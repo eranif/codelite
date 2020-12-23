@@ -32,6 +32,9 @@
 class QuickDebugDlg : public QuickDebugBase
 {
 protected:
+    virtual void OnRemoteBrowedDebuggee(wxCommandEvent& event);
+    virtual void OnRemoteBrowseDebugger(wxCommandEvent& event);
+    virtual void OnRemoteBrowseWD(wxCommandEvent& event);
     virtual void OnDebuggerChanged(wxCommandEvent& event);
     virtual void OnDebugOverSshUI(wxUpdateUIEvent& event);
     virtual void OnSelectAlternateDebugger(wxCommandEvent& event);
@@ -41,16 +44,11 @@ protected:
     void OnButtonBrowseWD(wxCommandEvent& event);
     void Initialize();
     void UpdateDebuggerExecutable(const QuickDebugInfo& info);
+    wxArrayString GetStartupCmds();
 
 public:
     QuickDebugDlg(wxWindow* parent);
     virtual ~QuickDebugDlg();
-    wxArrayString GetStartupCmds();
-    wxString GetExe();
-    wxString GetDebuggerName();
-    wxString GetWorkingDirectory();
-    wxString GetArguments();
-    wxString GetAlternateDebuggerExe() const { return m_textCtrlDebuggerExec->GetValue(); }
 };
 
 #endif // __quickdebugdlg__

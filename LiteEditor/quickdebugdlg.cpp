@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
 #include "SFTPBrowserDlg.h"
 #include "cl_sftp.h"
 #include "codelite_events.h"
@@ -46,11 +47,6 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
     Initialize();
     SetName("QuickDebugDlg");
 
-#if !USE_SFTP
-    m_checkBoxDebugOverSSH->SetValue(false);
-    m_checkBoxDebugOverSSH->Enable(false);
-#endif
-
     // Let the plugins override the values
     clDebugEvent eventShowing(wxEVT_QUICK_DEBUG_DLG_SHOWING);
     if(EventNotifier::Get()->ProcessEvent(eventShowing)) {
@@ -64,8 +60,16 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
             m_WD->SetValue(eventShowing.GetWorkingDirectory());
         }
     }
-
     ::clSetDialogBestSizeAndPosition(this);
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        lexer->Apply(m_stcRemoteStartupCommands);
+        lexer->Apply(m_stcStartupCmds);
+    }
+    
+#if !USE_SFTP
+    m_panelSSH->Enable(false);
+#endif
 }
 
 QuickDebugDlg::~QuickDebugDlg() {}
@@ -74,6 +78,12 @@ void QuickDebugDlg::Initialize()
 {
     QuickDebugInfo info;
     EditorConfigST::Get()->ReadObject(wxT("QuickDebugDlg"), &info);
+
+    if(info.IsDebugOverSSH()) {
+        m_notebook47->SetSelection(1);
+    } else {
+        m_notebook47->SetSelection(0);
+    }
 
     m_choiceDebuggers->Append(DebuggerMgr::Get().GetAvailableDebuggers());
     if(m_choiceDebuggers->GetCount()) {
@@ -105,14 +115,15 @@ void QuickDebugDlg::Initialize()
         startupCmds << info.GetStartCmds().Item(i) << wxT("\n");
     }
 
-    m_textCtrlCmds->ChangeValue(startupCmds);
+    m_stcStartupCmds->SetText(startupCmds);
     UpdateDebuggerExecutable(info);
 
 #if USE_SFTP
+    // ssh related
     SFTPSettings settings;
     settings.Load();
 
-    wxString selectedAccount = info.GetSshAccount();
+    const wxString& selectedAccount = info.GetSshAccount();
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
     int selection = wxNOT_FOUND;
     for(const auto& account : accounts) {
@@ -128,28 +139,19 @@ void QuickDebugDlg::Initialize()
         m_choiceSshAccounts->SetSelection(0);
     }
 
-    m_checkBoxDebugOverSSH->SetValue(info.IsDebugOverSSH());
+    m_stcRemoteStartupCommands->SetText(wxJoin(info.GetRemoteStartCmds(), '\n'));
+    m_textCtrlRemoteArgs->ChangeValue(info.GetRemoteArgs());
+    m_textCtrlRemoteDebuggee->ChangeValue(info.GetRemoteExe());
+    m_textCtrlRemoteDebugger->ChangeValue(info.GetRemoteDebugger());
+    m_textCtrlRemoteWD->ChangeValue(info.GetRemoteWD());
 #endif
 }
 
 void QuickDebugDlg::OnButtonBrowseExe(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-#if USE_SFTP
-    if(m_checkBoxDebugOverSSH->IsChecked()) {
-        // Open a remote folder browser
-        SFTPBrowserDlg dlg(this, _("Select executable to debug"), wxEmptyString,
-                           clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES,
-                           m_choiceSshAccounts->GetStringSelection());
-        if(dlg.ShowModal() == wxID_OK) {
-            m_ExeFilepath->Insert(dlg.GetPath(), 0);
-            m_ExeFilepath->SetSelection(0);
-        }
-        return;
-    }
-#endif
     wxString path, ans;
-    wxFileName fn(GetExe());
+    wxFileName fn(m_ExeFilepath->GetValue());
     if(fn.FileExists()) {
         // Use the serialised path as the wxFileSelector default path
         path = fn.GetPath();
@@ -173,13 +175,21 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
     const size_t MAX_NO_ITEMS = 10;
     QuickDebugInfo info;
     info.SetSelectedDbg(m_choiceDebuggers->GetSelection());
-    info.SetExeFilepaths(ReturnWithStringPrepended(m_ExeFilepath->GetStrings(), GetExe(), MAX_NO_ITEMS));
-    info.SetWDs(ReturnWithStringPrepended(m_WD->GetStrings(), GetWorkingDirectory(), MAX_NO_ITEMS));
+    info.SetExeFilepaths(
+        ReturnWithStringPrepended(m_ExeFilepath->GetStrings(), m_ExeFilepath->GetValue(), MAX_NO_ITEMS));
+    info.SetWDs(ReturnWithStringPrepended(m_WD->GetStrings(), m_WD->GetStringSelection(), MAX_NO_ITEMS));
     info.SetStartCmds(GetStartupCmds());
     info.SetArguments(m_textCtrlArgs->GetValue());
     info.SetAlternateDebuggerExec(m_textCtrlDebuggerExec->GetValue());
-    info.SetDebugOverSSH(m_checkBoxDebugOverSSH->IsChecked());
+
+    // ssh tab
+    info.SetDebugOverSSH(m_notebook47->GetSelection() == 1);
     info.SetSshAccount(m_choiceSshAccounts->GetStringSelection());
+    info.SetRemoteDebugger(m_textCtrlRemoteDebugger->GetValue());
+    info.SetRemoteExe(m_textCtrlRemoteDebuggee->GetValue());
+    info.SetRemoteArgs(m_textCtrlRemoteArgs->GetValue());
+    info.SetRemoteWD(m_textCtrlRemoteWD->GetValue());
+    info.SetRemoteStartCmds(wxStringTokenize(m_stcRemoteStartupCommands->GetText(), "\n\r", wxTOKEN_STRTOK));
     EditorConfigST::Get()->WriteObject(wxT("QuickDebugDlg"), &info);
 
     // Let the plugins persist the data
@@ -191,20 +201,32 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
 
     // Notify that a debug session is starting
     clDebugEvent eventQuickDebug(wxEVT_QUICK_DEBUG);
-    eventQuickDebug.SetAlternateDebuggerPath(m_textCtrlDebuggerExec->GetValue());
-    eventQuickDebug.SetDebuggerName(m_choiceDebuggers->GetStringSelection());
-    eventQuickDebug.SetExecutableName(m_ExeFilepath->GetStringSelection());
-    eventQuickDebug.SetWorkingDirectory(m_WD->GetStringSelection());
-    eventQuickDebug.SetArguments(m_textCtrlArgs->GetValue());
-    eventQuickDebug.SetStartupCommands(wxJoin(GetStartupCmds(), '\n'));
+    if(m_notebook47->GetSelection() == 1) {
+        // SSH is selected
 #if USE_SFTP
-    SFTPSettings settings;
-    settings.Load();
-    SSHAccountInfo sshAccount;
-    settings.GetAccount(m_choiceSshAccounts->GetStringSelection(), sshAccount);
-    eventQuickDebug.SetIsSSHDebugging(m_checkBoxDebugOverSSH->IsChecked());
-    eventQuickDebug.SetSshAccount(sshAccount);
+        SFTPSettings settings;
+        settings.Load();
+        SSHAccountInfo sshAccount;
+        settings.GetAccount(m_choiceSshAccounts->GetStringSelection(), sshAccount);
+        eventQuickDebug.SetIsSSHDebugging(true);
+        eventQuickDebug.SetSshAccount(sshAccount);
+
+        eventQuickDebug.SetAlternateDebuggerPath(m_textCtrlRemoteDebugger->GetValue());
+        eventQuickDebug.SetDebuggerName("GNU gdb debugger");
+        eventQuickDebug.SetExecutableName(m_textCtrlRemoteDebuggee->GetValue());
+        eventQuickDebug.SetWorkingDirectory(m_textCtrlRemoteWD->GetValue());
+        eventQuickDebug.SetArguments(m_textCtrlRemoteArgs->GetValue());
+        eventQuickDebug.SetStartupCommands(m_stcRemoteStartupCommands->GetValue());
 #endif
+
+    } else {
+        eventQuickDebug.SetAlternateDebuggerPath(m_textCtrlDebuggerExec->GetValue());
+        eventQuickDebug.SetDebuggerName(m_choiceDebuggers->GetStringSelection());
+        eventQuickDebug.SetExecutableName(m_ExeFilepath->GetStringSelection());
+        eventQuickDebug.SetWorkingDirectory(m_WD->GetStringSelection());
+        eventQuickDebug.SetArguments(m_textCtrlArgs->GetValue());
+        eventQuickDebug.SetStartupCommands(wxJoin(GetStartupCmds(), '\n'));
+    }
     EventNotifier::Get()->AddPendingEvent(eventQuickDebug);
     EndModal(wxID_OK);
 }
@@ -212,82 +234,54 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
 void QuickDebugDlg::OnButtonCancel(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
     EndModal(wxID_CANCEL);
 }
 
-wxString QuickDebugDlg::GetArguments() { return m_textCtrlArgs->GetValue(); }
-
-wxString QuickDebugDlg::GetDebuggerName() { return m_choiceDebuggers->GetStringSelection(); }
-
-wxString QuickDebugDlg::GetExe() { return m_ExeFilepath->GetValue(); }
-
 wxArrayString QuickDebugDlg::GetStartupCmds()
 {
-    wxString cmds = m_textCtrlCmds->GetValue();
+    wxString cmds = m_stcStartupCmds->GetText();
     cmds.Trim().Trim(false);
-
     return wxStringTokenize(cmds, wxT("\n\r"), wxTOKEN_STRTOK);
 }
-
-wxString QuickDebugDlg::GetWorkingDirectory() { return m_WD->GetValue(); }
 
 void QuickDebugDlg::OnButtonBrowseWD(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
-    if(m_checkBoxDebugOverSSH->IsChecked()) {
-#if USE_SFTP
-        // Open a remote folder browser
-        SFTPBrowserDlg dlg(this, _("Select working directory"), wxEmptyString, clSFTP::SFTP_BROWSE_FOLDERS,
-                           m_choiceSshAccounts->GetStringSelection());
-        if(dlg.ShowModal() == wxID_OK) {
-            m_WD->Insert(dlg.GetPath(), 0);
-            m_WD->SetSelection(0);
-        }
-#endif
-    } else {
-        wxString ans, path(GetWorkingDirectory());
-        if(!wxFileName::DirExists(path)) {
-            path = wxStandardPaths::Get().GetUserConfigDir();
-        }
+    wxString ans, path(m_WD->GetValue());
+    if(!wxFileName::DirExists(path)) {
+        path = wxStandardPaths::Get().GetUserConfigDir();
+    }
 
-        ans = wxDirSelector(_("Select working directory:"), path);
-        if(!ans.empty()) {
-            m_WD->Insert(ans, 0);
-            m_WD->SetSelection(0);
-        }
+    ans = wxDirSelector(_("Select working directory:"), path);
+    if(!ans.empty()) {
+        m_WD->Insert(ans, 0);
+        m_WD->SetSelection(0);
     }
 }
 void QuickDebugDlg::OnSelectAlternateDebugger(wxCommandEvent& event)
 {
-#if USE_SFTP
-    if(m_checkBoxDebugOverSSH->IsChecked()) {
-        SFTPBrowserDlg dlg(this, _("Select gdb"), wxEmptyString,
-                           clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES,
-                           m_choiceSshAccounts->GetStringSelection());
-        if(dlg.ShowModal() == wxID_OK) {
-            m_textCtrlDebuggerExec->ChangeValue(dlg.GetPath());
-        }
-        return;
-    }
-#endif
     wxString debuggerPath = ::wxFileSelector(_("Choose debugger:"), wxStandardPaths::Get().GetUserConfigDir());
     if(debuggerPath.IsEmpty())
         return;
     m_textCtrlDebuggerExec->ChangeValue(debuggerPath);
 }
 
-void QuickDebugDlg::OnDebugOverSshUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxDebugOverSSH->IsChecked()); }
+void QuickDebugDlg::OnDebugOverSshUI(wxUpdateUIEvent& event)
+{
+#if USE_SFTP
+    event.Enable(true);
+#else
+    event.Enable(false);
+#endif
+}
 
 void QuickDebugDlg::OnDebuggerChanged(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(!m_checkBoxDebugOverSSH->IsChecked()) {
-        QuickDebugInfo info;
-        EditorConfigST::Get()->ReadObject("QuickDebugDlg", &info);
-        UpdateDebuggerExecutable(info);
-    }
+    QuickDebugInfo info;
+    EditorConfigST::Get()->ReadObject("QuickDebugDlg", &info);
+    UpdateDebuggerExecutable(info);
 }
 
 void QuickDebugDlg::UpdateDebuggerExecutable(const QuickDebugInfo& info)
@@ -302,4 +296,43 @@ void QuickDebugDlg::UpdateDebuggerExecutable(const QuickDebugInfo& info)
     if(!info.GetAlternateDebuggerExec().empty()) {
         m_textCtrlDebuggerExec->ChangeValue(info.GetAlternateDebuggerExec());
     }
+}
+
+void QuickDebugDlg::OnRemoteBrowedDebuggee(wxCommandEvent& event)
+{
+    // Open a remote folder browser
+    wxUnusedVar(event);
+#if USE_SFTP
+    SFTPBrowserDlg dlg(this, _("Select executable to debug"), wxEmptyString,
+                       clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES,
+                       m_choiceSshAccounts->GetStringSelection());
+    if(dlg.ShowModal() == wxID_OK) {
+        m_textCtrlRemoteDebuggee->ChangeValue(dlg.GetPath());
+    }
+#endif
+}
+
+void QuickDebugDlg::OnRemoteBrowseDebugger(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+#if USE_SFTP
+    SFTPBrowserDlg dlg(this, _("Select gdb"), wxEmptyString, clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES,
+                       m_choiceSshAccounts->GetStringSelection());
+    if(dlg.ShowModal() == wxID_OK) {
+        m_textCtrlRemoteDebugger->ChangeValue(dlg.GetPath());
+    }
+#endif
+}
+
+void QuickDebugDlg::OnRemoteBrowseWD(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+#if USE_SFTP
+    // Open a remote folder browser
+    SFTPBrowserDlg dlg(this, _("Select working directory"), wxEmptyString, clSFTP::SFTP_BROWSE_FOLDERS,
+                       m_choiceSshAccounts->GetStringSelection());
+    if(dlg.ShowModal() == wxID_OK) {
+        m_textCtrlRemoteWD->ChangeValue(dlg.GetPath());
+    }
+#endif
 }

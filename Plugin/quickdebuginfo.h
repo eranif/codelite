@@ -33,7 +33,6 @@
 
 class WXDLLIMPEXP_SDK QuickDebugInfo : public SerializedObject
 {
-
     wxArrayString m_exeFilepaths;
     wxArrayString m_wds;
     wxString m_arguments;
@@ -42,6 +41,11 @@ class WXDLLIMPEXP_SDK QuickDebugInfo : public SerializedObject
     wxString m_alternateDebuggerExec;
     bool m_debugOverSSH = false;
     wxString m_sshAccount;
+    wxString m_remoteExe;
+    wxString m_remoteDebugger;
+    wxString m_remoteWD;
+    wxArrayString m_remoteStartCmds;
+    wxString m_remoteArgs;
 
 public:
     QuickDebugInfo();
@@ -53,13 +57,11 @@ public:
 
     void SetArguments(const wxString& arguments) { this->m_arguments = arguments; }
     void SetExeFilepaths(const wxArrayString& exeFilepaths) { this->m_exeFilepaths = exeFilepaths; }
-    void SetSelectedDbg(const int& selectedDbg) { this->m_selectedDbg = selectedDbg; }
     void SetStartCmds(const wxArrayString& startCmds) { this->m_startCmds = startCmds; }
     void SetWDs(const wxArrayString& wds) { this->m_wds = wds; }
 
     const wxString& GetArguments() const { return m_arguments; }
     const wxArrayString& GetExeFilepaths() const { return m_exeFilepaths; }
-    const int& GetSelectedDbg() const { return m_selectedDbg; }
     const wxArrayString& GetStartCmds() const { return m_startCmds; }
     const wxArrayString& GetWds() const { return m_wds; }
     void SetAlternateDebuggerExec(const wxString& alternateDebuggerExec)
@@ -71,5 +73,18 @@ public:
     void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }
     bool IsDebugOverSSH() const { return m_debugOverSSH; }
     const wxString& GetSshAccount() const { return m_sshAccount; }
+    void SetRemoteArgs(const wxString& remoteArgs) { this->m_remoteArgs = remoteArgs; }
+    void SetRemoteDebugger(const wxString& remoteDebugger) { this->m_remoteDebugger = remoteDebugger; }
+    void SetRemoteExe(const wxString& remoteExe) { this->m_remoteExe = remoteExe; }
+    void SetRemoteStartCmds(const wxArrayString& remoteStartCmds) { this->m_remoteStartCmds = remoteStartCmds; }
+    void SetRemoteWD(const wxString& remoteWD) { this->m_remoteWD = remoteWD; }
+    void SetSelectedDbg(int selectedDbg) { this->m_selectedDbg = selectedDbg; }
+    void SetWds(const wxArrayString& wds) { this->m_wds = wds; }
+    const wxString& GetRemoteArgs() const { return m_remoteArgs; }
+    const wxString& GetRemoteDebugger() const { return m_remoteDebugger; }
+    const wxString& GetRemoteExe() const { return m_remoteExe; }
+    const wxArrayString& GetRemoteStartCmds() const { return m_remoteStartCmds; }
+    const wxString& GetRemoteWD() const { return m_remoteWD; }
+    int GetSelectedDbg() const { return m_selectedDbg; }
 };
 #endif // __quickdebuginfo__

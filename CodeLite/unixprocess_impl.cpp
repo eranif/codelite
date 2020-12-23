@@ -23,14 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "file_logger.h"
-#include "unixprocess_impl.h"
-#include <cstring>
+#include "SocketAPI/clSocketBase.h"
+#include "StringUtils.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "SocketAPI/clSocketBase.h"
+#include "unixprocess_impl.h"
+#include <cstring>
 #include <thread>
-#include "StringUtils.h"
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
@@ -51,9 +50,9 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 #elif defined(__NetBSD__)
-#include <util.h>
 #include <sys/ioctl.h>
 #include <termios.h>
+#include <util.h>
 #else
 #include <pty.h>
 #include <utmp.h>
@@ -61,9 +60,6 @@
 #else
 #include <util.h>
 #endif
-
-static char** argv = NULL;
-static int argc = 0;
 
 // ----------------------------------------------
 #define ISBLANK(ch) ((ch) == ' ' || (ch) == '\t')
@@ -117,13 +113,15 @@ char** dupargv(char** argv)
     int argc;
     char** copy;
 
-    if(argv == NULL) return NULL;
+    if(argv == NULL)
+        return NULL;
 
     /* the vector */
     for(argc = 0; argv[argc] != NULL; argc++)
         ;
     copy = (char**)malloc((argc + 1) * sizeof(char*));
-    if(copy == NULL) return NULL;
+    if(copy == NULL)
+        return NULL;
 
     /* the strings */
     for(argc = 0; argv[argc] != NULL; argc++) {
@@ -234,19 +232,15 @@ char** buildargv(const char* input)
 
 //-----------------------------------------------------
 
-static void make_argv(const wxString& cmd)
+static char** make_argv(const wxString& cmd, int& argc)
 {
-    if(argc) {
-        freeargv(argv);
-        argc = 0;
-    }
-
-    argv = buildargv(cmd.mb_str(wxConvUTF8).data());
+    char** argv = buildargv(cmd.mb_str(wxConvUTF8).data());
     argc = 0;
 
     for(char** targs = argv; *targs != NULL; targs++) {
-        argc++;
+        ++argc;
     }
+    return argv;
 }
 
 static void RemoveTerminalColoring(char* buffer)
@@ -275,7 +269,9 @@ void UnixProcessImpl::Cleanup()
 {
     close(GetReadHandle());
     close(GetWriteHandle());
-    if(GetStderrHandle() != wxNOT_FOUND) { close(GetStderrHandle()); }
+    if(GetStderrHandle() != wxNOT_FOUND) {
+        close(GetStderrHandle());
+    }
     if(m_thr) {
         // Stop the reader thread
         m_thr->Stop();
@@ -295,7 +291,9 @@ bool UnixProcessImpl::IsAlive() { return kill(m_pid, 0) == 0; }
 
 bool UnixProcessImpl::ReadFromFd(int fd, fd_set& rset, wxString& output)
 {
-    if(fd == wxNOT_FOUND) { return false; }
+    if(fd == wxNOT_FOUND) {
+        return false;
+    }
     if(FD_ISSET(fd, &rset)) {
         // there is something to read
         char buffer[BUFF_SIZE + 1]; // our read buffer
@@ -305,9 +303,13 @@ bool UnixProcessImpl::ReadFromFd(int fd, fd_set& rset, wxString& output)
 
             // Remove coloring chars from the incomnig buffer
             // colors are marked with ESC and terminates with lower case 'm'
-            if(!(this->m_flags & IProcessRawOutput)) { RemoveTerminalColoring(buffer); }
+            if(!(this->m_flags & IProcessRawOutput)) {
+                RemoveTerminalColoring(buffer);
+            }
             wxString convBuff = wxString(buffer, wxConvUTF8);
-            if(convBuff.IsEmpty()) { convBuff = wxString::From8BitData(buffer); }
+            if(convBuff.IsEmpty()) {
+                convBuff = wxString::From8BitData(buffer);
+            }
 
             output = convBuff;
             return true;
@@ -323,7 +325,9 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
 
     memset(&rs, 0, sizeof(rs));
     FD_SET(GetReadHandle(), &rs);
-    if(m_stderrHandle != wxNOT_FOUND) { FD_SET(m_stderrHandle, &rs); }
+    if(m_stderrHandle != wxNOT_FOUND) {
+        FD_SET(m_stderrHandle, &rs);
+    }
 
     timeout.tv_sec = 0;      // 0 seconds
     timeout.tv_usec = 50000; // 50 ms
@@ -347,7 +351,9 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
 
     } else {
 
-        if(errCode == EINTR || errCode == EAGAIN) { return true; }
+        if(errCode == EINTR || errCode == EAGAIN) {
+            return true;
+        }
 
         // Process terminated
         // the exit code will be set in the sigchld event handler
@@ -367,7 +373,9 @@ bool UnixProcessImpl::WriteRaw(const std::string& buff)
     while(!tmpbuf.empty()) {
         int bytes_written =
             ::write(GetWriteHandle(), tmpbuf.c_str(), tmpbuf.length() > chunk_size ? chunk_size : tmpbuf.length());
-        if(bytes_written <= 0) { return false; }
+        if(bytes_written <= 0) {
+            return false;
+        }
         tmpbuf.erase(0, bytes_written);
     }
     return true;
@@ -377,7 +385,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
                                    const wxString& workingDirectory, IProcessCallback* cb)
 {
     wxString newCmd = cmd;
-    const char *sudo_path;
+    const char* sudo_path;
 
     if((flags & IProcessCreateAsSuperuser)) {
         sudo_path = "/usr/bin/sudo";
@@ -390,15 +398,18 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
             clDEBUG1() << "Executing command:" << newCmd << clEndl;
 
         } else {
-            clWARNING() << "Unable to run command: '" << cmd
-                        << "' as superuser: sudo: no such file or directory" << clEndl;
+            clWARNING() << "Unable to run command: '" << cmd << "' as superuser: sudo: no such file or directory"
+                        << clEndl;
         }
     } else {
         clDEBUG1() << "Executing command:" << newCmd << clEndl;
     }
 
-    make_argv(newCmd);
-    if(argc == 0) { return NULL; }
+    int argc = 0;
+    char** argv = make_argv(newCmd, argc);
+    if(argc == 0 || argv == nullptr) {
+        return nullptr;
+    }
 
     // fork the child process
     wxString curdir = wxGetCwd();
@@ -450,11 +461,15 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
 
         // at this point, slave is used as stdin/stdout/stderr
         // Child process
-        if(workingDirectory.IsEmpty() == false) { wxSetWorkingDirectory(workingDirectory); }
+        if(workingDirectory.IsEmpty() == false) {
+            wxSetWorkingDirectory(workingDirectory);
+        }
 
         // execute the process
         errno = 0;
-        if(execvp(argv[0], argv) < 0) { clERROR() << "execvp('" << newCmd << "') error:" << strerror(errno) << clEndl; }
+        if(execvp(argv[0], argv) < 0) {
+            clERROR() << "execvp('" << newCmd << "') error:" << strerror(errno) << clEndl;
+        }
 
         // if we got here, we failed...
         exit(0);
@@ -498,11 +513,13 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         proc->SetWriteHandler(master);
         proc->SetPid(rc);
         proc->m_flags = flags; // Keep the creation flags
-        
+
         // Keep the terminal name, we will need it
         proc->SetTty(pts_name);
-        
-        if(!(proc->m_flags & IProcessCreateSync)) { proc->StartReaderThread(); }
+
+        if(!(proc->m_flags & IProcessCreateSync)) {
+            proc->StartReaderThread();
+        }
         return proc;
     }
 }
@@ -544,9 +561,6 @@ void UnixProcessImpl::Detach()
     m_thr = NULL;
 }
 
-void UnixProcessImpl::Signal(wxSignal sig)
-{
-   wxKill(GetPid(), sig, NULL, wxKILL_CHILDREN);
-}
+void UnixProcessImpl::Signal(wxSignal sig) { wxKill(GetPid(), sig, NULL, wxKILL_CHILDREN); }
 
 #endif //#if defined(__WXMAC )||defined(__WXGTK__)

@@ -8,8 +8,8 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include <wx/msgdlg.h>
-#include <wx/utils.h>
 #include <wx/stc/stc.h>
+#include <wx/utils.h>
 
 clSFTPManager::clSFTPManager()
 {
@@ -115,7 +115,14 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     auto info = connection_info.first;
     wxFileName localPath = clSFTP::GetLocalFileName(info, path, true);
     wxMemoryBuffer buffer;
-    SFTPAttribute::Ptr_t fileAttr = sftp->Read(path, buffer);
+    SFTPAttribute::Ptr_t fileAttr;
+    try {
+        fileAttr = sftp->Read(path, buffer);
+    } catch(clException& e) {
+        clWARNING() << "Failed to open file:" << path << "." << e.What() << clEndl;
+        return nullptr;
+    }
+
     wxFFile fp(localPath.GetFullPath(), "w+b");
     if(fp.IsOpened()) {
         fp.Write(buffer.GetData(), buffer.GetDataLen());

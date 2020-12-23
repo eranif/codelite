@@ -70,7 +70,9 @@ void DebuggerCallstackView::OnItemActivated(wxDataViewEvent& event)
     StackEntry* entry = reinterpret_cast<StackEntry*>(m_dvListCtrl->GetItemData(event.GetItem()));
     if(entry) {
         long frame, frameLine;
-        if(!entry->level.ToLong(&frame)) { frame = 0; }
+        if(!entry->level.ToLong(&frame)) {
+            frame = 0;
+        }
 
         // Remove the currently selected item
         wxDataViewItem curitem = m_dvListCtrl->RowToItem(m_currLevel);
@@ -106,17 +108,21 @@ void DebuggerCallstackView::Update(const StackEntryArray& stackArr)
         wxVector<wxVariant> cols;
         cols.push_back(::MakeBitmapIndexText(entry.level, isactive ? 0 : 1));
         cols.push_back(entry.function);
-        cols.push_back(wxFileName(entry.file).GetFullPath());
+        cols.push_back(entry.file);
         cols.push_back(entry.line);
         cols.push_back(entry.address);
         StackEntry* d = new StackEntry(entry);
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)d);
-        if(isactive) { activeFrame = i; }
+        if(isactive) {
+            activeFrame = i;
+        }
     }
 
     // Make sure that everything is drawn before we attempt to select anything
     m_dvListCtrl->Update();
-    if(activeFrame != wxNOT_FOUND) { CallAfter(&DebuggerCallstackView::EnsureRowVisible, activeFrame); }
+    if(activeFrame != wxNOT_FOUND) {
+        CallAfter(&DebuggerCallstackView::EnsureRowVisible, activeFrame);
+    }
 }
 
 void DebuggerCallstackView::SetCurrentLevel(const int level)

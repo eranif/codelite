@@ -9,6 +9,7 @@
 #include "imanager.h"
 #include <wx/msgdlg.h>
 #include <wx/utils.h>
+#include <wx/stc/stc.h>
 
 clSFTPManager::clSFTPManager()
 {
@@ -98,6 +99,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     for(auto editor : editors) {
         auto clientData = GetSFTPClientData(editor);
         if(clientData && clientData->GetAccountName() == accountName && clientData->GetRemotePath() == path) {
+            clGetManager()->SelectPage(editor->GetCtrl());
             return editor;
         }
     }

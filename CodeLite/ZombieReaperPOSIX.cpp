@@ -28,8 +28,8 @@
 
 #ifndef __WXMSW__
 
-#include <sys/wait.h>
 #include "file_logger.h"
+#include <sys/wait.h>
 
 wxDEFINE_EVENT(wxEVT_CL_PROCESS_TERMINATED, wxProcessEvent);
 
@@ -39,33 +39,30 @@ ZombieReaperPOSIX::ZombieReaperPOSIX()
     CL_DEBUG("ZombieReaperPOSIX: started");
 }
 
-ZombieReaperPOSIX::~ZombieReaperPOSIX()
-{
-    
-}
+ZombieReaperPOSIX::~ZombieReaperPOSIX() {}
 
 void* ZombieReaperPOSIX::Entry()
 {
-    while ( !TestDestroy() ) {
-        int status (0);
+    while(!TestDestroy()) {
+        int status(0);
         pid_t pid = ::waitpid((pid_t)-1, &status, WNOHANG);
-        if ( pid > 0 ) {
+        if(pid > 0) {
             // Notify about this process termination
             wxProcessEvent event(0, pid, status);
-            event.SetEventType( wxEVT_CL_PROCESS_TERMINATED );
-            EventNotifier::Get()->AddPendingEvent( event );
-            CL_DEBUG("ZombieReaperPOSIX: process %d exited with status code %d", (int)pid, status);
+            event.SetEventType(wxEVT_CL_PROCESS_TERMINATED);
+            EventNotifier::Get()->AddPendingEvent(event);
+            clDEBUG() << "ZombieReaperPOSIX: process" << (int)pid << "exited with status code" << status << clEndl;
         }
-        wxThread::Sleep(50);
+        wxThread::Sleep(500);
     }
-    
-    CL_DEBUG("ZombieReaperPOSIX: going down");
+
+    clDEBUG() << "ZombieReaperPOSIX: going down" << clEndl;
     return NULL;
 }
 
 void ZombieReaperPOSIX::Stop()
 {
-    if ( IsAlive() ) {
+    if(IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);

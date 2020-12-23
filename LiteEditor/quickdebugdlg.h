@@ -45,6 +45,7 @@ protected:
     void Initialize();
     void UpdateDebuggerExecutable(const QuickDebugInfo& info);
     wxArrayString GetStartupCmds();
+    void SetComboBoxValue(wxComboBox* combo, const wxString& value);
 
 public:
     QuickDebugDlg(wxWindow* parent);

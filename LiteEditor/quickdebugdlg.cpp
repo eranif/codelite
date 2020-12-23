@@ -51,13 +51,13 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
     clDebugEvent eventShowing(wxEVT_QUICK_DEBUG_DLG_SHOWING);
     if(EventNotifier::Get()->ProcessEvent(eventShowing)) {
         if(!eventShowing.GetExecutableName().IsEmpty()) {
-            m_ExeFilepath->ChangeValue(eventShowing.GetExecutableName());
+            SetComboBoxValue(m_ExeFilepath, eventShowing.GetExecutableName());
         }
         if(!eventShowing.GetArguments().IsEmpty()) {
             m_textCtrlArgs->ChangeValue(eventShowing.GetArguments());
         }
         if(!eventShowing.GetWorkingDirectory().IsEmpty()) {
-            m_WD->SetValue(eventShowing.GetWorkingDirectory());
+            SetComboBoxValue(m_WD, eventShowing.GetWorkingDirectory());
         }
     }
     ::clSetDialogBestSizeAndPosition(this);
@@ -66,7 +66,7 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
         lexer->Apply(m_stcRemoteStartupCommands);
         lexer->Apply(m_stcStartupCmds);
     }
-    
+
 #if !USE_SFTP
     m_panelSSH->Enable(false);
 #endif
@@ -335,4 +335,16 @@ void QuickDebugDlg::OnRemoteBrowseWD(wxCommandEvent& event)
         m_textCtrlRemoteWD->ChangeValue(dlg.GetPath());
     }
 #endif
+}
+
+void QuickDebugDlg::SetComboBoxValue(wxComboBox* combo, const wxString& value)
+{
+    int where = combo->FindString(value);
+    if(where != wxNOT_FOUND) {
+        combo->SetSelection(where);
+    } else {
+        // new value
+        where = combo->Insert(value, 0);
+        combo->SetSelection(where);
+    }
 }

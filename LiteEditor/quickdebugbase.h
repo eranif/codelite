@@ -57,11 +57,11 @@ protected:
     wxStaticText* m_staticText2;
     wxComboBox* m_ExeFilepath;
     wxButton* m_buttonBrowseExe;
+    wxStaticText* m_staticText4;
+    wxTextCtrl* m_textCtrlArgs;
     wxStaticText* m_staticText5;
     wxComboBox* m_WD;
     wxButton* m_buttonBrowseWD;
-    wxStaticText* m_staticText4;
-    wxTextCtrl* m_textCtrlArgs;
     wxStyledTextCtrl* m_stcStartupCmds;
     wxPanel* m_panelSSH;
     wxChoice* m_choiceSshAccounts;
@@ -71,11 +71,11 @@ protected:
     wxStaticText* m_staticText72;
     wxTextCtrl* m_textCtrlRemoteDebuggee;
     wxButton* m_button76;
+    wxStaticText* m_staticText84;
+    wxTextCtrl* m_textCtrlRemoteArgs;
     wxStaticText* m_staticText78;
     wxTextCtrl* m_textCtrlRemoteWD;
     wxButton* m_button82;
-    wxStaticText* m_staticText84;
-    wxTextCtrl* m_textCtrlRemoteArgs;
     wxStyledTextCtrl* m_stcRemoteStartupCommands;
     wxStdDialogButtonSizer* m_stdBtnSizer2;
     wxButton* m_buttonOK;
@@ -102,11 +102,11 @@ public:
     wxStaticText* GetStaticText2() { return m_staticText2; }
     wxComboBox* GetExeFilepath() { return m_ExeFilepath; }
     wxButton* GetButtonBrowseExe() { return m_buttonBrowseExe; }
+    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
     wxStaticText* GetStaticText5() { return m_staticText5; }
     wxComboBox* GetWD() { return m_WD; }
     wxButton* GetButtonBrowseWD() { return m_buttonBrowseWD; }
-    wxStaticText* GetStaticText4() { return m_staticText4; }
-    wxTextCtrl* GetTextCtrlArgs() { return m_textCtrlArgs; }
     wxStyledTextCtrl* GetStcStartupCmds() { return m_stcStartupCmds; }
     wxPanel* GetPanelLocal() { return m_panelLocal; }
     wxChoice* GetChoiceSshAccounts() { return m_choiceSshAccounts; }
@@ -116,11 +116,11 @@ public:
     wxStaticText* GetStaticText72() { return m_staticText72; }
     wxTextCtrl* GetTextCtrlRemoteDebuggee() { return m_textCtrlRemoteDebuggee; }
     wxButton* GetButton76() { return m_button76; }
+    wxStaticText* GetStaticText84() { return m_staticText84; }
+    wxTextCtrl* GetTextCtrlRemoteArgs() { return m_textCtrlRemoteArgs; }
     wxStaticText* GetStaticText78() { return m_staticText78; }
     wxTextCtrl* GetTextCtrlRemoteWD() { return m_textCtrlRemoteWD; }
     wxButton* GetButton82() { return m_button82; }
-    wxStaticText* GetStaticText84() { return m_staticText84; }
-    wxTextCtrl* GetTextCtrlRemoteArgs() { return m_textCtrlRemoteArgs; }
     wxStyledTextCtrl* GetStcRemoteStartupCommands() { return m_stcRemoteStartupCommands; }
     wxPanel* GetPanelSSH() { return m_panelSSH; }
     wxNotebook* GetNotebook47() { return m_notebook47; }

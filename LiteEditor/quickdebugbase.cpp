@@ -122,6 +122,21 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     flexGridSizer24->Add(m_buttonBrowseExe, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
+    m_staticText4 = new wxStaticText(m_panelLocal, wxID_ANY, _("Arguments:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelLocal, wxSize(-1, -1)), 0);
+
+    flexGridSizer24->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlArgs =
+        new wxTextCtrl(m_panelLocal, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelLocal, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlArgs->SetHint(wxT(""));
+#endif
+
+    flexGridSizer24->Add(m_textCtrlArgs, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer24->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
     m_staticText5 = new wxStaticText(m_panelLocal, wxID_ANY, _("Working directory:"), wxDefaultPosition,
                                      wxDLG_UNIT(m_panelLocal, wxSize(-1, -1)), 0);
 
@@ -142,21 +157,6 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
     m_buttonBrowseWD->SetToolTip(_("Browse for working directory"));
 
     flexGridSizer24->Add(m_buttonBrowseWD, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_staticText4 = new wxStaticText(m_panelLocal, wxID_ANY, _("Arguments:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelLocal, wxSize(-1, -1)), 0);
-
-    flexGridSizer24->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlArgs =
-        new wxTextCtrl(m_panelLocal, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelLocal, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlArgs->SetHint(wxT(""));
-#endif
-
-    flexGridSizer24->Add(m_textCtrlArgs, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    flexGridSizer24->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer26 =
         new wxStaticBoxSizer(new wxStaticBox(m_panelLocal, wxID_ANY, _("Startup commands:")), wxVERTICAL);
@@ -295,6 +295,21 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     flexGridSizer70->Add(m_button76, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
+    m_staticText84 = new wxStaticText(m_panelSSH, wxID_ANY, _("Arguments:"), wxDefaultPosition,
+                                      wxDLG_UNIT(m_panelSSH, wxSize(-1, -1)), 0);
+
+    flexGridSizer70->Add(m_staticText84, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlRemoteArgs =
+        new wxTextCtrl(m_panelSSH, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelSSH, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlRemoteArgs->SetHint(wxT(""));
+#endif
+
+    flexGridSizer70->Add(m_textCtrlRemoteArgs, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer70->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
     m_staticText78 = new wxStaticText(m_panelSSH, wxID_ANY, _("Working directory:"), wxDefaultPosition,
                                       wxDLG_UNIT(m_panelSSH, wxSize(-1, -1)), 0);
 
@@ -312,19 +327,6 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
         new wxButton(m_panelSSH, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(m_panelSSH, wxSize(-1, -1)), 0);
 
     flexGridSizer70->Add(m_button82, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_staticText84 = new wxStaticText(m_panelSSH, wxID_ANY, _("Arguments:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelSSH, wxSize(-1, -1)), 0);
-
-    flexGridSizer70->Add(m_staticText84, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlRemoteArgs =
-        new wxTextCtrl(m_panelSSH, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelSSH, wxSize(-1, -1)), 0);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlRemoteArgs->SetHint(wxT(""));
-#endif
-
-    flexGridSizer70->Add(m_textCtrlRemoteArgs, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer88 =
         new wxStaticBoxSizer(new wxStaticBox(m_panelSSH, wxID_ANY, _("Startup commands:")), wxVERTICAL);

@@ -50,7 +50,7 @@ public:
      * @param accountName the account name to use
      * @return true on success or false
      */
-    bool SaveFile(wxString& localPath, const wxString& remotePath, wxString& accountName);
+    bool SaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName);
 };
 #endif
 #endif // CLSFTPMANAGER_HPP

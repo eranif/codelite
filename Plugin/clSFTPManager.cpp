@@ -1,5 +1,6 @@
 #if USE_SFTP
 #include "SFTPClientData.hpp"
+#include "clSFTPEvent.h"
 #include "clSFTPManager.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -41,12 +42,27 @@ void clSFTPManager::Release()
             clGetManager()->CloseEditor(editor, false);
         }
     }
+
+    // Notify about each connection we are closing
+    for(auto sess : m_connections) {
+        wxString accountName;
+        try {
+            sess.second.second->Close();
+            accountName = sess.first;
+
+        } catch(clException& e) {
+            wxUnusedVar(e);
+        }
+        // Notify about session opened
+        clSFTPEvent event(wxEVT_SFTP_SESSION_CLOSED);
+        event.SetAccount(accountName);
+        EventNotifier::Get()->AddPendingEvent(event);
+    }
     m_connections.clear();
 }
 
 bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
 {
-    wxBusyCursor bc;
     {
         auto iter = m_connections.find(account.GetAccountName());
         if(iter != m_connections.end()) {
@@ -58,6 +74,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
         }
     }
 
+    wxBusyCursor bc;
     try {
         clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetPort()));
         ssh->Connect();
@@ -73,6 +90,12 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
         clSFTP::Ptr_t sftp(new clSFTP(ssh));
         sftp->Initialize();
         m_connections.insert({ account.GetAccountName(), { account, sftp } });
+
+        // Notify about session opened
+        clSFTPEvent event(wxEVT_SFTP_SESSION_OPENED);
+        event.SetAccount(account.GetAccountName());
+        EventNotifier::Get()->AddPendingEvent(event);
+
     } catch(clException& e) {
         wxMessageBox(wxString() << _("Failed to open SSH connection:\n") << e.What(), "CodeLite", wxOK | wxICON_ERROR);
         clERROR() << "SFTP Manager error:" << e.What() << clEndl;
@@ -116,6 +139,10 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     wxFileName localPath = clSFTP::GetLocalFileName(info, path, true);
     wxMemoryBuffer buffer;
     SFTPAttribute::Ptr_t fileAttr;
+
+    // this might be a lengthy operation, start a busy cursor
+    wxBusyCursor bc;
+
     try {
         fileAttr = sftp->Read(path, buffer);
     } catch(clException& e) {
@@ -182,6 +209,10 @@ SFTPClientData* clSFTPManager::GetSFTPClientData(IEditor* editor)
 void clSFTPManager::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
+
+    // this might be a lengthy operation, start a busy cursor
+    wxBusyCursor bc;
+
     const wxString& filename = event.GetString();
     auto editor = clGetManager()->FindEditor(filename);
     CHECK_PTR_RET(editor);

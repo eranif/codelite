@@ -20,6 +20,8 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_connectionString = json.namedObject("connectionString").toString("stdio");
     m_priority = json.namedObject("priority").toInt(m_priority);
     m_disaplayDiagnostics = json.namedObject("displayDiagnostics").toBool(m_disaplayDiagnostics); // defaults to true
+    m_remoteLSP = json["remoteLSP"].toBool(m_remoteLSP);
+    m_sshAccount = json["sshAccount"].toString(m_sshAccount);
 
     // we no longer are using exepath + args, instead a single "command" is used
     wxString commandDefault = m_exepath;
@@ -29,7 +31,7 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
             commandDefault << " " << m_args;
         }
     }
-    
+
     // read the environment variables
     auto env = json["environment"];
     size_t envSize = env.arraySize();
@@ -69,7 +71,9 @@ JSONItem LanguageServerEntry::ToJSON() const
     json.addProperty("displayDiagnostics", m_disaplayDiagnostics);
     json.addProperty("command", m_command);
     json.addProperty("initOptions", m_initOptions);
-    
+    json.addProperty("remoteLSP", m_remoteLSP);
+    json.addProperty("sshAccount", m_sshAccount);
+
     // Write the environment variables
     wxArrayString envArr;
     for(const auto& env_entry : m_env) {

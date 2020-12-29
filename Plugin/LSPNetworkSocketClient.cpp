@@ -2,6 +2,8 @@
 #include "cl_exception.h"
 #include "dirsaver.h"
 #include "file_logger.h"
+#include "sftp_settings.h"
+#include "ssh_account_info.h"
 
 LSPNetworkSocketClient::LSPNetworkSocketClient() {}
 
@@ -9,7 +11,9 @@ LSPNetworkSocketClient::~LSPNetworkSocketClient() { Close(); }
 
 void LSPNetworkSocketClient::Close()
 {
-    if(m_lspServer) { m_lspServer->Detach(); }
+    if(m_lspServer) {
+        m_lspServer->Detach();
+    }
     wxDELETE(m_lspServer);
     m_socket.reset(nullptr);
     m_pid = wxNOT_FOUND;
@@ -27,7 +31,9 @@ static wxString& wrap_with_quotes(wxString& str)
 
 wxString BuildCommand(const wxArrayString& args)
 {
-    if(args.empty()) { return ""; }
+    if(args.empty()) {
+        return "";
+    }
     // Build command line from the array
     wxString command;
     command << args[0];
@@ -48,15 +54,33 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
     // Start the process
     if(m_startupInfo.GetFlags() & LSPStartupInfo::kAutoStart) {
         wxString cmd = BuildCommand(m_startupInfo.GetLspServerCommand());
-        m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, m_startupInfo.GetWorkingDirectory());
-        if(!m_lspServer) { throw clException(wxString() << "Failed to execute process: " << cmd); }
+        // if remote is enabled for this LSP, start it on the remote machine
+        if(m_startupInfo.GetFlags() & LSPStartupInfo::kRemoteLSP) {
+#if USE_SFTP
+            SFTPSettings s;
+            SSHAccountInfo accountInfo;
+            s.Load();
+            if(!s.GetAccount(m_startupInfo.GetAccountName(), accountInfo)) {
+                throw clException(_("LSP: could not locate SSH account ") + m_startupInfo.GetAccountName());
+            }
+            m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH, m_startupInfo.GetWorkingDirectory(),
+                                               nullptr, (wxUIntPtr)&accountInfo);
+#else
+            throw clException("SFTP is not enabled in this build");
+#endif
+        } else {
+            m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, m_startupInfo.GetWorkingDirectory());
+        }
+        if(!m_lspServer) {
+            throw clException(wxString() << "Failed to execute process: " << cmd);
+        }
 
         m_lspServer->Detach(); // we dont want events
         m_pid = m_lspServer->GetPid();
     } else {
         m_pid = wxNOT_FOUND;
     }
-    
+
     // Now that the process is up, connect to the server
     m_socket.reset(new clAsyncSocket(m_startupInfo.GetConnectioString(), kAsyncSocketBuffer | kAsyncSocketClient));
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LSPNetworkSocketClient::OnSocketConnected, this);

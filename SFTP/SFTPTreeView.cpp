@@ -249,6 +249,11 @@ void SFTPTreeView::DoCloseSession()
 
     // Set the session name
     if(m_sftp) {
+        // Notify that the session is closed
+        clSFTPEvent event(wxEVT_SFTP_SESSION_CLOSED);
+        event.SetAccount(m_sftp->GetAccount());
+        EventNotifier::Get()->AddPendingEvent(event);
+
         sess.SetAccount(m_sftp->GetAccount());
         sess.SetRootFolder(m_textCtrlQuickJump->GetValue()); // Keep the root folder
         m_sessions.Load().SetSession(sess).Save();
@@ -738,6 +743,12 @@ void SFTPTreeView::DoOpenSession()
         m_sftp.reset(new clSFTP(ssh));
         m_sftp->Initialize();
         m_sftp->SetAccount(m_account.GetAccountName());
+
+        // Notify that the session is opened
+        clSFTPEvent event(wxEVT_SFTP_SESSION_OPENED);
+        event.SetAccount(m_sftp->GetAccount());
+        EventNotifier::Get()->AddPendingEvent(event);
+
         m_plugin->GetManager()->SetStatusMessage(wxString() << _("Done!"));
 
         dlg.Update(9, _("Fetching directory list..."));

@@ -1,5 +1,6 @@
 #if USE_SFTP
 #include "SFTPClientData.hpp"
+#include "clSFTPEvent.h"
 #include "clSFTPManager.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -41,6 +42,12 @@ void clSFTPManager::Release()
             clGetManager()->CloseEditor(editor, false);
         }
     }
+
+    for(const auto& conn_info : m_connections) {
+        clSFTPEvent event(wxEVT_SFTP_SESSION_CLOSED);
+        event.SetAccount(conn_info.first);
+        EventNotifier::Get()->AddPendingEvent(event);
+    }
     m_connections.clear();
 }
 
@@ -73,6 +80,12 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
         clSFTP::Ptr_t sftp(new clSFTP(ssh));
         sftp->Initialize();
         m_connections.insert({ account.GetAccountName(), { account, sftp } });
+
+        // Notify that a session is established
+        clSFTPEvent event(wxEVT_SFTP_SESSION_OPENED);
+        event.SetAccount(account.GetAccountName());
+        EventNotifier::Get()->AddPendingEvent(event);
+
     } catch(clException& e) {
         wxMessageBox(wxString() << _("Failed to open SSH connection:\n") << e.What(), "CodeLite", wxOK | wxICON_ERROR);
         clERROR() << "SFTP Manager error:" << e.What() << clEndl;

@@ -149,23 +149,18 @@ bool LanguageServerProtocol::DoStart()
 {
     DoClear();
 
-    clDEBUG() << GetLogPrefix() << "Starting...";
-    clDEBUG() << GetLogPrefix() << "Command:" << m_lspCommand;
-    clDEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder;
+    clDEBUG() << GetLogPrefix() << "Starting..." << clEndl;
+    clDEBUG() << GetLogPrefix() << "Command:" << m_startupInfo.GetLspServerCommand() << clEndl;
+    clDEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder << clEndl;
     for(const wxString& lang : m_languages) {
-        clDEBUG() << GetLogPrefix() << "Language:" << lang;
+        clDEBUG() << GetLogPrefix() << "Language:" << lang << clEndl;
     }
-    LSPStartupInfo info;
-    info.SetLspServerCommand(m_lspCommand);
-    info.SetWorkingDirectory(m_workingDirectory);
-    info.SetConnectioString(m_connectionString);
-    info.SetFlags(m_createFlags);
     try {
         // apply global environment variables
         EnvSetter env;
         // apply this lsp specific environment variables
         clEnvironment localEnv(&m_env);
-        m_network->Open(info);
+        m_network->Open(m_startupInfo);
         return true;
     } catch(clException& e) {
         clWARNING() << e.What();
@@ -173,21 +168,20 @@ bool LanguageServerProtocol::DoStart()
     }
 }
 
-bool LanguageServerProtocol::Start(const wxArrayString& lspCommand, const clEnvList_t& env, const wxString& initOptions,
-                                   const wxString& connectionString, const wxString& workingDirectory,
-                                   const wxString& rootFolder, const wxArrayString& languages, size_t flags)
+bool LanguageServerProtocol::Start(const LSPStartupInfo& startupInfo, const clEnvList_t& env,
+                                   const wxString& initOptions, const wxString& rootFolder,
+                                   const wxArrayString& languages)
 {
     if(IsRunning()) {
         return true;
     }
     DoClear();
+
     m_languages.clear();
     std::for_each(languages.begin(), languages.end(), [&](const wxString& lang) { m_languages.insert(lang); });
-    m_lspCommand = lspCommand;
-    m_workingDirectory = workingDirectory;
+    m_startupInfo = startupInfo;
+
     m_rootFolder = rootFolder;
-    m_connectionString = connectionString;
-    m_createFlags = flags;
     m_initOptions = initOptions;
     m_env = env;
     return DoStart();

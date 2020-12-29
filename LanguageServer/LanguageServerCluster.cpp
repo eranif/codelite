@@ -240,60 +240,72 @@ void LanguageServerCluster::RestartServer(const wxString& name)
 
 void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 {
-    if(entry.IsEnabled()) {
-        clDEBUG() << "Connecting to LSP server:" << entry.GetName();
-
-        if(!entry.IsValid()) {
-            clWARNING() << "LSP Server" << entry.GetName()
-                        << "is not valid and it will not be started (one of the specified paths do not "
-                           "exist)";
-            LanguageServerConfig::Get().GetServers()[entry.GetName()].SetEnabled(false);
-            LanguageServerConfig::Get().Save();
-            return;
-        }
-
-        IPathConverter::Ptr_t pathConverter(new PathConverterDefault());
-        LanguageServerProtocol::Ptr_t lsp(
-            new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this, pathConverter));
-        lsp->SetPriority(entry.GetPriority());
-        lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
-        lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
-
-        wxString command = entry.GetCommand();
-
-        wxString project;
-        if(clCxxWorkspaceST::Get()->IsOpen()) {
-            project = clCxxWorkspaceST::Get()->GetActiveProjectName();
-        }
-        command = MacroManager::Instance()->Expand(command, clGetManager(), project);
-        wxArrayString lspCommand;
-        lspCommand = StringUtils::BuildArgv(command);
-
-        wxString rootDir;
-        if(clWorkspaceManager::Get().GetWorkspace() && entry.IsAutoRestart()) {
-            rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
-        } else {
-            rootDir = entry.GetWorkingDirectory();
-        }
-
-        clDEBUG() << "Starting lsp:";
-        clDEBUG() << "Connection string:" << entry.GetConnectionString();
-        if(entry.IsAutoRestart()) {
-            clDEBUG() << "lspCommand:" << lspCommand;
-            clDEBUG() << "entry.GetWorkingDirectory():" << entry.GetWorkingDirectory();
-        }
-        clDEBUG() << "rootDir:" << rootDir;
-        clDEBUG() << "entry.GetLanguages():" << entry.GetLanguages();
-
-        size_t flags = 0;
-        if(entry.IsAutoRestart()) {
-            flags |= LSPStartupInfo::kAutoStart;
-        }
-
-        lsp->Start(lspCommand, entry.GetEnv(), entry.GetInitOptions(), entry.GetConnectionString(),
-                   entry.GetWorkingDirectory(), rootDir, entry.GetLanguages(), flags);
-        m_servers.insert({ entry.GetName(), lsp });
+    if(!entry.IsEnabled()) {
+        clDEBUG() << "LSP" << entry.GetName() << "is not enabled" << clEndl;
+        return;
     }
+
+    clDEBUG() << "Connecting to LSP server:" << entry.GetName();
+
+    if(!entry.IsValid()) {
+        clWARNING() << "LSP Server" << entry.GetName()
+                    << "is not valid and it will not be started (one of the specified paths do not "
+                       "exist)";
+        LanguageServerConfig::Get().GetServers()[entry.GetName()].SetEnabled(false);
+        LanguageServerConfig::Get().Save();
+        return;
+    }
+
+    IPathConverter::Ptr_t pathConverter(new PathConverterDefault());
+    LanguageServerProtocol::Ptr_t lsp(
+        new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this, pathConverter));
+    lsp->SetPriority(entry.GetPriority());
+    lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
+    lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
+
+    wxString command = entry.GetCommand();
+
+    wxString project;
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        project = clCxxWorkspaceST::Get()->GetActiveProjectName();
+    }
+    command = MacroManager::Instance()->Expand(command, clGetManager(), project);
+    wxArrayString lspCommand;
+    lspCommand = StringUtils::BuildArgv(command);
+
+    wxString rootDir;
+    if(clWorkspaceManager::Get().GetWorkspace() && entry.IsAutoRestart()) {
+        rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
+    } else {
+        rootDir = entry.GetWorkingDirectory();
+    }
+
+    clDEBUG() << "Starting lsp:";
+    clDEBUG() << "Connection string:" << entry.GetConnectionString();
+    if(entry.IsAutoRestart()) {
+        clDEBUG() << "lspCommand:" << lspCommand;
+        clDEBUG() << "entry.GetWorkingDirectory():" << entry.GetWorkingDirectory();
+    }
+    clDEBUG() << "rootDir:" << rootDir;
+    clDEBUG() << "entry.GetLanguages():" << entry.GetLanguages();
+
+    size_t flags = 0;
+    if(entry.IsAutoRestart()) {
+        flags |= LSPStartupInfo::kAutoStart;
+    }
+
+    if(entry.IsRemoteLSP()) {
+        flags |= LSPStartupInfo::kRemoteLSP;
+    }
+
+    LSPStartupInfo startup_info;
+    startup_info.SetConnectioString(entry.GetConnectionString());
+    startup_info.SetLspServerCommand(lspCommand);
+    startup_info.SetFlags(flags);
+    startup_info.SetWorkingDirectory(entry.GetWorkingDirectory());
+    startup_info.SetAccountName(entry.GetSshAccount());
+    lsp->Start(startup_info, entry.GetEnv(), entry.GetInitOptions(), rootDir, entry.GetLanguages());
+    m_servers.insert({ entry.GetName(), lsp });
 }
 
 void LanguageServerCluster::OnWorkspaceClosed(wxCommandEvent& event)

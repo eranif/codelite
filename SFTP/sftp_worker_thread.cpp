@@ -87,9 +87,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
                 return;
             case eSFTPActions::kUpload: {
                 DoReportStatusBarMessage(wxString() << _("Uploading file: ") << req->GetRemoteFile());
-                SFTPAttribute::Ptr_t attr(new SFTPAttribute(NULL));
-                attr->SetPermissions(req->GetPermissions());
-                m_sftp->CreateRemoteFile(req->GetRemoteFile(), wxFileName(req->GetLocalFile()), attr);
+                m_sftp->CreateRemoteFile(req->GetRemoteFile(), wxFileName(req->GetLocalFile()));
                 msg << "Successfully uploaded file: " << req->GetLocalFile() << " -> " << req->GetRemoteFile();
                 DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_OK);
                 DoReportStatusBarMessage("");

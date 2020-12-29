@@ -95,14 +95,12 @@ public:
      * @param localFile the local file
      * @param remotePath the remote path (abs path)
      */
-    void Write(const wxFileName& localFile, const wxString& remotePath,
-               SFTPAttribute::Ptr_t attributes = SFTPAttribute::Ptr_t(NULL));
+    void Write(const wxFileName& localFile, const wxString& remotePath);
 
     /**
      * @brief write the content of 'fileContent' into the remote file represented by remotePath
      */
-    void Write(const wxMemoryBuffer& fileContent, const wxString& remotePath,
-               SFTPAttribute::Ptr_t attributes = SFTPAttribute::Ptr_t(NULL));
+    void Write(const wxMemoryBuffer& fileContent, const wxString& remotePath);
 
     /**
      * @brief read remote file and return its content
@@ -128,13 +126,13 @@ public:
     /**
      * @brief create a file. This function also creates the path to the file (by calling internally to Mkpath)
      */
-    void CreateRemoteFile(const wxString& remoteFullPath, const wxString& content, SFTPAttribute::Ptr_t attr);
+    void CreateRemoteFile(const wxString& remoteFullPath, const wxString& content);
 
     /**
      * @brief this version create a copy of the local file on the remote server. Similar to the previous
      * version, it also creates the path to the file if needed
      */
-    void CreateRemoteFile(const wxString& remoteFullPath, const wxFileName& localFile, SFTPAttribute::Ptr_t attr);
+    void CreateRemoteFile(const wxString& remoteFullPath, const wxFileName& localFile);
 
     /**
      * @brief create path . If the directory does not exist, create it (all sub paths if needed)

@@ -113,7 +113,7 @@ void clSFTP::Close()
     m_sftp = NULL;
 }
 
-void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath, SFTPAttribute::Ptr_t attributes)
+void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath)
 {
     if(!m_connected) {
         throw clException("scp is not initialized!");
@@ -140,12 +140,9 @@ void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath, SFTP
     }
     fp.Close();
     Write(memBuffer, remotePath);
-    if(attributes && attributes->GetPermissions()) {
-        Chmod(remotePath, attributes->GetPermissions());
-    }
 }
 
-void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath, SFTPAttribute::Ptr_t attributes)
+void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath)
 {
     if(!m_sftp) {
         throw clException("SFTP is not initialized");
@@ -182,17 +179,9 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
     sftp_close(file);
 
     // Unlink the original file if it exists
-    bool needUnlink = false;
-    {
-        // Check if the file exists
-        sftp_attributes attr = sftp_stat(m_sftp, remotePath.mb_str(wxConvISO8859_1).data());
-        if(attr) {
-            needUnlink = true;
-            sftp_attributes_free(attr);
-        }
-    }
+    SFTPAttribute::Ptr_t pattr(new SFTPAttribute(sftp_stat(m_sftp, remotePath.mb_str(wxConvISO8859_1).data())));
 
-    if(needUnlink && sftp_unlink(m_sftp, remotePath.mb_str(wxConvUTF8).data()) < 0) {
+    if(pattr->IsOk() && sftp_unlink(m_sftp, remotePath.mb_str(wxConvUTF8).data()) < 0) {
         throw clException(wxString() << _("Failed to unlink file: ") << remotePath << ". "
                                      << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));
@@ -205,8 +194,8 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
                           sftp_get_error(m_sftp));
     }
 
-    if(attributes && attributes->GetPermissions()) {
-        Chmod(remotePath, attributes->GetPermissions());
+    if(pattr->IsOk()) {
+        Chmod(remotePath, pattr->GetPermissions());
     }
 }
 
@@ -408,11 +397,11 @@ SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path)
     return pattr;
 }
 
-void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxString& content, SFTPAttribute::Ptr_t attr)
+void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxString& content)
 {
     // Create the path to the file
     Mkpath(wxFileName(remoteFullPath).GetPath());
-    Write(content, remoteFullPath, attr);
+    Write(content, remoteFullPath);
 }
 
 void clSFTP::Mkpath(const wxString& remoteDirFullpath)
@@ -447,10 +436,10 @@ void clSFTP::Mkpath(const wxString& remoteDirFullpath)
     }
 }
 
-void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxFileName& localFile, SFTPAttribute::Ptr_t attr)
+void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxFileName& localFile)
 {
     Mkpath(wxFileName(remoteFullPath).GetPath());
-    Write(localFile, remoteFullPath, attr);
+    Write(localFile, remoteFullPath);
 }
 
 void clSFTP::Chmod(const wxString& remotePath, size_t permissions)

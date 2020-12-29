@@ -53,7 +53,7 @@ void clSFTPManager::Release()
         } catch(clException& e) {
             wxUnusedVar(e);
         }
-        // Notify about session opened
+        // Notify about session closed
         clSFTPEvent event(wxEVT_SFTP_SESSION_CLOSED);
         event.SetAccount(accountName);
         EventNotifier::Get()->AddPendingEvent(event);

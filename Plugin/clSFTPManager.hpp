@@ -36,8 +36,21 @@ public:
      * true, replace it
      */
     bool AddConnection(const SSHAccountInfo& account, bool replace = false);
+    /**
+     * @brief open remote file in an editor and return a pointer to the editor
+     * @param path file path on the remote machine
+     * @param accountName the account name to use
+     */
     IEditor* OpenFile(const wxString& path, const wxString& accountName);
     IEditor* OpenFile(const wxString& path, const SSHAccountInfo& accountInfo);
+    /**
+     * @brief save file remotely
+     * @param localPath file on the local machine
+     * @param remotePath file path on the remote machine
+     * @param accountName the account name to use
+     * @return true on success or false
+     */
+    bool SaveFile(wxString& localPath, const wxString& remotePath, wxString& accountName);
 };
 #endif
 #endif // CLSFTPMANAGER_HPP

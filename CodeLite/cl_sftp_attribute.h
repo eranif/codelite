@@ -27,11 +27,11 @@
 
 #if USE_SFTP
 
-#include <wx/filename.h>
 #include "codelite_exports.h"
+#include "smart_ptr.h"
 #include <list>
 #include <wx/clntdata.h>
-#include "smart_ptr.h"
+#include <wx/filename.h>
 
 // We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
 struct sftp_attributes_struct;
@@ -42,8 +42,8 @@ class WXDLLIMPEXP_CL SFTPAttribute : public wxClientData
     wxString m_name;
     size_t m_flags;
     size_t m_size;
-    SFTPAttribute_t m_attributes;
-    size_t m_permissions;
+    SFTPAttribute_t m_attributes = nullptr;
+    size_t m_permissions = 0;
     wxString m_symlinkPath; // incase this file represents a symlink, this member will hold the target path
 
 public:
@@ -66,6 +66,7 @@ public:
     SFTPAttribute(SFTPAttribute_t attr);
     virtual ~SFTPAttribute();
 
+    bool IsOk() const { return m_attributes != nullptr; }
     static bool Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two);
     /**
      * @brief assign this object with attributes.

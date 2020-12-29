@@ -46,7 +46,9 @@ void SFTPAttribute::Assign(SFTPAttribute_t attr)
 
 void SFTPAttribute::DoClear()
 {
-    if(m_attributes) { sftp_attributes_free(m_attributes); }
+    if(m_attributes) {
+        sftp_attributes_free(m_attributes);
+    }
     m_attributes = NULL;
     m_name.Clear();
     m_flags = 0;
@@ -56,7 +58,8 @@ void SFTPAttribute::DoClear()
 
 void SFTPAttribute::DoConstruct()
 {
-    if(!m_attributes) return;
+    if(!m_attributes)
+        return;
 
     m_name = m_attributes->name;
     m_size = m_attributes->size;

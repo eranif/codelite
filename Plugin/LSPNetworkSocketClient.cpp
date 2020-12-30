@@ -63,8 +63,8 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
             if(!s.GetAccount(m_startupInfo.GetAccountName(), accountInfo)) {
                 throw clException(_("LSP: could not locate SSH account ") + m_startupInfo.GetAccountName());
             }
-            m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH, m_startupInfo.GetWorkingDirectory(),
-                                               nullptr, (wxUIntPtr)&accountInfo);
+            m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH | IProcessInteractiveSSH,
+                                               m_startupInfo.GetWorkingDirectory(), nullptr, (wxUIntPtr)&accountInfo);
 #else
             throw clException("SFTP is not enabled in this build");
 #endif

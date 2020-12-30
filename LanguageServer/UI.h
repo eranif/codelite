@@ -22,10 +22,11 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #include <wx/imaglist.h>
 #include <wx/stc/stc.h>
 #include <wx/combobox.h>
-#include <wx/arrstr.h>
 #include <wx/slider.h>
 #include <wx/dataview.h>
 #include "clThemedTreeCtrl.h"
@@ -89,6 +90,8 @@ protected:
     wxCheckBox* m_checkBoxEnabled;
     wxStaticText* m_staticText453;
     wxTextCtrl* m_textCtrlName;
+    wxCheckBox* m_checkBoxRemoteServer;
+    wxChoice* m_choiceSSHAccounts;
     wxStaticText* m_staticText495;
     wxNotebook* m_notebook164;
     wxPanel* m_panelCommand;
@@ -110,6 +113,7 @@ protected:
     wxCheckBox* m_checkBoxDiagnostics;
 
 protected:
+    virtual void OnRemoteServerUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCommandUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnBrowseWD(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSuggestLanguages(wxCommandEvent& event) { event.Skip(); }
@@ -118,6 +122,8 @@ public:
     wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }
     wxStaticText* GetStaticText453() { return m_staticText453; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxCheckBox* GetCheckBoxRemoteServer() { return m_checkBoxRemoteServer; }
+    wxChoice* GetChoiceSSHAccounts() { return m_choiceSSHAccounts; }
     wxStaticText* GetStaticText495() { return m_staticText495; }
     wxStyledTextCtrl* GetStcCommand() { return m_stcCommand; }
     wxPanel* GetPanelCommand() { return m_panelCommand; }

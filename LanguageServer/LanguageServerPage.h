@@ -1,11 +1,14 @@
 #ifndef LANGUAGESERVERPAGE_H
 #define LANGUAGESERVERPAGE_H
 
-#include "UI.h"
 #include "LanguageServerEntry.h"
+#include "UI.h"
 
 class LanguageServerPage : public LanguageServerPageBase
 {
+protected:
+    void InitialiseSSH(const LanguageServerEntry& data);
+
 public:
     LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data);
     LanguageServerPage(wxWindow* parent);
@@ -15,6 +18,7 @@ public:
     LanguageServerEntry GetData() const;
 
 protected:
+    virtual void OnRemoteServerUI(wxUpdateUIEvent& event);
     virtual void OnBrowseWD(wxCommandEvent& event);
     virtual void OnCommandUI(wxUpdateUIEvent& event);
     virtual void OnSuggestLanguages(wxCommandEvent& event);

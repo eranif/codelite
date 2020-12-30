@@ -8,6 +8,10 @@
 #include <wx/dirdlg.h>
 #include <wx/tokenzr.h>
 
+#if USE_SFTP
+#include "sftp_settings.h"
+#endif
+
 LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data)
     : LanguageServerPageBase(parent)
 {
@@ -28,6 +32,9 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent, const LanguageServerEnt
     this->m_comboBoxConnection->SetValue(data.GetConnectionString());
     m_checkBoxDiagnostics->SetValue(data.IsDisaplayDiagnostics());
     m_sliderPriority->SetValue(data.GetPriority());
+    m_checkBoxRemoteServer->SetValue(data.IsRemoteLSP());
+
+    InitialiseSSH(data);
     const auto& env = data.GetEnv();
     if(!env.empty()) {
         wxString envString;
@@ -47,6 +54,7 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent)
         lex->Apply(m_stcCommand);
         lex->Apply(m_stcInitOptions);
     }
+    InitialiseSSH({});
 }
 
 LanguageServerPage::~LanguageServerPage() {}
@@ -63,6 +71,9 @@ LanguageServerEntry LanguageServerPage::GetData() const
     d.SetPriority(m_sliderPriority->GetValue());
     d.SetDisaplayDiagnostics(m_checkBoxDiagnostics->IsChecked());
     d.SetInitOptions(m_stcInitOptions->GetText().Trim().Trim(false));
+    d.SetSshAccount(m_choiceSSHAccounts->GetStringSelection());
+    d.SetRemoteLSP(m_checkBoxRemoteServer->IsChecked());
+
     // Store the environment
     clEnvList_t envList;
     wxArrayString env_lines = wxStringTokenize(m_stcEnvironment->GetText(), "\n", wxTOKEN_STRTOK);
@@ -123,4 +134,30 @@ void LanguageServerPage::OnBrowseWD(wxCommandEvent& event)
     if(new_path.IsEmpty() == false) {
         m_textCtrlWD->SetValue(new_path);
     }
+}
+void LanguageServerPage::OnRemoteServerUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxRemoteServer->IsChecked()); }
+
+void LanguageServerPage::InitialiseSSH(const LanguageServerEntry& data)
+{
+#if USE_SFTP
+    SFTPSettings s;
+    s.Load();
+    const auto& accounts = s.GetAccounts();
+    int selectedAccount = wxNOT_FOUND;
+    for(const auto& account : accounts) {
+        int where = m_choiceSSHAccounts->Append(account.GetAccountName());
+        if(account.GetAccountName() == data.GetSshAccount()) {
+            selectedAccount = where;
+        }
+    }
+    if(selectedAccount != wxNOT_FOUND) {
+        m_choiceSSHAccounts->SetSelection(selectedAccount);
+    } else if(!accounts.empty()) {
+        m_choiceSSHAccounts->SetSelection(0);
+    }
+#else
+    m_checkBoxRemoteServer->SetValue(false);
+    m_checkBoxRemoteServer->Enable(false);
+    wxUnusedVar(data);
+#endif
 }

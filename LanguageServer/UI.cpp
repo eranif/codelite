@@ -140,7 +140,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     flexGridSizer432->SetFlexibleDirection(wxBOTH);
     flexGridSizer432->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer432->AddGrowableCol(1);
-    flexGridSizer432->AddGrowableRow(2);
+    flexGridSizer432->AddGrowableRow(3);
 
     boxSizer31->Add(flexGridSizer432, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -165,6 +165,24 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 #endif
 
     flexGridSizer432->Add(m_textCtrlName, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    flexGridSizer432->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer184 = new wxBoxSizer(wxHORIZONTAL);
+
+    flexGridSizer432->Add(boxSizer184, 0, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxRemoteServer =
+        new wxCheckBox(this, wxID_ANY, _("Remote Server"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxRemoteServer->SetValue(false);
+
+    boxSizer184->Add(m_checkBoxRemoteServer, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceSSHAccountsArr;
+    m_choiceSSHAccounts =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceSSHAccountsArr, 0);
+
+    boxSizer184->Add(m_choiceSSHAccounts, 1, wxALL, WXC_FROM_DIP(5));
 
     m_staticText495 =
         new wxStaticText(this, wxID_ANY, _("Options:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -415,6 +433,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
         GetSizer()->Fit(this);
     }
     // Connect events
+    m_choiceSSHAccounts->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnRemoteServerUI),
+                                 NULL, this);
     m_stcCommand->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnCommandUI), NULL, this);
     m_button1153->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LanguageServerPageBase::OnBrowseWD), NULL,
                           this);
@@ -424,6 +444,8 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
 
 LanguageServerPageBase::~LanguageServerPageBase()
 {
+    m_choiceSSHAccounts->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnRemoteServerUI),
+                                    NULL, this);
     m_stcCommand->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnCommandUI), NULL, this);
     m_button1153->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LanguageServerPageBase::OnBrowseWD),
                              NULL, this);

@@ -1,5 +1,5 @@
 #include "StringUtils.h"
-#include "clSSHChannel.h"
+#include "clSSHChannel.hpp"
 #include <wx/msgqueue.h>
 #include <wx/regex.h>
 #if USE_SFTP
@@ -389,4 +389,6 @@ void clSSHChannel::SendSignal(wxSignal sig)
         throw clException(BuildError("Failed to send signal"));
     }
 }
+
+void clSSHChannel::Detach() {}
 #endif

@@ -22,14 +22,14 @@ public:
         kInterativeMode,
         kRemoteCommand,
     };
-	
+
 protected:
     clSSH::Ptr_t m_ssh;
     SSHChannel_t m_channel = nullptr;
     clJoinableThread* m_thread = nullptr;
     wxMessageQueue<wxString> m_Queue;
     wxEvtHandler* m_owner = nullptr;
-	eChannelType m_type = kRemoteCommand;
+    eChannelType m_type = kRemoteCommand;
 
 protected:
     wxString BuildError(const wxString& prefix) const;
@@ -71,13 +71,18 @@ public:
      * @brief write message to the channel
      */
     void Write(const wxString& message);
-	
-	bool IsInteractive() const { return m_type == kInterativeMode; }
-    
+
+    bool IsInteractive() const { return m_type == kInterativeMode; }
+
     /**
-     * @brief Send a signal to remote process 
+     * @brief Send a signal to remote process
      */
     void SendSignal(wxSignal sig);
+    
+    /**
+     * @brief detach from the remote process (this does not kill it)
+     */
+    void Detach();
 };
 #endif
 #endif // CLSSHCHANNEL_H

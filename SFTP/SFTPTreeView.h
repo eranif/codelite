@@ -33,7 +33,7 @@
 #include "cl_sftp.h"
 #include "ssh_account_info.h"
 #include <vector>
-#include "clSSHChannel.h"
+#include "clSSHChannel.hpp"
 #include <wx/timer.h>
 
 class MyClientData;

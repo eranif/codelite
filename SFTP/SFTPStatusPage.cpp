@@ -32,7 +32,7 @@
 #include "sftp_worker_thread.h"
 #include <wx/log.h>
 #include <wx/menu.h>
-#include "clSSHChannel.h"
+#include "clSSHChannel.hpp"
 #include "remote_file_info.h"
 #include "sftp_worker_thread.h"
 #include "SFTPTreeView.h"

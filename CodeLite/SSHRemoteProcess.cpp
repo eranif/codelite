@@ -1,4 +1,5 @@
 #include "SSHRemoteProcess.hpp"
+#include "clSSHChannel.hpp"
 #if USE_SFTP
 #include "cl_command_event.h"
 #include "file_logger.h"
@@ -34,11 +35,9 @@ SSHRemoteProcess::SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHC
     Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SSHRemoteProcess::OnOutput, this);
 }
 
-SSHRemoteProcess::~SSHRemoteProcess() { Detach(); }
+SSHRemoteProcess::~SSHRemoteProcess() { Cleanup(); }
 
-void SSHRemoteProcess::Cleanup() { Detach(); }
-
-void SSHRemoteProcess::Detach()
+void SSHRemoteProcess::Cleanup()
 {
     try {
         if(m_channel) {
@@ -49,6 +48,14 @@ void SSHRemoteProcess::Detach()
         m_ssh.reset(nullptr);
     } catch(clException& e) {
         clWARNING() << "SSHRemoteProcess::Detach:" << e.What();
+    }
+}
+
+void SSHRemoteProcess::Detach()
+{
+    if(m_channel) {
+        // this does nothing
+        m_channel->Detach();
     }
 }
 
@@ -63,10 +70,15 @@ bool SSHRemoteProcess::Read(wxString& buff, wxString& buffErr)
 
 void SSHRemoteProcess::Terminate()
 {
-    Detach();
+    if(m_channel) {
+        m_channel->Close();
+        m_channel.reset();
+    }
+    if(m_ssh) {
+        m_ssh.reset(nullptr);
+    }
     clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
     GetOwner()->AddPendingEvent(e);
-    m_ssh.reset(nullptr);
 }
 
 bool SSHRemoteProcess::Write(const std::string& buff) { return do_ssh_write(m_channel, buff); }

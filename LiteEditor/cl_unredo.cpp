@@ -23,11 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_unredo.h"
 #include "cl_editor.h"
+#include "cl_unredo.h"
 
-
-CLCommandProcessor::CLCommandProcessor() : CommandProcessorBase()
+CLCommandProcessor::CLCommandProcessor()
+    : CommandProcessorBase()
 {
     m_initialCommand = new CLTextCommand(CLC_unknown);
     m_initialCommand->Close();
@@ -36,14 +36,15 @@ CLCommandProcessor::CLCommandProcessor() : CommandProcessorBase()
 void CLCommandProcessor::CloseSciUndoAction() const
 {
     wxCHECK_RET(GetParent(), "A parentless CLCommandProcessor");
-    GetParent()->BeginUndoAction(); // Tell scintilla to stop trying to append to the stale 'current' CLCommand. Yes, we *do* need both the Begin and End.
+    GetParent()->BeginUndoAction(); // Tell scintilla to stop trying to append to the stale 'current' CLCommand. Yes, we
+                                    // *do* need both the Begin and End.
     GetParent()->EndUndoAction();
 }
 
 void CLCommandProcessor::ProcessOpenCommand()
 {
     CommandProcessorBase::ProcessOpenCommand(); // Do the real work
-    
+
     CloseSciUndoAction();
 }
 
@@ -51,14 +52,14 @@ void CLCommandProcessor::StartNewTextCommand(CLC_types type, const wxString& tex
 {
     wxCHECK_RET(!GetOpenCommand(), "Trying to start a new command when there's already an existing one");
 
-    if (CanRedo()) {
+    if(CanRedo()) {
         ClearRedos(); // Remove any now-stale redoable items
     }
 
-    if (type == CLC_delete) {
-        Add( CLCommand::Ptr_t(new CLDeleteTextCommand) );
+    if(type == CLC_delete) {
+        Add(CLCommand::Ptr_t(new CLDeleteTextCommand));
     } else {
-        Add( CLCommand::Ptr_t(new CLInsertTextCommand) );
+        Add(CLCommand::Ptr_t(new CLInsertTextCommand));
     }
 
     GetOpenCommand()->SetText(text);
@@ -68,8 +69,9 @@ void CLCommandProcessor::AppendToTextCommand(const wxString& text, int WXUNUSED(
 {
     wxCHECK_RET(GetOpenCommand(), "Trying to add to a non-existent or non-open command");
     CLCommand::Ptr_t command = GetOpenCommand();
-    if (command->GetCommandType() == CLC_delete) {
-        // Reverse any incrementally-added string here, so that undoing an insertion of "abcd" gets displayed as: delete "abcd", not "dcba"
+    if(command->GetCommandType() == CLC_delete) {
+        // Reverse any incrementally-added string here, so that undoing an insertion of "abcd" gets displayed as: delete
+        // "abcd", not "dcba"
         command->SetText(text + command->GetText());
     } else {
         command->SetText(command->GetText() + text);

@@ -69,7 +69,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
 
     flexGridSizer32->Add(m_staticText34, 0, wxRIGHT | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2020, by Eran Ifrah"), wxDefaultPosition,
+    m_staticTextSubtitle = new wxStaticText(m_panel22, wxID_ANY, _("2007 - 2021, by Eran Ifrah"), wxDefaultPosition,
                                             wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
 
     flexGridSizer32->Add(m_staticTextSubtitle, 0, wxLEFT | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));

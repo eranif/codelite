@@ -75,6 +75,9 @@ void wxTerminalColourHandler::Append(const wxString& buffer)
             long x, y;
             m_ctrl->PositionToXY(lastPos, &x, &y);
             long newpos = m_ctrl->XYToPosition(0, y);
+            if(newpos == wxNOT_FOUND) {
+                newpos = 0;
+            }
             curline = m_ctrl->GetRange(newpos, lastPos);
             m_ctrl->Remove(newpos, lastPos);
             m_ctrl->SetInsertionPoint(newpos);

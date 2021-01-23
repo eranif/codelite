@@ -17,7 +17,7 @@ clGetTextFromUserDialog::clGetTextFromUserDialog(wxWindow* parent, const wxStrin
     // WindowAttrManager::Load(this);
     CenterOnParent();
     SetName("clGetTextFromUserDialog");
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    GetSizer()->Fit(this);
 }
 
 clGetTextFromUserDialog::~clGetTextFromUserDialog() {}

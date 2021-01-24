@@ -1435,9 +1435,9 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
 
-bool clMainFrame::StartSetupWizard()
+bool clMainFrame::StartSetupWizard(bool firstTime)
 {
-    clBootstrapWizard wiz(this);
+    clBootstrapWizard wiz(this, firstTime);
     if(wiz.RunWizard(wiz.GetFirstPage())) {
         {
             wxString message;
@@ -1485,7 +1485,7 @@ void clMainFrame::Bootstrap()
 {
     if(!clConfig::Get().Read(kConfigBootstrapCompleted, false)) {
         clConfig::Get().Write(kConfigBootstrapCompleted, true);
-        if(StartSetupWizard()) {
+        if(StartSetupWizard(true)) {
             EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
             return;
         }
@@ -5460,7 +5460,7 @@ void clMainFrame::OnShowTabBarUI(wxUpdateUIEvent& event) { event.Check(clConfig:
 void clMainFrame::OnRunSetupWizard(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!StartSetupWizard()) {
+    if(!StartSetupWizard(false)) {
         GetMainBook()->ApplySettingsChanges();
     }
 }

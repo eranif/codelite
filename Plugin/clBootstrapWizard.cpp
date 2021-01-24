@@ -14,6 +14,26 @@
 #include <wx/wupdlock.h>
 #include <wxStringHash.h>
 
+static wxArrayString GetMiscPlugins()
+{
+    static wxArrayString miscPlugins;
+    if(miscPlugins.empty()) {
+        miscPlugins.push_back("AutoSave");
+        miscPlugins.push_back("CodeLite Vim");
+        miscPlugins.push_back("ExternalTools");
+        miscPlugins.push_back("CMakePlugin");
+        miscPlugins.push_back("CScope");
+        miscPlugins.push_back("CppChecker");
+        miscPlugins.push_back("QMakePlugin");
+        miscPlugins.push_back("UnitTestPP");
+        miscPlugins.push_back("EOSWiki");
+#ifdef __WXGTK__
+        miscPlugins.push_back("MemCheck");
+#endif
+    }
+    return miscPlugins;
+}
+
 static const wxArrayString& GetBasePlugins()
 {
     static wxArrayString basePlugins;
@@ -68,6 +88,19 @@ static const wxArrayString& GetWebPlugins()
     return webPlugins;
 }
 
+static const wxArrayString& GetAllPlugins()
+{
+    static wxArrayString allPlugins;
+    if(allPlugins.empty()) {
+        WX_APPEND_ARRAY(allPlugins, GetBasePlugins());
+        WX_APPEND_ARRAY(allPlugins, GetCxxPlugins());
+        WX_APPEND_ARRAY(allPlugins, GetWebPlugins());
+        WX_APPEND_ARRAY(allPlugins, GetMiscPlugins());
+        allPlugins.Sort();
+    }
+    return allPlugins;
+}
+
 class clBootstrapWizardPluginData : public wxClientData
 {
 public:
@@ -114,8 +147,9 @@ const wxString sampleText = "class Demo {\n"
                             "    }\n"
                             "};";
 
-clBootstrapWizard::clBootstrapWizard(wxWindow* parent)
+clBootstrapWizard::clBootstrapWizard(wxWindow* parent, bool firstTime)
     : clBoostrapWizardBase(parent)
+    , m_firstTime(firstTime)
     , m_developmentProfile(0)
 {
     m_selectedTheme = LIGHT_THEME;
@@ -267,8 +301,11 @@ void clBootstrapWizard::OnInstallCompilerUI(wxUpdateUIEvent& event)
 wxArrayString clBootstrapWizard::GetSelectedPlugins()
 {
     int profile = m_radioBoxProfile->GetSelection();
-    if(profile == 0 || profile == 1) {
-        // Default (C++) dont change anything
+    if(profile == 0) {
+        // Default, so load the lot
+        return GetAllPlugins();
+    } else if(profile == 1) {
+        // C++
         return GetCxxPlugins();
     } else if(profile == 2) {
         // web developer
@@ -286,7 +323,7 @@ bool clBootstrapWizard::IsRestartRequired()
 void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 {
     event.Skip();
-    if(IsRestartRequired()) {
+    if(IsRestartRequired() || m_firstTime) {
         // user changed plugins
         clConfig conf("plugins.conf");
         PluginInfoArray plugins;

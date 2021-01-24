@@ -377,7 +377,7 @@ private:
      * @brief show the startup wizard
      * @return true if a restart is needed
      */
-    bool StartSetupWizard();
+    bool StartSetupWizard(bool firstTime);
 
     /**
      * @brief see if the wizard changed developer profile

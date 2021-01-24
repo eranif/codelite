@@ -42,6 +42,7 @@ public:
 class WXDLLIMPEXP_SDK clBootstrapWizard : public clBoostrapWizardBase
 {
     ICompilerLocator::CompilerVec_t m_compilers;
+    bool m_firstTime = false;
     bool m_globalThemeChanged = false;
     wxString m_selectedTheme;
 
@@ -49,7 +50,7 @@ public:
     int m_developmentProfile = 0;
 
 public:
-    clBootstrapWizard(wxWindow* parent);
+    clBootstrapWizard(wxWindow* parent, bool firstTime);
     virtual ~clBootstrapWizard();
     clBootstrapData GetData();
     wxArrayString GetSelectedPlugins();

@@ -38,6 +38,7 @@
 #include "globals.h"
 
 #include "EditorOptionsGeneralEdit.h"
+#include "clTabRendererClassic.h"
 #include "editorsettingsbookmarkspanel.h"
 #include "editorsettingscomments.h"
 #include "editorsettingscommentsdoxygenpanel.h"
@@ -55,6 +56,7 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     , m_contentObjects()
     , restartRquired(false)
 {
+    m_treeBook->SetArt(clTabRenderer::CreateRenderer(m_treeBook, m_treeBook->GetStyle()));
     Initialize();
     SetName("PreferencesDialog");
     WindowAttrManager::Load(this);
@@ -109,7 +111,7 @@ void PreferencesDialog::Initialize()
     AddPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), _("Guides"), true);
     AddPage(new EditorOptionsGeneralEdit(m_treeBook), _("Edit"), false);
     AddPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), _("Indentation"));
-    AddPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin Indicator"));
+    AddPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin"));
     AddPage(new EditorSettingsCaret(m_treeBook), _("Caret & Scrolling"));
     AddPage(new EditorOptionsGeneralSavePanel(m_treeBook), _("Save Options"));
     AddPage(new EditorSettingsComments(m_treeBook), _("Code"));

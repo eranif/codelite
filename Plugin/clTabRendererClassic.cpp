@@ -122,7 +122,9 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         int tabEndCoord = tabInfo.GetRect().GetRightTop().x;
         if((textEndCoord + clTabRenderer::GetMarkerWidth()) > tabEndCoord) {
             int newSize = tabEndCoord - tabInfo.m_textX;
-            DrawingUtils::TruncateText(label, newSize, dc, label);
+            wxString fixedLabel;
+            DrawingUtils::TruncateText(label, newSize, fontDC, fixedLabel);
+            label.swap(fixedLabel);
         }
     }
 

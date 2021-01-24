@@ -30,7 +30,6 @@
 #include "wxcrafter.h"
 #include <list>
 
-class Notebook;
 class MyMenuBar;
 wxDECLARE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 

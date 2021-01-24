@@ -63,9 +63,11 @@ static void RGBtoHSB(int r, int g, int b, float* h, float* s, float* br)
 {
     float hue, saturation, brightness;
     int cmax = (r > g) ? r : g;
-    if(b > cmax) cmax = b;
+    if(b > cmax)
+        cmax = b;
     int cmin = (r < g) ? r : g;
-    if(b < cmin) cmin = b;
+    if(b < cmin)
+        cmin = b;
 
     brightness = ((float)cmax) / 255.0f;
     if(cmax != 0)
@@ -85,7 +87,8 @@ static void RGBtoHSB(int r, int g, int b, float* h, float* s, float* br)
         else
             hue = 4.0f + greenc - redc;
         hue = hue / 6.0f;
-        if(hue < 0) hue = hue + 1.0f;
+        if(hue < 0)
+            hue = hue + 1.0f;
     }
     (*h) = hue;
     (*s) = saturation;
@@ -141,18 +144,25 @@ static void RGB_2_HSL(float r, float g, float b, float* h, float* s, float* l)
         else if(var_B == var_Max)
             *h = (2.0 / 3.0) + del_G - del_R;
 
-        if(*h < 0) *h += 1;
-        if(*h > 1) *h -= 1;
+        if(*h < 0)
+            *h += 1;
+        if(*h > 1)
+            *h -= 1;
     }
 }
 
 static float Hue_2_RGB(float v1, float v2, float vH) // Function Hue_2_RGB
 {
-    if(vH < 0) vH += 1;
-    if(vH > 1) vH -= 1;
-    if((6.0 * vH) < 1) return (v1 + (v2 - v1) * 6.0 * vH);
-    if((2.0 * vH) < 1) return (v2);
-    if((3.0 * vH) < 2) return (v1 + (v2 - v1) * ((2.0 / 3.0) - vH) * 6.0);
+    if(vH < 0)
+        vH += 1;
+    if(vH > 1)
+        vH -= 1;
+    if((6.0 * vH) < 1)
+        return (v1 + (v2 - v1) * 6.0 * vH);
+    if((2.0 * vH) < 1)
+        return (v2);
+    if((3.0 * vH) < 2)
+        return (v1 + (v2 - v1) * ((2.0 / 3.0) - vH) * 6.0);
     return (v1);
 }
 
@@ -183,14 +193,17 @@ static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 
 wxColour DrawingUtils::LightColour(const wxColour& color, float percent)
 {
-    if(percent == 0) { return color; }
+    if(percent == 0) {
+        return color;
+    }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
 
     // reduce the Lum value
     l += (float)((percent * 5.0) / 100.0);
-    if(l > 1.0) l = 1.0;
+    if(l > 1.0)
+        l = 1.0;
 
     HSL_2_RGB(h, s, l, &r, &g, &b);
     return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
@@ -204,7 +217,7 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
     wxString tempText = text;
 
     fixedText = wxT("");
-    dc.GetTextExtent(text, &textW, &textH);
+    dc.GetTextExtent(tempText, &textW, &textH);
     if(rectSize >= textW) {
         fixedText = text;
         return;
@@ -227,7 +240,9 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
 
         fixedText = text1 + suffix + text2;
         dc.GetTextExtent(fixedText, &textW, &textH);
-        if(rectSize >= textW) { return; }
+        if(rectSize >= textW) {
+            return;
+        }
     }
 }
 
@@ -248,7 +263,8 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const 
     else
         high = rect.GetWidth() - 1;
 
-    if(high < 1) return;
+    if(high < 1)
+        return;
 
     for(int i = 0; i <= high; ++i) {
         int r = startColor.Red() + ((i * rd * 100) / high) / 100;
@@ -278,14 +294,17 @@ bool DrawingUtils::IsDark(const wxColour& color)
 
 wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 {
-    if(percent == 0) { return color; }
+    if(percent == 0) {
+        return color;
+    }
 
     float h, s, l, r, g, b;
     RGB_2_HSL(color.Red(), color.Green(), color.Blue(), &h, &s, &l);
 
     // reduce the Lum value
     l -= (float)((percent * 5.0) / 100.0);
-    if(l < 0) l = 0.0;
+    if(l < 0)
+        l = 0.0;
 
     HSL_2_RGB(h, s, l, &r, &g, &b);
     return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);

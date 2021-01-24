@@ -3,16 +3,16 @@
 
 #include "cl_defs.h"
 
-#if CL_USE_NATIVEBOOK
+#ifdef __WXGTK__
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
 #include "cl_command_event.h"
+#include <gtk/gtk.h>
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/notebook.h>
-#include <gtk/gtk.h>
 
-class Notebook : public wxNotebook
+class clGTKNotebook : public wxNotebook
 {
 protected:
     size_t m_bookStyle = kNotebook_Default;
@@ -46,12 +46,12 @@ public:
     void GTKActionButtonNewClicked(GtkToolItem* button);
 
 public:
-    Notebook(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxNotebookNameStr);
+    clGTKNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxNotebookNameStr);
     bool Create(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxNotebookNameStr);
     // dtor
-    virtual ~Notebook();
+    virtual ~clGTKNotebook();
 
     void SetStyle(size_t bookStyle) { this->m_bookStyle = bookStyle; }
     size_t GetStyle() const { return m_bookStyle; }
@@ -96,5 +96,5 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCt
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NEW_PAGE, wxBookCtrlEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);
-#endif // defined(__WXGTK__) && !defined(__WXGTK20__)
+#endif // defined(__WXGTK__)
 #endif // GTKNOTEBOOK_HPP

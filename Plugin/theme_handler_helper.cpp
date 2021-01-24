@@ -74,6 +74,7 @@ void ThemeHandlerHelper::OnThemeChanged(wxCommandEvent& e)
 
 void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
 {
+    return;
     // Collect all toolbars
     std::queue<wxWindow*> q;
     std::vector<wxAuiToolBar*> toolbars;
@@ -87,35 +88,27 @@ void ThemeHandlerHelper::UpdateColours(wxWindow* topWindow)
     while(!q.empty()) {
         wxWindow* w = q.front();
         q.pop();
-        if(dynamic_cast<wxAuiToolBar*>(w)) {
-            toolbars.push_back(dynamic_cast<wxAuiToolBar*>(w));
-        } else {
-            if(IS_TYPEOF(wxListBox, w) || IS_TYPEOF(wxDataViewCtrl, w) || IS_TYPEOF(wxListCtrl, w)) {
-                w->SetBackgroundColour(bgColour);
-                w->SetForegroundColour(fgColour);
-                w->Refresh();
-            } else if(IS_TYPEOF(wxStyledTextCtrl, w)) {
-                // wxSTC requires different method
-                wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
-                if(stc->GetLexer() == wxSTC_LEX_NULL) {
-                    if(!textLexer) {
-                        // Only modify text lexers
-                        for(int i = 0; i < wxSTC_STYLE_MAX; i++) {
-                            stc->StyleSetBackground(i, bgColour);
-                            stc->StyleSetForeground(i, fgColour);
-                        }
-
-                    } else {
-                        textLexer->Apply(stc);
+        if(IS_TYPEOF(wxStyledTextCtrl, w)) {
+            // wxSTC requires different method
+            wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(w);
+            if(stc->GetLexer() == wxSTC_LEX_NULL) {
+                if(!textLexer) {
+                    // Only modify text lexers
+                    for(int i = 0; i < wxSTC_STYLE_MAX; i++) {
+                        stc->StyleSetBackground(i, bgColour);
+                        stc->StyleSetForeground(i, fgColour);
                     }
+
+                } else {
+                    textLexer->Apply(stc);
                 }
-                w->Refresh();
             }
-            wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
-            while(iter) {
-                q.push(iter->GetData());
-                iter = iter->GetNext();
-            }
+            w->Refresh();
+        }
+        wxWindowList::compatibility_iterator iter = w->GetChildren().GetFirst();
+        while(iter) {
+            q.push(iter->GetData());
+            iter = iter->GetNext();
         }
     }
     DoUpdateNotebookStyle(m_window);
@@ -183,7 +176,7 @@ public:
 #endif
 void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 {
-#ifndef __WXGTK__
+#if 0
     if(!win) {
         return;
     }

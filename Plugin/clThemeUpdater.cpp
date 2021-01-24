@@ -30,11 +30,13 @@ void clThemeUpdater::OnColoursAndFontsChanged(clCommandEvent& e)
 
 void clThemeUpdater::UpdateGlobalColours()
 {
+#if 0
     std::for_each(m_windows.begin(), m_windows.end(), [&](wxWindow* win) {
         win->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         win->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
         win->Refresh();
     });
+#endif
 }
 
 void clThemeUpdater::RegisterWindow(wxWindow* win)

@@ -44,7 +44,7 @@ protected:
     void DoHideNoActiveWindows();
 
 public:
-    WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY);
+    WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY, bool useNativeThemeColours = false);
     virtual ~WindowStack();
 
     bool Add(wxWindow* win, bool select);

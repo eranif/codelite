@@ -109,7 +109,8 @@ clGenericNotebook::clGenericNotebook(wxWindow* parent, wxWindowID id, const wxPo
     Bind(wxEVT_SIZE, &clGenericNotebook::OnSize, this);
     Bind(wxEVT_SIZING, &clGenericNotebook::OnSize, this);
     m_tabCtrl = new clTabCtrl(this, style);
-    m_windows = new WindowStack(this);
+    bool use_system_theme = (style & kNotebook_DynamicColours) == 0;
+    m_windows = new WindowStack(this, wxID_ANY, use_system_theme);
     PositionControls();
 }
 
@@ -225,7 +226,8 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_dragStartTime((time_t)-1)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    SetBackgroundColour(style & kNotebook_DynamicColours ? clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
+                                                         : wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     m_art = clTabRenderer::CreateRenderer(this, m_style);
     DoSetBestSize();
 
@@ -1400,8 +1402,10 @@ void clTabCtrl::OnBeginDrag()
 void clTabCtrl::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    GetParent()->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    wxColour bgColour = GetStyle() & kNotebook_DynamicColours ? clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
+                                                              : wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    SetBackgroundColour(bgColour);
+    GetParent()->SetBackgroundColour(bgColour);
     Refresh();
 }
 

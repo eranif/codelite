@@ -566,6 +566,8 @@
       <File Name="GotoAnythingDlg.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
+      <File Name="clGenericNotebook.hpp"/>
+      <File Name="clGenericNotebook.cpp"/>
       <File Name="clTabRendererGTK3.cpp"/>
       <File Name="clTabRendererGTK3.h"/>
       <File Name="clTab.h"/>

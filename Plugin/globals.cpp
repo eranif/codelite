@@ -128,19 +128,19 @@ void MSWSetWindowDarkTheme(wxWindow* win)
     static const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
     if(huxtheme) {
         SetWindowTheme(win->GetHandle(), b ? L"DarkMode_Explorer" : L"Explorer", NULL);
-        static const ADMFA _AllowDarkModeForApp = (ADMFA)GetProcAddress(huxtheme, MAKEINTRESOURCEA(135));
-        static const ADMFW _AllowDarkModeForWindow = (ADMFW)GetProcAddress(huxtheme, MAKEINTRESOURCEA(133));
-        if(_AllowDarkModeForApp && _AllowDarkModeForWindow) {
-            _AllowDarkModeForApp(b);
-            _AllowDarkModeForWindow(win->GetHandle(), b);
-            EnumChildWindows(win->GetHandle(), &DarkExplorerChildProc, b);
-
-            const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
-
-            if(_FlushMenuThemes)
-                _FlushMenuThemes();
-            InvalidateRect(win->GetHandle(), nullptr, FALSE); // HACK
-        }
+        // static const ADMFA _AllowDarkModeForApp = (ADMFA)GetProcAddress(huxtheme, MAKEINTRESOURCEA(135));
+        // static const ADMFW _AllowDarkModeForWindow = (ADMFW)GetProcAddress(huxtheme, MAKEINTRESOURCEA(133));
+        // if(_AllowDarkModeForApp && _AllowDarkModeForWindow) {
+        //     _AllowDarkModeForApp(b);
+        //     _AllowDarkModeForWindow(win->GetHandle(), b);
+        //     EnumChildWindows(win->GetHandle(), &DarkExplorerChildProc, b);
+        // 
+        //     const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
+        // 
+        //     if(_FlushMenuThemes)
+        //         _FlushMenuThemes();
+        //     InvalidateRect(win->GetHandle(), nullptr, FALSE); // HACK
+        // }
     }
 }
 

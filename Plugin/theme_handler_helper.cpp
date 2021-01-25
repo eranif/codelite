@@ -176,7 +176,6 @@ public:
 #endif
 void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
 {
-#if 0
     if(!win) {
         return;
     }
@@ -202,18 +201,17 @@ void ThemeHandlerHelper::DoUpdateNotebookStyle(wxWindow* win)
                               EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
         }
 
-        wxWindowList::compatibility_iterator iter = p->GetChildren().GetFirst();
+        auto iter = p->GetChildren().GetFirst();
         while(iter) {
-            wxWindow* child = iter->GetData();
+            auto child = iter->GetData();
             if(child && V.count(child) == 0) {
                 // make sure we won't visit this child again
-                Q.push_back(child);
                 V.insert(child);
+                Q.push_back(child);
             }
             iter = iter->GetNext();
         }
     }
-#endif
 }
 
 void ThemeHandlerHelper::OnPreferencesUpdated(wxCommandEvent& e)

@@ -104,6 +104,10 @@ void MainBook::CreateGuiControls()
         style |= kNotebook_MouseScrollSwitchTabs;
     }
 
+    if(clConfig::Get().Read("HideTabBar", false)) {
+        style |= kNotebook_HideTabBar;
+    }
+
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     sz->Add(m_book, 1, wxEXPAND);
@@ -1661,6 +1665,16 @@ void MainBook::OnSettingsChanged(wxCommandEvent& e)
 {
     e.Skip();
     ApplyTabLabelChanges();
+
+    // do we need to hide/show the tab bar?
+    bool hideTabBar = clConfig::Get().Read("HideTabBar", false);
+    size_t style = m_book->GetStyle();
+    if(hideTabBar) {
+        style |= kNotebook_HideTabBar;
+    } else {
+        style &= ~kNotebook_HideTabBar;
+    }
+    m_book->SetStyle(style);
 }
 
 clEditor* MainBook::OpenFile(const BrowseRecord& rec)

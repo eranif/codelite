@@ -63,6 +63,7 @@ protected:
     wxCheckBox* m_checkBoxMouseScrollSwitchTabs;
     wxCheckBox* m_checkBoxSortTabsDropdownAlphabetically;
     wxCheckBox* m_checkBoxEnableTabSwitchingKey;
+    wxCheckBox* m_checkBoxHideTabBar;
     wxPanel* m_panel12;
     wxRadioBox* m_radioBoxHint;
     wxCheckBox* m_checkBoxCustomCaptionColour;
@@ -114,6 +115,7 @@ public:
     wxCheckBox* GetCheckBoxMouseScrollSwitchTabs() { return m_checkBoxMouseScrollSwitchTabs; }
     wxCheckBox* GetCheckBoxSortTabsDropdownAlphabetically() { return m_checkBoxSortTabsDropdownAlphabetically; }
     wxCheckBox* GetCheckBoxEnableTabSwitchingKey() { return m_checkBoxEnableTabSwitchingKey; }
+    wxCheckBox* GetCheckBoxHideTabBar() { return m_checkBoxHideTabBar; }
     wxPanel* GetPanelTabs() { return m_panelTabs; }
     wxRadioBox* GetRadioBoxHint() { return m_radioBoxHint; }
     wxCheckBox* GetCheckBoxCustomCaptionColour() { return m_checkBoxCustomCaptionColour; }

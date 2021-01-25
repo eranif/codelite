@@ -888,6 +888,13 @@ void clTabCtrl::SetStyle(size_t style)
     GetArt()->AdjustColours(m_colours, GetStyle());
     m_visibleTabs.clear();
     Layout();
+    if(GetStyle() & kNotebook_HideTabBar) {
+        Hide();
+    } else {
+        if(((GetStyle() & kNotebook_HideTabBar) == 0) && !IsShown()) {
+            Show();
+        }
+    }
     Refresh();
 }
 

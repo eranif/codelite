@@ -159,6 +159,12 @@ EditorSettingsDockingWindowsBase::EditorSettingsDockingWindowsBase(wxWindow* par
 
     boxSizer56->Add(m_checkBoxEnableTabSwitchingKey, 0, wxALL, WXC_FROM_DIP(5));
 
+    m_checkBoxHideTabBar = new wxCheckBox(m_panelTabs, wxID_ANY, _("Hide main tab bar"), wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelTabs, wxSize(-1, -1)), 0);
+    m_checkBoxHideTabBar->SetValue(false);
+
+    boxSizer56->Add(m_checkBoxHideTabBar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1, -1)),
                             wxTAB_TRAVERSAL);
     m_notebook10->AddPage(m_panel12, _("Docking"), false);

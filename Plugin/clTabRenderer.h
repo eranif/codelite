@@ -35,28 +35,29 @@ class clTabCtrl;
 enum NotebookStyle {
     /// Add a "+" button for creating new empty pages
     kNotebook_NewButton = (1 << 0),
-    
-    /// We got an open spot here...
-    
+
+    /// Hide the tab-bar
+    kNotebook_HideTabBar = (1 << 1),
+
     /// Allow tabs to move using DnD
     kNotebook_AllowDnD = (1 << 2),
-    
+
     /// Draw X button on the active tab
     kNotebook_CloseButtonOnActiveTab = (1 << 3),
-    
+
     /// Mouse middle click closes tab
     kNotebook_MouseMiddleClickClosesTab = (1 << 4),
-    
+
     /// Show a drop down button for displaying all tabs list
     kNotebook_ShowFileListButton = (1 << 5),
-    
+
     /// Mouse middle click on a tab fires an event
     kNotebook_MouseMiddleClickFireEvent = (1 << 6),
-    
+
     /// Clicking the X button on the active button fires an event
     /// instead of closing the tab (i.e. let the container a complete control)
     kNotebook_CloseButtonOnActiveTabFireEvent = (1 << 7),
-    
+
     /// Fire navigation event for Ctrl-TAB et al
     kNotebook_EnableNavigationEvent = (1 << 8),
     /// Place tabs at the bottom

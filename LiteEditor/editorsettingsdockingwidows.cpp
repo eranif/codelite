@@ -60,6 +60,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxShowPath->SetValue(options->IsTabShowPath());
     m_checkBoxNavBarSortDropdown->SetValue(options->IsSortNavBarDropdown());
     m_checkBoxCustomCaptionColour->SetValue(clConfig::Get().Read("UseCustomCaptionsColour", false));
+    m_checkBoxHideTabBar->SetValue(clConfig::Get().Read("HideTabBar", false));
     m_cpCaptionColour->SetColour(DrawingUtils::GetCaptionColour());
 
     m_choiceTabStyle->Append(clTabRenderer::GetRenderers());
@@ -146,6 +147,7 @@ void EditorSettingsDockingWindows::Save(OptionsConfigPtr options)
     clConfig::Get().Write("ActiveTabMarkerColour", m_colourPickerMarker->GetColour());
     clConfig::Get().Write("UseCustomCaptionsColour", m_checkBoxCustomCaptionColour->IsChecked());
     clConfig::Get().Write("CustomCaptionColour", m_cpCaptionColour->GetColour());
+    clConfig::Get().Write("HideTabBar", m_checkBoxHideTabBar->IsChecked());
 
     options->SetHideOutpuPaneOnUserClick(m_checkBoxHideOutputPaneOnClick->IsChecked());
     options->SetHideOutputPaneNotIfBuild(m_checkBoxHideOutputPaneNotIfBuild->IsChecked());

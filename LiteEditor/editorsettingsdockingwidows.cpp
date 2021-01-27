@@ -63,6 +63,11 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
     m_checkBoxHideTabBar->SetValue(clConfig::Get().Read("HideTabBar", false));
     m_cpCaptionColour->SetColour(DrawingUtils::GetCaptionColour());
 
+#if CL_USE_NATIVEBOOK
+    m_checkBoxHideTabBar->SetValue(false);
+    m_checkBoxHideTabBar->Enable(false);
+#endif
+
     m_choiceTabStyle->Append(clTabRenderer::GetRenderers());
     wxString selection = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
     m_choiceTabStyle->SetStringSelection(selection);

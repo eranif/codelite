@@ -40,7 +40,6 @@ static void on_button_clicked(GtkWidget* widget, gpointer* data)
     wxUnusedVar(widget);
     wxWindow* page = reinterpret_cast<wxWindow*>(data);
     clGTKNotebook* book = dynamic_cast<clGTKNotebook*>(page->GetParent());
-    std::cout << "button clicked" << std::endl;
     book->TabButtonClicked(page);
 }
 

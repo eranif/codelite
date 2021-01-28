@@ -4,6 +4,6 @@ Exec=codelite %f
 Icon=codelite
 Terminal=false
 Type=Application
-Categories=Development;
+Categories=Development;IDE;
 StartupNotify=true
 Keywords=IDE;development;programming;

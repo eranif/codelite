@@ -1,3 +1,4 @@
+#include "asyncprocess.h"
 #include "clClangFormatLocator.h"
 #include "cl_standard_paths.h"
 #include "globals.h"
@@ -14,6 +15,23 @@ clClangFormatLocator::~clClangFormatLocator() {}
 bool clClangFormatLocator::Locate(wxString& clangFormat)
 {
 #ifdef __WXGTK__
+    // try to locate clang-format that comes with CodeLite
+    wxFileName clangFormatExe(clStandardPaths::Get().GetUserDataDir(), "");
+    clangFormatExe.AppendDir("lsp");
+    clangFormatExe.AppendDir("clang-tools");
+    clangFormatExe.SetFullName("clang-format");
+    if(clangFormatExe.FileExists()) {
+        // this clang-format requires LD_LIBRARY_PATH set properly
+        wxString ldLibPath = ::wxGetenv("LD_LIBRARY_PATH");
+        if(!ldLibPath.IsEmpty()) {
+            ldLibPath << ":";
+        }
+        ldLibPath << clangFormatExe.GetPath();
+        ::wxSetEnv("LD_LIBRARY_PATH", ldLibPath);
+        clangFormat = clangFormatExe.GetFullPath();
+        return true;
+    }
+
     wxArrayString nameOptions;
     nameOptions.Add("clang-format");
     nameOptions.Add("clang-format-3.9");

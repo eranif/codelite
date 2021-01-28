@@ -159,6 +159,7 @@ public:
 
 protected:
     void DoRestartCodeLite();
+    void InstallClangTools();
 
     //--------------------------- Workspace Loading -----------------------------
 public:

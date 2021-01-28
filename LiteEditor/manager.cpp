@@ -235,6 +235,9 @@ Manager::Manager(void)
 
     // Instantiate the profile manager
     clProfileHandler::Get();
+
+    // extract and install clang-tools if needed (GTK only)
+    InstallClangTools();
 }
 
 Manager::~Manager(void)
@@ -3878,4 +3881,58 @@ void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
         UpdateDebuggerPane();
         SetRepositionEditor(true);
     }
+}
+
+void Manager::InstallClangTools()
+{
+#ifdef __WXGTK__
+    // Extract clang-tools.tgz if needed
+    // see if we need to copy it from the installation folder
+    wxFileName toolsFile(clStandardPaths::Get().GetDataDir(), "clang-tools.tgz");
+    wxFileName clangd_exe(clStandardPaths::Get().GetUserDataDir(), "clangd");
+    clangd_exe.AppendDir("lsp");
+    clangd_exe.AppendDir("clang-tools");
+    if(clangd_exe.FileExists()) {
+        // this clang-format requires LD_LIBRARY_PATH set properly
+        wxString ldLibPath = ::wxGetenv("LD_LIBRARY_PATH");
+        if(!ldLibPath.IsEmpty()) {
+            ldLibPath << ":";
+        }
+        ldLibPath << clangd_exe.GetPath();
+        ::wxSetEnv("LD_LIBRARY_PATH", ldLibPath);
+        return;
+    }
+
+    if(toolsFile.FileExists()) {
+        wxString clang_tools_tgz = toolsFile.GetFullPath();
+        ::WrapWithQuotes(clang_tools_tgz);
+
+        wxFileName fnToolsDir(clStandardPaths::Get().GetUserDataDir(), "");
+        fnToolsDir.AppendDir("lsp");
+        wxString tools_local_folder = fnToolsDir.GetPath();
+        ::WrapWithQuotes(tools_local_folder);
+
+        // sh -c 'mkdir -p ~/.codelite/lsp/ && tar xvfz /usr/share/codelite/clang-tools.tgz -C ~/.codelite/lsp/'
+        wxString command;
+        command << "mkdir -p " << tools_local_folder << " && tar xvfz " << clang_tools_tgz << " -C "
+                << tools_local_folder;
+        ::WrapInShell(command);
+
+        clDEBUG() << "Running:" << command << clEndl;
+        IProcess::Ptr_t process(::CreateSyncProcess(command));
+        if(process) {
+            wxString output;
+            process->WaitForTerminate(output);
+            clDEBUG() << output << clEndl;
+
+            // this clang-format requires LD_LIBRARY_PATH set properly
+            wxString ldLibPath = ::wxGetenv("LD_LIBRARY_PATH");
+            if(!ldLibPath.IsEmpty()) {
+                ldLibPath << ":";
+            }
+            ldLibPath << clangd_exe.GetPath();
+            ::wxSetEnv("LD_LIBRARY_PATH", ldLibPath);
+        }
+    }
+#endif
 }

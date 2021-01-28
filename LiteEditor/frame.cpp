@@ -3291,7 +3291,7 @@ void clMainFrame::CompleteInitialization()
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
-
+    
     // Register the file system workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));
 

@@ -212,7 +212,7 @@ private:
     void DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo);
     void DoShowDiffsForFiles(const wxArrayString& files, bool useFileAsBase = false);
     void DoSetRepoPath(const wxString& repoPath = "", bool promptUser = true);
-    void DoRecoverFromGitCommandError();
+    void DoRecoverFromGitCommandError(bool clear_queue = true);
     void DoLoadBlameInfo(bool clearCache);
     void DoUpdateBlameInfo(const wxString& info, const wxString& fullpath);
     DECLARE_EVENT_TABLE()

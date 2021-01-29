@@ -47,18 +47,45 @@ protected:
     wxPanel* m_panelEmpty;
 
 protected:
-    virtual void OnPhpItemSelected(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnPhpItemActivated(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnPhpItemSelected(wxTreeEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnPhpItemActivated(wxTreeEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxPanel* GetPanelCxx() { return m_panelCxx; }
-    PHPOutlineTree* GetTreeCtrlPhp() { return m_treeCtrlPhp; }
-    wxPanel* GetPanelPhp() { return m_panelPhp; }
-    wxPanel* GetPanelEmpty() { return m_panelEmpty; }
-    wxPanel* GetPanelPlaceHolder() { return m_panelPlaceHolder; }
-    wxSimplebook* GetSimpleBook() { return m_simpleBook; }
-    OutlineTabBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    wxPanel* GetPanelCxx()
+    {
+        return m_panelCxx;
+    }
+    PHPOutlineTree* GetTreeCtrlPhp()
+    {
+        return m_treeCtrlPhp;
+    }
+    wxPanel* GetPanelPhp()
+    {
+        return m_panelPhp;
+    }
+    wxPanel* GetPanelEmpty()
+    {
+        return m_panelEmpty;
+    }
+    wxPanel* GetPanelPlaceHolder()
+    {
+        return m_panelPlaceHolder;
+    }
+    wxSimplebook* GetSimpleBook()
+    {
+        return m_simpleBook;
+    }
+    OutlineTabBaseClass(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~OutlineTabBaseClass();
 };
 

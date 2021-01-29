@@ -11941,15 +11941,15 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"Notebook"
+																	"m_value":	"clGenericNotebook"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"Notebook.h"
+																	"m_value":	"clGenericNotebook.hpp"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
-																	"m_value":	""
+																	"m_value":	"kNotebook_LeftTabs"
 																}],
 															"m_events":	[],
 															"m_children":	[{
@@ -12302,7 +12302,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Label:",
-																			"m_value":	"Unversioned Files"
+																			"m_value":	"Untracked"
 																		}, {
 																			"type":	"bitmapPicker",
 																			"m_label":	"Bitmap File:",
@@ -12662,15 +12662,15 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"Notebook"
+																	"m_value":	"clGenericNotebook"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"Notebook.h"
+																	"m_value":	"clGenericNotebook.hpp"
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
-																	"m_value":	""
+																	"m_value":	"kNotebook_HideTabBar"
 																}],
 															"m_events":	[],
 															"m_children":	[{

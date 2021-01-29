@@ -7,18 +7,19 @@
 #ifndef _CODELITE_LITEEDITOR_THREADLISTPANELBASE_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_THREADLISTPANELBASE_BASE_CLASSES_H
 
-#include "clThemedListCtrl.h"
-#include <wx/artprov.h>
-#include <wx/dataview.h>
-#include <wx/panel.h>
+// clang-format off
 #include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/xrc/xh_bmp.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/panel.h>
+#include <wx/artprov.h>
+#include <wx/sizer.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -31,18 +32,29 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
+
 class ThreadListBasePanel : public wxPanel
 {
 protected:
     clThemedListCtrl* m_dvListCtrl;
 
 protected:
-    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxDataViewEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    ThreadListBasePanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    clThemedListCtrl* GetDvListCtrl()
+    {
+        return m_dvListCtrl;
+    }
+    ThreadListBasePanel(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxTAB_TRAVERSAL);
     virtual ~ThreadListBasePanel();
 };
 

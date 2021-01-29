@@ -11,8 +11,12 @@ extern void wxCrafter6v4fW1InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                 const wxPoint& pos, const wxSize& size, long style)
+DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent,
+    wxWindowID id,
+    const wxString& title,
+    const wxPoint& pos,
+    const wxSize& size,
+    long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if(!bBitmapLoaded) {
@@ -58,20 +62,23 @@ DebuggerSettingsBaseDlg::DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id
     }
     // Connect events
     m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnOk), NULL, this);
-    m_button96->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel),
-                        NULL, this);
+    m_button96->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel), NULL, this);
 }
 
 DebuggerSettingsBaseDlg::~DebuggerSettingsBaseDlg()
 {
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnOk), NULL,
-                           this);
-    m_button96->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel),
-                           NULL, this);
+    m_buttonOK->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnOk), NULL, this);
+    m_button96->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DebuggerSettingsBaseDlg::OnButtonCancel), NULL, this);
 }
 
-DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                               long style)
+DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent,
+    wxWindowID id,
+    const wxPoint& pos,
+    const wxSize& size,
+    long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if(!bBitmapLoaded) {
@@ -130,10 +137,15 @@ DbgPageStartupCmdsBase::DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id, 
     }
 }
 
-DbgPageStartupCmdsBase::~DbgPageStartupCmdsBase() {}
+DbgPageStartupCmdsBase::~DbgPageStartupCmdsBase()
+{
+}
 
-PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,
-                                                 const wxSize& size, long style)
+PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent,
+    wxWindowID id,
+    const wxPoint& pos,
+    const wxSize& size,
+    long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if(!bBitmapLoaded) {
@@ -158,7 +170,7 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id
     bSizer4->Add(bSizer5, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_listCtrl1 = new wxListCtrl(m_panel2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel2, wxSize(-1, -1)),
-                                 wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
+        wxLC_VRULES | wxLC_HRULES | wxLC_SINGLE_SEL | wxLC_REPORT);
 
     bSizer5->Add(m_listCtrl1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -187,38 +199,42 @@ PreDefinedTypesPageBase::PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_listCtrl1->Connect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                         wxListEventHandler(PreDefinedTypesPageBase::OnItemActivated), NULL, this);
-    m_listCtrl1->Connect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
-                         wxListEventHandler(PreDefinedTypesPageBase::OnItemDeselected), NULL, this);
-    m_listCtrl1->Connect(wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(PreDefinedTypesPageBase::OnItemSelected),
-                         NULL, this);
-    m_buttonNewType->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                             wxCommandEventHandler(PreDefinedTypesPageBase::OnNewShortcut), NULL, this);
-    m_buttonEdit->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PreDefinedTypesPageBase::OnEditShortcut),
-                          NULL, this);
-    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(PreDefinedTypesPageBase::OnDeleteShortcut), NULL, this);
+    m_listCtrl1->Connect(
+        wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(PreDefinedTypesPageBase::OnItemActivated), NULL, this);
+    m_listCtrl1->Connect(
+        wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(PreDefinedTypesPageBase::OnItemDeselected), NULL, this);
+    m_listCtrl1->Connect(
+        wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(PreDefinedTypesPageBase::OnItemSelected), NULL, this);
+    m_buttonNewType->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PreDefinedTypesPageBase::OnNewShortcut), NULL, this);
+    m_buttonEdit->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PreDefinedTypesPageBase::OnEditShortcut), NULL, this);
+    m_buttonDelete->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PreDefinedTypesPageBase::OnDeleteShortcut), NULL, this);
 }
 
 PreDefinedTypesPageBase::~PreDefinedTypesPageBase()
 {
-    m_listCtrl1->Disconnect(wxEVT_COMMAND_LIST_ITEM_ACTIVATED,
-                            wxListEventHandler(PreDefinedTypesPageBase::OnItemActivated), NULL, this);
-    m_listCtrl1->Disconnect(wxEVT_COMMAND_LIST_ITEM_DESELECTED,
-                            wxListEventHandler(PreDefinedTypesPageBase::OnItemDeselected), NULL, this);
-    m_listCtrl1->Disconnect(wxEVT_COMMAND_LIST_ITEM_SELECTED,
-                            wxListEventHandler(PreDefinedTypesPageBase::OnItemSelected), NULL, this);
-    m_buttonNewType->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                wxCommandEventHandler(PreDefinedTypesPageBase::OnNewShortcut), NULL, this);
-    m_buttonEdit->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                             wxCommandEventHandler(PreDefinedTypesPageBase::OnEditShortcut), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(PreDefinedTypesPageBase::OnDeleteShortcut), NULL, this);
+    m_listCtrl1->Disconnect(
+        wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEventHandler(PreDefinedTypesPageBase::OnItemActivated), NULL, this);
+    m_listCtrl1->Disconnect(
+        wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEventHandler(PreDefinedTypesPageBase::OnItemDeselected), NULL, this);
+    m_listCtrl1->Disconnect(
+        wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(PreDefinedTypesPageBase::OnItemSelected), NULL, this);
+    m_buttonNewType->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PreDefinedTypesPageBase::OnNewShortcut), NULL, this);
+    m_buttonEdit->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PreDefinedTypesPageBase::OnEditShortcut), NULL, this);
+    m_buttonDelete->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PreDefinedTypesPageBase::OnDeleteShortcut), NULL, this);
 }
 
-NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                 const wxPoint& pos, const wxSize& size, long style)
+NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent,
+    wxWindowID id,
+    const wxString& title,
+    const wxPoint& pos,
+    const wxSize& size,
+    long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if(!bBitmapLoaded) {
@@ -251,8 +267,8 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
 
     fgSizer2->Add(m_textCtrlName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("Copy Values From:"), wxDefaultPosition,
-                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText4 = new wxStaticText(
+        this, wxID_ANY, _("Copy Values From:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     fgSizer2->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -265,7 +281,7 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
     fgSizer2->Add(0, 0, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxMakeActive = new wxCheckBox(this, wxID_ANY, _("Make this 'PreDefined Types' set active"),
-                                          wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxMakeActive->SetValue(false);
 
     fgSizer2->Add(m_checkBoxMakeActive, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -304,10 +320,15 @@ NewPreDefinedSetBaseDlg::NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id
 #endif
 }
 
-NewPreDefinedSetBaseDlg::~NewPreDefinedSetBaseDlg() {}
+NewPreDefinedSetBaseDlg::~NewPreDefinedSetBaseDlg()
+{
+}
 
-DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                       long style)
+DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent,
+    wxWindowID id,
+    const wxPoint& pos,
+    const wxSize& size,
+    long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if(!bBitmapLoaded) {
@@ -333,8 +354,8 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
 
     bSizer16->Add(m_notebook73, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelGeneral = new wxPanel(m_notebook73, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook73, wxSize(-1, -1)),
-                                 wxTAB_TRAVERSAL);
+    m_panelGeneral = new wxPanel(
+        m_notebook73, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook73, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook73->AddPage(m_panelGeneral, _("General"), false);
 
     wxBoxSizer* boxSizer81 = new wxBoxSizer(wxVERTICAL);
@@ -348,12 +369,12 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer81->Add(flexGridSizer49, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText1 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Debugger path:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
 
     flexGridSizer49->Add(m_staticText1, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_textCtrDbgPath = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_textCtrDbgPath = new wxTextCtrl(
+        m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_textCtrDbgPath->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrDbgPath->SetHint(wxT(""));
@@ -361,8 +382,8 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer49->Add(m_textCtrDbgPath, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_buttonBrowse = new wxButton(m_panelGeneral, wxID_ANY, _("Browse"), wxDefaultPosition,
-                                  wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_buttonBrowse = new wxButton(
+        m_panelGeneral, wxID_ANY, _("Browse"), wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
 
     flexGridSizer49->Add(m_buttonBrowse, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -370,9 +391,8 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer81->Add(boxSizer86, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkBoxEnablePendingBreakpoints =
-        new wxCheckBox(m_panelGeneral, wxID_ANY, _("Enable pending breakpoints"), wxDefaultPosition,
-                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+    m_checkBoxEnablePendingBreakpoints = new wxCheckBox(m_panelGeneral, wxID_ANY, _("Enable pending breakpoints"),
+        wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_checkBoxEnablePendingBreakpoints->SetValue(false);
     m_checkBoxEnablePendingBreakpoints->SetToolTip(
         _("Some breakpoints can't be applied before the program is run, or even later. This is especially a problem "
@@ -384,7 +404,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
 
     m_checkBoxSetBreakpointsAfterMain =
         new wxCheckBox(m_panelGeneral, wxID_ANY, _("Apply breakpoints after main function is hit"), wxDefaultPosition,
-                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+            wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_checkBoxSetBreakpointsAfterMain->SetValue(false);
     m_checkBoxSetBreakpointsAfterMain->SetToolTip(
         _("Sometimes, some breakpoints won't apply cleanly until after main() has been reached. If this box is ticked, "
@@ -393,7 +413,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer86->Add(m_checkBoxSetBreakpointsAfterMain, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBreakAtWinMain = new wxCheckBox(m_panelGeneral, wxID_ANY, _("Automatically set breakpoint at main"),
-                                           wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_checkBreakAtWinMain->SetValue(false);
     m_checkBreakAtWinMain->SetToolTip(
         _("Every time the debugger runs, set a breakpoint at main(). You may wish to stop then anyway; but it's "
@@ -403,13 +423,13 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer86->Add(m_checkBreakAtWinMain, 0, wxALL, WXC_FROM_DIP(5));
 
     m_catchThrow = new wxCheckBox(m_panelGeneral, wxID_ANY, _("Break when a C++ exception is thrown"),
-                                  wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_catchThrow->SetValue(false);
 
     boxSizer86->Add(m_catchThrow, 0, wxALL, WXC_FROM_DIP(5));
 
     m_raiseOnBpHit = new wxCheckBox(m_panelGeneral, wxID_ANY, _("Raise CodeLite when a breakpoint is hit"),
-                                    wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_raiseOnBpHit->SetValue(true);
     m_raiseOnBpHit->SetToolTip(
         _("Normally, when a breakpoint is hit, you'll want CodeLite to be raise to the top of the window z-order, so "
@@ -420,7 +440,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
 
     m_checkBoxRunAsSuperuser =
         new wxCheckBox(m_panelGeneral, wxID_ANY, _("On platforms that support it, run gdb as superuser"),
-                       wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+            wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_checkBoxRunAsSuperuser->SetValue(false);
     m_checkBoxRunAsSuperuser->SetToolTip(
         _("On platforms that support it, run gdb as superuser.\nThis is done by running gdb with 'sudo'"));
@@ -428,13 +448,13 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer86->Add(m_checkBoxRunAsSuperuser, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxDefaultHexDisplay = new wxCheckBox(m_panelGeneral, wxID_ANY, _("Use default Hex Display"),
-                                                 wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
     m_checkBoxDefaultHexDisplay->SetValue(false);
 
     boxSizer86->Add(m_checkBoxDefaultHexDisplay, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelTooltip = new wxPanel(m_notebook73, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook73, wxSize(-1, -1)),
-                                 wxTAB_TRAVERSAL);
+    m_panelTooltip = new wxPanel(
+        m_notebook73, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook73, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook73->AddPage(m_panelTooltip, _("Tooltip"), false);
 
     wxBoxSizer* boxSizer83 = new wxBoxSizer(wxVERTICAL);
@@ -442,7 +462,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
 
     m_showTooltipsRequiresControl =
         new wxCheckBox(m_panelTooltip, wxID_ANY, _("Use CTRL key to evaluate expressions under the cursor"),
-                       wxDefaultPosition, wxDLG_UNIT(m_panelTooltip, wxSize(-1, -1)), 0);
+            wxDefaultPosition, wxDLG_UNIT(m_panelTooltip, wxSize(-1, -1)), 0);
     m_showTooltipsRequiresControl->SetValue(false);
     m_showTooltipsRequiresControl->SetToolTip(
         _("When enabled, codelite will evaluate the expression under the cursor only if the CTRL key is down. "
@@ -451,13 +471,13 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer83->Add(m_showTooltipsRequiresControl, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxAutoExpand = new wxCheckBox(m_panelTooltip, wxID_ANY, _("Auto expand items under the cursor"),
-                                          wxDefaultPosition, wxDLG_UNIT(m_panelTooltip, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panelTooltip, wxSize(-1, -1)), 0);
     m_checkBoxAutoExpand->SetValue(false);
 
     boxSizer83->Add(m_checkBoxAutoExpand, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_panelDisplay = new wxPanel(m_notebook73, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook73, wxSize(-1, -1)),
-                                 wxTAB_TRAVERSAL);
+    m_panelDisplay = new wxPanel(
+        m_notebook73, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook73, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook73->AddPage(m_panelDisplay, _("Display"), false);
 
     wxBoxSizer* boxSizer85 = new wxBoxSizer(wxVERTICAL);
@@ -471,13 +491,13 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer85->Add(flexGridSizer102, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText2 = new wxStaticText(m_panelDisplay, wxID_ANY, _("Max string size:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
+        wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
     m_staticText2->SetToolTip(_("For no limit, set it to 0"));
 
     flexGridSizer102->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_spinCtrlStringSize = new wxSpinCtrl(m_panelDisplay, wxID_ANY, wxT("200"), wxDefaultPosition,
-                                          wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), wxSP_ARROW_KEYS);
+        wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), wxSP_ARROW_KEYS);
     m_spinCtrlStringSize->SetToolTip(_("For no limit, set it to 0"));
     m_spinCtrlStringSize->SetRange(0, 10000);
     m_spinCtrlStringSize->SetValue(200);
@@ -485,12 +505,12 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     flexGridSizer102->Add(m_spinCtrlStringSize, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_staticText104 = new wxStaticText(m_panelDisplay, wxID_ANY, _("Max number of elements:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
+        wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
 
     flexGridSizer102->Add(m_staticText104, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_spinCtrlMaxElements = new wxSpinCtrl(m_panelDisplay, wxID_ANY, wxT("100"), wxDefaultPosition,
-                                           wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), wxSP_ARROW_KEYS);
+        wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), wxSP_ARROW_KEYS);
     m_spinCtrlMaxElements->SetToolTip(_("For no limit, set it to 0"));
     m_spinCtrlMaxElements->SetRange(0, 1000);
     m_spinCtrlMaxElements->SetValue(100);
@@ -504,7 +524,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     boxSizer85->Add(fgSizer21, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxExpandLocals = new wxCheckBox(m_panelDisplay, wxID_ANY, _("Use 'PreDefined types for the 'Locals' view"),
-                                            wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
     m_checkBoxExpandLocals->SetValue(false);
 
     fgSizer21->Add(m_checkBoxExpandLocals, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(5));
@@ -512,7 +532,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     fgSizer21->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxCharArrAsPtr = new wxCheckBox(m_panelDisplay, wxID_ANY, _("Auto cast 'char[]' into 'char*'"),
-                                            wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
     m_checkBoxCharArrAsPtr->SetValue(false);
 
     fgSizer21->Add(m_checkBoxCharArrAsPtr, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -520,7 +540,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     fgSizer21->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxUsePrettyPrinting = new wxCheckBox(m_panelDisplay, wxID_ANY, _("Enable GDB Pretty Printing"),
-                                                 wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
     m_checkBoxUsePrettyPrinting->SetValue(false);
     m_checkBoxUsePrettyPrinting->SetToolTip(
         _("If ticked, examining the contents of e.g. std::string, wxString, wxArrayString will be much easier"));
@@ -530,7 +550,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
     fgSizer21->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxPrintObjectOn = new wxCheckBox(m_panelDisplay, wxID_ANY, _("Print object ON"), wxDefaultPosition,
-                                             wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
+        wxDLG_UNIT(m_panelDisplay, wxSize(-1, -1)), 0);
     m_checkBoxPrintObjectOn->SetValue(false);
     m_checkBoxPrintObjectOn->SetToolTip(
         _("When displaying a pointer to an object, identify the actual (derived) type of the object rather than the "
@@ -544,18 +564,18 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_buttonBrowse->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPageGeneralBase::OnBrowse), NULL,
-                            this);
-    m_checkBoxRunAsSuperuser->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageGeneralBase::OnSuperuserUI), NULL,
-                                      this);
+    m_buttonBrowse->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPageGeneralBase::OnBrowse), NULL, this);
+    m_checkBoxRunAsSuperuser->Connect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageGeneralBase::OnSuperuserUI), NULL, this);
 }
 
 DbgPageGeneralBase::~DbgPageGeneralBase()
 {
-    m_buttonBrowse->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPageGeneralBase::OnBrowse), NULL,
-                               this);
-    m_checkBoxRunAsSuperuser->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageGeneralBase::OnSuperuserUI),
-                                         NULL, this);
+    m_buttonBrowse->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPageGeneralBase::OnBrowse), NULL, this);
+    m_checkBoxRunAsSuperuser->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageGeneralBase::OnSuperuserUI), NULL, this);
 }
 
 DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -588,19 +608,19 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     m_checkUseRelativePaths =
         new wxCheckBox(m_panel7, wxID_ANY, _("Use file name only for breakpoints (NO full paths)"), wxDefaultPosition,
-                       wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
+            wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
     m_checkUseRelativePaths->SetValue(false);
 
     boxSizer10->Add(m_checkUseRelativePaths, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxEnableLog = new wxCheckBox(m_panel7, wxID_ANY, _("Enable full debugger logging"), wxDefaultPosition,
-                                         wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
+        wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
     m_checkBoxEnableLog->SetValue(false);
 
     boxSizer10->Add(m_checkBoxEnableLog, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkShowTerminal = new wxCheckBox(m_panel7, wxID_ANY, _("Show debugger terminal"), wxDefaultPosition,
-                                         wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
+    m_checkShowTerminal = new wxCheckBox(
+        m_panel7, wxID_ANY, _("Show debugger terminal"), wxDefaultPosition, wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
     m_checkShowTerminal->SetValue(false);
 
     boxSizer10->Add(m_checkShowTerminal, 0, wxALL, WXC_FROM_DIP(5));
@@ -610,12 +630,12 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     boxSizer10->Add(boxSizer4, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText6 = new wxStaticText(m_panel7, wxID_ANY, _("Max number of frames to allow in a call-stack"),
-                                     wxDefaultPosition, wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
 
     boxSizer4->Add(m_staticText6, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_maxFramesSpinCtrl = new wxSpinCtrl(m_panel7, wxID_ANY, wxT("500"), wxDefaultPosition,
-                                         wxDLG_UNIT(m_panel7, wxSize(70, -1)), wxSP_ARROW_KEYS);
+    m_maxFramesSpinCtrl = new wxSpinCtrl(
+        m_panel7, wxID_ANY, wxT("500"), wxDefaultPosition, wxDLG_UNIT(m_panel7, wxSize(70, -1)), wxSP_ARROW_KEYS);
     m_maxFramesSpinCtrl->SetToolTip(
         _("The maximum number of frames that CodeLite will display in the Call Stack tab. This protects against a very "
           "long hang while trying to show 100,000 frames in an infinite recursion situation."));
@@ -634,13 +654,13 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
     sbSizer6->Add(gSizer5, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxDebugAssert = new wxCheckBox(m_panel7, wxID_ANY, _("Break at assertion failure (MinGW only)"),
-                                           wxDefaultPosition, wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
+        wxDefaultPosition, wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
     m_checkBoxDebugAssert->SetValue(false);
 
     gSizer5->Add(m_checkBoxDebugAssert, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText5 = new wxStaticText(m_panel7, wxID_ANY, _("Cygwin path conversion command:"), wxDefaultPosition,
-                                     wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
+        wxDLG_UNIT(m_panel7, wxSize(-1, -1)), 0);
     m_staticText5->SetToolTip(_("Set here the command to use in order to convert cygwin paths into native Windows "
                                 "paths (use $(File) as a place holder for the file name)"));
 
@@ -656,7 +676,7 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
 #endif
 
     gSizer5->Add(m_textCtrlCygwinPathCommand, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND | wxALIGN_CENTER_VERTICAL,
-                 WXC_FROM_DIP(5));
+        WXC_FROM_DIP(5));
 
     SetName(wxT("DbgPageMiscBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -664,27 +684,30 @@ DbgPageMiscBase::DbgPageMiscBase(wxWindow* parent, wxWindowID id, const wxPoint&
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_checkBoxDebugAssert->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                   wxCommandEventHandler(DbgPageMiscBase::OnDebugAssert), NULL, this);
+    m_checkBoxDebugAssert->Connect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(DbgPageMiscBase::OnDebugAssert), NULL, this);
     m_checkBoxDebugAssert->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL, this);
     m_staticText5->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL, this);
-    m_textCtrlCygwinPathCommand->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL,
-                                         this);
+    m_textCtrlCygwinPathCommand->Connect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL, this);
 }
 
 DbgPageMiscBase::~DbgPageMiscBase()
 {
-    m_checkBoxDebugAssert->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                      wxCommandEventHandler(DbgPageMiscBase::OnDebugAssert), NULL, this);
-    m_checkBoxDebugAssert->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL,
-                                      this);
+    m_checkBoxDebugAssert->Disconnect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(DbgPageMiscBase::OnDebugAssert), NULL, this);
+    m_checkBoxDebugAssert->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL, this);
     m_staticText5->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL, this);
-    m_textCtrlCygwinPathCommand->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL,
-                                            this);
+    m_textCtrlCygwinPathCommand->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPageMiscBase::OnWindowsUI), NULL, this);
 }
 
-DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                               long style)
+DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent,
+    wxWindowID id,
+    const wxPoint& pos,
+    const wxSize& size,
+    long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if(!bBitmapLoaded) {
@@ -737,30 +760,33 @@ DbgPagePreDefTypesBase::DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id, 
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_buttonNewSet->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnNewSet), NULL,
-                            this);
-    m_buttonDeleteSet->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnDeleteSet),
-                               NULL, this);
-    m_buttonDeleteSet->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPagePreDefTypesBase::OnDeleteSetUI), NULL,
-                               this);
+    m_buttonNewSet->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnNewSet), NULL, this);
+    m_buttonDeleteSet->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnDeleteSet), NULL, this);
+    m_buttonDeleteSet->Connect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPagePreDefTypesBase::OnDeleteSetUI), NULL, this);
     m_notebookPreDefTypes->Connect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,
-                                   wxChoicebookEventHandler(DbgPagePreDefTypesBase::OnPageChanged), NULL, this);
+        wxChoicebookEventHandler(DbgPagePreDefTypesBase::OnPageChanged), NULL, this);
 }
 
 DbgPagePreDefTypesBase::~DbgPagePreDefTypesBase()
 {
-    m_buttonNewSet->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnNewSet),
-                               NULL, this);
-    m_buttonDeleteSet->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                  wxCommandEventHandler(DbgPagePreDefTypesBase::OnDeleteSet), NULL, this);
-    m_buttonDeleteSet->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPagePreDefTypesBase::OnDeleteSetUI), NULL,
-                                  this);
+    m_buttonNewSet->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnNewSet), NULL, this);
+    m_buttonDeleteSet->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DbgPagePreDefTypesBase::OnDeleteSet), NULL, this);
+    m_buttonDeleteSet->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DbgPagePreDefTypesBase::OnDeleteSetUI), NULL, this);
     m_notebookPreDefTypes->Disconnect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,
-                                      wxChoicebookEventHandler(DbgPagePreDefTypesBase::OnPageChanged), NULL, this);
+        wxChoicebookEventHandler(DbgPagePreDefTypesBase::OnPageChanged), NULL, this);
 }
 
-DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,
-                                                       const wxSize& size, long style)
+DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent,
+    wxWindowID id,
+    const wxPoint& pos,
+    const wxSize& size,
+    long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if(!bBitmapLoaded) {
@@ -780,8 +806,8 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
 
     boxSizer14->Add(flexGridSizer22, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText24 = new wxStaticText(this, wxID_ANY, _("Current function:"), wxDefaultPosition,
-                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText24 = new wxStaticText(
+        this, wxID_ANY, _("Current function:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     flexGridSizer22->Add(m_staticText24, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -793,21 +819,21 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
 
     flexGridSizer22->Add(m_textCtrlCurFunction, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitter51 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
+    m_splitter51 = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+        wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitter51->SetSashGravity(0.5);
     m_splitter51->SetMinimumPaneSize(10);
 
     boxSizer14->Add(m_splitter51, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage55 = new wxPanel(m_splitter51, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter51, wxSize(-1, -1)),
-                                   wxTAB_TRAVERSAL);
+    m_splitterPage55 = new wxPanel(
+        m_splitter51, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter51, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* boxSizer61 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage55->SetSizer(boxSizer61);
 
-    m_stc = new wxStyledTextCtrl(m_splitterPage55, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_splitterPage55, wxSize(-1, -1)), 0);
+    m_stc = new wxStyledTextCtrl(
+        m_splitterPage55, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage55, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -843,25 +869,24 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
     m_stc->SetKeyWords(3, wxT(""));
     m_stc->SetKeyWords(4, wxT(""));
 
-    boxSizer61->Add(m_stc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer61->Add(m_stc, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_splitterPage59 = new wxPanel(m_splitter51, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter51, wxSize(-1, -1)),
-                                   wxTAB_TRAVERSAL);
+    m_splitterPage59 = new wxPanel(
+        m_splitter51, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter51, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter51->SplitVertically(m_splitterPage55, m_splitterPage59, 0);
 
     wxBoxSizer* boxSizer63 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage59->SetSizer(boxSizer63);
 
-    m_dvListCtrlRegisters =
-        new clThemedListCtrl(m_splitterPage59, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_splitterPage59, wxSize(-1, -1)), wxDV_ENABLE_SEARCH | wxDV_ROW_LINES);
+    m_dvListCtrlRegisters = new clThemedListCtrl(m_splitterPage59, wxID_ANY, wxDefaultPosition,
+        wxDLG_UNIT(m_splitterPage59, wxSize(-1, -1)), wxDV_ENABLE_SEARCH | wxDV_ROW_LINES);
 
-    boxSizer63->Add(m_dvListCtrlRegisters, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer63->Add(m_dvListCtrlRegisters, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrlRegisters->AppendTextColumn(_("Register"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                            wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlRegisters->AppendTextColumn(_("Value"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                            wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlRegisters->AppendTextColumn(
+        _("Register"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlRegisters->AppendTextColumn(
+        _("Value"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
 
     SetName(wxT("DebuggerDisassemblyTabBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
@@ -869,14 +894,14 @@ DebuggerDisassemblyTabBase::DebuggerDisassemblyTabBase(wxWindow* parent, wxWindo
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_stc->Connect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked), NULL,
-                   this);
+    m_stc->Connect(
+        wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked), NULL, this);
 }
 
 DebuggerDisassemblyTabBase::~DebuggerDisassemblyTabBase()
 {
-    m_stc->Disconnect(wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked),
-                      NULL, this);
+    m_stc->Disconnect(
+        wxEVT_STC_MARGINCLICK, wxStyledTextEventHandler(DebuggerDisassemblyTabBase::OnMarginClicked), NULL, this);
 }
 
 LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -898,9 +923,9 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
     boxSizer29->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_listTable = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                       wxTR_SINGLE | wxTR_ROW_LINES | wxTR_HIDE_ROOT | wxTR_ENABLE_SEARCH);
+        wxTR_SINGLE | wxTR_ROW_LINES | wxTR_HIDE_ROOT | wxTR_ENABLE_SEARCH);
 
-    boxSizer29->Add(m_listTable, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer29->Add(m_listTable, 1, wxEXPAND, WXC_FROM_DIP(2));
 
     SetName(wxT("LocalsTableBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
@@ -908,27 +933,27 @@ LocalsTableBase::LocalsTableBase(wxWindow* parent, wxWindowID id, const wxPoint&
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_listTable->Connect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin),
-                         NULL, this);
-    m_listTable->Connect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd),
-                         NULL, this);
-    m_listTable->Connect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(LocalsTableBase::OnItemRightClick), NULL,
-                         this);
+    m_listTable->Connect(
+        wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin), NULL, this);
+    m_listTable->Connect(
+        wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd), NULL, this);
+    m_listTable->Connect(
+        wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(LocalsTableBase::OnItemRightClick), NULL, this);
     m_listTable->Connect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(LocalsTableBase::OnListKeyDown), NULL, this);
-    m_listTable->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LocalsTableBase::OnItemExpanding), NULL,
-                         this);
+    m_listTable->Connect(
+        wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LocalsTableBase::OnItemExpanding), NULL, this);
 }
 
 LocalsTableBase::~LocalsTableBase()
 {
-    m_listTable->Disconnect(wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT,
-                            wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin), NULL, this);
-    m_listTable->Disconnect(wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd),
-                            NULL, this);
-    m_listTable->Disconnect(wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(LocalsTableBase::OnItemRightClick), NULL,
-                            this);
-    m_listTable->Disconnect(wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(LocalsTableBase::OnListKeyDown), NULL,
-                            this);
-    m_listTable->Disconnect(wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LocalsTableBase::OnItemExpanding),
-                            NULL, this);
+    m_listTable->Disconnect(
+        wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelBegin), NULL, this);
+    m_listTable->Disconnect(
+        wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEventHandler(LocalsTableBase::OnListEditLabelEnd), NULL, this);
+    m_listTable->Disconnect(
+        wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler(LocalsTableBase::OnItemRightClick), NULL, this);
+    m_listTable->Disconnect(
+        wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEventHandler(LocalsTableBase::OnListKeyDown), NULL, this);
+    m_listTable->Disconnect(
+        wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEventHandler(LocalsTableBase::OnItemExpanding), NULL, this);
 }

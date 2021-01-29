@@ -44,7 +44,7 @@ wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* mainSizer;
     mainSizer = new wxBoxSizer(wxVERTICAL);
 
-    m_textCtrl = new wxStyledTextCtrl(this);
+    m_textCtrl = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
     m_textCtrl->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
     m_textCtrl->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
     m_textCtrl->SetMarginWidth(2, 4);
@@ -53,7 +53,9 @@ wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_textCtrl->MarkerAdd(0, MARKER_ID);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_textCtrl); }
+    if(lexer) {
+        lexer->Apply(m_textCtrl);
+    }
     mainSizer->Add(m_textCtrl, 1, wxEXPAND, 0);
     this->SetSizer(mainSizer);
     this->Layout();
@@ -63,7 +65,9 @@ wxTerminalBase::wxTerminalBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_textCtrl->Bind(wxEVT_KEY_DOWN, &wxTerminalBase::OnKey, this);
     m_textCtrl->Bind(wxEVT_STC_CHARADDED, &wxTerminalBase::OnCharAdded, this);
     m_textCtrl->Bind(wxEVT_LEFT_UP, [&](wxMouseEvent& event) {
-        if(m_textCtrl->GetSelectedText().IsEmpty()) { this->CallAfter(&wxTerminalBase::CaretToEnd); }
+        if(m_textCtrl->GetSelectedText().IsEmpty()) {
+            this->CallAfter(&wxTerminalBase::CaretToEnd);
+        }
         event.Skip();
     });
     m_textCtrl->SetReadOnly(true);

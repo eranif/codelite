@@ -33,12 +33,21 @@ class WXDLLIMPEXP_SDK clSearchText
     bool m_enabled = false;
 
 public:
-    static bool Matches(const wxString& findWhat, size_t col, const wxString& text,
-                        size_t searchFlags = wxTR_SEARCH_DEFAULT, clMatchResult* matches = nullptr);
+    static bool Matches(const wxString& findWhat,
+        size_t col,
+        const wxString& text,
+        size_t searchFlags = wxTR_SEARCH_DEFAULT,
+        clMatchResult* matches = nullptr);
     clSearchText();
     virtual ~clSearchText();
-    void SetEnabled(bool enabled) { this->m_enabled = enabled; }
-    bool IsEnabled() const { return m_enabled; }
+    void SetEnabled(bool enabled)
+    {
+        this->m_enabled = enabled;
+    }
+    bool IsEnabled() const
+    {
+        return m_enabled;
+    }
 };
 
 class WXDLLIMPEXP_SDK clControlWithItems : public clScrolledPanel
@@ -74,37 +83,82 @@ protected:
     virtual void OnMouseScroll(wxMouseEvent& event);
     virtual bool DoKeyDown(const wxKeyEvent& event);
     virtual void DoMouseScroll(const wxMouseEvent& event);
-    clSearchText& GetSearch() { return m_search; }
-    const clSearchText& GetSearch() const { return m_search; }
+    clSearchText& GetSearch()
+    {
+        return m_search;
+    }
+    const clSearchText& GetSearch() const
+    {
+        return m_search;
+    }
 
     void DoPositionHScrollbar();
     void DoPositionVScrollbar();
 
 public:
-    clControlWithItems(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxDefaultSize, long style = 0);
+    clControlWithItems(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
+        long style = 0);
     virtual ~clControlWithItems();
     clControlWithItems();
 
     void SetNativeTheme(bool nativeTheme);
-    bool IsNativeTheme() const { return m_nativeTheme; }
-    bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize, long style = 0);
-    virtual int GetIndent() const { return m_indent; }
+    bool IsNativeTheme() const
+    {
+        return m_nativeTheme;
+    }
+    bool Create(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
+        long style = 0);
+    virtual int GetIndent() const
+    {
+        return m_indent;
+    }
 
-    virtual void SetFirstColumn(int firstColumn) { this->m_firstColumn = firstColumn; }
-    virtual int GetFirstColumn() const { return m_firstColumn; }
+    virtual void SetFirstColumn(int firstColumn)
+    {
+        this->m_firstColumn = firstColumn;
+    }
+    virtual int GetFirstColumn() const
+    {
+        return m_firstColumn;
+    }
 
-    virtual void SetLineHeight(int lineHeight) { this->m_lineHeight = lineHeight; }
-    virtual int GetLineHeight() const { return m_lineHeight; }
+    virtual void SetLineHeight(int lineHeight)
+    {
+        this->m_lineHeight = lineHeight;
+    }
+    virtual int GetLineHeight() const
+    {
+        return m_lineHeight;
+    }
 
-    virtual void SetBitmaps(BitmapVec_t* bitmaps) { this->m_bitmaps = bitmaps; }
+    virtual void SetBitmaps(BitmapVec_t* bitmaps)
+    {
+        this->m_bitmaps = bitmaps;
+    }
     virtual void SetImageList(wxImageList* images);
-    virtual const BitmapVec_t* GetBitmaps() const { return m_bitmaps; }
-    virtual BitmapVec_t* GetBitmaps() { return m_bitmaps; }
+    virtual const BitmapVec_t* GetBitmaps() const
+    {
+        return m_bitmaps;
+    }
+    virtual BitmapVec_t* GetBitmaps()
+    {
+        return m_bitmaps;
+    }
 
-    void SetScrollTick(int scrollTick) { this->m_scrollTick = scrollTick; }
-    int GetScrollTick() const { return m_scrollTick; }
+    void SetScrollTick(int scrollTick)
+    {
+        this->m_scrollTick = scrollTick;
+    }
+    int GetScrollTick() const
+    {
+        return m_scrollTick;
+    }
 
     /**
      * @brief return bitmap at a given index
@@ -114,7 +168,10 @@ public:
     /**
      * @brief set the item's indent size
      */
-    virtual void SetIndent(int size) { m_indent = size; }
+    virtual void SetIndent(int size)
+    {
+        m_indent = size;
+    }
 
     /**
      * @brief return the items rect area, excluding header
@@ -155,16 +212,16 @@ public:
      */
     virtual void UpdateScrollBar();
 
-    void SetColours(const clColours& colours)
-    {
-        this->m_colours = colours;
-        GetVScrollBar()->SetColours(m_colours);
-        GetHScrollBar()->SetColours(m_colours);
-        Refresh();
-    }
+    void SetColours(const clColours& colours);
 
-    const clColours& GetColours() const { return m_colours; }
-    clColours& GetColours() { return m_colours; }
+    const clColours& GetColours() const
+    {
+        return m_colours;
+    }
+    clColours& GetColours()
+    {
+        return m_colours;
+    }
 
     // Horizontal scrolling implementation
     void ScollToColumn(int firstColumn);

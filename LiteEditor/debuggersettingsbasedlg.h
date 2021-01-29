@@ -30,6 +30,7 @@
 #include <wx/statbox.h>
 #include <wx/choicebk.h>
 #include <wx/splitter.h>
+#include "clThemedSplitterWindow.h"
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
 #include <wx/toolbar.h>
@@ -63,14 +64,26 @@ protected:
     wxButton* m_button96;
 
 protected:
-    virtual void OnOk(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnButtonCancel(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOk(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnButtonCancel(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxNotebook* GetNotebook() { return m_notebook; }
-    DebuggerSettingsBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Debugger Settings"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    wxNotebook* GetNotebook()
+    {
+        return m_notebook;
+    }
+    DebuggerSettingsBaseDlg(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxString& title = _("Debugger Settings"),
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DebuggerSettingsBaseDlg();
 };
 
@@ -81,9 +94,15 @@ protected:
 
 protected:
 public:
-    wxStyledTextCtrl* GetTextCtrlStartupCommands() { return m_textCtrlStartupCommands; }
-    DbgPageStartupCmdsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    wxStyledTextCtrl* GetTextCtrlStartupCommands()
+    {
+        return m_textCtrlStartupCommands;
+    }
+    DbgPageStartupCmdsBase(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxTAB_TRAVERSAL);
     virtual ~DbgPageStartupCmdsBase();
 };
 
@@ -97,21 +116,57 @@ protected:
     wxButton* m_buttonDelete;
 
 protected:
-    virtual void OnItemActivated(wxListEvent& event) { event.Skip(); }
-    virtual void OnItemDeselected(wxListEvent& event) { event.Skip(); }
-    virtual void OnItemSelected(wxListEvent& event) { event.Skip(); }
-    virtual void OnNewShortcut(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEditShortcut(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteShortcut(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxListEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnItemDeselected(wxListEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnItemSelected(wxListEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnNewShortcut(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnEditShortcut(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnDeleteShortcut(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxListCtrl* GetListCtrl1() { return m_listCtrl1; }
-    wxButton* GetButtonNewType() { return m_buttonNewType; }
-    wxButton* GetButtonEdit() { return m_buttonEdit; }
-    wxButton* GetButtonDelete() { return m_buttonDelete; }
-    wxPanel* GetPanel2() { return m_panel2; }
-    PreDefinedTypesPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    wxListCtrl* GetListCtrl1()
+    {
+        return m_listCtrl1;
+    }
+    wxButton* GetButtonNewType()
+    {
+        return m_buttonNewType;
+    }
+    wxButton* GetButtonEdit()
+    {
+        return m_buttonEdit;
+    }
+    wxButton* GetButtonDelete()
+    {
+        return m_buttonDelete;
+    }
+    wxPanel* GetPanel2()
+    {
+        return m_panel2;
+    }
+    PreDefinedTypesPageBase(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxTAB_TRAVERSAL);
     virtual ~PreDefinedTypesPageBase();
 };
 
@@ -128,17 +183,40 @@ protected:
 
 protected:
 public:
-    wxStaticText* GetStaticText3() { return m_staticText3; }
-    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
-    wxStaticText* GetStaticText4() { return m_staticText4; }
-    wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }
-    wxCheckBox* GetCheckBoxMakeActive() { return m_checkBoxMakeActive; }
-    wxButton* GetButton9() { return m_button9; }
-    wxButton* GetButton10() { return m_button10; }
-    NewPreDefinedSetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
-                            const wxString& title = _("Create a new 'PreDefined Types' set..."),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    wxStaticText* GetStaticText3()
+    {
+        return m_staticText3;
+    }
+    wxTextCtrl* GetTextCtrlName()
+    {
+        return m_textCtrlName;
+    }
+    wxStaticText* GetStaticText4()
+    {
+        return m_staticText4;
+    }
+    wxChoice* GetChoiceCopyFrom()
+    {
+        return m_choiceCopyFrom;
+    }
+    wxCheckBox* GetCheckBoxMakeActive()
+    {
+        return m_checkBoxMakeActive;
+    }
+    wxButton* GetButton9()
+    {
+        return m_button9;
+    }
+    wxButton* GetButton10()
+    {
+        return m_button10;
+    }
+    NewPreDefinedSetBaseDlg(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxString& title = _("Create a new 'PreDefined Types' set..."),
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewPreDefinedSetBaseDlg();
 };
 
@@ -172,37 +250,121 @@ protected:
     wxCheckBox* m_checkBoxPrintObjectOn;
 
 protected:
-    virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSuperuserUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBrowse(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnSuperuserUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxStaticText* GetStaticText1() { return m_staticText1; }
-    wxTextCtrl* GetTextCtrDbgPath() { return m_textCtrDbgPath; }
-    wxButton* GetButtonBrowse() { return m_buttonBrowse; }
-    wxCheckBox* GetCheckBoxEnablePendingBreakpoints() { return m_checkBoxEnablePendingBreakpoints; }
-    wxCheckBox* GetCheckBoxSetBreakpointsAfterMain() { return m_checkBoxSetBreakpointsAfterMain; }
-    wxCheckBox* GetCheckBreakAtWinMain() { return m_checkBreakAtWinMain; }
-    wxCheckBox* GetCatchThrow() { return m_catchThrow; }
-    wxCheckBox* GetRaiseOnBpHit() { return m_raiseOnBpHit; }
-    wxCheckBox* GetCheckBoxRunAsSuperuser() { return m_checkBoxRunAsSuperuser; }
-    wxCheckBox* GetCheckBoxDefaultHexDisplay() { return m_checkBoxDefaultHexDisplay; }
-    wxPanel* GetPanelGeneral() { return m_panelGeneral; }
-    wxCheckBox* GetShowTooltipsRequiresControl() { return m_showTooltipsRequiresControl; }
-    wxCheckBox* GetCheckBoxAutoExpand() { return m_checkBoxAutoExpand; }
-    wxPanel* GetPanelTooltip() { return m_panelTooltip; }
-    wxStaticText* GetStaticText2() { return m_staticText2; }
-    wxSpinCtrl* GetSpinCtrlStringSize() { return m_spinCtrlStringSize; }
-    wxStaticText* GetStaticText104() { return m_staticText104; }
-    wxSpinCtrl* GetSpinCtrlMaxElements() { return m_spinCtrlMaxElements; }
-    wxCheckBox* GetCheckBoxExpandLocals() { return m_checkBoxExpandLocals; }
-    wxCheckBox* GetCheckBoxCharArrAsPtr() { return m_checkBoxCharArrAsPtr; }
-    wxCheckBox* GetCheckBoxUsePrettyPrinting() { return m_checkBoxUsePrettyPrinting; }
-    wxCheckBox* GetCheckBoxPrintObjectOn() { return m_checkBoxPrintObjectOn; }
-    wxPanel* GetPanelDisplay() { return m_panelDisplay; }
-    wxNotebook* GetNotebook73() { return m_notebook73; }
-    wxPanel* GetPanel6() { return m_panel6; }
-    DbgPageGeneralBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    wxStaticText* GetStaticText1()
+    {
+        return m_staticText1;
+    }
+    wxTextCtrl* GetTextCtrDbgPath()
+    {
+        return m_textCtrDbgPath;
+    }
+    wxButton* GetButtonBrowse()
+    {
+        return m_buttonBrowse;
+    }
+    wxCheckBox* GetCheckBoxEnablePendingBreakpoints()
+    {
+        return m_checkBoxEnablePendingBreakpoints;
+    }
+    wxCheckBox* GetCheckBoxSetBreakpointsAfterMain()
+    {
+        return m_checkBoxSetBreakpointsAfterMain;
+    }
+    wxCheckBox* GetCheckBreakAtWinMain()
+    {
+        return m_checkBreakAtWinMain;
+    }
+    wxCheckBox* GetCatchThrow()
+    {
+        return m_catchThrow;
+    }
+    wxCheckBox* GetRaiseOnBpHit()
+    {
+        return m_raiseOnBpHit;
+    }
+    wxCheckBox* GetCheckBoxRunAsSuperuser()
+    {
+        return m_checkBoxRunAsSuperuser;
+    }
+    wxCheckBox* GetCheckBoxDefaultHexDisplay()
+    {
+        return m_checkBoxDefaultHexDisplay;
+    }
+    wxPanel* GetPanelGeneral()
+    {
+        return m_panelGeneral;
+    }
+    wxCheckBox* GetShowTooltipsRequiresControl()
+    {
+        return m_showTooltipsRequiresControl;
+    }
+    wxCheckBox* GetCheckBoxAutoExpand()
+    {
+        return m_checkBoxAutoExpand;
+    }
+    wxPanel* GetPanelTooltip()
+    {
+        return m_panelTooltip;
+    }
+    wxStaticText* GetStaticText2()
+    {
+        return m_staticText2;
+    }
+    wxSpinCtrl* GetSpinCtrlStringSize()
+    {
+        return m_spinCtrlStringSize;
+    }
+    wxStaticText* GetStaticText104()
+    {
+        return m_staticText104;
+    }
+    wxSpinCtrl* GetSpinCtrlMaxElements()
+    {
+        return m_spinCtrlMaxElements;
+    }
+    wxCheckBox* GetCheckBoxExpandLocals()
+    {
+        return m_checkBoxExpandLocals;
+    }
+    wxCheckBox* GetCheckBoxCharArrAsPtr()
+    {
+        return m_checkBoxCharArrAsPtr;
+    }
+    wxCheckBox* GetCheckBoxUsePrettyPrinting()
+    {
+        return m_checkBoxUsePrettyPrinting;
+    }
+    wxCheckBox* GetCheckBoxPrintObjectOn()
+    {
+        return m_checkBoxPrintObjectOn;
+    }
+    wxPanel* GetPanelDisplay()
+    {
+        return m_panelDisplay;
+    }
+    wxNotebook* GetNotebook73()
+    {
+        return m_notebook73;
+    }
+    wxPanel* GetPanel6()
+    {
+        return m_panel6;
+    }
+    DbgPageGeneralBase(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxTAB_TRAVERSAL);
     virtual ~DbgPageGeneralBase();
 };
 
@@ -220,21 +382,57 @@ protected:
     wxTextCtrl* m_textCtrlCygwinPathCommand;
 
 protected:
-    virtual void OnDebugAssert(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnWindowsUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDebugAssert(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnWindowsUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxCheckBox* GetCheckUseRelativePaths() { return m_checkUseRelativePaths; }
-    wxCheckBox* GetCheckBoxEnableLog() { return m_checkBoxEnableLog; }
-    wxCheckBox* GetCheckShowTerminal() { return m_checkShowTerminal; }
-    wxStaticText* GetStaticText6() { return m_staticText6; }
-    wxSpinCtrl* GetMaxFramesSpinCtrl() { return m_maxFramesSpinCtrl; }
-    wxCheckBox* GetCheckBoxDebugAssert() { return m_checkBoxDebugAssert; }
-    wxStaticText* GetStaticText5() { return m_staticText5; }
-    wxTextCtrl* GetTextCtrlCygwinPathCommand() { return m_textCtrlCygwinPathCommand; }
-    wxPanel* GetPanel7() { return m_panel7; }
-    DbgPageMiscBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    wxCheckBox* GetCheckUseRelativePaths()
+    {
+        return m_checkUseRelativePaths;
+    }
+    wxCheckBox* GetCheckBoxEnableLog()
+    {
+        return m_checkBoxEnableLog;
+    }
+    wxCheckBox* GetCheckShowTerminal()
+    {
+        return m_checkShowTerminal;
+    }
+    wxStaticText* GetStaticText6()
+    {
+        return m_staticText6;
+    }
+    wxSpinCtrl* GetMaxFramesSpinCtrl()
+    {
+        return m_maxFramesSpinCtrl;
+    }
+    wxCheckBox* GetCheckBoxDebugAssert()
+    {
+        return m_checkBoxDebugAssert;
+    }
+    wxStaticText* GetStaticText5()
+    {
+        return m_staticText5;
+    }
+    wxTextCtrl* GetTextCtrlCygwinPathCommand()
+    {
+        return m_textCtrlCygwinPathCommand;
+    }
+    wxPanel* GetPanel7()
+    {
+        return m_panel7;
+    }
+    DbgPageMiscBase(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxTAB_TRAVERSAL);
     virtual ~DbgPageMiscBase();
 };
 
@@ -247,18 +445,45 @@ protected:
     wxChoicebook* m_notebookPreDefTypes;
 
 protected:
-    virtual void OnNewSet(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteSet(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteSetUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnPageChanged(wxChoicebookEvent& event) { event.Skip(); }
+    virtual void OnNewSet(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnDeleteSet(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnDeleteSetUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnPageChanged(wxChoicebookEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxButton* GetButtonNewSet() { return m_buttonNewSet; }
-    wxButton* GetButtonDeleteSet() { return m_buttonDeleteSet; }
-    wxChoicebook* GetNotebookPreDefTypes() { return m_notebookPreDefTypes; }
-    wxPanel* GetPanel6() { return m_panel6; }
-    DbgPagePreDefTypesBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    wxButton* GetButtonNewSet()
+    {
+        return m_buttonNewSet;
+    }
+    wxButton* GetButtonDeleteSet()
+    {
+        return m_buttonDeleteSet;
+    }
+    wxChoicebook* GetNotebookPreDefTypes()
+    {
+        return m_notebookPreDefTypes;
+    }
+    wxPanel* GetPanel6()
+    {
+        return m_panel6;
+    }
+    DbgPagePreDefTypesBase(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(-1, -1),
+        long style = wxTAB_TRAVERSAL);
     virtual ~DbgPagePreDefTypesBase();
 };
 
@@ -267,25 +492,52 @@ class DebuggerDisassemblyTabBase : public wxPanel
 protected:
     wxStaticText* m_staticText24;
     wxTextCtrl* m_textCtrlCurFunction;
-    wxSplitterWindow* m_splitter51;
+    clThemedSplitterWindow* m_splitter51;
     wxPanel* m_splitterPage55;
     wxStyledTextCtrl* m_stc;
     wxPanel* m_splitterPage59;
     clThemedListCtrl* m_dvListCtrlRegisters;
 
 protected:
-    virtual void OnMarginClicked(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnMarginClicked(wxStyledTextEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxStaticText* GetStaticText24() { return m_staticText24; }
-    wxTextCtrl* GetTextCtrlCurFunction() { return m_textCtrlCurFunction; }
-    wxStyledTextCtrl* GetStc() { return m_stc; }
-    wxPanel* GetSplitterPage55() { return m_splitterPage55; }
-    clThemedListCtrl* GetDvListCtrlRegisters() { return m_dvListCtrlRegisters; }
-    wxPanel* GetSplitterPage59() { return m_splitterPage59; }
-    wxSplitterWindow* GetSplitter51() { return m_splitter51; }
-    DebuggerDisassemblyTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                               const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    wxStaticText* GetStaticText24()
+    {
+        return m_staticText24;
+    }
+    wxTextCtrl* GetTextCtrlCurFunction()
+    {
+        return m_textCtrlCurFunction;
+    }
+    wxStyledTextCtrl* GetStc()
+    {
+        return m_stc;
+    }
+    wxPanel* GetSplitterPage55()
+    {
+        return m_splitterPage55;
+    }
+    clThemedListCtrl* GetDvListCtrlRegisters()
+    {
+        return m_dvListCtrlRegisters;
+    }
+    wxPanel* GetSplitterPage59()
+    {
+        return m_splitterPage59;
+    }
+    clThemedSplitterWindow* GetSplitter51()
+    {
+        return m_splitter51;
+    }
+    DebuggerDisassemblyTabBase(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(500, 300),
+        long style = wxTAB_TRAVERSAL);
     virtual ~DebuggerDisassemblyTabBase();
 };
 
@@ -296,17 +548,41 @@ protected:
     clThemedTreeCtrl* m_listTable;
 
 protected:
-    virtual void OnListEditLabelBegin(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnListEditLabelEnd(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnItemRightClick(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnListKeyDown(wxTreeEvent& event) { event.Skip(); }
-    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnListEditLabelBegin(wxTreeEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnListEditLabelEnd(wxTreeEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnItemRightClick(wxTreeEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnListKeyDown(wxTreeEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnItemExpanding(wxTreeEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
-    clThemedTreeCtrl* GetListTable() { return m_listTable; }
-    LocalsTableBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                    const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    clToolBar* GetToolbar()
+    {
+        return m_toolbar;
+    }
+    clThemedTreeCtrl* GetListTable()
+    {
+        return m_listTable;
+    }
+    LocalsTableBase(wxWindow* parent,
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxSize(500, 300),
+        long style = wxTAB_TRAVERSAL);
     virtual ~LocalsTableBase();
 };
 

@@ -11,8 +11,11 @@ extern void wxC15DCInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-ThreadListBasePanel::ThreadListBasePanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                         long style)
+ThreadListBasePanel::ThreadListBasePanel(wxWindow* parent,
+    wxWindowID id,
+    const wxPoint& pos,
+    const wxSize& size,
+    long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if(!bBitmapLoaded) {
@@ -25,21 +28,21 @@ ThreadListBasePanel::ThreadListBasePanel(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrl = new clThemedListCtrl(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
 
-    mainSizer->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    mainSizer->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrl->AppendTextColumn(_("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Active?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("#"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("Active?"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
 
     SetName(wxT("ThreadListBasePanel"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -48,11 +51,11 @@ ThreadListBasePanel::ThreadListBasePanel(wxWindow* parent, wxWindowID id, const 
     }
     // Connect events
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(ThreadListBasePanel::OnItemActivated), NULL, this);
+        wxDataViewEventHandler(ThreadListBasePanel::OnItemActivated), NULL, this);
 }
 
 ThreadListBasePanel::~ThreadListBasePanel()
 {
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(ThreadListBasePanel::OnItemActivated), NULL, this);
+        wxDataViewEventHandler(ThreadListBasePanel::OnItemActivated), NULL, this);
 }

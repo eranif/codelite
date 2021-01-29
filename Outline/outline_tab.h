@@ -52,6 +52,8 @@ protected:
     virtual void OnSortAlphaUI(wxUpdateUIEvent& event);
     virtual void OnPhpItemActivated(wxTreeEvent& event);
     virtual void OnPhpItemSelected(wxTreeEvent& event);
+    void OnThemeChanged(clCommandEvent& event);
+    
     bool IsIncludeFileNode();
 
     void DoRefreshCxxView();

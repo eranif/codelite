@@ -1684,27 +1684,12 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void clMainFrame::OnClose(wxCloseEvent& event)
 {
-    // Prompt before exit, but not if we're coming from the Setup Wizard
-    // if(!GetAndResetNoSavePerspectivePrompt()) {
-    //    wxStandardID ans =
-    //        PromptForYesNoCancelDialogWithCheckbox(_("Closing CodeLite\n\nSave perspective and exit?"), "SaveAndExit",
-    //                                               "Save and Exit", "Exit without saving", "Don't Exit");
-    //    if(ans == wxID_CANCEL) {
-    //        event.Veto();
-    //        event.Skip(false);
-    //        return;
-    //    }
-    //
-    //    if(ans == wxID_YES) {
-    //        if(!SaveLayoutAndSession()) {
-    //            event.Veto();
-    //            event.Skip(false);
-    //            return;
-    //        }
-    //    }
-    //}
+    if(!SaveLayoutAndSession()) {
+        event.Veto();
+        event.Skip(false);
+        return;
+    }
 
-    SaveLayoutAndSession();
     SaveGeneralSettings();
 
     event.Skip();
@@ -3291,7 +3276,7 @@ void clMainFrame::CompleteInitialization()
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
-    
+
     // Register the file system workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));
 

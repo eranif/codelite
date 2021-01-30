@@ -22,13 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "formatoptions.h"
+#include "JSON.h"
 #include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
 #include "editor_config.h"
 #include "file_logger.h"
+#include "formatoptions.h"
 #include "globals.h"
-#include "JSON.h"
 #include "phpoptions.h"
 
 FormatOptions::FormatOptions()
@@ -36,7 +36,7 @@ FormatOptions::FormatOptions()
     , m_engine(kCxxFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
-                           kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft)
+                           kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft | kClangFormatFile)
     , m_clangBreakBeforeBrace(kLinux)
     , m_clangColumnLimit(120)
     , m_phpFormatOptions(kPFF_Defaults)
@@ -479,14 +479,14 @@ wxString FormatOptions::GetPhpFixerRules(const wxFileName& fileName)
         if(m_PHPCSFixerPharRules & (kPcfAlignDoubleArrow | kPcfStripDoubleArrow | kPcfIgnoreDoubleArrow)) {
             binary_operator_spaces.addProperty("align_double_arrow",
                                                m_PHPCSFixerPharRules & kPcfIgnoreDoubleArrow
-                                               ? cJSON_NULL
-                                               : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
+                                                   ? cJSON_NULL
+                                                   : m_PHPCSFixerPharRules & kPcfAlignDoubleArrow ? true : false);
         }
         if(m_PHPCSFixerPharRules & (kPcfAlignEquals | kPcfStripEquals | kPcfIgnoreEquals)) {
             binary_operator_spaces.addProperty("align_equals",
                                                m_PHPCSFixerPharRules & kPcfIgnoreEquals
-                                               ? cJSON_NULL
-                                               : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
+                                                   ? cJSON_NULL
+                                                   : m_PHPCSFixerPharRules & kPcfAlignEquals ? true : false);
         }
         rules.addProperty("binary_operator_spaces", binary_operator_spaces);
     }

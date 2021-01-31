@@ -96,6 +96,7 @@ protected:
     static wxString GetLanguageId(const wxString& fn);
     void UpdateFileSent(const wxFileName& filename, const std::string& fileContent);
     bool IsFileChangedSinceLastParse(const wxFileName& filename, const std::string& fileContent) const;
+    bool FindImplFile(const wxString& headerFile, wxArrayString& implfilesArr);
 
 protected:
     /**

@@ -24,6 +24,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
@@ -302,6 +303,27 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
+
+    // clangd will return the match for the declaration incase it never parsed the implementation file
+    // so we apply this logic:
+    // - if the file is header then:
+    //  - find all possible implementation files (based on file extension)
+    //  - check to see if these files were parsed already
+    //  - for every file that was not parsed, send SendOpenRequest request
+
+    wxArrayString others;
+    if(FindImplFile(editor->GetFileName().GetFullPath(), others)) {
+        for(const wxString& cppFile : others) {
+            if(m_filesSent.count(cppFile) == 0 && ShouldHandleFile(cppFile)) {
+                // we never parsed this file before
+                clDEBUG() << "Before calling 'FindDefintion' parsing implementation file:" << cppFile << endl;
+                std::string fileContent;
+                if(FileUtils::ReadFileContentRaw(cppFile, fileContent)) {
+                    SendOpenRequest(cppFile, fileContent, GetLanguageId(fileContent));
+                }
+            }
+        }
+    }
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxFileName& filename = editor->GetFileName();
@@ -812,6 +834,41 @@ bool LanguageServerProtocol::IsFileChangedSinceLastParse(const wxFileName& filen
     }
     wxString checksum = wxMD5::GetDigest(fileContent);
     return m_filesSent.find(filename.GetFullPath())->second != checksum;
+}
+
+bool LanguageServerProtocol::FindImplFile(const wxString& headerFile, wxArrayString& implfilesArr)
+{
+    wxFileName fnHeaderFile(headerFile);
+    wxString ext = fnHeaderFile.GetExt();
+
+    // sanity
+    if(!FileExtManager::IsCxxFile(headerFile)) {
+        return false;
+    }
+
+    if(FileExtManager::GetType(fnHeaderFile.GetFullName()) != FileExtManager::TypeHeader) {
+        return false;
+    }
+
+    wxArrayString cppExtensions;
+
+    // try to find a implementation file
+    cppExtensions.Add("cpp");
+    cppExtensions.Add("cxx");
+    cppExtensions.Add("cc");
+    cppExtensions.Add("c++");
+    cppExtensions.Add("c");
+    cppExtensions.Add("ipp");
+
+    // Try to locate a file in the same folder first
+    wxFileName cppFile = fnHeaderFile;
+    for(const wxString& extension : cppExtensions) {
+        cppFile.SetExt(extension);
+        if(cppFile.FileExists()) {
+            implfilesArr.Add(cppFile.GetFullPath());
+        }
+    }
+    return !implfilesArr.IsEmpty();
 }
 
 //===------------------------------------------------------------------

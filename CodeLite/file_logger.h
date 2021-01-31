@@ -171,6 +171,12 @@ inline FileLogger& clEndl(FileLogger& d)
     return d;
 }
 
+inline FileLogger& endl(FileLogger& d)
+{
+    d.Flush();
+    return d;
+}
+
 template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
 {
     logger.Append(obj, logger.GetRequestedLogLevel());

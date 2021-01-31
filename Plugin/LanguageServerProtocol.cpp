@@ -304,27 +304,6 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
-    // clangd will return the match for the declaration incase it never parsed the implementation file
-    // so we apply this logic:
-    // - if the file is header then:
-    //  - find all possible implementation files (based on file extension)
-    //  - check to see if these files were parsed already
-    //  - for every file that was not parsed, send SendOpenRequest request
-
-    wxArrayString others;
-    if(FindImplFile(editor->GetFileName().GetFullPath(), others)) {
-        for(const wxString& cppFile : others) {
-            if(m_filesSent.count(cppFile) == 0 && ShouldHandleFile(cppFile)) {
-                // we never parsed this file before
-                clDEBUG() << "Before calling 'FindDefintion' parsing implementation file:" << cppFile << endl;
-                std::string fileContent;
-                if(FileUtils::ReadFileContentRaw(cppFile, fileContent)) {
-                    SendOpenRequest(cppFile, fileContent, GetLanguageId(fileContent));
-                }
-            }
-        }
-    }
-
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxFileName& filename = editor->GetFileName();
     if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
@@ -453,6 +432,20 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
             clDEBUG() << "OpenEditor->SendChangeRequest called for:" << editor->GetFileName().GetFullName();
             SendChangeRequest(editor->GetFileName(), fileContent);
         } else {
+            // If we are about to load a header file, also pass clangd the implementation(s) file
+            wxArrayString others;
+            if(FindImplFile(editor->GetFileName().GetFullPath(), others)) {
+                for(const wxString& cppFile : others) {
+                    if(m_filesSent.count(cppFile) == 0 && ShouldHandleFile(cppFile)) {
+                        // we never parsed this file before
+                        clDEBUG() << "OpenEditor->SendOpenRequest called for:" << cppFile << endl;
+                        std::string fileContent;
+                        if(FileUtils::ReadFileContentRaw(cppFile, fileContent)) {
+                            SendOpenRequest(cppFile, fileContent, GetLanguageId(fileContent));
+                        }
+                    }
+                }
+            }
 
             clDEBUG() << "OpenEditor->SendOpenRequest called for:" << editor->GetFileName().GetFullName();
             SendOpenRequest(editor->GetFileName(), fileContent, GetLanguageId(editor->GetFileName()));

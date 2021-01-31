@@ -432,7 +432,11 @@ JSONItem& JSONItem::addProperty(const wxString& name, const std::string& value)
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxChar* value)
 {
+#if wxVERSION_NUMBER >= 2900 && wxVERSION_NUMBER < 3104
+    append(JSONItem(name, wxString(value).c_str(), cJSON_String));
+#else
     append(JSONItem(name, wxString(value), cJSON_String));
+#endif
     return *this;
 }
 
@@ -452,7 +456,11 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxArrayString& arr)
     return *this;
 }
 
+#if wxVERSION_NUMBER >= 2900 && wxVERSION_NUMBER < 3104
+void JSONItem::arrayAppend(const wxString& value) { arrayAppend(JSONItem(wxT(""), value.c_str(), cJSON_String)); }
+#else
 void JSONItem::arrayAppend(const wxString& value) { arrayAppend(JSONItem(wxT(""), value, cJSON_String)); }
+#endif
 
 wxArrayString JSONItem::toArrayString(const wxArrayString& defaultValue) const
 {

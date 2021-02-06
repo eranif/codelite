@@ -174,7 +174,7 @@ void WorkspacePane::CreateGUIControls()
     m_workspaceTab->GetView()->AddPage(m_explorer, _("File Explorer"), false);
 
 // Add the Open Windows Panel (Tabs)
-#ifndef __WXOSX__
+//#ifndef __WXOSX__
     name = _("Tabs");
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
@@ -186,7 +186,7 @@ void WorkspacePane::CreateGUIControls()
     }
     m_tabs.insert(std::make_pair(name, Tab(name, m_openWindowsPane)));
     mgr->AddWorkspaceTab(name);
-#endif
+//#endif
 
     // Add the Tabgroups tab
     name = _("Tabgroups");

@@ -53,10 +53,7 @@ private:
     wxStaticText* m_staticText;
     Notebook* m_book;
     TabgroupsPane* m_TabgroupsPane;
-
-#ifndef __WXOSX__
     OpenWindowsPanel* m_openWindowsPane;
-#endif
 
     FileExplorer* m_explorer;
     WorkspaceTab* m_workspaceTab;

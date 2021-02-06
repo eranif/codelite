@@ -355,7 +355,7 @@ wxString JSONItem::format(bool formatted) const
     }
 
     char* p = formatted ? cJSON_Print(m_json) : cJSON_PrintUnformatted(m_json);
-    wxString s(p, wxConvISO8859_1);
+    wxString s(p, wxConvUTF8);
     free(p);
     return s;
 }

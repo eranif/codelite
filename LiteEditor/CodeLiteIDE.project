@@ -500,6 +500,8 @@
     <File Name="clConfigurationSelectionCtrl.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Editor">
+    <File Name="ContextRust.cpp"/>
+    <File Name="ContextRust.hpp"/>
     <File Name="ContextPython.cpp"/>
     <File Name="ContextPython.hpp"/>
     <File Name="context_base.h"/>

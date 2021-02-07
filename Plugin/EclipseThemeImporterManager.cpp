@@ -17,6 +17,7 @@
 #include "EclipseMakefileThemeImporter.h"
 #include "EclipsePHPThemeImporter.h"
 #include "EclipsePythonThemeImporter.h"
+#include "EclipseRustThemeImporter.h"
 #include "EclipseSCSSThemeImporter.h"
 #include "EclipseSQLThemeImporter.h"
 #include "EclipseScriptThemeImporter.h"
@@ -51,6 +52,7 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseSCSSThemeImporter());
     m_importers.push_back(new EclipseDockerfileThemeImporter());
     m_importers.push_back(new EclipseYAMLThemeImporter());
+    m_importers.push_back(new EclipseRustThemeImporter());
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}
@@ -71,7 +73,9 @@ bool EclipseThemeImporterManager::ImportCxxToAll()
         wxString eclipseXml = files.at(i).GetFullPath();
         EclipseThemeImporterBase::List_t::iterator iter = m_importers.begin();
         for(; iter != m_importers.end(); ++iter) {
-            if((*iter)->GetLangName() != "c++") { ColoursAndFontsManager::Get().AddLexer((*iter)->Import(eclipseXml)); }
+            if((*iter)->GetLangName() != "c++") {
+                ColoursAndFontsManager::Get().AddLexer((*iter)->Import(eclipseXml));
+            }
         }
     }
     ColoursAndFontsManager::Get().Save(true);

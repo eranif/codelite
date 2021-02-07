@@ -229,6 +229,8 @@
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
     <VirtualDirectory Name="EclipseImporters">
+      <File Name="EclipseRustThemeImporter.cpp"/>
+      <File Name="EclipseRustThemeImporter.h"/>
       <File Name="EclipseYAMLThemeImporter.cpp"/>
       <File Name="EclipseYAMLThemeImporter.h"/>
       <File Name="EclipseDockerfileThemeImporter.cpp"/>

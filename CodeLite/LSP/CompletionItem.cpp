@@ -15,7 +15,19 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t p
     m_label = json.namedObject("label").toString();
     m_kind = json.namedObject("kind").toInt(m_kind);
     m_detail = json.namedObject("detail").toString();
-    m_documentation = json.namedObject("documentation").toString();
+
+    // parse the documentation
+    auto doc = json.namedObject("documentation");
+    if(doc.isOk()) {
+        if(doc.isString()) {
+            // plain string, nothing more to be done here
+            m_documentation = doc.toString();
+        } else {
+            // an object of type MarkupContent
+            m_documentation = doc["value"].toString();
+        }
+    }
+
     m_filterText = json.namedObject("filterText").toString();
     m_insertText = json.namedObject("insertText").toString();
     m_insertTextFormat = json.namedObject("insertTextFormat").toString();

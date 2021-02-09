@@ -647,7 +647,7 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(codelite_vim)
     add_subdirectory(Docker)
     add_subdirectory(LanguageServer)
-    
+    add_subdirectory(Rust)
     if (WITH_SFTP)
         add_subdirectory(SFTP)
     endif(WITH_SFTP)

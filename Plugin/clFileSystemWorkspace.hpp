@@ -129,7 +129,7 @@ public:
      * @brief create an empty workspace at a given folder
      * @param folder
      */
-    void New(const wxString& folder);
+    void New(const wxString& folder, const wxString& name = wxEmptyString);
 
     /**
      * @brief close the workspace
@@ -181,4 +181,5 @@ public:
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FS_NEW_WORKSPACE_FILE_CREATED, clFileSystemEvent);
 #endif // CLFILESYSTEMWORKSPACE_HPP

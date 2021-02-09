@@ -38,6 +38,11 @@ public:
     RustPlugin(IManager* manager);
     virtual ~RustPlugin();
 
+protected:
+    void OnFolderContextMenu(clContextMenuEvent& event);
+    void OnRustWorkspaceFileCreated(clFileSystemEvent& event);
+    void OnNewWorkspace(clCommandEvent& e);
+
 public:
     //--------------------------------------------
     // Abstract methods

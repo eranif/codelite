@@ -48,6 +48,7 @@
     }
 
 wxDEFINE_EVENT(wxEVT_FS_SCAN_COMPLETED, clFileSystemEvent);
+wxDEFINE_EVENT(wxEVT_FS_NEW_WORKSPACE_FILE_CREATED, clFileSystemEvent);
 clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
     : m_dummy(dummy)
 {
@@ -427,7 +428,7 @@ clFileSystemWorkspace& clFileSystemWorkspace::Get()
     return wsp;
 }
 
-void clFileSystemWorkspace::New(const wxString& folder) { DoCreate("", folder, true); }
+void clFileSystemWorkspace::New(const wxString& folder, const wxString& name) { DoCreate(name, folder, true); }
 
 void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
 {
@@ -858,10 +859,17 @@ void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path,
     m_filename = fn;
     if(!fn.FileExists()) {
         Save(false);
+
+        // let the plugins know that we just created a new workspace file and we
+        // are about to load it
+        clFileSystemEvent createEvent(wxEVT_FS_NEW_WORKSPACE_FILE_CREATED);
+        createEvent.SetPath(m_filename.GetFullPath());
+        EventNotifier::Get()->ProcessEvent(createEvent);
     }
 
     // and load it
     if(Load(m_filename)) {
+        // Now load it
         DoOpen();
     } else {
         m_filename.Clear();

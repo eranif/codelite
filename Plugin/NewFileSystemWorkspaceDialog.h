@@ -4,8 +4,10 @@
 
 class NewFileSystemWorkspaceDialog : public NewFileSystemWorkspaceDialogBase
 {
+    bool m_autoSetNameFromPath = true;
+
 public:
-    NewFileSystemWorkspaceDialog(wxWindow* parent);
+    NewFileSystemWorkspaceDialog(wxWindow* parent, bool autoSetNameFromPath = true);
     virtual ~NewFileSystemWorkspaceDialog();
 
     wxString GetWorkspaceName() const;

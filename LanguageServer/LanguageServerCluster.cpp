@@ -24,7 +24,7 @@ LanguageServerCluster::LanguageServerCluster()
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                &LanguageServerCluster::OnCompileCommandsGenerated, this);
-
+    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -43,6 +43,8 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                  &LanguageServerCluster::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
+
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Unbind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -422,3 +424,21 @@ void LanguageServerCluster::ClearAllDiagnostics()
 }
 
 void LanguageServerCluster::ClearRestartCounters() { m_restartCounters.clear(); }
+
+void LanguageServerCluster::OnBuildEnded(clBuildEvent& event)
+{
+    event.Skip();
+    wxArrayString rustLsps;
+    for(auto vt : m_servers) {
+        auto lsp = vt.second;
+        if(lsp->GetSupportedLanguages().count("rust")) {
+            // rust is a unique in this matter: it's build command might update the paths
+            // by updating the crates, so after each build, we restart it
+            rustLsps.Add(vt.first);
+        }
+    }
+
+    for(const wxString& lspName : rustLsps) {
+        RestartServer(lspName);
+    }
+}

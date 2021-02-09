@@ -51,6 +51,7 @@ protected:
     void OnSetDiagnostics(LSPEvent& event);
     void OnClearDiagnostics(LSPEvent& event);
     void OnOutlineSymbols(LSPEvent& event);
+    void OnBuildEnded(clBuildEvent& event);
 
 public:
     LanguageServerCluster();

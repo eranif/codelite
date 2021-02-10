@@ -57,6 +57,7 @@
     <Project Name="wxcLib" Path="wxcrafter/wxcLib/wxcLib.project" Active="No"/>
     <Project Name="LanguageServer" Path="LanguageServer/LanguageServer.project" Active="No"/>
     <Project Name="EOSWiki" Path="EOSWiki/EOSWiki.project" Active="No"/>
+    <Project Name="Rust" Path="Rust/Rust.project"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>
@@ -169,6 +170,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x86_Release"/>
+      <Project Name="Rust" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -243,6 +245,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
       <Environment/>
@@ -316,6 +319,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
       <Environment/>
@@ -390,6 +394,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release" Selected="no">
       <Environment/>
@@ -464,6 +469,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
       <Environment>WXWIN=C:\src\wxWidgets
@@ -538,8 +544,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
+      <Project Name="Rust" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="yes">
       <Environment>WXWIN=C:\src\wxWidgets
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
@@ -612,8 +619,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -685,8 +693,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -758,8 +767,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -831,8 +841,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins" Selected="yes">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -904,6 +915,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="Rust" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

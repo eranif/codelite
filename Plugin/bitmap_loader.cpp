@@ -25,6 +25,8 @@
 
 #include "bitmap_loader.h"
 #include "clBitmap.h"
+#include "clFilesCollector.h"
+#include "clSystemSettings.h"
 #include "clZipReader.h"
 #include "cl_standard_paths.h"
 #include "editor_config.h"
@@ -36,11 +38,9 @@
 #include <wx/dcscreen.h>
 #include <wx/dir.h>
 #include <wx/ffile.h>
+#include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
-#include "clSystemSettings.h"
-#include <wx/msgdlg.h>
-#include "clFilesCollector.h"
 
 std::unordered_map<wxString, wxBitmap> BitmapLoader::m_toolbarsBitmaps;
 std::unordered_map<wxString, wxString> BitmapLoader::m_manifest;
@@ -111,14 +111,15 @@ void BitmapLoader::initialize()
         scanner.Scan(tmpdir.GetPath(), V, "*.png", wxEmptyString, wxEmptyString);
         for(const wxFileName& fn : V) {
             // the @2x are loaded on demand
-            if(fn.GetFullName().Contains("@2x")) { continue; }
+            if(fn.GetFullName().Contains("@2x")) {
+                continue;
+            }
             wxString name = fn.GetName();
             wxBitmap bmp;
             if(bmp.LoadFile(fn.GetFullPath(), wxBITMAP_TYPE_PNG)) {
                 m_toolbarsBitmaps.erase(name);
-                m_toolbarsBitmaps.insert({name, bmp});
+                m_toolbarsBitmaps.insert({ name, bmp });
             }
-            
         }
         tmpdir.Rmdir(wxPATH_RMDIR_FULL);
     }
@@ -142,7 +143,9 @@ void BitmapLoader::initialize()
         };
 
         for(const auto& entry : buffers) {
-            if(!entry.first.EndsWith(".png")) { continue; }
+            if(!entry.first.EndsWith(".png")) {
+                continue;
+            }
 
             wxString name = wxFileName(entry.first).GetName();
             clZipReader::Entry d = entry.second;
@@ -159,7 +162,9 @@ void BitmapLoader::initialize()
 
         // Free the memory
         for(const auto& entry : buffers) {
-            if(entry.second.buffer && entry.second.len) { free(entry.second.buffer); }
+            if(entry.second.buffer && entry.second.len) {
+                free(entry.second.buffer);
+            }
         }
         buffers.clear();
     }
@@ -219,6 +224,7 @@ void BitmapLoader::CreateMimeList()
                                 FileExtManager::TypeFolderSymlinkExpanded);
         m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-symlink", bitmap_size), FileExtManager::TypeFolderSymlink);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt-symlink", bitmap_size), FileExtManager::TypeFileSymlink);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("rust", bitmap_size), FileExtManager::TypeRust);
 
         // Non mime bitmaps
         m_mimeBitmaps.AddBitmap(LoadBitmap("file_save", bitmap_size), kSave);
@@ -265,7 +271,9 @@ clMimeBitmaps::~clMimeBitmaps() {}
 
 int clMimeBitmaps::GetIndex(int type) const
 {
-    if(m_fileIndexMap.count(type) == 0) { return wxNOT_FOUND; }
+    if(m_fileIndexMap.count(type) == 0) {
+        return wxNOT_FOUND;
+    }
     return m_fileIndexMap.at(type);
 }
 

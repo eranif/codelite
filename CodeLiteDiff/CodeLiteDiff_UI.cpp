@@ -33,7 +33,7 @@ NewFileComparisonBase::NewFileComparisonBase(wxWindow* parent, wxWindowID id, co
     
     boxSizer6->Add(flexGridSizer23, 0, wxEXPAND, 5);
     
-    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Left FIle:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Left File:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer23->Add(m_staticText27, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     

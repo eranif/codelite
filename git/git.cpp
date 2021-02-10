@@ -1936,7 +1936,7 @@ void GitPlugin::InitDefaults()
     }
 
     if(!m_repositoryDirectory.IsEmpty()) {
-        GIT_MESSAGE(wxT("intializing git on %s"), m_repositoryDirectory.c_str());
+        GIT_MESSAGE(wxT("Initializing git... %s"), m_repositoryDirectory.c_str());
 #if 0
         m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),true);
         m_pluginToolbar->EnableTool(XRCID("git_bisect_good"),false);

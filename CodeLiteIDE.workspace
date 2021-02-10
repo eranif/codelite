@@ -57,7 +57,7 @@
     <Project Name="wxcLib" Path="wxcrafter/wxcLib/wxcLib.project" Active="No"/>
     <Project Name="LanguageServer" Path="LanguageServer/LanguageServer.project" Active="No"/>
     <Project Name="EOSWiki" Path="EOSWiki/EOSWiki.project" Active="No"/>
-    <Project Name="Rust" Path="Rust/Rust.project"/>
+    <Project Name="Rust" Path="Rust/Rust.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
     <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>

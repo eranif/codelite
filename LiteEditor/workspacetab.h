@@ -52,7 +52,6 @@ protected:
     virtual void OnPinnedCxxProjectContextMenu(wxDataViewEvent& event);
     void ProjectSettingsDlgClosed();
     void DoGoHome();
-    void DoConfigChanged(const wxString& newConfigName);
     void LoadCxxPinnedProjects();
     void SaveCxxPinnedProjects();
     /**
@@ -69,8 +68,6 @@ protected:
     void OnPaint(wxPaintEvent& event);
     void CreateGUIControls();
     void ConnectEvents();
-    void DoWorkspaceConfig();
-    void DoUpdateChoiceWithProjects();
 
     void OnLinkEditor(wxCommandEvent& e);
     void OnCollapseAll(wxCommandEvent& e);
@@ -88,10 +85,6 @@ protected:
     void OnProjectRemoved(clCommandEvent& e);
     void OnActiveEditorChanged(wxCommandEvent& e);
     void OnEditorClosing(wxCommandEvent& e);
-    void OnWorkspaceConfig(wxCommandEvent& e);
-    void OnConfigurationManager(wxCommandEvent& e);
-    void OnConfigChanged(clCommandEvent& e);
-    void OnActiveProjectChanged(clProjectSettingsEvent& e);
 
     void OnBuildStarted(clBuildEvent& event);
     void OnBuildEnded(clBuildEvent& event);

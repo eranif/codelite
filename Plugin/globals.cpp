@@ -134,9 +134,9 @@ void MSWSetWindowDarkTheme(wxWindow* win)
             _AllowDarkModeForApp(b);
             _AllowDarkModeForWindow(win->GetHandle(), b);
             EnumChildWindows(win->GetHandle(), &DarkExplorerChildProc, b);
-        
+
             const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
-        
+
             if(_FlushMenuThemes)
                 _FlushMenuThemes();
             InvalidateRect(win->GetHandle(), nullptr, FALSE); // HACK
@@ -947,17 +947,17 @@ static void DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<P
         wxDir dir(folder);
         dir.Traverse(dt);
 
-        files = dt.GetFiles();
+        const auto& files = dt.GetFiles();
         if(files.GetCount() > 0) {
             for(size_t i = 0; i < files.GetCount(); i++) {
                 ProjectPtr proj(new Project());
                 if(!proj->Load(files.Item(i))) {
                     // corrupted xml file?
-                    clLogMessage(wxT("Failed to load template project: ") + files.Item(i) + wxT(" (corrupted XML?)"));
+                    clWARNING() << "Failed to load template project:" << files.Item(i) << "(corrupted XML?)" << endl;
                     continue;
                 }
                 list.push_back(proj);
-
+                clSYSTEM() << "Found template project:" << files[i] << "." << proj->GetName() << endl;
                 // load template icon
                 wxFileName fn(files.Item(i));
                 fn.SetFullName("icon.png");

@@ -219,10 +219,7 @@ bool LanguageServerProtocol::CanHandle(const wxFileName& filename) const
 bool LanguageServerProtocol::ShouldHandleFile(const wxFileName& fn) const
 {
     wxString lang = GetLanguageId(fn);
-    clDEBUG() << "Language ID for file" << fn << "->" << lang;
-    // for(const auto& lang : m_languages) {
-    //     clDEBUG1() << "    LSP supports language:" << lang << clEndl;
-    // }
+    clDEBUG1() << "Language ID for file" << fn << "->" << lang;
     return (m_languages.count(lang) != 0);
 }
 
@@ -420,7 +417,7 @@ wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "["
 
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
-    clDEBUG() << "OpenEditor is called for" << editor->GetFileName();
+    clDEBUG1() << "OpenEditor is called for" << editor->GetFileName() << endl;
     if(!IsInitialized()) {
         return;
     }
@@ -447,7 +444,7 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
                 }
             }
 
-            clDEBUG() << "OpenEditor->SendOpenRequest called for:" << editor->GetFileName().GetFullName();
+            clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << editor->GetFileName().GetFullName();
             SendOpenRequest(editor->GetFileName(), fileContent, GetLanguageId(editor->GetFileName()));
         }
     }

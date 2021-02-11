@@ -189,7 +189,6 @@ void clFileSystemWorkspace::CacheFiles(bool force)
             clFilesScanner fs;
             std::vector<wxString> files;
             wxStringSet_t excludeFolders = { ".git", ".svn", ".codelite" };
-            fs.Scan(rootFolder, files, GetFilesMask(), "", excludeFolders);
 
             wxString excludePaths = GetExcludeFolders();
             wxArrayString paths = StringUtils::BuildArgv(excludePaths);
@@ -202,7 +201,9 @@ void clFileSystemWorkspace::CacheFiles(bool force)
                     if(excludePath.IsEmpty()) {
                         continue;
                     }
-                    excludeFolders.insert(excludePath);
+
+                    wxFileName fnpath(excludePath, "");
+                    excludeFolders.insert(fnpath.GetPath());
                 }
             }
             fs.Scan(rootFolder, files, GetFilesMask(), "", excludeFolders);

@@ -1,11 +1,11 @@
-#include "LSPNetworkSTDIO.h"
-#include "JSON.h"
-#include <sstream>
-#include "file_logger.h"
-#include "clcommandlineparser.h"
 #include "ChildProcess.h"
-#include "processreaderthread.h"
+#include "JSON.h"
+#include "LSPNetworkSTDIO.h"
+#include "clcommandlineparser.h"
 #include "dirsaver.h"
+#include "file_logger.h"
+#include "processreaderthread.h"
+#include <sstream>
 
 LSPNetworkSTDIO::LSPNetworkSTDIO() {}
 
@@ -26,9 +26,11 @@ void LSPNetworkSTDIO::Open(const LSPStartupInfo& siInfo)
     m_server->Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &LSPNetworkSTDIO::OnProcessTerminated, this);
 
     DirSaver ds;
-    if(!siInfo.GetWorkingDirectory().IsEmpty()) { ::wxSetWorkingDirectory(siInfo.GetWorkingDirectory()); }
+    if(!siInfo.GetWorkingDirectory().IsEmpty()) {
+        ::wxSetWorkingDirectory(siInfo.GetWorkingDirectory());
+    }
     m_server->Start(siInfo.GetLspServerCommand());
-    
+
     clCommandEvent evtReady(wxEVT_LSP_NET_CONNECTED);
     AddPendingEvent(evtReady);
 }
@@ -36,10 +38,10 @@ void LSPNetworkSTDIO::Open(const LSPStartupInfo& siInfo)
 void LSPNetworkSTDIO::Send(const std::string& data)
 {
     if(m_server) {
-        clDEBUG() << "LSPNetworkSTDIO:\n" << data;
+        clDEBUG() << "LSPNetworkSTDIO:\n" << data << endl;
         m_server->Write(data);
     } else {
-        clDEBUG() << "LSPNetworkSTDIO: no process !?";
+        clDEBUG() << "LSPNetworkSTDIO: no process !?" << endl;
     }
 }
 

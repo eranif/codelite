@@ -57,13 +57,13 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
     c.InitFromColour(activeTabBGColour.ChangeLightness(90));
 
     colours.activeTabTextColour = c.GetItemTextColour();
-    colours.activeTabBgColour = activeTabBGColour;
+    colours.activeTabBgColour = activeTabBGColour.ChangeLightness(130);
     colours.activeTabPenColour = c.GetBorderColour();
     colours.activeTabInnerPenColour = c.GetBgColour();
 
     // Inactive tab
-    colours.inactiveTabBgColour = c.GetBgColour();
-    colours.inactiveTabTextColour = c.GetGrayText();
+    colours.inactiveTabBgColour = c.GetBgColour().ChangeLightness(120); // at worst, it will be white
+    colours.inactiveTabTextColour = colours.activeTabTextColour;
     colours.inactiveTabPenColour = c.GetBgColour();
     colours.inactiveTabInnerPenColour = c.GetBgColour();
     colours.tabAreaColour = c.GetBgColour();

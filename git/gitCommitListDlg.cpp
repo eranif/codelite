@@ -28,6 +28,7 @@
 #include "gitentry.h"
 #include "windowattrmanager.h"
 
+#include "GitDiffOutputParser.h"
 #include "asyncprocess.h"
 #include "cl_config.h"
 #include "editor_config.h"
@@ -38,7 +39,6 @@
 #include "lexer_configuration.h"
 #include "processreaderthread.h"
 #include <wx/tokenzr.h>
-#include "GitDiffOutputParser.h"
 
 static int ID_COPY_COMMIT_HASH = wxNewId();
 static int ID_REVERT_COMMIT = wxNewId();
@@ -54,7 +54,9 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     Bind(wxEVT_CHAR_HOOK, &GitCommitListDlg::OnCharHook, this);
 
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("diff");
-    if(lex) { lex->Apply(m_stcDiff, true); }
+    if(lex) {
+        lex->Apply(m_stcDiff, true);
+    }
 
     LexerConf::Ptr_t textLex = EditorConfigST::Get()->GetLexer("text");
     textLex->Apply(m_stcCommitMessage, true);
@@ -65,7 +67,9 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     m_gitPath = data.GetGITExecutablePath();
     m_gitPath.Trim().Trim(false);
 
-    if(m_gitPath.IsEmpty()) { m_gitPath = "git"; }
+    if(m_gitPath.IsEmpty()) {
+        m_gitPath = "git";
+    }
 
     m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH, wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard), NULL, this);
@@ -136,7 +140,9 @@ void GitCommitListDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.
 void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event)
 {
     wxVariant v;
-    if(!event.GetItem().IsOk()) { return; }
+    if(!event.GetItem().IsOk()) {
+        return;
+    }
 
     wxString commitID = m_dvListCtrlCommitList->GetItemText(event.GetItem());
     wxString command =
@@ -209,7 +215,9 @@ void GitCommitListDlg::ClearAll(bool includingCommitlist /*=true*/)
     m_stcDiff->SetEditable(true);
     m_stcCommitMessage->ClearAll();
     m_fileListBox->Clear();
-    if(includingCommitlist) { m_dvListCtrlCommitList->DeleteAllItems(); }
+    if(includingCommitlist) {
+        m_dvListCtrlCommitList->DeleteAllItems();
+    }
     m_diffMap.clear();
     m_stcDiff->ClearAll();
     m_stcCommitMessage->SetEditable(false);
@@ -245,7 +253,9 @@ wxString GitCommitListDlg::GetFilterString() const
     wxString args;
     wxString filter = m_searchCtrlFilter->GetValue();
 
-    if(filter.empty() && m_comboExtraArgs->GetValue().empty()) { return args; }
+    if(filter.empty() && m_comboExtraArgs->GetValue().empty()) {
+        return args;
+    }
 
     wxArrayString searchStrings = ::wxStringTokenize(filter, " ", wxTOKEN_STRTOK);
     for(size_t i = 0; i < searchStrings.size(); ++i) {
@@ -258,9 +268,13 @@ wxString GitCommitListDlg::GetFilterString() const
         args << " --all-match";
     }
 
-    if(m_checkBoxIgnoreCase->IsChecked()) { args << " -i"; }
+    if(m_checkBoxIgnoreCase->IsChecked()) {
+        args << " -i";
+    }
 
-    if(!m_comboExtraArgs->GetValue().empty()) { args << ' ' << m_comboExtraArgs->GetValue(); }
+    if(!m_comboExtraArgs->GetValue().empty()) {
+        args << ' ' << m_comboExtraArgs->GetValue();
+    }
 
     return args;
 }
@@ -307,13 +321,12 @@ void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
     event.Enable(m_dvListCtrlCommitList->GetItemCount() >= 100);
 }
 
-void GitCommitListDlg::OnBtnClose(wxCommandEvent& event)
-{
-    Destroy();
-}
+void GitCommitListDlg::OnBtnClose(wxCommandEvent& event) { Destroy(); }
 
 void GitCommitListDlg::OnCharHook(wxKeyEvent& event) // Needed to catch ESC
 {
     event.Skip();
-    if (event.GetKeyCode() == WXK_ESCAPE ) { Destroy(); }
+    if(event.GetKeyCode() == WXK_ESCAPE) {
+        Destroy();
+    }
 }

@@ -23,17 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "macromanager.h"
-#include "environmentconfig.h"
+#include "IWorkspace.h"
 #include "build_config.h"
+#include "clFileSystemWorkspace.hpp"
+#include "clWorkspaceManager.h"
+#include "environmentconfig.h"
+#include "globals.h"
+#include "imanager.h"
+#include "macromanager.h"
 #include "project.h"
 #include "workspace.h"
-#include "imanager.h"
 #include <wx/regex.h>
-#include "globals.h"
-#include "clWorkspaceManager.h"
-#include "IWorkspace.h"
-#include "clFileSystemWorkspace.hpp"
 
 MacroManager::MacroManager() {}
 
@@ -55,7 +55,8 @@ wxString MacroManager::Replace(const wxString& inString, const wxString& variabl
                                bool bIgnoreCase)
 {
     size_t flags = wxRE_DEFAULT;
-    if(bIgnoreCase) flags |= wxRE_ICASE;
+    if(bIgnoreCase)
+        flags |= wxRE_ICASE;
 
     wxString strRe1;
     wxString strRe2;
@@ -73,13 +74,21 @@ wxString MacroManager::Replace(const wxString& inString, const wxString& variabl
     wxRegEx reFour(strRe4, flags);  // %variable%
 
     wxString result = inString;
-    if(reOne.Matches(result)) { reOne.ReplaceAll(&result, replaceWith); }
+    if(reOne.Matches(result)) {
+        reOne.ReplaceAll(&result, replaceWith);
+    }
 
-    if(reTwo.Matches(result)) { reTwo.ReplaceAll(&result, replaceWith); }
+    if(reTwo.Matches(result)) {
+        reTwo.ReplaceAll(&result, replaceWith);
+    }
 
-    if(reThree.Matches(result)) { reThree.ReplaceAll(&result, replaceWith); }
+    if(reThree.Matches(result)) {
+        reThree.ReplaceAll(&result, replaceWith);
+    }
 
-    if(reFour.Matches(result)) { reFour.ReplaceAll(&result, replaceWith); }
+    if(reFour.Matches(result)) {
+        reFour.ReplaceAll(&result, replaceWith);
+    }
     return result;
 }
 
@@ -140,7 +149,9 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
     clCxxWorkspace* workspace = nullptr;
     // IWorkspace* workspace = clWorkspaceManager::Get().IsWorkspaceOpened();
 
-    if(!manager) { manager = clGetManager(); }
+    if(!manager) {
+        manager = clGetManager();
+    }
 
     wxString wspName;
     wxString wspConfig;
@@ -286,6 +297,8 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
             // Apply the environment and expand the variables
             EnvSetter es(NULL, NULL, project, confToBuild);
             expandedString = manager->GetEnv()->ExpandVariables(expandedString, false);
+        } else if(applyEnv) {
+            expandedString = EnvironmentConfig::Instance()->ExpandVariables(expandedString, false);
         }
     }
     return expandedString;

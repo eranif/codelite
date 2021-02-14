@@ -35,7 +35,7 @@ bool MainApp::OnInit()
 
     wxXmlResource::Get()->InitAllHandlers();
 
-    if (!wxXmlResource::Get()->Load(wxT("../gui.xrc")))
+    if (!wxXmlResource::Get()->Load("./gui.xrc"))
         return false;
 
     SetTopWindow(new MainFrame(NULL));

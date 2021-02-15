@@ -73,6 +73,29 @@ static bool IsStringContainsSpec(const wxString& str, const wxStringSet_t& specS
     return false;
 }
 
+static bool IsRelPathContainedInSpec(const wxString& rootPath, const wxString& fullPath, const wxStringSet_t& specSet)
+{
+    wxFileName fp(fullPath);
+    fp.MakeRelativeTo(rootPath);
+
+    wxArrayString fpDirs = fp.GetDirs();
+    fpDirs.Add(fp.GetFullName()); // Add the last (filename) part into the path array
+
+    const wxString pathSeparators = fp.GetPathSeparators();
+    for (const wxString& spec : specSet) {
+        // Check if spec matches the beginning of the full path
+        if (fp.GetFullPath().StartsWith(spec)) {
+            return true;
+        }
+        // First check if spec is a path-elem (without path separators)
+        // Then check if path-elem if found in the array of full path-elements
+        if (!spec.Contains(pathSeparators) && (fpDirs.Index(spec) != wxNOT_FOUND)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec,
                             const wxString& excludeFilespec, const wxStringSet_t& excludeFolders)
 {
@@ -112,7 +135,7 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
 #else
                     (excludeFolders.count(FileUtils::RealPath(fullpath))
 #endif
-                     || IsStringContainsSpec(fullpath, excludeFolders)));
+                     || IsRelPathContainedInSpec(rootFolder, fullpath, excludeFolders)));
             if(isDirectory && !isExcludeDir) {
                 // Traverse into this folder
                 Q.push(fullpath);

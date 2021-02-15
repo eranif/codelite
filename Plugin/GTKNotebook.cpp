@@ -1,4 +1,5 @@
 #include "GTKNotebook.hpp"
+#include <wx/wupdlock.h>
 
 #ifdef __WXGTK__
 
@@ -624,9 +625,19 @@ bool clGTKNotebook::SetPageToolTip(size_t page, const wxString& tooltip)
 
 bool clGTKNotebook::MoveActivePage(int newIndex)
 {
-    wxUnusedVar(newIndex);
-    return false;
+    wxWindow* curpage = GetCurrentPage();
+    if(curpage == nullptr) {
+        return false;
+    }
+
+    // avoid flickering
+    wxWindowUpdateLocker locker(this);
+    wxString label = GetPageText(GetSelection());
+    RemovePage(GetSelection());
+    InsertPage(newIndex, curpage, label, true);
+    return true;
 }
+
 clTabHistory::Ptr_t clGTKNotebook::GetHistory() const
 {
     // return the history

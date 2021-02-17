@@ -83,7 +83,12 @@ clGTKNotebook::clGTKNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos
     Initialise(style);
 }
 
-clGTKNotebook::~clGTKNotebook() { wxDELETE(m_tabContextMenu); }
+clGTKNotebook::~clGTKNotebook()
+{
+    wxDELETE(m_tabContextMenu); 
+    Unbind(wxEVT_NOTEBOOK_PAGE_CHANGING, &clGTKNotebook::OnPageChanging, this);
+    Unbind(wxEVT_NOTEBOOK_PAGE_CHANGED, &clGTKNotebook::OnPageChanged, this);
+}
 
 bool clGTKNotebook::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                            const wxString& name)

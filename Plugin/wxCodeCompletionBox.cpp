@@ -46,8 +46,12 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
         bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     }
 
+    // bool isDark = DrawingUtils::IsDark(bgColour);
     clColours colours;
-    colours.InitFromColour(bgColour.ChangeLightness(110));
+    colours.InitFromColour(bgColour);
+    const auto& prop = lexer->GetProperty(SEL_TEXT_ATTR_ID);
+    colours.SetSelItemBgColourNoFocus(prop.GetBgColour());
+    colours.SetSelItemTextColourNoFocus(prop.GetFgColour());
 
     SetBackgroundColour(colours.GetBorderColour());
     m_mainPanel->SetBackgroundColour(colours.GetBorderColour());
@@ -58,6 +62,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 #endif
 
     // m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
+    m_list->SetNativeTheme(false);
     m_list->SetColours(colours);
     m_list->SetDefaultFont(m_ccFont);
     m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);

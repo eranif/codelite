@@ -172,6 +172,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
     : clThemedTreeCtrl(parent, id, pos, size, style)
     , m_eventsBound(false)
 {
+    SetNativeTheme(true);
     // Sorting method
     std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> SortFunc = [&](const wxTreeItemId& itemA,
                                                                                  const wxTreeItemId& itemB) {

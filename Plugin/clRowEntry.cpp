@@ -601,11 +601,20 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
         dc.SetTextForeground(colours.GetItemTextColour());
         dc.DrawText(text, x, y);
     } else {
-        dc.SetTextForeground(IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
+        if(!IsSelected()) {
+            dc.SetTextForeground(colours.GetItemTextColour());
+        } else {
+            dc.SetTextForeground(win->HasFocus() ? colours.GetSelItemTextColour()
+                                                 : colours.GetSelItemTextColourNoFocus());
+        }
         dc.DrawText(text, x, y);
     }
 #else
-    dc.SetTextForeground(IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour());
+    if(!IsSelected()) {
+        dc.SetTextForeground(colours.GetItemTextColour());
+    } else {
+        dc.SetTextForeground(win->HasFocus() ? colours.GetSelItemTextColour() : colours.GetSelItemTextColourNoFocus());
+    }
     dc.DrawText(text, x, y);
 #endif
 }

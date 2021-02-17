@@ -6,25 +6,26 @@
 
 class WXDLLIMPEXP_SDK clColours
 {
-    wxColour hoverBgColour;          // Background colour of an hovered item
-    wxColour itemTextColour;         // item text colour
-    wxColour itemBgColour;           // item bg colour
-    wxColour selItemTextColour;      // text colour for the selected item
-    wxColour selItemBgColour;        // selected item background colour
-    wxColour selItemBgColourNoFocus; // selected item background colour
-    wxColour buttonColour;           // expand/collapse button colour
-    wxColour selbuttonColour;        // The colour of the button ("Expand") when on a selected row
-    wxColour bgColour;               // background colour for the control
-    wxColour alternateColour;        // Colour to draw odd items background (wxTR_ROW_LINES)
-    wxColour headerBgColour;         // Header background colour
-    wxColour headerHBorderColour;    // The line to use for drawing a horizontal header border
-    wxColour headerVBorderColour;    // The line to use for drawing a vertical header border
-    wxColour matchedItemText;        // Text colour for matched item (need the style wxTR_ENABLE_SEARCH)
-    wxColour matchedItemBgText;      // Text bg colour for matched item (need the style wxTR_ENABLE_SEARCH)
-    wxColour borderColour;           // Basic border colour
-    wxColour darkBorderColour;       // Darker border colour
-    wxColour fillColour;             // fill colour
-    wxColour grayText;               // Gray text
+    wxColour hoverBgColour;            // Background colour of an hovered item
+    wxColour itemTextColour;           // item text colour
+    wxColour itemBgColour;             // item bg colour
+    wxColour selItemTextColour;        // text colour for the selected item
+    wxColour selItemBgColour;          // selected item background colour
+    wxColour selItemBgColourNoFocus;   // selected item background colour when the control has no focus
+    wxColour selItemTextColourNoFocus; // selected item text colour when the control has no focus
+    wxColour buttonColour;             // expand/collapse button colour
+    wxColour selbuttonColour;          // The colour of the button ("Expand") when on a selected row
+    wxColour bgColour;                 // background colour for the control
+    wxColour alternateColour;          // Colour to draw odd items background (wxTR_ROW_LINES)
+    wxColour headerBgColour;           // Header background colour
+    wxColour headerHBorderColour;      // The line to use for drawing a horizontal header border
+    wxColour headerVBorderColour;      // The line to use for drawing a vertical header border
+    wxColour matchedItemText;          // Text colour for matched item (need the style wxTR_ENABLE_SEARCH)
+    wxColour matchedItemBgText;        // Text bg colour for matched item (need the style wxTR_ENABLE_SEARCH)
+    wxColour borderColour;             // Basic border colour
+    wxColour darkBorderColour;         // Darker border colour
+    wxColour fillColour;               // fill colour
+    wxColour grayText;                 // Gray text
 
 public:
     clColours& SetDarkBorderColour(const wxColour& darkBorderColour)
@@ -84,6 +85,11 @@ public:
     const wxColour& GetFillColour() const { return fillColour; }
     void SetGrayText(const wxColour& grayText) { this->grayText = grayText; }
     const wxColour& GetGrayText() const { return grayText; }
+    void SetSelItemTextColourNoFocus(const wxColour& selItemTextColourNoFocus)
+    {
+        this->selItemTextColourNoFocus = selItemTextColourNoFocus;
+    }
+    const wxColour& GetSelItemTextColourNoFocus() const { return selItemTextColourNoFocus; }
 };
 
 #endif // CLCOLOURS_H

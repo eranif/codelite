@@ -52,6 +52,7 @@ void clColours::InitFromColour(const wxColour& baseColour)
         selbuttonColour = selItemTextColour.ChangeLightness(120);
         buttonColour = itemTextColour.ChangeLightness(120);
         selItemBgColourNoFocus = selItemBgColour.ChangeLightness(FACTOR_SEL_BG_COLOUR_NOFOCUS);
+        selItemTextColourNoFocus = selItemTextColour;
         grayText = itemTextColour.ChangeLightness(150);
     } else {
         alternateColour = bgColour.ChangeLightness(FACTOR_ALTROW_DARK);
@@ -65,6 +66,7 @@ void clColours::InitFromColour(const wxColour& baseColour)
         buttonColour = itemTextColour.ChangeLightness(80);
         selItemBgColourNoFocus = bgColour.ChangeLightness(115);
         grayText = itemTextColour.ChangeLightness(50);
+        selItemTextColourNoFocus = selItemTextColour;
     }
     itemBgColour = bgColour;
     matchedItemBgText = wxColour("#8BC34A");

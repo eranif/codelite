@@ -1,3 +1,6 @@
+// rust support was added in wx3.1
+#include "wx/versioninfo.h"
+#if wxCHECK_VERSION(3, 1, 0)
 #include "EclipseRustThemeImporter.h"
 
 EclipseRustThemeImporter::EclipseRustThemeImporter()
@@ -49,3 +52,4 @@ LexerConf::Ptr_t EclipseRustThemeImporter::Import(const wxFileName& eclipseXmlFi
     FinalizeImport(lexer);
     return lexer;
 }
+#endif

@@ -22,6 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "wx/versioninfo.h"
+
+// rust support was added in wx3.1
+#if wxCHECK_VERSION(3, 1, 0)
 
 #include "ContextRust.hpp"
 #include "cl_editor.h"
@@ -189,3 +193,5 @@ bool ContextRust::IsStringTriggerCodeComplete(const wxString& str) const
 }
 
 void ContextRust::ProcessIdleActions() { ContextGeneric::ProcessIdleActions(); }
+
+#endif // wxVERSION_NUMBER >= 3100

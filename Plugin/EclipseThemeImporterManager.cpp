@@ -1,3 +1,5 @@
+#include "wx/versioninfo.h"
+
 #include "ColoursAndFontsManager.h"
 #include "EclipseASMThemeImporter.h"
 #include "EclipseBatchThemeImporter.h"
@@ -17,7 +19,9 @@
 #include "EclipseMakefileThemeImporter.h"
 #include "EclipsePHPThemeImporter.h"
 #include "EclipsePythonThemeImporter.h"
+#if wxCHECK_VERSION(3, 1, 0)
 #include "EclipseRustThemeImporter.h"
+#endif
 #include "EclipseSCSSThemeImporter.h"
 #include "EclipseSQLThemeImporter.h"
 #include "EclipseScriptThemeImporter.h"
@@ -52,7 +56,9 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseSCSSThemeImporter());
     m_importers.push_back(new EclipseDockerfileThemeImporter());
     m_importers.push_back(new EclipseYAMLThemeImporter());
+#if wxCHECK_VERSION(3, 1, 0)
     m_importers.push_back(new EclipseRustThemeImporter());
+#endif
 }
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}

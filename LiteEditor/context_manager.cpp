@@ -35,6 +35,7 @@
 #include "editor_config.h"
 #include "generic_context.h"
 #include <wx/tokenzr.h>
+#include "wx/versioninfo.h"
 
 ContextManager::ContextManager() { Initialize(); }
 
@@ -75,7 +76,9 @@ void ContextManager::Initialize()
     m_contextPool["php"] = new ContextPhp();
     m_contextPool["javascript"] = new ContextJavaScript();
     m_contextPool["python"] = new ContextPython();
+#if wxCHECK_VERSION(3, 1, 0)
     m_contextPool["rust"] = new ContextRust();
+#endif
 
     // load generic lexers
     wxArrayString names = ColoursAndFontsManager::Get().GetAllLexersNames();

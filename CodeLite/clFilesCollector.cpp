@@ -63,6 +63,7 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxFileName>&
     return filesOutput.size();
 }
 
+#if 0
 static bool IsStringContainsSpec(const wxString& str, const wxStringSet_t& specSet)
 {
     for(const wxString& spec : specSet) {
@@ -72,6 +73,7 @@ static bool IsStringContainsSpec(const wxString& str, const wxStringSet_t& specS
     }
     return false;
 }
+#endif
 
 static bool IsRelPathContainedInSpec(const wxString& rootPath, const wxString& fullPath, const wxStringSet_t& specSet)
 {

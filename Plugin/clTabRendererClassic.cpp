@@ -34,18 +34,18 @@ void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour
     colours.activeTabTextColour = c.GetItemTextColour();
     colours.activeTabBgColour = activeTabBGColour;
 
-//    wxColour sysbgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
-//    if(DrawingUtils::IsDark(sysbgColour)) {
-//        colours.activeTabBgColour = sysbgColour.ChangeLightness(90);
-//    }
+    //    wxColour sysbgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+    //    if(DrawingUtils::IsDark(sysbgColour)) {
+    //        colours.activeTabBgColour = sysbgColour.ChangeLightness(90);
+    //    }
 
-    colours.activeTabPenColour = c.GetBorderColour();
+    colours.activeTabPenColour = c.GetBgColour().ChangeLightness(60);
     colours.activeTabInnerPenColour = c.GetBgColour();
 
     // Inactive tab
     colours.inactiveTabBgColour = c.GetBgColour();
     colours.inactiveTabTextColour = c.GetItemTextColour().ChangeLightness(90);
-    colours.inactiveTabPenColour = c.GetBgColour();
+    colours.inactiveTabPenColour = colours.activeTabPenColour;
     colours.inactiveTabInnerPenColour = c.GetBgColour();
     colours.tabAreaColour = c.GetBgColour();
 }
@@ -58,13 +58,13 @@ void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColou
 
     colours.activeTabTextColour = c.GetItemTextColour();
     colours.activeTabBgColour = activeTabBGColour.ChangeLightness(130);
-    colours.activeTabPenColour = c.GetBorderColour();
+    colours.activeTabPenColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     colours.activeTabInnerPenColour = c.GetBgColour();
 
     // Inactive tab
     colours.inactiveTabBgColour = c.GetBgColour().ChangeLightness(120); // at worst, it will be white
     colours.inactiveTabTextColour = colours.activeTabTextColour;
-    colours.inactiveTabPenColour = c.GetBgColour();
+    colours.inactiveTabPenColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     colours.inactiveTabInnerPenColour = c.GetBgColour();
     colours.tabAreaColour = c.GetBgColour();
 }
@@ -83,7 +83,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     }
 
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
-    wxColour penColour(bgColour);
+    wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
 
     if(isDark && !tabInfo.IsActive()) {
         bgColour = bgColour.ChangeLightness(105);
@@ -96,15 +96,26 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
     // Draw the tab rectangle
     wxRect tabRect = tabInfo.GetRect();
-    tabRect.SetHeight(tabRect.GetHeight() + tabRaius);
-    tabRect.SetY(tabRect.GetY() - tabRaius);
-    tabRect.Inflate(1);
-
-    {
-        dc.SetPen(penColour);
-        dc.SetBrush(bgColour);
-        dc.DrawRoundedRectangle(tabRect, tabRaius);
+    if(IS_VERTICAL_TABS(style)) {
+        tabRect.height += 1;
+    } else {
+        tabRect.width += 1;
+        if(tabInfo.IsActive()) {
+            tabRect.height += tabRaius + 1;
+            if(style & kNotebook_BottomTabs) {
+                tabRect.y += tabRaius;
+            }
+        } else {
+            tabRect.height += tabRaius;
+            if(style & kNotebook_BottomTabs) {
+                tabRect.y += tabRaius;
+            }
+        }
     }
+
+    dc.SetPen(penColour);
+    dc.SetBrush(bgColour);
+    dc.DrawRoundedRectangle(tabRect, tabRaius);
 
     // Draw bitmap
     if(tabInfo.GetBitmap().IsOk()) {
@@ -160,16 +171,22 @@ void clTabRendererClassic::DrawBackground(wxWindow* parent, wxDC& dc, const wxRe
 void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
                                               const clTabColours& colours, size_t style)
 {
-    wxUnusedVar(parent);
-    wxUnusedVar(dc);
-    wxUnusedVar(clientRect);
-    wxColour penColour(colours.activeTabBgColour);
-    dc.SetPen(penColour);
-    if(!IS_VERTICAL_TABS(style)) {
-        if(style & kNotebook_BottomTabs) {
-            DRAW_LINE(clientRect.GetTopLeft(), clientRect.GetTopRight());
-        } else {
-            DRAW_LINE(clientRect.GetBottomLeft(), clientRect.GetBottomRight());
-        }
-    }
+    // wxUnusedVar(parent);
+    // wxUnusedVar(dc);
+    // wxUnusedVar(clientRect);
+    // wxUnusedVar(style);
+    // wxColour penColour(colours.activeTabPenColour);
+    //
+    // dc.SetPen(penColour);
+    // dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    // dc.DrawRectangle(clientRect);
+    //
+    // dc.SetPen(colours.activeTabBgColour);
+    // if(!IS_VERTICAL_TABS(style)) {
+    //     if(style & kNotebook_BottomTabs) {
+    //         DRAW_LINE(clientRect.GetTopLeft(), clientRect.GetTopRight());
+    //     } else {
+    //         DRAW_LINE(clientRect.GetBottomLeft(), clientRect.GetBottomRight());
+    //     }
+    // }
 }

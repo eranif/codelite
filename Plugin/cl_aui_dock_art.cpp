@@ -127,6 +127,10 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
     } else {
         buttonRect.Deflate(1);
     }
+    if (buttonRect.GetHeight() < 2)  {
+        // A wx3.0.x build may arrive here with a 1*1 rect -> a sigabort in libcairo
+        return; 
+    }
     buttonRect = buttonRect.CenterIn(_rect);
     eButtonState buttonState = eButtonState::kNormal;
     switch(button_state) {

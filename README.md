@@ -22,19 +22,19 @@ Building CodeLite on Linux
 
 To build CodeLite on your computer you will need these packages:
 
- - wxWidgets 3.0 or later development packages (or a self-build)
- - The GTK development packages: often called libgtk-3-dev or gtk3-devel, or similar
- - pkg-config (which usually comes with the GTK dev package)
- - The build-essential package (or the relevant bit of it: G++, Make etc)
- - CMake
- - Git.
+ - wxWidgets 3.1 or later development packages (or a self-build).
+ - The GTK development packages: often called `libgtk-3-dev` or `gtk3-devel`, or similar.
+ - `pkg-config` (which usually comes with the GTK dev package).
+ - The `build-essential` package (or the relevant bit of it: G++, Make etc).
+ - `cmake`.
+ - `git`.
 
-You should have wxWidgets 3.0 or later built on your machine. If you don't know how to build (or you're just lazy...) you can [download wxWidgets from CodeLite's repository][6].
+In the Debian/Ubuntu repositories, wxWidgets libraries are at their 3.0 version, which is good enough for compiling Codelite 15.0, however, **you should have wxWidgets 3.1 or later to built the master branch on your machine**. If you don't know how to build wxWidgets (or you're just lazy...) you can [add the CodeLite's wxWidgets repository to you distro][6].
 
 
-On Ubuntu / Debian you can install all of the above by typing:
+**Ubuntu / Debian**: After adding the proper libraries to you distro's sources, you can install all of the above by typing:
 
-    sudo apt-get install libgtk-3-dev pkg-config build-essential git cmake libssh-dev libwxgtk3.0-gtk3-dev libsqlite3-dev
+    sudo apt install pkg-config build-essential git cmake libgtk-3-dev libssh-dev libsqlite3-dev libwxbase3.1-dev libwxbase3.1unofficial3-dev libwxgtk3.1unofficial3-dev
 
 Git clone the sources:
 

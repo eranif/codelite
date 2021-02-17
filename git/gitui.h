@@ -171,6 +171,7 @@ public:
 class GitCommitListDlgBase : public wxDialog
 {
 protected:
+    wxPanel* m_panel806;
     clThemedSplitterWindow* m_splitter174;
     wxPanel* m_splitterPage178;
     clThemedSplitterWindow* m_splitter777;
@@ -229,6 +230,7 @@ public:
     wxPanel* GetSplitterPage182() { return m_splitterPage182; }
     clThemedSplitterWindow* GetSplitter174() { return m_splitter174; }
     wxButton* GetButtonClose() { return m_buttonClose; }
+    wxPanel* GetPanel806() { return m_panel806; }
     GitCommitListDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Commit List"),
                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX);

@@ -5,13 +5,14 @@
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include <clColours.h>
 #include <wx/settings.h>
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE | wxTR_ROW_LINES
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_THEME | wxTR_ROW_LINES
 #else
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_NONE | wxTR_ROW_LINES
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_ROW_LINES
 #endif
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -68,16 +69,16 @@ void clThemedTreeCtrl::ApplyTheme()
     // EnableStyle(wxTR_ROW_LINES, !DrawingUtils::IsDark(baseColour));
 
     // Set the built-in search colours
-    wxColour highlightColur = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-    wxColour textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+    wxColour highlightColur = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+    wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
 
     // When not using custom colours, use system defaults
     if(!useCustomColour) {
-        colours.SetSelItemBgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+        colours.SetSelItemBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 #ifdef __WXOSX__
-        colours.SetSelItemBgColourNoFocus(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+        colours.SetSelItemBgColourNoFocus(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 #else
         colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
 #endif

@@ -439,12 +439,19 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* bSizer17 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer17);
 
-    m_splitter174 = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                               wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_panel806 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer17->Add(m_panel806, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer808 = new wxBoxSizer(wxVERTICAL);
+    m_panel806->SetSizer(boxSizer808);
+
+    m_splitter174 = new clThemedSplitterWindow(m_panel806, wxID_ANY, wxDefaultPosition,
+                                               wxDLG_UNIT(m_panel806, wxSize(-1, -1)), wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitter174->SetSashGravity(0.3);
     m_splitter174->SetMinimumPaneSize(150);
 
-    bSizer17->Add(m_splitter174, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer808->Add(m_splitter174, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitterPage178 = new wxPanel(m_splitter174, wxID_ANY, wxDefaultPosition,
                                     wxDLG_UNIT(m_splitter174, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -669,9 +676,10 @@ GitCommitListDlgBase::GitCommitListDlgBase(wxWindow* parent, wxWindowID id, cons
 
     wxBoxSizer* boxSizer769 = new wxBoxSizer(wxVERTICAL);
 
-    bSizer17->Add(boxSizer769, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer808->Add(boxSizer769, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_buttonClose = new wxButton(this, wxID_CANCEL, _("Close"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonClose =
+        new wxButton(m_panel806, wxID_CANCEL, _("Close"), wxDefaultPosition, wxDLG_UNIT(m_panel806, wxSize(-1, -1)), 0);
 
     boxSizer769->Add(m_buttonClose, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 

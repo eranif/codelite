@@ -983,6 +983,8 @@ private:
     void DoUpdateTLWTitle(bool raise);
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
     int GetFirstSingleLineCommentPos(int from, int commentStyle);
+    void DoSelectRange(const LSP::Range& range);
+
     /**
      * @brief return number of whitespace characters in the beginning of the line
      */

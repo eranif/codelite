@@ -2393,7 +2393,7 @@ void clEditor::FindAndSelectV(const wxString& _pattern, const wxString& name, in
     ClearSelections();
     strings.Add(_pattern);
     strings.Add(name);
-    DoFindAndSelectV(strings, pos);
+    CallAfter(&clEditor::DoFindAndSelectV, strings, pos);
 }
 
 void clEditor::DoFindAndSelectV(const wxArrayString& strings, int pos) // Called with CallAfter()
@@ -4711,7 +4711,7 @@ bool clEditor::FindAndSelect(const wxString& pattern, const wxString& what, int 
     return DoFindAndSelect(pattern, what, pos, navmgr);
 }
 
-bool clEditor::SelectRange(const LSP::Range& range)
+void clEditor::DoSelectRange(const LSP::Range& range)
 {
     ClearSelections();
     int startPos = PositionFromLine(range.GetStart().GetLine());
@@ -4719,9 +4719,17 @@ bool clEditor::SelectRange(const LSP::Range& range)
 
     int endPos = PositionFromLine(range.GetEnd().GetLine());
     endPos += range.GetEnd().GetCharacter();
-    CenterLine(LineFromPosition(startPos), GetColumn(startPos));
     SetSelectionStart(startPos);
     SetSelectionEnd(endPos);
+    int nLineNumber = LineFromPosition(startPos);
+    CallAfter(&clEditor::CenterLinePreserveSelection, nLineNumber);
+}
+
+bool clEditor::SelectRange(const LSP::Range& range)
+{
+    // on GTK, DoSelectRange will probably fail since the file is not really loaded into screen yet
+    // so we need to use here CallAfter
+    CallAfter(&clEditor::DoSelectRange, range);
     return true;
 }
 

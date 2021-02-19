@@ -98,6 +98,7 @@
     <File Name="clButton.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clThemedCtrl.hpp"/>
     <File Name="clThemedSplitterWindow.cpp"/>
     <File Name="clThemedSplitterWindow.h"/>
     <File Name="clCustomScrollBar.cpp"/>

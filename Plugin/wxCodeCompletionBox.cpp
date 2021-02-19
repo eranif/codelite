@@ -37,7 +37,10 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     // Use the active editor's font (if any)
     wxColour bgColour;
     wxColour textColour;
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
+    if(!lexer) {
+        lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    }
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
         bgColour = editor->GetCtrl()->StyleGetBackground(0);

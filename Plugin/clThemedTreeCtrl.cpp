@@ -1,5 +1,6 @@
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
+#include "clThemedCtrl.hpp"
 #include "clThemedTreeCtrl.h"
 #include "cl_config.h"
 #include "codelite_events.h"
@@ -48,37 +49,4 @@ void clThemedTreeCtrl::OnThemeChanged(wxCommandEvent& event)
     ApplyTheme();
 }
 
-void clThemedTreeCtrl::ApplyTheme()
-{
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    clColours colours;
-    if(lexer->IsDark()) {
-        colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    } else {
-        colours.InitDefaults();
-    }
-
-    wxColour baseColour = colours.GetBgColour();
-    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
-    if(useCustomColour) {
-        baseColour = clConfig::Get().Read("BaseColour", baseColour);
-        colours.InitFromColour(baseColour);
-    }
-
-    // Set the built-in search colours
-    wxColour highlightColur = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-    wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-    colours.SetMatchedItemBgText(highlightColur);
-    colours.SetMatchedItemText(textColour);
-
-    // When not using custom colours, use system defaults
-    if(!useCustomColour) {
-        wxColour selColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-        colours.SetSelItemBgColour(selColour);
-        colours.SetSelItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-        colours.SetSelItemBgColourNoFocus(selColour.ChangeLightness(150));
-        colours.SetSelItemTextColourNoFocus(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-    }
-    // When using custom bg colour, don't use native drawings
-    this->SetColours(colours);
-}
+void clThemedTreeCtrl::ApplyTheme() { cl::ApplyTheme<clThemedTreeCtrl>(this); }

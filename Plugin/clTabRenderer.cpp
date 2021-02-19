@@ -165,7 +165,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
 
-    wxFont font = clTabRenderer::GetTabFont(false);
+    wxFont font = clTabRenderer::GetTabFont(true);
     dc.SetFont(font);
 
     bool bVerticalTabs = IS_VERTICAL_TABS(style);
@@ -292,8 +292,10 @@ clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
 
 wxFont clTabRenderer::GetTabFont(bool bold)
 {
-    wxUnusedVar(bold);
     wxFont f = DrawingUtils::GetDefaultGuiFont();
+    if(bold) {
+        f.SetWeight(wxFONTWEIGHT_BOLD);
+    }
     return f;
 }
 
@@ -432,9 +434,29 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
     wxUnusedVar(parent);
     wxUnusedVar(colours);
     wxUnusedVar(style);
-    dc.SetPen(colours.activeTabPenColour);
+    dc.SetPen(colours.inactiveTabPenColour);
     dc.SetBrush(colours.tabAreaColour);
     dc.DrawRectangle(clientRect);
+    bool isBottom = style & kNotebook_BottomTabs;
+    bool isLeft = style & kNotebook_LeftTabs;
+    bool isRight = style & kNotebook_RightTabs;
+
+    wxPoint p1, p2;
+    if(isBottom) {
+        p1 = clientRect.GetTopLeft();
+        p2 = clientRect.GetTopRight();
+    } else if(isLeft) {
+        p1 = clientRect.GetTopRight();
+        p2 = clientRect.GetBottomRight();
+    } else if(isRight) {
+        p1 = clientRect.GetTopLeft();
+        p2 = clientRect.GetBottomLeft();
+    } else {
+        p1 = clientRect.GetBottomLeft();
+        p2 = clientRect.GetBottomRight();
+    }
+    dc.SetPen(colours.activeTabPenColour);
+    dc.DrawLine(p1, p2);
 }
 
 void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
@@ -477,7 +499,7 @@ void clTabRenderer::DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
     wxPen markerPen(colours.markerColour);
     // Draw marker line if needed
     // wxRect confinedRect = parent->GetClientRect();
-    bool isGTK3 = (GetName() == "GTK3");
+    bool isGTK3 = true;
     wxDirection direction;
     wxPoint p1, p2;
     if((style & kNotebook_LeftTabs)) {

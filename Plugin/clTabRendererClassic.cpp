@@ -120,6 +120,9 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         tabRect.width += 1;
         if(tabInfo.IsActive()) {
             tabRect.height += 1;
+            if(isBottom) {
+                tabRect.y -= 1;
+            }
         }
     }
 

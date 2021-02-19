@@ -336,9 +336,9 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_panelCxx->SetSizer(boxSizer505);
 
     m_panel625 = new wxPanel(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL | wxBORDER_THEME);
+                             wxTAB_TRAVERSAL | wxBORDER_NONE);
 
-    boxSizer505->Add(m_panel625, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer505->Add(m_panel625, 0, wxEXPAND, WXC_FROM_DIP(2));
 
     wxBoxSizer* boxSizer627 = new wxBoxSizer(wxVERTICAL);
     m_panel625->SetSizer(boxSizer627);
@@ -370,9 +370,9 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_dvListCtrlPinnedProjects =
         new clThemedListCtrl(m_splitterPagePinnedProjects, wxID_ANY, wxDefaultPosition,
                              wxDLG_UNIT(m_splitterPagePinnedProjects, wxSize(-1, 150)),
-                             wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE | wxBORDER_THEME);
+                             wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE | wxBORDER_SIMPLE);
 
-    boxSizer621->Add(m_dvListCtrlPinnedProjects, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer621->Add(m_dvListCtrlPinnedProjects, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrlPinnedProjects->AppendTextColumn(_("Project"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                                  wxDATAVIEW_COL_RESIZABLE);
@@ -385,9 +385,9 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     m_fileView = new FileViewTree(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition,
                                   wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1, -1)),
-                                  wxTR_MULTIPLE | wxTR_NO_LINES | wxTR_HAS_BUTTONS | wxBORDER_THEME);
+                                  wxTR_MULTIPLE | wxTR_NO_LINES | wxTR_HAS_BUTTONS | wxBORDER_SIMPLE);
 
-    boxSizer619->Add(m_fileView, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer619->Add(m_fileView, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("WorkspaceTabBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

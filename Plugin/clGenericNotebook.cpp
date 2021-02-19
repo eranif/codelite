@@ -119,10 +119,7 @@ clGenericNotebook::~clGenericNotebook() {}
 void clGenericNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
                                 const wxString& shortLabel)
 {
-    clTabInfo::Ptr_t tab(new clTabInfo(m_tabCtrl, GetStyle(), page, label, bmp));
-    tab->SetShortLabel(shortLabel);
-    tab->SetActive(selected, GetStyle());
-    m_tabCtrl->AddPage(tab);
+    InsertPage(GetPageCount(), page, label, selected, bmp, shortLabel);
 }
 
 void clGenericNotebook::DoChangeSelection(wxWindow* page) { m_windows->Select(page); }
@@ -131,11 +128,7 @@ bool clGenericNotebook::InsertPage(size_t index, wxWindow* page, const wxString&
                                    const wxBitmap& bmp, const wxString& shortLabel)
 {
     clTabInfo::Ptr_t tab(new clTabInfo(m_tabCtrl, GetStyle(), page, label, bmp));
-    wxString shortl = shortLabel;
-    if(shortl.empty() && !label.empty()) {
-        shortl = label.Mid(0, wxMin(label.Length(), 3)).Upper();
-    }
-    tab->SetShortLabel(shortl);
+    tab->SetShortLabel(shortLabel.IsEmpty() ? label : shortLabel);
     tab->SetActive(selected, GetStyle());
     return m_tabCtrl->InsertPage(index, tab);
 }

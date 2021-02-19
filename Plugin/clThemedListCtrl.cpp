@@ -8,7 +8,7 @@
 #include <wx/settings.h>
 
 #ifdef __WXMSW__
-#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_THEME | wxDV_ROW_LINES
+#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_SIMPLE | wxDV_ROW_LINES
 #else
 #define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_DEFAULT | wxDV_ROW_LINES
 #endif

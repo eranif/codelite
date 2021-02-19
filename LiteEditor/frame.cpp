@@ -1363,7 +1363,7 @@ void clMainFrame::CreateToolBar(int toolSize)
         wxDELETE(m_toolbar);
     }
 
-    m_toolbar = new clToolBar(this, wxID_ANY);
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER | wxTB_FLAT);
     m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_toolbar->SetMiniToolBar(false); // We want main toolbar
     m_toolbar->EnableCustomisation(true);

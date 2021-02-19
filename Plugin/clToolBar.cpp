@@ -129,9 +129,11 @@ void clToolBar::OnPaint(wxPaintEvent& event)
         m_chevronRect = chevronRect;
     }
 
-    tbBgColour = tbBgColour.ChangeLightness(70);
-    gcdc.SetPen(tbBgColour);
-    gcdc.DrawLine(GetClientRect().GetLeftBottom(), GetClientRect().GetRightBottom());
+    if(!(m_windowStyle & wxTB_NODIVIDER)) {
+        tbBgColour = tbBgColour.ChangeLightness(70);
+        gcdc.SetPen(tbBgColour);
+        gcdc.DrawLine(GetClientRect().GetLeftBottom(), GetClientRect().GetRightBottom());
+    }
 }
 
 void clToolBar::RenderGroup(int& xx, const clToolBar::ToolVect_t& G, wxDC& gcdc, bool isLastGroup)
@@ -513,14 +515,15 @@ void clToolBar::DoShowOverflowMenu()
             menu.AppendSeparator();
         }
         menu.Append(XRCID("customise_toolbar"), _("Customise..."));
-        menu.Bind(wxEVT_MENU,
-                  [&](wxCommandEvent& event) {
-                      wxUnusedVar(event);
-                      wxCommandEvent evtCustomise(wxEVT_TOOLBAR_CUSTOMISE);
-                      evtCustomise.SetEventObject(this);
-                      GetEventHandler()->AddPendingEvent(evtCustomise);
-                  },
-                  XRCID("customise_toolbar"));
+        menu.Bind(
+            wxEVT_MENU,
+            [&](wxCommandEvent& event) {
+                wxUnusedVar(event);
+                wxCommandEvent evtCustomise(wxEVT_TOOLBAR_CUSTOMISE);
+                evtCustomise.SetEventObject(this);
+                GetEventHandler()->AddPendingEvent(evtCustomise);
+            },
+            XRCID("customise_toolbar"));
     }
     // Show the menu
     m_popupShown = true;

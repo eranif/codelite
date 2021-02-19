@@ -12,11 +12,11 @@
 clTabRendererCurved::clTabRendererCurved(const wxWindow* parent)
     : clTabRenderer("TRAPEZOID", parent)
 {
-    bottomAreaHeight = 5;
-    majorCurveWidth = 15;
-    smallCurveWidth = 4;
-    overlapWidth = 20;
-    verticalOverlapWidth = 3;
+    bottomAreaHeight = 0;
+    majorCurveWidth = 10;
+    overlapWidth = 8;
+    smallCurveWidth = 0;
+    verticalOverlapWidth = 0;
 }
 
 clTabRendererCurved::~clTabRendererCurved() {}
@@ -30,9 +30,11 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
 
-    if(isDark && !tabInfo.IsActive()) { bgColour = bgColour.ChangeLightness(105); }
+    if(isDark && !tabInfo.IsActive()) {
+        bgColour = bgColour.ChangeLightness(105);
+    }
 
-    wxFont font = GetTabFont(false);
+    wxFont font = GetTabFont(tabInfo.IsActive());
     wxColour activeTabTextColour = isDark ? colours.markerColour : colours.activeTabTextColour;
     fontDC.SetTextForeground(tabInfo.IsActive() ? activeTabTextColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
@@ -133,6 +135,10 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
             dc.SetPen(tabInfo.IsActive() ? colours.activeTabInnerPenColour : colours.inactiveTabInnerPenColour);
             dc.SetBrush(bgColour);
             dc.DrawPolygon(6, points);
+            if(!tabInfo.IsActive()) {
+                dc.SetPen(colours.activeTabPenColour);
+                dc.DrawLine(points[0], points[5]);
+            }
         }
     }
 
@@ -144,7 +150,9 @@ void clTabRendererCurved::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const c
     }
     const wxString& label = tabInfo.GetBestLabel(style);
     fontDC.DrawText(label, tabInfo.m_textX + tabInfo.m_rect.GetX(), tabInfo.m_textY);
-    if(style & kNotebook_CloseButtonOnActiveTab) { DrawButton(parent, dc, tabInfo, colours, buttonState); }
+    if(style & kNotebook_CloseButtonOnActiveTab) {
+        DrawButton(parent, dc, tabInfo, colours, buttonState);
+    }
 }
 
 void clTabRendererCurved::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect,

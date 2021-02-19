@@ -185,6 +185,7 @@ class WorkspaceTabBase : public wxPanel
 protected:
     wxSimplebook* m_simpleBook;
     wxPanel* m_panelCxx;
+    wxPanel* m_panel625;
     clConfigurationSelectionCtrl* m_configChangeCtrl;
     clToolBar* m_toolbar580;
     clThemedSplitterWindow* m_splitter;
@@ -200,6 +201,7 @@ protected:
 public:
     clConfigurationSelectionCtrl* GetConfigChangeCtrl() { return m_configChangeCtrl; }
     clToolBar* GetToolbar580() { return m_toolbar580; }
+    wxPanel* GetPanel625() { return m_panel625; }
     clThemedListCtrl* GetDvListCtrlPinnedProjects() { return m_dvListCtrlPinnedProjects; }
     wxPanel* GetSplitterPagePinnedProjects() { return m_splitterPagePinnedProjects; }
     FileViewTree* GetFileView() { return m_fileView; }

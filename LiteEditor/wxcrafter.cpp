@@ -335,16 +335,24 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer505 = new wxBoxSizer(wxVERTICAL);
     m_panelCxx->SetSizer(boxSizer505);
 
-    m_configChangeCtrl = new clConfigurationSelectionCtrl(m_panelCxx, wxID_ANY, wxDefaultPosition,
-                                                          wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_panel625 = new wxPanel(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL | wxBORDER_THEME);
 
-    boxSizer505->Add(m_configChangeCtrl, 0, wxTOP | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer505->Add(m_panel625, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_toolbar580 = new clToolBar(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)),
+    wxBoxSizer* boxSizer627 = new wxBoxSizer(wxVERTICAL);
+    m_panel625->SetSizer(boxSizer627);
+
+    m_configChangeCtrl = new clConfigurationSelectionCtrl(m_panel625, wxID_ANY, wxDefaultPosition,
+                                                          wxDLG_UNIT(m_panel625, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    boxSizer627->Add(m_configChangeCtrl, 0, wxEXPAND, WXC_FROM_DIP(2));
+
+    m_toolbar580 = new clToolBar(m_panel625, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel625, wxSize(-1, -1)),
                                  wxTB_NODIVIDER | wxTB_FLAT);
     m_toolbar580->SetToolBitmapSize(wxSize(16, 16));
 
-    boxSizer505->Add(m_toolbar580, 0, wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer627->Add(m_toolbar580, 0, wxEXPAND, WXC_FROM_DIP(2));
 
     m_splitter = new clThemedSplitterWindow(m_panelCxx, wxID_ANY, wxDefaultPosition,
                                             wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)), wxSP_LIVE_UPDATE);
@@ -359,11 +367,12 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     wxBoxSizer* boxSizer621 = new wxBoxSizer(wxVERTICAL);
     m_splitterPagePinnedProjects->SetSizer(boxSizer621);
 
-    m_dvListCtrlPinnedProjects = new clThemedListCtrl(m_splitterPagePinnedProjects, wxID_ANY, wxDefaultPosition,
-                                                      wxDLG_UNIT(m_splitterPagePinnedProjects, wxSize(-1, 150)),
-                                                      wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE);
+    m_dvListCtrlPinnedProjects =
+        new clThemedListCtrl(m_splitterPagePinnedProjects, wxID_ANY, wxDefaultPosition,
+                             wxDLG_UNIT(m_splitterPagePinnedProjects, wxSize(-1, 150)),
+                             wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxBORDER_NONE | wxBORDER_THEME);
 
-    boxSizer621->Add(m_dvListCtrlPinnedProjects, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer621->Add(m_dvListCtrlPinnedProjects, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_dvListCtrlPinnedProjects->AppendTextColumn(_("Project"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                                  wxDATAVIEW_COL_RESIZABLE);
@@ -376,9 +385,9 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     m_fileView = new FileViewTree(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition,
                                   wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1, -1)),
-                                  wxTR_MULTIPLE | wxTR_NO_LINES | wxTR_HAS_BUTTONS);
+                                  wxTR_MULTIPLE | wxTR_NO_LINES | wxTR_HAS_BUTTONS | wxBORDER_THEME);
 
-    boxSizer619->Add(m_fileView, 1, wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer619->Add(m_fileView, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     SetName(wxT("WorkspaceTabBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

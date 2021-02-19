@@ -71,15 +71,12 @@ void clThemedListCtrlBase::ApplyTheme()
 
     // When not using custom colours, use system defaults
     if(!useCustomColour) {
-        colours.SetSelItemBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-#ifdef __WXOSX__
-        colours.SetSelItemBgColourNoFocus(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-#else
-        colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
-#endif
+        wxColour selColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+        colours.SetSelItemBgColour(selColour);
+        colours.SetSelItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+        colours.SetSelItemBgColourNoFocus(selColour.ChangeLightness(150));
+        colours.SetSelItemTextColourNoFocus(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
     }
-    // When using custom bg colour, don't use native drawings
-    this->SetNativeTheme(!useCustomColour);
     this->SetColours(colours);
 }
 
@@ -97,11 +94,5 @@ clThemedOrderedListCtrl::clThemedOrderedListCtrl(wxWindow* parent, wxWindowID id
                                                  const wxSize& size, long style)
     : clThemedListCtrlBase(parent, id, pos, size, (style | LIST_STYLE))
 {
-    // auto sort_func = [this](clRowEntry* a, clRowEntry* b) {
-    //     size_t column = this->GetSortedColumn();
-    //     const wxString& label_a = a->GetLabel(column);
-    //     const wxString& label_b = a->GetLabel(column);
-    //     return (label_b.CmpNoCase(label_a) < 0);
-    // };
     SetSortFunction(nullptr);
 }

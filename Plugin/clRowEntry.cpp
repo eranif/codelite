@@ -80,6 +80,7 @@ struct clClipperHelper {
 
 void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
+    wxColour c = win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus();
 #ifdef __WXMSW__
     if(m_tree->IsNativeTheme()) {
         int flags = wxCONTROL_SELECTED;
@@ -89,13 +90,13 @@ void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect
         wxRendererNative::Get().DrawItemSelectionRect(win, dc, rect, flags);
 
     } else {
-        dc.SetPen(win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
-        dc.SetBrush(win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
+        dc.SetPen(c);
+        dc.SetBrush(c);
         dc.DrawRectangle(rect);
     }
 #else
-    dc.SetPen(win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
-    dc.SetBrush(win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus());
+    dc.SetPen(c);
+    dc.SetBrush(c);
     dc.DrawRectangle(rect);
 #endif
 }

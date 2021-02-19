@@ -65,9 +65,6 @@ void clThemedTreeCtrl::ApplyTheme()
         colours.InitFromColour(baseColour);
     }
 
-    // Use alternate line colours for light trees only
-    // EnableStyle(wxTR_ROW_LINES, !DrawingUtils::IsDark(baseColour));
-
     // Set the built-in search colours
     wxColour highlightColur = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
@@ -76,14 +73,12 @@ void clThemedTreeCtrl::ApplyTheme()
 
     // When not using custom colours, use system defaults
     if(!useCustomColour) {
-        colours.SetSelItemBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-#ifdef __WXOSX__
-        colours.SetSelItemBgColourNoFocus(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-#else
-        colours.SetSelItemBgColourNoFocus(colours.GetSelItemBgColour().ChangeLightness(110));
-#endif
+        wxColour selColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+        colours.SetSelItemBgColour(selColour);
+        colours.SetSelItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+        colours.SetSelItemBgColourNoFocus(selColour.ChangeLightness(150));
+        colours.SetSelItemTextColourNoFocus(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
     }
     // When using custom bg colour, don't use native drawings
-    this->SetNativeTheme(!useCustomColour);
     this->SetColours(colours);
 }

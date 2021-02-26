@@ -1,8 +1,8 @@
-#include "clThemedSplitterWindow.h"
-#include <wx/dcbuffer.h>
 #include "clSystemSettings.h"
-#include "event_notifier.h"
+#include "clThemedSplitterWindow.h"
 #include "drawingutils.h"
+#include "event_notifier.h"
+#include <wx/dcbuffer.h>
 
 clThemedSplitterWindow::clThemedSplitterWindow(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                                long style, const wxString& name)
@@ -12,9 +12,11 @@ clThemedSplitterWindow::clThemedSplitterWindow(wxWindow* parent, wxWindowID id, 
 
 clThemedSplitterWindow::~clThemedSplitterWindow()
 {
+#ifndef __WXGTK__
     Unbind(wxEVT_PAINT, &clThemedSplitterWindow::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &clThemedSplitterWindow::OnEraseBg, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedSplitterWindow::OnSysColoursChanged, this);
+#endif
 }
 
 bool clThemedSplitterWindow::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
@@ -22,16 +24,20 @@ bool clThemedSplitterWindow::Create(wxWindow* parent, wxWindowID id, const wxPoi
 {
     wxUnusedVar(style);
     bool res = wxSplitterWindow::Create(parent, id, pos, size, wxSP_LIVE_UPDATE | wxBORDER_NONE, name);
-    if(!res) { return false; }
-
+    if(!res) {
+        return false;
+    }
+#ifndef __WXGTK__
     Bind(wxEVT_PAINT, &clThemedSplitterWindow::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clThemedSplitterWindow::OnEraseBg, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedSplitterWindow::OnSysColoursChanged, this);
+#endif
     return res;
 }
 
 void clThemedSplitterWindow::OnPaint(wxPaintEvent& event)
 {
+    wxUnusedVar(event);
     wxAutoBufferedPaintDC dc(this);
     DoDrawSash(dc);
 }
@@ -57,6 +63,10 @@ void clThemedSplitterWindow::OnSysColoursChanged(clCommandEvent& event)
 
 void clThemedSplitterWindow::DrawSash(wxDC& dc)
 {
+#ifdef __WXGTK__
+    wxSplitterWindow::DrawSash(dc);
+#else
     wxUnusedVar(dc);
     Refresh();
+#endif
 }

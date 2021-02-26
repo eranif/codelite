@@ -483,8 +483,8 @@ if ( MAKE_DEB )
     message("-- Distro name: ${distro}")
     
     set(DEB_DEPS "")
-    if ( ${distro} STREQUAL "debian_9" )
-        set(DEB_DEPS "clang-tools-7, clang-format-9")
+    if ( ${distro} STREQUAL "debian_10" )
+        set(DEB_DEPS "clang-tools-7, clang-format-10")
     endif()
     
     if ( ${distro} STREQUAL "ubuntu_1804" )

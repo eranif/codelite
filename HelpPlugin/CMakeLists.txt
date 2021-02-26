@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 # set the plugin name here
 set( PLUGIN_NAME "HelpPlugin")

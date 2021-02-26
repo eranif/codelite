@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 3.0)
 
 find_library(LIBHUNSPELL 
             # Fedora doesn't create a hunspell->hunspell-1.3 symlink, so explicitly look for (the current) full name

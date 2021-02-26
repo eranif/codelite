@@ -3,7 +3,7 @@
 #
 
 # Don't support very old versions
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 3.0)
 
 # Create variable for plugin name
 set(PLUGIN_NAME "CMakePlugin")

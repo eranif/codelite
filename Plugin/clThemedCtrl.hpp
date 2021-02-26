@@ -4,7 +4,9 @@
 #include "ColoursAndFontsManager.h"
 #include "clColours.h"
 #include "clSystemSettings.h"
+#include "drawingutils.h"
 #include "lexer_configuration.h"
+
 namespace cl
 {
 template <typename T> void ApplyTheme(T* ctrl)
@@ -26,14 +28,20 @@ template <typename T> void ApplyTheme(T* ctrl)
     colours.SetMatchedItemBgText(highlightColur);
     colours.SetMatchedItemText(textColour);
 
-    // When not using custom colours, use system defaults
-    if(!useCustomColour) {
-        wxColour selColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-        colours.SetSelItemBgColour(selColour);
-        colours.SetSelItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-        colours.SetSelItemBgColourNoFocus(selColour.ChangeLightness(150));
-        colours.SetSelItemTextColourNoFocus(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
+    if(!lexer) {
+        lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
+
+    // When not using custom colours, use system defaults
+    auto& prop = lexer->GetProperty(SEL_TEXT_ATTR_ID);
+    wxColour selBgColour = prop.GetBgColour();
+    wxColour selTextColour = prop.GetFgColour();
+    colours.SetSelItemBgColour(selBgColour);
+    colours.SetSelItemTextColour(selTextColour);
+    colours.SetSelItemBgColourNoFocus(colours.IsLightTheme() ? selBgColour.ChangeLightness(120)
+                                                             : selBgColour.ChangeLightness(80));
+    colours.SetSelItemTextColourNoFocus(selTextColour);
     ctrl->SetColours(colours);
 }
 

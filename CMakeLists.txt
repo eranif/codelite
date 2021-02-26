@@ -484,15 +484,15 @@ if ( MAKE_DEB )
     
     set(DEB_DEPS "")
     if ( ${distro} STREQUAL "debian_9" )
-        set(DEB_DEPS "clang-tools-7")
+        set(DEB_DEPS "clang-tools-7, libncurses5")
     endif()
     
     if ( ${distro} STREQUAL "ubuntu_1804" )
-        set(DEB_DEPS "clangd-10")
+        set(DEB_DEPS "clangd-10, libncurses5")
     endif()
     
     if ( ${distro} STREQUAL "ubuntu_2004" )
-        set(DEB_DEPS "clangd-10")
+        set(DEB_DEPS "clangd-10, libncurses5")
     endif()
     
     message("-- Generating deb target")

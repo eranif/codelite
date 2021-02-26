@@ -1,8 +1,10 @@
 #ifndef CLFSWNEWCONFIGDLG_H
 #define CLFSWNEWCONFIGDLG_H
-#include "clFileSystemWorkspaceDlgBase.h"
 
-class clFSWNewConfigDlg : public clFSWNewConfigDlgBase
+#include "clFileSystemWorkspaceDlgBase.h"
+#include "codelite_exports.h"
+
+class WXDLLIMPEXP_SDK clFSWNewConfigDlg : public clFSWNewConfigDlgBase
 {
 public:
     clFSWNewConfigDlg(wxWindow* parent);

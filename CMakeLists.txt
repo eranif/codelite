@@ -61,6 +61,7 @@ else()
 endif()
 
 include(FindSqlite3)
+include(UtilsHelper)
 
 if(NOT SQLITE3_FOUND)
     set(SQLITE3_INCLUDE_DIR ${CL_SRC_ROOT}/sqlite3)
@@ -478,6 +479,22 @@ message("-- ARCH_NAME ${ARCH_NAME}")
 ## CPack
 ##############################################
 if ( MAKE_DEB )
+    get_distro_name(distro)
+    message("Distro name: ${distro}")
+    
+    set(DEB_DEPS "")
+    if ( ${distro} STREQUAL "debian_9" )
+        set(DEB_DEPS "clang-tools-7")
+    endif()
+    
+    if ( ${distro} STREQUAL "ubuntu_1804" )
+        set(DEB_DEPS "clangd-10")
+    endif()
+    
+    if ( ${distro} STREQUAL "ubuntu_2004" )
+        set(DEB_DEPS "clangd-10")
+    endif()
+    
     message("-- Generating deb target")
     if( ${ARCH} EQUAL 32 )
         message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE i386")
@@ -505,7 +522,7 @@ if ( MAKE_DEB )
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY     "optional")
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential, git, subversion, gdb, xterm, gcc, g++")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libncurses5")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS      "${DEB_DEPS}")
     set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
     set(CPACK_PACKAGE_DESCRIPTION_FILE    "${CL_SRC_ROOT}/DESC")
     set(CPACK_STRIP_FILES TRUE)

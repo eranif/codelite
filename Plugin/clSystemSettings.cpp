@@ -1,8 +1,9 @@
 #include "clSystemSettings.h"
 #include "cl_config.h"
-#include "event_notifier.h"
 #include "codelite_events.h"
+#include "event_notifier.h"
 #include "theme_handler_helper.h"
+#include "wx/app.h"
 
 bool clSystemSettings::m_useCustomColours = false;
 clColours clSystemSettings::m_customColours;
@@ -17,11 +18,13 @@ clSystemSettings::clSystemSettings()
         m_customColours.InitFromColour(baseColour);
     }
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clSystemSettings::OnColoursChanged, this);
+    wxTheApp->Bind(wxEVT_SYS_COLOUR_CHANGED, &clSystemSettings::OnSystemColourChanged, this);
 }
 
 clSystemSettings::~clSystemSettings()
 {
-    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clSystemSettings::OnColoursChanged, this);
+    // EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clSystemSettings::OnColoursChanged, this);
+    // wxTheApp->Unbind(wxEVT_SYS_COLOUR_CHANGED, &clSystemSettings::OnSystemColourChanged, this);
 }
 
 wxColour clSystemSettings::GetColour(wxSystemColour index)
@@ -51,6 +54,23 @@ wxColour clSystemSettings::GetColour(wxSystemColour index)
 void clSystemSettings::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
+    DoColourChangedEvent();
+}
+
+clSystemSettings& clSystemSettings::Get()
+{
+    static clSystemSettings settings;
+    return settings;
+}
+
+void clSystemSettings::OnSystemColourChanged(wxSysColourChangedEvent& event)
+{
+    event.Skip();
+    DoColourChangedEvent();
+}
+
+void clSystemSettings::DoColourChangedEvent()
+{
     m_useCustomColours = clConfig::Get().Read("UseCustomBaseColour", false);
     if(m_useCustomColours) {
         wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
@@ -60,14 +80,8 @@ void clSystemSettings::OnColoursChanged(clCommandEvent& event)
         ThemeHandlerHelper helper(EventNotifier::Get()->TopFrame());
         helper.UpdateNotebookColours(EventNotifier::Get()->TopFrame());
     }
-    
+
     // Notify about colours changes
     clCommandEvent evtColoursChanged(wxEVT_SYS_COLOURS_CHANGED);
     EventNotifier::Get()->AddPendingEvent(evtColoursChanged);
-}
-
-clSystemSettings& clSystemSettings::Get()
-{
-    static clSystemSettings settings;
-    return settings;
 }

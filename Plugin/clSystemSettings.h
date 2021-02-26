@@ -1,11 +1,11 @@
 #ifndef CLSYSTEMSETTINGS_H
 #define CLSYSTEMSETTINGS_H
 
-#include <wx/settings.h>
+#include "clColours.h"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include <wx/event.h>
-#include "cl_command_event.h"
-#include "clColours.h"
+#include <wx/settings.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SYS_COLOURS_CHANGED, clCommandEvent);
 class WXDLLIMPEXP_SDK clSystemSettings : public wxEvtHandler, public wxSystemSettings
@@ -15,6 +15,8 @@ class WXDLLIMPEXP_SDK clSystemSettings : public wxEvtHandler, public wxSystemSet
 
 protected:
     void OnColoursChanged(clCommandEvent& event);
+    void OnSystemColourChanged(wxSysColourChangedEvent& event);
+    void DoColourChangedEvent();
     clSystemSettings();
 
 public:

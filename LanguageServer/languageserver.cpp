@@ -108,12 +108,8 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
     // launch a thread to locate any LSP installed on this machine
     if(LanguageServerConfig::Get().GetServers().empty()) {
         clDEBUG() << "Scanning..." << clEndl;
-#if 1
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {
-#else
-        LanguageServerPlugin* plugin = this;
-#endif
                 std::vector<LSPDetector::Ptr_t> matches;
                 LSPDetectorManager detector;
                 clDEBUG() << "***"
@@ -126,11 +122,9 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
                           << "Scanning for LSPs... is done ***" << clEndl;
                 clDEBUG() << "*** Calling   ConfigureLSPs" << clEndl;
                 plugin->CallAfter(&LanguageServerPlugin::ConfigureLSPs, matches);
-#if 1
             },
             this);
         thr.detach();
-#endif
     }
 }
 
@@ -187,8 +181,23 @@ void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& 
     }
 
     LanguageServerConfig& config = LanguageServerConfig::Get();
+    // remove clangd installed under ~/.codelite/lsp/clang-tools
+    wxArrayString serversToRemove;
+    for(const auto& server : config.GetServers()) {
+        if(server.second.GetCommand().Contains(".codelite/lsp/clang-tools")) {
+            serversToRemove.Add(server.first);
+        }
+    }
+
+    bool force = !serversToRemove.IsEmpty();
+    // remove all old entries
+    for(const auto& name : serversToRemove) {
+        clSYSTEM() << "Removing broken LSP server:" << name << endl;
+        config.RemoveServer(name);
+    }
+
     clDEBUG() << "ConfigureLSPs: there are currently" << config.GetServers().size() << "LSPs configured" << clEndl;
-    if(config.GetServers().empty()) {
+    if(config.GetServers().empty() || force) {
         clDEBUG() << "No LSPs configured - auto configuring" << clEndl;
         // Only if the user did not configure LSP before, we configure it for him
         for(auto lsp : lsps) {

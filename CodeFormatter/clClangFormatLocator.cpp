@@ -16,7 +16,13 @@ clClangFormatLocator::~clClangFormatLocator() {}
 bool clClangFormatLocator::Locate(wxString& clangFormat)
 {
 #ifdef __WXGTK__
-    wxFileName fnClangFormat("/usr/bin", "");
+    wxFileName fnClangFormat("/usr/bin", "clang-format");
+    if(fnClangFormat.FileExists()) {
+        clSYSTEM() << "Fonund clang-format ==>" << fnClangFormat << endl;
+        clangFormat = fnClangFormat.GetFullPath();
+        return true;
+    }
+    
     wxArrayString suffix;
     for(size_t i = 20; i >= 7; --i) {
         fnClangFormat.SetFullName(wxString() << "clang-format-" << i);

@@ -25,6 +25,7 @@ bool LSPClangdDetector::DoLocate()
         ConfigureFile(clangdExe);
         return true;
     }
+
 #elif defined(__WXOSX__)
     // Try the installation folder first
     wxFileName clangdExe(clStandardPaths::Get().GetBinaryFullPath("clangd"));
@@ -33,7 +34,13 @@ bool LSPClangdDetector::DoLocate()
         return true;
     }
 #elif defined(__WXGTK__)
-    wxFileName fnClangdExe("/usr/bin", "");
+    // try the obvious name first: "clangd"
+    wxFileName fnClangdExe("/usr/bin", "clangd");
+    if(fnClangdExe.FileExists()) {
+        clSYSTEM() << "Fonund clangd ==>" << fnClangdExe << endl;
+        ConfigureFile(fnClangdExe);
+        return true;
+    }
     wxArrayString suffix;
     for(size_t i = 20; i >= 7; --i) {
         fnClangdExe.SetFullName(wxString() << "clangd-" << i);

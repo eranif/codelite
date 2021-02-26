@@ -9,6 +9,13 @@
    "excludePaths": "/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm",
    "debugger": "GNU gdb debugger"
   }, {
+   "name": "Debug GTK2",
+   "targets": [["CMake", "mkdir -p build-debug-gtk2 && cd build-debug-gtk2 && cmake .. -DWITH_WXPATH=$HOME/devl/wxWidgets/build-release-gtk2 -DMAKE_DEB=1 -DCOPY_WX_LIBS=1 -DCMAKE_BUILD_TYPE=Debug -DCL_PREFIX=$HOME/root"], ["build", "mkdir -p build-debug-gtk2 && cd build-debug-gtk2 && make -j$(nproc)"], ["clean", "mkdir -p build-debug-gtk2 && cd build-debug-gtk2 && make -j$(nproc) clean"]],
+   "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.py;*.php;*.rb;*.html;*.js",
+   "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
+   "excludePaths": "/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm",
+   "debugger": "GNU gdb debugger"
+  }, {
    "name": "Release",
    "targets": [["Make package", "cmake --version && cd build-release && make -j$(nproc) package"], ["Run CMake", "mkdir -p build-release && cd build-release && cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1"], ["build", "cd build-release && make -j$(nproc)"], ["clean", "cd  build-release && make -j$(nproc) clean"]],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.plist;*.iss",

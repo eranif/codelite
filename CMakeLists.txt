@@ -480,7 +480,7 @@ message("-- ARCH_NAME ${ARCH_NAME}")
 ##############################################
 if ( MAKE_DEB )
     get_distro_name(distro)
-    message("Distro name: ${distro}")
+    message("-- Distro name: ${distro}")
     
     set(DEB_DEPS "")
     if ( ${distro} STREQUAL "debian_9" )

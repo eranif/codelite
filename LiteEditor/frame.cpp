@@ -1060,7 +1060,7 @@ void clMainFrame::CreateGUIControls()
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
     // Get the best caption size
     int captionSize = GetBestXButtonSize(this);
-    int extra = ::clGetSize(6, this);
+    int extra = ::clGetSize(8, this);
     captionSize += extra;
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);

@@ -78,18 +78,18 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
     return ret;
 }
 
-static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour)
+static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColour& textColour)
 {
-    auto conf = ColoursAndFontsManager::Get().GetLexer("text");
-    if(!conf) {
-        bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-        penColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+    wxColour baseColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    bgColour = baseColour.ChangeLightness(DrawingUtils::IsDark(baseColour) ? 110 : 90);
+    penColour = baseColour.ChangeLightness(80);
+    textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+}
 
-    } else {
-        auto& prop = conf->GetProperty(0);
-        bgColour = prop.GetBgColour();
-        penColour = prop.GetFgColour();
-    }
+static wxColour clDockArtSashColour()
+{
+    wxColour baseColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    return baseColour.ChangeLightness(DrawingUtils::IsDark(baseColour) ? 80 : 120);
 }
 
 // ------------------------------------------------------------
@@ -155,8 +155,8 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
     }
 
     // Prepare the colours
-    wxColour bgColour, penColour;
-    clDockArtGetColours(bgColour, penColour);
+    wxColour bgColour, penColour, textColour;
+    clDockArtGetColours(bgColour, penColour, textColour);
 
     switch(button) {
     case wxAUI_BUTTON_CLOSE:
@@ -245,11 +245,18 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         pDC->SetFont(f);
 
-        wxColour captionBgColour, textColour;
-        clDockArtGetColours(captionBgColour, textColour);
+        wxColour captionBgColour, penColour, textColour;
+        clDockArtGetColours(captionBgColour, penColour, textColour);
 
+        // we inflat the rect by 1 to fix a one pixel glitch
         pDC->SetPen(captionBgColour);
         pDC->SetBrush(captionBgColour);
+        tmpRect.Inflate(1);
+        pDC->DrawRectangle(tmpRect);
+
+        // restore the rect and draw with the border (pen)
+        tmpRect.Deflate(1);
+        pDC->SetPen(penColour);
         pDC->DrawRectangle(tmpRect);
 
         int caption_offset = 5;
@@ -291,7 +298,13 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    return wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
+    wxUnusedVar(orientation);
+    wxUnusedVar(window);
+
+    wxColour c = clDockArtSashColour();
+    dc.SetPen(c);
+    dc.SetBrush(c);
+    dc.DrawRectangle(rect);
 }
 
 void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)

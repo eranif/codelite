@@ -107,6 +107,7 @@ void MainBook::CreateGuiControls()
     if(clConfig::Get().Read("HideTabBar", false)) {
         style |= kNotebook_HideTabBar;
     }
+    style |= wxBORDER_SIMPLE;
 
     // load the notebook style from the configuration settings
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);

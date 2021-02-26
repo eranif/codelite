@@ -5,10 +5,44 @@
 #include "theme_handler_helper.h"
 #include "wx/app.h"
 
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
+#endif
+
 bool clSystemSettings::m_useCustomColours = false;
 clColours clSystemSettings::m_customColours;
 
 wxDEFINE_EVENT(wxEVT_SYS_COLOURS_CHANGED, clCommandEvent);
+
+#if 0
+static GtkWidget* gs_tlw_parent = nullptr;
+static GtkContainer* GetContainerWidget()
+{
+    static GtkContainer* s_widget;
+    if(s_widget == NULL) {
+        s_widget = GTK_CONTAINER(gtk_fixed_new());
+        g_object_add_weak_pointer(G_OBJECT(s_widget), (void**)&s_widget);
+        gs_tlw_parent = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        gtk_container_add(GTK_CONTAINER(gs_tlw_parent), GTK_WIDGET(s_widget));
+    }
+    return s_widget;
+}
+
+static GtkWidget* GetHeaderBarWidget()
+{
+    static GtkWidget* s_widget;
+    if(s_widget == NULL) {
+        s_widget = gtk_toolbar_new();
+        g_object_add_weak_pointer(G_OBJECT(s_widget), (void**)&s_widget);
+        gtk_container_add(GetContainerWidget(), s_widget);
+        gtk_widget_ensure_style(s_widget);
+    }
+    return s_widget;
+}
+
+static const GtkStyle* GtkHeaderbarStyle() { return gtk_widget_get_style(GetHeaderBarWidget()); }
+
+#endif
 
 clSystemSettings::clSystemSettings()
 {
@@ -27,9 +61,15 @@ clSystemSettings::~clSystemSettings()
     // wxTheApp->Unbind(wxEVT_SYS_COLOUR_CHANGED, &clSystemSettings::OnSystemColourChanged, this);
 }
 
-wxColour clSystemSettings::GetColour(wxSystemColour index)
+wxColour clSystemSettings::GetColour(int index)
 {
     if(m_useCustomColours) {
+        if(index == wxSYS_COLOUR_TOOLBAR) {
+            return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
+            return m_customColours.GetItemTextColour();
+        }
+        // fallback
         switch(index) {
         case wxSYS_COLOUR_3DFACE:
         case wxSYS_COLOUR_LISTBOX:
@@ -44,10 +84,19 @@ wxColour clSystemSettings::GetColour(wxSystemColour index)
         case wxSYS_COLOUR_GRAYTEXT:
             return m_customColours.GetGrayText();
         default:
-            return wxSystemSettings::GetColour(index);
+            return wxSystemSettings::GetColour((wxSystemColour)index);
         }
     } else {
-        return wxSystemSettings::GetColour(index);
+#ifdef __WXGTK__
+        if(index == wxSYS_COLOUR_TOOLBAR) {
+            return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+            //return wxColor(GtkHeaderbarStyle()->bg[GTK_STATE_NORMAL]);
+        } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
+            return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+            //return wxColor(GtkHeaderbarStyle()->fg[GTK_STATE_NORMAL]);
+        }
+#endif
+        return wxSystemSettings::GetColour((wxSystemColour)index);
     }
 }
 

@@ -321,26 +321,32 @@ wxColour DrawingUtils::GetMenuTextColour() { return clSystemSettings::GetColour(
 wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 {
 #ifdef __WXMSW__
+    wxUnusedVar(miniToolbar);
     return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #elif defined(__WXOSX__)
     wxUnusedVar(miniToolbar);
     return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #else
-    wxUnusedVar(miniToolbar);
-    return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-//    return miniToolbar ? clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
-//                       : clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    return miniToolbar ? clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
+                       : clSystemSettings::GetColour(wxSYS_COLOUR_TOOLBAR);
 #endif
 }
 
 void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniToolbar)
 {
-    wxUnusedVar(miniToolbar);
-#ifdef __WXOSX__
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+#ifdef __WXGTK__
+    wxColour c = GetMenuBarBgColour(miniToolbar);
+    dc.SetPen(c);
+    dc.SetBrush(c);
+    dc.DrawRectangle(rect);
+
+#elif defined(__WXOSX__)
+    wxColour c = GetMenuBarBgColour(miniToolbar);
+    dc.SetPen(c);
+    dc.SetBrush(c);
     dc.DrawRectangle(rect);
 #else
+    wxUnusedVar(miniToolbar);
     wxRect topRect = rect;
     topRect.SetHeight((rect.GetHeight() / 8) * 7);
     wxRect bottomRect = rect;

@@ -19,16 +19,17 @@
 #include <wx/renderer.h>
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
+#include "clSystemSettings.h"
 
 wxDEFINE_EVENT(wxEVT_TOOLBAR_CUSTOMISE, wxCommandEvent);
 clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style,
                      const wxString& name)
     : wxPanel(parent, winid, pos, size, style, name)
     , m_popupShown(false)
-    , m_flags(0)
+    , m_flags(kMiniToolBar)
 {
     SetGroupSpacing(30);
-    m_bgColour = DrawingUtils::GetPanelBgColour();
+    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
     m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
     if(m_useCustomBgColour) {
         m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour);
@@ -36,7 +37,6 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
 
     SetGroupSpacing(50);
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    SetMiniToolBar(true);
 
     Bind(wxEVT_PAINT, &clToolBar::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &clToolBar::OnEraseBackground, this);
@@ -57,7 +57,7 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
         }
     });
 
-    m_bgColour = DrawingUtils::GetPanelBgColour();
+    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clToolBar::OnColoursChanged, this);
 }
 
@@ -669,7 +669,7 @@ int clToolBar::GetYSpacer() const
 void clToolBar::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    m_bgColour = DrawingUtils::GetPanelBgColour();
+    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
     m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
     if(m_useCustomBgColour) {
         m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour);

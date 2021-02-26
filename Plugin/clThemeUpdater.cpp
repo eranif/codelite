@@ -53,9 +53,11 @@ void clThemeUpdater::RegisterWindow(wxWindow* win)
 
     clDEBUG() << "clThemeUpdater::RegisterWindow(): is called:" << (unsigned long long)win << clEndl;
     // we want to know when this window is destroyed so we could remove it
+#ifdef __WXMSW__
     win->Bind(wxEVT_DESTROY, &clThemeUpdater::OnWindowDestroyed, this);
     win->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     win->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+#endif
     m_windows.insert(win);
 }
 
@@ -64,7 +66,9 @@ void clThemeUpdater::UnRegisterWindow(wxWindow* win)
     if(m_windows.count(win)) {
         // disconnect the destory event
         clDEBUG() << "clThemeUpdater::UnRegisterWindow(): is called:" << (unsigned long long)(win) << clEndl;
+#ifdef __WXMSW__
         win->Unbind(wxEVT_DESTROY, &clThemeUpdater::OnWindowDestroyed, this);
+#endif
         m_windows.erase(win);
     }
 }

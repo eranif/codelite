@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ColoursAndFontsManager.h"
 #include "clStatusBar.h"
 #include "clSystemSettings.h"
 #include "clTabRenderer.h"
@@ -79,9 +80,16 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 
 static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour)
 {
-    bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
-    bgColour = bgColour.ChangeLightness(80);
-    penColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    auto conf = ColoursAndFontsManager::Get().GetLexer("text");
+    if(!conf) {
+        bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+        penColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+
+    } else {
+        auto& prop = conf->GetProperty(0);
+        bgColour = prop.GetBgColour();
+        penColour = prop.GetFgColour();
+    }
 }
 
 // ------------------------------------------------------------
@@ -273,38 +281,17 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    if(!IsRectOK(dc, rect))
-        return;
-    wxUnusedVar(window);
-    wxUnusedVar(orientation);
-    dc.SetPen(m_bgColour);
-    dc.SetBrush(m_bgColour);
-    dc.DrawRectangle(rect);
+    return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
-    if(!IsRectOK(dc, rect))
-        return;
-    dc.SetPen(m_bgColour);
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawRectangle(rect);
+    return wxAuiDefaultDockArt::DrawBorder(dc, window, rect, pane);
 }
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    if(!IsRectOK(dc, rect))
-        return;
-
-    wxUnusedVar(window);
-    wxUnusedVar(orientation);
-
-    wxColour c = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    c = c.ChangeLightness(DrawingUtils::IsDark(c) ? 115 : 85);
-
-    dc.SetPen(c);
-    dc.SetBrush(c);
-    dc.DrawRectangle(rect);
+    return wxAuiDefaultDockArt::DrawSash(dc, window, orientation, rect);
 }
 
 void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)

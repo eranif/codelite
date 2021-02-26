@@ -59,6 +59,7 @@
 #include <wx/splash.h>
 
 // forward decls
+class OnSysColoursChanged;
 class DebuggerToolBar;
 class clToolBar;
 class WebUpdateJob;
@@ -147,11 +148,13 @@ public:
 
 protected:
     bool IsEditorEvent(wxEvent& event);
+    void DoSysColoursChanged();
     void DoCreateBuildDropDownMenu(wxMenu* menu);
     void DoShowToolbars(bool show, bool update = true);
     void InitializeLogo();
     void DoFullscreen(bool b);
     void DoShowMenuBar(bool show);
+    void OnSysColoursChanged(clCommandEvent& event);
 
 public:
     void Raise() override;

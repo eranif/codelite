@@ -823,6 +823,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
     EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, &clMainFrame::OnRenameSymbol, this);
     EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
     // Start the code completion manager, we do this by calling it once
     CodeCompletionManager::Get();
 
@@ -930,6 +931,7 @@ clMainFrame::~clMainFrame(void)
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL,
                                      this);
     wxDELETE(m_timer);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
 
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
@@ -1056,7 +1058,6 @@ void clMainFrame::CreateGUIControls()
     SetAUIManagerFlags();
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
-
     // Get the best caption size
     int captionSize = GetBestXButtonSize(this);
     int extra = ::clGetSize(6, this);
@@ -1271,6 +1272,7 @@ void clMainFrame::CreateGUIControls()
     GetDebuggerPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("debugger_view_rmenu")));
     GetOutputPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu(wxT("outputview_view_rmenu")));
 
+    DoSysColoursChanged();
     m_mgr.Update();
     SetAutoLayout(true);
 
@@ -1363,7 +1365,12 @@ void clMainFrame::CreateToolBar(int toolSize)
         wxDELETE(m_toolbar);
     }
 
-    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER | wxTB_FLAT);
+    long style = wxTB_FLAT;
+#ifndef __WXGTK__
+    style |= wxTB_NODIVIDER;
+#endif
+
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_toolbar->SetMiniToolBar(false); // We want main toolbar
     m_toolbar->EnableCustomisation(true);
@@ -4846,7 +4853,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
     // Set the manager flags
-    unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING;
+    unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_ALLOW_ACTIVE_PANE;
 
     int dockingStyle = EditorConfigST::Get()->GetOptions()->GetDockingStyle();
     switch(dockingStyle) {
@@ -4861,10 +4868,6 @@ void clMainFrame::SetAUIManagerFlags()
         break;
     }
     auiMgrFlags |= wxAUI_MGR_LIVE_RESIZE;
-    //#if defined(__WXGTK__) && !defined(__WXGTK3__)
-    // GTK2, remove live-resize flag
-    // auiMgrFlags &= ~wxAUI_MGR_LIVE_RESIZE;
-    //#endif
     m_mgr.SetFlags(auiMgrFlags);
 }
 
@@ -6044,3 +6047,22 @@ void clMainFrame::DoShowMenuBar(bool show)
 }
 
 wxMenuBar* clMainFrame::GetMenuBar() const { return wxFrame::GetMenuBar(); }
+
+void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
+{
+    event.Skip();
+    DoSysColoursChanged();
+}
+
+void clMainFrame::DoSysColoursChanged()
+{
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
+                                     clSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
+                                     clSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION));
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
+                                     clSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION));
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
+                                     clSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTINACTIVECAPTION));
+    m_mgr.Update();
+}

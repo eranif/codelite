@@ -227,4 +227,29 @@ public:
     virtual ~NewFileSystemWorkspaceDialogBase();
 };
 
+class clFSWNewConfigDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText231;
+    wxTextCtrl* m_textCtrlName;
+    wxStaticText* m_staticText235;
+    wxChoice* m_choiceCopyFrom;
+    wxStdDialogButtonSizer* m_stdBtnSizer223;
+    wxButton* m_button225;
+    wxButton* m_button227;
+
+protected:
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText231() { return m_staticText231; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText235() { return m_staticText235; }
+    wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }
+    clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Configurtion"),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~clFSWNewConfigDlgBase();
+};
+
 #endif

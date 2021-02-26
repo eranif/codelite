@@ -12,6 +12,13 @@
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 
+static wxString GetDisplayName(const wxFileName& fn)
+{
+    wxString displayName;
+    displayName << fn.GetDirs().Last() << wxFileName::GetPathSeparator() << fn.GetFullName();
+    return displayName;
+}
+
 NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
     : NewFormWizardBaseClass(parent)
     , m_mgr(mgr)
@@ -56,8 +63,8 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
     }
 
     // Populate the *wxcp files
-    wxStringSet_t uniqueFiles;
-    wxArrayString wxcp_files;
+    std::set<wxString> uniqueFiles;
+    std::vector<std::pair<wxString, wxString>> wxcp_files;
 
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         wxArrayString allFiles;
@@ -68,27 +75,29 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
             if(fn.GetExt().Lower() == "wxcp") {
                 if(uniqueFiles.count(filename) == 0) {
                     uniqueFiles.insert(filename);
-                    wxcp_files.Add(filename);
+
+                    // we keep {display name:fullpath} pairs
+                    wxcp_files.push_back({ GetDisplayName(fn), fn.GetFullPath() });
                 }
             }
         }
 
-        wxcp_files.Sort();
-        m_choiceWxcp->Append(wxcp_files);
+        for(const auto& p : wxcp_files) {
+            m_choiceWxcp->Append(p.first, new wxStringClientData(p.second));
+        }
     }
 
-#if STANDALONE_BUILD
     if(wxcProjectMetadata::Get().IsLoaded()) {
-        m_choiceWxcp->Append(wxcProjectMetadata::Get().GetProjectFile());
+        wxFileName fn(wxcProjectMetadata::Get().GetProjectFile());
+        m_choiceWxcp->Append(GetDisplayName(fn), new wxStringClientData(fn.GetFullPath()));
     }
-#endif
 
-    if(m_choiceWxcp->IsEmpty() == false) {
+    if(!m_choiceWxcp->IsEmpty()) {
         m_choiceWxcp->SetSelection(0);
     }
 
     wxFileName fnProject(wxcProjectMetadata::Get().GetProjectFile());
-    int where = m_choiceWxcp->FindString(fnProject.GetFullPath());
+    int where = m_choiceWxcp->FindString(GetDisplayName(fnProject));
     if(where != wxNOT_FOUND) {
         m_choiceWxcp->SetSelection(where);
     }
@@ -96,23 +105,7 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
 
 NewFormWizard::~NewFormWizard() {}
 
-void NewFormWizard::OnFormTypeSelected(wxCommandEvent& event)
-{
-    event.Skip();
-    wxString type = m_choiceFormType->GetStringSelection();
-
-    wxArrayString commercialForms;
-    commercialForms.Add("wxImageList");
-    commercialForms.Add("wxPopupWindow");
-
-    if(commercialForms.Index(type) != wxNOT_FOUND && !wxcSettings::Get().IsLicensed()) {
-        // A commercial form was selected, but this wxC is not
-        // don't let the user to proceed from there
-        ::wxMessageBox(wxString() << _("'") << type << _("' is not available in the free edition of wxCrafter"),
-                       "wxCrafter", wxICON_WARNING | wxOK | wxCENTER, this);
-        m_choiceFormType->SetSelection(0); // reset the selection to 'wxFrame' (index 0)
-    }
-}
+void NewFormWizard::OnFormTypeSelected(wxCommandEvent& event) { event.Skip(); }
 
 void NewFormWizard::OnSelectVirtualFolder(wxCommandEvent& event)
 {
@@ -225,9 +218,10 @@ void NewFormWizard::OnNewWxcpProject(wxCommandEvent& event)
     wxFileName fn(newfile);
     fn.SetExt(wxT("wxcp"));
 
-    int where = m_choiceWxcp->FindString(fn.GetFullPath());
+    wxString displayName = GetDisplayName(fn);
+    int where = m_choiceWxcp->FindString(displayName);
     if(where == wxNOT_FOUND) {
-        int newpos = m_choiceWxcp->Append(fn.GetFullPath());
+        int newpos = m_choiceWxcp->Append(displayName, new wxStringClientData(fn.GetFullPath()));
         m_choiceWxcp->SetSelection(newpos);
 
     } else {
@@ -238,7 +232,13 @@ void NewFormWizard::OnNewWxcpProject(wxCommandEvent& event)
 
 wxString NewFormWizard::GetWxcpFile() const
 {
-    wxFileName fn(m_choiceWxcp->GetStringSelection());
+    int selection = m_choiceWxcp->GetSelection();
+    if(selection == wxNOT_FOUND) {
+        return "";
+    }
+
+    wxStringClientData* cd = reinterpret_cast<wxStringClientData*>(m_choiceWxcp->GetClientObject(selection));
+    wxFileName fn(cd->GetData());
     return fn.GetFullPath();
 }
 
@@ -316,9 +316,12 @@ void NewFormWizard::OnBrowseWxcpFile(wxCommandEvent& event)
     if(path.empty()) {
         return;
     }
-    int where = m_choiceWxcp->FindString(path);
+
+    wxFileName fn(path);
+    wxString displayName = GetDisplayName(fn);
+    int where = m_choiceWxcp->FindString(displayName);
     if(where == wxNOT_FOUND) {
-        where = m_choiceWxcp->Append(path);
+        where = m_choiceWxcp->Append(displayName, new wxStringClientData(path));
     }
     m_choiceWxcp->SetSelection(where);
 }

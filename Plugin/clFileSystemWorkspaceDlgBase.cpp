@@ -760,3 +760,86 @@ NewFileSystemWorkspaceDialogBase::~NewFileSystemWorkspaceDialogBase()
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewFileSystemWorkspaceDialogBase::OnOKUI), NULL,
                            this);
 }
+
+clFSWNewConfigDlgBase::clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                             const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCB09InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer221 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer221);
+
+    wxFlexGridSizer* flexGridSizer229 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer229->SetFlexibleDirection(wxBOTH);
+    flexGridSizer229->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer229->AddGrowableCol(1);
+
+    boxSizer221->Add(flexGridSizer229, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText231 =
+        new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer229->Add(m_staticText231, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(200, -1)), 0);
+    m_textCtrlName->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlName->SetHint(wxT(""));
+#endif
+
+    flexGridSizer229->Add(m_textCtrlName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText235 =
+        new wxStaticText(this, wxID_ANY, _("Copy from:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer229->Add(m_staticText235, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceCopyFromArr;
+    m_choiceCopyFrom =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceCopyFromArr, 0);
+
+    flexGridSizer229->Add(m_choiceCopyFrom, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer223 = new wxStdDialogButtonSizer();
+
+    boxSizer221->Add(m_stdBtnSizer223, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button225 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button225->SetDefault();
+    m_stdBtnSizer223->AddButton(m_button225);
+
+    m_button227 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer223->AddButton(m_button227);
+    m_stdBtnSizer223->Realize();
+
+    SetName(wxT("clFSWNewConfigDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_button225->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFSWNewConfigDlgBase::OnOKUI), NULL, this);
+}
+
+clFSWNewConfigDlgBase::~clFSWNewConfigDlgBase()
+{
+    m_button225->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clFSWNewConfigDlgBase::OnOKUI), NULL, this);
+}

@@ -135,7 +135,7 @@ public:
     bool Save(const wxFileName& filename);
     bool Load(const wxFileName& filename);
 
-    bool AddConfig(const wxString& name);
+    bool AddConfig(const wxString& name, const wxString& copyfrom = wxEmptyString);
     bool DeleteConfig(const wxString& name);
     bool SetSelectedConfig(const wxString& name);
     clFileSystemWorkspaceConfig::Ptr_t GetSelectedConfig() const;

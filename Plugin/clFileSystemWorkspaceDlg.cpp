@@ -1,10 +1,12 @@
 #include "BuildTargetDlg.h"
 #include "ColoursAndFontsManager.h"
 #include "FSConfigPage.h"
+#include "clFSWNewConfigDlg.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceDlg.h"
 #include "globals.h"
 #include "macros.h"
+#include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 #include <wx/wupdlock.h>
 
@@ -47,11 +49,22 @@ void clFileSystemWorkspaceDlg::OnOK(wxCommandEvent& event)
 void clFileSystemWorkspaceDlg::OnNewConfig(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    wxString name = ::wxGetTextFromUser(_("Name"), _("New configuration"), "Untitled");
+    clFSWNewConfigDlg dlg(this);
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    wxString name = dlg.GetConfigName();
     if(name.IsEmpty()) {
         return;
     }
-    if(clFileSystemWorkspace::Get().GetSettings().AddConfig(name)) {
+
+    wxString copyFrom = dlg.GetCopyFrom();
+    if(copyFrom == "-- None --") {
+        copyFrom.Clear();
+    }
+
+    if(clFileSystemWorkspace::Get().GetSettings().AddConfig(name, copyFrom)) {
         clFileSystemWorkspaceConfig::Ptr_t conf = clFileSystemWorkspace::Get().GetSettings().GetConfig(name);
         FSConfigPage* page = new FSConfigPage(m_notebook, conf);
         m_notebook->AddPage(page, name, true);
@@ -60,7 +73,6 @@ void clFileSystemWorkspaceDlg::OnNewConfig(wxCommandEvent& event)
 
 void clFileSystemWorkspaceDlg::OnDeleteConfig(wxCommandEvent& event)
 {
-    wxWindowUpdateLocker locker(this);
     if(m_notebook->GetSelection() == wxNOT_FOUND) {
         return;
     }
@@ -68,7 +80,19 @@ void clFileSystemWorkspaceDlg::OnDeleteConfig(wxCommandEvent& event)
         return;
     }
     int sel = m_notebook->GetSelection();
+    if(sel == wxNOT_FOUND) {
+        return;
+    }
+
+    wxString message;
+    message << _("Choosing 'Yes' will delete workspace configuration '") << m_notebook->GetPageText(sel) << "'\n";
+    message << _("Continue?");
+    if(::wxMessageBox(message, "Confirm", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, this) != wxYES) {
+        return;
+    }
+
     if(clFileSystemWorkspace::Get().GetSettings().DeleteConfig(m_notebook->GetPageText(sel))) {
+        wxWindowUpdateLocker locker(this);
         m_notebook->DeletePage(sel);
     }
 }

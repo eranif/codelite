@@ -394,13 +394,22 @@ bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename)
     return true;
 }
 
-bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name)
+bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name, const wxString& copyfrom)
 {
     if(m_configsMap.count(name)) {
         // already exists
+        clWARNING() << "Can't add new configurtion:" << name << ". Already exists" << endl;
         return false;
     }
-    clFileSystemWorkspaceConfig::Ptr_t conf(new clFileSystemWorkspaceConfig);
+
+    clFileSystemWorkspaceConfig::Ptr_t conf;
+    if(!copyfrom.IsEmpty() && GetConfig(copyfrom)) {
+        // clone the config
+        conf = GetConfig(copyfrom)->Clone();
+    } else {
+        // create an empty one
+        conf.reset(new clFileSystemWorkspaceConfig());
+    }
     conf->SetName(name);
     m_configsMap.insert({ name, conf });
     if(m_configsMap.size() == 1) {

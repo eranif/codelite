@@ -6054,15 +6054,4 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     DoSysColoursChanged();
 }
 
-void clMainFrame::DoSysColoursChanged()
-{
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-                                     clSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-                                     clSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION));
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-                                     clSystemSettings::GetColour(wxSYS_COLOUR_INACTIVECAPTION));
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-                                     clSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTINACTIVECAPTION));
-    m_mgr.Update();
-}
+void clMainFrame::DoSysColoursChanged() { MSWSetWindowDarkTheme(this); }

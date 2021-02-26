@@ -46,20 +46,21 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID 
     , m_withButtons(withButtonsPane)
 {
     m_listTable->SetShowHeader(true);
-    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), clGetManager()->GetStdIcons()->LoadBitmap("file_reload"));
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(wxID_REFRESH, _("Refresh"), images->Add("file_reload"));
     m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnRefresh, this, wxID_REFRESH);
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnRefreshUI, this, wxID_REFRESH);
 
     if(m_withButtons) {
-        m_toolbar->AddTool(wxID_DELETE, _("Delete"), clGetManager()->GetStdIcons()->LoadBitmap("clean"));
+        m_toolbar->AddTool(wxID_DELETE, _("Delete"), images->Add("clean"));
         m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnDeleteWatch, this, wxID_DELETE);
         m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnDeleteWatchUI, this, wxID_DELETE);
 
-        m_toolbar->AddTool(wxID_NEW, _("New"), clGetManager()->GetStdIcons()->LoadBitmap("file_new"));
+        m_toolbar->AddTool(wxID_NEW, _("New"), images->Add("file_new"));
         m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnNewWatch, this, wxID_NEW);
         m_toolbar->Bind(wxEVT_UPDATE_UI, &DebuggerTreeListCtrlBase::OnNewWatchUI, this, wxID_NEW);
     } else {
-        m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"));
+        m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), images->Add("sort"));
         m_toolbar->Bind(wxEVT_TOOL, &DebuggerTreeListCtrlBase::OnSortItems, this, wxID_SORT_ASCENDING);
     }
     m_toolbar->Realize();
@@ -69,7 +70,8 @@ DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase() {}
 
 IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
 {
-    if(!ManagerST::Get()->DbgCanInteract()) return NULL;
+    if(!ManagerST::Get()->DbgCanInteract())
+        return NULL;
 
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     return dbgr;
@@ -86,11 +88,15 @@ void DebuggerTreeListCtrlBase::DoResetItemColour(const wxTreeItemId& item, size_
         DbgTreeItemData* data = (DbgTreeItemData*)m_listTable->GetItemData(child);
 
         bool resetColor = ((itemKind == 0) || (data && (data->_kind & itemKind)));
-        if(resetColor) { m_listTable->SetItemTextColour(child, fgColour, 1); }
+        if(resetColor) {
+            m_listTable->SetItemTextColour(child, fgColour, 1);
+        }
 
         m_listTable->SetItemBackgroundColour(child, bgColour, 1);
 
-        if(m_listTable->HasChildren(child)) { DoResetItemColour(child, itemKind); }
+        if(m_listTable->HasChildren(child)) {
+            DoResetItemColour(child, itemKind);
+        }
         child = m_listTable->GetNextChild(item, cookieOne);
     }
 }
@@ -104,7 +110,9 @@ void DebuggerTreeListCtrlBase::OnEvaluateVariableObj(const DebuggerEventData& ev
     if(iter != m_gdbIdToTreeId.end()) {
         wxString newValue = value;
         wxString curValue = m_listTable->GetItemText(iter->second, 1);
-        if(!(newValue == curValue || curValue.IsEmpty())) { m_listTable->SetItemTextColour(iter->second, *wxRED, 1); }
+        if(!(newValue == curValue || curValue.IsEmpty())) {
+            m_listTable->SetItemTextColour(iter->second, *wxRED, 1);
+        }
         m_listTable->SetItemText(iter->second, value, 1);
 
         // keep the red items IDs in the array
@@ -115,7 +123,8 @@ void DebuggerTreeListCtrlBase::OnEvaluateVariableObj(const DebuggerEventData& ev
 void DebuggerTreeListCtrlBase::DoRefreshItemRecursively(IDebugger* dbgr, const wxTreeItemId& item,
                                                         wxArrayString& itemsToRefresh)
 {
-    if(itemsToRefresh.IsEmpty()) return;
+    if(itemsToRefresh.IsEmpty())
+        return;
 
     wxTreeItemIdValue cookieOne;
     wxTreeItemId exprItem = m_listTable->GetFirstChild(item, cookieOne);
@@ -131,7 +140,9 @@ void DebuggerTreeListCtrlBase::DoRefreshItemRecursively(IDebugger* dbgr, const w
             }
         }
 
-        if(m_listTable->HasChildren(exprItem)) { DoRefreshItemRecursively(dbgr, exprItem, itemsToRefresh); }
+        if(m_listTable->HasChildren(exprItem)) {
+            DoRefreshItemRecursively(dbgr, exprItem, itemsToRefresh);
+        }
         exprItem = m_listTable->GetNextChild(item, cookieOne);
     }
 }
@@ -161,7 +172,8 @@ void DebuggerTreeListCtrlBase::Clear()
 
 void DebuggerTreeListCtrlBase::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId& item, bool forceCreate)
 {
-    if(!dbgr || !item.IsOk()) return;
+    if(!dbgr || !item.IsOk())
+        return;
 
     DbgTreeItemData* data = static_cast<DbgTreeItemData*>(m_listTable->GetItemData(item));
     if(data && data->_gdbId.IsEmpty() == false) {
@@ -186,10 +198,13 @@ void DebuggerTreeListCtrlBase::DoRefreshItem(IDebugger* dbgr, const wxTreeItemId
 wxString DebuggerTreeListCtrlBase::DoGetGdbId(const wxTreeItemId& item)
 {
     wxString gdbId;
-    if(!item.IsOk()) return gdbId;
+    if(!item.IsOk())
+        return gdbId;
 
     DbgTreeItemData* data = (DbgTreeItemData*)m_listTable->GetItemData(item);
-    if(data) { return data->_gdbId; }
+    if(data) {
+        return data->_gdbId;
+    }
     return gdbId;
 }
 
@@ -201,7 +216,8 @@ wxTreeItemId DebuggerTreeListCtrlBase::DoFindItemByGdbId(const wxString& gdbId)
     while(item.IsOk()) {
 
         wxString id = DoGetGdbId(item);
-        if(id.IsEmpty() == false && id == gdbId) return item;
+        if(id.IsEmpty() == false && id == gdbId)
+            return item;
 
         item = m_listTable->GetNextChild(root, cookieOne);
     }
@@ -211,10 +227,14 @@ wxTreeItemId DebuggerTreeListCtrlBase::DoFindItemByGdbId(const wxString& gdbId)
 void DebuggerTreeListCtrlBase::DoDeleteWatch(const wxTreeItemId& item)
 {
     IDebugger* dbgr = DoGetDebugger();
-    if(!dbgr || !item.IsOk()) { return; }
+    if(!dbgr || !item.IsOk()) {
+        return;
+    }
 
     wxString gdbId = DoGetGdbId(item);
-    if(gdbId.IsEmpty() == false) { dbgr->DeleteVariableObject(gdbId); }
+    if(gdbId.IsEmpty() == false) {
+        dbgr->DeleteVariableObject(gdbId);
+    }
 
 #ifdef __WXMAC__
 
@@ -227,9 +247,13 @@ void DebuggerTreeListCtrlBase::DoDeleteWatch(const wxTreeItemId& item)
         wxTreeItemId child = m_listTable->GetFirstChild(item, cookie);
         while(child.IsOk()) {
             gdbId = DoGetGdbId(child);
-            if(gdbId.IsEmpty() == false) { dbgr->DeleteVariableObject(gdbId); }
+            if(gdbId.IsEmpty() == false) {
+                dbgr->DeleteVariableObject(gdbId);
+            }
 
-            if(m_listTable->HasChildren(child)) { DoDeleteWatch(child); }
+            if(m_listTable->HasChildren(child)) {
+                DoDeleteWatch(child);
+            }
 
             child = m_listTable->GetNextChild(item, cookie);
         }
@@ -244,7 +268,8 @@ wxTreeItemId DebuggerTreeListCtrlBase::DoFindItemByExpression(const wxString& ex
     wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
     while(item.IsOk()) {
 
-        if(m_listTable->GetItemText(item) == expr) return item;
+        if(m_listTable->GetItemText(item) == expr)
+            return item;
         item = m_listTable->GetNextChild(root, cookieOne);
     }
     return wxTreeItemId();
@@ -255,7 +280,8 @@ void DebuggerTreeListCtrlBase::ResetTableColors() { DoResetItemColour(m_listTabl
 wxString DebuggerTreeListCtrlBase::GetItemPath(const wxTreeItemId& item)
 {
     wxArrayString pathArr;
-    if(item.IsOk() == false) return wxT("");
+    if(item.IsOk() == false)
+        return wxT("");
 
     DbgTreeItemData* data = (DbgTreeItemData*)m_listTable->GetItemData(item);
     if(data && data->_gdbId.IsEmpty()) {
@@ -266,11 +292,14 @@ wxString DebuggerTreeListCtrlBase::GetItemPath(const wxTreeItemId& item)
     wxTreeItemId parent = item;
     while(parent.IsOk() && m_listTable->GetRootItem() != parent) {
         DbgTreeItemData* itemData = (DbgTreeItemData*)m_listTable->GetItemData(parent);
-        if(itemData && !itemData->_isFake) { pathArr.Add(m_listTable->GetItemText(parent)); }
+        if(itemData && !itemData->_isFake) {
+            pathArr.Add(m_listTable->GetItemText(parent));
+        }
         parent = m_listTable->GetItemParent(parent);
     }
 
-    if(pathArr.IsEmpty()) return wxT("");
+    if(pathArr.IsEmpty())
+        return wxT("");
 
     wxString itemPath;
     for(int i = (int)pathArr.GetCount() - 1; i >= 0; i--) {

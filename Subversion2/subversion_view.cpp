@@ -155,6 +155,14 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
+    EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, [this](clCommandEvent& event) {
+        event.Skip();
+        m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+        m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+        m_dvListCtrl->Refresh();
+        m_dvListCtrlUnversioned->Refresh();
+    });
+
     CreatGUIControls();
     m_themeHelper = new ThemeHandlerHelper(this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),
@@ -239,35 +247,32 @@ void SubversionView::CreatGUIControls()
     // Assign the image list
     // Add toolbar
     // Create the toolbar
-    BitmapLoader* bmpLdr = m_plugin->GetManager()->GetStdIcons();
     clToolBar* tb = new clToolBar(this);
+    auto images = tb->GetBitmapsCreateIfNeeded();
     // Common svn actions
-    tb->AddTool(XRCID("svn_update"), _("Svn update"), bmpLdr->LoadBitmap("pull"), _("Svn update"));
-    tb->AddTool(XRCID("svn_commit"), _("Svn commit all changes"), bmpLdr->LoadBitmap("git-commit"),
+    tb->AddTool(XRCID("svn_update"), _("Svn update"), images->Add("pull"), _("Svn update"));
+    tb->AddTool(XRCID("svn_commit"), _("Svn commit all changes"), images->Add("git-commit"),
                 _("Svn commit all changes"));
-    tb->AddTool(XRCID("svn_revert"), _("Svn revert all changes"), bmpLdr->LoadBitmap("undo"),
-                _("Svn revert all changes"));
+    tb->AddTool(XRCID("svn_revert"), _("Svn revert all changes"), images->Add("undo"), _("Svn revert all changes"));
     tb->AddSeparator();
-    tb->AddTool(XRCID("svn_refresh"), _("Refresh View"), bmpLdr->LoadBitmap("debugger_restart"), _("Refresh View"));
-    tb->AddTool(XRCID("svn_info"), _("Svn Info"), bmpLdr->LoadBitmap("info"), _("Svn Info"));
+    tb->AddTool(XRCID("svn_refresh"), _("Refresh View"), images->Add("debugger_restart"), _("Refresh View"));
+    tb->AddTool(XRCID("svn_info"), _("Svn Info"), images->Add("info"), _("Svn Info"));
     tb->AddSeparator();
 
-    tb->AddTool(XRCID("svn_stop"), _("Stop current svn process"), bmpLdr->LoadBitmap("stop"),
-                _("Stop current svn process"));
-    tb->AddTool(XRCID("svn_cleanup"), _("Svn Cleanup"), bmpLdr->LoadBitmap("clean"), _("Svn Cleanup"));
+    tb->AddTool(XRCID("svn_stop"), _("Stop current svn process"), images->Add("stop"), _("Stop current svn process"));
+    tb->AddTool(XRCID("svn_cleanup"), _("Svn Cleanup"), images->Add("clean"), _("Svn Cleanup"));
     tb->AddSeparator();
-    tb->AddTool(XRCID("svn_checkout"), _("Svn Checkout"), bmpLdr->LoadBitmap("next"), _("Svn Checkout"));
+    tb->AddTool(XRCID("svn_checkout"), _("Svn Checkout"), images->Add("next"), _("Svn Checkout"));
     tb->AddSeparator();
-    tb->AddTool(XRCID("clear_svn_output"), _("Clear Svn Output Tab"), bmpLdr->LoadBitmap("clear"),
-                _("Clear Svn Output Tab"), wxITEM_NORMAL);
-    tb->AddTool(XRCID("svn_settings"), _("Svn Settings..."), bmpLdr->LoadBitmap("cog"), _("Svn Settings..."));
-    tb->AddTool(XRCID("svn_link_editor"), _("Link Editor"), bmpLdr->LoadBitmap(wxT("link_editor")), _("Link Editor"),
+    tb->AddTool(XRCID("clear_svn_output"), _("Clear Svn Output Tab"), images->Add("clear"), _("Clear Svn Output Tab"),
+                wxITEM_NORMAL);
+    tb->AddTool(XRCID("svn_settings"), _("Svn Settings..."), images->Add("cog"), _("Svn Settings..."));
+    tb->AddTool(XRCID("svn_link_editor"), _("Link Editor"), images->Add(wxT("link_editor")), _("Link Editor"),
                 wxITEM_CHECK);
     tb->AddSeparator();
-    tb->AddTool(XRCID("svn_open_local_repo_browser"), _("Select a Directory to View..."), bmpLdr->LoadBitmap("folder"),
+    tb->AddTool(XRCID("svn_open_local_repo_browser"), _("Select a Directory to View..."), images->Add("folder"),
                 _("Select a Directory to View..."), wxITEM_NORMAL);
-    tb->AddTool(XRCID("svn_close_view"), _("Close View"), bmpLdr->LoadBitmap("file_close"), _("Close View"),
-                wxITEM_NORMAL);
+    tb->AddTool(XRCID("svn_close_view"), _("Close View"), images->Add("file_close"), _("Close View"), wxITEM_NORMAL);
     tb->ToggleTool(XRCID("svn_link_editor"), m_plugin->GetSettings().GetFlags() & SvnLinkEditor);
 
     tb->Connect(XRCID("clear_svn_output"), wxEVT_COMMAND_MENU_SELECTED,

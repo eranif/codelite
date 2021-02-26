@@ -1374,42 +1374,37 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_toolbar->SetMiniToolBar(false); // We want main toolbar
     m_toolbar->EnableCustomisation(true);
-    BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
-
-    m_toolbar->AddTool(XRCID("new_file"), _("New"), bmpLoader.LoadBitmap(wxT("file_new"), toolSize), _("New File"));
-    m_toolbar->AddTool(XRCID("open_file"), _("Open"), bmpLoader.LoadBitmap(wxT("file_open"), toolSize), _("Open File"));
-    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload"), bmpLoader.LoadBitmap(wxT("file_reload"), toolSize),
-                       _("Reload File"));
-    m_toolbar->AddTool(XRCID("save_file"), _("Save"), bmpLoader.LoadBitmap(wxT("file_save"), toolSize), _("Save"));
-    m_toolbar->AddTool(XRCID("save_all"), _("Save All"), bmpLoader.LoadBitmap(wxT("file_save_all"), toolSize),
-                       _("Save All"));
-    m_toolbar->AddTool(XRCID("close_file"), _("Close"), bmpLoader.LoadBitmap(wxT("file_close"), toolSize),
-                       _("Close File"));
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("new_file"), _("New"), images->Add(wxT("file_new"), toolSize), _("New File"));
+    m_toolbar->AddTool(XRCID("open_file"), _("Open"), images->Add(wxT("file_open"), toolSize), _("Open File"));
+    m_toolbar->AddTool(XRCID("refresh_file"), _("Reload"), images->Add(wxT("file_reload"), toolSize), _("Reload File"));
+    m_toolbar->AddTool(XRCID("save_file"), _("Save"), images->Add(wxT("file_save"), toolSize), _("Save"));
+    m_toolbar->AddTool(XRCID("save_all"), _("Save All"), images->Add(wxT("file_save_all"), toolSize), _("Save All"));
+    m_toolbar->AddTool(XRCID("close_file"), _("Close"), images->Add(wxT("file_close"), toolSize), _("Close File"));
     m_toolbar->AddSpacer();
-    m_toolbar->AddTool(wxID_CUT, _("Cut"), bmpLoader.LoadBitmap(wxT("cut"), toolSize), _("Cut"));
-    m_toolbar->AddTool(wxID_COPY, _("Copy"), bmpLoader.LoadBitmap(wxT("copy"), toolSize), _("Copy"));
-    m_toolbar->AddTool(wxID_PASTE, _("Paste"), bmpLoader.LoadBitmap(wxT("paste"), toolSize), _("Paste"));
-    m_toolbar->AddTool(wxID_UNDO, _("Undo"), bmpLoader.LoadBitmap(wxT("undo"), toolSize), _("Undo"), wxITEM_DROPDOWN);
-    m_toolbar->AddTool(wxID_REDO, _("Redo"), bmpLoader.LoadBitmap(wxT("redo"), toolSize), _("Redo"), wxITEM_DROPDOWN);
+    m_toolbar->AddTool(wxID_CUT, _("Cut"), images->Add(wxT("cut"), toolSize), _("Cut"));
+    m_toolbar->AddTool(wxID_COPY, _("Copy"), images->Add(wxT("copy"), toolSize), _("Copy"));
+    m_toolbar->AddTool(wxID_PASTE, _("Paste"), images->Add(wxT("paste"), toolSize), _("Paste"));
+    m_toolbar->AddTool(wxID_UNDO, _("Undo"), images->Add(wxT("undo"), toolSize), _("Undo"), wxITEM_DROPDOWN);
+    m_toolbar->AddTool(wxID_REDO, _("Redo"), images->Add(wxT("redo"), toolSize), _("Redo"), wxITEM_DROPDOWN);
     m_toolbar->AddSpacer();
-    m_toolbar->AddTool(wxID_BACKWARD, _("Backward"), bmpLoader.LoadBitmap(wxT("back"), toolSize), _("Backward"));
-    m_toolbar->AddTool(wxID_FORWARD, _("Forward"), bmpLoader.LoadBitmap(wxT("forward"), toolSize), _("Forward"));
+    m_toolbar->AddTool(wxID_BACKWARD, _("Backward"), images->Add(wxT("back"), toolSize), _("Backward"));
+    m_toolbar->AddTool(wxID_FORWARD, _("Forward"), images->Add(wxT("forward"), toolSize), _("Forward"));
     m_toolbar->AddSpacer();
 
     //----------------------------------------------
     // create the search toolbar
     //----------------------------------------------
-    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), bmpLoader.LoadBitmap(wxT("bookmark"), toolSize),
+    m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), images->Add(wxT("bookmark"), toolSize),
                        _("Toggle Bookmark"), wxITEM_DROPDOWN);
     m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
-    m_toolbar->AddTool(wxID_FIND, _("Find"), bmpLoader.LoadBitmap(wxT("find"), toolSize), _("Find"));
-    m_toolbar->AddTool(wxID_REPLACE, _("Replace"), bmpLoader.LoadBitmap(wxT("find_and_replace"), toolSize),
-                       _("Replace"));
-    m_toolbar->AddTool(XRCID("find_in_files"), _("Find In Files"), bmpLoader.LoadBitmap(wxT("find_in_files"), toolSize),
+    m_toolbar->AddTool(wxID_FIND, _("Find"), images->Add(wxT("find"), toolSize), _("Find"));
+    m_toolbar->AddTool(wxID_REPLACE, _("Replace"), images->Add(wxT("find_and_replace"), toolSize), _("Replace"));
+    m_toolbar->AddTool(XRCID("find_in_files"), _("Find In Files"), images->Add(wxT("find_in_files"), toolSize),
                        _("Find In Files"));
     m_toolbar->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"),
-                       bmpLoader.LoadBitmap(wxT("open_resource"), toolSize), _("Find Resource In Workspace"));
-    m_toolbar->AddTool(XRCID("highlight_word"), _("Highlight Word"), bmpLoader.LoadBitmap(wxT("mark_word"), toolSize),
+                       images->Add(wxT("open_resource"), toolSize), _("Find Resource In Workspace"));
+    m_toolbar->AddTool(XRCID("highlight_word"), _("Highlight Word"), images->Add(wxT("mark_word"), toolSize),
                        _("Highlight Matching Words"), wxITEM_CHECK);
     m_toolbar->ToggleTool(XRCID("highlight_word"), m_highlightWord);
     m_toolbar->AddSpacer();
@@ -1417,24 +1412,24 @@ void clMainFrame::CreateToolBar(int toolSize)
     //----------------------------------------------
     // create the build toolbar
     //----------------------------------------------
-    m_toolbar->AddTool(XRCID("build_active_project"), _("Build Active Project"),
-                       bmpLoader.LoadBitmap(wxT("build"), toolSize), _("Build Active Project"), wxITEM_DROPDOWN);
-    m_toolbar->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"),
-                       bmpLoader.LoadBitmap(wxT("stop"), toolSize), _("Stop Current Build"));
-    m_toolbar->AddTool(XRCID("clean_active_project"), _("Clean Active Project"),
-                       bmpLoader.LoadBitmap(wxT("clean"), toolSize), _("Clean Active Project"));
+    m_toolbar->AddTool(XRCID("build_active_project"), _("Build Active Project"), images->Add(wxT("build"), toolSize),
+                       _("Build Active Project"), wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("stop_active_project_build"), _("Stop Current Build"), images->Add(wxT("stop"), toolSize),
+                       _("Stop Current Build"));
+    m_toolbar->AddTool(XRCID("clean_active_project"), _("Clean Active Project"), images->Add(wxT("clean"), toolSize),
+                       _("Clean Active Project"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("execute_no_debug"), _("Run Active Project"),
-                       bmpLoader.LoadBitmap(wxT("execute"), toolSize), _("Run Active Project"));
+    m_toolbar->AddTool(XRCID("execute_no_debug"), _("Run Active Project"), images->Add(wxT("execute"), toolSize),
+                       _("Run Active Project"));
     m_toolbar->AddTool(XRCID("stop_executed_program"), _("Stop Running Program"),
-                       bmpLoader.LoadBitmap(wxT("execute_stop"), toolSize), _("Stop Running Program"));
+                       images->Add(wxT("execute_stop"), toolSize), _("Stop Running Program"));
     m_toolbar->AddSpacer();
 
     //----------------------------------------------
     // create the debugger toolbar
     //----------------------------------------------
     m_toolbar->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
-                       bmpLoader.LoadBitmap(wxT("start-debugger"), toolSize), _("Start or Continue debugger"));
+                       images->Add(wxT("start-debugger"), toolSize), _("Start or Continue debugger"));
     m_toolbar->AddSpacer();
 
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
@@ -6051,6 +6046,7 @@ wxMenuBar* clMainFrame::GetMenuBar() const { return wxFrame::GetMenuBar(); }
 void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
 {
     event.Skip();
+    clBitmaps::Get().SysColoursChanged(); // Notify the bitmap manager that system colour has changed
     DoSysColoursChanged();
 }
 

@@ -1,6 +1,7 @@
 #include "ColoursAndFontsManager.h"
 #include "TailPanel.h"
 #include "bitmap_loader.h"
+#include "clThemeUpdater.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -11,7 +12,6 @@
 #include <imanager.h>
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
-#include "clThemeUpdater.h"
 
 TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     : TailPanelBase(parent)
@@ -22,7 +22,7 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
 {
     clThemeUpdater::Get().RegisterWindow(this);
     clThemeUpdater::Get().RegisterWindow(m_staticTextFileName);
-    
+
     DoBuildToolbar();
     m_fileWatcher.reset(new clFileSystemWatcher());
     m_fileWatcher->SetOwner(this);
@@ -103,7 +103,9 @@ void TailPanel::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip(); // must call this to allow other handlers to work
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_stc); }
+    if(lexer) {
+        lexer->Apply(m_stc);
+    }
     m_stc->SetEOLMode(wxSTC_EOL_CRLF);
     m_stc->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
 }
@@ -124,7 +126,9 @@ void TailPanel::OnCloseUI(wxUpdateUIEvent& event) { event.Enable(m_file.IsOk());
 void TailPanel::OnOpen(wxCommandEvent& event)
 {
     wxString filepath = ::wxFileSelector();
-    if(filepath.IsEmpty() || !wxFileName::Exists(filepath)) { return; }
+    if(filepath.IsEmpty() || !wxFileName::Exists(filepath)) {
+        return;
+    }
 
     DoClear();
     DoOpen(filepath);
@@ -174,7 +178,8 @@ void TailPanel::DoPrepareRecentItemsMenu(wxMenu& menu)
 
 void TailPanel::OnOpenRecentItem(wxCommandEvent& event)
 {
-    if(m_recentItemsMap.count(event.GetId()) == 0) return;
+    if(m_recentItemsMap.count(event.GetId()) == 0)
+        return;
     wxString filepath = m_recentItemsMap[event.GetId()];
     DoClear(); // Clear the old content first
     DoOpen(filepath);
@@ -226,21 +231,23 @@ wxString TailPanel::GetTailTitle() const
 void TailPanel::SetFrameTitle()
 {
     wxFrame* parent = dynamic_cast<wxFrame*>(GetParent());
-    if(parent) { parent->SetLabel(GetTailTitle()); }
+    if(parent) {
+        parent->SetLabel(GetTailTitle());
+    }
 }
 
 void TailPanel::DoBuildToolbar()
 {
     m_toolbar = new clToolBar(this);
-    m_toolbar->AddTool(XRCID("tail_open"), _("Open file"), clGetManager()->GetStdIcons()->LoadBitmap("folder"), "",
-                       wxITEM_DROPDOWN);
-    m_toolbar->AddTool(XRCID("tail_close"), _("Close file"), clGetManager()->GetStdIcons()->LoadBitmap("file_close"));
-    m_toolbar->AddTool(XRCID("tail_clear"), _("Clear"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("tail_open"), _("Open file"), images->Add("folder"), "", wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("tail_close"), _("Close file"), images->Add("file_close"));
+    m_toolbar->AddTool(XRCID("tail_clear"), _("Clear"), images->Add("clear"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("tail_pause"), _("Pause"), clGetManager()->GetStdIcons()->LoadBitmap("interrupt"));
-    m_toolbar->AddTool(XRCID("tail_play"), _("Play"), clGetManager()->GetStdIcons()->LoadBitmap("debugger_start"));
+    m_toolbar->AddTool(XRCID("tail_pause"), _("Pause"), images->Add("interrupt"));
+    m_toolbar->AddTool(XRCID("tail_play"), _("Play"), images->Add("debugger_start"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("tail_detach"), _("Detach window"), clGetManager()->GetStdIcons()->LoadBitmap("windows"));
+    m_toolbar->AddTool(XRCID("tail_detach"), _("Detach window"), images->Add("windows"));
 
     // Bind events
     m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnOpen, this, XRCID("tail_open"));

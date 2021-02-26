@@ -59,14 +59,13 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
     GetSizer()->Layout();
 
     // replace the icons...
-    BitmapLoader* bmpLoader = pManager->GetStdIcons();
     m_toolbar = new clToolBar(this);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 
-    m_toolbar->AddTool(XRCID("IDT_DBE_CONNECT"), _("Open connection"), bmpLoader->LoadBitmap("plus"));
-    m_toolbar->AddTool(XRCID("IDT_DBE_CLOSE_CONNECTION"), _("Close selected connection"),
-                       bmpLoader->LoadBitmap("minus"));
-    m_toolbar->AddTool(XRCID("IDT_DBE_REFRESH"), _("Refresh View"), bmpLoader->LoadBitmap("debugger_restart"));
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("IDT_DBE_CONNECT"), _("Open connection"), images->Add("plus"));
+    m_toolbar->AddTool(XRCID("IDT_DBE_CLOSE_CONNECTION"), _("Close selected connection"), images->Add("minus"));
+    m_toolbar->AddTool(XRCID("IDT_DBE_REFRESH"), _("Refresh View"), images->Add("debugger_restart"));
     m_toolbar->Realize();
     Layout();
 
@@ -158,11 +157,14 @@ void DbViewerPanel::RefreshDbView()
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(child);
             if(data) {
                 DbConnection* pCon = wxDynamicCast(data->GetData(), DbConnection);
-                if(pCon) pCon->RefreshChildren();
+                if(pCon)
+                    pCon->RefreshChildren();
                 Database* pDb = wxDynamicCast(data->GetData(), Database);
-                if(pDb) pDb->RefreshChildren(false);
+                if(pDb)
+                    pDb->RefreshChildren(false);
                 Table* pTab = wxDynamicCast(data->GetData(), Table);
-                if(pTab) pTab->RefreshChildren();
+                if(pTab)
+                    pTab->RefreshChildren();
             }
             child = m_treeDatabases->GetNextChild(root, cookie);
         }
@@ -255,7 +257,9 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event) { event.Skip(); }
 void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 {
     event.Skip();
-    if(event.GetItem().IsOk()) { m_treeDatabases->SelectItem(event.GetItem()); }
+    if(event.GetItem().IsOk()) {
+        m_treeDatabases->SelectItem(event.GetItem());
+    }
 }
 
 void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
@@ -300,7 +304,8 @@ void DbViewerPanel::OnToolCloseUI(wxUpdateUIEvent& event)
 
 void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 {
-    if(!m_selectedID.IsOk()) return;
+    if(!m_selectedID.IsOk())
+        return;
 
     try {
         if(evt.GetId() == XRCID("IDR_DBVIEWER_COPY_COLUMN")) {
@@ -480,7 +485,9 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                     // TODO:LANG:
                     wxFileDialog dlg(this, _("Import database from SQL file ..."), wxGetCwd(), wxT(""),
                                      wxT("SQL Files (*.sql)|*.sql"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-                    if(dlg.ShowModal() == wxID_OK) { ImportDb(dlg.GetPath(), pDb); }
+                    if(dlg.ShowModal() == wxID_OK) {
+                        ImportDb(dlg.GetPath(), pDb);
+                    }
                 }
             }
             RefreshDbView();
@@ -512,21 +519,27 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                         SerializableList::compatibility_iterator tabNode = pDb->GetFirstChildNode();
                         while(tabNode) {
                             Table* tab = wxDynamicCast(tabNode->GetData(), Table);
-                            if(tab) { retStr.append(pDb->GetDbAdapter()->GetCreateTableSql(tab, true)); }
+                            if(tab) {
+                                retStr.append(pDb->GetDbAdapter()->GetCreateTableSql(tab, true));
+                            }
                             tabNode = tabNode->GetNext();
                         }
 
                         tabNode = pDb->GetFirstChildNode();
                         while(tabNode) {
                             View* view = wxDynamicCast(tabNode->GetData(), View);
-                            if(view) { retStr.append(pDb->GetDbAdapter()->GetCreateViewSql(view, true)); }
+                            if(view) {
+                                retStr.append(pDb->GetDbAdapter()->GetCreateViewSql(view, true));
+                            }
                             tabNode = tabNode->GetNext();
                         }
 
                         tabNode = pDb->GetFirstChildNode();
                         while(tabNode) {
                             Table* tab = wxDynamicCast(tabNode->GetData(), Table);
-                            if(tab) { retStr.append(pDb->GetDbAdapter()->GetAlterTableConstraintSql(tab)); }
+                            if(tab) {
+                                retStr.append(pDb->GetDbAdapter()->GetAlterTableConstraintSql(tab));
+                            }
                             tabNode = tabNode->GetNext();
                         }
 
@@ -534,7 +547,8 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                         dump.DumpData();
 
                         wxTextFile file(dlg.GetPath());
-                        if(!file.Exists()) file.Create();
+                        if(!file.Exists())
+                            file.Create();
                         file.Open();
                         if(file.IsOpened()) {
                             file.InsertLine(retStr, 0);
@@ -577,13 +591,15 @@ bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
         pDbLayer->BeginTransaction();
 
         wxString useSql = pDb->GetDbAdapter()->GetUseDb(pDb->GetName());
-        if(!useSql.IsEmpty()) pDbLayer->RunQuery(wxString::Format(wxT("USE %s"), pDb->GetName().c_str()));
+        if(!useSql.IsEmpty())
+            pDbLayer->RunQuery(wxString::Format(wxT("USE %s"), pDb->GetName().c_str()));
 
         while(!input.Eof()) {
             wxString line = text.ReadLine();
             // dialog.AppendText(line);
             int index = line.Find(wxT("--"));
-            if(index != wxNOT_FOUND) line = line.Mid(0, index);
+            if(index != wxNOT_FOUND)
+                line = line.Mid(0, index);
             command.append(line);
             if(line.Find(wxT(";")) != wxNOT_FOUND) {
                 dialog.AppendSeparator();
@@ -640,7 +656,9 @@ wxString DbViewerPanel::CreatePanelName(View* v)
 void DbViewerPanel::InitStyledTextCtrl(wxStyledTextCtrl* sci)
 {
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer("SQL");
-    if(lexer) { lexer->Apply(sci, true); }
+    if(lexer) {
+        lexer->Apply(sci, true);
+    }
 }
 
 void DbViewerPanel::OnShowThumbnail(wxCommandEvent& e) { wxUnusedVar(e); }
@@ -752,7 +770,9 @@ void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
 
 void DbViewerPanel::RemoveFrame(DbExplorerFrame* frame)
 {
-    if(m_frames.count(frame)) { m_frames.erase(frame); }
+    if(m_frames.count(frame)) {
+        m_frames.erase(frame);
+    }
 }
 
 void DbViewerPanel::OpenSQLiteFile(const wxFileName& fileName, bool openDefaultSQLPanel)

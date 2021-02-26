@@ -24,9 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "bookmark_manager.h"
+#include "clThemeUpdater.h"
 #include "cl_editor.h"
 #include "editorframe.h"
 #include "event_notifier.h"
+#include "frame.h"
 #include "mainbook.h"
 #include "manager.h"
 #include "my_menu_bar.h"
@@ -34,8 +36,6 @@
 #include "quickfindbar.h"
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
-#include "frame.h"
-#include "clThemeUpdater.h"
 
 class clThemeUpdater;
 wxDEFINE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
@@ -47,9 +47,11 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     m_editor->Reparent(m_mainPanel);
     m_mainPanel->GetSizer()->Add(editor, 1, wxEXPAND);
     clThemeUpdater::Get().RegisterWindow(m_mainPanel);
-    
+
     // Notebook::RemovePage hides the detached tab
-    if(!editor->IsShown()) { editor->Show(); }
+    if(!editor->IsShown()) {
+        editor->Show();
+    }
 
     // Set a find control for this editor
     m_findBar = new QuickFindBar(m_mainPanel);
@@ -57,15 +59,16 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     m_mainPanel->GetSizer()->Add(m_findBar, 0, wxEXPAND | wxALL, 0);
     m_findBar->Hide();
     m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
-    
+
     m_toolbar->SetMiniToolBar(false);
-    m_toolbar->AddTool(XRCID("file-save"), _("Save"), clGetManager()->GetStdIcons()->LoadBitmap("file_save"));
-    m_toolbar->AddTool(XRCID("file-close"), _("Close"), clGetManager()->GetStdIcons()->LoadBitmap("file_close"));
-    m_toolbar->AddTool(XRCID("reload_file"), _("Reload"), clGetManager()->GetStdIcons()->LoadBitmap("file_reload"));
-    m_toolbar->AddTool(XRCID("show-find-bar"), _("Find"), clGetManager()->GetStdIcons()->LoadBitmap("cscope"));
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("file-save"), _("Save"), images->Add("file_save"));
+    m_toolbar->AddTool(XRCID("file-close"), _("Close"), images->Add("file_close"));
+    m_toolbar->AddTool(XRCID("reload_file"), _("Reload"), images->Add("file_reload"));
+    m_toolbar->AddTool(XRCID("show-find-bar"), _("Find"), images->Add("cscope"));
     m_toolbar->AddSpacer();
-    m_toolbar->AddTool(wxID_UNDO, _("Undo"), clGetManager()->GetStdIcons()->LoadBitmap("undo"));
-    m_toolbar->AddTool(wxID_REDO, _("Redo"), clGetManager()->GetStdIcons()->LoadBitmap("redo"));
+    m_toolbar->AddTool(wxID_UNDO, _("Undo"), images->Add("undo"));
+    m_toolbar->AddTool(wxID_REDO, _("Redo"), images->Add("redo"));
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnSave, this, XRCID("file-save"));
@@ -75,7 +78,7 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
     m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnEdit, this, wxID_REDO);
     m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnFind, this, XRCID("show-find-bar"));
     m_toolbar->Bind(wxEVT_TOOL, &EditorFrame::OnReload, this, XRCID("reload_file"));
-    
+
     m_mainPanel->Layout();
     SetTitle(editor->GetFileName().GetFullPath());
     SetSize(600, 600);

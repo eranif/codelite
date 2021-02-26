@@ -65,10 +65,11 @@ NodeDebuggerPane::NodeDebuggerPane(wxWindow* parent)
     m_dvListCtrlBreakpoints->SetSortFunction(nullptr);
 
     DoPrintStartupMessages();
-    m_tbBreakpoints->AddTool(wxID_CLEAR, _("Clear all breakpoints"),
-                             clGetManager()->GetStdIcons()->LoadBitmap("clean"));
-    m_tbBreakpoints->AddTool(wxID_REMOVE, _("Delete breakpoint"), clGetManager()->GetStdIcons()->LoadBitmap("minus"));
+    auto images = m_tbBreakpoints->GetBitmapsCreateIfNeeded();
+    m_tbBreakpoints->AddTool(wxID_CLEAR, _("Clear all breakpoints"), images->Add("clean"));
+    m_tbBreakpoints->AddTool(wxID_REMOVE, _("Delete breakpoint"), images->Add("minus"));
     m_tbBreakpoints->Realize();
+
     m_tbBreakpoints->Bind(wxEVT_TOOL, &NodeDebuggerPane::OnClearAllBreakpoints, this, wxID_CLEAR);
     m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &NodeDebuggerPane::OnClearAllBreakpointsUI, this, wxID_CLEAR);
     m_tbBreakpoints->Bind(wxEVT_TOOL, &NodeDebuggerPane::OnDeleteBreakpoint, this, wxID_REMOVE);
@@ -208,9 +209,13 @@ void NodeDebuggerPane::OnConsoleOutput(clDebugEvent& event)
 void NodeDebuggerPane::OnEval(clCommandEvent& event)
 {
     // We always eval on the active frame
-    if(m_dvListCtrlCallstack->IsEmpty()) { return; }
+    if(m_dvListCtrlCallstack->IsEmpty()) {
+        return;
+    }
     const wxString& frameId = NodeJSWorkspace::Get()->GetDebugger()->GetActiveFrame();
-    if(frameId.IsEmpty()) { return; }
+    if(frameId.IsEmpty()) {
+        return;
+    }
     NodeJSWorkspace::Get()->GetDebugger()->Eval(event.GetString(), frameId);
 }
 
@@ -223,7 +228,9 @@ void NodeDebuggerPane::OnEvalResult(clDebugRemoteObjectEvent& event)
 void NodeDebuggerPane::OnCreateObject(clDebugRemoteObjectEvent& event)
 {
     nSerializableObject::Ptr_t o = event.GetRemoteObject();
-    if(!m_debuggerTooltip) { m_debuggerTooltip = new NodeDebuggerTooltip(this); }
+    if(!m_debuggerTooltip) {
+        m_debuggerTooltip = new NodeDebuggerTooltip(this);
+    }
     m_debuggerTooltip->Show(o);
 }
 
@@ -280,7 +287,9 @@ void NodeDebuggerPane::OnDeleteBreakpoint(wxCommandEvent& event)
     CHECK_ITEM_RET(item);
 
     wxStringClientData* cd = reinterpret_cast<wxStringClientData*>(m_dvListCtrlBreakpoints->GetItemData(item));
-    if(cd) { NodeJSWorkspace::Get()->GetDebugger()->DeleteBreakpointByID(cd->GetData()); }
+    if(cd) {
+        NodeJSWorkspace::Get()->GetDebugger()->DeleteBreakpointByID(cd->GetData());
+    }
 }
 
 void NodeDebuggerPane::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
@@ -291,7 +300,9 @@ void NodeDebuggerPane::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
 void NodeDebuggerPane::DoUpdateLocalsView(CallFrame* callFrame)
 {
     m_treeCtrlLocals->DeleteAllItems();
-    if(!callFrame) { return; }
+    if(!callFrame) {
+        return;
+    }
     wxTreeItemId root = m_treeCtrlLocals->AddRoot("Locals");
     const nSerializableObject::Vec_t& chain = callFrame->GetScopeChain();
     for(size_t i = 0; i < chain.size(); ++i) {
@@ -304,7 +315,9 @@ void NodeDebuggerPane::DoUpdateLocalsView(CallFrame* callFrame)
             m_treeCtrlLocals->AppendItem(scopeItemId, "Loading...");
 
             // Dont expand the "global" scope
-            if(name != "global") { m_treeCtrlLocals->Expand(scopeItemId); }
+            if(name != "global") {
+                m_treeCtrlLocals->Expand(scopeItemId);
+            }
             m_localsPendingItems.insert({ objectId, scopeItemId });
 
             // Request the properties for this object from the debugger
@@ -317,7 +330,9 @@ void NodeDebuggerPane::DoUpdateLocalsView(CallFrame* callFrame)
 void NodeDebuggerPane::OnLocalProperties(clDebugEvent& event)
 {
     wxString objectId = event.GetStartupCommands();
-    if(m_localsPendingItems.count(objectId) == 0) { return; }
+    if(m_localsPendingItems.count(objectId) == 0) {
+        return;
+    }
     wxTreeItemId item = m_localsPendingItems[objectId];
     m_localsPendingItems.erase(objectId);
     m_treeCtrlLocals->DeleteChildren(item);
@@ -331,7 +346,9 @@ void NodeDebuggerPane::OnLocalProperties(clDebugEvent& event)
         JSONItem prop = prop_arr.arrayItem(i);
         PropertyDescriptor propDesc;
         propDesc.FromJSON(prop);
-        if(!propDesc.IsEmpty()) { propVec.push_back(propDesc); }
+        if(!propDesc.IsEmpty()) {
+            propVec.push_back(propDesc);
+        }
     }
 
     for(size_t i = 0; i < propVec.size(); ++i) {
@@ -339,7 +356,9 @@ void NodeDebuggerPane::OnLocalProperties(clDebugEvent& event)
         wxTreeItemId child = m_treeCtrlLocals->AppendItem(item, prop.GetName());
         m_treeCtrlLocals->SetItemText(child, prop.GetTextPreview(), 1);
         m_treeCtrlLocals->SetItemData(child, new LocalTreeItemData(prop.GetValue().GetObjectId()));
-        if(prop.HasChildren()) { m_treeCtrlLocals->AppendItem(child, "<dummy>"); }
+        if(prop.HasChildren()) {
+            m_treeCtrlLocals->AppendItem(child, "<dummy>");
+        }
     }
 }
 void NodeDebuggerPane::OnLocalExpanding(wxTreeEvent& event)
@@ -366,9 +385,13 @@ void NodeDebuggerPane::OnLocalExpanding(wxTreeEvent& event)
 
 wxString NodeDebuggerPane::GetLocalObjectItem(const wxTreeItemId& item) const
 {
-    if(item.IsOk() == false) { return ""; }
+    if(item.IsOk() == false) {
+        return "";
+    }
     LocalTreeItemData* d = dynamic_cast<LocalTreeItemData*>(m_treeCtrlLocals->GetItemData(item));
-    if(!d) { return ""; }
+    if(!d) {
+        return "";
+    }
     return d->GetData();
 }
 
@@ -400,7 +423,9 @@ CallFrame* NodeDebuggerPane::GetFrameById(const wxString& frameId) const
 {
     for(size_t i = 0; i < m_frames.size(); ++i) {
         CallFrame* frame = m_frames[i]->To<CallFrame>();
-        if(frame->GetCallFrameId() == frameId) { return frame; }
+        if(frame->GetCallFrameId() == frameId) {
+            return frame;
+        }
     }
     return nullptr;
 }
@@ -408,20 +433,21 @@ void NodeDebuggerPane::OnStackContextMenu(wxDataViewEvent& event)
 {
     wxMenu m;
     m.Append(XRCID("node-copy-backtrace"), _("Copy Backtrace"));
-    m.Bind(wxEVT_MENU,
-           [&](wxCommandEvent& event) {
-               wxString backtrace;
-               for(size_t i = 0; i < m_dvListCtrlCallstack->GetItemCount(); ++i) {
-                   wxString line;
-                   wxDataViewItem item = m_dvListCtrlCallstack->RowToItem(i);
-                   for(size_t col = 0; col < 4; ++col) {
-                       line << m_dvListCtrlCallstack->GetItemText(item, col) << " ";
-                   }
-                   backtrace << line << "\n";
-               }
-               ::CopyToClipboard(backtrace);
-           },
-           XRCID("node-copy-backtrace"));
+    m.Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& event) {
+            wxString backtrace;
+            for(size_t i = 0; i < m_dvListCtrlCallstack->GetItemCount(); ++i) {
+                wxString line;
+                wxDataViewItem item = m_dvListCtrlCallstack->RowToItem(i);
+                for(size_t col = 0; col < 4; ++col) {
+                    line << m_dvListCtrlCallstack->GetItemText(item, col) << " ";
+                }
+                backtrace << line << "\n";
+            }
+            ::CopyToClipboard(backtrace);
+        },
+        XRCID("node-copy-backtrace"));
     m_dvListCtrlCallstack->PopupMenu(&m);
 }
 
@@ -429,5 +455,7 @@ void NodeDebuggerPane::SelectTab(const wxString& label)
 {
     // Select the terminal tab
     int tabIndex = m_notebook->GetPageIndex(label);
-    if(tabIndex != wxNOT_FOUND) { m_notebook->SetSelection(tabIndex); }
+    if(tabIndex != wxNOT_FOUND) {
+        m_notebook->SetSelection(tabIndex);
+    }
 }

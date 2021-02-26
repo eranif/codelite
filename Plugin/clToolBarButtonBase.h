@@ -14,18 +14,20 @@
 #define CL_TOOL_BAR_DROPDOWN_ARROW_SIZE 8
 #endif
 
+#define INVALID_BITMAP_ID wxString::npos
+
 class WXDLLIMPEXP_SDK clToolBarButtonBase
 {
 protected:
-    clToolBar* m_toolbar;
-    wxWindowID m_id;
-    wxBitmap m_bmp;
+    clToolBar* m_toolbar = nullptr;
+    wxWindowID m_id = wxID_ANY;
+    size_t m_bmpId = INVALID_BITMAP_ID;
     wxString m_label;
-    size_t m_flags;
+    size_t m_flags = 0;
     wxRect m_dropDownArrowRect;
     wxRect m_buttonRect;
-    size_t m_renderFlags;
-    wxMenu* m_menu;
+    size_t m_renderFlags = 0;
+    wxMenu* m_menu = nullptr;
 
 public:
     enum eFlags {
@@ -46,7 +48,7 @@ public:
     };
 
 public:
-    clToolBarButtonBase(clToolBar* parent, wxWindowID id, const wxBitmap& bmp, const wxString& label = "",
+    clToolBarButtonBase(clToolBar* parent, wxWindowID id, int bmpId = wxNOT_FOUND, const wxString& label = "",
                         size_t flags = 0);
     virtual ~clToolBarButtonBase();
 
@@ -83,9 +85,11 @@ protected:
     }
 
 public:
-    void SetBmp(const wxBitmap& bmp) { this->m_bmp = bmp; }
+    void SetBitmapIndex(size_t index) { this->m_bmpId = index; }
+    size_t GetBitmapIndex() const { return this->m_bmpId; }
+    bool HasBitmap() const { return GetBitmapIndex() != INVALID_BITMAP_ID; }
     void SetLabel(const wxString& label) { this->m_label = label; }
-    const wxBitmap& GetBmp() const { return m_bmp; }
+    const wxBitmap& GetBitmap() const;
     const wxString& GetLabel() const { return m_label; }
 
     /**
@@ -102,10 +106,7 @@ public:
     void SetRenderFlags(size_t flags) { m_renderFlags = flags; }
     bool IsHover() const { return m_renderFlags & kHover; }
     bool IsPressed() const { return m_renderFlags & kPressed; }
-    void SetHover(bool b)
-    {
-        EnableRenderFlag(kHover, b);
-    }
+    void SetHover(bool b) { EnableRenderFlag(kHover, b); }
     void SetPressed(bool b)
     {
         ClearRenderFlags();

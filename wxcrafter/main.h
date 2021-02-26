@@ -20,7 +20,6 @@ protected:
     wxFindReplaceDialog* m_findReplaceDialog;
     wxFindReplaceData m_findData;
     bool m_exiting;
-    BitmapLoader* m_bitmaps = NULL;
 
 protected:
     virtual void OnFileOpen(wxCommandEvent& event);

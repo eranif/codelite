@@ -19,10 +19,11 @@ clCustomiseToolBarDlg::clCustomiseToolBarDlg(wxWindow* parent, clToolBar* tb)
         clToolBarButtonBase* button = m_buttons[i];
         wxVector<wxVariant> cols;
         cols.push_back(wxVariant(!button->IsHidden()));
-        if (button->IsSpacer()) {
-            cols.push_back(::MakeIconText(_("Spacer"), button->GetBmp()));
+        if(button->IsSpacer()) {
+            cols.push_back(::MakeIconText(_("Spacer"), button->GetBitmap()));
         } else {
-            cols.push_back(::MakeIconText(button->IsSeparator() ? _("Separator") : button->GetLabel(), button->GetBmp()));
+            cols.push_back(
+                ::MakeIconText(button->IsSeparator() ? _("Separator") : button->GetLabel(), button->GetBitmap()));
         }
         m_dvListCtrlItems->AppendItem(cols, (wxUIntPtr)button);
     }

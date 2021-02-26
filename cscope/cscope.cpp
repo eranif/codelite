@@ -116,16 +116,16 @@ void Cscope::CreateToolBar(clToolBar* toolbar)
 
     // Sample code that adds single button to the toolbar
     // and associates an image to it
-    BitmapLoader* bitmapLoader = m_mgr->GetStdIcons();
+    auto images = toolbar->GetBitmapsCreateIfNeeded();
 
     // use the large icons set
     toolbar->AddSpacer();
-    toolbar->AddTool(XRCID("cscope_find_symbol"), _("Find this C symbol"), bitmapLoader->LoadBitmap("find", size),
+    toolbar->AddTool(XRCID("cscope_find_symbol"), _("Find this C symbol"), images->Add("find", size),
                      _("Find this C symbol"));
     toolbar->AddTool(XRCID("cscope_functions_calling_this_function"), _("Find functions calling this function"),
-                     bitmapLoader->LoadBitmap("step_in", size), _("Find functions calling this function"));
+                     images->Add("step_in", size), _("Find functions calling this function"));
     toolbar->AddTool(XRCID("cscope_functions_called_by_this_function"), _("Find functions called by this function"),
-                     bitmapLoader->LoadBitmap("step_out", size), _("Find functions called by this function"));
+                     images->Add("step_out", size), _("Find functions called by this function"));
 
     // Command events
     m_topWindow->Connect(XRCID("cscope_find_global_definition"), wxEVT_COMMAND_MENU_SELECTED,

@@ -99,8 +99,13 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Bind(wxEVT_FOLDER_CREATED, &PHPWorkspaceView::OnFolderChanged, this);
     EventNotifier::Get()->Bind(wxEVT_FOLDER_DELETED, &PHPWorkspaceView::OnFolderChanged, this);
 
-    BitmapLoader* bl = m_mgr->GetStdIcons();
-    m_treeCtrlView->SetBitmaps(&bl->GetMimeBitmaps().GetBitmaps());
+    m_treeCtrlView->SetBitmaps(&m_mgr->GetStdIcons()->GetMimeBitmaps().GetBitmaps());
+
+    // respond to bitmaps-updated event
+    EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, [this](clCommandEvent& event) {
+        event.Skip();
+        m_treeCtrlView->SetBitmaps(&m_mgr->GetStdIcons()->GetMimeBitmaps().GetBitmaps());
+    });
 
     // Allow the PHP view to accepts folders
     m_treeCtrlView->SetDropTarget(new clFileOrFolderDropTarget(this));
@@ -109,20 +114,21 @@ PHPWorkspaceView::PHPWorkspaceView(wxWindow* parent, IManager* mgr)
     Bind(wxEVT_DND_FOLDER_DROPPED, &PHPWorkspaceView::OnFolderDropped, this);
 
     // Build the toolbar
-    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), bl->LoadBitmap("cog"),
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_SETTINGS"), _("Open active project settings"), images->Add("cog"),
                        _("Open active project settings"), wxITEM_NORMAL);
 #if USE_SFTP
-    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"), bl->LoadBitmap("file_open"),
+    m_toolbar->AddTool(XRCID("ID_PHP_PROJECT_REMOTE_SAVE"), _("Setup automatic upload"), images->Add("file_open"),
                        _("Setup automatic upload"), wxITEM_DROPDOWN);
 #endif
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), bl->LoadBitmap("fold"), _("Collapse All"),
+    m_toolbar->AddTool(XRCID("ID_TOOL_COLLAPSE"), _("Collapse All"), images->Add("fold"), _("Collapse All"),
                        wxITEM_NORMAL);
     m_toolbar->AddTool(XRCID("ID_TOOL_SYNC_WORKSPACE"), _("Sync workspace with file system"),
-                       bl->LoadBitmap("debugger_restart"), _("Sync workspace with file system..."), wxITEM_NORMAL);
+                       images->Add("debugger_restart"), _("Sync workspace with file system..."), wxITEM_NORMAL);
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("ID_TOOL_START_DEBUGGER_LISTENER"), _("Wait for Debugger Connection"),
-                       bl->LoadBitmap("debugger_start"), _("Wait for Debugger Connection"));
+                       images->Add("debugger_start"), _("Wait for Debugger Connection"));
     m_toolbar->Realize();
 
     // Bind events

@@ -79,6 +79,7 @@ void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
     event.SetEventObject(FocusedControl);
     wxPostEvent(destination, event);
 }
+
 clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     : QuickFindBarBase(parent, id)
     , m_sci(NULL)
@@ -92,7 +93,6 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
 {
     // SetBackgroundStyle(wxBG_STYLE_PAINT);
     // Add the 'close' button
-    BitmapLoader* bmps = clGetManager()->GetStdIcons();
     clThemeUpdater::Get().UnRegisterWindow(this);
 
     // Handle Edit events
@@ -101,20 +101,22 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     m_findEventsHandler->NoUnbind();
     m_replaceEventsHandler->NoUnbind();
     m_toolbar->SetMiniToolBar(true);
-    m_toolbar->AddTool(wxID_CLOSE, _("Close"), bmps->LoadBitmap("file_close"), _("Close"), wxITEM_NORMAL);
+
+    clBitmapList* bitmaps = new clBitmapList;
+    m_toolbar->AddTool(wxID_CLOSE, _("Close"), bitmaps->Add("file_close"), _("Close"), wxITEM_NORMAL);
     m_toolbar->AddSeparator();
     m_matchesFound = new wxStaticText(m_toolbar, wxID_ANY, "", wxDefaultPosition, wxSize(250, -1),
                                       wxST_NO_AUTORESIZE | wxALIGN_LEFT);
     m_toolbar->AddControl(m_matchesFound);
     m_toolbar->AddStretchableSpace();
-    m_toolbar->AddTool(XRCID("case-sensitive"), _("Case Sensitive"), bmps->LoadBitmap("case-sensitive"), "",
+    m_toolbar->AddTool(XRCID("case-sensitive"), _("Case Sensitive"), bitmaps->Add("case-sensitive"), "", wxITEM_CHECK);
+    m_toolbar->AddTool(XRCID("whole-word"), _("Whole word"), bitmaps->Add("whole-word"), "", wxITEM_CHECK);
+    m_toolbar->AddTool(XRCID("use-regex"), _("Regex"), bitmaps->Add("regular-expression"), "", wxITEM_CHECK);
+    m_toolbar->AddTool(XRCID("highlight-matches"), _("Highlight matches"), bitmaps->Add("marker"), "", wxITEM_CHECK);
+    m_toolbar->AddTool(XRCID("replace-in-selection"), _("Replace In Selection"), bitmaps->Add("text_selection"), "",
                        wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("whole-word"), _("Whole word"), bmps->LoadBitmap("whole-word"), "", wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("use-regex"), _("Regex"), bmps->LoadBitmap("regular-expression"), "", wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("highlight-matches"), _("Highlight matches"), bmps->LoadBitmap("marker"), "",
-                       wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("replace-in-selection"), _("Replace In Selection"), bmps->LoadBitmap("text_selection"), "",
-                       wxITEM_CHECK);
+    m_toolbar->AssignBitmaps(bitmaps);
+
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &clPluginsFindBar::OnHide, this, wxID_CLOSE);
     m_toolbar->Bind(

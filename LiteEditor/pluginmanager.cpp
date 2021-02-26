@@ -605,10 +605,8 @@ bool PluginManager::IsShutdownInProgress() const { return ManagerST::Get()->IsSh
 
 BitmapLoader* PluginManager::GetStdIcons()
 {
-    if(!m_bmpLoader) {
-        m_bmpLoader = BitmapLoader::Create();
-    }
-    return m_bmpLoader;
+    // return the current bitmap loader
+    return clBitmaps::Get().GetLoader();
 }
 
 wxArrayString PluginManager::GetProjectCompileFlags(const wxString& projectName, bool isCppFile)

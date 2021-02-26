@@ -44,17 +44,16 @@ BuildTabTopPanel::BuildTabTopPanel(wxWindow* parent)
     BitmapLoader* bmps = clGetManager()->GetStdIcons();
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_toolbar = new clToolBar(this, wxID_ANY);
-    m_toolbar->AddTool(XRCID("build_tool_pin"), _("Pin build view"), bmps->LoadBitmap("ToolPin"), _("Pin build view"),
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("build_tool_pin"), _("Pin build view"), images->Add("ToolPin"), _("Pin build view"),
                        wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("build_tool_scroll_view"), _("Scroll to last line"), bmps->LoadBitmap("link_editor"),
+    m_toolbar->AddTool(XRCID("build_tool_scroll_view"), _("Scroll to last line"), images->Add("link_editor"),
                        _("Scroll to last line"), wxITEM_CHECK);
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("build_tool_clear"), _("Clear view"), bmps->LoadBitmap("clear"), _("Clear view"));
-    m_toolbar->AddTool(XRCID("build_tool_save"), _("Save build log"), bmps->LoadBitmap("file_save"),
-                       _("Save build log"));
-    m_toolbar->AddTool(XRCID("build_tool_copy"), _("Copy build log"), bmps->LoadBitmap("copy"), _("Copy build log"));
-    m_toolbar->AddTool(XRCID("build_tool_paste"), _("Paste build log"), bmps->LoadBitmap("paste"),
-                       _("Paste build log"));
+    m_toolbar->AddTool(XRCID("build_tool_clear"), _("Clear view"), images->Add("clear"), _("Clear view"));
+    m_toolbar->AddTool(XRCID("build_tool_save"), _("Save build log"), images->Add("file_save"), _("Save build log"));
+    m_toolbar->AddTool(XRCID("build_tool_copy"), _("Copy build log"), images->Add("copy"), _("Copy build log"));
+    m_toolbar->AddTool(XRCID("build_tool_paste"), _("Paste build log"), images->Add("paste"), _("Paste build log"));
     m_toolbar->Realize();
     GetSizer()->Add(m_toolbar, 0, wxEXPAND);
 
@@ -81,7 +80,9 @@ void BuildTabTopPanel::OnToolPinCommandToolClicked(wxCommandEvent& event)
 
 void BuildTabTopPanel::OnClearBuildOutput(wxCommandEvent& WXUNUSED(event))
 {
-    if(m_buildTab) { m_buildTab->Clear(); }
+    if(m_buildTab) {
+        m_buildTab->Clear();
+    }
 }
 
 void BuildTabTopPanel::OnClearBuildOutputUI(wxUpdateUIEvent& event)
@@ -98,7 +99,8 @@ void BuildTabTopPanel::OnSaveBuildOutput(wxCommandEvent& WXUNUSED(event))
 {
     wxString filename = ::wxFileSelector(_("Select a file"), wxEmptyString, wxT("BuildLog.txt"), wxEmptyString,
                                          wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-    if(filename.IsEmpty()) return;
+    if(filename.IsEmpty())
+        return;
 
     wxFileName fn(filename);
     wxFFile fp(fn.GetFullPath(), wxT("w+b"));
@@ -139,7 +141,9 @@ void BuildTabTopPanel::OnPaste(wxCommandEvent& event)
 {
     wxString content = m_buildTab->GetBuildContent();
     clEditor* editor = clMainFrame::Get()->GetMainBook()->NewEditor();
-    if(editor) { editor->SetText(content); }
+    if(editor) {
+        editor->SetText(content);
+    }
 }
 
 void BuildTabTopPanel::OnPasteUI(wxUpdateUIEvent& event)
@@ -154,7 +158,9 @@ void BuildTabTopPanel::OnPasteUI(wxUpdateUIEvent& event)
 void BuildTabTopPanel::OnAutoScroll(wxCommandEvent& event)
 {
     clConfig::Get().Write(kConfigBuildAutoScroll, event.IsChecked());
-    if(event.IsChecked()) { m_buildTab->ScrollToBottom(); }
+    if(event.IsChecked()) {
+        m_buildTab->ScrollToBottom();
+    }
 }
 
 void BuildTabTopPanel::OnAutoScrollUI(wxUpdateUIEvent& event)

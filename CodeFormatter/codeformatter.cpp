@@ -133,11 +133,10 @@ void CodeFormatter::CreateToolBar(clToolBar* toolbar)
     // support both toolbars icon size
     int size = m_mgr->GetToolbarIconSize();
 
-    BitmapLoader* bmpLoader = m_mgr->GetStdIcons();
+    clBitmapList* images = toolbar->GetBitmapsCreateIfNeeded();
     toolbar->AddSpacer();
-    toolbar->AddTool(XRCID("format_source"), _("Format Source"), bmpLoader->LoadBitmap("format", size),
-                     _("Format Source Code"));
-    toolbar->AddTool(XRCID("formatter_options"), _("Format Options"), bmpLoader->LoadBitmap("cog", size),
+    toolbar->AddTool(XRCID("format_source"), _("Format Source"), images->Add("format"), _("Format Source Code"));
+    toolbar->AddTool(XRCID("formatter_options"), _("Format Options"), images->Add("cog"),
                      _("Source Code Formatter Options..."));
     // Connect the events to us
     m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED,

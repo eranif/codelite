@@ -2,7 +2,7 @@
 #include "drawingutils.h"
 
 clToolBarControl::clToolBarControl(clToolBar* parent, wxWindow* control)
-    : clToolBarButtonBase(parent, wxID_ANY, wxNullBitmap, "", kControl)
+    : clToolBarButtonBase(parent, wxID_ANY, INVALID_BITMAP_ID, "", kControl)
     , m_ctrl(control)
 {
 }

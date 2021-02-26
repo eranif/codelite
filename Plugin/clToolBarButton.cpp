@@ -1,7 +1,7 @@
 #include "clToolBarButton.h"
 
-clToolBarButton::clToolBarButton(clToolBar* parent, wxWindowID winid, const wxBitmap& bmp, const wxString& label)
-    : clToolBarButtonBase(parent, winid, bmp, label)
+clToolBarButton::clToolBarButton(clToolBar* parent, wxWindowID winid, size_t bitmapId, const wxString& label)
+    : clToolBarButtonBase(parent, winid, bitmapId, label)
 {
 }
 
@@ -12,11 +12,12 @@ wxSize clToolBarButton::CalculateSize(wxDC& dc) const
     wxSize sz;
     sz.y = 0;
     sz.x += m_toolbar->GetXSpacer();
-    if(m_bmp.IsOk()) {
-        sz.x += m_bmp.GetScaledWidth();
+    const wxBitmap& bmp = GetBitmap();
+    if(bmp.IsOk()) {
+        sz.x += bmp.GetScaledWidth();
         sz.x += m_toolbar->GetXSpacer();
 
-        int height = m_bmp.GetScaledHeight();
+        int height = bmp.GetScaledHeight();
         sz.y = wxMax(sz.GetHeight(), height);
     }
     if(!m_label.IsEmpty() && m_toolbar->IsShowLabels()) {

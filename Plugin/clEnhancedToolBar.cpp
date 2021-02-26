@@ -15,7 +15,7 @@ void clEnhancedToolBar::Add2StatesTool(wxWindowID id, wxEvtHandler* sink, const 
 {
     // we add this tool with the initial setup of button1
     m_buttons.insert({ id, { button1, button2, 0, sink } });
-    AddTool(id, button1.label, button1.bmp, button1.label, kind);
+    AddTool(id, button1.label, button1.bmp_id, button1.label, kind);
     Bind(wxEVT_TOOL, &clEnhancedToolBar::OnButtonClicked, this, id);
 }
 
@@ -58,7 +58,7 @@ void clEnhancedToolBar::SetButtonAction(wxWindowID buttonId, wxWindowID actionID
         btn = &state.button2;
         state.selection = 1;
     }
-    button->SetBmp(btn->bmp);
+    button->SetBitmapIndex(btn->bmp_id);
     button->SetLabel(btn->label);
     clDEBUG1() << "toolbar button changed state to" << btn->label;
     Refresh();

@@ -18,14 +18,13 @@ GitResetDlg::GitResetDlg(wxWindow* parent, const wxArrayString& filesToRevert, c
         m_checkListBoxNew->Check(i, true);
     }
 
-    m_clToolbarAltered->AddTool(XRCID("toggle-all-altered"), _("Toggle All"),
-                                clGetManager()->GetStdIcons()->LoadBitmap("check-all"));
+    auto images = m_clToolbarAltered->GetBitmapsCreateIfNeeded();
+    m_clToolbarAltered->AddTool(XRCID("toggle-all-altered"), _("Toggle All"), images->Add("check-all"));
     m_clToolbarAltered->Bind(wxEVT_TOOL, &GitResetDlg::OnToggleAllRevert, this, XRCID("toggle-all-altered"));
     m_clToolbarAltered->Bind(wxEVT_UPDATE_UI, &GitResetDlg::OnToggleAllRevertUI, this, XRCID("toggle-all-altered"));
     m_clToolbarAltered->Realize();
 
-    m_clToolbarAdded->AddTool(XRCID("toggle-all-added"), _("Toggle All"),
-                              clGetManager()->GetStdIcons()->LoadBitmap("check-all"));
+    m_clToolbarAdded->AddTool(XRCID("toggle-all-added"), _("Toggle All"), images->Add("check-all"));
     m_clToolbarAdded->Bind(wxEVT_TOOL, &GitResetDlg::OnToggleAllRemove, this, XRCID("toggle-all-added"));
     m_clToolbarAdded->Bind(wxEVT_UPDATE_UI, &GitResetDlg::OnToggleAllRemoveUI, this, XRCID("toggle-all-added"));
     m_clToolbarAdded->Realize();
@@ -38,7 +37,9 @@ wxArrayString GitResetDlg::GetItemsToRevert() const
 {
     wxArrayString toRevert;
     for(size_t i = 0; i < m_checkListBoxChanged->GetCount(); ++i) {
-        if(m_checkListBoxChanged->IsChecked(i)) { toRevert.Add(m_checkListBoxChanged->GetString(i)); }
+        if(m_checkListBoxChanged->IsChecked(i)) {
+            toRevert.Add(m_checkListBoxChanged->GetString(i));
+        }
     }
 
     return toRevert;
@@ -47,7 +48,9 @@ wxArrayString GitResetDlg::GetItemsToRemove() const
 {
     wxArrayString toRemove;
     for(size_t i = 0; i < m_checkListBoxNew->GetCount(); ++i) {
-        if(m_checkListBoxNew->IsChecked(i)) { toRemove.Add(m_checkListBoxNew->GetString(i)); }
+        if(m_checkListBoxNew->IsChecked(i)) {
+            toRemove.Add(m_checkListBoxNew->GetString(i));
+        }
     }
 
     return toRemove;

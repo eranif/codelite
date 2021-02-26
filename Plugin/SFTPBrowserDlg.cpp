@@ -95,9 +95,10 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
         }
     }
 
-    m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent Folder"), clGetManager()->GetStdIcons()->LoadBitmap("up"));
-    m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"), _("Open SSH Account Manager"),
-                       clGetManager()->GetStdIcons()->LoadBitmap("folder-users"));
+    clBitmapList* images = new clBitmapList;
+    m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent Folder"), images->Add("up"));
+    m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"), _("Open SSH Account Manager"), images->Add("folder-users"));
+    m_toolbar->AssignBitmaps(images);
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnCdUp, this, XRCID("ID_CD_UP"));

@@ -88,8 +88,8 @@ OpenWindowsPanel::OpenWindowsPanel(wxWindow* parent, const wxString& caption)
     m_dvListCtrl->SetSortFunction(nullptr);
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_toolbar = new clToolBar(this);
-    m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), clGetManager()->GetStdIcons()->LoadBitmap("sort"), "",
-                       wxITEM_CHECK);
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(wxID_SORT_ASCENDING, _("Sort"), images->Add("sort"), "", wxITEM_CHECK);
     m_toolbar->Realize();
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 

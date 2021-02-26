@@ -145,19 +145,18 @@ void WorkspaceTab::CreateGUIControls()
     m_view->AddPage(new DefaultWorkspacePage(m_simpleBook), _("Default"));
     m_view->SelectPage(_("Default"));
     m_view->SetDefaultPage(_("Default"));
-    BitmapLoader* bmps = clGetManager()->GetStdIcons();
-    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), bmps->LoadBitmap("link_editor"), "",
-                          wxITEM_CHECK);
-    m_toolbar580->AddTool(XRCID("ID_TOOL_COLLAPSE_ALL"), _("Collapse All"), bmps->LoadBitmap("fold"));
-    m_toolbar580->AddTool(XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"), _("Goto Active Project"), bmps->LoadBitmap("home"));
+    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
+    m_toolbar580->AddTool(XRCID("ID_TOOL_LINK_EDITOR"), _("Link Editor"), images->Add("link_editor"), "", wxITEM_CHECK);
+    m_toolbar580->AddTool(XRCID("ID_TOOL_COLLAPSE_ALL"), _("Collapse All"), images->Add("fold"));
+    m_toolbar580->AddTool(XRCID("ID_TOOL_GOTO_ACTIVE_PROJECT"), _("Goto Active Project"), images->Add("home"));
     m_toolbar580->AddTool(XRCID("ID_TOOL_ACTIVE_PROJECT_SETTINGS"),
                           _("Open selected project settings. If there is no project selected, open the parent project "
                             "of the selected item in the tree"),
-                          bmps->LoadBitmap("cog"));
+                          images->Add("cog"));
     m_toolbar580->AddSpacer();
-    m_toolbar580->AddTool(XRCID("ID_BUILD_PROJECT"), _("Build Active Project"), bmps->LoadBitmap("build"),
+    m_toolbar580->AddTool(XRCID("ID_BUILD_PROJECT"), _("Build Active Project"), images->Add("build"),
                           _("Build Active Project"), wxITEM_DROPDOWN);
-    m_toolbar580->AddTool(XRCID("ID_EXECUTE_NO_DEBUG"), _("Run Active Project"), bmps->LoadBitmap("execute"),
+    m_toolbar580->AddTool(XRCID("ID_EXECUTE_NO_DEBUG"), _("Run Active Project"), images->Add("execute"),
                           _("Run Active Project"));
     m_toolbar580->Realize();
 }
@@ -575,8 +574,9 @@ void WorkspaceTab::OnBuildStarted(clBuildEvent& event)
     event.Skip();
     m_buildInProgress = true;
     auto button = m_toolbar580->FindById(XRCID("ID_BUILD_PROJECT"));
+    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
     if(button) {
-        button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("stop"));
+        button->SetBitmapIndex(images->Add("stop"));
         button->SetLabel(_("Stop Current Build"));
         m_toolbar580->Refresh();
     }
@@ -587,8 +587,9 @@ void WorkspaceTab::OnBuildEnded(clBuildEvent& event)
     event.Skip();
     m_buildInProgress = false;
     auto button = m_toolbar580->FindById(XRCID("ID_BUILD_PROJECT"));
+    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
     if(button) {
-        button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("build"));
+        button->SetBitmapIndex(images->Add("build"));
         button->SetLabel(_("Build Active Project"));
         m_toolbar580->Refresh();
     }
@@ -637,8 +638,9 @@ void WorkspaceTab::OnProgramStarted(clExecuteEvent& event)
     event.Skip();
     m_runInProgress = true;
     auto button = m_toolbar580->FindById(XRCID("ID_EXECUTE_NO_DEBUG"));
+    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
     if(button) {
-        button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("stop"));
+        button->SetBitmapIndex(images->Add("stop"));
         button->SetLabel(_("Stop running program"));
         m_toolbar580->Refresh();
     }
@@ -649,8 +651,9 @@ void WorkspaceTab::OnProgramStopped(clExecuteEvent& event)
     event.Skip();
     m_runInProgress = false;
     auto button = m_toolbar580->FindById(XRCID("ID_EXECUTE_NO_DEBUG"));
+    auto images = m_toolbar580->GetBitmapsCreateIfNeeded();
     if(button) {
-        button->SetBmp(clGetManager()->GetStdIcons()->LoadBitmap("execute"));
+        button->SetBitmapIndex(images->Add("execute"));
         button->SetLabel(_("Run active project"));
         m_toolbar580->Refresh();
     }

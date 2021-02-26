@@ -23,19 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "LLDBOutputView.h"
-#include "LLDBProtocol/LLDBBreakpoint.h"
-#include "event_notifier.h"
-#include "LLDBNewBreakpointDlg.h"
-#include "LLDBPlugin.h"
-#include "ieditor.h"
-#include "LLDBProtocol/LLDBEnums.h"
-#include "file_logger.h"
 #include "ColoursAndFontsManager.h"
-#include "lexer_configuration.h"
+#include "LLDBNewBreakpointDlg.h"
+#include "LLDBOutputView.h"
+#include "LLDBPlugin.h"
+#include "LLDBProtocol/LLDBBreakpoint.h"
+#include "LLDBProtocol/LLDBEnums.h"
 #include "bitmap_loader.h"
-#include "imanager.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include "lexer_configuration.h"
 
 class LLDBBreakpointClientData : public wxTreeItemData
 {
@@ -55,10 +55,10 @@ LLDBOutputView::LLDBOutputView(wxWindow* parent, LLDBPlugin* plugin)
     , m_plugin(plugin)
     , m_connector(plugin->GetLLDB())
 {
-    m_tbBreakpoints->AddTool(wxID_DELETE, _("Delete Breakpoint"), clGetManager()->GetStdIcons()->LoadBitmap("minus"));
-    m_tbBreakpoints->AddTool(wxID_CLEAR, _("Delete All Breakpoints"),
-                             clGetManager()->GetStdIcons()->LoadBitmap("clean"));
-    m_tbBreakpoints->AddTool(wxID_NEW, _("New Breakpoint"), clGetManager()->GetStdIcons()->LoadBitmap("plus"));
+    auto images = m_tbBreakpoints->GetBitmapsCreateIfNeeded();
+    m_tbBreakpoints->AddTool(wxID_DELETE, _("Delete Breakpoint"), images->Add("minus"));
+    m_tbBreakpoints->AddTool(wxID_CLEAR, _("Delete All Breakpoints"), images->Add("clean"));
+    m_tbBreakpoints->AddTool(wxID_NEW, _("New Breakpoint"), images->Add("plus"));
     m_tbBreakpoints->Realize();
     m_tbBreakpoints->Bind(wxEVT_TOOL, &LLDBOutputView::OnDeleteBreakpoint, this, wxID_DELETE);
     m_tbBreakpoints->Bind(wxEVT_UPDATE_UI, &LLDBOutputView::OnDeleteBreakpointUI, this, wxID_DELETE);
@@ -104,7 +104,9 @@ void LLDBOutputView::Initialize()
 {
     Clear();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_stcConsole); }
+    if(lexer) {
+        lexer->Apply(m_stcConsole);
+    }
 
     // initialize the console view
     m_stcConsole->SetReadOnly(true);
@@ -193,7 +195,9 @@ void LLDBOutputView::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
 
 LLDBBreakpoint::Ptr_t LLDBOutputView::GetBreakpoint(const wxTreeItemId& item)
 {
-    if(!item.IsOk()) { return LLDBBreakpoint::Ptr_t(NULL); }
+    if(!item.IsOk()) {
+        return LLDBBreakpoint::Ptr_t(NULL);
+    }
     LLDBBreakpointClientData* cd = dynamic_cast<LLDBBreakpointClientData*>(m_treeCtrlBreakpoints->GetItemData(item));
     if(cd) {
         return cd->GetBreakpoint();
@@ -204,12 +208,15 @@ LLDBBreakpoint::Ptr_t LLDBOutputView::GetBreakpoint(const wxTreeItemId& item)
 
 void LLDBOutputView::GotoBreakpoint(LLDBBreakpoint::Ptr_t bp)
 {
-    if(!bp) return;
+    if(!bp)
+        return;
     wxFileName fileLoc(bp->GetFilename());
     if(fileLoc.Exists()) {
         if(m_plugin->GetManager()->OpenFile(fileLoc.GetFullPath(), "", bp->GetLineNumber() - 1)) {
             IEditor* editor = m_plugin->GetManager()->GetActiveEditor();
-            if(editor) { editor->SetActive(); }
+            if(editor) {
+                editor->SetActive();
+            }
         }
     }
 }
@@ -228,7 +235,8 @@ void LLDBOutputView::OnCopy(wxCommandEvent& event)
     event.Skip();
     if(m_stcConsole->HasFocus()) {
         event.Skip(false);
-        if(m_stcConsole->CanCopy()) m_stcConsole->Copy();
+        if(m_stcConsole->CanCopy())
+            m_stcConsole->Copy();
     }
 }
 
@@ -237,10 +245,13 @@ void LLDBOutputView::OnConsoleOutput(LLDBEvent& event)
     event.Skip();
     m_stcConsole->SetReadOnly(false);
     wxString text;
-    if(!m_stcConsole->IsEmpty() && !m_stcConsole->GetText().EndsWith("\n")) { text << "\n"; }
+    if(!m_stcConsole->IsEmpty() && !m_stcConsole->GetText().EndsWith("\n")) {
+        text << "\n";
+    }
     text << event.GetString();
     text.Trim();
-    if(text.IsEmpty()) return;
+    if(text.IsEmpty())
+        return;
 
     text << "\n";
     m_stcConsole->AppendText(text);

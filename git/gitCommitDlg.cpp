@@ -55,9 +55,9 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
         diffLexer->Apply(m_stcDiff);
     }
 
-    m_toolbar->AddTool(XRCID("ID_CHECKALL"), _("Toggle files"), clGetManager()->GetStdIcons()->LoadBitmap("check-all"));
-    m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"),
-                       clGetManager()->GetStdIcons()->LoadBitmap("history"));
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("ID_CHECKALL"), _("Toggle files"), images->Add("check-all"));
+    m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"), images->Add("history"));
     m_toolbar->Realize();
     LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
     lex->Apply(m_stcCommitMessage);

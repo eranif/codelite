@@ -1,12 +1,12 @@
 #ifndef CLTOOLBARMENUBUTTON_H
 #define CLTOOLBARMENUBUTTON_H
 
-#include "clToolBarButtonBase.h" 
+#include "clToolBarButtonBase.h"
 
 class WXDLLIMPEXP_SDK clToolBarMenuButton : public clToolBarButtonBase
 {
 public:
-    clToolBarMenuButton(clToolBar* parent, wxWindowID winid, const wxBitmap& bmp, const wxString& label = "");
+    clToolBarMenuButton(clToolBar* parent, wxWindowID winid, size_t bmpId, const wxString& label = "");
     virtual ~clToolBarMenuButton();
 
 public:

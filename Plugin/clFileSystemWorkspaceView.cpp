@@ -18,22 +18,20 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     SetNewFileTemplate("Untitled.cpp", wxStrlen("Untitled"));
     SetViewName(viewName);
 
-    GetToolBar()->AddTool(wxID_PREFERENCES, _("Settings"), clGetManager()->GetStdIcons()->LoadBitmap("cog"), "",
-                          wxITEM_NORMAL);
+    clBitmapList* images = GetToolBar()->GetBitmaps();
+    GetToolBar()->AddTool(wxID_PREFERENCES, _("Settings"), images->Add("cog"), "", wxITEM_NORMAL);
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
     GetToolBar()->AddSeparator();
 
-    BitmapLoader* bmps = clGetManager()->GetStdIcons();
+    GetToolBar()->Add2StatesTool(XRCID("ID_BUILD_BUTTON"), EventNotifier::Get()->TopFrame()->GetEventHandler(),
+                                 { XRCID("build_active_project"), _("Build Active Project"), images->Add("build") },
+                                 { XRCID("stop_active_project_build"), _("Stop Current Build"), images->Add("stop") },
+                                 wxITEM_DROPDOWN);
 
-    GetToolBar()->Add2StatesTool(
-        XRCID("ID_BUILD_BUTTON"), EventNotifier::Get()->TopFrame()->GetEventHandler(),
-        { XRCID("build_active_project"), _("Build Active Project"), bmps->LoadBitmap("build") },
-        { XRCID("stop_active_project_build"), _("Stop Current Build"), bmps->LoadBitmap("stop") }, wxITEM_DROPDOWN);
-
-    GetToolBar()->Add2StatesTool(
-        XRCID("ID_RUN_BUTTON"), EventNotifier::Get()->TopFrame()->GetEventHandler(),
-        { XRCID("execute_no_debug"), _("Run program"), bmps->LoadBitmap("execute") },
-        { XRCID("stop_executed_program"), _("Stop running program"), bmps->LoadBitmap("stop") }, wxITEM_NORMAL);
+    GetToolBar()->Add2StatesTool(XRCID("ID_RUN_BUTTON"), EventNotifier::Get()->TopFrame()->GetEventHandler(),
+                                 { XRCID("execute_no_debug"), _("Run program"), images->Add("execute") },
+                                 { XRCID("stop_executed_program"), _("Stop running program"), images->Add("stop") },
+                                 wxITEM_NORMAL);
 
     GetToolBar()->Realize();
 

@@ -308,9 +308,9 @@ void SvnCommitDialog::OnClearHistoryUI(wxUpdateUIEvent& event)
 
 void SvnCommitDialog::DoCreateToolbar()
 {
-    m_toolbar->AddTool(XRCID("commit-history"), _("Commit History"),
-                       clGetManager()->GetStdIcons()->LoadBitmap("history"), "", wxITEM_DROPDOWN);
-    m_toolbar->AddTool(wxID_CLEAR, _("Clear History"), clGetManager()->GetStdIcons()->LoadBitmap("clear"));
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("commit-history"), _("Commit History"), images->Add("history"), "", wxITEM_DROPDOWN);
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear History"), images->Add("clear"));
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &SvnCommitDialog::OnShowCommitHistory, this, XRCID("commit-history"));

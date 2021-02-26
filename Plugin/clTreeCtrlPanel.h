@@ -48,7 +48,6 @@ public:
     };
 
 protected:
-    BitmapLoader* m_bmpLoader = nullptr;
     clConfig* m_config = nullptr;
     wxString m_viewName;
     clTreeCtrlPanelDefaultPage* m_defaultView = nullptr;

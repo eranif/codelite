@@ -1,20 +1,22 @@
 #include "DebuggerToolBar.h"
+#include "bitmap_loader.h"
+#include "clToolBar.h"
+#include "cl_config.h"
+#include "drawingutils.h"
+#include "editor_config.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
-#include "bitmap_loader.h"
 #include "windowattrmanager.h"
-#include <wx/xrc/xmlres.h>
-#include "clToolBar.h"
-#include "editor_config.h"
-#include "cl_config.h"
 #include <wx/dcbuffer.h>
-#include "drawingutils.h"
-#include "event_notifier.h"
 #include <wx/frame.h>
+#include <wx/xrc/xmlres.h>
 
 DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
 {
-    if(!wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)) { return; }
+    if(!wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)) {
+        return;
+    }
     Hide();
     SetSizer(new wxBoxSizer(wxVERTICAL));
     wxPanel* mainPanel = new wxPanel(this);
@@ -23,37 +25,32 @@ DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
     mainPanel->GetSizer()->Add(m_gripper, 0, wxEXPAND);
     GetSizer()->Add(mainPanel, 1, wxEXPAND);
 
-    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    int toolSize = options->GetIconsSize();
-
     // Create the toolbar itself
     //===-----------------------------------------------------------------------------
     // Debugger floating toolbar
     // The rest of the debugger buttons will go to a separate floating toolbar
     //===-----------------------------------------------------------------------------
-    BitmapLoader& bmpLoader = *clGetManager()->GetStdIcons();
     m_tb = new clToolBar(mainPanel);
     m_tb->SetMiniToolBar(false);
-    
-    m_tb->AddTool(XRCID("start_debugger"), _("Continue"), bmpLoader.LoadBitmap(wxT("debugger_start"), toolSize),
-                  _("Continue"));
-    m_tb->AddTool(XRCID("stop_debugger"), _("Stop debugger"), bmpLoader.LoadBitmap(wxT("debugger_stop"), toolSize),
-                  _("Stop debugger"));
-    m_tb->AddTool(XRCID("pause_debugger"), _("Pause debugger"), bmpLoader.LoadBitmap(wxT("interrupt"), toolSize),
-                  _("Pause debugger"));
-    m_tb->AddTool(XRCID("restart_debugger"), _("Restart debugger"),
-                  bmpLoader.LoadBitmap(wxT("debugger_restart"), toolSize), _("Restart debugger"));
-    m_tb->AddTool(XRCID("show_cursor"), _("Show Current Line"),
-                  bmpLoader.LoadBitmap(wxT("show_current_line"), toolSize), _("Show Current Line"));
-    m_tb->AddTool(XRCID("dbg_stepin"), _("Step Into"), bmpLoader.LoadBitmap(wxT("step_in"), toolSize), _("Step In"));
-    m_tb->AddTool(XRCID("dbg_next"), _("Next"), bmpLoader.LoadBitmap(wxT("next"), toolSize), _("Next"));
-    m_tb->AddTool(XRCID("dbg_stepout"), _("Step Out"), bmpLoader.LoadBitmap(wxT("step_out"), toolSize), _("Step Out"));
+
+    clBitmapList* images = new clBitmapList;
+    m_tb->AddTool(XRCID("start_debugger"), _("Continue"), images->Add("debugger_start"), _("Continue"));
+    m_tb->AddTool(XRCID("stop_debugger"), _("Stop debugger"), images->Add("debugger_stop"), _("Stop debugger"));
+    m_tb->AddTool(XRCID("pause_debugger"), _("Pause debugger"), images->Add("interrupt"), _("Pause debugger"));
+    m_tb->AddTool(XRCID("restart_debugger"), _("Restart debugger"), images->Add("debugger_restart"),
+                  _("Restart debugger"));
+    m_tb->AddTool(XRCID("show_cursor"), _("Show Current Line"), images->Add("show_current_line"),
+                  _("Show Current Line"));
+    m_tb->AddTool(XRCID("dbg_stepin"), _("Step Into"), images->Add("step_in"), _("Step In"));
+    m_tb->AddTool(XRCID("dbg_next"), _("Next"), images->Add("next"), _("Next"));
+    m_tb->AddTool(XRCID("dbg_stepout"), _("Step Out"), images->Add("step_out"), _("Step Out"));
     m_tb->AddSeparator();
-    m_tb->AddTool(XRCID("dbg_enable_reverse_debug"), _("Toggle Rewind Commands"),
-                  bmpLoader.LoadBitmap("rewind", toolSize), _("Toggle Rewind Commands"), wxITEM_CHECK);
-    m_tb->AddTool(XRCID("dbg_start_recording"), _("Start Reverse Debug Recording"),
-                  bmpLoader.LoadBitmap("record", toolSize), _("Start Reverse Debug Recording"), wxITEM_CHECK);
+    m_tb->AddTool(XRCID("dbg_enable_reverse_debug"), _("Toggle Rewind Commands"), images->Add("rewind"),
+                  _("Toggle Rewind Commands"), wxITEM_CHECK);
+    m_tb->AddTool(XRCID("dbg_start_recording"), _("Start Reverse Debug Recording"), images->Add("record"),
+                  _("Start Reverse Debug Recording"), wxITEM_CHECK);
     m_tb->AddSeparator();
+    m_tb->AssignBitmaps(images);
     m_tb->Realize();
     // Let the top level window (i.e. the main frame) process this
     m_tb->Bind(wxEVT_TOOL, [&](wxCommandEvent& event) {
@@ -93,7 +90,7 @@ Gripper::Gripper(wxWindow* parent)
     Bind(wxEVT_PAINT, &Gripper::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent&) {});
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &Gripper::OnAppActivated, this);
-    //SetSizeHints(wxNOT_FOUND, 10);
+    // SetSizeHints(wxNOT_FOUND, 10);
     SetSizeHints(wxNOT_FOUND, 0);
 }
 

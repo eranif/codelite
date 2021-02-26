@@ -90,10 +90,10 @@ CompilerMainPage::CompilerMainPage(wxWindow* parent)
     m_listLinkerOptions->InsertColumn(0, _("Switch"));
     m_listLinkerOptions->InsertColumn(1, _("Help"));
 
-    BitmapLoader* bmps = clGetManager()->GetStdIcons();
-    m_toolbar->AddTool(wxID_NEW, _("Add an existing compiler"), bmps->LoadBitmap("file_new"));
-    m_toolbar->AddTool(wxID_COPY, _("Copy compiler"), bmps->LoadBitmap("copy"));
-    m_toolbar->AddTool(wxID_FIND, _("Scan for compilers"), bmps->LoadBitmap("find"));
+    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(wxID_NEW, _("Add an existing compiler"), images->Add("file_new"));
+    m_toolbar->AddTool(wxID_COPY, _("Copy compiler"), images->Add("copy"));
+    m_toolbar->AddTool(wxID_FIND, _("Scan for compilers"), images->Add("find"));
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &CompilerMainPage::OnAddExistingCompiler, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &CompilerMainPage::OnCloneCompiler, this, wxID_COPY);

@@ -59,7 +59,9 @@ static UnitTestPP* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new UnitTestPP(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new UnitTestPP(manager);
+    }
     return thePlugin;
 }
 
@@ -108,8 +110,8 @@ void UnitTestPP::CreateToolBar(clToolBar* toolbar)
 {
     int size = m_mgr->GetToolbarIconSize();
 
-    BitmapLoader& bitmapLoader = *m_mgr->GetStdIcons();
-    toolbar->AddTool(XRCID("run_unit_tests"), _("Run Unit tests..."), bitmapLoader.LoadBitmap("ok", size),
+    auto images = toolbar->GetBitmapsCreateIfNeeded();
+    toolbar->AddTool(XRCID("run_unit_tests"), _("Run Unit tests..."), images->Add("ok", size),
                      _("Run project as unit test project..."));
 }
 
@@ -304,7 +306,9 @@ void UnitTestPP::DoCreateFixtureTest(const wxString& name, const wxString& fixtu
     text << wxT("}\n");
 
     IEditor* editor = DoAddTestFile(filename, projectName);
-    if(editor) { editor->AppendText(text); }
+    if(editor) {
+        editor->AppendText(text);
+    }
 }
 
 void UnitTestPP::DoCreateSimpleTest(const wxString& name, const wxString& projectName, const wxString& filename)
@@ -325,13 +329,16 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name, const wxString& projec
     text << wxT("{\n");
     text << wxT("}\n");
 
-    if(editor) { editor->AppendText(text); }
+    if(editor) {
+        editor->AppendText(text);
+    }
 }
 
 void UnitTestPP::OnRunUnitTests(wxCommandEvent& e)
 {
     ProjectPtr p = m_mgr->GetSelectedProject();
-    if(!p) return;
+    if(!p)
+        return;
     DoRunProject(p);
 }
 
@@ -355,14 +362,18 @@ std::vector<ProjectPtr> UnitTestPP::GetUnitTestProjects()
     for(size_t i = 0; i < projects.GetCount(); i++) {
         wxString err_msg;
         ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projects.Item(i), err_msg);
-        if(proj && IsUnitTestProject(proj)) { ut_projects.push_back(proj); }
+        if(proj && IsUnitTestProject(proj)) {
+            ut_projects.push_back(proj);
+        }
     }
     return ut_projects;
 }
 
 bool UnitTestPP::IsUnitTestProject(ProjectPtr p)
 {
-    if(!p) { return false; }
+    if(!p) {
+        return false;
+    }
     return p->GetProjectInternalType() == wxT("UnitTest++");
 }
 
@@ -416,7 +427,9 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
         // open the file
         m_mgr->OpenFile(fn.GetFullPath());
         editor = m_mgr->GetActiveEditor();
-        if(editor && editor->GetFileName() == fn) { return editor; }
+        if(editor && editor->GetFileName() == fn) {
+            return editor;
+        }
     }
     return NULL;
 }
@@ -432,7 +445,9 @@ wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName& fil
         // and return
         for(size_t i = 0; i < files.size(); i++) {
             wxFileName fn = files.at(i);
-            if(IsSourceFile(fn.GetExt())) { return fn; }
+            if(IsSourceFile(fn.GetExt())) {
+                return fn;
+            }
         }
         // no source file were found in the project
         // create a path name of the file which will be located
@@ -453,7 +468,9 @@ wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName& fil
 void UnitTestPP::OnMarkProjectAsUT(wxCommandEvent& e)
 {
     ProjectPtr p = m_mgr->GetSelectedProject();
-    if(!p) { return; }
+    if(!p) {
+        return;
+    }
 
     p->SetProjectInternalType(wxT("UnitTest++"));
     p->Save();
@@ -510,13 +527,17 @@ void UnitTestPP::OnRunProject(clExecuteEvent& e)
 {
     e.Skip();
     // Sanity
-    if(!clCxxWorkspaceST::Get()->IsOpen()) return;
-    if(e.GetTargetName().IsEmpty()) return;
+    if(!clCxxWorkspaceST::Get()->IsOpen())
+        return;
+    if(e.GetTargetName().IsEmpty())
+        return;
 
     ProjectPtr pProj = clCxxWorkspaceST::Get()->GetProject(e.GetTargetName());
     CHECK_PTR_RET(pProj);
 
-    if(pProj->GetProjectInternalType() != "UnitTest++") { return; }
+    if(pProj->GetProjectInternalType() != "UnitTest++") {
+        return;
+    }
 
     // This is our to handle
     e.Skip(false);

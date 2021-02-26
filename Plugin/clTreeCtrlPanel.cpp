@@ -29,13 +29,14 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
 {
     ::MSWSetNativeTheme(GetTreeCtrl());
-    m_bmpLoader = clGetManager()->GetStdIcons();
     GetTreeCtrl()->SetFont(DrawingUtils::GetDefaultGuiFont());
 
     m_toolbar = new clEnhancedToolBar(this);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
-    m_toolbar->AddTool(XRCID("link_editor"), _("Link Editor"), m_bmpLoader->LoadBitmap("link_editor"), "",
-                       wxITEM_CHECK);
+    clBitmapList* images = new clBitmapList;
+    m_toolbar->AddTool(XRCID("link_editor"), _("Link Editor"), images->Add("link_editor"), "", wxITEM_CHECK);
+    m_toolbar->AssignBitmaps(images);
+
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &clTreeCtrlPanel::OnLinkEditor, this, XRCID("link_editor"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &clTreeCtrlPanel::OnLinkEditorUI, this, XRCID("link_editor"));
@@ -44,7 +45,14 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     SetDropTarget(new clFileOrFolderDropTarget(this));
     GetTreeCtrl()->SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &clTreeCtrlPanel::OnFolderDropped, this);
-    GetTreeCtrl()->SetBitmaps(m_bmpLoader->GetStandardMimeBitmapListPtr());
+    GetTreeCtrl()->SetBitmaps(clBitmaps::Get().GetLoader()->GetStandardMimeBitmapListPtr());
+
+    // Bind and respond to the bitmaps-updated event
+    EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, [this](clCommandEvent& event) {
+        event.Skip();
+        GetTreeCtrl()->SetBitmaps(clBitmaps::Get().GetLoader()->GetStandardMimeBitmapListPtr());
+        GetTreeCtrl()->Refresh();
+    });
     GetTreeCtrl()->AddRoot(_("Folders"), wxNOT_FOUND, wxNOT_FOUND, new clTreeCtrlData(clTreeCtrlData::kRoot));
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clTreeCtrlPanel::OnActiveEditorChanged, this);
@@ -296,9 +304,9 @@ wxTreeItemId clTreeCtrlPanel::DoAddFile(const wxTreeItemId& parent, const wxStri
     clTreeCtrlData* cd = new clTreeCtrlData(clTreeCtrlData::kFile);
     cd->SetPath(filename.GetFullPath());
 
-    int imgIdx = m_bmpLoader->GetMimeImageId(filename.GetFullName());
+    int imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(filename.GetFullName());
     if(imgIdx == wxNOT_FOUND) {
-        imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeText);
+        imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeText);
     }
     wxTreeItemId fileItem = GetTreeCtrl()->AppendItem(parent, filename.GetFullName(), imgIdx, imgIdx, cd);
     // Add this entry to the index
@@ -340,8 +348,8 @@ wxTreeItemId clTreeCtrlPanel::DoAddFolder(const wxTreeItemId& parent, const wxSt
         }
     }
 
-    int imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder);
-    int imgOpenedIDx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+    int imgIdx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeFolder);
+    int imgOpenedIDx = clBitmaps::Get().GetLoader()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
     wxTreeItemId itemFolder = GetTreeCtrl()->AppendItem(parent, displayName, imgIdx, imgOpenedIDx, cd);
 
     // Add this entry to the index

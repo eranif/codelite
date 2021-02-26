@@ -185,27 +185,23 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_CONN_GEN_CODE, &MainFrame::OnNetGenerateCode, this);
     EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_NEW_FORM, &MainFrame::OnNetNewForm, this);
 
-#if STANDALONE_BUILD
-    m_bitmaps = BitmapLoader::Create();
-#else
-    m_bitmaps = clGetManager()->GetStdIcons();
-#endif
     m_mainToolbar->SetMiniToolBar(false);
+    auto images = m_mainToolbar->GetBitmapsCreateIfNeeded();
 
 #if !STANDALONE_BUILD
-    m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), m_bitmaps->LoadBitmap("back"));
+    m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), images->Add("back"));
 #endif
-    m_mainToolbar->AddTool(wxID_NEW, _("New Project"), m_bitmaps->LoadBitmap("file_new"));
-    m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), m_bitmaps->LoadBitmap("file_open"), "", wxITEM_DROPDOWN);
-    m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), m_bitmaps->LoadBitmap("file_close"));
-    m_mainToolbar->AddTool(wxID_SAVE, _("Save"), m_bitmaps->LoadBitmap("file_save"));
+    m_mainToolbar->AddTool(wxID_NEW, _("New Project"), images->Add("file_new"));
+    m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), images->Add("file_open"), "", wxITEM_DROPDOWN);
+    m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), images->Add("file_close"));
+    m_mainToolbar->AddTool(wxID_SAVE, _("Save"), images->Add("file_save"));
     m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), m_bitmaps->LoadBitmap("undo"));
-    m_mainToolbar->AddTool(wxID_REDO, _("Redo"), m_bitmaps->LoadBitmap("redo"));
+    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), images->Add("undo"));
+    m_mainToolbar->AddTool(wxID_REDO, _("Redo"), images->Add("redo"));
     m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(wxID_FIND, _("Find"), m_bitmaps->LoadBitmap("find"));
+    m_mainToolbar->AddTool(wxID_FIND, _("Find"), images->Add("find"));
     m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(XRCID("generate-code"), _("Generate Code"), m_bitmaps->LoadBitmap("execute"));
+    m_mainToolbar->AddTool(XRCID("generate-code"), _("Generate Code"), images->Add("execute"));
     m_mainToolbar->Realize();
 
 #if !STANDALONE_BUILD

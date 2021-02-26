@@ -2,16 +2,18 @@
 #define CLENHANCEDTOOLBAR_HPP
 
 #include "clToolBar.h"
+#include "clToolBarButtonBase.h"
 #include <codelite_exports.h>
 #include <unordered_map>
 
+using namespace std;
 class WXDLLIMPEXP_SDK clEnhancedToolBar : public clToolBar
 {
 public:
     struct Button {
         wxWindowID id;
         wxString label;
-        wxBitmap bmp;
+        size_t bmp_id;
     };
 
 protected:
@@ -34,7 +36,7 @@ protected:
     };
 
 protected:
-    std::unordered_map<wxWindowID, ButtonState> m_buttons;
+    unordered_map<wxWindowID, ButtonState> m_buttons;
     void OnButtonClicked(wxCommandEvent& event);
 
 public:

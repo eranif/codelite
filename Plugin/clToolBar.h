@@ -1,12 +1,15 @@
 #ifndef CLTOOLBAR_H
 #define CLTOOLBAR_H
 
+#include "bitmap_loader.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include <unordered_map>
 #include <vector>
 #include <wx/menu.h>
 #include <wx/panel.h>
+
+#define INVALID_BITMAP_ID wxString::npos
 
 class clToolBarButtonBase;
 class WXDLLIMPEXP_SDK clToolBar : public wxPanel
@@ -24,6 +27,8 @@ private:
     int m_groupSpacing;
     wxColour m_bgColour;
     bool m_useCustomBgColour = false;
+    clBitmapList* m_bitmaps = nullptr;
+    bool m_ownedBitmaps = false;
 
 public:
     enum eFlags {
@@ -56,6 +61,25 @@ public:
               const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
               const wxString& name = "clToolBar");
     virtual ~clToolBar();
+
+    const wxBitmap& GetBitmap(size_t index) const;
+
+    /**
+     * @brief set a bitmaps pointer. the caller is still the owner (i.e. he is responsible for deleting it)
+     * the pointer must be in scope as long as this class exists
+     */
+    void SetBitmaps(clBitmapList* bitmaps);
+
+    clBitmapList* GetBitmaps() const { return m_bitmaps; }
+    /**
+     * @brief return a pointer to the bitmaps list. Create one if no such bitmap list exists
+     */
+    clBitmapList* GetBitmapsCreateIfNeeded();
+
+    /**
+     * @brief assign bitmap list to the toolbar. the toolbar is the owner
+     */
+    void AssignBitmaps(clBitmapList* bitmaps);
 
     void EnableFlag(eFlags f, bool b)
     {
@@ -114,9 +138,9 @@ public:
      * if where can not be found, this function returns null     */
     clToolBarButtonBase* InsertAfter(wxWindowID where, clToolBarButtonBase* button);
 
-    clToolBarButtonBase* AddButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
-    clToolBarButtonBase* AddMenuButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
-    clToolBarButtonBase* AddToggleButton(wxWindowID id, const wxBitmap& bmp, const wxString& label = "");
+    clToolBarButtonBase* AddButton(wxWindowID id, size_t bitmapIndex, const wxString& label = "");
+    clToolBarButtonBase* AddMenuButton(wxWindowID id, size_t bitmapIndex, const wxString& label = "");
+    clToolBarButtonBase* AddToggleButton(wxWindowID id, size_t bitmapIndex, const wxString& label = "");
     clToolBarButtonBase* AddSeparator();
     clToolBarButtonBase* AddStretchableSpace();
     clToolBarButtonBase* AddSpacer();
@@ -128,30 +152,29 @@ public:
     clToolBarButtonBase* AddControl(wxWindow* control);
 
     // Compatibility API with wxToolBar
-    clToolBarButtonBase* AddTool(wxWindowID id, const wxString& label, const wxBitmap& bmp,
+    clToolBarButtonBase* AddTool(wxWindowID id, const wxString& label, size_t bitmapIndex,
                                  const wxString& helpString = "", wxItemKind kind = wxITEM_NORMAL)
     {
         wxUnusedVar(helpString);
         switch(kind) {
         case wxITEM_DROPDOWN:
-            return AddMenuButton(id, bmp, label);
+            return AddMenuButton(id, bitmapIndex, label);
         case wxITEM_CHECK:
-            return AddToggleButton(id, bmp, label);
+            return AddToggleButton(id, bitmapIndex, label);
         case wxITEM_NORMAL:
         default:
-            return AddButton(id, bmp, label);
+            return AddButton(id, bitmapIndex, label);
         }
     }
 
-    clToolBarButtonBase* AddTool(wxWindowID id, const wxString& label, const wxBitmap& bitmap,
-                                 const wxBitmap& bmpDisabled, wxItemKind kind = wxITEM_NORMAL,
-                                 const wxString& shortHelp = wxEmptyString, const wxString& longHelp = wxEmptyString,
-                                 wxObject* data = NULL)
+    clToolBarButtonBase* AddTool(wxWindowID id, const wxString& label, size_t bitmapIndex, size_t bitmapIndexDisabled,
+                                 wxItemKind kind = wxITEM_NORMAL, const wxString& shortHelp = wxEmptyString,
+                                 const wxString& longHelp = wxEmptyString, wxObject* data = NULL)
     {
-        wxUnusedVar(bmpDisabled);
+        wxUnusedVar(bitmapIndexDisabled);
         wxUnusedVar(longHelp);
         wxUnusedVar(data);
-        return AddTool(id, label, bitmap, shortHelp, kind);
+        return AddTool(id, label, bitmapIndex, shortHelp, kind);
     }
 
     void SetToolBitmapSize(const wxSize& size) { wxUnusedVar(size); }

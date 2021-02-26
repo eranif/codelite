@@ -3455,6 +3455,13 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
     // let the context process it as well
     if(event.GetKeyCode() == WXK_ESCAPE) {
 
+        // if we are in fullscreen mode, hitting ESC will disable this
+        wxFrame* mainframe = EventNotifier::Get()->TopFrame();
+        if(mainframe->IsFullScreen()) {
+            mainframe->ShowFullScreen(false, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER |
+                                                 wxFULLSCREEN_NOCAPTION);
+        }
+
         if(GetFunctionTip()->IsActive()) {
             GetFunctionTip()->Deactivate();
             escapeUsed = true;

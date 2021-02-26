@@ -65,11 +65,10 @@ wxColour clSystemSettings::GetColour(int index)
 {
     if(m_useCustomColours) {
         if(index == wxSYS_COLOUR_TOOLBAR) {
-            return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+            index = wxSYS_COLOUR_3DFACE; // fallback
         } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
             return m_customColours.GetItemTextColour();
         }
-        // fallback
         switch(index) {
         case wxSYS_COLOUR_3DFACE:
         case wxSYS_COLOUR_LISTBOX:
@@ -90,10 +89,10 @@ wxColour clSystemSettings::GetColour(int index)
 #ifdef __WXGTK__
         if(index == wxSYS_COLOUR_TOOLBAR) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-            //return wxColor(GtkHeaderbarStyle()->bg[GTK_STATE_NORMAL]);
+            // return wxColor(GtkHeaderbarStyle()->bg[GTK_STATE_NORMAL]);
         } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-            //return wxColor(GtkHeaderbarStyle()->fg[GTK_STATE_NORMAL]);
+            // return wxColor(GtkHeaderbarStyle()->fg[GTK_STATE_NORMAL]);
         }
 #endif
         return wxSystemSettings::GetColour((wxSystemColour)index);

@@ -674,7 +674,7 @@ int clToolBar::GetYSpacer() const
 void clToolBar::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    m_bgColour = DrawingUtils::GetMenuBarBgColour(HasFlag(kMiniToolBar));
     m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
     if(m_useCustomBgColour) {
         m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour);

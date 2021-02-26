@@ -9,20 +9,16 @@ namespace cl
 {
 template <typename T> void ApplyTheme(T* ctrl)
 {
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     clColours colours;
-    if(lexer->IsDark()) {
-        colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    } else {
-        colours.InitDefaults();
-    }
-
     wxColour baseColour = colours.GetBgColour();
     bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
     if(useCustomColour) {
         baseColour = clConfig::Get().Read("BaseColour", baseColour);
-        colours.InitFromColour(baseColour);
+    } else {
+        // we use the *native* background colour (notice that we are using wxSystemSettings)
+        baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     }
+    colours.InitFromColour(baseColour);
 
     // Set the built-in search colours
     wxColour highlightColur = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);

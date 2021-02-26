@@ -89,7 +89,7 @@ static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour)
 clAuiDockArt::clAuiDockArt(IManager* manager)
     : m_manager(manager)
 {
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
     m_captionColour = DrawingUtils::GetCaptionColour();
     m_captionTextColour = DrawingUtils::GetCaptionTextColour();
     m_useCustomCaptionColour = clConfig::Get().Read("UseCustomCaptionsColour", false);
@@ -110,7 +110,7 @@ clAuiDockArt::clAuiDockArt(IManager* manager)
 
 clAuiDockArt::~clAuiDockArt()
 {
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
 }
 
 void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
@@ -127,9 +127,9 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
     } else {
         buttonRect.Deflate(1);
     }
-    if (buttonRect.GetHeight() < 2)  {
+    if(buttonRect.GetHeight() < 2) {
         // A wx3.0.x build may arrive here with a 1*1 rect -> a sigabort in libcairo
-        return; 
+        return;
     }
     buttonRect = buttonRect.CenterIn(_rect);
     eButtonState buttonState = eButtonState::kNormal;
@@ -307,10 +307,22 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
     dc.DrawRectangle(rect);
 }
 
-void clAuiDockArt::OnSettingsChanged(wxCommandEvent& event)
+void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)
 {
     event.Skip();
-    m_captionColour = DrawingUtils::GetCaptionColour();
-    m_captionTextColour = DrawingUtils::GetCaptionTextColour();
+    clColours colours;
+    wxColour baseColour = colours.GetBgColour();
+    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
+    if(useCustomColour) {
+        baseColour = clConfig::Get().Read("BaseColour", baseColour);
+    } else {
+        // we use the *native* background colour (notice that we are using wxSystemSettings)
+        baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    }
+    colours.InitFromColour(baseColour);
+
+    m_captionColour = clSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
+    m_captionTextColour = colours.GetItemTextColour();
+    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     m_useCustomCaptionColour = false;
 }

@@ -3,7 +3,7 @@
  "name": "CodeLiteIDE-Linux",
  "configs": [{
    "name": "Debug",
-   "targets": [["Run CMake", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["build", "cd build-debug && make -j8 install"], ["clean", "cd build-debug && make -j8 clean"], ["install", "cd build-debug && make -j8 install"]],
+   "targets": [["Run CMake", "mkdir -p build-debug && cd build-debug && cmake -DCMAKE_BUILD_TYPE=Debug .. -DCOPY_WX_LIBS=1 -DMAKE_DEB=1 -DCL_PREFIX=$HOME/root"], ["build", "cd build-debug && make -j$(nproc) install"], ["clean", "cd build-debug && make -j$(nproc) clean"], ["install", "cd build-debug && make -j$(nproc) install"]],
    "file_extensions": "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.xrc",
    "excludeFilesPattern": "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
    "excludePaths": "/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug-native-book;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release-gtk2;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/bitmaps-light;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-debug;/home/ANT.AMAZON.COM/eifrah/devl/codelite/build-release;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-dark;/home/ANT.AMAZON.COM/eifrah/devl/codelite/codelite-icons-fresh-farm",

@@ -427,14 +427,14 @@ void clGTKNotebook::Initialise(long style)
     }
 
     if(m_bookStyle & kNotebook_ShowFileListButton) {
-        GtkToolItem* button = gtk_tool_button_new(nullptr, "\u25BC");
-        gtk_box_pack_end(GTK_BOX(box), GTK_WIDGET(button), false, false, 0);
+        GtkToolItem* button = gtk_tool_button_new(nullptr, "\u25BE");
+        gtk_box_pack_end(GTK_BOX(box), GTK_WIDGET(button), false, true, 10);
         g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_clicked), this);
     }
 
     // Add the "+" button if needed
     if(m_bookStyle & kNotebook_NewButton) {
-        GtkToolItem* button = gtk_tool_button_new_from_stock(GTK_STOCK_ADD);
+        GtkToolItem* button = gtk_tool_button_new(nullptr, "\uFF0B");
         gtk_box_pack_end(GTK_BOX(box), GTK_WIDGET(button), true, true, 2);
         gtk_widget_show_all(GTK_WIDGET(button));
         g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_new_clicked), this);
@@ -465,14 +465,9 @@ void clGTKNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel
 
     wxGtkNotebookPage* p = GetNotebookPage(index);
     if(m_bookStyle & kNotebook_CloseButtonOnActiveTab) {
-#ifdef __WXGTK3__
         GtkToolItem* button = gtk_tool_button_new(nullptr, "✖");
-#else
-        GtkToolItem* button = gtk_tool_button_new_from_stock(GTK_STOCK_CLOSE);
-#endif
 
         // remove the label and insert it back at the start
-
         // add nother reference before removing it, since we plan on reusing it later
         g_object_ref(p->m_label);
         gtk_container_remove(GTK_CONTAINER(p->m_box), p->m_label);

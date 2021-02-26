@@ -584,6 +584,7 @@
     <File Name="../InnoSetup/codelite_php.iss"/>
     <File Name="../InnoSetup/codelite64_mingw.iss"/>
     <VirtualDirectory Name="CMakeModules">
+      <File Name="../cmake/Modules/UtilsHelper.cmake"/>
       <File Name="../cmake/Modules/FindClang.cmake"/>
       <File Name="../cmake/Modules/FindGLIB2.cmake"/>
       <File Name="../cmake/Modules/FindGTK3.cmake"/>

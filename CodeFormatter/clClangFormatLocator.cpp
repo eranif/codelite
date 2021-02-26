@@ -7,6 +7,7 @@
 #include <wx/log.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
+#include "file_logger.h"
 
 clClangFormatLocator::clClangFormatLocator() {}
 
@@ -15,37 +16,13 @@ clClangFormatLocator::~clClangFormatLocator() {}
 bool clClangFormatLocator::Locate(wxString& clangFormat)
 {
 #ifdef __WXGTK__
-    // try to locate clang-format that comes with CodeLite
-    wxFileName clangFormatExe(clStandardPaths::Get().GetUserDataDir(), "");
-    clangFormatExe.AppendDir("lsp");
-    clangFormatExe.AppendDir("clang-tools");
-    clangFormatExe.SetFullName("clang-format");
-    if(clangFormatExe.FileExists()) {
-        // this clang-format requires LD_LIBRARY_PATH set properly
-        wxString ldLibPath = ::wxGetenv("LD_LIBRARY_PATH");
-        if(!ldLibPath.IsEmpty()) {
-            ldLibPath << ":";
-        }
-        ldLibPath << clangFormatExe.GetPath();
-        ::wxSetEnv("LD_LIBRARY_PATH", ldLibPath);
-        clangFormat = clangFormatExe.GetFullPath();
-        return true;
-    }
-
-    wxArrayString nameOptions;
-    nameOptions.Add("clang-format");
-    nameOptions.Add("clang-format-3.9");
-    nameOptions.Add("clang-format-3.8");
-    nameOptions.Add("clang-format-3.7");
-    nameOptions.Add("clang-format-3.6");
-    nameOptions.Add("clang-format-3.5");
-    nameOptions.Add("clang-format-3.4");
-    nameOptions.Add("clang-format-3.3");
-
-    wxFileName file;
-    for(size_t i = 0; i < nameOptions.GetCount(); ++i) {
-        if(clFindExecutable(nameOptions.Item(i), file)) {
-            clangFormat = file.GetFullPath();
+    wxFileName fnClangFormat("/usr/bin", "");
+    wxArrayString suffix;
+    for(size_t i = 20; i >= 7; --i) {
+        fnClangFormat.SetFullName(wxString() << "clang-format-" << i);
+        if(fnClangFormat.FileExists()) {
+            clSYSTEM() << "Fonund clang-format ==>" << fnClangFormat << endl;
+            clangFormat = fnClangFormat.GetFullPath();
             return true;
         }
     }

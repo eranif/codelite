@@ -33,20 +33,17 @@ bool LSPClangdDetector::DoLocate()
         return true;
     }
 #elif defined(__WXGTK__)
-    wxFileName clangdExe(clStandardPaths::Get().GetUserDataDir(), "");
-    clangdExe.AppendDir("lsp");
-    clangdExe.AppendDir("clang-tools");
-    clangdExe.SetFullName("clangd");
-    if(clangdExe.FileExists()) {
-        ConfigureFile(clangdExe);
-        // this clangd requires LD_LIBRARY_PATH set properly
-        clEnvList_t environment;
-        environment.push_back({ "LD_LIBRARY_PATH", clangdExe.GetPath() });
-        SetEnv(environment);
-        return true;
+    wxFileName fnClangdExe("/usr/bin", "");
+    wxArrayString suffix;
+    for(size_t i = 20; i >= 7; --i) {
+        fnClangdExe.SetFullName(wxString() << "clangd-" << i);
+        if(fnClangdExe.FileExists()) {
+            clSYSTEM() << "Fonund clangd ==>" << fnClangdExe << endl;
+            ConfigureFile(fnClangdExe);
+            return true;
+        }
     }
 #endif
-
     CompilerLocatorCLANG locator;
     wxFileName fnClangd;
 #if defined(__WXMSW__)

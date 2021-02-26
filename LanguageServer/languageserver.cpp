@@ -106,7 +106,17 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
     // launch a thread to locate any LSP installed on this machine
-    if(LanguageServerConfig::Get().GetServers().empty()) {
+
+    bool force = false;
+    const auto& servers = LanguageServerConfig::Get().GetServers();
+    for(auto& server : servers) {
+        if(server.second.GetCommand().Contains(".codelite/lsp/clang-tools")) {
+            force = true;
+            break;
+        }
+    }
+
+    if(LanguageServerConfig::Get().GetServers().empty() || force) {
         clDEBUG() << "Scanning..." << clEndl;
         std::thread thr(
             [=](LanguageServerPlugin* plugin) {

@@ -11,7 +11,11 @@
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/notebook.h>
+#include <unordered_map>
+#include <wx/notebook.h>
+#include "bitmap_loader.h"
 
+using namespace std;
 class clGTKNotebook : public wxNotebook
 {
 protected:
@@ -19,14 +23,15 @@ protected:
 
     struct UserData {
         wxString tooltip;
-        wxBitmap bitmap;
+        int bitmap;
     };
     std::unordered_map<wxWindow*, UserData> m_userData;
     wxMenu* m_tabContextMenu = nullptr;
     clTabHistory::Ptr_t m_history;
-
+    clBitmapList* m_bitmaps = nullptr;
+    
 protected:
-    void DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, const wxBitmap& bmp);
+    void DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, int bmp);
     bool GetPageDetails(wxWindow* page, int& curindex, wxString& label, int& imageId) const;
     void BindEvents();
     void Initialise(long style);
@@ -52,17 +57,19 @@ public:
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxNotebookNameStr);
     // dtor
     virtual ~clGTKNotebook();
-
+    
+    clBitmapList* GetBitmaps() const { return m_bitmaps; }
+    int GetPageBitmapIndex(size_t index) const;
     void SetStyle(size_t bookStyle) { this->m_bookStyle = bookStyle; }
     size_t GetStyle() const { return m_bookStyle; }
     void SetTabDirection(wxDirection d);
     void EnableStyle(NotebookStyle style, bool enable);
 
     // API
-    void AddPage(wxWindow* page, const wxString& label, bool selected = false, const wxBitmap& bmp = wxNullBitmap,
+    void AddPage(wxWindow* page, const wxString& label, bool selected = false, int bmp = wxNOT_FOUND,
                  const wxString& shortLabel = wxEmptyString);
     bool InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected = false,
-                    const wxBitmap& bmp = wxNullBitmap, const wxString& shortLabel = wxEmptyString);
+                    int bmp = wxNOT_FOUND, const wxString& shortLabel = wxEmptyString);
 
     bool RemovePage(size_t page, bool notify);
     bool DeletePage(size_t page, bool notify);
@@ -70,7 +77,7 @@ public:
     bool DeletePage(size_t page) override;
 
     wxWindow* GetCurrentPage() const;
-    void SetPageBitmap(size_t index, const wxBitmap& bmp);
+    void SetPageBitmap(size_t index, int bmp);
     wxBitmap GetPageBitmap(size_t index) const;
     bool DeleteAllPages() override;
     int GetPageIndex(wxWindow* window) const;

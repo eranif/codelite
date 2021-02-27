@@ -85,7 +85,8 @@ clGTKNotebook::clGTKNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos
 
 clGTKNotebook::~clGTKNotebook()
 {
-    wxDELETE(m_tabContextMenu); 
+    wxDELETE(m_tabContextMenu);
+    wxDELETE(m_bitmaps);
     Unbind(wxEVT_NOTEBOOK_PAGE_CHANGING, &clGTKNotebook::OnPageChanging, this);
     Unbind(wxEVT_NOTEBOOK_PAGE_CHANGED, &clGTKNotebook::OnPageChanged, this);
 }
@@ -111,8 +112,7 @@ int clGTKNotebook::ChangeSelection(size_t nPage)
     return res;
 }
 
-void clGTKNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
-                            const wxString& shortLabel)
+void clGTKNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, int bmp, const wxString& shortLabel)
 {
     if(!page) {
         return;
@@ -123,13 +123,14 @@ void clGTKNotebook::AddPage(wxWindow* page, const wxString& label, bool selected
     if(page->GetParent() != this) {
         page->Reparent(this);
     }
+    // TODO :: fix bmp code to display images
     if(!wxNotebook::InsertPage(GetPageCount(), page, label, selected, wxNOT_FOUND)) {
         return;
     }
     DoFinaliseAddPage(page, shortLabel, bmp);
 }
 
-bool clGTKNotebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
+bool clGTKNotebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, int bmp,
                                const wxString& shortLabel)
 {
     if(!page) {
@@ -141,6 +142,7 @@ bool clGTKNotebook::InsertPage(size_t index, wxWindow* page, const wxString& lab
     if(!page->IsShown()) {
         page->Show();
     }
+    // TODO :: fix bmp code to display images
     if(!wxNotebook::InsertPage(index, page, label, selected, wxNOT_FOUND)) {
         return false;
     }
@@ -411,6 +413,7 @@ void clGTKNotebook::TabButtonClicked(wxWindow* page)
 
 void clGTKNotebook::Initialise(long style)
 {
+    m_bitmaps = new clBitmapList;
     m_history.reset(new clTabHistory());
     m_bookStyle = (style & ~wxWINDOW_STYLE_MASK);
     if(!(m_bookStyle & kNotebook_CloseButtonOnActiveTab)) {
@@ -448,7 +451,7 @@ void clGTKNotebook::Initialise(long style)
     BindEvents();
 }
 
-void clGTKNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, const wxBitmap& bmp)
+void clGTKNotebook::DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, int bmp)
 {
     // do we need to add buton?
     int index = GetPageIndex(page);
@@ -578,22 +581,21 @@ bool clGTKNotebook::DeleteAllPages()
     return true;
 }
 
-void clGTKNotebook::SetPageBitmap(size_t index, const wxBitmap& bmp)
+void clGTKNotebook::SetPageBitmap(size_t index, int bmp)
 {
+    wxUnusedVar(bmp);
     wxWindow* win = GetPage(index);
     if(m_userData.count(win) == 0) {
         return;
     }
+    // TODO: do we really need m_userData now that we moved to clBitmapList ?
     m_userData[win].bitmap = bmp;
 }
 
 wxBitmap clGTKNotebook::GetPageBitmap(size_t index) const
 {
-    auto iter = m_userData.find(GetPage(index));
-    if(iter == m_userData.end()) {
-        return wxNullBitmap;
-    }
-    return iter->second.bitmap;
+    wxUnusedVar(index);
+    return wxNullBitmap;
 }
 
 int clGTKNotebook::GetPageIndex(const wxString& label) const
@@ -647,7 +649,7 @@ clTabHistory::Ptr_t clGTKNotebook::GetHistory() const
 size_t clGTKNotebook::GetAllTabs(clTabInfo::Vec_t& tabs)
 {
     for(size_t i = 0; i < GetPageCount(); ++i) {
-        clTabInfo::Ptr_t info(new clTabInfo(nullptr, 0, GetPage(i), GetPageText(i), GetPageBitmap(i)));
+        clTabInfo::Ptr_t info(new clTabInfo(nullptr, 0, GetPage(i), GetPageText(i), wxNOT_FOUND));
         tabs.push_back(info);
     }
     return tabs.size();
@@ -755,6 +757,12 @@ void clGTKNotebook::GTKActionButtonNewClicked(GtkToolItem* button)
     wxBookCtrlEvent event(wxEVT_BOOK_NEW_PAGE);
     event.SetEventObject(this);
     GetEventHandler()->ProcessEvent(event);
+}
+
+int clGTKNotebook::GetPageBitmapIndex(size_t index) const
+{
+    // TODO :: implement this
+    return wxNOT_FOUND;
 }
 
 #endif // __WXGTK3__

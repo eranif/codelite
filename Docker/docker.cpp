@@ -38,17 +38,18 @@ Docker::Docker(IManager* manager)
     m_longName = _("Docker for CodeLite");
     m_shortName = wxT("Docker");
     m_driver.reset(new clDockerDriver(this));
-    
+
     clWorkspaceManager::Get().RegisterWorkspace(new clDockerWorkspace(false, nullptr, m_driver));
     clDockerWorkspace::Initialise(this);
     clDockerWorkspace::Get(); // Make sure that the workspace instance is up and all events are hooked
 
     Notebook* book = m_mgr->GetOutputPaneNotebook();
+    auto images = book->GetBitmaps();
     m_outputView = new DockerOutputPane(book, m_driver);
-    book->AddPage(m_outputView, _("Docker"), false, m_mgr->GetStdIcons()->LoadBitmap("docker"));
+    book->AddPage(m_outputView, _("Docker"), false, images->Add("docker"));
 
     m_tabToggler.reset(new clTabTogglerHelper(_("Docker"), m_outputView, "", NULL));
-    m_tabToggler->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("docker"));
+    m_tabToggler->SetOutputTabBmp(images->Add("docker"));
 }
 
 Docker::~Docker() {}
@@ -64,13 +65,13 @@ void Docker::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     menu->Append(XRCID("ID_DOCKER_SETTINGS"), _("Settings"));
     pluginsMenu->Append(wxID_ANY, _("Docker"), menu);
-    menu->Bind(wxEVT_MENU,
-               [&](wxCommandEvent& event) {
-                   DockerSettingsDlg dlg(EventNotifier::Get()->TopFrame());
-                   if(dlg.ShowModal() == wxID_OK) {
-                   }
-               },
-               XRCID("ID_DOCKER_SETTINGS"));
+    menu->Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& event) {
+            DockerSettingsDlg dlg(EventNotifier::Get()->TopFrame());
+            if(dlg.ShowModal() == wxID_OK) {}
+        },
+        XRCID("ID_DOCKER_SETTINGS"));
 }
 
 void Docker::UnPlug()

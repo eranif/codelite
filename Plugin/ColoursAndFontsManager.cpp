@@ -1121,9 +1121,6 @@ void ColoursAndFontsManager::OnAdjustTheme(clCommandEvent& event)
     // Notify this change
     clCommandEvent evt(wxEVT_CMD_COLOURS_FONTS_UPDATED);
     EventNotifier::Get()->AddPendingEvent(evt);
-
-    clGetManager()->DisplayMessage(_("A CodeLite restart is needed. Would you like to restart it now?"),
-                                   wxICON_QUESTION, { { XRCID("restart-codelite"), _("Yes") }, { wxID_NO, _("No") } });
 }
 
 wxColour ColoursAndFontsManager::GetBackgroundColourFromLexer(LexerConf::Ptr_t lexer) const

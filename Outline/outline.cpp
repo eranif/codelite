@@ -56,7 +56,9 @@ static SymbolViewPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new SymbolViewPlugin(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new SymbolViewPlugin(manager);
+    }
     return thePlugin;
 }
 
@@ -89,13 +91,13 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
     if(IsPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("Outline"), false, wxNullBitmap, wxSize(200, 200));
+            new DockablePane(book->GetParent()->GetParent(), book, _("Outline"), false, wxNOT_FOUND, wxSize(200, 200));
         m_view = new OutlineTab(cp, m_mgr);
         cp->SetChildNoReparent(m_view);
         m_view->m_isEnabled = true; // Enabled when detached
     } else {
         m_view = new OutlineTab(book, m_mgr);
-        book->AddPage(m_view, _("Outline"), false, wxNullBitmap);
+        book->AddPage(m_view, _("Outline"), false, wxNOT_FOUND);
     }
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &SymbolViewPlugin::OnToggleTab, this);
     m_mgr->AddWorkspaceTab(_("Outline"));
@@ -144,7 +146,9 @@ void SymbolViewPlugin::OnToggleTab(clCommandEvent& event)
         m_mgr->GetWorkspacePaneNotebook()->AddPage(m_view, _("Outline"), true);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(_("Outline"));
-        if(where != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(where); }
+        if(where != wxNOT_FOUND) {
+            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+        }
     }
 }
 
@@ -163,7 +167,9 @@ void SymbolViewPlugin::OnPageChanged(wxBookCtrlEvent& e)
         if(sel != wxNOT_FOUND) {
             wxString seletionText = m_mgr->GetWorkspacePaneNotebook()->GetPageText(sel);
             m_view->m_isEnabled = (seletionText == _("Outline"));
-            if(m_view->m_isEnabled) { m_view->EditorChanged(); }
+            if(m_view->m_isEnabled) {
+                m_view->EditorChanged();
+            }
         } else {
             // the page is detached
             m_view->m_isEnabled = true; // just mark as active

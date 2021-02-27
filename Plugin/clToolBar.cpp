@@ -687,7 +687,7 @@ void clToolBar::SetGroupSpacing(int spacing) { m_groupSpacing = clGetSize(spacin
 const wxBitmap& clToolBar::GetBitmap(size_t index) const
 {
     wxASSERT_MSG(m_bitmaps, "No bitmaps !?");
-    return m_bitmaps->at(index);
+    return m_bitmaps->Get(index, false);
 }
 
 void clToolBar::SetBitmaps(clBitmapList* bitmaps)

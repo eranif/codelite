@@ -116,18 +116,18 @@ clGenericNotebook::clGenericNotebook(wxWindow* parent, wxWindowID id, const wxPo
 
 clGenericNotebook::~clGenericNotebook() {}
 
-void clGenericNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, const wxBitmap& bmp,
+void clGenericNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, int bitmapId,
                                 const wxString& shortLabel)
 {
-    InsertPage(GetPageCount(), page, label, selected, bmp, shortLabel);
+    InsertPage(GetPageCount(), page, label, selected, bitmapId, shortLabel);
 }
 
 void clGenericNotebook::DoChangeSelection(wxWindow* page) { m_windows->Select(page); }
 
-bool clGenericNotebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected,
-                                   const wxBitmap& bmp, const wxString& shortLabel)
+bool clGenericNotebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, int bitmapId,
+                                   const wxString& shortLabel)
 {
-    clTabInfo::Ptr_t tab(new clTabInfo(m_tabCtrl, GetStyle(), page, label, bmp));
+    clTabInfo::Ptr_t tab(new clTabInfo(m_tabCtrl, GetStyle(), page, label, bitmapId));
     tab->SetShortLabel(shortLabel.IsEmpty() ? label : shortLabel);
     tab->SetActive(selected, GetStyle());
     return m_tabCtrl->InsertPage(index, tab);
@@ -218,6 +218,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     , m_contextMenu(NULL)
     , m_dragStartTime((time_t)-1)
 {
+    m_bitmaps = new clBitmapList;
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetBackgroundColour(style & kNotebook_DynamicColours ? clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
                                                          : wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
@@ -355,6 +356,7 @@ clTabCtrl::~clTabCtrl()
     Unbind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Unbind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
     Unbind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
+    wxDELETE(m_bitmaps);
 }
 
 void clTabCtrl::OnSize(wxSizeEvent& event)
@@ -704,15 +706,25 @@ wxString clTabCtrl::GetPageText(size_t page) const
     return "";
 }
 
-wxBitmap clTabCtrl::GetPageBitmap(size_t index) const
+const wxBitmap& clTabCtrl::GetPageBitmap(size_t index) const
 {
     clTabInfo::Ptr_t tab = GetTabInfo(index);
-    if(tab)
-        return tab->GetBitmap();
+    if(tab) {
+        return GetBitmaps()->Get(tab->GetBitmap(), false);
+    }
     return wxNullBitmap;
 }
 
-void clTabCtrl::SetPageBitmap(size_t index, const wxBitmap& bmp)
+int clTabCtrl::GetPageBitmapIndex(size_t index) const
+{
+    clTabInfo::Ptr_t tab = GetTabInfo(index);
+    if(tab) {
+        return tab->GetBitmap();
+    }
+    return wxNOT_FOUND;
+}
+
+void clTabCtrl::SetPageBitmap(size_t index, int bmp)
 {
     clTabInfo::Ptr_t tab = GetTabInfo(index);
     if(!tab)
@@ -1480,7 +1492,7 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
             return false;
         }
         wxString label = m_notebook->GetPageText(nTabIndex);
-        wxBitmap bmp = m_notebook->GetPageBitmap(nTabIndex);
+        int bmp = m_notebook->GetPageBitmapIndex(nTabIndex);
 
         // Remove the page and insert it at the drop index
         m_notebook->RemovePage(nTabIndex, false);

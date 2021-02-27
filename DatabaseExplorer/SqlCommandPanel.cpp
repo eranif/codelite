@@ -95,7 +95,6 @@ SQLCommandPanel::SQLCommandPanel(wxWindow* parent, IDbAdapter* dbAdapter, const 
         GetEventHandler()->AddPendingEvent(event);
     }
 
-    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
     m_toolbar = new clToolBar(this);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(wxID_OPEN, _("Load SQL Script"), images->Add("file_open"));

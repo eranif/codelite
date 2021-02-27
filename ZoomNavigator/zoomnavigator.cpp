@@ -44,14 +44,17 @@
 
 static ZoomNavigator* thePlugin = NULL;
 #define CHECK_CONDITION(cond) \
-    if(!cond) return;
+    if(!cond)                 \
+        return;
 
 const wxString ZOOM_PANE_TITLE(_("Zoom Navigator"));
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new ZoomNavigator(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new ZoomNavigator(manager);
+    }
     return thePlugin;
 }
 
@@ -112,7 +115,9 @@ void ZoomNavigator::UnPlug()
     // Remove the tab if it's actually docked in the workspace pane
     int index(wxNOT_FOUND);
     index = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(zoompane);
-    if(index != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(index); }
+    if(index != wxNOT_FOUND) {
+        m_mgr->GetWorkspacePaneNotebook()->RemovePage(index);
+    }
     zoompane->Destroy();
 }
 
@@ -132,20 +137,22 @@ void ZoomNavigator::OnShowHideClick(wxCommandEvent& e) {}
 void ZoomNavigator::DoInitialize()
 {
     znConfigItem data;
-    if(m_config->ReadItem(&data)) { m_enabled = data.IsEnabled(); }
+    if(m_config->ReadItem(&data)) {
+        m_enabled = data.IsEnabled();
+    }
 
     // create tab (possibly detached)
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
     if(IsZoomPaneDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNullBitmap,
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, ZOOM_PANE_TITLE, false, wxNOT_FOUND,
                                             wxSize(200, 200));
         zoompane = new wxPanel(cp);
         cp->SetChildNoReparent(zoompane);
 
     } else {
         zoompane = new wxPanel(book);
-        book->AddPage(zoompane, ZOOM_PANE_TITLE, false, wxNullBitmap);
+        book->AddPage(zoompane, ZOOM_PANE_TITLE, false, wxNOT_FOUND);
     }
     m_mgr->AddWorkspaceTab(ZOOM_PANE_TITLE);
 
@@ -180,13 +187,17 @@ void ZoomNavigator::DoUpdate()
     CHECK_CONDITION(!m_mgr->IsShutdownInProgress());
 
     IEditor* curEditor = m_mgr->GetActiveEditor();
-    if(!curEditor && !m_text->IsEmpty()) { DoCleanup(); }
+    if(!curEditor && !m_text->IsEmpty()) {
+        DoCleanup();
+    }
     CHECK_CONDITION(curEditor);
 
     wxStyledTextCtrl* stc = curEditor->GetCtrl();
     CHECK_CONDITION(stc);
 
-    if(curEditor->GetFileName().GetFullPath() != m_curfile) { SetEditorText(curEditor); }
+    if(curEditor->GetFileName().GetFullPath() != m_curfile) {
+        SetEditorText(curEditor);
+    }
 
     int first = stc->GetFirstVisibleLine();
     int last = stc->LinesOnScreen() + first;
@@ -217,7 +228,8 @@ void ZoomNavigator::SetZoomTextScrollPosToMiddle(wxStyledTextCtrl* stc)
     int linesAboveIt = numLinesOnScreen / 2;
 
     first = first - linesAboveIt;
-    if(first < 0) first = 0;
+    if(first < 0)
+        first = 0;
 
     m_text->SetFirstVisibleLine(first);
     m_text->ClearSelections();
@@ -243,11 +255,14 @@ void ZoomNavigator::OnPreviewClicked(wxMouseEvent& e)
 
     // the first line is taken from the preview
     int pos = m_text->PositionFromPoint(e.GetPosition());
-    if(pos == wxSTC_INVALID_POSITION) { return; }
+    if(pos == wxSTC_INVALID_POSITION) {
+        return;
+    }
     int first = m_text->LineFromPosition(pos);
     int nLinesOnScreen = curEditor->GetCtrl()->LinesOnScreen();
     first -= (nLinesOnScreen / 2);
-    if(first < 0) first = 0;
+    if(first < 0)
+        first = 0;
 
     // however, the last line is set according to the actual editor
     int last = nLinesOnScreen + first;
@@ -349,6 +364,8 @@ void ZoomNavigator::OnToggleTab(clCommandEvent& event)
         m_mgr->GetWorkspacePaneNotebook()->AddPage(zoompane, ZOOM_PANE_TITLE, true);
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(ZOOM_PANE_TITLE);
-        if(where != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(where); }
+        if(where != wxNOT_FOUND) {
+            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+        }
     }
 }

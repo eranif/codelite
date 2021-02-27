@@ -147,12 +147,12 @@ void WorkspacePane::CreateGUIControls()
 
     name = _("Workspace");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_workspaceTab = new WorkspaceTab(cp, name);
         cp->SetChildNoReparent(m_workspaceTab);
     } else {
         m_workspaceTab = new WorkspaceTab(m_book, name);
-        m_book->AddPage(m_workspaceTab, name, true, wxNullBitmap);
+        m_book->AddPage(m_workspaceTab, name, true, wxNOT_FOUND);
     }
     m_tabs.insert(std::make_pair(name, Tab(name, m_workspaceTab)));
     mgr->AddWorkspaceTab(name);
@@ -160,7 +160,7 @@ void WorkspacePane::CreateGUIControls()
     // Add the explorer tab
     name = _("Explorer");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_explorer = new FileExplorer(cp, name);
         cp->SetChildNoReparent(m_explorer);
     } else {
@@ -173,11 +173,11 @@ void WorkspacePane::CreateGUIControls()
     // Add the "File Explorer" view to the list of files managed by the workspace-view
     m_workspaceTab->GetView()->AddPage(m_explorer, _("File Explorer"), false);
 
-// Add the Open Windows Panel (Tabs)
-//#ifndef __WXOSX__
+    // Add the Open Windows Panel (Tabs)
+    //#ifndef __WXOSX__
     name = _("Tabs");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_openWindowsPane = new OpenWindowsPanel(cp, name);
         cp->SetChildNoReparent(m_openWindowsPane);
     } else {
@@ -186,12 +186,12 @@ void WorkspacePane::CreateGUIControls()
     }
     m_tabs.insert(std::make_pair(name, Tab(name, m_openWindowsPane)));
     mgr->AddWorkspaceTab(name);
-//#endif
+    //#endif
 
     // Add the Tabgroups tab
     name = _("Tabgroups");
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNullBitmap, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_TabgroupsPane = new TabgroupsPane(cp, name);
         cp->SetChildNoReparent(m_TabgroupsPane);
     } else {
@@ -232,8 +232,8 @@ void WorkspacePane::UpdateProgress(int val)
 
 typedef struct {
     wxString text;
-    wxWindow* win;
-    wxBitmap bmp;
+    wxWindow* win = nullptr;
+    int bmp = wxNOT_FOUND;
 } tagTabInfo;
 
 #include "file_logger.h"
@@ -259,7 +259,7 @@ void WorkspacePane::ApplySavedTabOrder() const
                 tagTabInfo Tab;
                 Tab.text = title;
                 Tab.win = m_book->GetPage(n);
-                Tab.bmp = m_book->GetPageBitmap(n);
+                Tab.bmp = m_book->GetPageBitmapIndex(n);
 
                 vTempstore.push_back(Tab);
                 m_book->RemovePage(n);

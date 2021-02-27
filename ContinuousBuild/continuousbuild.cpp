@@ -48,7 +48,9 @@ static ContinuousBuild* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new ContinuousBuild(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new ContinuousBuild(manager);
+    }
     return thePlugin;
 }
 
@@ -75,9 +77,11 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
     m_view = new ContinousBuildPane(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
 
     // add our page to the output pane notebook
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, m_mgr->GetStdIcons()->LoadBitmap("execute"));
+    auto book = m_mgr->GetOutputPaneNotebook();
+    auto images = book->GetBitmaps();
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_view, CONT_BUILD, false, images->Add("execute"));
     m_tabHelper.reset(new clTabTogglerHelper(CONT_BUILD, m_view, "", NULL));
-    m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("execute"));
+    m_tabHelper->SetOutputTabBmp(images->Add("execute"));
 
     m_topWin = m_mgr->GetTheApp();
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
@@ -230,7 +234,8 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 
     EnvSetter env(NULL, NULL, projectName, bldConf->GetName());
     CL_DEBUG(wxString::Format(wxT("cmd:%s\n"), cmd.c_str()));
-    if(!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this)) return;
+    if(!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this))
+        return;
 
     // Set some messages
     m_mgr->SetStatusMessage(

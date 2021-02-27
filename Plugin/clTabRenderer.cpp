@@ -122,7 +122,7 @@ static void SetBestXButtonSize(wxWindow* win)
     }
 }
 
-clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, const wxBitmap& bmp)
+clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, int bmp)
     : m_bitmap(bmp)
     , m_tabCtrl(tabCtrl)
     , m_label(text)
@@ -133,9 +133,13 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxS
 {
     SetBestXButtonSize(nullptr);
     CalculateOffsets(style);
-    if(m_bitmap.IsOk()) {
-        m_disabledBitmp = DrawingUtils::CreateDisabledBitmap(m_bitmap);
-    }
+    CreateDisabledBitmap();
+}
+
+void clTabInfo::CreateDisabledBitmap()
+{
+    // the disabled image as the same index as the normal one
+    m_disabledBitmp = m_bitmap;
 }
 
 clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
@@ -187,10 +191,11 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     m_bmpX = wxNOT_FOUND;
     m_bmpY = wxNOT_FOUND;
 
-    if(m_bitmap.IsOk() && !bVerticalTabs) {
+    if(HasBitmap() && !bVerticalTabs) {
+        const wxBitmap& bmp = m_tabCtrl->GetBitmaps()->Get(m_bitmap, false);
         m_bmpX = m_width;
-        m_width += m_bitmap.GetScaledWidth();
-        m_bmpY = ((m_height - m_bitmap.GetScaledHeight()) / 2);
+        m_width += bmp.GetScaledWidth();
+        m_bmpY = ((m_height - bmp.GetScaledHeight()) / 2);
         m_width += X_spacer;
     }
 
@@ -237,12 +242,10 @@ void clTabInfo::CalculateOffsets(size_t style)
     CalculateOffsets(style, gcdc);
 }
 
-void clTabInfo::SetBitmap(const wxBitmap& bitmap, size_t style)
+void clTabInfo::SetBitmap(int bitmap, size_t style)
 {
     this->m_bitmap = bitmap;
-    if(m_bitmap.IsOk()) {
-        m_disabledBitmp = DrawingUtils::CreateDisabledBitmap(m_bitmap);
-    }
+    CreateDisabledBitmap();
     CalculateOffsets(style);
 }
 
@@ -274,6 +277,14 @@ const wxString& clTabInfo::GetBestLabel(size_t style) const
         return m_label;
     }
 }
+
+const wxBitmap& clTabInfo::GetBitmap(int index, bool disabled) const
+{
+    return m_tabCtrl->GetBitmaps()->Get(index, disabled);
+}
+
+bool clTabInfo::HasDisableBitmap() const { return m_tabCtrl->GetBitmaps()->Get(m_disabledBitmp, true).IsOk(); }
+bool clTabInfo::HasBitmap() const { return m_tabCtrl->GetBitmaps()->Get(m_bitmap, false).IsOk(); }
 
 std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderes;
 

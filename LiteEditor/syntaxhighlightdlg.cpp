@@ -816,7 +816,4 @@ void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
     event.Skip();
 }
 
-bool SyntaxHighlightDlg::IsRestartRequired() const
-{
-    return (m_useBaseColourEnding != m_useBaseColourInitial) || (m_initialTheme != m_endingTheme);
-}
+bool SyntaxHighlightDlg::IsRestartRequired() const { return false; }

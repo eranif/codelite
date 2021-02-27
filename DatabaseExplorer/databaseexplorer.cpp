@@ -115,7 +115,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     if(IsDbViewDetached()) {
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, _("DbExplorer"), false, wxNullBitmap,
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, _("DbExplorer"), false, wxNOT_FOUND,
                                             wxSize(200, 200));
         m_dbViewerPanel = new DbViewerPanel(cp, editorBook, m_mgr);
         cp->SetChildNoReparent(m_dbViewerPanel);
@@ -123,11 +123,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     } else {
 
         m_dbViewerPanel = new DbViewerPanel(book, editorBook, m_mgr);
-        // size_t index = GetSettings().GetSvnTabIndex();
-        // if(index == Notebook::npos)
         book->AddPage(m_dbViewerPanel, _("DbExplorer"), false);
-        // else
-        //	book->InsertPage(index, m_dbViewerPanel, svnCONSOLE_TEXT, false);
     }
     m_mgr->AddWorkspaceTab(_("DbExplorer"));
 

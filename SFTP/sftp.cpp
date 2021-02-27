@@ -123,7 +123,7 @@ SFTP::SFTP(IManager* manager)
     if(IsPaneDetached(_("SFTP"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP"), false, wxNullBitmap, wxSize(200, 200));
+            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP"), false, wxNOT_FOUND, wxSize(200, 200));
         m_treeView = new SFTPTreeView(cp, this);
         cp->SetChildNoReparent(m_treeView);
 
@@ -134,22 +134,23 @@ SFTP::SFTP(IManager* manager)
 
     // Add the "SFTP Log" page to the output pane
     book = m_mgr->GetOutputPaneNotebook();
-    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("upload");
+    auto images = book->GetBitmaps();
+    int bmp_index = images->Add("upload");
     if(IsPaneDetached(_("SFTP Log"))) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
         DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), false, bmp, wxSize(200, 200));
+            new DockablePane(book->GetParent()->GetParent(), book, _("SFTP Log"), false, bmp_index, wxSize(200, 200));
         m_outputPane = new SFTPStatusPage(cp, this);
         cp->SetChildNoReparent(m_outputPane);
 
     } else {
         m_outputPane = new SFTPStatusPage(book, this);
-        book->AddPage(m_outputPane, _("SFTP Log"), false, bmp);
+        book->AddPage(m_outputPane, _("SFTP Log"), false, bmp_index);
     }
 
     // Create the helper for adding our tabs in the "more" menu
     m_tabToggler.reset(new clTabTogglerHelper(_("SFTP Log"), m_outputPane, _("SFTP"), m_treeView));
-    m_tabToggler->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("remote-folder"));
+    m_tabToggler->SetOutputTabBmp(bmp_index);
 
     SFTPWorkerThread::Instance()->SetNotifyWindow(m_outputPane);
     SFTPWorkerThread::Instance()->SetSftpPlugin(this);
@@ -347,8 +348,7 @@ void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
     tooltip << "Local: " << cd.GetLocalPath() << "\n"
             << "Remote: " << cd.GetRemotePath();
 
-    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("download");
-    IEditor* editor = m_mgr->OpenFile(cd.GetLocalPath(), bmp, tooltip);
+    IEditor* editor = m_mgr->OpenFile(cd.GetLocalPath(), "download", tooltip);
     if(editor) {
         // Tag this editor as a remote file
         SFTPClientData* pcd = new SFTPClientData(cd);

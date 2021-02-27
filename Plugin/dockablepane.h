@@ -39,7 +39,7 @@ class WXDLLIMPEXP_SDK DockablePane : public wxPanel
     wxWindow* m_child;
     Notebook* m_book;
     wxString m_text;
-    wxBitmap m_bmp;
+    int m_bmp = wxNOT_FOUND;
     bool m_notifiedDestroyed;
 
     void ClosePane(wxCommandEvent& e);
@@ -54,7 +54,7 @@ public:
                  Notebook* book,
                  const wxString& title,
                  bool initialFloat = true,
-                 const wxBitmap& bmp = wxNullBitmap,
+                 int bmp = wxNOT_FOUND,
                  wxSize size = wxDefaultSize);
     virtual ~DockablePane();
     wxString GetName() { return m_text; }

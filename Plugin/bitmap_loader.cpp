@@ -382,7 +382,9 @@ void clBitmapList::OnBitmapsUpdated(clCommandEvent& event)
             // replace this entry
             new_bmp_info.name = old_bmp_info.name;
             new_bmp_info.bmp_ptr = const_cast<wxBitmap*>(&clBitmaps::Get().GetLoader()->LoadBitmap(old_bmp_info.name));
-            new_bmp_info.bmp = wxNullBitmap;
+            if(new_bmp_info.bmp_ptr) {
+                new_bmp_info.bmp_disabled = DrawingUtils::CreateDisabledBitmap(*new_bmp_info.bmp_ptr);
+            }
         } else {
             new_bmp_info = old_bmp_info;
         }
@@ -403,17 +405,21 @@ clBitmapList::~clBitmapList()
     EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &clBitmapList::OnBitmapsUpdated, this);
 }
 
-const wxBitmap& clBitmapList::at(size_t index) const
+const wxBitmap& clBitmapList::Get(size_t index, bool disabledBmp) const
 {
     auto iter = m_bitmaps.find(index);
     if(iter == m_bitmaps.end()) {
         return wxNullBitmap;
     }
 
-    if(iter->second.bmp_ptr) {
-        return *(iter->second.bmp_ptr);
+    if(disabledBmp) {
+        return iter->second.bmp_disabled;
     } else {
-        return iter->second.bmp;
+        if(iter->second.bmp_ptr) {
+            return *(iter->second.bmp_ptr);
+        } else {
+            return iter->second.bmp;
+        }
     }
 }
 
@@ -441,7 +447,10 @@ void clBitmapList::Delete(size_t index)
 
 void clBitmapList::Delete(const wxString& name) { Delete(FindIdByName(name)); }
 
-const wxBitmap& clBitmapList::at(const wxString& name) const { return at(FindIdByName(name)); }
+const wxBitmap& clBitmapList::Get(const wxString& name, bool disabledBmp) const
+{
+    return Get(FindIdByName(name), disabledBmp);
+}
 
 size_t clBitmapList::FindIdByName(const wxString& name) const
 {
@@ -456,16 +465,16 @@ size_t clBitmapList::Add(const wxString& bmp_name, int size)
 {
     wxUnusedVar(size);
     const wxBitmap& bmp = clBitmaps::Get().GetLoader()->LoadBitmap(bmp_name);
-    return DoAdd(bmp, bmp_name, false);
+    return DoAdd(bmp, DrawingUtils::CreateDisabledBitmap(bmp), bmp_name, false);
 }
 
 size_t clBitmapList::Add(const wxBitmap& bmp, const wxString& name)
 {
     // user bitmap
-    return DoAdd(bmp, name, true);
+    return DoAdd(bmp, DrawingUtils::CreateDisabledBitmap(bmp), name, true);
 }
 
-size_t clBitmapList::DoAdd(const wxBitmap& bmp, const wxString& bmp_name, bool user_bmp)
+size_t clBitmapList::DoAdd(const wxBitmap& bmp, const wxBitmap& bmpDisabled, const wxString& bmp_name, bool user_bmp)
 {
     size_t index = FindIdByName(bmp_name);
     if(index != wxString::npos) {
@@ -474,6 +483,7 @@ size_t clBitmapList::DoAdd(const wxBitmap& bmp, const wxString& bmp_name, bool u
 
     // new entry
     BmpInfo bi;
+    bi.bmp_disabled = bmpDisabled;
     if(!user_bmp) {
         // keep pointer
         bi.bmp_ptr = const_cast<wxBitmap*>(&bmp);
@@ -489,4 +499,14 @@ size_t clBitmapList::DoAdd(const wxBitmap& bmp, const wxString& bmp_name, bool u
     m_nameToIndex.insert({ bi.name, new_index });
     m_index++;
     return new_index;
+}
+
+const wxString& clBitmapList::GetBitmapName(size_t index) const
+{
+    auto where = m_bitmaps.find(index);
+    if(where == m_bitmaps.end()) {
+        static wxString emptyString;
+        return emptyString;
+    }
+    return where->second.name;
 }

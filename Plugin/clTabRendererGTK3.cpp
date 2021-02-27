@@ -60,10 +60,11 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
 
     bool bVerticalTabs = IS_VERTICAL_TABS(style);
     // Draw bitmap
-    if(tabInfo.GetBitmap().IsOk() && !bVerticalTabs) {
-        const wxBitmap& bmp = (!tabInfo.IsActive() && tabInfo.GetDisabledBitmp().IsOk()) ? tabInfo.GetDisabledBitmp()
-                                                                                         : tabInfo.GetBitmap();
-        dc.DrawBitmap(bmp, tabInfo.m_bmpX + rr.GetX(), tabInfo.m_bmpY + rr.GetY());
+    if(tabInfo.HasBitmap() && !bVerticalTabs) {
+        int bmpIndex =
+            (!tabInfo.IsActive() && tabInfo.HasDisableBitmap()) ? tabInfo.GetDisabledBitmp() : tabInfo.GetBitmap();
+        bool disabledBmp = !tabInfo.IsActive();
+        dc.DrawBitmap(tabInfo.GetBitmap(bmpIndex, disabledBmp), tabInfo.m_bmpX + rr.GetX(), tabInfo.m_bmpY + rr.GetY());
     }
     wxString label = tabInfo.GetBestLabel(style);
     if(bVerticalTabs) {
@@ -75,13 +76,17 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
             DrawingUtils::TruncateText(tabInfo.m_label, newSize, dc, label);
         }
     }
-    if(tabInfo.IsActive()) { 
+    if(tabInfo.IsActive()) {
         wxColour activeTabTextColour = isDark ? colours.markerColour : colours.activeTabTextColour;
-        dc.SetTextForeground(activeTabTextColour); 
+        dc.SetTextForeground(activeTabTextColour);
     }
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
-    if(style & kNotebook_CloseButtonOnActiveTab) { DrawButton(parent, dc, tabInfo, colours, buttonState); }
-    if(tabInfo.IsActive()) { DrawMarker(dc, tabInfo, colours, style | kNotebook_UnderlineActiveTab); }
+    if(style & kNotebook_CloseButtonOnActiveTab) {
+        DrawButton(parent, dc, tabInfo, colours, buttonState);
+    }
+    if(tabInfo.IsActive()) {
+        DrawMarker(dc, tabInfo, colours, style | kNotebook_UnderlineActiveTab);
+    }
 }
 
 void clTabRendererGTK3::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,

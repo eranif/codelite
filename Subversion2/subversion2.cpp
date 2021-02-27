@@ -393,18 +393,19 @@ void Subversion2::DoInitialize()
 
     // create tab (possibly detached)
     Notebook* book = m_mgr->GetOutputPaneNotebook();
+    auto images = book->GetBitmaps();
     if(IsSubversionViewDetached()) {
         // Make the window child of the main panel (which is the grand parent of the notebook)
-        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, svnCONSOLE_TEXT, false, wxNullBitmap,
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, svnCONSOLE_TEXT, false, wxNOT_FOUND,
                                             wxSize(200, 200));
         m_subversionView = new SubversionView(cp, this);
         cp->SetChildNoReparent(m_subversionView);
     } else {
         m_subversionView = new SubversionView(book, this);
-        book->AddPage(m_subversionView, svnCONSOLE_TEXT, false, m_svnBitmap);
+        book->AddPage(m_subversionView, svnCONSOLE_TEXT, false, images->Add("subversion"));
     }
     m_tabToggler.reset(new clTabTogglerHelper(svnCONSOLE_TEXT, m_subversionView, "", NULL));
-    m_tabToggler->SetOutputTabBmp(m_svnBitmap);
+    m_tabToggler->SetOutputTabBmp(images->Add("subversion"));
 
     DoSetSSH();
     // We need to perform a dummy call to svn so it will create all the default

@@ -99,8 +99,9 @@ void DebuggerPane::CreateGUIControls()
     }
     style |= kNotebook_UnderlineActiveTab;
 
-    GeneralImages img;
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    auto images = m_book->GetBitmaps();
+
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
 
@@ -117,120 +118,111 @@ void DebuggerPane::CreateGUIControls()
 
     wxString name;
     name = wxGetTranslation(LOCALS);
-    wxBitmap bmp = wxNullBitmap;
     // Add the 'Locals View'
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_localsTable = new LocalsTable(cp);
         cp->SetChildNoReparent(m_localsTable);
 
     } else {
         m_localsTable = new LocalsTable(m_book);
-        m_book->AddPage(m_localsTable, name, false, bmp);
+        m_book->AddPage(m_localsTable, name, false, wxNOT_FOUND);
     }
 
     // Add the 'watches View'
     name = wxGetTranslation(WATCHES);
-    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_watchesTable = new WatchesTable(cp);
         cp->SetChildNoReparent(m_watchesTable);
 
     } else {
         m_watchesTable = new WatchesTable(m_book);
-        m_book->AddPage(m_watchesTable, name, false, bmp);
+        m_book->AddPage(m_watchesTable, name, false, wxNOT_FOUND);
     }
 
     // Add the 'ASCII Viewer'
     name = wxGetTranslation(ASCII_VIEWER);
-    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_asciiViewer = new DebuggerAsciiViewer(cp);
         cp->SetChildNoReparent(m_asciiViewer);
 
     } else {
         m_asciiViewer = new DebuggerAsciiViewer(m_book);
-        m_book->AddPage(m_asciiViewer, name, false, bmp);
+        m_book->AddPage(m_asciiViewer, name, false, wxNOT_FOUND);
     }
 
     // Add the 'Call Stack'
     name = wxGetTranslation(FRAMES);
-    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_frameList = new DebuggerCallstackView(cp);
         cp->SetChildNoReparent(m_frameList);
 
     } else {
         m_frameList = new DebuggerCallstackView(m_book);
-        m_book->AddPage(m_frameList, name, false, bmp);
+        m_book->AddPage(m_frameList, name, false, wxNOT_FOUND);
     }
 
     // Add the 'Breakpoints'
     name = wxGetTranslation(BREAKPOINTS);
-    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_breakpoints = new BreakpointDlg(cp);
         cp->SetChildNoReparent(m_breakpoints);
 
     } else {
         m_breakpoints = new BreakpointDlg(m_book);
-        m_book->AddPage(m_breakpoints, name, false, bmp);
+        m_book->AddPage(m_breakpoints, name, false, wxNOT_FOUND);
     }
 
     // Add the 'Threads'
     name = wxGetTranslation(THREADS);
-    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_threads = new ThreadListPanel(cp);
         cp->SetChildNoReparent(m_threads);
 
     } else {
         m_threads = new ThreadListPanel(m_book);
-        m_book->AddPage(m_threads, name, false, bmp);
+        m_book->AddPage(m_threads, name, false, wxNOT_FOUND);
     }
 
     // Add the 'Memory View'
     name = wxGetTranslation(MEMORY);
-    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_memory = new MemoryView(cp);
         cp->SetChildNoReparent(m_memory);
 
     } else {
         m_memory = new MemoryView(m_book);
-        m_book->AddPage(m_memory, name, false, bmp);
+        m_book->AddPage(m_memory, name, false, wxNOT_FOUND);
     }
 
     // Add the "Output" tab
     name = wxGetTranslation(DEBUGGER_OUTPUT);
-    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_outputDebug = new DebugTab(cp, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
         cp->SetChildNoReparent(m_outputDebug);
 
     } else {
         m_outputDebug = new DebugTab(m_book, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
-        m_book->AddPage(m_outputDebug, name, false, bmp);
+        m_book->AddPage(m_outputDebug, name, false, wxNOT_FOUND);
     }
 
     // Add the "Output" tab
     name = wxGetTranslation(DISASSEMBLY);
-    bmp = wxNullBitmap;
     if(IS_DETACHED(name)) {
-        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
         m_disassemble = new DebuggerDisassemblyTab(cp, wxGetTranslation(DISASSEMBLY));
         cp->SetChildNoReparent(m_disassemble);
 
     } else {
         m_disassemble = new DebuggerDisassemblyTab(m_book, wxGetTranslation(DISASSEMBLY));
-        m_book->AddPage(m_disassemble, name, false, bmp);
+        m_book->AddPage(m_disassemble, name, false, wxNOT_FOUND);
     }
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &DebuggerPane::OnPageChanged, this);
     m_initDone = true;

@@ -3771,8 +3771,7 @@ void clMainFrame::OnDetachWorkspaceViewTab(wxCommandEvent& e)
     size_t sel = GetWorkspacePane()->GetNotebook()->GetSelection();
     wxWindow* page = GetWorkspacePane()->GetNotebook()->GetCurrentPage();
     wxString text = GetWorkspacePane()->GetNotebook()->GetPageText(sel);
-    wxBitmap bmp = GetWorkspacePane()->GetNotebook()->GetPageBitmap(
-        sel); // We might have a bitmap on the tab, make sure we restore it
+    int bmp = GetWorkspacePane()->GetNotebook()->GetPageBitmapIndex(sel);
 
     DockablePane* pane = new DockablePane(this, GetWorkspacePane()->GetNotebook(), text, true, bmp, wxSize(200, 200));
     page->Reparent(pane);
@@ -4031,7 +4030,7 @@ void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
     size_t sel = GetDebuggerPane()->GetNotebook()->GetSelection();
     wxWindow* page = GetDebuggerPane()->GetNotebook()->GetCurrentPage();
     wxString text = GetDebuggerPane()->GetNotebook()->GetPageText(sel);
-    wxBitmap bmp = GetDebuggerPane()->GetNotebook()->GetPageBitmap(sel);
+    int bmp = GetDebuggerPane()->GetNotebook()->GetPageBitmapIndex(sel);
 
     DockablePane* pane = new DockablePane(this, GetDebuggerPane()->GetNotebook(), text, false, bmp, wxSize(200, 200));
     page->Reparent(pane);

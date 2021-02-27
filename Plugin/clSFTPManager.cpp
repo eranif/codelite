@@ -154,8 +154,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     tooltip << "Local: " << cd->GetLocalPath() << "\n"
             << "Remote: " << cd->GetRemotePath();
 
-    wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("download");
-    auto editor = clGetManager()->OpenFile(localPath.GetFullPath(), bmp, tooltip);
+    auto editor = clGetManager()->OpenFile(localPath.GetFullPath(), "download", tooltip);
     editor->SetClientData("sftp", cd);
     return editor;
 }

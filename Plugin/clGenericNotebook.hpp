@@ -1,6 +1,7 @@
 #ifndef CL_GENERIC_NOTEBOOK_HPP
 #define CL_GENERIC_NOTEBOOK_HPP
 
+#include "bitmap_loader.h"
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
 #include "cl_command_event.h"
@@ -67,6 +68,8 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     wxDateTime m_dragStartTime;
     wxPoint m_dragStartPos;
 
+    clBitmapList* m_bitmaps = nullptr;
+
 protected:
     void DoChangeSelection(size_t index);
 
@@ -123,6 +126,9 @@ protected:
 public:
     clTabCtrl(wxWindow* notebook, size_t style);
     virtual ~clTabCtrl();
+
+    /// bitmaps mangement
+    clBitmapList* GetBitmaps() const { return m_bitmaps; }
 
     /**
      * @brief return the art class used by this tab control
@@ -187,8 +193,9 @@ public:
     void AddPage(clTabInfo::Ptr_t tab);
     bool InsertPage(size_t index, clTabInfo::Ptr_t tab);
 
-    void SetPageBitmap(size_t index, const wxBitmap& bmp);
-    wxBitmap GetPageBitmap(size_t index) const;
+    void SetPageBitmap(size_t index, int bitmapId);
+    const wxBitmap& GetPageBitmap(size_t index) const;
+    int GetPageBitmapIndex(size_t index) const;
     wxWindow* GetPage(size_t index) const;
     void GetAllPages(std::vector<wxWindow*>& pages);
     int FindPage(wxWindow* page) const;
@@ -224,7 +231,10 @@ public:
      * Constructor
      */
     clGenericNotebook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
+                      const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
+
+    /// bitmaps mangement
+    clBitmapList* GetBitmaps() const { return m_tabCtrl->GetBitmaps(); }
 
     /**
      * @brief update the notebook art class and refresh
@@ -260,14 +270,14 @@ public:
     /**
      * @brief append page to the notebook
      */
-    void AddPage(wxWindow* page, const wxString& label, bool selected = false, const wxBitmap& bmp = wxNullBitmap,
+    void AddPage(wxWindow* page, const wxString& label, bool selected = false, int bitmapId = wxNOT_FOUND,
                  const wxString& shortLabel = wxEmptyString);
 
     /**
      * @brief insert page at a specified position
      */
     bool InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected = false,
-                    const wxBitmap& bmp = wxNullBitmap, const wxString& shortLabel = wxEmptyString);
+                    int bitmapId = wxNOT_FOUND, const wxString& shortLabel = wxEmptyString);
 
     /**
      * @brief return the currently selected page or null
@@ -321,12 +331,17 @@ public:
     /**
      * @brief set the image for the given page
      */
-    void SetPageBitmap(size_t index, const wxBitmap& bmp) { m_tabCtrl->SetPageBitmap(index, bmp); }
+    void SetPageBitmap(size_t index, int bitmapId) { m_tabCtrl->SetPageBitmap(index, bitmapId); }
 
     /**
      * @brief return bitmap for a given page. Return wxNullBitmap if invalid page
      */
-    wxBitmap GetPageBitmap(size_t index) const { return m_tabCtrl->GetPageBitmap(index); }
+    const wxBitmap& GetPageBitmap(size_t index) const { return m_tabCtrl->GetPageBitmap(index); }
+
+    /**
+     * @brief return bitmap for a given page. Return wxNullBitmap if invalid page
+     */
+    int GetPageBitmapIndex(size_t index) const { return m_tabCtrl->GetPageBitmapIndex(index); }
 
     // Base class members...
     virtual bool SetPageImage(size_t page, int image)

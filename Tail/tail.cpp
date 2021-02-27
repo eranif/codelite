@@ -11,7 +11,9 @@ static Tail* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new Tail(manager); }
+    if(thePlugin == NULL) {
+        thePlugin = new Tail(manager);
+    }
     return thePlugin;
 }
 
@@ -116,7 +118,7 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, 
     }
 
     // Hook our output-pane panel
-    wxBitmap bmp = m_mgr->GetStdIcons()->LoadBitmap("mime-txt");
+    int bmp = m_mgr->GetOutputPaneNotebook()->GetBitmaps()->Add("mime-txt");
     m_view = tmpView;
     m_editEventsHandler.Reset(new clEditEventsHandler(m_view->GetStc()));
     if(isNotebook) {

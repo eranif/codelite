@@ -137,15 +137,15 @@ public:
  */
 class WXDLLIMPEXP_SDK clTabInfo
 {
-    wxBitmap m_bitmap;
-    wxBitmap m_disabledBitmp;
+    int m_bitmap = wxNOT_FOUND;
+    int m_disabledBitmp = wxNOT_FOUND;
 
 public:
-    clTabCtrl* m_tabCtrl;
+    clTabCtrl* m_tabCtrl = nullptr;
     wxString m_label;
     wxString m_shortLabel;
     wxString m_tooltip;
-    wxWindow* m_window;
+    wxWindow* m_window = nullptr;
     wxRect m_rect;
     bool m_active;
     int m_textX;
@@ -170,16 +170,16 @@ public:
     typedef std::vector<clTabInfo::Ptr_t> Vec_t;
 
     clTabInfo(clTabCtrl* tabCtrl);
-    clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text,
-              const wxBitmap& bmp = wxNullBitmap);
+    clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, int bitmapId = wxNOT_FOUND);
     virtual ~clTabInfo() {}
-
+    
+    void CreateDisabledBitmap();
     bool IsValid() const { return m_window != NULL; }
-    void SetBitmap(const wxBitmap& bitmap, size_t style);
+    void SetBitmap(int bitmap, size_t style);
     void SetLabel(const wxString& label, size_t style);
     void SetActive(bool active, size_t style);
     void SetRect(const wxRect& rect) { this->m_rect = rect; }
-    const wxBitmap& GetBitmap() const { return m_bitmap; }
+    int GetBitmap() const { return m_bitmap; }
     const wxString& GetLabel() const { return m_label; }
     const wxString& GetShortLabel() const { return m_shortLabel; }
     void SetShortLabel(const wxString& shortLabel) { this->m_shortLabel = shortLabel; }
@@ -196,7 +196,10 @@ public:
     int GetWidth() const { return m_width; }
     void SetTooltip(const wxString& tooltip) { this->m_tooltip = tooltip; }
     const wxString& GetTooltip() const { return m_tooltip; }
-    const wxBitmap& GetDisabledBitmp() const { return m_disabledBitmp; }
+    int GetDisabledBitmp() const { return m_disabledBitmp; }
+    const wxBitmap& GetBitmap(int index, bool disabled) const;
+    bool HasDisableBitmap() const;
+    bool HasBitmap() const;
 };
 
 class WXDLLIMPEXP_SDK clTabRenderer

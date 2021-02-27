@@ -91,10 +91,11 @@ UnitTestPP::UnitTestPP(IManager* manager)
                                   NULL, this);
 
     m_outputPage = new UnitTestsPage(m_mgr->GetOutputPaneNotebook(), m_mgr);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputPage, _("UnitTest++"), false,
-                                            m_mgr->GetStdIcons()->LoadBitmap("ok"));
+    auto book = m_mgr->GetOutputPaneNotebook();
+    auto images = book->GetBitmaps();
+    book->AddPage(m_outputPage, _("UnitTest++"), false, images->Add("ok"));
     m_tabHelper.reset(new clTabTogglerHelper(_("UnitTest++"), m_outputPage, "", NULL));
-    m_tabHelper->SetOutputTabBmp(m_mgr->GetStdIcons()->LoadBitmap("ok"));
+    m_tabHelper->SetOutputTabBmp(images->Add("ok"));
 
     m_longName = _("A Unit test plugin based on the UnitTest++ framework");
     m_shortName = wxT("UnitTestPP");

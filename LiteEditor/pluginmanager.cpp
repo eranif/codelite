@@ -382,9 +382,10 @@ Notebook* PluginManager::GetOutputPaneNotebook() { return clMainFrame::Get()->Ge
 
 Notebook* PluginManager::GetWorkspacePaneNotebook() { return clMainFrame::Get()->GetWorkspacePane()->GetNotebook(); }
 
-IEditor* PluginManager::OpenFile(const wxString& fileName, const wxBitmap& bmp, const wxString& tooltip)
+IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& bmpResourceName, const wxString& tooltip)
 {
-    IEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(fileName, bmp, tooltip);
+    int bmp_index = clMainFrame::Get()->GetMainBook()->GetBitmapIndexOrAdd(bmpResourceName);
+    IEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(fileName, bmp_index, tooltip);
     if(editor) {
         editor->SetActive();
     }
@@ -569,10 +570,11 @@ bool PluginManager::ClosePage(const wxFileName& filename)
 
 wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
-bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp,
-                            bool selected)
+bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip,
+                            const wxString& bmpResourceName, bool selected)
 {
-    return clMainFrame::Get()->GetMainBook()->AddPage(win, text, tooltip, bmp, selected);
+    int bmp_index = clMainFrame::Get()->GetMainBook()->GetBitmapIndexOrAdd(bmpResourceName);
+    return clMainFrame::Get()->GetMainBook()->AddPage(win, text, tooltip, bmp_index, selected);
 }
 
 bool PluginManager::SelectPage(wxWindow* win) { return clMainFrame::Get()->GetMainBook()->SelectPage(win); }
@@ -686,7 +688,7 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString& projectName,
 
 void PluginManager::AddEditorPage(wxWindow* page, const wxString& name, const wxString& tooltip)
 {
-    clMainFrame::Get()->GetMainBook()->AddPage(page, name, tooltip, wxNullBitmap, true);
+    clMainFrame::Get()->GetMainBook()->AddPage(page, name, tooltip, wxNOT_FOUND, true);
 }
 
 wxPanel* PluginManager::GetEditorPaneNotebook() { return clMainFrame::Get()->GetMainBook(); }

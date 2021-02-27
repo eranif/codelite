@@ -26,14 +26,14 @@
 #ifndef CLTABTOGGLERHELPER_H
 #define CLTABTOGGLERHELPER_H
 
-#include "codelite_exports.h"
-#include <wx/string.h>
-#include <wx/event.h>
-#include <wx/window.h>
-#include "cl_command_event.h"
-#include <wx/bitmap.h>
-#include <wx/sharedptr.h>
 #include "Notebook.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
+#include <wx/bitmap.h>
+#include <wx/event.h>
+#include <wx/sharedptr.h>
+#include <wx/string.h>
+#include <wx/window.h>
 
 class WXDLLIMPEXP_SDK clTabTogglerHelper : public wxEvtHandler
 {
@@ -41,13 +41,13 @@ class WXDLLIMPEXP_SDK clTabTogglerHelper : public wxEvtHandler
     wxWindow* m_outputTab;
     wxString m_workspaceTabName;
     wxWindow* m_workspaceTab;
-    wxBitmap m_outputTabBmp;
-    wxBitmap m_workspaceTabBmp;
+    int m_outputTabBmp = wxNOT_FOUND;
+    int m_workspaceTabBmp = wxNOT_FOUND;
 
 protected:
     void OnToggleOutputTab(clCommandEvent& event);
     void OnToggleWorkspaceTab(clCommandEvent& event);
-    
+
 public:
     /**
      * @brief return true if "tabname" is in the notebook (does not matter if it is focused or not)
@@ -59,8 +59,8 @@ public:
     typedef wxSharedPtr<clTabTogglerHelper> Ptr_t;
 
 public:
-    clTabTogglerHelper(
-        const wxString& outputTabName, wxWindow* outputTab, const wxString& workspaceTabName, wxWindow* workspaceTab);
+    clTabTogglerHelper(const wxString& outputTabName, wxWindow* outputTab, const wxString& workspaceTabName,
+                       wxWindow* workspaceTab);
     virtual ~clTabTogglerHelper();
 
     clTabTogglerHelper& SetOutputTab(wxWindow* outputTab)
@@ -68,7 +68,7 @@ public:
         this->m_outputTab = outputTab;
         return *this;
     }
-    clTabTogglerHelper& SetOutputTabBmp(const wxBitmap& outputTabBmp)
+    clTabTogglerHelper& SetOutputTabBmp(int outputTabBmp)
     {
         this->m_outputTabBmp = outputTabBmp;
         return *this;
@@ -83,7 +83,7 @@ public:
         this->m_workspaceTab = workspaceTab;
         return *this;
     }
-    clTabTogglerHelper& SetWorkspaceTabBmp(const wxBitmap& workspaceTabBmp)
+    clTabTogglerHelper& SetWorkspaceTabBmp(int workspaceTabBmp)
     {
         this->m_workspaceTabBmp = workspaceTabBmp;
         return *this;
@@ -95,10 +95,10 @@ public:
     }
 
     wxWindow* GetOutputTab() { return m_outputTab; }
-    const wxBitmap& GetOutputTabBmp() const { return m_outputTabBmp; }
+    int GetOutputTabBmp() const { return m_outputTabBmp; }
     const wxString& GetOutputTabName() const { return m_outputTabName; }
     wxWindow* GetWorkspaceTab() { return m_workspaceTab; }
-    const wxBitmap& GetWorkspaceTabBmp() const { return m_workspaceTabBmp; }
+    int GetWorkspaceTabBmp() const { return m_workspaceTabBmp; }
     const wxString& GetWorkspaceTabName() const { return m_workspaceTabName; }
 };
 

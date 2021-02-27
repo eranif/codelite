@@ -104,29 +104,29 @@ void OutputPane::CreateGUIControls()
 
     // Build tab
     m_buildWin = new NewBuildTab(m_book);
+    auto images = m_book->GetBitmaps();
 #if PHP_BUILD
     m_buildWin->Hide();
 #else
-    m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, bmpLoader->LoadBitmap(wxT("build")));
-    m_tabs.insert(std::make_pair(wxGetTranslation(BUILD_WIN),
-                                 Tab(wxGetTranslation(BUILD_WIN), m_buildWin, bmpLoader->LoadBitmap(wxT("build")))));
+    m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, images->Add(wxT("build")));
+    m_tabs.insert(
+        std::make_pair(wxGetTranslation(BUILD_WIN), Tab(wxGetTranslation(BUILD_WIN), m_buildWin, wxNOT_FOUND)));
     mgr->AddOutputTab(wxGetTranslation(BUILD_WIN));
 #endif
 
     // Find in files
     m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN));
-    m_book->AddPage(m_findResultsTab, wxGetTranslation(FIND_IN_FILES_WIN), false, bmpLoader->LoadBitmap(wxT("find")));
-    m_tabs.insert(
-        std::make_pair(wxGetTranslation(FIND_IN_FILES_WIN),
-                       Tab(wxGetTranslation(FIND_IN_FILES_WIN), m_findResultsTab, bmpLoader->LoadBitmap(wxT("find")))));
+    m_book->AddPage(m_findResultsTab, wxGetTranslation(FIND_IN_FILES_WIN), false, images->Add(wxT("find")));
+    m_tabs.insert(std::make_pair(wxGetTranslation(FIND_IN_FILES_WIN),
+                                 Tab(wxGetTranslation(FIND_IN_FILES_WIN), m_findResultsTab, images->Add(wxT("find")))));
     mgr->AddOutputTab(wxGetTranslation(FIND_IN_FILES_WIN));
 
     // Replace In Files
     m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, wxGetTranslation(REPLACE_IN_FILES));
     m_book->AddPage(m_replaceResultsTab, wxGetTranslation(REPLACE_IN_FILES), false,
-                    bmpLoader->LoadBitmap(wxT("find_and_replace")));
-    m_tabs.insert(std::make_pair(
-        REPLACE_IN_FILES, Tab(REPLACE_IN_FILES, m_replaceResultsTab, bmpLoader->LoadBitmap(wxT("find_and_replace")))));
+                    images->Add(wxT("find_and_replace")));
+    m_tabs.insert(std::make_pair(REPLACE_IN_FILES,
+                                 Tab(REPLACE_IN_FILES, m_replaceResultsTab, images->Add(wxT("find_and_replace")))));
     mgr->AddOutputTab(REPLACE_IN_FILES);
 
     // Show Usage ("References")
@@ -134,23 +134,23 @@ void OutputPane::CreateGUIControls()
 #if PHP_BUILD
     m_showUsageTab->Hide();
 #else
-    m_book->AddPage(m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, bmpLoader->LoadBitmap(wxT("find")));
-    m_tabs.insert(std::make_pair(wxGetTranslation(SHOW_USAGE), Tab(wxGetTranslation(SHOW_USAGE), m_showUsageTab,
-                                                                   bmpLoader->LoadBitmap(wxT("find")))));
+    m_book->AddPage(m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, images->Add(wxT("find")));
+    m_tabs.insert(std::make_pair(wxGetTranslation(SHOW_USAGE),
+                                 Tab(wxGetTranslation(SHOW_USAGE), m_showUsageTab, images->Add(wxT("find")))));
     mgr->AddOutputTab(wxGetTranslation(SHOW_USAGE));
 #endif
     // Output tab
     m_outputWind = new OutputTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
-    m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, bmpLoader->LoadBitmap(wxT("console")));
-    m_tabs.insert(std::make_pair(wxGetTranslation(OUTPUT_WIN), Tab(wxGetTranslation(OUTPUT_WIN), m_outputWind,
-                                                                   bmpLoader->LoadBitmap(wxT("console")))));
+    m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, images->Add(wxT("console")));
+    m_tabs.insert(std::make_pair(wxGetTranslation(OUTPUT_WIN),
+                                 Tab(wxGetTranslation(OUTPUT_WIN), m_outputWind, images->Add(wxT("console")))));
     mgr->AddOutputTab(wxGetTranslation(OUTPUT_WIN));
 
     // Tasks panel
     m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
-    m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, bmpLoader->LoadBitmap("tasks"));
-    m_tabs.insert(std::make_pair(wxGetTranslation(TASKS),
-                                 Tab(wxGetTranslation(TASKS), m_taskPanel, bmpLoader->LoadBitmap("tasks"))));
+    m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, images->Add("tasks"));
+    m_tabs.insert(
+        std::make_pair(wxGetTranslation(TASKS), Tab(wxGetTranslation(TASKS), m_taskPanel, images->Add("tasks"))));
     mgr->AddOutputTab(wxGetTranslation(TASKS));
 
     SetMinSize(wxSize(200, 100));
@@ -203,8 +203,8 @@ void OutputPane::SaveTabOrder()
 
 typedef struct {
     wxString text;
-    wxWindow* win;
-    wxBitmap bmp;
+    wxWindow* win = nullptr;
+    int bmp = wxNOT_FOUND;
 } tagTabInfo;
 
 void OutputPane::ApplySavedTabOrder() const
@@ -226,7 +226,7 @@ void OutputPane::ApplySavedTabOrder() const
                 tagTabInfo Tab;
                 Tab.text = title;
                 Tab.win = m_book->GetPage(n);
-                Tab.bmp = m_book->GetPageBitmap(n);
+                Tab.bmp = m_book->GetPageBitmapIndex(n);
 
                 vTempstore.push_back(Tab);
                 m_book->RemovePage(n);
@@ -275,7 +275,7 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
         // Insert the page
         int where = clTabTogglerHelper::IsTabInNotebook(GetNotebook(), t.m_label);
         if(where == wxNOT_FOUND) {
-            GetNotebook()->AddPage(t.m_window, t.m_label, true, t.m_bmp);
+            GetNotebook()->AddPage(t.m_window, t.m_label, true, t.m_bmpIndex);
         } else {
             GetNotebook()->SetSelection(where);
         }

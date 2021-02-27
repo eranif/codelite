@@ -131,10 +131,11 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     dc.DrawRectangle(tabRect);
 
     // Draw bitmap
-    if(tabInfo.GetBitmap().IsOk()) {
-        const wxBitmap& bmp = (!tabInfo.IsActive() && tabInfo.GetDisabledBitmp().IsOk()) ? tabInfo.GetDisabledBitmp()
-                                                                                         : tabInfo.GetBitmap();
-        dc.DrawBitmap(bmp, tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
+    if(tabInfo.HasBitmap()) {
+        int bmpIndex =
+            (!tabInfo.IsActive() && tabInfo.HasDisableBitmap()) ? tabInfo.GetDisabledBitmp() : tabInfo.GetBitmap();
+        bool disabledBmp = !tabInfo.IsActive();
+        dc.DrawBitmap(tabInfo.GetBitmap(bmpIndex, disabledBmp), tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
     }
 
     wxRect rr = tabInfo.m_rect;

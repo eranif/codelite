@@ -115,7 +115,9 @@ public:
      */
     void AddWorkspaceTab(const wxString& tabLabel)
     {
-        if(m_workspaceTabs.Index(tabLabel) == wxNOT_FOUND) { m_workspaceTabs.Add(tabLabel); }
+        if(m_workspaceTabs.Index(tabLabel) == wxNOT_FOUND) {
+            m_workspaceTabs.Add(tabLabel);
+        }
     }
 
     /**
@@ -123,7 +125,9 @@ public:
      */
     void AddOutputTab(const wxString& tabLabel)
     {
-        if(m_outputTabs.Index(tabLabel) == wxNOT_FOUND) { m_outputTabs.Add(tabLabel); }
+        if(m_outputTabs.Index(tabLabel) == wxNOT_FOUND) {
+            m_outputTabs.Add(tabLabel);
+        }
     }
 
     virtual clToolBar* GetToolBar() = 0;
@@ -183,7 +187,7 @@ public:
     /**
      * @brief open a file with a given tooltip and bitmap
      */
-    virtual IEditor* OpenFile(const wxString& fileName, const wxBitmap& bmp,
+    virtual IEditor* OpenFile(const wxString& fileName, const wxString& bmpResourceName,
                               const wxString& tooltip = wxEmptyString) = 0;
 
     /**
@@ -497,7 +501,7 @@ public:
      * @brief add a page to the mainbook
      */
     virtual bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,
-                         const wxBitmap& bmp = wxNullBitmap, bool selected = false) = 0;
+                         const wxString& bmpResourceName = wxEmptyString, bool selected = false) = 0;
 
     /**
      * @brief select a window in mainbook
@@ -643,7 +647,7 @@ public:
      * @brief return list of all breakpoints
      */
     virtual void GetBreakpoints(std::vector<clDebuggerBreakpoint>& bpList) = 0;
-    
+
     /**
      * @brief build and display the build menu for a toolbar button
      */

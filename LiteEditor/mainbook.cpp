@@ -561,7 +561,7 @@ clEditor* MainBook::NewEditor()
 
     clEditor* editor = new clEditor(m_book);
     editor->SetFileName(fileName);
-    AddPage(editor, fileName.GetFullName(), fileName.GetFullPath(), wxNullBitmap, true);
+    AddPage(editor, fileName.GetFullName(), fileName.GetFullPath(), wxNOT_FOUND, true);
 
 #if !CL_USE_NATIVEBOOK
     if(m_book->GetSizer()) {
@@ -592,7 +592,7 @@ static bool IsFileExists(const wxFileName& filename)
 
 clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectName, int lineno, long position,
                              OF_extra extra /*=OF_AddJump*/, bool preserveSelection /*=true*/,
-                             const wxBitmap& bmp /*= wxNullBitmap*/, const wxString& tooltip /* wxEmptyString */)
+                             int bmp /*= wxNullBitmap*/, const wxString& tooltip /* wxEmptyString */)
 {
     wxFileName fileName(file_name);
     fileName.MakeAbsolute();
@@ -727,7 +727,7 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
     return editor;
 }
 
-bool MainBook::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, const wxBitmap& bmp, bool selected,
+bool MainBook::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, int bmp, bool selected,
                        int insert_at_index /*=wxNOT_FOUND*/)
 {
     ShowWelcomePage(false);
@@ -1160,9 +1160,9 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
         return;
     }
 
-    wxBitmap lockBmp = ::clGetManager()->GetStdIcons()->LoadBitmap("lock");
+    int lockBmp = m_book->GetBitmaps()->Add("lock");
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
-        wxBitmap orig_bmp = editor->GetEditorBitmap();
+        int orig_bmp = editor->GetEditorBitmap();
         if(editor == m_book->GetPage(i)) {
             m_book->SetPageBitmap(i, readOnly ? lockBmp : orig_bmp);
             break;
@@ -1551,7 +1551,7 @@ void MainBook::GetDetachedTabs(clTab::Vec_t& tabs)
     const EditorFrame::List_t& detachedEditors = GetDetachedEditors();
     std::for_each(detachedEditors.begin(), detachedEditors.end(), [&](EditorFrame* fr) {
         clTab tabInfo;
-        tabInfo.bitmap = wxNullBitmap;
+        tabInfo.bitmap = wxNOT_FOUND;
         tabInfo.filename = fr->GetEditor()->GetFileName();
         tabInfo.isFile = true;
         tabInfo.isModified = fr->GetEditor()->IsModified();
@@ -1818,3 +1818,5 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
     }
     return label;
 }
+
+int MainBook::GetBitmapIndexOrAdd(const wxString& name) { return m_book->GetBitmaps()->Add(name); }

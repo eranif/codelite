@@ -30,15 +30,14 @@
 #include "cl_command_event.h"
 #include "editorframe.h"
 #include "filehistory.h"
+#include "navigationmanager.h"
 #include "quickfindbar.h"
 #include "sessionmanager.h"
 #include "wxStringHash.h"
 #include <set>
 #include <wx/panel.h>
-#include "navigationmanager.h"
 
 class FilesModifiedDlg;
-
 
 class MessagePane;
 class clEditorBar;
@@ -132,7 +131,7 @@ public:
 
     void SetFindBar(QuickFindBar* findBar);
     QuickFindBar* GetFindBar() const { return m_findBar; }
-    
+
     /**
      * @brief register a welcome page. This page is displayed whenever there are no tabs open
      * in CodeLite. If there is already a welcome page registered, this call destroys the previous one
@@ -164,7 +163,7 @@ public:
     bool IsNavBarShown() { return m_navBar && m_navBar->IsShown(); }
     clEditorBar* GetEditorBar() { return m_navBar; }
     void SetEditorBar(clEditorBar* bar) { m_navBar = bar; }
-    
+
     void SaveSession(SessionEntry& session, wxArrayInt* excludeArr = NULL);
     void RestoreSession(SessionEntry& session);
     /**
@@ -198,12 +197,15 @@ public:
     wxWindow* GetPage(size_t page);
     size_t GetPageCount() const;
     wxWindow* FindPage(const wxString& text);
-
+    /**
+     * @brief return the bitmap index or add it if it is missing and then return its index
+     */
+    int GetBitmapIndexOrAdd(const wxString& name);
     clEditor* NewEditor();
 
     clEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                        long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
-                       const wxBitmap& bmp = wxNullBitmap, const wxString& tooltip = wxEmptyString);
+                       int bmp = wxNOT_FOUND, const wxString& tooltip = wxEmptyString);
     /**
      * @brief open file based on a browsing record
      */
@@ -212,16 +214,16 @@ public:
     /**
      * @brief a simpler version: open a file with a given tooltip and bitmap
      */
-    clEditor* OpenFile(const wxString& file_name, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString)
+    clEditor* OpenFile(const wxString& file_name, int bmp, const wxString& tooltip = wxEmptyString)
     {
         return OpenFile(file_name, "", wxNOT_FOUND, wxNOT_FOUND, OF_AddJump, false, bmp, tooltip);
     }
 
-    bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,
-                 const wxBitmap& bmp = wxNullBitmap, bool selected = false, int insert_at_index = wxNOT_FOUND);
+    bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString, int bmp = wxNOT_FOUND,
+                 bool selected = false, int insert_at_index = wxNOT_FOUND);
     bool SelectPage(wxWindow* win);
 
-    bool UserSelectFiles(std::vector<std::pair<wxFileName, bool> >& files, const wxString& title,
+    bool UserSelectFiles(std::vector<std::pair<wxFileName, bool>>& files, const wxString& title,
                          const wxString& caption, bool cancellable = true);
 
     bool SaveAll(bool askUser, bool includeUntitled);

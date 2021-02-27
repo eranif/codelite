@@ -51,7 +51,9 @@ void clTabTogglerHelper::OnToggleOutputTab(clCommandEvent& event)
         }
     } else {
         int where = clGetManager()->GetOutputPaneNotebook()->GetPageIndex(m_outputTabName);
-        if(where != wxNOT_FOUND) { clGetManager()->GetOutputPaneNotebook()->RemovePage(where); }
+        if(where != wxNOT_FOUND) {
+            clGetManager()->GetOutputPaneNotebook()->RemovePage(where);
+        }
     }
 }
 
@@ -76,14 +78,17 @@ void clTabTogglerHelper::OnToggleWorkspaceTab(clCommandEvent& event)
         }
     } else {
         int where = clGetManager()->GetWorkspacePaneNotebook()->GetPageIndex(m_workspaceTabName);
-        if(where != wxNOT_FOUND) { clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where); }
+        if(where != wxNOT_FOUND) {
+            clGetManager()->GetWorkspacePaneNotebook()->RemovePage(where);
+        }
     }
 }
 
 int clTabTogglerHelper::IsTabInNotebook(Notebook* book, const wxString& tabname)
 {
     for(size_t i = 0; i < book->GetPageCount(); ++i) {
-        if(book->GetPageText(i) == tabname) return i;
+        if(book->GetPageText(i) == tabname)
+            return i;
     }
     return wxNOT_FOUND;
 }

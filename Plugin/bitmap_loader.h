@@ -78,8 +78,9 @@ class WXDLLIMPEXP_SDK clBitmapList : public wxEvtHandler
 {
     size_t m_index = 0;
     struct BmpInfo {
-        wxBitmap* bmp_ptr = nullptr; // if this is set, it means that it is part of the BitmapLoader class
-        wxBitmap bmp = wxNullBitmap; // user provided bitmap
+        wxBitmap* bmp_ptr = nullptr;          // if this is set, it means that it is part of the BitmapLoader class
+        wxBitmap bmp = wxNullBitmap;          // user provided bitmap
+        wxBitmap bmp_disabled = wxNullBitmap; // this one is always a one that we provide
         wxString name;
     };
     unordered_map<size_t, BmpInfo> m_bitmaps;
@@ -88,7 +89,7 @@ class WXDLLIMPEXP_SDK clBitmapList : public wxEvtHandler
 protected:
     void OnBitmapsUpdated(clCommandEvent& event);
     size_t FindIdByName(const wxString& name) const;
-    size_t DoAdd(const wxBitmap& bmp, const wxString& bmp_name, bool user_bmp);
+    size_t DoAdd(const wxBitmap& bmp, const wxBitmap& bmpDisabled, const wxString& bmp_name, bool user_bmp);
 
 public:
     clBitmapList();
@@ -97,11 +98,15 @@ public:
     size_t Add(const wxString& bmp_name, int size = wxNOT_FOUND);
     size_t size() const { return m_bitmaps.size(); }
     bool empty() const { return m_bitmaps.empty(); }
-    const wxBitmap& at(size_t index) const;
-    const wxBitmap& at(const wxString& name) const;
+    const wxBitmap& Get(size_t index, bool disabledBmp) const;
+    const wxBitmap& Get(const wxString& name, bool disabledBmp) const;
     void Delete(size_t index);
     void Delete(const wxString& name);
     void clear();
+    /**
+     * @brief return bitmap name for a given index
+     */
+    const wxString& GetBitmapName(size_t index) const;
 };
 
 class WXDLLIMPEXP_SDK BitmapLoader : public wxEvtHandler

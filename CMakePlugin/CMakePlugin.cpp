@@ -117,7 +117,9 @@ static const wxString HELP_TAB_NAME = _("CMake Help");
  */
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(!g_plugin) { g_plugin = new CMakePlugin(manager); }
+    if(!g_plugin) {
+        g_plugin = new CMakePlugin(manager);
+    }
 
     return g_plugin;
 }
@@ -170,17 +172,15 @@ CMakePlugin::CMakePlugin(IManager* manager)
     m_cmake.reset(new CMake(m_configuration->GetProgramPath()));
 
     Notebook* book = m_mgr->GetWorkspacePaneNotebook();
-    cmakeImages images;
-    const wxBitmap& bmp = images.Bitmap("cmake_16");
-
+    auto images = book->GetBitmaps();
     if(IsPaneDetached()) {
-        DockablePane* cp =
-            new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, false, bmp, wxSize(200, 200));
+        DockablePane* cp = new DockablePane(book->GetParent()->GetParent(), book, HELP_TAB_NAME, false,
+                                            images->Add("cmake"), wxSize(200, 200));
         m_helpTab = new CMakeHelpTab(cp, this);
         cp->SetChildNoReparent(m_helpTab);
     } else {
         m_helpTab = new CMakeHelpTab(book, this);
-        book->AddPage(m_helpTab, HELP_TAB_NAME, false, bmp);
+        book->AddPage(m_helpTab, HELP_TAB_NAME, false, images->Add("cmake"));
         m_mgr->AddWorkspaceTab(HELP_TAB_NAME);
     }
 
@@ -231,7 +231,8 @@ wxString CMakePlugin::GetSelectedProjectConfig() const
 {
     BuildConfigPtr configPtr = GetSelectedBuildConfig();
 
-    if(configPtr) return configPtr->GetName();
+    if(configPtr)
+        return configPtr->GetName();
 
     return wxEmptyString;
 }
@@ -308,7 +309,9 @@ void CMakePlugin::UnPlug()
     int pos = notebook->GetPageIndex("CMake Help");
     if(pos != wxNOT_FOUND) {
         CMakeHelpTab* helpTab = dynamic_cast<CMakeHelpTab*>(notebook->GetPage(pos));
-        if(helpTab) { helpTab->Stop(); }
+        if(helpTab) {
+            helpTab->Stop();
+        }
         notebook->RemovePage(pos);
     }
 
@@ -372,12 +375,13 @@ void CMakePlugin::OnToggleHelpTab(clCommandEvent& event)
 
     if(event.IsSelected()) {
         // show it
-        cmakeImages images;
-        const wxBitmap& bmp = images.Bitmap("cmake_16");
-        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_helpTab, HELP_TAB_NAME, true, bmp);
+        auto images = m_mgr->GetWorkspacePaneNotebook()->GetBitmaps();
+        m_mgr->GetWorkspacePaneNotebook()->AddPage(m_helpTab, HELP_TAB_NAME, true, images->Add("cmake"));
     } else {
         int where = m_mgr->GetWorkspacePaneNotebook()->GetPageIndex(HELP_TAB_NAME);
-        if(where != wxNOT_FOUND) { m_mgr->GetWorkspacePaneNotebook()->RemovePage(where); }
+        if(where != wxNOT_FOUND) {
+            m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
+        }
     }
 }
 
@@ -406,8 +410,12 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
     size_t curpos = 0;
     wxMenuItemList::const_iterator iter = items.begin();
     for(; iter != items.end(); ++iter) {
-        if((*iter)->GetId() == XRCID("build_project")) { buildPos = curpos; }
-        if((*iter)->GetId() == XRCID("project_properties")) { settingsPos = curpos; }
+        if((*iter)->GetId() == XRCID("build_project")) {
+            buildPos = curpos;
+        }
+        if((*iter)->GetId() == XRCID("project_properties")) {
+            settingsPos = curpos;
+        }
         ++curpos;
     }
 
@@ -463,7 +471,9 @@ void CMakePlugin::OnOpenCMakeLists(wxCommandEvent& event)
     }
 
     cmakelists.SetFullName(CMAKELISTS_FILE);
-    if(cmakelists.FileExists()) { m_mgr->OpenFile(cmakelists.GetFullPath()); }
+    if(cmakelists.FileExists()) {
+        m_mgr->OpenFile(cmakelists.GetFullPath());
+    }
 }
 
 void CMakePlugin::OnExportCMakeLists(wxCommandEvent& event)
@@ -475,7 +485,9 @@ void CMakePlugin::OnExportCMakeLists(wxCommandEvent& event)
     CHECK_PTR_RET(proj);
 
     CMakeGenerator generator;
-    if(generator.Generate(proj)) { EventNotifier::Get()->PostReloadExternallyModifiedEvent(); }
+    if(generator.Generate(proj)) {
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent();
+    }
 }
 
 void CMakePlugin::OnWorkspaceContextMenu(clContextMenuEvent& event)
@@ -551,7 +563,9 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
 #endif
 
     CMakeGenerator generator;
-    if(generator.CanGenerate(p)) { generator.Generate(p); }
+    if(generator.CanGenerate(p)) {
+        generator.Generate(p);
+    }
 
     wxString args = buildConf->GetBuildSystemArguments();
 

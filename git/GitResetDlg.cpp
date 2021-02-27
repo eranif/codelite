@@ -23,7 +23,8 @@ GitResetDlg::GitResetDlg(wxWindow* parent, const wxArrayString& filesToRevert, c
     m_clToolbarAltered->Bind(wxEVT_TOOL, &GitResetDlg::OnToggleAllRevert, this, XRCID("toggle-all-altered"));
     m_clToolbarAltered->Bind(wxEVT_UPDATE_UI, &GitResetDlg::OnToggleAllRevertUI, this, XRCID("toggle-all-altered"));
     m_clToolbarAltered->Realize();
-
+    
+    images = m_clToolbarAdded->GetBitmapsCreateIfNeeded();
     m_clToolbarAdded->AddTool(XRCID("toggle-all-added"), _("Toggle All"), images->Add("check-all"));
     m_clToolbarAdded->Bind(wxEVT_TOOL, &GitResetDlg::OnToggleAllRemove, this, XRCID("toggle-all-added"));
     m_clToolbarAdded->Bind(wxEVT_UPDATE_UI, &GitResetDlg::OnToggleAllRemoveUI, this, XRCID("toggle-all-added"));

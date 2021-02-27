@@ -95,7 +95,8 @@ public:
     Notebook* GetWorkspacePaneNotebook();
     IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                       OF_extra flags = OF_AddJump);
-    IEditor* OpenFile(const wxString& fileName, const wxBitmap& bmp, const wxString& tooltip = wxEmptyString);
+    IEditor* OpenFile(const wxString& fileName, const wxString& bmpResourceName,
+                      const wxString& tooltip = wxEmptyString);
     IEditor* OpenFile(const BrowseRecord& rec);
     wxString GetStartupDirectory() const;
     void AddProject(const wxString& path);
@@ -135,7 +136,7 @@ public:
     bool ClosePage(const wxFileName& filename);
     wxWindow* FindPage(const wxString& text);
     bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,
-                 const wxBitmap& bmp = wxNullBitmap, bool selected = false);
+                 const wxString& bmpResourceName = wxEmptyString, bool selected = false);
     bool SelectPage(wxWindow* win);
     NavMgr* GetNavigationMgr();
     IEditor* NewEditor();

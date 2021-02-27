@@ -831,10 +831,9 @@ bool wxCrafterPlugin::DoShowDesigner(bool createIfNotExist)
         }
 
         if(createIfNotExist) {
-            wxcImages images;
             wxPanel* mainBookPanel = m_mgr->GetEditorPaneNotebook();
             m_mainPanel = new GUICraftMainPanel(mainBookPanel, this, m_treeView->GetTree());
-            m_mgr->AddPage(m_mainPanel, _("[wxCrafter]"), _("wxCrafter Designer"), images.Bitmap("wxc_icon"), true);
+            m_mgr->AddPage(m_mainPanel, _("[wxCrafter]"), _("wxCrafter Designer"), "blocks", true);
             DoSelectWorkspaceTab();
             return true;
         }
@@ -1390,6 +1389,7 @@ void wxCrafterPlugin::OnToggleView(clCommandEvent& event)
         event.Skip();
         return;
     }
+#if 0
     if(event.IsSelected()) {
         // show it
         wxcImages images;
@@ -1400,6 +1400,7 @@ void wxCrafterPlugin::OnToggleView(clCommandEvent& event)
             m_mgr->GetWorkspacePaneNotebook()->RemovePage(where);
         }
     }
+#endif
 }
 
 void wxCrafterPlugin::OnSaveUI(clCommandEvent& event)

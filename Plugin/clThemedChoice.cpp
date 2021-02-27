@@ -1,9 +1,9 @@
-#include "clThemedChoice.h"
 #include "ColoursAndFontsManager.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
 #include "clSystemSettings.h"
+#include "clThemedChoice.h"
 #include "cl_config.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 
 clThemedChoice::clThemedChoice() {}
 
@@ -43,19 +43,8 @@ void clThemedChoice::OnThemeChanged(wxCommandEvent& event)
 void clThemedChoice::ApplyTheme()
 {
 #if !wxUSE_NATIVE_CHOICE
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     clColours colours;
-    if(lexer->IsDark()) {
-        colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    } else {
-        colours.InitDefaults();
-    }
-    wxColour baseColour = colours.GetBgColour();
-    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
-    if(useCustomColour) {
-        baseColour = clConfig::Get().Read("BaseColour", baseColour);
-        colours.InitFromColour(baseColour);
-    }
+    colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     SetColours(colours);
 #endif
 }

@@ -42,8 +42,8 @@ EVT_ERASE_BACKGROUND(DockablePane::OnEraseBg)
 EVT_PAINT(DockablePane::OnPaint)
 END_EVENT_TABLE()
 
-DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& title, bool initialFloat,
-                           const wxBitmap& bmp, wxSize size)
+DockablePane::DockablePane(wxWindow* parent, Notebook* book, const wxString& title, bool initialFloat, int bmp,
+                           wxSize size)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, size, wxBORDER_NONE)
     , m_child(NULL)
     , m_book(book)

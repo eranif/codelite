@@ -261,7 +261,7 @@ protected:
     wxString m_keywordClasses;
     /// A space delimited list of all the variables in this editor
     wxString m_keywordLocals;
-    wxBitmap m_editorBitmap;
+    int m_editorBitmap = wxNOT_FOUND;
     size_t m_statusBarFields;
     int m_lastBeginLine = wxNOT_FOUND;
     int m_lastLine = wxNOT_FOUND;
@@ -289,8 +289,8 @@ public:
     bool IsHasCCAnnotation() const { return m_hasCCAnnotation; }
     void ClearCCAnnotations();
 
-    void SetEditorBitmap(const wxBitmap& editorBitmap) { this->m_editorBitmap = editorBitmap; }
-    const wxBitmap& GetEditorBitmap() const { return m_editorBitmap; }
+    void SetEditorBitmap(int editorBitmap) { this->m_editorBitmap = editorBitmap; }
+    int GetEditorBitmap() const { return m_editorBitmap; }
 
     void NotifyMarkerChanged(int lineNumber = wxNOT_FOUND);
 

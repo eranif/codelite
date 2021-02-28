@@ -63,11 +63,11 @@ void clColours::InitFromColour(const wxColour& baseColour)
         headerBgColour = bgColour.ChangeLightness(105);
         headerHBorderColour = headerBgColour.ChangeLightness(112);
         headerVBorderColour = headerBgColour.ChangeLightness(112);
+        selItemTextColour = itemTextColour;
         selbuttonColour = selItemTextColour.ChangeLightness(80);
         buttonColour = itemTextColour.ChangeLightness(80);
         grayText = itemTextColour.ChangeLightness(50);
 
-        selItemTextColour = itemTextColour;
         selItemBgColour = bgColour.ChangeLightness(120);
         selItemTextColourNoFocus = itemTextColour;
         selItemBgColourNoFocus = bgColour.ChangeLightness(110);

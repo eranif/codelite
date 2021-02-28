@@ -248,7 +248,7 @@ public:
     clThemedButton* GetButtonBookmarks() { return m_buttonBookmarks; }
     wxStaticText* GetLabelText() { return m_labelText; }
     clEditorBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_SIMPLE);
+                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~clEditorBarBase();
 };
 

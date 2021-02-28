@@ -382,7 +382,7 @@ void clBitmapList::OnBitmapsUpdated(clCommandEvent& event)
             // replace this entry
             new_bmp_info.name = old_bmp_info.name;
             new_bmp_info.bmp_ptr = const_cast<wxBitmap*>(&clBitmaps::Get().GetLoader()->LoadBitmap(old_bmp_info.name));
-            if(new_bmp_info.bmp_ptr) {
+            if(new_bmp_info.bmp_ptr && new_bmp_info.bmp_ptr->IsOk()) {
                 new_bmp_info.bmp_disabled = DrawingUtils::CreateDisabledBitmap(*new_bmp_info.bmp_ptr);
             }
         } else {
@@ -405,7 +405,7 @@ clBitmapList::~clBitmapList()
     EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &clBitmapList::OnBitmapsUpdated, this);
 }
 
-const wxBitmap& clBitmapList::Get(size_t index, bool disabledBmp) const
+const wxBitmap& clBitmapList::Get(size_t index, bool disabledBmp)
 {
     auto iter = m_bitmaps.find(index);
     if(iter == m_bitmaps.end()) {
@@ -413,6 +413,10 @@ const wxBitmap& clBitmapList::Get(size_t index, bool disabledBmp) const
     }
 
     if(disabledBmp) {
+        // create the disabled bitmap upon request
+        if(!iter->second.bmp_disabled.IsOk()) {
+            iter->second.bmp_disabled = DrawingUtils::CreateDisabledBitmap(iter->second.bmp);
+        }
         return iter->second.bmp_disabled;
     } else {
         if(iter->second.bmp_ptr) {
@@ -447,7 +451,7 @@ void clBitmapList::Delete(size_t index)
 
 void clBitmapList::Delete(const wxString& name) { Delete(FindIdByName(name)); }
 
-const wxBitmap& clBitmapList::Get(const wxString& name, bool disabledBmp) const
+const wxBitmap& clBitmapList::Get(const wxString& name, bool disabledBmp)
 {
     return Get(FindIdByName(name), disabledBmp);
 }
@@ -465,13 +469,13 @@ size_t clBitmapList::Add(const wxString& bmp_name, int size)
 {
     wxUnusedVar(size);
     const wxBitmap& bmp = clBitmaps::Get().GetLoader()->LoadBitmap(bmp_name);
-    return DoAdd(bmp, DrawingUtils::CreateDisabledBitmap(bmp), bmp_name, false);
+    return DoAdd(bmp, wxNullBitmap, bmp_name, false);
 }
 
 size_t clBitmapList::Add(const wxBitmap& bmp, const wxString& name)
 {
     // user bitmap
-    return DoAdd(bmp, DrawingUtils::CreateDisabledBitmap(bmp), name, true);
+    return DoAdd(bmp, wxNullBitmap, name, true);
 }
 
 size_t clBitmapList::DoAdd(const wxBitmap& bmp, const wxBitmap& bmpDisabled, const wxString& bmp_name, bool user_bmp)

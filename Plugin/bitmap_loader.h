@@ -98,8 +98,8 @@ public:
     size_t Add(const wxString& bmp_name, int size = wxNOT_FOUND);
     size_t size() const { return m_bitmaps.size(); }
     bool empty() const { return m_bitmaps.empty(); }
-    const wxBitmap& Get(size_t index, bool disabledBmp) const;
-    const wxBitmap& Get(const wxString& name, bool disabledBmp) const;
+    const wxBitmap& Get(size_t index, bool disabledBmp);
+    const wxBitmap& Get(const wxString& name, bool disabledBmp);
     void Delete(size_t index);
     void Delete(const wxString& name);
     void clear();

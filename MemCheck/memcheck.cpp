@@ -103,9 +103,9 @@ MemCheckPlugin::MemCheckPlugin(IManager* manager)
     // CL_DEBUG1(PLUGIN_PREFIX("adding 'Output View' notebook pane"));
     auto images = m_mgr->GetOutputPaneNotebook()->GetBitmaps();
     m_outputView = new MemCheckOutputView(m_mgr->GetOutputPaneNotebook(), this, m_mgr);
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputView, _("MemCheck"), false, images->Add("check"));
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_outputView, _("MemCheck"), false, images->Add("check-all"));
     m_tabHelper.reset(new clTabTogglerHelper(_("MemCheck"), m_outputView, "", NULL));
-    m_tabHelper->SetOutputTabBmp(images->Add("check"));
+    m_tabHelper->SetOutputTabBmp(images->Add("check-all"));
 
     m_settings = new MemCheckSettings();
     GetSettings()->LoadFromConfig();

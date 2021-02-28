@@ -327,8 +327,8 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     // The "selected config" is kept in the local workspace
     m_selectedConfig = local.namedObject("selected_config").toString();
     // load the configurations
-    JSONItem localConfigs = shared.namedObject("configs");
-    JSONItem sharedConfigs = local.namedObject("configs");
+    JSONItem sharedConfigs = shared.namedObject("configs");
+    JSONItem localConfigs = local.namedObject("configs");
     if(sharedConfigs.arraySize() != localConfigs.arraySize()) {
         clSYSTEM() << "Notice: File System Workspace: local config and shared configs do not match!" << endl;
     }

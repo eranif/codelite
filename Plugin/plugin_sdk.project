@@ -354,8 +354,6 @@
     <File Name="wx_tree_traverser.cpp"/>
     <File Name="macromanager.cpp"/>
     <File Name="macromanager.h"/>
-    <File Name="theme_handler_helper.h"/>
-    <File Name="theme_handler_helper.cpp"/>
     <File Name="clStringHistory.h"/>
     <File Name="clStringHistory.cpp"/>
     <File Name="clFindResultsStyler.h"/>

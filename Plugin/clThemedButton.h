@@ -2,11 +2,12 @@
 #define CLTHEMEDBUTTON_H
 
 #include "clButton.h"
+#include "cl_command_event.h"
 
 class WXDLLIMPEXP_SDK clThemedButton : public clButton
 {
 protected:
-    void OnThemeChanged(wxCommandEvent& event);
+    void OnThemeChanged(clCommandEvent& event);
     void ApplyTheme();
 
 public:

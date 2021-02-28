@@ -3,6 +3,7 @@
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "clEditorBar.h"
+#include "clSystemSettings.h"
 #include "clTabRenderer.h"
 #include "clThemeUpdater.h"
 #include "clWorkspaceManager.h"
@@ -43,7 +44,7 @@ clEditorBar::clEditorBar(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clEditorBar::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clEditorBar::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_MARKER_CHANGED, &clEditorBar::OnMarkerChanged, this);
     m_buttonScope->SetBitmap(m_functionBmp);
     m_buttonScope->SetHasDropDownMenu(true);
@@ -57,7 +58,7 @@ clEditorBar::~clEditorBar()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clEditorBar::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clEditorBar::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_MARKER_CHANGED, &clEditorBar::OnMarkerChanged, this);
 }
 
@@ -85,7 +86,7 @@ void clEditorBar::DoShow(bool s)
     CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
-void clEditorBar::OnThemeChanged(wxCommandEvent& e)
+void clEditorBar::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
     CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
@@ -99,7 +100,14 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_projectName.clear();
     m_filenameRelative.clear();
     m_bookmarks.clear();
-    m_labelText->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+
+    wxColour bgcolour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+
+    SetBackgroundColour(bgcolour);
+    m_labelText->SetForegroundColour(textColour);
+    m_labelText->SetBackgroundColour(bgcolour);
+
     if(!m_shouldShow) {
         return;
     }

@@ -51,6 +51,6 @@ protected:
     virtual void OnButtonScope(wxCommandEvent& event);
     void OnMarkerChanged(clCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& e);
-    void OnThemeChanged(wxCommandEvent& e);
+    void OnThemeChanged(clCommandEvent& e);
 };
 #endif // CLEDITORBAR_H

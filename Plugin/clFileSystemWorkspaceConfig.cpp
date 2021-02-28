@@ -6,6 +6,7 @@
 #include "ctags_manager.h"
 #include "debuggermanager.h"
 #include "dirsaver.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "macromanager.h"
@@ -15,6 +16,8 @@
 #define WORKSPACE_TYPE "File System Workspace"
 #define DEFAULT_EXCLUDE_FILE_PATTERN "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project"
 
+wxDEFINE_EVENT(wxEVT_FSW_SETTINGS_SAVED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_FSW_SETTINGS_LOADED, clCommandEvent);
 clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
     : m_fileExtensions(DEFAULT_FILE_EXTENSIONS)
     , m_excludeFilesPattern(DEFAULT_EXCLUDE_FILE_PATTERN)
@@ -386,6 +389,9 @@ bool clFileSystemWorkspaceSettings::Save(const wxFileName& filename)
     ToJSON(itemShared, itemLocal);
     root_shared.save(filename);
     root_local.save(localWorkspace);
+
+    clCommandEvent eventSaved(wxEVT_FSW_SETTINGS_SAVED);
+    EventNotifier::Get()->AddPendingEvent(eventSaved);
     return true;
 }
 
@@ -407,6 +413,8 @@ bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename)
         auto iLocal = root_local.toElement();
         FromJSON(iShared, iLocal);
     }
+    clCommandEvent eventSaved(wxEVT_FSW_SETTINGS_LOADED);
+    EventNotifier::Get()->AddPendingEvent(eventSaved);
     return true;
 }
 

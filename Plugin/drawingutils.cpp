@@ -287,9 +287,12 @@ void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const 
 
 bool DrawingUtils::IsDark(const wxColour& color)
 {
-    float h, s, b;
-    RGBtoHSB(color.Red(), color.Green(), color.Blue(), &h, &s, &b);
-    return (b < 0.5);
+    double r = color.Red();
+    double g = color.Green();
+    double b = color.Blue();
+
+    double luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return (luma < 140);
 }
 
 wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)

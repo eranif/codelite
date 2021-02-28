@@ -30,18 +30,29 @@ clTabColours::clTabColours() { UpdateColours(0); }
 void clTabColours::UpdateColours(size_t notebookStyle)
 {
     wxUnusedVar(notebookStyle);
-    activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-    tabAreaColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
+    wxColour base_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    bool is_dark = DrawingUtils::IsDark(base_colour);
+
+    tabAreaColour = base_colour.ChangeLightness(80);
+
     // active tab colours
-    activeTabBgColour = tabAreaColour.ChangeLightness(130);
-    activeTabPenColour = activeTabBgColour.ChangeLightness(80);
-    activeTabInnerPenColour = activeTabPenColour.ChangeLightness(120);
-    
+    activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    activeTabPenColour = tabAreaColour.ChangeLightness(80);
+    if(is_dark) {
+        activeTabBgColour = activeTabPenColour;
+    } else {
+        activeTabBgColour = base_colour.ChangeLightness(110);
+    }
+    activeTabInnerPenColour = activeTabBgColour;
+
     // inactive tab colours
-    inactiveTabTextColour = "WHITE";
+    inactiveTabTextColour = activeTabTextColour;
     inactiveTabBgColour = tabAreaColour.ChangeLightness(110);
     inactiveTabPenColour = activeTabPenColour.ChangeLightness(110);
     inactiveTabInnerPenColour = inactiveTabBgColour;
+
+    // the marker colour
+    markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#dc7633"));
 }
 
 bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }
@@ -428,24 +439,8 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
 
 void clTabRenderer::AdjustColours(clTabColours& colours, size_t style)
 {
-    if(style & kNotebook_DynamicColours) {
-        wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();
-        if(!globalTheme.IsEmpty()) {
-            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", globalTheme);
-            if(lexer && lexer->IsDark()) {
-                // Dark theme, update all the colours
-                colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
-                colours.activeTabInnerPenColour = colours.activeTabBgColour;
-                colours.activeTabPenColour = colours.activeTabBgColour.ChangeLightness(110);
-                colours.activeTabTextColour = *wxWHITE;
-            } else if(lexer) {
-                // Light theme
-                colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
-                colours.activeTabInnerPenColour = colours.activeTabBgColour;
-                colours.activeTabTextColour = *wxBLACK;
-            }
-        }
-    }
+    wxUnusedVar(style);
+    wxUnusedVar(colours);
 }
 
 void clTabRenderer::DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, size_t style)

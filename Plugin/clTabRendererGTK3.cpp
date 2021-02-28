@@ -40,7 +40,8 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
     wxColour activeTabBgColour = DrawingUtils::IsDark(colours.tabAreaColour)
                                      ? colours.tabAreaColour.ChangeLightness(105)
                                      : colours.tabAreaColour.ChangeLightness(125);
-    wxColour bgColour(colours.tabAreaColour);
+
+    wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.tabAreaColour);
     wxColour penColour(colours.tabAreaColour);
 
     wxFont font = GetTabFont(tabInfo.IsActive());
@@ -123,32 +124,4 @@ void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)
 {
     wxUnusedVar(style);
     wxUnusedVar(colours);
-    /*bool useDefaults = true;
-    if(style & kNotebook_DynamicColours) {
-        wxString globalTheme = ColoursAndFontsManager::Get().GetGlobalTheme();
-        if(!globalTheme.IsEmpty()) {
-            LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", globalTheme);
-            if(lexer && lexer->IsDark()) {
-                // Dark theme, update all the colours
-                colours.activeTabBgColour = lexer->GetProperty(0).GetBgColour();
-                colours.activeTabInnerPenColour = colours.activeTabBgColour;
-                colours.activeTabPenColour = colours.activeTabBgColour.ChangeLightness(110);
-                colours.activeTabTextColour = *wxWHITE;
-                colours.inactiveTabTextColour = wxColour("#909497");
-                colours.tabAreaColour = colours.activeTabBgColour.ChangeLightness(110);
-                useDefaults = false;
-            }
-        }
-    }
-
-    if(useDefaults) {
-        colours.activeTabBgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-        colours.activeTabInnerPenColour = colours.activeTabBgColour;
-        colours.tabAreaColour = colours.inactiveTabBgColour;
-        colours.activeTabPenColour = colours.activeTabBgColour;
-        colours.activeTabTextColour = DrawingUtils::GetPanelTextColour();
-        colours.inactiveTabTextColour = DrawingUtils::IsDark(colours.activeTabTextColour)
-                                            ? colours.activeTabTextColour.ChangeLightness(140)
-                                            : colours.activeTabTextColour.ChangeLightness(60);
-    }*/
 }

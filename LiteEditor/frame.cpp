@@ -1155,13 +1155,18 @@ void clMainFrame::CreateGUIControls()
     // Wrap the mainbook with a wxPanel
     // We do this so we can place the find bar under the main book
     wxPanel* container = new wxPanel(m_mainPanel);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
+        e.Skip();
+        container->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    });
+
     clThemeUpdater::Get().RegisterWindow(container);
 
     container->SetSizer(new wxBoxSizer(wxVERTICAL));
     clEditorBar* navbar = new clEditorBar(container);
     navbar->Hide();
 
-    container->GetSizer()->Add(navbar, 0, wxEXPAND | wxALL, 5);
+    container->GetSizer()->Add(navbar, 0, wxEXPAND|wxBOTTOM, 5);
 
     // Add the debugger toolbar
     m_debuggerToolbar = new DebuggerToolBar(container);

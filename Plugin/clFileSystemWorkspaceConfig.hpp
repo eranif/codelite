@@ -3,6 +3,7 @@
 
 #include "JSON.h"
 #include "clBacktickCache.hpp"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "macros.h"
 #include <map>
@@ -152,4 +153,6 @@ public:
     static bool IsOk(const wxFileName& filename);
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FSW_SETTINGS_SAVED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_FSW_SETTINGS_LOADED, clCommandEvent);
 #endif // CLFILESYSTEMWORKSPACECONFIG_HPP

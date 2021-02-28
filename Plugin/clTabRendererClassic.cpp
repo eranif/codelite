@@ -27,46 +27,15 @@ clTabRendererClassic::~clTabRendererClassic() {}
 
 void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour& activeTabBGColour)
 {
-    // Active tab
-    clColours c;
-    c.InitFromColour(activeTabBGColour.ChangeLightness(110));
-
-    colours.activeTabTextColour = c.GetItemTextColour();
-    colours.activeTabBgColour = activeTabBGColour;
-
-    //    wxColour sysbgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
-    //    if(DrawingUtils::IsDark(sysbgColour)) {
-    //        colours.activeTabBgColour = sysbgColour.ChangeLightness(90);
-    //    }
-
-    colours.activeTabPenColour = c.GetBgColour().ChangeLightness(60);
-    colours.activeTabInnerPenColour = c.GetBgColour();
-
-    // Inactive tab
-    colours.inactiveTabBgColour = c.GetBgColour();
-    colours.inactiveTabTextColour = c.GetItemTextColour().ChangeLightness(90);
-    colours.inactiveTabPenColour = colours.activeTabPenColour.ChangeLightness(110);
-    colours.inactiveTabInnerPenColour = c.GetBgColour();
-    colours.tabAreaColour = c.GetBgColour();
+    wxUnusedVar(colours);
+    wxUnusedVar(activeTabBGColour);
 }
 
 void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColour& activeTabBGColour)
 {
     // Active tab
-    clColours c;
-    c.InitFromColour(activeTabBGColour.ChangeLightness(90));
-
-    colours.activeTabTextColour = c.GetItemTextColour();
-    colours.activeTabBgColour = activeTabBGColour.ChangeLightness(130);
-    colours.activeTabPenColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-    colours.activeTabInnerPenColour = c.GetBgColour();
-
-    // Inactive tab
-    colours.inactiveTabBgColour = c.GetBgColour().ChangeLightness(120); // at worst, it will be white
-    colours.inactiveTabTextColour = colours.activeTabTextColour;
-    colours.inactiveTabPenColour = colours.activeTabPenColour.ChangeLightness(130);
-    colours.inactiveTabInnerPenColour = c.GetBgColour();
-    colours.tabAreaColour = c.GetBgColour();
+    wxUnusedVar(colours);
+    wxUnusedVar(activeTabBGColour);
 }
 
 void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
@@ -95,11 +64,11 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
     clTabColours colours = colors;
     bool isDark = DrawingUtils::IsDark(colours.activeTabBgColour);
-    if(isDark) {
-        InitDarkColours(colours, colours.activeTabBgColour);
-    } else {
-        InitLightColours(colours, colours.activeTabBgColour);
-    }
+    // if(isDark) {
+    //     InitDarkColours(colours, colours.activeTabBgColour);
+    // } else {
+    //     InitLightColours(colours, colours.activeTabBgColour);
+    // }
 
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);

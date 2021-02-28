@@ -12,7 +12,7 @@ bool clThemedButton::Create(wxWindow* parent, wxWindowID id, const wxString& lab
 {
     bool res = clButton::Create(parent, id, label, pos, size, style, validator, name);
     if(res) {
-        EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedButton::OnThemeChanged, this);
+        EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
         ApplyTheme();
     }
 
@@ -23,16 +23,16 @@ clThemedButton::clThemedButton(wxWindow* parent, wxWindowID id, const wxString& 
                                const wxSize& size, long style, const wxValidator& validator, const wxString& name)
     : clButton(parent, id, label, pos, size, style, validator, name)
 {
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedButton::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
     ApplyTheme();
 }
 
 clThemedButton::~clThemedButton()
 {
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedButton::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
 }
 
-void clThemedButton::OnThemeChanged(wxCommandEvent& event)
+void clThemedButton::OnThemeChanged(clCommandEvent& event)
 {
     event.Skip();
     ApplyTheme();
@@ -41,19 +41,8 @@ void clThemedButton::OnThemeChanged(wxCommandEvent& event)
 void clThemedButton::ApplyTheme()
 {
 #if !wxUSE_NATIVE_BUTTON
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     clColours colours;
-    if(lexer->IsDark()) {
-        colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    } else {
-        colours.InitDefaults();
-    }
-    wxColour baseColour = colours.GetBgColour();
-    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
-    if(useCustomColour) {
-        baseColour = clConfig::Get().Read("BaseColour", baseColour);
-        colours.InitFromColour(baseColour);
-    }
+    colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     SetColours(colours);
 #endif
 }

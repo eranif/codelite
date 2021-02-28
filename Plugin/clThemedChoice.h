@@ -2,11 +2,12 @@
 #define CLTHEMEDCHOICE_H
 
 #include "clChoice.h" // Base class: clChoice
+#include "cl_command_event.h"
 
 class WXDLLIMPEXP_SDK clThemedChoice : public clChoice
 {
 protected:
-    void OnThemeChanged(wxCommandEvent& event);
+    void OnThemeChanged(clCommandEvent& event);
     void ApplyTheme();
 
 public:

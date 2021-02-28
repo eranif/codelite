@@ -2,7 +2,6 @@
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
-#include "theme_handler_helper.h"
 #include "wx/app.h"
 
 #ifdef __WXGTK__
@@ -123,10 +122,6 @@ void clSystemSettings::DoColourChangedEvent()
     if(m_useCustomColours) {
         wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         m_customColours.InitFromColour(baseColour);
-
-        // Make sure that the notebook colours are getting updated as well
-        ThemeHandlerHelper helper(EventNotifier::Get()->TopFrame());
-        helper.UpdateNotebookColours(EventNotifier::Get()->TopFrame());
     }
 
     // Notify about colours changes

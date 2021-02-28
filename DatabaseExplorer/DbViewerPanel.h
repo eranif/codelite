@@ -29,7 +29,6 @@
 #include "../Interfaces/imanager.h"
 #include "GUI.h" // Base class: _DbExplorerPanel
 #include "clToolBar.h"
-#include "theme_handler_helper.h"
 // database
 #include <wx/dblayer/include/DatabaseLayer.h>
 
@@ -88,7 +87,6 @@ private:
     DbConnection* m_pEditedConnection;
     wxWindow* m_pPrevPanel;
     bool m_SuppressUpdate;
-    ThemeHandlerHelper* m_themeHelper;
     clToolBar* m_toolbar;
 
 public:
@@ -99,7 +97,7 @@ public:
     void AddDbConnection(DbConnection* pDbCon) { m_pConnections->AddChild(pDbCon); }
     void SetServer(wxString& server) { m_server = server; }
     void OpenSQLiteFile(const wxFileName& fileName, bool openDefaultSQLPanel);
-    
+
     virtual void OnConnectClick(wxCommandEvent& event);
     virtual void OnConnectUI(wxUpdateUIEvent& event);
     virtual void OnItemActivate(wxTreeEvent& event);

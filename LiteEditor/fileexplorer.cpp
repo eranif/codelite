@@ -51,17 +51,11 @@ FileExplorer::FileExplorer(wxWindow* parent, const wxString& caption)
     , m_caption(caption)
 {
     CreateGUIControls();
-
-    m_themeHelper = new ThemeHandlerHelper(this);
     SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &FileExplorer::OnFolderDropped, this);
 }
 
-FileExplorer::~FileExplorer()
-{
-    wxDELETE(m_themeHelper);
-    Unbind(wxEVT_DND_FOLDER_DROPPED, &FileExplorer::OnFolderDropped, this);
-}
+FileExplorer::~FileExplorer() { Unbind(wxEVT_DND_FOLDER_DROPPED, &FileExplorer::OnFolderDropped, this); }
 
 void FileExplorer::CreateGUIControls()
 {

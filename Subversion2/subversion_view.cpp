@@ -164,7 +164,6 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     });
 
     CreatGUIControls();
-    m_themeHelper = new ThemeHandlerHelper(this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),
                                   NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed),
@@ -191,7 +190,6 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
 SubversionView::~SubversionView()
 {
     clThemeUpdater::Get().UnRegisterWindow(m_splitter);
-    wxDELETE(m_themeHelper);
     DisconnectEvents();
 }
 

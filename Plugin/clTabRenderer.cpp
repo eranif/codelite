@@ -25,83 +25,23 @@
 
 static int X_BUTTON_SIZE = 14;
 
-clTabColours::clTabColours() { InitDarkColours(); }
+clTabColours::clTabColours() { UpdateColours(0); }
 
-void clTabColours::InitFromColours(const wxColour& baseColour, const wxColour& textColour)
+void clTabColours::UpdateColours(size_t notebookStyle)
 {
-#if CL_BUILD
-    if(DrawingUtils::IsDark(baseColour)) {
-        activeTabTextColour = "WHITE";
-        activeTabBgColour = baseColour;
-        activeTabPenColour = baseColour.ChangeLightness(80);
-        activeTabInnerPenColour = baseColour.ChangeLightness(120);
-
-        inactiveTabTextColour = "WHITE";
-        inactiveTabBgColour = baseColour.ChangeLightness(110);
-        inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
-        inactiveTabInnerPenColour = inactiveTabPenColour; // inactiveTabBgColour.ChangeLightness(120);
-
-        tabAreaColour = baseColour.ChangeLightness(130);
-    } else {
-        activeTabTextColour = "BLACK";
-        activeTabBgColour = baseColour;
-        activeTabPenColour = baseColour.ChangeLightness(80);
-        activeTabInnerPenColour = "WHITE";
-
-        inactiveTabTextColour = "BLACK";
-        inactiveTabBgColour = baseColour.ChangeLightness(90);
-        inactiveTabPenColour = inactiveTabBgColour.ChangeLightness(80);
-        inactiveTabInnerPenColour = inactiveTabPenColour; // baseColour;
-
-        tabAreaColour = baseColour.ChangeLightness(130);
-    }
-#else
-    wxUnusedVar(baseColour);
-    wxUnusedVar(textColour);
-#endif
-}
-
-void clTabColours::InitDarkColours()
-{
-    InitLightColours();
-    activeTabTextColour = "WHITE";
-    activeTabBgColour = *wxBLACK;
-}
-
-void clTabColours::InitLightColours()
-{
-    wxColour faceColour;
-    faceColour = DrawingUtils::GetPanelBgColour();
-    wxColour textColour = DrawingUtils::GetPanelTextColour();
-    activeTabTextColour = textColour;
-    inactiveTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-    if(DrawingUtils::IsDark(faceColour)) {
-        // Make the active tab draker
-        activeTabBgColour = faceColour.ChangeLightness(60);
-        activeTabPenColour = activeTabBgColour;
-        inactiveTabTextColour = activeTabTextColour;
-
-    } else {
-        // Make it lighter
-        activeTabBgColour = faceColour;
-        activeTabPenColour = faceColour.ChangeLightness(70);
-    }
-
-    activeTabInnerPenColour = activeTabBgColour;
-    if(DrawingUtils::IsDark(activeTabBgColour)) {
-        activeTabTextColour = *wxWHITE;
-    }
-
-    tabAreaColour = faceColour;
-    markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#dc7633"));
-
-#ifdef __WXMSW__
-    inactiveTabBgColour = faceColour.ChangeLightness(90);
-#else
-    inactiveTabBgColour = tabAreaColour.ChangeLightness(90);
-#endif
-    inactiveTabPenColour = tabAreaColour.ChangeLightness(70);
-    inactiveTabInnerPenColour = tabAreaColour;
+    wxUnusedVar(notebookStyle);
+    activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    tabAreaColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(80);
+    // active tab colours
+    activeTabBgColour = tabAreaColour.ChangeLightness(130);
+    activeTabPenColour = activeTabBgColour.ChangeLightness(80);
+    activeTabInnerPenColour = activeTabPenColour.ChangeLightness(120);
+    
+    // inactive tab colours
+    inactiveTabTextColour = "WHITE";
+    inactiveTabBgColour = tabAreaColour.ChangeLightness(110);
+    inactiveTabPenColour = activeTabPenColour.ChangeLightness(110);
+    inactiveTabInnerPenColour = inactiveTabBgColour;
 }
 
 bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }

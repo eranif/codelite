@@ -114,19 +114,10 @@ public:
     virtual ~clTabColours() {}
 
     /**
-     * @brief initialize the colours from base colour and text colour
+     * @brief update colours based on the current theme
      */
-    void InitFromColours(const wxColour& baseColour, const wxColour& textColour);
-
-    /**
-     * @brief initialize the dark colours
-     */
-    virtual void InitDarkColours();
-    /**
-     * @brief initialize the light colours
-     */
-    virtual void InitLightColours();
-
+    void UpdateColours(size_t notebookStyle);
+    
     bool IsDarkColours() const;
 };
 

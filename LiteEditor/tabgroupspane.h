@@ -30,7 +30,6 @@
 #include <wx/treectrl.h>
 #include <vector>
 #include <utility>
-#include "theme_handler_helper.h"
 
 class clThemedTreeCtrl;
 enum tabgrouptype { TGT_group, TGT_item };
@@ -64,7 +63,6 @@ class TabgroupsPane : public wxPanel
         TGM_ID_CutItem,
         TGM_ID_RemoveItem
     };
-    ThemeHandlerHelper* m_themeHelper;
 
 public:
     TabgroupsPane() { m_node = NULL; }

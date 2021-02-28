@@ -30,7 +30,6 @@
 #include "cl_command_event.h"
 #include "imanager.h"
 #include "openwindowspanelbase.h"
-#include "theme_handler_helper.h"
 #include <map>
 
 class clToolBar;

@@ -70,7 +70,6 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
 
     CreateGUIControls();
     ConnectEvents();
-    m_themeHelper = NULL; // new ThemeHandlerHelper(this);
     SetDropTarget(new clFileOrFolderDropTarget(this));
     Bind(wxEVT_DND_FOLDER_DROPPED, &WorkspaceTab::OnFolderDropped, this);
 
@@ -92,7 +91,6 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
 
 WorkspaceTab::~WorkspaceTab()
 {
-    wxDELETE(m_themeHelper);
     wxTheApp->Disconnect(XRCID("show_in_workspace"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(WorkspaceTab::OnShowFile), NULL, this);
     wxTheApp->Disconnect(XRCID("show_in_workspace"), wxEVT_UPDATE_UI,

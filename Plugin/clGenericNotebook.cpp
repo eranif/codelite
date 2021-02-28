@@ -111,10 +111,17 @@ clGenericNotebook::clGenericNotebook(wxWindow* parent, wxWindowID id, const wxPo
     m_tabCtrl = new clTabCtrl(this, style);
     bool use_system_theme = (style & kNotebook_DynamicColours) == 0;
     m_windows = new WindowStack(this, wxID_ANY, use_system_theme);
+
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clGenericNotebook::OnColoursChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &clGenericNotebook::OnPreferencesChanged, this);
     PositionControls();
 }
 
-clGenericNotebook::~clGenericNotebook() {}
+clGenericNotebook::~clGenericNotebook()
+{
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clGenericNotebook::OnColoursChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &clGenericNotebook::OnPreferencesChanged, this);
+}
 
 void clGenericNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, int bitmapId,
                                 const wxString& shortLabel)
@@ -204,6 +211,23 @@ void clGenericNotebook::OnSize(wxSizeEvent& event)
     // CallAfter(&clGenericNotebook::PositionControls);
 }
 
+void clGenericNotebook::OnPreferencesChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    // update the renderer
+    SetArt(clTabRenderer::CreateRenderer(this, GetStyle()));
+
+    // Enable tab switching using the mouse scrollbar
+    EnableStyle(kNotebook_MouseScrollSwitchTabs, EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
+}
+
+void clGenericNotebook::OnColoursChanged(clCommandEvent& event)
+{
+    event.Skip();
+    m_tabCtrl->m_colours.UpdateColours(GetStyle());
+    Refresh();
+}
+
 //----------------------------------------------------------
 // clGenericNotebook header
 //----------------------------------------------------------
@@ -237,12 +261,11 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     Bind(wxEVT_MOUSEWHEEL, &clTabCtrl::OnMouseScroll, this);
     Bind(wxEVT_CONTEXT_MENU, &clTabCtrl::OnContextMenu, this);
     Bind(wxEVT_LEFT_DCLICK, &clTabCtrl::OnLeftDClick, this);
-    m_colours.InitLightColours();
-
     SetStyle(m_style);
+    m_colours.UpdateColours(m_style);
+
     // The history object
     m_history.reset(new clTabHistory());
-    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clTabCtrl::OnColoursChanged, this);
 }
 
 void clTabCtrl::DoSetBestSize()
@@ -343,7 +366,6 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 
 clTabCtrl::~clTabCtrl()
 {
-    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clTabCtrl::OnColoursChanged, this);
     wxDELETE(m_contextMenu);
     Unbind(wxEVT_PAINT, &clTabCtrl::OnPaint, this);
     Unbind(wxEVT_ERASE_BACKGROUND, &clTabCtrl::OnEraseBG, this);
@@ -884,13 +906,9 @@ void clTabCtrl::SetStyle(size_t style)
         SetSizeHints(wxSize(-1, m_nHeight));
         SetSize(-1, m_nHeight);
     }
-    m_colours.InitLightColours();
-
     for(size_t i = 0; i < m_tabs.size(); ++i) {
         m_tabs.at(i)->CalculateOffsets(GetStyle());
     }
-
-    GetArt()->AdjustColours(m_colours, GetStyle());
     m_visibleTabs.clear();
     Layout();
     if(GetStyle() & kNotebook_HideTabBar) {
@@ -1368,8 +1386,6 @@ void clTabCtrl::OnRightUp(wxMouseEvent& event) { event.Skip(); }
 void clTabCtrl::SetArt(clTabRenderer::Ptr_t art)
 {
     m_art = art;
-    m_colours.InitLightColours();
-
     DoSetBestSize();
     Refresh();
 }
@@ -1409,16 +1425,6 @@ void clTabCtrl::OnBeginDrag()
     dragSource.SetData(dragContent);
     wxDragResult result = dragSource.DoDragDrop(true);
     wxUnusedVar(result);
-}
-
-void clTabCtrl::OnColoursChanged(clCommandEvent& event)
-{
-    event.Skip();
-    wxColour bgColour = GetStyle() & kNotebook_DynamicColours ? clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
-                                                              : wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    SetBackgroundColour(bgColour);
-    GetParent()->SetBackgroundColour(bgColour);
-    Refresh();
 }
 
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)

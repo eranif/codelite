@@ -27,7 +27,6 @@
 #define SYMBOLVIEWTABPANEL_H
 
 #include "cl_command_event.h"
-#include "theme_handler_helper.h"
 #include "wxcrafter.h"
 
 class clToolBar;
@@ -39,7 +38,6 @@ class OutlineTab : public OutlineTabBaseClass
 protected:
     IManager* m_mgr;
     svSymbolTree* m_tree;
-    ThemeHandlerHelper* m_themeHelper;
     wxFileName m_phpFile;
     bool m_sortCxxTreeAlphabetically;
     clToolBar* m_toolbar;

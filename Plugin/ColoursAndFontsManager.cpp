@@ -10,7 +10,6 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "macros.h"
-#include "theme_handler_helper.h"
 #include "wxStringHash.h"
 #include "xmlutils.h"
 #include <algorithm>

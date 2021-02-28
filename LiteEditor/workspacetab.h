@@ -26,7 +26,6 @@
 #define __workspacetab__
 
 #include "cl_command_event.h"
-#include "theme_handler_helper.h"
 #include "wxcrafter.h"
 #include <wx/panel.h>
 
@@ -38,7 +37,6 @@ class WorkspaceTab : public WorkspaceTabBase
 
     wxString m_caption;
     bool m_isLinkedToEditor;
-    ThemeHandlerHelper* m_themeHelper;
     ProjectSettingsDlg* m_dlg;
     clWorkspaceView* m_view;
     wxColour m_bgColour;

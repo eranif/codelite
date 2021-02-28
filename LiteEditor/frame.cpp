@@ -72,7 +72,6 @@
 #include "renamesymboldlg.h"
 #include "save_perspective_as_dlg.h"
 #include "tags_parser_search_path_dlg.h"
-#include "theme_handler_helper.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "wxCustomStatusBar.h"
 #include <CompilersDetectorManager.h>
@@ -4099,9 +4098,6 @@ void clMainFrame::OnSyntaxHighlight(wxCommandEvent& e)
         // A restart required
         DoSuggestRestart();
     }
-
-    // Update the notebook colours on the next event iteration so clSystemSettings will get updated first
-    m_themeHandler.CallAfter(&ThemeHandler::UpdateNotebookColours, this);
 }
 
 void clMainFrame::OnStartQuickDebug(clDebugEvent& e)

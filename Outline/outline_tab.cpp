@@ -102,7 +102,6 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     Connect(wxEVT_SV_FIND_REFERENCES, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL,
             this);
     Connect(wxEVT_SV_RENAME_SYMBOL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OutlineTab::OnItemSelectedUI), NULL, this);
-    m_themeHelper = new ThemeHandlerHelper(this);
     m_toolbar = new clToolBar(m_panelCxx);
 
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
@@ -116,7 +115,6 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
 
 OutlineTab::~OutlineTab()
 {
-    wxDELETE(m_themeHelper);
     wxTheApp->GetTopWindow()->GetEventHandler()->Unbind(wxEVT_MENU, &OutlineTab::OnSearchSymbol, this, wxID_FIND);
     m_toolbar->Unbind(wxEVT_TOOL, &OutlineTab::OnSortAlpha, this, wxID_SORT_ASCENDING);
     m_toolbar->Unbind(wxEVT_UPDATE_UI, &OutlineTab::OnSortAlphaUI, this, wxID_SORT_ASCENDING);

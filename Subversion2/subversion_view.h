@@ -34,7 +34,6 @@
 #include "svncommand.h"
 #include "svninfo.h"
 #include "svntreedata.h"
-#include "theme_handler_helper.h"
 
 class Subversion2;
 class wxMenu;
@@ -70,7 +69,6 @@ class SubversionView : public SubversionPageBase
     wxString m_curpath;
     SvnConsole* m_subversionConsole;
     int m_fileExplorerLastBaseImgIdx;
-    ThemeHandlerHelper* m_themeHelper;
     wxFileName m_workspaceFile;
     IProcess* m_codeliteEcho;
 

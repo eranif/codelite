@@ -49,25 +49,19 @@
 
 ThemeHandler::ThemeHandler()
 {
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ThemeHandler::OnEditorThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ThemeHandler::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &ThemeHandler::OnColoursChanged, this);
 }
 
 ThemeHandler::~ThemeHandler()
 {
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ThemeHandler::OnEditorThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ThemeHandler::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &ThemeHandler::OnColoursChanged, this);
 }
 
-void ThemeHandler::OnEditorThemeChanged(wxCommandEvent& e) { e.Skip(); }
-
 void ThemeHandler::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
-    m_helper.reset(new ThemeHandlerHelper(clMainFrame::Get()));
-    m_helper->UpdateColours(clMainFrame::Get());
     // Fire "wxEVT_EDITOR_SETTINGS_CHANGED" to ensure that the notebook appearance is in sync with the settings
     PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
 }
@@ -81,4 +75,3 @@ void ThemeHandler::OnColoursChanged(clCommandEvent& e)
 }
 
 void ThemeHandler::UpdateColours() { MSWSetWindowDarkTheme(clMainFrame::Get()); }
-void ThemeHandler::UpdateNotebookColours(wxWindow* parent) { m_helper->UpdateNotebookColours(parent); }

@@ -74,7 +74,6 @@ protected:
     void DoChangeSelection(size_t index);
 
 protected:
-    void OnColoursChanged(clCommandEvent& event);
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
     void OnSize(wxSizeEvent& event);
@@ -142,7 +141,6 @@ public:
 
     bool IsVerticalTabs() const;
 
-    void SetColours(const clTabColours& colours) { this->m_colours = colours; }
     const clTabColours& GetColours() const { return m_colours; }
 
     /**
@@ -225,6 +223,8 @@ protected:
     bool IsVerticalTabs() const { return m_tabCtrl->IsVerticalTabs(); }
     void OnSize(wxSizeEvent& event);
     void PositionControls();
+    void OnPreferencesChanged(wxCommandEvent& event);
+    void OnColoursChanged(clCommandEvent& event);
 
 public:
     /**

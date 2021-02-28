@@ -49,26 +49,26 @@
 
 // Declaration
 #include "CMakeHelpTab.h"
+#include "ColoursAndFontsManager.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include <wx/stc/stc.h>
-#include "ColoursAndFontsManager.h"
 #include <wx/filename.h>
-#include "fileutils.h"
+#include <wx/stc/stc.h>
 
 // wxWidgets
-#include <wx/msgdlg.h>
 #include <wx/busyinfo.h>
 #include <wx/menu.h>
+#include <wx/msgdlg.h>
 
 // Codelite
 #include "file_logger.h"
-#include "imanager.h"
 #include "ieditor.h"
+#include "imanager.h"
 
 // CMakePlugin
-#include "CMakePlugin.h"
 #include "CMake.h"
+#include "CMakePlugin.h"
 
 /* ************************************************************************ */
 /* DEFINITIONS                                                              */
@@ -90,14 +90,10 @@ CMakeHelpTab::CMakeHelpTab(wxWindow* parent, CMakePlugin* plugin)
     wxASSERT(plugin);
     wxASSERT(m_gaugeLoad->GetRange() == 100); // Must be 100
 
-    m_themeHelper.reset(new ThemeHandlerHelper(this));
     Bind(wxEVT_CLOSE_WINDOW, &CMakeHelpTab::OnClose, this);
     Bind(EVT_THREAD_START, &CMakeHelpTab::OnThreadStart, this);
     Bind(EVT_THREAD_UPDATE, &CMakeHelpTab::OnThreadUpdate, this);
     Bind(EVT_THREAD_DONE, &CMakeHelpTab::OnThreadDone, this);
-
-    // Initial load
-    //LoadData();
 }
 
 /* ************************************************************************ */
@@ -113,7 +109,8 @@ void CMakeHelpTab::OnInsert(wxCommandEvent& event)
     IEditor* editor = manager->GetActiveEditor();
 
     // No active editor
-    if(!editor) return;
+    if(!editor)
+        return;
 
     // Insert value
     editor->InsertText(editor->GetCurrentPosition(), m_listBoxList->GetString(event.GetInt()));
@@ -178,7 +175,8 @@ void CMakeHelpTab::ListAll()
     // Remove old data
     m_listBoxList->Clear();
 
-    if(!m_data) return;
+    if(!m_data)
+        return;
 
     // Foreach data and store names into list
     for(std::map<wxString, wxString>::const_iterator it = m_data->begin(), ite = m_data->end(); it != ite; ++it) {
@@ -195,12 +193,14 @@ void CMakeHelpTab::ListFiltered(const wxString& search)
     // Remove old data
     m_listBoxList->Clear();
 
-    if(!m_data) return;
+    if(!m_data)
+        return;
 
     // Foreach data and store names into list
     for(std::map<wxString, wxString>::const_iterator it = m_data->begin(), ite = m_data->end(); it != ite; ++it) {
         // Store only that starts with given string
-        if(it->first.Matches(searchMatches)) m_listBoxList->Append(it->first);
+        if(it->first.Matches(searchMatches))
+            m_listBoxList->Append(it->first);
     }
 }
 
@@ -243,7 +243,8 @@ void CMakeHelpTab::OnThreadDone(wxThreadEvent& event)
 void CMakeHelpTab::OnClose(wxCloseEvent& event)
 {
     // Wait for thread
-    if(GetThread() && GetThread()->IsRunning()) GetThread()->Wait();
+    if(GetThread() && GetThread()->IsRunning())
+        GetThread()->Wait();
 
     Destroy();
 }
@@ -299,7 +300,8 @@ void CMakeHelpTab::ShowTopic(int topic)
 void CMakeHelpTab::PublishData()
 {
     // The background thread must not working now
-    if(GetThread() && GetThread()->IsRunning()) return;
+    if(GetThread() && GetThread()->IsRunning())
+        return;
 
     // Set CMake version
     m_staticTextVersionValue->SetLabel(m_plugin->GetCMake()->GetVersion());
@@ -379,7 +381,8 @@ void CMakeHelpTab::Update(int value)
 void CMakeHelpTab::Inc(int value)
 {
     // There is nothing to add
-    if(!value) return;
+    if(!value)
+        return;
 
     Update(m_progress + value);
 }
@@ -402,20 +405,21 @@ void CMakeHelpTab::CreateHelpPage(const wxString& content, const wxString& subje
 {
     wxString text = content;
     text.Replace("<br />", "\n");
-    text.Replace("&lt;" , "<");
-    text.Replace("&gt;" , ">");
+    text.Replace("&lt;", "<");
+    text.Replace("&gt;", ">");
     text.Replace("\r", "");
     text.Replace("\n\n", "\n");
     text.Replace("::\n", "\n\n");
     IManager* manager = ::clGetManager();
-    
+
     // Write the content of the help into a temporary file
     wxFileName fnTemp = wxFileName::CreateTempFileName("cmake");
     wxFileName fnCMakeHelpFile = fnTemp;
     fnCMakeHelpFile.SetFullName("CMakeHelp.cmake");
-    
-    if(!FileUtils::WriteFileContent(fnCMakeHelpFile, text)) return;
-    
+
+    if(!FileUtils::WriteFileContent(fnCMakeHelpFile, text))
+        return;
+
     if(manager->OpenFile(fnCMakeHelpFile.GetFullPath())) {
         IEditor* activeEditor = manager->GetActiveEditor();
         if(activeEditor && activeEditor->GetFileName().GetFullPath() == fnCMakeHelpFile.GetFullPath()) {

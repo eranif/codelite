@@ -74,13 +74,11 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DbViewerPanel::OnToolCloseUI, this, XRCID("IDT_DBE_CLOSE_CONNECTION"));
     m_toolbar->Bind(wxEVT_TOOL, &DbViewerPanel::OnRefreshClick, this, XRCID("IDT_DBE_REFRESH"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DbViewerPanel::OnRefreshUI, this, XRCID("IDT_DBE_REFRESH"));
-    m_themeHelper = new ThemeHandlerHelper(this);
 }
 
 DbViewerPanel::~DbViewerPanel()
 {
     std::for_each(m_frames.begin(), m_frames.end(), [&](DbExplorerFrame* frame) { wxDELETE(frame); });
-    wxDELETE(m_themeHelper);
 
     m_toolbar->Unbind(wxEVT_TOOL, &DbViewerPanel::OnConnectClick, this, XRCID("IDT_DBE_CONNECT"));
     m_toolbar->Unbind(wxEVT_TOOL, &DbViewerPanel::OnToolCloseClick, this, XRCID("IDT_DBE_CLOSE_CONNECTION"));

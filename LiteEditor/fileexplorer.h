@@ -27,7 +27,6 @@
 
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
-#include "theme_handler_helper.h"
 #include "wx/panel.h"
 #include <imanager.h>
 
@@ -39,7 +38,6 @@ class FileExplorer : public wxPanel
 private:
     clTreeCtrlPanel* m_view;
     wxString m_caption;
-    ThemeHandlerHelper* m_themeHelper;
     void CreateGUIControls();
 
 protected:

@@ -25,10 +25,9 @@
 #ifndef __outputtabwindow__
 #define __outputtabwindow__
 
+#include "clFindResultsStyler.h"
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
-#include "theme_handler_helper.h"
-#include "clFindResultsStyler.h"
 
 class clToolBar;
 class wxBoxSizer;
@@ -45,9 +44,8 @@ protected:
     bool m_autoAppearErrors;
     bool m_errorsFirstLine;
     wxBoxSizer* m_vSizer;
-    ThemeHandlerHelper* m_themeHelper;
     clFindResultsStyler::Ptr_t m_styler;
-    
+
     static void DefineMarker(wxStyledTextCtrl* sci, int marker, int markerType, wxColor fore, wxColor back);
     static void InitStyle(wxStyledTextCtrl* sci, int lexer, bool folding);
 

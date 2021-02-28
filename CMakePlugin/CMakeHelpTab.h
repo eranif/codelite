@@ -52,14 +52,13 @@
 
 // C++
 #include <map>
-#include "theme_handler_helper.h"
 
 // wxWidgets
 #include <wx/thread.h>
 
 // UI
-#include "CMakePluginUi.h"
 #include "CMake.h"
+#include "CMakePluginUi.h"
 
 /* ************************************************************************ */
 /* FORWARD DECLARATIONS                                                     */
@@ -74,13 +73,11 @@ class CMakePlugin;
 /**
  * @brief Dockable window with CMake help.
  */
-class CMakeHelpTab : public CMakeHelpTabBase, public wxThreadHelper,
-    public CMake::LoadNotifier
+class CMakeHelpTab : public CMakeHelpTabBase, public wxThreadHelper, public CMake::LoadNotifier
 {
 
-// Public Ctors & Dtors
+    // Public Ctors & Dtors
 public:
-   
     /**
      * @brief Constructor.
      *
@@ -89,10 +86,8 @@ public:
      */
     CMakeHelpTab(wxWindow* parent, CMakePlugin* plugin);
 
-
-// Protected Events
+    // Protected Events
 protected:
-    
     /**
      * @brief create help page with a given content
      */
@@ -105,14 +100,12 @@ protected:
      */
     virtual void OnChangeTopic(wxCommandEvent& event);
 
-
     /**
      * @brief On item insert into editor.
      *
      * @param event
      */
     virtual void OnInsert(wxCommandEvent& event);
-
 
     /**
      * @brief On item search.
@@ -121,14 +114,12 @@ protected:
      */
     virtual void OnSearch(wxCommandEvent& event);
 
-
     /**
      * @brief On item search cancel.
      *
      * @param event
      */
     virtual void OnSearchCancel(wxCommandEvent& event);
-
 
     /**
      * @brief On item select.
@@ -137,14 +128,12 @@ protected:
      */
     virtual void OnSelect(wxCommandEvent& event);
 
-
     /**
      * @brief On CMake help data reload.
      *
      * @param event
      */
     virtual void OnReload(wxCommandEvent& event);
-
 
     /**
      * @brief Notify about loading start.
@@ -153,14 +142,12 @@ protected:
      */
     void OnThreadStart(wxThreadEvent& event);
 
-
     /**
      * @brief Updates gauge by current state of the background thread.
      *
      * @param event
      */
     void OnThreadUpdate(wxThreadEvent& event);
-
 
     /**
      * @brief Notify about loading is done
@@ -169,14 +156,12 @@ protected:
      */
     void OnThreadDone(wxThreadEvent& event);
 
-
     /**
      * @brief On tab close.
      *
      * @param event
      */
     void OnClose(wxCloseEvent& event);
-
 
     /**
      * @brief Some items update UI.
@@ -185,11 +170,8 @@ protected:
      */
     virtual void OnUpdateUi(wxUpdateUIEvent& event);
 
-
-// Public Operations
+    // Public Operations
 public:
-
-
     /**
      * @brief Show required topic.
      *
@@ -197,17 +179,13 @@ public:
      */
     void ShowTopic(int topic);
 
-
     /**
      * @brief Show CMake help data in UI.
      */
     void PublishData();
 
-
-// CMake::LoadNotifier
+    // CMake::LoadNotifier
 public:
-
-
     /**
      * @brief Checks if loading should be stopped.
      *
@@ -215,12 +193,10 @@ public:
      */
     virtual bool RequestStop() const;
 
-
     /**
      * @brief Loading is started.
      */
     virtual void Start();
-
 
     /**
      * @brief Update loading progress.
@@ -229,14 +205,12 @@ public:
      */
     virtual void Update(int value);
 
-
     /**
      * @brief Increase loading progress.
      *
      * @param value
      */
     virtual void Inc(int value);
-
 
     /**
      * @brief Loading is done.
@@ -247,18 +221,15 @@ public:
      * @brief stop the worker thread
      */
     virtual void Stop();
-    
-// Protected Operations
+
+    // Protected Operations
 protected:
-
-
     /**
      * @brief Does the thread things.
      *
      * @return Exit code.
      */
     virtual wxThread::ExitCode Entry();
-
 
     /**
      * @brief Loads data from CMake object into UI objects.
@@ -268,16 +239,12 @@ protected:
      */
     void LoadData(bool force = false);
 
-
-// Private Operations
+    // Private Operations
 private:
-
-
     /**
      * @brief List all items.
      */
     void ListAll();
-
 
     /**
      * @brief List only items that match search string.
@@ -286,11 +253,8 @@ private:
      */
     void ListFiltered(const wxString& search);
 
-
-// Private Data Members
+    // Private Data Members
 private:
-
-
     /// A pointer to cmake plugin.
     CMakePlugin* const m_plugin;
 
@@ -302,8 +266,6 @@ private:
 
     /// Current progress state.
     int m_progress;
-    
-    ThemeHandlerHelper::Ptr m_themeHelper;
 };
 
 /* ************************************************************************ */

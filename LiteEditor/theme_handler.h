@@ -26,25 +26,20 @@
 #ifndef THEMEHANDLER_H
 #define THEMEHANDLER_H
 
+#include "cl_command_event.h"
+#include "plugin.h"
 #include <wx/event.h> // Base class: wxEvtHandler
 #include <wx/stc/stc.h>
-#include "plugin.h"
-#include "theme_handler_helper.h"
-#include "cl_command_event.h"
 
 class ThemeHandler : public wxEvtHandler
 {
-    ThemeHandlerHelper::Ptr m_helper;
-
 protected:
     void UpdateColours();
 
 public:
     ThemeHandler();
     virtual ~ThemeHandler();
-    
-    void UpdateNotebookColours(wxWindow* parent);
-    void OnEditorThemeChanged(wxCommandEvent& e);
+
     void OnColoursChanged(clCommandEvent& e);
     void OnInitDone(wxCommandEvent& e);
 };

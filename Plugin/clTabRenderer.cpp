@@ -280,11 +280,17 @@ const wxString& clTabInfo::GetBestLabel(size_t style) const
 
 const wxBitmap& clTabInfo::GetBitmap(int index, bool disabled) const
 {
+    if(!m_tabCtrl) {
+        return wxNullBitmap;
+    }
     return m_tabCtrl->GetBitmaps()->Get(index, disabled);
 }
 
-bool clTabInfo::HasDisableBitmap() const { return m_tabCtrl->GetBitmaps()->Get(m_disabledBitmp, true).IsOk(); }
-bool clTabInfo::HasBitmap() const { return m_tabCtrl->GetBitmaps()->Get(m_bitmap, false).IsOk(); }
+bool clTabInfo::HasDisableBitmap() const
+{
+    return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_disabledBitmp, true).IsOk();
+}
+bool clTabInfo::HasBitmap() const { return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_bitmap, false).IsOk(); }
 
 std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderes;
 

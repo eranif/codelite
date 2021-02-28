@@ -330,18 +330,34 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     JSONItem localConfigs = shared.namedObject("configs");
     JSONItem sharedConfigs = local.namedObject("configs");
     if(sharedConfigs.arraySize() != localConfigs.arraySize()) {
-        clWARNING() << "Local config and shared configs do not match!" << clEndl;
-        return;
+        clSYSTEM() << "Notice: File System Workspace: local config and shared configs do not match!" << endl;
     }
 
-    int nCount = localConfigs.arraySize();
+    // Loop over the local configs and keep them in a map
+    // this is because the number of confiugration entires in
+    // the local workspace does not match to the shared one
+    // this can happen when loading the workspace on different
+    // machines (when the shared version is kept in SCM)
+    std::unordered_map<wxString, JSONItem> localConfigsMap;
+
+    int localCount = localConfigs.arraySize();
+    for(int i = 0; i < localCount; ++i) {
+        auto c = localConfigs[i];
+        localConfigsMap.insert({ c["name"].toString(), c });
+    }
+
+    int nCount = sharedConfigs.arraySize();
     wxString firstConfig;
     bool selectedConfigFound = false;
     m_configsMap.clear();
     for(int i = 0; i < nCount; ++i) {
         clFileSystemWorkspaceConfig::Ptr_t conf(new clFileSystemWorkspaceConfig);
-        conf->FromSharedJSON(localConfigs.arrayItem(i));
-        conf->FromLocalJSON(sharedConfigs.arrayItem(i));
+        conf->FromSharedJSON(sharedConfigs.arrayItem(i));
+        auto iter = localConfigsMap.find(conf->GetName());
+        if(iter != localConfigsMap.end()) {
+            conf->FromLocalJSON(iter->second);
+        }
+
         if(firstConfig.empty()) {
             firstConfig = conf->GetName();
         }

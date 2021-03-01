@@ -6,39 +6,48 @@
 #include "processreaderthread.h"
 #include <wx/utils.h>
 
-bool do_ssh_write(clSSHChannel::Ptr_t channel, const wxString& buffer)
+bool do_ssh_write(clSSHChannel::Ptr_t channel, const wxString& buffer, bool raw)
 {
     try {
         if(!channel->IsInteractive()) {
             channel->Execute(buffer);
         } else {
-            channel->Write(buffer);
+            raw ? channel->Write(buffer) : channel->WriteRaw(buffer);
         }
     } catch(clException& e) {
-        clERROR() << e.What();
+        clERROR() << e.What() << endl;
         return false;
     }
     return true;
 }
 
-SSHRemoteProcess::SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHChannel::eChannelType type)
+SSHRemoteProcess::SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHChannel::eChannelType type,
+                                   bool separateStderr)
     : IProcess(NULL)
     , m_owner(owner)
 {
     m_ssh = ssh;
-    m_channel.reset(new clSSHChannel(ssh, type, this));
+    m_channel.reset(new clSSHChannel(ssh, type, this, separateStderr));
     m_channel->Open(); // may throw
     Bind(wxEVT_SSH_CHANNEL_PTY, &SSHRemoteProcess::OnPty, this);
     Bind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &SSHRemoteProcess::OnError, this);
     Bind(wxEVT_SSH_CHANNEL_READ_ERROR, &SSHRemoteProcess::OnError, this);
     Bind(wxEVT_SSH_CHANNEL_CLOSED, &SSHRemoteProcess::OnTerminate, this);
     Bind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SSHRemoteProcess::OnOutput, this);
+    Bind(wxEVT_SSH_CHANNEL_READ_STDERR, &SSHRemoteProcess::OnOutputSterr, this);
 }
 
 SSHRemoteProcess::~SSHRemoteProcess() { Cleanup(); }
 
 void SSHRemoteProcess::Cleanup()
 {
+    Unbind(wxEVT_SSH_CHANNEL_PTY, &SSHRemoteProcess::OnPty, this);
+    Unbind(wxEVT_SSH_CHANNEL_WRITE_ERROR, &SSHRemoteProcess::OnError, this);
+    Unbind(wxEVT_SSH_CHANNEL_READ_ERROR, &SSHRemoteProcess::OnError, this);
+    Unbind(wxEVT_SSH_CHANNEL_CLOSED, &SSHRemoteProcess::OnTerminate, this);
+    Unbind(wxEVT_SSH_CHANNEL_READ_OUTPUT, &SSHRemoteProcess::OnOutput, this);
+    Unbind(wxEVT_SSH_CHANNEL_READ_STDERR, &SSHRemoteProcess::OnOutputSterr, this);
+
     try {
         if(m_channel) {
             m_channel->SendSignal(wxSIGTERM);
@@ -81,21 +90,22 @@ void SSHRemoteProcess::Terminate()
     GetOwner()->AddPendingEvent(e);
 }
 
-bool SSHRemoteProcess::Write(const std::string& buff) { return do_ssh_write(m_channel, buff); }
+bool SSHRemoteProcess::Write(const std::string& buff) { return do_ssh_write(m_channel, buff, false); }
 
-bool SSHRemoteProcess::Write(const wxString& buff) { return do_ssh_write(m_channel, buff); }
+bool SSHRemoteProcess::Write(const wxString& buff) { return do_ssh_write(m_channel, buff, false); }
 
-bool SSHRemoteProcess::WriteRaw(const std::string& buff) { return do_ssh_write(m_channel, buff); }
+bool SSHRemoteProcess::WriteRaw(const std::string& buff) { return do_ssh_write(m_channel, buff, true); }
 
-bool SSHRemoteProcess::WriteRaw(const wxString& buff) { return do_ssh_write(m_channel, buff); }
+bool SSHRemoteProcess::WriteRaw(const wxString& buff) { return do_ssh_write(m_channel, buff, true); }
 
-bool SSHRemoteProcess::WriteToConsole(const wxString& buff) { return do_ssh_write(m_channel, buff); }
+bool SSHRemoteProcess::WriteToConsole(const wxString& buff) { return do_ssh_write(m_channel, buff, false); }
 
-IProcess* SSHRemoteProcess::Create(wxEvtHandler* owner, clSSH::Ptr_t ssh, const wxString& command, bool interactive)
+IProcess* SSHRemoteProcess::Create(wxEvtHandler* owner, clSSH::Ptr_t ssh, const wxString& command, size_t flags)
 {
     try {
         SSHRemoteProcess* process = new SSHRemoteProcess(
-            owner, ssh, interactive ? clSSHChannel::kInterativeMode : clSSHChannel::kRemoteCommand);
+            owner, ssh, flags & IProcessInteractiveSSH ? clSSHChannel::kInterativeMode : clSSHChannel::kRemoteCommand,
+            flags & IProcessStderrEvent);
         if(!command.IsEmpty()) {
             process->Write(command);
         }
@@ -106,7 +116,7 @@ IProcess* SSHRemoteProcess::Create(wxEvtHandler* owner, clSSH::Ptr_t ssh, const 
 }
 
 IProcess* SSHRemoteProcess::Create(wxEvtHandler* owner, const SSHAccountInfo& account, const wxString& command,
-                                   bool interactive)
+                                   size_t flags)
 {
     try {
         clSSH::Ptr_t ssh(new clSSH());
@@ -119,7 +129,8 @@ IProcess* SSHRemoteProcess::Create(wxEvtHandler* owner, const SSHAccountInfo& ac
         ssh->Login();
 
         SSHRemoteProcess* process = new SSHRemoteProcess(
-            owner, ssh, interactive ? clSSHChannel::kInterativeMode : clSSHChannel::kRemoteCommand);
+            owner, ssh, flags & IProcessInteractiveSSH ? clSSHChannel::kInterativeMode : clSSHChannel::kRemoteCommand,
+            flags & IProcessStderrEvent);
         if(!command.IsEmpty()) {
             process->Write(command);
         }
@@ -143,6 +154,14 @@ void SSHRemoteProcess::OnTerminate(clCommandEvent& event) { Terminate(); }
 void SSHRemoteProcess::OnOutput(clCommandEvent& event)
 {
     clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
+    e.SetOutput(event.GetString());
+    e.SetEventObject(this);
+    GetOwner()->AddPendingEvent(e);
+}
+
+void SSHRemoteProcess::OnOutputSterr(clCommandEvent& event)
+{
+    clProcessEvent e(wxEVT_ASYNC_PROCESS_STDERR);
     e.SetOutput(event.GetString());
     e.SetEventObject(this);
     GetOwner()->AddPendingEvent(e);

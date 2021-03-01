@@ -1,13 +1,13 @@
 #ifndef LSPNETWORK_H
 #define LSPNETWORK_H
 
-#include <wx/event.h>
-#include "codelite_exports.h"
-#include "cl_command_event.h"
-#include <wx/string.h>
-#include <wx/arrstr.h>
-#include <macros.h>
 #include "LSPStartupInfo.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
+#include <macros.h>
+#include <wx/arrstr.h>
+#include <wx/event.h>
+#include <wx/string.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_DATA_READY, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_NET_ERROR, clCommandEvent);
@@ -22,6 +22,10 @@ class WXDLLIMPEXP_SDK LSPNetwork : public wxEvtHandler
 {
 protected:
     LSPStartupInfo m_startupInfo;
+
+protected:
+    wxString& wrap_with_quotes(wxString& str);
+    wxString BuildCommand(const wxArrayString& args);
 
 public:
     typedef wxSharedPtr<LSPNetwork> Ptr_t;

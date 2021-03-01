@@ -16,12 +16,12 @@ class WXDLLIMPEXP_CL SSHRemoteProcess : public IProcess
     clSSH::Ptr_t m_ssh;
 
 public:
-    SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHChannel::eChannelType type);
+    SSHRemoteProcess(wxEvtHandler* owner, clSSH::Ptr_t ssh, clSSHChannel::eChannelType type,
+                     bool separateStderr = false);
     virtual ~SSHRemoteProcess();
 
-    static IProcess* Create(wxEvtHandler* owner, clSSH::Ptr_t ssh, const wxString& command, bool interactive);
-    static IProcess* Create(wxEvtHandler* owner, const SSHAccountInfo& account, const wxString& command,
-                            bool interactive);
+    static IProcess* Create(wxEvtHandler* owner, clSSH::Ptr_t ssh, const wxString& command, size_t flags);
+    static IProcess* Create(wxEvtHandler* owner, const SSHAccountInfo& account, const wxString& command, size_t flags);
     wxEvtHandler* GetOwner() { return m_owner; }
 
     void SetPty(const wxString& pty) { this->m_pty = pty; }
@@ -31,6 +31,7 @@ protected:
     void OnError(clCommandEvent& event);
     void OnTerminate(clCommandEvent& event);
     void OnOutput(clCommandEvent& event);
+    void OnOutputSterr(clCommandEvent& event);
     void OnPty(clCommandEvent& event);
 
 public:

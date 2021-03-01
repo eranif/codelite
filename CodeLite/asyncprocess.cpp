@@ -57,7 +57,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t f
                       << clEndl;
             return nullptr;
         }
-        return SSHRemoteProcess::Create(parent, *accountInfo, cmd, flags & IProcessInteractiveSSH);
+        return SSHRemoteProcess::Create(parent, *accountInfo, cmd, flags);
     }
 #endif
 

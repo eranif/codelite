@@ -19,34 +19,6 @@ void LSPNetworkSocketClient::Close()
     m_pid = wxNOT_FOUND;
 }
 
-static wxString& wrap_with_quotes(wxString& str)
-{
-    if(str.Contains(" ")) {
-        // since we are going to convert this into a string, we need to escape all backslashes
-        str.Replace("\\", "\\\\");
-        str.Prepend("\"").Append("\"");
-    }
-    return str;
-}
-
-static wxString BuildCommand(const wxArrayString& args)
-{
-    if(args.empty()) {
-        return "";
-    }
-    // Build command line from the array
-    wxString command;
-    command << args[0];
-
-    wrap_with_quotes(command);
-    for(size_t i = 1; i < args.size(); ++i) {
-        wxString argument = args[i];
-        wrap_with_quotes(argument);
-        command << " " << argument;
-    }
-    return command;
-}
-
 bool LSPNetworkSocketClient::IsConnected() const { return m_socket != nullptr; }
 void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
 {

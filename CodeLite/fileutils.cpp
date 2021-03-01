@@ -631,7 +631,7 @@ std::string FileUtils::ToStdString(const wxString& str) { return StringUtils::To
 
 bool FileUtils::ReadBufferFromFile(const wxFileName& fn, wxString& data, size_t bufferSize)
 {
-    std::wifstream fin(fn.GetFullPath().c_str(), std::ios::binary);
+    std::wifstream fin(fn.GetFullPath().ToStdString(), std::ios::binary);
     if(fin.bad()) {
         clERROR() << "Failed to open file:" << fn;
         return false;

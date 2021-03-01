@@ -22,31 +22,30 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "project.h"
+#include "event_notifier.h"
 #include "fileextmanager.h"
+#include "project.h"
 #include <wx/app.h>
 #include <wx/msgdlg.h>
-#include "event_notifier.h"
 
-#include "file_logger.h"
-#include "editor_config.h"
-#include <wx/stopwatch.h>
-#include "environmentconfig.h"
-#include "evnvarlist.h"
-#include "environmentconfig.h"
+#include "StringUtils.h"
+#include "build_settings_config.h"
 #include "builder_NMake.h"
+#include "buildmanager.h"
+#include "cl_command_event.h"
 #include "configuration_mapping.h"
 #include "dirsaver.h"
-#include "wx/tokenzr.h"
-#include "macros.h"
-#include "build_settings_config.h"
-#include "buildmanager.h"
-#include "wx/sstream.h"
+#include "editor_config.h"
+#include "environmentconfig.h"
+#include "evnvarlist.h"
+#include "file_logger.h"
 #include "globals.h"
-#include "cl_command_event.h"
-#include <algorithm>
 #include "macromanager.h"
-#include "StringUtils.h"
+#include "macros.h"
+#include "wx/sstream.h"
+#include "wx/tokenzr.h"
+#include <algorithm>
+#include <wx/stopwatch.h>
 
 static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
 
@@ -199,7 +198,8 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
         bool modified = proj->IsModified();
 
         // Update the dependencies only if needed
-        if(settingsChanged) proj->SetDependencies(depsArr, bld_conf_name);
+        if(settingsChanged)
+            proj->SetDependencies(depsArr, bld_conf_name);
 
         // the set settings functions marks the project as 'modified' this causes
         // an unneeded makefile generation if the settings was not really modified
@@ -529,7 +529,7 @@ void BuilderNMake::GenerateMakefile(ProjectPtr proj, const wxString& confToBuild
     // Load the current project files
     m_allFiles.clear();
     proj->GetFilesAsVector(m_allFiles);
-    
+
     // generate the selected configuration for this project
     // wxTextOutputStream text(output);
     wxString text;
@@ -645,7 +645,8 @@ void BuilderNMake::CreateSrcList(ProjectPtr proj, const wxString& confToBuild, w
     for(size_t i = 0; i < files.size(); i++) {
 
         // is this a valid file?
-        if(!cmp->GetCmpFileType(files[i].GetExt(), ft)) continue;
+        if(!cmp->GetCmpFileType(files[i].GetExt(), ft))
+            continue;
 
         if(ft.kind == Compiler::CmpFileKindResource) {
 #ifndef __WXMSW__
@@ -721,7 +722,8 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
         }
 
         // is this a valid file?
-        if(!cmp->GetCmpFileType(files[i].GetExt(), ft)) continue;
+        if(!cmp->GetCmpFileType(files[i].GetExt(), ft))
+            continue;
 
         if(ft.kind == Compiler::CmpFileKindResource && !OS_WINDOWS) {
             continue;
@@ -751,7 +753,8 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
     }
 
     text << "\n\nObjects=";
-    for(size_t i = 0; i < objCounter; ++i) text << "$(Objects" << i << ") ";
+    for(size_t i = 0; i < objCounter; ++i)
+        text << "$(Objects" << i << ") ";
 
     text << wxT("\n\n");
     m_objectChunks = objCounter;
@@ -770,7 +773,7 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
         !cmp->GetSwitch(wxT("PreprocessOnly")).IsEmpty() && !cmp->GetPreprocessSuffix().IsEmpty();
 
     std::vector<wxFileName> abs_files, rel_paths;
-    
+
     abs_files.reserve(m_allFiles.size());
     rel_paths.reserve(m_allFiles.size());
 
@@ -935,7 +938,7 @@ void BuilderNMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToBui
         wxString pchFile = bldConf->GetPrecompiledHeader();
         pchFile.Trim().Trim(false);
 
-        if(pchFile.IsEmpty() == false) {
+        if(pchFile.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
             text << wxT("\t") << wxT("del /Q ") << pchFile << wxT(".gch") << wxT("\n");
         }
 
@@ -959,7 +962,7 @@ void BuilderNMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToBui
         wxString pchFile = bldConf->GetPrecompiledHeader();
         pchFile.Trim().Trim(false);
 
-        if(pchFile.IsEmpty() == false) {
+        if(pchFile.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
             text << wxT("\t") << wxT("@del /Q ") << pchFile << wxT(".gch") << wxT("\n");
         }
     }
@@ -999,7 +1002,8 @@ void BuilderNMake::CreateLinkTargets(const wxString& type, BuildConfigPtr bldCon
         text << wxT("$(OutputFile)\n\n");
 
         text << wxT("$(OutputFile): $(IntermediateDirectory)\\.d ");
-        if(extraDeps.IsEmpty() == false) text << extraDeps;
+        if(extraDeps.IsEmpty() == false)
+            text << extraDeps;
 
         text << wxT("$(Objects) \n");
         targetName = wxT("$(IntermediateDirectory)\\.d");
@@ -1038,7 +1042,8 @@ void BuilderNMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, w
     // $(Objects) variable (to be used with the @<file-name> option of the LD
     for(size_t i = 0; i < m_objectChunks; ++i) {
         wxString oper = ">>";
-        if(i == 0) oper = " >";
+        if(i == 0)
+            oper = " >";
 
         text << "\t@echo $(Objects" << i << ") " << oper << " $(ObjectsFileList)\n";
     }
@@ -1086,7 +1091,8 @@ void BuilderNMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, w
 
 void BuilderNMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text)
 {
-    if(!HasPostbuildCommands(bldConf)) return;
+    if(!HasPostbuildCommands(bldConf))
+        return;
 
     // generate postbuild commands
     BuildCommandList cmds;
@@ -1373,7 +1379,8 @@ wxString BuilderNMake::ParseIncludePath(const wxString& paths, const wxString& p
         // path.Replace(wxT("\\"), wxT("/"));
 
         wxString wrapper;
-        if(path.Contains(wxT(" "))) wrapper = wxT("\"");
+        if(path.Contains(wxT(" ")))
+            wrapper = wxT("\"");
 
         incluedPath << wxT("$(IncludeSwitch)") << wrapper << path << wrapper << wxT(" ");
     }
@@ -1392,7 +1399,8 @@ wxString BuilderNMake::ParseLibPath(const wxString& paths, const wxString& proje
         path.Trim().Trim(false);
         // path.Replace(wxT("\\"), wxT("/"));
         wxString wrapper;
-        if(path.Contains(wxT(" "))) wrapper = wxT("\"");
+        if(path.Contains(wxT(" ")))
+            wrapper = wxT("\"");
 
         libPath << wxT("$(LibraryPathSwitch)") << wrapper << path << wrapper << wxT(" ");
     }
@@ -1687,7 +1695,7 @@ wxString BuilderNMake::GetProjectMakeCommand(const wxFileName& wspfile, const wx
         }
 
         // Run pre-compiled header compilation if any
-        if(precmpheader.IsEmpty() == false) {
+        if(precmpheader.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
             makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".gch") << wxT(" && ");
         }
     }
@@ -1737,7 +1745,7 @@ wxString BuilderNMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& co
         }
 
         // Run pre-compiled header compilation if any
-        if(precmpheader.IsEmpty() == false) {
+        if(precmpheader.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
             makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".gch") << wxT(" && ");
         }
     }
@@ -1756,18 +1764,30 @@ void BuilderNMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStrin
     wxString filename = bldConf->GetPrecompiledHeader();
     filename.Trim().Trim(false);
 
-    if(filename.IsEmpty()) return;
+    if(filename.IsEmpty())
+        return;
+
+    auto pchPolicy = bldConf->GetPCHFlagsPolicy();
+    if(pchPolicy == BuildConfig::kPCHJustInclude) {
+        // no need to add rule here
+        return;
+    }
 
     text << wxT("\n");
     text << wxT("# PreCompiled Header\n");
     text << filename << wxT(".gch: ") << filename << wxT("\n");
-    if(bldConf->GetPCHFlagsPolicy() == BuildConfig::kPCHPolicyReplace) {
+    switch(pchPolicy) {
+    case BuildConfig::kPCHPolicyReplace:
         text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename
              << wxT(" $(PCHCompileFlags)\n");
-
-    } else { // BuildConfig::kPCHPolicyAppend
+        break;
+    case BuildConfig::kPCHPolicyAppend:
         text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename
              << wxT(" $(PCHCompileFlags) $(CXXFLAGS) $(IncludePath)\n");
+        break;
+    case BuildConfig::kPCHJustInclude:
+        // for completeness
+        break;
     }
     text << wxT("\n");
 }
@@ -1794,10 +1814,12 @@ wxString BuilderNMake::GetBuildToolCommand(const wxString& project, const wxStri
     wxString buildTool;
 
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
-    if(!bldConf) return wxEmptyString;
+    if(!bldConf)
+        return wxEmptyString;
 
     CompilerPtr compiler = bldConf->GetCompiler();
-    if(!compiler) return wxEmptyString;
+    if(!compiler)
+        return wxEmptyString;
 
     if(isCommandlineCommand) {
         buildTool = compiler->GetTool("MAKE");
@@ -1836,9 +1858,11 @@ wxString BuilderNMake::DoGetTargetPrefix(const wxFileName& filename, const wxStr
     const wxArrayString& dirs = filename.GetDirs();
     wxString lastDir;
 
-    if(cwd == filename.GetPath()) return wxEmptyString;
+    if(cwd == filename.GetPath())
+        return wxEmptyString;
 
-    if(cmp && cmp->GetObjectNameIdenticalToFileName()) return wxEmptyString;
+    if(cmp && cmp->GetObjectNameIdenticalToFileName())
+        return wxEmptyString;
 
     if(cwd == filename.GetPath()) {
         return wxEmptyString;

@@ -3208,7 +3208,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	"Set the PCH flags policy to:\\n* Append - this means that the flags set in the 'PCH Compile Flags' field will be appended to default flags\\n* Replace - the 'PCH Compile Flags' will replace any other flags"
+													"m_value":	"When compiling a PCH, use the value set in PCH compile Flags as follows:\\n- Append: append the value\\n- Replace: replace any other compile flags with this value (not recommended)\\n- Just Include: don't attempt to build the PCH, just include it"
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",
@@ -3230,7 +3230,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Choices:",
-													"m_value":	"Replace;Append;"
+													"m_value":	"Replace;Append;Just Include"
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Array Integer Values",

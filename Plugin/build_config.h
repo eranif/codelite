@@ -25,15 +25,15 @@
 #ifndef BUILD_CONFIGURATION_H
 #define BUILD_CONFIGURATION_H
 
-#include "configuration_object.h"
 #include "build_config_common.h"
-#include <wx/arrstr.h>
-#include <wx/string.h>
+#include "builder.h"
+#include "codelite_exports.h"
+#include "compiler.h"
+#include "configuration_object.h"
 #include <list>
 #include <map>
-#include "compiler.h"
-#include "codelite_exports.h"
-#include "builder.h"
+#include <wx/arrstr.h>
+#include <wx/string.h>
 
 #ifndef WXDLLIMPEXP_LE_SDK
 #ifdef WXMAKINGDLL_LE_SDK
@@ -84,6 +84,7 @@ public:
     enum ePCHPolicy {
         kPCHPolicyReplace = 0,
         kPCHPolicyAppend = 1,
+        kPCHJustInclude = 2,
     };
 
 private:
@@ -140,7 +141,7 @@ private:
     wxString m_ccPCH;
     bool m_clangC11;
     bool m_clangC14;
-	bool m_clangC17;
+    bool m_clangC17;
     wxArrayString m_debuggerSearchPaths;
     bool m_isGUIProgram;
     bool m_isProjectEnabled;
@@ -172,7 +173,7 @@ public:
     bool IsClangC11() const { return m_clangC11; }
     void SetClangC14(bool clangC14) { this->m_clangC14 = clangC14; }
     bool IsClangC14() const { return m_clangC14; }
-	void SetClangC17(bool clangC17) { this->m_clangC17 = clangC17; }
+    void SetClangC17(bool clangC17) { this->m_clangC17 = clangC17; }
     bool IsClangC17() const { return m_clangC17; }
     void SetClangCcPCH(const wxString& ccPCH) { this->m_ccPCH = ccPCH; }
     const wxString& GetClangCcPCH() const { return m_ccPCH; }
@@ -359,7 +360,7 @@ public:
         this->m_buildSystemArguments = buildSystemArguments;
     }
     const wxString& GetBuildSystemArguments() const { return m_buildSystemArguments; }
-    
+
     /**
      * @brief return the build defined for this build configuration
      * @return 

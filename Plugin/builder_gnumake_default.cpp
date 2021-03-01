@@ -934,7 +934,7 @@ void BuilderGnuMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToB
     // Remove the pre-compiled header
     wxString pchFile = bldConf->GetPrecompiledHeader();
     pchFile.Trim().Trim(false);
-    if(pchFile.IsEmpty() == false) {
+    if(pchFile.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
         text << wxT("\t") << wxT("$(RM) ") << pchFile << wxT(".gch") << wxT("\n");
     }
     text << wxT("\n\n");
@@ -1617,7 +1617,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(const wxFileName& wspfile, const 
         }
 
         // Run pre-compiled header compilation if any
-        if(precmpheader.IsEmpty() == false) {
+        if(precmpheader.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
             makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".gch") << wxT(" && ");
         }
     }
@@ -1672,7 +1672,7 @@ wxString BuilderGnuMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& 
         }
 
         // Run pre-compiled header compilation if any
-        if(!precmpheader.IsEmpty()) {
+        if(!precmpheader.IsEmpty() && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
             makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".gch") << wxT(" && ");
         }
     }
@@ -1694,16 +1694,27 @@ void BuilderGnuMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStr
     if(filename.IsEmpty())
         return;
 
+    auto pchPolicy = bldConf->GetPCHFlagsPolicy();
+    if(pchPolicy == BuildConfig::kPCHJustInclude) {
+        // no need to add rule here
+        return;
+    }
+
     text << wxT("\n");
     text << wxT("# PreCompiled Header\n");
     text << filename << wxT(".gch: ") << filename << wxT("\n");
-    if(bldConf->GetPCHFlagsPolicy() == BuildConfig::kPCHPolicyReplace) {
+    switch(pchPolicy) {
+    case BuildConfig::kPCHPolicyReplace:
         text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename
              << wxT(" $(PCHCompileFlags)\n");
-
-    } else { // BuildConfig::kPCHPolicyAppend
+        break;
+    case BuildConfig::kPCHPolicyAppend:
         text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename
              << wxT(" $(PCHCompileFlags) $(CXXFLAGS) $(IncludePath)\n");
+        break;
+    case BuildConfig::kPCHJustInclude:
+        // for completeness
+        break;
     }
     text << wxT("\n");
 }

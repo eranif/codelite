@@ -23,20 +23,18 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ps_compiler_page.h"
-#include "compiler.h"
 #include "addoptioncheckdlg.h"
-#include "project_settings_dlg.h"
 #include "build_settings_config.h"
-#include "project.h"
-#include "ps_general_page.h"
-#include "manager.h"
-#include <wx/filedlg.h>
+#include "compiler.h"
 #include "globals.h"
+#include "manager.h"
+#include "project.h"
+#include "project_settings_dlg.h"
+#include "ps_compiler_page.h"
+#include "ps_general_page.h"
+#include <wx/filedlg.h>
 
-PSCompilerPage::PSCompilerPage(wxWindow* parent,
-                               const wxString& projectName,
-                               ProjectSettingsDlg* dlg,
+PSCompilerPage::PSCompilerPage(wxWindow* parent, const wxString& projectName, ProjectSettingsDlg* dlg,
                                PSGeneralPage* gp)
     : PSCompilerPageBase(parent)
     , m_dlg(dlg)

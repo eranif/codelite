@@ -59,7 +59,9 @@ void PSCompletionPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSet
     buildConf->SetClangPPFlags(m_textCtrlMacros->GetValue());
     buildConf->SetCcSearchPaths(m_textCtrlSearchPaths->GetValue());
     // Save was requested
-    if(m_ccSettingsModified) { m_ccSettingsModified = false; }
+    if(m_ccSettingsModified) {
+        m_ccSettingsModified = false;
+    }
 }
 
 void PSCompletionPage::OnBrowsePCH(wxCommandEvent& event) {}

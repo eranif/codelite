@@ -82,7 +82,9 @@ ProjectSettingsBaseDlg::ProjectSettingsBaseDlg(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("ProjectSettingsBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -255,7 +257,9 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
 
     SetName(wxT("PSGeneralPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_checkBoxEnabled->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                wxCommandEventHandler(PSGeneralPageBase::OnProjectEnabled), NULL, this);
@@ -369,17 +373,21 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_pgMgrIntArr.Clear();
     m_pgMgrArr.Add(_("Replace"));
     m_pgMgrArr.Add(_("Append"));
+    m_pgMgrArr.Add(_("Just Include"));
     m_pgMgrIntArr.Add(0);
     m_pgMgrIntArr.Add(1);
     m_pgPropPCHPolicy = m_pgMgr->AppendIn(
         CATEGORY_PCH, new wxEnumProperty(_("PCH Compile Flags Policy"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropPCHPolicy->SetHelpString(
-        _("Set the PCH flags policy to:\n* Append - this means that the flags set in the 'PCH Compile Flags' field "
-          "will be appended to default flags\n* Replace - the 'PCH Compile Flags' will replace any other flags"));
+        _("When compiling a PCH, use the value set in PCH compile Flags as follows:\n- Append: append the value\n- "
+          "Replace: replace any other compile flags with this value (not recommended)\n- Just Include: don't attempt "
+          "to build the PCH, just include it"));
 
     SetName(wxT("PSCompilerPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectEnabledUI), NULL, this);
     m_checkCompilerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
@@ -457,7 +465,9 @@ PSLinkPageBase::PSLinkPageBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     SetName(wxT("PSLinkPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSLinkPageBase::OnProjectEnabledUI), NULL, this);
     m_checkLinkerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
@@ -717,7 +727,9 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("PSDebuggerPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnProjectEnabledUI), NULL, this);
     m_button39->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
@@ -828,7 +840,9 @@ PSResourcesPageBase::PSResourcesPageBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("PSResourcesPageBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSResourcesPageBase::OnProjectEnabledUI), NULL, this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSResourcesPageBase::OnValueChanged), NULL, this);
@@ -947,7 +961,9 @@ PSEnvironmentBasePage::PSEnvironmentBasePage(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("PSEnvironmentBasePage"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSEnvironmentBasePage::OnProjectEnabledUI), NULL, this);
     m_choiceEnv->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified),
@@ -1036,7 +1052,9 @@ PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("PSBuildEventsBasePage"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSBuildEventsBasePage::OnProjectEnabledUI), NULL, this);
     m_textCtrlBuildEvents->Connect(wxEVT_STC_CHARADDED,
@@ -1135,7 +1153,9 @@ PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("PSCustomBuildBasePage"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomBuildBasePage::OnProjectEnabledUI), NULL, this);
     m_checkEnableCustomBuild->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
@@ -1290,7 +1310,9 @@ GlobalSettingsBasePanel::GlobalSettingsBasePanel(wxWindow* parent, wxWindowID id
 
     SetName(wxT("GlobalSettingsBasePanel"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(GlobalSettingsBasePanel::OnValueChanged), NULL, this);
     m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
@@ -1416,7 +1438,9 @@ PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID 
 
     SetName(wxT("PSCustomMakefileBasePage"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectEnabledUI), NULL, this);
     m_staticText25->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI),
@@ -1573,7 +1597,9 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     SetName(wxT("PSCompletionBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompletionBase::OnProjectEnabledUI), NULL, this);
 }
@@ -1675,7 +1701,9 @@ ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* paren
 
     SetName(wxT("ProjectCustomBuildTragetDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

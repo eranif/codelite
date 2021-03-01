@@ -103,6 +103,7 @@ protected:
                       OpenResourceDialogItemData* clientData, int imgid);
     int DoGetTagImg(TagEntryPtr tag);
     OpenResourceDialogItemData* GetItemData(const wxDataViewItem& item) const;
+    void OnSelectAllText();
 
 protected:
     // Handlers for OpenResourceDialogBase events.

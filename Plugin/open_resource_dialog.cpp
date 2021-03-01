@@ -88,9 +88,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 
     m_textCtrlResourceName->SetFocus();
     SetLabel(_("Open resource..."));
-
     SetName("OpenResourceDialog");
-    WindowAttrManager::Load(this);
 
     // load all files from the workspace
     if(::clIsCxxWorkspaceOpened()) {
@@ -122,10 +120,10 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     // We use here 'SetValue' so an event will get fired and update the control
     if(!initialSelection.IsEmpty()) {
         m_textCtrlResourceName->SetValue(initialSelection);
-        m_textCtrlResourceName->SelectAll();
+        CallAfter(&OpenResourceDialog::OnSelectAllText);
     } else if(!lastStringTyped.IsEmpty()) {
         m_textCtrlResourceName->SetValue(lastStringTyped);
-        m_textCtrlResourceName->SelectAll();
+        CallAfter(&OpenResourceDialog::OnSelectAllText);
     }
 
     bool showFiles = clConfig::Get().Read("OpenResourceDialog/ShowFiles", true);
@@ -453,3 +451,5 @@ OpenResourceDialogItemData* OpenResourceDialog::GetItemData(const wxDataViewItem
 {
     return reinterpret_cast<OpenResourceDialogItemData*>(m_dataview->GetItemData(item));
 }
+
+void OpenResourceDialog::OnSelectAllText() { m_textCtrlResourceName->SelectAll(); }

@@ -29,7 +29,7 @@ static wxString& wrap_with_quotes(wxString& str)
     return str;
 }
 
-wxString BuildCommand(const wxArrayString& args)
+static wxString BuildCommand(const wxArrayString& args)
 {
     if(args.empty()) {
         return "";

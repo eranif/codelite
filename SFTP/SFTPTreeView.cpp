@@ -73,8 +73,14 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
     , m_plugin(plugin)
 {
-    m_bmpLoader = clGetManager()->GetStdIcons();
-    m_treeCtrl->SetBitmaps(m_bmpLoader->GetStandardMimeBitmapListPtr());
+    auto loader = clGetManager()->GetStdIcons();
+    m_treeCtrl->SetBitmaps(loader->GetStandardMimeBitmapListPtr());
+
+    // refresh the bitmaps
+    EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, [this](clCommandEvent& e) {
+        e.Skip();
+        m_treeCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    });
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &SFTPTreeView::OnKeepAliveTimer, this, m_timer->GetId());
     m_timer->Start(30000); // every 30 seconds send a hearbeat
@@ -178,8 +184,8 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
     MyClientData* cd = new MyClientData(initialFolder);
     cd->SetFolder();
 
-    wxTreeItemId root =
-        m_treeCtrl->AddRoot(initialFolder, m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
+    wxTreeItemId root = m_treeCtrl->AddRoot(
+        initialFolder, clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
 
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
@@ -302,24 +308,24 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
         int imgIdx = wxNOT_FOUND;
         int expandImgIDx = wxNOT_FOUND;
         if(attr->IsFolder()) {
-            imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder);
-            expandImgIDx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolderExpanded);
+            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
+            expandImgIDx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderExpanded);
         } else if(attr->IsFile()) {
-            imgIdx = m_bmpLoader->GetMimeImageId(attr->GetName());
+            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(attr->GetName());
         }
 
         if(attr->IsSymlink()) {
             if(attr->IsFile()) {
-                imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFileSymlink);
+                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFileSymlink);
 
             } else {
-                imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolderSymlink);
-                expandImgIDx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolderSymlinkExpanded);
+                imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlink);
+                expandImgIDx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolderSymlinkExpanded);
             }
         }
 
         if(imgIdx == wxNOT_FOUND) {
-            imgIdx = m_bmpLoader->GetMimeImageId(FileExtManager::TypeText);
+            imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeText);
         }
 
         wxString path;
@@ -565,7 +571,8 @@ wxTreeItemId SFTPTreeView::DoAddFile(const wxTreeItemId& parent, const wxString&
 
         wxTreeItemId child = m_treeCtrl->AppendItem(
             parent, newFile->GetFullName(),
-            m_bmpLoader->GetMimeImageId(FileExtManager::GetType(path, FileExtManager::TypeText)), wxNOT_FOUND, newFile);
+            clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::GetType(path, FileExtManager::TypeText)),
+            wxNOT_FOUND, newFile);
         return child;
 
     } catch(clException& e) {
@@ -585,7 +592,8 @@ wxTreeItemId SFTPTreeView::DoAddFolder(const wxTreeItemId& parent, const wxStrin
         newCd->SetInitialized(false);
 
         wxTreeItemId child = m_treeCtrl->AppendItem(
-            parent, newCd->GetFullName(), m_bmpLoader->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, newCd);
+            parent, newCd->GetFullName(), clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder),
+            wxNOT_FOUND, newCd);
 
         m_treeCtrl->AppendItem(child, "<dummy>");
         return child;

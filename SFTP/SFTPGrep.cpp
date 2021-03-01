@@ -15,7 +15,7 @@ SFTPGrep::SFTPGrep(wxWindow* parent)
     m_textCtrlSeachIn->ChangeValue(searchIn);
 }
 
-SFTPGrep::~SFTPGrep() 
+SFTPGrep::~SFTPGrep()
 {
     clConfig::Get().Write("sftp/grep/finw_what", m_textCtrlFindWhat->GetValue());
     clConfig::Get().Write("sftp/grep/search_in", m_textCtrlSeachIn->GetValue());
@@ -38,9 +38,14 @@ GrepData SFTPGrep::GetData() const
 wxString GrepData::GetGrepCommand(const wxString& path) const
 {
     wxString command;
-    command << "find " << path << " -name \"" << GetSearchIn() << "\" | xargs grep -n ";
-    if(IsIgnoreCase()) { command << " -i "; }
-    if(IsWholeWord()) { command << " -w "; }
+    // use -n -H to include the file:line
+    command << "find " << path << " -name \"" << GetSearchIn() << "\" | xargs grep -n -H ";
+    if(IsIgnoreCase()) {
+        command << " -i ";
+    }
+    if(IsWholeWord()) {
+        command << " -w ";
+    }
     command << " \"" << GetFindWhat() << "\"";
     return command;
 }

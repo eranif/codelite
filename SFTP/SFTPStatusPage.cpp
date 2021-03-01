@@ -25,17 +25,17 @@
 
 #include "ColoursAndFontsManager.h"
 #include "SFTPStatusPage.h"
+#include "SFTPTreeView.h"
+#include "clSSHChannel.hpp"
 #include "event_notifier.h"
 #include "lexer_configuration.h"
+#include "remote_file_info.h"
 #include "sftp.h"
 #include "sftp_item_comparator.h"
 #include "sftp_worker_thread.h"
 #include <wx/log.h>
 #include <wx/menu.h>
-#include "clSSHChannel.hpp"
-#include "remote_file_info.h"
-#include "sftp_worker_thread.h"
-#include "SFTPTreeView.h"
+#include "file_logger.h"
 
 SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     : SFTPStatusPageBase(parent)
@@ -136,7 +136,9 @@ void SFTPStatusPage::OnThemeChanged(wxCommandEvent& event)
 void SFTPStatusPage::OnCopy(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_stcOutput->CanCopy()) { m_stcOutput->Copy(); }
+    if(m_stcOutput->CanCopy()) {
+        m_stcOutput->Copy();
+    }
 }
 
 void SFTPStatusPage::OnSelectAll(wxCommandEvent& event)
@@ -147,6 +149,7 @@ void SFTPStatusPage::OnSelectAll(wxCommandEvent& event)
 
 void SFTPStatusPage::OnFindOutput(clCommandEvent& event)
 {
+    clDEBUG() << event.GetString() << endl;
     m_stcSearch->SetReadOnly(false);
     m_stcSearch->AddText(event.GetString());
     m_stcSearch->SetReadOnly(true);
@@ -189,9 +192,9 @@ void SFTPStatusPage::OnHotspotClicked(wxStyledTextEvent& event)
     m_plugin->OpenFile(filename, nLineNumber - 1);
 }
 
-void SFTPStatusPage::ShowSearchTab() { m_notebook->SetSelection(0); }
+void SFTPStatusPage::ShowSearchTab() { m_notebook->SetSelection(GetTabIndex(_("Search"))); }
 
-void SFTPStatusPage::ShowLogTab() { m_notebook->SetSelection(1); }
+void SFTPStatusPage::ShowLogTab() { m_notebook->SetSelection(GetTabIndex(_("Log"))); }
 
 void SFTPStatusPage::AddSearchText(const wxString& text)
 {
@@ -199,4 +202,14 @@ void SFTPStatusPage::AddSearchText(const wxString& text)
     m_stcSearch->AddText("== " + text + "\n");
     m_stcSearch->SetReadOnly(true);
     m_stcSearch->ScrollToEnd();
+}
+
+int SFTPStatusPage::GetTabIndex(const wxString& name) const
+{
+    for(size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
+        if(name == m_notebook->GetPageText(i)) {
+            return i;
+        }
+    }
+    return wxNOT_FOUND;
 }

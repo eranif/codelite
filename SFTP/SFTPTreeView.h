@@ -29,11 +29,11 @@
 #include "SFTPSessionInfo.h"
 #include "UI.h"
 #include "bitmap_loader.h"
+#include "clSSHChannel.hpp"
 #include "cl_command_event.h"
 #include "cl_sftp.h"
 #include "ssh_account_info.h"
 #include <vector>
-#include "clSSHChannel.hpp"
 #include <wx/timer.h>
 
 class MyClientData;
@@ -45,7 +45,6 @@ class SFTPTreeView : public SFTPTreeViewBase
 {
     clSFTP::Ptr_t m_sftp;
     clSSHChannel::Ptr_t m_channel;
-    BitmapLoader* m_bmpLoader;
     SSHAccountInfo m_account;
     SFTP* m_plugin;
     wxString m_commandOutput;

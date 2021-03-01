@@ -64,5 +64,6 @@ protected:
     void OnFindFinished(clCommandEvent& event);
     void OnFindError(clCommandEvent& event);
     void OnHotspotClicked(wxStyledTextEvent& event);
+    int GetTabIndex(const wxString& name) const;
 };
 #endif // SFTPSTATUSPAGE_H

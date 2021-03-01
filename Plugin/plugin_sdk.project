@@ -175,6 +175,7 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="libplugin_pch.h"/>
     <File Name="SwitchToWorkspaceDlg.h"/>
     <File Name="SwitchToWorkspaceDlg.cpp"/>
     <File Name="SwitchToWorkspaceBase_plugin_bitmaps.cpp"/>
@@ -873,7 +874,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -916,7 +917,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
       ]]>
@@ -964,7 +965,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
       <General OutputFile="libplugin_sdkud.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[
       
@@ -1019,7 +1020,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
       <General OutputFile="libplugin_sdkud.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--no-plugins" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -1054,7 +1055,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="libplugin_pch.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
@@ -1073,7 +1074,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
       <General OutputFile="libplugin_sdku.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -1108,7 +1109,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x86_Release" CompilerType="GCC (i686)" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch;-O2" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release_32.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch;-O2" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../CodeLite"/>
@@ -1125,7 +1126,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="yes"/>
       <General OutputFile="libplugin_sdku.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>

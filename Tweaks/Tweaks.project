@@ -222,7 +222,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no);-O2" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../CodeLite"/>

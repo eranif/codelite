@@ -206,6 +206,7 @@
     <File Name="clGotoEntry.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
+    <File Name="libcodelite_pch.h"/>
     <File Name="clDirChanger.hpp"/>
     <File Name="wxCodeCompletionBoxEntry.hpp"/>
     <File Name="y.tab.h"/>
@@ -504,6 +505,12 @@
     <File Name="clFileSystemWatcher.h"/>
     <File Name="clFileSystemWatcher.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="CMake_Debug"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="PCH"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -526,7 +533,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -572,7 +579,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="libcodeliteud.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -629,7 +636,7 @@
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="libcodeliteud.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--no-plugins" UseSeparateDebugArgs="yes" DebugArguments="--no-plugins" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -672,7 +679,7 @@ XmlLexer.cpp: XMLLexer.l
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch" C_Options="-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cxxflags --debug=no --unicode=yes);-Winvalid-pch" C_Options="-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="libcodelite_pch.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -682,6 +689,7 @@ XmlLexer.cpp: XMLLexer.l
         <IncludePath Value="../sdk/websocketpp"/>
         <IncludePath Value="../sdk/asio-1.12.1"/>
         <Preprocessor Value="USE_SFTP=1"/>
+        <Preprocessor Value="wxUSE_GUI=1"/>
       </Compiler>
       <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
@@ -692,7 +700,7 @@ XmlLexer.cpp: XMLLexer.l
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="libcodeliteu.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -725,7 +733,8 @@ PhpLexer.cpp: PhpLexer.l
 JSLexer.cpp: JSLexer.l
 	flex -Pjs --noline --batch --outfile=JSLexer.cpp JSLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -735,7 +744,7 @@ XmlLexer.cpp: XMLLexer.l
       </Completion>
     </Configuration>
     <Configuration Name="Win_x86_Release" CompilerType="GCC (i686)" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="../PCH/precompiled_header_release_32.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cxxflags --debug=no --unicode=yes);-Wall;-O2;-Winvalid-pch" C_Options="-Wall;-O2" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="./include"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -755,7 +764,7 @@ XmlLexer.cpp: XMLLexer.l
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="libcodeliteu.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Make Generator"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -794,15 +803,9 @@ PhpLexer.cpp: PhpLexer.l
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="CMake_Debug"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
   <Dependencies Name="Win_x64_Release">
+    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="wxshapeframework"/>
-    <Project Name="sqlite3"/>
-  </Dependencies>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="PCH"/>
   </Dependencies>
 </CodeLite_Project>

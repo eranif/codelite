@@ -173,7 +173,7 @@ php_expr_lexer.cpp: php_expr.l
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="GCC (i686)" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="$(shell wx-config --cflags --debug=no);-O2" C_Options="" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release_32.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="$(shell wx-config --cflags --debug=no);-O2" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../CodeLite"/>
@@ -325,7 +325,7 @@ php_expr_lexer.cpp: php_expr.l
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Release" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cflags --debug=no);" C_Options="" Assembler="" Required="yes" PreCompiledHeader="../../PCH/precompiled_header_release.h" PCHInCommandLine="yes" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
+      <Compiler Options="-O2;-std=c++11;-Wall;$(shell wx-config --cflags --debug=no);" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="$(shell wx-config --cxxflags --unicode=yes --debug=no) -O2" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../CodeLite"/>

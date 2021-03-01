@@ -64,18 +64,6 @@ void DesignerContainerPanel::AddMainView(wxPanel* panel)
     DoConnectCharEvent(this);
 }
 
-void DesignerContainerPanel::Clear()
-{
-    m_windows.clear();
-    if(m_mainPanel) { m_mainPanel->Hide(); }
-    GetSizer()->Clear(true);
-    m_mainPanel = NULL;
-    m_height = -1;
-    m_width = -1;
-    m_topLevelType = ID_WXPANEL_TOPLEVEL;
-    m_caption = NULL;
-}
-
 void DesignerContainerPanel::CalcBestSize(int winType)
 {
     wxcWidget* page = GUICraftMainPanel::m_MainPanel->GetActiveWizardPage();

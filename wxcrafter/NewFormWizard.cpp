@@ -14,8 +14,14 @@
 
 static wxString GetDisplayName(const wxFileName& fn)
 {
+    if(!fn.IsOk()) {
+        return wxEmptyString;
+    }
     wxString displayName;
-    displayName << fn.GetDirs().Last() << wxFileName::GetPathSeparator() << fn.GetFullName();
+    if(fn.GetDirCount()) {
+        displayName << fn.GetDirs().Last() << wxFileName::GetPathSeparator();
+    }
+    displayName << fn.GetFullName();
     return displayName;
 }
 

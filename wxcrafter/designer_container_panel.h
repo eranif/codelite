@@ -36,7 +36,6 @@ public:
     void SetMenuBar(MenuBar* mb);
     void EnableCaption(const wxString& caption, const wxString& style, const wxBitmap& icon);
     void SetStatusBar(wxStatusBar* mb);
-    void Clear();
     void CalcBestSize(int winType);
 };
 

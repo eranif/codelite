@@ -30,7 +30,7 @@ class DesignerPanel : public wxScrolledWindow
 {
     bool m_constructing;
     wxString m_xrcLoaded;
-    DesignerContainerPanel* m_innerContainer;
+    DesignerContainerPanel* m_mainPanel = nullptr;
     wxWindow* m_hintedWin;
     wxWindow* m_parentWin;
     wxSizerItem* m_hintedSizeritem;

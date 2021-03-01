@@ -112,8 +112,8 @@ DesignerPanel::DesignerPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
 
-    m_innerContainer = new DesignerContainerPanel(this);
-    GetSizer()->Add(m_innerContainer, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL | wxALL, 5);
+    m_mainPanel = new DesignerContainerPanel(this);
+    GetSizer()->Add(m_mainPanel, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
     wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     if(DrawingUtils::IsDark(bgColour)) {
@@ -150,13 +150,16 @@ void DesignerPanel::OnUpdatePreview(wxCommandEvent& e)
     e.Skip();
 
     BOOL_LOCKER bl(m_constructing);
-    if(m_xrcLoaded == e.GetString()) return;
+    if(m_xrcLoaded == e.GetString())
+        return;
 
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif
 
-    if(m_innerContainer) { DoClear(); }
+    if(m_mainPanel) {
+        DoClear();
+    }
 
     m_xrcLoaded = e.GetString();
     DoLoadXRC(e.GetInt());
@@ -198,7 +201,9 @@ void DesignerPanel::DoControlSelected(wxEvent& e)
 
         wxString clsname, parent_clsname;
         const wxClassInfo* clsInfo = win->GetClassInfo();
-        if(clsInfo && clsInfo->GetClassName()) { clsname = clsInfo->GetClassName(); }
+        if(clsInfo && clsInfo->GetClassName()) {
+            clsname = clsInfo->GetClassName();
+        }
 
         if(win->GetParent() && win->GetParent()->GetClassInfo() && win->GetParent()->GetClassInfo()->GetClassName()) {
             parent_clsname = win->GetParent()->GetClassInfo()->GetClassName();
@@ -347,11 +352,15 @@ void DesignerPanel::StoreSizersRecursively(wxSizer* sizer, wxWindow* container)
             // not the real container
             if(child->IsSizer()) {
                 wxStaticBoxSizer* sbs = wxDynamicCast(child->GetSizer(), wxStaticBoxSizer);
-                if(sbs) { container = (wxWindow*)(sbs->GetStaticBox()); }
+                if(sbs) {
+                    container = (wxWindow*)(sbs->GetStaticBox());
+                }
             }
 
             int id = child->GetId(); // GetId() returns XRCID(name), or wxNOT_FOUND for ""
-            if(id != wxNOT_FOUND) { m_sizeritems.insert(std::make_pair(id, SizeritemData(container, child))); }
+            if(id != wxNOT_FOUND) {
+                m_sizeritems.insert(std::make_pair(id, SizeritemData(container, child)));
+            }
 
             if(child->IsSizer()) {
                 wxSizer* childsizer = child->GetSizer();
@@ -415,7 +424,9 @@ void DesignerPanel::DoDrawSurroundingMarker(wxWindow* win)
     }
 
     wxWindow* parent = win->GetParent();
-    if(!parent) { return; }
+    if(!parent) {
+        return;
+    }
 
     ClearStaleOutlines();
 
@@ -456,10 +467,14 @@ void DesignerPanel::MarkOutline(wxDC& dc, wxRect* rect /*=NULL*/) const
 void DesignerPanel::MarkBorders(wxDC& dc) const
 {
     wxSizer* sizer = m_hintedWin->GetContainingSizer();
-    if(!sizer) { return; }
+    if(!sizer) {
+        return;
+    }
 
     wxSizerItem* szitem = sizer->GetItem(m_hintedWin);
-    if(!szitem || !szitem->GetBorder()) { return; }
+    if(!szitem || !szitem->GetBorder()) {
+        return;
+    }
 
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
 
@@ -538,7 +553,19 @@ wxPoint DesignerPanel::GetOutlineOffset() const
 void DesignerPanel::DoClear()
 {
     // Remove all children of this sizer
-    m_innerContainer->Clear();
+    if(!GetSizer()->IsEmpty()) {
+        GetSizer()->Clear();
+    }
+    if(m_mainPanel) {
+        m_mainPanel->Destroy();
+    }
+    m_mainPanel = nullptr;
+    
+    // create new panel and place it
+    m_mainPanel = new DesignerContainerPanel(this);
+    GetSizer()->Add(m_mainPanel, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL | wxALL, 5);
+
+
     m_xrcLoaded.Clear();
     m_hintedWin = NULL;
     m_parentWin = NULL;
@@ -549,10 +576,14 @@ void DesignerPanel::DoClear()
 
 void DesignerPanel::DoNotebookPageChangeEvent(wxEvent& e)
 {
-    if(m_constructing) { return; }
+    if(m_constructing) {
+        return;
+    }
 
     wxBookCtrlBase* nbk = dynamic_cast<wxBookCtrlBase*>(e.GetEventObject());
-    if(!nbk) { return; }
+    if(!nbk) {
+        return;
+    }
 
     int idx = nbk->GetSelection();
     if(idx != wxNOT_FOUND) {
@@ -577,10 +608,13 @@ void DesignerPanel::OnTreebookPageChanged(wxTreebookEvent& e) { DoNotebookPageCh
 
 void DesignerPanel::DoAuiBookChanged(wxAuiNotebookEvent& e)
 {
-    if(m_constructing) { return; }
+    if(m_constructing) {
+        return;
+    }
 
     wxAuiNotebook* nbk = dynamic_cast<wxAuiNotebook*>(e.GetEventObject());
-    if(!nbk) return;
+    if(!nbk)
+        return;
 
     int idx = nbk->GetSelection();
     if(idx != wxNOT_FOUND) {
@@ -609,7 +643,7 @@ void DesignerPanel::DoLoadXRC(int topLeveWinType)
 
     // We must be in the directory of the project to be able to load the bitmaps properly
     DirectoryChanger dc(wxcProjectMetadata::Get().GetProjectPath());
-    panel = wxXmlResource::Get()->LoadPanel(m_innerContainer, wxT("PreviewPanel"));
+    panel = wxXmlResource::Get()->LoadPanel(m_mainPanel, wxT("PreviewPanel"));
 
     if(panel) {
 
@@ -621,7 +655,7 @@ void DesignerPanel::DoLoadXRC(int topLeveWinType)
                 fnBmp.MakeAbsolute(wxcProjectMetadata::Get().GetProjectPath());
                 tlwIcon = wxBitmap(fnBmp.GetFullPath(), wxBITMAP_TYPE_ANY);
             }
-            m_innerContainer->EnableCaption(caption, styleString, tlwIcon);
+            m_mainPanel->EnableCaption(caption, styleString, tlwIcon);
         }
 
         RecurseConnectEvents(panel);
@@ -633,32 +667,36 @@ void DesignerPanel::DoLoadXRC(int topLeveWinType)
             HiddenFrame* hf = new HiddenFrame();
             hf->SetMenuBar(mb);
 #endif
-            m_innerContainer->SetMenuBar(new MenuBar(m_innerContainer, mb));
+            m_mainPanel->SetMenuBar(new MenuBar(m_mainPanel, mb));
 
 #ifdef __WXGTK__
             hf->Destroy();
 #endif
         }
 
-        ToolBar* pane = new ToolBar(m_innerContainer);
+        ToolBar* pane = new ToolBar(m_mainPanel);
         wxToolBar* tb = wxXmlResource::Get()->LoadToolBar(pane, wxT("TOOL_BAR_ID"));
         if(tb) {
             pane->AddToolbar(tb);
-            m_innerContainer->SetToolbar(pane);
+            m_mainPanel->SetToolbar(pane);
 
         } else {
             pane->Destroy();
         }
         panel->Show();
-        m_innerContainer->AddMainView(panel);
+        m_mainPanel->AddMainView(panel);
         GetSizer()->Layout();
         wxStatusBar* sb = dynamic_cast<wxStatusBar*>(
-            wxXmlResource::Get()->LoadObject(m_innerContainer, wxT("STATUS_BAR_ID"), wxT("wxStatusBar")));
-        if(sb) { m_innerContainer->SetStatusBar(sb); }
-        m_innerContainer->CalcBestSize(topLeveWinType);
+            wxXmlResource::Get()->LoadObject(m_mainPanel, wxT("STATUS_BAR_ID"), wxT("wxStatusBar")));
+        if(sb) {
+            m_mainPanel->SetStatusBar(sb);
+        }
+        m_mainPanel->CalcBestSize(topLeveWinType);
         wxXmlResource::Get()->Unload(fn.GetFullPath());
 
-        if(topLeveWinType == ID_WXWIZARD) { GetSizer()->Fit(m_innerContainer); }
+        if(topLeveWinType == ID_WXWIZARD) {
+            GetSizer()->Fit(m_mainPanel);
+        }
     }
     Layout();
 }
@@ -727,7 +765,9 @@ void DesignerPanel::OnControlFocus(wxFocusEvent& event)
     wxDataViewTreeCtrl* win1 = dynamic_cast<wxDataViewTreeCtrl*>(event.GetEventObject());
     wxDataViewCtrl* win2 = dynamic_cast<wxDataViewCtrl*>(event.GetEventObject());
     wxDataViewListCtrl* win3 = dynamic_cast<wxDataViewListCtrl*>(event.GetEventObject());
-    if(win1 || win2 || win3) { DoControlSelected(event); }
+    if(win1 || win2 || win3) {
+        DoControlSelected(event);
+    }
 #endif
 }
 
@@ -735,7 +775,9 @@ void DesignerPanel::OnRadioBox(wxCommandEvent& e)
 {
     e.Skip();
     wxRadioBox* rb = dynamic_cast<wxRadioBox*>(e.GetEventObject());
-    if(rb) { DoControlSelected(e); }
+    if(rb) {
+        DoControlSelected(e);
+    }
 }
 
 void DesignerPanel::OnRibbonPageChanged(wxRibbonBarEvent& e)
@@ -752,7 +794,9 @@ void DesignerPanel::OnTreeListCtrlFocus(wxFocusEvent& e)
 {
     e.Skip();
     wxTreeListCtrl* rb = dynamic_cast<wxTreeListCtrl*>(e.GetEventObject());
-    if(rb) { DoControlSelected(e); }
+    if(rb) {
+        DoControlSelected(e);
+    }
 }
 
 void DesignerPanel::OnSize(wxSizeEvent& event)

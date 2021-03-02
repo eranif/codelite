@@ -291,7 +291,6 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
 void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
 {
     wxMenu* menu = event.GetMenu();
-    menu->AppendSeparator();
 
     DetachedPanesInfo dpi;
     EditorConfigST::Get()->ReadObject("DetachedPanesList", &dpi);

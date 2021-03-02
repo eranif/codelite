@@ -47,6 +47,7 @@ class PSCompilerPage : public PSCompilerPageBase, public IProjectSettingsPage
     PSGeneralPage* m_gp;
 
 protected:
+    virtual void OnCopyCompilerSettings(wxCommandEvent& event);
     virtual void OnCompilerNeeded(wxCommandEvent& event);
     virtual void OnCustomEditorClicked(wxCommandEvent& event);
     virtual void OnUpdateUI(wxUpdateUIEvent& event);

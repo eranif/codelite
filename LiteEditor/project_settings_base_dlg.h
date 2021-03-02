@@ -128,6 +128,7 @@ class PSCompilerPageBase : public wxPanel
 {
 protected:
     wxCheckBox* m_checkCompilerNeeded;
+    wxButton* m_buttonSyncCompilerOptions;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* CATEGORY_OPTIONS4;
     wxPGProperty* m_pgPropBehaviorWithGlobalSettings;
@@ -145,12 +146,14 @@ protected:
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCompilerNeeded(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnPropertyChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnCopyCompilerSettings(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnPropertyChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxCheckBox* GetCheckCompilerNeeded() { return m_checkCompilerNeeded; }
+    wxButton* GetButtonSyncCompilerOptions() { return m_buttonSyncCompilerOptions; }
     wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
     PSCompilerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
@@ -467,6 +470,30 @@ public:
                                     const wxSize& size = wxSize(-1, -1),
                                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ProjectCustomBuildTragetDlgBase();
+};
+
+class CopyCompilerSettingsDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText317;
+    wxChoice* m_choiceProjects;
+    wxStaticText* m_staticText321;
+    wxChoice* m_choiceConfigurations;
+    wxStdDialogButtonSizer* m_stdBtnSizer309;
+    wxButton* m_button311;
+    wxButton* m_button313;
+
+protected:
+public:
+    wxStaticText* GetStaticText317() { return m_staticText317; }
+    wxChoice* GetChoiceProjects() { return m_choiceProjects; }
+    wxStaticText* GetStaticText321() { return m_staticText321; }
+    wxChoice* GetChoiceConfigurations() { return m_choiceConfigurations; }
+    CopyCompilerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                const wxString& title = _("Copy Compiler Settings"),
+                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~CopyCompilerSettingsDlgBase();
 };
 
 #endif

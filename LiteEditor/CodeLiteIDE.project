@@ -353,6 +353,8 @@
       <File Name="batchbuilddlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectSettings">
+      <File Name="CopyCompilerSettingsDlg.cpp"/>
+      <File Name="CopyCompilerSettingsDlg.h"/>
       <File Name="depend_dlg_page.cpp"/>
       <File Name="depend_dlg_page.h"/>
       <File Name="depends_dlg.cpp"/>

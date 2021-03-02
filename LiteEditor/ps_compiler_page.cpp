@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "CopyCompilerSettingsDlg.h"
 #include "addoptioncheckdlg.h"
 #include "build_settings_config.h"
 #include "compiler.h"
@@ -121,3 +122,32 @@ void PSCompilerPage::OnCustomEditorClicked(wxCommandEvent& event)
 }
 
 void PSCompilerPage::OnCompilerNeeded(wxCommandEvent& event) { m_dlg->SetIsDirty(true); }
+void PSCompilerPage::OnCopyCompilerSettings(wxCommandEvent& event)
+{
+    CopyCompilerSettingsDlg dlg(this);
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    wxString project, config;
+    dlg.GetCopyFrom(project, config);
+
+    auto p = clCxxWorkspaceST::Get()->GetProject(project);
+    CHECK_PTR_RET(p);
+
+    auto buildConf = p->GetBuildConfiguration(config);
+    CHECK_PTR_RET(buildConf);
+
+    m_checkCompilerNeeded->SetValue(!buildConf->IsCompilerRequired());
+    m_pgPropCppOpts->SetValueFromString(buildConf->GetCompileOptions());
+    m_pgPropIncludePaths->SetValueFromString(buildConf->GetIncludePath());
+    m_pgPropPreProcessors->SetValueFromString(buildConf->GetPreprocessor());
+    m_pgPropPreCmpHeaderFile->SetValue(buildConf->GetPrecompiledHeader());
+    m_pgPropCOpts->SetValue(buildConf->GetCCompileOptions());
+    SelectChoiceWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
+    m_pgPropIncludePCH->SetValue(buildConf->GetPchInCommandLine());
+    m_pgPropPCHCompileLine->SetValue(buildConf->GetPchCompileFlags());
+    m_pgPropAssembler->SetValue(buildConf->GetAssmeblerOptions());
+    m_pgPropPCHPolicy->SetValue((int)buildConf->GetPCHFlagsPolicy());
+    m_dlg->SetIsDirty(true);
+}

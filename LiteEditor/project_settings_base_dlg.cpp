@@ -294,11 +294,23 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer1761 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1761);
 
+    wxBoxSizer* boxSizer301 = new wxBoxSizer(wxHORIZONTAL);
+
+    boxSizer1761->Add(boxSizer301, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_checkCompilerNeeded = new wxCheckBox(this, wxID_ANY, _("Compiler is not required for this project"),
                                            wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkCompilerNeeded->SetValue(false);
 
-    boxSizer1761->Add(m_checkCompilerNeeded, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+    boxSizer301->Add(m_checkCompilerNeeded, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    boxSizer301->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonSyncCompilerOptions =
+        new wxButton(this, wxID_ANY, _("Copy"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonSyncCompilerOptions->SetToolTip(_("Copy settings for this page from another project"));
+
+    boxSizer301->Add(m_buttonSyncCompilerOptions, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_pgMgrArr;
     wxUnusedVar(m_pgMgrArr);
@@ -392,6 +404,10 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectEnabledUI), NULL, this);
     m_checkCompilerNeeded->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                    wxCommandEventHandler(PSCompilerPageBase::OnCompilerNeeded), NULL, this);
+    m_buttonSyncCompilerOptions->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                         wxCommandEventHandler(PSCompilerPageBase::OnCopyCompilerSettings), NULL, this);
+    m_buttonSyncCompilerOptions->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnUpdateUI), NULL,
+                                         this);
     m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSCompilerPageBase::OnPropertyChanged), NULL, this);
     m_pgMgr->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnUpdateUI), NULL, this);
     m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCustomEditorClicked),
@@ -403,6 +419,10 @@ PSCompilerPageBase::~PSCompilerPageBase()
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnProjectEnabledUI), NULL, this);
     m_checkCompilerNeeded->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                       wxCommandEventHandler(PSCompilerPageBase::OnCompilerNeeded), NULL, this);
+    m_buttonSyncCompilerOptions->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSCompilerPageBase::OnCopyCompilerSettings), NULL, this);
+    m_buttonSyncCompilerOptions->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnUpdateUI),
+                                            NULL, this);
     m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(PSCompilerPageBase::OnPropertyChanged), NULL,
                         this);
     m_pgMgr->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompilerPageBase::OnUpdateUI), NULL, this);
@@ -1726,3 +1746,79 @@ ProjectCustomBuildTragetDlgBase::~ProjectCustomBuildTragetDlgBase()
     m_textCtrlTargetName->Disconnect(
         wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ProjectCustomBuildTragetDlgBase::OnEditTargetNameUI), NULL, this);
 }
+
+CopyCompilerSettingsDlgBase::CopyCompilerSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                         const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCA3F0InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer307 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer307);
+
+    wxFlexGridSizer* flexGridSizer315 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer315->SetFlexibleDirection(wxBOTH);
+    flexGridSizer315->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer315->AddGrowableCol(1);
+
+    boxSizer307->Add(flexGridSizer315, 1, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    m_staticText317 =
+        new wxStaticText(this, wxID_ANY, _("Project Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer315->Add(m_staticText317, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceProjectsArr;
+    m_choiceProjects =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(250, -1)), m_choiceProjectsArr, 0);
+
+    flexGridSizer315->Add(m_choiceProjects, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText321 =
+        new wxStaticText(this, wxID_ANY, _("Configuration:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer315->Add(m_staticText321, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceConfigurationsArr;
+    m_choiceConfigurations =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceConfigurationsArr, 0);
+
+    flexGridSizer315->Add(m_choiceConfigurations, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer309 = new wxStdDialogButtonSizer();
+
+    boxSizer307->Add(m_stdBtnSizer309, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_button311 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer309->AddButton(m_button311);
+
+    m_button313 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button313->SetDefault();
+    m_stdBtnSizer309->AddButton(m_button313);
+    m_stdBtnSizer309->Realize();
+
+    SetName(wxT("CopyCompilerSettingsDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+}
+
+CopyCompilerSettingsDlgBase::~CopyCompilerSettingsDlgBase() {}

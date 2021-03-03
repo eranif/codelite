@@ -181,7 +181,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     if(!IsRectOK(dc, rect))
         return;
 
-#if defined(__WXOSX__)
+#ifdef __WXOSX__
     tmpRect = rect;
     tmpRect.Inflate(1);
     window->PrepareDC(dc);
@@ -190,13 +190,12 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     wxFont f = DrawingUtils::GetDefaultGuiFont();
     dc.SetFont(f);
 
-    if(m_useCustomCaptionColour) {
-        dc.SetPen(m_captionColour);
-        dc.SetBrush(m_captionColour);
-        dc.DrawRectangle(tmpRect);
-    } else {
-        DrawingUtils::FillMenuBarBgColour(dc, tmpRect);
-    }
+    wxColour captionBgColour, penColour, textColour;
+    clDockArtGetColours(captionBgColour, penColour, textColour);
+
+    dc.SetPen(penColour);
+    dc.SetBrush(captionBgColour);
+    dc.DrawRectangle(tmpRect);
 
     int caption_offset = 0;
     if(pane.icon.IsOk()) {
@@ -205,7 +204,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     } else {
         caption_offset = 3;
     }
-    dc.SetTextForeground(m_captionTextColour);
+    dc.SetTextForeground(textColour);
     wxCoord w, h;
     dc.GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
 

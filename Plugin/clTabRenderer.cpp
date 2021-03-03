@@ -47,7 +47,11 @@ void clTabColours::UpdateColours(size_t notebookStyle)
 
     // inactive tab colours
     inactiveTabTextColour = activeTabTextColour;
+#ifdef __WXOSX__
+    inactiveTabBgColour = tabAreaColour.ChangeLightness(105);
+#else
     inactiveTabBgColour = tabAreaColour.ChangeLightness(110);
+#endif
     inactiveTabPenColour = activeTabPenColour.ChangeLightness(110);
     inactiveTabInnerPenColour = inactiveTabBgColour;
 
@@ -402,7 +406,11 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
     wxUnusedVar(parent);
     wxUnusedVar(colours);
     wxUnusedVar(style);
+#ifdef __WXOSX__
+    dc.SetPen(colours.tabAreaColour);
+#else
     dc.SetPen(colours.inactiveTabPenColour);
+#endif
     dc.SetBrush(colours.tabAreaColour);
     dc.DrawRectangle(clientRect);
     bool isBottom = style & kNotebook_BottomTabs;

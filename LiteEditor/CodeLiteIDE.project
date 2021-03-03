@@ -93,8 +93,8 @@
     <Ignorefiles/>
     <Regexes/>
     <Excludepaths>
-      <Path>Win_x64_Debug\</Path>
       <Path>Win_x64_Release\</Path>
+      <Path>Win_x64_Debug\</Path>
     </Excludepaths>
     <Extensions>
       <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp;*.iss;*.sh]]>
@@ -389,6 +389,7 @@
       <File Name="ProjectCustomBuildTragetDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectManagement">
+      <File Name="../formbuilder/new_item_dlg.wxcp"/>
       <File Name="new_item_dlg.cpp"/>
       <File Name="new_item_dlg.h"/>
       <File Name="newworkspacedlg.h"/>
@@ -848,6 +849,7 @@
       <File Name="ConfigManagerBaseDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
+      <File Name="new_item_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="DbgCommandBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="AddOptionsDialogBase_liteeditor_bitmaps.cpp"/>
       <File Name="tabgroupbasedlgs_liteeditor_bitmaps.cpp"/>

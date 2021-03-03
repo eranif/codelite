@@ -22,6 +22,7 @@ CopyCompilerSettingsDlg::CopyCompilerSettingsDlg(wxWindow* parent)
         m_choiceProjects->SetSelection(where == wxNOT_FOUND ? 0 : where);
         DoUpdateConfigurations(savedName);
     }
+    GetSizer()->Fit(this);
 }
 
 CopyCompilerSettingsDlg::~CopyCompilerSettingsDlg()
@@ -47,7 +48,7 @@ void CopyCompilerSettingsDlg::DoUpdateConfigurations(const wxString& configToSel
 
     configurations.Sort([](const wxString& a, const wxString& b) -> int { return a.CmpNoCase(b); });
     m_choiceConfigurations->Append(configurations);
-    
+
     if(!configurations.empty()) {
         int where = wxNOT_FOUND;
         if(!configToSelect.empty()) {

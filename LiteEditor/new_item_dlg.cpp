@@ -22,197 +22,49 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb  1 2007)
-// http://www.wxformbuilder.org/
-//
-// PLEASE DO "NOT" EDIT THIS FILE!
-///////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif //__BORLANDC__
-
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif //WX_PRECOMP
-
+#include "globals.h"
+#include "macros.h"
+#include "new_item_base_dlg.h"
 #include "new_item_dlg.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
-#include "globals.h"
 #include "wx/xrc/xmlres.h"
-#include "wx/textctrl.h"
-#include "dirsaver.h"
-#include "macros.h"
+#include <wx/dirdlg.h>
 #include <wx/imaglist.h>
-
-static const wxString FileTypeCpp = wxT("C++ Source File (.cpp)");
-static const wxString FileTypeC = wxT("C Source File (.c)");
-static const wxString FileTypeHeader = wxT("Header File (.h)");
-static const wxString FileTypeAny = wxT("Any File");
+#include <wx/msgdlg.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
-BEGIN_EVENT_TABLE(NewItemDlg, NewItemBaseDlg)
-    EVT_CHAR_HOOK(NewItemDlg::OnCharHook)
-END_EVENT_TABLE()
-
-NewItemDlg::NewItemDlg( wxWindow* parent, wxString cwd)
+NewItemDlg::NewItemDlg(wxWindow* parent, const wxString& cwd)
     : NewItemBaseDlg(parent)
 {
-    m_cwd = cwd;
-    m_fileType->InsertColumn(0, _("File Type"));
-    m_fileType->SetColumnWidth(0, 300);
-
-    // Initialise images map
-    wxImageList *images = new wxImageList(16, 16, true);
-    BitmapLoader *bmpLoader = PluginManager::Get()->GetStdIcons();
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/c")));     //0
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/cpp")));   //1
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/h")));     //2
-    images->Add(bmpLoader->LoadBitmap(wxT("mime/16/text")));  //3
-
-    m_fileType->AssignImageList( images,  wxIMAGE_LIST_SMALL );
-
-    //-----------------------------------
-    // Populate the list:
-    m_fileTypeValue = FileTypeCpp;
-
-    long row = AppendListCtrlRow(m_fileType);
-    SetColumnText(m_fileType, row, 0, FileTypeCpp, 1);
-
-    row = AppendListCtrlRow(m_fileType);
-    SetColumnText(m_fileType, row, 0, FileTypeC, 0);
-
-    row = AppendListCtrlRow(m_fileType);
-    SetColumnText(m_fileType, row, 0, FileTypeHeader, 2);
-
-    row = AppendListCtrlRow(m_fileType);
-    SetColumnText(m_fileType, row, 0, FileTypeAny, 3);
-    m_fileTypeValue = FileTypeAny;
-
-    //select the last item
-    m_fileType->SetItemState(row, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-    m_fileType->SetItemState(row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-
-    m_location->SetValue(m_cwd);
-    m_fileName->SetFocus();
-
-    // Attach events
-    ConnectEvents();
-    SetName("NewItemDlg");
-    WindowAttrManager::Load(this);
+    m_fileName->ChangeValue("Untitled.cpp");
+    m_location->ChangeValue(cwd);
+    int charsToSelect = wxStrlen("Untitled");
+    m_fileName->SetSelection(0, charsToSelect);
+    GetSizer()->Fit(this);
+    CentreOnParent();
 }
 
-void NewItemDlg::ConnectEvents()
-{
-    m_cancel->Connect(m_cancel->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewItemDlg::OnClick), NULL, this);
-    m_okButton->Connect(m_okButton->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewItemDlg::OnClick), NULL, this);
-    m_browseBtn->Connect(m_browseBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewItemDlg::OnClick), NULL, this);
-    m_fileType->Connect(m_fileType->GetId(), wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler(NewItemDlg::OnListItemSelected), NULL, this);
-}
+NewItemDlg::~NewItemDlg() {}
 
-
-void NewItemDlg::OnClick(wxCommandEvent &event)
+void NewItemDlg::OnBrowseButton(wxCommandEvent& event)
 {
-    int id = event.GetId();
-    if ( id == m_okButton->GetId() ) {
-        DoCreateFile();
-    } else if ( id == m_cancel->GetId() ) {
-        EndModal(wxID_CANCEL);
-    } else if ( id == m_browseBtn->GetId() ) {
-        DirSaver ds;
-        wxDirDialog *dlg = new wxDirDialog(this, _("Location:"),  m_cwd);
-        if (dlg->ShowModal() == wxID_OK) {
-            m_location->SetValue(dlg->GetPath());
-        }
-        dlg->Destroy();
-    }
-}
-
-void NewItemDlg::DoCreateFile()
-{
-    wxString errMsg;
-    if ( !Validate(errMsg) ) {
-        wxMessageBox(errMsg, _("CodeLite"), wxICON_INFORMATION | wxOK);
+    wxString path = ::wxDirSelector(_("select a folder"), m_location->GetValue());
+    if(path.empty()) {
         return;
     }
-
-    // Construct the file name
-    wxString fileName(m_fileName->GetValue());
-    TrimString(fileName);
-
-    if (m_fileTypeValue == FileTypeAny) {
-        m_newFileName = wxFileName(m_location->GetValue(), fileName);
-        
-    } else if ( m_fileTypeValue == FileTypeC ) {
-        // If user already provided suffix, dont add another one on top of it
-        if (fileName.Find(wxT(".")) == wxNOT_FOUND ) {
-            m_newFileName = wxFileName(m_location->GetValue(), fileName, wxT("c"));
-        } else {
-            m_newFileName = wxFileName(m_location->GetValue(), fileName);
-        }
-        
-    } else if ( m_fileTypeValue == FileTypeCpp ) {
-        // If user already provided suffix, dont add another one on top of it
-        if (fileName.Find(wxT(".")) == wxNOT_FOUND ) {
-            m_newFileName = wxFileName(m_location->GetValue(), fileName, wxT("cpp"));
-        } else {
-            m_newFileName = wxFileName(m_location->GetValue(), fileName);
-        }
-        
-    } else if ( m_fileTypeValue == FileTypeHeader ) {
-        // If user already provided suffix, dont add another one on top of it
-        if (fileName.Find(wxT(".")) == wxNOT_FOUND ) {
-            m_newFileName = wxFileName(m_location->GetValue(), fileName, wxT("h"));
-        } else {
-            m_newFileName = wxFileName(m_location->GetValue(), fileName);
-        }
-    }
-    EndModal(wxID_OK);
+    m_location->ChangeValue(path); // we want event here
 }
 
-bool NewItemDlg::Validate(wxString &errMsg)
+wxFileName NewItemDlg::GetFileName() const
 {
-    // make sure we have file name & path set up correctly
-    wxFileName fn(m_location->GetValue() + wxFileName::GetPathSeparator());
-
-    if ( m_location->GetValue().Trim().IsEmpty() ) {
-        errMsg = _("Missing location");
-        return false;
-    }
-
-    fn = wxFileName(m_location->GetValue(), m_fileName->GetValue());
-    if ( fn.FileExists() ) {
-        errMsg = _("A file with that name already exists. Please choose a different name");
-        return false;
-    }
-
-    if ( m_fileName->GetValue().Trim().IsEmpty() ) {
-        errMsg = _("Missing file name");
-        return false;
-    }
-
-    return true;
+    wxFileName fn(m_location->GetValue(), m_fileName->GetValue());
+    return fn;
 }
 
-void NewItemDlg::OnListItemSelected(wxListEvent &event)
+void NewItemDlg::OnOKUI(wxUpdateUIEvent& event)
 {
-    m_fileTypeValue = event.GetText();
-}
-
-void NewItemDlg::OnCharHook(wxKeyEvent &event)
-{
-    if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
-        DoCreateFile();
-    }
-    event.Skip();
-}
-
-NewItemDlg::~NewItemDlg()
-{
-    
+    event.Enable(wxFileName(m_location->GetValue(), "").DirExists() && !m_fileName->GetValue().IsEmpty());
 }

@@ -380,6 +380,9 @@ void clToolBar::ShowMenuForButton(wxWindowID buttonID, wxMenu* menu)
     wxPoint menuPos = button->GetButtonRect().GetBottomLeft();
 #ifdef __WXOSX__
     menuPos.y += 5;
+#else
+    menuPos.y += 2;
+    menuPos.x -= 1;
 #endif
 
     PopupMenu(menu, menuPos);

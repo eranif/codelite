@@ -34,27 +34,17 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     wxColour penColour;
     wxColour buttonColour;
 
-#if defined(__WXMSW__) || defined(__WXOSX__)
-    wxColour bgHighlightColour("rgb(153, 209, 255)");
-    penColour = bgHighlightColour;
-#else
-    wxColour bgHighlightColour(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    if(DrawingUtils::IsDark(bgHighlightColour)) {
-        bgHighlightColour = bgHighlightColour.ChangeLightness(140);
-    }
-#endif
-
     const wxColour bgColour = DrawingUtils::GetMenuBarBgColour(m_toolbar->HasFlag(clToolBar::kMiniToolBar));
     bool isdark = DrawingUtils::IsDark(bgColour);
     if(IsEnabled() && (IsPressed() || IsChecked())) {
-        wxColour pressBgColour = isdark ? bgColour.ChangeLightness(110) : bgColour.ChangeLightness(70);
+        wxColour pressBgColour = isdark ? bgColour.ChangeLightness(110) : bgColour.ChangeLightness(80);
         wxRect highlightRect = m_buttonRect;
         highlightRect.Inflate(1);
 
-        penColour = isdark ? pressBgColour.ChangeLightness(30) : pressBgColour;
+        penColour = isdark ? pressBgColour.ChangeLightness(120) : pressBgColour.ChangeLightness(80);
         dc.SetBrush(pressBgColour);
         dc.SetPen(penColour);
-        dc.DrawRoundedRectangle(highlightRect, 0);
+        dc.DrawRectangle(highlightRect);
         textColour = colours.GetSelItemTextColour();
         buttonColour = colours.GetSelbuttonColour();
 

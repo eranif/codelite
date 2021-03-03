@@ -35,8 +35,17 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
     clBitmapList* images = new clBitmapList;
     m_toolbar->AddTool(XRCID("link_editor"), _("Link Editor"), images->Add("link_editor"), "", wxITEM_CHECK);
+    m_toolbar->AddTool(XRCID("collapse_folders"), _("Fold Tree"), images->Add("fold"), "", wxITEM_NORMAL);
     m_toolbar->AssignBitmaps(images);
 
+    Bind(
+        wxEVT_TOOL,
+        [this](wxCommandEvent& e) {
+            e.Skip();
+            m_treeCtrl->CollapseAll();
+            m_treeCtrl->Expand(m_treeCtrl->GetRootItem());
+        },
+        XRCID("collapse_folders"));
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &clTreeCtrlPanel::OnLinkEditor, this, XRCID("link_editor"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &clTreeCtrlPanel::OnLinkEditorUI, this, XRCID("link_editor"));
@@ -984,6 +993,10 @@ void clTreeCtrlPanel::OnLinkEditor(wxCommandEvent& event)
     }
     if(GetConfig()) {
         GetConfig()->Write("FileExplorer/Options", m_options);
+    }
+    if(m_options & kLinkToEditor) {
+        // show the active editor's item
+        ExpandToFile(clGetManager()->GetActiveEditor()->GetFileName());
     }
 }
 

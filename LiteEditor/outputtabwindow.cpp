@@ -190,7 +190,6 @@ void OutputTabWindow::CreateGUIControls()
 
     // Add the find bar
     mainSizer->Add(m_vSizer, 1, wxEXPAND | wxALL, 0);
-    BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
 
     // Create the toolbar
     m_tb = new clToolBar(this);

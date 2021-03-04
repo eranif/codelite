@@ -61,7 +61,6 @@
 #include "file_logger.h"
 #include "gitBlameDlg.h"
 #include "gitCloneDlg.h"
-#include "icons/icon_git.xpm"
 #include "overlaytool.h"
 #include "project.h"
 #include <unordered_set>

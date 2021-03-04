@@ -45,7 +45,7 @@ public:
         wxASSERT(m_index != wxNOT_FOUND);
     }
     wxString GetCommit(size_t n) const { return (n < m_visitedCommits.GetCount()) ? m_visitedCommits.Item(n) : ""; }
-    bool CanGoBack() const { return m_index >= 0 && m_index < (m_visitedCommits.GetCount() - 1); }
+    bool CanGoBack() const { return m_index >= 0 && m_index < (int)(m_visitedCommits.GetCount() - 1); }
     bool CanGoForward() const { return m_index > 0; }
     void LoadChoice(wxChoice* choice) const
     {

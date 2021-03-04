@@ -1273,7 +1273,72 @@
     <Project Name="codelite_echo"/>
     <Project Name="codelite_cppcheck"/>
   </Dependencies>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="PCH"/>
+    <Project Name="wxscintilla"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="libCodeLite"/>
+    <Project Name="plugin_sdk"/>
+    <Project Name="DebuggerGDB"/>
+    <Project Name="CodeFormatter"/>
+    <Project Name="Subversion"/>
+    <Project Name="Gizmos"/>
+    <Project Name="Cscope"/>
+    <Project Name="Copyright"/>
+    <Project Name="UnitTestPP"/>
+    <Project Name="CMakePlugin"/>
+    <Project Name="CodeLiteDiff"/>
+    <Project Name="ContinuousBuild"/>
+    <Project Name="CppChecker"/>
+    <Project Name="wxshapeframework"/>
+    <Project Name="databaselayer_sqlite"/>
+    <Project Name="DatabaseExplorer"/>
+    <Project Name="ExternalTools"/>
+    <Project Name="LLDBProtocol"/>
+    <Project Name="LLDBDebugger"/>
+    <Project Name="Outline"/>
+    <Project Name="PHPParser"/>
+    <Project Name="PHPPlugin"/>
+    <Project Name="QMakePlugin"/>
+    <Project Name="SFTP"/>
+    <Project Name="hunspell"/>
+    <Project Name="SpellCheck"/>
+    <Project Name="Subversion2"/>
+    <Project Name="WordCompletion"/>
+    <Project Name="ZoomNavigator"/>
+    <Project Name="abbreviation"/>
+    <Project Name="git"/>
+    <Project Name="snipwiz"/>
+    <Project Name="wxFormBuilder"/>
+    <Project Name="WebTools"/>
+    <Project Name="HelpPlugin"/>
+    <Project Name="AutoSave"/>
+    <Project Name="Tail"/>
+    <Project Name="EditorConfigPlugin"/>
+    <Project Name="codelite_vim"/>
+    <Project Name="PHPLint"/>
+    <Project Name="PHPRefactoring"/>
+    <Project Name="SmartCompletion"/>
+    <Project Name="Docker"/>
+    <Project Name="wxcLib"/>
+    <Project Name="wxcrafter"/>
+    <Project Name="LanguageServer"/>
+    <Project Name="Rust"/>
+    <Project Name="EOSWiki"/>
+    <Project Name="wx-config"/>
+    <Project Name="codelite_make"/>
+    <Project Name="codelite_launcher"/>
+    <Project Name="makedir"/>
+    <Project Name="codelite_indexer"/>
+    <Project Name="codelitegcc"/>
+    <Project Name="codelite_terminal"/>
+    <Project Name="le_exec"/>
+    <Project Name="codelite_echo"/>
+    <Project Name="codelite_cppcheck"/>
+  </Dependencies>
   <Dependencies Name="Win_x64_Debug">
+    <Project Name="PCH"/>
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="databaselayer_sqlite"/>
@@ -1320,12 +1385,13 @@
     <Project Name="SmartCompletion"/>
     <Project Name="Docker"/>
     <Project Name="LanguageServer"/>
-    <Project Name="wxcLib"/>
-    <Project Name="wxcrafter"/>
+    <Project Name="Rust"/>
     <Project Name="EOSWiki"/>
+    <Project Name="wxcrafter"/>
   </Dependencies>
   <Dependencies Name="Win_x64_Debug">
     <Project Name="sqlite3"/>
+    <Project Name="PCH"/>
     <Project Name="wxsqlite3"/>
     <Project Name="databaselayer_sqlite"/>
     <Project Name="wxshapeframework"/>
@@ -2032,7 +2098,7 @@ resources.cpp: resources.xrc
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-Wall;$(shell wx-config  --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-Wall;$(shell wx-config  --cxxflags --unicode=yes);-Winvalid-pch" C_Options="-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
@@ -2040,8 +2106,15 @@ resources.cpp: resources.xrc
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../Interfaces"/>
         <IncludePath Value="../sdk/clang/include"/>
-        <Preprocessor Value="CL_DEBUG_BUILD=1"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
         <Preprocessor Value="USE_SFTP=1"/>
+        <Preprocessor Value="wxUSE_GUI=1"/>
+        <Preprocessor Value="CL_DEBUG_BUILD=1"/>
       </Compiler>
       <Linker Options="-g;$(shell wx-config  --libs std,stc,propgrid --unicode=yes);-Wl,--subsystem,windows -mwindows;" Required="yes">
         <LibraryPath Value="."/>
@@ -2084,7 +2157,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2205,8 +2279,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2334,68 +2407,4 @@ resources.cpp: resources.xrc
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="PCH"/>
-    <Project Name="wxscintilla"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="libCodeLite"/>
-    <Project Name="plugin_sdk"/>
-    <Project Name="DebuggerGDB"/>
-    <Project Name="CodeFormatter"/>
-    <Project Name="Subversion"/>
-    <Project Name="Gizmos"/>
-    <Project Name="Cscope"/>
-    <Project Name="Copyright"/>
-    <Project Name="UnitTestPP"/>
-    <Project Name="CMakePlugin"/>
-    <Project Name="CodeLiteDiff"/>
-    <Project Name="ContinuousBuild"/>
-    <Project Name="CppChecker"/>
-    <Project Name="wxshapeframework"/>
-    <Project Name="databaselayer_sqlite"/>
-    <Project Name="DatabaseExplorer"/>
-    <Project Name="ExternalTools"/>
-    <Project Name="LLDBProtocol"/>
-    <Project Name="LLDBDebugger"/>
-    <Project Name="Outline"/>
-    <Project Name="PHPParser"/>
-    <Project Name="PHPPlugin"/>
-    <Project Name="QMakePlugin"/>
-    <Project Name="SFTP"/>
-    <Project Name="hunspell"/>
-    <Project Name="SpellCheck"/>
-    <Project Name="Subversion2"/>
-    <Project Name="WordCompletion"/>
-    <Project Name="ZoomNavigator"/>
-    <Project Name="abbreviation"/>
-    <Project Name="git"/>
-    <Project Name="snipwiz"/>
-    <Project Name="wxFormBuilder"/>
-    <Project Name="WebTools"/>
-    <Project Name="HelpPlugin"/>
-    <Project Name="AutoSave"/>
-    <Project Name="Tail"/>
-    <Project Name="EditorConfigPlugin"/>
-    <Project Name="codelite_vim"/>
-    <Project Name="PHPLint"/>
-    <Project Name="PHPRefactoring"/>
-    <Project Name="SmartCompletion"/>
-    <Project Name="Docker"/>
-    <Project Name="wxcLib"/>
-    <Project Name="wxcrafter"/>
-    <Project Name="LanguageServer"/>
-    <Project Name="Rust"/>
-    <Project Name="EOSWiki"/>
-    <Project Name="wx-config"/>
-    <Project Name="codelite_make"/>
-    <Project Name="codelite_launcher"/>
-    <Project Name="makedir"/>
-    <Project Name="codelite_indexer"/>
-    <Project Name="codelitegcc"/>
-    <Project Name="codelite_terminal"/>
-    <Project Name="le_exec"/>
-    <Project Name="codelite_echo"/>
-    <Project Name="codelite_cppcheck"/>
-  </Dependencies>
 </CodeLite_Project>

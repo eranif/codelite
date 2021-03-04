@@ -144,15 +144,27 @@
       </Completion>
     </Configuration>
     <Configuration Name="Win_x64_Debug" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;$(shell wx-config --cxxflags --unicode=yes )" C_Options="-g;$(shell wx-config --cxxflags --unicode=yes )" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options=";-g;$(shell wx-config --cxxflags);-O0;-Wall" C_Options=";-g" Assembler="" Required="yes" PreCompiledHeader="$(WorkspacePath)/PCH/precompiled_header_dbg.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="2">
         <IncludePath Value="."/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sqlite3"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="../sdk/wxpropgrid/include"/>
-        <IncludePath Value="../sdk/codelite_cppcheck"/>
+        <IncludePath Value="$(WorkspacePath)"/>
+        <IncludePath Value="$(WorkspacePath)/Interfaces"/>
+        <IncludePath Value="$(WorkspacePath)/CodeLite"/>
+        <IncludePath Value="$(WorkspacePath)/Plugin"/>
+        <IncludePath Value="$(WorkspacePath)/sdk/wxsqlite3/include"/>
+        <IncludePath Value="$(WorkspacePath)/sdk/libssh/include"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+        <Preprocessor Value="USE_SFTP=1"/>
+        <Preprocessor Value="USE_SFTP=1"/>
+        <Preprocessor Value="wxUSE_GUI=1"/>
+        <Preprocessor Value="CL_DEBUG_BUILD=1"/>
       </Compiler>
       <Linker Options="-O2;$(shell wx-config  --libs std,stc --unicode=yes);" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>

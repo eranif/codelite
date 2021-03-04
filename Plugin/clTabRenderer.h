@@ -117,7 +117,7 @@ public:
      * @brief update colours based on the current theme
      */
     void UpdateColours(size_t notebookStyle);
-    
+
     bool IsDarkColours() const;
 };
 
@@ -163,7 +163,7 @@ public:
     clTabInfo(clTabCtrl* tabCtrl);
     clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, int bitmapId = wxNOT_FOUND);
     virtual ~clTabInfo() {}
-    
+
     void CreateDisabledBitmap();
     bool IsValid() const { return m_window != NULL; }
     void SetBitmap(int bitmap, size_t style);
@@ -231,8 +231,8 @@ public:
      * @brief finalise the background after all elements have been drawn on the tab area colour. Default is
      * to do nothing
      */
-    virtual void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
-                                    size_t style);
+    virtual void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const wxRect& activeTabRect,
+                                    const clTabColours& colours, size_t style);
     /**
      * @brief reutrn font suitable for drawing the tab label
      */

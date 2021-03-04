@@ -450,11 +450,11 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     GetArt()->DrawBackground(this, gcdc, rect, m_colours, m_style);
     UpdateVisibleTabs();
 
-    int activeTabInex = wxNOT_FOUND;
+    clTabInfo::Ptr_t activeTab;
     for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
         clTabInfo::Ptr_t tab = m_visibleTabs.at(i);
-        if(tab->IsActive()) {
-            activeTabInex = i;
+        if(tab->IsActive() && !activeTab) {
+            activeTab = tab;
         }
 
         clTabColours* pColours = &m_colours;
@@ -463,8 +463,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     // Redraw the active tab
-    if(activeTabInex != wxNOT_FOUND) {
-        clTabInfo::Ptr_t activeTab = m_visibleTabs.at(activeTabInex);
+    if(activeTab) {
         m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, activeTab->m_xButtonState);
     }
     if(!IsVerticalTabs()) {
@@ -480,7 +479,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         gcdc.SetPen(m_colours.inactiveTabPenColour);
         m_art->DrawChevron(this, gcdc, m_chevronRect, m_colours);
     }
-    m_art->FinaliseBackground(this, gcdc, clientRect, m_colours, m_style);
+    m_art->FinaliseBackground(this, gcdc, clientRect, activeTab ? activeTab->GetRect() : wxRect(), m_colours, m_style);
 }
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)

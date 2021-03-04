@@ -1,5 +1,4 @@
 #include "clTabRendererGTK3.h"
-
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
@@ -14,6 +13,7 @@
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
+static int marginTop = 5;
 clTabRendererGTK3::clTabRendererGTK3(const wxWindow* parent)
     : clTabRenderer("GTK3", parent)
 {
@@ -110,14 +110,36 @@ void clTabRendererGTK3::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect&
     dc.DrawRectangle(rect);
 }
 
-void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
-                                           size_t style)
+void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const wxRect& activeTabRect,
+                                           const clTabColours& colours, size_t style)
 {
-    wxUnusedVar(parent);
-    wxUnusedVar(dc);
-    wxUnusedVar(rect);
-    wxUnusedVar(colours);
-    wxUnusedVar(style);
+    if(IS_VERTICAL_TABS(style)) {
+        return;
+    }
+    
+    wxRect topRect = rect;
+    topRect.SetHeight(marginTop);
+    dc.SetPen(colours.activeTabBgColour);
+    dc.SetBrush(colours.activeTabBgColour);
+    dc.DrawRectangle(topRect);
+    
+    // draw dark line at the bottom of the top rect
+    wxColour borderColour = colours.activeTabBgColour.ChangeLightness(50);
+    dc.SetPen(borderColour);
+    dc.DrawLine(topRect.GetBottomLeft(), topRect.GetBottomRight());
+    
+    // clear the dark line drawn in the prev lines from the active tab
+    wxPoint p1, p2;
+    p1 = wxPoint(activeTabRect.GetLeft(), topRect.GetBottom());
+    p2 = wxPoint(activeTabRect.GetRight() + 1, topRect.GetBottom());
+    dc.SetPen(colours.activeTabBgColour);
+    dc.DrawLine(p1, p2);
+    
+    // draw dark line at the bottom of the active tab
+    p1.y = activeTabRect.GetBottom();
+    p2.y = p1.y;
+    dc.SetPen(borderColour);
+    dc.DrawLine(p1, p2);
 }
 
 void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)

@@ -453,7 +453,7 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
 }
 
 void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
-                                       const clTabColours& colours, size_t style)
+                                       const wxRect& activeTabRect, const clTabColours& colours, size_t style)
 {
     wxUnusedVar(parent);
     wxUnusedVar(colours);

@@ -68,10 +68,14 @@
 #endif
 
 WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiManager* mgr)
-    : wxPanel(parent)
-    , m_caption(caption)
+    : m_caption(caption)
     , m_mgr(mgr)
 {
+    int style = wxTAB_TRAVERSAL;
+    if(!wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)) {
+        return;
+    }
+
     CreateGUIControls();
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &WorkspacePane::OnSettingsChanged, this);

@@ -16,8 +16,8 @@ public:
     void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect, wxDC& dc,
                         const clTabColours& colours, size_t style);
     void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style);
-    void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
-                            size_t style);
+    void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const wxRect& activeTabRect,
+                            const clTabColours& colours, size_t style);
     clTabRenderer* New(const wxWindow* parent) const { return new clTabRendererClassic(parent); }
 };
 #endif // CLTABRENDERERCLASSIC_H

@@ -7,6 +7,8 @@
 #include <wx/font.h>
 #include <wx/settings.h>
 
+static int marginTop = 5;
+
 #define DRAW_LINE(__p1, __p2) \
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);  \
@@ -120,7 +122,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         p1 = tabRect.GetBottomLeft();
         p2 = tabRect.GetBottomRight();
     }
-    
+
     if(!tabInfo.IsActive()) {
         dc.SetPen(colours.activeTabBgColour.ChangeLightness(50));
         p1.y += 1;
@@ -161,27 +163,48 @@ void clTabRendererClassic::DrawBackground(wxWindow* parent, wxDC& dc, const wxRe
         InitLightColours(c, c.activeTabBgColour);
     }
     clTabRenderer::DrawBackground(parent, dc, rect, c, style);
+    if(IS_VERTICAL_TABS(style)) {
+        return;
+    }
+    wxRect topRect = rect;
+    topRect.SetHeight(marginTop);
+
+    dc.SetBrush(colours.activeTabBgColour);
+    dc.SetPen(colours.activeTabBgColour);
+    dc.DrawRectangle(topRect);
 }
 
 void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
-                                              const clTabColours& colours, size_t style)
+                                              const wxRect& activeTabRect, const clTabColours& colours, size_t style)
 {
-    // wxUnusedVar(parent);
-    // wxUnusedVar(dc);
-    // wxUnusedVar(clientRect);
-    // wxUnusedVar(style);
-    // wxColour penColour(colours.activeTabPenColour);
-    //
-    // dc.SetPen(penColour);
-    // dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    // dc.DrawRectangle(clientRect);
-    //
-    // dc.SetPen(colours.activeTabBgColour);
-    // if(!IS_VERTICAL_TABS(style)) {
-    //     if(style & kNotebook_BottomTabs) {
-    //         DRAW_LINE(clientRect.GetTopLeft(), clientRect.GetTopRight());
-    //     } else {
-    //         DRAW_LINE(clientRect.GetBottomLeft(), clientRect.GetBottomRight());
-    //     }
-    // }
+    wxUnusedVar(parent);
+    if(IS_VERTICAL_TABS(style)) {
+        return;
+    }
+    
+    wxColour borderColour = colours.activeTabBgColour.ChangeLightness(50);
+    wxRect topRect = clientRect;
+    topRect.SetHeight(marginTop);
+    
+    dc.SetPen(colours.activeTabBgColour);
+    dc.SetBrush(colours.activeTabBgColour);
+    dc.DrawRectangle(topRect);
+    
+    // draw dark line at the bottom of the top rect
+    dc.SetPen(borderColour);
+    dc.DrawLine(topRect.GetBottomLeft(), topRect.GetBottomRight());
+//    dc.DrawLine(topRect.GetTopLeft(), topRect.GetTopRight());
+    
+    // clear the dark line drawn in the prev lines from the active tab
+    wxPoint p1, p2;
+    p1 = wxPoint(activeTabRect.GetLeft(), topRect.GetBottom());
+    p2 = wxPoint(activeTabRect.GetRight() + 1, topRect.GetBottom());
+    dc.SetPen(colours.activeTabBgColour);
+    dc.DrawLine(p1, p2);
+    
+    // draw dark line at the bottom of the active tab
+    p1.y = activeTabRect.GetBottom();
+    p2.y = p1.y;
+    dc.SetPen(borderColour);
+    dc.DrawLine(p1, p2);
 }

@@ -32,7 +32,20 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     wxUnusedVar(notebookStyle);
     wxColour base_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     bool is_dark = DrawingUtils::IsDark(base_colour);
+#ifdef __WXOSX__
+    tabAreaColour = base_colour.ChangeLightness(80);
+    activeTabBgColour = base_colour;
+    activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    activeTabPenColour = base_colour;
+    activeTabInnerPenColour = activeTabPenColour;
 
+    // inactive tab colours
+    inactiveTabTextColour = activeTabTextColour;
+    inactiveTabBgColour = tabAreaColour;
+    inactiveTabPenColour = tabAreaColour.ChangeLightness(90);
+    inactiveTabInnerPenColour = inactiveTabBgColour;
+
+#else
     tabAreaColour = base_colour.ChangeLightness(80);
 
     // active tab colours
@@ -47,15 +60,12 @@ void clTabColours::UpdateColours(size_t notebookStyle)
 
     // inactive tab colours
     inactiveTabTextColour = activeTabTextColour;
-#ifdef __WXOSX__
-    inactiveTabBgColour = tabAreaColour.ChangeLightness(105);
-#else
     inactiveTabBgColour = tabAreaColour.ChangeLightness(110);
-#endif
     inactiveTabPenColour = activeTabPenColour.ChangeLightness(110);
     inactiveTabInnerPenColour = inactiveTabBgColour;
 
     // the marker colour
+#endif
     markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#dc7633"));
 }
 
@@ -265,9 +275,13 @@ clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
 wxFont clTabRenderer::GetTabFont(bool bold)
 {
     wxFont f = DrawingUtils::GetDefaultGuiFont();
+#ifdef __WXOSX__
+    wxUnusedVar(bold);
+#else
     if(bold) {
         f.SetWeight(wxFONTWEIGHT_BOLD);
     }
+#endif
     return f;
 }
 
@@ -413,6 +427,8 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
 #endif
     dc.SetBrush(colours.tabAreaColour);
     dc.DrawRectangle(clientRect);
+
+#ifndef __WXOSX__
     bool isBottom = style & kNotebook_BottomTabs;
     bool isLeft = style & kNotebook_LeftTabs;
     bool isRight = style & kNotebook_RightTabs;
@@ -431,8 +447,9 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
         p1 = clientRect.GetBottomLeft();
         p2 = clientRect.GetBottomRight();
     }
-    dc.SetPen(colours.activeTabPenColour);
+    dc.SetPen(colours.inactiveTabPenColour);
     dc.DrawLine(p1, p2);
+#endif
 }
 
 void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,

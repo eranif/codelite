@@ -47,29 +47,8 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     bool isLeft = style & kNotebook_LeftTabs;
     bool isRight = style & kNotebook_RightTabs;
 
-    wxPoint p1, p2;
-    if(isBottom) {
-        p1 = tabRect.GetTopLeft();
-        p2 = tabRect.GetTopRight();
-    } else if(isLeft) {
-        p1 = tabRect.GetTopRight();
-        p2 = tabRect.GetBottomRight();
-    } else if(isRight) {
-        p1 = tabRect.GetTopLeft();
-        p2 = tabRect.GetBottomLeft();
-    } else {
-        p1 = tabRect.GetBottomLeft();
-        p2 = tabRect.GetBottomRight();
-    }
-
     clTabColours colours = colors;
     bool isDark = DrawingUtils::IsDark(colours.activeTabBgColour);
-    // if(isDark) {
-    //     InitDarkColours(colours, colours.activeTabBgColour);
-    // } else {
-    //     InitLightColours(colours, colours.activeTabBgColour);
-    // }
-
     wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
 
@@ -127,8 +106,36 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         DrawButton(parent, dc, tabInfo, colours, buttonState);
     }
 
+    wxPoint p1, p2;
+    if(isBottom) {
+        p1 = tabRect.GetTopLeft();
+        p2 = tabRect.GetTopRight();
+    } else if(isLeft) {
+        p1 = tabRect.GetTopRight();
+        p2 = tabRect.GetBottomRight();
+    } else if(isRight) {
+        p1 = tabRect.GetTopLeft();
+        p2 = tabRect.GetBottomLeft();
+    } else {
+        p1 = tabRect.GetBottomLeft();
+        p2 = tabRect.GetBottomRight();
+    }
+    
     if(!tabInfo.IsActive()) {
-        dc.SetPen(colours.activeTabPenColour);
+        dc.SetPen(colours.activeTabBgColour.ChangeLightness(50));
+        p1.y += 1;
+        p2.y += 1;
+        dc.DrawLine(p1, p2);
+    } else {
+        p1 = tabRect.GetRightTop();
+        p2 = tabRect.GetBottomRight();
+        p2.y -= 1; // don't override the bottom line
+        dc.SetPen(colours.activeTabBgColour.ChangeLightness(110));
+        dc.DrawLine(p1, p2);
+
+        p1 = tabRect.GetLeftTop();
+        p2 = tabRect.GetLeftBottom();
+        p2.y -= 1; // don't override the bottom line
         dc.DrawLine(p1, p2);
     }
 }

@@ -206,6 +206,7 @@
     <File Name="clGotoEntry.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Header Files">
+    <File Name="libcodelite_pch_dbg.h"/>
     <File Name="libcodelite_pch.h"/>
     <File Name="clDirChanger.hpp"/>
     <File Name="wxCodeCompletionBoxEntry.hpp"/>

@@ -770,4 +770,66 @@ public:
 typedef void (wxEvtHandler::*clEditorConfigEventFunction)(clEditorConfigEvent&);
 #define clEditorConfigEventHandler(func) wxEVENT_HANDLER_CAST(clEditorConfigEventFunction, func)
 
+//---------------------------------------------------------------
+// Language Server events
+//---------------------------------------------------------------
+class WXDLLIMPEXP_CL clLanguageServerEvent : public clCommandEvent
+{
+public:
+    enum eFlags {
+        kEnabled = (1 << 0),
+        kSSHEnabled = (1 << 1),
+        kDisaplyDiags = (1 << 2),
+    };
+
+    enum eAction {
+        kInvalidAction = 0,
+        kDelete = 1,
+        kConfigure = 2,
+        kRestart = 3,
+        kRestartAll = 4,
+        kOpenSettings = 5,
+    };
+
+protected:
+    wxString m_lspName;
+    wxString m_lspCommand;
+    size_t m_flags = 0;
+    wxString m_sshAccount;
+    size_t m_priority = 50;
+    wxString m_connectionString;
+    std::vector<std::pair<wxString, wxString>> m_enviroment;
+    wxString m_initOptions;
+    wxArrayString m_languages;
+    eAction m_action = kInvalidAction;
+
+public:
+    clLanguageServerEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clLanguageServerEvent(const clLanguageServerEvent& event);
+    clLanguageServerEvent& operator=(const clLanguageServerEvent& src);
+    virtual ~clLanguageServerEvent();
+    virtual wxEvent* Clone() const;
+    void SetConnectionString(const wxString& connectionString) { this->m_connectionString = connectionString; }
+    void SetFlags(size_t flags) { this->m_flags = flags; }
+    void SetInitOptions(const wxString& initOptions) { this->m_initOptions = initOptions; }
+    void SetLanguages(const wxArrayString& languages) { this->m_languages = languages; }
+    void SetLspCommand(const wxString& lspCommand) { this->m_lspCommand = lspCommand; }
+    void SetLspName(const wxString& lspName) { this->m_lspName = lspName; }
+    void SetPriority(size_t priority) { this->m_priority = priority; }
+    void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }
+    const wxString& GetConnectionString() const { return m_connectionString; }
+    size_t GetFlags() const { return m_flags; }
+    const wxString& GetInitOptions() const { return m_initOptions; }
+    const wxArrayString& GetLanguages() const { return m_languages; }
+    const wxString& GetLspCommand() const { return m_lspCommand; }
+    const wxString& GetLspName() const { return m_lspName; }
+    size_t GetPriority() const { return m_priority; }
+    const wxString& GetSshAccount() const { return m_sshAccount; }
+    void SetAction(const eAction& action) { this->m_action = action; }
+    const eAction& GetAction() const { return m_action; }
+};
+
+typedef void (wxEvtHandler::*clLanguageServerEventFunction)(clLanguageServerEvent&);
+#define clLanguageServerEventHandler(func) wxEVENT_HANDLER_CAST(clLanguageServerEventFunction, func)
+
 #endif // CLCOMMANDEVENT_H

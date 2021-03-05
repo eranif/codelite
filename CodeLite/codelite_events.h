@@ -313,7 +313,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_EDITOR_GOT_CONTROL, wxComma
 
 //-------------------------------------------------------------------------------------
 
-
 //-------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------
 // Code completion events
@@ -901,4 +900,26 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SOURCE_CONTROL_RESET_FILES, clSou
 // Source control just updated the local files by issuing a pull command (or svn update etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SOURCE_CONTROL_PULLED, clSourceControlEvent);
 
+//------------------------------------------------------------------------------------------
+// LSP management events
+//------------------------------------------------------------------------------------------
+
+// stop all LSPs
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_STOP_ALL, clLanguageServerEvent);
+// start all LSPs
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_START_ALL, clLanguageServerEvent);
+// restart all LSPs
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART_ALL, clLanguageServerEvent);
+// stop a single LSP identified by event.GetLspName()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_STOP, clLanguageServerEvent);
+// start a single LSP identified by event.GetLspName()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_START, clLanguageServerEvent);
+// restart a single LSP identified by event.GetLspName()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART, clLanguageServerEvent);
+// delete a single LSP identified by event.GetLspName()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DELETE, clLanguageServerEvent);
+// configure new LSP
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CONFIGURE, clLanguageServerEvent);
+// open LSPs configuration dialog. If event.GetLspName() is not empty, it will also select its page
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_OPEN_SETTINGS_DLG, clLanguageServerEvent);
 #endif // CODELITE_EVENTS_H

@@ -505,3 +505,36 @@ clSourceControlEvent& clSourceControlEvent::operator=(const clSourceControlEvent
     m_sourceControlName = src.m_sourceControlName;
     return *this;
 }
+
+///----------------------------------------------------------------------------------
+/// clLanguageServerEvent
+///----------------------------------------------------------------------------------
+
+clLanguageServerEvent::clLanguageServerEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
+clLanguageServerEvent::clLanguageServerEvent(const clLanguageServerEvent& event) {}
+
+clLanguageServerEvent::~clLanguageServerEvent() {}
+clLanguageServerEvent& clLanguageServerEvent::operator=(const clLanguageServerEvent& src)
+{
+    if(this == &src) {
+        return *this;
+    }
+    clCommandEvent::operator=(src);
+    m_lspName = src.m_lspName;
+    m_lspCommand = src.m_lspCommand;
+    m_flags = src.m_flags;
+    m_sshAccount = src.m_sshAccount;
+    m_priority = src.m_priority;
+    m_connectionString = src.m_connectionString;
+    m_enviroment = src.m_enviroment;
+    m_initOptions = src.m_initOptions;
+    m_languages = src.m_languages;
+    m_action = src.m_action;
+    return *this;
+}
+
+wxEvent* clLanguageServerEvent::Clone() const { return new clLanguageServerEvent(*this); }

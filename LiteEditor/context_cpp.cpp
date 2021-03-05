@@ -1120,8 +1120,7 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxString& lhs)
         std::vector<wxFileName> workspaceFiles;
         ManagerST::Get()->GetWorkspaceFiles(workspaceFiles, true);
         for(const wxFileName& workspaceFile : workspaceFiles) {
-            if((workspaceFile.GetFullName() == otherFile.GetFullName()) &&
-               (extensionsHash.count(workspaceFile.GetExt()))) {
+            if((workspaceFile.GetName() == otherFile.GetName()) && (extensionsHash.count(workspaceFile.GetExt()))) {
                 // the same file name with the proper extension, this is our "swapped" file
                 lhs = workspaceFile.GetFullPath();
                 return true;

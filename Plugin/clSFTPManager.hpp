@@ -16,11 +16,11 @@ class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
     std::unordered_map<wxString, std::pair<SSHAccountInfo, clSFTP::Ptr_t>> m_connections;
 
 protected:
-    std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnection(const wxString& account) const;
+    std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
+    clSFTP::Ptr_t GetConnectionPtr(const wxString& account) const;
 
 protected:
-    void OnDebugEnded(clDebugEvent& event);
-    void OnDebugStarted(clDebugEvent& event);
+    void OnGoingDown(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
     SFTPClientData* GetSFTPClientData(IEditor* editor);
 
@@ -51,6 +51,27 @@ public:
      * @return true on success or false
      */
     bool SaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName);
+
+    /**
+     * @brief delete a connection
+     */
+    void DeleteConnection(const wxString& accountName);
+    
+    /**
+     * @brief list entries in a given folder for a given account
+     * @param path
+     * @return 
+     */
+    SFTPAttribute::List_t List(const wxString& path, const SSHAccountInfo& accountInfo) const;
+    
+    /**
+     * @brief create new file with a given path
+     */
+    bool NewFile(const wxString& path, const SSHAccountInfo& accountInfo) const;
+    /**
+     * @brief create a new folder with a given path
+     */
+    bool NewFolder(const wxString& path, const SSHAccountInfo& accountInfo) const;
 };
 #endif
 #endif // CLSFTPMANAGER_HPP

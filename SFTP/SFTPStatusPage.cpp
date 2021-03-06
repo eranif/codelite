@@ -31,7 +31,7 @@
 #include "lexer_configuration.h"
 #include "remote_file_info.h"
 #include "sftp.h"
-#include "sftp_item_comparator.h"
+#include "sftp_item_comparator.hpp"
 #include "sftp_worker_thread.h"
 #include <wx/log.h>
 #include <wx/menu.h>

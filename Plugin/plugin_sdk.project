@@ -749,6 +749,10 @@
     <File Name="GotoAnythingBaseUI.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
+    <File Name="sftp_item_comparator.hpp"/>
+    <File Name="sftp_item_comparator.cpp"/>
+    <File Name="clRemoteDirCtrl.cpp"/>
+    <File Name="clRemoteDirCtrl.hpp"/>
     <File Name="clSFTPManager.cpp"/>
     <File Name="clSFTPManager.hpp"/>
     <File Name="SFTPSessionInfo.cpp"/>

@@ -26,10 +26,12 @@
 #ifndef SFTPITEMCOMPARATOR_H
 #define SFTPITEMCOMPARATOR_H
 
+#include "codelite_exports.h"
 #include <vector>
 #include <wx/treectrl.h>
 
-class MyClientData : public wxTreeItemData
+using namespace std;
+class WXDLLIMPEXP_SDK clRemoteDirCtrlItemData : public wxTreeItemData
 {
 public:
     enum eFileType {
@@ -45,17 +47,17 @@ protected:
     size_t m_flags = kFile;
 
 public:
-    typedef std::vector<MyClientData*> Vector_t;
+    typedef vector<clRemoteDirCtrlItemData*> Vec_t;
 
 public:
-    MyClientData(const wxString& path)
+    clRemoteDirCtrlItemData(const wxString& path)
         : m_path(path)
     {
+        m_path.Replace("\\", "/");
         while(m_path.Replace("//", "/")) {}
-        while(m_path.Replace("\\\\", "\\")) {}
     }
 
-    virtual ~MyClientData() {}
+    virtual ~clRemoteDirCtrlItemData() {}
 
     wxString GetBasename() const { return GetFullPath().BeforeLast('/'); }
     wxString GetFullName() const { return GetFullPath().AfterLast('/'); }

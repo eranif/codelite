@@ -43,7 +43,7 @@
 #include "globals.h"
 #include "macros.h"
 #include "sftp.h"
-#include "sftp_item_comparator.h"
+#include "sftp_item_comparator.hpp"
 #include "sftp_settings.h"
 #include "sftp_worker_thread.h"
 #include "ssh_account_info.h"
@@ -87,8 +87,8 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 
     std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> SortFunc = [&](const wxTreeItemId& itemA,
                                                                                  const wxTreeItemId& itemB) {
-        MyClientData* a = static_cast<MyClientData*>(GetItemData(itemA));
-        MyClientData* b = static_cast<MyClientData*>(GetItemData(itemB));
+        clRemoteDirCtrlItemData* a = static_cast<clRemoteDirCtrlItemData*>(GetItemData(itemA));
+        clRemoteDirCtrlItemData* b = static_cast<clRemoteDirCtrlItemData*>(GetItemData(itemB));
         if(a->IsFolder() && !b->IsFolder())
             return true;
         else if(b->IsFolder() && !a->IsFolder())
@@ -181,7 +181,7 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
 {
     m_treeCtrl->DeleteAllItems();
     // add the root item
-    MyClientData* cd = new MyClientData(initialFolder);
+    clRemoteDirCtrlItemData* cd = new clRemoteDirCtrlItemData(initialFolder);
     cd->SetFolder();
 
     wxTreeItemId root = m_treeCtrl->AddRoot(
@@ -194,7 +194,7 @@ void SFTPTreeView::DoBuildTree(const wxString& initialFolder)
 void SFTPTreeView::OnItemActivated(wxTreeEvent& event)
 {
     event.Skip();
-    MyClientData* cd = GetItemData(event.GetItem());
+    clRemoteDirCtrlItemData* cd = GetItemData(event.GetItem());
     CHECK_PTR_RET(cd);
 
     if(cd->IsFolder()) {
@@ -270,7 +270,7 @@ void SFTPTreeView::DoCloseSession()
 bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
 {
     wxBusyCursor bc;
-    MyClientData* cd = GetItemData(item);
+    clRemoteDirCtrlItemData* cd = GetItemData(item);
     CHECK_PTR_RET_FALSE(cd);
 
     // already initialized this folder before?
@@ -332,7 +332,7 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
         path << cd->GetFullPath() << "/" << attr->GetName();
         while(path.Replace("//", "/")) {}
 
-        MyClientData* childClientData = new MyClientData(path);
+        clRemoteDirCtrlItemData* childClientData = new clRemoteDirCtrlItemData(path);
         if(attr->IsFolder()) {
             childClientData->SetFolder();
         } else if(attr->IsFile()) {
@@ -354,21 +354,22 @@ bool SFTPTreeView::DoExpandItem(const wxTreeItemId& item)
     return nNumOfRealChildren > 0;
 }
 
-MyClientData* SFTPTreeView::GetItemData(const wxTreeItemId& item)
+clRemoteDirCtrlItemData* SFTPTreeView::GetItemData(const wxTreeItemId& item)
 {
     CHECK_ITEM_RET_NULL(item);
-    MyClientData* cd = dynamic_cast<MyClientData*>(m_treeCtrl->GetItemData(item));
+    clRemoteDirCtrlItemData* cd = dynamic_cast<clRemoteDirCtrlItemData*>(m_treeCtrl->GetItemData(item));
     return cd;
 }
 
-MyClientDataVect_t SFTPTreeView::GetSelectionsItemData()
+clRemoteDirCtrlItemData::Vec_t SFTPTreeView::GetSelectionsItemData()
 {
-    MyClientDataVect_t res;
+    clRemoteDirCtrlItemData::Vec_t res;
     wxArrayTreeItemIds items;
     m_treeCtrl->GetSelections(items);
 
+    res.reserve(items.Count());
     for(size_t i = 0; i < items.GetCount(); ++i) {
-        MyClientData* cd = GetItemData(items.Item(i));
+        clRemoteDirCtrlItemData* cd = GetItemData(items.Item(i));
         if(cd) {
             res.push_back(cd);
         }
@@ -388,7 +389,7 @@ void SFTPTreeView::OnContextMenu(wxContextMenuEvent& event)
     wxTreeItemId item = items.Item(0);
     CHECK_ITEM_RET(item);
 
-    MyClientData* cd = GetItemData(item);
+    clRemoteDirCtrlItemData* cd = GetItemData(item);
     wxMenu menu;
     if(cd) {
 
@@ -437,7 +438,7 @@ void SFTPTreeView::OnMenuDelete(wxCommandEvent& event)
     try {
 
         for(size_t i = 0; i < items.size(); ++i) {
-            MyClientData* cd = GetItemData(items.Item(i));
+            clRemoteDirCtrlItemData* cd = GetItemData(items.Item(i));
             if(cd->IsFolder()) {
                 m_sftp->RemoveDir(cd->GetFullPath());
 
@@ -460,7 +461,7 @@ void SFTPTreeView::OnMenuNew(wxCommandEvent& event)
     if(items.size() != 1)
         return;
 
-    MyClientData* cd = GetItemData(items.Item(0));
+    clRemoteDirCtrlItemData* cd = GetItemData(items.Item(0));
     CHECK_PTR_RET(cd);
 
     if(!cd->IsFolder()) {
@@ -482,7 +483,7 @@ void SFTPTreeView::OnMenuNewFile(wxCommandEvent& event)
     if(items.size() != 1)
         return;
 
-    MyClientData* cd = GetItemData(items.Item(0));
+    clRemoteDirCtrlItemData* cd = GetItemData(items.Item(0));
     CHECK_PTR_RET(cd);
 
     if(!cd->IsFolder()) {
@@ -514,7 +515,7 @@ void SFTPTreeView::OnMenuRename(wxCommandEvent& event)
     try {
         for(size_t i = 0; i < items.size(); ++i) {
 
-            MyClientData* cd = GetItemData(items.Item(i));
+            clRemoteDirCtrlItemData* cd = GetItemData(items.Item(i));
             if(!cd)
                 continue; // ??
 
@@ -542,7 +543,7 @@ void SFTPTreeView::OnMenuOpen(wxCommandEvent& event)
         return;
 
     for(size_t i = 0; i < items.size(); ++i) {
-        MyClientData* cd = GetItemData(items.Item(i));
+        clRemoteDirCtrlItemData* cd = GetItemData(items.Item(i));
         if(!cd || cd->IsFolder()) {
             continue;
         }
@@ -565,7 +566,7 @@ wxTreeItemId SFTPTreeView::DoAddFile(const wxTreeItemId& parent, const wxString&
         m_sftp->Write(memBuffer, path);
         SFTPAttribute::Ptr_t attr = m_sftp->Stat(path);
         // Update the UI
-        MyClientData* newFile = new MyClientData(path);
+        clRemoteDirCtrlItemData* newFile = new clRemoteDirCtrlItemData(path);
         newFile->SetFile();
         newFile->SetInitialized(false);
 
@@ -587,7 +588,7 @@ wxTreeItemId SFTPTreeView::DoAddFolder(const wxTreeItemId& parent, const wxStrin
         m_sftp->CreateDir(path);
         SFTPAttribute::Ptr_t attr = m_sftp->Stat(path);
         // Update the UI
-        MyClientData* newCd = new MyClientData(path);
+        clRemoteDirCtrlItemData* newCd = new clRemoteDirCtrlItemData(path);
         newCd->SetFolder();
         newCd->SetInitialized(false);
 
@@ -634,11 +635,11 @@ void SFTPTreeView::OnAddBookmark(wxCommandEvent& event)
             return;
 
         // Get the current selection
-        MyClientDataVect_t selections = GetSelectionsItemData();
+        clRemoteDirCtrlItemData::Vec_t selections = GetSelectionsItemData();
         if(selections.size() != 1)
             return;
 
-        MyClientData* cd = selections.at(0);
+        clRemoteDirCtrlItemData* cd = selections.at(0);
         CHECK_PTR_RET(cd);
 
         if(!cd->IsFolder())
@@ -676,11 +677,11 @@ void SFTPTreeView::OnChoiceAccount(wxCommandEvent& event) { event.Skip(); }
 void SFTPTreeView::OnChoiceAccountUI(wxUpdateUIEvent& event) { event.Enable(!IsConnected()); }
 void SFTPTreeView::OnSelectionChanged(wxTreeEvent& event)
 {
-    MyClientDataVect_t items = GetSelectionsItemData();
+    clRemoteDirCtrlItemData::Vec_t items = GetSelectionsItemData();
     if(items.size() != 1)
         return;
 
-    MyClientData* cd = items.at(0);
+    clRemoteDirCtrlItemData* cd = items.at(0);
     if(cd->IsFolder()) {
         m_textCtrlQuickJump->ChangeValue(cd->GetFullPath());
     }
@@ -795,7 +796,7 @@ void SFTPTreeView::OnMenuRefreshFolder(wxCommandEvent& event)
         return;
 
     wxTreeItemId item = items.Item(0);
-    MyClientData* cd = GetItemData(item);
+    clRemoteDirCtrlItemData* cd = GetItemData(item);
     if(!cd || !cd->IsFolder()) {
         return;
     }
@@ -900,7 +901,7 @@ void SFTPTreeView::OnOpenTerminalUI(wxUpdateUIEvent& event) { event.Enable(true)
 
 bool SFTPTreeView::DoOpenFile(const wxTreeItemId& item)
 {
-    MyClientData* cd = GetItemData(item);
+    clRemoteDirCtrlItemData* cd = GetItemData(item);
     if(!cd || cd->IsFolder()) {
         return false;
     }
@@ -925,7 +926,7 @@ void SFTPTreeView::OnMenuOpenWithDefaultApplication(wxCommandEvent& event)
         return;
 
     for(size_t i = 0; i < items.size(); ++i) {
-        MyClientData* cd = GetItemData(items.Item(i));
+        clRemoteDirCtrlItemData* cd = GetItemData(items.Item(i));
         if(!cd || cd->IsFolder()) {
             continue;
         }
@@ -948,7 +949,7 @@ void SFTPTreeView::OnMenuOpenContainingFolder(wxCommandEvent& event)
         return;
 
     for(size_t i = 0; i < items.size(); ++i) {
-        MyClientData* cd = GetItemData(items.Item(i));
+        clRemoteDirCtrlItemData* cd = GetItemData(items.Item(i));
         if(!cd || cd->IsFolder()) {
             continue;
         }
@@ -971,7 +972,7 @@ void SFTPTreeView::OnFileDropped(clCommandEvent& event)
     wxString defaultPath = m_textCtrlQuickJump->GetValue();
     if(items.size() == 1) {
         // Use the selected folder as the default path
-        MyClientData* cd = GetItemData(items.Item(0));
+        clRemoteDirCtrlItemData* cd = GetItemData(items.Item(0));
         if(cd && cd->IsFolder()) {
             defaultPath = cd->GetFullPath();
             parenItem = items.Item(0);
@@ -1096,7 +1097,7 @@ void SFTPTreeView::OnExecuteCommand(wxCommandEvent& event)
 
     try {
 
-        MyClientData* cd = GetItemData(items.Item(0));
+        clRemoteDirCtrlItemData* cd = GetItemData(items.Item(0));
         if(!cd) {
             return;
         } // ??
@@ -1122,7 +1123,7 @@ void SFTPTreeView::OnRemoteFind(wxCommandEvent& event)
     if(items.GetCount() != 1) {
         return;
     }
-    MyClientData* cd = GetItemData(items.Item(0));
+    clRemoteDirCtrlItemData* cd = GetItemData(items.Item(0));
     if(!cd || !cd->IsFolder()) {
         return;
     }

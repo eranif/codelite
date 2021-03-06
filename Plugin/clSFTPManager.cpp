@@ -14,15 +14,13 @@
 
 clSFTPManager::clSFTPManager()
 {
-    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clSFTPManager::OnDebugEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clSFTPManager::OnDebugStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
 }
 
 clSFTPManager::~clSFTPManager()
 {
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clSFTPManager::OnDebugEnded, this);
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clSFTPManager::OnDebugStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
 }
 
@@ -118,7 +116,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     }
 
     // Open it
-    auto connection_info = GetConnection(accountName);
+    auto connection_info = GetConnectionPair(accountName);
     if(!connection_info.second) {
         return nullptr;
     }
@@ -159,7 +157,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     return editor;
 }
 
-std::pair<SSHAccountInfo, clSFTP::Ptr_t> clSFTPManager::GetConnection(const wxString& account) const
+std::pair<SSHAccountInfo, clSFTP::Ptr_t> clSFTPManager::GetConnectionPair(const wxString& account) const
 {
     auto iter = m_connections.find(account);
     if(iter == m_connections.end()) {
@@ -168,18 +166,13 @@ std::pair<SSHAccountInfo, clSFTP::Ptr_t> clSFTPManager::GetConnection(const wxSt
     return iter->second;
 }
 
-void clSFTPManager::OnDebugEnded(clDebugEvent& event)
+clSFTP::Ptr_t clSFTPManager::GetConnectionPtr(const wxString& account) const
 {
-    // free all the connections
-    event.Skip();
-    Release();
-}
-
-void clSFTPManager::OnDebugStarted(clDebugEvent& event)
-{
-    // free all the connections
-    event.Skip();
-    Release();
+    auto iter = m_connections.find(account);
+    if(iter == m_connections.end()) {
+        return clSFTP::Ptr_t(nullptr);
+    }
+    return iter->second.second;
 }
 
 SFTPClientData* clSFTPManager::GetSFTPClientData(IEditor* editor)
@@ -201,14 +194,15 @@ void clSFTPManager::OnFileSaved(clCommandEvent& event)
     auto cd = GetSFTPClientData(editor);
     CHECK_PTR_RET(cd);
 
-    auto conn_info = GetConnection(cd->GetAccountName());
+    auto conn_info = GetConnectionPair(cd->GetAccountName());
     CHECK_PTR_RET(conn_info.second);
     SaveFile(cd->GetLocalPath(), cd->GetRemotePath(), conn_info.first.GetAccountName());
 }
 
 bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName)
 {
-    auto conn_info = GetConnection(accountName);
+    wxBusyCursor bc;
+    auto conn_info = GetConnectionPair(accountName);
     CHECK_PTR_RET_FALSE(conn_info.second);
 
     auto conn = conn_info.second;
@@ -227,4 +221,71 @@ bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePa
     }
     return true;
 }
+
+void clSFTPManager::DeleteConnection(const wxString& accountName)
+{
+    auto iter = m_connections.find(accountName);
+    if(iter == m_connections.end()) {
+        // nothing to be done here
+        return;
+    }
+    m_connections.erase(iter);
+}
+
+SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo) const
+{
+    wxBusyCursor bc;
+    auto conn = GetConnectionPtr(accountInfo.GetAccountName());
+    if(!conn) {
+        return {};
+    }
+
+    // get list of files and populate the tree
+    SFTPAttribute::List_t attributes;
+    try {
+        attributes = conn->List(path, clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
+
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        return {};
+    }
+    return attributes;
+}
+
+bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountInfo) const
+{
+    auto conn = GetConnectionPtr(accountInfo.GetAccountName());
+    if(!conn) {
+        return false;
+    }
+    try {
+        conn->CreateRemoteFile(path, wxEmptyString);
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        return false;
+    }
+    return true;
+}
+
+void clSFTPManager::OnGoingDown(clCommandEvent& event)
+{
+    event.Skip();
+    Release();
+}
+
+bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accountInfo) const
+{
+    auto conn = GetConnectionPtr(accountInfo.GetAccountName());
+    if(!conn) {
+        return false;
+    }
+    try {
+        conn->CreateDir(path);
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        return false;
+    }
+    return true;
+}
+
 #endif

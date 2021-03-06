@@ -32,15 +32,12 @@
 #include "clSSHChannel.hpp"
 #include "cl_command_event.h"
 #include "cl_sftp.h"
+#include "sftp_item_comparator.hpp"
 #include "ssh_account_info.h"
 #include <vector>
 #include <wx/timer.h>
 
-class MyClientData;
 class SFTP;
-
-typedef std::vector<MyClientData*> MyClientDataVect_t;
-
 class SFTPTreeView : public SFTPTreeViewBase
 {
     clSFTP::Ptr_t m_sftp;
@@ -122,8 +119,8 @@ protected:
     wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
     wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);
 
-    MyClientData* GetItemData(const wxTreeItemId& item);
-    MyClientDataVect_t GetSelectionsItemData();
+    clRemoteDirCtrlItemData* GetItemData(const wxTreeItemId& item);
+    clRemoteDirCtrlItemData::Vec_t GetSelectionsItemData();
     bool DoOpenFile(const wxTreeItemId& item);
     void DoDeleteColumn(int colIdx);
     bool GetAccountFromUser(SSHAccountInfo& account);

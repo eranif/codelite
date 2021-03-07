@@ -559,7 +559,7 @@ wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
     const auto& M = m_settings.GetSelectedConfig()->GetBuildTargets();
     if(M.count(target)) {
         wxString cmd = M.find(target)->second;
-        if(!GetConfig()->IsRemoteEnabled()) {
+        if(!(GetConfig()->IsRemoteEnabled() && GetConfig()->IsRemoteBuild())) {
             ::WrapInShell(cmd);
         }
         return cmd;

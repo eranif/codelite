@@ -28,18 +28,7 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
         wxString cmd = BuildCommand(m_startupInfo.GetLspServerCommand());
         // if remote is enabled for this LSP, start it on the remote machine
         if(m_startupInfo.GetFlags() & LSPStartupInfo::kRemoteLSP) {
-#if USE_SFTP
-            SFTPSettings s;
-            SSHAccountInfo accountInfo;
-            s.Load();
-            if(!s.GetAccount(m_startupInfo.GetAccountName(), accountInfo)) {
-                throw clException(_("LSP: could not locate SSH account ") + m_startupInfo.GetAccountName());
-            }
-            m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH | IProcessInteractiveSSH,
-                                               m_startupInfo.GetWorkingDirectory(), nullptr, (wxUIntPtr)&accountInfo);
-#else
-            throw clException("SFTP is not enabled in this build");
-#endif
+            throw clException("Executing LSP over SSH is enabled only for STDIO based LSPs");
         } else {
             m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, m_startupInfo.GetWorkingDirectory());
         }

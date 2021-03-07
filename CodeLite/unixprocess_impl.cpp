@@ -387,24 +387,6 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
     wxString newCmd = cmd;
     const char* sudo_path;
 
-    if((flags & IProcessCreateAsSuperuser)) {
-        sudo_path = "/usr/bin/sudo";
-        if(!wxFileName::Exists(sudo_path)) {
-            sudo_path = "/usr/local/bin/sudo";
-        }
-        if(wxFileName::Exists(sudo_path)) {
-            newCmd.Prepend(sudo_path);
-            newCmd.Prepend(" --askpass ");
-            clDEBUG1() << "Executing command:" << newCmd << clEndl;
-
-        } else {
-            clWARNING() << "Unable to run command: '" << cmd << "' as superuser: sudo: no such file or directory"
-                        << clEndl;
-        }
-    } else {
-        clDEBUG1() << "Executing command:" << newCmd << clEndl;
-    }
-
     int argc = 0;
     char** argv = make_argv(newCmd, argc);
     if(argc == 0 || argv == nullptr) {
@@ -415,10 +397,9 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
     wxString curdir = wxGetCwd();
 
     // Prentend that we are a terminal...
-    int master, slave;
+    int master;
     char pts_name[1024];
     memset(pts_name, 0x0, sizeof(pts_name));
-    openpty(&master, &slave, pts_name, NULL, NULL);
 
     // Create a one-way communication channel (pipe).
     // If successful, two file descriptors are stored in stderrPipes;
@@ -433,31 +414,28 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         }
     }
 
-    int rc = fork();
+    int rc = forkpty(&master, pts_name, nullptr, nullptr);
     if(rc == 0) {
         //===-------------------------------------------------------
         // Child process
         //===-------------------------------------------------------
-        struct termios termio;
-        tcgetattr(slave, &termio);
-        cfmakeraw(&termio);
-        termio.c_lflag = ICANON;
-        termio.c_oflag = ONOCR | ONLRET;
-        tcsetattr(slave, TCSANOW, &termio);
-
-        // Set 'slave' as STD{IN|OUT|ERR} and close slave FD
-        login_tty(slave);
-        close(master); // close the un-needed master end
+        for(int i = 0; i < FD_SETSIZE; ++i) {
+            if(i != STDERR_FILENO && i != STDOUT_FILENO && i != STDIN_FILENO) {
+                if((i == stderrPipes[1]) && (flags & IProcessStderrEvent)) {
+                    // skip it
+                } else {
+                    ::close(i);
+                }
+            }
+        }
 
         // Incase the user wants to get separate events for STDERR, dup2 STDERR to the PIPE write end
         // we opened earlier
         if(flags & IProcessStderrEvent) {
             // Dup stderrPipes[1] into stderr
-            close(STDERR_FILENO);
             dup2(stderrPipes[1], STDERR_FILENO);
-            close(stderrPipes[0]); // close the read end
+            close(stderrPipes[1]);
         }
-        close(slave);
 
         // at this point, slave is used as stdin/stdout/stderr
         // Child process
@@ -486,7 +464,11 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         //===-------------------------------------------------------
         // Parent
         //===-------------------------------------------------------
-        close(slave);
+        struct termios tios;
+        tcgetattr(master, &tios);
+        tios.c_lflag &= ~(ECHO | ECHONL);
+        tcsetattr(master, TCSAFLUSH, &tios);
+
         freeargv(argv);
         argc = 0;
 

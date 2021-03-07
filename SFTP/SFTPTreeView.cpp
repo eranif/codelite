@@ -140,7 +140,9 @@ void SFTPTreeView::OnAddBookmarkMenu(wxCommandEvent& event)
     const wxArrayString& bookmarks = m_account.GetBookmarks();
     wxMenu menu;
     for(size_t i = 0; i < bookmarks.GetCount(); ++i) {
-        menu.Append(ID_SFTP_BOOKMARK_FIRST + i, bookmarks.Item(i));
+        if(!bookmarks[i].empty()) {
+            menu.Append(ID_SFTP_BOOKMARK_FIRST + i, bookmarks.Item(i));
+        }
     }
     menu.AppendSeparator();
     menu.Append(ID_SFTP_BOOKMARK_SETTINGS, _("Manage bookmarks..."));
@@ -432,7 +434,4 @@ void SFTPTreeView::OnFindFinished(clCommandEvent& event) {}
 
 void SFTPTreeView::OnFindError(clCommandEvent& event) {}
 
-void SFTPTreeView::DoChangeLocation(const wxString& path)
-{
-    m_view->SetNewRoot(path);
-}
+void SFTPTreeView::DoChangeLocation(const wxString& path) { m_view->SetNewRoot(path); }

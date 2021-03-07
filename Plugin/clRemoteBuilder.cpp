@@ -9,7 +9,6 @@
 #include <wx/msgdlg.h>
 
 #if USE_SFTP
-#include "SSHRemoteProcess.hpp"
 #include "sftp_settings.h"
 #endif
 
@@ -43,34 +42,21 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
         return;
     }
 
-    clSSH::Ptr_t ssh(new clSSH());
-    try {
-
-        // Establish SSH connection and launch the build
-        ssh->SetUsername(account.GetUsername());
-        ssh->SetPassword(account.GetPassword());
-        ssh->SetHost(account.GetHost());
-        ssh->SetPort(account.GetPort());
-        ssh->Connect();
-        ssh->Login();
-
-    } catch(clException& e) {
-        clERROR() << e.What();
-        ::wxMessageBox(wxString() << _("Failed to start remote build\n") << e.What(), "CodeLite",
-                       wxICON_ERROR | wxCENTRE);
+    wxFileName ssh;
+    if(!clFindExecutable("ssh", ssh)) {
+        wxMessageBox(_("Could not locaet ssh executable"), "CodeLite", wxICON_WARNING | wxOK);
         return;
     }
 
-    // SSH is connected
-
     // Prepare the command
     wxString cmd;
-    cmd << "/bin/bash -c 'cd " << workingDirectory << " && " << command << "'";
+    cmd << ssh.GetFullPath() << " " << account.GetUsername() << "@" << account.GetHost() << " -p " << account.GetPort()
+        << " 'cd " << workingDirectory << " && " << command << "'";
     clGetManager()->ClearOutputTab(kOutputTab_Build);
     clGetManager()->AppendOutputTabText(
         kOutputTab_Build, wxString() << "Remote build started using ssh account: " << account.GetAccountName() << "\n");
     clGetManager()->AppendOutputTabText(kOutputTab_Build, cmd + "\n");
-    m_remoteProcess = SSHRemoteProcess::Create(this, ssh, cmd, false);
+    m_remoteProcess = ::CreateAsyncProcess(this, cmd);
 
     clBuildEvent eventStart(wxEVT_BUILD_STARTED);
     EventNotifier::Get()->AddPendingEvent(eventStart);

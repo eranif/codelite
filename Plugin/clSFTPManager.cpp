@@ -16,12 +16,19 @@ clSFTPManager::clSFTPManager()
 {
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
+
+    m_timer = new wxTimer(this);
+    m_timer->Start(10000); // 10 seconds should be good enough for a "keep-alive" interval
+    Bind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
 }
 
 clSFTPManager::~clSFTPManager()
 {
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
+    m_timer->Stop();
+    wxDELETE(m_timer);
+    Bind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
 }
 
 clSFTPManager& clSFTPManager::Get()
@@ -339,6 +346,22 @@ bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& a
         return false;
     }
     return true;
+}
+
+void clSFTPManager::OnTimer(wxTimerEvent& event)
+{
+    event.Skip();
+    if(m_connections.empty()) {
+        return;
+    }
+
+    for(const auto& vt : m_connections) {
+        try {
+            vt.second.second->SendKeepAlive();
+        } catch(clException& e) {
+            clWARNING() << "failed to send keep-alive message for account:" << vt.first << "." << e.What() << endl;
+        }
+    }
 }
 
 #endif

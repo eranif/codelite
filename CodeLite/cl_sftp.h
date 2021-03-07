@@ -185,6 +185,11 @@ public:
      * @brief return the current folder
      */
     const wxString& GetCurrentFolder() const { return m_currentFolder; }
+    
+    /**
+     * @brief send keep alive message
+     */
+    void SendKeepAlive();
 };
 
 #endif // USE_SFTP

@@ -8,12 +8,14 @@
 #include <unordered_map>
 #include <wx/event.h>
 #include <wx/string.h>
+#include <wx/timer.h>
 
 class IEditor;
 class SFTPClientData;
 class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
 {
     std::unordered_map<wxString, std::pair<SSHAccountInfo, clSFTP::Ptr_t>> m_connections;
+    wxTimer* m_timer = nullptr;
 
 protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
@@ -23,6 +25,7 @@ protected:
     void OnGoingDown(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
     SFTPClientData* GetSFTPClientData(IEditor* editor);
+    void OnTimer(wxTimerEvent& event);
 
 public:
     clSFTPManager();

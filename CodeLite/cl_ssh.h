@@ -83,6 +83,11 @@ public:
     bool IsCommandRunning() const { return m_channel != NULL; }
 
     /**
+     * @brief send a message that should be ignored. This is useful for implemeting keep-alive
+     */
+    void SendIgnore();
+
+    /**
      * @brief connect to the remote server
      */
     void Connect(int seconds = 10);

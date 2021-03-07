@@ -533,4 +533,12 @@ wxString clSFTP::GetErrorString() const
     }
 }
 
+void clSFTP::SendKeepAlive()
+{
+    if(!m_sftp || !m_ssh) {
+        return;
+    }
+    m_ssh->SendIgnore();
+}
+
 #endif // USE_SFTP

@@ -442,4 +442,14 @@ void clSSH::DoConnectWithRetries(int retries)
     throw clException("Connect timeout");
 }
 
+void clSSH::SendIgnore()
+{
+    if(!m_session) {
+        throw clException("Session not opened");
+    }
+    if(ssh_send_ignore(m_session, "ping") != SSH_OK) {
+        throw clException("Failed to send ignore message");
+    }
+}
+
 #endif // USE_SFTP

@@ -298,7 +298,7 @@ void SubversionView::CreatGUIControls()
 
     m_subversionConsole = new SvnConsole(m_sci, m_plugin);
 
-    DoRootDirChanged(wxGetCwd());
+    DoRootDirChanged(wxEmptyString);
     BuildTree();
 }
 
@@ -1302,21 +1302,21 @@ void SubversionView::OnSciStcChange(wxStyledTextEvent& event)
 
 void SubversionView::OnCloseView(wxCommandEvent& event)
 {
-    if(!m_curpath.IsEmpty()) {
-        if(::wxMessageBox(_("Close SVN view?"), _("Confirm"),
-                          wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
-            return;
-        }
-        DoCloseView();
-
-        // Clear the source control bitmap
-        clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, "", "");
+    if(m_curpath.IsEmpty())
+        return;
+    if(::wxMessageBox(_("Close SVN view?"), _("Confirm"), wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) !=
+       wxYES) {
+        return;
     }
+    DoCloseView();
+
+    // Clear the source control bitmap
+    clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, "", "");
 }
 
 void SubversionView::DoCloseView()
 {
-    DoChangeRootPathUI("");
+    DoChangeRootPathUI(wxEmptyString);
     wxCommandEvent dummy;
     OnClearOuptut(dummy);
 
@@ -1375,12 +1375,7 @@ void SubversionView::DoGetAllFiles(wxArrayString& paths)
 
 void SubversionView::OnViewUpdateUI(wxUpdateUIEvent& event) { event.Enable(!DoGetCurRepoPath().IsEmpty()); }
 
-void SubversionView::OnAppActivated(wxCommandEvent& event)
-{
-    if(!m_curpath.IsEmpty()) {
-        CallAfter(&SubversionView::BuildTree);
-    }
-}
+void SubversionView::OnAppActivated(wxCommandEvent& event) { event.Skip(); }
 
 void SubversionView::OnUnversionedItemActivated(wxDataViewEvent& event)
 {

@@ -182,10 +182,16 @@ public:
     void Chmod(const wxString& remotePath, size_t permissions);
 
     /**
+     * @brief change remote directory
+     * @param remotePath
+     */
+    SFTPAttribute::List_t Chdir(const wxString& remotePath);
+
+    /**
      * @brief return the current folder
      */
     const wxString& GetCurrentFolder() const { return m_currentFolder; }
-    
+
     /**
      * @brief send keep alive message
      */

@@ -67,6 +67,11 @@ public:
      * @brief return the selected folders
      */
     size_t GetSelectedFolders(wxArrayString& paths) const;
+    
+    /**
+     * @brief change the new root folder
+     */
+    bool SetNewRoot(const wxString& remotePath);
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_REMOTE_DIR_CONTEXT_MENU_SHOWING, clContextMenuEvent);

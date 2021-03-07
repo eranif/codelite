@@ -1727,6 +1727,9 @@ void MainBook::DoShowWindow(wxWindow* win, bool show)
 
 void MainBook::ShowWelcomePage(bool show)
 {
+#if defined(__WXGTK__) && !defined(NDEBUG)
+    wxUnusedVar(show);
+#else
     int where = m_book->GetPageIndex(wxT("Welcome!"));
     if(show) {
         GetSizer()->Show(m_book);
@@ -1741,6 +1744,7 @@ void MainBook::ShowWelcomePage(bool show)
             m_book->DeletePage(where, false);
         }
     }
+#endif
 }
 
 void MainBook::ShowQuickBarForPlugins()

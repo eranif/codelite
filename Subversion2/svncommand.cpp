@@ -23,15 +23,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "svncommand.h"
 #include "environmentconfig.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "imanager.h"
+#include "subversion2.h"
 #include "subversion_strings.h"
 #include "svn_console.h"
-#include "globals.h"
-#include "subversion2.h"
+#include "svncommand.h"
 #include <wx/aui/framemanager.h>
-#include "imanager.h"
-#include "file_logger.h"
 
 SvnCommand::SvnCommand(Subversion2* plugin)
     : m_process(NULL)
@@ -44,17 +44,12 @@ SvnCommand::SvnCommand(Subversion2* plugin)
 
 SvnCommand::~SvnCommand() { ClearAll(); }
 
-bool SvnCommand::Execute(const wxString& command,
-                         const wxString& workingDirectory,
-                         SvnCommandHandler* handler,
+bool SvnCommand::Execute(const wxString& command, const wxString& workingDirectory, SvnCommandHandler* handler,
                          Subversion2* plugin)
 {
     // Dont run 2 commands at the same time
     if(m_process) {
-        if(handler) {
-            // handler->GetPlugin()->GetShell()->AppendText(svnANOTHER_PROCESS_RUNNING);
-            delete handler;
-        }
+        wxDELETE(handler);
         return false;
     }
 
@@ -90,7 +85,7 @@ void SvnCommand::OnProcessOutput(clProcessEvent& event)
 void SvnCommand::OnProcessTerminated(clProcessEvent& event)
 {
     if(m_handler) {
-        clDEBUG1() << "Subversion:" << m_output << clEndl;;
+        clDEBUG1() << "Subversion:" << m_output << clEndl;
         if(m_handler->TestLoginRequired(m_output)) {
             // re-issue the last command but this time with login dialog
             m_handler->GetPlugin()->GetConsole()->AppendText(_("Authentication failed. Retrying...\n"));
@@ -105,15 +100,9 @@ void SvnCommand::OnProcessTerminated(clProcessEvent& event)
             // command ended successfully, invoke the "success" callback
             m_handler->Process(m_output);
         }
-
-        delete m_handler;
-        m_handler = NULL;
+        wxDELETE(m_handler);
     }
-
-    if(m_process) {
-        delete m_process;
-        m_process = NULL;
-    }
+    wxDELETE(m_process);
 }
 
 void SvnCommand::ClearAll()

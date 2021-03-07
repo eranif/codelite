@@ -57,18 +57,6 @@
 #include <wx/textdlg.h>
 #include <wx/utils.h>
 
-static const int ID_NEW = ::wxNewId();
-static const int ID_RENAME = ::wxNewId();
-static const int ID_DELETE = ::wxNewId();
-static const int ID_OPEN = ::wxNewId();
-static const int ID_NEW_FILE = ::wxNewId();
-static const int ID_REFRESH_FOLDER = ::wxNewId();
-static const int ID_EXECUTE_COMMAND = ::wxNewId();
-static const int ID_SHOW_SIZE_COL = ::wxNewId();
-static const int ID_SHOW_TYPE_COL = ::wxNewId();
-static const int ID_OPEN_WITH_DEFAULT_APP = ::wxNewId();
-static const int ID_OPEN_CONTAINING_FOLDER = ::wxNewId();
-
 SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
     , m_plugin(plugin)
@@ -160,7 +148,7 @@ void SFTPTreeView::OnAddBookmarkMenu(wxCommandEvent& event)
     int sel = m_toolbar->GetMenuSelectionFromUser(XRCID("ID_ADD_BOOKMARK"), &menu);
     if((sel >= ID_SFTP_BOOKMARK_FIRST) && (sel <= ID_SFTP_BOOKMARK_LAST)) {
         // A bookmark was selected
-        CallAfter(&SFTPTreeView::DoBuildTree, bookmarks.Item(sel - ID_SFTP_BOOKMARK_FIRST));
+        CallAfter(&SFTPTreeView::DoChangeLocation, bookmarks.Item(sel - ID_SFTP_BOOKMARK_FIRST));
 
     } else if(sel == ID_SFTP_BOOKMARK_SETTINGS) {
         // Bookmark settings
@@ -188,7 +176,12 @@ void SFTPTreeView::OnAddBookmark(wxCommandEvent& event)
 }
 
 void SFTPTreeView::OnAddBookmarkUI(wxUpdateUIEvent& event) { event.Enable(m_view->IsConnected()); }
-void SFTPTreeView::OnGotoLocation(wxCommandEvent& event) { DoBuildTree(m_textCtrlQuickJump->GetValue()); }
+void SFTPTreeView::OnGotoLocation(wxCommandEvent& event)
+{
+    // check that the target folder exists
+    m_view->SetNewRoot(m_textCtrlQuickJump->GetValue());
+}
+
 void SFTPTreeView::OnGotoLocationUI(wxUpdateUIEvent& event) { event.Enable(m_view->IsConnected()); }
 
 void SFTPTreeView::ManageBookmarks()
@@ -438,3 +431,8 @@ void SFTPTreeView::OnFindOutput(clCommandEvent& event) {}
 void SFTPTreeView::OnFindFinished(clCommandEvent& event) {}
 
 void SFTPTreeView::OnFindError(clCommandEvent& event) {}
+
+void SFTPTreeView::DoChangeLocation(const wxString& path)
+{
+    m_view->SetNewRoot(path);
+}

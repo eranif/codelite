@@ -25,6 +25,7 @@
 
 #include "WelcomePage.h"
 #include "bitmap_loader.h"
+#include "cl_defs.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "fileextmanager.h"
@@ -36,13 +37,10 @@
 #include "window_locker.h"
 #include <wx/arrstr.h>
 #include <wx/clntdata.h>
-#include "cl_defs.h"
 
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL,
-                                  this);
     m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 32));
     m_staticBitmap->Hide();
     m_cmdLnkBtnFilesMenu->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
@@ -58,11 +56,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
 #endif
 }
 
-WelcomePage::~WelcomePage()
-{
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(WelcomePage::OnThemeChanged), NULL,
-                                     this);
-}
+WelcomePage::~WelcomePage() {}
 
 void WelcomePage::OnOpenForums(wxCommandEvent& event)
 {

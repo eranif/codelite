@@ -459,4 +459,26 @@ size_t clRemoteDirCtrl::GetSelectedFolders(wxArrayString& paths) const
     return paths.size();
 }
 
+bool clRemoteDirCtrl::SetNewRoot(const wxString& remotePath)
+{
+    wxBusyCursor bc;
+    // Check that the new folder exists
+    if(!clSFTPManager::Get().IsDirExists(remotePath, m_account)) {
+        ::wxMessageBox(_("Can not set new root directory: ") + remotePath + _("\nNo such directory"), "CodeLite",
+                       wxICON_WARNING | wxCENTRE);
+        return false;
+    }
+    m_treeCtrl->DeleteAllItems();
+
+    // add new root item
+    clRemoteDirCtrlItemData* cd = new clRemoteDirCtrlItemData(remotePath);
+    cd->SetFolder();
+
+    wxTreeItemId root = m_treeCtrl->AddRoot(
+        remotePath, clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
+    m_treeCtrl->AppendItem(root, "<dummy>");
+    DoExpandItem(root);
+    return true;
+}
+
 #endif // USE_SFTP

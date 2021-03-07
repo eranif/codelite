@@ -95,6 +95,7 @@ protected:
     void DoOpenSession();
     void DoBuildTree(const wxString& initialFolder);
     void ManageBookmarks();
+    void DoChangeLocation(const wxString& path);
 
     bool GetAccountFromUser(SSHAccountInfo& account);
     //    SFTPSessionInfo& GetSession(bool createIfMissing);

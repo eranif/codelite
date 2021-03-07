@@ -8,12 +8,15 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
+#include "wx/debug.h"
+#include "wx/thread.h"
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
 #include <wx/utils.h>
 
 clSFTPManager::clSFTPManager()
 {
+    assert(wxThread::IsMain());
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
 
@@ -24,11 +27,12 @@ clSFTPManager::clSFTPManager()
 
 clSFTPManager::~clSFTPManager()
 {
-    EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
+    EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
+    Unbind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
+
     m_timer->Stop();
     wxDELETE(m_timer);
-    Bind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
 }
 
 clSFTPManager& clSFTPManager::Get()
@@ -39,7 +43,9 @@ clSFTPManager& clSFTPManager::Get()
 
 void clSFTPManager::Release()
 {
-    for(const auto& conn_info : m_connections) {
+    assert(wxThread::IsMain());
+    while(!m_connections.empty()) {
+        const auto& conn_info = *(m_connections.begin());
         DeleteConnection(conn_info.first, false);
     }
     m_connections.clear();
@@ -47,6 +53,7 @@ void clSFTPManager::Release()
 
 bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
 {
+    assert(wxThread::IsMain());
     wxBusyCursor bc;
     {
         auto iter = m_connections.find(account.GetAccountName());
@@ -90,6 +97,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
 
 IEditor* clSFTPManager::OpenFile(const wxString& path, const SSHAccountInfo& accountInfo)
 {
+    assert(wxThread::IsMain());
     wxBusyCursor bc;
     bool res = AddConnection(accountInfo);
     if(!res) {
@@ -100,6 +108,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const SSHAccountInfo& acc
 
 IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountName)
 {
+    assert(wxThread::IsMain());
     // if the file is already opened in the editor, return it
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
@@ -155,6 +164,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
 
 std::pair<SSHAccountInfo, clSFTP::Ptr_t> clSFTPManager::GetConnectionPair(const wxString& account) const
 {
+    assert(wxThread::IsMain());
     auto iter = m_connections.find(account);
     if(iter == m_connections.end()) {
         return { {}, clSFTP::Ptr_t(nullptr) };
@@ -164,6 +174,7 @@ std::pair<SSHAccountInfo, clSFTP::Ptr_t> clSFTPManager::GetConnectionPair(const 
 
 clSFTP::Ptr_t clSFTPManager::GetConnectionPtr(const wxString& account) const
 {
+    assert(wxThread::IsMain());
     auto iter = m_connections.find(account);
     if(iter == m_connections.end()) {
         return clSFTP::Ptr_t(nullptr);
@@ -173,6 +184,7 @@ clSFTP::Ptr_t clSFTPManager::GetConnectionPtr(const wxString& account) const
 
 SFTPClientData* clSFTPManager::GetSFTPClientData(IEditor* editor)
 {
+    assert(wxThread::IsMain());
     auto clientData = editor->GetClientData("sftp");
     if(!clientData) {
         return nullptr;
@@ -197,6 +209,7 @@ void clSFTPManager::OnFileSaved(clCommandEvent& event)
 
 bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName)
 {
+    assert(wxThread::IsMain());
     wxBusyCursor bc;
     auto conn_info = GetConnectionPair(accountName);
     CHECK_PTR_RET_FALSE(conn_info.second);
@@ -220,6 +233,7 @@ bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePa
 
 bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUser)
 {
+    assert(wxThread::IsMain());
     auto iter = m_connections.find(accountName);
     if(iter == m_connections.end()) {
         // nothing to be done here
@@ -251,6 +265,7 @@ bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUse
 
 SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo) const
 {
+    assert(wxThread::IsMain());
     wxBusyCursor bc;
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
     if(!conn) {
@@ -271,6 +286,7 @@ SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccount
 
 bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountInfo) const
 {
+    assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
     if(!conn) {
         return false;
@@ -294,6 +310,7 @@ void clSFTPManager::OnGoingDown(clCommandEvent& event)
 
 bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accountInfo) const
 {
+    assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
     CHECK_PTR_RET_FALSE(conn);
 
@@ -308,6 +325,7 @@ bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accoun
 
 bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, const SSHAccountInfo& accountInfo) const
 {
+    assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
     CHECK_PTR_RET_FALSE(conn);
 
@@ -322,6 +340,7 @@ bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, con
 
 bool clSFTPManager::DeleteDir(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
 {
+    assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
     CHECK_PTR_RET_FALSE(conn);
 
@@ -336,6 +355,7 @@ bool clSFTPManager::DeleteDir(const wxString& fullpath, const SSHAccountInfo& ac
 
 bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
 {
+    assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
     CHECK_PTR_RET_FALSE(conn);
 
@@ -350,6 +370,7 @@ bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& a
 
 void clSFTPManager::OnTimer(wxTimerEvent& event)
 {
+    assert(wxThread::IsMain());
     event.Skip();
     if(m_connections.empty()) {
         return;
@@ -361,6 +382,35 @@ void clSFTPManager::OnTimer(wxTimerEvent& event)
         } catch(clException& e) {
             clWARNING() << "failed to send keep-alive message for account:" << vt.first << "." << e.What() << endl;
         }
+    }
+}
+
+bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
+{
+    assert(wxThread::IsMain());
+    auto conn = GetConnectionPtr(accountInfo.GetAccountName());
+    CHECK_PTR_RET_FALSE(conn);
+
+    try {
+        auto attr = conn->Stat(fullpath);
+        return attr->IsFile();
+    } catch(clException& e) {
+        wxUnusedVar(e);
+        return false;
+    }
+}
+
+bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
+{
+    assert(wxThread::IsMain());
+    auto conn = GetConnectionPtr(accountInfo.GetAccountName());
+    CHECK_PTR_RET_FALSE(conn);
+    try {
+        auto attr = conn->Stat(fullpath);
+        return attr->IsFolder();
+    } catch(clException& e) {
+        wxUnusedVar(e);
+        return false;
     }
 }
 

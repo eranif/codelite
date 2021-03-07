@@ -541,4 +541,18 @@ void clSFTP::SendKeepAlive()
     m_ssh->SendIgnore();
 }
 
+SFTPAttribute::List_t clSFTP::Chdir(const wxString& remotePath)
+{
+    if(!m_sftp) {
+        throw clException("SFTP is not initialized");
+    }
+
+    // Check that the directory exists
+    auto attr = Stat(remotePath);
+    if(!attr->IsFolder()) {
+        throw clException("Chdir failed. " + remotePath + " is not a directory");
+    }
+    return List(remotePath, SFTP_BROWSE_FILES | SFTP_BROWSE_FOLDERS);
+}
+
 #endif // USE_SFTP

@@ -92,6 +92,14 @@ public:
      * @brief unlink a file
      */
     bool UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+    /**
+     * @brief check if a file with a given path exists
+     */
+    bool IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+    /**
+     * @brief check if a directory with a given path exists
+     */
+    bool IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
 };
 #endif
 #endif // CLSFTPMANAGER_HPP

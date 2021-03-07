@@ -14,6 +14,8 @@
 #include <wx/sizer.h>
 #include <wx/xrc/xmlres.h>
 
+wxDEFINE_EVENT(wxEVT_REMOTE_DIR_CONTEXT_MENU_SHOWING, clContextMenuEvent);
+
 clRemoteDirCtrl::clRemoteDirCtrl(wxWindow* parent)
     : wxPanel(parent)
 {
@@ -52,21 +54,22 @@ clRemoteDirCtrl::~clRemoteDirCtrl()
     m_treeCtrl->Unbind(wxEVT_TREE_ITEM_ACTIVATED, &clRemoteDirCtrl::OnItemActivated, this);
 }
 
-clRemoteDirCtrlItemData* clRemoteDirCtrl::GetItemData(const wxTreeItemId& item)
+clRemoteDirCtrlItemData* clRemoteDirCtrl::GetItemData(const wxTreeItemId& item) const
 {
     CHECK_ITEM_RET_NULL(item);
     clRemoteDirCtrlItemData* cd = dynamic_cast<clRemoteDirCtrlItemData*>(m_treeCtrl->GetItemData(item));
     return cd;
 }
 
-void clRemoteDirCtrl::OnItemActivated(wxTreeEvent& event) {}
+void clRemoteDirCtrl::OnItemActivated(wxTreeEvent& event) { DoOpenItem(event.GetItem(), kOpenInCodeLite); }
 
 void clRemoteDirCtrl::OnItemExpanding(wxTreeEvent& event) { DoExpandItem(event.GetItem()); }
 
-void clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
+bool clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
 {
+    Close(false); // close any view previously opened, do not prompt the user
     if(!clSFTPManager::Get().AddConnection(account)) {
-        return;
+        return false;
     }
     m_account = account;
     m_treeCtrl->DeleteAllItems();
@@ -79,13 +82,17 @@ void clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
         path, clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder), wxNOT_FOUND, cd);
     m_treeCtrl->AppendItem(root, "<dummy>");
     DoExpandItem(root);
+    return true;
 }
 
-void clRemoteDirCtrl::Close()
+bool clRemoteDirCtrl::Close(bool promptUser)
 {
-    clSFTPManager::Get().DeleteConnection(m_account.GetAccountName());
+    if(!clSFTPManager::Get().DeleteConnection(m_account.GetAccountName(), promptUser)) {
+        return false;
+    }
     m_account = {};
     m_treeCtrl->DeleteAllItems();
+    return true;
 }
 
 void clRemoteDirCtrl::DoExpandItem(const wxTreeItemId& item)
@@ -179,9 +186,8 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
 
     // Just incase, make sure the item is selected
     m_treeCtrl->SelectItem(item);
-    wxMenuItem* menuItem = nullptr;
     if(!cd->IsFolder()) {
-        item = menu.Append(wxID_ANY, _("Open"));
+        menu.Append(wxID_OPEN, _("Open"));
         menu.Bind(
             wxEVT_MENU,
             [this, item, items](wxCommandEvent& event) {
@@ -191,9 +197,9 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
                     CallAfter(&clRemoteDirCtrl::DoOpenItem, i, kOpenInCodeLite);
                 }
             },
-            menuItem->GetId());
+            wxID_OPEN);
         menu.AppendSeparator();
-        item = menu.Append(wxID_ANY, _("Download and Open Containing Folder..."));
+        menu.Append(wxID_DOWN, _("Download and Open Containing Folder..."));
         menu.Bind(
             wxEVT_MENU,
             [this, item](wxCommandEvent& event) {
@@ -207,11 +213,11 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
                     CallAfter(&clRemoteDirCtrl::DoOpenItem, i, kOpenInExplorer);
                 }
             },
-            menuItem->GetId());
+            wxID_DOWN);
         menu.AppendSeparator();
 
     } else {
-        menuItem = menu.Append(wxID_ANY, _("Create a new directory..."));
+        menu.Append(XRCID("new-dir"), _("Create a new directory..."));
         menu.Bind(
             wxEVT_MENU,
             [this, item](wxCommandEvent& event) {
@@ -222,8 +228,8 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
                 }
                 CallAfter(&clRemoteDirCtrl::DoCreateFolder, item, folderName);
             },
-            menuItem->GetId());
-        menuItem = menu.Append(wxID_ANY, _("Create a new file..."));
+            XRCID("new-dir"));
+        menu.Append(XRCID("new-new-file"), _("Create a new file..."));
         menu.Bind(
             wxEVT_MENU,
             [this, item](wxCommandEvent& event) {
@@ -234,8 +240,8 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
                 }
                 CallAfter(&clRemoteDirCtrl::DoCreateFile, item, fileName);
             },
-            menuItem->GetId());
-        menuItem = menu.Append(wxID_ANY, _("Refresh"));
+            XRCID("new-new-file"));
+        menu.Append(wxID_REFRESH, _("Refresh"));
         menu.Bind(
             wxEVT_MENU,
             [this, item](wxCommandEvent& event) {
@@ -247,35 +253,33 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
                 m_treeCtrl->AppendItem(item, "<dummy>");
                 m_treeCtrl->Collapse(item);
             },
-            menuItem->GetId());
-        menu.AppendSeparator();
-        menuItem = menu.Append(wxID_ANY, _("Run 'grep' in this folder"));
-        menu.Bind(
-            wxEVT_MENU,
-            [this, item](wxCommandEvent& event) {
-                event.Skip();
-                CallAfter(&clRemoteDirCtrl::DoGrepFolder, item);
-            },
-            menuItem->GetId());
+            wxID_REFRESH);
         menu.AppendSeparator();
     }
-    menuItem = menu.Append(wxID_ANY, _("Rename"));
+    menu.Append(XRCID("rename_item"), _("Rename"));
     menu.Bind(
         wxEVT_MENU,
         [this, item](wxCommandEvent& event) {
             event.Skip();
             CallAfter(&clRemoteDirCtrl::DoRename, item);
         },
-        menuItem->GetId());
+        XRCID("rename_item"));
     menu.AppendSeparator();
-    menuItem = menu.Append(wxID_ANY, _("Delete"));
+    menu.Append(XRCID("delete-file"), _("Delete"));
     menu.Bind(
         wxEVT_MENU,
         [this, item](wxCommandEvent& event) {
             event.Skip();
             CallAfter(&clRemoteDirCtrl::DoDelete, item);
         },
-        menuItem->GetId());
+        XRCID("delete-file"));
+
+    // let others know that we are about to show the context menu for this control
+    clContextMenuEvent menuEvent(wxEVT_REMOTE_DIR_CONTEXT_MENU_SHOWING);
+    menuEvent.SetMenu(&menu);
+    menuEvent.SetEventObject(this);
+    m_treeCtrl->GetEventHandler()->ProcessEvent(menuEvent);
+
     m_treeCtrl->PopupMenu(&menu);
 }
 
@@ -342,6 +346,10 @@ void clRemoteDirCtrl::DoCreateFile(const wxTreeItemId& item, const wxString& nam
     CHECK_PTR_RET(cd);
     CHECK_COND_RET(cd->IsFolder());
 
+    if(!cd->IsInitialized()) {
+        // make sure that the folder is expanded
+        DoExpandItem(item);
+    }
     wxString fullpath;
     fullpath << cd->GetFullPath() << "/" << name;
     if(!clSFTPManager::Get().NewFile(fullpath, m_account)) {
@@ -358,19 +366,97 @@ void clRemoteDirCtrl::DoCreateFile(const wxTreeItemId& item, const wxString& nam
     CallAfter(&clRemoteDirCtrl::DoOpenItem, childItem, kOpenInCodeLite);
 }
 
-void clRemoteDirCtrl::DoGrepFolder(const wxTreeItemId& item)
-{
-    // TODO: implement this
-}
-
 void clRemoteDirCtrl::DoRename(const wxTreeItemId& item)
 {
-    // TODO: implement this
+    clRemoteDirCtrlItemData* cd = GetItemData(item);
+    if(!cd) {
+        return;
+    }
+
+    wxString new_name = ::clGetTextFromUser(_("Renaming ") + cd->GetFullName(), _("New name:"), cd->GetFullName());
+    if(new_name.IsEmpty())
+        return;
+
+    wxString old_path = cd->GetFullPath();
+    wxString oldName = cd->GetFullName(); // in case the rename will fail
+    cd->SetFullName(new_name);
+    if(!clSFTPManager::Get().Rename(old_path, cd->GetFullPath(), m_account)) {
+        cd->SetFullName(oldName); // restore the old name
+        return;
+    }
+
+    // update the text
+    m_treeCtrl->SetItemText(item, new_name);
+    if(cd->IsFolder()) {
+        // if it's a folder, remove all its children and mark it as non-initialised
+        m_treeCtrl->DeleteChildren(item);
+        cd->SetInitialized(false);
+        m_treeCtrl->AppendItem(item, "<dummy>");
+        m_treeCtrl->Collapse(item);
+    }
 }
 
 void clRemoteDirCtrl::DoDelete(const wxTreeItemId& item)
 {
-    // TODO: implement this
+    wxArrayTreeItemIds items;
+    m_treeCtrl->GetSelections(items);
+    if(items.empty())
+        return;
+
+    wxString message;
+    message << _("Are you sure you want to delete the selected items?");
+    if(::wxMessageBox(message, "Confirm", wxYES_NO | wxCANCEL | wxICON_QUESTION) != wxYES) {
+        return;
+    }
+
+    for(const auto& item : items) {
+        clRemoteDirCtrlItemData* cd = GetItemData(item);
+        bool success = false;
+        if(cd->IsFolder()) {
+            success = clSFTPManager::Get().DeleteDir(cd->GetFullPath(), m_account);
+
+        } else {
+            success = clSFTPManager::Get().UnlinkFile(cd->GetFullPath(), m_account);
+        }
+        // Remove the selection
+        if(success) {
+            m_treeCtrl->Delete(item);
+        }
+    }
+}
+
+bool clRemoteDirCtrl::IsConnected() const { return !m_treeCtrl->IsEmpty() && !m_account.GetAccountName().IsEmpty(); }
+
+wxString clRemoteDirCtrl::GetSelectedFolder() const
+{
+    auto selections = GetSelections();
+    if(selections.empty()) {
+        return wxEmptyString;
+    }
+
+    auto cd = GetItemData(selections[0]);
+    CHECK_COND_RET_EMPTY_STRING(cd);
+    CHECK_COND_RET_EMPTY_STRING(cd->IsFolder());
+    return cd->GetFullPath();
+}
+
+size_t clRemoteDirCtrl::GetSelectedFolders(wxArrayString& paths) const
+{
+    auto selections = GetSelections();
+    if(selections.empty()) {
+        paths.clear();
+        return 0;
+    }
+
+    paths.reserve(selections.size());
+    for(const auto& item : selections) {
+        auto cd = GetItemData(item);
+        if(!cd || !cd->IsFolder()) {
+            continue;
+        }
+        paths.Add(cd->GetFullPath());
+    }
+    return paths.size();
 }
 
 #endif // USE_SFTP

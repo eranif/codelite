@@ -32,19 +32,8 @@ clSFTPManager& clSFTPManager::Get()
 
 void clSFTPManager::Release()
 {
-    IEditor::List_t editors;
-    clGetManager()->GetAllEditors(editors);
-    for(auto editor : editors) {
-        auto cd = GetSFTPClientData(editor);
-        if(cd && m_connections.count(cd->GetAccountName())) {
-            clGetManager()->CloseEditor(editor, false);
-        }
-    }
-
     for(const auto& conn_info : m_connections) {
-        clSFTPEvent event(wxEVT_SFTP_SESSION_CLOSED);
-        event.SetAccount(conn_info.first);
-        EventNotifier::Get()->AddPendingEvent(event);
+        DeleteConnection(conn_info.first, false);
     }
     m_connections.clear();
 }
@@ -222,14 +211,35 @@ bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePa
     return true;
 }
 
-void clSFTPManager::DeleteConnection(const wxString& accountName)
+bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUser)
 {
     auto iter = m_connections.find(accountName);
     if(iter == m_connections.end()) {
         // nothing to be done here
-        return;
+        return false;
     }
+
+    // close all editors owned by this account
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    for(auto editor : editors) {
+        auto cd = GetSFTPClientData(editor);
+        if(cd && (cd->GetAccountName() == accountName)) {
+            if(!clGetManager()->CloseEditor(editor, promptUser)) {
+                // user cancelled
+                return false;
+            }
+        }
+    }
+
+    // notify that a session was closed
+    clSFTPEvent event(wxEVT_SFTP_SESSION_CLOSED);
+    event.SetAccount(accountName);
+    EventNotifier::Get()->AddPendingEvent(event);
+
+    // and finally remove the connection
     m_connections.erase(iter);
+    return true;
 }
 
 SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo) const
@@ -259,9 +269,11 @@ bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountI
         return false;
     }
     try {
-        conn->CreateRemoteFile(path, wxEmptyString);
+        conn->CreateEmptyFile(path);
     } catch(clException& e) {
-        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        ::wxMessageBox(wxString() << _("Failed to create file: ") << path << "\n"
+                                  << e.What(),
+                       "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
         return false;
     }
     return true;
@@ -276,11 +288,52 @@ void clSFTPManager::OnGoingDown(clCommandEvent& event)
 bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accountInfo) const
 {
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
-    if(!conn) {
-        return false;
-    }
+    CHECK_PTR_RET_FALSE(conn);
+
     try {
         conn->CreateDir(path);
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        return false;
+    }
+    return true;
+}
+
+bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, const SSHAccountInfo& accountInfo) const
+{
+    auto conn = GetConnectionPtr(accountInfo.GetAccountName());
+    CHECK_PTR_RET_FALSE(conn);
+
+    try {
+        conn->Rename(oldpath, newpath);
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        return false;
+    }
+    return true;
+}
+
+bool clSFTPManager::DeleteDir(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
+{
+    auto conn = GetConnectionPtr(accountInfo.GetAccountName());
+    CHECK_PTR_RET_FALSE(conn);
+
+    try {
+        conn->RemoveDir(fullpath);
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        return false;
+    }
+    return true;
+}
+
+bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
+{
+    auto conn = GetConnectionPtr(accountInfo.GetAccountName());
+    CHECK_PTR_RET_FALSE(conn);
+
+    try {
+        conn->UnlinkFile(fullpath);
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
         return false;

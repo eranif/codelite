@@ -32,9 +32,9 @@
 #include "cl_sftp_attribute.h"
 #include "cl_ssh.h"
 #include "codelite_exports.h"
+#include "ssh_account_info.h"
 #include <wx/buffer.h>
 #include <wx/filename.h>
-#include "ssh_account_info.h"
 
 // We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
 struct sftp_session_struct;
@@ -54,6 +54,9 @@ public:
         SFTP_BROWSE_FILES = 0x00000001,
         SFTP_BROWSE_FOLDERS = 0x00000002,
     };
+
+protected:
+    wxString GetErrorString() const;
 
 public:
     clSFTP(clSSH::Ptr_t ssh);
@@ -101,6 +104,11 @@ public:
      * @brief write the content of 'fileContent' into the remote file represented by remotePath
      */
     void Write(const wxMemoryBuffer& fileContent, const wxString& remotePath);
+
+    /**
+     * @brief create an empty remote file
+     */
+    void CreateEmptyFile(const wxString& remotePath);
 
     /**
      * @brief read remote file and return its content

@@ -29,6 +29,7 @@
 #include "SFTPSessionInfo.h"
 #include "UI.h"
 #include "bitmap_loader.h"
+#include "clRemoteDirCtrl.hpp"
 #include "clSSHChannel.hpp"
 #include "cl_command_event.h"
 #include "cl_sftp.h"
@@ -40,13 +41,12 @@
 class SFTP;
 class SFTPTreeView : public SFTPTreeViewBase
 {
-    clSFTP::Ptr_t m_sftp;
-    clSSHChannel::Ptr_t m_channel;
     SSHAccountInfo m_account;
     SFTP* m_plugin;
     wxString m_commandOutput;
     SFTPSessionInfoList m_sessions;
     wxTimer* m_timer = nullptr;
+    clRemoteDirCtrl* m_view = nullptr;
 
 public:
     enum {
@@ -58,40 +58,26 @@ public:
 public:
     SFTPTreeView(wxWindow* parent, SFTP* plugin);
     virtual ~SFTPTreeView();
-    bool IsConnected() const { return m_sftp && m_sftp->IsConnected(); }
     const SSHAccountInfo& GetAccount() const { return m_account; }
 
 protected:
-    virtual void OnSftpSettings(wxCommandEvent& event);
-    virtual void OnOpenTerminal(wxCommandEvent& event);
-    virtual void OnOpenTerminalMenu(wxCommandEvent& event);
-    virtual void OnOpenTerminalUI(wxUpdateUIEvent& event);
-    virtual void OnConnection(wxCommandEvent& event);
-    virtual void OnSelectionChanged(wxTreeEvent& event);
-    virtual void OnChoiceAccount(wxCommandEvent& event);
-    virtual void OnChoiceAccountUI(wxUpdateUIEvent& event);
-    virtual void OnGotoLocation(wxCommandEvent& event);
-    virtual void OnGotoLocationUI(wxUpdateUIEvent& event);
-    virtual void OnAddBookmark(wxCommandEvent& event);
-    virtual void OnAddBookmarkMenu(wxCommandEvent& event);
-    virtual void OnAddBookmarkUI(wxUpdateUIEvent& event);
-    virtual void OnContextMenu(wxContextMenuEvent& event);
-    virtual void OnDisconnect(wxCommandEvent& event);
-    virtual void OnDisconnectUI(wxUpdateUIEvent& event);
-    virtual void OnConnect(wxCommandEvent& event);
-    virtual void OnMenuNew(wxCommandEvent& event);
-    virtual void OnMenuOpen(wxCommandEvent& event);
-    virtual void OnMenuDelete(wxCommandEvent& event);
-    virtual void OnMenuRename(wxCommandEvent& event);
-    virtual void OnMenuNewFile(wxCommandEvent& event);
-    virtual void OnMenuOpenWithDefaultApplication(wxCommandEvent& event);
-    virtual void OnMenuOpenContainingFolder(wxCommandEvent& event);
-    virtual void OnMenuRefreshFolder(wxCommandEvent& event);
-    virtual void OnExecuteCommand(wxCommandEvent& event);
-    void OnFileDropped(clCommandEvent& event);
-    void OnEditorClosing(wxCommandEvent& evt);
-    void OnRemoteFind(wxCommandEvent& event);
+    void OnSftpSettings(wxCommandEvent& event);
+    void OnOpenTerminal(wxCommandEvent& event);
+    void OnOpenTerminalMenu(wxCommandEvent& event);
+    void OnOpenTerminalUI(wxUpdateUIEvent& event);
+    void OnConnection(wxCommandEvent& event);
+    void OnChoiceAccount(wxCommandEvent& event);
+    void OnChoiceAccountUI(wxUpdateUIEvent& event);
+    void OnGotoLocation(wxCommandEvent& event);
+    void OnGotoLocationUI(wxUpdateUIEvent& event);
+    void OnAddBookmark(wxCommandEvent& event);
+    void OnAddBookmarkMenu(wxCommandEvent& event);
+    void OnAddBookmarkUI(wxUpdateUIEvent& event);
+    void OnDisconnect(wxCommandEvent& event);
+    void OnDisconnectUI(wxUpdateUIEvent& event);
+    void OnConnect(wxCommandEvent& event);
     void OnKeepAliveTimer(wxTimerEvent& event);
+
     // Edit events
     void OnCopy(wxCommandEvent& event);
     void OnCut(wxCommandEvent& event);
@@ -107,29 +93,14 @@ protected:
 
     void DoCloseSession();
     void DoOpenSession();
-    bool DoExpandItem(const wxTreeItemId& item);
     void DoBuildTree(const wxString& initialFolder);
     void ManageBookmarks();
-    /**
-     * @brief open remote file path
-     * @param path the remote file path
-     */
-    void DoOpenFile(const wxString& path);
 
-    wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
-    wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);
-
-    clRemoteDirCtrlItemData* GetItemData(const wxTreeItemId& item);
-    clRemoteDirCtrlItemData::Vec_t GetSelectionsItemData();
-    bool DoOpenFile(const wxTreeItemId& item);
-    void DoDeleteColumn(int colIdx);
     bool GetAccountFromUser(SSHAccountInfo& account);
-    SFTPSessionInfo& GetSession(bool createIfMissing);
-    void DoLoadSession();
+    //    SFTPSessionInfo& GetSession(bool createIfMissing);
+    //    void DoLoadSession();
 
 protected:
-    virtual void OnItemActivated(wxTreeEvent& event);
-    virtual void OnItemExpanding(wxTreeEvent& event);
     virtual void OnOpenAccountManager(wxCommandEvent& event);
 };
 #endif // SFTPTREEVIEW_H

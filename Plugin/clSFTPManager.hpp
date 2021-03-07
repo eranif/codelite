@@ -54,16 +54,18 @@ public:
 
     /**
      * @brief delete a connection
+     * if promptUser is set to true and any un-saved files belonged to the connection
+     * are opened, the user is prompted to save them
      */
-    void DeleteConnection(const wxString& accountName);
-    
+    bool DeleteConnection(const wxString& accountName, bool promptUser = false);
+
     /**
      * @brief list entries in a given folder for a given account
      * @param path
-     * @return 
+     * @return
      */
     SFTPAttribute::List_t List(const wxString& path, const SSHAccountInfo& accountInfo) const;
-    
+
     /**
      * @brief create new file with a given path
      */
@@ -72,6 +74,21 @@ public:
      * @brief create a new folder with a given path
      */
     bool NewFolder(const wxString& path, const SSHAccountInfo& accountInfo) const;
+
+    /**
+     * @brief rename a file/directory
+     * @param oldpath
+     * @param newpath
+     */
+    bool Rename(const wxString& oldpath, const wxString& newpath, const SSHAccountInfo& accountInfo) const;
+    /**
+     * @brief delere a directory
+     */
+    bool DeleteDir(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+    /**
+     * @brief unlink a file
+     */
+    bool UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
 };
 #endif
 #endif // CLSFTPMANAGER_HPP

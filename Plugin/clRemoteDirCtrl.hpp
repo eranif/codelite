@@ -28,13 +28,12 @@ protected:
     void OnContextMenu(wxContextMenuEvent& event);
 
 protected:
-    clRemoteDirCtrlItemData* GetItemData(const wxTreeItemId& item);
+    clRemoteDirCtrlItemData* GetItemData(const wxTreeItemId& item) const;
     void DoExpandItem(const wxTreeItemId& item);
     wxArrayTreeItemIds GetSelections() const;
     void DoOpenItem(const wxTreeItemId& item, eDownloadAction action);
     void DoCreateFolder(const wxTreeItemId& item, const wxString& name);
     void DoCreateFile(const wxTreeItemId& item, const wxString& name);
-    void DoGrepFolder(const wxTreeItemId& item);
     void DoRename(const wxTreeItemId& item);
     void DoDelete(const wxTreeItemId& item);
 
@@ -47,12 +46,29 @@ public:
     /**
      * @brief Open the tree view for a given path + ssh
      */
-    void Open(const wxString& path, const SSHAccountInfo& account);
+    bool Open(const wxString& path, const SSHAccountInfo& account);
     /**
      * @brief close the view and free all resources
      */
-    void Close();
+    bool Close(bool promptUser);
+
+    /**
+     * @brief return true if the tree is "connected" to an account
+     * @return
+     */
+    bool IsConnected() const;
+    
+    /**
+     * @brief return the selected path
+     */
+    wxString GetSelectedFolder() const;
+    
+    /**
+     * @brief return the selected folders
+     */
+    size_t GetSelectedFolders(wxArrayString& paths) const;
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_REMOTE_DIR_CONTEXT_MENU_SHOWING, clContextMenuEvent);
 #endif
 #endif // CLREMOTEDIRCTRL_HPP

@@ -179,7 +179,7 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
     sftp_close(file);
 
     // Unlink the original file if it exists
-    SFTPAttribute::Ptr_t pattr(new SFTPAttribute(sftp_stat(m_sftp, remotePath.mb_str(wxConvISO8859_1).data())));
+    SFTPAttribute::Ptr_t pattr(new SFTPAttribute(sftp_stat(m_sftp, remotePath.mb_str(wxConvUTF8).data())));
 
     if(pattr->IsOk() && sftp_unlink(m_sftp, remotePath.mb_str(wxConvUTF8).data()) < 0) {
         throw clException(wxString() << _("Failed to unlink file: ") << remotePath << ". "
@@ -314,7 +314,7 @@ void clSFTP::CreateDir(const wxString& dirname)
     }
 
     int rc;
-    rc = sftp_mkdir(m_sftp, dirname.mb_str(wxConvISO8859_1).data(), S_IRWXU);
+    rc = sftp_mkdir(m_sftp, dirname.mb_str(wxConvUTF8).data(), S_IRWXU);
 
     if(rc != SSH_OK) {
         throw clException(wxString() << _("Failed to create directory: ") << dirname << ". "
@@ -330,7 +330,7 @@ void clSFTP::Rename(const wxString& oldpath, const wxString& newpath)
     }
 
     int rc;
-    rc = sftp_rename(m_sftp, oldpath.mb_str(wxConvISO8859_1).data(), newpath.mb_str(wxConvISO8859_1).data());
+    rc = sftp_rename(m_sftp, oldpath.mb_str(wxConvUTF8).data(), newpath.mb_str(wxConvUTF8).data());
 
     if(rc != SSH_OK) {
         throw clException(wxString() << _("Failed to rename path. ") << ssh_get_error(m_ssh->GetSession()),
@@ -345,12 +345,10 @@ void clSFTP::RemoveDir(const wxString& dirname)
     }
 
     int rc;
-    rc = sftp_rmdir(m_sftp, dirname.mb_str(wxConvISO8859_1).data());
+    rc = sftp_rmdir(m_sftp, dirname.mb_str(wxConvUTF8).data());
 
     if(rc != SSH_OK) {
-        throw clException(wxString() << _("Failed to remove directory: ") << dirname << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(wxString() << _("Failed to remove directory: ") << dirname << "\n" << GetErrorString());
     }
 }
 
@@ -361,7 +359,7 @@ void clSFTP::UnlinkFile(const wxString& path)
     }
 
     int rc;
-    rc = sftp_unlink(m_sftp, path.mb_str(wxConvISO8859_1).data());
+    rc = sftp_unlink(m_sftp, path.mb_str(wxConvUTF8).data());
 
     if(rc != SSH_OK) {
         throw clException(wxString() << _("Failed to unlink path: ") << path << ". "
@@ -376,7 +374,7 @@ SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path)
         throw clException("SFTP is not initialized");
     }
 
-    sftp_attributes attr = sftp_stat(m_sftp, path.mb_str(wxConvISO8859_1).data());
+    sftp_attributes attr = sftp_stat(m_sftp, path.mb_str(wxConvUTF8).data());
     if(!attr) {
         throw clException(wxString() << _("Could not stat: ") << path << ". " << ssh_get_error(m_ssh->GetSession()),
                           sftp_get_error(m_sftp));
@@ -384,7 +382,7 @@ SFTPAttribute::Ptr_t clSFTP::Stat(const wxString& path)
     wxString target;
     if(attr->type == SSH_FILEXFER_TYPE_SYMLINK) {
         // this is a symlink file, read the symlink info
-        const char* ctarget = sftp_readlink(m_sftp, path.mb_str(wxConvISO8859_1).data());
+        const char* ctarget = sftp_readlink(m_sftp, path.mb_str(wxConvUTF8).data());
         if(!ctarget) {
             throw clException(wxString() << _("Failed to read symlink target. ") << ssh_get_error(m_ssh->GetSession()));
         }
@@ -402,6 +400,13 @@ void clSFTP::CreateRemoteFile(const wxString& remoteFullPath, const wxString& co
     // Create the path to the file
     Mkpath(wxFileName(remoteFullPath).GetPath());
     Write(content, remoteFullPath);
+}
+
+void clSFTP::CreateEmptyFile(const wxString& remotePath)
+{
+    Mkpath(wxFileName(remotePath).GetPath());
+    wxMemoryBuffer mb;
+    Write(mb, remotePath);
 }
 
 void clSFTP::Mkpath(const wxString& remoteDirFullpath)
@@ -423,7 +428,7 @@ void clSFTP::Mkpath(const wxString& remoteDirFullpath)
     curdir << "/";
     for(size_t i = 0; i < dirs.GetCount(); ++i) {
         curdir << dirs.Item(i);
-        sftp_attributes attr = sftp_stat(m_sftp, curdir.mb_str(wxConvISO8859_1).data());
+        sftp_attributes attr = sftp_stat(m_sftp, curdir.mb_str(wxConvUTF8).data());
         if(!attr) {
             // directory does not exists
             CreateDir(curdir);
@@ -485,6 +490,47 @@ wxFileName clSFTP::GetLocalFileName(const SSHAccountInfo& accountInfo, const wxS
         localFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     }
     return localFile.GetFullPath();
+}
+
+wxString clSFTP::GetErrorString() const
+{
+    if(!m_sftp) {
+        return wxEmptyString;
+    }
+
+    int errorCode = sftp_get_error(m_sftp);
+    switch(errorCode) {
+    case SSH_FX_OK:
+        return "no error";
+    case SSH_FX_EOF:
+        return "end-of-file encountered";
+    case SSH_FX_NO_SUCH_FILE:
+        return "file does not exist";
+    case SSH_FX_PERMISSION_DENIED:
+        return "permission denied";
+    case SSH_FX_FAILURE:
+        return "generic failure";
+    case SSH_FX_BAD_MESSAGE:
+        return "garbage received from server";
+    case SSH_FX_NO_CONNECTION:
+        return "no connection has been set up";
+    case SSH_FX_CONNECTION_LOST:
+        return "there was a connection, but we lost it";
+    case SSH_FX_OP_UNSUPPORTED:
+        return "operation not supported by libssh yet";
+    case SSH_FX_INVALID_HANDLE:
+        return "invalid file handle";
+    case SSH_FX_NO_SUCH_PATH:
+        return "no such file or directory path exists";
+    case SSH_FX_FILE_ALREADY_EXISTS:
+        return "an attempt to create an already existing file or directory has been made";
+    case SSH_FX_WRITE_PROTECT:
+        return "write-protected filesystem";
+    case SSH_FX_NO_MEDIA:
+        return "no media was in remote drive";
+    default:
+        return wxEmptyString;
+    }
 }
 
 #endif // USE_SFTP

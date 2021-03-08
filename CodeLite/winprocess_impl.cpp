@@ -163,9 +163,16 @@ public:
     void Write(const std::string& buffer) { m_outgoingQueue.Post(buffer); }
 };
 
+IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags,
+                                  const wxString& workingDirectory, IProcessCallback* cb)
+{
+    wxString cmd = wxJoin(args, ' ', 0);
+    return Execute(parent, cmd, flags, workingDirectory, cb);
+}
+
 /*static*/
-IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, wxString& errMsg, size_t flags,
-                                  const wxString& workingDir, IProcessCallback* cb)
+IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
+                                  IProcessCallback* cb)
 {
     SECURITY_ATTRIBUTES saAttr;
     BOOL fSuccess;

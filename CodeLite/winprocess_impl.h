@@ -30,9 +30,9 @@
 #include "asyncprocess.h"
 #include "codelite_exports.h"
 #include <Windows.h>
-#include <wx/string.h>
 #include <thread>
 #include <unordered_set>
+#include <wx/string.h>
 
 class ProcessReaderThread;
 class WinWriterThread;
@@ -53,9 +53,12 @@ public:
     virtual ~WinProcessImpl();
 
     // Create process asynchronously and return a process object
-    static IProcess* Execute(wxEvtHandler* parent, const wxString& cmd, wxString& errMsg,
-                             size_t flags = IProcessCreateDefault, const wxString& workingDir = wxEmptyString,
-                             IProcessCallback* cb = NULL);
+    static IProcess* Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags = IProcessCreateDefault,
+                             const wxString& workingDir = wxEmptyString, IProcessCallback* cb = NULL);
+
+    // Create process asynchronously and return a process object
+    static IProcess* Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags = IProcessCreateDefault,
+                             const wxString& workingDir = wxEmptyString, IProcessCallback* cb = NULL);
 
     /**
      * @brief read data from stdout and error
@@ -80,7 +83,7 @@ public:
     virtual void Terminate();
     virtual void Detach();
     virtual void Signal(wxSignal sig);
-    
+
 private:
     // Creating process related handles
     HANDLE hChildStdinRd, hChildStdinWr, hChildStdinWrDup, hChildStdoutRd, hChildStdoutWr, hChildStdoutRdDup,

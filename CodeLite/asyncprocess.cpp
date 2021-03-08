@@ -98,7 +98,11 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
     }
 
     wxString oneLiner = wxJoin(*p_args, ' ', 0);
+#ifdef __WXMSW__
+    oneLiner.Prepend("\"").Append("\"");
+#else
     oneLiner.Replace("\"", "\\\""); // escape any double quotes
+#endif
     a.Add(oneLiner);
     return a;
 }
@@ -140,8 +144,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
     clDEBUG() << "CreateAsyncProcess called with:" << c << endl;
 
 #ifdef __WXMSW__
-    wxString errMsg;
-    return WinProcessImpl::Execute(parent, c, errMsg, flags, workingDir);
+    return WinProcessImpl::Execute(parent, c, flags, workingDir);
 #else
     return UnixProcessImpl::Execute(parent, c, flags, workingDir);
 #endif
@@ -158,8 +161,7 @@ IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const
 {
     clEnvironment e(env);
 #ifdef __WXMSW__
-    wxString errMsg;
-    return WinProcessImpl::Execute(parent, cmd, errMsg, flags, workingDir, cb);
+    return WinProcessImpl::Execute(parent, cmd, flags, workingDir, cb);
 #else
     return UnixProcessImpl::Execute(parent, cmd, flags, workingDir, cb);
 #endif
@@ -169,8 +171,7 @@ IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& w
 {
     clEnvironment e(env);
 #ifdef __WXMSW__
-    wxString errMsg;
-    return WinProcessImpl::Execute(NULL, cmd, errMsg, flags | IProcessCreateSync, workingDir);
+    return WinProcessImpl::Execute(NULL, cmd, flags | IProcessCreateSync, workingDir);
 #else
     return UnixProcessImpl::Execute(NULL, cmd, flags | IProcessCreateSync, workingDir);
 #endif

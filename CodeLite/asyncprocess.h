@@ -35,6 +35,7 @@
 #include <wx/string.h>
 #include <wx/utils.h>
 
+using namespace std;
 typedef std::vector<std::pair<wxString, wxString>> clEnvList_t;
 enum IProcessCreateFlags {
     IProcessCreateDefault = (1 << 0),           // Default: create process with no console window
@@ -222,6 +223,16 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString
  * @brief same as above, but uses array of instead of a single string
  */
 WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args,
+                                            size_t flags = IProcessCreateDefault,
+                                            const wxString& workingDir = wxEmptyString,
+                                            const clEnvList_t* env = nullptr,
+                                            const wxString& sshAccountName = wxEmptyString);
+
+/**
+ * @brief a wrapper for the variant that accepts wxArrayString.
+ * This is because wxArrayString does not allow initializer list
+ */
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const vector<wxString>& args,
                                             size_t flags = IProcessCreateDefault,
                                             const wxString& workingDir = wxEmptyString,
                                             const clEnvList_t* env = nullptr,

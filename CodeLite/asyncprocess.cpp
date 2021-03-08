@@ -29,6 +29,7 @@ class IProcess;
 //#include "asyncprocess.h"
 #include "StringUtils.h"
 #include "asyncprocess.h"
+#include "clTempFile.hpp"
 #include "file_logger.h"
 #include "ssh_account_info.h"
 #include <wx/arrstr.h>
@@ -61,8 +62,13 @@ static wxArrayString __WrapInShell(const wxArrayString& args)
     return command;
 }
 
-static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& wd, const wxString& sshAccountName)
+static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& wd, const wxString& sshAccountName,
+                                     clTempFile& tmpfile)
 {
+#ifndef __WXMSW__
+    wxUnusedVar(tmpfile);
+#endif
+
     // we accept both SSHAccountInfo* & wxString* with the account name
     if(sshAccountName.empty()) {
         clERROR() << "CreateAsyncProcess: no ssh account name provided" << endl;
@@ -76,17 +82,22 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
         return args;
     }
 
-    a.Add("ssh");
-    a.Add(accountInfo.GetUsername() + "@" + accountInfo.GetHost());
-    a.Add("-p");
-    a.Add(wxString() << accountInfo.GetPort());
-    wxString sshEnv;
-    if(::wxGetEnv("SSH_OPTIONS", &sshEnv)) {
-        wxArrayString sshOptionsArr = StringUtils::BuildArgv(sshEnv);
-        a.insert(a.end(), sshOptionsArr.begin(), sshOptionsArr.end());
+    // determine the ssh client we have
+#if 1
+    bool is_putty = false;
+    wxString ssh_client = "ssh";
+#else
+    // TODO: putty does not allow us to capture the output..., so disable it for now
+    auto ssh_client = SSHAccountInfo::GetSSHClient();
+    if(ssh_client.empty()) {
+        ssh_client = "ssh";
     }
+    bool is_putty = ssh_client.Contains("putty");
+#endif
 
-    // add the command as a single string
+    //----------------------------------------------------------
+    // prepare the main command ("args") as a one liner string
+    //----------------------------------------------------------
     wxArrayString* p_args = const_cast<wxArrayString*>(&args);
     wxArrayString tmpargs;
     if(!wd.empty()) {
@@ -96,14 +107,49 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
         tmpargs.insert(tmpargs.end(), args.begin(), args.end());
         p_args = &tmpargs;
     }
-
     wxString oneLiner = wxJoin(*p_args, ' ', 0);
 #ifdef __WXMSW__
-    oneLiner.Prepend("\"").Append("\"");
+    if(!is_putty) {
+        oneLiner.Prepend("\"").Append("\"");
+    }
 #else
     oneLiner.Replace("\"", "\\\""); // escape any double quotes
 #endif
-    a.Add(oneLiner);
+
+    //----------------------------------------------------------
+    // build the executing command
+    //----------------------------------------------------------
+
+    // the following are common to both ssh / putty clients
+    a.Add(ssh_client);
+    a.Add(accountInfo.GetUsername() + "@" + accountInfo.GetHost());
+    a.Add(is_putty ? "-P" : "-p");
+    a.Add(wxString() << accountInfo.GetPort());
+
+    //----------------------------------------------------------
+    // we support extra args in the environment variable
+    // CL_SSH_OPTIONS
+    //----------------------------------------------------------
+    wxString sshEnv;
+    if(::wxGetEnv("CL_SSH_OPTIONS", &sshEnv)) {
+        wxArrayString sshOptionsArr = StringUtils::BuildArgv(sshEnv);
+        a.insert(a.end(), sshOptionsArr.begin(), sshOptionsArr.end());
+    }
+
+    if(is_putty) {
+        // putty supports password
+        if(!accountInfo.GetPassword().empty()) {
+            a.Add("-pw");
+            a.Add(accountInfo.GetPassword());
+        }
+        // when using putty, we need to prepare a command file
+        tmpfile.Write(oneLiner);
+        a.Add("-m");
+        a.Add(tmpfile.GetFullPath(true));
+        a.Add("-t");
+    } else {
+        a.Add(oneLiner);
+    }
     return a;
 }
 
@@ -123,6 +169,17 @@ static void __StripArgs(wxArrayString& args)
 #endif
 }
 
+IProcess* CreateAsyncProcess(wxEvtHandler* parent, const vector<wxString>& args, size_t flags,
+                             const wxString& workingDir, const clEnvList_t* env, const wxString& sshAccountName)
+{
+    wxArrayString wxargs;
+    wxargs.reserve(args.size());
+    for(const wxString& s : args) {
+        wxargs.Add(s);
+    }
+    return CreateAsyncProcess(parent, wxargs, flags, workingDir, env, sshAccountName);
+}
+
 IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, size_t flags, const wxString& workingDir,
                              const clEnvList_t* env, const wxString& sshAccountName)
 {
@@ -134,8 +191,10 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
         c = __WrapInShell(c);
     }
 
+    clTempFile tmpfile; // needed for putty clients
+    tmpfile.Persist();  // do not delete this file on destruct
     if(flags & IProcessCreateSSH) {
-        c = __AddSshCommand(c, workingDir, sshAccountName);
+        c = __AddSshCommand(c, workingDir, sshAccountName, tmpfile);
     }
 
     // needed on linux where fork does not require the extra quoting

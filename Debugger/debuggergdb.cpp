@@ -624,7 +624,20 @@ bool DbgGdb::Interrupt()
 {
     if(m_isSSHDebugging) {
         // send SIGINT to gdb
-        m_gdbProcess->Signal(wxSIGINT);
+        if(m_debuggeePid == wxNOT_FOUND) {
+            ::wxMessageBox(_("Can't interrupt debuggee process: I don't know its PID!"), wxT("CodeLite"));
+            return false;
+        }
+
+        // open ssh connection and send SIGINT to the debuggee PID
+        wxString output;
+        vector<wxString> command = { "kill", "-INT", to_string(m_debuggeePid) };
+        IProcess::Ptr_t proc(::CreateAsyncProcess(this, command,
+                                                  IProcessCreateDefault | IProcessCreateSSH | IProcessCreateSync,
+                                                  wxEmptyString, nullptr, m_sshAccount));
+        proc->WaitForTerminate(output);
+        clDEBUG() << "Sending SIGINT to debugee PID:" << m_debuggeePid << endl;
+        clDEBUG() << output << endl;
         return true;
     } else {
         if(m_debuggeePid > 0) {

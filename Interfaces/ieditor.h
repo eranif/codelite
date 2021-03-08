@@ -26,19 +26,20 @@
 #ifndef IEDITOR_H
 #define IEDITOR_H
 
-#include <wx/filename.h>
+#include "LSP/basic_types.h"
 #include "browse_record.h"
-#include "wx/string.h"
-#include <wx/colour.h>
-#include "entry.h"
-#include <vector>
 #include "cl_calltip.h"
+#include "entry.h"
+#include "optionsconfig.h"
+#include "wx/string.h"
 #include <list>
 #include <map>
-#include "optionsconfig.h"
-#include "LSP/basic_types.h"
 #include <string>
+#include <vector>
+#include <wx/colour.h>
+#include <wx/filename.h>
 
+class SFTPClientData;
 class wxStyledTextCtrl;
 
 class NavMgr;
@@ -106,7 +107,7 @@ public:
      * \brief return the current editor content
      */
     virtual wxString GetEditorText() = 0;
-    
+
     /**
      * @brief get editor text raw, in an efficient way
      */
@@ -347,12 +348,12 @@ public:
      * @return return true if a match was found, false otherwise
      */
     virtual bool FindAndSelect(const wxString& pattern, const wxString& what, int from_pos, NavMgr* navmgr) = 0;
-    
+
     /**
      * @brief select range
      */
     virtual bool SelectRange(const LSP::Range& range) = 0;
-    
+
     /**
      * @brief Similar to the above but returns void, and is implemented asynchronously
      */
@@ -496,7 +497,9 @@ public:
     wxClientData* GetClientData(const wxString& key) const
     {
         IEditor::ClientDataMap_t::const_iterator iter = m_data.find(key);
-        if(iter != m_data.end()) { return iter->second; }
+        if(iter != m_data.end()) {
+            return iter->second;
+        }
         return NULL;
     }
 
@@ -539,7 +542,23 @@ public:
      * @param bookmarksVector output, contains pairs of: LINE:SNIPPET
      * @return number of bookmarks found
      */
-    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString> >& bookmarksVector) = 0;
+    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString>>& bookmarksVector) = 0;
+
+    /**
+     * @brief incase this editor represents a remote file, return its remote path
+     */
+    virtual wxString GetRemotePath() const = 0;
+
+    /**
+     * @brief return true if this file represents a remote file
+     */
+    virtual bool IsRemoteFile() const = 0;
+
+    /**
+     * @brief return a pointer to the remote data
+     * @return remote file info, or null if this file is not a remote a file
+     */
+    virtual SFTPClientData* GetRemoteData() const = 0;
 };
 
 #endif // IEDITOR_H

@@ -5754,8 +5754,8 @@ void clMainFrame::OnDebugRunToCursor(wxCommandEvent& e)
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor && dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
         clDebuggerBreakpoint bp;
-        bp.Create(editor->GetFileName().GetFullPath(), editor->GetCurrentLine() + 1,
-                  ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
+        bp.Create(editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath(),
+                  editor->GetCurrentLine() + 1, ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
         bp.bp_type = BP_type_tempbreak;
         dbgr->Break(bp);
         dbgr->Continue();
@@ -5772,7 +5772,8 @@ void clMainFrame::OnDebugJumpToCursor(wxCommandEvent& e)
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor && dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-        dbgr->Jump(editor->GetFileName().GetFullPath(), editor->GetCurrentLine() + 1);
+        dbgr->Jump(editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath(),
+                   editor->GetCurrentLine() + 1);
     }
 }
 

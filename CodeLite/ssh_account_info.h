@@ -78,6 +78,11 @@ public:
      */
     static SSHAccountInfo LoadAccount(const wxString& accountName);
 
+    /**
+     * @brief return user defined SSH client
+     */
+    static wxString GetSSHClient();
+
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

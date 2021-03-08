@@ -163,10 +163,28 @@ public:
     void Write(const std::string& buffer) { m_outgoingQueue.Post(buffer); }
 };
 
+static wxString __JoinArray(const wxArrayString& args, size_t flags)
+{
+    wxUnusedVar(flags);
+    wxString command;
+    wxArrayString arr;
+    arr.reserve(args.size());
+    arr = args;
+    for(auto& arg : arr) {
+        if(arg.Contains(" ")) {
+            arg.Prepend("\"").Append("\"");
+        }
+        command << arg << " ";
+    }
+    command.Trim().Trim(false);
+    return command;
+}
+
 IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags,
                                   const wxString& workingDirectory, IProcessCallback* cb)
 {
-    wxString cmd = wxJoin(args, ' ', 0);
+    wxString cmd = __JoinArray(args, flags);
+    clDEBUG() << "Windows process starting:" << cmd << endl;
     return Execute(parent, cmd, flags, workingDirectory, cb);
 }
 

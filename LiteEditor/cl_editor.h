@@ -26,6 +26,7 @@
 #define LITEEDITOR_EDITOR_H
 
 #include "LSP/CompletionItem.h"
+#include "SFTPClientData.hpp"
 #include "bookmark_manager.h"
 #include "browse_record.h"
 #include "clEditorStateLocker.h"
@@ -977,6 +978,22 @@ public:
      * @brief update editor options based on the global + workspace settings
      */
     void UpdateOptions();
+
+    /**
+     * @brief incase this editor represents a remote file, return its remote path
+     */
+    wxString GetRemotePath() const override;
+
+    /**
+     * @brief return true if this file represents a remote file
+     */
+    bool IsRemoteFile() const override;
+
+    /**
+     * @brief return a pointer to the remote data
+     * @return remote file info, or null if this file is not a remote a file
+     */
+    SFTPClientData* GetRemoteData() const override;
 
 private:
     void UpdateLineNumberMarginWidth();

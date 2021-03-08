@@ -119,3 +119,15 @@ SSHAccountInfo SSHAccountInfo::LoadAccount(const wxString& accountName)
     }
     return {};
 }
+
+wxString SSHAccountInfo::GetSSHClient()
+{
+    wxFileName jsonfile(clStandardPaths::Get().GetUserDataDir(), "sftp-settings.conf");
+    jsonfile.AppendDir("config");
+
+    JSON root(jsonfile);
+    if(!root.isOk()) {
+        return wxEmptyString;
+    }
+    return root.toElement()["sftp-settings"]["sshClient"].toString();
+}

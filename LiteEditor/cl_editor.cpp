@@ -3705,8 +3705,8 @@ void clEditor::AddBreakpoint(int lineno /*= -1*/, const wxString& conditions /*=
     }
 
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(GetFileName().GetFullPath(), lineno, conditions,
-                                                                     is_temp, is_disabled)) {
+    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
+           IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -5977,6 +5977,25 @@ size_t clEditor::GetEditorTextRaw(std::string& text)
         text.append(cb.data());
     }
     return text.length();
+}
+
+wxString clEditor::GetRemotePath() const
+{
+    if(IsRemoteFile()) {
+        return GetRemoteData()->GetRemotePath();
+    }
+    return wxEmptyString;
+}
+
+bool clEditor::IsRemoteFile() const { return GetRemoteData() != nullptr; }
+
+SFTPClientData* clEditor::GetRemoteData() const
+{
+    auto cd = IEditor::GetClientData("sftp");
+    if(cd) {
+        return reinterpret_cast<SFTPClientData*>(cd);
+    }
+    return nullptr;
 }
 
 // ----------------------------------

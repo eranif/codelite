@@ -125,6 +125,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
+    <File Name="clTempFile.cpp"/>
+    <File Name="clTempFile.hpp"/>
     <File Name="CTags.cpp"/>
     <File Name="CTags.hpp"/>
     <File Name="BreakpointInfoArray.cpp"/>

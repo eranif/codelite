@@ -43,7 +43,21 @@ class IProcess;
 
 static wxArrayString __WrapInShell(const wxArrayString& args)
 {
-    wxString cmd = wxJoin(args, ' ', 0);
+    wxArrayString tmparr = args;
+#ifdef __WXMSW__
+    // Make sure that the first command is wrapped with "" if it contains spaces
+    if(!tmparr.empty()) {
+        clDEBUG1() << "==> __WrapInShell called for" << tmparr << endl;
+        clDEBUG1() << "tmparr[0] is:" << tmparr[0] << endl;
+        wxString& realCmd = tmparr[0];
+        if((!realCmd.StartsWith("\"")) && (realCmd.Contains(" "))) {
+            clDEBUG() << "==> Fixing" << tmparr << endl;
+            realCmd.Prepend("\"").Append("\"");
+        }
+    }
+#endif
+
+    wxString cmd = wxJoin(tmparr, ' ', 0);
     wxArrayString command;
 
 #ifdef __WXMSW__
@@ -83,10 +97,8 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
     }
 
     // determine the ssh client we have
-#if 1
-    bool is_putty = false;
     wxString ssh_client = "ssh";
-#else
+#if 0
     // TODO: putty does not allow us to capture the output..., so disable it for now
     auto ssh_client = SSHAccountInfo::GetSSHClient();
     if(ssh_client.empty()) {
@@ -109,9 +121,7 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
     }
     wxString oneLiner = wxJoin(*p_args, ' ', 0);
 #ifdef __WXMSW__
-    if(!is_putty) {
-        oneLiner.Prepend("\"").Append("\"");
-    }
+    oneLiner.Prepend("\"").Append("\"");
 #else
     oneLiner.Replace("\"", "\\\""); // escape any double quotes
 #endif
@@ -123,7 +133,7 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
     // the following are common to both ssh / putty clients
     a.Add(ssh_client);
     a.Add(accountInfo.GetUsername() + "@" + accountInfo.GetHost());
-    a.Add(is_putty ? "-P" : "-p");
+    a.Add("-p");
     a.Add(wxString() << accountInfo.GetPort());
 
     //----------------------------------------------------------
@@ -136,6 +146,7 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
         a.insert(a.end(), sshOptionsArr.begin(), sshOptionsArr.end());
     }
 
+#if 0
     if(is_putty) {
         // putty supports password
         if(!accountInfo.GetPassword().empty()) {
@@ -147,13 +158,13 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
         a.Add("-m");
         a.Add(tmpfile.GetFullPath(true));
         a.Add("-t");
-    } else {
-        a.Add(oneLiner);
     }
+#endif
+    a.Add(oneLiner);
     return a;
 }
 
-static void __StripArgs(wxArrayString& args)
+static void __FixArgs(wxArrayString& args)
 {
 #if defined(__WXOSX__) || defined(__WXGTK__)
     for(wxString& arg : args) {
@@ -198,7 +209,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
     }
 
     // needed on linux where fork does not require the extra quoting
-    __StripArgs(c);
+    __FixArgs(c);
 
     clDEBUG() << "CreateAsyncProcess called with:" << c << endl;
 

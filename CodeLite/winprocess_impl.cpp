@@ -166,7 +166,21 @@ public:
 static wxString __JoinArray(const wxArrayString& args, size_t flags)
 {
     wxString command;
-    if(flags & (IProcessCreateSSH | IProcessWrapInShell)) {
+    if(flags & IProcessWrapInShell) {
+        // CMD /C [command] ...
+        // Make sure that the first command is wrapped with "" if it contains spaces
+        clDEBUG1() << "==> __JoinArray called for" << args << endl;
+        clDEBUG1() << "args[2] is:" << args[2] << endl;
+        if((args.size() > 3) && (!args[2].StartsWith("\"")) && (args[2].Contains(" "))) {
+            clDEBUG() << "==> Fixing" << args << endl;
+            wxArrayString tmparr = args;
+            wxString& firstCommand = tmparr[2];
+            firstCommand.Prepend("\"").Append("\"");
+            command = wxJoin(tmparr, ' ', 0);
+        } else {
+            command = wxJoin(args, ' ', 0);
+        }
+    } else if(flags & IProcessCreateSSH) {
         // simple join
         command = wxJoin(args, ' ', 0);
     } else {

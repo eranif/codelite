@@ -241,25 +241,24 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
 {
     if(si.isSSHDebugging) {
 
-        if(!si.accountInfo) {
+        if(si.sshAccountName.empty()) {
             clERROR() << "Failed to start gdb over ssh: account info not provided" << clEndl;
             return false;
         }
+
         wxString dbgExeName = "gdb"; // it's up to the server machine to have gdb in the path
         wxString cmd = "gdb --interpreter=mi ";
         cmd << si.exeName;
         m_debuggeePid = wxNOT_FOUND;
         m_attachedMode = false;
 
-        m_observer->UpdateAddLine(wxString()
-                                  << _("Debugging over SSH, using account: ") << si.accountInfo->GetAccountName());
+        m_observer->UpdateAddLine(wxString() << _("Debugging over SSH, using account: ") << si.sshAccountName);
         m_observer->UpdateAddLine(wxString() << _("Current working dir: ") << wxGetCwd());
         m_observer->UpdateAddLine(wxString() << _("Launching gdb from : ") << si.cwd);
         m_observer->UpdateAddLine(wxString() << _("Starting debugger  : ") << cmd);
 
         // Launch gdb
-        m_gdbProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH | IProcessInteractiveSSH, si.cwd, nullptr,
-                                            (wxUIntPtr)si.accountInfo);
+        m_gdbProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH, si.cwd, nullptr, si.sshAccountName);
         if(!m_gdbProcess) {
             return false;
         }
@@ -1120,7 +1119,7 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
 {
     m_isSSHDebugging = sessionInfo.isSSHDebugging;
-    m_sshAccount = sessionInfo.accountInfo == nullptr ? SSHAccountInfo() : *(sessionInfo.accountInfo);
+    m_sshAccount = sessionInfo.sshAccountName;
     m_goingDown = false;
     m_internalBpId = wxNOT_FOUND;
 

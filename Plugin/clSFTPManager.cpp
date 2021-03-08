@@ -123,7 +123,15 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
     // Open it
     auto connection_info = GetConnectionPair(accountName);
     if(!connection_info.second) {
-        return nullptr;
+        // No such connection, attempt to load the connection details and open a session
+        auto account = SSHAccountInfo::LoadAccount(accountName);
+        if(accountName.empty() || !AddConnection(account)) {
+            return nullptr;
+        }
+        connection_info = GetConnectionPair(accountName);
+        if(!connection_info.second) {
+            return nullptr;
+        }
     }
 
     // build the local file path

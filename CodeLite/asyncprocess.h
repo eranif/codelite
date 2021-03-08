@@ -49,6 +49,7 @@ enum IProcessCreateFlags {
                                     // terminal colours escape sequences
     IProcessCreateSSH = (1 << 8),   // Create a remote process, over SSH
     IProcessInteractiveSSH = (1 << 9),
+    IProcessWrapInShell = (1 << 10), // wrap the command in the OS shell (CMD, BASH)
 };
 
 class WXDLLIMPEXP_CL IProcess;
@@ -215,7 +216,16 @@ public:
 WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd,
                                             size_t flags = IProcessCreateDefault,
                                             const wxString& workingDir = wxEmptyString,
-                                            const clEnvList_t* env = nullptr, wxUIntPtr clientData = 0);
+                                            const clEnvList_t* env = nullptr,
+                                            const wxString& sshAccountName = wxEmptyString);
+/**
+ * @brief same as above, but uses array of instead of a single string
+ */
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args,
+                                            size_t flags = IProcessCreateDefault,
+                                            const wxString& workingDir = wxEmptyString,
+                                            const clEnvList_t* env = nullptr,
+                                            const wxString& sshAccountName = wxEmptyString);
 
 /**
  * @brief create synchronus process

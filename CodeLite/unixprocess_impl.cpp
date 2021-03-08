@@ -232,14 +232,14 @@ char** buildargv(const char* input)
 
 //-----------------------------------------------------
 
-static char** make_argv(const wxString& cmd, int& argc)
+static char** make_argv(const wxArrayString& args, int& argc)
 {
-    char** argv = buildargv(cmd.mb_str(wxConvUTF8).data());
-    argc = 0;
-
-    for(char** targs = argv; *targs != NULL; targs++) {
-        ++argc;
+    char** argv = new char*[args.size() + 1];
+    for(size_t i = 0; i < args.size(); ++i) {
+        argv[i] = strdup(args[i].mb_str(wxConvUTF8).data());
     }
+    argv[args.size()] = 0;
+    argc = args.size();
     return argv;
 }
 
@@ -381,14 +381,11 @@ bool UnixProcessImpl::WriteRaw(const std::string& buff)
     return true;
 }
 
-IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,
+IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags,
                                    const wxString& workingDirectory, IProcessCallback* cb)
 {
-    wxString newCmd = cmd;
-    const char* sudo_path;
-
     int argc = 0;
-    char** argv = make_argv(newCmd, argc);
+    char** argv = make_argv(args, argc);
     if(argc == 0 || argv == nullptr) {
         return nullptr;
     }
@@ -446,7 +443,7 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         // execute the process
         errno = 0;
         if(execvp(argv[0], argv) < 0) {
-            clERROR() << "execvp('" << newCmd << "') error:" << strerror(errno) << clEndl;
+            clERROR() << "execvp" << args << "error:" << strerror(errno) << clEndl;
         }
 
         // if we got here, we failed...
@@ -504,6 +501,15 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, si
         }
         return proc;
     }
+}
+
+IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,
+                                   const wxString& workingDirectory, IProcessCallback* cb)
+{
+    wxArrayString args = StringUtils::BuildArgv(cmd);
+    clDEBUG() << "Executing:" << cmd << endl;
+    clDEBUG() << "As array:" << args << endl;
+    return Execute(parent, args, flags, workingDirectory, cb);
 }
 
 void UnixProcessImpl::StartReaderThread()

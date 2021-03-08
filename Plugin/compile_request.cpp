@@ -22,32 +22,31 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "ICompilerLocator.h"
+#include "asyncprocess.h"
+#include "build_config.h"
+#include "build_settings_config.h"
+#include "buildmanager.h"
+#include "cl_command_event.h"
 #include "compile_request.h"
+#include "compiler.h"
+#include "dirsaver.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
+#include "macromanager.h"
+#include "macros.h"
+#include "plugin.h"
+#include "workspace.h"
+#include "wx/process.h"
 #include <wx/app.h>
 #include <wx/log.h>
-#include "event_notifier.h"
-#include "asyncprocess.h"
-#include "imanager.h"
-#include "macros.h"
-#include "compiler.h"
-#include "build_settings_config.h"
-#include "globals.h"
-#include "build_config.h"
-#include "environmentconfig.h"
-#include "buildmanager.h"
-#include "wx/process.h"
-#include "workspace.h"
-#include "dirsaver.h"
-#include "plugin.h"
-#include "cl_command_event.h"
-#include "ICompilerLocator.h"
-#include <wx/regex.h>
-#include "macromanager.h"
-#include "globals.h"
 #include <wx/msgdlg.h>
+#include <wx/regex.h>
 
-CompileRequest::CompileRequest(
-    const QueueCommand& buildInfo, const wxString& fileName, bool runPremakeOnly, bool preprocessOnly)
+CompileRequest::CompileRequest(const QueueCommand& buildInfo, const wxString& fileName, bool runPremakeOnly,
+                               bool preprocessOnly)
     : ShellCommand(buildInfo)
     , m_fileName(fileName)
     , m_premakeOnly(runPremakeOnly)
@@ -89,7 +88,8 @@ void CompileRequest::Process(IManager* manager)
         }
         msg << _("Build anyway?");
         wxStandardID res = ::PromptForYesNoDialogWithCheckbox(msg, "UnresolvedMacros", _("Yes"), _("No"),
-            _("Remember my answer and don't ask me again"), wxYES_NO | wxICON_WARNING | wxYES_DEFAULT);
+                                                              _("Remember my answer and don't ask me again"),
+                                                              wxYES_NO | wxICON_WARNING | wxYES_DEFAULT);
         if(res != wxID_YES) {
             ::wxMessageBox(_("Build Cancelled!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
             return;
@@ -121,10 +121,10 @@ void CompileRequest::Process(IManager* manager)
         wxString args = bldConf->GetBuildSystemArguments();
         if(m_fileName.IsEmpty() == false) {
             // we got a complie request of a single file
-            cmd = m_preprocessOnly ?
-                builder->GetPreprocessFileCmd(
-                    m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName, errMsg) :
-                builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName);
+            cmd = m_preprocessOnly
+                      ? builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName,
+                                                      errMsg)
+                      : builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName);
         } else if(m_info.GetProjectOnly()) {
 
             switch(m_info.GetKind()) {
@@ -173,9 +173,7 @@ void CompileRequest::Process(IManager* manager)
         return;
     }
 
-    WrapInShell(cmd);
     DirSaver ds;
-
     DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
 
     // expand the variables of the command
@@ -211,7 +209,7 @@ void CompileRequest::Process(IManager* manager)
     om["LC_ALL"] = "C";
 
     EnvSetter envir(env, &om, proj->GetName(), m_info.GetConfiguration());
-    m_proc = CreateAsyncProcess(this, cmd);
+    m_proc = CreateAsyncProcess(this, cmd, IProcessCreateDefault | IProcessWrapInShell);
     if(!m_proc) {
         wxString message;
         message << _("Failed to start build process, command: ") << cmd << _(", process terminated with exit code: 0");

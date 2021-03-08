@@ -26,13 +26,12 @@
 class wxEvtHandler;
 class IProcess;
 
-#if USE_SFTP
-#include "SSHRemoteProcess.hpp"
-#endif
-
+//#include "asyncprocess.h"
+#include "StringUtils.h"
+#include "asyncprocess.h"
 #include "file_logger.h"
-#include "macros.h"
 #include "ssh_account_info.h"
+#include <wx/arrstr.h>
 #include <wx/string.h>
 
 #ifdef __WXMSW__
@@ -41,33 +40,117 @@ class IProcess;
 #include "unixprocess_impl.h"
 #endif
 
-IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
-                             const clEnvList_t* env, wxUIntPtr clientData)
+static wxArrayString __WrapInShell(const wxArrayString& args)
 {
-#if USE_SFTP
-    if(flags & IProcessCreateSSH) {
-        if(!clientData) {
-            clERROR() << "Requested to create async process over SSH, but no client data provided!" << clEndl;
-            return nullptr;
+    wxString cmd = wxJoin(args, ' ', 0);
+    wxArrayString command;
+
+#ifdef __WXMSW__
+    wxChar* shell = wxGetenv(wxT("COMSPEC"));
+    if(!shell) {
+        shell = (wxChar*)wxT("CMD.EXE");
+    }
+    command.Add(shell);
+    command.Add("/C");
+    command.Add(cmd);
+#else
+    command.Add("/bin/sh");
+    command.Add("-c");
+    command.Add(cmd);
+#endif
+    return command;
+}
+
+static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& wd, const wxString& sshAccountName)
+{
+    // we accept both SSHAccountInfo* & wxString* with the account name
+    if(sshAccountName.empty()) {
+        clERROR() << "CreateAsyncProcess: no ssh account name provided" << endl;
+        return args;
+    }
+    wxArrayString a;
+
+    auto accountInfo = SSHAccountInfo::LoadAccount(sshAccountName);
+    if(accountInfo.GetAccountName().empty()) {
+        clERROR() << "CreateAsyncProcess: could not locate ssh account:" << sshAccountName << endl;
+        return args;
+    }
+
+    a.Add("ssh");
+    a.Add(accountInfo.GetUsername() + "@" + accountInfo.GetHost());
+    a.Add("-p");
+    a.Add(wxString() << accountInfo.GetPort());
+    wxString sshEnv;
+    if(::wxGetEnv("SSH_OPTIONS", &sshEnv)) {
+        wxArrayString sshOptionsArr = StringUtils::BuildArgv(sshEnv);
+        a.insert(a.end(), sshOptionsArr.begin(), sshOptionsArr.end());
+    }
+
+    // add the command as a single string
+    wxArrayString* p_args = const_cast<wxArrayString*>(&args);
+    wxArrayString tmpargs;
+    if(!wd.empty()) {
+        tmpargs.Add("cd");
+        tmpargs.Add(wd);
+        tmpargs.Add("&&");
+        tmpargs.insert(tmpargs.end(), args.begin(), args.end());
+        p_args = &tmpargs;
+    }
+
+    wxString oneLiner = wxJoin(*p_args, ' ', 0);
+    oneLiner.Replace("\"", "\\\""); // escape any double quotes
+    a.Add(oneLiner);
+    return a;
+}
+
+static void __StripArgs(wxArrayString& args)
+{
+#if defined(__WXOSX__) || defined(__WXGTK__)
+    for(wxString& arg : args) {
+        arg.Trim().Trim(false);
+        if(arg.StartsWith("'") || arg.StartsWith("\"")) {
+            arg.Remove(0, 1);
         }
 
-        SSHAccountInfo* accountInfo = reinterpret_cast<SSHAccountInfo*>(clientData);
-        if(!accountInfo) {
-            clERROR() << "Requested to create async process over SSH, but client data is not of type SSHAccountInfo"
-                      << clEndl;
-            return nullptr;
+        if(arg.EndsWith("'") || arg.EndsWith("\"")) {
+            arg.RemoveLast();
         }
-        return SSHRemoteProcess::Create(parent, *accountInfo, cmd, flags);
     }
 #endif
+}
 
+IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, size_t flags, const wxString& workingDir,
+                             const clEnvList_t* env, const wxString& sshAccountName)
+{
     clEnvironment e(env);
+    wxArrayString c = args;
+
+    if(flags & IProcessWrapInShell) {
+        // wrap the command in OS specific terminal
+        c = __WrapInShell(c);
+    }
+
+    if(flags & IProcessCreateSSH) {
+        c = __AddSshCommand(c, workingDir, sshAccountName);
+    }
+
+    // needed on linux where fork does not require the extra quoting
+    __StripArgs(c);
+
+    clDEBUG() << "CreateAsyncProcess called with:" << c << endl;
+
 #ifdef __WXMSW__
     wxString errMsg;
-    return WinProcessImpl::Execute(parent, cmd, errMsg, flags, workingDir);
+    return WinProcessImpl::Execute(parent, c, errMsg, flags, workingDir);
 #else
-    return UnixProcessImpl::Execute(parent, cmd, flags, workingDir);
+    return UnixProcessImpl::Execute(parent, c, flags, workingDir);
 #endif
+}
+
+IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
+                             const clEnvList_t* env, const wxString& sshAccountName)
+{
+    return CreateAsyncProcess(parent, StringUtils::BuildArgv(cmd), flags, workingDir, env, sshAccountName);
 }
 
 IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const wxString& cmd, size_t flags,

@@ -1166,7 +1166,7 @@ void clMainFrame::CreateGUIControls()
     clEditorBar* navbar = new clEditorBar(container);
     navbar->Hide();
 
-    container->GetSizer()->Add(navbar, 0, wxEXPAND|wxBOTTOM, 5);
+    container->GetSizer()->Add(navbar, 0, wxEXPAND | wxBOTTOM, 5);
 
     // Add the debugger toolbar
     m_debuggerToolbar = new DebuggerToolBar(container);
@@ -4182,7 +4182,7 @@ void clMainFrame::OnStartQuickDebug(clDebugEvent& e)
         si.ttyName = tty;
         si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
         si.isSSHDebugging = e.IsSSHDebugging();
-        si.accountInfo = const_cast<SSHAccountInfo*>(&e.GetSshAccount());
+        si.sshAccountName = e.GetSshAccount();
         dbgr->Start(si);
 
         // notify plugins that the debugger just started

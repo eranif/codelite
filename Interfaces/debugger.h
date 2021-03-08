@@ -311,7 +311,6 @@ public:
 
 /// This structure contains the information needed
 /// by the debugger to start a debug session
-class SSHAccountInfo;
 class DebugSessionInfo
 {
 public:
@@ -325,8 +324,7 @@ public:
     wxArrayString searchPaths;                /// Additional search paths to pass to the debugger
     bool enablePrettyPrinting = true;         /// Should we enable pretty printing?
     bool isSSHDebugging = false;              /// Debugging over SSH
-    SSHAccountInfo* accountInfo =
-        nullptr; /// When isSSHDebugging is set true, this will hold the account details to login into
+    wxString sshAccountName;                  /// When isSSHDebugging is set true, holds the ssh account name
 };
 
 class IDebuggerObserver;

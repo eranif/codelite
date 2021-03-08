@@ -82,3 +82,40 @@ void SSHAccountInfo::AddBookmark(const wxString& location)
         m_bookmarks.Add(location);
     }
 }
+
+SSHAccountInfo::Vect_t SSHAccountInfo::Load(const function<bool(const SSHAccountInfo&)>& matcher)
+{
+    wxFileName jsonfile(clStandardPaths::Get().GetUserDataDir(), "sftp-settings.conf");
+    jsonfile.AppendDir("config");
+
+    JSON root(jsonfile);
+    if(!root.isOk()) {
+        return {};
+    }
+    JSONItem s = root.toElement()["sftp-settings"];
+    auto accounts = s["accounts"];
+    size_t count = accounts.arraySize();
+    if(count == 0) {
+        return {};
+    }
+    Vect_t accountsVec;
+    accountsVec.reserve(count);
+    for(size_t i = 0; i < count; ++i) {
+        auto account = accounts[i];
+        SSHAccountInfo ai;
+        ai.FromJSON(account);
+        if(!matcher || (matcher && matcher(ai))) {
+            accountsVec.emplace_back(ai);
+        }
+    }
+    return accountsVec;
+}
+
+SSHAccountInfo SSHAccountInfo::LoadAccount(const wxString& accountName)
+{
+    auto res = Load([&](const SSHAccountInfo& ai) { return ai.GetAccountName() == accountName; });
+    if(res.size() == 1) {
+        return res[0];
+    }
+    return {};
+}

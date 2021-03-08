@@ -766,37 +766,43 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
         return;
     }
 
+    if(m_buildProcess) {
+        return;
+    }
+
+    size_t flags = IProcessCreateDefault;
     // Check that the remote development is enabled AND remote build
     if(GetConfig()->IsRemoteEnabled() && GetConfig()->IsRemoteBuild()) {
-        // Launch a remote build process
-        if(m_remoteBuilder && m_remoteBuilder->IsRunning()) {
-            return;
-        }
-        m_remoteBuilder.reset(new clRemoteBuilder());
-        m_remoteBuilder->Build(GetConfig()->GetRemoteAccount(), cmd, GetConfig()->GetRemoteFolder());
+        flags |= IProcessCreateSSH;
+    }
+
+    // Replace all workspace macros from the command
+    cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
+
+    // Build the environment to use
+    clEnvList_t envList = GetEnvList();
+
+    // Start the process with the environemt
+    wxString ssh_account;
+    wxString wd = GetFileName().GetPath();
+
+    // make changes if SSH is enabled here
+    if(flags & IProcessCreateSSH) {
+        ssh_account = GetConfig()->GetRemoteAccount();
+        wd = GetConfig()->GetRemoteFolder();
+    }
+
+    m_buildProcess = ::CreateAsyncProcess(this, cmd, flags, wd, &envList, ssh_account);
+    if(!m_buildProcess) {
+        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
     } else {
-        if(m_buildProcess) {
-            return;
-        }
-        // Replace all workspace macros from the command
-        cmd = MacroManager::Instance()->Expand(cmd, nullptr, wxEmptyString);
+        clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
+        EventNotifier::Get()->AddPendingEvent(e);
 
-        // Build the environment to use
-        clEnvList_t envList = GetEnvList();
-
-        // Start the process with the environemt
-        m_buildProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, GetFileName().GetPath(), &envList);
-        if(!m_buildProcess) {
-            clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
-            EventNotifier::Get()->AddPendingEvent(e);
-        } else {
-            clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
-            EventNotifier::Get()->AddPendingEvent(e);
-
-            // Notify about build process started
-            clBuildEvent eventStart(wxEVT_BUILD_STARTED);
-            EventNotifier::Get()->AddPendingEvent(eventStart);
-        }
+        // Notify about build process started
+        clBuildEvent eventStart(wxEVT_BUILD_STARTED);
+        EventNotifier::Get()->AddPendingEvent(eventStart);
     }
 }
 

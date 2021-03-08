@@ -203,21 +203,14 @@ void QuickDebugDlg::OnButtonDebug(wxCommandEvent& event)
     clDebugEvent eventQuickDebug(wxEVT_QUICK_DEBUG);
     if(m_notebook47->GetSelection() == 1) {
         // SSH is selected
-#if USE_SFTP
-        SFTPSettings settings;
-        settings.Load();
-        SSHAccountInfo sshAccount;
-        settings.GetAccount(m_choiceSshAccounts->GetStringSelection(), sshAccount);
         eventQuickDebug.SetIsSSHDebugging(true);
-        eventQuickDebug.SetSshAccount(sshAccount);
-
+        eventQuickDebug.SetSshAccount(m_choiceSshAccounts->GetStringSelection());
         eventQuickDebug.SetAlternateDebuggerPath(m_textCtrlRemoteDebugger->GetValue());
         eventQuickDebug.SetDebuggerName("GNU gdb debugger");
         eventQuickDebug.SetExecutableName(m_textCtrlRemoteDebuggee->GetValue());
         eventQuickDebug.SetWorkingDirectory(m_textCtrlRemoteWD->GetValue());
         eventQuickDebug.SetArguments(m_textCtrlRemoteArgs->GetValue());
         eventQuickDebug.SetStartupCommands(m_stcRemoteStartupCommands->GetValue());
-#endif
 
     } else {
         eventQuickDebug.SetAlternateDebuggerPath(m_textCtrlDebuggerExec->GetValue());

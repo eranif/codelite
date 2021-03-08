@@ -476,12 +476,12 @@ void CppCheckPlugin::DoProcess(ProjectPtr proj)
     wxString command = DoGetCommand(proj);
     m_view->AppendLine(wxString::Format(_("Starting cppcheck: %s\n"), command.c_str()));
 
+    size_t flags = IProcessCreateDefault | IProcessWrapInShell;
 #if defined(__WXMSW__)
     // Under Windows, we set the working directory to the binary folder
     // so the configurtion files can be found
     clDEBUG() << "CppCheck: Working directory:" << clStandardPaths::Get().GetBinFolder() << endl;
     clDEBUG() << "CppCheck: Command:" << command << endl;
-    size_t flags = IProcessCreateDefault | IProcessWrapInShell;
     m_cppcheckProcess = CreateAsyncProcess(this, command, flags, clStandardPaths::Get().GetBinFolder());
 #elif defined(__WXOSX__)
     clDEBUG() << "CppCheck: Working directory:" << clStandardPaths::Get().GetDataDir() << endl;

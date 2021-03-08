@@ -165,19 +165,23 @@ public:
 
 static wxString __JoinArray(const wxArrayString& args, size_t flags)
 {
-    wxUnusedVar(flags);
     wxString command;
-    wxArrayString arr;
-    arr.reserve(args.size());
-    arr = args;
-    for(auto& arg : arr) {
-        if(arg.Contains(" ")) {
-            // escape any " before we start escaping
-            arg.Replace("\"", "\\\"");
-            // now wrap with double quotes
-            arg.Prepend("\"").Append("\"");
+    if(flags & (IProcessCreateSSH | IProcessWrapInShell)) {
+        // simple join
+        command = wxJoin(args, ' ', 0);
+    } else {
+        wxArrayString arr;
+        arr.reserve(args.size());
+        arr = args;
+        for(auto& arg : arr) {
+            if(arg.Contains(" ")) {
+                // escape any " before we start escaping
+                arg.Replace("\"", "\\\"");
+                // now wrap with double quotes
+                arg.Prepend("\"").Append("\"");
+            }
+            command << arg << " ";
         }
-        command << arg << " ";
     }
     command.Trim().Trim(false);
     return command;

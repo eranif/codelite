@@ -172,6 +172,9 @@ static wxString __JoinArray(const wxArrayString& args, size_t flags)
     arr = args;
     for(auto& arg : arr) {
         if(arg.Contains(" ")) {
+            // escape any " before we start escaping
+            arg.Replace("\"", "\\\"");
+            // now wrap with double quotes
             arg.Prepend("\"").Append("\"");
         }
         command << arg << " ";

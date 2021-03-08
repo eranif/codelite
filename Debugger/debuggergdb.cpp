@@ -629,6 +629,9 @@ bool DbgGdb::Interrupt()
             return false;
         }
 
+        // this is a length operation, show busy cursor
+        wxBusyCursor bc;
+
         // open ssh connection and send SIGINT to the debuggee PID
         wxString output;
         vector<wxString> command = { "kill", "-INT", to_string(m_debuggeePid) };

@@ -111,13 +111,11 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
     }
 
     EnvSetter envGuard(clGetManager()->GetEnv(), NULL, projectName, configName);
-    ::WrapInShell(command);
-
     clDEBUG() << "Running command:" << command << clEndl;
 
     int pid = wxNOT_FOUND;
     if(ti.GetCaptureOutput()) {
-        IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateConsole, working_dir);
+        IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateConsole | IProcessWrapInShell, working_dir);
         if(!proc) {
             ::wxMessageBox(_("Failed to launch tool\n'") + command + "'", "CodeLite", wxICON_ERROR | wxOK | wxCENTER,
                            EventNotifier::Get()->TopFrame());

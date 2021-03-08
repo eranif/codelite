@@ -479,16 +479,16 @@ void CppCheckPlugin::DoProcess(ProjectPtr proj)
 #if defined(__WXMSW__)
     // Under Windows, we set the working directory to the binary folder
     // so the configurtion files can be found
-    CL_DEBUG("CppCheck: Working directory: %s", clStandardPaths::Get().GetBinFolder());
-    CL_DEBUG("CppCheck: Command: %s", command);
-    m_cppcheckProcess = CreateAsyncProcess(this, command, IProcessCreateDefault, clStandardPaths::Get().GetBinFolder());
+    clDEBUG() << "CppCheck: Working directory:" << clStandardPaths::Get().GetBinFolder() << endl;
+    clDEBUG() << "CppCheck: Command:" << command << endl;
+    size_t flags = IProcessCreateDefault | IProcessWrapInShell;
+    m_cppcheckProcess = CreateAsyncProcess(this, command, flags, clStandardPaths::Get().GetBinFolder());
 #elif defined(__WXOSX__)
-    CL_DEBUG("CppCheck: Working directory: %s", clStandardPaths::Get().GetDataDir());
-    CL_DEBUG("CppCheck: Command: %s", command);
-    m_cppcheckProcess = CreateAsyncProcess(this, command, IProcessCreateDefault, clStandardPaths::Get().GetDataDir());
-
+    clDEBUG() << "CppCheck: Working directory:" << clStandardPaths::Get().GetDataDir() << endl;
+    clDEBUG() << "CppCheck: Command:" << command << endl;
+    m_cppcheckProcess = CreateAsyncProcess(this, command, flags, clStandardPaths::Get().GetDataDir());
 #else
-    m_cppcheckProcess = CreateAsyncProcess(this, command);
+    m_cppcheckProcess = CreateAsyncProcess(this, command, flags);
 #endif
     if(!m_cppcheckProcess) {
         wxMessageBox(_("Failed to launch codelite_cppcheck process!"), _("Warning"), wxOK | wxCENTER | wxICON_WARNING);
@@ -621,8 +621,7 @@ wxString CppCheckPlugin::DoGetCommand(ProjectPtr proj)
     cmd << wxT(" --file-list=");
     ::WrapWithQuotes(fileList);
     cmd << fileList << " ";
-    CL_DEBUG("cppcheck command: %s", cmd);
-    ::WrapInShell(cmd);
+    clDEBUG() << "cppcheck command:" << cmd << endl;
     return cmd;
 }
 

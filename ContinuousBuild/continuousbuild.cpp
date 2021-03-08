@@ -187,26 +187,25 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
     // get the selected configuration to be build
     BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf(project->GetName(), wxEmptyString);
     if(!bldConf) {
-        CL_DEBUG(wxT("Failed to locate build configuration\n"));
+        clDEBUG() << "Failed to locate build configuration\n" << endl;
         return;
     }
 
     BuilderPtr builder = bldConf->GetBuilder();
     if(!builder) {
-        CL_DEBUG(wxT("Failed to located builder\n"));
+        clDEBUG() << "Failed to located builder\n" << endl;
         return;
     }
 
     // Only normal file builds are supported
     if(bldConf->IsCustomBuild()) {
-        CL_DEBUG(wxT("Build is custom. Skipping\n"));
+        clDEBUG() << "Build is custom. Skipping\n" << endl;
         return;
     }
 
     // get the single file command to use
     wxString cmd =
         builder->GetSingleFileCmd(projectName, bldConf->GetName(), bldConf->GetBuildSystemArguments(), fileName);
-    WrapInShell(cmd);
 
     if(m_buildProcess.IsBusy()) {
         // add the build to the queue
@@ -233,7 +232,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
     EventNotifier::Get()->AddPendingEvent(event);
 
     EnvSetter env(NULL, NULL, projectName, bldConf->GetName());
-    CL_DEBUG(wxString::Format(wxT("cmd:%s\n"), cmd.c_str()));
+    clDEBUG() << "Continuous build:" << cmd << endl;
     if(!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this))
         return;
 

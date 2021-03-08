@@ -55,10 +55,6 @@ bool SvnCommand::Execute(const wxString& command, const wxString& workingDirecto
 
     ClearAll();
 
-    // Wrap the command in the OS Shell
-    wxString cmdShell(command);
-    WrapInShell(cmdShell);
-
     // Apply the environment variables before executing the command
     wxStringMap_t om;
     om.insert(std::make_pair("LC_ALL", "C"));
@@ -66,7 +62,7 @@ bool SvnCommand::Execute(const wxString& command, const wxString& workingDirecto
     bool useOverrideMap = m_plugin->GetSettings().GetFlags() & SvnUsePosixLocale;
     EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
 
-    m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, workingDirectory);
+    m_process = CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell, workingDirectory);
     if(!m_process) {
         return false;
     }

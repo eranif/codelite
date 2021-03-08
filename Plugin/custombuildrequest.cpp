@@ -31,6 +31,7 @@
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
@@ -39,7 +40,6 @@
 #include <wx/app.h>
 #include <wx/ffile.h>
 #include <wx/log.h>
-#include "file_logger.h"
 
 #ifdef __WXMSW__
 #define ECHO_CMD wxT("@echo ")
@@ -187,16 +187,18 @@ void CustomBuildRequest::Process(IManager* manager)
 
 #ifdef __WXMSW__
     // Windows CD command requires the paths to be backslashe
-    if(cmd.Find(wxT("cd ")) != wxNOT_FOUND) cmd.Replace(wxT("/"), wxT("\\"));
+    if(cmd.Find(wxT("cd ")) != wxNOT_FOUND)
+        cmd.Replace(wxT("/"), wxT("\\"));
 #endif
 
     // Wrap the build command in the shell, so it will be able
     // to perform 'chain' commands like
     // cd SOMEWHERE && make && ...
 
+    size_t processFlags = IProcessCreateDefault;
     // Dont wrap the command if it was altered previously
     if(!bCommandAltered) {
-        WrapInShell(cmd);
+        processFlags |= IProcessWrapInShell;
     }
 
     // print the build command
@@ -219,7 +221,7 @@ void CustomBuildRequest::Process(IManager* manager)
     om["LC_ALL"] = "C";
     EnvSetter environment(env, &om, proj->GetName(), m_info.GetConfiguration());
 
-    m_proc = CreateAsyncProcess(this, cmd);
+    m_proc = CreateAsyncProcess(this, cmd, processFlags);
     if(!m_proc) {
         wxString message;
         message << _("Failed to start build process, command: ") << cmd << _(", process terminated with exit code: 0");

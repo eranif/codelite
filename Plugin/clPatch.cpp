@@ -1,8 +1,8 @@
 #include "clPatch.h"
 #include "cl_standard_paths.h"
-#include "procutils.h"
-#include "globals.h"
 #include "dirsaver.h"
+#include "globals.h"
+#include "procutils.h"
 
 clPatch::clPatch()
 {
@@ -16,8 +16,7 @@ clPatch::clPatch()
 
 clPatch::~clPatch() {}
 
-void
-clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirectory, const wxString& args) 
+void clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirectory, const wxString& args)
 {
     // Sanity
     if(!m_patch.FileExists()) {

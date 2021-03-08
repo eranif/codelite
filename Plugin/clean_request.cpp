@@ -22,24 +22,24 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "ICompilerLocator.h"
+#include "asyncprocess.h"
+#include "build_settings_config.h"
+#include "buildmanager.h"
+#include "cl_command_event.h"
+#include "clean_request.h"
+#include "compiler.h"
+#include "dirsaver.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
+#include "macros.h"
+#include "plugin.h"
+#include "workspace.h"
+#include "wx/process.h"
 #include <wx/app.h>
 #include <wx/log.h>
-#include "build_settings_config.h"
-#include "asyncprocess.h"
-#include "imanager.h"
-#include "event_notifier.h"
-#include "macros.h"
-#include "compiler.h"
-#include "clean_request.h"
-#include "environmentconfig.h"
-#include "globals.h"
-#include "buildmanager.h"
-#include "wx/process.h"
-#include "dirsaver.h"
-#include "workspace.h"
-#include "plugin.h"
-#include "cl_command_event.h"
-#include "ICompilerLocator.h"
 
 CleanRequest::CleanRequest(const QueueCommand& info)
     : ShellCommand(info)
@@ -125,7 +125,6 @@ void CleanRequest::Process(IManager* manager)
     SendStartMsg();
     // Expand the variables of the command
     cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
-    WrapInShell(cmd);
     DirSaver ds;
     DoSetWorkingDirectory(proj, false, false);
 
@@ -151,7 +150,7 @@ void CleanRequest::Process(IManager* manager)
 
     // apply environment settings
     EnvSetter env(NULL, &om, proj->GetName(), m_info.GetConfiguration());
-    m_proc = CreateAsyncProcess(this, cmd);
+    m_proc = CreateAsyncProcess(this, cmd, IProcessCreateDefault | IProcessWrapInShell);
     if(!m_proc) {
 
         // remove environment settings applied

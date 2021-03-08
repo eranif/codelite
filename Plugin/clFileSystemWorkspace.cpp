@@ -559,9 +559,6 @@ wxString clFileSystemWorkspace::GetTargetCommand(const wxString& target) const
     const auto& M = m_settings.GetSelectedConfig()->GetBuildTargets();
     if(M.count(target)) {
         wxString cmd = M.find(target)->second;
-        if(!(GetConfig()->IsRemoteEnabled() && GetConfig()->IsRemoteBuild())) {
-            ::WrapInShell(cmd);
-        }
         return cmd;
     }
     return wxEmptyString;
@@ -774,6 +771,8 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
     // Check that the remote development is enabled AND remote build
     if(GetConfig()->IsRemoteEnabled() && GetConfig()->IsRemoteBuild()) {
         flags |= IProcessCreateSSH;
+    } else {
+        flags |= IProcessWrapInShell;
     }
 
     // Replace all workspace macros from the command

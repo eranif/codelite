@@ -45,7 +45,9 @@ static wxFormBuilder* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new wxFormBuilder(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new wxFormBuilder(manager);
+    }
     return thePlugin;
 }
 
@@ -267,11 +269,17 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
         wxFileName cppFile(fbpFile.GetPath(), data.file + wxT(".cpp"));
         wxFileName headerFile(fbpFile.GetPath(), data.file + wxT(".h"));
 
-        if(cppFile.FileExists()) { filesToAdd.Add(cppFile.GetFullPath()); }
+        if(cppFile.FileExists()) {
+            filesToAdd.Add(cppFile.GetFullPath());
+        }
 
-        if(headerFile.FileExists()) { filesToAdd.Add(headerFile.GetFullPath()); }
+        if(headerFile.FileExists()) {
+            filesToAdd.Add(headerFile.GetFullPath());
+        }
 
-        if(filesToAdd.GetCount()) { m_mgr->AddFilesToVirtualFolder(data.virtualFolder, filesToAdd); }
+        if(filesToAdd.GetCount()) {
+            m_mgr->AddFilesToVirtualFolder(data.virtualFolder, filesToAdd);
+        }
 
         DoLaunchWxFB(fbpFile.GetFullPath());
     }
@@ -307,9 +315,7 @@ void wxFormBuilder::DoLaunchWxFB(const wxString& file)
     wxString cmd = confData.GetCommand();
     cmd.Replace(wxT("$(wxfb)"), fbpath);
     cmd.Replace(wxT("$(wxfb_project)"), wxString::Format(wxT("\"%s\""), file.c_str()));
-
-    WrapInShell(cmd);
-    CreateAsyncProcess(this, cmd, IProcessCreateWithHiddenConsole);
+    CreateAsyncProcess(this, cmd, IProcessCreateWithHiddenConsole | IProcessWrapInShell);
 }
 
 wxString wxFormBuilder::GetWxFBPath()
@@ -353,7 +359,9 @@ void wxFormBuilder::OnOpenFile(clCommandEvent& e)
     e.Skip();
     // launch it with the default application
     wxFileName fullpath(e.GetFileName());
-    if(fullpath.GetExt().MakeLower() != wxT("fbp")) { return; }
+    if(fullpath.GetExt().MakeLower() != wxT("fbp")) {
+        return;
+    }
 
 #ifdef __WXGTK__
     e.Skip(false);
@@ -378,7 +386,9 @@ void wxFormBuilder::OnOpenFile(clCommandEvent& e)
 
 void wxFormBuilder::OnWxFBTerminated(clProcessEvent& e)
 {
-    if(e.GetProcess()) { delete e.GetProcess(); }
+    if(e.GetProcess()) {
+        delete e.GetProcess();
+    }
 }
 
 void wxFormBuilder::OnShowFileContextMenu(clContextMenuEvent& event)

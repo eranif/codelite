@@ -1440,15 +1440,9 @@ void Subversion2::FinishSyncProcess(ProjectPtr& proj, const wxString& workDir, b
 wxString Subversion2::GetSvnExeNameNoConfigDir()
 {
     SvnSettingsData ssd = GetSettings();
-    wxString executeable;
-    wxString exeName = ssd.GetExecutable();
-    exeName.Trim().Trim(false);
-    bool encloseQuotations = (exeName.Find(wxT(" ")) != wxNOT_FOUND);
-    if(encloseQuotations) {
-        executeable << wxT("\"") << ssd.GetExecutable() << wxT("\" ");
-    } else {
-        executeable << ssd.GetExecutable() << wxT(" ");
-    }
+    wxString executeable = ssd.GetExecutable();
+    ::WrapWithQuotes(executeable);
+    executeable << " ";
     return executeable;
 }
 

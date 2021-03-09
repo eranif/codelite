@@ -80,7 +80,7 @@ void GitDiffDlg::CreateDiff()
 
     wxString command = PrepareCommand();
     m_plugin->DisplayMessage("GitDiff: " + command);
-    m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
+    m_process = CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
 }
 
 wxString GitDiffDlg::PrepareCommand() const

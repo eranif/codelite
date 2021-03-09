@@ -206,7 +206,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
         // wrap the command in OS specific terminal
         c = __WrapInShell(c);
     }
-    
+
     clTempFile tmpfile; // needed for putty clients
     tmpfile.Persist();  // do not delete this file on destruct
     if(flags & IProcessCreateSSH) {
@@ -245,12 +245,8 @@ IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const
 
 IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& workingDir, const clEnvList_t* env)
 {
-    clEnvironment e(env);
-#ifdef __WXMSW__
-    return WinProcessImpl::Execute(NULL, cmd, flags | IProcessCreateSync, workingDir);
-#else
-    return UnixProcessImpl::Execute(NULL, cmd, flags | IProcessCreateSync, workingDir);
-#endif
+    return CreateAsyncProcess(nullptr, StringUtils::BuildArgv(cmd), flags | IProcessCreateSync, workingDir, env,
+                              wxEmptyString);
 }
 
 // Static methods:

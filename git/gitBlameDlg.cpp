@@ -487,7 +487,8 @@ void GitBlameDlg::UpdateLogControls(const wxString& commit)
 {
     if(!commit.empty()) {
         wxString command = wxString::Format(wxT("%s --no-pager show %s"), m_gitPath, commit);
-        m_process = CreateAsyncProcess(this, command, IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
+        m_process = CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell,
+                                       m_plugin->GetRepositoryDirectory());
     }
 }
 

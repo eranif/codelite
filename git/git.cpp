@@ -2672,7 +2672,7 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& wo
     git << command;
 
     GetConsole()->AddRawText("[" + workingDir + "] " + git + "\n");
-    IProcess::Ptr_t gitProc(::CreateSyncProcess(git, IProcessCreateSync, workingDir));
+    IProcess::Ptr_t gitProc(::CreateSyncProcess(git, IProcessCreateSync | IProcessWrapInShell, workingDir));
     if(gitProc) {
         gitProc->WaitForTerminate(commandOutput);
     } else {

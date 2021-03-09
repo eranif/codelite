@@ -41,21 +41,24 @@ class IProcess;
 #include "unixprocess_impl.h"
 #endif
 
+static void __WrapSpacesForShell(wxString& str)
+{
+    str.Trim().Trim(false);
+    if(str.Contains(" ") && !str.StartsWith("\"")) {
+#ifndef __WXMSW__
+        // escape any occurances of "
+        str.Replace("\"", "\\\"");
+#endif
+        str.Append("\"").Prepend("\"");
+    }
+}
+
 static wxArrayString __WrapInShell(const wxArrayString& args)
 {
     wxArrayString tmparr = args;
-#ifdef __WXMSW__
-    // Make sure that the first command is wrapped with "" if it contains spaces
-    if(!tmparr.empty()) {
-        clDEBUG1() << "==> __WrapInShell called for" << tmparr << endl;
-        clDEBUG1() << "tmparr[0] is:" << tmparr[0] << endl;
-        wxString& realCmd = tmparr[0];
-        if((!realCmd.StartsWith("\"")) && (realCmd.Contains(" "))) {
-            clDEBUG() << "==> Fixing" << tmparr << endl;
-            realCmd.Prepend("\"").Append("\"");
-        }
+    for(wxString& arg : tmparr) {
+        __WrapSpacesForShell(arg);
     }
-#endif
 
     wxString cmd = wxJoin(tmparr, ' ', 0);
     wxArrayString command;
@@ -203,7 +206,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
         // wrap the command in OS specific terminal
         c = __WrapInShell(c);
     }
-
+    
     clTempFile tmpfile; // needed for putty clients
     tmpfile.Persist();  // do not delete this file on destruct
     if(flags & IProcessCreateSSH) {
@@ -225,7 +228,8 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
 IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
                              const clEnvList_t* env, const wxString& sshAccountName)
 {
-    return CreateAsyncProcess(parent, StringUtils::BuildArgv(cmd), flags, workingDir, env, sshAccountName);
+    auto args = StringUtils::BuildArgv(cmd);
+    return CreateAsyncProcess(parent, args, flags, workingDir, env, sshAccountName);
 }
 
 IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const wxString& cmd, size_t flags,

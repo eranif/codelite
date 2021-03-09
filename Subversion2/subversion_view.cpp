@@ -148,7 +148,6 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     , m_simpleCommand(plugin)
     , m_diffCommand(plugin)
     , m_fileExplorerLastBaseImgIdx(-1)
-    , m_codeliteEcho(NULL)
 {
     clThemeUpdater::Get().RegisterWindow(m_splitter);
 
@@ -965,16 +964,20 @@ void SubversionView::OnItemActivated(wxDataViewEvent& event)
         wxString echo = wxFileName(clStandardPaths::Get().GetBinaryFullPath("codelite-echo")).GetFullPath();
         command << ::WrapWithQuotes(echo);
 
-        // make sure we kill previous codelite-echo executable
-        wxDELETE(m_codeliteEcho);
-
         wxArrayString lines;
-        {
-            DirSaver ds;
-            ::wxSetWorkingDirectory(DoGetCurRepoPath());
-            DiffCmdHandler* cmdHandler = new DiffCmdHandler(this, data->GetFilepath());
-            m_codeliteEcho = ::CreateAsyncProcessCB(this, cmdHandler, command);
-        }
+        DirSaver ds;
+        ::wxSetWorkingDirectory(DoGetCurRepoPath());
+        wxString filename = data->GetFilepath();
+        ::CreateAsyncProcessCB(
+            command,
+            [this, filename](const wxString& output) {
+                wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+                if(lines.GetCount() == 3) {
+                    // we got all the info we need
+                    FinishDiff(lines.Item(2).Trim(), filename);
+                }
+            },
+            IProcessCreateDefault | IProcessWrapInShell);
     }
 }
 
@@ -1276,7 +1279,6 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
     clCommandLineParser parser(output);
     wxArrayString tokens = parser.ToArray();
     if(tokens.GetCount() < 2) {
-        wxDELETE(m_codeliteEcho);
         return;
     }
     wxString rightFile = tokens.Last();
@@ -1292,8 +1294,8 @@ void SubversionView::FinishDiff(wxString output, wxFileName fileBeingDiffed)
     DiffSideBySidePanel::FileInfo r(rightFile, title_right, false);
     clDiffFrame* diffView = new clDiffFrame(EventNotifier::Get()->TopFrame(), l, r, true);
     diffView->Show();
-    wxDELETE(m_codeliteEcho);
 }
+
 void SubversionView::OnSciStcChange(wxStyledTextEvent& event)
 {
     event.Skip();

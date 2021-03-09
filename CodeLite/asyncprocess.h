@@ -28,6 +28,7 @@
 
 #include "codelite_exports.h"
 #include "macros.h"
+#include <functional>
 #include <map>
 #include <vector>
 #include <wx/event.h>
@@ -250,17 +251,15 @@ WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = I
                                            const clEnvList_t* env = nullptr);
 
 /**
- * @brief start process
- * @brief cb callback object. Instead of events, OnProcessOutput and OnProcessTerminated will be called respectively
- * @param parent the parent. all events will be sent to this object
+ * @brief start process and execute a callback once the process terminates
  * @param cmd command line to execute
+ * @brief cb callback
  * @param flags possible creation flag
  * @param workingDir set the working directory of the executed process
- * @return
+ * @param env
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcessCB(wxEvtHandler* parent, IProcessCallback* cb, const wxString& cmd,
-                                              size_t flags = IProcessCreateDefault,
-                                              const wxString& workingDir = wxEmptyString,
-                                              const clEnvList_t* env = nullptr);
+WXDLLIMPEXP_CL void CreateAsyncProcessCB(const wxString& cmd, function<void(const wxString&)> cb,
+                                         size_t flags = IProcessCreateDefault,
+                                         const wxString& workingDir = wxEmptyString, const clEnvList_t* env = nullptr);
 
 #endif // I_PROCESS_H

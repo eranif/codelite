@@ -70,7 +70,6 @@ class SubversionView : public SubversionPageBase
     SvnConsole* m_subversionConsole;
     int m_fileExplorerLastBaseImgIdx;
     wxFileName m_workspaceFile;
-    IProcess* m_codeliteEcho;
 
 public:
     enum { SvnInfo_Tag, SvnInfo_Branch, SvnInfo_Info };

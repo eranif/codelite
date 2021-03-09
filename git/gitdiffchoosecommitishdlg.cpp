@@ -32,36 +32,6 @@
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
 
-/**
- * @class GitDiffCmdHandler
- * Handle e.g. git branch command output
- * Sets the 3 pairs of wxChoices with the output
- */
-class GitDiffCmdHandler : public IProcessCallback
-{
-    wxChoice* m_choice1;
-    wxChoice* m_choice2;
-    wxString m_output;
-
-public:
-    GitDiffCmdHandler(wxChoice* choice1, wxChoice* choice2)
-        : m_choice1(choice1)
-        , m_choice2(choice2)
-    {
-    }
-    ~GitDiffCmdHandler() {}
-
-    virtual void OnProcessOutput(const wxString& str) { m_output << str; }
-
-    virtual void OnProcessTerminated()
-    {
-        wxArrayString items = wxStringTokenize(m_output, "\n", wxTOKEN_STRTOK);
-        if(m_choice1) { m_choice1->Set(items); }
-        if(m_choice2) { m_choice2->Set(items); }
-        delete this;
-    }
-};
-
 GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin* plugin)
     : GitDiffChooseCommitishDlgBase(parent)
     , m_plugin(plugin)
@@ -100,19 +70,34 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
     m_comboCommitish1->Append(data.GetGitDiffChooseDlgCBoxValues1());
     m_comboCommitish2->Append(data.GetGitDiffChooseDlgCBoxValues2());
 
-    wxString command = m_gitPath + " --no-pager branch -a --no-color";
-    m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(m_choiceBranch1, m_choiceBranch2), command,
-                                     IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
+    CreateAsyncProcessCB(
+        m_gitPath + " --no-pager branch -a --no-color",
+        [this](const wxString& output) {
+            wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+            m_choiceBranch1->Set(items);
+            m_choiceBranch1->Set(items);
+        },
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
 
-    command = m_gitPath + " --no-pager tag";
-    m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(m_choiceTag1, m_choiceTag2), command,
-                                     IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
+    CreateAsyncProcessCB(
+        m_gitPath + " --no-pager tag",
+        [this](const wxString& output) {
+            wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+            m_choiceTag1->Set(items);
+            m_choiceTag2->Set(items);
+        },
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
 
     // Restrict the commits to 1000: filling a wxChoice with many more froze CodeLite for several minutes
     // and in any case, selecting one particular commit out of hundreds is not easy!
-    command = m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\"";
-    m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(m_choiceCommit1, m_choiceCommit2), command,
-                                     IProcessCreateDefault, m_plugin->GetRepositoryDirectory());
+    CreateAsyncProcessCB(
+        m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\"",
+        [this](const wxString& output) {
+            wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+            m_choiceCommit1->Set(items);
+            m_choiceCommit2->Set(items);
+        },
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
 }
 
 GitDiffChooseCommitishDlg::~GitDiffChooseCommitishDlg()
@@ -121,7 +106,9 @@ GitDiffChooseCommitishDlg::~GitDiffChooseCommitishDlg()
     if(m_selectedRadio1 == 3) {
         wxString sel = m_comboCommitish1->GetValue();
         if(!sel.empty()) {
-            if(comboCommitish1Strings.Index(sel) != wxNOT_FOUND) { comboCommitish1Strings.Remove(sel); }
+            if(comboCommitish1Strings.Index(sel) != wxNOT_FOUND) {
+                comboCommitish1Strings.Remove(sel);
+            }
             comboCommitish1Strings.Insert(sel, 0);
         }
     }
@@ -129,7 +116,9 @@ GitDiffChooseCommitishDlg::~GitDiffChooseCommitishDlg()
     if(m_selectedRadio1 == 3) {
         wxString sel = m_comboCommitish2->GetValue();
         if(!sel.empty()) {
-            if(comboCommitish2Strings.Index(sel) != wxNOT_FOUND) { comboCommitish2Strings.Remove(sel); }
+            if(comboCommitish2Strings.Index(sel) != wxNOT_FOUND) {
+                comboCommitish2Strings.Remove(sel);
+            }
             comboCommitish2Strings.Insert(sel, 0);
         }
     }
@@ -150,7 +139,9 @@ wxString GitDiffChooseCommitishDlg::GetAncestorSetting(wxSpinCtrl* spin) const
     wxString setting;
     if(spin) {
         int value = spin->GetValue();
-        if(value > 0) { setting = wxString::Format("~%i", value); }
+        if(value > 0) {
+            setting = wxString::Format("~%i", value);
+        }
     }
     return setting;
 }
@@ -241,9 +232,13 @@ void GitDiffChooseCommitishDlg::OnBranch1Changed(wxCommandEvent& event)
     if(newBranch.StartsWith("* ")) {
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
-    wxString command = m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch;
-    m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(m_choiceCommit1, NULL), command, IProcessCreateDefault,
-                                     m_plugin->GetRepositoryDirectory());
+    CreateAsyncProcessCB(
+        m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch,
+        [this](const wxString& output) {
+            wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+            m_choiceCommit1->Set(items);
+        },
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
 }
 void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
 {
@@ -251,7 +246,12 @@ void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
     if(newBranch.StartsWith("* ")) {
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
-    wxString command = m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch;
-    m_process = CreateAsyncProcessCB(this, new GitDiffCmdHandler(NULL, m_choiceCommit2), command, IProcessCreateDefault,
-                                     m_plugin->GetRepositoryDirectory());
+
+    CreateAsyncProcessCB(
+        m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch,
+        [this](const wxString& output) {
+            wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+            m_choiceCommit2->Set(items);
+        },
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
 }

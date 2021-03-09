@@ -70,6 +70,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     if(m_gitPath.IsEmpty()) {
         m_gitPath = "git";
     }
+    ::WrapWithQuotes(m_gitPath);
 
     m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH, wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard), NULL, this);

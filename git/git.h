@@ -177,6 +177,7 @@ class GitPlugin : public IPlugin
         m_blameMap; // contains file: comment per line (extracted from the 'git blame' info)
     size_t m_configFlags = 0;
     wxString m_lastBlameMessage;
+    wxFileName m_gitCommitMessageFile;
 
 private:
     void DoCreateTreeImages();
@@ -283,7 +284,7 @@ private:
 
     // Respond to local events
     void OnGitActionDone(clSourceControlEvent& event);
-    
+
 public:
     GitPlugin(IManager* manager);
     virtual ~GitPlugin();

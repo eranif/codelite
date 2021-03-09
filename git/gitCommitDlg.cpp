@@ -128,9 +128,9 @@ wxArrayString GitCommitDlg::GetSelectedFiles()
 wxString GitCommitDlg::GetCommitMessage()
 {
     wxString msg = m_stcCommitMessage->GetText();
-    msg.Replace(wxT("\""), wxT("\\\""));
     return msg;
 }
+
 /*******************************************************************************/
 void GitCommitDlg::OnChangeFile(wxDataViewEvent& e)
 {

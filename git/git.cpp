@@ -55,6 +55,7 @@
 #include "clDiffFrame.h"
 #include "clEditorBar.h"
 #include "clStatusBar.h"
+#include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
@@ -130,6 +131,9 @@ GitPlugin::GitPlugin(IManager* manager)
     , m_commandProcessor(NULL)
     , m_gitBlameDlg(NULL)
 {
+    m_gitCommitMessageFile.SetPath(clStandardPaths::Get().GetTempDir());
+    m_gitCommitMessageFile.SetFullName("CL_GIT_COMMIT_MSG.TXT");
+
     m_longName = _("GIT plugin");
     m_shortName = wxT("Git");
     m_eventHandler = m_mgr->GetTheApp();
@@ -2624,10 +2628,16 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 
             // Add the message
             if(!message.IsEmpty()) {
-                commitArgs << "-m \"";
-                commitArgs << message;
-                commitArgs << "\" ";
+                wxString messagefile = m_gitCommitMessageFile.GetFullPath();
+                ::WrapWithQuotes(messagefile);
+                commitArgs << "--file=";
+                commitArgs << messagefile << " ";
 
+                if(!FileUtils::WriteFileContent(m_gitCommitMessageFile, message)) {
+                    m_console->AddRawText(_("Aborting!. Failed to write commit message to file: ") +
+                                          m_gitCommitMessageFile.GetFullPath());
+                    return;
+                }
             } else {
                 // we are amending previous commit, use the previous commit message
                 // by passing the --no-edit switch

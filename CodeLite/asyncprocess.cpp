@@ -214,8 +214,11 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
 
 static void __FixArgs(wxArrayString& args)
 {
-#if defined(__WXOSX__) || defined(__WXGTK__)
     for(wxString& arg : args) {
+        // escape LF/CR
+        arg.Replace("\n", "");
+        arg.Replace("\r", "");
+#if defined(__WXOSX__) || defined(__WXGTK__)
         arg.Trim().Trim(false);
         if(arg.length() > 1) {
             if(arg.StartsWith("'") && arg.EndsWith("'")) {
@@ -226,8 +229,8 @@ static void __FixArgs(wxArrayString& args)
                 arg.RemoveLast();
             }
         }
-    }
 #endif
+    }
 }
 
 IProcess* CreateAsyncProcess(wxEvtHandler* parent, const vector<wxString>& args, size_t flags,
@@ -246,9 +249,9 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
 {
     clEnvironment e(env);
     wxArrayString c = args;
-    
+
     clDEBUG() << "1: CreateAsyncProcess called with:" << c << endl;
-    
+
     if(flags & IProcessWrapInShell) {
         // wrap the command in OS specific terminal
         c = __WrapInShell(c, flags);

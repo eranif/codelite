@@ -1340,7 +1340,7 @@ void GitPlugin::ProcessGitActionQueue()
     clDEBUG1() << "[git]" << command << clEndl;
     clDEBUG1() << "[git]" << workingDirectory << clEndl;
 
-    m_process = ::CreateAsyncProcess(this, command, createFlags, workingDirectory);
+    m_process = ::CreateAsyncProcess(this, command, createFlags | IProcessWrapInShell, workingDirectory);
     if(!m_process) {
         GIT_MESSAGE(wxT("Failed to execute git command!"));
         DoRecoverFromGitCommandError();
@@ -1746,12 +1746,10 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     } break;
     case gitCommitList: {
-        if(m_commitListDlg) {
-            m_commitListDlg->SetCommitList(m_commandOutput);
-        } else {
+        if(!m_commitListDlg) {
             m_commitListDlg = new GitCommitListDlg(m_topWindow, m_repositoryDirectory, this);
-            m_commitListDlg->SetCommitList(m_commandOutput);
         }
+        m_commitListDlg->SetCommitList(m_commandOutput);
         m_commitListDlg->Show();
     } break;
     case gitCommit: {

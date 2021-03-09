@@ -46,7 +46,9 @@ void* ProcessReaderThread::Entry()
 {
     while(true) {
         // Did we get a request to terminate?
-        if(TestDestroy()) { break; }
+        if(TestDestroy()) {
+            break;
+        }
 
         if(m_process) {
             wxString buff;
@@ -66,14 +68,18 @@ void* ProcessReaderThread::Entry()
                                 clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
                                 e.SetOutput(buff);
                                 e.SetProcess(m_process);
-                                if(m_notifiedWindow) { m_notifiedWindow->AddPendingEvent(e); }
+                                if(m_notifiedWindow) {
+                                    m_notifiedWindow->AddPendingEvent(e);
+                                }
                             }
                             if(!buffErr.IsEmpty()) {
                                 // we got some data, send event to parent
                                 clProcessEvent e(wxEVT_ASYNC_PROCESS_STDERR);
                                 e.SetOutput(buffErr);
                                 e.SetProcess(m_process);
-                                if(m_notifiedWindow) { m_notifiedWindow->AddPendingEvent(e); }
+                                if(m_notifiedWindow) {
+                                    m_notifiedWindow->AddPendingEvent(e);
+                                }
                             }
                         }
                     }
@@ -132,6 +138,8 @@ void ProcessReaderThread::NotifyTerminated()
         // fallback to the event system
         clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
         e.SetProcess(m_process);
-        if(m_notifiedWindow) { m_notifiedWindow->AddPendingEvent(e); }
+        if(m_notifiedWindow) {
+            m_notifiedWindow->AddPendingEvent(e);
+        }
     }
 }

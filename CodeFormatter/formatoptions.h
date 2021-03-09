@@ -209,7 +209,8 @@ private:
     /**
      * @brief Check if there is a file of the given name in any of the parent directories of the input file
      */
-    bool HasConfigForFile(const wxFileName& fileName, const wxString& configName) const;
+    bool HasConfigForFile(const wxFileName& fileName,
+                          const wxString& configName, wxFileName& fileloc) const;
 
 public:
     FormatOptions();
@@ -260,7 +261,7 @@ public:
     wxString ClangFormatCommand(const wxFileName& fileName, wxString originalFileName = "",
                                 const int& cursorPosition = wxNOT_FOUND, const int& selStart = wxNOT_FOUND,
                                 const int& selEnd = wxNOT_FOUND) const;
-    wxString GetClangFormatStyleAsString(const wxFileName& fileName) const;
+    void GenerateConfigFile(const wxFileName& fileName) const;
     void SetClangFormatExe(const wxString& clangFormatExe)
     {
         this->m_clangFormatExe = clangFormatExe;

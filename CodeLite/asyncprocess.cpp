@@ -169,12 +169,14 @@ static void __FixArgs(wxArrayString& args)
 #if defined(__WXOSX__) || defined(__WXGTK__)
     for(wxString& arg : args) {
         arg.Trim().Trim(false);
-        if(arg.StartsWith("'") || arg.StartsWith("\"")) {
-            arg.Remove(0, 1);
-        }
-
-        if(arg.EndsWith("'") || arg.EndsWith("\"")) {
-            arg.RemoveLast();
+        if(arg.length() > 1) {
+            if(arg.StartsWith("'") && arg.EndsWith("'")) {
+                arg.Remove(0, 1);
+                arg.RemoveLast();
+            } else if(arg.StartsWith("\"") && arg.EndsWith("\"")) {
+                arg.Remove(0, 1);
+                arg.RemoveLast();
+            }
         }
     }
 #endif

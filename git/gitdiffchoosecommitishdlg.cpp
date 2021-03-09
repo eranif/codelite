@@ -28,6 +28,7 @@
 #include "git.h"
 #include "gitdiffchoosecommitishdlg.h"
 #include "gitentry.h"
+#include "globals.h"
 #include "processreaderthread.h"
 #include "windowattrmanager.h"
 #include <wx/tokenzr.h>
@@ -52,6 +53,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
 
     m_gitPath = data.GetGITExecutablePath();
     m_gitPath.Trim().Trim(false);
+    ::WrapWithQuotes(m_gitPath);
 
     m_selectedRadio1 = data.GetGitDiffChooseDlgRadioSel1();
     m_selectedRadio2 = data.GetGitDiffChooseDlgRadioSel2();

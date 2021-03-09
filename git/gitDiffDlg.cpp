@@ -51,6 +51,7 @@ GitDiffDlg::GitDiffDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* 
     GitEntry data;
     conf.ReadItem(&data);
     m_gitPath = data.GetGITExecutablePath();
+    ::WrapWithQuotes(m_gitPath);
 
     SetName("GitDiffDlg");
     WindowAttrManager::Load(this);

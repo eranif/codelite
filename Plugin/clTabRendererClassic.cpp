@@ -132,12 +132,14 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         p1 = tabRect.GetRightTop();
         p2 = tabRect.GetBottomRight();
         p2.y -= 1; // don't override the bottom line
+        p1.y -= 1; // dont override the top line
         dc.SetPen(colours.activeTabBgColour.ChangeLightness(110));
         dc.DrawLine(p1, p2);
 
         p1 = tabRect.GetLeftTop();
         p2 = tabRect.GetLeftBottom();
         p2.y -= 1; // don't override the bottom line
+        p1.y -= 1; // dont override the top line
         dc.DrawLine(p1, p2);
     }
 }
@@ -197,8 +199,8 @@ void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
     
     // clear the dark line drawn in the prev lines from the active tab
     wxPoint p1, p2;
-    p1 = wxPoint(activeTabRect.GetLeft(), topRect.GetBottom());
-    p2 = wxPoint(activeTabRect.GetRight() + 1, topRect.GetBottom());
+    p1 = wxPoint(activeTabRect.GetLeft() - 1, topRect.GetBottom());
+    p2 = wxPoint(activeTabRect.GetRight() + 2, topRect.GetBottom());
     dc.SetPen(colours.activeTabBgColour);
     dc.DrawLine(p1, p2);
     

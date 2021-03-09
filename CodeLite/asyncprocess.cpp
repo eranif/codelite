@@ -30,53 +30,97 @@ class IProcess;
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clTempFile.hpp"
+#include "cl_command_event.h"
 #include "file_logger.h"
+#include "processreaderthread.h"
 #include "ssh_account_info.h"
 #include <wx/arrstr.h>
 #include <wx/string.h>
 
 #ifdef __WXMSW__
+static bool shell_is_cmd = true;
 #include "winprocess_impl.h"
 #else
+static bool shell_is_cmd = false;
 #include "unixprocess_impl.h"
 #endif
+class __AsyncCallback : public wxEvtHandler
+{
+    function<void(const wxString&)> m_cb;
+    wxString m_output;
 
-static void __WrapSpacesForShell(wxString& str)
+public:
+    __AsyncCallback(function<void(const wxString&)> cb)
+        : m_cb(move(cb))
+    {
+        Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &__AsyncCallback::OnProcessTerminated, this);
+        Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &__AsyncCallback::OnProcessOutput, this);
+    }
+    ~__AsyncCallback()
+    {
+        Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &__AsyncCallback::OnProcessTerminated, this);
+        Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &__AsyncCallback::OnProcessOutput, this);
+    }
+
+    void OnProcessOutput(clProcessEvent& event)
+    {
+        size_t new_len = m_output.length() + event.GetOutput().length();
+        if(new_len > m_output.length()) {
+            m_output.reserve(new_len);
+            m_output << event.GetOutput();
+        }
+    }
+
+    void OnProcessTerminated(clProcessEvent& event)
+    {
+        if(!event.GetOutput().empty()) {
+            m_output << event.GetOutput();
+        }
+        // all the user callback
+        m_cb(m_output);
+        delete event.GetProcess();
+        delete this; // we are no longer needed...
+    }
+};
+
+static void __WrapSpacesForShell(wxString& str, size_t flags)
 {
     str.Trim().Trim(false);
     auto tmpArgs = StringUtils::BuildArgv(str);
     if(tmpArgs.size() > 1) {
-#ifndef __WXMSW__
-        // escape any occurances of "
-        str.Replace("\"", "\\\"");
-#endif
+        if(!shell_is_cmd || (flags & IProcessCreateSSH)) {
+            // escape any occurances of "
+            str.Replace("\"", "\\\"");
+        }
         str.Append("\"").Prepend("\"");
     }
 }
 
-static wxArrayString __WrapInShell(const wxArrayString& args)
+static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
 {
     wxArrayString tmparr = args;
     for(wxString& arg : tmparr) {
-        __WrapSpacesForShell(arg);
+        __WrapSpacesForShell(arg, flags);
     }
 
     wxString cmd = wxJoin(tmparr, ' ', 0);
     wxArrayString command;
 
-#ifdef __WXMSW__
-    wxChar* shell = wxGetenv(wxT("COMSPEC"));
-    if(!shell) {
-        shell = (wxChar*)wxT("CMD.EXE");
+    bool is_ssh = flags & IProcessCreateSSH;
+    if(shell_is_cmd && !is_ssh) {
+        wxChar* shell = wxGetenv(wxT("COMSPEC"));
+        if(!shell) {
+            shell = (wxChar*)wxT("CMD.EXE");
+        }
+        command.Add(shell);
+        command.Add("/C");
+        command.Add("\"" + cmd + "\"");
+
+    } else {
+        command.Add("/bin/sh");
+        command.Add("-c");
+        command.Add(cmd);
     }
-    command.Add(shell);
-    command.Add("/C");
-    command.Add(cmd);
-#else
-    command.Add("/bin/sh");
-    command.Add("-c");
-    command.Add(cmd);
-#endif
     return command;
 }
 
@@ -202,10 +246,12 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
 {
     clEnvironment e(env);
     wxArrayString c = args;
-
+    
+    clDEBUG() << "1: CreateAsyncProcess called with:" << c << endl;
+    
     if(flags & IProcessWrapInShell) {
         // wrap the command in OS specific terminal
-        c = __WrapInShell(c);
+        c = __WrapInShell(c, flags);
     }
 
     clTempFile tmpfile; // needed for putty clients
@@ -216,8 +262,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
 
     // needed on linux where fork does not require the extra quoting
     __FixArgs(c);
-
-    clDEBUG() << "CreateAsyncProcess called with:" << c << endl;
+    clDEBUG() << "2: CreateAsyncProcess called with:" << c << endl;
 
 #ifdef __WXMSW__
     return WinProcessImpl::Execute(parent, c, flags, workingDir);
@@ -225,45 +270,6 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
     return UnixProcessImpl::Execute(parent, c, flags, workingDir);
 #endif
 }
-
-class __AsyncCallback : public wxEvtHandler
-{
-    function<void(const wxString&)> m_cb;
-    wxString m_output;
-
-public:
-    __AsyncCallback(function<void(const wxString&)> cb)
-        : m_cb(move(cb))
-    {
-        Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &__AsyncCallback::OnProcessTerminated, this);
-        Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &__AsyncCallback::OnProcessOutput, this);
-    }
-    ~__AsyncCallback()
-    {
-        Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &__AsyncCallback::OnProcessTerminated, this);
-        Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &__AsyncCallback::OnProcessOutput, this);
-    }
-
-    void OnProcessOutput(clProcessEvent& event)
-    {
-        size_t new_len = m_output.length() + event.GetOutput().length();
-        if(new_len > m_output.length()) {
-            m_output.reserve(new_len);
-            m_output << event.GetOutput();
-        }
-    }
-
-    void OnProcessTerminated(clProcessEvent& event)
-    {
-        if(!event.GetOutput().empty()) {
-            m_output << event.GetOutput();
-        }
-        // all the user callback
-        m_cb(m_output);
-        delete event.GetProcess();
-        delete this; // we are no longer needed...
-    }
-};
 
 IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
                              const clEnvList_t* env, const wxString& sshAccountName)

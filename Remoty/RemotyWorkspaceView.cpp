@@ -1,4 +1,4 @@
-#include "RemotyWorkspaceView.h"
+#include "RemotyWorkspaceView.hpp"
 #include "file_logger.h"
 #include "ssh_account_info.h"
 

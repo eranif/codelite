@@ -27,9 +27,9 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="RemotyWorkspaceView.hpp"/>
     <File Name="RemotyUI.h"/>
     <File Name="RemotyUI.cpp"/>
-    <File Name="RemotyWorkspaceView.h"/>
     <File Name="RemotyWorkspaceView.cpp"/>
     <File Name="RemotyUI_remoty_bitmaps.cpp"/>
     <File Name="RemotyUI.wxcp"/>

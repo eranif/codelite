@@ -34,7 +34,7 @@
 #include "git.h"
 #include "gitCommitEditor.h"
 #include "gitdiffchoosecommitishdlg.h"
-#include "global.h"
+#include "globals.h"
 #include "processreaderthread.h"
 #include <wx/tokenzr.h>
 

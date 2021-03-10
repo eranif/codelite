@@ -481,6 +481,9 @@ double wxOSXGetMainScreenContentScaleFactor();
 wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 {
     bool bDarkBG = IsDark(GetPanelBgColour());
+    if(!bmp.IsOk()) {
+        return wxNullBitmap;
+    }
     return bmp.ConvertToDisabled(bDarkBG ? 69 : 255);
 }
 

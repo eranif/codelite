@@ -84,8 +84,11 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     if(tabInfo.HasBitmap()) {
         int bmpIndex =
             (!tabInfo.IsActive() && tabInfo.HasDisableBitmap()) ? tabInfo.GetDisabledBitmp() : tabInfo.GetBitmap();
-        bool disabledBmp = !tabInfo.IsActive();
-        dc.DrawBitmap(tabInfo.GetBitmap(bmpIndex, disabledBmp), tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
+        bool disabledBmp = (!tabInfo.IsActive() && tabInfo.HasDisableBitmap());
+        const wxBitmap& bmp = tabInfo.GetBitmap(bmpIndex, disabledBmp);
+        if(bmp.IsOk()) {
+            dc.DrawBitmap(bmp, tabInfo.m_bmpX + tabInfo.m_rect.GetX(), tabInfo.m_bmpY);
+        }
     }
 
     wxRect rr = tabInfo.m_rect;
@@ -183,27 +186,32 @@ void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
     if(IS_VERTICAL_TABS(style)) {
         return;
     }
-    
+
     wxColour borderColour = colours.activeTabBgColour.ChangeLightness(50);
     wxRect topRect = clientRect;
     topRect.SetHeight(marginTop);
-    
+
     dc.SetPen(colours.activeTabBgColour);
     dc.SetBrush(colours.activeTabBgColour);
     dc.DrawRectangle(topRect);
-    
+
     // draw dark line at the bottom of the top rect
     dc.SetPen(borderColour);
     dc.DrawLine(topRect.GetBottomLeft(), topRect.GetBottomRight());
-//    dc.DrawLine(topRect.GetTopLeft(), topRect.GetTopRight());
-    
+    //    dc.DrawLine(topRect.GetTopLeft(), topRect.GetTopRight());
+
     // clear the dark line drawn in the prev lines from the active tab
     wxPoint p1, p2;
     p1 = wxPoint(activeTabRect.GetLeft() - 1, topRect.GetBottom());
     p2 = wxPoint(activeTabRect.GetRight() + 2, topRect.GetBottom());
     dc.SetPen(colours.activeTabBgColour);
     dc.DrawLine(p1, p2);
-    
+
+#ifndef __WXMSW__
+    p1.x += 2;
+    p2.x -= 2;
+#endif
+
     // draw dark line at the bottom of the active tab
     p1.y = activeTabRect.GetBottom();
     p2.y = p1.y;

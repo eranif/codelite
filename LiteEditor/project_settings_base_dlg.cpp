@@ -388,6 +388,7 @@ PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wx
     m_pgMgrArr.Add(_("Just Include"));
     m_pgMgrIntArr.Add(0);
     m_pgMgrIntArr.Add(1);
+    m_pgMgrIntArr.Add(2);
     m_pgPropPCHPolicy = m_pgMgr->AppendIn(
         CATEGORY_PCH, new wxEnumProperty(_("PCH Compile Flags Policy"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
     m_pgPropPCHPolicy->SetHelpString(

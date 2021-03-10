@@ -3383,7 +3383,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Array Integer Values",
-													"m_value":	"0;1"
+													"m_value":	"0;1;2"
 												}, {
 													"type":	"bool",
 													"m_label":	"Bool Value",

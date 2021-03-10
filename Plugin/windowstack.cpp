@@ -127,7 +127,7 @@ void WindowStack::DoSelect(wxWindow* win)
     win->Show();
     m_activeWin = win;
     // Hide the rest
-    DoHideNoActiveWindows();
+    CallAfter(&WindowStack::DoHideNoActiveWindows);
 }
 
 void WindowStack::OnSize(wxSizeEvent& e)
@@ -141,11 +141,11 @@ void WindowStack::OnSize(wxSizeEvent& e)
 
 void WindowStack::DoHideNoActiveWindows()
 {
-    std::for_each(m_windows.begin(), m_windows.end(), [&](wxWindow* w) {
+    for(auto w : m_windows) {
         if(w != m_activeWin) {
             w->Hide();
         }
-    });
+    }
 
 #ifdef __WXOSX__
     if(m_activeWin) {

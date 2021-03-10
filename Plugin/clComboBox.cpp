@@ -93,32 +93,31 @@ void clComboBox::OnButtonClicked(wxCommandEvent& event)
         const wxString& choice = m_choices.Item(i);
         auto item = menu.Append(wxID_ANY, choice, "", wxITEM_CHECK);
         item->Check(i == (size_t)m_selection);
-        menu.Bind(wxEVT_MENU,
-                  [this, choice, i](wxCommandEvent& e) {
-                      wxUnusedVar(e);
+        menu.Bind(
+            wxEVT_MENU,
+            [this, choice, i](wxCommandEvent& e) {
+                wxUnusedVar(e);
 
-                      // update the selected text
-                      m_textCtrl->ChangeValue(choice);
-                      m_selection = i;
+                // update the selected text
+                m_textCtrl->ChangeValue(choice);
+                m_selection = i;
 
-                      // Notify about selection change
-                      wxCommandEvent selectionChanged(wxEVT_COMBOBOX);
-                      selectionChanged.SetEventObject(this);
-                      selectionChanged.SetInt(i); // the new selection
-                      GetEventHandler()->AddPendingEvent(selectionChanged);
-                  },
-                  item->GetId());
+                // Notify about selection change
+                wxCommandEvent selectionChanged(wxEVT_COMBOBOX);
+                selectionChanged.SetEventObject(this);
+                selectionChanged.SetInt(i); // the new selection
+                GetEventHandler()->AddPendingEvent(selectionChanged);
+            },
+            item->GetId());
     }
 
-#if 0
     wxPoint menuPos = GetClientRect().GetBottomLeft();
 #ifdef __WXOSX__
     menuPos.y += 5;
 #endif
     menuPos = m_button->ScreenToClient(ClientToScreen(menuPos));
-#endif
 
-    m_button->ShowMenu(menu, nullptr);
+    m_button->ShowMenu(menu, &menuPos);
     m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }
 

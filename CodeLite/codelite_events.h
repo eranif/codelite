@@ -424,6 +424,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_CREATE_NEW_WORKSPACE, clComma
 // event.Skip(false) on the event
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_OPEN_WORKSPACE, clCommandEvent);
 
+// user initiated a 'OnSwitchWorkspace' event
+// a plugin may override this to change the default behavior
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SWITCHING_TO_WORKSPACE, clCommandEvent);
+
 // Event type: clCommandEvent
 // User requested to close the workspace.
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_CLOSE_WORKSPACE, clCommandEvent);

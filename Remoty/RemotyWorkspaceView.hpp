@@ -14,6 +14,11 @@ public:
     /**
      * @brief open a workspace on a given remote folder
      */
-    void Open(const wxString& path, const wxString& accountName);
+    void OpenWorkspace(const wxString& path, const wxString& accountName);
+    
+    /**
+     * @brief close the workspace view
+     */
+    void CloseWorkspace();
 };
 #endif // REMOTYWORKSPACEVIEW_H

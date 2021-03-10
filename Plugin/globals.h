@@ -36,10 +36,10 @@
 #include <wx/ctrlsub.h>
 #include <wx/dc.h>
 #include <wx/dcgraph.h>
+#include <wx/infobar.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/string.h>
 #include <wx/variant.h>
-#include <wx/infobar.h>
 
 class wxDataViewCtrl;
 class IManager;
@@ -519,6 +519,20 @@ WXDLLIMPEXP_SDK void clRecalculateSTCHScrollBar(wxStyledTextCtrl* ctrl);
 WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title, const wxString& message,
                                            const wxString& initialValue = "", int charsToSelect = wxNOT_FOUND,
                                            wxWindow* parent = NULL);
+
+/**
+ * @brief similar to wxDirSelector, but on a remote machine
+ */
+WXDLLIMPEXP_SDK pair<wxString, wxString>
+clRemoteFolderSelector(const wxString& title, const wxString& accountName = wxEmptyString, wxWindow* parent = NULL);
+
+/**
+ * @brief similar to wxFileSelector, but on a remote machine
+ */
+WXDLLIMPEXP_SDK pair<wxString, wxString> clRemoteFileSelector(const wxString& title,
+                                                              const wxString& accountName = wxEmptyString,
+                                                              const wxString& filter = wxEmptyString,
+                                                              wxWindow* parent = NULL);
 /**
  * @brief return the instance to the plugin manager. A convinience method
  */

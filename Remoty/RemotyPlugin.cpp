@@ -67,6 +67,7 @@ RemotyPlugin::RemotyPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &RemotyPlugin::OnFolderContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyPlugin::OnNewWorkspace, this);
     clWorkspaceManager::Get().RegisterWorkspace(new RemoteWorkspace(true));
+    m_workspace = new RemoteWorkspace();
 }
 
 RemotyPlugin::~RemotyPlugin() {}
@@ -83,6 +84,7 @@ void RemotyPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void RemotyPlugin::UnPlug()
 {
+    wxDELETE(m_workspace);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &RemotyPlugin::OnFolderContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyPlugin::OnNewWorkspace, this);
 }

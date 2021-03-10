@@ -33,3 +33,106 @@ RemotyWorkspaceViewBase::RemotyWorkspaceViewBase(wxWindow* parent, wxWindowID id
 }
 
 RemotyWorkspaceViewBase::~RemotyWorkspaceViewBase() {}
+
+RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                               const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterjtvK2XInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer7 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer7);
+
+    wxFlexGridSizer* flexGridSizer15 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer15->SetFlexibleDirection(wxBOTH);
+    flexGridSizer15->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer15->AddGrowableCol(1);
+
+    boxSizer7->Add(flexGridSizer15, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText17 =
+        new wxStaticText(this, wxID_ANY, _("Local workspace:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer15->Add(m_staticText17, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_comboBoxLocalArr;
+    m_comboBoxLocal = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition,
+                                           wxDLG_UNIT(this, wxSize(250, -1)), m_comboBoxLocalArr, 0);
+#if wxVERSION_NUMBER >= 3000
+    m_comboBoxLocal->SetHint(wxT(""));
+#endif
+
+    flexGridSizer15->Add(m_comboBoxLocal, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button29 = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer15->Add(m_button29, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText21 = new wxStaticText(this, wxID_ANY, _("Remote workspace:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer15->Add(m_staticText21, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_comboBoxRemoteArr;
+    m_comboBoxRemote = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(this, wxSize(-1, -1)), m_comboBoxRemoteArr, 0);
+#if wxVERSION_NUMBER >= 3000
+    m_comboBoxRemote->SetHint(wxT(""));
+#endif
+
+    flexGridSizer15->Add(m_comboBoxRemote, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button31 = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer15->Add(m_button31, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer9 = new wxStdDialogButtonSizer();
+
+    boxSizer7->Add(m_stdBtnSizer9, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button11 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button11->SetDefault();
+    m_stdBtnSizer9->AddButton(m_button11);
+
+    m_button13 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer9->AddButton(m_button13);
+    m_stdBtnSizer9->Realize();
+
+    SetName(wxT("RemotySwitchToWorkspaceDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_button29->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                        wxCommandEventHandler(RemotySwitchToWorkspaceDlgBase::OnLocalBrowse), NULL, this);
+    m_button31->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                        wxCommandEventHandler(RemotySwitchToWorkspaceDlgBase::OnRemoteBrowse), NULL, this);
+    m_button11->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(RemotySwitchToWorkspaceDlgBase::OnOKUI), NULL, this);
+}
+
+RemotySwitchToWorkspaceDlgBase::~RemotySwitchToWorkspaceDlgBase()
+{
+    m_button29->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(RemotySwitchToWorkspaceDlgBase::OnLocalBrowse), NULL, this);
+    m_button31->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(RemotySwitchToWorkspaceDlgBase::OnRemoteBrowse), NULL, this);
+    m_button11->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(RemotySwitchToWorkspaceDlgBase::OnOKUI), NULL, this);
+}

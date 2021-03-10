@@ -40,20 +40,4 @@ void clThemedComboBox::OnThemeChanged(wxCommandEvent& event)
     ApplyTheme();
 }
 
-void clThemedComboBox::ApplyTheme()
-{
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    clColours colours;
-    if(lexer->IsDark()) {
-        colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    } else {
-        colours.InitDefaults();
-    }
-    wxColour baseColour = colours.GetBgColour();
-    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
-    if(useCustomColour) {
-        baseColour = clConfig::Get().Read("BaseColour", baseColour);
-        colours.InitFromColour(baseColour);
-    }
-    //GetButton()->SetColours(colours);
-}
+void clThemedComboBox::ApplyTheme() {}

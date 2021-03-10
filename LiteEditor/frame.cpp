@@ -1854,10 +1854,22 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 {
-    wxUnusedVar(event);
+    // Notify plugins
+    clCommandEvent switchingToWorkspce(wxEVT_SWITCHING_TO_WORKSPACE);
+    if(event.GetString().IsEmpty()) {
+        if(EventNotifier::Get()->ProcessEvent(switchingToWorkspce)) {
+            // plugin called event.Skip(false)
+            return;
+        }
+    }
+
+    // To restore the default behavior, a plugin could set the file name in the event so we can skip the
+    // SwitchToWorkspaceDlg process
+    if(!switchingToWorkspce.GetFileName().empty()) {
+        event.SetString(switchingToWorkspce.GetFileName());
+    }
 
     wxBusyCursor bc;
-
     wxString wspFile;
     const wxString WSP_EXT = "workspace";
 
@@ -1888,7 +1900,7 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
     e.SetEventObject(this);
     e.SetFileName(wspFile);
     if(EventNotifier::Get()->ProcessEvent(e)) {
-        // the plugin processed it by itself
+        // a plugin processed it by itself
         return;
     }
 

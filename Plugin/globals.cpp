@@ -94,6 +94,10 @@
 #include <gtk/gtk.h>
 #endif
 
+#if USE_SFTP
+#include "SFTPBrowserDlg.h"
+#endif
+
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_0_ARGS = ::wxNewEventType();
 const wxEventType wxEVT_COMMAND_CL_INTERNAL_1_ARGS = ::wxNewEventType();
 
@@ -2185,6 +2189,34 @@ static void DoSetDialogSize(wxDialog* win, double factor)
         win->GetSizer()->Layout();
         win->CentreOnParent();
     }
+#endif
+}
+
+pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, const wxString& accountName,
+                                                const wxString& initialFolder, wxWindow* parent)
+{
+#if USE_SFTP
+    SFTPBrowserDlg dlg(parent, title, wxEmptyString, clSFTP::SFTP_BROWSE_FOLDERS, accountName);
+    if(dlg.ShowModal() != wxID_OK) {
+        return {};
+    }
+    return { dlg.GetAccount(), dlg.GetPath() };
+#else
+    return {};
+#endif
+}
+
+pair<wxString, wxString> clRemoteFileSelector(const wxString& title, const wxString& accountName,
+                                              const wxString& filter, wxWindow* parent)
+{
+#if USE_SFTP
+    SFTPBrowserDlg dlg(parent, title, filter, clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES, accountName);
+    if(dlg.ShowModal() != wxID_OK) {
+        return {};
+    }
+    return { dlg.GetAccount(), dlg.GetPath() };
+#else
+    return {};
 #endif
 }
 

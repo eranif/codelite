@@ -14,6 +14,13 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/dialog.h>
+#include <wx/iconbndl.h>
+#include <wx/stattext.h>
+#include <wx/combobox.h>
+#include <wx/arrstr.h>
+#include "clThemedComboBox.hpp"
+#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -40,6 +47,38 @@ public:
     RemotyWorkspaceViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                             const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~RemotyWorkspaceViewBase();
+};
+
+class RemotySwitchToWorkspaceDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText17;
+    clThemedComboBox* m_comboBoxLocal;
+    wxButton* m_button29;
+    wxStaticText* m_staticText21;
+    clThemedComboBox* m_comboBoxRemote;
+    wxButton* m_button31;
+    wxStdDialogButtonSizer* m_stdBtnSizer9;
+    wxButton* m_button11;
+    wxButton* m_button13;
+
+protected:
+    virtual void OnLocalBrowse(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRemoteBrowse(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText17() { return m_staticText17; }
+    clThemedComboBox* GetComboBoxLocal() { return m_comboBoxLocal; }
+    wxButton* GetButton29() { return m_button29; }
+    wxStaticText* GetStaticText21() { return m_staticText21; }
+    clThemedComboBox* GetComboBoxRemote() { return m_comboBoxRemote; }
+    wxButton* GetButton31() { return m_button31; }
+    RemotySwitchToWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                   const wxString& title = _("Switch to workspace..."),
+                                   const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                   long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~RemotySwitchToWorkspaceDlgBase();
 };
 
 #endif

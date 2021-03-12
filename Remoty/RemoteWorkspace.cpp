@@ -79,11 +79,18 @@ void RemoteWorkspace::OnOpenWorkspace(clCommandEvent& event)
     if(dlg.ShowModal() != wxID_OK) {
         return;
     }
+
     if(!dlg.IsRemote()) {
         event.Skip();
         event.SetFileName(dlg.GetPath());
         return;
     }
+
+    // Close any opened workspace
+    auto frame = EventNotifier::Get()->TopFrame();
+    wxCommandEvent eventCloseWsp(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
+    eventCloseWsp.SetEventObject(frame);
+    frame->GetEventHandler()->ProcessEvent(eventCloseWsp);
 
     // parse the remote file path
     wxString remote_path = dlg.GetPath();

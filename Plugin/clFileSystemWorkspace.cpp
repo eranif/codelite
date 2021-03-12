@@ -301,6 +301,12 @@ void clFileSystemWorkspace::RestoreSession()
 
 void clFileSystemWorkspace::DoOpen()
 {
+    // Close any opened workspace
+    auto frame = EventNotifier::Get()->TopFrame();
+    wxCommandEvent eventCloseWsp(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
+    eventCloseWsp.SetEventObject(frame);
+    frame->GetEventHandler()->ProcessEvent(eventCloseWsp);
+        
     // set the working directory to the workspace view
     ::wxSetWorkingDirectory(GetFileName().GetPath());
 

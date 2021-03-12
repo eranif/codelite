@@ -98,6 +98,14 @@ void clDockerWorkspace::Shutdown() { wxDELETE(g_workspace); }
 void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
 {
     event.Skip();
+
+    // Close any opened workspace
+    auto frame = EventNotifier::Get()->TopFrame();
+    wxCommandEvent eventCloseWsp(wxEVT_COMMAND_MENU_SELECTED, XRCID("close_workspace"));
+    eventCloseWsp.SetEventObject(frame);
+    frame->GetEventHandler()->ProcessEvent(eventCloseWsp);
+
+    // load the current workspace
     wxFileName workspaceFile(event.GetFileName());
 
     // Test that this is our workspace
@@ -111,7 +119,6 @@ void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
     // event.Skip(false)
     event.Skip(false);
 
-    // Check if this is a PHP workspace
     if(IsOpen()) {
         Close();
     }

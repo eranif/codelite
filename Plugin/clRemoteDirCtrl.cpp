@@ -14,7 +14,8 @@
 #include <wx/sizer.h>
 #include <wx/xrc/xmlres.h>
 
-wxDEFINE_EVENT(wxEVT_REMOTE_DIR_CONTEXT_MENU_SHOWING, clContextMenuEvent);
+wxDEFINE_EVENT(wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING, clContextMenuEvent);
+wxDEFINE_EVENT(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, clContextMenuEvent);
 
 clRemoteDirCtrl::clRemoteDirCtrl(wxWindow* parent)
     : wxPanel(parent)
@@ -275,9 +276,11 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
         XRCID("delete-file"));
 
     // let others know that we are about to show the context menu for this control
-    clContextMenuEvent menuEvent(wxEVT_REMOTE_DIR_CONTEXT_MENU_SHOWING);
+    clContextMenuEvent menuEvent(cd->IsFolder() ? wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING
+                                                : wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING);
     menuEvent.SetMenu(&menu);
     menuEvent.SetEventObject(this);
+    menuEvent.SetClientData(item);
     m_treeCtrl->GetEventHandler()->ProcessEvent(menuEvent);
 
     m_treeCtrl->PopupMenu(&menu);

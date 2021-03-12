@@ -6,6 +6,7 @@
 class FSConfigPage : public FSConfigPageBase
 {
     clFileSystemWorkspaceConfig::Ptr_t m_config;
+    bool m_enableRemotePage = true;
 
 protected:
     virtual void OnEditExcludePaths(wxCommandEvent& event);
@@ -19,7 +20,7 @@ protected:
     void DoUpdateSSHAcounts();
 
 public:
-    FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config);
+    FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config, bool enableRemotePage = true);
     virtual ~FSConfigPage();
     void Save();
 

@@ -400,6 +400,10 @@ bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename)
     wxFileName localWorkspace = filename;
     localWorkspace.AppendDir(".codelite");
     JSON root_shared(filename);
+    if(!root_shared.isOk()) {
+        clWARNING() << "Invalid File System Workspace file:" << filename << endl;
+        return false;
+    }
     JSON root_local(localWorkspace);
     if(!root_local.isOk()) {
         // old version

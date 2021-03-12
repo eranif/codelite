@@ -1,12 +1,16 @@
 #ifndef CLFILESYSTEMWORKSPACEDLG_H
 #define CLFILESYSTEMWORKSPACEDLG_H
+#include "clFileSystemWorkspaceConfig.hpp"
 #include "clFileSystemWorkspaceDlgBase.h"
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceDlg : public clFileSystemWorkspaceDlgBase
 {
+    clFileSystemWorkspaceSettings* m_settings = nullptr;
+    bool m_usingGlobalSettings = true;
+
 public:
-    clFileSystemWorkspaceDlg(wxWindow* parent);
+    clFileSystemWorkspaceDlg(wxWindow* parent, clFileSystemWorkspaceSettings* settings = nullptr);
     virtual ~clFileSystemWorkspaceDlg();
 
 protected:

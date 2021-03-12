@@ -25,8 +25,9 @@
 
 #define OPEN_SSH_ACCOUNT_MANAGER "-- Open SSH Account Manager --"
 
-FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config)
+FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config, bool enableRemotePage)
     : FSConfigPageBase(parent)
+    , m_enableRemotePage(enableRemotePage)
 {
     m_config = config;
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
@@ -66,6 +67,13 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_textCtrlExcludeFiles->ChangeValue(config->GetExcludeFilesPattern());
     m_textCtrlExcludePaths->ChangeValue(config->GetExecludePaths());
     m_dirPickerWD->SetPath(config->GetWorkingDirectory());
+
+    if(!m_enableRemotePage) {
+        m_checkBoxEnableRemote->Disable();
+        m_checkBoxRemoteBuild->Disable();
+        m_textCtrlRemoteFolder->Disable();
+        m_panelRemote->Disable();
+    }
 }
 
 FSConfigPage::~FSConfigPage() {}
@@ -158,7 +166,7 @@ void FSConfigPage::DoTargetActivated()
 void FSConfigPage::OnRemoteEnabledUI(wxUpdateUIEvent& event)
 {
 #if USE_SFTP
-    event.Enable(m_checkBoxEnableRemote->IsChecked());
+    event.Enable(m_enableRemotePage && m_checkBoxEnableRemote->IsChecked());
 #else
     event.Enable(false);
 #endif
@@ -191,6 +199,11 @@ void FSConfigPage::OnSSHAccountChoice(wxCommandEvent& event)
 void FSConfigPage::DoUpdateSSHAcounts()
 {
 #if USE_SFTP
+    if(!m_enableRemotePage) {
+        m_choiceSSHAccount->Enable(false);
+        return;
+    }
+
     m_choiceSSHAccount->Clear();
     // Load the SSH accounts
     SFTPSettings settings;

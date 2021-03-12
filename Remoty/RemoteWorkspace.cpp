@@ -2,10 +2,13 @@
 #include "RemotySwitchToWorkspaceDlg.h"
 #include "RemotyWorkspaceView.hpp"
 #include "clFileSystemWorkspace.hpp"
+#include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
 #include <wx/msgdlg.h>
@@ -94,21 +97,19 @@ void RemoteWorkspace::OnOpenWorkspace(clCommandEvent& event)
 
     // parse the remote file path
     wxString remote_path = dlg.GetPath();
-    wxString remote_file_path;
 
-    remote_file_path = remote_path.AfterLast(':');
-    remote_path = remote_path.BeforeLast(':');
-
-    wxURI uri(remote_path);
-    const wxString& remote_server = uri.GetServer();
-    const wxString& user_name = uri.GetUser();
-    const wxString& port = uri.GetPort();
+    wxString path, scheme, user_name, remote_server, port;
+    FileUtils::ParseURI(remote_path, path, scheme, user_name, remote_server, port);
 
     long nPort = 22;
     port.ToCLong(&nPort);
 
     // Load the account
     auto accounts = SSHAccountInfo::Load([&](const SSHAccountInfo& acc) -> bool {
+        clDEBUG() << "Checking account:" << acc.GetAccountName() << endl;
+        clDEBUG() << "user_name:" << user_name << "vs" << acc.GetUsername() << endl;
+        clDEBUG() << "remote_server:" << remote_server << "vs" << acc.GetHost() << endl;
+        clDEBUG() << "nPort:" << nPort << "vs" << acc.GetPort() << endl;
         return acc.GetUsername() == user_name && acc.GetPort() == nPort && acc.GetHost() == remote_server;
     });
 
@@ -118,9 +119,26 @@ void RemoteWorkspace::OnOpenWorkspace(clCommandEvent& event)
         return;
     }
 
+    wxBusyCursor bc;
+    // first: attempt to download the workspace file and store it locally
+    auto localFile = clSFTPManager::Get().Download(path, accounts[0].GetAccountName());
+    if(!localFile.IsOk()) {
+        ::wxMessageBox(_("Failed to download remote workspace file!"), "CodeLite", wxICON_ERROR | wxCENTER);
+        return;
+    }
+
+    if(!m_settings.Load(localFile)) {
+        ::wxMessageBox(_("Failed to load workspace file: ") + m_localWorkspaceFile, "CodeLite",
+                       wxICON_ERROR | wxCENTER);
+        return;
+    }
+
     m_account = accounts[0];
-    remote_file_path.Replace("\\", "/");
-    wxString workspacePath = remote_file_path.BeforeLast('/');
+    m_remoteWorkspaceFile = path;
+    m_localWorkspaceFile = localFile.GetFullPath();
+
+    path.Replace("\\", "/");
+    wxString workspacePath = path.BeforeLast('/');
     if(workspacePath.empty()) {
         ::wxMessageBox(_("Invalid empty remote path provided"), "CodeLite", wxICON_ERROR | wxCENTER);
         return;
@@ -139,17 +157,7 @@ void RemoteWorkspace::OnOpenWorkspace(clCommandEvent& event)
 void RemoteWorkspace::OnCloseWorkspace(clCommandEvent& event)
 {
     event.Skip();
-    m_view->CloseWorkspace();
-    m_account = {};
-
-    // notify codelite to close all opened files
-    wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
-    eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
-
-    // Notify workspace closed event
-    wxCommandEvent event_closed(wxEVT_WORKSPACE_CLOSED);
-    EventNotifier::Get()->ProcessEvent(event_closed);
+    DoClose(true);
 }
 
 void RemoteWorkspace::Initialise()
@@ -158,8 +166,30 @@ void RemoteWorkspace::Initialise()
         return;
     }
     BindEvents();
-    m_view = new RemotyWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook());
+    m_view = new RemotyWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), this);
     clGetManager()->GetWorkspaceView()->AddPage(m_view, WORKSPACE_TYPE_NAME);
 }
 
 bool RemoteWorkspace::IsOpened() const { return !m_account.GetAccountName().empty(); }
+
+void RemoteWorkspace::DoClose(bool notify)
+{
+    m_view->CloseWorkspace();
+    m_settings.Save(m_localWorkspaceFile);
+    m_settings.Clear();
+
+    m_account = {};
+    m_remoteWorkspaceFile.clear();
+    m_localWorkspaceFile.clear();
+
+    if(notify) {
+        // notify codelite to close all opened files
+        wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
+        eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
+
+        // Notify workspace closed event
+        wxCommandEvent event_closed(wxEVT_WORKSPACE_CLOSED);
+        EventNotifier::Get()->ProcessEvent(event_closed);
+    }
+}

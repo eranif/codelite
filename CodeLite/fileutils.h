@@ -284,5 +284,11 @@ public:
      */
     static size_t FindSimilar(const wxFileName& filename, const std::vector<wxString>& extensions,
                               std::vector<wxFileName>& vout);
+
+    /**
+     * @brief given URI, parse it into its basic parts
+     */
+    static bool ParseURI(const wxString& uri, wxString& path, wxString& scheme, wxString& user, wxString& host,
+                         wxString& port);
 };
 #endif // FILEUTILS_H

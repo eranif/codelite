@@ -1,16 +1,29 @@
+#include "RemoteWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
+#include "clFileSystemWorkspaceConfig.hpp"
+#include "clFileSystemWorkspaceDlg.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "ssh_account_info.h"
+#include <wx/msgdlg.h>
 
-RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent)
+RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemoteWorkspace* workspace)
     : RemotyWorkspaceViewBase(parent)
+    , m_workspace(workspace)
 {
     m_tree = new clRemoteDirCtrl(this);
     GetSizer()->Add(m_tree, 1, wxEXPAND);
     GetSizer()->Fit(this);
+
+    m_tree->Bind(wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnDirContextMenu, this);
+    m_tree->Bind(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnFileContextMenu, this);
 }
 
-RemotyWorkspaceView::~RemotyWorkspaceView() {}
+RemotyWorkspaceView::~RemotyWorkspaceView()
+{
+    m_tree->Unbind(wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnDirContextMenu, this);
+    m_tree->Unbind(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnFileContextMenu, this);
+}
 
 void RemotyWorkspaceView::OpenWorkspace(const wxString& path, const wxString& accountName)
 {
@@ -24,3 +37,21 @@ void RemotyWorkspaceView::OpenWorkspace(const wxString& path, const wxString& ac
 }
 
 void RemotyWorkspaceView::CloseWorkspace() { m_tree->Close(false); }
+
+void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    wxMenu* menu = event.GetMenu();
+    menu->AppendSeparator();
+    menu->Append(XRCID("remoty-wps-settings"), _("Workspace settings..."));
+    menu->Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            // load the remote workspace settings
+            clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame(), &m_workspace->GetSettings());
+            dlg.ShowModal();
+        },
+        XRCID("remoty-wps-settings"));
+}
+
+void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event) { event.Skip(); }

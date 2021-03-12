@@ -5,6 +5,7 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
@@ -120,44 +121,21 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
         }
     }
 
-    // Open it
-    auto connection_info = GetConnectionPair(accountName);
-    if(!connection_info.second) {
-        // No such connection, attempt to load the connection details and open a session
-        auto account = SSHAccountInfo::LoadAccount(accountName);
-        if(accountName.empty() || !AddConnection(account)) {
-            return nullptr;
-        }
-        connection_info = GetConnectionPair(accountName);
-        if(!connection_info.second) {
-            return nullptr;
-        }
-    }
-
-    // build the local file path
-    auto sftp = connection_info.second;
-    auto info = connection_info.first;
-    wxFileName localPath = clSFTP::GetLocalFileName(info, path, true);
-    wxMemoryBuffer buffer;
-    SFTPAttribute::Ptr_t fileAttr;
-    try {
-        fileAttr = sftp->Read(path, buffer);
-    } catch(clException& e) {
-        clWARNING() << "Failed to open file:" << path << "." << e.What() << clEndl;
+    auto account = SSHAccountInfo::LoadAccount(accountName);
+    if(account.GetAccountName().empty()) {
+        clWARNING() << "failed to locate account:" << accountName << endl;
         return nullptr;
     }
-
-    wxFFile fp(localPath.GetFullPath(), "w+b");
-    if(fp.IsOpened()) {
-        fp.Write(buffer.GetData(), buffer.GetDataLen());
-        fp.Close();
+    wxFileName localPath = clSFTP::GetLocalFileName(account, path, true);
+    if(!DoDownload(path, localPath.GetFullPath(), accountName)) {
+        return nullptr;
     }
 
     // set the client data for this editor
     SFTPClientData* cd = new SFTPClientData;
     cd->SetLocalPath(localPath.GetFullPath());
     cd->SetRemotePath(path);
-    cd->SetPermissions(fileAttr ? fileAttr->GetPermissions() : 0);
+    cd->SetPermissions(0); // not used
     cd->SetLineNumber(wxNOT_FOUND);
     cd->SetAccountName(accountName);
 
@@ -418,6 +396,67 @@ bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& 
         return attr->IsFolder();
     } catch(clException& e) {
         wxUnusedVar(e);
+        return false;
+    }
+}
+
+wxFileName clSFTPManager::Download(const wxString& path, const wxString& accountName)
+{
+    clDEBUG() << "SFTP Manager: Download() called for" << path << endl;
+    wxFileName local_file(clStandardPaths::Get().GetTempDir(), path.AfterLast('/'));
+    local_file.AppendDir("sftp-downloads");
+    local_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    if(DoDownload(path, local_file.GetFullPath(), accountName)) {
+        return local_file;
+    }
+    return {};
+}
+
+bool clSFTPManager::DoDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName)
+{
+    // Open it
+    clDEBUG() << "SFTP Manager: downloading file" << remotePath << "->" << localPath << "for account:" << accountName
+              << endl;
+    auto connection_info = GetConnectionPair(accountName);
+    if(!connection_info.second) {
+        // No such connection, attempt to load the connection details and open a session
+        auto account = SSHAccountInfo::LoadAccount(accountName);
+        if(accountName.empty()) {
+            clWARNING() << "Could not locate account:" << accountName << endl;
+            return false;
+        }
+
+        if(!AddConnection(account)) {
+            clWARNING() << "Failed to open connection:" << accountName << endl;
+            return false;
+        }
+
+        connection_info = GetConnectionPair(accountName);
+        if(!connection_info.second) {
+            return false;
+        }
+    }
+
+    // build the local file path
+    auto sftp = connection_info.second;
+    auto info = connection_info.first;
+    wxMemoryBuffer buffer;
+    SFTPAttribute::Ptr_t fileAttr;
+    try {
+        fileAttr = sftp->Read(remotePath, buffer);
+    } catch(clException& e) {
+        clWARNING() << "Failed to open file:" << remotePath << "." << e.What() << clEndl;
+        return false;
+    }
+
+    wxLogNull noLog;
+    wxFFile fp(localPath, "w+b");
+    if(fp.IsOpened()) {
+        fp.Write(buffer.GetData(), buffer.GetDataLen());
+        fp.Close();
+        return true;
+    } else {
+        clWARNING() << "Failed to write local file content:" << localPath << endl;
         return false;
     }
 }

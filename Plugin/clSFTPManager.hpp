@@ -26,6 +26,7 @@ protected:
     void OnFileSaved(clCommandEvent& event);
     SFTPClientData* GetSFTPClientData(IEditor* editor);
     void OnTimer(wxTimerEvent& event);
+    bool DoDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName);
 
 public:
     clSFTPManager();
@@ -46,6 +47,11 @@ public:
      */
     IEditor* OpenFile(const wxString& path, const wxString& accountName);
     IEditor* OpenFile(const wxString& path, const SSHAccountInfo& accountInfo);
+    /**
+     * @brief download file, but do not open it in a an editor
+     * @return return the *local* file path
+     */
+    wxFileName Download(const wxString& path, const wxString& accountName);
     /**
      * @brief save file remotely
      * @param localPath file on the local machine

@@ -40,6 +40,7 @@
 #include <wx/ffile.h>
 #include <wx/file.h>
 #include <wx/log.h>
+#include <wx/uri.h>
 #if wxUSE_GUI
 #include <wx/msgdlg.h>
 #endif
@@ -783,4 +784,41 @@ size_t FileUtils::FindSimilar(const wxFileName& filename, const std::vector<wxSt
         }
     }
     return vout.size();
+}
+
+bool FileUtils::ParseURI(const wxString& uri, wxString& path, wxString& scheme, wxString& user, wxString& host,
+                         wxString& port)
+{
+    if(uri.starts_with("file://")) {
+        path = uri.Mid(7);
+        scheme = "file://";
+        return true;
+    } else if(uri.starts_with("ssh://")) {
+        // expected syntax:
+        // ssh://user@host:port:/path
+        scheme = "ssh://";
+        wxString remainder = uri.Mid(6);
+        user = remainder.BeforeFirst('@');
+        remainder = remainder.AfterFirst('@');
+        host = remainder.BeforeFirst(':');
+        remainder = remainder.AfterFirst(':');
+
+        // at this point we got:
+        // port:/path
+        // OR -
+        // /path
+        if(remainder.empty()) {
+            return true;
+        }
+
+        if(remainder[0] == '/') {
+            path = remainder;
+        } else {
+            port = remainder.BeforeFirst(':');
+            path = remainder.AfterFirst(':');
+        }
+        return true;
+    } else {
+        return false;
+    }
 }

@@ -32,39 +32,34 @@ SwitchToWorkspaceBaseDlg::SwitchToWorkspaceBaseDlg(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer14 = new wxBoxSizer(wxVERTICAL);
     m_panel12->SetSizer(boxSizer14);
 
-    wxFlexGridSizer* flexGridSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer4 = new wxFlexGridSizer(0, 3, 0, 0);
     flexGridSizer4->SetFlexibleDirection(wxBOTH);
     flexGridSizer4->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer4->AddGrowableCol(1);
 
-    boxSizer14->Add(flexGridSizer4, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer14->Add(flexGridSizer4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText6 = new wxStaticText(m_panel12, wxID_ANY, _("Choose a workspace file:"), wxDefaultPosition,
+    m_staticText6 = new wxStaticText(m_panel12, wxID_ANY, _("Workspace file:"), wxDefaultPosition,
                                      wxDLG_UNIT(m_panel12, wxSize(-1, -1)), 0);
 
     flexGridSizer4->Add(m_staticText6, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_filePicker = new wxFilePickerCtrl(m_panel12, wxID_ANY, wxEmptyString, _("Select a file"),
-                                        wxT("CodeLite Workspace files (*.workspace)|*.workspace"), wxDefaultPosition,
-                                        wxDLG_UNIT(m_panel12, wxSize(-1, -1)),
-                                        wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
+    wxArrayString m_comboBoxFilesArr;
+    m_comboBoxFiles = new clThemedComboBox(m_panel12, wxID_ANY, wxT(""), wxDefaultPosition,
+                                           wxDLG_UNIT(m_panel12, wxSize(250, -1)), m_comboBoxFilesArr, 0);
+    m_comboBoxFiles->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_comboBoxFiles->SetHint(wxT(""));
+#endif
 
-    flexGridSizer4->Add(m_filePicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer4->Add(m_comboBoxFiles, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText10 = new wxStaticText(m_panel12, wxID_ANY, _("Or select a previously opened workspace:"),
-                                      wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)), 0);
+    m_button24 =
+        new wxButton(m_panel12, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)), 0);
+    m_button24->SetFocus();
 
-    boxSizer14->Add(m_staticText10, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer4->Add(m_button24, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_dvListCtrl = new clThemedListCtrl(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)),
-                                        wxDV_ROW_LINES | wxDV_SINGLE);
-
-    boxSizer14->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dvListCtrl->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
     m_stdBtnSizer18 = new wxStdDialogButtonSizer();
 
     boxSizer2->Add(m_stdBtnSizer18, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
@@ -95,16 +90,10 @@ SwitchToWorkspaceBaseDlg::SwitchToWorkspaceBaseDlg(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(SwitchToWorkspaceBaseDlg::OnItemActivated), NULL, this);
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                          wxDataViewEventHandler(SwitchToWorkspaceBaseDlg::OnSelectionChanged), NULL, this);
+    m_button20->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SwitchToWorkspaceBaseDlg::OnOKUI), NULL, this);
 }
 
 SwitchToWorkspaceBaseDlg::~SwitchToWorkspaceBaseDlg()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(SwitchToWorkspaceBaseDlg::OnItemActivated), NULL, this);
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                             wxDataViewEventHandler(SwitchToWorkspaceBaseDlg::OnSelectionChanged), NULL, this);
+    m_button20->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SwitchToWorkspaceBaseDlg::OnOKUI), NULL, this);
 }

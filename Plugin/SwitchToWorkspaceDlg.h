@@ -8,9 +8,7 @@ public:
     SwitchToWorkspaceDlg(wxWindow* parent);
     virtual ~SwitchToWorkspaceDlg();
     wxString GetPath() const;
-
 protected:
-    virtual void OnSelectionChanged(wxDataViewEvent& event);
-    virtual void OnItemActivated(wxDataViewEvent& event);
+    virtual void OnOKUI(wxUpdateUIEvent& event);
 };
 #endif // SWITCHTOWORKSPACEDLG_H

@@ -6,28 +6,12 @@ SwitchToWorkspaceDlg::SwitchToWorkspaceDlg(wxWindow* parent)
     : SwitchToWorkspaceBaseDlg(parent)
 {
     auto recentWorkspaces = clConfig::Get().GetRecentWorkspaces();
-    for(const auto& wspfile : recentWorkspaces) {
-        wxVector<wxVariant> cols;
-        wxFileName fn(wspfile);
-        cols.push_back(fn.GetFullName());
-        cols.push_back(fn.GetFullPath());
-        m_dvListCtrl->AppendItem(cols);
-    }
-    ::clSetDialogBestSizeAndPosition(this);
+    m_comboBoxFiles->Append(recentWorkspaces);
+    CenterOnParent();
+    GetSizer()->Fit(this);
 }
 
 SwitchToWorkspaceDlg::~SwitchToWorkspaceDlg() {}
 
-void SwitchToWorkspaceDlg::OnItemActivated(wxDataViewEvent& event)
-{
-    m_filePicker->SetPath(m_dvListCtrl->GetItemText(event.GetItem(), 1));
-    // Close the dialog
-    EndModal(wxID_OK);
-}
-
-void SwitchToWorkspaceDlg::OnSelectionChanged(wxDataViewEvent& event)
-{
-    m_filePicker->SetPath(m_dvListCtrl->GetItemText(event.GetItem(), 1));
-}
-
-wxString SwitchToWorkspaceDlg::GetPath() const { return m_filePicker->GetPath(); }
+wxString SwitchToWorkspaceDlg::GetPath() const { return m_comboBoxFiles->GetValue(); }
+void SwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_comboBoxFiles->GetValue().IsEmpty()); }

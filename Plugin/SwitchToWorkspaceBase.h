@@ -17,9 +17,9 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
-#include <wx/filepicker.h>
-#include <wx/dataview.h>
-#include "clThemedListCtrl.h"
+#include <wx/combobox.h>
+#include <wx/arrstr.h>
+#include "clThemedComboBox.hpp"
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -44,22 +44,19 @@ class SwitchToWorkspaceBaseDlg : public wxDialog
 protected:
     wxPanel* m_panel12;
     wxStaticText* m_staticText6;
-    wxFilePickerCtrl* m_filePicker;
-    wxStaticText* m_staticText10;
-    clThemedListCtrl* m_dvListCtrl;
+    clThemedComboBox* m_comboBoxFiles;
+    wxButton* m_button24;
     wxStdDialogButtonSizer* m_stdBtnSizer18;
     wxButton* m_button20;
     wxButton* m_button22;
 
 protected:
-    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnSelectionChanged(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText6() { return m_staticText6; }
-    wxFilePickerCtrl* GetFilePicker() { return m_filePicker; }
-    wxStaticText* GetStaticText10() { return m_staticText10; }
-    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedComboBox* GetComboBoxFiles() { return m_comboBoxFiles; }
+    wxButton* GetButton24() { return m_button24; }
     wxPanel* GetPanel12() { return m_panel12; }
     SwitchToWorkspaceBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
                              const wxString& title = _("Switch to workspace"), const wxPoint& pos = wxDefaultPosition,

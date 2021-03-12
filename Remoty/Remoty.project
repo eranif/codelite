@@ -27,6 +27,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="RemotySwitchToWorkspaceDlg.h"/>
+    <File Name="RemotySwitchToWorkspaceDlg.cpp"/>
     <File Name="RemotyWorkspaceView.hpp"/>
     <File Name="RemotyUI.h"/>
     <File Name="RemotyUI.cpp"/>

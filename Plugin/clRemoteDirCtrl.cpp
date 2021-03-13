@@ -183,6 +183,7 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
     clRemoteDirCtrlItemData* cd = GetItemData(item);
     CHECK_PTR_RET(cd);
 
+    bool is_root_item = (m_treeCtrl->GetRootItem() == item);
     wxMenu menu;
 
     // Just incase, make sure the item is selected
@@ -215,7 +216,6 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
                 }
             },
             wxID_DOWN);
-        menu.AppendSeparator();
 
     } else {
         menu.Append(XRCID("new-dir"), _("Create a new directory..."));
@@ -255,26 +255,27 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
                 m_treeCtrl->Collapse(item);
             },
             wxID_REFRESH);
-        menu.AppendSeparator();
     }
-    menu.Append(XRCID("rename_item"), _("Rename"));
-    menu.Bind(
-        wxEVT_MENU,
-        [this, item](wxCommandEvent& event) {
-            event.Skip();
-            CallAfter(&clRemoteDirCtrl::DoRename, item);
-        },
-        XRCID("rename_item"));
-    menu.AppendSeparator();
-    menu.Append(XRCID("delete-file"), _("Delete"));
-    menu.Bind(
-        wxEVT_MENU,
-        [this, item](wxCommandEvent& event) {
-            event.Skip();
-            CallAfter(&clRemoteDirCtrl::DoDelete, item);
-        },
-        XRCID("delete-file"));
-
+    if(!is_root_item) {
+        menu.AppendSeparator();
+        menu.Append(XRCID("rename_item"), _("Rename"));
+        menu.Bind(
+            wxEVT_MENU,
+            [this, item](wxCommandEvent& event) {
+                event.Skip();
+                CallAfter(&clRemoteDirCtrl::DoRename, item);
+            },
+            XRCID("rename_item"));
+        menu.AppendSeparator();
+        menu.Append(XRCID("delete-file"), _("Delete"));
+        menu.Bind(
+            wxEVT_MENU,
+            [this, item](wxCommandEvent& event) {
+                event.Skip();
+                CallAfter(&clRemoteDirCtrl::DoDelete, item);
+            },
+            XRCID("delete-file"));
+    }
     // let others know that we are about to show the context menu for this control
     clContextMenuEvent menuEvent(cd->IsFolder() ? wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING
                                                 : wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING);

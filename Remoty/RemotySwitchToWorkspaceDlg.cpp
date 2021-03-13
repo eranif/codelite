@@ -16,6 +16,7 @@ RemotySwitchToWorkspaceDlg::RemotySwitchToWorkspaceDlg(wxWindow* parent)
     auto recentRemoteWorkspaces = clConfig::Get().Read("remoty/recent_workspaces", wxArrayString());
     m_comboBoxRemote->Append(recentRemoteWorkspaces);
     GetSizer()->Fit(this);
+    CenterOnParent();
 }
 
 RemotySwitchToWorkspaceDlg::~RemotySwitchToWorkspaceDlg()

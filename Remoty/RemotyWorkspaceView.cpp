@@ -42,21 +42,27 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
     wxMenu* menu = event.GetMenu();
-    menu->AppendSeparator();
-    menu->Append(XRCID("remoty-wps-settings"), _("Workspace settings..."));
-    menu->Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent& e) {
-            // load the remote workspace settings
-            clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame(), &m_workspace->GetSettings());
-            dlg.SetUseRemoteBrowsing(true, m_workspace->GetAccount().GetAccountName());
-            if(dlg.ShowModal() != wxID_OK) {
-                return;
-            }
-            // save workspace settings to the remote server
-            m_workspace->CallAfter(&RemoteWorkspace::SaveSettings);
-        },
-        XRCID("remoty-wps-settings"));
+    auto item = m_tree->GetTree()->GetSelection();
+    CHECK_ITEM_RET(item);
+
+    bool isRootItem = (item == m_tree->GetTree()->GetRootItem());
+    if(isRootItem) {
+        menu->AppendSeparator();
+        menu->Append(XRCID("remoty-wps-settings"), _("Workspace settings..."));
+        menu->Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent& e) {
+                // load the remote workspace settings
+                clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame(), &m_workspace->GetSettings());
+                dlg.SetUseRemoteBrowsing(true, m_workspace->GetAccount().GetAccountName());
+                if(dlg.ShowModal() != wxID_OK) {
+                    return;
+                }
+                // save workspace settings to the remote server
+                m_workspace->CallAfter(&RemoteWorkspace::SaveSettings);
+            },
+            XRCID("remoty-wps-settings"));
+    }
 }
 
 void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event) { event.Skip(); }

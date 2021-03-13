@@ -30,6 +30,8 @@
 #include "bitmap_loader.h"
 #include "build_settings_config.h"
 #include "buildtabsettingsdata.h"
+#include "clFileSystemWorkspace.hpp"
+#include "clFileSystemWorkspaceConfig.hpp"
 #include "clSingleChoiceDialog.h"
 #include "clStrings.h"
 #include "cl_command_event.h"
@@ -55,8 +57,6 @@
 #include <wx/fdrepdlg.h>
 #include <wx/regex.h>
 #include <wx/settings.h>
-#include "clFileSystemWorkspace.hpp"
-#include "clFileSystemWorkspaceConfig.hpp"
 
 #define IS_VALID_LINE(lineNumber) ((lineNumber >= 0 && lineNumber < m_view->GetLineCount()))
 #ifdef __WXMSW__
@@ -215,7 +215,9 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
         DoSelectAndOpen(bli->GetLineInBuildTab(), true);
     }
 
-    if(m_buildTabSettings.GetBuildPaneScrollDestination() == ScrollToEnd) { m_view->ScrollToEnd(); }
+    if(m_buildTabSettings.GetBuildPaneScrollDestination() == ScrollToEnd) {
+        m_view->ScrollToEnd();
+    }
 
     // notify the plugins that the build has ended
     clBuildEvent buildEvent(wxEVT_BUILD_ENDED);
@@ -236,7 +238,9 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
         wxArrayString arrOut;
         ProcUtils::SafeExecuteCommand(cmd, arrOut);
 
-        if(arrOut.IsEmpty() == false) { m_cygwinRoot = arrOut.Item(0); }
+        if(arrOut.IsEmpty() == false) {
+            m_cygwinRoot = arrOut.Item(0);
+        }
     }
 
     m_buildInProgress = true;
@@ -259,7 +263,9 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
 
     wxWindow* win(NULL);
     int sel = opane->GetNotebook()->GetSelection();
-    if(sel != wxNOT_FOUND) { win = opane->GetNotebook()->GetPage(sel); }
+    if(sel != wxNOT_FOUND) {
+        win = opane->GetNotebook()->GetPage(sel);
+    }
 
     if(m_showMe == BuildTabSettingsData::ShowOnStart) {
         ManagerST::Get()->ShowOutputPane(BUILD_WIN, true);
@@ -276,7 +282,9 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
     if(bed) {
         BuildConfigPtr buildConfig =
             clCxxWorkspaceST::Get()->GetProjBuildConf(bed->GetProjectName(), bed->GetConfiguration());
-        if(buildConfig) { m_cmp = buildConfig->GetCompiler(); }
+        if(buildConfig) {
+            m_cmp = buildConfig->GetCompiler();
+        }
 
         // notify the plugins that the build had started
         clBuildEvent buildEvent(wxEVT_BUILD_STARTED);
@@ -342,7 +350,9 @@ void NewBuildTab::DoCacheRegexes()
             CmpPatternPtr compiledPatternPtr(new CmpPattern(new wxRegEx(iter->pattern, wxRE_ADVANCED | wxRE_ICASE),
                                                             iter->fileNameIndex, iter->lineNumberIndex,
                                                             iter->columnIndex, SV_ERROR));
-            if(compiledPatternPtr->GetRegex()->IsValid()) { cmpPatterns.errorsPatterns.push_back(compiledPatternPtr); }
+            if(compiledPatternPtr->GetRegex()->IsValid()) {
+                cmpPatterns.errorsPatterns.push_back(compiledPatternPtr);
+            }
         }
 
         for(iter = warnPatterns.begin(); iter != warnPatterns.end(); iter++) {
@@ -350,7 +360,9 @@ void NewBuildTab::DoCacheRegexes()
             CmpPatternPtr compiledPatternPtr(new CmpPattern(new wxRegEx(iter->pattern, wxRE_ADVANCED | wxRE_ICASE),
                                                             iter->fileNameIndex, iter->lineNumberIndex,
                                                             iter->columnIndex, SV_WARNING));
-            if(compiledPatternPtr->GetRegex()->IsValid()) { cmpPatterns.warningPatterns.push_back(compiledPatternPtr); }
+            if(compiledPatternPtr->GetRegex()->IsValid()) {
+                cmpPatterns.warningPatterns.push_back(compiledPatternPtr);
+            }
         }
 
         m_cmpPatterns.insert(std::make_pair(cmp->GetName(), cmpPatterns));
@@ -361,7 +373,9 @@ void NewBuildTab::DoCacheRegexes()
 bool NewBuildTab::DoGetCompilerPatterns(const wxString& compilerName, CmpPatterns& patterns)
 {
     MapCmpPatterns_t::iterator iter = m_cmpPatterns.find(compilerName);
-    if(iter == m_cmpPatterns.end()) { return false; }
+    if(iter == m_cmpPatterns.end()) {
+        return false;
+    }
     patterns = iter->second;
     return true;
 }
@@ -400,7 +414,8 @@ void NewBuildTab::DoClear()
 
 void NewBuildTab::MarkEditor(clEditor* editor)
 {
-    if(!editor) return;
+    if(!editor)
+        return;
 
     editor->DelAllCompilerMarkers();
     editor->AnnotationClearAll();
@@ -410,7 +425,9 @@ void NewBuildTab::MarkEditor(clEditor* editor)
     EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
 
     // Are markers or annotations enabled?
-    if(options.GetErrorWarningStyle() == BuildTabSettingsData::EWS_NoMarkers) { return; }
+    if(options.GetErrorWarningStyle() == BuildTabSettingsData::EWS_NoMarkers) {
+        return;
+    }
 
     std::pair<MultimapBuildInfo_t::iterator, MultimapBuildInfo_t::iterator> iter =
         m_buildInfoPerFile.equal_range(editor->GetFileName().GetFullPath());
@@ -467,7 +484,8 @@ void NewBuildTab::MarkEditor(clEditor* editor)
     for(; annIter != annotations.end(); ++annIter) {
         wxString concatText;
         for(auto& text : annIter->second.text) {
-            if(!concatText.IsEmpty()) concatText << "\n";
+            if(!concatText.IsEmpty())
+                concatText << "\n";
             concatText << text;
         }
 
@@ -573,21 +591,28 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
 
         int curLen = (endPos.x - beginPos.x) + 10;
         m_maxlineWidth = wxMax(m_maxlineWidth, curLen);
-        if(m_maxlineWidth > 0) { m_view->SetScrollWidth(m_maxlineWidth); }
+        if(m_maxlineWidth > 0) {
+            m_view->SetScrollWidth(m_maxlineWidth);
+        }
         m_view->SetEditable(false);
 
-        if(clConfig::Get().Read(kConfigBuildAutoScroll, true)) { m_view->ScrollToEnd(); }
+        if(clConfig::Get().Read(kConfigBuildAutoScroll, true)) {
+            m_view->ScrollToEnd();
+        }
     }
 }
 
 void NewBuildTab::CenterLineInView(int line)
 {
-    if(line > m_view->GetLineCount()) return;
+    if(line > m_view->GetLineCount())
+        return;
     int linesOnScreen = m_view->LinesOnScreen();
     // To place our line in the middle, the first visible line should be
     // the: line - (linesOnScreen / 2)
     int firstVisibleLine = line - (linesOnScreen / 2);
-    if(firstVisibleLine < 0) { firstVisibleLine = 0; }
+    if(firstVisibleLine < 0) {
+        firstVisibleLine = 0;
+    }
     m_view->EnsureVisible(firstVisibleLine);
     m_view->SetFirstVisibleLine(firstVisibleLine);
     m_view->ClearSelections();
@@ -615,7 +640,9 @@ void NewBuildTab::DoToggleWindow()
                 }
 
                 // Sanity
-                if(bli) { CenterLineInView(bli->GetLineInBuildTab()); }
+                if(bli) {
+                    CenterLineInView(bli->GetLineInBuildTab());
+                }
             }
         }
 
@@ -630,7 +657,8 @@ void NewBuildTab::DoToggleWindow()
 void NewBuildTab::OnNextBuildError(wxCommandEvent& e)
 {
     // if we are here, we have at least something in the list of errors
-    if(m_errorsAndWarningsList.empty()) return;
+    if(m_errorsAndWarningsList.empty())
+        return;
 
     EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &m_buildTabSettings);
     bool skipWarnings = m_buildTabSettings.GetSkipWarnings();
@@ -678,7 +706,9 @@ void NewBuildTab::OnNextBuildErrorUI(wxUpdateUIEvent& e)
 
 bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
 {
-    if(!m_viewData.count(buildViewLine)) { return false; }
+    if(!m_viewData.count(buildViewLine)) {
+        return false;
+    }
 
     BuildLineInfo* bli = m_viewData.find(buildViewLine)->second;
     if(bli) {
@@ -695,10 +725,14 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
 
             std::for_each(files.begin(), files.end(), [&](const wxString& filepath) {
                 wxFileName fnFilePath(filepath);
-                if(fnFilePath.GetFullName() == fn.GetFullName()) { candidates.push_back(fnFilePath); }
+                if(fnFilePath.GetFullName() == fn.GetFullName()) {
+                    candidates.push_back(fnFilePath);
+                }
             });
 
-            if(candidates.empty()) { return false; }
+            if(candidates.empty()) {
+                return false;
+            }
 
             if(candidates.size() == 1) {
                 fn = candidates.at(0);
@@ -712,10 +746,12 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
 
                 clSingleChoiceDialog dlg(EventNotifier::Get()->TopFrame(), fileArr);
                 dlg.SetLabel(_("Select a file to open"));
-                if(dlg.ShowModal() != wxID_OK) return false;
+                if(dlg.ShowModal() != wxID_OK)
+                    return false;
 
                 wxString selection = dlg.GetSelection();
-                if(selection.IsEmpty()) return false;
+                if(selection.IsEmpty())
+                    return false;
 
                 fn = wxFileName(selection);
                 // if we resolved it now, open the file there is no point in searching this file
@@ -744,10 +780,13 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
             }
 
             if(editor) {
-                if(!editor->HasCompilerMarkers()) MarkEditor(editor);
+                if(!editor->HasCompilerMarkers())
+                    MarkEditor(editor);
 
                 int lineNumber = bli->GetLineNumber();
-                if(lineNumber > 0) { lineNumber--; }
+                if(lineNumber > 0) {
+                    lineNumber--;
+                }
 
                 DoCentreErrorLine(bli, editor, centerLine);
                 return true;
@@ -763,13 +802,19 @@ wxFont NewBuildTab::DoGetFont() const
 {
     wxFont font = wxNullFont;
     LexerConf::Ptr_t lexerConf = EditorConfigST::Get()->GetLexer("C++");
-    if(lexerConf) { font = lexerConf->GetFontForSyle(wxSTC_C_DEFAULT, this); }
+    if(lexerConf) {
+        font = lexerConf->GetFontForSyle(wxSTC_C_DEFAULT, this);
+    }
 
-    if(font.IsOk() == false) { font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT); }
+    if(font.IsOk() == false) {
+        font = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
+    }
 
     // if the user selected a font in the settings, use it instead
     wxFont userFont = m_buildTabSettings.GetBuildFont();
-    if(userFont.IsOk()) { font = userFont; }
+    if(userFont.IsOk()) {
+        font = userFont;
+    }
     return font;
 }
 
@@ -788,7 +833,9 @@ void NewBuildTab::OnOpenInEditor(wxCommandEvent& e)
 {
     wxString content = this->GetBuildContent();
     clEditor* editor = clMainFrame::Get()->GetMainBook()->NewEditor();
-    if(editor) { editor->SetText(content); }
+    if(editor) {
+        editor->SetText(content);
+    }
 }
 
 void NewBuildTab::OnOpenInEditorUI(wxUpdateUIEvent& e) { e.Enable(!m_buildInProgress && !m_view->IsEmpty()); }
@@ -935,7 +982,9 @@ void NewBuildTab::DoCentreErrorLine(BuildLineInfo* bli, clEditor* editor, bool c
 
         // Our line is not visible
         int firstVisibleLine = bli->GetLineInBuildTab() - (linesOnScreen / 2);
-        if(firstVisibleLine < 0) { firstVisibleLine = 0; }
+        if(firstVisibleLine < 0) {
+            firstVisibleLine = 0;
+        }
         m_view->EnsureVisible(firstVisibleLine);
         m_view->SetFirstVisibleLine(firstVisibleLine);
     }
@@ -948,7 +997,9 @@ void NewBuildTab::ColourOutput()
     int fromLine = (m_lastLineColoured == wxNOT_FOUND) ? 0 : m_lastLineColoured;
     int untilLine = (m_view->GetLineCount() - 1);
 
-    if(fromLine == untilLine) { return; }
+    if(fromLine == untilLine) {
+        return;
+    }
 
     for(int i = fromLine; (i < untilLine) && (untilLine >= fromLine); ++i) {
         int startPos = m_view->PositionFromLine(i);
@@ -1041,7 +1092,9 @@ CmpPatternPtr NewBuildTab::GetMatchingRegex(const wxString& lineText, LINE_SEVER
 
 void NewBuildTab::OnIdle(wxIdleEvent& event)
 {
-    if(m_view->IsEmpty()) { return; }
+    if(m_view->IsEmpty()) {
+        return;
+    }
     ColourOutput();
 }
 
@@ -1051,16 +1104,22 @@ void NewBuildTab::OnIdle(wxIdleEvent& event)
 bool CmpPattern::Matches(const wxString& line, BuildLineInfo& lineInfo)
 {
     long fidx, lidx;
-    if(!m_fileIndex.ToLong(&fidx) || !m_lineIndex.ToLong(&lidx)) return false;
+    if(!m_fileIndex.ToLong(&fidx) || !m_lineIndex.ToLong(&lidx))
+        return false;
 
-    if(!m_regex || !m_regex->IsValid()) return false;
-    if(!m_regex->Matches(line)) return false;
+    if(!m_regex || !m_regex->IsValid())
+        return false;
+    if(!m_regex->Matches(line))
+        return false;
 
     long colIndex;
-    if(!m_colIndex.ToLong(&colIndex)) return false;
+    if(!m_colIndex.ToLong(&colIndex))
+        return false;
 
     lineInfo.SetSeverity(m_severity);
-    if(m_regex->GetMatchCount() > (size_t)fidx) { lineInfo.SetFilename(m_regex->GetMatch(line, fidx)); }
+    if(m_regex->GetMatchCount() > (size_t)fidx) {
+        lineInfo.SetFilename(m_regex->GetMatch(line, fidx));
+    }
 
     // keep the match length
     lineInfo.SetRegexLineMatch(m_regex->GetMatch(line, 0).length());
@@ -1075,9 +1134,13 @@ bool CmpPattern::Matches(const wxString& line, BuildLineInfo& lineInfo)
     if(m_regex->GetMatchCount() > (size_t)colIndex) {
         long column;
         wxString strCol = m_regex->GetMatch(line, colIndex);
-        if(strCol.StartsWith(":")) { strCol.Remove(0, 1); }
+        if(strCol.StartsWith(":")) {
+            strCol.Remove(0, 1);
+        }
 
-        if(!strCol.IsEmpty() && strCol.ToLong(&column)) { lineInfo.SetColumn(column); }
+        if(!strCol.IsEmpty() && strCol.ToLong(&column)) {
+            lineInfo.SetColumn(column);
+        }
     }
     return true;
 }

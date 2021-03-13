@@ -1,12 +1,12 @@
+#include "Notebook.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clProfileHandler.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
-#include "workspace.h"
 #include "globals.h"
-#include "Notebook.h"
-#include <algorithm>
 #include "imanager.h"
-#include "clFileSystemWorkspace.hpp"
+#include "workspace.h"
+#include <algorithm>
 
 clProfileHandler::clProfileHandler()
 {
@@ -14,8 +14,7 @@ clProfileHandler::clProfileHandler()
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clProfileHandler::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clProfileHandler::OnGoingDown, this);
 
-    m_cxxOutputTabs = { "Clang",    "Build",    "References", "UnitTest++", "Trace",
-                        "CppCheck", "MemCheck", "CScope",     "BuildQ" };
+    m_cxxOutputTabs = { "References", "UnitTest++", "Trace", "CppCheck", "MemCheck", "CScope", "BuildQ" };
     m_cxxWorkspaceTabs = { "CMake Help", "wxCrafter", "Tabgroups" };
 }
 

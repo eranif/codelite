@@ -79,6 +79,8 @@ void RemoteWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &RemoteWorkspace::OnIsBuildInProgress, this);
     EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &RemoteWorkspace::OnStopBuild, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &RemoteWorkspace::OnCustomTargetMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemoteWorkspace::OnBuildHotspotClicked, this);
+
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemoteWorkspace::OnBuildProcessTerminated, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemoteWorkspace::OnBuildProcessOutput, this);
 }
@@ -92,6 +94,7 @@ void RemoteWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &RemoteWorkspace::OnCloseWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &RemoteWorkspace::OnBuildStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &RemoteWorkspace::OnIsBuildInProgress, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemoteWorkspace::OnBuildHotspotClicked, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemoteWorkspace::OnBuildProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemoteWorkspace::OnBuildProcessOutput, this);
@@ -311,7 +314,10 @@ void RemoteWorkspace::DoBuild(const wxString& target)
         clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
     } else {
+        // notify about starting build process.
+        // we pass the selected compiler in the event
         clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
+        e.SetString(conf->GetCompiler());
         EventNotifier::Get()->AddPendingEvent(e);
 
         // Notify about build process started
@@ -389,5 +395,17 @@ void RemoteWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
                 this->CallAfter(&RemoteWorkspace::DoBuild, iter->second);
             },
             menuId);
+    }
+}
+
+void RemoteWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
+{
+    CHECK_EVENT(event);
+    const wxString& filename = event.GetFileName();
+    int line_number = event.GetLineNumber();
+
+    auto editor = clSFTPManager::Get().OpenFile(filename, m_account.GetAccountName());
+    if(editor) {
+        editor->CenterLine(line_number);
     }
 }

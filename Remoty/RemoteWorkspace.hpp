@@ -41,6 +41,7 @@ protected:
     void OnBuildProcessOutput(clProcessEvent& event);
     void OnIsBuildInProgress(clBuildEvent& event);
     void OnStopBuild(clBuildEvent& event);
+    void OnBuildHotspotClicked(clBuildEvent& event);
     void OnCustomTargetMenu(clContextMenuEvent& event);
     
 public:

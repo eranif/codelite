@@ -36,6 +36,7 @@
 #include "clStrings.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
+#include "codelite_events.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -279,6 +280,7 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
 
     m_cmp.Reset(NULL);
     BuildEventDetails* bed = dynamic_cast<BuildEventDetails*>(e.GetClientObject());
+    wxString cmpname = e.GetString();
     if(bed) {
         BuildConfigPtr buildConfig =
             clCxxWorkspaceST::Get()->GetProjBuildConf(bed->GetProjectName(), bed->GetConfiguration());
@@ -291,8 +293,8 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
         buildEvent.SetProjectName(bed->GetProjectName());
         buildEvent.SetConfigurationName(bed->GetConfiguration());
         EventNotifier::Get()->AddPendingEvent(buildEvent);
-    } else if(clFileSystemWorkspace::Get().IsOpen() && clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()) {
-        const wxString& cmpname = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()->GetCompiler();
+    } else if(!cmpname.empty()) {
+        clDEBUG() << "Build output view: using compiler error patterns:" << cmpname << endl;
         m_cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpname);
     }
 }
@@ -318,6 +320,7 @@ BuildLineInfo* NewBuildTab::DoProcessLine(const wxString& line)
         buildLineInfo->SetLineNumber(bli.GetLineNumber());
         buildLineInfo->NormalizeFilename(m_directories, m_cygwinRoot);
         buildLineInfo->SetRegexLineMatch(bli.GetRegexLineMatch());
+        buildLineInfo->SetFilenameRaw(bli.GetFilenameRaw());
         buildLineInfo->SetColumn(bli.GetColumn());
         if(severity == SV_WARNING) {
             // Warning
@@ -717,6 +720,14 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
         // Highlight the clicked line on the view
         m_view->MarkerDeleteAll(LEX_GCC_MARKER);
         m_view->MarkerAdd(bli->GetLineInBuildTab(), LEX_GCC_MARKER);
+
+        // let the plugins a first chance in handling this line
+        clBuildEvent eventErrorClicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
+        eventErrorClicked.SetFileName(bli->GetFilenameRaw()); // pass the file name "raw" (i.e. unmodified by CodeLite)
+        eventErrorClicked.SetLineNumber(bli->GetLineNumber());
+        if(EventNotifier::Get()->ProcessEvent(eventErrorClicked)) {
+            return true;
+        }
 
         if(!fn.IsAbsolute()) {
             std::set<wxString> files;
@@ -1118,7 +1129,9 @@ bool CmpPattern::Matches(const wxString& line, BuildLineInfo& lineInfo)
 
     lineInfo.SetSeverity(m_severity);
     if(m_regex->GetMatchCount() > (size_t)fidx) {
-        lineInfo.SetFilename(m_regex->GetMatch(line, fidx));
+        wxString file_name = m_regex->GetMatch(line, fidx);
+        lineInfo.SetFilename(file_name);
+        lineInfo.SetFilenameRaw(file_name);
     }
 
     // keep the match length

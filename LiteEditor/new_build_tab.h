@@ -28,17 +28,17 @@
 
 #include "cl_defs.h"
 
-#include "precompiled_header.h"
-#include <wx/fdrepdlg.h>
-#include <wx/dataview.h>
-#include <wx/stopwatch.h>
-#include <wx/panel.h> // Base class: wxPanel
 #include "buildtabsettingsdata.h"
-#include "compiler.h"
-#include <map>
-#include <wx/regex.h>
 #include "cl_command_event.h"
+#include "compiler.h"
+#include "precompiled_header.h"
+#include <map>
+#include <wx/dataview.h>
+#include <wx/fdrepdlg.h>
+#include <wx/panel.h> // Base class: wxPanel
+#include <wx/regex.h>
 #include <wx/stc/stc.h>
+#include <wx/stopwatch.h>
 
 class wxDataViewListCtrl;
 
@@ -57,6 +57,7 @@ class BuildLineInfo
 {
 protected:
     wxString m_filename;
+    wxString m_filenameRaw; // the file name as reported by the compiler, unmodified
     int m_line_number;
     int m_column;
     LINE_SEVERITY m_severity;
@@ -91,6 +92,8 @@ public:
     LINE_SEVERITY GetSeverity() const { return m_severity; }
     void SetLineInBuildTab(int lineInBuildTab) { this->m_lineInBuildTab = lineInBuildTab; }
     int GetLineInBuildTab() const { return m_lineInBuildTab; }
+    void SetFilenameRaw(const wxString& filenameRaw) { this->m_filenameRaw = filenameRaw; }
+    const wxString& GetFilenameRaw() const { return m_filenameRaw; }
 };
 
 /////////////////////////////////////////////////////////////////

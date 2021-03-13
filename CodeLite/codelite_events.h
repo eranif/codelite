@@ -252,6 +252,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_GET_ADDITIONAL_LINKFLAGS, clBuild
 // for the project + configuration
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_PLUGIN_EXPORT_MAKEFILE, clBuildEvent);
 
+// User clicked on an highlighted error message in the output tab
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, clBuildEvent);
+
 // ----------------------------------------------------------------------
 // ----------------------------------------------------------------------
 

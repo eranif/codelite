@@ -49,7 +49,12 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
         [this](wxCommandEvent& e) {
             // load the remote workspace settings
             clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame(), &m_workspace->GetSettings());
-            dlg.ShowModal();
+            dlg.SetUseRemoteBrowsing(true, m_workspace->GetAccount().GetAccountName());
+            if(dlg.ShowModal() != wxID_OK) {
+                return;
+            }
+            // save workspace settings to the remote server
+            m_workspace->CallAfter(&RemoteWorkspace::SaveSettings);
         },
         XRCID("remoty-wps-settings"));
 }

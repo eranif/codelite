@@ -44,7 +44,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
 
     m_stcCCFlags->SetText(m_config->GetCompileFlagsAsString());
     m_textCtrlFileExt->ChangeValue(m_config->GetFileExtensions());
-    m_filePickerExe->SetPath(m_config->GetExecutable());
+    m_textCtrlExec->ChangeValue(m_config->GetExecutable());
     m_textCtrlArgs->ChangeValue(m_config->GetArgs());
     m_stcEnv->SetText(m_config->GetEnvironment());
     const auto& targets = m_config->GetBuildTargets();
@@ -66,7 +66,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_choiceDebuggers->SetStringSelection(config->GetDebugger());
     m_textCtrlExcludeFiles->ChangeValue(config->GetExcludeFilesPattern());
     m_textCtrlExcludePaths->ChangeValue(config->GetExecludePaths());
-    m_dirPickerWD->SetPath(config->GetWorkingDirectory());
+    m_textCtrlWD->ChangeValue(config->GetWorkingDirectory());
 
     if(!m_enableRemotePage) {
         m_checkBoxEnableRemote->Disable();
@@ -76,7 +76,9 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     }
 }
 
-FSConfigPage::~FSConfigPage() {}
+FSConfigPage::~FSConfigPage()
+{
+}
 
 void FSConfigPage::OnDelete(wxCommandEvent& event)
 {
@@ -131,7 +133,7 @@ void FSConfigPage::Save()
     m_config->SetBuildTargets(targets);
     m_config->SetCompileFlags(::wxStringTokenize(m_stcCCFlags->GetText(), "\r\n", wxTOKEN_STRTOK));
     m_config->SetFileExtensions(m_textCtrlFileExt->GetValue());
-    m_config->SetExecutable(m_filePickerExe->GetPath());
+    m_config->SetExecutable(m_textCtrlExec->GetValue());
     m_config->SetEnvironment(m_stcEnv->GetText());
     m_config->SetArgs(m_textCtrlArgs->GetValue());
     m_config->SetCompiler(m_choiceCompiler->GetStringSelection());
@@ -142,7 +144,7 @@ void FSConfigPage::Save()
     m_config->SetDebugger(m_choiceDebuggers->GetStringSelection());
     m_config->SetExcludeFilesPattern(m_textCtrlExcludeFiles->GetValue());
     m_config->SetExcludePaths(m_textCtrlExcludePaths->GetValue());
-    m_config->SetWorkingDirectory(m_dirPickerWD->GetPath());
+    m_config->SetWorkingDirectory(m_textCtrlWD->GetValue());
 }
 
 void FSConfigPage::OnTargetActivated(wxDataViewEvent& event)
@@ -157,7 +159,7 @@ void FSConfigPage::DoTargetActivated()
     CHECK_ITEM_RET(item);
 
     BuildTargetDlg dlg(::wxGetTopLevelParent(this), m_dvListCtrlTargets->GetItemText(item, 0),
-                       m_dvListCtrlTargets->GetItemText(item, 1));
+        m_dvListCtrlTargets->GetItemText(item, 1));
     if(dlg.ShowModal() == wxID_OK) {
         m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetName(), 0);
         m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetCommand(), 1);
@@ -249,4 +251,41 @@ void FSConfigPage::OnEditExcludePaths(wxCommandEvent& event)
         value = wxJoin(lines, ';');
         m_textCtrlExcludePaths->ChangeValue(value);
     }
+}
+void FSConfigPage::OnBrowseExec(wxCommandEvent& event)
+{
+    wxString path;
+    if(m_useRemoteBrowsing) {
+        auto p = ::clRemoteFileSelector(_("Select a directory"), m_sshAccount);
+        if(p.first != m_sshAccount) {
+            ::wxMessageBox(_("Wrong account selected!"), "CodeLite", wxOK | wxICON_WARNING);
+            return;
+        }
+        path = p.second;
+    } else {
+        path = ::wxFileSelector();
+    }
+    if(path.empty()) {
+        return;
+    }
+    m_textCtrlExec->ChangeValue(path);
+}
+
+void FSConfigPage::OnBrowseWD(wxCommandEvent& event)
+{
+    wxString path;
+    if(m_useRemoteBrowsing) {
+        auto p = ::clRemoteFolderSelector(_("Select a directory"), m_sshAccount);
+        if(p.first != m_sshAccount) {
+            ::wxMessageBox(_("Wrong account selected!"), "CodeLite", wxOK | wxICON_WARNING);
+            return;
+        }
+        path = p.second;
+    } else {
+        path = ::wxDirSelector();
+    }
+    if(path.empty()) {
+        return;
+    }
+    m_textCtrlWD->ChangeValue(path);
 }

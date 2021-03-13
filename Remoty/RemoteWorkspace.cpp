@@ -106,10 +106,10 @@ void RemoteWorkspace::OnOpenWorkspace(clCommandEvent& event)
 
     // Load the account
     auto accounts = SSHAccountInfo::Load([&](const SSHAccountInfo& acc) -> bool {
-        clDEBUG() << "Checking account:" << acc.GetAccountName() << endl;
-        clDEBUG() << "user_name:" << user_name << "vs" << acc.GetUsername() << endl;
-        clDEBUG() << "remote_server:" << remote_server << "vs" << acc.GetHost() << endl;
-        clDEBUG() << "nPort:" << nPort << "vs" << acc.GetPort() << endl;
+        clDEBUG1() << "Checking account:" << acc.GetAccountName() << endl;
+        clDEBUG1() << "user_name:" << user_name << "vs" << acc.GetUsername() << endl;
+        clDEBUG1() << "remote_server:" << remote_server << "vs" << acc.GetHost() << endl;
+        clDEBUG1() << "nPort:" << nPort << "vs" << acc.GetPort() << endl;
         return acc.GetUsername() == user_name && acc.GetPort() == nPort && acc.GetHost() == remote_server;
     });
 
@@ -127,7 +127,12 @@ void RemoteWorkspace::OnOpenWorkspace(clCommandEvent& event)
         return;
     }
 
-    if(!m_settings.Load(localFile)) {
+    wxFileName userSettings(clStandardPaths::Get().GetUserDataDir(), localFile.GetFullName());
+    userSettings.AppendDir("Remoty");
+    userSettings.AppendDir("LocalWorkspaces");
+    userSettings.Mkdir(wxPATH_MKDIR_FULL);
+    clDEBUG() << "User workspace file is set:" << userSettings << endl;
+    if(!m_settings.Load(localFile, userSettings)) {
         ::wxMessageBox(_("Failed to load workspace file: ") + m_localWorkspaceFile, "CodeLite",
                        wxICON_ERROR | wxCENTER);
         return;
@@ -136,6 +141,7 @@ void RemoteWorkspace::OnOpenWorkspace(clCommandEvent& event)
     m_account = accounts[0];
     m_remoteWorkspaceFile = path;
     m_localWorkspaceFile = localFile.GetFullPath();
+    m_localUserWorkspaceFile = userSettings.GetFullPath();
 
     path.Replace("\\", "/");
     wxString workspacePath = path.BeforeLast('/');
@@ -175,13 +181,13 @@ bool RemoteWorkspace::IsOpened() const { return !m_account.GetAccountName().empt
 void RemoteWorkspace::DoClose(bool notify)
 {
     m_view->CloseWorkspace();
-    m_settings.Save(m_localWorkspaceFile);
+    m_settings.Save(m_localWorkspaceFile, m_localUserWorkspaceFile);
     m_settings.Clear();
 
     m_account = {};
     m_remoteWorkspaceFile.clear();
     m_localWorkspaceFile.clear();
-
+    m_localUserWorkspaceFile.clear();
     if(notify) {
         // notify codelite to close all opened files
         wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
@@ -192,4 +198,15 @@ void RemoteWorkspace::DoClose(bool notify)
         wxCommandEvent event_closed(wxEVT_WORKSPACE_CLOSED);
         EventNotifier::Get()->ProcessEvent(event_closed);
     }
+}
+
+void RemoteWorkspace::SaveSettings()
+{
+    if(m_remoteWorkspaceFile.empty() || m_localWorkspaceFile.empty() || m_account.GetAccountName().empty()) {
+        return;
+    }
+
+    wxBusyCursor bc;
+    m_settings.Save(m_localWorkspaceFile, m_localUserWorkspaceFile);
+    clSFTPManager::Get().SaveFile(m_localWorkspaceFile, m_remoteWorkspaceFile, m_account.GetAccountName());
 }

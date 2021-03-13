@@ -16,6 +16,7 @@ class RemoteWorkspace : public IWorkspace
     SSHAccountInfo m_account;
     wxString m_remoteWorkspaceFile;
     wxString m_localWorkspaceFile;
+    wxString m_localUserWorkspaceFile;
     clFileSystemWorkspaceSettings m_settings;
 
 public:
@@ -33,7 +34,10 @@ protected:
 
 public:
     // IWorkspace
-    virtual wxString GetActiveProjectName() const { return wxEmptyString; }
+    virtual wxString GetActiveProjectName() const
+    {
+        return wxEmptyString;
+    }
     virtual wxFileName GetFileName() const;
     virtual wxString GetFilesMask() const;
     virtual wxFileName GetProjectFileName(const wxString& projectName) const;
@@ -46,11 +50,30 @@ public:
 
     // API
     bool IsOpened() const;
-    const SSHAccountInfo& GetAccount() const { return m_account; }
-    const wxString& GetLocalWorkspaceFile() const { return m_localWorkspaceFile; }
-    const wxString& GetRemoteWorkspaceFile() const { return m_remoteWorkspaceFile; }
-    const clFileSystemWorkspaceSettings& GetSettings() const { return m_settings; }
-    clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
+    const SSHAccountInfo& GetAccount() const
+    {
+        return m_account;
+    }
+    const wxString& GetLocalWorkspaceFile() const
+    {
+        return m_localWorkspaceFile;
+    }
+    const wxString& GetRemoteWorkspaceFile() const
+    {
+        return m_remoteWorkspaceFile;
+    }
+    const clFileSystemWorkspaceSettings& GetSettings() const
+    {
+        return m_settings;
+    }
+    clFileSystemWorkspaceSettings& GetSettings()
+    {
+        return m_settings;
+    }
+    /**
+     * @brief save the settings to the remote machine
+     */
+    void SaveSettings();
 };
 
 #endif // RemoteWorkspace_HPP

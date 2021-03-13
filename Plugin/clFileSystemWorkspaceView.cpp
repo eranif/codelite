@@ -131,7 +131,10 @@ void clFileSystemWorkspaceView::OnCloseFolder(wxCommandEvent& event)
 void clFileSystemWorkspaceView::OnSettings(wxCommandEvent& event)
 {
     clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame());
-    dlg.ShowModal();
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+    
 }
 
 void clFileSystemWorkspaceView::UpdateConfigs(const wxArrayString& configs, const wxString& selectedConfig)

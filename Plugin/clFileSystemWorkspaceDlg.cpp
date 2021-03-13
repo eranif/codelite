@@ -35,7 +35,9 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent, clFileSyste
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-clFileSystemWorkspaceDlg::~clFileSystemWorkspaceDlg() {}
+clFileSystemWorkspaceDlg::~clFileSystemWorkspaceDlg()
+{
+}
 
 void clFileSystemWorkspaceDlg::OnOK(wxCommandEvent& event)
 {
@@ -112,4 +114,17 @@ void clFileSystemWorkspaceDlg::OnDeleteConfig(wxCommandEvent& event)
 void clFileSystemWorkspaceDlg::OnDeleteConfigUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_notebook->GetPageCount() > 1);
+}
+
+void clFileSystemWorkspaceDlg::SetUseRemoteBrowsing(bool useRemoteBrowsing, const wxString& account)
+{
+    this->m_useRemoteBrowsing = useRemoteBrowsing;
+    this->m_sshAccount = account;
+    for(size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
+        FSConfigPage* page = reinterpret_cast<FSConfigPage*>(m_notebook->GetPage(i));
+        if(!page) {
+            continue;
+        }
+        page->SetUseRemoteBrowsing(useRemoteBrowsing, account);
+    }
 }

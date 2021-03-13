@@ -8,10 +8,17 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceDlg : public clFileSystemWorkspaceDlg
 {
     clFileSystemWorkspaceSettings* m_settings = nullptr;
     bool m_usingGlobalSettings = true;
+    bool m_useRemoteBrowsing = false;
+    wxString m_sshAccount;
 
 public:
     clFileSystemWorkspaceDlg(wxWindow* parent, clFileSystemWorkspaceSettings* settings = nullptr);
     virtual ~clFileSystemWorkspaceDlg();
+    void SetUseRemoteBrowsing(bool useRemoteBrowsing, const wxString& account);
+    bool IsUseRemoteBrowsing() const
+    {
+        return m_useRemoteBrowsing;
+    }
 
 protected:
     virtual void OnDeleteConfig(wxCommandEvent& event);

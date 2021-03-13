@@ -375,11 +375,17 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     }
 }
 
-bool clFileSystemWorkspaceSettings::Save(const wxFileName& filename)
+bool clFileSystemWorkspaceSettings::Save(const wxFileName& filename, const wxFileName& localSettings)
 {
     // store the
-    wxFileName localWorkspace = filename;
-    localWorkspace.AppendDir(".codelite");
+    wxFileName localWorkspace;
+
+    if(localSettings.IsOk()) {
+        localWorkspace = localSettings;
+    } else {
+        localWorkspace = filename;
+        localWorkspace.AppendDir(".codelite");
+    }
     localWorkspace.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     JSON root_local(cJSON_Object);
     JSON root_shared(cJSON_Object);
@@ -395,10 +401,16 @@ bool clFileSystemWorkspaceSettings::Save(const wxFileName& filename)
     return true;
 }
 
-bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename)
+bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename, const wxFileName& localSettings)
 {
-    wxFileName localWorkspace = filename;
-    localWorkspace.AppendDir(".codelite");
+    wxFileName localWorkspace;
+    if(localSettings.IsOk()) {
+        localWorkspace = localSettings;
+    } else {
+        localWorkspace = filename;
+        localWorkspace.AppendDir(".codelite");
+    };
+
     JSON root_shared(filename);
     if(!root_shared.isOk()) {
         clWARNING() << "Invalid File System Workspace file:" << filename << endl;

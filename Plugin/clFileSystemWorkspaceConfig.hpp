@@ -133,8 +133,8 @@ public:
     clFileSystemWorkspaceSettings();
     virtual ~clFileSystemWorkspaceSettings();
 
-    bool Save(const wxFileName& filename);
-    bool Load(const wxFileName& filename);
+    bool Save(const wxFileName& filename, const wxFileName& localSettings = {});
+    bool Load(const wxFileName& filename, const wxFileName& localSettings = {});
 
     bool AddConfig(const wxString& name, const wxString& copyfrom = wxEmptyString);
     bool DeleteConfig(const wxString& name);

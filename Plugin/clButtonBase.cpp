@@ -327,7 +327,7 @@ wxSize clButtonBase::GetBestSize() const
     int buttonWidth = 0;
     {
         wxRect r = dc.GetTextExtent("Tp");
-        r.Inflate(8);
+        r.Inflate(4);
         buttonHeight = r.GetHeight();
     }
 

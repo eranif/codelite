@@ -2,6 +2,7 @@
 #include "SFTPClientData.hpp"
 #include "clSFTPEvent.h"
 #include "clSFTPManager.hpp"
+#include "clTempFile.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -459,6 +460,15 @@ bool clSFTPManager::DoDownload(const wxString& remotePath, const wxString& local
         clWARNING() << "Failed to write local file content:" << localPath << endl;
         return false;
     }
+}
+
+bool clSFTPManager::WriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName)
+{
+    clTempFile tmpfile;
+    if(!tmpfile.Write(content, wxConvUTF8)) {
+        return false;
+    }
+    return SaveFile(tmpfile.GetFullPath(), remotePath, accountName);
 }
 
 #endif

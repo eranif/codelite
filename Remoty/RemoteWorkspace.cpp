@@ -11,8 +11,19 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
+#include "processreaderthread.h"
+#include "shell_command.h"
 #include <wx/msgdlg.h>
 #include <wx/uri.h>
+
+#define CHECK_EVENT(e)     \
+    {                      \
+        if(!IsOpened()) {  \
+            e.Skip();      \
+            return;        \
+        }                  \
+        event.Skip(false); \
+    }
 
 RemoteWorkspace::RemoteWorkspace()
 {
@@ -64,6 +75,12 @@ void RemoteWorkspace::BindEvents()
 
     EventNotifier::Get()->Bind(wxEVT_SWITCHING_TO_WORKSPACE, &RemoteWorkspace::OnOpenWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &RemoteWorkspace::OnCloseWorkspace, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &RemoteWorkspace::OnBuildStarting, this);
+    EventNotifier::Get()->Bind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &RemoteWorkspace::OnIsBuildInProgress, this);
+    EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &RemoteWorkspace::OnStopBuild, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &RemoteWorkspace::OnCustomTargetMenu, this);
+    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemoteWorkspace::OnBuildProcessTerminated, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemoteWorkspace::OnBuildProcessOutput, this);
 }
 
 void RemoteWorkspace::UnbindEvents()
@@ -73,6 +90,11 @@ void RemoteWorkspace::UnbindEvents()
     }
     EventNotifier::Get()->Unbind(wxEVT_SWITCHING_TO_WORKSPACE, &RemoteWorkspace::OnOpenWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &RemoteWorkspace::OnCloseWorkspace, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &RemoteWorkspace::OnBuildStarting, this);
+    EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &RemoteWorkspace::OnIsBuildInProgress, this);
+
+    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemoteWorkspace::OnBuildProcessTerminated, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemoteWorkspace::OnBuildProcessOutput, this);
     m_eventsConnected = false;
 }
 
@@ -209,4 +231,163 @@ void RemoteWorkspace::SaveSettings()
     wxBusyCursor bc;
     m_settings.Save(m_localWorkspaceFile, m_localUserWorkspaceFile);
     clSFTPManager::Get().SaveFile(m_localWorkspaceFile, m_remoteWorkspaceFile, m_account.GetAccountName());
+}
+
+void RemoteWorkspace::OnBuildStarting(clBuildEvent& event)
+{
+    event.Skip();
+    if(IsOpened()) {
+        event.Skip(false);
+        // before we start the build, save all modified files
+        clGetManager()->SaveAll(false);
+        DoBuild(event.GetKind());
+    }
+}
+
+wxString RemoteWorkspace::GetTargetCommand(const wxString& target) const
+{
+    if(!m_settings.GetSelectedConfig()) {
+        return wxEmptyString;
+    }
+    const auto& M = m_settings.GetSelectedConfig()->GetBuildTargets();
+    if(M.count(target)) {
+        wxString cmd = M.find(target)->second;
+        return cmd;
+    }
+    return wxEmptyString;
+}
+
+void RemoteWorkspace::DoBuild(const wxString& target)
+{
+    wxBusyCursor bc;
+    auto conf = m_settings.GetSelectedConfig();
+    if(!conf) {
+        ::wxMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
+                         "settings and add one"),
+                       "CodeLite", wxICON_ERROR | wxCENTER);
+        return;
+    }
+
+    wxString cmd = GetTargetCommand(target);
+    if(cmd.IsEmpty()) {
+        ::wxMessageBox(_("Don't know how to run '") + target + "'", "CodeLite", wxICON_ERROR | wxCENTER);
+        return;
+    }
+
+    if(m_buildProcess) {
+        return;
+    }
+
+    // Build the environment to use
+    const wxString& envstr = conf->GetEnvironment();
+    auto envmap = FileUtils::CreateEnvironment(envstr);
+
+    // Creae a build script
+    wxString buildScript;
+    buildScript << "/tmp/" << m_account.GetUsername() << "_codelite-build.sh";
+    wxString buildScriptContent;
+
+    buildScriptContent << "#!/bin/bash -e\n"; // stop at first error
+    buildScriptContent << "# prepare the environment variables\n";
+    for(auto& vt : envmap) {
+        buildScriptContent << "export " << vt.first << "=" << ::WrapWithQuotes(vt.second) << "\n";
+    }
+    buildScriptContent << "\n";
+
+    wxString working_dir = m_remoteWorkspaceFile.BeforeLast('/');
+    buildScriptContent << "cd " << working_dir << "\n";
+    buildScriptContent << cmd << "\n";
+
+    // upload the test script
+    if(!clSFTPManager::Get().WriteFile(buildScriptContent, buildScript, m_account.GetAccountName())) {
+        ::wxMessageBox(_("Failed to write build script to the remote machine!"), "CodeLite", wxICON_ERROR | wxCENTER);
+        return;
+    }
+
+    vector<wxString> args = { "/bin/bash", "-f", buildScript };
+    m_buildProcess = ::CreateAsyncProcess(this, args, IProcessCreateDefault | IProcessCreateSSH, wxEmptyString, nullptr,
+                                          m_account.GetAccountName());
+    if(!m_buildProcess) {
+        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
+    } else {
+        clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
+        EventNotifier::Get()->AddPendingEvent(e);
+
+        // Notify about build process started
+        clBuildEvent eventStart(wxEVT_BUILD_STARTED);
+        EventNotifier::Get()->AddPendingEvent(eventStart);
+    }
+}
+
+void RemoteWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
+{
+    if(event.GetProcess() == m_buildProcess) {
+        wxDELETE(m_buildProcess);
+        DoPrintBuildMessage(event.GetOutput());
+
+        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+        EventNotifier::Get()->AddPendingEvent(e);
+
+        // Notify about build process started
+        clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
+        EventNotifier::Get()->AddPendingEvent(eventStopped);
+    }
+}
+
+void RemoteWorkspace::OnBuildProcessOutput(clProcessEvent& event)
+{
+    if(event.GetProcess() == m_buildProcess) {
+        DoPrintBuildMessage(event.GetOutput());
+    }
+}
+
+void RemoteWorkspace::DoPrintBuildMessage(const wxString& message)
+{
+    clCommandEvent e(wxEVT_SHELL_COMMAND_ADDLINE);
+    e.SetString(message);
+    EventNotifier::Get()->AddPendingEvent(e);
+}
+
+void RemoteWorkspace::OnIsBuildInProgress(clBuildEvent& event)
+{
+    CHECK_EVENT(event);
+    event.SetIsRunning(m_buildProcess != nullptr);
+}
+
+void RemoteWorkspace::OnStopBuild(clBuildEvent& event)
+{
+    CHECK_EVENT(event);
+    if(!m_buildProcess) {
+        return;
+    }
+    m_buildProcess->Terminate();
+}
+
+void RemoteWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
+{
+    CHECK_EVENT(event);
+    CHECK_PTR_RET(m_settings.GetSelectedConfig());
+
+    wxMenu* menu = event.GetMenu();
+    wxArrayString arrTargets;
+    const auto& targets = m_settings.GetSelectedConfig()->GetBuildTargets();
+
+    unordered_map<int, wxString> M;
+    for(const auto& vt : targets) {
+        const wxString& name = vt.first;
+        int menuId = wxXmlResource::GetXRCID(vt.first);
+        M.insert({ menuId, name });
+        menu->Append(menuId, name, name, wxITEM_NORMAL);
+        menu->Bind(
+            wxEVT_MENU,
+            [=](wxCommandEvent& e) {
+                auto iter = M.find(e.GetId());
+                if(iter == M.end()) {
+                    return;
+                }
+                this->CallAfter(&RemoteWorkspace::DoBuild, iter->second);
+            },
+            menuId);
+    }
 }

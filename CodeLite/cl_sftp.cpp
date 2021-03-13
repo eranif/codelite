@@ -129,16 +129,17 @@ void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath)
                                      << ::strerror(errno));
     }
 
-    char buffer[4096];
     wxMemoryBuffer memBuffer;
+    size_t len = fp.Length();
+    void* buffer = memBuffer.GetWriteBuf(len);
     size_t nbytes(0);
-    while(!fp.Eof()) {
-        nbytes = fp.Read(buffer, sizeof(buffer));
-        if(nbytes == 0)
-            break;
-        memBuffer.AppendData(buffer, nbytes);
+    nbytes = fp.Read(buffer, fp.Length());
+    if(nbytes != fp.Length()) {
+        throw clException(wxString() << "failed to read local file content. expected read size: " << len
+                                     << ". bytes read: " << nbytes);
     }
     fp.Close();
+    memBuffer.SetDataLen(len);
     Write(memBuffer, remotePath);
 }
 

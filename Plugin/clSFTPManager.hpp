@@ -62,6 +62,15 @@ public:
     bool SaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName);
 
     /**
+     * @brief write file content
+     * @param content of the file
+     * @param remotePath file path on the remote machine
+     * @param accountName the account name to use
+     * @return true on success or false
+     */
+    bool WriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName);
+
+    /**
      * @brief delete a connection
      * if promptUser is set to true and any un-saved files belonged to the connection
      * are opened, the user is prompted to save them

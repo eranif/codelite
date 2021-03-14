@@ -21,6 +21,7 @@ clSFTPManager::clSFTPManager()
     assert(wxThread::IsMain());
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
+    m_eventsConnected = true;
 
     m_timer = new wxTimer(this);
     m_timer->Start(10000); // 10 seconds should be good enough for a "keep-alive" interval
@@ -29,12 +30,17 @@ clSFTPManager::clSFTPManager()
 
 clSFTPManager::~clSFTPManager()
 {
-    EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
-    Unbind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
+    if(m_eventsConnected) {
+        EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
+        EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
+        m_eventsConnected = false;
+    }
 
-    m_timer->Stop();
-    wxDELETE(m_timer);
+    if(m_timer) {
+        Unbind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
+        m_timer->Stop();
+        wxDELETE(m_timer);
+    }
 }
 
 clSFTPManager& clSFTPManager::Get()
@@ -51,6 +57,17 @@ void clSFTPManager::Release()
         DeleteConnection(conn_info.first, false);
     }
     m_connections.clear();
+
+    if(m_eventsConnected) {
+        EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
+        EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
+        m_eventsConnected = false;
+    }
+    if(m_timer) {
+        Unbind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
+        m_timer->Stop();
+        wxDELETE(m_timer);
+    }
 }
 
 bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
@@ -200,6 +217,10 @@ SFTPClientData* clSFTPManager::GetSFTPClientData(IEditor* editor)
 void clSFTPManager::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
+    if(clGetManager()->IsShutdownInProgress()) {
+        return;
+    }
+
     const wxString& filename = event.GetString();
     auto editor = clGetManager()->FindEditor(filename);
     CHECK_PTR_RET(editor);
@@ -308,6 +329,7 @@ bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountI
 void clSFTPManager::OnGoingDown(clCommandEvent& event)
 {
     event.Skip();
+    clDEBUG() << "SFTP manager is shutting down..." << endl;
     Release();
 }
 

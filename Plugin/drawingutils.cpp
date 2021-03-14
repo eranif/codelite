@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "clScrolledPanel.h"
+#include "clTabRendererSquare.h"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
 #include "wx/dc.h"
@@ -323,6 +324,11 @@ wxColour DrawingUtils::GetMenuTextColour() { return clSystemSettings::GetColour(
 
 wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 {
+    wxUnusedVar(miniToolbar);
+    clTabColours c;
+    c.UpdateColours(0);
+    return c.activeTabBgColour;
+#if 0
 #ifdef __WXMSW__
     wxUnusedVar(miniToolbar);
     return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
@@ -330,8 +336,7 @@ wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
     wxUnusedVar(miniToolbar);
     return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #else
-    return miniToolbar ? clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
-                       : clSystemSettings::GetColour(wxSYS_COLOUR_TOOLBAR);
+#endif
 #endif
 }
 

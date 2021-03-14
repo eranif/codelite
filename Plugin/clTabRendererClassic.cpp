@@ -51,12 +51,12 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
     clTabColours colours = colors;
     bool isDark = DrawingUtils::IsDark(colours.activeTabBgColour);
-    wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour);
+    wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.tabAreaColour);
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
 
-    if(isDark && !tabInfo.IsActive()) {
-        bgColour = bgColour.ChangeLightness(105);
-    }
+    // if(isDark && !tabInfo.IsActive()) {
+    //     bgColour = bgColour.ChangeLightness(105);
+    // }
 
     wxFont font = GetTabFont(tabInfo.IsActive());
     wxColour activeTabTextColour = isDark ? colours.markerColour : colours.activeTabTextColour;
@@ -132,11 +132,12 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         p2.y += 1;
         dc.DrawLine(p1, p2);
     } else {
+        int light_factor = isDark ? 115 : 80;
         p1 = tabRect.GetRightTop();
         p2 = tabRect.GetBottomRight();
         p2.y -= 1; // don't override the bottom line
         p1.y -= 1; // dont override the top line
-        dc.SetPen(colours.activeTabBgColour.ChangeLightness(110));
+        dc.SetPen(colours.activeTabBgColour.ChangeLightness(light_factor));
         dc.DrawLine(p1, p2);
 
         p1 = tabRect.GetLeftTop();
@@ -202,14 +203,14 @@ void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
 
     // clear the dark line drawn in the prev lines from the active tab
     wxPoint p1, p2;
-    p1 = wxPoint(activeTabRect.GetLeft() - 1, topRect.GetBottom());
-    p2 = wxPoint(activeTabRect.GetRight() + 2, topRect.GetBottom());
+    p1 = wxPoint(activeTabRect.GetLeft(), topRect.GetBottom());
+    p2 = wxPoint(activeTabRect.GetRight() + 1, topRect.GetBottom());
     dc.SetPen(colours.activeTabBgColour);
     dc.DrawLine(p1, p2);
 
 #ifndef __WXMSW__
-    p1.x += 2;
-    p2.x -= 2;
+    p1.x += 1;
+    p2.x -= 1;
 #endif
 
     // draw dark line at the bottom of the active tab

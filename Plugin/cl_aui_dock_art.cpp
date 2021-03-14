@@ -80,7 +80,7 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 
 static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColour& textColour)
 {
-    wxColour baseColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour baseColour = DrawingUtils::GetMenuBarBgColour(false);
     bgColour = baseColour.ChangeLightness(DrawingUtils::IsDark(baseColour) ? 110 : 90);
     penColour = baseColour.ChangeLightness(80);
     textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
@@ -88,8 +88,8 @@ static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColou
 
 static wxColour clDockArtSashColour()
 {
-    wxColour baseColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-    return baseColour.ChangeLightness(DrawingUtils::IsDark(baseColour) ? 80 : 120);
+    wxColour baseColour = DrawingUtils::GetMenuBarBgColour(false);
+    return baseColour;
 }
 
 // ------------------------------------------------------------

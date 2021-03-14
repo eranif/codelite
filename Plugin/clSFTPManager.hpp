@@ -16,6 +16,7 @@ class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
 {
     std::unordered_map<wxString, std::pair<SSHAccountInfo, clSFTP::Ptr_t>> m_connections;
     wxTimer* m_timer = nullptr;
+    bool m_eventsConnected = true;
 
 protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;

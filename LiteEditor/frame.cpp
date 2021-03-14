@@ -1370,9 +1370,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     }
 
     long style = wxTB_FLAT;
-#ifndef __WXGTK__
     style |= wxTB_NODIVIDER;
-#endif
 
     m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));

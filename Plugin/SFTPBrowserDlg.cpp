@@ -127,8 +127,8 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
             m_choiceAccount->SetSelection(0);
         }
     }
+    CallAfter(&SFTPBrowserDlg::DoSetLocationFocus);
     SetName("SFTPBrowserDlg");
-    m_textCtrlRemoteFolder->CallAfter(&wxTextCtrl::SetInsertionPointEnd);
     WindowAttrManager::Load(this);
 }
 
@@ -136,6 +136,13 @@ SFTPBrowserDlg::~SFTPBrowserDlg()
 {
     clConfig::Get().Write("SFTPBrowserDlg/location", m_textCtrlRemoteFolder->GetValue());
     clConfig::Get().Write("SFTPBrowserDlg/account", m_choiceAccount->GetStringSelection());
+}
+
+void SFTPBrowserDlg::DoSetLocationFocus()
+{
+    // set the insertion point to the end of the text control
+    m_textCtrlRemoteFolder->SetInsertionPointEnd();
+    m_textCtrlRemoteFolder->SetFocus();
 }
 
 void SFTPBrowserDlg::OnRefresh(wxCommandEvent& event)

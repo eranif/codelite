@@ -20,6 +20,7 @@ class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
 protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
     clSFTP::Ptr_t GetConnectionPtr(const wxString& account) const;
+    clSFTP::Ptr_t GetConnectionPtrAddIfMissing(const wxString& account);
 
 protected:
     void OnGoingDown(clCommandEvent& event);

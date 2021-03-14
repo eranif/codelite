@@ -9,7 +9,7 @@
 #define WORKSPACE_TYPE_NAME "Remote over SSH"
 
 class RemotyWorkspaceView;
-class RemoteWorkspace : public IWorkspace
+class RemotyWorkspace : public IWorkspace
 {
     bool m_eventsConnected = false;
     RemotyWorkspaceView* m_view = nullptr;
@@ -21,9 +21,9 @@ class RemoteWorkspace : public IWorkspace
     IProcess* m_buildProcess = nullptr;
 
 public:
-    RemoteWorkspace();
-    RemoteWorkspace(bool dummy);
-    virtual ~RemoteWorkspace();
+    RemotyWorkspace();
+    RemotyWorkspace(bool dummy);
+    virtual ~RemotyWorkspace();
 
 protected:
     void BindEvents();
@@ -32,6 +32,8 @@ protected:
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void DoClose(bool notify);
+    /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
+    void DoOpen(const wxString& workspaceFileURI);
     void DoBuild(const wxString& kind);
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
@@ -43,7 +45,8 @@ protected:
     void OnStopBuild(clBuildEvent& event);
     void OnBuildHotspotClicked(clBuildEvent& event);
     void OnCustomTargetMenu(clContextMenuEvent& event);
-    
+    void OnNewWorkspace(clCommandEvent& event);
+
 public:
     // IWorkspace
     virtual wxString GetActiveProjectName() const { return wxEmptyString; }

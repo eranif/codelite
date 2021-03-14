@@ -42,17 +42,18 @@ class WXDLLIMPEXP_SDK SFTPBrowserDlg : public SFTPBrowserBaseDlg
     size_t m_flags;
 
 protected:
-    virtual void OnSSHAccountManager(wxCommandEvent& event);
-    virtual void OnCdUpUI(wxUpdateUIEvent& event);
-    virtual void OnCdUp(wxCommandEvent& event);
-    virtual void OnEnter(wxCommandEvent& event);
-    virtual void OnFocusLost(wxFocusEvent& event);
-    virtual void OnTextUpdated(wxCommandEvent& event);
-    virtual void OnKeyDown(wxKeyEvent& event);
-    virtual void OnItemSelected(wxDataViewEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
-    virtual void OnTextEnter(wxCommandEvent& event);
-    virtual void OnItemActivated(wxDataViewEvent& event);
+    void OnSSHAccountManager(wxCommandEvent& event);
+    void OnConnectedUI(wxUpdateUIEvent& event);
+    void OnNewFolder(wxCommandEvent& event);
+    void OnCdUp(wxCommandEvent& event);
+    void OnEnter(wxCommandEvent& event);
+    void OnFocusLost(wxFocusEvent& event);
+    void OnTextUpdated(wxCommandEvent& event);
+    void OnKeyDown(wxKeyEvent& event);
+    void OnItemSelected(wxDataViewEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event);
+    void OnTextEnter(wxCommandEvent& event);
+    void OnItemActivated(wxDataViewEvent& event);
     void DoCloseSession();
     void DoDisplayEntriesForPath(const wxString& path = "");
     void ClearView();

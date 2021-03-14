@@ -136,3 +136,95 @@ RemotySwitchToWorkspaceDlgBase::~RemotySwitchToWorkspaceDlgBase()
                            wxCommandEventHandler(RemotySwitchToWorkspaceDlgBase::OnRemoteBrowse), NULL, this);
     m_button11->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(RemotySwitchToWorkspaceDlgBase::OnOKUI), NULL, this);
 }
+
+RemotyNewWorkspaceDlgBase::RemotyNewWorkspaceDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                     const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterjtvK2XInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer35);
+
+    wxFlexGridSizer* flexGridSizer43 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer43->SetFlexibleDirection(wxBOTH);
+    flexGridSizer43->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer43->AddGrowableCol(1);
+
+    boxSizer35->Add(flexGridSizer43, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText45 =
+        new wxStaticText(this, wxID_ANY, _("Path:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer43->Add(m_staticText45, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlPath = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(250, -1)), 0);
+    m_textCtrlPath->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlPath->SetHint(wxT(""));
+#endif
+
+    flexGridSizer43->Add(m_textCtrlPath, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button49 = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer43->Add(m_button49, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText59 =
+        new wxStaticText(this, wxID_ANY, _("Workspace name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer43->Add(m_staticText59, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlName->SetHint(wxT(""));
+#endif
+
+    flexGridSizer43->Add(m_textCtrlName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer37 = new wxStdDialogButtonSizer();
+
+    boxSizer35->Add(m_stdBtnSizer37, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_button39 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer37->AddButton(m_button39);
+
+    m_button41 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button41->SetDefault();
+    m_stdBtnSizer37->AddButton(m_button41);
+    m_stdBtnSizer37->Realize();
+
+    SetName(wxT("RemotyNewWorkspaceDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_button49->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(RemotyNewWorkspaceDlgBase::OnBrowse), NULL,
+                        this);
+    m_button41->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(RemotyNewWorkspaceDlgBase::OnOKUI), NULL, this);
+}
+
+RemotyNewWorkspaceDlgBase::~RemotyNewWorkspaceDlgBase()
+{
+    m_button49->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(RemotyNewWorkspaceDlgBase::OnBrowse),
+                           NULL, this);
+    m_button41->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(RemotyNewWorkspaceDlgBase::OnOKUI), NULL, this);
+}

@@ -169,6 +169,24 @@ clSFTP::Ptr_t clSFTPManager::GetConnectionPtr(const wxString& account) const
     return iter->second.second;
 }
 
+clSFTP::Ptr_t clSFTPManager::GetConnectionPtrAddIfMissing(const wxString& account)
+{
+    assert(wxThread::IsMain());
+    auto iter = m_connections.find(account);
+    if(iter != m_connections.end()) {
+        return iter->second.second;
+    }
+    // no such connection, add it
+    auto acc = SSHAccountInfo::LoadAccount(account);
+    if(acc.GetAccountName().empty()) {
+        return clSFTP::Ptr_t(nullptr);
+    }
+    if(!AddConnection(acc)) {
+        return clSFTP::Ptr_t(nullptr);
+    }
+    return m_connections[account].second;
+}
+
 SFTPClientData* clSFTPManager::GetSFTPClientData(IEditor* editor)
 {
     assert(wxThread::IsMain());
@@ -198,14 +216,12 @@ bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePa
 {
     assert(wxThread::IsMain());
     wxBusyCursor bc;
-    auto conn_info = GetConnectionPair(accountName);
-    CHECK_PTR_RET_FALSE(conn_info.second);
-
-    auto conn = conn_info.second;
-    auto account = conn_info.first;
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    CHECK_PTR_RET_FALSE(conn);
 
     wxString message;
     message << _("Uploading file: ") << localPath << " -> " << accountName << "@" << remotePath;
+    clDEBUG() << message << endl;
     clGetManager()->SetStatusMessage(message, 3);
     try {
         conn->Write(localPath, remotePath);

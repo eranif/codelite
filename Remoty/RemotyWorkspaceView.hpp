@@ -3,18 +3,18 @@
 #include "RemotyUI.h"
 #include "clRemoteDirCtrl.hpp"
 
-class RemoteWorkspace;
+class RemotyWorkspace;
 class RemotyWorkspaceView : public RemotyWorkspaceViewBase
 {
     clRemoteDirCtrl* m_tree = nullptr;
-    RemoteWorkspace* m_workspace = nullptr;
+    RemotyWorkspace* m_workspace = nullptr;
 
 protected:
     void OnDirContextMenu(clContextMenuEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
 
 public:
-    RemotyWorkspaceView(wxWindow* parent, RemoteWorkspace* workspace);
+    RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace);
     virtual ~RemotyWorkspaceView();
 
     /**

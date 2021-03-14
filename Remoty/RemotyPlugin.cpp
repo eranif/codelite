@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "NewFileSystemWorkspaceDialog.h"
-#include "RemoteWorkspace.hpp"
+#include "RemotyWorkspace.hpp"
 #include "RemotyPlugin.hpp"
 #include "asyncprocess.h"
 #include "clFileSystemWorkspace.hpp"
@@ -66,8 +66,8 @@ RemotyPlugin::RemotyPlugin(IManager* manager)
     m_shortName = "Remoty";
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &RemotyPlugin::OnFolderContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyPlugin::OnNewWorkspace, this);
-    clWorkspaceManager::Get().RegisterWorkspace(new RemoteWorkspace(true));
-    m_workspace = new RemoteWorkspace();
+    clWorkspaceManager::Get().RegisterWorkspace(new RemotyWorkspace(true));
+    m_workspace = new RemotyWorkspace();
 }
 
 RemotyPlugin::~RemotyPlugin() {}

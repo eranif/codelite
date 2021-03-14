@@ -96,26 +96,47 @@ SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wx
     }
 
     clBitmapList* images = new clBitmapList;
-    m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent Folder"), images->Add("up"));
-    m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"), _("Open SSH Account Manager"), images->Add("folder-users"));
+    m_toolbar->AddTool(wxID_NEW, _("Create new folder"), images->Add("plus"));
+    m_toolbar->AddTool(XRCID("ID_CD_UP"), _("Parent folder"), images->Add("up"));
+    m_toolbar->AddTool(XRCID("ID_SSH_ACCOUNT_MANAGER"), _("Open SSH account manager"), images->Add("folder-users"));
     m_toolbar->AssignBitmaps(images);
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnCdUp, this, XRCID("ID_CD_UP"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPBrowserDlg::OnCdUpUI, this, XRCID("ID_CD_UP"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPBrowserDlg::OnConnectedUI, this, XRCID("ID_CD_UP"));
+
+    m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnNewFolder, this, wxID_NEW);
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &SFTPBrowserDlg::OnConnectedUI, this, wxID_NEW);
+
     m_toolbar->Bind(wxEVT_TOOL, &SFTPBrowserDlg::OnSSHAccountManager, this, XRCID("ID_SSH_ACCOUNT_MANAGER"));
+
+    wxString last_location = clConfig::Get().Read("SFTPBrowserDlg/location", wxString());
+    wxString last_account = clConfig::Get().Read("SFTPBrowserDlg/account", wxString());
 
     if(selection != wxNOT_FOUND) {
         m_choiceAccount->SetSelection(selection);
         m_choiceAccount->Enable(false); // don't allow the user to change the account selection
-    } else if(!m_choiceAccount->IsEmpty()) {
-        m_choiceAccount->SetSelection(0);
+    } else {
+        if(!last_location.empty()) {
+            m_textCtrlRemoteFolder->ChangeValue(last_location);
+        }
+        int where = m_choiceAccount->FindString(last_account);
+        if(where != wxNOT_FOUND) {
+            m_choiceAccount->SetSelection(where);
+        } else if(!m_choiceAccount->IsEmpty()) {
+            m_choiceAccount->SetSelection(0);
+        }
     }
     SetName("SFTPBrowserDlg");
+    m_textCtrlRemoteFolder->CallAfter(&wxTextCtrl::SetInsertionPointEnd);
     WindowAttrManager::Load(this);
 }
 
-SFTPBrowserDlg::~SFTPBrowserDlg() {}
+SFTPBrowserDlg::~SFTPBrowserDlg()
+{
+    clConfig::Get().Write("SFTPBrowserDlg/location", m_textCtrlRemoteFolder->GetValue());
+    clConfig::Get().Write("SFTPBrowserDlg/account", m_choiceAccount->GetStringSelection());
+}
 
 void SFTPBrowserDlg::OnRefresh(wxCommandEvent& event)
 {
@@ -334,7 +355,7 @@ void SFTPBrowserDlg::OnCdUp(wxCommandEvent& event)
     DoDisplayEntriesForPath("..");
 }
 
-void SFTPBrowserDlg::OnCdUpUI(wxUpdateUIEvent& event) { event.Enable(m_sftp); }
+void SFTPBrowserDlg::OnConnectedUI(wxUpdateUIEvent& event) { event.Enable(m_sftp); }
 
 void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
 {
@@ -415,6 +436,27 @@ void SFTPBrowserDlg::DoBrowse()
     } catch(clException& e) {
         ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
         DoCloseSession();
+    }
+}
+
+void SFTPBrowserDlg::OnNewFolder(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    CHECK_PTR_RET(m_sftp);
+
+    wxString name = clGetTextFromUser(_("Create new folder"), _("Name:"));
+    if(name.empty()) {
+        return;
+    }
+
+    try {
+        wxString path;
+        path << m_sftp->GetCurrentFolder() << "/" << name;
+        m_sftp->CreateDir(path);
+        ClearView();
+        DoDisplayEntriesForPath();
+    } catch(clException& e) {
+        ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
     }
 }
 

@@ -27,6 +27,10 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="RemotyNewWorkspaceDlg.cpp"/>
+    <File Name="RemotyNewWorkspaceDlg.h"/>
+    <File Name="RemotyWorkspace.cpp"/>
+    <File Name="RemotyWorkspace.hpp"/>
     <File Name="RemotySwitchToWorkspaceDlg.h"/>
     <File Name="RemotySwitchToWorkspaceDlg.cpp"/>
     <File Name="RemotyWorkspaceView.hpp"/>
@@ -37,8 +41,6 @@
     <File Name="RemotyUI.wxcp"/>
     <File Name="RemotyPlugin.hpp"/>
     <File Name="RemotyPlugin.cpp"/>
-    <File Name="RemoteWorkspace.hpp"/>
-    <File Name="RemoteWorkspace.cpp"/>
     <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
   <Dependencies/>

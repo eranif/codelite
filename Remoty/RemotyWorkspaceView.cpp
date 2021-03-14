@@ -1,4 +1,4 @@
-#include "RemoteWorkspace.hpp"
+#include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clFileSystemWorkspaceDlg.h"
@@ -7,7 +7,7 @@
 #include "ssh_account_info.h"
 #include <wx/msgdlg.h>
 
-RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemoteWorkspace* workspace)
+RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace)
     : RemotyWorkspaceViewBase(parent)
     , m_workspace(workspace)
 {
@@ -59,7 +59,7 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
                     return;
                 }
                 // save workspace settings to the remote server
-                m_workspace->CallAfter(&RemoteWorkspace::SaveSettings);
+                m_workspace->CallAfter(&RemotyWorkspace::SaveSettings);
             },
             XRCID("remoty-wps-settings"));
     }

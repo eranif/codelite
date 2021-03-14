@@ -21,6 +21,7 @@
 #include <wx/arrstr.h>
 #include "clThemedComboBox.hpp"
 #include <wx/button.h>
+#include <wx/textctrl.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -79,6 +80,35 @@ public:
                                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                                    long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~RemotySwitchToWorkspaceDlgBase();
+};
+
+class RemotyNewWorkspaceDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText45;
+    wxTextCtrl* m_textCtrlPath;
+    wxButton* m_button49;
+    wxStaticText* m_staticText59;
+    wxTextCtrl* m_textCtrlName;
+    wxStdDialogButtonSizer* m_stdBtnSizer37;
+    wxButton* m_button39;
+    wxButton* m_button41;
+
+protected:
+    virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText45() { return m_staticText45; }
+    wxTextCtrl* GetTextCtrlPath() { return m_textCtrlPath; }
+    wxButton* GetButton49() { return m_button49; }
+    wxStaticText* GetStaticText59() { return m_staticText59; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    RemotyNewWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                              const wxString& title = _("New File System Workspace (remote)"),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~RemotyNewWorkspaceDlgBase();
 };
 
 #endif

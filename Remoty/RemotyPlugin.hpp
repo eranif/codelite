@@ -32,10 +32,10 @@
 #include "macros.h"
 #include "plugin.h"
 
-class RemoteWorkspace;
+class RemotyWorkspace;
 class RemotyPlugin : public IPlugin
 {
-    RemoteWorkspace* m_workspace = nullptr;
+    RemotyWorkspace* m_workspace = nullptr;
 
 public:
     RemotyPlugin(IManager* manager);

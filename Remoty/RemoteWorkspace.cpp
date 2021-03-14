@@ -1,4 +1,4 @@
-#include "RemoteWorkspace.hpp"
+#include "RemotyWorkspace.hpp"
 #include "RemotySwitchToWorkspaceDlg.h"
 #include "RemotyWorkspaceView.hpp"
 #include "clFileSystemWorkspace.hpp"

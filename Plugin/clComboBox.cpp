@@ -65,7 +65,7 @@ void clComboBox::DoCreate(const wxString& value)
 {
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
     m_textCtrl = new wxTextCtrl(this, wxID_ANY, value);
-    GetSizer()->Add(m_textCtrl, 1, wxEXPAND, 0);
+    GetSizer()->Add(m_textCtrl, 1, wxEXPAND | wxALL, 1);
     m_button = new clButton(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     m_button->SetHasDropDownMenu(true);
 #if wxUSE_NATIVE_BUTTON
@@ -81,7 +81,7 @@ void clComboBox::DoCreate(const wxString& value)
     if(m_cbStyle & wxCB_READONLY) {
         m_textCtrl->SetEditable(false);
     }
-    GetSizer()->Add(m_button);
+    GetSizer()->Add(m_button, 0,  wxALIGN_CENTER_VERTICAL | wxALL, 1);
     GetSizer()->Fit(this);
 }
 

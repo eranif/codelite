@@ -51,6 +51,7 @@ protected:
     wxButton* m_button22;
 
 protected:
+    virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:

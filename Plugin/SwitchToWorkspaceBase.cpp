@@ -58,7 +58,7 @@ SwitchToWorkspaceBaseDlg::SwitchToWorkspaceBaseDlg(wxWindow* parent, wxWindowID 
         new wxButton(m_panel12, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(-1, -1)), 0);
     m_button24->SetFocus();
 
-    flexGridSizer4->Add(m_button24, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer4->Add(m_button24, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_stdBtnSizer18 = new wxStdDialogButtonSizer();
 
@@ -90,10 +90,14 @@ SwitchToWorkspaceBaseDlg::SwitchToWorkspaceBaseDlg(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
+    m_button24->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SwitchToWorkspaceBaseDlg::OnBrowse), NULL,
+                        this);
     m_button20->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SwitchToWorkspaceBaseDlg::OnOKUI), NULL, this);
 }
 
 SwitchToWorkspaceBaseDlg::~SwitchToWorkspaceBaseDlg()
 {
+    m_button24->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SwitchToWorkspaceBaseDlg::OnBrowse),
+                           NULL, this);
     m_button20->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SwitchToWorkspaceBaseDlg::OnOKUI), NULL, this);
 }

@@ -71,7 +71,7 @@ RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent,
 
     m_button29 = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    flexGridSizer15->Add(m_button29, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer15->Add(m_button29, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_staticText21 = new wxStaticText(this, wxID_ANY, _("Remote workspace:"), wxDefaultPosition,
                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -81,6 +81,7 @@ RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent,
     wxArrayString m_comboBoxRemoteArr;
     m_comboBoxRemote = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition,
                                             wxDLG_UNIT(this, wxSize(-1, -1)), m_comboBoxRemoteArr, 0);
+    m_comboBoxRemote->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_comboBoxRemote->SetHint(wxT(""));
 #endif
@@ -89,11 +90,11 @@ RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent,
 
     m_button31 = new wxButton(this, wxID_ANY, _("Browse..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    flexGridSizer15->Add(m_button31, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer15->Add(m_button31, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_stdBtnSizer9 = new wxStdDialogButtonSizer();
 
-    boxSizer7->Add(m_stdBtnSizer9, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer7->Add(m_stdBtnSizer9, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
     m_button11 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button11->SetDefault();

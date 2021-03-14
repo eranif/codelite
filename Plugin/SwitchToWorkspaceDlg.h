@@ -8,7 +8,9 @@ public:
     SwitchToWorkspaceDlg(wxWindow* parent);
     virtual ~SwitchToWorkspaceDlg();
     wxString GetPath() const;
+
 protected:
+    virtual void OnBrowse(wxCommandEvent& event);
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };
 #endif // SWITCHTOWORKSPACEDLG_H

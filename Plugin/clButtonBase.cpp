@@ -323,11 +323,17 @@ wxSize clButtonBase::GetBestSize() const
     wxGCDC dc(memDC);
     dc.SetFont(DrawingUtils::GetDefaultGuiFont());
 
+#ifdef __WXGTK__
+    int inflateSize = 8;
+#else
+    int inflateSize = 4;
+#endif
+
     int buttonHeight = 0;
     int buttonWidth = 0;
     {
         wxRect r = dc.GetTextExtent("Tp");
-        r.Inflate(4);
+        r.Inflate(inflateSize);
         buttonHeight = r.GetHeight();
     }
 

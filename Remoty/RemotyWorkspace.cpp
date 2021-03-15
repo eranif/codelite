@@ -8,6 +8,7 @@
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
 #include "codelite_events.h"
+#include "debuggermanager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -75,6 +76,7 @@ void RemotyWorkspace::BindEvents()
         return;
     }
 
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &RemotyWorkspace::OnDebugStarting, this);
     EventNotifier::Get()->Bind(wxEVT_SWITCHING_TO_WORKSPACE, &RemotyWorkspace::OnOpenWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &RemotyWorkspace::OnCloseWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &RemotyWorkspace::OnBuildStarting, this);
@@ -99,6 +101,7 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &RemotyWorkspace::OnIsBuildInProgress, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemotyWorkspace::OnBuildHotspotClicked, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyWorkspace::OnNewWorkspace, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &RemotyWorkspace::OnDebugStarting, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemotyWorkspace::OnBuildProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemotyWorkspace::OnBuildProcessOutput, this);
@@ -465,4 +468,70 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     // Notify that the a new workspace is loaded
     wxCommandEvent open_event(wxEVT_WORKSPACE_LOADED);
     EventNotifier::Get()->AddPendingEvent(open_event);
+}
+
+void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
+{
+    CHECK_EVENT(event);
+    auto conf = m_settings.GetSelectedConfig();
+    CHECK_PTR_RET(conf);
+
+    DebuggerMgr::Get().SetActiveDebugger(conf->GetDebugger());
+    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+    if(!dbgr) {
+        return;
+    }
+
+    // if already running, skip this
+    // the default behaviour is to "continue"
+    if(dbgr->IsRunning()) {
+        event.Skip();
+        return;
+    }
+
+    // Update the debugger information
+    DebuggerInformation dinfo = dbgr->GetDebuggerInformation();
+    dinfo.breakAtWinMain = true;
+    dbgr->SetDebuggerInformation(dinfo);
+    dbgr->SetIsRemoteDebugging(false);
+
+    // Setup the debug session
+    wxString exe, args, wd;
+    GetExecutable(exe, args, wd);
+
+    // Start the debugger
+    DebugSessionInfo startup_info;
+    clDebuggerBreakpoint::Vec_t bpList;
+    startup_info.debuggerPath = "gdb"; // just assume we have it in the path :)
+    startup_info.exeName = exe;
+    startup_info.cwd = wd;
+    startup_info.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
+    clGetManager()->GetBreakpoints(bpList);
+    startup_info.bpList = bpList;
+    startup_info.isSSHDebugging = true;
+    startup_info.sshAccountName = m_account.GetAccountName();
+
+    // Start terminal (doesn't do anything under MSW)
+    startup_info.ttyName = wxEmptyString;
+    startup_info.enablePrettyPrinting = true;
+    dbgr->Start(startup_info);
+
+    // Notify that debug session started
+    // this will ensure that the debug layout is loaded
+    clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
+    eventStarted.SetClientData(&startup_info);
+    EventNotifier::Get()->ProcessEvent(eventStarted);
+
+    // Now run the debuggee
+    dbgr->Run(args, "");
+}
+
+void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
+{
+    auto conf = m_settings.GetSelectedConfig();
+    CHECK_PTR_RET(conf);
+
+    exe = conf->GetExecutable();
+    args = conf->GetArgs();
+    wd = conf->GetWorkingDirectory().IsEmpty() ? GetFileName().GetPath() : conf->GetWorkingDirectory();
 }

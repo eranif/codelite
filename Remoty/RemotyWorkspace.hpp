@@ -37,6 +37,7 @@ protected:
     void DoBuild(const wxString& kind);
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
+    void GetExecutable(wxString& exe, wxString& args, wxString& wd);
 
     void OnBuildStarting(clBuildEvent& event);
     void OnBuildProcessTerminated(clProcessEvent& event);
@@ -46,6 +47,7 @@ protected:
     void OnBuildHotspotClicked(clBuildEvent& event);
     void OnCustomTargetMenu(clContextMenuEvent& event);
     void OnNewWorkspace(clCommandEvent& event);
+    void OnDebugStarting(clDebugEvent& event);
 
 public:
     // IWorkspace

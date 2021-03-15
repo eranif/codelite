@@ -39,8 +39,6 @@
 #include "fileview.h"
 #include <wx/frame.h>
 #include <wx/menu.h>
-#include <wx/checkbox.h>
-#include <wx/stc/stc.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/bannerwindow.h>
@@ -252,40 +250,6 @@ public:
                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800, 600),
                     long style = wxDEFAULT_FRAME_STYLE);
     virtual ~EditorFrameBase();
-};
-
-class ClangOutputTabBase : public wxPanel
-{
-public:
-    enum {
-        ID_TOOL_CLEAR_LOG = 8001,
-        ID_TOOL_CLEAR_ALL = 8002,
-    };
-
-protected:
-    clToolBar* m_toolbar578;
-    wxCheckBox* m_checkBoxEnableClang;
-    wxCheckBox* m_checkBoxShowErrors;
-    wxStyledTextCtrl* m_stc;
-
-protected:
-    virtual void OnEnableClang(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEnableClangUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnShowAnnotations(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnShowAnnotationsUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClearCache(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearCacheUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnClearText(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnClearTextUI(wxUpdateUIEvent& event) { event.Skip(); }
-
-public:
-    wxCheckBox* GetCheckBoxEnableClang() { return m_checkBoxEnableClang; }
-    wxCheckBox* GetCheckBoxShowErrors() { return m_checkBoxShowErrors; }
-    clToolBar* GetToolbar578() { return m_toolbar578; }
-    wxStyledTextCtrl* GetStc() { return m_stc; }
-    ClangOutputTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
-    virtual ~ClangOutputTabBase();
 };
 
 class OpenFolderDlgBase : public wxDialog

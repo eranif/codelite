@@ -385,7 +385,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     m_fileView = new FileViewTree(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition,
                                   wxDLG_UNIT(m_splitterPageTreeView, wxSize(-1, -1)),
-                                  wxTR_MULTIPLE | wxTR_NO_LINES | wxTR_HAS_BUTTONS | wxBORDER_SIMPLE);
+                                  wxTR_MULTIPLE | wxTR_NO_LINES | wxTR_HAS_BUTTONS);
 
     boxSizer619->Add(m_fileView, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -538,122 +538,6 @@ EditorFrameBase::~EditorFrameBase()
                      wxCommandEventHandler(EditorFrameBase::OnRedo), NULL, this);
     this->Disconnect(m_menuItemRedo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnRedoUI), NULL,
                      this);
-}
-
-ClangOutputTabBase::ClangOutputTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                       long style)
-    : wxPanel(parent, id, pos, size, style)
-{
-    if(!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxC3F25InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    wxBoxSizer* boxSizer424 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer424);
-
-    m_toolbar578 = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_toolbar578->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer424->Add(m_toolbar578, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxEnableClang = new wxCheckBox(m_toolbar578, wxID_ANY, _("Enable Clang"), wxDefaultPosition,
-                                           wxDLG_UNIT(m_toolbar578, wxSize(-1, -1)), 0);
-    m_checkBoxEnableClang->SetValue(false);
-    m_checkBoxEnableClang->SetToolTip(_("Enable Clang code completion"));
-    m_toolbar578->AddControl(m_checkBoxEnableClang);
-
-    m_checkBoxShowErrors = new wxCheckBox(m_toolbar578, wxID_ANY, _("Inline Errors"), wxDefaultPosition,
-                                          wxDLG_UNIT(m_toolbar578, wxSize(-1, -1)), 0);
-    m_checkBoxShowErrors->SetValue(false);
-    m_checkBoxShowErrors->SetToolTip(
-        _("Display Clang errors as text annotations inside the editor (i.e. as an inline messages)"));
-    m_toolbar578->AddControl(m_checkBoxShowErrors);
-
-    m_toolbar578->Realize();
-
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBORDER_STATIC);
-    // Configure the fold margin
-    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_stc->SetMarginSensitive(4, true);
-    m_stc->SetMarginWidth(4, 0);
-
-    // Configure the tracker margin
-    m_stc->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_stc->SetMarginWidth(2, 0);
-    m_stc->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_stc->SetMarginWidth(0, 0);
-
-    // Configure the line symbol margin
-    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_stc->SetMarginMask(3, 0);
-    m_stc->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_stc->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_stc->StyleClearAll();
-    m_stc->SetWrapMode(0);
-    m_stc->SetIndentationGuides(0);
-    m_stc->SetKeyWords(0, wxT(""));
-    m_stc->SetKeyWords(1, wxT(""));
-    m_stc->SetKeyWords(2, wxT(""));
-    m_stc->SetKeyWords(3, wxT(""));
-    m_stc->SetKeyWords(4, wxT(""));
-
-    boxSizer424->Add(m_stc, 1, wxEXPAND, WXC_FROM_DIP(2));
-
-    SetName(wxT("ClangOutputTabBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
-    }
-    // Connect events
-    m_checkBoxEnableClang->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                   wxCommandEventHandler(ClangOutputTabBase::OnEnableClang), NULL, this);
-    m_checkBoxEnableClang->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnEnableClangUI), NULL,
-                                   this);
-    m_checkBoxShowErrors->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                  wxCommandEventHandler(ClangOutputTabBase::OnShowAnnotations), NULL, this);
-    m_checkBoxShowErrors->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnShowAnnotationsUI),
-                                  NULL, this);
-    this->Connect(ID_TOOL_CLEAR_ALL, wxEVT_COMMAND_TOOL_CLICKED,
-                  wxCommandEventHandler(ClangOutputTabBase::OnClearCache), NULL, this);
-    this->Connect(ID_TOOL_CLEAR_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearCacheUI), NULL,
-                  this);
-    this->Connect(ID_TOOL_CLEAR_LOG, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(ClangOutputTabBase::OnClearText),
-                  NULL, this);
-    this->Connect(ID_TOOL_CLEAR_LOG, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearTextUI), NULL,
-                  this);
-}
-
-ClangOutputTabBase::~ClangOutputTabBase()
-{
-    m_checkBoxEnableClang->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                      wxCommandEventHandler(ClangOutputTabBase::OnEnableClang), NULL, this);
-    m_checkBoxEnableClang->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnEnableClangUI),
-                                      NULL, this);
-    m_checkBoxShowErrors->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                     wxCommandEventHandler(ClangOutputTabBase::OnShowAnnotations), NULL, this);
-    m_checkBoxShowErrors->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnShowAnnotationsUI),
-                                     NULL, this);
-    this->Disconnect(ID_TOOL_CLEAR_ALL, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(ClangOutputTabBase::OnClearCache), NULL, this);
-    this->Disconnect(ID_TOOL_CLEAR_ALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearCacheUI),
-                     NULL, this);
-    this->Disconnect(ID_TOOL_CLEAR_LOG, wxEVT_COMMAND_TOOL_CLICKED,
-                     wxCommandEventHandler(ClangOutputTabBase::OnClearText), NULL, this);
-    this->Disconnect(ID_TOOL_CLEAR_LOG, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(ClangOutputTabBase::OnClearTextUI),
-                     NULL, this);
 }
 
 OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,

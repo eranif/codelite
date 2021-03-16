@@ -57,6 +57,7 @@ class SyntaxHighlightDlg : public SyntaxHighlightBaseDlg
     bool m_useBaseColourEnding = false;
 
 protected:
+    virtual void OnUseCustomBaseColourUI(wxUpdateUIEvent& event);
     virtual void OnCustomBaseColourPIcked(wxColourPickerEvent& event);
     virtual void OnUseCustomBaseColour(wxCommandEvent& event);
     virtual void OnUseCustomColourUI(wxUpdateUIEvent& event);

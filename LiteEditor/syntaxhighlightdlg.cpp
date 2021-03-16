@@ -31,6 +31,7 @@
 #include "clZipReader.h"
 #include "clZipWriter.h"
 #include "cl_config.h"
+#include "cl_defs.h"
 #include "context_manager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -817,3 +818,12 @@ void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
 }
 
 bool SyntaxHighlightDlg::IsRestartRequired() const { return false; }
+void SyntaxHighlightDlg::OnUseCustomBaseColourUI(wxUpdateUIEvent& event)
+{
+#if CL_USE_NATIVEBOOK
+    event.Enable(false);
+    event.Check(false);
+#else
+    event.Enable(true);
+#endif
+}

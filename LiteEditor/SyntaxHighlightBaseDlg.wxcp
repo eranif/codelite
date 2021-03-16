@@ -631,6 +631,13 @@
 																							"m_functionNameAndSignature":	"OnUseCustomBaseColour(wxCommandEvent& event)",
 																							"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 																							"m_noBody":	false
+																						}, {
+																							"m_eventName":	"wxEVT_UPDATE_UI",
+																							"m_eventClass":	"wxUpdateUIEvent",
+																							"m_eventHandler":	"wxUpdateUIEventHandler",
+																							"m_functionNameAndSignature":	"OnUseCustomBaseColourUI(wxUpdateUIEvent& event)",
+																							"m_description":	"Process a wxEVT_UPDATE_UI event",
+																							"m_noBody":	false
 																						}],
 																					"m_children":	[]
 																				}, {

@@ -88,7 +88,7 @@ static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColou
 
 static wxColour clDockArtSashColour()
 {
-    wxColour baseColour = DrawingUtils::GetMenuBarBgColour(false);
+    wxColour baseColour = DrawingUtils::GetMenuBarBgColour(true);
     return baseColour;
 }
 

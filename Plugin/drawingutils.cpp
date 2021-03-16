@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "clScrolledPanel.h"
-#include "clTabRendererSquare.h"
 #include "clSystemSettings.h"
+#include "clTabRendererSquare.h"
 #include "drawingutils.h"
 #include "wx/dc.h"
 #include "wx/settings.h"
@@ -318,21 +318,34 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
     dc.SetBrush(c);
     dc.DrawRectangle(rect);
 #else
-    wxUnusedVar(miniToolbar);
-    wxRect topRect = rect;
-    topRect.SetHeight((rect.GetHeight() / 8) * 7);
+
+#define RATIO 8
+#define BIG_PART (RATIO - 1)
+
+    wxColour c = GetMenuBarBgColour(miniToolbar);
+
+    // bottom rect, 7/8 of the rect height
     wxRect bottomRect = rect;
-    bottomRect.SetTop(topRect.GetBottom());
+    bottomRect.SetHeight((rect.GetHeight() / RATIO) * BIG_PART);
+    bottomRect.SetBottom(rect.GetBottom());
 
-    wxColour topColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    wxColour bottomColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetPen(c);
+    dc.SetBrush(c);
+    dc.DrawRectangle(bottomRect);
 
-    dc.SetPen(topColour);
-    dc.SetBrush(topColour);
-    dc.DrawRectangle(topRect);
+    wxRect topRect = rect;
+    topRect.height = rect.GetHeight() / RATIO;
+    topRect.y = bottomRect.GetTopLeft().y;
 
-    bottomColour = bottomColour.ChangeLightness(IsDark(topColour) ? 70 : 90);
-    PaintStraightGradientBox(dc, bottomRect, topColour, bottomColour, true);
+    wxColour c1, c2;
+    c1 = c;
+    c2 = c1.ChangeLightness(IsDark(c) ? 70 : 100);
+    PaintStraightGradientBox(dc, topRect, c2, c1, true);
+
+#undef RATIO
+#undef SMALL_PART
+#undef BIG_PART
+
 #endif
 }
 

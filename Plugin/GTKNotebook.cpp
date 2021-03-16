@@ -5,12 +5,17 @@
 
 #include "clTabRenderer.h"
 #include "editor_config.h"
+#include "file_logger.h"
+#include <deque>
 #include <gtk/gtk.h>
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 #include <wx/dataobj.h>
 #include <wx/defs.h>
 #include <wx/dnd.h>
+#include <wx/gdicmn.h>
+#include <wx/types.h>
 
 //===------------------
 // GTK specifics
@@ -53,20 +58,76 @@ static void on_page_reordered(clGTKNotebook* notebook, GtkWidget* child, guint p
     wxbook->TabReordered();
 }
 
-static gboolean button_press_event(GtkWidget* WXUNUSED_IN_GTK3(widget), GdkEventButton* gdk_event, clGTKNotebook* win)
+#define INVALID_POS ((size_t)-1)
+
+static wxRect get_label_rect(clGTKNotebook* win, int i)
 {
+    auto box = win->GetNotebookPage(i)->m_box;
+    GtkAllocation a;
+    gtk_widget_get_allocation(box, &a);
+    return wxRect(a.x, a.y, a.width, a.height);
+}
+
+static gboolean button_press_event(GtkWidget*, GdkEventButton* gdk_event, clGTKNotebook* win)
+{
+    // determine the page ID
+    std::deque<pair<wxRect, int>> visible_tabs_rects;
+    int active_page = win->GetSelection();
+    if(active_page == wxNOT_FOUND)
+        return false;
+
+    wxPoint pt(gdk_event->x, gdk_event->y);
+    visible_tabs_rects.emplace_back(std::make_pair(get_label_rect(win, active_page), active_page));
+
+    // go right until we found tab that its x is lower than the current
+    for(int i = (active_page + 1); i < win->GetPageCount(); ++i) {
+        auto& current_rect = visible_tabs_rects.back();
+        wxRect r = get_label_rect(win, i);
+        if(r.x > current_rect.first.x) {
+            visible_tabs_rects.emplace_back(std::make_pair(r, i));
+        } else {
+            break;
+        }
+    }
+
+    if(active_page > 0) { // <- not the first tab
+        // at this point, visible_tabs_rects contains list of tabs from the active tab -> last visibile tab to the right
+        // now fill the tabs from the left side
+        for(int i = (active_page - 1); i >= 0; --i) {
+            auto& current_rect = visible_tabs_rects.front();
+            wxRect r = get_label_rect(win, i);
+            if(r.x < current_rect.first.x) {
+                visible_tabs_rects.emplace_front(std::make_pair(r, i));
+            } else {
+                break;
+            }
+        }
+    }
+
+    int click_index = wxNOT_FOUND;
+    for(size_t i = 0; i < visible_tabs_rects.size(); ++i) {
+        auto& d = visible_tabs_rects[i];
+        if(d.first.Contains(pt)) {
+            click_index = d.second;
+        }
+    }
+
+    if(click_index == wxNOT_FOUND) {
+        return false;
+    }
+
     // check the mouse button clicked
     if(gdk_event->button == 1 && gdk_event->type == GDK_2BUTTON_PRESS) {
         // wxEVT_LEFT_DCLICK
-        win->GTKLeftDClick();
+        win->GTKLeftDClick(click_index);
         return true;
     } else if(gdk_event->button == 2 && gdk_event->type == GDK_BUTTON_PRESS) {
         // wxEVT_MIDDLE_DOWN
-        win->GTKMiddleDown();
+        win->GTKMiddleDown(click_index);
         return true;
     } else if(gdk_event->button == 3 && gdk_event->type == GDK_BUTTON_PRESS) {
         // wxEVT_RIGHT_DOWN
-        win->GTKRightDown();
+        win->GTKRightDown(click_index);
         return true;
     } else {
         return false;
@@ -169,59 +230,40 @@ void clGTKNotebook::BindEvents()
     g_signal_connect(GTK_NOTEBOOK(GetHandle()), "page-reordered", G_CALLBACK(on_page_reordered), this);
 }
 
-void clGTKNotebook::GTKLeftDClick()
+void clGTKNotebook::GTKLeftDClick(int index)
 {
-    long flags = 0;
-    wxPoint pt = ScreenToClient(::wxGetMousePosition());
-    int pos = HitTest(pt, &flags);
-    if(pos != wxNOT_FOUND && (flags & (wxBK_HITTEST_ONICON | wxBK_HITTEST_ONLABEL))) {
+    if(index != wxNOT_FOUND) {
         // Fire event
         wxBookCtrlEvent event(wxEVT_BOOK_TAB_DCLICKED);
         event.SetEventObject(this);
-        event.SetSelection(pos);
+        event.SetSelection(index);
         GetEventHandler()->AddPendingEvent(event);
-    } else if(flags & wxBK_HITTEST_NOWHERE) {
-        // we do nothing
     }
 }
 
-void clGTKNotebook::GTKMiddleDown()
+void clGTKNotebook::GTKMiddleDown(int index)
 {
-    long flags = 0;
-    wxPoint pt = ScreenToClient(::wxGetMousePosition());
-
-    int pos = HitTest(pt, &flags);
-    if(pos == wxNOT_FOUND) {
-        return;
-    }
     if(m_bookStyle & kNotebook_MouseMiddleClickClosesTab) {
         // Close the tab
-        DeletePage(pos);
+        DeletePage(index);
     } else if(m_bookStyle & kNotebook_CloseButtonOnActiveTabFireEvent) {
         // Fire event
         wxBookCtrlEvent event(wxEVT_BOOK_PAGE_CLOSE_BUTTON);
         event.SetEventObject(this);
-        event.SetSelection(pos);
+        event.SetSelection(index);
         GetEventHandler()->ProcessEvent(event);
     }
 }
 
-void clGTKNotebook::GTKRightDown()
+void clGTKNotebook::GTKRightDown(int index)
 {
-    long flags = 0;
-    wxPoint pt = ScreenToClient(::wxGetMousePosition());
-    int where = HitTest(pt, &flags);
-    if(where == wxNOT_FOUND) {
-        return;
-    }
-
     if(m_tabContextMenu) {
         PopupMenu(m_tabContextMenu);
     } else {
         // fire an event
         wxBookCtrlEvent menuEvent(wxEVT_BOOK_TAB_CONTEXT_MENU);
         menuEvent.SetEventObject(this);
-        menuEvent.SetSelection(where);
+        menuEvent.SetSelection(index);
         GetEventHandler()->ProcessEvent(menuEvent);
     }
 }

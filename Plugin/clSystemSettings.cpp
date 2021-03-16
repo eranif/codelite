@@ -122,6 +122,8 @@ void clSystemSettings::DoColourChangedEvent()
     if(m_useCustomColours) {
         wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         m_customColours.InitFromColour(baseColour);
+    } else {
+        m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     }
 
     // Notify about colours changes

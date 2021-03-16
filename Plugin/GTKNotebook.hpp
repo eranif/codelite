@@ -44,9 +44,9 @@ public:
     int FindPageByGTKHandle(WXWidget page) const;
     void TabButtonClicked(wxWindow* page);
     void TabReordered();
-    void GTKLeftDClick();
-    void GTKMiddleDown();
-    void GTKRightDown();
+    void GTKLeftDClick(int index);
+    void GTKMiddleDown(int index);
+    void GTKRightDown(int index);
     void GTKActionButtonMenuClicked(GtkToolItem* button);
     void GTKActionButtonNewClicked(GtkToolItem* button);
 

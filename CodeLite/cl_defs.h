@@ -41,7 +41,7 @@
 #ifndef INSTALL_DIR
 #define INSTALL_DIR "/usr/share/codelite"
 #endif
-#define CL_USE_NATIVEBOOK 0
+#define CL_USE_NATIVEBOOK 1
 #else
 #ifdef USE_POSIX_LAYOUT
 #ifndef PLUGINS_DIR
@@ -64,7 +64,7 @@
 #ifdef CL_USE_NATIVEBOOK
 #undef CL_USE_NATIVEBOOK
 #endif
-#define CL_USE_NATIVEBOOK 0
+#define CL_USE_NATIVEBOOK 1
 #else
 #ifdef CL_USE_NATIVEBOOK
 #undef CL_USE_NATIVEBOOK
@@ -73,12 +73,7 @@
 #endif
 #endif
 
-#if wxVERSION_NUMBER < 2904
-#define CL_USE_NEW_BUILD_TAB 0
-#else
 #define CL_USE_NEW_BUILD_TAB 1
-#endif
-
 #define CL_N0_OF_BOOKMARK_TYPES 5
 
 #endif // CL_DEFS_H

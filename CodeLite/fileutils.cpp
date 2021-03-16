@@ -789,11 +789,11 @@ size_t FileUtils::FindSimilar(const wxFileName& filename, const std::vector<wxSt
 bool FileUtils::ParseURI(const wxString& uri, wxString& path, wxString& scheme, wxString& user, wxString& host,
                          wxString& port)
 {
-    if(uri.starts_with("file://")) {
+    if(uri.StartsWith("file://")) {
         path = uri.Mid(7);
         scheme = "file://";
         return true;
-    } else if(uri.starts_with("ssh://")) {
+    } else if(uri.StartsWith("ssh://")) {
         // expected syntax:
         // ssh://user@host:port:/path
         scheme = "ssh://";

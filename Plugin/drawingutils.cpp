@@ -285,22 +285,17 @@ wxColour DrawingUtils::GetPanelTextColour() { return clSystemSettings::GetColour
 wxColour DrawingUtils::GetTextCtrlTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT); }
 
 wxColour DrawingUtils::GetMenuTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT); }
+#include "cl_defs.h"
 
 wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 {
     wxUnusedVar(miniToolbar);
+#if CL_USE_NATIVEBOOK
+    return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+#else
     clTabColours c;
     c.UpdateColours(0);
     return c.activeTabBgColour;
-#if 0
-#ifdef __WXMSW__
-    wxUnusedVar(miniToolbar);
-    return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-#elif defined(__WXOSX__)
-    wxUnusedVar(miniToolbar);
-    return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-#else
-#endif
 #endif
 }
 

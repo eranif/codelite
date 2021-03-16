@@ -38,7 +38,7 @@ void clColours::InitFromColour(const wxColour& baseColour)
     itemTextColour = is_light ? wxColour("#212121") : wxColour("#FDFEFE");
 
     if(is_dark && DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
-        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
     }
 
     if(is_light) {

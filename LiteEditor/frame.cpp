@@ -1157,7 +1157,9 @@ void clMainFrame::CreateGUIControls()
     wxPanel* container = new wxPanel(m_mainPanel);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
         e.Skip();
+#if !CL_USE_NATIVEBOOK
         container->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+#endif
     });
 
     clThemeUpdater::Get().RegisterWindow(container);

@@ -1,8 +1,10 @@
 #include "clSystemSettings.h"
 #include "cl_config.h"
 #include "codelite_events.h"
+#include "drawingutils.h"
 #include "event_notifier.h"
 #include "wx/app.h"
+#include <wx/settings.h>
 
 #ifdef __WXGTK__
 #include <gtk/gtk.h>
@@ -123,7 +125,10 @@ void clSystemSettings::DoColourChangedEvent()
         wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
         m_customColours.InitFromColour(baseColour);
     } else {
-        m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        bool menu_bar_dark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+        bool face_dark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        m_customColours.InitFromColour(menu_bar_dark != face_dark ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
+                                                                  : wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
     }
 
     // Notify about colours changes

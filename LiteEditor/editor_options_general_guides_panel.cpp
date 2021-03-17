@@ -23,16 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "clSystemSettings.h"
+#include "cl_config.h"
 #include "editor_options_general_guides_panel.h"
 #include "globals.h"
+#include <wx/settings.h>
 #include <wx/stc/stc.h>
-#include "cl_config.h"
 
 EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* parent)
     : EditorOptionsGeneralGuidesPanelBase(parent)
     , TreeBookNode<EditorOptionsGeneralGuidesPanel>()
 {
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrGeneral->GetGrid());
+
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     m_pgPropDisplayLineNumbers->SetValue(options->GetDisplayLineNumbers());
     m_pgPropRelativeLineNumbers->SetValue(options->GetRelativeLineNumbers());
@@ -50,7 +53,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     m_pgPropWhitespaceVisibility->SetChoiceSelection(options->GetShowWhitspaces());
     m_pgPropCaretLineAlpha->SetValue(options->GetCaretLineAlpha());
     m_pgPropLineSpacing->SetValue(clConfig::Get().Read("extra_line_spacing", (int)0));
-    
+
     // EOL
     // Default;Mac (CR);Windows (CRLF);Unix (LF)
     wxArrayString eolOptions;
@@ -59,7 +62,9 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     eolOptions.Add("Windows (CRLF)");
     eolOptions.Add("Unix (LF)");
     int eolSel = eolOptions.Index(options->GetEolMode());
-    if(eolSel != wxNOT_FOUND) { m_pgPropEOLMode->SetChoiceSelection(eolSel); }
+    if(eolSel != wxNOT_FOUND) {
+        m_pgPropEOLMode->SetChoiceSelection(eolSel);
+    }
 }
 
 void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)

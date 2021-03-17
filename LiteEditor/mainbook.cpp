@@ -41,6 +41,7 @@
 #include "frame.h"
 #include "globals.h"
 #include "ieditor.h"
+#include "macros.h"
 #include "mainbook.h"
 #include "manager.h"
 #include "new_quick_watch_dlg.h"
@@ -1577,18 +1578,14 @@ void MainBook::OnCacheUpdated(clCommandEvent& e)
 void MainBook::OnUpdateNavigationBar(clCodeCompletionEvent& e)
 {
     e.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
-    CHECK_PTR_RET(editor);
-
     clEditor* activeEditor = GetActiveEditor();
-    if(editor != activeEditor)
-        return;
+    CHECK_PTR_RET(activeEditor);
 
     // This event is no longer valid
     if(activeEditor->GetCurrentLine() != e.GetLineNumber())
         return;
 
-    FileExtManager::FileType ft = FileExtManager::GetTypeFromExtension(editor->GetFileName());
+    FileExtManager::FileType ft = FileExtManager::GetTypeFromExtension(activeEditor->GetFileName());
     if((ft != FileExtManager::TypeSourceC) && (ft != FileExtManager::TypeSourceCpp) &&
        (ft != FileExtManager::TypeHeader))
         return;

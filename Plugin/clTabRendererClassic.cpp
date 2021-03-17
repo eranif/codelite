@@ -126,25 +126,39 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         p2 = tabRect.GetBottomRight();
     }
 
-    if(!tabInfo.IsActive()) {
-        dc.SetPen(colours.activeTabBgColour.ChangeLightness(50));
-        p1.y += 1;
-        p2.y += 1;
-        dc.DrawLine(p1, p2);
-    } else {
-        int light_factor = isDark ? 115 : 80;
-        p1 = tabRect.GetRightTop();
-        p2 = tabRect.GetBottomRight();
-        p2.y -= 1; // don't override the bottom line
-        p1.y -= 1; // dont override the top line
-        dc.SetPen(colours.activeTabBgColour.ChangeLightness(light_factor));
-        dc.DrawLine(p1, p2);
+    if(!bVerticalTabs) {
+        if(!tabInfo.IsActive()) {
+            dc.SetPen(colours.activeTabBgColour.ChangeLightness(50));
+            p1.y += 1;
+            p2.y += 1;
+            dc.DrawLine(p1, p2);
+        } else {
+            int light_factor = isDark ? 115 : 80;
+            p1 = tabRect.GetRightTop();
+            p2 = tabRect.GetBottomRight();
+            p2.y -= 1; // don't override the bottom line
+            p1.y -= 1; // dont override the top line
+            dc.SetPen(colours.activeTabBgColour.ChangeLightness(light_factor));
+            dc.DrawLine(p1, p2);
 
-        p1 = tabRect.GetLeftTop();
-        p2 = tabRect.GetLeftBottom();
-        p2.y -= 1; // don't override the bottom line
-        p1.y -= 1; // dont override the top line
-        dc.DrawLine(p1, p2);
+            p1 = tabRect.GetLeftTop();
+            p2 = tabRect.GetLeftBottom();
+            p2.y -= 1; // don't override the bottom line
+            p1.y -= 1; // dont override the top line
+            dc.DrawLine(p1, p2);
+        }
+    } else {
+        if(tabInfo.IsActive()) {
+            int light_factor = isDark ? 115 : 80;
+            p1 = tabRect.GetTopRight();
+            p2 = tabRect.GetTopLeft();
+            dc.SetPen(colours.activeTabBgColour.ChangeLightness(light_factor));
+            dc.DrawLine(p1, p2);
+
+            p1 = tabRect.GetBottomRight();
+            p2 = tabRect.GetBottomLeft();
+            dc.DrawLine(p1, p2);
+        }
     }
 }
 

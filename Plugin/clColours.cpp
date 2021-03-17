@@ -24,7 +24,7 @@ void clColours::InitDefaults()
 
 void clColours::InitDarkDefaults() { InitFromColour(wxColour("#5F6A6A")); }
 
-bool clColours::IsLightTheme() const { return !DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)); }
+bool clColours::IsLightTheme() const { return !DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)); }
 
 void clColours::InitFromColour(const wxColour& baseColour)
 {
@@ -37,7 +37,7 @@ void clColours::InitFromColour(const wxColour& baseColour)
     bgColour = baseColour;
     itemTextColour = is_light ? wxColour("#212121") : wxColour("#FDFEFE");
 
-    if(is_dark && DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+    if(is_dark && DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
         bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
     }
 

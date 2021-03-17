@@ -245,7 +245,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
     m_bitmaps = new clBitmapList;
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     SetBackgroundColour(style & kNotebook_DynamicColours ? clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
-                                                         : wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+                                                         : wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     m_art = clTabRenderer::CreateRenderer(this, m_style);
     DoSetBestSize();
 

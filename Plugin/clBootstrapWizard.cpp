@@ -153,7 +153,7 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent, bool firstTime)
     , m_developmentProfile(0)
 {
     m_selectedTheme = LIGHT_THEME;
-    if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+    if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
         m_selectedTheme = DARK_THEME;
     }
 
@@ -214,7 +214,7 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
     {
         auto lexer = ColoursAndFontsManager::Get().GetLexer("c++", m_selectedTheme);
         m_selectedTheme = LIGHT_THEME;
-        if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE))) {
+        if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
             m_selectedTheme = DARK_THEME;
         }
         clConfig::Get().Write("UseCustomBaseColour", false);

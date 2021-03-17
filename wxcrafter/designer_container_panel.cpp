@@ -18,7 +18,7 @@ DesignerContainerPanel::DesignerContainerPanel(wxWindow* parent)
     Bind(wxEVT_SIZE, &DesignerContainerPanel::OnSize, this);
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
-    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 }
 
 DesignerContainerPanel::~DesignerContainerPanel() { Unbind(wxEVT_SIZE, &DesignerContainerPanel::OnSize, this); }

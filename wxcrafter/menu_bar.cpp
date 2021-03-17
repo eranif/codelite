@@ -103,7 +103,7 @@ void MenuBar::OnPaint(wxPaintEvent& e)
     wxBufferedPaintDC dc(this);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
 
-    wxColour bgColor = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour bgColor = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
 
     // Color the background
     dc.SetPen(bgColor);

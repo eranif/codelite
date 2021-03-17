@@ -43,7 +43,7 @@ clCustomScrollBar::clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPo
     }
     Bind(wxEVT_SIZE, &clCustomScrollBar::OnSize, this);
     Bind(wxEVT_IDLE, &clCustomScrollBar::OnIdle, this);
-    m_colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    m_colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 }
 
 clCustomScrollBar::~clCustomScrollBar()

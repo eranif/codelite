@@ -30,7 +30,7 @@ void CaptionBar::OnPaint(wxPaintEvent& event)
     wxcImages myImages;
     wxUnusedVar(event);
     wxBufferedPaintDC dc(this);
-    wxColour penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     wxColour bgColour1 = wxSystemSettings::GetColour(wxSYS_COLOUR_GRADIENTACTIVECAPTION);
     wxColour bgColour2 = wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
 

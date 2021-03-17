@@ -56,7 +56,7 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
 
-    wxColour brushCol = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour brushCol = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     dc.SetPen(brushCol);
     dc.SetBrush(brushCol);
 

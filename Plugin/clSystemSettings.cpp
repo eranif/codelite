@@ -87,16 +87,15 @@ wxColour clSystemSettings::GetColour(int index)
             return wxSystemSettings::GetColour((wxSystemColour)index);
         }
     } else {
-#ifdef __WXGTK__
         if(index == wxSYS_COLOUR_TOOLBAR) {
-            return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-            // return wxColor(GtkHeaderbarStyle()->bg[GTK_STATE_NORMAL]);
+            return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-            // return wxColor(GtkHeaderbarStyle()->fg[GTK_STATE_NORMAL]);
+        } else if(index == wxSYS_COLOUR_3DFACE) {
+            return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+        } else {
+            return wxSystemSettings::GetColour((wxSystemColour)index);
         }
-#endif
-        return wxSystemSettings::GetColour((wxSystemColour)index);
     }
 }
 
@@ -122,13 +121,10 @@ void clSystemSettings::DoColourChangedEvent()
 {
     m_useCustomColours = clConfig::Get().Read("UseCustomBaseColour", false);
     if(m_useCustomColours) {
-        wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         m_customColours.InitFromColour(baseColour);
     } else {
-        bool menu_bar_dark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
-        bool face_dark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-        m_customColours.InitFromColour(menu_bar_dark != face_dark ? wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)
-                                                                  : wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+        m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     }
 
     // Notify about colours changes

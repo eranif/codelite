@@ -10,7 +10,7 @@ clNotebookTheme clNotebookTheme::GetTheme(clNotebookTheme::eNotebookTheme theme)
         notebookTheme.m_penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
         notebookTheme.m_activeTabPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
         notebookTheme.m_innerPenColour = *wxWHITE;
-        notebookTheme.m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        notebookTheme.m_bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         notebookTheme.m_activeTabTextColour = *wxBLACK;
         notebookTheme.m_tabTextColour = *wxBLACK;
         notebookTheme.m_tabBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);

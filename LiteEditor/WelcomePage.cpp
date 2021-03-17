@@ -50,7 +50,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
     m_cmdLnkBtnWiki->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
     m_cmdLnkBtnWorkspaces->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
     GetSizer()->Fit(this);
-    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 #if CL_USE_NATIVEBOOK
     Show();
 #endif

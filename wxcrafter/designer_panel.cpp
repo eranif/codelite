@@ -115,7 +115,7 @@ DesignerPanel::DesignerPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos
     m_mainPanel = new DesignerContainerPanel(this);
     GetSizer()->Add(m_mainPanel, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL | wxALL, 5);
 
-    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     if(DrawingUtils::IsDark(bgColour)) {
         bgColour = bgColour.ChangeLightness(120);
     } else {
@@ -509,7 +509,7 @@ void DesignerPanel::ClearStaleOutlines() const
     // First any control
     if(m_parentWin && m_hintedWin) {
         wxClientDC dc(m_parentWin);
-        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         MarkOutline(dc);
         MarkBorders(dc);
     }
@@ -517,7 +517,7 @@ void DesignerPanel::ClearStaleOutlines() const
     // Now any sizer/spacer
     if(m_hintedContainer && m_hintedSizeritem) {
         wxClientDC dc(m_hintedContainer);
-        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         wxRect rect(m_hintedSizeritem->GetRect());
         MarkOutline(dc, &rect);
         DoMarkBorders(dc, rect, m_hintedSizeritem->GetBorder(), m_hintedSizeritem->GetFlag());

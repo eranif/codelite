@@ -70,45 +70,17 @@ static wxRect get_label_rect(clGTKNotebook* win, int i)
 
 static gboolean button_press_event(GtkWidget*, GdkEventButton* gdk_event, clGTKNotebook* win)
 {
-    // determine the page ID
-    std::deque<pair<wxRect, int>> visible_tabs_rects;
-    int active_page = win->GetSelection();
-    if(active_page == wxNOT_FOUND)
-        return false;
-
     wxPoint pt(gdk_event->x, gdk_event->y);
-    visible_tabs_rects.emplace_back(std::make_pair(get_label_rect(win, active_page), active_page));
-
-    // go right until we found tab that its x is lower than the current
-    for(int i = (active_page + 1); i < win->GetPageCount(); ++i) {
-        auto& current_rect = visible_tabs_rects.back();
-        wxRect r = get_label_rect(win, i);
-        if(r.x > current_rect.first.x) {
-            visible_tabs_rects.emplace_back(std::make_pair(r, i));
-        } else {
-            break;
-        }
-    }
-
-    if(active_page > 0) { // <- not the first tab
-        // at this point, visible_tabs_rects contains list of tabs from the active tab -> last visibile tab to the right
-        // now fill the tabs from the left side
-        for(int i = (active_page - 1); i >= 0; --i) {
-            auto& current_rect = visible_tabs_rects.front();
-            wxRect r = get_label_rect(win, i);
-            if(r.x < current_rect.first.x) {
-                visible_tabs_rects.emplace_front(std::make_pair(r, i));
-            } else {
-                break;
-            }
-        }
-    }
-
     int click_index = wxNOT_FOUND;
-    for(size_t i = 0; i < visible_tabs_rects.size(); ++i) {
-        auto& d = visible_tabs_rects[i];
-        if(d.first.Contains(pt)) {
-            click_index = d.second;
+    for(size_t i = 0; i < win->GetPageCount(); ++i) {
+        auto box = win->GetNotebookPage(i)->m_box;
+        if(!gtk_widget_get_child_visible(box)) {
+            continue;
+        }
+        auto r = get_label_rect(win, i);
+        if(r.Contains(pt)) {
+            click_index = i;
+            break;
         }
     }
 

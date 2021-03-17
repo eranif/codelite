@@ -71,6 +71,7 @@ wxColour clSystemSettings::GetColour(int index)
             return m_customColours.GetItemTextColour();
         }
         switch(index) {
+        case wxSYS_COLOUR_MENUBAR:
         case wxSYS_COLOUR_3DFACE:
         case wxSYS_COLOUR_LISTBOX:
             return m_customColours.GetBgColour();

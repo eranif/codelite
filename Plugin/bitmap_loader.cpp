@@ -313,12 +313,12 @@ wxDEFINE_EVENT(wxEVT_BITMAPS_UPDATED, clCommandEvent);
 clBitmaps::clBitmaps()
 {
     Initialise();
-    // EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this);
 }
 
 clBitmaps::~clBitmaps()
 {
-    // EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this);
 }
 
 clBitmaps& clBitmaps::Get()

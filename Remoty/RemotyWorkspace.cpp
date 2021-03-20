@@ -143,6 +143,10 @@ bool RemotyWorkspace::IsOpened() const { return !m_account.GetAccountName().empt
 
 void RemotyWorkspace::DoClose(bool notify)
 {
+    if(!IsOpened()) {
+        return;
+    }
+
     m_view->CloseWorkspace();
     m_settings.Save(m_localWorkspaceFile, m_localUserWorkspaceFile);
     m_settings.Clear();

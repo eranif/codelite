@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	627,
+		"m_objCounter":	629,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC3F25InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_liteeditor_bitmaps.cpp",
@@ -2062,7 +2062,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Name:",
-																			"m_value":	"gridSizer574"
+																			"m_value":	"gridSizer629"
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Style:",
@@ -2140,11 +2140,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton.h"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",
@@ -2230,11 +2230,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton.h"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",
@@ -2320,11 +2320,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton.h"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",
@@ -2417,11 +2417,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton.h"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",
@@ -2514,11 +2514,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton.h"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",
@@ -2604,11 +2604,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Class Name:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Include File:",
-																					"m_value":	""
+																					"m_value":	"clThemedButton.h"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Style:",

@@ -25,6 +25,7 @@
 
 #ifndef WELCOMEPAGE_H
 #define WELCOMEPAGE_H
+#include "clThemedButton.h"
 #include "wxcrafter.h"
 #include <map>
 
@@ -38,17 +39,19 @@ protected:
     virtual void OnNewWorkspace(wxCommandEvent& event);
     virtual void OnRecentFileUI(wxUpdateUIEvent& event);
     virtual void OnRecentProjectUI(wxUpdateUIEvent& event);
-    int DoGetPopupMenuSelection( wxCommandLinkButton* btn, const wxArrayString& strings, const wxString &menuTitle);
+    int DoGetPopupMenuSelection(clThemedButton* btn, const wxArrayString& strings, const wxString& menuTitle);
+    void DoOpenFile(const wxString& filename);
 
 public:
     WelcomePage(wxWindow* parent);
     virtual ~WelcomePage();
+
 protected:
     virtual void OnShowFileseMenu(wxCommandEvent& event);
     virtual void OnShowWorkspaceMenu(wxCommandEvent& event);
     virtual void OnSize(wxSizeEvent& event);
     virtual void OnOpenForums(wxCommandEvent& event);
     virtual void OnOpenWiki(wxCommandEvent& event);
-    void OnThemeChanged(wxCommandEvent &e);
+    void OnThemeChanged(wxCommandEvent& e);
 };
 #endif // WELCOMEPAGE_H

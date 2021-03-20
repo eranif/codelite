@@ -30,6 +30,7 @@
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 #include <wx/commandlinkbutton.h>
+#include "clThemedButton.h"
 #include <wx/simplebook.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
@@ -145,12 +146,12 @@ protected:
     wxScrolledWindow* m_scrollWin247;
     wxPanel* m_panel191;
     wxStaticBitmap* m_staticBitmap;
-    wxCommandLinkButton* m_cmdLnkBtnNewWorkspace;
-    wxCommandLinkButton* m_cmdLnkBtnNewProject;
-    wxCommandLinkButton* m_cmdLnkBtnWorkspaces;
-    wxCommandLinkButton* m_cmdLnkBtnFilesMenu;
-    wxCommandLinkButton* m_cmdLnkBtnForum;
-    wxCommandLinkButton* m_cmdLnkBtnWiki;
+    clThemedButton* m_cmdLnkBtnNewWorkspace;
+    clThemedButton* m_cmdLnkBtnNewProject;
+    clThemedButton* m_cmdLnkBtnWorkspaces;
+    clThemedButton* m_cmdLnkBtnFilesMenu;
+    clThemedButton* m_cmdLnkBtnForum;
+    clThemedButton* m_cmdLnkBtnWiki;
 
 protected:
     virtual void OnSize(wxSizeEvent& event) { event.Skip(); }
@@ -165,12 +166,12 @@ protected:
 
 public:
     wxStaticBitmap* GetStaticBitmap() { return m_staticBitmap; }
-    wxCommandLinkButton* GetCmdLnkBtnNewWorkspace() { return m_cmdLnkBtnNewWorkspace; }
-    wxCommandLinkButton* GetCmdLnkBtnNewProject() { return m_cmdLnkBtnNewProject; }
-    wxCommandLinkButton* GetCmdLnkBtnWorkspaces() { return m_cmdLnkBtnWorkspaces; }
-    wxCommandLinkButton* GetCmdLnkBtnFilesMenu() { return m_cmdLnkBtnFilesMenu; }
-    wxCommandLinkButton* GetCmdLnkBtnForum() { return m_cmdLnkBtnForum; }
-    wxCommandLinkButton* GetCmdLnkBtnWiki() { return m_cmdLnkBtnWiki; }
+    clThemedButton* GetCmdLnkBtnNewWorkspace() { return m_cmdLnkBtnNewWorkspace; }
+    clThemedButton* GetCmdLnkBtnNewProject() { return m_cmdLnkBtnNewProject; }
+    clThemedButton* GetCmdLnkBtnWorkspaces() { return m_cmdLnkBtnWorkspaces; }
+    clThemedButton* GetCmdLnkBtnFilesMenu() { return m_cmdLnkBtnFilesMenu; }
+    clThemedButton* GetCmdLnkBtnForum() { return m_cmdLnkBtnForum; }
+    clThemedButton* GetCmdLnkBtnWiki() { return m_cmdLnkBtnWiki; }
     wxPanel* GetPanel191() { return m_panel191; }
     wxScrolledWindow* GetScrollWin247() { return m_scrollWin247; }
     WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

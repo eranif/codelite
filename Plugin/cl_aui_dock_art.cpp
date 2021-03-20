@@ -287,7 +287,10 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.DrawRectangle(rect);
+    //return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)

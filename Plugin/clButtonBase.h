@@ -1,15 +1,15 @@
 #ifndef CLBUTTONBASE_H
 #define CLBUTTONBASE_H
 
+#include "clColours.h"
 #include "codelite_exports.h"
+#include "drawingutils.h"
+#include "wxCustomControls.hpp"
+#include <wx/bitmap.h>
+#include <wx/control.h>
+#include <wx/menu.h>
 #include <wx/panel.h>
 #include <wx/validate.h>
-#include "clColours.h"
-#include "drawingutils.h"
-#include <wx/control.h>
-#include <wx/bitmap.h>
-#include <wx/menu.h>
-#include "wxCustomControls.hpp"
 
 #if wxUSE_NATIVE_BUTTON
 #include <wx/button.h>
@@ -27,9 +27,10 @@ protected:
     size_t m_buttonStyle = 0;
     clColours m_colours;
     wxString m_text;
+    wxString m_subText;
     eButtonState m_state = eButtonState::kNormal;
 
-    enum eDrawingFlags {
+    enum eDrawingFlags{
         kDrawingFlagEnabled = (1 << 0),
         kDrawingFlagChecked = (1 << 1),
     };
@@ -85,9 +86,10 @@ public:
     void SetDefault();
     void SetBitmap(const wxBitmap& bmp);
     const wxBitmap& GetBitmap() const;
-#endif    
+#endif
 
-    
+    void SetSubText(const wxString& subText);
+    const wxString& GetSubText() const { return m_subText; }
     void SetText(const wxString& text);
     void SetHasDropDownMenu(bool hasDropDownMenu);
     bool HasDropDownMenu() const { return m_hasDropDownMenu; }

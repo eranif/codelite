@@ -1,9 +1,9 @@
-#include "clThemedButton.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
+#include "clThemedButton.h"
 #include "cl_config.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 
 clThemedButton::clThemedButton() {}
 
@@ -23,6 +23,16 @@ clThemedButton::clThemedButton(wxWindow* parent, wxWindowID id, const wxString& 
                                const wxSize& size, long style, const wxValidator& validator, const wxString& name)
     : clButton(parent, id, label, pos, size, style, validator, name)
 {
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
+    ApplyTheme();
+}
+
+clThemedButton::clThemedButton(wxWindow* parent, wxWindowID id, const wxString& label, const wxString& note,
+                               const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator,
+                               const wxString& name)
+    : clButton(parent, id, label, pos, size, style, validator, name)
+{
+    SetSubText(note);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
     ApplyTheme();
 }

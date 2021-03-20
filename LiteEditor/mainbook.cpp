@@ -28,7 +28,6 @@
 #include "clAuiMainNotebookTabArt.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clImageViewer.h"
-#include "clThemeUpdater.h"
 #include "cl_defs.h"
 #include "close_all_dlg.h"
 #include "ctags_manager.h"
@@ -67,10 +66,6 @@ MainBook::MainBook(wxWindow* parent)
     , m_welcomePage(NULL)
     , m_findBar(NULL)
 {
-#if !CL_USE_NATIVEBOOK
-    clThemeUpdater::Get().RegisterWindow(this);
-#endif
-
     CreateGuiControls();
     ConnectEvents();
 }
@@ -232,6 +227,7 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
     if(m_book->GetPageCount() == 0) {
         SendCmdEvent(wxEVT_ALL_EDITORS_CLOSED);
         ShowQuickBar(false);
+        ShowWelcomePage(true);
     }
     DoUpdateNotebookTheme();
 }
@@ -1347,9 +1343,17 @@ void MainBook::OnWorkspaceReloadStarted(clCommandEvent& e)
 
 void MainBook::ClosePageVoid(wxWindow* win) { ClosePage(win); }
 
-void MainBook::CloseAllButThisVoid(wxWindow* win) { CloseAllButThis(win); }
+void MainBook::CloseAllButThisVoid(wxWindow* win)
+{
+    CloseAllButThis(win);
+    ShowWelcomePage(true);
+}
 
-void MainBook::CloseAllVoid(bool cancellable) { CloseAll(cancellable); }
+void MainBook::CloseAllVoid(bool cancellable)
+{
+    CloseAll(cancellable);
+    ShowWelcomePage(true);
+}
 
 FilesModifiedDlg* MainBook::GetFilesModifiedDlg()
 {

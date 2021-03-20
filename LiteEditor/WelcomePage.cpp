@@ -43,12 +43,6 @@ WelcomePage::WelcomePage(wxWindow* parent)
 {
     m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 32));
     m_staticBitmap->Hide();
-    m_cmdLnkBtnFilesMenu->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
-    m_cmdLnkBtnForum->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
-    m_cmdLnkBtnNewProject->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
-    m_cmdLnkBtnNewWorkspace->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
-    m_cmdLnkBtnWiki->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
-    m_cmdLnkBtnWorkspaces->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("show_current_line"));
     GetSizer()->Fit(this);
     SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 #if CL_USE_NATIVEBOOK
@@ -83,8 +77,7 @@ void WelcomePage::OnShowFileseMenu(wxCommandEvent& event)
 
     int id = DoGetPopupMenuSelection(m_cmdLnkBtnFilesMenu, recentFiles, _("Select file to open"));
     if(id != wxID_NONE) {
-        wxString filename = m_idToName[id];
-        clMainFrame::Get()->GetMainBook()->OpenFile(filename);
+        CallAfter(&WelcomePage::DoOpenFile, m_idToName[id]);
     }
 }
 
@@ -114,8 +107,7 @@ void WelcomePage::OnShowWorkspaceMenu(wxCommandEvent& event)
     }
 }
 
-int WelcomePage::DoGetPopupMenuSelection(wxCommandLinkButton* btn, const wxArrayString& strings,
-                                         const wxString& menuTitle)
+int WelcomePage::DoGetPopupMenuSelection(clThemedButton* btn, const wxArrayString& strings, const wxString& menuTitle)
 {
     BitmapLoader* loader = PluginManager::Get()->GetStdIcons();
 
@@ -191,3 +183,5 @@ void WelcomePage::OnOpenWorkspace(wxCommandEvent& event)
     e.SetEventObject(clMainFrame::Get());
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
+
+void WelcomePage::DoOpenFile(const wxString& filename) { clMainFrame::Get()->GetMainBook()->OpenFile(filename); }

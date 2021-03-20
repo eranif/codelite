@@ -8,7 +8,13 @@
 
 #include "clSystemSettings.h"
 #include <wx/gdicmn.h>
+
+#if wxCHECK_VERSION(3, 1, 0)
 #define TEXT_SPACER FromDIP(5)
+#else
+#define TEXT_SPACER 5
+#define SetFractionalPointSize SetPointSize
+#endif
 
 #ifdef __WXMSW__
 #define BUTTON_RADIUS 0.0
@@ -110,7 +116,9 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
         wxRect clientRect = GetClientRect();
         wxRect focusRect = clientRect.Deflate(3);
         focusRect = focusRect.CenterIn(clientRect);
-        wxRendererNative::GetGeneric().DrawFocusRect(this, abdc, focusRect, wxCONTROL_SELECTED);
+        dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxPENSTYLE_DOT));
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        dc.DrawRoundedRectangle(focusRect, 3);
     }
 }
 

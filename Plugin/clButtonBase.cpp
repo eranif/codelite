@@ -14,6 +14,7 @@
 #else
 #define TEXT_SPACER 5
 #define SetFractionalPointSize SetPointSize
+#define wxFONTWEIGHT_SEMIBOLD wxFONTWEIGHT_BOLD
 #endif
 
 #ifdef __WXMSW__

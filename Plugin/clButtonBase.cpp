@@ -289,8 +289,9 @@ void clButtonBase::Render(wxDC& dc)
     }
 
     // Setup some colours (text and dropdown)
-    wxColour textColour = m_colours.GetItemTextColour();
-    wxColour dropDownColour = m_colours.GetDarkBorderColour();
+    wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    wxColour dropDownColour = textColour.ChangeLightness(isDark ? 90 : 110);
+
     if(isDisabled) {
         dropDownColour = textColour = m_colours.GetGrayText();
     } else if(IsPressed()) {

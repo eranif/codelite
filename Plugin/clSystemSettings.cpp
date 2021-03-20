@@ -74,6 +74,7 @@ wxColour clSystemSettings::GetColour(int index)
         case wxSYS_COLOUR_MENUBAR:
         case wxSYS_COLOUR_3DFACE:
         case wxSYS_COLOUR_LISTBOX:
+        case wxSYS_COLOUR_WINDOW:
             return m_customColours.GetBgColour();
         case wxSYS_COLOUR_3DSHADOW:
             return m_customColours.GetBorderColour();
@@ -92,6 +93,12 @@ wxColour clSystemSettings::GetColour(int index)
             return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+#ifdef __WXMSW__
+        } else if(index == wxSYS_COLOUR_WINDOW) {
+            return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        } else if(index == wxSYS_COLOUR_3DFACE) {
+            return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
+#endif
         } else {
             return wxSystemSettings::GetColour((wxSystemColour)index);
         }

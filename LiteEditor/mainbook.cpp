@@ -1346,7 +1346,6 @@ void MainBook::ClosePageVoid(wxWindow* win) { ClosePage(win); }
 void MainBook::CloseAllButThisVoid(wxWindow* win)
 {
     CloseAllButThis(win);
-    ShowWelcomePage(true);
 }
 
 void MainBook::CloseAllVoid(bool cancellable)

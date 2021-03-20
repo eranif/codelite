@@ -92,8 +92,6 @@ wxColour clSystemSettings::GetColour(int index)
             return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-        } else if(index == wxSYS_COLOUR_3DFACE) {
-            return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         } else {
             return wxSystemSettings::GetColour((wxSystemColour)index);
         }

@@ -98,8 +98,8 @@ void DockablePane::OnPaint(wxPaintEvent& e)
 
     wxRect rect = GetClientRect();
     rect.Inflate(1);
-    dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-    dc.SetBrush(wxBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+    dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
+    dc.SetBrush(wxBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)));
     dc.DrawRectangle(rect);
 }
 

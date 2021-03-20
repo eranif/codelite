@@ -66,7 +66,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     , m_isEnabled(false)
 {
     m_tree = new svSymbolTree(m_panelCxx, m_mgr, wxID_ANY);
-    m_simpleBook->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    m_simpleBook->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 
     // Bind the wxID_FIND from the top level window (our main frame)
     // to this class
@@ -379,5 +379,5 @@ void OutlineTab::EditorChanged()
 void OutlineTab::OnThemeChanged(clCommandEvent& event)
 {
     event.Skip();
-    m_simpleBook->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    m_simpleBook->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 }

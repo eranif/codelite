@@ -483,7 +483,7 @@ void FindInFilesDialog::DoSetSearchPaths(const wxString& path)
     text << path;
     text.Trim().Trim(false);
     m_stcPaths->SetText(text);
-    ::clRecalculateSTCHScrollBar(m_stcPaths);
+    //::clRecalculateSTCHScrollBar(m_stcPaths);
 }
 
 void FindInFilesDialog::OnReplaceUI(wxUpdateUIEvent& event)

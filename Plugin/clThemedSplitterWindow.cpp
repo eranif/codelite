@@ -46,7 +46,7 @@ void clThemedSplitterWindow::OnEraseBg(wxEraseEvent& event) { wxUnusedVar(event)
 
 void clThemedSplitterWindow::DoDrawSash(wxDC& dc)
 {
-    wxColour c = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour c = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     c = c.ChangeLightness(DrawingUtils::IsDark(c) ? 115 : 85);
 
     wxRect rect = GetClientRect();

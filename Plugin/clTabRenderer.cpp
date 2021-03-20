@@ -30,7 +30,7 @@ clTabColours::clTabColours() { UpdateColours(0); }
 void clTabColours::UpdateColours(size_t notebookStyle)
 {
     wxUnusedVar(notebookStyle);
-    wxColour base_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour base_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     bool is_dark = DrawingUtils::IsDark(base_colour);
 #if defined(__WXMSW__) || defined(__WXOSX__)
     tabAreaColour = base_colour.ChangeLightness(is_dark ? 50 : 80);

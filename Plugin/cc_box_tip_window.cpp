@@ -360,7 +360,7 @@ void CCBoxTipWindow::DoDrawTip(wxDC& dc, size_t& max_width)
             colours.InitFromColour(bgColour);
             m_useLightColours = !DrawingUtils::IsDark(bgColour);
         } else {
-            colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+            colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         }
     }
 

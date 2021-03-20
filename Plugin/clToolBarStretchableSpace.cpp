@@ -20,7 +20,7 @@ void clToolBarStretchableSpace::Render(wxDC& dc, const wxRect& rect)
     if(GetWidth() == 0) {
         return;
     }
-    wxColour colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     dc.SetPen(colour);
     dc.SetBrush(colour);
     dc.DrawRectangle(rect);

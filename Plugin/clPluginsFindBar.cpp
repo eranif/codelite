@@ -1244,7 +1244,7 @@ bool clPluginsFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what,
 void clPluginsFindBar::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC dc(this);
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.DrawRectangle(GetClientRect());
 }

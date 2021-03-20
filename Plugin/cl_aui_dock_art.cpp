@@ -287,8 +287,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.DrawRectangle(rect);
     //return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 }
@@ -325,6 +325,6 @@ void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)
 
     m_captionColour = clSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
     m_captionTextColour = colours.GetItemTextColour();
-    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     m_useCustomCaptionColour = false;
 }

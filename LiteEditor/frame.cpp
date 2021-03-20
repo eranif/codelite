@@ -1158,7 +1158,7 @@ void clMainFrame::CreateGUIControls()
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
         e.Skip();
 #if !CL_USE_NATIVEBOOK
-        container->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        container->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 #endif
     });
 
@@ -2785,7 +2785,7 @@ wxString clMainFrame::CreateWorkspaceTable()
     Manager* mgr = ManagerST::Get();
     mgr->GetRecentlyOpenedWorkspaces(files);
 
-    wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     bgclr = DrawingUtils::LightColour(bgclr, 7);
 
     html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
@@ -2823,7 +2823,7 @@ wxString clMainFrame::CreateFilesTable()
     wxArrayString files;
     GetMainBook()->GetRecentlyOpenedFiles(files);
 
-    wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     bgclr = DrawingUtils::LightColour(bgclr, 10.0);
     html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
     if(files.GetCount() == 0) {

@@ -128,7 +128,7 @@ BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
 
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
-    bool b = DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    bool b = DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     static const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
     if(huxtheme) {
         SetWindowTheme(win->GetHandle(), b ? L"DarkMode_Explorer" : L"Explorer", NULL);

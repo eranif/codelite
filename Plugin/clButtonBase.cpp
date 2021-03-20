@@ -6,6 +6,8 @@
 #include <wx/renderer.h>
 #include <wx/settings.h>
 
+#include "clSystemSettings.h"
+#include <wx/gdicmn.h>
 #define TEXT_SPACER FromDIP(5)
 
 #ifdef __WXMSW__
@@ -152,7 +154,7 @@ void clButtonBase::Initialise()
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     BindEvents();
-    m_colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    m_colours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     SetSizeHints(GetBestSize());
 }
 
@@ -175,14 +177,15 @@ void clButtonBase::Render(wxDC& dc)
     clientRect.Inflate(1);
 #endif
 
-    dc.SetBrush(m_colours.GetBgColour());
-    dc.SetPen(m_colours.GetBgColour());
+    wxColour parentbgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    dc.SetBrush(parentbgColour);
+    dc.SetPen(parentbgColour);
     dc.DrawRectangle(clientRect);
 
     bool isDisabled = !IsEnabled();
-    bool isDark = DrawingUtils::IsDark(m_colours.GetBgColour());
-    wxColour bgColour = m_colours.GetBgColour();
-    wxColour borderColour = m_colours.GetBorderColour();
+    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+    bool isDark = DrawingUtils::IsDark(bgColour);
+    wxColour borderColour = isDark ? bgColour.ChangeLightness(50) : bgColour.ChangeLightness(80);
 
     switch(m_state) {
     case eButtonState::kNormal:
@@ -196,14 +199,6 @@ void clButtonBase::Render(wxDC& dc)
         break;
     }
 
-    if(isDark) {
-#ifdef __WXOSX__
-        borderColour = bgColour.ChangeLightness(80);
-#else
-        borderColour = bgColour.ChangeLightness(50);
-#endif
-    }
-
     if(isDisabled) {
         bgColour = bgColour.ChangeLightness(110);
         borderColour = borderColour.ChangeLightness(110);
@@ -214,14 +209,14 @@ void clButtonBase::Render(wxDC& dc)
     if(!isDisabled) {
         if(IsNormal() || IsHover()) {
             // fill the button bg colour with gradient
-            dc.GradientFillLinear(rect, bgColour, m_colours.GetBgColour(), wxNORTH);
             // draw the border
             dc.SetPen(borderColour);
-            dc.SetBrush(*wxTRANSPARENT_BRUSH);
+            dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
             dc.DrawRoundedRectangle(rect, button_radius);
         } else if(m_state == eButtonState::kPressed) {
             // pressed button is drawns with flat bg colour and border
             wxColour pressedBgColour = bgColour.ChangeLightness(90);
+            borderColour = borderColour.ChangeLightness(70);
             dc.SetPen(borderColour);
             dc.SetBrush(pressedBgColour);
             dc.DrawRoundedRectangle(rect, button_radius);
@@ -234,7 +229,7 @@ void clButtonBase::Render(wxDC& dc)
     }
 
     if(!isDisabled && !IsPressed()) {
-        wxColour topLineColour = bgColour.ChangeLightness(115);
+        wxColour topLineColour = isDark ? bgColour.ChangeLightness(115) : bgColour.ChangeLightness(150);
         wxRect rr = rect;
         rr.Deflate(2);
         dc.SetPen(topLineColour);
@@ -306,10 +301,10 @@ void clButtonBase::Render(wxDC& dc)
     if(!buttonText.IsEmpty()) {
         bool has_sub_text = !subtext.empty();
         wxRect textBoundingRect = text_rect;
-        textBoundingRect = textBoundingRect.CenterIn(rect, wxVERTICAL);
-        textBoundingRect.x += TEXT_SPACER;
-        sub_text_rect = textBoundingRect;
+        textBoundingRect = textBoundingRect.CenterIn(rect, (has_sub_text ? (wxVERTICAL) : (wxVERTICAL | wxHORIZONTAL)));
         if(has_sub_text) {
+            textBoundingRect.x += TEXT_SPACER;
+            sub_text_rect = textBoundingRect;
             sub_text_rect.width = dc.GetTextExtent(subtext).x;
             sub_text_rect.x += sub_text_x_spacer; // align the text with the actual text and not the with the arrow
             sub_text_rect.y += sub_text_rect.height;

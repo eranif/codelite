@@ -278,7 +278,7 @@ wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
     return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
 
-wxColour DrawingUtils::GetPanelBgColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE); }
+wxColour DrawingUtils::GetPanelBgColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW); }
 
 wxColour DrawingUtils::GetPanelTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
 
@@ -291,7 +291,7 @@ wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 {
     wxUnusedVar(miniToolbar);
 #if CL_USE_NATIVEBOOK
-    return clSystemSettings::GetColour(miniToolbar ? wxSYS_COLOUR_3DFACE : wxSYS_COLOUR_MENUBAR);
+    return clSystemSettings::GetColour(miniToolbar ? wxSYS_COLOUR_WINDOW : wxSYS_COLOUR_MENUBAR);
 #else
     clTabColours c;
     c.UpdateColours(0);
@@ -363,7 +363,7 @@ wxColour DrawingUtils::GetThemeTipBgColour()
     if(IsThemeDark()) {
         return GetThemeBgColour();
     } else {
-        return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     }
 }
 
@@ -394,7 +394,7 @@ wxColour DrawingUtils::GetAUIPaneBGColour() { return GetPanelBgColour(); }
 wxBrush DrawingUtils::GetStippleBrush()
 {
     wxMemoryDC memDC;
-    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     wxBitmap bmpStipple(3, 3);
     wxColour lightPen = DrawingUtils::DarkColour(bgColour, 5.0);
     wxColour darkPen = DrawingUtils::LightColour(bgColour, 3.0);
@@ -796,7 +796,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxRendererNative::Get().DrawDropArrow(win, dc, dropDownRect, 0);
 #else
     // OSX
-    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     if(IsDark(bgColour)) {
         // On Dark theme (Mojave and later)
         int width = choiceRect.GetHeight();

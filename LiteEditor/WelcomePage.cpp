@@ -44,7 +44,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
     m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 32));
     m_staticBitmap->Hide();
     GetSizer()->Fit(this);
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 #if CL_USE_NATIVEBOOK
     Show();
 #endif

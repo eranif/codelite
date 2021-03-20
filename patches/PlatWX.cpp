@@ -1391,7 +1391,7 @@ DynamicLibrary *DynamicLibrary::Load(const char *WXUNUSED(modulePath)) {
 
 ColourDesired Platform::Chrome() {
     wxColour c;
-    c = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    c = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     return ColourDesired(c.Red(), c.Green(), c.Blue());
 }
 

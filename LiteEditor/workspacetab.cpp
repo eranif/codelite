@@ -75,8 +75,8 @@ WorkspaceTab::WorkspaceTab(wxWindow* parent, const wxString& caption)
 
     m_panelCxx->Bind(wxEVT_PAINT, [&](wxPaintEvent& e) {
         wxAutoBufferedPaintDC dc(m_panelCxx);
-        dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-        dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         dc.DrawRectangle(m_panelCxx->GetClientRect());
     });
 
@@ -457,8 +457,8 @@ void WorkspaceTab::OnFolderDropped(clCommandEvent& event)
 void WorkspaceTab::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC dc(this);
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.DrawRectangle(GetClientRect());
 }
 

@@ -153,7 +153,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
         XRCID("import_eclipse_theme"));
 
     // Theme handling
-    wxColour baseColour = clConfig::Get().Read("BaseColour", clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    wxColour baseColour = clConfig::Get().Read("BaseColour", clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     m_colourPickerBaseColour->SetColour(baseColour);
     m_useBaseColourInitial = clConfig::Get().Read("UseCustomBaseColour", false);
     m_useBaseColourEnding = m_useBaseColourInitial;

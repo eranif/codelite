@@ -32,7 +32,7 @@ void clThemeUpdater::UpdateGlobalColours()
 {
 #if 0
     std::for_each(m_windows.begin(), m_windows.end(), [&](wxWindow* win) {
-        win->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        win->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         win->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
         win->Refresh();
     });
@@ -55,7 +55,7 @@ void clThemeUpdater::RegisterWindow(wxWindow* win)
     // we want to know when this window is destroyed so we could remove it
 #ifdef __WXMSW__
     win->Bind(wxEVT_DESTROY, &clThemeUpdater::OnWindowDestroyed, this);
-    win->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    win->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     win->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
 #endif
     m_windows.insert(win);

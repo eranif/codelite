@@ -52,7 +52,7 @@ public:
     virtual void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
     virtual void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
 
-    virtual wxColour GetBgColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE); }
+    virtual wxColour GetBgColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW); }
     virtual wxColour GetPenColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
     virtual wxColour GetTextColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
     virtual wxColour GetSeparatorColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }

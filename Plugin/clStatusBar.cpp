@@ -57,7 +57,7 @@ class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
 protected:
     void InitialiseColours()
     {
-        m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         bool isdark = DrawingUtils::IsDark(m_bgColour);
         m_bgColour = m_bgColour.ChangeLightness(isdark ? 105 : 95);
 

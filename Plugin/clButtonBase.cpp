@@ -117,7 +117,7 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
         wxRect clientRect = GetClientRect();
         wxRect focusRect = clientRect.Deflate(3);
         focusRect = focusRect.CenterIn(clientRect);
-        dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT), 1, wxPENSTYLE_DOT));
+        dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 1, wxPENSTYLE_DOT));
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
         dc.DrawRoundedRectangle(focusRect, 3);
     }

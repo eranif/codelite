@@ -28,6 +28,7 @@
 #include "clAuiMainNotebookTabArt.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clImageViewer.h"
+#include "clWorkspaceManager.h"
 #include "cl_defs.h"
 #include "close_all_dlg.h"
 #include "ctags_manager.h"
@@ -227,7 +228,11 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
     if(m_book->GetPageCount() == 0) {
         SendCmdEvent(wxEVT_ALL_EDITORS_CLOSED);
         ShowQuickBar(false);
-        ShowWelcomePage(true);
+
+        // if no workspace is opened, show the "welcome page"
+        if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            ShowWelcomePage(true);
+        }
     }
     DoUpdateNotebookTheme();
 }
@@ -1343,15 +1348,14 @@ void MainBook::OnWorkspaceReloadStarted(clCommandEvent& e)
 
 void MainBook::ClosePageVoid(wxWindow* win) { ClosePage(win); }
 
-void MainBook::CloseAllButThisVoid(wxWindow* win)
-{
-    CloseAllButThis(win);
-}
+void MainBook::CloseAllButThisVoid(wxWindow* win) { CloseAllButThis(win); }
 
 void MainBook::CloseAllVoid(bool cancellable)
 {
     CloseAll(cancellable);
-    ShowWelcomePage(true);
+    if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        ShowWelcomePage(true);
+    }
 }
 
 FilesModifiedDlg* MainBook::GetFilesModifiedDlg()

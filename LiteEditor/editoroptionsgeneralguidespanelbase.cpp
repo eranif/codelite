@@ -44,7 +44,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
 
     m_pgPropRelativeLineNumbers = m_pgMgrGeneral->AppendIn(
         m_pgPropCategoryGeneral, new wxBoolProperty(_("Enable Relative line numbers."), wxPG_LABEL, 0));
-    m_pgPropRelativeLineNumbers->SetHelpString(_("m_pgPropRelativeLineNumbers"));
+    m_pgPropRelativeLineNumbers->SetHelpString(_("Enable Relative line numbers."));
 
     m_pgPropHighlightMatchedBrace = m_pgMgrGeneral->AppendIn(
         m_pgPropCategoryGeneral, new wxBoolProperty(_("Highlight matched braces"), wxPG_LABEL, 1));

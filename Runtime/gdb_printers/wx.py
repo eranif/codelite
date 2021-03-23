@@ -8,6 +8,7 @@ class wxStringPrinter:
 
     def __init__(self, val):
         self.val = val
+        self.max_string_length = 1024
 
     def to_string(self):
         ret = ""
@@ -20,7 +21,11 @@ class wxStringPrinter:
 
         try:
             if wx29:
-                dataAsCharPointer = '"' + self.val['m_impl']['_M_dataplus']['_M_p'].string() + '"'
+                length = self.val['m_impl']['_M_string_length']
+                if length > self.max_string_length:
+                    dataAsCharPointer = '"' + self.val['m_impl']['_M_dataplus']['_M_p'].string(length = self.max_string_length) + '"...'
+                else:
+                    dataAsCharPointer = '"' + self.val['m_impl']['_M_dataplus']['_M_p'].string() + '"'
             else:
                 dataAsCharPointer = '"' + self.val['m_pchData'].string() + '"'
             ret = dataAsCharPointer
@@ -38,6 +43,7 @@ class wxArrayString:
             self.items = items
             self.item_count = item_count
             self.count = 0
+            self.max_string_length = 64
 
         def __iter__(self):
             return self
@@ -49,7 +55,12 @@ class wxArrayString:
                 raise StopIteration
             try:
                 # Try the wx >=2.9 way first
-                elt = '"' + self.items[count]['_M_dataplus']['_M_p'].string() + '"'
+                length = self.items[count]['m_impl']['_M_string_length']
+                if length > self.max_string_length:
+                    elt = '"' + self.items[count]['m_impl']['_M_dataplus']['_M_p'].string(length = self.max_string_length) + '"...'
+                else:
+                    elt = '"' + self.items[count]['m_impl']['_M_dataplus']['_M_p'].string() + '"'
+            
             except Exception:
                 # The wx2.8 way
                 elt = self.items[count]

@@ -7,15 +7,22 @@ GitDiffOutputParser::~GitDiffOutputParser() {}
 
 void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, wxArrayString* commitMessage) const
 {
-    wxArrayString diffList = wxStringTokenize(rawDiff, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
+    wxStringTokenizer tokenizer(rawDiff, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
     unsigned index = 0;
     wxString currentFile;
     wxString currentDiff;
     const wxString diffPrefix = "diff --git a/";
     bool foundFirstDiff = false;
     eGitDiffStates state = kLookingForFileName; // Searching for file name
-    for(size_t i = 0; i < diffList.size(); ++i) {
-        wxString& line = diffList.Item(i);
+    wxString empty;
+    wxString& line = empty;
+    bool nextToken = true;
+    while (tokenizer.HasMoreTokens()) {
+        if (nextToken) {
+            line = tokenizer.GetNextToken();
+        }
+        nextToken = true;
+        
         if (commitMessage && !foundFirstDiff) {
             // The git blame and git CommitList need to display the commit message
             // This can be found at the top of the output, before the first "diff "
@@ -47,7 +54,7 @@ void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, 
 
                 // Reset the scanner loop
                 state = kLookingForFileName;
-                --i; // This will make sure we process this line again, however, in the other state switch case
+                nextToken = false; // This will make sure we process this line again, however, in the other state switch case
             } else {
                 currentDiff << line << "\n";
             }

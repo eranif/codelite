@@ -110,8 +110,10 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
     wxArrayString specArr = ::wxStringTokenize(filespec.Lower(), ";,|", wxTOKEN_STRTOK);
     wxArrayString excludeSpecArr = ::wxStringTokenize(excludeFilespec.Lower(), ";,|", wxTOKEN_STRTOK);
     std::queue<wxString> Q;
+    std::set<wxString> S;
     Q.push(rootFolder);
-
+    S.insert(rootFolder);
+    
     while(!Q.empty()) {
         wxString dirpath = Q.front();
         Q.pop();
@@ -140,7 +142,11 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
                      || IsRelPathContainedInSpec(rootFolder, fullpath, excludeFolders)));
             if(isDirectory && !isExcludeDir) {
                 // Traverse into this folder
-                Q.push(fullpath);
+                wxString realPath = FileUtils::RealPath(fullpath);
+                if (S.insert(realPath).second) {
+                    Q.push(fullpath);
+                }
+                
             } else if(!isDirectory && FileUtils::WildMatch(excludeSpecArr, filename)) {
                 // Do nothing
             } else if(!isDirectory && FileUtils::WildMatch(specArr, filename)) {

@@ -323,6 +323,13 @@ void clButtonBase::Render(wxDC& dc)
             sub_text_rect.y -= (sub_text_rect.height / 2);
         }
 
+#ifdef __WXMAC__
+        wxFont font = DrawingUtils::GetDefaultGuiFont();
+        if(has_sub_text) {
+            font.SetFractionalPointSize((double)font.GetPointSize()*1.4);
+        }
+        dc.SetFont(font);
+#endif
         DrawLabel(dc, textBoundingRect, buttonText, textColour);
         if(has_sub_text) {
             wxFont font = DrawingUtils::GetDefaultGuiFont();
@@ -378,7 +385,7 @@ wxSize clButtonBase::GetBestSize() const
     }
     dc.SetFont(f);
 
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined(__WXMAC__)
     int inflateSize = 8;
 #else
     int inflateSize = 4;

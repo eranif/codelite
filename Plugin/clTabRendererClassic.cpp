@@ -176,6 +176,9 @@ void clTabRendererClassic::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tab
 void clTabRendererClassic::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
                                           size_t style)
 {
+#ifdef __WXMAC__
+    clTabRenderer::DrawBackground(parent, dc, rect, colours, style);
+#else
     clTabColours c = colours;
     if(DrawingUtils::IsDark(c.activeTabBgColour)) {
         InitDarkColours(c, c.activeTabBgColour);
@@ -192,11 +195,15 @@ void clTabRendererClassic::DrawBackground(wxWindow* parent, wxDC& dc, const wxRe
     dc.SetBrush(colours.activeTabBgColour);
     dc.SetPen(colours.activeTabBgColour);
     dc.DrawRectangle(topRect);
+#endif
 }
 
 void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
                                               const wxRect& activeTabRect, const clTabColours& colours, size_t style)
 {
+#ifdef __WXMAC__
+    return;
+#endif
     wxUnusedVar(parent);
     if(IS_VERTICAL_TABS(style)) {
         return;

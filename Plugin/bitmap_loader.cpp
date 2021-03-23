@@ -342,7 +342,13 @@ void clBitmaps::Initialise()
 void clBitmaps::SysColoursChanged()
 {
     auto old_ptr = m_activeBitmaps;
-    bool isDark = DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR));
+    
+    wxSystemColour cIndex = wxSYS_COLOUR_MENUBAR;
+#ifdef __WXMAC__
+    cIndex = wxSYS_COLOUR_3DFACE;
+#endif
+
+    bool isDark = DrawingUtils::IsDark(clSystemSettings::GetColour(cIndex));
     m_activeBitmaps = isDark ? m_darkBitmaps : m_lightBitmaps;
 
     if(old_ptr != m_activeBitmaps) {

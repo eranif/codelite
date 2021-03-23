@@ -93,7 +93,7 @@ wxColour clSystemSettings::GetColour(int index)
             return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-#ifdef __WXMSW__
+#if defined(__WXMSW__)||defined(__WXMAC__)
         } else if(index == wxSYS_COLOUR_WINDOW) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
         } else if(index == wxSYS_COLOUR_3DFACE) {

@@ -22,12 +22,12 @@ class WXDLLIMPEXP_SDK clButtonBase : public BUTTON_BASE
 {
 protected:
     bool m_hasDropDownMenu = false;
+    wxString m_subText;
 #if !wxUSE_NATIVE_BUTTON
 protected:
     size_t m_buttonStyle = 0;
     clColours m_colours;
     wxString m_text;
-    wxString m_subText;
     eButtonState m_state = eButtonState::kNormal;
 
     enum eDrawingFlags{

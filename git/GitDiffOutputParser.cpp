@@ -17,7 +17,7 @@ void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, 
     wxString empty;
     wxString& line = empty;
     bool nextToken = true;
-    while (tokenizer.HasMoreTokens()) {
+    while (tokenizer.HasMoreTokens() || nextToken == false) {
         if (nextToken) {
             line = tokenizer.GetNextToken();
         }

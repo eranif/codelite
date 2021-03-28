@@ -2,6 +2,7 @@
 #define __LanguageServerPlugin__
 
 #include "CompileCommandsGenerator.h"
+#include "LSPDetector.hpp"
 #include "LanguageServerCluster.h"
 #include "cl_command_event.h"
 #include "plugin.h"
@@ -18,6 +19,16 @@ protected:
     void OnEditorContextMenu(clContextMenuEvent& event);
     void OnMenuFindSymbol(wxCommandEvent& event);
     void ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps);
+
+    void OnLSPStopAll(clLanguageServerEvent& event);
+    void OnLSPStartAll(clLanguageServerEvent& event);
+    void OnLSPRestartAll(clLanguageServerEvent& event);
+    void OnLSPStopOne(clLanguageServerEvent& event);
+    void OnLSPStartOne(clLanguageServerEvent& event);
+    void OnLSPRestartOne(clLanguageServerEvent& event);
+    void OnLSPConfigure(clLanguageServerEvent& event);
+    void OnLSPDelete(clLanguageServerEvent& event);
+    void OnLSPShowSettingsDlg(clLanguageServerEvent& event);
 
 public:
     LanguageServerPlugin(IManager* manager);

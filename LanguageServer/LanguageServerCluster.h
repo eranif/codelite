@@ -24,9 +24,13 @@ class LanguageServerCluster : public wxEvtHandler
 public:
     typedef wxSharedPtr<LanguageServerCluster> Ptr_t;
 
-protected:
-    void RestartServer(const wxString& name);
+public:
     void StartServer(const LanguageServerEntry& entry);
+
+    void RestartServer(const wxString& name);
+    void StartServer(const wxString& entry);
+    void StopServer(const wxString& entry);
+    void DeleteServer(const wxString& name);
 
     void StopAll();
     void StartAll();

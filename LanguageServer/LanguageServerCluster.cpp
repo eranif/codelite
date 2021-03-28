@@ -277,7 +277,10 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
     wxString rootDir;
     if(clWorkspaceManager::Get().GetWorkspace() && entry.IsAutoRestart()) {
-        rootDir = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
+        // we have an opened workspace. if the workspace has a root directory, let's use it
+        // otherwise, default to the LSP value
+        wxString path = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
+        rootDir = path.empty() ? entry.GetWorkingDirectory() : path;
     } else {
         rootDir = entry.GetWorkingDirectory();
     }
@@ -441,4 +444,34 @@ void LanguageServerCluster::OnBuildEnded(clBuildEvent& event)
     for(const wxString& lspName : rustLsps) {
         RestartServer(lspName);
     }
+}
+
+void LanguageServerCluster::StopServer(const wxString& name)
+{
+    LanguageServerProtocol::Ptr_t server = GetServerByName(name);
+    if(!server) {
+        return;
+    }
+
+    clDEBUG() << "Stopping LSP server:" << name << clEndl;
+    server->Stop();
+    // Remove the old instance
+    m_servers.erase(name);
+}
+
+void LanguageServerCluster::DeleteServer(const wxString& name)
+{
+    StopServer(name); // stop any server that goes by that name
+    // Delete it's configuration entry
+    LanguageServerConfig::Get().RemoveServer(name);
+    LanguageServerConfig::Get().Save();
+}
+
+void LanguageServerCluster::StartServer(const wxString& name)
+{
+    auto entry = LanguageServerConfig::Get().GetServer(name);
+    if(!entry.IsValid()) {
+        return;
+    }
+    StartServer(entry);
 }

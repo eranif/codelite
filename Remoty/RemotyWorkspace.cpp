@@ -2,6 +2,7 @@
 #include "RemotySwitchToWorkspaceDlg.h"
 #include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
+#include "StringUtils.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
@@ -155,6 +156,16 @@ void RemotyWorkspace::DoClose(bool notify)
     m_remoteWorkspaceFile.clear();
     m_localWorkspaceFile.clear();
     m_localUserWorkspaceFile.clear();
+
+    // remove any clangd configured by us
+    clLanguageServerEvent delete_event(wxEVT_LSP_DELETE);
+    delete_event.SetLspName("Remoty - clangd");
+    EventNotifier::Get()->ProcessEvent(delete_event);
+
+    // and restart all the LSPs
+    clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
+    EventNotifier::Get()->AddPendingEvent(restart_event);
+
     if(notify) {
         // notify codelite to close all opened files
         wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
@@ -228,11 +239,8 @@ void RemotyWorkspace::DoBuild(const wxString& target)
     auto envmap = FileUtils::CreateEnvironment(envstr);
 
     // Creae a build script
-    wxString buildScript;
-    buildScript << "/tmp/" << m_account.GetUsername() << "_codelite-build.sh";
     wxString buildScriptContent;
 
-    buildScriptContent << "#!/bin/bash -e\n"; // stop at first error
     buildScriptContent << "# prepare the environment variables\n";
     for(auto& vt : envmap) {
         buildScriptContent << "export " << vt.first << "=" << ::WrapWithQuotes(vt.second) << "\n";
@@ -243,15 +251,7 @@ void RemotyWorkspace::DoBuild(const wxString& target)
     buildScriptContent << "cd " << working_dir << "\n";
     buildScriptContent << cmd << "\n";
 
-    // upload the test script
-    if(!clSFTPManager::Get().WriteFile(buildScriptContent, buildScript, m_account.GetAccountName())) {
-        ::wxMessageBox(_("Failed to write build script to the remote machine!"), "CodeLite", wxICON_ERROR | wxCENTER);
-        return;
-    }
-
-    vector<wxString> args = { "/bin/bash", "-f", buildScript };
-    m_buildProcess = ::CreateAsyncProcess(this, args, IProcessCreateDefault | IProcessCreateSSH, wxEmptyString, nullptr,
-                                          m_account.GetAccountName());
+    m_buildProcess = DoRunSSHProcess(buildScriptContent);
     if(!m_buildProcess) {
         clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
@@ -469,6 +469,9 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
     clWorkspaceManager::Get().SetWorkspace(this);
 
+    // Configure LSP for this workspace
+    ConfigureClangd();
+
     // Notify that the a new workspace is loaded
     wxCommandEvent open_event(wxEVT_WORKSPACE_LOADED);
     EventNotifier::Get()->AddPendingEvent(open_event);
@@ -539,3 +542,73 @@ void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
     args = conf->GetArgs();
     wd = conf->GetWorkingDirectory().IsEmpty() ? GetFileName().GetPath() : conf->GetWorkingDirectory();
 }
+
+void RemotyWorkspace::ConfigureClangd()
+{
+    // create a detection script on the remote host
+    wxString clangd_exe;
+    {
+        wxString command;
+        command << "clangd=$(ls -vr /usr/bin/clangd*|head -1)\n";
+        command << "echo $clangd\n";
+        IProcess::Ptr_t p(DoRunSSHProcess(command, true));
+        p->WaitForTerminate(clangd_exe);
+    }
+
+    clangd_exe.Trim().Trim(false);
+    if(clangd_exe.empty() || !clangd_exe.StartsWith("/usr/bin/clangd")) {
+        clDEBUG() << "No clangd was found on remote host" << endl;
+        return;
+    }
+
+    clDEBUG() << "Found clangd:" << clangd_exe << endl;
+
+    // Notify LSP to Configure this LSP for us
+    wxArrayString langs;
+    langs.Add("c");
+    langs.Add("cpp");
+
+    clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
+    configure_event.SetLspName("Remoty - clangd");
+    configure_event.SetLanguages(langs);
+
+    // the command: we need to set it to the workspace folder
+    wxString clangd_cmd;
+    clangd_cmd << "cd " << GetRemoteWorkingDir() << " && " << clangd_exe << " -limit-results=500";
+    configure_event.SetLspCommand(clangd_cmd);
+    configure_event.SetFlags(clLanguageServerEvent::kEnabled | clLanguageServerEvent::kDisaplyDiags |
+                             clLanguageServerEvent::kSSHEnabled);
+    configure_event.SetSshAccount(m_account.GetAccountName());
+    configure_event.SetConnectionString("stdio");
+    configure_event.SetPriority(150);
+    EventNotifier::Get()->ProcessEvent(configure_event);
+
+    clLanguageServerEvent restart_event(wxEVT_LSP_RESTART);
+    restart_event.SetLspName("Remoty - clangd");
+    EventNotifier::Get()->AddPendingEvent(restart_event);
+}
+
+IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool sync)
+{
+    wxString content;
+    content << "#!/bin/bash -e\n"; // stop at first error
+    content << scriptContent;
+
+    wxString path;
+    path << "/tmp/codelite-remoty." << clGetUserName() << ".sh";
+
+    // upload the script
+    if(!clSFTPManager::Get().WriteFile(content, path, m_account.GetAccountName())) {
+        ::wxMessageBox(_("Failed to write remote script on the remote machine!"), "CodeLite", wxICON_ERROR | wxCENTER);
+        return nullptr;
+    }
+
+    vector<wxString> args = { "/bin/bash", path };
+    size_t flags = IProcessCreateDefault | IProcessCreateSSH;
+    if(sync) {
+        flags |= IProcessCreateSync;
+    }
+    return ::CreateAsyncProcess(this, args, flags, wxEmptyString, nullptr, m_account.GetAccountName());
+}
+
+wxString RemotyWorkspace::GetRemoteWorkingDir() const { return m_remoteWorkspaceFile.BeforeLast('/'); }

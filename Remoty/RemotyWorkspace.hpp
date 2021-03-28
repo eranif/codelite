@@ -19,6 +19,7 @@ class RemotyWorkspace : public IWorkspace
     wxString m_localUserWorkspaceFile;
     clFileSystemWorkspaceSettings m_settings;
     IProcess* m_buildProcess = nullptr;
+    IProcess* m_cmdProcess = nullptr;
 
 public:
     RemotyWorkspace();
@@ -26,6 +27,7 @@ public:
     virtual ~RemotyWorkspace();
 
 protected:
+    void ConfigureClangd();
     void BindEvents();
     void UnbindEvents();
     void Initialise();
@@ -35,6 +37,7 @@ protected:
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);
     void DoBuild(const wxString& kind);
+    IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
     void GetExecutable(wxString& exe, wxString& args, wxString& wd);
@@ -48,7 +51,8 @@ protected:
     void OnCustomTargetMenu(clContextMenuEvent& event);
     void OnNewWorkspace(clCommandEvent& event);
     void OnDebugStarting(clDebugEvent& event);
-
+    
+    wxString GetRemoteWorkingDir() const;
 public:
     // IWorkspace
     virtual wxString GetActiveProjectName() const { return wxEmptyString; }

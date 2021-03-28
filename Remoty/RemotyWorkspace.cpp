@@ -86,6 +86,7 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &RemotyWorkspace::OnCustomTargetMenu, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemotyWorkspace::OnBuildHotspotClicked, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyWorkspace::OnNewWorkspace, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
 
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemotyWorkspace::OnBuildProcessTerminated, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemotyWorkspace::OnBuildProcessOutput, this);
@@ -103,6 +104,7 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemotyWorkspace::OnBuildHotspotClicked, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyWorkspace::OnNewWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &RemotyWorkspace::OnDebugStarting, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemotyWorkspace::OnBuildProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemotyWorkspace::OnBuildProcessOutput, this);
@@ -518,8 +520,25 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     startup_info.isSSHDebugging = true;
     startup_info.sshAccountName = m_account.GetAccountName();
 
-    // Start terminal (doesn't do anything under MSW)
-    startup_info.ttyName = wxEmptyString;
+    // open new terminal on the remote host
+    m_remote_terminal.reset(new clRemoteTerminal(m_account));
+    m_remote_terminal->Start();
+
+    // wait for the tty
+    wxBusyCursor bc;
+    size_t count = 100; // 10 seconds
+    wxString tty;
+    while(--count) {
+        tty = m_remote_terminal->ReadTty();
+        if(tty.empty()) {
+            wxMilliSleep(100);
+        } else {
+            break;
+        }
+    }
+    clDEBUG() << "Using remote tty:" << tty << endl;
+
+    startup_info.ttyName = tty;
     startup_info.enablePrettyPrinting = true;
     dbgr->Start(startup_info);
 
@@ -612,3 +631,9 @@ IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool s
 }
 
 wxString RemotyWorkspace::GetRemoteWorkingDir() const { return m_remoteWorkspaceFile.BeforeLast('/'); }
+
+void RemotyWorkspace::OnDebugEnded(clDebugEvent& event)
+{
+    event.Skip();
+    m_remote_terminal.reset();
+}

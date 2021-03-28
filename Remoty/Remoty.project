@@ -27,6 +27,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="src">
+    <File Name="clRemoteTerminal.cpp"/>
+    <File Name="clRemoteTerminal.hpp"/>
     <File Name="RemotyNewWorkspaceDlg.cpp"/>
     <File Name="RemotyNewWorkspaceDlg.h"/>
     <File Name="RemotyWorkspace.cpp"/>

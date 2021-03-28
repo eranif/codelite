@@ -3,6 +3,7 @@
 
 #include "IWorkspace.h" // Base class: IWorkspace
 #include "clFileSystemWorkspaceConfig.hpp"
+#include "clRemoteTerminal.hpp"
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
 
@@ -20,6 +21,7 @@ class RemotyWorkspace : public IWorkspace
     clFileSystemWorkspaceSettings m_settings;
     IProcess* m_buildProcess = nullptr;
     IProcess* m_cmdProcess = nullptr;
+    clRemoteTerminal::ptr_t m_remote_terminal;
 
 public:
     RemotyWorkspace();
@@ -51,8 +53,10 @@ protected:
     void OnCustomTargetMenu(clContextMenuEvent& event);
     void OnNewWorkspace(clCommandEvent& event);
     void OnDebugStarting(clDebugEvent& event);
-    
+    void OnDebugEnded(clDebugEvent& event);
+
     wxString GetRemoteWorkingDir() const;
+
 public:
     // IWorkspace
     virtual wxString GetActiveProjectName() const { return wxEmptyString; }

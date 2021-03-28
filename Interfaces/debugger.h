@@ -354,7 +354,9 @@ protected:
     wxString m_name;
     bool m_isRemoteDebugging;
     bool m_isRemoteExtended;
+    bool m_isSSHDebugging = false;
     wxString m_debuggeeProjectName;
+    wxString m_sshAccount;
 
 public:
     IDebugger()
@@ -369,6 +371,7 @@ public:
 
     void SetObserver(IDebuggerObserver* observer) { m_observer = observer; }
 
+    const wxString& GetSshAccount() const { return m_sshAccount; }
     IDebuggerObserver* GetObserver() { return m_observer; }
 
     void SetEnvironment(EnvironmentConfig* env) { m_env = env; }
@@ -378,13 +381,13 @@ public:
     DebuggerInformation GetDebuggerInformation() { return m_info; }
 
     void SetIsRemoteDebugging(bool isRemoteDebugging) { this->m_isRemoteDebugging = isRemoteDebugging; }
-
     bool GetIsRemoteDebugging() const { return m_isRemoteDebugging; }
-
     void SetIsRemoteExtended(bool isRemoteExtended) { this->m_isRemoteExtended = isRemoteExtended; }
-
     bool GetIsRemoteExtended() const { return m_isRemoteExtended; }
-
+    void SetIsSSHDebugging(bool isSSHDebugging) { this->m_isSSHDebugging = isSSHDebugging; }
+    bool IsSSHDebugging() const { return m_isSSHDebugging; }
+    void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }
+    
     /**
      * \brief Sets the logging level 'on the fly'
      * \param level the new level

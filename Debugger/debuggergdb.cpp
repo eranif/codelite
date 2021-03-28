@@ -248,6 +248,9 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
 
         wxString dbgExeName = "gdb"; // it's up to the server machine to have gdb in the path
         wxString cmd = "gdb --interpreter=mi ";
+        if(!si.ttyName.IsEmpty()) {
+            cmd << " --tty=" << si.ttyName << " ";
+        }
         cmd << si.exeName;
         m_debuggeePid = wxNOT_FOUND;
         m_attachedMode = false;
@@ -273,15 +276,11 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
         }
 
         wxString cmd;
-#if defined(__WXGTK__) || defined(__WXMAC__)
         cmd << dbgExeName;
         if(!si.ttyName.IsEmpty()) {
             cmd << wxT(" --tty=") << si.ttyName;
         }
         cmd << wxT(" --interpreter=mi ") << si.exeName;
-#else
-        cmd << dbgExeName << wxT(" --interpreter=mi ") << si.exeName;
-#endif
 
         m_debuggeePid = wxNOT_FOUND;
         m_attachedMode = false;
@@ -416,6 +415,19 @@ void DbgGdb::DoCleanup()
 bool DbgGdb::Stop()
 {
     m_goingDown = true;
+
+    if(IsSSHDebugging() && m_debuggeePid != wxNOT_FOUND) {
+        // this is a length operation, show busy cursor
+        wxBusyCursor bc;
+
+        // open ssh connection and send SIGINT to the debuggee PID
+        wxString kill_output;
+        vector<wxString> command = { "kill", "-9", to_string(m_debuggeePid) };
+        IProcess::Ptr_t proc(::CreateAsyncProcess(this, command,
+                                                  IProcessCreateDefault | IProcessCreateSSH | IProcessCreateSync,
+                                                  wxEmptyString, nullptr, m_sshAccount));
+        proc->WaitForTerminate(kill_output);
+    }
 
     if(!m_attachedMode) {
         clKill((int)m_debuggeePid, wxSIGKILL, true, (m_info.flags & DebuggerInformation::kRunAsSuperuser));
@@ -771,7 +783,7 @@ void DbgGdb::Poke()
     }
 
     while(DoGetNextLine(curline)) {
-
+        clSYSTEM() << "Poke:" << curline << endl;
         GetDebugeePID(curline);
 
         // For string manipulations without damaging the original line read

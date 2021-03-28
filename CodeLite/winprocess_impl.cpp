@@ -355,6 +355,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
         siStartInfo.wShowWindow = SW_HIDE;
         creationFlags = CREATE_NEW_CONSOLE | CREATE_NEW_PROCESS_GROUP;
     }
+    clDEBUG() << "Running process:" << cmd << endl;
 
     BOOL ret = CreateProcess(NULL,
                              cmd.wchar_str(),   // shell line execution command

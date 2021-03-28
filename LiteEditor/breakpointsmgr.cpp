@@ -253,10 +253,21 @@ void BreakptMgr::DoRefreshFileBreakpoints(clEditor* editor)
 {
     // Load the file's line-type bps into fi, and make a set of their line-numbers
     std::multimap<int, clDebuggerBreakpoint> bps;
-    for(size_t i = 0; i < m_bps.size(); i++) {
-        clDebuggerBreakpoint b = m_bps.at(i);
-        if((editor->GetFileName() == b.file) && (b.lineno != -1)) {
-            bps.insert(std::pair<int, clDebuggerBreakpoint>(b.lineno, b));
+    for(size_t i = 0; i < m_bps.size(); ++i) {
+        clDebuggerBreakpoint& b = m_bps[i];
+        wxString remotePath = editor->GetRemotePath();
+        if(!remotePath.empty()) {
+            // this is a remote file
+            wxFileName fn(b.file);
+            wxString unix_path = fn.GetFullPath(wxPATH_UNIX);
+            if(remotePath == unix_path && b.lineno != -1) {
+                b.file.swap(unix_path);
+                bps.insert({ b.lineno, b });
+            }
+        } else {
+            if((editor->GetFileName() == b.file) && (b.lineno != -1)) {
+                bps.insert({ b.lineno, b });
+            }
         }
     }
 
@@ -692,35 +703,49 @@ void BreakptMgr::EditBreakpoint(int index, bool& bpExist)
 void BreakptMgr::ReconcileBreakpoints(const std::vector<clDebuggerBreakpoint>& li)
 {
     std::vector<clDebuggerBreakpoint> updated_bps;
-    std::vector<clDebuggerBreakpoint>::const_iterator li_iter = li.begin();
-    for(; li_iter != li.end(); ++li_iter) {
-        int index = FindBreakpointById(li_iter->debugger_id, m_bps);
+    updated_bps.reserve(li.size());
+
+    auto debugger = DebuggerMgr::Get().GetActiveDebugger();
+    bool remote_debugging = false;
+    if(debugger && debugger->IsSSHDebugging()) {
+        // convert breakpoint path to unix paths
+        remote_debugging = true;
+    }
+
+    for(auto bp : li) {
+        if(remote_debugging) {
+            wxFileName fn(bp.file);
+            bp.file = fn.GetFullPath(wxPATH_UNIX);
+        }
+
+        int index = FindBreakpointById(bp.debugger_id, m_bps);
         if(index == wxNOT_FOUND) {
 
-            if(IsDuplicate(*li_iter, updated_bps))
+            if(IsDuplicate(bp, updated_bps))
                 continue;
 
             // This will happen e.g. if a bp was auto-set on Main()
             // If so, its internal_id will be invalid
-            clDebuggerBreakpoint bp = *li_iter;
             bp.internal_id = GetNextID();
-            updated_bps.push_back(bp);
+            updated_bps.emplace_back(bp);
 
         } else {
             // We've match the debugger_id from -break-list with a bp
             // Update the ignore-count, then store it in a new vector
-            clDebuggerBreakpoint bp = m_bps.at(index);
-            bp.ignore_number = li_iter->ignore_number;
-            bp.what = li_iter->what;
-            bp.at = li_iter->at;
+            clDebuggerBreakpoint bpt = m_bps[index];
+            bpt.ignore_number = bp.ignore_number;
+            bpt.what = bp.what;
+            bpt.at = bp.at;
+            bpt.file = bp.file;
 
             // Remove it from the m_bps list
             m_bps.erase(m_bps.begin() + index);
 
-            SetBestBPType(bp); // as this might have just changed
-            updated_bps.push_back(bp);
+            SetBestBPType(bpt); // as this might have just changed
+            updated_bps.emplace_back(bpt);
         }
     }
+
     // All the still-existing bps have been added to updated_bps
     // So throw away m_bps (which will contain stale bps) and replace with the new vector
     // First though, delete all markers. Otherwise, if the last in a file has been deleted...

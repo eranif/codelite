@@ -72,8 +72,6 @@ class DbgGdb : public wxEvtHandler, public IDebugger
     bool m_reverseDebugging;
     wxStringSet_t m_reversableCommands;
     bool m_isRecording;
-    bool m_isSSHDebugging = false;
-    wxString m_sshAccount;
 
 public:
     int m_internalBpId;
@@ -111,9 +109,6 @@ public:
 
     void SetIsRecording(bool isRecording) { this->m_isRecording = isRecording; }
     bool IsRecording() const { return m_isRecording; }
-
-    bool IsSSHDebugging() const { return m_isSSHDebugging; }
-    const wxString& GetSshAccount() const { return m_sshAccount; }
 
 public:
     DbgGdb();

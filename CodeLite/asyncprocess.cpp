@@ -181,8 +181,9 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
     // the following are common to both ssh / putty clients
     a.Add(ssh_client);
     a.Add(accountInfo.GetUsername() + "@" + accountInfo.GetHost());
-    a.Add("-p");
-    a.Add(wxString() << accountInfo.GetPort());
+    a.Add("-t");                                // force tty
+    a.Add("-p");                                // port
+    a.Add(wxString() << accountInfo.GetPort()); // the port number
 
     //----------------------------------------------------------
     // we support extra args in the environment variable

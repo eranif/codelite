@@ -939,6 +939,12 @@ FLAGS_t Allocator::DoGetValidMenus(wxcWidget* item) const
             menuflags |= MT_INSERT_INTO_SIZER;
             break;
 
+        case ID_WXAUIMANAGER:
+            menuflags |= MT_EVENTS;
+            menuflags |= MT_COMMON_MENU;
+            menuflags |= MT_EDIT;
+            break;
+
         default:
             menuflags |= MT_EVENTS;
             menuflags |= MT_COMMON_MENU;

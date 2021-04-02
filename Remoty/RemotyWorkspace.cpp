@@ -41,9 +41,18 @@ RemotyWorkspace::RemotyWorkspace(bool dummy)
     SetWorkspaceType(WORKSPACE_TYPE_NAME);
 }
 
-RemotyWorkspace::~RemotyWorkspace() { UnbindEvents(); }
-wxFileName RemotyWorkspace::GetFileName() const { return {}; }
-wxString RemotyWorkspace::GetFilesMask() const { return clFileSystemWorkspace::Get().GetFilesMask(); }
+RemotyWorkspace::~RemotyWorkspace()
+{
+    UnbindEvents();
+}
+wxFileName RemotyWorkspace::GetFileName() const
+{
+    return {};
+}
+wxString RemotyWorkspace::GetFilesMask() const
+{
+    return clFileSystemWorkspace::Get().GetFilesMask();
+}
 
 wxFileName RemotyWorkspace::GetProjectFileName(const wxString& projectName) const
 {
@@ -57,7 +66,10 @@ void RemotyWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString
     wxUnusedVar(files);
 }
 
-wxString RemotyWorkspace::GetProjectFromFile(const wxFileName& filename) const { return wxEmptyString; }
+wxString RemotyWorkspace::GetProjectFromFile(const wxFileName& filename) const
+{
+    return wxEmptyString;
+}
 
 void RemotyWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
@@ -65,11 +77,20 @@ void RemotyWorkspace::GetWorkspaceFiles(wxArrayString& files) const
     wxUnusedVar(files);
 }
 
-wxArrayString RemotyWorkspace::GetWorkspaceProjects() const { return {}; }
+wxArrayString RemotyWorkspace::GetWorkspaceProjects() const
+{
+    return {};
+}
 
-bool RemotyWorkspace::IsBuildSupported() const { return true; }
+bool RemotyWorkspace::IsBuildSupported() const
+{
+    return true;
+}
 
-bool RemotyWorkspace::IsProjectSupported() const { return false; }
+bool RemotyWorkspace::IsProjectSupported() const
+{
+    return false;
+}
 
 void RemotyWorkspace::BindEvents()
 {
@@ -142,7 +163,10 @@ void RemotyWorkspace::Initialise()
     clGetManager()->GetWorkspaceView()->AddPage(m_view, WORKSPACE_TYPE_NAME);
 }
 
-bool RemotyWorkspace::IsOpened() const { return !m_account.GetAccountName().empty(); }
+bool RemotyWorkspace::IsOpened() const
+{
+    return !m_account.GetAccountName().empty();
+}
 
 void RemotyWorkspace::DoClose(bool notify)
 {
@@ -566,16 +590,27 @@ void RemotyWorkspace::ConfigureClangd()
 {
     // create a detection script on the remote host
     wxString clangd_exe;
+    wxString script_output;
     {
         wxString command;
         command << "clangd=$(ls -vr /usr/bin/clangd*|head -1)\n";
         command << "echo $clangd\n";
         IProcess::Ptr_t p(DoRunSSHProcess(command, true));
-        p->WaitForTerminate(clangd_exe);
+        p->WaitForTerminate(script_output);
     }
 
-    clangd_exe.Trim().Trim(false);
-    if(clangd_exe.empty() || !clangd_exe.StartsWith("/usr/bin/clangd")) {
+    // parse the output
+    clDEBUG() << "ConfigureClangd:" << script_output << endl;
+    auto lines = ::wxStringTokenize(script_output, "\r\n", wxTOKEN_STRTOK);
+    for(auto& line : lines) {
+        line.Trim().Trim(false);
+        if(line.StartsWith("/usr/bin/clangd")) {
+            clangd_exe.swap(line);
+            break;
+        }
+    }
+
+    if(clangd_exe.empty()) {
         clDEBUG() << "No clangd was found on remote host" << endl;
         return;
     }
@@ -630,7 +665,10 @@ IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool s
     return ::CreateAsyncProcess(this, args, flags, wxEmptyString, nullptr, m_account.GetAccountName());
 }
 
-wxString RemotyWorkspace::GetRemoteWorkingDir() const { return m_remoteWorkspaceFile.BeforeLast('/'); }
+wxString RemotyWorkspace::GetRemoteWorkingDir() const
+{
+    return m_remoteWorkspaceFile.BeforeLast('/');
+}
 
 void RemotyWorkspace::OnDebugEnded(clDebugEvent& event)
 {

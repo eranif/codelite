@@ -25,10 +25,10 @@
 #ifndef DBGCMD_H
 #define DBGCMD_H
 
-#include "wx/string.h"
-#include "wx/event.h"
-#include "debuggerobserver.h"
 #include "debugger.h"
+#include "debuggerobserver.h"
+#include "wx/event.h"
+#include "wx/string.h"
 
 class IDebugger;
 class DbgGdb;
@@ -54,9 +54,14 @@ public:
         : m_observer(observer)
     {
     }
-    virtual ~DbgCmdHandler() {}
+    virtual ~DbgCmdHandler()
+    {
+    }
 
-    virtual bool WantsErrors() const { return false; }
+    virtual bool WantsErrors() const
+    {
+        return false;
+    }
 
     virtual bool ProcessOutput(const wxString& line) = 0;
 };
@@ -76,7 +81,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerGetLine() {}
+    virtual ~DbgCmdHandlerGetLine()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -92,7 +99,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerDisasseble() {}
+    virtual ~DbgCmdHandlerDisasseble()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -108,7 +117,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerDisassebleCurLine() {}
+    virtual ~DbgCmdHandlerDisassebleCurLine()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -128,7 +139,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerStackDepth() {}
+    virtual ~DbgCmdHandlerStackDepth()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -152,7 +165,9 @@ public:
         , m_gdb(gdb)
     {
     }
-    virtual ~DbgCmdHandlerAsyncCmd() {}
+    virtual ~DbgCmdHandlerAsyncCmd()
+    {
+    }
 
     void UpdateGotControl(DebuggerReasons reason, const wxString& func);
     virtual bool ProcessOutput(const wxString& line);
@@ -166,9 +181,14 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerExecRun() {}
+    virtual ~DbgCmdHandlerExecRun()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
-    virtual bool WantsErrors() const { return true; }
+    virtual bool WantsErrors() const
+    {
+        return true;
+    }
 };
 
 class DbgCmdHandlerRemoteDebugging : public DbgCmdHandler
@@ -182,7 +202,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerRemoteDebugging() {}
+    virtual ~DbgCmdHandlerRemoteDebugging()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -195,11 +217,8 @@ class DbgCmdHandlerBp : public DbgCmdHandler
     DbgGdb* m_debugger;
 
 public:
-    DbgCmdHandlerBp(IDebuggerObserver* observer,
-                    DbgGdb* debugger,
-                    clDebuggerBreakpoint bp,
-                    std::vector<clDebuggerBreakpoint>* bplist,
-                    int bptype = BP_type_break)
+    DbgCmdHandlerBp(IDebuggerObserver* observer, DbgGdb* debugger, clDebuggerBreakpoint bp,
+                    std::vector<clDebuggerBreakpoint>* bplist, int bptype = BP_type_break)
         : DbgCmdHandler(observer)
         , m_bp(bp)
         , m_bplist(bplist)
@@ -208,9 +227,14 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerBp() {}
+    virtual ~DbgCmdHandlerBp()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
-    virtual bool WantsErrors() const { return true; }
+    virtual bool WantsErrors() const
+    {
+        return true;
+    }
 };
 
 class DbgCmdHandlerLocals : public DbgCmdHandler
@@ -220,7 +244,9 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdHandlerLocals() {}
+    virtual ~DbgCmdHandlerLocals()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -231,7 +257,9 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdHandlerFuncArgs() {}
+    virtual ~DbgCmdHandlerFuncArgs()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -243,7 +271,9 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdHandlerVarCreator() {}
+    virtual ~DbgCmdHandlerVarCreator()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -258,9 +288,14 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerEvalExpr() {}
+    virtual ~DbgCmdHandlerEvalExpr()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
-    virtual const wxString& GetExpression() const { return m_expression; }
+    virtual const wxString& GetExpression() const
+    {
+        return m_expression;
+    }
 };
 
 // handler -list-stack-frames command
@@ -271,7 +306,9 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdStackList() {}
+    virtual ~DbgCmdStackList()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -283,7 +320,9 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdSelectFrame() {}
+    virtual ~DbgCmdSelectFrame()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -295,7 +334,9 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdDisplayOutput() {}
+    virtual ~DbgCmdDisplayOutput()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -308,9 +349,14 @@ class DbgCmdResolveTypeHandler : public DbgCmdHandler
 public:
     DbgCmdResolveTypeHandler(const wxString& expression, DbgGdb* debugger, int userReason);
 
-    virtual ~DbgCmdResolveTypeHandler() {}
+    virtual ~DbgCmdResolveTypeHandler()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
-    virtual bool WantsErrors() const { return true; }
+    virtual bool WantsErrors() const
+    {
+        return true;
+    }
 };
 
 class DbgCmdCLIHandler : public DbgCmdHandler
@@ -324,16 +370,30 @@ public:
     {
     }
 
-    virtual ~DbgCmdCLIHandler() {}
+    virtual ~DbgCmdCLIHandler()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 
-    const wxString& GetOutput() const { return m_output; }
+    const wxString& GetOutput() const
+    {
+        return m_output;
+    }
 
-    void SetCommandId(const wxString& commandId) { this->m_commandId = commandId; }
+    void SetCommandId(const wxString& commandId)
+    {
+        this->m_commandId = commandId;
+    }
 
-    const wxString& GetCommandId() const { return m_commandId; }
+    const wxString& GetCommandId() const
+    {
+        return m_commandId;
+    }
 
-    void Append(const wxString& text) { m_output.Append(text + wxT("\n")); }
+    void Append(const wxString& text)
+    {
+        m_output.Append(text + wxT("\n"));
+    }
 };
 
 class DbgCmdGetTipHandler : public DbgCmdCLIHandler
@@ -348,7 +408,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdGetTipHandler() {}
+    virtual ~DbgCmdGetTipHandler()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -363,7 +425,9 @@ public:
         , m_bp(bp)
     {
     }
-    virtual ~DbgCmdSetConditionHandler() {}
+    virtual ~DbgCmdSetConditionHandler()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -372,12 +436,17 @@ public:
 // the debugger
 class DbgCmdBreakList : public DbgCmdHandler
 {
+    DbgGdb* m_gdb = nullptr;
+
 public:
-    DbgCmdBreakList(IDebuggerObserver* observer)
-        : DbgCmdHandler(observer)
+    DbgCmdBreakList(DbgGdb* gdb)
+        : DbgCmdHandler(nullptr)
+        , m_gdb(gdb)
     {
     }
-    virtual ~DbgCmdBreakList() {}
+    virtual ~DbgCmdBreakList()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -391,7 +460,9 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdListThreads() {}
+    virtual ~DbgCmdListThreads()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -411,7 +482,9 @@ public:
         , m_columns(columns)
     {
     }
-    virtual ~DbgCmdWatchMemory() {}
+    virtual ~DbgCmdWatchMemory()
+    {
+    }
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -434,9 +507,14 @@ public:
     /**
      * @brief we want to handle error ourselves
      */
-    virtual bool WantsErrors() const { return true; }
+    virtual bool WantsErrors() const
+    {
+        return true;
+    }
 
-    virtual ~DbgCmdCreateVarObj() {}
+    virtual ~DbgCmdCreateVarObj()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -455,7 +533,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdListChildren() {}
+    virtual ~DbgCmdListChildren()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -473,7 +553,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdEvalVarObj() {}
+    virtual ~DbgCmdEvalVarObj()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -489,7 +571,9 @@ public:
     {
     }
 
-    virtual ~DbgFindMainBreakpointIdHandler() {}
+    virtual ~DbgFindMainBreakpointIdHandler()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -509,10 +593,15 @@ public:
     {
     }
 
-    virtual ~DbgVarObjUpdate() {}
+    virtual ~DbgVarObjUpdate()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
-    virtual bool WantsErrors() { return true; }
+    virtual bool WantsErrors()
+    {
+        return true;
+    }
 };
 
 // Callback for handling jump command questions
@@ -524,7 +613,9 @@ public:
         : DbgCmdCLIHandler(observer)
     {
     }
-    virtual ~DbgCmdJumpHandler() {}
+    virtual ~DbgCmdJumpHandler()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -536,7 +627,9 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdStopHandler() {}
+    virtual ~DbgCmdStopHandler()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -551,7 +644,9 @@ public:
         , m_gdb(gdb)
     {
     }
-    virtual ~DbgCmdRecordHandler() {}
+    virtual ~DbgCmdRecordHandler()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -572,7 +667,9 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerRegisterNames() {}
+    virtual ~DbgCmdHandlerRegisterNames()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -593,7 +690,9 @@ public:
         m_numberToName = numberToName;
     }
 
-    virtual ~DbgCmdHandlerRegisterValues() {}
+    virtual ~DbgCmdHandlerRegisterValues()
+    {
+    }
 
     virtual bool ProcessOutput(const wxString& line);
 };

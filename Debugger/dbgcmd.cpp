@@ -997,18 +997,6 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
             wxRemoveQuotes(breakpoint.what);
         }
 
-        //		iter = attr.find("func");
-        //		if ( iter != attr.end() ) {
-        //			breakpoint.function_name = wxString(iter->second.c_str(), wxConvUTF8);
-        //			wxRemoveQuotes( breakpoint.function_name );
-        //		}
-        //
-        //		iter = attr.find("addr");
-        //		if ( iter != attr.end() ) {
-        //			breakpoint.memory_address = wxString(iter->second.c_str(), wxConvUTF8);
-        //			wxRemoveQuotes( breakpoint.memory_address );
-        //		}
-
         iter = attr.find("file");
         if(iter != attr.end()) {
             breakpoint.file = wxString(iter->second.c_str(), wxConvUTF8);
@@ -1068,8 +1056,12 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
         }
     });
 
-    li.swap(uniqueBreakpoints);
-    m_observer->ReconcileBreakpoints(li);
+    // Update the UI
+    clDebugEvent event_breakpoints(wxEVT_DEBUG_BREAKPOINTS_LIST);
+    event_breakpoints.SetSshAccount(m_gdb->GetSshAccount());
+    event_breakpoints.SetIsSSHDebugging(m_gdb->IsSSHDebugging());
+    event_breakpoints.GetBreakpoints().swap(uniqueBreakpoints);
+    EventNotifier::Get()->AddPendingEvent(event_breakpoints);
     return true;
 }
 

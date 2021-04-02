@@ -39,12 +39,14 @@ BreakptMgr::BreakptMgr()
     NextInternalID = FIRST_INTERNAL_ID;
     m_expectingControl = false;
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &BreakptMgr::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_DEBUG_BREAKPOINTS_LIST, &BreakptMgr::OnReconcileBreakpoints, this);
 }
 
 BreakptMgr::~BreakptMgr()
 {
     Clear();
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &BreakptMgr::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_BREAKPOINTS_LIST, &BreakptMgr::OnReconcileBreakpoints, this);
 }
 
 bool BreakptMgr::AddBreakpointByAddress(const wxString& address)
@@ -700,10 +702,13 @@ void BreakptMgr::EditBreakpoint(int index, bool& bpExist)
     RefreshBreakpointMarkers();
 }
 
-void BreakptMgr::ReconcileBreakpoints(const std::vector<clDebuggerBreakpoint>& li)
+void BreakptMgr::OnReconcileBreakpoints(clDebugEvent& event)
 {
+    // reconcile the real breakpoint list with the one stored here
+    const auto& actual_bps_list = event.GetBreakpoints();
+
     std::vector<clDebuggerBreakpoint> updated_bps;
-    updated_bps.reserve(li.size());
+    updated_bps.reserve(actual_bps_list.size());
 
     auto debugger = DebuggerMgr::Get().GetActiveDebugger();
     bool remote_debugging = false;
@@ -712,7 +717,7 @@ void BreakptMgr::ReconcileBreakpoints(const std::vector<clDebuggerBreakpoint>& l
         remote_debugging = true;
     }
 
-    for(auto bp : li) {
+    for(auto bp : actual_bps_list) {
         if(remote_debugging) {
             wxFileName fn(bp.file);
             bp.file = fn.GetFullPath(wxPATH_UNIX);
@@ -990,7 +995,10 @@ bool BreakptMgr::AreThereEnabledBreakpoints(bool enabled /*= true*/)
     return false;
 }
 
-void BreakptMgr::SaveSession(SessionEntry& session) { session.SetBreakpoints(m_bps); }
+void BreakptMgr::SaveSession(SessionEntry& session)
+{
+    session.SetBreakpoints(m_bps);
+}
 
 void BreakptMgr::LoadSession(const SessionEntry& session)
 {
@@ -1078,7 +1086,10 @@ void myDragImage::OnEndDrag(wxMouseEvent& event)
     }
 }
 
-void BreakptMgr::RefreshBreakpointsForEditor(clEditor* editor) { DoRefreshFileBreakpoints(editor); }
+void BreakptMgr::RefreshBreakpointsForEditor(clEditor* editor)
+{
+    DoRefreshFileBreakpoints(editor);
+}
 
 bool BreakptMgr::IsDuplicate(const clDebuggerBreakpoint& bp, const std::vector<clDebuggerBreakpoint>& bpList)
 {

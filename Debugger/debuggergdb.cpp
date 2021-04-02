@@ -200,7 +200,10 @@ DbgGdb::~DbgGdb()
     EventNotifier::Get()->Disconnect(wxEVT_GDB_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
 }
 
-void DbgGdb::RegisterHandler(const wxString& id, DbgCmdHandler* cmd) { m_handlers[id] = cmd; }
+void DbgGdb::RegisterHandler(const wxString& id, DbgCmdHandler* cmd)
+{
+    m_handlers[id] = cmd;
+}
 
 DbgCmdHandler* DbgGdb::PopHandler(const wxString& id)
 {
@@ -438,7 +441,10 @@ bool DbgGdb::Stop()
     return true;
 }
 
-bool DbgGdb::Next() { return WriteCommand(wxT("-exec-next"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
+bool DbgGdb::Next()
+{
+    return WriteCommand(wxT("-exec-next"), new DbgCmdHandlerAsyncCmd(m_observer, this));
+}
 
 bool DbgGdb::NextInstruction()
 {
@@ -619,18 +625,30 @@ bool DbgGdb::SetCommands(const clDebuggerBreakpoint& bp)
     return WriteCommand(command, NULL);
 }
 
-bool DbgGdb::Continue() { return WriteCommand("-exec-continue", new DbgCmdHandlerAsyncCmd(m_observer, this)); }
+bool DbgGdb::Continue()
+{
+    return WriteCommand("-exec-continue", new DbgCmdHandlerAsyncCmd(m_observer, this));
+}
 
-bool DbgGdb::StepIn() { return WriteCommand(wxT("-exec-step"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
+bool DbgGdb::StepIn()
+{
+    return WriteCommand(wxT("-exec-step"), new DbgCmdHandlerAsyncCmd(m_observer, this));
+}
 
 bool DbgGdb::StepInInstruction()
 {
     return WriteCommand(wxT("-exec-step-instruction"), new DbgCmdHandlerAsyncCmd(m_observer, this));
 }
 
-bool DbgGdb::StepOut() { return WriteCommand(wxT("-exec-finish"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
+bool DbgGdb::StepOut()
+{
+    return WriteCommand(wxT("-exec-finish"), new DbgCmdHandlerAsyncCmd(m_observer, this));
+}
 
-bool DbgGdb::IsRunning() { return m_gdbProcess != NULL; }
+bool DbgGdb::IsRunning()
+{
+    return m_gdbProcess != NULL;
+}
 
 bool DbgGdb::Interrupt()
 {
@@ -728,7 +746,10 @@ bool DbgGdb::ExecuteCmd(const wxString& cmd)
     return false;
 }
 
-bool DbgGdb::RemoveAllBreaks() { return ExecuteCmd(wxT("delete")); }
+bool DbgGdb::RemoveAllBreaks()
+{
+    return ExecuteCmd(wxT("delete"));
+}
 
 bool DbgGdb::RemoveBreak(double bid)
 {
@@ -783,7 +804,6 @@ void DbgGdb::Poke()
     }
 
     while(DoGetNextLine(curline)) {
-        clSYSTEM() << "Poke:" << curline << endl;
         GetDebugeePID(curline);
 
         // For string manipulations without damaging the original line read
@@ -1023,7 +1043,10 @@ bool DbgGdb::SetFrame(int frame)
     return WriteCommand(command, new DbgCmdSelectFrame(m_observer));
 }
 
-bool DbgGdb::ListThreads() { return WriteCommand(wxT("-thread-info"), new DbgCmdListThreads(m_observer)); }
+bool DbgGdb::ListThreads()
+{
+    return WriteCommand(wxT("-thread-info"), new DbgCmdListThreads(m_observer));
+}
 
 bool DbgGdb::SelectThread(long threadId)
 {
@@ -1092,7 +1115,10 @@ void DbgGdb::SetDebuggerInformation(const DebuggerInformation& info)
     m_consoleFinder.SetConsoleCommand(info.consoleCommand);
 }
 
-void DbgGdb::BreakList() { (void)WriteCommand(wxT("-break-list"), new DbgCmdBreakList(m_observer)); }
+void DbgGdb::BreakList()
+{
+    (void)WriteCommand(wxT("-break-list"), new DbgCmdBreakList(this));
+}
 
 bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName)
 {
@@ -1265,7 +1291,10 @@ void DbgGdb::SetCliHandler(DbgCmdCLIHandler* handler)
     m_cliHandler = handler;
 }
 
-DbgCmdCLIHandler* DbgGdb::GetCliHandler() { return m_cliHandler; }
+DbgCmdCLIHandler* DbgGdb::GetCliHandler()
+{
+    return m_cliHandler;
+}
 
 bool DbgGdb::ListChildren(const wxString& name, int userReason)
 {
@@ -1364,9 +1393,15 @@ bool DbgGdb::DoGetNextLine(wxString& line)
     return true;
 }
 
-void DbgGdb::SetInternalMainBpID(int bpId) { m_internalBpId = bpId; }
+void DbgGdb::SetInternalMainBpID(int bpId)
+{
+    m_internalBpId = bpId;
+}
 
-bool DbgGdb::Restart() { return WriteCommand(wxT("-exec-run "), new DbgCmdHandlerExecRun(m_observer, this)); }
+bool DbgGdb::Restart()
+{
+    return WriteCommand(wxT("-exec-run "), new DbgCmdHandlerExecRun(m_observer, this));
+}
 
 bool DbgGdb::SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat)
 {
@@ -1592,7 +1627,10 @@ bool DbgGdb::ListRegisters()
     return WriteCommand("-data-list-register-names", new DbgCmdHandlerRegisterNames(m_observer, this));
 }
 
-void DbgGdb::EnableReverseDebugging(bool b) { m_reverseDebugging = b; }
+void DbgGdb::EnableReverseDebugging(bool b)
+{
+    m_reverseDebugging = b;
+}
 
 void DbgGdb::EnableRecording(bool b)
 {
@@ -1607,4 +1645,7 @@ void DbgGdb::EnableRecording(bool b)
     }
 }
 
-bool DbgGdb::IsReverseDebuggingEnabled() const { return m_reverseDebugging; }
+bool DbgGdb::IsReverseDebuggingEnabled() const
+{
+    return m_reverseDebugging;
+}

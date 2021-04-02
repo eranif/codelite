@@ -280,6 +280,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_ENDED, clDebugEvent);
 // Debugger is requesting to open a file and set the marker at a given position
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_SET_FILELINE, clDebugEvent);
 
+// debugger -> IDE.
+// Update the breakpoint
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUG_BREAKPOINTS_LIST, clDebugEvent);
+
 // Notify the debugger to update the active pane
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DEBUGGER_REFRESH_PANE, clDebugEvent);
 

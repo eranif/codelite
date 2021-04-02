@@ -244,7 +244,7 @@ public:
      * Update the m_bps with what the debugger really contains
      * from vector of breakpoints acquired from -break-list
      */
-    void ReconcileBreakpoints(const std::vector<clDebuggerBreakpoint>& li);
+    void OnReconcileBreakpoints(clDebugEvent& event);
 
     /**
      * Clears the debugger_ids of all breakpoints.

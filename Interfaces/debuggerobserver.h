@@ -267,18 +267,6 @@ public:
     }
 
     /**
-     * @brief Update the breakpoints-manager's info with what the debugger really contains
-     * @param vector of breakpoints acquired from -break-list
-     */
-    void ReconcileBreakpoints(std::vector<clDebuggerBreakpoint>& li)
-    {
-        DebuggerEventData e;
-        e.m_updateReason = DBG_UR_RECONCILE_BPTS;
-        e.m_bpInfoList = li;
-        DebuggerUpdate(e);
-    }
-
-    /**
      * @brief Tell the manager that the debugger is now interruptable
      */
     void DebuggerPidValid()

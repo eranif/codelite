@@ -98,17 +98,38 @@ public:
     bool ExecCLICommand(const wxString& command, DbgCmdCLIHandler* cmd);
     void SetBreakpoints();
     void SetInternalMainBpID(int bpId);
-    void SetShouldBreakAtMain(bool break_at_main) { m_break_at_main = break_at_main; }
-    bool GetShouldBreakAtMain() const { return m_break_at_main; }
+    void SetShouldBreakAtMain(bool break_at_main)
+    {
+        m_break_at_main = break_at_main;
+    }
+    bool GetShouldBreakAtMain() const
+    {
+        return m_break_at_main;
+    }
     void GetDebugeePID(const wxString& line);
 
-    void SetGoingDown(bool goingDown) { this->m_goingDown = goingDown; }
-    bool IsGoingDown() const { return m_goingDown; }
+    void SetGoingDown(bool goingDown)
+    {
+        this->m_goingDown = goingDown;
+    }
+    bool IsGoingDown() const
+    {
+        return m_goingDown;
+    }
 
-    const std::vector<clDebuggerBreakpoint>& GetBpList() const { return m_bpList; }
+    const std::vector<clDebuggerBreakpoint>& GetBpList() const
+    {
+        return m_bpList;
+    }
 
-    void SetIsRecording(bool isRecording) { this->m_isRecording = isRecording; }
-    bool IsRecording() const { return m_isRecording; }
+    void SetIsRecording(bool isRecording)
+    {
+        this->m_isRecording = isRecording;
+    }
+    bool IsRecording() const
+    {
+        return m_isRecording;
+    }
 
 public:
     DbgGdb();

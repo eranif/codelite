@@ -3131,10 +3131,6 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
         UpdateRemoteTargetConnected(event.m_text);
         break;
 
-    case DBG_UR_RECONCILE_BPTS:
-        GetBreakpointsMgr()->ReconcileBreakpoints(event.m_bpInfoList);
-        break;
-
     case DBG_UR_BP_HIT:
         GetBreakpointsMgr()->BreakpointHit(event.m_bpDebuggerId);
         break;

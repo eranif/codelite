@@ -44,7 +44,7 @@ public:
 
     wxString GetLabelForUI() const
     {
-        wxString label = GetLabel();
+        wxString label = wxGetTranslation(GetLabel());
         label.EndsWith(":", &label);
         return label;
     }

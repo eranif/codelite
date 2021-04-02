@@ -169,7 +169,7 @@ void AuiPaneInfo::OnChanged(wxPropertyGridEvent& e)
     wxString value = prop->GetValueAsString();
     int iValue = prop->GetValue().GetLong();
     wxSize szValue = wxCrafter::DecodeSize(value);
-    bool bValue = (value == "True");
+    bool bValue = prop->GetValue().GetBool();
 
     if(label == _("Name"))
         m_name = value;

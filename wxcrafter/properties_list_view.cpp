@@ -47,7 +47,7 @@ void PropertiesListView::ConstructProjectSettings()
     m_pg->Append(new wxPropertyCategory(_("wxCrafter Project Settings")));
     AddDirPicker(_("Output Directory"), wxcProjectMetadata::Get().GetGeneratedFilesDir(),
                  _("The generated files' output directory"));
-    AddDirPicker(PROP_OUTPUT_FILE_NAME, wxcProjectMetadata::Get().GetOutputFileName(),
+    AddDirPicker(wxGetTranslation(PROP_OUTPUT_FILE_NAME), wxcProjectMetadata::Get().GetOutputFileName(),
                  _("The generated files' name.\nwxCrafter will generate a $(FILE).cpp and $(FILE).h"));
     AddLongTextProp(_("Additional Include Files"), filesStr,
                     _("List of additional include files that should be included in the "
@@ -259,7 +259,7 @@ void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
         p = m_pg->GetProperty(_("Bitmap Files"));
         if(p) { wxcProjectMetadata::Get().SetBitmapsFile(p->GetValueAsString()); }
 
-        p = m_pg->GetProperty(PROP_OUTPUT_FILE_NAME);
+        p = m_pg->GetProperty(wxGetTranslation(PROP_OUTPUT_FILE_NAME));
         if(p) { wxcProjectMetadata::Get().SetOutputFileName(p->GetValueAsString()); }
 
         p = m_pg->GetProperty(_("Generate Window ID"));
@@ -294,7 +294,7 @@ void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
 
             wxBoolProperty* boolProp = dynamic_cast<wxBoolProperty*>(pgp);
             if(boolProp) {
-                pb->SetValue(boolProp->GetValueAsString() == "True" ? "1" : "0");
+                pb->SetValue(boolProp->GetValue().GetBool() ? "1" : "0");
             } else {
                 pb->SetValue(pgp->GetValueAsString());
             }

@@ -225,7 +225,7 @@ void ToolBarItemWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
             wxString ppn = "1";
             propertynode = XmlUtils::FindFirstByTagName(node, "proportion");
             if(propertynode) { ppn = propertynode->GetNodeContent(); }
-            SetPropertyString("Proportion:", ppn);
+            SetPropertyString(PROP_PROPORTION, ppn);
         }
     }
 
@@ -455,7 +455,7 @@ AuiToolBarItemSpaceWrapper::AuiToolBarItemSpaceWrapper()
 
     AddCategory(_("ToolBar Item Space"));
     AddProperty(new StringProperty(PROP_NAME, "", "Name"));
-    AddProperty(new StringProperty("Proportion:", "1", _("How stretchable the space is. The normal value is 1.")));
+    AddProperty(new StringProperty(PROP_PROPORTION, "1", _("How stretchable the space is. The normal value is 1.")));
 
     m_namePattern = "m_auitbarStretchSpace";
     SetName(GenerateName());
@@ -463,13 +463,13 @@ AuiToolBarItemSpaceWrapper::AuiToolBarItemSpaceWrapper()
 
 wxString AuiToolBarItemSpaceWrapper::CppCtorCode() const
 {
-    return wxString() << GetWindowParent() << "->AddStretchSpacer(" << PropertyString("Proportion:") << ");\n";
+    return wxString() << GetWindowParent() << "->AddStretchSpacer(" << PropertyString(PROP_PROPORTION) << ");\n";
 }
 
 void AuiToolBarItemSpaceWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     text << wxT("<object class=\"space\" name=\"") << GetName() << wxT("\">") << wxT("<proportion>")
-         << PropertyString("Proportion:") << wxT("</proportion>") << wxT("</object>");
+         << PropertyString(PROP_PROPORTION) << wxT("</proportion>") << wxT("</object>");
 }
 // -------------------------------------------
 // AuiLabel item

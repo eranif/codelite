@@ -5266,7 +5266,11 @@ void clEditor::DoUpdateTLWTitle(bool raise)
 
     } else {
         wxString title;
-        title << GetFileName().GetFullPath();
+        if(IsRemoteFile()) {
+            title << GetRemotePath() << "[" << GetRemoteData()->GetAccountName() << "]";
+        } else {
+            title << GetFileName().GetFullPath();
+        }
         if(GetModify()) {
             title.Prepend("*");
         }

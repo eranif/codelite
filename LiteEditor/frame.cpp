@@ -1018,7 +1018,10 @@ void clMainFrame::Initialize(bool loadLastSession)
     ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
 }
 
-clMainFrame* clMainFrame::Get() { return m_theFrame; }
+clMainFrame* clMainFrame::Get()
+{
+    return m_theFrame;
+}
 static int GetBestXButtonSize(wxWindow* win)
 {
     wxUnusedVar(win);
@@ -1511,9 +1514,14 @@ void clMainFrame::Bootstrap()
     }
 }
 
-void clMainFrame::UpdateBuildTools() {}
+void clMainFrame::UpdateBuildTools()
+{
+}
 
-void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) { Close(); }
+void clMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
+{
+    Close();
+}
 
 void clMainFrame::OnTBUnRedoMenu(wxCommandEvent& event)
 {
@@ -1916,7 +1924,10 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
     ManagerST::Get()->OpenWorkspace(wspFile);
 }
 
-void clMainFrame::OnCompleteWordRefreshList(wxCommandEvent& event) { wxUnusedVar(event); }
+void clMainFrame::OnCompleteWordRefreshList(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+}
 
 void clMainFrame::OnCodeComplete(wxCommandEvent& event)
 {
@@ -3551,9 +3562,15 @@ void clMainFrame::OnCloseAllButThis(wxCommandEvent& e)
     }
 }
 
-WorkspaceTab* clMainFrame::GetWorkspaceTab() { return GetWorkspacePane()->GetWorkspaceTab(); }
+WorkspaceTab* clMainFrame::GetWorkspaceTab()
+{
+    return GetWorkspacePane()->GetWorkspaceTab();
+}
 
-FileExplorer* clMainFrame::GetFileExplorer() { return GetWorkspacePane()->GetFileExplorer(); }
+FileExplorer* clMainFrame::GetFileExplorer()
+{
+    return GetWorkspacePane()->GetFileExplorer();
+}
 
 void clMainFrame::OnFileCloseUI(wxUpdateUIEvent& event)
 {
@@ -3698,7 +3715,10 @@ void clMainFrame::OnConfigureAccelerators(wxCommandEvent& e)
     dlg.ShowModal();
 }
 
-void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e) { wxUnusedVar(e); }
+void clMainFrame::OnUpdateBuildRefactorIndexBar(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+}
 
 void clMainFrame::OnHighlightWord(wxCommandEvent& event)
 {
@@ -3997,10 +4017,15 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
     }
 
     wxString fullname, fullpath;
-    // We support the following macros:
     if(editor) {
-        fullname = editor->GetFileName().GetFullName();
-        fullpath = editor->GetFileName().GetFullPath();
+        if(editor->IsRemoteFile()) {
+            fullname = editor->GetRemotePath().AfterLast('/');
+            fullpath = editor->GetRemotePath();
+        } else {
+            // We support the following macros:
+            fullname = editor->GetFileName().GetFullName();
+            fullpath = editor->GetFileName().GetFullPath();
+        }
     }
 
     pattern.Replace("$workspace", workspace);
@@ -4597,7 +4622,10 @@ bool clMainFrame::SaveLayoutAndSession()
     return true;
 }
 
-void clMainFrame::SaveGeneralSettings() { EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo); }
+void clMainFrame::SaveGeneralSettings()
+{
+    EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
+}
 
 void clMainFrame::OnNextFiFMatch(wxCommandEvent& e)
 {
@@ -4611,9 +4639,15 @@ void clMainFrame::OnPreviousFiFMatch(wxCommandEvent& e)
     GetOutputPane()->GetFindResultsTab()->PrevMatch();
 }
 
-void clMainFrame::OnNextFiFMatchUI(wxUpdateUIEvent& e) { CHECK_SHUTDOWN(); }
+void clMainFrame::OnNextFiFMatchUI(wxUpdateUIEvent& e)
+{
+    CHECK_SHUTDOWN();
+}
 
-void clMainFrame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e) { CHECK_SHUTDOWN(); }
+void clMainFrame::OnPreviousFiFMatchUI(wxUpdateUIEvent& e)
+{
+    CHECK_SHUTDOWN();
+}
 
 void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
 {
@@ -4689,7 +4723,10 @@ void clMainFrame::OnShowActiveProjectSettingsUI(wxUpdateUIEvent& e)
     e.Enable(ManagerST::Get()->IsWorkspaceOpen() && (projectList.IsEmpty() == false));
 }
 
-void clMainFrame::StartTimer() { m_timer->Start(1000, true); }
+void clMainFrame::StartTimer()
+{
+    m_timer->Start(1000, true);
+}
 
 void clMainFrame::OnLoadPerspective(wxCommandEvent& e)
 {
@@ -4911,7 +4948,10 @@ void clMainFrame::OnRetaggingProgress(clParseThreadEvent& e)
     GetWorkspacePane()->UpdateProgress(e.GetProgressPercentage());
 }
 
-void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event) { CHECK_SHUTDOWN(); }
+void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event)
+{
+    CHECK_SHUTDOWN();
+}
 
 void clMainFrame::OnViewWordWrap(wxCommandEvent& e)
 {
@@ -5040,8 +5080,14 @@ void clMainFrame::OnWebSearchSelectionUI(wxUpdateUIEvent& e)
     e.Enable(editor && !editor->GetSelectedText().IsEmpty());
 }
 
-void clMainFrame::OnPchCacheEnded(wxCommandEvent& e) { e.Skip(); }
-void clMainFrame::OnPchCacheStarted(wxCommandEvent& e) { e.Skip(); }
+void clMainFrame::OnPchCacheEnded(wxCommandEvent& e)
+{
+    e.Skip();
+}
+void clMainFrame::OnPchCacheStarted(wxCommandEvent& e)
+{
+    e.Skip();
+}
 
 ///////////////////// Helper methods /////////////////////////////
 
@@ -5116,7 +5162,10 @@ void clMainFrame::OnSaveLayoutAsPerspective(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e) { DoUpdatePerspectiveMenu(); }
+void clMainFrame::OnRefreshPerspectiveMenu(wxCommandEvent& e)
+{
+    DoUpdatePerspectiveMenu();
+}
 
 void clMainFrame::OnChangePerspectiveUI(wxUpdateUIEvent& e)
 {
@@ -5145,7 +5194,10 @@ void clMainFrame::OnParserThreadReady(clParseThreadEvent& e)
     }
 }
 
-void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event) { event.Enable(true); }
+void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event)
+{
+    event.Enable(true);
+}
 
 void clMainFrame::OnActivateEditor(wxCommandEvent& e)
 {
@@ -5351,7 +5403,10 @@ void clMainFrame::OnRefactoringCacheStatus(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnThemeChanged(wxCommandEvent& e) { e.Skip(); }
+void clMainFrame::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+}
 
 void clMainFrame::OnChangeActiveBookmarkType(wxCommandEvent& e)
 {
@@ -5377,9 +5432,15 @@ void clMainFrame::OnSettingsChanged(wxCommandEvent& e)
     std::for_each(editors.begin(), editors.end(), [&](clEditor* editor) { editor->PreferencesChanged(); });
 }
 
-void clMainFrame::OnDetachEditor(wxCommandEvent& e) { GetMainBook()->DetachActiveEditor(); }
+void clMainFrame::OnDetachEditor(wxCommandEvent& e)
+{
+    GetMainBook()->DetachActiveEditor();
+}
 
-void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e) { e.Enable(GetMainBook()->GetActiveEditor() != NULL); }
+void clMainFrame::OnDetachEditorUI(wxUpdateUIEvent& e)
+{
+    e.Enable(GetMainBook()->GetActiveEditor() != NULL);
+}
 
 void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
 {
@@ -5388,7 +5449,10 @@ void clMainFrame::OnShowStatusBar(wxCommandEvent& event)
     clConfig::Get().Write(kConfigShowStatusBar, event.IsChecked());
 }
 
-void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event) { event.Check(m_frameHelper->IsStatusBarVisible()); }
+void clMainFrame::OnShowStatusBarUI(wxUpdateUIEvent& event)
+{
+    event.Check(m_frameHelper->IsStatusBarVisible());
+}
 
 void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {
@@ -5397,7 +5461,10 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
     clConfig::Get().Write(kConfigShowToolBar, event.IsChecked());
 }
 
-void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event) { event.Check(m_frameHelper->IsToolbarShown()); }
+void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)
+{
+    event.Check(m_frameHelper->IsToolbarShown());
+}
 
 void clMainFrame::ShowOrHideCaptions()
 {
@@ -5449,7 +5516,10 @@ void clMainFrame::OnShowTabBar(wxCommandEvent& event)
     GetMainBook()->ShowTabBar(event.IsChecked());
 }
 
-void clMainFrame::OnShowTabBarUI(wxUpdateUIEvent& event) { event.Check(clConfig::Get().Read(kConfigShowTabBar, true)); }
+void clMainFrame::OnShowTabBarUI(wxUpdateUIEvent& event)
+{
+    event.Check(clConfig::Get().Read(kConfigShowTabBar, true));
+}
 
 void clMainFrame::OnRunSetupWizard(wxCommandEvent& e)
 {
@@ -5844,7 +5914,10 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
         wxNOT_FOUND);
 }
 
-void clMainFrame::OnGotoAnything(wxCommandEvent& e) { clGotoAnythingManager::Get().ShowDialog(); }
+void clMainFrame::OnGotoAnything(wxCommandEvent& e)
+{
+    clGotoAnythingManager::Get().ShowDialog();
+}
 
 void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
 {
@@ -5996,7 +6069,10 @@ void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event)
 #endif
 }
 
-void clMainFrame::Raise() { wxFrame::Raise(); }
+void clMainFrame::Raise()
+{
+    wxFrame::Raise();
+}
 
 void clMainFrame::OnFindReferences(clRefactoringEvent& e)
 {
@@ -6054,7 +6130,10 @@ void clMainFrame::DoShowMenuBar(bool show)
 #endif
 }
 
-wxMenuBar* clMainFrame::GetMenuBar() const { return wxFrame::GetMenuBar(); }
+wxMenuBar* clMainFrame::GetMenuBar() const
+{
+    return wxFrame::GetMenuBar();
+}
 
 void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
 {
@@ -6063,4 +6142,7 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     DoSysColoursChanged();
 }
 
-void clMainFrame::DoSysColoursChanged() { MSWSetWindowDarkTheme(this); }
+void clMainFrame::DoSysColoursChanged()
+{
+    MSWSetWindowDarkTheme(this);
+}

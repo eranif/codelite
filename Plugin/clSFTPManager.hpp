@@ -42,6 +42,7 @@ public:
      * true, replace it
      */
     bool AddConnection(const SSHAccountInfo& account, bool replace = false);
+
     /**
      * @brief open remote file in an editor and return a pointer to the editor
      * @param path file path on the remote machine
@@ -49,11 +50,13 @@ public:
      */
     IEditor* OpenFile(const wxString& path, const wxString& accountName);
     IEditor* OpenFile(const wxString& path, const SSHAccountInfo& accountInfo);
+
     /**
      * @brief download file, but do not open it in a an editor
      * @return return the *local* file path
      */
     wxFileName Download(const wxString& path, const wxString& accountName);
+
     /**
      * @brief save file remotely
      * @param localPath file on the local machine
@@ -105,18 +108,31 @@ public:
      * @brief delere a directory
      */
     bool DeleteDir(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+
     /**
      * @brief unlink a file
      */
     bool UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+
     /**
      * @brief check if a file with a given path exists
      */
     bool IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+
     /**
      * @brief check if a directory with a given path exists
      */
     bool IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+
+    /**
+     * @brief return the remote path for a local file
+     */
+    bool GetRemotePath(const wxString& local_path, const wxString& accountName, wxString& remote_path) const;
+
+    /**
+     * @brief return the local path for a remote path
+     */
+    bool GetLocalPath(const wxString& remote_path, const wxString& accountName, wxString& local_path) const;
 };
 #endif
 #endif // CLSFTPMANAGER_HPP

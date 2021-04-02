@@ -149,12 +149,8 @@ void BreakptMgr::GetBreakpoints(clDebuggerBreakpoint::Vec_t& li)
 // Get all known breakpoints for this line/file
 clDebuggerBreakpoint& BreakptMgr::GetBreakpoint(const wxString& fileName, const int lineno)
 {
-    wxFileName fn(fileName);
-    fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
-    wxString normalizedPath = fn.GetFullPath();
-    auto iter = std::find_if(m_bps.begin(), m_bps.end(), [&](const clDebuggerBreakpoint& a) {
-        return a.file == normalizedPath && a.lineno == lineno;
-    });
+    auto iter = std::find_if(m_bps.begin(), m_bps.end(),
+                             [&](const clDebuggerBreakpoint& a) { return a.file == fileName && a.lineno == lineno; });
     if(iter == m_bps.end()) {
         static clDebuggerBreakpoint empty;
         return empty;
@@ -164,12 +160,8 @@ clDebuggerBreakpoint& BreakptMgr::GetBreakpoint(const wxString& fileName, const 
 
 const clDebuggerBreakpoint& BreakptMgr::GetBreakpoint(const wxString& fileName, const int lineno) const
 {
-    wxFileName fn(fileName);
-    fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
-    wxString normalizedPath = fn.GetFullPath();
-    clDebuggerBreakpoint::Vec_t::const_iterator iter =
-        std::find_if(m_bps.begin(), m_bps.end(),
-                     [&](const clDebuggerBreakpoint& a) { return a.file == normalizedPath && a.lineno == lineno; });
+    auto iter = std::find_if(m_bps.begin(), m_bps.end(),
+                             [&](const clDebuggerBreakpoint& a) { return a.file == fileName && a.lineno == lineno; });
     if(iter == m_bps.end()) {
         static clDebuggerBreakpoint empty;
         return empty;
@@ -1098,11 +1090,6 @@ bool BreakptMgr::IsDuplicate(const clDebuggerBreakpoint& bp, const std::vector<c
     }
 
     wxString bpFile = bp.file;
-    if(bpFile.IsEmpty() == false) {
-        wxFileName bpFileName(bp.file);
-        bpFileName.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
-        bpFile = bpFileName.GetFullPath();
-    }
     for(size_t i = 0; i < bpList.size(); i++) {
         if(bpList.at(i).file.IsEmpty() == false) {
             wxFileName fn(bpList.at(i).file);

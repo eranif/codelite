@@ -67,21 +67,21 @@ public:
     clDebuggerBreakpoint& operator=(const clDebuggerBreakpoint& BI);
     ~clDebuggerBreakpoint();
 
-    bool IsConditional() { return !conditions.IsEmpty(); }
+    bool IsConditional()
+    {
+        return !conditions.IsEmpty();
+    }
     double GetId() const
     {
         int best_id = (this->debugger_id == -1 ? this->internal_id : this->debugger_id);
         return best_id;
     }
 
-    void Create(wxString filename, int line, int int_id, int ext_id = -1)
+    void Create(const wxString& filename, int line, int int_id, int ext_id = -1)
     {
-        wxFileName fn(filename);
-        fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
-
         bp_type = BP_type_break;
         lineno = line;
-        file = filename.IsEmpty() ? wxString() : fn.GetFullPath();
+        file = filename;
         internal_id = int_id;
         debugger_id = ext_id;
     }
@@ -97,7 +97,10 @@ public:
                 (!function_name.IsEmpty() ? (regex == BI.regex) : true));
     }
 
-    bool IsNull() const { return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND; }
+    bool IsNull() const
+    {
+        return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND;
+    }
 
     // JSON serialization
     JSONItem ToJSON() const;

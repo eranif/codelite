@@ -509,4 +509,34 @@ bool clSFTPManager::WriteFile(const wxString& content, const wxString& remotePat
     return SaveFile(tmpfile.GetFullPath(), remotePath, accountName);
 }
 
+bool clSFTPManager::GetRemotePath(const wxString& local_path, const wxString& accountName, wxString& remote_path) const
+{
+    auto p = GetConnectionPair(accountName);
+    CHECK_PTR_RET_FALSE(p.second);
+
+    const auto& account_info = p.first;
+    wxString download_folder = clSFTP::GetDefaultDownloadFolder(account_info);
+    wxString rest;
+    if(local_path.StartsWith(download_folder, &rest)) {
+        rest.Replace("\\", "/");
+        remote_path.swap(rest);
+        return true;
+    }
+    return false;
+}
+
+bool clSFTPManager::GetLocalPath(const wxString& remote_path, const wxString& accountName, wxString& local_path) const
+{
+    auto p = GetConnectionPair(accountName);
+    CHECK_PTR_RET_FALSE(p.second);
+
+    const auto& account_info = p.first;
+    wxFileName fn = clSFTP::GetLocalFileName(account_info, remote_path);
+    if(fn.IsOk()) {
+        local_path = fn.GetFullPath();
+        return true;
+    }
+    return false;
+}
+
 #endif

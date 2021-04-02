@@ -1,8 +1,18 @@
 #include "clDebuggerBreakpoint.hpp"
 
-clDebuggerBreakpoint::clDebuggerBreakpoint() {}
+#ifdef __WXMSW__
+#define is_windows true
+#else
+#define is_windows false
+#endif
 
-clDebuggerBreakpoint::~clDebuggerBreakpoint() {}
+clDebuggerBreakpoint::clDebuggerBreakpoint()
+{
+}
+
+clDebuggerBreakpoint::~clDebuggerBreakpoint()
+{
+}
 
 clDebuggerBreakpoint::clDebuggerBreakpoint(const clDebuggerBreakpoint& BI)
 {
@@ -13,11 +23,13 @@ clDebuggerBreakpoint::clDebuggerBreakpoint(const clDebuggerBreakpoint& BI)
     // call operator=
     *this = BI;
 
-    // Normalize the file name
-    if(file.IsEmpty() == false) {
-        wxFileName fn(file);
-        fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
-        file = fn.GetFullPath();
+    if(!is_windows || (is_windows && !file.Contains("/"))) {
+        // Normalize the file name
+        if(!file.IsEmpty()) {
+            wxFileName fn(file);
+            fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
+            file = fn.GetFullPath();
+        }
     }
 }
 

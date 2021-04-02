@@ -271,8 +271,14 @@ public:
         }
     }
 
-    bool OnDrop(wxCoord x, wxCoord y) { return true; }
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) { return m_stc->DoDragOver(x, y, defResult); }
+    bool OnDrop(wxCoord x, wxCoord y)
+    {
+        return true;
+    }
+    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult)
+    {
+        return m_stc->DoDragOver(x, y, defResult);
+    }
 };
 
 //=====================================================================
@@ -464,7 +470,10 @@ clEditor::~clEditor()
     }
 }
 
-time_t clEditor::GetFileLastModifiedTime() const { return GetFileModificationTime(m_fileName.GetFullPath()); }
+time_t clEditor::GetFileLastModifiedTime() const
+{
+    return GetFileModificationTime(m_fileName.GetFullPath());
+}
 
 void clEditor::SetSyntaxHighlight(const wxString& lexerName)
 {
@@ -1714,27 +1723,33 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
 // this function is called before the debugger startup
 void clEditor::UpdateBreakpoints()
 {
-    ManagerST::Get()->GetBreakpointsMgr()->DeleteAllBreakpointsByFileName(GetFileName().GetFullPath());
+    wxString file_path = IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath();
+    // if this is a remote file, use that path in the debugger view
+    ManagerST::Get()->GetBreakpointsMgr()->DeleteAllBreakpointsByFileName(file_path);
 
     // iterate over the array and update the breakpoint manager with updated line numbers for each breakpoint
-    std::map<int, std::vector<clDebuggerBreakpoint>>::iterator iter = m_breakpointsInfo.begin();
-    for(; iter != m_breakpointsInfo.end(); iter++) {
-        int handle = iter->first;
+    for(auto& d : m_breakpointsInfo) {
+        int handle = d.first;
         int line = MarkerLineFromHandle(handle);
         if(line >= 0) {
-            for(size_t i = 0; i < iter->second.size(); i++) {
-                iter->second.at(i).lineno = line + 1;
-                iter->second.at(i).origin = BO_Editor;
+            for(size_t i = 0; i < d.second.size(); i++) {
+                d.second[i].lineno = line + 1;
+                d.second[i].origin = BO_Editor;
+                d.second[i].file = file_path;
             }
         }
 
-        ManagerST::Get()->GetBreakpointsMgr()->SetBreakpoints(iter->second);
+        ManagerST::Get()->GetBreakpointsMgr()->SetBreakpoints(d.second);
+
         // update the Breakpoints pane too
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
     }
 }
 
-wxString clEditor::GetWordAtCaret(bool wordCharsOnly) { return GetWordAtPosition(GetCurrentPos(), wordCharsOnly); }
+wxString clEditor::GetWordAtCaret(bool wordCharsOnly)
+{
+    return GetWordAtPosition(GetCurrentPos(), wordCharsOnly);
+}
 
 //---------------------------------------------------------------------------
 // Most of the functionality for this functionality
@@ -1906,7 +1921,10 @@ void clEditor::OnDwellEnd(wxStyledTextEvent& event)
     m_context->OnDbgDwellEnd(event);
 }
 
-void clEditor::OnCallTipClick(wxStyledTextEvent& event) { m_context->OnCallTipClick(event); }
+void clEditor::OnCallTipClick(wxStyledTextEvent& event)
+{
+    m_context->OnCallTipClick(event);
+}
 
 void clEditor::OnMenuCommand(wxCommandEvent& event)
 {
@@ -2326,9 +2344,15 @@ void clEditor::FindNext(const FindReplaceData& data)
     }
 }
 
-bool clEditor::Replace() { return Replace(m_findReplaceDlg->GetData()); }
+bool clEditor::Replace()
+{
+    return Replace(m_findReplaceDlg->GetData());
+}
 
-bool clEditor::FindAndSelect() { return FindAndSelect(m_findReplaceDlg->GetData()); }
+bool clEditor::FindAndSelect()
+{
+    return FindAndSelect(m_findReplaceDlg->GetData());
+}
 
 bool clEditor::FindAndSelect(const FindReplaceData& data)
 {
@@ -3106,7 +3130,10 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
     return encoding;
 }
 
-void clEditor::DoUpdateLineNumbers() { return; }
+void clEditor::DoUpdateLineNumbers()
+{
+    return;
+}
 
 void clEditor::DoUpdateRelativeLineNumbers()
 {
@@ -3704,9 +3731,10 @@ void clEditor::AddBreakpoint(int lineno /*= -1*/, const wxString& conditions /*=
         lineno = GetCurrentLine() + 1;
     }
 
+    wxString file_path = IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath();
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
-    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
-           IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath(), lineno, conditions, is_temp, is_disabled)) {
+    if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(file_path, lineno, conditions, is_temp,
+                                                                     is_disabled)) {
         wxMessageBox(_("Failed to insert breakpoint"));
 
     } else {
@@ -3735,7 +3763,8 @@ void clEditor::DelBreakpoint(int lineno /*= -1*/)
     // was triggered by user action
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
 
-    int result = ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByLineno(GetFileName().GetFullPath(), lineno);
+    wxString file_path = IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath();
+    int result = ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByLineno(file_path, lineno);
     switch(result) {
     case true:
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
@@ -3760,17 +3789,16 @@ void clEditor::ToggleBreakpoint(int lineno)
         lineno = GetCurrentLine() + 1;
     }
 
+    wxString file_path = IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath();
     // Does any of the plugins want to handle this?
     clDebugEvent dbgEvent(wxEVT_DBG_UI_TOGGLE_BREAKPOINT);
     dbgEvent.SetInt(lineno);
-    dbgEvent.SetFileName(GetFileName().GetFullPath());
+    dbgEvent.SetFileName(file_path);
     if(EventNotifier::Get()->ProcessEvent(dbgEvent)) {
         return;
     }
 
-    const clDebuggerBreakpoint& bp =
-        ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(GetFileName().GetFullPath(), lineno);
-
+    const clDebuggerBreakpoint& bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(file_path, lineno);
     if(bp.IsNull()) {
         // This will (always?) be from a margin mouse-click, so assume it's a standard breakpt that's wanted
         AddBreakpoint(lineno);
@@ -4186,7 +4214,10 @@ void clEditor::OnLeftDClick(wxStyledTextEvent& event)
     event.Skip();
 }
 
-bool clEditor::IsCompletionBoxShown() { return wxCodeCompletionBoxManager::Get().IsShown(); }
+bool clEditor::IsCompletionBoxShown()
+{
+    return wxCodeCompletionBoxManager::Get().IsShown();
+}
 
 int clEditor::GetCurrentLine()
 {
@@ -4286,13 +4317,25 @@ void clEditor::ShowFunctionTipFromCurrentPos()
     }
 }
 
-wxString clEditor::GetSelection() { return wxStyledTextCtrl::GetSelectedText(); }
+wxString clEditor::GetSelection()
+{
+    return wxStyledTextCtrl::GetSelectedText();
+}
 
-int clEditor::GetSelectionStart() { return wxStyledTextCtrl::GetSelectionStart(); }
+int clEditor::GetSelectionStart()
+{
+    return wxStyledTextCtrl::GetSelectionStart();
+}
 
-int clEditor::GetSelectionEnd() { return wxStyledTextCtrl::GetSelectionEnd(); }
+int clEditor::GetSelectionEnd()
+{
+    return wxStyledTextCtrl::GetSelectionEnd();
+}
 
-void clEditor::ReplaceSelection(const wxString& text) { wxStyledTextCtrl::ReplaceSelection(text); }
+void clEditor::ReplaceSelection(const wxString& text)
+{
+    wxStyledTextCtrl::ReplaceSelection(text);
+}
 
 void clEditor::ClearUserIndicators()
 {
@@ -4300,9 +4343,15 @@ void clEditor::ClearUserIndicators()
     IndicatorClearRange(0, GetLength());
 }
 
-int clEditor::GetUserIndicatorEnd(int pos) { return wxStyledTextCtrl::IndicatorEnd(USER_INDICATOR, pos); }
+int clEditor::GetUserIndicatorEnd(int pos)
+{
+    return wxStyledTextCtrl::IndicatorEnd(USER_INDICATOR, pos);
+}
 
-int clEditor::GetUserIndicatorStart(int pos) { return wxStyledTextCtrl::IndicatorStart(USER_INDICATOR, pos); }
+int clEditor::GetUserIndicatorStart(int pos)
+{
+    return wxStyledTextCtrl::IndicatorStart(USER_INDICATOR, pos);
+}
 
 void clEditor::SelectText(int startPos, int len)
 {
@@ -4323,9 +4372,15 @@ void clEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
     IndicatorSetUnder(USER_INDICATOR, true);
 }
 
-int clEditor::GetLexerId() { return GetLexer(); }
+int clEditor::GetLexerId()
+{
+    return GetLexer();
+}
 
-int clEditor::GetStyleAtPos(int pos) { return GetStyleAt(pos); }
+int clEditor::GetStyleAtPos(int pos)
+{
+    return GetStyleAt(pos);
+}
 
 int clEditor::WordStartPos(int pos, bool onlyWordCharacters)
 {
@@ -4938,7 +4993,10 @@ bool clEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replac
     return (matchCount > 0);
 }
 
-void clEditor::SetLexerName(const wxString& lexerName) { SetSyntaxHighlight(lexerName); }
+void clEditor::SetLexerName(const wxString& lexerName)
+{
+    SetSyntaxHighlight(lexerName);
+}
 
 void clEditor::HighlightWord(StringHighlightOutput* highlightOutput)
 {
@@ -4985,9 +5043,15 @@ void clEditor::ChangeCase(bool toLower)
     }
 }
 
-int clEditor::LineFromPos(int pos) { return wxStyledTextCtrl::LineFromPosition(pos); }
+int clEditor::LineFromPos(int pos)
+{
+    return wxStyledTextCtrl::LineFromPosition(pos);
+}
 
-int clEditor::PosFromLine(int line) { return wxStyledTextCtrl::PositionFromLine(line); }
+int clEditor::PosFromLine(int line)
+{
+    return wxStyledTextCtrl::PositionFromLine(line);
+}
 
 int clEditor::LineEnd(int line)
 {
@@ -4995,9 +5059,15 @@ int clEditor::LineEnd(int line)
     return pos + wxStyledTextCtrl::LineLength(line);
 }
 
-wxString clEditor::GetTextRange(int startPos, int endPos) { return wxStyledTextCtrl::GetTextRange(startPos, endPos); }
+wxString clEditor::GetTextRange(int startPos, int endPos)
+{
+    return wxStyledTextCtrl::GetTextRange(startPos, endPos);
+}
 
-void clEditor::DelayedSetActive() { CallAfter(&clEditor::SetActive); }
+void clEditor::DelayedSetActive()
+{
+    CallAfter(&clEditor::SetActive);
+}
 
 void clEditor::OnFocus(wxFocusEvent& event)
 {
@@ -5028,15 +5098,30 @@ void clEditor::ShowCalltip(clCallTipPtr tip)
     GetFunctionTip()->Activate(pt, GetCurrLineHeight(), StyleGetBackground(wxSTC_C_DEFAULT));
 }
 
-int clEditor::PositionAfterPos(int pos) { return wxStyledTextCtrl::PositionAfter(pos); }
+int clEditor::PositionAfterPos(int pos)
+{
+    return wxStyledTextCtrl::PositionAfter(pos);
+}
 
-int clEditor::GetCharAtPos(int pos) { return wxStyledTextCtrl::GetCharAt(pos); }
+int clEditor::GetCharAtPos(int pos)
+{
+    return wxStyledTextCtrl::GetCharAt(pos);
+}
 
-int clEditor::PositionBeforePos(int pos) { return wxStyledTextCtrl::PositionBefore(pos); }
+int clEditor::PositionBeforePos(int pos)
+{
+    return wxStyledTextCtrl::PositionBefore(pos);
+}
 
-void clEditor::GetChanges(std::vector<int>& changes) { m_deltas->GetChanges(changes); }
+void clEditor::GetChanges(std::vector<int>& changes)
+{
+    m_deltas->GetChanges(changes);
+}
 
-void clEditor::OnFindInFiles() { m_deltas->Clear(); }
+void clEditor::OnFindInFiles()
+{
+    m_deltas->Clear();
+}
 
 void clEditor::OnHighlightWordChecked(wxCommandEvent& e)
 {
@@ -5790,7 +5875,10 @@ void clEditor::ClearCCAnnotations()
     }
 }
 
-void clEditor::ApplyEditorConfig() { SetProperties(); }
+void clEditor::ApplyEditorConfig()
+{
+    SetProperties();
+}
 
 void clEditor::OpenURL(wxCommandEvent& event)
 {
@@ -5987,7 +6075,10 @@ wxString clEditor::GetRemotePath() const
     return wxEmptyString;
 }
 
-bool clEditor::IsRemoteFile() const { return GetRemoteData() != nullptr; }
+bool clEditor::IsRemoteFile() const
+{
+    return GetRemoteData() != nullptr;
+}
 
 SFTPClientData* clEditor::GetRemoteData() const
 {
@@ -6002,7 +6093,13 @@ SFTPClientData* clEditor::GetRemoteData() const
 // SelectionInfo
 // ----------------------------------
 struct SelectorSorter {
-    bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
+    bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b)
+    {
+        return a.first < b.first;
+    }
 };
 
-void clEditor::SelectionInfo::Sort() { std::sort(this->selections.begin(), this->selections.end(), SelectorSorter()); }
+void clEditor::SelectionInfo::Sort()
+{
+    std::sort(this->selections.begin(), this->selections.end(), SelectorSorter());
+}

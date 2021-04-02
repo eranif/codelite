@@ -270,7 +270,7 @@ void clButtonBase::Render(wxDC& dc)
     if(!buttonText.IsEmpty()) {
         wxFont font = DrawingUtils::GetDefaultGuiFont();
         if(!subtext.empty()) {
-            font.SetFractionalPointSize((double)1.5 * (double)font.GetPointSize());
+            font.SetFractionalPointSize((double)1.2 * (double)font.GetPointSize());
             font.SetWeight(wxFONTWEIGHT_SEMIBOLD);
         }
         dc.SetFont(font);
@@ -326,7 +326,7 @@ void clButtonBase::Render(wxDC& dc)
 #ifdef __WXMAC__
         wxFont font = DrawingUtils::GetDefaultGuiFont();
         if(has_sub_text) {
-            font.SetFractionalPointSize((double)font.GetPointSize()*1.4);
+            font.SetFractionalPointSize((double)font.GetPointSize()*1.2);
         }
         dc.SetFont(font);
 #endif
@@ -380,7 +380,7 @@ wxSize clButtonBase::GetBestSize() const
 
     wxFont f = DrawingUtils::GetDefaultGuiFont();
     if(!GetSubText().empty()) {
-        f.SetFractionalPointSize((double)f.GetPointSize() * (double)1.5);
+        f.SetFractionalPointSize((double)f.GetPointSize() * (double)1.2);
         f.SetWeight(wxFONTWEIGHT_SEMIBOLD);
     }
     dc.SetFont(f);

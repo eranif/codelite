@@ -41,7 +41,10 @@ public:
         : m_dir(d)
     {
     }
-    ~SFTPDirCloser() { sftp_closedir(m_dir); }
+    ~SFTPDirCloser()
+    {
+        sftp_closedir(m_dir);
+    }
 };
 
 clSFTP::clSFTP(clSSH::Ptr_t ssh)
@@ -51,7 +54,10 @@ clSFTP::clSFTP(clSSH::Ptr_t ssh)
 {
 }
 
-clSFTP::~clSFTP() { Close(); }
+clSFTP::~clSFTP()
+{
+    Close();
+}
 
 /**
  * @brief update 'attr' to include details about the symlink
@@ -134,7 +140,7 @@ void clSFTP::Write(const wxFileName& localFile, const wxString& remotePath)
     void* buffer = memBuffer.GetWriteBuf(len);
     size_t nbytes(0);
     nbytes = fp.Read(buffer, fp.Length());
-    if(nbytes != fp.Length()) {
+    if(nbytes != (size_t)fp.Length()) {
         throw clException(wxString() << "failed to read local file content. expected read size: " << len
                                      << ". bytes read: " << nbytes);
     }

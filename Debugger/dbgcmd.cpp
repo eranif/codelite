@@ -988,10 +988,8 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
     // the way gdb sees it
     for(size_t i = 0; i < info.children.size(); i++) {
         clDebuggerBreakpoint breakpoint;
-        std::map<std::string, std::string> attr = info.children.at(i);
-        std::map<std::string, std::string>::const_iterator iter;
-
-        iter = attr.find("what");
+        auto& attr = info.children[i];
+        auto iter = attr.find("what");
         if(iter != attr.end()) {
             breakpoint.what = wxString(iter->second.c_str(), wxConvUTF8);
             wxRemoveQuotes(breakpoint.what);

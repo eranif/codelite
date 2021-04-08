@@ -6070,7 +6070,7 @@ void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
 
 void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event)
 {
-#if defined(__WXGTK__)
+#if defined(__WXGTK__) || defined(__WXMSW__)
     event.Check(GetMainMenuBar()->IsShown());
 #else
     event.Check(true);
@@ -6134,7 +6134,7 @@ void clMainFrame::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID)
 
 void clMainFrame::DoShowMenuBar(bool show)
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined(__WXMSW__)
     GetMainMenuBar()->Show(show);
 #endif
 }

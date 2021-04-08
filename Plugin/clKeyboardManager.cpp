@@ -9,6 +9,7 @@
 #include "imanager.h"
 #include "macros.h"
 #include "newkeyshortcutdlg.h"
+#include "wxCustomControls.hpp"
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/log.h>
@@ -345,6 +346,10 @@ void clKeyboardManager::Update(wxFrame* frame)
         // update only the requested frame
         DoUpdateFrame(frame, intAccels);
     }
+
+#if !wxUSE_NATIVE_MENUBAR
+    clGetManager()->GetMenuBar()->UpdateAccelerators();
+#endif
 }
 
 int clKeyboardManager::PopupNewKeyboardShortcutDlg(wxWindow* parent, MenuItemData& menuItemData)

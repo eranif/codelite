@@ -1,5 +1,6 @@
 #include "clMenuBar.hpp"
 #if !wxUSE_NATIVE_MENUBAR
+#include "file_logger.h"
 #include <deque>
 #include <drawingutils.h>
 #include <wx/dc.h>
@@ -7,6 +8,7 @@
 #include <wx/dcgraph.h>
 #include <wx/frame.h>
 #include <wx/sizer.h>
+#include <wx/xrc/xmlres.h>
 
 clMenuBar::clMenuBar()
 {
@@ -474,15 +476,14 @@ void clMenuBar::UpdateAccelerators()
             auto menu = Q.back();
             Q.pop_back();
             const auto& items = menu->GetMenuItems();
-            for(auto menuItem : items) {
-                if(menuItem->IsSubMenu()) {
-                    Q.push_back(menuItem->GetSubMenu());
+            for(auto menu_item : items) {
+                if(menu_item->IsSubMenu()) {
+                    Q.push_back(menu_item->GetSubMenu());
                 } else {
-                    auto accel = menuItem->GetAccel();
+                    wxAcceleratorEntry* accel = wxAcceleratorEntry::Create(menu_item->GetItemLabel());
                     if(accel && accel->IsOk()) {
-                        accel->Set(accel->GetFlags(), accel->GetKeyCode(), menuItem->GetId());
+                        accel->Set(accel->GetFlags(), accel->GetKeyCode(), menu_item->GetId());
                         accels.push_back(accel);
-
                     } else {
                         wxDELETE(accel);
                     }

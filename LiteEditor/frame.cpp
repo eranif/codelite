@@ -367,8 +367,8 @@ EVT_UPDATE_UI_RANGE(viewAsMenuItemID, viewAsMenuItemMaxID, clMainFrame::Dispatch
 //-------------------------------------------------------
 // Search menu
 //-------------------------------------------------------
-EVT_MENU(wxID_FIND, clMainFrame::DispatchCommandEvent)
-EVT_MENU(wxID_REPLACE, clMainFrame::DispatchCommandEvent)
+EVT_MENU(XRCID("id_find"), clMainFrame::DispatchCommandEvent)
+EVT_MENU(XRCID("id_replace"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("find_resource"), clMainFrame::OnFindResourceXXX)
 EVT_MENU(XRCID("incremental_search"), clMainFrame::OnIncrementalSearch)
 EVT_MENU(XRCID("incremental_replace"), clMainFrame::OnIncrementalReplace)
@@ -396,8 +396,8 @@ EVT_MENU(XRCID("wxEVT_BOOK_MOVE_TAB_RIGHT"), clMainFrame::OnMainBookMovePage)
 EVT_UPDATE_UI(XRCID("ID_QUICK_ADD_NEXT"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("ID_QUICK_FIND_ALL"), clMainFrame::OnFileExistUpdateUI)
 
-EVT_UPDATE_UI(wxID_FIND, clMainFrame::OnIncrementalSearchUI)
-EVT_UPDATE_UI(wxID_REPLACE, clMainFrame::OnIncrementalSearchUI)
+EVT_UPDATE_UI(XRCID("id_find"), clMainFrame::OnIncrementalSearchUI)
+EVT_UPDATE_UI(XRCID("id_replace"), clMainFrame::OnIncrementalSearchUI)
 EVT_UPDATE_UI(XRCID("select_previous"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("select_next"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("find_next"), clMainFrame::OnFileExistUpdateUI)
@@ -1409,8 +1409,8 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->AddTool(XRCID("toggle_bookmark"), _("Toggle Bookmark"), images->Add(wxT("bookmark"), toolSize),
                        _("Toggle Bookmark"), wxITEM_DROPDOWN);
     m_toolbar->SetDropdownMenu(XRCID("toggle_bookmark"), BookmarkManager::Get().CreateBookmarksSubmenu(NULL));
-    m_toolbar->AddTool(wxID_FIND, _("Find"), images->Add(wxT("find"), toolSize), _("Find"));
-    m_toolbar->AddTool(wxID_REPLACE, _("Replace"), images->Add(wxT("find_and_replace"), toolSize), _("Replace"));
+    m_toolbar->AddTool(XRCID("id_find"), _("Find"), images->Add(wxT("find"), toolSize), _("Find"));
+    m_toolbar->AddTool(XRCID("id_replace"), _("Replace"), images->Add(wxT("find_and_replace"), toolSize), _("Replace"));
     m_toolbar->AddTool(XRCID("find_in_files"), _("Find In Files"), images->Add(wxT("find_in_files"), toolSize),
                        _("Find In Files"));
     m_toolbar->AddTool(XRCID("find_resource"), _("Find Resource In Workspace"),
@@ -1561,7 +1561,7 @@ bool clMainFrame::IsEditorEvent(wxEvent& event)
 #ifdef __WXGTK__
     MainBook* mainBook = GetMainBook();
     if(!mainBook || !mainBook->GetActiveEditor(true)) {
-        if(event.GetId() == wxID_FIND)
+        if(event.GetId() == XRCID("id_find"))
             return true;
         else
             return false;
@@ -1629,7 +1629,7 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
     clEditor* editor = GetMainBook()->GetActiveEditor(true);
     if(editor) {
         editor->OnMenuCommand(event);
-    } else if(event.GetId() == wxID_FIND) {
+    } else if(event.GetId() == XRCID("id_find")) {
         // Let the plugins handle this
         GetMainBook()->ShowQuickBarForPlugins();
     }

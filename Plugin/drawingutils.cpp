@@ -301,7 +301,7 @@ wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 
 void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniToolbar)
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined(__WXMSW__)
     wxColour c = GetMenuBarBgColour(miniToolbar);
     dc.SetPen(c);
     dc.SetBrush(c);

@@ -229,9 +229,9 @@ void FindReplaceHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& ev
 {
     clEditor* editor = dynamic_cast<clEditor*>(owner);
     if(editor) {
-        if(event.GetId() == wxID_FIND) {
+        if(event.GetId() == XRCID("id_find")) {
             clMainFrame::Get()->GetMainBook()->ShowQuickBar(editor->GetFirstSelection(), false);
-        } else if(event.GetId() == wxID_REPLACE) {
+        } else if(event.GetId() == XRCID("id_replace")) {
             clMainFrame::Get()->GetMainBook()->ShowQuickBar(editor->GetFirstSelection(), true);
 
         } else if(event.GetId() == XRCID("ID_QUICK_ADD_NEXT")) {

@@ -22,9 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "menumanager.h"
-#include "menu_event_handlers.h"
 #include "macros.h"
+#include "menu_event_handlers.h"
+#include "menumanager.h"
 
 MenuManager::MenuManager(void)
 {
@@ -57,8 +57,8 @@ MenuManager::MenuManager(void)
     PushHandler(new EditHandler(XRCID("convert_indent_to_spaces")));
     PushHandler(new BraceMatchHandler(XRCID("select_to_brace")));
     PushHandler(new BraceMatchHandler(XRCID("match_brace")));
-    PushHandler(new FindReplaceHandler(wxID_FIND));
-    PushHandler(new FindReplaceHandler(wxID_REPLACE));
+    PushHandler(new FindReplaceHandler(XRCID("id_find")));
+    PushHandler(new FindReplaceHandler(XRCID("id_replace")));
     PushHandler(new FindReplaceHandler(XRCID("ID_QUICK_ADD_NEXT")));
     PushHandler(new FindReplaceHandler(XRCID("ID_QUICK_FIND_ALL")));
     PushHandler(new GotoHandler(XRCID("goto_linenumber")));
@@ -90,13 +90,19 @@ MenuManager::MenuManager(void)
     PushHandler(new DebuggerMenuHandler(XRCID("show_breakpoint_dlg")));
 }
 
-MenuManager::~MenuManager(void) {}
+MenuManager::~MenuManager(void)
+{
+}
 
-void MenuManager::PushHandler(MenuEventHandlerPtr handler) { m_handlers[handler->GetEventId()] = handler; }
+void MenuManager::PushHandler(MenuEventHandlerPtr handler)
+{
+    m_handlers[handler->GetEventId()] = handler;
+}
 
 MenuEventHandlerPtr MenuManager::GetHandler(int id)
 {
     HandlesrHash::iterator iter = m_handlers.find(id);
-    if(iter != m_handlers.end()) return iter->second;
+    if(iter != m_handlers.end())
+        return iter->second;
     return NULL;
 }

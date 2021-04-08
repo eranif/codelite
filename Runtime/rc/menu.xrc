@@ -389,10 +389,10 @@
             <!-- Find and Replace -->
             <object class="wxMenu" name="wxID_ANY">
                 <label>Find and Replace</label>
-                <object class="wxMenuItem" name="wxID_FIND">
+                <object class="wxMenuItem" name="id_find">
                     <label>Fi&amp;nd...</label>
                 </object>
-                <object class="wxMenuItem" name="wxID_REPLACE">
+                <object class="wxMenuItem" name="id_replace">
                     <label>&amp;Replace...</label>
                 </object>
                 <object class="wxMenuItem" name="find_next">

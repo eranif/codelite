@@ -25,8 +25,8 @@
 #ifndef MENUMANAGER_H
 #define MENUMANAGER_H
 
-#include "singleton.h"
 #include "menu_event_handlers.h"
+#include "singleton.h"
 #include "smart_ptr.h"
 #include <map>
 
@@ -38,18 +38,18 @@ WX_DECLARE_HASH_MAP(int, MenuEventHandlerPtr, wxIntegerHash, wxIntegerEqual, Han
 
 class MenuManager : public Singleton<MenuManager>
 {
-	friend class Singleton<MenuManager>;
-	HandlesrHash m_handlers;
+    friend class Singleton<MenuManager>;
+    HandlesrHash m_handlers;
+
 public:
+    // register new event handler
+    void PushHandler(MenuEventHandlerPtr handler);
 
-	// register new event handler
-	void PushHandler(MenuEventHandlerPtr handler);
-
-	MenuEventHandlerPtr GetHandler(int id);
+    MenuEventHandlerPtr GetHandler(int id);
 
 private:
-	MenuManager(void);
-	virtual ~MenuManager(void);
+    MenuManager(void);
+    virtual ~MenuManager(void);
 };
 
 #endif // MENUMANAGER_H

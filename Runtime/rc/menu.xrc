@@ -431,10 +431,10 @@
             <!-- GOTO -->
             <object class="wxMenu" name="wxID_ANY">
                 <label>Go To</label>
-                <object class="wxMenuItem" name="wxID_BACKWARD">
+                <object class="wxMenuItem" name="id_backward">
                     <label>Go To Pre&amp;vious Location</label>
                 </object>
-                <object class="wxMenuItem" name="wxID_FORWARD">
+                <object class="wxMenuItem" name="id_forward">
                     <label>Go To For&amp;ward Location</label>
                 </object>
                 <object class="wxMenuItem" name="goto_linenumber">

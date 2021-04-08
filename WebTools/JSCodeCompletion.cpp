@@ -1,16 +1,19 @@
 #include "JSCodeCompletion.h"
+#include "JSON.h"
 #include "WebToolsConfig.h"
+#include "clNodeJS.h"
 #include "clZipReader.h"
 #include "cl_calltip.h"
 #include "cl_standard_paths.h"
+#include "codelite_events.h"
 #include "entry.h"
 #include "event_notifier.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
-#include "JSON.h"
 #include "macros.h"
 #include "navigationmanager.h"
+#include "webtools.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 #include "wxCodeCompletionBoxManager.h"
 #include <algorithm>
@@ -21,9 +24,6 @@
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
-#include "clNodeJS.h"
-#include "webtools.h"
-#include "codelite_events.h"
 
 JSCodeCompletion::JSCodeCompletion(const wxString& workingDirectory, WebTools* plugin)
     : ServiceProvider("WebTools: JavaScript", eServiceType::kCodeCompletion)
@@ -80,7 +80,8 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
         return;
     }
 
-    if(!SanityCheck()) return;
+    if(!SanityCheck())
+        return;
 
     // Sanity
     CHECK_PTR_RET(editor);
@@ -95,7 +96,9 @@ void JSCodeCompletion::CodeComplete(IEditor* editor)
             currentPos = ctrl->PositionBefore(currentPos);
             continue;
         }
-        if(prevChar == '(') { isFunctionTip = true; }
+        if(prevChar == '(') {
+            isFunctionTip = true;
+        }
         break;
     }
 
@@ -114,8 +117,10 @@ void JSCodeCompletion::OnCodeCompleteReady(const wxCodeCompletionBoxEntry::Vec_t
 
     // sanity
     CHECK_PTR_RET(editor);
-    if(editor->GetFileName().GetFullPath() != filename) return;
-    if(editor->GetCurrentPosition() != m_ccPos) return;
+    if(editor->GetFileName().GetFullPath() != filename)
+        return;
+    if(editor->GetCurrentPosition() != m_ccPos)
+        return;
     if(entries.empty()) {
         TriggerWordCompletion();
         return;
@@ -132,12 +137,17 @@ void JSCodeCompletion::OnFunctionTipReady(clCallTipPtr calltip, const wxString& 
     // sanity
     CHECK_PTR_RET(editor);
     CHECK_PTR_RET(calltip);
-    if(editor->GetFileName().GetFullPath() != filename) return;
-    if(editor->GetCurrentPosition() != m_ccPos) return;
+    if(editor->GetFileName().GetFullPath() != filename)
+        return;
+    if(editor->GetCurrentPosition() != m_ccPos)
+        return;
     editor->ShowCalltip(calltip);
 }
 
-void JSCodeCompletion::Reload() { m_ternServer.RecycleIfNeeded(true); }
+void JSCodeCompletion::Reload()
+{
+    m_ternServer.RecycleIfNeeded(true);
+}
 
 bool JSCodeCompletion::IsEnabled() const
 {
@@ -154,9 +164,12 @@ void JSCodeCompletion::TriggerWordCompletion()
 
 void JSCodeCompletion::FindDefinition(IEditor* editor)
 {
-    if(!IsEnabled()) { return; }
+    if(!IsEnabled()) {
+        return;
+    }
 
-    if(!SanityCheck()) return;
+    if(!SanityCheck())
+        return;
 
     // Sanity
     CHECK_PTR_RET(editor);
@@ -181,9 +194,8 @@ void JSCodeCompletion::OnDefinitionFound(const clTernDefinition& loc)
         if(editor) {
             editor->CenterLine(editor->LineFromPos(loc.start));
             if(editor->FindAndSelect(pattern, pattern, loc.start, NULL)) {
-                to = editor->CreateBrowseRecord();
                 // Record this jump
-                clGetManager()->GetNavigationMgr()->AddJump(from, to);
+                clGetManager()->GetNavigationMgr()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
             }
         }
     }
@@ -191,9 +203,12 @@ void JSCodeCompletion::OnDefinitionFound(const clTernDefinition& loc)
 
 void JSCodeCompletion::ResetTern(bool force)
 {
-    if(!IsEnabled()) { return; }
+    if(!IsEnabled()) {
+        return;
+    }
 
-    if(!SanityCheck()) return;
+    if(!SanityCheck())
+        return;
 
     // Sanity
     m_ccPos = wxNOT_FOUND;
@@ -218,10 +233,13 @@ void JSCodeCompletion::OnGotoDefinition(wxCommandEvent& event)
 
 void JSCodeCompletion::ReparseFile(IEditor* editor)
 {
-    if(!IsEnabled()) { return; }
+    if(!IsEnabled()) {
+        return;
+    }
     CHECK_PTR_RET(editor);
 
-    if(!SanityCheck()) return;
+    if(!SanityCheck())
+        return;
 
     // Sanity
     m_ccPos = wxNOT_FOUND;

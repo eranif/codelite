@@ -29,7 +29,7 @@
 #include "codelite_exports.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "vector"
+#include <stack>
 
 /**
  * @class NavMgr
@@ -37,14 +37,17 @@
  * @author Eran
  * @date 08/10/07
  */
-class WXDLLIMPEXP_SDK NavMgr
+class WXDLLIMPEXP_SDK NavMgr : public wxEvtHandler
 {
-    std::vector<BrowseRecord> m_jumps;
-    size_t m_cur;
+    std::stack<BrowseRecord> m_nexts;
+    std::stack<BrowseRecord> m_prevs;
+    BrowseRecord m_currentLocation;
 
 private:
     NavMgr();
     virtual ~NavMgr();
+
+    void OnWorkspaceClosed(wxCommandEvent& e);
 
 public:
     static NavMgr* Get();
@@ -55,23 +58,9 @@ public:
     bool ValidLocation(const BrowseRecord& rec) const;
 
     /**
-     * @brief add new jump record to the manager, this new record become the new top of the list
-     * @param from the starting point of the jump
-     * @param to the ending point of the jump
+     * @brief store the current jump origin -> target
      */
-    void AddJump(const BrowseRecord& from, const BrowseRecord& to);
-
-    /**
-     * @brief return the next place to visit (destination)
-     * @return next browsing record
-     */
-    BrowseRecord GetNext();
-
-    /**
-     * @brief return the previous place we visited (source)
-     * @return previous browsing record
-     */
-    BrowseRecord GetPrev();
+    void StoreCurrentLocation(const BrowseRecord& origin, const BrowseRecord& target);
 
     /**
      * @brief return true if manager has more next items

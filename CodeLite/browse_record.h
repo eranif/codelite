@@ -32,21 +32,36 @@ class BrowseRecord
 public:
     wxString filename;
     wxString project;
-    int lineno;
-    int position;
-    int firstLineInView;
+    int lineno = wxNOT_FOUND;
+    int column = wxNOT_FOUND;
+    int firstLineInView = wxNOT_FOUND;
 
 public:
     BrowseRecord()
         : filename(wxEmptyString)
         , project(wxEmptyString)
         , lineno(wxNOT_FOUND)
-        , position(wxNOT_FOUND)
+        , column(wxNOT_FOUND)
         , firstLineInView(wxNOT_FOUND)
     {
     }
 
-    ~BrowseRecord() {}
+    ~BrowseRecord()
+    {
+    }
+
+    bool IsSameAs(const BrowseRecord& other) const
+    {
+        return filename == other.filename && lineno == other.lineno;
+    }
+    
+    /**
+     * @brief having a file name is enough for a jumping record
+     */
+    bool IsOk() const
+    {
+        return !filename.empty();
+    }
 };
 
 #endif // BROWSE_HISTORY_H

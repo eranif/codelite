@@ -318,7 +318,10 @@ void MainBook::ClearFileHistory()
     clConfig::Get().ClearRecentFiles();
 }
 
-void MainBook::GetRecentlyOpenedFiles(wxArrayString& files) { files = clConfig::Get().GetRecentFiles(); }
+void MainBook::GetRecentlyOpenedFiles(wxArrayString& files)
+{
+    files = clConfig::Get().GetRecentFiles();
+}
 
 void MainBook::UpdateNavBar(clEditor* editor)
 {
@@ -374,7 +377,10 @@ void MainBook::ShowNavBar(bool s)
     }
 }
 
-void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { CreateSession(session, excludeArr); }
+void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr)
+{
+    CreateSession(session, excludeArr);
+}
 
 void MainBook::RestoreSession(SessionEntry& session)
 {
@@ -723,7 +729,7 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
 
     if(extra & OF_AddJump) {
         BrowseRecord jumpto = editor->CreateBrowseRecord();
-        NavMgr::Get()->AddJump(jumpfrom, jumpto);
+        NavMgr::Get()->StoreCurrentLocation(jumpfrom, jumpto);
     }
     return editor;
 }
@@ -1171,7 +1177,10 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
     }
 }
 
-long MainBook::GetBookStyle() { return 0; }
+long MainBook::GetBookStyle()
+{
+    return 0;
+}
 
 bool MainBook::DoSelectPage(wxWindow* win)
 {
@@ -1235,8 +1244,14 @@ void MainBook::DoUpdateNotebookTheme()
 #endif
 }
 
-wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }
-int MainBook::GetCurrentPageIndex() { return m_book->GetSelection(); }
+wxWindow* MainBook::GetCurrentPage()
+{
+    return m_book->GetCurrentPage();
+}
+int MainBook::GetCurrentPageIndex()
+{
+    return m_book->GetSelection();
+}
 
 void MainBook::OnClosePage(wxBookCtrlEvent& e)
 {
@@ -1251,9 +1266,15 @@ void MainBook::OnClosePage(wxBookCtrlEvent& e)
     }
 }
 
-void MainBook::OnDebugEnded(clDebugEvent& e) { e.Skip(); }
+void MainBook::OnDebugEnded(clDebugEvent& e)
+{
+    e.Skip();
+}
 
-void MainBook::DoHandleFrameMenu(clEditor* editor) { wxUnusedVar(editor); }
+void MainBook::DoHandleFrameMenu(clEditor* editor)
+{
+    wxUnusedVar(editor);
+}
 
 void MainBook::OnPageChanging(wxBookCtrlEvent& e)
 {
@@ -1282,7 +1303,10 @@ void MainBook::OnInitDone(wxCommandEvent& e)
     }
 }
 
-wxWindow* MainBook::GetPage(size_t page) { return m_book->GetPage(page); }
+wxWindow* MainBook::GetPage(size_t page)
+{
+    return m_book->GetPage(page);
+}
 
 bool MainBook::ClosePage(const wxString& text)
 {
@@ -1295,7 +1319,10 @@ bool MainBook::ClosePage(const wxString& text)
     return numPageClosed > 0;
 }
 
-size_t MainBook::GetPageCount() const { return m_book->GetPageCount(); }
+size_t MainBook::GetPageCount() const
+{
+    return m_book->GetPageCount();
+}
 
 void MainBook::DetachActiveEditor()
 {
@@ -1346,9 +1373,15 @@ void MainBook::OnWorkspaceReloadStarted(clCommandEvent& e)
     m_isWorkspaceReloading = true;
 }
 
-void MainBook::ClosePageVoid(wxWindow* win) { ClosePage(win); }
+void MainBook::ClosePageVoid(wxWindow* win)
+{
+    ClosePage(win);
+}
 
-void MainBook::CloseAllButThisVoid(wxWindow* win) { CloseAllButThis(win); }
+void MainBook::CloseAllButThisVoid(wxWindow* win)
+{
+    CloseAllButThis(win);
+}
 
 void MainBook::CloseAllVoid(bool cancellable)
 {
@@ -1417,7 +1450,10 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
     session.SetFindInFilesMask(frd.GetSelectedMask());
 }
 
-void MainBook::ShowTabBar(bool b) { wxUnusedVar(b); }
+void MainBook::ShowTabBar(bool b)
+{
+    wxUnusedVar(b);
+}
 
 void MainBook::CloseTabsToTheRight(wxWindow* win)
 {
@@ -1689,14 +1725,17 @@ clEditor* MainBook::OpenFile(const BrowseRecord& rec)
             editor->GetCtrl()->SetFirstVisibleLine(rec.firstLineInView);
         }
         // Determine the best position for the caret
-        int pos = rec.position;
-        if((pos == wxNOT_FOUND) && (rec.lineno != wxNOT_FOUND)) {
-            pos = editor->PositionFromLine(rec.lineno);
-        }
-        if(pos != wxNOT_FOUND) {
-            editor->SetCurrentPos(rec.position);
-            editor->SetSelectionStart(rec.position);
-            editor->SetSelectionEnd(rec.position);
+        int line_number = rec.lineno;
+        int column = rec.column;
+
+        if(line_number != wxNOT_FOUND) {
+            int pos = editor->PositionFromLine(line_number);
+            if(column != wxNOT_FOUND) {
+                pos += column;
+            }
+            editor->SetCurrentPos(pos);
+            editor->SetSelectionStart(pos);
+            editor->SetSelectionEnd(pos);
             editor->EnsureCaretVisible();
         }
     }
@@ -1822,4 +1861,7 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
     return label;
 }
 
-int MainBook::GetBitmapIndexOrAdd(const wxString& name) { return m_book->GetBitmaps()->Add(name); }
+int MainBook::GetBitmapIndexOrAdd(const wxString& name)
+{
+    return m_book->GetBitmaps()->Add(name);
+}

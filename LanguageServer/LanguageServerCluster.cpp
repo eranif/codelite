@@ -102,13 +102,13 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
         IEditor* oldEditor = clGetManager()->GetActiveEditor();
         if(oldEditor) {
             from = oldEditor->CreateBrowseRecord();
+            
         }
+
         IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND, OF_None);
         if(editor) {
             editor->SelectRange(location.GetRange());
-            if(oldEditor) {
-                NavMgr::Get()->AddJump(from, editor->CreateBrowseRecord());
-            }
+            NavMgr::Get()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
         }
     }
 }
@@ -426,7 +426,10 @@ void LanguageServerCluster::ClearAllDiagnostics()
     }
 }
 
-void LanguageServerCluster::ClearRestartCounters() { m_restartCounters.clear(); }
+void LanguageServerCluster::ClearRestartCounters()
+{
+    m_restartCounters.clear();
+}
 
 void LanguageServerCluster::OnBuildEnded(clBuildEvent& event)
 {

@@ -2904,7 +2904,7 @@ void ContextCpp::OnGotoFunctionStart(wxCommandEvent& event)
         BrowseRecord jumpfrom = GetCtrl().CreateBrowseRecord();
         GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine() - 1));
         // add an entry to the navigation manager
-        NavMgr::Get()->AddJump(jumpfrom, GetCtrl().CreateBrowseRecord());
+        NavMgr::Get()->StoreCurrentLocation(jumpfrom, GetCtrl().CreateBrowseRecord());
     }
 }
 
@@ -2918,7 +2918,7 @@ void ContextCpp::OnGotoNextFunction(wxCommandEvent& event)
         BrowseRecord jumpfrom = GetCtrl().CreateBrowseRecord();
         GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine() - 1));
         // add an entry to the navigation manager
-        NavMgr::Get()->AddJump(jumpfrom, GetCtrl().CreateBrowseRecord());
+        NavMgr::Get()->StoreCurrentLocation(jumpfrom, GetCtrl().CreateBrowseRecord());
     }
 }
 

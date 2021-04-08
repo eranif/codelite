@@ -3625,14 +3625,11 @@ BrowseRecord clEditor::CreateBrowseRecord()
 {
     // Remember this position before skipping to the next one
     BrowseRecord record;
-    record.lineno = LineFromPosition(GetCurrentPos()) + 1; // scintilla counts from zero, while tagentry from 1
+    record.lineno = LineFromPosition(GetCurrentPos()); // scintilla counts from zero, while tagentry from 1
     record.filename = GetFileName().GetFullPath();
     record.project = GetProject();
     record.firstLineInView = GetFirstVisibleLine();
-
-    // if the file is part of the workspace set the project name
-    // else, open it with empty project
-    record.position = GetCurrentPos();
+    record.column = GetColumn(GetCurrentPosition());
     return record;
 }
 
@@ -4910,7 +4907,10 @@ bool clEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, i
     } while(again);
 
     if(res && navmgr) {
-        navmgr->AddJump(jumpfrom, CreateBrowseRecord());
+        auto new_loc = CreateBrowseRecord();
+        if(!new_loc.IsSameAs(jumpfrom)) {
+            navmgr->StoreCurrentLocation(jumpfrom, new_loc);
+        }
     }
     this->ScrollToColumn(0);
     return res;

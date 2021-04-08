@@ -85,6 +85,7 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include "wxCustomControls.hpp"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -611,12 +612,12 @@ EVT_MENU(XRCID("save_current_layout"), clMainFrame::OnSaveLayoutAsPerspective)
 //-----------------------------------------------------------------
 // Toolbar
 //-----------------------------------------------------------------
-EVT_MENU(wxID_FORWARD, clMainFrame::OnBackwardForward)
-EVT_MENU(wxID_BACKWARD, clMainFrame::OnBackwardForward)
+EVT_MENU(XRCID("id_forward"), clMainFrame::OnBackwardForward)
+EVT_MENU(XRCID("id_backward"), clMainFrame::OnBackwardForward)
 EVT_MENU(XRCID("highlight_word"), clMainFrame::OnHighlightWord)
 
-EVT_UPDATE_UI(wxID_FORWARD, clMainFrame::OnBackwardForwardUI)
-EVT_UPDATE_UI(wxID_BACKWARD, clMainFrame::OnBackwardForwardUI)
+EVT_UPDATE_UI(XRCID("id_forward"), clMainFrame::OnBackwardForwardUI)
+EVT_UPDATE_UI(XRCID("id_backward"), clMainFrame::OnBackwardForwardUI)
 
 //-------------------------------------------------------
 // Workspace Pane tab context menu
@@ -1079,7 +1080,7 @@ void clMainFrame::CreateGUIControls()
 
     // Load the menubar from XRC and set this frame's menubar to it.
 
-#ifdef __WXMSW__
+#if !wxUSE_NATIVE_MENUBAR
     // replace the menu bar with our customer menu bar
     wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
     m_menuBar = new clThemedMenuBar(this, 0, nullptr, nullptr);
@@ -1399,8 +1400,8 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->AddTool(wxID_UNDO, _("Undo"), images->Add(wxT("undo"), toolSize), _("Undo"), wxITEM_DROPDOWN);
     m_toolbar->AddTool(wxID_REDO, _("Redo"), images->Add(wxT("redo"), toolSize), _("Redo"), wxITEM_DROPDOWN);
     m_toolbar->AddSpacer();
-    m_toolbar->AddTool(wxID_BACKWARD, _("Backward"), images->Add(wxT("back"), toolSize), _("Backward"));
-    m_toolbar->AddTool(wxID_FORWARD, _("Forward"), images->Add(wxT("forward"), toolSize), _("Forward"));
+    m_toolbar->AddTool(XRCID("id_backward"), _("Backward"), images->Add(wxT("back"), toolSize), _("Backward"));
+    m_toolbar->AddTool(XRCID("id_forward"), _("Forward"), images->Add(wxT("forward"), toolSize), _("Forward"));
     m_toolbar->AddSpacer();
 
     //----------------------------------------------
@@ -2958,22 +2959,21 @@ void clMainFrame::OnRecentWorkspace(wxCommandEvent& event)
 
 void clMainFrame::OnBackwardForward(wxCommandEvent& event)
 {
-    switch(event.GetId()) {
-    case wxID_FORWARD:
+    if(event.GetId() == XRCID("id_forward")) {
         NavMgr::Get()->NavigateForward(PluginManager::Get());
-        break;
-    case wxID_BACKWARD:
+    } else if(event.GetId() == XRCID("id_backward")) {
         NavMgr::Get()->NavigateBackward(PluginManager::Get());
-        break;
+    } else {
+        event.Skip();
     }
 }
 
 void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    if(event.GetId() == wxID_FORWARD) {
+    if(event.GetId() == XRCID("id_forward")) {
         event.Enable(NavMgr::Get()->CanNext());
-    } else if(event.GetId() == wxID_BACKWARD) {
+    } else if(event.GetId() == XRCID("id_backward")) {
         event.Enable(NavMgr::Get()->CanPrev());
     } else {
         event.Skip();

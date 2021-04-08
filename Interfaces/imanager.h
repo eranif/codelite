@@ -28,6 +28,7 @@
 
 #include "Notebook.h"
 #include "bitmap_loader.h"
+#include "clMenuBar.hpp"
 #include "clStatusBar.h"
 #include "clTab.h"
 #include "debugger.h"
@@ -97,18 +98,28 @@ class IManager
     wxArrayString m_outputTabs;
 
 public:
-    IManager() {}
-    virtual ~IManager() {}
+    IManager()
+    {
+    }
+    virtual ~IManager()
+    {
+    }
 
     /**
      * @brief return a list of all possible output tabs registered by the user
      */
-    const wxArrayString& GetOutputTabs() const { return m_outputTabs; }
+    const wxArrayString& GetOutputTabs() const
+    {
+        return m_outputTabs;
+    }
 
     /**
      * @brief return a list of all possible workspace tabs
      */
-    const wxArrayString& GetWorkspaceTabs() const { return m_workspaceTabs; }
+    const wxArrayString& GetWorkspaceTabs() const
+    {
+        return m_workspaceTabs;
+    }
 
     /**
      * @brief register a workspace tab
@@ -131,6 +142,8 @@ public:
     }
 
     virtual clToolBar* GetToolBar() = 0;
+
+    virtual clMenuBar* GetMenuBar() = 0;
 
     /**
      * @brief show the output pane and if provided, select 'selectedWindow'

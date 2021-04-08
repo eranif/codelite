@@ -270,7 +270,7 @@ void LLDBPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     // Menu Bar > Settings > LLDB Settings
 
     // Get the main frame's menubar
-    wxMenuBar* mb = pluginsMenu->GetMenuBar();
+    auto mb = clGetManager()->GetMenuBar();
     if(mb) {
         wxMenu* settingsMenu(NULL);
         int menuPos = mb->FindMenu(_("Settings"));

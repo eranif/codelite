@@ -229,7 +229,6 @@ void clScrolledPanel::OnCharHook(wxKeyEvent& event)
     wxKeyEvent keyDown = event;
     keyDown.SetEventType(wxEVT_KEY_DOWN);
     if(DoKeyDown(keyDown)) {
-        event.Skip(false);
         return;
     }
 

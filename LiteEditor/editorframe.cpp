@@ -31,7 +31,6 @@
 #include "frame.h"
 #include "mainbook.h"
 #include "manager.h"
-#include "my_menu_bar.h"
 #include "plugin.h"
 #include "quickfindbar.h"
 #include <wx/msgdlg.h>

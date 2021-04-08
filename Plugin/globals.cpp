@@ -2279,3 +2279,4 @@ bool clIsWaylandSession()
     return false;
 #endif
 }
+

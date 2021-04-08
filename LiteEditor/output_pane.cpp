@@ -94,8 +94,6 @@ void OutputPane::CreateGUIControls()
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &OutputPane::OnOutputBookFileListMenu, this);
 
-    BitmapLoader* bmpLoader = PluginManager::Get()->GetStdIcons();
-
     // Calculate the widest tab (the one with the 'Workspace' label) TODO: What happens with translations?
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL | wxGROW, 0);
 

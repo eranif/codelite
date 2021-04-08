@@ -44,6 +44,7 @@
 #include "clMainFrameHelper.h"
 #include "clSingleChoiceDialog.h"
 #include "clThemeUpdater.h"
+#include "clThemedMenuBar.hpp"
 #include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_dock_art.h"
@@ -64,7 +65,6 @@
 #include "includepathlocator.h"
 #include "localstable.h"
 #include "manage_perspective_dlg.h"
-#include "my_menu_bar.h"
 #include "open_resource_dialog.h" // New open resource
 #include "precompiled_header.h"
 #include "quickfindbar.h"
@@ -1078,22 +1078,26 @@ void clMainFrame::CreateGUIControls()
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 
     // Load the menubar from XRC and set this frame's menubar to it.
-    wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
 
+#ifdef __WXMSW__
+    // replace the menu bar with our customer menu bar
+    wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
+    m_menuBar = new clThemedMenuBar(this, 0, nullptr, nullptr);
+    GetSizer()->Insert(0, m_menuBar, 0, wxEXPAND);
+    m_menuBar->FromMenuBar(mb);
+    SetMenuBar(nullptr);
+#else
+    m_menuBar = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
 #ifdef __WXOSX__
     wxMenu* view = NULL;
-    wxMenuItem* item = mb->FindItem(XRCID("show_tabs_tab"), &view);
+    wxMenuItem* item = m_menuBar->FindItem(XRCID("show_tabs_tab"), &view);
     if(item && view) {
         view->Remove(item);
     }
 #endif
 
     // Under wxGTK < 2.9.4 we need this wrapper class to avoid warnings on ubuntu when codelite exits
-    m_myMenuBar = new MyMenuBar(mb);
-    SetMenuBar(m_myMenuBar->GetMenuBar());
-
-#ifdef __WXMSW__
-    hMenu = GetMenu(GetHWND());
+    SetMenuBar(m_menuBar);
 #endif
 
     bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
@@ -1109,12 +1113,12 @@ void clMainFrame::CreateGUIControls()
 
     // Connect to Edit menu, so that its labelled-state submenu can be added on the fly when necessary
     wxMenu* editmenu = NULL;
-    wxMenuItem* menuitem = GetMenuBar()->FindItem(wxID_UNDO, &editmenu);
+    wxMenuItem* menuitem = GetMainMenuBar()->FindItem(wxID_UNDO, &editmenu);
     if(menuitem && editmenu) {
         editmenu->Bind(wxEVT_MENU_OPEN, wxMenuEventHandler(clMainFrame::OnEditMenuOpened), this);
     }
 
-    m_DPmenuMgr = new DockablePaneMenuManager(GetMenuBar(), &m_mgr);
+    m_DPmenuMgr = new DockablePaneMenuManager(&m_mgr);
 
     //---------------------------------------------
     // Add docking windows
@@ -1439,7 +1443,12 @@ void clMainFrame::CreateToolBar(int toolSize)
                        images->Add(wxT("start-debugger"), toolSize), _("Start or Continue debugger"));
     m_toolbar->AddSpacer();
 
-    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+    size_t insert_index = 0;
+    wxSizerItem* sizer_item = GetSizer()->GetItem((size_t)0);
+    if(sizer_item->GetWindow() == GetMainMenuBar()) {
+        insert_index = 1;
+    }
+    GetSizer()->Insert(insert_index, m_toolbar, 0, wxEXPAND);
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
@@ -2871,7 +2880,7 @@ void clMainFrame::CreateRecentlyOpenedFilesMenu()
     GetMainBook()->GetRecentlyOpenedFiles(files);
 
     wxMenu* menu = NULL;
-    wxMenuItem* item = GetMenuBar()->FindItem(XRCID("recent_files"), &menu);
+    wxMenuItem* item = GetMainMenuBar()->FindItem(XRCID("recent_files"), &menu);
     if(item && menu) {
         wxMenu* submenu = item->GetSubMenu();
         if(submenu) {
@@ -2893,7 +2902,7 @@ void clMainFrame::CreateRecentlyOpenedWorkspacesMenu()
     ManagerST::Get()->GetRecentlyOpenedWorkspaces(files);
 
     wxMenu* menu = NULL;
-    wxMenuItem* item = GetMenuBar()->FindItem(XRCID("recent_workspaces"), &menu);
+    wxMenuItem* item = GetMainMenuBar()->FindItem(XRCID("recent_workspaces"), &menu);
     if(item && menu) {
         wxMenu* submenu = item->GetSubMenu();
         if(submenu) {
@@ -5114,7 +5123,7 @@ void clMainFrame::DoUpdatePerspectiveMenu()
 {
     // Locate the "perspective_menu"
     wxMenu* menu = NULL;
-    GetMenuBar()->FindItem(XRCID("manage_perspectives"), &menu);
+    GetMainMenuBar()->FindItem(XRCID("manage_perspectives"), &menu);
     if(!menu) {
         return;
     }
@@ -6062,7 +6071,7 @@ void clMainFrame::OnShowMenuBar(wxCommandEvent& event)
 void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event)
 {
 #if defined(__WXGTK__)
-    event.Check(GetMenuBar()->IsShown());
+    event.Check(GetMainMenuBar()->IsShown());
 #else
     event.Check(true);
     event.Enable(false);
@@ -6126,13 +6135,8 @@ void clMainFrame::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID)
 void clMainFrame::DoShowMenuBar(bool show)
 {
 #ifdef __WXGTK__
-    GetMenuBar()->Show(show);
+    GetMainMenuBar()->Show(show);
 #endif
-}
-
-wxMenuBar* clMainFrame::GetMenuBar() const
-{
-    return wxFrame::GetMenuBar();
 }
 
 void clMainFrame::OnSysColoursChanged(clCommandEvent& event)

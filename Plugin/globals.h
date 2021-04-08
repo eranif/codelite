@@ -40,6 +40,7 @@
 #include <wx/propgrid/propgrid.h>
 #include <wx/string.h>
 #include <wx/variant.h>
+#include "clThemedMenuBar.hpp"
 
 class wxDataViewCtrl;
 class IManager;

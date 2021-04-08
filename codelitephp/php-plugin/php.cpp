@@ -46,7 +46,9 @@ static PhpPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new PhpPlugin(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new PhpPlugin(manager);
+    }
     return thePlugin;
 }
 
@@ -60,7 +62,10 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion()
+{
+    return PLUGIN_INTERFACE_VERSION;
+}
 
 PhpPlugin::PhpPlugin(IManager* manager)
     : IPlugin(manager)
@@ -181,7 +186,9 @@ PhpPlugin::PhpPlugin(IManager* manager)
 #endif // USE_SFTP
 }
 
-PhpPlugin::~PhpPlugin() {}
+PhpPlugin::~PhpPlugin()
+{
+}
 
 bool PhpPlugin::IsWorkspaceViewDetached()
 {
@@ -191,11 +198,16 @@ bool PhpPlugin::IsWorkspaceViewDetached()
     return detachedPanes.Index(PHPStrings::PHP_WORKSPACE_VIEW_TITLE) != wxNOT_FOUND;
 }
 
-void PhpPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void PhpPlugin::CreateToolBar(clToolBar* toolbar)
+{
+    wxUnusedVar(toolbar);
+}
 
 void PhpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
-    if(pluginsMenu->GetMenuBar()) { DoPlaceMenuBar(pluginsMenu->GetMenuBar()); }
+    if(clGetManager()->GetMenuBar()) {
+        DoPlaceMenuBar(clGetManager()->GetMenuBar());
+    }
 }
 
 void PhpPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -352,7 +364,8 @@ void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
     e.Skip();
     wxFileName workspaceFile(e.GetFileName());
     JSON root(workspaceFile);
-    if(!root.isOk()) return;
+    if(!root.isOk())
+        return;
 
     wxString type = root.toElement().namedObject("metadata").namedObject("type").toString();
     bool hasProjects = root.toElement().hasNamedObject("projects");
@@ -364,7 +377,9 @@ void PhpPlugin::OnOpenWorkspace(clCommandEvent& e)
     }
 
     // Check if this is a PHP workspace
-    if(PHPWorkspace::Get()->IsOpen()) { PHPWorkspace::Get()->Close(true, true); }
+    if(PHPWorkspace::Get()->IsOpen()) {
+        PHPWorkspace::Get()->Close(true, true);
+    }
     DoOpenWorkspace(workspaceFile.GetFullPath());
 }
 
@@ -449,7 +464,9 @@ void PhpPlugin::OnGetCurrentFileProjectFiles(wxCommandEvent& e)
     if(PHPWorkspace::Get()->IsOpen()) {
         IEditor* editor = m_mgr->GetActiveEditor();
         wxArrayString* pfiles = (wxArrayString*)e.GetClientData();
-        if(editor && pfiles) { ::wxMessageBox("Not implemented for PHP!"); }
+        if(editor && pfiles) {
+            ::wxMessageBox("Not implemented for PHP!");
+        }
     } else {
         e.Skip();
     }
@@ -485,7 +502,7 @@ void PhpPlugin::OnNewProject(clNewProjectEvent& e)
     }
 }
 
-void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
+void PhpPlugin::DoPlaceMenuBar(clMenuBar* menuBar)
 {
     // Add our menu bar
     wxMenu* phpMenuBarMenu = new wxMenu();
@@ -494,7 +511,9 @@ void PhpPlugin::DoPlaceMenuBar(wxMenuBar* menuBar)
                            _("Run XDebug Setup Wizard..."));
 
     int helpLoc = menuBar->FindMenu(_("Help"));
-    if(helpLoc != wxNOT_FOUND) { menuBar->Insert(helpLoc, phpMenuBarMenu, _("P&HP")); }
+    if(helpLoc != wxNOT_FOUND) {
+        menuBar->Insert(helpLoc, phpMenuBarMenu, _("P&HP"));
+    }
 }
 
 void PhpPlugin::OnMenuCommand(wxCommandEvent& e)
@@ -561,7 +580,10 @@ void PhpPlugin::OnXDebugDeleteAllBreakpoints(clDebugEvent& e)
     EventNotifier::Get()->AddPendingEvent(eventDelAllBP);
 }
 
-void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e) { DoEnsureXDebugPanesVisible(_("Breakpoints")); }
+void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e)
+{
+    DoEnsureXDebugPanesVisible(_("Breakpoints"));
+}
 
 void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
 {
@@ -602,8 +624,12 @@ void PhpPlugin::SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name)
 void PhpPlugin::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
 {
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(paneName);
-    if(pi.IsOk() && !pi.IsShown()) { pi.Show(); }
-    if(update) { m_mgr->GetDockingManager()->Update(); }
+    if(pi.IsOk() && !pi.IsShown()) {
+        pi.Show();
+    }
+    if(update) {
+        m_mgr->GetDockingManager()->Update();
+    }
 }
 
 void PhpPlugin::OnNewProjectFinish(clNewProjectEvent& e)
@@ -635,7 +661,9 @@ void PhpPlugin::OnNewProjectFinish(clNewProjectEvent& e)
     }
 }
 
-void PhpPlugin::OnXDebugSettings(wxCommandEvent& e) {}
+void PhpPlugin::OnXDebugSettings(wxCommandEvent& e)
+{
+}
 
 void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 {
@@ -653,7 +681,10 @@ void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
     }
 }
 
-void PhpPlugin::SetEditorActive(IEditor* editor) { editor->SetActive(); }
+void PhpPlugin::SetEditorActive(IEditor* editor)
+{
+    editor->SetActive();
+}
 
 void PhpPlugin::RunXDebugDiagnostics()
 {
@@ -723,7 +754,10 @@ void PhpPlugin::FinalizeStartup()
     data.Load();
 }
 
-void PhpPlugin::OnGoingDown(clCommandEvent& event) { event.Skip(); }
+void PhpPlugin::OnGoingDown(clCommandEvent& event)
+{
+    event.Skip();
+}
 
 void PhpPlugin::OnFileSysetmUpdated(clFileSystemEvent& event)
 {

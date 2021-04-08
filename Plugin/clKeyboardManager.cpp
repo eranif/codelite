@@ -5,6 +5,8 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "globals.h"
+#include "imanager.h"
 #include "macros.h"
 #include "newkeyshortcutdlg.h"
 #include <algorithm>
@@ -174,7 +176,7 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& acce
     std::vector<wxAcceleratorEntry> table;
 
     // Update menus. If a match is found remove it from the 'accel' table
-    wxMenuBar* menuBar = frame->GetMenuBar();
+    clMenuBar* menuBar = clGetManager()->GetMenuBar();
     if(!menuBar) {
         clDEBUG() << "No menu bar found!" << clEndl;
         return;

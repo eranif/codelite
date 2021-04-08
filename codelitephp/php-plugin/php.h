@@ -26,14 +26,15 @@
 #ifndef __PHP__
 #define __PHP__
 
+#include "PhpSFTPHandler.h"
 #include "XDebugManager.h"
+#include "clThemedMenuBar.hpp"
 #include "php_event.h"
 #include "plugin.h"
 #include "plugin_settings.h"
 #include <cl_command_event.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
-#include "PhpSFTPHandler.h"
 
 class EvalPane;
 class LocalsView;
@@ -57,7 +58,7 @@ protected:
     bool m_showWelcomePage;
 #if USE_SFTP
     PhpSFTPHandler::Ptr_t m_sftpHandler;
-#endif //USE_SFTP
+#endif // USE_SFTP
 
 public:
     enum {
@@ -75,12 +76,15 @@ public:
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
     void FinalizeStartup();
 
-    PHPDebugPane* GetDebuggerPane() { return m_debuggerPane; }
+    PHPDebugPane* GetDebuggerPane()
+    {
+        return m_debuggerPane;
+    }
 
 protected:
     bool IsWorkspaceViewDetached();
     void DoOpenWorkspace(const wxString& filename, bool createIfMissing = false, bool createProjectFromSources = false);
-    void DoPlaceMenuBar(wxMenuBar* menuBar);
+    void DoPlaceMenuBar(clMenuBar* menuBar);
     void DoEnsureXDebugPanesVisible(const wxString& selectWindow = "");
 
 public:
@@ -93,7 +97,10 @@ public:
     virtual void UnPlug();
     void RunXDebugDiagnostics();
 
-    IManager* GetManager() { return m_mgr; }
+    IManager* GetManager()
+    {
+        return m_mgr;
+    }
     // Event handlers
 
     void SetEditorActive(IEditor* editor);

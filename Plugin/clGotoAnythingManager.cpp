@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <queue>
 #include <wx/menu.h>
-#include <wx/xrc/xmlres.h>
 #include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 clGotoAnythingManager::clGotoAnythingManager()
 {
@@ -82,10 +82,13 @@ void clGotoAnythingManager::Initialise()
     m_actions.clear();
 
     wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
-    wxMenuBar* mb = mainFrame->GetMenuBar();
-    if(!mb) return;
+    auto mb = clGetManager()->GetMenuBar();
+    if(!mb) {
+        return;
+    }
+
     // Get list of menu entries
-    std::queue<std::pair<wxString, wxMenu*> > q;
+    std::queue<std::pair<wxString, wxMenu*>> q;
     for(size_t i = 0; i < mb->GetMenuCount(); ++i) {
         q.push(std::make_pair("", mb->GetMenu(i)));
     }
@@ -105,7 +108,9 @@ void clGotoAnythingManager::Initialise()
             wxMenuItem* menuItem = *iter;
             if(menuItem->GetSubMenu()) {
                 wxString labelText = menuItem->GetItemLabelText();
-                if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) { continue; }
+                if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) {
+                    continue;
+                }
                 q.push(std::make_pair(menuItem->GetItemLabelText() + " > ", menuItem->GetSubMenu()));
             } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR)) {
                 clGotoEntry entry;
@@ -115,7 +120,9 @@ void clGotoAnythingManager::Initialise()
                     entry.SetFlags(clGotoEntry::kItemCheck);
                     entry.SetChecked(menuItem->IsChecked());
                 }
-                if(menuItem->GetAccel()) { entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString()); }
+                if(menuItem->GetAccel()) {
+                    entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString());
+                }
                 entry.SetResourceID(menuItem->GetId());
                 entry.SetBitmap(menuItem->GetBitmap().IsOk() ? menuItem->GetBitmap() : defaultBitmap);
                 if(!entry.GetDesc().IsEmpty()) {

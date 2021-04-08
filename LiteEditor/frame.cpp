@@ -5122,32 +5122,26 @@ bool clMainFrame::IsWorkspaceViewFlagEnabled(int flag)
 void clMainFrame::DoUpdatePerspectiveMenu()
 {
     // Locate the "perspective_menu"
-    wxMenu* menu = NULL;
-    GetMainMenuBar()->FindItem(XRCID("manage_perspectives"), &menu);
-    if(!menu) {
+    int pos = GetMainMenuBar()->FindMenu(_("Perspective"));
+    if(pos == wxNOT_FOUND) {
+        clWARNING() << "Could not find menu: Perspective" << endl;
         return;
     }
 
-    std::vector<int> menuItemIds;
-    const wxMenuItemList& items = menu->GetMenuItems();
-    wxMenuItemList::const_iterator iter = items.begin();
-    for(; iter != items.end(); iter++) {
-        wxMenuItem* menuItem = *iter;
-        if(menuItem->GetId() == wxID_SEPARATOR || menuItem->GetId() == XRCID("save_current_layout") ||
-           menuItem->GetId() == XRCID("manage_perspectives") || menuItem->GetId() == XRCID("restore_layout"))
-            continue;
-        menuItemIds.push_back(menuItem->GetId());
-    }
-
-    for(size_t i = 0; i < menuItemIds.size(); i++) {
-        menu->Delete(menuItemIds.at(i));
-    }
-
+    wxMenu* m = new wxMenu;
     wxArrayString perspectives = ManagerST::Get()->GetPerspectiveManager().GetAllPerspectives();
     for(size_t i = 0; i < perspectives.GetCount(); i++) {
         wxString name = perspectives.Item(i);
-        menu->Prepend(ManagerST::Get()->GetPerspectiveManager().MenuIdFromName(name), name, wxT(""), true);
+        int menu_id = ManagerST::Get()->GetPerspectiveManager().MenuIdFromName(name);
+        m->Append(menu_id, name, wxEmptyString, wxITEM_CHECK);
     }
+    m->AppendSeparator();
+    m->Append(XRCID("manage_perspectives"), _("Manage Perspectives..."));
+    m->Append(XRCID("save_current_layout"), _("Save Current Layout As..."));
+    m->Append(XRCID("restore_layout"), _("Reset..."));
+
+    wxMenu* old_menu = GetMainMenuBar()->Replace(pos, m, _("Perspective"));
+    wxDELETE(old_menu);
 }
 
 // Perspective management

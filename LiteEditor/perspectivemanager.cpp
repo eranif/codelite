@@ -40,11 +40,16 @@ PerspectiveManager::PerspectiveManager()
     , m_aui(NULL)
 {
     wxString active = EditorConfigST::Get()->GetString(wxT("ActivePerspective"));
-    if(active.IsEmpty() == false) { m_active = active; }
+    if(active.IsEmpty() == false) {
+        m_active = active;
+    }
     ClearIds();
 }
 
-PerspectiveManager::~PerspectiveManager() { DisconnectEvents(); }
+PerspectiveManager::~PerspectiveManager()
+{
+    DisconnectEvents();
+}
 
 void PerspectiveManager::DeleteAllPerspectives()
 {
@@ -60,7 +65,9 @@ void PerspectiveManager::DeleteAllPerspectives()
 void PerspectiveManager::LoadPerspective(const wxString& name)
 {
     wxString pname = name;
-    if(pname.IsEmpty()) { pname = m_active; }
+    if(pname.IsEmpty()) {
+        pname = m_active;
+    }
 
     wxString file = DoGetPathFromName(pname);
     wxString content;
@@ -70,7 +77,9 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
         m_active = pname;
         EditorConfigST::Get()->SetString(wxT("ActivePerspective"), m_active);
 
-        if(pname == DEBUG_LAYOUT) { DoEnsureDebuggerPanesAreVisible(); }
+        if(pname == DEBUG_LAYOUT) {
+            DoEnsureDebuggerPanesAreVisible();
+        }
 
     } else {
         if(pname == DEBUG_LAYOUT) {
@@ -93,7 +102,9 @@ void PerspectiveManager::LoadPerspective(const wxString& name)
 void PerspectiveManager::SavePerspective(const wxString& name, bool notify)
 {
     wxString pname = name;
-    if(pname.IsEmpty()) { pname = GetActive(); }
+    if(pname.IsEmpty()) {
+        pname = GetActive();
+    }
 
     WriteFileWithBackup(DoGetPathFromName(pname), clMainFrame::Get()->GetDockingManager().SavePerspective(), false);
     m_active = pname;
@@ -138,7 +149,9 @@ wxString PerspectiveManager::NameFromMenuId(int id)
 {
     std::map<wxString, int>::iterator iter = m_menuIdToName.begin();
     for(; iter != m_menuIdToName.end(); iter++) {
-        if(iter->second == id) { return iter->first; }
+        if(iter->second == id) {
+            return iter->first;
+        }
     }
     return wxT("");
 }
@@ -146,7 +159,8 @@ wxString PerspectiveManager::NameFromMenuId(int id)
 void PerspectiveManager::LoadPerspectiveByMenuId(int id)
 {
     wxString name = NameFromMenuId(id);
-    if(name.IsEmpty()) return;
+    if(name.IsEmpty())
+        return;
 
     LoadPerspective(name);
 }
@@ -173,7 +187,9 @@ wxString PerspectiveManager::DoGetPathFromName(const wxString& name)
     wxString filename = name;
 
     filename.MakeLower();
-    if(!filename.EndsWith(wxT(".layout"))) { filename << wxT(".layout"); }
+    if(!filename.EndsWith(wxT(".layout"))) {
+        filename << wxT(".layout");
+    }
 
     file << clStandardPaths::Get().GetUserDataDir() << wxT("/config/") << filename;
     return file;
@@ -182,10 +198,15 @@ wxString PerspectiveManager::DoGetPathFromName(const wxString& name)
 void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
 {
     wxString file = DoGetPathFromName(name);
-    if(!wxFileName::FileExists(file)) { SavePerspective(name, false); }
+    if(!wxFileName::FileExists(file)) {
+        SavePerspective(name, false);
+    }
 }
 
-bool PerspectiveManager::IsDefaultActive() const { return GetActive().CmpNoCase(NORMAL_LAYOUT) == 0; }
+bool PerspectiveManager::IsDefaultActive() const
+{
+    return GetActive().CmpNoCase(NORMAL_LAYOUT) == 0;
+}
 
 void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
 {
@@ -222,13 +243,16 @@ void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
     DoShowPane(item.WindowName(DebuggerPaneConfig::Disassemble), (item.GetWindows() & DebuggerPaneConfig::Disassemble),
                needUpdate);
 
-    if(needUpdate) { clMainFrame::Get()->GetDockingManager().Update(); }
+    if(needUpdate) {
+        clMainFrame::Get()->GetDockingManager().Update();
+    }
 }
 
 void PerspectiveManager::OnPaneClosing(wxAuiManagerEvent& event)
 {
     event.Skip();
-    if(!m_aui) return;
+    if(!m_aui)
+        return;
 
     wxAuiPaneInfo& pane_info = m_aui->GetPane(wxT("Output View"));
     if(pane_info.IsOk() && pane_info.IsShown()) {
@@ -248,10 +272,12 @@ void PerspectiveManager::ConnectEvents(wxAuiManager* mgr)
 
 void PerspectiveManager::ToggleOutputPane(bool hide)
 {
-    if(!m_aui) return;
+    if(!m_aui)
+        return;
 
     wxAuiPaneInfo& pane_info = m_aui->GetPane(wxT("Output View"));
-    if(!pane_info.IsOk()) return;
+    if(!pane_info.IsOk())
+        return;
 
     pane_info.Show(!hide);
     m_aui->Update();

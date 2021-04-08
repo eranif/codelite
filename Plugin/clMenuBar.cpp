@@ -52,7 +52,8 @@ wxMenuItem* clMenuBar::DoFindMenuItem(int id, wxMenu** parent) const
 {
     wxMenuItem* mi = nullptr;
     for(auto d : m_menus) {
-        if((mi = d.menu->FindItem(id, parent))) {
+        if((mi = d.menu->FindItem(id, nullptr))) {
+            *parent = d.menu;
             return mi;
         }
     }

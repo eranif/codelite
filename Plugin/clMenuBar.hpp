@@ -1,6 +1,11 @@
 #ifndef CLMENUBAR_HPP
 #define CLMENUBAR_HPP
 
+#include "wxCustomControls.hpp"
+#if wxUSE_NATIVE_MENUBAR
+#include <wx/menu.h>
+typedef wxMenuBar clMenuBar;
+#else
 #include <clColours.h>
 #include <codelite_exports.h>
 #include <unordered_map>
@@ -189,5 +194,5 @@ public:
      */
     void FromMenuBar(wxMenuBar* mb);
 };
-
+#endif
 #endif // CLMENUBAR_HPP

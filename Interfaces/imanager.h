@@ -41,6 +41,7 @@
 #include "wx/treectrl.h"
 #include <vector>
 #include <wx/aui/framemanager.h>
+#include "clThemedMenuBar.hpp"
 
 class clTreeCtrl;
 class clEditorBar;

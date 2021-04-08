@@ -2,12 +2,15 @@
 #define CLTHEMEDMENUBAR_HPP
 
 #include "clMenuBar.hpp"
+#if wxUSE_NATIVE_MENUBAR
+typedef clMenuBar clThemedMenuBar;
+#else
+#include "clMenuBar.hpp"
 #include "clThemedCtrl.hpp"
 #include "codelite_events.h"
 #include "codelite_exports.h"
 #include "event_notifier.h"
-
-#ifdef __WXMSW__
+#include <wx/menu.h>
 class WXDLLIMPEXP_SDK clThemedMenuBar : public clMenuBar
 {
 public:
@@ -17,8 +20,5 @@ public:
 
     void OnThemeChanged(wxCommandEvent& event);
 };
-#else
-typedef clThemedMenuBar wxMenuBar;
-typedef clMenuBar wxMenuBar;
 #endif
 #endif // CLTHEMEDMENUBAR_HPP

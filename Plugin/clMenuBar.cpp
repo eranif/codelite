@@ -1,4 +1,5 @@
 #include "clMenuBar.hpp"
+#if !wxUSE_NATIVE_MENUBAR
 #include <deque>
 #include <drawingutils.h>
 #include <wx/dc.h>
@@ -516,3 +517,4 @@ void clMenuBar::FromMenuBar(wxMenuBar* mb)
     UpdateAccelerators();
     Refresh();
 }
+#endif

@@ -1,4 +1,5 @@
 #include "clThemedMenuBar.hpp"
+#if !wxUSE_NATIVE_MENUBAR
 clThemedMenuBar::clThemedMenuBar()
 {
 }
@@ -19,3 +20,4 @@ void clThemedMenuBar::OnThemeChanged(wxCommandEvent& event)
     event.Skip();
     cl::ApplyTheme<clThemedMenuBar>(this);
 }
+#endif

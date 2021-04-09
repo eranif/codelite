@@ -20,7 +20,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_choice = new clThemedChoice(this, wxID_ANY, pos, size, {});
     m_choice->Bind(wxEVT_CHOICE, &clConfigurationSelectionCtrl::OnChoice, this);
-    GetSizer()->Add(m_choice, 1, wxEXPAND);
+    GetSizer()->Add(m_choice, 1, wxEXPAND | wxALL, 5);
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clConfigurationSelectionCtrl::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clConfigurationSelectionCtrl::OnWorkspaceClosed, this);
@@ -88,7 +88,9 @@ void clConfigurationSelectionCtrl::OnChoice(wxCommandEvent& event)
     }
 }
 
-void clConfigurationSelectionCtrl::Clear() {}
+void clConfigurationSelectionCtrl::Clear()
+{
+}
 
 void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& configurations)
 {

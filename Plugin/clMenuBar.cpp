@@ -455,7 +455,6 @@ void clMenuBar::OnLeftUp(wxMouseEvent& e)
         if(mi.menu) {
             m_menu_is_up = true;
             wxPoint pt = mi.m_rect.GetBottomLeft();
-            pt.x += 1;
             pt.y += 1;
             PopupMenu(mi.menu, pt);
             m_menu_is_up = false;

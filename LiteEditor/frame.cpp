@@ -73,6 +73,7 @@
 #include "save_perspective_as_dlg.h"
 #include "tags_parser_search_path_dlg.h"
 #include "wxCodeCompletionBoxManager.h"
+#include "wxCustomControls.hpp"
 #include "wxCustomStatusBar.h"
 #include <CompilersDetectorManager.h>
 #include <algorithm>
@@ -85,7 +86,6 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
-#include "wxCustomControls.hpp"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -1045,6 +1045,12 @@ void clMainFrame::CreateGUIControls()
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_mainPanel = new wxPanel(this);
     GetSizer()->Add(m_mainPanel, 1, wxEXPAND);
+    m_mainPanel->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
+        e.Skip();
+        m_mainPanel->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        m_mainPanel->Refresh();
+    });
     InitializeLogo();
 
 #if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)

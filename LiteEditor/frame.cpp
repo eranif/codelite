@@ -5461,7 +5461,7 @@ void clMainFrame::OnShowToolbar(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     DoShowToolbars(!m_toolbar->IsShown());
-    clConfig::Get().Write(kConfigShowToolBar, event.IsChecked());
+    clConfig::Get().Write(kConfigShowToolBar, m_toolbar->IsShown());
 }
 
 void clMainFrame::OnShowToolbarUI(wxUpdateUIEvent& event)

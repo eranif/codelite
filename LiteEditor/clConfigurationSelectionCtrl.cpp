@@ -1,6 +1,5 @@
 #include "bitmap_loader.h"
 #include "clConfigurationSelectionCtrl.h"
-#include "clThemeUpdater.h"
 #include "clThemedChoice.h"
 #include "cl_config.h"
 #include "codelite_events.h"
@@ -16,7 +15,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
                                                            const wxSize& size, long style)
     : wxPanel(parent, winid, pos, size, style)
 {
-    clThemeUpdater::Get().RegisterWindow(this);
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_choice = new clThemedChoice(this, wxID_ANY, pos, size, {});
     m_choice->Bind(wxEVT_CHOICE, &clConfigurationSelectionCtrl::OnChoice, this);
@@ -30,6 +29,11 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
                    XRCID("configuration_manager"));
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &clConfigurationSelectionCtrl::OnActiveProjectChanged,
                                this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
+        e.Skip();
+        SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        Refresh();
+    });
 }
 
 clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()

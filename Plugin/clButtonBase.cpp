@@ -388,7 +388,7 @@ wxSize clButtonBase::GetBestSize() const
 #if defined(__WXGTK__) || defined(__WXMAC__)
     int inflateSize = 8;
 #else
-    int inflateSize = 4;
+    int inflateSize = 6;
 #endif
 
     int buttonHeight = 0;

@@ -26,18 +26,22 @@
 #ifndef CXXPREPROCESSORSCANNERBASE_H
 #define CXXPREPROCESSORSCANNERBASE_H
 
-#include "codelite_exports.h"
 #include "CxxLexerAPI.h"
-#include <wx/filename.h>
 #include "CxxScannerBase.h"
+#include "codelite_exports.h"
+#include <unordered_set>
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_CL CxxPreProcessor;
 class WXDLLIMPEXP_CL CIncludeStatementCollector : public CxxScannerBase
 {
+    std::unordered_set<wxString>& m_visitedFiles;
+
 public:
-    CIncludeStatementCollector(CxxPreProcessor* pp, const wxFileName& filename);
+    CIncludeStatementCollector(CxxPreProcessor* pp, const wxFileName& filename,
+                               std::unordered_set<wxString>& visitedFiles);
     virtual ~CIncludeStatementCollector();
-    void OnToken(CxxLexerToken &token);
+    void OnToken(CxxLexerToken& token) override;
 };
 
 #endif // CXXPREPROCESSORSCANNERBASE_H

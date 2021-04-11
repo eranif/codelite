@@ -10,7 +10,9 @@ CxxUsingNamespaceCollectorThread::CxxUsingNamespaceCollectorThread()
 {
 }
 
-CxxUsingNamespaceCollectorThread::~CxxUsingNamespaceCollectorThread() {}
+CxxUsingNamespaceCollectorThread::~CxxUsingNamespaceCollectorThread()
+{
+}
 
 void CxxUsingNamespaceCollectorThread::ProcessRequest(ThreadRequest* request)
 {
@@ -19,7 +21,8 @@ void CxxUsingNamespaceCollectorThread::ProcessRequest(ThreadRequest* request)
 
     CxxPreProcessor pp;
     pp.SetMaxDepth(20);
-    CxxUsingNamespaceCollector collector(&pp, req->filename);
+    std::unordered_set<wxString> visitedFiles;
+    CxxUsingNamespaceCollector collector(&pp, req->filename, visitedFiles);
     for(size_t i = 0; i < req->includePaths.GetCount(); ++i) {
         pp.AddIncludePath(req->includePaths.Item(i));
     }

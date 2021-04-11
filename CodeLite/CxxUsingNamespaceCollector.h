@@ -26,12 +26,13 @@
 #ifndef CXXUSINGNAMESPACECOLLECTOR_H
 #define CXXUSINGNAMESPACECOLLECTOR_H
 
-#include "codelite_exports.h"
 #include "CxxScannerBase.h"
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL CxxUsingNamespaceCollector : public CxxScannerBase
 {
     wxArrayString m_usingNamespaces;
+    std::unordered_set<wxString>& m_visitedFiles;
 
 private:
     void ParseUsingNamespace();
@@ -39,9 +40,16 @@ private:
 public:
     virtual void OnToken(CxxLexerToken& token);
 
-    void SetUsingNamespaces(const wxArrayString& usingNamespaces) { this->m_usingNamespaces = usingNamespaces; }
-    const wxArrayString& GetUsingNamespaces() const { return m_usingNamespaces; }
-    CxxUsingNamespaceCollector(CxxPreProcessor* preProcessor, const wxFileName& filename);
+    void SetUsingNamespaces(const wxArrayString& usingNamespaces)
+    {
+        this->m_usingNamespaces = usingNamespaces;
+    }
+    const wxArrayString& GetUsingNamespaces() const
+    {
+        return m_usingNamespaces;
+    }
+    CxxUsingNamespaceCollector(CxxPreProcessor* preProcessor, const wxFileName& filename,
+                               std::unordered_set<wxString>& visitedFiles);
     virtual ~CxxUsingNamespaceCollector();
 };
 

@@ -27,10 +27,11 @@
 #define CXXPREPROCESSORSCANNER_H
 
 #include "CxxLexerAPI.h"
-#include <wx/string.h>
-#include <list>
-#include <wx/sharedptr.h>
 #include "codelite_exports.h"
+#include <list>
+#include <unordered_set>
+#include <wx/sharedptr.h>
+#include <wx/string.h>
 
 class CxxPreProcessor;
 class WXDLLIMPEXP_CL CxxPreProcessorScanner
@@ -39,10 +40,11 @@ protected:
     Scanner_t m_scanner;
     wxFileName m_filename;
     size_t m_options;
-    
+    std::unordered_set<wxString>& m_visitedFiles;
+
 public:
     typedef wxSharedPtr<CxxPreProcessorScanner> Ptr_t;
-    
+
 private:
     /**
      * @brief run the scanner until we reach the closing #endif
@@ -58,34 +60,36 @@ private:
      */
     bool ConsumeCurrentBranch();
     /**
-     * @brief read the next token that matches 'type' 
+     * @brief read the next token that matches 'type'
      * If we reached the end of the 'PreProcessor' state and there is no match
      * throw an exception
      */
-    void ReadUntilMatch(int type, CxxLexerToken& token) ;
-    
-    void GetRestOfPPLine(wxString &rest, bool collectNumberOnly = false);
+    void ReadUntilMatch(int type, CxxLexerToken& token);
+
+    void GetRestOfPPLine(wxString& rest, bool collectNumberOnly = false);
     bool CheckIfDefined(const CxxPreProcessorToken::Map_t& table);
     bool CheckIf(const CxxPreProcessorToken::Map_t& table);
     bool IsTokenExists(const CxxPreProcessorToken::Map_t& table, const CxxLexerToken& token);
-    
+
 public:
-    CxxPreProcessorScanner(const wxFileName &file, size_t options);
-    
+    CxxPreProcessorScanner(const wxFileName& file, size_t options, std::unordered_set<wxString>& visitedFiles);
+
     /**
      * @brief return true if we got a valid scanner
      */
-    bool IsNull() const {
-        return m_scanner == NULL;;
+    bool IsNull() const
+    {
+        return m_scanner == NULL;
+        ;
     }
-    
+
     virtual ~CxxPreProcessorScanner();
-    
+
     /**
      * @brief the main parsing function
      * @param ppTable
      */
-    void Parse(CxxPreProcessor* pp)  ;
+    void Parse(CxxPreProcessor* pp);
 };
 
 #endif // CXXPREPROCESSORSCANNER_H

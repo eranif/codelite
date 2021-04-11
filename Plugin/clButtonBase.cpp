@@ -283,10 +283,10 @@ void clButtonBase::Render(wxDC& dc)
         double factor = 1.2;
 #ifdef __WXMAC__
         factor = 1.5;
+        double default_font_point_size = font.GetFractionalPointSize();
 #endif
 
         wxFont font = DrawingUtils::GetDefaultGuiFont();
-        double default_font_point_size = font.GetFractionalPointSize();
         if(!subtext.empty()) {
             font.SetFractionalPointSize(factor * (double)font.GetPointSize());
             font.SetWeight(wxFONTWEIGHT_SEMIBOLD);

@@ -26,7 +26,9 @@
 #define RIGHT_ARROW L"\u276f  "
 
 #if wxUSE_NATIVE_BUTTON
-clButtonBase::clButtonBase() {}
+clButtonBase::clButtonBase()
+{
+}
 
 clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
                            const wxSize& size, long style, const wxValidator& validator, const wxString& name)
@@ -39,9 +41,13 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
 {
     return wxButton::Create(parent, id, label, pos, size, style, validator, name);
 }
-clButtonBase::~clButtonBase() {}
+clButtonBase::~clButtonBase()
+{
+}
 #else
-clButtonBase::clButtonBase() {}
+clButtonBase::clButtonBase()
+{
+}
 
 clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
                            const wxSize& size, long style, const wxValidator& validator, const wxString& name)
@@ -68,7 +74,10 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
     return true;
 }
 
-clButtonBase::~clButtonBase() { UnBindEvents(); }
+clButtonBase::~clButtonBase()
+{
+    UnBindEvents();
+}
 
 #endif
 
@@ -123,7 +132,10 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
     }
 }
 
-void clButtonBase::OnErasebg(wxEraseEvent& event) { wxUnusedVar(event); }
+void clButtonBase::OnErasebg(wxEraseEvent& event)
+{
+    wxUnusedVar(event);
+}
 
 void clButtonBase::OnLeftDown(wxMouseEvent& event)
 {
@@ -268,9 +280,15 @@ void clButtonBase::Render(wxDC& dc)
     wxString subtext = GetSubText();
     int sub_text_x_spacer = 0;
     if(!buttonText.IsEmpty()) {
+        double factor = 1.2;
+#ifdef __WXMAC__
+        factor = 1.5;
+#endif
+
         wxFont font = DrawingUtils::GetDefaultGuiFont();
+        double default_font_point_size = font.GetFractionalPointSize();
         if(!subtext.empty()) {
-            font.SetFractionalPointSize((double)1.2 * (double)font.GetPointSize());
+            font.SetFractionalPointSize(factor * (double)font.GetPointSize());
             font.SetWeight(wxFONTWEIGHT_SEMIBOLD);
         }
         dc.SetFont(font);
@@ -288,6 +306,13 @@ void clButtonBase::Render(wxDC& dc)
         wxSize text_size = dc.GetTextExtent(buttonText);
         text_rect.SetHeight(text_size.GetHeight());
         text_rect.SetWidth(text_size.GetWidth());
+
+#ifdef __WXMAC__
+        // restore the real fractional point size which 1.2
+        if(!subtext.empty()) {
+            font.SetFractionalPointSize(1.2 * default_font_point_size);
+        }
+#endif
     }
 
     // Draw the bitmap first
@@ -326,7 +351,7 @@ void clButtonBase::Render(wxDC& dc)
 #ifdef __WXMAC__
         wxFont font = DrawingUtils::GetDefaultGuiFont();
         if(has_sub_text) {
-            font.SetFractionalPointSize((double)font.GetPointSize()*1.2);
+            font.SetFractionalPointSize((double)font.GetPointSize() * 1.2);
         }
         dc.SetFont(font);
 #endif
@@ -380,7 +405,11 @@ wxSize clButtonBase::GetBestSize() const
 
     wxFont f = DrawingUtils::GetDefaultGuiFont();
     if(!GetSubText().empty()) {
-        f.SetFractionalPointSize((double)f.GetPointSize() * (double)1.2);
+        double factor = 1.2;
+#ifdef __WXMAC__
+        factor = 1.5;
+#endif
+        f.SetFractionalPointSize((double)f.GetPointSize() * factor);
         f.SetWeight(wxFONTWEIGHT_SEMIBOLD);
     }
     dc.SetFont(f);
@@ -488,7 +517,9 @@ size_t clButtonBase::GetDrawingFlags() const
     }
     return flags;
 }
-void clButtonBase::SetDefault() {}
+void clButtonBase::SetDefault()
+{
+}
 
 void clButtonBase::OnSize(wxSizeEvent& event)
 {
@@ -505,7 +536,10 @@ void clButtonBase::SetBitmap(const wxBitmap& bmp)
     Refresh();
 }
 
-const wxBitmap& clButtonBase::GetBitmap() const { return m_bitmap; }
+const wxBitmap& clButtonBase::GetBitmap() const
+{
+    return m_bitmap;
+}
 #endif
 
 void clButtonBase::SetHasDropDownMenu(bool hasDropDownMenu)

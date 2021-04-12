@@ -25,7 +25,9 @@ clTabRendererClassic::clTabRendererClassic(const wxWindow* parent)
     verticalOverlapWidth = 0;
 }
 
-clTabRendererClassic::~clTabRendererClassic() {}
+clTabRendererClassic::~clTabRendererClassic()
+{
+}
 
 void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour& activeTabBGColour)
 {
@@ -209,7 +211,8 @@ void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const 
         return;
     }
 
-    wxColour borderColour = colours.activeTabBgColour.ChangeLightness(50);
+    wxColour borderColour =
+        colours.activeTabBgColour.ChangeLightness(DrawingUtils::IsDark(colours.activeTabBgColour) ? 50 : 70);
     wxRect topRect = clientRect;
     topRect.SetHeight(marginTop);
 

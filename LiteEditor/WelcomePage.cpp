@@ -44,13 +44,21 @@ WelcomePage::WelcomePage(wxWindow* parent)
     m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 32));
     m_staticBitmap->Hide();
     GetSizer()->Fit(this);
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
+        e.Skip();
+        SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        Refresh();
+    });
+
 #if CL_USE_NATIVEBOOK
     Show();
 #endif
 }
 
-WelcomePage::~WelcomePage() {}
+WelcomePage::~WelcomePage()
+{
+}
 
 void WelcomePage::OnOpenForums(wxCommandEvent& event)
 {
@@ -168,7 +176,10 @@ void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
     event.Enable(!files.IsEmpty());
 }
 
-void WelcomePage::OnThemeChanged(wxCommandEvent& e) { e.Skip(); }
+void WelcomePage::OnThemeChanged(wxCommandEvent& e)
+{
+    e.Skip();
+}
 
 void WelcomePage::OnNewWorkspace(wxCommandEvent& event)
 {
@@ -184,4 +195,7 @@ void WelcomePage::OnOpenWorkspace(wxCommandEvent& event)
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
 
-void WelcomePage::DoOpenFile(const wxString& filename) { clMainFrame::Get()->GetMainBook()->OpenFile(filename); }
+void WelcomePage::DoOpenFile(const wxString& filename)
+{
+    clMainFrame::Get()->GetMainBook()->OpenFile(filename);
+}

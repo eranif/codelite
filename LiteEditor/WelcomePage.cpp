@@ -45,11 +45,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
     m_staticBitmap->Hide();
     GetSizer()->Fit(this);
 
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
-        e.Skip();
-        SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-        Refresh();
-    });
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &WelcomePage::OnThemeChanged, this);
 
 #if CL_USE_NATIVEBOOK
     Show();
@@ -58,6 +54,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
 
 WelcomePage::~WelcomePage()
 {
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &WelcomePage::OnThemeChanged, this);
 }
 
 void WelcomePage::OnOpenForums(wxCommandEvent& event)
@@ -176,9 +173,11 @@ void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
     event.Enable(!files.IsEmpty());
 }
 
-void WelcomePage::OnThemeChanged(wxCommandEvent& e)
+void WelcomePage::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    Refresh();
 }
 
 void WelcomePage::OnNewWorkspace(wxCommandEvent& event)

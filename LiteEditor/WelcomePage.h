@@ -52,6 +52,6 @@ protected:
     virtual void OnSize(wxSizeEvent& event);
     virtual void OnOpenForums(wxCommandEvent& event);
     virtual void OnOpenWiki(wxCommandEvent& event);
-    void OnThemeChanged(wxCommandEvent& e);
+    void OnThemeChanged(clCommandEvent& e);
 };
 #endif // WELCOMEPAGE_H

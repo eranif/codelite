@@ -3,6 +3,7 @@
 #include "clSFTPEvent.h"
 #include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
+#include "cl_command_event.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -12,9 +13,14 @@
 #include "imanager.h"
 #include "wx/debug.h"
 #include "wx/thread.h"
+#include <functional>
+#include <thread>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
 #include <wx/utils.h>
+
+wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_SAVE_ERROR, clCommandEvent);
 
 clSFTPManager::clSFTPManager()
 {
@@ -22,10 +28,13 @@ clSFTPManager::clSFTPManager()
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clSFTPManager::OnGoingDown, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &clSFTPManager::OnFileSaved, this);
     m_eventsConnected = true;
+    m_shutdown.store(false);
 
     m_timer = new wxTimer(this);
     m_timer->Start(10000); // 10 seconds should be good enough for a "keep-alive" interval
     Bind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
+    Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &clSFTPManager::OnSaveCompleted, this);
+    Bind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &clSFTPManager::OnSaveError, this);
 }
 
 clSFTPManager::~clSFTPManager()
@@ -41,6 +50,8 @@ clSFTPManager::~clSFTPManager()
         m_timer->Stop();
         wxDELETE(m_timer);
     }
+    Unbind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &clSFTPManager::OnSaveCompleted, this);
+    Unbind(wxEVT_SFTP_ASYNC_SAVE_ERROR, &clSFTPManager::OnSaveError, this);
 }
 
 clSFTPManager& clSFTPManager::Get()
@@ -67,6 +78,11 @@ void clSFTPManager::Release()
         Unbind(wxEVT_TIMER, &clSFTPManager::OnTimer, this, m_timer->GetId());
         m_timer->Stop();
         wxDELETE(m_timer);
+    }
+    if(m_saveThread) {
+        m_shutdown.store(true);
+        m_saveThread->join();
+        wxDELETE(m_saveThread);
     }
 }
 
@@ -243,15 +259,12 @@ bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePa
     wxString message;
     message << _("Uploading file: ") << localPath << " -> " << accountName << "@" << remotePath;
     clDEBUG() << message << endl;
-    clGetManager()->SetStatusMessage(message, 3);
-    try {
-        conn->Write(localPath, remotePath);
 
-    } catch(clException& e) {
-        wxMessageBox(_("Failed to write file: ") + remotePath + _("\n") + e.What(), "CodeLite",
-                     wxICON_ERROR | wxCENTER);
-        return false;
-    }
+    // start the thread if needed
+    StartSaveThread();
+
+    // Post a save request
+    m_q.Post(MakeSaveRequest(conn, localPath, remotePath));
     return true;
 }
 
@@ -537,6 +550,63 @@ bool clSFTPManager::GetLocalPath(const wxString& remote_path, const wxString& ac
         return true;
     }
     return false;
+}
+
+void clSFTPManager::StartSaveThread()
+{
+    if(m_saveThread) {
+        return;
+    }
+
+    m_saveThread = new std::thread(
+        [](wxMessageQueue<save_request*>& Q, atomic_bool& shutdown) {
+            while(!shutdown.load()) {
+                save_request* req = nullptr;
+                if(Q.ReceiveTimeout(10, req) == wxMSGQUEUE_NO_ERROR) {
+                    try {
+                        req->conn->Write(req->local_path, req->remote_path);
+
+                        // notify about save success
+                        clCommandEvent success_event(wxEVT_SFTP_ASYNC_SAVE_COMPLETED);
+                        success_event.SetFileName(req->remote_path);
+                        req->sink->AddPendingEvent(success_event);
+                    } catch(clException& e) {
+                        clERROR() << e.What() << endl;
+                        // notify about save error
+                        wxString errmsg;
+                        errmsg << _("Failed to save file: ") << req->remote_path << "\n";
+                        errmsg << e.What();
+                        clCommandEvent err_event(wxEVT_SFTP_ASYNC_SAVE_ERROR);
+                        err_event.SetString(errmsg);
+                        err_event.SetFileName(req->remote_path);
+                        req->sink->AddPendingEvent(err_event);
+                    }
+                    wxDELETE(req);
+                }
+            }
+        },
+        std::ref(m_q), std::ref(m_shutdown));
+}
+
+clSFTPManager::save_request* clSFTPManager::MakeSaveRequest(clSFTP::Ptr_t conn, const wxString& local_path,
+                                                            const wxString& remote_path)
+{
+    save_request* req = new save_request();
+    req->conn = conn;
+    req->local_path = local_path;
+    req->remote_path = remote_path;
+    req->sink = this;
+    return req;
+}
+
+void clSFTPManager::OnSaveCompleted(clCommandEvent& e)
+{
+    clGetManager()->SetStatusMessage(e.GetFileName() + _(" saved"), 3);
+}
+
+void clSFTPManager::OnSaveError(clCommandEvent& e)
+{
+    ::wxMessageBox(e.GetString(), "CodeLite", wxICON_ERROR | wxOK);
 }
 
 #endif

@@ -33,6 +33,7 @@
 #include "cl_ssh.h"
 #include "codelite_exports.h"
 #include "ssh_account_info.h"
+#include <memory>
 #include <wx/buffer.h>
 #include <wx/filename.h>
 
@@ -49,7 +50,7 @@ class WXDLLIMPEXP_CL clSFTP
     wxString m_account;
 
 public:
-    typedef wxSharedPtr<clSFTP> Ptr_t;
+    typedef std::shared_ptr<clSFTP> Ptr_t;
     enum {
         SFTP_BROWSE_FILES = 0x00000001,
         SFTP_BROWSE_FOLDERS = 0x00000002,
@@ -77,12 +78,24 @@ public:
     /**
      * @brief return the underlying ssh session
      */
-    clSSH::Ptr_t GetSsh() const { return m_ssh; }
+    clSSH::Ptr_t GetSsh() const
+    {
+        return m_ssh;
+    }
 
-    bool IsConnected() const { return m_connected; }
+    bool IsConnected() const
+    {
+        return m_connected;
+    }
 
-    void SetAccount(const wxString& account) { this->m_account = account; }
-    const wxString& GetAccount() const { return m_account; }
+    void SetAccount(const wxString& account)
+    {
+        this->m_account = account;
+    }
+    const wxString& GetAccount() const
+    {
+        return m_account;
+    }
     /**
      * @brief intialize the scp over ssh
      */
@@ -190,7 +203,10 @@ public:
     /**
      * @brief return the current folder
      */
-    const wxString& GetCurrentFolder() const { return m_currentFolder; }
+    const wxString& GetCurrentFolder() const
+    {
+        return m_currentFolder;
+    }
 
     /**
      * @brief send keep alive message

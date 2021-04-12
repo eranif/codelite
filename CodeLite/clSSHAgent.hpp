@@ -2,6 +2,7 @@
 #define CLSSHAGENT_HPP
 
 #include "codelite_exports.h"
+#include <memory>
 #include <wx/sharedptr.h>
 
 class IProcess;
@@ -15,7 +16,7 @@ protected:
     void Stop();
 
 public:
-    typedef wxSharedPtr<clSSHAgent> Ptr_t;
+    typedef std::shared_ptr<clSSHAgent> Ptr_t;
 
 public:
     clSSHAgent();

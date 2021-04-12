@@ -20,7 +20,7 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
 
     clBitmapList* images = GetToolBar()->GetBitmaps();
     GetToolBar()->AddTool(wxID_PREFERENCES, _("Settings"), images->Add("cog"), "", wxITEM_NORMAL);
-    
+
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
     GetToolBar()->AddSeparator();
 
@@ -41,7 +41,7 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     m_buttonConfigs->Bind(wxEVT_BUTTON, &clFileSystemWorkspaceView::OnShowConfigsMenu, this);
     GetToolBar()->Bind(wxEVT_TOOL_DROPDOWN, &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown, this,
                        XRCID("ID_BUILD_BUTTON"));
-    GetSizer()->Insert(0, m_buttonConfigs, 0, wxEXPAND);
+    GetSizer()->Insert(0, m_buttonConfigs, 0, wxEXPAND | wxALL, 5);
 
     // Hide hidden folders and files
     m_options &= ~kShowHiddenFiles;
@@ -134,7 +134,6 @@ void clFileSystemWorkspaceView::OnSettings(wxCommandEvent& event)
     if(dlg.ShowModal() != wxID_OK) {
         return;
     }
-    
 }
 
 void clFileSystemWorkspaceView::UpdateConfigs(const wxArrayString& configs, const wxString& selectedConfig)

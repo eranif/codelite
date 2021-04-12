@@ -5,8 +5,11 @@
 #include "cl_command_event.h"
 #include "cl_sftp.h"
 #include "codelite_exports.h"
+#include <atomic>
+#include <thread>
 #include <unordered_map>
 #include <wx/event.h>
+#include <wx/msgqueue.h>
 #include <wx/string.h>
 #include <wx/timer.h>
 
@@ -14,14 +17,27 @@ class IEditor;
 class SFTPClientData;
 class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
 {
+protected:
+    struct save_request {
+        clSFTP::Ptr_t conn;
+        wxString local_path;
+        wxString remote_path;
+        wxEvtHandler* sink = nullptr;
+    };
+
+protected:
     std::unordered_map<wxString, std::pair<SSHAccountInfo, clSFTP::Ptr_t>> m_connections;
     wxTimer* m_timer = nullptr;
     bool m_eventsConnected = true;
+    std::thread* m_saveThread = nullptr;
+    wxMessageQueue<save_request*> m_q;
+    atomic_bool m_shutdown;
 
 protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
     clSFTP::Ptr_t GetConnectionPtr(const wxString& account) const;
     clSFTP::Ptr_t GetConnectionPtrAddIfMissing(const wxString& account);
+    save_request* MakeSaveRequest(clSFTP::Ptr_t conn, const wxString& local_path, const wxString& remote_path);
 
 protected:
     void OnGoingDown(clCommandEvent& event);
@@ -29,6 +45,9 @@ protected:
     SFTPClientData* GetSFTPClientData(IEditor* editor);
     void OnTimer(wxTimerEvent& event);
     bool DoDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName);
+    void StartSaveThread();
+    void OnSaveCompleted(clCommandEvent& e);
+    void OnSaveError(clCommandEvent& e);
 
 public:
     clSFTPManager();
@@ -134,5 +153,8 @@ public:
      */
     bool GetLocalPath(const wxString& remote_path, const wxString& accountName, wxString& local_path) const;
 };
+
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_ERROR, clCommandEvent);
 #endif
 #endif // CLSFTPMANAGER_HPP

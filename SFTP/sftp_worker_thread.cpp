@@ -65,14 +65,14 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
     wxString requestAccount = req->GetAccount().GetAccountName();
 
     if(currentAccout.IsEmpty() || currentAccout != requestAccount) {
-        m_sftp.reset(NULL);
+        m_sftp.reset();
         DoConnect(req);
     }
 
     if(req->GetAction() == eSFTPActions::kConnect) {
         // Nothing more to be done here
         // Disconnect
-        m_sftp.reset(NULL);
+        m_sftp.reset();
         return;
     }
 
@@ -151,7 +151,7 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
             msg << "SFTP error: " << e.What();
             DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_ERROR);
             DoReportStatusBarMessage(msg);
-            m_sftp.reset(NULL);
+            m_sftp.reset();
 
             // Requeue our request
             if(req->GetRetryCounter() == 0) {
@@ -197,7 +197,7 @@ void SFTPWorkerThread::DoConnect(SFTPThreadRequet* req)
         wxString msg;
         msg << "Connect error. " << e.What();
         DoReportMessage(accountName, msg, SFTPThreadMessage::STATUS_ERROR);
-        m_sftp.reset(NULL);
+        m_sftp.reset();
     }
 }
 

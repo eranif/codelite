@@ -149,6 +149,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\Docker.dll"; DestDir: "{app}\plugins";
 Source: "{#CODELITE_ROOT}\Runtime\plugins\LanguageServer.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\EOSWiki.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 Source: "{#CODELITE_ROOT}\Runtime\plugins\Rust.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
+Source: "{#CODELITE_ROOT}\Runtime\plugins\Remote.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion 
 
 Source: "{#CODELITE_ROOT}\Runtime\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ; 

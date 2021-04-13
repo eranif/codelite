@@ -27,7 +27,7 @@
 #include <build_settings_config.h>
 #include <windowattrmanager.h>
 
-#define SELECT_COMPILER "<Click to select a compiler...>"
+#define SELECT_COMPILER _("<Click to select a compiler...>")
 
 CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t& deletedCompilers)
     : CompilersModifiedDlgBase(parent)
@@ -44,7 +44,7 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
         m_props.push_back( prop );
         
         wxString message;
-        message << _("Create a new compiler named '") << *iter << "' by cloning an existing compiler";
+        message << _("Create a new compiler named '") << *iter << _("' by cloning an existing compiler");
         prop->SetHelpString( message );
     }
     SetName("CompilersModifiedDlg");

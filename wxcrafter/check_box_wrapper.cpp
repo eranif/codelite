@@ -10,8 +10,8 @@ CheckBoxWrapper::CheckBoxWrapper()
     : wxcWidget(ID_WXCHECKBOX)
 {
     SetPropertyString(_("Common Settings"), "wxCheckBox");
-    AddProperty(new StringProperty(PROP_LABEL, wxT("My CheckBox"), wxT("The Checkbox label")));
-    AddProperty(new BoolProperty(PROP_VALUE, false, wxT("Value")));
+    AddProperty(new StringProperty(PROP_LABEL, _("My CheckBox"), _("The Checkbox label")));
+    AddProperty(new BoolProperty(PROP_VALUE, false, _("Value")));
 
     PREPEND_STYLE(wxCHK_2STATE, false);
     PREPEND_STYLE(wxCHK_3STATE, false);
@@ -19,7 +19,7 @@ CheckBoxWrapper::CheckBoxWrapper()
     PREPEND_STYLE(wxALIGN_RIGHT, false);
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_CHECKBOX_CLICKED"),
-                         wxT("Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."));
+                         _("Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked."));
     m_namePattern = wxT("m_checkBox");
     SetName(GenerateName());
 }

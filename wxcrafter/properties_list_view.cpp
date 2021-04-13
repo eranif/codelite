@@ -262,16 +262,16 @@ void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
         p = m_pg->GetProperty(PROP_OUTPUT_FILE_NAME);
         if(p) { wxcProjectMetadata::Get().SetOutputFileName(p->GetValueAsString()); }
 
-        p = m_pg->GetProperty("Generate Window ID");
+        p = m_pg->GetProperty(_("Generate Window ID"));
         if(p) { wxcProjectMetadata::Get().SetUseEnum(p->GetValue().GetBool()); }
 
-        p = m_pg->GetProperty("First Window ID");
+        p = m_pg->GetProperty(_("First Window ID"));
         if(p) { wxcProjectMetadata::Get().SetFirstWindowId(p->GetValue().GetInteger()); }
 
-        p = m_pg->GetProperty("Generate Translatable Strings");
+        p = m_pg->GetProperty(_("Generate Translatable Strings"));
         if(p) { wxcProjectMetadata::Get().SetUseUnderscoreMacro(p->GetValue().GetBool()); }
 
-        p = m_pg->GetProperty("Add wxWidgets Handlers if missing");
+        p = m_pg->GetProperty(_("Add wxWidgets Handlers if missing"));
         if(p) { wxcProjectMetadata::Get().SetAddHandlers(p->GetValue().GetBool()); }
 
         wxCommandEvent evt(wxEVT_PROJECT_METADATA_MODIFIED);

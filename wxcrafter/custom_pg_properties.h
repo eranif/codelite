@@ -65,7 +65,7 @@ public:
         if(str.IsEmpty() == false) { str.RemoveLast(); }
 
         EnterStringsDlg dlg(wxCrafter::TopFrame(), str);
-        dlg.SetMessage(_(""));
+        dlg.SetMessage(wxT(""));
         if(dlg.ShowModal() == wxID_OK) {
 
             wxString value = dlg.GetValue();

@@ -45,15 +45,15 @@
 #include "wx/xrc/xmlres.h"
 #include <wx/aui/framemanager.h>
 
-const wxString DebuggerPane::LOCALS = _("Locals");
-const wxString DebuggerPane::WATCHES = _("Watches");
-const wxString DebuggerPane::FRAMES = _("Call Stack");
-const wxString DebuggerPane::BREAKPOINTS = _("Breakpoints");
-const wxString DebuggerPane::THREADS = _("Threads");
-const wxString DebuggerPane::MEMORY = _("Memory");
-const wxString DebuggerPane::ASCII_VIEWER = _("Ascii Viewer");
-const wxString DebuggerPane::DEBUGGER_OUTPUT = _("Output");
-const wxString DebuggerPane::DISASSEMBLY = _("Disassemble");
+const wxString DebuggerPane::LOCALS = wxTRANSLATE("Locals");
+const wxString DebuggerPane::WATCHES = wxTRANSLATE("Watches");
+const wxString DebuggerPane::FRAMES = wxTRANSLATE("Call Stack");
+const wxString DebuggerPane::BREAKPOINTS = wxTRANSLATE("Breakpoints");
+const wxString DebuggerPane::THREADS = wxTRANSLATE("Threads");
+const wxString DebuggerPane::MEMORY = wxTRANSLATE("Memory");
+const wxString DebuggerPane::ASCII_VIEWER = wxTRANSLATE("Ascii Viewer");
+const wxString DebuggerPane::DEBUGGER_OUTPUT = wxTRANSLATE("Output");
+const wxString DebuggerPane::DISASSEMBLY = wxTRANSLATE("Disassemble");
 
 #define IS_DETACHED(name) (detachedPanes.Index(name) != wxNOT_FOUND) ? true : false
 

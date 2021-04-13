@@ -55,7 +55,7 @@ void SmartCompletion::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("smart_completion_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);
 
-    pluginsMenu->Append(wxID_ANY, wxT("SmartCompletions"), menu);
+    pluginsMenu->Append(wxID_ANY, _("SmartCompletions"), menu);
 
     m_mgr->GetTheApp()->Bind(wxEVT_MENU, &SmartCompletion::OnSettings, this, XRCID("smart_completion_settings"));
 }

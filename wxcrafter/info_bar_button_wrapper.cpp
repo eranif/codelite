@@ -15,12 +15,12 @@ InfoBarButtonWrapper::InfoBarButtonWrapper()
     AddProperty(new WinIdProperty());
     AddProperty(new StringProperty(PROP_NAME, "", _("Name")));
     AddProperty(
-        new StringProperty(PROP_LABEL, "My Label",
+        new StringProperty(PROP_LABEL, _("My Label"),
                            _("The label of the button. It may only be empty if the button ID is one of the stock ids "
                              "in which case the corresponding stock label (see wxGetStockLabel()) will be used")));
 
     RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
-                  wxT("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
+                  _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
                   wxT("wxCommandEventHandler"));
 
     m_namePattern = "m_infoBarButton";

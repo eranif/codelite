@@ -140,15 +140,14 @@ void LLDBThreadsView::OnContextMenu(wxDataViewEvent& event)
 
     wxMenu menu;
     if(!threadIds.empty()) {
-        const auto suffix = (threadIds.size() > 1) ? wxT("s") : wxT("");
-        menu.Append(lldbSuspendThreadIds, wxString("Suspend thread") << suffix);
-        menu.Append(lldbSuspendOtherThreadIds, wxString("Suspend other threads"));
+        menu.Append(lldbSuspendThreadIds, wxPLURAL("Suspend thread", "Suspend threads", threadIds.size()));
+        menu.Append(lldbSuspendOtherThreadIds, _("Suspend other threads"));
         menu.AppendSeparator();
-        menu.Append(lldbResumeThreadIds, wxString("Resume thread") << suffix);
-        menu.Append(lldbResumeOtherThreadIds, wxString("Resume other threads"));
+        menu.Append(lldbResumeThreadIds, wxPLURAL("Resume thread", "Resume threads", threadIds.size()));
+        menu.Append(lldbResumeOtherThreadIds, _("Resume other threads"));
     }
 
-    menu.Append(lldbResumeAllThreadsId, wxString("Resume all threads"));
+    menu.Append(lldbResumeAllThreadsId, _("Resume all threads"));
 
     const auto sel = GetPopupMenuSelectionFromUser(menu);
 

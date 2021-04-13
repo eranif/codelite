@@ -18,17 +18,17 @@ CheckListBoxWrapper::CheckListBoxWrapper()
     PREPEND_STYLE(wxLB_SORT, false);
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_LISTBOX_SELECTED"),
-                         wxT("Process a wxEVT_COMMAND_LISTBOX_SELECTED event\nwhen an item on the list is selected or "
-                             "the selection changes."));
+                         _("Process a wxEVT_COMMAND_LISTBOX_SELECTED event\nwhen an item on the list is selected or "
+                           "the selection changes."));
     RegisterEventCommand(
         wxT("wxEVT_COMMAND_LISTBOX_DOUBLECLICKED"),
-        wxT("Process a wxEVT_COMMAND_LISTBOX_DOUBLECLICKED event\nwhen the listbox is double-clicked."));
+        _("Process a wxEVT_COMMAND_LISTBOX_DOUBLECLICKED event\nwhen the listbox is double-clicked."));
     RegisterEventCommand(wxT("wxEVT_COMMAND_CHECKLISTBOX_TOGGLED"),
-                         wxT("Process a wxEVT_COMMAND_CHECKLISTBOX_TOGGLED event\nwhen an item in the check list box "
-                             "is checked or unchecked."));
+                         _("Process a wxEVT_COMMAND_CHECKLISTBOX_TOGGLED event\nwhen an item in the check list box "
+                           "is checked or unchecked."));
 
     SetPropertyString(_("Common Settings"), "wxCheckListBox");
-    AddProperty(new MultiStringsProperty(PROP_OPTIONS, wxT("The List Box Items. A semi-colon list of strings")));
+    AddProperty(new MultiStringsProperty(PROP_OPTIONS, _("The List Box Items. A semi-colon list of strings")));
 
     m_namePattern = wxT("m_checkListBox");
     SetName(GenerateName());

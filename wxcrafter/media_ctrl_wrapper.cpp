@@ -40,7 +40,7 @@ MediaCtrlWrapper::MediaCtrlWrapper()
     RegisterEvent("wxEVT_MEDIA_PLAY", "wxMediaEvent",
                   _("Sent when a media has switched to the wxMEDIASTATE_PLAYING state"));
     RegisterEvent("wxEVT_MEDIA_PAUSE", "wxMediaEvent",
-                  _("Sent when a media has switched to the wxMEDIASTATE_PAUSED statee"));
+                  _("Sent when a media has switched to the wxMEDIASTATE_PAUSED state"));
 
     m_namePattern = "m_mediaCtrl";
     SetName(GenerateName());

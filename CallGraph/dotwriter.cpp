@@ -194,7 +194,7 @@ void DotWriter::WriteToDotLanguage()
     if(!is_node) { // if the call graph is empty create new graph with label node
         m_OutputString = wxT("digraph e {0 [label=");
         m_OutputString +=
-            _(wxString::Format("\"The call-graph is empty; the node threshold ceiling is %d !\"", wxRound(max_time)));
+            wxString::Format(_("\"The call-graph is empty; the node threshold ceiling is %d !\""), wxRound(max_time));
         m_OutputString += wxT(", shape=none, height=2, width=2, fontname=Arial, fontsize=14.00];}");
     }
 }

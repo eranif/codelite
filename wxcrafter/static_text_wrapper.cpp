@@ -17,7 +17,7 @@ StaticTextWrapper::StaticTextWrapper()
     m_properties.Item(PROP_LABEL)->SetValue(_("Static Text Label"));
 
     AddProperty(
-        new StringProperty(PROP_WRAP, wxT("-1"), wxT("Wrap the text after N pixels. If set to -1, don't wrap")));
+        new StringProperty(PROP_WRAP, wxT("-1"), _("Wrap the text after N pixels. If set to -1, don't wrap")));
 
     m_namePattern = wxT("m_staticText");
     SetName(GenerateName());

@@ -15,7 +15,7 @@ StaticBoxSizerWrapper::StaticBoxSizerWrapper()
     arr.Add(wxT("Horizontal"));
 
     SetPropertyString(_("Common Settings"), "wxStaticBoxSizer");
-    AddProperty(new ChoiceProperty(PROP_ORIENTATION, arr, 0, wxT("Sizer orientation")));
+    AddProperty(new ChoiceProperty(PROP_ORIENTATION, arr, 0, _("Sizer orientation")));
     AddProperty(new StringProperty(PROP_LABEL, _("My Label"), _("Label")));
 
     m_namePattern = wxT("staticBoxSizer");

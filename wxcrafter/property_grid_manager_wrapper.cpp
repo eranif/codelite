@@ -59,11 +59,11 @@ PropertyGridManagerWrapper::PropertyGridManagerWrapper()
     RegisterEvent("wxEVT_PG_COL_END_DRAG", "wxPropertyGridEvent",
                   _("Respond to wxEVT_PG_COL_END_DRAG event, generated after column resize by user has finished."));
     RegisterEvent("wxEVT_COMMAND_BUTTON_CLICKED", "wxCommandEvent",
-                  "Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked.");
+                  _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked."));
 
-    AddInteger(PROP_SASH_POS, "Sets x coordinate of the splitter", -1);
+    AddInteger(PROP_SASH_POS, _("Sets x coordinate of the splitter"), -1);
     AddBool(PROP_SPLITTER_LEFT,
-            "Moves splitter as left as possible, while still allowing all labels to be shown in full", false);
+            _("Moves splitter as left as possible, while still allowing all labels to be shown in full"), false);
 
     m_namePattern = "m_pgMgr";
     SetName(GenerateName());

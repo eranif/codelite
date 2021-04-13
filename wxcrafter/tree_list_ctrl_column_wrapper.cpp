@@ -20,7 +20,7 @@ TreeListCtrlColumnWrapper::TreeListCtrlColumnWrapper()
 
     // FIXME: add alignment + column flags here
     AddProperty(new CategoryProperty(_("wxTreeListCtrl Column")));
-    AddProperty(new StringProperty(PROP_NAME, wxT("My Column"), wxT("Column caption")));
+    AddProperty(new StringProperty(PROP_NAME, _("My Column"), _("Column caption")));
     AddProperty(new ChoiceProperty(PROP_DV_LISTCTRL_COL_ALIGN, alignment, 0,
                                    _("Alignment of both the column header and its items")));
     AddProperty(new StringProperty(

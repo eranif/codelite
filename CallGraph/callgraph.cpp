@@ -158,7 +158,7 @@ void CallGraph::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("cg_about"), _("About..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     //
-    pluginsMenu->Append(wxID_ANY, wxT("Call Graph"), menu);
+    pluginsMenu->Append(wxID_ANY, _("Call Graph"), menu);
 }
 
 //-----------------------------------------------------------------------------
@@ -377,12 +377,12 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     // check source binary exists
     wxString bin_fpath = cfn.GetFullPath();
     if(!cfn.Exists()) {
-        bin_fpath = wxFileSelector("Please select the binary to analyze", base_path, "", "");
-        if(bin_fpath.IsEmpty()) return MessageBox("selected binary was canceled", wxICON_ERROR);
+        bin_fpath = wxFileSelector(_("Please select the binary to analyze"), base_path, "", "");
+        if(bin_fpath.IsEmpty()) return MessageBox(_("selected binary was canceled"), wxICON_ERROR);
 
         cfn.Assign(bin_fpath, wxPATH_NATIVE);
     }
-    if(!cfn.IsFileExecutable()) return MessageBox("bin/exe isn't executable", wxICON_ERROR);
+    if(!cfn.IsFileExecutable()) return MessageBox(_("bin/exe isn't executable"), wxICON_ERROR);
 
     // check 'gmon.out' file exists
     wxFileName gmon_cfn(cfn.GetPath() + wxFileName::GetPathSeparator() + GMON_FILENAME_OUT);
@@ -390,8 +390,8 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
 
     wxString gmonfn = gmon_cfn.GetFullPath();
     if(!gmon_cfn.Exists()) {
-        gmonfn = wxFileSelector("Please select the gprof file", gmon_cfn.GetPath(), "gmon", "out");
-        if(gmonfn.IsEmpty()) return MessageBox("selected gprof was canceled", wxICON_ERROR);
+        gmonfn = wxFileSelector(_("Please select the gprof file"), gmon_cfn.GetPath(), "gmon", "out");
+        if(gmonfn.IsEmpty()) return MessageBox(_("selected gprof was canceled"), wxICON_ERROR);
 
         gmon_cfn.Assign(gmonfn, wxPATH_NATIVE);
     }

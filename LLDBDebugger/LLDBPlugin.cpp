@@ -299,10 +299,10 @@ void LLDBPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
     size_t numberOfMenuItems = 0;
 
     if(m_connector.IsCanInteract()) {
-        menu->Prepend(lldbJumpToCursorContextMenuId, wxT("Jump to Caret Line"));
+        menu->Prepend(lldbJumpToCursorContextMenuId, _("Jump to Caret Line"));
         ++numberOfMenuItems;
 
-        menu->Prepend(lldbRunToCursorContextMenuId, wxT("Run to Caret Line"));
+        menu->Prepend(lldbRunToCursorContextMenuId, _("Run to Caret Line"));
         ++numberOfMenuItems;
     }
 
@@ -319,7 +319,7 @@ void LLDBPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
     }
 
     if(!word.IsEmpty()) {
-        const auto menuItemText = wxString(wxT("Add Watch")) << wxT(" '") << word << wxT("'");
+        const auto menuItemText = wxString(_("Add Watch")) << wxT(" '") << word << wxT("'");
         menu->Prepend(lldbAddWatchContextMenuId, menuItemText);
         ++numberOfMenuItems;
     }

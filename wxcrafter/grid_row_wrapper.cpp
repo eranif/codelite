@@ -11,7 +11,7 @@ GridRowWrapper::GridRowWrapper()
 
     SetPropertyString(_("Common Settings"), "wxGridRow");
     AddProperty(new CategoryProperty(_("wxGrid Row")));
-    AddText(PROP_NAME, _("The Row Label"), "My Row");
+    AddText(PROP_NAME, _("The Row Label"), _("My Row"));
     AddInteger(PROP_HEIGHT, _("Sets the height of the row\nDefault -1 fits to the label height"), -1);
 
     m_namePattern = "Row";

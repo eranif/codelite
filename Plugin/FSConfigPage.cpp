@@ -23,7 +23,7 @@
 #include "sftp_settings.h"
 #endif
 
-#define OPEN_SSH_ACCOUNT_MANAGER "-- Open SSH Account Manager --"
+#define OPEN_SSH_ACCOUNT_MANAGER _("-- Open SSH Account Manager --")
 
 FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config, bool enableRemotePage)
     : FSConfigPageBase(parent)

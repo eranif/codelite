@@ -303,18 +303,18 @@ void LLDBLocalsView::OnLocalsContextMenu(wxTreeEvent& event)
     }
 
     wxMenu menu;
-    menu.Append(wxID_COPY, wxString::Format("Copy value%s to clipboard", ((1 == selections.GetCount()) ? "" : "s")));
+    menu.Append(wxID_COPY, wxPLURAL("Copy value to clipboard", "Copy values to clipboard", selections.GetCount()));
     if(1 == selections.GetCount()) {
         menu.Append(lldbLocalsViewEditValueMenuId, _("Edit value"));
     }
     menu.Append(lldbLocalsViewAddWatchContextMenuId,
-                wxString::Format("Add watch%s", ((1 == selections.GetCount()) ? "" : "es")));
+                wxPLURAL("Add watch", "Add watches", selections.GetCount()));
 
     wxArrayTreeItemIds watches;
     GetWatchesFromSelections(watches);
     if(watches.GetCount()) {
         menu.Append(lldbLocalsViewRemoveWatchContextMenuId,
-                    wxString::Format("Remove watch%s", ((1 == watches.GetCount()) ? "" : "es")));
+                    wxPLURAL("Remove watch", "Remove watches", watches.GetCount()));
     }
 
     wxMenu* pSubMenu = LLDBFormat::CreateMenu();

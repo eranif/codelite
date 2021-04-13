@@ -253,7 +253,7 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
                 continue;
             }
 
-            text << wxT("\t@echo \"") << wxGetTranslation(BUILD_PROJECT_PREFIX) << dependProj->GetName() << wxT(" - ")
+            text << wxT("\t@echo \"") << BUILD_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ")
                  << projectSelConf << wxT(" ]----------\"\n");
             // make the paths relative, if it's sensible to do so
             wxFileName fn(dependProj->GetFileName());
@@ -333,7 +333,7 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
         projectSelConf = confToBuild;
     }
 
-    text << wxT("\t@echo \"") << wxGetTranslation(BUILD_PROJECT_PREFIX) << project << wxT(" - ") << projectSelConf
+    text << wxT("\t@echo \"") << BUILD_PROJECT_PREFIX << project << wxT(" - ") << projectSelConf
          << wxT(" ]----------\"\n");
 
     // make the paths relative, if it's sensible to do so
@@ -372,7 +372,7 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
                 continue;
             }
 
-            text << wxT("\t@echo \"") << wxGetTranslation(CLEAN_PROJECT_PREFIX) << dependProj->GetName() << wxT(" - ")
+            text << wxT("\t@echo \"") << CLEAN_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ")
                  << projectSelConf << wxT(" ]----------\"\n");
 
             // make the paths relative
@@ -446,7 +446,7 @@ bool BuilderNMake::Export(const wxString& project, const wxString& confToBuild, 
         projectSelConf = confToBuild;
     }
 
-    text << wxT("\t@echo \"") << wxGetTranslation(CLEAN_PROJECT_PREFIX) << project << wxT(" - ") << projectSelConf
+    text << wxT("\t@echo \"") << CLEAN_PROJECT_PREFIX << project << wxT(" - ") << projectSelConf
          << wxT(" ]----------\"\n");
     if(isPluginGeneratedMakefile) {
 

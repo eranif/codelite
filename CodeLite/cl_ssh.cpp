@@ -201,7 +201,7 @@ bool clSSH::LoginPassword(bool throwExc)
         return true;
 
     } else if(rc == SSH_AUTH_DENIED) {
-        THROW_OR_FALSE("Login failed: invalid username/password");
+        THROW_OR_FALSE(_("Login failed: invalid username/password"));
 
     } else {
         THROW_OR_FALSE(wxString() << _("Authentication error: ") << ssh_get_error(m_session));
@@ -248,7 +248,7 @@ bool clSSH::LoginInteractiveKBD(bool throwExc)
         }
         return true; // success
     }
-    THROW_OR_FALSE("Interactive Keyboard is not enabled for this server");
+    THROW_OR_FALSE(_("Interactive Keyboard is not enabled for this server"));
     return false;
 }
 

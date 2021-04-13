@@ -106,50 +106,50 @@ void OutputPane::CreateGUIControls()
 #if PHP_BUILD
     m_buildWin->Hide();
 #else
-    m_book->AddPage(m_buildWin, wxGetTranslation(BUILD_WIN), true, images->Add(wxT("build")));
+    m_book->AddPage(m_buildWin, BUILD_WIN, true, images->Add(wxT("build")));
     m_tabs.insert(
-        std::make_pair(wxGetTranslation(BUILD_WIN), Tab(wxGetTranslation(BUILD_WIN), m_buildWin, wxNOT_FOUND)));
-    mgr->AddOutputTab(wxGetTranslation(BUILD_WIN));
+        std::make_pair(BUILD_WIN, Tab(BUILD_WIN, m_buildWin, wxNOT_FOUND)));
+    mgr->AddOutputTab(BUILD_WIN);
 #endif
 
     // Find in files
-    m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, wxGetTranslation(FIND_IN_FILES_WIN));
-    m_book->AddPage(m_findResultsTab, wxGetTranslation(FIND_IN_FILES_WIN), false, images->Add(wxT("find")));
-    m_tabs.insert(std::make_pair(wxGetTranslation(FIND_IN_FILES_WIN),
-                                 Tab(wxGetTranslation(FIND_IN_FILES_WIN), m_findResultsTab, images->Add(wxT("find")))));
-    mgr->AddOutputTab(wxGetTranslation(FIND_IN_FILES_WIN));
+    m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);
+    m_book->AddPage(m_findResultsTab, FIND_IN_FILES_WIN, false, images->Add(wxT("find")));
+    m_tabs.insert(std::make_pair(FIND_IN_FILES_WIN,
+                                 Tab(FIND_IN_FILES_WIN, m_findResultsTab, images->Add(wxT("find")))));
+    mgr->AddOutputTab(FIND_IN_FILES_WIN);
 
     // Replace In Files
-    m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, wxGetTranslation(REPLACE_IN_FILES));
-    m_book->AddPage(m_replaceResultsTab, wxGetTranslation(REPLACE_IN_FILES), false,
+    m_replaceResultsTab = new ReplaceInFilesPanel(m_book, wxID_ANY, REPLACE_IN_FILES);
+    m_book->AddPage(m_replaceResultsTab, REPLACE_IN_FILES, false,
                     images->Add(wxT("find_and_replace")));
     m_tabs.insert(std::make_pair(REPLACE_IN_FILES,
                                  Tab(REPLACE_IN_FILES, m_replaceResultsTab, images->Add(wxT("find_and_replace")))));
     mgr->AddOutputTab(REPLACE_IN_FILES);
 
     // Show Usage ("References")
-    m_showUsageTab = new FindUsageTab(m_book, wxGetTranslation(SHOW_USAGE));
+    m_showUsageTab = new FindUsageTab(m_book, SHOW_USAGE);
 #if PHP_BUILD
     m_showUsageTab->Hide();
 #else
-    m_book->AddPage(m_showUsageTab, wxGetTranslation(SHOW_USAGE), false, images->Add(wxT("find")));
-    m_tabs.insert(std::make_pair(wxGetTranslation(SHOW_USAGE),
-                                 Tab(wxGetTranslation(SHOW_USAGE), m_showUsageTab, images->Add(wxT("find")))));
-    mgr->AddOutputTab(wxGetTranslation(SHOW_USAGE));
+    m_book->AddPage(m_showUsageTab, SHOW_USAGE, false, images->Add(wxT("find")));
+    m_tabs.insert(std::make_pair(SHOW_USAGE,
+                                 Tab(SHOW_USAGE, m_showUsageTab, images->Add(wxT("find")))));
+    mgr->AddOutputTab(SHOW_USAGE);
 #endif
     // Output tab
-    m_outputWind = new OutputTab(m_book, wxID_ANY, wxGetTranslation(OUTPUT_WIN));
-    m_book->AddPage(m_outputWind, wxGetTranslation(OUTPUT_WIN), false, images->Add(wxT("console")));
-    m_tabs.insert(std::make_pair(wxGetTranslation(OUTPUT_WIN),
-                                 Tab(wxGetTranslation(OUTPUT_WIN), m_outputWind, images->Add(wxT("console")))));
-    mgr->AddOutputTab(wxGetTranslation(OUTPUT_WIN));
+    m_outputWind = new OutputTab(m_book, wxID_ANY, OUTPUT_WIN);
+    m_book->AddPage(m_outputWind, OUTPUT_WIN, false, images->Add(wxT("console")));
+    m_tabs.insert(std::make_pair(OUTPUT_WIN,
+                                 Tab(OUTPUT_WIN, m_outputWind, images->Add(wxT("console")))));
+    mgr->AddOutputTab(OUTPUT_WIN);
 
     // Tasks panel
-    m_taskPanel = new TaskPanel(m_book, wxID_ANY, wxGetTranslation(TASKS));
-    m_book->AddPage(m_taskPanel, wxGetTranslation(TASKS), false, images->Add("tasks"));
+    m_taskPanel = new TaskPanel(m_book, wxID_ANY, TASKS);
+    m_book->AddPage(m_taskPanel, TASKS, false, images->Add("tasks"));
     m_tabs.insert(
-        std::make_pair(wxGetTranslation(TASKS), Tab(wxGetTranslation(TASKS), m_taskPanel, images->Add("tasks"))));
-    mgr->AddOutputTab(wxGetTranslation(TASKS));
+        std::make_pair(TASKS, Tab(TASKS, m_taskPanel, images->Add("tasks"))));
+    mgr->AddOutputTab(TASKS);
 
     SetMinSize(wxSize(200, 100));
     mainSizer->Layout();

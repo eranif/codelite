@@ -23,89 +23,89 @@ GridWrapper::GridWrapper()
     hOpts.Add("wxALIGN_RIGHT");
 
     SetPropertyString(_("Common Settings"), "wxGrid");
-    AddProperty(new CategoryProperty("wxGrid Header"));
-    AddProperty(new BoolProperty(PROP_AUTOSIZE_COL, true, wxT("Auto size column content to fit the column header")));
+    AddProperty(new CategoryProperty(_("wxGrid Header")));
+    AddProperty(new BoolProperty(PROP_AUTOSIZE_COL, true, _("Auto size column content to fit the column header")));
     AddProperty(
-        new BoolProperty(PROP_GRID_NATIVE_LOOK, true, wxT("Enable the use of native header window for column labels")));
-    // AddProperty(new BoolProperty(PROP_GRID_NATIVE_COL_LABELS, true, wxT("Call this in order to make the column labels
+        new BoolProperty(PROP_GRID_NATIVE_LOOK, true, _("Enable the use of native header window for column labels")));
+    // AddProperty(new BoolProperty(PROP_GRID_NATIVE_COL_LABELS, true, _("Call this in order to make the column labels
     // use a native look")));
 
-    AddProperty(new CategoryProperty("wxGrid Columns Labels"));
+    AddProperty(new CategoryProperty(_("wxGrid Columns Labels")));
     AddInteger(PROP_HEIGHT, _("Sets the height of the column label"), -1);
     AddProperty(new ChoiceProperty(PROP_COL_LABEL_H_ALIGN, hOpts, 1, _("Sets the horizontal alignment of the label")));
     AddProperty(new ChoiceProperty(PROP_COL_LABEL_V_ALIGN, vOpts, 1, _("Sets the vertical alignment of the label")));
 
-    AddProperty(new CategoryProperty("wxGrid Rows Labels"));
+    AddProperty(new CategoryProperty(_("wxGrid Rows Labels")));
     AddInteger(PROP_WIDTH, _("Sets the width of the row labels"), -1);
     AddProperty(new ChoiceProperty(PROP_ROW_LABEL_H_ALIGN, hOpts, 2, _("Sets the horizontal alignment of the label")));
     AddProperty(new ChoiceProperty(PROP_ROW_LABEL_V_ALIGN, vOpts, 1, _("Sets the vertical alignment of the label")));
 
-    AddProperty(new CategoryProperty("wxGrid Cells"));
-    AddProperty(new BoolProperty(PROP_ALLOW_EDITING, true, wxT("Allow editing grid content")));
+    AddProperty(new CategoryProperty(_("wxGrid Cells")));
+    AddProperty(new BoolProperty(PROP_ALLOW_EDITING, true, _("Allow editing grid content")));
 
     RegisterEvent(wxT("wxEVT_GRID_CELL_CHANGING"), wxT("wxGridEvent"),
-                  wxT("The user is about to change the data in a cell. The new cell value as string is available from "
-                      "GetString() event object method. This event can be vetoed if the change is not allowed. "
-                      "Processes a wxEVT_GRID_CELL_CHANGING event type"));
+                  _("The user is about to change the data in a cell. The new cell value as string is available from "
+                    "GetString() event object method. This event can be vetoed if the change is not allowed. "
+                    "Processes a wxEVT_GRID_CELL_CHANGING event type"));
     RegisterEvent(wxT("wxEVT_GRID_CELL_CHANGED"), wxT("wxGridEvent"),
-                  wxT("The user changed the data in a cell. The old cell value as string is available from GetString() "
-                      "event object method. Notice that vetoing this event still works for backwards compatibility "
-                      "reasons but any new code should only veto EVT_GRID_CELL_CHANGING event and not this one. "
-                      "Processes a wxEVT_GRID_CELL_CHANGED event type."));
+                  _("The user changed the data in a cell. The old cell value as string is available from GetString() "
+                    "event object method. Notice that vetoing this event still works for backwards compatibility "
+                    "reasons but any new code should only veto EVT_GRID_CELL_CHANGING event and not this one. "
+                    "Processes a wxEVT_GRID_CELL_CHANGED event type."));
     RegisterEvent(wxT("wxEVT_GRID_CELL_LEFT_CLICK"), wxT("wxGridEvent"),
-                  wxT("The user clicked a cell with the left mouse button. Processes a wxEVT_GRID_CELL_LEFT_CLICK."));
+                  _("The user clicked a cell with the left mouse button. Processes a wxEVT_GRID_CELL_LEFT_CLICK."));
     RegisterEvent(
         wxT("wxEVT_GRID_CELL_LEFT_DCLICK"), wxT("wxGridEvent"),
-        wxT("The user double-clicked a cell with the left mouse button. Processes a wxEVT_GRID_CELL_LEFT_DCLICK"));
+        _("The user double-clicked a cell with the left mouse button. Processes a wxEVT_GRID_CELL_LEFT_DCLICK"));
     RegisterEvent(wxT("wxEVT_GRID_CELL_RIGHT_CLICK"), wxT("wxGridEvent"),
-                  wxT("The user clicked a cell with the right mouse button. Processes a wxEVT_GRID_CELL_RIGHT_CLICK."));
+                  _("The user clicked a cell with the right mouse button. Processes a wxEVT_GRID_CELL_RIGHT_CLICK."));
     RegisterEvent(
         wxT("wxEVT_GRID_CELL_RIGHT_DCLICK"), wxT("wxGridEvent"),
-        wxT("The user double-clicked a cell with the right mouse button. Processes a wxEVT_GRID_CELL_RIGHT_DCLICK."));
+        _("The user double-clicked a cell with the right mouse button. Processes a wxEVT_GRID_CELL_RIGHT_DCLICK."));
     RegisterEvent(wxT("wxEVT_GRID_EDITOR_HIDDEN"), wxT("wxGridEvent"),
-                  wxT("The editor for a cell was hidden. Processes a wxEVT_GRID_EDITOR_HIDDEN event type."));
+                  _("The editor for a cell was hidden. Processes a wxEVT_GRID_EDITOR_HIDDEN event type."));
     RegisterEvent(wxT("wxEVT_GRID_EDITOR_SHOWN"), wxT("wxGridEvent"),
-                  wxT("The editor for a cell was shown. Processes a wxEVT_GRID_EDITOR_SHOWN event type"));
+                  _("The editor for a cell was shown. Processes a wxEVT_GRID_EDITOR_SHOWN event type"));
     RegisterEvent(wxT("wxEVT_GRID_LABEL_LEFT_CLICK"), wxT("wxGridEvent"),
-                  wxT("The user clicked a label with the left mouse button. Processes a wxEVT_GRID_LABEL_LEFT_CLICK."));
+                  _("The user clicked a label with the left mouse button. Processes a wxEVT_GRID_LABEL_LEFT_CLICK."));
     RegisterEvent(
         wxT("wxEVT_GRID_LABEL_LEFT_DCLICK"), wxT("wxGridEvent"),
-        wxT("The user double-clicked a label with the left mouse button. Processes a wxEVT_GRID_LABEL_LEFT_DCLICK."));
+        _("The user double-clicked a label with the left mouse button. Processes a wxEVT_GRID_LABEL_LEFT_DCLICK."));
     RegisterEvent(
         wxT("wxEVT_GRID_LABEL_RIGHT_CLICK"), wxT("wxGridEvent"),
-        wxT("The user clicked a label with the right mouse button. Processes a wxEVT_GRID_LABEL_RIGHT_CLICK."));
+        _("The user clicked a label with the right mouse button. Processes a wxEVT_GRID_LABEL_RIGHT_CLICK."));
     RegisterEvent(
         wxT("wxEVT_GRID_LABEL_RIGHT_DCLICK"), wxT("wxGridEvent"),
-        wxT("The user double-clicked a label with the right mouse button. Processes a wxEVT_GRID_LABEL_RIGHT_DCLICK."));
+        _("The user double-clicked a label with the right mouse button. Processes a wxEVT_GRID_LABEL_RIGHT_DCLICK."));
     RegisterEvent(wxT("wxEVT_GRID_SELECT_CELL"), wxT("wxGridEvent"),
-                  wxT("The user moved to, and selected a cell. Processes a wxEVT_GRID_SELECT_CELL."));
+                  _("The user moved to, and selected a cell. Processes a wxEVT_GRID_SELECT_CELL."));
     RegisterEvent(
         wxT("wxEVT_GRID_COL_MOVE"), wxT("wxGridEvent"),
-        "The user tries to change the order of the columns in the grid by dragging the column specified by GetCol()."
-        "This event can be vetoed to either prevent the user from reordering the column change completely (but notice "
-        "that if you don't want to allow it at all, you simply shouldn't call wxGrid::EnableDragColMove() in the first "
-        "place), "
-        "vetoed but handled in some way in the handler, e.g. by really moving the column to the new position at the "
-        "associated table level, "
-        "or allowed to proceed in which case wxGrid::SetColPos() is used to reorder the columns display order without "
-        "affecting the use of "
-        "the column indices otherwise. This event macro corresponds to wxEVT_GRID_COL_MOVE event type.");
+        _("The user tries to change the order of the columns in the grid by dragging the column specified by GetCol(). "
+          "This event can be vetoed to either prevent the user from reordering the column change completely (but notice "
+          "that if you don't want to allow it at all, you simply shouldn't call wxGrid::EnableDragColMove() in the first "
+          "place), "
+          "vetoed but handled in some way in the handler, e.g. by really moving the column to the new position at the "
+          "associated table level, "
+          "or allowed to proceed in which case wxGrid::SetColPos() is used to reorder the columns display order without "
+          "affecting the use of "
+          "the column indices otherwise. This event macro corresponds to wxEVT_GRID_COL_MOVE event type."));
     RegisterEvent(wxT("wxEVT_GRID_COL_SORT"), wxT("wxGridEvent"),
-                  "This event is generated when a column is clicked by the user and its name is explained by the fact "
-                  "that the custom reaction to a "
-                  "click on a column is to sort the grid contents by this column. However the grid itself has no "
-                  "special support for sorting and it's "
-                  "up to the handler of this event to update the associated table. But if the event is handled (and "
-                  "not vetoed) the grid supposes that "
-                  "the table was indeed resorted and updates the column to indicate the new sort order and refreshes "
-                  "itself. This event macro corresponds"
-                  "to wxEVT_GRID_COL_SORT event type.");
+                  _("This event is generated when a column is clicked by the user and its name is explained by the fact "
+                    "that the custom reaction to a "
+                    "click on a column is to sort the grid contents by this column. However the grid itself has no "
+                    "special support for sorting and it's "
+                    "up to the handler of this event to update the associated table. But if the event is handled (and "
+                    "not vetoed) the grid supposes that "
+                    "the table was indeed resorted and updates the column to indicate the new sort order and refreshes "
+                    "itself. This event macro corresponds "
+                    "to wxEVT_GRID_COL_SORT event type."));
     RegisterEvent(wxT("wxEVT_GRID_TABBING"), wxT("wxGridEvent"),
-                  "This event is generated when the user presses TAB or Shift-TAB in the grid. It can be used to "
-                  "customize the simple default TAB handling "
-                  "logic, e.g. to go to the next non-empty cell instead of just the next cell. See also "
-                  "wxGrid::SetTabBehaviour()."
-                  " This event is new since wxWidgets 2.9.5.");
+                  _("This event is generated when the user presses TAB or Shift-TAB in the grid. It can be used to "
+                    "customize the simple default TAB handling "
+                    "logic, e.g. to go to the next non-empty cell instead of just the next cell. See also "
+                    "wxGrid::SetTabBehaviour()."
+                    " This event is new since wxWidgets 2.9.5."));
     m_namePattern = wxT("m_grid");
     SetName(GenerateName());
 }

@@ -204,12 +204,12 @@ void SymbolTree::BuildTree(const wxFileName& fileName, const TagEntryPtrVector_t
     // add three items here:
     // the globals node, the mcros and the prototype node
     int nodeImgIdx = clGetManager()->GetStdIcons()->GetImageIndex(BitmapLoader::kAngleBrackets);
-    m_globalsNode = AppendItem(root, wxT("Global Functions and Variables"), nodeImgIdx, nodeImgIdx,
-                               new MyTreeItemData(wxT("Global Functions and Variables"), wxEmptyString));
-    m_prototypesNode = AppendItem(root, wxT("Functions Prototypes"), nodeImgIdx, nodeImgIdx,
-                                  new MyTreeItemData(wxT("Functions Prototypes"), wxEmptyString));
+    m_globalsNode = AppendItem(root, _("Global Functions and Variables"), nodeImgIdx, nodeImgIdx,
+                               new MyTreeItemData(_("Global Functions and Variables"), wxEmptyString));
+    m_prototypesNode = AppendItem(root, _("Functions Prototypes"), nodeImgIdx, nodeImgIdx,
+                                  new MyTreeItemData(_("Functions Prototypes"), wxEmptyString));
     m_macrosNode =
-        AppendItem(root, wxT("Macros"), nodeImgIdx, nodeImgIdx, new MyTreeItemData(wxT("Macros"), wxEmptyString));
+        AppendItem(root, _("Macros"), nodeImgIdx, nodeImgIdx, new MyTreeItemData(_("Macros"), wxEmptyString));
 
     for(; !walker.End(); walker++) {
         // Add the item to the tree

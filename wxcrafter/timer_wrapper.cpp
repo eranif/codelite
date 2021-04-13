@@ -15,7 +15,7 @@ TimerWrapper::TimerWrapper()
 
     SetPropertyString(_("Common Settings"), "wxTimer");
     AddProperty(new CategoryProperty(_("wxTimer")));
-    AddProperty(new StringProperty(PROP_NAME, _(""), _("Control name")));
+    AddProperty(new StringProperty(PROP_NAME, "", _("Control name")));
     AddProperty(new IntProperty(PROP_INTERVAL, 1000, _("Sets the current interval for the timer (in milliseconds)")));
     AddProperty(new BoolProperty(PROP_START_TIMER, true, _("Start the timer")));
     AddProperty(

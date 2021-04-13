@@ -422,7 +422,7 @@ void IHunSpell::InitLanguageList()
     m_languageList[_T( "German (Germany-neu ortho.)" )] = _T( "de_DE_neu" );
     m_languageList[_T( "Greek (Greece)" )] = _T( "el_GR" );
     m_languageList[_T( "English (Australia)" )] = _T( "en_AU" );
-    m_languageList[_T( "English (Canada)" )] = _("en_CA");
+    m_languageList[_T( "English (Canada)" )] = _T("en_CA");
     m_languageList[_T( "English (United Kingdom)" )] = _T( "en_GB" );
     m_languageList[_T( "English (New Zealand)" )] = _T( "en_NZ" );
     m_languageList[_T( "English (United States)" )] = _T( "en_US" );

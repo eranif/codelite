@@ -24,7 +24,7 @@ DialogWrapper::DialogWrapper()
     RegisterEvent(wxT("wxEVT_ACTIVATE_APP"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE_APP event"));
 
     SetPropertyString(_("Common Settings"), "wxDialog");
-    DoSetPropertyStringValue(PROP_TITLE, wxT("My Dialog"));
+    DoSetPropertyStringValue(PROP_TITLE, _("My Dialog"));
     m_namePattern = wxT("MyDialog");
 
     AddCategory(_("Dialog Icons"));

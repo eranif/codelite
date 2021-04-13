@@ -1514,7 +1514,7 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer198->Add(m_textCtrlInheritedClassName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText187 = new wxStaticText(m_wizardPageGeneratedCode, wxID_ANY, _("Sublcass file:"), wxDefaultPosition,
+    m_staticText187 = new wxStaticText(m_wizardPageGeneratedCode, wxID_ANY, _("Subclass file:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), 0);
 
     flexGridSizer198->Add(m_staticText187, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));

@@ -1768,7 +1768,7 @@
 																														}, {
 																															"type":	"multi-string",
 																															"m_label":	"Choices:",
-																															"m_value":	"Align Escaped Newlines Left;Align Trailing Comments;Allow All Parameters Of Declaration On Next Line;Allow Short Functions On A Single Line;Allow Short Blocks On A Single Line;Allow Short Loops On A Single Line;Allow Short If Statements On A SingleLine;Always Break Before Multiline Strings;Always Break Template Declarations;Bin Pack Parameters;Break Before Binary Operators;Break Before Ternary Operators;Break Constructor Initializers Before Comma;Indent Case Labels;Indent Function DeclarationAfterType;Space Before Assignment Operators;Space Before Parentheses;Spaces In Parentheses;Pointer And Reference Aligned to the Right"
+																															"m_value":	"Align Escaped Newlines Left;Align Trailing Comments;Allow All Parameters Of Declaration On Next Line;Allow Short Functions On A Single Line;Allow Short Blocks On A Single Line;Allow Short Loops On A Single Line;Allow Short If Statements On A SingleLine;Always Break Before Multiline Strings;Always Break Template Declarations;Bin Pack Parameters;Break Before Binary Operators;Break Before Ternary Operators;Break Constructor Initializers Before Comma;Indent Case Labels;Indent Function Declaration After Type;Space Before Assignment Operators;Space Before Parentheses;Spaces In Parentheses;Pointer And Reference Aligned to the Right"
 																														}, {
 																															"type":	"multi-string",
 																															"m_label":	"Array Integer Values",
@@ -2614,7 +2614,7 @@
 																														}, {
 																															"type":	"multi-string",
 																															"m_label":	"Choices:",
-																															"m_value":	"Class;Brackets;Switches;Namespaces;Case;Labels;Blocks;Preprocessors;Max Instatement Indent;Min Instatement Indent"
+																															"m_value":	"Class;Brackets;Switches;Namespaces;Case;Labels;Blocks;Preprocessors;Max Instatement Indent;Min Conditional Indent"
 																														}, {
 																															"type":	"multi-string",
 																															"m_label":	"Array Integer Values",
@@ -4563,7 +4563,7 @@
 																														}, {
 																															"type":	"string",
 																															"m_label":	"Label:",
-																															"m_value":	"PHP-CS-Fixer parh path"
+																															"m_value":	"PHP-CS-Fixer phar path"
 																														}, {
 																															"type":	"multi-string",
 																															"m_label":	"Tooltip:",

@@ -26,16 +26,16 @@ AuiManagerWrapper::AuiManagerWrapper()
     // wxAUI_DOCKART_GRADIENT_TYPE
 
     SetPropertyString(_("Common Settings"), "wxAuiManager");
-    AddProperty(new CategoryProperty("General"));
+    AddProperty(new CategoryProperty(_("General")));
     AddProperty(new StringProperty(PROP_NAME, "", _("wxAuiManager member name")));
     AddProperty(new ColorProperty(PROP_BG, "<Default>", _("Background Colour")));
     AddProperty(new IntProperty(PROP_AUI_PANE_BORDER_SIZE, -1, _("Pane border size")));
 
-    AddProperty(new CategoryProperty("Sash"));
+    AddProperty(new CategoryProperty(_("Sash")));
     AddProperty(new ColorProperty(PROP_AUI_SASH_COLOUR, "<Default>", _("Sash colour")));
     AddProperty(new IntProperty(PROP_AUI_SASH_SIZE, -1, _("Set the wxAUI sash size")));
 
-    AddProperty(new CategoryProperty("Caption"));
+    AddProperty(new CategoryProperty(_("Caption")));
     wxArrayString gradientTypes;
     gradientTypes.Add("wxAUI_GRADIENT_NONE");
     gradientTypes.Add("wxAUI_GRADIENT_VERTICAL");

@@ -26,7 +26,7 @@ FontPickerDlg::FontPickerDlg(wxWindow* parent, const wxString& font)
 
     if(f.IsOk()) {
         m_staticTextSample->SetFont(f);
-        m_staticTextSample->SetLabel(wxT("Sample Text"));
+        m_staticTextSample->SetLabel(_("Sample Text"));
     }
     SetName("FontPickerDlg");
     WindowAttrManager::Load(this);
@@ -86,7 +86,7 @@ void FontPickerDlg::DoUpdateSelectionToPreDefinedFont()
                 m_fontname << wxT(",normal");
 
             m_staticTextSample->SetFont(font);
-            m_staticTextSample->SetLabel(wxT("Sample Text"));
+            m_staticTextSample->SetLabel(_("Sample Text"));
 
         } else {
             m_fontname = wxCrafter::FontToString(font);
@@ -99,5 +99,5 @@ void FontPickerDlg::DoUpdateSelectionToCustomFont()
     m_fontname = wxCrafter::FontToString(font);
 
     m_staticTextSample->SetFont(font);
-    m_staticTextSample->SetLabel(wxT("Sample Text"));
+    m_staticTextSample->SetLabel(_("Sample Text"));
 }

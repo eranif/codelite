@@ -52,7 +52,7 @@ void MacrosDlg::OnItemRightClick(wxListEvent& event)
 {
     m_item = event.m_itemIndex;
     wxMenu menu;
-    menu.Append(XRCID("copy_macro"), wxT("Copy macro name"), NULL);
+    menu.Append(XRCID("copy_macro"), _("Copy macro name"), NULL);
     PopupMenu(&menu);
 }
 
@@ -91,7 +91,7 @@ void MacrosDlg::Initialize()
         AddMacro(wxT("$(User)"), _("Expands to logged-in user as defined by the OS"));
         AddMacro(wxT("$(Date)"), _("Expands to current date"));
         AddMacro(wxT("$(CodeLitePath)"),
-                 _("Expands to CodeLite's startup directory on (e.g. on Unix it expands to ~/.codelite/"));
+                 _("Expands to CodeLite's startup directory on (e.g. on Unix it expands to ~/.codelite/)"));
         AddMacro(
             wxT("$(ProjectFiles)"),
             _("A space delimited string containing all of the project files in a relative path to the project file"));

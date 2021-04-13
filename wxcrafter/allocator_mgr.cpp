@@ -474,9 +474,9 @@ wxMenu* Allocator::CreateSizersMenu() const
     MENU_ENTRY(ID_WXGRIDBAGSIZER, wxT("wxGridBagSizer"), wxT("wxgridbagsizer"));
     MENU_SEPARATOR();
     MENU_ENTRY(ID_WXSTDDLGBUTTONSIZER, wxT("wxStdDialogButtonSizer"), wxT("stddlgbuttonsizer"));
-    MENU_ENTRY(ID_WXSTDBUTTON, wxT("Standard wxButton"), wxT("wxbutton"));
+    MENU_ENTRY(ID_WXSTDBUTTON, _("Standard wxButton"), wxT("wxbutton"));
     MENU_SEPARATOR();
-    MENU_ENTRY(ID_WXSPACER, wxT("Spacer"), wxT("spacer"));
+    MENU_ENTRY(ID_WXSPACER, _("Spacer"), wxT("spacer"));
     // ADD_NEW_CONTROL
     return menu;
 }
@@ -487,14 +487,14 @@ wxMenu* Allocator::CreateTopLevelMenu() const
     wxMenuItem* menuItem = NULL;
     wxCrafter::ResourceLoader bmpLoader;
 
-    MENU_ENTRY(ID_WXFRAME, wxT("New wxFrame"), wxT("wxframe"));
-    MENU_ENTRY(ID_WXDIALOG, wxT("New wxDialog"), wxT("wxdialog"));
-    MENU_ENTRY(ID_WXWIZARD, wxT("New wxWizard"), wxT("wxwizard"));
-    MENU_ENTRY(ID_WXPANEL_TOPLEVEL, wxT("New wxPanel"), wxT("wxpanel"));
-    MENU_ENTRY(ID_WXAUITOOLBARTOPLEVEL, wxT("wxAuiToolBar"), wxT("wxauitoolbar"));
+    MENU_ENTRY(ID_WXFRAME, _("New wxFrame"), wxT("wxframe"));
+    MENU_ENTRY(ID_WXDIALOG, _("New wxDialog"), wxT("wxdialog"));
+    MENU_ENTRY(ID_WXWIZARD, _("New wxWizard"), wxT("wxwizard"));
+    MENU_ENTRY(ID_WXPANEL_TOPLEVEL, _("New wxPanel"), wxT("wxpanel"));
+    MENU_ENTRY(ID_WXAUITOOLBARTOPLEVEL, _("wxAuiToolBar"), wxT("wxauitoolbar"));
     MENU_SEPARATOR();
-    MENU_ENTRY(ID_WXIMAGELIST, wxT("New wxImageList"), wxT("wximglist"));
-    MENU_ENTRY(ID_WXPOPUPWINDOW, wxT("New wxPopupWindow"), wxT("wxpopupwindow"));
+    MENU_ENTRY(ID_WXIMAGELIST, _("New wxImageList"), wxT("wximglist"));
+    MENU_ENTRY(ID_WXPOPUPWINDOW, _("New wxPopupWindow"), wxT("wxpopupwindow"));
 
     // ADD_NEW_CONTROL
     return menu;
@@ -631,17 +631,17 @@ void Allocator::PrepareMenu(wxMenu& menu, wxcWidget* item)
     if(flags & MT_RIBBON_GALLERY) { menu.Append(ID_WXRIBBONGALLERYITME, _("Add Gallery Item")); }
 
     if(flags & MT_NOTEBOOK_PAGES) {
-        menu.Append(ID_WXPANEL_NOTEBOOK_PAGE, wxT("Add Notebook Page"));
-        if(isChildOfTreeBook) { menu.Append(ID_WXTREEBOOK_SUB_PAGE, wxT("Add Sub Page")); }
+        menu.Append(ID_WXPANEL_NOTEBOOK_PAGE, _("Add Notebook Page"));
+        if(isChildOfTreeBook) { menu.Append(ID_WXTREEBOOK_SUB_PAGE, _("Add Sub Page")); }
     }
 
     if(flags & MT_SPLITTERWIN_PAGES) { menu.Append(ID_WXSPLITTERWINDOW_PAGE, _("Add Panel"), _("Add Panel")); }
 
-    if(flags & MT_DV_LIST_CTRL_COL) { menu.Append(ID_WXDATAVIEWCOL, wxT("Add Column")); }
+    if(flags & MT_DV_LIST_CTRL_COL) { menu.Append(ID_WXDATAVIEWCOL, _("Add Column")); }
 
-    if(flags & MT_LIST_CTRL_COLUMNS) { menu.Append(ID_WXLISTCTRL_COL, wxT("Add List Column")); }
+    if(flags & MT_LIST_CTRL_COLUMNS) { menu.Append(ID_WXLISTCTRL_COL, _("Add List Column")); }
 
-    if(flags & MT_TREE_LIST_CTRL_COLUMNS) { menu.Append(ID_WXTREELISTCTRLCOL, wxT("Add Column")); }
+    if(flags & MT_TREE_LIST_CTRL_COLUMNS) { menu.Append(ID_WXTREELISTCTRLCOL, _("Add Column")); }
 
     if(flags & MT_EVENTS) { DoAddEventsMenu(menu); }
 
@@ -959,18 +959,18 @@ FLAGS_t Allocator::DoGetValidMenus(wxcWidget* item) const
 void Allocator::DoAddCommonMenu(wxMenu& menu) const
 {
     if(menu.GetMenuItemCount() != 0) { menu.AppendSeparator(); }
-    menu.Append(ID_MOVE_NODE_UP, wxT("Move Up"));
-    menu.Append(ID_MOVE_NODE_DOWN, wxT("Move Down"));
-    menu.Append(ID_MOVE_NODE_INTO_SIZER, wxT("Move Left into Higher Sizer"));
-    menu.Append(ID_MOVE_NODE_INTO_SIBLING, wxT("Move Right into Sibling Sizer"));
+    menu.Append(ID_MOVE_NODE_UP, _("Move Up"));
+    menu.Append(ID_MOVE_NODE_DOWN, _("Move Down"));
+    menu.Append(ID_MOVE_NODE_INTO_SIZER, _("Move Left into Higher Sizer"));
+    menu.Append(ID_MOVE_NODE_INTO_SIBLING, _("Move Right into Sibling Sizer"));
     menu.AppendSeparator();
-    menu.Append(ID_DELETE_NODE, wxT("Delete"));
+    menu.Append(ID_DELETE_NODE, _("Delete"));
 }
 
 void Allocator::DoAddProjectMenu(wxMenu& menu) const
 {
     if(menu.GetMenuItemCount() != 0) { menu.AppendSeparator(); }
-    menu.Append(ID_SAVE_WXGUI_PROJECT, wxT("Save"));
+    menu.Append(ID_SAVE_WXGUI_PROJECT, _("Save"));
 }
 
 void Allocator::DoAddControlEventsMenu(wxMenu& menu) const

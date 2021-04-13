@@ -68,7 +68,7 @@ void WordCompletionPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu;
     menu->Append(XRCID("text_word_complete_settings"), _("Settings"));
-    pluginsMenu->Append(wxID_ANY, GetShortName(), menu);
+    pluginsMenu->Append(wxID_ANY, _("Word Completion"), menu);
 }
 
 void WordCompletionPlugin::UnPlug()

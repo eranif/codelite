@@ -22,7 +22,7 @@ SplitterWindowWrapper::SplitterWindowWrapper()
         << _("Gravity tells wxSplitterWindow how much will left/top window grow while resizing.\n")
         << _("Example values:\n") << _("0.0 - only the bottom/right window is automatically resized\n")
         << _("0.5 - both windows grow by equal size\n") << _("1.0 - only left/top window grows\n")
-        << _("Gravity should be a real value between 0.0 and 1.0)");
+        << _("(Gravity should be a real value between 0.0 and 1.0)");
 
     AddProperty(new StringProperty(PROP_SASH_GRAVITY, wxT("0.5"), tip));
     AddProperty(new StringProperty(PROP_MIN_PANE_SIZE, wxT("10"), _("Sets the minimum pane size")));

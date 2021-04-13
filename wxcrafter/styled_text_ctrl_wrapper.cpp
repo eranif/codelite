@@ -205,7 +205,7 @@ StyledTextCtrlWrapper::StyledTextCtrlWrapper()
     int sel = lexersArr.Index("wxSTC_LEX_NULL");
     AddProperty(
         new ChoiceProperty(PROP_STC_LEXER, lexersArr, sel,
-                           _("Set the wxStyledTextCtrl lexer.\nThe lexer affects the synatx highlight of control")));
+                           _("Set the wxStyledTextCtrl lexer.\nThe lexer affects the syntax highlight of control")));
     AddProperty(new FontProperty(PROP_FONT, "", _("Set the basic styles font")));
 
     AddProperty(new CategoryProperty(_("Keywords")));

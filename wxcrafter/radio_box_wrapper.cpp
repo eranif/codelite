@@ -13,15 +13,15 @@ RadioBoxWrapper::RadioBoxWrapper()
     PREPEND_STYLE(wxRA_SPECIFY_COLS, false);
 
     SetPropertyString(_("Common Settings"), "wxRadioBox");
-    AddProperty(new StringProperty(PROP_LABEL, wxT("My RadioBox"), wxT("Label")));
+    AddProperty(new StringProperty(PROP_LABEL, _("My RadioBox"), _("Label")));
     AddProperty(new MultiStringsProperty(PROP_OPTIONS, _("An array of choices with which to initialize the radiobox")));
-    AddProperty(new StringProperty(PROP_SELECTION, wxT("0"), wxT("The zero-based position of the selected button")));
+    AddProperty(new StringProperty(PROP_SELECTION, wxT("0"), _("The zero-based position of the selected button")));
     AddProperty(new StringProperty(PROP_MAJORDIM, wxT("1"),
                                    _("Specifies the maximum number of rows (if style contains wxRA_SPECIFY_ROWS) or "
                                      "columns (if style contains wxRA_SPECIFY_COLS) for a two-dimensional radiobox")));
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_RADIOBOX_SELECTED"),
-                         wxT("Process a wxEVT_COMMAND_RADIOBOX_SELECTED event, when a radiobutton is clicked."));
+                         _("Process a wxEVT_COMMAND_RADIOBOX_SELECTED event, when a radiobutton is clicked."));
     DoSetPropertyStringValue(PROP_OPTIONS, wxT("An option;Second Option"));
 
     m_namePattern = wxT("m_radioBox");

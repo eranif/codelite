@@ -120,14 +120,14 @@ void DatabasePage::LoadDatabases() {
 	pImageList->Add(wxIcon(form_yellow_xpm));						// view icon
 	m_treeDatabases->SetImageList(pImageList);
 
-	wxTreeItemId totalRootID = m_treeDatabases->AddRoot(wxString::Format(wxT("Databases")),-1);
+	wxTreeItemId totalRootID = m_treeDatabases->AddRoot(wxString::Format(_("Databases")),-1);
 
 	// ---------------- load connections ----------------------------
 	SerializableList::compatibility_iterator connectionNode = m_pConnections->GetFirstChildNode();
 	while(connectionNode) {
 		DbConnection* pDbCon = (DbConnection*) wxDynamicCast(connectionNode->GetData(),DbConnection);
 		if (pDbCon) {
-			wxTreeItemId rootID = m_treeDatabases->AppendItem(totalRootID,wxString::Format(wxT("Databases (%s)"),pDbCon->GetServerName().c_str()),-1,-1, new DbItem(pDbCon));
+			wxTreeItemId rootID = m_treeDatabases->AppendItem(totalRootID,wxString::Format(_("Databases (%s)"),pDbCon->GetServerName().c_str()),-1,-1, new DbItem(pDbCon));
 			m_treeDatabases->Expand(rootID);
 			// ----------------------- load databases -------------------------------
 			SerializableList::compatibility_iterator dbNode = pDbCon->GetFirstChildNode();

@@ -116,7 +116,7 @@ void EnvironmentVariablesDlg::OnDeleteSet(wxCommandEvent& event)
     if(selection == wxNOT_FOUND) return;
 
     wxString name = m_book->GetPageText((size_t)selection);
-    if(wxMessageBox(wxString::Format(wxT("Delete environment variables set\n'%s' ?"), name.c_str()), wxT("Confirm"),
+    if(wxMessageBox(wxString::Format(_("Delete environment variables set\n'%s' ?"), name.c_str()), _("Confirm"),
                     wxYES_NO | wxICON_QUESTION, this) != wxYES)
         return;
     m_book->DeletePage((size_t)selection);

@@ -18,17 +18,17 @@ ListBoxWrapper::ListBoxWrapper()
     PREPEND_STYLE(wxLB_SORT, false);
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_LISTBOX_SELECTED"),
-                         wxT("Process a wxEVT_COMMAND_LISTBOX_SELECTED event, when an item on the list is selected or "
-                             "the selection changes."));
+                         _("Process a wxEVT_COMMAND_LISTBOX_SELECTED event, when an item on the list is selected or "
+                           "the selection changes."));
     RegisterEventCommand(
         wxT("wxEVT_COMMAND_LISTBOX_DOUBLECLICKED"),
-        wxT("Process a wxEVT_COMMAND_LISTBOX_DOUBLECLICKED event, when the listbox is double-clicked."));
+        _("Process a wxEVT_COMMAND_LISTBOX_DOUBLECLICKED event, when the listbox is double-clicked."));
 
     SetPropertyString(_("Common Settings"), "wxListBox");
-    AddProperty(new MultiStringsProperty(PROP_OPTIONS, wxT("The List Box Items. A semi-colon list of strings")));
+    AddProperty(new MultiStringsProperty(PROP_OPTIONS, _("The List Box Items. A semi-colon list of strings")));
     AddProperty(new StringProperty(
         PROP_SELECTION, wxT("-1"),
-        wxT("The zero-based position of any initially selected string, or -1 if none are to be selected")));
+        _("The zero-based position of any initially selected string, or -1 if none are to be selected")));
 
     m_namePattern = wxT("m_listBox");
     SetName(GenerateName());

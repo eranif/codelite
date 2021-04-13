@@ -52,7 +52,7 @@ void EditorConfigPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     menu->Append(new wxMenuItem(menu, XRCID("editor_config_settings"), _("Settings...")));
-    pluginsMenu->Append(wxID_ANY, "EditorConfig", menu);
+    pluginsMenu->Append(wxID_ANY, _("EditorConfig"), menu);
     menu->Bind(wxEVT_MENU, &EditorConfigPlugin::OnSettings, this, XRCID("editor_config_settings"));
 }
 

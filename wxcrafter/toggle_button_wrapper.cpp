@@ -10,8 +10,8 @@ ToggleButtonWrapper::ToggleButtonWrapper()
     : wxcWidget(ID_WXTOGGLEBUTTON)
 {
     SetPropertyString(_("Common Settings"), "wxToggleButton");
-    AddProperty(new StringProperty(PROP_LABEL, wxT("My Button"), wxT("The button label")));
-    AddProperty(new BoolProperty(PROP_CHECKED, wxT("Initial state"), wxT("The button initial state")));
+    AddProperty(new StringProperty(PROP_LABEL, _("My Button"), _("The button label")));
+    AddProperty(new BoolProperty(PROP_CHECKED, wxT("Initial state"), _("The button initial state")));
 
     PREPEND_STYLE(wxBU_BOTTOM, false);
     PREPEND_STYLE(wxBU_EXACTFIT, false);
@@ -19,7 +19,7 @@ ToggleButtonWrapper::ToggleButtonWrapper()
     PREPEND_STYLE(wxBU_RIGHT, false);
     PREPEND_STYLE(wxBU_TOP, false);
 
-    RegisterEventCommand(wxT("wxEVT_COMMAND_TOGGLEBUTTON_CLICKED"), wxT("Handles a toggle button click event."));
+    RegisterEventCommand(wxT("wxEVT_COMMAND_TOGGLEBUTTON_CLICKED"), _("Handles a toggle button click event."));
 
     m_namePattern = wxT("m_toggleButton");
     SetName(GenerateName());

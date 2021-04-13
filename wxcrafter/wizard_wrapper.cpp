@@ -13,7 +13,7 @@ WizardWrapper::WizardWrapper()
     : TopLevelWinWrapper(ID_WXWIZARD)
 {
     SetPropertyString(_("Common Settings"), "wxWizard");
-    DoSetPropertyStringValue(PROP_TITLE, wxT("My Wizard"));
+    DoSetPropertyStringValue(PROP_TITLE, _("My Wizard"));
     AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""),
                                          _("The default bitmap used in the left side of the wizard.")));
 

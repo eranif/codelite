@@ -26,23 +26,23 @@ TextCtrlWrapper::TextCtrlWrapper()
     PREPEND_STYLE(wxTE_WORDWRAP, false);
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_UPDATED"),
-                         wxT("Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice "
-                             "that this event will be sent when the text controls contents changes\n - whether this is "
-                             "due to user input or comes from the program itself\n(for example, if SetValue() is "
-                             "called); see ChangeValue() for a function which does not send this event."));
+                         _("Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice "
+                           "that this event will be sent when the text controls contents changes\n - whether this is "
+                           "due to user input or comes from the program itself\n(for example, if SetValue() is "
+                           "called); see ChangeValue() for a function which does not send this event."));
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_ENTER"),
-                         wxT("Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text "
-                             "control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated)."));
+                         _("Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text "
+                           "control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated)."));
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_MAXLEN"),
-                         wxT("User tried to enter more text into the control than the limit set by SetMaxLength."));
+                         _("User tried to enter more text into the control than the limit set by SetMaxLength."));
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_URL"),
-                         wxT("A mouse event occurred over an URL in the text control (wxMSW and wxGTK2 only)"));
+                         _("A mouse event occurred over an URL in the text control (wxMSW and wxGTK2 only)"));
 
     SetPropertyString(_("Common Settings"), "wxTextCtrl");
-    AddProperty(new StringProperty(PROP_VALUE, wxT(""), wxT("Default text control value")));
+    AddProperty(new StringProperty(PROP_VALUE, wxT(""), _("Default text control value")));
     AddProperty(new StringProperty(PROP_HINT, "", _("Sets a hint shown in an empty unfocused text control")));
     AddProperty(new StringProperty(PROP_MAXLENGTH, wxT("0"),
-                                   wxT("The maximum length of user entered text. Only for single-line wxTextCtrls.")));
+                                   _("The maximum length of user entered text. Only for single-line wxTextCtrls.")));
     AddProperty(new BoolProperty(
         PROP_AUTO_COMPLETE_DIRS, false,
         _("Enable auto-completion of the text using the file system directories. Notice that currently this function "

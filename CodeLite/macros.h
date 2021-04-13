@@ -87,24 +87,24 @@
 // Constants
 //-----------------------------------------------------
 
-#define clCMD_NEW  "<New...>"
-#define clCMD_EDIT "<Edit...>"
+#define clCMD_NEW  _("<New...>")
+#define clCMD_EDIT _("<Edit...>")
 
 // constant message
-#define BUILD_START_MSG "----------Build Started--------\n"
-#define BUILD_END_MSG "----------Build Ended----------\n"
-#define BUILD_PROJECT_PREFIX "----------Building project:[ "
-#define CLEAN_PROJECT_PREFIX "----------Cleaning project:[ "
+#define BUILD_START_MSG _("----------Build Started--------\n")
+#define BUILD_END_MSG _("----------Build Ended----------\n")
+#define BUILD_PROJECT_PREFIX _("----------Building project:[ ")
+#define CLEAN_PROJECT_PREFIX _("----------Cleaning project:[ ")
 
 // Find in files options
-#define SEARCH_IN_WORKSPACE "<Entire Workspace>"
-#define SEARCH_IN_PROJECT "<Active Project>"
-#define SEARCH_IN_CURR_FILE_PROJECT "<Current File's Project>"
-#define SEARCH_IN_CURRENT_FILE "<Current File>"
-#define SEARCH_IN_OPEN_FILES "<Open Files>"
-#define SEARCH_IN_WORKSPACE_FOLDER "<Workspace Folder>"
-#define USE_WORKSPACE_ENV_VAR_SET _("<Use Defaults>")
-#define USE_GLOBAL_SETTINGS _("<Use Defaults>")
+#define SEARCH_IN_WORKSPACE wxTRANSLATE("<Entire Workspace>")
+#define SEARCH_IN_PROJECT wxTRANSLATE("<Active Project>")
+#define SEARCH_IN_CURR_FILE_PROJECT wxTRANSLATE("<Current File's Project>")
+#define SEARCH_IN_CURRENT_FILE wxTRANSLATE("<Current File>")
+#define SEARCH_IN_OPEN_FILES wxTRANSLATE("<Open Files>")
+#define SEARCH_IN_WORKSPACE_FOLDER wxTRANSLATE("<Workspace Folder>")
+#define USE_WORKSPACE_ENV_VAR_SET wxTRANSLATE("<Use Defaults>")
+#define USE_GLOBAL_SETTINGS wxTRANSLATE("<Use Defaults>")
 
 // terminal macro
 #ifdef __WXGTK__

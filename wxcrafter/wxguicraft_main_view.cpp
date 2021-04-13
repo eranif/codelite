@@ -415,7 +415,7 @@ void GUICraftMainPanel::Clear()
     m_styles.Clear(m_pgMgrStyles->GetGrid());
 
     m_treeControls->DeleteAllItems();
-    m_treeControls->AddRoot(wxT("wxCrafter Project"), 0, 0);
+    m_treeControls->AddRoot(_("wxCrafter Project"), 0, 0);
     wxcProjectMetadata::Get().Reset();
 
     // Notify all controls to perform cleanup
@@ -589,17 +589,17 @@ void GUICraftMainPanel::DoUpdateSizerFlags(wxcWidget* data)
 
     if(!data) {
         DoShowPropertiesPage(m_panelAuiPaneInfo, "wxAuiPaneInfo", false);
-        DoShowPropertiesPage(m_panelSizerFlags, "Sizer Flags", false);
+        DoShowPropertiesPage(m_panelSizerFlags, _("Sizer Flags"), false);
 
     } else {
         int cursel = m_notebook2->GetSelection();
         if(data->IsAuiPane()) {
             DoShowPropertiesPage(m_panelAuiPaneInfo, "wxAuiPaneInfo", true);
-            DoShowPropertiesPage(m_panelSizerFlags, "Sizer Flags", false);
+            DoShowPropertiesPage(m_panelSizerFlags, _("Sizer Flags"), false);
 
         } else {
             DoShowPropertiesPage(m_panelAuiPaneInfo, "wxAuiPaneInfo", false);
-            DoShowPropertiesPage(m_panelSizerFlags, "Sizer Flags", true);
+            DoShowPropertiesPage(m_panelSizerFlags, _("Sizer Flags"), true);
         }
 #ifndef __WXGTK__
         m_notebook2->SetSelection(cursel);
@@ -1153,7 +1153,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
 #endif
     if(deleteAllItems) {
         m_treeControls->DeleteAllItems();
-        m_treeControls->AddRoot(wxT("wxCrafter Project"), 0, 0);
+        m_treeControls->AddRoot(_("wxCrafter Project"), 0, 0);
         project_file = wxcProjectMetadata::Get().GetProjectFile();
         wxcProjectMetadata::Get().FromJSON(
             json.toElement().namedObject(wxT("metadata"))); // Needed for Redo() to work correctly
@@ -1174,7 +1174,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     }
     NotifyPreviewChanged(wxEVT_WXGUI_PROJECT_LOADED);
 
-    wxString rootText = project_file.IsOk() ? project_file.GetFullPath() : wxT("wxCrafter Project");
+    wxString rootText = project_file.IsOk() ? project_file.GetFullPath() : _("wxCrafter Project");
 
     m_treeControls->SetItemText(m_treeControls->GetRootItem(), rootText);
     wxcWidget::SetObjCounter(wxcProjectMetadata::Get().GetObjCounter());
@@ -2584,7 +2584,7 @@ wxcWidget* GUICraftMainPanel::GetActiveTopLevelWin() const
 void GUICraftMainPanel::OnGenerateCodeMenu(wxAuiToolBarEvent& e)
 {
     if(e.IsDropDownClicked()) {
-        wxMenu menu(wxT("Code Generation"));
+        wxMenu menu(_("Code Generation"));
         wxMenuItem* item = menu.AppendCheckItem(XRCID("GenerateCPP"), _("Generate C++ code"));
         item->Check(wxcProjectMetadata::Get().GetGenerateCPPCode());
         item = menu.AppendCheckItem(XRCID("GenerateXRC"), _("Generate XRC"));

@@ -437,7 +437,7 @@ void SFTPBrowserDlg::ClearView()
 
 void SFTPBrowserDlg::DoBrowse()
 {
-    wxBusyInfo wait("Please wait, connecting...", this);
+    wxBusyInfo wait(_("Please wait, connecting..."), this);
     wxBusyCursor bc;
     wxTheApp->Yield();
     DoCloseSession();

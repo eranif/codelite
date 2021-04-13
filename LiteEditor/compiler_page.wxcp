@@ -3123,7 +3123,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Tooltip:",
-																					"m_value":	"The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"
+																					"m_value":	"The C compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Bg Colour:",
@@ -3643,7 +3643,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Tooltip:",
-																					"m_value":	"On various platform (e.g. Cygwin) it is recommended to use their own sepcial gdb executable rather than the global one\\nYou can specify one here, or leave this empty to use the default"
+																					"m_value":	"On various platform (e.g. Cygwin) it is recommended to use their own special gdb executable rather than the global one\\nYou can specify one here, or leave this empty to use the default"
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Bg Colour:",

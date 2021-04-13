@@ -449,7 +449,7 @@ void LocalsTable::OnStackSelected(clCommandEvent& event)
     event.Skip();
     Clear();
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if(dbgr && dbgr->IsRunning() && ManagerST::Get()->IsDebuggerViewVisible(DebuggerPane::LOCALS)) {
+    if(dbgr && dbgr->IsRunning() && ManagerST::Get()->IsDebuggerViewVisible(wxGetTranslation(DebuggerPane::LOCALS))) {
         dbgr->QueryLocals();
     }
 }

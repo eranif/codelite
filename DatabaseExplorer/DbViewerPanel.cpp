@@ -178,7 +178,7 @@ void DbViewerPanel::RefreshDbView()
     int img_find = loader->GetImageIndex(BitmapLoader::kFind);
     int img_database = loader->GetImageIndex(BitmapLoader::kDatabase);
     int img_column = loader->GetImageIndex(BitmapLoader::kColumn);
-    wxTreeItemId totalRootID = m_treeDatabases->AddRoot(wxString::Format(wxT("Databases")), wxNOT_FOUND);
+    wxTreeItemId totalRootID = m_treeDatabases->AddRoot(wxString::Format(_("Databases")), wxNOT_FOUND);
 
     // ---------------- load connections ----------------------------
     SerializableList::compatibility_iterator connectionNode = m_pConnections->GetFirstChildNode();
@@ -186,7 +186,7 @@ void DbViewerPanel::RefreshDbView()
         DbConnection* pDbCon = (DbConnection*)wxDynamicCast(connectionNode->GetData(), DbConnection);
         if(pDbCon) {
             wxTreeItemId rootID = m_treeDatabases->AppendItem(
-                totalRootID, wxString::Format(wxT("Databases (%s)"), pDbCon->GetServerName().c_str()), img_database,
+                totalRootID, wxString::Format(_("Databases (%s)"), pDbCon->GetServerName().c_str()), img_database,
                 img_database, new DbItem(pDbCon));
 
             // ----------------------- load databases -------------------------------
@@ -198,7 +198,7 @@ void DbViewerPanel::RefreshDbView()
                                                                     img_database, new DbItem(pDatabase));
                     m_treeDatabases->Expand(rootID);
                     wxTreeItemId idFolder =
-                        m_treeDatabases->AppendItem(dbID, wxT("Tables"), img_folder, img_folder, NULL);
+                        m_treeDatabases->AppendItem(dbID, _("Tables"), img_folder, img_folder, NULL);
 
                     // ----------------------------- load tables ----------------------------------
                     SerializableList::compatibility_iterator tabNode = pDatabase->GetFirstChildNode();
@@ -226,7 +226,7 @@ void DbViewerPanel::RefreshDbView()
                     }
                     // ----------------------------------------------------------------------------
 
-                    idFolder = m_treeDatabases->AppendItem(dbID, wxT("Views"), img_folder, img_folder, NULL);
+                    idFolder = m_treeDatabases->AppendItem(dbID, _("Views"), img_folder, img_folder, NULL);
 
                     // ----------------------------- load views ----------------------------------
                     tabNode = pDatabase->GetFirstChildNode();

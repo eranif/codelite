@@ -15,7 +15,7 @@ SpinCtrlWrapper::SpinCtrlWrapper()
     RegisterEvent(wxT("wxEVT_SPINCTRL"), wxT("wxSpinEvent"),
                   _("Generated whenever the numeric value of the spinctrl is updated"));
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_UPDATED"),
-                         wxT("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."));
+                         _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."));
 
     SetPropertyString(_("Common Settings"), "wxSpinCtrl");
     AddProperty(new StringProperty(PROP_VALUE, wxT("0"), _("The initial value")));

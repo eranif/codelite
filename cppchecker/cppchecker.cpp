@@ -149,7 +149,7 @@ void CppCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenuItem* item =
         new wxMenuItem(menu, XRCID("cppcheck_settings_item"), _("Settings"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
-    pluginsMenu->Append(wxID_ANY, wxT("CppCheck"), menu);
+    pluginsMenu->Append(wxID_ANY, _("CppCheck"), menu);
 }
 
 void CppCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)

@@ -10,19 +10,19 @@ BitmapComboxWrapper::BitmapComboxWrapper()
     : wxcWidget(ID_WXBITMAPCOMBOBOX)
 {
     SetPropertyString(_("Common Settings"), "wxBitmapComboBox");
-    AddProperty(new BitmapTextArrayProperty(PROP_CB_CHOICES, "", wxT("Combobox drop down choices")));
+    AddProperty(new BitmapTextArrayProperty(PROP_CB_CHOICES, "", _("Combobox drop down choices")));
     AddProperty(new StringProperty(
         PROP_SELECTION, wxT("-1"),
-        wxT("The zero-based position of any initially selected string, or -1 if none are to be selected")));
-    AddProperty(new StringProperty(PROP_VALUE, "", wxT("The combobox initial value")));
+        _("The zero-based position of any initially selected string, or -1 if none are to be selected")));
+    AddProperty(new StringProperty(PROP_VALUE, "", _("The combobox initial value")));
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_COMBOBOX_SELECTED"),
-                         wxT("Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is selected. "
+                         _("Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is selected. "
                              "Note that calling GetValue returns the new value of selection."));
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_UPDATED"),
-                         wxT("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."));
+                         _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."));
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_ENTER"),
-                         wxT("Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox."));
+                         _("Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox."));
 
     PREPEND_STYLE(wxCB_READONLY, false);
     PREPEND_STYLE(wxCB_SORT, false);

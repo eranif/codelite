@@ -140,7 +140,7 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
                           wxITEM_NORMAL);
     menu->Append(item);
 
-    pluginsMenu->Append(wxID_ANY, wxT("UnitTest++"), menu);
+    pluginsMenu->Append(wxID_ANY, _("UnitTest++"), menu);
 
     // connect the events
     wxTheApp->Connect(XRCID("unittestpp_new_simple_test"), wxEVT_COMMAND_MENU_SELECTED,

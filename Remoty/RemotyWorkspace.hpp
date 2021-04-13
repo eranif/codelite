@@ -6,6 +6,8 @@
 #include "clRemoteTerminal.hpp"
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
+#include <deque>
+#include <functional>
 
 #define WORKSPACE_TYPE_NAME "Remote over SSH"
 
@@ -59,7 +61,10 @@ protected:
 
 public:
     // IWorkspace
-    virtual wxString GetActiveProjectName() const { return wxEmptyString; }
+    virtual wxString GetActiveProjectName() const
+    {
+        return wxEmptyString;
+    }
     virtual wxFileName GetFileName() const;
     virtual wxString GetFilesMask() const;
     virtual wxFileName GetProjectFileName(const wxString& projectName) const;
@@ -72,11 +77,26 @@ public:
 
     // API
     bool IsOpened() const;
-    const SSHAccountInfo& GetAccount() const { return m_account; }
-    const wxString& GetLocalWorkspaceFile() const { return m_localWorkspaceFile; }
-    const wxString& GetRemoteWorkspaceFile() const { return m_remoteWorkspaceFile; }
-    const clFileSystemWorkspaceSettings& GetSettings() const { return m_settings; }
-    clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
+    const SSHAccountInfo& GetAccount() const
+    {
+        return m_account;
+    }
+    const wxString& GetLocalWorkspaceFile() const
+    {
+        return m_localWorkspaceFile;
+    }
+    const wxString& GetRemoteWorkspaceFile() const
+    {
+        return m_remoteWorkspaceFile;
+    }
+    const clFileSystemWorkspaceSettings& GetSettings() const
+    {
+        return m_settings;
+    }
+    clFileSystemWorkspaceSettings& GetSettings()
+    {
+        return m_settings;
+    }
     /**
      * @brief save the settings to the remote machine
      */

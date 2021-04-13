@@ -212,7 +212,7 @@ void RemotyWorkspace::SaveSettings()
 
     wxBusyCursor bc;
     m_settings.Save(m_localWorkspaceFile, m_localUserWorkspaceFile);
-    clSFTPManager::Get().SaveFile(m_localWorkspaceFile, m_remoteWorkspaceFile, m_account.GetAccountName());
+    clSFTPManager::Get().AsyncSaveFile(m_localWorkspaceFile, m_remoteWorkspaceFile, m_account.GetAccountName());
 }
 
 void RemotyWorkspace::OnBuildStarting(clBuildEvent& event)
@@ -403,7 +403,7 @@ void RemotyWorkspace::OnNewWorkspace(clCommandEvent& event)
         remote_path << "/" << name << ".workspace";
         // upload this file to the remote location
         clDEBUG() << "Writing file: [" << account << "]" << tmpfile.GetFullPath() << "->" << remote_path << endl;
-        if(!clSFTPManager::Get().SaveFile(tmpfile.GetFullPath(), remote_path, account)) {
+        if(!clSFTPManager::Get().AwaitSaveFile(tmpfile.GetFullPath(), remote_path, account)) {
             ::wxMessageBox(wxString() << _("Failed to create new workspace file:\n") << remote_path, "CodeLite",
                            wxOK | wxICON_ERROR);
             return;
@@ -651,8 +651,7 @@ IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool s
     wxString path;
     path << "/tmp/codelite-remoty." << clGetUserName() << ".sh";
 
-    // upload the script
-    if(!clSFTPManager::Get().WriteFile(content, path, m_account.GetAccountName())) {
+    if(!clSFTPManager::Get().AwaitWriteFile(content, path, m_account.GetAccountName())) {
         ::wxMessageBox(_("Failed to write remote script on the remote machine!"), "CodeLite", wxICON_ERROR | wxCENTER);
         return nullptr;
     }

@@ -6,11 +6,15 @@
 #include "cl_sftp.h"
 #include "codelite_exports.h"
 #include <atomic>
+#include <condition_variable>
+#include <functional>
+#include <mutex>
 #include <thread>
 #include <unordered_map>
 #include <wx/event.h>
 #include <wx/msgqueue.h>
 #include <wx/string.h>
+#include <wx/thread.h>
 #include <wx/timer.h>
 
 class IEditor;
@@ -22,7 +26,9 @@ protected:
         clSFTP::Ptr_t conn;
         wxString local_path;
         wxString remote_path;
-        wxEvtHandler* sink = nullptr;
+        bool delete_local_file = false;
+        wxEvtHandler* sink = nullptr;              // use standard event methods
+        std::function<void()> notify_cb = nullptr; // use notify_cb
     };
 
 protected:
@@ -37,7 +43,8 @@ protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
     clSFTP::Ptr_t GetConnectionPtr(const wxString& account) const;
     clSFTP::Ptr_t GetConnectionPtrAddIfMissing(const wxString& account);
-    save_request* MakeSaveRequest(clSFTP::Ptr_t conn, const wxString& local_path, const wxString& remote_path);
+    save_request* MakeSaveRequest(clSFTP::Ptr_t conn, const wxString& local_path, const wxString& remote_path,
+                                  wxEvtHandler* sink, bool delete_local, std::function<void()> notify_cb);
 
 protected:
     void OnGoingDown(clCommandEvent& event);
@@ -48,6 +55,8 @@ protected:
     void StartSaveThread();
     void OnSaveCompleted(clCommandEvent& e);
     void OnSaveError(clCommandEvent& e);
+    bool DoSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+                    bool delete_local, wxEvtHandler* sink, std::function<void()> notify_cb);
 
 public:
     clSFTPManager();
@@ -77,22 +86,45 @@ public:
     wxFileName Download(const wxString& path, const wxString& accountName);
 
     /**
-     * @brief save file remotely
+     * @brief save file remotely. this function is async
      * @param localPath file on the local machine
      * @param remotePath file path on the remote machine
      * @param accountName the account name to use
+     * @param sink callback object for save file events
      * @return true on success or false
      */
-    bool SaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName);
+    bool AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+                       wxEvtHandler* sink = nullptr);
 
     /**
-     * @brief write file content
+     * @brief write file content. this function is async
+     * @param content of the file
+     * @param remotePath file path on the remote machine
+     * @param accountName the account name to use
+     * @param sink callback object for save file events
+     * @return true on success or false
+     */
+    bool AsyncWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName,
+                        wxEvtHandler* sink = nullptr);
+
+    /**
+     * @brief save file remotely. this function is sync
+     * @param localPath file on the local machine
+     * @param remotePath file path on the remote machine
+     * @param accountName the account name to use
+     * @param sink callback object for save file events
+     * @return true on success or false
+     */
+    bool AwaitSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName);
+
+    /**
+     * @brief write file content. this function is sync
      * @param content of the file
      * @param remotePath file path on the remote machine
      * @param accountName the account name to use
      * @return true on success or false
      */
-    bool WriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName);
+    bool AwaitWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName);
 
     /**
      * @brief delete a connection

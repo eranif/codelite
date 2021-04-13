@@ -13,8 +13,11 @@
 #include "imanager.h"
 #include "wx/debug.h"
 #include "wx/thread.h"
+#include <condition_variable>
 #include <functional>
+#include <mutex>
 #include <thread>
+#include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
 #include <wx/utils.h>
@@ -246,10 +249,11 @@ void clSFTPManager::OnFileSaved(clCommandEvent& event)
 
     auto conn_info = GetConnectionPair(cd->GetAccountName());
     CHECK_PTR_RET(conn_info.second);
-    SaveFile(cd->GetLocalPath(), cd->GetRemotePath(), conn_info.first.GetAccountName());
+    AsyncSaveFile(cd->GetLocalPath(), cd->GetRemotePath(), conn_info.first.GetAccountName(), nullptr);
 }
 
-bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName)
+bool clSFTPManager::DoSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+                               bool delete_local, wxEvtHandler* sink, std::function<void()> notify_cb)
 {
     assert(wxThread::IsMain());
     wxBusyCursor bc;
@@ -264,8 +268,47 @@ bool clSFTPManager::SaveFile(const wxString& localPath, const wxString& remotePa
     StartSaveThread();
 
     // Post a save request
-    m_q.Post(MakeSaveRequest(conn, localPath, remotePath));
+    auto request = MakeSaveRequest(conn, localPath, remotePath, sink, delete_local, notify_cb);
+    m_q.Post(request);
     return true;
+}
+
+bool clSFTPManager::AwaitSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName)
+{
+    std::condition_variable cv;
+    std::mutex m;
+    bool write_is_completed = false;
+    auto notify_cb = [&cv, &m, &write_is_completed]() {
+        {
+            std::unique_lock<std::mutex> lk{ m };
+            write_is_completed = true;
+        }
+        cv.notify_all();
+    };
+
+    if(!DoSaveFile(localPath, remotePath, accountName, false, this, std::move(notify_cb))) {
+        return false;
+    }
+
+    std::unique_lock<std::mutex> lk{ m };
+    cv.wait(lk, [&write_is_completed] { return write_is_completed == true; });
+    return true;
+}
+
+bool clSFTPManager::AwaitWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName)
+{
+    clTempFile tmpfile;
+    tmpfile.Persist(); // do not delete it on exit
+    if(!tmpfile.Write(content, wxConvUTF8)) {
+        return false;
+    }
+    return AwaitSaveFile(tmpfile.GetFullPath(), remotePath, accountName);
+}
+
+bool clSFTPManager::AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+                                  wxEvtHandler* sink)
+{
+    return DoSaveFile(localPath, remotePath, accountName, false, sink, nullptr);
 }
 
 bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUser)
@@ -513,13 +556,15 @@ bool clSFTPManager::DoDownload(const wxString& remotePath, const wxString& local
     }
 }
 
-bool clSFTPManager::WriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName)
+bool clSFTPManager::AsyncWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName,
+                                   wxEvtHandler* sink)
 {
     clTempFile tmpfile;
+    tmpfile.Persist(); // do not delete it on exit
     if(!tmpfile.Write(content, wxConvUTF8)) {
         return false;
     }
-    return SaveFile(tmpfile.GetFullPath(), remotePath, accountName);
+    return DoSaveFile(tmpfile.GetFullPath(), remotePath, accountName, true, sink, nullptr);
 }
 
 bool clSFTPManager::GetRemotePath(const wxString& local_path, const wxString& accountName, wxString& remote_path) const
@@ -581,6 +626,12 @@ void clSFTPManager::StartSaveThread()
                         err_event.SetFileName(req->remote_path);
                         req->sink->AddPendingEvent(err_event);
                     }
+                    if(req->delete_local_file) {
+                        clRemoveFile(req->local_path);
+                    }
+                    if(req->notify_cb) {
+                        req->notify_cb();
+                    }
                     wxDELETE(req);
                 }
             }
@@ -589,13 +640,18 @@ void clSFTPManager::StartSaveThread()
 }
 
 clSFTPManager::save_request* clSFTPManager::MakeSaveRequest(clSFTP::Ptr_t conn, const wxString& local_path,
-                                                            const wxString& remote_path)
+                                                            const wxString& remote_path, wxEvtHandler* sink,
+                                                            bool delete_local, std::function<void()> notify_cb)
 {
     save_request* req = new save_request();
     req->conn = conn;
     req->local_path = local_path;
     req->remote_path = remote_path;
-    req->sink = this;
+    req->sink = sink == nullptr ? this : sink; // always assign a sink object
+    if(notify_cb) {
+        req->notify_cb = std::move(notify_cb);
+    }
+    req->delete_local_file = delete_local;
     return req;
 }
 

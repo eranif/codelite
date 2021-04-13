@@ -3,7 +3,12 @@ nav:
     - Download: download.md
     - Build: build_from_sources.md
     - Quick Start: hello_world.md
-
+    - Settings:
+        - Look and feel: customise/colours_and_fonts.md
+        - Keyboard shortcuts: customise/keyboard_shortcuts.md
+        - Editor: editor/preferences.md
+        - Build Settings: build_settings/build_settings.md
+        
 markdown_extensions:
         - pymdownx.keys
         - admonition

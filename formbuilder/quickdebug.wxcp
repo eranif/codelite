@@ -1127,7 +1127,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Tooltip:",
-																					"m_value":	"Select executale to debug"
+																					"m_value":	"Select executable to debug"
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Bg Colour:",

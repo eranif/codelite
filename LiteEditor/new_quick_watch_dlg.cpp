@@ -338,7 +338,7 @@ void DisplayVariableDlg::OnMenuSelection(wxCommandEvent& e)
         if(e.GetId() == XRCID("tip_add_watch")) {
             wxString fullpath = DoGetItemPath(item);
             clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(fullpath);
-            clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
+            clMainFrame::Get()->GetDebuggerPane()->SelectTab(wxGetTranslation(DebuggerPane::WATCHES));
             clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
 
         } else if(e.GetId() == XRCID("tip_copy_value")) {

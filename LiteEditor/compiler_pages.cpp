@@ -355,7 +355,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_pgPropCC = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("C Compiler"), wxPG_LABEL, wxT("")));
     m_pgPropCC->SetHelpString(
-        _("The C++ compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"));
+        _("The C compiler path (plus optional flags). This tool is represented in the Makefile as $(CC)"));
     m_pgPropCC->SetEditor(wxT("TextCtrlAndButton"));
 
     m_pgPropAS = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Assembler Name"), wxPG_LABEL, wxT("")));
@@ -391,7 +391,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
 
     m_pgPropDebugger = m_pgMgrTools->AppendIn(m_pgProp94, new wxStringProperty(_("Gdb"), wxPG_LABEL, wxT("")));
     m_pgPropDebugger->SetHelpString(
-        _("On various platform (e.g. Cygwin) it is recommended to use their own sepcial gdb executable rather than the "
+        _("On various platform (e.g. Cygwin) it is recommended to use their own special gdb executable rather than the "
           "global one\nYou can specify one here, or leave this empty to use the default"));
     m_pgPropDebugger->SetEditor(wxT("TextCtrlAndButton"));
 

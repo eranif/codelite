@@ -130,23 +130,23 @@ void MemCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(menu, XRCID("memcheck_check_active_project"), wxT("&Run MemCheck"), wxEmptyString,
+    item = new wxMenuItem(menu, XRCID("memcheck_check_active_project"), _("&Run MemCheck"), wxEmptyString,
                           wxITEM_NORMAL);
     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("memcheck_import"), wxT("&Load MemCheck log from file..."), wxEmptyString,
+    item = new wxMenuItem(menu, XRCID("memcheck_import"), _("&Load MemCheck log from file..."), wxEmptyString,
                           wxITEM_NORMAL);
     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import")));
     menu->Append(item);
 
     menu->AppendSeparator();
 
-    item = new wxMenuItem(menu, XRCID("memcheck_settings"), wxT("&Settings..."), wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu, XRCID("memcheck_settings"), _("&Settings..."), wxEmptyString, wxITEM_NORMAL);
     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_settings")));
     menu->Append(item);
 
-    item = new wxMenuItem(pluginsMenu, wxID_ANY, wxT("MemCheck"), wxEmptyString, wxITEM_NORMAL, menu);
+    item = new wxMenuItem(pluginsMenu, wxID_ANY, _("MemCheck"), wxEmptyString, wxITEM_NORMAL, menu);
     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
     pluginsMenu->Append(item);
 }
@@ -159,12 +159,12 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
             wxMenu* subMenu = new wxMenu();
             wxMenuItem* item(NULL);
 
-            item = new wxMenuItem(subMenu, XRCID("memcheck_check_popup_project"), wxT("&Run MemCheck"), wxEmptyString,
+            item = new wxMenuItem(subMenu, XRCID("memcheck_check_popup_project"), _("&Run MemCheck"), wxEmptyString,
                                   wxITEM_NORMAL);
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
             subMenu->Append(item);
 
-            item = new wxMenuItem(subMenu, XRCID("memcheck_import"), wxT("&Load MemCheck log from file..."),
+            item = new wxMenuItem(subMenu, XRCID("memcheck_import"), _("&Load MemCheck log from file..."),
                                   wxEmptyString, wxITEM_NORMAL);
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import")));
             subMenu->Append(item);
@@ -172,7 +172,7 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
             subMenu->AppendSeparator();
 
             item =
-                new wxMenuItem(subMenu, XRCID("memcheck_settings"), wxT("&Settings..."), wxEmptyString, wxITEM_NORMAL);
+                new wxMenuItem(subMenu, XRCID("memcheck_settings"), _("&Settings..."), wxEmptyString, wxITEM_NORMAL);
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_settings")));
             subMenu->Append(item);
 
@@ -336,7 +336,7 @@ void MemCheckPlugin::CheckProject(const wxString& projectName)
     wxString cmdArgs;
     m_memcheckProcessor->GetExecutionCommand(command, cmd, cmdArgs);
     m_mgr->AppendOutputTabText(kOutputTab_Output, wxString()
-                                                      << "MemCheck command: " << command << " " << cmdArgs << "\n");
+                                                      << _("MemCheck command: ") << command << " " << cmdArgs << "\n");
     m_terminal.ExecuteConsole(cmd, true, cmdArgs, "", wxString::Format("MemCheck: %s", projectName));
 }
 
@@ -344,17 +344,17 @@ void MemCheckPlugin::OnImportLog(wxCommandEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::OnImportLog()"));
 
-    wxFileDialog openFileDialog(m_mgr->GetTheApp()->GetTopWindow(), wxT("Open log file"), "", "",
+    wxFileDialog openFileDialog(m_mgr->GetTheApp()->GetTopWindow(), _("Open log file"), "", "",
                                 "xml files (*.xml)|*.xml|all files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if(openFileDialog.ShowModal() == wxID_CANCEL)
         return;
 
     wxWindowDisabler disableAll;
-    wxBusyInfo wait(wxT(BUSY_MESSAGE));
+    wxBusyInfo wait(BUSY_MESSAGE);
     m_mgr->GetTheApp()->Yield();
 
     if(!m_memcheckProcessor->Process(openFileDialog.GetPath()))
-        wxMessageBox(wxT("Output log file cannot be properly loaded."), wxT("Processing error."), wxICON_ERROR);
+        wxMessageBox(_("Output log file cannot be properly loaded."), _("Processing error."), wxICON_ERROR);
 
     m_outputView->LoadErrors();
     SwitchToMyPage();
@@ -388,7 +388,7 @@ void MemCheckPlugin::OnProcessOutput(clCommandEvent& event)
 void MemCheckPlugin::OnProcessTerminated(clCommandEvent& event)
 {
     m_mgr->AppendOutputTabText(kOutputTab_Output, _("\n-- MemCheck process completed\n"));
-    wxBusyInfo wait(wxT(BUSY_MESSAGE));
+    wxBusyInfo wait(BUSY_MESSAGE);
     m_mgr->GetTheApp()->Yield();
 
     m_memcheckProcessor->Process();

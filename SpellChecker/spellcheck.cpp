@@ -183,7 +183,7 @@ void SpellCheck::CreatePluginMenu(wxMenu* pluginsMenu)
 
     pItem = new wxMenuItem(pMenu, IDM_SETTINGS, _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     pMenu->Append(pItem);
-    pluginsMenu->Append(wxID_ANY, s_plugName, pMenu);
+    pluginsMenu->Append(wxID_ANY, _("SpellCheck"), pMenu);
 
     m_topWin->Bind(wxEVT_MENU, &SpellCheck::OnSettings, this, IDM_SETTINGS);
 }

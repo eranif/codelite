@@ -4335,7 +4335,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
                 ManagerST::Get()->ShowDebuggerPane();
             }
 
-            clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
+            clMainFrame::Get()->GetDebuggerPane()->SelectTab(wxGetTranslation(DebuggerPane::FRAMES));
             ManagerST::Get()->UpdateDebuggerPane();
 
             // Finally, get the call-stack and 'continue' gdb (which seems to be necessary for things to work...)

@@ -156,7 +156,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     flexGridSizer127->Add(m_checkBoxDeepUsingNamespaceResolving, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxGenCompileCommandsJSON =
-        new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Generate compile_commans.json file"), wxDefaultPosition,
+        new wxCheckBox(m_paneDisplayAndBehavior, wxID_ANY, _("Generate compile_commands.json file"), wxDefaultPosition,
                        wxDLG_UNIT(m_paneDisplayAndBehavior, wxSize(-1, -1)), 0);
     m_checkBoxGenCompileCommandsJSON->SetValue(false);
 
@@ -459,7 +459,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     boxSizer130->Add(m_staticText9, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_hyperlink1 = new wxHyperlinkCtrl(m_panelClangGeneral, wxID_ANY, _("Macros Handling"),
-                                       wxT("http://codelite.org/LiteEditor/MacrosHandling101"), wxDefaultPosition,
+                                       wxT("https://wiki.codelite.org/pmwiki.php/Main/MacrosHandling101"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelClangGeneral, wxSize(-1, -1)), wxHL_DEFAULT_STYLE);
 
     boxSizer130->Add(m_hyperlink1, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));

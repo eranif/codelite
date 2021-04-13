@@ -124,9 +124,9 @@ void DebuggerPage::OnBrowse(wxCommandEvent& e)
     wxUnusedVar(e);
     wxString newfilepath, filepath(m_textCtrDbgPath->GetValue());
     if((!filepath.IsEmpty()) && wxFileName::FileExists(filepath)) {
-        newfilepath = wxFileSelector(wxT("Select file:"), filepath.c_str());
+        newfilepath = wxFileSelector(_("Select file:"), filepath.c_str());
     } else {
-        newfilepath = wxFileSelector(wxT("Select file:"));
+        newfilepath = wxFileSelector(_("Select file:"));
     }
 
     if(!newfilepath.IsEmpty()) { m_textCtrDbgPath->SetValue(newfilepath); }
@@ -191,8 +191,8 @@ void DbgPagePreDefTypes::OnDeleteSet(wxCommandEvent& event)
 
     wxString name = m_notebookPreDefTypes->GetPageText((size_t)sel);
     if(wxMessageBox(
-           wxString::Format(wxT("You are about to delete 'PreDefined Types' set '%s'\nContinue ?"), name.c_str()),
-           wxT("Confirm deleting 'PreDefined Types' set"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
+           wxString::Format(_("You are about to delete 'PreDefined Types' set '%s'\nContinue ?"), name.c_str()),
+           _("Confirm deleting 'PreDefined Types' set"), wxYES_NO | wxCENTER | wxICON_QUESTION, this) == wxYES) {
         m_notebookPreDefTypes->DeletePage((size_t)sel);
     }
 }
@@ -226,7 +226,7 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
         // Make sure that a set with this name does not already exists
         for(size_t i = 0; i < m_notebookPreDefTypes->GetPageCount(); i++) {
             if(m_notebookPreDefTypes->GetPageText((size_t)i) == newName) {
-                wxMessageBox(wxT("A set with this name already exist"), wxT("Name Already Exists"),
+                wxMessageBox(_("A set with this name already exist"), _("Name Already Exists"),
                              wxICON_WARNING | wxOK | wxCENTER);
                 return;
             }
@@ -271,20 +271,20 @@ void DebuggerSettingsDlg::Initialize()
     // for each debugger, add page
     m_pages.clear();
     DebuggerPage* p = new DebuggerPage(m_notebook, "GNU gdb debugger");
-    m_notebook->AddPage(p, wxT("GNU gdb debugger"), true);
+    m_notebook->AddPage(p, _("GNU gdb debugger"), true);
     m_pages.push_back(p);
 
     wxNotebook* innerBook = p->GetNotebook73();
     DebuggerPageMisc* misc = new DebuggerPageMisc(innerBook, "GNU gdb debugger");
-    innerBook->AddPage(misc, wxT("Misc"), false);
+    innerBook->AddPage(misc, _("Misc"), false);
     m_pages.push_back(misc);
 
     DebuggerPageStartupCmds* cmds = new DebuggerPageStartupCmds(innerBook, "GNU gdb debugger");
-    innerBook->AddPage(cmds, wxT("Startup Commands"), false);
+    innerBook->AddPage(cmds, _("Startup Commands"), false);
     m_pages.push_back(cmds);
 
     DbgPagePreDefTypes* types = new DbgPagePreDefTypes(m_notebook);
-    m_notebook->AddPage(types, wxT("Pre-Defined Types"), false);
+    m_notebook->AddPage(types, _("Pre-Defined Types"), false);
     m_pages.push_back(types);
 }
 

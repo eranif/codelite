@@ -37,9 +37,9 @@ EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions, wxXmlNode* 
 {
     wxString label = title;
     if(level == pLevel_workspace) {
-        label = wxT("Workspace local editor preferences");
+        label = _("Workspace local editor preferences");
     } else if(level == pLevel_project) {
-        label = wxT("Project local editor preferences");
+        label = _("Project local editor preferences");
     }
     SetTitle(label);
 

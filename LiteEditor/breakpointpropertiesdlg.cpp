@@ -245,7 +245,7 @@ void BreakptPropertiesDlg::OnPageChanged(wxChoicebookEvent& event)
     if (!GetTitle().StartsWith("Properties")) {
         wxString tip =  (its_a_breakpt ?
                             "You can add a condition to any breakpoint. The debugger will then stop only if the condition is met.\n \
-The condition can be any simple or complex expression in your programming language,providing it returns a bool. However any variables that you use must be in scope.\n \
+The condition can be any simple or complex expression in your programming language, providing it returns a bool. However any variables that you use must be in scope.\n \
 If you've previously set a condition and no longer want it, just clear this textctrl." :
                         "It is not possible to Add a conditional watchpoint. Create a normal watchpoint first, then Edit it to add the conditon"
                         );

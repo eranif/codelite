@@ -33,7 +33,7 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
     cellType.Add("wxDATAVIEW_CELL_EDITABLE");
 
     AddProperty(new CategoryProperty(_("wxDataViewListCtrl Column")));
-    AddProperty(new StringProperty(PROP_NAME, wxT("My Column"), _("Column Caption")));
+    AddProperty(new StringProperty(PROP_NAME, _("My Column"), _("Column Caption")));
     AddProperty(new StringProperty(PROP_WIDTH, wxT("-2"),
                                    _("Column Width (in pixels)\n-1 - special value for column width meaning "
                                      "unspecified/default\n-2 - size the column automatically to fit all values")));

@@ -1278,7 +1278,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	"Set the current repository email"
+																	"m_value":	"Set the global email"
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
@@ -1447,7 +1447,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	"Set the current repository user name (this name will tell git who you are).\\nIf this field letf empty, the global one is used"
+																	"m_value":	"Set the current repository user name (this name will tell git who you are).\\nIf this field left empty, the global one is used"
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
@@ -1623,7 +1623,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	"Set the current repository email\\nIf this field letf empty, the global one is used"
+																	"m_value":	"Set the current repository email\\nIf this field left empty, the global one is used"
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",

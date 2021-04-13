@@ -26,7 +26,7 @@ wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
 {
     m_treeControls->SetImageList(Allocator::Instance()->GetImageList());
     m_treeControls->SetSortFunction(nullptr);
-    m_treeControls->AddRoot(wxT("wxCrafter Project"), 0, 0);
+    m_treeControls->AddRoot(_("wxCrafter Project"), 0, 0);
     m_eventsPane = new EventsEditorPane(m_splitterPageEvents, NULL, plugin);
     m_splitterPageEvents->GetSizer()->Add(m_eventsPane, 1, wxEXPAND | wxALL, 2);
 

@@ -14410,7 +14410,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Label:",
-													"m_value":	"Sublcass file:"
+													"m_value":	"Subclass file:"
 												}, {
 													"type":	"string",
 													"m_label":	"Wrap:",

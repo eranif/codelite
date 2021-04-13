@@ -132,7 +132,7 @@ void PopulateToolbarOverflow(clToolBar* toolbar)
     auto images = toolbar->GetBitmapsCreateIfNeeded();
     for(size_t n = 0; n < IDsize; ++n) {
         if(IDs[n] != 0) {
-            toolbar->AddTool(IDs[n], labels[n], images->Add(bitmapnames[n]));
+            toolbar->AddTool(IDs[n], wxGetTranslation(labels[n]), images->Add(bitmapnames[n]));
         } else {
             toolbar->AddSeparator();
         }

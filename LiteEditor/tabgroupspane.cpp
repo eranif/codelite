@@ -800,7 +800,7 @@ void TabgroupsPane::AddFile(const wxString& filename)
 
 wxTreeItemId TabgroupsPane::GetRootItemForTabgroup(bool global)
 {
-    wxString label = global ? "Global tabgroups" : "Workspace tabgroups";
+    wxString label = global ? _("Global tabgroups") : _("Workspace tabgroups");
 
     // First see if the appropriate tabgroup base-item has already been created
     wxTreeItemIdValue cookie;

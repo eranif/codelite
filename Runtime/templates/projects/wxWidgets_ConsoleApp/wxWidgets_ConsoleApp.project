@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="wxWidgets Console Application (with wxEvent loop)" InternalType="Console" IconIndex="wx16" Version="11000">
-  <Description>A wxWidgets console application with wxEvent loop (the main application class is a sublcass of wxAppConsole)</Description>
+  <Description>A wxWidgets console application with wxEvent loop (the main application class is a subclass of wxAppConsole)</Description>
   <Dependencies/>
   <VirtualDirectory Name="include">
     <File Name="main_app.h"/>

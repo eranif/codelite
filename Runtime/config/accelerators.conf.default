@@ -150,7 +150,7 @@ cppcheck_editor_item|Plugins::CppCheck|Check current file|
 cppcheck_project_item|Plugins::CppCheck|Check current file's project|
 cppcheck_workspace_item|Plugins::CppCheck|Check workspace|
 options|Settings|Global Editor Preferences...|Alt-O
-synatx_highlight|Settings|Syntax Highlight & Fonts...|
+syntax_highlight|Settings|Syntax Highlight & Fonts...|
 configure_accelerators|Settings|Configure accelerators...|
 add_envvar|Settings|Environment Variables...|Ctrl-Shift-V
 advance_settings|Settings|Build Settings...|

@@ -710,7 +710,7 @@ void Manager::ImportMSVSSolution(const wxString& path, const wxString& defaultCo
         wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(event);
     } else {
-        wxMessageBox(wxT("Solution/workspace unsupported"), wxMessageBoxCaptionStr, wxOK | wxCENTRE | wxSTAY_ON_TOP);
+        wxMessageBox(_("Solution/workspace unsupported"), wxMessageBoxCaptionStr, wxOK | wxCENTRE | wxSTAY_ON_TOP);
     }
 }
 
@@ -1918,7 +1918,7 @@ void Manager::DoUpdateDebuggerTabControl(wxWindow* curpage)
     if(!IsPaneVisible(wxT("Debugger")))
         return;
 
-    if(curpage == (wxWindow*)pane->GetBreakpointView() || IsPaneVisible(DebuggerPane::BREAKPOINTS)) {
+    if(curpage == (wxWindow*)pane->GetBreakpointView() || IsPaneVisible(wxGetTranslation(DebuggerPane::BREAKPOINTS))) {
         pane->GetBreakpointView()->Initialize();
     }
 
@@ -2596,7 +2596,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
         // Print the stack trace
         if(showDialog) {
             // select the "Call Stack" tab
-            clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
+            clMainFrame::Get()->GetDebuggerPane()->SelectTab(wxGetTranslation(DebuggerPane::FRAMES));
         }
 
         if(!userTriggered) {
@@ -2620,7 +2620,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
         // Print the stack trace
         wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(wxT("Debugger"));
         if(info.IsShown()) {
-            clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::FRAMES);
+            clMainFrame::Get()->GetDebuggerPane()->SelectTab(wxGetTranslation(DebuggerPane::FRAMES));
             CallAfter(&Manager::UpdateDebuggerPane);
         }
     } break;
@@ -2743,8 +2743,8 @@ void Manager::UpdateTypeReolsved(const wxString& expr, const wxString& type_name
     bool get_tip(false);
 
     Notebook* book = clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
-    if(book->GetPageText(book->GetSelection()) == DebuggerPane::ASCII_VIEWER ||
-       IsPaneVisible(DebuggerPane::ASCII_VIEWER)) {
+    if(book->GetPageText(book->GetSelection()) == wxGetTranslation(DebuggerPane::ASCII_VIEWER) ||
+       IsPaneVisible(wxGetTranslation(DebuggerPane::ASCII_VIEWER))) {
         get_tip = true;
     }
 

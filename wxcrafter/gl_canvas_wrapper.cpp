@@ -10,7 +10,7 @@ GLCanvasWrapper::GLCanvasWrapper()
 
     SetPropertyString(_("Common Settings"), "wxGLCanvas");
     DelProperty(PROP_CONTROL_SPECIFIC_SETTINGS);
-    AddCategory("wxGLCanvas Attribute List");
+    AddCategory(_("wxGLCanvas Attribute List"));
 
     AddProperty(new StringProperty("WX_GL_RGBA", _("Use true color palette (on if no attrs specified)")));
     m_attrs.Add("WX_GL_RGBA");

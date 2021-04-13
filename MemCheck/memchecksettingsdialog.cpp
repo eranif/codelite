@@ -97,7 +97,7 @@ void MemCheckSettingsDialog::OnAddSupp(wxCommandEvent& event)
 {
     // ATTN  m_mgr->GetTheApp()
     wxFileDialog openFileDialog(wxTheApp->GetTopWindow(),
-                                wxT("Add suppression file(s)"),
+                                _("Add suppression file(s)"),
                                 "",
                                 "",
                                 "suppression files (*.supp)|*.supp|all files (*.*)|*.*",
@@ -131,8 +131,8 @@ void MemCheckSettingsDialog::OnSuppListRightDown(wxMouseEvent& event)
         m_listBoxSuppFiles->SetSelection(index);
     }
 
-    menuItem = menu.Append(XRCID("memcheck_add_supp"), wxT("Add suppression file(s)..."));
-    menuItem = menu.Append(XRCID("memcheck_del_supp"), wxT("Remove suppression file(s)"));
+    menuItem = menu.Append(XRCID("memcheck_add_supp"), _("Add suppression file(s)..."));
+    menuItem = menu.Append(XRCID("memcheck_del_supp"), _("Remove suppression file(s)"));
     menuItem->Enable(m_listBoxSuppFiles->HitTest(event.GetPosition()) != wxNOT_FOUND);
 
     menu.Connect(XRCID("memcheck_add_supp"),

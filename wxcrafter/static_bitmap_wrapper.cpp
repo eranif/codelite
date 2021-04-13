@@ -10,7 +10,7 @@ StaticBitmapWrapper::StaticBitmapWrapper()
     : wxcWidget(ID_WXSTATICBITMAP)
 {
     SetPropertyString(_("Common Settings"), "wxStaticBitmap");
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), wxT("Select the bitmap file")));
+    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file")));
     m_namePattern = wxT("m_staticBitmap");
     SetName(GenerateName());
 }

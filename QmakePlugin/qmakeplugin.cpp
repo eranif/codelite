@@ -121,7 +121,7 @@ void QMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("qmake_settings"), _("Settings..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
-    pluginsMenu->Append(wxID_ANY, wxT("QMake"), menu);
+    pluginsMenu->Append(wxID_ANY, _("QMake"), menu);
 
     wxTheApp->Connect(XRCID("new_qmake_project"), wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject), NULL, (wxEvtHandler*)this);
@@ -264,7 +264,7 @@ void QMakePlugin::OnBuildStarting(clBuildEvent& event)
     QMakeProFileGenerator generator(m_mgr, project, config);
     if(!wxFileName::Exists(generator.GetProFileName())) {
         // alert and return
-        ::wxMessageBox(_("Could not locate pro file.\nDid you remember to run qmake? (right click on the project"),
+        ::wxMessageBox(_("Could not locate pro file.\nDid you remember to run qmake? (right click on the project)"),
                        "QMake", wxICON_WARNING | wxCENTER);
         return;
     } else {

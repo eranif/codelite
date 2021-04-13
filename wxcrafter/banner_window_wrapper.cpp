@@ -32,7 +32,7 @@ BannerWindowWrapper::BannerWindowWrapper()
                              "position, this is supposed to be taken care of in the usual way, e.g. using sizers")));
     AddProperty(new BitmapPickerProperty(
         PROP_BITMAP_PATH, wxT(""),
-        wxT("Select the bitmap file\nImportant: You can set text and title OR a bitmap, but not both")));
+        _("Select the bitmap file\nImportant: You can set text and title OR a bitmap, but not both")));
     AddProperty(new ColorProperty(PROP_COLOR_GRADIENT_START));
     AddProperty(new ColorProperty(PROP_COLOR_GRADIENT_END));
 

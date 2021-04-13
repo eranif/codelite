@@ -110,7 +110,7 @@ bool ReconcileProjectDlg::LoadData()
 
     m_allfiles.clear();
     {
-        wxBusyInfo wait("Searching for files...", this);
+        wxBusyInfo wait(_("Searching for files..."), this);
         wxSafeYield();
 
         clFilesScanner scanner;

@@ -239,8 +239,11 @@ SearchData FindInFilesDialog::DoGetSearchData()
             wxString projectName = rootDir.Mid(3);
             DoAddProjectFiles(projectName, files);
 
-        } else if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)) &&
-                  clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        } else if((rootDir == wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)) ||
+                  (rootDir == SEARCH_IN_WORKSPACE_FOLDER)) {
+            if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+                continue;
+            }
             // Add the workspace folder
             rootDirs.Add(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
 
@@ -339,24 +342,24 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
     // Show a popup menu
     wxMenu menu;
     int firstItem = 8994;
-    menu.Append(firstItem + 6, "Add Folder...");
+    menu.Append(firstItem + 6, _("Add Folder..."));
     menu.AppendSeparator();
-    menu.Append(firstItem + 0, SEARCH_IN_WORKSPACE_FOLDER);
-    menu.Append(firstItem + 1, SEARCH_IN_WORKSPACE);
-    menu.Append(firstItem + 2, SEARCH_IN_PROJECT);
-    menu.Append(firstItem + 3, SEARCH_IN_CURR_FILE_PROJECT);
-    menu.Append(firstItem + 4, SEARCH_IN_CURRENT_FILE);
-    menu.Append(firstItem + 5, SEARCH_IN_OPEN_FILES);
+    menu.Append(firstItem + 0, wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER));
+    menu.Append(firstItem + 1, wxGetTranslation(SEARCH_IN_WORKSPACE));
+    menu.Append(firstItem + 2, wxGetTranslation(SEARCH_IN_PROJECT));
+    menu.Append(firstItem + 3, wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT));
+    menu.Append(firstItem + 4, wxGetTranslation(SEARCH_IN_CURRENT_FILE));
+    menu.Append(firstItem + 5, wxGetTranslation(SEARCH_IN_OPEN_FILES));
     menu.AppendSeparator();
-    menu.Append(firstItem + 7, "Add Exclude Pattern");
+    menu.Append(firstItem + 7, _("Add Exclude Pattern"));
 
     std::map<int, wxString> options;
-    options.insert(std::make_pair(firstItem + 0, SEARCH_IN_WORKSPACE_FOLDER));
-    options.insert(std::make_pair(firstItem + 1, SEARCH_IN_WORKSPACE));
-    options.insert(std::make_pair(firstItem + 2, SEARCH_IN_PROJECT));
-    options.insert(std::make_pair(firstItem + 3, SEARCH_IN_CURR_FILE_PROJECT));
-    options.insert(std::make_pair(firstItem + 4, SEARCH_IN_CURRENT_FILE));
-    options.insert(std::make_pair(firstItem + 5, SEARCH_IN_OPEN_FILES));
+    options.insert(std::make_pair(firstItem + 0, wxGetTranslation(SEARCH_IN_WORKSPACE_FOLDER)));
+    options.insert(std::make_pair(firstItem + 1, wxGetTranslation(SEARCH_IN_WORKSPACE)));
+    options.insert(std::make_pair(firstItem + 2, wxGetTranslation(SEARCH_IN_PROJECT)));
+    options.insert(std::make_pair(firstItem + 3, wxGetTranslation(SEARCH_IN_CURR_FILE_PROJECT)));
+    options.insert(std::make_pair(firstItem + 4, wxGetTranslation(SEARCH_IN_CURRENT_FILE)));
+    options.insert(std::make_pair(firstItem + 5, wxGetTranslation(SEARCH_IN_OPEN_FILES)));
 
     // Menu will be shown in client coordinates
     wxRect size = m_btnAddPath->GetSize();

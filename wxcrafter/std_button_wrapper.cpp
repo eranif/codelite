@@ -22,7 +22,7 @@ StdButtonWrapper::StdButtonWrapper()
     ids.Add("wxID_CONTEXT_HELP");
 
     RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
-                  wxT("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
+                  _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
                   wxT("wxCommandEventHandler"));
 
     AddProperty(new CategoryProperty(_("Standard wxButton")));

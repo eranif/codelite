@@ -82,8 +82,8 @@ wxArrayString ConfigurationManagerDlg::GetChoicesForProject(const wxString& proj
         }
     }
 
-    choices.Add(wxGetTranslation(clCMD_NEW));
-    choices.Add(wxGetTranslation(clCMD_EDIT));
+    choices.Add(clCMD_NEW);
+    choices.Add(clCMD_EDIT);
     return choices;
 }
 
@@ -108,8 +108,8 @@ void ConfigurationManagerDlg::PopulateConfigurations()
     }
 
     // append the 'New' & 'Delete' commands
-    m_choiceConfigurations->Append(wxGetTranslation(clCMD_NEW));
-    m_choiceConfigurations->Append(wxGetTranslation(clCMD_EDIT));
+    m_choiceConfigurations->Append(clCMD_NEW);
+    m_choiceConfigurations->Append(clCMD_EDIT);
 
     int sel = m_choiceConfigurations->FindString(m_currentWorkspaceConfiguration.IsEmpty()
                                                      ? matrix->GetSelectedConfigurationName()
@@ -150,9 +150,9 @@ void ConfigurationManagerDlg::LoadWorkspaceConfiguration(const wxString& confNam
 
 void ConfigurationManagerDlg::OnWorkspaceConfigSelected(wxCommandEvent& event)
 {
-    if(event.GetString() == wxGetTranslation(clCMD_NEW)) {
+    if(event.GetString() == clCMD_NEW) {
         OnButtonNew(event);
-    } else if(event.GetString() == wxGetTranslation(clCMD_EDIT)) {
+    } else if(event.GetString() == clCMD_EDIT) {
         // popup the delete dialog for configurations
         EditWorkspaceConfDlg dlg(this);
         dlg.ShowModal();
@@ -217,7 +217,7 @@ WorkspaceConfiguration::ConfigMappingList ConfigurationManagerDlg::GetCurrentSet
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         wxString projectName = m_dvListCtrl->GetItemText(item, 0);
         wxString configName = m_dvListCtrl->GetItemText(item, 1);
-        if((configName != wxGetTranslation(clCMD_NEW)) && (configName != wxGetTranslation(clCMD_EDIT))) {
+        if((configName != clCMD_NEW) && (configName != clCMD_EDIT)) {
             ConfigMappingEntry entry(projectName, configName);
             list.push_back(entry);
         }
@@ -272,7 +272,7 @@ void ConfigurationManagerDlg::OnValueChanged(wxDataViewEvent& event)
     wxString projectName = m_dvListCtrl->GetItemText(event.GetItem(), 0);
     wxString selection = event.GetString(); // the new selection
 
-    if(selection == wxGetTranslation(clCMD_NEW)) {
+    if(selection == clCMD_NEW) {
         // popup the 'New Configuration' dialog
         NewConfigurationDlg dlg(this, projectName);
         if(dlg.ShowModal() == wxID_OK) {
@@ -281,7 +281,7 @@ void ConfigurationManagerDlg::OnValueChanged(wxDataViewEvent& event)
             PopulateConfigurations();
         }
         event.Veto(); // prevent the change from taking place
-    } else if(selection == wxGetTranslation(clCMD_EDIT)) {
+    } else if(selection == clCMD_EDIT) {
         EditConfigurationDialog dlg(this, projectName);
         if(dlg.ShowModal() == wxID_OK) {
             m_dirty = true;

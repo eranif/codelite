@@ -12,7 +12,7 @@ GridColumnWrapper::GridColumnWrapper()
 
     SetPropertyString(_("Common Settings"), "wxGridColumn");
     AddProperty(new CategoryProperty(_("wxGrid Column")));
-    AddText(PROP_NAME, _("The Column Label"), "My Column");
+    AddText(PROP_NAME, _("The Column Label"), _("My Column"));
     AddInteger(PROP_WIDTH,
                _("Sets the width of the specified column.\nThe new column width in pixels, 0 to hide the column or -1 "
                  "to fit the column width to its label width"),

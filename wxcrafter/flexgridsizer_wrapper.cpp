@@ -9,14 +9,14 @@ FlexGridSizerWrapper::FlexGridSizerWrapper()
     m_styles.Clear(); // Sizer has no styles
 
     SetPropertyString(_("Common Settings"), "wxFlexGridSizer");
-    AddProperty(new StringProperty(PROP_COLS, wxT("2"), wxT("Number of columns in the grid")));
-    AddProperty(new StringProperty(PROP_ROWS, wxT("0"), wxT("Number of rows in the grid")));
+    AddProperty(new StringProperty(PROP_COLS, wxT("2"), _("Number of columns in the grid")));
+    AddProperty(new StringProperty(PROP_ROWS, wxT("0"), _("Number of rows in the grid")));
     AddProperty(
-        new StringProperty(PROP_GROW_COLS, wxT(""), wxT("Which columns are allowed to grow. Comma separated list")));
+        new StringProperty(PROP_GROW_COLS, wxT(""), _("Which columns are allowed to grow. Comma separated list")));
     AddProperty(
-        new StringProperty(PROP_GROW_ROWS, wxT(""), wxT("Which rows are allowed to grow. Comma separated list")));
-    AddProperty(new StringProperty(PROP_HGAP, wxT("0"), wxT("The horizontal gap between grid cells")));
-    AddProperty(new StringProperty(PROP_VGAP, wxT("0"), wxT("The vertical gap between grid cells")));
+        new StringProperty(PROP_GROW_ROWS, wxT(""), _("Which rows are allowed to grow. Comma separated list")));
+    AddProperty(new StringProperty(PROP_HGAP, wxT("0"), _("The horizontal gap between grid cells")));
+    AddProperty(new StringProperty(PROP_VGAP, wxT("0"), _("The vertical gap between grid cells")));
     m_namePattern = wxT("flexGridSizer");
 
     EnableSizerFlag("wxEXPAND", true);

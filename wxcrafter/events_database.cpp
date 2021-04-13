@@ -105,65 +105,65 @@ void EventsDatabase::FillCommonEvents()
     // Key Events
     m_events.PushBack(wxT("wxEVT_KEY_DOWN"),
                       ConnectDetails(wxT("wxEVT_KEY_DOWN"), wxT("wxKeyEvent"),
-                                     wxT("Process a wxEVT_KEY_DOWN event (any key has been pressed)"),
+                                     _("Process a wxEVT_KEY_DOWN event (any key has been pressed)"),
                                      wxT("wxKeyEventHandler")));
     m_events.PushBack(wxT("wxEVT_KEY_UP"),
                       ConnectDetails(wxT("wxEVT_KEY_UP"), wxT("wxKeyEvent"),
-                                     wxT("Process a wxEVT_KEY_UP event (any key has been released)"),
+                                     _("Process a wxEVT_KEY_UP event (any key has been released)"),
                                      wxT("wxKeyEventHandler")));
     m_events.PushBack(wxT("wxEVT_CHAR"), ConnectDetails(wxT("wxEVT_CHAR"), wxT("wxKeyEvent"),
-                                                        wxT("Process a wxEVT_CHAR event"), wxT("wxKeyEventHandler")));
+                                                        _("Process a wxEVT_CHAR event"), wxT("wxKeyEventHandler")));
 
     // Menu
     m_events.PushBack(
         wxT("wxEVT_CONTEXT_MENU"),
         ConnectDetails(wxT("wxEVT_CONTEXT_MENU"), wxT("wxContextMenuEvent"),
-                       wxT("A right click (or other context menu command depending on platform) has been detected"),
+                       _("A right click (or other context menu command depending on platform) has been detected"),
                        wxT("wxContextMenuEventHandler")));
 
     // Mouse Events
     m_events.PushBack(wxT("wxEVT_LEFT_DOWN"),
                       ConnectDetails(wxT("wxEVT_LEFT_DOWN"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_LEFT_DOWN event. The handler of this event should normally "
-                                         "call event.Skip() to allow the default processing to take place as otherwise "
-                                         "the window under mouse wouldn't get the focus."),
+                                     _("Process a wxEVT_LEFT_DOWN event. The handler of this event should normally "
+                                       "call event.Skip() to allow the default processing to take place as otherwise "
+                                       "the window under mouse wouldn't get the focus."),
                                      wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_LEFT_UP"),
-                      ConnectDetails(wxT("wxEVT_LEFT_UP"), wxT("wxMouseEvent"), wxT("Process a wxEVT_LEFT_UP event."),
+                      ConnectDetails(wxT("wxEVT_LEFT_UP"), wxT("wxMouseEvent"), _("Process a wxEVT_LEFT_UP event."),
                                      wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_LEFT_DCLICK"),
                       ConnectDetails(wxT("wxEVT_LEFT_DCLICK"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_LEFT_DCLICK event."), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_LEFT_DCLICK event."), wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_MIDDLE_DOWN"),
                       ConnectDetails(wxT("wxEVT_MIDDLE_DOWN"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_MIDDLE_DOWN event"), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_MIDDLE_DOWN event"), wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_MIDDLE_UP"),
                       ConnectDetails(wxT("wxEVT_MIDDLE_UP"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_MIDDLE_UP event"), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_MIDDLE_UP event"), wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_MIDDLE_DCLICK"),
                       ConnectDetails(wxT("wxEVT_MIDDLE_DCLICK"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_MIDDLE_DCLICK event."), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_MIDDLE_DCLICK event."), wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_RIGHT_DOWN"),
                       ConnectDetails(wxT("wxEVT_RIGHT_DOWN"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_RIGHT_DOWN event"), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_RIGHT_DOWN event"), wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_RIGHT_UP"),
-                      ConnectDetails(wxT("wxEVT_RIGHT_UP"), wxT("wxMouseEvent"), wxT("Process a wxEVT_RIGHT_UP event"),
+                      ConnectDetails(wxT("wxEVT_RIGHT_UP"), wxT("wxMouseEvent"), _("Process a wxEVT_RIGHT_UP event"),
                                      wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_RIGHT_DCLICK"),
                       ConnectDetails(wxT("wxEVT_RIGHT_DCLICK"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_RIGHT_DCLICK event"), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_RIGHT_DCLICK event"), wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_MOTION"),
-                      ConnectDetails(wxT("wxEVT_MOTION"), wxT("wxMouseEvent"), wxT("Process a wxEVT_MOTION event"),
+                      ConnectDetails(wxT("wxEVT_MOTION"), wxT("wxMouseEvent"), _("Process a wxEVT_MOTION event"),
                                      wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_ENTER_WINDOW"),
                       ConnectDetails(wxT("wxEVT_ENTER_WINDOW"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_ENTER_WINDOW event"), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_ENTER_WINDOW event"), wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_LEAVE_WINDOW"),
                       ConnectDetails(wxT("wxEVT_LEAVE_WINDOW"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_LEAVE_WINDOW event."), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_LEAVE_WINDOW event."), wxT("wxMouseEventHandler")));
     m_events.PushBack(wxT("wxEVT_MOUSEWHEEL"),
                       ConnectDetails(wxT("wxEVT_MOUSEWHEEL"), wxT("wxMouseEvent"),
-                                     wxT("Process a wxEVT_MOUSEWHEEL event"), wxT("wxMouseEventHandler")));
+                                     _("Process a wxEVT_MOUSEWHEEL event"), wxT("wxMouseEventHandler")));
     m_events.PushBack(
         wxT("wxEVT_MOUSE_CAPTURE_LOST"),
         ConnectDetails(wxT("wxEVT_MOUSE_CAPTURE_LOST"), wxT("wxMouseCaptureLostEvent"),
@@ -175,31 +175,31 @@ void EventsDatabase::FillCommonEvents()
     // Focus
     m_events.PushBack(wxT("wxEVT_SET_FOCUS"),
                       ConnectDetails(wxT("wxEVT_SET_FOCUS"), wxT("wxFocusEvent"),
-                                     wxT("Process a wxEVT_SET_FOCUS event"), wxT("wxFocusEventHandler")));
+                                     _("Process a wxEVT_SET_FOCUS event"), wxT("wxFocusEventHandler")));
     m_events.PushBack(wxT("wxEVT_KILL_FOCUS"),
                       ConnectDetails(wxT("wxEVT_KILL_FOCUS"), wxT("wxFocusEvent"),
-                                     wxT("Process a wxEVT_KILL_FOCUS event"), wxT("wxFocusEventHandler")));
+                                     _("Process a wxEVT_KILL_FOCUS event"), wxT("wxFocusEventHandler")));
 
     // UI
     m_events.PushBack(wxT("wxEVT_PAINT"),
-                      ConnectDetails(wxT("wxEVT_PAINT"), wxT("wxPaintEvent"), wxT("Process a wxEVT_PAINT event"),
+                      ConnectDetails(wxT("wxEVT_PAINT"), wxT("wxPaintEvent"), _("Process a wxEVT_PAINT event"),
                                      wxT("wxPaintEventHandler")));
     m_events.PushBack(wxT("wxEVT_ERASE_BACKGROUND"),
                       ConnectDetails(wxT("wxEVT_ERASE_BACKGROUND"), wxT("wxEraseEvent"),
-                                     wxT("Process a wxEVT_ERASE_BACKGROUND event."), wxT("wxEraseEventHandler")));
+                                     _("Process a wxEVT_ERASE_BACKGROUND event."), wxT("wxEraseEventHandler")));
     m_events.PushBack(wxT("wxEVT_SIZE"), ConnectDetails(wxT("wxEVT_SIZE"), wxT("wxSizeEvent"),
-                                                        wxT("Process a wxEVT_SIZE event"), wxT("wxSizeEventHandler")));
+                                                        _("Process a wxEVT_SIZE event"), wxT("wxSizeEventHandler")));
     m_events.PushBack(wxT("wxEVT_MOVE"),
                       ConnectDetails(wxT("wxEVT_MOVE"), wxT("wxMoveEvent"),
-                                     wxT("Process a wxEVT_MOVE event, which is generated when a window is moved."),
+                                     _("Process a wxEVT_MOVE event, which is generated when a window is moved."),
                                      wxT("wxMoveEventHandler")));
     m_events.PushBack(wxT("wxEVT_UPDATE_UI"),
                       ConnectDetails(wxT("wxEVT_UPDATE_UI"), wxT("wxUpdateUIEvent"),
-                                     wxT("Process a wxEVT_UPDATE_UI event"), wxT("wxUpdateUIEventHandler")));
+                                     _("Process a wxEVT_UPDATE_UI event"), wxT("wxUpdateUIEventHandler")));
 
     // Misc
     m_events.PushBack(wxT("wxEVT_IDLE"), ConnectDetails(wxT("wxEVT_IDLE"), wxT("wxIdleEvent"),
-                                                        wxT("Process a wxEVT_IDLE event"), wxT("wxIdleEventHandler")));
+                                                        _("Process a wxEVT_IDLE event"), wxT("wxIdleEventHandler")));
 
     MapEvents_t::const_iterator iter = m_events.begin();
     for(; iter != m_events.end(); iter++) {

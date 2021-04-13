@@ -341,7 +341,7 @@
                                         <property name="size" />
                                         <property name="style" />
                                         <property name="subclass" />
-                                        <property name="tooltip">Stop the curreny analysis</property>
+                                        <property name="tooltip">Stop the current analysis</property>
                                         <property name="validator_data_type" />
                                         <property name="validator_style">wxFILTER_NONE</property>
                                         <property name="validator_type">wxDefaultValidator</property>

@@ -17236,7 +17236,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
-											"m_value":	"The getter returns $this object"
+											"m_value":	"The setter returns $this object"
 										}, {
 											"type":	"colour",
 											"m_label":	"Bg Colour:",

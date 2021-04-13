@@ -163,7 +163,7 @@ void MemCheckOutputView::ShowPageView(size_t page)
     if(m_currentPageIsEmptyView) return;
 
     wxWindowDisabler disableAll;
-    wxBusyInfo wait(wxT(BUSY_MESSAGE));
+    wxBusyInfo wait(BUSY_MESSAGE);
     m_mgr->GetTheApp()->Yield();
 
     unsigned int flags = 0;
@@ -464,24 +464,24 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
     wxMenuItem* menuItem(NULL);
     wxMenu menu;
 
-    menuItem = menu.Append(XRCID("memcheck_jump_to_location"), wxT("Jump to location"));
+    menuItem = menu.Append(XRCID("memcheck_jump_to_location"), _("Jump to location"));
     menuItem->Enable(dataItem.IsOk() && !m_dataViewCtrlErrorsModel->IsContainer(dataItem));
     menu.AppendSeparator();
-    menuItem = menu.Append(XRCID("memcheck_mark_all_errors"), "Mark all");
+    menuItem = menu.Append(XRCID("memcheck_mark_all_errors"), _("Mark all"));
     menuItem->Enable(unmarked);
-    menuItem = menu.Append(XRCID("memcheck_unmark_all_errors"), wxT("Unmark all"));
+    menuItem = menu.Append(XRCID("memcheck_unmark_all_errors"), _("Unmark all"));
     menuItem->Enable(marked);
     menu.AppendSeparator();
-    menuItem = menu.Append(XRCID("memcheck_suppress_error"), wxT("Suppress this error"));
+    menuItem = menu.Append(XRCID("memcheck_suppress_error"), _("Suppress this error"));
     menuItem->Enable(dataItem.IsOk() && m_choiceSuppFile->GetSelection() != wxNOT_FOUND);
-    menuItem = menu.Append(XRCID("memcheck_suppress_marked_errors"), wxT("Suppress all marked errors"));
+    menuItem = menu.Append(XRCID("memcheck_suppress_marked_errors"), _("Suppress all marked errors"));
     menuItem->Enable(marked && m_choiceSuppFile->GetSelection() != wxNOT_FOUND);
     menu.AppendSeparator();
-    menuItem = menu.Append(XRCID("memcheck_row_to_clip"), wxT("Copy line as string to clipboard"));
+    menuItem = menu.Append(XRCID("memcheck_row_to_clip"), _("Copy line as string to clipboard"));
     menuItem->Enable(dataItem.IsOk());
-    menuItem = menu.Append(XRCID("memcheck_error_to_clip"), wxT("Copy error as string to clipboard"));
+    menuItem = menu.Append(XRCID("memcheck_error_to_clip"), _("Copy error as string to clipboard"));
     menuItem->Enable(dataItem.IsOk());
-    menuItem = menu.Append(XRCID("memcheck_marked_errors_to_clip"), wxT("Copy marked errors to clipboard"));
+    menuItem = menu.Append(XRCID("memcheck_marked_errors_to_clip"), _("Copy marked errors to clipboard"));
     menuItem->Enable(marked);
 
     menu.Connect(XRCID("memcheck_jump_to_location"), wxEVT_COMMAND_MENU_SELECTED,
@@ -663,7 +663,7 @@ void MemCheckOutputView::OnSuppFileOpen(wxCommandEvent& event)
 
 void MemCheckOutputView::UpdateStatusSupp()
 {
-    m_staticTextSuppStatus->SetLabel(wxString::Format("Total: %lu  Filtered: %lu  Selected: %d", m_totalErrorsSupp,
+    m_staticTextSuppStatus->SetLabel(wxString::Format(_("Total: %lu  Filtered: %lu  Selected: %d"), m_totalErrorsSupp,
         m_filterResults.size(), m_listCtrlErrors->GetSelectedItemCount()));
     m_staticTextSuppStatus->GetParent()->Layout();
 }
@@ -803,7 +803,7 @@ void MemCheckOutputView::ApplyFilterSupp(unsigned int mode)
         int pos = 0, len = 0;
         if(m_totalErrorsSupp > ITEMS_FOR_WAIT_DIALOG) {
             wxWindowDisabler disableAll;
-            wxBusyInfo wait(wxT(BUSY_MESSAGE));
+            wxBusyInfo wait(BUSY_MESSAGE);
             m_mgr->GetTheApp()->Yield();
         }
         size_t i = 0;

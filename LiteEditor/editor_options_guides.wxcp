@@ -345,11 +345,11 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Label:",
-													"m_value":	"Enable Relative line numbers."
+													"m_value":	"Enable Relative line numbers"
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	"m_pgPropRelativeLineNumbers"
+													"m_value":	"Enable Relative line numbers"
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",

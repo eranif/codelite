@@ -34,7 +34,7 @@ ButtonWrapper::ButtonWrapper()
 
     m_namePattern = wxT("m_button");
     SetPropertyString(_("Common Settings"), "wxButton");
-    AddProperty(new StringProperty(PROP_LABEL, wxT("My Button"), _("The button label")));
+    AddProperty(new StringProperty(PROP_LABEL, _("My Button"), _("The button label")));
     AddProperty(new BoolProperty(PROP_DEFAULT_BUTTON, false, _("Make this button the default button")));
     AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file (wx2.9.X and later)")));
     AddProperty(new ChoiceProperty(PROP_DIRECTION, directions, 0,

@@ -12,11 +12,11 @@ ListCtrlColumnWrapper::ListCtrlColumnWrapper()
 
     SetPropertyString(_("Common Settings"), "wxListCtrlColumn");
     AddProperty(new CategoryProperty(_("wxListCtrl Column")));
-    AddProperty(new StringProperty(PROP_NAME, wxT("My Column"), wxT("Column caption")));
+    AddProperty(new StringProperty(PROP_NAME, _("My Column"), _("Column caption")));
     AddProperty(new StringProperty(
         PROP_WIDTH, wxT("-1"),
-        wxT("Column Width\nSet it to -1 for auto sizing.\nOr set it to -2 to fit the column width to heading or to "
-            "extend to fill all the remaining space for the last column\nValue > 0 will set the width in pixels")));
+        _("Column Width\nSet it to -1 for auto sizing.\nOr set it to -2 to fit the column width to heading or to "
+          "extend to fill all the remaining space for the last column\nValue > 0 will set the width in pixels")));
 }
 
 ListCtrlColumnWrapper::~ListCtrlColumnWrapper() {}

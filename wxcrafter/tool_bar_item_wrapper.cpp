@@ -373,7 +373,7 @@ ToolBarItemSeparatorWrapper::ToolBarItemSeparatorWrapper()
     wxArrayString kinds;
     kinds.Add(ITEM_SEPARATOR);
 
-    AddCategory("ToolBar Item Separator");
+    AddCategory(_("ToolBar Item Separator"));
     AddProperty(new StringProperty(PROP_NAME, "", "Name"));
     AddProperty(new ChoiceProperty(PROP_KIND, kinds, 0, _("The tool kind")));
 
@@ -401,7 +401,7 @@ ToolBarItemSpaceWrapper::ToolBarItemSpaceWrapper()
     wxArrayString kinds;
     kinds.Add(ITEM_SPACE);
 
-    AddCategory("ToolBar Item Space");
+    AddCategory(_("ToolBar Item Space"));
     AddProperty(new StringProperty(PROP_NAME, "", "Name"));
     AddProperty(new ChoiceProperty(PROP_KIND, kinds, 0, _("The tool kind")));
 
@@ -424,7 +424,7 @@ AuiToolBarItemNonStretchSpaceWrapper::AuiToolBarItemNonStretchSpaceWrapper()
     m_properties.DeleteValues();
     m_sizerFlags.Clear();
 
-    AddCategory("AuiToolBar Item Space");
+    AddCategory(_("AuiToolBar Item Space"));
     AddProperty(new StringProperty(PROP_NAME, "", "Name"));
     AddProperty(new StringProperty(PROP_WIDTH, "0", _("The width of the space in pixels")));
 
@@ -453,7 +453,7 @@ AuiToolBarItemSpaceWrapper::AuiToolBarItemSpaceWrapper()
     m_properties.DeleteValues();
     m_sizerFlags.Clear();
 
-    AddCategory("ToolBar Item Space");
+    AddCategory(_("ToolBar Item Space"));
     AddProperty(new StringProperty(PROP_NAME, "", "Name"));
     AddProperty(new StringProperty("Proportion:", "1", _("How stretchable the space is. The normal value is 1.")));
 
@@ -483,7 +483,7 @@ AuiToolBarLabelWrapper::AuiToolBarLabelWrapper(int type)
     m_properties.DeleteValues();
 
     wxCrafter::ResourceLoader bmps;
-    AddProperty(new CategoryProperty("wxAuiToolBar Label"));
+    AddProperty(new CategoryProperty(_("wxAuiToolBar Label")));
     AddProperty(new WinIdProperty());
     AddProperty(new StringProperty(PROP_NAME, "", _("C++ variable name")));
     AddProperty(new StringProperty(PROP_LABEL, _("My toolbar label"), _("The label's text")));

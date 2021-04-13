@@ -104,7 +104,7 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("abbrev_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);
 
-    pluginsMenu->Append(XRCID("abbreviations_plugin_menu"), wxT("Abbreviation"), menu);
+    pluginsMenu->Append(XRCID("abbreviations_plugin_menu"), _("Abbreviation"), menu);
     m_topWindow->Bind(wxEVT_MENU, &AbbreviationPlugin::OnSettings, this, XRCID("abbrev_settings"));
     m_topWindow->Bind(wxEVT_MENU, &AbbreviationPlugin::OnShowAbbvreviations, this, XRCID("abbrev_insert"));
 }

@@ -23,14 +23,14 @@ CommandLinkButtonWrapper::CommandLinkButtonWrapper()
     AddProperty(new CategoryProperty("wxCommandLinkButton"));
 
     RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
-                  wxT("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
+                  _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
                   wxT("wxCommandEventHandler"));
 
     AddProperty(new StringProperty(PROP_LABEL, _("Label"),
                                    _("First line of text on the button, typically the label of an action that will be "
                                      "made when the button is pressed")));
     AddProperty(new StringProperty(
-        PROP_NOTE, _(""), _("Second line of text describing the action performed when the button is pressed")));
+        PROP_NOTE, wxT(""), _("Second line of text describing the action performed when the button is pressed")));
     AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file")));
     AddProperty(new BoolProperty(PROP_DEFAULT_BUTTON, false, _("Make this button the default button")));
 

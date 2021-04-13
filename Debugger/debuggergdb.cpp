@@ -1135,7 +1135,7 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 
     wxString actualPath;
     if(ExeLocator::Locate(dbgExeName, actualPath) == false) {
-        wxMessageBox(wxString::Format(wxT("Failed to locate gdb! at '%s'"), dbgExeName.c_str()), wxT("CodeLite"));
+        wxMessageBox(wxString::Format(_("Failed to locate gdb! at '%s'"), dbgExeName.c_str()), wxT("CodeLite"));
         return false;
     }
 

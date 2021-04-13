@@ -23,40 +23,40 @@ ListCtrlWrapper::ListCtrlWrapper()
     PREPEND_STYLE(wxLC_HRULES, false);
     PREPEND_STYLE(wxLC_VRULES, false);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_LIST_ITEM_SELECTED"), wxT("wxListEvent"), wxT("The item has been selected"));
-    RegisterEvent(wxT("wxEVT_COMMAND_LIST_ITEM_DESELECTED"), wxT("wxListEvent"), wxT("The item has been deselected"));
+    RegisterEvent(wxT("wxEVT_COMMAND_LIST_ITEM_SELECTED"), wxT("wxListEvent"), _("The item has been selected"));
+    RegisterEvent(wxT("wxEVT_COMMAND_LIST_ITEM_DESELECTED"), wxT("wxListEvent"), _("The item has been deselected"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK"), wxT("wxListEvent"),
-                  wxT("The right mouse button has been clicked on an item"));
+                  _("The right mouse button has been clicked on an item"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_ITEM_MIDDLE_CLICK"), wxT("wxListEvent"),
-                  wxT("The middle mouse button has been clicked on an item"));
+                  _("The middle mouse button has been clicked on an item"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_ITEM_ACTIVATED"), wxT("wxListEvent"),
-                  wxT("The item has been activated (ENTER or double click)"));
+                  _("The item has been activated (ENTER or double click)"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_ITEM_FOCUSED"), wxT("wxListEvent"),
-                  wxT("The currently focused item has changed"));
-    RegisterEvent(wxT("wxEVT_COMMAND_LIST_KEY_DOWN"), wxT("wxListEvent"), wxT("A key has been pressed"));
+                  _("The currently focused item has changed"));
+    RegisterEvent(wxT("wxEVT_COMMAND_LIST_KEY_DOWN"), wxT("wxListEvent"), _("A key has been pressed"));
 
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_COL_CLICK"), wxT("wxListEvent"),
-                  wxT("A column (m_col) has been left-clicked"));
+                  _("A column (m_col) has been left-clicked"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_COL_RIGHT_CLICK"), wxT("wxListEvent"),
-                  wxT("A column (m_col) has been right-clicked"));
+                  _("A column (m_col) has been right-clicked"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_COL_BEGIN_DRAG"), wxT("wxListEvent"),
-                  wxT("The user started resizing a column - can be vetoed"));
+                  _("The user started resizing a column - can be vetoed"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_COL_DRAGGING"), wxT("wxListEvent"),
-                  wxT("The divider between columns is being dragged"));
+                  _("The divider between columns is being dragged"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_COL_END_DRAG"), wxT("wxListEvent"),
-                  wxT("A column has been resized by the user"));
+                  _("A column has been resized by the user"));
 
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_BEGIN_DRAG"), wxT("wxListEvent"),
-                  wxT("Begin dragging with the left mouse button"));
+                  _("Begin dragging with the left mouse button"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_BEGIN_RDRAG"), wxT("wxListEvent"),
-                  wxT("Begin dragging with the right mouse button."));
+                  _("Begin dragging with the right mouse button."));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_BEGIN_LABEL_EDIT"), wxT("wxListEvent"),
-                  wxT("Begin editing a label. This can be prevented by calling Veto()"));
+                  _("Begin editing a label. This can be prevented by calling Veto()"));
     RegisterEvent(wxT("wxEVT_COMMAND_LIST_END_LABEL_EDIT"), wxT("wxListEvent"),
-                  wxT("Finish editing a label. This can be prevented by calling Veto()"));
-    RegisterEvent(wxT("wxEVT_COMMAND_LIST_DELETE_ITEM"), wxT("wxListEvent"), wxT("Delete an item"));
-    RegisterEvent(wxT("wxEVT_COMMAND_LIST_DELETE_ALL_ITEMS"), wxT("wxListEvent"), wxT("Delete all items"));
-    RegisterEvent(wxT("wxEVT_COMMAND_LIST_INSERT_ITEM"), wxT("wxListEvent"), wxT("An item has been inserted"));
+                  _("Finish editing a label. This can be prevented by calling Veto()"));
+    RegisterEvent(wxT("wxEVT_COMMAND_LIST_DELETE_ITEM"), wxT("wxListEvent"), _("Delete an item"));
+    RegisterEvent(wxT("wxEVT_COMMAND_LIST_DELETE_ALL_ITEMS"), wxT("wxListEvent"), _("Delete all items"));
+    RegisterEvent(wxT("wxEVT_COMMAND_LIST_INSERT_ITEM"), wxT("wxListEvent"), _("An item has been inserted"));
 
     m_namePattern = wxT("m_listCtrl");
     SetName(GenerateName());

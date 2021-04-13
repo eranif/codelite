@@ -471,7 +471,7 @@
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",
-             "m_value": "Stop the curreny analysis"
+             "m_value": "Stop the current analysis"
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",

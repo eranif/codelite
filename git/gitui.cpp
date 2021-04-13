@@ -114,7 +114,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     m_textCtrlGlobalEmail =
         new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1, -1)), 0);
-    m_textCtrlGlobalEmail->SetToolTip(_("Set the current repository email"));
+    m_textCtrlGlobalEmail->SetToolTip(_("Set the global email"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlGlobalEmail->SetHint(wxT(""));
 #endif
@@ -129,7 +129,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_textCtrlLocalName =
         new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1, -1)), 0);
     m_textCtrlLocalName->SetToolTip(_("Set the current repository user name (this name will tell git who you are).\nIf "
-                                      "this field letf empty, the global one is used"));
+                                      "this field left empty, the global one is used"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlLocalName->SetHint(wxT(""));
 #endif
@@ -144,7 +144,7 @@ GitSettingsDlgBase::GitSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_textCtrlLocalEmail =
         new wxTextCtrl(m_panel234, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel234, wxSize(-1, -1)), 0);
     m_textCtrlLocalEmail->SetToolTip(
-        _("Set the current repository email\nIf this field letf empty, the global one is used"));
+        _("Set the current repository email\nIf this field left empty, the global one is used"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlLocalEmail->SetHint(wxT(""));
 #endif

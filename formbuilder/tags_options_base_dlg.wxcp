@@ -1504,7 +1504,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Label:",
-																			"m_value":	"Generate compile_commans.json file"
+																			"m_value":	"Generate compile_commands.json file"
 																		}, {
 																			"type":	"bool",
 																			"m_label":	"Value:",
@@ -3973,7 +3973,7 @@
 																														}, {
 																															"type":	"string",
 																															"m_label":	"URL:",
-																															"m_value":	"http://codelite.org/LiteEditor/MacrosHandling101"
+																															"m_value":	"https://wiki.codelite.org/pmwiki.php/Main/MacrosHandling101"
 																														}, {
 																															"type":	"colour",
 																															"m_label":	"Normal Colour:",

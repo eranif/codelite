@@ -7,8 +7,8 @@ BitmapToggleButtonWrapper::BitmapToggleButtonWrapper()
     : wxcWidget(ID_WXBITMAPTOGGLEBUTTON)
 {
     SetPropertyString(_("Common Settings"), "wxBitmapToggleButton");
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", wxT("The bitmap")));
-    AddProperty(new BoolProperty(PROP_CHECKED, wxT("Initial state"), wxT("The button initial state")));
+    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", _("The bitmap")));
+    AddProperty(new BoolProperty(PROP_CHECKED, wxT("Initial state"), _("The button initial state")));
 
     PREPEND_STYLE(wxBU_BOTTOM, false);
     PREPEND_STYLE(wxBU_EXACTFIT, false);
@@ -16,7 +16,7 @@ BitmapToggleButtonWrapper::BitmapToggleButtonWrapper()
     PREPEND_STYLE(wxBU_RIGHT, false);
     PREPEND_STYLE(wxBU_TOP, false);
 
-    RegisterEventCommand(wxT("wxEVT_COMMAND_TOGGLEBUTTON_CLICKED"), wxT("Handles a toggle button click event."));
+    RegisterEventCommand(wxT("wxEVT_COMMAND_TOGGLEBUTTON_CLICKED"), _("Handles a toggle button click event."));
 
     m_namePattern = "m_bmpToggleBtn";
     SetName(GenerateName());

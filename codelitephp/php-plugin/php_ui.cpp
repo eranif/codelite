@@ -2205,7 +2205,7 @@ PHPSettersGettersDialogBase::PHPSettersGettersDialogBase(wxWindow* parent, wxWin
     m_checkBoxReurnThis = new wxCheckBox(this, wxID_ANY, _("Setter returns $this"), wxDefaultPosition,
                                          wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxReurnThis->SetValue(false);
-    m_checkBoxReurnThis->SetToolTip(_("The getter returns $this object"));
+    m_checkBoxReurnThis->SetToolTip(_("The setter returns $this object"));
 
     flexGridSizer667->Add(m_checkBoxReurnThis, 0, wxALL, WXC_FROM_DIP(5));
 

@@ -4000,7 +4000,7 @@ void clEditor::OnDbgAddWatch(wxCommandEvent& event)
         }
     }
     clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(word);
-    clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
+    clMainFrame::Get()->GetDebuggerPane()->SelectTab(wxGetTranslation(DebuggerPane::WATCHES));
     clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
 }
 
@@ -4024,7 +4024,7 @@ void clEditor::OnDbgCustomWatch(wxCommandEvent& event)
         command = MacroManager::Instance()->Replace(command, wxT("variable"), word, true);
 
         clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->AddExpression(command);
-        clMainFrame::Get()->GetDebuggerPane()->SelectTab(DebuggerPane::WATCHES);
+        clMainFrame::Get()->GetDebuggerPane()->SelectTab(wxGetTranslation(DebuggerPane::WATCHES));
         clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->RefreshValues();
     }
 }

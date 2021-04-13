@@ -46,7 +46,7 @@ void AutoSave::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     menu->Append(new wxMenuItem(menu, XRCID("auto_save_settings"), _("Settings...")));
-    pluginsMenu->Append(wxID_ANY, "Auto Save", menu);
+    pluginsMenu->Append(wxID_ANY, _("Auto Save"), menu);
 }
 
 void AutoSave::UnPlug()

@@ -15,7 +15,7 @@ BoxSizerWrapper::BoxSizerWrapper()
     arr.Add(wxT("wxHORIZONTAL"));
 
     SetPropertyString(_("Common Settings"), "wxBoxSizer");
-    AddProperty(new ChoiceProperty(PROP_ORIENTATION, arr, 0, wxT("Sizer orientation")));
+    AddProperty(new ChoiceProperty(PROP_ORIENTATION, arr, 0, _("Sizer orientation")));
 
     EnableSizerFlag("wxEXPAND", true);
     m_sizerItem.SetProportion(1);

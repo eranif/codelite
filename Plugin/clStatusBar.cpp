@@ -487,11 +487,11 @@ void clStatusBar::DoFieldClicked(int fieldIndex)
             CHECK_PTR_RET(field);
             wxStyledTextCtrl* stc = m_mgr->GetActiveEditor()->GetCtrl();
             wxMenu menu;
-            wxMenuItem* idConvertToTabs = menu.Append(wxID_ANY, "Convert Indentations to Tabs");
-            wxMenuItem* idConvertToSpaces = menu.Append(wxID_ANY, "Convert Indentations to Spaces");
+            wxMenuItem* idConvertToTabs = menu.Append(wxID_ANY, _("Convert Indentations to Tabs"));
+            wxMenuItem* idConvertToSpaces = menu.Append(wxID_ANY, _("Convert Indentations to Spaces"));
             menu.AppendSeparator();
-            wxMenuItem* idUseTabs = menu.Append(wxID_ANY, "Use Tabs", "", wxITEM_CHECK);
-            wxMenuItem* idUseSpaces = menu.Append(wxID_ANY, "Use Spaces", "", wxITEM_CHECK);
+            wxMenuItem* idUseTabs = menu.Append(wxID_ANY, _("Use Tabs"), "", wxITEM_CHECK);
+            wxMenuItem* idUseSpaces = menu.Append(wxID_ANY, _("Use Spaces"), "", wxITEM_CHECK);
 
             // Check the proper tabs vs spaces option
             menu.Check(idUseSpaces->GetId(), !stc->GetUseTabs());

@@ -11,11 +11,11 @@ RadioButtonWrapper::RadioButtonWrapper()
     PREPEND_STYLE(wxRB_SINGLE, false);
 
     SetPropertyString(_("Common Settings"), "wxRadioButton");
-    AddProperty(new StringProperty(PROP_LABEL, wxT("My RadioButton"), wxT("Label")));
-    AddProperty(new BoolProperty(PROP_VALUE, true, wxT("Initial value")));
+    AddProperty(new StringProperty(PROP_LABEL, _("My RadioButton"), _("Label")));
+    AddProperty(new BoolProperty(PROP_VALUE, true, _("Initial value")));
 
     RegisterEventCommand(wxT("wxEVT_COMMAND_RADIOBUTTON_SELECTED"),
-                         wxT("Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked."));
+                         _("Process a wxEVT_COMMAND_RADIOBUTTON_SELECTED event, when the radiobutton is clicked."));
 
     m_namePattern = wxT("m_radioButton");
     SetName(GenerateName());

@@ -101,7 +101,7 @@ void wxFormBuilder::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("wxfb_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
     menu->Append(item);
 
-    pluginsMenu->Append(wxID_ANY, wxT("wxFormBuilder"), menu);
+    pluginsMenu->Append(wxID_ANY, _("wxFormBuilder"), menu);
 
     m_topWin->Connect(XRCID("wxfb_settings"), wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(wxFormBuilder::OnSettings), NULL, this);

@@ -27,16 +27,16 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
     if(type == ID_WXFRAME || type == ID_WXDIALOG) {
         // a real top level windows
         // add support for wxTopLevelWindow events
-        RegisterEvent(wxT("wxEVT_MAXIMIZE"), wxT("wxMaximizeEvent"), wxT("Process a wxEVT_MAXIMIZE event"));
+        RegisterEvent(wxT("wxEVT_MAXIMIZE"), wxT("wxMaximizeEvent"), _("Process a wxEVT_MAXIMIZE event"));
         RegisterEvent(wxT("wxEVT_MOVE"), wxT("wxMoveEvent"),
-                      wxT("Process a wxEVT_MOVE event, which is generated when a window is moved"));
+                      _("Process a wxEVT_MOVE event, which is generated when a window is moved"));
         RegisterEvent(wxT("wxEVT_MOVE_START"), wxT("wxMoveEvent"),
-                      wxT("Process a wxEVT_MOVE_START event, which is generated when the "
+                      _("Process a wxEVT_MOVE_START event, which is generated when the "
                           "user starts to move or size a window. Windows only"));
         RegisterEvent(wxT("wxEVT_MOVE_END"), wxT("wxMoveEvent"),
-                      wxT("Process a wxEVT_MOVE_END event, which is generated when "
+                      _("Process a wxEVT_MOVE_END event, which is generated when "
                           "the user stops moving or sizing a window. Windows only"));
-        RegisterEvent(wxT("wxEVT_SHOW"), wxT("wxShowEvent"), wxT("Process a wxEVT_SHOW event"));
+        RegisterEvent(wxT("wxEVT_SHOW"), wxT("wxShowEvent"), _("Process a wxEVT_SHOW event"));
     }
 
     // Default size for top level windows

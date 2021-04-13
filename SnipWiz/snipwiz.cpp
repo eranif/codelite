@@ -153,7 +153,7 @@ void SnipWiz::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, IDM_CLASS_WIZ, _("Template class..."), _("Template class..."), wxITEM_NORMAL);
     menu->Append(item);
 
-    pluginsMenu->Append(wxID_ANY, plugName, menu);
+    pluginsMenu->Append(wxID_ANY, _("SnipWiz"), menu);
 
     m_topWin->Connect(IDM_SETTINGS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SnipWiz::OnSettings), NULL,
                       this);

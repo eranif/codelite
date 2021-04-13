@@ -13,14 +13,14 @@ HtmlWindowWrapper::HtmlWindowWrapper()
     PREPEND_STYLE(wxHW_NO_SELECTION, false);
 
     SetPropertyString(_("Common Settings"), "wxHtmlWindow");
-    AddProperty(new StringProperty(PROP_HTMLCODE, wxT("<b>wxHtmlWindow control!</b>"), wxT("HTML code to load")));
-    AddProperty(new StringProperty(PROP_URL, wxT(""), wxT("URL to load")));
+    AddProperty(new StringProperty(PROP_HTMLCODE, wxT("<b>wxHtmlWindow control!</b>"), _("HTML code to load")));
+    AddProperty(new StringProperty(PROP_URL, wxT(""), _("URL to load")));
 
-    RegisterEvent(wxT("wxEVT_COMMAND_HTML_CELL_CLICKED"), wxT("wxHtmlCellEvent"), wxT("A wxHtmlCell was clicked."));
+    RegisterEvent(wxT("wxEVT_COMMAND_HTML_CELL_CLICKED"), wxT("wxHtmlCellEvent"), _("A wxHtmlCell was clicked."));
     RegisterEvent(wxT("wxEVT_COMMAND_HTML_CELL_HOVER"), wxT("wxHtmlCellEvent"),
-                  wxT("The mouse passed over a wxHtmlCell."));
+                  _("The mouse passed over a wxHtmlCell."));
     RegisterEvent(wxT("wxEVT_COMMAND_HTML_LINK_CLICKED"), wxT("wxHtmlLinkEvent"),
-                  wxT("A wxHtmlCell which contains an hyperlink was clicked."));
+                  _("A wxHtmlCell which contains an hyperlink was clicked."));
 
     m_namePattern = wxT("m_htmlWin");
     SetName(GenerateName());

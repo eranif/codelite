@@ -202,7 +202,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent,
     m_pgMgrClangArr.Add(_("Break Before Ternary Operators"));
     m_pgMgrClangArr.Add(_("Break Constructor Initializers Before Comma"));
     m_pgMgrClangArr.Add(_("Indent Case Labels"));
-    m_pgMgrClangArr.Add(_("Indent Function DeclarationAfterType"));
+    m_pgMgrClangArr.Add(_("Indent Function Declaration After Type"));
     m_pgMgrClangArr.Add(_("Space Before Assignment Operators"));
     m_pgMgrClangArr.Add(_("Space Before Parentheses"));
     m_pgMgrClangArr.Add(_("Spaces In Parentheses"));
@@ -342,7 +342,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent,
     m_pgMgrAstyleArr.Add(_("Blocks"));
     m_pgMgrAstyleArr.Add(_("Preprocessors"));
     m_pgMgrAstyleArr.Add(_("Max Instatement Indent"));
-    m_pgMgrAstyleArr.Add(_("Min Instatement Indent"));
+    m_pgMgrAstyleArr.Add(_("Min Conditional Indent"));
     m_pgMgrAstyleIntArr.Add(AS_INDENT_CLASS);
     m_pgMgrAstyleIntArr.Add(AS_INDENT_BRACKETS);
     m_pgMgrAstyleIntArr.Add(AS_INDENT_SWITCHES);
@@ -608,7 +608,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent,
     m_pgPropPhpCSFixer->SetHelpString(wxT(""));
 
     m_filePickerPHPCsFixerPhar = m_pgMgrPHPCsFixer->AppendIn(
-        m_pgPropPhpCSFixer, new wxFileProperty(_("PHP-CS-Fixer parh path"), wxPG_LABEL, wxT("")));
+        m_pgPropPhpCSFixer, new wxFileProperty(_("PHP-CS-Fixer phar path"), wxPG_LABEL, wxT("")));
 #if !defined(__WXOSX__) && !defined(_WIN64)
     m_filePickerPHPCsFixerPhar->SetAttribute(wxPG_FILE_WILDCARD, wxT(""));
 #endif // !defined(__WXOSX__) && !defined(_WIN64)

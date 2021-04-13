@@ -88,7 +88,7 @@ SQLCommandPanel::SQLCommandPanel(wxWindow* parent, IDbAdapter* dbAdapter, const 
     m_dbTable = dbTable;
 
     m_editHelper.Reset(new clEditEventsHandler(m_scintillaSQL));
-    m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
+    m_scintillaSQL->AddText(wxString::Format(_(" -- selected database %s\n"), m_dbName.c_str()));
     if(!dbTable.IsEmpty()) {
         m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));
         wxCommandEvent event(wxEVT_EXECUTE_SQL);
@@ -379,7 +379,7 @@ bool SQLCommandPanel::IsBlobColumn(const wxString& str)
 void SQLCommandPanel::SetDefaultSelect()
 {
     m_scintillaSQL->ClearAll();
-    m_scintillaSQL->AddText(wxString::Format(wxT(" -- selected database %s\n"), m_dbName.c_str()));
+    m_scintillaSQL->AddText(wxString::Format(_(" -- selected database %s\n"), m_dbName.c_str()));
     if(!m_dbTable.IsEmpty()) {
         m_scintillaSQL->AddText(m_pDbAdapter->GetDefaultSelect(m_dbName, m_dbTable));
         CallAfter(&SQLCommandPanel::ExecuteSql);

@@ -58,7 +58,7 @@ void EOSWiki::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     menu->Append(new wxMenuItem(menu, XRCID("eosio_new_project"), _("New Project...")));
-    pluginsMenu->Append(wxID_ANY, "EOS Wiki", menu);
+    pluginsMenu->Append(wxID_ANY, _("EOS Wiki"), menu);
 }
 
 void EOSWiki::UnPlug() { wxTheApp->Unbind(wxEVT_MENU, &EOSWiki::OnNewProject, this, XRCID("eosio_new_project")); }

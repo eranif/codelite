@@ -118,7 +118,7 @@ QuickDebugBase::QuickDebugBase(wxWindow* parent, wxWindowID id, const wxString& 
 
     m_buttonBrowseExe =
         new wxButton(m_panelLocal, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(m_panelLocal, wxSize(-1, -1)), 0);
-    m_buttonBrowseExe->SetToolTip(_("Select executale to debug"));
+    m_buttonBrowseExe->SetToolTip(_("Select executable to debug"));
 
     flexGridSizer24->Add(m_buttonBrowseExe, 0, wxRIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 

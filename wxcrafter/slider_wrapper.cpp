@@ -7,9 +7,9 @@ SliderWrapper::SliderWrapper()
     : wxcWidget(ID_WXSLIDER)
 {
     SetPropertyString(_("Common Settings"), "wxSlider");
-    AddProperty(new StringProperty(PROP_VALUE, wxT("50"), wxT("Value")));
-    AddProperty(new StringProperty(PROP_MINVALUE, wxT("0"), wxT("Minimum slider value")));
-    AddProperty(new StringProperty(PROP_MAXVALUE, wxT("100"), wxT("Maximum slider value")));
+    AddProperty(new StringProperty(PROP_VALUE, wxT("50"), _("Value")));
+    AddProperty(new StringProperty(PROP_MINVALUE, wxT("0"), _("Minimum slider value")));
+    AddProperty(new StringProperty(PROP_MAXVALUE, wxT("100"), _("Maximum slider value")));
 
     PREPEND_STYLE(wxSL_HORIZONTAL, true);
     PREPEND_STYLE(wxSL_VERTICAL, false);
@@ -23,22 +23,22 @@ SliderWrapper::SliderWrapper()
     PREPEND_STYLE(wxSL_INVERSE, false);
 
     RegisterEvent(wxT("wxEVT_SCROLL_TOP"), wxT("wxScrollEvent"),
-                  wxT("Process wxEVT_SCROLL_TOP scroll-to-top events (minimum position)"));
+                  _("Process wxEVT_SCROLL_TOP scroll-to-top events (minimum position)"));
     RegisterEvent(wxT("wxEVT_SCROLL_BOTTOM"), wxT("wxScrollEvent"),
-                  wxT("Process wxEVT_SCROLL_BOTTOM scroll-to-bottom events (maximum position)."));
-    RegisterEvent(wxT("wxEVT_SCROLL_LINEUP"), wxT("wxScrollEvent"), wxT("Process wxEVT_SCROLL_LINEUP line up events."));
+                  _("Process wxEVT_SCROLL_BOTTOM scroll-to-bottom events (maximum position)."));
+    RegisterEvent(wxT("wxEVT_SCROLL_LINEUP"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_LINEUP line up events."));
     RegisterEvent(wxT("wxEVT_SCROLL_LINEDOWN"), wxT("wxScrollEvent"),
-                  wxT("Process wxEVT_SCROLL_LINEDOWN line down events."));
-    RegisterEvent(wxT("wxEVT_SCROLL_PAGEUP"), wxT("wxScrollEvent"), wxT("Process wxEVT_SCROLL_PAGEUP page up events."));
+                  _("Process wxEVT_SCROLL_LINEDOWN line down events."));
+    RegisterEvent(wxT("wxEVT_SCROLL_PAGEUP"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_PAGEUP page up events."));
     RegisterEvent(wxT("wxEVT_SCROLL_PAGEDOWN"), wxT("wxScrollEvent"),
-                  wxT("Process wxEVT_SCROLL_PAGEDOWN page down events"));
+                  _("Process wxEVT_SCROLL_PAGEDOWN page down events"));
     RegisterEvent(wxT("wxEVT_SCROLL_THUMBTRACK"), wxT("wxScrollEvent"),
-                  wxT("Process wxEVT_SCROLL_THUMBTRACK thumbtrack events (frequent events sent as the user drags the "
+                  _("Process wxEVT_SCROLL_THUMBTRACK thumbtrack events (frequent events sent as the user drags the "
                       "thumbtrack)."));
     RegisterEvent(wxT("wxEVT_SCROLL_THUMBRELEASE"), wxT("wxScrollEvent"),
-                  wxT("Process wxEVT_SCROLL_THUMBRELEASE thumb release events."));
+                  _("Process wxEVT_SCROLL_THUMBRELEASE thumb release events."));
     RegisterEvent(wxT("wxEVT_SCROLL_CHANGED"), wxT("wxScrollEvent"),
-                  wxT("Process wxEVT_SCROLL_CHANGED end of scrolling events (MSW only)."));
+                  _("Process wxEVT_SCROLL_CHANGED end of scrolling events (MSW only)."));
 
     m_namePattern = wxT("m_slider");
     SetName(GenerateName());

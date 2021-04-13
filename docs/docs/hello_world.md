@@ -30,5 +30,9 @@ The setup wizard allows you configure the following:
 
 5. Click the `OK` button
 6. CodeLite will generate a sample `main.cpp` file
-7. Hit ++f7++ to build the project
+7. Hit ++f7++ to build the project or use the context menu as shown below:
+
+![Build](img/hello_world/build.png)
+
 8. Hit ++ctrl+f5++ to launch the program
+

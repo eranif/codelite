@@ -55,6 +55,7 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed,
                                this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &clFileSystemWorkspaceView::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clFileSystemWorkspaceView::OnThemeChanged, this);
 }
 
 clFileSystemWorkspaceView::~clFileSystemWorkspaceView()
@@ -70,6 +71,7 @@ clFileSystemWorkspaceView::~clFileSystemWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed,
                                  this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &clFileSystemWorkspaceView::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clFileSystemWorkspaceView::OnThemeChanged, this);
 }
 
 void clFileSystemWorkspaceView::OnFolderDropped(clCommandEvent& event)
@@ -305,4 +307,11 @@ void clFileSystemWorkspaceView::OnExcludePath(wxCommandEvent& event)
         config_ptr->SetExcludePaths(::wxJoin(excludePathsArr, ';'));
     }
     clFileSystemWorkspace::Get().Save(true);
+}
+
+void clFileSystemWorkspaceView::OnThemeChanged(clCommandEvent& event)
+{
+    event.Skip();
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    Refresh();
 }

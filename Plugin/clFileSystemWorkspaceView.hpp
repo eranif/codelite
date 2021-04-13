@@ -34,6 +34,7 @@ protected:
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnExcludePath(wxCommandEvent& event);
+    void OnThemeChanged(clCommandEvent& event);
 
 protected:
     void DoAddIncludePathsToConfig(clFileSystemWorkspaceConfig::Ptr_t config, const wxArrayString& paths);

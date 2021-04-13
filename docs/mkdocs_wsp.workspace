@@ -1,6 +1,6 @@
 {
  "workspace_type": "File System Workspace",
- "name": "",
+ "name": "mkdocs_wsp",
  "configs": [{
    "name": "Debug",
    "targets": [["build", ""], ["clean", ""]],

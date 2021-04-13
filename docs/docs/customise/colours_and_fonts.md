@@ -40,4 +40,22 @@ You can switch between themes (or preview a theme) from: `Settings` &#8594; `Col
 
 * Congratulation, you have just installed a new theme!
 
+
+## Tab Control Visualisation
+---
+
+On some platforms (Windows & macOS) CodeLite offers to ability to change the appearance of the tab control, as well
+as their height and orientation
+
+1. From the `Settings` &#8594; `Preferences` dialog, select the `Windows & Tabs` entry
+2. Under the `Tabs` section, you can change the following:
+    - Tab style
+    - Tab height
+    - Active tab marker colour
+    - Workspace view tabs orientation
+    - Output view tabs orientation
+
+
+
+
 [1]: http://www.eclipsecolorthemes.org/

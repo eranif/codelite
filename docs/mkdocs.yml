@@ -4,9 +4,9 @@ nav:
     - Build: build_from_sources.md
     - Quick Start: hello_world.md
     - Settings:
-        - Look and feel: customise/colours_and_fonts.md
-        - Keyboard shortcuts: customise/keyboard_shortcuts.md
-        - Build Settings: build_settings/build_settings.md
+        - Look and feel: settings/colours_and_fonts.md
+        - Keyboard shortcuts: settings/keyboard_shortcuts.md
+        - Build Settings: settings/build_settings.md
         
 markdown_extensions:
         - pymdownx.keys

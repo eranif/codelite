@@ -7,14 +7,27 @@ nav:
         - Look and feel: settings/colours_and_fonts.md
         - Keyboard shortcuts: settings/keyboard_shortcuts.md
         - Build Settings: settings/build_settings.md
-    - workspace:
+        - Environment Variables: settings/environment_variables.md
+    - Workspace:
         - C/C++: workspaces/default.md
         - File System Workspace: workspaces/file_system.md
         - PHP (via plugin): workspaces/php.md
         - Node.js (via plugin): workspaces/nodejs.md
 
+theme:
+    name: material
+    palette:
+        primary: green
+    highlightjs: true
+    font:
+        text: Roboto
+        code: Roboto Mono
+#theme:
+#    name: mkdocs
+#
+
 markdown_extensions:
         - pymdownx.keys
         - admonition
-
-theme: windmill
+        - pymdownx.highlight
+        - pymdownx.superfences

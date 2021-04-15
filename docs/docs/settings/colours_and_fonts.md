@@ -29,12 +29,12 @@ You can switch between themes (or preview a theme) from: `Settings` &#8594; `Col
 --- 
 
 * Visit the [Eclipse Colour Themes web site][1] and search for a theme that you like
-* Click on the theme that you want to install and download its `XML` format:
+* Click on the theme that you want to install and download its `XML` format from the website:
 
 ![Download XML](download_xml.png)
 
 * Open the `Colours and fonts` dialog from: `Settings` &#8594; `Colours and fonts`
-* Click on the `eclipse` button and select the `XML` file you just downloaded and click OK
+* Click on the `eclipse` button, select the `XML` file you just downloaded and click OK:
 
 ![Install it](colours_and_fonts_eclipse.png)
 

@@ -14,7 +14,7 @@ The setup wizard allows you configure the following:
 - Customise colours: select the colouring theme
 - Whitespace and indentation: basic editing configuration
 
-!!! note "TIP"
+!!! TIP
     You can always bring the setup wizard from main menu bar: `Help` &#8594; `Run the setup wizard`
 
 

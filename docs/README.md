@@ -7,6 +7,17 @@ Install the following
 - install mkdocs + extensions
 - If you are under MSYS2, make sure to run: `pacman -S libcrypt-devel`
 
+Install `pip3`:
+
+```bash
+# make sure we got curl installed
+sudo apt-get install curl
+# install pip3
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
+sudo apt-get install libpython-dev
+```
+
 ```bash
 pip3 install mkdocs
 pip3 install pymdown-extensions

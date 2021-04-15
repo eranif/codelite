@@ -39,9 +39,9 @@ static const wxString s_spOptions( wxT( "SpellCheckOptions" ) );
 static const wxString s_noEditor( wxT( "There is no active editor\n" ) );
 static const wxString s_codeLite( wxT( "CodeLite" ) );
 static const wxString s_userDict( wxT("userwords.dict") );
-static const wxString s_cppDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|_;:\"\'<>/~0123456789" ) );
+static const wxString s_cppDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|_;:\"\'<>/~0123456789`" ) );
 static const wxString s_commentDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/" ) );
-static const wxString s_defDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/~0123456789" ) );
+static const wxString s_defDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/~0123456789`" ) );
 static const wxString s_dectHex( wxT("^0[xX]([0-9a-f]+|[0-9A-F]+)$"));
 
 static const wxString s_include( wxT( "#include" ) );

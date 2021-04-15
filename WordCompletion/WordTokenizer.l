@@ -71,6 +71,7 @@ hex_constant "0"[xX][0-9a-fA-F]+{integer_suffix_opt}
 <INITIAL>"{"  { return kWordDelim;}
 <INITIAL>"}"  { return kWordDelim;}
 <INITIAL>"|"  { return kWordDelim;}
+<INITIAL>"`"  { return kWordDelim;}
 <INITIAL>"?"  { return kWordDelim;}
 <INITIAL>. {
     // Everything else

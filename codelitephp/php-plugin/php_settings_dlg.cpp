@@ -1,11 +1,12 @@
-#include "php_settings_dlg.h"
-#include "php_configuration_data.h"
-#include <wx/dirdlg.h>
-#include <windowattrmanager.h>
-#include <event_notifier.h>
-#include "lexer_configuration.h"
 #include "ColoursAndFontsManager.h"
 #include "globals.h"
+#include "lexer_configuration.h"
+#include "php_configuration_data.h"
+#include "php_settings_dlg.h"
+#include "php_workspace.h"
+#include <event_notifier.h>
+#include <windowattrmanager.h>
+#include <wx/dirdlg.h>
 
 PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     : PHPSettingsBaseDlg(parent)
@@ -14,7 +15,7 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     if(lexer) {
         lexer->Apply(m_stcIncludePaths);
     }
-    
+
     PHPConfigurationData data;
     data.Load();
 
@@ -30,7 +31,9 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-PHPSettingsDlg::~PHPSettingsDlg() {}
+PHPSettingsDlg::~PHPSettingsDlg()
+{
+}
 
 void PHPSettingsDlg::OnBrowseForIncludePath(wxCommandEvent& event)
 {
@@ -63,10 +66,11 @@ void PHPSettingsDlg::OnOK(wxCommandEvent& event)
 
     data.Save();
 
-    // Send an event to trigger a retag
-    wxCommandEvent evtRetag(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtRetag);
-
+    // Send an event to trigger a retag, but only if we got a PHP workspace opened
+    if(PHPWorkspace::Get()->IsOpen()) {
+        wxCommandEvent evtRetag(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtRetag);
+    }
     EndModal(wxID_OK);
 }
 
@@ -86,4 +90,7 @@ void PHPSettingsDlg::OnAddCCPath(wxCommandEvent& event)
     }
 }
 
-void PHPSettingsDlg::OnUpdateApplyUI(wxCommandEvent& event) { event.Skip(); }
+void PHPSettingsDlg::OnUpdateApplyUI(wxCommandEvent& event)
+{
+    event.Skip();
+}

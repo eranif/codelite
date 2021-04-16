@@ -32,15 +32,12 @@
 class clPlatform
 {
 public:
-    enum {
-        Gtk,
-        Windows,
-        Mac,
-        Unknown
-    };
+    enum eOS { kGtk, kWindows, kMac, kUnknown };
     static wxChar PathSeparator;
+    static wxChar DirSeparator;
+
 public:
-    static bool OS();
+    static clPlatform::eOS GetOS();
 };
 
 #endif // CLPLATFORM_H

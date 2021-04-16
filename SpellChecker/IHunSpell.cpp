@@ -35,6 +35,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "file_logger.h"
+#include "globals.h"
+#include "macros.h"
 #include "wx/wxprec.h"
 #include <wx/log.h>
 
@@ -177,21 +179,19 @@ wxArrayString IHunSpell::GetSuggestions(const wxString& misspelled)
     return suggestions;
 }
 // ------------------------------------------------------------
-void IHunSpell::CheckCppSpelling(const wxString& check)
+void IHunSpell::CheckCppSpelling()
 {
-    IEditor* pEditor = m_pPlugIn->GetEditor();
+    // check if engine is initialized, if not do so
+    CHECK_COND_RET(InitEngine());
 
-    if(!pEditor)
-        return;
+    IEditor* pEditor = ::clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(pEditor);
 
     int retVal = kNoSpellingError;
-    wxString text = check + wxT(" ");
+    wxString text = pEditor->GetEditorText() + " ";
+
     m_parseValues.clear();
     wxStyledTextCtrl* pTextCtrl = pEditor->GetCtrl();
-
-    // check if engine is initialized, if not do so
-    if(!InitEngine())
-        return;
 
     // check for dialog and create if necessary
     if(!m_pPlugIn->GetCheckContinuous()) {
@@ -268,20 +268,23 @@ void IHunSpell::CheckCppSpelling(const wxString& check)
         retVal = MarkErrors(pEditor);
 }
 // ------------------------------------------------------------
-void IHunSpell::CheckSpelling(const wxString& check)
+void IHunSpell::CheckSpelling()
 {
-    IEditor* pEditor = m_pPlugIn->GetEditor();
+    clDEBUG1() << "SpellChecker: checkSpelling is called" << endl;
+    IEditor* pEditor = ::clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(pEditor);
+    CHECK_COND_RET(InitEngine());
 
-    if(!pEditor)
+    // special handling for C++ files
+    if(pEditor->GetLexerId() == wxSTC_LEX_CPP) {
+        clDEBUG1() << "SpellChecker: checkSpelling -> C++ is called" << endl;
+        CheckCppSpelling();
         return;
+    }
 
     int offset = 0;
     bool error = false;
-    wxString text = check + wxT(" ");
-
-    // check if engine is initialized, if not do so
-    if(!InitEngine())
-        return;
+    wxString text = pEditor->GetEditorText() + " ";
 
     // check for dialog and create if necessary
     if(m_pSpellDlg == NULL) {
@@ -290,6 +293,7 @@ void IHunSpell::CheckSpelling(const wxString& check)
     m_pSpellDlg->SetPHs(this);
     wxStringTokenizer tkz(text, s_defDelimiters);
 
+    clDEBUG1() << "SpellChecker: checking file:" << pEditor->GetFileName() << endl;
     while(tkz.HasMoreTokens()) {
         wxString token = tkz.GetNextToken();
         int pos = tkz.GetPosition() - token.Len() - 1;
@@ -334,7 +338,7 @@ void IHunSpell::CheckSpelling(const wxString& check)
             }
         }
     }
-
+    clDEBUG1() << "SpellChecker:: checking file:" << pEditor->GetFileName() << "is done" << endl;
     if(!m_pPlugIn->GetCheckContinuous()) {
         // clean up
         pEditor->ClearUserIndicators();

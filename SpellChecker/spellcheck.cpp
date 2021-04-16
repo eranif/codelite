@@ -44,6 +44,7 @@
 #include "IHunSpell.h"
 #include "SpellCheckerSettings.h"
 #include "ctags_manager.h"
+#include "macros.h"
 #include "scGlobals.h"
 #include "spellcheck.h"
 #include "workspace.h"
@@ -94,7 +95,10 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 // ------------------------------------------------------------
-CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion()
+{
+    return PLUGIN_INTERFACE_VERSION;
+}
 // ------------------------------------------------------------
 SpellCheck::SpellCheck(IManager* manager)
     : IPlugin(manager)
@@ -290,47 +294,36 @@ void SpellCheck::OnSettings(wxCommandEvent& e)
         SaveSettings();
     }
 }
+
 // ------------------------------------------------------------
 void SpellCheck::OnCheck(wxCommandEvent& e)
 {
     IEditor* editor = GetEditor();
+    CHECK_PTR_RET(m_pEngine);
+    CHECK_PTR_RET(editor);
 
-    if(!editor)
+    bool old_continous_value = GetCheckContinuous();
+    if(GetCheckContinuous()) {
+        // switch continuous search off if running
+        SetCheckContinuous(false);
+    }
+
+    // if we don't have a dictionary yet, open settings
+    if(!m_pEngine->GetDictionary()) {
+        OnSettings(e);
         return;
-    wxString text = editor->GetEditorText();
-    text += wxT(" "); // prevents indicator flickering at end of file
+    }
 
-    if(m_pEngine != NULL) {
-        if(GetCheckContinuous()) {
-            // switch continuous search off if running
-            SetCheckContinuous(false);
-        }
+    m_pEngine->CheckSpelling();
+    if(!GetCheckContinuous()) {
+        editor->ClearUserIndicators();
+    }
 
-        // if we don't have a dictionary yet, open settings
-        if(!m_pEngine->GetDictionary()) {
-            OnSettings(e);
-            return;
-        }
-
-        switch(editor->GetLexerId()) {
-        case wxSTC_LEX_CPP: {
-            if(m_mgr->IsWorkspaceOpen()) {
-                m_pEngine->CheckCppSpelling(text);
-
-                if(!GetCheckContinuous()) {
-                    editor->ClearUserIndicators();
-                }
-            }
-        } break;
-        case wxSTC_LEX_NULL: {
-            m_pEngine->CheckSpelling(text);
-            if(!GetCheckContinuous()) {
-                editor->ClearUserIndicators();
-            }
-        } break;
-        }
+    if(old_continous_value) {
+        SetCheckContinuous(true);
     }
 }
+
 // ------------------------------------------------------------
 void SpellCheck::LoadSettings()
 {
@@ -362,40 +355,32 @@ void SpellCheck::SaveSettings()
 // ------------------------------------------------------------
 void SpellCheck::OnContinousCheck(wxCommandEvent& e)
 {
-    if(m_pEngine != NULL) {
-        if(e.GetInt() == 0) {
-            SetCheckContinuous(false);
-            ClearIndicatorsFromEditors();
-            return;
-        }
+    CHECK_PTR_RET(m_pEngine);
 
-        SetCheckContinuous(true);
-
-        // if we don't have a dictionary yet, open settings
-        if(!m_pEngine->GetDictionary()) {
-            OnSettings(e);
-            return;
-        }
-
-        IEditor* editor = m_mgr->GetActiveEditor();
-
-        if(editor) {
-            wxString text = editor->GetEditorText();
-
-            switch(editor->GetLexerId()) {
-            case wxSTC_LEX_CPP: {
-                if(m_mgr->IsWorkspaceOpen()) {
-                    m_pEngine->CheckCppSpelling(text);
-                }
-            } break;
-            default: {
-                m_pEngine->CheckSpelling(text);
-            } break;
-            }
-            m_timer.Start(PARSE_TIME);
-        }
+    if(!e.IsChecked()) {
+        SetCheckContinuous(false);
+        ClearIndicatorsFromEditors();
+        return;
     }
+
+    SetCheckContinuous(true);
+
+    // if we don't have a dictionary yet, open settings
+    if(!m_pEngine->GetDictionary()) {
+        OnSettings(e);
+        return;
+    }
+
+    IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    m_pEngine->CheckSpelling();
+    if(!GetCheckContinuous()) {
+        editor->ClearUserIndicators();
+    }
+    m_timer.Start(PARSE_TIME);
 }
+
 // ------------------------------------------------------------
 void SpellCheck::OnTimer(wxTimerEvent& e)
 {
@@ -405,32 +390,21 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
         return;
 
     IEditor* editor = m_mgr->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(GetCheckContinuous());
 
-    if(!editor)
+    // Only run the checks if we've not run them or the file is modified.
+    const auto modificationCount(editor->GetModificationCount());
+    if((editor == m_pLastEditor) && (m_lastModificationCount == modificationCount)) {
         return;
-
-    if(GetCheckContinuous()) {
-        // Only run the checks if we've not run them or the file is modified.
-        const auto modificationCount(editor->GetModificationCount());
-        if((editor == m_pLastEditor) && (m_lastModificationCount == modificationCount)) {
-            return;
-        }
-
-        m_pLastEditor = editor;
-        m_lastModificationCount = modificationCount;
-
-        switch(editor->GetLexerId()) {
-        case wxSTC_LEX_CPP: {
-            if(m_mgr->IsWorkspaceOpen()) {
-                m_pEngine->CheckCppSpelling(editor->GetEditorText());
-            }
-        } break;
-        default: {
-            m_pEngine->CheckSpelling(editor->GetEditorText());
-        } break;
-        }
     }
+
+    m_pLastEditor = editor;
+    m_lastModificationCount = modificationCount;
+    m_pLastEditor->ClearUserIndicators();
+    m_pEngine->CheckSpelling();
 }
+
 // ------------------------------------------------------------
 void SpellCheck::SetCheckContinuous(bool value)
 {
@@ -462,7 +436,10 @@ void SpellCheck::OnWspLoaded(wxCommandEvent& e)
     e.Skip();
 }
 // ------------------------------------------------------------
-void SpellCheck::OnWspClosed(wxCommandEvent& e) { e.Skip(); }
+void SpellCheck::OnWspClosed(wxCommandEvent& e)
+{
+    e.Skip();
+}
 // ------------------------------------------------------------
 void SpellCheck::OnSuggestion(wxCommandEvent& e)
 {

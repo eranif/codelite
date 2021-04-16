@@ -76,7 +76,7 @@ Contains all the information needed in order to **compile** your code (this is d
 Set the environment variables to use when building / running this project.
 You can set variables in two ways:
 
-- Use a [pre-defined evnironment variables set](../../settings/environment_variables/#using-pre-defined-set)
+- Use a [pre-defined environment variables set](../../settings/environment_variables/#using-pre-defined-set)
 - Manually set them for [using the same syntax as explained here](../../settings/environment_variables/#setting-global-environment-variables)
 
 ### Linker
@@ -87,7 +87,7 @@ You can set variables in two ways:
 |`Use with global settings`| See [Global Settings below](#global-settings)|
 |`Linker options`|semi colon list of options to pass to the linker e.g. `-pthread;-s`|
 |`Libraries search path`|semi colon list of directories to pass to the compiler for searching libraries. It is recommended to use here relative paths, or use environment variables. e.g. `$(HOME)/lib;$(BOOST_DIR)/lib`|
-|`Libraries`|semi colon list of libraries to link agaist. e.g. `boost_fiber;boost_system`|
+|`Libraries`|semi colon list of libraries to link against. e.g. `boost_fiber;boost_system`|
 
 !!! TIP
     When setting the `Libraries` field, there is no need to include the prefix `lib` or its prefix e.g. `.a`
@@ -98,7 +98,7 @@ You can set variables in two ways:
 ---
 
 This page allows to override the global debugger settings.
-Settings that can be overriden here:
+Settings that can be overridden here:
 
 - Custom debugger executable
 - Add debugger search paths for source files

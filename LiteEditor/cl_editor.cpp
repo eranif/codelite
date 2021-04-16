@@ -903,7 +903,12 @@ void clEditor::SetProperties()
     IndicatorSetUnder(MATCH_INDICATOR, false);
     IndicatorSetUnder(DEBUGGER_INDICATOR, true);
 
-    SetUserIndicatorStyleAndColour(wxSTC_INDIC_SQUIGGLE, wxT("RED"));
+    bool isDarkTheme = (lexer && lexer->IsDark());
+    wxColour indicator_colour = *wxRED;
+    if(isDarkTheme) {
+        indicator_colour = *wxWHITE;
+    }
+    SetUserIndicatorStyleAndColour(wxSTC_INDIC_SQUIGGLE, indicator_colour);
 
     wxColour col2(wxT("LIGHT BLUE"));
     wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
@@ -921,7 +926,7 @@ void clEditor::SetProperties()
 
     IndicatorSetUnder(MARKER_FIND_BAR_WORD_HIGHLIGHT, true);
     IndicatorSetStyle(MARKER_FIND_BAR_WORD_HIGHLIGHT, wxSTC_INDIC_BOX);
-    bool isDarkTheme = (lexer && lexer->IsDark());
+
     IndicatorSetForeground(MARKER_FIND_BAR_WORD_HIGHLIGHT, isDarkTheme ? "WHITE" : "BLACK");
     if(alpha != wxNOT_FOUND) {
         IndicatorSetAlpha(MARKER_FIND_BAR_WORD_HIGHLIGHT, alpha);

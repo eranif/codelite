@@ -3,11 +3,7 @@
 
 std::string StringUtils::ToStdString(const wxString& str)
 {
-    wxCharBuffer cb = str.ToAscii();
-    const char* data = cb.data();
-    if(!data) {
-        data = str.mb_str(wxConvUTF8).data();
-    }
+    const char* data = str.mb_str(wxConvUTF8).data();
     if(!data) {
         data = str.To8BitData();
     }

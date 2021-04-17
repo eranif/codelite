@@ -136,9 +136,11 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
     size_t matchStyleLen = 0;
     size_t i = 0;
     for(; iter != text.end(); ++iter) {
-        bool advance2Pos = false;
         const wxUniChar& ch = *iter;
-        if((long)ch >= 128) { advance2Pos = true; }
+        size_t chWidth = 1;
+        if(!ch.IsAscii()) {
+            chWidth = wxString(ch).mb_str(wxConvUTF8).length();
+        }
 
         switch(m_curstate) {
         default:
@@ -155,7 +157,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
                 ctrl->SetStyling(1, LEX_FIF_DEFAULT);
             } else {
                 // File name
-                filenameStyleLen = 1;
+                filenameStyleLen = chWidth;
                 m_curstate = kFile;
             }
             break;
@@ -174,8 +176,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             }
             break;
         case kScope:
-            ++scopeStyleLen;
-
+            scopeStyleLen += chWidth;
             if(ch == ']') {
                 // end of scope
                 ctrl->SetStyling(scopeStyleLen, LEX_FIF_SCOPE);
@@ -184,8 +185,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             }
             break;
         case kMatch:
-            ++matchStyleLen;
-            if(advance2Pos) { ++matchStyleLen; }
+            matchStyleLen += chWidth;
             if(ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
@@ -193,7 +193,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             }
             break;
         case kFile:
-            ++filenameStyleLen;
+            filenameStyleLen += chWidth;
             if(ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 2 | wxSTC_FOLDLEVELHEADERFLAG);
@@ -202,7 +202,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             }
             break;
         case kHeader:
-            ++headerStyleLen;
+            headerStyleLen += chWidth;
             if(ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 1 | wxSTC_FOLDLEVELHEADERFLAG);
@@ -211,11 +211,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             }
             break;
         }
-        if(advance2Pos) {
-            i += 2;
-        } else {
-            ++i;
-        }
+        i += chWidth;
     }
 
     // Left overs...

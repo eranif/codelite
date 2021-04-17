@@ -28,9 +28,12 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
     size_t i = 0;
     wxString::const_iterator iter = text.begin();
     for(; iter != text.end(); ++iter) {
-        bool advance2Pos = false;
         const wxUniChar& ch = *iter;
-        if((long)ch >= 128) { advance2Pos = true; }
+        size_t chWidth = 1;
+        if(!ch.IsAscii()) {
+            chWidth = wxString(ch).mb_str(wxConvUTF8).length();
+        }
+
         switch(m_curstate) {
         default:
             break;
@@ -39,12 +42,12 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
                 ++headerStyleLen;
                 m_curstate = kHeader;
             } else {
-                ++filenameStyleLen;
+                filenameStyleLen += chWidth;
                 m_curstate = kFile;
             }
             break;
         case kHeader:
-            ++headerStyleLen;
+            headerStyleLen += chWidth;
             if(ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetStyling(headerStyleLen, LEX_FIF_HEADER);
@@ -52,7 +55,7 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             }
             break;
         case kFile:
-            ++filenameStyleLen;
+            filenameStyleLen += chWidth;
             if(ch == ':') {
                 m_curstate = kLineNumber;
                 ctrl->SetStyling(filenameStyleLen, LEX_FIF_FILE);
@@ -68,7 +71,7 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             }
             break;
         case kMatch:
-            ++matchStyleLen;
+            matchStyleLen += chWidth;
             if(ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
@@ -77,11 +80,7 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             break;
         }
 
-        if(advance2Pos) {
-            i += 2;
-        } else {
-            ++i;
-        }
+        i += chWidth;
     }
 
     // Left overs...

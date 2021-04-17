@@ -73,7 +73,7 @@ PHPProject::PHPProject()
     : m_isActive(false)
     , m_importFileSpec(
           "*.php;*.php5;*.inc;*.phtml;*.js;*.html;*.css;*.scss;*.less;*.json;*.xml;*.ini;*.md;*.txt;*.text;."
-          "htaccess;*.ctp;*.sql")
+          "htaccess;*.ctp;*.sql;*.yml;*.module")
     , m_excludeFolders(".git;.svn;.codelite;.clang")
 {
     Bind(wxEVT_PHP_PROJECT_FILES_SYNC_START, &PHPProject::OnFileScanStart, this);

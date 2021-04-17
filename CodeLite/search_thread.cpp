@@ -62,13 +62,21 @@ wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHSTARTED, wxCommandEvent);
 // SearchData
 //----------------------------------------------------------------
 
-const wxString& SearchData::GetExtensions() const { return m_validExt; }
+const wxString& SearchData::GetExtensions() const
+{
+    return m_validExt;
+}
 
-SearchData& SearchData::operator=(const SearchData& rhs) { return Copy(rhs); }
+SearchData& SearchData::operator=(const SearchData& rhs)
+{
+    return Copy(rhs);
+}
 
 SearchData& SearchData::Copy(const SearchData& other)
 {
-    if(this == &other) { return *this; }
+    if(this == &other) {
+        return *this;
+    }
     m_findString = other.m_findString.c_str();
     m_flags = other.m_flags;
     m_validExt = other.m_validExt.c_str();
@@ -99,7 +107,9 @@ SearchThread::SearchThread()
     IndexWordChars();
 }
 
-SearchThread::~SearchThread() {}
+SearchThread::~SearchThread()
+{
+}
 
 void SearchThread::IndexWordChars()
 {
@@ -128,13 +138,17 @@ wxRegEx& SearchThread::GetRegex(const wxString& expr, bool matchCase)
         int flags = wxRE_DEFAULT;
 #endif
 
-        if(!matchCase) flags |= wxRE_ICASE;
+        if(!matchCase)
+            flags |= wxRE_ICASE;
         m_regex.Compile(m_reExpr, flags);
     }
     return m_regex;
 }
 
-void SearchThread::PerformSearch(const SearchData& data) { Add(new SearchData(data)); }
+void SearchThread::PerformSearch(const SearchData& data)
+{
+    Add(new SearchData(data));
+}
 
 void SearchThread::ProcessRequest(ThreadRequest* req)
 {
@@ -240,10 +254,14 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
 {
     // Process single lines
     int lineNumber = 1;
-    if(!wxFileName::FileExists(fileName)) { return; }
+    if(!wxFileName::FileExists(fileName)) {
+        return;
+    }
 
     size_t size = FileUtils::GetFileSize(fileName);
-    if(size == 0) { return; }
+    if(size == 0) {
+        return;
+    }
     wxString fileData;
     fileData.Alloc(size);
 
@@ -313,9 +331,13 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         }
 
         // Dont search for empty strings
-        if(findString.empty()) { return; }
-        
-        if(!data->IsMatchCase()) { findString.MakeLower(); }
+        if(findString.empty()) {
+            return;
+        }
+
+        if(!data->IsMatchCase()) {
+            findString.MakeLower();
+        }
         while(tkz.HasMoreTokens()) {
 
             // Read the next line
@@ -326,7 +348,9 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         }
     }
 
-    if(m_results.empty() == false) { SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner()); }
+    if(m_results.empty() == false) {
+        SendEvent(wxEVT_SEARCH_THREAD_MATCHFOUND, data->GetOwner());
+    }
 }
 
 void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const int lineOffset,
@@ -405,7 +429,8 @@ void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const
             col += len;
 
             // adjust the line
-            if(line.Length() - col <= 0) break;
+            if(line.Length() - col <= 0)
+                break;
             modLine = modLine.Right(line.Length() - col);
         }
     }
@@ -417,7 +442,9 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
 {
     wxString modLine = line;
 
-    if(!data->IsMatchCase()) { modLine.MakeLower(); }
+    if(!data->IsMatchCase()) {
+        modLine.MakeLower();
+    }
 
     int pos = 0;
     int col = 0;
@@ -438,7 +465,8 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
             }
 
             // Pipe filtes OK?
-            if(!allFiltersOK) return;
+            if(!allFiltersOK)
+                return;
 
             // we have a match
             if(data->IsMatchWholeWord()) {
@@ -529,7 +557,9 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
                 m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
             }
 
-            if(!AdjustLine(modLine, pos, findWhat)) { break; }
+            if(!AdjustLine(modLine, pos, findWhat)) {
+                break;
+            }
             col += (int)findWhat.Length();
         }
     }
@@ -549,7 +579,8 @@ bool SearchThread::AdjustLine(wxString& line, int& pos, const wxString& findStri
 
 void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
 {
-    if(!m_notifiedWindow && !owner) return;
+    if(!m_notifiedWindow && !owner)
+        return;
 
     wxCommandEvent event(type, GetId());
 
@@ -594,7 +625,8 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
     const wxArrayString& excludePatterns = data->GetExcludePatterns();
     const wxString& mask = data->GetExtensions();
     std::for_each(files.begin(), files.end(), [&](const wxString& filename) {
-        if(uniqueFiles.count(filename)) return;
+        if(uniqueFiles.count(filename))
+            return;
         uniqueFiles.insert(filename);
         if(FileUtils::WildMatch(mask, filename) && !FileUtils::WildMatch(excludePatterns, filename)) {
             tmpFiles.Add(filename);
@@ -607,13 +639,16 @@ void SearchThread::FilterFiles(wxArrayString& files, const SearchData* data)
 static SearchThread* gs_SearchThread = NULL;
 void SearchThreadST::Free()
 {
-    if(gs_SearchThread) { delete gs_SearchThread; }
+    if(gs_SearchThread) {
+        delete gs_SearchThread;
+    }
     gs_SearchThread = NULL;
 }
 
 SearchThread* SearchThreadST::Get()
 {
-    if(gs_SearchThread == NULL) gs_SearchThread = new SearchThread;
+    if(gs_SearchThread == NULL)
+        gs_SearchThread = new SearchThread;
     return gs_SearchThread;
 }
 

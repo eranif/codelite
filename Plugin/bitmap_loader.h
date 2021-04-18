@@ -82,6 +82,7 @@ class WXDLLIMPEXP_SDK clBitmapList : public wxEvtHandler
         wxBitmap bmp = wxNullBitmap;          // user provided bitmap
         wxBitmap bmp_disabled = wxNullBitmap; // this one is always a one that we provide
         wxString name;
+        int ref_count = 1;
     };
     unordered_map<size_t, BmpInfo> m_bitmaps;
     unordered_map<wxString, size_t> m_nameToIndex;

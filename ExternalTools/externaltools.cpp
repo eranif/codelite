@@ -22,7 +22,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-
 #include "ExternalToolsManager.h"
 #include "ExternalToolsProcessManager.h"
 #include "async_executable_cmd.h"
@@ -35,6 +34,7 @@
 #include "event_notifier.h"
 #include "externaltooldlg.h"
 #include "externaltools.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "plugin_version.h"
@@ -52,7 +52,10 @@
 static ExternalToolsPlugin* thePlugin = NULL;
 
 struct DecSort {
-    bool operator()(const ToolInfo& t1, const ToolInfo& t2) { return t1.GetName().CmpNoCase(t2.GetName()) < 0; }
+    bool operator()(const ToolInfo& t1, const ToolInfo& t2)
+    {
+        return t1.GetName().CmpNoCase(t2.GetName()) < 0;
+    }
 };
 
 // Define the plugin entry point
@@ -74,7 +77,10 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
+CL_PLUGIN_API int GetPluginInterfaceVersion()
+{
+    return PLUGIN_INTERFACE_VERSION;
+}
 
 ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
     : IPlugin(manager)
@@ -109,7 +115,9 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
     m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &m_externalTools);
 }
 
-ExternalToolsPlugin::~ExternalToolsPlugin() {}
+ExternalToolsPlugin::~ExternalToolsPlugin()
+{
+}
 
 void ExternalToolsPlugin::CreateToolBar(clToolBar* toolbar)
 {
@@ -210,7 +218,7 @@ void ExternalToolsPlugin::DoRecreateToolbar()
             if(icon24.FileExists()) {
                 wxBitmap bmp;
                 bmp.LoadFile(icon24.GetFullPath(), wxBITMAP_TYPE_PNG);
-                if(!bmp.IsOk()) {
+                if(bmp.IsOk()) {
                     bmp_index = images->Add(bmp, icon24.GetFullPath());
                 }
             }
@@ -219,7 +227,7 @@ void ExternalToolsPlugin::DoRecreateToolbar()
             if(icon16.FileExists()) {
                 wxBitmap bmp;
                 bmp.LoadFile(icon16.GetFullPath(), wxBITMAP_TYPE_PNG);
-                if(!bmp.IsOk()) {
+                if(bmp.IsOk()) {
                     bmp_index = images->Add(bmp, icon16.GetFullPath());
                 }
             }

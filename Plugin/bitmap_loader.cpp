@@ -44,7 +44,9 @@
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 
-BitmapLoader::~BitmapLoader() {}
+BitmapLoader::~BitmapLoader()
+{
+}
 
 BitmapLoader::BitmapLoader(bool darkTheme)
     : m_bMapPopulated(false)
@@ -66,9 +68,15 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     return wxNullBitmap;
 }
 
-int BitmapLoader::GetMimeImageId(int type) { return GetMimeBitmaps().GetIndex(type); }
+int BitmapLoader::GetMimeImageId(int type)
+{
+    return GetMimeBitmaps().GetIndex(type);
+}
 
-int BitmapLoader::GetMimeImageId(const wxString& filename) { return GetMimeBitmaps().GetIndex(filename); }
+int BitmapLoader::GetMimeImageId(const wxString& filename)
+{
+    return GetMimeBitmaps().GetIndex(filename);
+}
 
 wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 {
@@ -264,9 +272,13 @@ const wxBitmap& BitmapLoader::GetBitmapForFile(const wxString& filename) const
 // clMimeBitmaps
 //===---------------------------
 
-clMimeBitmaps::clMimeBitmaps() {}
+clMimeBitmaps::clMimeBitmaps()
+{
+}
 
-clMimeBitmaps::~clMimeBitmaps() {}
+clMimeBitmaps::~clMimeBitmaps()
+{
+}
 
 int clMimeBitmaps::GetIndex(int type) const
 {
@@ -330,7 +342,10 @@ clBitmaps& clBitmaps::Get()
     return *pBitmaps;
 }
 
-BitmapLoader* clBitmaps::GetLoader() { return m_activeBitmaps; }
+BitmapLoader* clBitmaps::GetLoader()
+{
+    return m_activeBitmaps;
+}
 
 void clBitmaps::Initialise()
 {
@@ -342,7 +357,7 @@ void clBitmaps::Initialise()
 void clBitmaps::SysColoursChanged()
 {
     auto old_ptr = m_activeBitmaps;
-    
+
     wxSystemColour cIndex = wxSYS_COLOUR_MENUBAR;
 #ifdef __WXMAC__
     cIndex = wxSYS_COLOUR_3DFACE;
@@ -448,15 +463,21 @@ void clBitmapList::Delete(size_t index)
         return;
     }
 
-    // remove the entry from the name:index map
-    auto iter2 = m_nameToIndex.find(iter->second.name);
-    if(iter2 != m_nameToIndex.end()) {
-        m_nameToIndex.erase(iter2);
+    iter->second.ref_count--;
+    if(iter->second.ref_count <= 0) {
+        // remove the entry from the name:index map
+        auto iter2 = m_nameToIndex.find(iter->second.name);
+        if(iter2 != m_nameToIndex.end()) {
+            m_nameToIndex.erase(iter2);
+        }
+        m_bitmaps.erase(iter);
     }
-    m_bitmaps.erase(iter);
 }
 
-void clBitmapList::Delete(const wxString& name) { Delete(FindIdByName(name)); }
+void clBitmapList::Delete(const wxString& name)
+{
+    Delete(FindIdByName(name));
+}
 
 const wxBitmap& clBitmapList::Get(const wxString& name, bool disabledBmp)
 {
@@ -489,11 +510,12 @@ size_t clBitmapList::DoAdd(const wxBitmap& bmp, const wxBitmap& bmpDisabled, con
 {
     size_t index = FindIdByName(bmp_name);
     if(index != wxString::npos) {
+        m_bitmaps[index].ref_count++;
         return index;
     }
 
     // new entry
-    BmpInfo bi;
+    BmpInfo bi; // ref_count = 1
     bi.bmp_disabled = bmpDisabled;
     if(!user_bmp) {
         // keep pointer

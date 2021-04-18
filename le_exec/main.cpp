@@ -1,18 +1,19 @@
+#include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
 #include <time.h>
-#include <conio.h>
+#include <windows.h>
 #define wait_key getch
-#include <string.h>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <string.h>
 
 bool hasSpaces(const char* str)
 {
     char last = 0;
     while(str && *str) {
-        if((*str == ' ' || *str == '\t') && last != '\\') return true;
+        if((*str == ' ' || *str == '\t') && last != '\\')
+            return true;
         last = *str++;
     }
     return false;
@@ -21,7 +22,7 @@ bool hasSpaces(const char* str)
 int main(int argc, char** argv)
 {
     if(argc < 2) {
-        std::cout << "Usage: le_exec <program_name> [arguments...]" << std::endl;
+        std::cout << "Usage: codelite-exec <program_name> [arguments...]" << std::endl;
         return 1;
     }
 
@@ -38,16 +39,20 @@ int main(int argc, char** argv)
 
     // 1st arg (executable) enclosed in quotes to support filenames with spaces
     bool sp = hasSpaces(argv[1]);
-    if(sp) strcat(cmdline, "\"");
+    if(sp)
+        strcat(cmdline, "\"");
     strcat(cmdline, argv[1]);
-    if(sp) strcat(cmdline, "\"");
+    if(sp)
+        strcat(cmdline, "\"");
     strcat(cmdline, " ");
 
     for(int i = 2; i < argc; ++i) {
         sp = hasSpaces(argv[i]);
-        if(sp) strcat(cmdline, "\"");
+        if(sp)
+            strcat(cmdline, "\"");
         strcat(cmdline, argv[i]);
-        if(sp) strcat(cmdline, "\"");
+        if(sp)
+            strcat(cmdline, "\"");
         strcat(cmdline, " ");
     }
 
@@ -82,9 +87,10 @@ int main(int argc, char** argv)
     DWORD ret;
     GetExitCodeProcess(pi.hProcess, &ret);
 
-    std::cout << "\r\nTime elapsed: " << std::setfill('0') << std::setw(3) << minutes << ":" << std::setw(2) << seconds << ":"
-              << std::setw(3) << ms << std::endl;
-    std::cout << "Press any key to continue" << std::endl;
+    std::cout << "\r\n==== Program exited with exit code: " << ret << " ====" << std::endl;
+    std::cout << "Time elapsed: " << std::setfill('0') << std::setw(3) << minutes << ":" << std::setw(2) << seconds
+              << "." << std::setw(3) << ms << " (MM:SS.MS) " << std::endl;
+    std::cout << "Press any key to continue..." << std::endl;
     wait_key();
 
     // Close process and thread handles.

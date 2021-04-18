@@ -54,7 +54,7 @@ copy %RUNTIME_DIR%\codelite_launcher.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-echo.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %SDK_DIR%\clang\lib\clang-format-64.exe "%TARGET_DIR%\CodeLite\codelite-clang-format.exe" /Y
 copy %SDK_DIR%\libssh\lib\libssh.dll "%TARGET_DIR%\CodeLite\libssh.dll" /Y
-copy %RUNTIME_DIR%\le_exec.exe "%TARGET_DIR%\CodeLite\" /Y
+copy %RUNTIME_DIR%\codelite-exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-make.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-terminal.exe "%TARGET_DIR%\CodeLite\" /Y

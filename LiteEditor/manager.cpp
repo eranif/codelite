@@ -299,7 +299,10 @@ Manager::~Manager(void)
 
 //--------------------------- Workspace Loading -----------------------------
 
-bool Manager::IsWorkspaceOpen() const { return clCxxWorkspaceST::Get()->GetName().IsEmpty() == false; }
+bool Manager::IsWorkspaceOpen() const
+{
+    return clCxxWorkspaceST::Get()->GetName().IsEmpty() == false;
+}
 
 void Manager::CreateWorkspace(const wxString& name, const wxString& path)
 {
@@ -503,7 +506,10 @@ void Manager::ClearWorkspaceHistory()
     clConfig::Get().ClearRecentWorkspaces();
 }
 
-void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files) { files = clConfig::Get().GetRecentWorkspaces(); }
+void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files)
+{
+    files = clConfig::Get().GetRecentWorkspaces();
+}
 
 //--------------------------- Workspace Projects Mgmt -----------------------------
 
@@ -757,7 +763,10 @@ bool Manager::RemoveProject(const wxString& name, bool notify)
     return true;
 }
 
-void Manager::GetProjectList(wxArrayString& list) { clCxxWorkspaceST::Get()->GetProjectList(list); }
+void Manager::GetProjectList(wxArrayString& list)
+{
+    clCxxWorkspaceST::Get()->GetProjectList(list);
+}
 
 ProjectPtr Manager::GetProject(const wxString& name) const
 {
@@ -776,7 +785,10 @@ ProjectPtr Manager::GetProject(const wxString& name) const
     return proj;
 }
 
-wxString Manager::GetActiveProjectName() { return clCxxWorkspaceST::Get()->GetActiveProjectName(); }
+wxString Manager::GetActiveProjectName()
+{
+    return clCxxWorkspaceST::Get()->GetActiveProjectName();
+}
 
 void Manager::SetActiveProject(const wxString& name)
 {
@@ -793,7 +805,10 @@ void Manager::SetActiveProject(const wxString& name)
     }
 }
 
-BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const { return clCxxWorkspaceST::Get()->GetBuildMatrix(); }
+BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const
+{
+    return clCxxWorkspaceST::Get()->GetBuildMatrix();
+}
 
 void Manager::SetWorkspaceBuildMatrix(BuildMatrixPtr matrix)
 {
@@ -1793,7 +1808,10 @@ void Manager::UpdateMenuAccelerators(wxFrame* frame)
 
 //--------------------------- Run Program (No Debug) -----------------------------
 
-bool Manager::IsProgramRunning() const { return m_programProcess; }
+bool Manager::IsProgramRunning() const
+{
+    return m_programProcess;
+}
 
 void Manager::ExecuteNoDebug(const wxString& projectName)
 {
@@ -1846,8 +1864,13 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     if(!bldConf->IsGUIProgram()) {
         createProcessFlags = IProcessNoRedirect | IProcessCreateConsole;
     }
+
 #ifdef __WXMSW__
     createProcessFlags |= IProcessCreateConsole;
+    if(!bldConf->IsGUIProgram()) {
+        // wrap with terminal
+        createProcessFlags |= IProcessWrapInShell;
+    }
 #endif
 
     wxString dummy;
@@ -2803,7 +2826,10 @@ void Manager::StopBuild()
     m_buildQueue.clear();
 }
 
-void Manager::PushQueueCommand(const QueueCommand& buildInfo) { m_buildQueue.push_back(buildInfo); }
+void Manager::PushQueueCommand(const QueueCommand& buildInfo)
+{
+    m_buildQueue.push_back(buildInfo);
+}
 
 void Manager::ProcessCommandQueue()
 {
@@ -3045,7 +3071,10 @@ void Manager::DoCmdWorkspace(int cmd)
     }
 }
 
-void Manager::DbgClearWatches() { m_dbgWatchExpressions.Clear(); }
+void Manager::DbgClearWatches()
+{
+    m_dbgWatchExpressions.Clear();
+}
 
 void Manager::DebuggerUpdate(const DebuggerEventData& event)
 {
@@ -3303,7 +3332,10 @@ void Manager::DoRestartCodeLite()
     app->SetRestartCommand(restartCodeLiteCommand, workingDirectory);
 }
 
-void Manager::SetCodeLiteLauncherPath(const wxString& path) { m_codeliteLauncher = path; }
+void Manager::SetCodeLiteLauncherPath(const wxString& path)
+{
+    m_codeliteLauncher = path;
+}
 
 void Manager::OnRestart(clCommandEvent& event)
 {
@@ -3544,7 +3576,10 @@ void Manager::OnProjectSettingsModified(clProjectSettingsEvent& event)
     clMainFrame::Get()->SelectBestEnvSet();
 }
 
-void Manager::OnDbContentCacherLoaded(wxCommandEvent& event) { clLogMessage(event.GetString()); }
+void Manager::OnDbContentCacherLoaded(wxCommandEvent& event)
+{
+    clLogMessage(event.GetString());
+}
 
 void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
 {
@@ -3564,7 +3599,10 @@ void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
     matrix->GetProjectSelectedConf(workspaceConf, project);
 }
 
-void Manager::UpdatePreprocessorFile(clEditor* editor) { wxUnusedVar(editor); }
+void Manager::UpdatePreprocessorFile(clEditor* editor)
+{
+    wxUnusedVar(editor);
+}
 
 BuildConfigPtr Manager::GetCurrentBuildConf()
 {
@@ -3626,9 +3664,14 @@ void Manager::OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e)
     }
 }
 
-void Manager::GenerateCompileCommands() {}
+void Manager::GenerateCompileCommands()
+{
+}
 
-void Manager::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
+void Manager::OnBuildEnded(clBuildEvent& event)
+{
+    event.Skip();
+}
 
 void Manager::DbgContinue()
 {

@@ -53,7 +53,7 @@ copy ..\sdk\clang\lib\libclang.dll "%TARGET_DIR%\CodeLite\" /Y
 copy ..\sdk\clang\lib\clang-format.exe "%TARGET_DIR%\CodeLite\codelite-clang-format.exe" /Y
 copy ..\sdk\libssh\lib\libssh.dll "%TARGET_DIR%\CodeLite\" /Y
 copy makedir.exe "%TARGET_DIR%\CodeLite\" /Y
-copy le_exec.exe "%TARGET_DIR%\CodeLite\" /Y
+copy codelite-exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy CodeLite.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite-make.exe "%TARGET_DIR%\CodeLite\" /Y
 copy codelite-terminal.exe "%TARGET_DIR%\CodeLite\" /Y

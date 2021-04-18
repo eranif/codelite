@@ -163,7 +163,9 @@ BuildConfig::BuildConfig(wxXmlNode* node)
                     bool enabled = XmlUtils::ReadBool(child, wxT("Enabled"));
 
                     BuildCommand cmd(child->GetNodeContent(), enabled);
-                    m_preBuildCommands.push_back(cmd);
+                    if(cmd.IsOk()) {
+                        m_preBuildCommands.push_back(cmd);
+                    }
                 }
                 child = child->GetNext();
             }
@@ -176,7 +178,9 @@ BuildConfig::BuildConfig(wxXmlNode* node)
                 if(child->GetName() == wxT("Command")) {
                     bool enabled = XmlUtils::ReadBool(child, wxT("Enabled"));
                     BuildCommand cmd(child->GetNodeContent(), enabled);
-                    m_postBuildCommands.push_back(cmd);
+                    if(cmd.IsOk()) {
+                        m_postBuildCommands.push_back(cmd);
+                    }
                 }
                 child = child->GetNext();
             }
@@ -305,7 +309,9 @@ BuildConfig::BuildConfig(wxXmlNode* node)
     }
 }
 
-BuildConfig::~BuildConfig() {}
+BuildConfig::~BuildConfig()
+{
+}
 
 BuildConfig* BuildConfig::Clone() const
 {
@@ -396,22 +402,29 @@ wxXmlNode* BuildConfig::ToXml() const
     wxXmlNode* preBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("PreBuild"));
     node->AddChild(preBuild);
 
-    BuildCommandList::const_iterator iter = m_preBuildCommands.begin();
-    for(; iter != m_preBuildCommands.end(); iter++) {
+    for(const auto& cmd : m_preBuildCommands) {
+        if(!cmd.IsOk()) {
+            continue;
+        }
+
         wxXmlNode* command = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Command"));
-        command->AddProperty(wxT("Enabled"), BoolToString(iter->GetEnabled()));
-        XmlUtils::SetNodeContent(command, iter->GetCommand());
+        command->AddProperty(wxT("Enabled"), BoolToString(cmd.GetEnabled()));
+        XmlUtils::SetNodeContent(command, cmd.GetCommand());
         preBuild->AddChild(command);
     }
 
     // add postbuild commands
     wxXmlNode* postBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("PostBuild"));
     node->AddChild(postBuild);
-    iter = m_postBuildCommands.begin();
-    for(; iter != m_postBuildCommands.end(); iter++) {
+
+    for(const auto& cmd : m_postBuildCommands) {
+        if(!cmd.IsOk()) {
+            continue;
+        }
+
         wxXmlNode* command = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Command"));
-        command->AddProperty(wxT("Enabled"), BoolToString(iter->GetEnabled()));
-        XmlUtils::SetNodeContent(command, iter->GetCommand());
+        command->AddProperty(wxT("Enabled"), BoolToString(cmd.GetEnabled()));
+        XmlUtils::SetNodeContent(command, cmd.GetCommand());
         postBuild->AddChild(command);
     }
 
@@ -491,28 +504,67 @@ wxXmlNode* BuildConfig::ToXml() const
     return node;
 }
 
-void BuildConfig::SetPreprocessor(const wxString& pre) { m_commonConfig.SetPreprocessor(pre); }
+void BuildConfig::SetPreprocessor(const wxString& pre)
+{
+    m_commonConfig.SetPreprocessor(pre);
+}
 
-void BuildConfig::SetIncludePath(const wxString& path) { m_commonConfig.SetIncludePath(path); }
+void BuildConfig::SetIncludePath(const wxString& path)
+{
+    m_commonConfig.SetIncludePath(path);
+}
 
-void BuildConfig::SetLibraries(const wxString& libs) { m_commonConfig.SetLibraries(libs); }
+void BuildConfig::SetLibraries(const wxString& libs)
+{
+    m_commonConfig.SetLibraries(libs);
+}
 
-void BuildConfig::SetLibPath(const wxString& paths) { m_commonConfig.SetLibPath(paths); }
+void BuildConfig::SetLibPath(const wxString& paths)
+{
+    m_commonConfig.SetLibPath(paths);
+}
 
-wxString BuildConfig::GetLibPath() const { return m_commonConfig.GetLibPath(); }
+wxString BuildConfig::GetLibPath() const
+{
+    return m_commonConfig.GetLibPath();
+}
 
-wxString BuildConfig::GetLibraries() const { return m_commonConfig.GetLibraries(); }
+wxString BuildConfig::GetLibraries() const
+{
+    return m_commonConfig.GetLibraries();
+}
 
-wxString BuildConfig::GetIncludePath() const { return m_commonConfig.GetIncludePath(); }
+wxString BuildConfig::GetIncludePath() const
+{
+    return m_commonConfig.GetIncludePath();
+}
 
-wxString BuildConfig::GetPreprocessor() const { return m_commonConfig.GetPreprocessor(); }
+wxString BuildConfig::GetPreprocessor() const
+{
+    return m_commonConfig.GetPreprocessor();
+}
 
-wxString BuildConfig::GetOutputFileName() const { return NormalizePath(m_outputFile); }
+wxString BuildConfig::GetOutputFileName() const
+{
+    return NormalizePath(m_outputFile);
+}
 
-wxString BuildConfig::GetIntermediateDirectory() const { return NormalizePath(m_intermediateDirectory); }
+wxString BuildConfig::GetIntermediateDirectory() const
+{
+    return NormalizePath(m_intermediateDirectory);
+}
 
-wxString BuildConfig::GetWorkingDirectory() const { return NormalizePath(m_workingDirectory); }
+wxString BuildConfig::GetWorkingDirectory() const
+{
+    return NormalizePath(m_workingDirectory);
+}
 
-CompilerPtr BuildConfig::GetCompiler() const { return BuildSettingsConfigST::Get()->GetCompiler(GetCompilerType()); }
+CompilerPtr BuildConfig::GetCompiler() const
+{
+    return BuildSettingsConfigST::Get()->GetCompiler(GetCompilerType());
+}
 
-BuilderPtr BuildConfig::GetBuilder() { return BuildManagerST::Get()->GetBuilder(GetBuildSystem()); }
+BuilderPtr BuildConfig::GetBuilder()
+{
+    return BuildManagerST::Get()->GetBuilder(GetBuildSystem());
+}

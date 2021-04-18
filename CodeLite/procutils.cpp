@@ -22,6 +22,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#ifdef __FreeBSD__
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <sys/user.h>
+#include <fcntl.h>
+#include <kvm.h>
+#include <paths.h>
+#endif
+
 #include "asyncprocess.h"
 #include "fileutils.h"
 #include "procutils.h"
@@ -40,15 +49,6 @@
 #define popen _popen
 #endif
 
-#endif
-
-#ifdef __FreeBSD__
-#include <fcntl.h>
-#include <kvm.h>
-#include <paths.h>
-#include <sys/param.h>
-#include <sys/sysctl.h>
-#include <sys/user.h>
 #endif
 
 static wxString WrapWithShell(const wxString& cmd)

@@ -14,7 +14,7 @@ RibbonPageWrapper::RibbonPageWrapper()
     SetPropertyString(_("Common Settings"), "wxRibbonPage");
     AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Page Icon")));
     AddProperty(new StringProperty(PROP_LABEL, "Page", _("Page Label")));
-    AddProperty(new BoolProperty(PROP_SELECTED, "Selected", _("Selected")));
+    AddProperty(new BoolProperty(PROP_SELECTED, false, _("Selected")));
     m_namePattern = "m_ribbonPage";
     SetName(GenerateName());
 }

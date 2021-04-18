@@ -8,7 +8,7 @@ BitmapToggleButtonWrapper::BitmapToggleButtonWrapper()
 {
     SetPropertyString(_("Common Settings"), "wxBitmapToggleButton");
     AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", _("The bitmap")));
-    AddProperty(new BoolProperty(PROP_CHECKED, wxT("Initial state"), _("The button initial state")));
+    AddProperty(new BoolProperty(PROP_CHECKED, false, _("The button initial state")));
 
     PREPEND_STYLE(wxBU_BOTTOM, false);
     PREPEND_STYLE(wxBU_EXACTFIT, false);

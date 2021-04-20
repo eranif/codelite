@@ -64,17 +64,44 @@ protected:
     wxButton* m_button13;
 
 protected:
-    virtual void OnLocalBrowse(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnRemoteBrowse(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnLocalBrowse(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnRemoteBrowse(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnOKUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxStaticText* GetStaticText17() { return m_staticText17; }
-    clThemedComboBox* GetComboBoxLocal() { return m_comboBoxLocal; }
-    wxButton* GetButton29() { return m_button29; }
-    wxStaticText* GetStaticText21() { return m_staticText21; }
-    clThemedComboBox* GetComboBoxRemote() { return m_comboBoxRemote; }
-    wxButton* GetButton31() { return m_button31; }
+    wxStaticText* GetStaticText17()
+    {
+        return m_staticText17;
+    }
+    clThemedComboBox* GetComboBoxLocal()
+    {
+        return m_comboBoxLocal;
+    }
+    wxButton* GetButton29()
+    {
+        return m_button29;
+    }
+    wxStaticText* GetStaticText21()
+    {
+        return m_staticText21;
+    }
+    clThemedComboBox* GetComboBoxRemote()
+    {
+        return m_comboBoxRemote;
+    }
+    wxButton* GetButton31()
+    {
+        return m_button31;
+    }
     RemotySwitchToWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                                    const wxString& title = _("Switch to workspace..."),
                                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
@@ -95,15 +122,36 @@ protected:
     wxButton* m_button41;
 
 protected:
-    virtual void OnBrowse(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBrowse(wxCommandEvent& event)
+    {
+        event.Skip();
+    }
+    virtual void OnOKUI(wxUpdateUIEvent& event)
+    {
+        event.Skip();
+    }
 
 public:
-    wxStaticText* GetStaticText45() { return m_staticText45; }
-    wxTextCtrl* GetTextCtrlPath() { return m_textCtrlPath; }
-    wxButton* GetButton49() { return m_button49; }
-    wxStaticText* GetStaticText59() { return m_staticText59; }
-    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText45()
+    {
+        return m_staticText45;
+    }
+    wxTextCtrl* GetTextCtrlPath()
+    {
+        return m_textCtrlPath;
+    }
+    wxButton* GetButton49()
+    {
+        return m_button49;
+    }
+    wxStaticText* GetStaticText59()
+    {
+        return m_staticText59;
+    }
+    wxTextCtrl* GetTextCtrlName()
+    {
+        return m_textCtrlName;
+    }
     RemotyNewWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                               const wxString& title = _("New File System Workspace (remote)"),
                               const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),

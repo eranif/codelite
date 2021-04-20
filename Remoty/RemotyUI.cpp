@@ -32,7 +32,9 @@ RemotyWorkspaceViewBase::RemotyWorkspaceViewBase(wxWindow* parent, wxWindowID id
     }
 }
 
-RemotyWorkspaceViewBase::~RemotyWorkspaceViewBase() {}
+RemotyWorkspaceViewBase::~RemotyWorkspaceViewBase()
+{
+}
 
 RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
                                                                const wxPoint& pos, const wxSize& size, long style)
@@ -63,6 +65,7 @@ RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent,
     wxArrayString m_comboBoxLocalArr;
     m_comboBoxLocal = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition,
                                            wxDLG_UNIT(this, wxSize(250, -1)), m_comboBoxLocalArr, 0);
+    m_comboBoxLocal->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_comboBoxLocal->SetHint(wxT(""));
 #endif
@@ -81,7 +84,6 @@ RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent,
     wxArrayString m_comboBoxRemoteArr;
     m_comboBoxRemote = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition,
                                             wxDLG_UNIT(this, wxSize(-1, -1)), m_comboBoxRemoteArr, 0);
-    m_comboBoxRemote->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_comboBoxRemote->SetHint(wxT(""));
 #endif

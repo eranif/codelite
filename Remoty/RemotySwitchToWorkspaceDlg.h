@@ -1,25 +1,25 @@
 #ifndef REMOTYSWITCHTOWORKSPACEDLG_H
 #define REMOTYSWITCHTOWORKSPACEDLG_H
 #include "RemotyUI.h"
+#include <unordered_map>
 
 class RemotySwitchToWorkspaceDlg : public RemotySwitchToWorkspaceDlgBase
 {
+    std::unordered_map<wxString, wxString> m_displayToRemotePath;
+
 public:
     RemotySwitchToWorkspaceDlg(wxWindow* parent);
     virtual ~RemotySwitchToWorkspaceDlg();
-    bool IsRemote() const { return !m_comboBoxRemote->GetValue().empty(); }
-    wxString GetPath() const
+    bool IsRemote() const
     {
-        if(IsRemote()) {
-            return m_comboBoxRemote->GetValue();
-        } else {
-            return m_comboBoxLocal->GetValue();
-        }
+        return !m_comboBoxRemote->GetValue().empty();
     }
+    wxString GetPath() const;
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event);
-    virtual void OnLocalBrowse(wxCommandEvent& event);
-    virtual void OnRemoteBrowse(wxCommandEvent& event);
+    void OnOKUI(wxUpdateUIEvent& event) override;
+    void OnLocalBrowse(wxCommandEvent& event) override;
+    void OnRemoteBrowse(wxCommandEvent& event) override;
+    wxString GetDisplayStringFromFullPath(const wxString& full_path) const;
 };
 #endif // REMOTYSWITCHTOWORKSPACEDLG_H

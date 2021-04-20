@@ -1,9 +1,12 @@
 #include "RemotySwitchToWorkspaceDlg.h"
 #include "SFTPBrowserDlg.h"
 #include "cl_config.h"
+#include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "wx/dirdlg.h"
 #include "wx/filedlg.h"
+#include <wx/tokenzr.h>
 
 RemotySwitchToWorkspaceDlg::RemotySwitchToWorkspaceDlg(wxWindow* parent)
     : RemotySwitchToWorkspaceDlgBase(parent)
@@ -14,7 +17,13 @@ RemotySwitchToWorkspaceDlg::RemotySwitchToWorkspaceDlg(wxWindow* parent)
 
     // load any recent remote workspaces loaded
     auto recentRemoteWorkspaces = clConfig::Get().Read("remoty/recent_workspaces", wxArrayString());
-    m_comboBoxRemote->Append(recentRemoteWorkspaces);
+    wxArrayString paths;
+    paths.reserve(recentRemoteWorkspaces.size());
+    for(const auto& recent_path : recentRemoteWorkspaces) {
+        paths.Add(GetDisplayStringFromFullPath(recent_path));
+        m_displayToRemotePath.insert({ paths.Last(), recent_path });
+    }
+    m_comboBoxRemote->Append(paths);
     GetSizer()->Fit(this);
     CenterOnParent();
 }
@@ -24,7 +33,12 @@ RemotySwitchToWorkspaceDlg::~RemotySwitchToWorkspaceDlg()
     auto recentRemoteWorkspaces = clConfig::Get().Read("remoty/recent_workspaces", wxArrayString());
     auto selection = m_comboBoxRemote->GetValue();
     selection.Trim().Trim(false);
-    if(!selection.empty() && (recentRemoteWorkspaces.Index(selection) == wxNOT_FOUND)) {
+    if(m_displayToRemotePath.count(selection) == 0) {
+        return;
+    }
+
+    const wxString& full_path = m_displayToRemotePath[selection];
+    if(!selection.empty() && (recentRemoteWorkspaces.Index(full_path) == wxNOT_FOUND)) {
         recentRemoteWorkspaces.Add(selection);
         recentRemoteWorkspaces.Sort();
         clConfig::Get().Write("remoty/recent_workspaces", recentRemoteWorkspaces);
@@ -61,10 +75,53 @@ void RemotySwitchToWorkspaceDlg::OnRemoteBrowse(wxCommandEvent& event)
     }
 
     // build the path
-    wxString remotePath;
-    remotePath << "ssh://" << account.GetUsername() << "@" << account.GetHost() << ":" << account.GetPort() << ":"
-               << path;
-    m_comboBoxRemote->SetValue(remotePath);
+    auto parts = ::wxStringTokenize(path, "/", wxTOKEN_STRTOK);
+    wxString full_path;
+    full_path << "ssh://" << account.GetUsername() << "@" << account.GetHost() << ":" << account.GetPort() << ":"
+              << path;
+
+    wxString display_path = GetDisplayStringFromFullPath(full_path);
+    m_comboBoxRemote->SetValue(display_path);
+    m_displayToRemotePath.insert({ display_path, full_path });
 }
 
-void RemotySwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!GetPath().IsEmpty()); }
+void RemotySwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!GetPath().IsEmpty());
+}
+
+wxString RemotySwitchToWorkspaceDlg::GetPath() const
+{
+    if(IsRemote()) {
+        return m_displayToRemotePath.find(m_comboBoxRemote->GetValue())->second;
+    } else {
+        return m_comboBoxLocal->GetValue();
+    }
+}
+
+wxString RemotySwitchToWorkspaceDlg::GetDisplayStringFromFullPath(const wxString& full_path) const
+{
+    wxString path, scheme, user_name, remote_server, port;
+    FileUtils::ParseURI(full_path, path, scheme, user_name, remote_server, port);
+
+    long nPort = 22;
+    port.ToCLong(&nPort);
+
+    auto accounts = SSHAccountInfo::Load([&](const SSHAccountInfo& acc) -> bool {
+        return acc.GetUsername() == user_name && acc.GetPort() == nPort && acc.GetHost() == remote_server;
+    });
+
+    if(accounts.size() != 1) {
+        return full_path;
+    }
+    const auto& account = accounts[0];
+
+    wxString display_path;
+    auto parts = ::wxStringTokenize(path, "/", wxTOKEN_STRTOK);
+    if(!parts.empty()) {
+        display_path = parts.Last() + "@" + account.GetAccountName();
+    } else {
+        display_path = full_path;
+    }
+    return display_path;
+}

@@ -20,12 +20,52 @@ You can create a workspace for an existing source files or create a new workspac
 - Optionally, check the option to create the workspace on a separate directory
 
 !!! Tip
-    To create a workspace from an existing code base, select the workspace path to your code base location
-    and make sure you un-check the option `Create the workspace in a separate directory`
+    To create a workspace from an existing source code base, set the workspace path to your code base location
+    and make sure you un-checked the option `Create the workspace in a separate directory`
 
 !!! Tip
     Another way of creating a workspace from an existing code base: Open your file browser (Windows Explorer, Dolphin, Finder etc)
     drag the source code folder and drop it on the workspace view
 
 
+## Hello World
+---
 
+### Creating and running `hello world` 
+---
+
+- Create a new workspace as described [here](#create-a-new-workspace)
+- Add an empty file to the workspace by right clicking on the folder and selecting `New File`
+- In the dialog that is shown, set the file name to `test.js`
+- Paste the following content and save the file:
+
+```JavaScript
+function printHelloWorld() {
+    console.log("Hello World");
+}
+
+printHelloWorld();
+```
+
+- Click ++ctrl+f5++ to execute it
+- In the dialog that shown, click `OK`
+
+### Debugging
+----
+
+- Click ++f5++ to lauchn the debugger dialog
+- Accept the default values and click `OK`
+- You are ready to debug, use the following table to get started with the debugger:
+
+ Keyboard shortcut                           | Description
+ ------------------------------------        |--------------
+ ++f9++                                      | Toggle a breakpoint on the current line
+ ++f5++                                      | Start or resume the debugger operation
+ ++f10++                                     | Next line
+ ++f11++                                     | Step into a function
+ ++shift+f11++                               | Step out of a function
+ Hover over a variable and click ++ctrl++    | Display the debugger tooltip
+++shift+f5++                                 | Stop the debugger
+
+!!! Tip
+    All the above shortcuts can be changed from the [keyboard shortcuts dialog](../settings/keyboard_shortcuts.md)

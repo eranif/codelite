@@ -62,9 +62,15 @@ clRemoteDirCtrlItemData* clRemoteDirCtrl::GetItemData(const wxTreeItemId& item) 
     return cd;
 }
 
-void clRemoteDirCtrl::OnItemActivated(wxTreeEvent& event) { DoOpenItem(event.GetItem(), kOpenInCodeLite); }
+void clRemoteDirCtrl::OnItemActivated(wxTreeEvent& event)
+{
+    DoOpenItem(event.GetItem(), kOpenInCodeLite);
+}
 
-void clRemoteDirCtrl::OnItemExpanding(wxTreeEvent& event) { DoExpandItem(event.GetItem()); }
+void clRemoteDirCtrl::OnItemExpanding(wxTreeEvent& event)
+{
+    DoExpandItem(event.GetItem());
+}
 
 bool clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
 {
@@ -331,6 +337,11 @@ void clRemoteDirCtrl::DoCreateFolder(const wxTreeItemId& item, const wxString& n
         return;
     }
 
+    if(!cd->IsInitialized()) {
+        // make sure that the folder is expanded
+        DoExpandItem(item);
+    }
+
     clRemoteDirCtrlItemData* itemData = new clRemoteDirCtrlItemData(fullpath);
     itemData->SetFolder();
     int imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
@@ -339,6 +350,9 @@ void clRemoteDirCtrl::DoCreateFolder(const wxTreeItemId& item, const wxString& n
     auto child = m_treeCtrl->AppendItem(item, name, imgIdx, expandImgIDx, itemData);
     // append dummy item, to get the 'expand' icon
     m_treeCtrl->AppendItem(child, "<dummy>");
+    if(!m_treeCtrl->IsExpanded(item)) {
+        m_treeCtrl->Expand(item);
+    }
     m_treeCtrl->SelectItem(child); // select the newly added folder
 }
 
@@ -366,6 +380,9 @@ void clRemoteDirCtrl::DoCreateFile(const wxTreeItemId& item, const wxString& nam
     int imgIdx = clGetManager()->GetStdIcons()->GetMimeImageId(name);
     int expandImgIDx = wxNOT_FOUND;
     auto childItem = m_treeCtrl->AppendItem(item, name, imgIdx, expandImgIDx, itemData);
+    if(!m_treeCtrl->IsExpanded(item)) {
+        m_treeCtrl->Expand(item);
+    }
     m_treeCtrl->SelectItem(childItem);
     CallAfter(&clRemoteDirCtrl::DoOpenItem, childItem, kOpenInCodeLite);
 }
@@ -429,7 +446,10 @@ void clRemoteDirCtrl::DoDelete(const wxTreeItemId& item)
     }
 }
 
-bool clRemoteDirCtrl::IsConnected() const { return !m_treeCtrl->IsEmpty() && !m_account.GetAccountName().IsEmpty(); }
+bool clRemoteDirCtrl::IsConnected() const
+{
+    return !m_treeCtrl->IsEmpty() && !m_account.GetAccountName().IsEmpty();
+}
 
 wxString clRemoteDirCtrl::GetSelectedFolder() const
 {

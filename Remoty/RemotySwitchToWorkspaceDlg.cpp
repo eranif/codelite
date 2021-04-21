@@ -39,7 +39,7 @@ RemotySwitchToWorkspaceDlg::~RemotySwitchToWorkspaceDlg()
 
     const wxString& full_path = m_displayToRemotePath[selection];
     if(!selection.empty() && (recentRemoteWorkspaces.Index(full_path) == wxNOT_FOUND)) {
-        recentRemoteWorkspaces.Add(selection);
+        recentRemoteWorkspaces.Add(full_path);
         recentRemoteWorkspaces.Sort();
         clConfig::Get().Write("remoty/recent_workspaces", recentRemoteWorkspaces);
     }

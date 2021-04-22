@@ -188,6 +188,64 @@ On the above pages (`Compiler`, `Linker` and `Resources`) you can set the mergin
 | Prepend | The page properties are prepended to the global settings|
 | Overwrite | The page properties overwrite the global settings|
 
+## The Configuration Manager
+---
+
+CodeLite supports multiple build configurations, i.e. you can build your code in Release, Debug or any other configuration that you have defined 
+via the configuration manager (from menu, `Build` &#8594; `configuration Manager...`) 
+To switch between the defined configuration, change the selection of the drop down button at the top of the workspace view:
+
+![configuration manager menu](configuration-manager-menu.png)
+
+![configuration manager dialogue](configuration-manager-dlg.png)
+
+The dialog has two sections, Workspace Configuration at the top, and Available Project Configurations below; 
+the latter showing every project in this workspace. Let's start with Projects, as it'll be easier to understand that way
+
+### Project Configurations
+---
+
+Each project is created with two default configurations, `Debug` and `Release`. 
+If you open the drop down arrow right to the project entry, you'll see an entry for each of these, plus items `Edit` and `New`:
+
+![](configuration-manager-project-menu.png)
+
+- `Edit` just lets you rename or delete an item. 
+- `New` is more interesting. It brings up a dialog where you're asked for a name for the new configuration, and you also have the opportunity to clone the contents of one of the existing settings; this saves you from having to re-enter all the non-default data each time.
+
+So why would you want to do this? Isn't having a `Debug` and a `Release` build enough for anyone? 
+No, there are various other things you might want to do. You might decide to have a build that links to `wxWidgets` statically, 
+and another dynamically; or a unicode build and an ANSI one. You might want to build your app as a library as well as an executable, 
+and as either a static or a dynamic one.
+
+Another reason for having multiple builds is multiple wxWidgets versions (if you're using CodeLite to create non-wxWidgets programs, substitute your own toolkit's name here ;). You probably have installed a recent version of wxWidgets stable, but what if you wish to make sure your project builds against wxWidgets svn trunk? Or to check compatibility with an older wxWidgets e.g. 2.6.4, or even 2.4.2?
+
+Yet another reason: compiling on different platforms. If you build your project on `MSWindows`, `Linux` and `macOS`, you'll need a build (or several) for each.
+So I've convinced you that you just must have a different available build for every day of the week. I suggest you give each a descriptive name e.g. `wx2.8.9ud`
+
+### Project Settings
+---
+So far, you've just duplicated an existing build-type (or used the defaults), and given it a different label. 
+Now you have to make `wx2.8.9ud` actually have 2.9 unicode debug settings. 
+For this you use the Project Settings dialog. At the top of this dialog, change the Configuration Type combobox selection to `wx2.8.9ud` 
+Then go through the tabs, altering any relevant settings (in this example, you'll need to make the entries on the Compiler and Linker tabs call a 2.9 unicode debug `wx-config`).
+Your new project configuration is now available to use in a workspace build matrix. 
+
+### Workspace Configuration
+---
+
+At the top of the Configuration Manager dialog is the Workspace Configuration combobox. 
+This also comes with four entries: two default build matrices, `Debug` and `Release`, plus `Edit` and `New`. 
+If you change the setting e.g. from Debug to Release, the project combobox(es) should change to match.
+
+
+- Again: `Edit` lets you rename or delete an item. 
+- This time, `New` just asks for a name for the new build matrix; it will usually make sense to give it the same name as the builds it will contain, so let's make one called wx2.8.9ud. Now select this in the Workspace Configuration combobox, and in the project combobox select wx2.8.9ud too. Click `OK` and your new configuration is ready.
+
+You can change to a wx2.8.9ud build with just a mouse-click, by selecting it in the 'Selected Configuration' combobox in the Workspace View. Now building will use your 2.9 unicode debug wxWidgets installation instead of the normal one.
+
+By now you're probably thinking that this is an over-complicated way to do things. Why not just change at the project level, and not bother with a workspace build matrix? As usual, for 'Hello World' you're right. But doing it this way gives you much more flexibility with larger, real-world apps. CodeLite itself is a good example of this. The workspace (currently) contains 18 projects. Two have a build (sensibly called 'common') that stays the same on each platform; but the other 16 have a build for MSWindows and another for Linux/Mac. Without the build-matrix idea, compiling for a different platform would mean changing the build type on 16 projects; with it, you need only to select a different build matrix, and each project is adjusted automatically. 
+
 ## Active project
 ---
 

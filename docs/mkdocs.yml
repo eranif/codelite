@@ -15,7 +15,9 @@ nav:
         - Node.js (via plugin): workspaces/nodejs.md
     - Code Completion:
         - C/C++: code_completion/cxx.md
-        
+    - Plugins:
+        - Language Server Protocol: plugins/lsd.md
+
 theme:
     name: material
     palette:

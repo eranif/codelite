@@ -24,9 +24,6 @@ theme:
     font:
         text: Roboto
         code: Roboto Mono
-#theme:
-#    name: mkdocs
-#
 
 markdown_extensions:
         - pymdownx.keys

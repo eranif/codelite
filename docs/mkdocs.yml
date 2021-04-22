@@ -13,11 +13,13 @@ nav:
         - File System Workspace: workspaces/file_system.md
         - PHP (via plugin): workspaces/php.md
         - Node.js (via plugin): workspaces/nodejs.md
-
+    - Code Completion:
+        - C/C++: code_completion/cxx.md
+        
 theme:
     name: material
     palette:
-        primary: green
+        primary: white
     highlightjs: true
     font:
         text: Roboto

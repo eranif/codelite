@@ -78,6 +78,8 @@
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/dataobj.h>
 #include <wx/dcmemory.h>
+#include <wx/filefn.h>
+#include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/printdlg.h>
 #include <wx/regex.h>
@@ -1593,6 +1595,9 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
 
     // Do all the writing on the temporary file
     wxFileName intermediateFile(fileName);
+
+    // Make sure that the folder does exist
+    intermediateFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     intermediateFile.SetFullName("~" + fileName.GetFullName() + "." + ::wxGetUserId());
 
     {

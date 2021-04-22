@@ -42,7 +42,6 @@ HelpPlugin::HelpPlugin(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &HelpPlugin::OnHelp, this, XRCID("ID_ZEAL_HELP"));
     Bind(wxEVT_MENU, &HelpPlugin::OnHelpSettings, this, XRCID("ID_ZEAL_SETTINGS"));
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &HelpPlugin::OnEditorContextMenu, this);
-    clKeyboardManager::Get()->AddGlobalAccelerator("ID_ZEAL_HELP", "F1", "Help::Search the docs for selected text");
 }
 
 HelpPlugin::~HelpPlugin() {}

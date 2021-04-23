@@ -16,7 +16,7 @@ nav:
     - Code Completion:
         - C/C++: code_completion/cxx.md
     - Plugins:
-        - Language Server Protocol: plugins/lsd.md
+        - Language Server Protocol: plugins/lsp.md
 
 theme:
     name: material

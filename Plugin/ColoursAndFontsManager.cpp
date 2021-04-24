@@ -1162,5 +1162,4 @@ void ColoursAndFontsManager::SetThemeTextSelectionColours(const wxString& theme_
             lexer->SetUseCustomTextSelectionFgColour(useCustomerFgColour);
         }
     }
-    Save();
 }

@@ -108,6 +108,7 @@ protected:
     void DoSetGlobalBgColour(const wxColour& colour);
     void DoShowTooltipForGlobalBgColourChanged();
     void DoExport(const wxArrayString& lexers = wxArrayString());
+    void UpdateTextSelectionColours();
 
 public:
     /** Constructor */

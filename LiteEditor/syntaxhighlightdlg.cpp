@@ -287,6 +287,9 @@ void SyntaxHighlightDlg::SaveChanges()
     clConfig::Get().Write("BaseColour", m_colourPickerBaseColour->GetColour());
     clConfig::Get().Write("UseCustomBaseColour", m_cbUseCustomBaseColour->IsChecked());
 
+    // Update the text selection colours
+    UpdateTextSelectionColours();
+
     // Now save the changes to the file system
     ColoursAndFontsManager::Get().Save();
     m_isModified = false;
@@ -594,9 +597,7 @@ void SyntaxHighlightDlg::OnSelTextFgChanged(wxColourPickerEvent& event)
     CHECK_PTR_RET(m_lexer);
     event.Skip();
     m_isModified = true;
-    ColoursAndFontsManager::Get().SetThemeTextSelectionColours(
-        m_lexer->GetThemeName(), m_colourPickerSelTextBgColour->GetColour(), m_colourPickerSelTextFgColour->GetColour(),
-        m_checkBoxCustomSelectionFgColour->IsChecked());
+    UpdateTextSelectionColours();
 }
 
 void SyntaxHighlightDlg::OnUseCustomFgTextColour(wxCommandEvent& event)
@@ -604,9 +605,14 @@ void SyntaxHighlightDlg::OnUseCustomFgTextColour(wxCommandEvent& event)
     CHECK_PTR_RET(m_lexer);
     event.Skip();
     m_isModified = true;
+    UpdateTextSelectionColours();
+}
+
+void SyntaxHighlightDlg::UpdateTextSelectionColours()
+{
     ColoursAndFontsManager::Get().SetThemeTextSelectionColours(
         m_lexer->GetThemeName(), m_colourPickerSelTextBgColour->GetColour(), m_colourPickerSelTextFgColour->GetColour(),
-        event.IsChecked());
+        m_checkBoxCustomSelectionFgColour->IsChecked());
 }
 
 void SyntaxHighlightDlg::OnNewTheme(wxCommandEvent& event)

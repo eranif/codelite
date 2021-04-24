@@ -1,17 +1,24 @@
 #ifndef REMOTYWORKSPACEVIEW_H
 #define REMOTYWORKSPACEVIEW_H
 #include "RemotyUI.h"
+#include "asyncprocess.h"
 #include "clRemoteDirCtrl.hpp"
+#include "clRemoteFinderHelper.hpp"
+#include "cl_command_event.h"
+#include <wx/stopwatch.h>
 
 class RemotyWorkspace;
 class RemotyWorkspaceView : public RemotyWorkspaceViewBase
 {
     clRemoteDirCtrl* m_tree = nullptr;
     RemotyWorkspace* m_workspace = nullptr;
+    clRemoteFinderHelper m_remoteFinder;
 
 protected:
     void OnDirContextMenu(clContextMenuEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
+    void OnFindInFilesShowing(clFindInFilesEvent& event);
+    void OnOpenFindInFilesMatch(clFindInFilesEvent& event);
 
 public:
     RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace);

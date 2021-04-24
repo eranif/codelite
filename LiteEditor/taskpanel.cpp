@@ -22,19 +22,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/xrc/xmlres.h>
+#include "clStrings.h"
+#include "clWorkspaceManager.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "frame.h"
+#include "macros.h"
+#include "manager.h"
+#include "taskpanel.h"
+#include "tasks_find_what_dlg.h"
 #include "taskspaneldata.h"
 #include <wx/fontmap.h>
-#include "tasks_find_what_dlg.h"
 #include <wx/tglbtn.h>
-#include "frame.h"
-#include "manager.h"
-#include "macros.h"
-#include "taskpanel.h"
-#include "clWorkspaceManager.h"
-#include "event_notifier.h"
-#include "clStrings.h"
+#include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(TaskPanel, FindResultsTab)
 EVT_BUTTON(wxID_FIND, TaskPanel::OnSearch)
@@ -87,11 +87,13 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
         wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
         size_t pos = astrEncodings.Add(encodingName);
 
-        if(d.GetEncoding() == encodingName) selection = static_cast<int>(pos);
+        if(d.GetEncoding() == encodingName)
+            selection = static_cast<int>(pos);
     }
 
     m_choiceEncoding->Append(astrEncodings);
-    if(m_choiceEncoding->IsEmpty() == false) m_choiceEncoding->SetSelection(selection);
+    if(m_choiceEncoding->IsEmpty() == false)
+        m_choiceEncoding->SetSelection(selection);
 
     m_choiceEncoding->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected), NULL,
                               this);
@@ -106,10 +108,15 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
 
     mainSizer->Add(hSizer, 1, wxEXPAND | wxALL, 1);
     mainSizer->Layout();
+
+    // unbind the search events for this instance and re-bind them to the 'this'
+    UnbindSearchEvents(EventNotifier::Get());
+    BindSearchEvents(this);
 }
 
 TaskPanel::~TaskPanel()
 {
+    UnbindSearchEvents(this);
     m_choiceEncoding->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected),
                                  NULL, this);
 }
@@ -138,10 +145,12 @@ SearchData TaskPanel::DoGetSearchData()
 
         regex.Trim().Trim(false);
         wxRegEx re(regex);
-        if(enabled && !regex.IsEmpty() && re.IsValid()) sfind << wxT("(") << regex << wxT(")|");
+        if(enabled && !regex.IsEmpty() && re.IsValid())
+            sfind << wxT("(") << regex << wxT(")|");
     }
 
-    if(sfind.empty() == false) sfind.RemoveLast();
+    if(sfind.empty() == false)
+        sfind.RemoveLast();
 
     data.SetFindString(sfind);
 
@@ -160,9 +169,15 @@ void TaskPanel::OnSearch(wxCommandEvent& e)
     SearchThreadST::Get()->PerformSearch(sd);
 }
 
-void TaskPanel::OnSearchUI(wxUpdateUIEvent& e) { e.Enable(clWorkspaceManager::Get().IsWorkspaceOpened()); }
+void TaskPanel::OnSearchUI(wxUpdateUIEvent& e)
+{
+    e.Enable(clWorkspaceManager::Get().IsWorkspaceOpened());
+}
 
-void TaskPanel::OnRepeatOutput(wxCommandEvent& e) { OnSearch(e); }
+void TaskPanel::OnRepeatOutput(wxCommandEvent& e)
+{
+    OnSearch(e);
+}
 
 void TaskPanel::OnFindWhat(wxCommandEvent& e)
 {

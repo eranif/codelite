@@ -236,7 +236,7 @@ wxArrayString clComboBox::GetStrings() const
 {
     wxArrayString strings;
     strings.reserve(m_choices.size() + 1);
-    if(GetSelection() == INVALID_SIZE_T) {
+    if(GetSelection() == INVALID_SIZE_T && !GetValue().empty()) {
         strings.Add(GetValue());
     }
     strings.insert(strings.end(), m_choices.begin(), m_choices.end());

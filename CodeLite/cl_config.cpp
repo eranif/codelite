@@ -26,6 +26,8 @@
 #include "cl_config.h"
 #include "cl_defs.h"
 #include "cl_standard_paths.h"
+#include "fileutils.h"
+#include "wx/filename.h"
 #include <algorithm>
 #include <wx/filefn.h>
 #include <wx/log.h>
@@ -82,7 +84,10 @@ clConfig::clConfig(const wxString& filename)
     }
 }
 
-clConfig::~clConfig() { wxDELETE(m_root); }
+clConfig::~clConfig()
+{
+    wxDELETE(m_root);
+}
 
 clConfig& clConfig::Get()
 {
@@ -152,6 +157,39 @@ bool clConfig::ReadItem(clConfigItem* item, const wxString& differentName)
         return true;
     }
     return false;
+}
+
+bool clConfig::Write(const wxString& name, std::function<JSONItem()> serialiser_func, const wxFileName& configFile)
+{
+    auto item = serialiser_func();
+    if(configFile.IsOk()) {
+        // write to a separate file
+        configFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        return FileUtils::WriteFileContent(configFile, item.format());
+    } else {
+        // add it to the global configuration file
+        DoDeleteProperty(name);
+        item.setName(name);
+        m_root->toElement().append(item);
+        return true;
+    }
+}
+
+void clConfig::Read(const wxString& name, std::function<void(const JSONItem& item)> deserialiser_func,
+                    const wxFileName& configFile)
+{
+    if(configFile.IsOk() && configFile.FileExists()) {
+        JSON root(configFile);
+        if(!root.isOk()) {
+            return;
+        }
+        deserialiser_func(root.toElement());
+    } else {
+        auto root = m_root->toElement();
+        if(root.hasNamedObject(name)) {
+            deserialiser_func(root[name]);
+        }
+    }
 }
 
 void clConfig::WriteItem(const clConfigItem* item, const wxString& differentName)

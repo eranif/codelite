@@ -4,6 +4,7 @@
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
 #include "clFileSystemWorkspace.hpp"
+#include "clRemoteFindDialog.h"
 #include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
@@ -108,7 +109,6 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemotyWorkspace::OnBuildHotspotClicked, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyWorkspace::OnNewWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &RemotyWorkspace::OnFindInFilesShowing, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemotyWorkspace::OnBuildProcessTerminated, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemotyWorkspace::OnBuildProcessOutput, this);
 }
@@ -126,8 +126,7 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyWorkspace::OnNewWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &RemotyWorkspace::OnDebugStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
-    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &RemotyWorkspace::OnFindInFilesShowing, this);
-    
+
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemotyWorkspace::OnBuildProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemotyWorkspace::OnBuildProcessOutput, this);
     m_eventsConnected = false;
@@ -674,14 +673,4 @@ void RemotyWorkspace::OnDebugEnded(clDebugEvent& event)
 {
     event.Skip();
     m_remote_terminal.reset();
-}
-
-void RemotyWorkspace::OnFindInFilesShowing(clFindInFilesEvent& event)
-{
-    event.Skip();
-    if(!IsOpened())
-        return;
-
-    // override the default find in files dialog
-    event.Skip(false);
 }

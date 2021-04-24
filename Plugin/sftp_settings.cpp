@@ -74,7 +74,7 @@ SFTPSettings& SFTPSettings::Load()
 {
     clConfig config("sftp-settings.conf");
     config.ReadItem(this);
-    MSWImportPuTTYAccounts();
+//    MSWImportPuTTYAccounts();
     return *this;
 }
 

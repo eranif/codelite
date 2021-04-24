@@ -26,8 +26,10 @@
 #ifndef CLCONFIG_H
 #define CLCONFIG_H
 
-#include "codelite_exports.h"
 #include "JSON.h"
+#include "codelite_exports.h"
+#include "wx/filename.h"
+#include <functional>
 #include <map>
 
 ////////////////////////////////////////////////////////
@@ -43,11 +45,19 @@ public:
     {
     }
 
-    virtual ~clConfigItem() {}
+    virtual ~clConfigItem()
+    {
+    }
 
-    const wxString& GetName() const { return m_name; }
+    const wxString& GetName() const
+    {
+        return m_name;
+    }
 
-    void SetName(const wxString& name) { this->m_name = name; }
+    void SetName(const wxString& name)
+    {
+        this->m_name = name;
+    }
     virtual void FromJSON(const JSONItem& json) = 0;
     virtual JSONItem ToJSON() const = 0;
 };
@@ -89,7 +99,7 @@ protected:
     wxFileName m_filename;
     JSON* m_root;
     std::map<wxString, wxArrayString> m_cacheRecentItems;
-    
+
 protected:
     void DoDeleteProperty(const wxString& property);
     JSONItem GetGeneralSetting();
@@ -117,17 +127,34 @@ public:
 
     // Merge 2 arrays of strings into a single array with all duplicate entries removed
     wxArrayString MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const;
-    wxStringMap_t MergeStringMaps(const wxStringMap_t& map1,
-                                               const wxStringMap_t& map2) const;
+    wxStringMap_t MergeStringMaps(const wxStringMap_t& map1, const wxStringMap_t& map2) const;
     // Workspace history
-    void AddRecentWorkspace(const wxString& filename) { DoAddRecentItem("RecentWorkspaces", filename); }
-    wxArrayString GetRecentWorkspaces() const { return DoGetRecentItems("RecentWorkspaces"); }
-    void ClearRecentWorkspaces() { DoClearRecentItems("RecentWorkspaces"); }
+    void AddRecentWorkspace(const wxString& filename)
+    {
+        DoAddRecentItem("RecentWorkspaces", filename);
+    }
+    wxArrayString GetRecentWorkspaces() const
+    {
+        return DoGetRecentItems("RecentWorkspaces");
+    }
+    void ClearRecentWorkspaces()
+    {
+        DoClearRecentItems("RecentWorkspaces");
+    }
 
     // File history
-    void AddRecentFile(const wxString& filename) { DoAddRecentItem("RecentFiles", filename); }
-    wxArrayString GetRecentFiles() const { return DoGetRecentItems("RecentFiles"); }
-    void ClearRecentFiles() { DoClearRecentItems("RecentFiles"); }
+    void AddRecentFile(const wxString& filename)
+    {
+        DoAddRecentItem("RecentFiles", filename);
+    }
+    wxArrayString GetRecentFiles() const
+    {
+        return DoGetRecentItems("RecentFiles");
+    }
+    void ClearRecentFiles()
+    {
+        DoClearRecentItems("RecentFiles");
+    }
 
     // Workspace tab order
     //------------------------------
@@ -156,15 +183,42 @@ public:
     // wxArrayString
     wxArrayString Read(const wxString& name, const wxArrayString& defaultValue);
     void Write(const wxString& name, const wxArrayString& value);
-    
+
     // wxFont
     wxFont Read(const wxString& name, const wxFont& defaultValue);
     void Write(const wxString& name, const wxFont& value);
-    
+
     // wxColour
     wxColour Read(const wxString& name, const wxColour& defaultValue);
     void Write(const wxString& name, const wxColour& value);
-    
+
+    // Custom items, using lambda
+    // A general purpose method that writes JSONItem created by a user defined function
+    //
+    // Write("my_item_name", []() -> JSONItem {
+    //          JSONItem item = JSON::createObject();
+    //          item.addProperty("name", "eran");
+    //          item.addProperty("last_name", "ifrah");
+    //          return item;
+    //      });
+    // Note: if configFile is valid, parameter is IGNORED and the JSONItem is written ino the configFile instead
+    // as an anonymous object, e.g. if configFile is set to /tmp/my_config.json, then its content will be written
+    // like this:
+    //  {
+    //      "name" :  "eran",
+    //      "last_name" : "ifrah"
+    //  }
+    bool Write(const wxString& name, std::function<JSONItem()> serialiser_func, const wxFileName& configFile = {});
+
+    // read custom items, using lambda:
+    // Read("my_item_name", [&my_struct](const JSONItem& item) {
+    //      my_struct.name = item["name"].toString();
+    //      my_struct.last_name = item["last_name"].toString();
+    //  });
+    // Note: if configFile is valid, `name` is ignored (see comment for Write() method above)
+    void Read(const wxString& name, std::function<void(const JSONItem& item)> deserialiser_func,
+              const wxFileName& configFile = {});
+
     // Quick Find Bar history
     void AddQuickFindSearchItem(const wxString& str);
     void AddQuickFindReplaceItem(const wxString& str);

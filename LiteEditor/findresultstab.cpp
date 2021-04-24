@@ -28,6 +28,7 @@
 #include "clStrings.h"
 #include "clToolBarButtonBase.h"
 #include "cl_aui_tool_stickness.h"
+#include "cl_command_event.h"
 #include "cl_config.h"
 #include "cl_editor.h"
 #include "codelite_events.h"
@@ -50,10 +51,6 @@
 #include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(FindResultsTab, OutputTabWindow)
-EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHSTARTED, FindResultsTab::OnSearchStart)
-EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_MATCHFOUND, FindResultsTab::OnSearchMatch)
-EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHEND, FindResultsTab::OnSearchEnded)
-EVT_COMMAND(wxID_ANY, wxEVT_SEARCH_THREAD_SEARCHCANCELED, FindResultsTab::OnSearchCancel)
 EVT_UPDATE_UI(XRCID("hold_pane_open"), FindResultsTab::OnHoldOpenUpdateUI)
 END_EVENT_TABLE()
 
@@ -61,6 +58,7 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     : OutputTabWindow(parent, id, name)
     , m_searchInProgress(false)
 {
+    BindSearchEvents(EventNotifier::Get());
     m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindResultsTab::OnStyleNeeded), NULL, this);
     wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
@@ -87,6 +85,7 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
 
 FindResultsTab::~FindResultsTab()
 {
+    UnbindSearchEvents(EventNotifier::Get());
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL,
                                   this);
     wxTheApp->Disconnect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED,
@@ -117,7 +116,8 @@ void FindResultsTab::Clear()
 void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
 {
     if(m_searchInProgress) {
-        ::wxMessageBox(_("The search thread is currently busy"), _("CodeLite"), wxICON_INFORMATION | wxOK);
+        ::wxMessageBox(_("Another search is currently running, try again later"), _("CodeLite"),
+                       wxICON_WARNING | wxOK | wxOK_DEFAULT);
         return;
     }
 
@@ -211,18 +211,12 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
             if(!m_matchInfo.empty()) {
                 AppendText("\n");
             }
-            wxFileName fn(iter->GetFileName());
-            fn.MakeRelativeTo();
-            AppendText(fn.GetFullPath() + wxT("\n"));
+            AppendText(iter->GetFileName() + wxT("\n"));
         }
 
         int lineno = m_sci->GetLineCount() - 1;
         m_matchInfo.insert(std::make_pair(lineno, *iter));
         wxString text = iter->GetPattern();
-        // int delta = -text.Length();
-        // text.Trim(false);
-        // delta += text.Length();
-        // text.Trim();
 
         wxString linenum = wxString::Format(wxT(" %5u: "), iter->GetLineNumber());
         SearchData* d = GetSearchData();
@@ -397,6 +391,15 @@ void FindResultsTab::PrevMatch()
 void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledTextCtrl* sci, int markerLine)
 {
     if(!result.GetFileName().IsEmpty()) {
+        // let plugins handle this first
+        clFindInFilesEvent open_event(wxEVT_FINDINFILES_OPEN_MATCH);
+        open_event.SetFileName(result.GetFileName());
+        open_event.SetLineNumber(result.GetLineNumber());
+        open_event.SetInt(result.GetColumn());
+        if(EventNotifier::Get()->ProcessEvent(open_event)) {
+            return;
+        }
+
         clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(result.GetFileName());
         if(editor && result.GetLen() >= 0) {
             // Update the destination position if there have been subsequent changes in the editor
@@ -579,6 +582,26 @@ void FindResultsTab::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
     Clear();
+}
+
+void FindResultsTab::UnbindSearchEvents(wxEvtHandler* binder)
+{
+    if(!m_searchEventsConnected)
+        return;
+    m_searchEventsConnected = false;
+    binder->Unbind(wxEVT_SEARCH_THREAD_SEARCHSTARTED, &FindResultsTab::OnSearchStart, this);
+    binder->Unbind(wxEVT_SEARCH_THREAD_MATCHFOUND, &FindResultsTab::OnSearchMatch, this);
+    binder->Unbind(wxEVT_SEARCH_THREAD_SEARCHEND, &FindResultsTab::OnSearchEnded, this);
+    binder->Unbind(wxEVT_SEARCH_THREAD_SEARCHCANCELED, &FindResultsTab::OnSearchCancel, this);
+}
+
+void FindResultsTab::BindSearchEvents(wxEvtHandler* binder)
+{
+    binder->Bind(wxEVT_SEARCH_THREAD_SEARCHSTARTED, &FindResultsTab::OnSearchStart, this);
+    binder->Bind(wxEVT_SEARCH_THREAD_MATCHFOUND, &FindResultsTab::OnSearchMatch, this);
+    binder->Bind(wxEVT_SEARCH_THREAD_SEARCHEND, &FindResultsTab::OnSearchEnded, this);
+    binder->Bind(wxEVT_SEARCH_THREAD_SEARCHCANCELED, &FindResultsTab::OnSearchCancel, this);
+    m_searchEventsConnected = true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////

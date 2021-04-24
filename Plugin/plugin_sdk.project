@@ -751,6 +751,10 @@
     <File Name="GotoAnythingBaseUI.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="sftp_ui">
+    <File Name="clRemoteFinderHelper.cpp"/>
+    <File Name="clRemoteFinderHelper.hpp"/>
+    <File Name="clRemoteFindDialog.cpp"/>
+    <File Name="clRemoteFindDialog.h"/>
     <File Name="sftp_item_comparator.hpp"/>
     <File Name="sftp_item_comparator.cpp"/>
     <File Name="clRemoteDirCtrl.cpp"/>

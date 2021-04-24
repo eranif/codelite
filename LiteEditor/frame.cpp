@@ -757,7 +757,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     SetDropTarget(new FileDropTarget());
 
     // Start the search thread
-    SearchThreadST::Get()->SetNotifyWindow(this);
+    SearchThreadST::Get()->SetNotifyWindow(EventNotifier::Get());
     SearchThreadST::Get()->Start(WXTHREAD_MIN_PRIORITY);
 
     // start the job queue

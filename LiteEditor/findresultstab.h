@@ -48,6 +48,7 @@ protected:
     wxString m_searchTitle;
     std::list<int> m_indicators;
     bool m_searchInProgress;
+    bool m_searchEventsConnected = false;
 
     struct History {
         wxString title;
@@ -62,6 +63,8 @@ protected:
 
 protected:
     MatchInfo_t m_matchInfo;
+    void UnbindSearchEvents(wxEvtHandler* binder);
+    void BindSearchEvents(wxEvtHandler* binder);
 
     void AppendText(const wxString& line);
     void Clear();
@@ -142,8 +145,13 @@ class EditorDeltasHolder
     // GetChanges()
 
 public:
-    EditorDeltasHolder() {}
-    ~EditorDeltasHolder() { Clear(); }
+    EditorDeltasHolder()
+    {
+    }
+    ~EditorDeltasHolder()
+    {
+        Clear();
+    }
 
     void Clear()
     {
@@ -165,8 +173,14 @@ public:
         }
     }
 
-    void OnFileSaved() { m_changesAtLastSave = m_changes; }
-    void OnFileInFiles() { m_changesForCurrentMatches = m_changesAtLastSave; }
+    void OnFileSaved()
+    {
+        m_changesAtLastSave = m_changes;
+    }
+    void OnFileInFiles()
+    {
+        m_changesForCurrentMatches = m_changesAtLastSave;
+    }
     void GetChanges(std::vector<int>& changes);
 
 protected:

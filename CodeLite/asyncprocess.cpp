@@ -119,7 +119,7 @@ static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
     } else {
         command.Add("/bin/sh");
         command.Add("-c");
-        command.Add(cmd);
+        command.Add("'" + cmd + "'");
     }
     return command;
 }

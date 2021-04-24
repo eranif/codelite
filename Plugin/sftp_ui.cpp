@@ -76,7 +76,9 @@ SSHAccountManagerDlgBase::SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID 
 
     SetName(wxT("SSHAccountManagerDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -259,7 +261,9 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("AddSSHAcountDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -401,7 +405,9 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("SFTPBrowserBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -450,4 +456,117 @@ SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
     m_textCtrlInlineSearch->Disconnect(wxEVT_KILL_FOCUS, wxFocusEventHandler(SFTPBrowserBaseDlg::OnFocusLost), NULL,
                                        this);
     m_button59->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPBrowserBaseDlg::OnOKUI), NULL, this);
+}
+
+clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                               const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCE8CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer155 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer155);
+
+    wxFlexGridSizer* flexGridSizer163 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer163->SetFlexibleDirection(wxBOTH);
+    flexGridSizer163->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer163->AddGrowableCol(1);
+
+    boxSizer155->Add(flexGridSizer163, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText165 =
+        new wxStaticText(this, wxID_ANY, _("Find:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer163->Add(m_staticText165, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_comboBoxFindWhatArr;
+    m_comboBoxFindWhat = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition,
+                                              wxDLG_UNIT(this, wxSize(250, -1)), m_comboBoxFindWhatArr, 0);
+    m_comboBoxFindWhat->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_comboBoxFindWhat->SetHint(wxT(""));
+#endif
+
+    flexGridSizer163->Add(m_comboBoxFindWhat, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText169 =
+        new wxStaticText(this, wxID_ANY, _("Where:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer163->Add(m_staticText169, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_comboBoxWhereArr;
+    m_comboBoxWhere = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                           m_comboBoxWhereArr, 0);
+#if wxVERSION_NUMBER >= 3000
+    m_comboBoxWhere->SetHint(wxT(""));
+#endif
+
+    flexGridSizer163->Add(m_comboBoxWhere, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText175 =
+        new wxStaticText(this, wxID_ANY, _("File types:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer163->Add(m_staticText175, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_comboBoxTypesArr;
+    m_comboBoxTypes = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                           m_comboBoxTypesArr, 0);
+#if wxVERSION_NUMBER >= 3000
+    m_comboBoxTypes->SetHint(wxT(""));
+#endif
+
+    flexGridSizer163->Add(m_comboBoxTypes, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText177 =
+        new wxStaticText(this, wxID_ANY, _("Account:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer163->Add(m_staticText177, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceAccountsArr;
+    m_choiceAccounts =
+        new clThemedChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceAccountsArr, 0);
+
+    flexGridSizer163->Add(m_choiceAccounts, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer157 = new wxStdDialogButtonSizer();
+
+    boxSizer155->Add(m_stdBtnSizer157, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonOK->SetDefault();
+    m_stdBtnSizer157->AddButton(m_buttonOK);
+
+    m_button161 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer157->AddButton(m_button161);
+    m_stdBtnSizer157->Realize();
+
+    SetName(wxT("clRemoteFindDialogBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
+    // Connect events
+    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clRemoteFindDialogBase::OnOK_UI), NULL, this);
+}
+
+clRemoteFindDialogBase::~clRemoteFindDialogBase()
+{
+    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clRemoteFindDialogBase::OnOK_UI), NULL, this);
 }

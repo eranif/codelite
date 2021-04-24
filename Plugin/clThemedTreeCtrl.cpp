@@ -9,11 +9,12 @@
 #include "globals.h"
 #include <clColours.h>
 #include <wx/settings.h>
+#include "wx/treebase.h"
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_SIMPLE | wxTR_ROW_LINES
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_ROW_LINES | wxTR_MULTIPLE
 #else
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_ROW_LINES
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_ROW_LINES | wxTR_MULTIPLE 
 #endif
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

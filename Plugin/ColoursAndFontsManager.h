@@ -26,16 +26,16 @@
 #ifndef LEXERCONFMANAGER_H
 #define LEXERCONFMANAGER_H
 
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "lexer_configuration.h"
-#include <vector>
-#include <map>
-#include <wx/string.h>
-#include <wx/filename.h>
-#include <wx/event.h>
-#include "cl_command_event.h"
-#include <wx/font.h>
 #include "wxStringHash.h"
+#include <map>
+#include <vector>
+#include <wx/event.h>
+#include <wx/filename.h>
+#include <wx/font.h>
+#include <wx/string.h>
 
 // When the version is 0, it means that we need to upgrade the colours for the line numbers
 // and for the default state
@@ -75,7 +75,7 @@ protected:
 
 public:
     static ColoursAndFontsManager& Get();
-    
+
     /**
      * @brief return a suitable background colour that matches the lexer's bg colour
      */
@@ -111,8 +111,14 @@ public:
     void SetGlobalFont(const wxFont& font);
     const wxFont& GetGlobalFont() const;
 
-    void SetGlobalTheme(const wxString& globalTheme) { this->m_globalTheme = globalTheme; }
-    const wxString& GetGlobalTheme() const { return m_globalTheme; }
+    void SetGlobalTheme(const wxString& globalTheme)
+    {
+        this->m_globalTheme = globalTheme;
+    }
+    const wxString& GetGlobalTheme() const
+    {
+        return m_globalTheme;
+    }
     /**
      * @brief reload the lexers from the configuration files
      */
@@ -132,6 +138,13 @@ public:
      * @brief set the active theme for a lexer by name
      */
     void SetActiveTheme(const wxString& lexerName, const wxString& themeName);
+
+    /**
+     * @brief update a theme text selection colours
+     */
+    void SetThemeTextSelectionColours(const wxString& theme_name, const wxColour& bg, const wxColour& fg,
+                                      bool useCustomerFgColour = true);
+
     /**
      * @brief return the lexer by name.
      * @param lexerName the lexer name, e.g. "c++"
@@ -187,7 +200,7 @@ public:
      * @brief add new lexer (replace an existing one if exists)
      */
     void AddLexer(LexerConf::Ptr_t lexer);
-    
+
     /**
      * @brief return true if the current theme is dark
      */

@@ -842,7 +842,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
     lexer->SetThemeName(themeName);
 
-    clDEBUG1() << "Loading lexer:" << lexerName;
+    clDEBUG() << "Loading lexer:" << lexerName;
 
     if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
         lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
@@ -1004,7 +1004,10 @@ void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
     });
 }
 
-const wxFont& ColoursAndFontsManager::GetGlobalFont() const { return this->m_globalFont; }
+const wxFont& ColoursAndFontsManager::GetGlobalFont() const
+{
+    return this->m_globalFont;
+}
 
 bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, const wxArrayString& names) const
 {
@@ -1145,4 +1148,19 @@ bool ColoursAndFontsManager::IsDarkTheme() const
         return false;
     }
     return lexer->IsDark();
+}
+
+void ColoursAndFontsManager::SetThemeTextSelectionColours(const wxString& theme_name, const wxColour& bg,
+                                                          const wxColour& fg, bool useCustomerFgColour)
+{
+    wxString theme_name_lc = theme_name.Lower();
+    for(auto& lexer : m_allLexers) {
+        if(lexer->GetThemeName().CmpNoCase(theme_name) == 0) {
+            auto& sp = lexer->GetProperty(SEL_TEXT_ATTR_ID);
+            sp.SetBgColour(bg.GetAsString(wxC2S_HTML_SYNTAX));
+            sp.SetFgColour(fg.GetAsString(wxC2S_HTML_SYNTAX));
+            lexer->SetUseCustomTextSelectionFgColour(useCustomerFgColour);
+        }
+    }
+    Save();
 }

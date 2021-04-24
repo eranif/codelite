@@ -384,8 +384,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     bSizer5->Add(m_button9, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_panelTextSelection =
-        new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook2->AddPage(m_panelTextSelection, _("Text Selection"), false);
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelTextSelection, _("Text Selection"), false);
 
     wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
     m_panelTextSelection->SetSizer(bSizer7);

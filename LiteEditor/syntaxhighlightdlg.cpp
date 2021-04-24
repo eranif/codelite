@@ -448,11 +448,10 @@ void SyntaxHighlightDlg::OnSelTextChanged(wxColourPickerEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
     event.Skip();
-    StyleProperty& selProp = m_lexer->GetProperty(SEL_TEXT_ATTR_ID);
-    if(!selProp.IsNull()) {
-        m_isModified = true;
-        selProp.SetBgColour(event.GetColour().GetAsString(wxC2S_HTML_SYNTAX));
-    }
+    m_isModified = true;
+    ColoursAndFontsManager::Get().SetThemeTextSelectionColours(
+        m_lexer->GetThemeName(), m_colourPickerSelTextBgColour->GetColour(), m_colourPickerSelTextFgColour->GetColour(),
+        m_checkBoxCustomSelectionFgColour->IsChecked());
 }
 
 void SyntaxHighlightDlg::OnStyleWithinPreprocessor(wxCommandEvent& event)
@@ -580,7 +579,10 @@ void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
     LoadLexer("");
 }
 
-void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isModified); }
+void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_isModified);
+}
 
 void SyntaxHighlightDlg::OnTextSelFgUI(wxUpdateUIEvent& event)
 {
@@ -591,11 +593,10 @@ void SyntaxHighlightDlg::OnSelTextFgChanged(wxColourPickerEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
     event.Skip();
-    StyleProperty& selProp = m_lexer->GetProperty(SEL_TEXT_ATTR_ID);
-    if(!selProp.IsNull()) {
-        m_isModified = true;
-        selProp.SetFgColour(event.GetColour().GetAsString(wxC2S_HTML_SYNTAX));
-    }
+    m_isModified = true;
+    ColoursAndFontsManager::Get().SetThemeTextSelectionColours(
+        m_lexer->GetThemeName(), m_colourPickerSelTextBgColour->GetColour(), m_colourPickerSelTextFgColour->GetColour(),
+        m_checkBoxCustomSelectionFgColour->IsChecked());
 }
 
 void SyntaxHighlightDlg::OnUseCustomFgTextColour(wxCommandEvent& event)
@@ -603,7 +604,9 @@ void SyntaxHighlightDlg::OnUseCustomFgTextColour(wxCommandEvent& event)
     CHECK_PTR_RET(m_lexer);
     event.Skip();
     m_isModified = true;
-    m_lexer->SetUseCustomTextSelectionFgColour(event.IsChecked());
+    ColoursAndFontsManager::Get().SetThemeTextSelectionColours(
+        m_lexer->GetThemeName(), m_colourPickerSelTextBgColour->GetColour(), m_colourPickerSelTextFgColour->GetColour(),
+        event.IsChecked());
 }
 
 void SyntaxHighlightDlg::OnNewTheme(wxCommandEvent& event)
@@ -762,7 +765,9 @@ void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
     m_bgColourPicker->SetColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 }
 
-void SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged() {}
+void SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged()
+{
+}
 
 void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
 {
@@ -817,7 +822,10 @@ void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
     event.Skip();
 }
 
-bool SyntaxHighlightDlg::IsRestartRequired() const { return false; }
+bool SyntaxHighlightDlg::IsRestartRequired() const
+{
+    return false;
+}
 void SyntaxHighlightDlg::OnUseCustomBaseColourUI(wxUpdateUIEvent& event)
 {
 #if CL_USE_NATIVEBOOK

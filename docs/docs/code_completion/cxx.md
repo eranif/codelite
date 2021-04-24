@@ -174,7 +174,7 @@ wxConstCast(%0, %1)=const_cast<%0>(%1)
 #### Types
 ---
 
-Some C++ is too complex for `ctags` to handle. This is where you can help `ctags` the code a litte better
+Some C++ is too complex for `ctags` to handle. This is where you can help `ctags` to understand the code a little better
 For example:
 
 `std::queue::reference` definition is too complex for `ctags` to understand.

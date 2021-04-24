@@ -17,6 +17,7 @@ class WXDLLIMPEXP_SDK clRemoteFinderHelper : public wxEvtHandler
 protected:
     void OnSearchOutput(clProcessEvent& event);
     void OnSearchTerminated(clProcessEvent& event);
+    wxWindow* GetSearchTab();
 
 public:
     clRemoteFinderHelper();

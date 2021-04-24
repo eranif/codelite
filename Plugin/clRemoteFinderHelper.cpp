@@ -1,7 +1,10 @@
+#include "Notebook.h"
 #include "asyncprocess.h"
 #include "clRemoteFinderHelper.hpp"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
+#include "imanager.h"
 #include "processreaderthread.h"
 #include "search_thread.h"
 #include <wx/tokenzr.h>
@@ -30,6 +33,12 @@ void clRemoteFinderHelper::OnSearchTerminated(clProcessEvent& event)
     m_searchOutput << event.GetOutput();
     wxDELETE(m_searchProcess);
     clDEBUG() << "remote search completed:" << m_searchOutput << endl;
+    
+    auto search_tab = GetSearchTab();
+    if(!search_tab) {
+        clWARNING() << "clRemoteFinderHelper: search tab is hidden" << endl;
+        return;
+    }
 
     long elapsed_time = m_stopWatch.Time();
 
@@ -53,7 +62,6 @@ void clRemoteFinderHelper::OnSearchTerminated(clProcessEvent& event)
         if(!line_number_str.ToCLong(&nLineNumber)) {
             continue;
         }
-        --nLineNumber; // zero based line numbers
         // the remainder is the pattern
         line = line.AfterFirst(':');
 
@@ -70,7 +78,7 @@ void clRemoteFinderHelper::OnSearchTerminated(clProcessEvent& event)
     if(resList && !resList->empty()) {
         wxCommandEvent matchs_event(wxEVT_SEARCH_THREAD_MATCHFOUND);
         matchs_event.SetClientData(resList);
-        EventNotifier::Get()->AddPendingEvent(matchs_event);
+        search_tab->GetEventHandler()->AddPendingEvent(matchs_event);
     } else if(resList) {
         wxDELETE(resList);
     }
@@ -80,7 +88,7 @@ void clRemoteFinderHelper::OnSearchTerminated(clProcessEvent& event)
     summary->SetNumMatchesFound(resList ? resList->size() : 0);
     wxCommandEvent end_event(wxEVT_SEARCH_THREAD_SEARCHEND);
     end_event.SetClientData(summary);
-    EventNotifier::Get()->AddPendingEvent(end_event);
+    search_tab->GetEventHandler()->AddPendingEvent(end_event);
 }
 
 void clRemoteFinderHelper::Search(const wxArrayString& args, const wxString& accountName, const wxString& findString,
@@ -89,6 +97,11 @@ void clRemoteFinderHelper::Search(const wxArrayString& args, const wxString& acc
     // start ssh process
     m_searchOutput.clear();
     m_stopWatch.Start();
+
+    if(!GetSearchTab()) {
+        clWARNING() << "clRemoteFinderHelper: search ignored, search tab is hidden" << endl;
+        return;
+    }
 
     m_searchProcess = ::CreateAsyncProcess(this, args, IProcessCreateDefault | IProcessWrapInShell | IProcessCreateSSH,
                                            wxEmptyString, nullptr, accountName);
@@ -99,5 +112,16 @@ void clRemoteFinderHelper::Search(const wxArrayString& args, const wxString& acc
     sd.SetExtensions(fileExtensions);
     wxCommandEvent start_event(wxEVT_SEARCH_THREAD_SEARCHSTARTED);
     start_event.SetClientData(new SearchData(sd));
-    EventNotifier::Get()->AddPendingEvent(start_event);
+    GetSearchTab()->GetEventHandler()->AddPendingEvent(start_event);
+}
+
+wxWindow* clRemoteFinderHelper::GetSearchTab()
+{
+    auto book = clGetManager()->GetOutputPaneNotebook();
+    for(size_t i = 0; i < book->GetPageCount(); ++i) {
+        if(book->GetPageText(i) == _("Search")) {
+            return book->GetPage(i);
+        }
+    }
+    return nullptr;
 }

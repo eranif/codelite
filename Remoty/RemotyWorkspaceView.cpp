@@ -136,6 +136,7 @@ void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
     clDEBUG() << "Remoty: opening file:" << event.GetFileName() << ":" << event.GetLineNumber() << endl;
     auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), m_workspace->GetAccount().GetAccountName());
     if(editor) {
-        editor->GetCtrl()->GotoLine(event.GetLineNumber());
+        // sci is 0 based line numbers
+        editor->GetCtrl()->GotoLine(event.GetLineNumber() - 1);
     }
 }

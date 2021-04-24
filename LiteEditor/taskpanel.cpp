@@ -108,15 +108,10 @@ TaskPanel::TaskPanel(wxWindow* parent, wxWindowID id, const wxString& name)
 
     mainSizer->Add(hSizer, 1, wxEXPAND | wxALL, 1);
     mainSizer->Layout();
-
-    // unbind the search events for this instance and re-bind them to the 'this'
-    UnbindSearchEvents(EventNotifier::Get());
-    BindSearchEvents(this);
 }
 
 TaskPanel::~TaskPanel()
 {
-    UnbindSearchEvents(this);
     m_choiceEncoding->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(TaskPanel::OnEncodingSelected),
                                  NULL, this);
 }

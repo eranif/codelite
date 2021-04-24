@@ -58,7 +58,7 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
     : OutputTabWindow(parent, id, name)
     , m_searchInProgress(false)
 {
-    BindSearchEvents(EventNotifier::Get());
+    BindSearchEvents(this);
     m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindResultsTab::OnStyleNeeded), NULL, this);
     wxTheApp->Connect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(FindResultsTab::OnFindInFiles), NULL, this);
@@ -85,7 +85,7 @@ FindResultsTab::FindResultsTab(wxWindow* parent, wxWindowID id, const wxString& 
 
 FindResultsTab::~FindResultsTab()
 {
-    UnbindSearchEvents(EventNotifier::Get());
+    UnbindSearchEvents(this);
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindResultsTab::OnThemeChanged), NULL,
                                   this);
     wxTheApp->Disconnect(XRCID("find_in_files"), wxEVT_COMMAND_MENU_SELECTED,

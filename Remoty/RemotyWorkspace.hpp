@@ -37,6 +37,8 @@ protected:
     void Initialise();
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
+    void OnFindInFilesShowing(clFindInFilesEvent& event);
+
     void DoClose(bool notify);
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);

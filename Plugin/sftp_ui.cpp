@@ -533,6 +533,22 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer163->Add(m_choiceAccounts, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    wxGridSizer* gridSizer197 = new wxGridSizer(0, 2, 0, 0);
+
+    boxSizer155->Add(gridSizer197, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_checkBoxCase =
+        new wxCheckBox(this, wxID_ANY, _("Case sensitive"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxCase->SetValue(false);
+
+    gridSizer197->Add(m_checkBoxCase, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxWholeWord =
+        new wxCheckBox(this, wxID_ANY, _("Whole word"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxWholeWord->SetValue(false);
+
+    gridSizer197->Add(m_checkBoxWholeWord, 0, wxALL, WXC_FROM_DIP(5));
+
     m_stdBtnSizer157 = new wxStdDialogButtonSizer();
 
     boxSizer155->Add(m_stdBtnSizer157, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));

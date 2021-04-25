@@ -9,6 +9,11 @@
 #define INVALID_POS ((size_t)-1)
 
 static const wxString defaultFileTypes = "*.cpp;*.c;*.hpp;*.h;*.txt;*.py;*.php;*.yml;Makefile";
+enum eSearchFlags {
+    kWholeWord = (1 << 0),
+    kCaseSearch = (1 << 1),
+};
+
 struct clRemoteFindDialogData {
     wxArrayString find_what_arr;
     wxString last_find_what;
@@ -16,6 +21,7 @@ struct clRemoteFindDialogData {
     wxString last_where;
     wxArrayString file_types;
     wxString last_file_types;
+    size_t flags = (kWholeWord | kCaseSearch);
 };
 
 clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account_name)
@@ -41,6 +47,7 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
         data.last_where = item["last_where"].toString();
         data.file_types = item["file_types"].toArrayString();
         data.last_file_types = item["last_file_types"].toString();
+        data.flags = item["flags"].toSize_t();
     });
 
     if(data.file_types.empty() && data.file_types.empty()) {
@@ -51,6 +58,8 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     UpdateCombo(m_comboBoxFindWhat, data.find_what_arr, data.last_find_what);
     UpdateCombo(m_comboBoxWhere, data.where_arr, data.last_where);
     UpdateCombo(m_comboBoxTypes, data.file_types, data.last_file_types);
+    m_checkBoxCase->SetValue(data.flags & kCaseSearch);
+    m_checkBoxWholeWord->SetValue(data.flags & kWholeWord);
 }
 
 clRemoteFindDialog::~clRemoteFindDialog()
@@ -62,6 +71,13 @@ clRemoteFindDialog::~clRemoteFindDialog()
     data.last_where = m_comboBoxWhere->GetStringSelection();
     data.file_types = m_comboBoxTypes->GetStrings();
     data.last_file_types = m_comboBoxTypes->GetStringSelection();
+    data.flags = 0;
+    if(m_checkBoxCase->IsChecked()) {
+        data.flags |= kCaseSearch;
+    }
+    if(m_checkBoxWholeWord->IsChecked()) {
+        data.flags |= kWholeWord;
+    }
 
     clConfig::Get().Write("remote_find_in_files", [&data]() -> JSONItem {
         JSONItem item = JSONItem::createObject();
@@ -71,6 +87,7 @@ clRemoteFindDialog::~clRemoteFindDialog()
         item.addProperty("last_where", data.last_where);
         item.addProperty("file_types", data.file_types);
         item.addProperty("last_file_types", data.last_file_types);
+        item.addProperty("flags", data.flags);
         return item;
     });
 }
@@ -123,6 +140,12 @@ wxArrayString clRemoteFindDialog::GetGrepCommand() const
     command.Add("|");
     command.Add("xargs");
     command.Add("grep");
+    if(!m_checkBoxCase->IsChecked()) {
+        command.Add("-i");
+    }
+    if(m_checkBoxWholeWord->IsChecked()) {
+        command.Add("-w");
+    }
     command.Add("--line-number");
     command.Add("--with-filename");
     command.Add(GetFindWhat());

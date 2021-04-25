@@ -29,6 +29,7 @@
 #include <wx/combobox.h>
 #include "clThemedComboBox.hpp"
 #include "clThemedChoice.h"
+#include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -344,6 +345,8 @@ protected:
     clThemedComboBox* m_comboBoxTypes;
     wxStaticText* m_staticText177;
     clThemedChoice* m_choiceAccounts;
+    wxCheckBox* m_checkBoxCase;
+    wxCheckBox* m_checkBoxWholeWord;
     wxStdDialogButtonSizer* m_stdBtnSizer157;
     wxButton* m_buttonOK;
     wxButton* m_button161;
@@ -386,6 +389,14 @@ public:
     clThemedChoice* GetChoiceAccounts()
     {
         return m_choiceAccounts;
+    }
+    wxCheckBox* GetCheckBoxCase()
+    {
+        return m_checkBoxCase;
+    }
+    wxCheckBox* GetCheckBoxWholeWord()
+    {
+        return m_checkBoxWholeWord;
     }
     clRemoteFindDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                            const wxString& title = _("Remote Find In Files"), const wxPoint& pos = wxDefaultPosition,

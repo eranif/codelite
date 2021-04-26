@@ -436,15 +436,6 @@
       <File Name="editorsettingslocalbase.cpp"/>
       <File Name="editorsettingslocalbase.h"/>
     </VirtualDirectory>
-    <VirtualDirectory Name="Tasks">
-      <File Name="tasksfindwhatdlgbase.cpp"/>
-      <File Name="tasksfindwhatdlgbase.h"/>
-      <File Name="tasks_find_what_dlg.h"/>
-      <File Name="tasks_find_what_dlg.cpp"/>
-      <File Name="taskpanel.cpp"/>
-      <File Name="taskpanel.h"/>
-      <File Name="taskspaneldata.h"/>
-    </VirtualDirectory>
     <VirtualDirectory Name="SettersGetters">
       <File Name="setters_getters_dlg.cpp"/>
       <File Name="setters_getters_dlg.h"/>

@@ -411,6 +411,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     // wxStopWatch	sw;
 
     const int err = ::wxExecute(cmdgprof, wxEXEC_SYNC, proc);
+    wxUnusedVar(err);
     // on sync returns 0 (success), -1 (failure / "couldn't be started")
 
     // myLog("wxExecute() returned err %d, had pid %d", err, (int)proc->GetPid());

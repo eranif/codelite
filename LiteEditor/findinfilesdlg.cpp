@@ -46,9 +46,15 @@
 #include <wx/wupdlock.h>
 #include <wxStringHash.h>
 
-FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
+static const wxString RE_TODO = "(/[/\\*]+ *TODO)";
+static const wxString RE_BUG = "(/[/\\*]+ *BUG)";
+static const wxString RE_ATTN = "(/[/\\*]+ *ATTN)";
+static const wxString RE_FIXME = "(/[/\\*]+ *FIXME)";
+
+FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wxWindow* handler)
     : FindInFilesDialogBase(parent, wxID_ANY)
     , m_data(data)
+    , m_handler(handler)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
@@ -76,6 +82,10 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data)
     m_regualrExpression->SetValue(m_data.GetFlags() & wxFRD_REGULAREXPRESSION);
     m_checkBoxSaveFilesBeforeSearching->SetValue(m_data.GetFlags() & wxFRD_SAVE_BEFORE_SEARCH);
     m_checkBoxPipeForGrep->SetValue(m_data.GetFlags() & wxFRD_ENABLE_PIPE_SUPPORT);
+
+    // keep the current regex value, in case user uses the presets and we want
+    // to restore it back
+    m_oldRegexValue = m_data.GetFlags() & wxFRD_REGULAREXPRESSION;
 
     // Set encoding
     static wxArrayString astrEncodings;
@@ -156,7 +166,8 @@ void FindInFilesDialog::DoSetFileMask()
 void FindInFilesDialog::DoSearchReplace()
 {
     SearchData data = DoGetSearchData();
-    data.SetOwner(EventNotifier::Get());
+    // direct output results to the 'Replace' tab, unless a custom handler was provided
+    data.SetOwner(m_handler ? m_handler : clMainFrame::Get()->GetOutputPane()->GetReplaceResultsTab());
     DoSaveOpenFiles();
     SearchThreadST::Get()->PerformSearch(data);
     BuildFindReplaceData();
@@ -166,7 +177,8 @@ void FindInFilesDialog::DoSearchReplace()
 void FindInFilesDialog::DoSearch()
 {
     SearchData data = DoGetSearchData();
-    data.SetOwner(EventNotifier::Get());
+    // direct results to the 'Search' tab
+    data.SetOwner(m_handler ? m_handler : clMainFrame::Get()->GetOutputPane()->GetFindResultsTab());
 
     // check to see if we require to save the files
     DoSaveOpenFiles();
@@ -541,6 +553,11 @@ wxArrayString FindInFilesDialog::GetPathsAsArray() const
 
 void FindInFilesDialog::BuildFindReplaceData()
 {
+    if(m_presetSearch && !m_userChangedRegexManually) {
+        // restore the regex value
+        m_regualrExpression->SetValue(m_oldRegexValue);
+    }
+
     m_data.SetFlags(GetSearchFlags());
     m_data.SetFindString(m_findString->GetValue());
     m_data.SetReplaceString(m_replaceString->GetValue());
@@ -571,6 +588,7 @@ void FindInFilesDialog::SetFileMask(const wxString& mask)
         m_fileTypes->SetSelection(where);
     }
 }
+
 void FindInFilesDialog::OnFindEnter(wxCommandEvent& event)
 {
     event.Skip();
@@ -585,4 +603,66 @@ void FindInFilesDialog::OnReplaceEnter(wxCommandEvent& event)
 void FindInFilesDialog::DoSelectAll()
 {
     m_findString->GetTextCtrl()->SelectAll();
+}
+
+void FindInFilesDialog::OnATTN(wxCommandEvent& event)
+{
+    m_presetSearch = true;
+    SetPresets();
+}
+
+void FindInFilesDialog::OnBUG(wxCommandEvent& event)
+{
+    m_presetSearch = true;
+    SetPresets();
+}
+
+void FindInFilesDialog::OnFIXME(wxCommandEvent& event)
+{
+    m_presetSearch = true;
+    SetPresets();
+}
+
+void FindInFilesDialog::OnTODO(wxCommandEvent& event)
+{
+    m_presetSearch = true;
+    SetPresets();
+}
+
+void FindInFilesDialog::OnRegex(wxCommandEvent& event)
+{
+    event.Skip();
+    m_userChangedRegexManually = true;
+}
+
+void FindInFilesDialog::SetPresets()
+{
+    wxString pattern;
+    if(m_checkBoxATTN->IsChecked()) {
+        pattern << RE_ATTN << "|";
+    }
+
+    if(m_checkBoxBUG->IsChecked()) {
+        pattern << RE_BUG << "|";
+    }
+
+    if(m_checkBoxFIXME->IsChecked()) {
+        pattern << RE_FIXME << "|";
+    }
+
+    if(m_checkBoxTODO->IsChecked()) {
+        pattern << RE_TODO << "|";
+    }
+
+    if(!pattern.empty()) {
+        // remove the trailing pipe
+        pattern.RemoveLast();
+    }
+
+    m_findString->SetValue(pattern);
+    if(!m_regualrExpression->IsChecked()) {
+        // enable regex
+        m_regualrExpression->SetValue(true);
+        m_presetSearch = true;
+    }
 }

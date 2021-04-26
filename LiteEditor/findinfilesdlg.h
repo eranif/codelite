@@ -35,11 +35,21 @@ class FindInFilesDialog : public FindInFilesDialogBase
     FindReplaceData& m_data;
     wxArrayString m_pluginFileMask;
     bool m_transient = false;
+    wxWindow* m_handler = nullptr;
+    bool m_oldRegexValue;
+    bool m_userChangedRegexManually = false;
+    bool m_presetSearch = false;
 
 protected:
+    virtual void OnRegex(wxCommandEvent& event);
+    virtual void OnATTN(wxCommandEvent& event);
+    virtual void OnBUG(wxCommandEvent& event);
+    virtual void OnFIXME(wxCommandEvent& event);
+    virtual void OnTODO(wxCommandEvent& event);
     virtual void OnFindEnter(wxCommandEvent& event);
     virtual void OnReplaceEnter(wxCommandEvent& event);
     wxArrayString GetPathsAsArray() const;
+    void SetPresets();
 
 protected:
     virtual void OnLookInKeyDown(wxKeyEvent& event);
@@ -70,7 +80,7 @@ protected:
     void BuildFindReplaceData();
 
 public:
-    FindInFilesDialog(wxWindow* parent, FindReplaceData& data);
+    FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wxWindow* handler = nullptr);
     virtual ~FindInFilesDialog();
     void SetSearchPaths(const wxString& paths, bool transient = false);
     void SetFileMask(const wxString& mask);

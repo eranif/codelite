@@ -391,5 +391,6 @@ bool DbSettingDialog::DoSQLiteItemActivated()
     }
 #else
     wxMessageBox(_("SQLite connection is not supported."), _("DB Error"), wxOK | wxICON_WARNING);
+    return false;
 #endif
 }

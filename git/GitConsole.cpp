@@ -347,8 +347,6 @@ void GitConsole::UpdateTreeView(const wxString& output)
     wxVector<wxVariant> cols;
     wxArrayString files = ::wxStringTokenize(output, "\n\r", wxTOKEN_STRTOK);
 
-    BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
-
     // parse the output
     std::vector<GitFileEntry> lines;
     for(size_t i = 0; i < files.GetCount(); ++i) {

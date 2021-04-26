@@ -971,7 +971,7 @@ bool MainBook::CloseAllButThis(wxWindow* page)
         if(editor->GetCtrl() == page) {
             continue;
         }
-        ClosePage(editor, false);
+        ClosePage(editor, true);
     }
     return true;
 }

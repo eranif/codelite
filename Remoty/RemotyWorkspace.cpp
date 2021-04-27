@@ -3,6 +3,7 @@
 #include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
+#include "clConsoleBase.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clRemoteFindDialog.h"
 #include "clSFTPManager.hpp"
@@ -16,10 +17,13 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
+#include "macros.h"
 #include "processreaderthread.h"
 #include "shell_command.h"
 #include <wx/msgdlg.h>
+#include <wx/tokenzr.h>
 #include <wx/uri.h>
+#include <wx/utils.h>
 
 #define CHECK_EVENT(e)     \
     {                      \
@@ -111,6 +115,10 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemotyWorkspace::OnBuildProcessTerminated, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemotyWorkspace::OnBuildProcessOutput, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &RemotyWorkspace::OnRun, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &RemotyWorkspace::OnStop, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &RemotyWorkspace::OnIsProgramRunning, this);
+    Bind(wxEVT_TERMINAL_EXIT, &RemotyWorkspace::OnExecProcessTerminated, this);
 }
 
 void RemotyWorkspace::UnbindEvents()
@@ -126,9 +134,12 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyWorkspace::OnNewWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &RemotyWorkspace::OnDebugStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &RemotyWorkspace::OnRun, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &RemotyWorkspace::OnStop, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemotyWorkspace::OnBuildProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemotyWorkspace::OnBuildProcessOutput, this);
+    Unbind(wxEVT_TERMINAL_EXIT, &RemotyWorkspace::OnExecProcessTerminated, this);
     m_eventsConnected = false;
 }
 
@@ -260,20 +271,13 @@ void RemotyWorkspace::DoBuild(const wxString& target)
         return;
     }
 
-    // Build the environment to use
-    const wxString& envstr = conf->GetEnvironment();
-    auto envmap = FileUtils::CreateEnvironment(envstr);
-
     // Creae a build script
     wxString buildScriptContent;
 
-    buildScriptContent << "# prepare the environment variables\n";
-    for(auto& vt : envmap) {
-        buildScriptContent << "export " << vt.first << "=" << ::WrapWithQuotes(vt.second) << "\n";
-    }
+    buildScriptContent << CreateEnvScriptContent();
     buildScriptContent << "\n";
 
-    wxString working_dir = m_remoteWorkspaceFile.BeforeLast('/');
+    wxString working_dir = GetRemoteWorkingDir();
     buildScriptContent << "cd " << working_dir << "\n";
     buildScriptContent << cmd << "\n";
 
@@ -484,7 +488,7 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     m_localUserWorkspaceFile = userSettings.GetFullPath();
 
     path.Replace("\\", "/");
-    wxString workspacePath = path.BeforeLast('/');
+    wxString workspacePath = GetRemoteWorkingDir();
     if(workspacePath.empty()) {
         ::wxMessageBox(_("Invalid empty remote path provided"), "CodeLite", wxICON_ERROR | wxCENTER);
         return;
@@ -644,18 +648,7 @@ void RemotyWorkspace::ConfigureClangd()
 
 IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool sync)
 {
-    wxString content;
-    content << "#!/bin/bash -e\n"; // stop at first error
-    content << scriptContent;
-
-    wxString path;
-    path << "/tmp/codelite-remoty." << clGetUserName() << ".sh";
-
-    if(!clSFTPManager::Get().AwaitWriteFile(content, path, m_account.GetAccountName())) {
-        ::wxMessageBox(_("Failed to write remote script on the remote machine!"), "CodeLite", wxICON_ERROR | wxCENTER);
-        return nullptr;
-    }
-
+    wxString path = UploadScript(scriptContent);
     vector<wxString> args = { "/bin/bash", path };
     size_t flags = IProcessCreateDefault | IProcessCreateSSH;
     if(sync) {
@@ -673,4 +666,120 @@ void RemotyWorkspace::OnDebugEnded(clDebugEvent& event)
 {
     event.Skip();
     m_remote_terminal.reset();
+}
+
+void RemotyWorkspace::OnRun(clExecuteEvent& event)
+{
+    CHECK_EVENT(event);
+    auto conf = m_settings.GetSelectedConfig();
+    CHECK_PTR_RET(conf);
+
+    wxString command;
+    command = conf->GetExecutable();
+    if(command.empty()) {
+        ::wxMessageBox(_("Please specify an executable to run"), "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
+        return;
+    }
+    ::WrapWithQuotes(command);
+    command << " ";
+    auto argsArr = ::wxStringTokenize(conf->GetArgs(), "\n\r", wxTOKEN_STRTOK);
+    if(argsArr.size() == 1) {
+        command << conf->GetArgs();
+    } else {
+        // one line per arg
+        for(auto& line : argsArr) {
+            line.Trim().Trim(false);
+            ::WrapWithQuotes(line);
+            command << line << " ";
+        }
+    }
+    wxString envString = CreateEnvScriptContent();
+    wxString wd = conf->GetWorkingDirectory();
+    wd.Trim().Trim(false);
+
+    if(wd.empty()) {
+        wd = GetRemoteWorkingDir();
+    }
+
+    wxString scriptContent;
+    scriptContent << envString << "\n";
+    scriptContent << "cd " << wd << "\n";
+
+    command.Trim().Trim(false);
+    scriptContent << ::WrapWithQuotes(command) << "\n";
+    scriptContent << "exit $?";
+
+    wxString script_path = UploadScript(scriptContent);
+
+    // build the command
+    wxString cmd_args;
+    cmd_args << m_account.GetUsername() << "@" << m_account.GetHost() << " -p " << m_account.GetPort() << " '";
+    cmd_args << "/bin/bash " << script_path << "'";
+
+    // start the process
+    auto terminal = clConsoleBase::GetTerminal();
+    terminal->SetCommand("ssh", cmd_args);
+    terminal->SetTerminalNeeded(true);
+    terminal->SetWaitWhenDone(true);
+    terminal->SetSink(this);
+    terminal->Start();
+    m_execPID = terminal->GetPid();
+}
+
+void RemotyWorkspace::OnStop(clExecuteEvent& event)
+{
+    CHECK_EVENT(event);
+    if(m_execPID != wxNOT_FOUND) {
+        ::clKill(m_execPID, wxSIGTERM, true, false);
+        m_execPID = wxNOT_FOUND;
+    }
+}
+
+wxString RemotyWorkspace::CreateEnvScriptContent() const
+{
+    auto conf = m_settings.GetSelectedConfig();
+    CHECK_PTR_RET_EMPTY_STRING(conf);
+
+    const wxString& envstr = conf->GetEnvironment();
+    auto envmap = FileUtils::CreateEnvironment(envstr);
+
+    wxString content;
+    content << "# prepare the environment variables\n";
+    for(auto& vt : envmap) {
+        content << "export " << vt.first << "=" << ::WrapWithQuotes(vt.second) << "\n";
+    }
+    return content;
+}
+
+wxString RemotyWorkspace::UploadScript(const wxString& content, const wxString& script_path) const
+{
+    wxString script_content;
+    script_content << "#!/bin/bash -e\n"; // stop at first error
+    script_content << content;
+
+    wxString default_path;
+    default_path << "/tmp/codelite-remoty." << clGetUserName() << ".sh";
+
+    wxString path = default_path;
+    if(!script_path.empty()) {
+        path = script_path;
+    }
+
+    if(!clSFTPManager::Get().AwaitWriteFile(script_content, path, m_account.GetAccountName())) {
+        ::wxMessageBox(_("Failed to write remote script on the remote machine!"), "CodeLite", wxICON_ERROR | wxCENTER);
+        return wxEmptyString;
+    }
+    return path;
+}
+
+void RemotyWorkspace::OnIsProgramRunning(clExecuteEvent& event)
+{
+    CHECK_EVENT(event);
+    event.SetAnswer(m_execPID != wxNOT_FOUND);
+}
+
+void RemotyWorkspace::OnExecProcessTerminated(clProcessEvent& event)
+{
+    wxUnusedVar(event);
+    m_execPID = wxNOT_FOUND;
 }

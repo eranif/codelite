@@ -23,6 +23,7 @@ class RemotyWorkspace : public IWorkspace
     clFileSystemWorkspaceSettings m_settings;
     IProcess* m_buildProcess = nullptr;
     IProcess* m_cmdProcess = nullptr;
+    long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
 
 public:
@@ -57,8 +58,14 @@ protected:
     void OnNewWorkspace(clCommandEvent& event);
     void OnDebugStarting(clDebugEvent& event);
     void OnDebugEnded(clDebugEvent& event);
+    void OnRun(clExecuteEvent& event);
+    void OnStop(clExecuteEvent& event);
+    void OnIsProgramRunning(clExecuteEvent& event);
+    void OnExecProcessTerminated(clProcessEvent& event);
 
     wxString GetRemoteWorkingDir() const;
+    wxString CreateEnvScriptContent() const;
+    wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
 
 public:
     // IWorkspace

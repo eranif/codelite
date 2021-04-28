@@ -15,14 +15,10 @@ More information can be found here:
 
 ## Where to go from here?
 
-[Download CodeLite to get started][9]
+[Download CodeLite to get started][5]
 
 [1]: https://codelite.org
 [2]: https://codelite.org/support.php
 [3]: https://codelite.org
 [4]: https://codelite.org/support.php
-[5]: https://wiki.codelite.org/pmwiki.php
-[6]: https://wiki.codelite.org/pmwiki.php/Main/WxWidgets31Binaries
-[7]: https://wiki.codelite.org/pmwiki.php/Developers/BuildingWxWidgetsWin
-[8]: https://codelite.org/support.php
-[9]: download.md
+[5]: download.md

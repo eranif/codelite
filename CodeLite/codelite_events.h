@@ -125,6 +125,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FOLDER_CREATED, clFileSystemEvent
 // This event can also be fired if the user selected "Duplicate Tab"
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_SAVEAS, clFileSystemEvent);
 
+// find the other file that matches a given file. Usually, this event is sent when user
+// tries to switch to header file from c++ and vice versa or when CodeLite is searching
+// the implementation file to add function body
+// A handler passes back the pair file to CodeLite by setting it in the event e.SetPath(..)
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_FIND_MATCHING_PAIR, clFileSystemEvent);
+
 // The active editor was changed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEvent);
 

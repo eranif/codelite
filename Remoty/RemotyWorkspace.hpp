@@ -2,6 +2,7 @@
 #define REMOTEWORKSPACE_HPP
 
 #include "IWorkspace.h" // Base class: IWorkspace
+#include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clRemoteTerminal.hpp"
 #include "cl_command_event.h"
@@ -62,7 +63,7 @@ protected:
     void OnStop(clExecuteEvent& event);
     void OnIsProgramRunning(clExecuteEvent& event);
     void OnExecProcessTerminated(clProcessEvent& event);
-
+    void OnFindSwapped(clFileSystemEvent& event);
     wxString GetRemoteWorkingDir() const;
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;

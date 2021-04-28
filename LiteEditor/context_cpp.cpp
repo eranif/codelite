@@ -33,6 +33,7 @@
 #include "browse_record.h"
 #include "buildtabsettingsdata.h"
 #include "clEditorStateLocker.h"
+#include "clFileSystemEvent.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clSelectSymbolDialog.h"
 #include "cl_command_event.h"
@@ -215,7 +216,10 @@ ContextCpp::~ContextCpp()
     wxDELETE(m_rclickMenu);
 }
 
-ContextBase* ContextCpp::NewInstance(clEditor* container) { return new ContextCpp(container); }
+ContextBase* ContextCpp::NewInstance(clEditor* container)
+{
+    return new ContextCpp(container);
+}
 
 void ContextCpp::OnDwellEnd(wxStyledTextEvent& event)
 {
@@ -870,8 +874,13 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
 struct ContextCpp_ClientData : public wxClientData {
     TagEntryPtr m_ptr;
 
-    ContextCpp_ClientData(TagEntryPtr ptr) { m_ptr = ptr; }
-    virtual ~ContextCpp_ClientData() {}
+    ContextCpp_ClientData(TagEntryPtr ptr)
+    {
+        m_ptr = ptr;
+    }
+    virtual ~ContextCpp_ClientData()
+    {
+    }
 };
 
 TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
@@ -1028,6 +1037,13 @@ void ContextCpp::SwapFiles(const wxFileName& fileName)
 bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
 {
     CHECK_JS_RETURN_FALSE();
+
+    clFileSystemEvent event_find_pair(wxEVT_FILE_FIND_MATCHING_PAIR);
+    event_find_pair.SetFileName(rhs.GetFullPath());
+    if(EventNotifier::Get()->ProcessEvent(event_find_pair)) {
+        others.insert(event_find_pair.GetPath());
+        return true;
+    }
 
     others.clear();
     wxString ext = rhs.GetExt();
@@ -2922,9 +2938,14 @@ void ContextCpp::OnGotoNextFunction(wxCommandEvent& event)
     }
 }
 
-void ContextCpp::OnCallTipClick(wxStyledTextEvent& e) { e.Skip(); }
+void ContextCpp::OnCallTipClick(wxStyledTextEvent& e)
+{
+    e.Skip();
+}
 
-void ContextCpp::OnCalltipCancel() {}
+void ContextCpp::OnCalltipCancel()
+{
+}
 
 void ContextCpp::DoUpdateCalltipHighlight()
 {
@@ -3183,7 +3204,10 @@ void ContextCpp::OnFindReferences(wxCommandEvent& e)
                                                   word_start, files);
 }
 
-bool ContextCpp::IsDefaultContext() const { return false; }
+bool ContextCpp::IsDefaultContext() const
+{
+    return false;
+}
 
 void ContextCpp::OnSyncSignatures(wxCommandEvent& e)
 {

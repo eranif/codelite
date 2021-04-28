@@ -14,6 +14,7 @@
 #include "debuggermanager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
@@ -118,6 +119,7 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &RemotyWorkspace::OnRun, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &RemotyWorkspace::OnStop, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &RemotyWorkspace::OnIsProgramRunning, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_FIND_MATCHING_PAIR, &RemotyWorkspace::OnFindSwapped, this);
     Bind(wxEVT_TERMINAL_EXIT, &RemotyWorkspace::OnExecProcessTerminated, this);
 }
 
@@ -136,6 +138,7 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &RemotyWorkspace::OnRun, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &RemotyWorkspace::OnStop, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_FIND_MATCHING_PAIR, &RemotyWorkspace::OnFindSwapped, this);
 
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RemotyWorkspace::OnBuildProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &RemotyWorkspace::OnBuildProcessOutput, this);
@@ -796,4 +799,50 @@ void RemotyWorkspace::OnExecProcessTerminated(clProcessEvent& event)
 {
     wxUnusedVar(event);
     m_execPID = wxNOT_FOUND;
+}
+
+void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    if(!editor) {
+        event.Skip();
+        return;
+    }
+    if(!editor->IsRemoteFile()) {
+        event.Skip();
+        return;
+    }
+    CHECK_EVENT(event);
+
+    const wxString& ext = editor->GetFileName().GetExt();
+    std::vector<wxString> exts;
+
+    // replace the file extension
+    auto type = FileExtManager::GetTypeFromExtension(editor->GetFileName().GetFullName());
+    if(type == FileExtManager::TypeSourceC || type == FileExtManager::TypeSourceCpp) {
+        // try to find a header file
+        exts.push_back("h");
+        exts.push_back("hpp");
+        exts.push_back("hxx");
+        exts.push_back("h++");
+
+    } else {
+        // try to find a implementation file
+        exts.push_back("cpp");
+        exts.push_back("cxx");
+        exts.push_back("cc");
+        exts.push_back("c++");
+        exts.push_back("c");
+    }
+
+    wxString remote_path = editor->GetRemotePath();
+    for(const auto& other_ext : exts) {
+        remote_path = remote_path.BeforeLast('.');
+        remote_path << "." << other_ext;
+        if(clSFTPManager::Get().IsFileExists(remote_path, m_account)) {
+            // open this file
+            auto other_editor = clSFTPManager::Get().OpenFile(remote_path, m_account);
+            event.SetPath(other_editor->GetFileName().GetFullPath());
+        }
+    }
 }

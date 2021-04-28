@@ -150,17 +150,15 @@ JSONItem::JSONItem(const wxString& name, double val)
 JSONItem::JSONItem(const wxString& name, const std::string& val)
     : m_name(name)
     , m_type(cJSON_String)
+    , m_valueString(val)
 {
-    m_valueString.reserve(val.length() + 1);
-    m_valueString.append(val);
 }
 
 JSONItem::JSONItem(const wxString& name, const char* pval, size_t len)
     : m_name(name)
     , m_type(cJSON_String)
+    , m_valueString(pval, len)
 {
-    m_valueString.reserve(len + 1);
-    m_valueString.append(pval);
 }
 
 JSONItem::JSONItem(const wxString& name, bool val)
@@ -419,7 +417,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, bool value)
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxString& value)
 {
-    const wxCharBuffer cb = value.mbc_str();
+    const wxCharBuffer cb = value.mb_str(wxConvUTF8);
     append(JSONItem(name, cb.data(), cb.length()));
     return *this;
 }
@@ -432,12 +430,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, const std::string& value)
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxChar* value)
 {
-#if wxVERSION_NUMBER >= 2900 && wxVERSION_NUMBER < 3104
-    append(JSONItem(name, wxString(value).c_str(), cJSON_String));
-#else
-    append(JSONItem(name, wxString(value), cJSON_String));
-#endif
-    return *this;
+    return addProperty(name, wxString(value));
 }
 
 JSONItem& JSONItem::addProperty(const wxString& name, long value)
@@ -456,11 +449,11 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxArrayString& arr)
     return *this;
 }
 
-#if wxVERSION_NUMBER >= 2900 && wxVERSION_NUMBER < 3104
-void JSONItem::arrayAppend(const wxString& value) { arrayAppend(JSONItem(wxT(""), value.c_str(), cJSON_String)); }
-#else
-void JSONItem::arrayAppend(const wxString& value) { arrayAppend(JSONItem(wxT(""), value, cJSON_String)); }
-#endif
+void JSONItem::arrayAppend(const wxString& value)
+{
+    const wxCharBuffer cb = value.mb_str(wxConvUTF8);
+    arrayAppend(JSONItem(wxT(""), cb.data(), cb.length()));
+}
 
 wxArrayString JSONItem::toArrayString(const wxArrayString& defaultValue) const
 {

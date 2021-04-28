@@ -24,6 +24,7 @@ class RemotyWorkspace : public IWorkspace
     clFileSystemWorkspaceSettings m_settings;
     IProcess* m_buildProcess = nullptr;
     IProcess* m_cmdProcess = nullptr;
+    IProcess* m_scanFilesProcess = nullptr;
     long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
 
@@ -67,6 +68,7 @@ protected:
     wxString GetRemoteWorkingDir() const;
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
+    void DoScanFiles();
 
 public:
     // IWorkspace

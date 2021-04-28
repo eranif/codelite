@@ -3,6 +3,7 @@
 #include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
+#include "asyncprocess.h"
 #include "clConsoleBase.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clRemoteFindDialog.h"
@@ -853,4 +854,8 @@ void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
             event.SetPath(other_editor->GetFileName().GetFullPath());
         }
     }
+}
+
+void RemotyWorkspace::DoScanFiles()
+{
 }

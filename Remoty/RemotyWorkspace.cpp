@@ -471,7 +471,8 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     const auto& account = accounts[0];
     auto localFile = clSFTPManager::Get().Download(path, account.GetAccountName());
     if(!localFile.IsOk()) {
-        ::wxMessageBox(_("Failed to download remote workspace file!"), "CodeLite", wxICON_ERROR | wxCENTER);
+        ::wxMessageBox(_("Failed to download remote workspace file!\n") + clSFTPManager::Get().GetLastError(),
+                       "CodeLite", wxICON_ERROR | wxCENTER);
         return;
     }
 
@@ -498,10 +499,17 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
 
     // Construct the local file path
     wxFileName localClangFormatFile = clSFTP::GetLocalFileName(account, remoteClangFormatFile, true);
-    localClangFormatFile = clSFTPManager::Get().Download(remoteClangFormatFile, account.GetAccountName(),
-                                                         localClangFormatFile.GetFullPath());
-    if(localClangFormatFile.IsOk() && localClangFormatFile.FileExists()) {
-        clGetManager()->SetStatusMessage(_("Downloaded .clang-format file"));
+    bool hasClangFormatFile = clSFTPManager::Get().IsFileExists(remoteClangFormatFile, account);
+    if(hasClangFormatFile) {
+        localClangFormatFile = clSFTPManager::Get().Download(remoteClangFormatFile, account.GetAccountName(),
+                                                             localClangFormatFile.GetFullPath());
+        if(localClangFormatFile.IsOk() && localClangFormatFile.FileExists()) {
+            clGetManager()->SetStatusMessage(_("Downloaded .clang-format file"));
+        } else {
+            ::wxMessageBox(_("Failed to download file: ") + remoteClangFormatFile + "\n" +
+                               clSFTPManager::Get().GetLastError(),
+                           "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT);
+        }
     }
 
     path.Replace("\\", "/");

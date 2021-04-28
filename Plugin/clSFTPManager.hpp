@@ -38,6 +38,7 @@ protected:
     std::thread* m_saveThread = nullptr;
     wxMessageQueue<save_request*> m_q;
     atomic_bool m_shutdown;
+    wxString m_lastError;
 
 protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
@@ -185,6 +186,22 @@ public:
      * @brief return the local path for a remote path
      */
     bool GetLocalPath(const wxString& remote_path, const wxString& accountName, wxString& local_path) const;
+
+    /**
+     * @brief return the last error occurred
+     */
+    const wxString& GetLastError() const
+    {
+        return m_lastError;
+    }
+
+    /**
+     * @brief clear last error captured
+     */
+    void ClearLastError()
+    {
+        m_lastError.clear();
+    }
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);

@@ -160,7 +160,8 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
 
     auto account = SSHAccountInfo::LoadAccount(accountName);
     if(account.GetAccountName().empty()) {
-        clWARNING() << "failed to locate account:" << accountName << endl;
+        m_lastError.clear();
+        m_lastError << "failed to locate account:" << accountName;
         return nullptr;
     }
     wxFileName localPath = clSFTP::GetLocalFileName(account, path, true);
@@ -522,12 +523,14 @@ bool clSFTPManager::DoDownload(const wxString& remotePath, const wxString& local
         // No such connection, attempt to load the connection details and open a session
         auto account = SSHAccountInfo::LoadAccount(accountName);
         if(accountName.empty()) {
-            clWARNING() << "Could not locate account:" << accountName << endl;
+            m_lastError.clear();
+            m_lastError << "Could not locate account:" << accountName;
             return false;
         }
 
         if(!AddConnection(account)) {
-            clWARNING() << "Failed to open connection:" << accountName << endl;
+            m_lastError.clear();
+            m_lastError << "Failed to open connection:" << accountName;
             return false;
         }
 
@@ -545,7 +548,8 @@ bool clSFTPManager::DoDownload(const wxString& remotePath, const wxString& local
     try {
         fileAttr = sftp->Read(remotePath, buffer);
     } catch(clException& e) {
-        clWARNING() << "Failed to open file:" << remotePath << "." << e.What() << clEndl;
+        m_lastError.clear();
+        m_lastError << "Failed to open file:" << remotePath << "." << e.What();
         return false;
     }
 
@@ -556,7 +560,8 @@ bool clSFTPManager::DoDownload(const wxString& remotePath, const wxString& local
         fp.Close();
         return true;
     } else {
-        clWARNING() << "Failed to write local file content:" << localPath << endl;
+        m_lastError.clear();
+        m_lastError << "Failed to write local file content:" << localPath;
         return false;
     }
 }

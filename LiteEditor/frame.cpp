@@ -2777,6 +2777,7 @@ void clMainFrame::OnFileCloseAll(wxCommandEvent& event)
 
 void clMainFrame::OnQuickOutline(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
     // Sanity
     clEditor* activeEditor = GetMainBook()->GetActiveEditor(true);
     CHECK_PTR_RET(activeEditor);
@@ -2788,11 +2789,6 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
 
     if(EventNotifier::Get()->ProcessEvent(evt))
         return;
-
-    wxUnusedVar(event);
-    if(!::clIsCxxWorkspaceOpened()) {
-        return;
-    }
 
     // Show outline dialog
     if(gOutlineDialog == nullptr) {

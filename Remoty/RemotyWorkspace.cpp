@@ -465,7 +465,8 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
 
     wxBusyCursor bc;
     // first: attempt to download the workspace file and store it locally
-    auto localFile = clSFTPManager::Get().Download(path, accounts[0].GetAccountName());
+    const auto& account = accounts[0];
+    auto localFile = clSFTPManager::Get().Download(path, account.GetAccountName());
     if(!localFile.IsOk()) {
         ::wxMessageBox(_("Failed to download remote workspace file!"), "CodeLite", wxICON_ERROR | wxCENTER);
         return;
@@ -486,6 +487,19 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     m_remoteWorkspaceFile = path;
     m_localWorkspaceFile = localFile.GetFullPath();
     m_localUserWorkspaceFile = userSettings.GetFullPath();
+
+    // If the user has .clang-format file, download it as well and place it next to the root download folder
+    wxString remoteClangFormatFile = path;
+    remoteClangFormatFile = remoteClangFormatFile.BeforeLast('/');
+    remoteClangFormatFile << "/.clang-format";
+
+    // Construct the local file path
+    wxFileName localClangFormatFile = clSFTP::GetLocalFileName(account, remoteClangFormatFile, true);
+    localClangFormatFile = clSFTPManager::Get().Download(remoteClangFormatFile, account.GetAccountName(),
+                                                         localClangFormatFile.GetFullPath());
+    if(localClangFormatFile.IsOk() && localClangFormatFile.FileExists()) {
+        clGetManager()->SetStatusMessage(_("Downloaded .clang-format file"));
+    }
 
     path.Replace("\\", "/");
     wxString workspacePath = GetRemoteWorkingDir();

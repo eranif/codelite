@@ -80,10 +80,11 @@ public:
     IEditor* OpenFile(const wxString& path, const SSHAccountInfo& accountInfo);
 
     /**
-     * @brief download file, but do not open it in a an editor
+     * @brief download file, but do not open it in a an editor. Optionally, allow the user set the local file name
      * @return return the *local* file path
      */
-    wxFileName Download(const wxString& path, const wxString& accountName);
+    wxFileName Download(const wxString& path, const wxString& accountName,
+                        const wxString& localFileName = wxEmptyString);
 
     /**
      * @brief save file remotely. this function is async

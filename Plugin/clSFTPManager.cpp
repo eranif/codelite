@@ -495,11 +495,16 @@ bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& 
     }
 }
 
-wxFileName clSFTPManager::Download(const wxString& path, const wxString& accountName)
+wxFileName clSFTPManager::Download(const wxString& path, const wxString& accountName, const wxString& localFileName)
 {
     clDEBUG() << "SFTP Manager: Download() called for" << path << endl;
-    wxFileName local_file(clStandardPaths::Get().GetTempDir(), path.AfterLast('/'));
-    local_file.AppendDir("sftp-downloads");
+    wxFileName local_file;
+    if(localFileName.empty()) {
+        local_file = wxFileName(clStandardPaths::Get().GetTempDir(), path.AfterLast('/'));
+        local_file.AppendDir("sftp-downloads");
+    } else {
+        local_file = wxFileName(localFileName);
+    }
     local_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     if(DoDownload(path, local_file.GetFullPath(), accountName)) {
         return local_file;

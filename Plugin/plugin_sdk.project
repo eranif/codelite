@@ -179,6 +179,8 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="clCodeLiteRemoteProcess.hpp"/>
+    <File Name="clCodeLiteRemoteProcess.cpp"/>
     <File Name="libplugin_pch.h"/>
     <File Name="SwitchToWorkspaceDlg.h"/>
     <File Name="SwitchToWorkspaceDlg.cpp"/>

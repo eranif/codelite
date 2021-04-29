@@ -3,13 +3,19 @@ import sys
 import os
 import json
 import re
+import argparse
+import subprocess
 
-#
+#----------------------------------------------------------------------------------------------------------------------------------
 # Sample usage:
 #   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
 #   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite", "find_what": "wxcReplyEventData"}
-#   {"command":"exec", "program": ["/usr/bin/ls"], "wd": "/c/src/codelite", "env": [["ENV1", "ENV_VALUE1"], ["ENV2", "ENV_VALUE2"]]}
+#   {"command":"exec", "cmd": ["/usr/bin/ls"], "wd": "/c/src/codelite/AutoSave", "env": [["PATH", "/c/src/codelite/Runtime"], ["ENV2", "ENV_VALUE2"]]}
 #
+# Command line usage:
+#   python3 codelite-remote.py --i # start in interactive mode
+#   python3 codelite-remote.py --list /path/to/dir --extensions ".txt .cpp .hpp"
+#----------------------------------------------------------------------------------------------------------------------------------
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -20,7 +26,7 @@ def _get_list_of_files(cmd):
     root_dir = cmd['root_dir']
     if not os.path.isdir(root_dir):
         eprint("error: {} is not a directory".format(root_dir))
-        return None
+        return []
     
     # build the extension tuple
     exts_set = set()
@@ -37,7 +43,37 @@ def _get_list_of_files(cmd):
     return files_arr
 
 def on_exec(cmd):
-    pass
+    """
+    Execute command and print its output
+    """
+    # preare the environment
+    env_dict = dict(os.environ.copy())
+    user_env = cmd['env']
+    for pair in user_env:
+        name = pair[0]
+        value = pair[1]
+        if env_dict.get(name, -1) == -1:
+            env_dict[name] = value
+        else:
+            env_dict[name] = "{}:{}".format(value, env_dict[name])
+
+    proc = subprocess.Popen(args=cmd['cmd'], 
+                            cwd=cmd['wd'],
+                            stdout=subprocess.PIPE, 
+                            stderr=subprocess.PIPE, 
+                            shell=False, 
+                            env=env_dict)
+    try:
+        outs, errs = proc.communicate()
+        # prepare the reply
+        reply = {
+            "stdout": outs.decode("utf-8"),
+            "stderr": errs.decode("utf-8")
+        }
+        print(json.dumps(reply))
+    except TimeoutExpired:
+        proc.kill()
+        outs, errs = proc.communicate()
 
 def on_find_files(cmd):
     """
@@ -48,8 +84,7 @@ def on_find_files(cmd):
     {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
     """
     arr_files = _get_list_of_files(cmd)
-    if arr_files is not None:
-        print(json.dumps(arr_files))
+    print(json.dumps(arr_files))
 
 def on_find_in_files(cmd):
     """
@@ -92,27 +127,45 @@ def main_loop():
     """
     accept input from the user and process the command    
     """
-    handlers = { 
-        "ls": on_find_files, 
-        "find": on_find_in_files,
-        "exec": on_exec
-    }
-    while True:
-        try:
-            text = input("(codelite)")
-            text = text.strip()
-            if text == "exit" or text == "bye" or text == "quit":
-                exit(0)
-            
-            # split the command line by spaces
-            command = json.loads(text)
-            func = handlers.get(command['command'], None)
-            if func is not None:
-                func(command)
-            else:
-                eprint("unknown command '{}'".format(command['command']))
-        except Exception as e:
-            eprint(e)
+    parser = argparse.ArgumentParser(description='codelite-remote helper')
+    parser.add_argument('--list', dest='root_dir', help='one time command to run')
+    parser.add_argument('--extensions', dest='extensions', help='list of file extensions in the form of ".txt .cpp"')
+    parser.add_argument('--i', dest='interactive', action="store_true", help='start interactive mode')
+    args = parser.parse_args()
+    
+    if not args.interactive:
+        # print list of files and exit
+        file_extensions = args.extensions.split(" ")
+        
+        cmd = {
+            "root_dir": args.root_dir,
+            "file_extensions": file_extensions,
+        }
+        files_arr = _get_list_of_files(cmd)
+        print(json.dumps(files_arr))
+    else:
+        # interactive mode
+        handlers = { 
+            "ls": on_find_files, 
+            "find": on_find_in_files,
+            "exec": on_exec
+        }
+        while True:
+            try:
+                text = input("(codelite)")
+                text = text.strip()
+                if text == "exit" or text == "bye" or text == "quit":
+                    exit(0)
+                
+                # split the command line by spaces
+                command = json.loads(text)
+                func = handlers.get(command['command'], None)
+                if func is not None:
+                    func(command)
+                else:
+                    eprint("unknown command '{}'".format(command['command']))
+            except Exception as e:
+                eprint(e)
 
 def main():
     main_loop()

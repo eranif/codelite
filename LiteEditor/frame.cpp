@@ -4680,9 +4680,19 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
 
     if(dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {
         std::vector<OpenResourceDialogItemData*> items = dlg.GetSelections();
-        std::for_each(items.begin(), items.end(), [&](OpenResourceDialogItemData* item) {
+        for(auto item : items) {
+
+            // try the plugins first
+            clCommandEvent open_resource_event(wxEVT_OPEN_RESOURCE_FILE_SELECTED);
+            open_resource_event.SetFileName(item->m_file);
+            open_resource_event.SetLineNumber(item->m_line);
+            if(EventNotifier::Get()->ProcessEvent(open_resource_event)) {
+                continue;
+            }
+
+            // default behaviour
             OpenResourceDialog::OpenSelection(*item, PluginManager::Get());
-        });
+        }
     }
 }
 

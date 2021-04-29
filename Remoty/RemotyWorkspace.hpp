@@ -10,6 +10,7 @@
 #include "ssh_account_info.h"
 #include <deque>
 #include <functional>
+#include <wx/arrstr.h>
 
 #define WORKSPACE_TYPE_NAME "Remote over SSH"
 
@@ -28,6 +29,7 @@ class RemotyWorkspace : public IWorkspace
     clCodeLiteRemoteProcess m_codeliteRemote;
     long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
+    wxArrayString m_workspaceFiles;
 
 public:
     RemotyWorkspace();
@@ -43,6 +45,8 @@ protected:
     void OnCloseWorkspace(clCommandEvent& event);
     void DoClose(bool notify);
     void StartCodeLiteRemote();
+    void OnListFilesCompleted(clCommandEvent& event);
+    void OnOpenResourceFile(clCommandEvent& event);
 
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);
@@ -113,6 +117,10 @@ public:
      * @brief save the settings to the remote machine
      */
     void SaveSettings();
+    /**
+     * @brief refresh the workspace files list (by scanning them on the remote machine)
+     */
+    void ScanForWorkspaceFiles();
 };
 
 #endif // RemoteWorkspace_HPP

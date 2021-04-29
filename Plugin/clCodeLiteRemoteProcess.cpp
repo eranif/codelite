@@ -1,10 +1,19 @@
+#include "JSON.h"
 #include "StringUtils.h"
 #include "asyncprocess.h"
+#include "cJSON.h"
 #include "clCodeLiteRemoteProcess.hpp"
+#include "cl_command_event.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "processreaderthread.h"
+#include <functional>
+#include <unordered_map>
+#include <wx/event.h>
+#include <wx/tokenzr.h>
+
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 
 clCodeLiteRemoteProcess::clCodeLiteRemoteProcess()
 {
@@ -70,16 +79,6 @@ void clCodeLiteRemoteProcess::StartSync(const SSHAccountInfo& account, const wxS
     proc->WaitForTerminate(output);
 }
 
-void clCodeLiteRemoteProcess::AsyncCommand(const wxString& json_command, std::function<void(const wxString&)> callback)
-{
-    // send the command
-    if(!m_process || !callback) {
-        return;
-    }
-    m_process->Write(json_command + "\n");
-    m_completionCallbacks.push_back(std::move(callback));
-}
-
 void clCodeLiteRemoteProcess::OnProcessOutput(clProcessEvent& e)
 {
     m_outputRead << e.GetOutput();
@@ -127,9 +126,48 @@ void clCodeLiteRemoteProcess::ProcessOutput()
             where = m_outputRead.find('\n');
             continue;
         }
-        auto cb = std::move(m_completionCallbacks.front());
-        cb(msg);
+
+        auto cb = m_completionCallbacks.front();
+        clCommandEvent event;
+        if((this->*cb)(msg, event)) {
+            // fire the event
+            AddPendingEvent(event);
+        }
+
         m_completionCallbacks.pop_front();
         where = m_outputRead.find('\n');
     }
+}
+
+bool clCodeLiteRemoteProcess::OnListFiles(const wxString& output, clCommandEvent& e)
+{
+    e.SetEventType(wxEVT_CODELITE_REMOTE_LIST_FILES);
+
+    // parse the output
+    JSON root(output);
+    if(!root.isOk()) {
+        return false;
+    }
+
+    wxArrayString files = root.toElement().toArrayString();
+    e.GetStrings().swap(files);
+    return true;
+}
+
+void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString& extensions)
+{
+    if(!m_process) {
+        return;
+    }
+
+    // build the command and send it
+    JSON root(cJSON_Object);
+    auto item = root.toElement();
+    item.addProperty("command", "ls");
+    item.addProperty("root_dir", root_dir);
+    item.addProperty("file_extensions", ::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK));
+    m_process->Write(item.format(false) + "\n");
+
+    // push a callback
+    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnListFiles);
 }

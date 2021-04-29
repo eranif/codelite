@@ -22,9 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "macros.h"
+#include <wx/event.h>
 
 #include "bitmap_loader.h"
 #include "clFileSystemWorkspace.hpp"
+#include "clWorkspaceManager.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -48,6 +51,8 @@
 BEGIN_EVENT_TABLE(OpenResourceDialog, OpenResourceDialogBase)
 EVT_TIMER(XRCID("OR_TIMER"), OpenResourceDialog::OnTimer)
 END_EVENT_TABLE()
+
+wxDEFINE_EVENT(wxEVT_OPEN_RESOURCE_FILE_SELECTED, clCommandEvent);
 
 OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, const wxString& initialSelection)
     : OpenResourceDialogBase(parent)
@@ -110,6 +115,19 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         } else if(clFileSystemWorkspace::Get().IsOpen()) {
             const std::vector<wxFileName>& files = clFileSystemWorkspace::Get().GetFiles();
             for(const wxFileName& fn : files) {
+                m_files.insert({ fn.GetFullName(), fn.GetFullPath() });
+            }
+        }
+    } else if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        // the workspace API to get list of files
+        wxArrayString files;
+        clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
+        wxStringSet_t unique_files;
+        m_files.reserve(files.size());
+        for(const auto& file : files) {
+            if(unique_files.count(file) == 0) {
+                unique_files.insert(file);
+                wxFileName fn(file);
                 m_files.insert({ fn.GetFullName(), fn.GetFullPath() });
             }
         }
@@ -337,11 +355,20 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
+void OpenResourceDialog::OnOK(wxCommandEvent& event)
+{
+    event.Skip();
+}
 
-void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_dataview->GetSelectedItemsCount()); }
+void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_dataview->GetSelectedItemsCount());
+}
 
-bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false; }
+bool OpenResourceDialogItemData::IsOk() const
+{
+    return m_file.IsEmpty() == false;
+}
 
 void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
 {
@@ -406,12 +433,24 @@ bool OpenResourceDialog::MatchesFilter(const wxString& name)
     return FileUtils::FuzzyMatch(filter, name);
 }
 
-void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
-void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
+void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event)
+{
+    DoPopulateList();
+}
+void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event)
+{
+    DoPopulateList();
+}
 
-void OpenResourceDialog::OnEnter(wxCommandEvent& event) { CallAfter(&OpenResourceDialog::EndModal, wxID_OK); }
+void OpenResourceDialog::OnEnter(wxCommandEvent& event)
+{
+    CallAfter(&OpenResourceDialog::EndModal, wxID_OK);
+}
 
-void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }
+void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event)
+{
+    event.Skip();
+}
 
 std::vector<OpenResourceDialogItemData*> OpenResourceDialog::GetSelections() const
 {
@@ -452,4 +491,7 @@ OpenResourceDialogItemData* OpenResourceDialog::GetItemData(const wxDataViewItem
     return reinterpret_cast<OpenResourceDialogItemData*>(m_dataview->GetItemData(item));
 }
 
-void OpenResourceDialog::OnSelectAllText() { m_textCtrlResourceName->SelectAll(); }
+void OpenResourceDialog::OnSelectAllText()
+{
+    m_textCtrlResourceName->SelectAll();
+}

@@ -93,7 +93,10 @@ JSONItem JSON::toElement() const
     return JSONItem(m_json);
 }
 
-wxString JSON::errorString() const { return _errorString; }
+wxString JSON::errorString() const
+{
+    return _errorString;
+}
 
 JSONItem JSONItem::namedObject(const wxString& name) const
 {
@@ -175,7 +178,10 @@ JSONItem JSONItem::operator[](int index) const
     return JSONItem(NULL);
 }
 
-JSONItem JSONItem::operator[](const wxString& name) const { return namedObject(name); }
+JSONItem JSONItem::operator[](const wxString& name) const
+{
+    return namedObject(name);
+}
 
 JSONItem JSONItem::arrayItem(int pos) const
 {
@@ -466,6 +472,8 @@ wxArrayString JSONItem::toArrayString(const wxArrayString& defaultValue) const
     }
 
     wxArrayString arr;
+    int arr_size = arraySize();
+    arr.reserve(arr_size);
     for(int i = 0; i < arraySize(); i++) {
         arr.Add(arrayItem(i).toString());
     }
@@ -589,7 +597,10 @@ wxStringMap_t JSONItem::toStringMap() const
     }
     return res;
 }
-JSONItem& JSONItem::addProperty(const wxString& name, size_t value) { return addProperty(name, (int)value); }
+JSONItem& JSONItem::addProperty(const wxString& name, size_t value)
+{
+    return addProperty(name, (int)value);
+}
 
 #if wxUSE_GUI
 JSONItem& JSONItem::addProperty(const wxString& name, const wxColour& colour)

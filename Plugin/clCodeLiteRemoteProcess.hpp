@@ -14,16 +14,22 @@
 
 class WXDLLIMPEXP_SDK clCodeLiteRemoteProcess : public wxEvtHandler
 {
+protected:
+    typedef bool (clCodeLiteRemoteProcess::*CallbackFunc)(const wxString&, clCommandEvent&);
+
+protected:
     IProcess* m_process = nullptr;
-    std::deque<std::function<void(const wxString&)>> m_completionCallbacks;
+    std::deque<CallbackFunc> m_completionCallbacks;
     std::function<void()> m_terminateCallback;
     wxString m_outputRead;
 
-protected:
     void OnProcessOutput(clProcessEvent& e);
     void OnProcessTerminated(clProcessEvent& e);
     void Cleanup();
     void ProcessOutput();
+
+    // prepare an event from list command output
+    bool OnListFiles(const wxString& output, clCommandEvent& e);
 
 public:
     clCodeLiteRemoteProcess();
@@ -33,12 +39,12 @@ public:
     void StartSync(const SSHAccountInfo& account, const wxString& scriptPath, const std::vector<wxString>& args,
                    wxString& output);
     void SetTerminateCallback(std::function<void()> callback);
-    void AsyncCommand(const wxString& json_command, std::function<void(const wxString&)> callback);
     void Stop();
     bool IsRunning() const
     {
         return m_process != nullptr;
     }
+    void ListFiles(const wxString& root_dir, const wxString& extensions);
 };
-
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 #endif // CLCODELITEREMOTEPROCESS_HPP

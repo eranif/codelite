@@ -27,6 +27,7 @@
 #define __open_resource_dialog__
 
 #include "clAnagram.h"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "entry.h"
 #include "fileextmanager.h"
@@ -34,6 +35,7 @@
 #include "wxStringHash.h"
 #include <vector>
 #include <wx/arrstr.h>
+#include <wx/event.h>
 #include <wx/timer.h>
 
 class IManager;
@@ -71,7 +73,9 @@ public:
     {
     }
 
-    virtual ~OpenResourceDialogItemData() {}
+    virtual ~OpenResourceDialogItemData()
+    {
+    }
 
     bool IsOk() const;
 };
@@ -124,7 +128,10 @@ public:
     virtual ~OpenResourceDialog();
 
     std::vector<OpenResourceDialogItemData*> GetSelections() const;
-    wxArrayString& GetFilters() { return m_filters; }
+    wxArrayString& GetFilters()
+    {
+        return m_filters;
+    }
 
     /**
      * \brief helper method for opening the selection
@@ -134,4 +141,5 @@ public:
     static void OpenSelection(const OpenResourceDialogItemData& selection, IManager* manager);
 };
 
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_OPEN_RESOURCE_FILE_SELECTED, clCommandEvent);
 #endif // __open_resource_dialog__

@@ -5,9 +5,11 @@
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
+#include "clRemoteFinderHelper.hpp"
 #include "clRemoteTerminal.hpp"
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
+#include "wx/event.h"
 #include <deque>
 #include <functional>
 #include <wx/arrstr.h>
@@ -30,6 +32,7 @@ class RemotyWorkspace : public IWorkspace
     long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
     wxArrayString m_workspaceFiles;
+    clRemoteFinderHelper m_remoteFinder;
 
 public:
     RemotyWorkspace();
@@ -47,10 +50,14 @@ protected:
     void StartCodeLiteRemote();
     void OnListFilesCompleted(clCommandEvent& event);
     void OnOpenResourceFile(clCommandEvent& event);
+    void OnShutdown(clCommandEvent& event);
+    void OnInitDone(wxCommandEvent& event);
 
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);
     void DoBuild(const wxString& kind);
+    void DeleteClangdEntry();
+
     IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
     wxString GetTargetCommand(const wxString& target) const;
     void DoPrintBuildMessage(const wxString& message);
@@ -71,6 +78,8 @@ protected:
     void OnIsProgramRunning(clExecuteEvent& event);
     void OnExecProcessTerminated(clProcessEvent& event);
     void OnFindSwapped(clFileSystemEvent& event);
+    void OnCodeLiteRemoteFindCompleted(clFindInFilesEvent& event);
+
     wxString GetRemoteWorkingDir() const;
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
@@ -121,6 +130,11 @@ public:
      * @brief refresh the workspace files list (by scanning them on the remote machine)
      */
     void ScanForWorkspaceFiles();
+
+    /**
+     * @brief perform find in files
+     */
+    void FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what);
 };
 
 #endif // RemoteWorkspace_HPP

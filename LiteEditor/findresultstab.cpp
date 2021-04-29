@@ -393,9 +393,17 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
     if(!result.GetFileName().IsEmpty()) {
         // let plugins handle this first
         clFindInFilesEvent open_event(wxEVT_FINDINFILES_OPEN_MATCH);
-        open_event.SetFileName(result.GetFileName());
-        open_event.SetLineNumber(result.GetLineNumber());
-        open_event.SetInt(result.GetColumn());
+
+        // prepare a single match entry and fire it
+        clFindInFilesEvent::Match match;
+        clFindInFilesEvent::Location loc;
+        match.file = result.GetFileName();
+        loc.column_start = result.GetColumn();
+        loc.column_end = result.GetColumn() + result.GetLen();
+        loc.line = result.GetLineNumber();
+        match.locations.push_back(loc);
+        open_event.GetMatches().push_back(match);
+
         if(EventNotifier::Get()->ProcessEvent(open_event)) {
             return;
         }

@@ -12,6 +12,7 @@ set RUNTIME_DIR=%CODELITE_SRC_DIR%\Runtime
 IF EXIST ..\wxcrafter\wxcrafter.accelerators (set COPY_WXC_RESOURCES=1)
 
 xcopy %RUNTIME_DIR%\config\*.default "%TARGET_DIR%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
+xcopy %RUNTIME_DIR%\codelite-remote "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\config\build_settings.xml.default.win "%TARGET_DIR%\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\debuggers\*.dll "%TARGET_DIR%\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes
 xcopy %RUNTIME_DIR%\images\* "%TARGET_DIR%\CodeLite\images\" /E /I /H /Y /EXCLUDE:excludes

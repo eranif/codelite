@@ -15,7 +15,7 @@
 class WXDLLIMPEXP_SDK clCodeLiteRemoteProcess : public wxEvtHandler
 {
 protected:
-    typedef bool (clCodeLiteRemoteProcess::*CallbackFunc)(const wxString&, clCommandEvent&);
+    typedef void (clCodeLiteRemoteProcess::*CallbackFunc)(const wxString&);
 
 protected:
     IProcess* m_process = nullptr;
@@ -29,7 +29,8 @@ protected:
     void ProcessOutput();
 
     // prepare an event from list command output
-    bool OnListFiles(const wxString& output, clCommandEvent& e);
+    void OnListFilesCompleted(const wxString& output);
+    void OnFindCompleted(const wxString& output);
 
 public:
     clCodeLiteRemoteProcess();
@@ -45,6 +46,9 @@ public:
         return m_process != nullptr;
     }
     void ListFiles(const wxString& root_dir, const wxString& extensions);
+    void Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
+                size_t search_flags = 0);
 };
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
 #endif // CLCODELITEREMOTEPROCESS_HPP

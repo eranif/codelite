@@ -1,6 +1,7 @@
 #include "Notebook.h"
 #include "asyncprocess.h"
 #include "clRemoteFinderHelper.hpp"
+#include "cl_command_event.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -11,29 +12,14 @@
 
 clRemoteFinderHelper::clRemoteFinderHelper()
 {
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteFinderHelper::OnSearchTerminated, this);
-    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteFinderHelper::OnSearchOutput, this);
 }
 
 clRemoteFinderHelper::~clRemoteFinderHelper()
 {
-    wxDELETE(m_searchProcess);
-    Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clRemoteFinderHelper::OnSearchTerminated, this);
-    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clRemoteFinderHelper::OnSearchOutput, this);
 }
 
-void clRemoteFinderHelper::OnSearchOutput(clProcessEvent& event)
+void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event)
 {
-    m_searchOutput.reserve(m_searchOutput.length() + event.GetOutput().length());
-    m_searchOutput << event.GetOutput();
-}
-
-void clRemoteFinderHelper::OnSearchTerminated(clProcessEvent& event)
-{
-    m_searchOutput << event.GetOutput();
-    wxDELETE(m_searchProcess);
-    clDEBUG() << "remote search completed:" << m_searchOutput << endl;
-    
     auto search_tab = GetSearchTab();
     if(!search_tab) {
         clWARNING() << "clRemoteFinderHelper: search tab is hidden" << endl;
@@ -43,36 +29,22 @@ void clRemoteFinderHelper::OnSearchTerminated(clProcessEvent& event)
     long elapsed_time = m_stopWatch.Time();
 
     // process the output
-    wxArrayString lines = ::wxStringTokenize(m_searchOutput, "\r\n", wxTOKEN_DEFAULT);
     SearchResultList* resList = nullptr;
-    if(!lines.empty()) {
+    if(!event.GetMatches().empty()) {
         resList = new SearchResultList;
     }
 
-    for(auto& line : lines) {
-        line.Trim();
-        // find the file name
-        wxString filepath = line.BeforeFirst(':');
-        line = line.AfterFirst(':');
-
-        // find the line number
-        wxString line_number_str = line.BeforeFirst(':');
-
-        long nLineNumber = wxNOT_FOUND;
-        if(!line_number_str.ToCLong(&nLineNumber)) {
-            continue;
+    for(const auto& file_match : event.GetMatches()) {
+        const wxString& filename = file_match.file;
+        for(const auto& location : file_match.locations) {
+            SearchResult res;
+            res.SetColumn(location.column_start);
+            res.SetLen(location.column_end - location.column_start);
+            res.SetFileName(filename);
+            res.SetLineNumber(location.line);
+            res.SetPattern(location.pattern);
+            resList->push_back(res);
         }
-        // the remainder is the pattern
-        line = line.AfterFirst(':');
-
-        SearchResult res;
-        res.SetColumn(0);
-        res.SetLen(0);
-
-        res.SetFileName(filepath);
-        res.SetLineNumber(nLineNumber);
-        res.SetPattern(line);
-        resList->push_back(res);
     }
 
     if(resList && !resList->empty()) {
@@ -91,11 +63,12 @@ void clRemoteFinderHelper::OnSearchTerminated(clProcessEvent& event)
     search_tab->GetEventHandler()->AddPendingEvent(end_event);
 }
 
-void clRemoteFinderHelper::Search(const wxArrayString& args, const wxString& accountName, const wxString& findString,
-                                  const wxString& fileExtensions)
+void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions)
 {
     // start ssh process
-    m_searchOutput.clear();
+    if(!m_codeliteRemote || !m_codeliteRemote->IsRunning()) {
+        return;
+    }
     m_stopWatch.Start();
 
     if(!GetSearchTab()) {
@@ -103,8 +76,7 @@ void clRemoteFinderHelper::Search(const wxArrayString& args, const wxString& acc
         return;
     }
 
-    m_searchProcess = ::CreateAsyncProcess(this, args, IProcessCreateDefault | IProcessWrapInShell | IProcessCreateSSH,
-                                           wxEmptyString, nullptr, accountName);
+    m_codeliteRemote->Search(root_dir, fileExtensions, findString, 0);
 
     SearchData sd;
     sd.SetEncoding("UTF-8");
@@ -124,4 +96,9 @@ wxWindow* clRemoteFinderHelper::GetSearchTab()
         }
     }
     return nullptr;
+}
+
+void clRemoteFinderHelper::SetCodeLiteRemote(clCodeLiteRemoteProcess* clr)
+{
+    m_codeliteRemote = clr;
 }

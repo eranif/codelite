@@ -65,7 +65,10 @@ clCommandEvent& clCommandEvent::operator=(const clCommandEvent& src)
     return *this;
 }
 
-clCommandEvent::~clCommandEvent() { m_ptr.reset(); }
+clCommandEvent::~clCommandEvent()
+{
+    m_ptr.reset();
+}
 
 wxEvent* clCommandEvent::Clone() const
 {
@@ -73,9 +76,15 @@ wxEvent* clCommandEvent::Clone() const
     return new_event;
 }
 
-void clCommandEvent::SetClientObject(wxClientData* clientObject) { m_ptr = clientObject; }
+void clCommandEvent::SetClientObject(wxClientData* clientObject)
+{
+    m_ptr = clientObject;
+}
 
-wxClientData* clCommandEvent::GetClientObject() const { return m_ptr.get(); }
+wxClientData* clCommandEvent::GetClientObject() const
+{
+    return m_ptr.get();
+}
 
 // ---------------------------------
 // Code Completion event
@@ -105,7 +114,9 @@ clCodeCompletionEvent::clCodeCompletionEvent(wxEventType commandType, int winid)
     m_entry.reset(NULL);
 }
 
-clCodeCompletionEvent::~clCodeCompletionEvent() {}
+clCodeCompletionEvent::~clCodeCompletionEvent()
+{
+}
 
 clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEvent& src)
 {
@@ -128,7 +139,10 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
 // clColourEvent
 // ------------------------------------------------
 
-clColourEvent::clColourEvent(const clColourEvent& event) { *this = event; }
+clColourEvent::clColourEvent(const clColourEvent& event)
+{
+    *this = event;
+}
 
 clColourEvent::clColourEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -139,7 +153,9 @@ clColourEvent::clColourEvent(wxEventType commandType, int winid)
 {
 }
 
-clColourEvent::~clColourEvent() {}
+clColourEvent::~clColourEvent()
+{
+}
 
 clColourEvent& clColourEvent::operator=(const clColourEvent& src)
 {
@@ -159,7 +175,10 @@ clColourEvent& clColourEvent::operator=(const clColourEvent& src)
 // clBuildEvent
 // ------------------------------------------------
 
-clBuildEvent::clBuildEvent(const clBuildEvent& event) { *this = event; }
+clBuildEvent::clBuildEvent(const clBuildEvent& event)
+{
+    *this = event;
+}
 
 clBuildEvent::clBuildEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -170,7 +189,9 @@ clBuildEvent::clBuildEvent(wxEventType commandType, int winid)
 {
 }
 
-clBuildEvent::~clBuildEvent() {}
+clBuildEvent::~clBuildEvent()
+{
+}
 
 clBuildEvent& clBuildEvent::operator=(const clBuildEvent& src)
 {
@@ -197,9 +218,14 @@ clDebugEvent::clDebugEvent(wxEventType commandType, int winid)
 {
 }
 
-clDebugEvent::~clDebugEvent() {}
+clDebugEvent::~clDebugEvent()
+{
+}
 
-clDebugEvent::clDebugEvent(const clDebugEvent& event) { *this = event; }
+clDebugEvent::clDebugEvent(const clDebugEvent& event)
+{
+    *this = event;
+}
 
 clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
 {
@@ -233,9 +259,14 @@ clNewProjectEvent::clNewProjectEvent(wxEventType commandType, int winid)
 {
 }
 
-clNewProjectEvent::clNewProjectEvent(const clNewProjectEvent& event) { *this = event; }
+clNewProjectEvent::clNewProjectEvent(const clNewProjectEvent& event)
+{
+    *this = event;
+}
 
-clNewProjectEvent::~clNewProjectEvent() {}
+clNewProjectEvent::~clNewProjectEvent()
+{
+}
 
 clNewProjectEvent& clNewProjectEvent::operator=(const clNewProjectEvent& other)
 {
@@ -252,9 +283,14 @@ clNewProjectEvent& clNewProjectEvent::operator=(const clNewProjectEvent& other)
 // --------------------------------------------------------------
 // Compiler event
 // --------------------------------------------------------------
-clCompilerEvent::~clCompilerEvent() {}
+clCompilerEvent::~clCompilerEvent()
+{
+}
 
-clCompilerEvent::clCompilerEvent(const clCompilerEvent& event) { *this = event; }
+clCompilerEvent::clCompilerEvent(const clCompilerEvent& event)
+{
+    *this = event;
+}
 
 clCompilerEvent::clCompilerEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -271,14 +307,19 @@ clCompilerEvent& clCompilerEvent::operator=(const clCompilerEvent& src)
 // Source formatting event
 // --------------------------------------------------------------
 
-clSourceFormatEvent::clSourceFormatEvent(const clSourceFormatEvent& event) { *this = event; }
+clSourceFormatEvent::clSourceFormatEvent(const clSourceFormatEvent& event)
+{
+    *this = event;
+}
 
 clSourceFormatEvent::clSourceFormatEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {
 }
 
-clSourceFormatEvent::~clSourceFormatEvent() {}
+clSourceFormatEvent::~clSourceFormatEvent()
+{
+}
 
 clSourceFormatEvent& clSourceFormatEvent::operator=(const clSourceFormatEvent& src)
 {
@@ -301,7 +342,10 @@ clContextMenuEvent::clContextMenuEvent(wxEventType commandType, int winid)
 {
 }
 
-clContextMenuEvent::clContextMenuEvent(const clContextMenuEvent& event) { *this = event; }
+clContextMenuEvent::clContextMenuEvent(const clContextMenuEvent& event)
+{
+    *this = event;
+}
 clContextMenuEvent& clContextMenuEvent::operator=(const clContextMenuEvent& src)
 {
     clCommandEvent::operator=(src);
@@ -313,14 +357,21 @@ clContextMenuEvent& clContextMenuEvent::operator=(const clContextMenuEvent& src)
     return *this;
 }
 
-clContextMenuEvent::~clContextMenuEvent() {}
+clContextMenuEvent::~clContextMenuEvent()
+{
+}
 
 //-------------------------------------------------------------------------
 // clExecuteEvent
 //-------------------------------------------------------------------------
 
-clExecuteEvent::clExecuteEvent(const clExecuteEvent& event) { *this = event; }
-clExecuteEvent::~clExecuteEvent() {}
+clExecuteEvent::clExecuteEvent(const clExecuteEvent& event)
+{
+    *this = event;
+}
+clExecuteEvent::~clExecuteEvent()
+{
+}
 clExecuteEvent& clExecuteEvent::operator=(const clExecuteEvent& src)
 {
     clCommandEvent::operator=(src);
@@ -344,14 +395,19 @@ clProjectSettingsEvent& clProjectSettingsEvent::operator=(const clProjectSetting
     return *this;
 }
 
-clProjectSettingsEvent::clProjectSettingsEvent(const clProjectSettingsEvent& event) { *this = event; }
+clProjectSettingsEvent::clProjectSettingsEvent(const clProjectSettingsEvent& event)
+{
+    *this = event;
+}
 
 clProjectSettingsEvent::clProjectSettingsEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {
 }
 
-clProjectSettingsEvent::~clProjectSettingsEvent() {}
+clProjectSettingsEvent::~clProjectSettingsEvent()
+{
+}
 
 //------------------------------------------------------------------------
 // clFindEvent
@@ -363,7 +419,10 @@ clFindEvent& clFindEvent::operator=(const clFindEvent& src)
     return *this;
 }
 
-clFindEvent::clFindEvent(const clFindEvent& event) { *this = event; }
+clFindEvent::clFindEvent(const clFindEvent& event)
+{
+    *this = event;
+}
 
 clFindEvent::clFindEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -371,7 +430,9 @@ clFindEvent::clFindEvent(wxEventType commandType, int winid)
 {
 }
 
-clFindEvent::~clFindEvent() {}
+clFindEvent::~clFindEvent()
+{
+}
 
 //------------------------------------------------------------------------
 // clFindInFilesEvent
@@ -383,23 +444,32 @@ clFindInFilesEvent& clFindInFilesEvent::operator=(const clFindInFilesEvent& src)
     m_fileMask = src.m_fileMask;
     m_options = src.m_options;
     m_transientPaths = src.m_transientPaths;
+    m_matches = src.m_matches;
     return *this;
 }
 
-clFindInFilesEvent::clFindInFilesEvent(const clFindInFilesEvent& event) { *this = event; }
+clFindInFilesEvent::clFindInFilesEvent(const clFindInFilesEvent& event)
+{
+    *this = event;
+}
 
 clFindInFilesEvent::clFindInFilesEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {
 }
 
-clFindInFilesEvent::~clFindInFilesEvent() {}
+clFindInFilesEvent::~clFindInFilesEvent()
+{
+}
 
 //------------------------------------------------------------------------
 // clParseEvent
 //------------------------------------------------------------------------
 
-clParseEvent::clParseEvent(const clParseEvent& event) { *this = event; }
+clParseEvent::clParseEvent(const clParseEvent& event)
+{
+    *this = event;
+}
 
 clParseEvent::clParseEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -408,7 +478,9 @@ clParseEvent::clParseEvent(wxEventType commandType, int winid)
 {
 }
 
-clParseEvent::~clParseEvent() {}
+clParseEvent::~clParseEvent()
+{
+}
 
 clParseEvent& clParseEvent::operator=(const clParseEvent& src)
 {
@@ -422,7 +494,10 @@ clParseEvent& clParseEvent::operator=(const clParseEvent& src)
 // clProcessEvent
 //-------------------------------------------------------------------
 
-clProcessEvent::clProcessEvent(const clProcessEvent& event) { *this = event; }
+clProcessEvent::clProcessEvent(const clProcessEvent& event)
+{
+    *this = event;
+}
 
 clProcessEvent::clProcessEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -430,7 +505,9 @@ clProcessEvent::clProcessEvent(wxEventType commandType, int winid)
 {
 }
 
-clProcessEvent::~clProcessEvent() {}
+clProcessEvent::~clProcessEvent()
+{
+}
 
 clProcessEvent& clProcessEvent::operator=(const clProcessEvent& src)
 {
@@ -443,9 +520,14 @@ clProcessEvent& clProcessEvent::operator=(const clProcessEvent& src)
 // --------------------------------------------------------------
 // Compiler event
 // --------------------------------------------------------------
-clEditorConfigEvent::~clEditorConfigEvent() {}
+clEditorConfigEvent::~clEditorConfigEvent()
+{
+}
 
-clEditorConfigEvent::clEditorConfigEvent(const clEditorConfigEvent& event) { *this = event; }
+clEditorConfigEvent::clEditorConfigEvent(const clEditorConfigEvent& event)
+{
+    *this = event;
+}
 
 clEditorConfigEvent::clEditorConfigEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -467,9 +549,14 @@ clGotoEvent::clGotoEvent(wxEventType commandType, int winid)
 {
 }
 
-clGotoEvent::clGotoEvent(const clGotoEvent& src) { *this = src; }
+clGotoEvent::clGotoEvent(const clGotoEvent& src)
+{
+    *this = src;
+}
 
-clGotoEvent::~clGotoEvent() {}
+clGotoEvent::~clGotoEvent()
+{
+}
 
 clGotoEvent& clGotoEvent::operator=(const clGotoEvent& src)
 {
@@ -490,11 +577,19 @@ clSourceControlEvent::clSourceControlEvent(wxEventType commandType, int winid)
 {
 }
 
-clSourceControlEvent::clSourceControlEvent(const clSourceControlEvent& event) { *this = event; }
+clSourceControlEvent::clSourceControlEvent(const clSourceControlEvent& event)
+{
+    *this = event;
+}
 
-clSourceControlEvent::~clSourceControlEvent() {}
+clSourceControlEvent::~clSourceControlEvent()
+{
+}
 
-wxEvent* clSourceControlEvent::Clone() const { return new clSourceControlEvent(*this); }
+wxEvent* clSourceControlEvent::Clone() const
+{
+    return new clSourceControlEvent(*this);
+}
 
 clSourceControlEvent& clSourceControlEvent::operator=(const clSourceControlEvent& src)
 {
@@ -515,9 +610,13 @@ clLanguageServerEvent::clLanguageServerEvent(wxEventType commandType, int winid)
 {
 }
 
-clLanguageServerEvent::clLanguageServerEvent(const clLanguageServerEvent& event) {}
+clLanguageServerEvent::clLanguageServerEvent(const clLanguageServerEvent& event)
+{
+}
 
-clLanguageServerEvent::~clLanguageServerEvent() {}
+clLanguageServerEvent::~clLanguageServerEvent()
+{
+}
 clLanguageServerEvent& clLanguageServerEvent::operator=(const clLanguageServerEvent& src)
 {
     if(this == &src) {
@@ -537,4 +636,7 @@ clLanguageServerEvent& clLanguageServerEvent::operator=(const clLanguageServerEv
     return *this;
 }
 
-wxEvent* clLanguageServerEvent::Clone() const { return new clLanguageServerEvent(*this); }
+wxEvent* clLanguageServerEvent::Clone() const
+{
+    return new clLanguageServerEvent(*this);
+}

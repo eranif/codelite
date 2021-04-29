@@ -70,8 +70,8 @@ def on_exec(cmd):
         outs, errs = proc.communicate()
         # prepare the reply
         reply = {
-            "stdout": outs.decode("utf-8"),
-            "stderr": errs.decode("utf-8")
+            "stdout": outs.decode(encoding="utf-8", errors="ignore"),
+            "stderr": errs.decode(encoding="utf-8", errors="ignore")
         }
         print(json.dumps(reply))
     except TimeoutExpired:
@@ -101,29 +101,34 @@ def on_find_in_files(cmd):
     find_what = cmd['find_what']
     return_obj = []
     for file in files_arr:
-        lines = open(file=file, mode="r", encoding="utf-8").read().splitlines()
-        line_number = 0
-        entries = []
-        for line in lines:
-            line_number += 1
-            matches = []
-            for m in re.finditer(find_what, line):
-                matches.append({
-                    "start": m.start(),
-                    "end": m.end()
-                })
-                
-            if len(matches) > 0:
-                for match in matches:
-                    entries.append({
-                        "ln": line_number, 
-                        "start": match['start'],
-                        "end": match['end']
+        try:
+            lines = open(file=file, mode="r", encoding="utf-8").read().splitlines()
+            line_number = 0
+            entries = []
+            for line in lines:
+                line_number += 1
+                matches = []
+                for m in re.finditer(find_what, line):
+                    matches.append({
+                        "start": m.start(),
+                        "end": m.end()
                     })
-                return_obj.append({
-                    "file": file,
-                    "matches": entries
-                })
+                    
+                if len(matches) > 0:
+                    for match in matches:
+                        entries.append({
+                            "ln": line_number, 
+                            "start": match['start'],
+                            "end": match['end'],
+                            "pattern": line
+                        })
+            return_obj.append({
+                "file": file,
+                "matches": entries
+            })
+        except UnicodeDecodeError as e:
+            eprint("decoding error in file {}".format(file))
+            pass
     print(json.dumps(return_obj))
 
 def main_loop():

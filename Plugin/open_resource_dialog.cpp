@@ -128,7 +128,10 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
             if(unique_files.count(file) == 0) {
                 unique_files.insert(file);
                 wxFileName fn(file);
-                m_files.insert({ fn.GetFullName(), fn.GetFullPath() });
+                // keep the file as-is do not "format" it by calling
+                // fn.GetFullPath() since we might be on Windows and we display
+                // Linux path style files
+                m_files.insert({ fn.GetFullName(), file });
             }
         }
     }
@@ -291,9 +294,8 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
 
             wxFileName fn(iter->second);
             int imgId = clGetManager()->GetStdIcons()->GetMimeImageId(fn.GetFullName());
-            DoAppendLine(fn.GetFullName(), fn.GetFullPath(), false,
-                         new OpenResourceDialogItemData(fn.GetFullPath(), -1, wxT(""), fn.GetFullName(), wxT("")),
-                         imgId);
+            DoAppendLine(fn.GetFullName(), iter->second, false,
+                         new OpenResourceDialogItemData(iter->second, -1, wxT(""), fn.GetFullName(), wxT("")), imgId);
             ++counter;
         }
     }

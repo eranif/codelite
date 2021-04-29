@@ -12,7 +12,6 @@ class RemotyWorkspaceView : public RemotyWorkspaceViewBase
 {
     clRemoteDirCtrl* m_tree = nullptr;
     RemotyWorkspace* m_workspace = nullptr;
-    clRemoteFinderHelper m_remoteFinder;
 
 protected:
     void OnDirContextMenu(clContextMenuEvent& event);

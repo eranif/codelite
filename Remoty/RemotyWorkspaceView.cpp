@@ -91,7 +91,7 @@ void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
 void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
 {
     event.Skip();
-    if(!m_workspace->IsOpened() || m_remoteFinder.IsRunning())
+    if(!m_workspace->IsOpened())
         return;
 
     // override the default find in files dialog
@@ -121,22 +121,25 @@ void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
     }
 
     // start the search
-    m_remoteFinder.Search(dlg.GetGrepCommand(), m_workspace->GetAccount().GetAccountName(), dlg.GetFindWhat(),
-                          dlg.GetFileExtensions());
+    m_workspace->FindInFiles(dlg.GetWhere(), dlg.GetFileExtensions(), dlg.GetFindWhat());
 }
 
 void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
 {
     event.Skip();
-    if(!m_workspace->IsOpened())
+    if(!m_workspace->IsOpened() || event.GetMatches().empty())
         return;
 
     // this is ours to handle
     event.Skip(false);
-    clDEBUG() << "Remoty: opening file:" << event.GetFileName() << ":" << event.GetLineNumber() << endl;
-    auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), m_workspace->GetAccount().GetAccountName());
+    const auto& match = event.GetMatches()[0];
+    const auto& loc = match.locations[0];
+    auto editor = clSFTPManager::Get().OpenFile(match.file, m_workspace->GetAccount().GetAccountName());
     if(editor) {
         // sci is 0 based line numbers
-        editor->GetCtrl()->GotoLine(event.GetLineNumber() - 1);
+        int pos_start = editor->PosFromLine(loc.line - 1) + loc.column_start;
+        int pos_end = editor->PosFromLine(loc.line - 1) + loc.column_end;
+        editor->GetCtrl()->GotoLine(loc.line - 1);
+        editor->GetCtrl()->SetSelection(pos_start, pos_end);
     }
 }

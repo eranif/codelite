@@ -5,6 +5,7 @@ set COPY_WXC_RESOURCES=0
 IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
 IF EXIST ..\wxcrafter\wxcrafter.accelerators (set COPY_WXC_RESOURCES=1)
 
+xcopy codelite-remote "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\*.default "%TARGET_DIR%\CodeLite\config\" /E /I /H /Y /EXCLUDE:excludes
 xcopy config\build_settings.xml.default.win "%TARGET_DIR%\CodeLite\config\build_settings.xml.default" /E /I /H /Y /EXCLUDE:excludes
 xcopy debuggers\*.dll "%TARGET_DIR%\CodeLite\debuggers\" /E /I /H /Y /EXCLUDE:excludes

@@ -674,7 +674,7 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <VirtualDirectory Name="scripts">
-    <File Name="res/codelite-remote.py"/>
+    <File Name="res/codelite-remote"/>
     <File Name="res/convert-svgs.sh"/>
     <File Name="../Runtime/update.bat"/>
     <File Name="../make_src_targz.sh"/>

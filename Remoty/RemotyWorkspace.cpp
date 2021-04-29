@@ -203,6 +203,10 @@ void RemotyWorkspace::DoClose(bool notify)
     delete_event.SetLspName("Remoty - clangd");
     EventNotifier::Get()->ProcessEvent(delete_event);
 
+    wxDELETE(m_buildProcess);
+    wxDELETE(m_cmdProcess);
+    m_codeliteRemote.Stop();
+
     // and restart all the LSPs
     clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
     EventNotifier::Get()->AddPendingEvent(restart_event);
@@ -454,10 +458,6 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
 
     // Load the account
     auto accounts = SSHAccountInfo::Load([&](const SSHAccountInfo& acc) -> bool {
-        clDEBUG1() << "Checking account:" << acc.GetAccountName() << endl;
-        clDEBUG1() << "user_name:" << user_name << "vs" << acc.GetUsername() << endl;
-        clDEBUG1() << "remote_server:" << remote_server << "vs" << acc.GetHost() << endl;
-        clDEBUG1() << "nPort:" << nPort << "vs" << acc.GetPort() << endl;
         return acc.GetUsername() == user_name && acc.GetPort() == nPort && acc.GetHost() == remote_server;
     });
 
@@ -527,6 +527,16 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
 
     // Configure LSP for this workspace
     ConfigureClangd();
+
+    // upload codelite-remote script to the workspace folder
+    wxString remoteCodeLitePath = GetRemoteWorkingDir() + "/.codelite/codelite-remote";
+    clSFTPManager::Get().NewFolder(GetRemoteWorkingDir() + "/.codelite", m_account);
+
+    // upload codelite-remote script and start it once its uploaded
+    wxString localCodeLiteRemoteScript = clStandardPaths::Get().GetBinaryFullPath("codelite-remote");
+    if(clSFTPManager::Get().AwaitSaveFile(localCodeLiteRemoteScript, remoteCodeLitePath, m_account.GetAccountName())) {
+        StartCodeLiteRemote();
+    }
 
     // Notify that the a new workspace is loaded
     wxCommandEvent open_event(wxEVT_WORKSPACE_LOADED);
@@ -855,7 +865,13 @@ void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
         }
     }
 }
-
-void RemotyWorkspace::DoScanFiles()
+void RemotyWorkspace::StartCodeLiteRemote()
 {
+    if(m_codeliteRemote.IsRunning()) {
+        return;
+    }
+
+    wxString codelite_remote_script;
+    codelite_remote_script << GetRemoteWorkingDir() << "/.codelite/codelite-remote";
+    m_codeliteRemote.StartInteractive(m_account, codelite_remote_script);
 }

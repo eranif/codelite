@@ -17,13 +17,16 @@ import subprocess
 #   python3 codelite-remote.py --list /path/to/dir --extensions ".txt .cpp .hpp"
 #----------------------------------------------------------------------------------------------------------------------------------
 def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+    #print(*args, file=sys.stderr, **kwargs)
+    pass
 
 def _get_list_of_files(cmd):
     """
     helper method to on_find_files - return list of files as array    
     """
     root_dir = cmd['root_dir']
+    root_dir = os.path.expanduser(root_dir)
+    root_dir = os.path.expandvars(root_dir)
     if not os.path.isdir(root_dir):
         eprint("error: {} is not a directory".format(root_dir))
         return []
@@ -152,7 +155,7 @@ def main_loop():
         }
         while True:
             try:
-                text = input("(codelite)")
+                text = input()
                 text = text.strip()
                 if text == "exit" or text == "bye" or text == "quit":
                     exit(0)

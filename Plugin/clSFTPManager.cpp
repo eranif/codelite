@@ -126,8 +126,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
         EventNotifier::Get()->AddPendingEvent(event);
 
     } catch(clException& e) {
-        wxMessageBox(wxString() << _("Failed to open SSH connection:\n") << e.What(), "CodeLite", wxOK | wxICON_ERROR);
-        clERROR() << "SFTP Manager error:" << e.What() << clEndl;
+        CaptureError("AddConnection", e);
         return false;
     }
     return true;
@@ -344,7 +343,7 @@ bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUse
     return true;
 }
 
-SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo) const
+SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo)
 {
     assert(wxThread::IsMain());
     wxBusyCursor bc;
@@ -359,13 +358,13 @@ SFTPAttribute::List_t clSFTPManager::List(const wxString& path, const SSHAccount
         attributes = conn->List(path, clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
 
     } catch(clException& e) {
-        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        CaptureError("List", e);
         return {};
     }
     return attributes;
 }
 
-bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountInfo) const
+bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountInfo)
 {
     assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
@@ -375,9 +374,7 @@ bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountI
     try {
         conn->CreateEmptyFile(path);
     } catch(clException& e) {
-        ::wxMessageBox(wxString() << _("Failed to create file: ") << path << "\n"
-                                  << e.What(),
-                       "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        CaptureError("NewFile", e);
         return false;
     }
     return true;
@@ -390,7 +387,7 @@ void clSFTPManager::OnGoingDown(clCommandEvent& event)
     Release();
 }
 
-bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accountInfo) const
+bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accountInfo)
 {
     assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
@@ -399,13 +396,13 @@ bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accoun
     try {
         conn->CreateDir(path);
     } catch(clException& e) {
-        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        CaptureError("NewFolder", e);
         return false;
     }
     return true;
 }
 
-bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, const SSHAccountInfo& accountInfo) const
+bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, const SSHAccountInfo& accountInfo)
 {
     assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
@@ -414,13 +411,13 @@ bool clSFTPManager::Rename(const wxString& oldpath, const wxString& newpath, con
     try {
         conn->Rename(oldpath, newpath);
     } catch(clException& e) {
-        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        CaptureError("Rename", e);
         return false;
     }
     return true;
 }
 
-bool clSFTPManager::DeleteDir(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
+bool clSFTPManager::DeleteDir(const wxString& fullpath, const SSHAccountInfo& accountInfo)
 {
     assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
@@ -429,13 +426,13 @@ bool clSFTPManager::DeleteDir(const wxString& fullpath, const SSHAccountInfo& ac
     try {
         conn->RemoveDir(fullpath);
     } catch(clException& e) {
-        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        CaptureError("DeleteDir", e);
         return false;
     }
     return true;
 }
 
-bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
+bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo)
 {
     assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
@@ -444,7 +441,7 @@ bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& a
     try {
         conn->UnlinkFile(fullpath);
     } catch(clException& e) {
-        ::wxMessageBox(e.What(), "SFTP", wxOK | wxICON_ERROR | wxCENTER, EventNotifier::Get()->TopFrame());
+        CaptureError("UnlinkFile", e);
         return false;
     }
     return true;
@@ -467,7 +464,7 @@ void clSFTPManager::OnTimer(wxTimerEvent& event)
     }
 }
 
-bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
+bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
 {
     assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
@@ -482,7 +479,7 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo&
     }
 }
 
-bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const
+bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
 {
     assert(wxThread::IsMain());
     auto conn = GetConnectionPtr(accountInfo.GetAccountName());
@@ -577,7 +574,7 @@ bool clSFTPManager::AsyncWriteFile(const wxString& content, const wxString& remo
     return DoSaveFile(tmpfile.GetFullPath(), remotePath, accountName, true, sink, nullptr);
 }
 
-bool clSFTPManager::GetRemotePath(const wxString& local_path, const wxString& accountName, wxString& remote_path) const
+bool clSFTPManager::GetRemotePath(const wxString& local_path, const wxString& accountName, wxString& remote_path)
 {
     auto p = GetConnectionPair(accountName);
     CHECK_PTR_RET_FALSE(p.second);
@@ -593,7 +590,7 @@ bool clSFTPManager::GetRemotePath(const wxString& local_path, const wxString& ac
     return false;
 }
 
-bool clSFTPManager::GetLocalPath(const wxString& remote_path, const wxString& accountName, wxString& local_path) const
+bool clSFTPManager::GetLocalPath(const wxString& remote_path, const wxString& accountName, wxString& local_path)
 {
     auto p = GetConnectionPair(accountName);
     CHECK_PTR_RET_FALSE(p.second);
@@ -672,7 +669,16 @@ void clSFTPManager::OnSaveCompleted(clCommandEvent& e)
 
 void clSFTPManager::OnSaveError(clCommandEvent& e)
 {
-    ::wxMessageBox(e.GetString(), "CodeLite", wxICON_ERROR | wxOK);
+    m_lastError.clear();
+    m_lastError << "SaveError: " << e.GetString();
+    clERROR() << m_lastError << endl;
+}
+
+void clSFTPManager::CaptureError(const wxString& context, const clException& e)
+{
+    m_lastError.clear();
+    m_lastError << context << "." << e.What();
+    clERROR() << m_lastError << endl;
 }
 
 #endif

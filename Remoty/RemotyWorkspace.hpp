@@ -2,6 +2,7 @@
 #define REMOTEWORKSPACE_HPP
 
 #include "IWorkspace.h" // Base class: IWorkspace
+#include "clCodeLiteRemoteProcess.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clRemoteTerminal.hpp"
@@ -24,7 +25,7 @@ class RemotyWorkspace : public IWorkspace
     clFileSystemWorkspaceSettings m_settings;
     IProcess* m_buildProcess = nullptr;
     IProcess* m_cmdProcess = nullptr;
-    IProcess* m_scanFilesProcess = nullptr;
+    clCodeLiteRemoteProcess m_codeliteRemote;
     long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
 
@@ -40,8 +41,9 @@ protected:
     void Initialise();
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
-
     void DoClose(bool notify);
+    void StartCodeLiteRemote();
+
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);
     void DoBuild(const wxString& kind);
@@ -68,7 +70,6 @@ protected:
     wxString GetRemoteWorkingDir() const;
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
-    void DoScanFiles();
 
 public:
     // IWorkspace

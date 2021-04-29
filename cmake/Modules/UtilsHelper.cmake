@@ -1,5 +1,18 @@
 cmake_minimum_required(VERSION 3.0)
 
+#------------------------------------
+# install script
+#------------------------------------
+macro(codelite_install_script _script_)
+    set (EXE_PERM OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ)
+    if(APPLE)
+        install(FILES ${_script_} DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/ PERMISSIONS ${EXE_PERM})
+    else()
+        # On non OSX, we place the non plugins next to the plugins
+        install(FILES ${_script_} DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+    endif()
+endmacro()
+
 function(get_distro_name DISTRO_NAME)
     execute_process(COMMAND /bin/bash "-c" "cat /etc/os-release |grep ^ID=|cut -d = -f 2"
                     OUTPUT_VARIABLE _DISTRO_ID OUTPUT_STRIP_TRAILING_WHITESPACE)

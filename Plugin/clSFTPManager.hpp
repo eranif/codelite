@@ -58,6 +58,7 @@ protected:
     void OnSaveError(clCommandEvent& e);
     bool DoSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
                     bool delete_local, wxEvtHandler* sink, std::function<void()> notify_cb);
+    void CaptureError(const wxString& context, const clException& e);
 
 public:
     clSFTPManager();
@@ -140,52 +141,52 @@ public:
      * @param path
      * @return
      */
-    SFTPAttribute::List_t List(const wxString& path, const SSHAccountInfo& accountInfo) const;
+    SFTPAttribute::List_t List(const wxString& path, const SSHAccountInfo& accountInfo);
 
     /**
      * @brief create new file with a given path
      */
-    bool NewFile(const wxString& path, const SSHAccountInfo& accountInfo) const;
+    bool NewFile(const wxString& path, const SSHAccountInfo& accountInfo);
     /**
      * @brief create a new folder with a given path
      */
-    bool NewFolder(const wxString& path, const SSHAccountInfo& accountInfo) const;
+    bool NewFolder(const wxString& path, const SSHAccountInfo& accountInfo);
 
     /**
      * @brief rename a file/directory
      * @param oldpath
      * @param newpath
      */
-    bool Rename(const wxString& oldpath, const wxString& newpath, const SSHAccountInfo& accountInfo) const;
+    bool Rename(const wxString& oldpath, const wxString& newpath, const SSHAccountInfo& accountInfo);
     /**
      * @brief delere a directory
      */
-    bool DeleteDir(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+    bool DeleteDir(const wxString& fullpath, const SSHAccountInfo& accountInfo);
 
     /**
      * @brief unlink a file
      */
-    bool UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+    bool UnlinkFile(const wxString& fullpath, const SSHAccountInfo& accountInfo);
 
     /**
      * @brief check if a file with a given path exists
      */
-    bool IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+    bool IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo);
 
     /**
      * @brief check if a directory with a given path exists
      */
-    bool IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo) const;
+    bool IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo);
 
     /**
      * @brief return the remote path for a local file
      */
-    bool GetRemotePath(const wxString& local_path, const wxString& accountName, wxString& remote_path) const;
+    bool GetRemotePath(const wxString& local_path, const wxString& accountName, wxString& remote_path);
 
     /**
      * @brief return the local path for a remote path
      */
-    bool GetLocalPath(const wxString& remote_path, const wxString& accountName, wxString& local_path) const;
+    bool GetLocalPath(const wxString& remote_path, const wxString& accountName, wxString& local_path);
 
     /**
      * @brief return the last error occurred

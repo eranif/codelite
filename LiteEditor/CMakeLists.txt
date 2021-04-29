@@ -10,6 +10,7 @@ find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
 
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
+include(UtilsHelper)
 
 # Include paths
 include_directories("${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/PCH" "${CL_SRC_ROOT}/Interfaces")
@@ -156,6 +157,7 @@ if(NOT APPLE)
         # Clear the icon cache if exists
         install(CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
     endif (  UNIX AND NOT APPLE )
+    codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
     
     install(
         DIRECTORY ${CL_SRC_ROOT}/Runtime/images 
@@ -214,13 +216,6 @@ if(NOT APPLE)
         file(GLOB libssh_lib_list "${LIBSSH_LIB}*")
         message("-- will copy ${libssh_lib_list}")
         install(FILES ${wxfilepaths} ${libssh_lib_list} DESTINATION ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite)
-        #install(CODE "set(INSTALL_DIR \"${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite\")")
-        #install(FILES ${CL_SRC_ROOT}/Runtime/codelite-fix-rpath DESTINATION 
-        #        ${CL_PREFIX}/${CL_INSTALL_LIBDIR}/codelite 
-        #        PERMISSIONS 
-        #        ${EXE_PERM})
-        #install(CODE "set(SOURCE_DIR \"${CL_SRC_ROOT}\")")
-        #install(SCRIPT "${CL_SRC_ROOT}/Runtime/codelite_post_install.cmake")
     endif()
 
     if ( USE_CLANG AND MINGW )

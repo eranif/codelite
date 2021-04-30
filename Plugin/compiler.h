@@ -25,6 +25,7 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
+#include "asyncprocess.h"
 #include "codelite_exports.h"
 #include "configuration_object.h"
 #include "smart_ptr.h"
@@ -119,6 +120,11 @@ public:
 
     Compiler(wxXmlNode* node, Compiler::eRegexType regexType = Compiler::kRegexGNU);
     virtual ~Compiler();
+
+    /**
+     * @brief return { "PATH", "/compiler/bin:$PATH"} pair
+     */
+    void CreatePathEnv(clEnvList_t* env_list);
 
     /**
      * @brief check if this compiler is a 64 bit compiler

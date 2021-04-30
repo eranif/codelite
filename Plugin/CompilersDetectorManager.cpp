@@ -29,13 +29,14 @@
 #include "CompilerLocatorEosCDT.h"
 #include "CompilerLocatorGCC.h"
 #include "CompilerLocatorMSVC.h"
+#include "CompilerLocatorMSYS2.hpp"
 #include "CompilerLocatorMinGW.h"
 #include "CompilersDetectorManager.h"
+#include "GCCMetadata.hpp"
 #include "JSON.h"
 #include "build_settings_config.h"
 #include "cl_config.h"
 #include "environmentconfig.h"
-#include "includepathlocator.h"
 #include "macros.h"
 #include <wx/arrstr.h>
 #include <wx/choicdlg.h>
@@ -51,6 +52,7 @@ CompilersDetectorManager::CompilersDetectorManager()
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCLANG()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSVC()));
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCygwin()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorMSYS2()));
 
 #elif defined(__WXGTK__)
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorGCC()));
@@ -215,9 +217,10 @@ void CompilersDetectorManager::MSWFixClangToolChain(CompilerPtr compiler,
                 compiler->SetTool("ResourceCompiler", mingwCmp->GetTool("ResourceCompiler"));
 
                 // Update the include paths
-                IncludePathLocator locator(NULL);
-                wxArrayString includePaths, excludePaths;
-                locator.Locate(includePaths, excludePaths, false, mingwCmp->GetTool("CXX"));
+                GCCMetadata compiler_md("MinGW");
+                wxArrayString includePaths;
+                compiler_md.Load(mingwCmp->GetTool("CXX"), mingwCmp->GetInstallationPath());
+                includePaths = compiler_md.GetSearchPaths();
 
                 // Convert the include paths to semi colon separated list
                 wxString mingwIncludePaths = wxJoin(includePaths, ';');

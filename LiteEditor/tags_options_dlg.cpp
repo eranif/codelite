@@ -30,7 +30,7 @@
 #include "ctags_manager.h"
 #include "globals.h"
 #include "ieditor.h"
-#include "includepathlocator.h"
+#include "GCCMetadata.hpp"
 #include "lexer_configuration.h"
 #include "macros.h"
 #include "pluginmanager.h"

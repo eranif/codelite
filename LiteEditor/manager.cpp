@@ -299,10 +299,7 @@ Manager::~Manager(void)
 
 //--------------------------- Workspace Loading -----------------------------
 
-bool Manager::IsWorkspaceOpen() const
-{
-    return clCxxWorkspaceST::Get()->GetName().IsEmpty() == false;
-}
+bool Manager::IsWorkspaceOpen() const { return clCxxWorkspaceST::Get()->GetName().IsEmpty() == false; }
 
 void Manager::CreateWorkspace(const wxString& name, const wxString& path)
 {
@@ -506,10 +503,7 @@ void Manager::ClearWorkspaceHistory()
     clConfig::Get().ClearRecentWorkspaces();
 }
 
-void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files)
-{
-    files = clConfig::Get().GetRecentWorkspaces();
-}
+void Manager::GetRecentlyOpenedWorkspaces(wxArrayString& files) { files = clConfig::Get().GetRecentWorkspaces(); }
 
 //--------------------------- Workspace Projects Mgmt -----------------------------
 
@@ -763,10 +757,7 @@ bool Manager::RemoveProject(const wxString& name, bool notify)
     return true;
 }
 
-void Manager::GetProjectList(wxArrayString& list)
-{
-    clCxxWorkspaceST::Get()->GetProjectList(list);
-}
+void Manager::GetProjectList(wxArrayString& list) { clCxxWorkspaceST::Get()->GetProjectList(list); }
 
 ProjectPtr Manager::GetProject(const wxString& name) const
 {
@@ -785,10 +776,7 @@ ProjectPtr Manager::GetProject(const wxString& name) const
     return proj;
 }
 
-wxString Manager::GetActiveProjectName()
-{
-    return clCxxWorkspaceST::Get()->GetActiveProjectName();
-}
+wxString Manager::GetActiveProjectName() { return clCxxWorkspaceST::Get()->GetActiveProjectName(); }
 
 void Manager::SetActiveProject(const wxString& name)
 {
@@ -805,10 +793,7 @@ void Manager::SetActiveProject(const wxString& name)
     }
 }
 
-BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const
-{
-    return clCxxWorkspaceST::Get()->GetBuildMatrix();
-}
+BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const { return clCxxWorkspaceST::Get()->GetBuildMatrix(); }
 
 void Manager::SetWorkspaceBuildMatrix(BuildMatrixPtr matrix)
 {
@@ -1808,10 +1793,7 @@ void Manager::UpdateMenuAccelerators(wxFrame* frame)
 
 //--------------------------- Run Program (No Debug) -----------------------------
 
-bool Manager::IsProgramRunning() const
-{
-    return m_programProcess;
-}
+bool Manager::IsProgramRunning() const { return m_programProcess; }
 
 void Manager::ExecuteNoDebug(const wxString& projectName)
 {
@@ -1876,8 +1858,10 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     wxString dummy;
     execLine = GetProjectExecutionCommand(projectName, dummy, bldConf->GetPauseWhenExecEnds());
     wxUnusedVar(dummy);
+    clEnvList_t env_list;
+    bldConf->GetCompiler()->CreatePathEnv(&env_list);
 
-    m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd);
+    m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd, &env_list);
     if(m_programProcess) {
         clGetManager()->AppendOutputTabText(kOutputTab_Output, wxString()
                                                                    << _("Working directory is set to: ") << wd << "\n");
@@ -2273,6 +2257,10 @@ void Manager::DbgStart(long attachPid)
         si.searchPaths = bldConf->GetDebuggerSearchPaths();
     }
 
+    clEnvList_t env_list;
+    if(bldConf) {
+        bldConf->GetCompiler()->CreatePathEnv(&env_list);
+    }
     if(attachPid == wxNOT_FOUND) {
         // it is now OK to start the debugger...
         dbg_cmds = wxStringTokenize(bldConf->GetDebuggerStartupCmds(), wxT("\n"), wxTOKEN_STRTOK);
@@ -2280,7 +2268,7 @@ void Manager::DbgStart(long attachPid)
         // append project level commands to the global commands
         si.cmds.insert(si.cmds.end(), dbg_cmds.begin(), dbg_cmds.end());
 
-        if(!dbgr->Start(si)) {
+        if(!dbgr->Start(si, &env_list)) {
             wxString errMsg;
             errMsg << _("Failed to initialize debugger: ") << dbgname << wxT("\n");
             DebugMessage(errMsg);
@@ -2291,7 +2279,7 @@ void Manager::DbgStart(long attachPid)
         si.cmds.insert(si.cmds.end(), dbg_cmds.begin(), dbg_cmds.end());
 
         // Attach to process...
-        if(!dbgr->Attach(si)) {
+        if(!dbgr->Attach(si, &env_list)) {
             wxString errMsg;
             errMsg << _("Failed to initialize debugger: ") << dbgname << wxT("\n");
             DebugMessage(errMsg);
@@ -2826,10 +2814,7 @@ void Manager::StopBuild()
     m_buildQueue.clear();
 }
 
-void Manager::PushQueueCommand(const QueueCommand& buildInfo)
-{
-    m_buildQueue.push_back(buildInfo);
-}
+void Manager::PushQueueCommand(const QueueCommand& buildInfo) { m_buildQueue.push_back(buildInfo); }
 
 void Manager::ProcessCommandQueue()
 {
@@ -3071,10 +3056,7 @@ void Manager::DoCmdWorkspace(int cmd)
     }
 }
 
-void Manager::DbgClearWatches()
-{
-    m_dbgWatchExpressions.Clear();
-}
+void Manager::DbgClearWatches() { m_dbgWatchExpressions.Clear(); }
 
 void Manager::DebuggerUpdate(const DebuggerEventData& event)
 {
@@ -3332,10 +3314,7 @@ void Manager::DoRestartCodeLite()
     app->SetRestartCommand(restartCodeLiteCommand, workingDirectory);
 }
 
-void Manager::SetCodeLiteLauncherPath(const wxString& path)
-{
-    m_codeliteLauncher = path;
-}
+void Manager::SetCodeLiteLauncherPath(const wxString& path) { m_codeliteLauncher = path; }
 
 void Manager::OnRestart(clCommandEvent& event)
 {
@@ -3576,10 +3555,7 @@ void Manager::OnProjectSettingsModified(clProjectSettingsEvent& event)
     clMainFrame::Get()->SelectBestEnvSet();
 }
 
-void Manager::OnDbContentCacherLoaded(wxCommandEvent& event)
-{
-    clLogMessage(event.GetString());
-}
+void Manager::OnDbContentCacherLoaded(wxCommandEvent& event) { clLogMessage(event.GetString()); }
 
 void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
 {
@@ -3599,10 +3575,7 @@ void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
     matrix->GetProjectSelectedConf(workspaceConf, project);
 }
 
-void Manager::UpdatePreprocessorFile(clEditor* editor)
-{
-    wxUnusedVar(editor);
-}
+void Manager::UpdatePreprocessorFile(clEditor* editor) { wxUnusedVar(editor); }
 
 BuildConfigPtr Manager::GetCurrentBuildConf()
 {
@@ -3664,14 +3637,9 @@ void Manager::OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e)
     }
 }
 
-void Manager::GenerateCompileCommands()
-{
-}
+void Manager::GenerateCompileCommands() {}
 
-void Manager::OnBuildEnded(clBuildEvent& event)
-{
-    event.Skip();
-}
+void Manager::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 
 void Manager::DbgContinue()
 {

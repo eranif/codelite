@@ -26,7 +26,7 @@
 #include "CompilersFoundDlg.h"
 #include <windowattrmanager.h>
 #include <compiler.h>
-#include <includepathlocator.h>
+#include <GCCMetadata.hpp>
 
 class MyCompilersFoundModel : public CompilersFoundModel
 {
@@ -167,12 +167,11 @@ void CompilersFoundDlg::MSWUpdateToolchain(CompilerPtr compiler)
                 c->SetTool("ResourceCompiler", resourceCompiler);
 
                 // Clang under Windows, needs the include paths from the MinGW compiler
-                IncludePathLocator locator(NULL);
-                wxArrayString includePaths, excludePaths;
-                locator.Locate(includePaths, excludePaths, false, compiler->GetTool("CXX"));
-
+                GCCMetadata cmd("MinGW");
+                cmd.Load(compiler->GetTool("CXX"), compiler->GetInstallationPath());
+                
                 // Convert the include paths to semi colon separated list
-                wxString mingwIncludePaths = wxJoin(includePaths, ';');
+                wxString mingwIncludePaths = wxJoin(cmd.GetSearchPaths(), ';');
                 c->SetGlobalIncludePath(mingwIncludePaths);
             }
         }

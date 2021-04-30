@@ -623,7 +623,7 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
 
     startup_info.ttyName = tty;
     startup_info.enablePrettyPrinting = true;
-    dbgr->Start(startup_info);
+    dbgr->Start(startup_info, nullptr);
 
     // Notify that debug session started
     // this will ensure that the debug layout is loaded

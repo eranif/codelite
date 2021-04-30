@@ -62,7 +62,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "findusagetab.h"
-#include "includepathlocator.h"
+#include "GCCMetadata.hpp"
 #include "localstable.h"
 #include "manage_perspective_dlg.h"
 #include "open_resource_dialog.h" // New open resource
@@ -4231,7 +4231,7 @@ void clMainFrame::OnStartQuickDebug(clDebugEvent& e)
         si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
         si.isSSHDebugging = e.IsSSHDebugging();
         si.sshAccountName = e.GetSshAccount();
-        dbgr->Start(si);
+        dbgr->Start(si, nullptr);
 
         // notify plugins that the debugger just started
         {
@@ -4316,7 +4316,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             si.cmds = cmds;
             si.ttyName = tty;
             si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
-            dbgr->Start(si);
+            dbgr->Start(si, nullptr);
 
             // notify plugins that the debugger just started
             {

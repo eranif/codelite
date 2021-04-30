@@ -29,7 +29,7 @@
 #include "clFilesCollector.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "includepathlocator.h"
+#include "GCCMetadata.hpp"
 #include "procutils.h"
 #include <globals.h>
 #include <wx/regex.h>

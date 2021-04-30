@@ -424,6 +424,8 @@
     <File Name="debuggersettings.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="configuration">
+    <File Name="GCCMetadata.cpp"/>
+    <File Name="GCCMetadata.hpp"/>
     <File Name="attribute_style.h"/>
     <File Name="build_settings_config.cpp"/>
     <File Name="editor_config.cpp"/>
@@ -454,8 +456,6 @@
     <File Name="tagsmanagementconf.cpp"/>
     <File Name="tagsmanagementconf.h"/>
     <File Name="build_config_common.h"/>
-    <File Name="includepathlocator.cpp"/>
-    <File Name="includepathlocator.h"/>
     <File Name="cl_registry.h"/>
     <File Name="cl_registry.cpp"/>
     <File Name="clPersistenceManager.h"/>
@@ -804,6 +804,8 @@
     <File Name="clPatch.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Compilers">
+    <File Name="CompilerLocatorMSYS2.cpp"/>
+    <File Name="CompilerLocatorMSYS2.hpp"/>
     <File Name="CompilerLocatorEosCDT.cpp"/>
     <File Name="CompilerLocatorEosCDT.h"/>
     <File Name="ICompilerLocator.h"/>

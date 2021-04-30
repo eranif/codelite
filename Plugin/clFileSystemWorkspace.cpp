@@ -1024,7 +1024,7 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     if(cmp && !cmp->GetTool("Debugger").empty()) {
         startup_info.debuggerPath = cmp->GetTool("Debugger");
     }
-    dbgr->Start(startup_info);
+    dbgr->Start(startup_info, nullptr);
 
     // Notify that debug session started
     // this will ensure that the debug layout is loaded

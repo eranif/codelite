@@ -23,38 +23,32 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editor_config.h"
-#include "environmentconfig.h"
+#include "GCCMetadata.hpp"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "GCCMetadata.hpp"
-#include "procutils.h"
 #include <wx/dir.h>
 #include <wx/fileconf.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 
-GCCMetadata::GCCMetadata()
+GCCMetadata::GCCMetadata(const wxString& basename)
+    : m_basename(basename)
 {
 }
 
-GCCMetadata::~GCCMetadata()
-{
-}
+GCCMetadata::~GCCMetadata() {}
 
-void GCCMetadata::Locate(const wxString& rootDir, const wxString& tool, wxArrayString& paths, wxString& target)
+void GCCMetadata::Load(const wxString& tool, const wxString& rootDir, bool is_cygwin)
 {
+    m_searchPaths.clear();
+    m_target.clear();
+
     // Common compiler paths - should be placed at top of the include path!
     wxString tmpfile1 = wxFileName::CreateTempFileName(wxT("codelite"));
     wxString command;
     wxString tmpfile = tmpfile1;
     tmpfile += wxT(".cpp");
-
-    wxString bin = tool;
-    if(bin.IsEmpty()) {
-        bin = wxT("gcc");
-    }
 
     wxRenameFile(tmpfile1, tmpfile);
 
@@ -63,26 +57,19 @@ void GCCMetadata::Locate(const wxString& rootDir, const wxString& tool, wxArrayS
     wxString working_directory;
 #ifdef __WXMSW__
     if(::clIsCygwinEnvironment()) {
-        command << bin << " -v -x c++ /dev/null -fsyntax-only";
+        command << tool << " -v -x c++ /dev/null -fsyntax-only";
     } else {
-        wxFileName cxx(bin);
+        wxFileName cxx(tool);
 
         // execute the command from the tool directory
         working_directory = cxx.GetPath();
-        command << "echo |" << bin << " -xc++ -E -v - -fsyntax-only";
+        command << "echo |" << tool << " -xc++ -E -v - -fsyntax-only";
     }
 #else
-    command << bin << " -v -x c++ /dev/null -fsyntax-only";
+    command << tool << " -v -x c++ /dev/null -fsyntax-only";
 #endif
 
-    clDEBUG() << "Running command:" << command << endl;
-    wxString outputStr;
-    IProcess::Ptr_t proc(::CreateSyncProcess(command, IProcessCreateDefault | IProcessWrapInShell, working_directory));
-    if(proc) {
-        proc->WaitForTerminate(outputStr);
-    }
-    clDEBUG() << "Output is:" << outputStr << endl;
-
+    wxString outputStr = RunCommand(command, working_directory);
     clRemoveFile(tmpfile);
 
     wxArrayString outputArr = wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
@@ -90,12 +77,6 @@ void GCCMetadata::Locate(const wxString& rootDir, const wxString& tool, wxArrayS
     bool collect(false);
     for(wxString& line : outputArr) {
         line.Trim().Trim(false);
-
-        // store the target
-        if(target.empty() && line.StartsWith("Target:")) {
-            target = line.AfterFirst(':');
-            target.Trim().Trim(false);
-        }
 
         // search the scan starting point
         if(line.Contains(wxT("#include <...> search starts here:"))) {
@@ -110,6 +91,10 @@ void GCCMetadata::Locate(const wxString& rootDir, const wxString& tool, wxArrayS
         if(collect) {
             line.Replace("(framework directory)", wxEmptyString);
 #ifdef __WXMSW__
+            if(is_cygwin && line.StartsWith("/usr/lib")) {
+                line.Replace("/usr/lib", "/lib");
+            }
+
             if(line.StartsWith("/")) {
                 // probably MSYS2 or Cygwin
                 // replace the "/" with the root folder
@@ -120,7 +105,25 @@ void GCCMetadata::Locate(const wxString& rootDir, const wxString& tool, wxArrayS
             // but it is harmless to use it under all OSs
             wxFileName includePath(line, wxEmptyString);
             includePath.Normalize();
-            paths.Add(includePath.GetPath());
+            m_searchPaths.Add(includePath.GetPath());
         }
     }
+
+    // get the target
+    m_target = RunCommand(tool + " -dumpmachine", wxFileName(tool).GetPath());
+    wxString versionString = RunCommand(tool + " -dumpversion", wxFileName(tool).GetPath());
+    m_name << m_basename << "-" << versionString;
+}
+
+wxString GCCMetadata::RunCommand(const wxString& command, const wxString& working_directory)
+{
+    clDEBUG() << "Running command:" << command << endl;
+    wxString outputStr;
+    IProcess::Ptr_t proc(::CreateSyncProcess(command, IProcessCreateDefault | IProcessWrapInShell, working_directory));
+    if(proc) {
+        proc->WaitForTerminate(outputStr);
+    }
+    clDEBUG() << "Output is:" << outputStr << endl;
+    outputStr.Trim().Trim(false);
+    return outputStr;
 }

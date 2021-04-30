@@ -27,6 +27,7 @@
 
 #include "BreakpointInfoArray.hpp"
 #include "archive.h"
+#include "asyncprocess.h"
 #include "clDebuggerBreakpoint.hpp"
 #include "cl_standard_paths.h"
 #include "macros.h"
@@ -387,7 +388,7 @@ public:
     void SetIsSSHDebugging(bool isSSHDebugging) { this->m_isSSHDebugging = isSSHDebugging; }
     bool IsSSHDebugging() const { return m_isSSHDebugging; }
     void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }
-    
+
     /**
      * \brief Sets the logging level 'on the fly'
      * \param level the new level
@@ -408,13 +409,13 @@ public:
      * \brief start the debugger by running an executable
      * \return true on success, false otherwise
      */
-    virtual bool Start(const DebugSessionInfo& info) = 0;
+    virtual bool Start(const DebugSessionInfo& info, clEnvList_t* env_list) = 0;
 
     /**
      * \brief start the debugger by attaching to a process
      * \return true on success, false otherwise
      */
-    virtual bool Attach(const DebugSessionInfo& info) = 0;
+    virtual bool Attach(const DebugSessionInfo& info, clEnvList_t* env_list) = 0;
 
     /**
      * \brief Run the program under the debugger. This method must be called *after* Start() has been called

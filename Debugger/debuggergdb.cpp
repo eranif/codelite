@@ -200,10 +200,7 @@ DbgGdb::~DbgGdb()
     EventNotifier::Get()->Disconnect(wxEVT_GDB_STOP_DEBUGGER, wxCommandEventHandler(DbgGdb::OnKillGDB), NULL, this);
 }
 
-void DbgGdb::RegisterHandler(const wxString& id, DbgCmdHandler* cmd)
-{
-    m_handlers[id] = cmd;
-}
+void DbgGdb::RegisterHandler(const wxString& id, DbgCmdHandler* cmd) { m_handlers[id] = cmd; }
 
 DbgCmdHandler* DbgGdb::PopHandler(const wxString& id)
 {
@@ -240,7 +237,7 @@ void DbgGdb::EmptyQueue()
     m_handlers.clear();
 }
 
-bool DbgGdb::Start(const DebugSessionInfo& si)
+bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
 {
     if(si.isSSHDebugging) {
 
@@ -305,7 +302,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si)
             flags |= IProcessCreateAsSuperuser;
         }
 
-        m_gdbProcess = ::CreateAsyncProcess(this, cmd, flags, si.cwd);
+        m_gdbProcess = ::CreateAsyncProcess(this, cmd, flags, si.cwd, env_list);
         if(!m_gdbProcess) {
             return false;
         }
@@ -441,10 +438,7 @@ bool DbgGdb::Stop()
     return true;
 }
 
-bool DbgGdb::Next()
-{
-    return WriteCommand(wxT("-exec-next"), new DbgCmdHandlerAsyncCmd(m_observer, this));
-}
+bool DbgGdb::Next() { return WriteCommand(wxT("-exec-next"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
 bool DbgGdb::NextInstruction()
 {
@@ -625,30 +619,18 @@ bool DbgGdb::SetCommands(const clDebuggerBreakpoint& bp)
     return WriteCommand(command, NULL);
 }
 
-bool DbgGdb::Continue()
-{
-    return WriteCommand("-exec-continue", new DbgCmdHandlerAsyncCmd(m_observer, this));
-}
+bool DbgGdb::Continue() { return WriteCommand("-exec-continue", new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
-bool DbgGdb::StepIn()
-{
-    return WriteCommand(wxT("-exec-step"), new DbgCmdHandlerAsyncCmd(m_observer, this));
-}
+bool DbgGdb::StepIn() { return WriteCommand(wxT("-exec-step"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
 bool DbgGdb::StepInInstruction()
 {
     return WriteCommand(wxT("-exec-step-instruction"), new DbgCmdHandlerAsyncCmd(m_observer, this));
 }
 
-bool DbgGdb::StepOut()
-{
-    return WriteCommand(wxT("-exec-finish"), new DbgCmdHandlerAsyncCmd(m_observer, this));
-}
+bool DbgGdb::StepOut() { return WriteCommand(wxT("-exec-finish"), new DbgCmdHandlerAsyncCmd(m_observer, this)); }
 
-bool DbgGdb::IsRunning()
-{
-    return m_gdbProcess != NULL;
-}
+bool DbgGdb::IsRunning() { return m_gdbProcess != NULL; }
 
 bool DbgGdb::Interrupt()
 {
@@ -746,10 +728,7 @@ bool DbgGdb::ExecuteCmd(const wxString& cmd)
     return false;
 }
 
-bool DbgGdb::RemoveAllBreaks()
-{
-    return ExecuteCmd(wxT("delete"));
-}
+bool DbgGdb::RemoveAllBreaks() { return ExecuteCmd(wxT("delete")); }
 
 bool DbgGdb::RemoveBreak(double bid)
 {
@@ -1043,10 +1022,7 @@ bool DbgGdb::SetFrame(int frame)
     return WriteCommand(command, new DbgCmdSelectFrame(m_observer));
 }
 
-bool DbgGdb::ListThreads()
-{
-    return WriteCommand(wxT("-thread-info"), new DbgCmdListThreads(m_observer));
-}
+bool DbgGdb::ListThreads() { return WriteCommand(wxT("-thread-info"), new DbgCmdListThreads(m_observer)); }
 
 bool DbgGdb::SelectThread(long threadId)
 {
@@ -1115,10 +1091,7 @@ void DbgGdb::SetDebuggerInformation(const DebuggerInformation& info)
     m_consoleFinder.SetConsoleCommand(info.consoleCommand);
 }
 
-void DbgGdb::BreakList()
-{
-    (void)WriteCommand(wxT("-break-list"), new DbgCmdBreakList(this));
-}
+void DbgGdb::BreakList() { (void)WriteCommand(wxT("-break-list"), new DbgCmdBreakList(this)); }
 
 bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName)
 {
@@ -1131,12 +1104,6 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
     dbgExeName = debuggerPath;
     if(dbgExeName.IsEmpty()) {
         dbgExeName = wxT("gdb");
-    }
-
-    wxString actualPath;
-    if(ExeLocator::Locate(dbgExeName, actualPath) == false) {
-        wxMessageBox(wxString::Format(_("Failed to locate gdb! at '%s'"), dbgExeName.c_str()), wxT("CodeLite"));
-        return false;
     }
 
     // set the debugger specific startup commands
@@ -1291,10 +1258,7 @@ void DbgGdb::SetCliHandler(DbgCmdCLIHandler* handler)
     m_cliHandler = handler;
 }
 
-DbgCmdCLIHandler* DbgGdb::GetCliHandler()
-{
-    return m_cliHandler;
-}
+DbgCmdCLIHandler* DbgGdb::GetCliHandler() { return m_cliHandler; }
 
 bool DbgGdb::ListChildren(const wxString& name, int userReason)
 {
@@ -1393,15 +1357,9 @@ bool DbgGdb::DoGetNextLine(wxString& line)
     return true;
 }
 
-void DbgGdb::SetInternalMainBpID(int bpId)
-{
-    m_internalBpId = bpId;
-}
+void DbgGdb::SetInternalMainBpID(int bpId) { m_internalBpId = bpId; }
 
-bool DbgGdb::Restart()
-{
-    return WriteCommand(wxT("-exec-run "), new DbgCmdHandlerExecRun(m_observer, this));
-}
+bool DbgGdb::Restart() { return WriteCommand(wxT("-exec-run "), new DbgCmdHandlerExecRun(m_observer, this)); }
 
 bool DbgGdb::SetVariableObbjectDisplayFormat(const wxString& name, DisplayFormat displayFormat)
 {
@@ -1571,7 +1529,7 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
     return true;
 }
 
-bool DbgGdb::Attach(const DebugSessionInfo& si)
+bool DbgGdb::Attach(const DebugSessionInfo& si, clEnvList_t* env_list)
 {
     // set the environment variables
     EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
@@ -1611,13 +1569,14 @@ bool DbgGdb::Attach(const DebugSessionInfo& si)
     if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
         createFlags |= IProcessCreateAsSuperuser;
     }
-    m_gdbProcess = CreateAsyncProcess(this, cmd, createFlags);
+    m_gdbProcess = CreateAsyncProcess(this, cmd, createFlags, wxEmptyString, env_list);
     if(!m_gdbProcess) {
         return false;
     }
     m_gdbProcess->SetHardKill(true);
 
     DoInitializeGdb(si);
+
     m_observer->UpdateGotControl(DBG_END_STEPPING);
     return true;
 }
@@ -1627,10 +1586,7 @@ bool DbgGdb::ListRegisters()
     return WriteCommand("-data-list-register-names", new DbgCmdHandlerRegisterNames(m_observer, this));
 }
 
-void DbgGdb::EnableReverseDebugging(bool b)
-{
-    m_reverseDebugging = b;
-}
+void DbgGdb::EnableReverseDebugging(bool b) { m_reverseDebugging = b; }
 
 void DbgGdb::EnableRecording(bool b)
 {
@@ -1645,7 +1601,4 @@ void DbgGdb::EnableRecording(bool b)
     }
 }
 
-bool DbgGdb::IsReverseDebuggingEnabled() const
-{
-    return m_reverseDebugging;
-}
+bool DbgGdb::IsReverseDebuggingEnabled() const { return m_reverseDebugging; }

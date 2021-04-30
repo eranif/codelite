@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "CxxPreProcessor.h"
+#include "GCCMetadata.hpp"
 #include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "build_system.h"
@@ -689,70 +690,9 @@ wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
 
 wxArrayString Compiler::POSIXGetIncludePaths() const
 {
-    wxString command;
-    clDEBUG() << "Loading compiler built-in search paths...";
-#ifdef __WXMSW__
-    if(::clIsCygwinEnvironment()) {
-        command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
-    } else {
-        command << GetTool("CXX") << " -v -x c++ nul -fsyntax-only";
-    }
-#else
-    command << GetTool("CXX") << " -v -x c++ /dev/null -fsyntax-only";
-#endif
-
-    clDEBUG() << "Running command:" << command;
-    wxString outputStr;
-    IProcess::Ptr_t proc(::CreateSyncProcess(command));
-    if(proc)
-        proc->WaitForTerminate(outputStr);
-
-    clDEBUG() << "Output is:" << outputStr;
-
-    wxArrayString arr;
-    wxArrayString outputArr = ::wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
-
-    // Analyze the output
-    bool collect(false);
-    for(size_t i = 0; i < outputArr.GetCount(); i++) {
-        if(outputArr[i].Contains(wxT("#include <...> search starts here:"))) {
-            collect = true;
-            continue;
-        }
-
-        if(outputArr[i].Contains(wxT("End of search list."))) {
-            break;
-        }
-
-        if(collect) {
-
-            wxString file = outputArr.Item(i).Trim().Trim(false);
-
-            // on Mac, (framework directory) appears also,
-            // but it is harmless to use it under all OSs
-            file.Replace(wxT("(framework directory)"), wxT(""));
-            file.Trim().Trim(false);
-
-            // Fix cygwin paths to use Windows native paths
-#ifdef __WXMSW__
-            if(GetCompilerFamily() == COMPILER_FAMILY_CYGWIN) {
-                const wxString& cygdriveRoot = GetInstallationPath();
-
-                // For reasons beyond me, /usr/lib is mapped to /lib
-                if(file.StartsWith("/usr/lib")) {
-                    file.Replace("/usr/lib", "/lib");
-                }
-                file.Prepend(cygdriveRoot + "/");
-            }
-#endif
-
-            wxFileName includePath(file, "");
-            includePath.Normalize();
-
-            arr.Add(includePath.GetPath());
-        }
-    }
-    return arr;
+    GCCMetadata cmd(GetName());
+    cmd.Load(GetTool("CXX"), GetInstallationPath(), GetCompilerFamily() == COMPILER_FAMILY_CYGWIN);
+    return cmd.GetSearchPaths();
 }
 
 const wxArrayString& Compiler::GetBuiltinMacros()
@@ -835,4 +775,18 @@ bool Compiler::Is64BitCompiler()
         }
     }
     return false;
+}
+
+void Compiler::CreatePathEnv(clEnvList_t* env_list)
+{
+    wxFileName compiler_path(GetInstallationPath(), wxEmptyString);
+    if(wxFileName::DirExists(compiler_path.GetPath() + "/usr")) {
+        compiler_path.AppendDir("usr");
+    }
+    if(wxFileName::DirExists(compiler_path.GetPath() + "/bin")) {
+        compiler_path.AppendDir("bin");
+    }
+    wxString env_path;
+    wxGetEnv("PATH", &env_path);
+    env_list->push_back({ "PATH", compiler_path.GetPath() + clPATH_SEPARATOR + env_path });
 }

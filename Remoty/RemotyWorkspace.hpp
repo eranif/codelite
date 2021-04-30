@@ -48,7 +48,6 @@ protected:
     void OnCloseWorkspace(clCommandEvent& event);
     void DoClose(bool notify);
     void StartCodeLiteRemote();
-    void OnListFilesCompleted(clCommandEvent& event);
     void OnOpenResourceFile(clCommandEvent& event);
     void OnShutdown(clCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
@@ -78,7 +77,13 @@ protected:
     void OnIsProgramRunning(clExecuteEvent& event);
     void OnExecProcessTerminated(clProcessEvent& event);
     void OnFindSwapped(clFileSystemEvent& event);
-    void OnCodeLiteRemoteFindCompleted(clFindInFilesEvent& event);
+
+    // codelite-remote
+    void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
+    void OnCodeLiteRemoteFindDone(clFindInFilesEvent& event);
+
+    void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
+    void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);
 
     wxString GetRemoteWorkingDir() const;
     wxString CreateEnvScriptContent() const;

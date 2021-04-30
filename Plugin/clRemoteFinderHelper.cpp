@@ -18,7 +18,7 @@ clRemoteFinderHelper::~clRemoteFinderHelper()
 {
 }
 
-void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event)
+void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, bool is_completed)
 {
     auto search_tab = GetSearchTab();
     if(!search_tab) {
@@ -26,26 +26,26 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event)
         return;
     }
 
-    long elapsed_time = m_stopWatch.Time();
-
     // process the output
     SearchResultList* resList = nullptr;
-    if(!event.GetMatches().empty()) {
-        resList = new SearchResultList;
-    }
+    const auto& matches = event.GetMatches();
 
-    for(const auto& file_match : event.GetMatches()) {
-        const wxString& filename = file_match.file;
-        for(const auto& location : file_match.locations) {
-            SearchResult res;
-            res.SetColumn(location.column_start);
-            res.SetLen(location.column_end - location.column_start);
-            res.SetFileName(filename);
-            res.SetLineNumber(location.line);
-            res.SetPattern(location.pattern);
-            resList->push_back(res);
+    if(!matches.empty()) {
+        resList = new SearchResultList;
+        for(const auto& file_match : matches) {
+            const wxString& filename = file_match.file;
+            for(const auto& location : file_match.locations) {
+                SearchResult res;
+                res.SetColumn(location.column_start);
+                res.SetLen(location.column_end - location.column_start);
+                res.SetFileName(filename);
+                res.SetLineNumber(location.line);
+                res.SetPattern(location.pattern);
+                resList->push_back(res);
+            }
         }
     }
+    m_matches_found += (resList ? resList->size() : 0);
 
     if(resList && !resList->empty()) {
         wxCommandEvent matchs_event(wxEVT_SEARCH_THREAD_MATCHFOUND);
@@ -55,12 +55,22 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event)
         wxDELETE(resList);
     }
 
-    SearchSummary* summary = new SearchSummary;
-    summary->SetElapsedTime(elapsed_time);
-    summary->SetNumMatchesFound(resList ? resList->size() : 0);
-    wxCommandEvent end_event(wxEVT_SEARCH_THREAD_SEARCHEND);
-    end_event.SetClientData(summary);
-    search_tab->GetEventHandler()->AddPendingEvent(end_event);
+    if(is_completed) {
+        // stop the clock
+        long elapsed_time = m_stopWatch.Time();
+        SearchSummary* summary = new SearchSummary;
+        summary->SetElapsedTime(elapsed_time);
+
+        // set the total number of matches found
+        summary->SetNumMatchesFound(m_matches_found);
+        wxCommandEvent end_event(wxEVT_SEARCH_THREAD_SEARCHEND);
+        summary->SetNumFileScanned(event.GetInt());
+        end_event.SetClientData(summary);
+        search_tab->GetEventHandler()->AddPendingEvent(end_event);
+
+        // prepare for next search
+        m_matches_found = 0;
+    }
 }
 
 void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions,
@@ -71,6 +81,7 @@ void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& find
         return;
     }
     m_stopWatch.Start();
+    m_matches_found = 0;
 
     if(!GetSearchTab()) {
         clWARNING() << "clRemoteFinderHelper: search ignored, search tab is hidden" << endl;

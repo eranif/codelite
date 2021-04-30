@@ -15,22 +15,27 @@
 class WXDLLIMPEXP_SDK clCodeLiteRemoteProcess : public wxEvtHandler
 {
 protected:
-    typedef void (clCodeLiteRemoteProcess::*CallbackFunc)(const wxString&);
+    typedef void (clCodeLiteRemoteProcess::*CallbackFunc)(const wxString&, bool);
 
 protected:
     IProcess* m_process = nullptr;
     std::deque<CallbackFunc> m_completionCallbacks;
     std::function<void()> m_terminateCallback;
     wxString m_outputRead;
+    size_t m_fif_matches_count = 0;
+    size_t m_fif_files_scanned = 0;
 
+protected:
     void OnProcessOutput(clProcessEvent& e);
     void OnProcessTerminated(clProcessEvent& e);
     void Cleanup();
     void ProcessOutput();
+    bool GetNextBuffer(wxString& output, bool& is_completed);
+    void ResetStates();
 
     // prepare an event from list command output
-    void OnListFilesCompleted(const wxString& output);
-    void OnFindCompleted(const wxString& output);
+    void OnListFilesOutput(const wxString& output, bool is_completed);
+    void OnFindOutput(const wxString& buffer, bool is_completed);
 
 public:
     clCodeLiteRemoteProcess();
@@ -46,9 +51,11 @@ public:
         return m_process != nullptr;
     }
     void ListFiles(const wxString& root_dir, const wxString& extensions);
-    void Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
-                bool whole_word, bool icase);
+    void Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what, bool whole_word,
+                bool icase);
 };
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
 #endif // CLCODELITEREMOTEPROCESS_HPP

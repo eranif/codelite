@@ -15,7 +15,9 @@
 #include <wx/tokenzr.h>
 
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
 
 clCodeLiteRemoteProcess::clCodeLiteRemoteProcess()
 {
@@ -125,38 +127,47 @@ void clCodeLiteRemoteProcess::Cleanup()
     m_terminateCallback = nullptr;
 }
 
+bool clCodeLiteRemoteProcess::GetNextBuffer(wxString& buffer, bool& is_completed)
+{
+    static const char msg_terminator[] = ">>codelite-remote-msg-end<<\n";
+    static size_t msg_terminator_len = sizeof(msg_terminator) - 1;
+
+    size_t separator_len = msg_terminator_len;
+    size_t where = m_outputRead.find(msg_terminator);
+    if(where == wxString::npos) {
+        // locate the \n from the end
+        is_completed = false;
+        where = m_outputRead.rfind("\n");
+        separator_len = 1;
+    } else {
+        is_completed = true;
+    }
+
+    if(where != wxString::npos) {
+        buffer = m_outputRead.Mid(0, where);
+        m_outputRead.erase(0, where + separator_len);
+    }
+    return where != wxString::npos;
+}
+
 void clCodeLiteRemoteProcess::ProcessOutput()
 {
-    size_t where = m_outputRead.find('\n');
-    while(where != wxString::npos) {
-        wxString msg = m_outputRead.Mid(0, where);
-        m_outputRead.erase(0, where + 1); // remove the consumed line + the "\n"
+    bool is_completed = false;
+    wxString buffer;
+
+    while(GetNextBuffer(buffer, is_completed)) {
         if(m_completionCallbacks.empty()) {
-            where = m_outputRead.find('\n');
+            clERROR() << "No completion callback !?" << endl;
             continue;
         }
 
         auto cb = m_completionCallbacks.front();
-        (this->*cb)(msg);
-
-        m_completionCallbacks.pop_front();
-        where = m_outputRead.find('\n');
+        (this->*cb)(buffer, is_completed);
+        if(is_completed) {
+            m_completionCallbacks.pop_front();
+            ResetStates();
+        }
     }
-}
-
-void clCodeLiteRemoteProcess::OnListFilesCompleted(const wxString& output)
-{
-    clCommandEvent event(wxEVT_CODELITE_REMOTE_LIST_FILES);
-
-    // parse the output
-    JSON root(output);
-    if(!root.isOk()) {
-        return;
-    }
-
-    wxArrayString files = root.toElement().toArrayString();
-    event.GetStrings().swap(files);
-    AddPendingEvent(event);
 }
 
 void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString& extensions)
@@ -177,7 +188,7 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
     m_process->Write(item.format(false) + "\n");
 
     // push a callback
-    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnListFilesCompleted);
+    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnListFilesOutput);
 }
 
 void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
@@ -205,47 +216,90 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& e
     clDEBUG() << command << endl;
 
     // push a callback
-    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnFindCompleted);
+    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnFindOutput);
 }
 
-void clCodeLiteRemoteProcess::OnFindCompleted(const wxString& output)
+// -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+// completion handlers
+// -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+
+void clCodeLiteRemoteProcess::OnListFilesOutput(const wxString& output, bool is_completed)
 {
-    clDEBUG() << output << endl;
-    JSON root(output);
-    if(!root.isOk()) {
+    clCommandEvent event(wxEVT_CODELITE_REMOTE_LIST_FILES);
+
+    // parse the output
+    wxArrayString files = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
+    event.GetStrings().swap(files);
+    AddPendingEvent(event);
+
+    if(is_completed) {
+        clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE);
+        AddPendingEvent(event_done);
+    }
+}
+
+void clCodeLiteRemoteProcess::OnFindOutput(const wxString& output, bool is_completed)
+{
+    wxArrayString files = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
+    if(files.empty()) {
         return;
     }
 
-    auto arr = root.toElement();
-
-    size_t arr_size = arr.arraySize();
     clFindInFilesEvent::Match::vec_t matches;
-    matches.reserve(arr_size);
+    matches.reserve(files.size());
+    for(const wxString& file : files) {
+        JSON j(file);
+        if(!j.isOk()) {
+            continue;
+        }
 
-    for(size_t i = 0; i < arr_size; ++i) {
-        auto file_matches = arr[i];
+        auto file_matches = j.toElement();
+
+        if((m_fif_matches_count == 0) && (m_fif_files_scanned == 0) && file_matches.hasNamedObject("files_scanned")) {
+            m_fif_files_scanned = file_matches["files_scanned"].toSize_t();
+            continue;
+        }
+
         clFindInFilesEvent::Match match;
         match.file = file_matches["file"].toString();
         auto json_locations = file_matches["matches"];
         size_t loc_count = json_locations.arraySize();
 
         // add the locations for this file
-        match.locations.reserve(loc_count);
-        for(size_t j = 0; j < loc_count; j++) {
-            clFindInFilesEvent::Location loc;
-            auto json_loc = json_locations[j];
-            loc.line = json_loc["ln"].toSize_t();
-            loc.column_start = json_loc["start"].toSize_t();
-            loc.column_end = json_loc["end"].toSize_t();
-            loc.pattern = json_loc["pattern"].toString();
-            match.locations.emplace_back(loc);
+        if(loc_count) {
+            match.locations.reserve(loc_count);
+            for(size_t j = 0; j < loc_count; j++) {
+                clFindInFilesEvent::Location loc;
+                auto json_loc = json_locations[j];
+                loc.line = json_loc["ln"].toSize_t();
+                loc.column_start = json_loc["start"].toSize_t();
+                loc.column_end = json_loc["end"].toSize_t();
+                loc.pattern = json_loc["pattern"].toString();
+                match.locations.push_back(loc);
+                m_fif_matches_count++;
+            }
+            // add the match
+            matches.push_back(match);
         }
-
-        // add the match
-        matches.emplace_back(match);
     }
 
-    clFindInFilesEvent event(wxEVT_CODELITE_REMOTE_FIND_RESULTS);
-    event.SetMatches(matches);
-    AddPendingEvent(event);
+    if(!matches.empty()) {
+        clFindInFilesEvent event(wxEVT_CODELITE_REMOTE_FIND_RESULTS);
+        event.SetMatches(matches);
+        AddPendingEvent(event);
+    }
+
+    if(is_completed) {
+        clFindInFilesEvent event_done(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE);
+        event_done.SetInt(m_fif_files_scanned);
+        AddPendingEvent(event_done);
+    }
+}
+
+void clCodeLiteRemoteProcess::ResetStates()
+{
+    m_fif_matches_count = 0;
+    m_fif_files_scanned = 0;
 }

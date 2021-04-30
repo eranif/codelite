@@ -20,6 +20,9 @@ def eprint(*args, **kwargs):
     #print(*args, file=sys.stderr, **kwargs)
     pass
 
+def print_message_terminator():
+    print(">>codelite-remote-msg-end<<")
+
 def _get_list_of_files(cmd):
     """
     helper method to on_find_files - return list of files as array    
@@ -87,7 +90,9 @@ def on_find_files(cmd):
     {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
     """
     arr_files = _get_list_of_files(cmd)
-    print(json.dumps(arr_files))
+    for file in arr_files:
+        print(file)
+    print_message_terminator()
 
 def on_find_in_files(cmd):
     """
@@ -113,6 +118,12 @@ def on_find_in_files(cmd):
     word_chars_set = set()
     for ch in word_chars:
         word_chars_set.add(ch)
+    
+    # first line contains the number of files scanned
+    files_scanned = {
+        "files_scanned": len(files_arr)
+    }
+    print(json.dumps(files_scanned))
 
     for file in files_arr:
         try:
@@ -152,14 +163,15 @@ def on_find_in_files(cmd):
                         })
             # add this file to the return object
             if len(entries) > 0:
-                return_obj.append({
+                reply = {
                     "file": file,
                     "matches": entries
-                })
+                }
+                print(json.dumps(reply))
         except UnicodeDecodeError as e:
             eprint("decoding error in file {}".format(file))
             pass
-    print(json.dumps(return_obj))
+    print_message_terminator()
 
 def main_loop():
     """

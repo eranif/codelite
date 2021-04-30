@@ -12,6 +12,7 @@ class WXDLLIMPEXP_SDK clRemoteFinderHelper
 {
     wxStopWatch m_stopWatch;
     clCodeLiteRemoteProcess* m_codeliteRemote = nullptr;
+    size_t m_matches_found = 0;
 
 protected:
     wxWindow* GetSearchTab();
@@ -26,7 +27,7 @@ public:
      * @brief convert find-in-files format into CodeLite's output tab view format
      * @param event
      */
-    void ProcessSearchOutput(const clFindInFilesEvent& event);
+    void ProcessSearchOutput(const clFindInFilesEvent& event, bool is_completed);
 
     /**
      * @brief execute a search

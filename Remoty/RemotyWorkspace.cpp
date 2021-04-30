@@ -135,8 +135,10 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
 
     // codelite-remote events
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnListFilesCompleted, this);
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindCompleted, this);
+    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress, this);
+    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
+    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress, this);
+    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone, this);
 }
 
 void RemotyWorkspace::UnbindEvents()
@@ -164,8 +166,12 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
 
     // codelite-remote events
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnListFilesCompleted, this);
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindCompleted, this);
+    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
+                            this);
+    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
+                            this);
+    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress, this);
+    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone, this);
     m_eventsConnected = false;
 }
 
@@ -893,9 +899,14 @@ void RemotyWorkspace::StartCodeLiteRemote()
     m_codeliteRemote.StartInteractive(m_account, codelite_remote_script);
 }
 
-void RemotyWorkspace::OnListFilesCompleted(clCommandEvent& event)
+void RemotyWorkspace::OnCodeLiteRemoteListFilesProgress(clCommandEvent& event)
 {
-    m_workspaceFiles.swap(event.GetStrings());
+    m_workspaceFiles.reserve(event.GetStrings().size() + m_workspaceFiles.size());
+    m_workspaceFiles.insert(m_workspaceFiles.end(), event.GetStrings().begin(), event.GetStrings().end());
+}
+
+void RemotyWorkspace::OnCodeLiteRemoteListFilesDone(clCommandEvent& event)
+{
     clGetManager()->SetStatusMessage(_("Remote file system scan completed"));
 }
 
@@ -905,6 +916,7 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
     wxString file_extensions = GetSettings().GetSelectedConfig()->GetFileExtensions();
 
     file_extensions.Replace("*", "");
+    m_workspaceFiles.clear();
     m_codeliteRemote.ListFiles(root_dir, file_extensions);
 }
 
@@ -946,7 +958,12 @@ void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file
     m_remoteFinder.Search(root_dir, find_what, file_extensions, whole_word, icase);
 }
 
-void RemotyWorkspace::OnCodeLiteRemoteFindCompleted(clFindInFilesEvent& event)
+void RemotyWorkspace::OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event)
 {
-    m_remoteFinder.ProcessSearchOutput(event);
+    m_remoteFinder.ProcessSearchOutput(event, false);
+}
+
+void RemotyWorkspace::OnCodeLiteRemoteFindDone(clFindInFilesEvent& event)
+{
+    m_remoteFinder.ProcessSearchOutput(event, true);
 }

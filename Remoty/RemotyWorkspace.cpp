@@ -54,13 +54,13 @@ RemotyWorkspace::RemotyWorkspace(bool dummy)
 RemotyWorkspace::~RemotyWorkspace()
 {
     UnbindEvents();
-    DoClose(false);
 }
 
 wxFileName RemotyWorkspace::GetFileName() const
 {
     return {};
 }
+
 wxString RemotyWorkspace::GetFilesMask() const
 {
     return clFileSystemWorkspace::Get().GetFilesMask();
@@ -941,7 +941,7 @@ void RemotyWorkspace::DeleteClangdEntry()
 {
     clLanguageServerEvent delete_event(wxEVT_LSP_DELETE);
     delete_event.SetLspName("Remoty - clangd");
-    EventNotifier::Get()->ProcessEvent(delete_event);
+    EventNotifier::Get()->AddPendingEvent(delete_event);
 }
 
 void RemotyWorkspace::OnInitDone(wxCommandEvent& event)

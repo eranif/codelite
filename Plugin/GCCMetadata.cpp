@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "GCCMetadata.hpp"
+#include "clTempFile.hpp"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
@@ -45,16 +46,15 @@ void GCCMetadata::Load(const wxString& tool, const wxString& rootDir, bool is_cy
     m_target.clear();
 
     // Common compiler paths - should be placed at top of the include path!
-    wxString tmpfile1 = wxFileName::CreateTempFileName(wxT("codelite"));
     wxString command;
-    wxString tmpfile = tmpfile1;
-    tmpfile += wxT(".cpp");
 
-    wxRenameFile(tmpfile1, tmpfile);
 
     // GCC prints parts of its output to stdout and some to stderr
     // redirect all output to stdout
     wxString working_directory;
+    clTempFile tmpfile;
+    tmpfile.Write(wxEmptyString);
+    
 #ifdef __WXMSW__
     if(::clIsCygwinEnvironment()) {
         command << tool << " -v -x c++ /dev/null -fsyntax-only";
@@ -63,14 +63,15 @@ void GCCMetadata::Load(const wxString& tool, const wxString& rootDir, bool is_cy
 
         // execute the command from the tool directory
         working_directory = cxx.GetPath();
-        command << "echo |" << tool << " -xc++ -E -v - -fsyntax-only";
+        ::WrapWithQuotes(working_directory);
+        command << "cd " << working_directory << " && " << tool << " -xc++ -E -v " << tmpfile.GetFullPath(true)
+                << " -fsyntax-only";
     }
 #else
     command << tool << " -v -x c++ /dev/null -fsyntax-only";
 #endif
 
     wxString outputStr = RunCommand(command, working_directory);
-    clRemoveFile(tmpfile);
 
     wxArrayString outputArr = wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
     // Analyze the output

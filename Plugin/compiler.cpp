@@ -690,6 +690,7 @@ wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
 
 wxArrayString Compiler::POSIXGetIncludePaths() const
 {
+    clDEBUG() << "POSIXGetIncludePaths called" << endl;
     GCCMetadata cmd(GetName());
     cmd.Load(GetTool("CXX"), GetInstallationPath(), GetCompilerFamily() == COMPILER_FAMILY_CYGWIN);
     return cmd.GetSearchPaths();

@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "GCCMetadata.hpp"
 #include "ICompilerLocator.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
@@ -119,7 +120,7 @@ bool Project::Load(const wxString& path)
     if(!m_doc.Load(path)) {
         return false;
     }
-    
+
     // Workaround WX bug: load the plugins data (GetAllPluginsData will strip any trailing whitespaces)
     // and then set them back
     std::map<wxString, wxString> pluginsData;
@@ -1410,28 +1411,6 @@ static wxString GetExtraFlags(CompilerPtr compiler)
     return "";
 }
 
-static void GetExtraFlags(wxString& content, CompilerPtr compiler)
-{
-#ifdef __WXMSW__
-    if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
-        if(!content.IsEmpty() && !content.EndsWith("\n")) {
-            content << "\n";
-        }
-        if(compiler->Is64BitCompiler()) {
-            content << "-target"
-                    << "\n"
-                    << "x86_64-pc-windows-gnu"
-                    << "\n";
-        } else {
-            content << "-target"
-                    << "\n"
-                    << "i686-pc-windows-gnu"
-                    << "\n";
-        }
-    }
-#endif
-}
-
 wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
                                            const wxString& filenamePlaceholder, size_t flags)
 {
@@ -2112,7 +2091,9 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
 
     // Add the target flag
     if(cmp) {
-        GetExtraFlags(compile_flags_content, buildConf->GetCompiler());
+        GCCMetadata cmd(cmp->GetName());
+        cmd.Load(cmp->GetTool("CXX"), cmp->GetInstallationPath());
+        compile_flags_content << "-target\n" << cmd.GetTarget() << "\n";
     }
 
     // Handle h files as C++ headers

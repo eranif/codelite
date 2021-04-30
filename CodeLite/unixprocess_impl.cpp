@@ -189,7 +189,7 @@ bool UnixProcessImpl::ReadFromFd(int fd, fd_set& rset, wxString& output)
                 convBuff = wxString::From8BitData(buffer);
             }
 
-            output = convBuff;
+            output.swap(convBuff);
             return true;
         }
     }

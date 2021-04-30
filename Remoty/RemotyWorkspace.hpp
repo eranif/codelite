@@ -134,7 +134,8 @@ public:
     /**
      * @brief perform find in files
      */
-    void FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what);
+    void FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
+                     bool whole_word, bool icase);
 };
 
 #endif // RemoteWorkspace_HPP

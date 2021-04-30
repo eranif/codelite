@@ -63,7 +63,8 @@ void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event)
     search_tab->GetEventHandler()->AddPendingEvent(end_event);
 }
 
-void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions)
+void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions,
+                                  bool whole_word, bool icase)
 {
     // start ssh process
     if(!m_codeliteRemote || !m_codeliteRemote->IsRunning()) {
@@ -76,7 +77,7 @@ void clRemoteFinderHelper::Search(const wxString& root_dir, const wxString& find
         return;
     }
 
-    m_codeliteRemote->Search(root_dir, fileExtensions, findString, 0);
+    m_codeliteRemote->Search(root_dir, fileExtensions, findString, whole_word, icase);
 
     SearchData sd;
     sd.SetEncoding("UTF-8");

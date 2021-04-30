@@ -9,7 +9,7 @@ import subprocess
 #----------------------------------------------------------------------------------------------------------------------------------
 # Sample usage:
 #   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
-#   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite", "find_what": "wxcReplyEventData"}
+#   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": true, "icase": false}
 #   {"command":"exec", "cmd": ["/usr/bin/ls"], "wd": "/c/src/codelite/AutoSave", "env": [["PATH", "/c/src/codelite/Runtime"], ["ENV2", "ENV_VALUE2"]]}
 #
 # Command line usage:
@@ -100,20 +100,48 @@ def on_find_in_files(cmd):
     files_arr = _get_list_of_files(cmd)
     find_what = cmd['find_what']
     return_obj = []
+    
+    # search flags
+    whole_word = cmd['whole_word']
+    ignore_case = cmd['icase']
+
+    re_flags = 0
+    if ignore_case:
+        re_flags |= re.IGNORECASE
+    
+    word_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_"
+    word_chars_set = set()
+    for ch in word_chars:
+        word_chars_set.add(ch)
+
     for file in files_arr:
         try:
             lines = open(file=file, mode="r", encoding="utf-8").read().splitlines()
             line_number = 0
             entries = []
             for line in lines:
+                # aggregate results per line
                 line_number += 1
                 matches = []
-                for m in re.finditer(find_what, line):
-                    matches.append({
-                        "start": m.start(),
-                        "end": m.end()
-                    })
-                    
+                for m in re.finditer(find_what, line, flags=re_flags):
+                    start_pos = m.start()
+                    end_pos = m.end()
+                    can_add = True
+                    # check if this match is a "whole word"
+                    if whole_word is True:
+                        # check the char left and right to the match
+                        if start_pos > 0 and line[start_pos - 1] in word_chars_set:
+                            can_add = False
+                        elif end_pos < (len(line) - 1) and line[end_pos + 1] in word_chars_set:
+                            can_add = False
+
+                    if can_add is True:
+                        matches.append({
+                            "start": start_pos,
+                            "end": end_pos
+                        })
+                # if we found matches for this line,
+                # add them to the "entries"
                 if len(matches) > 0:
                     for match in matches:
                         entries.append({
@@ -122,10 +150,12 @@ def on_find_in_files(cmd):
                             "end": match['end'],
                             "pattern": line
                         })
-            return_obj.append({
-                "file": file,
-                "matches": entries
-            })
+            # add this file to the return object
+            if len(entries) > 0:
+                return_obj.append({
+                    "file": file,
+                    "matches": entries
+                })
         except UnicodeDecodeError as e:
             eprint("decoding error in file {}".format(file))
             pass

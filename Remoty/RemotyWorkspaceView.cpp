@@ -9,6 +9,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
+#include "ieditor.h"
 #include "imanager.h"
 #include "processreaderthread.h"
 #include "search_thread.h"
@@ -121,7 +122,8 @@ void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
     }
 
     // start the search
-    m_workspace->FindInFiles(dlg.GetWhere(), dlg.GetFileExtensions(), dlg.GetFindWhat());
+    m_workspace->FindInFiles(dlg.GetWhere(), dlg.GetFileExtensions(), dlg.GetFindWhat(), dlg.IsWholeWord(),
+                             dlg.IsIcase());
 }
 
 void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
@@ -134,7 +136,13 @@ void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
     event.Skip(false);
     const auto& match = event.GetMatches()[0];
     const auto& loc = match.locations[0];
-    auto editor = clSFTPManager::Get().OpenFile(match.file, m_workspace->GetAccount().GetAccountName());
+
+    // if the file is already opened, just show it
+    IEditor* editor = clGetManager()->FindEditor(match.file);
+    if(!editor) {
+        editor = clSFTPManager::Get().OpenFile(match.file, m_workspace->GetAccount().GetAccountName());
+    }
+
     if(editor) {
         // sci is 0 based line numbers
         int pos_start = editor->PosFromLine(loc.line - 1) + loc.column_start;

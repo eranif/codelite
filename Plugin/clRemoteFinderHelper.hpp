@@ -8,7 +8,7 @@
 #include "wx/event.h"
 #include "wx/stopwatch.h"
 
-class WXDLLIMPEXP_SDK clRemoteFinderHelper 
+class WXDLLIMPEXP_SDK clRemoteFinderHelper
 {
     wxStopWatch m_stopWatch;
     clCodeLiteRemoteProcess* m_codeliteRemote = nullptr;
@@ -31,7 +31,8 @@ public:
     /**
      * @brief execute a search
      */
-    void Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions);
+    void Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions, bool whole_word,
+                bool icase);
 };
 
 #endif // CLREMOTEFINDERHELPER_HPP

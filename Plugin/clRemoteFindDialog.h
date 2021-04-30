@@ -19,11 +19,13 @@ public:
     void SetWhere(const wxString& where);
     void SetFileTypes(const wxString& filetypes);
     void SetFindWhat(const wxString& findWhat);
-    
+
     wxString GetWhere() const;
     wxString GetFindWhat() const;
     wxString GetFileExtensions() const;
-    
+    bool IsIcase() const;
+    bool IsWholeWord() const;
+
     /**
      * @brief build grep command from the input provided
      */

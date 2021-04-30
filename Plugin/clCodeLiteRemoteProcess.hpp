@@ -47,7 +47,7 @@ public:
     }
     void ListFiles(const wxString& root_dir, const wxString& extensions);
     void Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
-                size_t search_flags = 0);
+                bool whole_word, bool icase);
 };
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);

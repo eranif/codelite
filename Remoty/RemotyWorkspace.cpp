@@ -939,10 +939,11 @@ void RemotyWorkspace::OnInitDone(wxCommandEvent& event)
     DeleteClangdEntry();
 }
 
-void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what)
+void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
+                                  bool whole_word, bool icase)
 {
     m_remoteFinder.SetCodeLiteRemote(&m_codeliteRemote);
-    m_remoteFinder.Search(root_dir, find_what, file_extensions);
+    m_remoteFinder.Search(root_dir, find_what, file_extensions, whole_word, icase);
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteFindCompleted(clFindInFilesEvent& event)

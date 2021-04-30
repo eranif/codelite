@@ -166,3 +166,13 @@ wxString clRemoteFindDialog::GetFileExtensions() const
 {
     return m_comboBoxTypes->GetStringSelection();
 }
+
+bool clRemoteFindDialog::IsIcase() const
+{
+    return !m_checkBoxCase->IsChecked();
+}
+
+bool clRemoteFindDialog::IsWholeWord() const
+{
+    return m_checkBoxWholeWord->IsChecked();
+}

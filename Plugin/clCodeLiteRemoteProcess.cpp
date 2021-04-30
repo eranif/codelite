@@ -181,13 +181,11 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
 }
 
 void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
-                                     size_t search_flags)
+                                     bool whole_word, bool icase)
 {
     if(!m_process) {
         return;
     }
-
-    wxUnusedVar(search_flags);
 
     wxString exts = extensions;
     exts.Replace("*", "");
@@ -199,6 +197,8 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& e
     item.addProperty("root_dir", root_dir);
     item.addProperty("find_what", find_what);
     item.addProperty("file_extensions", ::wxStringTokenize(exts, ",; |", wxTOKEN_STRTOK));
+    item.addProperty("icase", icase);
+    item.addProperty("whole_word", whole_word);
 
     wxString command = item.format(false);
     m_process->Write(command + "\n");

@@ -56,7 +56,9 @@ CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
     compiler->SetTool("LinkerName", gxx.GetFullPath());
     compiler->SetTool("SharedObjectLinkerName", gxx.GetFullPath() + " -shared -fPIC");
     compiler->SetTool("AS", as.GetFullPath());
-    compiler->SetTool("MAKE", make.GetFullPath());
+
+    size_t cpu_count = wxThread::GetCPUCount();
+    compiler->SetTool("MAKE", wxString() << make.GetFullPath() << " -j" << cpu_count);
     compiler->SetTool("ResourceCompiler", windres.GetFullPath());
     compiler->SetTool("Debugger", gdb.GetFullPath());
     return compiler;

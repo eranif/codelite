@@ -23,10 +23,14 @@ static bool SetChoiceOptions(wxChoice* choice, const wxArrayString& values, cons
     choice->Clear();
     for(const wxString& v : values) {
         int where = choice->Append(v);
-        if(v == defaultValue) { match = where; }
+        if(v == defaultValue) {
+            match = where;
+        }
     }
 
-    if(match != wxNOT_FOUND) { choice->SetSelection(match); }
+    if(match != wxNOT_FOUND) {
+        choice->SetSelection(match);
+    }
     return (match != wxNOT_FOUND);
 }
 
@@ -67,7 +71,9 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
 
         m_projectsMap.insert({ proj->GetName(), proj });
         wxString internalType = proj->GetProjectInternalType();
-        if(internalType.IsEmpty()) { internalType = "General"; }
+        if(internalType.IsEmpty()) {
+            internalType = "General";
+        }
 
         if(m_categories.count(internalType) == 0) {
             m_categories.insert({ internalType, wxArrayString() });
@@ -128,7 +134,9 @@ NewProjectDialog::~NewProjectDialog()
 
 wxArrayString NewProjectDialog::GetProjectsTypesForCategory(const wxString& category)
 {
-    if(m_categories.count(category) == 0) { return wxArrayString(); }
+    if(m_categories.count(category) == 0) {
+        return wxArrayString();
+    }
     const wxArrayString& projects = m_categories[category];
     return projects;
 }
@@ -142,8 +150,12 @@ void NewProjectDialog::OnOKUI(wxUpdateUIEvent& event)
 ProjectData NewProjectDialog::GetProjectData() const
 {
     wxString sel = m_choiceType->GetStringSelection();
-    if(sel.IsEmpty()) { return ProjectData(); }
-    if(m_projectsMap.count(sel) == 0) { return ProjectData(); }
+    if(sel.IsEmpty()) {
+        return ProjectData();
+    }
+    if(m_projectsMap.count(sel) == 0) {
+        return ProjectData();
+    }
 
     ProjectData data;
     data.m_builderName = m_choiceBuild->GetStringSelection();
@@ -152,7 +164,9 @@ ProjectData NewProjectDialog::GetProjectData() const
     data.m_debuggerType = m_choiceDebugger->GetStringSelection();
 
     wxFileName path(m_dirPicker->GetPath(), "");
-    if(m_checkBoxSepFolder->IsChecked()) { path.AppendDir(data.m_name); }
+    if(m_checkBoxSepFolder->IsChecked()) {
+        path.AppendDir(data.m_name);
+    }
     data.m_path = path.GetPath();
     data.m_sourceTemplate = "C++ Project";
     data.m_srcProject = m_projectsMap.find(sel)->second;
@@ -164,7 +178,9 @@ void NewProjectDialog::OnPathSelected(wxFileDirPickerEvent& event)
     wxUnusedVar(event);
     if(!m_userTypeName) {
         wxFileName path(m_dirPicker->GetPath(), "");
-        if(path.GetDirCount()) { m_textCtrlName->ChangeValue(path.GetDirs().Last()); }
+        if(path.GetDirCount()) {
+            m_textCtrlName->ChangeValue(path.GetDirs().Last());
+        }
     }
 }
 
@@ -177,7 +193,9 @@ void NewProjectDialog::OnNameTyped(wxCommandEvent& event)
 void NewProjectDialog::OnCategoryChanged(wxCommandEvent& event)
 {
     wxString sel = m_choiceCategory->GetStringSelection();
-    if(sel.IsEmpty()) { return; }
+    if(sel.IsEmpty()) {
+        return;
+    }
     wxArrayString a = GetProjectsTypesForCategory(sel);
     SetChoiceOptions(m_choiceType, a, wxEmptyString);
 }

@@ -66,6 +66,7 @@ protected:
     virtual void OnPathSelected(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnNameTyped(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCategoryChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCompilerChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 

@@ -207,3 +207,21 @@ void NewProjectDialog::OnOK(wxCommandEvent& event)
     }
     event.Skip();
 }
+
+void NewProjectDialog::OnCompilerChanged(wxCommandEvent& event)
+{
+    static const wxString GENRATOR_UNIX = "CodeLite Makefile Generator - UNIX";
+
+    wxString newCompiler = m_choiceCompiler->GetStringSelection();
+    if(newCompiler.Contains("MSYS") && m_choiceBuild->GetStringSelection() != GENRATOR_UNIX) {
+        if(::wxMessageBox(
+               _("MSYS based compiler requires a UNIX Makefile Generator\nWould like CodeLite to fix this for you?"),
+               "CodeLite", wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT) != wxYES) {
+            return;
+        }
+        int unixMakefiles = m_choiceBuild->FindString(GENRATOR_UNIX);
+        if(unixMakefiles != wxNOT_FOUND) {
+            m_choiceBuild->SetSelection(unixMakefiles);
+        }
+    }
+}

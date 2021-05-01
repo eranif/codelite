@@ -132,7 +132,9 @@ NewProjectDialogBase::NewProjectDialogBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("NewProjectDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -152,6 +154,8 @@ NewProjectDialogBase::NewProjectDialogBase(wxWindow* parent, wxWindowID id, cons
                             this);
     m_choiceCategory->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
                               wxCommandEventHandler(NewProjectDialogBase::OnCategoryChanged), NULL, this);
+    m_choiceCompiler->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
+                              wxCommandEventHandler(NewProjectDialogBase::OnCompilerChanged), NULL, this);
     m_button6->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDialogBase::OnOKUI), NULL, this);
     m_button6->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDialogBase::OnOK), NULL, this);
 }
@@ -164,6 +168,8 @@ NewProjectDialogBase::~NewProjectDialogBase()
                                NULL, this);
     m_choiceCategory->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
                                  wxCommandEventHandler(NewProjectDialogBase::OnCategoryChanged), NULL, this);
+    m_choiceCompiler->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                 wxCommandEventHandler(NewProjectDialogBase::OnCompilerChanged), NULL, this);
     m_button6->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewProjectDialogBase::OnOKUI), NULL, this);
     m_button6->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewProjectDialogBase::OnOK), NULL, this);
 }

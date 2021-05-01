@@ -41,6 +41,7 @@ protected:
     size_t m_objectChunks;
     Project::FilesMap_t* m_projectFilesMetadata;
     bool m_isWindows = false;
+    bool m_isMSYSEnv = false;
 
 protected:
     enum eBuildFlags {
@@ -87,6 +88,8 @@ protected:
                                          const wxString& arguments, bool isCommandlineCommand) const;
 
     bool SendBuildEvent(int eventId, const wxString& projectName, const wxString& configurationName);
+    bool HandleResourceFiles() const;
+    bool IsResourceFile(const Compiler::CmpFileTypeInfo& file_type) const;
 
 private:
     void GenerateMakefile(ProjectPtr proj, const wxString& confToBuild, bool force, const wxArrayString& depsProj);

@@ -28,6 +28,7 @@
 #include <wx/app.h>
 #include <wx/msgdlg.h>
 
+#include "StringUtils.h"
 #include "build_settings_config.h"
 #include "builder_gnumake_default.h"
 #include "buildmanager.h"
@@ -45,7 +46,6 @@
 #include "wx/tokenzr.h"
 #include <algorithm>
 #include <wx/stopwatch.h>
-#include "StringUtils.h"
 
 BuilderGnuMake::BuilderGnuMake()
     : Builder("CodeLite Makefile Generator")
@@ -270,8 +270,8 @@ bool BuilderGnuMake::Export(const wxString& project, const wxString& confToBuild
                 continue;
             }
 
-            text << wxT("\t@echo \"") << BUILD_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ")
-                 << projectSelConf << wxT(" ]----------\"\n");
+            text << wxT("\t@echo \"") << BUILD_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ") << projectSelConf
+                 << wxT(" ]----------\"\n");
             // make the paths relative, if it's sensible to do so
             wxFileName fn(dependProj->GetFileName());
             MakeRelativeIfSensible(fn, wspfile.GetPath());
@@ -388,8 +388,8 @@ bool BuilderGnuMake::Export(const wxString& project, const wxString& confToBuild
                 continue;
             }
 
-            text << wxT("\t@echo \"") << CLEAN_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ")
-                 << projectSelConf << wxT(" ]----------\"\n");
+            text << wxT("\t@echo \"") << CLEAN_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ") << projectSelConf
+                 << wxT(" ]----------\"\n");
 
             // make the paths relative
             wxFileName fn(dependProj->GetFileName());
@@ -665,18 +665,12 @@ void BuilderGnuMake::CreateSrcList(ProjectPtr proj, const wxString& confToBuild,
         if(!cmp->GetCmpFileType(files[i].GetExt(), ft))
             continue;
 
-        if(ft.kind == Compiler::CmpFileKindResource) {
-#ifndef __WXMSW__
-            // Resource compiler "windres" is not supported under
-            // *nix OS
+        if(IsResourceFile(ft) && !HandleResourceFiles()) {
             continue;
-#endif
         }
 
         relPath = files.at(i).GetPath(true, wxPATH_UNIX);
         relPath.Trim().Trim(false);
-
-        // Compiler::CmpFileKindSource , Compiler::CmpFileKindResource file
         text << relPath << files[i].GetFullName() << wxT(" ");
 
         if(counter % 10 == 0) {
@@ -745,7 +739,7 @@ void BuilderGnuMake::CreateObjectList(ProjectPtr proj, const wxString& confToBui
         if(!cmp->GetCmpFileType(files[i].GetExt(), ft))
             continue;
 
-        if(ft.kind == Compiler::CmpFileKindResource && !m_isWindows) {
+        if(IsResourceFile(ft) && !HandleResourceFiles()) {
             continue;
         }
 
@@ -895,7 +889,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBu
                          << wxT(" ") << source_file_to_compile << wxT("\n\n");
                 }
 
-            } else if(ft.kind == Compiler::CmpFileKindResource && m_isWindows) {
+            } else if(IsResourceFile(ft) && HandleResourceFiles()) {
                 // we construct an object name which also includes the full name of the reousrce file and appends a
                 // .o to the name (to be more precised, $(ObjectSuffix))
                 wxString objectName;
@@ -1219,7 +1213,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     }
 
     // only if resource compiler required, evaluate the resource variables
-    if(m_isWindows) {
+    if(HandleResourceFiles()) {
         wxString rcBuildOpts = bldConf->GetResCompileOptions();
         rcBuildOpts.Replace(wxT(";"), wxT(" "));
         text << wxT("RcCmpOptions           :=") << rcBuildOpts << wxT("\n");
@@ -1851,4 +1845,11 @@ bool BuilderGnuMake::SendBuildEvent(int eventId, const wxString& projectName, co
     e.SetProjectName(projectName);
     e.SetConfigurationName(configurationName);
     return EventNotifier::Get()->ProcessEvent(e);
+}
+
+bool BuilderGnuMake::HandleResourceFiles() const { return m_isMSYSEnv || m_isWindows; }
+
+bool BuilderGnuMake::IsResourceFile(const Compiler::CmpFileTypeInfo& file_type) const
+{
+    return file_type.kind == Compiler::CmpFileKindResource;
 }

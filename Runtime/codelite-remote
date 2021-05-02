@@ -10,14 +10,14 @@ import subprocess
 # Sample usage:
 #   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
 #   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": true, "icase": false}
-#   {"command":"exec", "cmd": ["/usr/bin/ls"], "wd": "/c/src/codelite/AutoSave", "env": [["PATH", "/c/src/codelite/Runtime"], ["ENV2", "ENV_VALUE2"]]}
+#   {"command":"exec", "cmd": "/usr/bin/ls", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
 #
 # Command line usage:
 #   python3 codelite-remote.py --i # start in interactive mode
 #   python3 codelite-remote.py --list /path/to/dir --extensions ".txt .cpp .hpp"
 #----------------------------------------------------------------------------------------------------------------------------------
 def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+    #print(*args, file=sys.stderr, **kwargs)
     pass
 
 def print_message_terminator():
@@ -53,34 +53,31 @@ def on_exec(cmd):
     Execute command and print its output
     """
     # preare the environment
-    env_dict = dict(os.environ.copy())
-    user_env = cmd['env']
-    for env_entry in user_env:
-        name = env_entry['name']
-        value = env_entry['value']
-        if env_dict.get(name, -1) == -1:
-            env_dict[name] = value
-        else:
-            env_dict[name] = "{}:{}".format(value, env_dict[name])
-    working_directory = os.path.expanduser(cmd['wd'])
-    working_directory = os.path.expandvars(working_directory)
-    proc = subprocess.Popen(args=cmd['cmd'], 
-                            cwd=working_directory,
-                            stdout=subprocess.PIPE, 
-                            stderr=subprocess.PIPE, 
-                            shell=True, 
-                            env=env_dict)
-    # steram stdout and stderr
     try:
-        for line in proc.stdout:
-            print(line)
-        for line in proc.stderr:
-            print(line)
-        print_message_terminator()
-    except TimeoutExpired:
-        proc.kill()
-        outs, errs = proc.communicate()
-        print_message_terminator()
+        env_dict = dict(os.environ.copy())
+        user_env = cmd['env']
+        for env_entry in user_env:
+            name = env_entry['name']
+            value = env_entry['value']
+            if env_dict.get(name, -1) == -1:
+                env_dict[name] = value
+            else:
+                env_dict[name] = "{}:{}".format(value, env_dict[name])
+        working_directory = os.path.expanduser(cmd['wd'])
+        working_directory = os.path.expandvars(working_directory)
+        completed_proc = subprocess.run(args=cmd['cmd'], 
+                                        cwd=working_directory,
+                                        shell=True, 
+                                        env=env_dict)
+    except Exception as e:
+        eprint("on_exe error: {}".format(e))
+        try:
+            proc.kill()
+            outs, errs = proc.communicate()
+        except:
+            pass
+    # always print the terminating message
+    print_message_terminator()
 
 def on_find_files(cmd):
     """
@@ -216,7 +213,8 @@ def main_loop():
                 else:
                     eprint("unknown command '{}'".format(command['command']))
             except Exception as e:
-                eprint(e)
+                eprint("main_loop() error: {}".format(e))
+                exit(1)
 
 def main():
     main_loop()

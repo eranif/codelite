@@ -19,6 +19,10 @@
 class RemotyWorkspaceView;
 class RemotyWorkspace : public IWorkspace
 {
+private:
+    typedef void (RemotyWorkspace::*CallbackFunc)(const wxString&, bool);
+
+private:
     bool m_eventsConnected = false;
     RemotyWorkspaceView* m_view = nullptr;
     SSHAccountInfo m_account;
@@ -26,13 +30,13 @@ class RemotyWorkspace : public IWorkspace
     wxString m_localWorkspaceFile;
     wxString m_localUserWorkspaceFile;
     clFileSystemWorkspaceSettings m_settings;
-    IProcess* m_buildProcess = nullptr;
     IProcess* m_cmdProcess = nullptr;
     clCodeLiteRemoteProcess m_codeliteRemote;
     long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
     wxArrayString m_workspaceFiles;
     clRemoteFinderHelper m_remoteFinder;
+    std::deque<CallbackFunc> m_execOutputCallbacks;
 
 public:
     RemotyWorkspace();
@@ -47,15 +51,19 @@ protected:
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void DoClose(bool notify);
-    void StartCodeLiteRemote();
+    void StartCodeLiteRemote(bool restart = false);
     void OnOpenResourceFile(clCommandEvent& event);
     void OnShutdown(clCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
+
+    /// codelite-remote exec handlers
+    void OnBuildOutput(const wxString& output, bool is_completed);
 
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);
     void DoBuild(const wxString& kind);
     void DeleteClangdEntry();
+    void OnCodeLiteRemoteTerminated(clCommandEvent& event);
 
     IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
     wxString GetTargetCommand(const wxString& target) const;
@@ -63,8 +71,6 @@ protected:
     void GetExecutable(wxString& exe, wxString& args, wxString& wd);
 
     void OnBuildStarting(clBuildEvent& event);
-    void OnBuildProcessTerminated(clProcessEvent& event);
-    void OnBuildProcessOutput(clProcessEvent& event);
     void OnIsBuildInProgress(clBuildEvent& event);
     void OnStopBuild(clBuildEvent& event);
     void OnBuildHotspotClicked(clBuildEvent& event);
@@ -77,6 +83,8 @@ protected:
     void OnIsProgramRunning(clExecuteEvent& event);
     void OnExecProcessTerminated(clProcessEvent& event);
     void OnFindSwapped(clFileSystemEvent& event);
+    void OnCodeLiteRemoteExecOutput(clProcessEvent& event);
+    void OnCodeLiteRemoteExecDone(clProcessEvent& event);
 
     // codelite-remote
     void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
@@ -91,10 +99,7 @@ protected:
 
 public:
     // IWorkspace
-    virtual wxString GetActiveProjectName() const
-    {
-        return wxEmptyString;
-    }
+    virtual wxString GetActiveProjectName() const { return wxEmptyString; }
     virtual wxFileName GetFileName() const;
     virtual wxString GetFilesMask() const;
     virtual wxFileName GetProjectFileName(const wxString& projectName) const;
@@ -107,26 +112,11 @@ public:
 
     // API
     bool IsOpened() const;
-    const SSHAccountInfo& GetAccount() const
-    {
-        return m_account;
-    }
-    const wxString& GetLocalWorkspaceFile() const
-    {
-        return m_localWorkspaceFile;
-    }
-    const wxString& GetRemoteWorkspaceFile() const
-    {
-        return m_remoteWorkspaceFile;
-    }
-    const clFileSystemWorkspaceSettings& GetSettings() const
-    {
-        return m_settings;
-    }
-    clFileSystemWorkspaceSettings& GetSettings()
-    {
-        return m_settings;
-    }
+    const SSHAccountInfo& GetAccount() const { return m_account; }
+    const wxString& GetLocalWorkspaceFile() const { return m_localWorkspaceFile; }
+    const wxString& GetRemoteWorkspaceFile() const { return m_remoteWorkspaceFile; }
+    const clFileSystemWorkspaceSettings& GetSettings() const { return m_settings; }
+    clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
     /**
      * @brief save the settings to the remote machine
      */

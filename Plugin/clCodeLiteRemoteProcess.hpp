@@ -21,10 +21,10 @@ protected:
 protected:
     IProcess* m_process = nullptr;
     std::deque<CallbackFunc> m_completionCallbacks;
-    std::function<void()> m_terminateCallback;
     wxString m_outputRead;
     size_t m_fif_matches_count = 0;
     size_t m_fif_files_scanned = 0;
+    bool m_going_down = false;
 
 protected:
     void OnProcessOutput(clProcessEvent& e);
@@ -44,11 +44,9 @@ public:
     ~clCodeLiteRemoteProcess();
 
     void StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath);
-    void StartSync(const SSHAccountInfo& account, const wxString& scriptPath, const std::vector<wxString>& args,
-                   wxString& output);
-    void SetTerminateCallback(std::function<void()> callback);
     void Stop();
     bool IsRunning() const { return m_process != nullptr; }
+
     // API
     /**
      * @brief find all files on a remote machine from a given directory that matches the extensions list
@@ -68,6 +66,7 @@ public:
      */
     void Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env);
 };
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_TERMINATED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);

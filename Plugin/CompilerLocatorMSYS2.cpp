@@ -46,7 +46,7 @@ CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
     // create new compiler
     CompilerPtr compiler(new Compiler(nullptr));
     compiler->SetName(cmd.GetName());
-    compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
+    compiler->SetCompilerFamily(COMPILER_FAMILY_MSYS2);
     compiler->SetInstallationPath(folder);
 
     // add the tools

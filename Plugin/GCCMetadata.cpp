@@ -23,15 +23,37 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "CxxPreProcessor.h"
 #include "GCCMetadata.hpp"
 #include "clTempFile.hpp"
+#include "environmentconfig.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "procutils.h"
 #include <wx/dir.h>
 #include <wx/fileconf.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
+
+// we keep a cache entries to avoid running processes
+// since thread_local is broken under windows, we use
+// real locks here (at least it is for MinGW 7.3)
+static std::unordered_map<wxString, GCCMetadata> s_cache;
+static wxCriticalSection s_cs;
+
+void GCCMetadata::GetMetadataFromCache(const wxString& tool, const wxString& rootDir, bool is_cygwin, GCCMetadata* md)
+{
+    wxCriticalSectionLocker locker(s_cs);
+    if(s_cache.count(tool) == 0) {
+        GCCMetadata tmp(md->m_basename);
+        tmp.DoLoad(tool, rootDir, is_cygwin);
+        s_cache.insert({ tool, tmp });
+    }
+
+    const auto& cachedEntry = s_cache[tool];
+    *md = cachedEntry;
+}
 
 GCCMetadata::GCCMetadata(const wxString& basename)
     : m_basename(basename)
@@ -42,36 +64,48 @@ GCCMetadata::~GCCMetadata() {}
 
 void GCCMetadata::Load(const wxString& tool, const wxString& rootDir, bool is_cygwin)
 {
+    // find an entry in the cache
+    // if no such entry exist, update the cache
+    GetMetadataFromCache(tool, rootDir, is_cygwin, this);
+}
+
+void GCCMetadata::DoLoad(const wxString& tool, const wxString& rootDir, bool is_cygwin)
+{
     m_searchPaths.clear();
     m_target.clear();
 
     // Common compiler paths - should be placed at top of the include path!
     wxString command;
 
-
     // GCC prints parts of its output to stdout and some to stderr
     // redirect all output to stdout
     wxString working_directory;
     clTempFile tmpfile;
     tmpfile.Write(wxEmptyString);
-    
+
+    wxFileName cxx(tool);
+
+    clEnvList_t envlist;
+    wxString pathenv;
+    ::wxGetEnv("PATH", &pathenv);
+    pathenv.Prepend(cxx.GetPath() + clPATH_SEPARATOR);
+    envlist.push_back({ "PATH", pathenv });
+
 #ifdef __WXMSW__
     if(::clIsCygwinEnvironment()) {
-        command << tool << " -v -x c++ /dev/null -fsyntax-only";
+        command << cxx.GetFullName() << " -v -x c++ /dev/null -fsyntax-only";
     } else {
-        wxFileName cxx(tool);
 
         // execute the command from the tool directory
         working_directory = cxx.GetPath();
         ::WrapWithQuotes(working_directory);
-        command << "cd " << working_directory << " && " << tool << " -xc++ -E -v " << tmpfile.GetFullPath(true)
-                << " -fsyntax-only";
+        command << cxx.GetFullName() << " -xc++ -E -v " << tmpfile.GetFullPath(true) << " -fsyntax-only";
     }
 #else
-    command << tool << " -v -x c++ /dev/null -fsyntax-only";
+    command << cxx.GetFullName() << " -v -x c++ /dev/null -fsyntax-only";
 #endif
 
-    wxString outputStr = RunCommand(command, working_directory);
+    wxString outputStr = RunCommand(command, working_directory, &envlist);
 
     wxArrayString outputArr = wxStringTokenize(outputStr, wxT("\n\r"), wxTOKEN_STRTOK);
     // Analyze the output
@@ -111,20 +145,45 @@ void GCCMetadata::Load(const wxString& tool, const wxString& rootDir, bool is_cy
     }
 
     // get the target
-    m_target = RunCommand(tool + " -dumpmachine", wxFileName(tool).GetPath());
-    wxString versionString = RunCommand(tool + " -dumpversion", wxFileName(tool).GetPath());
+    m_target = RunCommand(cxx.GetFullName() + " -dumpmachine", wxFileName(tool).GetPath(), &envlist);
+    wxString versionString = RunCommand(cxx.GetFullName() + " -dumpversion", wxFileName(tool).GetPath(), &envlist);
     m_name << m_basename << "-" << versionString;
+
+    // load macros
+    clTempFile macrosFile;
+    macrosFile.Write(wxEmptyString);
+
+    wxString macros_command;
+    macros_command << cxx.GetFullName() << " -dM -E -xc++ " << macrosFile.GetFullPath(true);
+
+    clDEBUG() << "Loading built-in macros for compiler '" << GetName() << "' :" << macros_command << clEndl;
+    wxString macros = RunCommand(macros_command, working_directory, &envlist);
+    macrosFile.Write(macros);
+
+    clDEBUG() << "Compiler builtin macros are written into:" << macrosFile.GetFullPath() << endl;
+
+    // we got our macro files
+    CxxPreProcessor pp;
+    wxFileName cmpMacrosFile(macrosFile.GetFullPath());
+    pp.Parse(cmpMacrosFile, kLexerOpt_CollectMacroValueNumbers);
+    m_macros = pp.GetDefinitions();
+
+    clDEBUG() << "GCC Metadata loaded for tool" << tool << endl;
+    clDEBUG() << "Name:" << GetName() << endl;
+    clDEBUG() << "Search paths:" << GetSearchPaths() << endl;
+    clDEBUG() << "Macros:" << GetMacros() << endl;
+    clDEBUG() << "Target:" << GetTarget() << endl;
 }
 
-wxString GCCMetadata::RunCommand(const wxString& command, const wxString& working_directory)
+wxString GCCMetadata::RunCommand(const wxString& command, const wxString& working_directory, clEnvList_t* env)
 {
     clDEBUG() << "Running command:" << command << endl;
     wxString outputStr;
-    IProcess::Ptr_t proc(::CreateSyncProcess(command, IProcessCreateDefault | IProcessWrapInShell, working_directory));
+    IProcess::Ptr_t proc(::CreateSyncProcess(command, IProcessCreateDefault, working_directory, env));
     if(proc) {
         proc->WaitForTerminate(outputStr);
     }
-    clDEBUG() << "Output is:" << outputStr << endl;
+    clDEBUG1() << "Output is:" << outputStr << endl;
     outputStr.Trim().Trim(false);
     return outputStr;
 }

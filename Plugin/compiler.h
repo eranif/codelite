@@ -25,6 +25,7 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
+#include "GCCMetadata.hpp"
 #include "asyncprocess.h"
 #include "codelite_exports.h"
 #include "configuration_object.h"
@@ -231,6 +232,15 @@ public:
         this->m_objectNameIdenticalToFileName = objectNameIdenticalToFileName;
     }
     bool GetObjectNameIdenticalToFileName() const { return m_objectNameIdenticalToFileName; }
+    /**
+     * @brief return the compiler metadata info
+     */
+    GCCMetadata GetMetadata() const;
+
+    /**
+     * @brief does this compiler support metadata object?
+     */
+    bool HasMetadata() const;
 };
 
 typedef SmartPtr<Compiler> CompilerPtr;

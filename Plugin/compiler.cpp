@@ -601,8 +601,9 @@ void Compiler::AddLinkerOption(const wxString& name, const wxString& desc)
 
 bool Compiler::IsGnuCompatibleCompiler() const
 {
-    return m_compilerFamily.IsEmpty() || m_compilerFamily == COMPILER_FAMILY_CLANG ||
-           m_compilerFamily == COMPILER_FAMILY_GCC || m_compilerFamily == COMPILER_FAMILY_MINGW;
+    static wxStringSet_t gnu_compilers = { COMPILER_FAMILY_CLANG, COMPILER_FAMILY_MINGW, COMPILER_FAMILY_GCC,
+                                           COMPILER_FAMILY_CYGWIN, COMPILER_FAMILY_MSYS2 };
+    return m_compilerFamily.IsEmpty() || gnu_compilers.count(m_compilerFamily);
 }
 
 void Compiler::AddDefaultGnuComplierOptions()
@@ -645,21 +646,11 @@ void Compiler::AddDefaultGnuLinkerOptions()
 
 wxArrayString Compiler::GetDefaultIncludePaths()
 {
-    wxArrayString defaultPaths;
-    wxArrayString gccCompilers;
-    gccCompilers.Add(COMPILER_FAMILY_MINGW);
-    gccCompilers.Add(COMPILER_FAMILY_CLANG);
-    gccCompilers.Add(COMPILER_FAMILY_GCC);
-
-    // Only add the cygwin
-    if(::clIsCygwinEnvironment()) {
-        gccCompilers.Add(COMPILER_FAMILY_CYGWIN);
+    if(HasMetadata()) {
+        return GetMetadata().GetSearchPaths();
+    } else {
+        return {};
     }
-
-    if(gccCompilers.Index(GetCompilerFamily()) != wxNOT_FOUND) {
-        defaultPaths = POSIXGetIncludePaths();
-    }
-    return defaultPaths;
 }
 
 wxString Compiler::GetGCCVersion() const
@@ -691,8 +682,7 @@ wxString Compiler::GetIncludePath(const wxString& pathSuffix) const
 wxArrayString Compiler::POSIXGetIncludePaths() const
 {
     clDEBUG() << "POSIXGetIncludePaths called" << endl;
-    GCCMetadata cmd(GetName());
-    cmd.Load(GetTool("CXX"), GetInstallationPath(), GetCompilerFamily() == COMPILER_FAMILY_CYGWIN);
+    GCCMetadata cmd = GetMetadata();
     return cmd.GetSearchPaths();
 }
 
@@ -705,37 +695,9 @@ const wxArrayString& Compiler::GetBuiltinMacros()
 
     wxArrayString definitions;
     // Command example: "echo | clang -dM -E - > /tmp/pp"
-    if(GetCompilerFamily() == COMPILER_FAMILY_CLANG || GetCompilerFamily() == COMPILER_FAMILY_GCC ||
-       GetCompilerFamily() == COMPILER_FAMILY_CYGWIN || GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
-        wxString command;
-        wxString tool = GetTool("CXX");
-        tool.Trim().Trim(false);
-        // incase 'tool' contains spaces, it should already wraped with double quotes so there is no need to wrap it
-        // again here
-#ifdef __WXMSW__
-        // CMD does not like "/"
-        tool.Replace("/", "\\");
-#endif
-        command << "echo | " << tool << " -dM -E - > ";
-        wxString tmpFile = wxFileName::CreateTempFileName("def-macros");
-        ::WrapWithQuotes(tmpFile);
-        command << tmpFile;
-        ::WrapInShell(command);
-        clDEBUG() << "Loading built-in macros for compiler '" << GetName() << "' :" << command << clEndl;
 
-        ProcUtils::SafeExecuteCommand(command);
-        wxFileName cmpMacrosFile(tmpFile);
-        if(cmpMacrosFile.Exists()) {
-            clDEBUG1() << "Compiler builtin macros are written into:" << cmpMacrosFile.GetFullPath();
-
-            // we got our macro files
-            CxxPreProcessor pp;
-            pp.Parse(cmpMacrosFile, kLexerOpt_CollectMacroValueNumbers);
-            definitions = pp.GetDefinitions();
-
-            // Delete the file
-            ::clRemoveFile(cmpMacrosFile.GetFullPath());
-        }
+    if(IsGnuCompatibleCompiler()) {
+        definitions = GetMetadata().GetMacros();
     }
     m_compilerBuiltinDefinitions.swap(definitions);
     clDEBUG() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl;
@@ -791,3 +753,13 @@ void Compiler::CreatePathEnv(clEnvList_t* env_list)
     wxGetEnv("PATH", &env_path);
     env_list->push_back({ "PATH", compiler_path.GetPath() + clPATH_SEPARATOR + env_path });
 }
+
+GCCMetadata Compiler::GetMetadata() const
+{
+    // cmd.Load() fetches the metadata from a shared cache so its a cheap operation
+    GCCMetadata cmd(GetName());
+    cmd.Load(GetTool("CXX"), GetInstallationPath(), GetCompilerFamily() == COMPILER_FAMILY_CYGWIN);
+    return cmd;
+}
+
+bool Compiler::HasMetadata() const { return IsGnuCompatibleCompiler(); }

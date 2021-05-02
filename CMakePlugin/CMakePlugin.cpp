@@ -598,7 +598,8 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
 #endif
 
     // Execute it
-    IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateDefault, fnWorkingDirectory.GetPath());
+    IProcess* proc =
+        ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell, fnWorkingDirectory.GetPath());
     if(!proc) {
         ::wxMessageBox(_("Failed to execute:\n") + command, "CodeLite", wxICON_ERROR | wxOK | wxCENTER,
                        EventNotifier::Get()->TopFrame());

@@ -1399,16 +1399,12 @@ static void ProcessMacros(const wxArrayString& macros, wxStringSet_t& res)
 
 static wxString GetExtraFlags(CompilerPtr compiler)
 {
-#ifdef __WXMSW__
-    if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
-        if(compiler->Is64BitCompiler()) {
-            return "-target x86_64-pc-windows-gnu";
-        } else {
-            return "-target i686-pc-windows-gnu";
-        }
+    wxString extra_flags;
+    if(compiler->HasMetadata()) {
+        auto md = compiler->GetMetadata();
+        extra_flags << "-target " << md.GetTarget();
     }
-#endif
-    return "";
+    return extra_flags;
 }
 
 wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,

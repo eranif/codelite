@@ -157,16 +157,11 @@ clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
 static wxArrayString GetExtraFlags(CompilerPtr compiler)
 {
     wxArrayString flags;
-#ifdef __WXMSW__
-    if(compiler->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
+    if(compiler->HasMetadata()) {
         flags.Add("-target");
-        if(compiler->Is64BitCompiler()) {
-            flags.Add("x86_64-pc-windows-gnu");
-        } else {
-            flags.Add("i686-pc-windows-gnu");
-        }
+        auto md = compiler->GetMetadata();
+        flags.Add(md.GetTarget());
     }
-#endif
     return flags;
 }
 

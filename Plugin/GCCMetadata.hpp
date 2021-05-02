@@ -26,6 +26,7 @@
 #ifndef GCCMETADATA_H
 #define GCCMETADATA_H
 
+#include "asyncprocess.h"
 #include "codelite_exports.h"
 #include <wx/arrstr.h>
 
@@ -40,9 +41,13 @@ class WXDLLIMPEXP_SDK GCCMetadata
     wxString m_target;
     wxString m_name;
     wxString m_basename;
+    wxArrayString m_macros;
 
 private:
-    wxString RunCommand(const wxString& command, const wxString& working_directory = wxEmptyString);
+    wxString RunCommand(const wxString& command, const wxString& working_directory = wxEmptyString,
+                        clEnvList_t* env = nullptr);
+    static void GetMetadataFromCache(const wxString& tool, const wxString& rootDir, bool is_cygwin, GCCMetadata* md);
+    void DoLoad(const wxString& tool, const wxString& rootDir, bool is_cygwin = false);
 
 public:
     GCCMetadata(const wxString& basename = "GCC");
@@ -64,5 +69,6 @@ public:
     const wxString& GetName() const { return m_name; }
     const wxArrayString& GetSearchPaths() const { return m_searchPaths; }
     const wxString& GetTarget() const { return m_target; }
+    const wxArrayString& GetMacros() const { return m_macros; }
 };
 #endif // GCCMETADATA_H

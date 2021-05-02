@@ -25,12 +25,12 @@
 
 #include "AddOptionsDialog.h"
 #include "ColoursAndFontsManager.h"
+#include "GCCMetadata.hpp"
 #include "clSingleChoiceDialog.h"
 #include "cl_config.h"
 #include "ctags_manager.h"
 #include "globals.h"
 #include "ieditor.h"
-#include "GCCMetadata.hpp"
 #include "lexer_configuration.h"
 #include "macros.h"
 #include "pluginmanager.h"
@@ -295,9 +295,10 @@ void CodeCompletionSettingsDialog::DoSuggest(wxStyledTextCtrl* textCtrl)
 
     // We only support auto retrieval of compilers from the GCC family
     wxArrayString compilerNames;
+    wxStringSet_t supportedFamilies = { COMPILER_FAMILY_CLANG, COMPILER_FAMILY_MINGW, COMPILER_FAMILY_GCC,
+                                        COMPILER_FAMILY_MSYS2 };
     std::for_each(allCompilers.begin(), allCompilers.end(), [&](CompilerPtr c) {
-        if(c->GetCompilerFamily() == COMPILER_FAMILY_CLANG || c->GetCompilerFamily() == COMPILER_FAMILY_MINGW ||
-           c->GetCompilerFamily() == COMPILER_FAMILY_GCC) {
+        if(supportedFamilies.count(c->GetCompilerFamily())) {
             compilerNames.Add(c->GetName());
         } else if(::clIsCygwinEnvironment() && c->GetCompilerFamily() == COMPILER_FAMILY_CYGWIN) {
             compilerNames.Add(c->GetName());

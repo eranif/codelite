@@ -185,7 +185,7 @@ void clKeyboardManager::DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& acce
 
     for(size_t i = 0; i < menuBar->GetMenuCount(); ++i) {
         wxMenu* menu = menuBar->GetMenu(i);
-        clDEBUG() << "clKeyboardManager: updating menu" << menuBar->GetMenuLabel(i) << clEndl;
+        clDEBUG1() << "clKeyboardManager: updating menu" << menuBar->GetMenuLabel(i) << clEndl;
         DoUpdateMenu(menu, accels, table);
     }
 

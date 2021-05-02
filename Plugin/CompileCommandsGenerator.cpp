@@ -62,7 +62,7 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
                 clDEBUG() << "File:" << compile_commands << "is not found in the cache";
             }
             clDEBUG() << "Old checksum is:" << oldCk;
-            if(ck == oldCk) {
+            if(ck == oldCk && wxFileName::FileExists(compile_commands)) {
                 clDEBUG() << "No changes detected in file:" << compile_commands << "processing is ignored";
                 // We fire this event with empty content. This ensures that
                 // a LSP restart will take place
@@ -167,10 +167,10 @@ void CompileCommandsGenerator::GenerateCompileCommands()
     clDEBUG() << "Executing:" << command;
 
     EnvSetter env(clCxxWorkspaceST::Get()->GetActiveProject());
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault);
+    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell);
 
     m_outputFile = workspaceFile;
-    m_outputFile.SetFullName("compile_commands.json");
+    m_outputFile.SetFullName(generateCompileCommands ? "compile_commands.json" : "compile_flags.txt");
 
     clGetManager()->SetStatusMessage(wxString() << _("Generating ") << m_outputFile.GetFullPath(), 2);
 }

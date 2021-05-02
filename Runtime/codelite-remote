@@ -9,15 +9,61 @@ import subprocess
 #----------------------------------------------------------------------------------------------------------------------------------
 # Sample usage:
 #   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
-#   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": true, "icase": false}
+#   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": false, "icase": true}
 #   {"command":"exec", "cmd": "/usr/bin/ls", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
 #
 # Command line usage:
 #   python3 codelite-remote.py --i # start in interactive mode
 #   python3 codelite-remote.py --list /path/to/dir --extensions ".txt .cpp .hpp"
 #----------------------------------------------------------------------------------------------------------------------------------
+
+##------------------------------
+## Helper string finder
+##------------------------------
+class string_finder:
+    def __init__(self, find_what: str, ignore_case, whole_word):
+        self.word_chars = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_")
+        self.find_what = find_what
+        self.ignore_case = ignore_case
+        self.whole_word = whole_word
+        if self.ignore_case:
+            self.find_what = self.find_what.lower()
+    
+    def set_line(self, line: str):
+        self.line = line
+        self.last_pos = 0
+        self.where = -1
+        if self.ignore_case:
+            self.line = self.line.lower()
+
+    def is_whole_word(self, start_pos, end_pos):
+        if self.whole_word is False:
+            return True
+
+        # check the char left and right to the match
+        if start_pos > 0 and self.line[start_pos - 1] in self.word_chars:
+            return False
+        elif end_pos < (len(self.line) - 1) and self.line[end_pos] in self.word_chars:
+            return False
+        return True
+
+    def find_next(self):
+        self.where = self.line.find(self.find_what, self.last_pos)
+        if self.where == -1:
+            return False
+        else:
+            # store the last position for next iteration
+            self.last_pos = self.where + len(self.find_what)
+            return self.is_whole_word(self.where, self.where + len(self.find_what))
+
+    def get_match_position(self):
+        return self.where
+##------------------------------
+## Helper string finder - end
+##------------------------------
+    
 def eprint(*args, **kwargs):
-    #print(*args, file=sys.stderr, **kwargs)
+    #print(*args, file=sys.stdout, **kwargs)
     pass
 
 def print_message_terminator():
@@ -108,21 +154,13 @@ def on_find_in_files(cmd):
     whole_word = cmd['whole_word']
     ignore_case = cmd['icase']
 
-    re_flags = 0
-    if ignore_case:
-        re_flags |= re.IGNORECASE
-    
-    word_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_"
-    word_chars_set = set()
-    for ch in word_chars:
-        word_chars_set.add(ch)
-    
     # first line contains the number of files scanned
     files_scanned = {
         "files_scanned": len(files_arr)
     }
     print(json.dumps(files_scanned))
-
+    
+    finder = string_finder(find_what, ignore_case, whole_word)
     for file in files_arr:
         try:
             lines = open(file=file, mode="r", encoding="utf-8").read().splitlines()
@@ -132,23 +170,15 @@ def on_find_in_files(cmd):
                 # aggregate results per line
                 line_number += 1
                 matches = []
-                for m in re.finditer(find_what, line, flags=re_flags):
-                    start_pos = m.start()
-                    end_pos = m.end()
-                    can_add = True
-                    # check if this match is a "whole word"
-                    if whole_word is True:
-                        # check the char left and right to the match
-                        if start_pos > 0 and line[start_pos - 1] in word_chars_set:
-                            can_add = False
-                        elif end_pos < (len(line) - 1) and line[end_pos + 1] in word_chars_set:
-                            can_add = False
-
-                    if can_add is True:
-                        matches.append({
-                            "start": start_pos,
-                            "end": end_pos
-                        })
+                # set the current line
+                finder.set_line(line)
+                while finder.find_next():
+                    start_pos = finder.get_match_position()
+                    end_pos = start_pos + len(find_what)
+                    matches.append({
+                        "start": start_pos,
+                        "end": end_pos
+                    })
                 # if we found matches for this line,
                 # add them to the "entries"
                 if len(matches) > 0:
@@ -198,11 +228,12 @@ def main_loop():
             "find": on_find_in_files,
             "exec": on_exec
         }
-        while True:
-            try:
+        try:
+            while True:
                 text = input()
                 text = text.strip()
                 if text == "exit" or text == "bye" or text == "quit":
+                    eprint("Bye!")
                     exit(0)
                 
                 # split the command line by spaces
@@ -212,9 +243,9 @@ def main_loop():
                     func(command)
                 else:
                     eprint("unknown command '{}'".format(command['command']))
-            except Exception as e:
-                eprint("main_loop() error: {}".format(e))
-                exit(1)
+        except Exception as e:
+            eprint(e)
+            pass
 
 def main():
     main_loop()

@@ -678,7 +678,7 @@ void clSFTPManager::CaptureError(const wxString& context, const clException& e)
 {
     m_lastError.clear();
     m_lastError << context << "." << e.What();
-    clERROR() << m_lastError << endl;
+    //clERROR() << m_lastError << endl;
 }
 
 #endif

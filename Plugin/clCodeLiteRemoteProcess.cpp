@@ -131,7 +131,7 @@ void clCodeLiteRemoteProcess::ProcessOutput()
 
     while(GetNextBuffer(buffer, is_completed)) {
         if(m_completionCallbacks.empty()) {
-            clERROR() << "No completion callback !?" << endl;
+            clDEBUG() << "Read: [" << buffer << "]. But there are no completion callback" << endl;
             continue;
         }
 

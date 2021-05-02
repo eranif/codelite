@@ -55,9 +55,9 @@ def on_exec(cmd):
     # preare the environment
     env_dict = dict(os.environ.copy())
     user_env = cmd['env']
-    for pair in user_env:
-        name = pair[0]
-        value = pair[1]
+    for env_entry in user_env:
+        name = env_entry['name']
+        value = env_entry['value']
         if env_dict.get(name, -1) == -1:
             env_dict[name] = value
         else:

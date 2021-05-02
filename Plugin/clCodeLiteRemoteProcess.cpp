@@ -233,12 +233,6 @@ void clCodeLiteRemoteProcess::Exec(const wxArrayString& args, const wxString& wo
         return;
     }
 
-    // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "exec");
-    item.addProperty("wd", working_directory);
-
     wxString cmdstr;
     wxArrayString arr;
     arr.reserve(args.size());
@@ -254,7 +248,19 @@ void clCodeLiteRemoteProcess::Exec(const wxArrayString& args, const wxString& wo
     }
     cmdstr.RemoveLast();
 
+    // build the command and send it
+    JSON root(cJSON_Object);
+    auto item = root.toElement();
+    item.addProperty("command", "exec");
+    item.addProperty("wd", working_directory);
     item.addProperty("cmd", cmdstr);
+
+    auto envarr = item.AddArray("env");
+    for(const auto& p : env) {
+        auto entry = envarr.AddObject(wxEmptyString);
+        entry.addProperty("name", p.first);
+        entry.addProperty("value", p.second);
+    }
 
     wxString command = item.format(false);
     m_process->Write(command + "\n");

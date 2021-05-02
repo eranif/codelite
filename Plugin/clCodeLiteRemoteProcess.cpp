@@ -18,6 +18,8 @@ wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clProcessEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
 
 clCodeLiteRemoteProcess::clCodeLiteRemoteProcess()
 {
@@ -219,6 +221,55 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& e
     m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnFindOutput);
 }
 
+void clCodeLiteRemoteProcess::ResetStates()
+{
+    m_fif_matches_count = 0;
+    m_fif_files_scanned = 0;
+}
+
+void clCodeLiteRemoteProcess::Exec(const wxArrayString& args, const wxString& working_directory, const clEnvList_t& env)
+{
+    if(!m_process || args.empty()) {
+        return;
+    }
+
+    // build the command and send it
+    JSON root(cJSON_Object);
+    auto item = root.toElement();
+    item.addProperty("command", "exec");
+    item.addProperty("wd", working_directory);
+
+    wxString cmdstr;
+    wxArrayString arr;
+    arr.reserve(args.size());
+    arr.insert(arr.end(), args.begin(), args.end());
+    for(auto& arg : arr) {
+        if(arg.Contains(" ")) {
+            // escape any " before we start escaping
+            arg.Replace("\"", "\\\"");
+            // now wrap with double quotes
+            arg.Prepend("\"").Append("\"");
+        }
+        cmdstr << arg << " ";
+    }
+    cmdstr.RemoveLast();
+
+    item.addProperty("cmd", cmdstr);
+
+    wxString command = item.format(false);
+    m_process->Write(command + "\n");
+    clDEBUG() << command << endl;
+
+    // push a callback
+    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnExecOutput);
+}
+
+void clCodeLiteRemoteProcess::Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env)
+{
+    wxArrayString cmd_arr = StringUtils::BuildArgv(cmd);
+    Exec(cmd_arr, working_directory, env);
+}
+
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // completion handlers
@@ -298,8 +349,16 @@ void clCodeLiteRemoteProcess::OnFindOutput(const wxString& output, bool is_compl
     }
 }
 
-void clCodeLiteRemoteProcess::ResetStates()
+void clCodeLiteRemoteProcess::OnExecOutput(const wxString& buffer, bool is_completed)
 {
-    m_fif_matches_count = 0;
-    m_fif_files_scanned = 0;
+    if(!buffer.empty()) {
+        clProcessEvent output_event(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT);
+        output_event.SetOutput(buffer);
+        AddPendingEvent(output_event);
+    }
+
+    if(is_completed) {
+        clProcessEvent end_event(wxEVT_CODELITE_REMOTE_EXEC_DONE);
+        AddPendingEvent(end_event);
+    }
 }

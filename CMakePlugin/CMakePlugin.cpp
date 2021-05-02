@@ -51,6 +51,7 @@
 // Declaration
 #include "CMakeBuilder.h"
 #include "CMakePlugin.h"
+#include "ICompilerLocator.h"
 #include "asyncprocess.h"
 #include "processreaderthread.h"
 
@@ -590,10 +591,17 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
     ::WrapWithQuotes(projectFolder);
 
     command << cmakeExe << " " << projectFolder << " " << args;
+
 #ifdef __WXMSW__
     if(!hasGeneratorInArgs) {
+        bool is_msys =
+            buildConf->GetCompiler() && buildConf->GetCompiler()->GetCompilerFamily() == COMPILER_FAMILY_MSYS2;
         // On Windows, generate MinGW makefiles
-        command << " -G\"MinGW Makefiles\"";
+        if(is_msys) {
+            command << " -G\"MSYS Makefiles\"";
+        } else {
+            command << " -G\"MinGW Makefiles\"";
+        }
     }
 #endif
 

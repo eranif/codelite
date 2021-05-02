@@ -2086,9 +2086,8 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
     }
 
     // Add the target flag
-    if(cmp) {
-        GCCMetadata cmd(cmp->GetName());
-        cmd.Load(cmp->GetTool("CXX"), cmp->GetInstallationPath());
+    if(cmp && cmp->HasMetadata()) {
+        GCCMetadata cmd = cmp->GetMetadata();
         compile_flags_content << "-target\n" << cmd.GetTarget() << "\n";
     }
 

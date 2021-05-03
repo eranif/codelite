@@ -62,7 +62,7 @@ void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, co
     command.push_back("python3 " + scriptPath + " --context " + GetContext());
 
     // start the process
-    m_process = ::CreateAsyncProcess(this, command, IProcessStderrEvent | IProcessCreateDefault);
+    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault);
 }
 
 void clCodeLiteRemoteProcess::OnProcessOutput(clProcessEvent& e)

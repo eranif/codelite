@@ -125,11 +125,11 @@ void RemotyWorkspace::BindEvents()
                                 this);
     m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
                                 this);
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
+                                this);
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
+                                this);
     // builder
-    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
-                                 this);
-    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
-                                 this);
     m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
                                  this);
     m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone,
@@ -167,11 +167,12 @@ void RemotyWorkspace::UnbindEvents()
     m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
                                   this);
     m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_TERMINATED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
+    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
+                                  this);
+    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE,
+                                  &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
+
     // builder
-    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES,
-                                   &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress, this);
-    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE,
-                                   &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
     m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
                                    this);
     m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone,
@@ -904,7 +905,8 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
 
     file_extensions.Replace("*", "");
     m_workspaceFiles.clear();
-    m_codeliteRemoteBuilder.ListFiles(root_dir, file_extensions);
+    // use the finder codelite-remote
+    m_codeliteRemoteFinder.ListFiles(root_dir, file_extensions);
 }
 
 void RemotyWorkspace::OnOpenResourceFile(clCommandEvent& event)

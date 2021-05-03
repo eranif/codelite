@@ -35,7 +35,8 @@ clCodeLiteRemoteProcess::~clCodeLiteRemoteProcess()
     wxDELETE(m_process);
 }
 
-void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath)
+void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath,
+                                               const wxString& contextString)
 {
     if(m_process) {
         return;
@@ -49,6 +50,8 @@ void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, co
     }
 
     m_going_down = false;
+    m_context = contextString;
+
     // wrap the command in ssh
     vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
     command.push_back(account.GetUsername() + "@" + account.GetHost());
@@ -56,7 +59,7 @@ void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, co
     command.push_back(wxString() << account.GetPort());
 
     // start the process in interactive mode
-    command.push_back("python3 " + scriptPath + " --i");
+    command.push_back("python3 " + scriptPath + " --context " + GetContext());
 
     // start the process
     m_process = ::CreateAsyncProcess(this, command, IProcessStderrEvent | IProcessCreateDefault);

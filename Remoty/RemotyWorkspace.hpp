@@ -30,13 +30,13 @@ private:
     wxString m_localWorkspaceFile;
     wxString m_localUserWorkspaceFile;
     clFileSystemWorkspaceSettings m_settings;
-    IProcess* m_cmdProcess = nullptr;
-    clCodeLiteRemoteProcess m_codeliteRemote;
+    clCodeLiteRemoteProcess m_codeliteRemoteBuilder;
+    clCodeLiteRemoteProcess m_codeliteRemoteFinder;
     long m_execPID = wxNOT_FOUND;
     clRemoteTerminal::ptr_t m_remote_terminal;
     wxArrayString m_workspaceFiles;
     clRemoteFinderHelper m_remoteFinder;
-    std::deque<CallbackFunc> m_execOutputCallbacks;
+    bool m_buildInProgress = false;
 
 public:
     RemotyWorkspace();
@@ -51,13 +51,13 @@ protected:
     void OnOpenWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void DoClose(bool notify);
-    void StartCodeLiteRemote(bool restart = false);
+    void StartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart = false);
     void OnOpenResourceFile(clCommandEvent& event);
     void OnShutdown(clCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
 
     /// codelite-remote exec handlers
-    void OnBuildOutput(const wxString& output, bool is_completed);
+    void DoProcessBuildOutput(const wxString& output, bool is_completed);
 
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);
@@ -83,8 +83,8 @@ protected:
     void OnIsProgramRunning(clExecuteEvent& event);
     void OnExecProcessTerminated(clProcessEvent& event);
     void OnFindSwapped(clFileSystemEvent& event);
-    void OnCodeLiteRemoteExecOutput(clProcessEvent& event);
-    void OnCodeLiteRemoteExecDone(clProcessEvent& event);
+    void OnCodeLiteRemoteBuildOutput(clProcessEvent& event);
+    void OnCodeLiteRemoteBuildOutputDone(clProcessEvent& event);
 
     // codelite-remote
     void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);

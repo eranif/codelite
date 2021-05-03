@@ -39,6 +39,12 @@
         event.Skip(false); \
     }
 
+namespace
+{
+static const char* CONTEXT_BUILDER = "builder";
+static const char* CONTEXT_FINDER = "finder";
+} // namespace
+
 RemotyWorkspace::RemotyWorkspace()
 {
     SetWorkspaceType(WORKSPACE_TYPE_NAME);
@@ -112,13 +118,23 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
 
     // codelite-remote events
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress, this);
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress, this);
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone, this);
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteExecOutput, this);
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteExecDone, this);
-    m_codeliteRemote.Bind(wxEVT_CODELITE_REMOTE_TERMINATED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
+
+    // finder
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_TERMINATED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress,
+                                this);
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
+                                this);
+    // builder
+    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
+                                 this);
+    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
+                                 this);
+    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
+                                 this);
+    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone,
+                                 this);
+    m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_TERMINATED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
 }
 
 void RemotyWorkspace::UnbindEvents()
@@ -144,26 +160,36 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
 
     // codelite-remote events
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES, &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress,
-                            this);
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
-                            this);
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress, this);
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone, this);
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteExecOutput, this);
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteExecDone, this);
-    m_codeliteRemote.Unbind(wxEVT_CODELITE_REMOTE_TERMINATED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
+
+    // finder
+    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS, &RemotyWorkspace::OnCodeLiteRemoteFindProgress,
+                                  this);
+    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, &RemotyWorkspace::OnCodeLiteRemoteFindDone,
+                                  this);
+    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_TERMINATED, &RemotyWorkspace::OnCodeLiteRemoteTerminated, this);
+    // builder
+    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES,
+                                   &RemotyWorkspace::OnCodeLiteRemoteListFilesProgress, this);
+    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE,
+                                   &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
+    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
+                                   this);
+    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_DONE, &RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone,
+                                   this);
+    m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_TERMINATED, &RemotyWorkspace::OnCodeLiteRemoteTerminated,
+                                   this);
     m_eventsConnected = false;
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteTerminated(clCommandEvent& event)
 {
-    while(!m_execOutputCallbacks.empty()) {
-        m_execOutputCallbacks.pop_back();
-    }
-
     clWARNING() << "codelite-remote process terminated" << endl;
-    StartCodeLiteRemote();
+    if(!m_codeliteRemoteBuilder.IsRunning()) {
+        StartCodeLiteRemote(&m_codeliteRemoteBuilder, m_codeliteRemoteBuilder.GetContext());
+        m_buildInProgress = false;
+    } else if(!m_codeliteRemoteFinder.IsRunning()) {
+        StartCodeLiteRemote(&m_codeliteRemoteFinder, m_codeliteRemoteFinder.GetContext());
+    }
 }
 
 void RemotyWorkspace::OnOpenWorkspace(clCommandEvent& event)
@@ -217,8 +243,8 @@ void RemotyWorkspace::DoClose(bool notify)
     // remove any clangd configured by us
     DeleteClangdEntry();
 
-    wxDELETE(m_cmdProcess);
-    m_codeliteRemote.Stop();
+    m_codeliteRemoteBuilder.Stop();
+    m_codeliteRemoteFinder.Stop();
 
     // and restart all the LSPs
     clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
@@ -290,8 +316,8 @@ void RemotyWorkspace::DoBuild(const wxString& target)
 
     auto envlist = FileUtils::CreateEnvironment(conf->GetEnvironment());
     wxString working_dir = GetRemoteWorkingDir();
-    m_codeliteRemote.Exec(cmd, working_dir, envlist);
-    m_execOutputCallbacks.push_back(&RemotyWorkspace::OnBuildOutput);
+    m_codeliteRemoteBuilder.Exec(cmd, working_dir, envlist);
+    m_buildInProgress = true;
 
     // notify about starting build process.
     // we pass the selected compiler in the event
@@ -314,14 +340,14 @@ void RemotyWorkspace::DoPrintBuildMessage(const wxString& message)
 void RemotyWorkspace::OnIsBuildInProgress(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    event.SetIsRunning(!m_execOutputCallbacks.empty() &&
-                       m_execOutputCallbacks.front() == &RemotyWorkspace::OnBuildOutput);
+    event.SetIsRunning(m_codeliteRemoteBuilder.IsRunning() && m_buildInProgress);
 }
 
 void RemotyWorkspace::OnStopBuild(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    StartCodeLiteRemote(true);
+    StartCodeLiteRemote(&m_codeliteRemoteBuilder, m_codeliteRemoteBuilder.GetContext(), true);
+    m_buildInProgress = false;
 
     clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
     EventNotifier::Get()->AddPendingEvent(eventStopped);
@@ -505,7 +531,8 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     // Configure LSP for this workspace
     ConfigureClangd();
 
-    StartCodeLiteRemote();
+    StartCodeLiteRemote(&m_codeliteRemoteBuilder, CONTEXT_BUILDER);
+    StartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER);
     ScanForWorkspaceFiles();
 
     // Notify that the a new workspace is loaded
@@ -832,24 +859,22 @@ void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
         }
     }
 }
-void RemotyWorkspace::StartCodeLiteRemote(bool restart)
+
+void RemotyWorkspace::StartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart)
 {
     // if running and restart is true, restart codelite-remote
-    if(m_codeliteRemote.IsRunning() && restart) {
+    if(proc->IsRunning() && restart) {
         clDEBUG() << "Stopping codelite-remote..." << endl;
-        m_codeliteRemote.Stop();
+        m_codeliteRemoteBuilder.Stop();
     }
 
     // make sure we are not running
-    if(m_codeliteRemote.IsRunning()) {
+    if(proc->IsRunning()) {
         clDEBUG() << "codelite-remote is already running" << endl;
         return;
     }
 
-    clDEBUG() << "Starting codelite-remote..." << endl;
-    while(!m_execOutputCallbacks.empty()) {
-        m_execOutputCallbacks.pop_back();
-    }
+    clDEBUG() << "Starting codelite-remote...(" << context << ") ..." << endl;
 
     // upload codelite-remote script to the workspace folder
     wxString remoteCodeLitePath = GetRemoteWorkingDir() + "/.codelite/codelite-remote";
@@ -857,8 +882,8 @@ void RemotyWorkspace::StartCodeLiteRemote(bool restart)
 
     wxString codelite_remote_script;
     codelite_remote_script << GetRemoteWorkingDir() << "/.codelite/codelite-remote";
-    m_codeliteRemote.StartInteractive(m_account, codelite_remote_script);
-    clDEBUG() << "Starting codelite-remote...done" << endl;
+    proc->StartInteractive(m_account, codelite_remote_script, context);
+    clDEBUG() << "Starting codelite-remote...(" << context << ") ... done" << endl;
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteListFilesProgress(clCommandEvent& event)
@@ -879,7 +904,7 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
 
     file_extensions.Replace("*", "");
     m_workspaceFiles.clear();
-    m_codeliteRemote.ListFiles(root_dir, file_extensions);
+    m_codeliteRemoteBuilder.ListFiles(root_dir, file_extensions);
 }
 
 void RemotyWorkspace::OnOpenResourceFile(clCommandEvent& event)
@@ -916,7 +941,7 @@ void RemotyWorkspace::OnInitDone(wxCommandEvent& event)
 void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
                                   bool whole_word, bool icase)
 {
-    m_remoteFinder.SetCodeLiteRemote(&m_codeliteRemote);
+    m_remoteFinder.SetCodeLiteRemote(&m_codeliteRemoteFinder);
     m_remoteFinder.Search(root_dir, find_what, file_extensions, whole_word, icase);
 }
 
@@ -930,30 +955,18 @@ void RemotyWorkspace::OnCodeLiteRemoteFindDone(clFindInFilesEvent& event)
     m_remoteFinder.ProcessSearchOutput(event, true);
 }
 
-void RemotyWorkspace::OnCodeLiteRemoteExecOutput(clProcessEvent& event)
+void RemotyWorkspace::OnCodeLiteRemoteBuildOutput(clProcessEvent& event)
 {
-    if(m_execOutputCallbacks.empty()) {
-        clERROR() << "OnCodeLiteRemoteExecOutput called, but no callback found!" << endl;
-        StartCodeLiteRemote(true);
-    } else {
-        auto cb = m_execOutputCallbacks.front();
-        (this->*cb)(event.GetOutput(), false);
-    }
+    DoProcessBuildOutput(event.GetOutput(), false);
 }
 
-void RemotyWorkspace::OnCodeLiteRemoteExecDone(clProcessEvent& event)
+void RemotyWorkspace::OnCodeLiteRemoteBuildOutputDone(clProcessEvent& event)
 {
-    if(m_execOutputCallbacks.empty()) {
-        clERROR() << "OnCodeLiteRemoteExecDone called, but no callback found!" << endl;
-        StartCodeLiteRemote(true);
-    } else {
-        auto cb = m_execOutputCallbacks.front();
-        (this->*cb)(event.GetOutput(), true);
-        m_execOutputCallbacks.pop_front();
-    }
+    DoProcessBuildOutput(event.GetOutput(), true);
+    m_buildInProgress = false;
 }
 
-void RemotyWorkspace::OnBuildOutput(const wxString& output, bool is_completed)
+void RemotyWorkspace::DoProcessBuildOutput(const wxString& output, bool is_completed)
 {
     if(!output.empty()) {
         DoPrintBuildMessage(output);

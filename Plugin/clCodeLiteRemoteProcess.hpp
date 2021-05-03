@@ -25,6 +25,7 @@ protected:
     size_t m_fif_matches_count = 0;
     size_t m_fif_files_scanned = 0;
     bool m_going_down = false;
+    wxString m_context;
 
 protected:
     void OnProcessOutput(clProcessEvent& e);
@@ -43,7 +44,9 @@ public:
     clCodeLiteRemoteProcess();
     ~clCodeLiteRemoteProcess();
 
-    void StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath);
+    const wxString& GetContext() const { return m_context; }
+
+    void StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath, const wxString& contextString);
     void Stop();
     bool IsRunning() const { return m_process != nullptr; }
 

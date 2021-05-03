@@ -5,6 +5,7 @@ import json
 import re
 import argparse
 import subprocess
+import logging
 
 #----------------------------------------------------------------------------------------------------------------------------------
 # Sample usage:
@@ -61,11 +62,6 @@ class string_finder:
 ##------------------------------
 ## Helper string finder - end
 ##------------------------------
-    
-def eprint(*args, **kwargs):
-    #print(*args, file=sys.stdout, **kwargs)
-    pass
-
 def print_message_terminator():
     print(">>codelite-remote-msg-end<<")
 
@@ -77,7 +73,7 @@ def _get_list_of_files(cmd):
     root_dir = os.path.expanduser(root_dir)
     root_dir = os.path.expandvars(root_dir)
     if not os.path.isdir(root_dir):
-        eprint("error: {} is not a directory".format(root_dir))
+        logging.error("error: {} is not a directory".format(root_dir))
         return []
     
     # build the extension tuple
@@ -116,7 +112,7 @@ def on_exec(cmd):
                                         shell=True, 
                                         env=env_dict)
     except Exception as e:
-        eprint("on_exe error: {}".format(e))
+        logging.error("on_exe error: {}".format(e))
         try:
             proc.kill()
             outs, errs = proc.communicate()
@@ -197,7 +193,7 @@ def on_find_in_files(cmd):
                 }
                 print(json.dumps(reply))
         except UnicodeDecodeError as e:
-            eprint("decoding error in file {}".format(file))
+            logging.error("decoding error in file {}".format(file))
             pass
     print_message_terminator()
 
@@ -206,46 +202,41 @@ def main_loop():
     accept input from the user and process the command    
     """
     parser = argparse.ArgumentParser(description='codelite-remote helper')
-    parser.add_argument('--list', dest='root_dir', help='one time command to run')
-    parser.add_argument('--extensions', dest='extensions', help='list of file extensions in the form of ".txt .cpp"')
-    parser.add_argument('--i', dest='interactive', action="store_true", help='start interactive mode')
+    parser.add_argument('--context', dest='context', help='execution context string')
     args = parser.parse_args()
     
-    if not args.interactive:
-        # print list of files and exit
-        file_extensions = args.extensions.split(" ")
-        
-        cmd = {
-            "root_dir": args.root_dir,
-            "file_extensions": file_extensions,
-        }
-        files_arr = _get_list_of_files(cmd)
-        print(json.dumps(files_arr))
-    else:
-        # interactive mode
-        handlers = { 
-            "ls": on_find_files, 
-            "find": on_find_in_files,
-            "exec": on_exec
-        }
+    # configure the log module
+    logging.basicConfig(filename='/tmp/codelite-remote.log', 
+                        format="%(asctime)s: {}: %(levelname)s: %(message)s".format(args.context.upper()),
+                        level=logging.ERROR)
+    # interactive mode
+    handlers = {
+        "ls": on_find_files, 
+        "find": on_find_in_files,
+        "exec": on_exec
+    }
+    logging.info("codelite-remote started in interactive mode")
+    while True:
         try:
-            while True:
-                text = input()
-                text = text.strip()
-                if text == "exit" or text == "bye" or text == "quit":
-                    eprint("Bye!")
-                    exit(0)
-                
-                # split the command line by spaces
-                command = json.loads(text)
-                func = handlers.get(command['command'], None)
-                if func is not None:
-                    func(command)
-                else:
-                    eprint("unknown command '{}'".format(command['command']))
+            text = input()
+            text = text.strip()
+            if text == "exit" or text == "bye" or text == "quit":
+                logging.info("Bye!")
+                exit(0)
+            
+            if len(text) == 0:
+                continue;
+
+            # split the command line by spaces
+            logging.info("processing command: {}".format(text))
+            command = json.loads(text)
+            func = handlers.get(command['command'], None)
+            if func is not None:
+                func(command)
+            else:
+                logging.error("unknown command '{}'".format(command['command']))
         except Exception as e:
-            eprint(e)
-            pass
+            logging.warning(e)
 
 def main():
     main_loop()

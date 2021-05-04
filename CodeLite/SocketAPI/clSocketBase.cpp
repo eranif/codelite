@@ -188,7 +188,7 @@ void clSocketBase::Send(const wxMemoryBuffer& msg)
     while(bytesLeft) {
         if(SelectWriteMS(1000) == kTimeout)
             continue;
-        int bytesSent = ::send(m_socket, (const char*)pdata, bytesLeft, 0);
+        int bytesSent = ::write(m_socket, (const char*)pdata, bytesLeft);
         if(bytesSent <= 0)
             throw clSocketException("Send error: " + error());
         pdata += bytesSent;

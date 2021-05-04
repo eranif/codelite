@@ -186,7 +186,7 @@ void clSocketBase::Send(const wxMemoryBuffer& msg)
     char* pdata = (char*)msg.GetData();
     int bytesLeft = msg.GetDataLen();
     while(bytesLeft) {
-        if(SelectWriteMS(1000) == kTimeout)
+        if(SelectWriteMS(100) == kTimeout)
             continue;
         int bytesSent = ::write(m_socket, (const char*)pdata, bytesLeft);
         if(bytesSent <= 0)

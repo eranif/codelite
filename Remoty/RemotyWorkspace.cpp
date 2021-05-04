@@ -994,5 +994,5 @@ void RemotyWorkspace::OnLSPOpenFile(LSPEvent& event)
         event.Skip();
         return;
     }
-    editor->GetCtrl()->GotoLine(event.GetLineNumber());
+    editor->SelectRange(event.GetLocation().GetRange());
 }

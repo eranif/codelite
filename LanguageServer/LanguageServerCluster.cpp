@@ -89,6 +89,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 
     // let someone else try and open this file first, as it might be a remote file
     LSPEvent open_event(wxEVT_LSP_OPEN_FILE);
+    open_event.SetLocation(location);
     open_event.SetFileName(location.GetPath());
     open_event.SetLineNumber(location.GetRange().GetStart().GetLine());
     if(EventNotifier::Get()->ProcessEvent(open_event)) {

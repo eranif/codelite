@@ -25,10 +25,12 @@
 
 #include "SocketAPI/clSocketBase.h"
 #include "StringUtils.h"
+#include "cl_exception.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "unixprocess_impl.h"
 #include <cstring>
+#include <string>
 #include <thread>
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
@@ -241,25 +243,31 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
     }
 }
 
+template <typename T> bool do_write(int fd, const T& buffer)
+{
+    static constexpr int max_retry_count = 10;
+    size_t bytes_written = 0;
+    size_t bytes_left = buffer.length();
+
+    // construct helper socket class
+    clSocketBase socket;
+    socket.SetSocket(fd);
+    socket.SetCloseOnExit(false); // avoid closing the descriptor
+    try {
+        socket.Send(buffer);
+    } catch(clException& e) {
+        clERROR() << "do_write() error:" << e.What() << endl;
+        return false;
+    }
+    return true;
+}
+
 bool UnixProcessImpl::Write(const std::string& buff) { return WriteRaw(buff + "\n"); }
 
 bool UnixProcessImpl::Write(const wxString& buff) { return Write(FileUtils::ToStdString(buff)); }
 
 bool UnixProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(FileUtils::ToStdString(buff)); }
-bool UnixProcessImpl::WriteRaw(const std::string& buff)
-{
-    std::string tmpbuf = buff;
-    const int chunk_size = 1024;
-    while(!tmpbuf.empty()) {
-        int bytes_written =
-            ::write(GetWriteHandle(), tmpbuf.c_str(), tmpbuf.length() > chunk_size ? chunk_size : tmpbuf.length());
-        if(bytes_written <= 0) {
-            return false;
-        }
-        tmpbuf.erase(0, bytes_written);
-    }
-    return true;
-}
+bool UnixProcessImpl::WriteRaw(const std::string& buff) { return do_write<std::string>(GetWriteHandle(), buff); }
 
 IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags,
                                    const wxString& workingDirectory, IProcessCallback* cb)
@@ -413,10 +421,8 @@ bool UnixProcessImpl::WriteToConsole(const wxString& buff)
 {
     wxString tmpbuf = buff;
     tmpbuf.Trim().Trim(false);
-
-    tmpbuf << wxT("\n");
-    int bytes = ::write(GetWriteHandle(), tmpbuf.mb_str(wxConvUTF8).data(), tmpbuf.Length());
-    return bytes == (int)tmpbuf.length();
+    tmpbuf << "\n";
+    return do_write<wxString>(GetWriteHandle(), buff);
 }
 
 void UnixProcessImpl::Detach()

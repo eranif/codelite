@@ -5,6 +5,7 @@
 #include "JSON.h"
 #include "JSONObject.h"
 #include "codelite_exports.h"
+#include "fileutils.h"
 #include <vector>
 #include <wx/sharedptr.h>
 
@@ -39,6 +40,24 @@ enum eSymbolKind {
     kSK_TypeParameter = 26,
 };
 
+class WXDLLIMPEXP_CL URI
+{
+    wxString m_path;
+    wxString m_uri;
+
+private:
+    URI(const wxString& str) = delete;
+    URI& operator=(const wxString& str) = delete;
+
+public:
+    URI() {}
+    ~URI() {}
+
+    static void FromString(const wxString& str, URI* o);
+
+    const wxString& GetPath() const;
+    const wxString& GetUrl() const;
+};
 //===----------------------------------------------------------------------------------
 // TextDocumentContentChangeEvent
 //===----------------------------------------------------------------------------------
@@ -47,8 +66,8 @@ class WXDLLIMPEXP_CL TextDocumentContentChangeEvent : public Serializable
     std::string m_text;
 
 public:
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     TextDocumentContentChangeEvent() {}
     TextDocumentContentChangeEvent(const wxString& text)
@@ -65,24 +84,23 @@ public:
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentIdentifier : public Serializable
 {
-    wxString m_filename;
+    URI m_filename;
 
 public:
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     TextDocumentIdentifier() {}
-    TextDocumentIdentifier(const wxString& filename)
-        : m_filename(filename)
-    {
-    }
+    TextDocumentIdentifier(const wxString& filename) { URI::FromString(filename, &m_filename); }
+
     virtual ~TextDocumentIdentifier() {}
     TextDocumentIdentifier& SetFilename(const wxString& filename)
     {
-        this->m_filename = filename;
+        URI::FromString(filename, &m_filename);
         return *this;
     }
-    const wxString& GetFilename() const { return m_filename; }
+    const wxString& GetPath() const { return m_filename.GetPath(); }
+    const wxString& GetPathAsURI() const { return m_filename.GetUrl(); }
 };
 
 //===----------------------------------------------------------------------------------
@@ -93,8 +111,8 @@ class WXDLLIMPEXP_CL VersionedTextDocumentIdentifier : public TextDocumentIdenti
     int m_version = 1;
 
 public:
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     VersionedTextDocumentIdentifier() {}
     VersionedTextDocumentIdentifier(int version)
@@ -119,8 +137,8 @@ class WXDLLIMPEXP_CL Position : public Serializable
     int m_character = wxNOT_FOUND;
 
 public:
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     Position(int line, int col)
         : m_line(line)
@@ -153,8 +171,8 @@ class WXDLLIMPEXP_CL Range : public Serializable
     Position m_end;
 
 public:
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     Range(const Position& start, const Position& end)
         : m_start(start)
@@ -190,8 +208,8 @@ class WXDLLIMPEXP_CL TextEdit : public LSP::Serializable
 public:
     TextEdit() {}
     virtual ~TextEdit() {}
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
     void SetNewText(const wxString& newText) { this->m_newText = newText; }
     void SetRange(const Range& range) { this->m_range = range; }
     const wxString& GetNewText() const { return m_newText; }
@@ -201,19 +219,19 @@ public:
 
 class WXDLLIMPEXP_CL Location : public Serializable
 {
-    wxString m_uri;
+    URI m_uri;
     Range m_range;
-    bool m_trySSH = false;
 
 public:
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     Location(const wxString& uri, const Range& range)
-        : m_uri(uri)
-        , m_range(range)
+        : m_range(range)
     {
+        URI::FromString(uri, &m_uri);
     }
+
     Location() {}
     virtual ~Location() {}
     Location& SetRange(const Range& range)
@@ -221,16 +239,15 @@ public:
         this->m_range = range;
         return *this;
     }
-    Location& SetUri(const wxString& uri)
+    Location& SetPath(const wxString& path)
     {
-        this->m_uri = uri;
+        URI::FromString(path, &m_uri);
         return *this;
     }
-    const Range& GetRange() const { return m_range; }
-    const wxString& GetUri() const { return m_uri; }
 
-    void SetTrySSH(bool trySSH) { this->m_trySSH = trySSH; }
-    bool IsTrySSH() const { return m_trySSH; }
+    const Range& GetRange() const { return m_range; }
+    const wxString& GetPathAsURI() const { return m_uri.GetUrl(); }
+    const wxString& GetPath() const { return m_uri.GetPath(); }
 };
 
 //===----------------------------------------------------------------------------------
@@ -238,22 +255,23 @@ public:
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentItem : public Serializable
 {
-    wxString m_uri;
+    URI m_uri;
     wxString m_languageId;
     std::string m_text;
     int m_version = 1;
 
 public:
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     TextDocumentItem(const wxString& uri, const wxString& langId, const std::string& text, int version = 1)
-        : m_uri(uri)
-        , m_languageId(langId)
+        : m_languageId(langId)
         , m_text(text)
         , m_version(version)
     {
+        URI::FromString(uri, &m_uri);
     }
+
     TextDocumentItem() {}
     virtual ~TextDocumentItem() {}
     TextDocumentItem& SetLanguageId(const wxString& languageId)
@@ -268,9 +286,10 @@ public:
     }
     TextDocumentItem& SetUri(const wxString& uri)
     {
-        this->m_uri = uri;
+        URI::FromString(uri, &m_uri);
         return *this;
     }
+
     TextDocumentItem& SetVersion(int version)
     {
         this->m_version = version;
@@ -278,7 +297,8 @@ public:
     }
     const wxString& GetLanguageId() const { return m_languageId; }
     const std::string& GetText() const { return m_text; }
-    const wxString& GetUri() const { return m_uri; }
+    const wxString& GetPathAsURI() const { return m_uri.GetUrl(); }
+    const wxString& GetPath() const { return m_uri.GetPath(); }
     int GetVersion() const { return m_version; }
 };
 
@@ -302,8 +322,8 @@ public:
     }
     const wxString& GetDocumentation() const { return m_documentation; }
     const wxString& GetLabel() const { return m_label; }
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     typedef std::vector<ParameterInformation> Vec_t;
 };
@@ -338,8 +358,8 @@ public:
     }
     const wxString& GetDocumentation() const { return m_documentation; }
     const wxString& GetLabel() const { return m_label; }
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 };
 
 class WXDLLIMPEXP_CL SignatureHelp : public LSP::Serializable
@@ -370,8 +390,8 @@ public:
     int GetActiveParameter() const { return m_activeParameter; }
     int GetActiveSignature() const { return m_activeSignature; }
     const SignatureInformation::Vec_t& GetSignatures() const { return m_signatures; }
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 };
 
 class WXDLLIMPEXP_CL Diagnostic : public Serializable
@@ -380,8 +400,8 @@ class WXDLLIMPEXP_CL Diagnostic : public Serializable
     wxString m_message;
 
 public:
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     Diagnostic(const Range& range, const wxString& message)
         : m_range(range)
@@ -441,8 +461,8 @@ class WXDLLIMPEXP_CL DocumentSymbol : public Serializable
     std::vector<DocumentSymbol> children;
 
 public:
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     DocumentSymbol() {}
     virtual ~DocumentSymbol() {}
@@ -495,8 +515,8 @@ class WXDLLIMPEXP_CL SymbolInformation : public Serializable
     wxString containerName;
 
 public:
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
 
     SymbolInformation() {}
     virtual ~SymbolInformation() {}

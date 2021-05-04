@@ -2,7 +2,7 @@
 
 static int counter = 0;
 
-LSP::DidChangeTextDocumentRequest::DidChangeTextDocumentRequest(const wxFileName& filename,
+LSP::DidChangeTextDocumentRequest::DidChangeTextDocumentRequest(const wxString& filename,
                                                                 const std::string& fileContent)
 {
     SetMethod("textDocument/didChange");
@@ -10,7 +10,7 @@ LSP::DidChangeTextDocumentRequest::DidChangeTextDocumentRequest(const wxFileName
 
     VersionedTextDocumentIdentifier id;
     id.SetVersion(++counter);
-    id.SetFilename(filename.GetFullPath());
+    id.SetFilename(filename);
     m_params->As<DidChangeTextDocumentParams>()->SetTextDocument(id);
 
     TextDocumentContentChangeEvent changeEvent;

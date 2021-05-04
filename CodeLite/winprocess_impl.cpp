@@ -92,12 +92,13 @@ template <typename T> bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hPr
     DWORD dwMode;
 
     // Make the pipe to non-blocking mode
-    dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
+    dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
     SetNamedPipeHandleState(hStdin, &dwMode, NULL, NULL);
     DWORD bytesLeft = buffer.length();
     long offset = 0;
+    static constexpr int max_retry_count = 100;
     size_t retryCount = 0;
-    while(bytesLeft > 0 && (retryCount < 100)) {
+    while(bytesLeft > 0 && (retryCount < max_retry_count)) {
         DWORD dwWritten = 0;
         if(!WriteFile(hStdin, buffer.c_str() + offset, bytesLeft, &dwWritten, NULL)) {
             int errorCode = GetLastError();
@@ -108,11 +109,17 @@ template <typename T> bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hPr
             return false;
         }
         if(dwWritten == 0) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
         bytesLeft -= dwWritten;
         offset += dwWritten;
         ++retryCount;
+    }
+
+    if(retryCount >= max_retry_count) {
+        clERROR() << "Failed to write to process after" << max_retry_count << "retries. Written"
+                  << (buffer.length() - bytesLeft) << "/" << buffer.length() << "bytes" << endl;
+        return false;
     }
     return true;
 }

@@ -40,6 +40,7 @@
 #include <wx/ffile.h>
 #include <wx/file.h>
 #include <wx/log.h>
+#include <wx/regex.h>
 #include <wx/uri.h>
 #if wxUSE_GUI
 #include <wx/msgdlg.h>
@@ -820,5 +821,42 @@ bool FileUtils::ParseURI(const wxString& uri, wxString& path, wxString& scheme, 
         return true;
     } else {
         return false;
+    }
+}
+
+wxString FileUtils::FilePathToURI(const wxString& filepath)
+{
+    if(filepath.StartsWith("file://")) {
+        return filepath;
+    } else {
+        wxString uri;
+        uri << "file://";
+        if(!filepath.StartsWith("/")) {
+            uri << "/";
+        }
+        wxString file_part = filepath;
+        file_part.Replace("\\", "/");
+        file_part = EncodeURI(file_part);
+        uri << file_part;
+        return uri;
+    }
+}
+
+wxString FileUtils::FilePathFromURI(const wxString& uri)
+{
+    wxString rest;
+    if(uri.StartsWith("file://", &rest)) {
+#ifdef __WXMSW__
+        // check if the file path starts with /C: (Windows drive)
+        wxRegEx re_windows_drive("/[a-z]{1}:", wxRE_DEFAULT | wxRE_ICASE);
+        if(re_windows_drive.IsValid() && re_windows_drive.Matches(rest)) {
+            rest.Remove(0, 1); // remove the leading slash
+            clDEBUG() << "Removing Windows Drive leading slash" << endl;
+            clDEBUG() << "File path from URI is:" << rest << endl;
+        }
+#endif
+        return DecodeURI(rest);
+    } else {
+        return uri;
     }
 }

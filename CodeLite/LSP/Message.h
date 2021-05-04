@@ -19,13 +19,13 @@ public:
 public:
     Message();
     virtual ~Message();
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
     /**
      * @brief serialize this message into string
      */
-    virtual std::string ToString(IPathConverter::Ptr_t pathConverter) const = 0;
+    virtual std::string ToString() const = 0;
 
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Message*>(this)); }
 };

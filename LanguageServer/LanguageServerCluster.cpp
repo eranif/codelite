@@ -69,7 +69,7 @@ void LanguageServerCluster::Reload()
     StartAll();
 }
 
-LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxFileName& filename)
+LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxString& filename)
 {
     std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::iterator iter =
         std::find_if(m_servers.begin(), m_servers.end(),
@@ -86,30 +86,30 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxFi
 void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 {
     const LSP::Location& location = event.GetLocation();
-    if(location.IsTrySSH()) {
-        // the file does not exist on the current machine, lets try and open it with ssh
-        clSFTPEvent openEvent(wxEVT_SFTP_OPEN_FILE);
-        openEvent.SetRemoteFile(location.GetUri());
-        openEvent.SetLineNumber(location.GetRange().GetStart().GetLine());
-        EventNotifier::Get()->AddPendingEvent(openEvent);
-    } else {
-        wxFileName fn(location.GetUri());
-        clDEBUG() << "LSP: Opening file:" << fn << "(" << location.GetRange().GetStart().GetLine() << ":"
-                  << location.GetRange().GetStart().GetCharacter() << ")";
 
-        // Manage the browser (BACK and FORWARD) ourself
-        BrowseRecord from;
-        IEditor* oldEditor = clGetManager()->GetActiveEditor();
-        if(oldEditor) {
-            from = oldEditor->CreateBrowseRecord();
-            
-        }
+    // let someone else try and open this file first, as it might be a remote file
+    LSPEvent open_event(wxEVT_LSP_OPEN_FILE);
+    open_event.SetFileName(location.GetPath());
+    open_event.SetLineNumber(location.GetRange().GetStart().GetLine());
+    if(EventNotifier::Get()->ProcessEvent(open_event)) {
+        return;
+    }
 
-        IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND, OF_None);
-        if(editor) {
-            editor->SelectRange(location.GetRange());
-            NavMgr::Get()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
-        }
+    wxFileName fn(location.GetPath());
+    clDEBUG() << "LSP: Opening file:" << fn << "(" << location.GetRange().GetStart().GetLine() << ":"
+              << location.GetRange().GetStart().GetCharacter() << ")";
+
+    // Manage the browser (BACK and FORWARD) ourself
+    BrowseRecord from;
+    IEditor* oldEditor = clGetManager()->GetActiveEditor();
+    if(oldEditor) {
+        from = oldEditor->CreateBrowseRecord();
+    }
+
+    IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND, OF_None);
+    if(editor) {
+        editor->SelectRange(location.GetRange());
+        NavMgr::Get()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
     }
 }
 
@@ -119,7 +119,7 @@ void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    LanguageServerProtocol::Ptr_t lsp = GetServerForFile(editor->GetFileName());
+    LanguageServerProtocol::Ptr_t lsp = GetServerForFile(GetEditorFilePath(editor));
     if(lsp) {
         lsp->OpenEditor(editor);
     }
@@ -258,9 +258,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         return;
     }
 
-    IPathConverter::Ptr_t pathConverter(new PathConverterDefault());
-    LanguageServerProtocol::Ptr_t lsp(
-        new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this, pathConverter));
+    LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
     lsp->SetPriority(entry.GetPriority());
     lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
     lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
@@ -394,9 +392,7 @@ void LanguageServerCluster::OnOutlineSymbols(LSPEvent& event)
 void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
 {
     event.Skip();
-    wxString uri = event.GetLocation().GetUri();
-    wxFileName fn(uri);
-    IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
+    IEditor* editor = FindEditor(event);
     if(editor) {
         editor->DelAllCompilerMarkers();
         for(const LSP::Diagnostic& d : event.GetDiagnostics()) {
@@ -409,9 +405,7 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
 void LanguageServerCluster::OnClearDiagnostics(LSPEvent& event)
 {
     event.Skip();
-    wxString uri = event.GetLocation().GetUri();
-    wxFileName fn(uri);
-    IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
+    IEditor* editor = FindEditor(event);
     if(editor) {
         editor->DelAllCompilerMarkers();
     }
@@ -426,10 +420,7 @@ void LanguageServerCluster::ClearAllDiagnostics()
     }
 }
 
-void LanguageServerCluster::ClearRestartCounters()
-{
-    m_restartCounters.clear();
-}
+void LanguageServerCluster::ClearRestartCounters() { m_restartCounters.clear(); }
 
 void LanguageServerCluster::OnBuildEnded(clBuildEvent& event)
 {
@@ -477,4 +468,30 @@ void LanguageServerCluster::StartServer(const wxString& name)
         return;
     }
     StartServer(entry);
+}
+
+wxString LanguageServerCluster::GetEditorFilePath(IEditor* editor) const
+{
+    if(editor->IsRemoteFile()) {
+        return editor->GetRemotePath();
+    } else {
+        return editor->GetFileName().GetFullPath();
+    }
+}
+
+IEditor* LanguageServerCluster::FindEditor(const LSPEvent& event) const
+{
+    return FindEditor(event.GetLocation().GetPath());
+}
+
+IEditor* LanguageServerCluster::FindEditor(const wxString& path) const
+{
+    IEditor::List_t all_editors;
+    clGetManager()->GetAllEditors(all_editors);
+    for(IEditor* editor : all_editors) {
+        if(editor->GetFileName().GetFullPath() == path || editor->GetRemotePath() == path) {
+            return editor;
+        }
+    }
+    return nullptr;
 }

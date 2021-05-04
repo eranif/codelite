@@ -290,5 +290,19 @@ public:
      */
     static bool ParseURI(const wxString& uri, wxString& path, wxString& scheme, wxString& user, wxString& host,
                          wxString& port);
+
+    /**
+     * @brief covnert path to uri
+     * /home/eran/file.cpp -> file:///home/eran/file.cpp
+     * file:///home/eran/file.cpp -> file:///home/eran/file.cpp
+     */
+    static wxString FilePathToURI(const wxString& filepath);
+
+    /**
+     * @brief convert uri to file path
+     * file:///home/eran/file.cpp -> /home/eran/file.cpp
+     * /home/eran/file.cpp -> /home/eran/file.cpp
+     */
+    static wxString FilePathFromURI(const wxString& uri);
 };
 #endif // FILEUTILS_H

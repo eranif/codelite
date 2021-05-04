@@ -13,6 +13,7 @@
 #include <deque>
 #include <functional>
 #include <wx/arrstr.h>
+#include "LSP/LSPEvent.h"
 
 #define WORKSPACE_TYPE_NAME "Remote over SSH"
 
@@ -55,6 +56,7 @@ protected:
     void OnOpenResourceFile(clCommandEvent& event);
     void OnShutdown(clCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
+    void OnLSPOpenFile(LSPEvent& event);
 
     /// codelite-remote exec handlers
     void DoProcessBuildOutput(const wxString& output, bool is_completed);

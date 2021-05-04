@@ -56,12 +56,18 @@ protected:
     void OnClearDiagnostics(LSPEvent& event);
     void OnOutlineSymbols(LSPEvent& event);
     void OnBuildEnded(clBuildEvent& event);
+    wxString GetEditorFilePath(IEditor* editor) const;
+    /**
+     * @brief find an editor either by local or remote path
+     */
+    IEditor* FindEditor(const wxString& path) const;
+    IEditor* FindEditor(const LSPEvent& event) const;
 
 public:
     LanguageServerCluster();
     virtual ~LanguageServerCluster();
     void Reload();
-    LanguageServerProtocol::Ptr_t GetServerForFile(const wxFileName& filename);
+    LanguageServerProtocol::Ptr_t GetServerForFile(const wxString& filename);
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
     void ClearRestartCounters();
 };

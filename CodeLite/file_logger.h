@@ -65,7 +65,15 @@ public:
     }
 
     int GetRequestedLogLevel() const { return _requestedLogLevel; }
-
+    static int GetCurrentLogLevel() { return m_verbosity; }
+    
+    /**
+     * @brief return true if log_level is lower than the currently set log level
+     */
+    static bool CanLog(int log_level) {
+        return log_level <= GetCurrentLogLevel();
+    }
+    
     /**
      * @brief give a thread-id a unique name which will be displayed in log
      */

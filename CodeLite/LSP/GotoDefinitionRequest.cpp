@@ -1,21 +1,20 @@
 #include "GotoDefinitionRequest.h"
 #include "LSP/LSPEvent.h"
 
-LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxFileName& filename, size_t line, size_t column)
+LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxString& filename, size_t line, size_t column)
     : m_filename(filename)
     , m_line(line)
     , m_column(column)
 {
     SetMethod("textDocument/definition");
     m_params.reset(new TextDocumentPositionParams());
-    m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename.GetFullPath()));
+    m_params->As<TextDocumentPositionParams>()->SetTextDocument(TextDocumentIdentifier(filename));
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
 LSP::GotoDefinitionRequest::~GotoDefinitionRequest() {}
 
-void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner,
-                                            IPathConverter::Ptr_t pathConverter)
+void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");
     if(!result.isOk()) {
@@ -23,12 +22,12 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
     }
     LSP::Location loc;
     if(result.isArray()) {
-        loc.FromJSON(result.arrayItem(0), pathConverter);
+        loc.FromJSON(result.arrayItem(0));
     } else {
-        loc.FromJSON(result, pathConverter);
+        loc.FromJSON(result);
     }
 
-    if(!loc.GetUri().IsEmpty()) {
+    if(!loc.GetPath().IsEmpty()) {
         // Fire an event with the matching location
         LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
         definitionEvent.SetLocation(loc);
@@ -36,7 +35,7 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
     }
 }
 
-bool LSP::GotoDefinitionRequest::IsValidAt(const wxFileName& filename, size_t line, size_t col) const
+bool LSP::GotoDefinitionRequest::IsValidAt(const wxString& filename, size_t line, size_t col) const
 {
     return (m_filename == filename) && (m_line == line) && (m_column == col);
 }

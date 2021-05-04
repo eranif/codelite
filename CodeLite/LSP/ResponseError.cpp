@@ -2,20 +2,19 @@
 
 LSP::ResponseError::ResponseError() {}
 
-LSP::ResponseError::ResponseError(const wxString& message, IPathConverter::Ptr_t pathConverter)
-    : m_pathConverter(pathConverter)
+LSP::ResponseError::ResponseError(const wxString& message)
 {
     JSON json(message);
-    FromJSON(json.toElement(), m_pathConverter);
+    FromJSON(json.toElement());
 }
 
 LSP::ResponseError::~ResponseError() {}
 
-void LSP::ResponseError::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void LSP::ResponseError::FromJSON(const JSONItem& json)
 {
     if(json.hasNamedObject("error")) {
         // serialize the parent
-        this->Message::FromJSON(json, pathConverter);
+        this->Message::FromJSON(json);
 
         // extract the error message
         JSONItem error = json.namedObject("error");
@@ -25,14 +24,6 @@ void LSP::ResponseError::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pa
     }
 }
 
-std::string LSP::ResponseError::ToString(IPathConverter::Ptr_t pathConverter) const
-{
-    wxUnusedVar(pathConverter);
-    return "";
-}
+std::string LSP::ResponseError::ToString() const { return ""; }
 
-JSONItem LSP::ResponseError::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
-{
-    wxUnusedVar(pathConverter);
-    return JSONItem(nullptr);
-}
+JSONItem LSP::ResponseError::ToJSON(const wxString& name) const { return JSONItem(nullptr); }

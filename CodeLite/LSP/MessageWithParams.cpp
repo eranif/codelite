@@ -9,25 +9,26 @@ LSP::MessageWithParams::MessageWithParams() {}
 
 LSP::MessageWithParams::~MessageWithParams() {}
 
-JSONItem LSP::MessageWithParams::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem LSP::MessageWithParams::ToJSON(const wxString& name) const
 {
-    JSONItem json = Message::ToJSON(name, pathConverter);
+    JSONItem json = Message::ToJSON(name);
     json.addProperty("method", GetMethod());
-    if(m_params) { json.append(m_params->ToJSON("params", pathConverter)); }
+    if(m_params) {
+        json.append(m_params->ToJSON("params"));
+    }
     return json;
 }
 
-void LSP::MessageWithParams::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void LSP::MessageWithParams::FromJSON(const JSONItem& json)
 {
     // we dont need to un-serialize a request object
     wxUnusedVar(json);
-    wxUnusedVar(pathConverter);
 }
 
-std::string LSP::MessageWithParams::ToString(IPathConverter::Ptr_t pathConverter) const
+std::string LSP::MessageWithParams::ToString() const
 {
     // Serialize the object and construct a JSON-RPC message
-    JSONItem json = ToJSON("", pathConverter);
+    JSONItem json = ToJSON("");
     char* data = json.FormatRawString(false);
 
     std::string s;

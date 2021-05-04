@@ -60,19 +60,18 @@ LSP::FilePath PathConverterDefault::ConvertTo(const wxString& path) const
 {
     clDEBUG() << "Converting" << path;
     wxFileName fn(path);
+
     // Locate an editor with this file path and check to see if it is a remote file
     IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
-    if(editor && editor->GetClientData("sftp")) {
-        SFTPClientData* pcd = dynamic_cast<SFTPClientData*>(editor->GetClientData("sftp"));
-        if(pcd) {
-            wxString url = pcd->GetRemotePath();
-            url.Prepend("file://");
-            clDEBUG() << path << "->" << url;
-            return url;
-        }
+    if(editor && editor->IsRemoteFile()) {
+        wxString url = editor->GetRemotePath();
+        url.Prepend("file://");
+        clDEBUG() << path << "->" << url;
+        return url;
+    } else {
+        // default behavior
+        wxString url = wxFileSystem::FileNameToURL(fn);
+        clDEBUG() << path << "->" << url;
+        return LSP::FilePath(url);
     }
-    // default behavior
-    wxString url = wxFileSystem::FileNameToURL(fn);
-    clDEBUG() << path << "->" << url;
-    return LSP::FilePath(url);
 }

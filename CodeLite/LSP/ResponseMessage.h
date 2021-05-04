@@ -14,7 +14,6 @@ class WXDLLIMPEXP_CL ResponseMessage : public LSP::Message
     int m_id = wxNOT_FOUND;
     wxSharedPtr<JSON> m_json;
     wxString m_jsonMessage;
-    IPathConverter::Ptr_t m_pathConverter;
 
 protected:
     /**
@@ -23,12 +22,12 @@ protected:
     int ReadHeaders(const wxString& message, wxStringMap_t& headers);
 
 public:
-    ResponseMessage(wxString& message, IPathConverter::Ptr_t pathConverter);
+    ResponseMessage(wxString& message);
     virtual ~ResponseMessage();
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
 
-    virtual std::string ToString(IPathConverter::Ptr_t pathConverter) const;
+    virtual std::string ToString() const;
     ResponseMessage& SetId(int id)
     {
         this->m_id = id;
@@ -48,11 +47,11 @@ public:
     /**
      * @brief return list of diagnostics
      */
-    std::vector<LSP::Diagnostic> GetDiagnostics(IPathConverter::Ptr_t pathConverter) const;
+    std::vector<LSP::Diagnostic> GetDiagnostics() const;
     /**
      * @brief return the URI diagnostics
      */
-    wxString GetDiagnosticsUri(IPathConverter::Ptr_t pathConverter) const;
+    wxString GetDiagnosticsUri() const;
 };
 }; // namespace LSP
 

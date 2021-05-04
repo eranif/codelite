@@ -13,7 +13,9 @@
 /// So we dont rely on the header length, but instead we count the chars ourself
 int FindCompleteMessage(const wxString& jsonMsg, int startIndex)
 {
-    if(jsonMsg[startIndex] != '{') { return wxNOT_FOUND; }
+    if(jsonMsg[startIndex] != '{') {
+        return wxNOT_FOUND;
+    }
     int depth = 1;
     int msglen = 1; // skip the '{'
     int state = STATE_NORMAL;
@@ -65,20 +67,27 @@ int FindCompleteMessage(const wxString& jsonMsg, int startIndex)
     return wxNOT_FOUND;
 }
 
-LSP::ResponseMessage::ResponseMessage(wxString& message, IPathConverter::Ptr_t pathConverter)
-    : m_pathConverter(pathConverter)
+LSP::ResponseMessage::ResponseMessage(wxString& message)
 {
     // Strip the headers
     wxStringMap_t headers;
     int headersSize = ReadHeaders(message, headers);
-    if(headersSize == wxNOT_FOUND) { return; }
+    if(headersSize == wxNOT_FOUND) {
+        return;
+    }
 
-    if(headers.count(HEADER_CONTENT_LENGTH) == 0) { return; }
+    if(headers.count(HEADER_CONTENT_LENGTH) == 0) {
+        return;
+    }
     int msglen = FindCompleteMessage(message, headersSize);
-    if(msglen == wxNOT_FOUND) { return; }
+    if(msglen == wxNOT_FOUND) {
+        return;
+    }
 
     // Remove the message from the buffer
-    if((headersSize + msglen) > (int)message.length()) { return; }
+    if((headersSize + msglen) > (int)message.length()) {
+        return;
+    }
     m_jsonMessage = message.Mid(0, headersSize + msglen);
 
     message.Remove(0, headersSize + msglen);
@@ -91,28 +100,20 @@ LSP::ResponseMessage::ResponseMessage(wxString& message, IPathConverter::Ptr_t p
     if(!m_json->isOk()) {
         m_json.reset(nullptr);
     } else {
-        FromJSON(m_json->toElement(), m_pathConverter);
+        FromJSON(m_json->toElement());
     }
 }
 
 LSP::ResponseMessage::~ResponseMessage() {}
 
-std::string LSP::ResponseMessage::ToString(IPathConverter::Ptr_t pathConverter) const
-{
-    wxUnusedVar(pathConverter);
-    return "";
-}
+std::string LSP::ResponseMessage::ToString() const { return ""; }
 
 // we dont really serialise response messages
-JSONItem LSP::ResponseMessage::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
-{
-    wxUnusedVar(pathConverter);
-    return JSONItem(nullptr);
-}
+JSONItem LSP::ResponseMessage::ToJSON(const wxString& name) const { return JSONItem(nullptr); }
 
-void LSP::ResponseMessage::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void LSP::ResponseMessage::FromJSON(const JSONItem& json)
 {
-    Message::FromJSON(json, pathConverter);
+    Message::FromJSON(json);
     m_id = json.namedObject("id").toInt();
 }
 
@@ -123,14 +124,18 @@ bool LSP::ResponseMessage::Has(const wxString& property) const
 
 JSONItem LSP::ResponseMessage::Get(const wxString& property) const
 {
-    if(!Has(property)) { return JSONItem(nullptr); }
+    if(!Has(property)) {
+        return JSONItem(nullptr);
+    }
     return m_json->toElement().namedObject(property);
 }
 
 int LSP::ResponseMessage::ReadHeaders(const wxString& message, wxStringMap_t& headers)
 {
     int where = message.Find("\r\n\r\n");
-    if(where == wxNOT_FOUND) { return wxNOT_FOUND; }
+    if(where == wxNOT_FOUND) {
+        return wxNOT_FOUND;
+    }
     wxString headerSection = message.Mid(0, where); // excluding the "\r\n\r\n"
     wxArrayString lines = ::wxStringTokenize(headerSection, "\n", wxTOKEN_STRTOK);
     for(wxString& header : lines) {
@@ -144,27 +149,29 @@ int LSP::ResponseMessage::ReadHeaders(const wxString& message, wxStringMap_t& he
     return (where + 4);
 }
 
-std::vector<LSP::Diagnostic> LSP::ResponseMessage::GetDiagnostics(IPathConverter::Ptr_t pathConverter) const
+std::vector<LSP::Diagnostic> LSP::ResponseMessage::GetDiagnostics() const
 {
     JSONItem params = Get("params");
-    if(!params.isOk()) { return {}; }
+    if(!params.isOk()) {
+        return {};
+    }
 
     std::vector<LSP::Diagnostic> res;
     JSONItem arrDiags = params.namedObject("diagnostics");
     int size = arrDiags.arraySize();
     for(int i = 0; i < size; ++i) {
         LSP::Diagnostic d;
-        d.FromJSON(arrDiags.arrayItem(i), pathConverter);
+        d.FromJSON(arrDiags.arrayItem(i));
         res.push_back(d);
     }
     return res;
 }
 
-wxString LSP::ResponseMessage::GetDiagnosticsUri(IPathConverter::Ptr_t pathConverter) const
+wxString LSP::ResponseMessage::GetDiagnosticsUri() const
 {
-    wxUnusedVar(pathConverter);
     JSONItem params = Get("params");
-    if(!params.isOk()) { return ""; }
-
+    if(!params.isOk()) {
+        return "";
+    }
     return params.namedObject("uri").toString();
 }

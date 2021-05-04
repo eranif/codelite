@@ -64,8 +64,8 @@ public:
 public:
     CompletionItem();
     virtual ~CompletionItem();
-    virtual JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const;
-    virtual void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    virtual void FromJSON(const JSONItem& json);
     void SetDetail(const wxString& detail) { this->m_detail = detail; }
     void SetDocumentation(const wxString& documentation) { this->m_documentation = documentation; }
     void SetFilterText(const wxString& filterText) { this->m_filterText = filterText; }

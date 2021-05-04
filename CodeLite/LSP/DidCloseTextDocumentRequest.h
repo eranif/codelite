@@ -1,9 +1,9 @@
 #ifndef DIDCLOSETEXTDOCUMENTREQUEST_H
 #define DIDCLOSETEXTDOCUMENTREQUEST_H
 
-#include <wx/filename.h>
 #include "LSP/MessageWithParams.h"
 #include "LSP/Notification.h"
+#include <wx/filename.h>
 
 namespace LSP
 {
@@ -11,7 +11,7 @@ namespace LSP
 class WXDLLIMPEXP_CL DidCloseTextDocumentRequest : public LSP::Notification
 {
 public:
-    DidCloseTextDocumentRequest(const wxFileName& filename);
+    explicit DidCloseTextDocumentRequest(const wxString& filename);
     virtual ~DidCloseTextDocumentRequest();
 };
 };     // namespace LSP

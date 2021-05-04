@@ -3,18 +3,13 @@
 namespace LSP
 {
 struct InitializedParams : public Params {
-    JSONItem ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const override
+    JSONItem ToJSON(const wxString& name) const override
     {
         wxUnusedVar(name);
-        wxUnusedVar(pathConverter);
         return JSONItem::createObject(name);
     }
 
-    void FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter) override
-    {
-        wxUnusedVar(json);
-        wxUnusedVar(pathConverter);
-    };
+    void FromJSON(const JSONItem& json) override { wxUnusedVar(json); };
 };
 
 InitializedNotification::InitializedNotification()

@@ -35,12 +35,10 @@
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
 
-LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner,
-                                               IPathConverter::Ptr_t pathConverter)
+LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
     : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
     , m_name(name)
     , m_owner(owner)
-    , m_pathConverter(pathConverter)
 {
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
@@ -210,13 +208,13 @@ void LanguageServerProtocol::DoClear()
 
 bool LanguageServerProtocol::IsRunning() const { return m_network->IsConnected(); }
 
-bool LanguageServerProtocol::CanHandle(const wxFileName& filename) const
+bool LanguageServerProtocol::CanHandle(const wxString& filename) const
 {
     wxString lang = GetLanguageId(filename);
     return m_languages.count(lang) != 0;
 }
 
-bool LanguageServerProtocol::ShouldHandleFile(const wxFileName& fn) const
+bool LanguageServerProtocol::ShouldHandleFile(const wxString& fn) const
 {
     wxString lang = GetLanguageId(fn);
     clDEBUG1() << "Language ID for file" << fn << "->" << lang;
@@ -225,7 +223,7 @@ bool LanguageServerProtocol::ShouldHandleFile(const wxFileName& fn) const
 
 bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
 {
-    return editor && ShouldHandleFile(editor->GetFileName());
+    return editor && ShouldHandleFile(GetEditorFilePath(editor));
 }
 
 void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
@@ -233,7 +231,7 @@ void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
-    if(CanHandle(editor->GetFileName())) {
+    if(CanHandle(GetEditorFilePath(editor))) {
         event.Skip(false);
         FunctionHelp(editor);
     }
@@ -247,7 +245,7 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
     if(event.IsInsideCommentOrString()) {
         return;
     }
-    if(CanHandle(editor->GetFileName())) {
+    if(CanHandle(GetEditorFilePath(editor))) {
         event.Skip(false);
         CodeComplete(editor);
     }
@@ -259,7 +257,7 @@ void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(editor->GetFileName())) {
+    if(CanHandle(GetEditorFilePath(editor))) {
         // this event is ours to handle
         event.Skip(false);
         FindDeclaration(editor);
@@ -272,7 +270,7 @@ void LanguageServerProtocol::OnFindSymbolImpl(clCodeCompletionEvent& event)
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(editor->GetFileName())) {
+    if(CanHandle(GetEditorFilePath(editor))) {
         // this event is ours to handle
         event.Skip(false);
         FindImplementation(editor);
@@ -285,7 +283,7 @@ void LanguageServerProtocol::OnFindSymbol(clCodeCompletionEvent& event)
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(editor->GetFileName())) {
+    if(CanHandle(GetEditorFilePath(editor))) {
         // this event is ours to handle
         event.Skip(false);
         FindDefinition(editor);
@@ -302,24 +300,25 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    const wxFileName& filename = editor->GetFileName();
-    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+    wxString filename = GetEditorFilePath(editor);
+    if(m_filesSent.count(filename) && editor->IsModified()) {
         // we already sent this file over, ask for change parse
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
         SendChangeRequest(filename, fileContent);
-    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+    } else if(m_filesSent.count(filename) == 0) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
         SendOpenRequest(filename, fileContent, GetLanguageId(filename));
     }
 
-    LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDefinitionRequest(
-        editor->GetFileName(), editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+    LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+        new LSP::GotoDefinitionRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
+                                       editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::SendOpenRequest(const wxFileName& filename, const std::string& fileContent,
+void LanguageServerProtocol::SendOpenRequest(const wxString& filename, const std::string& fileContent,
                                              const wxString& languageId)
 {
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
@@ -329,15 +328,15 @@ void LanguageServerProtocol::SendOpenRequest(const wxFileName& filename, const s
     LSP::DidOpenTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
 #ifndef __WXOSX__
-    req->SetStatusMessage(wxString() << GetLogPrefix() << " parsing file: " << filename.GetFullName());
+    req->SetStatusMessage(wxString() << GetLogPrefix() << " parsing file: " << filename);
 #endif
     UpdateFileSent(filename, fileContent);
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::SendCloseRequest(const wxFileName& filename)
+void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
 {
-    if(m_filesSent.count(filename.GetFullPath()) == 0) {
+    if(m_filesSent.count(filename) == 0) {
         clDEBUG() << GetLogPrefix() << "LanguageServerProtocol::FileClosed(): file" << filename << "is not opened";
         return;
     }
@@ -345,10 +344,10 @@ void LanguageServerProtocol::SendCloseRequest(const wxFileName& filename)
     LSP::DidCloseTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidCloseTextDocumentRequest(filename));
     QueueMessage(req);
-    m_filesSent.erase(filename.GetFullPath());
+    m_filesSent.erase(filename);
 }
 
-void LanguageServerProtocol::SendChangeRequest(const wxFileName& filename, const std::string& fileContent)
+void LanguageServerProtocol::SendChangeRequest(const wxString& filename, const std::string& fileContent)
 {
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
         clDEBUG() << GetLogPrefix() << "No changes detected in file:" << filename << clEndl;
@@ -358,27 +357,23 @@ void LanguageServerProtocol::SendChangeRequest(const wxFileName& filename, const
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
 #ifndef __WXOSX__
-    req->SetStatusMessage(wxString() << GetLogPrefix() << " re-parsing file: " << filename.GetFullName());
+    req->SetStatusMessage(wxString() << GetLogPrefix() << " re-parsing file: " << filename);
 #endif
     UpdateFileSent(filename, fileContent);
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::SendSaveRequest(const wxFileName& filename, const std::string& fileContent)
+void LanguageServerProtocol::SendSaveRequest(const wxString& filename, const std::string& fileContent)
 {
-    // LSP::DidSaveTextDocumentRequest req(filename, fileContent);
-    // req.Send(this);
-    // clGetManager()->SetStatusMessage(wxString() << "[LSP] re-parsing file: " << filename.GetFullName(), 1);
-
     // For now: report a change event
     SendChangeRequest(filename, fileContent);
 }
 
-void LanguageServerProtocol::SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column)
+void LanguageServerProtocol::SendCodeCompleteRequest(const wxString& filename, size_t line, size_t column)
 {
     if(ShouldHandleFile(filename)) {
-        LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::CompletionRequest(
-            LSP::TextDocumentIdentifier(filename.GetFullPath()), LSP::Position(line, column)));
+        LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+            new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
         QueueMessage(req);
     }
 }
@@ -409,7 +404,7 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     if(ShouldHandleFile(editor)) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendSaveRequest(editor->GetFileName(), fileContent);
+        SendSaveRequest(GetEditorFilePath(editor), fileContent);
     }
 }
 
@@ -417,7 +412,7 @@ wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "["
 
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
-    clDEBUG1() << "OpenEditor is called for" << editor->GetFileName() << endl;
+    clDEBUG1() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl;
     if(!IsInitialized()) {
         return;
     }
@@ -425,27 +420,13 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
 
-        if(m_filesSent.count(editor->GetFileName().GetFullPath())) {
-            clDEBUG() << "OpenEditor->SendChangeRequest called for:" << editor->GetFileName().GetFullName();
-            SendChangeRequest(editor->GetFileName(), fileContent);
+        if(m_filesSent.count(GetEditorFilePath(editor))) {
+            clDEBUG() << "OpenEditor->SendChangeRequest called for:" << GetEditorFilePath(editor);
+            SendChangeRequest(GetEditorFilePath(editor), fileContent);
         } else {
             // If we are about to load a header file, also pass clangd the implementation(s) file
-            wxArrayString others;
-            if(FindImplFile(editor->GetFileName().GetFullPath(), others)) {
-                for(const wxString& cppFile : others) {
-                    if(m_filesSent.count(cppFile) == 0 && ShouldHandleFile(cppFile)) {
-                        // we never parsed this file before
-                        clDEBUG() << "OpenEditor->SendOpenRequest called for:" << cppFile << endl;
-                        std::string fileContent;
-                        if(FileUtils::ReadFileContentRaw(cppFile, fileContent)) {
-                            SendOpenRequest(cppFile, fileContent, GetLanguageId(fileContent));
-                        }
-                    }
-                }
-            }
-
-            clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << editor->GetFileName().GetFullName();
-            SendOpenRequest(editor->GetFileName(), fileContent, GetLanguageId(editor->GetFileName()));
+            clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor);
+            SendOpenRequest(GetEditorFilePath(editor), fileContent, GetLanguageId(GetEditorFilePath(editor)));
         }
     }
 }
@@ -455,14 +436,15 @@ void LanguageServerProtocol::FunctionHelp(IEditor* editor)
     // sanity
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
+
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    const wxFileName& filename = editor->GetFileName();
-    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+    const wxString& filename = GetEditorFilePath(editor);
+    if(m_filesSent.count(filename) && editor->IsModified()) {
         // we already sent this file over, ask for change parse
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
         SendChangeRequest(filename, fileContent);
-    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+    } else if(m_filesSent.count(filename) == 0) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
         SendOpenRequest(filename, fileContent, GetLanguageId(filename));
@@ -481,21 +463,21 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
     // If the editor is modified, we need to tell the LSP to reparse the source file
-    const wxFileName& filename = editor->GetFileName();
+    const wxString& filename = GetEditorFilePath(editor);
 
-    if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+    if(m_filesSent.count(filename) && editor->IsModified()) {
         std::string text;
         editor->GetEditorTextRaw(text);
         SendChangeRequest(filename, text);
 
-    } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+    } else if(m_filesSent.count(filename) == 0) {
         std::string text;
         editor->GetEditorTextRaw(text);
         SendOpenRequest(filename, text, GetLanguageId(filename));
     }
 
     // Now request the for code completion
-    SendCodeCompleteRequest(editor->GetFileName(), editor->GetCurrentLine(),
+    SendCodeCompleteRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
                             editor->GetCtrl()->GetColumn(editor->GetCurrentPosition()));
 }
 
@@ -515,7 +497,7 @@ void LanguageServerProtocol::ProcessQueue()
     }
 
     // Write the message length as string of 10 bytes
-    m_network->Send(req->ToString(m_pathConverter));
+    m_network->Send(req->ToString());
     m_Queue.SetWaitingReponse(true);
     m_Queue.Pop();
     if(!req->GetStatusMessage().IsEmpty()) {
@@ -529,7 +511,7 @@ void LanguageServerProtocol::CloseEditor(IEditor* editor)
         return;
     }
     if(editor && ShouldHandleFile(editor)) {
-        SendCloseRequest(editor->GetFileName());
+        SendCloseRequest(GetEditorFilePath(editor));
     }
 }
 
@@ -544,20 +526,20 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor)
         CHECK_COND_RET(ShouldHandleFile(editor));
 
         // If the editor is modified, we need to tell the LSP to reparse the source file
-        const wxFileName& filename = editor->GetFileName();
-        if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+        const wxString& filename = GetEditorFilePath(editor);
+        if(m_filesSent.count(filename) && editor->IsModified()) {
             // we already sent this file over, ask for change parse
             std::string content;
             editor->GetEditorTextRaw(content);
             SendChangeRequest(filename, content);
-        } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        } else if(m_filesSent.count(filename) == 0) {
             std::string content;
             editor->GetEditorTextRaw(content);
             SendOpenRequest(filename, content, GetLanguageId(filename));
         }
 
         LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-            new LSP::GotoDeclarationRequest(editor->GetFileName(), editor->GetCurrentLine(),
+            new LSP::GotoDeclarationRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
                                             editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
         QueueMessage(req);
     }
@@ -599,14 +581,14 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 
     while(true) {
         // Did we get a complete message?
-        LSP::ResponseMessage res(m_outputBuffer, m_pathConverter);
+        LSP::ResponseMessage res(m_outputBuffer);
         if(res.IsOk()) {
             if(IsInitialized()) {
                 LSP::MessageWithParams::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 // Is this an error message?
                 if(res.Has("error")) {
                     clDEBUG() << GetLogPrefix() << "received an error message";
-                    LSP::ResponseError errMsg(res.GetMessageString(), m_pathConverter);
+                    LSP::ResponseError errMsg(res.GetMessageString());
                     switch(errMsg.GetErrorCode()) {
                     case LSP::ResponseError::kErrorCodeInternalError:
                     case LSP::ResponseError::kErrorCodeInvalidRequest: {
@@ -653,39 +635,37 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                                 return;
                             }
                             // let the originating request to handle it
-                            const wxFileName& filename = editor->GetFileName();
+                            const wxString& filename = GetEditorFilePath(editor);
                             size_t line = editor->GetCurrentLine();
                             size_t column = editor->GetCtrl()->GetColumn(editor->GetCurrentPosition());
                             if(false && preq->IsPositionDependantRequest() &&
                                !preq->IsValidAt(filename, line, column)) {
                                 clDEBUG() << "Response is no longer valid. Discarding its result";
                             } else {
-                                preq->OnResponse(res, m_owner, m_pathConverter);
+                                preq->OnResponse(res, m_owner);
                             }
                         }
 
                     } else if(res.IsPushDiagnostics()) {
                         // Get the URI
                         clDEBUG() << GetLogPrefix() << "Received diagnostic message";
-                        wxFileName fn(wxFileSystem::URLToFileName(res.GetDiagnosticsUri(m_pathConverter)));
-                        fn.Normalize();
+                        wxString fn = FileUtils::FilePathFromURI(res.GetDiagnosticsUri());
 #ifndef __WXOSX__
                         // Don't show this message on macOS as it appears in the middle of the screen...
                         clGetManager()->SetStatusMessage(
-                            wxString() << GetLogPrefix() << "parsing of file: " << fn.GetFullName() << " is completed",
-                            1);
+                            wxString() << GetLogPrefix() << "parsing of file: " << fn << " is completed", 1);
 #endif
-                        std::vector<LSP::Diagnostic> diags = res.GetDiagnostics(m_pathConverter);
+                        std::vector<LSP::Diagnostic> diags = res.GetDiagnostics();
                         if(!diags.empty() && IsDisaplayDiagnostics()) {
                             // report the diagnostics
                             LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);
-                            eventSetDiags.GetLocation().SetUri(fn.GetFullPath());
+                            eventSetDiags.GetLocation().SetPath(fn);
                             eventSetDiags.SetDiagnostics(diags);
                             m_owner->AddPendingEvent(eventSetDiags);
                         } else if(diags.empty()) {
                             // clear all diagnostics
                             LSPEvent eventClearDiags(wxEVT_LSP_CLEAR_DIAGNOSTICS);
-                            eventClearDiags.GetLocation().SetUri(fn.GetFullPath());
+                            eventClearDiags.GetLocation().SetPath(fn);
                             m_owner->AddPendingEvent(eventClearDiags);
                         }
                     } else {
@@ -761,26 +741,24 @@ void LanguageServerProtocol::FindImplementation(IEditor* editor)
         CHECK_COND_RET(ShouldHandleFile(editor));
 
         // If the editor is modified, we need to tell the LSP to reparse the source file
-        const wxFileName& filename = editor->GetFileName();
-        if(m_filesSent.count(filename.GetFullPath()) && editor->IsModified()) {
+        const wxString& filename = GetEditorFilePath(editor);
+        if(m_filesSent.count(filename) && editor->IsModified()) {
             // we already sent this file over, ask for change parse
             std::string content;
             editor->GetEditorTextRaw(content);
             SendChangeRequest(filename, content);
-        } else if(m_filesSent.count(filename.GetFullPath()) == 0) {
+        } else if(m_filesSent.count(filename) == 0) {
             std::string content;
             editor->GetEditorTextRaw(content);
             SendOpenRequest(filename, content, GetLanguageId(filename));
         }
 
         LSP::GotoImplementationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-            new LSP::GotoImplementationRequest(editor->GetFileName(), editor->GetCurrentLine(),
+            new LSP::GotoImplementationRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
                                                editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
         QueueMessage(req);
     }
 }
-
-wxString LanguageServerProtocol::GetLanguageId(const wxFileName& fn) { return GetLanguageId(fn.GetFullPath()); }
 
 void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
 {
@@ -793,7 +771,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(editor->GetFileName())) {
+    if(CanHandle(GetEditorFilePath(editor))) {
         // this event is ours to handle
         event.Skip(false);
         DocumentSymbols(editor);
@@ -805,62 +783,35 @@ void LanguageServerProtocol::DocumentSymbols(IEditor* editor)
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
-    const wxFileName& filename = editor->GetFileName();
+    const wxString& filename = GetEditorFilePath(editor);
     LSP::MessageWithParams::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename));
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::UpdateFileSent(const wxFileName& filename, const std::string& fileContent)
+void LanguageServerProtocol::UpdateFileSent(const wxString& filename, const std::string& fileContent)
 {
     wxString checksum = wxMD5::GetDigest(fileContent);
-    m_filesSent.erase(filename.GetFullPath());
+    m_filesSent.erase(filename);
     clDEBUG() << "Caching file:" << filename << "with checksum:" << checksum << clEndl;
-    m_filesSent.insert({ filename.GetFullPath(), checksum });
+    m_filesSent.insert({ filename, checksum });
 }
 
-bool LanguageServerProtocol::IsFileChangedSinceLastParse(const wxFileName& filename,
-                                                         const std::string& fileContent) const
+bool LanguageServerProtocol::IsFileChangedSinceLastParse(const wxString& filename, const std::string& fileContent) const
 {
-    if(m_filesSent.count(filename.GetFullPath()) == 0) {
+    if(m_filesSent.count(filename) == 0) {
         return true;
     }
     wxString checksum = wxMD5::GetDigest(fileContent);
-    return m_filesSent.find(filename.GetFullPath())->second != checksum;
+    return m_filesSent.find(filename)->second != checksum;
 }
 
-bool LanguageServerProtocol::FindImplFile(const wxString& headerFile, wxArrayString& implfilesArr)
+wxString LanguageServerProtocol::GetEditorFilePath(IEditor* editor) const
 {
-    wxFileName fnHeaderFile(headerFile);
-    wxString ext = fnHeaderFile.GetExt();
-
-    // sanity
-    if(!FileExtManager::IsCxxFile(headerFile)) {
-        return false;
+    if(editor->IsRemoteFile()) {
+        return editor->GetRemotePath();
+    } else {
+        return editor->GetFileName().GetFullPath();
     }
-
-    if(FileExtManager::GetType(fnHeaderFile.GetFullName()) != FileExtManager::TypeHeader) {
-        return false;
-    }
-
-    wxArrayString cppExtensions;
-
-    // try to find a implementation file
-    cppExtensions.Add("cpp");
-    cppExtensions.Add("cxx");
-    cppExtensions.Add("cc");
-    cppExtensions.Add("c++");
-    cppExtensions.Add("c");
-    cppExtensions.Add("ipp");
-
-    // Try to locate a file in the same folder first
-    wxFileName cppFile = fnHeaderFile;
-    for(const wxString& extension : cppExtensions) {
-        cppFile.SetExt(extension);
-        if(cppFile.FileExists()) {
-            implfilesArr.Add(cppFile.GetFullPath());
-        }
-    }
-    return !implfilesArr.IsEmpty();
 }
 
 //===------------------------------------------------------------------

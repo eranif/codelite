@@ -3,18 +3,17 @@
 #include "file_logger.h"
 #include "json_rpc_params.h"
 
-LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxFileName& filename)
+LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxString& filename)
 {
     SetMethod("textDocument/documentSymbol");
     // set the params
     m_params.reset(new DocumentSymbolParams());
-    m_params->As<DocumentSymbolParams>()->SetTextDocument(TextDocumentIdentifier(filename.GetFullPath()));
+    m_params->As<DocumentSymbolParams>()->SetTextDocument(TextDocumentIdentifier(filename));
 }
 
 LSP::DocumentSymbolsRequest::~DocumentSymbolsRequest() {}
 
-void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner,
-                                             IPathConverter::Ptr_t pathConverter)
+void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     auto result = response.Get("result");
     if(!result.isOk()) {
@@ -35,7 +34,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
             event.GetSymbolsInformation().reserve(size);
             for(int i = 0; i < size; ++i) {
                 SymbolInformation si;
-                si.FromJSON(result[i], pathConverter);
+                si.FromJSON(result[i]);
                 event.GetSymbolsInformation().push_back(si);
             }
             owner->QueueEvent(event.Clone());
@@ -43,7 +42,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
             std::vector<DocumentSymbol> symbols;
             for(int i = 0; i < size; ++i) {
                 DocumentSymbol ds;
-                ds.FromJSON(result[i], pathConverter);
+                ds.FromJSON(result[i]);
                 symbols.push_back(ds);
             }
         }

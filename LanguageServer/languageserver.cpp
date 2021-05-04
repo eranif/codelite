@@ -167,7 +167,7 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForFile(editor->GetFileName());
+    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForFile(GetEditorFilePath(editor));
     CHECK_PTR_RET(lsp);
 
     auto langs = lsp->GetSupportedLanguages();
@@ -322,4 +322,13 @@ void LanguageServerPlugin::OnLSPShowSettingsDlg(clLanguageServerEvent& event)
 {
     wxCommandEvent dummy;
     OnSettings(dummy);
+}
+
+wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const
+{
+    if(editor->IsRemoteFile()) {
+        return editor->GetRemotePath();
+    } else {
+        return editor->GetFileName().GetFullPath();
+    }
 }

@@ -1,8 +1,8 @@
 #ifndef DIDSAVE_TEXTDOCUMENTREQUEST_H
 #define DIDSAVE_TEXTDOCUMENTREQUEST_H
 
-#include <wx/filename.h>
 #include "LSP/Notification.h"
+#include <wx/filename.h>
 
 namespace LSP
 {
@@ -10,7 +10,7 @@ namespace LSP
 class WXDLLIMPEXP_CL DidSaveTextDocumentRequest : public LSP::Notification
 {
 public:
-    DidSaveTextDocumentRequest(const wxFileName& filename, const wxString& fileContent);
+    explicit DidSaveTextDocumentRequest(const wxString& filename, const wxString& fileContent);
     virtual ~DidSaveTextDocumentRequest();
 };
 }; // namespace LSP

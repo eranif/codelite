@@ -54,7 +54,6 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     wxStringSet_t m_languages;
     wxString m_outputBuffer;
     wxString m_rootFolder;
-    IPathConverter::Ptr_t m_pathConverter;
     clEnvList_t m_env;
     LSPStartupInfo m_startupInfo;
     // initialization
@@ -86,43 +85,43 @@ protected:
     void OnFunctionCallTip(clCodeCompletionEvent& event);
     void OnQuickOutline(clCodeCompletionEvent& event);
 
+    wxString GetEditorFilePath(IEditor* editor) const;
+
 protected:
     void DoClear();
-    bool ShouldHandleFile(const wxFileName& fn) const;
+    bool ShouldHandleFile(const wxString& fn) const;
     bool ShouldHandleFile(IEditor* editor) const;
     wxString GetLogPrefix() const;
     void ProcessQueue();
-    static wxString GetLanguageId(const wxFileName& fn);
     static wxString GetLanguageId(const wxString& fn);
-    void UpdateFileSent(const wxFileName& filename, const std::string& fileContent);
-    bool IsFileChangedSinceLastParse(const wxFileName& filename, const std::string& fileContent) const;
-    bool FindImplFile(const wxString& headerFile, wxArrayString& implfilesArr);
+    void UpdateFileSent(const wxString& filename, const std::string& fileContent);
+    bool IsFileChangedSinceLastParse(const wxString& filename, const std::string& fileContent) const;
 
 protected:
     /**
      * @brief notify about file open
      */
-    void SendOpenRequest(const wxFileName& filename, const std::string& fileContent, const wxString& languageId);
+    void SendOpenRequest(const wxString& filename, const std::string& fileContent, const wxString& languageId);
 
     /**
      * @brief report a file-close notification
      */
-    void SendCloseRequest(const wxFileName& filename);
+    void SendCloseRequest(const wxString& filename);
 
     /**
      * @brief report a file-changed notification
      */
-    void SendChangeRequest(const wxFileName& filename, const std::string& fileContent);
+    void SendChangeRequest(const wxString& filename, const std::string& fileContent);
 
     /**
      * @brief report a file-save notification
      */
-    void SendSaveRequest(const wxFileName& filename, const std::string& fileContent);
+    void SendSaveRequest(const wxString& filename, const std::string& fileContent);
 
     /**
      * @brief request for a code completion at a given doc/position
      */
-    void SendCodeCompleteRequest(const wxFileName& filename, size_t line, size_t column);
+    void SendCodeCompleteRequest(const wxString& filename, size_t line, size_t column);
 
     bool DoStart();
 
@@ -132,8 +131,7 @@ protected:
     void QueueMessage(LSP::MessageWithParams::Ptr_t request);
 
 public:
-    LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner,
-                           IPathConverter::Ptr_t pathConverter);
+    LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner);
     virtual ~LanguageServerProtocol();
 
     LanguageServerProtocol& SetDisaplayDiagnostics(bool disaplayDiagnostics)
@@ -142,8 +140,7 @@ public:
         return *this;
     }
     bool IsDisaplayDiagnostics() const { return m_disaplayDiagnostics; }
-    void SetPathConverter(IPathConverter::Ptr_t pathConverter) { this->m_pathConverter = pathConverter; }
-    IPathConverter::Ptr_t GetPathConverter() const { return m_pathConverter; }
+
     LanguageServerProtocol& SetName(const wxString& name)
     {
         this->m_name = name;
@@ -163,7 +160,7 @@ public:
      * @brief return list of all supported languages by LSP. The list contains the abbreviation entry and a description
      */
     static std::set<wxString> GetSupportedLanguages();
-    bool CanHandle(const wxFileName& filename) const;
+    bool CanHandle(const wxString& filename) const;
 
     /**
      * @brief start LSP server and connect to it (e.g. clangd)

@@ -5,6 +5,7 @@
 #include "SocketAPI/clSocketClientAsync.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
+#include <wx/ffile.h>
 
 ///===------------------------------
 /// LSPNetwork based on STDIO
@@ -14,6 +15,7 @@ class LSPNetworkSTDIO : public LSPNetwork
 {
 protected:
     ChildProcess* m_server = nullptr;
+    wxFFile m_log;
 
 protected:
     void DoStartLocalProcess();

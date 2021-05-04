@@ -10,9 +10,9 @@ namespace LSP
 class WXDLLIMPEXP_CL DocumentSymbolsRequest : public LSP::Request
 {
 public:
-    DocumentSymbolsRequest(const wxFileName& filename);
+    explicit DocumentSymbolsRequest(const wxString& filename);
     virtual ~DocumentSymbolsRequest();
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner, IPathConverter::Ptr_t pathConverter);
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };
 };     // namespace LSP
 #endif // DOCUMDENET_SYMBOLS_REQUEST_HPP

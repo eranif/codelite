@@ -116,6 +116,7 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_OPEN_RESOURCE_FILE_SELECTED, &RemotyWorkspace::OnOpenResourceFile, this);
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &RemotyWorkspace::OnShutdown, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
 
     // codelite-remote events
 
@@ -158,6 +159,7 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_OPEN_RESOURCE_FILE_SELECTED, &RemotyWorkspace::OnOpenResourceFile, this);
     EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &RemotyWorkspace::OnShutdown, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
 
     // codelite-remote events
 
@@ -982,4 +984,15 @@ void RemotyWorkspace::DoProcessBuildOutput(const wxString& output, bool is_compl
         clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
         EventNotifier::Get()->AddPendingEvent(eventStopped);
     }
+}
+
+void RemotyWorkspace::OnLSPOpenFile(LSPEvent& event)
+{
+    CHECK_EVENT(event);
+    auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), m_account);
+    if(!editor) {
+        event.Skip();
+        return;
+    }
+    editor->GetCtrl()->GotoLine(event.GetLineNumber());
 }

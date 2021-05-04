@@ -10,6 +10,7 @@ wxDEFINE_EVENT(wxEVT_LSP_SIGNATURE_HELP, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_SET_DIAGNOSTICS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_CLEAR_DIAGNOSTICS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_DOCUMENT_SYMBOLS, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_OPEN_FILE, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)

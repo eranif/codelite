@@ -12,33 +12,30 @@ namespace LSP
 //===----------------------------------------------------------------------------------
 // TextDocumentIdentifier
 //===----------------------------------------------------------------------------------
-void TextDocumentIdentifier::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void TextDocumentIdentifier::FromJSON(const JSONItem& json)
 {
-    wxString uri = json.namedObject("uri").toString();
-    auto path = pathConverter->ConvertFrom(uri);
-    m_filename = path.GetPath();
+    URI::FromString(json.namedObject("uri").toString(), &m_filename);
 }
 
-JSONItem TextDocumentIdentifier::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem TextDocumentIdentifier::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    auto path = pathConverter->ConvertTo(m_filename);
-    json.addProperty("uri", path.GetPath());
+    json.addProperty("uri", GetPathAsURI());
     return json;
 }
 
 //===----------------------------------------------------------------------------------
 // VersionedTextDocumentIdentifier
 //===----------------------------------------------------------------------------------
-void VersionedTextDocumentIdentifier::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void VersionedTextDocumentIdentifier::FromJSON(const JSONItem& json)
 {
-    TextDocumentIdentifier::FromJSON(json, pathConverter);
+    TextDocumentIdentifier::FromJSON(json);
     m_version = json.namedObject("version").toInt(m_version);
 }
 
-JSONItem VersionedTextDocumentIdentifier::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem VersionedTextDocumentIdentifier::ToJSON(const wxString& name) const
 {
-    JSONItem json = TextDocumentIdentifier::ToJSON(name, pathConverter);
+    JSONItem json = TextDocumentIdentifier::ToJSON(name);
     json.addProperty("version", m_version);
     return json;
 }
@@ -46,13 +43,13 @@ JSONItem VersionedTextDocumentIdentifier::ToJSON(const wxString& name, IPathConv
 //===----------------------------------------------------------------------------------
 // Position
 //===----------------------------------------------------------------------------------
-void Position::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void Position::FromJSON(const JSONItem& json)
 {
     m_line = json.namedObject("line").toInt(0);
     m_character = json.namedObject("character").toInt(0);
 }
 
-JSONItem Position::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem Position::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("line", m_line);
@@ -63,21 +60,19 @@ JSONItem Position::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConver
 //===----------------------------------------------------------------------------------
 // TextDocumentItem
 //===----------------------------------------------------------------------------------
-void TextDocumentItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void TextDocumentItem::FromJSON(const JSONItem& json)
 {
-    auto path = pathConverter->ConvertFrom(json.namedObject("uri").toString());
-    m_uri = path.GetPath();
+    URI::FromString(json.namedObject("uri").toString(), &m_uri);
 
     m_languageId = json.namedObject("languageId").toString();
     m_version = json.namedObject("version").toInt();
     m_text = json.namedObject("text").toString();
 }
 
-JSONItem TextDocumentItem::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem TextDocumentItem::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    auto path = pathConverter->ConvertTo(GetUri());
-    json.addProperty("uri", path.GetPath())
+    json.addProperty("uri", GetPathAsURI())
         .addProperty("languageId", GetLanguageId())
         .addProperty("version", GetVersion())
         .addProperty("text", GetText());
@@ -86,71 +81,64 @@ JSONItem TextDocumentItem::ToJSON(const wxString& name, IPathConverter::Ptr_t pa
 //===----------------------------------------------------------------------------------
 // TextDocumentContentChangeEvent
 //===----------------------------------------------------------------------------------
-void TextDocumentContentChangeEvent::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
-{
-    m_text = json.namedObject("text").toString();
-}
+void TextDocumentContentChangeEvent::FromJSON(const JSONItem& json) { m_text = json.namedObject("text").toString(); }
 
-JSONItem TextDocumentContentChangeEvent::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem TextDocumentContentChangeEvent::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("text", m_text);
     return json;
 }
 
-void Range::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void Range::FromJSON(const JSONItem& json)
 {
-    m_start.FromJSON(json.namedObject("start"), pathConverter);
-    m_end.FromJSON(json.namedObject("end"), pathConverter);
+    m_start.FromJSON(json.namedObject("start"));
+    m_end.FromJSON(json.namedObject("end"));
 }
 
-JSONItem Range::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem Range::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_start.ToJSON("start", pathConverter));
-    json.append(m_start.ToJSON("end", pathConverter));
+    json.append(m_start.ToJSON("start"));
+    json.append(m_start.ToJSON("end"));
     return json;
 }
 
-void Location::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void Location::FromJSON(const JSONItem& json)
 {
-    auto path = pathConverter->ConvertFrom(json.namedObject("uri").toString());
-    m_trySSH = path.IsRemoteFile();
-    m_uri = path.GetPath();
-    m_range.FromJSON(json.namedObject("range"), pathConverter);
+    URI::FromString(json.namedObject("uri").toString(), &m_uri);
+    m_range.FromJSON(json.namedObject("range"));
 }
 
-JSONItem Location::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem Location::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    auto path = pathConverter->ConvertTo(m_uri);
-    json.addProperty("uri", path.GetPath());
-    json.append(m_range.ToJSON("range", pathConverter));
+    json.addProperty("uri", GetPathAsURI());
+    json.append(m_range.ToJSON("range"));
     return json;
 }
 
-void TextEdit::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void TextEdit::FromJSON(const JSONItem& json)
 {
-    m_range.FromJSON(json.namedObject("range"), pathConverter);
+    m_range.FromJSON(json.namedObject("range"));
     m_newText = json.namedObject("newText").toString();
 }
 
-JSONItem TextEdit::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem TextEdit::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("newText", m_newText);
-    json.append(m_range.ToJSON("range", pathConverter));
+    json.append(m_range.ToJSON("range"));
     return json;
 }
-}; // namespace LSP
 
-void LSP::ParameterInformation::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void ParameterInformation::FromJSON(const JSONItem& json)
 {
     m_label = json.namedObject("label").toString();
     m_documentation = json.namedObject("documentation").toString();
 }
 
-JSONItem LSP::ParameterInformation::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem ParameterInformation::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("label", m_label);
@@ -158,7 +146,7 @@ JSONItem LSP::ParameterInformation::ToJSON(const wxString& name, IPathConverter:
     return json;
 }
 
-void LSP::SignatureInformation::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void SignatureInformation::FromJSON(const JSONItem& json)
 {
     m_label = json.namedObject("label").toString();
     m_documentation = json.namedObject("documentation").toString();
@@ -170,14 +158,14 @@ void LSP::SignatureInformation::FromJSON(const JSONItem& json, IPathConverter::P
             m_parameters.reserve(size);
             for(int i = 0; i < size; ++i) {
                 ParameterInformation p;
-                p.FromJSON(parameters.arrayItem(i), pathConverter);
+                p.FromJSON(parameters.arrayItem(i));
                 m_parameters.push_back(p);
             }
         }
     }
 }
 
-JSONItem LSP::SignatureInformation::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem SignatureInformation::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("label", m_label);
@@ -186,13 +174,13 @@ JSONItem LSP::SignatureInformation::ToJSON(const wxString& name, IPathConverter:
         JSONItem params = JSONItem::createArray("parameters");
         json.append(params);
         for(size_t i = 0; i < m_parameters.size(); ++i) {
-            params.append(m_parameters.at(i).ToJSON("", pathConverter));
+            params.append(m_parameters.at(i).ToJSON(""));
         }
     }
     return json;
 }
 
-void LSP::SignatureHelp::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void SignatureHelp::FromJSON(const JSONItem& json)
 {
     // Read the signatures
     m_signatures.clear();
@@ -200,7 +188,7 @@ void LSP::SignatureHelp::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pa
     const int count = signatures.arraySize();
     for(int i = 0; i < count; ++i) {
         SignatureInformation si;
-        si.FromJSON(signatures.arrayItem(i), pathConverter);
+        si.FromJSON(signatures.arrayItem(i));
         m_signatures.push_back(si);
     }
 
@@ -208,13 +196,13 @@ void LSP::SignatureHelp::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pa
     m_activeParameter = json.namedObject("activeParameter").toInt(0);
 }
 
-JSONItem LSP::SignatureHelp::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem SignatureHelp::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     JSONItem signatures = JSONItem::createArray("signatures");
     json.append(signatures);
     for(const SignatureInformation& si : m_signatures) {
-        signatures.arrayAppend(si.ToJSON("", pathConverter));
+        signatures.arrayAppend(si.ToJSON(""));
     }
     json.addProperty("activeSignature", m_activeSignature);
     json.addProperty("activeParameter", m_activeParameter);
@@ -224,21 +212,21 @@ JSONItem LSP::SignatureHelp::ToJSON(const wxString& name, IPathConverter::Ptr_t 
 ///===------------------------------------------------------------------------
 /// Diagnostic
 ///===------------------------------------------------------------------------
-void LSP::Diagnostic::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void Diagnostic::FromJSON(const JSONItem& json)
 {
-    m_range.FromJSON(json.namedObject("range"), pathConverter);
+    m_range.FromJSON(json.namedObject("range"));
     m_message = json.namedObject("message").toString();
 }
 
-JSONItem LSP::Diagnostic::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem Diagnostic::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_range.ToJSON("range", pathConverter));
+    json.append(m_range.ToJSON("range"));
     json.addProperty("message", GetMessage());
     return json;
 }
 
-LSP::TextDocumentContentChangeEvent& LSP::TextDocumentContentChangeEvent::SetText(const std::string& text)
+TextDocumentContentChangeEvent& TextDocumentContentChangeEvent::SetText(const std::string& text)
 {
     this->m_text.clear();
     if(!text.empty()) {
@@ -250,13 +238,13 @@ LSP::TextDocumentContentChangeEvent& LSP::TextDocumentContentChangeEvent::SetTex
 //===----------------------------------------------------------------------------------
 // DocumentSymbol
 //===----------------------------------------------------------------------------------
-void LSP::DocumentSymbol::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void DocumentSymbol::FromJSON(const JSONItem& json)
 {
     name = json["name"].toString();
     detail = json["detail"].toString();
     kind = (eSymbolKind)json["kind"].toInt(0);
-    range.FromJSON(json["range"], pathConverter);
-    selectionRange.FromJSON(json["selectionRange"], pathConverter);
+    range.FromJSON(json["range"]);
+    selectionRange.FromJSON(json["selectionRange"]);
 
     // read the children
     auto jsonChildren = json["children"];
@@ -266,30 +254,39 @@ void LSP::DocumentSymbol::FromJSON(const JSONItem& json, IPathConverter::Ptr_t p
     for(int i = 0; i < size; ++i) {
         auto child = jsonChildren[i];
         DocumentSymbol ds;
-        ds.FromJSON(child, pathConverter);
+        ds.FromJSON(child);
         children.push_back(ds);
     }
 }
 
-JSONItem LSP::DocumentSymbol::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem DocumentSymbol::ToJSON(const wxString& name) const
 {
-    wxASSERT_MSG(false, "LSP::DocumentSymbol::ToJSON(): is not implemented");
+    wxASSERT_MSG(false, "DocumentSymbol::ToJSON(): is not implemented");
     return JSONItem(nullptr);
 }
 
 //===----------------------------------------------------------------------------------
 // DocumentSymbol
 //===----------------------------------------------------------------------------------
-void LSP::SymbolInformation::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void SymbolInformation::FromJSON(const JSONItem& json)
 {
     name = json["name"].toString();
     containerName = json["containerName"].toString();
     kind = (eSymbolKind)json["kind"].toInt(0);
-    location.FromJSON(json["location"], pathConverter);
+    location.FromJSON(json["location"]);
 }
 
-JSONItem LSP::SymbolInformation::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
+JSONItem SymbolInformation::ToJSON(const wxString& name) const
 {
     wxASSERT_MSG(false, "LSP::SymbolInformation::ToJSON(): is not implemented");
     return JSONItem(nullptr);
 }
+
+const wxString& URI::GetPath() const { return m_path; }
+const wxString& URI::GetUrl() const { return m_uri; }
+void URI::FromString(const wxString& str, URI* uri)
+{
+    uri->m_path = FileUtils::FilePathFromURI(str);
+    uri->m_uri = FileUtils::FilePathToURI(str);
+}
+}; // namespace LSP

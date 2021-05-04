@@ -5,12 +5,9 @@ LSP::CompletionItem::CompletionItem() {}
 
 LSP::CompletionItem::~CompletionItem() {}
 
-JSONItem LSP::CompletionItem::ToJSON(const wxString& name, IPathConverter::Ptr_t pathConverter) const
-{
-    return JSONItem(NULL);
-}
+JSONItem LSP::CompletionItem::ToJSON(const wxString& name) const { return JSONItem(NULL); }
 
-void LSP::CompletionItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t pathConverter)
+void LSP::CompletionItem::FromJSON(const JSONItem& json)
 {
     m_label = json.namedObject("label").toString();
     m_kind = json.namedObject("kind").toInt(m_kind);
@@ -37,7 +34,7 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t p
         int count = additionalTextEdits.arraySize();
         for(int i = 0; i < count; ++i) {
             wxSharedPtr<TextEdit> edit(new TextEdit());
-            edit->FromJSON(additionalTextEdits.arrayItem(i), pathConverter);
+            edit->FromJSON(additionalTextEdits.arrayItem(i));
             m_vAdditionalText.push_back(edit);
         }
     }
@@ -48,6 +45,6 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json, IPathConverter::Ptr_t p
     m_documentation.Trim().Trim(false);
     if(json.hasNamedObject("textEdit") && !json.namedObject("textEdit").isNull()) {
         m_textEdit.reset(new LSP::TextEdit());
-        m_textEdit->FromJSON(json.namedObject("textEdit"), pathConverter);
+        m_textEdit->FromJSON(json.namedObject("textEdit"));
     }
 }

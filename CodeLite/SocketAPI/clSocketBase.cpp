@@ -26,16 +26,16 @@
 #include "clSocketBase.h"
 #include <cerrno>
 #include <cstdio>
-#include <sstream>
 #include <memory>
+#include <sstream>
 
 #ifndef _WIN32
 #include <fcntl.h>
-#include <unistd.h>
-#include <sys/select.h>
 #include <string.h>
-#include <sys/types.h>
+#include <sys/select.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 #endif
 
 clSocketBase::clSocketBase(socket_t sockfd)
@@ -118,8 +118,7 @@ int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long 
         }
 
         throw clSocketException("Read failed: " + error(err));
-    }
-    else if(0 == res) {
+    } else if(0 == res) {
         throw clSocketException("Read failed: " + error());
     }
 
@@ -187,9 +186,11 @@ void clSocketBase::Send(const wxMemoryBuffer& msg)
     char* pdata = (char*)msg.GetData();
     int bytesLeft = msg.GetDataLen();
     while(bytesLeft) {
-        if(SelectWriteMS(1000) == kTimeout) continue;
+        if(SelectWriteMS(1000) == kTimeout)
+            continue;
         int bytesSent = ::send(m_socket, (const char*)pdata, bytesLeft, 0);
-        if(bytesSent <= 0) throw clSocketException("Send error: " + error());
+        if(bytesSent <= 0)
+            throw clSocketException("Send error: " + error());
         pdata += bytesSent;
         bytesLeft -= bytesSent;
     }
@@ -204,27 +205,20 @@ int clSocketBase::GetLastError()
 #endif
 }
 
-std::string clSocketBase::error()
-{
-    return error(GetLastError());
-}
+std::string clSocketBase::error() { return error(GetLastError()); }
 
 std::string clSocketBase::error(const int errorCode)
 {
     std::string err;
 #ifdef _WIN32
     // Get the error message, if any.
-    if(errorCode == 0) return "No error message has been recorded";
+    if(errorCode == 0)
+        return "No error message has been recorded";
 
     LPSTR messageBuffer = nullptr;
     size_t size =
         FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                       NULL,
-                       errorCode,
-                       MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                       (LPSTR)&messageBuffer,
-                       0,
-                       NULL);
+                       NULL, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
 
     std::string message(messageBuffer, size);
 
@@ -434,4 +428,10 @@ int clSocketBase::SelectReadMS(long milliSeconds)
         // we got something to read
         return kSuccess;
     }
+}
+
+void clSocketBase::SetSocket(socket_t socket)
+{
+    SetCloseOnExit(false);
+    m_socket = socket;
 }

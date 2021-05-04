@@ -415,7 +415,7 @@ bool UnixProcessImpl::WriteToConsole(const wxString& buff)
     tmpbuf.Trim().Trim(false);
 
     tmpbuf << wxT("\n");
-    int bytes = write(GetWriteHandle(), tmpbuf.mb_str(wxConvUTF8).data(), tmpbuf.Length());
+    int bytes = ::write(GetWriteHandle(), tmpbuf.mb_str(wxConvUTF8).data(), tmpbuf.Length());
     return bytes == (int)tmpbuf.length();
 }
 

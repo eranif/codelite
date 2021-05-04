@@ -26,8 +26,8 @@
 #ifndef CLSOCKETBASE_H
 #define CLSOCKETBASE_H
 
-#include <sys/param.h>
 #include <string>
+#include <sys/param.h>
 #include <wx/msgqueue.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
@@ -68,8 +68,8 @@ public:
 class WXDLLIMPEXP_CL clSocketBase
 {
 protected:
-    socket_t m_socket;
-    bool m_closeOnExit;
+    socket_t m_socket = INVALID_SOCKET;
+    bool m_closeOnExit = true;
 
 public:
     typedef wxSharedPtr<clSocketBase> Ptr_t;
@@ -114,6 +114,11 @@ public:
     static void Initialize();
 
     socket_t GetSocket() const { return m_socket; }
+
+    /**
+     * @brief use user socket handle
+     */
+    void SetSocket(socket_t socket);
 
     /**
      * @brief

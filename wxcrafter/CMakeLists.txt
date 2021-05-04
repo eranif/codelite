@@ -36,7 +36,7 @@ else (UNIX AND NOT APPLE )
     set(__WX_COMPONENTS "std")
 endif()
 
-find_package(wxWidgets COMPONENTS ${__WX_COMPONENTS} REQUIRED)
+
 
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )

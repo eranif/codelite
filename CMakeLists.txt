@@ -272,6 +272,9 @@ if (UNIX AND NOT APPLE)
 
 endif (UNIX AND NOT APPLE)
 
+# find wxWidgets once
+find_package(wxWidgets COMPONENTS adv aui base core html propgrid xml xrc net stc ribbon richtext REQUIRED)
+
 if (AUTOGEN_REVISION MATCHES 0)
     set ( MAKE_AUTOGEN_REVISION_STRING 0)
 else (AUTOGEN_REVISION MATCHES 1)
@@ -279,14 +282,10 @@ else (AUTOGEN_REVISION MATCHES 1)
 endif (AUTOGEN_REVISION MATCHES 0)
 unset(AUTOGEN_REVISION CACHE)
 
-## build wxCrafter?
-if ( WITH_WXC )
-    set(BUILD_WXC 1)
-    if ( UNIX AND NOT APPLE )
-        set(WX_COMPONENTS "std aui propgrid stc richtext ribbon")
-    endif (UNIX AND NOT APPLE )
-endif ( WITH_WXC )
-unset(WITH_WXC CACHE)
+set(BUILD_WXC 1)
+if ( UNIX AND NOT APPLE )
+    set(WX_COMPONENTS "std aui propgrid stc richtext ribbon")
+endif (UNIX AND NOT APPLE )
 
 ## package the wx libs?
 if (COPY_WX_LIBS MATCHES 1)

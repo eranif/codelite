@@ -3,9 +3,9 @@ message("-- Processing target codelite-lldb")
 
 if ( APPLE )
     ## Under Apple, we only support monolithic build of wxWidgets
-    find_package(wxWidgets COMPONENTS std REQUIRED)
+    
 else ( APPLE )
-    find_package(wxWidgets COMPONENTS std aui propgrid stc richtext ribbon REQUIRED)
+    
 endif ( APPLE )
 
 FILE(GLOB SRC "*.cpp")

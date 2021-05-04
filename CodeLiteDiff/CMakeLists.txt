@@ -8,7 +8,7 @@ set(PLUGIN_NAME "CodeLiteDiff")
 project(${PLUGIN_NAME})
 
 # Find wxWidgets with required components
-find_package(wxWidgets COMPONENTS ${WX_COMPONENTS} REQUIRED)
+
 
 # wxWidgets include
 include("${wxWidgets_USE_FILE}")

@@ -12,15 +12,6 @@ endif()
 # visual studio, and in our makefiles. 
 project( ${PLUGIN_NAME} )
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-if (WITH_WEBVIEW)
-    message("-- Internal Web Browser is enabled")
-    find_package(wxWidgets COMPONENTS adv aui base core html propgrid xml xrc net stc webview REQUIRED)
-else()
-    message("-- Internal Web Browser is disabled")
-    find_package(wxWidgets COMPONENTS adv aui base core html propgrid xml xrc net stc REQUIRED)
-endif()
-
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 

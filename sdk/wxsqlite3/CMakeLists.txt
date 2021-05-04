@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.0)
 project(wxsqlite3)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS core base REQUIRED)
+
 
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )

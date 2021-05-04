@@ -14,7 +14,7 @@ project(codelite-cli)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-find_package(wxWidgets COMPONENTS base xml REQUIRED)
+
 include("${wxWidgets_USE_FILE}")
 
 if(APPLE)

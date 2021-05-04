@@ -6,9 +6,9 @@ cmake_minimum_required(VERSION 3.0)
 project(codelite-terminal)
 
 if ( UNIX OR MINGW AND NOT APPLE )
-    find_package(wxWidgets COMPONENTS std stc aui REQUIRED)
+    
 else ( UNIX AND NOT APPLE )
-    find_package(wxWidgets COMPONENTS std stc REQUIRED)
+    
 endif ( UNIX OR MINGW AND NOT APPLE )
 
 # we need wxWidgets flags to be set only for the c++ files, so we do it like this

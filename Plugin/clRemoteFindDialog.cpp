@@ -36,6 +36,7 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
         }
         m_choiceAccounts->Append(accounts_arr);
         m_choiceAccounts->SetStringSelection(account_name);
+        m_choiceAccounts->Enable(false);
     }
 
     // read the find what list
@@ -60,6 +61,7 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     UpdateCombo(m_comboBoxTypes, data.file_types, data.last_file_types);
     m_checkBoxCase->SetValue(data.flags & kCaseSearch);
     m_checkBoxWholeWord->SetValue(data.flags & kWholeWord);
+    m_comboBoxFindWhat->GetTextCtrl()->SelectAll();
 }
 
 clRemoteFindDialog::~clRemoteFindDialog()
@@ -77,6 +79,20 @@ clRemoteFindDialog::~clRemoteFindDialog()
     }
     if(m_checkBoxWholeWord->IsChecked()) {
         data.flags |= kWholeWord;
+    }
+
+    // truncate the number of items we keep in the history
+    static constexpr int max_size = 20;
+    if(data.where_arr.size() > max_size) {
+        data.where_arr.resize(max_size);
+    }
+
+    if(data.find_what_arr.size() > max_size) {
+        data.find_what_arr.resize(max_size);
+    }
+
+    if(data.file_types.size() > max_size) {
+        data.file_types.resize(max_size);
     }
 
     clConfig::Get().Write("remote_find_in_files", [&data]() -> JSONItem {
@@ -99,26 +115,13 @@ void clRemoteFindDialog::UpdateCombo(clThemedComboBox* cb, const wxArrayString& 
     cb->SetStringSelection(lastSelection);
 }
 
-void clRemoteFindDialog::OnOK_UI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_comboBoxFindWhat->GetStringSelection().empty() && !m_comboBoxTypes->GetStringSelection().empty() &&
-                 !m_comboBoxWhere->GetStrings().empty() && !m_choiceAccounts->GetStringSelection().empty());
-}
+void clRemoteFindDialog::OnOK_UI(wxUpdateUIEvent& event) { event.Enable(CanOk()); }
 
-void clRemoteFindDialog::SetWhere(const wxString& where)
-{
-    m_comboBoxWhere->SetValue(where);
-}
+void clRemoteFindDialog::SetWhere(const wxString& where) { m_comboBoxWhere->SetValue(where); }
 
-void clRemoteFindDialog::SetFileTypes(const wxString& filetypes)
-{
-    m_comboBoxTypes->SetValue(filetypes);
-}
+void clRemoteFindDialog::SetFileTypes(const wxString& filetypes) { m_comboBoxTypes->SetValue(filetypes); }
 
-void clRemoteFindDialog::SetFindWhat(const wxString& findWhat)
-{
-    m_comboBoxFindWhat->SetValue(findWhat);
-}
+void clRemoteFindDialog::SetFindWhat(const wxString& findWhat) { m_comboBoxFindWhat->SetValue(findWhat); }
 
 wxArrayString clRemoteFindDialog::GetGrepCommand() const
 {
@@ -152,27 +155,26 @@ wxArrayString clRemoteFindDialog::GetGrepCommand() const
     return command;
 }
 
-wxString clRemoteFindDialog::GetWhere() const
+wxString clRemoteFindDialog::GetWhere() const { return m_comboBoxWhere->GetStringSelection(); }
+
+wxString clRemoteFindDialog::GetFindWhat() const { return m_comboBoxFindWhat->GetStringSelection(); }
+
+wxString clRemoteFindDialog::GetFileExtensions() const { return m_comboBoxTypes->GetStringSelection(); }
+
+bool clRemoteFindDialog::IsIcase() const { return !m_checkBoxCase->IsChecked(); }
+
+bool clRemoteFindDialog::IsWholeWord() const { return m_checkBoxWholeWord->IsChecked(); }
+
+void clRemoteFindDialog::OnSearch(wxCommandEvent& event)
 {
-    return m_comboBoxWhere->GetStringSelection();
+    wxUnusedVar(event);
+    if(CanOk()) {
+        EndModal(wxID_OK);
+    }
 }
 
-wxString clRemoteFindDialog::GetFindWhat() const
+bool clRemoteFindDialog::CanOk() const
 {
-    return m_comboBoxFindWhat->GetStringSelection();
-}
-
-wxString clRemoteFindDialog::GetFileExtensions() const
-{
-    return m_comboBoxTypes->GetStringSelection();
-}
-
-bool clRemoteFindDialog::IsIcase() const
-{
-    return !m_checkBoxCase->IsChecked();
-}
-
-bool clRemoteFindDialog::IsWholeWord() const
-{
-    return m_checkBoxWholeWord->IsChecked();
+    return !m_comboBoxFindWhat->GetStringSelection().empty() && !m_comboBoxTypes->GetStringSelection().empty() &&
+           !m_comboBoxWhere->GetStrings().empty() && !m_choiceAccounts->GetStringSelection().empty();
 }

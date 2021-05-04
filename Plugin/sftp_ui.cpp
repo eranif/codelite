@@ -579,10 +579,22 @@ clRemoteFindDialogBase::clRemoteFindDialogBase(wxWindow* parent, wxWindowID id, 
     }
 #endif
     // Connect events
+    m_comboBoxFindWhat->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
+                                this);
+    m_comboBoxWhere->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
+                             this);
+    m_comboBoxTypes->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
+                             this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clRemoteFindDialogBase::OnOK_UI), NULL, this);
 }
 
 clRemoteFindDialogBase::~clRemoteFindDialogBase()
 {
+    m_comboBoxFindWhat->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch),
+                                   NULL, this);
+    m_comboBoxWhere->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
+                                this);
+    m_comboBoxTypes->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clRemoteFindDialogBase::OnSearch), NULL,
+                                this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clRemoteFindDialogBase::OnOK_UI), NULL, this);
 }

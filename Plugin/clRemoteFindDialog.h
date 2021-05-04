@@ -9,8 +9,10 @@
 class WXDLLIMPEXP_SDK clRemoteFindDialog : public clRemoteFindDialogBase
 {
 protected:
+    virtual void OnSearch(wxCommandEvent& event);
     virtual void OnOK_UI(wxUpdateUIEvent& event);
     void UpdateCombo(clThemedComboBox* cb, const wxArrayString& options, const wxString& lastSelection);
+    bool CanOk() const;
 
 public:
     clRemoteFindDialog(wxWindow* parent, const wxString& account_name);

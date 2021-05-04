@@ -60,60 +60,21 @@ protected:
     wxButton* m_button8;
 
 protected:
-    virtual void OnItemActivated(wxDataViewEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnAddAccount(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnDeleteAccount(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnDeleteAccountUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnEditAccountUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnEditAccount(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnOK(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnAddAccount(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteAccount(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnEditAccountUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnEditAccount(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    clThemedListCtrl* GetDvListCtrl()
-    {
-        return m_dvListCtrl;
-    }
-    wxButton* GetButtonNew()
-    {
-        return m_buttonNew;
-    }
-    wxButton* GetButtonDelete()
-    {
-        return m_buttonDelete;
-    }
-    wxButton* GetButtonEdit()
-    {
-        return m_buttonEdit;
-    }
-    wxButton* GetButton6()
-    {
-        return m_button6;
-    }
-    wxButton* GetButton8()
-    {
-        return m_button8;
-    }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxButton* GetButtonNew() { return m_buttonNew; }
+    wxButton* GetButtonDelete() { return m_buttonDelete; }
+    wxButton* GetButtonEdit() { return m_buttonEdit; }
+    wxButton* GetButton6() { return m_button6; }
+    wxButton* GetButton8() { return m_button8; }
     SSHAccountManagerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                              const wxString& title = _("SSH Account Manager"), const wxPoint& pos = wxDefaultPosition,
                              const wxSize& size = wxSize(-1, -1),
@@ -142,88 +103,28 @@ protected:
     wxButton* m_button25;
 
 protected:
-    virtual void OnHomeFolderUpdated(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnTestConnection(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnTestConnectionUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnOKUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnHomeFolderUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTestConnection(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTestConnectionUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxInfoBar* GetInfobar()
-    {
-        return m_infobar;
-    }
-    wxStaticText* GetStaticText98()
-    {
-        return m_staticText98;
-    }
-    wxTextCtrl* GetTextCtrlName()
-    {
-        return m_textCtrlName;
-    }
-    wxStaticText* GetStaticHostIp()
-    {
-        return m_staticHostIp;
-    }
-    wxTextCtrl* GetTextCtrlHost()
-    {
-        return m_textCtrlHost;
-    }
-    wxStaticText* GetStaticText45()
-    {
-        return m_staticText45;
-    }
-    wxTextCtrl* GetTextCtrlPort()
-    {
-        return m_textCtrlPort;
-    }
-    wxStaticText* GetStaticText37()
-    {
-        return m_staticText37;
-    }
-    wxTextCtrl* GetTextCtrlUsername()
-    {
-        return m_textCtrlUsername;
-    }
-    wxStaticText* GetStaticText41()
-    {
-        return m_staticText41;
-    }
-    wxTextCtrl* GetTextCtrlPassword()
-    {
-        return m_textCtrlPassword;
-    }
-    wxStaticText* GetStaticText110()
-    {
-        return m_staticText110;
-    }
-    wxTextCtrl* GetTextCtrlHomeFolder()
-    {
-        return m_textCtrlHomeFolder;
-    }
-    wxButton* GetButton51()
-    {
-        return m_button51;
-    }
-    wxButton* GetButton27()
-    {
-        return m_button27;
-    }
-    wxButton* GetButton25()
-    {
-        return m_button25;
-    }
+    wxInfoBar* GetInfobar() { return m_infobar; }
+    wxStaticText* GetStaticText98() { return m_staticText98; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticHostIp() { return m_staticHostIp; }
+    wxTextCtrl* GetTextCtrlHost() { return m_textCtrlHost; }
+    wxStaticText* GetStaticText45() { return m_staticText45; }
+    wxTextCtrl* GetTextCtrlPort() { return m_textCtrlPort; }
+    wxStaticText* GetStaticText37() { return m_staticText37; }
+    wxTextCtrl* GetTextCtrlUsername() { return m_textCtrlUsername; }
+    wxStaticText* GetStaticText41() { return m_staticText41; }
+    wxTextCtrl* GetTextCtrlPassword() { return m_textCtrlPassword; }
+    wxStaticText* GetStaticText110() { return m_staticText110; }
+    wxTextCtrl* GetTextCtrlHomeFolder() { return m_textCtrlHomeFolder; }
+    wxButton* GetButton51() { return m_button51; }
+    wxButton* GetButton27() { return m_button27; }
+    wxButton* GetButton25() { return m_button25; }
     AddSSHAcountDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Add Account"),
                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
@@ -246,88 +147,28 @@ protected:
     wxButton* m_button61;
 
 protected:
-    virtual void OnTextEnter(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnRefresh(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnRefreshUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnItemSelected(wxDataViewEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnItemActivated(wxDataViewEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnTextUpdated(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnEnter(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnFocusLost(wxFocusEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnOKUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnTextEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnFocusLost(wxFocusEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar()
-    {
-        return m_toolbar;
-    }
-    wxStaticText* GetStaticText82()
-    {
-        return m_staticText82;
-    }
-    wxChoice* GetChoiceAccount()
-    {
-        return m_choiceAccount;
-    }
-    wxStaticText* GetStaticText66()
-    {
-        return m_staticText66;
-    }
-    wxTextCtrl* GetTextCtrlRemoteFolder()
-    {
-        return m_textCtrlRemoteFolder;
-    }
-    wxButton* GetButtonRefresh()
-    {
-        return m_buttonRefresh;
-    }
-    clThemedListCtrl* GetDataview()
-    {
-        return m_dataview;
-    }
-    wxTextCtrl* GetTextCtrlInlineSearch()
-    {
-        return m_textCtrlInlineSearch;
-    }
-    wxButton* GetButton59()
-    {
-        return m_button59;
-    }
-    wxButton* GetButton61()
-    {
-        return m_button61;
-    }
-    wxPanel* GetPanel149()
-    {
-        return m_panel149;
-    }
+    clToolBar* GetToolbar() { return m_toolbar; }
+    wxStaticText* GetStaticText82() { return m_staticText82; }
+    wxChoice* GetChoiceAccount() { return m_choiceAccount; }
+    wxStaticText* GetStaticText66() { return m_staticText66; }
+    wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
+    wxButton* GetButtonRefresh() { return m_buttonRefresh; }
+    clThemedListCtrl* GetDataview() { return m_dataview; }
+    wxTextCtrl* GetTextCtrlInlineSearch() { return m_textCtrlInlineSearch; }
+    wxButton* GetButton59() { return m_button59; }
+    wxButton* GetButton61() { return m_button61; }
+    wxPanel* GetPanel149() { return m_panel149; }
     SFTPBrowserBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("SFTP Browser"),
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
@@ -352,52 +193,20 @@ protected:
     wxButton* m_button161;
 
 protected:
-    virtual void OnOK_UI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnSearch(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOK_UI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText165()
-    {
-        return m_staticText165;
-    }
-    clThemedComboBox* GetComboBoxFindWhat()
-    {
-        return m_comboBoxFindWhat;
-    }
-    wxStaticText* GetStaticText169()
-    {
-        return m_staticText169;
-    }
-    clThemedComboBox* GetComboBoxWhere()
-    {
-        return m_comboBoxWhere;
-    }
-    wxStaticText* GetStaticText175()
-    {
-        return m_staticText175;
-    }
-    clThemedComboBox* GetComboBoxTypes()
-    {
-        return m_comboBoxTypes;
-    }
-    wxStaticText* GetStaticText177()
-    {
-        return m_staticText177;
-    }
-    clThemedChoice* GetChoiceAccounts()
-    {
-        return m_choiceAccounts;
-    }
-    wxCheckBox* GetCheckBoxCase()
-    {
-        return m_checkBoxCase;
-    }
-    wxCheckBox* GetCheckBoxWholeWord()
-    {
-        return m_checkBoxWholeWord;
-    }
+    wxStaticText* GetStaticText165() { return m_staticText165; }
+    clThemedComboBox* GetComboBoxFindWhat() { return m_comboBoxFindWhat; }
+    wxStaticText* GetStaticText169() { return m_staticText169; }
+    clThemedComboBox* GetComboBoxWhere() { return m_comboBoxWhere; }
+    wxStaticText* GetStaticText175() { return m_staticText175; }
+    clThemedComboBox* GetComboBoxTypes() { return m_comboBoxTypes; }
+    wxStaticText* GetStaticText177() { return m_staticText177; }
+    clThemedChoice* GetChoiceAccounts() { return m_choiceAccounts; }
+    wxCheckBox* GetCheckBoxCase() { return m_checkBoxCase; }
+    wxCheckBox* GetCheckBoxWholeWord() { return m_checkBoxWholeWord; }
     clRemoteFindDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                            const wxString& title = _("Remote Find In Files"), const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

@@ -78,7 +78,7 @@ void LSPNetworkSTDIO::OnProcessOutput(clProcessEvent& event)
 
 void LSPNetworkSTDIO::OnProcessStderr(clProcessEvent& event)
 {
-    if(FileLogger::CanLog(FileLogger::Error)) {
+    if(FileLogger::CanLog(FileLogger::Dbg)) {
         m_log.Write(wxString() << "[**STDERR**]");
         m_log.Write(event.GetOutput());
     }

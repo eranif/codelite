@@ -851,11 +851,14 @@ wxString FileUtils::FilePathFromURI(const wxString& uri)
         wxRegEx re_windows_drive("/[a-z]{1}:", wxRE_DEFAULT | wxRE_ICASE);
         if(re_windows_drive.IsValid() && re_windows_drive.Matches(rest)) {
             rest.Remove(0, 1); // remove the leading slash
-            clDEBUG() << "Removing Windows Drive leading slash" << endl;
-            clDEBUG() << "File path from URI is:" << rest << endl;
+            // since we know that his is a Windows style path
+            // make sure we are using backslashes
+            rest.Replace("/", "\\");
         }
 #endif
-        return DecodeURI(rest);
+        rest = DecodeURI(rest);
+        clDEBUG() << "FilePathFromURI:" << uri << "->" << rest << endl;
+        return rest;
     } else {
         return uri;
     }

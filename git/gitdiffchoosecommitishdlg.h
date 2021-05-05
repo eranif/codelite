@@ -34,26 +34,20 @@ class GitDiffChooseCommitishDlg : public GitDiffChooseCommitishDlgBase
 public:
     GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin* plugin);
     virtual ~GitDiffChooseCommitishDlg();
-    
-    wxString GetFirstCommit() const {
-        return m_textFirst->GetValue() + GetAncestorSetting(m_spinCtrl1);
-    }
-    wxString GetSecondCommit() const {
-        return m_textSecond->GetValue() + GetAncestorSetting(m_spinCtrl2);
-    }
-    wxString GetJoiner() const {
-        return m_checkTripleDot->GetValue() ? "...":" ";
-    }
+
+    wxString GetFirstCommit() const { return m_textFirst->GetValue() + GetAncestorSetting(m_spinCtrl1); }
+    wxString GetSecondCommit() const { return m_textSecond->GetValue() + GetAncestorSetting(m_spinCtrl2); }
+    wxString GetJoiner() const { return m_checkTripleDot->GetValue() ? "..." : " "; }
+
 protected:
-    wxString m_gitPath;
     GitPlugin* m_plugin;
     IProcess* m_process;
-    
+
     int m_selectedRadio1;
     int m_selectedRadio2;
     wxItemContainerImmutable* m_activeChoice1; // May be a wxChoice or a wxComboBox
     wxItemContainerImmutable* m_activeChoice2;
-    
+
     wxString GetAncestorSetting(wxSpinCtrl* spin) const; // Returns any '~5' setting
 
     virtual void OnBranch1Changed(wxCommandEvent& event);

@@ -51,10 +51,6 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
     GitEntry data;
     conf.ReadItem(&data);
 
-    m_gitPath = data.GetGITExecutablePath();
-    m_gitPath.Trim().Trim(false);
-    ::WrapWithQuotes(m_gitPath);
-
     m_selectedRadio1 = data.GetGitDiffChooseDlgRadioSel1();
     m_selectedRadio2 = data.GetGitDiffChooseDlgRadioSel2();
     wxRadioButton* radiosL[] = { m_radioBranch1, m_radioTag1, m_radioCommit1, m_radioUserEntered1 };
@@ -73,7 +69,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
     m_comboCommitish2->Append(data.GetGitDiffChooseDlgCBoxValues2());
 
     m_plugin->AsyncRunGitWithCallback(
-        m_gitPath + " --no-pager branch -a --no-color",
+        " --no-pager branch -a --no-color",
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceBranch1->Set(items);
@@ -82,7 +78,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
         IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
 
     m_plugin->AsyncRunGitWithCallback(
-        m_gitPath + " --no-pager tag",
+        " --no-pager tag",
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceTag1->Set(items);
@@ -93,7 +89,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
     // Restrict the commits to 1000: filling a wxChoice with many more froze CodeLite for several minutes
     // and in any case, selecting one particular commit out of hundreds is not easy!
     m_plugin->AsyncRunGitWithCallback(
-        m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\"",
+        " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\"",
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceCommit1->Set(items);
@@ -235,7 +231,7 @@ void GitDiffChooseCommitishDlg::OnBranch1Changed(wxCommandEvent& event)
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
     m_plugin->AsyncRunGitWithCallback(
-        m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch,
+        " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch,
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceCommit1->Set(items);
@@ -250,7 +246,7 @@ void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
     }
 
     m_plugin->AsyncRunGitWithCallback(
-        m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch,
+        " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch,
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceCommit2->Set(items);

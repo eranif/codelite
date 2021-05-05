@@ -1,13 +1,13 @@
 #ifndef GITBLAMEDLG_H
 #define GITBLAMEDLG_H
-#include "gitui.h"
 #include "clEditorEditEventsHandler.h"
 #include "cl_command_event.h"
+#include "gitui.h"
 #include "macros.h"
-#include <wx/stc/stc.h>
+#include <map>
 #include <wx/arrstr.h>
 #include <wx/choice.h>
-#include <map>
+#include <wx/stc/stc.h>
 
 class IProcess;
 class GitPlugin;
@@ -85,7 +85,7 @@ public:
     void SetBlame(const wxString& blame, const wxString& args);
     void OnRevListOutput(const wxString& output, const wxString& Arguments);
     void Show();
-    
+
 protected:
     virtual void OnExtraArgsTextEnter(wxCommandEvent& event);
     virtual void OnRefreshBlame(wxCommandEvent& event);
@@ -105,7 +105,7 @@ protected:
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);
     void OnChangeFile(wxCommandEvent& event);
-    
+
     void DoCloseDialog();
 
     GitPlugin* m_plugin;
@@ -121,7 +121,6 @@ protected:
 
     wxString m_commandOutput;
     IProcess* m_process;
-    wxString m_gitPath;
 };
 
 class GitBlameSettingsDlg : public GitBlameSettingsDlgBase

@@ -140,12 +140,6 @@ GitBlameDlg::GitBlameDlg(wxWindow* parent, GitPlugin* plugin)
         m_splitterH->SetSashPosition(m_sashPositionH);
         m_splitterV->SetSashPosition(m_sashPositionV);
     }
-
-    m_gitPath = data.GetGITExecutablePath();
-    m_gitPath.Trim().Trim(false);
-
-    m_gitPath = data.GetGITExecutablePath();
-
     m_comboExtraArgs->Clear(); // Remove the placeholder string (there to make the control wider)
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitBlameDlg::OnProcessOutput, this);
@@ -486,8 +480,9 @@ void GitBlameDlg::OnProcessOutput(clProcessEvent& event) { m_commandOutput.Appen
 void GitBlameDlg::UpdateLogControls(const wxString& commit)
 {
     if(!commit.empty()) {
-        wxString command = wxString::Format(wxT("%s --no-pager show %s"), m_gitPath, commit);
-        m_process = m_plugin->AsyncRunGit(this, command, IProcessCreateDefault | IProcessWrapInShell,
+        wxString command_args;
+        command_args << "--no-pager show " << commit;
+        m_process = m_plugin->AsyncRunGit(this, command_args, IProcessCreateDefault | IProcessWrapInShell,
                                           m_plugin->GetRepositoryDirectory());
     }
 }

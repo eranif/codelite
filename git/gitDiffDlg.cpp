@@ -50,8 +50,6 @@ GitDiffDlg::GitDiffDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* 
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    m_gitPath = data.GetGITExecutablePath();
-    ::WrapWithQuotes(m_gitPath);
 
     SetName("GitDiffDlg");
     WindowAttrManager::Load(this);
@@ -109,7 +107,7 @@ wxString GitDiffDlg::PrepareCommand() const
         command << "--ignore-all-space "; // -w
     }
 
-    return m_gitPath + command + commitsString;
+    return command + commitsString;
 }
 
 void GitDiffDlg::SetDiff(const wxString& diff)

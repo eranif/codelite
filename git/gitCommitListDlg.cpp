@@ -60,18 +60,6 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
 
     LexerConf::Ptr_t textLex = EditorConfigST::Get()->GetLexer("text");
     textLex->Apply(m_stcCommitMessage, true);
-
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-    m_gitPath = data.GetGITExecutablePath();
-    m_gitPath.Trim().Trim(false);
-
-    if(m_gitPath.IsEmpty()) {
-        m_gitPath = "git";
-    }
-    ::WrapWithQuotes(m_gitPath);
-
     m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH, wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard), NULL, this);
     m_dvListCtrlCommitList->Connect(ID_REVERT_COMMIT, wxEVT_COMMAND_MENU_SELECTED,
@@ -146,9 +134,9 @@ void GitCommitListDlg::OnSelectionChanged(wxDataViewEvent& event)
     }
 
     wxString commitID = m_dvListCtrlCommitList->GetItemText(event.GetItem());
-    wxString command =
-        wxString::Format(wxT("%s --no-pager show --first-parent %s"), m_gitPath.c_str(), commitID.c_str());
-    m_process = m_git->AsyncRunGit(this, command, IProcessCreateDefault | IProcessWrapInShell, m_workingDir);
+    wxString command_args;
+    command_args << "--no-pager show --first-parent " << commitID;
+    m_process = m_git->AsyncRunGit(this, command_args, IProcessCreateDefault | IProcessWrapInShell, m_workingDir);
 }
 
 void GitCommitListDlg::OnContextMenu(wxDataViewEvent& event)

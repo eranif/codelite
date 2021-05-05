@@ -26,15 +26,15 @@
 #ifndef __WebTools__
 #define __WebTools__
 
-#include "plugin.h"
-#include "JavaScriptSyntaxColourThread.h"
-#include "cl_command_event.h"
-#include "JSCodeCompletion.h"
-#include <wx/timer.h>
-#include "ieditor.h"
-#include "XMLCodeCompletion.h"
 #include "CSSCodeCompletion.h"
+#include "JSCodeCompletion.h"
+#include "JavaScriptSyntaxColourThread.h"
+#include "XMLCodeCompletion.h"
 #include "clJSCTags.h"
+#include "cl_command_event.h"
+#include "ieditor.h"
+#include "plugin.h"
+#include <wx/timer.h>
 
 class NodeDebuggerPane;
 class NodeJSWorkspaceView;
@@ -57,8 +57,8 @@ class WebTools : public IPlugin
     wxString m_savePerspective;
 
 protected:
-    void OnWorkspaceClosed(wxCommandEvent& event);
-    void OnWorkspaceLoaded(wxCommandEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnEditorChanged(wxCommandEvent& event);
     void DoRefreshColours(const wxString& filename);
     void OnFileLoaded(clCommandEvent& event);

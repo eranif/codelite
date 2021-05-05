@@ -41,8 +41,8 @@ public:
     void OnOpen(wxCommandEvent& e);
     void OnProjectSaved(wxCommandEvent& e);
     void OnOpenUI(wxUpdateUIEvent& e);
-    void OnWorkspaceLoaded(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
 
 protected:
     virtual void OnRefreshWxcpFiles(wxCommandEvent& event);

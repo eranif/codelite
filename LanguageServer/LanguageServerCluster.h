@@ -5,6 +5,7 @@
 #include "LSP/basic_types.h"
 #include "LanguageServerEntry.h"
 #include "LanguageServerProtocol.h"
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "entry.h"
 #include <wx/event.h>
@@ -49,8 +50,8 @@ protected:
     void OnRestartNeeded(LSPEvent& event);
     void OnLSPInitialized(LSPEvent& event);
     void OnMethodNotFound(LSPEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
-    void OnWorkspaceOpen(wxCommandEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
+    void OnWorkspaceOpen(clWorkspaceEvent& event);
     void OnCompileCommandsGenerated(clCommandEvent& event);
     void OnSetDiagnostics(LSPEvent& event);
     void OnClearDiagnostics(LSPEvent& event);

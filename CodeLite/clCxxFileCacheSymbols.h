@@ -1,6 +1,7 @@
 #ifndef CLCXXFILECACHESYMBOLS_H
 #define CLCXXFILECACHESYMBOLS_H
 
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "entry.h"
@@ -14,14 +15,14 @@
 class SourceToTagsThread;
 class WXDLLIMPEXP_CL clCxxFileCacheSymbols : public wxEvtHandler
 {
-    std::unordered_map<wxString, std::vector<TagEntryPtr> > m_cache;
+    std::unordered_map<wxString, std::vector<TagEntryPtr>> m_cache;
     std::unordered_set<wxString> m_pendingFiles;
     wxCriticalSection m_cs;
     SourceToTagsThread* m_helperThread;
 
 protected:
     void OnFileSave(clCommandEvent& e);
-    void OnWorkspaceAction(wxCommandEvent& e);
+    void OnWorkspaceAction(clWorkspaceEvent& e);
 
 public:
     void OnPraseCompleted(const wxString& filename, const wxString& strTags);

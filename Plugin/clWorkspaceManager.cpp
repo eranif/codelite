@@ -23,7 +23,7 @@ clWorkspaceManager& clWorkspaceManager::Get()
 
 void clWorkspaceManager::RegisterWorkspace(IWorkspace* workspace) { m_workspaces.push_back(workspace); }
 
-void clWorkspaceManager::OnWorkspaceClosed(wxCommandEvent& e)
+void clWorkspaceManager::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     SetWorkspace(NULL);

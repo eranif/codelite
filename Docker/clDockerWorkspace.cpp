@@ -160,9 +160,11 @@ void clDockerWorkspace::Open(const wxFileName& path)
         clGetManager()->EnableClangCodeCompletion(false);
 
         // Notify that the a new workspace is loaded
-        wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
-        event.SetString(m_filename.GetFullPath());
-        EventNotifier::Get()->AddPendingEvent(event);
+        clWorkspaceEvent open_event(wxEVT_WORKSPACE_LOADED);
+        open_event.SetFileName(m_filename.GetFullPath());
+        open_event.SetString(m_filename.GetFullPath());
+        open_event.SetWorkspaceType(GetWorkspaceType());
+        EventNotifier::Get()->AddPendingEvent(open_event);
 
         // and finally, request codelite to keep this workspace in the recently opened workspace list
         clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
@@ -190,8 +192,8 @@ void clDockerWorkspace::Close()
         EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
 
         // Notify workspace closed event
-        wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
-        EventNotifier::Get()->ProcessEvent(event);
+        clWorkspaceEvent event_workspace_closed(wxEVT_WORKSPACE_CLOSED);
+        EventNotifier::Get()->ProcessEvent(event_workspace_closed);
 
         m_filename.Clear();
         m_settings.Clear();

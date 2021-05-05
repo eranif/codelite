@@ -64,7 +64,7 @@ size_t NodeJSBptManager::GetBreakpointsForFile(const wxString& filename, NodeJSB
     return bps.size();
 }
 
-void NodeJSBptManager::OnWorkspaceClosed(wxCommandEvent& event)
+void NodeJSBptManager::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
 
@@ -76,7 +76,7 @@ void NodeJSBptManager::OnWorkspaceClosed(wxCommandEvent& event)
     }
 }
 
-void NodeJSBptManager::OnWorkspaceOpened(wxCommandEvent& event)
+void NodeJSBptManager::OnWorkspaceOpened(clWorkspaceEvent& event)
 {
     event.Skip();
     m_workspaceFile.Clear();

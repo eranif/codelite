@@ -1,26 +1,22 @@
-#include "php_workspace.h"
+#include "clWorkspaceManager.h"
+#include "cl_command_event.h"
+#include "file_logger.h"
+#include "php_code_completion.h"
+#include "php_configuration_data.h"
+#include "php_event.h"
+#include "php_parser_thread.h"
 #include "php_strings.h"
+#include "php_workspace.h"
+#include <algorithm>
+#include <cl_command_event.h>
 #include <dirtraverser.h>
-#include <plugin.h>
+#include <event_notifier.h>
 #include <globals.h>
+#include <macros.h>
+#include <plugin.h>
 #include <wx/busyinfo.h>
 #include <wx/msgdlg.h>
-#include <event_notifier.h>
-#include <macros.h>
-#include "php_event.h"
-#include <cl_command_event.h>
-#include <wx/msgdlg.h>
-#include "php_code_completion.h"
-#include "php_strings.h"
-#include <wx/msgdlg.h>
-#include "php_parser_thread.h"
 #include <wx/progdlg.h>
-#include "cl_command_event.h"
-#include "php_strings.h"
-#include "php_configuration_data.h"
-#include "clWorkspaceManager.h"
-#include <algorithm>
-#include "file_logger.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -63,7 +59,8 @@ void PHPWorkspace::Release()
 
 bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
 {
-    SendCmdEvent(wxEVT_WORKSPACE_CLOSING);
+    clWorkspaceEvent closing_event(wxEVT_WORKSPACE_CLOSING);
+    EventNotifier::Get()->ProcessEvent(closing_event);
 
     if(IsOpen()) {
         if(m_manager && saveSession) {
@@ -86,7 +83,8 @@ bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
     EventNotifier::Get()->AddPendingEvent(phpEvent);
 
     // Notify that workspace has been opened to the plugins
-    SendCmdEvent(wxEVT_WORKSPACE_CLOSED);
+    clWorkspaceEvent closed_event(wxEVT_WORKSPACE_CLOSED);
+    EventNotifier::Get()->ProcessEvent(closed_event);
     return true;
 }
 
@@ -152,8 +150,10 @@ bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool creat
     // this is important so other plugins such as Svn, Git
     // want to adjust their paths according to the new workspace
     {
-        wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
+        clWorkspaceEvent event(wxEVT_WORKSPACE_LOADED);
+        event.SetFileName(GetFilename().GetFullPath());
         event.SetString(GetFilename().GetFullPath());
+        event.SetWorkspaceType(GetWorkspaceType());
         EventNotifier::Get()->AddPendingEvent(event);
     }
 
@@ -185,7 +185,8 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
     projectName << createData.name << ".phprj";
     fnProjectFileName.SetFullName(projectName);
 
-    if(HasProject(projectName)) return;
+    if(HasProject(projectName))
+        return;
 
     // Ensure that the path to the file exists
     fnProjectFileName.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
@@ -312,9 +313,7 @@ void PHPWorkspace::DelFile(const wxString& project, const wxString& filename)
     proj->FilesDeleted(files, true);
 }
 
-bool PHPWorkspace::RunProject(bool debugging,
-                              const wxString& urlOrFilePath,
-                              const wxString& projectName,
+bool PHPWorkspace::RunProject(bool debugging, const wxString& urlOrFilePath, const wxString& projectName,
                               const wxString& xdebugSessionName)
 {
     wxString projectToRun = projectName;
@@ -458,7 +457,8 @@ void PHPWorkspace::Rename(const wxString& newname)
     if(!::wxRenameFile(m_workspaceFile.GetFullPath(), new_path.GetFullPath())) {
         wxString msg;
         msg << _("Failed to rename workspace file:\n'") << m_workspaceFile.GetFullName() << _("'\nto:\n'")
-            << new_path.GetFullName() << "'\n" << strerror(errno);
+            << new_path.GetFullName() << "'\n"
+            << strerror(errno);
         ::wxMessageBox(msg, "CodeLite", wxOK | wxCENTER | wxICON_ERROR, EventNotifier::Get()->TopFrame());
         return;
     }
@@ -478,10 +478,8 @@ void PHPWorkspace::Rename(const wxString& newname)
 
 void PHPWorkspace::DoPromptWorkspaceModifiedDialog()
 {
-    wxMessageDialog dlg(FRAME,
-                        _("Workspace file modified externally. Would you like to reload the workspace?"),
-                        "CodeLite",
-                        wxYES_NO | wxCENTER);
+    wxMessageDialog dlg(FRAME, _("Workspace file modified externally. Would you like to reload the workspace?"),
+                        "CodeLite", wxYES_NO | wxCENTER);
     dlg.SetYesNoLabels(_("Reload Workspace"), _("Ignore"));
 
     int answer = dlg.ShowModal();
@@ -554,7 +552,8 @@ PHPProject::Ptr_t PHPWorkspace::GetProjectForFile(const wxFileName& filename) co
 {
     PHPProject::Map_t::const_iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {
-        if(iter->second->HasFile(filename)) return iter->second;
+        if(iter->second->HasFile(filename))
+            return iter->second;
     }
     return PHPProject::Ptr_t(NULL);
 }
@@ -662,9 +661,8 @@ void PHPWorkspace::GetProjectFiles(const wxString& projectName, wxArrayString& f
 
 void PHPWorkspace::GetWorkspaceFiles(wxArrayString& files) const
 {
-    std::for_each(m_projects.begin(), m_projects.end(), [&](const PHPProject::Map_t::value_type& v) {
-        v.second->GetFilesArray(files);
-    });
+    std::for_each(m_projects.begin(), m_projects.end(),
+                  [&](const PHPProject::Map_t::value_type& v) { v.second->GetFilesArray(files); });
 }
 
 void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
@@ -676,7 +674,7 @@ void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
         clCommandEvent event(wxEVT_PHP_WORKSPACE_FILES_SYNC_START);
         owner->AddPendingEvent(event);
     }
-    
+
     if(!m_projects.empty()) {
         PHPProject::Map_t::const_iterator iter = m_projects.begin();
         for(; iter != m_projects.end(); ++iter) {
@@ -732,9 +730,7 @@ wxArrayString PHPWorkspace::GetWorkspaceProjects() const
 {
     wxArrayString projectArr;
     PHPProject::Map_t projects = GetProjects();
-    std::for_each(projects.begin(), projects.end(), [&](PHPProject::Map_t::value_type p) {
-        projectArr.Add(p.second->GetName());
-    });
+    std::for_each(projects.begin(), projects.end(),
+                  [&](PHPProject::Map_t::value_type p) { projectArr.Add(p.second->GetName()); });
     return projectArr;
 }
-

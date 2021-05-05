@@ -125,6 +125,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
+    <File Name="clWorkspaceEvent.cpp"/>
+    <File Name="clWorkspaceEvent.hpp"/>
     <File Name="clTempFile.cpp"/>
     <File Name="clTempFile.hpp"/>
     <File Name="CTags.cpp"/>

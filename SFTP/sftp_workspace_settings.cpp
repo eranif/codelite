@@ -30,9 +30,7 @@ SFTPWorkspaceSettings::SFTPWorkspaceSettings()
 {
 }
 
-SFTPWorkspaceSettings::~SFTPWorkspaceSettings()
-{
-}
+SFTPWorkspaceSettings::~SFTPWorkspaceSettings() {}
 
 void SFTPWorkspaceSettings::FromJSON(const JSONItem& json)
 {
@@ -51,11 +49,13 @@ JSONItem SFTPWorkspaceSettings::ToJSON() const
 void SFTPWorkspaceSettings::Load(SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile)
 {
     wxFileName fn(workspaceFile);
-    fn.SetName("sftp-workspace-settings");
-    fn.SetExt("conf");
-    fn.AppendDir(".codelite");
-    clConfig config( fn.GetFullPath() );
-    config.ReadItem( &settings );
+    if(fn.IsOk() && fn.FileExists()) {
+        fn.SetName("sftp-workspace-settings");
+        fn.SetExt("conf");
+        fn.AppendDir(".codelite");
+        clConfig config(fn.GetFullPath());
+        config.ReadItem(&settings);
+    }
 }
 
 void SFTPWorkspaceSettings::Save(const SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile)
@@ -64,8 +64,8 @@ void SFTPWorkspaceSettings::Save(const SFTPWorkspaceSettings& settings, const wx
     fn.SetName("sftp-workspace-settings");
     fn.SetExt("conf");
     fn.AppendDir(".codelite");
-    clConfig config( fn.GetFullPath() );
-    config.WriteItem( &settings );
+    clConfig config(fn.GetFullPath());
+    config.WriteItem(&settings);
 }
 
 void SFTPWorkspaceSettings::Clear()

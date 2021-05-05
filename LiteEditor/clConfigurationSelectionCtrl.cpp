@@ -103,7 +103,7 @@ void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& config
     m_choice->Set(m_configurations);
 }
 
-void clConfigurationSelectionCtrl::OnWorkspaceLoaded(wxCommandEvent& event)
+void clConfigurationSelectionCtrl::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
     if(ManagerST::Get()->IsWorkspaceOpen()) {
@@ -113,7 +113,7 @@ void clConfigurationSelectionCtrl::OnWorkspaceLoaded(wxCommandEvent& event)
     }
 }
 
-void clConfigurationSelectionCtrl::OnWorkspaceClosed(wxCommandEvent& event)
+void clConfigurationSelectionCtrl::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();

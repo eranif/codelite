@@ -55,8 +55,8 @@ public:
     // Event handlers
     void OnSettings(wxCommandEvent& e);
     void OnColourTab(clColourEvent& e);
-    void OnWorkspaceLoaded(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnFileViewBuildTree(clCommandEvent& e);
     void OnCustomizeProject(clColourEvent& e);
     void OnTabBorderColour(clColourEvent& e);

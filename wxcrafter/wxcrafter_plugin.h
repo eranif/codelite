@@ -78,7 +78,7 @@ protected:
     void OnPageChanged(wxCommandEvent& e);
     void OnWorkspaceTabSelected(wxBookCtrlEvent& e);
     void OnDesignerItemSelected(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnBuildStarting(wxCommandEvent& e);
     void OnAllEditorsClosing(wxCommandEvent& e);
     void OnAllEditorsClosed(wxCommandEvent& e);

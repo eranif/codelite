@@ -75,13 +75,17 @@ bool NodeJSWorkspace::IsProjectSupported() const { return false; }
 
 void NodeJSWorkspace::Free()
 {
-    if(ms_workspace) { delete ms_workspace; }
+    if(ms_workspace) {
+        delete ms_workspace;
+    }
     ms_workspace = NULL;
 }
 
 NodeJSWorkspace* NodeJSWorkspace::Get()
 {
-    if(!ms_workspace) { ms_workspace = new NodeJSWorkspace(); }
+    if(!ms_workspace) {
+        ms_workspace = new NodeJSWorkspace();
+    }
     return ms_workspace;
 }
 
@@ -89,8 +93,10 @@ bool NodeJSWorkspace::IsOpen() const { return m_filename.IsOk() && m_filename.Ex
 
 bool NodeJSWorkspace::Create(const wxFileName& filename)
 {
-    if(IsOpen()) return false;
-    if(filename.Exists()) return false;
+    if(IsOpen())
+        return false;
+    if(filename.Exists())
+        return false;
     DoClear();
     m_filename = filename;
 
@@ -105,14 +111,16 @@ bool NodeJSWorkspace::Create(const wxFileName& filename)
 
 bool NodeJSWorkspace::Open(const wxFileName& filename)
 {
-    if(IsOpen()) return false;
+    if(IsOpen())
+        return false;
     m_filename = filename;
     return DoOpen(m_filename);
 }
 
 void NodeJSWorkspace::Close()
 {
-    if(!IsOpen()) return;
+    if(!IsOpen())
+        return;
 
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
@@ -127,7 +135,7 @@ void NodeJSWorkspace::Close()
     GetView()->Clear();
 
     // Notify workspace closed event
-    wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
+    clWorkspaceEvent event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(event);
 
     m_debugger.reset(NULL);
@@ -168,7 +176,8 @@ void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
         e.Skip(false);
         // Create a new NodeJS workspace
         NodeJSNewWorkspaceDlg dlg(NULL);
-        if(dlg.ShowModal() != wxID_OK) return;
+        if(dlg.ShowModal() != wxID_OK)
+            return;
 
         wxFileName workspaceFile = dlg.GetWorkspaceFilename();
         if(!workspaceFile.GetDirCount()) {
@@ -218,8 +227,10 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     clGetManager()->EnableClangCodeCompletion(false);
 
     // Notify that the a new workspace is loaded
-    wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
+    clWorkspaceEvent event(wxEVT_WORKSPACE_LOADED);
     event.SetString(filename.GetFullPath());
+    event.SetWorkspaceType(GetWorkspaceType());
+    event.SetFileName(filename.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(event);
 
     // and finally, request codelite to keep this workspace in the recently opened workspace list
@@ -241,13 +252,17 @@ void NodeJSWorkspace::OnOpenWorkspace(clCommandEvent& event)
     // Test that this is our workspace
     NodeJSWorkspaceConfiguration conf(workspaceFile);
     conf.Load();
-    if(!conf.IsOk()) { return; }
+    if(!conf.IsOk()) {
+        return;
+    }
     // This is a NodeJS workspace, stop event processing by calling
     // event.Skip(false)
     event.Skip(false);
 
     // Check if this is a PHP workspace
-    if(IsOpen()) { Close(); }
+    if(IsOpen()) {
+        Close();
+    }
     Open(workspaceFile);
 }
 
@@ -266,7 +281,9 @@ void NodeJSWorkspace::OnAllEditorsClosed(wxCommandEvent& event)
 
 void NodeJSWorkspace::RestoreSession()
 {
-    if(IsOpen()) { clGetManager()->LoadWorkspaceSession(m_filename); }
+    if(IsOpen()) {
+        clGetManager()->LoadWorkspaceSession(m_filename);
+    }
 }
 
 void NodeJSWorkspace::OnSaveSession(clCommandEvent& event)
@@ -295,7 +312,9 @@ void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
         }
         event.Skip(false);
         NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kExecute);
-        if(dlg.ShowModal() != wxID_OK) { return; }
+        if(dlg.ShowModal() != wxID_OK) {
+            return;
+        }
 
         wxString command;
         wxString command_args;

@@ -27,6 +27,7 @@
 #define GITCONSOLE_H
 #include "bitmap_loader.h"
 #include "clGenericSTCStyler.h"
+#include "clWorkspaceEvent.hpp"
 #include "gitui.h"
 #include <wx/dataview.h>
 
@@ -87,10 +88,10 @@ protected:
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);
-
+    
     void OnOpenFile(wxCommandEvent& e);
     void OnCloseView(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnConfigurationChanged(wxCommandEvent& e);
 
     void OnGitPullDropdown(wxCommandEvent& event) { DoOnDropdown("git_pull", XRCID("git_pull")); }

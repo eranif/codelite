@@ -69,8 +69,8 @@ protected:
     void OnSetupWorkspaceMirroring(wxCommandEvent& e);
     void OnDisableWorkspaceMirroring(wxCommandEvent& e);
     void OnDisableWorkspaceMirroringUI(wxUpdateUIEvent& e);
-    void OnWorkspaceOpened(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceOpened(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnFileSaved(clCommandEvent& e);
     void OnFileRenamed(clFileSystemEvent& e);
     void OnFileDeleted(clFileSystemEvent& e);

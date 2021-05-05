@@ -274,14 +274,19 @@ void SFTP::OnSetupWorkspaceMirroring(wxCommandEvent& e)
     }
 }
 
-void SFTP::OnWorkspaceOpened(wxCommandEvent& e)
+void SFTP::OnWorkspaceOpened(clWorkspaceEvent& e)
 {
     e.Skip();
-    m_workspaceFile = e.GetString();
-    SFTPWorkspaceSettings::Load(m_workspaceSettings, m_workspaceFile);
+    if(e.IsRemote()) {
+        m_workspaceFile.Clear();
+        m_workspaceSettings.Clear();
+    } else {
+        m_workspaceFile = e.GetString();
+        SFTPWorkspaceSettings::Load(m_workspaceSettings, m_workspaceFile);
+    }
 }
 
-void SFTP::OnWorkspaceClosed(wxCommandEvent& e)
+void SFTP::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     m_workspaceFile.Clear();

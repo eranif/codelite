@@ -759,7 +759,7 @@ int TabgroupsPane::DoGetIconIndex(const wxString& filename)
     return imgIdx;
 }
 
-void TabgroupsPane::OnWorkspaceClosed(wxCommandEvent& e)
+void TabgroupsPane::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     m_tree->DeleteChildren(GetRootItemForTabgroup(false));

@@ -87,8 +87,7 @@ OutlineTab::OutlineTab(wxWindow* parent, IManager* mgr)
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLOSING, wxCommandEventHandler(OutlineTab::OnEditorClosed), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OutlineTab::OnAllEditorsClosed), NULL,
                                   this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(OutlineTab::OnWorkspaceClosed), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &OutlineTab::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL,
                                   this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &OutlineTab::OnEditorSaved, this);
@@ -127,8 +126,7 @@ OutlineTab::~OutlineTab()
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSED, wxCommandEventHandler(OutlineTab::OnAllEditorsClosed),
                                      NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(OutlineTab::OnWorkspaceClosed), NULL,
-                                     this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &OutlineTab::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_COMPLETED, wxCommandEventHandler(OutlineTab::OnFilesTagged), NULL,
                                      this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &OutlineTab::OnEditorSaved, this);
@@ -207,7 +205,7 @@ void OutlineTab::OnEditorClosed(wxCommandEvent& e)
     }
 }
 
-void OutlineTab::OnWorkspaceClosed(wxCommandEvent& e)
+void OutlineTab::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     wxWindowUpdateLocker locker(this);

@@ -260,7 +260,7 @@ void RemotyWorkspace::DoClose(bool notify)
         EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
 
         // Notify workspace closed event
-        wxCommandEvent event_closed(wxEVT_WORKSPACE_CLOSED);
+        clWorkspaceEvent event_closed(wxEVT_WORKSPACE_CLOSED);
         EventNotifier::Get()->ProcessEvent(event_closed);
     }
 }
@@ -539,7 +539,11 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     ScanForWorkspaceFiles();
 
     // Notify that the a new workspace is loaded
-    wxCommandEvent open_event(wxEVT_WORKSPACE_LOADED);
+    clWorkspaceEvent open_event(wxEVT_WORKSPACE_LOADED);
+    open_event.SetIsRemote(true);
+    open_event.SetFileName(m_remoteWorkspaceFile);
+    open_event.SetRemoteAccount(m_account.GetAccountName());
+    open_event.SetWorkspaceType(GetWorkspaceType());
     EventNotifier::Get()->AddPendingEvent(open_event);
 }
 

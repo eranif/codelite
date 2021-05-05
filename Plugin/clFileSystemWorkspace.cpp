@@ -342,8 +342,9 @@ void clFileSystemWorkspace::DoOpen()
     clWorkspaceManager::Get().SetWorkspace(this);
 
     // Notify that the a new workspace is loaded
-    wxCommandEvent event(wxEVT_WORKSPACE_LOADED);
+    clWorkspaceEvent event(wxEVT_WORKSPACE_LOADED);
     event.SetString(GetFileName().GetFullPath());
+    event.SetFileName(GetFileName().GetFullPath());
     EventNotifier::Get()->AddPendingEvent(event);
 
     // Update the build configurations button
@@ -392,8 +393,8 @@ void clFileSystemWorkspace::DoClose()
     EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
 
     // Notify workspace closed event
-    wxCommandEvent event(wxEVT_WORKSPACE_CLOSED);
-    EventNotifier::Get()->ProcessEvent(event);
+    clWorkspaceEvent event_closed(wxEVT_WORKSPACE_CLOSED);
+    EventNotifier::Get()->ProcessEvent(event_closed);
 
     // Free the database
     TagsManagerST::Get()->CloseDatabase();

@@ -218,8 +218,7 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
                                   this);
     EventNotifier::Get()->Connect(wxEVT_PREVIEW_CTRL_SELECTED,
                                   wxCommandEventHandler(wxCrafterPlugin::OnDesignerItemSelected), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(wxCrafterPlugin::OnWorkspaceClosed),
-                                  NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &wxCrafterPlugin::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, wxCommandEventHandler(wxCrafterPlugin::OnBuildStarting), NULL,
                                   this);
     EventNotifier::Get()->Connect(wxEVT_ALL_EDITORS_CLOSING,
@@ -313,8 +312,7 @@ void wxCrafterPlugin::UnPlug()
                                      NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_PREVIEW_CTRL_SELECTED,
                                      wxCommandEventHandler(wxCrafterPlugin::OnDesignerItemSelected), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(wxCrafterPlugin::OnWorkspaceClosed),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &wxCrafterPlugin::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, wxCommandEventHandler(wxCrafterPlugin::OnBuildStarting),
                                      NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_ALL_EDITORS_CLOSING,
@@ -933,7 +931,7 @@ void wxCrafterPlugin::OnDesignerItemSelected(wxCommandEvent& e)
     DoSelectWorkspaceTab();
 }
 
-void wxCrafterPlugin::OnWorkspaceClosed(wxCommandEvent& e)
+void wxCrafterPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     m_treeView->CloseProject(false);

@@ -37,10 +37,10 @@
 
 #include "plugin.h"
 
-#include "memcheckui.h"
-#include "imemcheckprocessor.h"
 #include "TerminalEmulator.h"
 #include "clTabTogglerHelper.h"
+#include "imemcheckprocessor.h"
+#include "memcheckui.h"
 
 class MemCheckOutputView;
 
@@ -59,15 +59,9 @@ public:
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
 
-    MemCheckSettings* const GetSettings()
-    {
-        return m_settings;
-    };
+    MemCheckSettings* const GetSettings() { return m_settings; };
 
-    virtual IMemCheckProcessor* GetProcessor()
-    {
-        return m_memcheckProcessor;
-    }
+    virtual IMemCheckProcessor* GetProcessor() { return m_memcheckProcessor; }
 
     /**
      * @brief true if test is not runnging and GUI can respond, otherwise if test is runnign user can't listing errors
@@ -86,10 +80,7 @@ public:
      * @return
      */
     //    bool IsRunning() const { return m_process != NULL; }
-    bool IsRunning() const
-    {
-        return m_terminal.IsRunning();
-    }
+    bool IsRunning() const { return m_terminal.IsRunning(); }
 
 protected:
     MemCheckIcons16 m_icons16;
@@ -102,11 +93,11 @@ protected:
     clTabTogglerHelper::Ptr_t m_tabHelper;
 
 protected:
-    void OnWorkspaceLoaded(wxCommandEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
-    
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
+
     wxString PrepareCommand(const wxString& projectName, wxString& wd);
-    
+
     /**
      * @brief After settings dialogue is closed, settings are reapplied in plugin.
      */

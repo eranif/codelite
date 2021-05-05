@@ -29,6 +29,7 @@
 #include "cl_defs.h"
 
 #include "buildtabsettingsdata.h"
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "compiler.h"
 #include "precompiled_header.h"
@@ -218,8 +219,8 @@ protected:
     void OnBuildStarted(clCommandEvent& e);
     void OnBuildEnded(clCommandEvent& e);
     void OnBuildAddLine(clCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
-    void OnWorkspaceLoaded(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnNextBuildError(wxCommandEvent& e);
     void OnNextBuildErrorUI(wxUpdateUIEvent& e);
     void OnMenu(wxContextMenuEvent& e);

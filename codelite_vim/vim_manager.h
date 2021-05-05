@@ -1,16 +1,17 @@
 #ifndef __VIM_MANAGER_H__
 #define __VIM_MANAGER_H__
 
-#include <wx/stc/stc.h>
-#include "vimCommands.h"
-#include "ieditor.h"
-#include "event_notifier.h"
-#include "macros.h"
-#include "imanager.h"
-#include "globals.h"
-#include "codelite_events.h"
-#include <wx/kbdstate.h>
 #include "VimSettings.h"
+#include "clWorkspaceEvent.hpp"
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include "macros.h"
+#include "vimCommands.h"
+#include <wx/kbdstate.h>
+#include <wx/stc/stc.h>
 /*Experimental*/
 #include <list>
 
@@ -31,7 +32,7 @@ public:
 protected:
     void OnEditorChanged(wxCommandEvent& event);
     void OnEditorClosing(wxCommandEvent& event);
-    void OnWorkspaceClosing(wxCommandEvent& event);
+    void OnWorkspaceClosing(clWorkspaceEvent& event);
     void OnAllEditorsClosing(wxCommandEvent& event);
     void OnCharEvt(wxKeyEvent& event);
     void OnKeyDown(wxKeyEvent& event);
@@ -52,7 +53,7 @@ protected:
     void updateCarret();
     void updateMessageModus();
     void updateVimMessage();
-    
+
 private:
     wxStatusBar* status_vim;
     VimSettings& m_settings;
@@ -65,11 +66,10 @@ private:
     int m_caretInsertStyle;
     int m_caretBlockStyle;
     std::vector<VimBaseCommand*> m_editorStates;
-	
+
     void IssueCommand();
     void updateView();
     void RepeatCommand();
 };
 
 #endif // __VIM_MANAGER_H__
-

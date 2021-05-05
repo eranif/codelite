@@ -23,13 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "workspace.h"
-#include "globals.h"
-#include "unittestspage.h"
-#include "imanager.h"
-#include <wx/msgdlg.h>
 #include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
 #include "plugin.h"
+#include "unittestspage.h"
+#include "workspace.h"
+#include <wx/msgdlg.h>
 
 class UTLineInfo : public wxClientData
 {
@@ -48,14 +48,12 @@ UnitTestsPage::UnitTestsPage(wxWindow* parent, IManager* mgr)
     : UnitTestsBasePage(parent, wxID_ANY, wxDefaultPosition, wxSize(1, 1), 0)
     , m_mgr(mgr)
 {
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &UnitTestsPage::OnWorkspaceClosed, this);
 }
 
 UnitTestsPage::~UnitTestsPage()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(UnitTestsPage::OnWorkspaceClosed),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &UnitTestsPage::OnWorkspaceClosed, this);
 }
 
 void UnitTestsPage::UpdateFailedBar(size_t amount, const wxString& msg) { m_progressFailed->Update(amount, msg); }
@@ -132,7 +130,7 @@ void UnitTestsPage::Clear()
     m_staticTextTotalTests->SetLabel("");
 }
 
-void UnitTestsPage::OnWorkspaceClosed(wxCommandEvent& e)
+void UnitTestsPage::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     Clear();

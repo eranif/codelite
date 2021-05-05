@@ -69,7 +69,8 @@ protected:
     // Event handlers
     void OnBuildEnded(clBuildEvent& e);
     void OnFilesAdded(clCommandEvent& e);
-    void OnWorkspaceLoaded(wxCommandEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
 
     void OnBuildStarted(clBuildEvent& e);
     void OnAppActivated(wxActivateEvent& e);
@@ -77,7 +78,6 @@ protected:
     void OnFileSaved(clCommandEvent& event);
     void OnFileLoaded(clCommandEvent& event);
     void OnWorkspaceConfig(wxCommandEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
     void OnEnvironmentVariablesModified(clCommandEvent& event);
     void OnBlockCommentCodeComplete(clCodeCompletionEvent& event);
     void OnBlockCommentWordComplete(clCodeCompletionEvent& event);

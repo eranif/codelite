@@ -501,13 +501,13 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab)
     return value;
 }
 
-void OpenWindowsPanel::OnWorkspaceClosed(wxCommandEvent& event)
+void OpenWindowsPanel::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     m_workspaceClosing = false;
 }
 
-void OpenWindowsPanel::OnWorkspaceClosing(wxCommandEvent& event)
+void OpenWindowsPanel::OnWorkspaceClosing(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();

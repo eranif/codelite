@@ -267,7 +267,7 @@ void clStatusBar::SetBuildBitmap(const wxBitmap& bmp, const wxString& tooltip)
     Refresh();
 }
 
-void clStatusBar::OnWorkspaceClosed(wxCommandEvent& event)
+void clStatusBar::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();

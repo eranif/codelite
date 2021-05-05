@@ -6,6 +6,7 @@
 #include "clDockerDriver.h"
 #include "clDockerImage.h"
 #include "clGenericSTCStyler.h"
+#include "clWorkspaceEvent.hpp"
 
 class DockerOutputPane : public DockerOutputPaneBase
 {
@@ -23,7 +24,7 @@ protected:
     void OnClearUnusedImages(wxCommandEvent& event);
     void OnClearUnusedImagesUI(wxUpdateUIEvent& event);
     void OnClearUnusedImagesMenu(wxCommandEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
 
 protected:
     size_t GetSelectedContainers(clDockerContainer::Vect_t& containers);

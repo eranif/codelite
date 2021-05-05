@@ -121,8 +121,7 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
     m_mgr->GetTheApp()->Connect(XRCID("cppcheck_project_item"), wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(CppCheckPlugin::OnCheckProjectItem), NULL, (wxEvtHandler*)this);
 
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CppCheckPlugin::OnWorkspaceClosed),
-                                  NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CppCheckPlugin::OnWorkspaceClosed, this);
 
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &CppCheckPlugin::OnEditorContextMenu, this);
     m_view = new CppCheckReportPage(m_mgr->GetOutputPaneNotebook(), m_mgr, this);
@@ -199,8 +198,7 @@ void CppCheckPlugin::UnPlug()
                                    (wxEvtHandler*)this);
 
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &CppCheckPlugin::OnEditorContextMenu, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(CppCheckPlugin::OnWorkspaceClosed),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &CppCheckPlugin::OnWorkspaceClosed, this);
 
     // before this plugin is un-plugged we must remove the tab we added
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
@@ -562,7 +560,7 @@ void CppCheckPlugin::RemoveExcludedFiles()
     }
 }
 
-void CppCheckPlugin::OnWorkspaceClosed(wxCommandEvent& e)
+void CppCheckPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     m_view->Clear();
     e.Skip();

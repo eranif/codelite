@@ -26,6 +26,7 @@
 #ifndef __unittestspage__
 #define __unittestspage__
 
+#include "clWorkspaceEvent.hpp"
 #include "unittestcppoutputparser.h"
 #include "unittestreport.h"
 
@@ -36,7 +37,7 @@ class UnitTestsPage : public UnitTestsBasePage
     IManager* m_mgr;
 
     void OnItemActivated(wxDataViewEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
 
 public:
     /** Constructor */

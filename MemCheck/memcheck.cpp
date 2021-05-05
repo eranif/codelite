@@ -95,10 +95,8 @@ MemCheckPlugin::MemCheckPlugin(IManager* manager)
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
 
     // EventNotifier::Get()->Connect( wxEVT_INIT_DONE, wxCommandEventHandler(MemCheckPlugin::OnInitDone), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(MemCheckPlugin::OnWorkspaceLoaded),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MemCheckPlugin::OnWorkspaceClosed),
-                                  NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &MemCheckPlugin::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MemCheckPlugin::OnWorkspaceClosed, this);
 
     // CL_DEBUG1(PLUGIN_PREFIX("adding 'Output View' notebook pane"));
     auto images = m_mgr->GetOutputPaneNotebook()->GetBitmaps();
@@ -130,8 +128,8 @@ void MemCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(menu, XRCID("memcheck_check_active_project"), _("&Run MemCheck"), wxEmptyString,
-                          wxITEM_NORMAL);
+    item =
+        new wxMenuItem(menu, XRCID("memcheck_check_active_project"), _("&Run MemCheck"), wxEmptyString, wxITEM_NORMAL);
     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
     menu->Append(item);
 
@@ -171,8 +169,7 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
             subMenu->AppendSeparator();
 
-            item =
-                new wxMenuItem(subMenu, XRCID("memcheck_settings"), _("&Settings..."), wxEmptyString, wxITEM_NORMAL);
+            item = new wxMenuItem(subMenu, XRCID("memcheck_settings"), _("&Settings..."), wxEmptyString, wxITEM_NORMAL);
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_settings")));
             subMenu->Append(item);
 
@@ -221,10 +218,8 @@ void MemCheckPlugin::UnPlug()
 
     // EventNotifier::Get()->Disconnect( wxEVT_INIT_DONE, wxCommandEventHandler(MemCheckPlugin::OnInitDone), NULL,
     // this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(MemCheckPlugin::OnWorkspaceLoaded),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MemCheckPlugin::OnWorkspaceClosed),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &MemCheckPlugin::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MemCheckPlugin::OnWorkspaceClosed, this);
 
     // before this plugin is un-plugged we must remove the tab we added
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
@@ -236,16 +231,14 @@ void MemCheckPlugin::UnPlug()
     }
 }
 
-void MemCheckPlugin::OnWorkspaceLoaded(wxCommandEvent& event)
+void MemCheckPlugin::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
-    // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::OnWorkspaceLoaded()"));
     ApplySettings();
     event.Skip();
 }
 
-void MemCheckPlugin::OnWorkspaceClosed(wxCommandEvent& event)
+void MemCheckPlugin::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
-    // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::OnWorkspaceClosed()"));
     ApplySettings();
     event.Skip();
 }

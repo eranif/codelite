@@ -26,12 +26,13 @@
 #ifndef TABGROUP_MANAGER_H
 #define TABGROUP_MANAGER_H
 
-#include <wx/arrstr.h>
-#include <wx/string.h>
-#include <vector>
-#include <utility>
+#include "clWorkspaceEvent.hpp"
 #include "singleton.h"
+#include <utility>
+#include <vector>
+#include <wx/arrstr.h>
 #include <wx/event.h>
+#include <wx/string.h>
 
 /**
  * Each pair consists of the tabgroup name, and an array of the names of the constituent tabs
@@ -44,8 +45,8 @@ class TabgroupManager : public wxEvtHandler
     friend class Singleton<TabgroupManager>;
 
 protected:
-    void OnWorkspaceLoaded(wxCommandEvent& evt);
-    void OnWorkspaceClosed(wxCommandEvent& evt);
+    void OnWorkspaceLoaded(clWorkspaceEvent& evt);
+    void OnWorkspaceClosed(clWorkspaceEvent& evt);
 
 public:
     wxString GetTabgroupDirectory();
@@ -61,8 +62,8 @@ public:
     void LoadTabgroupData(bool isGlobal, const wxString& tabgroup);
 
     wxXmlNode* FindTabgroupItem(wxXmlDocument& doc, const wxString& filepath, const wxString& itemfilepath);
-    bool DoAddItemToTabgroup(
-        wxXmlDocument& doc, wxXmlNode* node, const wxString& filepath, const wxString& nextitemfilepath);
+    bool DoAddItemToTabgroup(wxXmlDocument& doc, wxXmlNode* node, const wxString& filepath,
+                             const wxString& nextitemfilepath);
     /*!
      * \brief Remove this item from the tabgroup on disc, optionally returning its data in an xml node to be stored for
      * Cut

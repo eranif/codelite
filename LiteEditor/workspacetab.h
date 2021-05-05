@@ -77,8 +77,8 @@ protected:
     void OnShowFile(wxCommandEvent& e);
     void OnShowFileUI(wxUpdateUIEvent& e);
 
-    void OnWorkspaceLoaded(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnProjectAdded(clCommandEvent& e);
     void OnProjectRemoved(clCommandEvent& e);
     void OnActiveEditorChanged(wxCommandEvent& e);

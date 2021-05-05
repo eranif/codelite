@@ -232,8 +232,8 @@ private:
     void OnFileSaved(clCommandEvent& e);
     void OnFilesAddedToProject(clCommandEvent& e);
     void OnFilesRemovedFromProject(clCommandEvent& e);
-    void OnWorkspaceLoaded(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnWorkspaceConfigurationChanged(wxCommandEvent& e);
     void OnMainFrameTitle(clCommandEvent& e);
     void OnSetGitRepoPath(wxCommandEvent& e);

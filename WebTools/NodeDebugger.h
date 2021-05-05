@@ -66,7 +66,7 @@ protected:
     void OnWebSocketError(clCommandEvent& event);
     void OnWebSocketOnMessage(clCommandEvent& event);
     void OnWebSocketDisconnected(clCommandEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnInteract(clDebugEvent& event);
     void OnTooltip(clDebugEvent& event);
     // Helpers

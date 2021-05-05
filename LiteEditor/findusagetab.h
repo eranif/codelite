@@ -26,8 +26,9 @@
 #ifndef FINDUSAGETAB_H
 #define FINDUSAGETAB_H
 
-#include "outputtabwindow.h" // Base class OutputTabWindow
+#include "clWorkspaceEvent.hpp"
 #include "cpptoken.h"
+#include "outputtabwindow.h" // Base class OutputTabWindow
 #include "wxStringHash.h"
 
 typedef std::unordered_map<int, CppToken> UsageResultsMap;
@@ -51,7 +52,7 @@ public:
     virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
     virtual void OnStyleNeeded(wxStyledTextEvent& e);
     virtual void OnThemeChanged(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
 
 public:
     void ShowUsage(const CppToken::Vec_t& matches, const wxString& searchWhat);

@@ -26,10 +26,10 @@
 #ifndef __CppChecker__
 #define __CppChecker__
 
-#include "plugin.h"
 #include "asyncprocess.h"
-#include "cppcheck_settings.h"
 #include "clTabTogglerHelper.h"
+#include "cppcheck_settings.h"
+#include "plugin.h"
 
 class wxMenuItem;
 class CppCheckReportPage;
@@ -110,7 +110,7 @@ protected:
      * @brief handle the workspace closed event and clear the view
      * @param e
      */
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     /**
      * @brief handle the settings item
      * @param e event

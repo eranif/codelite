@@ -23,20 +23,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/xml/xml.h>
-#include <wx/filename.h>
 #include <wx/dir.h>
+#include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include <wx/xml/xml.h>
 
-#include "manager.h"
-#include "xmlutils.h"
-#include "wx_xml_compatibility.h"
-#include "tabgroupmanager.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "frame.h"
+#include "manager.h"
+#include "tabgroupmanager.h"
 #include "tabgroupspane.h"
 #include "workspace_pane.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
+#include "wx_xml_compatibility.h"
+#include "xmlutils.h"
 
 TabgroupManager::~TabgroupManager()
 {
@@ -82,9 +82,8 @@ void TabgroupManager::SetTabgroupDirectory()
 void TabgroupManager::LoadKnownTabgroups(bool isGlobal /*=false*/)
 {
     wxArrayString Tabgrpfiles;
-    wxString tabgroupsDir = isGlobal ?
-        clStandardPaths::Get().GetUserDataDir() + "/tabgroups" : GetTabgroupDirectory();
-        
+    wxString tabgroupsDir = isGlobal ? clStandardPaths::Get().GetUserDataDir() + "/tabgroups" : GetTabgroupDirectory();
+
     // Load tabgroups from the tabgroup dir
     wxDir::GetAllFiles(tabgroupsDir, &Tabgrpfiles, wxT("*.tabgroup"), wxDIR_FILES);
     for(size_t n = 0; n < Tabgrpfiles.GetCount(); ++n) {
@@ -115,8 +114,8 @@ void TabgroupManager::LoadTabgroupData(bool isGlobal, const wxString& tabgroup)
     }
 }
 
-bool TabgroupManager::DoAddItemToTabgroup(
-    wxXmlDocument& doc, wxXmlNode* node, const wxString& filepath, const wxString& nextitemfilepath)
+bool TabgroupManager::DoAddItemToTabgroup(wxXmlDocument& doc, wxXmlNode* node, const wxString& filepath,
+                                          const wxString& nextitemfilepath)
 {
     wxXmlNode* TabInfoArrayNode = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("TabInfoArray"));
     if(!TabInfoArrayNode) {
@@ -155,8 +154,8 @@ wxXmlNode* TabgroupManager::FindTabgroupItem(wxXmlDocument& doc, const wxString&
     return NULL;
 }
 
-wxXmlNode* TabgroupManager::DoDeleteTabgroupItem(
-    wxXmlDocument& doc, const wxString& filepath, const wxString& itemfilepath)
+wxXmlNode* TabgroupManager::DoDeleteTabgroupItem(wxXmlDocument& doc, const wxString& filepath,
+                                                 const wxString& itemfilepath)
 {
     wxXmlNode* TabInfoArrayNode = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("TabInfoArray"));
     if(TabInfoArrayNode) {
@@ -175,7 +174,7 @@ wxXmlNode* TabgroupManager::DoDeleteTabgroupItem(
     return NULL;
 }
 
-void TabgroupManager::OnWorkspaceLoaded(wxCommandEvent& evt)
+void TabgroupManager::OnWorkspaceLoaded(clWorkspaceEvent& evt)
 {
     evt.Skip();
     wxFileName fnWorkspaceFile(evt.GetString());
@@ -193,7 +192,7 @@ void TabgroupManager::OnWorkspaceLoaded(wxCommandEvent& evt)
     clMainFrame::Get()->GetWorkspacePane()->GetTabgroupsTab()->DisplayTabgroups(false);
 }
 
-void TabgroupManager::OnWorkspaceClosed(wxCommandEvent& evt)
+void TabgroupManager::OnWorkspaceClosed(clWorkspaceEvent& evt)
 {
     evt.Skip();
     m_tabgroupdir.Clear();

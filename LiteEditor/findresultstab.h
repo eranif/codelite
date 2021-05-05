@@ -32,6 +32,7 @@
 #include <wx/stc/stc.h>
 
 #include "Notebook.h"
+#include "clWorkspaceEvent.hpp"
 #include "findinfilesdlg.h"
 #include "outputtabwindow.h"
 #include "search_thread.h"
@@ -91,7 +92,7 @@ protected:
     SearchData* GetSearchData();
     void DoOpenSearchResult(const SearchResult& result, wxStyledTextCtrl* sci, int markerLine);
     void OnThemeChanged(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
     DECLARE_EVENT_TABLE()
 
 public:
@@ -145,13 +146,8 @@ class EditorDeltasHolder
     // GetChanges()
 
 public:
-    EditorDeltasHolder()
-    {
-    }
-    ~EditorDeltasHolder()
-    {
-        Clear();
-    }
+    EditorDeltasHolder() {}
+    ~EditorDeltasHolder() { Clear(); }
 
     void Clear()
     {
@@ -173,14 +169,8 @@ public:
         }
     }
 
-    void OnFileSaved()
-    {
-        m_changesAtLastSave = m_changes;
-    }
-    void OnFileInFiles()
-    {
-        m_changesForCurrentMatches = m_changesAtLastSave;
-    }
+    void OnFileSaved() { m_changesAtLastSave = m_changes; }
+    void OnFileInFiles() { m_changesForCurrentMatches = m_changesAtLastSave; }
     void GetChanges(std::vector<int>& changes);
 
 protected:

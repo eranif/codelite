@@ -132,10 +132,8 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, clCommandEventHandler(NewBuildTab::OnBuildEnded),
                                   NULL, this);
 
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(NewBuildTab::OnWorkspaceLoaded), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(NewBuildTab::OnWorkspaceClosed), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &NewBuildTab::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NewBuildTab::OnWorkspaceClosed, this);
 
     wxTheApp->Connect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED,
                       wxCommandEventHandler(NewBuildTab::OnNextBuildError), NULL, this);
@@ -521,14 +519,14 @@ void NewBuildTab::DoSearchForDirectory(const wxString& line)
     }
 }
 
-void NewBuildTab::OnWorkspaceClosed(wxCommandEvent& e)
+void NewBuildTab::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     DoClear();
     InitView();
 }
 
-void NewBuildTab::OnWorkspaceLoaded(wxCommandEvent& e)
+void NewBuildTab::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
     DoClear();
@@ -586,17 +584,17 @@ void NewBuildTab::DoProcessOutput(bool compilationEnded, bool isSummaryLine)
         m_view->AppendText(modText + "\n");
 
         // get the newly added line width
-//        int endPosition = m_view->GetLineEndPosition(curline); // get character position from begin
-//        int beginPosition = m_view->PositionFromLine(curline); // and end of line
-//
-//        wxPoint beginPos = m_view->PointFromPosition(beginPosition);
-//        wxPoint endPos = m_view->PointFromPosition(endPosition);
-//
-//        int curLen = (endPos.x - beginPos.x) + 10;
-//        m_maxlineWidth = wxMax(m_maxlineWidth, curLen);
-//        if(m_maxlineWidth > 0) {
-//            m_view->SetScrollWidth(m_maxlineWidth);
-//        }
+        //        int endPosition = m_view->GetLineEndPosition(curline); // get character position from begin
+        //        int beginPosition = m_view->PositionFromLine(curline); // and end of line
+        //
+        //        wxPoint beginPos = m_view->PointFromPosition(beginPosition);
+        //        wxPoint endPos = m_view->PointFromPosition(endPosition);
+        //
+        //        int curLen = (endPos.x - beginPos.x) + 10;
+        //        m_maxlineWidth = wxMax(m_maxlineWidth, curLen);
+        //        if(m_maxlineWidth > 0) {
+        //            m_view->SetScrollWidth(m_maxlineWidth);
+        //        }
         m_view->SetEditable(false);
 
         if(clConfig::Get().Read(kConfigBuildAutoScroll, true)) {

@@ -27,8 +27,9 @@
 #define NODEJSDEBUGGERBREAKPOINTMANAGER_H
 
 #include "NodeJSDebuggerBreakpoint.h"
-#include <wx/event.h>
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
+#include <wx/event.h>
 
 class IEditor;
 class NodeJSBptManager : public wxEvtHandler
@@ -38,8 +39,8 @@ class NodeJSBptManager : public wxEvtHandler
 
 protected:
     void OnEditorChanged(wxCommandEvent& e);
-    void OnWorkspaceOpened(wxCommandEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceOpened(clWorkspaceEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnDebuggerStopped(clDebugEvent& event);
     void OnFileSaved(clCommandEvent& event);
 
@@ -76,7 +77,7 @@ public:
     void AddBreakpoint(const wxFileName& filename, int line);
 
     const NodeJSBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
-    
+
     /**
      * @brief remove all breakpoints from both the manager + UI
      */
@@ -85,7 +86,7 @@ public:
      * @brief remove a single breakpoint by its ID
      */
     void DeleteByID(const wxString& bpid);
-    
+
     /**
      * @brief return list of all applied breakpoints
      */

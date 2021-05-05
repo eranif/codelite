@@ -83,8 +83,8 @@ private:
     void OnPageChanging(wxBookCtrlEvent& e);
     void OnProjectFileAdded(clCommandEvent& e);
     void OnProjectFileRemoved(clCommandEvent& e);
-    void OnWorkspaceLoaded(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnDebugEnded(clDebugEvent& e);
     void OnInitDone(wxCommandEvent& e);
     void OnDetachedEditorClosed(clCommandEvent& e);
@@ -93,8 +93,8 @@ private:
     bool DoSelectPage(wxWindow* win);
     void DoHandleFrameMenu(clEditor* editor);
     void DoEraseDetachedEditor(IEditor* editor);
-    void OnWorkspaceReloadStarted(clCommandEvent& e);
-    void OnWorkspaceReloadEnded(clCommandEvent& e);
+    void OnWorkspaceReloadStarted(clWorkspaceEvent& e);
+    void OnWorkspaceReloadEnded(clWorkspaceEvent& e);
     void OnEditorSettingsChanged(wxCommandEvent& e);
     void OnCacheUpdated(clCommandEvent& e);
     void OnUpdateNavigationBar(clCodeCompletionEvent& e);

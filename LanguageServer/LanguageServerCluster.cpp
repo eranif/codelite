@@ -312,13 +312,13 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     m_servers.insert({ entry.GetName(), lsp });
 }
 
-void LanguageServerCluster::OnWorkspaceClosed(wxCommandEvent& event)
+void LanguageServerCluster::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     this->StopAll();
 }
 
-void LanguageServerCluster::OnWorkspaceOpen(wxCommandEvent& event)
+void LanguageServerCluster::OnWorkspaceOpen(clWorkspaceEvent& event)
 {
     event.Skip();
     this->Reload();

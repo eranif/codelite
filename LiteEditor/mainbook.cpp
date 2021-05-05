@@ -122,13 +122,11 @@ void MainBook::ConnectEvents()
     m_book->Bind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     m_book->Bind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
 
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(MainBook::OnWorkspaceLoaded), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &MainBook::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MainBook::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(MainBook::OnProjectFileAdded), NULL,
                                   this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MainBook::OnWorkspaceClosed), NULL,
                                   this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &MainBook::OnDebugEnded, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
@@ -159,14 +157,12 @@ MainBook::~MainBook()
 
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
 
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(MainBook::OnWorkspaceLoaded), NULL,
-                                     this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &MainBook::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MainBook::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(MainBook::OnProjectFileAdded), NULL,
                                      this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_REMOVED, clCommandEventHandler(MainBook::OnProjectFileRemoved),
                                      NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MainBook::OnWorkspaceClosed), NULL,
-                                     this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &MainBook::OnDebugEnded, this);
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
@@ -264,14 +260,14 @@ void MainBook::OnProjectFileRemoved(clCommandEvent& e)
     }
 }
 
-void MainBook::OnWorkspaceLoaded(wxCommandEvent& e)
+void MainBook::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
     CloseAll(false); // get ready for session to be restored by clearing out existing pages
     ShowWelcomePage(false);
 }
 
-void MainBook::OnWorkspaceClosed(wxCommandEvent& e)
+void MainBook::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     CloseAll(false); // make sure no unsaved files
@@ -318,10 +314,7 @@ void MainBook::ClearFileHistory()
     clConfig::Get().ClearRecentFiles();
 }
 
-void MainBook::GetRecentlyOpenedFiles(wxArrayString& files)
-{
-    files = clConfig::Get().GetRecentFiles();
-}
+void MainBook::GetRecentlyOpenedFiles(wxArrayString& files) { files = clConfig::Get().GetRecentFiles(); }
 
 void MainBook::UpdateNavBar(clEditor* editor)
 {
@@ -377,10 +370,7 @@ void MainBook::ShowNavBar(bool s)
     }
 }
 
-void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr)
-{
-    CreateSession(session, excludeArr);
-}
+void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { CreateSession(session, excludeArr); }
 
 void MainBook::RestoreSession(SessionEntry& session)
 {
@@ -1177,10 +1167,7 @@ void MainBook::MarkEditorReadOnly(clEditor* editor)
     }
 }
 
-long MainBook::GetBookStyle()
-{
-    return 0;
-}
+long MainBook::GetBookStyle() { return 0; }
 
 bool MainBook::DoSelectPage(wxWindow* win)
 {
@@ -1244,14 +1231,8 @@ void MainBook::DoUpdateNotebookTheme()
 #endif
 }
 
-wxWindow* MainBook::GetCurrentPage()
-{
-    return m_book->GetCurrentPage();
-}
-int MainBook::GetCurrentPageIndex()
-{
-    return m_book->GetSelection();
-}
+wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }
+int MainBook::GetCurrentPageIndex() { return m_book->GetSelection(); }
 
 void MainBook::OnClosePage(wxBookCtrlEvent& e)
 {
@@ -1266,15 +1247,9 @@ void MainBook::OnClosePage(wxBookCtrlEvent& e)
     }
 }
 
-void MainBook::OnDebugEnded(clDebugEvent& e)
-{
-    e.Skip();
-}
+void MainBook::OnDebugEnded(clDebugEvent& e) { e.Skip(); }
 
-void MainBook::DoHandleFrameMenu(clEditor* editor)
-{
-    wxUnusedVar(editor);
-}
+void MainBook::DoHandleFrameMenu(clEditor* editor) { wxUnusedVar(editor); }
 
 void MainBook::OnPageChanging(wxBookCtrlEvent& e)
 {
@@ -1303,10 +1278,7 @@ void MainBook::OnInitDone(wxCommandEvent& e)
     }
 }
 
-wxWindow* MainBook::GetPage(size_t page)
-{
-    return m_book->GetPage(page);
-}
+wxWindow* MainBook::GetPage(size_t page) { return m_book->GetPage(page); }
 
 bool MainBook::ClosePage(const wxString& text)
 {
@@ -1319,10 +1291,7 @@ bool MainBook::ClosePage(const wxString& text)
     return numPageClosed > 0;
 }
 
-size_t MainBook::GetPageCount() const
-{
-    return m_book->GetPageCount();
-}
+size_t MainBook::GetPageCount() const { return m_book->GetPageCount(); }
 
 void MainBook::DetachActiveEditor()
 {
@@ -1361,27 +1330,21 @@ void MainBook::DoEraseDetachedEditor(IEditor* editor)
     }
 }
 
-void MainBook::OnWorkspaceReloadEnded(clCommandEvent& e)
+void MainBook::OnWorkspaceReloadEnded(clWorkspaceEvent& e)
 {
     e.Skip();
     m_isWorkspaceReloading = false;
 }
 
-void MainBook::OnWorkspaceReloadStarted(clCommandEvent& e)
+void MainBook::OnWorkspaceReloadStarted(clWorkspaceEvent& e)
 {
     e.Skip();
     m_isWorkspaceReloading = true;
 }
 
-void MainBook::ClosePageVoid(wxWindow* win)
-{
-    ClosePage(win);
-}
+void MainBook::ClosePageVoid(wxWindow* win) { ClosePage(win); }
 
-void MainBook::CloseAllButThisVoid(wxWindow* win)
-{
-    CloseAllButThis(win);
-}
+void MainBook::CloseAllButThisVoid(wxWindow* win) { CloseAllButThis(win); }
 
 void MainBook::CloseAllVoid(bool cancellable)
 {
@@ -1450,10 +1413,7 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
     session.SetFindInFilesMask(frd.GetSelectedMask());
 }
 
-void MainBook::ShowTabBar(bool b)
-{
-    wxUnusedVar(b);
-}
+void MainBook::ShowTabBar(bool b) { wxUnusedVar(b); }
 
 void MainBook::CloseTabsToTheRight(wxWindow* win)
 {
@@ -1861,7 +1821,4 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
     return label;
 }
 
-int MainBook::GetBitmapIndexOrAdd(const wxString& name)
-{
-    return m_book->GetBitmaps()->Add(name);
-}
+int MainBook::GetBitmapIndexOrAdd(const wxString& name) { return m_book->GetBitmaps()->Add(name); }

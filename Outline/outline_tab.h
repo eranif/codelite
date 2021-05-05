@@ -51,7 +51,7 @@ protected:
     virtual void OnPhpItemActivated(wxTreeEvent& event);
     virtual void OnPhpItemSelected(wxTreeEvent& event);
     void OnThemeChanged(clCommandEvent& event);
-    
+
     bool IsIncludeFileNode();
 
     void DoRefreshCxxView();
@@ -64,7 +64,7 @@ public:
 
     // Event Handlers
     ////////////////////////////////////////////////
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnActiveEditorChanged(wxCommandEvent& e);
     void OnEditorClosed(wxCommandEvent& e);
     void OnAllEditorsClosed(wxCommandEvent& e);

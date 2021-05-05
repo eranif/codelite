@@ -155,7 +155,7 @@ void clCxxFileCacheSymbols::OnFileSave(clCommandEvent& e)
     Delete(e.GetFileName());
 }
 
-void clCxxFileCacheSymbols::OnWorkspaceAction(wxCommandEvent& e)
+void clCxxFileCacheSymbols::OnWorkspaceAction(clWorkspaceEvent& e)
 {
     e.Skip();
     Clear();

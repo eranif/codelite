@@ -28,6 +28,7 @@
 
 #include "bitmap_loader.h"
 #include "clFileSystemEvent.h"
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "subversion2_ui.h"
 #include "svn_console.h"
@@ -119,8 +120,8 @@ protected:
     void OnItemActivated(wxDataViewEvent& event);
 
     // IDE Events
-    void OnWorkspaceLoaded(wxCommandEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnClearOuptut(wxCommandEvent& event);
     void OnRefreshView(wxCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);

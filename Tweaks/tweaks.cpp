@@ -44,7 +44,9 @@ static int ID_TWEAKS_SETTINGS = ::wxNewId();
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new Tweaks(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new Tweaks(manager);
+    }
     return thePlugin;
 }
 
@@ -71,8 +73,8 @@ Tweaks::Tweaks(IManager* manager)
     m_mgr->GetTheApp()->Connect(ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_COLOUR_TAB, clColourEventHandler(Tweaks::OnColourTab), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &Tweaks::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &Tweaks::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_VIEW_BUILD_STARTING,
                                   clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT,
@@ -86,10 +88,8 @@ void Tweaks::UnPlug()
     m_mgr->GetTheApp()->Disconnect(ID_TWEAKS_SETTINGS, wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(Tweaks::OnSettings), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_COLOUR_TAB, clColourEventHandler(Tweaks::OnColourTab), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(Tweaks::OnWorkspaceLoaded), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(Tweaks::OnWorkspaceClosed), NULL,
-                                     this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &Tweaks::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &Tweaks::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_VIEW_BUILD_STARTING,
                                      clCommandEventHandler(Tweaks::OnFileViewBuildTree), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_VIEW_CUSTOMIZE_PROJECT,
@@ -120,7 +120,9 @@ void Tweaks::OnSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     TweaksSettingsDlg dlg(m_mgr->GetTheApp()->GetTopWindow());
-    if(dlg.ShowModal() == wxID_OK) { dlg.GetSettings().Save(); }
+    if(dlg.ShowModal() == wxID_OK) {
+        dlg.GetSettings().Save();
+    }
 
     m_settings.Load(); // Refresh our cached settings
     // Refresh the drawings
@@ -162,12 +164,14 @@ void Tweaks::OnColourTab(clColourEvent& e)
 IEditor* Tweaks::FindEditorByPage(wxWindow* page)
 {
     for(size_t i = 0; i < m_mgr->GetPageCount(); ++i) {
-        if(m_mgr->GetPage(i) == page) { return dynamic_cast<IEditor*>(m_mgr->GetPage(i)); }
+        if(m_mgr->GetPage(i) == page) {
+            return dynamic_cast<IEditor*>(m_mgr->GetPage(i));
+        }
     }
     return NULL;
 }
 
-void Tweaks::OnWorkspaceLoaded(wxCommandEvent& e)
+void Tweaks::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
     // Refresh the list with the current workspace setup
@@ -176,7 +180,7 @@ void Tweaks::OnWorkspaceLoaded(wxCommandEvent& e)
     m_mgr->GetOutputPaneNotebook()->Refresh();
 }
 
-void Tweaks::OnWorkspaceClosed(wxCommandEvent& e)
+void Tweaks::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     m_settings.Clear();
@@ -205,7 +209,9 @@ void Tweaks::OnFileViewBuildTree(clCommandEvent& e)
     for(; iter != m_settings.GetProjects().end(); ++iter) {
         wxString bmpfile = iter->second.GetBitmapFilename();
         bmpfile.Trim().Trim(false);
-        if(bmpfile.IsEmpty()) { continue; }
+        if(bmpfile.IsEmpty()) {
+            continue;
+        }
         wxBitmap bmp(bmpfile, wxBITMAP_TYPE_ANY);
         if(bmp.IsOk()) {
             wxIcon icn;

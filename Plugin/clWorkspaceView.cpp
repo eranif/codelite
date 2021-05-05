@@ -1,7 +1,7 @@
 #include "clWorkspaceView.h"
-#include "macros.h"
-#include "event_notifier.h"
 #include "codelite_events.h"
+#include "event_notifier.h"
+#include "macros.h"
 #include <algorithm>
 
 clWorkspaceView::clWorkspaceView(wxSimplebook* book)
@@ -67,7 +67,7 @@ void clWorkspaceView::RemovePage(const wxString& name)
     }
 }
 
-void clWorkspaceView::OnWorkspaceClosed(wxCommandEvent& event)
+void clWorkspaceView::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     SelectPage(GetDefaultPage());
@@ -77,7 +77,8 @@ std::map<wxString, wxWindow*> clWorkspaceView::GetAllPages() const
 {
     std::map<wxString, wxWindow*> pages;
     for(size_t i = 0; i < m_simpleBook->GetPageCount(); ++i) {
-        if(m_simpleBook->GetPageText(i) == _("Default")) continue;
+        if(m_simpleBook->GetPageText(i) == _("Default"))
+            continue;
         pages.insert(std::make_pair(m_simpleBook->GetPageText(i), m_simpleBook->GetPage(i)));
     }
     pages.insert(m_windows.begin(), m_windows.end());

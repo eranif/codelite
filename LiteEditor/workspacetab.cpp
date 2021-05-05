@@ -96,10 +96,8 @@ WorkspaceTab::~WorkspaceTab()
     wxTheApp->Disconnect(XRCID("show_in_workspace"), wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI), NULL, this);
 
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &WorkspaceTab::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &WorkspaceTab::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_ADDED, clCommandEventHandler(WorkspaceTab::OnProjectAdded), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_REMOVED, clCommandEventHandler(WorkspaceTab::OnProjectRemoved), NULL,
                                      this);
@@ -186,10 +184,9 @@ void WorkspaceTab::ConnectEvents()
                       wxCommandEventHandler(WorkspaceTab::OnShowFile), NULL, this);
     wxTheApp->Connect(XRCID("show_in_workspace"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WorkspaceTab::OnShowFileUI),
                       NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceLoaded), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(WorkspaceTab::OnWorkspaceClosed), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &WorkspaceTab::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &WorkspaceTab::OnWorkspaceClosed, this);
+
     EventNotifier::Get()->Connect(wxEVT_PROJ_ADDED, clCommandEventHandler(WorkspaceTab::OnProjectAdded), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_REMOVED, clCommandEventHandler(WorkspaceTab::OnProjectRemoved), NULL,
                                   this);
@@ -321,7 +318,7 @@ void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
     }
 }
 
-void WorkspaceTab::OnWorkspaceLoaded(wxCommandEvent& e)
+void WorkspaceTab::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
     if(ManagerST::Get()->IsWorkspaceOpen()) {
@@ -336,7 +333,7 @@ void WorkspaceTab::OnWorkspaceLoaded(wxCommandEvent& e)
 
 void WorkspaceTab::OnEditorClosing(wxCommandEvent& e) { e.Skip(); }
 
-void WorkspaceTab::OnWorkspaceClosed(wxCommandEvent& e)
+void WorkspaceTab::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     m_fileView->DeleteAllItems();

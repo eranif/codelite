@@ -189,8 +189,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     EventNotifier::Get()->Connect(wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged),
                                   NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &GitConsole::OnWorkspaceClosed, this);
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
@@ -255,13 +254,16 @@ GitConsole::~GitConsole()
     clThemeUpdater::Get().UnRegisterWindow(m_splitter733);
     EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED,
                                      wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitConsole::OnWorkspaceClosed), NULL,
-                                     this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &GitConsole::OnWorkspaceClosed, this);
     m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
 }
 
-void GitConsole::OnClearGitLog(wxCommandEvent& event) { m_stcLog->ClearAll(); }
+void GitConsole::OnClearGitLog(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    m_stcLog->ClearAll();
+}
 
 void GitConsole::OnStopGitProcess(wxCommandEvent& event)
 {
@@ -478,11 +480,14 @@ void GitConsole::OnResetFile(wxCommandEvent& event)
         m_git->UndoAddFiles(filesToRemove);
     }
 }
-void GitConsole::OnWorkspaceClosed(wxCommandEvent& e)
+
+void GitConsole::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     Clear();
-    OnClearGitLog(e);
+
+    wxCommandEvent dummy;
+    OnClearGitLog(dummy);
 }
 
 void GitConsole::OnItemSelectedUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrl->GetSelectedItemsCount()); }
@@ -646,7 +651,9 @@ void GitConsole::OnCloseView(wxCommandEvent& e)
     if(sb) {
         sb->SetSourceControlBitmap(wxNullBitmap, "", "");
     }
-    OnWorkspaceClosed(e);
+
+    clWorkspaceEvent dummy;
+    OnWorkspaceClosed(dummy);
 }
 
 void GitConsole::Clear()

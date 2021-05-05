@@ -26,6 +26,7 @@
 #define NAVIGATIONMANAGER_H
 
 #include "browse_record.h"
+#include "clWorkspaceEvent.hpp"
 #include "codelite_exports.h"
 #include "ieditor.h"
 #include "imanager.h"
@@ -47,7 +48,7 @@ private:
     NavMgr();
     virtual ~NavMgr();
 
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
 
 public:
     static NavMgr* Get();

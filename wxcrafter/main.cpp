@@ -273,8 +273,7 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
                                   wxCommandEventHandler(MainFrame::OnProjectSynched), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(MainFrame::OnProjectLoaded), NULL,
                                   this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MainFrame::OnWorkspaceClosed), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MainFrame::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(MainFrame::OnProjectClosed), NULL,
                                   this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS,
@@ -304,8 +303,7 @@ MainFrame::~MainFrame()
                                      wxCommandEventHandler(MainFrame::OnProjectSynched), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(MainFrame::OnProjectLoaded), NULL,
                                      this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(MainFrame::OnWorkspaceClosed), NULL,
-                                     this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MainFrame::OnWorkspaceClosed, this);
     EventNotifier::Get()->Disconnect(wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(MainFrame::OnProjectClosed),
                                      NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS,
@@ -432,7 +430,7 @@ void MainFrame::OnPreviewUI(wxUpdateUIEvent& event)
     event.Enable(!m_wxcView->IsPreviewAlive() && wxcProjectMetadata::Get().IsLoaded());
 }
 
-void MainFrame::OnWorkspaceClosed(wxCommandEvent& e)
+void MainFrame::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     SetTitle("wxCrafter");

@@ -145,10 +145,8 @@ GitPlugin::GitPlugin(IManager* manager)
 
     EventNotifier::Get()->Bind(wxEVT_FILE_CREATED, &GitPlugin::OnFileCreated, this);
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(GitPlugin::OnWorkspaceClosed), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &GitPlugin::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &GitPlugin::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL,
                                   this);
@@ -431,10 +429,8 @@ void GitPlugin::UnPlug()
     /*SYSTEM*/
     EventNotifier::Get()->Disconnect(wxEVT_INIT_DONE, wxCommandEventHandler(GitPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(GitPlugin::OnWorkspaceLoaded), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &GitPlugin::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &GitPlugin::OnFilesAddedToProject, this);
     EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CONFIG_CHANGED,
                                      wxCommandEventHandler(GitPlugin::OnWorkspaceConfigurationChanged), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
@@ -1043,7 +1039,7 @@ void GitPlugin::OnFilesRemovedFromProject(clCommandEvent& e)
 }
 
 /*******************************************************************************/
-void GitPlugin::OnWorkspaceLoaded(wxCommandEvent& e)
+void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
     m_workspaceFilename = e.GetString();
@@ -2062,7 +2058,7 @@ void GitPlugin::HideProgress()
 
 void GitPlugin::OnEnableGitRepoExists(wxUpdateUIEvent& e) { e.Enable(m_repositoryDirectory.IsEmpty() == false); }
 
-void GitPlugin::OnWorkspaceClosed(wxCommandEvent& e)
+void GitPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     StoreWorkspaceRepoDetails();

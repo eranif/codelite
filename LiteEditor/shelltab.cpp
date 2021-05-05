@@ -443,7 +443,7 @@ void OutputTab::OnProcEnded(wxCommandEvent& e)
     DoSetCollecting(false);
 }
 
-void OutputTab::OnWorkspaceClosed(wxCommandEvent& event)
+void OutputTab::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();

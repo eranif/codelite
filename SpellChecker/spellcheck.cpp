@@ -95,10 +95,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 // ------------------------------------------------------------
-CL_PLUGIN_API int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 // ------------------------------------------------------------
 SpellCheck::SpellCheck(IManager* manager)
     : IPlugin(manager)
@@ -155,6 +152,7 @@ void SpellCheck::Init()
         if(!m_options.GetDictionaryFileName().IsEmpty())
             m_pEngine->InitEngine();
     }
+
     m_timer.Bind(wxEVT_TIMER, &SpellCheck::OnTimer, this);
     m_topWin->Bind(wxEVT_CONTEXT_MENU_EDITOR, &SpellCheck::OnContextMenu, this);
     m_topWin->Bind(wxEVT_WORKSPACE_LOADED, &SpellCheck::OnWspLoaded, this);
@@ -430,16 +428,14 @@ void SpellCheck::SetCheckContinuous(bool value)
 }
 
 // ------------------------------------------------------------
-void SpellCheck::OnWspLoaded(wxCommandEvent& e)
+void SpellCheck::OnWspLoaded(clWorkspaceEvent& e)
 {
     m_currentWspPath = e.GetString();
     e.Skip();
 }
+
 // ------------------------------------------------------------
-void SpellCheck::OnWspClosed(wxCommandEvent& e)
-{
-    e.Skip();
-}
+void SpellCheck::OnWspClosed(clWorkspaceEvent& e) { e.Skip(); }
 // ------------------------------------------------------------
 void SpellCheck::OnSuggestion(wxCommandEvent& e)
 {

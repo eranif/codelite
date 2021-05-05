@@ -27,6 +27,7 @@
 #define CODELITE_EVENTS_H
 
 #include "clFileSystemEvent.h"
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
@@ -42,18 +43,16 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_INIT_DONE, wxCommandEvent);
 // wxCommandEvent::GetString() will return the node name modified
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_CONFIG_CHANGED, wxCommandEvent);
 
-// wxCommandEvent::GetString() will return the workspace fullpath
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_LOADED, wxCommandEvent);
+// workspace loading related event
+// use clWorkspaceEvent::GetString(), clWorkspaceEvent::GetFileName() to get the path
+// use clWorkspaceEvent::GetWorkspaceType() to get the type of the workspace loaded/closed
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_LOADED, clWorkspaceEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_RELOAD_STARTED, clWorkspaceEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_RELOAD_ENDED, clWorkspaceEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_CLOSING, clWorkspaceEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_CLOSED, clWorkspaceEvent);
 
-// The build configuration was changed
-// use event.GetString() to get the selected configuration name
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_CONFIG_CHANGED, wxCommandEvent);
-
-// clientData is NULL
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_CLOSED, wxCommandEvent);
-
-// A workspace closing has started
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_CLOSING, wxCommandEvent);
 
 // clientData is NULL
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_VIEW_INIT_DONE, wxCommandEvent);
@@ -660,14 +659,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, c
 // -------------------Debugger events end------------------------------------------------
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CMD_OPEN_PROJ_SETTINGS,
                          clCommandEvent); // clCommandEvent. Use event.GetString() to get the project name
-
-// Workspace reload started
-// event type: clCommandEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_RELOAD_STARTED, clCommandEvent);
-
-// Workspace reload is done
-// event type: clCommandEvent
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WORKSPACE_RELOAD_ENDED, clCommandEvent);
 
 // event type: clNewProjectEvent
 // Use this event to add new templates / categories to the wizard

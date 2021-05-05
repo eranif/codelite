@@ -1,12 +1,13 @@
 #ifndef CLPROFILEHANDLER_H
 #define CLPROFILEHANDLER_H
 
-#include <wx/event.h>
-#include "codelite_exports.h"
-#include "wxStringHash.h"
-#include "macros.h"
-#include "cl_command_event.h"
 #include "Notebook.h"
+#include "clWorkspaceEvent.hpp"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
+#include "macros.h"
+#include "wxStringHash.h"
+#include <wx/event.h>
 
 class WXDLLIMPEXP_SDK clProfileHandler : public wxEvtHandler
 {
@@ -19,8 +20,8 @@ protected:
     clProfileHandler();
     virtual ~clProfileHandler();
 
-    void OnWorkspaceClosed(wxCommandEvent& e);
-    void OnWorkspaceLoaded(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnGoingDown(clCommandEvent& e);
     void HandleWorkspaceTabs(bool show);
     void HandleOutputTabs(bool show);

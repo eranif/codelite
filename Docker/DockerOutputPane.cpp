@@ -302,7 +302,7 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
     m_dvListCtrlContainers->PopupMenu(&menu);
 }
 
-void DockerOutputPane::OnWorkspaceClosed(wxCommandEvent& event)
+void DockerOutputPane::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();

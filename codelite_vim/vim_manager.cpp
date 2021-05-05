@@ -405,7 +405,7 @@ void VimManager::setUpVimBarPos()
     // status_vim->SetSize(0, 0, width, wxDefaultCoord);
 }
 
-void VimManager::OnWorkspaceClosing(wxCommandEvent& event)
+void VimManager::OnWorkspaceClosing(clWorkspaceEvent& event)
 {
     event.Skip();
     DeleteAllEditorState();

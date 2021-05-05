@@ -26,6 +26,7 @@
 #define SHELLTAB_H
 
 #include "OutputDebugStringThread.h"
+#include "clWorkspaceEvent.hpp"
 #include "outputtabwindow.h"
 
 class wxTerminal;
@@ -85,7 +86,7 @@ public:
     void OnDebugStopped(clDebugEvent& event);
     virtual void OnProcStarted(wxCommandEvent& e);
     virtual void OnProcEnded(wxCommandEvent& e);
-    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
 };
 
 class DebugTab : public wxPanel

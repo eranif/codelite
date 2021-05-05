@@ -163,10 +163,8 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     });
 
     CreatGUIControls();
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed),
-                                  NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &SubversionView::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &SubversionView::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(SubversionView::OnFileSaved), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(SubversionView::OnFileAdded), NULL,
                                   this);
@@ -325,7 +323,7 @@ void SubversionView::BuildExplorerTree(const wxString& root)
     m_simpleCommand.Execute(command, root, new SvnStatusHandler(m_plugin, wxNOT_FOUND, NULL, true, root), m_plugin);
 }
 
-void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
+void SubversionView::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
 
@@ -348,7 +346,7 @@ void SubversionView::OnWorkspaceLoaded(wxCommandEvent& event)
     }
 }
 
-void SubversionView::OnWorkspaceClosed(wxCommandEvent& event)
+void SubversionView::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
 
@@ -1096,10 +1094,9 @@ void SubversionView::OnActiveEditorChanged(wxCommandEvent& event)
 
 void SubversionView::DisconnectEvents()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_LOADED, wxCommandEventHandler(SubversionView::OnWorkspaceLoaded),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WORKSPACE_CLOSED, wxCommandEventHandler(SubversionView::OnWorkspaceClosed),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &SubversionView::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &SubversionView::OnWorkspaceClosed, this);
+
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(SubversionView::OnFileSaved), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(SubversionView::OnFileAdded), NULL,
                                      this);

@@ -204,7 +204,7 @@ bool WebTools::IsJavaScriptFile(const wxString& filename)
     return FileExtManager::GetType(filename) == FileExtManager::TypeJS;
 }
 
-void WebTools::OnWorkspaceClosed(wxCommandEvent& event) { event.Skip(); }
+void WebTools::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
 
 void WebTools::OnEditorChanged(wxCommandEvent& event)
 {
@@ -377,7 +377,7 @@ void WebTools::EnsureAuiPaneIsVisible(const wxString& paneName, bool update)
     }
 }
 
-void WebTools::OnWorkspaceLoaded(wxCommandEvent& event)
+void WebTools::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
     wxFileName workspaceFile = event.GetString();

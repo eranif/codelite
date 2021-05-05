@@ -37,7 +37,7 @@ clDockerWorkspaceView::~clDockerWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &clDockerWorkspaceView::OnFindInFilesDismissed, this);
 }
 
-void clDockerWorkspaceView::OnWorkspaceClosed(wxCommandEvent& event)
+void clDockerWorkspaceView::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();
@@ -49,7 +49,7 @@ void clDockerWorkspaceView::OnWorkspaceClosed(wxCommandEvent& event)
     settings.Save();
 }
 
-void clDockerWorkspaceView::OnWorkspaceOpened(wxCommandEvent& event)
+void clDockerWorkspaceView::OnWorkspaceOpened(clWorkspaceEvent& event)
 {
     event.Skip();
     if(clDockerWorkspace::Get()->IsOpen()) {

@@ -25,14 +25,14 @@ clProfileHandler::~clProfileHandler()
     EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &clProfileHandler::OnGoingDown, this);
 }
 
-void clProfileHandler::OnWorkspaceClosed(wxCommandEvent& e)
+void clProfileHandler::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     RestoreTabs(m_cxxOutputTabsToRestore, wxEVT_SHOW_OUTPUT_TAB);
     RestoreTabs(m_cxxWorkspaceTabsToRestore, wxEVT_SHOW_WORKSPACE_TAB);
 }
 
-void clProfileHandler::OnWorkspaceLoaded(wxCommandEvent& e)
+void clProfileHandler::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
     if(::clIsCxxWorkspaceOpened()) {

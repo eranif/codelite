@@ -71,7 +71,7 @@ protected:
     virtual void OnProjectModified(wxCommandEvent& e);
     virtual void OnProjectSynched(wxCommandEvent& e);
     virtual void OnProjectLoaded(wxCommandEvent& e);
-    virtual void OnWorkspaceClosed(wxCommandEvent& e);
+    virtual void OnWorkspaceClosed(clWorkspaceEvent& e);
     virtual void OnCodeLiteGotFocus(wxCommandEvent& e);
     virtual void OnLicenseUpdatedSuccessfully(wxCommandEvent& e);
     virtual void OnLicenseUpdatedUnSuccessfully(wxCommandEvent& e);

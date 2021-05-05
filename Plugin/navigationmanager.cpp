@@ -26,10 +26,7 @@
 #include "event_notifier.h"
 #include "navigationmanager.h"
 
-NavMgr::NavMgr()
-{
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NavMgr::OnWorkspaceClosed, this);
-}
+NavMgr::NavMgr() { EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NavMgr::OnWorkspaceClosed, this); }
 
 NavMgr::~NavMgr()
 {
@@ -56,15 +53,9 @@ bool NavMgr::ValidLocation(const BrowseRecord& rec) const
     return (!rec.filename.IsEmpty()) && (rec.lineno > 1);
 }
 
-bool NavMgr::CanNext() const
-{
-    return !m_nexts.empty();
-}
+bool NavMgr::CanNext() const { return !m_nexts.empty(); }
 
-bool NavMgr::CanPrev() const
-{
-    return !m_prevs.empty();
-}
+bool NavMgr::CanPrev() const { return !m_prevs.empty(); }
 
 void NavMgr::StoreCurrentLocation(const BrowseRecord& origin, const BrowseRecord& target)
 {
@@ -104,7 +95,7 @@ bool NavMgr::NavigateForward(IManager* mgr)
     return mgr->OpenFile(new_loc);
 }
 
-void NavMgr::OnWorkspaceClosed(wxCommandEvent& e)
+void NavMgr::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
     Clear();

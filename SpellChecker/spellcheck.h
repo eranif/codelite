@@ -65,8 +65,8 @@ public:
     void OnCheck(wxCommandEvent& e);
     void OnContinousCheck(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& e);
-    void OnWspLoaded(wxCommandEvent& e);
-    void OnWspClosed(wxCommandEvent& e);
+    void OnWspLoaded(clWorkspaceEvent& e);
+    void OnWspClosed(clWorkspaceEvent& e);
     void OnSuggestion(wxCommandEvent& e);
     void OnIgnoreWord(wxCommandEvent& e);
     void OnAddWord(wxCommandEvent& e);

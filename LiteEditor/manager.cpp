@@ -373,8 +373,10 @@ void Manager::DoSetupWorkspace(const wxString& path)
     // set the C++ workspace as the active one
     clWorkspaceManager::Get().SetWorkspace(clCxxWorkspaceST::Get());
 
-    wxCommandEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
+    clWorkspaceEvent evtWorkspaceLoaded(wxEVT_WORKSPACE_LOADED);
+    evtWorkspaceLoaded.SetFileName(path);
     evtWorkspaceLoaded.SetString(path);
+    evtWorkspaceLoaded.SetWorkspaceType(clCxxWorkspaceST::Get()->GetWorkspaceType());
     EventNotifier::Get()->ProcessEvent(evtWorkspaceLoaded);
 
     // Update the refactoring cache
@@ -426,7 +428,8 @@ void Manager::CloseWorkspace()
 {
     m_workspceClosing = true;
     if(!IsShutdownInProgress()) {
-        SendCmdEvent(wxEVT_WORKSPACE_CLOSING);
+        clWorkspaceEvent closing_event(wxEVT_WORKSPACE_CLOSING);
+        EventNotifier::Get()->ProcessEvent(closing_event);
     }
 
     DbgClearWatches();
@@ -474,7 +477,8 @@ void Manager::CloseWorkspace()
     ParseThreadST::Get()->ClearPaths();
 
     if(!IsShutdownInProgress()) {
-        SendCmdEvent(wxEVT_WORKSPACE_CLOSED);
+        clWorkspaceEvent closed_event(wxEVT_WORKSPACE_CLOSED);
+        EventNotifier::Get()->ProcessEvent(closed_event);
     }
     m_workspceClosing = false;
 }

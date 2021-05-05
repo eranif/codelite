@@ -26,9 +26,10 @@
 #ifndef CLWORKSPACEMANAGER_H
 #define CLWORKSPACEMANAGER_H
 
-#include <wx/event.h>
-#include "codelite_exports.h"
 #include "IWorkspace.h"
+#include "clWorkspaceEvent.hpp"
+#include "codelite_exports.h"
+#include <wx/event.h>
 
 class WXDLLIMPEXP_SDK clWorkspaceManager : public wxEvtHandler
 {
@@ -39,25 +40,25 @@ protected:
     clWorkspaceManager();
     virtual ~clWorkspaceManager();
 
-    void OnWorkspaceClosed(wxCommandEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
 
 public:
     static clWorkspaceManager& Get();
 
     void SetWorkspace(IWorkspace* workspace) { this->m_workspace = workspace; }
     IWorkspace* GetWorkspace() { return m_workspace; }
-    
+
     /**
      * @brief return list of all supported workspaces
      */
     wxArrayString GetAllWorkspaces() const;
-    
+
     /**
      * @brief return an array containing the files mask for all the workspace
      * types
      */
     wxArrayString GetUnifiedFilesMask() const;
-    
+
     /**
      * @brief do we have a workspace opened?
      */

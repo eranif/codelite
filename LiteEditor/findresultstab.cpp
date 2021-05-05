@@ -93,10 +93,7 @@ FindResultsTab::~FindResultsTab()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &FindResultsTab::OnWorkspaceClosed, this);
 }
 
-void FindResultsTab::SetStyles(wxStyledTextCtrl* sci)
-{
-    m_styler->SetStyles(sci);
-}
+void FindResultsTab::SetStyles(wxStyledTextCtrl* sci) { m_styler->SetStyles(sci); }
 
 void FindResultsTab::AppendText(const wxString& line)
 {
@@ -284,10 +281,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     }
 }
 
-void FindResultsTab::OnSearchCancel(wxCommandEvent& e)
-{
-    AppendText(_("====== Search cancelled by user ======\n"));
-}
+void FindResultsTab::OnSearchCancel(wxCommandEvent& e) { AppendText(_("====== Search cancelled by user ======\n")); }
 
 void FindResultsTab::OnClearAll(wxCommandEvent& e)
 {
@@ -296,10 +290,7 @@ void FindResultsTab::OnClearAll(wxCommandEvent& e)
     Clear();
 }
 
-void FindResultsTab::OnClearAllUI(wxUpdateUIEvent& e)
-{
-    e.Enable(!m_searchInProgress && !m_sci->IsEmpty());
-}
+void FindResultsTab::OnClearAllUI(wxUpdateUIEvent& e) { e.Enable(!m_searchInProgress && !m_sci->IsEmpty()); }
 
 void FindResultsTab::OnRepeatOutput(wxCommandEvent& e)
 {
@@ -309,10 +300,7 @@ void FindResultsTab::OnRepeatOutput(wxCommandEvent& e)
     SearchThreadST::Get()->PerformSearch(*searchData);
 }
 
-void FindResultsTab::OnRepeatOutputUI(wxUpdateUIEvent& e)
-{
-    e.Enable(m_sci->GetLength() > 0);
-}
+void FindResultsTab::OnRepeatOutputUI(wxUpdateUIEvent& e) { e.Enable(m_sci->GetLength() > 0); }
 
 void FindResultsTab::OnMouseDClick(wxStyledTextEvent& e)
 {
@@ -332,10 +320,7 @@ void FindResultsTab::OnMouseDClick(wxStyledTextEvent& e)
     }
 }
 
-SearchData* FindResultsTab::GetSearchData()
-{
-    return &m_searchData;
-}
+SearchData* FindResultsTab::GetSearchData() { return &m_searchData; }
 
 void FindResultsTab::NextMatch()
 {
@@ -469,10 +454,7 @@ void FindResultsTab::OnStopSearch(wxCommandEvent& e)
     SearchThreadST::Get()->StopSearch();
 }
 
-void FindResultsTab::OnStopSearchUI(wxUpdateUIEvent& e)
-{
-    e.Enable(m_searchInProgress);
-}
+void FindResultsTab::OnStopSearchUI(wxUpdateUIEvent& e) { e.Enable(m_searchInProgress); }
 
 void FindResultsTab::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
@@ -576,17 +558,11 @@ void FindResultsTab::LoadSearch(const History& h)
     m_sci->SetEditable(false);
 }
 
-void FindResultsTab::OnRecentSearchesUI(wxUpdateUIEvent& e)
-{
-    e.Enable(!m_history.IsEmpty() && !m_searchInProgress);
-}
+void FindResultsTab::OnRecentSearchesUI(wxUpdateUIEvent& e) { e.Enable(!m_history.IsEmpty() && !m_searchInProgress); }
 
-void FindResultsTab::ResetStyler()
-{
-    m_styler->Reset();
-}
+void FindResultsTab::ResetStyler() { m_styler->Reset(); }
 
-void FindResultsTab::OnWorkspaceClosed(wxCommandEvent& event)
+void FindResultsTab::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();

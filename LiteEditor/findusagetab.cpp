@@ -23,17 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "findusagetab.h"
-#include "findresultstab.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/ffile.h>
-#include <wx/tokenzr.h>
-#include "ctags_manager.h"
 #include "cl_editor.h"
-#include "frame.h"
+#include "ctags_manager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "findresultstab.h"
+#include "findusagetab.h"
+#include "frame.h"
 #include "plugin.h"
+#include <wx/ffile.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 FindUsageTab::FindUsageTab(wxWindow* parent, const wxString& name)
     : OutputTabWindow(parent, wxID_ANY, name)
@@ -43,22 +43,23 @@ FindUsageTab::FindUsageTab(wxWindow* parent, const wxString& name)
     m_sci->Connect(wxEVT_STC_STYLENEEDED, wxStyledTextEventHandler(FindUsageTab::OnStyleNeeded), NULL, this);
     m_tb->DeleteById(XRCID("repeat_output"));
     m_tb->Realize();
-    EventNotifier::Get()->Connect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindUsageTab::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindUsageTab::OnThemeChanged), NULL,
+                                  this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &FindUsageTab::OnWorkspaceClosed, this);
 }
 
 FindUsageTab::~FindUsageTab()
 {
-    EventNotifier::Get()->Disconnect(
-        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindUsageTab::OnThemeChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(FindUsageTab::OnThemeChanged), NULL,
+                                     this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &FindUsageTab::OnWorkspaceClosed, this);
 }
 
 void FindUsageTab::OnStyleNeeded(wxStyledTextEvent& e)
 {
     wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(e.GetEventObject());
-    if(!ctrl) return;
+    if(!ctrl)
+        return;
     m_styler->StyleText(ctrl, e, true);
 }
 
@@ -188,7 +189,7 @@ void FindUsageTab::OnThemeChanged(wxCommandEvent& e)
     m_styler->SetStyles(m_sci);
 }
 
-void FindUsageTab::OnWorkspaceClosed(wxCommandEvent& event)
+void FindUsageTab::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();

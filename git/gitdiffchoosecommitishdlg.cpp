@@ -72,7 +72,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
     m_comboCommitish1->Append(data.GetGitDiffChooseDlgCBoxValues1());
     m_comboCommitish2->Append(data.GetGitDiffChooseDlgCBoxValues2());
 
-    CreateAsyncProcessCB(
+    m_plugin->AsyncRunGitWithCallback(
         m_gitPath + " --no-pager branch -a --no-color",
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
@@ -81,7 +81,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
         },
         IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
 
-    CreateAsyncProcessCB(
+    m_plugin->AsyncRunGitWithCallback(
         m_gitPath + " --no-pager tag",
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
@@ -92,7 +92,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
 
     // Restrict the commits to 1000: filling a wxChoice with many more froze CodeLite for several minutes
     // and in any case, selecting one particular commit out of hundreds is not easy!
-    CreateAsyncProcessCB(
+    m_plugin->AsyncRunGitWithCallback(
         m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\"",
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
@@ -234,7 +234,7 @@ void GitDiffChooseCommitishDlg::OnBranch1Changed(wxCommandEvent& event)
     if(newBranch.StartsWith("* ")) {
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
-    CreateAsyncProcessCB(
+    m_plugin->AsyncRunGitWithCallback(
         m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch,
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
@@ -249,7 +249,7 @@ void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
 
-    CreateAsyncProcessCB(
+    m_plugin->AsyncRunGitWithCallback(
         m_gitPath + " --no-pager log -1000 --format=\"%h %<(60,trunc)%s\" " + newBranch,
         [this](const wxString& output) {
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);

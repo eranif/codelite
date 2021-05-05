@@ -1344,7 +1344,7 @@ void GitPlugin::ProcessGitActionQueue()
     clDEBUG1() << "[git]" << command << clEndl;
     clDEBUG1() << "[git]" << workingDirectory << clEndl;
 
-    m_process = ::CreateAsyncProcess(this, command, createFlags | IProcessWrapInShell, workingDirectory);
+    m_process = AsyncRunGit(this, command, createFlags | IProcessWrapInShell, workingDirectory);
     if(!m_process) {
         GIT_MESSAGE(wxT("Failed to execute git command!"));
         DoRecoverFromGitCommandError();
@@ -2941,4 +2941,17 @@ void GitPlugin::OnGitActionDone(clSourceControlEvent& event)
     m_blameMap.clear();
     m_lastBlameMessage.clear();
     DoLoadBlameInfo(false);
+}
+
+IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command, size_t create_flags,
+                                 const wxString& working_directory)
+{
+    auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell, working_directory);
+    return process;
+}
+
+void GitPlugin::AsyncRunGitWithCallback(const wxString& command, std::function<void(const wxString&)> callback,
+                                        size_t create_flags, const wxString& working_directory)
+{
+    ::CreateAsyncProcessCB(command, callback, create_flags, working_directory, nullptr);
 }

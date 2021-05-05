@@ -293,6 +293,16 @@ public:
     void WorkspaceClosed();
 
     /**
+     * @brief create git process and return the process handle
+     */
+    IProcess* AsyncRunGit(wxEvtHandler* handler, const wxString& command, size_t create_flags,
+                          const wxString& working_directory);
+    /**
+     * @brief create a git process and direct the output to a callback
+     */
+    void AsyncRunGitWithCallback(const wxString& command, std::function<void(const wxString&)> callback,
+                                 size_t create_flags, const wxString& working_directory);
+    /**
      * @brief is git enabled for the current workspace?
      */
     bool IsGitEnabled() const;

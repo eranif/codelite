@@ -1038,17 +1038,38 @@ void GitPlugin::OnFilesRemovedFromProject(clCommandEvent& e)
     RefreshFileListView(); // in git world, deleting a file is enough
 }
 
+void GitPlugin::ClearCodeLiteRemoteInfo()
+{
+    m_isRemoteWorkspace = false;
+    m_remoteWorkspaceAccount.clear();
+    m_remoteProcess.Stop();
+    m_codeliteRemoteScriptPath.clear();
+}
+
+void GitPlugin::StartCodeLiteRemote()
+{
+    if(m_isRemoteWorkspace && !m_workspaceFilename.empty() && !m_remoteWorkspaceAccount.empty()) {
+        wxString codelite_remote_script = m_workspaceFilename.BeforeLast('/');
+        codelite_remote_script << "/.codelite/codelite-remote";
+        m_remoteProcess.StartInteractive(m_remoteWorkspaceAccount, m_workspaceFilename, "git");
+    }
+}
+
 /*******************************************************************************/
 void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
+    ClearCodeLiteRemoteInfo();
     m_workspaceFilename = e.GetString();
+    m_isRemoteWorkspace = e.IsRemote();
+    m_remoteWorkspaceAccount = e.GetRemoteAccount();
     DoCleanup();
     InitDefaults();
     RefreshFileListView();
 
     // Try to set the repo to the workspace path
     DoSetRepoPath(GetWorkspaceFileName().GetPath(), false);
+    StartCodeLiteRemote();
     CallAfter(&GitPlugin::DoRefreshView, false);
 }
 
@@ -2291,9 +2312,15 @@ void GitPlugin::OnWorkspaceConfigurationChanged(wxCommandEvent& e)
     ProcessGitActionQueue();
 }
 
-wxString GitPlugin::GetWorkspaceName() const { return m_workspaceFilename.GetName(); }
+wxString GitPlugin::GetWorkspaceName() const
+{
+    wxString name;
+    name = m_workspaceFilename.AfterLast('/');
+    name = name.BeforeLast('.');
+    return name;
+}
 
-bool GitPlugin::IsWorkspaceOpened() const { return m_workspaceFilename.IsOk(); }
+bool GitPlugin::IsWorkspaceOpened() const { return !m_workspaceFilename.empty(); }
 
 wxFileName GitPlugin::GetWorkspaceFileName() const { return m_workspaceFilename; }
 

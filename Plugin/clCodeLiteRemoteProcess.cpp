@@ -22,6 +22,92 @@ wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clProcessEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
 
+namespace
+{
+class CodeLiteRemoteProcess : public IProcess
+{
+    clCodeLiteRemoteProcess* m_process = nullptr;
+
+private:
+    bool DoWrite(const wxString& buff)
+    {
+        if(!m_process) {
+            return false;
+        }
+        m_process->Write(buff);
+        return true;
+    }
+
+public:
+    CodeLiteRemoteProcess(wxEvtHandler* handler, clCodeLiteRemoteProcess* process)
+        : IProcess(handler)
+        , m_process(process)
+    {
+    }
+    ~CodeLiteRemoteProcess() { m_process = nullptr; }
+
+    // Stop notifying the parent window about input/output from the process
+    // this is useful when we wish to terminate the process onExit but we don't want
+    // to know about its termination
+    void Detach() override {}
+
+    // Read from process stdout - return immediately if no data is available
+    bool Read(wxString& buff, wxString& buffErr) override { return false; }
+
+    // Write to the process stdin
+    // This version add LF to the buffer
+    bool Write(const wxString& buff) override { return DoWrite(buff); }
+
+    // ANSI version
+    // This version add LF to the buffer
+    bool Write(const std::string& buff) override { return DoWrite(buff); }
+
+    // Write to the process stdin
+    bool WriteRaw(const wxString& buff) override { return DoWrite(buff); }
+
+    // ANSI version
+    bool WriteRaw(const std::string& buff) override { return DoWrite(buff); }
+
+    /**
+     * @brief this method is mostly needed on MSW where writing a password
+     * is done directly on the console buffer rather than its stdin
+     */
+    bool WriteToConsole(const wxString& buff) override { return DoWrite(buff + "\n"); }
+
+    // Return true if the process is still alive
+    bool IsAlive() override { return m_process && m_process->IsRunning(); }
+
+    // Clean the process resources and kill the process if it is
+    // still alive
+    void Cleanup() override {}
+
+    // Terminate the process. It is recommended to use this method
+    // so it will invoke the 'Cleaup' procedure and the process
+    // termination event will be sent out
+    void Terminate() override {}
+
+    /**
+     * @brief send signal to the process
+     */
+    void Signal(wxSignal sig) override { wxUnusedVar(sig); }
+
+    void PostOutputEvent(const wxString& output)
+    {
+        clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
+        e.SetOutput(output);
+        e.SetProcess(this);
+        m_parent->AddPendingEvent(e);
+    }
+
+    void PostTerminateEvent()
+    {
+        clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
+        e.SetProcess(this);
+        m_parent->AddPendingEvent(e);
+    }
+};
+} // namespace
+
 clCodeLiteRemoteProcess::clCodeLiteRemoteProcess()
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clCodeLiteRemoteProcess::OnProcessTerminated, this);
@@ -33,6 +119,17 @@ clCodeLiteRemoteProcess::~clCodeLiteRemoteProcess()
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clCodeLiteRemoteProcess::OnProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clCodeLiteRemoteProcess::OnProcessOutput, this);
     wxDELETE(m_process);
+}
+
+void clCodeLiteRemoteProcess::StartInteractive(const wxString& account, const wxString& scriptPath,
+                                               const wxString& contextString)
+{
+    auto ssh_account = SSHAccountInfo::LoadAccount(account);
+    if(ssh_account.GetAccountName().empty()) {
+        clWARNING() << "Failed to load ssh account:" << account << endl;
+        return;
+    }
+    StartInteractive(ssh_account, scriptPath, contextString);
 }
 
 void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath,
@@ -138,8 +235,17 @@ void clCodeLiteRemoteProcess::ProcessOutput()
             continue;
         }
 
-        auto cb = m_completionCallbacks.front();
-        (this->*cb)(buffer, is_completed);
+        auto p = m_completionCallbacks.front();
+        if(p.func) {
+            (this->*p.func)(buffer, is_completed);
+        } else if(p.handler) {
+            auto handler = static_cast<CodeLiteRemoteProcess*>(p.handler);
+            handler->PostOutputEvent(buffer);
+            if(is_completed) {
+                handler->PostTerminateEvent();
+            }
+        }
+
         if(is_completed) {
             m_completionCallbacks.pop_front();
             ResetStates();
@@ -165,7 +271,7 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
     m_process->Write(item.format(false) + "\n");
 
     // push a callback
-    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnListFilesOutput);
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListFilesOutput, nullptr });
 }
 
 void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& extensions, const wxString& find_what,
@@ -193,7 +299,7 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& e
     clDEBUG() << command << endl;
 
     // push a callback
-    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnFindOutput);
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindOutput, nullptr });
 }
 
 void clCodeLiteRemoteProcess::ResetStates()
@@ -202,10 +308,85 @@ void clCodeLiteRemoteProcess::ResetStates()
     m_fif_files_scanned = 0;
 }
 
+void clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
+                                     IProcess* handler)
+{
+    if(!m_process) {
+        return;
+    }
+
+    // build the command and send it
+    JSON root(cJSON_Object);
+    auto item = root.toElement();
+    item.addProperty("command", "exec");
+    item.addProperty("wd", working_directory);
+    item.addProperty("cmd", cmd);
+
+    auto envarr = item.AddArray("env");
+    for(const auto& p : env) {
+        auto entry = envarr.AddObject(wxEmptyString);
+        entry.addProperty("name", p.first);
+        entry.addProperty("value", p.second);
+    }
+
+    wxString command = item.format(false);
+    m_process->Write(command + "\n");
+    clDEBUG() << command << endl;
+
+    // push a callback
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnExecOutput, handler });
+}
+
 void clCodeLiteRemoteProcess::Exec(const wxArrayString& args, const wxString& working_directory, const clEnvList_t& env)
 {
-    if(!m_process || args.empty()) {
+    wxString cmdstr = GetCmdString(args);
+    if(cmdstr.empty()) {
         return;
+    }
+    DoExec(cmdstr, working_directory, env);
+}
+
+void clCodeLiteRemoteProcess::Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env)
+{
+    DoExec(cmd, working_directory, env);
+}
+
+void clCodeLiteRemoteProcess::Write(const wxString& str)
+{
+    if(IsRunning()) {
+        return;
+    }
+    if(!str.EndsWith("\n")) {
+        m_process->Write(str + "\n");
+    } else {
+        m_process->Write(str);
+    }
+}
+
+IProcess* clCodeLiteRemoteProcess::CreateAsyncProcess(wxEvtHandler* handler, const wxString& cmd,
+                                                      const wxString& working_directory, const clEnvList_t& env)
+{
+    CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(handler, this);
+    DoExec(cmd, working_directory, env, p);
+    return p;
+}
+
+IProcess* clCodeLiteRemoteProcess::CreateAsyncProcess(wxEvtHandler* handler, const wxArrayString& cmd,
+                                                      const wxString& working_directory, const clEnvList_t& env)
+{
+    wxString cmdstr = GetCmdString(cmd);
+    if(cmdstr.empty()) {
+        return nullptr;
+    }
+    CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(handler, this);
+    DoExec(cmdstr, working_directory, env, p);
+    return p;
+}
+
+wxString clCodeLiteRemoteProcess::GetCmdString(const wxArrayString& args) const
+{
+    if(args.empty()) {
+        return wxEmptyString;
     }
 
     wxString cmdstr;
@@ -222,33 +403,7 @@ void clCodeLiteRemoteProcess::Exec(const wxArrayString& args, const wxString& wo
         cmdstr << arg << " ";
     }
     cmdstr.RemoveLast();
-
-    // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "exec");
-    item.addProperty("wd", working_directory);
-    item.addProperty("cmd", cmdstr);
-
-    auto envarr = item.AddArray("env");
-    for(const auto& p : env) {
-        auto entry = envarr.AddObject(wxEmptyString);
-        entry.addProperty("name", p.first);
-        entry.addProperty("value", p.second);
-    }
-
-    wxString command = item.format(false);
-    m_process->Write(command + "\n");
-    clDEBUG() << command << endl;
-
-    // push a callback
-    m_completionCallbacks.push_back(&clCodeLiteRemoteProcess::OnExecOutput);
-}
-
-void clCodeLiteRemoteProcess::Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env)
-{
-    wxArrayString cmd_arr = StringUtils::BuildArgv(cmd);
-    Exec(cmd_arr, working_directory, env);
+    return cmdstr;
 }
 
 // -------------------------------------------------------------------------------------

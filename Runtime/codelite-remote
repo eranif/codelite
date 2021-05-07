@@ -11,7 +11,7 @@ import logging
 # Sample usage:
 #   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
 #   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": false, "icase": true}
-#   {"command":"exec", "cmd": "/usr/bin/ls", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
+#   {"command":"exec", "cmd": "/usr/bin/passwd", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
 #
 # Command line usage:
 #   python3 codelite-remote.py --i # start in interactive mode
@@ -110,7 +110,8 @@ def on_exec(cmd):
         completed_proc = subprocess.run(args=cmd['cmd'], 
                                         cwd=working_directory,
                                         shell=True, 
-                                        env=env_dict)
+                                        env=env_dict,
+                                        stdin=subprocess.PIPE)
     except Exception as e:
         logging.error("on_exe error: {}".format(e))
         try:

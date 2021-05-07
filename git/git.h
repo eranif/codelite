@@ -36,6 +36,7 @@
 #include <wx/progdlg.h>
 
 #include "asyncprocess.h"
+#include "clCodeLiteRemoteProcess.hpp"
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
 #include "gitentry.h"
@@ -166,7 +167,7 @@ class GitPlugin : public IPlugin
     IntMap_t m_treeImageMapping;
     int m_baseImageCount;
     GitConsole* m_console;
-    wxFileName m_workspaceFilename;
+    wxString m_workspaceFilename;
     GitCommitListDlg* m_commitListDlg;
     wxArrayString m_filesSelected;
     wxString m_selectedFolder;
@@ -178,8 +179,14 @@ class GitPlugin : public IPlugin
     size_t m_configFlags = 0;
     wxString m_lastBlameMessage;
     wxFileName m_gitCommitMessageFile;
+    bool m_isRemoteWorkspace = false;
+    wxString m_remoteWorkspaceAccount;
+    clCodeLiteRemoteProcess m_remoteProcess;
+    wxString m_codeliteRemoteScriptPath;
 
 private:
+    void StartCodeLiteRemote();
+    void ClearCodeLiteRemoteInfo();
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
     void DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString& workingDir);

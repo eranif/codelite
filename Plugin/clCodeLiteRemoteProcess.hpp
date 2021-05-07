@@ -17,10 +17,19 @@ class WXDLLIMPEXP_SDK clCodeLiteRemoteProcess : public wxEvtHandler
 {
 protected:
     typedef void (clCodeLiteRemoteProcess::*CallbackFunc)(const wxString&, bool);
+    struct callback_pair {
+        CallbackFunc func = nullptr;
+        IProcess* handler = nullptr;
+        callback_pair(CallbackFunc func, IProcess* handler)
+        {
+            this->func = func;
+            this->handler = handler;
+        }
+    };
 
 protected:
     IProcess* m_process = nullptr;
-    std::deque<CallbackFunc> m_completionCallbacks;
+    std::deque<callback_pair> m_completionCallbacks;
     wxString m_outputRead;
     size_t m_fif_matches_count = 0;
     size_t m_fif_files_scanned = 0;
@@ -39,14 +48,24 @@ protected:
     void OnListFilesOutput(const wxString& output, bool is_completed);
     void OnFindOutput(const wxString& buffer, bool is_completed);
     void OnExecOutput(const wxString& buffer, bool is_completed);
+    void DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
+                IProcess* handler = nullptr);
+    wxString GetCmdString(const wxArrayString& args) const;
 
 public:
     clCodeLiteRemoteProcess();
     ~clCodeLiteRemoteProcess();
 
     const wxString& GetContext() const { return m_context; }
-
+    /**
+     * @brief start remote process in an interactive mode
+     */
     void StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath, const wxString& contextString);
+    /**
+     * @brief save as above, but with the account name
+     */
+    void StartInteractive(const wxString& account, const wxString& scriptPath, const wxString& contextString);
+
     void Stop();
     bool IsRunning() const { return m_process != nullptr; }
 
@@ -55,6 +74,7 @@ public:
      * @brief find all files on a remote machine from a given directory that matches the extensions list
      */
     void ListFiles(const wxString& root_dir, const wxString& extensions);
+
     /**
      * @brief find in files on a remote machine
      */
@@ -64,10 +84,31 @@ public:
      * @brief execute a command on the remote machine
      */
     void Exec(const wxArrayString& args, const wxString& working_directory, const clEnvList_t& env);
+
     /**
      * @brief execute a command on the remote machine
      */
     void Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env);
+
+    /**
+     * @brief call 'exec' and return an instance of IProcess. This method is for compatability with the
+     * CreateAsyncProcess family of functions
+     * @note it is up to the caller to delete the return process object
+     */
+    IProcess* CreateAsyncProcess(wxEvtHandler* handler, const wxString& cmd, const wxString& working_directory,
+                                 const clEnvList_t& env);
+    /**
+     * @brief call 'exec' and return an instance of IProcess. This method is for compatability with the
+     * CreateAsyncProcess family of functions
+     * @note it is up to the caller to delete the return process object
+     */
+    IProcess* CreateAsyncProcess(wxEvtHandler* handler, const wxArrayString& cmd, const wxString& working_directory,
+                                 const clEnvList_t& env);
+
+    /**
+     * @brief write string to the running process's stdin
+     */
+    void Write(const wxString& str);
 };
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_TERMINATED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);

@@ -9,13 +9,15 @@ import logging
 
 #----------------------------------------------------------------------------------------------------------------------------------
 # Sample usage:
+#
 #   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
 #   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": false, "icase": true}
+#   {"command":"write_file", "path": "/tmp/myfile.txt", "content": "hello world"}
 #   {"command":"exec", "cmd": "/usr/bin/passwd", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
 #
 # Command line usage:
-#   python3 codelite-remote.py --i # start in interactive mode
-#   python3 codelite-remote.py --list /path/to/dir --extensions ".txt .cpp .hpp"
+#   python3 codelite-remote.py --context builder
+#
 #----------------------------------------------------------------------------------------------------------------------------------
 
 ##------------------------------
@@ -89,6 +91,15 @@ def _get_list_of_files(cmd):
             if curext in exts_set:
                 files_arr.append(os.path.join(root, file))
     return files_arr
+
+def write_file(cmd):
+    try:
+        fp = open(cmd["path"], "w")
+        fp.write(cmd["content"])
+        fp.close()
+    except Exception as e:
+        logging.error("write_file error: {}".format(e))
+    print_message_terminator()
 
 def on_exec(cmd):
     """
@@ -214,7 +225,8 @@ def main_loop():
     handlers = {
         "ls": on_find_files, 
         "find": on_find_in_files,
-        "exec": on_exec
+        "exec": on_exec,
+        "write_file": write_file
     }
     logging.info("codelite-remote started in interactive mode")
     while True:

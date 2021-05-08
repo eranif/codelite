@@ -54,6 +54,7 @@
 #include "clCommandProcessor.h"
 #include "clDiffFrame.h"
 #include "clEditorBar.h"
+#include "clSFTPManager.hpp"
 #include "clStatusBar.h"
 #include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
@@ -134,9 +135,6 @@ GitPlugin::GitPlugin(IManager* manager)
     , m_commandProcessor(NULL)
     , m_gitBlameDlg(NULL)
 {
-    m_gitCommitMessageFile.SetPath(clStandardPaths::Get().GetTempDir());
-    m_gitCommitMessageFile.SetFullName("CL_GIT_COMMIT_MSG.TXT");
-
     m_longName = _("GIT plugin");
     m_shortName = wxT("Git");
     m_eventHandler = m_mgr->GetTheApp();
@@ -981,6 +979,7 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     // Try to set the repo to the workspace path
     DoSetRepoPath();
     CallAfter(&GitPlugin::DoRefreshView, false);
+    m_gitCommitMessageFile = GetWorkspacePath() + "/.codelite/CL_GIT_COMMIT_MSG.TXT";
 }
 
 void GitPlugin::OnInitDone(wxCommandEvent& e)
@@ -1967,6 +1966,7 @@ void GitPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 
 void GitPlugin::DoCleanup()
 {
+    m_gitCommitMessageFile.clear();
     m_gitActionQueue.clear();
     m_repositoryDirectory.Clear();
     m_remotes.Clear();
@@ -2533,15 +2533,24 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 
             // Add the message
             if(!message.IsEmpty()) {
-                wxString messagefile = m_gitCommitMessageFile.GetFullPath();
+                wxString messagefile = m_gitCommitMessageFile;
                 ::WrapWithQuotes(messagefile);
                 commitArgs << "--file=";
                 commitArgs << messagefile << " ";
 
-                if(!FileUtils::WriteFileContent(m_gitCommitMessageFile, message)) {
-                    m_console->AddRawText(_("Aborting!. Failed to write commit message to file: ") +
-                                          m_gitCommitMessageFile.GetFullPath());
-                    return;
+                if(m_isRemoteWorkspace) {
+                    if(!clSFTPManager::Get().AwaitWriteFile(message, m_gitCommitMessageFile,
+                                                            m_remoteWorkspaceAccount)) {
+                        m_console->AddRawText(_("Aborting!. Failed to write commit message to file: ") +
+                                              m_gitCommitMessageFile + "\n" + clSFTPManager::Get().GetLastError());
+                        return;
+                    }
+                } else {
+                    if(!FileUtils::WriteFileContent(m_gitCommitMessageFile, message)) {
+                        m_console->AddRawText(_("Aborting!. Failed to write commit message to file: ") +
+                                              m_gitCommitMessageFile);
+                        return;
+                    }
                 }
             } else {
                 // we are amending previous commit, use the previous commit message

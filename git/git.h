@@ -178,7 +178,7 @@ class GitPlugin : public IPlugin
         m_blameMap; // contains file: comment per line (extracted from the 'git blame' info)
     size_t m_configFlags = 0;
     wxString m_lastBlameMessage;
-    wxFileName m_gitCommitMessageFile;
+    wxString m_gitCommitMessageFile;
     bool m_isRemoteWorkspace = false;
     wxString m_remoteWorkspaceAccount;
     clCodeLiteRemoteProcess m_remoteProcess;

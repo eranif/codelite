@@ -75,8 +75,13 @@
 #endif
 
 static GitPlugin* thePlugin = NULL;
-#define GIT_MESSAGE(...) m_console->AddText(wxString::Format(__VA_ARGS__));
-#define GIT_MESSAGE1(...)
+
+#define GIT_MESSAGE_IF(cond, ...)                          \
+    if(cond) {                                             \
+        m_console->AddText(wxString::Format(__VA_ARGS__)); \
+    }
+#define GIT_MESSAGE(...) GIT_MESSAGE_IF(true, __VA_ARGS__)
+#define GIT_MESSAGE1(...) GIT_MESSAGE_IF(m_configFlags& GitEntry::Git_Verbose_Log, __VA_ARGS__)
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
@@ -372,6 +377,7 @@ void GitPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 /*******************************************************************************/
 void GitPlugin::UnPlug()
 {
+    ClearCodeLiteRemoteInfo();
     // before this plugin is un-plugged we must remove the tab we added
     for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
         if(m_console == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
@@ -465,80 +471,11 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
     DoSetRepoPath();
 }
 
-void GitPlugin::DoSetRepoPath(const wxString& repoPath, bool promptUser)
+void GitPlugin::DoSetRepoPath()
 {
-    wxString dir = repoPath;
-
-    // Sanity
-    if(dir.IsEmpty() && !promptUser) {
-        return;
-    }
-
-    if(dir.IsEmpty() && promptUser) {
-        // use the current repository as the starting path
-        // if current repository is empty, use the current workspace path
-        wxString startPath = m_repositoryDirectory;
-        if(startPath.IsEmpty()) {
-            startPath = GetWorkspaceFileName().GetPath();
-        }
-
-        dir = ::wxDirSelector(_("Select git root directory"), startPath);
-        if(dir.empty()) {
-            return; // The user probably pressed Cancel
-        }
-    }
-
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(&data);
-    wxString workspaceName(GetWorkspaceFileName().GetName());
-    // Get the project name (can be PHP, JS or C++)
-    wxString projectName = clWorkspaceManager::Get().IsWorkspaceOpened()
-                               ? clWorkspaceManager::Get().GetWorkspace()->GetActiveProjectName()
-                               : "";
-    wxString lastRepoPath = data.GetProjectLastRepoPath(workspaceName, projectName);
-
-    if(!dir.IsEmpty()) {
-        // we were given a path, scan the folder and its parent
-        // searching for .git folder, when we find one - its our git root
-        // folder
-        wxFileName fnDir(dir, "");
-        while(fnDir.GetDirCount()) {
-            wxFileName gitDotFolder(fnDir.GetPath(), "");
-            gitDotFolder.AppendDir(".git");
-            if(gitDotFolder.DirExists()) {
-                // a match
-                gitDotFolder.RemoveLastDir(); // Remove the .git folder
-                dir = gitDotFolder.GetPath();
-                break;
-            }
-            fnDir.RemoveLastDir();
-        }
-
-        if(!fnDir.GetDirCount()) {
-            // Not found. Use any previously-set repo path outside the project
-            dir = lastRepoPath;
-            if(dir.empty()) {
-                return;
-            }
-        }
-
-        m_repositoryDirectory = dir;
-        data.SetProjectLastRepoPath(workspaceName, projectName, m_repositoryDirectory);
-        conf.WriteItem(&data);
-        conf.Save();
-
-        GIT_MESSAGE1("Git repo path is now set to '%s'", m_repositoryDirectory);
-
-        // Update the status bar icon to reflect that we are using "Git"
-        clStatusBar* sb = m_mgr->GetStatusBar();
-        if(sb) {
-            sb->SetSourceControlBitmap(m_mgr->GetStdIcons()->LoadBitmap("git"), "Git",
-                                       _("Using Git\nClick to open the Git view"));
-        }
-        AddDefaultActions();
-        ProcessGitActionQueue();
-    }
+    m_repositoryDirectory = GetWorkspacePath();
+    AddDefaultActions();
+    ProcessGitActionQueue();
 }
 
 /*******************************************************************************/
@@ -596,7 +533,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     }
 
     wxString commandOutput;
-    DoExecuteCommandSync(cmd, workingDir, commandOutput);
+    DoExecuteCommandSync(cmd, &commandOutput, workingDir);
     GetConsole()->AddRawText(commandOutput);
     RefreshFileListView();
 }
@@ -635,7 +572,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
 
         // We need to run this command per file
         wxString commandOutput;
-        DoExecuteCommandSync(cmd, workingDir, commandOutput);
+        DoExecuteCommandSync(cmd, &commandOutput, workingDir);
         if(!commandOutput.IsEmpty()) {
             DoShowDiffViewer(commandOutput, files.Item(i));
         }
@@ -670,7 +607,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
     }
 
     wxString commandOutput;
-    DoExecuteCommandSync(cmd, workingDir, commandOutput);
+    DoExecuteCommandSync(cmd, &commandOutput, workingDir);
     GetConsole()->AddRawText(commandOutput);
 
     // Reload externally modified files
@@ -1051,7 +988,7 @@ void GitPlugin::StartCodeLiteRemote()
     if(m_isRemoteWorkspace && !m_workspaceFilename.empty() && !m_remoteWorkspaceAccount.empty()) {
         wxString codelite_remote_script = m_workspaceFilename.BeforeLast('/');
         codelite_remote_script << "/.codelite/codelite-remote";
-        m_remoteProcess.StartInteractive(m_remoteWorkspaceAccount, m_workspaceFilename, "git");
+        m_remoteProcess.StartInteractive(m_remoteWorkspaceAccount, codelite_remote_script, "git");
     }
 }
 
@@ -1064,12 +1001,12 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     m_isRemoteWorkspace = e.IsRemote();
     m_remoteWorkspaceAccount = e.GetRemoteAccount();
     DoCleanup();
+    StartCodeLiteRemote();
     InitDefaults();
     RefreshFileListView();
 
     // Try to set the repo to the workspace path
-    DoSetRepoPath(GetWorkspaceFileName().GetPath(), false);
-    StartCodeLiteRemote();
+    DoSetRepoPath();
     CallAfter(&GitPlugin::DoRefreshView, false);
 }
 
@@ -1099,221 +1036,179 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     wxString command_args;
+    bool log_message = false;
     switch(ga.action) {
     case gitBlameSummary: {
         wxString filepath = ga.arguments;
         ::WrapWithQuotes(filepath);
         command_args << " --no-pager blame --date=short " << filepath;
-        GIT_MESSAGE1("%s", command_args);
     } break;
     case gitStash:
         command_args << " stash";
-        GIT_MESSAGE("Git repository is ditry, stashing local changes before pulling...");
-        GIT_MESSAGE("%s", command_args);
+        log_message = true;
         break;
 
     case gitStashPop:
         command_args << " stash pop";
-
-        GIT_MESSAGE("%s", command_args);
+        log_message = true;
         break;
 
     case gitRevertCommit:
         command_args << " revert --no-commit " << ga.arguments;
-        GIT_MESSAGE("%s", command_args);
+        log_message = true;
         break;
 
     case gitApplyPatch:
         command_args << " apply --whitespace=nowarn --ignore-whitespace " << ga.arguments;
-        GIT_MESSAGE("%s", command_args.c_str());
+        log_message = true;
         break;
 
     case gitRmFiles:
         command_args << " --no-pager rm --force " << ga.arguments;
-        GIT_MESSAGE("%s", command_args.c_str());
+        log_message = true;
         break;
 
     case gitClone:
         command_args << wxT(" --no-pager clone ") << ga.arguments;
-        GIT_MESSAGE("%s", command_args.c_str());
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitStatus:
         command_args << " --no-pager status -s";
-        GIT_MESSAGE1("%s", command_args.c_str());
-        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitListAll:
-        GIT_MESSAGE1(wxT("Listing files in git repository"));
         command_args << wxT(" --no-pager ls-files");
-        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitListModified:
-        GIT_MESSAGE1(wxT("Listing modified files in git repository"));
         command_args << wxT(" --no-pager ls-files -m");
-        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitUpdateRemotes:
-        GIT_MESSAGE1(wxT("Updating remotes"));
         command_args << wxT(" --no-pager remote update");
         break;
 
     case gitListRemotes:
-        GIT_MESSAGE1(wxT("Listing remotes"));
         command_args << wxT(" --no-pager remote");
-        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitAddFile:
-        GIT_MESSAGE(wxT("Add file ") + ga.arguments);
         command_args << wxT(" --no-pager add ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitDeleteFile:
-        GIT_MESSAGE(wxT("Delete file ") + ga.arguments);
         command_args << wxT(" --no-pager update-index --remove --force-remove ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitDiffFile:
-        GIT_MESSAGE1(wxT("Diff file: ") + ga.arguments);
         command_args << wxT(" --no-pager show HEAD:") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. (Repo path: %s)"), command_args, m_repositoryDirectory);
         break;
 
     case gitDiffRepoCommit:
         command_args << wxT(" --no-pager diff --no-color HEAD");
-        GIT_MESSAGE(wxT("%s"), command_args.c_str());
         ShowProgress(wxT("Obtaining diffs for modified files..."));
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitDiffRepoShow:
         command_args << wxT(" --no-pager diff --no-color HEAD");
-        GIT_MESSAGE(wxT("%s"), command_args.c_str());
         ShowProgress(wxT("Obtaining diffs for modified files..."));
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitResetFile:
-        GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
         command_args << wxT(" --no-pager checkout ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitUndoAdd:
-        GIT_MESSAGE(wxT("Reset file ") + ga.arguments);
         command_args << wxT(" --no-pager reset ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitPull:
-        GIT_MESSAGE(wxT("Pull remote changes"));
         ShowProgress(wxT("Obtaining remote changes"), false);
         command_args << " --no-pager pull " << ga.arguments;
         command_args << " --log";
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitPush:
-        GIT_MESSAGE(wxT("Push local changes (") + ga.arguments + wxT(")"));
         command_args << wxT(" --no-pager push ") << ga.arguments;
         ShowProgress(wxT("Pushing local changes..."), false);
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitCommit:
-        GIT_MESSAGE(wxT("Commit local changes (") + ga.arguments + wxT(")"));
         command_args << wxT(" --no-pager commit ") << ga.arguments;
         ShowProgress(wxT("Committing local changes..."));
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitResetRepo:
-        GIT_MESSAGE(wxT("Reset repository"));
         command_args << wxT(" --no-pager reset --hard");
         ShowProgress(wxT("Resetting local repository..."));
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitBranchCreate:
-        GIT_MESSAGE(wxT("Create local branch ") + ga.arguments);
         command_args << wxT(" --no-pager branch ") << ga.arguments;
         ShowProgress(wxT("Creating local branch..."));
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitBranchCurrent:
-        GIT_MESSAGE1(wxT("Get current branch"));
         command_args << wxT(" --no-pager branch --no-color");
-        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitBranchList:
-        GIT_MESSAGE1(wxT("List local branches"));
         command_args << wxT(" --no-pager branch --no-color");
-        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitBranchListRemote:
-        GIT_MESSAGE1(wxT("List remote branches"));
         command_args << wxT(" --no-pager branch -r --no-color");
-        GIT_MESSAGE1(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitBranchSwitch:
-        GIT_MESSAGE(wxT("Switch to local branch ") + ga.arguments);
         ShowProgress(wxT("Switching to local branch ") + ga.arguments, false);
         command_args << wxT(" --no-pager checkout ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitBranchSwitchRemote:
-        GIT_MESSAGE(wxT("Switch to remote branch ") + ga.arguments);
         ShowProgress(wxT("Switching to remote branch ") + ga.arguments, false);
         command_args << wxT(" --no-pager checkout -b ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
 
     case gitCommitList:
-        GIT_MESSAGE(wxT("Listing commits..."));
         ShowProgress(wxT("Fetching commit list"));
         // hash @ author-name @ date @ subject
         command_args << wxT(" --no-pager log --pretty=\"%h@%an@%ci@%s\" -n 100 ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     case gitBlame:
-        GIT_MESSAGE("Git blame...");
         command_args << " --no-pager blame --line-porcelain " << ga.arguments;
-        GIT_MESSAGE("Git blame: %s", command_args);
+        log_message = true;
         break;
 
     case gitRevlist:
         command_args << " --no-pager rev-list " << ga.arguments;
-        GIT_MESSAGE("Git rev-list: %s", command_args);
         break;
 
     case gitRebase:
-        GIT_MESSAGE(wxT("Rebasing.."));
         ShowProgress(wxT("Rebase with ") + ga.arguments + wxT(".."));
         command_args << wxT(" --no-pager rebase ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
+        log_message = true;
         break;
     case gitConfig:
         command_args << wxT(" --no-pager config ") << ga.arguments;
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
     case gitGarbageCollection:
-        GIT_MESSAGE(wxT("Clean database.."));
         ShowProgress(wxT("Cleaning git database. This may take some time..."), false);
+        log_message = true;
         command_args << wxT(" --no-pager gc");
-        GIT_MESSAGE(wxT("%s. Repo path: %s"), command_args.c_str(), m_repositoryDirectory.c_str());
         break;
 
     default:
@@ -1353,7 +1248,7 @@ void GitPlugin::ProcessGitActionQueue()
     EnvSetter es(&om);
     wxString workingDirectory = ga.workingDirectory.IsEmpty() ? m_repositoryDirectory : ga.workingDirectory;
 
-    m_process = AsyncRunGit(this, command_args, createFlags | IProcessWrapInShell, workingDirectory);
+    m_process = AsyncRunGit(this, command_args, createFlags | IProcessWrapInShell, workingDirectory, log_message);
     if(!m_process) {
         GIT_MESSAGE(wxT("Failed to execute git command!"));
         DoRecoverFromGitCommandError();
@@ -1919,28 +1814,24 @@ void GitPlugin::InitDefaults()
     conf.WriteItem(&data);
     conf.Save();
 
-    wxString repoPath;
-    if(IsWorkspaceOpened()) {
-        repoPath = data.GetPath(GetWorkspaceName());
-    } else {
-        repoPath = ::wxGetCwd();
-    }
+    m_repositoryDirectory = GetWorkspacePath();
+    if(!m_isRemoteWorkspace) {
+        wxString repoPath;
+        if(IsWorkspaceOpened()) {
+            repoPath = data.GetPath(GetWorkspaceName());
+        } else {
+            repoPath = ::wxGetCwd();
+        }
+        if(!repoPath.IsEmpty() && wxFileName::DirExists(repoPath + wxFileName::GetPathSeparator() + wxT(".git"))) {
+            m_repositoryDirectory = repoPath;
 
-    if(!repoPath.IsEmpty() && wxFileName::DirExists(repoPath + wxFileName::GetPathSeparator() + wxT(".git"))) {
-        m_repositoryDirectory = repoPath;
-
-    } else {
-        DoCleanup();
+        } else {
+            DoCleanup();
+        }
     }
 
     if(!m_repositoryDirectory.IsEmpty()) {
         GIT_MESSAGE(wxT("Initializing git... %s"), m_repositoryDirectory.c_str());
-#if 0
-        m_pluginToolbar->EnableTool(XRCID("git_bisect_start"),true);
-        m_pluginToolbar->EnableTool(XRCID("git_bisect_good"),false);
-        m_pluginToolbar->EnableTool(XRCID("git_bisect_bad"),false);
-        m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
-#endif
         gitAction ga(gitListAll, wxT(""));
         m_gitActionQueue.push_back(ga);
         AddDefaultActions();
@@ -2086,6 +1977,7 @@ void GitPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
     m_blameMap.clear();
     WorkspaceClosed();
     m_lastBlameMessage.clear();
+    ClearCodeLiteRemoteInfo();
 }
 
 void GitPlugin::DoCleanup()
@@ -2322,7 +2214,20 @@ wxString GitPlugin::GetWorkspaceName() const
 
 bool GitPlugin::IsWorkspaceOpened() const { return !m_workspaceFilename.empty(); }
 
-wxFileName GitPlugin::GetWorkspaceFileName() const { return m_workspaceFilename; }
+const wxString& GitPlugin::GetWorkspaceFileName() const { return m_workspaceFilename; }
+
+wxString GitPlugin::GetWorkspacePath() const
+{
+    wxString path = GetWorkspaceFileName();
+    if(!m_isRemoteWorkspace) {
+        path.Replace("\\", "/");
+        path = path.BeforeLast('/');
+        path.Replace("/", wxFileName::GetPathSeparator());
+    } else {
+        path = path.BeforeLast('/');
+    }
+    return path;
+}
 
 void GitPlugin::RevertCommit(const wxString& commitId)
 {
@@ -2621,9 +2526,9 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 {
     wxString lastCommitString, commitHistory;
     // Find the title/body message of the previous commit, in case the user wants to amend it
-    DoExecuteCommandSync("log -1 --pretty=format:\"%B\"", m_repositoryDirectory, lastCommitString);
+    DoExecuteCommandSync("log -1 --pretty=format:\"%B\"", &lastCommitString);
     // Similarly the # and title of the last 100 commits for the commit history
-    DoExecuteCommandSync("log -100 --abbrev-commit --pretty=oneline", m_repositoryDirectory, commitHistory);
+    DoExecuteCommandSync("log -100 --abbrev-commit --pretty=oneline", &commitHistory);
 
     commitArgs.Clear();
     GitCommitDlg dlg(m_topWindow, this, m_repositoryDirectory);
@@ -2672,7 +2577,7 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
 {
     // 1. Get diff output
     wxString diff;
-    bool res = DoExecuteCommandSync("diff --no-color HEAD", m_selectedFolder, diff);
+    bool res = DoExecuteCommandSync("diff --no-color HEAD", &diff, m_selectedFolder);
     if(!diff.IsEmpty()) {
         wxString commitArgs;
         DoShowCommitDialog(diff, commitArgs);
@@ -2686,28 +2591,40 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
     }
 }
 
-bool GitPlugin::DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput)
+bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandOutput, const wxString& workingDir)
 {
-    commandOutput.Clear();
-    wxString git = m_pathGITExecutable;
-    // Wrap the executable with quotes if needed
-    git.Trim().Trim(false);
-    ::WrapWithQuotes(git);
-    git << " --no-pager ";
-    git << command;
+    commandOutput->Clear();
+    if(!m_isRemoteWorkspace) {
+        wxString git = m_pathGITExecutable;
+        // Wrap the executable with quotes if needed
+        git.Trim().Trim(false);
+        ::WrapWithQuotes(git);
+        git << " --no-pager ";
+        git << command;
 
-    GetConsole()->AddRawText("[" + workingDir + "] " + git + "\n");
-    IProcess::Ptr_t gitProc(::CreateSyncProcess(git, IProcessCreateSync | IProcessWrapInShell, workingDir));
-    if(gitProc) {
-        gitProc->WaitForTerminate(commandOutput);
+        GetConsole()->AddRawText("[" + workingDir + "] " + git + "\n");
+        IProcess::Ptr_t gitProc(::CreateSyncProcess(git, IProcessCreateSync | IProcessWrapInShell, workingDir));
+        if(gitProc) {
+            gitProc->WaitForTerminate(*commandOutput);
+        } else {
+            return false;
+        }
+
     } else {
-        return false;
+        clEnvList_t env;
+        wxString git_command = "git --no-pager ";
+        git_command << command;
+        if(!m_remoteProcess.SyncExec(git_command, workingDir.empty() ? m_repositoryDirectory : workingDir, env,
+                                     commandOutput)) {
+            commandOutput->clear();
+            return false;
+        }
     }
 
-    const wxString lcOutput = commandOutput.Lower();
+    const wxString lcOutput = commandOutput->Lower();
     if(lcOutput.Contains("fatal:") || lcOutput.Contains("not a git repository")) {
         // prompt the user for the error
-        commandOutput.clear();
+        commandOutput->clear();
         return false;
     }
     return true;
@@ -2757,7 +2674,7 @@ void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
     m_console->UpdateTreeView("");
 
     wxFileName projectFile(event.GetFileName());
-    DoSetRepoPath(projectFile.GetPath(), false);
+    DoSetRepoPath();
 }
 
 void GitPlugin::StoreWorkspaceRepoDetails()
@@ -2959,34 +2876,58 @@ void GitPlugin::OnGitActionDone(clSourceControlEvent& event)
 }
 
 IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_args, size_t create_flags,
-                                 const wxString& working_directory)
+                                 const wxString& working_directory, bool logMessage)
 {
-    wxString command = m_pathGITExecutable;
+    if(m_isRemoteWorkspace) {
+        wxString command;
+        command << "git " << command_args;
 
-    // Wrap the executable with quotes if needed
-    command.Trim().Trim(false);
-    ::WrapWithQuotes(command);
+        clEnvList_t env;
+        GIT_MESSAGE_IF(logMessage, command);
+        return m_remoteProcess.CreateAsyncProcess(handler, command, working_directory, env);
 
-    command << " " << command_args;
+    } else {
+        wxString command = m_pathGITExecutable;
 
-    clDEBUG1() << "[git]" << command << clEndl;
-    clDEBUG1() << "[git]" << working_directory << clEndl;
+        // Wrap the executable with quotes if needed
+        command.Trim().Trim(false);
+        ::WrapWithQuotes(command);
 
-    auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell, working_directory);
-    return process;
+        command << " " << command_args;
+
+        clDEBUG1() << "[git]" << command << clEndl;
+        clDEBUG1() << "[git]" << working_directory << clEndl;
+        GIT_MESSAGE_IF(logMessage, command);
+
+        auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell, working_directory);
+        return process;
+    }
 }
 
 void GitPlugin::AsyncRunGitWithCallback(const wxString& command_args, std::function<void(const wxString&)> callback,
-                                        size_t create_flags, const wxString& working_directory)
+                                        size_t create_flags, const wxString& working_directory, bool logMessage)
 {
-    wxString command = m_pathGITExecutable;
+    if(m_isRemoteWorkspace) {
+        wxString command;
+        command << "git " << command_args;
 
-    // Wrap the executable with quotes if needed
-    command.Trim().Trim(false);
-    ::WrapWithQuotes(command);
+        clDEBUG1() << "[git]" << command << clEndl;
+        clDEBUG1() << "[git]" << working_directory << clEndl;
 
-    command << " " << command_args;
-    clDEBUG1() << "[git]" << command << clEndl;
-    clDEBUG1() << "[git]" << working_directory << clEndl;
-    ::CreateAsyncProcessCB(command, callback, create_flags, working_directory, nullptr);
+        clEnvList_t env;
+        GIT_MESSAGE_IF(logMessage, command);
+        m_remoteProcess.CreateAsyncProcessCB(command, std::move(callback), working_directory, env);
+    } else {
+        wxString command = m_pathGITExecutable;
+
+        // Wrap the executable with quotes if needed
+        command.Trim().Trim(false);
+        ::WrapWithQuotes(command);
+
+        command << " " << command_args;
+        clDEBUG1() << "[git]" << command << clEndl;
+        clDEBUG1() << "[git]" << working_directory << clEndl;
+        GIT_MESSAGE_IF(logMessage, command);
+        ::CreateAsyncProcessCB(command, callback, create_flags, working_directory, nullptr);
+    }
 }

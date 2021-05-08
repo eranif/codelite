@@ -38,7 +38,6 @@ class WXDLLIMPEXP_CL UnixProcessImpl : public IProcess
     int m_readHandle;
     int m_stderrHandle = wxNOT_FOUND;
     int m_writeHandle;
-    ProcessReaderThread* m_thr = nullptr;
     wxString m_tty;
     friend class wxTerminal;
 

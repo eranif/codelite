@@ -36,6 +36,7 @@
 #include <wx/string.h>
 #include <wx/utils.h>
 
+class ProcessReaderThread;
 using namespace std;
 typedef std::vector<std::pair<wxString, wxString>> clEnvList_t;
 enum IProcessCreateFlags {
@@ -114,11 +115,12 @@ public:
 class WXDLLIMPEXP_CL IProcess : public wxEvtHandler
 {
 protected:
-    wxEvtHandler* m_parent;
-    int m_pid;
-    bool m_hardKill;
-    IProcessCallback* m_callback;
+    wxEvtHandler* m_parent = nullptr;
+    int m_pid = wxNOT_FOUND;
+    bool m_hardKill = false;
+    IProcessCallback* m_callback = nullptr;
     size_t m_flags; // The creation flags
+    ProcessReaderThread* m_thr = nullptr;
 
 public:
     typedef wxSharedPtr<IProcess> Ptr_t;
@@ -204,6 +206,15 @@ public:
      * @brief do we have process redirect enabled?
      */
     bool IsRedirect() const { return !(m_flags & IProcessNoRedirect); }
+
+    /**
+     * @brief stop reading process output in the background thread
+     */
+    void SuspendAsyncReads();
+    /**
+     * @brief resume reading process output in the background
+     */
+    void ResumeAsyncReads();
 };
 
 // Help method

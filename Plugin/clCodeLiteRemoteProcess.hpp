@@ -41,16 +41,35 @@ protected:
     void OnProcessTerminated(clProcessEvent& e);
     void Cleanup();
     void ProcessOutput();
-    bool GetNextBuffer(wxString& output, bool& is_completed);
+    bool GetNextBuffer(wxString& raw_input_buffer, wxString& output, bool& is_completed);
     void ResetStates();
 
     // prepare an event from list command output
     void OnListFilesOutput(const wxString& output, bool is_completed);
     void OnFindOutput(const wxString& buffer, bool is_completed);
     void OnExecOutput(const wxString& buffer, bool is_completed);
-    void DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
+    bool DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
                 IProcess* handler = nullptr);
-    wxString GetCmdString(const wxArrayString& args) const;
+
+    template <typename Container> wxString GetCmdString(const Container& args) const
+    {
+        if(args.empty()) {
+            return wxEmptyString;
+        }
+
+        wxString cmdstr;
+        for(auto arg : args) {
+            if(arg.Contains(" ")) {
+                // escape any " before we start escaping
+                arg.Replace("\"", "\\\"");
+                // now wrap with double quotes
+                arg.Prepend("\"").Append("\"");
+            }
+            cmdstr << arg << " ";
+        }
+        cmdstr.RemoveLast();
+        return cmdstr;
+    }
 
 public:
     clCodeLiteRemoteProcess();
@@ -98,18 +117,32 @@ public:
     IProcess* CreateAsyncProcess(wxEvtHandler* handler, const wxString& cmd, const wxString& working_directory,
                                  const clEnvList_t& env);
     /**
+     * @brief call 'exec' with callback
+     */
+    void CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString&)> callback,
+                              const wxString& working_directory, const clEnvList_t& env);
+    /**
      * @brief call 'exec' and return an instance of IProcess. This method is for compatability with the
      * CreateAsyncProcess family of functions
      * @note it is up to the caller to delete the return process object
      */
-    IProcess* CreateAsyncProcess(wxEvtHandler* handler, const wxArrayString& cmd, const wxString& working_directory,
-                                 const clEnvList_t& env);
-
+    template <typename Container>
+    IProcess* CreateAsyncProcess(wxEvtHandler* handler, const Container& cmd, const wxString& working_directory,
+                                 const clEnvList_t& env)
+    {
+        wxString cmdstr = GetCmdString(cmd);
+        return CreateAsyncProcess(handler, cmdstr, working_directory, env);
+    }
+    /**
+     * @brief execute remote process `cmd` and wait for its output
+     */
+    bool SyncExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env, wxString* output);
     /**
      * @brief write string to the running process's stdin
      */
     void Write(const wxString& str);
 };
+
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_TERMINATED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);

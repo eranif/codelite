@@ -330,3 +330,21 @@ void IProcess::WaitForTerminate(wxString& output)
         }
     }
 }
+
+void IProcess::SuspendAsyncReads()
+{
+    if(m_thr) {
+        clDEBUG1() << "Suspending process reader thread..." << endl;
+        m_thr->Suspend();
+        clDEBUG1() << "Suspending process reader thread...done" << endl;
+    }
+}
+
+void IProcess::ResumeAsyncReads()
+{
+    if(m_thr) {
+        clDEBUG1() << "Resuming process reader thread..." << endl;
+        m_thr->Resume();
+        clDEBUG1() << "Resuming process reader thread..." << endl;
+    }
+}

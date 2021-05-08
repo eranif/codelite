@@ -24,8 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "gitLogDlg.h"
-
-#include "icons/icon_git.xpm"
 #include "windowattrmanager.h"
 
 GitLogDlg::GitLogDlg(wxWindow* parent, const wxString title)

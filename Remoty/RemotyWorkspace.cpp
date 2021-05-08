@@ -542,6 +542,7 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     clWorkspaceEvent open_event(wxEVT_WORKSPACE_LOADED);
     open_event.SetIsRemote(true);
     open_event.SetFileName(m_remoteWorkspaceFile);
+    open_event.SetString(m_remoteWorkspaceFile);
     open_event.SetRemoteAccount(m_account.GetAccountName());
     open_event.SetWorkspaceType(GetWorkspaceType());
     EventNotifier::Get()->AddPendingEvent(open_event);

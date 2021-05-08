@@ -190,7 +190,8 @@ private:
     void DoCreateTreeImages();
     void DoShowDiffViewer(const wxString& headFile, const wxString& fileName);
     void DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString& workingDir);
-    bool DoExecuteCommandSync(const wxString& command, const wxString& workingDir, wxString& commandOutput);
+    bool DoExecuteCommandSync(const wxString& command, wxString* commandOutput,
+                              const wxString& workingDir = wxEmptyString);
 
     void DoSetTreeItemImage(clTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
     void InitDefaults();
@@ -205,7 +206,8 @@ private:
     /// Workspace management
     bool IsWorkspaceOpened() const;
     wxString GetWorkspaceName() const;
-    wxFileName GetWorkspaceFileName() const;
+    const wxString& GetWorkspaceFileName() const;
+    wxString GetWorkspacePath() const;
 
     void FinishGitListAction(const gitAction& ga);
     void ListBranchAction(const gitAction& ga);
@@ -219,7 +221,7 @@ private:
     void DoResetFiles(const wxArrayString& files);
     void DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo);
     void DoShowDiffsForFiles(const wxArrayString& files, bool useFileAsBase = false);
-    void DoSetRepoPath(const wxString& repoPath = "", bool promptUser = true);
+    void DoSetRepoPath();
     void DoRecoverFromGitCommandError(bool clear_queue = true);
     void DoLoadBlameInfo(bool clearCache);
     void DoUpdateBlameInfo(const wxString& info, const wxString& fullpath);
@@ -303,12 +305,12 @@ public:
      * @brief create git process and return the process handle
      */
     IProcess* AsyncRunGit(wxEvtHandler* handler, const wxString& git_args, size_t create_flags,
-                          const wxString& working_directory);
+                          const wxString& working_directory, bool logMessage = false);
     /**
      * @brief create a git process and direct the output to a callback
      */
     void AsyncRunGitWithCallback(const wxString& git_args, std::function<void(const wxString&)> callback,
-                                 size_t create_flags, const wxString& working_directory);
+                                 size_t create_flags, const wxString& working_directory, bool logMessage = false);
     /**
      * @brief is git enabled for the current workspace?
      */

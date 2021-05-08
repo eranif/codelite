@@ -169,7 +169,7 @@ void GitCommitDlg::OnCommitHistory(wxCommandEvent& event)
     wxString commitHash = dlg.GetSelection().BeforeFirst(' ');
     if(!commitHash.empty()) {
         wxString selectedCommit;
-        m_plugin->DoExecuteCommandSync("log -1 --pretty=format:\"%B\" " + commitHash, m_workingDir, selectedCommit);
+        m_plugin->DoExecuteCommandSync("log -1 --pretty=format:\"%B\" " + commitHash, &selectedCommit);
         if(!selectedCommit.empty()) {
             m_stcCommitMessage->SetText(selectedCommit);
         }

@@ -139,7 +139,6 @@ UnixProcessImpl::UnixProcessImpl(wxEvtHandler* parent)
     : IProcess(parent)
     , m_readHandle(-1)
     , m_writeHandle(-1)
-    , m_thr(NULL)
 {
 }
 

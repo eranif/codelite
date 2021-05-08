@@ -150,7 +150,6 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
     // so we split the list into 2: entries with weight geater than 0 and 0
     std::vector<std::pair<int, clGotoEntry> > importantEntries;
     clGotoEntry::Vec_t normalEntries;
-    clGotoEntry::Vec_t::iterator iter = entries.begin();
     std::for_each(entries.begin(), entries.end(), [&](const clGotoEntry& entry) {
         if(T.count(entry.GetDesc())) {
             // This item has weight

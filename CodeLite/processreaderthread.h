@@ -29,6 +29,7 @@
 #include "codelite_exports.h"
 #include "wx/event.h"
 #include "wx/thread.h"
+#include <atomic>
 #include <deque>
 
 class IProcess;
@@ -39,8 +40,10 @@ class IProcess;
 class WXDLLIMPEXP_CL ProcessReaderThread : public wxThread
 {
 protected:
-    wxEvtHandler* m_notifiedWindow;
-    IProcess* m_process;
+    wxEvtHandler* m_notifiedWindow = nullptr;
+    IProcess* m_process = nullptr;
+    std::atomic_bool m_suspend;
+    std::atomic_bool m_is_suspended;
 
 protected:
     void NotifyTerminated();
@@ -88,6 +91,16 @@ public:
     void Start(int priority = WXTHREAD_DEFAULT_PRIORITY);
 
     void SetProcess(IProcess* proc) { m_process = proc; }
+
+    /**
+     * @brief suspend the reader thread
+     */
+    void Suspend();
+
+    /**
+     * @brief resume the reader thread
+     */
+    void Resume();
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_PROCESS_OUTPUT, clProcessEvent);

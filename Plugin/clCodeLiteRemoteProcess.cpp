@@ -21,12 +21,19 @@ wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clProcessEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
+namespace
+{
+const char msg_terminator[] = ">>codelite-remote-msg-end<<\n";
+size_t msg_terminator_len = sizeof(msg_terminator) - 1;
+} // namespace
 
 namespace
 {
 class CodeLiteRemoteProcess : public IProcess
 {
     clCodeLiteRemoteProcess* m_process = nullptr;
+    std::function<void(const wxString&)> m_callback = nullptr;
+    wxString m_output;
 
 private:
     bool DoWrite(const wxString& buff)
@@ -45,6 +52,12 @@ public:
     {
     }
     ~CodeLiteRemoteProcess() { m_process = nullptr; }
+
+    // are we using callback?
+    bool IsUsingCallback() const { return m_callback != nullptr; }
+
+    // Use callback instead of events
+    void SetCallback(std::function<void(const wxString&)> cb) { m_callback = std::move(cb); }
 
     // Stop notifying the parent window about input/output from the process
     // this is useful when we wish to terminate the process onExit but we don't want
@@ -93,17 +106,27 @@ public:
 
     void PostOutputEvent(const wxString& output)
     {
-        clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
-        e.SetOutput(output);
-        e.SetProcess(this);
-        m_parent->AddPendingEvent(e);
+        if(m_callback) {
+            // when callback is used, we aggregate the output
+            // and post it in the terminated event
+            m_output << output;
+        } else {
+            clProcessEvent e(wxEVT_ASYNC_PROCESS_OUTPUT);
+            e.SetOutput(output);
+            e.SetProcess(this);
+            m_parent->AddPendingEvent(e);
+        }
     }
 
     void PostTerminateEvent()
     {
-        clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
-        e.SetProcess(this);
-        m_parent->AddPendingEvent(e);
+        if(m_callback) {
+            m_callback(m_output);
+        } else {
+            clProcessEvent e(wxEVT_ASYNC_PROCESS_TERMINATED);
+            e.SetProcess(this);
+            m_parent->AddPendingEvent(e);
+        }
     }
 };
 } // namespace
@@ -170,6 +193,7 @@ void clCodeLiteRemoteProcess::OnProcessOutput(clProcessEvent& e)
 
 void clCodeLiteRemoteProcess::OnProcessTerminated(clProcessEvent& e)
 {
+    wxUnusedVar(e);
     Cleanup();
     if(!m_going_down) {
         clCommandEvent terminate_event(wxEVT_CODELITE_REMOTE_TERMINATED);
@@ -197,17 +221,14 @@ void clCodeLiteRemoteProcess::Cleanup()
     wxDELETE(m_process);
 }
 
-bool clCodeLiteRemoteProcess::GetNextBuffer(wxString& buffer, bool& is_completed)
+bool clCodeLiteRemoteProcess::GetNextBuffer(wxString& raw_input_buffer, wxString& buffer, bool& is_completed)
 {
-    static const char msg_terminator[] = ">>codelite-remote-msg-end<<\n";
-    static size_t msg_terminator_len = sizeof(msg_terminator) - 1;
-
     size_t separator_len = msg_terminator_len;
-    size_t where = m_outputRead.find(msg_terminator);
+    size_t where = raw_input_buffer.find(msg_terminator);
     if(where == wxString::npos) {
         // locate the \n from the end
         is_completed = false;
-        where = m_outputRead.rfind("\n");
+        where = raw_input_buffer.rfind("\n");
         separator_len = 1;
     } else {
         is_completed = true;
@@ -218,8 +239,8 @@ bool clCodeLiteRemoteProcess::GetNextBuffer(wxString& buffer, bool& is_completed
         if(separator_len == 1) {
             length_to_take += 1;
         }
-        buffer = m_outputRead.Mid(0, length_to_take);
-        m_outputRead.erase(0, where + separator_len);
+        buffer = raw_input_buffer.Mid(0, length_to_take);
+        raw_input_buffer.erase(0, where + separator_len);
     }
     return where != wxString::npos;
 }
@@ -229,21 +250,26 @@ void clCodeLiteRemoteProcess::ProcessOutput()
     bool is_completed = false;
     wxString buffer;
 
-    while(GetNextBuffer(buffer, is_completed)) {
+    while(GetNextBuffer(m_outputRead, buffer, is_completed)) {
         if(m_completionCallbacks.empty()) {
             clDEBUG() << "Read: [" << buffer << "]. But there are no completion callback" << endl;
             continue;
         }
 
         auto p = m_completionCallbacks.front();
-        if(p.func) {
-            (this->*p.func)(buffer, is_completed);
-        } else if(p.handler) {
+        if(p.handler) {
             auto handler = static_cast<CodeLiteRemoteProcess*>(p.handler);
             handler->PostOutputEvent(buffer);
             if(is_completed) {
                 handler->PostTerminateEvent();
+
+                // when using callback the handler is handled internally
+                if(handler->IsUsingCallback()) {
+                    delete handler;
+                }
             }
+        } else if(p.func) {
+            (this->*p.func)(buffer, is_completed);
         }
 
         if(is_completed) {
@@ -308,11 +334,11 @@ void clCodeLiteRemoteProcess::ResetStates()
     m_fif_files_scanned = 0;
 }
 
-void clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
+bool clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
                                      IProcess* handler)
 {
     if(!m_process) {
-        return;
+        return false;
     }
 
     // build the command and send it
@@ -335,6 +361,7 @@ void clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& workin
 
     // push a callback
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnExecOutput, handler });
+    return true;
 }
 
 void clCodeLiteRemoteProcess::Exec(const wxArrayString& args, const wxString& working_directory, const clEnvList_t& env)
@@ -367,43 +394,22 @@ IProcess* clCodeLiteRemoteProcess::CreateAsyncProcess(wxEvtHandler* handler, con
                                                       const wxString& working_directory, const clEnvList_t& env)
 {
     CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(handler, this);
-    DoExec(cmd, working_directory, env, p);
-    return p;
+    if(DoExec(cmd, working_directory, env, p)) {
+        return p;
+    }
+    wxDELETE(p);
+    return nullptr;
 }
 
-IProcess* clCodeLiteRemoteProcess::CreateAsyncProcess(wxEvtHandler* handler, const wxArrayString& cmd,
-                                                      const wxString& working_directory, const clEnvList_t& env)
+void clCodeLiteRemoteProcess::CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString&)> callback,
+                                                   const wxString& working_directory, const clEnvList_t& env)
 {
-    wxString cmdstr = GetCmdString(cmd);
-    if(cmdstr.empty()) {
-        return nullptr;
+    CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(nullptr, this);
+    p->SetCallback(std::move(callback));
+    if(DoExec(cmd, working_directory, env, p)) {
+        return;
     }
-    CodeLiteRemoteProcess* p = new CodeLiteRemoteProcess(handler, this);
-    DoExec(cmdstr, working_directory, env, p);
-    return p;
-}
-
-wxString clCodeLiteRemoteProcess::GetCmdString(const wxArrayString& args) const
-{
-    if(args.empty()) {
-        return wxEmptyString;
-    }
-
-    wxString cmdstr;
-    wxArrayString arr;
-    arr.reserve(args.size());
-    arr.insert(arr.end(), args.begin(), args.end());
-    for(auto& arg : arr) {
-        if(arg.Contains(" ")) {
-            // escape any " before we start escaping
-            arg.Replace("\"", "\\\"");
-            // now wrap with double quotes
-            arg.Prepend("\"").Append("\"");
-        }
-        cmdstr << arg << " ";
-    }
-    cmdstr.RemoveLast();
-    return cmdstr;
+    wxDELETE(p);
 }
 
 // -------------------------------------------------------------------------------------
@@ -497,4 +503,54 @@ void clCodeLiteRemoteProcess::OnExecOutput(const wxString& buffer, bool is_compl
         clProcessEvent end_event(wxEVT_CODELITE_REMOTE_EXEC_DONE);
         AddPendingEvent(end_event);
     }
+}
+
+bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
+                                       wxString* output)
+{
+    if(!m_completionCallbacks.empty()) {
+        clWARNING() << "unable to run SyncExec() for command:" << cmd << "async queue is not empty" << endl;
+        return false;
+    }
+    if(!m_process) {
+        clWARNING() << "unable to run SyncExec() for command:" << cmd << "no process" << endl;
+        return false;
+    }
+    // disable the background reader thread
+    m_process->SuspendAsyncReads();
+
+    if(!DoExec(cmd, working_directory, env)) {
+        return false;
+    }
+
+    // DoExec pushes a callback to the queue - pop it
+    // as we dont really need it
+    m_completionCallbacks.pop_back();
+
+    // read
+    wxString buff_out, buff_err;
+    m_outputRead.clear();
+
+    wxString complete_output;
+    while(m_process->Read(buff_out, buff_err)) {
+        m_outputRead << buff_out;
+        size_t where = m_outputRead.find(msg_terminator);
+        if(where == wxString::npos) {
+            continue;
+        }
+
+        // strip the terminator and make it our output
+        *output = m_outputRead.Mid(0, where);
+        clDEBUG() << "SyncExec(" << cmd << "):" << *output << endl;
+
+        m_outputRead.clear();
+        // resume the async nature of the process
+        m_process->ResumeAsyncReads();
+        return true;
+    }
+
+    // process terminated
+    clProcessEvent dummy;
+    OnProcessTerminated(dummy);
+    return false;
 }

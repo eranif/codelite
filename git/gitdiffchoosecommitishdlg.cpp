@@ -36,10 +36,10 @@
 GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin* plugin)
     : GitDiffChooseCommitishDlgBase(parent)
     , m_plugin(plugin)
-    , m_activeChoice1(m_choiceCommit1)
-    , m_activeChoice2(m_choiceCommit2)
     , m_selectedRadio1(3)
     , m_selectedRadio2(3)
+    , m_activeChoice1(m_choiceCommit1)
+    , m_activeChoice2(m_choiceCommit2)
 {
     WindowAttrManager::Load(this);
 

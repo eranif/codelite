@@ -234,7 +234,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
-    m_stcLog->SetWrapMode(wxSTC_WRAP_WORD);
     m_gauge->Hide();
     GetSizer()->Fit(this);
 
@@ -379,10 +378,6 @@ void GitConsole::UpdateTreeView(const wxString& output)
         wxString filenameFullpath = d.fullpath;
         wxString filename = d.fullname;
         wxChar chX = prefix[0];
-        wxChar chY = 0;
-        if(prefix.length() > 1) {
-            chY = prefix[1];
-        }
 
         wxBitmap statusBmp;
         eGitFile kind = eGitFile::kUntrackedFile;
@@ -639,7 +634,7 @@ void GitConsole::OnCloseView(wxCommandEvent& e)
         clConfig conf("git.conf");
         GitEntry entry;
         if(conf.ReadItem(&entry)) {
-            entry.DeleteEntry(m_git->GetWorkspaceFileName().GetName());
+            entry.DeleteEntry(m_git->GetWorkspaceName());
             conf.WriteItem(&entry);
         }
     }

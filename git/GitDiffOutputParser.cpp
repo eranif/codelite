@@ -8,7 +8,6 @@ GitDiffOutputParser::~GitDiffOutputParser() {}
 void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, wxArrayString* commitMessage) const
 {
     wxStringTokenizer tokenizer(rawDiff, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
-    unsigned index = 0;
     wxString currentFile;
     wxString currentDiff;
     const wxString diffPrefix = "diff --git a/";
@@ -17,16 +16,16 @@ void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, 
     wxString empty;
     wxString& line = empty;
     bool nextToken = true;
-    while (tokenizer.HasMoreTokens() || nextToken == false) {
-        if (nextToken) {
+    while(tokenizer.HasMoreTokens() || nextToken == false) {
+        if(nextToken) {
             line = tokenizer.GetNextToken();
         }
         nextToken = true;
-        
-        if (commitMessage && !foundFirstDiff) {
+
+        if(commitMessage && !foundFirstDiff) {
             // The git blame and git CommitList need to display the commit message
             // This can be found at the top of the output, before the first "diff "
-            if (!line.StartsWith("diff ")) {
+            if(!line.StartsWith("diff ")) {
                 commitMessage->Add(line + "\n");
                 continue;
             } else {
@@ -40,7 +39,9 @@ void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, 
                 int where = line.Find(diffPrefix);
                 line = line.Mid(where + diffPrefix.length());
                 where = line.Find(" b/");
-                if(where != wxNOT_FOUND) { line = line.Mid(0, where); }
+                if(where != wxNOT_FOUND) {
+                    line = line.Mid(0, where);
+                }
                 currentFile = line;
                 state = kLookingForDiff;
             }
@@ -54,7 +55,8 @@ void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, 
 
                 // Reset the scanner loop
                 state = kLookingForFileName;
-                nextToken = false; // This will make sure we process this line again, however, in the other state switch case
+                nextToken =
+                    false; // This will make sure we process this line again, however, in the other state switch case
             } else {
                 currentDiff << line << "\n";
             }
@@ -63,5 +65,7 @@ void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, 
     }
 
     // Add any leftovers
-    if(!currentFile.IsEmpty()) { M[currentFile] = currentDiff; }
+    if(!currentFile.IsEmpty()) {
+        M[currentFile] = currentDiff;
+    }
 }

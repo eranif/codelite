@@ -417,7 +417,6 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
 
 WinProcessImpl::WinProcessImpl(wxEvtHandler* parent)
     : IProcess(parent)
-    , m_thr(NULL)
 {
     hChildStdinRd = NULL;
     hChildStdinWrDup = NULL;

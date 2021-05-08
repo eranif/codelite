@@ -1593,6 +1593,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_stcLog->StyleClearAll();
     m_stcLog->SetWrapMode(0);
     m_stcLog->SetIndentationGuides(0);
+    m_stcLog->SetEOLMode(2);
     m_stcLog->SetKeyWords(0, wxT(""));
     m_stcLog->SetKeyWords(1, wxT(""));
     m_stcLog->SetKeyWords(2, wxT(""));

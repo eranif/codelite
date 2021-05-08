@@ -41,6 +41,7 @@
 #include "cl_command_event.h"
 #include "gitentry.h"
 #include "gitui.h"
+#include "ieditor.h"
 #include "overlaytool.h"
 #include "plugin.h"
 #include "processreaderthread.h"
@@ -178,7 +179,6 @@ class GitPlugin : public IPlugin
         m_blameMap; // contains file: comment per line (extracted from the 'git blame' info)
     size_t m_configFlags = 0;
     wxString m_lastBlameMessage;
-    wxString m_gitCommitMessageFile;
     bool m_isRemoteWorkspace = false;
     wxString m_remoteWorkspaceAccount;
     clCodeLiteRemoteProcess m_remoteProcess;
@@ -208,6 +208,7 @@ private:
     wxString GetWorkspaceName() const;
     const wxString& GetWorkspaceFileName() const;
     wxString GetWorkspacePath() const;
+    wxString GetCommitMessageFile() const;
 
     void FinishGitListAction(const gitAction& ga);
     void ListBranchAction(const gitAction& ga);
@@ -288,13 +289,15 @@ private:
     // Respond to local events
     void OnGitActionDone(clSourceControlEvent& event);
     bool HandleErrorsOnRemoteRepo(const wxString& output) const;
-    
+
 public:
     GitPlugin(IManager* manager);
     virtual ~GitPlugin();
 
     void StoreWorkspaceRepoDetails();
     void WorkspaceClosed();
+
+    bool IsRemoteWorkspace() const { return m_isRemoteWorkspace; }
 
     /**
      * @brief create git process and return the process handle
@@ -310,6 +313,11 @@ public:
      * @brief is git enabled for the current workspace?
      */
     bool IsGitEnabled() const;
+
+    /**
+     * @brief open a file. The path is relative to the workspace location
+     */
+    IEditor* OpenFile(const wxString& relativePathFile);
 
     /**
      * @brief fetch the next 100 commits (skip 'skip' first commits)

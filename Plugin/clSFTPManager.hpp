@@ -31,6 +31,12 @@ protected:
         std::function<void()> notify_cb = nullptr; // use notify_cb
     };
 
+    struct saved_file {
+        wxString local_path;
+        wxString remote_path;
+        wxString account_name;
+    };
+
 protected:
     std::unordered_map<wxString, std::pair<SSHAccountInfo, clSFTP::Ptr_t>> m_connections;
     wxTimer* m_timer = nullptr;
@@ -39,6 +45,7 @@ protected:
     wxMessageQueue<save_request*> m_q;
     atomic_bool m_shutdown;
     wxString m_lastError;
+    std::unordered_map<wxString, saved_file> m_downloadedFileToAccount;
 
 protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
@@ -66,6 +73,15 @@ public:
 
     static clSFTPManager& Get();
     void Release();
+
+    /**
+     * @brief return true if this file was downloaded via the sftp manager
+     * @param filepath path the local file
+     * @param account [output] the account this file belongs to
+     * @param remote_path [output] the file's remote path
+     * @return true if filepath was downloaded via the sftp manager
+     */
+    bool IsRemoteFile(const wxString& filepath, wxString* account, wxString* remote_path) const;
 
     /**
      * @brief add new connection to the manager. if a connection for this account already exists and 'replace' is set to
@@ -191,18 +207,12 @@ public:
     /**
      * @brief return the last error occurred
      */
-    const wxString& GetLastError() const
-    {
-        return m_lastError;
-    }
+    const wxString& GetLastError() const { return m_lastError; }
 
     /**
      * @brief clear last error captured
      */
-    void ClearLastError()
-    {
-        m_lastError.clear();
-    }
+    void ClearLastError() { m_lastError.clear(); }
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);

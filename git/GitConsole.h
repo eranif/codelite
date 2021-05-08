@@ -88,9 +88,8 @@ protected:
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);
-    
+
     void OnOpenFile(wxCommandEvent& e);
-    void OnCloseView(wxCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnConfigurationChanged(wxCommandEvent& e);
 

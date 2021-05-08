@@ -48,6 +48,7 @@ class WXDLLIMPEXP_CL clSFTP
     bool m_connected;
     wxString m_currentFolder;
     wxString m_account;
+    wxCriticalSection m_cs;
 
 public:
     typedef std::shared_ptr<clSFTP> Ptr_t;
@@ -78,24 +79,12 @@ public:
     /**
      * @brief return the underlying ssh session
      */
-    clSSH::Ptr_t GetSsh() const
-    {
-        return m_ssh;
-    }
+    clSSH::Ptr_t GetSsh() const { return m_ssh; }
 
-    bool IsConnected() const
-    {
-        return m_connected;
-    }
+    bool IsConnected() const { return m_connected; }
 
-    void SetAccount(const wxString& account)
-    {
-        this->m_account = account;
-    }
-    const wxString& GetAccount() const
-    {
-        return m_account;
-    }
+    void SetAccount(const wxString& account) { this->m_account = account; }
+    const wxString& GetAccount() const { return m_account; }
     /**
      * @brief intialize the scp over ssh
      */
@@ -203,10 +192,7 @@ public:
     /**
      * @brief return the current folder
      */
-    const wxString& GetCurrentFolder() const
-    {
-        return m_currentFolder;
-    }
+    const wxString& GetCurrentFolder() const { return m_currentFolder; }
 
     /**
      * @brief send keep alive message

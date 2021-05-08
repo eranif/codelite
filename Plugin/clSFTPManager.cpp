@@ -134,7 +134,6 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
 
 IEditor* clSFTPManager::OpenFile(const wxString& path, const SSHAccountInfo& accountInfo)
 {
-    assert(wxThread::IsMain());
     wxBusyCursor bc;
     bool res = AddConnection(accountInfo);
     if(!res) {
@@ -145,7 +144,6 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const SSHAccountInfo& acc
 
 IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountName)
 {
-    assert(wxThread::IsMain());
     // if the file is already opened in the editor, return it
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
@@ -163,6 +161,7 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
         m_lastError << "failed to locate account:" << accountName;
         return nullptr;
     }
+
     wxFileName localPath = clSFTP::GetLocalFileName(account, path, true);
     if(!DoDownload(path, localPath.GetFullPath(), accountName)) {
         return nullptr;
@@ -555,6 +554,13 @@ bool clSFTPManager::DoDownload(const wxString& remotePath, const wxString& local
     if(fp.IsOpened()) {
         fp.Write(buffer.GetData(), buffer.GetDataLen());
         fp.Close();
+
+        // remember this file as ours
+        saved_file info;
+        info.account_name = accountName;
+        info.local_path = localPath;
+        info.remote_path = remotePath;
+        m_downloadedFileToAccount.insert({ localPath, info });
         return true;
     } else {
         m_lastError.clear();
@@ -679,6 +685,17 @@ void clSFTPManager::CaptureError(const wxString& context, const clException& e)
     m_lastError.clear();
     m_lastError << context << "." << e.What();
     // clERROR() << m_lastError << endl;
+}
+
+bool clSFTPManager::IsRemoteFile(const wxString& filepath, wxString* account, wxString* remote_path) const
+{
+    if(m_downloadedFileToAccount.count(filepath) == 0) {
+        return false;
+    }
+
+    *account = m_downloadedFileToAccount.find(filepath)->second.account_name;
+    *remote_path = m_downloadedFileToAccount.find(filepath)->second.remote_path;
+    return true;
 }
 
 #endif

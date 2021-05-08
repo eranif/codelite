@@ -52,6 +52,8 @@
 
 #define GIT_ITEM_DATA(viewItem) reinterpret_cast<GitClientData*>(m_dvListCtrl->GetItemData(viewItem))
 
+namespace
+{
 enum class eGitFile {
     kUnknown = -1,
     kNewFile,
@@ -79,7 +81,7 @@ public:
     eGitFile GetKind() const { return m_kind; }
 };
 
-static wxVariant MakeFileBitmapLabel(const wxString& filename)
+wxVariant MakeFileBitmapLabel(const wxString& filename)
 {
     BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
     clDataViewTextBitmap tb(filename,
@@ -138,6 +140,20 @@ void PopulateToolbarOverflow(clToolBar* toolbar)
         }
     }
 }
+
+struct GitFileEntry {
+    wxString path;
+    wxString fullname;
+    wxString prefix; // entry type (modified, new, etc)
+
+    GitFileEntry(const wxString& rawpath, const wxString& prefix, const wxString& repopath)
+        : path(rawpath)
+        , prefix(prefix)
+    {
+        fullname = rawpath.AfterLast('/');
+    }
+};
+} // namespace
 
 // ---------------------------------------------------------------------
 
@@ -320,28 +336,6 @@ void GitConsole::OnConfigurationChanged(wxCommandEvent& e)
     m_isVerbose = (data.GetFlags() & GitEntry::Git_Verbose_Log);
 }
 
-struct GitFileEntry {
-    wxString fullname;
-    wxString fullpath;
-    wxString relpath;
-    wxString prefix;
-
-    GitFileEntry(wxFileName& fn, const wxString& prefix, const wxString& repopath)
-    {
-        this->prefix = prefix;
-        if(fn.IsRelative()) {
-            relpath = fn.GetFullPath();
-            fullname = fn.GetFullName();
-            fn.MakeAbsolute(repopath);
-            fullpath = fn.GetFullPath();
-        } else {
-            fullpath = fn.GetFullPath();
-            fullname = fn.GetFullName();
-            fn.MakeRelativeTo(repopath);
-            relpath = fn.GetFullPath();
-        }
-    }
-};
 void GitConsole::UpdateTreeView(const wxString& output)
 {
     Clear();
@@ -350,34 +344,36 @@ void GitConsole::UpdateTreeView(const wxString& output)
 
     // parse the output
     std::vector<GitFileEntry> lines;
-    for(size_t i = 0; i < files.GetCount(); ++i) {
+    lines.reserve(files.size());
 
-        wxString filename = files.Item(i);
+    for(wxString& filename : files) {
+
         filename.Trim().Trim(false);
         filename.Replace("\t", " ");
+        filename.Replace("\\", "/");
+
         wxString prefix = filename.BeforeFirst(' ');
         filename = filename.AfterFirst(' ');
-        wxString filenameFullpath = filename;
 
         filename.Trim().Trim(false);
         if(filename.EndsWith("/"))
+            // a directory
             continue;
-        wxFileName fn(filename);
-        GitFileEntry entry(fn, prefix, m_git->GetRepositoryDirectory());
+
+        GitFileEntry entry(filename, prefix, m_git->GetRepositoryDirectory());
         lines.push_back(entry);
     }
 
-    std::sort(lines.begin(), lines.end(), [](const GitFileEntry& a, const GitFileEntry& b) {
-        const wxString& fpa = a.relpath;
-        const wxString& fpb = b.relpath;
+    auto sort_cb = [](const GitFileEntry& a, const GitFileEntry& b) {
+        const wxString& fpa = a.path;
+        const wxString& fpb = b.path;
         return fpa.CmpNoCase(fpb) < 0;
-    });
+    };
+    std::sort(lines.begin(), lines.end(), std::move(sort_cb));
 
     for(const auto& d : lines) {
-        wxString prefix = d.prefix;
-        wxString filenameFullpath = d.fullpath;
         wxString filename = d.fullname;
-        wxChar chX = prefix[0];
+        wxChar chX = d.prefix[0];
 
         wxBitmap statusBmp;
         eGitFile kind = eGitFile::kUntrackedFile;
@@ -407,34 +403,31 @@ void GitConsole::UpdateTreeView(const wxString& output)
         if(kind != eGitFile::kUntrackedFile) {
             cols.clear();
             cols.push_back(wxString() << chX);
-            cols.push_back(MakeFileBitmapLabel(d.relpath));
-            m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
+            cols.push_back(MakeFileBitmapLabel(d.path));
+            m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(d.path, kind));
         } else {
             cols.clear();
-            cols.push_back(MakeFileBitmapLabel(d.relpath));
-            cols.push_back(d.relpath);
-            m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(filenameFullpath, kind));
+            cols.push_back(MakeFileBitmapLabel(d.path));
+            cols.push_back(d.path);
+            m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(d.path, kind));
         }
     }
 }
 
 void GitConsole::OnContextMenu(wxDataViewEvent& event)
 {
-    wxMenu menu;
     bool hasSelection = (m_dvListCtrl->GetSelectedItemsCount() > 0);
-    if(hasSelection) {
-        menu.Append(XRCID("git_console_open_file"), _("Open File"));
-        menu.AppendSeparator();
-        menu.Append(XRCID("git_console_reset_file"), _("Reset file"));
-        menu.AppendSeparator();
+    if(!hasSelection) {
+        return;
     }
-    menu.Append(XRCID("git_console_close_view"), _("Close View"));
 
-    if(hasSelection) {
-        menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file"));
-        menu.Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
-    }
-    menu.Bind(wxEVT_MENU, &GitConsole::OnCloseView, this, XRCID("git_console_close_view"));
+    wxMenu menu;
+    menu.Append(XRCID("git_console_open_file"), _("Open File"));
+    menu.AppendSeparator();
+    menu.Append(XRCID("git_console_reset_file"), _("Reset file"));
+
+    menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file"));
+    menu.Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
     m_dvListCtrl->PopupMenu(&menu);
 }
 
@@ -520,7 +513,7 @@ void GitConsole::OnOpenFile(wxCommandEvent& e)
     // open the files
     for(size_t i = 0; i < files.GetCount(); ++i) {
         GIT_MESSAGE("Opening file: %s", files.Item(i).c_str());
-        m_git->GetManager()->OpenFile(files.Item(i));
+        m_git->OpenFile(files.Item(i));
     }
 }
 
@@ -624,33 +617,6 @@ bool GitConsole::IsDirty() const { return (m_dvListCtrl->GetItemCount() > 0); }
 
 void GitConsole::OnStclogStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
-void GitConsole::OnCloseView(wxCommandEvent& e)
-{
-    e.Skip();
-
-    // Write down that we don't want to set this git repo once this workspace
-    // is re-loaded
-    if(m_git->IsWorkspaceOpened()) {
-        clConfig conf("git.conf");
-        GitEntry entry;
-        if(conf.ReadItem(&entry)) {
-            entry.DeleteEntry(m_git->GetWorkspaceName());
-            conf.WriteItem(&entry);
-        }
-    }
-    // Close the git view
-    m_git->WorkspaceClosed();
-
-    // Clear the source control image
-    clStatusBar* sb = clGetManager()->GetStatusBar();
-    if(sb) {
-        sb->SetSourceControlBitmap(wxNullBitmap, "", "");
-    }
-
-    clWorkspaceEvent dummy;
-    OnWorkspaceClosed(dummy);
-}
-
 void GitConsole::Clear()
 {
     m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
@@ -717,11 +683,12 @@ void GitConsole::OnOpenUnversionedFiles(wxCommandEvent& event)
     if(paths.IsEmpty()) {
         return;
     }
-    std::for_each(paths.begin(), paths.end(), [&](const wxString& filepath) {
-        if(!wxDirExists(filepath)) {
-            clGetManager()->OpenFile(filepath);
+
+    for(const wxString& filepath : paths) {
+        if(!filepath.EndsWith("/")) {
+            m_git->OpenFile(filepath);
         }
-    });
+    }
 }
 
 void GitConsole::OnAddUnversionedFiles(wxCommandEvent& event)

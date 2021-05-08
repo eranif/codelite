@@ -414,9 +414,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
             m_chevronRect = wxRect(rightPoint, wxSize(CHEVRON_SIZE, rect.GetHeight()));
             rect.SetWidth(rect.GetWidth() - CHEVRON_SIZE);
         }
-    }
-
-    if(m_tabs.empty()) {
+    } else if(m_tabs.empty()) {
         // Draw the default bg colour
         gcdc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         gcdc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
@@ -1123,45 +1121,45 @@ void clTabCtrl::OnContextMenu(wxContextMenuEvent& event)
 
 void clTabCtrl::DoShowTabList()
 {
-    if(m_tabs.empty())
-        return;
-
     const int curselection = GetSelection();
     wxMenu menu;
     const int firstTabPageID = 13457;
     int pageMenuID = firstTabPageID;
 
-    // Optionally make a sorted view of tabs.
-    std::vector<size_t> sortedIndexes(m_tabs.size());
-    {
-        // std is C++11 at the moment, so no generalized capture.
-        size_t index = 0;
-        std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
-    }
+    // Do we have pages opened?
+    if(!m_tabs.empty()) {
+        // Optionally make a sorted view of tabs.
+        std::vector<size_t> sortedIndexes(m_tabs.size());
+        {
+            // std is C++11 at the moment, so no generalized capture.
+            size_t index = 0;
+            std::generate(sortedIndexes.begin(), sortedIndexes.end(), [&index]() { return index++; });
+        }
 
-    if(EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
-        std::sort(sortedIndexes.begin(), sortedIndexes.end(),
-                  [this](size_t i1, size_t i2) { return m_tabs[i1]->m_label.CmpNoCase(m_tabs[i2]->m_label) < 0; });
-    }
+        if(EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
+            std::sort(sortedIndexes.begin(), sortedIndexes.end(),
+                      [this](size_t i1, size_t i2) { return m_tabs[i1]->m_label.CmpNoCase(m_tabs[i2]->m_label) < 0; });
+        }
 
-    for(auto sortedIndex : sortedIndexes) {
-        clTabInfo::Ptr_t tab = m_tabs.at(sortedIndex);
-        wxWindow* pWindow = tab->GetWindow();
-        wxString label = tab->GetLabel();
-        wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
-        menu.Append(item);
-        item->Check(tab->IsActive());
-        menu.Bind(
-            wxEVT_MENU,
-            [=](wxCommandEvent& event) {
-                clGenericNotebook* book = dynamic_cast<clGenericNotebook*>(this->GetParent());
-                int newSelection = book->GetPageIndex(pWindow);
-                if(newSelection != curselection) {
-                    book->SetSelection(newSelection);
-                }
-            },
-            pageMenuID);
-        pageMenuID++;
+        for(auto sortedIndex : sortedIndexes) {
+            clTabInfo::Ptr_t tab = m_tabs.at(sortedIndex);
+            wxWindow* pWindow = tab->GetWindow();
+            wxString label = tab->GetLabel();
+            wxMenuItem* item = new wxMenuItem(&menu, pageMenuID, label, "", wxITEM_CHECK);
+            menu.Append(item);
+            item->Check(tab->IsActive());
+            menu.Bind(
+                wxEVT_MENU,
+                [=](wxCommandEvent& event) {
+                    clGenericNotebook* book = dynamic_cast<clGenericNotebook*>(this->GetParent());
+                    int newSelection = book->GetPageIndex(pWindow);
+                    if(newSelection != curselection) {
+                        book->SetSelection(newSelection);
+                    }
+                },
+                pageMenuID);
+            pageMenuID++;
+        }
     }
 
     // Let others handle this event as well
@@ -1169,6 +1167,10 @@ void clTabCtrl::DoShowTabList()
     menuEvent.SetMenu(&menu);
     menuEvent.SetEventObject(GetParent()); // The clGenericNotebook
     GetParent()->GetEventHandler()->ProcessEvent(menuEvent);
+
+    if(menu.GetMenuItemCount() == 0) {
+        return;
+    }
 
 #ifdef __WXGTK__
     PopupMenu(&menu);

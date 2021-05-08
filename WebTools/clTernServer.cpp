@@ -4,6 +4,7 @@
 #include "SocketAPI/clSocketClient.h"
 #include "WebToolsConfig.h"
 #include "asyncprocess.h"
+#include "clNodeJS.h"
 #include "clTernServer.h"
 #include "clTernWorkerThread.h"
 #include "cl_standard_paths.h"
@@ -19,7 +20,6 @@
 #include <wx/msgdlg.h>
 #include <wx/regex.h>
 #include <wx/stc/stc.h>
-#include "clNodeJS.h"
 
 clTernServer::clTernServer(JSCodeCompletion* cc)
     : m_jsCCManager(cc)
@@ -37,16 +37,15 @@ clTernServer::clTernServer(JSCodeCompletion* cc)
 
 clTernServer::~clTernServer() {}
 
-void clTernServer::OnTernOutput(clProcessEvent& event)
-{
-    PrintMessage(event.GetOutput());
-}
+void clTernServer::OnTernOutput(clProcessEvent& event) { PrintMessage(event.GetOutput()); }
 
 static size_t crash_count = 0;
 void clTernServer::OnTernTerminated(clProcessEvent& event)
 {
     wxDELETE(m_tern);
-    if(m_goingDown || !m_jsCCManager->IsEnabled()) { return; }
+    if(m_goingDown || !m_jsCCManager->IsEnabled()) {
+        return;
+    }
 #if defined(__WXMSW__) && !defined(NDEBUG)
     HANDLE hProcess = ::GetCurrentProcess();
     DWORD handleCount;
@@ -62,33 +61,41 @@ void clTernServer::OnTernTerminated(clProcessEvent& event)
 
 bool clTernServer::Start(const wxString& workingDirectory)
 {
-    if(m_fatalError) return false;
-    if(!m_jsCCManager->IsEnabled()) return true;
-    if(!WebToolsConfig::Get().IsNodeInstalled()) { return true; }
-    if(!WebToolsConfig::Get().IsTernInstalled()) { return true; }
-    
+    if(m_fatalError)
+        return false;
+    if(!m_jsCCManager->IsEnabled())
+        return true;
+    if(!WebToolsConfig::Get().IsNodeInstalled()) {
+        return true;
+    }
+    if(!WebToolsConfig::Get().IsTernInstalled()) {
+        return true;
+    }
+
     m_workingDirectory = workingDirectory;
     WebToolsConfig& conf = WebToolsConfig::Get();
 
     wxString nodeExe = conf.GetNodejs();
     ::WrapWithQuotes(nodeExe);
-    
+
     wxString ternScriptString = conf.GetTernScript().GetFullPath();
     ::WrapWithQuotes(ternScriptString);
 
     wxString command;
     command << nodeExe << " " << ternScriptString << " --persistent --port " << m_port;
 
-    if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) { command << " --verbose"; }
+    if(conf.HasJavaScriptFlag(WebToolsConfig::kJSEnableVerboseLogging)) {
+        command << " --verbose";
+    }
 
     // Create a .tern-project file
-    if(m_workingDirectory.IsEmpty()) { m_workingDirectory = clStandardPaths::Get().GetUserDataDir(); }
+    if(m_workingDirectory.IsEmpty()) {
+        m_workingDirectory = clStandardPaths::Get().GetUserDataDir();
+    }
 
     wxFileName ternConfig(m_workingDirectory, ".tern-project");
     wxString content = conf.GetTernProjectFile();
     if(!FileUtils::WriteFileContent(ternConfig, content)) {
-        ::wxMessageBox(_("Could not write tern project file: ") + ternConfig.GetFullPath(), "CodeLite",
-                       wxICON_ERROR | wxOK | wxCENTER);
         PrintMessage("Could not write tern project file: " + ternConfig.GetFullPath());
         m_fatalError = true;
         return false;
@@ -106,19 +113,25 @@ bool clTernServer::Start(const wxString& workingDirectory)
 void clTernServer::Terminate()
 {
     m_goingDown = true;
-    if(m_tern) { m_tern->Terminate(); }
+    if(m_tern) {
+        m_tern->Terminate();
+    }
     wxDELETE(m_tern);
 
     // Stop the worker thread
-    if(m_workerThread) { m_workerThread->Stop(); }
+    if(m_workerThread) {
+        m_workerThread->Stop();
+    }
     wxDELETE(m_workerThread);
 }
 
 bool clTernServer::PostCCRequest(IEditor* editor)
 {
     // Sanity
-    if(m_workerThread) return false;        // another request is in progress
-    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    if(m_workerThread)
+        return false; // another request is in progress
+    if(m_port == wxNOT_FOUND)
+        return false; // don't know tern's port
     ++m_recycleCount;
 
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
@@ -186,8 +199,12 @@ wxString clTernServer::PrepareDoc(const wxString& doc, const wxString& url)
         }
     }
 
-    if(!curline.IsEmpty()) { content << curline << "\n"; }
-    if(!url.IsEmpty()) { content << "@link " << url; }
+    if(!curline.IsEmpty()) {
+        content << curline << "\n";
+    }
+    if(!url.IsEmpty()) {
+        content << "@link " << url;
+    }
     return content;
 }
 
@@ -215,7 +232,8 @@ void clTernServer::ProcessType(const wxString& type, wxString& signature, wxStri
 
             case ')':
                 --depth;
-                if(depth == 0) cont = false;
+                if(depth == 0)
+                    cont = false;
                 signature << ")";
                 break;
 
@@ -320,7 +338,9 @@ void clTernServer::OnTernWorkerThreadDone(const clTernWorkerThread::Reply& reply
         break;
     case clTernWorkerThread::kFindDefinition: {
         clTernDefinition loc;
-        if(ProcessDefinitionOutput(reply.json, loc)) { m_jsCCManager->OnDefinitionFound(loc); }
+        if(ProcessDefinitionOutput(reply.json, loc)) {
+            m_jsCCManager->OnDefinitionFound(loc);
+        }
     } break;
     case clTernWorkerThread::kReparse: {
         // TODO ??
@@ -350,7 +370,9 @@ clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
     int imgID;
     wxString sig, retValue;
     ProcessType(type, sig, retValue, imgID);
-    if(sig.IsEmpty()) { return NULL; }
+    if(sig.IsEmpty()) {
+        return NULL;
+    }
     t->SetSignature(sig);
     t->SetReturnValue(retValue);
     t->SetKind("function");
@@ -361,7 +383,9 @@ clCallTipPtr clTernServer::ProcessCalltip(const wxString& output)
 
 JSONItem clTernServer::CreateLocation(wxStyledTextCtrl* ctrl, int pos)
 {
-    if(pos == wxNOT_FOUND) { pos = ctrl->GetCurrentPos(); }
+    if(pos == wxNOT_FOUND) {
+        pos = ctrl->GetCurrentPos();
+    }
     int lineNo = ctrl->LineFromPosition(pos);
     JSONItem loc = JSONItem::createObject("end");
     loc.addProperty("line", lineNo);
@@ -376,8 +400,10 @@ JSONItem clTernServer::CreateLocation(wxStyledTextCtrl* ctrl, int pos)
 bool clTernServer::PostFunctionTipRequest(IEditor* editor, int pos)
 {
     // Sanity
-    if(m_workerThread) return false;        // another request is in progress
-    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    if(m_workerThread)
+        return false; // another request is in progress
+    if(m_port == wxNOT_FOUND)
+        return false; // don't know tern's port
     ++m_recycleCount;
 
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
@@ -450,8 +476,10 @@ void clTernServer::ClearFatalErrorFlag() { m_fatalError = false; }
 bool clTernServer::PostFindDefinitionRequest(IEditor* editor)
 {
     // Sanity
-    if(m_workerThread) return false;        // another request is in progress
-    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    if(m_workerThread)
+        return false; // another request is in progress
+    if(m_port == wxNOT_FOUND)
+        return false; // don't know tern's port
     ++m_recycleCount;
 
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
@@ -487,7 +515,9 @@ bool clTernServer::ProcessDefinitionOutput(const wxString& output, clTernDefinit
 
     if(json.hasNamedObject("file")) {
         wxFileName fn(json.namedObject("file").toString());
-        if(!m_workingDirectory.IsEmpty()) { fn.MakeAbsolute(m_workingDirectory); }
+        if(!m_workingDirectory.IsEmpty()) {
+            fn.MakeAbsolute(m_workingDirectory);
+        }
         loc.file = fn.GetFullPath();
         loc.start = json.namedObject("start").toInt();
         loc.end = json.namedObject("end").toInt();
@@ -503,8 +533,10 @@ bool clTernServer::ProcessDefinitionOutput(const wxString& output, clTernDefinit
 bool clTernServer::PostResetCommand(bool forgetFiles)
 {
     // Sanity
-    if(m_workerThread) return false;        // another request is in progress
-    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    if(m_workerThread)
+        return false; // another request is in progress
+    if(m_port == wxNOT_FOUND)
+        return false; // don't know tern's port
     ++m_recycleCount;
 
     // Prepare the request
@@ -512,7 +544,9 @@ bool clTernServer::PostResetCommand(bool forgetFiles)
     JSONItem query = JSONItem::createObject("query");
     root.toElement().append(query);
     query.addProperty("type", wxString("reset"));
-    if(forgetFiles) { query.addProperty("forgetFiles", true); }
+    if(forgetFiles) {
+        query.addProperty("forgetFiles", true);
+    }
 
     clTernWorkerThread::Request* req = new clTernWorkerThread::Request;
     req->jsonRequest = root.toElement().FormatRawString();
@@ -528,9 +562,12 @@ bool clTernServer::PostResetCommand(bool forgetFiles)
 bool clTernServer::PostReparseCommand(IEditor* editor)
 {
     // Sanity
-    if(!editor) return false;
-    if(m_workerThread) return false;        // another request is in progress
-    if(m_port == wxNOT_FOUND) return false; // don't know tern's port
+    if(!editor)
+        return false;
+    if(m_workerThread)
+        return false; // another request is in progress
+    if(m_port == wxNOT_FOUND)
+        return false; // don't know tern's port
     ++m_recycleCount;
 
     // Prepare the request

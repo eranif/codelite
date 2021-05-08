@@ -17,6 +17,7 @@ nav:
         - C/C++: code_completion/cxx.md
     - Plugins:
         - Language Server Protocol: plugins/lsp.md
+        - CMake: cmake.md
 
 theme:
     name: material

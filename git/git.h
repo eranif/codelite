@@ -274,12 +274,6 @@ private:
     void OnAppActivated(wxCommandEvent& event);
     void OnUpdateNavBar(clCodeCompletionEvent& event);
     void OnEditorClosed(wxCommandEvent& event);
-#if 0
-    void OnBisectStart(wxCommandEvent& e);
-    void OnBisectGood(wxCommandEvent& e);
-    void OnBisectBad(wxCommandEvent& e);
-    void OnBisectReset(wxCommandEvent& e);
-#endif
     void OnEnableGitRepoExists(wxUpdateUIEvent& e);
     void OnClone(wxCommandEvent& e);
 
@@ -293,7 +287,8 @@ private:
 
     // Respond to local events
     void OnGitActionDone(clSourceControlEvent& event);
-
+    bool HandleErrorsOnRemoteRepo(const wxString& output) const;
+    
 public:
     GitPlugin(IManager* manager);
     virtual ~GitPlugin();

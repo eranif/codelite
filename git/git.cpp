@@ -91,7 +91,7 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
     }
     return thePlugin;
 }
-/*******************************************************************************/
+
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
@@ -101,10 +101,9 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     info.SetVersion(wxT("v1.1.0"));
     return &info;
 }
-/*******************************************************************************/
+
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-/*******************************************************************************/
 // Helper that returns the last-used selection for those git commands with several alternative options
 wxString GetAnyDefaultCommand(const wxString& gitCommand)
 {
@@ -114,7 +113,6 @@ wxString GetAnyDefaultCommand(const wxString& gitCommand)
     GitCommandsEntries& ce = data.GetGitCommandsEntries(gitCommand);
     return ce.GetDefaultCommand();
 }
-/*******************************************************************************/
 
 BEGIN_EVENT_TABLE(GitPlugin, wxEvtHandler)
 EVT_TIMER(wxID_ANY, GitPlugin::OnProgressTimer)
@@ -205,13 +203,10 @@ GitPlugin::GitPlugin(IManager* manager)
     m_configFlags = data.GetFlags();
 }
 
-/*******************************************************************************/
 GitPlugin::~GitPlugin() { delete m_gitBlameDlg; }
 
-/*******************************************************************************/
 void GitPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
-/*******************************************************************************/
 void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     m_pluginMenu = new wxMenu();
@@ -367,14 +362,12 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
                             wxUpdateUIEventHandler(GitPlugin::OnEnableGitRepoExists), NULL, this);
 }
 
-/*******************************************************************************/
 void GitPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     wxUnusedVar(menu);
     wxUnusedVar(type);
 }
 
-/*******************************************************************************/
 void GitPlugin::UnPlug()
 {
     ClearCodeLiteRemoteInfo();
@@ -464,7 +457,6 @@ void GitPlugin::UnPlug()
     m_tabToggler.reset(NULL);
 }
 
-/*******************************************************************************/
 void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -478,7 +470,6 @@ void GitPlugin::DoSetRepoPath()
     ProcessGitActionQueue();
 }
 
-/*******************************************************************************/
 void GitPlugin::OnSettings(wxCommandEvent& e)
 {
     GitSettingsDlg dlg(m_topWindow, m_repositoryDirectory);
@@ -505,7 +496,6 @@ void GitPlugin::OnSettings(wxCommandEvent& e)
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -538,10 +528,8 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     RefreshFileListView();
 }
 
-/*******************************************************************************/
 void GitPlugin::OnFileDeleteSelected(wxCommandEvent& e) { RefreshFileListView(); }
 
-/*******************************************************************************/
 void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -579,7 +567,6 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -615,7 +602,6 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
     RefreshFileListView();
 }
 
-/*******************************************************************************/
 void GitPlugin::OnSwitchLocalBranch(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -644,7 +630,7 @@ void GitPlugin::OnSwitchLocalBranch(wxCommandEvent& e)
     m_mgr->SaveAll();
     ProcessGitActionQueue();
 }
-/*******************************************************************************/
+
 void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -679,7 +665,7 @@ void GitPlugin::OnSwitchRemoteBranch(wxCommandEvent& e)
     m_mgr->SaveAll();
     ProcessGitActionQueue();
 }
-/*******************************************************************************/
+
 void GitPlugin::OnCreateBranch(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -702,7 +688,7 @@ void GitPlugin::OnCreateBranch(wxCommandEvent& e)
 
     ProcessGitActionQueue();
 }
-/*******************************************************************************/
+
 void GitPlugin::OnCommit(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -712,7 +698,6 @@ void GitPlugin::OnCommit(wxCommandEvent& e)
     ProcessGitActionQueue();
 }
 
-/*******************************************************************************/
 void GitPlugin::OnCommitList(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -720,8 +705,6 @@ void GitPlugin::OnCommitList(wxCommandEvent& e)
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
-
-/*******************************************************************************/
 
 void GitPlugin::OnShowDiffs(wxCommandEvent& e)
 {
@@ -733,7 +716,6 @@ void GitPlugin::OnShowDiffs(wxCommandEvent& e)
     dlg.ShowModal();
 }
 
-/*******************************************************************************/
 void GitPlugin::OnApplyPatch(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -742,7 +724,7 @@ void GitPlugin::OnApplyPatch(wxCommandEvent& e)
         ApplyPatch(dlg.GetPatchFile(), dlg.GetExtraFlags());
     }
 }
-/*******************************************************************************/
+
 void GitPlugin::OnPush(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -767,7 +749,6 @@ void GitPlugin::OnPush(wxCommandEvent& e)
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::OnPull(wxCommandEvent& e)
 {
     wxString argumentString = e.GetString(); // This might be user-specified e.g. pull --rebase
@@ -799,7 +780,6 @@ void GitPlugin::OnPull(wxCommandEvent& e)
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::OnResetRepository(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -811,7 +791,7 @@ void GitPlugin::OnResetRepository(wxCommandEvent& e)
         ProcessGitActionQueue();
     }
 }
-/*******************************************************************************/
+
 void GitPlugin::OnStartGitk(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -821,7 +801,6 @@ void GitPlugin::OnStartGitk(wxCommandEvent& e)
     ::wxExecute(m_pathGITKExecutable);
 }
 
-/*******************************************************************************/
 void GitPlugin::OnListModified(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -850,7 +829,6 @@ void GitPlugin::OnListModified(wxCommandEvent& e)
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::OnGitBlame(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -860,7 +838,7 @@ void GitPlugin::OnGitBlame(wxCommandEvent& e)
         DoGitBlame(filepath);
     }
 }
-/*******************************************************************************/
+
 wxString GitPlugin::GetEditorRelativeFilepath() const // Called by OnGitBlame or the git blame dialog
 {
     IEditor* current = m_mgr->GetActiveEditor();
@@ -875,14 +853,14 @@ wxString GitPlugin::GetEditorRelativeFilepath() const // Called by OnGitBlame or
 
     return fn.GetFullPath();
 }
-/*******************************************************************************/
+
 void GitPlugin::DoGitBlame(const wxString& args) // Called by OnGitBlame or the git blame dialog
 {
     gitAction ga(gitBlame, args);
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
-/*******************************************************************************/
+
 void GitPlugin::OnGitBlameRevList(const wxString& arg, const wxString& filepath,
                                   const wxString& commit) // Called by the git blame dialog
 {
@@ -896,14 +874,13 @@ void GitPlugin::OnGitBlameRevList(const wxString& arg, const wxString& filepath,
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
 }
-/*******************************************************************************/
 
 void GitPlugin::OnRefresh(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     DoRefreshView(true);
 }
-/*******************************************************************************/
+
 void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -912,7 +889,6 @@ void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
     ProcessGitActionQueue();
 }
 
-/*******************************************************************************/
 #if 0
 void GitPlugin::OnBisectStart(wxCommandEvent& e)
 {
@@ -922,19 +898,19 @@ void GitPlugin::OnBisectStart(wxCommandEvent& e)
     m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),true);
 }
 
-/*******************************************************************************/
+
 
 void GitPlugin::OnBisectGood(wxCommandEvent& e)
 {
 }
 
-/*******************************************************************************/
+
 
 void GitPlugin::OnBisectBad(wxCommandEvent& e)
 {
 }
 
-/*******************************************************************************/
+
 
 void GitPlugin::OnBisectReset(wxCommandEvent& e)
 {
@@ -944,7 +920,7 @@ void GitPlugin::OnBisectReset(wxCommandEvent& e)
     m_pluginToolbar->EnableTool(XRCID("git_bisect_reset"),false);
 }
 #endif
-/*******************************************************************************/
+
 void GitPlugin::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
@@ -955,7 +931,6 @@ void GitPlugin::OnFileSaved(clCommandEvent& e)
     RefreshFileListView();
 }
 
-/*******************************************************************************/
 void GitPlugin::OnFilesAddedToProject(clCommandEvent& e)
 {
     e.Skip();
@@ -968,7 +943,6 @@ void GitPlugin::OnFilesAddedToProject(clCommandEvent& e)
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::OnFilesRemovedFromProject(clCommandEvent& e)
 {
     e.Skip();
@@ -992,7 +966,6 @@ void GitPlugin::StartCodeLiteRemote()
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
@@ -1010,13 +983,12 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     CallAfter(&GitPlugin::DoRefreshView, false);
 }
 
-/*******************************************************************************/
 void GitPlugin::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
     m_topWindow = m_mgr->GetTheApp()->GetTopWindow();
 }
-/*******************************************************************************/
+
 void GitPlugin::ProcessGitActionQueue()
 {
     if(m_gitActionQueue.size() == 0)
@@ -1255,7 +1227,6 @@ void GitPlugin::ProcessGitActionQueue()
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::FinishGitListAction(const gitAction& ga)
 {
     clConfig conf("git.conf");
@@ -1315,7 +1286,6 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
     m_mgr->SetStatusMessage("", 0);
 }
 
-/*******************************************************************************/
 void GitPlugin::ListBranchAction(const gitAction& ga)
 {
     wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
@@ -1339,7 +1309,7 @@ void GitPlugin::ListBranchAction(const gitAction& ga)
         m_remoteBranchList = branchList;
     }
 }
-/*******************************************************************************/
+
 void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
 {
     wxArrayString gitList = wxStringTokenize(m_commandOutput, wxT("\n"));
@@ -1362,7 +1332,7 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
         m_mgr->GetDockingManager()->Update();
     }
 }
-/*******************************************************************************/
+
 void GitPlugin::UpdateFileTree()
 {
     if(!m_mgr->GetWorkspace()->IsOpen()) {
@@ -1479,7 +1449,6 @@ void GitPlugin::UpdateFileTree()
     m_mgr->ReloadWorkspace();
 }
 
-/*******************************************************************************/
 void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 {
     HideProgress();
@@ -1693,10 +1662,29 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     ProcessGitActionQueue();
 }
 
-/*******************************************************************************/
+bool GitPlugin::HandleErrorsOnRemoteRepo(const wxString& output) const
+{
+    if(!m_isRemoteWorkspace) {
+        return false;
+    }
+
+    if(output.Contains("username for") || output.Contains("username for") ||
+       output.Contains("commit-msg hook failure") || output.Contains("pre-commit hook failure") ||
+       output.Contains("*** please tell me who you are") || output.EndsWith("password:") ||
+       output.Contains("password for") || output.Contains("authentication failed") ||
+       (output.Contains("the authenticity of host") && output.Contains("can't be established")) ||
+       output.Contains("key fingerprint")) {
+        ::wxMessageBox(_("Remote git error (needs to be handled manually on the remote server)\n") + output, "CodeLite",
+                       wxICON_WARNING | wxOK | wxCANCEL | wxOK_DEFAULT);
+        return true;
+    }
+    return false;
+}
+
 void GitPlugin::OnProcessOutput(clProcessEvent& event)
 {
     wxString output = event.GetOutput();
+    auto process = event.GetProcess();
     clDEBUG1() << "[git]" << output;
     gitAction ga;
     if(!m_gitActionQueue.empty()) {
@@ -1712,23 +1700,28 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     wxString tmpOutput = output;
     tmpOutput.Trim().Trim(false);
     tmpOutput.MakeLower();
+
     static std::unordered_set<int> exclude_commands = { gitDiffRepoCommit, gitDiffFile, gitCommitList,  gitDiffRepoShow,
                                                         gitBlame,          gitRevlist,  gitBlameSummary };
-    if(exclude_commands.count(ga.action) == 0) {
+    if(process && exclude_commands.count(ga.action) == 0) {
+        if(HandleErrorsOnRemoteRepo(tmpOutput)) {
+            return;
+        }
+
         if(tmpOutput.Contains("username for")) {
             // username is required
             wxString username = ::wxGetTextFromUser(output);
             if(username.IsEmpty()) {
-                m_process->Terminate();
+                process->Terminate();
             } else {
-                m_process->WriteToConsole(username);
+                process->WriteToConsole(username);
             }
 
         } else if(tmpOutput.Contains("commit-msg hook failure") || tmpOutput.Contains("pre-commit hook failure")) {
-            m_process->Terminate();
+            process->Terminate();
 
         } else if(tmpOutput.Contains("*** please tell me who you are")) {
-            m_process->Terminate();
+            process->Terminate();
             GitUserEmailDialog userEmailDialog(EventNotifier::Get()->TopFrame());
             if(userEmailDialog.ShowModal() == wxID_OK) {
                 wxString username = userEmailDialog.GetUsername();
@@ -1754,21 +1747,21 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
             if(pass.IsEmpty()) {
 
                 // No point on continuing
-                m_process->Terminate();
+                process->Terminate();
 
             } else {
 
                 // write the password
-                m_process->WriteToConsole(pass);
+                process->WriteToConsole(pass);
             }
         } else if((tmpOutput.Contains("the authenticity of host") && tmpOutput.Contains("can't be established")) ||
                   tmpOutput.Contains("key fingerprint")) {
             if(::wxMessageBox(tmpOutput, _("Are you sure you want to continue connecting"),
                               wxYES_NO | wxCENTER | wxICON_QUESTION) == wxYES) {
-                m_process->WriteToConsole("yes");
+                process->WriteToConsole("yes");
 
             } else {
-                m_process->Terminate();
+                process->Terminate();
             }
         }
     }
@@ -1789,7 +1782,6 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::InitDefaults()
 {
     DoCreateTreeImages();
@@ -1839,7 +1831,6 @@ void GitPlugin::InitDefaults()
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::AddDefaultActions()
 {
     gitAction ga(gitBranchCurrent, wxT(""));
@@ -1867,7 +1858,6 @@ void GitPlugin::AddDefaultActions()
     m_gitActionQueue.push_back(ga);
 }
 
-/*******************************************************************************/
 void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
 {
     clConfig conf("git.conf");
@@ -1901,8 +1891,6 @@ void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, Ove
         }
     }
 }
-
-/*******************************************************************************/
 
 void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified /*=false*/) const
 {
@@ -1941,14 +1929,12 @@ void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, boo
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::OnProgressTimer(wxTimerEvent& Event)
 {
     if(m_console->IsProgressShown())
         m_console->PulseProgress();
 }
 
-/*******************************************************************************/
 void GitPlugin::ShowProgress(const wxString& message, bool pulse)
 {
     m_console->ShowProgress(message, pulse);
@@ -1961,7 +1947,6 @@ void GitPlugin::ShowProgress(const wxString& message, bool pulse)
     }
 }
 
-/*******************************************************************************/
 void GitPlugin::HideProgress()
 {
     m_console->HideProgress();

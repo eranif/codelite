@@ -674,20 +674,15 @@ void clGTKNotebook::GTKActionButtonMenuClicked(GtkToolItem* button)
     clTabInfo::Vec_t tabs;
     GetAllTabs(tabs);
 
-    // Do we have pages opened?
-    if(GetPageCount() == 0) {
-        return;
-    }
-
     const int curselection = GetSelection();
     wxMenu menu;
     const int firstTabPageID = 13457;
     int pageMenuID = firstTabPageID;
 
-    // Optionally make a sorted view of tabs.
-    std::vector<size_t> sortedIndexes;
+    // Do we have pages opened?
     if(GetPageCount()) {
-        sortedIndexes.resize(GetPageCount());
+        // Optionally make a sorted view of tabs.
+        std::vector<size_t> sortedIndexes(GetPageCount());
         {
             // std is C++11 at the moment, so no generalized capture.
             size_t index = 0;
@@ -723,6 +718,10 @@ void clGTKNotebook::GTKActionButtonMenuClicked(GtkToolItem* button)
     menuEvent.SetMenu(&menu);
     menuEvent.SetEventObject(this); // The clGTKNotebook
     GetEventHandler()->ProcessEvent(menuEvent);
+
+    if(menu.GetMenuItemCount() == 0) {
+        return;
+    }
 
     wxPoint pt(wxNOT_FOUND, wxNOT_FOUND);
     int width, height;

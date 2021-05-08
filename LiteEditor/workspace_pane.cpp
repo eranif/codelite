@@ -481,7 +481,7 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
             continue;
         }
 
-        if(hiddenTabsMenu->GetMenuItemCount() == 0) {
+        if(menu->GetMenuItemCount() > 0 && hiddenTabsMenu->GetMenuItemCount() == 0) {
             // we are adding the first menu item
             menu->AppendSeparator();
         }

@@ -31,6 +31,10 @@
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 
+#ifndef __WXMSW__
+#include "icons/icon_git.xpm"
+#endif
+
 GitFileDiffDlg::GitFileDiffDlg(wxWindow* parent)
     : GitFileDiffDlgBase(parent)
 {

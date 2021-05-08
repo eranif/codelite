@@ -26,6 +26,10 @@
 #include "gitLogDlg.h"
 #include "windowattrmanager.h"
 
+#ifndef __WXMSW__
+#include "icons/icon_git.xpm"
+#endif
+
 GitLogDlg::GitLogDlg(wxWindow* parent, const wxString title)
     : wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 {

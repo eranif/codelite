@@ -79,7 +79,7 @@ static GitPlugin* thePlugin = NULL;
 
 #define GIT_MESSAGE_IF(cond, ...)                                                                \
     if(cond) {                                                                                   \
-        m_console->AddText("[" + m_repositoryDirectory + "]: " + wxString::Format(__VA_ARGS__)); \
+        m_console->AddText("[" + m_repositoryDirectory + "] " + wxString::Format(__VA_ARGS__)); \
     }
 #define GIT_MESSAGE(...) GIT_MESSAGE_IF(true, __VA_ARGS__)
 #define GIT_MESSAGE1(...) GIT_MESSAGE_IF(m_configFlags& GitEntry::Git_Verbose_Log, __VA_ARGS__)
@@ -992,12 +992,12 @@ void GitPlugin::ProcessGitActionQueue()
     } break;
     case gitStash:
         command_args << " stash";
-        log_message = true;
+        log_message = false;
         break;
 
     case gitStashPop:
         command_args << " stash pop";
-        log_message = true;
+        log_message = false;
         break;
 
     case gitRevertCommit:

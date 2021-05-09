@@ -255,3 +255,39 @@ All the default keyboard accelerators are applied to the **active** project.
 
 If you hit ++f7++ to start the build process, it will build the **active** project 
 
+## Debugging
+---
+
+### Starting the debugger
+
+There are three sorts of debug session:
+
+- Debugging the active project
+- Attaching to an existing process
+- Quick-debug
+
+#### Debugging the active project
+
+This is the normal sort of debugging. First, if your workspace contains more than one project, ensure that the active one is the desired project
+with the project name shown in bold. If not, this can be changed by right clicking on the project and selecting `Set as active`
+
+Then start the debugger by:
+
+- Pressing ++f5++
+- Clicking the appropriate tool in the Debug section of the main toolbar (the bug icon)
+- From the main menu bar: `Debugger` &#8594; `Start/Continue Debugger`
+
+CodeLite will start the debugger, automatically providing it with the following parameters:
+
+- The executable to debug, taken from `Project Settings` &#8594; `General` &#8594; `Execution` &#8594; `Executable to Run / Debug`
+- Once the debugger is successfully started, it will pass the program arguments [see the General page for info](#general)
+
+#### Attach to a process
+
+To select a process to debug, go to `Debugger` &#8594; `Attach to process`; this will open a dialog with all current processes listed. 
+Select the one to be debugged. Debugging then continues as above
+
+### Quick Debug
+
+This is described in detail in [Debugging With Quick Debug](../debuggers/quick_debug.md)
+

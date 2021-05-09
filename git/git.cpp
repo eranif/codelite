@@ -77,8 +77,8 @@
 
 static GitPlugin* thePlugin = NULL;
 
-#define GIT_MESSAGE_IF(cond, ...)                                                                \
-    if(cond) {                                                                                   \
+#define GIT_MESSAGE_IF(cond, ...)                                                               \
+    if(cond) {                                                                                  \
         m_console->AddText("[" + m_repositoryDirectory + "] " + wxString::Format(__VA_ARGS__)); \
     }
 #define GIT_MESSAGE(...) GIT_MESSAGE_IF(true, __VA_ARGS__)
@@ -455,7 +455,7 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 
 void GitPlugin::DoSetRepoPath()
 {
-    m_repositoryDirectory = GetWorkspacePath();
+    m_repositoryDirectory = FindRepositoryRoot(GetWorkspacePath());
     AddDefaultActions();
     ProcessGitActionQueue();
 }
@@ -692,9 +692,6 @@ void GitPlugin::OnCommitList(wxCommandEvent& e)
 void GitPlugin::OnShowDiffs(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    /*    gitAction ga(gitDiffRepoShow, wxT(""));
-        m_gitActionQueue.push_back(ga);
-        ProcessGitActionQueue();*/
     GitDiffDlg dlg(m_topWindow, m_repositoryDirectory, this);
     dlg.ShowModal();
 }
@@ -1758,20 +1755,14 @@ void GitPlugin::InitDefaults()
     conf.WriteItem(&data);
     conf.Save();
 
-    m_repositoryDirectory = GetWorkspacePath();
-    if(!m_isRemoteWorkspace) {
-        wxString repoPath;
-        if(IsWorkspaceOpened()) {
-            repoPath = data.GetPath(GetWorkspaceName());
+    if(IsWorkspaceOpened()) {
+        if(IsRemoteWorkspace()) {
+            m_repositoryDirectory = GetWorkspacePath();
         } else {
-            repoPath = ::wxGetCwd();
+            m_repositoryDirectory = FindRepositoryRoot(GetWorkspacePath());
         }
-        if(!repoPath.IsEmpty() && wxFileName::DirExists(repoPath + wxFileName::GetPathSeparator() + wxT(".git"))) {
-            m_repositoryDirectory = repoPath;
-
-        } else {
-            DoCleanup();
-        }
+    } else {
+        DoCleanup();
     }
 
     if(!m_repositoryDirectory.IsEmpty()) {
@@ -2872,4 +2863,23 @@ wxString GitPlugin::GetCommitMessageFile() const
     wxFileName fn(GetWorkspacePath() + "/CL_GIT_COMMIT_MSG.TXT");
     fn.AppendDir(".codelite");
     return fn.GetFullPath(IsRemoteWorkspace() ? wxPATH_UNIX : wxPATH_NATIVE);
+}
+
+wxString GitPlugin::FindRepositoryRoot(const wxString& starting_dir) const
+{
+    if(IsRemoteWorkspace()) {
+        return starting_dir;
+    }
+
+    wxFileName fp(starting_dir, "");
+    while(fp.GetDirCount()) {
+        wxFileName gitdir(fp.GetPath(), wxEmptyString);
+        gitdir.AppendDir(".git");
+        if(wxFileName::DirExists(gitdir.GetPath())) {
+            gitdir.RemoveLastDir(); // remove the .git folder
+            return gitdir.GetPath();
+        }
+        fp.RemoveLastDir();
+    }
+    return starting_dir;
 }

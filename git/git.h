@@ -209,6 +209,7 @@ private:
     const wxString& GetWorkspaceFileName() const;
     wxString GetWorkspacePath() const;
     wxString GetCommitMessageFile() const;
+    wxString FindRepositoryRoot(const wxString& starting_dir) const;
 
     void FinishGitListAction(const gitAction& ga);
     void ListBranchAction(const gitAction& ga);

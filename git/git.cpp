@@ -880,29 +880,6 @@ void GitPlugin::OnFileSaved(clCommandEvent& e)
     m_gitActionQueue.push_back(ga);
     ProcessGitActionQueue();
     RefreshFileListView();
-
-    wxString owned_account;
-    wxString remote_path;
-    if(IsRemoteWorkspace() && clSFTPManager::Get().IsRemoteFile(e.GetFileName(), &owned_account, &remote_path) &&
-       owned_account == m_remoteWorkspaceAccount && remote_path.Contains(GetWorkspacePath())) {
-        // this is a workspace file
-        clSFTPManager::Get().AsyncSaveFile(e.GetFileName(), remote_path, owned_account);
-        // if the file is opened in the editor, reload it
-        IEditor::List_t editors;
-        clGetManager()->GetAllEditors(editors);
-        IEditor* file_editor = nullptr;
-        for(auto editor : editors) {
-            if(editor->GetRemotePath() == remote_path) {
-                file_editor = editor;
-                break;
-            }
-        }
-
-        if(file_editor) {
-            // this will trigger a reload
-            clSFTPManager::Get().Download(remote_path, owned_account, file_editor->GetFileName().GetFullPath());
-        }
-    }
 }
 
 void GitPlugin::OnFilesAddedToProject(clCommandEvent& e)

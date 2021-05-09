@@ -48,7 +48,6 @@ class WXDLLIMPEXP_CL clSFTP
     bool m_connected;
     wxString m_currentFolder;
     wxString m_account;
-    wxCriticalSection m_cs;
 
 public:
     typedef std::shared_ptr<clSFTP> Ptr_t;

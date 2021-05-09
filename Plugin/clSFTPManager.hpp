@@ -5,6 +5,7 @@
 #include "cl_command_event.h"
 #include "cl_sftp.h"
 #include "codelite_exports.h"
+#include "sync_queue.h"
 #include <atomic>
 #include <condition_variable>
 #include <functional>
@@ -22,15 +23,6 @@ class SFTPClientData;
 class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
 {
 protected:
-    struct save_request {
-        clSFTP::Ptr_t conn;
-        wxString local_path;
-        wxString remote_path;
-        bool delete_local_file = false;
-        wxEvtHandler* sink = nullptr;              // use standard event methods
-        std::function<void()> notify_cb = nullptr; // use notify_cb
-    };
-
     struct saved_file {
         wxString local_path;
         wxString remote_path;
@@ -41,8 +33,8 @@ protected:
     std::unordered_map<wxString, std::pair<SSHAccountInfo, clSFTP::Ptr_t>> m_connections;
     wxTimer* m_timer = nullptr;
     bool m_eventsConnected = true;
-    std::thread* m_saveThread = nullptr;
-    wxMessageQueue<save_request*> m_q;
+    std::thread* m_worker_thread = nullptr;
+    SyncQueue<std::function<void()>> m_q;
     atomic_bool m_shutdown;
     wxString m_lastError;
     std::unordered_map<wxString, saved_file> m_downloadedFileToAccount;
@@ -51,21 +43,21 @@ protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
     clSFTP::Ptr_t GetConnectionPtr(const wxString& account) const;
     clSFTP::Ptr_t GetConnectionPtrAddIfMissing(const wxString& account);
-    save_request* MakeSaveRequest(clSFTP::Ptr_t conn, const wxString& local_path, const wxString& remote_path,
-                                  wxEvtHandler* sink, bool delete_local, std::function<void()> notify_cb);
 
 protected:
     void OnGoingDown(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
     SFTPClientData* GetSFTPClientData(IEditor* editor);
     void OnTimer(wxTimerEvent& event);
-    bool DoDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName);
-    void StartSaveThread();
+    bool DoSyncDownload(const wxString& remotePath, const wxString& localPath, const wxString& accountName);
+    void StartWorkerThread();
+    void StopWorkerThread();
     void OnSaveCompleted(clCommandEvent& e);
     void OnSaveError(clCommandEvent& e);
-    bool DoSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
-                    bool delete_local, wxEvtHandler* sink, std::function<void()> notify_cb);
-    void CaptureError(const wxString& context, const clException& e);
+    void DoAsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+                         bool delete_local, wxEvtHandler* sink);
+    bool DoSyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+                        bool delete_local);
 
 public:
     clSFTPManager();
@@ -110,9 +102,8 @@ public:
      * @param remotePath file path on the remote machine
      * @param accountName the account name to use
      * @param sink callback object for save file events
-     * @return true on success or false
      */
-    bool AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+    void AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
                        wxEvtHandler* sink = nullptr);
 
     /**
@@ -121,9 +112,8 @@ public:
      * @param remotePath file path on the remote machine
      * @param accountName the account name to use
      * @param sink callback object for save file events
-     * @return true on success or false
      */
-    bool AsyncWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName,
+    void AsyncWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName,
                         wxEvtHandler* sink = nullptr);
 
     /**

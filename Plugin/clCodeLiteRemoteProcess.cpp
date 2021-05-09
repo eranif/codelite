@@ -14,7 +14,7 @@
 #include <wx/event.h>
 #include <wx/tokenzr.h>
 
-wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_TERMINATED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_RESTARTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
@@ -155,6 +155,25 @@ void clCodeLiteRemoteProcess::StartInteractive(const wxString& account, const wx
     StartInteractive(ssh_account, scriptPath, contextString);
 }
 
+void clCodeLiteRemoteProcess::StartIfNotRunning()
+{
+    if(IsRunning()) {
+        return;
+    }
+
+    // wrap the command in ssh
+    vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
+    command.push_back(m_account.GetUsername() + "@" + m_account.GetHost());
+    command.push_back("-p");
+    command.push_back(wxString() << m_account.GetPort());
+
+    // start the process in interactive mode
+    command.push_back("python3 " + m_scriptPath + " --context " + GetContext());
+
+    // start the process
+    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault);
+}
+
 void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath,
                                                const wxString& contextString)
 {
@@ -171,18 +190,10 @@ void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, co
 
     m_going_down = false;
     m_context = contextString;
+    m_account = account;
+    m_scriptPath = scriptPath;
 
-    // wrap the command in ssh
-    vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
-    command.push_back(account.GetUsername() + "@" + account.GetHost());
-    command.push_back("-p");
-    command.push_back(wxString() << account.GetPort());
-
-    // start the process in interactive mode
-    command.push_back("python3 " + scriptPath + " --context " + GetContext());
-
-    // start the process
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault);
+    StartIfNotRunning();
 }
 
 void clCodeLiteRemoteProcess::OnProcessOutput(clProcessEvent& e)
@@ -196,7 +207,10 @@ void clCodeLiteRemoteProcess::OnProcessTerminated(clProcessEvent& e)
     wxUnusedVar(e);
     Cleanup();
     if(!m_going_down) {
-        clCommandEvent terminate_event(wxEVT_CODELITE_REMOTE_TERMINATED);
+        // restart the process
+        StartIfNotRunning();
+        
+        clCommandEvent terminate_event(wxEVT_CODELITE_REMOTE_RESTARTED);
         terminate_event.SetEventObject(this);
         AddPendingEvent(terminate_event);
     }

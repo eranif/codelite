@@ -35,6 +35,8 @@ protected:
     size_t m_fif_files_scanned = 0;
     bool m_going_down = false;
     wxString m_context;
+    SSHAccountInfo m_account;
+    wxString m_scriptPath;
 
 protected:
     void OnProcessOutput(clProcessEvent& e);
@@ -74,6 +76,12 @@ protected:
 public:
     clCodeLiteRemoteProcess();
     ~clCodeLiteRemoteProcess();
+
+    /**
+     * @brief start the process using the same arguments used in the last call to StartInteractive. If the process is
+     * running, do nothing
+     */
+    void StartIfNotRunning();
 
     const wxString& GetContext() const { return m_context; }
     /**
@@ -143,7 +151,7 @@ public:
     void Write(const wxString& str);
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_TERMINATED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_RESTARTED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);

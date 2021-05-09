@@ -28,6 +28,9 @@ From here, you can interact with the debugger [as described here](gdb.md#interac
 ## Remote debugging over SSH
 ---
 
+!!! Tip
+    Before continuing, please read the [SFTP plugin Documentation](../plugins/sftp.md)
+
 !!! TIP
     SSH accounts can be defined from `Plugins` &#8594; `SFTP` &#8594; `Open SSH account manager`
 

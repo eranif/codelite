@@ -280,10 +280,6 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
                           wxITEM_NORMAL);
     item->SetBitmap(bmps->LoadBitmap("cog"));
     m_pluginMenu->Append(item);
-    item = new wxMenuItem(m_pluginMenu, XRCID("git_set_repository"), _("Set GIT repository path"),
-                          _("Set GIT repository path"), wxITEM_NORMAL);
-    item->SetBitmap(bmps->LoadBitmap("folder"));
-    m_pluginMenu->Append(item);
     item = new wxMenuItem(m_pluginMenu, XRCID("git_clone"), _("Clone a git repository"), _("Clone a git repository"),
                           wxITEM_NORMAL);
     item->SetBitmap(bmps->LoadBitmap("copy"));
@@ -295,8 +291,6 @@ void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     pluginsMenu->Append(item);
 
     m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
-    m_eventHandler->Connect(XRCID("git_set_repository"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnSetGitRepoPath),
-                            NULL, this);
     m_eventHandler->Connect(XRCID("git_settings"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnSettings), NULL,
                             this);
     m_eventHandler->Connect(XRCID("git_switch_branch"), wxEVT_MENU,
@@ -390,8 +384,6 @@ void GitPlugin::UnPlug()
 
     /*MENU*/
     m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnOpenMSYSGit, this, XRCID("git_msysgit"));
-    m_eventHandler->Disconnect(XRCID("git_set_repository"), wxEVT_MENU,
-                               wxCommandEventHandler(GitPlugin::OnSetGitRepoPath), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_settings"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnSettings), NULL,
                                this);
     m_eventHandler->Disconnect(XRCID("git_switch_branch"), wxEVT_MENU,

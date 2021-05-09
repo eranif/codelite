@@ -91,52 +91,34 @@ wxVariant MakeFileBitmapLabel(const wxString& filename)
     return v;
 }
 
+struct ToolBarItem {
+    wxString label;
+    int id;
+    wxString bmp;
+};
 // ---------------------------------------------------------------------
 void PopulateToolbarOverflow(clToolBar* toolbar)
 {
-    static const char* labels[] = { wxTRANSLATE("Create local branch"),
-                                    wxTRANSLATE("Switch to local branch"),
-                                    wxTRANSLATE("Switch to remote branch"),
-                                    "",
-                                    wxTRANSLATE("Refresh"),
-                                    wxTRANSLATE("Apply Patch"),
-                                    "",
-                                    wxTRANSLATE("Start gitk"),
-                                    wxTRANSLATE("Garbage collect"),
-                                    "",
-                                    wxTRANSLATE("Plugin settings"),
-                                    wxTRANSLATE("Set repository path"),
-                                    wxTRANSLATE("Clone a git repository") };
-    static const char* bitmapnames[] = { "file_new", "split",          "remote-folder", "", "file_reload", "patch",
-                                         "",         "debugger_start", "clean",         "", "cog",         "folder",
-                                         "copy" };
-    static const int IDs[] = { XRCID("git_create_branch"),
-                               XRCID("git_switch_branch"),
-                               XRCID("git_switch_to_remote_branch"),
-                               0,
-                               XRCID("git_refresh"),
-                               XRCID("git_apply_patch"),
-                               0,
-                               XRCID("git_start_gitk"),
-                               XRCID("git_garbage_collection"),
-                               0,
-                               XRCID("git_settings"),
-                               XRCID("git_set_repository"),
-                               XRCID("git_clone") };
-    size_t IDsize = sizeof(IDs) / sizeof(int);
-    wxCHECK_RET(sizeof(labels) / sizeof(char*) == IDsize, "Mismatched arrays");
-    wxCHECK_RET(sizeof(bitmapnames) / sizeof(char*) == IDsize, "Mismatched arrays");
-
-    wxAuiToolBarItem item, separator;
-    item.SetKind(wxITEM_NORMAL);
-    separator.SetKind(wxITEM_SEPARATOR);
+    std::vector<ToolBarItem> items = { { wxTRANSLATE("Create local branch"), XRCID("git_create_branch"), "file_new" },
+                                       { wxTRANSLATE("Switch to local branch"), XRCID("git_switch_branch"), "split" },
+                                       { wxTRANSLATE("Switch to remote branch"), XRCID("git_switch_to_remote_branch"),
+                                         "remote-folder" },
+                                       { wxEmptyString, wxID_SEPARATOR, wxEmptyString },
+                                       { wxTRANSLATE("Refresh"), XRCID("git_refresh"), "file_reload" },
+                                       { wxTRANSLATE("Apply Patch"), XRCID("git_apply_patch"), "patch" },
+                                       { wxEmptyString, wxID_SEPARATOR, wxEmptyString },
+                                       { wxTRANSLATE("Start gitk"), XRCID("git_start_gitk"), "debugger_start" },
+                                       { wxTRANSLATE("Garbage collect"), XRCID("git_garbage_collection"), "clean" },
+                                       { wxEmptyString, wxID_SEPARATOR, wxEmptyString },
+                                       { wxTRANSLATE("Plugin settings"), XRCID("git_settings"), "cog" },
+                                       { wxTRANSLATE("Clone a git repository"), XRCID("git_clone"), "copy" } };
 
     auto images = toolbar->GetBitmapsCreateIfNeeded();
-    for(size_t n = 0; n < IDsize; ++n) {
-        if(IDs[n] != 0) {
-            toolbar->AddTool(IDs[n], wxGetTranslation(labels[n]), images->Add(bitmapnames[n]));
-        } else {
+    for(auto item : items) {
+        if(item.id == wxID_SEPARATOR) {
             toolbar->AddSeparator();
+        } else {
+            toolbar->AddTool(item.id, wxGetTranslation(item.label), images->Add(item.bmp));
         }
     }
 }
@@ -400,16 +382,17 @@ void GitConsole::UpdateTreeView(const wxString& output)
             break;
         }
 
-        if(kind != eGitFile::kUntrackedFile) {
+        if(kind == eGitFile::kUntrackedFile) {
+            // untracked
+            cols.clear();
+            cols.push_back(MakeFileBitmapLabel(d.path));
+            m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(d.path, kind));
+        } else {
+            // modified
             cols.clear();
             cols.push_back(wxString() << chX);
             cols.push_back(MakeFileBitmapLabel(d.path));
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(d.path, kind));
-        } else {
-            cols.clear();
-            cols.push_back(MakeFileBitmapLabel(d.path));
-            cols.push_back(d.path);
-            m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(d.path, kind));
         }
     }
 }

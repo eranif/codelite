@@ -18,6 +18,7 @@ nav:
     - Plugins:
         - Language Server Protocol: plugins/lsp.md
         - CMake: plugins/cmake.md
+        - SFTP: plugins/sftp.md
     - Debugging:
         - gdb: debuggers/gdb.md
         - Quick Debug: debuggers/quick_debug.md

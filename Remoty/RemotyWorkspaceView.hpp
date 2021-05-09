@@ -18,6 +18,8 @@ protected:
     void OnFileContextMenu(clContextMenuEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenFindInFilesMatch(clFindInFilesEvent& event);
+    void SetBuildConfiguration(const wxString& config);
+    void BuildTarget(const wxString& name);
 
 public:
     RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace);

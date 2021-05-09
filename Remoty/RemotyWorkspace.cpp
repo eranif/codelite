@@ -283,7 +283,7 @@ void RemotyWorkspace::OnBuildStarting(clBuildEvent& event)
         event.Skip(false);
         // before we start the build, save all modified files
         clGetManager()->SaveAll(false);
-        DoBuild(event.GetKind());
+        BuildTarget(event.GetKind());
     }
 }
 
@@ -300,7 +300,7 @@ wxString RemotyWorkspace::GetTargetCommand(const wxString& target) const
     return wxEmptyString;
 }
 
-void RemotyWorkspace::DoBuild(const wxString& target)
+void RemotyWorkspace::BuildTarget(const wxString& target)
 {
     wxBusyCursor bc;
     auto conf = m_settings.GetSelectedConfig();
@@ -378,7 +378,7 @@ void RemotyWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
                 if(iter == M.end()) {
                     return;
                 }
-                this->CallAfter(&RemotyWorkspace::DoBuild, iter->second);
+                this->CallAfter(&RemotyWorkspace::BuildTarget, iter->second);
             },
             menuId);
     }

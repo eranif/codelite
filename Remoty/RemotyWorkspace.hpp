@@ -2,6 +2,7 @@
 #define REMOTEWORKSPACE_HPP
 
 #include "IWorkspace.h" // Base class: IWorkspace
+#include "LSP/LSPEvent.h"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
@@ -13,7 +14,6 @@
 #include <deque>
 #include <functional>
 #include <wx/arrstr.h>
-#include "LSP/LSPEvent.h"
 
 #define WORKSPACE_TYPE_NAME "Remote over SSH"
 
@@ -63,7 +63,7 @@ protected:
 
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);
-    void DoBuild(const wxString& kind);
+
     void DeleteClangdEntry();
     void OnCodeLiteRemoteTerminated(clCommandEvent& event);
 
@@ -119,6 +119,8 @@ public:
     const wxString& GetRemoteWorkspaceFile() const { return m_remoteWorkspaceFile; }
     const clFileSystemWorkspaceSettings& GetSettings() const { return m_settings; }
     clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
+    void BuildTarget(const wxString& kind);
+
     /**
      * @brief save the settings to the remote machine
      */

@@ -17,7 +17,9 @@
 #include "wx/event.h"
 #include "wx/tokenzr.h"
 #include "wx/wxcrt.h"
+#include <wx/arrstr.h>
 #include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace)
     : RemotyWorkspaceViewBase(parent)
@@ -52,10 +54,7 @@ void RemotyWorkspaceView::OpenWorkspace(const wxString& path, const wxString& ac
     m_tree->Open(path, account);
 }
 
-void RemotyWorkspaceView::CloseWorkspace()
-{
-    m_tree->Close(false);
-}
+void RemotyWorkspaceView::CloseWorkspace() { m_tree->Close(false); }
 
 void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
 {
@@ -66,6 +65,54 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
 
     bool isRootItem = (item == m_tree->GetTree()->GetRootItem());
     if(isRootItem) {
+        auto& settings = m_workspace->GetSettings();
+        if(settings.GetSelectedConfig()) {
+            // ===---
+            // add "build" menu entry
+            // ===---
+            const auto& targets = settings.GetSelectedConfig()->GetBuildTargets();
+            wxMenu* build_menu = new wxMenu;
+            for(const auto& vt : targets) {
+                const wxString& name = vt.first;
+                wxString xrcid_str;
+                xrcid_str << "wsp-build-" << name;
+                int xrcid = wxXmlResource::GetXRCID(xrcid_str);
+                build_menu->Append(xrcid, name, wxEmptyString, wxITEM_NORMAL);
+                build_menu->Bind(
+                    wxEVT_MENU,
+                    [this, name](wxCommandEvent& event) {
+                        wxUnusedVar(event);
+                        CallAfter(&RemotyWorkspaceView::BuildTarget, name);
+                    },
+                    xrcid);
+            }
+            menu->AppendSubMenu(build_menu, _("Build"));
+            // ===---
+            // add "select configuration" menu entry
+            // ===---
+            wxMenu* select_config_menu = new wxMenu;
+            wxArrayString configs = settings.GetConfigs();
+            wxString activeConfig = settings.GetSelectedConfig()->GetName();
+            for(auto config : configs) {
+                wxString xrcid_str;
+                xrcid_str << "wsp-config-" << config;
+                int xrcid = wxXmlResource::GetXRCID(xrcid_str);
+                select_config_menu->Append(xrcid, config, wxEmptyString, wxITEM_CHECK);
+                select_config_menu->Check(xrcid, config == activeConfig);
+                select_config_menu->Bind(
+                    wxEVT_MENU,
+                    [this, config](wxCommandEvent& event) {
+                        wxUnusedVar(event);
+                        CallAfter(&RemotyWorkspaceView::SetBuildConfiguration, config);
+                    },
+                    xrcid);
+            }
+            menu->AppendSubMenu(select_config_menu, _("Configuration"));
+            menu->AppendSeparator();
+        } else {
+            menu->AppendSeparator();
+        }
+
         menu->AppendSeparator();
         menu->Append(XRCID("remoty-wps-settings"), _("Workspace settings..."));
         menu->Bind(
@@ -84,10 +131,7 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
     }
 }
 
-void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
-{
-    event.Skip();
-}
+void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event) { event.Skip(); }
 
 void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
 {
@@ -151,3 +195,10 @@ void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
         editor->GetCtrl()->SetSelection(pos_start, pos_end);
     }
 }
+
+void RemotyWorkspaceView::SetBuildConfiguration(const wxString& config)
+{
+    m_workspace->GetSettings().SetSelectedConfig(config);
+}
+
+void RemotyWorkspaceView::BuildTarget(const wxString& name) { m_workspace->BuildTarget(name); }

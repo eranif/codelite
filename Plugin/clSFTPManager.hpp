@@ -42,6 +42,7 @@ protected:
 protected:
     std::pair<SSHAccountInfo, clSFTP::Ptr_t> GetConnectionPair(const wxString& account) const;
     clSFTP::Ptr_t GetConnectionPtr(const wxString& account) const;
+    size_t GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connections) const;
     clSFTP::Ptr_t GetConnectionPtrAddIfMissing(const wxString& account);
 
 protected:

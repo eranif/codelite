@@ -19,6 +19,7 @@
 #include <future>
 #include <mutex>
 #include <thread>
+#include <vector>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
@@ -560,7 +561,28 @@ bool clSFTPManager::UnlinkFile(const wxString& fullpath, const SSHAccountInfo& a
     return future.get();
 }
 
-void clSFTPManager::OnTimer(wxTimerEvent& event) { event.Skip(); }
+void clSFTPManager::OnTimer(wxTimerEvent& event)
+{
+    event.Skip();
+
+    std::vector<clSFTP::Ptr_t> all_connections;
+    size_t count = GetAllConnectionsPtr(all_connections);
+    if(count == 0) {
+        return;
+    }
+
+    // push SendKeepAlive() function for all the connections that we hold
+    for(auto conn : all_connections) {
+        auto func = [conn]() {
+            try {
+                conn->SendKeepAlive();
+            } catch(clException& e) {
+                clWARNING() << "failed to send keep-alive message for account:" << e.What() << endl;
+            }
+        };
+        m_q.push_back(std::move(func));
+    }
+}
 
 bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
 {
@@ -712,6 +734,23 @@ bool clSFTPManager::IsRemoteFile(const wxString& filepath, wxString* account, wx
     *account = m_downloadedFileToAccount.find(filepath)->second.account_name;
     *remote_path = m_downloadedFileToAccount.find(filepath)->second.remote_path;
     return true;
+}
+
+size_t clSFTPManager::GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connections) const
+{
+    if(m_connections.empty()) {
+        return 0;
+    }
+    connections.clear();
+    connections.reserve(m_connections.size());
+    for(const auto& vt : m_connections) {
+        auto conn = GetConnectionPtr(vt.first);
+        if(!conn) {
+            continue;
+        }
+        connections.push_back(conn);
+    }
+    return connections.size();
 }
 
 #endif

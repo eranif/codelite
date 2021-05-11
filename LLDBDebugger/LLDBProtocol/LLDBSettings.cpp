@@ -53,27 +53,19 @@ LLDBSettings::LLDBSettings()
     m_types = s_DefaultTypes;
     wxFileName exePath;
 #ifdef __WXGTK__
-    // Default path to lldb-server
-    wxString path;
-    ::wxGetEnv("PATH", &path);
-    wxArrayString lldbServerOptions;
-    lldbServerOptions.Add("lldb-server"); // no version suffix
-    for(size_t major = 3; major < 8; ++major) {
-        for(size_t minor = 0; minor < 10; ++minor) {
-            lldbServerOptions.Add(wxString() << "lldb-server-" << major << "." << minor);
-        }
+    // try to locate lldb-server
+    wxArrayString suffix_list;
+    suffix_list.reserve(30);
+    for(int i = 30; i > 0; --i) {
+        suffix_list.Add(wxString() << "-" << i);
     }
-    for(size_t i = 0; i < lldbServerOptions.size(); ++i) {
-        if(::clFindExecutable(lldbServerOptions.Item(i), exePath)) {
-            break;
-        }
-    }
+    FileUtils::FindExe("lldb-server", exePath, {}, suffix_list);
 
 #elif defined(__WXOSX__)
     exePath = wxFileName(clStandardPaths::Get().GetBinaryFullPath("debugserver"));
 #endif
 
-    if(exePath.IsOk() && exePath.FileExists()) {
+    if(exePath.IsOk() && exePath.FileExists() && m_debugserver.empty()) {
         m_debugserver = exePath.GetFullPath();
     }
 }
@@ -117,21 +109,6 @@ void LLDBSettings::FromJSON(const JSONItem& json)
     m_lastLocalFolder = json.namedObject("m_lastLocalFolder").toString();
     m_lastRemoteFolder = json.namedObject("m_lastRemoteFolder").toString();
     m_debugserver = json.namedObject("m_debugserver").toString(m_debugserver);
-
-#ifdef __WXGTK__
-    // try to locate lldb-server
-    wxArrayString suffix_list;
-    suffix_list.reserve(30);
-    for(int i = 30; i > 0; --i) {
-        suffix_list.Add(wxString() << "-" << i);
-    }
-    if(m_debugserver.empty()) {
-        wxFileName fn_lldb_server;
-        if(FileUtils::FindExe("lldb-server", fn_lldb_server, {}, suffix_list)) {
-            m_debugserver = fn_lldb_server.GetFullPath();
-        }
-    }
-#endif
 }
 
 JSONItem LLDBSettings::ToJSON() const

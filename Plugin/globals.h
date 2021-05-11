@@ -25,6 +25,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#include "clThemedMenuBar.hpp"
 #include "codelite_exports.h"
 #include "macros.h"
 #include "window_locker.h"
@@ -40,7 +41,6 @@
 #include <wx/propgrid/propgrid.h>
 #include <wx/string.h>
 #include <wx/variant.h>
-#include "clThemedMenuBar.hpp"
 
 class wxDataViewCtrl;
 class IManager;
@@ -589,8 +589,8 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
  * @param exepath [output]
  * @param hint list of directories to search
  */
-WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name, wxFileName& exepath,
-                                      const wxArrayString& hint = wxArrayString());
+WXDLLIMPEXP_SDK bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint = {},
+                                      const wxArrayString& suffix_list = {});
 
 /**
  * @brief given a menu and an item ID, return its position

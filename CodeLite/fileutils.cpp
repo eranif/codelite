@@ -700,8 +700,9 @@ clEnvList_t FileUtils::CreateEnvironment(const wxString& envstr)
     }
     return L;
 }
-
-bool FileUtils::FindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint)
+namespace
+{
+bool DoFindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint)
 {
     wxString path;
     if(!::wxGetEnv("PATH", &path)) {
@@ -747,6 +748,24 @@ bool FileUtils::FindExe(const wxString& name, wxFileName& exepath, const wxArray
             }
         }
 #endif
+    }
+    return false;
+}
+} // namespace
+
+bool FileUtils::FindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint,
+                        const wxArrayString& suffix_list)
+{
+    wxArrayString possible_suffix;
+    possible_suffix.Add(wxEmptyString);
+    if(!suffix_list.empty()) {
+        possible_suffix.reserve(possible_suffix.size() + suffix_list.size());
+        possible_suffix.insert(possible_suffix.end(), suffix_list.begin(), suffix_list.end());
+    }
+    for(const wxString& suffix : possible_suffix) {
+        if(DoFindExe(name + suffix, exepath, hint)) {
+            return true;
+        }
     }
     return false;
 }

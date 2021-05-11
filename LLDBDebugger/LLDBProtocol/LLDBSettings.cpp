@@ -24,12 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBSettings.h"
-#include <wx/filename.h>
 #include "cl_standard_paths.h"
-#include <wx/ffile.h>
-#include "cl_standard_paths.h"
-#include <wx/utils.h>
+#include "fileutils.h"
 #include "globals.h"
+#include <wx/ffile.h>
+#include <wx/filename.h>
+#include <wx/utils.h>
 
 #ifdef __WXMAC__
 static const wxString s_DefaultTypes = "type summary add wxString --summary-string \"${var.m_impl}\"\n"
@@ -117,6 +117,21 @@ void LLDBSettings::FromJSON(const JSONItem& json)
     m_lastLocalFolder = json.namedObject("m_lastLocalFolder").toString();
     m_lastRemoteFolder = json.namedObject("m_lastRemoteFolder").toString();
     m_debugserver = json.namedObject("m_debugserver").toString(m_debugserver);
+
+#ifdef __WXGTK__
+    // try to locate lldb-server
+    wxArrayString suffix_list;
+    suffix_list.reserve(30);
+    for(int i = 30; i > 0; --i) {
+        suffix_list.Add(wxString() << "-" << i);
+    }
+    if(m_debugserver.empty()) {
+        wxFileName fn_lldb_server;
+        if(FileUtils::FindExe("lldb-server", fn_lldb_server, {}, suffix_list)) {
+            m_debugserver = fn_lldb_server.GetFullPath();
+        }
+    }
+#endif
 }
 
 JSONItem LLDBSettings::ToJSON() const

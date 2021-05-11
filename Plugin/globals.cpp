@@ -2069,9 +2069,9 @@ void clSetEditorFontEncoding(const wxString& encoding)
     EditorConfigST::Get()->SetOptions(options);
 }
 
-bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint)
+bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint, const wxArrayString& suffix_list)
 {
-    return FileUtils::FindExe(name, exepath, hint);
+    return FileUtils::FindExe(name, exepath, hint, suffix_list);
 }
 
 int clFindMenuItemPosition(wxMenu* menu, int menuItemId)

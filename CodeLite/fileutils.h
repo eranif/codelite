@@ -266,9 +266,12 @@ public:
      * @param name the name of the file to locate
      * @param exepath will contain its filepath if successfully located
      * @param hint extra paths to search
+     * @param list of suffixes. On Linux, some files may have number attached to them like: lldb-10, lldb-9
+     * passing suffix_list = {"-10", "-9"...} will also check for these files (in order)
      * @return true if a filepath was found
      */
-    static bool FindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint = wxArrayString());
+    static bool FindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint = {},
+                        const wxArrayString& suffix_list = {});
 
     /**
      * @brief create a temporary file *name* in a given folder with a given name prefix and an extension

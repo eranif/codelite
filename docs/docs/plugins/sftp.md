@@ -81,4 +81,4 @@ In addition for defining new SSH accounts in CodeLite, the SFTP plugin offers a 
     - Check the option `connect to an existing account`
     - Select the account from the drop down list
     
-If all goes well, you should be able to browse files on the remote machine
+You should now be able to browse files on the remote machine

@@ -21,6 +21,7 @@ nav:
         - SFTP: plugins/sftp.md
     - Debugging:
         - gdb: debuggers/gdb.md
+        - lldb: debuggers/lldb.md
         - Quick Debug: debuggers/quick_debug.md
         
 theme:

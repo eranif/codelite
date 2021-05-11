@@ -8,7 +8,7 @@ You can do this with `Debug` &#8594; `Quick Debug`. This brings up the Quick Deb
 and the Working Directory to which to change (less essential); and one for any arguments to pass to the program (not essential). 
 You can also select which debugger to use (the likely choices being gdb or none :p) and `Startup Commands`, where you can add commands to be passed direct to gdb.
 
-![Quick Debug](quick_debug_dialog.png)
+![Quick Debug](images/quick_debug_dialog.png)
 
 An example is worth a thousand pictures.
 
@@ -37,7 +37,7 @@ From here, you can interact with the debugger [as described here](gdb.md#interac
 !!! WARNING
     SSH accounts **MUST** be using ssh keys and **not** passwords in order to work properly
 
-![Quick Debug SSH](quick_debug_dialog_ssh.png)
+![Quick Debug SSH](images/quick_debug_dialog_ssh.png)
 
 With recent versions of CodeLite it is possible to debug on a remote machine or (WSL) using the Quick Debug dialog.
 To enable this:

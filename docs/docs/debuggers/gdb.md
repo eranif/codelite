@@ -5,7 +5,7 @@
 
 When the debugger starts, the `Debugger` View appears (at the bottom of CodeLite by default) with multiple tabs.
 
-![Debugger View](gdb_pane.png)
+![Debugger View](images/gdb_pane.png)
 
 Tab Name    | Description |
 ------------|-------------|
@@ -25,7 +25,7 @@ Tab Name    | Description |
 Once the debugger is running a new toolbar will appear at the top left.
 You can Pause, Continue and Stop it from that toolbar. 
 
-![Debugger Toolbar](gdb_toolbar.png)
+![Debugger Toolbar](images/gdb_toolbar.png)
 
 When a breakpoint has been hit, you will often want to step through the next lines of code. 
 The commands `Next`, `Step In` and `Step Out` (Finish) are available as keyboard shortcuts and from the Debug menu; 
@@ -74,12 +74,12 @@ mymap.insert({"String Three", 3});
  
 Without pretty printing enabled, viewing `mymap` in the Locals view will give you this:
 
-![No Pretty Printing](gdb_no_pretty_printing.png)
+![No Pretty Printing](images/gdb_no_pretty_printing.png)
 
 Once enabled from: `Settings` &#8594; `GDB Settings` &#8594; `Display` &#8594; `Enable GDB Pretty printing`
 The display view changes into this:
 
-![No Pretty Printing](gdb_with_pretty_printing.png)
+![No Pretty Printing](images/gdb_with_pretty_printing.png)
 
 ### Setting up pretty printing
 
@@ -87,8 +87,8 @@ The display view changes into this:
     Before you can enable this feature within CodeLite, make sure that your `gdb` supports `python` (on most Linux systems this is the default)
 
 
-- Make sure to point CodeLite to the correct gdb. You can do this from the main menu `Settings` -> `GDB Settings` -> `GNU gdb debugger` -> `General` and select the new gdb in the `Debugger path` field.
-- Once everything is set up properly, go to CodeLite's menu bar: `Settings` -> `GDB Settings` -> `GNU gdb debugger` -> `General` and enable the option `Enable GDB pretty printing`
+- Make sure to point CodeLite to the correct gdb. You can do this from the main menu `Settings` &#8594; `GDB Settings` &#8594; `GNU gdb debugger` &#8594; `General` and select the new gdb in the `Debugger path` field.
+- Once everything is set up properly, go to CodeLite's menu bar: `Settings` &#8594; `GDB Settings` &#8594; `GNU gdb debugger` &#8594; `General` and enable the option `Enable GDB pretty printing`
 - Still in the gdb settings dialog, switch to the `Startup commands` tab and paste the following content:
 
 ```python

@@ -19,6 +19,7 @@ nav:
         - Language Server Protocol: plugins/lsp.md
         - CMake: plugins/cmake.md
         - SFTP: plugins/sftp.md
+        - SnipWiz: plugins/snipwiz.md
     - Debugging:
         - gdb: debuggers/gdb.md
         - lldb: debuggers/lldb.md

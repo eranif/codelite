@@ -53,7 +53,7 @@ printHelloWorld();
 ### Debugging
 ----
 
-- Click ++f5++ to lauchn the debugger dialog
+- Click ++f5++ to launch the debugger dialog
 - Accept the default values and click `OK`
 - You are ready to debug, use the following table to get started with the debugger:
 

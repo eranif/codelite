@@ -43,6 +43,7 @@ class TemplateClassDlg : public TemplateClassBaseDlg
     IManager* m_pManager;
 
 protected:
+    virtual void OnVirtualDirUI(wxUpdateUIEvent& event);
     virtual void OnStcHeaderFileContentChnaged(wxStyledTextEvent& event);
     virtual void OnStcImplFileContentChnaged(wxStyledTextEvent& event);
     void OnClassNameEntered(wxCommandEvent& event);
@@ -79,8 +80,8 @@ public:
     SnipWiz* GetPlugin() { return m_plugin; }
 
     void SetCurEol(const int& curEol) { this->m_curEol = curEol; }
-    void SetPluginPath(const wxString& pluginPath) { this->m_pluginPath = pluginPath; }
-    void SetProjectPath(const wxString& projectPath) { this->m_projectPath = projectPath; }
+    void SetPluginPath(const wxString& pluginPath);
+    void SetProjectPath(const wxString& projectPath);
     void SetVirtualFolder(const wxString& virtualFolder) { this->m_virtualFolder = virtualFolder; }
     const int& GetCurEol() const { return m_curEol; }
     const wxString& GetPluginPath() const { return m_pluginPath; }

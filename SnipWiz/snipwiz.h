@@ -37,10 +37,10 @@
 #ifndef __snipwiz__
 #define __snipwiz__
 
+#include "cl_command_event.h"
 #include "plugin.h"
 #include "swStringDb.h"
 #include <vector>
-#include "cl_command_event.h"
 
 class wxMenuItem;
 class SnipWiz : public IPlugin
@@ -61,10 +61,10 @@ public:
     virtual void CreatePluginMenu(wxMenu* pluginsMenu);
     virtual void HookPopupMenu(wxMenu* menu, MenuType type);
     virtual void UnPlug();
-    
+
     // event handler
     void OnEditorContextMenu(clContextMenuEvent& event);
-    
+    void OnFolderContextMenu(clContextMenuEvent& event);
     void OnMenuSnippets(wxCommandEvent& e);
     void OnMenuExpandSwitch(wxCommandEvent& e);
     void OnMenuPaste(wxCommandEvent& e);

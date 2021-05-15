@@ -38,6 +38,7 @@
 #include <wx/msgdlg.h>
 #include <wx/textbuf.h>
 #include <wx/textfile.h>
+#include "event_notifier.h"
 
 static const wxString swHeader = wxT("header");
 static const wxString swSource = wxT("source");

@@ -8,7 +8,7 @@ Git clone the sources:
     git clone https://github.com/eranif/codelite.git
 
  - Download CodeLite installer for Windows from our [Download Page][8]
- - Build wxWidgets 3.1 or later. See build instructions [here][7]
+ - Build wxWidgets 3.1 or later. See build instructions [here][5]
  - Open the workspace `CodeLiteIDE.workspace` (located in the CodeLite's folder)
  - Make sure that the project `CodeLiteIDE` is selected (the active project uses **bold** font)
  - Select the `Win_x64_Release` or `Win_x86_Release` (depending if you want to build a 32 or 64 bit version of CodeLite) 
@@ -30,7 +30,7 @@ To build CodeLite on your computer you will need these packages:
  - `cmake`.
  - `git`.
 
-In the Debian/Ubuntu repositories, wxWidgets libraries are at their 3.0 version, which is good enough for compiling Codelite 15.0, however, **you should have wxWidgets 3.1 or later to built the master branch on your machine**. If you don't know how to build wxWidgets (or you're just lazy...) you can [add the CodeLite's wxWidgets repository to you distro][6].
+In the Debian/Ubuntu repositories, wxWidgets libraries are at their 3.0 version, which is good enough for compiling Codelite 15.0, however, **you should have wxWidgets 3.1 or later to built the master branch on your machine**. Linux build instructions can be [found here][6]
 
 
 **Ubuntu / Debian**: After adding the proper libraries to you distro's sources, you can install all of the above by typing:
@@ -123,7 +123,7 @@ To launch CodeLite:
 [2]: https://codelite.org/support.php
 [3]: https://codelite.org
 [4]: https://codelite.org/support.php
-[5]: https://wiki.codelite.org/pmwiki.php
-[6]: https://wiki.codelite.org/pmwiki.php/Main/WxWidgets31Binaries
+[5]: /build_wx_widgets/#windows
+[6]: /build_wx_widgets/#linux
 [7]: https://wiki.codelite.org/pmwiki.php/Developers/BuildingWxWidgetsWin
 [8]: https://codelite.org/support.php

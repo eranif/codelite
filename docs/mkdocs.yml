@@ -28,6 +28,8 @@ nav:
         - XDebug (PHP): debuggers/xdebug.md
         - Node.js: debuggers/nodejs.md
         - Quick Debug: debuggers/quick_debug.md
+    - wxWidgets:
+        - wxWidgets 3.1.5: wxWidgets/repo315.md
         
 theme:
     name: material

@@ -51,12 +51,12 @@ Git clone the sources:
 Run CMake and build CodeLite:
 
 ```bash
-  cd codelite
-  mkdir build-release
-  cd build-release
-  cmake .. -DCMAKE_BUILD_TYPE=Release
-  cmake --build . -j $(nproc)
-  sudo cmake --build . --target install
+ cd codelite
+ mkdir build-release
+ cd build-release
+ cmake -DCMAKE_BUILD_TYPE=Release .. -DCOPY_WX_LIBS=1
+ make -j$(nproc)
+ sudo make install
 ```
 
 ----------
@@ -90,19 +90,22 @@ Preparation:
  - Install CMake: `brew install cmake`
  - Install wxWidgets: `brew install wxmac --dev --use-llvm`
 
+!!! Tip
+    You can choose to build [wxWidgets from sources](/build_wx_widgets/#macos)
 
-Clone the repo (lets assume that you have a folder `/Users/YOU/src`)
+
+Clone the repo (lets assume that you have a folder `/Users/$USER/src`)
 
 ```bash
-cd /Users/YOU/src
+cd /Users/$USER/src
 git clone https://github.com/eranif/codelite.git
 ```
- the above will create the folder `/Users/YOU/codelite`
+ the above will create the folder `/Users/$USER/codelite`
 
  To build CodeLite:
 
 ```bash
-cd /Users/YOU/codelite
+cd /Users/$USER/codelite
 mkdir build-release
 cd build-release
 cmake .. -DCMAKE_BUILD_TYPE=Release

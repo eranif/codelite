@@ -6,76 +6,81 @@
 
 #include "qmakesettingsbasedlg.h"
 
-
 // Declare the bitmap loading function
 extern void wxCrafterljRDukInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-QMakeSettingsBaseDlg::QMakeSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+QMakeSettingsBaseDlg::QMakeSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                           const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterljRDukInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
-    
-    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Add / modify qmake configurations:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    mainSizer->Add(m_staticText5, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
+
+    m_staticText5 = new wxStaticText(this, wxID_ANY, _("Add / modify qmake configurations:"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    mainSizer->Add(m_staticText5, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
-    
-    mainSizer->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
-    
-    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+
+    mainSizer->Add(bSizer3, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_notebook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_notebook->SetName(wxT("m_notebook"));
-    
-    bSizer3->Add(m_notebook, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    mainSizer->Add(m_staticline1, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer3->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticline1 =
+        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
+
+    mainSizer->Add(m_staticline1, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer2 = new wxBoxSizer(wxHORIZONTAL);
-    
-    mainSizer->Add(bSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_buttonNew = new wxButton(this, wxID_ANY, _("&New..."), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    mainSizer->Add(bSizer2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonNew = new wxButton(this, wxID_ANY, _("&New..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonNew->SetToolTip(_("Create new qmake settings"));
-    
-    bSizer2->Add(m_buttonNew, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer2->Add(m_buttonCancel, 0, wxALL, 5);
-    
-    m_buttonOk = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer2->Add(m_buttonNew, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonCancel =
+        new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer2->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonOk = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOk->SetDefault();
-    
-    bSizer2->Add(m_buttonOk, 0, wxALL, 5);
-    
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook)){
+
+    bSizer2->Add(m_buttonOk, 0, wxALL, WXC_FROM_DIP(5));
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
     } else {
         wxPersistenceManager::Get().Restore(m_notebook);
     }
-    #endif
-    
+#endif
+
     SetName(wxT("QMakeSettingsBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -85,79 +90,85 @@ QMakeSettingsBaseDlg::QMakeSettingsBaseDlg(wxWindow* parent, wxWindowID id, cons
 #endif
     // Connect events
     m_notebook->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(QMakeSettingsBaseDlg::OnRightDown), NULL, this);
-    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QMakeSettingsBaseDlg::OnNewQmakeSettings), NULL, this);
+    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QMakeSettingsBaseDlg::OnNewQmakeSettings),
+                         NULL, this);
     m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QMakeSettingsBaseDlg::OnOK), NULL, this);
-    
 }
 
 QMakeSettingsBaseDlg::~QMakeSettingsBaseDlg()
 {
     m_notebook->Disconnect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(QMakeSettingsBaseDlg::OnRightDown), NULL, this);
-    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QMakeSettingsBaseDlg::OnNewQmakeSettings), NULL, this);
+    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(QMakeSettingsBaseDlg::OnNewQmakeSettings), NULL, this);
     m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(QMakeSettingsBaseDlg::OnOK), NULL, this);
-    
 }
 
-QmakeSettingsTabBase::QmakeSettingsTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+QmakeSettingsTabBase::QmakeSettingsTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                           long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCrafterljRDukInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
-    
+
     wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer2->SetFlexibleDirection( wxBOTH );
-    fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer2->SetFlexibleDirection(wxBOTH);
+    fgSizer2->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer2->AddGrowableCol(1);
-    
-    bSizer4->Add(fgSizer2, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("qmake executable:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer2->Add(m_staticText1, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_filePickerQmakeExec = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition, wxSize(-1, -1), wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN);
-    
-    fgSizer2->Add(m_filePickerQmakeExec, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("QMAKESPEC:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer2->Add(m_staticText2, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
+    bSizer4->Add(fgSizer2, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText1 = new wxStaticText(this, wxID_ANY, _("qmake executable:"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer2->Add(m_staticText1, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_filePickerQmakeExec =
+        new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
+                             wxDLG_UNIT(this, wxSize(-1, -1)),
+                             wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_FILE_MUST_EXIST | wxFLP_OPEN);
+    m_filePickerQmakeExec->SetFocus();
+
+    fgSizer2->Add(m_filePickerQmakeExec, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText2 =
+        new wxStaticText(this, wxID_ANY, _("QMAKESPEC:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer2->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
     wxArrayString m_comboBoxQmakespecArr;
-    m_comboBoxQmakespec = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_comboBoxQmakespecArr, 0);
-    #if wxVERSION_NUMBER >= 3000
+    m_comboBoxQmakespec = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                         m_comboBoxQmakespecArr, 0);
+#if wxVERSION_NUMBER >= 3000
     m_comboBoxQmakespec->SetHint(wxT(""));
-    #endif
-    
-    fgSizer2->Add(m_comboBoxQmakespec, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText4 = new wxStaticText(this, wxID_ANY, _("QTDIR:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer2->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
-    m_textCtrlQtdir = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+#endif
+
+    fgSizer2->Add(m_comboBoxQmakespec, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText4 =
+        new wxStaticText(this, wxID_ANY, _("QTDIR:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer2->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlQtdir = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_textCtrlQtdir->SetToolTip(_("Set QTDIR to the directory where you've installed Qt"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlQtdir->SetHint(wxT(""));
-    #endif
-    
-    fgSizer2->Add(m_textCtrlQtdir, 0, wxALL|wxEXPAND, 5);
-    
+#endif
+
+    fgSizer2->Add(m_textCtrlQtdir, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("QmakeSettingsTabBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
 }
 
-QmakeSettingsTabBase::~QmakeSettingsTabBase()
-{
-}
+QmakeSettingsTabBase::~QmakeSettingsTabBase() {}

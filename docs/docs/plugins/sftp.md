@@ -10,7 +10,7 @@ To browse the remote machine file system you first need to define an SSH account
 ## Installing SSH Tools on Windows
 ---
 
-On Windows 10 and later, install OpenSSH tools as described [here](https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse) 
+On Windows 10 and later, install OpenSSH tools as described [here][1]
 
 ## Uploading keys to remote machines
 ---
@@ -82,3 +82,5 @@ In addition for defining new SSH accounts in CodeLite, the SFTP plugin offers a 
     - Select the account from the drop down list
     
 You should now be able to browse files on the remote machine
+
+[1]: https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse

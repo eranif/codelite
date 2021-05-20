@@ -2,8 +2,8 @@ site_name: CodeLite Documentation
 nav:
     - Download: download.md
     - Build: 
-        - CodeLite: build_from_sources.md
-        - wxWidgets: build_wx_widgets.md
+        - CodeLite: build/build_from_sources.md
+        - wxWidgets: build/build_wx_widgets.md
     - Quick Start: hello_world.md
     - Settings:
         - Look and feel: settings/colours_and_fonts.md

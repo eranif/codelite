@@ -78,7 +78,7 @@ Preparation:
  - Install wxWidgets: `brew install wxmac --dev --use-llvm`
 
 !!! Tip
-    You can choose to build [wxWidgets from sources](/build_wx_widgets/#macos)
+    You can choose to build [wxWidgets from sources][9]
 
 
 Clone the repo (lets assume that you have a folder `/Users/$USER/src`)
@@ -108,11 +108,11 @@ To launch CodeLite:
 
 ----------
 
-
  [1]: https://codelite.org
  [2]: https://codelite.org/support.php
  [3]: https://codelite.org
  [4]: https://codelite.org/support.php
- [5]: /build_wx_widgets/#windows
- [6]: /build_wx_widgets/#linux
+ [5]: /build/build_wx_widgets/#windows
+ [6]: /build/build_wx_widgets/#linux
  [8]: https://codelite.org/support.php
+ [9]: /build/build_wx_widgets/#macos

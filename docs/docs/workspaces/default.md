@@ -105,7 +105,7 @@ Settings that can be overridden here:
 - Custom start-up commands 
 - Remote attach commands (executed after the debugger attaches a remote target)
 
-You can also specify here if debugging over `gdbserver` by enabling the `Debugging a remote target`. You can [read more about `gdbserver` here](https://sourceware.org/gdb/current/onlinedocs/gdb/Server.html)
+You can also specify here if debugging over `gdbserver` by enabling the `Debugging a remote target`. You can [read more about `gdbserver` here][1]
 
 ### Resources
 ---
@@ -291,3 +291,4 @@ Select the one to be debugged. Debugging then continues as above
 
 This is described in detail in [Debugging With Quick Debug](../debuggers/quick_debug.md)
 
+[1]: https://sourceware.org/gdb/current/onlinedocs/gdb/Server.html

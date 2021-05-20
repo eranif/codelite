@@ -4,7 +4,7 @@
 ---
 
 We provide pre built binaries for Windows for both 32 and 64 bit.
-visit [CodeLite downloads page](https://downloads.codelite.org) and pick the version you want.
+visit [CodeLite downloads page][1] and pick the version you want.
 
 Note that there are two variants to choose from:
 
@@ -17,7 +17,7 @@ Note that despite their name, these releases are very stable.
 ## macOS big sur
 ---
 
-Download macOS bundle from [CodeLite downloads page](https://downloads.codelite.org)
+Download macOS bundle from [CodeLite downloads page][1]
 
 ## Linux
 ---
@@ -136,12 +136,12 @@ First tell rpm about the CodeLite public key. As superuser do:
  rpm -Uvh https://repos.codelite.org/rpms-15.0/fedora/33/codelite-15.0.1-1.fc33.x86_64.rpm
 ```
 
-There are also source rpms for [fedora](https://repos.codelite.org/rpms-15.0/fedora/codelite-15.0.1-1.fc.src.rpm) and [Open SUSE](https://repos.codelite.org/rpms-15.0/suse/codelite-15.0.1-1.suse.src.rpm)
+There are also source rpms for [fedora][2] and [Open SUSE][3]
 
 ### ArchLinux
 ---
 
-CodeLite is available on ArchLinux via their [AUR repository](https://aur.archlinux.org/packages/codelite/)
+CodeLite is available on ArchLinux via their [AUR repository][4]
 To install CodeLite:
 
 ```bash
@@ -152,10 +152,14 @@ yaourt -S codelite
 ---
 
 For Linux, we also offer release candidate builds for Ubuntu `18.04` and `20.04`
-You can download the deb file from our [download page](https://downloads.codelite.org) and install it using `gdebi` :
+You can download the deb file from our [download page][1] and install it using `gdebi` :
 
 ```bash
 sudo apt-get install gdebi
 sudo gdebi -n /path/to/codelite.deb
 ```
 
+[1]: https://downloads.codelite.org
+[2]: https://repos.codelite.org/rpms-15.0/fedora/codelite-15.0.1-1.fc.src.rpm
+[3]: https://repos.codelite.org/rpms-15.0/suse/codelite-15.0.1-1.suse.src.rpm
+[4]: https://aur.archlinux.org/packages/codelite/

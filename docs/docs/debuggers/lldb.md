@@ -97,7 +97,7 @@ This view displays the active frame variables:
 
 ### Data formatters
 
-To read about LLDB data formatters, please read [this article](http://lldb.llvm.org/varformats.html) from the LLDB website.
+To read about LLDB data formatters, please read [this article][1] from the LLDB website.
 
 When a debug session starts, the plugin will "source" the file `~/.lldbinit` so you should place there any custom commands 
 to be executed before the session starts. This is where you want to place your python printers.
@@ -167,7 +167,7 @@ Basic types
 In many cases, python printers is not needed and you can settle for a simple printer using the type summary add command. 
 By default CodeLite comes with 3 basic printers defined, for `wxString`, `wxRect` and `wxPoint`
 
-The syntax is very simple and [explained in details here](http://lldb.llvm.org/varformats.html)
+The syntax is very simple and [explained in details here][2]
 You can add your own types to the LLDB Settings dialog: `Settings` &#8594; `LLDB Settings` &#8594; `Types`:
 
 ```bash
@@ -181,3 +181,5 @@ type summary add wxRect --summary-string "(x = ${var.x}, y = ${var.y}) (width = 
 In order to trigger the debugger tooltip, you need to place the mouse pointer over the variable you wish to explore and hold down the ++cmd++ or ++ctrl++ key By default the debugger 
 will try to evaluate the word under the caret, if for some reason you wish to view a more complex expression, select it with the mouse and then click the ++cmd++ or ++ctrl++ key
 
+[1]: http://lldb.llvm.org/varformats.html
+[2]: http://lldb.llvm.org/varformats.html

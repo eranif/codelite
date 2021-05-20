@@ -53,7 +53,7 @@ You can add here as many targets as you wish. They are all accessbile from the `
 ---
 
 The content of this page is used to generate the file `compile_flags.txt`
-See more details about this file [here](https://releases.llvm.org/8.0.0/tools/clang/tools/extra/docs/clangd/Installation.html)
+See more details about this file [here][1]
 
 *Example*
 
@@ -102,3 +102,5 @@ To enable this:
 - Select the SSH account to use from the drop down list (or create a new one by using the ssh account manager)
 - `Remote folder` : specify the path on the remote machine where the workspace file is located. Usually, you want the remote directory structure to be a mirror to the local one
 - `Use remote build` : by checking this option, the build commands defined in the [build page](#build) are executed on the remote machine
+
+[1]: https://releases.llvm.org/8.0.0/tools/clang/tools/extra/docs/clangd/Installation.html

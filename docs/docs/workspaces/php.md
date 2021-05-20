@@ -6,7 +6,7 @@ As of CodeLite 7.0, PHP support in CodeLite has been extended to provide a fully
 The PHP plugin supports (but is not limited to) the following:
 
 - Code Completion
-- Debugging capabilities via [XDebug](https://xdebug.org/)
+- Debugging capabilities via [XDebug][1]
 - Syntax checking
 - Simplified project management
 - Class wizard
@@ -90,7 +90,7 @@ $my_class->hello_world();
 ## Syntax checking
 ---
 
-CodeLite has built-in integration for [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer), [PHPMD](https://github.com/phpmd/phpmd) and basic php lint.
+CodeLite has built-in integration for [PHP_CodeSniffer][2], [PHPMD][3] and basic php lint.
 
 These tools look for code style violations, code design issue and basic syntax errors. 
 When an issue is detected a marker will be placed to the left of the affected line, hover the marker to view a description of the issue
@@ -102,16 +102,22 @@ Under the Code Sniffer tab you need to specify the path to the `phpcs` `phar` fi
 Configuration of `phpcs` should be done by creating a `phpcs.xml` rule file and placing it under the workspace root folder.
 
 The Mess Detector allows you to point to the `phpmd` `phar` file and an optional rule set `xml` file.
-You can use an [online standard generator](http://edorian.github.io/php-coding-standard-generator/) to generate the XML rule files
+You can use an [online standard generator][5] to generate the XML rule files
 
 ## Code refactoring
 ---
 
 CodeLite relies on an external tool for providing PHP refactoring (rename variables, class properties etc) To enable refactoring, follow these steps:
 
-- Download the latest refactoring PHAR file [from here](https://github.com/AJenbo/php-refactoring-browser/releases)
+- Download the latest refactoring PHAR file [from here][4]
 - From the main menu open `Plugins` &#8594; `PHP Refactoring` &#8594; `Options...`, select the `phprefactor.phar` file and click `OK`
 - Make sure a valid PHP executable is selected from `PHP` &#8594; `Settings` &#8594; `General` &#8594; `PHP Executable`
 
 You now should be able to perform code refactoring (like renaming variables, moving selected code in to a separate method) 
 from the right click menu or from the project level context menu
+
+[1]: https://xdebug.org/
+[2]: https://github.com/squizlabs/PHP_CodeSniffer
+[3]: https://github.com/phpmd/phpmd
+[4]: https://github.com/AJenbo/php-refactoring-browser/releases
+[5]: http://edorian.github.io/php-coding-standard-generator/

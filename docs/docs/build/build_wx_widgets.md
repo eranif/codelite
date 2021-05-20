@@ -7,7 +7,7 @@
 ### Prerequisites
 - Download and install MinGW. CodeLite is built with MinGW w64 7.1 64 bit
 - Open `CMD` terminal and add the `bin` folder to the `PATH` environment, e.g: `C:\MinGW-64\bin` (assuming you installed MinGW under `C:\MinGW-64\bin`) `set PATH=C:\MinGW-64\bin;%PATH%`
-- Download wxWidgets sources, CodeLite requires wxWidgets `3.1.x` and later [from here](http://www.wxwidgets.org/downloads)
+- Download wxWidgets sources, CodeLite requires wxWidgets `3.1.x` and later [from here][3]
 - If you have cloned wxWidgets repository from git master, you will also need to run this: `git submodule update --init` from the root wxWidgets folder 
 
 ### Release
@@ -122,4 +122,4 @@ sudo make install
 
  [1]: https://brew.sh/
  [2]: https://wxwidgets.org/downloads/
- 
+ [3]: https://www.wxwidgets.org/downloads

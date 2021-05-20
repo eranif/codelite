@@ -21,34 +21,21 @@ Git clone the sources:
 ## Linux
 ----
 
-To build CodeLite on your computer you will need these packages:
-
- - wxWidgets 3.1 or later development packages (or a self-build).
- - The GTK development packages: often called `libgtk-3-dev` or `gtk3-devel`, or similar.
- - `pkg-config` (which usually comes with the GTK dev package).
- - The `build-essential` package (or the relevant bit of it: G++, Make etc).
- - `cmake`.
- - `git`.
-
-In the Debian/Ubuntu repositories, wxWidgets libraries are at their 3.0 version, which is good enough for compiling Codelite 15.0, however, **you should have wxWidgets 3.1 or later to built the master branch on your machine**. Linux build instructions can be [found here][6]
-
-
-**Ubuntu / Debian**: After adding the proper libraries to you distro's sources, you can install all of the above by typing:
+- To build CodeLite on your computer you will first need to [Build wxWidgets from sources][6]
+- Install `libssh-dev` and `libsqlite3-dev` packages (or similar, depending on your distro). On **Ubuntu / Debian**, you can use this command:
 
 ```bash
-    sudo apt install    pkg-config build-essential git cmake \
-                        libgtk-3-dev libssh-dev libsqlite3-dev \
-                        libwxbase3.1-dev libwxbase3.1unofficial3-dev \
-                        libwxgtk3.1unofficial3-dev
+    sudo apt install build-essential git cmake \
+                     libssh-dev libsqlite3-dev 
 ```
 
-Git clone the sources:
+- Git clone the sources:
 
 ```bash
     git clone https://github.com/eranif/codelite.git
 ```
 
-Run CMake and build CodeLite:
+- Run `cmake` and build CodeLite:
 
 ```bash
  cd codelite
@@ -113,20 +100,19 @@ cmake --build . -j $(sysctl -n hw.physicalcpu)
 cmake --build . --target install
 ```
 
-You should now have an app bundle `/Users/YOU/codelite/build-release/codelite.app`
+You should now have an app bundle `/Users/$USER/codelite/build-release/codelite.app`
 
 To launch CodeLite:
 
-`open /Users/YOU/codelite/build-release/codelite.app`
+`open /Users/$USER/codelite/build-release/codelite.app`
 
 ----------
 
 
-[1]: https://codelite.org
-[2]: https://codelite.org/support.php
-[3]: https://codelite.org
-[4]: https://codelite.org/support.php
-[5]: /build_wx_widgets/#windows
-[6]: /build_wx_widgets/#linux
-[7]: https://wiki.codelite.org/pmwiki.php/Developers/BuildingWxWidgetsWin
-[8]: https://codelite.org/support.php
+ [1]: https://codelite.org
+ [2]: https://codelite.org/support.php
+ [3]: https://codelite.org
+ [4]: https://codelite.org/support.php
+ [5]: /build_wx_widgets/#windows
+ [6]: /build_wx_widgets/#linux
+ [8]: https://codelite.org/support.php

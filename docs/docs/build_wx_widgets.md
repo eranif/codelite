@@ -64,22 +64,10 @@ sudo apt-get install libgtk-3-dev \
                      xterm
 ```
 
-### GTK2
+!!! Tip
+    If your distro provides a newer version of `clang-format`, install it. The higher, the better
 
-```bash
-mkdir /home/$USER/devl
-cd /home/$USER/devl
-git clone https://github.com/wxWidgets/wxWidgets.git
-cd /home/$USER/devl/wxWidgets
-git submodule init
-git submodule update
-mkdir build-release
-cd build-release
-../configure --disable-debug_flag
-make -j$(nproc) && sudo make install
-```
-
-### GTK3 (recommended)
+### GTK3 (**recommended**)
 
 ```bash
 mkdir /home/$USER/devl
@@ -91,6 +79,21 @@ git submodule update
 mkdir build-release-gtk3
 cd build-release-gtk3
 ../configure --disable-debug_flag --with-gtk=3
+make -j$(nproc) && sudo make install
+```
+
+### GTK2 (*Obsolete*)
+
+```bash
+mkdir /home/$USER/devl
+cd /home/$USER/devl
+git clone https://github.com/wxWidgets/wxWidgets.git
+cd /home/$USER/devl/wxWidgets
+git submodule init
+git submodule update
+mkdir build-release
+cd build-release
+../configure --disable-debug_flag
 make -j$(nproc) && sudo make install
 ```
 

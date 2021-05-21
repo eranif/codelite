@@ -515,9 +515,9 @@ void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
         generator.Generate();
 
         // run qmake
-        wxString qmake_exe = m_conf->Read(wxString::Format(wxT("%s/qmake"), bcpd.m_qmakeConfig.c_str()));
-        wxString qmakespec = m_conf->Read(wxString::Format(wxT("%s/qmakespec"), bcpd.m_qmakeConfig.c_str()));
-        wxString qtdir = m_conf->Read(wxString::Format(wxT("%s/qtdir"), bcpd.m_qmakeConfig.c_str()));
+        wxString qmake_exe = m_conf->Read(wxString::Format(wxT("%s/qmake"), bcpd.m_qmakeConfig));
+        wxString qmakespec = m_conf->Read(wxString::Format(wxT("%s/qmakespec"), bcpd.m_qmakeConfig));
+        wxString qtdir = m_conf->Read(wxString::Format(wxT("%s/qtdir"), bcpd.m_qmakeConfig));
 
         // Create qmake comand
         wxString qmake_exe_line;
@@ -527,19 +527,29 @@ void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
         // Set QTDIR
         DirSaver ds;
         {
-
             wxString errMsg;
             ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
             if(!p) {
                 return;
             }
-
-            qmake_exe_line << wxT("\"") << qmake_exe << wxT("\" -spec ") << qmakespec << wxT(" ")
-                           << generator.GetProFileName();
+            ::WrapWithQuotes(qmake_exe);
+            qmake_exe_line << qmake_exe << wxT(" -spec ") << qmakespec << wxT(" ") << generator.GetProFileName();
             wxStringMap_t om;
-            om.insert(std::make_pair("QTDIR", qtdir));
+            om.insert({ "QTDIR", qtdir });
+
+            // Add the bin folder of the compiler (so qmakw will be able to find g++ or whatever compiler)
+            wxString cxx = bldConf->GetCompiler()->GetTool("CXX");
+            wxFileName fnCxx(cxx);
+            wxString curpath;
+            wxString updatedPath = fnCxx.GetPath();
+            if(::wxGetEnv("PATH", &curpath)) {
+                updatedPath << clPATH_SEPARATOR << curpath;
+            }
+            om.insert({ "PATH", updatedPath });
+
             EnvSetter envGuard(NULL, &om, project, config);
             m_mgr->ClearOutputTab(kOutputTab_Build);
+            m_mgr->ShowOutputPane(_("Build"));
             m_mgr->AppendOutputTabText(kOutputTab_Build, wxString() << "-- " << qmake_exe_line << "\n");
             m_qmakeProcess =
                 ::CreateAsyncProcess(this, qmake_exe_line, IProcessCreateDefault, p->GetFileName().GetPath());

@@ -22,6 +22,7 @@ nav:
         - CMake: plugins/cmake.md
         - SFTP: plugins/sftp.md
         - SnipWiz: plugins/snipwiz.md
+        - QMake: plugins/qmake.md
     - Debugging:
         - gdb: debuggers/gdb.md
         - lldb: debuggers/lldb.md

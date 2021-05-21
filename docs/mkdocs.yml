@@ -25,6 +25,7 @@ nav:
         - QMake: plugins/qmake.md
         - CppCheck: plugins/cppcheck.md
         - Subversion: plugins/svn.md
+        - wxCrafter: plugins/wxcrafter.md
     - Debugging:
         - gdb: debuggers/gdb.md
         - lldb: debuggers/lldb.md

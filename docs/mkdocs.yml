@@ -26,6 +26,7 @@ nav:
         - CppCheck: plugins/cppcheck.md
         - Subversion: plugins/svn.md
         - wxCrafter: plugins/wxcrafter.md
+        - Git: plugins/git.md
     - Debugging:
         - gdb: debuggers/gdb.md
         - lldb: debuggers/lldb.md

@@ -14,7 +14,7 @@
 
 - CodeLite requires a wxWidgets build which enables Graphic Context, to do this, open a `CMD` terminal and type:
 
-```bash
+```batch
  cd \Path\To\wxWidgets\Sources\build\msw
  mingw32-make -f makefile.gcc setup_h SHARED=1 UNICODE=1 BUILD=release VENDOR=cl
 ```
@@ -29,7 +29,7 @@
 
 - Start the build:
 
-```bash
+```batch
  mingw32-make -j8 -f Makefile.gcc SHARED=1 UNICODE=1 BUILD=release VENDOR=cl CXXFLAGS="-fno-keep-inline-dllexport -std=c++11"
 ```
 

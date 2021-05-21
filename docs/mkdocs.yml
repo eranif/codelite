@@ -24,6 +24,7 @@ nav:
         - SnipWiz: plugins/snipwiz.md
         - QMake: plugins/qmake.md
         - CppCheck: plugins/cppcheck.md
+        - Subversion: plugins/svn.md
     - Debugging:
         - gdb: debuggers/gdb.md
         - lldb: debuggers/lldb.md

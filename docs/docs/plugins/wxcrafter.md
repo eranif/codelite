@@ -98,6 +98,21 @@ and add this include somewhere to the top of this file:
 
 ![hello world](images/wxc_hello_world.png)
 
+## Project settings
+---
+
+When selecting the root item in the tree view of wxCrafter, you can alter the various wxCrafter project settings
+
+Property name | Description
+--------------|----------------
+Output directory | this tells wxCrafter where to place the generated files. If the path set is relative, it will be relative to the current wxcp file 
+Output File Name|the name of the file to use for the base classes. By default, it will use the base name of the current wxcp file
+Additional Include Files|provide a list of files that should be included in the generated files. The format is "MyFile.h";"AnotherHeader.h"
+Bitmaps File|Set here the name of the file for the project bitmaps. wxCrafter converts all selected bitmap files into a C array and embed them into the executable. This file contains these arrays
+Generate Window ID|When setting this to True, wxCrafter will treat any unrecognized Window ID as a enumerator and will place it as member of the relevant class. So if you set a Window ID for a control to be something like ID_MY_BUTTON, wxCrafter will create an enum with ID_MY_BUTTON as one of its enumerators
+First Window ID|The initial value for the Window ID enum 
+
+
  [1]: https://www.wxwidgets.org/docs/tutorials.htm
  [2]: https://www.wxwidgets.org/docs/tutorials/hello.htm
  

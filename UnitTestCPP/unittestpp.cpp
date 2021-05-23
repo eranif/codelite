@@ -553,7 +553,7 @@ void UnitTestPP::DoRunProject(ProjectPtr project)
     DirSaver ds;
 
     // Ensure that the ut++ page is shown and selected
-    m_mgr->ShowOutputPane("UnitTest++");
+    m_mgr->ShowOutputPane(_("UnitTest++"));
 
     // first we need to CD to the project directory
     ::wxSetWorkingDirectory(project->GetFileName().GetPath());

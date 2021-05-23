@@ -6,114 +6,125 @@
 
 #include "unittestreport.h"
 
-
 // Declare the bitmap loading function
 extern void wxC52E5InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-UnitTestsBasePage::UnitTestsBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+UnitTestsBasePage::UnitTestsBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                     long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC52E5InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer8);
-    
+
     wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 3, 0, 0);
-    fgSizer3->SetFlexibleDirection( wxBOTH );
-    fgSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer3->SetFlexibleDirection(wxBOTH);
+    fgSizer3->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer3->AddGrowableCol(0);
     fgSizer3->AddGrowableCol(1);
-    
+
     bSizer8->Add(fgSizer3, 0, wxEXPAND, WXC_FROM_DIP(5));
-    
+
     m_progressPassed = new ProgressCtrl(this);
-    fgSizer3->Add(m_progressPassed, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+    fgSizer3->Add(m_progressPassed, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_progressFailed = new ProgressCtrl(this);
-    fgSizer3->Add(m_progressFailed, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
+    fgSizer3->Add(m_progressFailed, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 6, 0, 0);
-    fgSizer4->SetFlexibleDirection( wxBOTH );
-    fgSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer4->SetFlexibleDirection(wxBOTH);
+    fgSizer4->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer4->AddGrowableCol(1);
     fgSizer4->AddGrowableCol(3);
     fgSizer4->AddGrowableCol(5);
-    
-    bSizer8->Add(fgSizer4, 0, wxLEFT|wxRIGHT, WXC_FROM_DIP(5));
-    
-    m_staticText10 = new wxStaticText(this, wxID_ANY, _("Total tests:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer4->Add(m_staticText10, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticTextTotalTests = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(50,-1)), 0);
+
+    bSizer8->Add(fgSizer4, 0, wxLEFT | wxRIGHT, WXC_FROM_DIP(5));
+
+    m_staticText10 =
+        new wxStaticText(this, wxID_ANY, _("Total tests:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer4->Add(m_staticText10, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticTextTotalTests =
+        new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(50, -1)), 0);
     wxFont m_staticTextTotalTestsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextTotalTestsFont.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticTextTotalTests->SetFont(m_staticTextTotalTestsFont);
-    
-    fgSizer4->Add(m_staticTextTotalTests, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticText12 = new wxStaticText(this, wxID_ANY, _("Tests failed:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
-    fgSizer4->Add(m_staticText12, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticTextFailTestsNum = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(50,-1)), 0);
+
+    fgSizer4->Add(m_staticTextTotalTests, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText12 =
+        new wxStaticText(this, wxID_ANY, _("Tests failed:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    fgSizer4->Add(m_staticText12, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticTextFailTestsNum =
+        new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(50, -1)), 0);
     wxFont m_staticTextFailTestsNumFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextFailTestsNumFont.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticTextFailTestsNum->SetFont(m_staticTextFailTestsNumFont);
-    
-    fgSizer4->Add(m_staticTextFailTestsNum, 0, wxALL|wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-    
-    m_staticText14 = new wxStaticText(this, wxID_ANY, _("Tests passed:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    
+
+    fgSizer4->Add(m_staticTextFailTestsNum, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText14 =
+        new wxStaticText(this, wxID_ANY, _("Tests passed:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
     fgSizer4->Add(m_staticText14, 0, wxALL, WXC_FROM_DIP(5));
-    
-    m_staticTextSuccessTestsNum = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(50,-1)), 0);
+
+    m_staticTextSuccessTestsNum =
+        new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(50, -1)), 0);
     wxFont m_staticTextSuccessTestsNumFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextSuccessTestsNumFont.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticTextSuccessTestsNum->SetFont(m_staticTextSuccessTestsNumFont);
-    
-    fgSizer4->Add(m_staticTextSuccessTestsNum, 0, wxALL|wxALIGN_LEFT, WXC_FROM_DIP(5));
-    
+
+    fgSizer4->Add(m_staticTextSuccessTestsNum, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer7 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer8->Add(boxSizer7, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_dvListCtrlErrors = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_VERT_RULES|wxDV_ROW_LINES|wxDV_SINGLE);
+
+    bSizer8->Add(boxSizer7, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlErrors = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                              wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
     m_dvListCtrlErrors->SetFocus();
-    
-    boxSizer7->Add(m_dvListCtrlErrors, 1, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(5));
-    
-    m_dvListCtrlErrors->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
-    m_dvListCtrlErrors->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
-    m_dvListCtrlErrors->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT);
-    m_button4 = new wxButton(this, wxID_CLEAR, _("Clear"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+
+    boxSizer7->Add(m_dvListCtrlErrors, 1, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlErrors->AppendTextColumn(_("File"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlErrors->AppendTextColumn(_("Line"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlErrors->AppendTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                         wxDATAVIEW_COL_RESIZABLE);
+    m_button4 = new wxButton(this, wxID_CLEAR, _("Clear"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button4->SetDefault();
     m_button4->SetToolTip(_("Clear report..."));
-    
-    boxSizer7->Add(m_button4, 0, wxLEFT|wxRIGHT|wxBOTTOM, WXC_FROM_DIP(5));
-    
+
+    boxSizer7->Add(m_button4, 0, wxLEFT | wxRIGHT | wxBOTTOM, WXC_FROM_DIP(5));
+
     SetName(wxT("UnitTestsBasePage"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
     // Connect events
-    m_dvListCtrlErrors->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(UnitTestsBasePage::OnItemActivated), NULL, this);
-    m_button4->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(UnitTestsBasePage::OnClearReport), NULL, this);
-    
+    m_dvListCtrlErrors->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                wxDataViewEventHandler(UnitTestsBasePage::OnItemActivated), NULL, this);
+    m_button4->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(UnitTestsBasePage::OnClearReport), NULL,
+                       this);
 }
 
 UnitTestsBasePage::~UnitTestsBasePage()
 {
-    m_dvListCtrlErrors->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(UnitTestsBasePage::OnItemActivated), NULL, this);
-    m_button4->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(UnitTestsBasePage::OnClearReport), NULL, this);
-    
+    m_dvListCtrlErrors->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
+                                   wxDataViewEventHandler(UnitTestsBasePage::OnItemActivated), NULL, this);
+    m_button4->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(UnitTestsBasePage::OnClearReport), NULL,
+                          this);
 }

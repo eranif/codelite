@@ -7,6 +7,7 @@
 #ifndef _CODELITE_UNITTESTCPP_UNITTESTREPORT_BASE_CLASSES_H
 #define _CODELITE_UNITTESTCPP_UNITTESTREPORT_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -16,6 +17,7 @@
 #include "progressctrl.h"
 #include <wx/stattext.h>
 #include <wx/dataview.h>
+#include "clThemedListCtrl.h"
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -33,6 +35,7 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
 
 class UnitTestsBasePage : public wxPanel
 {
@@ -45,7 +48,7 @@ protected:
     wxStaticText* m_staticTextFailTestsNum;
     wxStaticText* m_staticText14;
     wxStaticText* m_staticTextSuccessTestsNum;
-    wxDataViewListCtrl* m_dvListCtrlErrors;
+    clThemedListCtrl* m_dvListCtrlErrors;
     wxButton* m_button4;
 
 protected:
@@ -61,9 +64,10 @@ public:
     wxStaticText* GetStaticTextFailTestsNum() { return m_staticTextFailTestsNum; }
     wxStaticText* GetStaticText14() { return m_staticText14; }
     wxStaticText* GetStaticTextSuccessTestsNum() { return m_staticTextSuccessTestsNum; }
-    wxDataViewListCtrl* GetDvListCtrlErrors() { return m_dvListCtrlErrors; }
+    clThemedListCtrl* GetDvListCtrlErrors() { return m_dvListCtrlErrors; }
     wxButton* GetButton4() { return m_button4; }
-    UnitTestsBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    UnitTestsBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~UnitTestsBasePage();
 };
 

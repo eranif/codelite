@@ -118,7 +118,7 @@ void UnitTestsPage::Initialize(TestSummary* summary)
 
 void UnitTestsPage::Clear()
 {
-    for(int i = 0; i < m_dvListCtrlErrors->GetItemCount(); ++i) {
+    for(size_t i = 0; i < m_dvListCtrlErrors->GetItemCount(); ++i) {
         UTLineInfo* info = (UTLineInfo*)m_dvListCtrlErrors->GetItemData(m_dvListCtrlErrors->RowToItem(i));
         wxDELETE(info);
     }

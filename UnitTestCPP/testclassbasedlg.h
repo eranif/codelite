@@ -7,6 +7,7 @@
 #ifndef _CODELITE_UNITTESTCPP_NEWCLASSTESTBASE_BASE_CLASSES_H
 #define _CODELITE_UNITTESTCPP_NEWCLASSTESTBASE_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -14,11 +15,13 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/statline.h>
 #include <wx/checklst.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -36,49 +39,50 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
 
 class TestClassBaseDlg : public wxDialog
 {
 protected:
-    wxStaticText* m_staticText16;
+    wxPanel* m_panel25;
+    wxStaticText* m_staticText163;
     wxTextCtrl* m_textCtrlClassName;
-    wxButton* m_buttonClass;
-    wxStaticText* m_staticText4;
+    wxButton* m_buttonClass5;
+    wxStaticText* m_staticText46;
     wxTextCtrl* m_textCtrlFixtureName;
-    wxStaticText* m_staticText3;
+    wxStaticText* m_staticText39;
     wxTextCtrl* m_textCtrlFileName;
-    wxStaticText* m_staticText5;
+    wxStaticText* m_staticText512;
     wxChoice* m_choiceProjects;
-    wxStaticText* m_staticText6;
+    wxStaticLine* m_staticLine2015;
+    wxStaticText* m_staticText617;
     wxCheckListBox* m_checkListMethods;
-    wxButton* m_buttonCheckAll;
-    wxButton* m_buttonUnCheckAll;
-    wxStdDialogButtonSizer* m_stdBtnSizer2;
-    wxButton* m_button4;
-    wxButton* m_button6;
+    wxButton* m_buttonCheckAll21;
+    wxButton* m_buttonUnCheckAll22;
+    wxStdDialogButtonSizer* m_stdBtnSizer223;
+    wxButton* m_button424;
+    wxButton* m_button625;
 
 protected:
-    virtual void OnClassNameUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnShowClassListDialog(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCheckAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUnCheckAll(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
-
 public:
-    wxStaticText* GetStaticText16() { return m_staticText16; }
+    wxStaticText* GetStaticText163() { return m_staticText163; }
     wxTextCtrl* GetTextCtrlClassName() { return m_textCtrlClassName; }
-    wxButton* GetButtonClass() { return m_buttonClass; }
-    wxStaticText* GetStaticText4() { return m_staticText4; }
+    wxButton* GetButtonClass5() { return m_buttonClass5; }
+    wxStaticText* GetStaticText46() { return m_staticText46; }
     wxTextCtrl* GetTextCtrlFixtureName() { return m_textCtrlFixtureName; }
-    wxStaticText* GetStaticText3() { return m_staticText3; }
+    wxStaticText* GetStaticText39() { return m_staticText39; }
     wxTextCtrl* GetTextCtrlFileName() { return m_textCtrlFileName; }
-    wxStaticText* GetStaticText5() { return m_staticText5; }
+    wxStaticText* GetStaticText512() { return m_staticText512; }
     wxChoice* GetChoiceProjects() { return m_choiceProjects; }
-    wxStaticText* GetStaticText6() { return m_staticText6; }
+    wxStaticLine* GetStaticLine2015() { return m_staticLine2015; }
+    wxStaticText* GetStaticText617() { return m_staticText617; }
     wxCheckListBox* GetCheckListMethods() { return m_checkListMethods; }
-    wxButton* GetButtonCheckAll() { return m_buttonCheckAll; }
-    wxButton* GetButtonUnCheckAll() { return m_buttonUnCheckAll; }
-    TestClassBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create UnitTests for Class"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    wxButton* GetButtonCheckAll21() { return m_buttonCheckAll21; }
+    wxButton* GetButtonUnCheckAll22() { return m_buttonUnCheckAll22; }
+    wxPanel* GetPanel25() { return m_panel25; }
+    TestClassBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
+                     const wxString& title = _("Create UnitTests for Class"), const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~TestClassBaseDlg();
 };
 

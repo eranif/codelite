@@ -26,12 +26,11 @@
 #ifndef __unittestcppoutputparser__
 #define __unittestcppoutputparser__
 
-#include <wx/arrstr.h>
 #include <vector>
+#include <wx/arrstr.h>
 #include <wx/dynarray.h>
 
-struct ErrorLineInfo
-{
+struct ErrorLineInfo {
     wxString line;
     wxString file;
     wxString description;

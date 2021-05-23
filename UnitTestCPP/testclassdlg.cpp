@@ -23,16 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/app.h>
-#include <wx/choicdlg.h>
-#include "unittestpp.h"
-#include "open_resource_dialog.h"
-#include <wx/msgdlg.h>
-#include "testclassdlg.h"
-#include "imanager.h"
 #include "ctags_manager.h"
+#include "globals.h"
+#include "imanager.h"
+#include "open_resource_dialog.h"
+#include "testclassdlg.h"
+#include "unittestpp.h"
 #include "windowattrmanager.h"
 #include <algorithm>
+#include <wx/app.h>
+#include <wx/choicdlg.h>
+#include <wx/msgdlg.h>
 
 TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
     : TestClassBaseDlg(parent)
@@ -52,8 +53,7 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
     if(m_choiceProjects->IsEmpty() == false) {
         m_choiceProjects->SetSelection(0);
     }
-    SetName("TestClassDlg");
-    WindowAttrManager::Load(this);
+    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 TestClassDlg::~TestClassDlg() {}

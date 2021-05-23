@@ -25,8 +25,8 @@
 
 #ifndef CLSINGLECHOICEDIALOG_H
 #define CLSINGLECHOICEDIALOG_H
-#include "wxcrafter_plugin.h"
 #include "codelite_exports.h"
+#include "wxcrafter_plugin.h"
 
 class WXDLLIMPEXP_SDK clSingleChoiceDialog : public clSingleChoiceDialogBase
 {
@@ -41,9 +41,7 @@ protected:
     void DoInitialise();
 
 protected:
-    virtual void OnFilter(wxCommandEvent& event);
-    virtual void OnActivated(wxDataViewEvent& event);
-    virtual void OnItemActivated(wxCommandEvent& event);
-    virtual void OnOKUI(wxUpdateUIEvent& event);
+    void OnActivated(wxDataViewEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
 };
 #endif // CLSINGLECHOICEDIALOG_H

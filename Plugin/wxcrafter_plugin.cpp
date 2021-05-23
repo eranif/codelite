@@ -607,19 +607,10 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer181 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer181);
 
-    m_searchCtrl = new wxSearchCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                    wxTE_PROCESS_ENTER);
-    m_searchCtrl->SetToolTip(_("Filter the results.\nHit ENTER to apply the filter"));
-    m_searchCtrl->SetFocus();
-    m_searchCtrl->ShowSearchButton(true);
-    m_searchCtrl->ShowCancelButton(false);
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
-    boxSizer181->Add(m_searchCtrl, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
-
-    boxSizer181->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer181->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrl->AppendTextColumn(_("My Column"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                    wxDATAVIEW_COL_RESIZABLE);
@@ -654,8 +645,6 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
-    m_searchCtrl->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clSingleChoiceDialogBase::OnFilter), NULL,
-                          this);
     m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                           wxDataViewEventHandler(clSingleChoiceDialogBase::OnActivated), NULL, this);
     m_button185->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSingleChoiceDialogBase::OnOKUI), NULL, this);
@@ -663,8 +652,6 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
 
 clSingleChoiceDialogBase::~clSingleChoiceDialogBase()
 {
-    m_searchCtrl->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(clSingleChoiceDialogBase::OnFilter), NULL,
-                             this);
     m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                              wxDataViewEventHandler(clSingleChoiceDialogBase::OnActivated), NULL, this);
     m_button185->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSingleChoiceDialogBase::OnOKUI), NULL, this);

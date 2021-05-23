@@ -26,7 +26,6 @@
 #include "clFileViwerTreeCtrl.h"
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
-#include <wx/srchctrl.h>
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 #include "clThemedButton.h"
@@ -194,20 +193,17 @@ public:
 class clSingleChoiceDialogBase : public wxDialog
 {
 protected:
-    wxSearchCtrl* m_searchCtrl;
-    wxDataViewListCtrl* m_dvListCtrl;
+    clThemedListCtrl* m_dvListCtrl;
     wxStdDialogButtonSizer* m_stdBtnSizer183;
     wxButton* m_button185;
     wxButton* m_button187;
 
 protected:
-    virtual void OnFilter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxSearchCtrl* GetSearchCtrl() { return m_searchCtrl; }
-    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

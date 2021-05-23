@@ -116,7 +116,7 @@ CodeLite relies on an external tool for providing PHP refactoring (rename variab
 You now should be able to perform code refactoring (like renaming variables, moving selected code in to a separate method) 
 from the right click menu or from the project level context menu
 
-[1]: https://xdebug.org/
+[1]: /debuggers/xdebug
 [2]: https://github.com/squizlabs/PHP_CodeSniffer
 [3]: https://github.com/phpmd/phpmd
 [4]: https://github.com/AJenbo/php-refactoring-browser/releases

@@ -42,7 +42,9 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
 {
     TagEntryPtrVector_t tags;
     m_manager->GetTagsManager()->GetClasses(tags);
-    std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr t) { m_tags[t->GetName()].push_back(t); });
+    for(auto tag : tags) {
+        m_tags[tag->GetName()].push_back(tag);
+    }
 
     // populate the unit tests project list
     std::vector<ProjectPtr> projects = m_plugin->GetUnitTestProjects();

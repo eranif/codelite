@@ -64,6 +64,12 @@ protected:
     wxButton* m_button625;
 
 protected:
+    virtual void OnClassNameUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnShowClassListDialog(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCheckAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnUnCheckAll(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonOk(wxCommandEvent& event) { event.Skip(); }
+
 public:
     wxStaticText* GetStaticText163() { return m_staticText163; }
     wxTextCtrl* GetTextCtrlClassName() { return m_textCtrlClassName; }

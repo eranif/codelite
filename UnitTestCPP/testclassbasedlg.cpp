@@ -173,6 +173,28 @@ TestClassBaseDlg::TestClassBaseDlg(wxWindow* parent, wxWindowID id, const wxStri
         wxPersistenceManager::Get().Restore(this);
     }
 #endif
+    // Connect events
+    m_textCtrlClassName->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                 wxCommandEventHandler(TestClassBaseDlg::OnClassNameUpdated), NULL, this);
+    m_buttonClass5->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
+                            wxCommandEventHandler(TestClassBaseDlg::OnShowClassListDialog), NULL, this);
+    m_buttonCheckAll21->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnCheckAll), NULL,
+                                this);
+    m_buttonUnCheckAll22->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnUnCheckAll),
+                                  NULL, this);
+    m_button424->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnButtonOk), NULL, this);
 }
 
-TestClassBaseDlg::~TestClassBaseDlg() {}
+TestClassBaseDlg::~TestClassBaseDlg()
+{
+    m_textCtrlClassName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                    wxCommandEventHandler(TestClassBaseDlg::OnClassNameUpdated), NULL, this);
+    m_buttonClass5->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                               wxCommandEventHandler(TestClassBaseDlg::OnShowClassListDialog), NULL, this);
+    m_buttonCheckAll21->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnCheckAll),
+                                   NULL, this);
+    m_buttonUnCheckAll22->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
+                                     wxCommandEventHandler(TestClassBaseDlg::OnUnCheckAll), NULL, this);
+    m_button424->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TestClassBaseDlg::OnButtonOk), NULL,
+                            this);
+}

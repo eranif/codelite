@@ -450,7 +450,14 @@
 															"m_label":	"Auto Complete Files:",
 															"m_value":	false
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
+															"m_eventClass":	"wxCommandEvent",
+															"m_eventHandler":	"wxCommandEventHandler",
+															"m_functionNameAndSignature":	"OnClassNameUpdated(wxCommandEvent& event)",
+															"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}, {
 													"m_type":	4400,
@@ -538,7 +545,14 @@
 															"m_label":	"Margins:",
 															"m_value":	"2,2"
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+															"m_eventClass":	"wxCommandEvent",
+															"m_eventHandler":	"wxCommandEventHandler",
+															"m_functionNameAndSignature":	"OnShowClassListDialog(wxCommandEvent& event)",
+															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}, {
 													"m_type":	4405,
@@ -1452,7 +1466,14 @@
 																			"m_label":	"Margins:",
 																			"m_value":	"2,2"
 																		}],
-																	"m_events":	[],
+																	"m_events":	[{
+																			"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+																			"m_eventClass":	"wxCommandEvent",
+																			"m_eventHandler":	"wxCommandEventHandler",
+																			"m_functionNameAndSignature":	"OnCheckAll(wxCommandEvent& event)",
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
+																		}],
 																	"m_children":	[]
 																}, {
 																	"m_type":	4400,
@@ -1540,7 +1561,14 @@
 																			"m_label":	"Margins:",
 																			"m_value":	"2,2"
 																		}],
-																	"m_events":	[],
+																	"m_events":	[{
+																			"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+																			"m_eventClass":	"wxCommandEvent",
+																			"m_eventHandler":	"wxCommandEventHandler",
+																			"m_functionNameAndSignature":	"OnUnCheckAll(wxCommandEvent& event)",
+																			"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+																			"m_noBody":	false
+																		}],
 																	"m_children":	[]
 																}]
 														}]
@@ -1637,7 +1665,14 @@
 															"m_label":	"Default Button",
 															"m_value":	true
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
+															"m_eventClass":	"wxCommandEvent",
+															"m_eventHandler":	"wxCommandEventHandler",
+															"m_functionNameAndSignature":	"OnButtonOk(wxCommandEvent& event)",
+															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}, {
 													"m_type":	4468,

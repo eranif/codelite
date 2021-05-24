@@ -41,6 +41,7 @@ nav:
         - Sync Project with File System: misc/reconcile_project.md
         - Bookmarks: misc/bookmarks.md
         - Undor & Redo: misc/ur.md
+        - Tab Groups: misc/tabgroups.md
 theme:
     name: material
     palette:

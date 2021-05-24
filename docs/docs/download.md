@@ -59,13 +59,16 @@ from Table 1, or else use `apt-add-repository` in a terminal:
  sudo apt-add-repository 'deb https://repos.codelite.org/ubuntu/ focal universe'
 ```
 
+*Table 1: CodeLite repositories (GTK+3):* 
+
 Distro/release 	| Lines to append
 ----------------|---------------------------
 debian buster 	| `deb https://repos.codelite.org/debian/ buster devel`
 ubuntu focal 	| `deb https://repos.codelite.org/ubuntu/ focal universe`
 ubuntu groovy and hirsute |	`deb https://repos.codelite.org/ubuntu/ groovy universe`
 
-*Table 1: CodeLite repositories (GTK+3)*
+
+*Table 2: CodeLite repositories (GTK+2):*
 
 Distro/release 	| Lines to append
 ----------------|------------------
@@ -77,10 +80,7 @@ ubuntu cosmic 	|`deb https://repos.codelite.org/ubuntu2/ cosmic universe`
 ubuntu disco 	|`deb https://repos.codelite.org/ubuntu2/ disco universe`
 ubuntu eoan 	|`deb https://repos.codelite.org/ubuntu2/ eoan universe`
 
-*Table 2: CodeLite repositories (GTK+2) for CodeLite 13.0 and earlier*
-
-
-- You then need update your repositories. In synaptic, click the `Reload` button. If you're doing things by hand, do: 
+- You then need to update your repositories. In synaptic, click the `Reload` button. If you're doing things by hand, do: 
 
 ```bash
  sudo apt-get update
@@ -88,7 +88,7 @@ ubuntu eoan 	|`deb https://repos.codelite.org/ubuntu2/ eoan universe`
 ```
 
 !!! Tip
-    The ubuntu packages should also work on other *buntus, and on derivatives e.g. Mint.
+    The Ubuntu packages should also work on other *buntus, and on derivatives e.g. Mint.
 
 #### Apt
 
@@ -125,8 +125,8 @@ There are rpms available for fedora 33/34 and openSUSE Leap 15.2:
 
 Distro	| x86_64 GTK+3
 --------|----------------
-fedora	| `33` & `34`
-openSUSE |	`15.2`
+fedora	| [`33 & 34`][5]
+openSUSE |	[`15.2`][6]
 
 
 First tell rpm about the CodeLite public key. As superuser do: 
@@ -163,3 +163,5 @@ sudo gdebi -n /path/to/codelite.deb
 [2]: https://repos.codelite.org/rpms-15.0/fedora/codelite-15.0.1-1.fc.src.rpm
 [3]: https://repos.codelite.org/rpms-15.0/suse/codelite-15.0.1-1.suse.src.rpm
 [4]: https://aur.archlinux.org/packages/codelite/
+[5]: https://repos.codelite.org/rpms-15.0/fedora/33/codelite-15.0.1-1.fc33.x86_64.rpm
+[6]: https://repos.codelite.org/rpms-15.0/suse/15.2/codelite-15.0.1-1.suse.x86_64.rpm

@@ -260,9 +260,11 @@ void LanguageServerPlugin::OnLSPStartAll(clLanguageServerEvent& event)
 
 void LanguageServerPlugin::OnLSPRestartAll(clLanguageServerEvent& event)
 {
+    clDEBUG() << "LSP: restarting all LSPs" << endl;
     CHECK_PTR_RET(m_servers);
     m_servers->StopAll();
     m_servers->StartAll();
+    clDEBUG() << "LSP: restarting all LSPs...done" << endl;
 }
 
 void LanguageServerPlugin::OnLSPStopOne(clLanguageServerEvent& event)

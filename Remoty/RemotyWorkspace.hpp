@@ -21,7 +21,7 @@ class RemotyWorkspaceView;
 class RemotyWorkspace : public IWorkspace
 {
 private:
-    typedef void (RemotyWorkspace::*CallbackFunc)(const wxString&, bool);
+    typedef void (RemotyWorkspace::*CallbackFunc)(const wxString&);
 
 private:
     bool m_eventsConnected = false;
@@ -38,6 +38,7 @@ private:
     wxArrayString m_workspaceFiles;
     clRemoteFinderHelper m_remoteFinder;
     bool m_buildInProgress = false;
+    std::deque<CallbackFunc> m_locate_requests;
 
 public:
     RemotyWorkspace();
@@ -45,7 +46,9 @@ public:
     virtual ~RemotyWorkspace();
 
 protected:
-    void ConfigureClangd();
+    void ConfigureClangd(const wxString& exe);
+    void ConfigureRls(const wxString& exe);
+
     void BindEvents();
     void UnbindEvents();
     void Initialise();
@@ -64,7 +67,7 @@ protected:
     /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
     void DoOpen(const wxString& workspaceFileURI);
 
-    void DeleteClangdEntry();
+    void DeleteLspEntries();
     void OnCodeLiteRemoteTerminated(clCommandEvent& event);
 
     IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
@@ -92,12 +95,19 @@ protected:
     void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
     void OnCodeLiteRemoteFindDone(clFindInFilesEvent& event);
 
+    void OnCodeLiteRemoteLocate(clCommandEvent& event);
+    void OnCodeLiteRemoteLocateDone(clCommandEvent& event);
+
     void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
     void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);
 
     wxString GetRemoteWorkingDir() const;
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
+    /**
+     * @brief scan for remote lsps and configure them
+     */
+    void ScanForLSPs();
 
 public:
     // IWorkspace

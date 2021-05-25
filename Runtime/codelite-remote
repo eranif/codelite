@@ -14,6 +14,7 @@ import logging
 #   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": false, "icase": true}
 #   {"command":"write_file", "path": "/tmp/myfile.txt", "content": "hello world"}
 #   {"command":"exec", "cmd": "/usr/bin/passwd", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
+#   {"command": "locate", "path": "/usr/bin", "name": "clangd", "ext": "", "versions": [15,14,13,12,11,10,9,8,7,6]}
 #
 # Command line usage:
 #   python3 codelite-remote.py --context builder
@@ -209,6 +210,41 @@ def on_find_in_files(cmd):
             pass
     print_message_terminator()
 
+def locate(cmd):
+    """
+    attempt to locate file with possible version number
+    """
+    
+    # {"command": "locate", "path": "/c/LLVM/bin", "name": "clangd", "ext": "exe", "versions": ["15","14"]}
+    path = cmd['path']
+    path = os.path.expanduser(path)
+    path = os.path.expandvars(path)
+
+    name = cmd['name']
+    ext = cmd['ext']
+    versions_arr = cmd['versions']
+    match_found = False
+    for version_number in versions_arr:
+        fullpath = "{}/{}-{}".format(path, name, version_number)
+        if len(ext) > 0:
+            fullpath = "{}.{}".format(fullpath, ext)
+        
+        if os.path.exists(fullpath):
+            print(fullpath)
+            match_found = True
+            break
+
+    if not match_found:
+        # try without the prefix
+        fullpath = "{}/{}".format(path, name)
+        if len(ext) > 0:
+            fullpath = "{}.{}".format(fullpath, ext)
+        
+        if os.path.exists(fullpath):
+            print(fullpath)
+            match_found = True
+    print_message_terminator()
+
 def main_loop():
     """
     accept input from the user and process the command    
@@ -226,7 +262,8 @@ def main_loop():
         "ls": on_find_files, 
         "find": on_find_in_files,
         "exec": on_exec,
-        "write_file": write_file
+        "write_file": write_file,
+        "locate": locate,
     }
     logging.info("codelite-remote started in interactive mode")
     while True:

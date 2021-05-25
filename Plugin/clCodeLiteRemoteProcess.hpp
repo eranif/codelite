@@ -49,6 +49,7 @@ protected:
     // prepare an event from list command output
     void OnListFilesOutput(const wxString& output, bool is_completed);
     void OnFindOutput(const wxString& buffer, bool is_completed);
+    void OnLocateOutput(const wxString& buffer, bool is_completed);
     void OnExecOutput(const wxString& buffer, bool is_completed);
     bool DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
                 IProcess* handler = nullptr);
@@ -113,6 +114,11 @@ public:
     void Exec(const wxArrayString& args, const wxString& working_directory, const clEnvList_t& env);
 
     /**
+     * @brief attempt to locate a file on the remote machine with possible version number
+     */
+    void Locate(const wxString& path, const wxString& name, const wxString& ext, const std::vector<wxString>& = {});
+
+    /**
      * @brief execute a command on the remote machine
      */
     void Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env);
@@ -158,4 +164,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS, cl
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clProcessEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LOCATE, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LOCATE_DONE, clCommandEvent);
 #endif // CLCODELITEREMOTEPROCESS_HPP

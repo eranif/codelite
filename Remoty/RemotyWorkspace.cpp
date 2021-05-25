@@ -130,6 +130,9 @@ void RemotyWorkspace::BindEvents()
                                 this);
     m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE, &RemotyWorkspace::OnCodeLiteRemoteListFilesDone,
                                 this);
+
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LOCATE, &RemotyWorkspace::OnCodeLiteRemoteLocate, this);
+    m_codeliteRemoteFinder.Bind(wxEVT_CODELITE_REMOTE_LOCATE_DONE, &RemotyWorkspace::OnCodeLiteRemoteLocateDone, this);
     // builder
     m_codeliteRemoteBuilder.Bind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
                                  this);
@@ -173,6 +176,9 @@ void RemotyWorkspace::UnbindEvents()
                                   this);
     m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE,
                                   &RemotyWorkspace::OnCodeLiteRemoteListFilesDone, this);
+    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LOCATE, &RemotyWorkspace::OnCodeLiteRemoteLocate, this);
+    m_codeliteRemoteFinder.Unbind(wxEVT_CODELITE_REMOTE_LOCATE_DONE, &RemotyWorkspace::OnCodeLiteRemoteLocateDone,
+                                  this);
 
     // builder
     m_codeliteRemoteBuilder.Unbind(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, &RemotyWorkspace::OnCodeLiteRemoteBuildOutput,
@@ -240,7 +246,7 @@ void RemotyWorkspace::DoClose(bool notify)
     m_localUserWorkspaceFile.clear();
 
     // remove any clangd configured by us
-    DeleteClangdEntry();
+    DeleteLspEntries();
 
     m_codeliteRemoteBuilder.Stop();
     m_codeliteRemoteFinder.Stop();
@@ -527,12 +533,12 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
     clWorkspaceManager::Get().SetWorkspace(this);
 
-    // Configure LSP for this workspace
-    ConfigureClangd();
-
     StartCodeLiteRemote(&m_codeliteRemoteBuilder, CONTEXT_BUILDER);
     StartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER);
     ScanForWorkspaceFiles();
+
+    // Configure remote LSPs for this workspace
+    ScanForLSPs();
 
     // Notify that the a new workspace is loaded
     clWorkspaceEvent open_event(wxEVT_WORKSPACE_LOADED);
@@ -601,6 +607,18 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
             break;
         }
     }
+
+    // convert the envlist into map
+    auto envlist = FileUtils::CreateEnvironment(conf->GetEnvironment());
+    wxStringMap_t envmap;
+    envmap.reserve(envlist.size());
+    envmap.insert(envlist.begin(), envlist.end());
+
+    // override the gdb executable with the one provided with the GDB environment variable
+    if(envmap.count("GDB")) {
+        const wxString& gdbpath = envmap["GDB"];
+        startup_info.debuggerPath = gdbpath;
+    }
     clDEBUG() << "Using remote tty:" << tty << endl;
 
     startup_info.ttyName = tty;
@@ -627,60 +645,51 @@ void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
     wd = conf->GetWorkingDirectory().IsEmpty() ? GetFileName().GetPath() : conf->GetWorkingDirectory();
 }
 
-void RemotyWorkspace::ConfigureClangd()
-{
-    // create a detection script on the remote host
-    wxString clangd_exe;
-    wxString script_output;
-    {
-        wxString command;
-        command << "clangd=$(ls -vr /usr/bin/clangd*|head -1)\n";
-        command << "echo $clangd\n";
-        IProcess::Ptr_t p(DoRunSSHProcess(command, true));
-        p->WaitForTerminate(script_output);
-    }
-
-    // parse the output
-    clDEBUG() << "ConfigureClangd:" << script_output << endl;
-    auto lines = ::wxStringTokenize(script_output, "\r\n", wxTOKEN_STRTOK);
-    for(auto& line : lines) {
-        line.Trim().Trim(false);
-        if(line.StartsWith("/usr/bin/clangd")) {
-            clangd_exe.swap(line);
-            break;
-        }
-    }
-
-    if(clangd_exe.empty()) {
-        clDEBUG() << "No clangd was found on remote host" << endl;
-        return;
-    }
-
-    clDEBUG() << "Found clangd:" << clangd_exe << endl;
-
-    // Notify LSP to Configure this LSP for us
+void RemotyWorkspace::ConfigureRls(const wxString& exe)
+{ // Notify LSP to Configure this LSP for us
     wxArrayString langs;
-    langs.Add("c");
-    langs.Add("cpp");
+    langs.Add("rust");
+
+    wxString lsp_name = "Remoty - rust";
 
     clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
-    configure_event.SetLspName("Remoty - clangd");
+    configure_event.SetLspName(lsp_name);
     configure_event.SetLanguages(langs);
 
     // the command: we need to set it to the workspace folder
-    wxString clangd_cmd;
-    clangd_cmd << "cd " << GetRemoteWorkingDir() << " && " << clangd_exe << " -limit-results=500";
-    configure_event.SetLspCommand(clangd_cmd);
+    wxString lsp_cmd;
+    lsp_cmd << "cd " << GetRemoteWorkingDir() << " && " << exe;
+    configure_event.SetLspCommand(lsp_cmd);
     configure_event.SetFlags(clLanguageServerEvent::kEnabled | clLanguageServerEvent::kDisaplyDiags |
                              clLanguageServerEvent::kSSHEnabled);
     configure_event.SetSshAccount(m_account.GetAccountName());
     configure_event.SetConnectionString("stdio");
     configure_event.SetPriority(150);
     EventNotifier::Get()->ProcessEvent(configure_event);
+}
 
-    clLanguageServerEvent restart_event(wxEVT_LSP_RESTART);
-    restart_event.SetLspName("Remoty - clangd");
-    EventNotifier::Get()->AddPendingEvent(restart_event);
+void RemotyWorkspace::ConfigureClangd(const wxString& exe)
+{
+    // Notify LSP to Configure this LSP for us
+    wxArrayString langs;
+    langs.Add("c");
+    langs.Add("cpp");
+
+    wxString lsp_name = "Remoty - clangd";
+    clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
+    configure_event.SetLspName(lsp_name);
+    configure_event.SetLanguages(langs);
+
+    // the command: we need to set it to the workspace folder
+    wxString lsp_cmd;
+    lsp_cmd << "cd " << GetRemoteWorkingDir() << " && " << exe << " -limit-results=500";
+    configure_event.SetLspCommand(lsp_cmd);
+    configure_event.SetFlags(clLanguageServerEvent::kEnabled | clLanguageServerEvent::kDisaplyDiags |
+                             clLanguageServerEvent::kSSHEnabled);
+    configure_event.SetSshAccount(m_account.GetAccountName());
+    configure_event.SetConnectionString("stdio");
+    configure_event.SetPriority(150);
+    EventNotifier::Get()->ProcessEvent(configure_event);
 }
 
 IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool sync)
@@ -929,18 +938,21 @@ void RemotyWorkspace::OnShutdown(clCommandEvent& event)
     DoClose(false);
 }
 
-void RemotyWorkspace::DeleteClangdEntry()
+void RemotyWorkspace::DeleteLspEntries()
 {
-    clLanguageServerEvent delete_event(wxEVT_LSP_DELETE);
-    delete_event.SetLspName("Remoty - clangd");
-    EventNotifier::Get()->ProcessEvent(delete_event);
+    std::vector<wxString> lsps = { "Remoty - clangd", "Remoty - rust" };
+    for(auto lsp : lsps) {
+        clLanguageServerEvent delete_event(wxEVT_LSP_DELETE);
+        delete_event.SetLspName(lsp);
+        EventNotifier::Get()->ProcessEvent(delete_event);
+    }
 }
 
 void RemotyWorkspace::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
     // incase we crashed earlier, remote any relics
-    DeleteClangdEntry();
+    DeleteLspEntries();
 }
 
 void RemotyWorkspace::FindInFiles(const wxString& root_dir, const wxString& file_extensions, const wxString& find_what,
@@ -996,4 +1008,43 @@ void RemotyWorkspace::OnLSPOpenFile(LSPEvent& event)
         return;
     }
     editor->SelectRange(event.GetLocation().GetRange());
+}
+
+void RemotyWorkspace::OnCodeLiteRemoteLocate(clCommandEvent& event)
+{
+    const wxString& exe = event.GetFileName();
+    if(exe.empty()) {
+        return;
+    }
+
+    auto cb = m_locate_requests.front();
+    clDEBUG() << "Found remote lsp:" << exe << endl;
+    (this->*cb)(exe);
+}
+
+void RemotyWorkspace::OnCodeLiteRemoteLocateDone(clCommandEvent& event)
+{
+    if(m_locate_requests.empty()) {
+        return;
+    }
+    m_locate_requests.pop_front();
+    if(m_locate_requests.empty()) {
+        clDEBUG() << "Sending wxEVT_LSP_RESTART_ALL event" << endl;
+        // we are done configuring the LSPs, restart them
+        clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
+        EventNotifier::Get()->ProcessEvent(restart_event);
+    }
+}
+
+void RemotyWorkspace::ScanForLSPs()
+{
+    std::vector<wxString> clangd_versions;
+    for(size_t i = 20; i >= 7; --i) {
+        clangd_versions.push_back(wxString() << i);
+    }
+    m_codeliteRemoteFinder.Locate("/usr/bin", "clangd", wxEmptyString, clangd_versions);
+    m_locate_requests.push_back(&RemotyWorkspace::ConfigureClangd);
+
+    m_codeliteRemoteFinder.Locate("$HOME/.cargo/bin", "rls", wxEmptyString, {});
+    m_locate_requests.push_back(&RemotyWorkspace::ConfigureRls);
 }

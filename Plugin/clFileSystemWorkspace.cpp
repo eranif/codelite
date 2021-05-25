@@ -1022,12 +1022,13 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     }
 
     // Get toolchain
-    auto envlist = FileUtils::CreateEnvironment(GetConfig()->GetEnvironment());
     CompilerPtr cmp = GetCompiler();
     if(cmp && !cmp->GetTool("Debugger").empty()) {
         startup_info.debuggerPath = cmp->GetTool("Debugger");
     }
+    
     // convert the envlist into map
+    auto envlist = FileUtils::CreateEnvironment(GetConfig()->GetEnvironment());
     wxStringMap_t envmap;
     envmap.reserve(envlist.size());
     envmap.insert(envlist.begin(), envlist.end());

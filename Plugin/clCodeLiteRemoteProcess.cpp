@@ -21,6 +21,8 @@ wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS, clFindInFilesEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FIND_RESULTS_DONE, clFindInFilesEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clProcessEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LOCATE_DONE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LOCATE, clCommandEvent);
 namespace
 {
 const char msg_terminator[] = ">>codelite-remote-msg-end<<\n";
@@ -209,7 +211,7 @@ void clCodeLiteRemoteProcess::OnProcessTerminated(clProcessEvent& e)
     if(!m_going_down) {
         // restart the process
         StartIfNotRunning();
-        
+
         clCommandEvent terminate_event(wxEVT_CODELITE_REMOTE_RESTARTED);
         terminate_event.SetEventObject(this);
         AddPendingEvent(terminate_event);
@@ -342,6 +344,39 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& e
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindOutput, nullptr });
 }
 
+void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name, const wxString& ext,
+                                     const std::vector<wxString>& versions)
+{
+    if(!m_process) {
+        return;
+    }
+
+    // build the command and send it
+    JSON root(cJSON_Object);
+    auto item = root.toElement();
+    item.addProperty("command", "locate");
+    item.addProperty("path", path);
+    item.addProperty("name", name);
+    item.addProperty("ext", ext);
+
+    // convert std::vector to wxArrayString
+    wxArrayString v;
+    v.reserve(versions.size());
+
+    for(const auto& s : versions) {
+        v.Add(s);
+    }
+
+    item.addProperty("versions", v);
+
+    wxString command = item.format(false);
+    m_process->Write(command + "\n");
+    clDEBUG() << command << endl;
+
+    // push a callback
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnLocateOutput, nullptr });
+}
+
 void clCodeLiteRemoteProcess::ResetStates()
 {
     m_fif_matches_count = 0;
@@ -443,6 +478,22 @@ void clCodeLiteRemoteProcess::OnListFilesOutput(const wxString& output, bool is_
 
     if(is_completed) {
         clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE);
+        AddPendingEvent(event_done);
+    }
+}
+
+void clCodeLiteRemoteProcess::OnLocateOutput(const wxString& output, bool is_completed)
+{
+    clCommandEvent event(wxEVT_CODELITE_REMOTE_LOCATE);
+
+    // parse the output
+    wxString fullpath = output;
+    fullpath.Trim().Trim(false);
+    event.SetFileName(fullpath);
+    AddPendingEvent(event);
+
+    if(is_completed) {
+        clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LOCATE_DONE);
         AddPendingEvent(event_done);
     }
 }

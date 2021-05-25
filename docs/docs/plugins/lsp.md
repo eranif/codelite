@@ -3,15 +3,41 @@
 
 From the [Language Server web site][1]: The Language Server Protocol (LSP) is used between the IDE and a language smartness provider (the server) to integrate features like auto complete, go to definition, find all references and alike into the tool 
 
-## Configuring
+## Configuring common Language Servers
 ---
 
 By default, CodeLite is able to detect and configure language server for:
 
-- Python (`pyls` module)
-- C++ (`clangd`)
+- [Python `pylsp` module][3]
+- [C++ (`clangd`)][6]
+- [Rust (`rls`)][4]
 
-### `clangd`
+On startup CodeLite will attempt to configure all the above language servers.
+However, if you installed them after you started CodeLite, you will need to tell 
+CodeLite to run the scan process again. To do this:
+
+- Goto `Plugins` &#8594;  `Language Server` &#8594; `Settings`
+- Click on the `Scan` button
+
+!!! Important
+    CodeLite will configure the LSP for you, but it will **NOT** install it for you.
+    See below steps for installing language servers
+
+### Install `pylsp` (python)
+---
+
+`pylsps` is installed via `pip`
+You will need for this:
+
+- python 3 installed
+- pip3 installed
+
+```bash
+pip install python-lsp-server
+```
+
+### Install `clangd` (c++)
+---
 
 `clangd` is the LSP implementation from the `clang` team. It provide a compiler level completion with an unmatched accuracy
 
@@ -39,6 +65,17 @@ Once installed, follow the steps in the [manual configuration section](#manual-c
 #### macOS
 
 Like Windows, `clangd` in part of CodeLite bundle
+
+### Install `rls` (rust)
+--- 
+
+- Install [`rustup`][5]
+- Then type:
+
+```bash
+rustup update
+rustup component add rls rust-analysis rust-src
+```
 
 ## Manual configuration
 ---
@@ -117,3 +154,7 @@ this way, after running `cmake`, you will get an up-to-date `compile_commands.js
 
 [1]: https://langserver.org/
 [2]: https://langserver.org/#implementations-server
+[3]: https://github.com/python-lsp/python-lsp-server
+[4]: https://github.com/rust-lang/rls
+[5]: https://rustup.rs/
+[6]: https://clangd.llvm.org/

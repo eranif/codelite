@@ -8,9 +8,9 @@ From the [Language Server web site][1]: The Language Server Protocol (LSP) is us
 
 By default, CodeLite is able to detect and configure language server for:
 
-- [Python `pylsp` module][3]
-- [C++ (`clangd`)][6]
-- [Rust (`rls`)][4]
+- [Python `pylsp` module][6]
+- [C++ (`clangd`)][7]
+- [Rust (`rls`)][8]
 
 On startup CodeLite will attempt to configure all the above language servers.
 However, if you installed them after you started CodeLite, you will need to tell 
@@ -26,8 +26,7 @@ CodeLite to run the scan process again. To do this:
 ### Install `pylsp` (python)
 ---
 
-`pylsps` is installed via `pip`
-You will need for this:
+`pylsps` is installed via `pip`. For this, you will need to install the following:
 
 - python 3 installed
 - pip3 installed
@@ -36,10 +35,15 @@ You will need for this:
 pip install python-lsp-server
 ```
 
+Visit the [project home page][3]
+
 ### Install `clangd` (c++)
 ---
 
 `clangd` is the LSP implementation from the `clang` team. It provide a compiler level completion with an unmatched accuracy
+
+
+Visit the [project home page][7]
 
 #### Windows
 
@@ -76,6 +80,9 @@ Like Windows, `clangd` in part of CodeLite bundle
 rustup update
 rustup component add rls rust-analysis rust-src
 ```
+
+
+Visit the [project home page][8]
 
 ## Manual configuration
 ---
@@ -155,6 +162,8 @@ this way, after running `cmake`, you will get an up-to-date `compile_commands.js
 [1]: https://langserver.org/
 [2]: https://langserver.org/#implementations-server
 [3]: https://github.com/python-lsp/python-lsp-server
-[4]: https://github.com/rust-lang/rls
-[5]: https://rustup.rs/
-[6]: https://clangd.llvm.org/
+[4]: https://clangd.llvm.org/
+[5]: https://github.com/rust-lang/rls
+[6]: #install-pylsp-python
+[7]: #install-clangd-c
+[8]: #install-rls-rust

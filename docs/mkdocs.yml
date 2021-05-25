@@ -4,6 +4,7 @@ nav:
     - Build: 
         - wxWidgets: build/build_wx_widgets.md
         - CodeLite: build/build_from_sources.md
+        - MinGW: build/mingw_builds.md
     - Quick Start: hello_world.md
     - Settings:
         - Look and feel: settings/colours_and_fonts.md
@@ -42,6 +43,7 @@ nav:
         - Bookmarks: misc/bookmarks.md
         - Undor & Redo: misc/ur.md
         - Tab Groups: misc/tabgroups.md
+        - Tips & Tricks: misc/tips_and_tricks.md
 theme:
     name: material
     palette:
@@ -56,3 +58,5 @@ markdown_extensions:
         - admonition
         - pymdownx.highlight
         - pymdownx.superfences
+        - pymdownx.tasklist:
+            custom_checkbox: true

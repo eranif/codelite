@@ -28,6 +28,7 @@
 #include "RustPlugin.hpp"
 #include "RustWorkspace.hpp"
 #include "asyncprocess.h"
+#include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clWorkspaceManager.h"
@@ -120,10 +121,16 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
             // set the environment variable to point to rust-gdb
             wxString env_str;
 #ifndef __WXMSW__
-            // This does not work on Windows, just use normal gdb
+            // use rust-gdb
             auto rust_gdb = GetRustGdb();
             if(!rust_gdb.empty()) {
                 env_str << "GDB=" << rust_gdb << "\n";
+            }
+#else
+            // use normal gdb
+            auto compiler = BuildSettingsConfigST::Get()->GetCompiler(debug->GetCompiler());
+            if(compiler) {
+                env_str << "GDB=" << compiler->GetTool("Debugger") << "\n";
             }
 #endif
             if(!GetCargoDir().empty()) {

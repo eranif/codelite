@@ -42,6 +42,7 @@ protected:
     void OnFolderContextMenu(clContextMenuEvent& event);
     void OnRustWorkspaceFileCreated(clFileSystemEvent& event);
     void OnNewWorkspace(clCommandEvent& e);
+    wxString GetRustGdb() const;
 
 public:
     //--------------------------------------------

@@ -24,6 +24,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macromanager.h"
+#include "macros.h"
 #include "parse_thread.h"
 #include "processreaderthread.h"
 #include "shell_command.h"
@@ -1021,10 +1022,22 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     }
 
     // Get toolchain
+    auto envlist = FileUtils::CreateEnvironment(GetConfig()->GetEnvironment());
     CompilerPtr cmp = GetCompiler();
     if(cmp && !cmp->GetTool("Debugger").empty()) {
         startup_info.debuggerPath = cmp->GetTool("Debugger");
     }
+    // convert the envlist into map
+    wxStringMap_t envmap;
+    envmap.reserve(envlist.size());
+    envmap.insert(envlist.begin(), envlist.end());
+
+    // override the gdb executable with the one provided with the GDB environment variable
+    if(envmap.count("GDB")) {
+        wxString gdbpath = MacroManager::Instance()->Expand(envmap["GDB"], clGetManager(), "");
+        startup_info.debuggerPath = gdbpath;
+    }
+
     dbgr->Start(startup_info, nullptr);
 
     // Notify that debug session started

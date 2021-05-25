@@ -31,11 +31,14 @@
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clWorkspaceManager.h"
+#include "cl_standard_paths.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
 #include <wx/msgdlg.h>
+#include <wx/stdpaths.h>
+#include <wx/utils.h>
 
 static RustPlugin* thePlugin = NULL;
 // Define the plugin entry point
@@ -111,7 +114,13 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
         if(debug) {
             debug->SetBuildTargets({ { "build", "cargo build" }, { "clean", "cargo clean" } });
             debug->SetExecutable("./target/debug/" + name);
-            debug->SetFileExtensions(debug->GetFileExtensions() + ";*.rs");
+            debug->SetFileExtensions(debug->GetFileExtensions() + ";*.rs;*.toml");
+
+            // set the environment variable to point to rust-gdb
+            auto rust_gdb = GetRustGdb();
+            if(!rust_gdb.empty()) {
+                debug->SetEnvironment("GDB=" + rust_gdb);
+            }
         }
         settings.Save(workspaceFile);
     }
@@ -153,5 +162,24 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
             // we successfully created a new cargo workspace, now, load it (using the standard file system workspace)
             clFileSystemWorkspace::Get().New(cargoToml.GetPath(), cargoToml.GetDirs().Last());
         }
+    }
+}
+
+wxString RustPlugin::GetRustGdb() const
+{
+    wxString homedir;
+#ifdef __WXMSW__
+    ::wxGetEnv("USERPROFILE", &homedir);
+    wxFileName rust_gdb(homedir, "rust-gdb.exe");
+#else
+    ::wxGetEnv("HOME", &homedir);
+    wxFileName rust_gdb(homedir, "rust-gdb");
+#endif
+    rust_gdb.AppendDir(".cargo");
+    rust_gdb.AppendDir("bin");
+    if(rust_gdb.FileExists()) {
+        return rust_gdb.GetFullPath();
+    } else {
+        return wxEmptyString;
     }
 }

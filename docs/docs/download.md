@@ -3,16 +3,15 @@
 ## Windows
 ---
 
-We provide pre built binaries for Windows for both 32 and 64 bit.
+We provide pre-built binaries for Windows for both 32 and 64 bit.
 visit [CodeLite downloads page][1] and pick the version you want.
 
 Note that there are two variants to choose from:
 
-- Stable release: more stable releases, released 1-2 per year
-- Weekly builds: a more frequent releases
-
-If you wish to experiment with the latest features, pick this variant.
-Note that despite their name, these releases are very stable.
+- Stable release: more stable releases, released 1-2 per year.
+- Weekly builds: more frequent releases.  
+   If you wish to experiment with the latest features, pick this variant.
+  Note that despite their name, these releases are very stable.
 
 ## macOS big sur
 ---

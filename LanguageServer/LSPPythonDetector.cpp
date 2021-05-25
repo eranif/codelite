@@ -15,7 +15,9 @@ LSPPythonDetector::~LSPPythonDetector() {}
 bool LSPPythonDetector::DoLocate()
 {
     clPythonLocator locator;
-    if(!locator.Locate()) { return false; }
+    if(!locator.Locate()) {
+        return false;
+    }
 
     const wxString& pythonExe = locator.GetPython();
     const wxString& pip = locator.GetPip();
@@ -29,12 +31,16 @@ bool LSPPythonDetector::DoLocate()
     command << " list";
 
     IProcess::Ptr_t proc(::CreateSyncProcess(command, IProcessCreateDefault, fnPython.GetPath()));
-    if(!proc) { return false; }
+    if(!proc) {
+        return false;
+    }
 
     wxString output;
     proc->WaitForTerminate(output);
 
-    if(!output.Contains("python-language-server")) { return false; }
+    if(!output.Contains("python-lsp-server")) {
+        return false;
+    }
 
     // We have it installed
 
@@ -42,7 +48,7 @@ bool LSPPythonDetector::DoLocate()
     command << pythonExe;
     ::WrapWithQuotes(command);
 
-    command << " -m pyls";
+    command << " -m pylsp";
     SetCommand(command);
     // Add support for the languages
     GetLangugaes().Add("python");

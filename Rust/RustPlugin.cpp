@@ -36,6 +36,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
+#include "macros.h"
 #include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
@@ -117,9 +118,20 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
             debug->SetFileExtensions(debug->GetFileExtensions() + ";*.rs;*.toml");
 
             // set the environment variable to point to rust-gdb
+            wxString env_str;
+#ifndef __WXMSW__
+            // This does not work on Windows, just use normal gdb
             auto rust_gdb = GetRustGdb();
             if(!rust_gdb.empty()) {
-                debug->SetEnvironment("GDB=" + rust_gdb);
+                env_str << "GDB=" << rust_gdb << "\n";
+            }
+#endif
+            if(!GetCargoDir().empty()) {
+                env_str << "PATH=" << GetCargoBinDir() << clPATH_SEPARATOR << "$PATH"
+                        << "\n";
+            }
+            if(!env_str.empty()) {
+                debug->SetEnvironment(env_str);
             }
         }
         settings.Save(workspaceFile);
@@ -182,4 +194,28 @@ wxString RustPlugin::GetRustGdb() const
     } else {
         return wxEmptyString;
     }
+}
+
+wxString RustPlugin::GetCargoDir() const
+{
+    wxString homedir;
+#ifdef __WXMSW__
+    ::wxGetEnv("USERPROFILE", &homedir);
+#else
+    ::wxGetEnv("HOME", &homedir);
+#endif
+    wxFileName cargo_dir(homedir, wxEmptyString);
+    cargo_dir.AppendDir(".cargo");
+    if(cargo_dir.DirExists()) {
+        return cargo_dir.GetPath();
+    } else {
+        return wxEmptyString;
+    }
+}
+
+wxString RustPlugin::GetCargoBinDir() const
+{
+    wxFileName fn(GetCargoDir(), wxEmptyString);
+    fn.AppendDir("bin");
+    return fn.GetPath();
 }

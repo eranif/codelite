@@ -43,6 +43,8 @@ protected:
     void OnRustWorkspaceFileCreated(clFileSystemEvent& event);
     void OnNewWorkspace(clCommandEvent& e);
     wxString GetRustGdb() const;
+    wxString GetCargoDir() const;
+    wxString GetCargoBinDir() const;
 
 public:
     //--------------------------------------------

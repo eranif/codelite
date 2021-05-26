@@ -931,6 +931,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART, clLanguageServerEven
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DELETE, clLanguageServerEvent);
 // configure new LSP
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CONFIGURE, clLanguageServerEvent);
+// Enable server
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_ENABLE_SERVER, clLanguageServerEvent);
+// Disable server
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DISABLE_SERVER, clLanguageServerEvent);
 // open LSPs configuration dialog. If event.GetLspName() is not empty, it will also select its page
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_OPEN_SETTINGS_DLG, clLanguageServerEvent);
 #endif // CODELITE_EVENTS_H

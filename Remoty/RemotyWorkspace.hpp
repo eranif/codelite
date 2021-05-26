@@ -39,6 +39,7 @@ private:
     clRemoteFinderHelper m_remoteFinder;
     bool m_buildInProgress = false;
     std::deque<CallbackFunc> m_locate_requests;
+    std::unordered_map<wxString, bool> m_old_servers_state;
 
 public:
     RemotyWorkspace();
@@ -60,6 +61,12 @@ protected:
     void OnShutdown(clCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
     void OnLSPOpenFile(LSPEvent& event);
+
+    // keep the LSPs state as it were before we added our remote ones
+    // and disable them
+    void LSPStoreAndDisableCurrent();
+    // restore the LSPs state
+    void LSPRestore();
 
     /// codelite-remote exec handlers
     void DoProcessBuildOutput(const wxString& output, bool is_completed);

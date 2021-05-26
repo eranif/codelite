@@ -61,6 +61,8 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_LSP_CONFIGURE, &LanguageServerPlugin::OnLSPConfigure, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_DELETE, &LanguageServerPlugin::OnLSPDelete, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_OPEN_SETTINGS_DLG, &LanguageServerPlugin::OnLSPShowSettingsDlg, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_ENABLE_SERVER, &LanguageServerPlugin::OnLSPEnableServer, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_DISABLE_SERVER, &LanguageServerPlugin::OnLSPDisableServer, this);
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
@@ -95,6 +97,8 @@ void LanguageServerPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_LSP_CONFIGURE, &LanguageServerPlugin::OnLSPConfigure, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_DELETE, &LanguageServerPlugin::OnLSPDelete, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_OPEN_SETTINGS_DLG, &LanguageServerPlugin::OnLSPShowSettingsDlg, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_ENABLE_SERVER, &LanguageServerPlugin::OnLSPEnableServer, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_DISABLE_SERVER, &LanguageServerPlugin::OnLSPDisableServer, this);
 
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
@@ -291,6 +295,7 @@ void LanguageServerPlugin::OnLSPRestartOne(clLanguageServerEvent& event)
 
 void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
 {
+
     LanguageServerEntry entry;
     LanguageServerEntry* pentry = &entry;
 
@@ -333,4 +338,22 @@ wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const
     } else {
         return editor->GetFileName().GetFullPath();
     }
+}
+
+void LanguageServerPlugin::OnLSPEnableServer(clLanguageServerEvent& event)
+{
+    auto& lsp_config = LanguageServerConfig::Get().GetServer(event.GetLspName());
+    if(!lsp_config.IsValid()) {
+        return;
+    }
+    lsp_config.SetEnabled(true);
+}
+
+void LanguageServerPlugin::OnLSPDisableServer(clLanguageServerEvent& event)
+{
+    auto& lsp_config = LanguageServerConfig::Get().GetServer(event.GetLspName());
+    if(!lsp_config.IsValid()) {
+        return;
+    }
+    lsp_config.SetEnabled(false);
 }

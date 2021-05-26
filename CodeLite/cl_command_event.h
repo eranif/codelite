@@ -1339,6 +1339,7 @@ public:
         kRestart = 3,
         kRestartAll = 4,
         kOpenSettings = 5,
+        kEnable = 6,
     };
 
 protected:

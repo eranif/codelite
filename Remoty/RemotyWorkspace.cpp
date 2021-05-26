@@ -251,6 +251,9 @@ void RemotyWorkspace::DoClose(bool notify)
     m_codeliteRemoteBuilder.Stop();
     m_codeliteRemoteFinder.Stop();
 
+    // restore the current state of the LSPs
+    LSPRestore();
+
     // and restart all the LSPs
     clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
     EventNotifier::Get()->AddPendingEvent(restart_event);
@@ -536,6 +539,9 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     StartCodeLiteRemote(&m_codeliteRemoteBuilder, CONTEXT_BUILDER);
     StartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER);
     ScanForWorkspaceFiles();
+
+    // Disable all local LSPs before we start
+    LSPStoreAndDisableCurrent();
 
     // Configure remote LSPs for this workspace
     ScanForLSPs();
@@ -1047,4 +1053,47 @@ void RemotyWorkspace::ScanForLSPs()
 
     m_codeliteRemoteFinder.Locate("$HOME/.cargo/bin", "rls", wxEmptyString, {});
     m_locate_requests.push_back(&RemotyWorkspace::ConfigureRls);
+}
+
+void RemotyWorkspace::LSPStoreAndDisableCurrent()
+{
+    // load the current state of the current LSPs
+    wxFileName lspConfig(clStandardPaths::Get().GetUserDataDir(), "LanguageServer.conf");
+    lspConfig.AppendDir("config");
+
+    m_old_servers_state.clear();
+    clConfig::Get().Read(
+        wxEmptyString,
+        [this](const JSONItem& json) {
+            // iterate over the servers and keep their current state (we are only interested in the enabled ones)
+            auto servers = json["LSPConfig"]["servers"];
+            size_t count = servers.arraySize();
+            for(size_t i = 0; i < count; ++i) {
+                auto server = servers[i];
+                bool enabled = server["enabled"].toBool();
+                if(enabled) {
+                    wxString name = server["name"].toString();
+                    m_old_servers_state.insert({ name, enabled });
+                    clDEBUG() << "StoreLSPsState:" << name << "->" << enabled << endl;
+                }
+            }
+        },
+        lspConfig);
+
+    // now that we have the current state of all current LSPs, tell LSP to disable them all
+    for(auto vt : m_old_servers_state) {
+        clLanguageServerEvent disable_event(wxEVT_LSP_DISABLE_SERVER);
+        disable_event.SetLspName(vt.first);
+        EventNotifier::Get()->ProcessEvent(disable_event);
+    }
+}
+
+void RemotyWorkspace::LSPRestore()
+{
+    for(auto vt : m_old_servers_state) {
+        clLanguageServerEvent enable_event(wxEVT_LSP_ENABLE_SERVER);
+        enable_event.SetLspName(vt.first);
+        EventNotifier::Get()->ProcessEvent(enable_event);
+    }
+    m_old_servers_state.clear();
 }

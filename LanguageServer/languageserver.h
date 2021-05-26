@@ -29,6 +29,8 @@ protected:
     void OnLSPConfigure(clLanguageServerEvent& event);
     void OnLSPDelete(clLanguageServerEvent& event);
     void OnLSPShowSettingsDlg(clLanguageServerEvent& event);
+    void OnLSPEnableServer(clLanguageServerEvent& event);
+    void OnLSPDisableServer(clLanguageServerEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
 
 public:

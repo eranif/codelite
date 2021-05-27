@@ -410,6 +410,7 @@ void SnipWiz::IntSnippets()
     m_StringDb.SetSnippetString(wxT("for($"), wxT("for( $ = 0; $  < @; $++ )"));
     m_StringDb.SetSnippetString(wxT("for(Ii"), wxT("for( int i = 0; i  < $; i++ )@"));
     m_StringDb.SetSnippetString(wxT("for(Ui"), wxT("for( unsigned int i = 0; i  < $; i++ )@"));
+    m_StringDb.SetSnippetString(wxT("R\"("), wxT("R\"$(@)$\""));
 }
 
 //------------------------------------------------------------

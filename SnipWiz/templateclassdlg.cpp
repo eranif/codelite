@@ -61,7 +61,7 @@ void TemplateClassDlg::Initialize()
         cppLexer->Apply(m_textCtrlImpl, true);
     }
 
-    GetStringDb()->Load(m_pluginPath + defaultTmplFile);
+    GetStringDb()->Load(m_configPath + defaultTmplFile);
 
     wxArrayString templates;
     GetStringDb()->GetAllSets(templates);
@@ -221,7 +221,7 @@ void TemplateClassDlg::OnGenerateUI(wxUpdateUIEvent& event)
 void TemplateClassDlg::OnQuit(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    GetStringDb()->Save(m_pluginPath + defaultTmplFile);
+    GetStringDb()->Save(m_configPath + defaultTmplFile);
     EndModal(wxID_CANCEL);
 }
 
@@ -398,7 +398,7 @@ void TemplateClassDlg::OnStcImplFileContentChnaged(wxStyledTextEvent& event) { e
 
 void TemplateClassDlg::OnVirtualDirUI(wxUpdateUIEvent& event) { event.Enable(clCxxWorkspaceST::Get()->IsOpen()); }
 
-void TemplateClassDlg::SetPluginPath(const wxString& pluginPath) { this->m_pluginPath = pluginPath; }
+void TemplateClassDlg::SetConfigPath(const wxString& configPath) { this->m_configPath = configPath; }
 
 void TemplateClassDlg::SetProjectPath(const wxString& projectPath)
 {

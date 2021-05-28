@@ -113,18 +113,15 @@ SnipWiz::SnipWiz(IManager* manager)
     m_shortName = plugName;
     m_topWin = m_mgr->GetTheApp();
 
-    // get plugin path
-    m_pluginPath = m_mgr->GetStartupDirectory();
-    m_pluginPath += wxFILE_SEP_PATH;
-    m_pluginPath += wxT("templates");
-    m_pluginPath += wxFILE_SEP_PATH;
-    if(!wxFileName::DirExists(m_pluginPath)) {
-        wxFileName::Mkdir(m_pluginPath);
-    }
+    // get config path
+    m_configPath = clStandardPaths::Get().GetUserDataDir();
+    m_configPath += wxFILE_SEP_PATH;
+    m_configPath += wxT("config");
+    m_configPath += wxFILE_SEP_PATH;
 
     m_StringDb.SetCompress(true);
 
-    m_StringDb.Load(m_pluginPath + defaultTmplFile);
+    m_StringDb.Load(m_configPath + defaultTmplFile);
 
     m_StringDb.GetAllSnippetKeys(m_snippets);
     if(!m_snippets.GetCount()) {
@@ -142,7 +139,7 @@ SnipWiz::SnipWiz(IManager* manager)
 SnipWiz::~SnipWiz()
 {
     if(m_modified)
-        m_StringDb.Save(m_pluginPath + defaultTmplFile);
+        m_StringDb.Save(m_configPath + defaultTmplFile);
 }
 //------------------------------------------------------------
 
@@ -470,7 +467,7 @@ void SnipWiz::OnClassWizard(wxCommandEvent& e)
     TemplateClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
 
     dlg.SetCurEol(GetEOLByOS());
-    dlg.SetPluginPath(m_pluginPath);
+    dlg.SetConfigPath(m_configPath);
     dlg.ShowModal();
     if(dlg.GetModified()) {
         m_modified = true;
@@ -500,7 +497,7 @@ void SnipWiz::OnFolderContextMenu(clContextMenuEvent& event)
             wxUnusedVar(e);
             TemplateClassDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), this, m_mgr);
             dlg.SetCurEol(GetEOLByOS());
-            dlg.SetPluginPath(m_pluginPath);
+            dlg.SetConfigPath(m_configPath);
             dlg.SetProjectPath(path);
             dlg.ShowModal();
         },

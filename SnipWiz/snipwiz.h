@@ -99,7 +99,7 @@ protected:
     /// if stringDB is not found, init snippets with some defaults
     void IntSnippets();
 
-    wxString m_pluginPath;    // plugins path
+    wxString m_configPath;    // configs path
     wxArrayString m_snippets; // keys for StringDB
     bool m_modified;          // modified flag
     swStringDb m_StringDb;    // string database with snippets and templates

@@ -511,3 +511,11 @@ void WorkspacePane::OnWorkspaceBookFileListMenu(clContextMenuEvent& event)
         menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
     }
 }
+
+void WorkspacePane::ShowTab(const wxString& name, bool show)
+{
+    clCommandEvent show_event(wxEVT_SHOW_WORKSPACE_TAB);
+    show_event.SetString(name);
+    show_event.SetSelected(show);
+    EventNotifier::Get()->ProcessEvent(show_event);
+}

@@ -110,6 +110,11 @@ public:
      * @param tabTitle the tab to select
      */
     void SelectTab(const wxString& tabTitle);
+    
+    /**
+     * @brief show or hide a workspace tab
+     */
+    void ShowTab(const wxString& name, bool show);
 };
 
 #endif // WORKSPACE_PANE_H

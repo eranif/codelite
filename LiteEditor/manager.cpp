@@ -1756,6 +1756,8 @@ void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
     int index = book->GetPageIndex(focusWin);
     if(index != wxNOT_FOUND && index != book->GetSelection()) {
         book->SetSelection((size_t)index);
+    } else if(index == wxNOT_FOUND) {
+        clMainFrame::Get()->GetWorkspacePane()->ShowTab(focusWin, true);
     }
 }
 

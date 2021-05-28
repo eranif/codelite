@@ -41,7 +41,7 @@ nav:
         - Local Preferences: misc/local_preferences.md
         - Sync Project with File System: misc/reconcile_project.md
         - Bookmarks: misc/bookmarks.md
-        - Undor & Redo: misc/ur.md
+        - Undo & Redo: misc/ur.md
         - Tab Groups: misc/tabgroups.md
         - Tips & Tricks: misc/tips_and_tricks.md
 theme:

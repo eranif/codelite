@@ -320,3 +320,11 @@ void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
         menu->AppendSubMenu(hiddenTabsMenu, _("Hidden Tabs"), _("Hidden Tabs"));
     }
 }
+
+void OutputPane::ShowTab(const wxString& name, bool show)
+{
+    clCommandEvent show_event(wxEVT_SHOW_OUTPUT_TAB);
+    show_event.SetString(name);
+    show_event.SetSelected(show);
+    EventNotifier::Get()->ProcessEvent(show_event);
+}

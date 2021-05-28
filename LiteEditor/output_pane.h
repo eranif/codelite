@@ -128,7 +128,12 @@ public:
      * Destructor
      */
     virtual ~OutputPane();
-
+    
+    /**
+     * @brief show or hide tab by name
+     */
+    void ShowTab(const wxString& name, bool show);
+    
     Notebook* GetNotebook() { return m_book; }
     const wxString& GetCaption() const { return m_caption; }
 

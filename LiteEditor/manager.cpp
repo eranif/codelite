@@ -1678,6 +1678,11 @@ bool Manager::ShowOutputPane(wxString focusWin, bool commit)
         }
     }
 
+    if(index == wxNOT_FOUND) {
+        // possibly that tab is hidden, unhide it
+        pane->ShowTab(focusWin, true);
+    }
+
     if(index != wxNOT_FOUND && index != pane->GetNotebook()->GetSelection()) {
         wxWindow* focus = wxWindow::FindFocus();
         clEditor* editor = dynamic_cast<clEditor*>(focus);

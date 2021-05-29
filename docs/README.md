@@ -5,9 +5,18 @@ Install the following
 - python3
 - pip3
 - install mkdocs + extensions
-- If you are under MSYS2, make sure to run: `pacman -S libcrypt-devel`
+- If you are under MSYS2, make sure to install libcrypt-devel & python3:
 
-Install `pip3`:
+MSYS2:
+
+```bash
+pacman -S libcrypt-devel
+pacman -S python3
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
+```
+
+Ubuntu / Debian:  
 
 ```bash
 # make sure we got curl installed

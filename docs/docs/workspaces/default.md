@@ -56,7 +56,7 @@ This page contains list of general information about the project
 
 Contains all the information needed in order to **compile** your code (this is different from `Linking`):
 
-| Project property | Description |
+| Project property  | Description |
 |------------------|-------------|
 |`Compiler is not required for this project` | enable this option if this project does not require compiling|
 |`Use with global settings`| See [Global Settings below](#global-settings)|

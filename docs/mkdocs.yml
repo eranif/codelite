@@ -44,10 +44,15 @@ nav:
         - Undo & Redo: misc/ur.md
         - Tab Groups: misc/tabgroups.md
         - Tips & Tricks: misc/tips_and_tricks.md
+
+extra_css:
+    - stylesheets/extra.css
+
 theme:
     name: material
     palette:
-        primary: white
+        scheme: default
+        primary: black
     highlightjs: true
     font:
         text: Roboto

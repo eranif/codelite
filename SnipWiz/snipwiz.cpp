@@ -119,9 +119,20 @@ SnipWiz::SnipWiz(IManager* manager)
     m_configPath += wxT("config");
     m_configPath += wxFILE_SEP_PATH;
 
+    m_modified = false;
     m_StringDb.SetCompress(true);
 
-    m_StringDb.Load(m_configPath + defaultTmplFile);
+    if(!m_StringDb.Load(m_configPath + defaultTmplFile)) {
+        // For compatibility with CodeLite < 15.0.4:
+        // we don't use this directory for storing templates anymore.
+        wxString pluginPath = m_mgr->GetStartupDirectory();
+        pluginPath += wxFILE_SEP_PATH;
+        pluginPath += wxT("templates");
+        pluginPath += wxFILE_SEP_PATH;
+        if(m_StringDb.Load(pluginPath + defaultTmplFile)) {
+            m_modified = true;
+        }
+    }
 
     m_StringDb.GetAllSnippetKeys(m_snippets);
     if(!m_snippets.GetCount()) {
@@ -129,7 +140,6 @@ SnipWiz::SnipWiz(IManager* manager)
         m_StringDb.GetAllSnippetKeys(m_snippets);
     }
     m_snippets.Sort();
-    m_modified = false;
     m_clipboard.Empty();
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &SnipWiz::OnEditorContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &SnipWiz::OnFolderContextMenu, this);

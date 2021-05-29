@@ -28,7 +28,6 @@ To view the project settings, right click on the project and choose `Settings...
 
 ![project settings dialogue](default_project_settings_dlg.png)
 
-
 ### General
 ---
 

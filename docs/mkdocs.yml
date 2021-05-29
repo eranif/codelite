@@ -1,4 +1,9 @@
 site_name: CodeLite Documentation
+site_url: https://www.codelite.org
+repo_url: https://github.com/eranif/codelite
+repo_name: GitHub
+edit_uri: edit/master/docs/docs
+
 nav:
     - Download: download.md
     - Build: 

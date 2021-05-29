@@ -498,6 +498,7 @@ void SnipWiz::OnEditorContextMenu(clContextMenuEvent& event)
 
 void SnipWiz::OnFolderContextMenu(clContextMenuEvent& event)
 {
+    event.Skip();
     auto menu = event.GetMenu();
     wxString path = event.GetPath();
     menu->Append(XRCID("snipwiz_add_class"), _("New class from template"));

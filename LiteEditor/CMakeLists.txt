@@ -44,6 +44,13 @@ add_executable(codelite ${SRCS} ${RES_FILES})
 
 set( ADDITIONAL_LIBRARIES "" )
 
+if(MINGW)
+    set_target_properties(codelite
+                          PROPERTIES
+                          OUTPUT_NAME codelite
+                          ARCHIVE_OUTPUT_NAME execodelite)
+endif()
+
 if (UNIX)
     if ( IS_FREEBSD )
         set(ADDITIONAL_LIBRARIES "-lkvm")

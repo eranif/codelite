@@ -6,11 +6,11 @@ edit_uri: edit/master/docs/docs
 
 nav:
     - Downloads: 
-        - Downloads: downloads/download.md
-        - Old Downloads: 
-            - downloads/oldDownloads/Repositories14.md
-            - downloads/oldDownloads/Repositories13.md
-            - downloads/oldDownloads/Repositories12.md
+        - Latest: downloads/download.md
+        - Old Linux Repositories:
+            - CodeLite 14.0: downloads/oldDownloads/Repositories12.md
+            - CodeLite 13.0: downloads/oldDownloads/Repositories13.md
+            - CodeLite 12.0: downloads/oldDownloads/Repositories14.md
     - Build: 
         - wxWidgets: build/build_wx_widgets.md
         - CodeLite: build/build_from_sources.md

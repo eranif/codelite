@@ -12,8 +12,8 @@ Ubuntu 16.04 (xenial) and later have official CodeLite packages. Therefore, to a
 
 
 !!! Important
-   Except for fedora, previous CodeLite releases have used GTK+2. For CodeLite 13.0 we are also providing GTK+3-based packages. To avoid conflicts and reduce confusion, these are in separate repositories.
-   Also note that, to save time and CPU-cycles, I am no longer building i386 packages. I suspect that very few people would use them nowadays.
+    Except for fedora, previous CodeLite releases have used GTK+2. For CodeLite 13.0 we are also providing GTK+3-based packages. To avoid conflicts and reduce confusion, these are in separate repositories.
+    Also note that, to save time and CPU-cycles, I am no longer building i386 packages. I suspect that very few people would use them nowadays.
 
 
 To download CodeLite for Debian based systems (Debian / Mint / Ubuntu etc):

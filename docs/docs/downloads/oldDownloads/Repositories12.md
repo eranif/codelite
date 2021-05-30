@@ -6,9 +6,9 @@ Note that the CodeLite packages now incorporate the required wxWidgets libraries
 CodeLite apt repositories
 ----
 
-Note: Ubuntu 16.04 (xenial) and later have official CodeLite packages. Therefore, to avoid a name-clash, their CodeLite 12.0 packages have 'unofficial' appended to the name. See below for more details. Ubuntu artful, bionic and cosmic, and debian stretch, have official 10.0 packages. I don't know when/if they will upgrade to 12.0, so meanwhile we provide unofficial 12.0 ones. Ubuntu 19.04 (disco) has 12.0 packages so there is no need for an unofficial one.
-There are wxCrafter 2.9 packages for the corresponding unofficial CodeLite 12.0 ones and for the official disco CodeLite 12.0. wxCrafter 2.7 packages are available for the artful, zesty and stretch official 10.0 ones (the artful ones should work for bionic and cosmic too). Again, see below for important details. 
-
+!!! Note
+    Ubuntu 16.04 (xenial) and later have official CodeLite packages. Therefore, to avoid a name-clash, their CodeLite 12.0 packages have 'unofficial' appended to the name. See below for more details. Ubuntu artful, bionic and cosmic, and debian stretch, have official 10.0 packages. I don't know when/if they will upgrade to 12.0, so meanwhile we provide unofficial 12.0 ones. Ubuntu 19.04 (disco) has 12.0 packages so there is no need for an unofficial one.
+    There are wxCrafter 2.9 packages for the corresponding unofficial CodeLite 12.0 ones and for the official disco CodeLite 12.0. wxCrafter 2.7 packages are available for the artful, zesty and stretch official 10.0 ones (the artful ones should work for bionic and cosmic too). Again, see below for important details.
 
 To download CodeLite for Debian based systems (Debian / Mint / Ubuntu etc):
 

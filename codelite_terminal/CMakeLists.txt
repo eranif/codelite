@@ -40,9 +40,6 @@ endif ( UNIX )
 include_directories(${CL_SRC_ROOT}/Interfaces)
 include_directories(${CL_SRC_ROOT}/CodeLite)
 include_directories(${CL_SRC_ROOT}/Plugin)
-add_definitions(-DWXUSINGDLL_WXSQLITE3)
-add_definitions(-DWXUSINGDLL_CL)
-add_definitions(-DWXUSINGDLL_SDK)
 
 target_link_libraries(codelite-terminal ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${UTIL_LIB} libcodelite plugin)
 

@@ -26,12 +26,12 @@ set( WXC_DIR "${CL_SRC_ROOT}/wxcrafter")
 message("-- Generating makefile for wxCrafter")
 
 # Our project is called 'plugin' this is how it will be called in
-# visual studio, and in our makefiles. 
+# visual studio, and in our makefiles.
 project( ${PLUGIN_NAME} )
 
-if ( UNIX AND NOT APPLE )
+if ( MINGW OR UNIX AND NOT APPLE )
     set(__WX_COMPONENTS "std aui propgrid stc richtext ribbon")
-else (UNIX AND NOT APPLE )
+else ( MINGW OR UNIX AND NOT APPLE )
     # Apple, monolithic build of wxWidgets
     set(__WX_COMPONENTS "std")
 endif()

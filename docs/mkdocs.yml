@@ -5,7 +5,12 @@ repo_name: GitHub
 edit_uri: edit/master/docs/docs
 
 nav:
-    - Download: download.md
+    - Downloads: 
+        - Downloads: downloads/download.md
+        - Old Downloads: 
+            - downloads/oldDownloads/Repositories14.md
+            - downloads/oldDownloads/Repositories13.md
+            - downloads/oldDownloads/Repositories12.md
     - Build: 
         - wxWidgets: build/build_wx_widgets.md
         - CodeLite: build/build_from_sources.md

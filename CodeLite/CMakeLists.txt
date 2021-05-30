@@ -135,6 +135,15 @@ else (UNIX AND NOT APPLE)
                           -lz)
 endif ( UNIX AND NOT APPLE )
 
+if(MINGW)
+    set_target_properties(libcodelite
+                          PROPERTIES
+                          PREFIX ""
+                          OUTPUT_NAME libcodelite
+                          RUNTIME_OUTPUT_NAME codelite
+                          ARCHIVE_OUTPUT_NAME codelite)
+endif()
+
 if (NOT MINGW)
     if(APPLE)
         install(TARGETS libcodelite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)

@@ -1,5 +1,11 @@
-#include "clWebSocketClient.h"
+#include "wx/defs.h"
+#ifdef __WINDOWS__ // __WINDOWS__ defined by wx/defs.h
+// includes windows.h and if wxUSE_WINSOCK2 is true includes winsock2.h
+#include "wx/msw/wrapwin.h"
+#endif
+
 #include "SocketAPI/clSocketBase.h"
+#include "clWebSocketClient.h"
 
 // No boost or other external libraries, just plain old good C++11
 #define ASIO_STANDALONE 1

@@ -32,13 +32,13 @@
 #include <wx/process.h>
 #include <wx/string.h>
 
-#ifdef __WXMSW__
-#include <windows.h>
+#include "wx/defs.h"
+#ifdef __WINDOWS__          // __WINDOWS__ defined by wx/defs.h
+#include "wx/msw/wrapwin.h" // includes windows.h
 //#include <devpropdef.h>
 #include <Psapi.h>
 #include <SetupAPI.h>
 #include <tlhelp32.h>
-#include <wx/msw/winundef.h>
 #endif
 
 struct ProcessEntry {

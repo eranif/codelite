@@ -63,7 +63,7 @@ public:
     static void GetChildren(long pid, std::vector<long>& children);
     static bool Shell(const wxString& programConsoleCommand);
     static bool Locate(const wxString& name, wxString& where);
-    
+
     /**
      * @brief the equivalent of 'ps ax|grep <name>'
      */

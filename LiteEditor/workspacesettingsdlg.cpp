@@ -39,7 +39,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
     , m_localWorkspace(localWorkspace)
 {
     m_ccPage = new CodeCompletionPage(m_notebook1, CodeCompletionPage::TypeWorkspace);
-    m_notebook1->AddPage(m_ccPage, wxT("Code Completion"), false);
+    m_notebook1->AddPage(m_ccPage, _("Code Completion"), false);
 
     EvnVarList vars;
     EnvironmentConfig::Instance()->ReadObject(wxT("Variables"), &vars);

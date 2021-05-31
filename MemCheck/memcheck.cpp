@@ -174,7 +174,7 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
             subMenu->Append(item);
 
             menu->PrependSeparator();
-            item = new wxMenuItem(menu, XRCID("memcheck_MenuTypeFileView_Project"), wxT("MemCheck"), wxEmptyString,
+            item = new wxMenuItem(menu, XRCID("memcheck_MenuTypeFileView_Project"), _("MemCheck"), wxEmptyString,
                                   wxITEM_NORMAL, subMenu);
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
             menu->Prepend(item);

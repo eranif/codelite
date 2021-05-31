@@ -609,8 +609,8 @@ ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, con
     : ReconcileProjectFiletypesDlgBaseClass(parent)
     , m_projname(projname)
 {
-    m_listCtrlRegexes->AppendColumn("Regex");
-    m_listCtrlRegexes->AppendColumn("Virtual Directory");
+    m_listCtrlRegexes->AppendColumn(_("Regex"));
+    m_listCtrlRegexes->AppendColumn(_("Virtual Directory"));
 
     ::clSetDialogBestSizeAndPosition(this);
 }

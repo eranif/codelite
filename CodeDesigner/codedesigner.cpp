@@ -158,7 +158,7 @@ void CodeDesigner::HookPopupMenu(wxMenu* menu, MenuType type)
         // TODO::Append items for the file view/Virtual folder context menu
         if(!menu->FindItem(XRCID("cd_popup"))) {
             m_separatorItem = menu->AppendSeparator();
-            menu->Append(XRCID("cd_popup"), wxT("CodeDesigner"), CreatePopupMenu());
+            menu->Append(XRCID("cd_popup"), _("CodeDesigner"), CreatePopupMenu());
         }
     } else if(type == MenuTypeFileView_File) {
         // TODO::Append items for the file view/file context menu

@@ -1580,9 +1580,9 @@ void Subversion2::DoFilesDeleted(const wxArrayString& files, bool isFolder)
 
             if(fileCount) {
                 if(isFolder) {
-                    msg << ".. and " << fileCount << " more folders";
+                    msg << _(".. and ") << fileCount << _(" more folders");
                 } else {
-                    msg << ".. and " << fileCount << " more files";
+                    msg << _(".. and ") << fileCount << _(" more files");
                 }
             }
 

@@ -216,7 +216,7 @@ void PHPRefactoring::OnRenameClassAndNamespaces(wxCommandEvent& e)
     wxString msg;
     msg << _("This will sync namespaces and classes with folder and filenames, for all files in the selected folder, "
              "to comply with psr-0\nContinue?");
-    if(wxYES != ::wxMessageBox(msg, "PHP Refactoring", wxYES_NO | wxCANCEL | wxCENTER)) {
+    if(wxYES != ::wxMessageBox(msg, _("PHP Refactoring"), wxYES_NO | wxCANCEL | wxCENTER)) {
         return;
     }
 
@@ -242,7 +242,7 @@ void PHPRefactoring::RefactorFile(const wxString& action, const wxString& extraP
     tmpfile << filePath << "-refactoring-browser.php";
     wxString oldContent = editor->GetEditorText();
     if(!FileUtils::WriteFileContent(tmpfile, oldContent)) {
-        ::wxMessageBox(_("Can not refactor file:\nFailed to write temporary file"), "PHP Refactoring",
+        ::wxMessageBox(_("Can not refactor file:\nFailed to write temporary file"), _("PHP Refactoring"),
                        wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
@@ -263,7 +263,7 @@ void PHPRefactoring::RefactorFile(const wxString& action, const wxString& extraP
     RunCommand(parameters);
 
     if(!FileUtils::ReadFileContent(tmpfile, output)) {
-        ::wxMessageBox(_("Can not refactor file:\nfailed to read temporary file content"), "PHP Refactoring",
+        ::wxMessageBox(_("Can not refactor file:\nfailed to read temporary file content"), _("PHP Refactoring"),
                        wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
@@ -290,7 +290,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
 
     wxFileName php(m_settingsPhp.GetPhpExe());
     if(!php.Exists()) {
-        ::wxMessageBox(_("Can not refactor file: Missing PHP executable path"), "PHP Refactoring",
+        ::wxMessageBox(_("Can not refactor file: Missing PHP executable path"), _("PHP Refactoring"),
                        wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
@@ -299,7 +299,7 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
 
     wxFileName refactor(m_settings.GetPhprefactoringPhar());
     if(!refactor.Exists()) {
-        ::wxMessageBox(_("Can not refactor file: Missing PHP Refactoring Browser path"), "PHP Refactoring",
+        ::wxMessageBox(_("Can not refactor file: Missing PHP Refactoring Browser path"), _("PHP Refactoring"),
                        wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
@@ -339,14 +339,14 @@ void PHPRefactoring::RunCommand(const wxString& parameters, const wxString& work
             errorMessage = errorMessage.Mid(0, 500);
             errorMessage << "...";
         }
-        ::wxMessageBox(errorMessage, "PHP Refactoring", wxICON_ERROR | wxOK | wxCENTER);
+        ::wxMessageBox(errorMessage, _("PHP Refactoring"), wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
 
     wxFileName fnTmpFile(wxFileName::CreateTempFileName("diff-XXXXXX"));
     tmpfile = fnTmpFile.GetFullPath();
     if(!FileUtils::WriteFileContent(tmpfile, patch)) {
-        ::wxMessageBox(_("Can not refactor file:\nFailed to write temporary file"), "PHP Refactoring",
+        ::wxMessageBox(_("Can not refactor file:\nFailed to write temporary file"), _("PHP Refactoring"),
                        wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
@@ -371,7 +371,7 @@ void PHPRefactoring::OnContextMenu(clContextMenuEvent& event)
     event.Skip();
     wxMenu* menu = new wxMenu();
     menu->Append(wxID_RENAME_CLASS_AND_NAMESPACES, _("Rename Class and Namespaces"));
-    wxMenuItem* item = new wxMenuItem(event.GetMenu(), wxID_ANY, wxT("PHP Refactoring"));
+    wxMenuItem* item = new wxMenuItem(event.GetMenu(), wxID_ANY, _("PHP Refactoring"));
     item->SetSubMenu(menu);
     item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("php-workspace"));
     event.GetMenu()->AppendSeparator();

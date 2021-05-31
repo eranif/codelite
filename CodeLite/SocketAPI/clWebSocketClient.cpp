@@ -1,5 +1,5 @@
-#include "SocketAPI/clSocketBase.h"
 #include "clWebSocketClient.h"
+#include "SocketAPI/clSocketBase.h"
 
 // No boost or other external libraries, just plain old good C++11
 #define ASIO_STANDALONE 1
@@ -102,16 +102,22 @@ clWebSocketClient::~clWebSocketClient()
 
 void clWebSocketClient::StartLoop(const wxString& url)
 {
-    if(m_helperThread) { throw clSocketException("A websocket loop is already running"); }
+    if(m_helperThread) {
+        throw clSocketException("A websocket loop is already running");
+    }
 
     Client_t* c = GetClient<Client_t>();
-    if(!c) { throw clSocketException("Invalid connection!"); }
+    if(!c) {
+        throw clSocketException("Invalid connection!");
+    }
     try {
         std::string uri = url.mb_str(wxConvUTF8).data();
         // Register our message handler
         websocketpp::lib::error_code ec;
         Client_t::connection_ptr con = c->get_connection(uri, ec);
-        if(ec) { throw clSocketException(ec.message()); }
+        if(ec) {
+            throw clSocketException(ec.message());
+        }
 
         // Note that connect here only requests a connection. No network messages are
         // exchanged until the event loop starts running in the next line.
@@ -129,8 +135,12 @@ void clWebSocketClient::StartLoop(const wxString& url)
 void clWebSocketClient::Send(const wxString& data)
 {
     Client_t* c = GetClient<Client_t>();
-    if(!c) { throw clSocketException("Invalid connection!"); }
-    if(m_connection_handle.expired()) { throw clSocketException("Invalid connection handle!"); }
+    if(!c) {
+        throw clSocketException("Invalid connection!");
+    }
+    if(m_connection_handle.expired()) {
+        throw clSocketException("Invalid connection handle!");
+    }
 
     try {
         std::string str = data.mb_str(wxConvUTF8).data();
@@ -145,7 +155,9 @@ void clWebSocketClient::Send(const wxString& data)
 void clWebSocketClient::Close()
 {
     Client_t* c = GetClient<Client_t>();
-    if(!c) { return; }
+    if(!c) {
+        return;
+    }
     c->stop();
     DoCleanup();
 }
@@ -171,12 +183,14 @@ void clWebSocketClient::OnHelperThreadExit()
 void clWebSocketClient::DoInit()
 {
     // Dont initialise again
-    if(m_client) { return; }
+    if(m_client) {
+        return;
+    }
 
     try {
         m_client = new Client_t();
         Client_t* c = GetClient<Client_t>();
-        //c->set_access_channels(websocketpp::log::alevel::all);
+        // c->set_access_channels(websocketpp::log::alevel::all);
         c->clear_access_channels(websocketpp::log::alevel::all);
         c->init_asio();
         c->set_message_handler(bind(&on_ws_message, this, ::_1, ::_2));

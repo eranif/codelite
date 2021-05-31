@@ -111,7 +111,7 @@ void wxFormBuilder::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     if(type == MenuTypeFileView_Folder) {
         menu->AppendSeparator();
-        menu->Append(XRCID("WXFB_POPUP"), wxT("wxFormBuilder"), CreatePopupMenu());
+        menu->Append(XRCID("WXFB_POPUP"), _("wxFormBuilder"), CreatePopupMenu());
     }
 }
 

@@ -1719,7 +1719,7 @@ void MainBook::DoShowTabLabelContextMenu()
 void MainBook::RegisterWelcomePage(wxWindow* welcomePage)
 {
     wxUnusedVar(welcomePage);
-    m_book->AddPage(new WelcomePage(m_book), wxT("Welcome!"), true);
+    m_book->AddPage(new WelcomePage(m_book), _("Welcome!"), true);
 }
 
 void MainBook::DoShowWindow(wxWindow* win, bool show)
@@ -1730,11 +1730,11 @@ void MainBook::DoShowWindow(wxWindow* win, bool show)
 
 void MainBook::ShowWelcomePage(bool show)
 {
-    int where = m_book->GetPageIndex(wxT("Welcome!"));
+    int where = m_book->GetPageIndex(_("Welcome!"));
     if(show) {
         GetSizer()->Show(m_book);
         if(where == wxNOT_FOUND) {
-            m_book->AddPage(new WelcomePage(m_book), wxT("Welcome!"), true);
+            m_book->AddPage(new WelcomePage(m_book), _("Welcome!"), true);
         } else {
             m_book->SetSelection(where);
         }

@@ -308,7 +308,7 @@ void ProjectSettingsDlg::OnProjectSelected(wxCommandEvent& e)
     m_configName = bldConf->GetName();
 
     // determine the correct configuration to load
-    SetTitle(wxString() << m_projectName << " Project Settings");
+    SetTitle(wxString() << m_projectName << _(" Project Settings"));
 
     DoGetAllBuildConfigs();
     LoadValues(m_configName);

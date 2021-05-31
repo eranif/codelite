@@ -34,10 +34,10 @@ MemCheckOutputView::MemCheckOutputView(wxWindow* parent, MemCheckPlugin* plugin,
     m_listCtrlErrors->SetData(&m_filterResults);
 
     m_searchMenu = new wxMenu();
-    m_searchMenu->Append(XRCID("memcheck_search_string"), wxT("Search string"));
+    m_searchMenu->Append(XRCID("memcheck_search_string"), _("Search string"));
     m_searchCtrlFilter->SetMenu(m_searchMenu);
     m_searchMenu->AppendSeparator();
-    m_searchMenu->Append(XRCID("memcheck_search_nonworkspace"), wxT("Search 'nonworkspace'"));
+    m_searchMenu->Append(XRCID("memcheck_search_nonworkspace"), _("Search 'nonworkspace'"));
     m_searchCtrlFilter->SetMenu(m_searchMenu);
 
     m_searchMenu->Connect(XRCID("memcheck_search_string"), wxEVT_COMMAND_MENU_SELECTED,

@@ -116,7 +116,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
                          "entry from the tree-view and provide an Inherited class name and file name");
 
             wxRichMessageDialog dlg(NULL, message, "wxCrafter", wxOK | wxOK_DEFAULT | wxCENTER | wxICON_WARNING);
-            dlg.SetOKLabel("OK, continue with code generation");
+            dlg.SetOKLabel(_("OK, continue with code generation"));
             dlg.ShowCheckBox(_("Don't show this message again"));
 
             if(dlg.ShowModal() == wxID_CANCEL) { return; }
@@ -210,7 +210,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
 
     if(baseClassName.IsEmpty()) { // meaning that it was empty until BASE_CLASS_SUFFIX was appended
         wxString msg;
-        msg << wxT("Can not generate code.\nMake sure that all toplevel windows have a valid C++ class name");
+        msg << _("Can not generate code.\nMake sure that all toplevel windows have a valid C++ class name");
         wxMessageBox(msg, wxT("wxCrafter"), wxOK | wxICON_WARNING | wxCENTER);
         return;
     }

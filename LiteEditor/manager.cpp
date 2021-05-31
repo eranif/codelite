@@ -3698,7 +3698,7 @@ void Manager::OnBuildStarting(clBuildEvent& event)
         message << _("Build cancelled. The following compilers referred by the workspace could not be found:\n")
                 << strDeletedCompilers << "\n"
                 << _("Please fix your project settings by selecting a valid compiler");
-        ::wxMessageBox(message, "Build Aborted", wxOK | wxCENTER | wxICON_ERROR, EventNotifier::Get()->TopFrame());
+        ::wxMessageBox(message, _("Build Aborted"), wxOK | wxCENTER | wxICON_ERROR, EventNotifier::Get()->TopFrame());
         return;
 
     } else {

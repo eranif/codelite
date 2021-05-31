@@ -447,21 +447,21 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
 {
     menu->Append(XRCID("svn_open_file"), _("Open File"));
     menu->AppendSeparator();
-    menu->Append(XRCID("svn_file_update"), wxT("Update"));
-    menu->Append(XRCID("svn_file_commit"), wxT("Commit"));
+    menu->Append(XRCID("svn_file_update"), _("Update"));
+    menu->Append(XRCID("svn_file_commit"), _("Commit"));
     menu->AppendSeparator();
-    menu->Append(XRCID("svn_file_revert"), wxT("Revert"));
+    menu->Append(XRCID("svn_file_revert"), _("Revert"));
 
     menu->AppendSeparator();
-    menu->Append(XRCID("svn_lock"), wxT("Lock"));
-    menu->Append(XRCID("svn_unlock"), wxT("Unlock"));
+    menu->Append(XRCID("svn_lock"), _("Lock"));
+    menu->Append(XRCID("svn_unlock"), _("Unlock"));
 
     menu->AppendSeparator();
     //    menu->Append(XRCID("svn_add"), wxT("Add"));
-    menu->Append(XRCID("svn_delete"), wxT("Delete"));
-    menu->Append(XRCID("svn_rename"), wxT("Rename"));
+    menu->Append(XRCID("svn_delete"), _("Delete"));
+    menu->Append(XRCID("svn_rename"), _("Rename"));
     menu->AppendSeparator();
-    menu->Append(XRCID("svn_resolve"), wxT("Resolve"));
+    menu->Append(XRCID("svn_resolve"), _("Resolve"));
     menu->AppendSeparator();
     menu->Append(XRCID("svn_diff"), _("Create Diff..."));
     menu->AppendSeparator();
@@ -473,16 +473,16 @@ void SubversionView::CreateFileMenu(wxMenu* menu)
     subMenu = new wxMenu;
     subMenu->Append(XRCID("svn_ignore_file"), _("Ignore this file"));
     subMenu->Append(XRCID("svn_ignore_file_pattern"), _("Ignore this file pattern"));
-    menu->Append(wxID_ANY, wxT("Ignore"), subMenu);
+    menu->Append(wxID_ANY, _("Ignore"), subMenu);
 }
 
 void SubversionView::CreateRootMenu(wxMenu* menu)
 {
-    menu->Append(XRCID("svn_update"), wxT("Update"));
-    menu->Append(XRCID("svn_commit"), wxT("Commit"));
+    menu->Append(XRCID("svn_update"), _("Update"));
+    menu->Append(XRCID("svn_commit"), _("Commit"));
     menu->AppendSeparator();
 
-    menu->Append(XRCID("svn_revert"), wxT("Revert"));
+    menu->Append(XRCID("svn_revert"), _("Revert"));
     menu->AppendSeparator();
 
     menu->Append(XRCID("svn_tag"), _("Create Tag"));

@@ -2,6 +2,10 @@
 #define OUTPUTDEBUGSTRINGTHREAD_H
 
 #include "cl_command_event.h"
+#include "wx/defs.h"
+#ifdef __WINDOWS__          // __WINDOWS__ defined by wx/defs.h
+#include "wx/msw/wrapwin.h" // includes windows.h
+#endif
 #include <wx/thread.h> // Base class: wxThread
 
 wxDECLARE_EVENT(wxEVT_OUTPUT_DEBUG_STRING, clCommandEvent);

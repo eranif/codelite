@@ -428,14 +428,15 @@ void wxCodeCompletionBox::DoUpdateList()
     bool refreshList = FilterResults(true, startsWithCount, containsCount);
     wxUnusedVar(containsCount);
 
-    // If there a single exact match hide the cc box
-    // if(!m_entries.empty()) {
-    //     wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
-    //     if(startsWithCount == 1 && entryText.CmpNoCase(GetFilter()) == 0) {
-    //         DoDestroy();
-    //         return;
-    //     }
-    // }
+    // If there a single entry exact match hide the cc box
+    if(m_entries.size() == 1) {
+        wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
+        if(entryText.CmpNoCase(GetFilter()) == 0) {
+            InsertSelection();
+            CallAfter(&wxCodeCompletionBox::DoDestroy);
+            return;
+        }
+    }
 
     int curpos = m_stc->GetCurrentPos();
     if(m_entries.empty() || curpos < m_startPos || refreshList) {

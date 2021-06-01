@@ -224,6 +224,7 @@ void clGenericNotebook::OnPreferencesChanged(wxCommandEvent& event)
 void clGenericNotebook::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     m_tabCtrl->m_colours.UpdateColours(GetStyle());
     Refresh();
 }

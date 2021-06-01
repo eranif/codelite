@@ -25,6 +25,7 @@
 #ifndef WINDOWSTACK_H
 #define WINDOWSTACK_H
 
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "wx/panel.h"
 #include "wx/sizer.h"
@@ -42,6 +43,7 @@ protected:
     void DoSelect(wxWindow* win);
     void OnSize(wxSizeEvent& e);
     void DoHideNoActiveWindows();
+    void OnColoursChanged(clCommandEvent& event);
 
 public:
     WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY, bool useNativeThemeColours = false);

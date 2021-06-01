@@ -22,8 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "clSystemSettings.h"
 #include "clThemeUpdater.h"
 #include "drawingutils.h"
+#include "event_notifier.h"
 #include "windowstack.h"
 #include <algorithm>
 #include <wx/dcbuffer.h>
@@ -33,16 +35,13 @@ WindowStack::WindowStack(wxWindow* parent, wxWindowID id, bool useNativeThemeCol
     : wxWindow(parent, id)
 {
     Bind(wxEVT_SIZE, &WindowStack::OnSize, this);
-    if(!useNativeThemeColours) {
-        clThemeUpdater::Get().RegisterWindow(this);
-    }
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &WindowStack::OnColoursChanged, this);
 }
 
 WindowStack::~WindowStack()
 {
     Unbind(wxEVT_SIZE, &WindowStack::OnSize, this);
-    // it's OK to call UnRegisterWindow, it will do nothing if the window does not exist
-    clThemeUpdater::Get().UnRegisterWindow(this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &WindowStack::OnColoursChanged, this);
 }
 
 void WindowStack::Select(wxWindow* win)
@@ -152,4 +151,10 @@ void WindowStack::DoHideNoActiveWindows()
         m_activeWin->Refresh();
     }
 #endif
+}
+
+void WindowStack::OnColoursChanged(clCommandEvent& event)
+{
+    event.Skip();
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 }

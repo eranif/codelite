@@ -42,10 +42,10 @@ endif()
 include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories("${CL_SRC_ROOT}/Plugin" 
-                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include" 
-                    "${CL_SRC_ROOT}/CodeLite" 
-                    "${CL_SRC_ROOT}/PCH" 
+include_directories("${CL_SRC_ROOT}/Plugin"
+                    "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
+                    "${CL_SRC_ROOT}/CodeLite"
+                    "${CL_SRC_ROOT}/PCH"
                     "${CL_SRC_ROOT}/Interfaces")
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
@@ -60,7 +60,7 @@ endif ( USE_PCH )
 
 
 # Add RPATH
-## When building an application, set the install library to the proper location 
+## When building an application, set the install library to the proper location
 ## which is now under /usr/lib/x86_64-linux-gnu/wxcrafter
 if ( WXC_APP )
     set( WXC_INSTALL_LIBDIR "lib" )
@@ -82,7 +82,11 @@ endif(NOT OFFICIAL_CL_BUILD)
 endif ( WXC_APP )
 
 FILE(GLOB SRCS "*.cpp")
+if ( NOT WXC_APP )
+FILE(GLOB WXCLIB_SRCS "wxcLib/json_node.cpp" "wxcLib/cJSON.cpp" "wxcLib/wxc*.cpp")
+else ( NOT WXC_APP )
 FILE(GLOB WXCLIB_SRCS "wxcLib/*.cpp")
+endif ( NOT WXC_APP )
 
 include_directories( ${CMAKE_CURRENT_LIST_DIR} )
 include_directories( "${CMAKE_CURRENT_LIST_DIR}/wxcLib" )
@@ -93,7 +97,7 @@ add_library(wxcLib STATIC ${WXCLIB_SRCS})
 # Define the output
 if ( NOT WXC_APP )
     add_library(${PLUGIN_NAME} SHARED ${SRCS})
-else ( NOT WXC_APP ) 
+else ( NOT WXC_APP )
     add_executable(${PLUGIN_NAME} ${SRCS})
 endif ( NOT WXC_APP )
 
@@ -104,32 +108,32 @@ target_link_libraries(${PLUGIN_NAME} wxcLib)
 if ( NOT WXC_APP )
 
 if (NOT OFFICIAL_CL_BUILD)
-    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} 
-                          wxsqlite3 
+    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES}
+                          wxsqlite3
                           ${SQLITE3_LIBRARY}
-                          libcodelite 
+                          libcodelite
                           plugin)
 else(OFFICIAL_CL_BUILD)
     target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
 endif(NOT OFFICIAL_CL_BUILD)
 
-else() 
+else()
     target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES}
-                          wxsqlite3 
-                          libcodelite 
+                          wxsqlite3
+                          libcodelite
                           plugin
                           -lutil)
-endif() 
+endif()
 
 if ( NOT WXC_APP )
     ## wxCrafter as codelite's plugin
     CL_INSTALL_PLUGIN(${PLUGIN_NAME})
     CL_INSTALL_FILE_SHARED(${WXC_DIR}/wxgui.zip)
-    
+
 else ( NOT WXC_APP )
 
     set(CPACK_DEB_COMPONENT_INSTALL 1)
-    
+
     ## Installing an application
     install(TARGETS ${PLUGIN_NAME} DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM} COMPONENT standalone)
     install(FILES   "${WXC_DIR}/wxgui.zip" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME} COMPONENT standalone)
@@ -138,7 +142,7 @@ else ( NOT WXC_APP )
     install(FILES   "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libwxsqlite3.so" DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
     install(FILES   "${CL_SRC_ROOT}/wxcrafter/resources/wxc-logo-64.png" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME} COMPONENT standalone)
     install(FILES   "${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME}/config RENAME codelite.xml.default  COMPONENT standalone)
-    
+
 if ( NOT DEBUG_BUILD )
     message("-- Will install ${CL_SRC_ROOT}/wxcrafter/wxCrafter.desktop to /usr/share/applications")
     install(FILES "${CL_SRC_ROOT}/wxcrafter/wxCrafter.desktop" DESTINATION /usr/share/applications  COMPONENT standalone)
@@ -165,7 +169,7 @@ endif ( NOT DEBUG_BUILD )
         message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64")
         set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
     endif ()
-    
+
     #################################################################
     ## We need to deduce the location of the wx libs to be installed
     #################################################################
@@ -188,7 +192,7 @@ endif ( NOT DEBUG_BUILD )
             list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEM}.so*) # we need the terminal [.]so because the rpms contain both dynamic and static libs
         endif()
     endforeach()
-    
+
     file(GLOB wxfilepaths ${WX_LIBS_ALL})
     install(FILES ${wxfilepaths} DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
 

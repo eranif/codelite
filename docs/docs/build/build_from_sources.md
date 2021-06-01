@@ -35,7 +35,7 @@ Git clone the sources:
     git clone https://github.com/eranif/codelite.git
 ```
 
-- Run `cmake` and build CodeLite:
+- Build CodeLite:
 
 ```bash
  cd codelite
@@ -81,18 +81,18 @@ Preparation:
     You can choose to build [wxWidgets from sources][9]
 
 
-Clone the repo (lets assume that you have a folder `/Users/$USER/src`)
+Clone the repo (I will assume that your development folder is: `/Users/$USER/src`)
 
 ```bash
 cd /Users/$USER/src
 git clone https://github.com/eranif/codelite.git
 ```
- the above will create the folder `/Users/$USER/codelite`
+ the above will create the folder `/Users/$USER/src/codelite`
 
  To build CodeLite:
 
 ```bash
-cd /Users/$USER/codelite
+cd /Users/$USER/src/codelite
 mkdir build-release
 cd build-release
 cmake .. -DCMAKE_BUILD_TYPE=Release
@@ -100,11 +100,11 @@ cmake --build . -j $(sysctl -n hw.physicalcpu)
 cmake --build . --target install
 ```
 
-You should now have an app bundle `/Users/$USER/codelite/build-release/codelite.app`
+You should now have an app bundle `/Users/$USER/src/codelite/build-release/codelite.app`
 
 To launch CodeLite:
 
-`open /Users/$USER/codelite/build-release/codelite.app`
+`open /Users/$USER/src/codelite/build-release/codelite.app`
 
 ----------
 

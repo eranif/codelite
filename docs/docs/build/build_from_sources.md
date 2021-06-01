@@ -62,7 +62,7 @@ Prerequisites:
 
 Preparation:
 
- - (Optional) Make a separate folder for building if you want to get rid of all except the .app file after building
+ - (Optional) Make a separate folder for building if you want to get rid of all except the `.app` file after building
  - Install Xcode from Mac App Store
  - Install Xcode command-line tools: `xcode-select --install`
  - Install Homebrew:

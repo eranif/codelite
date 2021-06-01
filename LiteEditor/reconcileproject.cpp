@@ -200,10 +200,8 @@ void ReconcileProjectDlg::DistributeFiles(bool usingAutoallocate)
 
                 if(attemptAllocation) {
                     wxString virtualFolder = vdTree.FindBestMatchVDir(fn.GetPath(), fn.GetExt());
-                    if(virtualFolder.empty() && fn.GetPath().empty()) {
-                        virtualFolder = m_projname; // This must be a top-level file
-                    }
                     if(!virtualFolder.empty()) {
+                        wxASSERT_MSG(virtualFolder.find(':') != wxNOT_FOUND, "Invalid virtual folder");
                         wxVector<wxVariant> cols;
                         cols.push_back(::MakeIconText(fn.GetFullPath(), GetBitmap(filename)));
                         cols.push_back(virtualFolder);

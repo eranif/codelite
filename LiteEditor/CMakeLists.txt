@@ -1,8 +1,8 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.0)
- 
+
 # Our project is called 'codelite' this is how it will be called in
-# visual studio, and in our makefiles. 
+# visual studio, and in our makefiles.
 project(codelite)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -27,6 +27,11 @@ endif ( USE_PCH )
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
+
+if (MINGW)
+# disables the part of urlmon.h that defines IsLoggingEnabled
+add_definitions(-D_HITLOGGING_DEFINED=0)
+endif (MINGW)
 
 if ( USE_CLANG )
   add_definitions(-DHAS_LIBCLANG)
@@ -96,12 +101,12 @@ if(NOT APPLE)
     ## codelite icons
     install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip DESTINATION ${CL_PREFIX}/share/codelite)
     install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip DESTINATION ${CL_PREFIX}/share/codelite)
-    
+
     # extra clangd + clang-format tools
     if (UNIX)
         install(FILES ${CL_SRC_ROOT}/tools/linux/clang-tools.tgz DESTINATION ${CL_PREFIX}/share/codelite)
     endif()
-    
+
     ## License file
     install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CL_PREFIX}/share/codelite)
 
@@ -111,27 +116,27 @@ if(NOT APPLE)
     endif()
 
     ## Copy default configuration files
-    install(FILES ${CL_SRC_ROOT}/Runtime/config/accelerators.conf.default DESTINATION 
+    install(FILES ${CL_SRC_ROOT}/Runtime/config/accelerators.conf.default DESTINATION
             ${CL_PREFIX}/share/codelite/config)
-    install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default 
+    install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default
             DESTINATION ${CL_PREFIX}/share/codelite/config)
-    install(FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.gtk DESTINATION 
-            ${CL_PREFIX}/share/codelite/config 
+    install(FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.gtk DESTINATION
+            ${CL_PREFIX}/share/codelite/config
             RENAME debuggers.xml.default)
-    install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk 
-            DESTINATION ${CL_PREFIX}/share/codelite/config 
+    install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk
+            DESTINATION ${CL_PREFIX}/share/codelite/config
             RENAME codelite.xml.default)
 
     ## Create application launcher, copy application icon to standard location
     if ( UNIX AND NOT APPLE )
         install(FILES ${CL_SRC_ROOT}/Runtime/codelite.desktop DESTINATION ${CL_PREFIX}/share/applications)
         ## Install icons
-        
+
         ## 32x32
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo@2x.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32@2x/apps
                 RENAME codelite.png)
-                
+
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/32-codelite-logo.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/32x32/apps
                 RENAME codelite.png)
@@ -139,16 +144,16 @@ if(NOT APPLE)
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo@2x.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/64x64@2x/apps
                 RENAME codelite.png)
-                
+
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/64-codelite-logo.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/64x64/apps
                 RENAME codelite.png)
-                
+
         ## 128x128
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo@2x.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/128x128@2x/apps
                 RENAME codelite.png)
-                
+
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/128-codelite-logo.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/128x128/apps
                 RENAME codelite.png)
@@ -156,7 +161,7 @@ if(NOT APPLE)
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo@2x.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/256x256@2x/apps
                 RENAME codelite.png)
-                
+
         install(FILES ${CL_SRC_ROOT}/bitmaps-light/256-codelite-logo.png
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/256x256/apps
                 RENAME codelite.png)
@@ -165,13 +170,13 @@ if(NOT APPLE)
         install(CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
     endif (  UNIX AND NOT APPLE )
     codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
-    
+
     install(
-        DIRECTORY ${CL_SRC_ROOT}/Runtime/images 
-                  ${CL_SRC_ROOT}/Runtime/gdb_printers 
-                  ${CL_SRC_ROOT}/Runtime/src/ 
-                  ${CL_SRC_ROOT}/Runtime/lexers 
-                  ${CL_SRC_ROOT}/Runtime/templates 
+        DIRECTORY ${CL_SRC_ROOT}/Runtime/images
+                  ${CL_SRC_ROOT}/Runtime/gdb_printers
+                  ${CL_SRC_ROOT}/Runtime/src/
+                  ${CL_SRC_ROOT}/Runtime/lexers
+                  ${CL_SRC_ROOT}/Runtime/templates
                   ${CL_SRC_ROOT}/Runtime/rc
                   ${CL_SRC_ROOT}/Runtime/plugins/resources
         DESTINATION ${CL_PREFIX}/share/codelite
@@ -190,7 +195,7 @@ if(NOT APPLE)
     if (UNIX AND CL_COPY_WX_LIBS) # If we're packaging with wx2.9
         # We need to deduce the location of the wx libs to be installed
         execute_process(COMMAND ${WX_TOOL} --libs OUTPUT_VARIABLE WX_LIBSOUTPUT OUTPUT_STRIP_TRAILING_WHITESPACE)
-        
+
         if (${WX_LIBSOUTPUT} MATCHES "^-L.+") # In recent, multi-architecture, distro versions it'll start with -L/foo/bar
             string(REGEX REPLACE "^-L([^ ;]+).*" "\\1" WX_LIBS_DIR ${WX_LIBSOUTPUT})
         else()
@@ -212,7 +217,7 @@ if(NOT APPLE)
         foreach(ITEM ${WX_LIBS_ALL_LIST})
             # We want to replace -l with lib. We also want to exclude imaginary libs called _all.so, which buggy wx-config scripts can invent
             if (${ITEM} MATCHES "-lwx_.+" AND NOT ${ITEM} MATCHES "-l.+_all.+")
-                string(REGEX REPLACE "^-l" "lib" LIBITEM ${ITEM}) 
+                string(REGEX REPLACE "^-l" "lib" LIBITEM ${ITEM})
                 # openSUSE have started to use libwx_gtk2u_xrc-suse.so instead of libwx_gtk2u_xrc-3.1, so allow for extra text there
                 string(REGEX REPLACE "(libwx_[a-z0-9._]+-)(.+)" "\\1*\\2" LIBITEMADJ ${LIBITEM})
                 list(APPEND WX_LIBS_ALL ${WX_LIBS_DIR}/${LIBITEMADJ}*.so*) # we need the terminal [.]so because the rpms contain both dynamic and static libs

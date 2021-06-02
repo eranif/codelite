@@ -3,20 +3,19 @@
 ## Windows
 ----
 
-Git clone the sources:
-
-    git clone https://github.com/eranif/codelite.git
-
- - Download CodeLite installer for Windows from our [Download Page][8]
- - Build wxWidgets 3.1 or later. See build instructions [here][5]
- - Open the workspace `CodeLiteIDE.workspace` (located in the CodeLite's folder)
- - Make sure that the project `CodeLiteIDE` is selected (the active project uses **bold** font)
- - Select the `Win_x64_Release` or `Win_x86_Release` (depending if you want to build a 32 or 64 bit version of CodeLite) 
-   and hit ++f7++
- - When the compilation is over, close the workspace
- - Close CodeLite
- - To update your installation with the new CodeLite, close CodeLite and from a cmd.exe window navigate to `codelite-sources/Runtime/` and run the file `update64.bat` OR `update.bat` (again, depending on your selected arch)
-
+- Install compiler and other required tools (`git` etc) [as described here][10]
+- Build wxWidgets from sources. See build instructions [here][5]
+- Clone CodeLite sources:
+```bash
+git clone https://github.com/eranif/codelite.git
+```
+- Download and install CodeLite for Windows (`64 bit`) from our [Download Page][8]
+- Open the workspace `CodeLiteIDE.workspace` (located in the CodeLite's folder)
+- Make sure that the project `CodeLiteIDE` is selected (the active project uses **bold** font)
+- Select the `Win_x64_Release` build configuration and click ++f7++
+- When the compilation is over, close the workspace
+- Close CodeLite
+- To update your installation with the new CodeLite, close CodeLite and from a `cmd.exe` window (opened as Administrator), navigate to `codelite-sources/Runtime/` and run the file `update64.bat`
 
 ## Linux
 ----
@@ -116,3 +115,4 @@ To launch CodeLite:
  [6]: /build/build_wx_widgets/#linux
  [8]: https://codelite.org/support.php
  [9]: /build/build_wx_widgets/#macos
+ [10]: /build/mingw_builds/#prepare-a-working-environment

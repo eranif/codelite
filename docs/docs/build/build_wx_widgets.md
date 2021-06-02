@@ -4,38 +4,36 @@
 ## Windows
 ---
 
-### Prerequisites
-- Download and install MinGW. CodeLite is built with MinGW w64 7.1 64 bit
-- Open `CMD` terminal and add the `bin` folder to the `PATH` environment, e.g: `C:\MinGW-64\bin` (assuming you installed MinGW under `C:\MinGW-64\bin`) `set PATH=C:\MinGW-64\bin;%PATH%`
-- Download wxWidgets sources, CodeLite requires wxWidgets `3.1.x` and later [from here][3]
-- If you have cloned wxWidgets repository from git master, you will also need to run this: `git submodule update --init` from the root wxWidgets folder 
+CodeLite uses `MSYS2` for installing compiler and other tools:
 
-### Release
+- Prepare a working terminal with all the tools required [as described here][4]
+- Open `MSYS2` terminal, and clone wxWidgets sources and build them:
 
-- CodeLite requires a wxWidgets build which enables Graphic Context, to do this, open a `CMD` terminal and type:
-
-```batch
- cd \Path\To\wxWidgets\Sources\build\msw
- mingw32-make -f makefile.gcc setup_h SHARED=1 UNICODE=1 BUILD=release VENDOR=cl
+```bash
+git clone https://github.com/wxWidgets/wxWidgets
+cd ~/wxWidgets
+git submodule update --init
+cd build/mswu
+# create a setup.h file
+mingw32-make -f makefile.gcc setup_h SHARED=1 UNICODE=1 BUILD=release VENDOR=cl
 ```
 
-- Next, open the file: `\path\to\wxwidgets\lib\gcc_dll\mswu\wx\setup.h` and ensure that `wxUSE_GRAPHICS_CONTEXT` and `wxUSE_GRAPHICS_DIRECT2D` are both set to `1`: 
+CodeLite requires a wxWidgets build which enables Graphic Context, Direct2D and `wxUSE_SOCKET2` all enabled
 
-```c++
-#   define wxUSE_GRAPHICS_CONTEXT 1
-...
-#   define wxUSE_GRAPHICS_DIRECT2D 1
+To do so: 
+
+- Open the file `~/wxWidgets/lib/gcc_dll/setup.h` in your editor
+- Make sure that `wxUSE_GRAPHICS_CONTEXT`, `wxUSE_GRAPHICS_DIRECT2D` and `wxUSE_SOCKET2` are all set to `1` (if not, change it)
+
+Start the build process (from within the `MSYS2` terminal):
+
+```bash
+cd ~/wxWidgets/build/mswu
+mingw32-make -j$(nproc) -f Makefile.gcc SHARED=1 UNICODE=1 BUILD=release VENDOR=cl CXXFLAGS="-fno-keep-inline-dllexport -std=c++11"
 ```
 
-- Start the build:
-
-```batch
- mingw32-make -j8 -f Makefile.gcc SHARED=1 UNICODE=1 BUILD=release VENDOR=cl CXXFLAGS="-fno-keep-inline-dllexport -std=c++11"
-```
-
-### Debug
-
-To build in `Debug` confiugration, follow the `Release` steps and replace any occurrence of `BUILD=release` &#8594; `BUILD=debug`
+!!! Tip
+    if you need a `Debug` build of wxWidgets, follow the above steps and replace any occurrence of `BUILD=release` &#8594; `BUILD=debug`
 
 ## Linux
 ---
@@ -123,3 +121,4 @@ sudo make install
  [1]: https://brew.sh/
  [2]: https://wxwidgets.org/downloads/
  [3]: https://www.wxwidgets.org/downloads
+ [4]: /build/mingw_builds/#prepare-a-working-environment

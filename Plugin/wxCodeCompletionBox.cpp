@@ -432,7 +432,6 @@ void wxCodeCompletionBox::DoUpdateList()
     if(m_entries.size() == 1) {
         wxString entryText = m_entries[0]->GetText().BeforeFirst('(');
         if(entryText.CmpNoCase(GetFilter()) == 0) {
-            InsertSelection();
             CallAfter(&wxCodeCompletionBox::DoDestroy);
             return;
         }

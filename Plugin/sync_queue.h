@@ -69,7 +69,7 @@ public:
         }
         T e = std::move(m_queue.front());
         m_queue.pop_front();
-        return std::move(e);
+        return e;
     }
 
     /**

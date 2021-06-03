@@ -116,13 +116,14 @@ Distro|Release|x86_64
 ------|-------|------
 fedora|`33` & `34`|[wx-base-unicode][2] [wxGTK31][3] [wxGTK31-devel][4] [wxGTK31-gl][5] [wxGTK31-media][6] [wxGTK31-debuginfo][7]
 openSUSE|`15.2`|[libwx_baseu_net][8] [libwx_baseu][9] [libwx_baseu_xml][10] [libwx_gtk3u_adv][11] [libwx_gtk3u_aui][12] [libwx_gtk3u_core][13] [libwx_gtk3u_gl][14]  [libwx_gtk3u_html][15] [libwx_gtk3u_media][16] [libwx_gtk3u_propgrid][17] [libwx_gtk3u_qa][18] [libwx_gtk3u_ribbon][19] [libwx_gtk3u_richtext][20] [libwx_gtk3u_stc][21]  [libwx_gtk3u_webview][22] [libwx_gtk2u_xrc][23] [wxWidgets-3_1-devel][24] [wxWidgets-3_1-plugin-sound_sdlu][25]
+openSUSE|`15.3`|[libwx_baseu_net][28] [libwx_baseu][29] [libwx_baseu_xml][30] [libwx_gtk3u_adv][31] [libwx_gtk3u_aui][32] [libwx_gtk3u_core][33] [libwx_gtk3u_gl][34]  [libwx_gtk3u_html][35] [libwx_gtk3u_media][36] [libwx_gtk3u_propgrid][37] [libwx_gtk3u_qa][38] [libwx_gtk3u_ribbon][39] [libwx_gtk3u_richtext][40] [libwx_gtk3u_stc][41]  [libwx_gtk3u_webview][42] [libwx_gtk2u_xrc][43] [wxWidgets-3_1-devel][44] [wxWidgets-3_1-plugin-sound_sdlu][45]
 
 There are also source rpms for [Fedora][26] and [openSUSE][27]. The fedora srpm should also build on CentOS 8. 
 
 Either download the required rpms and install them as usual, or download and install in one step; e.g. 
 
 ```bash
-rpm -Uvh https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/wxWidgets-3_1-3.1.5-0.src.rpm
+rpm -Uvh https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/wxWidgets-3_1-3.1.5-1.src.rpm
 ```
 
 !!! Note
@@ -153,6 +154,27 @@ rpm -Uvh https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/wxWidgets-3_1-3.
  [23]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.2/libwx_gtk3u_xrc-suse15-3.1.5-0.x86_64.rpm
  [24]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.2/wxWidgets-3_1-devel-3.1.5-0.x86_64.rpm
  [25]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.2/wxWidgets-3_1-plugin-sound_sdlu-3_1-3.1.5-0.x86_64.rpm
+ 
  [26]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/fedora/wxGTK31-3.1.5-1.fc.src.rpm
- [27]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/wxWidgets-3_1-3.1.5-0.src.rpm
+ [27]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/wxWidgets-3_1-3.1.5-1.src.rpm
+ 
+ [28]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_baseu_net-suse15-3.1.5-0.x86_64.rpm
+ [29]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_baseu-suse15-3.1.5-0.x86_64.rpm
+ [30]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_baseu_xml-suse15-3.1.5-0.x86_64.rpm
+ [31]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_adv-suse15-3.1.5-0.x86_64.rpm
+ [32]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_aui-suse15-3.1.5-0.x86_64.rpm
+ [33]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_core-suse15-3.1.5-0.x86_64.rpm
+ [34]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_gl-suse15-3.1.5-0.x86_64.rpm
+ [35]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_html-suse15-3.1.5-0.x86_64.rpm
+ [36]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_media-suse15-3.1.5-0.x86_64.rpm
+ [37]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_propgrid-suse15-3.1.5-0.x86_64.rpm
+ [38]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_qa-suse15-3.1.5-0.x86_64.rpm
+ [39]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_ribbon-suse15-3.1.5-0.x86_64.rpm
+ [40]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_richtext-suse15-3.1.5-0.x86_64.rpm
+ [41]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_stc-suse15-3.1.5-0.x86_64.rpm
+ [42]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_webview-suse15-3.1.5-0.x86_64.rpm
+ [43]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/libwx_gtk3u_xrc-suse15-3.1.5-0.x86_64.rpm
+ [44]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/wxWidgets-3_1-devel-3.1.5-0.x86_64.rpm
+ [45]: https://repos.codelite.org/wx3.1.5/wx3.1-packages/suse/15.3/wxWidgets-3_1-plugin-sound_sdlu-3_1-3.1.5-0.x86_64.rpm
+
  

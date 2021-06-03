@@ -120,12 +120,12 @@ This allows you to select which to install using apt (or aptitude or synaptic).
 ### CodeLite RPMs
 ---
 
-There are rpms available for fedora 33/34 and openSUSE Leap 15.2: 
+There are rpms available for fedora 33/34, and openSUSE Leap 15.2/15.3: 
 
 Distro	| x86_64 GTK+3
 --------|----------------
 fedora	| [`33 & 34`][5]
-openSUSE |	[`15.2`][6]
+openSUSE |	[`15.2 & 15.3`][6]
 
 
 First tell rpm about the CodeLite public key. As superuser do: 
@@ -135,7 +135,7 @@ First tell rpm about the CodeLite public key. As superuser do:
  rpm -Uvh https://repos.codelite.org/rpms-15.0/fedora/33/codelite-15.0.1-1.fc33.x86_64.rpm
 ```
 
-There are also source rpms for [fedora][2] and [Open SUSE][3]
+There are also source rpms for [fedora][2] and [OpenSUSE][3]
 
 ### ArchLinux
 ---

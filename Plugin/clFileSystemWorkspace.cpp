@@ -994,57 +994,55 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     wxString exe, args, wd;
     GetExecutable(exe, args, wd);
 
+    const wxString& user_debugger = GetConfig()->GetDebuggerPath();
+
     // Start the debugger
-    DebugSessionInfo startup_info;
+    DebugSessionInfo session_info;
     clDebuggerBreakpoint::Vec_t bpList;
-    startup_info.debuggerPath = MacroManager::Instance()->Expand(dinfo.path, clGetManager(), "");
-    startup_info.exeName = exe;
-    startup_info.cwd = wd;
-    startup_info.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
+    session_info.exeName = exe;
+    session_info.cwd = wd;
+    session_info.init_file_content = GetConfig()->GetDebuggerCommands();
     clGetManager()->GetBreakpoints(bpList);
-    startup_info.bpList = bpList;
+    session_info.bpList = bpList;
 
     // Start terminal (doesn't do anything under MSW)
     m_debuggerTerminal.Clear();
     m_debuggerTerminal.Launch(dbgr->GetName());
-    startup_info.ttyName = m_debuggerTerminal.GetTty();
-    startup_info.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
+    session_info.ttyName = m_debuggerTerminal.GetTty();
+    session_info.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
 
     // Fire "starting" event
     clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
-    eventStarting.SetClientData(&startup_info);
+    eventStarting.SetClientData(&session_info);
     if(EventNotifier::Get()->ProcessEvent(eventStarting))
         return;
 
     // Check if any plugins provided us with new breakpoints
     if(!eventStarting.GetBreakpoints().empty()) {
-        startup_info.bpList.swap(eventStarting.GetBreakpoints());
+        session_info.bpList.swap(eventStarting.GetBreakpoints());
     }
 
-    // Get toolchain
-    CompilerPtr cmp = GetCompiler();
-    if(cmp && !cmp->GetTool("Debugger").empty()) {
-        startup_info.debuggerPath = cmp->GetTool("Debugger");
+    // Set the gdb executable
+    if(!user_debugger.empty()) {
+        session_info.debuggerPath = user_debugger;
+    } else {
+        CompilerPtr cmp = GetCompiler();
+        if(cmp && !cmp->GetTool("Debugger").empty()) {
+            session_info.debuggerPath = cmp->GetTool("Debugger");
+        }
     }
-    
+
     // convert the envlist into map
     auto envlist = FileUtils::CreateEnvironment(GetConfig()->GetEnvironment());
     wxStringMap_t envmap;
     envmap.reserve(envlist.size());
     envmap.insert(envlist.begin(), envlist.end());
-
-    // override the gdb executable with the one provided with the GDB environment variable
-    if(envmap.count("GDB")) {
-        wxString gdbpath = MacroManager::Instance()->Expand(envmap["GDB"], clGetManager(), "");
-        startup_info.debuggerPath = gdbpath;
-    }
-
-    dbgr->Start(startup_info, nullptr);
+    dbgr->Start(session_info, nullptr);
 
     // Notify that debug session started
     // this will ensure that the debug layout is loaded
     clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
-    eventStarted.SetClientData(&startup_info);
+    eventStarted.SetClientData(&session_info);
     EventNotifier::Get()->ProcessEvent(eventStarted);
     // Now run the debuggee
     dbgr->Run(args, "");

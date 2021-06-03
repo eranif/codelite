@@ -34,6 +34,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     if(lexer) {
         lexer->Apply(m_stcCCFlags);
         lexer->Apply(m_stcEnv);
+        lexer->Apply(m_stcCommands);
     }
 
     m_dvListCtrlTargets->SetSortFunction([](clRowEntry* a, clRowEntry* b) {
@@ -67,6 +68,8 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     m_textCtrlExcludeFiles->ChangeValue(config->GetExcludeFilesPattern());
     m_textCtrlExcludePaths->ChangeValue(config->GetExecludePaths());
     m_textCtrlWD->ChangeValue(config->GetWorkingDirectory());
+    m_textCtrlDebugger->ChangeValue(config->GetDebuggerPath());
+    m_stcCommands->SetText(config->GetDebuggerCommands());
 
     if(!m_enableRemotePage) {
         m_checkBoxEnableRemote->Disable();
@@ -76,9 +79,7 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     }
 }
 
-FSConfigPage::~FSConfigPage()
-{
-}
+FSConfigPage::~FSConfigPage() {}
 
 void FSConfigPage::OnDelete(wxCommandEvent& event)
 {
@@ -145,6 +146,8 @@ void FSConfigPage::Save()
     m_config->SetExcludeFilesPattern(m_textCtrlExcludeFiles->GetValue());
     m_config->SetExcludePaths(m_textCtrlExcludePaths->GetValue());
     m_config->SetWorkingDirectory(m_textCtrlWD->GetValue());
+    m_config->SetDebuggerPath(m_textCtrlDebugger->GetValue());
+    m_config->SetDebuggerCommands(m_stcCommands->GetText());
 }
 
 void FSConfigPage::OnTargetActivated(wxDataViewEvent& event)
@@ -159,7 +162,7 @@ void FSConfigPage::DoTargetActivated()
     CHECK_ITEM_RET(item);
 
     BuildTargetDlg dlg(::wxGetTopLevelParent(this), m_dvListCtrlTargets->GetItemText(item, 0),
-        m_dvListCtrlTargets->GetItemText(item, 1));
+                       m_dvListCtrlTargets->GetItemText(item, 1));
     if(dlg.ShowModal() == wxID_OK) {
         m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetName(), 0);
         m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetCommand(), 1);
@@ -288,4 +291,23 @@ void FSConfigPage::OnBrowseWD(wxCommandEvent& event)
         return;
     }
     m_textCtrlWD->ChangeValue(path);
+}
+
+void FSConfigPage::OnBrowseForGDB(wxCommandEvent& event)
+{
+    wxString path;
+    if(m_useRemoteBrowsing) {
+        auto p = ::clRemoteFileSelector(_("Select debugger executable:"), m_sshAccount);
+        if(p.first != m_sshAccount) {
+            ::wxMessageBox(_("Wrong account selected!"), "CodeLite", wxOK | wxICON_WARNING);
+            return;
+        }
+        path = p.second;
+    } else {
+        path = ::wxFileSelector();
+    }
+    if(path.empty()) {
+        return;
+    }
+    m_textCtrlDebugger->ChangeValue(path);
 }

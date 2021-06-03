@@ -42,9 +42,7 @@ protected:
     void OnFolderContextMenu(clContextMenuEvent& event);
     void OnRustWorkspaceFileCreated(clFileSystemEvent& event);
     void OnNewWorkspace(clCommandEvent& e);
-    wxString GetRustGdb() const;
-    wxString GetCargoDir() const;
-    wxString GetCargoBinDir() const;
+    wxString GetRustTool(const wxString& toolname) const;
 
 public:
     //--------------------------------------------

@@ -89,7 +89,7 @@ protected:
     void DoProcessAsyncCommand(wxString& line, wxString& id);
 
 protected:
-    bool DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName);
+    bool DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName, const DebugSessionInfo& sessionInfo);
     bool DoInitializeGdb(const DebugSessionInfo& sessionInfo);
     void SetCliHandler(DbgCmdCLIHandler* handler);
     DbgCmdCLIHandler* GetCliHandler();

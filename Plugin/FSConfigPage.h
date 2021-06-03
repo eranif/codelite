@@ -11,6 +11,7 @@ class FSConfigPage : public FSConfigPageBase
     wxString m_sshAccount;
 
 protected:
+    virtual void OnBrowseForGDB(wxCommandEvent& event);
     virtual void OnBrowseExec(wxCommandEvent& event);
     virtual void OnBrowseWD(wxCommandEvent& event);
     virtual void OnEditExcludePaths(wxCommandEvent& event);

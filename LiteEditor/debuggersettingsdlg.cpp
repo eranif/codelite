@@ -78,11 +78,13 @@ DebuggerPageStartupCmds::DebuggerPageStartupCmds(wxWindow* parent, const wxStrin
     , m_title(title)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_textCtrlStartupCommands); }
+    if(lexer) {
+        lexer->Apply(m_textCtrlStartupCommands);
+    }
 
     DebuggerInformation info;
     if(DebuggerMgr::Get().GetDebuggerInformation(title, info)) {
-        m_textCtrlStartupCommands->SetText(info.startupCommands);
+        m_textCtrlStartupCommands->SetText(info.initFileCommands);
     }
 }
 
@@ -129,12 +131,16 @@ void DebuggerPage::OnBrowse(wxCommandEvent& e)
         newfilepath = wxFileSelector(_("Select file:"));
     }
 
-    if(!newfilepath.IsEmpty()) { m_textCtrDbgPath->SetValue(newfilepath); }
+    if(!newfilepath.IsEmpty()) {
+        m_textCtrDbgPath->SetValue(newfilepath);
+    }
 }
 
 void DebuggerPage::OnDebugAssert(wxCommandEvent& e)
 {
-    if(e.IsChecked()) { m_checkBoxEnablePendingBreakpoints->SetValue(true); }
+    if(e.IsChecked()) {
+        m_checkBoxEnablePendingBreakpoints->SetValue(true);
+    }
 }
 
 void DebuggerPage::OnWindowsUI(wxUpdateUIEvent& event)
@@ -187,7 +193,8 @@ void DbgPagePreDefTypes::OnDeleteSet(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     int sel = m_notebookPreDefTypes->GetSelection();
-    if(sel == wxNOT_FOUND) return;
+    if(sel == wxNOT_FOUND)
+        return;
 
     wxString name = m_notebookPreDefTypes->GetPageText((size_t)sel);
     if(wxMessageBox(
@@ -221,7 +228,8 @@ void DbgPagePreDefTypes::OnNewSet(wxCommandEvent& event)
     if(dlg.ShowModal() == wxID_OK) {
         wxString newName = dlg.GetNameTextctl()->GetValue();
         newName.Trim().Trim(false);
-        if(newName.IsEmpty()) return;
+        if(newName.IsEmpty())
+            return;
 
         // Make sure that a set with this name does not already exists
         for(size_t i = 0; i < m_notebookPreDefTypes->GetPageCount(); i++) {
@@ -294,7 +302,8 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
     // go over the debuggers and set the debugger path
     for(size_t i = 0; i < (size_t)m_pages.size(); ++i) {
         wxWindow* win = m_pages[i];
-        if(!win) continue;
+        if(!win)
+            continue;
 
         DebuggerPage* page = dynamic_cast<DebuggerPage*>(win);
         if(page) {
@@ -357,12 +366,14 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
             // find the debugger
             DebuggerInformation info;
             DebuggerMgr::Get().GetDebuggerInformation(suCmds->m_title, info);
-            info.startupCommands = suCmds->m_textCtrlStartupCommands->GetText();
+            info.initFileCommands = suCmds->m_textCtrlStartupCommands->GetText();
             DebuggerMgr::Get().SetDebuggerInformation(suCmds->m_title, info);
         }
 
         DbgPagePreDefTypes* pd = dynamic_cast<DbgPagePreDefTypes*>(win);
-        if(pd) { pd->Save(); }
+        if(pd) {
+            pd->Save();
+        }
     }
 
     EndModal(wxID_OK);

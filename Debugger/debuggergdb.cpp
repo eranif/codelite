@@ -246,8 +246,13 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
             return false;
         }
 
-        wxString dbgExeName = "gdb"; // it's up to the server machine to have gdb in the path
-        wxString cmd = "gdb --interpreter=mi ";
+        wxString dbgExeName = si.debuggerPath;
+        wxString cmd = "gdb";
+        if(!si.debuggerPath.empty()) {
+            cmd = ::WrapSpaces(si.debuggerPath);
+        }
+        cmd << " --interpreter=mi ";
+
         if(!si.ttyName.IsEmpty()) {
             cmd << " --tty=" << si.ttyName << " ";
         }
@@ -271,7 +276,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
         EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
 
         wxString dbgExeName;
-        if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName)) {
+        if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName, si)) {
             return false;
         }
 
@@ -1093,7 +1098,8 @@ void DbgGdb::SetDebuggerInformation(const DebuggerInformation& info)
 
 void DbgGdb::BreakList() { (void)WriteCommand(wxT("-break-list"), new DbgCmdBreakList(this)); }
 
-bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName)
+bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName,
+                                   const DebugSessionInfo& sessionInfo)
 {
     if(m_gdbProcess) {
         // dont allow second instance of the debugger
@@ -1103,24 +1109,27 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
 
     dbgExeName = debuggerPath;
     if(dbgExeName.IsEmpty()) {
-        dbgExeName = wxT("gdb");
+        dbgExeName = "gdb";
     }
 
     // set the debugger specific startup commands
-    wxString startupInfo(m_info.startupCommands);
+    wxString gdbinit_file_content(m_info.initFileCommands);
+    wxString gdbinit_for_session(sessionInfo.init_file_content);
+    gdbinit_file_content << "\n" << gdbinit_for_session;
 
     // We must replace TABS with spaces or else gdb will hang...
-    startupInfo.Replace(wxT("\t"), wxT(" "));
+    gdbinit_file_content.Replace(wxT("\t"), wxT(" "));
+    gdbinit_file_content.Trim().Trim(false);
 
     // Write the content into a file
     wxFileName gdbInitFile(wxFileName::GetHomeDir(), ".gdbinit");
     wxFileName clGdbInitFile(wxFileName::GetHomeDir(), ".codelite-gdbinit");
 
     // Read the content of the user's file
-    wxString gdbInitContent;
-    FileUtils::ReadFileContent(gdbInitFile, gdbInitContent);
-    if(!gdbInitContent.IsEmpty() && !gdbInitContent.EndsWith("\n")) {
-        gdbInitContent << "\n";
+    wxString fileContent;
+    FileUtils::ReadFileContent(gdbInitFile, fileContent);
+    if(!fileContent.IsEmpty() && !fileContent.EndsWith("\n")) {
+        fileContent << "\n";
     }
 
     // Remove cl previous file
@@ -1128,8 +1137,9 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
         FileUtils::RemoveFile(clGdbInitFile);
     }
 
-    gdbInitContent << startupInfo;
-    if(FileUtils::WriteFileContent(clGdbInitFile, gdbInitContent)) {
+    gdbinit_file_content.Trim().Trim(false);
+    fileContent << gdbinit_file_content;
+    if(FileUtils::WriteFileContent(clGdbInitFile, fileContent)) {
         m_observer->UpdateAddLine(wxString() << "Using gdbinit file: " << clGdbInitFile.GetFullPath());
         dbgExeName << " --command=\"" << clGdbInitFile.GetFullPath() << "\"";
     }
@@ -1535,7 +1545,7 @@ bool DbgGdb::Attach(const DebugSessionInfo& si, clEnvList_t* env_list)
     EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
 
     wxString dbgExeName;
-    if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName)) {
+    if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName, si)) {
         return false;
     }
 

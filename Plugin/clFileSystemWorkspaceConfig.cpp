@@ -68,6 +68,8 @@ std::pair<JSONItem, JSONItem> clFileSystemWorkspaceConfig::ToJSON() const
     local.addProperty("remoteFolder", m_remoteFolder);
     local.addProperty("remoteAccount", m_remoteAccount);
     local.addProperty("workingDirectory", m_workingDirectory);
+    local.addProperty("debuggerPath", m_debuggerPath);
+    local.addProperty("debuggerCommands", m_debuggerCommands);
     return { shared, local };
 }
 
@@ -102,6 +104,8 @@ void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
     m_remoteFolder = json["remoteFolder"].toString();
     m_remoteAccount = json["remoteAccount"].toString();
     m_workingDirectory = json["workingDirectory"].toString();
+    m_debuggerPath = json["debuggerPath"].toString();
+    m_debuggerCommands = json["debuggerCommands"].toString();
 }
 
 void clFileSystemWorkspaceConfig::FromJSONOld(const JSONItem& json)

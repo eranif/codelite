@@ -36,6 +36,8 @@ protected:
     wxString m_excludeFilesPattern;
     wxString m_workingDirectory;
     wxString m_excludePaths;
+    wxString m_debuggerPath;
+    wxString m_debuggerCommands;
 
 public:
     typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
@@ -114,6 +116,10 @@ public:
      * C/C++ header file
      */
     wxArrayString GetWorkspaceIncludes(bool withPrefix = false) const;
+    void SetDebuggerCommands(const wxString& debuggerCommands) { this->m_debuggerCommands = debuggerCommands; }
+    void SetDebuggerPath(const wxString& debuggerPath) { this->m_debuggerPath = debuggerPath; }
+    const wxString& GetDebuggerCommands() const { return m_debuggerCommands; }
+    const wxString& GetDebuggerPath() const { return m_debuggerPath; }
 };
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings

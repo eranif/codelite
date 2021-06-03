@@ -674,6 +674,7 @@
     <Project Name="UnitTestPP"/>
   </Dependencies>
   <VirtualDirectory Name="scripts">
+    <File Name="../Runtime/rust-gdb.bat"/>
     <File Name="../Runtime/codelite-remote"/>
     <File Name="res/convert-svgs.sh"/>
     <File Name="../Runtime/update.bat"/>

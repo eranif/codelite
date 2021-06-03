@@ -167,7 +167,7 @@ public:
     bool catchThrow;
     bool showTooltipsOnlyWithControlKeyIsDown;
     bool debugAsserts;
-    wxString startupCommands;
+    wxString initFileCommands;
     int maxDisplayStringSize = 200;
     int maxDisplayElements = 100;
     bool resolveLocals;
@@ -194,7 +194,7 @@ public:
         , catchThrow(false)
         , showTooltipsOnlyWithControlKeyIsDown(false)
         , debugAsserts(false)
-        , startupCommands(wxEmptyString)
+        , initFileCommands(wxEmptyString)
         , resolveLocals(true)
         , autoExpandTipItems(true)
         , applyBreakpointsAfterProgramStarted(false)
@@ -222,7 +222,7 @@ public:
         arch.Write(wxT("catchThrow"), catchThrow);
         arch.Write(wxT("showTooltips"), showTooltipsOnlyWithControlKeyIsDown);
         arch.Write(wxT("debugAsserts"), debugAsserts);
-        arch.WriteCData(wxT("startupCommands"), startupCommands);
+        arch.WriteCData(wxT("startupCommands"), initFileCommands);
         arch.Write(wxT("maxDisplayStringSize"), maxDisplayStringSize);
         arch.Write("maxDisplayElements", maxDisplayElements);
         arch.Write(wxT("resolveLocals"), resolveLocals);
@@ -251,11 +251,11 @@ public:
         arch.Read(wxT("showTooltips"), showTooltipsOnlyWithControlKeyIsDown);
         arch.Read(wxT("debugAsserts"), debugAsserts);
 
-        arch.ReadCData(wxT("startupCommands"), startupCommands);
+        arch.ReadCData(wxT("startupCommands"), initFileCommands);
 
         wxFileName codeliteInstallDir = wxFileName(clStandardPaths::Get().GetUserDataDir(), "gdb_printers");
-        startupCommands.Replace("$CodeLiteGdbPrinters", codeliteInstallDir.GetFullPath());
-        startupCommands.Trim();
+        initFileCommands.Replace("$CodeLiteGdbPrinters", codeliteInstallDir.GetFullPath());
+        initFileCommands.Trim();
 
         arch.Read(wxT("maxDisplayStringSize"), maxDisplayStringSize);
         arch.Read(wxT("maxDisplayElements"), maxDisplayElements);
@@ -320,12 +320,13 @@ public:
     int PID = wxNOT_FOUND;                    /// Process ID to attach
     wxString cwd;                             /// Working directory
     std::vector<clDebuggerBreakpoint> bpList; /// Breakpoint list
-    wxArrayString cmds;                       /// Startup commands
-    wxString ttyName;                         /// TTY to use
-    wxArrayString searchPaths;                /// Additional search paths to pass to the debugger
-    bool enablePrettyPrinting = true;         /// Should we enable pretty printing?
-    bool isSSHDebugging = false;              /// Debugging over SSH
-    wxString sshAccountName;                  /// When isSSHDebugging is set true, holds the ssh account name
+    wxArrayString cmds;               /// Start-up commands (to be run after gdb starts, but before the user interacts)
+    wxString ttyName;                 /// TTY to use
+    wxArrayString searchPaths;        /// Additional search paths to pass to the debugger
+    bool enablePrettyPrinting = true; /// Should we enable pretty printing?
+    bool isSSHDebugging = false;      /// Debugging over SSH
+    wxString sshAccountName;          /// When isSSHDebugging is set true, holds the ssh account name
+    wxString init_file_content;       /// content to place in a .gdbinit like file
 };
 
 class IDebuggerObserver;

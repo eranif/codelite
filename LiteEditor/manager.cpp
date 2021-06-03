@@ -2262,7 +2262,6 @@ void Manager::DbgStart(long attachPid)
     si.ttyName = m_debuggerTerminal.GetTty();
     si.PID = PID;
     si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
-    si.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
 
     if(bldConf) {
         si.searchPaths = bldConf->GetDebuggerSearchPaths();
@@ -2272,9 +2271,10 @@ void Manager::DbgStart(long attachPid)
     if(bldConf) {
         bldConf->GetCompiler()->CreatePathEnv(&env_list);
     }
+
     if(attachPid == wxNOT_FOUND) {
         // it is now OK to start the debugger...
-        dbg_cmds = wxStringTokenize(bldConf->GetDebuggerStartupCmds(), wxT("\n"), wxTOKEN_STRTOK);
+        dbg_cmds = wxStringTokenize(bldConf->GetDebuggerStartupCmds(), "\r\n", wxTOKEN_STRTOK);
 
         // append project level commands to the global commands
         si.cmds.insert(si.cmds.end(), dbg_cmds.begin(), dbg_cmds.end());

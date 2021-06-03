@@ -120,23 +120,52 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
 
             // set the environment variable to point to rust-gdb
             wxString env_str;
-#ifndef __WXMSW__
+#if !defined(__WXMSW__)
             // use rust-gdb
-            auto rust_gdb = GetRustGdb();
-            if(!rust_gdb.empty()) {
-                env_str << "GDB=" << rust_gdb << "\n";
-            }
-#else
-            // use normal gdb
-            auto compiler = BuildSettingsConfigST::Get()->GetCompiler(debug->GetCompiler());
-            if(compiler) {
-                env_str << "GDB=" << compiler->GetTool("Debugger") << "\n";
-            }
-#endif
-            if(!GetCargoDir().empty()) {
-                env_str << "PATH=" << GetCargoBinDir() << clPATH_SEPARATOR << "$PATH"
+            wxFileName rust_gdb = GetRustTool("rust-gdb");
+            if(rust_gdb.IsOk()) {
+                env_str << "GDB=" << rust_gdb.GetFullPath() << "\n";
+                env_str << "PATH=" << rust_gdb.GetPath() << clPATH_SEPARATOR << "$PATH"
                         << "\n";
             }
+#else
+            // use gdb batch file wrapper
+            wxFileName gdb_python_module_directory(clStandardPaths::Get().GetUserDataDir(), wxEmptyString);
+            gdb_python_module_directory.AppendDir("gdb_printers");
+            gdb_python_module_directory.AppendDir("rustlib");
+            gdb_python_module_directory.AppendDir("etc");
+
+            wxFileName gdb_exe = GetRustTool("gdb");
+            if(gdb_exe.FileExists()) {
+                env_str << "RUST_GDB=" << gdb_exe.GetFullPath() << "\n";
+                env_str << "PATH=" << gdb_exe.GetPath() << clPATH_SEPARATOR << "$PATH\n";
+            } else {
+                env_str << "RUST_GDB=gdb\n";
+            }
+
+            // copy the rust-gdb.bat script into our local folder and replace any place-holders
+            wxFileName rust_gdb_script(clStandardPaths::Get().GetBinFolder(), "rust-gdb.bat");
+            wxString rust_gdb_script_content;
+            FileUtils::ReadFileContent(rust_gdb_script, rust_gdb_script_content);
+            rust_gdb_script_content.Replace("%SCRIPTS_PATH%", gdb_python_module_directory.GetPath());
+            rust_gdb_script.SetPath(clStandardPaths::Get().GetUserDataDir());
+            FileUtils::WriteFileContent(rust_gdb_script, rust_gdb_script_content);
+
+            debug->SetDebuggerPath(rust_gdb_script.GetFullPath());
+            // build the startup commands
+            wxString gdbinit_content = R"gdbinit(
+python
+import sys
+sys.path.insert(0, '%GDB_PYTHON_MODULE_DIRECTORY%')
+import gdb_load_rust_pretty_printers
+end
+)gdbinit";
+            gdbinit_content.Trim().Trim(false);
+            wxString fixed_path = gdb_python_module_directory.GetPath();
+            fixed_path.Replace("\\", "/");
+            gdbinit_content.Replace("%GDB_PYTHON_MODULE_DIRECTORY%", fixed_path);
+            debug->SetDebuggerCommands(gdbinit_content);
+#endif
             if(!env_str.empty()) {
                 debug->SetEnvironment(env_str);
             }
@@ -184,45 +213,39 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
     }
 }
 
-wxString RustPlugin::GetRustGdb() const
+wxString RustPlugin::GetRustTool(const wxString& toolname) const
 {
     wxString homedir;
 #ifdef __WXMSW__
+    // try common paths
     ::wxGetEnv("USERPROFILE", &homedir);
-    wxFileName rust_gdb(homedir, "rust-gdb.exe");
-#else
-    ::wxGetEnv("HOME", &homedir);
-    wxFileName rust_gdb(homedir, "rust-gdb");
-#endif
-    rust_gdb.AppendDir(".cargo");
-    rust_gdb.AppendDir("bin");
-    if(rust_gdb.FileExists()) {
-        return rust_gdb.GetFullPath();
-    } else {
-        return wxEmptyString;
-    }
-}
-
-wxString RustPlugin::GetCargoDir() const
-{
-    wxString homedir;
-#ifdef __WXMSW__
-    ::wxGetEnv("USERPROFILE", &homedir);
-#else
-    ::wxGetEnv("HOME", &homedir);
-#endif
     wxFileName cargo_dir(homedir, wxEmptyString);
     cargo_dir.AppendDir(".cargo");
-    if(cargo_dir.DirExists()) {
-        return cargo_dir.GetPath();
-    } else {
+    std::vector<wxString> vpaths = { "C:\\msys64\\mingw64\\bin", "C:\\msys2\\mingw64\\bin",
+                                     cargo_dir.GetPath() + "\\bin" };
+    wxArrayString paths;
+    paths.reserve(3);
+    for(const auto& path : vpaths) {
+        paths.Add(path);
+    }
+
+    wxFileName tool_exe;
+    if(!FileUtils::FindExe(toolname, tool_exe, paths)) {
         return wxEmptyString;
     }
-}
+    return tool_exe.GetFullPath();
+#else
+    // try common paths
+    ::wxGetEnv("HOME", &homedir);
+    wxFileName cargo_dir(homedir, wxEmptyString);
+    cargo_dir.AppendDir(".cargo");
+    wxArrayString paths;
+    paths.Add(cargo_dir.GetPath());
 
-wxString RustPlugin::GetCargoBinDir() const
-{
-    wxFileName fn(GetCargoDir(), wxEmptyString);
-    fn.AppendDir("bin");
-    return fn.GetPath();
+    wxFileName tool_exe;
+    if(!FileUtils::FindExe(toolname, tool_exe, paths)) {
+        return wxEmptyString;
+    }
+    return tool_exe.GetFullPath();
+#endif
 }

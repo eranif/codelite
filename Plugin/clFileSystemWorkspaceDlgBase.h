@@ -60,42 +60,19 @@ protected:
     wxButton* m_button12;
 
 protected:
-    virtual void OnNewConfig(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnDeleteConfig(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnDeleteConfigUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnOK(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnNewConfig(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteConfig(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteConfigUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxChoicebook* GetNotebook()
-    {
-        return m_notebook;
-    }
-    wxButton* GetButtonNew()
-    {
-        return m_buttonNew;
-    }
-    wxButton* GetButtonDelete()
-    {
-        return m_buttonDelete;
-    }
-    clFileSystemWorkspaceDlgBase(wxWindow* parent,
-        wxWindowID id = wxID_ANY,
-        const wxString& title = _("Workspace Settings"),
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxSize(-1, -1),
-        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    wxChoicebook* GetNotebook() { return m_notebook; }
+    wxButton* GetButtonNew() { return m_buttonNew; }
+    wxButton* GetButtonDelete() { return m_buttonDelete; }
+    clFileSystemWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                 const wxString& title = _("Workspace Settings"),
+                                 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clFileSystemWorkspaceDlgBase();
 };
 
@@ -111,34 +88,16 @@ protected:
     wxButton* m_button54;
 
 protected:
-    virtual void OnOK_UI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnOK_UI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText58()
-    {
-        return m_staticText58;
-    }
-    wxTextCtrl* GetTextCtrlaName()
-    {
-        return m_textCtrlaName;
-    }
-    wxStaticText* GetStaticText62()
-    {
-        return m_staticText62;
-    }
-    wxStyledTextCtrl* GetTextCtrlValue()
-    {
-        return m_textCtrlValue;
-    }
-    BuildTargetDlgBase(wxWindow* parent,
-        wxWindowID id = wxID_ANY,
-        const wxString& title = _("Build Target"),
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxSize(-1, -1),
-        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    wxStaticText* GetStaticText58() { return m_staticText58; }
+    wxTextCtrl* GetTextCtrlaName() { return m_textCtrlaName; }
+    wxStaticText* GetStaticText62() { return m_staticText62; }
+    wxStyledTextCtrl* GetTextCtrlValue() { return m_textCtrlValue; }
+    BuildTargetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Target"),
+                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~BuildTargetDlgBase();
 };
 
@@ -171,6 +130,12 @@ protected:
     wxButton* m_buttonNew;
     wxButton* m_buttonEdit;
     wxButton* m_buttonDelete;
+    wxPanel* Debugger;
+    wxStaticText* m_staticText256;
+    wxTextCtrl* m_textCtrlDebugger;
+    wxButton* m_button262;
+    wxStaticText* m_staticText265;
+    wxStyledTextCtrl* m_stcCommands;
     wxPanel* m_panelCodeCompletion;
     wxStaticText* m_staticText26;
     wxStyledTextCtrl* m_stcCCFlags;
@@ -187,225 +152,70 @@ protected:
     wxCheckBox* m_checkBoxRemoteBuild;
 
 protected:
-    virtual void OnBrowseExec(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnBrowseWD(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnEditExcludePaths(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnTargetActivated(wxDataViewEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnNewTarget(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnEditTarget(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnEditTargetUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnDelete(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnDeleteUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnEnableRemoteUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnRemoteEnabledUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnSSHAccountChoice(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnSSHBrowse(wxCommandEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnBrowseExec(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnBrowseWD(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditExcludePaths(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTargetActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnNewTarget(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditTarget(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEditTargetUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnBrowseForGDB(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEnableRemoteUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnRemoteEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSSHAccountChoice(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSSHBrowse(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText109()
-    {
-        return m_staticText109;
-    }
-    wxTextCtrl* GetTextCtrlExec()
-    {
-        return m_textCtrlExec;
-    }
-    wxButton* GetButton241()
-    {
-        return m_button241;
-    }
-    wxStaticText* GetStaticText191()
-    {
-        return m_staticText191;
-    }
-    wxTextCtrl* GetTextCtrlWD()
-    {
-        return m_textCtrlWD;
-    }
-    wxButton* GetButton243()
-    {
-        return m_button243;
-    }
-    wxStaticText* GetStaticText113()
-    {
-        return m_staticText113;
-    }
-    clThemedSTC* GetTextCtrlArgs()
-    {
-        return m_textCtrlArgs;
-    }
-    wxStaticText* GetStaticText125()
-    {
-        return m_staticText125;
-    }
-    clThemedChoice* GetChoiceCompiler()
-    {
-        return m_choiceCompiler;
-    }
-    wxStaticText* GetStaticText179()
-    {
-        return m_staticText179;
-    }
-    clThemedChoice* GetChoiceDebuggers()
-    {
-        return m_choiceDebuggers;
-    }
-    wxStaticText* GetStaticText35()
-    {
-        return m_staticText35;
-    }
-    wxTextCtrl* GetTextCtrlFileExt()
-    {
-        return m_textCtrlFileExt;
-    }
-    wxStaticText* GetStaticText187()
-    {
-        return m_staticText187;
-    }
-    wxTextCtrl* GetTextCtrlExcludeFiles()
-    {
-        return m_textCtrlExcludeFiles;
-    }
-    wxStaticText* GetStaticText207()
-    {
-        return m_staticText207;
-    }
-    wxTextCtrl* GetTextCtrlExcludePaths()
-    {
-        return m_textCtrlExcludePaths;
-    }
-    wxButton* GetButton213()
-    {
-        return m_button213;
-    }
-    wxPanel* GetPanelGeneral()
-    {
-        return m_panelGeneral;
-    }
-    clThemedListCtrl* GetDvListCtrlTargets()
-    {
-        return m_dvListCtrlTargets;
-    }
-    wxButton* GetButtonNew()
-    {
-        return m_buttonNew;
-    }
-    wxButton* GetButtonEdit()
-    {
-        return m_buttonEdit;
-    }
-    wxButton* GetButtonDelete()
-    {
-        return m_buttonDelete;
-    }
-    wxPanel* GetPanelBuild()
-    {
-        return m_panelBuild;
-    }
-    wxStaticText* GetStaticText26()
-    {
-        return m_staticText26;
-    }
-    wxStyledTextCtrl* GetStcCCFlags()
-    {
-        return m_stcCCFlags;
-    }
-    wxPanel* GetPanelCodeCompletion()
-    {
-        return m_panelCodeCompletion;
-    }
-    wxStaticText* GetStaticText119()
-    {
-        return m_staticText119;
-    }
-    wxStyledTextCtrl* GetStcEnv()
-    {
-        return m_stcEnv;
-    }
-    wxPanel* GetPanelEnv()
-    {
-        return m_panelEnv;
-    }
-    wxCheckBox* GetCheckBoxEnableRemote()
-    {
-        return m_checkBoxEnableRemote;
-    }
-    wxStaticText* GetStaticText161()
-    {
-        return m_staticText161;
-    }
-    wxChoice* GetChoiceSSHAccount()
-    {
-        return m_choiceSSHAccount;
-    }
-    wxStaticText* GetStaticText165()
-    {
-        return m_staticText165;
-    }
-    wxTextCtrl* GetTextCtrlRemoteFolder()
-    {
-        return m_textCtrlRemoteFolder;
-    }
-    wxButton* GetButton169()
-    {
-        return m_button169;
-    }
-    wxCheckBox* GetCheckBoxRemoteBuild()
-    {
-        return m_checkBoxRemoteBuild;
-    }
-    wxPanel* GetPanelRemote()
-    {
-        return m_panelRemote;
-    }
-    wxNotebook* GetNotebook()
-    {
-        return m_notebook;
-    }
-    FSConfigPageBase(wxWindow* parent,
-        wxWindowID id = wxID_ANY,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxSize(-1, -1),
-        long style = wxTAB_TRAVERSAL);
+    wxStaticText* GetStaticText109() { return m_staticText109; }
+    wxTextCtrl* GetTextCtrlExec() { return m_textCtrlExec; }
+    wxButton* GetButton241() { return m_button241; }
+    wxStaticText* GetStaticText191() { return m_staticText191; }
+    wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }
+    wxButton* GetButton243() { return m_button243; }
+    wxStaticText* GetStaticText113() { return m_staticText113; }
+    clThemedSTC* GetTextCtrlArgs() { return m_textCtrlArgs; }
+    wxStaticText* GetStaticText125() { return m_staticText125; }
+    clThemedChoice* GetChoiceCompiler() { return m_choiceCompiler; }
+    wxStaticText* GetStaticText179() { return m_staticText179; }
+    clThemedChoice* GetChoiceDebuggers() { return m_choiceDebuggers; }
+    wxStaticText* GetStaticText35() { return m_staticText35; }
+    wxTextCtrl* GetTextCtrlFileExt() { return m_textCtrlFileExt; }
+    wxStaticText* GetStaticText187() { return m_staticText187; }
+    wxTextCtrl* GetTextCtrlExcludeFiles() { return m_textCtrlExcludeFiles; }
+    wxStaticText* GetStaticText207() { return m_staticText207; }
+    wxTextCtrl* GetTextCtrlExcludePaths() { return m_textCtrlExcludePaths; }
+    wxButton* GetButton213() { return m_button213; }
+    wxPanel* GetPanelGeneral() { return m_panelGeneral; }
+    clThemedListCtrl* GetDvListCtrlTargets() { return m_dvListCtrlTargets; }
+    wxButton* GetButtonNew() { return m_buttonNew; }
+    wxButton* GetButtonEdit() { return m_buttonEdit; }
+    wxButton* GetButtonDelete() { return m_buttonDelete; }
+    wxPanel* GetPanelBuild() { return m_panelBuild; }
+    wxStaticText* GetStaticText256() { return m_staticText256; }
+    wxTextCtrl* GetTextCtrlDebugger() { return m_textCtrlDebugger; }
+    wxButton* GetButton262() { return m_button262; }
+    wxStaticText* GetStaticText265() { return m_staticText265; }
+    wxStyledTextCtrl* GetStcCommands() { return m_stcCommands; }
+    wxPanel* GetDebugger() { return Debugger; }
+    wxStaticText* GetStaticText26() { return m_staticText26; }
+    wxStyledTextCtrl* GetStcCCFlags() { return m_stcCCFlags; }
+    wxPanel* GetPanelCodeCompletion() { return m_panelCodeCompletion; }
+    wxStaticText* GetStaticText119() { return m_staticText119; }
+    wxStyledTextCtrl* GetStcEnv() { return m_stcEnv; }
+    wxPanel* GetPanelEnv() { return m_panelEnv; }
+    wxCheckBox* GetCheckBoxEnableRemote() { return m_checkBoxEnableRemote; }
+    wxStaticText* GetStaticText161() { return m_staticText161; }
+    wxChoice* GetChoiceSSHAccount() { return m_choiceSSHAccount; }
+    wxStaticText* GetStaticText165() { return m_staticText165; }
+    wxTextCtrl* GetTextCtrlRemoteFolder() { return m_textCtrlRemoteFolder; }
+    wxButton* GetButton169() { return m_button169; }
+    wxCheckBox* GetCheckBoxRemoteBuild() { return m_checkBoxRemoteBuild; }
+    wxPanel* GetPanelRemote() { return m_panelRemote; }
+    wxNotebook* GetNotebook() { return m_notebook; }
+    FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(500, -1), long style = wxTAB_TRAVERSAL);
     virtual ~FSConfigPageBase();
 };
 
@@ -421,38 +231,18 @@ protected:
     wxButton* m_button137;
 
 protected:
-    virtual void OnDirSelected(wxFileDirPickerEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnOKUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnDirSelected(wxFileDirPickerEvent& event) { event.Skip(); }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText141()
-    {
-        return m_staticText141;
-    }
-    wxDirPickerCtrl* GetDirPickerPath()
-    {
-        return m_dirPickerPath;
-    }
-    wxStaticText* GetStaticText145()
-    {
-        return m_staticText145;
-    }
-    wxTextCtrl* GetTextCtrlName()
-    {
-        return m_textCtrlName;
-    }
-    NewFileSystemWorkspaceDialogBase(wxWindow* parent,
-        wxWindowID id = wxID_ANY,
-        const wxString& title = _("Create workspace"),
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxSize(-1, -1),
-        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    wxStaticText* GetStaticText141() { return m_staticText141; }
+    wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
+    wxStaticText* GetStaticText145() { return m_staticText145; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+                                     const wxString& title = _("Create workspace"),
+                                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewFileSystemWorkspaceDialogBase();
 };
 
@@ -468,34 +258,16 @@ protected:
     wxButton* m_button227;
 
 protected:
-    virtual void OnOKUI(wxUpdateUIEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText231()
-    {
-        return m_staticText231;
-    }
-    wxTextCtrl* GetTextCtrlName()
-    {
-        return m_textCtrlName;
-    }
-    wxStaticText* GetStaticText235()
-    {
-        return m_staticText235;
-    }
-    wxChoice* GetChoiceCopyFrom()
-    {
-        return m_choiceCopyFrom;
-    }
-    clFSWNewConfigDlgBase(wxWindow* parent,
-        wxWindowID id = wxID_ANY,
-        const wxString& title = _("New Configurtion"),
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxSize(-1, -1),
-        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    wxStaticText* GetStaticText231() { return m_staticText231; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText235() { return m_staticText235; }
+    wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }
+    clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Configurtion"),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clFSWNewConfigDlgBase();
 };
 

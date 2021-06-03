@@ -586,16 +586,20 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     GetExecutable(exe, args, wd);
 
     // Start the debugger
-    DebugSessionInfo startup_info;
+    DebugSessionInfo sesstion_info;
     clDebuggerBreakpoint::Vec_t bpList;
-    startup_info.debuggerPath = "gdb"; // just assume we have it in the path :)
-    startup_info.exeName = exe;
-    startup_info.cwd = wd;
-    startup_info.cmds = ::wxStringTokenize(dinfo.startupCommands, "\r\n", wxTOKEN_STRTOK);
+
+    const wxString& user_debugger = conf->GetDebuggerPath();
+
+    sesstion_info.debuggerPath = user_debugger.empty() ? "gdb" : user_debugger;
+    sesstion_info.init_file_content = conf->GetDebuggerCommands();
+
+    sesstion_info.exeName = exe;
+    sesstion_info.cwd = wd;
     clGetManager()->GetBreakpoints(bpList);
-    startup_info.bpList = bpList;
-    startup_info.isSSHDebugging = true;
-    startup_info.sshAccountName = m_account.GetAccountName();
+    sesstion_info.bpList = bpList;
+    sesstion_info.isSSHDebugging = true;
+    sesstion_info.sshAccountName = m_account.GetAccountName();
 
     // open new terminal on the remote host
     m_remote_terminal.reset(new clRemoteTerminal(m_account));
@@ -623,18 +627,18 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     // override the gdb executable with the one provided with the GDB environment variable
     if(envmap.count("GDB")) {
         const wxString& gdbpath = envmap["GDB"];
-        startup_info.debuggerPath = gdbpath;
+        sesstion_info.debuggerPath = gdbpath;
     }
     clDEBUG() << "Using remote tty:" << tty << endl;
 
-    startup_info.ttyName = tty;
-    startup_info.enablePrettyPrinting = true;
-    dbgr->Start(startup_info, nullptr);
+    sesstion_info.ttyName = tty;
+    sesstion_info.enablePrettyPrinting = true;
+    dbgr->Start(sesstion_info, nullptr);
 
     // Notify that debug session started
     // this will ensure that the debug layout is loaded
     clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
-    eventStarted.SetClientData(&startup_info);
+    eventStarted.SetClientData(&sesstion_info);
     EventNotifier::Get()->ProcessEvent(eventStarted);
 
     // Now run the debuggee

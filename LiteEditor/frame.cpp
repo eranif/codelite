@@ -6138,7 +6138,10 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     colours.SetBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     colours.SetItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    // update the colours used by the caption
     m_captionBar->SetColours(colours);
+    // update the bitmap as well
+    m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines"));
 #endif
     DoSysColoursChanged();
 }

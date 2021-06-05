@@ -1039,7 +1039,7 @@ void clMainFrame::CreateGUIControls()
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_mainPanel = new wxPanel(this);
-    GetSizer()->Add(m_mainPanel, 1, wxEXPAND);
+
     m_mainPanel->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
         e.Skip();
@@ -1079,13 +1079,53 @@ void clMainFrame::CreateGUIControls()
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BUTTON_SIZE, GetBestXButtonSize(this));
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 
-    // Load the menubar from XRC and set this frame's menubar to it.
+    // add the caption bar
+#if wxUSE_CUSTOM_CAPTIONBAR
+    m_captionBar = new clCaptionBar(this, this);
+    GetSizer()->Add(m_captionBar, 0, wxEXPAND);
+    m_captionBar->SetOptions(wxCAPTION_STYLE_DEFAULT);
+    m_captionBar->SetCaption("CodeLite");
+    m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines", 24));
+    m_captionBar->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 24));
+    m_captionBar->Bind(wxEVT_CAPTION_ACTION_BUTTON, [this](wxCommandEvent& event) {
+        wxUnusedVar(event);
+        wxMenu action_menu;
+#if defined(__WXMSW__) || defined(__WXGTK__)
+        action_menu.Append(XRCID("action_show_menu_bar"), _("Show Menu Bar"), wxEmptyString, wxITEM_CHECK);
+        action_menu.Check(XRCID("action_show_menu_bar"), GetMainMenuBar()->IsShown());
+        action_menu.Bind(
+            wxEVT_MENU, [this](wxCommandEvent& e) { GetMainMenuBar()->Show(e.IsChecked()); },
+            XRCID("action_show_menu_bar"));
+#endif
+        action_menu.Append(XRCID("action_show_tool_bar"), _("Show Tool Bar"), wxEmptyString, wxITEM_CHECK);
+        action_menu.Check(XRCID("action_show_tool_bar"), GetMainToolBar()->IsShown());
+        action_menu.Bind(
+            wxEVT_MENU, [this](wxCommandEvent& e) { GetMainToolBar()->Show(e.IsChecked()); },
+            XRCID("action_show_tool_bar"));
 
+        bool is_output_pane_visible = false;
+        wxAuiPaneInfo& info = m_mgr.GetPane("Output View");
+        if(info.IsOk()) {
+            is_output_pane_visible = info.IsShown();
+        }
+
+        action_menu.Append(XRCID("show_output_pane"), _("Show Output View "), wxEmptyString, wxITEM_CHECK);
+        action_menu.Check(XRCID("show_output_pane"), is_output_pane_visible);
+        action_menu.Bind(
+            wxEVT_MENU, [this](wxCommandEvent& e) { ViewPane("Output View", e.IsChecked()); },
+            XRCID("show_output_pane"));
+
+        m_captionBar->ShowMenuForActionButton(&action_menu);
+        PostSizeEvent();
+    });
+#endif
+
+    // add menu bar
 #if !wxUSE_NATIVE_MENUBAR
     // replace the menu bar with our customer menu bar
     wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar(wxT("main_menu"));
     m_menuBar = new clThemedMenuBar(this, 0, nullptr, nullptr);
-    GetSizer()->Insert(0, m_menuBar, 0, wxEXPAND);
+    GetSizer()->Add(m_menuBar, 0, wxEXPAND);
     m_menuBar->FromMenuBar(mb);
     SetMenuBar(nullptr);
 #else
@@ -1097,13 +1137,15 @@ void clMainFrame::CreateGUIControls()
         view->Remove(item);
     }
 #endif
-
-    // Under wxGTK < 2.9.4 we need this wrapper class to avoid warnings on ubuntu when codelite exits
     SetMenuBar(m_menuBar);
 #endif
 
     bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
     DoShowMenuBar(showMenuBar);
+
+    // add the toolbars sizer
+    m_toolbarsSizer = new wxBoxSizer(wxVERTICAL);
+    GetSizer()->Add(m_toolbarsSizer, 0, wxEXPAND);
 
     // Create the status bar
     m_statusBar = new clStatusBar(this, PluginManager::Get());
@@ -1291,8 +1333,10 @@ void clMainFrame::CreateGUIControls()
     m_mgr.Update();
     SetAutoLayout(true);
 
-    // try to locate the build tools
+    // add the managed panel to the AUI manager
+    GetSizer()->Add(m_mainPanel, 1, wxEXPAND);
 
+    // try to locate the build tools
     long fix(1);
     fix = EditorConfigST::Get()->GetInteger(wxT("FixBuildToolOnStartup"), fix);
     if(fix) {
@@ -1376,7 +1420,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     // create the standard toolbar
     //----------------------------------------------
     if(m_toolbar) {
-        GetSizer()->Detach(m_toolbar);
+        m_toolbarsSizer->Detach(m_toolbar);
         wxDELETE(m_toolbar);
     }
 
@@ -1444,13 +1488,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
                        images->Add(wxT("start-debugger"), toolSize), _("Start or Continue debugger"));
     m_toolbar->AddSpacer();
-
-    size_t insert_index = 0;
-    wxSizerItem* sizer_item = GetSizer()->GetItem((size_t)0);
-    if(sizer_item->GetWindow() == GetMainMenuBar()) {
-        insert_index = 1;
-    }
-    GetSizer()->Insert(insert_index, m_toolbar, 0, wxEXPAND);
+    m_toolbarsSizer->Insert(0, m_toolbar, 0, wxEXPAND);
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
@@ -1586,7 +1624,6 @@ bool clMainFrame::IsEditorEvent(wxEvent& event)
     }
 
 #else
-
     // Handle common edit events
     // if the focused window is *not* clEditor,
     // and the focused windows is of type
@@ -4036,6 +4073,9 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
 
     // Update the title
     SetTitle(titleEvent.GetString());
+#if wxUSE_CUSTOM_CAPTIONBAR
+    m_captionBar->SetCaption(titleEvent.GetString());
+#endif
 }
 
 void clMainFrame::OnBuildWorkspace(wxCommandEvent& e)
@@ -6076,6 +6116,13 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
 {
     event.Skip();
     clBitmaps::Get().SysColoursChanged(); // Notify the bitmap manager that system colour has changed
+#if wxUSE_CUSTOM_CAPTIONBAR
+    clColours colours;
+    colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    colours.SetBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    colours.SetItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    m_captionBar->SetColours(colours);
+#endif
     DoSysColoursChanged();
 }
 

@@ -41,7 +41,6 @@ BuildTabTopPanel::BuildTabTopPanel(wxWindow* parent)
     : wxPanel(parent)
 {
     m_buildTab = dynamic_cast<NewBuildTab*>(parent);
-    BitmapLoader* bmps = clGetManager()->GetStdIcons();
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_toolbar = new clToolBar(this, wxID_ANY);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();

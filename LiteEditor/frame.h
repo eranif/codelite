@@ -28,6 +28,7 @@
 #include "EnvironmentVariablesDlg.h"
 #include "Notebook.h"
 #include "ZombieReaperPOSIX.h"
+#include "clCaptionBar.hpp"
 #include "clDockingManager.h"
 #include "clInfoBar.h"
 #include "clMainFrameHelper.h"
@@ -49,6 +50,7 @@
 #include "wx/combobox.h"
 #include "wx/frame.h"
 #include "wx/timer.h"
+#include "wxCustomControls.hpp"
 #include <set>
 #include <wx/cmndata.h>
 #include <wx/dcbuffer.h>
@@ -113,7 +115,7 @@ class clMainFrame : public wxFrame
     wxString m_defaultLayout;
     bool m_workspaceRetagIsRequired;
     bool m_loadLastSession;
-    wxSizer* m_horzSizer;
+    wxSizer* m_toolbarsSizer = nullptr;
     clThemedMenuBar* m_menuBar;
     wxMenu* m_bookmarksDropDownMenu;
     ThemeHandler m_themeHandler;
@@ -142,7 +144,9 @@ class clMainFrame : public wxFrame
     clToolBar* m_toolbar;
     DebuggerToolBar* m_debuggerToolbar = nullptr;
     clInfoBar* m_infoBar = nullptr;
-
+#if wxUSE_CUSTOM_CAPTIONBAR
+    clCaptionBar* m_captionBar = nullptr;
+#endif
 public:
     static bool m_initCompleted;
 

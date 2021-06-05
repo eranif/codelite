@@ -17,6 +17,7 @@ constexpr int SPACER = 5;
     }
 
 wxDEFINE_EVENT(wxEVT_CAPTION_ACTION_BUTTON, wxCommandEvent);
+wxDEFINE_EVENT(wxEVT_CAPTION_MOVE_END, wxCommandEvent);
 
 clCaptionBar::clCaptionBar(wxWindow* parent, wxTopLevelWindow* topLevelFrame)
     : wxWindow(parent, wxID_ANY)
@@ -201,6 +202,7 @@ void clCaptionBar::OnLeftDown(wxMouseEvent& e)
     }
 
     CaptureMouse();
+    SetCursor(wxCURSOR_SIZING);
     wxPoint pos = m_topLevelWindow->ClientToScreen(e.GetPosition());
     wxPoint origin = m_topLevelWindow->GetPosition();
     int dx = pos.x - origin.x;
@@ -212,7 +214,11 @@ void clCaptionBar::OnLeftUp(wxMouseEvent& e)
 {
     wxUnusedVar(e);
     if(HasCapture()) {
+        SetCursor(wxCURSOR_ARROW);
         ReleaseMouse();
+        wxCommandEvent move_event(wxEVT_CAPTION_MOVE_END);
+        move_event.SetEventObject(this);
+        GetEventHandler()->ProcessEvent(move_event);
     } else {
         auto ht = HitTest(e.GetPosition());
         if(ProcessCallback(m_leftUpCallbacks, ht)) {
@@ -239,7 +245,9 @@ void clCaptionBar::OnMotion(wxMouseEvent& e)
         if(e.Dragging() && e.LeftIsDown()) {
             wxPoint pt = e.GetPosition();
             wxPoint pos = m_topLevelWindow->ClientToScreen(pt);
-            m_topLevelWindow->Move(wxPoint(pos.x - m_delta.x, pos.y - m_delta.y));
+            wxPoint new_pos = wxPoint(pos.x - m_delta.x, pos.y - m_delta.y);
+            wxSize new_size = m_topLevelWindow->GetSize();
+            m_topLevelWindow->SetSize(wxRect(new_pos, new_size));
         }
     }
 }

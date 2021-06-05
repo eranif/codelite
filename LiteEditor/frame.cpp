@@ -1085,8 +1085,25 @@ void clMainFrame::CreateGUIControls()
     GetSizer()->Add(m_captionBar, 0, wxEXPAND);
     m_captionBar->SetOptions(wxCAPTION_STYLE_DEFAULT);
     m_captionBar->SetCaption("CodeLite");
-    m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines", 24));
+    m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines"));
     m_captionBar->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 24));
+    m_captionBar->Bind(wxEVT_CAPTION_MOVE_END, [this](wxCommandEvent& event) {
+        wxUnusedVar(event);
+#ifdef __WXMSW__
+        // Once a move event is completed from the caption bar
+        // it seems as if the coordinates of the internally managed
+        // windows in wxAUI are not updated this causes to weird behaviour
+        // e.g. scrollbars can not be access, since the UI thinks they
+        // are positioned elsewhere.
+        // We use this hack to a fore a layout by showing and hiding the navigation bar
+        // this seems to reset the coordinates
+        wxWindowUpdateLocker locker(this);
+        bool current_state = GetMainBook()->IsNavBarShown();
+        GetMainBook()->ShowNavBar(!current_state);
+        GetMainBook()->ShowNavBar(current_state);
+        SendSizeEvent();
+#endif
+    });
     m_captionBar->Bind(wxEVT_CAPTION_ACTION_BUTTON, [this](wxCommandEvent& event) {
         wxUnusedVar(event);
         wxMenu action_menu;

@@ -31,7 +31,11 @@
 #include "wx/sizer.h"
 #include <set>
 #include <vector>
+#include <wx/simplebook.h>
 
+#define wxUSE_WINDOWSTACK_SIMPLEBOOK 1
+
+#if !wxUSE_WINDOWSTACK_SIMPLEBOOK
 class WXDLLIMPEXP_SDK WindowStack : public wxWindow
 {
     std::vector<wxWindow*> m_windows;
@@ -59,5 +63,25 @@ public:
     bool IsEmpty() const { return m_windows.empty(); }
     wxWindow* GetSelected() const;
 };
+#else
+class WXDLLIMPEXP_SDK WindowStack : public wxSimplebook
+{
+    int FindPage(wxWindow* win) const;
 
+public:
+    WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY, bool useNativeThemeColours = false);
+    virtual ~WindowStack();
+
+    bool Add(wxWindow* win, bool select);
+    void Select(wxWindow* win);
+    void Clear();
+
+    bool Remove(wxWindow* win);
+
+    bool Contains(wxWindow* win);
+    bool IsEmpty() const { return GetPageCount() == 0; }
+    wxWindow* GetSelected() const;
+};
+
+#endif
 #endif // WINDOWSTACK_H

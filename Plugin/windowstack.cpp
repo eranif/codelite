@@ -31,6 +31,7 @@
 #include <wx/dcbuffer.h>
 #include <wx/wupdlock.h>
 
+#if !wxUSE_WINDOWSTACK_SIMPLEBOOK
 WindowStack::WindowStack(wxWindow* parent, wxWindowID id, bool useNativeThemeColours)
     : wxWindow(parent, id)
 {
@@ -108,18 +109,18 @@ int WindowStack::FindPage(wxWindow* page) const
 
 wxWindow* WindowStack::GetSelected() const { return m_activeWin; }
 
-void WindowStack::ChangeSelection(size_t index)
+int WindowStack::ChangeSelection(size_t index)
 {
     if(index >= m_windows.size()) {
-        return;
+        return wxNOT_FOUND;
     }
     DoSelect(m_windows[index]);
 }
 
-void WindowStack::DoSelect(wxWindow* win)
+int WindowStack::DoSelect(wxWindow* win)
 {
     if(!win) {
-        return;
+        return wxNOT_FOUND;
     }
     // Firsr, show the window
     win->SetSize(wxRect(0, 0, GetSize().x, GetSize().y));
@@ -158,3 +159,61 @@ void WindowStack::OnColoursChanged(clCommandEvent& event)
     event.Skip();
     SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 }
+#else
+WindowStack::WindowStack(wxWindow* parent, wxWindowID id, bool useNativeThemeColours)
+    : wxSimplebook(parent, id)
+{
+    wxUnusedVar(useNativeThemeColours);
+}
+
+WindowStack::~WindowStack() {}
+
+bool WindowStack::Add(wxWindow* win, bool select)
+{
+    if(!win || Contains(win)) {
+        return false;
+    }
+    win->Reparent(this);
+    return AddPage(win, wxEmptyString, select);
+}
+
+void WindowStack::Select(wxWindow* win)
+{
+    wxWindowUpdateLocker locker(this);
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        if(GetPage(i) == win) {
+            ChangeSelection(i);
+        }
+    }
+}
+
+int WindowStack::FindPage(wxWindow* win) const
+{
+    for(size_t i = 0; i < GetPageCount(); ++i) {
+        if(GetPage(i) == win) {
+            return i;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+void WindowStack::Clear() { DeleteAllPages(); }
+
+bool WindowStack::Remove(wxWindow* win)
+{
+    int index = FindPage(win);
+    if(index == wxNOT_FOUND) {
+        return false;
+    }
+    return RemovePage(index);
+}
+
+bool WindowStack::Contains(wxWindow* win) { return FindPage(win) != wxNOT_FOUND; }
+wxWindow* WindowStack::GetSelected() const
+{
+    if(GetSelection() == wxNOT_FOUND) {
+        return nullptr;
+    }
+    return GetPage(GetSelection());
+}
+#endif

@@ -40,6 +40,12 @@ void PSEnvironmentPage::OnCmdEvtVModified(wxCommandEvent& event)
     m_dlg->SetIsDirty(true);
 }
 
+void PSEnvironmentPage::OnStcEvtVModified(wxStyledTextEvent& event)
+{
+    event.Skip();
+    m_dlg->SetIsDirty(true);
+}
+
 void PSEnvironmentPage::Load(BuildConfigPtr buildConf)
 {
     ///////////////////////////////////////////////////////////////////////////

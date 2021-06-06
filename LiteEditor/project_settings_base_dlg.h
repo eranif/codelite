@@ -214,12 +214,13 @@ protected:
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseForDebuggerPath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnAddDebuggerSearchPath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteDebuggerSearchPath(wxCommandEvent& event) { event.Skip(); }
     virtual void OnDeleteDebuggerSearchPathUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStcEvtVModified(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnRemoteDebugUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
@@ -286,6 +287,7 @@ protected:
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStcEvtVModified(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText44() { return m_staticText44; }
@@ -310,7 +312,7 @@ protected:
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnBuildEventCharAdded(wxStyledTextEvent& event) { event.Skip(); }
+    virtual void OnStcEvtVModified(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText11() { return m_staticText11; }
@@ -406,6 +408,7 @@ protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnProjectCustumBuildUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCmdEvtVModified(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStcEvtVModified(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText25() { return m_staticText25; }
@@ -432,6 +435,7 @@ protected:
 
 protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnStcEvtVModified(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText47() { return m_staticText47; }

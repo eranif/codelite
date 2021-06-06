@@ -44,6 +44,12 @@ void PSCustomMakefileRulesPage::OnCmdEvtVModified( wxCommandEvent& event )
     m_dlg->SetIsDirty(true);
 }
 
+void PSCustomMakefileRulesPage::OnStcEvtVModified( wxStyledTextEvent& event )
+{
+    event.Skip();
+    m_dlg->SetIsDirty(true);
+}
+
 void PSCustomMakefileRulesPage::Load(BuildConfigPtr buildConf)
 {
     //set the custom pre-prebuild step

@@ -18,7 +18,11 @@ template <typename T> void ApplyTheme(T* ctrl)
         baseColour = clConfig::Get().Read("BaseColour", baseColour);
     } else {
         // we use the *native* background colour (notice that we are using wxSystemSettings)
+#ifdef __WXMSW__
+        baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+#else
         baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+#endif
     }
     colours.InitFromColour(baseColour);
 

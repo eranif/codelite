@@ -33,7 +33,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     wxColour base_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     bool is_dark = DrawingUtils::IsDark(base_colour);
 #if defined(__WXMSW__) || defined(__WXOSX__)
-    tabAreaColour = base_colour.ChangeLightness(is_dark ? 50 : 80);
+    tabAreaColour = base_colour.ChangeLightness(is_dark ? 60 : 90);
     activeTabBgColour = base_colour;
     activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
     activeTabPenColour = base_colour;

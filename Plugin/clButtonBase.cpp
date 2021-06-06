@@ -26,9 +26,7 @@
 #define RIGHT_ARROW L"\u276f  "
 
 #if wxUSE_NATIVE_BUTTON
-clButtonBase::clButtonBase()
-{
-}
+clButtonBase::clButtonBase() {}
 
 clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
                            const wxSize& size, long style, const wxValidator& validator, const wxString& name)
@@ -41,13 +39,9 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
 {
     return wxButton::Create(parent, id, label, pos, size, style, validator, name);
 }
-clButtonBase::~clButtonBase()
-{
-}
+clButtonBase::~clButtonBase() {}
 #else
-clButtonBase::clButtonBase()
-{
-}
+clButtonBase::clButtonBase() {}
 
 clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
                            const wxSize& size, long style, const wxValidator& validator, const wxString& name)
@@ -74,10 +68,7 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
     return true;
 }
 
-clButtonBase::~clButtonBase()
-{
-    UnBindEvents();
-}
+clButtonBase::~clButtonBase() { UnBindEvents(); }
 
 #endif
 
@@ -128,14 +119,11 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
         focusRect = focusRect.CenterIn(clientRect);
         dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 1, wxPENSTYLE_DOT));
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.DrawRoundedRectangle(focusRect, 3);
+        dc.DrawRoundedRectangle(focusRect, 0.0);
     }
 }
 
-void clButtonBase::OnErasebg(wxEraseEvent& event)
-{
-    wxUnusedVar(event);
-}
+void clButtonBase::OnErasebg(wxEraseEvent& event) { wxUnusedVar(event); }
 
 void clButtonBase::OnLeftDown(wxMouseEvent& event)
 {
@@ -226,7 +214,7 @@ void clButtonBase::Render(wxDC& dc)
     }
 
     // Draw the background
-    const int button_radius = GetSubText().empty() ? BUTTON_RADIUS : 5;
+    const int button_radius = BUTTON_RADIUS;
     if(!isDisabled) {
         if(IsNormal() || IsHover()) {
             // fill the button bg colour with gradient
@@ -517,9 +505,7 @@ size_t clButtonBase::GetDrawingFlags() const
     }
     return flags;
 }
-void clButtonBase::SetDefault()
-{
-}
+void clButtonBase::SetDefault() {}
 
 void clButtonBase::OnSize(wxSizeEvent& event)
 {
@@ -536,10 +522,7 @@ void clButtonBase::SetBitmap(const wxBitmap& bmp)
     Refresh();
 }
 
-const wxBitmap& clButtonBase::GetBitmap() const
-{
-    return m_bitmap;
-}
+const wxBitmap& clButtonBase::GetBitmap() const { return m_bitmap; }
 #endif
 
 void clButtonBase::SetHasDropDownMenu(bool hasDropDownMenu)

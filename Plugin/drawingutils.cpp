@@ -591,16 +591,11 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
 {
     // Calculate the circle radius:
     wxRect innerRect(rect);
-    wxColour buttonBgColour = wxColour("#E05A2B"); // Ubuntu orange 90%
-    wxColour borderColour = buttonBgColour.ChangeLightness(90);
-    wxColour xColour = buttonBgColour.ChangeLightness(50);
-
-#ifdef __WXOSX__
-    int penWidth = 1;
-#else
+    wxColour bg_colour = bgColouur;
+    bool is_dark = IsDark(bg_colour);
+    wxColour xColour = is_dark ? wxColour(*wxWHITE).ChangeLightness(90) : wxColour(*wxBLACK).ChangeLightness(120);
     int penWidth = 2;
-#endif
-    bool drawBackground = true;
+    bool drawBackground = false;
     switch(state) {
     case eButtonState::kNormal:
         break;
@@ -609,24 +604,27 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
         xColour = wxColour("GRAY");
         break;
     case eButtonState::kHover:
-        buttonBgColour = buttonBgColour.ChangeLightness(110);
+        drawBackground = true;
+        bg_colour = is_dark ? bg_colour.ChangeLightness(105) : bg_colour.ChangeLightness(95);
         break;
     case eButtonState::kPressed:
-        buttonBgColour = buttonBgColour.ChangeLightness(90);
+        drawBackground = true;
+        bg_colour = is_dark ? bg_colour.ChangeLightness(110) : bg_colour.ChangeLightness(90);
         break;
     default:
         break;
     }
 
+    wxRect xrect(rect);
+    wxRect bgRect = rect;
     if(drawBackground) {
-        dc.SetBrush(buttonBgColour);
-        dc.SetPen(borderColour);
-        dc.DrawRoundedRectangle(rect, 1.0);
+        bgRect.Inflate(2);
+        dc.SetBrush(bg_colour);
+        dc.SetPen(bg_colour);
+        dc.DrawRoundedRectangle(bgRect, 0.0);
     }
 
-    wxRect xrect(rect);
-    xrect.Deflate(rect.GetWidth() / 3);
-
+    xrect.Deflate(rect.GetWidth() / 4);
     xrect = xrect.CenterIn(rect);
 
     dc.SetPen(wxPen(xColour, penWidth));

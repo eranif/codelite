@@ -79,6 +79,9 @@
     <File Name="LanguageServerProtocol.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CustomControls">
+    <File Name="wxCustomControlsMSW.hpp"/>
+    <File Name="wxCustomControlsMacOS.hpp"/>
+    <File Name="wxCustomControlsGTK.hpp"/>
     <File Name="wxCustomControls.hpp"/>
     <File Name="clThemedComboBox.cpp"/>
     <File Name="clThemedComboBox.hpp"/>

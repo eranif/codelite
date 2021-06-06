@@ -350,7 +350,8 @@ void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo
     wxRect buttonRect = wxRect(tabInfo.m_bmpCloseX + tabInfo.GetRect().GetX(),
                                tabInfo.m_bmpCloseY + tabInfo.GetRect().GetY(), X_BUTTON_SIZE, X_BUTTON_SIZE);
     buttonRect = buttonRect.CenterIn(tabInfo.GetRect(), wxVERTICAL);
-    DrawingUtils::DrawButtonX(dc, win, buttonRect, colours.activeTabTextColour, colours.activeTabBgColour, state);
+    DrawingUtils::DrawButtonX(dc, win, buttonRect, colours.activeTabTextColour,
+                              tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour, state);
 }
 
 void clTabRenderer::DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours)

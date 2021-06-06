@@ -36,9 +36,9 @@ PSBuildEventsPage::PSBuildEventsPage(wxWindow* parent, bool preEvents, ProjectSe
 {
 }
 
-void PSBuildEventsPage::OnCmdEvtVModified(wxCommandEvent& event)
+void PSBuildEventsPage::OnStcEvtVModified(wxStyledTextEvent& event)
 {
-    wxUnusedVar(event);
+    event.Skip();
     m_dlg->SetIsDirty(true);
 }
 
@@ -67,9 +67,6 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
         cmdText.Append(wxT("\n"));
         m_textCtrlBuildEvents->AppendText(cmdText);
     }
-
-    m_textCtrlBuildEvents->Connect(wxEVT_COMMAND_TEXT_UPDATED,
-                                   wxCommandEventHandler(PSBuildEventsPage::OnCmdEvtVModified), NULL, this);
 }
 
 void PSBuildEventsPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
@@ -93,8 +90,3 @@ void PSBuildEventsPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSe
 
 void PSBuildEventsPage::Clear() { m_textCtrlBuildEvents->Clear(); }
 void PSBuildEventsPage::OnProjectEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_dlg->IsProjectEnabled()); }
-void PSBuildEventsPage::OnBuildEventCharAdded(wxStyledTextEvent& event)
-{
-    event.Skip();
-    m_dlg->SetIsDirty(true);
-}

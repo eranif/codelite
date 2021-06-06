@@ -44,6 +44,12 @@ void PSDebuggerPage::OnCmdEvtVModified( wxCommandEvent& event )
     m_dlg->SetIsDirty(true);
 }
 
+void PSDebuggerPage::OnStcEvtVModified( wxStyledTextEvent& event )
+{
+    event.Skip();
+    m_dlg->SetIsDirty(true);
+}
+
 void PSDebuggerPage::OnRemoteDebugUI( wxUpdateUIEvent& event )
 {
     event.Enable(m_checkBoxDbgRemote->IsChecked());

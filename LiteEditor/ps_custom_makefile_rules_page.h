@@ -45,6 +45,7 @@ protected:
     // Handlers for PSCustomMakefileBasePage events.
     void OnProjectCustumBuildUI( wxUpdateUIEvent& event );
     void OnCmdEvtVModified( wxCommandEvent& event );
+    void OnStcEvtVModified( wxStyledTextEvent& event );
 public:
     /** Constructor */
     PSCustomMakefileRulesPage( wxWindow* parent, ProjectSettingsDlg *dlg );

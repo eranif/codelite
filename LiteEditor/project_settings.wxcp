@@ -4441,7 +4441,14 @@
 															"m_label":	"Auto Complete Files:",
 															"m_value":	false
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_COMMAND_TEXT_UPDATED",
+															"m_eventClass":	"wxCommandEvent",
+															"m_eventHandler":	"wxCommandEventHandler",
+															"m_functionNameAndSignature":	"OnCmdEvtVModified(wxCommandEvent& event)",
+															"m_description":	"Respond to a wxEVT_COMMAND_TEXT_UPDATED event, generated when the text changes.\nNotice that this event will be sent when the text controls contents changes\n - whether this is due to user input or comes from the program itself\n(for example, if SetValue() is called); see ChangeValue() for a function which does not send this event.",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}, {
 													"m_type":	4400,
@@ -5358,7 +5365,14 @@
 																			"m_label":	"Keywords Set 5",
 																			"m_value":	""
 																		}],
-																	"m_events":	[],
+																	"m_events":	[{
+																			"m_eventName":	"wxEVT_STC_MODIFIED",
+																			"m_eventClass":	"wxStyledTextEvent",
+																			"m_eventHandler":	"wxStyledTextEventHandler",
+																			"m_functionNameAndSignature":	"OnStcEvtVModified(wxStyledTextEvent& event)",
+																			"m_description":	"Document modified",
+																			"m_noBody":	false
+																		}],
 																	"m_children":	[]
 																}]
 														}]
@@ -5663,7 +5677,14 @@
 																			"m_label":	"Keywords Set 5",
 																			"m_value":	""
 																		}],
-																	"m_events":	[],
+																	"m_events":	[{
+																			"m_eventName":	"wxEVT_STC_MODIFIED",
+																			"m_eventClass":	"wxStyledTextEvent",
+																			"m_eventHandler":	"wxStyledTextEventHandler",
+																			"m_functionNameAndSignature":	"OnStcEvtVModified(wxStyledTextEvent& event)",
+																			"m_description":	"Document modified",
+																			"m_noBody":	false
+																		}],
 																	"m_children":	[]
 																}]
 														}]
@@ -7569,7 +7590,14 @@
 													"m_label":	"Keywords Set 5",
 													"m_value":	""
 												}],
-											"m_events":	[],
+											"m_events":	[{
+													"m_eventName":	"wxEVT_STC_MODIFIED",
+													"m_eventClass":	"wxStyledTextEvent",
+													"m_eventHandler":	"wxStyledTextEventHandler",
+													"m_functionNameAndSignature":	"OnStcEvtVModified(wxStyledTextEvent& event)",
+													"m_description":	"Document modified",
+													"m_noBody":	false
+												}],
 											"m_children":	[]
 										}]
 								}]
@@ -8009,11 +8037,11 @@
 															"m_value":	""
 														}],
 													"m_events":	[{
-															"m_eventName":	"wxEVT_STC_CHARADDED",
+															"m_eventName":	"wxEVT_STC_MODIFIED",
 															"m_eventClass":	"wxStyledTextEvent",
 															"m_eventHandler":	"wxStyledTextEventHandler",
-															"m_functionNameAndSignature":	"OnBuildEventCharAdded(wxStyledTextEvent& event)",
-															"m_description":	"A char was added",
+															"m_functionNameAndSignature":	"OnStcEvtVModified(wxStyledTextEvent& event)",
+															"m_description":	"Document modified",
 															"m_noBody":	false
 														}],
 													"m_children":	[]
@@ -10796,7 +10824,14 @@
 															"m_label":	"Keywords Set 5",
 															"m_value":	""
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_STC_MODIFIED",
+															"m_eventClass":	"wxStyledTextEvent",
+															"m_eventHandler":	"wxStyledTextEventHandler",
+															"m_functionNameAndSignature":	"OnStcEvtVModified(wxStyledTextEvent& event)",
+															"m_description":	"Document modified",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}]
 										}, {
@@ -11406,7 +11441,14 @@
 															"m_label":	"Keywords Set 5",
 															"m_value":	""
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_STC_MODIFIED",
+															"m_eventClass":	"wxStyledTextEvent",
+															"m_eventHandler":	"wxStyledTextEventHandler",
+															"m_functionNameAndSignature":	"OnStcEvtVModified(wxStyledTextEvent& event)",
+															"m_description":	"Document modified",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}]
 										}]
@@ -11695,7 +11737,14 @@
 															"m_label":	"Keywords Set 5",
 															"m_value":	""
 														}],
-													"m_events":	[],
+													"m_events":	[{
+															"m_eventName":	"wxEVT_STC_MODIFIED",
+															"m_eventClass":	"wxStyledTextEvent",
+															"m_eventHandler":	"wxStyledTextEventHandler",
+															"m_functionNameAndSignature":	"OnStcEvtVModified(wxStyledTextEvent& event)",
+															"m_description":	"Document modified",
+															"m_noBody":	false
+														}],
 													"m_children":	[]
 												}, {
 													"m_type":	4401,

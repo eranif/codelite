@@ -753,6 +753,8 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
     }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnProjectEnabledUI), NULL, this);
+    m_textCtrlDebuggerPath->Connect(wxEVT_COMMAND_TEXT_UPDATED,
+                                    wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_button39->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                         wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
     m_dvListCtrlDebuggerSearchPaths->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
@@ -763,6 +765,10 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
                         wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
     m_button90->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI), NULL,
                         this);
+    m_textCtrlDbgCmds->Connect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(PSDebuggerPageBase::OnStcEvtVModified),
+                               NULL, this);
+    m_textCtrlDbgPostConnectCmds->Connect(wxEVT_STC_MODIFIED,
+                                          wxStyledTextEventHandler(PSDebuggerPageBase::OnStcEvtVModified), NULL, this);
     m_checkBoxDbgRemote->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                  wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_staticText31->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL, this);
@@ -784,6 +790,8 @@ PSDebuggerPageBase::PSDebuggerPageBase(wxWindow* parent, wxWindowID id, const wx
 PSDebuggerPageBase::~PSDebuggerPageBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnProjectEnabledUI), NULL, this);
+    m_textCtrlDebuggerPath->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
+                                       wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_button39->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                            wxCommandEventHandler(PSDebuggerPageBase::OnBrowseForDebuggerPath), NULL, this);
     m_dvListCtrlDebuggerSearchPaths->Disconnect(
@@ -794,6 +802,10 @@ PSDebuggerPageBase::~PSDebuggerPageBase()
                            wxCommandEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPath), NULL, this);
     m_button90->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnDeleteDebuggerSearchPathUI),
                            NULL, this);
+    m_textCtrlDbgCmds->Disconnect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(PSDebuggerPageBase::OnStcEvtVModified),
+                                  NULL, this);
+    m_textCtrlDbgPostConnectCmds->Disconnect(
+        wxEVT_STC_MODIFIED, wxStyledTextEventHandler(PSDebuggerPageBase::OnStcEvtVModified), NULL, this);
     m_checkBoxDbgRemote->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                     wxCommandEventHandler(PSDebuggerPageBase::OnCmdEvtVModified), NULL, this);
     m_staticText31->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSDebuggerPageBase::OnRemoteDebugUI), NULL,
@@ -991,6 +1003,8 @@ PSEnvironmentBasePage::PSEnvironmentBasePage(wxWindow* parent, wxWindowID id, co
                          NULL, this);
     m_choiceDbgEnv->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
                             wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
+    m_textCtrlEnvvars->Connect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(PSEnvironmentBasePage::OnStcEvtVModified),
+                               NULL, this);
 }
 
 PSEnvironmentBasePage::~PSEnvironmentBasePage()
@@ -1000,6 +1014,8 @@ PSEnvironmentBasePage::~PSEnvironmentBasePage()
                             wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
     m_choiceDbgEnv->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
                                wxCommandEventHandler(PSEnvironmentBasePage::OnCmdEvtVModified), NULL, this);
+    m_textCtrlEnvvars->Disconnect(wxEVT_STC_MODIFIED,
+                                  wxStyledTextEventHandler(PSEnvironmentBasePage::OnStcEvtVModified), NULL, this);
 }
 
 PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -1078,15 +1094,15 @@ PSBuildEventsBasePage::PSBuildEventsBasePage(wxWindow* parent, wxWindowID id, co
     }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSBuildEventsBasePage::OnProjectEnabledUI), NULL, this);
-    m_textCtrlBuildEvents->Connect(wxEVT_STC_CHARADDED,
-                                   wxStyledTextEventHandler(PSBuildEventsBasePage::OnBuildEventCharAdded), NULL, this);
+    m_textCtrlBuildEvents->Connect(wxEVT_STC_MODIFIED,
+                                   wxStyledTextEventHandler(PSBuildEventsBasePage::OnStcEvtVModified), NULL, this);
 }
 
 PSBuildEventsBasePage::~PSBuildEventsBasePage()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSBuildEventsBasePage::OnProjectEnabledUI), NULL, this);
-    m_textCtrlBuildEvents->Disconnect(
-        wxEVT_STC_CHARADDED, wxStyledTextEventHandler(PSBuildEventsBasePage::OnBuildEventCharAdded), NULL, this);
+    m_textCtrlBuildEvents->Disconnect(wxEVT_STC_MODIFIED,
+                                      wxStyledTextEventHandler(PSBuildEventsBasePage::OnStcEvtVModified), NULL, this);
 }
 
 PSCustomBuildBasePage::PSCustomBuildBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -1472,6 +1488,8 @@ PSCustomMakefileBasePage::PSCustomMakefileBasePage(wxWindow* parent, wxWindowID 
                         this);
     m_staticText26->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI),
                             NULL, this);
+    m_textPreBuildRule->Connect(wxEVT_STC_MODIFIED,
+                                wxStyledTextEventHandler(PSCustomMakefileBasePage::OnStcEvtVModified), NULL, this);
     m_staticText24->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI),
                             NULL, this);
 }
@@ -1487,6 +1505,8 @@ PSCustomMakefileBasePage::~PSCustomMakefileBasePage()
                            NULL, this);
     m_staticText26->Disconnect(wxEVT_UPDATE_UI,
                                wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
+    m_textPreBuildRule->Disconnect(wxEVT_STC_MODIFIED,
+                                   wxStyledTextEventHandler(PSCustomMakefileBasePage::OnStcEvtVModified), NULL, this);
     m_staticText24->Disconnect(wxEVT_UPDATE_UI,
                                wxUpdateUIEventHandler(PSCustomMakefileBasePage::OnProjectCustumBuildUI), NULL, this);
 }
@@ -1623,11 +1643,19 @@ PSCompletionBase::PSCompletionBase(wxWindow* parent, wxWindowID id, const wxPoin
     }
     // Connect events
     this->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompletionBase::OnProjectEnabledUI), NULL, this);
+    m_textCtrlSearchPaths->Connect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(PSCompletionBase::OnStcEvtVModified),
+                                   NULL, this);
+    m_textCtrlMacros->Connect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(PSCompletionBase::OnStcEvtVModified), NULL,
+                              this);
 }
 
 PSCompletionBase::~PSCompletionBase()
 {
     this->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSCompletionBase::OnProjectEnabledUI), NULL, this);
+    m_textCtrlSearchPaths->Disconnect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(PSCompletionBase::OnStcEvtVModified),
+                                      NULL, this);
+    m_textCtrlMacros->Disconnect(wxEVT_STC_MODIFIED, wxStyledTextEventHandler(PSCompletionBase::OnStcEvtVModified),
+                                 NULL, this);
 }
 
 ProjectCustomBuildTragetDlgBase::ProjectCustomBuildTragetDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,

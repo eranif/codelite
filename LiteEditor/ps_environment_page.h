@@ -45,6 +45,7 @@ protected:
     virtual void OnProjectEnabledUI(wxUpdateUIEvent& event);
     // Handlers for PSEnvironmentBasePage events.
     void OnCmdEvtVModified( wxCommandEvent& event );
+    void OnStcEvtVModified( wxStyledTextEvent& event );
 
 public:
     /** Constructor */

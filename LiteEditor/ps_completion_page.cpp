@@ -29,15 +29,13 @@
 PSCompletionPage::PSCompletionPage(wxWindow* parent, ProjectSettingsDlg* dlg)
     : PSCompletionBase(parent)
     , m_dlg(dlg)
-    , m_ccSettingsModified(false)
 {
 }
 
-void PSCompletionPage::OnCmdEvtVModified(wxCommandEvent& event)
+void PSCompletionPage::OnStcEvtVModified(wxStyledTextEvent& event)
 {
-    wxUnusedVar(event);
+    event.Skip();
     m_dlg->SetIsDirty(true);
-    m_ccSettingsModified = true;
 }
 
 void PSCompletionPage::Clear()
@@ -45,7 +43,6 @@ void PSCompletionPage::Clear()
     m_textCtrlSearchPaths->Clear();
     m_textCtrlMacros->Clear();
     m_textCtrlSearchPaths->Clear();
-    m_ccSettingsModified = false;
 }
 
 void PSCompletionPage::Load(BuildConfigPtr buildConf)
@@ -58,10 +55,6 @@ void PSCompletionPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSet
 {
     buildConf->SetClangPPFlags(m_textCtrlMacros->GetValue());
     buildConf->SetCcSearchPaths(m_textCtrlSearchPaths->GetValue());
-    // Save was requested
-    if(m_ccSettingsModified) {
-        m_ccSettingsModified = false;
-    }
 }
 
 void PSCompletionPage::OnBrowsePCH(wxCommandEvent& event) {}

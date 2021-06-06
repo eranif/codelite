@@ -326,7 +326,11 @@ void clCaptionBar::OnMouseDoubleClick(wxMouseEvent& e)
         if(m_topLevelWindow->IsMaximized()) {
             m_topLevelWindow->Restore();
         } else {
+#ifdef __WXMSW__
+            ShowWindowAsync(m_topLevelWindow->GetHWND(), SW_SHOWDEFAULT);
+#else
             m_topLevelWindow->Maximize();
+#endif
         }
     }
 }

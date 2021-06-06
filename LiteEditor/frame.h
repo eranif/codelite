@@ -144,9 +144,10 @@ class clMainFrame : public wxFrame
     clToolBar* m_toolbar;
     DebuggerToolBar* m_debuggerToolbar = nullptr;
     clInfoBar* m_infoBar = nullptr;
-#if wxUSE_CUSTOM_CAPTIONBAR
+#if !wxUSE_NATIVE_CAPTION
     clCaptionBar* m_captionBar = nullptr;
 #endif
+
 public:
     static bool m_initCompleted;
 

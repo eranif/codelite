@@ -1080,7 +1080,7 @@ void clMainFrame::CreateGUIControls()
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 
     // add the caption bar
-#if wxUSE_CUSTOM_CAPTIONBAR
+#if !wxUSE_NATIVE_CAPTION
     m_captionBar = new clCaptionBar(this, this);
     GetSizer()->Add(m_captionBar, 0, wxEXPAND);
     m_captionBar->SetOptions(wxCAPTION_STYLE_DEFAULT);
@@ -4090,7 +4090,7 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
 
     // Update the title
     SetTitle(titleEvent.GetString());
-#if wxUSE_CUSTOM_CAPTIONBAR
+#if !wxUSE_NATIVE_CAPTION
     m_captionBar->SetCaption(titleEvent.GetString());
 #endif
 }
@@ -6133,7 +6133,7 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
 {
     event.Skip();
     clBitmaps::Get().SysColoursChanged(); // Notify the bitmap manager that system colour has changed
-#if wxUSE_CUSTOM_CAPTIONBAR
+#if !wxUSE_NATIVE_CAPTION
     clColours colours;
     colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     colours.SetBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));

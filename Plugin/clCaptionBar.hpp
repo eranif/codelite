@@ -2,6 +2,7 @@
 #define CLCAPTIONBAR_HPP
 
 #include "wxCustomControls.hpp"
+#include <wx/window.h>
 #include <clColours.h>
 #include <codelite_exports.h>
 #include <unordered_map>
@@ -100,7 +101,7 @@ class WXDLLIMPEXP_SDK clCaptionBar : public wxWindow
 {
     friend class clCaptionButton;
     typedef void (clCaptionButton::*MouseCallback)(wxCaptionHitTest);
-    typedef std::unordered_map<wxCaptionHitTest, std::pair<clCaptionButton*, MouseCallback>> CallbackMap_t;
+    typedef std::unordered_map<int, std::pair<clCaptionButton*, MouseCallback>> CallbackMap_t;
 
 protected:
     clColours m_colours;

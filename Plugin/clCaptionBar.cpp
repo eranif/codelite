@@ -370,7 +370,7 @@ bool clCaptionBar::ProcessCallback(const CallbackMap_t& map, wxCaptionHitTest wh
         auto cb = p->second.second;
 
         if(This && cb) {
-            (This->*cb)(p->first);
+            (This->*cb)(where);
         }
         return true;
     } else {

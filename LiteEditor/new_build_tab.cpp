@@ -709,6 +709,8 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
         clBuildEvent eventErrorClicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
         eventErrorClicked.SetFileName(bli->GetFilenameRaw()); // pass the file name "raw" (i.e. unmodified by CodeLite)
         eventErrorClicked.SetLineNumber(bli->GetLineNumber());
+
+        clDEBUG() << "Sending build event click on file:" << eventErrorClicked.GetFileName() << endl;
         if(EventNotifier::Get()->ProcessEvent(eventErrorClicked)) {
             return true;
         }

@@ -73,6 +73,7 @@ RustPlugin::RustPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &RustPlugin::OnFolderContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_FS_NEW_WORKSPACE_FILE_CREATED, &RustPlugin::OnRustWorkspaceFileCreated, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RustPlugin::OnNewWorkspace, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RustPlugin::OnBuildErrorLineClicked, this);
     clWorkspaceManager::Get().RegisterWorkspace(new RustWorkspace());
 }
 
@@ -93,6 +94,7 @@ void RustPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &RustPlugin::OnFolderContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_FS_NEW_WORKSPACE_FILE_CREATED, &RustPlugin::OnRustWorkspaceFileCreated, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RustPlugin::OnNewWorkspace, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RustPlugin::OnBuildErrorLineClicked, this);
 }
 
 void RustPlugin::OnFolderContextMenu(clContextMenuEvent& event) { event.Skip(); }
@@ -115,6 +117,7 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
         }
         auto debug = settings.GetConfig("Debug");
         if(debug) {
+            clDEBUG() << "Setting project perferences..." << endl;
             debug->SetBuildTargets({ { "build", "cargo build" }, { "clean", "cargo clean" } });
             debug->SetExecutable("./target/debug/" + name);
             debug->SetFileExtensions(debug->GetFileExtensions() + ";*.rs;*.toml");
@@ -170,6 +173,52 @@ end
             if(!env_str.empty()) {
                 debug->SetEnvironment(env_str);
             }
+
+            // Create new "rustc" compiler and place compiler patterns to use
+            wxString error_pattern = R"re1(error\[.*?\]:(.*?)$)re1";
+            wxString error_pattern2 = R"re2(error:[ ]+(.*?))re2";
+            wxString warn_pattern = R"re2(-->[ ]*([a-zA-z\\\.]+):([\d]+):([\d]+))re2";
+
+            clDEBUG() << "Searching for rustc compiler..." << endl;
+            CompilerPtr rustc = BuildSettingsConfigST::Get()->GetCompiler("rustc");
+            if(!rustc || rustc->GetName() != "rustc") {
+                clDEBUG() << "Adding compiler: rustc" << endl;
+                // need to create it
+                rustc.Reset(new Compiler(nullptr));
+                rustc->SetCompilerFamily("Other");
+                rustc->SetName("rustc");
+                Compiler::CmpListInfoPattern errPatterns;
+                Compiler::CmpListInfoPattern warnPatterns;
+                {
+                    Compiler::CmpInfoPattern pattern;
+                    pattern.pattern = error_pattern;
+                    pattern.columnIndex = "-1";
+                    pattern.lineNumberIndex = "-1";
+                    pattern.fileNameIndex = "-1";
+                    errPatterns.push_back(pattern);
+                }
+                {
+                    Compiler::CmpInfoPattern pattern;
+                    pattern.pattern = error_pattern2;
+                    pattern.columnIndex = "-1";
+                    pattern.lineNumberIndex = "-1";
+                    pattern.fileNameIndex = "-1";
+                    errPatterns.push_back(pattern);
+                }
+
+                {
+                    Compiler::CmpInfoPattern pattern;
+                    pattern.pattern = warn_pattern;
+                    pattern.fileNameIndex = "1";
+                    pattern.lineNumberIndex = "2";
+                    pattern.columnIndex = "3";
+                    warnPatterns.push_back(pattern);
+                }
+                rustc->SetWarnPatterns(warnPatterns);
+                rustc->SetErrPatterns(errPatterns);
+                BuildSettingsConfigST::Get()->SetCompiler(rustc);
+            }
+            debug->SetCompiler("rustc");
         }
         settings.Save(workspaceFile);
     }
@@ -221,4 +270,30 @@ wxString RustPlugin::GetRustTool(const wxString& toolname) const
         return wxEmptyString;
     }
     return locator.GetRustTool(toolname);
+}
+
+void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
+{
+    if(!clFileSystemWorkspace::Get().IsOpen()) {
+        event.Skip();
+        return;
+    }
+
+    if(!FileExtManager::IsFileType(event.GetFileName(), FileExtManager::TypeRust)) {
+        event.Skip();
+        return;
+    }
+
+    //-->[ ]*([a-zA-z\\\.]+):([\d]+):([\d]+)
+    event.Skip(false);
+    clDEBUG() << "rust file clicked" << endl;
+
+    // build the file path:
+    // the compiler report the file in relative path to the workspace
+    wxString strfile = clFileSystemWorkspace::Get().GetFileName().GetPath();
+    strfile << wxFILE_SEP_PATH << event.GetFileName();
+    wxFileName fnFile(strfile);
+    if(fnFile.FileExists()) {
+        clGetManager()->OpenFile(fnFile.GetFullPath(), wxEmptyString, event.GetLineNumber());
+    }
 }

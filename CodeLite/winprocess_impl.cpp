@@ -212,7 +212,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& arg
                                   const wxString& workingDirectory, IProcessCallback* cb)
 {
     wxString cmd = __JoinArray(args, flags);
-    clDEBUG() << "Windows process starting:" << cmd << endl;
+    clDEBUG1() << "Windows process starting:" << cmd << endl;
     return Execute(parent, cmd, flags, workingDirectory, cb);
 }
 
@@ -362,7 +362,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
         siStartInfo.wShowWindow = SW_HIDE;
         creationFlags = CREATE_NEW_CONSOLE | CREATE_NEW_PROCESS_GROUP;
     }
-    clDEBUG() << "Running process:" << cmd << endl;
+    clDEBUG1() << "Running process:" << cmd << endl;
 
     BOOL ret = CreateProcess(NULL,
                              cmd.wchar_str(),   // shell line execution command

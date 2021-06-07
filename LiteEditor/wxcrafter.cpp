@@ -242,21 +242,21 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     gridSizer629->Add(m_cmdLnkBtnWorkspaces, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_cmdLnkBtnFilesMenu = new clThemedButton(m_panel191, wxID_ANY, _("Recent files"), _("Open a recently used file"),
+    m_cmdLnkBtnFilesMenu = new clThemedButton(m_panel191, wxID_ANY, _("Recent files"), _("Open a recently opened file"),
                                               wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnFilesMenu->SetToolTip(_("Open a file from the revcently opened files"));
+    m_cmdLnkBtnFilesMenu->SetToolTip(_("Open a file from the recently opened files list"));
 
     gridSizer629->Add(m_cmdLnkBtnFilesMenu, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_cmdLnkBtnForum = new clThemedButton(m_panel191, wxID_ANY, _("Forums"), _("Visit codelite's forums"),
-                                          wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
+    m_cmdLnkBtnForum = new clThemedButton(m_panel191, wxID_ANY, _("Forums"), _("Visit our forums"), wxDefaultPosition,
+                                          wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
     m_cmdLnkBtnForum->SetToolTip(_("Click to open a web browser in CodeLite's forums"));
 
     gridSizer629->Add(m_cmdLnkBtnForum, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_cmdLnkBtnWiki = new clThemedButton(m_panel191, wxID_ANY, _("Wiki"), _("Search codelite's wiki pages"),
+    m_cmdLnkBtnWiki = new clThemedButton(m_panel191, wxID_ANY, _("Docs"), _("Browse the documentation"),
                                          wxDefaultPosition, wxDLG_UNIT(m_panel191, wxSize(-1, -1)), wxBU_LEFT);
-    m_cmdLnkBtnWiki->SetToolTip(_("Click to open a web browser in CodeLite's wiki main documentation page"));
+    m_cmdLnkBtnWiki->SetToolTip(_("Click to open a web browser in CodeLite's documentation page"));
 
     gridSizer629->Add(m_cmdLnkBtnWiki, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

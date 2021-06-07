@@ -66,7 +66,7 @@ void WelcomePage::OnOpenForums(wxCommandEvent& event)
 void WelcomePage::OnOpenWiki(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    ::wxLaunchDefaultBrowser("http://wiki.codelite.org");
+    ::wxLaunchDefaultBrowser("https://docs.codelite.org");
 }
 
 void WelcomePage::OnSize(wxSizeEvent& event)
@@ -194,7 +194,4 @@ void WelcomePage::OnOpenWorkspace(wxCommandEvent& event)
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
 }
 
-void WelcomePage::DoOpenFile(const wxString& filename)
-{
-    clMainFrame::Get()->GetMainBook()->OpenFile(filename);
-}
+void WelcomePage::DoOpenFile(const wxString& filename) { clMainFrame::Get()->GetMainBook()->OpenFile(filename); }

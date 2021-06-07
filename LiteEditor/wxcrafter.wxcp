@@ -2389,7 +2389,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Tooltip:",
-																					"m_value":	"Open a file from the revcently opened files"
+																					"m_value":	"Open a file from the recently opened files list"
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Bg Colour:",
@@ -2433,7 +2433,7 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Note",
-																					"m_value":	"Open a recently used file"
+																					"m_value":	"Open a recently opened file"
 																				}, {
 																					"type":	"bitmapPicker",
 																					"m_label":	"Bitmap File:",
@@ -2530,7 +2530,7 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Note",
-																					"m_value":	"Visit codelite's forums"
+																					"m_value":	"Visit our forums"
 																				}, {
 																					"type":	"bitmapPicker",
 																					"m_label":	"Bitmap File:",
@@ -2576,7 +2576,7 @@
 																				}, {
 																					"type":	"multi-string",
 																					"m_label":	"Tooltip:",
-																					"m_value":	"Click to open a web browser in CodeLite's wiki main documentation page"
+																					"m_value":	"Click to open a web browser in CodeLite's documentation page"
 																				}, {
 																					"type":	"colour",
 																					"m_label":	"Bg Colour:",
@@ -2616,11 +2616,11 @@
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Label:",
-																					"m_value":	"Wiki"
+																					"m_value":	"Docs"
 																				}, {
 																					"type":	"string",
 																					"m_label":	"Note",
-																					"m_value":	"Search codelite's wiki pages"
+																					"m_value":	"Browse the documentation"
 																				}, {
 																					"type":	"bitmapPicker",
 																					"m_label":	"Bitmap File:",

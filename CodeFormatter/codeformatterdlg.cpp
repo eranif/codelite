@@ -121,6 +121,12 @@ void CodeFormatterDlg::InitDialog()
         phpLexer->Apply(m_textCtrlPreview_PhpCSFixer, true);
         phpLexer->Apply(m_textCtrlPreview_Phpcbf, true);
     }
+
+    LexerConf::Ptr_t textLexer = EditorConfigST::Get()->GetLexer("text");
+    if(textLexer) {
+        textLexer->Apply(m_stcRustConfig);
+    }
+
     m_textCtrlPreview->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
     m_textCtrlPreview_Clang->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
     m_stcPhpPreview->SetViewWhiteSpace(wxSTC_WS_VISIBLEALWAYS);
@@ -197,6 +203,11 @@ void CodeFormatterDlg::InitDialog()
 
     // User custom flags
     m_textCtrlUserFlags->ChangeValue(m_options.GetCustomFlags());
+
+    // rust settings
+    m_rustCommand->SetPath(m_options.GetRustCommand());
+    m_stcRustConfig->SetText(m_options.GetRustConfigContent());
+    m_textCtrlRustConfigPath->ChangeValue(m_options.GetRustConfigFile());
 }
 
 void CodeFormatterDlg::OnOK(wxCommandEvent& e)
@@ -208,6 +219,7 @@ void CodeFormatterDlg::OnOK(wxCommandEvent& e)
 #define ID_ASTYLE_HELP 1309
 #define ID_CLANG_FORMAST_HELP 1310
 #define ID_PHP_FORMAST_HELP 1311
+#define ID_RUSTFMT_HELP 1312
 
 void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 {
@@ -215,11 +227,13 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
     static wxString astyleHelpUrl(wxT("http://astyle.sourceforge.net/astyle.html"));
     static wxString clangFormatHelpUrl(wxT("http://clang.llvm.org/docs/ClangFormatStyleOptions.html"));
     static wxString phpFormatHelpUrl(wxT("https://github.com/FriendsOfPHP/PHP-CS-Fixer"));
+    static wxString rustfmtHelpUrl(wxT("https://rust-lang.github.io/rustfmt"));
 
     wxMenu menu;
     menu.Append(ID_ASTYLE_HELP, _("AStyle help page"));
     menu.Append(ID_CLANG_FORMAST_HELP, _("clang-format help page"));
     menu.Append(ID_PHP_FORMAST_HELP, _("PHP-CS-Fixer help page"));
+    menu.Append(ID_RUSTFMT_HELP, _("rustfmt help page"));
 
     wxRect size = m_buttonHelp->GetSize();
     wxPoint menuPos(0, size.GetHeight());
@@ -233,6 +247,8 @@ void CodeFormatterDlg::OnHelp(wxCommandEvent& e)
 
     } else if(res == ID_PHP_FORMAST_HELP) {
         ::wxLaunchDefaultBrowser(phpFormatHelpUrl);
+    } else if(res == ID_RUSTFMT_HELP) {
+        ::wxLaunchDefaultBrowser(rustfmtHelpUrl);
     }
 }
 
@@ -288,6 +304,11 @@ void CodeFormatterDlg::OnApply(wxCommandEvent& event)
 {
     m_isDirty = false;
     m_options.SetCustomFlags(m_textCtrlUserFlags->GetValue());
+
+    m_options.SetRustCommand(m_rustCommand->GetPath());
+    m_options.SetRustConfigContent(m_stcRustConfig->GetText());
+    m_options.SetRustConfigFile(m_textCtrlRustConfigPath->GetValue());
+
     m_mgr->GetConfigTool()->WriteObject(wxT("FormatterOptions"), &m_options);
     UpdatePreview();
 }
@@ -339,7 +360,9 @@ void CodeFormatterDlg::OnPgmgrclangPgChanged(wxPropertyGridEvent& event)
     size_t clangOptions(0);
     clangOptions |= m_pgPropClangFormatStyle->GetValue().GetInteger();
     clangOptions |= m_pgPropClangFormattingOptions->GetValue().GetInteger();
-    if(m_pgPropClangUseFile->GetValue().GetBool()) { clangOptions |= kClangFormatFile; }
+    if(m_pgPropClangUseFile->GetValue().GetBool()) {
+        clangOptions |= kClangFormatFile;
+    }
 
     m_options.SetClangFormatOptions(clangOptions);
     m_options.SetClangBreakBeforeBrace(m_pgPropClangBraceBreakStyle->GetValue().GetInteger());
@@ -375,7 +398,9 @@ void CodeFormatterDlg::OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event)
     m_options.SetPHPCSFixerPhar(m_filePickerPHPCsFixerPhar->GetValueAsString());
     m_options.SetPHPCSFixerPharOptions(m_pgPropPHPCsFixerOptions->GetValueAsString().Trim().Trim(false));
     size_t phpcsfixerSettings(0);
-    if(m_pgPropPHPCsFixerUseFile->GetValue().GetBool()) { phpcsfixerSettings |= kPHPFixserFormatFile; }
+    if(m_pgPropPHPCsFixerUseFile->GetValue().GetBool()) {
+        phpcsfixerSettings |= kPHPFixserFormatFile;
+    }
     m_options.SetPHPCSFixerPharSettings(phpcsfixerSettings);
     size_t phpcsfixerOptions(0);
     phpcsfixerOptions |= m_pgPropPHPCsFixerStandard->GetValue().GetInteger();
@@ -405,7 +430,9 @@ void CodeFormatterDlg::OnPgmgrPhpcbfPgChanged(wxPropertyGridEvent& event)
     m_options.SetPhpcbfStandard(m_pgPropPhpcbfStandard->GetValueAsString());
     size_t phpcbfOptions(0);
     phpcbfOptions |= m_pgPropPhpcbfOptions->GetValue().GetInteger();
-    if(m_pgPropPhpcbfUseFile->GetValue().GetBool()) { phpcbfOptions |= kPhpbcfFormatFile; }
+    if(m_pgPropPhpcbfUseFile->GetValue().GetBool()) {
+        phpcbfOptions |= kPhpbcfFormatFile;
+    }
     m_options.SetPhpcbfOptions(phpcbfOptions);
 
     CallAfter(&CodeFormatterDlg::UpdatePreview);

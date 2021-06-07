@@ -251,7 +251,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
     clEnvironment e(env);
     wxArrayString c = args;
 
-    clDEBUG() << "1: CreateAsyncProcess called with:" << c << endl;
+    clDEBUG1() << "1: CreateAsyncProcess called with:" << c << endl;
 
     if(flags & IProcessWrapInShell) {
         // wrap the command in OS specific terminal
@@ -266,7 +266,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
 
     // needed on linux where fork does not require the extra quoting
     __FixArgs(c);
-    clDEBUG() << "2: CreateAsyncProcess called with:" << c << endl;
+    clDEBUG1() << "2: CreateAsyncProcess called with:" << c << endl;
 
 #ifdef __WXMSW__
     return WinProcessImpl::Execute(parent, c, flags, workingDir);

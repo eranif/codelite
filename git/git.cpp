@@ -2694,7 +2694,6 @@ void GitPlugin::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     // Git the basic git blame
-    clDEBUG() << "Git: active editor changed" << clEndl;
     DoLoadBlameInfo(false);
 }
 
@@ -2702,6 +2701,10 @@ void GitPlugin::DoLoadBlameInfo(bool clearCache)
 {
     if(m_configFlags & GitEntry::Git_Hide_Blame_Status_Bar)
         return;
+
+    if(!IsGitEnabled()) {
+        return;
+    }
 
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);

@@ -225,6 +225,10 @@ FormatterEngine CodeFormatter::FindFormatter(const wxFileName& fileName)
         return kFormatEngineClangFormat;
     }
 
+    if(FileExtManager::IsFileType(fileName, FileExtManager::TypeRust)) {
+        return kFormatEngineRust;
+    }
+
     return kFormatEngineNone;
 }
 
@@ -249,7 +253,7 @@ bool CodeFormatter::CanFormatString(const FormatterEngine& engine)
 bool CodeFormatter::CanFormatFile(const FormatterEngine& engine)
 {
     if(engine == kFormatEngineClangFormat || engine == kFormatEnginePhpCsFixer || engine == kFormatEnginePhpcbf ||
-       engine == kFormatEngineWxXmlDocument) {
+       engine == kFormatEngineWxXmlDocument || engine == kFormatEngineRust) {
         return true;
     }
 
@@ -352,6 +356,8 @@ void CodeFormatter::DoFormatFile(const wxFileName& fileName, const FormatterEngi
         DoFormatWithPhpcbf(fileName);
     } else if(engine == kFormatEngineWxXmlDocument) {
         DoFormatWithWxXmlDocument(fileName);
+    } else if(engine == kFormatEngineRust) {
+        DoFormatWithRustfmt(fileName);
     }
 
     clDEBUG() << "CodeFormatte file formatted: " << fileName << clEndl;
@@ -431,6 +437,16 @@ void CodeFormatter::DoFormatWithClang(const wxFileName& fileName)
     }
 
     wxString command = m_options.ClangFormatCommand(fileName);
+    RunCommand(command);
+}
+
+void CodeFormatter::DoFormatWithRustfmt(const wxFileName& fileName)
+{
+    if(m_options.GetRustCommand().IsEmpty()) {
+        clWARNING() << "CodeFormatter: Missing rustfmt command" << clEndl;
+        return;
+    }
+    wxString command = m_options.RustfmtCommand(fileName);
     RunCommand(command);
 }
 

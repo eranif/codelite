@@ -11,7 +11,7 @@ bool clRustLocator::Locate()
 {
     wxString homedir;
     wxString toolname = "cargo";
-#ifdef __WXMSW__1
+#ifdef __WXMSW__
     // try common paths
     ::wxGetEnv("USERPROFILE", &homedir);
     wxFileName cargo_dir(homedir, wxEmptyString);

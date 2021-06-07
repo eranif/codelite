@@ -31,6 +31,7 @@
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
+#include "clRustLocator.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_standard_paths.h"
 #include "environmentconfig.h"
@@ -215,37 +216,9 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
 
 wxString RustPlugin::GetRustTool(const wxString& toolname) const
 {
-    wxString homedir;
-#ifdef __WXMSW__
-    // try common paths
-    ::wxGetEnv("USERPROFILE", &homedir);
-    wxFileName cargo_dir(homedir, wxEmptyString);
-    cargo_dir.AppendDir(".cargo");
-    std::vector<wxString> vpaths = { "C:\\msys64\\mingw64\\bin", "C:\\msys2\\mingw64\\bin",
-                                     cargo_dir.GetPath() + "\\bin" };
-    wxArrayString paths;
-    paths.reserve(3);
-    for(const auto& path : vpaths) {
-        paths.Add(path);
-    }
-
-    wxFileName tool_exe;
-    if(!FileUtils::FindExe(toolname, tool_exe, paths)) {
+    clRustLocator locator;
+    if(!locator.Locate()) {
         return wxEmptyString;
     }
-    return tool_exe.GetFullPath();
-#else
-    // try common paths
-    ::wxGetEnv("HOME", &homedir);
-    wxFileName cargo_dir(homedir, wxEmptyString);
-    cargo_dir.AppendDir(".cargo");
-    wxArrayString paths;
-    paths.Add(cargo_dir.GetPath());
-
-    wxFileName tool_exe;
-    if(!FileUtils::FindExe(toolname, tool_exe, paths)) {
-        return wxEmptyString;
-    }
-    return tool_exe.GetFullPath();
-#endif
+    return locator.GetRustTool(toolname);
 }

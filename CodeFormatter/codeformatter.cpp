@@ -50,6 +50,7 @@
 #include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>
 #include <wx/filename.h>
+#include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/xrc/xmlres.h>
 
@@ -274,17 +275,22 @@ void CodeFormatter::DoFormatEditor(IEditor* editor, int selStart, int selEnd)
     int cursorPosition = editor->GetCurrentPosition();
     FormatterEngine engine = FindFormatter(fileName);
 
-    wxString content;
-    if(selStart != wxNOT_FOUND && CanFormatSelection(engine)) {
-        content = editor->GetTextRange(selStart, selEnd);
-        DoFormatSelection(editor, content, engine, cursorPosition, selStart, selEnd);
+    if(engine == kFormatEngineRust) {
+        // special handling for rust
+        DoFormatWithRustfmt(editor, fileName);
     } else {
-        content = editor->GetEditorText();
-        DoFormatString(content, fileName, engine, cursorPosition);
-        selStart = wxNOT_FOUND;
-        selEnd = wxNOT_FOUND;
+        wxString content;
+        if(selStart != wxNOT_FOUND && CanFormatSelection(engine)) {
+            content = editor->GetTextRange(selStart, selEnd);
+            DoFormatSelection(editor, content, engine, cursorPosition, selStart, selEnd);
+        } else {
+            content = editor->GetEditorText();
+            DoFormatString(content, fileName, engine, cursorPosition);
+            selStart = wxNOT_FOUND;
+            selEnd = wxNOT_FOUND;
+        }
+        OverwriteEditorText(editor, content, cursorPosition, selStart, selEnd);
     }
-    OverwriteEditorText(editor, content, cursorPosition, selStart, selEnd);
 
     // Notify that a file was indented
     wxCommandEvent evtDone(wxEVT_CODEFORMATTER_INDENT_COMPLETED);
@@ -356,11 +362,8 @@ void CodeFormatter::DoFormatFile(const wxFileName& fileName, const FormatterEngi
         DoFormatWithPhpcbf(fileName);
     } else if(engine == kFormatEngineWxXmlDocument) {
         DoFormatWithWxXmlDocument(fileName);
-    } else if(engine == kFormatEngineRust) {
-        DoFormatWithRustfmt(fileName);
     }
-
-    clDEBUG() << "CodeFormatte file formatted: " << fileName << clEndl;
+    clDEBUG() << "CodeFormatter file formatted: " << fileName << clEndl;
 }
 
 void CodeFormatter::DoFormatSelection(IEditor* editor, wxString& content, const FormatterEngine& engine,
@@ -440,14 +443,45 @@ void CodeFormatter::DoFormatWithClang(const wxFileName& fileName)
     RunCommand(command);
 }
 
-void CodeFormatter::DoFormatWithRustfmt(const wxFileName& fileName)
+void CodeFormatter::DoFormatWithRustfmt(IEditor* editor, const wxFileName& fileName)
 {
     if(m_options.GetRustCommand().IsEmpty()) {
         clWARNING() << "CodeFormatter: Missing rustfmt command" << clEndl;
         return;
     }
+
+    // the problem with rustfmt is that we can not use a different file name
+    // but we might have modified changes in the editor
+    // to workaround this, we need to do the following:
+    // - save the editor content
+    // - format the file
+    // - overwrite the buffer with the modified version on the file system
+    bool undo = false;
+    if(editor->IsModified()) {
+        if(!editor->Save()) {
+            ::wxMessageBox(_("Failed to save file:\n") + fileName.GetFullPath(), "Source Code Formatter",
+                           wxOK | wxICON_ERROR);
+            return;
+        }
+        undo = true;
+    }
+
     wxString command = m_options.RustfmtCommand(fileName);
     RunCommand(command);
+
+    // revert the save we did earlier
+    if(undo) {
+        // restore the file to its state before we saved it
+        editor->GetCtrl()->Undo();
+    }
+
+    // read the formatted content
+    wxString fixedContent;
+    if(!FileUtils::ReadFileContent(fileName, fixedContent)) {
+        return;
+    }
+
+    OverwriteEditorText(editor, fixedContent, editor->GetCurrentPosition());
 }
 
 void CodeFormatter::DoFormatWithClang(wxString& content, const wxFileName& fileName, int& cursorPosition,

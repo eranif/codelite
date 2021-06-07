@@ -1034,10 +1034,10 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
     // convert the envlist into map
     auto envlist = FileUtils::CreateEnvironment(GetConfig()->GetEnvironment());
-    wxStringMap_t envmap;
-    envmap.reserve(envlist.size());
-    envmap.insert(envlist.begin(), envlist.end());
-    dbgr->Start(session_info, nullptr);
+//    wxStringMap_t envmap;
+//    envmap.reserve(envlist.size());
+//    envmap.insert(envlist.begin(), envlist.end());
+    dbgr->Start(session_info, &envlist);
 
     // Notify that debug session started
     // this will ensure that the debug layout is loaded

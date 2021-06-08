@@ -110,7 +110,7 @@ int clSocketBase::Read(char* buffer, size_t bufferSize, size_t& bytesRead, long 
         return kTimeout;
     }
     memset(buffer, 0, bufferSize);
-    const int res = recv(m_socket, buffer, bufferSize, 0);
+    const int res = ::recv(m_socket, buffer, bufferSize, 0);
 
     if(res < 0) {
         const int err = GetLastError();

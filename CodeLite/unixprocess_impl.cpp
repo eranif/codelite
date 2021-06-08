@@ -32,6 +32,7 @@
 #include <cstring>
 #include <string>
 #include <thread>
+#include <wx/buffer.h>
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
@@ -242,31 +243,43 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
     }
 }
 
-template <typename T> bool do_write(int fd, const T& buffer)
+namespace
+{
+bool do_write(int fd, const wxMemoryBuffer& buffer)
 {
     static constexpr int max_retry_count = 10;
     size_t bytes_written = 0;
-    size_t bytes_left = buffer.length();
+    size_t bytes_left = buffer.GetDataLen();
 
-    // construct helper socket class
-    clSocketBase socket;
-    socket.SetSocket(fd);
-    socket.SetCloseOnExit(false); // avoid closing the descriptor
-    try {
-        socket.Send(buffer);
-    } catch(clException& e) {
-        clERROR() << "do_write() error:" << e.What() << endl;
-        return false;
+    char* pdata = (char*)buffer.GetData();
+    std::string str(pdata, bytes_left);
+    clDEBUG1() << "do_write() buffer:" << str << endl;
+    clDEBUG1() << "do_write() length:" << str.length() << endl;
+    while(bytes_left) {
+        int bytes_sent = ::write(fd, (const char*)pdata, bytes_left);
+        clDEBUG1() << "::do_write() completed. number of bytes sent:" << bytes_sent << endl;
+        if(bytes_sent <= 0) {
+            return false;
+        }
+        pdata += bytes_sent;
+        bytes_left -= bytes_sent;
     }
     return true;
 }
+} // namespace
 
 bool UnixProcessImpl::Write(const std::string& buff) { return WriteRaw(buff + "\n"); }
 
 bool UnixProcessImpl::Write(const wxString& buff) { return Write(FileUtils::ToStdString(buff)); }
 
 bool UnixProcessImpl::WriteRaw(const wxString& buff) { return WriteRaw(FileUtils::ToStdString(buff)); }
-bool UnixProcessImpl::WriteRaw(const std::string& buff) { return do_write<std::string>(GetWriteHandle(), buff); }
+bool UnixProcessImpl::WriteRaw(const std::string& buff)
+{
+    int fd = GetWriteHandle();
+    wxMemoryBuffer mb;
+    mb.AppendData(buff.c_str(), buff.length());
+    return do_write(GetWriteHandle(), mb);
+}
 
 IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags,
                                    const wxString& workingDirectory, IProcessCallback* cb)
@@ -421,7 +434,11 @@ bool UnixProcessImpl::WriteToConsole(const wxString& buff)
     wxString tmpbuf = buff;
     tmpbuf.Trim().Trim(false);
     tmpbuf << "\n";
-    return do_write<wxString>(GetWriteHandle(), buff);
+    int fd = GetWriteHandle();
+    wxMemoryBuffer mb;
+    wxCharBuffer cb = buff.mb_str(wxConvUTF8).data();
+    mb.AppendData(cb.data(), cb.length());
+    return do_write(GetWriteHandle(), mb);
 }
 
 void UnixProcessImpl::Detach()

@@ -75,6 +75,7 @@ RustPlugin::RustPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RustPlugin::OnNewWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RustPlugin::OnBuildErrorLineClicked, this);
     clWorkspaceManager::Get().RegisterWorkspace(new RustWorkspace());
+    AddRustcCompilerIfMissing(); // make sure we got the rustc compiler if missing
 }
 
 RustPlugin::~RustPlugin() {}
@@ -173,51 +174,7 @@ end
             if(!env_str.empty()) {
                 debug->SetEnvironment(env_str);
             }
-
-            // Create new "rustc" compiler and place compiler patterns to use
-            wxString error_pattern = R"re1(error\[.*?\]:(.*?)$)re1";
-            wxString error_pattern2 = R"re2(error:[ ]+(.*?))re2";
-            wxString warn_pattern = R"re2(-->[ ]*([a-zA-z\\\.]+):([\d]+):([\d]+))re2";
-
-            clDEBUG() << "Searching for rustc compiler..." << endl;
-            CompilerPtr rustc = BuildSettingsConfigST::Get()->GetCompiler("rustc");
-            if(!rustc || rustc->GetName() != "rustc") {
-                clDEBUG() << "Adding compiler: rustc" << endl;
-                // need to create it
-                rustc.Reset(new Compiler(nullptr));
-                rustc->SetCompilerFamily("Other");
-                rustc->SetName("rustc");
-                Compiler::CmpListInfoPattern errPatterns;
-                Compiler::CmpListInfoPattern warnPatterns;
-                {
-                    Compiler::CmpInfoPattern pattern;
-                    pattern.pattern = error_pattern;
-                    pattern.columnIndex = "-1";
-                    pattern.lineNumberIndex = "-1";
-                    pattern.fileNameIndex = "-1";
-                    errPatterns.push_back(pattern);
-                }
-                {
-                    Compiler::CmpInfoPattern pattern;
-                    pattern.pattern = error_pattern2;
-                    pattern.columnIndex = "-1";
-                    pattern.lineNumberIndex = "-1";
-                    pattern.fileNameIndex = "-1";
-                    errPatterns.push_back(pattern);
-                }
-
-                {
-                    Compiler::CmpInfoPattern pattern;
-                    pattern.pattern = warn_pattern;
-                    pattern.fileNameIndex = "1";
-                    pattern.lineNumberIndex = "2";
-                    pattern.columnIndex = "3";
-                    warnPatterns.push_back(pattern);
-                }
-                rustc->SetWarnPatterns(warnPatterns);
-                rustc->SetErrPatterns(errPatterns);
-                BuildSettingsConfigST::Get()->SetCompiler(rustc);
-            }
+            AddRustcCompilerIfMissing();
             debug->SetCompiler("rustc");
         }
         settings.Save(workspaceFile);
@@ -284,7 +241,6 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
         return;
     }
 
-    //-->[ ]*([a-zA-z\\\.]+):([\d]+):([\d]+)
     event.Skip(false);
     clDEBUG() << "rust file clicked" << endl;
 
@@ -296,4 +252,55 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     if(fnFile.FileExists()) {
         clGetManager()->OpenFile(fnFile.GetFullPath(), wxEmptyString, event.GetLineNumber());
     }
+}
+
+void RustPlugin::AddRustcCompilerIfMissing()
+{
+    // Create new "rustc" compiler and place compiler patterns to use
+    wxString error_pattern = R"re1(error\[.*?\]:(.*?)$)re1";
+    wxString error_pattern2 = R"re2(error:[ ]+(.*?))re2";
+    wxString warn_pattern = R"re2(-->[ ]*([a-zA-z\\\.]+):([\d]+):([\d]+))re2";
+
+    clDEBUG() << "Searching for rustc compiler..." << endl;
+    if(BuildSettingsConfigST::Get()->IsCompilerExist("rustc")) {
+        clDEBUG() << "Compiler rustc already exists" << endl;
+        return;
+    }
+
+    clDEBUG() << "Adding compiler: rustc" << endl;
+    CompilerPtr rustc(new Compiler(nullptr));
+    // need to create it
+    rustc->SetCompilerFamily("Other");
+    rustc->SetName("rustc");
+    Compiler::CmpListInfoPattern errPatterns;
+    Compiler::CmpListInfoPattern warnPatterns;
+    {
+        Compiler::CmpInfoPattern pattern;
+        pattern.pattern = error_pattern;
+        pattern.columnIndex = "-1";
+        pattern.lineNumberIndex = "-1";
+        pattern.fileNameIndex = "-1";
+        errPatterns.push_back(pattern);
+    }
+    {
+        Compiler::CmpInfoPattern pattern;
+        pattern.pattern = error_pattern2;
+        pattern.columnIndex = "-1";
+        pattern.lineNumberIndex = "-1";
+        pattern.fileNameIndex = "-1";
+        errPatterns.push_back(pattern);
+    }
+
+    {
+        Compiler::CmpInfoPattern pattern;
+        pattern.pattern = warn_pattern;
+        pattern.fileNameIndex = "1";
+        pattern.lineNumberIndex = "2";
+        pattern.columnIndex = "3";
+        warnPatterns.push_back(pattern);
+    }
+    rustc->SetWarnPatterns(warnPatterns);
+    rustc->SetErrPatterns(errPatterns);
+    BuildSettingsConfigST::Get()->SetCompiler(rustc);
+    clDEBUG() << "Successfully added new compiler 'rustc'" << endl;
 }

@@ -44,6 +44,7 @@ protected:
     void OnNewWorkspace(clCommandEvent& e);
     wxString GetRustTool(const wxString& toolname) const;
     void OnBuildErrorLineClicked(clBuildEvent& event);
+    void AddRustcCompilerIfMissing();
 
 public:
     //--------------------------------------------

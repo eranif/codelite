@@ -23,9 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "JSON.h"
 #include "autoversion.h"
 #include "file_logger.h"
-#include "JSON.h"
 #include "precompiled_header.h"
 #include "procutils.h"
 #include "webupdatethread.h"
@@ -71,7 +71,9 @@ struct CodeLiteVersion {
 
         if((m_os == os) && (m_arch == arch) && (m_codename == codename)) {
             bool res = (m_version > nVersionNumber);
-            if(res) { clDEBUG() << "Found new version!" << clEndl; }
+            if(res) {
+                clDEBUG() << "Found new version!" << clEndl;
+            }
             return res;
         }
         return false;
@@ -164,6 +166,8 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
         codename = "Ubuntu 16.04";
     } else if(content.Contains("Ubuntu 18.04")) {
         codename = "Ubuntu 18.04";
+    } else if(content.Contains("Ubuntu 20.04")) {
+        codename = "Ubuntu 20.04";
     } else if(content.Contains("Debian GNU/Linux 8")) {
         codename = "Debian GNU/Linux 8";
     } else {
@@ -179,10 +183,10 @@ void WebUpdateJob::GetPlatformDetails(wxString& os, wxString& codename, wxString
 
 void WebUpdateJob::OnConnected(clCommandEvent& e)
 {
-    wxString message;
-    message << "GET /packages.json HTTP/1.1\r\n"
-            << "Host: www.codelite.org\r\n"
-            << "\r\n";
+    std::string message;
+    message.append("GET /packages.json HTTP/1.1\r\n");
+    message.append("Host: www.codelite.org\r\n");
+    message.append("\r\n");
     m_socket->Send(message);
 }
 
@@ -204,7 +208,7 @@ void WebUpdateJob::OnSocketError(clCommandEvent& e)
 {
     clDEBUG() << "WebUpdateJob: socket error:" << e.GetString() << clEndl;
     m_socket.reset(nullptr);
-    NotifyError("Socker error:" + e.GetString());
+    NotifyError("Socket error:" + e.GetString());
 }
 
 void WebUpdateJob::OnSocketInput(clCommandEvent& e)

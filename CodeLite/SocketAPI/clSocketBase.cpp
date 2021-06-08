@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "clSocketBase.h"
+#include "file_logger.h"
 #include <cerrno>
 #include <cstdio>
 #include <memory>
@@ -185,12 +186,19 @@ void clSocketBase::Send(const wxMemoryBuffer& msg)
     }
     char* pdata = (char*)msg.GetData();
     int bytesLeft = msg.GetDataLen();
+    
+    std::string str(pdata, bytesLeft);
+    clDEBUG1() << "Sending buffer:" << str << endl;
+    clDEBUG1() << "Message length:" << str.length() << endl;
     while(bytesLeft) {
-        if(SelectWriteMS(100) == kTimeout)
+        if(SelectWriteMS(100) == kTimeout) {
             continue;
-        int bytesSent = ::write(m_socket, (const char*)pdata, bytesLeft);
-        if(bytesSent <= 0)
+        }
+        int bytesSent = ::send(m_socket, (const char*)pdata, bytesLeft, 0);
+        clDEBUG1() << "::send() completed. number of bytes sent:" << bytesSent << endl;
+        if(bytesSent <= 0) {
             throw clSocketException("Send error: " + error());
+        }
         pdata += bytesSent;
         bytesLeft -= bytesSent;
     }
@@ -301,7 +309,7 @@ void clSocketBase::WriteMessage(const wxString& message)
     memset(msglen, 0, sizeof(msglen));
     sprintf(msglen, "%010d", len);
     // send it without the NULL byte
-    if(::write(m_socket, msglen, sizeof(msglen) - 1) < 0) {
+    if(::send(m_socket, msglen, sizeof(msglen) - 1, 0) < 0) {
         throw clSocketException("Send error: " + error(errno));
     }
 

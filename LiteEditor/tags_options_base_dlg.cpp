@@ -459,7 +459,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     boxSizer130->Add(m_staticText9, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_hyperlink1 = new wxHyperlinkCtrl(m_panelClangGeneral, wxID_ANY, _("Macros Handling"),
-                                       wxT("https://wiki.codelite.org/pmwiki.php/Main/MacrosHandling101"), wxDefaultPosition,
+                                       wxT("https://docs.codelite.org/code_completion/cxx/#tokens"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panelClangGeneral, wxSize(-1, -1)), wxHL_DEFAULT_STYLE);
 
     boxSizer130->Add(m_hyperlink1, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
@@ -587,7 +587,9 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("TagsOptionsBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

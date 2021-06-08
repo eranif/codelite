@@ -3973,7 +3973,7 @@
 																														}, {
 																															"type":	"string",
 																															"m_label":	"URL:",
-																															"m_value":	"https://wiki.codelite.org/pmwiki.php/Main/MacrosHandling101"
+																															"m_value":	"https://docs.codelite.org/code_completion/cxx/#tokens"
 																														}, {
 																															"type":	"colour",
 																															"m_label":	"Normal Colour:",

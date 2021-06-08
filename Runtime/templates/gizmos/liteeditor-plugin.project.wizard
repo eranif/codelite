@@ -51,7 +51,7 @@
             <General OutputFile="$(IntermediateDirectory)/$(ProjectName).dll" IntermediateDirectory="$(ConfigurationName)" 
                      Command="" CommandArguments="" WorkingDirectory="./ReleaseUnicode" 
                      PreCompiledHeader="../PCH/precompiled_header_release.h" PCHInCommandLine="yes" 
-                     PCHFlags="$(shell wx-config --cxxflags --debug=no) -O2" PCHFlagsPolicy="0"
+                     PCHFlags="$(shell wx-config --cxxflags --debug=no) -O2" PCHFlagsPolicy="1"
             />
             <Compiler Required="yes" Options="$(shell wx-config --cxxflags --debug=no ); -O2">
                 <IncludePath Value="."/>

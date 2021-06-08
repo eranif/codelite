@@ -81,7 +81,7 @@ void clComboBox::DoCreate(const wxString& value)
     if(m_cbStyle & wxCB_READONLY) {
         m_textCtrl->SetEditable(false);
     }
-    GetSizer()->Add(m_button, 0,  wxALIGN_CENTER_VERTICAL | wxALL, 1);
+    GetSizer()->Add(m_button, 0, wxALIGN_CENTER_VERTICAL | wxALL, 1);
     GetSizer()->Fit(this);
 }
 
@@ -165,7 +165,11 @@ void clComboBox::SetString(size_t n, const wxString& text)
     }
 }
 
-void clComboBox::SetValue(const wxString& text) { m_textCtrl->SetValue(text); }
+void clComboBox::SetValue(const wxString& text)
+{
+    m_textCtrl->SetValue(text);
+    SetStringSelection(text);
+}
 
 wxString clComboBox::GetStringSelection() const { return m_textCtrl->GetValue(); }
 

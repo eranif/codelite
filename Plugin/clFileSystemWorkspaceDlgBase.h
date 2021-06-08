@@ -23,9 +23,11 @@
 #include <wx/panel.h>
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
+#include <wx/combobox.h>
+#include <wx/arrstr.h>
+#include "clThemedComboBox.hpp"
 #include "clThemedSTC.hpp"
 #include <wx/choice.h>
-#include <wx/arrstr.h>
 #include "clThemedChoice.h"
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
@@ -107,7 +109,7 @@ protected:
     wxNotebook* m_notebook;
     wxPanel* m_panelGeneral;
     wxStaticText* m_staticText109;
-    wxTextCtrl* m_textCtrlExec;
+    clThemedComboBox* m_comboBoxExecutable;
     wxButton* m_button241;
     wxStaticText* m_staticText191;
     wxTextCtrl* m_textCtrlWD;
@@ -169,7 +171,7 @@ protected:
 
 public:
     wxStaticText* GetStaticText109() { return m_staticText109; }
-    wxTextCtrl* GetTextCtrlExec() { return m_textCtrlExec; }
+    clThemedComboBox* GetComboBoxExecutable() { return m_comboBoxExecutable; }
     wxButton* GetButton241() { return m_button241; }
     wxStaticText* GetStaticText191() { return m_staticText191; }
     wxTextCtrl* GetTextCtrlWD() { return m_textCtrlWD; }

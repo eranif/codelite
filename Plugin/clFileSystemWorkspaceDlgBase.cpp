@@ -261,14 +261,14 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer33->Add(boxSizer238, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_textCtrlExec = new wxTextCtrl(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
-                                    wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
-    m_textCtrlExec->SetFocus();
+    wxArrayString m_comboBoxExecutableArr;
+    m_comboBoxExecutable = new clThemedComboBox(m_panelGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
+                                                wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_comboBoxExecutableArr, 0);
 #if wxVERSION_NUMBER >= 3000
-    m_textCtrlExec->SetHint(wxT(""));
+    m_comboBoxExecutable->SetHint(wxT(""));
 #endif
 
-    boxSizer238->Add(m_textCtrlExec, 1, wxALL, WXC_FROM_DIP(5));
+    boxSizer238->Add(m_comboBoxExecutable, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_button241 = new wxButton(m_panelGeneral, wxID_ANY, _("..."), wxDefaultPosition,
                                wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), wxBU_EXACTFIT);

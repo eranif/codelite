@@ -38,6 +38,7 @@ protected:
     wxString m_excludePaths;
     wxString m_debuggerPath;
     wxString m_debuggerCommands;
+    wxArrayString m_lastExecutables;
 
 public:
     typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
@@ -120,6 +121,8 @@ public:
     void SetDebuggerPath(const wxString& debuggerPath) { this->m_debuggerPath = debuggerPath; }
     const wxString& GetDebuggerCommands() const { return m_debuggerCommands; }
     const wxString& GetDebuggerPath() const { return m_debuggerPath; }
+    void SetLastExecutables(const wxArrayString& lastExecutables) { this->m_lastExecutables = lastExecutables; }
+    const wxArrayString& GetLastExecutables() const { return m_lastExecutables; }
 };
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings

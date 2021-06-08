@@ -70,6 +70,7 @@ std::pair<JSONItem, JSONItem> clFileSystemWorkspaceConfig::ToJSON() const
     local.addProperty("workingDirectory", m_workingDirectory);
     local.addProperty("debuggerPath", m_debuggerPath);
     local.addProperty("debuggerCommands", m_debuggerCommands);
+    local.addProperty("last_executables", m_lastExecutables);
     return { shared, local };
 }
 
@@ -98,6 +99,7 @@ void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
     m_flags = json["flags"].toSize_t(m_flags);
     m_compileFlags = json["compile_flags"].toArrayString();
     m_executable = json["executable"].toString();
+    m_lastExecutables = json["last_executables"].toArrayString();
     m_args = json["arguments"].toString();
     m_environment = json["environment"].toString();
     m_compiler = json["compiler"].toString(m_compiler);

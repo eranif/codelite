@@ -45,7 +45,14 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
 
     m_stcCCFlags->SetText(m_config->GetCompileFlagsAsString());
     m_textCtrlFileExt->ChangeValue(m_config->GetFileExtensions());
-    m_textCtrlExec->ChangeValue(m_config->GetExecutable());
+
+    if(m_config->GetLastExecutables().empty()) {
+        m_comboBoxExecutable->Append(m_config->GetExecutable());
+    } else {
+        m_comboBoxExecutable->Append(m_config->GetLastExecutables());
+    }
+    m_comboBoxExecutable->SetValue(m_config->GetExecutable());
+
     m_textCtrlArgs->ChangeValue(m_config->GetArgs());
     m_stcEnv->SetText(m_config->GetEnvironment());
     const auto& targets = m_config->GetBuildTargets();
@@ -134,7 +141,19 @@ void FSConfigPage::Save()
     m_config->SetBuildTargets(targets);
     m_config->SetCompileFlags(::wxStringTokenize(m_stcCCFlags->GetText(), "\r\n", wxTOKEN_STRTOK));
     m_config->SetFileExtensions(m_textCtrlFileExt->GetValue());
-    m_config->SetExecutable(m_textCtrlExec->GetValue());
+    m_config->SetExecutable(m_comboBoxExecutable->GetStringSelection());
+
+    wxArrayString last_executables = m_comboBoxExecutable->GetStrings();
+    if(last_executables.Index(m_comboBoxExecutable->GetValue()) == wxNOT_FOUND) {
+        last_executables.Insert(m_comboBoxExecutable->GetValue(), 0);
+    }
+    if(last_executables.size() > 10) {
+        wxArrayString small_arr;
+        small_arr.insert(small_arr.end(), last_executables.begin(), last_executables.begin() + 9);
+        last_executables.swap(small_arr);
+    }
+
+    m_config->SetLastExecutables(last_executables);
     m_config->SetEnvironment(m_stcEnv->GetText());
     m_config->SetArgs(m_textCtrlArgs->GetValue());
     m_config->SetCompiler(m_choiceCompiler->GetStringSelection());
@@ -271,7 +290,7 @@ void FSConfigPage::OnBrowseExec(wxCommandEvent& event)
     if(path.empty()) {
         return;
     }
-    m_textCtrlExec->ChangeValue(path);
+    m_comboBoxExecutable->SetValue(path);
 }
 
 void FSConfigPage::OnBrowseWD(wxCommandEvent& event)

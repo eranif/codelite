@@ -9,6 +9,7 @@
 #include "clTabRenderer.h"
 #include "clTabRendererClassic.h"
 #include "clTabRendererCurved.h"
+#include "clTabRendererFirefox.hpp"
 #include "clTabRendererGTK3.h"
 #include "clTabRendererSquare.h"
 #include "cl_config.h"
@@ -382,6 +383,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
         RegisterRenderer(new clTabRendererGTK3(win));
         RegisterRenderer(new clTabRendererClassic(win));
         RegisterRenderer(new clTabRendererCurved(win));
+        RegisterRenderer(new clTabRendererFirefox(win));
     }
 
     wxString tab = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
@@ -398,11 +400,21 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
 
 wxArrayString clTabRenderer::GetRenderers()
 {
+    if(ms_Renderes.empty()) {
+        RegisterRenderer(new clTabRendererSquare(nullptr));
+        RegisterRenderer(new clTabRendererGTK3(nullptr));
+        RegisterRenderer(new clTabRendererClassic(nullptr));
+        RegisterRenderer(new clTabRendererCurved(nullptr));
+        RegisterRenderer(new clTabRendererFirefox(nullptr));
+    }
+
     wxArrayString renderers;
-    renderers.Add("GTK3");
-    renderers.Add("MINIMAL");
-    renderers.Add("TRAPEZOID");
-    renderers.Add("DEFAULT");
+    renderers.reserve(ms_Renderes.size());
+
+    for(auto vt : ms_Renderes) {
+        renderers.Add(vt.first);
+    }
+    renderers.Sort();
     return renderers;
 }
 

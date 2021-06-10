@@ -249,14 +249,9 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         clDockArtGetColours(captionBgColour, penColour, textColour);
 
         // we inflat the rect by 1 to fix a one pixel glitch
-        pDC->SetPen(captionBgColour);
-        pDC->SetBrush(captionBgColour);
+        pDC->SetPen(*wxTRANSPARENT_PEN);
+        pDC->SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         tmpRect.Inflate(1);
-        pDC->DrawRectangle(tmpRect);
-
-        // restore the rect and draw with the border (pen)
-        tmpRect.Deflate(1);
-        pDC->SetPen(penColour);
         pDC->DrawRectangle(tmpRect);
 
         int caption_offset = 5;

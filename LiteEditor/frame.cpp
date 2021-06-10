@@ -6150,6 +6150,7 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     // update the bitmap as well
     m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines"));
 #endif
+    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     DoSysColoursChanged();
 }
 

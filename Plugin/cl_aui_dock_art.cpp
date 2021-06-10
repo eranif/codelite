@@ -80,17 +80,12 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 
 static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColour& textColour)
 {
-#ifdef __WXMSW__
-    bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(95);
-#else
-    bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).ChangeLightness(95);
-#endif
+    bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     if(!DrawingUtils::IsDark(bgColour)) {
         textColour = wxColour(*wxBLACK).ChangeLightness(130);
     } else {
         textColour = wxColour(*wxWHITE).ChangeLightness(70);
     }
-
     penColour = bgColour;
 }
 
@@ -251,7 +246,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         // we inflat the rect by 1 to fix a one pixel glitch
         pDC->SetPen(*wxTRANSPARENT_PEN);
         pDC->SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-        tmpRect.Inflate(1);
+        tmpRect.Inflate(2);
         pDC->DrawRectangle(tmpRect);
 
         int caption_offset = 5;

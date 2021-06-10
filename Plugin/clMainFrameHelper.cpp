@@ -13,7 +13,7 @@ clMainFrameHelper::clMainFrameHelper(clMainFrame* frame, clDockingManager* dockM
 
 clMainFrameHelper::~clMainFrameHelper() {}
 
-bool clMainFrameHelper::IsToolbarShown() const { return m_mainFrame->GetMainToolBar()->IsShown(); }
+bool clMainFrameHelper::IsToolbarShown() const { return m_mainFrame && m_mainFrame->GetMainToolBar()->IsShown(); }
 
 bool clMainFrameHelper::IsCaptionsVisible() const
 {
@@ -28,4 +28,4 @@ bool clMainFrameHelper::IsCaptionsVisible() const
     return false;
 }
 
-bool clMainFrameHelper::IsStatusBarVisible() const { return m_mainFrame->GetStatusBar()->IsShown(); }
+bool clMainFrameHelper::IsStatusBarVisible() const { return m_mainFrame && m_mainFrame->GetStatusBar()->IsShown(); }

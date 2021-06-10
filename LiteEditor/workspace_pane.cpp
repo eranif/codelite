@@ -117,7 +117,7 @@ void WorkspacePane::CreateGUIControls()
     }
 #endif
 
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxSize(300, -1), style);
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetWorkspaceTabsDirection());
     m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &WorkspacePane::OnWorkspaceBookFileListMenu, this);
 

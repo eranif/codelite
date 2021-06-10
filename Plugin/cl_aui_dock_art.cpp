@@ -83,10 +83,11 @@ static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColou
     bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
     if(!DrawingUtils::IsDark(bgColour)) {
         textColour = wxColour(*wxBLACK).ChangeLightness(130);
+        penColour = bgColour.ChangeLightness(150);
     } else {
         textColour = wxColour(*wxWHITE).ChangeLightness(70);
+        penColour = bgColour.ChangeLightness(110);
     }
-    penColour = bgColour;
 }
 
 static wxColour clDockArtSashColour()
@@ -250,7 +251,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         pDC->DrawRectangle(tmpRect);
 
         int caption_offset = 5;
-
         wxRect clip_rect = tmpRect;
         clip_rect.width -= caption_offset; // text offset
         clip_rect.width -= 2;              // button padding
@@ -286,10 +286,12 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
+    wxColour bgColour, penColour, textColour;
+    clDockArtGetColours(bgColour, penColour, textColour);
+    
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetPen(penColour);
     dc.DrawRectangle(rect);
-    // return wxAuiDefaultDockArt::DrawBorder(dc, window, rect, pane);
 }
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)

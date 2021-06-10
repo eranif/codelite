@@ -43,7 +43,8 @@ class GeneralInfo : public SerializedObject
 {
     wxSize m_frameSize;
     wxPoint m_framePos;
-    size_t m_flags = CL_MAXIMIZE_FRAME | CL_USE_EOL_LF;
+    size_t m_flags = CL_USE_EOL_LF;
+    wxRect m_defaultRect;
 
 public:
     GeneralInfo();
@@ -60,6 +61,8 @@ public:
 
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
+
+    const wxRect& GetDefaultRect() const { return m_defaultRect; }
 };
 
 #endif // GENERALINFO_H

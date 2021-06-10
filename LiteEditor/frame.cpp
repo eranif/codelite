@@ -967,31 +967,6 @@ void clMainFrame::Initialize(bool loadLastSession)
     GeneralInfo inf;
     cfg->ReadObject(wxT("GeneralInfo"), &inf);
 
-    int screenW = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
-    int screenH = wxSystemSettings::GetMetric(wxSYS_SCREEN_Y);
-
-    // validate the frame loaded pos & size
-    if(inf.GetFramePosition().x < 0 || inf.GetFramePosition().x > screenW) {
-        inf.SetFramePosition(wxPoint(30, 3));
-    }
-    if(inf.GetFramePosition().y < 0 || inf.GetFramePosition().y > screenH) {
-        inf.SetFramePosition(wxPoint(30, 3));
-    }
-
-    wxSize frameSize(inf.GetFrameSize());
-    if(inf.GetFrameSize().x < 600 || inf.GetFrameSize().x > screenW) {
-        frameSize.SetWidth(600);
-    }
-    if(inf.GetFrameSize().y < 400 || inf.GetFrameSize().y > screenH) {
-        frameSize.SetHeight(400);
-    }
-    inf.SetFrameSize(frameSize);
-
-#ifdef __WXOSX__
-    inf.SetFramePosition(wxPoint(30, 100));
-    inf.SetFrameSize(wxSize(600, 400));
-#endif
-
     m_theFrame = new clMainFrame(NULL, wxID_ANY, title, inf.GetFramePosition(), inf.GetFrameSize(),
                                  wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
     m_theFrame->m_frameGeneralInfo = inf;
@@ -1201,7 +1176,7 @@ void clMainFrame::CreateGUIControls()
                                        .Name(m_workspacePane->GetCaption())
                                        .Caption(m_workspacePane->GetCaption())
                                        .Left()
-                                       .BestSize(500, 300)
+                                       .MinSize(200, -1)
                                        .Layer(1)
                                        .Position(0)
                                        .CloseButton(true));
@@ -1359,6 +1334,8 @@ void clMainFrame::CreateGUIControls()
     if(fix) {
         UpdateBuildTools();
     }
+
+    ::clSetTLWindowBestSizeAndPosition(this);
 
     // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
     SendSizeEvent(wxSEND_EVENT_POST);

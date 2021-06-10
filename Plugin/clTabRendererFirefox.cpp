@@ -1,3 +1,4 @@
+#include "clSystemSettings.h"
 #include "clTabRendererFirefox.hpp"
 
 namespace
@@ -25,6 +26,13 @@ void clTabRendererFirefox::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     wxColour pen_colour = tabInfo.IsActive() ? colours.activeTabPenColour : colours.tabAreaColour;
     wxColour bg_colour = tabInfo.IsActive() ? colours.activeTabBgColour : colours.tabAreaColour;
 
+    bool is_dark_colours = DrawingUtils::IsDark(colours.activeTabBgColour);
+    if(is_dark_colours && tabInfo.IsActive()) {
+        pen_colour = pen_colour.ChangeLightness(110);
+    } else if(tabInfo.IsActive()) {
+        pen_colour = *wxWHITE;
+    }
+
     dc.SetPen(pen_colour);
     dc.SetBrush(bg_colour);
     dc.DrawRoundedRectangle(tabRect, TAB_RADIUS);
@@ -42,8 +50,14 @@ void clTabRendererFirefox::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
     // text and close button
     wxFont font = GetTabFont(false);
-    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
+    wxColour text_colour;
+    if(!is_dark_colours) {
+        text_colour = wxColour(*wxBLACK).ChangeLightness(130);
+    } else {
+        text_colour = wxColour(*wxWHITE).ChangeLightness(70);
+    }
+    fontDC.SetTextForeground(text_colour);
 
     wxRect rr = tabInfo.m_rect;
     wxString label = tabInfo.GetBestLabel(style);

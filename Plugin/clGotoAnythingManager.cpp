@@ -59,7 +59,13 @@ void clGotoAnythingManager::ShowDialog()
     evtSort.GetEntries().swap(evtShowing.GetEntries());
     EventNotifier::Get()->ProcessEvent(evtSort);
 
-    std::vector<clGotoEntry> entries = evtSort.GetEntries();
+#ifdef __WXMSW__
+    if(clGetManager()->GetActiveEditor()) {
+        clGetManager()->GetActiveEditor()->SetActive();
+    }
+#endif
+
+    const std::vector<clGotoEntry>& entries = evtSort.GetEntries();
     GotoAnythingDlg dlg(EventNotifier::Get()->TopFrame(), entries);
     dlg.ShowModal();
 }

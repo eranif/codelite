@@ -19,6 +19,7 @@ public:
               size_t style, eButtonState buttonState) override;
     void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                         const clTabColours& colours, size_t style) override;
+    bool IsVerticalTabSupported() const override { return true; }
 };
 
 #endif // CLTABRENDERERFIREFOX_HPP

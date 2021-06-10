@@ -14,6 +14,7 @@
 #include "clTabRendererSquare.h"
 #include "cl_config.h"
 #include "editor_config.h"
+#include "macros.h"
 #include "wxStringHash.h"
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>
@@ -388,14 +389,20 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
 
     wxString tab = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
     wxString name = tab.Upper();
-    if((tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs)) {
-        return clTabRenderer::Ptr_t(Create(win, "MINIMAL"));
+
+    clTabRenderer::Ptr_t renderer;
+    bool is_vertical = (tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs);
+    renderer.reset(Create(win, name));
+    
+    if(!renderer) {
+        renderer = Create(win, "DEFAULT");
+    } else {
+        // make sure the selected renderer supports vertical tabbing
+        if(is_vertical && !renderer->IsVerticalTabSupported()) {
+            renderer.reset(Create(win, "MINIMAL"));
+        }
     }
-    clTabRenderer* r = Create(win, name);
-    if(!r) {
-        r = Create(win, "DEFAULT");
-    }
-    return clTabRenderer::Ptr_t(r);
+    return renderer;
 }
 
 wxArrayString clTabRenderer::GetRenderers()

@@ -80,10 +80,18 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 
 static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColour& textColour)
 {
-    wxColour baseColour = DrawingUtils::GetMenuBarBgColour(false);
-    bgColour = baseColour.ChangeLightness(DrawingUtils::IsDark(baseColour) ? 110 : 90);
-    penColour = baseColour.ChangeLightness(80);
-    textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+#ifdef __WXMSW__
+    bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(95);
+#else
+    bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).ChangeLightness(95);
+#endif
+    if(!DrawingUtils::IsDark(bgColour)) {
+        textColour = wxColour(*wxBLACK).ChangeLightness(130);
+    } else {
+        textColour = wxColour(*wxWHITE).ChangeLightness(70);
+    }
+
+    penColour = bgColour;
 }
 
 static wxColour clDockArtSashColour()
@@ -177,6 +185,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
                                wxAuiPaneInfo& pane)
 {
     wxRect tmpRect;
+    window->PrepareDC(dc);
 
     if(!IsRectOK(dc, rect))
         return;
@@ -184,7 +193,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 #ifdef __WXOSX__
     tmpRect = rect;
     tmpRect.Inflate(1);
-    window->PrepareDC(dc);
 
     // Prepare the colours
     wxFont f = DrawingUtils::GetDefaultGuiFont();
@@ -193,17 +201,11 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     wxColour captionBgColour, penColour, textColour;
     clDockArtGetColours(captionBgColour, penColour, textColour);
 
-    dc.SetPen(penColour);
-    dc.SetBrush(captionBgColour);
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.DrawRectangle(tmpRect);
 
-    int caption_offset = 0;
-    if(pane.icon.IsOk()) {
-        DrawIcon(dc, tmpRect, pane);
-        caption_offset += pane.icon.GetWidth() + 3;
-    } else {
-        caption_offset = 3;
-    }
+    int caption_offset = 5;
     dc.SetTextForeground(textColour);
     wxCoord w, h;
     dc.GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
@@ -223,7 +225,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
     wxString draw_text = wxAuiChopText(dc, text, clip_rect.width);
     wxSize textSize = dc.GetTextExtent(draw_text);
-
     dc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
 #else
     tmpRect = rect;
@@ -290,12 +291,15 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
     dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.DrawRectangle(rect);
-    //return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
+    // return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
-    return wxAuiDefaultDockArt::DrawBorder(dc, window, rect, pane);
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.DrawRectangle(rect);
+    // return wxAuiDefaultDockArt::DrawBorder(dc, window, rect, pane);
 }
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)

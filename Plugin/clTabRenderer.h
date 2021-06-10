@@ -275,5 +275,9 @@ public:
     void SetName(const wxString& name) { this->m_name = name; }
     const wxString& GetName() const { return m_name; }
     virtual clTabRenderer* New(const wxWindow* parent) const = 0;
+    /**
+     * @brief return true if this renderer supports vertical tabs
+     */
+    virtual bool IsVerticalTabSupported() const = 0;
 };
 #endif // CLTABRENDERER_H

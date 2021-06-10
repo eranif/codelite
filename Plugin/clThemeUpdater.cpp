@@ -51,7 +51,6 @@ void clThemeUpdater::RegisterWindow(wxWindow* win)
         return;
     }
 
-    clDEBUG() << "clThemeUpdater::RegisterWindow(): is called:" << (unsigned long long)win << clEndl;
     // we want to know when this window is destroyed so we could remove it
 #ifdef __WXMSW__
     win->Bind(wxEVT_DESTROY, &clThemeUpdater::OnWindowDestroyed, this);
@@ -65,7 +64,6 @@ void clThemeUpdater::UnRegisterWindow(wxWindow* win)
 {
     if(m_windows.count(win)) {
         // disconnect the destory event
-        clDEBUG() << "clThemeUpdater::UnRegisterWindow(): is called:" << (unsigned long long)(win) << clEndl;
 #ifdef __WXMSW__
         win->Unbind(wxEVT_DESTROY, &clThemeUpdater::OnWindowDestroyed, this);
 #endif
@@ -78,7 +76,6 @@ void clThemeUpdater::OnWindowDestroyed(wxWindowDestroyEvent& event)
     event.Skip();
     auto iter = m_windows.find(event.GetWindow());
     if(iter != m_windows.end()) {
-        clDEBUG() << "clThemeUpdater::OnWindowDestroyed(): is called:" << (unsigned long long)(*iter) << clEndl;
         m_windows.erase(iter);
     }
 }

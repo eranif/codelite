@@ -7,6 +7,7 @@ set BIN_DIR=%CODELITE_SRC_DIR%\build-Win_x64_Release\bin
 set LIB_DIR=%CODELITE_SRC_DIR%\build-Win_x64_Release\lib
 set SDK_DIR==%CODELITE_SRC_DIR%\sdk
 set RUNTIME_DIR=%CODELITE_SRC_DIR%\Runtime
+set WXWIN=C:\src\wxWidgets
 
 ::IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
 IF EXIST ..\wxcrafter\wxcrafter.accelerators (set COPY_WXC_RESOURCES=1)

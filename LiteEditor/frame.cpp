@@ -1572,7 +1572,6 @@ void clMainFrame::Bootstrap()
     SessionManager::Get().Load(sessConfFile);
 
     EventNotifier::Get()->PostCommandEvent(wxEVT_INIT_DONE, NULL);
-
     // restore last session if needed
     if(clConfig::Get().Read(kConfigRestoreLastSession, true) && m_loadLastSession) {
         wxCommandEvent loadSessionEvent(wxEVT_LOAD_SESSION);
@@ -1812,6 +1811,10 @@ void clMainFrame::LoadSession(const wxString& sessionName)
             // no workspace to open, so just restore any previously open editors
             GetMainBook()->RestoreSession(session);
         }
+    }
+
+    if(GetMainBook()->GetActiveEditor()) {
+        GetMainBook()->GetActiveEditor()->SetActive();
     }
 }
 
@@ -5919,7 +5922,11 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
         wxNOT_FOUND);
 }
 
-void clMainFrame::OnGotoAnything(wxCommandEvent& e) { clGotoAnythingManager::Get().ShowDialog(); }
+void clMainFrame::OnGotoAnything(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    clGotoAnythingManager::Get().ShowDialog();
+}
 
 void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
 {

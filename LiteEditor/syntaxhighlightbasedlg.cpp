@@ -34,7 +34,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
-    m_panel171 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(600, 400)), wxTAB_TRAVERSAL);
+    m_panel171 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     bSizer1->Add(m_panel171, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -62,7 +62,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_panelGlobalColours->SetSizer(boxSizer82);
 
     wxStaticBoxSizer* staticBoxSizer179 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("IDE Theme")), wxVERTICAL);
+        new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Editor Colours")), wxVERTICAL);
 
     boxSizer82->Add(staticBoxSizer179, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -87,6 +87,55 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
           "override this by choosing a different colour here"));
 
     flexGridSizer181->Add(m_colourPickerBaseColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* staticBoxSizer188 =
+        new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Text Selection")), wxVERTICAL);
+
+    boxSizer82->Add(staticBoxSizer188, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
+    fgSizer3->SetFlexibleDirection(wxBOTH);
+    fgSizer3->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    fgSizer3->AddGrowableCol(1);
+
+    staticBoxSizer188->Add(fgSizer3, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText9 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Selected Text Background Colour:"),
+                                     wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText9, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_colourPickerSelTextBgColour =
+        new wxColourPickerCtrl(m_panelGlobalColours, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT),
+                               wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)),
+                               wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+
+    fgSizer3->Add(m_colourPickerSelTextBgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText94 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Use Custom Selection Foreground Colour:"),
+                                      wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText94, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+
+    m_checkBoxCustomSelectionFgColour = new wxCheckBox(m_panelGlobalColours, wxID_ANY, wxT(""), wxDefaultPosition,
+                                                       wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+    m_checkBoxCustomSelectionFgColour->SetValue(false);
+    m_checkBoxCustomSelectionFgColour->SetToolTip(
+        _("You can choose to override the default selection colouring by enabling this checkbox"));
+
+    fgSizer3->Add(m_checkBoxCustomSelectionFgColour, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(5));
+
+    m_staticText84 = new wxStaticText(m_panelGlobalColours, wxID_ANY, _("Selected Text Foreground Colour:"),
+                                      wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
+
+    fgSizer3->Add(m_staticText84, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_colourPickerSelTextFgColour =
+        new wxColourPickerCtrl(m_panelGlobalColours, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT),
+                               wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)),
+                               wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
+
+    fgSizer3->Add(m_colourPickerSelTextFgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer182 =
         new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Syntax Highlight")), wxVERTICAL);
@@ -383,57 +432,6 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     bSizer5->Add(m_button9, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_panelTextSelection =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelTextSelection, _("Text Selection"), false);
-
-    wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
-    m_panelTextSelection->SetSizer(bSizer7);
-
-    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
-    fgSizer3->SetFlexibleDirection(wxBOTH);
-    fgSizer3->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    fgSizer3->AddGrowableCol(1);
-
-    bSizer7->Add(fgSizer3, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText9 = new wxStaticText(m_panelTextSelection, wxID_ANY, _("Selected Text Background Colour:"),
-                                     wxDefaultPosition, wxDLG_UNIT(m_panelTextSelection, wxSize(-1, -1)), 0);
-
-    fgSizer3->Add(m_staticText9, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_colourPickerSelTextBgColour =
-        new wxColourPickerCtrl(m_panelTextSelection, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT),
-                               wxDefaultPosition, wxDLG_UNIT(m_panelTextSelection, wxSize(-1, -1)),
-                               wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
-
-    fgSizer3->Add(m_colourPickerSelTextBgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText94 = new wxStaticText(m_panelTextSelection, wxID_ANY, _("Use Custom Selection Foreground Colour:"),
-                                      wxDefaultPosition, wxDLG_UNIT(m_panelTextSelection, wxSize(-1, -1)), 0);
-
-    fgSizer3->Add(m_staticText94, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
-
-    m_checkBoxCustomSelectionFgColour = new wxCheckBox(m_panelTextSelection, wxID_ANY, wxT(""), wxDefaultPosition,
-                                                       wxDLG_UNIT(m_panelTextSelection, wxSize(-1, -1)), 0);
-    m_checkBoxCustomSelectionFgColour->SetValue(false);
-    m_checkBoxCustomSelectionFgColour->SetToolTip(
-        _("You can choose to override the default selection colouring by enabling this checkbox"));
-
-    fgSizer3->Add(m_checkBoxCustomSelectionFgColour, 0, wxALL | wxEXPAND | wxALIGN_RIGHT, WXC_FROM_DIP(5));
-
-    m_staticText84 = new wxStaticText(m_panelTextSelection, wxID_ANY, _("Selected Text Foreground Colour:"),
-                                      wxDefaultPosition, wxDLG_UNIT(m_panelTextSelection, wxSize(-1, -1)), 0);
-
-    fgSizer3->Add(m_staticText84, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_colourPickerSelTextFgColour =
-        new wxColourPickerCtrl(m_panelTextSelection, wxID_ANY, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT),
-                               wxDefaultPosition, wxDLG_UNIT(m_panelTextSelection, wxSize(-1, -1)),
-                               wxCLRP_SHOW_LABEL | wxCLRP_USE_TEXTCTRL | wxCLRP_DEFAULT_STYLE);
-
-    fgSizer3->Add(m_colourPickerSelTextFgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     wxBoxSizer* boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer173->Add(boxSizer19, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -476,6 +474,18 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_colourPickerBaseColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
                                       wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnCustomBaseColourPIcked),
                                       NULL, this);
+    m_colourPickerSelTextBgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
+                                           wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextChanged), NULL,
+                                           this);
+    m_checkBoxCustomSelectionFgColour->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                               wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomFgTextColour),
+                                               NULL, this);
+    m_staticText84->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
+    m_colourPickerSelTextFgColour->Connect(wxEVT_UPDATE_UI,
+                                           wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
+    m_colourPickerSelTextFgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
+                                           wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged), NULL,
+                                           this);
     m_fontPickerGlobal->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED,
                                 wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
@@ -514,18 +524,6 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
                        wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton3), NULL, this);
     m_button9->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                        wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton4), NULL, this);
-    m_colourPickerSelTextBgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                           wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextChanged), NULL,
-                                           this);
-    m_checkBoxCustomSelectionFgColour->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                               wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomFgTextColour),
-                                               NULL, this);
-    m_staticText84->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
-    m_colourPickerSelTextFgColour->Connect(wxEVT_UPDATE_UI,
-                                           wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
-    m_colourPickerSelTextFgColour->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                           wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged), NULL,
-                                           this);
     m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonOK), NULL,
                         this);
     m_buttonCancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonCancel),
@@ -548,6 +546,19 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
     m_colourPickerBaseColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
                                          wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnCustomBaseColourPIcked),
                                          NULL, this);
+    m_colourPickerSelTextBgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
+                                              wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextChanged),
+                                              NULL, this);
+    m_checkBoxCustomSelectionFgColour->Disconnect(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomFgTextColour), NULL,
+        this);
+    m_staticText84->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL,
+                               this);
+    m_colourPickerSelTextFgColour->Disconnect(
+        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
+    m_colourPickerSelTextFgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
+                                              wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged),
+                                              NULL, this);
     m_fontPickerGlobal->Disconnect(wxEVT_COMMAND_FONTPICKER_CHANGED,
                                    wxFontPickerEventHandler(SyntaxHighlightBaseDlg::OnGlobalFontSelected), NULL, this);
     m_choiceGlobalTheme->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
@@ -587,19 +598,6 @@ SyntaxHighlightBaseDlg::~SyntaxHighlightBaseDlg()
                           wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton3), NULL, this);
     m_button9->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                           wxCommandEventHandler(SyntaxHighlightBaseDlg::OnEditKeyWordsButton4), NULL, this);
-    m_colourPickerSelTextBgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                              wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextChanged),
-                                              NULL, this);
-    m_checkBoxCustomSelectionFgColour->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnUseCustomFgTextColour), NULL,
-        this);
-    m_staticText84->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL,
-                               this);
-    m_colourPickerSelTextFgColour->Disconnect(
-        wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SyntaxHighlightBaseDlg::OnTextSelFgUI), NULL, this);
-    m_colourPickerSelTextFgColour->Disconnect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-                                              wxColourPickerEventHandler(SyntaxHighlightBaseDlg::OnSelTextFgChanged),
-                                              NULL, this);
     m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SyntaxHighlightBaseDlg::OnButtonOK),
                            NULL, this);
     m_buttonCancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,

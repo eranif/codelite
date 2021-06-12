@@ -35,6 +35,7 @@
 #include "context_manager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "frame.h"
 #include "free_text_dialog.h"
@@ -538,6 +539,8 @@ void SyntaxHighlightDlg::CreateLexerPage()
     m_styleWithinPreProcessor->SetValue(initialStyleWithinPreProcessor);
 
     // Update selected text properties
+    clDEBUG() << "Setting theme:" << m_lexer->GetName() << "selection colour: bg:" << selTextProperties.GetBgColour()
+              << ", fg:" << selTextProperties.GetFgColour() << endl;
     m_colourPickerSelTextBgColour->SetColour(selTextProperties.GetBgColour());
     m_colourPickerSelTextFgColour->SetColour(selTextProperties.GetFgColour());
     m_checkBoxCustomSelectionFgColour->SetValue(m_lexer->IsUseCustomTextSelectionFgColour());
@@ -582,10 +585,7 @@ void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
     LoadLexer("");
 }
 
-void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_isModified);
-}
+void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isModified); }
 
 void SyntaxHighlightDlg::OnTextSelFgUI(wxUpdateUIEvent& event)
 {
@@ -733,10 +733,10 @@ void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
     m_globalThemeChanged = true;
     m_isModified = true;
     DoUpdatePreview();
-
     LexerConf::Ptr_t previewLexer =
         ColoursAndFontsManager::Get().GetLexer("text", m_choiceGlobalTheme->GetStringSelection());
 
+    LoadLexer(m_choiceGlobalTheme->GetStringSelection());
     if(previewLexer && previewLexer->IsDark() && m_cbUseCustomBaseColour->IsChecked()) {
         wxColour bgColour = ColoursAndFontsManager::Get().GetBackgroundColourFromLexer(previewLexer);
         m_colourPickerBaseColour->SetColour(bgColour);
@@ -771,9 +771,7 @@ void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
     m_bgColourPicker->SetColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 }
 
-void SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged()
-{
-}
+void SyntaxHighlightDlg::DoShowTooltipForGlobalBgColourChanged() {}
 
 void SyntaxHighlightDlg::DoExport(const wxArrayString& lexers)
 {
@@ -828,10 +826,7 @@ void SyntaxHighlightDlg::OnUseCustomBaseColour(wxCommandEvent& event)
     event.Skip();
 }
 
-bool SyntaxHighlightDlg::IsRestartRequired() const
-{
-    return false;
-}
+bool SyntaxHighlightDlg::IsRestartRequired() const { return false; }
 void SyntaxHighlightDlg::OnUseCustomBaseColourUI(wxUpdateUIEvent& event)
 {
 #if CL_USE_NATIVEBOOK

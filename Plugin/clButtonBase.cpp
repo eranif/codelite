@@ -180,7 +180,7 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
         wxRect clientRect = GetClientRect();
         wxRect focusRect = clientRect.Deflate(3);
         focusRect = focusRect.CenterIn(clientRect);
-        dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 1, wxPENSTYLE_SHORT_DASH));
+        dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 1, wxPENSTYLE_DOT));
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
         dc.DrawRoundedRectangle(focusRect, 0.0);
     }

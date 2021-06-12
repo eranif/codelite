@@ -252,8 +252,10 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
 
     wxPoint pt1 = clientRect.GetTopRight();
     wxPoint pt2 = clientRect.GetBottomRight();
+#ifndef __WXOSX__
     pt1.x -= 1;
     pt2.x -= 1;
+#endif
     dc.DrawLine(pt1, pt2);
 }
 

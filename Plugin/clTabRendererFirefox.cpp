@@ -3,7 +3,11 @@
 
 namespace
 {
+#ifdef __WXOSX__
+constexpr double TAB_RADIUS = 3.0;
+#else
 constexpr double TAB_RADIUS = 0.0;
+#endif
 }
 
 clTabRendererFirefox::clTabRendererFirefox(const wxWindow* parent)

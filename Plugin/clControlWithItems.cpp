@@ -39,9 +39,9 @@ private:
             return;
         }
         wxTreeItemId where = next ? tree->FindNext(tree->GetSelection(), m_textCtrl->GetValue(), 0,
-                                        wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM) :
-                                    tree->FindPrev(tree->GetSelection(), m_textCtrl->GetValue(), 0,
-                                        wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM);
+                                                   wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM)
+                                  : tree->FindPrev(tree->GetSelection(), m_textCtrl->GetValue(), 0,
+                                                   wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM);
         if(where.IsOk()) {
             clRowEntry* row = reinterpret_cast<clRowEntry*>(where.GetID());
             clMatchResult res = row->GetHighlightInfo();
@@ -68,12 +68,8 @@ public:
 #if USE_PANEL_PARENT
         : wxPanel(parent)
 #else
-        : wxMiniFrame(parent,
-              wxID_ANY,
-              "Find",
-              wxDefaultPosition,
-              wxDefaultSize,
-              wxFRAME_FLOAT_ON_PARENT | wxBORDER_SIMPLE)
+        : wxMiniFrame(parent, wxID_ANY, "Find", wxDefaultPosition, wxDefaultSize,
+                      wxFRAME_FLOAT_ON_PARENT | wxBORDER_SIMPLE)
 #endif
     {
         SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -82,8 +78,8 @@ public:
         mainPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
         int scrollBarWidth = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, parent);
         wxSize searchControlSize(GetParent()->GetSize().GetWidth() / 2 - scrollBarWidth, -1);
-        m_textCtrl = new wxTextCtrl(
-            mainPanel, wxID_ANY, "", wxDefaultPosition, searchControlSize, wxTE_RICH | wxTE_PROCESS_ENTER);
+        m_textCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition, searchControlSize,
+                                    wxTE_RICH | wxTE_PROCESS_ENTER);
         mainPanel->GetSizer()->Add(m_textCtrl, 0, wxEXPAND);
         m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
         m_textCtrl->Bind(wxEVT_TEXT, &clSearchControl::OnTextUpdated, this);
@@ -115,10 +111,7 @@ public:
         SetPosition(wxPoint(GetPosition().x, parentPt.y - m_textCtrl->GetSize().GetHeight()));
 #endif
     }
-    void DoSelectNone()
-    {
-        m_textCtrl->SelectNone();
-    }
+    void DoSelectNone() { m_textCtrl->SelectNone(); }
 
     void InitSearch(const wxChar& ch)
     {
@@ -136,15 +129,9 @@ public:
         CallAfter(&clSearchControl::InitSearch, ch);
     }
 
-    void SelectNext()
-    {
-        DoSelect(true);
-    }
+    void SelectNext() { DoSelect(true); }
 
-    void SelectPrev()
-    {
-        DoSelect(false);
-    }
+    void SelectPrev() { DoSelect(false); }
 
     void Dismiss()
     {
@@ -188,19 +175,14 @@ public:
     }
 };
 
-clControlWithItems::clControlWithItems(wxWindow* parent,
-    wxWindowID id,
-    const wxPoint& pos,
-    const wxSize& size,
-    long style)
+clControlWithItems::clControlWithItems(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                       long style)
     : clScrolledPanel(parent, id, pos, size, style)
 {
     DoInitialize();
 }
 
-clControlWithItems::clControlWithItems()
-{
-}
+clControlWithItems::clControlWithItems() {}
 
 bool clControlWithItems::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
@@ -244,10 +226,7 @@ void clControlWithItems::SetShowHeader(bool b)
     }
 }
 
-bool clControlWithItems::IsHeaderVisible() const
-{
-    return GetHeader() && GetHeader()->IsShown();
-}
+bool clControlWithItems::IsHeaderVisible() const { return GetHeader() && GetHeader()->IsShown(); }
 
 wxRect clControlWithItems::GetItemsRect() const
 {
@@ -281,15 +260,9 @@ int clControlWithItems::GetNumLineCanFitOnScreen() const
     return max_lines_on_screen;
 }
 
-clRowEntry* clControlWithItems::GetFirstItemOnScreen()
-{
-    return m_firstItemOnScreen;
-}
+clRowEntry* clControlWithItems::GetFirstItemOnScreen() { return m_firstItemOnScreen; }
 
-void clControlWithItems::SetFirstItemOnScreen(clRowEntry* item)
-{
-    m_firstItemOnScreen = item;
-}
+void clControlWithItems::SetFirstItemOnScreen(clRowEntry* item) { m_firstItemOnScreen = item; }
 
 void clControlWithItems::UpdateScrollBar()
 {
@@ -443,7 +416,7 @@ bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
         return true;
     }
     if(m_search.IsEnabled() && wxIsprint(event.GetUnicodeKey()) &&
-        (event.GetModifiers() == wxMOD_NONE || event.GetModifiers() == wxMOD_SHIFT)) {
+       (event.GetModifiers() == wxMOD_NONE || event.GetModifiers() == wxMOD_SHIFT)) {
         if(!m_searchControl) {
             m_searchControl = new clSearchControl(this);
         }
@@ -453,9 +426,7 @@ bool clControlWithItems::DoKeyDown(const wxKeyEvent& event)
     return false;
 }
 
-void clControlWithItems::SearchControlDismissed()
-{
-}
+void clControlWithItems::SearchControlDismissed() {}
 
 void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
 {
@@ -492,10 +463,7 @@ void clControlWithItems::DoMouseScroll(const wxMouseEvent& event)
     ScrollToRow(new_row);
 }
 
-clHeaderBar* clControlWithItems::GetHeader() const
-{
-    return m_viewHeader;
-}
+clHeaderBar* clControlWithItems::GetHeader() const { return m_viewHeader; }
 
 void clControlWithItems::DoPositionVScrollbar()
 {
@@ -523,10 +491,7 @@ void clControlWithItems::DoPositionVScrollbar()
     }
 }
 
-void clControlWithItems::DoPositionHScrollbar()
-{
-    clScrolledPanel::DoPositionHScrollbar();
-}
+void clControlWithItems::DoPositionHScrollbar() { clScrolledPanel::DoPositionHScrollbar(); }
 
 void clControlWithItems::SetColumnWidth(size_t col, int width)
 {
@@ -580,19 +545,12 @@ void clControlWithItems::SetColours(const clColours& colours)
 //===---------------------------------------------------
 // clSearchText
 //===---------------------------------------------------
-clSearchText::clSearchText()
-{
-}
+clSearchText::clSearchText() {}
 
-clSearchText::~clSearchText()
-{
-}
+clSearchText::~clSearchText() {}
 
-bool clSearchText::Matches(const wxString& findWhat,
-    size_t col,
-    const wxString& text,
-    size_t searchFlags,
-    clMatchResult* matches)
+bool clSearchText::Matches(const wxString& findWhat, size_t col, const wxString& text, size_t searchFlags,
+                           clMatchResult* matches)
 {
     wxString haystack = searchFlags & wxTR_SEARCH_ICASE ? text.Lower() : text;
     wxString needle = searchFlags & wxTR_SEARCH_ICASE ? findWhat.Lower() : findWhat;

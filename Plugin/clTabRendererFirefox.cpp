@@ -27,6 +27,8 @@ void clTabRendererFirefox::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     wxColour bg_colour = tabInfo.IsActive() ? colours.activeTabBgColour : colours.tabAreaColour;
 
     bool is_dark_colours = DrawingUtils::IsDark(colours.activeTabBgColour);
+    bool is_light_colours = !is_dark_colours;
+
     if(is_dark_colours && tabInfo.IsActive()) {
         pen_colour = pen_colour.ChangeLightness(110);
     } else if(tabInfo.IsActive()) {
@@ -52,10 +54,10 @@ void clTabRendererFirefox::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     wxFont font = GetTabFont(false);
     fontDC.SetFont(font);
     wxColour text_colour;
-    if(!is_dark_colours) {
-        text_colour = wxColour(*wxBLACK).ChangeLightness(130);
+    if(is_light_colours) {
+        text_colour = wxColour(*wxBLACK).ChangeLightness(tabInfo.IsActive() ? 130 : 140);
     } else {
-        text_colour = wxColour(*wxWHITE).ChangeLightness(70);
+        text_colour = wxColour(*wxWHITE).ChangeLightness(tabInfo.IsActive() ? 70 : 60);
     }
     fontDC.SetTextForeground(text_colour);
 

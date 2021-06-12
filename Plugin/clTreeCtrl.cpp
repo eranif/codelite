@@ -233,6 +233,17 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     if(GetHeader() && GetHeader()->IsShown()) {
         GetHeader()->Update();
     }
+
+    // draw a one pixel line at the top of the items area
+    // this gives a nice border and UI separation
+    wxColour border_colour;
+    if(GetColours().IsLightTheme()) {
+        border_colour = *wxWHITE;
+    } else {
+        border_colour = GetColours().GetBgColour().ChangeLightness(80);
+    }
+    dc.SetPen(border_colour);
+    dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
 }
 
 wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text,

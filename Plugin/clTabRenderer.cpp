@@ -42,7 +42,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     activeTabInnerPenColour = activeTabPenColour;
 
     // inactive tab colours
-    inactiveTabTextColour = activeTabTextColour;
+    inactiveTabTextColour = activeTabTextColour.ChangeLightness(is_dark ? 85 : 115);
     inactiveTabBgColour = tabAreaColour;
     inactiveTabPenColour = tabAreaColour.ChangeLightness(90);
     inactiveTabInnerPenColour = inactiveTabBgColour;
@@ -61,7 +61,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     activeTabInnerPenColour = activeTabBgColour;
 
     // inactive tab colours
-    inactiveTabTextColour = activeTabTextColour;
+    inactiveTabTextColour = activeTabTextColour.ChangeLightness(is_dark ? 85 : 115);
     inactiveTabBgColour = tabAreaColour.ChangeLightness(110);
     inactiveTabPenColour = activeTabPenColour.ChangeLightness(110);
     inactiveTabInnerPenColour = inactiveTabBgColour;
@@ -393,7 +393,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
     clTabRenderer::Ptr_t renderer;
     bool is_vertical = (tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs);
     renderer.reset(Create(win, name));
-    
+
     if(!renderer) {
         renderer = Create(win, "DEFAULT");
     } else {

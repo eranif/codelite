@@ -423,7 +423,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 wxRect buttonRect = GetButtonRect();
                 buttonRect.Deflate(1);
                 textXOffset += buttonRect.GetWidth();
-                if(m_tree->IsNativeTheme() && (!IS_OSX && !IS_MSW)) {
+                if((m_tree->IsNativeTheme() && !IS_OSX) || IS_MSW) {
                     int flags = wxCONTROL_CURRENT;
                     if(IsExpanded()) {
                         flags |= wxCONTROL_EXPANDED;
@@ -444,7 +444,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 
                     buttonRect.Deflate((buttonRect.GetWidth() / 3), (buttonRect.GetHeight() / 3));
                     wxRect tribtn = buttonRect;
-                    dc.SetPen(wxPen(buttonColour, GetSizeDIP(2, win)));
+                    dc.SetPen(wxPen(buttonColour, GetSizeDIP(1, win)));
                     if(IsExpanded()) {
                         tribtn.SetHeight(tribtn.GetHeight() - tribtn.GetHeight() / 2);
                         tribtn = tribtn.CenterIn(buttonRect);

@@ -1,38 +1,31 @@
 #include "clFileOrFolderDropTarget.h"
+#include "clSystemSettings.h"
 #include "clTreeCtrlPanelDefaultPage.h"
+#include "cl_config.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include <wx/app.h>
+#include <wx/dcbuffer.h>
 #include <wx/menu.h>
 #include <wx/settings.h>
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include "clSystemSettings.h"
-#include <wx/dcbuffer.h>
-#include "cl_config.h"
 
 clTreeCtrlPanelDefaultPage::clTreeCtrlPanelDefaultPage(wxWindow* parent)
     : clTreeCtrlPanelDefaultPageBase(parent)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    
-    wxColour bg = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-    m_colours.InitFromColour(bg);
-    if(clConfig::Get().Read("UseCustomBaseColour", false)) {
-        bg = clConfig::Get().Read("BaseColour", bg);
-        m_colours.InitFromColour(bg);
-    }
-    
     SetDropTarget(new clFileOrFolderDropTarget(parent));
-    m_staticText177->SetBackgroundColour(m_colours.GetBgColour());
-    m_staticText177->SetForegroundColour(m_colours.GetItemTextColour());
-    GetPanel169()->SetBackgroundColour(m_colours.GetBgColour());
-    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clTreeCtrlPanelDefaultPage::OnColoursChanged, this);
+
+    clCommandEvent dummy;
+    OnColoursChanged(dummy);
+
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clTreeCtrlPanelDefaultPage::OnColoursChanged, this);
     Bind(wxEVT_PAINT, &clTreeCtrlPanelDefaultPage::OnPaint, this);
 }
 
 clTreeCtrlPanelDefaultPage::~clTreeCtrlPanelDefaultPage()
 {
     Unbind(wxEVT_PAINT, &clTreeCtrlPanelDefaultPage::OnPaint, this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clTreeCtrlPanelDefaultPage::OnColoursChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clTreeCtrlPanelDefaultPage::OnColoursChanged, this);
 }
 
 void clTreeCtrlPanelDefaultPage::OnDefaultPageContextMenu(wxContextMenuEvent& event)
@@ -52,22 +45,15 @@ void clTreeCtrlPanelDefaultPage::OnOpenFolder(wxCommandEvent& event)
 void clTreeCtrlPanelDefaultPage::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC dc(this);
-    dc.SetBrush(m_colours.GetBgColour());
-    dc.SetPen(m_colours.GetBgColour());
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.DrawRectangle(GetClientRect());
 }
 
 void clTreeCtrlPanelDefaultPage::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    wxColour bg = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-    m_colours.InitFromColour(bg);
-    bool useCustom = clConfig::Get().Read("UseCustomBaseColour", false);
-    if(useCustom) {
-        bg = clConfig::Get().Read("BaseColour", bg);
-        m_colours.InitFromColour(bg);
-    }
-    m_staticText177->SetForegroundColour(m_colours.GetBgColour());
-    GetPanel169()->SetBackgroundColour(m_colours.GetBgColour());
-    m_staticText177->SetForegroundColour(m_colours.GetItemTextColour());
+    m_staticText177->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    m_staticText177->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+    GetPanel169()->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 }

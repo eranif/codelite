@@ -58,8 +58,6 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
 {
     m_treeBook->SetArt(clTabRenderer::CreateRenderer(m_treeBook, m_treeBook->GetStyle()));
     Initialize();
-    SetName("PreferencesDialog");
-    WindowAttrManager::Load(this);
     ::clSetTLWindowBestSizeAndPosition(this);
 }
 

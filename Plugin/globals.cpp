@@ -2176,6 +2176,7 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     tlw->SetSize(frameSize.GetSize());
     tlw->GetSizer()->Fit(win);
     tlw->CentreOnParent();
+    tlw->PostSizeEvent();
 }
 
 static void DoSetDialogSize(wxDialog* win, double factor)

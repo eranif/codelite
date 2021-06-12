@@ -20,10 +20,73 @@
 #ifdef __WXMSW__
 #define BUTTON_RADIUS 0.0
 #else
-#define BUTTON_RADIUS 3.0
+#define BUTTON_RADIUS 0.0
 #endif
 
 #define RIGHT_ARROW L"\u276f  "
+
+namespace
+{
+void GetLinePoints(const wxRect& rect, wxPoint* pt1, wxPoint* pt2, wxDirection direction)
+{
+    switch(direction) {
+    case wxUP:
+        *pt1 = rect.GetTopLeft();
+        *pt2 = rect.GetTopRight();
+        break;
+    case wxDOWN:
+        *pt1 = rect.GetBottomLeft();
+        *pt2 = rect.GetBottomRight();
+        break;
+    case wxRIGHT:
+        *pt1 = rect.GetRightTop();
+        *pt2 = rect.GetRightBottom();
+        break;
+    case wxLEFT:
+    default:
+        *pt1 = rect.GetLeftTop();
+        *pt2 = rect.GetLeftBottom();
+        break;
+    }
+}
+
+void DrawBorder(wxDC& dc, const wxRect& rect, bool is_pressed)
+{
+    wxColour base_colour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+    bool is_light = !DrawingUtils::IsDark(base_colour);
+    wxColour light_colour = base_colour.ChangeLightness(is_light ? 180 : 110);
+    wxColour dark_colour = base_colour.ChangeLightness(80);
+
+    wxPoint p1, p2;
+
+    // draw top / left dark lines
+    dc.SetPen(is_pressed ? dark_colour : light_colour);
+    GetLinePoints(rect, &p1, &p2, wxTOP);
+    dc.DrawLine(p1, p2);
+
+    GetLinePoints(rect, &p1, &p2, wxLEFT);
+    dc.DrawLine(p1, p2);
+
+    // draw down / right light lines
+    dc.SetPen(is_pressed ? light_colour : dark_colour);
+    GetLinePoints(rect, &p1, &p2, wxDOWN);
+    dc.DrawLine(p1, p2);
+
+    GetLinePoints(rect, &p1, &p2, wxRIGHT);
+    dc.DrawLine(p1, p2);
+}
+
+void DrawLabel(wxDC& dc, const wxRect& rr, const wxString& text, const wxColour& textColour)
+{
+    dc.SetTextForeground(textColour);
+    dc.SetClippingRegion(rr);
+    // Truncate the text to fit the drawing area
+    wxString fixedText;
+    DrawingUtils::TruncateText(text, rr.GetWidth(), dc, fixedText);
+    dc.DrawText(fixedText, rr.x, rr.y);
+    dc.DestroyClippingRegion();
+}
+} // namespace
 
 #if wxUSE_NATIVE_BUTTON
 clButtonBase::clButtonBase() {}
@@ -117,7 +180,7 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
         wxRect clientRect = GetClientRect();
         wxRect focusRect = clientRect.Deflate(3);
         focusRect = focusRect.CenterIn(clientRect);
-        dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 1, wxPENSTYLE_DOT));
+        dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 1, wxPENSTYLE_SHORT_DASH));
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
         dc.DrawRoundedRectangle(focusRect, 0.0);
     }
@@ -167,17 +230,6 @@ void clButtonBase::Initialise()
     SetSizeHints(GetBestSize());
 }
 
-static void DrawLabel(wxDC& dc, const wxRect& rr, const wxString& text, const wxColour& textColour)
-{
-    dc.SetTextForeground(textColour);
-    dc.SetClippingRegion(rr);
-    // Truncate the text to fit the drawing area
-    wxString fixedText;
-    DrawingUtils::TruncateText(text, rr.GetWidth(), dc, fixedText);
-    dc.DrawText(fixedText, rr.x, rr.y);
-    dc.DestroyClippingRegion();
-}
-
 void clButtonBase::Render(wxDC& dc)
 {
     wxRect clientRect = GetClientRect();
@@ -219,31 +271,23 @@ void clButtonBase::Render(wxDC& dc)
         if(IsNormal() || IsHover()) {
             // fill the button bg colour with gradient
             // draw the border
-            dc.SetPen(borderColour);
+            dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
             dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
             dc.DrawRoundedRectangle(rect, button_radius);
         } else if(m_state == eButtonState::kPressed) {
             // pressed button is drawns with flat bg colour and border
             wxColour pressedBgColour = bgColour.ChangeLightness(90);
-            borderColour = borderColour.ChangeLightness(70);
-            dc.SetPen(borderColour);
+            dc.SetPen(pressedBgColour);
             dc.SetBrush(pressedBgColour);
             dc.DrawRoundedRectangle(rect, button_radius);
         }
     } else {
         // Draw the button border
-        dc.SetPen(borderColour);
+        dc.SetPen(bgColour);
         dc.SetBrush(bgColour);
         dc.DrawRoundedRectangle(rect, button_radius);
     }
-
-    if(!isDisabled && !IsPressed()) {
-        wxColour topLineColour = isDark ? bgColour.ChangeLightness(115) : bgColour.ChangeLightness(150);
-        wxRect rr = rect;
-        rr.Deflate(2);
-        dc.SetPen(topLineColour);
-        dc.DrawLine(rr.GetTopLeft(), rr.GetTopRight());
-    }
+    DrawBorder(dc, rect, IsPressed());
 
     wxRect bitmap_rect;
     wxRect text_rect;
@@ -312,7 +356,7 @@ void clButtonBase::Render(wxDC& dc)
 
     // Setup some colours (text and dropdown)
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-    wxColour dropDownColour = textColour.ChangeLightness(isDark ? 90 : 110);
+    wxColour dropDownColour = textColour.ChangeLightness(isDark ? 80 : 120);
 
     if(isDisabled) {
         dropDownColour = textColour = m_colours.GetGrayText();

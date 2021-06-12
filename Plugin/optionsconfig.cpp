@@ -128,9 +128,9 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_outputTabsDirection(wxUP)
     , m_indentedComments(false)
 #ifdef __WXOSX__
-    , m_nbTabHeight(nbTabHt_Tiny)
+    , m_nbTabHeight(nbTabHt_Medium)
 #else
-    , m_nbTabHeight(nbTabHt_Short)
+    , m_nbTabHeight(nbTabHt_Tall)
 #endif
     , m_webSearchPrefix(wxT("https://www.google.com/search?q="))
     , m_smartParen(true)

@@ -27,7 +27,7 @@ clThemedListCtrlBase::clThemedListCtrlBase(wxWindow* parent, wxWindowID id, cons
                                            long style)
     : clDataViewListCtrl(parent, id, pos, size, (style | LIST_STYLE))
 {
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrlBase::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedListCtrlBase::OnThemeChanged, this);
     ApplyTheme();
 
     // Enable keyboard search
@@ -37,7 +37,7 @@ clThemedListCtrlBase::clThemedListCtrlBase(wxWindow* parent, wxWindowID id, cons
 clThemedListCtrlBase::~clThemedListCtrlBase()
 {
     m_keyboard.reset(nullptr);
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedListCtrlBase::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedListCtrlBase::OnThemeChanged, this);
 }
 
 void clThemedListCtrlBase::OnThemeChanged(wxCommandEvent& event)

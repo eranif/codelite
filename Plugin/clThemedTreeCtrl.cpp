@@ -20,7 +20,7 @@
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clTreeCtrl(parent, id, pos, size, style | TREE_STYLE)
 {
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
     m_keyboard.reset(new clTreeKeyboardInput(this));
 }
@@ -30,7 +30,7 @@ bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
     if(!clTreeCtrl::Create(parent, id, pos, size, style | TREE_STYLE)) {
         return false;
     }
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
     ApplyTheme();
     m_keyboard.reset(new clTreeKeyboardInput(this));
     return true;
@@ -41,7 +41,7 @@ clThemedTreeCtrl::clThemedTreeCtrl() {}
 clThemedTreeCtrl::~clThemedTreeCtrl()
 {
     m_keyboard.reset(nullptr);
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
 }
 
 void clThemedTreeCtrl::OnThemeChanged(wxCommandEvent& event)

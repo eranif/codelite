@@ -25,7 +25,7 @@ void clColours::InitDefaults()
 
 void clColours::InitDarkDefaults() { InitFromColour(wxColour("#5F6A6A")); }
 
-bool clColours::IsLightTheme() const { return !DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)); }
+bool clColours::IsLightTheme() const { return !DrawingUtils::IsDark(GetBgColour()); }
 
 void clColours::InitFromColour(const wxColour& baseColour)
 {

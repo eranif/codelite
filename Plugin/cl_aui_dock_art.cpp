@@ -80,7 +80,7 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 
 static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColour& textColour)
 {
-    bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    bgColour = clSystemSettings::GetDefaultPanelColour();
     if(!DrawingUtils::IsDark(bgColour)) {
         textColour = wxColour(*wxBLACK).ChangeLightness(130);
         penColour = bgColour.ChangeLightness(150);
@@ -198,7 +198,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     clDockArtGetColours(captionBgColour, penColour, textColour);
 
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetBrush(captionBgColour);
     dc.DrawRectangle(tmpRect);
 
     int caption_offset = 5;
@@ -246,7 +246,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
         // we inflat the rect by 1 to fix a one pixel glitch
         pDC->SetPen(*wxTRANSPARENT_PEN);
-        pDC->SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        pDC->SetBrush(captionBgColour);
         tmpRect.Inflate(2);
         pDC->DrawRectangle(tmpRect);
 
@@ -278,8 +278,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
+    dc.SetPen(clSystemSettings::GetDefaultPanelColour());
     dc.DrawRectangle(rect);
     // return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 }
@@ -288,7 +288,7 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
 {
     wxColour bgColour, penColour, textColour;
     clDockArtGetColours(bgColour, penColour, textColour);
-    
+
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.SetPen(penColour);
     dc.DrawRectangle(rect);
@@ -308,19 +308,9 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
 void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)
 {
     event.Skip();
-    clColours colours;
-    wxColour baseColour = colours.GetBgColour();
-    bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
-    if(useCustomColour) {
-        baseColour = clConfig::Get().Read("BaseColour", baseColour);
-    } else {
-        // we use the *native* background colour (notice that we are using wxSystemSettings)
-        baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-    }
-    colours.InitFromColour(baseColour);
-
+    clColours colours = clSystemSettings::GetColours();
     m_captionColour = clSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
     m_captionTextColour = colours.GetItemTextColour();
-    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    m_bgColour = clSystemSettings::GetDefaultPanelColour();
     m_useCustomCaptionColour = false;
 }

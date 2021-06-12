@@ -30,6 +30,16 @@ public:
 
     virtual ~clSystemSettings();
     static wxColour GetColour(int index);
+    /**
+     * @brief return the default panel colour. On Windows, this returns
+     * wxSYS_COLOUR_3DFACE while on other platforms it returns wxSYS_COLOUR_WINDOW
+     */
+    static wxColour GetDefaultPanelColour();
+
+    /**
+     * @brief return the colours used internally
+     */
+    static const clColours& GetColours() { return m_customColours; }
 };
 
 #endif // CLSYSTEMSETTINGS_H

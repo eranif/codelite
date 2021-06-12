@@ -11,6 +11,7 @@ typedef clMenuBar clThemedMenuBar;
 #include "codelite_exports.h"
 #include "event_notifier.h"
 #include <wx/menu.h>
+
 class WXDLLIMPEXP_SDK clThemedMenuBar : public clMenuBar
 {
 public:
@@ -18,7 +19,7 @@ public:
     clThemedMenuBar(wxWindow* parent, size_t n, wxMenu* menus[], const wxString titles[], long style = 0);
     ~clThemedMenuBar();
 
-    void OnThemeChanged(wxCommandEvent& event);
+    void OnThemeChanged(clCommandEvent& event);
 };
 #endif
 #endif // CLTHEMEDMENUBAR_HPP

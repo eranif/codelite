@@ -93,11 +93,11 @@ wxColour clSystemSettings::GetColour(int index)
             return wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-#if defined(__WXMSW__)||defined(__WXMAC__)
+#if defined(__WXMSW__) || defined(__WXMAC__)
         } else if(index == wxSYS_COLOUR_WINDOW) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
         } else if(index == wxSYS_COLOUR_3DFACE) {
-            return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
+            return wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #endif
         } else {
             return wxSystemSettings::GetColour((wxSystemColour)index);
@@ -128,12 +128,35 @@ void clSystemSettings::DoColourChangedEvent()
     m_useCustomColours = clConfig::Get().Read("UseCustomBaseColour", false);
     if(m_useCustomColours) {
         wxColour baseColour = clConfig::Get().Read("BaseColour", wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        if(DrawingUtils::IsDark(baseColour)) {
+            baseColour = baseColour.ChangeLightness(110);
+        } else {
+#ifdef __WXMSW__
+            baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+#else
+            baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+#endif
+        }
         m_customColours.InitFromColour(baseColour);
+
     } else {
+#ifdef __WXMSW__
+        m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+#else
         m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+#endif
     }
 
     // Notify about colours changes
     clCommandEvent evtColoursChanged(wxEVT_SYS_COLOURS_CHANGED);
     EventNotifier::Get()->AddPendingEvent(evtColoursChanged);
+}
+
+wxColour clSystemSettings::GetDefaultPanelColour()
+{
+#ifdef __WXMSW__
+    return GetColour(wxSYS_COLOUR_3DFACE);
+#else
+    return GetColour(wxSYS_COLOUR_WINDOW);
+#endif
 }

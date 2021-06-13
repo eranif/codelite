@@ -41,6 +41,12 @@ int clRowEntry::Y_SPACER = 2;
 #define IS_OSX 0
 #endif
 
+#ifdef __WXGTK__
+#define IS_GTK 1
+#else
+#define IS_GTK 0
+#endif
+
 struct clClipperHelper {
 
     bool m_used = false;
@@ -423,7 +429,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 wxRect buttonRect = GetButtonRect();
                 buttonRect.Deflate(1);
                 textXOffset += buttonRect.GetWidth();
-                if((m_tree->IsNativeTheme() && !IS_OSX) || IS_MSW) {
+                if(true) {
                     int flags = wxCONTROL_CURRENT;
                     if(IsExpanded()) {
                         flags |= wxCONTROL_EXPANDED;

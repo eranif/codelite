@@ -25,7 +25,14 @@ void clColours::InitDefaults()
 
 void clColours::InitDarkDefaults() { InitFromColour(wxColour("#5F6A6A")); }
 
-bool clColours::IsLightTheme() const { return !DrawingUtils::IsDark(GetBgColour()); }
+bool clColours::IsLightTheme() const
+{
+    if(GetBgColour().IsOk()) {
+        return !DrawingUtils::IsDark(GetBgColour());
+    } else {
+        return !DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
+    }
+}
 
 void clColours::InitFromColour(const wxColour& baseColour)
 {
@@ -37,11 +44,6 @@ void clColours::InitFromColour(const wxColour& baseColour)
     bool is_light = !is_dark;
     bgColour = baseColour;
     itemTextColour = is_light ? wxColour("#212121") : wxColour("#FDFEFE");
-#ifndef __WXMAC__
-    if(is_dark && DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
-        bgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
-    }
-#endif
     if(is_light) {
         alternateColour = bgColour.ChangeLightness(FACTOR_ALTROW_LIGHT);
         hoverBgColour = bgColour.ChangeLightness(110);

@@ -54,6 +54,8 @@ nav:
         - Undo & Redo: misc/ur.md
         - Tab Groups: misc/tabgroups.md
         - Tips & Tricks: misc/tips_and_tricks.md
+    - Release Notes:
+        - CodeLite v16.0.0: release_notes/v16_0_0.md
 
 extra_css:
     - stylesheets/extra.css

@@ -32,9 +32,9 @@
 
 #define RIGHT_ARROW L"\u276f  "
 
-#if !wxUSE_BUTTON_NATIVE_RENDERER
 namespace
 {
+#if !wxUSE_BUTTON_NATIVE_RENDERER
 void DrawBorder(wxDC& dc, const wxRect& rect, bool is_pressed)
 {
     wxColour base_colour = clSystemSettings::GetDefaultPanelColour();
@@ -44,6 +44,7 @@ void DrawBorder(wxDC& dc, const wxRect& rect, bool is_pressed)
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.DrawRectangle(rect);
 }
+#endif
 
 void DrawLabel(wxDC& dc, const wxRect& rr, const wxString& text, const wxColour& textColour)
 {
@@ -56,7 +57,6 @@ void DrawLabel(wxDC& dc, const wxRect& rr, const wxString& text, const wxColour&
     dc.DestroyClippingRegion();
 }
 } // namespace
-#endif
 
 #if wxUSE_NATIVE_BUTTON
 clButtonBase::clButtonBase() {}

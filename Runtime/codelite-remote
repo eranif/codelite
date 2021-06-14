@@ -210,6 +210,35 @@ def on_find_in_files(cmd):
             pass
     print_message_terminator()
 
+def locate_in_path(name, path, versions_arr, ext):
+    """
+    Attempting to locate "name" in a given path
+    with versions suffix (optionally)
+    
+    Returns
+    -------
+        full path on success, empty string otherwise
+    """
+    
+    ## first try with suffix
+    for version_number in versions_arr:
+        fullpath = "{}/{}-{}".format(path, name, version_number)
+        if len(ext) > 0:
+            fullpath = "{}.{}".format(fullpath, ext)
+        
+        if os.path.exists(fullpath):
+            return fullpath
+
+    # If we got here, we could not get a match with suffix
+    # so try without it
+    fullpath = "{}/{}".format(path, name)
+    if len(ext) > 0:
+        fullpath = "{}.{}".format(fullpath, ext)
+    
+    if os.path.exists(fullpath):
+        return fullpath
+    return ""
+
 def locate(cmd):
     """
     attempt to locate file with possible version number
@@ -219,30 +248,20 @@ def locate(cmd):
     path = cmd['path']
     path = os.path.expanduser(path)
     path = os.path.expandvars(path)
-
+    
+    # append $PATH content
+    path = "{}{}{}".format(path, os.path.pathsep, os.path.expandvars("$PATH"))
+    
+    paths = path.split(os.path.pathsep)
     name = cmd['name']
     ext = cmd['ext']
     versions_arr = cmd['versions']
-    match_found = False
-    for version_number in versions_arr:
-        fullpath = "{}/{}-{}".format(path, name, version_number)
-        if len(ext) > 0:
-            fullpath = "{}.{}".format(fullpath, ext)
-        
-        if os.path.exists(fullpath):
+    
+    for p in paths:
+        fullpath = locate_in_path(name, p, versions_arr, ext)
+        if len(fullpath) > 0:
             print(fullpath)
-            match_found = True
             break
-
-    if not match_found:
-        # try without the prefix
-        fullpath = "{}/{}".format(path, name)
-        if len(ext) > 0:
-            fullpath = "{}.{}".format(fullpath, ext)
-        
-        if os.path.exists(fullpath):
-            print(fullpath)
-            match_found = True
     print_message_terminator()
 
 def main_loop():

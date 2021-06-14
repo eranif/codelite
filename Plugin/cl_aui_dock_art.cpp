@@ -84,7 +84,7 @@ static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColou
     if(DrawingUtils::IsDark(bgColour)) {
         textColour = wxColour(*wxWHITE).ChangeLightness(80);
         bgColour = bgColour.ChangeLightness(50);
-        penColour = bgColour.ChangeLightness(80);
+        penColour = bgColour.ChangeLightness(50);
     } else {
         textColour = wxColour(*wxBLACK).ChangeLightness(120);
         bgColour = wxColour("#9CC0E7"); // Pale Cerulean
@@ -284,15 +284,14 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
     memDc.SelectObject(bmp);
 
     wxGCDC gdc;
-    wxDC* pDC = NULL;
-    if(!DrawingUtils::GetGCDC(memDc, gdc)) {
-        pDC = &memDc;
-    } else {
-        pDC = &gdc;
-    }
-    pDC->SetPen(clSystemSettings::GetDefaultPanelColour());
-    pDC->SetBrush(clSystemSettings::GetDefaultPanelColour());
-    pDC->DrawRectangle(tmpRect);
+    DrawingUtils::GetGCDC(memDc, gdc);
+
+    wxColour bgColour, penColour, textColour;
+    clDockArtGetColours(bgColour, penColour, textColour);
+
+    gdc.SetPen(penColour);
+    gdc.SetBrush(bgColour);
+    gdc.DrawRectangle(tmpRect);
     memDc.SelectObject(wxNullBitmap);
     dc.DrawBitmap(bmp, rect.GetTopLeft(), true);
 #endif
@@ -314,9 +313,8 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
     wxUnusedVar(orientation);
     wxUnusedVar(window);
 
-    wxColour c = clDockArtSashColour();
-    dc.SetPen(c);
-    dc.SetBrush(c);
+    dc.SetPen(clDockArtSashColour());
+    dc.SetBrush(clDockArtSashColour());
     dc.DrawRectangle(rect);
 }
 

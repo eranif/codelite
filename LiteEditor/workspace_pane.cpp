@@ -75,7 +75,7 @@ WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiMan
     if(!wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style)) {
         return;
     }
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 
     CreateGUIControls();
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
@@ -83,7 +83,7 @@ WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiMan
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &WorkspacePane::OnToggleWorkspaceTab, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
         e.Skip();
-        SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
         Refresh();
     });
 }

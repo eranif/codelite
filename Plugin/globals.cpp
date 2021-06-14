@@ -128,7 +128,7 @@ BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
 
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
-    bool b = DrawingUtils::IsDark(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    bool b = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
     static const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
     if(huxtheme) {
         SetWindowTheme(win->GetHandle(), b ? L"DarkMode_Explorer" : L"Explorer", NULL);
@@ -1926,7 +1926,7 @@ void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid)
 {
     grid->SetPropertyAttributeAll(wxPG_BOOL_USE_CHECKBOX, true);
 
-    wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
     wxColour line_colour = bg_colour.ChangeLightness(60);
     wxColour text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     wxColour caption_colour = bg_colour;

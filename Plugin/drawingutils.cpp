@@ -278,7 +278,7 @@ wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
     return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
 
-wxColour DrawingUtils::GetPanelBgColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW); }
+wxColour DrawingUtils::GetPanelBgColour() { return clSystemSettings::GetDefaultPanelColour(); }
 
 wxColour DrawingUtils::GetPanelTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
 
@@ -350,11 +350,11 @@ void DrawingUtils::FillMenuBarBgColour(wxDC& dc, const wxRect& rect, bool miniTo
 
 wxColour DrawingUtils::GetMenuBarTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT); }
 
-wxColour DrawingUtils::GetTextCtrlBgColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW); }
+wxColour DrawingUtils::GetTextCtrlBgColour() { return clSystemSettings::GetDefaultPanelColour(); }
 
 wxColour DrawingUtils::GetOutputPaneFgColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT); }
 
-wxColour DrawingUtils::GetOutputPaneBgColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW); }
+wxColour DrawingUtils::GetOutputPaneBgColour() { return clSystemSettings::GetDefaultPanelColour(); }
 
 wxColour DrawingUtils::GetThemeBgColour() { return GetOutputPaneBgColour(); }
 
@@ -367,7 +367,7 @@ wxColour DrawingUtils::GetThemeTipBgColour()
     if(IsThemeDark()) {
         return GetThemeBgColour();
     } else {
-        return clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+        return clSystemSettings::GetDefaultPanelColour();
     }
 }
 
@@ -401,7 +401,7 @@ wxBrush DrawingUtils::GetStippleBrush()
 #ifdef __WXMSW__
     wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #else
-    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    wxColour bgColour = clSystemSettings::GetDefaultPanelColour();
 #endif
     wxBitmap bmpStipple(3, 3);
     wxColour lightPen = bgColour.ChangeLightness(105);
@@ -803,7 +803,7 @@ void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     wxRendererNative::Get().DrawDropArrow(win, dc, dropDownRect, 0);
 #else
     // OSX
-    wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    wxColour bgColour = clSystemSettings::GetDefaultPanelColour();
     if(IsDark(bgColour)) {
         // On Dark theme (Mojave and later)
         int width = choiceRect.GetHeight();

@@ -154,7 +154,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
         XRCID("import_eclipse_theme"));
 
     // Theme handling
-    wxColour baseColour = clConfig::Get().Read("BaseColour", clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    wxColour baseColour = clConfig::Get().Read("BaseColour", clSystemSettings::GetDefaultPanelColour());
     m_colourPickerBaseColour->SetColour(baseColour);
     m_useBaseColourInitial = clConfig::Get().Read("UseCustomBaseColour", false);
     m_useBaseColourEnding = m_useBaseColourInitial;
@@ -210,14 +210,14 @@ void SyntaxHighlightDlg::Clear()
     // Global Settings page
     m_choiceLexerThemes->Clear();
     m_globalFontPicker->SetSelectedFont(clSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT));
-    m_globalBgColourPicker->SetColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    m_globalBgColourPicker->SetColour(clSystemSettings::GetDefaultPanelColour());
     m_fileSpec->ChangeValue("");
 
     // Customize page
     m_properties->Clear();
     m_fontPicker->SetSelectedFont(clSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT));
     m_colourPicker->SetColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-    m_bgColourPicker->SetColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    m_bgColourPicker->SetColour(clSystemSettings::GetDefaultPanelColour());
     m_eolFilled->SetValue(false);
     m_styleWithinPreProcessor->SetValue(false);
 
@@ -508,7 +508,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
     }
 
     wxString initialColor = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString(wxC2S_HTML_SYNTAX);
-    wxString bgInitialColor = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).GetAsString(wxC2S_HTML_SYNTAX);
+    wxString bgInitialColor = clSystemSettings::GetDefaultPanelColour().GetAsString(wxC2S_HTML_SYNTAX);
     wxFont initialFont = wxNullFont;
     // bool     initialEolFilled (false);
     bool initialStyleWithinPreProcessor(true);

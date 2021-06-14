@@ -25,6 +25,7 @@
 
 #include "WelcomePage.h"
 #include "bitmap_loader.h"
+#include "clSystemSettings.h"
 #include "cl_defs.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -41,6 +42,8 @@
 WelcomePage::WelcomePage(wxWindow* parent)
     : WelcomePageBase(parent)
 {
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_staticBitmap->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 32));
     m_staticBitmap->Hide();
     GetSizer()->Fit(this);
@@ -176,7 +179,7 @@ void WelcomePage::OnRecentProjectUI(wxUpdateUIEvent& event)
 void WelcomePage::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     Refresh();
 }
 

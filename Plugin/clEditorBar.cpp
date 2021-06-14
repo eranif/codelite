@@ -101,7 +101,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
     m_filenameRelative.clear();
     m_bookmarks.clear();
 
-    wxColour bgcolour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    wxColour bgcolour = clSystemSettings::GetDefaultPanelColour();
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
     SetBackgroundColour(bgcolour);

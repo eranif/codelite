@@ -15,7 +15,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
                                                            const wxSize& size, long style)
     : wxPanel(parent, winid, pos, size, style)
 {
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_choice = new clThemedChoice(this, wxID_ANY, pos, size, {});
     m_choice->Bind(wxEVT_CHOICE, &clConfigurationSelectionCtrl::OnChoice, this);

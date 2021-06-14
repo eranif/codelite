@@ -373,7 +373,9 @@ void clButtonBase::Render(wxDC& dc)
     }
 
     if(HasFocus()) {
-        wxRendererNative::Get().DrawFocusRect(this, dc, clientRect);
+        wxRect focus_rect = clientRect;
+        focus_rect.Deflate(2);
+        wxRendererNative::Get().DrawFocusRect(this, dc, focus_rect);
     }
 }
 

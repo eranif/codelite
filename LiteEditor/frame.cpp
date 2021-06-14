@@ -2824,77 +2824,12 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
 
 wxString clMainFrame::CreateWorkspaceTable()
 {
-    wxString html;
-    wxArrayString files;
-    Manager* mgr = ManagerST::Get();
-    mgr->GetRecentlyOpenedWorkspaces(files);
-
-    wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-    bgclr = DrawingUtils::LightColour(bgclr, 7);
-
-    html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
-    if(files.GetCount() == 0) {
-        html << wxT("<tr><td><font size=2 face=\"Verdana\">");
-        html << _("No workspaces found.") << wxT("</font></td></tr>");
-    } else {
-        wxColour baseColour(232, 166, 101);
-        wxColour firstColour = DrawingUtils::LightColour(baseColour, 6);
-        wxColour secondColour = DrawingUtils::LightColour(baseColour, 8);
-        for(int i = (int)files.GetCount(); i > 0; --i) {
-            wxFileName fn(files.Item(i - 1));
-
-            wxColour lineCol;
-            if(i % 2) {
-                lineCol = firstColour;
-            } else {
-                lineCol = secondColour;
-            }
-
-            html << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">")
-                 << wxT("<td><font size=2 face=\"Verdana\">") << wxT("<a href=\"action:open-file:") << fn.GetFullPath()
-                 << wxT("\" >") << fn.GetName() << wxT("</a></font></td>") << wxT("<td><font size=2 face=\"Verdana\">")
-                 << fn.GetFullPath() << wxT("</font></td>") << wxT("</tr>");
-        }
-    }
-
-    html << wxT("</table>");
-    return html;
+    return wxEmptyString;
 }
 
 wxString clMainFrame::CreateFilesTable()
 {
-    wxString html;
-    wxArrayString files;
-    GetMainBook()->GetRecentlyOpenedFiles(files);
-
-    wxColour bgclr = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-    bgclr = DrawingUtils::LightColour(bgclr, 10.0);
-    html << wxT("<table width=100% border=0 bgcolor=\"") << bgclr.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">");
-    if(files.GetCount() == 0) {
-        html << wxT("<tr><td><font size=2 face=\"Verdana\">");
-        html << _("No files found.") << wxT("</font></td></tr>");
-    } else {
-        wxColour baseColour(232, 166, 101);
-        wxColour firstColour = DrawingUtils::LightColour(baseColour, 6);
-        wxColour secondColour = DrawingUtils::LightColour(baseColour, 8);
-        for(int i = (int)files.GetCount(); i > 0; --i) {
-
-            wxFileName fn(files.Item(i - 1));
-            wxColour lineCol;
-            if(i % 2) {
-                lineCol = firstColour;
-            } else {
-                lineCol = secondColour;
-            }
-            html << wxT("<tr bgcolor=\"") << lineCol.GetAsString(wxC2S_HTML_SYNTAX) << wxT("\">")
-                 << wxT("<td><font size=2 face=\"Verdana\">") << wxT("<a href=\"action:open-file:") << fn.GetFullPath()
-                 << wxT("\" >") << fn.GetFullName() << wxT("</a></font></td>")
-                 << wxT("<td><font size=2 face=\"Verdana\">") << fn.GetFullPath() << wxT("</font></td>")
-                 << wxT("</tr>");
-        }
-    }
-    html << wxT("</table>");
-    return html;
+    return wxEmptyString;
 }
 
 void clMainFrame::CreateRecentlyOpenedFilesMenu()
@@ -6119,8 +6054,8 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     clBitmaps::Get().SysColoursChanged(); // Notify the bitmap manager that system colour has changed
 #if !wxUSE_NATIVE_CAPTION
     clColours colours;
-    colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    colours.SetBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
+    colours.SetBgColour(clSystemSettings::GetDefaultPanelColour());
     colours.SetItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
     // update the colours used by the caption
     m_captionBar->SetColours(colours);

@@ -312,6 +312,6 @@ void clFileSystemWorkspaceView::OnExcludePath(wxCommandEvent& event)
 void clFileSystemWorkspaceView::OnThemeChanged(clCommandEvent& event)
 {
     event.Skip();
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     Refresh();
 }

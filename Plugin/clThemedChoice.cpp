@@ -43,7 +43,7 @@ void clThemedChoice::ApplyTheme()
 {
 #if !wxUSE_NATIVE_CHOICE
     clColours colours;
-    colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
     SetColours(colours);
 #endif
 }

@@ -1252,8 +1252,8 @@ bool QuickFindBar::Search(wxStyledTextCtrl* ctrl, const wxString& find_what, siz
 void QuickFindBar::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC dc(this);
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
+    dc.SetPen(clSystemSettings::GetDefaultPanelColour());
     dc.DrawRectangle(GetClientRect());
 }
 

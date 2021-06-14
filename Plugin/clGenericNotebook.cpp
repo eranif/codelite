@@ -245,7 +245,7 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 {
     m_bitmaps = new clBitmapList;
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    SetBackgroundColour(style & kNotebook_DynamicColours ? clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW)
+    SetBackgroundColour(style & kNotebook_DynamicColours ? clSystemSettings::GetDefaultPanelColour()
                                                          : wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     m_art = clTabRenderer::CreateRenderer(this, m_style);
     DoSetBestSize();
@@ -417,8 +417,8 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         }
     } else if(m_tabs.empty()) {
         // Draw the default bg colour
-        gcdc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-        gcdc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        gcdc.SetPen(clSystemSettings::GetDefaultPanelColour());
+        gcdc.SetBrush(clSystemSettings::GetDefaultPanelColour());
         gcdc.DrawRectangle(GetClientRect());
         return;
     }

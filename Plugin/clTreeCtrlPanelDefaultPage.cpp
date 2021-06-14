@@ -45,15 +45,15 @@ void clTreeCtrlPanelDefaultPage::OnOpenFolder(wxCommandEvent& event)
 void clTreeCtrlPanelDefaultPage::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC dc(this);
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
+    dc.SetPen(clSystemSettings::GetDefaultPanelColour());
     dc.DrawRectangle(GetClientRect());
 }
 
 void clTreeCtrlPanelDefaultPage::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    m_staticText177->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    m_staticText177->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_staticText177->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-    GetPanel169()->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    GetPanel169()->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 }

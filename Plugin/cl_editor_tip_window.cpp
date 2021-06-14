@@ -83,7 +83,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
         if(DrawingUtils::IsDark(bgColour)) {
             colours.InitFromColour(bgColour);
         } else {
-            colours.InitFromColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+            colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
         }
     }
 

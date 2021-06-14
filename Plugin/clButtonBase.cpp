@@ -396,6 +396,10 @@ void clButtonBase::Render(wxDC& dc)
         flags |= wxCONTROL_CURRENT;
     }
 
+    if(m_state == eButtonState::kDisabled) {
+        flags |= wxCONTROL_DISABLED;
+    }
+
     wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
     bool isDisabled = !IsEnabled();
     bool isDark = DrawingUtils::IsDark(bgColour);

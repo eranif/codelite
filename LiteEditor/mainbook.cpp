@@ -1502,9 +1502,10 @@ void MainBook::MovePage(bool movePageRight)
 void MainBook::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
+#if !CL_USE_NATIVEBOOK
     m_book->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-
     DoUpdateNotebookTheme();
+#endif
     // force a redrawing of the main notebook
     m_book->SetStyle(m_book->GetStyle());
 }

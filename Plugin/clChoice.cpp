@@ -1,5 +1,5 @@
 #include "clChoice.h"
-#include "wxCustomControlsGTK.hpp"
+#include "wxCustomControls.hpp"
 
 #if wxUSE_NATIVE_CHOICE
 clChoice::clChoice() {}

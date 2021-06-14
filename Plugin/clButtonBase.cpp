@@ -54,8 +54,8 @@ void DrawBorder(wxDC& dc, const wxRect& rect, bool is_pressed)
 {
     wxColour base_colour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
     bool is_light = !DrawingUtils::IsDark(base_colour);
-    wxColour light_colour = base_colour.ChangeLightness(is_light ? 180 : 110);
-    wxColour dark_colour = base_colour.ChangeLightness(80);
+    wxColour light_colour = base_colour.ChangeLightness(is_light ? 130 : 110);
+    wxColour dark_colour = base_colour.ChangeLightness(70);
 
     wxPoint p1, p2;
 

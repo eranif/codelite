@@ -143,7 +143,12 @@ void clSystemSettings::DoColourChangedEvent()
 #ifdef __WXMSW__
         m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 #else
-        m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        wxColour baseColour = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+        if(!DrawingUtils::IsDark(baseColour)) {
+            m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+        } else {
+            m_customColours.InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        }
 #endif
     }
 
@@ -154,9 +159,14 @@ void clSystemSettings::DoColourChangedEvent()
 
 wxColour clSystemSettings::GetDefaultPanelColour()
 {
+    wxColour panel_colour;
 #ifdef __WXMSW__
-    return GetColour(wxSYS_COLOUR_3DFACE);
+    panel_colour = GetColour(wxSYS_COLOUR_3DFACE);
 #else
-    return GetColour(wxSYS_COLOUR_WINDOW);
+    panel_colour = GetColour(wxSYS_COLOUR_3DFACE);
+    if(DrawingUtils::IsDark(panel_colour)) {
+        panel_colour = GetColour(wxSYS_COLOUR_WINDOW);
+    }
 #endif
+    return panel_colour;
 }

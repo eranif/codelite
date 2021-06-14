@@ -31,7 +31,7 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
                                this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
         e.Skip();
-        SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
         Refresh();
     });
 }
@@ -92,9 +92,7 @@ void clConfigurationSelectionCtrl::OnChoice(wxCommandEvent& event)
     }
 }
 
-void clConfigurationSelectionCtrl::Clear()
-{
-}
+void clConfigurationSelectionCtrl::Clear() {}
 
 void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& configurations)
 {

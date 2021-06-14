@@ -7,22 +7,19 @@
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
+#include "wx/treebase.h"
 #include <clColours.h>
 #include <wx/settings.h>
-#include "wx/treebase.h"
 
 #ifdef __WXMSW__
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_ROW_LINES | wxTR_MULTIPLE
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_MULTIPLE
 #else
-#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_ROW_LINES | wxTR_MULTIPLE 
+#define TREE_STYLE wxTR_ENABLE_SEARCH | wxBORDER_DEFAULT | wxTR_MULTIPLE
 #endif
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clTreeCtrl(parent, id, pos, size, style | TREE_STYLE)
 {
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
-    ApplyTheme();
-    m_keyboard.reset(new clTreeKeyboardInput(this));
+    Create(parent, id, pos, size, style & ~wxTR_ROW_LINES);
 }
 
 bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

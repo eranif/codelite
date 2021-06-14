@@ -1015,10 +1015,10 @@ void clMainFrame::CreateGUIControls()
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_mainPanel = new wxPanel(this);
 
-    m_mainPanel->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    m_mainPanel->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
         e.Skip();
-        m_mainPanel->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        m_mainPanel->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
         m_mainPanel->Refresh();
     });
     InitializeLogo();
@@ -1201,7 +1201,7 @@ void clMainFrame::CreateGUIControls()
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
         e.Skip();
 #if !CL_USE_NATIVEBOOK
-        container->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+        container->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 #endif
     });
 
@@ -6127,7 +6127,7 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     // update the bitmap as well
     m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines"));
 #endif
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     DoSysColoursChanged();
 }
 

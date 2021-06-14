@@ -81,20 +81,18 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColour& textColour)
 {
     bgColour = clSystemSettings::GetDefaultPanelColour();
-    if(!DrawingUtils::IsDark(bgColour)) {
+    if(DrawingUtils::IsDark(bgColour)) {
+        textColour = wxColour(*wxWHITE).ChangeLightness(80);
+        penColour = bgColour.ChangeLightness(110);
+        bgColour = bgColour.ChangeLightness(60);
+    } else {
         textColour = wxColour(*wxBLACK).ChangeLightness(130);
         penColour = bgColour.ChangeLightness(150);
-    } else {
-        textColour = wxColour(*wxWHITE).ChangeLightness(70);
-        penColour = bgColour.ChangeLightness(110);
+        bgColour = bgColour.ChangeLightness(80);
     }
 }
 
-static wxColour clDockArtSashColour()
-{
-    wxColour baseColour = DrawingUtils::GetMenuBarBgColour(true);
-    return baseColour;
-}
+static wxColour clDockArtSashColour() { return clSystemSettings::GetDefaultPanelColour(); }
 
 // ------------------------------------------------------------
 
@@ -278,20 +276,64 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
+#ifdef __WXOSX__
     dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
     dc.SetPen(clSystemSettings::GetDefaultPanelColour());
     dc.DrawRectangle(rect);
+#else
+    wxRect tmpRect = rect;
+    tmpRect.SetPosition(wxPoint(0, 0));
+    wxBitmap bmp(tmpRect.GetSize());
+
+    wxMemoryDC memDc;
+    memDc.SelectObject(bmp);
+
+    wxGCDC gdc;
+    wxDC* pDC = NULL;
+    if(!DrawingUtils::GetGCDC(memDc, gdc)) {
+        pDC = &memDc;
+    } else {
+        pDC = &gdc;
+    }
+    pDC->SetPen(clSystemSettings::GetDefaultPanelColour());
+    pDC->SetBrush(clSystemSettings::GetDefaultPanelColour());
+    pDC->DrawRectangle(tmpRect);
+    memDc.SelectObject(wxNullBitmap);
+    dc.DrawBitmap(bmp, rect.GetTopLeft(), true);
+#endif
     // return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
+#ifdef __WXOSX__
     wxColour bgColour, penColour, textColour;
     clDockArtGetColours(bgColour, penColour, textColour);
 
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.SetPen(penColour);
     dc.DrawRectangle(rect);
+#elese
+    wxRect tmpRect = rect;
+    tmpRect.SetPosition(wxPoint(0, 0));
+    wxBitmap bmp(tmpRect.GetSize());
+
+    wxMemoryDC memDc;
+    memDc.SelectObject(bmp);
+
+    wxGCDC gdc;
+    wxDC* pDC = NULL;
+    if(!DrawingUtils::GetGCDC(memDc, gdc)) {
+        pDC = &memDc;
+    } else {
+        pDC = &gdc;
+    }
+    pDC->SetPen(clSystemSettings::GetDefaultPanelColour());
+    pDC->SetBrush(*wxTRANSPARENT_BRUSH);
+    pDC->DrawRectangle(tmpRect);
+    memDc.SelectObject(wxNullBitmap);
+    dc.DrawBitmap(bmp, rect.GetTopLeft(), true);
+#endif
 }
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)

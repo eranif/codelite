@@ -46,9 +46,9 @@ void DrawBorder(wxDC& dc, const wxRect& rect, bool is_pressed)
 }
 #endif
 
-void DrawLabel(wxDC& dc, const wxRect& rr, const wxString& text, const wxColour& textColour)
+void DrawLabel(wxDC& dc, const wxRect& rr, const wxString& text, const wxColour& textColour, bool isDisabled = false)
 {
-    dc.SetTextForeground(textColour);
+    dc.SetTextForeground(isDisabled ? clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) : textColour);
     dc.SetClippingRegion(rr);
     // Truncate the text to fit the drawing area
     wxString fixedText;
@@ -476,13 +476,11 @@ void clButtonBase::Render(wxDC& dc)
 
     // Setup some colours (text and dropdown)
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-    // wxColour dropDownColour = textColour.ChangeLightness(isDark ? 80 : 120);
 
     if(isDisabled) {
-        // dropDownColour = textColour = m_colours.GetGrayText();
+        textColour = m_colours.GetGrayText();
     } else if(IsPressed()) {
         textColour = m_colours.GetItemTextColour().ChangeLightness(isDark ? 70 : 110);
-        // dropDownColour = dropDownColour.ChangeLightness(isDark ? 70 : 110);
     }
 
     if(!buttonText.IsEmpty()) {

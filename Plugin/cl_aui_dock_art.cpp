@@ -313,7 +313,7 @@ void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wx
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     dc.SetPen(penColour);
     dc.DrawRectangle(rect);
-#elese
+#else
     wxRect tmpRect = rect;
     tmpRect.SetPosition(wxPoint(0, 0));
     wxBitmap bmp(tmpRect.GetSize());

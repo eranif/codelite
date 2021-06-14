@@ -36,6 +36,7 @@ WindowStack::WindowStack(wxWindow* parent, wxWindowID id, bool useNativeThemeCol
     : wxWindow(parent, id)
 {
     Bind(wxEVT_SIZE, &WindowStack::OnSize, this);
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &WindowStack::OnColoursChanged, this);
 }
 
@@ -114,7 +115,7 @@ int WindowStack::ChangeSelection(size_t index)
     if(index >= m_windows.size()) {
         return wxNOT_FOUND;
     }
-    DoSelect(m_windows[index]);
+    return DoSelect(m_windows[index]);
 }
 
 int WindowStack::DoSelect(wxWindow* win)
@@ -125,9 +126,11 @@ int WindowStack::DoSelect(wxWindow* win)
     // Firsr, show the window
     win->SetSize(wxRect(0, 0, GetSize().x, GetSize().y));
     win->Show();
+    int oldSel = FindPage(win);
     m_activeWin = win;
     // Hide the rest
     CallAfter(&WindowStack::DoHideNoActiveWindows);
+    return oldSel;
 }
 
 void WindowStack::OnSize(wxSizeEvent& e)
@@ -157,16 +160,21 @@ void WindowStack::DoHideNoActiveWindows()
 void WindowStack::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 }
 #else
 WindowStack::WindowStack(wxWindow* parent, wxWindowID id, bool useNativeThemeColours)
     : wxSimplebook(parent, id)
 {
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &WindowStack::OnColoursChanged, this);
     wxUnusedVar(useNativeThemeColours);
 }
 
-WindowStack::~WindowStack() {}
+WindowStack::~WindowStack()
+{
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &WindowStack::OnColoursChanged, this);
+}
 
 bool WindowStack::Add(wxWindow* win, bool select)
 {
@@ -215,5 +223,11 @@ wxWindow* WindowStack::GetSelected() const
         return nullptr;
     }
     return GetPage(GetSelection());
+}
+
+void WindowStack::OnColoursChanged(clCommandEvent& e)
+{
+    e.Skip();
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 }
 #endif

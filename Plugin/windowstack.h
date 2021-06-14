@@ -43,8 +43,8 @@ class WXDLLIMPEXP_SDK WindowStack : public wxWindow
 
 protected:
     int FindPage(wxWindow* page) const;
-    void ChangeSelection(size_t index);
-    void DoSelect(wxWindow* win);
+    int ChangeSelection(size_t index);
+    int DoSelect(wxWindow* win);
     void OnSize(wxSizeEvent& e);
     void DoHideNoActiveWindows();
     void OnColoursChanged(clCommandEvent& event);
@@ -67,6 +67,7 @@ public:
 class WXDLLIMPEXP_SDK WindowStack : public wxSimplebook
 {
     int FindPage(wxWindow* win) const;
+    void OnColoursChanged(clCommandEvent& event);
 
 public:
     WindowStack(wxWindow* parent, wxWindowID id = wxID_ANY, bool useNativeThemeColours = false);

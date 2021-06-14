@@ -19,7 +19,6 @@
 #include <wx/toolbar.h>
 #include "clToolBar.h"
 #include <wx/notebook.h>
-#include "clGenericNotebook.hpp"
 #include <wx/imaglist.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
@@ -54,29 +53,43 @@
 class SyntaxHighlightBaseDlg : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer1;
     wxPanel* m_panel171;
+    wxBoxSizer* boxSizer173;
     clToolBar* m_toolbar;
-    clGenericNotebook* m_notebook;
+    wxNotebook* m_notebook;
     wxPanel* m_panelGlobalColours;
+    wxBoxSizer* boxSizer82;
+    wxStaticBoxSizer* staticBoxSizer179;
+    wxFlexGridSizer* flexGridSizer181;
     wxCheckBox* m_cbUseCustomBaseColour;
     wxColourPickerCtrl* m_colourPickerBaseColour;
+    wxStaticBoxSizer* staticBoxSizer188;
+    wxFlexGridSizer* fgSizer3;
     wxStaticText* m_staticText9;
     wxColourPickerCtrl* m_colourPickerSelTextBgColour;
     wxStaticText* m_staticText94;
     wxCheckBox* m_checkBoxCustomSelectionFgColour;
     wxStaticText* m_staticText84;
     wxColourPickerCtrl* m_colourPickerSelTextFgColour;
+    wxStaticBoxSizer* staticBoxSizer182;
+    wxFlexGridSizer* fgSizer4;
     wxStaticText* m_staticText159;
     wxFontPickerCtrl* m_fontPickerGlobal;
     wxStaticText* m_staticText155;
     wxChoice* m_choiceGlobalTheme;
     wxStyledTextCtrl* m_stcPreview;
     wxPanel* m_panelSyntaxHighlight;
+    wxBoxSizer* boxSizer21;
     wxListBox* m_listBox;
     wxPanel* m_panel25;
+    wxBoxSizer* bSizer3;
     wxNotebook* m_notebook2;
     wxPanel* m_panelGlobalSettings;
+    wxBoxSizer* bSizer6;
+    wxFlexGridSizer* fgSizer2;
     wxStaticText* m_staticText70;
+    wxBoxSizer* boxSizer95;
     wxChoice* m_choiceLexerThemes;
     wxStaticText* m_staticText6;
     wxFontPickerCtrl* m_globalFontPicker;
@@ -85,7 +98,11 @@ protected:
     wxStaticText* m_staticText8;
     wxTextCtrl* m_fileSpec;
     wxPanel* m_panelCustomize;
+    wxBoxSizer* bSizer51;
+    wxBoxSizer* bSizer8;
     wxListBox* m_properties;
+    wxBoxSizer* bSizer9;
+    wxFlexGridSizer* fgSizer1;
     wxStaticText* m_staticText2;
     wxFontPickerCtrl* m_fontPicker;
     wxStaticText* m_staticText3;
@@ -96,11 +113,13 @@ protected:
     wxCheckBox* m_styleWithinPreProcessor;
     wxStaticLine* m_staticline1;
     wxStaticText* m_staticText1;
+    wxBoxSizer* bSizer5;
     wxButton* m_button5;
     wxButton* m_button6;
     wxButton* m_button7;
     wxButton* m_button8;
     wxButton* m_button9;
+    wxBoxSizer* boxSizer19;
     wxStdDialogButtonSizer* m_stdBtnSizer10;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
@@ -182,7 +201,7 @@ public:
     wxNotebook* GetNotebook2() { return m_notebook2; }
     wxPanel* GetPanel25() { return m_panel25; }
     wxPanel* GetPanelSyntaxHighlight() { return m_panelSyntaxHighlight; }
-    clGenericNotebook* GetNotebook() { return m_notebook; }
+    wxNotebook* GetNotebook() { return m_notebook; }
     wxPanel* GetPanel171() { return m_panel171; }
     SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Colours and Fonts"),
                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
@@ -193,6 +212,8 @@ public:
 class NewThemeDialogBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer115;
+    wxFlexGridSizer* flexGridSizer125;
     wxStaticText* m_staticText127;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText131;

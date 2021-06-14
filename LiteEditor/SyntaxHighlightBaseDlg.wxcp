@@ -354,15 +354,15 @@
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",
-													"m_value":	"clGenericNotebook"
+													"m_value":	""
 												}, {
 													"type":	"string",
 													"m_label":	"Include File:",
-													"m_value":	"clGenericNotebook.hpp"
+													"m_value":	""
 												}, {
 													"type":	"string",
 													"m_label":	"Style:",
-													"m_value":	"kNotebook_LeftTabs"
+													"m_value":	""
 												}],
 											"m_events":	[],
 											"m_children":	[{

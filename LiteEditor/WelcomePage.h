@@ -25,6 +25,7 @@
 
 #ifndef WELCOMEPAGE_H
 #define WELCOMEPAGE_H
+
 #include "clThemedButton.h"
 #include "wxcrafter.h"
 #include <map>
@@ -33,6 +34,12 @@ class WelcomePage : public WelcomePageBase
 {
     typedef std::map<int, wxString> IntStringMap_t;
     IntStringMap_t m_idToName;
+    clThemedButton* m_cmdLnkBtnNewWorkspace = nullptr;
+    clThemedButton* m_cmdLnkBtnNewProject = nullptr;
+    clThemedButton* m_cmdLnkBtnWorkspaces = nullptr;
+    clThemedButton* m_cmdLnkBtnFilesMenu = nullptr;
+    clThemedButton* m_cmdLnkBtnForum = nullptr;
+    clThemedButton* m_cmdLnkBtnWiki = nullptr;
 
 protected:
     virtual void OnOpenWorkspace(wxCommandEvent& event);
@@ -41,6 +48,7 @@ protected:
     virtual void OnRecentProjectUI(wxUpdateUIEvent& event);
     int DoGetPopupMenuSelection(clThemedButton* btn, const wxArrayString& strings, const wxString& menuTitle);
     void DoOpenFile(const wxString& filename);
+    void AddButtons();
 
 public:
     WelcomePage(wxWindow* parent);

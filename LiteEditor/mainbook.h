@@ -53,7 +53,7 @@ private:
     bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
     FilesModifiedDlg* m_filesModifiedDlg;
     std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
-    wxWindow* m_welcomePage;
+    wxWindow* m_welcomePage = nullptr;
     QuickFindBar* m_findBar;
 
 public:
@@ -88,7 +88,7 @@ private:
     void OnDebugEnded(clDebugEvent& e);
     void OnInitDone(wxCommandEvent& e);
     void OnDetachedEditorClosed(clCommandEvent& e);
-    void OnThemeChanged(wxCommandEvent& e);
+    void OnThemeChanged(clCommandEvent& e);
     void OnColoursAndFontsChanged(clCommandEvent& e);
     bool DoSelectPage(wxWindow* win);
     void DoHandleFrameMenu(clEditor* editor);
@@ -101,6 +101,8 @@ private:
     void OnNavigationBarMenuShowing(clContextMenuEvent& e);
     void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
+    wxWindow* GetOrCreateWelcomePage();
+    
     /**
      * @brief return proper tab label for a given filename
      */

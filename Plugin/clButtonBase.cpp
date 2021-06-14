@@ -251,7 +251,7 @@ void clButtonBase::Render(wxDC& dc)
     bool isDark = DrawingUtils::IsDark(bgColour);
     wxColour borderColour = isDark ? bgColour.ChangeLightness(50) : bgColour.ChangeLightness(80);
 
-    dc.SetPen(borderColour);
+    dc.SetPen(bgColour);
     dc.SetBrush(bgColour);
     wxRendererNative::Get().DrawPushButton(this, dc, clientRect, flags);
 

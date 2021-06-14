@@ -132,7 +132,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Connect(wxEVT_INIT_DONE, wxCommandEventHandler(MainBook::OnInitDone), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &MainBook::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
@@ -155,7 +155,7 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     m_book->Unbind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &MainBook::OnThemeChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &MainBook::OnThemeChanged, this);
 
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &MainBook::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MainBook::OnWorkspaceClosed, this);
@@ -924,7 +924,12 @@ void MainBook::ReloadExternallyModified(bool prompt)
 bool MainBook::ClosePage(wxWindow* page)
 {
     int pos = m_book->GetPageIndex(page);
-    return pos != wxNOT_FOUND && m_book->DeletePage(pos);
+    if(pos != wxNOT_FOUND && m_book->GetPage(pos) == m_welcomePage) {
+        m_book->RemovePage(pos, true);
+        return true;
+    } else {
+        return pos != wxNOT_FOUND && m_book->DeletePage(pos);
+    }
 }
 
 bool MainBook::CloseAllButThis(wxWindow* page)
@@ -1494,9 +1499,11 @@ void MainBook::MovePage(bool movePageRight)
     }
 }
 
-void MainBook::OnThemeChanged(wxCommandEvent& e)
+void MainBook::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
+    m_book->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+
     DoUpdateNotebookTheme();
     // force a redrawing of the main notebook
     m_book->SetStyle(m_book->GetStyle());
@@ -1719,7 +1726,8 @@ void MainBook::DoShowTabLabelContextMenu()
 void MainBook::RegisterWelcomePage(wxWindow* welcomePage)
 {
     wxUnusedVar(welcomePage);
-    m_book->AddPage(new WelcomePage(m_book), _("Welcome!"), true);
+    m_welcomePage = GetOrCreateWelcomePage();
+    ShowWelcomePage(true);
 }
 
 void MainBook::DoShowWindow(wxWindow* win, bool show)
@@ -1730,19 +1738,12 @@ void MainBook::DoShowWindow(wxWindow* win, bool show)
 
 void MainBook::ShowWelcomePage(bool show)
 {
-    int where = m_book->GetPageIndex(_("Welcome!"));
     if(show) {
-        GetSizer()->Show(m_book);
-        if(where == wxNOT_FOUND) {
-            m_book->AddPage(new WelcomePage(m_book), _("Welcome!"), true);
-        } else {
-            m_book->SetSelection(where);
-        }
-
+        GetSizer()->Show(m_book, false);
+        GetSizer()->Show(m_welcomePage, true);
     } else {
-        if(where != wxNOT_FOUND) {
-            m_book->DeletePage(where, false);
-        }
+        GetSizer()->Show(m_book, true);
+        GetSizer()->Show(m_welcomePage, false);
     }
 }
 
@@ -1822,3 +1823,13 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 }
 
 int MainBook::GetBitmapIndexOrAdd(const wxString& name) { return m_book->GetBitmaps()->Add(name); }
+
+wxWindow* MainBook::GetOrCreateWelcomePage()
+{
+    if(m_welcomePage == nullptr) {
+        m_welcomePage = new WelcomePage(this);
+        m_welcomePage->Hide();
+        GetSizer()->Add(m_welcomePage, 1, wxEXPAND);
+    }
+    return m_welcomePage;
+}

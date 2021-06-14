@@ -429,7 +429,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 wxRect buttonRect = GetButtonRect();
                 buttonRect.Deflate(1);
                 textXOffset += buttonRect.GetWidth();
-                if(true) {
+                if(IS_GTK || IS_MSW) {
                     int flags = wxCONTROL_CURRENT;
                     if(IsExpanded()) {
                         flags |= wxCONTROL_EXPANDED;

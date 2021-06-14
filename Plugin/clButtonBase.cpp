@@ -24,7 +24,7 @@
 #define BUTTON_RADIUS 0.0
 #endif
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__WXMAC__)
 #define wxUSE_BUTTON_NATIVE_RENDERER 0
 #else
 #define wxUSE_BUTTON_NATIVE_RENDERER 1

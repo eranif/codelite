@@ -231,7 +231,7 @@ void clButtonBase::Render(wxDC& dc)
     clientRect.Inflate(1);
 #endif
 
-    wxColour parentbgColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    wxColour parentbgColour = clSystemSettings::GetDefaultPanelColour();
     dc.SetBrush(parentbgColour);
     dc.SetPen(parentbgColour);
     dc.DrawRectangle(clientRect);

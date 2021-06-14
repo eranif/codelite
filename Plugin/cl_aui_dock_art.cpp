@@ -84,7 +84,7 @@ static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColou
     if(DrawingUtils::IsDark(bgColour)) {
         textColour = wxColour(*wxWHITE).ChangeLightness(80);
         bgColour = bgColour.ChangeLightness(50);
-        penColour = bgColour;
+        penColour = bgColour.ChangeLightness(80);
     } else {
         textColour = wxColour(*wxBLACK).ChangeLightness(120);
         bgColour = wxColour("#9CC0E7"); // Pale Cerulean

@@ -8,6 +8,7 @@
 
 #include "clSystemSettings.h"
 #include <wx/gdicmn.h>
+#include <wx/renderer.h>
 
 #if wxCHECK_VERSION(3, 1, 0)
 #define TEXT_SPACER FromDIP(5)
@@ -176,14 +177,6 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
     PrepareDC(dc);
     Render(dc);
     m_lastPaintFlags = GetDrawingFlags();
-    if(HasFocus()) {
-        wxRect clientRect = GetClientRect();
-        wxRect focusRect = clientRect.Deflate(3);
-        focusRect = focusRect.CenterIn(clientRect);
-        dc.SetPen(wxPen(clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT), 1, wxPENSTYLE_DOT));
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.DrawRoundedRectangle(focusRect, 0.0);
-    }
 }
 
 void clButtonBase::OnErasebg(wxEraseEvent& event) { wxUnusedVar(event); }
@@ -243,51 +236,24 @@ void clButtonBase::Render(wxDC& dc)
     dc.SetPen(parentbgColour);
     dc.DrawRectangle(clientRect);
 
-    bool isDisabled = !IsEnabled();
+    // draw the button
+    int flags = 0;
+    if(IsPressed()) {
+        flags |= wxCONTROL_PRESSED;
+    }
+
+    if(IsHover()) {
+        flags |= wxCONTROL_CURRENT;
+    }
+
     wxColour bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
+    bool isDisabled = !IsEnabled();
     bool isDark = DrawingUtils::IsDark(bgColour);
     wxColour borderColour = isDark ? bgColour.ChangeLightness(50) : bgColour.ChangeLightness(80);
 
-    switch(m_state) {
-    case eButtonState::kNormal:
-    case eButtonState::kHover:
-        bgColour = bgColour.ChangeLightness(isDark ? 80 : 95);
-        break;
-    case eButtonState::kPressed:
-        bgColour = bgColour.ChangeLightness(isDark ? 70 : 80);
-        break;
-    case eButtonState::kDisabled:
-        break;
-    }
-
-    if(isDisabled) {
-        bgColour = bgColour.ChangeLightness(110);
-        borderColour = borderColour.ChangeLightness(110);
-    }
-
-    // Draw the background
-    const int button_radius = BUTTON_RADIUS;
-    if(!isDisabled) {
-        if(IsNormal() || IsHover()) {
-            // fill the button bg colour with gradient
-            // draw the border
-            dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-            dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-            dc.DrawRoundedRectangle(rect, button_radius);
-        } else if(m_state == eButtonState::kPressed) {
-            // pressed button is drawns with flat bg colour and border
-            wxColour pressedBgColour = bgColour.ChangeLightness(90);
-            dc.SetPen(pressedBgColour);
-            dc.SetBrush(pressedBgColour);
-            dc.DrawRoundedRectangle(rect, button_radius);
-        }
-    } else {
-        // Draw the button border
-        dc.SetPen(bgColour);
-        dc.SetBrush(bgColour);
-        dc.DrawRoundedRectangle(rect, button_radius);
-    }
-    DrawBorder(dc, rect, IsPressed());
+    dc.SetPen(borderColour);
+    dc.SetBrush(bgColour);
+    wxRendererNative::Get().DrawPushButton(this, dc, clientRect, flags);
 
     wxRect bitmap_rect;
     wxRect text_rect;
@@ -356,13 +322,13 @@ void clButtonBase::Render(wxDC& dc)
 
     // Setup some colours (text and dropdown)
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-    wxColour dropDownColour = textColour.ChangeLightness(isDark ? 80 : 120);
+    // wxColour dropDownColour = textColour.ChangeLightness(isDark ? 80 : 120);
 
     if(isDisabled) {
-        dropDownColour = textColour = m_colours.GetGrayText();
+        // dropDownColour = textColour = m_colours.GetGrayText();
     } else if(IsPressed()) {
         textColour = m_colours.GetItemTextColour().ChangeLightness(isDark ? 70 : 110);
-        dropDownColour = dropDownColour.ChangeLightness(isDark ? 70 : 110);
+        // dropDownColour = dropDownColour.ChangeLightness(isDark ? 70 : 110);
     }
 
     if(!buttonText.IsEmpty()) {
@@ -403,11 +369,11 @@ void clButtonBase::Render(wxDC& dc)
         int arrowWidth = arrowRect.GetWidth() / 2;
         wxRect r(0, 0, arrowWidth, arrowHeight);
         r = r.CenterIn(arrowRect);
+        wxRendererNative::Get().DrawDropArrow(this, dc, r, 0);
+    }
 
-        wxPoint downCenterPoint = wxPoint(r.GetBottomLeft().x + r.GetWidth() / 2, r.GetBottom());
-        dc.SetPen(wxPen(dropDownColour, 2));
-        dc.DrawLine(r.GetTopLeft(), downCenterPoint);
-        dc.DrawLine(r.GetTopRight(), downCenterPoint);
+    if(HasFocus()) {
+        wxRendererNative::Get().DrawFocusRect(this, dc, clientRect);
     }
 }
 

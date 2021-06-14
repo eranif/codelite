@@ -1745,6 +1745,7 @@ void MainBook::ShowWelcomePage(bool show)
         GetSizer()->Show(m_book, true);
         GetSizer()->Show(m_welcomePage, false);
     }
+    GetSizer()->Layout();
 }
 
 void MainBook::ShowQuickBarForPlugins()

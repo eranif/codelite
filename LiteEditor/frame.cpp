@@ -2940,9 +2940,7 @@ void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent& event)
 
 void clMainFrame::CreateWelcomePage()
 {
-#if !CL_USE_NATIVEBOOK
     GetMainBook()->RegisterWelcomePage(nullptr);
-#endif
 }
 
 void clMainFrame::OnImportMSVS(wxCommandEvent& e)

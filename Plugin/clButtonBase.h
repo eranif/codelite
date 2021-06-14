@@ -86,6 +86,11 @@ public:
     void SetDefault();
     void SetBitmap(const wxBitmap& bmp);
     const wxBitmap& GetBitmap() const;
+#else
+    void SetColours(const clColours& WXUNUSED(colour)) {}
+    void SetPressed() {}
+    void SetNormal() {}
+    void SetHover() {}
 #endif
 
     void SetSubText(const wxString& subText);

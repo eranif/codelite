@@ -10,6 +10,7 @@
 
 #if wxUSE_NATIVE_CHOICE
 #include <wx/choice.h>
+#include "clColours.h"
 class WXDLLIMPEXP_SDK clChoice : public wxChoice
 {
 public:
@@ -22,6 +23,8 @@ public:
     virtual ~clChoice();
     
     void SetText(const wxString& text);
+    void SetColours(const clColours& WXUNUSED(colour)) {}
+    void SetPressed() {}
 };
 #else
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CHOICE_MENU_SHOWING, wxNotifyEvent);

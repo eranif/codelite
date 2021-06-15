@@ -81,8 +81,11 @@ rustup update
 rustup component add rls rust-analysis rust-src
 ```
 
-
 Visit the [project home page][8]
+
+!!! Important
+    The `rls` language server must be started from the cargo project directory
+    i.e. the location of the `Cargo.toml` file
 
 ## Manual configuration
 ---
@@ -163,7 +166,7 @@ this way, after running `cmake`, you will get an up-to-date `compile_commands.js
 [2]: https://langserver.org/#implementations-server
 [3]: https://github.com/python-lsp/python-lsp-server
 [4]: https://clangd.llvm.org/
-[5]: https://github.com/rust-lang/rls
+[5]: https://rustup.rs/
 [6]: #install-pylsp-python
 [7]: #install-clangd-c
 [8]: #install-rls-rust

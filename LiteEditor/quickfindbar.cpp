@@ -28,6 +28,7 @@
 #include "clBitmapOverlayCtrl.h"
 #include "clSystemSettings.h"
 #include "clThemeUpdater.h"
+#include "cl_command_event.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
@@ -179,6 +180,13 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // Update the search flags
     m_searchFlags = clConfig::Get().Read("FindBar/SearchFlags", 0);
     m_highlightMatches = clConfig::Get().Read("FindBar/HighlightOccurences", false);
+
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
+        e.Skip();
+        SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+        Refresh();
+    });
 
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);

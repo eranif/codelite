@@ -3,6 +3,7 @@
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "wx/app.h"
 #include <wx/settings.h>
 
@@ -120,6 +121,7 @@ clSystemSettings& clSystemSettings::Get()
 void clSystemSettings::OnSystemColourChanged(wxSysColourChangedEvent& event)
 {
     event.Skip();
+    clDEBUG() << "system colour changed!" << endl;
     DoColourChangedEvent();
 }
 

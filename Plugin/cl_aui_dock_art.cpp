@@ -300,12 +300,10 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
-    wxColour bgColour, penColour, textColour;
-    clDockArtGetColours(bgColour, penColour, textColour);
-
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.SetPen(penColour);
-    dc.DrawRectangle(rect);
+    wxUnusedVar(dc);
+    wxUnusedVar(window);
+    wxUnusedVar(rect);
+    wxUnusedVar(pane);
 }
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)

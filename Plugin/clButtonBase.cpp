@@ -236,11 +236,12 @@ void clButtonBase::Render(wxDC& dc)
 
     // set the pen and draw the border
     wxColour base_colour = clSystemSettings::GetDefaultPanelColour();
-    bool is_light = !DrawingUtils::IsDark(base_colour);
     wxColour border_colour = base_colour.ChangeLightness(70);
+#ifdef __WXMAC__
     if(isDisabled) {
         border_colour = border_colour.ChangeLightness(110);
     }
+#endif
 
     dc.SetPen(border_colour);
     dc.DrawRoundedRectangle(rect, BUTTON_RADIUS);
@@ -249,6 +250,7 @@ void clButtonBase::Render(wxDC& dc)
     wxRect t = rect;
     t.Deflate(1);
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    bool is_light = !DrawingUtils::IsDark(base_colour);
     dc.SetPen(is_light ? *wxWHITE : base_colour.ChangeLightness(120));
     dc.DrawRoundedRectangle(t, BUTTON_RADIUS);
 #endif
@@ -373,7 +375,7 @@ void clButtonBase::Render(wxDC& dc)
         dc.DrawLine(r.GetTopLeft(), downCenterPoint);
         dc.DrawLine(r.GetTopRight(), downCenterPoint);
     }
-    
+
     if(HasFocus()) {
         wxRect focus_rect = clientRect;
         focus_rect.Deflate(2);

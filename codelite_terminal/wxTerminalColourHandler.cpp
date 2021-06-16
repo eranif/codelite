@@ -1,14 +1,14 @@
+#include "TextView.h"
 #include "wxTerminalColourHandler.h"
 #include "wxTerminalCtrl.h"
-#include "TextView.h"
 
 #ifdef __WXMSW__
-#include <windows.h>
 #include <Winuser.h>
+#include <windows.h>
 #endif
+#include <fileutils.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
-#include <fileutils.h>
 
 wxTerminalColourHandler::wxTerminalColourHandler()
 {
@@ -217,7 +217,9 @@ void wxTerminalColourHandler::SetStyleFromEscape(const wxString& escape)
         wxTextAttr textAttr = m_defaultAttr;
         for(const wxString& attr : attrs) {
             long number;
-            if(!attr.ToCLong(&number)) { continue; }
+            if(!attr.ToCLong(&number)) {
+                continue;
+            }
             switch(number) {
             case 0:
                 // reset attributes
@@ -239,10 +241,14 @@ void wxTerminalColourHandler::SetStyleFromEscape(const wxString& escape)
                 if((number >= 30 && number <= 37) || (number >= 90 && number <= 97)) {
                     // use colour table to set the text colour
                     wxColour c = GetColour(number);
-                    if(c.IsOk()) { textAttr.SetTextColour(c); }
+                    if(c.IsOk()) {
+                        textAttr.SetTextColour(c);
+                    }
                 } else if((number >= 40 && number <= 47) || (number >= 100 && number <= 107)) {
                     wxColour c = GetColour(number);
-                    if(c.IsOk()) { textAttr.SetBackgroundColour(c); }
+                    if(c.IsOk()) {
+                        textAttr.SetBackgroundColour(c);
+                    }
                 }
                 break;
             }
@@ -253,7 +259,9 @@ void wxTerminalColourHandler::SetStyleFromEscape(const wxString& escape)
 
 wxColour wxTerminalColourHandler::GetColour(long colour_number)
 {
-    if(m_colours.count(colour_number) == 0) { return wxNullColour; }
+    if(m_colours.count(colour_number) == 0) {
+        return wxNullColour;
+    }
     return m_colours.find(colour_number)->second;
 }
 
@@ -292,7 +300,9 @@ void wxTerminalColourHandler::SetDefaultStyle(const wxTextAttr& attr)
             m_defaultAttr.SetTextColour(attr.GetTextColour());
             m_ctrl->SetForegroundColour(attr.GetTextColour());
         }
-        if(attr.GetFont().IsOk()) { m_defaultAttr.SetFont(attr.GetFont()); }
+        if(attr.GetFont().IsOk()) {
+            m_defaultAttr.SetFont(attr.GetFont());
+        }
         m_ctrl->SetDefaultStyle(m_defaultAttr);
         m_ctrl->Refresh();
     }

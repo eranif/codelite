@@ -2,7 +2,7 @@
 <CodeLite_Project Name="codelite_terminal" InternalType="GUI" Version="11000">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00050001N0005Debug0000000000000001N0011Debug_Linux0000000000000001N0016Debug_Linux_GTK30000000000000001N0007Release0000000000000001N0015Win_x64_Release000000000000]]>
+      <![CDATA[00060001N0005Debug0000000000000001N0011Debug_Linux0000000000000001N0016Debug_Linux_GTK30000000000000001N0007Release0000000000000001N0015Win_x64_Release0000000000000001N0022Windows_Standalone_x64000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -101,7 +101,7 @@
         <Library Value="libplugin_sdkud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="codelite-terminal" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--working-directory=&quot;C:\src\wxcrafter&quot; --command=&quot;dir /w&quot; --wait" UseSeparateDebugArgs="no" DebugArguments="--working-directory=&quot;C:\src\wxcrafter&quot; --command=&quot;dir /w&quot;" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <General OutputFile="codelite-terminal" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--working-directory=C:\Users\Eran\Desktop\learn_rust --command=&quot;cargo --color always build&quot;" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=C:\src\codelite\Runtime;$PATH]]>
@@ -227,7 +227,7 @@ PATH=/home/eran/devl/wxWidgets/build-release-gtk3/:$PATH]]>
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-O2;-Wall;$(shell wx-config --cflags --debug=no)" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="../CodeLite"/>
@@ -351,6 +351,54 @@ PATH=/home/eran/devl/wxWidgets/build-release-gtk3/:$PATH]]>
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy "$(OutputFile).exe" ..\Runtime32</Command>
+      </PostBuild>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Windows_Standalone_x64" CompilerType="GCC (x86_64)" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O0;-Wall;$(shell wx-config --cflags);-g" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+        <IncludePath Value="../CodeLite"/>
+        <IncludePath Value="../Interfaces"/>
+        <IncludePath Value="../Plugin"/>
+        <Preprocessor Value="_WIN32_WINNT=0x0501"/>
+      </Compiler>
+      <Linker Options="$(shell wx-config --libs std,stc);-mwindows" Required="yes">
+        <LibraryPath Value="$(CL_HOME)/build-Win_x64_Release/lib"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libplugin_sdku.dll"/>
+      </Linker>
+      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
+      <General OutputFile="codelite-terminal-dbg.exe" IntermediateDirectory="" Command=".\$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[CL_HOME=..]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

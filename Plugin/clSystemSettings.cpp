@@ -89,7 +89,7 @@ wxColour clSystemSettings::GetColour(int index)
     } else {
         bool is_dark = DrawingUtils::IsDark(wxSYS_COLOUR_3DFACE);
         if(index == wxSYS_COLOUR_TOOLBAR) {
-            return wxSystemSettings::GetColour(IS_GTK ? wxSYS_COLOUR_WINDOW : wxSYS_COLOUR_3DFACE);
+            return GetDefaultPanelColour();
         } else if(index == wxSYS_COLOUR_TOOLBARTEXT) {
             return wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
         } else if(index == wxSYS_COLOUR_WINDOW) {

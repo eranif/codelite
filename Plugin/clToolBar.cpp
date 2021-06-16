@@ -29,11 +29,7 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
     , m_flags(kMiniToolBar)
 {
     SetGroupSpacing(30);
-    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
-    m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
-    if(m_useCustomBgColour) {
-        m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour);
-    }
+    m_bgColour = clSystemSettings::GetDefaultPanelColour();
 
     SetGroupSpacing(50);
     SetBackgroundStyle(wxBG_STYLE_PAINT);
@@ -57,7 +53,7 @@ clToolBar::clToolBar(wxWindow* parent, wxWindowID winid, const wxPoint& pos, con
         }
     });
 
-    m_bgColour = clSystemSettings::GetColour(wxSYS_COLOUR_MENUBAR);
+    m_bgColour = clSystemSettings::GetDefaultPanelColour();
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &clToolBar::OnColoursChanged, this);
 }
 
@@ -677,11 +673,7 @@ int clToolBar::GetYSpacer() const
 void clToolBar::OnColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    m_bgColour = DrawingUtils::GetMenuBarBgColour(HasFlag(kMiniToolBar));
-    m_useCustomBgColour = clConfig::Get().Read("UseCustomBaseColour", m_useCustomBgColour);
-    if(m_useCustomBgColour) {
-        m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour);
-    }
+    m_bgColour = clSystemSettings::GetDefaultPanelColour();
     Refresh();
 }
 

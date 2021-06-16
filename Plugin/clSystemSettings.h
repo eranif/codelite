@@ -18,11 +18,16 @@ class WXDLLIMPEXP_SDK clSystemSettings : public wxEvtHandler, public wxSystemSet
 {
     static bool m_useCustomColours;
     static clColours m_customColours;
+    static wxColour btn_face;
+    static wxColour panel_face;
 
 protected:
+    void OnAppActivated(wxActivateEvent& event);
     void OnColoursChanged(clCommandEvent& event);
     void OnSystemColourChanged(wxSysColourChangedEvent& event);
     void DoColourChangedEvent();
+    static void SampleColoursFromControls();
+
     clSystemSettings();
 
 public:

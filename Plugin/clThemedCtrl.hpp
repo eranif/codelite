@@ -4,8 +4,10 @@
 #include "ColoursAndFontsManager.h"
 #include "clColours.h"
 #include "clSystemSettings.h"
+#include "clTreeCtrl.h"
 #include "drawingutils.h"
 #include "lexer_configuration.h"
+#include <wx/settings.h>
 
 namespace cl
 {
@@ -17,7 +19,17 @@ template <typename T> void ApplyTheme(T* ctrl)
     }
 
     // When not using custom colours, use system defaults
-    clColours colours = clSystemSettings::GetColours();
+    clColours colours;
+    wxColour baseColour;
+    clTreeCtrl* tree = dynamic_cast<clTreeCtrl*>(ctrl);
+    if(tree) {
+        baseColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
+    } else {
+        baseColour = clSystemSettings::GetDefaultPanelColour();
+    }
+
+    colours.InitFromColour(baseColour);
+
     auto& prop = lexer->GetProperty(SEL_TEXT_ATTR_ID);
     wxColour selBgColour = prop.GetBgColour();
     wxColour selTextColour = prop.GetFgColour();

@@ -36,8 +36,6 @@
 clEditorBar::clEditorBar(wxWindow* parent)
     : clEditorBarBase(parent)
 {
-    clThemeUpdater::Get().RegisterWindow(this);
-
     m_functionBmp = clGetManager()->GetStdIcons()->LoadBitmap("function_public", 16);
     CreateBookmarksBitmap();
 
@@ -54,7 +52,6 @@ clEditorBar::clEditorBar(wxWindow* parent)
 
 clEditorBar::~clEditorBar()
 {
-    clThemeUpdater::Get().UnRegisterWindow(this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_PAGE_CHANGED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);

@@ -1026,13 +1026,6 @@ void clMainFrame::CreateGUIControls()
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_mainPanel = new wxPanel(this);
-
-    m_mainPanel->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
-        e.Skip();
-        m_mainPanel->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-        m_mainPanel->Refresh();
-    });
     InitializeLogo();
 
 #if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)
@@ -1212,9 +1205,7 @@ void clMainFrame::CreateGUIControls()
     wxPanel* container = new wxPanel(m_mainPanel);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
         e.Skip();
-#if !CL_USE_NATIVEBOOK
         container->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-#endif
     });
 
     clThemeUpdater::Get().RegisterWindow(container);
@@ -1223,7 +1214,7 @@ void clMainFrame::CreateGUIControls()
     clEditorBar* navbar = new clEditorBar(container);
     navbar->Hide();
 
-    container->GetSizer()->Add(navbar, 0, wxEXPAND | wxBOTTOM, 5);
+    container->GetSizer()->Add(navbar, 0, wxEXPAND);
 
     // Add the debugger toolbar
     m_debuggerToolbar = new DebuggerToolBar(container);
@@ -6075,6 +6066,10 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines"));
 #endif
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    m_mainPanel->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    m_debuggerPane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    m_outputPane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    m_workspacePane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     DoSysColoursChanged();
 }
 

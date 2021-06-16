@@ -41,7 +41,9 @@
 #include <wx/xrc/xmlres.h>
 
 // --------------------------------------------
-static bool IsRectOK(wxDC& dc, const wxRect& rect)
+namespace
+{
+bool IsRectOK(wxDC& dc, const wxRect& rect)
 {
     const wxSize dc_size = dc.GetSize();
 
@@ -51,7 +53,7 @@ static bool IsRectOK(wxDC& dc, const wxRect& rect)
     return (true);
 }
 
-static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
+wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 {
     wxCoord x, y;
 
@@ -77,45 +79,17 @@ static wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
     ret += wxT("...");
     return ret;
 }
-
-static void clDockArtGetColours(wxColour& bgColour, wxColour& penColour, wxColour& textColour)
-{
-    bgColour = clSystemSettings::GetDefaultPanelColour();
-    if(DrawingUtils::IsDark(bgColour)) {
-        textColour = wxColour(*wxWHITE).ChangeLightness(80);
-        bgColour = bgColour.ChangeLightness(50);
-        penColour = bgColour.ChangeLightness(50);
-    } else {
-        textColour = wxColour(*wxBLACK).ChangeLightness(120);
-        bgColour = wxColour("#9CC0E7"); // Pale Cerulean
-        penColour = bgColour;
-    }
-}
-
-static wxColour clDockArtSashColour() { return clSystemSettings::GetDefaultPanelColour(); }
-
+} // namespace
 // ------------------------------------------------------------
 
 clAuiDockArt::clAuiDockArt(IManager* manager)
     : m_manager(manager)
 {
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
-    m_captionColour = DrawingUtils::GetCaptionColour();
-    m_captionTextColour = DrawingUtils::GetCaptionTextColour();
-    m_useCustomCaptionColour = clConfig::Get().Read("UseCustomCaptionsColour", false);
 
-    m_bgColour = DrawingUtils::GetPanelBgColour();
-    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, [&](clCommandEvent& event) {
-        event.Skip();
-        m_bgColour = DrawingUtils::GetPanelBgColour();
-        bool useCustomColour = clConfig::Get().Read("UseCustomBaseColour", false);
-        if(useCustomColour) {
-            m_bgColour = clConfig::Get().Read("BaseColour", m_bgColour);
-        }
-
-        // Trigger a refresh
-        m_manager->GetDockingManager()->Update();
-    });
+    // initialise the colours to avoid assertion
+    clCommandEvent dummy;
+    OnSettingsChanged(dummy);
 }
 
 clAuiDockArt::~clAuiDockArt()
@@ -157,15 +131,12 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
     }
 
     // Prepare the colours
-    wxColour bgColour, penColour, textColour;
-    clDockArtGetColours(bgColour, penColour, textColour);
-
     switch(button) {
     case wxAUI_BUTTON_CLOSE:
-        DrawingUtils::DrawButtonX(dc, window, buttonRect, penColour, bgColour, buttonState);
+        DrawingUtils::DrawButtonX(dc, window, buttonRect, m_penColour, m_bgColour, buttonState);
         break;
     case wxAUI_BUTTON_MAXIMIZE_RESTORE:
-        DrawingUtils::DrawButtonMaximizeRestore(dc, window, buttonRect, penColour, bgColour, buttonState);
+        DrawingUtils::DrawButtonMaximizeRestore(dc, window, buttonRect, m_penColour, m_bgColour, buttonState);
         break;
     default:
         // Make sure that the pane buttons are drawn with proper colours
@@ -184,7 +155,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     if(!IsRectOK(dc, rect))
         return;
 
-#ifdef __WXOSX__
+#ifdef __WXMAC__
     tmpRect = rect;
     tmpRect.Inflate(1);
 
@@ -192,15 +163,12 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     wxFont f = DrawingUtils::GetDefaultGuiFont();
     dc.SetFont(f);
 
-    wxColour captionBgColour, penColour, textColour;
-    clDockArtGetColours(captionBgColour, penColour, textColour);
-
     dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(captionBgColour);
+    dc.SetBrush(m_captionColour);
     dc.DrawRectangle(tmpRect);
 
     int caption_offset = 5;
-    dc.SetTextForeground(textColour);
+    dc.SetTextForeground(m_captionTextColour);
     wxCoord w, h;
     dc.GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
 
@@ -234,12 +202,9 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         gdc.SetFont(f);
 
-        wxColour captionBgColour, penColour, textColour;
-        clDockArtGetColours(captionBgColour, penColour, textColour);
-
         // we inflate the rect by 1 to fix a one pixel glitch
         gdc.SetPen(*wxTRANSPARENT_PEN);
-        gdc.SetBrush(captionBgColour);
+        gdc.SetBrush(m_captionColour);
         tmpRect.Inflate(2);
         gdc.DrawRectangle(tmpRect);
 
@@ -261,7 +226,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         textRect = textRect.CenterIn(clip_rect, wxVERTICAL);
         textRect.SetX(caption_offset);
 
-        gdc.SetTextForeground(textColour);
+        gdc.SetTextForeground(m_captionTextColour);
         gdc.DrawText(draw_text, textRect.GetTopLeft());
         memDc.SelectObject(wxNullBitmap);
     }
@@ -271,9 +236,9 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
 {
-#ifdef __WXOSX__
-    dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
-    dc.SetPen(clSystemSettings::GetDefaultPanelColour());
+#ifdef __WXMAC__
+    dc.SetBrush(m_bgColour);
+    dc.SetPen(m_bgColour);
     dc.DrawRectangle(rect);
 #else
     wxRect tmpRect = rect;
@@ -286,16 +251,12 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
     wxGCDC gdc;
     DrawingUtils::GetGCDC(memDc, gdc);
 
-    wxColour bgColour, penColour, textColour;
-    clDockArtGetColours(bgColour, penColour, textColour);
-
-    gdc.SetPen(penColour);
-    gdc.SetBrush(bgColour);
+    gdc.SetPen(m_bgColour);
+    gdc.SetBrush(m_bgColour);
     gdc.DrawRectangle(tmpRect);
     memDc.SelectObject(wxNullBitmap);
     dc.DrawBitmap(bmp, rect.GetTopLeft(), true);
 #endif
-    // return wxAuiDefaultDockArt::DrawBackground(dc, window, orientation, rect);
 }
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
@@ -311,17 +272,25 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
     wxUnusedVar(orientation);
     wxUnusedVar(window);
 
-    dc.SetPen(clDockArtSashColour());
-    dc.SetBrush(clDockArtSashColour());
+    dc.SetPen(m_bgColour);
+    dc.SetBrush(m_bgColour);
     dc.DrawRectangle(rect);
 }
 
 void clAuiDockArt::OnSettingsChanged(clCommandEvent& event)
 {
     event.Skip();
-    clColours colours = clSystemSettings::GetColours();
-    m_captionColour = clSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
-    m_captionTextColour = colours.GetItemTextColour();
     m_bgColour = clSystemSettings::GetDefaultPanelColour();
-    m_useCustomCaptionColour = false;
+    if(DrawingUtils::IsDark(m_bgColour)) {
+        m_captionTextColour = wxColour(*wxWHITE).ChangeLightness(80);
+        m_captionColour = m_bgColour.ChangeLightness(50);
+        m_penColour = m_bgColour.ChangeLightness(50);
+    } else {
+        m_captionTextColour = wxColour(*wxBLACK).ChangeLightness(120);
+        m_captionColour = wxColour("#9CC0E7"); // Pale Cerulean
+        m_penColour = m_bgColour;
+    }
+
+    // trigger a refresh
+    clGetManager()->GetDockingManager()->Update();
 }

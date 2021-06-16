@@ -40,8 +40,7 @@ class WXDLLIMPEXP_SDK clAuiDockArt : public wxEvtHandler, public wxAuiDefaultDoc
     IManager* m_manager;
     wxColour m_captionColour;
     wxColour m_captionTextColour;
-    bool m_useCustomCaptionColour;
-    bool m_useCustomBgColour = false;
+    wxColour m_penColour;
     wxColour m_bgColour;
 
 public:

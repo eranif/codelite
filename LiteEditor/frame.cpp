@@ -83,6 +83,7 @@
 #include <wx/busyinfo.h>
 #include <wx/dcbuffer.h>
 #include <wx/richmsgdlg.h>
+#include <wx/settings.h>
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
@@ -707,6 +708,14 @@ EVT_COMMAND(wxID_ANY, wxEVT_LOAD_PERSPECTIVE, clMainFrame::OnLoadPerspective)
 EVT_COMMAND(wxID_ANY, wxEVT_CMD_DELETE_DOCKPANE, clMainFrame::OnDestroyDetachedPane)
 END_EVENT_TABLE()
 
+namespace
+{
+/// keep the initial startup background colour
+/// we use this to detect any theme changes done to the system
+/// the checks are done in the OnAppAcitvated event
+wxColour startupBackgroundColour;
+} // namespace
+
 clMainFrame* clMainFrame::m_theFrame = NULL;
 bool clMainFrame::m_initCompleted = false;
 
@@ -729,6 +738,9 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     if(!wxFrame::Create(pParent, id, title, pos, size, style)) {
         return;
     }
+
+    /// keep the initial background colour
+    startupBackgroundColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 
 #if defined(__WXGTK20__)
     // A rather ugly hack here.  GTK V2 insists that F10 should be the
@@ -2822,15 +2834,9 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     activeEditor->SetActive();
 }
 
-wxString clMainFrame::CreateWorkspaceTable()
-{
-    return wxEmptyString;
-}
+wxString clMainFrame::CreateWorkspaceTable() { return wxEmptyString; }
 
-wxString clMainFrame::CreateFilesTable()
-{
-    return wxEmptyString;
-}
+wxString clMainFrame::CreateFilesTable() { return wxEmptyString; }
 
 void clMainFrame::CreateRecentlyOpenedFilesMenu()
 {
@@ -2938,10 +2944,7 @@ void clMainFrame::OnBackwardForwardUI(wxUpdateUIEvent& event)
     }
 }
 
-void clMainFrame::CreateWelcomePage()
-{
-    GetMainBook()->RegisterWelcomePage(nullptr);
-}
+void clMainFrame::CreateWelcomePage() { GetMainBook()->RegisterWelcomePage(nullptr); }
 
 void clMainFrame::OnImportMSVS(wxCommandEvent& e)
 {
@@ -3425,6 +3428,17 @@ void clMainFrame::CompleteInitialization()
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
 {
     e.Skip();
+
+    // check for external theme detection
+    wxColour currentBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    if(currentBgColour != startupBackgroundColour) {
+        /// external theme change detected, fire an event
+        clCommandEvent themeChangedEvent(wxEVT_CMD_COLOURS_FONTS_UPDATED);
+        EventNotifier::Get()->AddPendingEvent(themeChangedEvent);
+        /// and update the new background colour
+        startupBackgroundColour = currentBgColour;
+    }
+
     if(m_theFrame && e.GetActive()) {
 
         // if workspace or project was modified, don't prompt for

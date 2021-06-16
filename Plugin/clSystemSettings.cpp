@@ -37,6 +37,7 @@ namespace
 /// the checks are done in the OnAppAcitvated event
 wxColour startupBackgroundColour;
 
+#ifdef __WXGTK__
 double GetLuminance(const wxColour& color)
 {
     double r = color.Red();
@@ -46,6 +47,7 @@ double GetLuminance(const wxColour& color)
     double luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     return luma;
 }
+#endif
 } // namespace
 
 wxDEFINE_EVENT(wxEVT_SYS_COLOURS_CHANGED, clCommandEvent);

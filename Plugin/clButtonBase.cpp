@@ -182,10 +182,12 @@ void clButtonBase::Initialise()
 
 void clButtonBase::Render(wxDC& dc)
 {
-#if !wxUSE_BUTTON_NATIVE_RENDERER
+    wxColour parentbgColour =
+        GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();
     wxRect clientRect = GetClientRect();
     wxRect rect = clientRect;
-    wxColour parentbgColour = clSystemSettings::GetDefaultPanelColour();
+
+#if !wxUSE_BUTTON_NATIVE_RENDERER
 #ifdef __WXMAC__
     clientRect.Inflate(2);
 #endif
@@ -382,13 +384,10 @@ void clButtonBase::Render(wxDC& dc)
         wxRendererNative::Get().DrawFocusRect(this, dc, focus_rect);
     }
 #else // use wxRendererNative
-    wxRect clientRect = GetClientRect();
-    wxRect rect = clientRect;
 #ifdef __WXOSX__
     clientRect.Inflate(1);
 #endif
 
-    wxColour parentbgColour = clSystemSettings::GetDefaultPanelColour();
     dc.SetBrush(parentbgColour);
     dc.SetPen(parentbgColour);
     dc.DrawRectangle(clientRect);

@@ -249,7 +249,11 @@ void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
         if(curitem->IsHidden()) {
             continue;
         }
-        curitem->Render(this, dc, m_colours, i, &GetSearch());
+        if(m_customRenderer) {
+            m_customRenderer->Render(this, dc, m_colours, i, curitem);
+        } else {
+            curitem->Render(this, dc, m_colours, i, &GetSearch());
+        }
     }
 }
 
@@ -540,6 +544,11 @@ void clControlWithItems::SetColours(const clColours& colours)
     GetHScrollBar()->SetColours(m_colours);
     SetBackgroundColour(GetColours().GetBgColour());
     Refresh();
+}
+
+void clControlWithItems::SetCustomRenderer(clControlWithItemsRowRenderer* renderer)
+{
+    m_customRenderer.reset(renderer);
 }
 
 //===---------------------------------------------------

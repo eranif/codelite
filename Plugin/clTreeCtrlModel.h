@@ -37,6 +37,8 @@ public:
     clRowEntry* GetFirstItemOnScreen() const { return m_firstItemOnScreen; }
 
     void SetSortFunction(const clSortFunc_t& CompareFunc) { m_shouldInsertBeforeFunc = CompareFunc; }
+    clSortFunc_t GetSortFunction() const { return m_shouldInsertBeforeFunc; }
+
     void ExpandAllChildren(const wxTreeItemId& item);
     void CollapseAllChildren(const wxTreeItemId& item);
 
@@ -68,7 +70,9 @@ public:
     clRowEntry* GetRowAfter(clRowEntry* item, bool visibleItem) const;
     clRowEntry* ToPtr(const wxTreeItemId& item) const
     {
-        if(!m_root || !item.IsOk()) { return nullptr; }
+        if(!m_root || !item.IsOk()) {
+            return nullptr;
+        }
         return reinterpret_cast<clRowEntry*>(item.GetID());
     }
 
@@ -135,7 +139,7 @@ public:
 
     clRowEntry* GetNextSibling(clRowEntry* item) const;
     clRowEntry* GetPrevSibling(clRowEntry* item) const;
-    
+
     void EnableEvents(bool enable) { m_shutdown = !enable; }
 };
 

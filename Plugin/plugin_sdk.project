@@ -107,6 +107,8 @@
     <File Name="clButton.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clAsciiEscapCodeHandler.hpp"/>
+    <File Name="clAsciiEscapCodeHandler.cpp"/>
     <File Name="clCaptionBar.hpp"/>
     <File Name="clCaptionBar.cpp"/>
     <File Name="clThemedMenuBar.cpp"/>

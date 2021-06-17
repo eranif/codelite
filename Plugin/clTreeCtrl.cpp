@@ -1380,8 +1380,10 @@ void clTreeCtrl::ClearAllHighlights()
 
 void clTreeCtrl::UpdateScrollBar()
 {
-    clControlWithItems::UpdateScrollBar();
-    m_scrollLines = 0;
+    if(!m_bulkInsert) {
+        clControlWithItems::UpdateScrollBar();
+        m_scrollLines = 0;
+    }
 }
 
 void clTreeCtrl::AddHeader(const wxString& label, const wxBitmap& bmp, int width) { DoAddHeader(label, bmp, width); }
@@ -1453,4 +1455,18 @@ wxFont clTreeCtrl::GetDefaultFont() const
         return m_defaultFont;
     }
     return clScrolledPanel::GetDefaultFont();
+}
+
+void clTreeCtrl::Begin()
+{
+    m_bulkInsert = true;
+    m_oldSortFunc = m_model.GetSortFunction();
+    m_model.SetSortFunction(nullptr);
+}
+
+void clTreeCtrl::Commit()
+{
+    m_bulkInsert = false;
+    m_model.SetSortFunction(m_oldSortFunc);
+    Refresh();
 }

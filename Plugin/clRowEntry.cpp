@@ -16,39 +16,9 @@
 #define wxCONTROL_NONE 0
 #endif
 
-#ifdef __WXMSW__
-#define PEN_STYLE wxPENSTYLE_SHORT_DASH
-#define IS_MSW 1
-#else
-#define PEN_STYLE wxPENSTYLE_DOT
-#define IS_MSW 0
-#endif
-
-#ifdef __WXMSW__
-int clRowEntry::X_SPACER = 4;
-int clRowEntry::Y_SPACER = 0;
-#elif defined(__WXOSX__)
-int clRowEntry::X_SPACER = 4;
-int clRowEntry::Y_SPACER = 2;
-#else
-int clRowEntry::X_SPACER = 5;
-int clRowEntry::Y_SPACER = 2;
-#endif
-
-#ifdef __WXOSX__
-#define IS_OSX 1
-#else
-#define IS_OSX 0
-#endif
-
-#ifdef __WXGTK__
-#define IS_GTK 1
-#else
-#define IS_GTK 0
-#endif
-
+namespace
+{
 struct clClipperHelper {
-
     bool m_used = false;
     wxRect m_oldRect;
     wxDC& m_dc;
@@ -83,6 +53,40 @@ struct clClipperHelper {
         }
     }
 };
+} // namespace
+
+#ifdef __WXMSW__
+int clRowEntry::X_SPACER = 4;
+int clRowEntry::Y_SPACER = 0;
+#elif defined(__WXOSX__)
+int clRowEntry::X_SPACER = 4;
+int clRowEntry::Y_SPACER = 2;
+#else
+int clRowEntry::X_SPACER = 5;
+int clRowEntry::Y_SPACER = 2;
+#endif
+
+// clang-format off
+#ifdef __WXMSW__
+#   define PEN_STYLE wxPENSTYLE_SHORT_DASH
+#   define IS_MSW 1
+#else
+#   define PEN_STYLE wxPENSTYLE_DOT
+#   define IS_MSW 0
+#endif
+
+#ifdef __WXOSX__
+#   define IS_OSX 1
+#else
+#   define IS_OSX 0
+#endif
+
+#ifdef __WXGTK__
+#   define IS_GTK 1
+#else
+#   define IS_GTK 0
+#endif
+// clang-format on
 
 void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {

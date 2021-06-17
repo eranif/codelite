@@ -283,7 +283,7 @@ void NewBuildTab::OnBuildStarted(clBuildEvent& e)
         EventNotifier::Get()->AddPendingEvent(buildEvent);
 
     } else if(!cmpname.empty()) {
-        clDEBUG() << "Build output view: using compiler error patterns:" << cmpname << endl;
+        clDEBUG1() << "Build output view: using compiler error patterns:" << cmpname << endl;
         m_cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpname);
     }
 }
@@ -333,7 +333,7 @@ void NewBuildTab::DoCacheRegexes()
     BuildSettingsConfigCookie cookie;
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
     while(cmp) {
-        clDEBUG() << "Caching patterns for compiler:" << cmp->GetName() << endl;
+        clDEBUG1() << "Caching patterns for compiler:" << cmp->GetName() << endl;
         CmpPatterns cmpPatterns;
         const Compiler::CmpListInfoPattern& errPatterns = cmp->GetErrPatterns();
         const Compiler::CmpListInfoPattern& warnPatterns = cmp->GetWarnPatterns();
@@ -702,7 +702,7 @@ bool NewBuildTab::DoSelectAndOpen(int buildViewLine, bool centerLine)
         eventErrorClicked.SetFileName(bli->GetFilenameRaw()); // pass the file name "raw" (i.e. unmodified by CodeLite)
         eventErrorClicked.SetLineNumber(bli->GetLineNumber());
 
-        clDEBUG() << "Sending build event click on file:" << eventErrorClicked.GetFileName() << endl;
+        clDEBUG1() << "Sending build event click on file:" << eventErrorClicked.GetFileName() << endl;
         if(EventNotifier::Get()->ProcessEvent(eventErrorClicked)) {
             return true;
         }

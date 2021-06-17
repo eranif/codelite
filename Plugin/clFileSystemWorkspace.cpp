@@ -578,10 +578,10 @@ void clFileSystemWorkspace::OnBuildProcessTerminated(clProcessEvent& event)
         wxDELETE(m_buildProcess);
         DoPrintBuildMessage(event.GetOutput());
 
-        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+        clBuildEvent e(wxEVT_BUILD_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
 
-        // Notify about build process started
+        // Notify about build process ended to plugins
         clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
         EventNotifier::Get()->AddPendingEvent(eventStopped);
     }
@@ -596,7 +596,7 @@ void clFileSystemWorkspace::OnBuildProcessOutput(clProcessEvent& event)
 
 void clFileSystemWorkspace::DoPrintBuildMessage(const wxString& message)
 {
-    clCommandEvent e(wxEVT_SHELL_COMMAND_ADDLINE);
+    clBuildEvent e(wxEVT_BUILD_PROCESS_ADDLINE);
     e.SetString(message);
     EventNotifier::Get()->AddPendingEvent(e);
 }
@@ -801,13 +801,15 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
 
     m_buildProcess = ::CreateAsyncProcess(this, cmd, flags, wd, &envList, ssh_account);
     if(!m_buildProcess) {
-        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+        clBuildEvent e(wxEVT_BUILD_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
+
     } else {
+
         // notify about starting build process.
         // we pass the selected compiler in the event
-        clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
-        e.SetString(GetConfig()->GetCompiler());
+        clBuildEvent e(wxEVT_BUILD_PROCESS_STARTED);
+        e.SetToolchain(GetConfig()->GetCompiler());
         EventNotifier::Get()->AddPendingEvent(e);
 
         // Notify about build process started
@@ -1034,9 +1036,9 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
     // convert the envlist into map
     auto envlist = FileUtils::CreateEnvironment(GetConfig()->GetEnvironment());
-//    wxStringMap_t envmap;
-//    envmap.reserve(envlist.size());
-//    envmap.insert(envlist.begin(), envlist.end());
+    //    wxStringMap_t envmap;
+    //    envmap.reserve(envlist.size());
+    //    envmap.insert(envlist.begin(), envlist.end());
     dbgr->Start(session_info, &envlist);
 
     // Notify that debug session started

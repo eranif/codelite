@@ -87,7 +87,6 @@ void CustomBuildRequest::Process(IManager* manager)
         return;
     }
 
-    SendStartMsg();
 
     BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
     if(!bldConf) {
@@ -95,6 +94,7 @@ void CustomBuildRequest::Process(IManager* manager)
                                       m_info.GetProject().c_str(), m_info.GetConfiguration().c_str()));
         return;
     }
+    SendStartMsg(bldConf->GetCompilerType());
 
     // try the special targets first:
     bool isClean(false);

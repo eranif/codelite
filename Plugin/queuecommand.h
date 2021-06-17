@@ -26,8 +26,8 @@
 #ifndef __queuecommand__
 #define __queuecommand__
 
-#include <wx/string.h>
 #include "codelite_exports.h"
+#include <wx/string.h>
 
 class WXDLLIMPEXP_SDK QueueCommand
 {
@@ -38,21 +38,13 @@ class WXDLLIMPEXP_SDK QueueCommand
     bool m_cleanLog;
     bool m_checkBuildSuccess;
     wxString m_customBuildTarget;
-    mutable wxString m_synopsis;
 
 public:
     // Command's kind
-    enum {
-        kBuild,
-        kClean,
-        kCustomBuild,
-        kDebug,
-        kRebuild,
-        kExecuteNoDebug
-    };
+    enum { kBuild, kClean, kCustomBuild, kDebug, kRebuild, kExecuteNoDebug };
 
 public:
-    QueueCommand(const wxString &project, const wxString &configuration, bool projectOnly, int kind);
+    QueueCommand(const wxString& project, const wxString& configuration, bool projectOnly, int kind);
     QueueCommand(int kind);
     ~QueueCommand();
 
@@ -60,37 +52,20 @@ public:
     // Setters/Getters
     //----------------------------------------
 
-    void SetConfiguration(const wxString& configuration) ;
-    void SetProject(const wxString& project) ;
-    const wxString& GetConfiguration() const ;
-    const wxString& GetProject() const ;
-    void SetProjectOnly(const bool& projectOnly) ;
-    const bool& GetProjectOnly() const ;
-    void SetKind(const int& kind) ;
-    const int& GetKind() const ;
-    void SetCleanLog(const bool& cleanLog) ;
-    const bool& GetCleanLog() const ;
-    void SetCheckBuildSuccess(const bool& checkBuildSuccess) {
-        this->m_checkBuildSuccess = checkBuildSuccess;
-    }
-    const bool& GetCheckBuildSuccess() const {
-        return m_checkBuildSuccess;
-    }
-    void SetCustomBuildTarget(const wxString& customBuildTarget) {
-        this->m_customBuildTarget = customBuildTarget;
-    }
-    const wxString& GetCustomBuildTarget() const {
-        return m_customBuildTarget;
-    }
-    const wxString& GetSynopsis() const {
-        if (m_synopsis.IsEmpty())
-            m_synopsis = DeriveSynopsis();
-        return m_synopsis;
-    }
-    void SetSynopsis(const wxString& synopsis) {
-        m_synopsis = synopsis;
-    }
-    wxString DeriveSynopsis() const;
+    void SetConfiguration(const wxString& configuration);
+    void SetProject(const wxString& project);
+    const wxString& GetConfiguration() const;
+    const wxString& GetProject() const;
+    void SetProjectOnly(const bool& projectOnly);
+    const bool& GetProjectOnly() const;
+    void SetKind(const int& kind);
+    const int& GetKind() const;
+    void SetCleanLog(const bool& cleanLog);
+    const bool& GetCleanLog() const;
+    void SetCheckBuildSuccess(const bool& checkBuildSuccess) { this->m_checkBuildSuccess = checkBuildSuccess; }
+    const bool& GetCheckBuildSuccess() const { return m_checkBuildSuccess; }
+    void SetCustomBuildTarget(const wxString& customBuildTarget) { this->m_customBuildTarget = customBuildTarget; }
+    const wxString& GetCustomBuildTarget() const { return m_customBuildTarget; }
 };
 
 #endif // __queuecommand__

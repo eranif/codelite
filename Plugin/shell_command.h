@@ -25,45 +25,18 @@
 #ifndef COMPILER_ACTION_H
 #define COMPILER_ACTION_H
 
+#include "cl_command_event.h"
+#include "codelite_exports.h"
 #include "project.h"
 #include "queuecommand.h"
 #include "wx/event.h"
-#include "codelite_exports.h"
-#include "cl_command_event.h"
 
 class IManager;
 class IProcess;
 
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_ADDLINE;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_STARTED;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED;
-extern WXDLLIMPEXP_SDK const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN;
-
-/**
- * @class BuildEventDetails
- * @brief associated data that (ClientData) which is sent with the
- * wxEVT_SHELL_COMMAND_STARTED and wxEVT_SHELL_COMMAND_STARTED_NOCLEAN events
- */
-class WXDLLIMPEXP_SDK BuildEventDetails : public wxClientData
-{
-    wxString m_projectName;
-    wxString m_configuration;
-    bool m_isClean;
-    bool m_isCustomProject;
-
-public:
-    BuildEventDetails() {}
-    virtual ~BuildEventDetails() {}
-
-    void SetConfiguration(const wxString& configuration) { this->m_configuration = configuration; }
-    void SetProjectName(const wxString& projectName) { this->m_projectName = projectName; }
-    const wxString& GetConfiguration() const { return m_configuration; }
-    const wxString& GetProjectName() const { return m_projectName; }
-    void SetIsClean(bool isClean) { this->m_isClean = isClean; }
-    void SetIsCustomProject(bool isCustomProject) { this->m_isCustomProject = isCustomProject; }
-    bool IsClean() const { return m_isClean; }
-    bool IsCustomProject() const { return m_isCustomProject; }
-};
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILD_PROCESS_ADDLINE, clBuildEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILD_PROCESS_STARTED, clBuildEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILD_PROCESS_ENDED, clBuildEvent);
 
 class WXDLLIMPEXP_SDK ShellCommand : public wxEvtHandler
 {
@@ -95,7 +68,7 @@ public:
     virtual void Process(IManager* manager) = 0;
 
     void AppendLine(const wxString& line);
-    void SendStartMsg();
+    void SendStartMsg(const wxString& toolchain);
     void SendEndMsg();
 };
 #endif

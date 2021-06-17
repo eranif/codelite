@@ -216,9 +216,9 @@ public:
 
 protected:
     void OnThemeChanged(wxCommandEvent& event);
-    void OnBuildStarted(clCommandEvent& e);
-    void OnBuildEnded(clCommandEvent& e);
-    void OnBuildAddLine(clCommandEvent& e);
+    void OnBuildStarted(clBuildEvent& e);
+    void OnBuildEnded(clBuildEvent& e);
+    void OnBuildAddLine(clBuildEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnNextBuildError(wxCommandEvent& e);

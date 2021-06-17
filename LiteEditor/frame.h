@@ -420,7 +420,7 @@ protected:
 
     void OnRestoreDefaultLayout(wxCommandEvent& e);
     void OnIdle(wxIdleEvent& e);
-    void OnBuildEnded(clCommandEvent& event);
+    void OnBuildEnded(clBuildEvent& event);
     void OnQuit(wxCommandEvent& WXUNUSED(event));
     void OnClose(wxCloseEvent& event);
     void OnCustomiseToolbar(wxCommandEvent& event);

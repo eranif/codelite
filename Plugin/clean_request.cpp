@@ -122,7 +122,8 @@ void CleanRequest::Process(IManager* manager)
         return;
     }
 
-    SendStartMsg();
+    SendStartMsg(bldConf ? bldConf->GetCompilerType() : wxString());
+
     // Expand the variables of the command
     cmd = ExpandAllVariables(cmd, w, m_info.GetProject(), m_info.GetConfiguration(), wxEmptyString);
     DirSaver ds;

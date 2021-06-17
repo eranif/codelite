@@ -123,14 +123,9 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
     BuildTabTopPanel* toolbox = new BuildTabTopPanel(this);
     bs->Insert(0, toolbox, 0, wxEXPAND);
 
-    EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_STARTED, clCommandEventHandler(NewBuildTab::OnBuildStarted), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_STARTED_NOCLEAN,
-                                  clCommandEventHandler(NewBuildTab::OnBuildStarted), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_ADDLINE, clCommandEventHandler(NewBuildTab::OnBuildAddLine), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_SHELL_COMMAND_PROCESS_ENDED, clCommandEventHandler(NewBuildTab::OnBuildEnded),
-                                  NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_PROCESS_STARTED, &NewBuildTab::OnBuildStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_PROCESS_ADDLINE, &NewBuildTab::OnBuildAddLine, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_PROCESS_ENDED, &NewBuildTab::OnBuildEnded, this);
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &NewBuildTab::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NewBuildTab::OnWorkspaceClosed, this);
@@ -144,21 +139,17 @@ NewBuildTab::NewBuildTab(wxWindow* parent)
 NewBuildTab::~NewBuildTab()
 {
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &NewBuildTab::OnThemeChanged, this);
-    EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_STARTED, clCommandEventHandler(NewBuildTab::OnBuildStarted),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_STARTED_NOCLEAN,
-                                     clCommandEventHandler(NewBuildTab::OnBuildStarted), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_ADDLINE, clCommandEventHandler(NewBuildTab::OnBuildAddLine),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_SHELL_COMMAND_PROCESS_ENDED,
-                                     clCommandEventHandler(NewBuildTab::OnBuildEnded), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_STARTED, &NewBuildTab::OnBuildStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_ADDLINE, &NewBuildTab::OnBuildAddLine, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_ENDED, &NewBuildTab::OnBuildEnded, this);
+
     wxTheApp->Disconnect(XRCID("next_build_error"), wxEVT_COMMAND_MENU_SELECTED,
                          wxCommandEventHandler(NewBuildTab::OnNextBuildError), NULL, this);
     wxTheApp->Disconnect(XRCID("next_build_error"), wxEVT_UPDATE_UI,
                          wxUpdateUIEventHandler(NewBuildTab::OnNextBuildErrorUI), NULL, this);
 }
 
-void NewBuildTab::OnBuildEnded(clCommandEvent& e)
+void NewBuildTab::OnBuildEnded(clBuildEvent& e)
 {
     e.Skip();
     CL_DEBUG("Build Ended!");
@@ -225,7 +216,7 @@ void NewBuildTab::OnBuildEnded(clCommandEvent& e)
     EventNotifier::Get()->AddPendingEvent(buildEvent);
 }
 
-void NewBuildTab::OnBuildStarted(clCommandEvent& e)
+void NewBuildTab::OnBuildStarted(clBuildEvent& e)
 {
     e.Skip();
 
@@ -252,7 +243,7 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
     m_showMe = (BuildTabSettingsData::ShowBuildPane)m_buildTabSettings.GetShowBuildPane();
     m_skipWarnings = m_buildTabSettings.GetSkipWarnings();
 
-    if(e.GetEventType() != wxEVT_SHELL_COMMAND_STARTED_NOCLEAN) {
+    if(e.IsCleanLog()) {
         DoClear();
         DoCacheRegexes();
     }
@@ -276,28 +267,28 @@ void NewBuildTab::OnBuildStarted(clCommandEvent& e)
     }
     m_sw.Start();
 
-    m_cmp.Reset(NULL);
-    BuildEventDetails* bed = dynamic_cast<BuildEventDetails*>(e.GetClientObject());
-    wxString cmpname = e.GetString();
-    if(bed) {
+    m_cmp.Reset(nullptr);
+    const wxString& cmpname = e.GetToolchain();
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
         BuildConfigPtr buildConfig =
-            clCxxWorkspaceST::Get()->GetProjBuildConf(bed->GetProjectName(), bed->GetConfiguration());
+            clCxxWorkspaceST::Get()->GetProjBuildConf(e.GetProjectName(), e.GetConfigurationName());
         if(buildConfig) {
             m_cmp = buildConfig->GetCompiler();
         }
 
         // notify the plugins that the build had started
         clBuildEvent buildEvent(wxEVT_BUILD_STARTED);
-        buildEvent.SetProjectName(bed->GetProjectName());
-        buildEvent.SetConfigurationName(bed->GetConfiguration());
+        buildEvent.SetProjectName(e.GetProjectName());
+        buildEvent.SetConfigurationName(e.GetConfigurationName());
         EventNotifier::Get()->AddPendingEvent(buildEvent);
+
     } else if(!cmpname.empty()) {
         clDEBUG() << "Build output view: using compiler error patterns:" << cmpname << endl;
         m_cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpname);
     }
 }
 
-void NewBuildTab::OnBuildAddLine(clCommandEvent& e)
+void NewBuildTab::OnBuildAddLine(clBuildEvent& e)
 {
     e.Skip(); // Always call skip..
     m_output << e.GetString();
@@ -342,6 +333,7 @@ void NewBuildTab::DoCacheRegexes()
     BuildSettingsConfigCookie cookie;
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
     while(cmp) {
+        clDEBUG() << "Caching patterns for compiler:" << cmp->GetName() << endl;
         CmpPatterns cmpPatterns;
         const Compiler::CmpListInfoPattern& errPatterns = cmp->GetErrPatterns();
         const Compiler::CmpListInfoPattern& warnPatterns = cmp->GetWarnPatterns();
@@ -1057,6 +1049,7 @@ CmpPatternPtr NewBuildTab::GetMatchingRegex(const wxString& lineText, LINE_SEVER
 
         CmpPatterns cmpPatterns;
         if(!DoGetCompilerPatterns(m_cmp->GetName(), cmpPatterns)) {
+            clDEBUG() << "Could not find patterns for compiler" << m_cmp->GetName() << endl;
             severity = SV_NONE;
             return NULL;
         }

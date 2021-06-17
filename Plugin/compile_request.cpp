@@ -110,11 +110,11 @@ void CompileRequest::Process(IManager* manager)
 
     // Send the EVENT_STARTED : even if this event is sent, next event will
     // be post, so no way to be sure the the build process has not started
-    SendStartMsg();
+    BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
+    SendStartMsg(bldConf ? bldConf->GetCompilerType() : wxString());
 
     // if we require to run the makefile generation command only, replace the 'cmd' with the
     // generation command line
-    BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
     if(bldConf) {
         // BuilderPtr builder = bm->GetBuilder("Default");
         BuilderPtr builder = bldConf->GetBuilder();

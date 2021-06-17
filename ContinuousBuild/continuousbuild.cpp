@@ -218,17 +218,13 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
         return;
     }
 
-    clCommandEvent event(wxEVT_SHELL_COMMAND_STARTED);
-
-    // Associate the build event details
-    BuildEventDetails* eventData = new BuildEventDetails();
-    eventData->SetProjectName(projectName);
-    eventData->SetConfiguration(bldConf->GetName());
-    eventData->SetIsCustomProject(bldConf->IsCustomBuild());
-    eventData->SetIsClean(false);
-
-    event.SetClientObject(eventData);
     // Fire it up
+    clBuildEvent event(wxEVT_BUILD_PROCESS_STARTED);
+    event.SetProjectName(projectName);
+    event.SetConfigurationName(bldConf->GetName());
+    event.SetFlag(clBuildEvent::kCustomProject, bldConf->IsCustomBuild());
+    event.SetFlag(clBuildEvent::kClean, false);
+    event.SetToolchain(bldConf->GetCompilerType());
     EventNotifier::Get()->AddPendingEvent(event);
 
     EnvSetter env(NULL, NULL, projectName, bldConf->GetName());
@@ -250,7 +246,7 @@ void ContinuousBuild::OnBuildProcessEnded(clProcessEvent& e)
     int pid = m_buildProcess.GetPid();
     m_view->RemoveFile(m_buildProcess.GetFileName());
 
-    clCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+    clBuildEvent event(wxEVT_BUILD_PROCESS_ENDED);
     EventNotifier::Get()->AddPendingEvent(event);
 
     int exitCode(-1);
@@ -266,7 +262,6 @@ void ContinuousBuild::OnBuildProcessEnded(clProcessEvent& e)
 
         wxString fileName = m_files.Item(0);
         m_files.RemoveAt(0);
-
         DoBuild(fileName);
     }
 }
@@ -299,7 +294,7 @@ void ContinuousBuild::OnStopIgnoreFileSaved(wxCommandEvent& e)
 
 void ContinuousBuild::OnBuildProcessOutput(clProcessEvent& e)
 {
-    clCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
+    clBuildEvent event(wxEVT_BUILD_PROCESS_ADDLINE);
     event.SetString(e.GetOutput());
     EventNotifier::Get()->AddPendingEvent(event);
 }

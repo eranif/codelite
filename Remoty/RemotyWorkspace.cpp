@@ -329,8 +329,8 @@ void RemotyWorkspace::BuildTarget(const wxString& target)
 
     // notify about starting build process.
     // we pass the selected compiler in the event
-    clCommandEvent e(wxEVT_SHELL_COMMAND_STARTED);
-    e.SetString(conf->GetCompiler());
+    clBuildEvent e(wxEVT_BUILD_PROCESS_STARTED);
+    e.SetToolchain(conf->GetCompiler());
     EventNotifier::Get()->AddPendingEvent(e);
 
     // Notify about build process started
@@ -340,7 +340,7 @@ void RemotyWorkspace::BuildTarget(const wxString& target)
 
 void RemotyWorkspace::DoPrintBuildMessage(const wxString& message)
 {
-    clCommandEvent e(wxEVT_SHELL_COMMAND_ADDLINE);
+    clBuildEvent e(wxEVT_BUILD_PROCESS_ADDLINE);
     e.SetString(message);
     EventNotifier::Get()->AddPendingEvent(e);
 }
@@ -1000,7 +1000,7 @@ void RemotyWorkspace::DoProcessBuildOutput(const wxString& output, bool is_compl
     }
 
     if(is_completed) {
-        clCommandEvent e(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
+        clBuildEvent e(wxEVT_BUILD_PROCESS_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
 
         // Notify about build process started

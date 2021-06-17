@@ -22,21 +22,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "environmentconfig.h"
-#include "processreaderthread.h"
-#include <wx/xrc/xmlres.h>
-#include "globals.h"
-#include "workspace.h"
-#include "shell_command.h"
-#include "event_notifier.h"
-#include "wx/tokenzr.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
+#include "environmentconfig.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "processreaderthread.h"
+#include "shell_command.h"
+#include "workspace.h"
+#include "wx/tokenzr.h"
+#include <wx/xrc/xmlres.h>
 
-const wxEventType wxEVT_SHELL_COMMAND_ADDLINE = XRCID("wxEVT_SHELL_COMMAND_ADDLINE");
-const wxEventType wxEVT_SHELL_COMMAND_STARTED = XRCID("wxEVT_SHELL_COMMAND_STARTED");
-const wxEventType wxEVT_SHELL_COMMAND_PROCESS_ENDED = XRCID("wxEVT_SHELL_COMMAND_PROCESS_ENDED");
-const wxEventType wxEVT_SHELL_COMMAND_STARTED_NOCLEAN = XRCID("wxEVT_SHELL_COMMAND_STARTED_NOCLEAN");
+wxDEFINE_EVENT(wxEVT_BUILD_PROCESS_ADDLINE, clBuildEvent);
+wxDEFINE_EVENT(wxEVT_BUILD_PROCESS_STARTED, clBuildEvent);
+wxDEFINE_EVENT(wxEVT_BUILD_PROCESS_ENDED, clBuildEvent);
 
 ShellCommand::ShellCommand(const QueueCommand& buildInfo)
     : m_proc(NULL)
@@ -48,10 +47,9 @@ ShellCommand::ShellCommand(const QueueCommand& buildInfo)
 
 void ShellCommand::AppendLine(const wxString& line)
 {
-    wxCommandEvent event(wxEVT_SHELL_COMMAND_ADDLINE);
-    event.SetString(line);
-    event.SetInt(m_info.GetKind());
-    EventNotifier::Get()->AddPendingEvent(event);
+    clBuildEvent add_line_event(wxEVT_BUILD_PROCESS_ADDLINE);
+    add_line_event.SetString(line);
+    EventNotifier::Get()->AddPendingEvent(add_line_event);
 }
 
 void ShellCommand::Stop()
@@ -60,26 +58,24 @@ void ShellCommand::Stop()
     CleanUp();
 }
 
-void ShellCommand::SendStartMsg()
+void ShellCommand::SendStartMsg(const wxString& toolchain)
 {
-    clCommandEvent event(m_info.GetCleanLog() ? wxEVT_SHELL_COMMAND_STARTED : wxEVT_SHELL_COMMAND_STARTED_NOCLEAN);
-    event.SetString(m_info.GetSynopsis());
-
-    BuildEventDetails* eventData = new BuildEventDetails();
-    eventData->SetProjectName(m_info.GetProject());
-    eventData->SetConfiguration(m_info.GetConfiguration());
-    eventData->SetIsCustomProject(m_info.GetKind() == QueueCommand::kCustomBuild);
-    eventData->SetIsClean(m_info.GetKind() == QueueCommand::kClean || (m_info.GetKind() == QueueCommand::kCustomBuild &&
-                                                                       m_info.GetCustomBuildTarget() == wxT("clean")));
-
-    event.SetClientObject(eventData);
-    EventNotifier::Get()->AddPendingEvent(event);
+    // fire build-started event
+    clBuildEvent start_event(wxEVT_BUILD_PROCESS_STARTED);
+    start_event.SetCleanLog(m_info.GetCleanLog());
+    start_event.SetProjectName(m_info.GetProject());
+    start_event.SetConfigurationName(m_info.GetConfiguration());
+    start_event.SetFlag(clBuildEvent::kCustomProject, m_info.GetKind() == QueueCommand::kCustomBuild);
+    start_event.SetToolchain(toolchain);
+    start_event.SetFlag(clBuildEvent::kClean, m_info.GetKind() == QueueCommand::kClean ||
+                                                  (start_event.HasFlag(clBuildEvent::kCustomProject) &&
+                                                   m_info.GetCustomBuildTarget() == wxT("clean")));
+    EventNotifier::Get()->AddPendingEvent(start_event);
 }
 
 void ShellCommand::SendEndMsg()
 {
-    wxCommandEvent event(wxEVT_SHELL_COMMAND_PROCESS_ENDED);
-    event.SetString(m_info.GetSynopsis());
+    clBuildEvent event(wxEVT_BUILD_PROCESS_ENDED);
     EventNotifier::Get()->AddPendingEvent(event);
 }
 

@@ -23,9 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "build_config.h"
 #include "queuecommand.h"
 #include "workspace.h"
-#include "build_config.h"
 
 QueueCommand::QueueCommand(const wxString& project, const wxString& configuration, bool projectOnly, int kind)
     : m_project(project)
@@ -44,110 +44,49 @@ QueueCommand::QueueCommand(int kind)
     , m_checkBuildSuccess(false)
 {
     // Fill with default values
-    if ( clCxxWorkspaceST::Get()->IsOpen() ) {
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
         m_project = clCxxWorkspaceST::Get()->GetActiveProjectName();
         BuildConfigPtr buildPtr = clCxxWorkspaceST::Get()->GetProjBuildConf(m_project, "");
-        wxCHECK_RET( buildPtr, "No active project" );
-        
-        // If a 'Build' or 'Clean' kinds where requested 
+        wxCHECK_RET(buildPtr, "No active project");
+
+        // If a 'Build' or 'Clean' kinds where requested
         // and the project build configuration is Custom build
         // change the kind to CustomBuild and set the proper build
         // targets
-        if ( m_kind == kBuild && buildPtr->IsCustomBuild() ) {
+        if(m_kind == kBuild && buildPtr->IsCustomBuild()) {
             // change the type to CustomBuild
             m_kind = kCustomBuild;
             SetCustomBuildTarget("Build");
-            
-        } else if ( m_kind == kClean && buildPtr->IsCustomBuild() ) {
+
+        } else if(m_kind == kClean && buildPtr->IsCustomBuild()) {
             // change the type to CustomBuild
             m_kind = kCustomBuild;
             SetCustomBuildTarget("Clean");
-        
+
         } else {
             m_configuration = buildPtr->GetName();
-            
         }
     }
 }
 
-QueueCommand::~QueueCommand()
-{
-}
+QueueCommand::~QueueCommand() {}
 
+void QueueCommand::SetConfiguration(const wxString& configuration) { this->m_configuration = configuration; }
 
-void QueueCommand::SetConfiguration(const wxString& configuration)
-{
-    this->m_configuration = configuration;
-}
+void QueueCommand::SetProject(const wxString& project) { this->m_project = project; }
 
-void QueueCommand::SetProject(const wxString& project)
-{
-    this->m_project = project;
-}
+const wxString& QueueCommand::GetConfiguration() const { return m_configuration; }
 
-const wxString& QueueCommand::GetConfiguration() const
-{
-    return m_configuration;
-}
+const wxString& QueueCommand::GetProject() const { return m_project; }
 
-const wxString& QueueCommand::GetProject() const
-{
-    return m_project;
-}
+void QueueCommand::SetProjectOnly(const bool& projectOnly) { this->m_projectOnly = projectOnly; }
 
-void QueueCommand::SetProjectOnly(const bool& projectOnly)
-{
-    this->m_projectOnly = projectOnly;
-}
+const bool& QueueCommand::GetProjectOnly() const { return m_projectOnly; }
 
-const bool& QueueCommand::GetProjectOnly() const
-{
-    return m_projectOnly;
-}
+void QueueCommand::SetKind(const int& kind) { this->m_kind = kind; }
 
-void QueueCommand::SetKind(const int& kind)
-{
-    this->m_kind = kind;
-}
+const int& QueueCommand::GetKind() const { return m_kind; }
 
-const int& QueueCommand::GetKind() const
-{
-    return m_kind;
-}
+void QueueCommand::SetCleanLog(const bool& cleanLog) { this->m_cleanLog = cleanLog; }
 
-void QueueCommand::SetCleanLog(const bool& cleanLog)
-{
-    this->m_cleanLog = cleanLog;
-}
-
-const bool& QueueCommand::GetCleanLog() const
-{
-    return m_cleanLog;
-}
-
-wxString QueueCommand::DeriveSynopsis() const
-{
-    wxString synopsis;
-    switch (m_kind) {
-    case kBuild:
-        synopsis << wxT("Building ");
-        break;
-    case kClean:
-        synopsis << wxT("Cleaning ");
-        break;
-    case kCustomBuild:
-        synopsis << wxT("Making '") << m_customBuildTarget << wxT("' In ");
-        break;
-    case kDebug:
-        synopsis << wxT("Debugging ");
-        break;
-    case kExecuteNoDebug:
-        synopsis << "Executing ";
-        break;
-    default:
-        synopsis << wxT("In ");
-        break;
-    }
-    synopsis << m_project << wxT(" (") << m_configuration << wxT(")");
-    return synopsis;
-}
+const bool& QueueCommand::GetCleanLog() const { return m_cleanLog; }

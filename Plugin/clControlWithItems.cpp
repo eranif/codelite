@@ -197,6 +197,8 @@ void clControlWithItems::DoInitialize()
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_viewHeader = new clHeaderBar(this, m_colours);
+    m_viewHeader->SetHeaderFont(GetDefaultFont());
+
     Bind(wxEVT_MOUSEWHEEL, &clControlWithItems::OnMouseScroll, this);
     Bind(wxEVT_SET_FOCUS, [&](wxFocusEvent& e) {
         e.Skip();
@@ -436,6 +438,9 @@ void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
 {
     wxRect clientRect = GetItemsRect();
     int y = clientRect.GetY();
+    int header_bar_width = m_viewHeader ? m_viewHeader->GetWidth() : wxNOT_FOUND;
+    int width = wxMax(clientRect.GetWidth(), header_bar_width);
+
     for(size_t i = 0; i < items.size(); ++i) {
         clRowEntry* curitem = items[i];
         if(curitem->IsHidden()) {
@@ -443,7 +448,7 @@ void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
             curitem->SetRects(wxRect(-100, -100, 0, 0), wxRect(-100, -100, 0, 0));
             continue;
         }
-        wxRect itemRect = wxRect(0, y, clientRect.GetWidth(), m_lineHeight);
+        wxRect itemRect = wxRect(0, y, width, m_lineHeight);
         wxRect buttonRect;
         if(curitem->HasChildren()) {
             buttonRect = wxRect((curitem->GetIndentsCount() * GetIndent()), y, m_lineHeight, m_lineHeight);
@@ -549,6 +554,26 @@ void clControlWithItems::SetColours(const clColours& colours)
 void clControlWithItems::SetCustomRenderer(clControlWithItemsRowRenderer* renderer)
 {
     m_customRenderer.reset(renderer);
+}
+
+void clControlWithItems::SetDefaultFont(const wxFont& font)
+{
+    m_defaultFont = font;
+    if(m_viewHeader) {
+        m_viewHeader->SetHeaderFont(GetDefaultFont());
+    }
+
+    // update the line height
+    wxSize textSize = GetTextSize("Tp");
+    SetLineHeight(clRowEntry::Y_SPACER + textSize.GetHeight() + clRowEntry::Y_SPACER);
+}
+
+wxFont clControlWithItems::GetDefaultFont() const
+{
+    if(m_defaultFont.IsOk()) {
+        return m_defaultFont;
+    }
+    return clScrolledPanel::GetDefaultFont();
 }
 
 //===---------------------------------------------------

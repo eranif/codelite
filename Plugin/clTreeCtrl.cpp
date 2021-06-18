@@ -912,7 +912,10 @@ bool clTreeCtrl::IsItemVisible(clRowEntry* item) const
 bool clTreeCtrl::IsItemFullyVisible(clRowEntry* item) const
 {
     const wxRect& itemRect = item->GetItemRect();
-    const wxRect clientRect = GetItemsRect();
+    wxRect clientRect = GetItemsRect();
+    // since we mainly ensure visibility on the Y axis, we need to make sure that the client rect
+    // has the same width as the item rect (incase of scrollbars, item rect will be wider)
+    clientRect.SetWidth(wxMax(itemRect.GetWidth(), clientRect.GetWidth()));
     return clientRect.Contains(itemRect);
 }
 
@@ -1444,17 +1447,9 @@ void clTreeCtrl::PageUp() { ScrollRows(GetNumLineCanFitOnScreen(), wxUP); }
 
 void clTreeCtrl::SetDefaultFont(const wxFont& font)
 {
-    m_defaultFont = font;
+    clControlWithItems::SetDefaultFont(font);
     UpdateLineHeight();
     Refresh();
-}
-
-wxFont clTreeCtrl::GetDefaultFont() const
-{
-    if(m_defaultFont.IsOk()) {
-        return m_defaultFont;
-    }
-    return clScrolledPanel::GetDefaultFont();
 }
 
 void clTreeCtrl::Begin()

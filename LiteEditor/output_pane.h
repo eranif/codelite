@@ -27,10 +27,11 @@
 
 #include <wx/panel.h>
 
+#include "Notebook.h"
 #include "cl_command_event.h"
 #include "shelltab.h"
-#include "Notebook.h"
 
+class BuildTab;
 class ClangOutputTab;
 class FindResultsTab;
 #if CL_USE_NEW_BUILD_TAB
@@ -85,20 +86,11 @@ private:
     Notebook* m_book = nullptr;
     FindResultsTab* m_findResultsTab;
     ReplaceInFilesPanel* m_replaceResultsTab;
-
-#if CL_USE_NEW_BUILD_TAB
     NewBuildTab* m_buildWin;
-#else
-    BuildTab* m_buildWin;
-#endif
-
     ShellTab* m_outputWind;
     TaskPanel* m_taskPanel;
     FindUsageTab* m_showUsageTab;
-
-#if HAS_LIBCLANG
-    ClangOutputTab* m_clangOutputTab;
-#endif
+    BuildTab* m_build_tab = nullptr;
 
     bool m_buildInProgress;
 
@@ -128,12 +120,12 @@ public:
      * Destructor
      */
     virtual ~OutputPane();
-    
+
     /**
      * @brief show or hide tab by name
      */
     void ShowTab(const wxString& name, bool show);
-    
+
     Notebook* GetNotebook() { return m_book; }
     const wxString& GetCaption() const { return m_caption; }
 
@@ -145,6 +137,7 @@ public:
     FindResultsTab* GetFindResultsTab() { return m_findResultsTab; }
     ReplaceInFilesPanel* GetReplaceResultsTab() { return m_replaceResultsTab; }
     NewBuildTab* GetBuildTab() { return m_buildWin; }
+    BuildTab* GetBuildOutputTab() { return m_build_tab; }
     ShellTab* GetOutputWindow() { return m_outputWind; }
     FindUsageTab* GetShowUsageTab() { return m_showUsageTab; }
 };

@@ -6,8 +6,8 @@
 #include "clRowEntry.h"
 #include "clScrolledPanel.h"
 #include <array>
-#include <wx/imaglist.h>
 #include <memory>
+#include <wx/imaglist.h>
 
 #ifdef __WXOSX__
 #define SCROLL_TICK 2
@@ -77,6 +77,7 @@ protected:
     bool m_maxList = false;
     bool m_nativeTheme = false;
     std::unique_ptr<clControlWithItemsRowRenderer> m_customRenderer;
+    wxFont m_defaultFont = wxNullFont;
 
 protected:
     void DoInitialize();
@@ -102,6 +103,9 @@ public:
                        const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clControlWithItems();
     clControlWithItems();
+
+    virtual void SetDefaultFont(const wxFont& font);
+    virtual wxFont GetDefaultFont() const;
 
     /**
      * @brief set a custom renderer to draw the rows for this control

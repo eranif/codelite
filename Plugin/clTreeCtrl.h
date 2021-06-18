@@ -27,7 +27,6 @@ protected:
     bool m_needToClearDefaultHeader = true;
     long m_treeStyle = 0;
     int m_scrollLines = 0;
-    wxFont m_defaultFont = wxNullFont;
     bool m_bulkInsert = false;
     clSortFunc_t m_oldSortFunc;
 
@@ -37,8 +36,8 @@ private:
     bool IsItemVisible(clRowEntry* item) const;
     bool IsItemFullyVisible(clRowEntry* item) const;
     void EnsureItemVisible(clRowEntry* item, bool fromTop);
-    clRowEntry* GetFirstItemOnScreen();
-    void SetFirstItemOnScreen(clRowEntry* item);
+    clRowEntry* GetFirstItemOnScreen() override;
+    void SetFirstItemOnScreen(clRowEntry* item) override;
     wxTreeItemId DoScrollLines(int numLines, bool up, wxTreeItemId from, bool selectIt);
 
     /**
@@ -55,13 +54,13 @@ private:
     clRowEntry* DoFind(clRowEntry* from, const wxString& what, size_t col, size_t searchFlags, bool next);
 
 protected:
-    void UpdateScrollBar();
+    void UpdateScrollBar() override;
     void DoAddHeader(const wxString& label, const wxBitmap& bmp, int width = wxCOL_WIDTH_AUTOSIZE);
     void UpdateLineHeight();
 
 public:
-    virtual int GetFirstItemPosition() const;
-    virtual int GetRange() const;
+    int GetFirstItemPosition() const override;
+    int GetRange() const override;
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize, long style = 0);
     clTreeCtrl();
@@ -69,6 +68,7 @@ public:
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);
 
+    void SetDefaultFont(const wxFont& font) override;
     /**
      * @brief notify the control that we are doing bulk insert so avoid
      * not needed UI updates
@@ -79,9 +79,6 @@ public:
      * @brief update the UI to the control content, use with `Begin()`
      */
     void Commit();
-
-    void SetDefaultFont(const wxFont& font);
-    wxFont GetDefaultFont() const;
 
     //===--------------------
     // Search support
@@ -134,13 +131,13 @@ public:
     /**
      * @brief associate bitmap vector with this tree. The bitmaps array must exists as long as this control exists
      */
-    virtual void SetBitmaps(BitmapVec_t* bitmaps);
+    void SetBitmaps(BitmapVec_t* bitmaps) override;
 
     /**
      * @brief set image list. The control does not take ownership on the input image list
      * Instead, it creates a copy of the images. It is up to the user to free any resources allocated
      */
-    virtual void SetImageList(wxImageList* images);
+    void SetImageList(wxImageList* images) override;
 
     /**
      * @brief return the tree style
@@ -262,17 +259,17 @@ public:
     /**
      * @brief set the item's indent size
      */
-    void SetIndent(int size);
+    void SetIndent(int size) override;
 
     /**
      * @brief return the current indent size
      */
-    virtual int GetIndent() const;
+    virtual int GetIndent() const override;
 
     /**
      * @brief is the tree has items? (root included)
      */
-    bool IsEmpty() const;
+    bool IsEmpty() const override;
 
     /**
      * @brief return the children count of this item
@@ -421,23 +418,21 @@ public:
     void PageUp();
 
 protected:
-    virtual bool DoKeyDown(const wxKeyEvent& event);
+    bool DoKeyDown(const wxKeyEvent& event) override;
     void DoEnsureVisible(const wxTreeItemId& item);
     void OnPaint(wxPaintEvent& event);
     void OnMouseLeftDown(wxMouseEvent& event);
     void OnMouseLeftUp(wxMouseEvent& event);
     void OnRightDown(wxMouseEvent& event);
     void OnMouseLeftDClick(wxMouseEvent& event);
-    void DoMouseScroll(const wxMouseEvent& event);
-    void ProcessIdle();
+    void DoMouseScroll(const wxMouseEvent& event) override;
+    void ProcessIdle() override;
     void OnLeaveWindow(wxMouseEvent& event);
     void OnEnterWindow(wxMouseEvent& event);
     void OnContextMenu(wxContextMenuEvent& event);
-
-    void ScrollRows(int steps, wxDirection direction);
-    void ScrollToRow(int firstLine);
-
-    wxTreeItemId GetRow(const wxPoint& pt) const;
+    void ScrollRows(int steps, wxDirection direction) override;
+    void ScrollToRow(int firstLine) override;
+    wxTreeItemId GetRow(const wxPoint& pt) const override;
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_ITEM_VALUE_CHANGED, wxTreeEvent);

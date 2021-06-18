@@ -60,6 +60,7 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include <wx/toolbook.h>
+#include "BuildTab.hpp"
 
 PluginManager* PluginManager::Get()
 {
@@ -886,7 +887,7 @@ void PluginManager::AppendOutputTabText(eOutputPaneTab tab, const wxString& text
 {
     switch(tab) {
     case kOutputTab_Build:
-        clMainFrame::Get()->GetOutputPane()->GetBuildTab()->AppendLine(text);
+        clMainFrame::Get()->GetOutputPane()->GetBuildOutputTab()->AppendLine(text);
         break;
     case kOutputTab_Output:
         clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(text);

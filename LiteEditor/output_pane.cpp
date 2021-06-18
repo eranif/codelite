@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "BuildTab.hpp"
 #include "clStrings.h"
 #include "clTabTogglerHelper.h"
 #include "detachedpanesinfo.h"
@@ -109,6 +110,11 @@ void OutputPane::CreateGUIControls()
     m_tabs.insert(std::make_pair(BUILD_WIN, Tab(BUILD_WIN, m_buildWin, wxNOT_FOUND)));
     mgr->AddOutputTab(BUILD_WIN);
 #endif
+
+    m_build_tab = new BuildTab(m_book);
+    m_book->AddPage(m_build_tab, _("Build Output"), true, images->Add(wxT("build")));
+    m_tabs.insert(std::make_pair(_("Build Output"), Tab(_("Build Output"), m_build_tab, wxNOT_FOUND)));
+    mgr->AddOutputTab(_("Build Output"));
 
     // Find in files
     m_findResultsTab = new FindResultsTab(m_book, wxID_ANY, FIND_IN_FILES_WIN);

@@ -152,9 +152,9 @@ NewBuildTab::~NewBuildTab()
 void NewBuildTab::OnBuildEnded(clBuildEvent& e)
 {
     e.Skip();
-    CL_DEBUG("Build Ended!");
-    m_buildInProgress = false;
+    clDEBUG1() << "Build completed!" << endl;
 
+    m_buildInProgress = false;
     DoProcessOutput(true, false);
 
     std::vector<clEditor*> editors;

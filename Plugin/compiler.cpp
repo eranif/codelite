@@ -231,30 +231,30 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         m_preprocessSuffix = ".i";
 
         if(regexType == kRegexGNU) {
-            AddPattern(eErrorPattern,
+            AddPattern(kSevError,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal "
                        "error)|(error)|(undefined reference)|([\\t ]*required from))",
                        1, 3, 4);
-            AddPattern(eErrorPattern,
+            AddPattern(kSevError,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ "
                        "*)(:)(\\(\\.text\\+[0-9a-fx]*\\))",
                        3, 1, -1);
-            AddPattern(eErrorPattern,
+            AddPattern(kSevError,
                        "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ "
                        "*)(:)([0-9]+)(:)",
                        3, 1, -1);
-            AddPattern(eErrorPattern, "undefined reference to", -1, -1, -1);
-            AddPattern(eErrorPattern, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1, -1);
+            AddPattern(kSevError, "undefined reference to", -1, -1, -1);
+            AddPattern(kSevError, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1, -1);
 
-            AddPattern(eWarningPattern,
+            AddPattern(kSevWarning,
                        "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ \\t]*(warning|required)",
                        1, 3, 4);
-            AddPattern(eWarningPattern, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)",
-                       1, 3, -1);
-            AddPattern(eWarningPattern,
+            AddPattern(kSevWarning, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)", 1, 3,
+                       -1);
+            AddPattern(kSevWarning,
                        "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)", 1, 3,
                        -1);
-            AddPattern(eWarningPattern,
+            AddPattern(kSevWarning,
                        "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?",
                        2, 4, -1);
 
@@ -263,14 +263,14 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         } else {
 
-            AddPattern(eErrorPattern, "^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error",
-                       1, 2);
-            AddPattern(eErrorPattern, "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(error)", 1, 3);
-            AddPattern(eErrorPattern, "(LINK : fatal error)", 1, 1);
-            AddPattern(eErrorPattern, "(NMAKE : fatal error)", 1, 1);
-            AddPattern(eWarningPattern, "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(warning)", 1, 3);
-            AddPattern(eWarningPattern, "([a-z_A-Z]*\\.obj)( : warning)", 1, 1);
-            AddPattern(eWarningPattern, "(cl : Command line warning)", 1, 1);
+            AddPattern(kSevError, "^windres: ([a-zA-Z:]{0,2}[ a-zA-Z\\\\.0-9_/\\+\\-]+) *:([0-9]+): syntax error", 1,
+                       2);
+            AddPattern(kSevError, "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(error)", 1, 3);
+            AddPattern(kSevError, "(LINK : fatal error)", 1, 1);
+            AddPattern(kSevError, "(NMAKE : fatal error)", 1, 1);
+            AddPattern(kSevWarning, "(^[a-zA-Z\\\\.0-9 _/\\:\\+\\-]+ *)(\\()([0-9]+)(\\))( \\: )(warning)", 1, 3);
+            AddPattern(kSevWarning, "([a-z_A-Z]*\\.obj)( : warning)", 1, 1);
+            AddPattern(kSevWarning, "(cl : Command line warning)", 1, 1);
         }
 
         SetTool("LinkerName", "g++");
@@ -565,7 +565,7 @@ void Compiler::AddPattern(int type, const wxString& pattern, int fileNameIndex, 
     pt.fileNameIndex = wxString::Format("%d", (int)fileNameIndex);
     pt.lineNumberIndex = wxString::Format("%d", (int)lineNumberIndex);
     pt.columnIndex = wxString::Format("%d", colIndex);
-    if(type == eErrorPattern) {
+    if(type == kSevError) {
         m_errorPatterns.push_back(pt);
 
     } else {
@@ -763,3 +763,89 @@ GCCMetadata Compiler::GetMetadata() const
 }
 
 bool Compiler::HasMetadata() const { return IsGnuCompatibleCompiler(); }
+
+bool Compiler::IsMatchesPattern(CmpInfoPattern& pattern, eSeverity severity, const wxString& line,
+                                PatternMatch* match_result) const
+{
+    if(!match_result) {
+        return false;
+    }
+
+    if(!pattern.re) {
+        // compile the regex
+        pattern.re.reset(new wxRegEx);
+        pattern.re->Compile(pattern.pattern, wxRE_ADVANCED | wxRE_ICASE);
+    }
+
+    if(!pattern.re->IsValid()) {
+        return false;
+    }
+
+    // convert the strings holding the index of the various part of the matches
+    // into numbers
+    long colIndex = wxNOT_FOUND;
+    long lineIndex = wxNOT_FOUND;
+    long fileIndex = wxNOT_FOUND;
+
+    // if any of the below conversion fails, we got a problem with this pattern
+    if(!pattern.columnIndex.ToLong(&colIndex))
+        return false;
+
+    if(!pattern.lineNumberIndex.ToLong(&lineIndex))
+        return false;
+
+    if(!pattern.fileNameIndex.ToLong(&fileIndex))
+        return false;
+
+    if(!pattern.re->Matches(line)) {
+        return false;
+    }
+
+    match_result->sev = severity;
+    // extract the file name
+    if(pattern.re->GetMatchCount() > (size_t)fileIndex) {
+        match_result->file_path = pattern.re->GetMatch(line, fileIndex);
+    }
+
+    // extract the line number
+    if(pattern.re->GetMatchCount() > (size_t)lineIndex) {
+        long lineNumber;
+        wxString strLine = pattern.re->GetMatch(line, lineIndex);
+        strLine.ToLong(&lineNumber);
+        match_result->line_number = (lineNumber - 1);
+    }
+
+    if(pattern.re->GetMatchCount() > (size_t)colIndex) {
+        long column;
+        wxString strCol = pattern.re->GetMatch(line, colIndex);
+        if(strCol.StartsWith(":")) {
+            strCol.Remove(0, 1);
+        }
+
+        if(!strCol.IsEmpty() && strCol.ToLong(&column)) {
+            match_result->column = column;
+        }
+    }
+    return true;
+}
+
+bool Compiler::Matches(const wxString& line, PatternMatch* match_result)
+{
+    if(!match_result) {
+        return false;
+    }
+    
+    // warnings must be first!
+    for(auto& warn_pattern : m_warningPatterns) {
+        if(IsMatchesPattern(warn_pattern, kSevWarning, line, match_result)) {
+            return true;
+        }
+    }
+
+    for(auto& err_pattern : m_errorPatterns) {
+        if(IsMatchesPattern(err_pattern, kSevError, line, match_result)) {
+            return true;
+        }
+    }
+    return false;
+}

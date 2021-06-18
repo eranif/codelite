@@ -642,6 +642,8 @@
     <File Name="findusagetab.h"/>
     <File Name="findusagetab.cpp"/>
     <VirtualDirectory Name="BuildTab">
+      <File Name="BuildTab.cpp"/>
+      <File Name="BuildTab.hpp"/>
       <File Name="new_build_tab.cpp"/>
       <File Name="new_build_tab.h"/>
       <File Name="BuildTabTopPanel.h"/>
@@ -2153,8 +2155,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2236,7 +2237,7 @@ resources.cpp: resources.xrc
         <IncludePath Value="../sdk/clang/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid);-Wl,--subsystem,windows -mwindows;-O2" Required="yes">
+      <Linker Options="$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid);-O2;-Wl,--subsystem,windows -mwindows;" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="../sdk/clang/lib"/>
@@ -2273,7 +2274,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>

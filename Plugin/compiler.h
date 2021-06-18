@@ -32,8 +32,11 @@
 #include "smart_ptr.h"
 #include <list>
 #include <map>
+#include <memory>
 #include <vector>
 #include <wx/arrstr.h>
+#include <wx/clntdata.h>
+#include <wx/regex.h>
 #include <wx/string.h>
 
 /**
@@ -50,7 +53,7 @@
 class WXDLLIMPEXP_SDK Compiler : public ConfObject
 {
 public:
-    enum { eErrorPattern, eWarningPattern };
+    enum eSeverity { kSevError, kSevWarning, kSevNote };
 
     enum CmpFileKind { CmpFileKindSource, CmpFileKindResource };
 
@@ -71,6 +74,16 @@ public:
         wxString lineNumberIndex;
         wxString fileNameIndex;
         wxString columnIndex;
+        std::shared_ptr<wxRegEx> re;
+    };
+
+    /// If a file matches a regular expression, this structure
+    /// will hold the information about it
+    struct PatternMatch : public wxClientData {
+        wxString file_path;
+        Compiler::eSeverity sev = kSevError;
+        int line_number = wxNOT_FOUND;
+        int column = wxNOT_FOUND;
     };
 
     struct LinkLine {
@@ -115,12 +128,19 @@ private:
     wxString GetGCCVersion() const;
     wxString GetIncludePath(const wxString& pathSuffix) const;
     wxArrayString POSIXGetIncludePaths() const;
+    bool IsMatchesPattern(CmpInfoPattern& pattern, eSeverity severity, const wxString& line,
+                          PatternMatch* match_result) const;
 
 public:
     typedef std::map<wxString, wxString>::const_iterator ConstIterator;
 
     Compiler(wxXmlNode* node, Compiler::eRegexType regexType = Compiler::kRegexGNU);
     virtual ~Compiler();
+
+    /**
+     * @brief attempt to parse line and provide details about the parsed data
+     */
+    bool Matches(const wxString& line, PatternMatch* match_result);
 
     /**
      * @brief return { "PATH", "/compiler/bin:$PATH"} pair

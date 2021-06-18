@@ -248,10 +248,13 @@ CodeLiteApp::CodeLiteApp(void)
     , m_startedInDebuggerMode(false)
 {
 }
+
 CodeLiteApp::~CodeLiteApp(void)
 {
     wxImage::CleanUpHandlers();
-    if(m_singleInstance) { delete m_singleInstance; }
+    if(m_singleInstance) {
+        delete m_singleInstance;
+    }
     wxDELETE(m_persistencManager);
 }
 
@@ -307,7 +310,9 @@ bool CodeLiteApp::OnInit()
     HINSTANCE user32Dll = LoadLibrary(L"User32.dll");
     if(user32Dll) {
         SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(user32Dll, "SetProcessDPIAware");
-        if(pFunc) { pFunc(); }
+        if(pFunc) {
+            pFunc();
+        }
         FreeLibrary(user32Dll);
     }
 #endif
@@ -346,10 +351,14 @@ bool CodeLiteApp::OnInit()
         }
     }
 
-    if(parser.Found(wxT("d"), &newDataDir)) { clStandardPaths::Get().SetUserDataDir(newDataDir); }
+    if(parser.Found(wxT("d"), &newDataDir)) {
+        clStandardPaths::Get().SetUserDataDir(newDataDir);
+    }
 
     // check for single instance
-    if(!IsSingleInstance(parser)) { return false; }
+    if(!IsSingleInstance(parser)) {
+        return false;
+    }
 
     if(parser.Found(wxT("h"))) {
         // print usage
@@ -435,7 +444,8 @@ bool CodeLiteApp::OnInit()
 
         // copy the settings from the global location if needed
         wxString installPath(INSTALL_DIR, wxConvUTF8);
-        if(!CopySettings(homeDir, installPath)) return false;
+        if(!CopySettings(homeDir, installPath))
+            return false;
         ManagerST::Get()->SetInstallDir(installPath);
 
     } else {
@@ -513,7 +523,8 @@ bool CodeLiteApp::OnInit()
     // into one giant XRC file if you wanted, but then they become more
     // diffcult to manage, and harder to reuse in later projects.
     // The menubar
-    if(!wxXmlResource::Get()->Load(DoFindMenuFile(ManagerST::Get()->GetInstallDir(), wxT("2.0")))) return false;
+    if(!wxXmlResource::Get()->Load(DoFindMenuFile(ManagerST::Get()->GetInstallDir(), wxT("2.0"))))
+        return false;
 
     // keep the startup directory
     ManagerST::Get()->SetStartupDirectory(::wxGetCwd());
@@ -593,7 +604,9 @@ bool CodeLiteApp::OnInit()
             const wxLanguageInfo* info = wxLocale::FindLanguageInfo(preferredLocalename);
             if(info) {
                 preferredLocale = info->Language;
-                if(preferredLocale == wxLANGUAGE_UNKNOWN) { preferredLocale = wxLANGUAGE_ENGLISH; }
+                if(preferredLocale == wxLANGUAGE_UNKNOWN) {
+                    preferredLocale = wxLANGUAGE_ENGLISH;
+                }
             }
         }
 
@@ -704,7 +717,9 @@ int CodeLiteApp::OnExit()
     if(IsRestartCodeLite()) {
         // Execute new CodeLite instance
         clSYSTEM() << "Restarting CodeLite:" << GetRestartCommand();
-        if(!this->m_restartWD.empty()) { ::wxSetWorkingDirectory(this->m_restartWD); }
+        if(!this->m_restartWD.empty()) {
+            ::wxSetWorkingDirectory(this->m_restartWD);
+        }
         wxExecute(GetRestartCommand(), wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
     }
 
@@ -846,7 +861,8 @@ void CodeLiteApp::MSWReadRegistry()
                 vars.AddVariable(wxT("Default"), wxT("PATH"), wxT("$(WXWIN)\\lib\\gcc_dll;$(PATH)"));
             }
 
-            if(!envs.Contains(wxT("WXCFG"))) vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
+            if(!envs.Contains(wxT("WXCFG")))
+                vars.AddVariable(wxT("Default"), wxT("WXCFG"), wxT("gcc_dll\\mswu"));
 
             EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
             wxSetEnv(wxT("WX_INCL_HOME"), strWx + wxT("\\include"));
@@ -889,7 +905,9 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
             wxXmlDocument doc;
             if(doc.Load(menuFile.GetFullPath())) {
                 wxString version = doc.GetRoot()->GetPropVal(wxT("version"), wxT("1.0"));
-                if(version != requiredVersion) { return defaultMenuFile; }
+                if(version != requiredVersion) {
+                    return defaultMenuFile;
+                }
             }
         }
         return menuFile.GetFullPath();

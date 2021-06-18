@@ -775,7 +775,7 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
         return;
     }
 
-    size_t flags = IProcessCreateDefault;
+    size_t flags = IProcessCreateDefault | IProcessCreateWithHiddenConsole; 
     // Check that the remote development is enabled AND remote build
     if(GetConfig()->IsRemoteEnabled() && GetConfig()->IsRemoteBuild()) {
         flags |= IProcessCreateSSH;

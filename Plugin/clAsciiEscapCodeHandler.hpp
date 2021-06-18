@@ -65,8 +65,11 @@ struct WXDLLIMPEXP_SDK clRenderDefaultStyle {
 
 class WXDLLIMPEXP_SDK clAsciiEscapeCodeHandler
 {
+    typedef std::unordered_map<int, wxColour> ColoursMap_t;
+    ColoursMap_t m_colours;
+    ColoursMap_t m_8_bit_colours;
+
     std::vector<Chunk> m_chunks;
-    std::unordered_map<int, wxColour> m_colours;
     eColourHandlerState m_state = eColourHandlerState::kNormal;
     int m_lineNumber = 0;
     // map between chunks and line numbers (index in the m_chunk vector)
@@ -75,7 +78,7 @@ class WXDLLIMPEXP_SDK clAsciiEscapeCodeHandler
 private:
     void EnsureCurrent();
     void UpdateStyle(const Chunk& chunk, wxDC& dc, const clRenderDefaultStyle& defaultStyle);
-    const wxColour& GetColour(int num) const;
+    const wxColour& GetColour(const ColoursMap_t& m, int num) const;
 
 public:
     clAsciiEscapeCodeHandler();

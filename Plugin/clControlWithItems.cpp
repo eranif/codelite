@@ -259,10 +259,15 @@ void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
     }
 }
 
-int clControlWithItems::GetNumLineCanFitOnScreen() const
+int clControlWithItems::GetNumLineCanFitOnScreen(bool fully_fit) const
 {
     wxRect clientRect = GetItemsRect();
-    int max_lines_on_screen = std::ceil((double)((double)clientRect.GetHeight() / (double)m_lineHeight));
+    int max_lines_on_screen = 0;
+    if(fully_fit) {
+        max_lines_on_screen = std::floor((double)((double)clientRect.GetHeight() / (double)m_lineHeight));
+    } else {
+        max_lines_on_screen = std::ceil((double)((double)clientRect.GetHeight() / (double)m_lineHeight));
+    }
     return max_lines_on_screen;
 }
 

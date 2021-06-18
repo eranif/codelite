@@ -38,9 +38,15 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
     }
 
     int my_style = 0;
-    if(style & wxDV_ROW_LINES) { my_style |= wxTR_ROW_LINES; }
-    if(style & wxDV_MULTIPLE) { my_style |= wxTR_MULTIPLE; }
-    if(style & wxDV_NO_HEADER) { SetShowHeader(false); }
+    if(style & wxDV_ROW_LINES) {
+        my_style |= wxTR_ROW_LINES;
+    }
+    if(style & wxDV_MULTIPLE) {
+        my_style |= wxTR_MULTIPLE;
+    }
+    if(style & wxDV_NO_HEADER) {
+        SetShowHeader(false);
+    }
     my_style |= wxTR_HIDE_ROOT;
     m_treeStyle = my_style;
 
@@ -157,7 +163,9 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
     } else if(event.GetEventType() == wxEVT_TREE_CHOICE) {
         type = wxEVT_DATAVIEW_CHOICE_BUTTON;
     }
-    if(type != wxEVT_ANY) { SendDataViewEvent(type, event, eventText); }
+    if(type != wxEVT_ANY) {
+        SendDataViewEvent(type, event, eventText);
+    }
 }
 
 bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent& treeEvent, const wxString& text)
@@ -185,7 +193,9 @@ void clDataViewListCtrl::DeleteAllItems(const std::function<void(wxUIntPtr)>& de
         clRowEntry::Vec_t& children = m_model.GetRoot()->GetChildren();
         for(size_t i = 0; i < children.size(); ++i) {
             wxUIntPtr userData = children[i]->GetData();
-            if(userData) { deleterFunc(userData); }
+            if(userData) {
+                deleterFunc(userData);
+            }
             children[i]->SetData(0);
         }
     }
@@ -276,20 +286,26 @@ wxFont clDataViewListCtrl::GetItemFont(const wxDataViewItem& item, size_t col) c
 
 void clDataViewListCtrl::EnableStyle(int style, bool enable, bool refresh)
 {
-    if(m_stylesMap.count(style) == 0) { return; }
+    if(m_stylesMap.count(style) == 0) {
+        return;
+    }
     clTreeCtrl::EnableStyle(m_stylesMap[style], enable, refresh);
 }
 
 clHeaderItem* clDataViewListCtrl::GetColumn(size_t index)
 {
-    if(index >= GetHeader()->size()) { return nullptr; }
+    if(index >= GetHeader()->size()) {
+        return nullptr;
+    }
     return &GetHeader()->Item(index);
 }
 
 size_t clDataViewListCtrl::GetItemCount() const
 {
     clRowEntry* root = m_model.GetRoot();
-    if(!root) { return 0; }
+    if(!root) {
+        return 0;
+    }
     return root->GetChildrenCount(false);
 }
 
@@ -298,22 +314,30 @@ wxDataViewItem clDataViewListCtrl::RowToItem(size_t row) const
     // Since a clDataViewListCtrl is basically a tree with a single hidden node (the root)
     // A row is simply a child at a given index
     clRowEntry* root = m_model.GetRoot();
-    if(!root) { return wxDataViewItem(); }
-    if(row >= root->GetChildren().size()) { return wxDataViewItem(); }
+    if(!root) {
+        return wxDataViewItem();
+    }
+    if(row >= root->GetChildren().size()) {
+        return wxDataViewItem();
+    }
     return wxDataViewItem(root->GetChildren()[row]);
 }
 
 void clDataViewListCtrl::DeleteItem(size_t row)
 {
     wxDataViewItem item = RowToItem(row);
-    if(!item.IsOk()) { return; }
+    if(!item.IsOk()) {
+        return;
+    }
     Delete(TREE_ITEM(item));
 }
 
 void clDataViewListCtrl::SetValue(const wxVariant& value, size_t row, size_t col)
 {
     wxDataViewItem item = RowToItem(row);
-    if(!item.IsOk()) { return; }
+    if(!item.IsOk()) {
+        return;
+    }
     clRowEntry* r = m_model.ToPtr(TREE_ITEM(item));
     DoSetCellValue(r, col, value);
 }
@@ -360,7 +384,9 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
 void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
 {
     clRowEntry* root = m_model.GetRoot();
-    if(!root) { return; }
+    if(!root) {
+        return;
+    }
 
     // Disconnect the current function, if any
     m_model.SetSortFunction(nullptr);
@@ -402,14 +428,20 @@ void clDataViewListCtrl::SetSortFunction(const clSortFunc_t& CompareFunc)
 int clDataViewListCtrl::ItemToRow(const wxDataViewItem& item) const
 {
     clRowEntry* pItem = m_model.ToPtr(TREE_ITEM(item));
-    if(!pItem) { return wxNOT_FOUND; }
+    if(!pItem) {
+        return wxNOT_FOUND;
+    }
 
     clRowEntry* root = m_model.GetRoot();
-    if(!root) { return wxNOT_FOUND; }
+    if(!root) {
+        return wxNOT_FOUND;
+    }
 
     const clRowEntry::Vec_t& children = root->GetChildren();
     for(size_t i = 0; i < children.size(); ++i) {
-        if(children[i] == pItem) { return i; }
+        if(children[i] == pItem) {
+            return i;
+        }
     }
     return wxNOT_FOUND;
 }
@@ -459,7 +491,9 @@ bool clDataViewListCtrl::IsItemChecked(const wxDataViewItem& item, size_t col) c
 void clDataViewListCtrl::ShowMenuForItem(const wxDataViewItem& item, wxMenu& menu, size_t col)
 {
     clRowEntry* row = m_model.ToPtr(TREE_ITEM(item));
-    if(!row) { return; }
+    if(!row) {
+        return;
+    }
 
     wxRect r = row->GetCellRect(col);
     PopupMenu(&menu, r.GetBottomLeft());
@@ -468,7 +502,9 @@ void clDataViewListCtrl::ShowMenuForItem(const wxDataViewItem& item, wxMenu& men
 void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, const wxArrayString& choices, size_t col)
 {
     clRowEntry* row = m_model.ToPtr(TREE_ITEM(item));
-    if(!row) { return; }
+    if(!row) {
+        return;
+    }
     const wxString& currentSelection = row->GetLabel(col);
     wxMenu menu;
     wxString selectedString;
@@ -479,11 +515,14 @@ void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, con
         item->Check(currentSelection == str);
         M.insert({ id, str });
     }
-    menu.Bind(wxEVT_MENU,
-              [&](wxCommandEvent& event) {
-                  if(M.count(event.GetId())) { selectedString = M[event.GetId()]; }
-              },
-              wxID_ANY);
+    menu.Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& event) {
+            if(M.count(event.GetId())) {
+                selectedString = M[event.GetId()];
+            }
+        },
+        wxID_ANY);
     wxRect r = row->GetCellRect(col);
     PopupMenu(&menu, r.GetBottomLeft());
     if(!selectedString.IsEmpty()) {
@@ -508,27 +547,47 @@ void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, con
 int clDataViewListCtrl::GetSelectedRow() const
 {
     wxDataViewItem sel = GetSelection();
-    if(!sel.IsOk()) { return wxNOT_FOUND; }
+    if(!sel.IsOk()) {
+        return wxNOT_FOUND;
+    }
     return ItemToRow(sel);
 }
 
 void clDataViewListCtrl::SelectRow(size_t row)
 {
     wxDataViewItem item = RowToItem(row);
-    if(!item.IsOk()) { return; }
+    if(!item.IsOk()) {
+        return;
+    }
     Select(item);
 }
 
 void clDataViewListCtrl::UnselectRow(size_t row)
 {
     wxDataViewItem item = RowToItem(row);
-    if(!item.IsOk()) { return; }
+    if(!item.IsOk()) {
+        return;
+    }
     clTreeCtrl::SelectItem(TREE_ITEM(item), false);
 }
 
 bool clDataViewListCtrl::IsRowSelected(size_t row) const
 {
     wxDataViewItem item = RowToItem(row);
-    if(!item.IsOk()) { return false; }
+    if(!item.IsOk()) {
+        return false;
+    }
     return IsSelected(TREE_ITEM(item));
+}
+
+void clDataViewListCtrl::ScrollToBottom()
+{
+    size_t num_items_can_fit = GetNumLineCanFitOnScreen(true);
+    if(GetItemCount() <= num_items_can_fit) {
+        ScrollToRow(0);
+        return;
+    }
+
+    size_t new_first_item = GetItemCount() - num_items_can_fit;
+    ScrollToRow(new_first_item);
 }

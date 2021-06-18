@@ -59,6 +59,7 @@ protected:
     void UpdateLineHeight();
 
 public:
+    void ScrollToBottom();
     int GetFirstItemPosition() const override;
     int GetRange() const override;
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

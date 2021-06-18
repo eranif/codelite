@@ -612,3 +612,18 @@ clRowEntry* clTreeCtrlModel::GetRowAfter(clRowEntry* item, bool visibleItem) con
     }
     return curp;
 }
+
+clRowEntry* clTreeCtrlModel::GetLastVisibleItem() const
+{
+    auto item = GetRoot();
+    if(!item) {
+        return nullptr;
+    }
+    
+    // get the last child
+    while(item && item->HasChildren() && item->IsExpanded()) {
+        item = item->GetLastChild();
+    }
+    return item;
+}
+

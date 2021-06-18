@@ -36,7 +36,9 @@ public:
     clDataViewListCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clDataViewListCtrl();
-
+    
+    void ScrollToBottom();
+    
     /**
      * @brief how many items can scroll in the view?
      */

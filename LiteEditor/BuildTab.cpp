@@ -208,11 +208,7 @@ void BuildTab::ProcessBuffer(bool last_line)
         m_buffer.swap(remainder);
     }
     m_view->Commit();
-    // select the last line
-    size_t row = m_view->GetItemCount() - 1;
-    m_view->SelectRow(row);
-    m_view->EnsureVisible(m_view->RowToItem(row));
-    m_view->UnselectRow(row);
+    m_view->ScrollToBottom();
 }
 
 void BuildTab::OnSysColourChanged(clCommandEvent& e)

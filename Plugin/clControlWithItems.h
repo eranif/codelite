@@ -81,7 +81,7 @@ protected:
 
 protected:
     void DoInitialize();
-    int GetNumLineCanFitOnScreen() const;
+    int GetNumLineCanFitOnScreen(bool fully_fit = false) const;
     virtual clRowEntry* GetFirstItemOnScreen();
     virtual void SetFirstItemOnScreen(clRowEntry* item);
     void RenderItems(wxDC& dc, const clRowEntry::Vec_t& items);

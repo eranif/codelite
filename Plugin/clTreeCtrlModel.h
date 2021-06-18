@@ -130,6 +130,13 @@ public:
     clRowEntry* GetItemFromIndex(int index) const;
 
     /**
+     * @brief return the last visible item
+     * NOTE: this does not check if the item is actually is displayed on the screen
+     * it only checks if the item is a state that allows it to be displayed on screen
+     */
+    clRowEntry* GetLastVisibleItem() const;
+
+    /**
      * @brief get range of items from -> to
      * Or from: to->from (incase 'to' has a lower index)
      */

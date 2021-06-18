@@ -137,11 +137,11 @@ void BuildTab::OnBuildAddLine(clBuildEvent& e)
 void BuildTab::OnBuildEnded(clBuildEvent& e)
 {
     e.Skip();
+    m_buildInProgress = false;
     ProcessBuffer(true);
 
     wxString text = CreateSummaryLine();
     m_buffer.swap(text);
-
     ProcessBuffer(true);
 
     // notify the plugins that the build has ended
@@ -348,8 +348,8 @@ void BuildTab::OnContextMenu(wxDataViewEvent& e)
     menu.Enable(wxID_CLEAR, !m_buildInProgress);
 
     menu.Append(wxID_SAVEAS);
-    menu.Enable(wxID_CLEAR, !m_buildInProgress);
-    
+    menu.Enable(wxID_SAVEAS, !m_buildInProgress);
+
     menu.Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& event) {

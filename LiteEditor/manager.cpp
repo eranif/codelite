@@ -51,6 +51,7 @@
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 
+#include "BuildTab.hpp"
 #include "CompilersModifiedDlg.h"
 #include "DebuggerCallstackView.h"
 #include "NewProjectDialog.h"

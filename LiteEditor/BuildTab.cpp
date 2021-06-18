@@ -3,12 +3,14 @@
 #include "StringUtils.h"
 #include "build_settings_config.h"
 #include "clAsciiEscapCodeHandler.hpp"
+#include "clStrings.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "frame.h"
 #include "globals.h"
 #include "mainbook.h"
+#include "manager.h"
 #include "shell_command.h"
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
@@ -92,6 +94,10 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
 {
     e.Skip();
     m_buildInProgress = true;
+
+    // ensure that the BUILD_IN is visible
+    ManagerST::Get()->ShowOutputPane(BUILD_WIN, true);
+
     m_buffer.clear();
     if(e.IsCleanLog()) {
         ClearView();
@@ -110,6 +116,15 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
         m_activeCompiler = BuildSettingsConfigST::Get()->GetCompiler(toolchain);
         clDEBUG() << "Active compiler is set to:" << m_activeCompiler->GetName() << endl;
     }
+
+    // notify the plugins that the build had started
+    clBuildEvent build_started_event(wxEVT_BUILD_STARTED);
+    build_started_event.SetProjectName(e.GetProjectName());
+    build_started_event.SetConfigurationName(e.GetConfigurationName());
+    EventNotifier::Get()->AddPendingEvent(build_started_event);
+
+    // start stop watch
+    m_sw.Start();
 }
 
 void BuildTab::OnBuildAddLine(clBuildEvent& e)
@@ -124,24 +139,16 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
     e.Skip();
     ProcessBuffer(true);
 
-    // at this point, m_buffer is empty
-    wxString text;
-    text << "\n";
-    eAsciiColours c;
-    if(m_error_count) {
-        text = _("==== build completed with errors ");
-        c = eAsciiColours::RED;
-    } else if(m_warn_count) {
-        text = _("=== build ended with warnings ");
-        c = eAsciiColours::YELLOW;
-    } else {
-        text = _("=== build completed successfully ");
-        c = eAsciiColours::GREEN;
-    }
-    text << "(" << m_error_count << _(" errors, ") << m_warn_count << _(" warnings) ===");
-    text = WrapLineInColour(text, c);
+    wxString text = CreateSummaryLine();
     m_buffer.swap(text);
+
     ProcessBuffer(true);
+
+    // notify the plugins that the build has ended
+    clBuildEvent build_ended_event(wxEVT_BUILD_ENDED);
+    build_ended_event.SetErrorCount(m_error_count);
+    build_ended_event.SetWarningCount(m_warn_count);
+    EventNotifier::Get()->AddPendingEvent(build_ended_event);
 }
 
 void BuildTab::ProcessBuffer(bool last_line)
@@ -151,7 +158,7 @@ void BuildTab::ProcessBuffer(bool last_line)
     auto lines = ::wxStringTokenize(m_buffer, "\n", wxTOKEN_RET_DELIMS);
     wxString remainder;
     while(!lines.empty()) {
-        auto& line = lines.back();
+        auto& line = lines[0];
         if(!last_line && !line.EndsWith("\n")) {
             // not a complete line
             remainder.swap(line);
@@ -198,8 +205,7 @@ void BuildTab::ProcessBuffer(bool last_line)
             // Note: its OK to pass null here
             m_view->AppendItem(line, wxNOT_FOUND, wxNOT_FOUND, (wxUIntPtr)m.release());
         }
-
-        lines.pop_back();
+        lines.erase(lines.begin());
     }
 
     if(last_line) {
@@ -226,6 +232,7 @@ void BuildTab::Cleanup()
     m_activeCompiler.Reset(nullptr);
     m_error_count = 0;
     m_warn_count = 0;
+    m_buildInterrupted = false;
 }
 
 void BuildTab::ApplyStyle()
@@ -273,7 +280,7 @@ wxString BuildTab::WrapLineInColour(const wxString& line, eAsciiColours colour) 
 
 void BuildTab::OnLineActivated(wxDataViewEvent& e)
 {
-    clDEBUG() << "Build line double clicked" << endl;
+    clDEBUG1() << "Build line double clicked" << endl;
     auto cd = reinterpret_cast<Compiler::PatternMatch*>(m_view->GetItemData(e.GetItem()));
     CHECK_PTR_RET(cd);
 
@@ -281,7 +288,7 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
     clBuildEvent eventErrorClicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
     eventErrorClicked.SetFileName(cd->file_path);
     eventErrorClicked.SetLineNumber(cd->line_number);
-    clDEBUG() << "Letting plugins process it first (" << cd->file_path << ":" << cd->line_number << ")" << endl;
+    clDEBUG1() << "Letting plugins process it first (" << cd->file_path << ":" << cd->line_number << ")" << endl;
     if(EventNotifier::Get()->ProcessEvent(eventErrorClicked)) {
         return;
     }
@@ -405,4 +412,45 @@ void BuildTab::CopySelections()
         content << str << "\n";
     }
     ::CopyToClipboard(content);
+}
+
+wxString BuildTab::CreateSummaryLine() const
+{
+    long elapsed = m_sw.Time() / 1000;
+    wxString total_time;
+    if(elapsed > 5) {
+        long sec = elapsed % 60;
+        long hours = elapsed / 3600;
+        long minutes = (elapsed % 3600) / 60;
+        total_time << wxString::Format(wxT(", %s: %02ld:%02ld:%02ld %s"), _("total time"), hours, minutes, sec,
+                                       _("seconds"));
+    }
+
+    wxString text;
+    if(m_buildInterrupted) {
+        // build was cancelled by the user
+        text << _("(Build cancelled by the user)\n");
+        text = WrapLineInColour(text, eAsciiColours::YELLOW);
+    } else {
+
+        // at this point, m_buffer is empty
+        text << "\n";
+        eAsciiColours c;
+        if(m_error_count) {
+            text = _("==== build ended with ");
+            text << WrapLineInColour("errors", eAsciiColours::RED);
+        } else if(m_warn_count) {
+            text = _("=== build ended with ");
+            text << WrapLineInColour("warnings", eAsciiColours::YELLOW);
+        } else {
+            text = _("=== build completed ");
+            text << WrapLineInColour("successfully", eAsciiColours::GREEN);
+        }
+        text << " (" << m_error_count << _(" errors, ") << m_warn_count << _(" warnings)");
+        if(!total_time.empty()) {
+            text << total_time;
+        }
+        text << " ===";
+    }
+    return text;
 }

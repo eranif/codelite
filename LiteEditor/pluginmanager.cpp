@@ -887,7 +887,7 @@ void PluginManager::AppendOutputTabText(eOutputPaneTab tab, const wxString& text
 {
     switch(tab) {
     case kOutputTab_Build:
-        clMainFrame::Get()->GetOutputPane()->GetBuildOutputTab()->AppendLine(text);
+        clMainFrame::Get()->GetOutputPane()->GetBuildTab()->AppendLine(text);
         break;
     case kOutputTab_Output:
         clMainFrame::Get()->GetOutputPane()->GetOutputWindow()->AppendText(text);

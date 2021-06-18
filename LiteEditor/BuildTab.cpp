@@ -341,10 +341,15 @@ void BuildTab::OnContextMenu(wxDataViewEvent& e)
     wxMenu menu;
     if(e.GetItem().IsOk()) {
         menu.Append(XRCID("copy-current-lines"), _("Copy selected lines to clipboard"));
+        menu.Enable(XRCID("copy-current-lines"), !m_buildInProgress);
         menu.AppendSeparator();
     }
     menu.Append(wxID_CLEAR);
+    menu.Enable(wxID_CLEAR, !m_buildInProgress);
+
     menu.Append(wxID_SAVEAS);
+    menu.Enable(wxID_CLEAR, !m_buildInProgress);
+    
     menu.Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& event) {
@@ -435,7 +440,6 @@ wxString BuildTab::CreateSummaryLine() const
 
         // at this point, m_buffer is empty
         text << "\n";
-        eAsciiColours c;
         if(m_error_count) {
             text = _("==== build ended with ");
             text << WrapLineInColour("errors", eAsciiColours::RED);

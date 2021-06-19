@@ -1521,7 +1521,9 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
                 // Write the pull log to the console
-                m_console->AddText(wxString() << "\n===============\nPull Log\n===============\n" << log << "\n", false);
+                m_console->AddText(wxString() << "\n===============\nPull Log\n===============\n"
+                                              << log << "\n",
+                                   false);
 
                 if(m_commandOutput.Contains(wxT("Merge made by"))) {
                     if(wxMessageBox(_("Merged after pull. Rebase?"), _("Rebase"), wxYES_NO, m_topWindow) == wxYES) {
@@ -2824,7 +2826,8 @@ IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_
         command << " " << command_args;
         GIT_MESSAGE_IF(logMessage, command);
 
-        auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell, working_directory);
+        auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell | IProcessRawOutput,
+                                            working_directory);
         return process;
     }
 }
@@ -2848,7 +2851,7 @@ void GitPlugin::AsyncRunGitWithCallback(const wxString& command_args, std::funct
 
         command << " " << command_args;
         GIT_MESSAGE_IF(logMessage, command);
-        ::CreateAsyncProcessCB(command, callback, create_flags, working_directory, nullptr);
+        ::CreateAsyncProcessCB(command, callback, create_flags | IProcessRawOutput, working_directory, nullptr);
     }
 }
 

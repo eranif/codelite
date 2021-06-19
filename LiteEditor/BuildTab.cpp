@@ -170,8 +170,10 @@ void BuildTab::ProcessBuffer(bool last_line)
         if(line.Lower().Contains("entering directory") || line.Lower().Contains("leaving directory")) {
             line = WrapLineInColour(line, eAsciiColours::GRAY);
             m_view->AppendItem(line);
+        } else if(line.Lower().Contains("building project")) {
+            line = WrapLineInColour(line, eAsciiColours::NORMAL_TEXT, true);
+            m_view->AppendItem(line);
         } else {
-
             std::unique_ptr<Compiler::PatternMatch> m(new Compiler::PatternMatch);
 
             // remove the terminal ascii colouring escape code
@@ -268,13 +270,13 @@ void BuildTab::ClearView()
     m_buffer.clear();
 }
 
-wxString BuildTab::WrapLineInColour(const wxString& line, eAsciiColours colour) const
+wxString BuildTab::WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font) const
 {
     wxString text;
     clAsciiEscapeColourBuilder text_builder(text);
 
     bool is_light = m_view->GetColours().IsLightTheme();
-    text_builder.SetTheme(is_light ? eAsciiTheme::LIGHT : eAsciiTheme::DARK).Add(line, colour);
+    text_builder.SetTheme(is_light ? eAsciiTheme::LIGHT : eAsciiTheme::DARK).Add(line, colour, fold_font);
     return text;
 }
 

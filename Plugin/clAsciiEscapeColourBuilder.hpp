@@ -10,6 +10,7 @@ enum class eAsciiColours : int {
     YELLOW,
     GREEN,
     GRAY,
+    NORMAL_TEXT,
 };
 
 enum class eAsciiTheme : int {

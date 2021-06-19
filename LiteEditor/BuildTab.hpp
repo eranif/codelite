@@ -37,7 +37,7 @@ protected:
     void ProcessBuffer(bool last_line = false);
     void Cleanup();
     void ApplyStyle();
-    wxString WrapLineInColour(const wxString& line, eAsciiColours colour) const;
+    wxString WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font = false) const;
     void DoCentreErrorLine(Compiler::PatternMatch* match_result, clEditor* editor, bool centerLine);
     void SaveBuildLog();
     void CopySelections();

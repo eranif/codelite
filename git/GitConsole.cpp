@@ -48,7 +48,7 @@
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 
-#define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
+#define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__), true);
 #define GIT_MESSAGE1(...)
 
 #define GIT_ITEM_DATA(viewItem) reinterpret_cast<GitClientData*>(m_dvListCtrl->GetItemData(viewItem))
@@ -283,11 +283,11 @@ bool GitConsole::HasAnsiEscapeSequences(const wxString& buffer) const
     return buffer.find(ch) != wxString::npos;
 }
 
-void GitConsole::AddText(const wxString& text)
+void GitConsole::AddText(const wxString& text, bool print_prompt)
 {
     auto lines = ::wxStringTokenize(text, "\n\r", wxTOKEN_STRTOK);
     for(const auto& line : lines) {
-        AddLine(line);
+        AddLine(line, print_prompt);
     }
 }
 
@@ -672,7 +672,7 @@ void GitConsole::ShowLog()
 
 wxString GitConsole::GetPrompt() const { return m_git->GetRepositoryDirectory() + ">"; }
 
-void GitConsole::AddLine(const wxString& line)
+void GitConsole::AddLine(const wxString& line, bool print_prompt)
 {
     wxString tmp = line;
     tmp.Replace("\r", wxEmptyString);
@@ -681,7 +681,9 @@ void GitConsole::AddLine(const wxString& line)
     auto& builder = m_dvListCtrlLog->GetBuilder();
     builder.Clear();
 
-    builder.Add(GetPrompt(), eAsciiColours::GRAY);
+    if(print_prompt) {
+        builder.Add(GetPrompt(), eAsciiColours::GRAY);
+    }
     if(HasAnsiEscapeSequences(tmp)) {
         builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
     } else {

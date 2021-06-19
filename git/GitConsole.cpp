@@ -285,7 +285,7 @@ bool GitConsole::HasAnsiEscapeSequences(const wxString& buffer) const
 
 void GitConsole::AddText(const wxString& text)
 {
-    auto lines = ::wxStringTokenize(text, "\r", wxTOKEN_STRTOK);
+    auto lines = ::wxStringTokenize(text, "\n\r", wxTOKEN_STRTOK);
     for(const auto& line : lines) {
         AddLine(line);
     }

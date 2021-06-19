@@ -4,6 +4,7 @@
 #include "build_settings_config.h"
 #include "clAsciiEscapCodeHandler.hpp"
 #include "clStrings.h"
+#include "clTerminalViewCtrl.hpp"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -15,7 +16,6 @@
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/tokenzr.h>
-#include "clTerminalViewCtrl.hpp"
 
 namespace
 {
@@ -27,6 +27,11 @@ void SetActive(clEditor* editor)
     event.SetEventObject(editor);
     wxPostEvent(clMainFrame::Get(), event);
 }
+
+struct LineClientData {
+    wxString project_name;
+    Compiler::PatternMatch match_pattern;
+};
 
 } // namespace
 
@@ -113,6 +118,8 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
     build_ended_event.SetErrorCount(m_error_count);
     build_ended_event.SetWarningCount(m_warn_count);
     EventNotifier::Get()->AddPendingEvent(build_ended_event);
+
+    m_currentProjectName.clear();
 }
 
 void BuildTab::ProcessBuffer(bool last_line)
@@ -135,19 +142,20 @@ void BuildTab::ProcessBuffer(bool last_line)
             line = WrapLineInColour(line, eAsciiColours::GRAY);
             m_view->AppendItem(line);
         } else if(line.Lower().Contains("building project")) {
+            ProcessBuildingProjectLine(line);
             line = WrapLineInColour(line, eAsciiColours::NORMAL_TEXT, true);
             m_view->AppendItem(line);
         } else {
-            std::unique_ptr<Compiler::PatternMatch> m(new Compiler::PatternMatch);
+            std::unique_ptr<LineClientData> m(new LineClientData);
 
             // remove the terminal ascii colouring escape code
             wxString modified_line;
             StringUtils::StripTerminalColouring(line, modified_line);
             bool lineHasColours = (line.length() != modified_line.length());
-            if(!m_activeCompiler || !m_activeCompiler->Matches(modified_line, m.get())) {
+            if(!m_activeCompiler || !m_activeCompiler->Matches(modified_line, &m->match_pattern)) {
                 m.reset();
             } else {
-                switch(m->sev) {
+                switch(m->match_pattern.sev) {
                 case Compiler::kSevError:
                     m_error_count++;
                     break;
@@ -163,12 +171,16 @@ void BuildTab::ProcessBuffer(bool last_line)
             // this colour has no colour associated with it (using ASCII escape)
             // add some
             if(!lineHasColours && m.get()) {
-                line =
-                    WrapLineInColour(line, m->sev == Compiler::kSevError ? eAsciiColours::RED : eAsciiColours::YELLOW);
+                line = WrapLineInColour(line, m->match_pattern.sev == Compiler::kSevError ? eAsciiColours::RED
+                                                                                          : eAsciiColours::YELLOW);
             }
             // Associate the match info with the line in the view
             // this will be used later when selecting lines
             // Note: its OK to pass null here
+            if(m) {
+                // set the line project name
+                m->project_name = GetCurrentProjectName();
+            }
             m_view->AppendItem(line, wxNOT_FOUND, wxNOT_FOUND, (wxUIntPtr)m.release());
         }
         lines.erase(lines.begin());
@@ -192,6 +204,7 @@ void BuildTab::Cleanup()
     m_error_count = 0;
     m_warn_count = 0;
     m_buildInterrupted = false;
+    m_currentProjectName.clear();
 }
 
 void BuildTab::AppendLine(const wxString& text)
@@ -204,7 +217,7 @@ void BuildTab::ClearView()
 {
     m_view->DeleteAllItems([](wxUIntPtr d) {
         if(d) {
-            Compiler::PatternMatch* p = reinterpret_cast<Compiler::PatternMatch*>(d);
+            LineClientData* p = reinterpret_cast<LineClientData*>(d);
             wxDELETE(p);
         }
     });
@@ -214,7 +227,7 @@ void BuildTab::ClearView()
 wxString BuildTab::WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font) const
 {
     wxString text;
-    clAsciiEscapeColourBuilder text_builder(text);
+    clAsciiEscapeColourBuilder text_builder(&text);
 
     bool is_light = m_view->GetColours().IsLightTheme();
     text_builder.SetTheme(is_light ? eAsciiTheme::LIGHT : eAsciiTheme::DARK).Add(line, colour, fold_font);
@@ -224,29 +237,32 @@ wxString BuildTab::WrapLineInColour(const wxString& line, eAsciiColours colour, 
 void BuildTab::OnLineActivated(wxDataViewEvent& e)
 {
     clDEBUG1() << "Build line double clicked" << endl;
-    auto cd = reinterpret_cast<Compiler::PatternMatch*>(m_view->GetItemData(e.GetItem()));
+    auto cd = reinterpret_cast<LineClientData*>(m_view->GetItemData(e.GetItem()));
     CHECK_PTR_RET(cd);
 
     // let the plugins a first chance in handling this line
     clBuildEvent eventErrorClicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
-    eventErrorClicked.SetFileName(cd->file_path);
-    eventErrorClicked.SetLineNumber(cd->line_number);
-    clDEBUG1() << "Letting plugins process it first (" << cd->file_path << ":" << cd->line_number << ")" << endl;
+    eventErrorClicked.SetFileName(cd->match_pattern.file_path);
+    eventErrorClicked.SetLineNumber(cd->match_pattern.line_number);
+    eventErrorClicked.SetProjectName(cd->project_name);
+    clDEBUG1() << "Letting plugins process it first (" << cd->match_pattern.file_path << ":"
+               << cd->match_pattern.line_number << ")" << endl;
     if(EventNotifier::Get()->ProcessEvent(eventErrorClicked)) {
         return;
     }
 
-    wxFileName fn(cd->file_path);
+    wxFileName fn(cd->match_pattern.file_path);
     if(fn.FileExists()) {
         // if we resolved it now, open the file there is no point in searching this file
         // in m_buildInfoPerFile since the key on this map is kept as full name
         clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
         if(!editor) {
-            editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, cd->line_number);
+            editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString,
+                                                                 cd->match_pattern.line_number);
         }
 
         CHECK_PTR_RET(editor);
-        DoCentreErrorLine(cd, editor, true);
+        DoCentreErrorLine(&cd->match_pattern, editor, true);
     }
 }
 
@@ -400,4 +416,18 @@ wxString BuildTab::CreateSummaryLine() const
         text << " ===";
     }
     return text;
+}
+
+void BuildTab::ProcessBuildingProjectLine(const wxString& line)
+{
+    // extract the project name from the line
+    // an example line:
+    // ----------Building project:[ CodeLiteIDE - Win_x64_Release ] (Single File Build)----------
+    wxString s = line.AfterFirst('[');
+    s = s.BeforeLast(']');
+    s = s.BeforeLast('-');
+    s.Trim().Trim(false);
+
+    // keep the current project name
+    m_currentProjectName.swap(s);
 }

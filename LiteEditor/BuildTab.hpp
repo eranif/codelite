@@ -23,18 +23,19 @@ class BuildTab : public wxPanel
     size_t m_error_count = 0;
     size_t m_warn_count = 0;
     bool m_buildInterrupted = false;
+    wxString m_currentProjectName;
 
 protected:
     void OnBuildStarted(clBuildEvent& e);
     void OnBuildAddLine(clBuildEvent& e);
     void OnBuildEnded(clBuildEvent& e);
-    void OnSysColourChanged(clCommandEvent& e);
     void OnLineActivated(wxDataViewEvent& e);
     void OnContextMenu(wxDataViewEvent& e);
 
     void ProcessBuffer(bool last_line = false);
     void Cleanup();
-
+    void ProcessBuildingProjectLine(const wxString& line);
+    const wxString& GetCurrentProjectName() const { return m_currentProjectName; }
     wxString WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font = false) const;
     void DoCentreErrorLine(Compiler::PatternMatch* match_result, clEditor* editor, bool centerLine);
     void SaveBuildLog();

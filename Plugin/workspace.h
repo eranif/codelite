@@ -25,21 +25,21 @@
 #ifndef WORKSPACE_H
 #define WORKSPACE_H
 
-#include "singleton.h"
-#include "wx/string.h"
-#include <wx/xml/xml.h>
-#include "wx/filename.h"
-#include "project.h"
-#include <map>
-#include "JSON.h"
-#include <wx/event.h>
-#include <cl_command_event.h>
 #include "IWorkspace.h"
-#include "configuration_mapping.h"
-#include "optionsconfig.h"
-#include "localworkspace.h"
+#include "JSON.h"
 #include "codelite_exports.h"
+#include "configuration_mapping.h"
+#include "localworkspace.h"
+#include "optionsconfig.h"
+#include "project.h"
+#include "singleton.h"
+#include "wx/filename.h"
+#include "wx/string.h"
 #include "wxStringHash.h"
+#include <cl_command_event.h>
+#include <map>
+#include <wx/event.h>
+#include <wx/xml/xml.h>
 
 #define CURRENT_WORKSPACE_VERSION 11000
 #define CURRENT_WORKSPACE_VERSION_STR wxString("11000")
@@ -94,13 +94,13 @@ public:
      * @return
      */
     LocalWorkspace* GetLocalWorkspace() const { return m_localWorkspace; }
-    
+
     // Backtick cache
     bool HasBacktick(const wxString& backtick) const;
     bool GetBacktickValue(const wxString& backtick, wxString& value) const;
     void SetBacktickValue(const wxString& backtick, const wxString& value);
     void ClearBacktickCache();
-    
+
 private:
     void DoUpdateBuildMatrix();
     /**
@@ -137,6 +137,11 @@ private:
     std::list<wxXmlNode*> DoGetProjectsXmlNodes() const;
 
     void DoVisitWorkspaceFolders(wxXmlNode* parent, const wxString& curpath, wxArrayString& paths) const;
+
+    /**
+     * @brief user clicked on a build output line with file:line
+     */
+    void OnBuildHotspotClicked(clBuildEvent& event);
 
 public:
     /**

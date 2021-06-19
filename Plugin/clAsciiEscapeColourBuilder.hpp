@@ -17,6 +17,14 @@ enum class eAsciiTheme : int {
     LIGHT,
 };
 
+// provide hash for eAsciiColours
+namespace std
+{
+template <> struct hash<eAsciiColours> {
+    std::size_t operator()(eAsciiColours i) const { return hash<int>{}((int)i); }
+};
+} // namespace std
+
 class WXDLLIMPEXP_SDK clAsciiEscapeColourBuilder
 {
 private:

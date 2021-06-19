@@ -26,6 +26,7 @@
 #include "GitConsole.h"
 #include "GitResetDlg.h"
 #include "bitmap_loader.h"
+#include "clAsciiEscapeColourBuilder.hpp"
 #include "clBitmap.h"
 #include "clCommandProcessor.h"
 #include "clThemeUpdater.h"
@@ -144,40 +145,25 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     , m_git(git)
 {
     // set the font to fit the C++ lexer default font
-    m_styler.reset(new clGenericSTCStyler(m_stcLog));
     m_bitmapLoader = clGetManager()->GetStdIcons();
     m_dvListCtrl->SetSortedColumn(1);
     m_dvListCtrlUnversioned->SetSortedColumn(1);
     clThemeUpdater::Get().RegisterWindow(m_splitter733);
 
     // Error messages will be coloured with red
-    {
-        wxArrayString words;
-        words.Add("fatal:");
-        words.Add("error:");
-        words.Add("tell me who you are");
-        words.Add("hook failure");
-        words.Add("not a git repository");
-        words.Add("No commit message given, aborting");
-        m_styler->AddStyle(words, clGenericSTCStyler::kError);
-    }
+    m_errorPatterns = { { "fatal:" },
+                        { "error:" },
+                        { "tell me who you are" },
+                        { "hook failure" },
+                        { "not a git repository" },
+                        { "No commit message given, aborting" } };
 
-    {
+    m_successPatterns =
         // Informative messages, will be coloured with green
-        wxArrayString words;
-        words.Add("up to date");
-        words.Add("up-to-date");
-        m_styler->AddStyle(words, clGenericSTCStyler::kInfo);
-    }
-    {
-        // warning messages
-        wxArrayString words;
-        words.Add("the authenticity of host");
-        words.Add("can't be established");
-        words.Add("key fingerprint");
-        m_styler->AddStyle(words, clGenericSTCStyler::kWarning);
-    }
-    m_styler->ApplyStyles();
+        { { "up to date" }, { "up-to-date" } };
+
+    // yellow
+    m_warningPatterns = { { "the authenticity of host" }, { "can't be established" }, { "key fingerprint" } };
 
     m_modifiedBmp = m_bitmapLoader->LoadBitmap("modified");
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
@@ -259,7 +245,7 @@ GitConsole::~GitConsole()
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_stcLog->ClearAll();
+    m_dvListCtrlLog->DeleteAllItems();
 }
 
 void GitConsole::OnStopGitProcess(wxCommandEvent& event)
@@ -278,33 +264,49 @@ void GitConsole::OnStopGitProcessUI(wxUpdateUIEvent& event)
     event.Enable(m_git->GetProcess() || m_git->GetFolderProcess());
 }
 
-void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event) { event.Enable(!m_stcLog->IsEmpty()); }
+void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event) { event.Enable(!m_dvListCtrlLog->IsEmpty()); }
+
+bool GitConsole::IsPatternFound(const wxString& buffer, const std::unordered_set<wxString>& m) const
+{
+    wxString lc = buffer.Lower();
+    for(const auto& s : m) {
+        if(lc.Contains(s)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool GitConsole::HasAnsiEscapeSequences(const wxString& buffer) const
+{
+    wxChar ch = 0x1B;
+    return buffer.find(ch) != wxString::npos;
+}
 
 void GitConsole::AddText(const wxString& text)
 {
-    m_stcLog->SetInsertionPoint(m_stcLog->GetLength());
-#ifdef __WXMSW__
     wxString tmp = text;
-    tmp.Replace("\r\n", "\n");
-    m_stcLog->AddText(tmp);
-    if(!tmp.EndsWith("\n")) {
-        m_stcLog->AddText("\n");
-    }
-#else
-    m_stcLog->AddText(text);
-    if(!text.EndsWith("\n")) {
-        m_stcLog->AddText("\n");
-    }
-#endif
-    m_stcLog->ScrollToEnd();
-}
+    tmp.Replace("\r", wxEmptyString);
+    tmp.Trim();
 
-void GitConsole::AddRawText(const wxString& text)
-{
-    // Add text without manipulate its content
-    m_stcLog->SetInsertionPoint(m_stcLog->GetLength());
-    m_stcLog->AddText(text);
-    m_stcLog->ScrollToEnd();
+    auto& builder = m_dvListCtrlLog->GetBuilder();
+    builder.Clear();
+
+    builder.Add(GetPrompt(), eAsciiColours::GRAY);
+    if(HasAnsiEscapeSequences(tmp)) {
+        builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
+    } else {
+        if(IsPatternFound(tmp, m_errorPatterns)) {
+            builder.Add(tmp, eAsciiColours::RED);
+        } else if(IsPatternFound(tmp, m_warningPatterns)) {
+            builder.Add(tmp, eAsciiColours::YELLOW);
+        } else if(IsPatternFound(tmp, m_successPatterns)) {
+            builder.Add(tmp, eAsciiColours::GREEN);
+        } else {
+            builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
+        }
+    }
+    m_dvListCtrlLog->AddLine(builder.GetString());
 }
 
 bool GitConsole::IsVerbose() const { return m_isVerbose; }
@@ -685,3 +687,5 @@ void GitConsole::ShowLog()
     // Change the selection to the "Log" view
     // m_notebookLog->SetSelection(m_notebookLog->GetPageIndex(_("Log")));
 }
+
+wxString GitConsole::GetPrompt() const { return m_git->GetRepositoryDirectory() + ">"; }

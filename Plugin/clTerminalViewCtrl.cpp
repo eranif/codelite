@@ -43,6 +43,7 @@ clTerminalViewCtrl::clTerminalViewCtrl(wxWindow* parent, wxWindowID id, const wx
                                        long style)
     : clDataViewListCtrl(parent, id, pos, size, style)
 {
+    SetSortFunction(nullptr);
     m_renderer = new MyAsciiRenderer();
     SetCustomRenderer(m_renderer);
     AppendIconTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
@@ -75,4 +76,16 @@ void clTerminalViewCtrl::ApplyStyle()
         SetDefaultFont(f);
         SetColours(colours);
     }
+}
+
+void clTerminalViewCtrl::AddLine(const wxString& text, wxUIntPtr data)
+{
+    AppendItem(text, wxNOT_FOUND, wxNOT_FOUND, data);
+    ScrollToBottom();
+}
+
+clAsciiEscapeColourBuilder& clTerminalViewCtrl::GetBuilder()
+{
+    m_builder.SetTheme(GetColours().IsLightTheme() ? eAsciiTheme::LIGHT : eAsciiTheme::DARK);
+    return m_builder;
 }

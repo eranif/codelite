@@ -42,6 +42,7 @@
 #include <wx/spinctrl.h>
 #include <wx/notebook.h>
 #include "clGenericNotebook.hpp"
+#include "clTerminalViewCtrl.hpp"
 #include <wx/gauge.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
@@ -69,8 +70,11 @@
 class GitSettingsDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* mainSizer;
     wxTreebook* m_treebook230;
     wxPanel* m_panel232;
+    wxBoxSizer* boxSizer240;
+    wxFlexGridSizer* fgSizer11;
     wxStaticText* m_staticText42;
     wxFilePickerCtrl* m_pathGIT;
     wxStaticText* m_staticText54;
@@ -78,6 +82,8 @@ protected:
     wxStaticText* m_staticText355;
     wxTextCtrl* m_textCtrlGitShell;
     wxPanel* m_panel234;
+    wxBoxSizer* boxSizer242;
+    wxFlexGridSizer* flexGridSizer244;
     wxStaticText* m_staticText246;
     wxTextCtrl* m_textCtrlGlobalName;
     wxStaticText* m_staticText250;
@@ -87,6 +93,7 @@ protected:
     wxStaticText* m_staticText258;
     wxTextCtrl* m_textCtrlLocalEmail;
     wxPanel* m_panel236;
+    wxBoxSizer* boxSizer766;
     wxCheckBox* m_checkBoxTerminal;
     wxCheckBox* m_checkBoxLog;
     wxCheckBox* m_checkBoxShowBlameInStatusBar;
@@ -129,17 +136,23 @@ public:
 class GitCommitDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer4;
     clThemedSplitterWindow* m_splitterMain;
     wxPanel* m_panel3;
+    wxBoxSizer* bSizer12;
     clThemedSplitterWindow* m_splitterInner;
     wxPanel* m_panel1;
+    wxBoxSizer* bSizer11;
     clThemedOrderedListCtrl* m_dvListCtrlFiles;
     wxPanel* m_panel2;
+    wxBoxSizer* bSizer9;
     wxStyledTextCtrl* m_stcDiff;
     wxPanel* m_panel4;
+    wxBoxSizer* bSizer13;
     clToolBar* m_toolbar;
     wxStyledTextCtrl* m_stcCommitMessage;
     wxCheckBox* m_checkBoxAmend;
+    wxBoxSizer* boxSizer372;
     wxButton* m_buttonOK;
     wxButton* m_buttonCancel;
 
@@ -171,11 +184,16 @@ public:
 class GitCommitListDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer17;
     wxPanel* m_panel806;
+    wxBoxSizer* boxSizer808;
     clThemedSplitterWindow* m_splitter174;
     wxPanel* m_splitterPage178;
+    wxBoxSizer* boxSizer205;
     clThemedSplitterWindow* m_splitter777;
     wxPanel* m_splitterPage781;
+    wxBoxSizer* boxSizer787;
+    wxFlexGridSizer* flexGridSizer800;
     wxSearchCtrl* m_searchCtrlFilter;
     wxButton* m_buttonPrevious;
     wxButton* m_buttonNext;
@@ -183,16 +201,21 @@ protected:
     wxCheckBox* m_checkBoxIgnoreCase;
     clThemedListCtrl* m_dvListCtrlCommitList;
     wxPanel* m_splitterPage785;
+    wxBoxSizer* boxSizer789;
     clThemedSplitterWindow* m_splitter791;
     wxPanel* m_splitterPage795;
+    wxBoxSizer* boxSizer208;
     wxStaticText* m_staticText210;
     wxListBox* m_fileListBox;
     wxPanel* m_splitterPage799;
+    wxBoxSizer* boxSizer218;
     wxStaticText* m_staticText220;
     wxStyledTextCtrl* m_stcCommitMessage;
     wxPanel* m_splitterPage182;
+    wxBoxSizer* boxSizer184;
     wxStaticText* m_staticText217;
     wxStyledTextCtrl* m_stcDiff;
+    wxBoxSizer* boxSizer769;
     wxButton* m_buttonClose;
 
 protected:
@@ -240,13 +263,17 @@ public:
 class GitDiffDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer17;
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageFiles;
+    wxBoxSizer* boxSizer62;
     wxStaticText* m_staticText68;
     wxListBox* m_fileListBox;
     wxPanel* m_splitterPageDiff;
+    wxBoxSizer* boxSizer64;
     wxStaticText* m_staticText66;
     GitCommitEditor* m_editor;
+    wxBoxSizer* boxSizer650;
     wxRadioBox* m_radioBoxStaged;
     wxCheckBox* m_checkIgnoreSpace;
     wxButton* m_buttonDiffDlg;
@@ -278,8 +305,12 @@ public:
 class GitDiffChooseCommitishDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer420;
     wxStaticText* m_staticText59825;
     wxStaticText* m_staticText598;
+    wxBoxSizer* boxSizer620;
+    wxStaticBoxSizer* staticBoxSizer635;
+    wxFlexGridSizer* flexGridSizer60413;
     wxRadioButton* m_radioBranch1;
     wxChoice* m_choiceBranch1;
     wxRadioButton* m_radioTag1;
@@ -288,6 +319,8 @@ protected:
     wxChoice* m_choiceCommit1;
     wxRadioButton* m_radioUserEntered1;
     wxComboBox* m_comboCommitish1;
+    wxStaticBoxSizer* staticBoxSizer636;
+    wxFlexGridSizer* flexGridSizer604;
     wxRadioButton* m_radioBranch2;
     wxChoice* m_choiceBranch2;
     wxRadioButton* m_radioTag2;
@@ -297,9 +330,12 @@ protected:
     wxRadioButton* m_radioUserEntered2;
     wxComboBox* m_comboCommitish2;
     wxCheckBox* m_checkTripleDot;
+    wxBoxSizer* boxSizer434;
+    wxFlexGridSizer* flexGridSizer61410;
     wxTextCtrl* m_textFirst;
     wxStaticText* m_staticText598211;
     wxSpinCtrl* m_spinCtrl1;
+    wxFlexGridSizer* flexGridSizer614;
     wxTextCtrl* m_textSecond;
     wxStaticText* m_staticText59821124;
     wxSpinCtrl* m_spinCtrl2;
@@ -364,6 +400,8 @@ public:
 class gitCloneDlgBaseClass : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer17;
+    wxFlexGridSizer* flexGridSizer21;
     wxStaticText* m_staticText22;
     wxTextCtrl* m_textCtrlURL;
     wxStaticText* m_staticText24;
@@ -389,6 +427,7 @@ public:
 class GitFileDiffDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer124;
     GitCommitEditor* m_editor;
     wxStdDialogButtonSizer* m_stdBtnSizer306;
     wxButton* m_button308;
@@ -409,6 +448,8 @@ public:
 class GitApplyPatchDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer154;
+    wxFlexGridSizer* flexGridSizer162;
     wxStaticText* m_staticText164;
     wxFilePickerCtrl* m_filePickerPatchFile;
     wxStaticText* m_staticText168;
@@ -432,18 +473,25 @@ public:
 class GitConsoleBase : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer36;
     clToolBar* m_toolbar;
+    wxBoxSizer* boxSizer711;
     clThemedSplitterWindow* m_splitter733;
     wxPanel* m_splitterPage737;
+    wxBoxSizer* boxSizer715;
     clGenericNotebook* m_notebookChanges;
     wxPanel* m_panel674;
+    wxBoxSizer* boxSizer678;
     clThemedOrderedListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
+    wxBoxSizer* boxSizer680;
     clThemedOrderedListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_splitterPage741;
+    wxBoxSizer* boxSizer743;
     clGenericNotebook* m_notebookLog;
     wxPanel* m_panel_log;
-    wxStyledTextCtrl* m_stcLog;
+    wxBoxSizer* boxSizer729;
+    clTerminalViewCtrl* m_dvListCtrlLog;
     wxGauge* m_gauge;
 
 protected:
@@ -461,7 +509,7 @@ public:
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
     clGenericNotebook* GetNotebookChanges() { return m_notebookChanges; }
     wxPanel* GetSplitterPage737() { return m_splitterPage737; }
-    wxStyledTextCtrl* GetStcLog() { return m_stcLog; }
+    clTerminalViewCtrl* GetDvListCtrlLog() { return m_dvListCtrlLog; }
     wxPanel* GetPanel_log() { return m_panel_log; }
     clGenericNotebook* GetNotebookLog() { return m_notebookLog; }
     wxPanel* GetSplitterPage741() { return m_splitterPage741; }
@@ -475,24 +523,31 @@ public:
 class GitBlameDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer374;
     wxAuiToolBar* m_auibar436;
     wxChoice* m_choiceHistory;
     wxStaticText* m_staticText414;
     wxComboBox* m_comboExtraArgs;
     wxSplitterWindow* m_splitterMain;
     wxPanel* m_splitterPageTop;
+    wxBoxSizer* boxSizer205;
     wxStyledTextCtrl* m_stcBlame;
     wxPanel* m_splitterPageBottom;
+    wxBoxSizer* boxSizer184;
     wxSplitterWindow* m_splitterH;
     wxPanel* m_splitterPage194;
+    wxBoxSizer* boxSizer218;
     wxStaticText* m_staticText220;
     wxStyledTextCtrl* m_stcCommitMessage;
     wxPanel* m_splitterPage190;
+    wxBoxSizer* bSizer18;
     wxSplitterWindow* m_splitterV;
     wxPanel* m_splitterPage200;
+    wxBoxSizer* boxSizer208;
     wxStaticText* m_staticText210;
     wxListBox* m_fileListBox;
     wxPanel* m_splitterPage204;
+    wxBoxSizer* boxSizer215;
     wxStaticText* m_staticText217;
     wxStyledTextCtrl* m_stcDiff;
     wxStdDialogButtonSizer* m_stdBtnSizer306;
@@ -542,6 +597,8 @@ public:
 class GitBlameSettingsDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer420;
+    wxBoxSizer* boxSizer434;
     wxCheckBox* m_checkParentCommit;
     wxCheckBox* m_checkShowLogControls;
     wxStdDialogButtonSizer* m_stdBtnSizer429;
@@ -561,11 +618,16 @@ public:
 class GitResetDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* bSizer4;
     wxPanel* m_panel759;
+    wxBoxSizer* boxSizer761;
     wxStaticText* m_staticText585;
+    wxGridSizer* gridSizer563;
+    wxBoxSizer* boxSizer565;
     wxStaticText* m_staticText581;
     clToolBar* m_clToolbarAltered;
     wxCheckListBox* m_checkListBoxChanged;
+    wxBoxSizer* boxSizer5651;
     wxStaticText* m_staticText5815;
     clToolBar* m_clToolbarAdded;
     wxCheckListBox* m_checkListBoxNew;
@@ -592,7 +654,9 @@ public:
 class GitUserEmailDialogBase : public wxDialog
 {
 protected:
+    wxBoxSizer* boxSizer686;
     wxStaticText* m_staticText704;
+    wxFlexGridSizer* flexGridSizer694;
     wxStaticText* m_staticText696;
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText700;

@@ -77,9 +77,9 @@
 
 static GitPlugin* thePlugin = NULL;
 
-#define GIT_MESSAGE_IF(cond, ...)                                                               \
-    if(cond) {                                                                                  \
-        m_console->AddText("[" + m_repositoryDirectory + "] " + wxString::Format(__VA_ARGS__)); \
+#define GIT_MESSAGE_IF(cond, ...)                          \
+    if(cond) {                                             \
+        m_console->AddText(wxString::Format(__VA_ARGS__)); \
     }
 #define GIT_MESSAGE(...) GIT_MESSAGE_IF(true, __VA_ARGS__)
 #define GIT_MESSAGE1(...) GIT_MESSAGE_IF(m_configFlags& GitEntry::Git_Verbose_Log, __VA_ARGS__)
@@ -514,7 +514,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
 
     wxString commandOutput;
     DoExecuteCommandSync(cmd, &commandOutput, workingDir);
-    GetConsole()->AddRawText(commandOutput);
+    GetConsole()->AddText(commandOutput);
     RefreshFileListView();
 }
 
@@ -578,7 +578,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
 
     wxString commandOutput;
     DoExecuteCommandSync(cmd, &commandOutput, workingDir);
-    GetConsole()->AddRawText(commandOutput);
+    GetConsole()->AddText(commandOutput);
 
     // Reload externally modified files
     EventNotifier::Get()->PostReloadExternallyModifiedEvent();
@@ -1641,7 +1641,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     }
 
     if(ga.action == gitPush || ga.action == gitPull) {
-        m_console->AddRawText(output);
+        m_console->AddText(output);
     }
     m_commandOutput.Append(output);
 
@@ -2470,14 +2470,13 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 
                 if(IsRemoteWorkspace()) {
                     if(!clSFTPManager::Get().AwaitWriteFile(message, messagefile, m_remoteWorkspaceAccount)) {
-                        m_console->AddRawText(_("ERROR: Failed to write commit message to file: ") + messagefile +
-                                              "\n" + clSFTPManager::Get().GetLastError() + "\n");
+                        m_console->AddText(_("ERROR: Failed to write commit message to file: ") + messagefile + "\n" +
+                                           clSFTPManager::Get().GetLastError() + "\n");
                         return;
                     }
                 } else {
                     if(!FileUtils::WriteFileContent(messagefile, message)) {
-                        m_console->AddRawText(_("ERROR: Failed to write commit message to file: ") + messagefile +
-                                              "\n");
+                        m_console->AddText(_("ERROR: Failed to write commit message to file: ") + messagefile + "\n");
                         return;
                     }
                 }
@@ -2491,7 +2490,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
                 commitArgs << ::WrapWithQuotes(selectedFiles.Item(i)) << wxT(" ");
 
         } else {
-            m_console->AddRawText(_("No commit message given, aborting"));
+            m_console->AddText(_("No commit message given, aborting"));
         }
     }
 }

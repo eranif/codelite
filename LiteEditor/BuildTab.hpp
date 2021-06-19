@@ -3,18 +3,16 @@
 
 #include "buildtabsettingsdata.h"
 #include "clAsciiEscapeColourBuilder.hpp"
-#include "clDataViewListCtrl.h"
+#include "clTerminalViewCtrl.hpp"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "compiler.h"
 #include <wx/panel.h>
 #include <wx/stopwatch.h>
 
-class clControlWithItemsRowRenderer;
 class BuildTab : public wxPanel
 {
-    clDataViewListCtrl* m_view = nullptr;
-    clControlWithItemsRowRenderer* m_renderer = nullptr;
+    clTerminalViewCtrl* m_view = nullptr;
     BuildTabSettingsData m_buildTabSettings;
     wxStopWatch m_sw;
 
@@ -36,7 +34,7 @@ protected:
 
     void ProcessBuffer(bool last_line = false);
     void Cleanup();
-    void ApplyStyle();
+
     wxString WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font = false) const;
     void DoCentreErrorLine(Compiler::PatternMatch* match_result, clEditor* editor, bool centerLine);
     void SaveBuildLog();

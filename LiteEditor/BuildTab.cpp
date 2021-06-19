@@ -15,41 +15,10 @@
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/tokenzr.h>
+#include "clTerminalViewCtrl.hpp"
 
 namespace
 {
-class MyAsciiRenderer : public clControlWithItemsRowRenderer
-{
-    clAsciiEscapeCodeHandler handler;
-    wxFont m_font;
-
-public:
-    MyAsciiRenderer() {}
-
-    void SetFont(const wxFont& f) { this->m_font = f; }
-    void Render(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) override
-    {
-        wxUnusedVar(window);
-        wxUnusedVar(row_index);
-
-        // draw the ascii line
-        handler.Reset();
-        handler.Parse(entry->GetLabel(0));
-
-        if(entry->IsSelected()) {
-            dc.SetPen(colours.GetSelItemBgColour());
-            dc.SetBrush(colours.GetSelItemBgColour());
-            dc.DrawRectangle(entry->GetItemRect());
-        }
-
-        clRenderDefaultStyle ds;
-        ds.bg_colour = colours.GetBgColour();
-        ds.fg_colour = colours.GetItemTextColour();
-        ds.font = m_font;
-        handler.Render(dc, ds, 0, entry->GetItemRect());
-    }
-};
-
 // Helper function to post an event to the frame
 void SetActive(clEditor* editor)
 {
@@ -67,17 +36,13 @@ BuildTab::BuildTab(wxWindow* parent)
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Fit(this);
 
-    m_view = new clDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_MULTIPLE | wxDV_NO_HEADER);
+    m_view = new clTerminalViewCtrl(this);
     GetSizer()->Add(m_view, 1, wxEXPAND);
-    m_renderer = new MyAsciiRenderer();
-    m_view->SetCustomRenderer(m_renderer);
-    m_view->AppendIconTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
 
     // Event handling
     EventNotifier::Get()->Bind(wxEVT_BUILD_PROCESS_STARTED, &BuildTab::OnBuildStarted, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_PROCESS_ADDLINE, &BuildTab::OnBuildAddLine, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_PROCESS_ENDED, &BuildTab::OnBuildEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &BuildTab::OnSysColourChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, [this](clWorkspaceEvent& e) {
         e.Skip();
         Cleanup();
@@ -85,7 +50,6 @@ BuildTab::BuildTab(wxWindow* parent)
 
     m_view->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &BuildTab::OnLineActivated, this);
     m_view->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &BuildTab::OnContextMenu, this);
-    ApplyStyle();
 }
 
 BuildTab::~BuildTab() {}
@@ -219,13 +183,6 @@ void BuildTab::ProcessBuffer(bool last_line)
     m_view->ScrollToBottom();
 }
 
-void BuildTab::OnSysColourChanged(clCommandEvent& e)
-{
-    e.Skip();
-    ApplyStyle();
-    m_view->Refresh();
-}
-
 void BuildTab::Cleanup()
 {
     m_buildInProgress = false;
@@ -237,21 +194,6 @@ void BuildTab::Cleanup()
     m_buildInterrupted = false;
 }
 
-void BuildTab::ApplyStyle()
-{
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        MyAsciiRenderer* r = static_cast<MyAsciiRenderer*>(m_renderer);
-        wxFont f = lexer->GetFontForSyle(0, this);
-        r->SetFont(f);
-        clColours colours;
-        colours.InitFromColour(lexer->GetProperty(0).GetBgColour());
-        colours.SetItemTextColour(lexer->GetProperty(0).GetFgColour());
-        m_view->SetDefaultFont(f);
-        m_view->SetColours(colours);
-    }
-}
-
 void BuildTab::AppendLine(const wxString& text)
 {
     m_buffer << text;
@@ -260,7 +202,6 @@ void BuildTab::AppendLine(const wxString& text)
 
 void BuildTab::ClearView()
 {
-    m_view->UnselectAll();
     m_view->DeleteAllItems([](wxUIntPtr d) {
         if(d) {
             Compiler::PatternMatch* p = reinterpret_cast<Compiler::PatternMatch*>(d);

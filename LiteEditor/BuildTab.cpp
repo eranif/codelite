@@ -444,13 +444,13 @@ wxString BuildTab::CreateSummaryLine() const
         text << "\n";
         if(m_error_count) {
             text = _("==== build ended with ");
-            text << WrapLineInColour("errors", eAsciiColours::RED);
+            text << WrapLineInColour("errors", eAsciiColours::RED, true);
         } else if(m_warn_count) {
             text = _("=== build ended with ");
-            text << WrapLineInColour("warnings", eAsciiColours::YELLOW);
+            text << WrapLineInColour("warnings", eAsciiColours::YELLOW, true);
         } else {
             text = _("=== build completed ");
-            text << WrapLineInColour("successfully", eAsciiColours::GREEN);
+            text << WrapLineInColour("successfully", eAsciiColours::GREEN, true);
         }
         text << " (" << m_error_count << _(" errors, ") << m_warn_count << _(" warnings)");
         if(!total_time.empty()) {

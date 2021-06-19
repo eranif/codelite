@@ -85,7 +85,7 @@ wxColour clSystemSettings::GetColour(int index)
         case wxSYS_COLOUR_WINDOW:
             return m_customColours.GetBgColour();
         case wxSYS_COLOUR_LISTBOX:
-            return m_customColours.GetBgColour().ChangeLightness(is_dark ? 105 : 90);
+            return m_customColours.GetBgColour().ChangeLightness(is_dark ? 105 : 100);
         case wxSYS_COLOUR_3DSHADOW:
             return m_customColours.GetBorderColour();
         case wxSYS_COLOUR_3DDKSHADOW:

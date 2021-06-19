@@ -14,7 +14,7 @@ clAsciiEscapeColourBuilder::clAsciiEscapeColourBuilder(wxString& string)
     m_lightThemeColours.insert({ eAsciiColours::YELLOW, 136 });
     m_lightThemeColours.insert({ eAsciiColours::GREEN, 28 });
     m_lightThemeColours.insert({ eAsciiColours::GRAY, 251 });
-    m_lightThemeColours.insert({ eAsciiColours::NORMAL_TEXT, 233 });
+    m_lightThemeColours.insert({ eAsciiColours::NORMAL_TEXT, 240 });
 
     m_darkThemeColours.insert({ eAsciiColours::RED, 196 });
     m_darkThemeColours.insert({ eAsciiColours::YELLOW, 214 });

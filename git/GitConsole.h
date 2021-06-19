@@ -47,11 +47,13 @@ class GitConsole : public GitConsoleBase
     std::unordered_set<wxString> m_errorPatterns;
     std::unordered_set<wxString> m_successPatterns;
     std::unordered_set<wxString> m_warningPatterns;
+    wxString m_buffer;
 
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);
     virtual ~GitConsole();
     void AddText(const wxString& text);
+    void AddLine(const wxString& line);
     bool IsVerbose() const;
     void UpdateTreeView(const wxString& output);
 

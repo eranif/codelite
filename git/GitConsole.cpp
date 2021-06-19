@@ -285,28 +285,10 @@ bool GitConsole::HasAnsiEscapeSequences(const wxString& buffer) const
 
 void GitConsole::AddText(const wxString& text)
 {
-    wxString tmp = text;
-    tmp.Replace("\r", wxEmptyString);
-    tmp.Trim();
-
-    auto& builder = m_dvListCtrlLog->GetBuilder();
-    builder.Clear();
-
-    builder.Add(GetPrompt(), eAsciiColours::GRAY);
-    if(HasAnsiEscapeSequences(tmp)) {
-        builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
-    } else {
-        if(IsPatternFound(tmp, m_errorPatterns)) {
-            builder.Add(tmp, eAsciiColours::RED);
-        } else if(IsPatternFound(tmp, m_warningPatterns)) {
-            builder.Add(tmp, eAsciiColours::YELLOW);
-        } else if(IsPatternFound(tmp, m_successPatterns)) {
-            builder.Add(tmp, eAsciiColours::GREEN);
-        } else {
-            builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
-        }
+    auto lines = ::wxStringTokenize(text, "\r", wxTOKEN_STRTOK);
+    for(const auto& line : lines) {
+        AddLine(line);
     }
-    m_dvListCtrlLog->AddLine(builder.GetString());
 }
 
 bool GitConsole::IsVerbose() const { return m_isVerbose; }
@@ -689,3 +671,29 @@ void GitConsole::ShowLog()
 }
 
 wxString GitConsole::GetPrompt() const { return m_git->GetRepositoryDirectory() + ">"; }
+
+void GitConsole::AddLine(const wxString& line)
+{
+    wxString tmp = line;
+    tmp.Replace("\r", wxEmptyString);
+    tmp.Trim();
+
+    auto& builder = m_dvListCtrlLog->GetBuilder();
+    builder.Clear();
+
+    builder.Add(GetPrompt(), eAsciiColours::GRAY);
+    if(HasAnsiEscapeSequences(tmp)) {
+        builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
+    } else {
+        if(IsPatternFound(tmp, m_errorPatterns)) {
+            builder.Add(tmp, eAsciiColours::RED);
+        } else if(IsPatternFound(tmp, m_warningPatterns)) {
+            builder.Add(tmp, eAsciiColours::YELLOW);
+        } else if(IsPatternFound(tmp, m_successPatterns)) {
+            builder.Add(tmp, eAsciiColours::GREEN);
+        } else {
+            builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
+        }
+    }
+    m_dvListCtrlLog->AddLine(builder.GetString());
+}

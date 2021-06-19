@@ -129,3 +129,16 @@ void ShellCommand::OnProcessTerminated(clProcessEvent& e)
     wxUnusedVar(e);
     CleanUp();
 }
+
+bool ShellCommand::StartProcess(const wxString& cmd, size_t create_flags)
+{
+#ifndef __WXMSW__
+    create_flags |= IProcessRawOutput;
+#endif
+
+    m_proc = ::CreateAsyncProcess(this, cmd, create_flags);
+    if(!m_proc) {
+        return false;
+    }
+    return true;
+}

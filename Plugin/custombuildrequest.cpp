@@ -87,7 +87,6 @@ void CustomBuildRequest::Process(IManager* manager)
         return;
     }
 
-
     BuildConfigPtr bldConf = w->GetProjBuildConf(m_info.GetProject(), m_info.GetConfiguration());
     if(!bldConf) {
         clLogMessage(wxString::Format(wxT("Failed to find build configuration for project '%s' and configuration '%s'"),
@@ -221,12 +220,10 @@ void CustomBuildRequest::Process(IManager* manager)
     om["LC_ALL"] = "C";
     EnvSetter environment(env, &om, proj->GetName(), m_info.GetConfiguration());
 
-    m_proc = CreateAsyncProcess(this, cmd, processFlags);
-    if(!m_proc) {
+    if(!StartProcess(cmd, processFlags)) {
         wxString message;
         message << _("Failed to start build process, command: ") << cmd << _(", process terminated with exit code: 0");
         AppendLine(message);
-        return;
     }
 }
 

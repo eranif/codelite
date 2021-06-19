@@ -40,8 +40,10 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BUILD_PROCESS_ENDED, clBuildEven
 
 class WXDLLIMPEXP_SDK ShellCommand : public wxEvtHandler
 {
+private:
+    IProcess* m_proc = nullptr;
+
 protected:
-    IProcess* m_proc;
     QueueCommand m_info;
 
 protected:
@@ -51,6 +53,7 @@ protected:
 
     void CleanUp();
     void DoSetWorkingDirectory(ProjectPtr proj, bool isCustom, bool isFileOnly);
+    bool StartProcess(const wxString& cmd, size_t create_flags = IProcessCreateDefault | IProcessWrapInShell);
 
 public:
     bool IsBusy() const { return m_proc != NULL; }

@@ -209,8 +209,7 @@ void CompileRequest::Process(IManager* manager)
     om["LC_ALL"] = "C";
 
     EnvSetter envir(env, &om, proj->GetName(), m_info.GetConfiguration());
-    m_proc = CreateAsyncProcess(this, cmd, IProcessCreateDefault | IProcessWrapInShell);
-    if(!m_proc) {
+    if(!StartProcess(cmd, IProcessCreateDefault | IProcessWrapInShell)) {
         wxString message;
         message << _("Failed to start build process, command: ") << cmd << _(", process terminated with exit code: 0");
         AppendLine(message);

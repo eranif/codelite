@@ -151,13 +151,10 @@ void CleanRequest::Process(IManager* manager)
 
     // apply environment settings
     EnvSetter env(NULL, &om, proj->GetName(), m_info.GetConfiguration());
-    m_proc = CreateAsyncProcess(this, cmd, IProcessCreateDefault | IProcessWrapInShell);
-    if(!m_proc) {
-
+    if(!StartProcess(cmd, IProcessCreateDefault | IProcessWrapInShell)) {
         // remove environment settings applied
         wxString message;
         message << _("Failed to start clean process, command: ") << cmd << _(", process terminated with exit code: 0");
         AppendLine(message);
-        return;
     }
 }

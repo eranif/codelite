@@ -3,8 +3,7 @@
 #include "wxTerminalCtrl.h"
 
 #ifdef __WXMSW__
-#include <Winuser.h>
-#include <windows.h>
+#include "wx/msw/wrapwin.h" // includes windows.h
 #endif
 #include <fileutils.h>
 #include <wx/tokenzr.h>

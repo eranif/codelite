@@ -46,6 +46,7 @@
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
+#include <wx/stc/stc.h>
 #include <wx/thread.h>
 #include <wx/tokenzr.h>
 

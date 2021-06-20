@@ -82,8 +82,7 @@ Like Windows, `clangd` in part of CodeLite bundle
 
 ```bash
 rustup update
-rustup component add rust-src
-rustup +nightly component add rust-analyzer-preview
+rustup +nightly component add rust-src rust-analyzer-preview
 ```
 
 You should now have `rust-analyzer` installed under `rustup` local folder, for example, under `Linux` or `macOS`,

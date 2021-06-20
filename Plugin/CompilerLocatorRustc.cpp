@@ -13,7 +13,7 @@ bool CompilerLocatorRustc::Locate()
 
     wxString error_pattern = R"re1(^error\[.*?\]:(.*?)$)re1";
     wxString error_pattern2 = R"re2(^error:[ ]+(.*?))re2";
-    wxString warn_pattern = R"re3(-->[ ]*([\w\./]+):([\d]+):([\d]+))re3";
+    wxString warn_pattern = R"re3(-->[ ]*([\\\w\./]+):([\d]+):([\d]+))re3";
     wxString warn_pattern2 = R"re4(^warning:)re4";
     wxString warn_pattern3 = R"re5(^note:)re5";
 

@@ -6,74 +6,66 @@
 
 #include "CompilersFoundDlgBase.h"
 
-
 // Declare the bitmap loading function
 extern void wxCFE1CInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                             const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCFE1CInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
-    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
-    
-    m_banner10 = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxSize(-1,-1), wxBORDER_SIMPLE);
-    m_banner10->SetBitmap(wxNullBitmap);
-    m_banner10->SetText(_("Found Compilers"), _("Below is a list of compilers found on your computer.\nClick 'OK' to replace the current list of compilers with this list. 'Cancel' to abort."));
-    m_banner10->SetGradient(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK), wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-    m_banner10->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
-    
-    boxSizer2->Add(m_banner10, 0, wxALL|wxEXPAND, 5);
-    
-    m_dataview = new wxDataViewCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(300,300), wxDV_ROW_LINES|wxDV_SINGLE);
-    
-    m_dataviewModel = new CompilersFoundModel;
-    m_dataviewModel->SetColCount( 2 );
-    m_dataview->AssociateModel(m_dataviewModel.get() );
-    
-    boxSizer2->Add(m_dataview, 1, wxALL|wxEXPAND, 5);
-    
-    m_dataview->AppendTextColumn(_("Compiler Name / Family"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
-    m_dataview->AppendTextColumn(_("Installation Path"), m_dataview->GetColumnCount(), wxDATAVIEW_CELL_INERT, 400, wxALIGN_LEFT);
-    wxBoxSizer* boxSizer31 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer2->Add(boxSizer31, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_staticBitmap35 = new wxStaticBitmap(this, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("bulb")), wxDefaultPosition, wxSize(-1,-1), 0 );
-    
-    boxSizer31->Add(m_staticBitmap35, 0, wxALL, 5);
-    
-    m_staticText29 = new wxStaticText(this, wxID_ANY, _("Double click a compiler to make it the default for its compiler family"), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer31->Add(m_staticText29, 0, wxALIGN_CENTER_VERTICAL, 5);
-    
+
+    m_staticText43 = new wxStaticText(this, wxID_ANY, _("Select the compilers to configure:"), wxDefaultPosition,
+                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer2->Add(m_staticText43, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_dataview = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                      wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dataview->SetFocus();
+
+    boxSizer2->Add(m_dataview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dataview->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                 wxDATAVIEW_COL_RESIZABLE);
+    m_dataview->AppendTextColumn(_("Installation path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                 wxDATAVIEW_COL_RESIZABLE);
+    boxSizer31 = new wxBoxSizer(wxHORIZONTAL);
+
+    boxSizer2->Add(boxSizer31, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
-    
-    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer4->AddButton(m_buttonCancel);
-    
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer4->AddButton(m_buttonOK);
     m_stdBtnSizer4->Realize();
-    
+
     SetName(wxT("CompilersFoundDlgBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -81,63 +73,65 @@ CompilersFoundDlgBase::CompilersFoundDlgBase(wxWindow* parent, wxWindowID id, co
         wxPersistenceManager::Get().Restore(this);
     }
 #endif
-    // Connect events
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(CompilersFoundDlgBase::OnItemActivated), NULL, this);
-    
 }
 
-CompilersFoundDlgBase::~CompilersFoundDlgBase()
-{
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, wxDataViewEventHandler(CompilersFoundDlgBase::OnItemActivated), NULL, this);
-    
-}
+CompilersFoundDlgBase::~CompilersFoundDlgBase() {}
 
-CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                   const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCFE1CInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
-    wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
-    
-    m_staticText27 = new wxStaticText(this, wxID_ANY, _("Some of the compilers referred  by the workspace no longer exist.\nDefine each missing compiler by cloning an existing compiler."), wxDefaultPosition, wxSize(-1,-1), 0);
-    
-    boxSizer16->Add(m_staticText27, 0, wxALL, 5);
-    
+
+    m_staticText27 = new wxStaticText(this, wxID_ANY,
+                                      _("Some of the compilers referred  by the workspace no longer exist.\nDefine "
+                                        "each missing compiler by cloning an existing compiler."),
+                                      wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer16->Add(m_staticText27, 0, wxALL, WXC_FROM_DIP(5));
+
     wxArrayString m_pgMgrCompilersArr;
     wxUnusedVar(m_pgMgrCompilersArr);
     wxArrayInt m_pgMgrCompilersIntArr;
     wxUnusedVar(m_pgMgrCompilersIntArr);
-    m_pgMgrCompilers = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), wxPG_DESCRIPTION|wxPG_SPLITTER_AUTO_CENTER|wxPG_BOLD_MODIFIED);
-    
-    boxSizer16->Add(m_pgMgrCompilers, 1, wxALL|wxEXPAND, 5);
-    
-    m_pgPropHeader = m_pgMgrCompilers->Append(  new wxPropertyCategory( _("Compilers") ) );
+    m_pgMgrCompilers = new wxPropertyGridManager(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                                 wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+
+    boxSizer16->Add(m_pgMgrCompilers, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_pgPropHeader = m_pgMgrCompilers->Append(new wxPropertyCategory(_("Compilers")));
     m_pgPropHeader->SetHelpString(wxT(""));
-    
+
     m_stdBtnSizer18 = new wxStdDialogButtonSizer();
-    
-    boxSizer16->Add(m_stdBtnSizer18, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    boxSizer16->Add(m_stdBtnSizer18, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer18->AddButton(m_buttonOK);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer18->AddButton(m_buttonCancel);
     m_stdBtnSizer18->Realize();
-    
+
     SetName(wxT("CompilersModifiedDlgBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
 #if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
@@ -146,14 +140,14 @@ CompilersModifiedDlgBase::CompilersModifiedDlgBase(wxWindow* parent, wxWindowID 
     }
 #endif
     // Connect events
-    m_pgMgrCompilers->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilersModifiedDlgBase::OnValueChanged), NULL, this);
+    m_pgMgrCompilers->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilersModifiedDlgBase::OnValueChanged),
+                              NULL, this);
     m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilersModifiedDlgBase::OnOKUI), NULL, this);
-    
 }
 
 CompilersModifiedDlgBase::~CompilersModifiedDlgBase()
 {
-    m_pgMgrCompilers->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilersModifiedDlgBase::OnValueChanged), NULL, this);
+    m_pgMgrCompilers->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CompilersModifiedDlgBase::OnValueChanged),
+                                 NULL, this);
     m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(CompilersModifiedDlgBase::OnOKUI), NULL, this);
-    
 }

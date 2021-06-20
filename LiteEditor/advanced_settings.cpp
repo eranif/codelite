@@ -158,12 +158,24 @@ void BuildSettingsDialog::OnCompilersDetected(const ICompilerLocator::CompilerVe
 {
     CompilersFoundDlg dlg(this, compilers);
     if(dlg.ShowModal() == wxID_OK) {
-        // Replace the current compilers with a new one
-        BuildSettingsConfigST::Get()->SetCompilers(compilers);
+        ICompilerLocator::CompilerVec_t selected_compilers;
+        if(dlg.GetSelectedCompilers(selected_compilers) == 0) {
+            return;
+        }
+
+        auto conf = BuildSettingsConfigST::Get();
+        conf->BeginBatch();
+        for(auto compiler : selected_compilers) {
+            if(conf->IsCompilerExist(compiler->GetName())) {
+                conf->DeleteCompiler(compiler->GetName());
+            }
+            conf->SetCompiler(compiler);
+        }
+        conf->Flush();
 
         // update the code completion search paths
         clMainFrame::Get()->CallAfter(&clMainFrame::UpdateParserSearchPathsFromDefaultCompiler);
-        
+
         // update the compilers view
         LoadCompilers();
     }

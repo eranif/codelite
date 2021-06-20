@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Rust">
+    <File Name="clRustup.hpp"/>
+    <File Name="clRustup.cpp"/>
     <File Name="clRustLocator.hpp"/>
     <File Name="clRustLocator.cpp"/>
   </VirtualDirectory>

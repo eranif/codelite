@@ -22,7 +22,7 @@ BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, cons
         bBitmapLoaded = true;
     }
 
-    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
+    bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
     wxArrayString m_pgMgrArr;
@@ -53,35 +53,6 @@ BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_pgPropJumpWarnings = m_pgMgr->AppendIn(CAT_GENERAL, new wxBoolProperty(_("Skip warnings"), wxPG_LABEL, 1));
     m_pgPropJumpWarnings->SetHelpString(_("When using the menu to jump to errors, skip warnings"));
 
-    m_pgPropAutoHideBuildPane =
-        m_pgMgr->AppendIn(CAT_GENERAL, new wxBoolProperty(_("Auto hide build pane"), wxPG_LABEL, 1));
-    m_pgPropAutoHideBuildPane->SetHelpString(
-        _("Automatically hide the build pane when there are neither errors nor warnings"));
-
-    m_pgMgrArr.Clear();
-    m_pgMgrIntArr.Clear();
-    m_pgMgrArr.Add(_("When build starts"));
-    m_pgMgrArr.Add(_("When build ends"));
-    m_pgMgrArr.Add(_("Don't automatically show"));
-    m_pgMgrIntArr.Add(0);
-    m_pgMgrIntArr.Add(1);
-    m_pgMgrIntArr.Add(2);
-    m_pgPropAutoShowBuildPane = m_pgMgr->AppendIn(
-        CAT_GENERAL, new wxEnumProperty(_("Auto show build pane"), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 0));
-    m_pgPropAutoShowBuildPane->SetHelpString(_("Select when to show the build pane"));
-
-    m_pgMgrArr.Clear();
-    m_pgMgrIntArr.Clear();
-    m_pgMgrArr.Add(_("The first error"));
-    m_pgMgrArr.Add(_("The first warning or error"));
-    m_pgMgrArr.Add(_("The end"));
-    m_pgMgrIntArr.Add(0);
-    m_pgMgrIntArr.Add(1);
-    m_pgMgrIntArr.Add(2);
-    m_pgPropAutoScroll = m_pgMgr->AppendIn(
-        CAT_GENERAL, new wxEnumProperty(_("When build ends scroll to..."), wxPG_LABEL, m_pgMgrArr, m_pgMgrIntArr, 1));
-    m_pgPropAutoScroll->SetHelpString(_("After build finishes, if showing the build pane scroll to..."));
-
     CAT_MARKERS = m_pgMgr->Append(new wxPropertyCategory(_("Build error indicators")));
     CAT_MARKERS->SetHelpString(wxT(""));
 
@@ -95,7 +66,9 @@ BuildTabSettingsBase::BuildTabSettingsBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("BuildTabSettingsBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_pgMgr->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildTabSettingsBase::OnCustomButtonClicked),
                      NULL, this);

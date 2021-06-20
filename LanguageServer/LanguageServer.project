@@ -38,6 +38,8 @@
     <File Name="LanguageServerSettingsDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="LSPRustAnalyzerDetector.hpp"/>
+    <File Name="LSPRustAnalyzerDetector.cpp"/>
     <File Name="PathConverterDefault.cpp"/>
     <File Name="PathConverterDefault.hpp"/>
     <File Name="LanguageServerCluster.cpp"/>

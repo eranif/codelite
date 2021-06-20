@@ -22,17 +22,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "frame.h"
 #include "buildsettingstab.h"
 #include "buildtabsettingsdata.h"
+#include "clFontHelper.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "frame.h"
+#include "globals.h"
+#include "macros.h"
 #include "new_build_tab.h"
 #include <wx/any.h>
-#include "macros.h"
 #include <wx/fontdlg.h>
-#include "clFontHelper.h"
-#include "event_notifier.h"
-#include "globals.h"
 
 BuildTabSetting::BuildTabSetting(wxWindow* parent)
     : BuildTabSettingsBase(parent)
@@ -50,9 +50,6 @@ BuildTabSetting::BuildTabSetting(wxWindow* parent)
     m_pgPropErrorColour->SetValue(errorColour);
     m_pgPropWarningColour->SetValue(warningColour);
 
-    m_pgPropAutoShowBuildPane->SetValueFromInt(options.GetShowBuildPane());
-    m_pgPropAutoHideBuildPane->SetValue((bool)options.GetAutoHide());
-    m_pgPropAutoScroll->SetValueFromInt(options.GetBuildPaneScrollDestination());
     m_pgPropUseMarkers->SetValue((bool)(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks));
     m_pgPropUseAnnotations->SetValue((bool)(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate));
 }
@@ -71,14 +68,15 @@ void BuildTabSetting::Save()
     options.SetErrorColour(errorColour.m_colour.GetAsString(wxC2S_HTML_SYNTAX));
     options.SetWarnColour(warningColour.m_colour.GetAsString(wxC2S_HTML_SYNTAX));
     options.SetSkipWarnings(m_pgPropJumpWarnings->GetValue().GetBool());
-    options.SetShowBuildPane(m_pgPropAutoShowBuildPane->GetValue().GetInteger());
-    options.SetAutoHide(m_pgPropAutoHideBuildPane->GetValue().GetBool());
-    options.SetBuildPaneScrollDestination(m_pgPropAutoScroll->GetValue().GetInteger());
 
     int flag(BuildTabSettingsData::EWS_NoMarkers);
-    if(m_pgPropUseMarkers->GetValue().GetBool()) { flag |= BuildTabSettingsData::EWS_Bookmarks; }
+    if(m_pgPropUseMarkers->GetValue().GetBool()) {
+        flag |= BuildTabSettingsData::EWS_Bookmarks;
+    }
 
-    if(m_pgPropUseAnnotations->GetValue().GetBool()) { flag |= BuildTabSettingsData::EWS_Annotate; }
+    if(m_pgPropUseAnnotations->GetValue().GetBool()) {
+        flag |= BuildTabSettingsData::EWS_Annotate;
+    }
 
     options.SetErrorWarningStyle(flag);
     EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);

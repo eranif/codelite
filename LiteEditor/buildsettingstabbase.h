@@ -38,15 +38,13 @@
 class BuildTabSettingsBase : public wxPanel
 {
 protected:
+    wxBoxSizer* bSizer1;
     wxPropertyGridManager* m_pgMgr;
     wxPGProperty* CAT_COLOURS_AND_FONTS;
     wxPGProperty* m_pgPropErrorColour;
     wxPGProperty* m_pgPropWarningColour;
     wxPGProperty* CAT_GENERAL;
     wxPGProperty* m_pgPropJumpWarnings;
-    wxPGProperty* m_pgPropAutoHideBuildPane;
-    wxPGProperty* m_pgPropAutoShowBuildPane;
-    wxPGProperty* m_pgPropAutoScroll;
     wxPGProperty* CAT_MARKERS;
     wxPGProperty* m_pgPropUseMarkers;
     wxPGProperty* m_pgPropUseAnnotations;

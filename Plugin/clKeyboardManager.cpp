@@ -333,19 +333,11 @@ void clKeyboardManager::Update(wxFrame* frame)
 
     if(!frame) {
         // update all frames
-        wxFrame* topFrame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
-        CHECK_PTR_RET(topFrame);
-
-        FrameList_t frames;
-        DoGetFrames(topFrame, frames);
-        for(FrameList_t::iterator iter = frames.begin(); iter != frames.end(); ++iter) {
-
-            DoUpdateFrame(*iter, intAccels);
-        }
-    } else {
-        // update only the requested frame
-        DoUpdateFrame(frame, intAccels);
+        frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
+        CHECK_PTR_RET(frame);
     }
+    // update only the requested frame
+    DoUpdateFrame(frame, intAccels);
 }
 
 int clKeyboardManager::PopupNewKeyboardShortcutDlg(wxWindow* parent, MenuItemData& menuItemData)

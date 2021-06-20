@@ -672,15 +672,15 @@ void GitConsole::ShowLog()
 
 wxString GitConsole::GetPrompt() const
 {
-    wxString prompt_str;
     wxFileName fn(m_git->GetRepositoryDirectory(), wxEmptyString);
-    const auto& parts = fn.GetDirs();
-    if(parts.size() > 2) {
-        prompt_str << parts.Item(parts.size() - 2) << "/" << parts.Item(parts.size() - 1);
-    } else {
-        prompt_str = fn.GetPath();
+    wxString prompt_str = fn.GetPath();
+#ifndef __WXMSW__
+    wxString home_dir = ::wxGetHomeDir();
+    if(prompt_str.StartsWith(home_dir)) {
+        prompt_str.Replace(home_dir, "~", false);
     }
-    prompt_str << ">";
+#endif
+    prompt_str << fn.GetPath() << ">";
     return prompt_str;
 }
 
@@ -694,8 +694,11 @@ void GitConsole::AddLine(const wxString& line, bool print_prompt)
     builder.Clear();
 
     if(print_prompt) {
-        builder.Add(GetPrompt(), eAsciiColours::GRAY);
+        builder.Add(GetPrompt(), eAsciiColours::GREEN, true);
+        m_dvListCtrlLog->AddLine(builder.GetString());
+        builder.Clear();
     }
+
     if(HasAnsiEscapeSequences(tmp)) {
         builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
     } else {

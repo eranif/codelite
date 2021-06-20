@@ -957,6 +957,7 @@ void GitPlugin::ProcessGitActionQueue()
     }
 
     wxString command_args;
+    size_t createFlags = 0;
     bool log_message = false;
     switch(ga.action) {
     case gitBlameSummary: {
@@ -1053,18 +1054,21 @@ void GitPlugin::ProcessGitActionQueue()
         command_args << "--no-pager pull " << ga.arguments;
         command_args << " --log";
         log_message = true;
+        createFlags |= IProcessRawOutput;
         break;
 
     case gitPush:
         command_args << wxT("--no-pager push ") << ga.arguments;
         ShowProgress(wxT("Pushing local changes..."), false);
         log_message = true;
+        createFlags |= IProcessRawOutput;
         break;
 
     case gitCommit:
         command_args << wxT("--no-pager commit ") << ga.arguments;
         ShowProgress(wxT("Committing local changes..."));
         log_message = true;
+        createFlags |= IProcessRawOutput;
         break;
 
     case gitResetRepo:
@@ -1101,6 +1105,7 @@ void GitPlugin::ProcessGitActionQueue()
         ShowProgress(wxT("Switching to remote branch ") + ga.arguments, false);
         command_args << wxT("--no-pager checkout -b ") << ga.arguments;
         log_message = true;
+        createFlags |= IProcessRawOutput;
         break;
 
     case gitCommitList:
@@ -1122,6 +1127,7 @@ void GitPlugin::ProcessGitActionQueue()
         ShowProgress(wxT("Rebase with ") + ga.arguments + wxT(".."));
         command_args << wxT("--no-pager rebase ") << ga.arguments;
         log_message = true;
+        createFlags |= IProcessRawOutput;
         break;
     case gitConfig:
         command_args << wxT("--no-pager config ") << ga.arguments;
@@ -1137,21 +1143,20 @@ void GitPlugin::ProcessGitActionQueue()
         return;
     }
 
-    IProcessCreateFlags createFlags;
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
 
 #ifdef __WXMSW__
     if(ga.action == gitClone || ga.action == gitPush || ga.action == gitPull) {
-        createFlags =
+        createFlags |=
             data.GetFlags() & GitEntry::Git_Show_Terminal ? IProcessCreateConsole : IProcessCreateWithHiddenConsole;
 
     } else {
-        createFlags = IProcessCreateWithHiddenConsole;
+        createFlags |= IProcessCreateWithHiddenConsole;
     }
 #else
-    createFlags = IProcessCreateWithHiddenConsole;
+    createFlags |= IProcessCreateWithHiddenConsole;
 
 #endif
 
@@ -1521,10 +1526,10 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
                 // Write the pull log to the console
-                m_console->AddText(wxString() << "\n===============\nPull Log\n===============\n"
-                                              << log << "\n",
-                                   false);
-
+                if(!log.empty()) {
+                    m_console->AddText(log, true);
+                }
+                
                 if(m_commandOutput.Contains(wxT("Merge made by"))) {
                     if(wxMessageBox(_("Merged after pull. Rebase?"), _("Rebase"), wxYES_NO, m_topWindow) == wxYES) {
                         wxString selection;
@@ -1636,7 +1641,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
 {
     wxString output = event.GetOutput();
     auto process = event.GetProcess();
-    clDEBUG1() << "[git]" << output;
+    clDEBUG() << output << endl;
     gitAction ga;
     if(!m_gitActionQueue.empty()) {
         ga = m_gitActionQueue.front();
@@ -1768,7 +1773,7 @@ void GitPlugin::InitDefaults()
     }
 
     if(!m_repositoryDirectory.IsEmpty()) {
-        GIT_MESSAGE(wxT("Initializing git... %s"), m_repositoryDirectory.c_str());
+        m_console->AddLine("Initializing git...", false);
         gitAction ga(gitListAll, wxT(""));
         m_gitActionQueue.push_back(ga);
         AddDefaultActions();
@@ -2826,8 +2831,7 @@ IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_
         command << " " << command_args;
         GIT_MESSAGE_IF(logMessage, command);
 
-        auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell | IProcessRawOutput,
-                                            working_directory);
+        auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell, working_directory);
         return process;
     }
 }
@@ -2851,7 +2855,7 @@ void GitPlugin::AsyncRunGitWithCallback(const wxString& command_args, std::funct
 
         command << " " << command_args;
         GIT_MESSAGE_IF(logMessage, command);
-        ::CreateAsyncProcessCB(command, callback, create_flags | IProcessRawOutput, working_directory, nullptr);
+        ::CreateAsyncProcessCB(command, callback, create_flags, working_directory, nullptr);
     }
 }
 

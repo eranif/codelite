@@ -77,9 +77,9 @@
 
 static GitPlugin* thePlugin = NULL;
 
-#define GIT_MESSAGE_IF(cond, ...)                                \
-    if(cond) {                                                   \
-        m_console->AddText(wxString::Format(__VA_ARGS__), true); \
+#define GIT_MESSAGE_IF(cond, ...)                          \
+    if(cond) {                                             \
+        m_console->AddText(wxString::Format(__VA_ARGS__)); \
     }
 #define GIT_MESSAGE(...) GIT_MESSAGE_IF(true, __VA_ARGS__)
 #define GIT_MESSAGE1(...) GIT_MESSAGE_IF(m_configFlags& GitEntry::Git_Verbose_Log, __VA_ARGS__)
@@ -514,7 +514,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
 
     wxString commandOutput;
     DoExecuteCommandSync(cmd, &commandOutput, workingDir);
-    GetConsole()->AddText(commandOutput, false);
+    GetConsole()->AddText(commandOutput);
     RefreshFileListView();
 }
 
@@ -578,7 +578,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
 
     wxString commandOutput;
     DoExecuteCommandSync(cmd, &commandOutput, workingDir);
-    GetConsole()->AddText(commandOutput, false);
+    GetConsole()->AddText(commandOutput);
 
     // Reload externally modified files
     EventNotifier::Get()->PostReloadExternallyModifiedEvent();
@@ -1527,9 +1527,9 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
                 wxString log = m_commandOutput.Mid(m_commandOutput.Find(wxT("From")));
                 // Write the pull log to the console
                 if(!log.empty()) {
-                    m_console->AddText(log, true);
+                    m_console->AddText(log);
                 }
-                
+
                 if(m_commandOutput.Contains(wxT("Merge made by"))) {
                     if(wxMessageBox(_("Merged after pull. Rebase?"), _("Rebase"), wxYES_NO, m_topWindow) == wxYES) {
                         wxString selection;
@@ -1648,7 +1648,7 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     }
 
     if(ga.action == gitPush || ga.action == gitPull) {
-        m_console->AddText(output, false);
+        m_console->AddText(output);
     }
     m_commandOutput.Append(output);
 
@@ -1773,7 +1773,7 @@ void GitPlugin::InitDefaults()
     }
 
     if(!m_repositoryDirectory.IsEmpty()) {
-        m_console->AddLine("Initializing git...", false);
+        m_console->AddLine("Initializing git...");
         gitAction ga(gitListAll, wxT(""));
         m_gitActionQueue.push_back(ga);
         AddDefaultActions();
@@ -2398,7 +2398,7 @@ void GitPlugin::OnCommandEnded(clCommandEvent& event)
 
 void GitPlugin::OnCommandOutput(clCommandEvent& event)
 {
-    m_console->AddText(event.GetString(), false);
+    m_console->AddText(event.GetString());
     wxString processOutput = event.GetString();
     processOutput.MakeLower();
     if(processOutput.Contains("username for")) {
@@ -2478,14 +2478,12 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
                 if(IsRemoteWorkspace()) {
                     if(!clSFTPManager::Get().AwaitWriteFile(message, messagefile, m_remoteWorkspaceAccount)) {
                         m_console->AddText(_("ERROR: Failed to write commit message to file: ") + messagefile + "\n" +
-                                               clSFTPManager::Get().GetLastError() + "\n",
-                                           true);
+                                           clSFTPManager::Get().GetLastError() + "\n");
                         return;
                     }
                 } else {
                     if(!FileUtils::WriteFileContent(messagefile, message)) {
-                        m_console->AddText(_("ERROR: Failed to write commit message to file: ") + messagefile + "\n",
-                                           true);
+                        m_console->AddText(_("ERROR: Failed to write commit message to file: ") + messagefile + "\n");
                         return;
                     }
                 }
@@ -2499,7 +2497,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
                 commitArgs << ::WrapWithQuotes(selectedFiles.Item(i)) << wxT(" ");
 
         } else {
-            m_console->AddText(_("error: no commit message given, aborting"), true);
+            m_console->AddText(_("error: no commit message given, aborting"));
         }
     }
 }
@@ -2818,6 +2816,10 @@ IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_
         command << "git " << command_args;
 
         clEnvList_t env;
+        if(logMessage) {
+            m_console->PrintPrompt();
+        }
+
         GIT_MESSAGE_IF(logMessage, command);
         return m_remoteProcess.CreateAsyncProcess(handler, command, working_directory, env);
 
@@ -2829,6 +2831,9 @@ IProcess* GitPlugin::AsyncRunGit(wxEvtHandler* handler, const wxString& command_
         ::WrapWithQuotes(command);
 
         command << " " << command_args;
+        if(logMessage) {
+            m_console->PrintPrompt();
+        }
         GIT_MESSAGE_IF(logMessage, command);
 
         auto process = ::CreateAsyncProcess(handler, command, create_flags | IProcessWrapInShell, working_directory);

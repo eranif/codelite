@@ -48,7 +48,7 @@
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 
-#define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__), true);
+#define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)
 
 #define GIT_ITEM_DATA(viewItem) reinterpret_cast<GitClientData*>(m_dvListCtrl->GetItemData(viewItem))
@@ -283,11 +283,11 @@ bool GitConsole::HasAnsiEscapeSequences(const wxString& buffer) const
     return buffer.find(ch) != wxString::npos;
 }
 
-void GitConsole::AddText(const wxString& text, bool print_prompt)
+void GitConsole::AddText(const wxString& text)
 {
     auto lines = ::wxStringTokenize(text, "\n", wxTOKEN_STRTOK);
     for(const auto& line : lines) {
-        AddLine(line, print_prompt);
+        AddLine(line);
     }
 }
 
@@ -684,7 +684,7 @@ wxString GitConsole::GetPrompt() const
     return prompt_str;
 }
 
-void GitConsole::AddLine(const wxString& line, bool print_prompt)
+void GitConsole::AddLine(const wxString& line)
 {
     wxString tmp = line;
     bool text_ends_with_cr = line.EndsWith("\r");
@@ -693,12 +693,6 @@ void GitConsole::AddLine(const wxString& line, bool print_prompt)
 
     auto& builder = m_dvListCtrlLog->GetBuilder();
     builder.Clear();
-
-    if(print_prompt) {
-        builder.Add(GetPrompt(), eAsciiColours::GREEN, true);
-        m_dvListCtrlLog->AddLine(builder.GetString(), false);
-        builder.Clear();
-    }
 
     if(HasAnsiEscapeSequences(tmp)) {
         builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
@@ -714,4 +708,13 @@ void GitConsole::AddLine(const wxString& line, bool print_prompt)
         }
     }
     m_dvListCtrlLog->AddLine(builder.GetString(), text_ends_with_cr);
+}
+
+void GitConsole::PrintPrompt()
+{
+    auto& builder = m_dvListCtrlLog->GetBuilder();
+    builder.Clear();
+    builder.Add(GetPrompt(), eAsciiColours::GREEN, true);
+    m_dvListCtrlLog->AddLine(builder.GetString(), false);
+    builder.Clear();
 }

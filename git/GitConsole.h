@@ -52,8 +52,9 @@ class GitConsole : public GitConsoleBase
 public:
     GitConsole(wxWindow* parent, GitPlugin* git);
     virtual ~GitConsole();
-    void AddText(const wxString& text, bool print_prompt);
-    void AddLine(const wxString& line, bool print_prompt);
+    void AddText(const wxString& text);
+    void AddLine(const wxString& line);
+    void PrintPrompt();
     bool IsVerbose() const;
     void UpdateTreeView(const wxString& output);
 

@@ -7,7 +7,7 @@
 #include <wx/tokenzr.h>
 
 LSPRustAnalyzerDetector::LSPRustAnalyzerDetector()
-    : LSPDetector("rust-anaylzer")
+    : LSPDetector("rust-analyzer")
 {
 }
 

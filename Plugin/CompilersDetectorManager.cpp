@@ -31,6 +31,7 @@
 #include "CompilerLocatorMSVC.h"
 #include "CompilerLocatorMSYS2.hpp"
 #include "CompilerLocatorMinGW.h"
+#include "CompilerLocatorRustc.hpp"
 #include "CompilersDetectorManager.h"
 #include "GCCMetadata.hpp"
 #include "JSON.h"
@@ -66,6 +67,7 @@ CompilersDetectorManager::CompilersDetectorManager()
 
 #endif
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorCrossGCC()));
+    m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorRustc()));
 }
 
 CompilersDetectorManager::~CompilersDetectorManager() {}

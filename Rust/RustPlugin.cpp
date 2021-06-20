@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CargoToml.hpp"
+#include "CompilerLocatorRustc.hpp"
 #include "NewFileSystemWorkspaceDialog.h"
 #include "RustPlugin.hpp"
 #include "RustWorkspace.hpp"
@@ -270,75 +271,14 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
 void RustPlugin::AddRustcCompilerIfMissing()
 {
     // Create new "rustc" compiler and place compiler patterns to use
-    wxString error_pattern = R"re1(^error\[.*?\]:(.*?)$)re1";
-    wxString error_pattern2 = R"re2(^error:[ ]+(.*?))re2";
-    wxString warn_pattern = R"re3(-->[ ]*([\w\./]+):([\d]+):([\d]+))re3";
-    wxString warn_pattern2 = R"re4(^warning:)re4";
-    wxString warn_pattern3 = R"re5(^note:)re5";
-
     clDEBUG() << "Searching for rustc compiler..." << endl;
     if(BuildSettingsConfigST::Get()->IsCompilerExist("rustc")) {
         clDEBUG() << "Compiler rustc already exists" << endl;
         return;
     }
 
-    clDEBUG() << "Adding compiler: rustc" << endl;
-    CompilerPtr rustc(new Compiler(nullptr));
-    // need to create it
-    rustc->SetCompilerFamily("Other");
-    rustc->SetName("rustc");
-    Compiler::CmpListInfoPattern errPatterns;
-    Compiler::CmpListInfoPattern warnPatterns;
-    {
-        // error[E1234]:
-        Compiler::CmpInfoPattern pattern;
-        pattern.pattern = error_pattern;
-        pattern.columnIndex = "-1";
-        pattern.lineNumberIndex = "-1";
-        pattern.fileNameIndex = "-1";
-        errPatterns.push_back(pattern);
-    }
-    {
-        // error:
-        Compiler::CmpInfoPattern pattern;
-        pattern.pattern = error_pattern2;
-        pattern.columnIndex = "-1";
-        pattern.lineNumberIndex = "-1";
-        pattern.fileNameIndex = "-1";
-        errPatterns.push_back(pattern);
-    }
-
-    {
-        // --> src/main.rs:1:23
-        Compiler::CmpInfoPattern pattern;
-        pattern.pattern = warn_pattern;
-        pattern.fileNameIndex = "1";
-        pattern.lineNumberIndex = "2";
-        pattern.columnIndex = "3";
-        warnPatterns.push_back(pattern);
-    }
-
-    {
-        // warning:
-        Compiler::CmpInfoPattern pattern;
-        pattern.pattern = warn_pattern2;
-        pattern.fileNameIndex = "-1";
-        pattern.lineNumberIndex = "-1";
-        pattern.columnIndex = "-1";
-        warnPatterns.push_back(pattern);
-    }
-    {
-        // note:
-        Compiler::CmpInfoPattern pattern;
-        pattern.pattern = warn_pattern3;
-        pattern.fileNameIndex = "-1";
-        pattern.lineNumberIndex = "-1";
-        pattern.columnIndex = "-1";
-        warnPatterns.push_back(pattern);
-    }
-
-    rustc->SetWarnPatterns(warnPatterns);
-    rustc->SetErrPatterns(errPatterns);
-    BuildSettingsConfigST::Get()->SetCompiler(rustc);
+    CompilerLocatorRustc locator;
+    locator.Locate(); // it never fails
+    BuildSettingsConfigST::Get()->SetCompiler(*locator.GetCompilers().begin());
     clDEBUG() << "Successfully added new compiler 'rustc'" << endl;
 }

@@ -823,6 +823,8 @@
     <File Name="clPatch.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Compilers">
+    <File Name="CompilerLocatorRustc.cpp"/>
+    <File Name="CompilerLocatorRustc.hpp"/>
     <File Name="CompilerLocatorMSYS2.cpp"/>
     <File Name="CompilerLocatorMSYS2.hpp"/>
     <File Name="CompilerLocatorEosCDT.cpp"/>

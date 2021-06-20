@@ -10,6 +10,7 @@ By default, CodeLite is able to detect and configure language server for:
 
 - [Python `pylsp` module][6]
 - [C++ (`clangd`)][7]
+- [Rust (`rust-analyzer`)][9]
 - [Rust (`rls`)][8]
 
 On startup CodeLite will attempt to configure all the above language servers.
@@ -69,6 +70,29 @@ Once installed, follow the steps in the [manual configuration section](#manual-c
 #### macOS
 
 Like Windows, `clangd` in part of CodeLite bundle
+
+### Install `rust-analyzer`
+---
+
+!!! Note
+    `rust-analyzer` can be installed via the `nightly` channel
+
+- Install [`rustup`][5]
+- Type:
+
+```bash
+rustup update
+rustup component add rust-src
+rustup +nightly component add rust-analyzer-preview
+```
+
+You should now have `rust-analyzer` installed under `rustup` local folder, for example, under `Linux` or `macOS`,
+it can be found here:
+
+```bash
+TARGET=$(rustup target list|grep installed|cut -d" " -f1)
+$HOME/.rustup/toolchains/nightly-$TARGET/bin/rust-analyzer
+```
 
 ### Install `rls` (rust)
 --- 
@@ -170,3 +194,4 @@ this way, after running `cmake`, you will get an up-to-date `compile_commands.js
 [6]: #install-pylsp-python
 [7]: #install-clangd-c
 [8]: #install-rls-rust
+[9]: #install-rust-analyzer

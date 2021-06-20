@@ -1055,7 +1055,7 @@ void RemotyWorkspace::ScanForLSPs()
     m_codeliteRemoteFinder.Locate("/usr/bin", "clangd", wxEmptyString, clangd_versions);
     m_locate_requests.push_back(&RemotyWorkspace::ConfigureClangd);
 
-    m_codeliteRemoteFinder.Locate("$HOME/.cargo/bin", "rls", wxEmptyString, {});
+    m_codeliteRemoteFinder.Locate("$HOME/.cargo/bin", "rust-anaylzer", wxEmptyString, {});
     m_locate_requests.push_back(&RemotyWorkspace::ConfigureRls);
 }
 

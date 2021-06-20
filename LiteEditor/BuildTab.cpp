@@ -113,6 +113,14 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
     m_buffer.swap(text);
     ProcessBuffer(true);
 
+    if(m_first_error_line != wxNOT_FOUND) {
+        m_view->EnsureVisible(m_view->RowToItem(m_first_error_line));
+        m_view->SelectRow(m_first_error_line);
+    } else if(m_first_warn_line != wxNOT_FOUND) {
+        m_view->EnsureVisible(m_view->RowToItem(m_first_warn_line));
+        m_view->SelectRow(m_first_warn_line);
+    }
+
     // notify the plugins that the build has ended
     clBuildEvent build_ended_event(wxEVT_BUILD_ENDED);
     build_ended_event.SetErrorCount(m_error_count);
@@ -158,8 +166,14 @@ void BuildTab::ProcessBuffer(bool last_line)
                 switch(m->match_pattern.sev) {
                 case Compiler::kSevError:
                     m_error_count++;
+                    if(m_first_error_line == wxNOT_FOUND) {
+                        m_first_error_line = m_view->GetItemCount();
+                    }
                     break;
                 case Compiler::kSevWarning:
+                    if(m_first_warn_line == wxNOT_FOUND) {
+                        m_first_warn_line = m_view->GetItemCount();
+                    }
                     m_warn_count++;
                     break;
                 default:
@@ -205,6 +219,8 @@ void BuildTab::Cleanup()
     m_warn_count = 0;
     m_buildInterrupted = false;
     m_currentProjectName.clear();
+    m_first_error_line = wxNOT_FOUND;
+    m_first_warn_line = wxNOT_FOUND;
 }
 
 void BuildTab::AppendLine(const wxString& text)

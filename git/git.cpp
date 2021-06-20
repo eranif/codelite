@@ -1603,7 +1603,6 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 
     if(ga.action == gitResetRepo || ga.action == gitResetFile) {
         // Reload externally modified files
-        clDEBUG() << "Git: posting a 'reload externally modified files' event";
         EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
     }
 
@@ -1641,7 +1640,6 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
 {
     wxString output = event.GetOutput();
     auto process = event.GetProcess();
-    clDEBUG() << output << endl;
     gitAction ga;
     if(!m_gitActionQueue.empty()) {
         ga = m_gitActionQueue.front();
@@ -2727,7 +2725,6 @@ void GitPlugin::DoLoadBlameInfo(bool clearCache)
 
 void GitPlugin::DoUpdateBlameInfo(const wxString& info, const wxString& fullpath)
 {
-    clDEBUG1() << info << clEndl;
     // parse the git blame output
     if(m_blameMap.count(fullpath)) {
         m_blameMap.erase(fullpath);
@@ -2802,7 +2799,6 @@ void GitPlugin::OnGitActionDone(clSourceControlEvent& event)
     // whenever a git action is performed, we clear the blame info
     // and reload it for the current file
     event.Skip();
-    clDEBUG() << "Clearing blame info" << clEndl;
     m_blameMap.clear();
     m_lastBlameMessage.clear();
     DoLoadBlameInfo(false);

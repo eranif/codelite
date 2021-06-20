@@ -24,6 +24,8 @@ class BuildTab : public wxPanel
     size_t m_warn_count = 0;
     bool m_buildInterrupted = false;
     wxString m_currentProjectName;
+    int m_first_error_line = wxNOT_FOUND;
+    int m_first_warn_line = wxNOT_FOUND;
 
 protected:
     void OnBuildStarted(clBuildEvent& e);

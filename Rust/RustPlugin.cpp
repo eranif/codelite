@@ -236,21 +236,34 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
         return;
     }
 
+    clDEBUG() << "User requested to open file:" << event.GetFileName() << endl;
+    clDEBUG() << "Line number:" << event.GetLineNumber() << endl;
+
     if(!FileExtManager::IsFileType(event.GetFileName(), FileExtManager::TypeRust)) {
         event.Skip();
         return;
     }
 
     event.Skip(false);
-    clDEBUG() << "rust file clicked" << endl;
+    clDEBUG() << "Rust file clicked:" << event.GetFileName() << endl;
 
     // build the file path:
     // the compiler report the file in relative path to the workspace
     wxString strfile = clFileSystemWorkspace::Get().GetFileName().GetPath();
     strfile << wxFILE_SEP_PATH << event.GetFileName();
     wxFileName fnFile(strfile);
-    if(fnFile.FileExists()) {
-        clGetManager()->OpenFile(fnFile.GetFullPath(), wxEmptyString, event.GetLineNumber());
+    if(!fnFile.FileExists()) {
+        return;
+    }
+
+    auto editor = clGetManager()->FindEditor(fnFile.GetFullPath());
+    if(!editor) {
+        editor = clGetManager()->OpenFile(fnFile.GetFullPath(), wxEmptyString, event.GetLineNumber());
+    }
+
+    if(editor) {
+        clGetManager()->SelectPage(editor->GetCtrl());
+        editor->CenterLine(event.GetLineNumber());
     }
 }
 
@@ -259,7 +272,7 @@ void RustPlugin::AddRustcCompilerIfMissing()
     // Create new "rustc" compiler and place compiler patterns to use
     wxString error_pattern = R"re1(^error\[.*?\]:(.*?)$)re1";
     wxString error_pattern2 = R"re2(^error:[ ]+(.*?))re2";
-    wxString warn_pattern = R"re3(-->[ ]*([a-zA-z/\\\.]+):([\d]+):([\d]+))re3";
+    wxString warn_pattern = R"re3(-->[ ]*([\w\./]+):([\d]+):([\d]+))re3";
     wxString warn_pattern2 = R"re4(^warning:)re4";
     wxString warn_pattern3 = R"re5(^note:)re5";
 

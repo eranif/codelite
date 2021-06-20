@@ -78,10 +78,22 @@ void clTerminalViewCtrl::ApplyStyle()
     }
 }
 
-void clTerminalViewCtrl::AddLine(const wxString& text, wxUIntPtr data)
+void clTerminalViewCtrl::AddLine(const wxString& text, bool text_ends_with_cr, wxUIntPtr data)
 {
+    if(IsEmpty()) {
+        m_overwriteLastLine = false;
+    }
+
+    // if we need to overwrite the last item, delete the last item and
+    // then call append
+    if(m_overwriteLastLine) {
+        DeleteItem(GetItemCount() - 1);
+        m_overwriteLastLine = false;
+    }
+
     AppendItem(text, wxNOT_FOUND, wxNOT_FOUND, data);
     ScrollToBottom();
+    m_overwriteLastLine = text_ends_with_cr;
 }
 
 clAsciiEscapeColourBuilder& clTerminalViewCtrl::GetBuilder()

@@ -10,6 +10,7 @@ class WXDLLIMPEXP_SDK clTerminalViewCtrl : public clDataViewListCtrl
 {
     clControlWithItemsRowRenderer* m_renderer = nullptr;
     clAsciiEscapeColourBuilder m_builder;
+    bool m_overwriteLastLine = false;
 
 protected:
     void OnSysColourChanged(clCommandEvent& e);
@@ -22,7 +23,7 @@ public:
     /**
      * @brief Add line of text, with optionally user data
      */
-    void AddLine(const wxString& text, wxUIntPtr data = 0);
+    void AddLine(const wxString& text, bool text_ends_with_cr, wxUIntPtr data = 0);
 
     clAsciiEscapeColourBuilder& GetBuilder();
 };

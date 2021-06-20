@@ -687,6 +687,7 @@ wxString GitConsole::GetPrompt() const
 void GitConsole::AddLine(const wxString& line, bool print_prompt)
 {
     wxString tmp = line;
+    bool text_ends_with_cr = line.EndsWith("\r");
     tmp.Replace("\r", wxEmptyString);
     tmp.Trim();
 
@@ -695,7 +696,7 @@ void GitConsole::AddLine(const wxString& line, bool print_prompt)
 
     if(print_prompt) {
         builder.Add(GetPrompt(), eAsciiColours::GREEN, true);
-        m_dvListCtrlLog->AddLine(builder.GetString());
+        m_dvListCtrlLog->AddLine(builder.GetString(), false);
         builder.Clear();
     }
 
@@ -712,5 +713,5 @@ void GitConsole::AddLine(const wxString& line, bool print_prompt)
             builder.Add(tmp, eAsciiColours::NORMAL_TEXT);
         }
     }
-    m_dvListCtrlLog->AddLine(builder.GetString());
+    m_dvListCtrlLog->AddLine(builder.GetString(), text_ends_with_cr);
 }

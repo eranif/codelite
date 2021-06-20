@@ -670,7 +670,19 @@ void GitConsole::ShowLog()
     // m_notebookLog->SetSelection(m_notebookLog->GetPageIndex(_("Log")));
 }
 
-wxString GitConsole::GetPrompt() const { return m_git->GetRepositoryDirectory() + ">"; }
+wxString GitConsole::GetPrompt() const
+{
+    wxString prompt_str;
+    wxFileName fn(m_git->GetRepositoryDirectory(), wxEmptyString);
+    const auto& parts = fn.GetDirs();
+    if(parts.size() > 2) {
+        prompt_str << parts.Item(parts.size() - 2) << "/" << parts.Item(parts.size() - 1);
+    } else {
+        prompt_str = fn.GetPath();
+    }
+    prompt_str << ">";
+    return prompt_str;
+}
 
 void GitConsole::AddLine(const wxString& line, bool print_prompt)
 {

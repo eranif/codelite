@@ -8,6 +8,7 @@
 #include <wx/colour.h>
 #include <wx/dc.h>
 #include <wx/string.h>
+#include <wx/window.h>
 
 enum class eColourHandlerState {
     kNormal = 0,
@@ -66,8 +67,12 @@ struct WXDLLIMPEXP_SDK clRenderDefaultStyle {
 class WXDLLIMPEXP_SDK clAsciiEscapeCodeHandler
 {
     typedef std::unordered_map<int, wxColour> ColoursMap_t;
-    ColoursMap_t m_colours;
-    ColoursMap_t m_8_bit_colours;
+    ColoursMap_t m_8_bit_colours_normal;
+    ColoursMap_t m_8_bit_colours_for_dark_theme;
+    ColoursMap_t m_colours_normal;
+    ColoursMap_t m_colours_for_dark_theme;
+    ColoursMap_t* m_8_bit_colours = nullptr;
+    ColoursMap_t* m_colours = nullptr;
 
     std::vector<Chunk> m_chunks;
     eColourHandlerState m_state = eColourHandlerState::kNormal;
@@ -89,7 +94,7 @@ public:
     /**
      * @brief draw line using device context using rect as the bounding area
      */
-    void Render(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect);
+    void Render(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect, bool isLightTheme);
 
     size_t GetLineCount() const { return m_lines.size(); }
 };

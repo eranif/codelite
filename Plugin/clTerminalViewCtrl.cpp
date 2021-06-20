@@ -34,7 +34,7 @@ public:
         ds.bg_colour = colours.GetBgColour();
         ds.fg_colour = colours.GetItemTextColour();
         ds.font = m_font;
-        handler.Render(dc, ds, 0, entry->GetItemRect());
+        handler.Render(dc, ds, 0, entry->GetItemRect(), colours.IsLightTheme());
     }
 };
 } // namespace

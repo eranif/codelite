@@ -280,5 +280,6 @@ void RustPlugin::AddRustcCompilerIfMissing()
     CompilerLocatorRustc locator;
     locator.Locate(); // it never fails
     BuildSettingsConfigST::Get()->SetCompiler(*locator.GetCompilers().begin());
+    BuildSettingsConfigST::Get()->Flush();
     clDEBUG() << "Successfully added new compiler 'rustc'" << endl;
 }

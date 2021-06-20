@@ -40,7 +40,7 @@ CompilerPtr CompilerLocatorMSYS2::Locate(const wxString& folder)
         return nullptr;
     }
 
-    GCCMetadata cmd("GCC-MSYS");
+    GCCMetadata cmd("MSYS2");
     cmd.Load(gcc.GetFullPath(), folder);
 
     // create new compiler

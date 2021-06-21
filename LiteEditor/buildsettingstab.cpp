@@ -30,7 +30,6 @@
 #include "frame.h"
 #include "globals.h"
 #include "macros.h"
-#include "new_build_tab.h"
 #include <wx/any.h>
 #include <wx/fontdlg.h>
 

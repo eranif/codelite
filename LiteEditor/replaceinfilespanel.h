@@ -26,6 +26,7 @@
 #define __replaceinfilespanel__
 
 #include "findresultstab.h"
+#include <wx/gauge.h>
 
 class ReplaceInFilesPanel : public FindResultsTab
 {
@@ -37,7 +38,7 @@ protected:
     wxBitmap m_bmpChecked;
     wxBitmap m_bmpUnchecked;
     bool m_bmpsForDarkTheme = false;
-    
+
 protected:
     void DoSaveResults(wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin,
                        std::map<int, SearchResult>::iterator end);
@@ -64,7 +65,7 @@ protected:
 public:
     ReplaceInFilesPanel(wxWindow* parent, wxWindowID id, const wxString& name);
     virtual ~ReplaceInFilesPanel();
-    
+
     virtual void SetStyles(wxStyledTextCtrl* sci);
 };
 

@@ -644,11 +644,6 @@
     <VirtualDirectory Name="BuildTab">
       <File Name="BuildTab.cpp"/>
       <File Name="BuildTab.hpp"/>
-      <File Name="new_build_tab.cpp"/>
-      <File Name="new_build_tab.h"/>
-      <File Name="BuildTabTopPanel.h"/>
-      <File Name="BuildTabTopPanel.cpp"/>
-      <File Name="buildsettingstab_liteeditor_bitmaps.cpp"/>
     </VirtualDirectory>
     <File Name="editor_options_docking_windows.wxcp"/>
     <File Name="editor_options_docking_windows_liteeditor_bitmaps.cpp"/>
@@ -844,6 +839,7 @@
       <File Name="ConfigManagerBaseDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="resources">
+      <File Name="buildsettingstab_liteeditor_bitmaps.cpp"/>
       <File Name="new_item_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="DbgCommandBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="AddOptionsDialogBase_liteeditor_bitmaps.cpp"/>

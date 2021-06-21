@@ -49,7 +49,6 @@
 #include "globals.h"
 #include "macros.h"
 #include "manager.h"
-#include "new_build_tab.h"
 #include "precompiled_header.h"
 #include "procutils.h"
 #include "singleinstancethreadjob.h"

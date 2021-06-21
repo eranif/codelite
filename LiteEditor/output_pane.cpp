@@ -32,7 +32,6 @@
 #include "findresultstab.h"
 #include "findusagetab.h"
 #include "frame.h"
-#include "new_build_tab.h"
 #include "output_pane.h"
 #include "pluginmanager.h"
 #include "replaceinfilespanel.h"
@@ -102,14 +101,14 @@ void OutputPane::CreateGUIControls()
 
     auto images = m_book->GetBitmaps();
     // Build tab
-//    m_buildWin = new NewBuildTab(m_book);
-//#if PHP_BUILD
-//    m_buildWin->Hide();
-//#else
-//    m_book->AddPage(m_buildWin, BUILD_WIN, true, images->Add(wxT("build")));
-//    m_tabs.insert(std::make_pair(BUILD_WIN, Tab(BUILD_WIN, m_buildWin, wxNOT_FOUND)));
-//    mgr->AddOutputTab(BUILD_WIN);
-//#endif
+    //    m_buildWin = new NewBuildTab(m_book);
+    //#if PHP_BUILD
+    //    m_buildWin->Hide();
+    //#else
+    //    m_book->AddPage(m_buildWin, BUILD_WIN, true, images->Add(wxT("build")));
+    //    m_tabs.insert(std::make_pair(BUILD_WIN, Tab(BUILD_WIN, m_buildWin, wxNOT_FOUND)));
+    //    mgr->AddOutputTab(BUILD_WIN);
+    //#endif
 
     m_build_tab = new BuildTab(m_book);
     m_book->AddPage(m_build_tab, BUILD_WIN, true, images->Add(wxT("build")));

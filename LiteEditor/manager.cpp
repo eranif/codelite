@@ -97,7 +97,6 @@
 #include "manager.h"
 #include "memoryview.h"
 #include "menumanager.h"
-#include "new_build_tab.h"
 #include "parse_thread.h"
 #include "pluginmanager.h"
 #include "processreaderthread.h"

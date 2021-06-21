@@ -47,7 +47,6 @@
 #include "language.h"
 #include "macromanager.h"
 #include "manager.h"
-#include "new_build_tab.h"
 #include "optionsconfig.h"
 #include "plugin_version.h"
 #include "pluginmanager.h"

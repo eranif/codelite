@@ -66,7 +66,6 @@
 #include "macromanager.h"
 #include "manager.h"
 #include "menumanager.h"
-#include "new_build_tab.h"
 #include "new_quick_watch_dlg.h"
 #include "parse_thread.h"
 #include "pluginmanager.h"

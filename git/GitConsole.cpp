@@ -147,7 +147,10 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     // set the font to fit the C++ lexer default font
     m_bitmapLoader = clGetManager()->GetStdIcons();
     m_dvListCtrl->SetSortedColumn(1);
+    m_dvListCtrl->SetRendererType(eRendererType::RENDERER_DIRECT2D);
     m_dvListCtrlUnversioned->SetSortedColumn(1);
+    m_dvListCtrlUnversioned->SetRendererType(eRendererType::RENDERER_DIRECT2D);
+
     clThemeUpdater::Get().RegisterWindow(m_splitter733);
 
     // Error messages will be coloured with red
@@ -230,6 +233,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
         m_dvListCtrl->Refresh();
         m_dvListCtrlUnversioned->Refresh();
     });
+
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
 }
 
 GitConsole::~GitConsole()
@@ -240,6 +245,7 @@ GitConsole::~GitConsole()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &GitConsole::OnWorkspaceClosed, this);
     m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
 }
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
@@ -717,4 +723,17 @@ void GitConsole::PrintPrompt()
     builder.Add(GetPrompt(), eAsciiColours::GREEN, true);
     m_dvListCtrlLog->AddLine(builder.GetString(), false);
     builder.Clear();
+}
+
+void GitConsole::OnSysColoursChanged(clCommandEvent& event)
+{
+    event.Skip();
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        auto font = lexer->GetFontForSyle(0, this);
+
+        m_dvListCtrl->SetDefaultFont(font);
+        m_dvListCtrlLog->SetDefaultFont(font);
+        m_dvListCtrlUnversioned->SetDefaultFont(font);
+    }
 }

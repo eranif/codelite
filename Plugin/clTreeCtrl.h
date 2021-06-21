@@ -20,6 +20,12 @@
 static const int wxTREE_HITTEST_ONDROPDOWNARROW = 0x2000;
 
 class clScrollBar;
+enum class eRendererType {
+    RENDERER_DEFAULT = 0,
+    RENDERER_DIRECT2D,
+    RENDERER_CAIRO,
+};
+
 class WXDLLIMPEXP_SDK clTreeCtrl : public clControlWithItems
 {
 protected:
@@ -29,6 +35,7 @@ protected:
     int m_scrollLines = 0;
     bool m_bulkInsert = false;
     clSortFunc_t m_oldSortFunc;
+    eRendererType m_renderer = eRendererType::RENDERER_DEFAULT;
 
 private:
     wxPoint DoFixPoint(const wxPoint& pt);
@@ -68,6 +75,12 @@ public:
     virtual ~clTreeCtrl();
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);
+
+    void SetRendererType(eRendererType renderer)
+    {
+        m_renderer = renderer;
+        Refresh();
+    }
 
     void SetDefaultFont(const wxFont& font) override;
     /**

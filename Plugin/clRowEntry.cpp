@@ -91,7 +91,7 @@ int clRowEntry::Y_SPACER = 2;
 void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
     wxColour c = win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus();
-#ifdef __WXMSW__
+#if 0
     if(m_tree->IsNativeTheme()) {
         int flags = wxCONTROL_SELECTED;
         if(win->HasFocus()) {
@@ -352,6 +352,7 @@ void clRowEntry::ClearRects()
     m_rowRect = wxRect();
 }
 
+#if 0
 static int GetSizeDIP(int size, wxWindow* win)
 {
     if(!win) {
@@ -363,6 +364,7 @@ static int GetSizeDIP(int size, wxWindow* win)
     return size;
 #endif
 }
+#endif
 
 void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index, clSearchText* searcher)
 {
@@ -433,7 +435,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 wxRect buttonRect = GetButtonRect();
                 buttonRect.Deflate(1);
                 textXOffset += buttonRect.GetWidth();
-                if(IS_GTK || IS_MSW) {
+                if(IS_GTK) {
                     int flags = wxCONTROL_CURRENT;
                     if(IsExpanded()) {
                         flags |= wxCONTROL_EXPANDED;
@@ -452,9 +454,9 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                         continue;
                     }
 
-                    buttonRect.Deflate((buttonRect.GetWidth() / 3), (buttonRect.GetHeight() / 3));
+                    buttonRect.Deflate((buttonRect.GetWidth() / 4), (buttonRect.GetHeight() / 4));
                     wxRect tribtn = buttonRect;
-                    dc.SetPen(wxPen(buttonColour, GetSizeDIP(1, win)));
+                    dc.SetPen(wxPen(buttonColour, 1));
                     if(IsExpanded()) {
                         tribtn.SetHeight(tribtn.GetHeight() - tribtn.GetHeight() / 2);
                         tribtn = tribtn.CenterIn(buttonRect);
@@ -940,19 +942,19 @@ const wxRect& clRowEntry::GetChoiceRect(size_t col) const
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
-#if 1
+#if 0
     wxUnusedVar(win);
     wxUnusedVar(colours);
     wxRendererNative::Get().DrawCheckBox(win, dc, rect, checked ? wxCONTROL_CHECKED : wxCONTROL_NONE);
 #else
-    dc.SetPen(wxPen(colours.GetBorderColour(), 2));
+    dc.SetPen(wxPen(colours.GetBorderColour(), 1));
     dc.SetBrush(checked ? colours.GetBorderColour() : *wxTRANSPARENT_BRUSH);
-    dc.DrawRoundedRectangle(rect, 2.0);
+    dc.DrawRoundedRectangle(rect, 1);
     if(checked) {
         wxRect innerRect = rect;
-        innerRect.Deflate(5);
+        innerRect.Deflate(2);
         const wxColour& penColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetDarkBorderColour();
-        dc.SetPen(wxPen(penColour, 3));
+        dc.SetPen(wxPen(penColour, 2));
 
         wxPoint p1, p2, p3;
         p1.x = innerRect.GetTopLeft().x;

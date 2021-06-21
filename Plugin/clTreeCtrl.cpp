@@ -2,6 +2,8 @@
 #include "clTreeCtrl.h"
 #include "clTreeCtrlModel.h"
 #include "clTreeNodeVisitor.h"
+#include "drawingutils.h"
+#include "macros.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
@@ -21,24 +23,9 @@
 #include <uxtheme.h>
 #endif
 
-#define CHECK_PTR_RET(p) \
-    if(!p) {             \
-        return;          \
-    }
-
-#define CHECK_ITEM_RET(item) \
-    if(!item.IsOk()) {       \
-        return;              \
-    }
-
 #define CHECK_ITEM_RET_INVALID_ITEM(item) \
     if(!item.IsOk()) {                    \
         return wxTreeItemId();            \
-    }
-
-#define CHECK_ITEM_RET_FALSE(item) \
-    if(!item.IsOk()) {             \
-        return false;              \
     }
 
 #define CHECK_ROOT_RET()     \
@@ -49,12 +36,47 @@
 wxDEFINE_EVENT(wxEVT_TREE_ITEM_VALUE_CHANGED, wxTreeEvent);
 wxDEFINE_EVENT(wxEVT_TREE_CHOICE, wxTreeEvent);
 
-static void MSWSetNativeTheme(wxWindow* win)
+namespace
+{
+void MSWSetNativeTheme(wxWindow* win)
 {
 #if defined(__WXMSW__) && defined(_WIN64)
     SetWindowTheme((HWND)win->GetHWND(), wxT("Explorer"), NULL);
 #endif
 }
+
+wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc, eRendererType t)
+{
+    wxGraphicsRenderer* renderer = nullptr;
+    switch(t) {
+    case eRendererType::RENDERER_CAIRO:
+    case eRendererType::RENDERER_DEFAULT:
+        renderer = wxGraphicsRenderer::GetDefaultRenderer();
+        break;
+    case eRendererType::RENDERER_DIRECT2D:
+#if defined(__WXMSW__) && wxUSE_GRAPHICS_DIRECT2D
+        renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+#else
+        renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
+        break;
+    }
+
+    wxGraphicsContext* context;
+    if(wxPaintDC* paintdc = wxDynamicCast(&dc, wxPaintDC)) {
+        context = renderer->CreateContext(*paintdc);
+
+    } else if(wxMemoryDC* memdc = wxDynamicCast(&dc, wxMemoryDC)) {
+        context = renderer->CreateContext(*memdc);
+
+    } else {
+        return dc;
+    }
+
+    gdc.SetGraphicsContext(context);
+    return gdc;
+}
+} // namespace
 
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clControlWithItems(parent, id, pos, size, style | wxWANTS_CHARS)
@@ -136,10 +158,13 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     wxAutoBufferedPaintDC pdc(this);
     PrepareDC(pdc);
 
-#ifdef __WXGTK__
-    wxDC& dc = pdc;
-#else
+#ifdef __WXMSW__
+    wxGCDC gcdc;
+    wxDC& dc = CreateGCDC(pdc, gcdc, m_renderer);
+#elif defined(__WXMAC__)
     wxGCDC dc(pdc);
+#else
+    wxDC& dc = pdc;
 #endif
 
     // Call the parent's Render method
@@ -921,7 +946,7 @@ bool clTreeCtrl::IsItemFullyVisible(clRowEntry* item) const
 
 void clTreeCtrl::EnsureItemVisible(clRowEntry* item, bool fromTop)
 {
-    CHECK_PTR_RET(item)
+    CHECK_PTR_RET(item);
     if(m_model.GetOnScreenItems().empty()) {
         // requesting to ensure item visibility before we drawn anyting on the screen
         // to reduce any strange behaviours (e.g. 1/2 screen is displayed while we can display more items)

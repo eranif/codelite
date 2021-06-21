@@ -43,6 +43,7 @@ clTerminalViewCtrl::clTerminalViewCtrl(wxWindow* parent, wxWindowID id, const wx
                                        long style)
     : clDataViewListCtrl(parent, id, pos, size, style)
 {
+    SetRendererType(eRendererType::RENDERER_DIRECT2D);
     SetSortFunction(nullptr);
     m_renderer = new MyAsciiRenderer();
     SetCustomRenderer(m_renderer);

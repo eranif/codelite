@@ -17,7 +17,9 @@ clScrolledPanel::clScrolledPanel(wxWindow* parent, wxWindowID id, const wxPoint&
 
 bool clScrolledPanel::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
-    if(!wxWindow::Create(parent, id, pos, size, style)) { return false; }
+    if(!wxWindow::Create(parent, id, pos, size, style)) {
+        return false;
+    }
     DoInitialize();
     return true;
 }
@@ -149,7 +151,9 @@ void clScrolledPanel::OnHScroll(wxScrollEvent& event)
             steps = 0;
             direction = wxRIGHT;
         }
-        if(steps != wxNOT_FOUND) { ScrollColumns(steps, direction); }
+        if(steps != wxNOT_FOUND) {
+            ScrollColumns(steps, direction);
+        }
     }
 }
 
@@ -181,7 +185,9 @@ void clScrolledPanel::OnVScroll(wxScrollEvent& event)
             steps = 0;
             direction = wxDOWN;
         }
-        if(steps != wxNOT_FOUND) { ScrollRows(steps, direction); }
+        if(steps != wxNOT_FOUND) {
+            ScrollRows(steps, direction);
+        }
     }
 }
 #endif
@@ -330,7 +336,9 @@ void clScrolledPanel::DoBeginDrag()
     wxTreeEvent event(wxEVT_TREE_BEGIN_DRAG);
     event.SetEventObject(this);
     GetEventHandler()->ProcessEvent(event);
-    if(!event.IsAllowed()) { return; }
+    if(!event.IsAllowed()) {
+        return;
+    }
 
     // Change the cursor indicating DnD in progress
     SetCursor(wxCURSOR_HAND);
@@ -366,6 +374,11 @@ wxFont clScrolledPanel::GetDefaultFont()
     int pointSize = f.GetPointSize() * ratio;
     f.SetPointSize(pointSize);
 #endif
+#elif defined(__WXMSW__)
+#if wxCHECK_VERSION(3, 1, 2)
+    float pointSize = f.GetFractionalPointSize() * 1.0;
+    f.SetFractionalPointSize(pointSize);
+#endif
 #endif
     return f;
 }
@@ -376,7 +389,9 @@ void clScrolledPanel::DoPositionVScrollbar()
     wxSize vsbSize = m_vsb->GetSize();
 
     int height = clientRect.GetHeight();
-    if(m_hsb && m_hsb->IsShown()) { height -= m_hsb->GetSize().GetHeight(); }
+    if(m_hsb && m_hsb->IsShown()) {
+        height -= m_hsb->GetSize().GetHeight();
+    }
     int width = vsbSize.GetWidth();
     int x = clientRect.GetWidth() - vsbSize.GetWidth();
     int y = 0;
@@ -391,7 +406,9 @@ void clScrolledPanel::DoPositionHScrollbar()
     wxSize hsbSize = m_hsb->GetSize();
 
     int width = clientRect.GetWidth();
-    if(m_vsb && m_vsb->IsShown()) { width -= m_vsb->GetSize().GetWidth(); }
+    if(m_vsb && m_vsb->IsShown()) {
+        width -= m_vsb->GetSize().GetWidth();
+    }
     int height = hsbSize.GetHeight();
     int x = 0;
     int y = clientRect.GetHeight() - hsbSize.GetHeight();
@@ -437,8 +454,12 @@ wxRect clScrolledPanel::GetClientArea() const
     r.SetTopLeft(wxPoint(0, 0));
 #endif
 
-    if(m_hsb && m_hsb->IsShown()) { r.SetHeight(r.GetHeight() - m_hsb->GetSize().GetHeight()); }
-    if(m_vsb && m_vsb->IsShown()) { r.SetWidth(r.GetWidth() - m_vsb->GetSize().GetWidth()); }
+    if(m_hsb && m_hsb->IsShown()) {
+        r.SetHeight(r.GetHeight() - m_hsb->GetSize().GetHeight());
+    }
+    if(m_vsb && m_vsb->IsShown()) {
+        r.SetWidth(r.GetWidth() - m_vsb->GetSize().GetWidth());
+    }
     return r;
 }
 

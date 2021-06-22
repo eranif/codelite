@@ -591,3 +591,28 @@ void clDataViewListCtrl::ScrollToBottom()
     size_t new_first_item = GetItemCount() - num_items_can_fit;
     ScrollToRow(new_first_item);
 }
+
+void clDataViewListCtrl::SetFirstVisibleRow(size_t row)
+{
+    wxDataViewItem item = RowToItem(row);
+    if(!item.IsOk()) {
+        return;
+    }
+
+    auto row_ptr = m_model.ToPtr(TREE_ITEM(item));
+    if(!row_ptr) {
+        return;
+    }
+    m_model.SetFirstItemOnScreen(row_ptr);
+    Refresh();
+}
+
+void clDataViewListCtrl::CenterRow(size_t row)
+{
+    size_t max_rows = GetNumLineCanFitOnScreen(true);
+    if(max_rows >= row) {
+        return;
+    }
+    size_t first_row = row - max_rows + (max_rows / 2);
+    SetFirstVisibleRow(first_row);
+}

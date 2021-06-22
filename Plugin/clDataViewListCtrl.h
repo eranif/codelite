@@ -36,9 +36,19 @@ public:
     clDataViewListCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clDataViewListCtrl();
-    
+
     void ScrollToBottom();
-    
+
+    /**
+     * @brief make row the first visible row in the view
+     */
+    void SetFirstVisibleRow(size_t row);
+
+    /**
+     * @brief center row in the view
+     */
+    void CenterRow(size_t row);
+
     /**
      * @brief how many items can scroll in the view?
      */
@@ -189,12 +199,12 @@ public:
      * @brief Selects given row.
      */
     void SelectRow(size_t row);
-    
+
     /**
      * @brief Unselects given row
      */
     void UnselectRow(size_t row);
-    
+
     /**
      * @brief Returns true if row is selected
      */

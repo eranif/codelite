@@ -2862,7 +2862,7 @@ void GitPlugin::AsyncRunGitWithCallback(const wxString& command_args, std::funct
 
 IEditor* GitPlugin::OpenFile(const wxString& relativePathFile)
 {
-    wxFileName fn(GetWorkspacePath() + "/" + relativePathFile);
+    wxFileName fn(GetRepositoryDirectory() + "/" + relativePathFile);
     if(IsRemoteWorkspace()) {
         return clSFTPManager::Get().OpenFile(fn.GetFullPath(wxPATH_UNIX), m_remoteWorkspaceAccount);
     } else {

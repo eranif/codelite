@@ -389,7 +389,7 @@ void BuildTab::CopySelections()
     ::CopyToClipboard(content);
 }
 
-wxString BuildTab::CreateSummaryLine() const
+wxString BuildTab::CreateSummaryLine()
 {
     long elapsed = m_sw.Time() / 1000;
     wxString total_time;
@@ -406,6 +406,7 @@ wxString BuildTab::CreateSummaryLine() const
         // build was cancelled by the user
         text << _("(Build cancelled by the user)\n");
         text = WrapLineInColour(text, eAsciiColours::YELLOW);
+        m_buildInterrupted = false;
     } else {
 
         // at this point, m_buffer is empty

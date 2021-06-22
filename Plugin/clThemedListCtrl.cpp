@@ -9,9 +9,9 @@
 #include <wx/settings.h>
 
 #ifdef __WXMSW__
-#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE
+#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxDV_ROW_LINES
 #else
-#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE
+#define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxDV_ROW_LINES
 #endif
 
 #if 0

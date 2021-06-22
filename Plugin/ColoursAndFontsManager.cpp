@@ -1167,9 +1167,9 @@ wxFont ColoursAndFontsManager::GetFixedFont(bool small) const
     auto font = lexer->GetFontForSyle(0, EventNotifier::Get()->TopFrame());
     if(small) {
 #if wxCHECK_VERSION(3, 1, 2)
-        font.SetFractionalPointSize(font.GetPointSize() * 0.8);
+        font.SetFractionalPointSize(font.GetPointSize() * 0.9);
 #else
-        font.SetPointSize(font.GetPointSize() - 2);
+        font.SetPointSize(font.GetPointSize() * 0.9);
 #endif
     }
     return font;

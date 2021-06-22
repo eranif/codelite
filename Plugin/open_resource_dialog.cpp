@@ -387,7 +387,7 @@ void OpenResourceDialog::DoAppendLine(const wxString& name, const wxString& full
     clientData->m_impl = boldFont;
     wxVector<wxVariant> cols;
     cols.push_back(::MakeBitmapIndexText(prefix + name, imgid));
-    cols.push_back(clientData->m_impl ? wxString("X") : wxString());
+    cols.push_back(clientData->m_impl ? wxString(wxT("\u274C")) : wxString());
     cols.push_back(fullname);
     m_dataview->AppendItem(cols, (wxUIntPtr)clientData);
 }

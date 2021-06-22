@@ -45,6 +45,15 @@ void MSWSetNativeTheme(wxWindow* win)
 #endif
 }
 
+struct DCLocker {
+    wxDC* pdc = nullptr;
+    DCLocker(wxDC* d)
+        : pdc(d)
+    {
+    }
+    ~DCLocker() { wxDELETE(pdc); }
+};
+
 wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc, eRendererType t)
 {
     wxGraphicsRenderer* renderer = nullptr;
@@ -155,15 +164,26 @@ clTreeCtrl::~clTreeCtrl()
 void clTreeCtrl::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
-    wxAutoBufferedPaintDC pdc(this);
-    PrepareDC(pdc);
 
 #ifdef __WXMSW__
+    wxDC* dc_ptr = nullptr;
+    if(m_renderer == eRendererType::RENDERER_DIRECT2D) {
+        dc_ptr = new wxPaintDC(this);
+    } else {
+        dc_ptr = new wxAutoBufferedPaintDC(this);
+    }
+
+    DCLocker locker(dc_ptr);
+    PrepareDC(*dc_ptr);
     wxGCDC gcdc;
-    wxDC& dc = CreateGCDC(pdc, gcdc, m_renderer);
+    wxDC& dc = CreateGCDC(*dc_ptr, gcdc, m_renderer);
 #elif defined(__WXMAC__)
+    wxPaintDC pdc(this);
+    PrepareDC(pdc);
     wxGCDC dc(pdc);
 #else
+    wxAutoBufferedPaintDC pdc(this);
+    PrepareDC(pdc);
     wxDC& dc = pdc;
 #endif
 

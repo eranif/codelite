@@ -91,24 +91,9 @@ int clRowEntry::Y_SPACER = 2;
 void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
     wxColour c = win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus();
-#if 0
-    if(m_tree->IsNativeTheme()) {
-        int flags = wxCONTROL_SELECTED;
-        if(win->HasFocus()) {
-            flags |= wxCONTROL_FOCUSED;
-        }
-        wxRendererNative::Get().DrawItemSelectionRect(win, dc, rect, flags);
-
-    } else {
-        dc.SetPen(c);
-        dc.SetBrush(c);
-        dc.DrawRectangle(rect);
-    }
-#else
     dc.SetPen(c);
     dc.SetBrush(c);
     dc.DrawRectangle(rect);
-#endif
 }
 
 clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
@@ -418,7 +403,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             colours.SetItemBgColour(cell.GetBgColour());
         }
         dc.SetFont(f);
-        wxColour buttonColour = IsSelected() ? colours.GetSelbuttonColour() : colours.GetButtonColour();
+        wxColour buttonColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour();
         wxRect cellRect = GetCellRect(i);
 
         // We use a helper class to clip the drawings this ensures that if we exit the scope
@@ -435,44 +420,33 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 wxRect buttonRect = GetButtonRect();
                 buttonRect.Deflate(1);
                 textXOffset += buttonRect.GetWidth();
-                if(IS_GTK) {
-                    int flags = wxCONTROL_CURRENT;
-                    if(IsExpanded()) {
-                        flags |= wxCONTROL_EXPANDED;
-                    }
-                    int button_width = wxSystemSettings::GetMetric(wxSYS_SMALLICON_X);
-                    wxRect modButtonRect = buttonRect;
-                    modButtonRect.SetWidth(button_width);
-                    modButtonRect.SetHeight(button_width);
-                    modButtonRect = modButtonRect.CenterIn(buttonRect);
-                    wxRendererNative::Get().DrawTreeItemButton(win, dc, modButtonRect, flags);
+
+                buttonRect = GetButtonRect();
+                if(textXOffset >= cellRect.GetWidth()) {
+                    // if we cant draw the button (off screen etc)
+                    SetRects(GetItemRect(), wxRect());
+                    continue;
+                }
+
+                buttonRect.Deflate((buttonRect.GetWidth() / 4), (buttonRect.GetHeight() / 4));
+                wxRect tribtn = buttonRect;
+                dc.SetPen(wxPen(buttonColour, 2));
+                if(IsExpanded()) {
+                    dc.SetPen(wxPen(buttonColour, 2));
+                    tribtn.SetHeight(tribtn.GetHeight() - tribtn.GetHeight() / 2);
+                    tribtn = tribtn.CenterIn(buttonRect);
+                    wxPoint middleLeft = wxPoint((tribtn.GetLeft() + tribtn.GetWidth() / 2), tribtn.GetBottom());
+                    dc.DrawLine(tribtn.GetTopLeft(), middleLeft);
+                    dc.DrawLine(tribtn.GetTopRight(), middleLeft);
                 } else {
-                    wxRect buttonRect = GetButtonRect();
-                    if(textXOffset >= cellRect.GetWidth()) {
-                        // if we cant draw the button (off screen etc)
-                        SetRects(GetItemRect(), wxRect());
-                        continue;
-                    }
+                    tribtn.SetWidth(tribtn.GetWidth() - tribtn.GetWidth() / 2);
+                    tribtn = tribtn.CenterIn(buttonRect);
 
-                    buttonRect.Deflate((buttonRect.GetWidth() / 4), (buttonRect.GetHeight() / 4));
-                    wxRect tribtn = buttonRect;
-                    dc.SetPen(wxPen(buttonColour, 1));
-                    if(IsExpanded()) {
-                        tribtn.SetHeight(tribtn.GetHeight() - tribtn.GetHeight() / 2);
-                        tribtn = tribtn.CenterIn(buttonRect);
-                        wxPoint middleLeft = wxPoint((tribtn.GetLeft() + tribtn.GetWidth() / 2), tribtn.GetBottom());
-                        dc.DrawLine(tribtn.GetTopLeft(), middleLeft);
-                        dc.DrawLine(tribtn.GetTopRight(), middleLeft);
-                    } else {
-                        tribtn.SetWidth(tribtn.GetWidth() - tribtn.GetWidth() / 2);
-                        tribtn = tribtn.CenterIn(buttonRect);
-
-                        wxPoint middleLeft = wxPoint(tribtn.GetRight(), (tribtn.GetY() + (tribtn.GetHeight() / 2)));
-                        wxPoint p1 = tribtn.GetTopLeft();
-                        wxPoint p2 = tribtn.GetBottomLeft();
-                        dc.DrawLine(p1, middleLeft);
-                        dc.DrawLine(middleLeft, p2);
-                    }
+                    wxPoint middleLeft = wxPoint(tribtn.GetRight(), (tribtn.GetY() + (tribtn.GetHeight() / 2)));
+                    wxPoint p1 = tribtn.GetTopLeft();
+                    wxPoint p2 = tribtn.GetBottomLeft();
+                    dc.DrawLine(p1, middleLeft);
+                    dc.DrawLine(middleLeft, p2);
                 }
 
             } else {
@@ -942,32 +916,19 @@ const wxRect& clRowEntry::GetChoiceRect(size_t col) const
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
-#if 0
-    wxUnusedVar(win);
-    wxUnusedVar(colours);
-    wxRendererNative::Get().DrawCheckBox(win, dc, rect, checked ? wxCONTROL_CHECKED : wxCONTROL_NONE);
-#else
-    dc.SetPen(wxPen(colours.GetBorderColour(), 1));
-    dc.SetBrush(checked ? colours.GetBorderColour() : *wxTRANSPARENT_BRUSH);
-    dc.DrawRoundedRectangle(rect, 1);
+    dc.SetPen(wxPen(colours.GetDarkBorderColour(), 1));
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRoundedRectangle(rect, 0);
+
     if(checked) {
         wxRect innerRect = rect;
-        innerRect.Deflate(2);
-        const wxColour& penColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetDarkBorderColour();
+        innerRect.Deflate(3);
+        const wxColour& penColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour();
         dc.SetPen(wxPen(penColour, 2));
 
-        wxPoint p1, p2, p3;
-        p1.x = innerRect.GetTopLeft().x;
-        p1.y = innerRect.GetTopLeft().y + (innerRect.GetHeight() / 2);
-
-        p2.x = innerRect.GetBottomLeft().x + (innerRect.GetWidth() / 3);
-        p2.y = innerRect.GetBottomLeft().y;
-
-        p3 = innerRect.GetTopRight();
-        dc.DrawLine(p1, p2);
-        dc.DrawLine(p2, p3);
+        dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
+        dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
     }
-#endif
 }
 
 int clRowEntry::GetCheckBoxWidth(wxWindow* win)

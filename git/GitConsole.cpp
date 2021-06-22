@@ -729,12 +729,8 @@ void GitConsole::PrintPrompt()
 void GitConsole::OnSysColoursChanged(clCommandEvent& event)
 {
     event.Skip();
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
-        auto font = lexer->GetFontForSyle(0, this);
-
-        m_dvListCtrl->SetDefaultFont(font);
-        m_dvListCtrlLog->SetDefaultFont(font);
-        m_dvListCtrlUnversioned->SetDefaultFont(font);
-    }
+    auto font = ColoursAndFontsManager::Get().GetFixedFont();
+    m_dvListCtrl->SetDefaultFont(font);
+    m_dvListCtrlLog->SetDefaultFont(font);
+    m_dvListCtrlUnversioned->SetDefaultFont(font);
 }

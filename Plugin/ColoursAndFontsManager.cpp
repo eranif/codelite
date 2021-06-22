@@ -1004,10 +1004,7 @@ void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
     });
 }
 
-const wxFont& ColoursAndFontsManager::GetGlobalFont() const
-{
-    return this->m_globalFont;
-}
+const wxFont& ColoursAndFontsManager::GetGlobalFont() const { return this->m_globalFont; }
 
 bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, const wxArrayString& names) const
 {
@@ -1162,4 +1159,18 @@ void ColoursAndFontsManager::SetThemeTextSelectionColours(const wxString& theme_
             lexer->SetUseCustomTextSelectionFgColour(useCustomerFgColour);
         }
     }
+}
+
+wxFont ColoursAndFontsManager::GetFixedFont(bool small) const
+{
+    auto lexer = GetLexer("text");
+    auto font = lexer->GetFontForSyle(0, EventNotifier::Get()->TopFrame());
+    if(small) {
+#if wxCHECK_VERSION(3, 1, 2)
+        font.SetFractionalPointSize(font.GetPointSize() * 0.8);
+#else
+        font.SetPointSize(font.GetPointSize() - 2);
+#endif
+    }
+    return font;
 }

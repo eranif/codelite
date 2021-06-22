@@ -24,8 +24,6 @@ class BuildTab : public wxPanel
     size_t m_warn_count = 0;
     bool m_buildInterrupted = false;
     wxString m_currentProjectName;
-    int m_first_error_line = wxNOT_FOUND;
-    int m_first_warn_line = wxNOT_FOUND;
 
 protected:
     void OnBuildStarted(clBuildEvent& e);
@@ -33,6 +31,10 @@ protected:
     void OnBuildEnded(clBuildEvent& e);
     void OnLineActivated(wxDataViewEvent& e);
     void OnContextMenu(wxDataViewEvent& e);
+    void OnNextBuildError(wxCommandEvent& event);
+    void OnNextBuildErrorUI(wxUpdateUIEvent& event);
+    size_t GetNextLineWithErrorOrWarning(size_t from) const;
+    void SelectFirstErrorOrWarning(size_t from);
 
     void ProcessBuffer(bool last_line = false);
     void Cleanup();

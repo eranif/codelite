@@ -13,6 +13,7 @@
 #include "mainbook.h"
 #include "manager.h"
 #include "shell_command.h"
+#include <wx/app.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/tokenzr.h>
@@ -54,10 +55,18 @@ BuildTab::BuildTab(wxWindow* parent)
     });
 
     m_view->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &BuildTab::OnLineActivated, this);
+    m_view->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &BuildTab::OnLineActivated, this);
     m_view->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &BuildTab::OnContextMenu, this);
+
+    wxTheApp->Bind(wxEVT_MENU, &BuildTab::OnNextBuildError, this, XRCID("next_build_error"));
+    wxTheApp->Bind(wxEVT_UPDATE_UI, &BuildTab::OnNextBuildErrorUI, this, XRCID("next_build_error"));
 }
 
-BuildTab::~BuildTab() {}
+BuildTab::~BuildTab()
+{
+    wxTheApp->Unbind(wxEVT_MENU, &BuildTab::OnNextBuildError, this, XRCID("next_build_error"));
+    wxTheApp->Unbind(wxEVT_UPDATE_UI, &BuildTab::OnNextBuildErrorUI, this, XRCID("next_build_error"));
+}
 
 void BuildTab::OnBuildStarted(clBuildEvent& e)
 {
@@ -113,13 +122,7 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
     m_buffer.swap(text);
     ProcessBuffer(true);
 
-    if(m_first_error_line != wxNOT_FOUND) {
-        m_view->EnsureVisible(m_view->RowToItem(m_first_error_line));
-        m_view->SelectRow(m_first_error_line);
-    } else if(m_first_warn_line != wxNOT_FOUND) {
-        m_view->EnsureVisible(m_view->RowToItem(m_first_warn_line));
-        m_view->SelectRow(m_first_warn_line);
-    }
+    SelectFirstErrorOrWarning(0);
 
     // notify the plugins that the build has ended
     clBuildEvent build_ended_event(wxEVT_BUILD_ENDED);
@@ -166,14 +169,8 @@ void BuildTab::ProcessBuffer(bool last_line)
                 switch(m->match_pattern.sev) {
                 case Compiler::kSevError:
                     m_error_count++;
-                    if(m_first_error_line == wxNOT_FOUND) {
-                        m_first_error_line = m_view->GetItemCount();
-                    }
                     break;
                 case Compiler::kSevWarning:
-                    if(m_first_warn_line == wxNOT_FOUND) {
-                        m_first_warn_line = m_view->GetItemCount();
-                    }
                     m_warn_count++;
                     break;
                 default:
@@ -219,8 +216,6 @@ void BuildTab::Cleanup()
     m_warn_count = 0;
     m_buildInterrupted = false;
     m_currentProjectName.clear();
-    m_first_error_line = wxNOT_FOUND;
-    m_first_warn_line = wxNOT_FOUND;
 }
 
 void BuildTab::AppendLine(const wxString& text)
@@ -329,7 +324,7 @@ void BuildTab::OnContextMenu(wxDataViewEvent& e)
         wxEVT_MENU,
         [this](wxCommandEvent& event) {
             wxUnusedVar(event);
-            ClearView();
+            Cleanup();
         },
         wxID_CLEAR);
 
@@ -446,4 +441,51 @@ void BuildTab::ProcessBuildingProjectLine(const wxString& line)
 
     // keep the current project name
     m_currentProjectName.swap(s);
+}
+
+size_t BuildTab::GetNextLineWithErrorOrWarning(size_t from) const
+{
+    if(m_error_count == 0 && m_warn_count == 0) {
+        return wxString::npos;
+    }
+
+    if(from >= m_view->GetItemCount()) {
+        return wxString::npos;
+    }
+
+    for(size_t i = from; i < m_view->GetItemCount(); ++i) {
+        wxUIntPtr p = m_view->GetItemData(m_view->RowToItem(i));
+        if(p) {
+            LineClientData* cd = reinterpret_cast<LineClientData*>(p);
+            if(cd->match_pattern.sev == Compiler::kSevWarning || cd->match_pattern.sev == Compiler::kSevError) {
+                return i;
+            }
+        }
+    }
+    return wxString::npos;
+}
+
+void BuildTab::OnNextBuildError(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    // get the next line to select
+    size_t from = m_view->GetSelectedRow();
+    if(from == wxString::npos) {
+        from = 0;
+    } else {
+        ++from;
+    }
+    SelectFirstErrorOrWarning(from);
+}
+
+void BuildTab::OnNextBuildErrorUI(wxUpdateUIEvent& event) { event.Enable(m_warn_count || m_error_count); }
+
+void BuildTab::SelectFirstErrorOrWarning(size_t from)
+{
+    size_t line_to_select = GetNextLineWithErrorOrWarning(from);
+    if(line_to_select != wxString::npos) {
+        m_view->EnsureVisible(m_view->RowToItem(line_to_select));
+        m_view->UnselectAll();
+        m_view->SelectRow(line_to_select);
+    }
 }

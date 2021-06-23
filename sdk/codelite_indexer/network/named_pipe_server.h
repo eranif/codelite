@@ -30,7 +30,7 @@
 #ifdef __WXMSW__
 #include <Windows.h>
 #ifndef _WIN64
-#   include <WinSock2.h>
+#include <WinSock2.h>
 #endif
 #else
 #include <unistd.h>
@@ -41,10 +41,10 @@
 class clNamedPipeServer : public clNamedPipe
 {
 public:
-	clNamedPipeServer(const char* pipePath);
-	virtual ~clNamedPipeServer(void);
-	void setHandle(PIPE_HANDLE handle) { this->setPipeHandle(handle) ; }
-	virtual void disconnect();
+    clNamedPipeServer(const char* pipePath);
+    virtual ~clNamedPipeServer(void);
+    void setHandle(PIPE_HANDLE handle) { this->setPipeHandle(handle); }
+    virtual void disconnect();
 };
 
 #endif // named_pipe_server_h__

@@ -280,6 +280,7 @@ public:
     bool Command_call_visual_mode();
     bool command_call_visual_line_mode();
     bool command_call_visual_block_mode();
+    bool command_move_cmd_call(bool& repeat_command);
     bool is_cmd_complete();
     void set_current_word(wxString word);
     void set_current_modus(VIM_MODI modus);

@@ -773,167 +773,26 @@ bool VimCommand::Command_call()
         m_ctrl->AddText(m_actionCommand);
         repeat_command = false;
         break;
-    case COMMANDVI::c0:
-        this->m_tmpbuf.Clear();
-        m_ctrl->DelLineLeft();
-        break;
-    case COMMANDVI::c$:
-        this->m_tmpbuf.Clear();
-        m_ctrl->DelLineRight();
-        break;
-    case COMMANDVI::c_caret: {
-        this->m_tmpbuf.Clear();
-        int pos_init_cV = m_ctrl->GetCurrentPos();
-        m_ctrl->Home();
-        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
-            m_ctrl->WordRight();
-        int pos_end_cV = m_ctrl->GetCurrentPos();
-        if (pos_end_cV < pos_init_cV) {
-            m_ctrl->DeleteRange(pos_end_cV, pos_init_cV - pos_end_cV);
-        } else {
-            m_ctrl->SetCurrentPos(pos_init_cV);
-            m_ctrl->CharLeft();
-        }
-        break;
-    }
-    case COMMANDVI::cw:
-        this->m_tmpbuf.Clear();
-        m_actions = std::max(1, m_actions);
-        for( int i = 0; i < m_actions; ++i )
-            m_ctrl->DelWordRight();
-        break;
-    case COMMANDVI::cb:
-        this->m_tmpbuf.Clear();
-        m_actions = std::max(1, m_actions);
-        for( int i = 0; i < m_actions; ++i )
-            m_ctrl->DelWordLeft();
-        break;
-    case COMMANDVI::ce:
-        this->m_tmpbuf.Clear();
-        m_actions = std::max(1, m_actions);
-        for( int i = 0; i < m_actions; ++i )
-            m_ctrl->DelWordRightEnd();
-        break;
-    case COMMANDVI::caw:
-        this->m_tmpbuf.Clear();
-        m_ctrl->CharRight();
-        m_ctrl->WordLeft();
-        m_ctrl->DelWordRight();
-        break;
-    case COMMANDVI::ci_quot: {
-        this->m_tmpbuf.Clear();
-        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
-        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('"', '"', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
-        }
-        break;
-    }
-    case COMMANDVI::ci_apos: {
-        this->m_tmpbuf.Clear();
-        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
-        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('\'', '\'', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
-        }
-        break;
-    }
-    case COMMANDVI::ci_pare: {
-        this->m_tmpbuf.Clear();
-        int minPos = 0;
-        int maxPos = m_ctrl->GetLastPosition();
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('(', ')', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
-        }
-        break;
-    }
-    case COMMANDVI::ci_lt: {
-        this->m_tmpbuf.Clear();
-        int minPos = 0;
-        int maxPos = m_ctrl->GetLastPosition();
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('<', '>', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
-        }
-        break;
-    }
-    case COMMANDVI::ci_square: {
-        this->m_tmpbuf.Clear();
-        int minPos = 0;
-        int maxPos = m_ctrl->GetLastPosition();
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
-        }
-        break;
-    }
-    case COMMANDVI::ci_curly: {
-        this->m_tmpbuf.Clear();
-        int minPos = 0;
-        int maxPos = m_ctrl->GetLastPosition();
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
-        }
-        break;
-    }
 
-    case COMMANDVI::S: {
-        this->m_tmpbuf.Clear();
-        int repeat_S = std::max(1, m_repeat);
-        for(int i = 0; i < repeat_S; ++i) {
-            m_ctrl->LineDelete();
-        }
-        m_ctrl->NewLine();
-        m_ctrl->LineUp();
-        break;
-    }
+    case COMMANDVI::S:
+    case COMMANDVI::cc:
+        m_ctrl->Home();
     case COMMANDVI::C:
-        m_ctrl->DelLineRight();
-        if(m_repeat > 1) {
+    case COMMANDVI::D: {
+        int pos_init_yw = m_ctrl->GetCurrentPos();
+        m_ctrl->LineEnd();
+        for(int i = 0; i < m_repeat - 1; ++i) {
             m_ctrl->LineDown();
-            for(int i = 0; i < m_repeat - 1; ++i) { // delete extra line if [num]C
-                m_ctrl->LineDelete();
-            }
-            m_ctrl->LineUp();
             m_ctrl->LineEnd();
         }
+        int pos_end_yw = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
+        m_ctrl->DeleteRange(pos_init_yw, pos_end_yw - pos_init_yw);
         repeat_command = false;
+        m_newLineCopy = false;
+        m_visualBlockCopy = false;
         break;
-
-    case COMMANDVI::cc: {
-        int repeat_cc = std::max(1, m_repeat) * std::max(1, m_actions);
-
-        for(int i = 0; i < repeat_cc; ++i) {
-            m_ctrl->LineDelete();
-        }
-        m_ctrl->LineUp();
-        m_ctrl->LineEnd();
-        m_ctrl->NewLine();
-        repeat_command = false;
-    } break;
-    
+    }
     case COMMANDVI::s: {
         this->m_tmpbuf.Clear();
         int repeat_s = std::max(1, m_repeat) * std::max(1, m_actions);
@@ -970,6 +829,7 @@ bool VimCommand::Command_call()
             m_ctrl->DelWordRight();
         }
     } break;
+    case COMMANDVI::cb:
     case COMMANDVI::db: {
         int pos_init_db = m_ctrl->GetCurrentPos();
         int repeat_db = std::max(1, m_repeat) * std::max(1, m_actions);
@@ -986,8 +846,10 @@ bool VimCommand::Command_call()
         m_newLineCopy = false;
         m_visualBlockCopy = false;
     } break;
+    case COMMANDVI::cw:
+    case COMMANDVI::ce:
     case COMMANDVI::de: {
-        int repeat_de = std::max(1, m_actions);
+        int repeat_de = std::max(1, m_repeat) * std::max(1, m_actions);
         for(int i = 0; i < repeat_de - 1; ++i) {
             m_listCopiedStr.push_back(get_text_at_position(kFromPosToEndWord));
             if(is_space_following()) m_listCopiedStr.push_back(add_following_spaces());
@@ -995,6 +857,7 @@ bool VimCommand::Command_call()
             m_ctrl->DelWordRight();
         } // last only the end of the word!
         m_listCopiedStr.push_back(get_text_at_position(kFromPosToEndWord));
+        repeat_command = false;
         m_newLineCopy = false;
         m_visualBlockCopy = false;
         m_ctrl->DelWordRightEnd();
@@ -1007,12 +870,36 @@ bool VimCommand::Command_call()
             m_ctrl->LineDelete();
         }
     } break;
-    case COMMANDVI::d0:
-        m_ctrl->DelLineLeft();
+    case COMMANDVI::c0:
+    case COMMANDVI::d0: {
+        int pos_init_yw = m_ctrl->GetCurrentPos();
+        m_ctrl->Home();
+        int pos_end_yw = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_end_yw, pos_init_yw));
+        m_ctrl->DeleteRange(pos_end_yw, pos_init_yw - pos_end_yw);
+        repeat_command = false;
+        m_newLineCopy = false;
+        m_visualBlockCopy = false;
         break;
-    case COMMANDVI::d$:
-        m_ctrl->DelLineRight();
+    }
+    case COMMANDVI::c$:
+    case COMMANDVI::d$: {
+        int repeat = std::max(1, m_repeat) * std::max(1, m_actions);
+        int pos_init_yw = m_ctrl->GetCurrentPos();
+        m_ctrl->LineEnd();
+        for(int i = 0; i < repeat - 1; ++i) {
+            m_ctrl->LineDown();
+            m_ctrl->LineEnd();
+        }
+        int pos_end_yw = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
+        m_ctrl->DeleteRange(pos_init_yw, pos_end_yw - pos_init_yw);
+        repeat_command = false;
+        m_newLineCopy = false;
+        m_visualBlockCopy = false;
         break;
+    }
+    case COMMANDVI::c_caret:
     case COMMANDVI::d_caret: {
         int pos_init_cV = m_ctrl->GetCurrentPos();
         m_ctrl->Home();
@@ -1020,7 +907,11 @@ bool VimCommand::Command_call()
             m_ctrl->WordRight();
         int pos_end_cV = m_ctrl->GetCurrentPos();
         if (pos_end_cV < pos_init_cV) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_end_cV, pos_init_cV));
             m_ctrl->DeleteRange(pos_end_cV, pos_init_cV - pos_end_cV);
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
         } else {
             m_ctrl->SetCurrentPos(pos_init_cV);
             m_ctrl->CharLeft();
@@ -1034,8 +925,9 @@ bool VimCommand::Command_call()
         if (m_commandID == COMMANDVI::dgg) {
             end_line = 0;
         }
-        if (m_actions > 0) {
-            end_line = std::min(m_actions - 1, m_ctrl->GetLineCount() - 1);
+        int line = std::max(1, m_repeat) * std::max(1, m_actions);
+        if (line > 1) {
+            end_line = std::min(line - 1, m_ctrl->GetLineCount() - 1);
         }
         if (begin_line > end_line) {std::swap(begin_line, end_line);}
         
@@ -1044,14 +936,28 @@ bool VimCommand::Command_call()
             this->m_listCopiedStr.push_back(m_ctrl->GetCurLine());
             m_ctrl->LineDelete();
         }
+        repeat_command = false;
+        m_visualBlockCopy = false;
     } break;
     
     
-    case COMMANDVI::daw:
-        m_ctrl->CharRight();
+    case COMMANDVI::caw:
+    case COMMANDVI::daw: {
+        int repeat = std::max(1, m_repeat) * std::max(1, m_actions);
+        m_ctrl->WordRightEnd();
         m_ctrl->WordLeft();
-        m_ctrl->DelWordRight();
+        long begin = m_ctrl->GetCurrentPos();
+        for (int i = 0; i < repeat; ++i) {
+            m_ctrl->WordRight();
+        }
+        int end = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(begin, end));
+        m_ctrl->DeleteRange(begin, end - begin);
+        repeat_command = false;
+        m_newLineCopy = false;
+        m_visualBlockCopy = false;
         break;
+    }
     case COMMANDVI::yiw:
     case COMMANDVI::ciw:
     case COMMANDVI::diw: {
@@ -1143,84 +1049,122 @@ bool VimCommand::Command_call()
         }
         break;
     }
+    case COMMANDVI::yi_quot:
+    case COMMANDVI::ci_quot:
     case COMMANDVI::di_quot: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('"', '"', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        if (findMatchingParentesis('"', '"', minPos, maxPos, leftPos, rightPos)) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            if (m_commandID != COMMANDVI::yi_quot) {
+                m_ctrl->SetCurrentPos(leftPos + 1);
+                m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+            }
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
+    case COMMANDVI::yi_apos:
+    case COMMANDVI::ci_apos:
     case COMMANDVI::di_apos: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('\'', '\'', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        if (findMatchingParentesis('\'', '\'', minPos, maxPos, leftPos, rightPos)) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            if (m_commandID != COMMANDVI::yi_apos) {
+                m_ctrl->SetCurrentPos(leftPos + 1);
+                m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+            }
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
+    case COMMANDVI::yi_pare:
+    case COMMANDVI::ci_pare:
     case COMMANDVI::di_pare: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('(', ')', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        if (findMatchingParentesis('(', ')', minPos, maxPos, leftPos, rightPos)) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            if (m_commandID != COMMANDVI::yi_pare) {
+                m_ctrl->SetCurrentPos(leftPos + 1);
+                m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+            }
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
+    case COMMANDVI::yi_lt:
+    case COMMANDVI::ci_lt:
     case COMMANDVI::di_lt: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('<', '>', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        if (findMatchingParentesis('<', '>', minPos, maxPos, leftPos, rightPos)) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            if (m_commandID != COMMANDVI::yi_lt) {
+                m_ctrl->SetCurrentPos(leftPos + 1);
+                m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+            }
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
+    case COMMANDVI::yi_square:
+    case COMMANDVI::ci_square:
     case COMMANDVI::di_square: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos)) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            if (m_commandID != COMMANDVI::yi_square) {
+                m_ctrl->SetCurrentPos(leftPos + 1);
+                m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+            }
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
+    case COMMANDVI::yi_curly:
+    case COMMANDVI::ci_curly:
     case COMMANDVI::di_curly: {
         int minPos = 0;
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos))
-        {
-            m_ctrl->SetCurrentPos(leftPos + 1);
-            m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+        if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos)) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
+            if (m_commandID != COMMANDVI::yi_curly) {
+                m_ctrl->SetCurrentPos(leftPos + 1);
+                m_ctrl->DeleteRange(leftPos + 1, rightPos - leftPos - 1);
+            }
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
         }
         break;
     }
 
 
-    case COMMANDVI::D:
-        this->m_listCopiedStr.push_back(get_text_at_position(kFromPositionToEndLine));
-        m_ctrl->DelLineRight();
-        break;
     /*=============== COPY ====================*/
     case COMMANDVI::yw: {
         int pos_init_yw = m_ctrl->GetCurrentPos();
@@ -1328,9 +1272,12 @@ bool VimCommand::Command_call()
         if (m_commandID == COMMANDVI::ygg) {
             end_line = 0;
         }
-        if (m_actions > 0) {
-            end_line = std::min(m_actions - 1, m_ctrl->GetLineCount() - 1);
+        
+        int line = std::max(1, m_repeat) * std::max(1, m_actions);
+        if (line > 1) {
+            end_line = std::min(line - 1, m_ctrl->GetLineCount() - 1);
         }
+        
         if (begin_line > end_line) {std::swap(begin_line, end_line);}
         
         m_ctrl->GotoLine(begin_line);
@@ -1339,107 +1286,25 @@ bool VimCommand::Command_call()
             m_ctrl->LineDown();
         }
         m_ctrl->GotoPos(pos);
+        repeat_command = false;
+        m_visualBlockCopy = false;
     } break;
     case COMMANDVI::yaw: {
-        int repeat_yw = std::max(1, m_repeat) * std::max(1, m_actions);
-        m_ctrl->CharRight();
-        m_ctrl->WordLeft();
-        int pos_end_yw = m_ctrl->GetCurrentPos();
+        int repeat = std::max(1, m_repeat) * std::max(1, m_actions);
         m_ctrl->WordRightEnd();
-        int pos_init_yw = m_ctrl->GetCurrentPos();
-        m_listCopiedStr.push_back(m_ctrl->GetTextRange(pos_init_yw, pos_end_yw));
+        m_ctrl->WordLeft();
+        long begin = m_ctrl->GetCurrentPos();
+        for (int i = 0; i < repeat; ++i) {
+            m_ctrl->WordRight();
+        }
+        int end = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(begin, end));
+        m_ctrl->GotoPos(begin);
         repeat_command = false;
-        m_ctrl->SetCurrentPos(pos_init_yw);
-        m_ctrl->CharLeft();
         m_newLineCopy = false;
         m_visualBlockCopy = false;
         break;
     }
-    case COMMANDVI::yi_quot: {
-        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
-        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('"', '"', minPos, maxPos, leftPos, rightPos))
-        {
-            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
-            repeat_command = false;
-            m_newLineCopy = false;
-            m_visualBlockCopy = false;
-        }
-        break;
-    }
-    case COMMANDVI::yi_apos: {
-        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
-        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('\'', '\'', minPos, maxPos, leftPos, rightPos))
-        {
-            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
-            repeat_command = false;
-            m_newLineCopy = false;
-            m_visualBlockCopy = false;
-        }
-        break;
-    }
-    case COMMANDVI::yi_pare: {
-        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
-        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('(', ')', minPos, maxPos, leftPos, rightPos))
-        {
-            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
-            repeat_command = false;
-            m_newLineCopy = false;
-            m_visualBlockCopy = false;
-        }
-        break;
-    }
-    case COMMANDVI::yi_lt: {
-        int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
-        int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('<', '>', minPos, maxPos, leftPos, rightPos))
-        {
-            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
-            repeat_command = false;
-            m_newLineCopy = false;
-            m_visualBlockCopy = false;
-        }
-        break;
-    }
-    case COMMANDVI::yi_square: {
-        int minPos = 0;
-        int maxPos = m_ctrl->GetLastPosition();
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos))
-        {
-            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
-            repeat_command = false;
-            m_newLineCopy = false;
-            m_visualBlockCopy = false;
-        }
-        break;
-    }
-    case COMMANDVI::yi_curly: {
-        int minPos = 0;
-        int maxPos = m_ctrl->GetLastPosition();
-        long leftPos = -1;
-        long rightPos = -1;
-        if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos))
-        {
-            m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
-            repeat_command = false;
-            m_newLineCopy = false;
-            m_visualBlockCopy = false;
-        }
-        break;
-    }
-
     case COMMANDVI::diesis: {
         m_searchWord = get_text_at_position();
         // m_ctrl->SetCurrentPos( /*FIXME*/ );

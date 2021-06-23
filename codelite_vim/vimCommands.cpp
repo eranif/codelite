@@ -20,6 +20,9 @@ VimCommand::VimCommand(IManager* m_mgr)
     , m_externalCommand('\0')
     , m_actions(0)
     , m_listCopiedStr()
+    , m_findKey('\0')
+    , m_findStep(1)
+    , m_findPosPrev(false)
     , m_cumulativeUndo(0)
     , m_modifierKey(0)
     , m_tmpbuf()
@@ -240,7 +243,9 @@ void VimCommand::completing_command(wxChar ch)
     case COMMAND_PART::MOD_NUM:
 
         if(ch < '9' && ch > '0' && m_baseCommand != 'r' && m_baseCommand != 'f' && m_baseCommand != 'F' &&
-           m_baseCommand != 't' && m_baseCommand != 'T') {
+            m_baseCommand != 't' && m_baseCommand != 'T' &&
+            !((m_baseCommand == 'c' || m_baseCommand == 'd' || m_baseCommand == 'y') &&
+            (m_externalCommand == 'f' || m_externalCommand == 'F' || m_externalCommand == 't' || m_externalCommand == 'T'))) {
             m_actions = m_actions * 10 + (int)ch - shift_ashii_num;
         } else {
             m_externalCommand = m_actionCommand;
@@ -531,60 +536,70 @@ bool VimCommand::Command_call()
         break;
     }
     case COMMANDVI::F: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos - i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, -1, false);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->GotoPos(pos - i);
+        m_findKey = m_actionCommand;
+        m_findStep = -1;
+        m_findPosPrev = false;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::f: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos + i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, 1, false);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->GotoPos(pos + i);
+        m_findKey = m_actionCommand;
+        m_findStep = 1;
+        m_findPosPrev = false;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::T: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos - i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, -1, true);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->GotoPos(pos - i + 1);
+        m_findKey = m_actionCommand;
+        m_findStep = -1;
+        m_findPosPrev = true;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::t: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos + i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, 1, true);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->GotoPos(pos + i - 1);
+        m_findKey = m_actionCommand;
+        m_findStep = 1;
+        m_findPosPrev = true;
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::semicolon: {
+        long pos = findCharInLine(m_findKey, m_findStep, m_findPosPrev, true);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
+        }
+        this->m_saveCommand = false;
+    } break;
+    case COMMANDVI::comma: {
+        long pos = findCharInLine(m_findKey, -m_findStep, m_findPosPrev, true);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
+        }
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::ctrl_D: {
         int lines = m_ctrl->LinesOnScreen() / 2;
@@ -905,7 +920,19 @@ bool VimCommand::Command_call()
         m_ctrl->NewLine();
         repeat_command = false;
     } break;
-
+    
+    case COMMANDVI::s: {
+        this->m_tmpbuf.Clear();
+        int repeat_s = std::max(1, m_repeat) * std::max(1, m_actions);
+        int start_pos = m_ctrl->GetCurrentPos();
+        int end_pos = std::min(repeat_s + start_pos, m_ctrl->GetLineEndPosition(m_ctrl->GetCurrentLine()));
+        this->m_listCopiedStr.push_back(m_ctrl->GetTextRange(start_pos, end_pos));
+        m_ctrl->DeleteRange(start_pos, end_pos - start_pos);
+        repeat_command = false;
+        m_newLineCopy = true;
+        m_visualBlockCopy = false;
+    } break;
+    
     case COMMANDVI::x: {
         this->m_tmpbuf.Clear();
         char currentChar = static_cast<char>(this->m_ctrl->GetCharAt(this->m_ctrl->GetCurrentPos()));
@@ -1012,6 +1039,97 @@ bool VimCommand::Command_call()
         m_ctrl->WordLeft();
         m_ctrl->DelWordRight();
         break;
+    case COMMANDVI::yiw:
+    case COMMANDVI::ciw:
+    case COMMANDVI::diw: {
+        int repeat = std::max(1, m_repeat) * std::max(1, m_actions);
+        long pos = m_ctrl->GetCurrentPos();
+        if (m_ctrl->GetCharAt(pos) <= 32) {
+            m_ctrl->WordLeft();
+            m_ctrl->GotoPos(m_ctrl->WordEndPosition(m_ctrl->GetCurrentPos(), false));
+        } else {
+            m_ctrl->WordRightEnd();
+            m_ctrl->WordLeft();
+        }
+        long start_pos = m_ctrl->GetCurrentPos();
+        while (repeat > 0) {
+            if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32) {
+                m_ctrl->WordRight();
+            } else {
+                m_ctrl->GotoPos(m_ctrl->WordEndPosition(m_ctrl->GetCurrentPos(), false));
+            }
+            repeat--;
+        }
+        long end_pos = m_ctrl->GetCurrentPos();
+        m_listCopiedStr.push_back(m_ctrl->GetTextRange(start_pos, end_pos));
+        if (m_commandID != COMMANDVI::yiw) {
+            m_ctrl->DeleteRange(start_pos, end_pos - start_pos);
+        }
+        repeat_command = false;
+        m_newLineCopy = false;
+        m_visualBlockCopy = false;
+        break;
+    }
+    case COMMANDVI::yf: 
+    case COMMANDVI::cf: 
+    case COMMANDVI::df: {
+        long start_pos = m_ctrl->GetCurrentPos();
+        long end_pos = findCharInLine(m_actionCommand, 1);
+        if (end_pos >= 0) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(start_pos, end_pos + 1));
+            if (m_commandID != COMMANDVI::yf)
+                m_ctrl->DeleteRange(start_pos, end_pos + 1 - start_pos);
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
+        }
+        break;
+    }
+    case COMMANDVI::yF: 
+    case COMMANDVI::cF: 
+    case COMMANDVI::dF: {
+        long start_pos = m_ctrl->GetCurrentPos();
+        long end_pos = findCharInLine(m_actionCommand, -1);
+        if (end_pos >= 0) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(start_pos, end_pos));
+            if (m_commandID != COMMANDVI::yF)
+                m_ctrl->DeleteRange(end_pos, start_pos - end_pos);
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
+        }
+        break;
+    }
+    case COMMANDVI::yt: 
+    case COMMANDVI::ct: 
+    case COMMANDVI::dt: {
+        long start_pos = m_ctrl->GetCurrentPos();
+        long end_pos = findCharInLine(m_actionCommand, 1, true);
+        if (end_pos >= 0) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(start_pos, end_pos + 1));
+            if (m_commandID != COMMANDVI::yt)
+                m_ctrl->DeleteRange(start_pos, end_pos + 1 - start_pos);
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
+        }
+        break;
+    }
+    case COMMANDVI::yT: 
+    case COMMANDVI::cT: 
+    case COMMANDVI::dT: {
+        long start_pos = m_ctrl->GetCurrentPos();
+        long end_pos = findCharInLine(m_actionCommand, -1, true);
+        if (end_pos >= 0) {
+            m_listCopiedStr.push_back(m_ctrl->GetTextRange(start_pos, end_pos));
+            if (m_commandID != COMMANDVI::yT)
+                m_ctrl->DeleteRange(end_pos, start_pos - end_pos);
+            repeat_command = false;
+            m_newLineCopy = false;
+            m_visualBlockCopy = false;
+        }
+        break;
+    }
     case COMMANDVI::di_quot: {
         int minPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
@@ -1631,61 +1749,53 @@ bool VimCommand::Command_call_visual_mode()
         break;
     }
     case COMMANDVI::F: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos - i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, -1, false);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->SetCurrentPos(pos - i);
+        m_findKey = m_actionCommand;
+        m_findStep = -1;
+        m_findPosPrev = false;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::f: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos + i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, 1, false);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->SetCurrentPos(pos + i);
+        m_findKey = m_actionCommand;
+        m_findStep = 1;
+        m_findPosPrev = false;
+        this->m_saveCommand = false;
     } break;
 
     case COMMANDVI::T: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos - i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, -1, true);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->SetCurrentPos(pos - i + 1);
+        m_findKey = m_actionCommand;
+        m_findStep = -1;
+        m_findPosPrev = true;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::t: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos + i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, 1, true);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->SetCurrentPos(pos + i - 1);
+        m_findKey = m_actionCommand;
+        m_findStep = 1;
+        m_findPosPrev = true;
+        this->m_saveCommand = false;
     } break;
 
     case COMMANDVI::G: /*====== START G =======*/
@@ -2022,60 +2132,52 @@ bool VimCommand::command_call_visual_block_mode()
         break;
     }
     case COMMANDVI::F: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos - i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, -1, false);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->GotoPos(pos - i);
+        m_findKey = m_actionCommand;
+        m_findStep = -1;
+        m_findPosPrev = false;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::f: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos + i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, 1, false);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->GotoPos(pos + i);
+        m_findKey = m_actionCommand;
+        m_findStep = 1;
+        m_findPosPrev = false;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::T: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos - i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, -1, true);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->GotoPos(pos - i + 1);
+        m_findKey = m_actionCommand;
+        m_findStep = -1;
+        m_findPosPrev = true;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::t: {
-        long i = 1;
-        long pos = m_ctrl->GetCurrentPos();
-        bool eoline = false;
-        char cur_char;
-        while((cur_char = m_ctrl->GetCharAt(pos + i)) != m_actionCommand) {
-            if(cur_char == '\n') {
-                eoline = true;
-                break;
-            }
-            ++i;
+        long pos = findCharInLine(m_actionCommand, 1, true);
+        if (pos >= 0) {
+            m_ctrl->GotoPos(pos);
+            m_ctrl->CharRight();
+            m_ctrl->CharLeft();
         }
-        if(eoline != true) m_ctrl->GotoPos(pos + i - 1);
+        m_findKey = m_actionCommand;
+        m_findStep = 1;
+        m_findPosPrev = true;
+        this->m_saveCommand = false;
     } break;
     case COMMANDVI::ctrl_D: {
         int lines = m_ctrl->LinesOnScreen() / 2;
@@ -2651,6 +2753,48 @@ bool VimCommand::is_cmd_complete()
 
     case 'c': /*~~~~~~ c[...] ~~~~~~~*/
         possible_command = true;
+        if (m_externalCommand == 'f') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::cf;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                m_currentModus = VIM_MODI::INSERT_MODUS;
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 'F') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::cF;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                m_currentModus = VIM_MODI::INSERT_MODUS;
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 't') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::ct;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                m_currentModus = VIM_MODI::INSERT_MODUS;
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 'T') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::cT;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                m_currentModus = VIM_MODI::INSERT_MODUS;
+                command_complete = true; 
+            }
+            break;
+        }
+        
         switch(m_actionCommand) {
         case '\0':
             if (m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) {
@@ -2679,11 +2823,19 @@ bool VimCommand::is_cmd_complete()
             if (m_externalCommand == 'a') {
                 command_complete = true;
                 m_commandID = COMMANDVI::caw;
+                this->m_listCopiedStr.clear();
+                m_currentModus = VIM_MODI::INSERT_MODUS;
+                break;
+            } else if (m_externalCommand == 'i') {
+                command_complete = true;
+                m_commandID = COMMANDVI::ciw;
+                this->m_listCopiedStr.clear();
                 m_currentModus = VIM_MODI::INSERT_MODUS;
                 break;
             }
             command_complete = true;
             m_commandID = COMMANDVI::cw;
+            this->m_listCopiedStr.clear();
             m_currentModus = VIM_MODI::INSERT_MODUS;
             break;
         case 'c':
@@ -2744,6 +2896,13 @@ bool VimCommand::is_cmd_complete()
             break;
         }
         break;
+    case 's':
+        possible_command = true;
+        command_complete = true;
+        m_commandID = COMMANDVI::s;
+        this->m_listCopiedStr.clear();
+        m_currentModus = VIM_MODI::INSERT_MODUS;
+        break;
     case 'S':
         possible_command = true;
         command_complete = true;
@@ -2775,6 +2934,43 @@ bool VimCommand::is_cmd_complete()
         break;
     case 'd': /*~~~~~~~ d[...] ~~~~~~~~*/
         possible_command = true;
+        if (m_externalCommand == 'f') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::df;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 'F') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::dF;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 't') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::dt;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 'T') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::dT;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                command_complete = true; 
+            }
+            break;
+        }
         switch(m_actionCommand) {
         case '\0':
             if(m_currentModus == VIM_MODI::VISUAL_MODUS ||
@@ -2805,6 +3001,12 @@ bool VimCommand::is_cmd_complete()
             if (m_externalCommand == 'a') {
                 command_complete = true;
                 m_commandID = COMMANDVI::daw;
+                this->m_listCopiedStr.clear();
+                break;
+            } else if (m_externalCommand == 'i') {
+                command_complete = true;
+                m_commandID = COMMANDVI::diw;
+                this->m_listCopiedStr.clear();
                 break;
             }
             command_complete = true;
@@ -2904,6 +3106,43 @@ bool VimCommand::is_cmd_complete()
     /*FIXME To be complete */
     case 'y':
         possible_command = true;
+        if (m_externalCommand == 'f') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::yf;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 'F') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::yF;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 't') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::yt;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                command_complete = true; 
+            }
+            break;
+        } else if (m_externalCommand == 'T') {
+            possible_command = true;
+            command_complete = false;
+            m_commandID = COMMANDVI::yT;
+            if(this->m_actionCommand != '\0') {
+                this->m_listCopiedStr.clear();
+                command_complete = true; 
+            }
+            break;
+        }
         switch(m_actionCommand) {
         case '\0':
             if(m_currentModus == VIM_MODI::VISUAL_MODUS ||
@@ -2920,6 +3159,11 @@ bool VimCommand::is_cmd_complete()
             if (m_externalCommand == 'a') {
                 command_complete = true;
                 m_commandID = COMMANDVI::yaw;
+                this->m_listCopiedStr.clear();
+                break;
+            } else if (m_externalCommand == 'i') {
+                command_complete = true;
+                m_commandID = COMMANDVI::yiw;
                 this->m_listCopiedStr.clear();
                 break;
             }
@@ -3061,6 +3305,17 @@ bool VimCommand::is_cmd_complete()
         m_commandID = COMMANDVI::repeat;
         break;
 
+    case ';':
+        possible_command = true;
+        command_complete = true;
+        m_commandID = COMMANDVI::semicolon;
+        break;
+        
+    case ',':
+        possible_command = true;
+        command_complete = true;
+        m_commandID = COMMANDVI::comma;
+        break;
     /*=============== Paste ======================*/
     case 'p':
         possible_command = true;
@@ -3235,6 +3490,22 @@ bool VimCommand::findMatchingParentesis(wxChar lch, wxChar rch,long minPos, long
     }
     return leftPos < rightPos && leftPos != -1;
 }
+
+long VimCommand::findCharInLine(wxChar key, long setup, bool posPrev, bool reFind)
+{
+    long i = setup + ((posPrev && reFind)? setup: 0);
+    long line_start_pos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine());
+    long line_end_pos = m_ctrl->GetLineEndPosition(m_ctrl->GetCurrentLine());
+    long pos = m_ctrl->GetCurrentPos();
+    while (pos + i >= line_start_pos && pos + i <= line_end_pos) {
+        if (m_ctrl->GetCharAt(pos + i) == key) {
+            return pos + i + ((posPrev)? -setup: 0);
+        }
+        i += setup;
+    }
+    return -1;
+}
+
 /* ###############################################################
  #                      VIM BASE COMMAND                         #
  ################################################################# */

@@ -1498,6 +1498,29 @@ bool VimCommand::Command_call()
             m_ctrl->CharRight();
             break;
         }
+    case COMMANDVI::tilde: {
+        int line = m_ctrl->GetCurrentLine();
+        int start = m_ctrl->GetCurrentPos();
+        int col = m_ctrl->GetColumn(start);
+        int end = findNextCharPos(line, col);
+
+        wxString str = m_ctrl->GetTextRange(start, end);       
+        
+        bool replace = false;
+        for (wxString::iterator it = str.begin(); it != str.end(); ++it) {
+            if (wxIslower(*it)) {
+                replace = true;
+                *it = wxToupper(*it);
+            } else if (wxIsupper(*it)) {
+                replace = true;
+                *it = wxTolower(*it);
+            }
+        }
+        if (replace) {
+            m_ctrl->Replace(start, end, str);
+        }
+        m_ctrl->CharRight();
+    } break;
     default:
         if (command_move_cmd_call(repeat_command) == false) {
             repeat_command = false;
@@ -1656,6 +1679,65 @@ bool VimCommand::command_call_visual_block_mode()
     bool repeat_command = true;
     this->m_saveCommand = true;
     switch(m_commandID) {
+    case COMMANDVI::o: {
+        int pos = m_ctrl->GetCurrentPos();
+        m_ctrl->GotoPos(m_initialVisualPos);
+        m_ctrl->CharRight();
+        m_ctrl->CharLeft();
+        m_initialVisualPos = pos;
+        this->m_saveCommand = false;
+        repeat_command = false;
+    } break;
+    case COMMANDVI::O: {
+        int begin_line = m_ctrl->LineFromPosition(m_initialVisualPos);
+        int cur_line = m_ctrl->GetCurrentLine();
+        int begin_col = m_ctrl->GetColumn(m_initialVisualPos);
+        int cur_col = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+        std::swap(begin_col, cur_col);
+        m_initialVisualPos = m_ctrl->FindColumn(begin_line, begin_col);
+        m_ctrl->GotoPos(m_ctrl->FindColumn(cur_line, cur_col));
+        m_ctrl->CharRight();
+        m_ctrl->CharLeft();
+        this->m_saveCommand = false;
+        repeat_command = false;
+    } break;
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    case COMMANDVI::tilde: {
+        int begin_line = m_ctrl->LineFromPosition(m_initialVisualPos);
+        int end_line = m_ctrl->GetCurrentLine();
+        int begin_col = m_ctrl->GetColumn(m_initialVisualPos);
+        int end_col = m_ctrl->GetColumn(m_ctrl->GetCurrentPos());
+        if (end_line < begin_line) {std::swap(end_line, begin_line);}
+        if (end_col < begin_col) {std::swap(end_col, begin_col); }
+        
+        for (int line = begin_line; line <= end_line; ++line) {
+            int start = m_ctrl->FindColumn(line, begin_col);
+            int end = findNextCharPos(line, end_col);
+            if (end >= start) {
+                wxString str = m_ctrl->GetTextRange(start, end);
+                bool replace = false;
+                for (wxString::iterator it = str.begin(); it != str.end(); ++it) {
+                    if (wxIslower(*it)) {
+                        replace = true;
+                        *it = wxToupper(*it);
+                    } else if (wxIsupper(*it)) {
+                        replace = true;
+                        *it = wxTolower(*it);
+                    }
+                }
+                if (replace) {
+                    m_ctrl->Replace(start, end,str);
+                }
+            }
+        }
+        m_ctrl->GotoPos(m_ctrl->FindColumn(begin_line, begin_col));
+        m_ctrl->CharRight();
+        m_ctrl->CharLeft();
+        
+        this->m_saveCommand = false; /*FIXME: check what is vim-behaviour*/
+        m_currentModus = VIM_MODI::NORMAL_MODUS;
+        
+    } break;
     case COMMANDVI::r: {
         int begin_line = m_ctrl->LineFromPosition(m_initialVisualPos);
         int end_line = m_ctrl->GetCurrentLine();
@@ -2807,6 +2889,12 @@ bool VimCommand::is_cmd_complete()
         break;
     case '\0':
         possible_command = true;
+        break;
+    case '~':
+        m_commandID = COMMANDVI::tilde;
+        possible_command = true;
+        command_complete = true;
+        break;
     default:
         break;
     }

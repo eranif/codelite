@@ -17,7 +17,7 @@ namespace
 {
 std::unordered_set<wxChar> delimiters = { ':', '@', '.',  '!', ' ', '\t', '.', '\\', '+', '*', '-',
                                           '<', '>', '[',  ']', '(', ')',  '{', '}',  '=', '%', '#',
-                                          '^', '&', '\'', '/', '|', ',',  '~', ';',  '`' };
+                                          '^', '&', '\'', '"', '/', '|',  ',', '~',  ';', '`' };
 
 int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
 {

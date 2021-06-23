@@ -13,6 +13,36 @@
 #include <wx/app.h>
 #include <wx/stc/stc.h>
 
+namespace
+{
+std::unordered_set<wxChar> delimiters = { ':', '@', '.',  '!', ' ', '\t', '.', '\\', '+', '*', '-',
+                                          '<', '>', '[',  ']', '(', ')',  '{', '}',  '=', '%', '#',
+                                          '^', '&', '\'', '/', '|', ',',  '~', ';',  '`' };
+
+int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
+{
+    int lineNumber = ctrl->LineFromPosition(from);
+    int lineStartPos = ctrl->PositionFromLine(lineNumber);
+    if(from == lineStartPos) {
+        return from;
+    }
+
+    // when we start the loop from is ALWAYS  greater than lineStartPos
+    while(from >= lineStartPos) {
+        --from;
+        if(from < lineStartPos) {
+            ++from;
+            break;
+        }
+        wxChar ch = ctrl->GetCharAt(from);
+        if(delimiters.count(ch)) {
+            from++;
+            break;
+        }
+    }
+    return from;
+}
+
 struct wxCodeCompletionClientData : public wxClientData {
     bool m_connected;
     wxCodeCompletionClientData()
@@ -21,6 +51,7 @@ struct wxCodeCompletionClientData : public wxClientData {
     }
     virtual ~wxCodeCompletionClientData() {}
 };
+} // namespace
 
 wxCodeCompletionBoxManager::wxCodeCompletionBoxManager()
     : m_box(NULL)
@@ -116,34 +147,6 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 }
 
 void wxCodeCompletionBoxManager::DestroyCurrent() { DestroyCCBox(); }
-
-int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, bool includeNekudotaiim)
-{
-    int lineNumber = ctrl->LineFromPosition(from);
-    int lineStartPos = ctrl->PositionFromLine(lineNumber);
-    if(from == lineStartPos) {
-        return from;
-    }
-
-    // when we start the loop from is ALWAYS  greater than lineStartPos
-    while(from >= lineStartPos) {
-        --from;
-        if(from < lineStartPos) {
-            ++from;
-            break;
-        }
-        wxChar ch = ctrl->GetCharAt(from);
-        if((ch >= 97 && ch <= 122)       // a-z
-           || (ch >= 65 && ch <= 90)     // A-Z
-           || (ch == '_') || (ch == '$') // _ or $ (for PHP)
-           || (ch >= '0' && ch <= '9') || (includeNekudotaiim && (ch == ':'))) {
-            continue;
-        }
-        ++from;
-        break;
-    }
-    return from;
-}
 
 void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match, bool userTriggered)
 {

@@ -166,7 +166,8 @@ enum class COMMANDVI {
     J,
     v,
     ctrl_V,
-    V
+    V,
+    tilde
 };
 
 /**

@@ -26,13 +26,11 @@
 #ifndef named_pipe_h__
 #define named_pipe_h__
 
-#ifdef __WXMSW__
-// Windows
-#ifndef _WIN64
-#include <WinSock2.h>
-#endif
+#include "wx/defs.h"
+#ifdef __WINDOWS__ // __WINDOWS__ defined in wx/defs.h
+// includes windows.h and if wxUSE_WINSOCK2 is true includes winsock2.h
+#include "wx/msw/wrapwin.h"
 
-#include <Windows.h>
 #include <string>
 
 #define PIPE_HANDLE HANDLE

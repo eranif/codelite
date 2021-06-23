@@ -26,12 +26,11 @@
 #ifndef named_pipe_server_h__
 #define named_pipe_server_h__
 
+#include "wx/defs.h"
 #include <stdlib.h>
-#ifdef __WXMSW__
-#include <Windows.h>
-#ifndef _WIN64
-#include <WinSock2.h>
-#endif
+#ifdef __WINDOWS__ // __WINDOWS__ defined in wx/defs.h
+// includes windows.h and if wxUSE_WINSOCK2 is true includes winsock2.h
+#include "wx/msw/wrapwin.h"
 #else
 #include <unistd.h>
 #endif

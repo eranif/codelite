@@ -3,8 +3,8 @@
 #ifndef __equeue_win_h__
 #define __equeue_win_h__
 
+#include "wx/msw/wrapwin.h" // includes windows.h
 #include <list>
-#include <windows.h>
 
 template <class T> class eQueueImpl
 {

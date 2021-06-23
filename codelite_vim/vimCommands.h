@@ -305,6 +305,8 @@ private:
     long goToMatchingParentesis(long start_pos);
     bool findMatchingParentesis(wxChar lch, wxChar rch, long minPos, long maxPos, long& leftPos, long& rightPos);
     long findCharInLine(wxChar key, long setup = 1, bool posPrev = false, bool reFind = false);
+    long findNextCharPos(int line, int col);
+    long findPrevCharPos(int line, int col);
     void normal_modus(wxChar ch);
     void visual_modus(wxChar ch);
     void command_modus(wxChar ch);

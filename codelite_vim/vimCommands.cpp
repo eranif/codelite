@@ -376,37 +376,38 @@ void VimCommand::parse_cmd_string()
  */
 void VimCommand::command_modus(wxChar ch) { m_tmpbuf.Append(ch); }
 
-/**
- * This function call on the controller of the actual editor the vim-command.
- * Here is the actual implementation of the binding.
- */
-bool VimCommand::Command_call()
-{
 
-    if(m_currentModus == VIM_MODI::VISUAL_MODUS) { return Command_call_visual_mode(); }
-    if(m_currentModus == VIM_MODI::VISUAL_LINE_MODUS) { return command_call_visual_line_mode(); }
-    if(m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) { return command_call_visual_block_mode(); }
-    
-    bool repeat_command = true;
-    this->m_saveCommand = true;
+bool VimCommand::command_move_cmd_call(bool& repeat_command)
+{
     switch(m_commandID) {
         /*======= MOVEMENT ===========*/
-
-    case COMMANDVI::j:
-        m_ctrl->LineDown();
+    case COMMANDVI::j: 
+        for (int i = 0; i < std::max(1, m_repeat); ++i) {
+            m_ctrl->LineDown();
+        }
         this->m_saveCommand = false;
-        break;
+        repeat_command = false;
+     break;
     case COMMANDVI::k:
-        m_ctrl->LineUp();
+        for (int i = 0; i < std::max(1, m_repeat); ++i) {
+            m_ctrl->LineUp();
+        }
         this->m_saveCommand = false;
+        repeat_command = false;
         break;
     case COMMANDVI::h:
-        m_ctrl->CharLeft();
+        for (int i = 0; i < std::max(1, m_repeat); ++i) {
+            m_ctrl->CharLeft();
+        }
         this->m_saveCommand = false;
+        repeat_command = false;
         break;
     case COMMANDVI::l:
-        m_ctrl->CharRight();
+        for (int i = 0; i < std::max(1, m_repeat); ++i) {
+            m_ctrl->CharRight();
+        }
         this->m_saveCommand = false;
+        repeat_command = false;
         break;
     case COMMANDVI::H: {
         int firstLine = m_ctrl->GetFirstVisibleLine();
@@ -415,6 +416,7 @@ bool VimCommand::Command_call()
             m_ctrl->LineUp();
         }
         this->m_saveCommand = false;
+        repeat_command = false;
     } break;
     case COMMANDVI::M: {
         int medLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen() / 2;
@@ -429,6 +431,7 @@ bool VimCommand::Command_call()
             }
         }
         this->m_saveCommand = false;
+        repeat_command = false;
     } break;
     case COMMANDVI::L: {
         int lastLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
@@ -437,22 +440,26 @@ bool VimCommand::Command_call()
             m_ctrl->LineDown();
         }
         this->m_saveCommand = false;
+        repeat_command = false;
     } break;
 
     case COMMANDVI::_0:
         m_ctrl->Home();
         this->m_saveCommand = false;
+        repeat_command = false;
         break;
     case COMMANDVI::_$:
         m_ctrl->LineEnd();
         m_ctrl->CharLeft();
         this->m_saveCommand = false;
+        repeat_command = false;
         break;
     case COMMANDVI::_V:
         m_ctrl->Home();
         if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
             m_ctrl->WordRight();
         this->m_saveCommand = false;
+        repeat_command = false;
         break;
     case COMMANDVI::w:
         m_ctrl->WordRight();
@@ -479,12 +486,14 @@ bool VimCommand::Command_call()
         break;
     /*FIXME*/
     case COMMANDVI::B: {
-        m_ctrl->WordLeft();
-        bool prev_is_space = is_space_preceding(false, true);
-        while(!prev_is_space) {
-            m_ctrl->WordLeft();
-            prev_is_space = is_space_preceding(false, true);
+        long pos = m_ctrl->GetCurrentPos() - 1;
+        if (pos >= 0 && m_ctrl->GetCharAt(pos) <= 32) {
+            while (pos >= 0 && m_ctrl->GetCharAt(pos) <= 32) pos--;
         }
+        while (pos >=0 && m_ctrl->GetCharAt(pos) > 32) pos--;
+        m_ctrl->GotoPos(pos + 1);
+        m_ctrl->CharRight();
+        m_ctrl->CharLeft();
         this->m_saveCommand = false;
         break;
     }
@@ -502,37 +511,22 @@ bool VimCommand::Command_call()
             }
         }
         m_ctrl->GotoPos(end - 1);
+        m_ctrl->CharRight();
+        m_ctrl->CharLeft();
         this->m_saveCommand = false;
         break;
     }
     case COMMANDVI::E: {
-        bool single_word = is_space_following();
-        m_ctrl->WordRight();
-        if(!single_word) {
-            bool next_is_space = is_space_following();
-            while(!next_is_space) {
-                m_ctrl->WordRight();
-                next_is_space = is_space_following();
-            }
-            // m_ctrl->WordRight();
+        long pos = m_ctrl->GetCurrentPos() + 1;
+        long len = m_ctrl->GetLength();
+        if (pos < len && m_ctrl->GetCharAt(pos) <= 32) {
+            while (pos < len && m_ctrl->GetCharAt(pos) <= 32) pos++;
         }
-        /*FIME - is a sequence of white space rightly jumped?*/
+        while (pos < len && m_ctrl->GetCharAt(pos) > 32) pos++;
+        m_ctrl->GotoPos(pos - 1);
+        m_ctrl->CharRight();
+        m_ctrl->CharLeft();
         this->m_saveCommand = false;
-
-        long pos = m_ctrl->GetCurrentPos();
-        long end = m_ctrl->WordEndPosition(pos, false);
-        if(pos == end - 1) {
-            m_ctrl->WordRight();
-            long i = 1;
-            pos = m_ctrl->GetCurrentPos();
-            end = m_ctrl->WordEndPosition(pos, false);
-            while(m_ctrl->GetCharAt(end + i) == ' ') {
-                i++;
-                end = m_ctrl->WordEndPosition(pos + i, false);
-            }
-        }
-        m_ctrl->GotoPos(end - 1);
-
         break;
     }
     case COMMANDVI::F: {
@@ -633,8 +627,27 @@ bool VimCommand::Command_call()
         m_ctrl->GotoLine(m_repeat - 1);
         repeat_command = false;
         break;
+    default:
+        return false;
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    }
+    return true;
+}
 
+/**
+ * This function call on the controller of the actual editor the vim-command.
+ * Here is the actual implementation of the binding.
+ */
+bool VimCommand::Command_call()
+{
+
+    if(m_currentModus == VIM_MODI::VISUAL_MODUS) { return Command_call_visual_mode(); }
+    if(m_currentModus == VIM_MODI::VISUAL_LINE_MODUS) { return command_call_visual_line_mode(); }
+    if(m_currentModus == VIM_MODI::VISUAL_BLOCK_MODUS) { return command_call_visual_block_mode(); }
+    
+    bool repeat_command = true;
+    this->m_saveCommand = true;
+    switch(m_commandID) {
     /*========= PUT IN INSERT MODE =============*/
     case COMMANDVI::i:
         this->m_tmpbuf.Clear();
@@ -1600,7 +1613,9 @@ bool VimCommand::Command_call()
             break;
         }
     default:
-        repeat_command = false;
+        if (command_move_cmd_call(repeat_command) == false) {
+            repeat_command = false;
+        }
         break;
     }
 
@@ -1612,235 +1627,22 @@ bool VimCommand::Command_call_visual_mode()
 
     bool repeat_command = true;
     this->m_saveCommand = true;
-    long anchorPosition = 0;
     long caretPosition = 0;
+    int pos = m_ctrl->GetCurrentPos();
+    m_ctrl->SetAnchor(pos);
     switch(m_commandID) {
-        /*======= MOVEMENT ===========*/
-
-    case COMMANDVI::j:
-        m_ctrl->LineDownExtend();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::k:
-        m_ctrl->LineUpExtend();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::h:
-        m_ctrl->CharLeftExtend();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::l:
-        m_ctrl->CharRightExtend();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::H: {
-        int firstLine = m_ctrl->GetFirstVisibleLine();
-        int curLine = m_ctrl->GetCurrentLine();
-        for (; curLine > firstLine; --curLine) {
-            m_ctrl->LineUpExtend();
-        }
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::M: {
-        int medLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen() / 2;
-        int curLine = m_ctrl->GetCurrentLine();
-        if (curLine > medLine) {
-            for (; curLine > medLine; --curLine) {
-                m_ctrl->LineUpExtend();
-            }
-        } else if (curLine < medLine) {
-            for (; curLine < medLine; ++curLine) {
-                m_ctrl->LineDownExtend();
-            }
-        }
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::L: {
-        int lastLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
-        int curLine = m_ctrl->GetCurrentLine();
-        for (; curLine < lastLine; ++curLine) {
-            m_ctrl->LineDownExtend();
-        }
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::_0:
-        m_ctrl->HomeExtend();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::_$:
-        m_ctrl->LineEndExtend();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::w:
-        m_ctrl->WordRightExtend();
-        this->m_saveCommand = false;
-        break;
-    /*CHECK-ME*/
-    case COMMANDVI::W: {
-        bool single_word = is_space_following();
-        m_ctrl->WordRightExtend();
-        if(!single_word) {
-            bool next_is_space = is_space_following();
-            while(!next_is_space) {
-                m_ctrl->WordRightExtend();
-                next_is_space = is_space_following();
-            }
-            m_ctrl->WordRightExtend();
-        }
-        /*FIME - is a sequence of white space rightly jumped?*/
-        this->m_saveCommand = false;
-        break;
-    }
-    case COMMANDVI::b:
-        m_ctrl->WordLeftExtend();
-        this->m_saveCommand = false;
-        break;
-    /*FIXME*/
-    case COMMANDVI::B: {
-        m_ctrl->WordLeft();
-        bool prev_is_space = is_space_preceding(false, true);
-        while(!prev_is_space) {
-            m_ctrl->WordLeft();
-            prev_is_space = is_space_preceding(false, true);
-        }
-        this->m_saveCommand = false;
-        break;
-    }
-    case COMMANDVI::e: {
-        long pos = m_ctrl->GetCurrentPos();
-        long end = m_ctrl->WordEndPosition(pos, false);
-        if(pos == end) {
-            m_ctrl->WordRight();
-            pos = m_ctrl->GetCurrentPos();
-            end = m_ctrl->WordEndPosition(pos, false);
-        }
-        m_ctrl->SetCurrentPos(end);
-        break;
-    }
-    case COMMANDVI::E: {
-
-        bool single_word = is_space_following();
-        m_ctrl->WordRight();
-        if(!single_word) {
-            bool next_is_space = is_space_following();
-            while(!next_is_space) {
-                m_ctrl->WordRight();
-                next_is_space = is_space_following();
-            }
-            //_ctrl->WordRight();
-        }
-        /*FIME - is a sequence of white space rightly jumped?*/
-        this->m_saveCommand = false;
-
-        long pos = m_ctrl->GetCurrentPos();
-        long end = m_ctrl->WordEndPosition(pos, false);
-        if(pos == end - 1) {
-            m_ctrl->WordRight();
-            long i = 1;
-            pos = m_ctrl->GetCurrentPos();
-            end = m_ctrl->WordEndPosition(pos, false);
-            while(m_ctrl->GetCharAt(end + i) == ' ') {
-                i++;
-                end = m_ctrl->WordEndPosition(pos + i, false);
-            }
-        }
-        m_ctrl->GotoPos(end - 1);
-
-        break;
-    }
-    case COMMANDVI::F: {
-        long pos = findCharInLine(m_actionCommand, -1, false);
-        if (pos >= 0) {
-            m_ctrl->GotoPos(pos);
-            m_ctrl->CharRight();
-            m_ctrl->CharLeft();
-        }
-        m_findKey = m_actionCommand;
-        m_findStep = -1;
-        m_findPosPrev = false;
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::f: {
-        long pos = findCharInLine(m_actionCommand, 1, false);
-        if (pos >= 0) {
-            m_ctrl->GotoPos(pos);
-            m_ctrl->CharRight();
-            m_ctrl->CharLeft();
-        }
-        m_findKey = m_actionCommand;
-        m_findStep = 1;
-        m_findPosPrev = false;
-        this->m_saveCommand = false;
-    } break;
-
-    case COMMANDVI::T: {
-        long pos = findCharInLine(m_actionCommand, -1, true);
-        if (pos >= 0) {
-            m_ctrl->GotoPos(pos);
-            m_ctrl->CharRight();
-            m_ctrl->CharLeft();
-        }
-        m_findKey = m_actionCommand;
-        m_findStep = -1;
-        m_findPosPrev = true;
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::t: {
-        long pos = findCharInLine(m_actionCommand, 1, true);
-        if (pos >= 0) {
-            m_ctrl->GotoPos(pos);
-            m_ctrl->CharRight();
-            m_ctrl->CharLeft();
-        }
-        m_findKey = m_actionCommand;
-        m_findStep = 1;
-        m_findPosPrev = true;
-        this->m_saveCommand = false;
-    } break;
-
-    case COMMANDVI::G: /*====== START G =======*/
-    {
-        /*FIXME extend section*/
-        this->m_saveCommand = false;
-        switch(m_repeat) {
-        case 0:
-            m_ctrl->DocumentEndExtend();
-            break;
-        case 1:
-            m_ctrl->DocumentStartExtend();
-            break;
-        default:
-            // m_ctrl->SetSelectionStart( m_ctrl->GetCurrentPos() );
-            // m_ctrl->GotoLine(m_repeat - 1);
-            // m_ctrl->SetSelectionEnd( m_ctrl->GetCurrentPos() );
-            break;
-        }
-    } break;            /*~~~~~~~ END G ~~~~~~~~*/
-    case COMMANDVI::gg: /*====== START G =======*/
-    {
-        /*// FIXME extend section*/
-        //     this->m_saveCommand = false;
-        //     if(m_repeat == 0) {
-        //         m_repeat = 1;
-        //     }
-        //     //m_ctrl->SetSelectionStart( m_ctrl->GetCurrentPos() );
-        //     m_ctrl->GotoLine(m_repeat - 1);
-        //     m_ctrl->SetSelectionEnd( m_ctrl->GetCurrentPos() );
-        //     repeat_command = false;
-    } break;
-        /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-        /*========== DELETE AND COPY =======================*/
+    /*========== DELETE AND COPY =======================*/
 
     case COMMANDVI::d:
     case COMMANDVI::x:
     case COMMANDVI::y:
-        anchorPosition = this->m_ctrl->GetAnchor();
         caretPosition = this->m_ctrl->GetCurrentPos();
         /* vim selects under cursor too, only an issue when selecting forward and
          * deleting or yanking*/
-        if(anchorPosition < caretPosition) {
-            this->m_ctrl->SetCurrentPos(caretPosition + 1);
+        if (caretPosition > m_initialVisualPos) {
+            m_ctrl->SetSelection(m_initialVisualPos, caretPosition + 1);
+        } else {
+            m_ctrl->SetSelection(caretPosition, m_initialVisualPos + 1);
         }
 
         this->m_listCopiedStr.push_back(m_ctrl->GetSelectedText());
@@ -1851,23 +1653,29 @@ bool VimCommand::Command_call_visual_mode()
 
         if(this->m_commandID != COMMANDVI::y) {
             m_ctrl->DeleteBack();        /*? better use Clear()*/
+        } else {
+            m_ctrl->GotoPos(caretPosition);
         }
+        return repeat_command;
         break;
     default:
+        for(int i = 0; i < this->getNumRepeat(); ++i) {
+            if (command_move_cmd_call(repeat_command) == false) {
+                break;
+            }
+            if (repeat_command == false) {
+                break;
+            }
+        }
+        repeat_command = false;
         break;
     }
 
-    anchorPosition = this->m_ctrl->GetAnchor();
     caretPosition = this->m_ctrl->GetCurrentPos();
-    /*Fix issue with scintilla not selecting under the cursor like vim*/
-    if(anchorPosition > caretPosition && anchorPosition == this->m_initialVisualPos) {
-
-        this->m_ctrl->SetAnchor(m_initialVisualPos + 1);
-
-    } else if(anchorPosition <= caretPosition && anchorPosition == this->m_initialVisualPos + 1) {
-
+    if (caretPosition > m_initialVisualPos) {
         this->m_ctrl->SetAnchor(m_initialVisualPos);
-
+    } else {
+        this->m_ctrl->SetAnchor(m_initialVisualPos + 1);
     }
 
     return repeat_command;
@@ -1878,67 +1686,27 @@ bool VimCommand::command_call_visual_line_mode()
     bool repeat_command = true;
     this->m_saveCommand = false;
 
+    m_ctrl->SetAnchor(m_ctrl->GetCurrentPos());
     switch(m_commandID) {
-        /*======= MOVEMENT ===========*/
-
-    case COMMANDVI::j:
-        this->m_ctrl->LineDown();
-        break;
-    case COMMANDVI::k:
-        this->m_ctrl->LineUp();
-        break;
-
-    case COMMANDVI::H:
-        this->m_ctrl->GotoLine(m_ctrl->GetFirstVisibleLine());
-        break;
-    case COMMANDVI::M: {
-        int medLine = 0;
-        //visible lines also means lines with nothing in them unfortunately
-        int visibleLines = this->m_ctrl->LinesOnScreen();
-        int documentLines = this->m_ctrl->GetLineCount();
-
-        //always round up if half of odd
-        if(documentLines < visibleLines) {
-            double halfLines = std::ceil(static_cast<double>(documentLines)/2);
-            medLine = this->m_ctrl->GetFirstVisibleLine() +
-                static_cast<int>(halfLines);
-        } else {
-            double halfLines = std::ceil(static_cast<double>(visibleLines)/2);
-            medLine = this->m_ctrl->GetFirstVisibleLine() +
-                static_cast<int>(halfLines);
-        }
-
-        this->m_ctrl->GotoLine(medLine - 1); //-1 for zero index param
-    } break;
-    case COMMANDVI::L: {
-        int lastLine = 0;
-        int visibleLines = this->m_ctrl->LinesOnScreen();
-        int documentLines = this->m_ctrl->GetLineCount();
-
-        if(documentLines < visibleLines) {
-            lastLine = this->m_ctrl->GetFirstVisibleLine() + documentLines;
-        } else {
-            lastLine = this->m_ctrl->GetFirstVisibleLine() + visibleLines;
-        }
-
-        this->m_ctrl->GotoLine(lastLine - 1); //-1 for zero index param
-    } break;
-
-    case COMMANDVI::G: /*====== START G =======*/
-        switch(m_repeat) {
-        case 0:
-            this->m_ctrl->DocumentEnd();
-            break;
-        default:
-            this->m_ctrl->GotoLine(m_repeat - 1);
-            break;
-        }
-        break;          /*~~~~~~~ END G ~~~~~~~~*/
-    case COMMANDVI::gg: /*====== START G =======*/
-        this->m_ctrl->DocumentStart();
+    case COMMANDVI::h:
+    case COMMANDVI::l:
+    case COMMANDVI::_0:
+    case COMMANDVI::_$:
+    case COMMANDVI::_V:
+    case COMMANDVI::w:
+    case COMMANDVI::W:
+    case COMMANDVI::b:
+    case COMMANDVI::B:
+    case COMMANDVI::e:
+    case COMMANDVI::E:
+    case COMMANDVI::F:
+    case COMMANDVI::f:
+    case COMMANDVI::T:
+    case COMMANDVI::t:
+    case COMMANDVI::semicolon:
+    case COMMANDVI::comma:
         repeat_command = false;
         break;
-
         /*========== DELETE AND COPY =======================*/
     case COMMANDVI::d:
     case COMMANDVI::x:
@@ -1957,9 +1725,15 @@ bool VimCommand::command_call_visual_line_mode()
         return repeat_command;
     }
     default:
-        //do nothing
+        for(int i = 0; i < this->getNumRepeat(); ++i) {
+            if (command_move_cmd_call(repeat_command) == false) {
+                break;
+            }
+            if (repeat_command == false) {
+                break;
+            }
+        }
         repeat_command = false;
-        return repeat_command;
     }
 
     int currentLine = this->m_ctrl->GetCurrentLine();
@@ -1986,233 +1760,6 @@ bool VimCommand::command_call_visual_block_mode()
     bool repeat_command = true;
     this->m_saveCommand = true;
     switch(m_commandID) {
-    /*======= MOVEMENT ===========*/
-
-    case COMMANDVI::j:
-        m_ctrl->LineDown();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::k:
-        m_ctrl->LineUp();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::h:
-        m_ctrl->CharLeft();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::l:
-        m_ctrl->CharRight();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::H: {
-        int firstLine = m_ctrl->GetFirstVisibleLine();
-        int curLine = m_ctrl->GetCurrentLine();
-        for (; curLine > firstLine; --curLine) {
-            m_ctrl->LineUp();
-        }
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::M: {
-        int medLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen() / 2;
-        int curLine = m_ctrl->GetCurrentLine();
-        if (curLine > medLine) {
-            for (; curLine > medLine; --curLine) {
-                m_ctrl->LineUp();
-            }
-        } else if (curLine < medLine) {
-            for (; curLine < medLine; ++curLine) {
-                m_ctrl->LineDown();
-            }
-        }
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::L: {
-        int lastLine = m_ctrl->GetFirstVisibleLine() + m_ctrl->LinesOnScreen();
-        int curLine = m_ctrl->GetCurrentLine();
-        for (; curLine < lastLine; ++curLine) {
-            m_ctrl->LineDown();
-        }
-        this->m_saveCommand = false;
-    } break;
-
-    case COMMANDVI::_0:
-        m_ctrl->Home();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::_$:
-        m_ctrl->LineEnd();
-        m_ctrl->CharLeft();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::_V:
-        m_ctrl->Home();
-        if (m_ctrl->GetCharAt(m_ctrl->GetCurrentPos()) <= 32)
-            m_ctrl->WordRight();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::w:
-        m_ctrl->WordRight();
-        this->m_saveCommand = false;
-        break;
-    case COMMANDVI::W: {
-        bool single_word = is_space_following();
-        m_ctrl->WordRight();
-        if(!single_word) {
-            bool next_is_space = is_space_following();
-            while(!next_is_space) {
-                m_ctrl->WordRight();
-                next_is_space = is_space_following();
-            }
-            m_ctrl->WordRight();
-        }
-        /*FIME - is a sequence of white space rightly jumped?*/
-        this->m_saveCommand = false;
-        break;
-    }
-    case COMMANDVI::b:
-        m_ctrl->WordLeft();
-        this->m_saveCommand = false;
-        break;
-    /*FIXME*/
-    case COMMANDVI::B: {
-        m_ctrl->WordLeft();
-        bool prev_is_space = is_space_preceding(false, true);
-        while(!prev_is_space) {
-            m_ctrl->WordLeft();
-            prev_is_space = is_space_preceding(false, true);
-        }
-        this->m_saveCommand = false;
-        break;
-    }
-    case COMMANDVI::e: {
-        long pos = m_ctrl->GetCurrentPos();
-        long end = m_ctrl->WordEndPosition(pos, false);
-        if(pos >= end - 1) {
-            m_ctrl->WordRight();
-            long i = 1;
-            pos = m_ctrl->GetCurrentPos();
-            end = m_ctrl->WordEndPosition(pos, false);
-            while(m_ctrl->GetCharAt(end + i) == ' ') {
-                i++;
-                end = m_ctrl->WordEndPosition(pos + i, false);
-            }
-        }
-        m_ctrl->GotoPos(end - 1);
-        this->m_saveCommand = false;
-        break;
-    }
-    case COMMANDVI::E: {
-        bool single_word = is_space_following();
-        m_ctrl->WordRight();
-        if(!single_word) {
-            bool next_is_space = is_space_following();
-            while(!next_is_space) {
-                m_ctrl->WordRight();
-                next_is_space = is_space_following();
-            }
-            // m_ctrl->WordRight();
-        }
-        /*FIME - is a sequence of white space rightly jumped?*/
-        this->m_saveCommand = false;
-
-        long pos = m_ctrl->GetCurrentPos();
-        long end = m_ctrl->WordEndPosition(pos, false);
-        if(pos == end - 1) {
-            m_ctrl->WordRight();
-            long i = 1;
-            pos = m_ctrl->GetCurrentPos();
-            end = m_ctrl->WordEndPosition(pos, false);
-            while(m_ctrl->GetCharAt(end + i) == ' ') {
-                i++;
-                end = m_ctrl->WordEndPosition(pos + i, false);
-            }
-        }
-        m_ctrl->GotoPos(end - 1);
-
-        break;
-    }
-    case COMMANDVI::F: {
-        long pos = findCharInLine(m_actionCommand, -1, false);
-        if (pos >= 0) {
-            m_ctrl->GotoPos(pos);
-            m_ctrl->CharRight();
-            m_ctrl->CharLeft();
-        }
-        m_findKey = m_actionCommand;
-        m_findStep = -1;
-        m_findPosPrev = false;
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::f: {
-        long pos = findCharInLine(m_actionCommand, 1, false);
-        if (pos >= 0) {
-            m_ctrl->GotoPos(pos);
-            m_ctrl->CharRight();
-            m_ctrl->CharLeft();
-        }
-        m_findKey = m_actionCommand;
-        m_findStep = 1;
-        m_findPosPrev = false;
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::T: {
-        long pos = findCharInLine(m_actionCommand, -1, true);
-        if (pos >= 0) {
-            m_ctrl->GotoPos(pos);
-            m_ctrl->CharRight();
-            m_ctrl->CharLeft();
-        }
-        m_findKey = m_actionCommand;
-        m_findStep = -1;
-        m_findPosPrev = true;
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::t: {
-        long pos = findCharInLine(m_actionCommand, 1, true);
-        if (pos >= 0) {
-            m_ctrl->GotoPos(pos);
-            m_ctrl->CharRight();
-            m_ctrl->CharLeft();
-        }
-        m_findKey = m_actionCommand;
-        m_findStep = 1;
-        m_findPosPrev = true;
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::ctrl_D: {
-        int lines = m_ctrl->LinesOnScreen() / 2;
-        m_ctrl->SetFirstVisibleLine(std::min(m_ctrl->GetLineCount(), m_ctrl->GetFirstVisibleLine() + lines));
-        m_ctrl->MoveCaretInsideView();
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::ctrl_U: {
-        int lines = m_ctrl->LinesOnScreen() / 2;
-        m_ctrl->SetFirstVisibleLine(std::max(0, m_ctrl->GetFirstVisibleLine() - lines));
-        m_ctrl->MoveCaretInsideView();
-        this->m_saveCommand = false;
-    } break;
-    case COMMANDVI::G: /*====== START G =======*/
-        this->m_saveCommand = false;
-        switch(m_repeat) {
-        case 0:
-            m_ctrl->DocumentEnd();
-            break;
-        case 1:
-            m_ctrl->DocumentStart();
-            break;
-        default:
-            m_ctrl->GotoLine(m_repeat - 1);
-            break;
-        }
-        break;          /*~~~~~~~ END G ~~~~~~~~*/
-    case COMMANDVI::gg: /*====== START G =======*/
-        this->m_saveCommand = false;
-        if(m_repeat == 0) { m_repeat = 1; }
-        m_ctrl->GotoLine(m_repeat - 1);
-        repeat_command = false;
-        break;
-    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-    
     case COMMANDVI::r: {
         int begin_line = m_ctrl->LineFromPosition(m_initialVisualPos);
         int end_line = m_ctrl->GetCurrentLine();
@@ -2294,6 +1841,7 @@ bool VimCommand::command_call_visual_block_mode()
 
     }break;
     default:
+        command_move_cmd_call(repeat_command);
         break;
     }
     

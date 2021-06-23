@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
     // as described in http://jrfonseca.dyndns.org/projects/gnu-win32/software/drmingw/
     // load the exception handler dll so we will get Dr MinGW at runtime
-    gHandler = LoadLibrary("exchndl.dll");
+    gHandler = LoadLibrary(wxS("exchndl.dll"));
 #endif
 
     int max_requests(5000);

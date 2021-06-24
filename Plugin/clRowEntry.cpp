@@ -921,17 +921,39 @@ const wxRect& clRowEntry::GetChoiceRect(size_t col) const
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
-    dc.SetPen(wxPen(colours.GetDarkBorderColour(), 1));
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawRoundedRectangle(rect, 0);
+    wxColour text_colour = colours.GetItemTextColour();
+    if(colours.IsLightTheme()) {
+        text_colour = text_colour.ChangeLightness(120);
+    }
 
     if(checked) {
-        wxRect innerRect = rect;
-        innerRect.Deflate(3);
-        const wxColour& penColour = colours.IsLightTheme() ? wxColour(*wxBLACK).ChangeLightness(130) : *wxWHITE;
-        dc.SetPen(penColour);
-        dc.SetBrush(penColour);
-        dc.DrawRectangle(innerRect);
+        dc.SetPen(text_colour);
+        dc.SetBrush(text_colour);
+        dc.DrawRoundedRectangle(rect, 2.0);
+
+        // draw the checkbox
+        wxRect inner_rect = rect;
+        inner_rect.Deflate(2);
+
+        wxPoint left_middle = inner_rect.GetTopLeft();
+        left_middle.y += inner_rect.GetHeight() / 2;
+
+        wxPoint bottom_middle = inner_rect.GetBottomLeft();
+        bottom_middle.x += inner_rect.GetWidth() / 4;
+        bottom_middle.y -= 2;
+
+        wxPoint top_right = inner_rect.GetTopRight();
+        top_right.y += 2;
+
+        const wxColour& penColour = colours.GetBgColour();
+        dc.SetPen(wxPen(penColour, 3));
+        dc.DrawLine(left_middle, bottom_middle);
+        dc.DrawLine(bottom_middle, top_right);
+
+    } else {
+        dc.SetPen(wxPen(text_colour, 2));
+        dc.SetBrush(*wxTRANSPARENT_BRUSH);
+        dc.DrawRoundedRectangle(rect, 2.0);
     }
 }
 

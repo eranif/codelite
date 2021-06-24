@@ -54,18 +54,18 @@ Source: "{#BUILD_BIN_DIR}\codelite-exec.exe"; DestDir: "{app}"; Flags: ignorever
 Source: "{#BUILD_BIN_DIR}\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
 
 ;; ---- wxWidgets DLLs
-Source: "{#WXWIN}\lib\gcc_dll\wxbase315u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxbase315u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxbase315u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw315u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase316u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase316u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxbase316u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- MinGW64 Dlls
 Source: "{#MINGW_DIR}\libgcc_s_seh-1.dll"; DestDir: "{app}"; Flags: ignoreversion;

@@ -485,8 +485,8 @@ void BuildTab::SelectFirstErrorOrWarning(size_t from)
 {
     size_t line_to_select = GetNextLineWithErrorOrWarning(from);
     if(line_to_select != wxString::npos) {
-        m_view->EnsureVisible(m_view->RowToItem(line_to_select));
         m_view->UnselectAll();
+        m_view->SetFirstVisibleRow(line_to_select);
         m_view->SelectRow(line_to_select);
     }
 }

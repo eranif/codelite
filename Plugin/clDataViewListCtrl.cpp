@@ -604,6 +604,7 @@ void clDataViewListCtrl::SetFirstVisibleRow(size_t row)
         return;
     }
     m_model.SetFirstItemOnScreen(row_ptr);
+    UpdateScrollBar();
     Refresh();
 }
 

@@ -564,6 +564,8 @@ void clControlWithItems::SetCustomRenderer(clControlWithItemsRowRenderer* render
 void clControlWithItems::SetDefaultFont(const wxFont& font)
 {
     m_defaultFont = font;
+    // update the temp DC with the default font
+    GetTempDC().SetFont(font);
     if(m_viewHeader) {
         m_viewHeader->SetHeaderFont(GetDefaultFont());
     }

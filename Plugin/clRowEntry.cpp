@@ -53,6 +53,14 @@ struct clClipperHelper {
         }
     }
 };
+
+void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
+{
+    wxColour c = win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus();
+    dc.SetPen(c);
+    dc.SetBrush(c);
+    dc.DrawRectangle(rect);
+}
 } // namespace
 
 #ifdef __WXMSW__
@@ -90,10 +98,7 @@ int clRowEntry::Y_SPACER = 2;
 
 void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
-    wxColour c = win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus();
-    dc.SetPen(c);
-    dc.SetBrush(c);
-    dc.DrawRectangle(rect);
+    DoDrawSimpleSelection(win, dc, rect, colours);
 }
 
 clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
@@ -496,7 +501,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         }
 
         // Draw the text
-        wxRect textRect(dc.GetTextExtent(cell.GetValueString()));
+        wxRect textRect(m_tree->GetTempDC().GetTextExtent(cell.GetValueString()));
         textRect = textRect.CenterIn(rowRect, wxVERTICAL);
         int textY = textRect.GetY();
         int textX = (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset;
@@ -557,7 +562,7 @@ void clRowEntry::RenderText(wxWindow* win, wxDC& dc, const clColours& colours, c
         for(size_t i = 0; i < arr.size(); ++i) {
             wxString str = arr[i];
             bool is_match = (i == 1); // the middle entry is always the matched string
-            wxSize sz = dc.GetTextExtent(str);
+            wxSize sz = m_tree->GetTempDC().GetTextExtent(str);
             rowRect.SetX(xx);
             rowRect.SetWidth(sz.GetWidth());
             if(is_match) {
@@ -681,11 +686,11 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
     }
 
     clCellValue& cell = GetColumn(col);
-    wxFont f = GetFont().IsOk() ? GetFont() : m_tree->GetDefaultFont();
-    if(cell.GetFont().IsOk()) {
-        f = cell.GetFont();
-    }
-    dc.SetFont(f);
+    // wxFont f = GetFont().IsOk() ? GetFont() : m_tree->GetDefaultFont();
+    // if(cell.GetFont().IsOk()) {
+    //     f = cell.GetFont();
+    // }
+    // dc.SetFont(f);
 
     int item_width = X_SPACER;
     if(cell.IsBool()) {
@@ -697,7 +702,7 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
         item_width += X_SPACER;
     }
 
-    wxSize textSize = dc.GetTextExtent(cell.GetValueString());
+    wxSize textSize = m_tree->GetTempDC().GetTextExtent(cell.GetValueString());
     if((col == 0) && !IsListItem()) {
         // always make room for the twist button
         item_width += rowHeight;
@@ -923,11 +928,10 @@ void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colour
     if(checked) {
         wxRect innerRect = rect;
         innerRect.Deflate(3);
-        const wxColour& penColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour();
-        dc.SetPen(wxPen(penColour, 2));
-
-        dc.DrawLine(innerRect.GetTopLeft(), innerRect.GetBottomRight());
-        dc.DrawLine(innerRect.GetTopRight(), innerRect.GetBottomLeft());
+        const wxColour& penColour = colours.IsLightTheme() ? wxColour(*wxBLACK).ChangeLightness(130) : *wxWHITE;
+        dc.SetPen(penColour);
+        dc.SetBrush(penColour);
+        dc.DrawRectangle(innerRect);
     }
 }
 

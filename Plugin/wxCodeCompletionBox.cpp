@@ -58,14 +58,11 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     SetBackgroundColour(colours.GetBorderColour());
     m_mainPanel->SetBackgroundColour(colours.GetBorderColour());
-
-    m_ccFont = lexer->GetFontForSyle(0, this);
-#if wxCHECK_VERSION(3, 1, 2)
-    m_ccFont.SetFractionalPointSize(m_ccFont.GetFractionalPointSize() * 0.8);
-#endif
+    m_ccFont = ColoursAndFontsManager::Get().GetFixedFont(true);
 
     // m_ccFont.SetPointSize(m_ccFont.GetPointSize() - clGetSize(1, this));
     m_list->SetNativeTheme(false);
+    m_list->SetRendererType(eRendererType::RENDERER_DIRECT2D);
     m_list->SetColours(colours);
     m_list->SetDefaultFont(m_ccFont);
     m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);

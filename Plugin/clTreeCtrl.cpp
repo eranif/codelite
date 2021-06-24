@@ -19,6 +19,10 @@
 #include <wx/utils.h>
 #include <wx/wupdlock.h>
 
+#if CL_BUILD
+#include "globals.h"
+#endif
+
 #ifdef __WXMSW__
 #include <uxtheme.h>
 #endif
@@ -38,9 +42,11 @@ wxDEFINE_EVENT(wxEVT_TREE_CHOICE, wxTreeEvent);
 
 namespace
 {
-void MSWSetNativeTheme(wxWindow* win)
+void SetNativeThemeMSW(wxWindow* win)
 {
-#if defined(__WXMSW__) && defined(_WIN64)
+#if CL_BUILD
+    ::MSWSetWindowDarkTheme(win);
+#else
     SetWindowTheme((HWND)win->GetHWND(), wxT("Explorer"), NULL);
 #endif
 }
@@ -81,7 +87,7 @@ wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc, eRendererType t)
     } else {
         return dc;
     }
-
+    context->SetAntialiasMode(wxANTIALIAS_DEFAULT);
     gdc.SetGraphicsContext(context);
     return gdc;
 }
@@ -144,7 +150,7 @@ void clTreeCtrl::DoInitialize()
     // There is always a header
     GetHeader()->Add("");
     SetShowHeader(false);
-    MSWSetNativeTheme(this);
+    SetNativeThemeMSW(this);
 }
 
 clTreeCtrl::~clTreeCtrl()

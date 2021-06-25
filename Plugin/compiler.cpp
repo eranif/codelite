@@ -232,31 +232,35 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         if(regexType == kRegexGNU) {
             AddPattern(kSevError,
-                       "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal "
+                       "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]*)([:0-9]*)(: )((fatal "
                        "error)|(error)|(undefined reference)|([\\t ]*required from))",
                        1, 3, 4);
-            AddPattern(kSevError,
-                       "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ "
-                       "*)(:)(\\(\\.text\\+[0-9a-fx]*\\))",
-                       3, 1, -1);
-            AddPattern(kSevError,
-                       "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ "
-                       "*)(:)([0-9]+)(:)",
-                       3, 1, -1);
+            AddPattern(
+                kSevError,
+                "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ "
+                "*)(:)(\\(\\.text\\+[0-9a-fx]*\\))",
+                3, 1, -1);
+            AddPattern(
+                kSevError,
+                "^([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([^ ][a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ "
+                "*)(:)([0-9]+)(:)",
+                3, 1, -1);
             AddPattern(kSevError, "undefined reference to", -1, -1, -1);
             AddPattern(kSevError, "\\*\\*\\* \\[[a-zA-Z\\-_0-9 ]+\\] (Error)", -1, -1, -1);
 
+            AddPattern(
+                kSevWarning,
+                "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ \\t]*(warning|required)", 1,
+                3, 4);
+            AddPattern(kSevWarning, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)",
+                       1, 3, -1);
             AddPattern(kSevWarning,
-                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?[ \\t]*(warning|required)",
-                       1, 3, 4);
-            AddPattern(kSevWarning, "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?( note)", 1, 3,
-                       -1);
-            AddPattern(kSevWarning,
-                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)", 1, 3,
-                       -1);
-            AddPattern(kSevWarning,
-                       "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-]+ *)(:)([0-9]+ *)(:)([0-9:]*)?",
-                       2, 4, -1);
+                       "([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?([ ]+instantiated)", 1,
+                       3, -1);
+            AddPattern(
+                kSevWarning,
+                "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?", 2,
+                4, -1);
 
             AddDefaultGnuComplierOptions();
             AddDefaultGnuLinkerOptions();
@@ -834,7 +838,7 @@ bool Compiler::Matches(const wxString& line, PatternMatch* match_result)
     if(!match_result) {
         return false;
     }
-    
+
     // warnings must be first!
     for(auto& warn_pattern : m_warningPatterns) {
         if(IsMatchesPattern(warn_pattern, kSevWarning, line, match_result)) {

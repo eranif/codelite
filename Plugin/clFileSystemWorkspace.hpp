@@ -11,15 +11,16 @@
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clRemoteBuilder.hpp"
+#include "clShellHelper.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "compiler.h"
 #include "macros.h"
+#include "parse_thread.h"
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 #include <wx/arrstr.h>
-#include "parse_thread.h"
 
 class clFileSystemWorkspaceView;
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
@@ -38,6 +39,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
     clDebuggerTerminalPOSIX m_debuggerTerminal;
     int m_execPID = wxNOT_FOUND;
     clBacktickCache::ptr_t m_backtickCache;
+    clShellHelper m_shell_helper;
 
 protected:
     void CacheFiles(bool force = false);

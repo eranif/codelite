@@ -12,7 +12,7 @@ class WXDLLIMPEXP_CL clTempFile
     bool m_deleteOnDestruct = true;
 
 public:
-    clTempFile();
+    clTempFile(const wxString& ext = "txt");
     ~clTempFile();
     /**
      * @brief wite content to the temp file

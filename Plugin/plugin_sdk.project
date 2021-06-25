@@ -55,6 +55,8 @@
     <File Name="clPythonLocator.hpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="FileSystemWorkspace">
+    <File Name="clShellHelper.cpp"/>
+    <File Name="clShellHelper.hpp"/>
     <File Name="clFSWNewConfigDlg.h"/>
     <File Name="clFSWNewConfigDlg.cpp"/>
     <File Name="NewFileSystemWorkspaceDialog.cpp"/>

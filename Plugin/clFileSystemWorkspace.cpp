@@ -663,11 +663,31 @@ clEnvList_t clFileSystemWorkspace::GetEnvList()
     // Add the global variables
     envstr += envMap.String();
     envstr += "\n";
+
+    // include special environment variable with the default compiler paths
+    const wxString& compiler_name = GetConfig()->GetCompiler();
+    if(!compiler_name.empty()) {
+        auto cmp = BuildSettingsConfigST::Get()->GetCompiler(compiler_name);
+        auto paths = cmp->GetDefaultIncludePaths();
+        if(!paths.empty()) {
+            wxString env_value;
+            for(const auto& path : paths) {
+                if(!env_value.empty()) {
+                    env_value << ";";
+                }
+                env_value << path;
+            }
+            envstr += "CXX_INCLUDE_PATHS=" + env_value + "\n";
+        }
+    }
+
+    // and finally, include the user environment variables
     envstr += GetConfig()->GetEnvironment();
 
     // Append the workspace environment
     envstr = MacroManager::Instance()->Expand(envstr, nullptr, wxEmptyString);
     envList = FileUtils::CreateEnvironment(envstr);
+
     return envList;
 }
 

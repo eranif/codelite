@@ -45,7 +45,7 @@ endfunction()
 if (UNIX)
     execute_process(COMMAND /bin/sh "-c" "uname -s|grep MSYS|cut -d_ -f1"
                     OUTPUT_VARIABLE _OS_NAME OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(FIND ${_OS_NAME} "MSYS" POS)
+    string(FIND "${_OS_NAME}" "MSYS" POS)
     if (POS GREATER -1)
         set(MSYS_SHELL 1)
         set(MSW 1)

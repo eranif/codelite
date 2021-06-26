@@ -30,11 +30,14 @@
 #include "event_notifier.h"
 #include "gdb_parser_incl.h"
 #include "gdb_result_parser.h"
+#include "gdbmi.hpp"
 #include "gdbmi_parse_thread_info.h"
 #include "precompiled_header.h"
 #include "procutils.h"
+#include "wx/buffer.h"
 #include "wx/tokenzr.h"
 #include <algorithm>
+#include <sstream>
 #include <wx/regex.h>
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
@@ -103,52 +106,16 @@ static wxString wxGdbFixValue(const wxString& value)
     return display_line;
 }
 
-static wxString NextValue(wxString& line, wxString& key)
+static void ParseStackEntry(gdbmi::Node& frame, StackEntry& entry)
 {
-    // extract the key name first
-    if(line.StartsWith(wxT(","))) {
-        line.Remove(0, 1);
-    }
-
-    key = line.BeforeFirst(wxT('='));
-    line = line.AfterFirst(wxT('"'));
-    wxString token;
-    bool cont(true);
-
-    while(!line.IsEmpty() && cont) {
-        wxChar ch = line.GetChar(0);
-        line.Remove(0, 1);
-
-        if(ch == wxT('"')) {
-            cont = false;
-        } else {
-            token << ch;
-        }
-    }
-    return token;
-}
-
-static void ParseStackEntry(const wxString& line, StackEntry& entry)
-{
-    wxString tmp(line);
-    wxString key, value;
-
-    value = NextValue(tmp, key);
-    while(value.IsEmpty() == false) {
-        if(key == wxT("level")) {
-            entry.level = value;
-        } else if(key == wxT("addr")) {
-            entry.address = value;
-        } else if(key == wxT("func")) {
-            entry.function = value;
-        } else if(key == wxT("file")) {
-            entry.file = value;
-        } else if(key == wxT("line")) {
-            entry.line = value;
-        } else if(key == wxT("fullname")) {
-            entry.file = value;
-        }
-        value = NextValue(tmp, key);
+    entry.level = frame["level"].value;
+    entry.address = frame["addr"].value;
+    entry.function = frame["func"].value;
+    entry.file = frame["file"].value;
+    entry.line = frame["line"].value;
+    const auto& fullname = frame["fullname"].value;
+    if(!fullname.empty()) {
+        entry.file = fullname;
     }
 }
 
@@ -173,128 +140,35 @@ static std::map<wxString, wxString> g_fileCache;
 
 bool DbgCmdHandlerGetLine::ProcessOutput(const wxString& line)
 {
-#if defined(__WXGTK__) || defined(__WXMAC__)
-    // Output from "-stack-info-frame"
-    //^done,frame={level="0",addr="0x000000000043b227",func="MyClass::DoFoo",file="./Foo.cpp",fullname="/full/path/to/Foo.cpp",line="30"}
+    //  ^done,line="9",file="C:\\src\\gdbmi_parser\\src\\main.cpp",fullname="C:\\src\\gdbmi_parser\\src\\main.cpp",macro-info="0"
+    gdbmi::Parser parser;
+    gdbmi::ParsedResult result;
 
-    wxString tmpLine;
-    line.StartsWith(wxT("^done,frame={"), &tmpLine);
-    tmpLine.RemoveLast();
-    if(tmpLine.IsEmpty()) {
-        return false;
+    auto cb = line.mb_str(wxConvUTF8);
+    parser.parse(cb.data(), &result);
+
+    wxString filename;
+    wxString lineNumber;
+    long line_number = 0;
+
+    // read the file name, giving fullname priority
+    if(!result["fullname"].value.empty()) {
+        filename = result["fullname"].value;
+    } else if(!result["file"].value.empty()) {
+        filename = result["file"].value;
     }
 
-    StackEntry entry;
-    ParseStackEntry(tmpLine, entry);
-
-    long line_number;
-    entry.line.ToLong(&line_number);
+    if(!result["line"].value.empty()) {
+        lineNumber = result["line"].value;
+        lineNumber.ToCLong(&line_number);
+    }
 
     clDebugEvent evtFileLine(wxEVT_DEBUG_SET_FILELINE);
-    evtFileLine.SetFileName(entry.file);
+    evtFileLine.SetFileName(filename);
     evtFileLine.SetLineNumber(line_number);
     evtFileLine.SetSshAccount(m_gdb->GetSshAccount());
     evtFileLine.SetIsSSHDebugging(m_gdb->IsSSHDebugging());
     EventNotifier::Get()->AddPendingEvent(evtFileLine);
-
-#else
-    // Output of -file-list-exec-source-file
-    //^done,line="36",file="a.cpp",fullname="C:/testbug1/a.cpp"
-    //^done,line="2",file="main.cpp",fullname="/Users/eran/main.cpp"
-
-    // By default we use the 'fullname' as our file name. however,
-    // if we are under Windows and the fullname contains the string '/cygdrive'
-    // we fallback to use the 'filename' since cygwin gdb report fullname in POSIX / Cygwin paths
-    // which can not be used by codelite
-    wxString strLine, fullName, filename;
-    wxStringTokenizer tkz(line, wxT(","));
-    if(tkz.HasMoreTokens()) {
-        // skip first
-        tkz.NextToken();
-    }
-    // line=
-    if(tkz.HasMoreTokens()) {
-        strLine = tkz.NextToken();
-    } else {
-        return false;
-    }
-    // file=
-    if(tkz.HasMoreTokens()) {
-        filename = tkz.NextToken();
-    }
-
-    // fullname=
-    if(tkz.HasMoreTokens()) {
-        wxString tmpfull_name = tkz.NextToken();
-        if(tmpfull_name.StartsWith("fullname")) {
-            fullName = tmpfull_name;
-        }
-    } else {
-        return false;
-    }
-
-    // line="36"
-    strLine = strLine.AfterFirst(wxT('"'));
-    strLine = strLine.BeforeLast(wxT('"'));
-    long lineno;
-    strLine.ToLong(&lineno);
-
-    // remove quotes
-    fullName = fullName.AfterFirst(wxT('"'));
-    fullName = fullName.BeforeLast(wxT('"'));
-    fullName.Replace(wxT("\\\\"), wxT("\\"));
-    fullName.Trim().Trim(false);
-
-    if(fullName.StartsWith(wxT("/")) && !m_gdb->IsSSHDebugging()) {
-        // fallback to use file="<..>"
-        filename = filename.AfterFirst(wxT('"'));
-        filename = filename.BeforeLast(wxT('"'));
-        filename.Replace(wxT("\\\\"), wxT("\\"));
-
-        filename.Trim().Trim(false);
-        fullName = filename;
-
-        // FIXME: change cypath => fullName
-        if(fullName.StartsWith(wxT("/"))) {
-
-            if(g_fileCache.find(fullName) != g_fileCache.end()) {
-                fullName = g_fileCache.find(fullName)->second;
-
-            } else {
-
-                // file attribute also contains cygwin path
-                wxString cygwinConvertPath = m_gdb->GetDebuggerInformation().cygwinPathCommand;
-                cygwinConvertPath.Trim().Trim(false);
-                if(!cygwinConvertPath.IsEmpty()) {
-                    // we got a conversion command from the user, use it
-                    cygwinConvertPath.Replace(wxT("$(File)"), wxString::Format(wxT("%s"), fullName.c_str()));
-                    wxArrayString cmdOutput;
-                    ProcUtils::SafeExecuteCommand(cygwinConvertPath, cmdOutput);
-                    if(cmdOutput.IsEmpty() == false) {
-                        cmdOutput.Item(0).Trim().Trim(false);
-                        wxString convertedPath = cmdOutput.Item(0);
-
-                        // Keep the file in the cache ( regardless of the validity of the result)
-                        g_fileCache[fullName] = convertedPath;
-
-                        // if the convertedPath does exists on the disk,
-                        // replace the file name with it
-                        if(wxFileName::FileExists(convertedPath)) {
-                            fullName = convertedPath;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    clDebugEvent evtFileLine(wxEVT_DEBUG_SET_FILELINE);
-    evtFileLine.SetFileName(fullName);
-    evtFileLine.SetLineNumber(lineno);
-    evtFileLine.SetSshAccount(m_gdb->GetSshAccount());
-    evtFileLine.SetIsSSHDebugging(m_gdb->IsSSHDebugging());
-    EventNotifier::Get()->AddPendingEvent(evtFileLine);
-#endif
     return true;
 }
 
@@ -757,32 +631,25 @@ bool DbgCmdHandlerEvalExpr::ProcessOutput(const wxString& line)
 
 bool DbgCmdStackList::ProcessOutput(const wxString& line)
 {
-    wxString tmpLine(line);
-    line.StartsWith(wxT("^done,stack=["), &tmpLine);
+    // 00000372^done,stack=[frame={level="0",addr="0x00007ff77a9853b0",func="gdbmi::ParsedResult::operator[]",file="C:/src/gdbmi_parser/src/gdbmi.hpp",fullname="C:\\src\\gdbmi_parser\\src\\gdbmi.hpp",line="132",arch="i386:x86-64"},
+    //                      frame={level="1",addr="0x00007ff77a9816ec",func="main",file="C:\\src\\gdbmi_parser\\src\\main.cpp",fullname="C:\\src\\gdbmi_parser\\src\\main.cpp",line="20",arch="i386:x86-64"}]
 
-    tmpLine = tmpLine.Trim();
-    tmpLine = tmpLine.Trim(false);
+    gdbmi::Parser parser;
+    gdbmi::ParsedResult result;
 
-    tmpLine.RemoveLast();
-    //--------------------------------------------------------
-    // tmpLine contains now string with the following format:
-    // frame={name="Value",...},frame={name="Value",...}
-    wxString remainder(tmpLine);
+    auto cb = line.mb_str(wxConvUTF8);
+    parser.parse(cb.data(), &result);
+    const auto& frames = result["stack"].children;
+    if(frames.empty()) {
+        return false;
+    }
+
     StackEntryArray stackArray;
-    while(true) {
-        tmpLine = tmpLine.AfterFirst(wxT('{'));
-        if(tmpLine.IsEmpty()) {
-            break;
-        }
-
-        remainder = tmpLine.AfterFirst(wxT('}'));
-        tmpLine = tmpLine.BeforeFirst(wxT('}'));
-
+    stackArray.reserve(frames.size());
+    for(size_t i = 0; i < frames.size(); ++i) {
         StackEntry entry;
-        ParseStackEntry(tmpLine, entry);
+        ParseStackEntry((*frames[i].get()), entry);
         stackArray.push_back(entry);
-
-        tmpLine = remainder;
     }
 
     // Send it as an event

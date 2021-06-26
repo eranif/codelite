@@ -27,6 +27,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Source Files">
+    <File Name="gdbmi.hpp"/>
+    <File Name="gdbmi.cpp"/>
     <File Name="debuggergdb.cpp"/>
     <File Name="dbgcmd.cpp"/>
     <File Name="gdbmi_parse_thread_info.h"/>

@@ -703,7 +703,7 @@ bool DbgGdb::QueryFileLine()
 
 bool DbgGdb::QueryLocals()
 {
-    return WriteCommand(wxT("-stack-list-variables --skip-unavailable --all-values"),
+    return WriteCommand(wxT("-stack-list-variables --skip-unavailable --simple-values"),
                         new DbgCmdHandlerLocals(m_observer));
 }
 
@@ -827,7 +827,8 @@ void DbgGdb::Poke()
             continue;
         }
 
-        if(curline.StartsWith(wxT("~")) || curline.StartsWith(wxT("&")) || curline.StartsWith("@")) {
+        wxChar prefix = curline[0];
+        if(prefix == '~' || prefix == '&' || prefix == '@') {
 
             // lines starting with ~ are considered "console stream" message
             // and are important to the CLI handler
@@ -924,7 +925,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString& line, wxString& id)
         DbgCmdHandler* handler = PopHandler(id);
         if(handler) {
             handler->ProcessOutput(line);
-            delete handler;
+            wxDELETE(handler);
         }
 
     } else if(line.StartsWith(wxT("^running"))) {
@@ -956,7 +957,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString& line, wxString& id)
             DbgCmdHandler* handler = PopHandler(id);
             if(handler) {
                 handler->ProcessOutput(line);
-                delete handler;
+                wxDELETE(handler);
             }
         }
     }
@@ -1311,7 +1312,6 @@ void DbgGdb::OnDataRead(clProcessEvent& e)
     if(!m_gdbProcess || !m_gdbProcess->IsAlive())
         return;
 
-    clDEBUG() << "GDB>>" << bufferRead;
     wxArrayString lines = wxStringTokenize(bufferRead, "\n", wxTOKEN_STRTOK);
     if(lines.IsEmpty()) {
         return;
@@ -1330,17 +1330,20 @@ void DbgGdb::OnDataRead(clProcessEvent& e)
         lines.RemoveAt(lines.GetCount() - 1);
     }
 
+    // make sure we have enough memory for the new lines
+    m_gdbOutputArr.reserve(m_gdbOutputArr.size() + lines.size());
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         wxString& line = lines.Item(i);
 
         line.Replace(wxT("(gdb)"), wxT(""));
         line.Trim().Trim(false);
-        if(line.IsEmpty() == false) {
-            m_gdbOutputArr.Add(line);
+        if(line.empty()) {
+            continue;
         }
+        m_gdbOutputArr.Add(line);
     }
 
-    if(m_gdbOutputArr.IsEmpty() == false) {
+    if(!m_gdbOutputArr.empty()) {
         // Trigger GDB processing
         Poke();
     }
@@ -1418,6 +1421,11 @@ void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)
 
 void DbgGdb::GetDebugeePID(const wxString& line)
 {
+    // if we already found the PID, return
+    if(m_debuggeePid != wxNOT_FOUND) {
+        return;
+    }
+
     if(m_debuggeePid == wxNOT_FOUND) {
         if(GetIsRemoteDebugging()) {
             m_debuggeePid = m_gdbProcess->GetPid();

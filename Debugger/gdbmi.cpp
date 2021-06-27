@@ -10,26 +10,26 @@
 
 namespace
 {
-std::unordered_map<std::string, gdbmi::eToken> words = {
+std::unordered_map<wxString, gdbmi::eToken> words = {
     { "done", gdbmi::T_DONE },   { "running", gdbmi::T_RUNNING }, { "connected", gdbmi::T_CONNECTED },
     { "error", gdbmi::T_ERROR }, { "exit", gdbmi::T_EXIT },       { "stopped", gdbmi::T_STOPPED },
 };
 
-void trim_both(std::string& str)
+void trim_both(wxString& str)
 {
-    static std::string trimString(" \r\n\t\v");
+    static wxString trimString(" \r\n\t\v");
     str.erase(0, str.find_first_not_of(trimString));
     str.erase(str.find_last_not_of(trimString) + 1);
 }
 
-void strip_double_backslashes(std::string& str)
+void strip_double_backslashes(wxString& str)
 {
-    std::string fixed_str;
+    wxString fixed_str;
     fixed_str.reserve(str.length());
 
-    char last_char = 0;
+    wxChar last_char = 0;
     for(size_t i = 0; i < str.length(); ++i) {
-        char ch = str[i];
+        wxChar ch = str[i];
         if(ch == '\\' && last_char == '\\') {
             // do nothing
         } else {
@@ -43,7 +43,7 @@ void strip_double_backslashes(std::string& str)
 
 } // namespace
 
-gdbmi::Node::ptr_t gdbmi::Node::add_child(std::string name, std::string value)
+gdbmi::Node::ptr_t gdbmi::Node::add_child(wxString name, wxString value)
 {
     auto c = do_add_child(name);
     c->value = std::move(value);
@@ -121,7 +121,7 @@ gdbmi::StringView gdbmi::Tokenizer::next_token(eToken* type)
     } else {
 
         auto w = read_word(type);
-        std::string as_str = w.to_string();
+        wxString as_str = w.to_string();
         if(words.count(as_str)) {
             *type = words[as_str];
             return w;
@@ -140,7 +140,7 @@ gdbmi::StringView gdbmi::Tokenizer::read_string(eToken* type)
     int state = STATE_NORMAL;
     size_t start_pos = m_pos;
     for(; m_pos < m_buffer.length(); ++m_pos) {
-        char ch = m_buffer[m_pos];
+        wxChar ch = m_buffer[m_pos];
         switch(state) {
         case STATE_NORMAL:
             switch(ch) {
@@ -160,7 +160,7 @@ gdbmi::StringView gdbmi::Tokenizer::read_string(eToken* type)
             break;
         case STATE_IN_ESCAPE:
         default:
-            // we have nothing to do in this state, but only skip the escaped char
+            // we have nothing to do in this state, but only skip the escaped wxChar
             // and return to the normal state
             state = STATE_NORMAL;
             break;
@@ -170,6 +170,13 @@ gdbmi::StringView gdbmi::Tokenizer::read_string(eToken* type)
     // if we reached here, it means that the buffer is in complete
     *type = T_EOF;
     return {};
+}
+
+gdbmi::StringView gdbmi::Tokenizer::remainder()
+{
+    auto s = StringView(m_buffer.data() + m_pos, m_buffer.length() - m_pos);
+    m_pos = m_buffer.length();
+    return s;
 }
 
 gdbmi::StringView gdbmi::Tokenizer::read_word(eToken* type)
@@ -182,32 +189,61 @@ gdbmi::StringView gdbmi::Tokenizer::read_word(eToken* type)
     return StringView(m_buffer.data() + start_pos, m_pos - start_pos);
 }
 
-void gdbmi::Parser::parse(const std::string& buffer, ParsedResult* result)
+void gdbmi::Parser::parse(const wxString& buffer, ParsedResult* result)
 {
     gdbmi::Tokenizer tokenizer(buffer);
     gdbmi::eToken token;
 
+    bool cont = true;
     constexpr int STATE_START = 0;
     constexpr int STATE_RESULT_CLASS = 1;
     constexpr int STATE_POW = 3;
-    constexpr int STATE_BREAK = 4;
     int state = STATE_START; // initial state
-    while(true) {
+    while(cont) {
         auto s = tokenizer.next_token(&token);
-        if(token == T_EOF || state == STATE_BREAK) {
+        if(token == T_EOF) {
             break;
         }
         switch(state) {
         case STATE_START:
-            // TODO: handle ~ & @ cases here
             switch(token) {
+            case T_STAR:
+                result->line_type = LT_EXEC_ASYNC_OUTPUT;
+                state = STATE_RESULT_CLASS;
+                break;
+            case T_EQUAL:
+                result->line_type = LT_NOTIFY_ASYNC_OUTPUT;
+                state = STATE_RESULT_CLASS;
+                break;
+            case T_PLUS:
+                result->line_type = LT_STATUS_ASYNC_OUTPUT;
+                state = STATE_RESULT_CLASS;
+                break;
             case T_WORD:
-                // the token
+                // token read while in this stage, can only be the txid
                 result->txid = s;
-                state = STATE_POW;
                 break;
             case T_POW:
+                result->line_type = LT_RESULT;
                 state = STATE_RESULT_CLASS;
+                break;
+            case T_STREAM_OUTPUT: // ~
+                // text that should be output to the console
+                result->line_type_context = tokenizer.remainder();
+                result->line_type = LT_CONSOLE_STREAM_OUTPUT;
+                cont = false;
+                break;
+            case T_TARGET_OUTPUT: // @
+                // output produced by the debuggee ("target")
+                result->line_type_context = tokenizer.remainder();
+                result->line_type = LT_TARGET_STREAM_OUTPUT;
+                cont = false;
+                break;
+            case T_LOG_OUTPUT: // &
+                // gdb internal messages
+                result->line_type_context = tokenizer.remainder();
+                result->line_type = LT_LOG_STREAM_OUTPUT;
+                cont = false;
                 break;
             default:
                 break;
@@ -225,8 +261,13 @@ void gdbmi::Parser::parse(const std::string& buffer, ParsedResult* result)
             case T_CONNECTED:
             case T_ERROR:
             case T_EXIT:
-                result->result_class = s;
-                state = STATE_BREAK;
+                result->line_type_context = s;
+                cont = false;
+                break;
+            case T_WORD:
+            case T_STOPPED:
+                result->line_type_context = s;
+                cont = false;
                 break;
             default:
                 break;
@@ -335,7 +376,7 @@ void gdbmi::Parser::parse_properties(Tokenizer* tokenizer, Node::ptr_t parent)
 void gdbmi::Parser::print(Node::ptr_t node, int depth)
 {
     if(!node->name.empty()) {
-        std::cout << std::string(depth, ' ') << node->name;
+        std::cout << wxString(depth, ' ') << node->name;
     }
 
     if(!node->value.empty()) {

@@ -143,9 +143,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString& line)
     //  ^done,line="9",file="C:\\src\\gdbmi_parser\\src\\main.cpp",fullname="C:\\src\\gdbmi_parser\\src\\main.cpp",macro-info="0"
     gdbmi::Parser parser;
     gdbmi::ParsedResult result;
-
-    auto cb = line.mb_str(wxConvUTF8);
-    parser.parse(cb.data(), &result);
+    parser.parse(line, &result);
 
     wxString filename;
     wxString lineNumber;
@@ -179,47 +177,32 @@ void DbgCmdHandlerAsyncCmd::UpdateGotControl(DebuggerReasons reason, const wxStr
 
 bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
 {
-    wxString reason;
     //*stopped,reason="end-stepping-range",thread-id="1",frame={addr="0x0040156b",func="main",args=[{name="argc",value="1"},{name="argv",value="0x3e2c50"}],file="a.cpp",line="46"}
     // when reason is "end-stepping-range", it means that one of the following command was
     // completed:
     //-exec-step, -exec-stepi
     //-exec-next, -exec-nexti
 
+    // *stopped,reason="signal-received",signal-name="SIGTRAP",signal-meaning="Trace/breakpoint
+    // trap",frame={addr="0x00007ffb4c333151",func="ntdll!DbgBreakPoint",args=[],from="C:\\Windows\\SYSTEM32\\ntdll.dll",arch="i386:x86-64"},thread-id="5",stopped-threads="all"
+
+    // *stopped,reason="function-finished",frame={addr="0x00007ff6a84b15ed",func="main",args=[{name="argc",value="1"},{name="argv",value="0x28996f51900"}],file="C:\\src\\gdbmi_parser\\src\\main.cpp",fullname="C:\\src\\gdbmi_parser\\src\\main.cpp",line="23",arch="i386:x86-64"},thread-id="1",stopped-threads="all"
+
     // try and get the debugee PID
     m_gdb->GetDebugeePID(line);
 
-    // Get the reason
-    GdbChildrenInfo info;
-    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
+    gdbmi::Parser parser;
+    gdbmi::ParsedResult result;
+    parser.parse(line, &result);
 
-    wxString func;
-    bool foundReason;
-
-    foundReason = false;
-    for(size_t i = 0; i < info.children.size(); i++) {
-        std::map<std::string, std::string> attr = info.children.at(i);
-        std::map<std::string, std::string>::const_iterator iter;
-
-        iter = attr.find("reason");
-        if(!foundReason && iter != attr.end()) {
-            foundReason = true;
-            reason = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(reason);
-        }
-
-        if(foundReason)
-            break;
-    }
-
-    if(reason.IsEmpty())
+    // sanity
+    if(result.line_type != gdbmi::LT_EXEC_ASYNC_OUTPUT || result.line_type_context.empty() /* stopped */) {
         return false;
-
-    int where = line.Find(wxT("func=\""));
-    if(where != wxNOT_FOUND) {
-        func = line.Mid(where + 6);
-        func = func.BeforeFirst(wxT('"'));
     }
+
+    wxString func = result["frame"]["func"].value;
+    wxString reason = result["reason"].value;
+    wxString signal_name = result["signal-name"].value;
 
     // Note:
     // This might look like a stupid if-else, since all taking
@@ -306,6 +289,7 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
                     }
 
                     // Continue running; but only if the user didn't _want_ to break-at-main anyway!
+                    // Continue running; but only if the user didn't _want_ to break-at-main anyway!
                     if(!m_gdb->GetShouldBreakAtMain() && !hasBreakOnMain) {
                         m_gdb->Continue();
 
@@ -330,42 +314,31 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
             UpdateGotControl(DBG_BP_HIT, func);
         }
 
-    } else if(reason == wxT("signal-received") && !m_gdb->IsGoingDown()) {
-
-        // got signal
-        // which signal?
-        wxString signame;
-        int where = line.Find(wxT("signal-name"));
-        if(where != wxNOT_FOUND) {
-            signame = line.Mid(where);
-            signame = signame.AfterFirst(wxT('"'));
-            signame = signame.BeforeFirst(wxT('"'));
-        }
-
-        if(signame == wxT("SIGSEGV")) {
+    } else if(reason == "signal-received" && !m_gdb->IsGoingDown()) {
+        if(signal_name == "SIGSEGV") {
             UpdateGotControl(DBG_RECV_SIGNAL_SIGSEGV, func);
 
-        } else if(signame == wxT("EXC_BAD_ACCESS")) {
+        } else if(signal_name == "EXC_BAD_ACCESS") {
             UpdateGotControl(DBG_RECV_SIGNAL_EXC_BAD_ACCESS, func);
 
-        } else if(signame == wxT("SIGABRT")) {
+        } else if(signal_name == "SIGABRT") {
             UpdateGotControl(DBG_RECV_SIGNAL_SIGABRT, func);
 
-        } else if(signame == wxT("SIGTRAP")) {
+        } else if(signal_name == "SIGTRAP") {
             UpdateGotControl(DBG_RECV_SIGNAL_SIGTRAP, func);
-        } else if(signame == "SIGPIPE") {
+        } else if(signal_name == "SIGPIPE") {
             UpdateGotControl(DBG_RECV_SIGNAL_SIGPIPE, func);
         } else {
             // default
             UpdateGotControl(DBG_RECV_SIGNAL, func);
         }
-    } else if(reason == wxT("exited-normally") || reason == wxT("exited")) {
+    } else if(reason == "exited-normally" || reason == "exited") {
         m_observer->UpdateAddLine(_("Program exited normally."));
 
         // debugee program exit normally
         UpdateGotControl(DBG_EXITED_NORMALLY, func);
 
-    } else if(reason == wxT("function-finished")) {
+    } else if(reason == "function-finished") {
 
         // debugee program exit normally
         UpdateGotControl(DBG_FUNC_FINISHED, func);
@@ -373,14 +346,8 @@ bool DbgCmdHandlerAsyncCmd::ProcessOutput(const wxString& line)
         // We finished an execution of a function.
         // Return to the caller the gdb-result-var since we might want
         // to create a variable object out of it
-        wxString gdbVar;
-        int where = line.Find(wxT("gdb-result-var"));
-        if(where != wxNOT_FOUND) {
-
-            gdbVar = line.Mid(where + 14);
-            gdbVar = gdbVar.AfterFirst(wxT('"'));
-            gdbVar = gdbVar.BeforeFirst(wxT('"'));
-
+        if(result.exists("gdb-result-var")) {
+            wxString gdbVar = result["gdb-result-var"].value;
             DebuggerEventData evt;
             evt.m_updateReason = DBG_UR_FUNCTIONFINISHED;
             evt.m_expression = gdbVar;
@@ -490,57 +457,40 @@ bool DbgCmdHandlerBp::ProcessOutput(const wxString& line)
 
 bool DbgCmdHandlerLocals::ProcessOutput(const wxString& line)
 {
+    // ^done,variables=[{name="result",value="{line_type = gdbmi::LT_EXEC_ASYNC_OUTPUT, line_type_context = {m_pdata =
+    // 0x241a4e42cb1 \"stopped,reason=\\\"end-stepping-range\\\"\", m_length = 7}, txid = {m_pdata = 0x0, m_length = 0},
+    // tree = std::shared_ptr<gdbmi::Node> (use count -1530317792, weak count 576) = {get() =
+    // 0x241a4e43d50}}"},{name="argc",arg="1",value="1"},{name="argv",arg="1",value="0x241a4c91900"},{name="input_str",value="\"*stopped,reason=\\\"end-stepping-range\\\"\""},{name="input_str_2",value="\"00001547^done,variables=[{name=\\\"vt\\\",value=\\\"{first
+    // = <error reading variable: Cannot access memory at address 0x1>\\\"},{name=\\\"__for_range\\\",value=\\\"<error
+    // reading variable>\\\"},{name=\\\"__for_begin\\\",value=\\\"{ct\"..."},{name="parser",value="{<No data fields>}"}]
     LocalVariables locals;
 
-    GdbChildrenInfo info;
-    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
+    gdbmi::Parser parser;
+    gdbmi::ParsedResult result;
+    parser.parse(line, &result);
 
-    for(size_t i = 0; i < info.children.size(); i++) {
-        std::map<std::string, std::string> attr = info.children.at(i);
-        LocalVariable var;
-        std::map<std::string, std::string>::const_iterator iter;
-
-        iter = attr.find("name");
-        if(iter != attr.end()) {
-            var.name = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(var.name);
-        }
-
-        iter = attr.find("exp");
-        if(iter != attr.end()) {
-            // We got exp? are we on Mac!!??
-            // Anyways, replace exp with name and keep name as gdbId
-            var.gdbId = var.name;
-            var.name = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(var.name);
-        }
-
-        // For primitive types, we also get the value
-        iter = attr.find("value");
-        if(iter != attr.end()) {
-            if(iter->second.empty() == false) {
-                wxString v(iter->second.c_str(), wxConvUTF8);
-                wxRemoveQuotes(v);
-                var.value = wxGdbFixValue(v);
-            }
-        }
-
-        var.value.Trim().Trim(false);
-        if(var.value.IsEmpty()) {
-            var.value = wxT("{...}");
-        }
-
-        iter = attr.find("type");
-        if(iter != attr.end()) {
-            if(iter->second.empty() == false) {
-                wxString t(iter->second.c_str(), wxConvUTF8);
-                wxRemoveQuotes(t);
-                var.type = t;
-            }
-        }
-
-        locals.push_back(var);
+    // sanity
+    if(result.line_type != gdbmi::LT_RESULT || result.line_type_context.to_string() != "done") {
+        return false;
     }
+
+    auto variables = result["variables"].children;
+    if(!variables.empty()) {
+        // no children
+        locals.reserve(variables.size());
+        for(size_t i = 0; i < variables.size(); ++i) {
+            // each entry in the list is also represented as a list
+            // with the index as its name
+            LocalVariable var;
+            var.name = (*variables[i])["name"].value;
+            var.value = (*variables[i])["value"].value;
+            if(var.value.empty()) {
+                var.value = "{..}";
+            }
+            locals.push_back(var);
+        }
+    }
+
     m_observer->UpdateLocals(locals);
 
     // The new way of notifying: send a wx's event
@@ -551,64 +501,6 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString& line)
     data.m_locals = locals;
     evtLocals.SetClientObject(new DebuggerEventData(data));
     EventNotifier::Get()->AddPendingEvent(evtLocals);
-
-    return true;
-}
-
-bool DbgCmdHandlerFuncArgs::ProcessOutput(const wxString& line)
-{
-    LocalVariables locals;
-
-    GdbChildrenInfo info;
-    gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
-
-    for(size_t i = 0; i < info.children.size(); i++) {
-        std::map<std::string, std::string> attr = info.children.at(i);
-        LocalVariable var;
-        std::map<std::string, std::string>::const_iterator iter;
-
-        iter = attr.find("name");
-        if(iter != attr.end()) {
-            var.name = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(var.name);
-        }
-
-        iter = attr.find("exp");
-        if(iter != attr.end()) {
-            // We got exp? are we on Mac!!??
-            // Anyways, replace exp with name and keep name as gdbId
-            var.gdbId = var.name;
-            var.name = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(var.name);
-        }
-
-        // For primitive types, we also get the value
-        iter = attr.find("value");
-        if(iter != attr.end()) {
-            if(iter->second.empty() == false) {
-                wxString v(iter->second.c_str(), wxConvUTF8);
-                wxRemoveQuotes(v);
-                var.value = wxGdbFixValue(v);
-            }
-        }
-
-        var.value.Trim().Trim(false);
-        if(var.value.IsEmpty()) {
-            var.value = wxT("{...}");
-        }
-
-        iter = attr.find("type");
-        if(iter != attr.end()) {
-            if(iter->second.empty() == false) {
-                wxString t(iter->second.c_str(), wxConvUTF8);
-                wxRemoveQuotes(t);
-                var.type = t;
-            }
-        }
-
-        locals.push_back(var);
-    }
-    m_observer->UpdateFunctionArguments(locals);
     return true;
 }
 
@@ -637,8 +529,7 @@ bool DbgCmdStackList::ProcessOutput(const wxString& line)
     gdbmi::Parser parser;
     gdbmi::ParsedResult result;
 
-    auto cb = line.mb_str(wxConvUTF8);
-    parser.parse(cb.data(), &result);
+    parser.parse(line, &result);
     const auto& frames = result["stack"].children;
     if(frames.empty()) {
         return false;
@@ -663,6 +554,7 @@ bool DbgCmdStackList::ProcessOutput(const wxString& line)
 
 bool DbgCmdSelectFrame::ProcessOutput(const wxString& line)
 {
+    wxUnusedVar(line);
     clCommandEvent evt(wxEVT_DEBUGGER_FRAME_SELECTED);
     EventNotifier::Get()->AddPendingEvent(evt);
     return true;
@@ -693,16 +585,17 @@ bool DbgCmdDisplayOutput::ProcessOutput(const wxString& line)
 
 bool DbgCmdResolveTypeHandler::ProcessOutput(const wxString& line)
 {
-    const wxCharBuffer scannerText = _C(line);
-    setGdbLexerInput(scannerText.data(), true);
-
-    int type;
-    wxString cmd, var_name;
-    wxString type_name, currentToken;
+    wxString var_name;
+    wxString type_name;
     wxString err_msg;
+
+    gdbmi::Parser parser;
+    gdbmi::ParsedResult result;
+    parser.parse(line, &result);
+
     // parse the output
     // ^done,name="var2",numchild="1",value="{...}",type="orxAABOX"
-    if(line.StartsWith("^error")) {
+    if(result.line_type != gdbmi::LT_RESULT && result.line_type_context.to_string() == "error") {
         err_msg = line.AfterFirst('=');
         err_msg.Prepend("GDB ERROR: ");
 
@@ -716,65 +609,13 @@ bool DbgCmdResolveTypeHandler::ProcessOutput(const wxString& line)
         return true;
 
     } else {
-
-        do {
-            // ^done
-            GDB_NEXT_TOKEN();
-            GDB_ABORT('^');
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(GDB_DONE);
-
-            // ,name="..."
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(',');
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(GDB_NAME);
-            GDB_NEXT_TOKEN();
-            GDB_ABORT('=');
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(GDB_STRING);
-            var_name = currentToken;
-
-            // ,numchild="..."
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(',');
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(GDB_NUMCHILD);
-            GDB_NEXT_TOKEN();
-            GDB_ABORT('=');
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(GDB_STRING);
-// On Mac this part does not seem to be reported by GDB
-#ifndef __WXMAC__
-            // ,value="..."
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(',');
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(GDB_VALUE);
-            GDB_NEXT_TOKEN();
-            GDB_ABORT('=');
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(GDB_STRING);
-#endif
-            // ,type="..."
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(',');
-            GDB_NEXT_TOKEN();
-            GDB_ABORT(GDB_TYPE);
-            GDB_NEXT_TOKEN();
-            GDB_ABORT('=');
-            GDB_NEXT_TOKEN();
-            type_name = currentToken;
-        } while(0);
+        var_name = result["name"].value;
+        type_name = result["type"].value;
     }
-    gdb_result_lex_clean();
-
-    wxGDB_STRIP_QUOATES(type_name);
-    wxGDB_STRIP_QUOATES(var_name);
 
     // delete the variable object
-    cmd.Clear();
-    cmd << wxT("-var-delete ") << var_name;
+    wxString cmd;
+    cmd << "-var-delete " << var_name;
 
     // since the above gdb command yields an output, we use the sync command
     // to get it as well to avoid errors in future calls to the gdb

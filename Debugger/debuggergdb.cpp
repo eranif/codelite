@@ -696,13 +696,8 @@ bool DbgGdb::Interrupt()
 
 bool DbgGdb::QueryFileLine()
 {
-#if defined(__WXGTK__) || defined(__WXMAC__)
-    if(!WriteCommand(wxT("-stack-info-frame"), new DbgCmdHandlerGetLine(m_observer, this)))
-        return false;
-#elif defined(__WXMSW__)
     if(!WriteCommand(wxT("-file-list-exec-source-file"), new DbgCmdHandlerGetLine(m_observer, this)))
         return false;
-#endif
     return true;
 }
 

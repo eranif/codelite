@@ -115,16 +115,16 @@ public:
     vec_t children;
     std::unordered_map<wxString, ptr_t> children_map;
 
-    Node& find_child(const wxString& name)
+    Node& find_child(const wxString& name) const
     {
         if(children_map.count(name) == 0) {
             thread_local Node emptyNode;
             return emptyNode;
         }
-        return *children_map[name].get();
+        return *(children_map.find(name)->second);
     }
 
-    Node& operator[](const wxString& name) { return find_child(name); }
+    Node& operator[](const wxString& name) const { return find_child(name); }
     ptr_t add_child() { return do_add_child(wxString() << children.size()); }
     ptr_t add_child(wxString name, wxString value = {});
     bool exists(const wxString& name) const { return children_map.count(name) > 0; }

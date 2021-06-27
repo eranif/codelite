@@ -685,78 +685,60 @@ bool DbgCmdSetConditionHandler::ProcessOutput(const wxString& line)
 // -break-list output handler
 bool DbgCmdBreakList::ProcessOutput(const wxString& line)
 {
-    wxString dbg_output(line);
-    dbg_output.Replace("bkpt=", "");
+    // ^done,BreakpointTable={nr_rows="1",nr_cols="6",hdr=[{width="7",alignment="-1",col_name="number",colhdr="Num"},{width="14",alignment="-1",col_name="type",colhdr="Type"},{width="4",alignment="-1",col_name="disp",colhdr="Disp"},{width="3",alignment="-1",col_name="enabled",colhdr="Enb"},{width="18",alignment="-1",col_name="addr",colhdr="Address"},{width="40",alignment="2",col_name="what",colhdr="What"}],body=[bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x000000000000ac60",func="main(int,
+    // char**)",file="/home/ANT.AMAZON.COM/eifrah/Documents/HelloWorld/HelloWorld/main.cpp",fullname="/home/ANT.AMAZON.COM/eifrah/Documents/HelloWorld/HelloWorld/main.cpp",line="292",thread-groups=["i1"],times="0",original-location="main"}]}
+    gdbmi::Parser parser;
+    gdbmi::ParsedResult result;
+    parser.parse(line, &result);
+
     std::vector<clDebuggerBreakpoint> li;
-    GdbChildrenInfo info;
-    gdbParseListChildren(dbg_output.mb_str(wxConvUTF8).data(), info);
 
-    // Children is a vector of map of attribues.
-    // Each map represents an information about a breakpoint
-    // the way gdb sees it
-    for(size_t i = 0; i < info.children.size(); i++) {
+    // sanity
+    if(result.line_type != gdbmi::LT_RESULT || result.line_type_context.to_string() != "done") {
+        return false;
+    }
+
+    const auto& body = result["BreakpointTable"]["body"].children;
+    if(body.empty()) {
+        return false;
+    }
+
+    li.reserve(body.size());
+    // convert gdbmi breakpoint info into clDebuggerBreakpoint construct
+    for(size_t i = 0; i < body.size(); i++) {
         clDebuggerBreakpoint breakpoint;
-        auto& attr = info.children[i];
-        auto iter = attr.find("what");
-        if(iter != attr.end()) {
-            breakpoint.what = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(breakpoint.what);
+        auto& bkpt = *body[i];
+
+        // "consume" the values by swapping them
+        breakpoint.what.swap(bkpt["what"].value);
+        breakpoint.at.swap(bkpt["at"].value);
+        breakpoint.file.swap(bkpt["fullname"].value);
+        if(breakpoint.file.empty()) {
+            breakpoint.file.swap(bkpt["file"].value);
         }
 
-        iter = attr.find("file");
-        if(iter != attr.end()) {
-            breakpoint.file = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(breakpoint.file);
+        wxString lineNumber = bkpt["line"].value;
+        if(!lineNumber.empty()) {
+            breakpoint.lineno = wxAtoi(lineNumber);
+        }
+        wxString ignore = bkpt["ignore"].value;
+        if(!ignore.empty()) {
+            breakpoint.ignore_number = wxAtoi(ignore);
         }
 
-        iter = attr.find("fullname");
-        if(iter != attr.end()) {
-            breakpoint.file = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(breakpoint.file);
-        }
-
-        iter = attr.find("at");
-        if(iter != attr.end()) {
-            breakpoint.at = wxString(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(breakpoint.at);
-        }
-
-        // If we got fullname, use it instead of 'file'
-        iter = attr.find("line");
-        if(iter != attr.end()) {
-            if(iter->second.empty() == false) {
-                wxString lineNumber(iter->second.c_str(), wxConvUTF8);
-                wxRemoveQuotes(lineNumber);
-                breakpoint.lineno = wxAtoi(lineNumber);
-            }
-        }
-
-        // get the 'ignore' attribute
-        iter = attr.find("ignore");
-        if(iter != attr.end()) {
-            if(iter->second.empty() == false) {
-                wxString ignore(iter->second.c_str(), wxConvUTF8);
-                wxRemoveQuotes(ignore);
-                breakpoint.ignore_number = wxAtoi(ignore);
-            }
-        }
-
-        // breakpoint ID
-        iter = attr.find("number");
-        if(iter != attr.end()) {
-            if(iter->second.empty() == false) {
-                wxString bpId(iter->second.c_str(), wxConvUTF8);
-                wxRemoveQuotes(bpId);
-                bpId.ToCDouble(&breakpoint.debugger_id);
-            }
+        wxString bpId = bkpt["number"].value;
+        if(!bpId.empty()) {
+            breakpoint.debugger_id = wxAtof(bpId);
         }
         li.push_back(breakpoint);
     }
 
     // Filter duplicate file:line breakpoints
     std::vector<clDebuggerBreakpoint> uniqueBreakpoints;
+    uniqueBreakpoints.reserve(li.size());
+
     std::for_each(li.begin(), li.end(), [&](const clDebuggerBreakpoint& bp) {
-        if(bp.debugger_id == (long)bp.debugger_id) {
+        if(bp.debugger_id == bp.debugger_id) {
             // real breakpoint ID
             uniqueBreakpoints.push_back(bp);
         }

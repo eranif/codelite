@@ -206,7 +206,6 @@ DebugTab::DebugTab(wxWindow* parent, wxWindowID id, const wxString& name)
     m_terminal->SetInteractive(true);
 
     // Toolbar
-    BitmapLoader* bmpLoader = clGetManager()->GetStdIcons();
     m_toolbar = new clToolBar(this);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     wxCheckBox* checkBoxLog = new wxCheckBox(m_toolbar, wxID_ANY, _("Enable Log"));

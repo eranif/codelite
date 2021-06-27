@@ -91,7 +91,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 {
     // SetBackgroundStyle(wxBG_STYLE_PAINT);
     // Add the 'close' button
-    BitmapLoader* bmps = clGetManager()->GetStdIcons();
     clThemeUpdater::Get().RegisterWindow(this);
 
     // Handle Edit events

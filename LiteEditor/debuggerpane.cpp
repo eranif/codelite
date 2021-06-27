@@ -100,7 +100,6 @@ void DebuggerPane::CreateGUIControls()
     style |= kNotebook_UnderlineActiveTab;
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-    auto images = m_book->GetBitmaps();
 
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);

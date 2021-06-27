@@ -41,7 +41,7 @@ class DebuggerPage : public DbgPageGeneralBase
 {
     friend class DebuggerSettingsDlg;
     wxString m_title;
-    
+
 protected:
     virtual void OnSuperuserUI(wxUpdateUIEvent& event);
     void OnBrowse(wxCommandEvent& e);
@@ -105,7 +105,7 @@ public:
 class DebuggerSettingsDlg : public DebuggerSettingsBaseDlg
 {
     std::vector<wxWindow*> m_pages;
-    
+
 protected:
     void Initialize();
     void OnOk(wxCommandEvent& e);

@@ -192,7 +192,7 @@ public:
         , useRelativeFilePaths(false)
         , maxCallStackFrames(500)
         , catchThrow(false)
-        , showTooltipsOnlyWithControlKeyIsDown(false)
+        , showTooltipsOnlyWithControlKeyIsDown(true)
         , debugAsserts(false)
         , initFileCommands(wxEmptyString)
         , resolveLocals(true)

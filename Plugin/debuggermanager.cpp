@@ -68,7 +68,9 @@ DebuggerMgr::~DebuggerMgr()
 
 DebuggerMgr& DebuggerMgr::Get()
 {
-    if(!ms_instance) { ms_instance = new DebuggerMgr(); }
+    if(!ms_instance) {
+        ms_instance = new DebuggerMgr();
+    }
     return *ms_instance;
 }
 
@@ -119,18 +121,24 @@ bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
     for(size_t i = 0; i < files.GetCount(); i++) {
         clDynamicLibrary* dl = new clDynamicLibrary();
         wxString fileName(files.Item(i));
-        
+
 #if defined(__WXMSW__) && CL_DEBUG_BUILD
         // Under MSW loading a release plugin while in debug mode will cause a crash
-        if(!fileName.EndsWith("-dbg.dll")) { continue; }
+        if(!fileName.EndsWith("-dbg.dll")) {
+            continue;
+        }
 #elif defined(__WXMSW__)
         // filter debug plugins
-        if(fileName.EndsWith("-dbg.dll")) { continue; }
+        if(fileName.EndsWith("-dbg.dll")) {
+            continue;
+        }
 #endif
         clDEBUG() << "Attempting to load debugger:" << fileName;
         if(!dl->Load(fileName)) {
             CL_WARNING("Failed to load debugger: %s", fileName);
-            if(!dl->GetError().IsEmpty()) { CL_WARNING("%s", dl->GetError()); }
+            if(!dl->GetError().IsEmpty()) {
+                CL_WARNING("%s", dl->GetError());
+            }
             wxDELETE(dl);
             continue;
         }
@@ -139,7 +147,9 @@ bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
         GET_DBG_INFO_FUNC pfn = (GET_DBG_INFO_FUNC)dl->GetSymbol(wxT("GetDebuggerInfo"), &success);
         if(!success) {
             clLogMessage(wxT("Failed to find GetDebuggerInfo() in dll: ") + fileName);
-            if(!dl->GetError().IsEmpty()) { clLogMessage(dl->GetError()); }
+            if(!dl->GetError().IsEmpty()) {
+                clLogMessage(dl->GetError());
+            }
             // dl->Unload();
             delete dl;
             continue;
@@ -151,7 +161,9 @@ bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
         GET_DBG_CREATE_FUNC pfnInitDbg = (GET_DBG_CREATE_FUNC)dl->GetSymbol(info.initFuncName, &success);
         if(!success) {
             clLogMessage(wxT("Failed to find init function in dll: ") + fileName);
-            if(!dl->GetError().IsEmpty()) { clLogMessage(dl->GetError()); }
+            if(!dl->GetError().IsEmpty()) {
+                clLogMessage(dl->GetError());
+            }
             dl->Detach();
             delete dl;
             continue;
@@ -203,7 +215,9 @@ IDebugger* DebuggerMgr::GetActiveDebugger()
     }
 
     std::map<wxString, IDebugger*>::iterator iter = m_debuggers.find(m_activeDebuggerName);
-    if(iter != m_debuggers.end()) { return iter->second; }
+    if(iter != m_debuggers.end()) {
+        return iter->second;
+    }
     return NULL;
 }
 
@@ -222,7 +236,9 @@ bool DebuggerMgr::GetDebuggerInformation(const wxString& name, DebuggerInformati
 bool DebuggerMgr::IsNativeDebuggerRunning() const
 {
     std::map<wxString, IDebugger*>::const_iterator iter = m_debuggers.find(m_activeDebuggerName);
-    if(iter == m_debuggers.end()) { return false; }
+    if(iter == m_debuggers.end()) {
+        return false;
+    }
 
     IDebugger* d = iter->second;
     return d && d->IsRunning();

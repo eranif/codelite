@@ -1269,7 +1269,7 @@ DbgCmdCLIHandler* DbgGdb::GetCliHandler() { return m_cliHandler; }
 bool DbgGdb::ListChildren(const wxString& name, int userReason)
 {
     wxString cmd;
-    cmd << "-var-list-children " << name;
+    cmd << "-var-list-children " << WrapSpaces(name);
     if(m_info.maxDisplayElements > 0) {
         cmd << " " << 0 << " " << m_info.maxDisplayElements;
     }
@@ -1300,7 +1300,9 @@ bool DbgGdb::DeleteVariableObject(const wxString& name)
 bool DbgGdb::EvaluateVariableObject(const wxString& name, int userReason)
 {
     wxString cmd;
-    cmd << wxT("-var-evaluate-expression ") << name;
+    // make sure we wrap the variable object with double quotes, since it might contain
+    // spaces and other goodies
+    cmd << "-var-evaluate-expression " << WrapSpaces(name);
     return WriteCommand(cmd, new DbgCmdEvalVarObj(m_observer, name, userReason));
 }
 

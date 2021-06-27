@@ -24,40 +24,38 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "conffilelocator.h"
 #include "configtool.h"
-#include "xmlutils.h"
-#include "serialized_object.h"
-#include "wx/filename.h"
-#include "wx/ffile.h"
 #include "editor_config.h"
-#include "wx_xml_compatibility.h"
 #include "globals.h"
+#include "serialized_object.h"
+#include "wx/ffile.h"
+#include "wx/filename.h"
+#include "wx_xml_compatibility.h"
+#include "xmlutils.h"
 
 ConfigTool::ConfigTool()
     : m_fileName(wxEmptyString)
 {
 }
 
-ConfigTool::~ConfigTool()
-{
-}
+ConfigTool::~ConfigTool() {}
 
-bool ConfigTool::Load(const wxString &basename, const wxString &version)
+bool ConfigTool::Load(const wxString& basename, const wxString& version)
 {
     wxString initialSettings = ConfFileLocator::Instance()->Locate(basename);
     bool loaded = m_doc.Load(initialSettings);
     wxString xmlVersion;
-    if ( loaded ) {
+    if(loaded) {
         xmlVersion = m_doc.GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
     }
-    
-    if ( xmlVersion != version ) {
+
+    if(xmlVersion != version) {
         loaded = m_doc.Load(ConfFileLocator::Instance()->GetDefaultCopy(basename));
     }
     m_fileName = ConfFileLocator::Instance()->GetLocalCopy(basename);
     return loaded;
 }
 
-bool ConfigTool::WriteObject(const wxString &name, SerializedObject *obj)
+bool ConfigTool::WriteObject(const wxString& name, SerializedObject* obj)
 {
     if(m_doc.IsOk() == false) {
         return false;
@@ -68,7 +66,7 @@ bool ConfigTool::WriteObject(const wxString &name, SerializedObject *obj)
     return ::SaveXmlToFile(&m_doc, m_fileName);
 }
 
-bool ConfigTool::ReadObject(const wxString &name, SerializedObject *obj)
+bool ConfigTool::ReadObject(const wxString& name, SerializedObject* obj)
 {
     if(m_doc.IsOk() == false) {
         return false;

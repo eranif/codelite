@@ -38,6 +38,7 @@
 #include "wx/tokenzr.h"
 #include <algorithm>
 #include <sstream>
+#include <unordered_map>
 #include <wx/regex.h>
 
 static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
@@ -958,100 +959,98 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
     return true;
 }
 
-static VariableObjChild FromParserOutput(const std::map<std::string, std::string>& attr)
+static VariableObjChild FromParserOutput(const gdbmi::Node& child)
 {
-    VariableObjChild child;
-    std::map<std::string, std::string>::const_iterator iter;
+    VariableObjChild var_child;
 
-    child.type = ExtractGdbChild(attr, wxT("type"));
-    child.gdbId = ExtractGdbChild(attr, wxT("name"));
-    wxString numChilds = ExtractGdbChild(attr, wxT("numchild"));
-    wxString dynamic = ExtractGdbChild(attr, wxT("dynamic"));
+    var_child.varName = child["exp"].value;
+    var_child.type = child["type"].value;
+    var_child.gdbId = child["name"].value;
+    wxString numChilds = child["numchild"].value;
+    wxString dynamic = child["dynamic"].value;
 
     if(numChilds.IsEmpty() == false) {
-        child.numChilds = wxAtoi(numChilds);
+        var_child.numChilds = wxAtoi(numChilds);
     }
 
-    if(child.numChilds == 0 && dynamic == "1") {
-        child.numChilds = 1;
+    if(var_child.numChilds == 0 && dynamic == "1") {
+        var_child.numChilds = 1;
     }
 
-    child.varName = ExtractGdbChild(attr, wxT("exp"));
-    if(child.varName.IsEmpty() || child.type == child.varName ||
-       (child.varName == wxT("public") || child.varName == wxT("private") || child.varName == wxT("protected")) ||
-       (child.type.Contains(wxT("class ")) || child.type.Contains(wxT("struct ")))) {
-
-        child.isAFake = true;
-    }
+    // child.varName = ExtractGdbChild(attr, wxT("exp"));
+    // if(child.varName.IsEmpty() || child.type == child.varName ||
+    //    (child.varName == wxT("public") || child.varName == wxT("private") || child.varName == wxT("protected")) ||
+    //    (child.type.Contains(wxT("class ")) || child.type.Contains(wxT("struct ")))) {
+    //
+    //     child.isAFake = true;
+    // }
 
     // For primitive types, we also get the value
-    iter = attr.find("value");
-    if(iter != attr.end()) {
-        if(iter->second.empty() == false) {
-            wxString v(iter->second.c_str(), wxConvUTF8);
-            wxRemoveQuotes(v);
-            child.value = wxGdbFixValue(v);
-
-            if(child.value.IsEmpty() == false) {
-                child.varName << wxT(" = ") << child.value;
-            }
-        }
+    var_child.value = child["value"].value;
+    if(!var_child.value.empty()) {
+        var_child.varName << " = " << var_child.value;
     }
-    return child;
+    return var_child;
 }
 
 bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 {
     DebuggerEventData e;
-    std::string cbuffer = line.mb_str(wxConvUTF8).data();
+    gdbmi::Parser parser;
+    gdbmi::ParsedResult result;
 
-    GdbChildrenInfo info;
-    gdbParseListChildren(cbuffer, info);
+    parser.parse(line, &result);
+
+    if(result.line_type != gdbmi::LT_RESULT || result.line_type_context.to_string() != "done") {
+        return false;
+    }
+
+    const auto& children = result["children"].children;
+    if(children.empty()) {
+        return true;
+    }
+
+    e.m_varObjChildren.reserve(children.size());
 
     // Convert the parser output to codelite data structure
-    for(size_t i = 0; i < info.children.size(); i++) {
-        e.m_varObjChildren.push_back(FromParserOutput(info.children.at(i)));
+    for(size_t i = 0; i < children.size(); ++i) {
+        e.m_varObjChildren.push_back(FromParserOutput(*children[i]));
     }
 
-    if(info.children.size() > 0) {
-        e.m_updateReason = DBG_UR_LISTCHILDREN;
-        e.m_expression = m_variable;
-        e.m_userReason = m_userReason;
-        m_observer->DebuggerUpdate(e);
+    e.m_updateReason = DBG_UR_LISTCHILDREN;
+    e.m_expression = m_variable;
+    e.m_userReason = m_userReason;
+    m_observer->DebuggerUpdate(e);
 
-        clCommandEvent evtList(wxEVT_DEBUGGER_LIST_CHILDREN);
-        evtList.SetClientObject(new DebuggerEventData(e));
-        EventNotifier::Get()->AddPendingEvent(evtList);
-    }
+    clCommandEvent evtList(wxEVT_DEBUGGER_LIST_CHILDREN);
+    evtList.SetClientObject(new DebuggerEventData(e));
+    EventNotifier::Get()->AddPendingEvent(evtList);
     return true;
 }
 
 bool DbgCmdEvalVarObj::ProcessOutput(const wxString& line)
 {
-    std::string cbuffer = line.mb_str(wxConvUTF8).data();
-    GdbChildrenInfo info;
-    gdbParseListChildren(cbuffer, info);
+    gdbmi::ParsedResult result;
+    gdbmi::Parser parser;
+    parser.parse(line, &result);
 
-    if(info.children.empty() == false) {
-        wxString display_line = ExtractGdbChild(info.children.at(0), wxT("value"));
-        display_line.Trim().Trim(false);
-        if(display_line.IsEmpty() == false) {
-            if(m_userReason == DBG_USERR_WATCHTABLE || display_line != wxT("{...}")) {
-                DebuggerEventData e;
-                e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
-                e.m_expression = m_variable;
-                e.m_evaluated = display_line;
-                e.m_userReason = m_userReason;
-                m_observer->DebuggerUpdate(e);
+    wxString display_line = result["value"].value;
 
-                clCommandEvent evtList(wxEVT_DEBUGGER_VAROBJ_EVALUATED);
-                evtList.SetClientObject(new DebuggerEventData(e));
-                EventNotifier::Get()->AddPendingEvent(evtList);
-            }
+    if(!display_line.empty()) {
+        if(m_userReason == DBG_USERR_WATCHTABLE || display_line != "{...}") {
+            DebuggerEventData e;
+            e.m_updateReason = DBG_UR_EVALVARIABLEOBJ;
+            e.m_expression = m_variable;
+            e.m_evaluated = display_line;
+            e.m_userReason = m_userReason;
+            m_observer->DebuggerUpdate(e);
+
+            clCommandEvent evtList(wxEVT_DEBUGGER_VAROBJ_EVALUATED);
+            evtList.SetClientObject(new DebuggerEventData(e));
+            EventNotifier::Get()->AddPendingEvent(evtList);
         }
-        return true;
     }
-    return false;
+    return true;
 }
 
 bool DbgFindMainBreakpointIdHandler::ProcessOutput(const wxString& line)

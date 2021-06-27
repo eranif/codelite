@@ -22,17 +22,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "simpletable.h"
-#include <wx/textdlg.h> //wxGetTextFromUser
-#include "manager.h"
-#include <wx/regex.h>
-#include <wx/xrc/xmlres.h>
-#include "debuggermanager.h"
-#include "globals.h"
 #include "debugger.h"
-#include "simpletablebase.h"
+#include "debuggermanager.h"
 #include "event_notifier.h"
+#include "globals.h"
+#include "manager.h"
+#include "simpletable.h"
+#include "simpletablebase.h"
+#include <wx/regex.h>
+#include <wx/textdlg.h> //wxGetTextFromUser
 #include <wx/utils.h>
+#include <wx/xrc/xmlres.h>
 
 /////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
@@ -43,84 +43,52 @@ WatchesTable::WatchesTable(wxWindow* parent)
     InitTable();
     // Only sort top level items, don't sort their children
     m_listTable->AddTreeStyle(wxTR_SORT_TOP_LEVEL);
-    
+
     m_DBG_USERR = DBG_USERR_WATCHTABLE;
     m_QUERY_NUM_CHILDS = QUERY_NUM_CHILDS;
     m_LIST_CHILDS = LIST_WATCH_CHILDS;
     // Should a be placed before b?
-    clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) {
-        return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);
-    };
-    
+    clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) { return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0); };
+
     // Load the right click menu
     m_rclickMenu = wxXmlResource::Get()->LoadMenu(wxT("dbg_watch_rmenu"));
-    Connect(
-        XRCID("del_expr"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnDeleteWatch), NULL, this);
-    Connect(XRCID("del_expr_all"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnDeleteAll),
-            NULL,
+    Connect(XRCID("del_expr"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnDeleteWatch), NULL,
             this);
-    Connect(XRCID("edit_expr"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnMenuEditExpr),
-            NULL,
+    Connect(XRCID("del_expr_all"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnDeleteAll), NULL,
             this);
-    Connect(XRCID("copy_value"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnMenuCopyValue),
-            NULL,
+    Connect(XRCID("edit_expr"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnMenuEditExpr), NULL,
             this);
-    Connect(XRCID("add_watch"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnNewWatch_Internal),
-            NULL,
-            this);
-    Connect(XRCID("copy_both"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnMenuCopyBoth),
-            NULL,
+    Connect(XRCID("copy_value"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnMenuCopyValue),
+            NULL, this);
+    Connect(XRCID("add_watch"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnNewWatch_Internal),
+            NULL, this);
+    Connect(XRCID("copy_both"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(WatchesTable::OnMenuCopyBoth), NULL,
             this);
 
-    Connect(XRCID("watches_df_natural"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
-            this);
-    Connect(XRCID("watches_df_hex"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
-            this);
-    Connect(XRCID("watches_df_bin"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
-            this);
-    Connect(XRCID("watches_df_octal"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
-            this);
-    Connect(XRCID("watches_df_decimal"),
-            wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat),
-            NULL,
-            this);
+    Connect(XRCID("watches_df_natural"), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat), NULL, this);
+    Connect(XRCID("watches_df_hex"), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat), NULL, this);
+    Connect(XRCID("watches_df_bin"), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat), NULL, this);
+    Connect(XRCID("watches_df_octal"), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat), NULL, this);
+    Connect(XRCID("watches_df_decimal"), wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(WatchesTable::OnMenuDisplayFormat), NULL, this);
 
     // UI events
     Connect(XRCID("edit_expr"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WatchesTable::OnMenuEditExprUI), NULL, this);
     Connect(XRCID("del_expr"), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(WatchesTable::OnDeleteWatchUI), NULL, this);
 
-    EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEventHandler(WatchesTable::OnTypeResolveError), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR,
+                                  clCommandEventHandler(WatchesTable::OnTypeResolveError), NULL, this);
     SetDropTarget(new WatchDropTarget(this));
 }
 
 WatchesTable::~WatchesTable()
 {
-    EventNotifier::Get()->Connect(
-        wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR, clCommandEventHandler(WatchesTable::OnTypeResolveError), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_TYPE_RESOLVE_ERROR,
+                                  clCommandEventHandler(WatchesTable::OnTypeResolveError), NULL, this);
 
     if(m_rclickMenu) {
         delete m_rclickMenu;
@@ -154,7 +122,8 @@ void WatchesTable::OnListKeyDown(wxTreeEvent& event)
     if(event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE) {
 
         wxTreeItemId item = m_listTable->GetSelection();
-        if(item.IsOk() == false) return;
+        if(item.IsOk() == false)
+            return;
 
         DoDeleteWatch(item);
         m_listTable->Delete(item);
@@ -204,7 +173,8 @@ void WatchesTable::OnDeleteWatch(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxTreeItemId item = m_listTable->GetSelection();
-    if(item.IsOk() == false) return;
+    if(item.IsOk() == false)
+        return;
 
     DoDeleteWatch(item);
     m_listTable->Delete(item);
@@ -232,13 +202,13 @@ void WatchesTable::AddExpression(const wxString& expr)
 
 void WatchesTable::UpdateVariableObjects()
 {
-    IDebugger *debugger = DebuggerMgr::Get().GetActiveDebugger();
+    IDebugger* debugger = DebuggerMgr::Get().GetActiveDebugger();
     CHECK_PTR_RET(debugger);
 
     wxTreeItemId root = m_listTable->GetRootItem();
     wxTreeItemIdValue cookieOne;
     wxTreeItemId item = m_listTable->GetFirstChild(root, cookieOne);
-    while( item.IsOk() ) {
+    while(item.IsOk()) {
         wxString gdbID = DoGetGdbId(item);
         if(!gdbID.IsEmpty()) {
             debugger->UpdateWatch(gdbID);
@@ -255,11 +225,13 @@ void WatchesTable::RefreshValues(bool repositionEditor)
 
     // loop over the childrens, if we got a valid variable object, re-evaluate it
     wxTreeItemId root = m_listTable->GetRootItem();
-    if(root.IsOk() == false) return;
+    if(root.IsOk() == false)
+        return;
 
     // Obtain the debugger and make sure that we can interact with it
     IDebugger* dbgr = DoGetDebugger();
-    if(!dbgr) return;
+    if(!dbgr)
+        return;
 
     // rese tree items colour to black
     DoResetItemColour(root, 0);
@@ -304,7 +276,8 @@ void WatchesTable::OnMenuEditExpr(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxTreeItemId item = m_listTable->GetSelection();
-    if(item.IsOk() == false) return;
+    if(item.IsOk() == false)
+        return;
 
     IDebugger* dbgr = DoGetDebugger();
     if(!dbgr) {
@@ -312,7 +285,8 @@ void WatchesTable::OnMenuEditExpr(wxCommandEvent& event)
     }
 
     wxString newExpr = wxGetTextFromUser(_("Update expression:"), _("Update Watch"), m_listTable->GetItemText(item));
-    if(newExpr.IsEmpty()) return;
+    if(newExpr.IsEmpty())
+        return;
 
     DoUpdateExpression(item, newExpr);
 }
@@ -371,10 +345,11 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEventData& event)
 
                 // set the type
                 m_listTable->SetItemText(item, event.m_variableObject.typeName, 2);
-                if (dbgr->GetDebuggerInformation().defaultHexDisplay == true)
-                  dbgr->SetVariableObbjectDisplayFormat(DoGetGdbId(item), DBG_DF_HEXADECIMAL);
+                if(dbgr->GetDebuggerInformation().defaultHexDisplay == true)
+                    dbgr->SetVariableObbjectDisplayFormat(DoGetGdbId(item), DBG_DF_HEXADECIMAL);
                 // refresh this item only
-                if(dbgr) DoRefreshItem(dbgr, item, true);
+                if(dbgr)
+                    DoRefreshItem(dbgr, item, true);
 
                 // Query the debugger to see if this node has a children
                 // In case it does, we add a dummy node so we will get the [+] sign
@@ -396,22 +371,26 @@ void WatchesTable::OnListChildren(const DebuggerEventData& event)
 {
     wxString gdbId = event.m_expression;
     std::map<wxString, wxTreeItemId>::iterator iter = m_listChildItemId.find(gdbId);
-    if(iter == m_listChildItemId.end()) return;
+    if(iter == m_listChildItemId.end())
+        return;
 
     wxTreeItemId item = iter->second;
     m_listChildItemId.erase(iter);
 
     if(event.m_userReason == m_QUERY_NUM_CHILDS) {
-        if(event.m_varObjChildren.empty() == false) m_listTable->AppendItem(item, wxT("<dummy>"));
+        if(event.m_varObjChildren.empty() == false)
+            m_listTable->AppendItem(item, wxT("<dummy>"));
 
     } else if(event.m_userReason == m_LIST_CHILDS) {
         if(event.m_varObjChildren.empty() == false) {
+            IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
+            if(!dbgr || !ManagerST::Get()->DbgCanInteract())
+                return;
+            m_listTable->Begin();
             for(size_t i = 0; i < event.m_varObjChildren.size(); i++) {
-                IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-                if(!dbgr || !ManagerST::Get()->DbgCanInteract()) return;
-
                 VariableObjChild ch = event.m_varObjChildren.at(i);
-                if(ch.varName == wxT("public") || ch.varName == wxT("private") || ch.varName == wxT("protected")) {
+
+                if(false /*ch.varName == wxT("public") || ch.varName == wxT("private") || ch.varName == wxT("protected")*/) {
                     // not really a node...
                     // ask for information about this node children
                     dbgr->ListChildren(ch.gdbId, m_LIST_CHILDS);
@@ -422,7 +401,7 @@ void WatchesTable::OnListChildren(const DebuggerEventData& event)
                     DbgTreeItemData* data = new DbgTreeItemData();
                     data->_gdbId = ch.gdbId;
                     wxTreeItemId child = m_listTable->AppendItem(item, ch.varName, -1, -1, data);
-                    m_listTable->SetItemText(child,ch.type, 2);
+                    m_listTable->SetItemText(child, ch.type, 2);
 
                     // Add a dummy node
                     if(child.IsOk() && ch.numChilds > 0) {
@@ -435,6 +414,7 @@ void WatchesTable::OnListChildren(const DebuggerEventData& event)
                     m_gdbIdToTreeId[data->_gdbId] = child;
                 }
             }
+            m_listTable->Commit();
         }
     }
 }
@@ -514,23 +494,25 @@ void WatchesTable::OnMenuDisplayFormat(wxCommandEvent& event)
     wxArrayTreeItemIds arr;
     m_listTable->GetSelections(arr);
     IDebugger* dbgr = DoGetDebugger();
-    if (!dbgr) return;
-    for (size_t i = 0; i < arr.GetCount();i++){
+    if(!dbgr)
+        return;
+    for(size_t i = 0; i < arr.GetCount(); i++) {
         wxTreeItemId item = arr.Item(i);
-        if (!item.IsOk()) return;
+        if(!item.IsOk())
+            return;
         wxString gdbId = DoGetGdbId(item);
         if(gdbId.IsEmpty() == false) {
             dbgr->SetVariableObbjectDisplayFormat(gdbId, df);
             dbgr->UpdateVariableObject(gdbId, m_DBG_USERR);
             DoRefreshItem(dbgr, item, true);
-        }       
+        }
     }
- 
 }
 
 void WatchesTable::OnUpdateVariableObject(const DebuggerEventData& event)
 {
-    if(event.m_varObjUpdateInfo.refreshIds.IsEmpty()) return;
+    if(event.m_varObjUpdateInfo.refreshIds.IsEmpty())
+        return;
 
     wxArrayString itemsToRefresh = event.m_varObjUpdateInfo.refreshIds;
     IDebugger* dbgr = DoGetDebugger();
@@ -555,7 +537,8 @@ void WatchesTable::OnTypeResolved(const DebuggerEventData& event)
     }
 
     // Obtain the debugger and make sure that we can interact with it
-    if(!ManagerST::Get()->DbgCanInteract()) return;
+    if(!ManagerST::Get()->DbgCanInteract())
+        return;
 
     // Append the new item and call the debugger to create a new variable object for this
     // expression

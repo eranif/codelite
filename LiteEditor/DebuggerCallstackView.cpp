@@ -102,6 +102,7 @@ void DebuggerCallstackView::Update(const StackEntryArray& stackArr)
     Clear();
     m_stack.insert(m_stack.end(), stackArr.begin(), stackArr.end());
     int activeFrame(-1);
+    m_dvListCtrl->Begin();
     for(int i = 0; i < (int)m_stack.size(); i++) {
         bool isactive = (i == m_currLevel);
         StackEntry entry = m_stack.at(i);
@@ -119,7 +120,8 @@ void DebuggerCallstackView::Update(const StackEntryArray& stackArr)
     }
 
     // Make sure that everything is drawn before we attempt to select anything
-    m_dvListCtrl->Update();
+    m_dvListCtrl->Commit();
+
     if(activeFrame != wxNOT_FOUND) {
         CallAfter(&DebuggerCallstackView::EnsureRowVisible, activeFrame);
     }

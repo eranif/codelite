@@ -32,6 +32,12 @@ void strip_double_backslashes(wxString& str)
         wxChar ch = str[i];
         if(ch == '\\' && last_char == '\\') {
             // do nothing
+        } else if(ch == '"' && last_char == '\\') {
+            // gdb adds an extra annoying '\"' to double quotes
+            // making it really hard to view strings in the debugger
+            // UI, so lets remove it
+            fixed_str.RemoveLast();
+            fixed_str.append(1, ch);
         } else {
             fixed_str.append(1, ch);
         }

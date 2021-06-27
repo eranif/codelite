@@ -57,8 +57,8 @@ public:
 #if wxVERSION_NUMBER >= 3104 && defined(__WXGTK3__)
 static void DoNothing(wxShowEvent& event)
 {
-// Swallows wxEVT_SHOW, which would otherwise result in a zero clientsize due
-// to a side-effect of the 3rd fix in https://trac.wxwidgets.org/ticket/16088
+    // Swallows wxEVT_SHOW, which would otherwise result in a zero clientsize due
+    // to a side-effect of the 3rd fix in https://trac.wxwidgets.org/ticket/16088
 }
 #endif
 
@@ -71,7 +71,7 @@ DisplayVariableDlg::DisplayVariableDlg(wxWindow* parent)
     Centre();
     SetName("clDebuggerEditItemDlgBase");
     m_treeCtrl->Bind(wxEVT_TREE_ITEM_MENU, &DisplayVariableDlg::OnItemMenu, this);
-#if wxVERSION_NUMBER >= 3104 && defined(__WXGTK3__) 
+#if wxVERSION_NUMBER >= 3104 && defined(__WXGTK3__)
     Bind(wxEVT_SHOW, DoNothing);
 #endif
 }
@@ -128,7 +128,8 @@ void DisplayVariableDlg::BuildTree(const VariableObjChildren& children, IDebugge
     m_gdbId2ItemLeaf[m_mainVariableObject] = root;
 #endif
 
-    if(children.empty()) return;
+    if(children.empty())
+        return;
     DoAddChildren(root, children);
 }
 
@@ -143,7 +144,8 @@ void DisplayVariableDlg::AddItems(const wxString& varname, const VariableObjChil
 
 void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChildren& children)
 {
-    if(item.IsOk() == false) return;
+    if(item.IsOk() == false)
+        return;
 
     if(m_treeCtrl->GetRootItem() != item && m_treeCtrl->ItemHasChildren(item)) {
         // delete the <dummy> node
@@ -151,7 +153,9 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
         wxTreeItemId child = m_treeCtrl->GetFirstChild(item, kookie);
         while(child.IsOk()) {
             wxString itemText = m_treeCtrl->GetItemText(child);
-            if(itemText == wxT("<dummy>") || itemText == _("Loading...")) { m_treeCtrl->Delete(child); }
+            if(itemText == wxT("<dummy>") || itemText == _("Loading...")) {
+                m_treeCtrl->Delete(child);
+            }
             child = m_treeCtrl->GetNextChild(item, kookie);
         }
     }
@@ -160,7 +164,7 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
         const VariableObjChild& ch = children[i];
 
         // Dont use ch.isAFake here since it will also returns true of inheritance
-        if(ch.varName != wxT("public") && ch.varName != wxT("private") && ch.varName != wxT("protected")) {
+        if(true /*ch.varName != wxT("public") && ch.varName != wxT("private") && ch.varName != wxT("protected")*/) {
             // Real node
             wxTreeItemId child = m_treeCtrl->AppendItem(item, ch.varName, -1, -1, new QWTreeData(ch));
             if(ch.numChilds > 0) {
@@ -197,7 +201,9 @@ void DisplayVariableDlg::UpdateValue(const wxString& varname, const wxString& va
         if(item.IsOk()) {
             wxString curtext = m_treeCtrl->GetItemText(item);
 #ifdef __WXMAC__
-            if(item == m_treeCtrl->GetRootItem()) { curtext = curtext.BeforeFirst(wxT('=')); }
+            if(item == m_treeCtrl->GetRootItem()) {
+                curtext = curtext.BeforeFirst(wxT('='));
+            }
 #endif
             curtext << wxT(" = ") << value;
             m_treeCtrl->SetItemText(item, curtext);
@@ -251,10 +257,13 @@ void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
     event.Skip();
     wxTreeItemId item = event.GetItem();
 
-    if(item.IsOk()) { m_treeCtrl->SelectItem(item); }
+    if(item.IsOk()) {
+        m_treeCtrl->SelectItem(item);
+    }
 
     // Dont show popup menu for fake nodes
-    if(IsFakeItem(item)) return;
+    if(IsFakeItem(item))
+        return;
 
     // Popup the menu
     wxMenu menu;
@@ -298,7 +307,8 @@ wxString DisplayVariableDlg::DoGetItemPath(const wxTreeItemId& treeItem)
         }
 
         // Are we at root yet?
-        if(m_treeCtrl->GetRootItem() == item) break;
+        if(m_treeCtrl->GetRootItem() == item)
+            break;
 
         // Surround this expression with parenthesiss
         item = m_treeCtrl->GetItemParent(item);
@@ -311,18 +321,22 @@ wxString DisplayVariableDlg::DoGetItemPath(const wxTreeItemId& treeItem)
         exprWithParentheses.Prepend(wxT("(")).Append(wxT(")."));
     }
 
-    if(!items.IsEmpty()) { exprWithParentheses.RemoveLast(); }
+    if(!items.IsEmpty()) {
+        exprWithParentheses.RemoveLast();
+    }
 
     return exprWithParentheses;
 }
 
 bool DisplayVariableDlg::IsFakeItem(const wxTreeItemId& item)
 {
-    if(item.IsOk() == false) return true; // fake
+    if(item.IsOk() == false)
+        return true; // fake
 
     if(item != m_treeCtrl->GetRootItem()) {
         QWTreeData* data = (QWTreeData*)m_treeCtrl->GetItemData(item);
-        if(data) return data->_voc.isAFake;
+        if(data)
+            return data->_voc.isAFake;
 
         return false;
 
@@ -356,7 +370,8 @@ void DisplayVariableDlg::OnCreateVariableObjError(const DebuggerEventData& event
 
 void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
 {
-    if(item.IsOk() == false) return;
+    if(item.IsOk() == false)
+        return;
 
     wxString oldText = m_treeCtrl->GetItemText(item);
     oldText = oldText.BeforeFirst(wxT('='));
@@ -380,10 +395,13 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
     wxWindow::WarpPointer(oldPos.x, oldPos.y);
 #endif
 
-    if(res != wxID_OK) { return; }
+    if(res != wxID_OK) {
+        return;
+    }
 
     wxString newText = dlg.GetValue();
-    if(newText.IsEmpty()) return;
+    if(newText.IsEmpty())
+        return;
 
     wxString newExpr = DoGetItemPath(item);
     m_treeCtrl->SetItemText(item, newText);
@@ -403,9 +421,11 @@ void DisplayVariableDlg::DoEditItem(const wxTreeItemId& item)
         typecast.Trim().Trim(false);
 
         if(!typecast.IsEmpty()) {
-            if(!typecast.StartsWith(wxT("("))) typecast.Prepend(wxT("("));
+            if(!typecast.StartsWith(wxT("(")))
+                typecast.Prepend(wxT("("));
 
-            if(!typecast.EndsWith(wxT(")"))) typecast.Append(wxT(")"));
+            if(!typecast.EndsWith(wxT(")")))
+                typecast.Append(wxT(")"));
         }
 
         newExpr.Prepend(typecast);
@@ -431,7 +451,8 @@ bool CLPersistentDebuggerTip::Restore()
     long w(-1), h(-1);
     const bool hasSize = RestoreValue("w", &w) && RestoreValue("h", &h);
 
-    if(hasSize) puw->SetSize(w, h);
+    if(hasSize)
+        puw->SetSize(w, h);
 
     return hasSize;
 }

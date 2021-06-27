@@ -126,7 +126,7 @@ public:
 
     Node& operator[](const wxString& name) const { return find_child(name); }
     ptr_t add_child() { return do_add_child(wxString() << children.size()); }
-    ptr_t add_child(wxString name, wxString value = {});
+    ptr_t add_child(const wxString& name, const wxString& value = {});
     bool exists(const wxString& name) const { return children_map.count(name) > 0; }
 };
 

@@ -43,7 +43,7 @@ void strip_double_backslashes(wxString& str)
 
 } // namespace
 
-gdbmi::Node::ptr_t gdbmi::Node::add_child(wxString name, wxString value)
+gdbmi::Node::ptr_t gdbmi::Node::add_child(const wxString& name, const wxString& value)
 {
     auto c = do_add_child(name);
     c->value = std::move(value);

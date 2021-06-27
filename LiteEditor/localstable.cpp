@@ -140,7 +140,7 @@ void LocalsTable::OnListChildren(const DebuggerEventData& event)
         if(event.m_varObjChildren.empty() == false) {
             for(size_t i = 0; i < event.m_varObjChildren.size(); i++) {
                 const VariableObjChild& ch = event.m_varObjChildren.at(i);
-                if(false /*ch.varName == wxT("public") || ch.varName == wxT("private") || ch.varName == wxT("protected")*/) {
+                if(ch.varName == "public" || ch.varName == "private" || ch.varName == "protected") {
                     // not really a node...
                     // ask for information about this node children
                     dbgr->ListChildren(ch.gdbId, m_LIST_CHILDS);

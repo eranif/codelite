@@ -164,7 +164,7 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
         const VariableObjChild& ch = children[i];
 
         // Dont use ch.isAFake here since it will also returns true of inheritance
-        if(true /*ch.varName != wxT("public") && ch.varName != wxT("private") && ch.varName != wxT("protected")*/) {
+        if(ch.varName != "public" && ch.varName != "private" && ch.varName != "protected") {
             // Real node
             wxTreeItemId child = m_treeCtrl->AppendItem(item, ch.varName, -1, -1, new QWTreeData(ch));
             if(ch.numChilds > 0) {

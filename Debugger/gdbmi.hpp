@@ -125,7 +125,22 @@ public:
     }
 
     Node& operator[](const wxString& name) const { return find_child(name); }
-    ptr_t add_child() { return do_add_child(wxString() << children.size()); }
+    Node& operator[](size_t index) const
+    {
+        if(index >= children.size()) {
+            thread_local Node emptyNode;
+            return emptyNode;
+        }
+        return *(children[index].get());
+    }
+
+    ptr_t add_child()
+    {
+        wxString s;
+        s << children.size();
+        return do_add_child(s);
+    }
+
     ptr_t add_child(const wxString& name, const wxString& value = {});
     bool exists(const wxString& name) const { return children_map.count(name) > 0; }
 };

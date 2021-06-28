@@ -49,11 +49,6 @@ static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
         currentToken = gdb_result_string; \
     }
 
-#define GDB_BREAK(ch)     \
-    if(type != (int)ch) { \
-        break;            \
-    }
-
 static void wxGDB_STRIP_QUOATES(wxString& currentToken)
 {
     size_t where = currentToken.find(wxT("\""));
@@ -531,16 +526,17 @@ bool DbgCmdStackList::ProcessOutput(const wxString& line)
     gdbmi::ParsedResult result;
 
     parser.parse(line, &result);
-    const auto& frames = result["stack"].children;
-    if(frames.empty()) {
+    if(result["stack"].children.empty()) {
         return false;
     }
 
+    const auto& stack = result["stack"];
+
     StackEntryArray stackArray;
-    stackArray.reserve(frames.size());
-    for(size_t i = 0; i < frames.size(); ++i) {
+    stackArray.reserve(stack.children.size());
+    for(size_t i = 0; i < stack.children.size(); ++i) {
         StackEntry entry;
-        ParseStackEntry((*frames[i].get()), entry);
+        ParseStackEntry(stack[i], entry);
         stackArray.push_back(entry);
     }
 
@@ -773,97 +769,36 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
 bool DbgCmdWatchMemory::ProcessOutput(const wxString& line)
 {
     DebuggerEventData e;
-    int divider(m_columns);
-    int factor((int)(m_count / divider));
 
-    if(m_count % divider != 0) {
-        factor = (int)(m_count / divider) + 1;
-    }
+    // 00000016^done,addr="0x0000004a789ff8f0",nr-bytes="32",total-bytes="32",next-row="0x0000004a789ff900",prev-row="0x0000004a789ff8e0",next-page="0x0000004a789ff910",prev-page="0x0000004a789ff8d0",
+    // memory=[{addr="0x0000004a789ff8f0",data=["0x00","0x00","0x00","0x00","0xd7","0x01","0x00","0x00","0x19","0x2d","0xa4","0x9d","0xd7","0x01","0x00","0x00"],ascii="?????????-??????"},{addr="0x0000004a789ff900",data=["0x04","0x00","0x00","0x00","0x00","0x00","0x00","0x00","0x10","0x2d","0xa4","0x9d","0xd7","0x01","0x00","0x00"],ascii="?????????-??????"}]
+    gdbmi::ParsedResult result;
+    gdbmi::Parser parser;
+    parser.parse(line, &result);
 
-    // {addr="0x003d3e24",data=["0x65","0x72","0x61","0x6e"],ascii="eran"},
-    // {addr="0x003d3e28",data=["0x00","0xab","0xab","0xab"],ascii="xxxx"}
-    wxString dbg_output(line), output;
+    wxString output;
+    wxString current_line;
+    size_t rows_count = result["memory"].children.size();
+    if(rows_count) {
+        for(size_t i = 0; i < rows_count; ++i) {
+            const auto& row = result["memory"][i];
+            current_line << row["addr"].value << " ";
 
-    // search for ,memory=[
-    int where = dbg_output.Find(wxT(",memory="));
-    if(where != wxNOT_FOUND) {
-        dbg_output = dbg_output.Mid((size_t)(where + 9));
-
-        const wxCharBuffer scannerText = _C(dbg_output);
-        setGdbLexerInput(scannerText.data(), true);
-
-        int type;
-        wxString currentToken;
-        wxString currentLine;
-        GDB_NEXT_TOKEN();
-
-        for(int i = 0; i < factor && type != 0; i++) {
-            currentLine.Clear();
-
-            while(type != GDB_ADDR) {
-
-                if(type == 0) {
-                    break;
-                }
-
-                GDB_NEXT_TOKEN();
-                continue;
+            // add the data
+            size_t data_size = row["data"].children.size();
+            for(size_t x = 0; x < data_size; ++x) {
+                current_line << row["data"][x].value << " ";
             }
 
-            // Eof?
-            if(type == 0) {
-                break;
+            if(row.exists("ascii")) {
+                current_line << row["ascii"].value;
             }
-
-            GDB_NEXT_TOKEN(); //=
-            GDB_NEXT_TOKEN(); // 0x003d3e24
-            wxGDB_STRIP_QUOATES(currentToken);
-            currentLine << currentToken << wxT(": ");
-
-            GDB_NEXT_TOKEN(); //,
-            GDB_NEXT_TOKEN(); // data
-            GDB_NEXT_TOKEN(); //=
-            GDB_NEXT_TOKEN(); //[
-
-            long v(0);
-            wxString hex, asciiDump;
-            for(int yy = 0; yy < divider; yy++) {
-                GDB_NEXT_TOKEN(); //"0x65"
-                wxGDB_STRIP_QUOATES(currentToken);
-                // convert the hex string into real value
-                if(currentToken.ToLong(&v, 16)) {
-
-                    //	char ch = (char)v;
-                    if(wxIsprint((wxChar)v) || (wxChar)v == ' ') {
-                        if(v == 9) { // TAB
-                            v = 32;  // SPACE
-                        }
-
-                        hex << (wxChar)v;
-                    } else {
-                        hex << wxT("?");
-                    }
-                } else {
-                    hex << wxT("?");
-                }
-
-                currentLine << currentToken << wxT(" ");
-                GDB_NEXT_TOKEN(); //, | ]
-            }
-
-            GDB_NEXT_TOKEN(); //,
-            GDB_NEXT_TOKEN(); // GDB_ASCII
-            GDB_NEXT_TOKEN(); //=
-            GDB_NEXT_TOKEN(); // ascii_value
-            currentLine << wxT(" : ") << hex;
-
-            wxGDB_STRIP_QUOATES(currentToken);
-            output << currentLine << wxT("\n");
-            GDB_NEXT_TOKEN();
+            output << current_line << "\n";
+            current_line.clear();
         }
-
-        gdb_result_lex_clean();
+        output.RemoveLast(); // remove the trailing \n
     }
+
     e.m_updateReason = DBG_UR_WATCHMEMORY;
     e.m_evaluated = output;
     e.m_expression = m_address;
@@ -979,8 +914,8 @@ static VariableObjChild FromParserOutput(const gdbmi::Node& child)
 
     // child.varName = ExtractGdbChild(attr, wxT("exp"));
     // if(child.varName.IsEmpty() || child.type == child.varName ||
-    //    (child.varName == wxT("public") || child.varName == wxT("private") || child.varName == wxT("protected")) ||
-    //    (child.type.Contains(wxT("class ")) || child.type.Contains(wxT("struct ")))) {
+    //    (child.varName == wxT("public") || child.varName == wxT("private") || child.varName == wxT("protected"))
+    //    || (child.type.Contains(wxT("class ")) || child.type.Contains(wxT("struct ")))) {
     //
     //     child.isAFake = true;
     // }

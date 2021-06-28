@@ -36,7 +36,7 @@ void strip_double_backslashes(wxString& str)
             // gdb adds an extra annoying '\"' to double quotes
             // making it really hard to view strings in the debugger
             // UI, so lets remove it
-            fixed_str.RemoveLast();
+            fixed_str.erase(fixed_str.length() - 1);
             fixed_str.append(1, ch);
         } else {
             fixed_str.append(1, ch);
@@ -381,8 +381,9 @@ void gdbmi::Parser::parse_properties(Tokenizer* tokenizer, Node::ptr_t parent)
 
 void gdbmi::Parser::print(Node::ptr_t node, int depth)
 {
+    std::cout << wxString(depth, ' ');
     if(!node->name.empty()) {
-        std::cout << wxString(depth, ' ') << node->name;
+        std::cout << node->name;
     }
 
     if(!node->value.empty()) {

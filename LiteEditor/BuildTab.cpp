@@ -444,9 +444,9 @@ void BuildTab::ProcessBuildingProjectLine(const wxString& line)
     m_currentProjectName.swap(s);
 }
 
-size_t BuildTab::GetNextLineWithErrorOrWarning(size_t from) const
+size_t BuildTab::GetNextLineWithErrorOrWarning(size_t from, bool errors_only) const
 {
-    if(m_error_count == 0 && m_warn_count == 0) {
+    if(m_error_count == 0 && (m_warn_count == 0 || errors_only)) {
         return wxString::npos;
     }
 
@@ -458,7 +458,10 @@ size_t BuildTab::GetNextLineWithErrorOrWarning(size_t from) const
         wxUIntPtr p = m_view->GetItemData(m_view->RowToItem(i));
         if(p) {
             LineClientData* cd = reinterpret_cast<LineClientData*>(p);
-            if(cd->match_pattern.sev == Compiler::kSevWarning || cd->match_pattern.sev == Compiler::kSevError) {
+            if(errors_only && cd->match_pattern.sev == Compiler::kSevError) {
+                return i;
+            } else if(!errors_only && (cd->match_pattern.sev == Compiler::kSevWarning ||
+                                       cd->match_pattern.sev == Compiler::kSevError)) {
                 return i;
             }
         }
@@ -483,7 +486,7 @@ void BuildTab::OnNextBuildErrorUI(wxUpdateUIEvent& event) { event.Enable(m_warn_
 
 void BuildTab::SelectFirstErrorOrWarning(size_t from)
 {
-    size_t line_to_select = GetNextLineWithErrorOrWarning(from);
+    size_t line_to_select = GetNextLineWithErrorOrWarning(from, m_buildTabSettings.GetSkipWarnings());
     if(line_to_select != wxString::npos) {
         m_view->UnselectAll();
         m_view->SetFirstVisibleRow(line_to_select);

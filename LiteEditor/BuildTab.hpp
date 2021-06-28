@@ -33,7 +33,7 @@ protected:
     void OnContextMenu(wxDataViewEvent& e);
     void OnNextBuildError(wxCommandEvent& event);
     void OnNextBuildErrorUI(wxUpdateUIEvent& event);
-    size_t GetNextLineWithErrorOrWarning(size_t from) const;
+    size_t GetNextLineWithErrorOrWarning(size_t from, bool errors_only = false) const;
     void SelectFirstErrorOrWarning(size_t from);
 
     void ProcessBuffer(bool last_line = false);

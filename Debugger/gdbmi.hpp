@@ -114,7 +114,8 @@ public:
     wxString value; // optional
     vec_t children;
     std::unordered_map<wxString, ptr_t> children_map;
-
+    
+    Node() {}
     Node& find_child(const wxString& name) const;
     Node& operator[](const wxString& name) const { return find_child(name); }
     Node& operator[](size_t index) const

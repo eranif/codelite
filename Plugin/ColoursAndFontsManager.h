@@ -75,7 +75,7 @@ protected:
 
 public:
     static ColoursAndFontsManager& Get();
-    
+
     /**
      * @brief return the default editor font (monospaced)
      */
@@ -115,14 +115,8 @@ public:
     void SetGlobalFont(const wxFont& font);
     const wxFont& GetGlobalFont() const;
 
-    void SetGlobalTheme(const wxString& globalTheme)
-    {
-        this->m_globalTheme = globalTheme;
-    }
-    const wxString& GetGlobalTheme() const
-    {
-        return m_globalTheme;
-    }
+    void SetGlobalTheme(const wxString& globalTheme) { this->m_globalTheme = globalTheme; }
+    const wxString& GetGlobalTheme() const { return m_globalTheme; }
     /**
      * @brief reload the lexers from the configuration files
      */
@@ -183,9 +177,9 @@ public:
     void RestoreDefaults();
 
     /**
-     * @brief import an eclipse theme into codelite
+     * @brief import an eclipse theme into CodeLite, return its name
      */
-    bool ImportEclipseTheme(const wxString& eclipseXml);
+    wxString ImportEclipseTheme(const wxString& eclipseXml);
 
     /**
      * @brief callback called by the helper thread indicating that it finished caching

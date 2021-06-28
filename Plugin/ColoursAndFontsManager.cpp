@@ -616,14 +616,13 @@ void ColoursAndFontsManager::RestoreDefaults()
     Reload();
 }
 
-bool ColoursAndFontsManager::ImportEclipseTheme(const wxString& eclipseXml)
+wxString ColoursAndFontsManager::ImportEclipseTheme(const wxString& eclipseXml)
 {
-    bool res = false;
     if(!eclipseXml.IsEmpty()) {
         EclipseThemeImporterManager importer;
         return importer.Import(eclipseXml);
     }
-    return res;
+    return wxEmptyString;
 }
 
 void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*>& userLexers)

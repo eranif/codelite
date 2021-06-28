@@ -699,21 +699,33 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
 {
     wxFileDialog selector(this, _("Select eclipse XML theme file"), "", "", "Eclipse Theme Files (*.xml)|*.xml",
-                          wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+                          wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if(selector.ShowModal() == wxID_OK) {
-        wxArrayString files;
-        selector.GetPaths(files);
-        if(files.IsEmpty())
+
+        wxString path = selector.GetPath();
+        if(path.empty())
             return;
-        for(size_t i = 0; i < files.size(); ++i) {
-            ColoursAndFontsManager::Get().ImportEclipseTheme(files.Item(i));
-        }
-        // Mark the dialg is modified and force a save
+
         wxBusyCursor bc;
+        wxString theme_name = ColoursAndFontsManager::Get().ImportEclipseTheme(path);
+
+        wxString message;
+        message << _("Theme : '") << theme_name << _("' imported successfully!");
+        ::wxMessageBox(message);
+
+        int pos = m_choiceGlobalTheme->Append(theme_name);
+        if(pos != wxNOT_FOUND) {
+            m_choiceGlobalTheme->SetSelection(pos);
+        }
+
+        // Make this lexer the active one
+        LoadLexer(theme_name);
+        DoUpdatePreview();
+
+        // Mark the dialg is modified and force a save
         m_isModified = true;
         SaveChanges();
 
-        ::wxMessageBox(_("File imported successfully!"));
         // Dismiss the dialog
         EndModal(wxID_OK);
         // and reload it

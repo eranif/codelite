@@ -63,13 +63,18 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}
 
-bool EclipseThemeImporterManager::Import(const wxString& eclipseXml)
+wxString EclipseThemeImporterManager::Import(const wxString& eclipseXml)
 {
+    wxString name;
     EclipseThemeImporterBase::List_t::iterator iter = m_importers.begin();
     for(; iter != m_importers.end(); ++iter) {
-        ColoursAndFontsManager::Get().AddLexer((*iter)->Import(eclipseXml));
+        auto lexer = (*iter)->Import(eclipseXml);
+        if(name.empty()) {
+            name = lexer->GetThemeName();
+        }
+        ColoursAndFontsManager::Get().AddLexer(lexer);
     }
-    return true;
+    return name;
 }
 
 bool EclipseThemeImporterManager::ImportCxxToAll()

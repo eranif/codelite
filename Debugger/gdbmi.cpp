@@ -8,6 +8,8 @@
 #include <unordered_set>
 #include <vector>
 
+thread_local gdbmi::Node emptyNode;
+
 namespace
 {
 std::unordered_map<wxString, gdbmi::eToken> words = {
@@ -394,4 +396,12 @@ void gdbmi::Parser::print(Node::ptr_t node, int depth)
     for(auto child : node->children) {
         print(child, depth + 4);
     }
+}
+
+gdbmi::Node& gdbmi::Node::find_child(const wxString& name) const
+{
+    if(children_map.count(name) == 0) {
+        return emptyNode;
+    }
+    return *(children_map.find(name)->second);
 }

@@ -11,6 +11,7 @@
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wxStringHash.h>
+#include <unordered_set>
 
 class LanguageServerCluster : public wxEvtHandler
 {
@@ -33,8 +34,8 @@ public:
     void StopServer(const wxString& entry);
     void DeleteServer(const wxString& name);
 
-    void StopAll();
-    void StartAll();
+    void StopAll(const std::unordered_set<wxString>& languages = {});
+    void StartAll(const std::unordered_set<wxString>& languages = {});
     void ClearAllDiagnostics();
 
     /**
@@ -67,9 +68,13 @@ protected:
 public:
     LanguageServerCluster();
     virtual ~LanguageServerCluster();
-    void Reload();
+    /**
+     * @brief restart language servers associated with a given languages
+     */
+    void Reload(const std::unordered_set<wxString>& languages = {});
     LanguageServerProtocol::Ptr_t GetServerForFile(const wxString& filename);
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
+    LanguageServerProtocol::Ptr_t GetServerForLanguage(const wxString& lang);
     void ClearRestartCounters();
 };
 

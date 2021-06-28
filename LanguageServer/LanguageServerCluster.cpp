@@ -57,16 +57,16 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
 }
 
-void LanguageServerCluster::Reload()
+void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages)
 {
-    StopAll();
+    StopAll(languages);
 
     // If we are not enabled, stop here
     if(!LanguageServerConfig::Get().IsEnabled()) {
         return;
     }
 
-    StartAll();
+    StartAll(languages);
 }
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxString& filename)
@@ -259,6 +259,11 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
         return;
     }
 
+    if(m_servers.count(entry.GetName())) {
+        clDEBUG() << "LSP" << entry.GetName() << "is already running" << endl;
+        return;
+    }
+
     LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
     lsp->SetPriority(entry.GetPriority());
     lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
@@ -324,28 +329,51 @@ void LanguageServerCluster::OnWorkspaceOpen(clWorkspaceEvent& event)
     this->Reload();
 }
 
-void LanguageServerCluster::StopAll()
+void LanguageServerCluster::StopAll(const std::unordered_set<wxString>& languages)
 {
-    for(const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt : m_servers) {
-        // stop all current processes
-        LanguageServerProtocol::Ptr_t server = vt.second;
-        server.reset(nullptr);
+    if(languages.empty()) {
+        // stop all
+        for(const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt : m_servers) {
+            // stop all current processes
+            LanguageServerProtocol::Ptr_t server = vt.second;
+            server.reset(nullptr);
+        }
+        m_servers.clear();
+    } else {
+        for(const auto& lang : languages) {
+            auto server = GetServerForLanguage(lang);
+            if(server) {
+                // this will stop and remove the server from the list
+                StopServer(server->GetName());
+            }
+        }
     }
-    m_servers.clear();
 
     // Clear all markers
     ClearAllDiagnostics();
 }
 
-void LanguageServerCluster::StartAll()
+void LanguageServerCluster::StartAll(const std::unordered_set<wxString>& languages)
 {
     // create a new list
     ClearAllDiagnostics();
 
-    const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
-    for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
-        const LanguageServerEntry& entry = vt.second;
-        StartServer(entry);
+    if(languages.empty()) {
+        const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
+        for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
+            const LanguageServerEntry& entry = vt.second;
+            StartServer(entry);
+        }
+    } else {
+        for(const wxString& lang : languages) {
+            const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
+            for(const auto& vt : servers) {
+                // start all the LSPs for the current language
+                if(vt.second.IsEnabled() && vt.second.GetLanguages().Index(lang) != wxNOT_FOUND) {
+                    StartServer(vt.second);
+                }
+            }
+        }
     }
 }
 
@@ -377,7 +405,7 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
 {
     event.Skip();
     clGetManager()->SetStatusMessage(_("Restarting Language Servers..."));
-    this->Reload(); // restart the servers
+    this->Reload({ "c", "cpp" }); // restart c/c++ the servers
     clGetManager()->SetStatusMessage(_("Ready"));
 }
 
@@ -423,23 +451,7 @@ void LanguageServerCluster::ClearAllDiagnostics()
 
 void LanguageServerCluster::ClearRestartCounters() { m_restartCounters.clear(); }
 
-void LanguageServerCluster::OnBuildEnded(clBuildEvent& event)
-{
-    event.Skip();
-    wxArrayString rustLsps;
-    for(auto vt : m_servers) {
-        auto lsp = vt.second;
-        if(lsp->GetSupportedLanguages().count("rust")) {
-            // rust is a unique in this matter: it's build command might update the paths
-            // by updating the crates, so after each build, we restart it
-            rustLsps.Add(vt.first);
-        }
-    }
-
-    for(const wxString& lspName : rustLsps) {
-        RestartServer(lspName);
-    }
-}
+void LanguageServerCluster::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 
 void LanguageServerCluster::StopServer(const wxString& name)
 {
@@ -495,4 +507,15 @@ IEditor* LanguageServerCluster::FindEditor(const wxString& path) const
         }
     }
     return nullptr;
+}
+
+LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const wxString& lang)
+{
+    for(auto vt : m_servers) {
+        auto server = vt.second;
+        if(server->GetSupportedLanguages().count(lang)) {
+            return server;
+        }
+    }
+    return LanguageServerProtocol::Ptr_t(nullptr);
 }

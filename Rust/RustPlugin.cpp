@@ -40,6 +40,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
+#include "wxmd5.h"
 #include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
@@ -75,6 +76,8 @@ RustPlugin::RustPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FS_NEW_WORKSPACE_FILE_CREATED, &RustPlugin::OnRustWorkspaceFileCreated, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RustPlugin::OnNewWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RustPlugin::OnBuildErrorLineClicked, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &RustPlugin::OnBuildEnded, this);
+
     clWorkspaceManager::Get().RegisterWorkspace(new RustWorkspace());
     AddRustcCompilerIfMissing(); // make sure we got the rustc compiler if missing
 }
@@ -97,6 +100,7 @@ void RustPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FS_NEW_WORKSPACE_FILE_CREATED, &RustPlugin::OnRustWorkspaceFileCreated, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RustPlugin::OnNewWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RustPlugin::OnBuildErrorLineClicked, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &RustPlugin::OnBuildEnded, this);
 }
 
 void RustPlugin::OnFolderContextMenu(clContextMenuEvent& event) { event.Skip(); }
@@ -282,4 +286,32 @@ void RustPlugin::AddRustcCompilerIfMissing()
     BuildSettingsConfigST::Get()->SetCompiler(*locator.GetCompilers().begin());
     BuildSettingsConfigST::Get()->Flush();
     clDEBUG() << "Successfully added new compiler 'rustc'" << endl;
+}
+
+void RustPlugin::OnBuildEnded(clBuildEvent& event)
+{
+    event.Skip();
+    if(!clFileSystemWorkspace::Get().IsOpen()) {
+        return;
+    }
+
+    wxFileName fnCargoToml(clFileSystemWorkspace::Get().GetFileName());
+    fnCargoToml.SetFullName("Cargo.toml");
+    wxString cargo_toml = fnCargoToml.GetFullPath();
+    if(!wxFileName::FileExists(cargo_toml)) {
+        return;
+    }
+
+    wxString new_digest = wxMD5::GetDigest(fnCargoToml);
+    wxString old_digest;
+    if(m_cargoTomlDigest.count(cargo_toml)) {
+        old_digest = m_cargoTomlDigest[cargo_toml];
+    }
+
+    if(new_digest != old_digest) {
+        // restart is required
+        clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
+        EventNotifier::Get()->ProcessEvent(restart_event);
+    }
+    m_cargoTomlDigest[cargo_toml] = new_digest;
 }

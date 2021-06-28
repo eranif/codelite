@@ -31,9 +31,13 @@
 #include "cl_command_event.h"
 #include "macros.h"
 #include "plugin.h"
+#include "wxStringHash.h"
+#include <unordered_map>
 
 class RustPlugin : public IPlugin
 {
+    std::unordered_map<wxString, wxString> m_cargoTomlDigest;
+
 public:
     RustPlugin(IManager* manager);
     virtual ~RustPlugin();
@@ -45,6 +49,7 @@ protected:
     wxString GetRustTool(const wxString& toolname) const;
     void OnBuildErrorLineClicked(clBuildEvent& event);
     void AddRustcCompilerIfMissing();
+    void OnBuildEnded(clBuildEvent& event);
 
 public:
     //--------------------------------------------

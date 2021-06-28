@@ -1,3 +1,4 @@
+#include "clRowEntry.h"
 #include "clScrollBar.h"
 #include "clTreeCtrl.h"
 #include "clTreeCtrlModel.h"
@@ -128,7 +129,7 @@ void clTreeCtrl::UpdateLineHeight()
     gcdc.SetFont(GetDefaultFont());
     wxSize textSize = gcdc.GetTextExtent("Tp");
 
-    SetLineHeight(clRowEntry::Y_SPACER + textSize.GetHeight() + clRowEntry::Y_SPACER);
+    SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);
     SetIndent(GetLineHeight());
 }
 
@@ -764,6 +765,7 @@ void clTreeCtrl::DoBitmapAdded()
     if(!GetBitmaps()) {
         return;
     }
+
     int heighestBitmap = 0;
     for(size_t i = 0; i < GetBitmaps()->size(); ++i) {
         const wxBitmap& bmp = GetBitmaps()->at(i);
@@ -771,7 +773,7 @@ void clTreeCtrl::DoBitmapAdded()
             heighestBitmap = wxMax(heighestBitmap, bmp.GetScaledHeight());
         }
     }
-    heighestBitmap += 2 * clRowEntry::Y_SPACER;
+    heighestBitmap += 2 * m_spacerY;
     SetLineHeight(wxMax(heighestBitmap, GetLineHeight()));
     SetIndent(GetLineHeight());
 }
@@ -1516,5 +1518,12 @@ void clTreeCtrl::Commit()
 {
     m_bulkInsert = false;
     m_model.SetSortFunction(m_oldSortFunc);
+    Refresh();
+}
+
+void clTreeCtrl::SetLineSpacing(size_t pixels)
+{
+    m_spacerY = pixels;
+    UpdateLineHeight();
     Refresh();
 }

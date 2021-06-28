@@ -3,6 +3,7 @@
 
 #include "clControlWithItems.h"
 #include "clHeaderBar.h"
+#include "clRowEntry.h"
 #include "clScrolledPanel.h"
 #include "clTreeCtrlModel.h"
 #include "codelite_exports.h"
@@ -36,6 +37,8 @@ protected:
     bool m_bulkInsert = false;
     clSortFunc_t m_oldSortFunc;
     eRendererType m_renderer = eRendererType::RENDERER_DEFAULT;
+    size_t m_spacerY = clRowEntry::Y_SPACER;
+    size_t m_spacerX = clRowEntry::X_SPACER;
 
 private:
     wxPoint DoFixPoint(const wxPoint& pt);
@@ -66,7 +69,6 @@ protected:
     void UpdateLineHeight();
 
 public:
-    void ScrollToBottom();
     int GetFirstItemPosition() const override;
     int GetRange() const override;
     clTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
@@ -75,6 +77,11 @@ public:
     virtual ~clTreeCtrl();
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);
+
+    /**
+     * @brief set the upper and lower spacing between lines in the view
+     */
+    void SetLineSpacing(size_t pixels);
 
     void SetRendererType(eRendererType renderer)
     {

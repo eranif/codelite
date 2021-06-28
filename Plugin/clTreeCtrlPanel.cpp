@@ -994,7 +994,9 @@ void clTreeCtrlPanel::OnLinkEditor(wxCommandEvent& event)
     if(GetConfig()) {
         GetConfig()->Write("FileExplorer/Options", m_options);
     }
-    if(m_options & kLinkToEditor) {
+    
+    auto editor = clGetManager()->GetActiveEditor();
+    if((m_options & kLinkToEditor) && editor) {
         // show the active editor's item
         ExpandToFile(clGetManager()->GetActiveEditor()->GetFileName());
     }
@@ -1002,7 +1004,8 @@ void clTreeCtrlPanel::OnLinkEditor(wxCommandEvent& event)
 
 void clTreeCtrlPanel::OnLinkEditorUI(wxUpdateUIEvent& event)
 {
-    if(IsFolderOpened()) {
+    auto editor = clGetManager()->GetActiveEditor();
+    if(editor && IsFolderOpened()) {
         event.Enable(true);
         event.Check(m_options & kLinkToEditor);
     } else {

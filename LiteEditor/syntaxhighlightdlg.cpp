@@ -730,8 +730,6 @@ void SyntaxHighlightDlg::OnLoadEclipseThemeWebsite(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
 {
-    m_globalThemeChanged = true;
-    m_isModified = true;
     DoUpdatePreview();
     LexerConf::Ptr_t previewLexer =
         ColoursAndFontsManager::Get().GetLexer("text", m_choiceGlobalTheme->GetStringSelection());
@@ -747,6 +745,8 @@ void SyntaxHighlightDlg::OnGlobalThemeSelected(wxCommandEvent& event)
         m_colourPickerBaseColour->SetColour(bgColour);
         m_endingTheme = kTHEME_LIGHT;
     }
+    m_globalThemeChanged = true;
+    m_isModified = true;
 }
 
 void SyntaxHighlightDlg::OnGlobalFontSelected(wxFontPickerEvent& event)

@@ -73,6 +73,13 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
     e.Skip();
     m_buildInProgress = true;
 
+    // clear all build markers
+    IEditor::List_t all_editors;
+    clGetManager()->GetAllEditors(all_editors);
+    for(auto editor : all_editors) {
+        editor->DelAllCompilerMarkers();
+    }
+
     // ensure that the BUILD_IN is visible
     ManagerST::Get()->ShowOutputPane(BUILD_WIN, true);
 

@@ -67,9 +67,13 @@ wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc, eRendererType t)
 {
     wxGraphicsRenderer* renderer = nullptr;
     switch(t) {
-    case eRendererType::RENDERER_CAIRO:
     case eRendererType::RENDERER_DEFAULT:
+    case eRendererType::RENDERER_CAIRO:
+#if defined(__WXGTK__)
+        renderer = wxGraphicsRenderer::GetCairoRenderer();
+#else
         renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
         break;
     case eRendererType::RENDERER_DIRECT2D:
 #if defined(__WXMSW__) && wxUSE_GRAPHICS_DIRECT2D

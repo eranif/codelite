@@ -30,6 +30,10 @@
 #define wxUSE_BUTTON_NATIVE_RENDERER 1
 #endif
 
+#if defined(__WXGTK__)
+#include <gtk/gtk.h>
+#endif
+
 #define RIGHT_ARROW L"\u276f  "
 
 namespace
@@ -182,8 +186,26 @@ void clButtonBase::Initialise()
 
 void clButtonBase::Render(wxDC& dc)
 {
+#if defined(__WXGTK__)
+    // set default
     wxColour parentbgColour =
         GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();
+    if(GetParent()) {
+        GdkRGBA colour;
+        auto hParent = GetParent()->GetHandle();
+        auto style_context = gtk_widget_get_style_context(GTK_WIDGET(hParent));
+        if(style_context) {
+            gtk_style_context_get_background_color(style_context, GTK_STATE_FLAG_NORMAL, &colour);
+            wxColour c = wxColour(colour);
+            if(c.IsOk()) {
+                parentbgColour = c;
+            }
+        }
+    }
+#else
+    wxColour parentbgColour =
+        GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();
+#endif
     wxRect clientRect = GetClientRect();
     wxRect rect = clientRect;
 

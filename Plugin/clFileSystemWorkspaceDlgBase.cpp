@@ -475,7 +475,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
                                        wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);
     m_staticText256->SetToolTip(_("Path to debugger executable\nLeave empty to use the defaults"));
 
-    boxSizer258->Add(m_staticText256, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    boxSizer258->Add(m_staticText256, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlDebugger =
         new wxTextCtrl(Debugger, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(Debugger, wxSize(-1, -1)), 0);

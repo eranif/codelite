@@ -99,7 +99,11 @@ void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
     m_flags = json["flags"].toSize_t(m_flags);
     m_compileFlags = json["compile_flags"].toArrayString();
     m_executable = json["executable"].toString();
-    m_lastExecutables = json["last_executables"].toArrayString();
+    wxArrayString last_execs = json["last_executables"].toArrayString();
+
+    // calling SetLastExecutables ensures that we dont add empty paths
+    SetLastExecutables(last_execs);
+
     m_args = json["arguments"].toString();
     m_environment = json["environment"].toString();
     m_compiler = json["compiler"].toString(m_compiler);
@@ -288,6 +292,21 @@ wxArrayString clFileSystemWorkspaceConfig::GetWorkspaceIncludes(bool withPrefix)
     }
     return workspaceDirsArr;
 }
+
+void clFileSystemWorkspaceConfig::SetLastExecutables(const wxArrayString& lastExecutables)
+{
+    m_lastExecutables.clear();
+    m_lastExecutables.reserve(lastExecutables.size());
+    for(auto path : lastExecutables) {
+        path.Trim().Trim(false);
+        if(path.empty()) {
+            continue;
+        }
+        m_lastExecutables.Add(path);
+    }
+}
+
+const wxArrayString& clFileSystemWorkspaceConfig::GetLastExecutables() const { return m_lastExecutables; }
 
 ///===-------------------------------------
 /// Workspace settings

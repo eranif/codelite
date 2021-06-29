@@ -121,8 +121,8 @@ public:
     void SetDebuggerPath(const wxString& debuggerPath) { this->m_debuggerPath = debuggerPath; }
     const wxString& GetDebuggerCommands() const { return m_debuggerCommands; }
     const wxString& GetDebuggerPath() const { return m_debuggerPath; }
-    void SetLastExecutables(const wxArrayString& lastExecutables) { this->m_lastExecutables = lastExecutables; }
-    const wxArrayString& GetLastExecutables() const { return m_lastExecutables; }
+    void SetLastExecutables(const wxArrayString& lastExecutables);
+    const wxArrayString& GetLastExecutables() const;
 };
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceSettings

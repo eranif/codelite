@@ -1,12 +1,12 @@
-#include "EclipseThemeImporterBase.h"
-#include "drawingutils.h"
-#include "xmlutils.h"
-#include <wx/colour.h>
-#include "cl_standard_paths.h"
-#include "globals.h"
 #include "ColoursAndFontsManager.h"
+#include "EclipseThemeImporterBase.h"
+#include "cl_standard_paths.h"
+#include "drawingutils.h"
+#include "globals.h"
 #include "lexer_configuration.h"
+#include "xmlutils.h"
 #include <wx/arrstr.h>
+#include <wx/colour.h>
 #include <wx/tokenzr.h>
 
 EclipseThemeImporterBase::EclipseThemeImporterBase() {}
@@ -18,7 +18,8 @@ bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImp
     prop.colour = "";
     prop.isBold = false;
     prop.isItalic = false;
-    if(!m_doc.IsOk()) return false;
+    if(!m_doc.IsOk())
+        return false;
 
     wxXmlNode* child = m_doc.GetRoot()->GetChildren();
     while(child) {
@@ -33,11 +34,12 @@ bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImp
     return false;
 }
 
-LexerConf::Ptr_t
-EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const wxString& langName, int langId)
+LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const wxString& langName,
+                                                            int langId)
 {
     m_langName = langName;
-    if(!m_doc.Load(eclipseXml.GetFullPath())) return NULL;
+    if(!m_doc.Load(eclipseXml.GetFullPath()))
+        return NULL;
 
     LexerConf::Ptr_t lexer(new LexerConf());
 
@@ -45,17 +47,34 @@ EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const w
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
 
     // Read the basic properties
-    if(!GetProperty("background", m_background)) return NULL;
-    if(!GetProperty("foreground", m_foreground)) return NULL;
-    if(!GetProperty("selectionForeground", m_selectionForeground)) return NULL;
-    if(!GetProperty("selectionBackground", m_selectionBackground)) return NULL;
-    if(!GetProperty("lineNumber", m_lineNumber)) return NULL;
-    if(!GetProperty("singleLineComment", m_singleLineComment)) return NULL;
-    if(!GetProperty("multiLineComment", m_multiLineComment)) return NULL;
-    if(!GetProperty("number", m_number)) return NULL;
-    if(!GetProperty("string", m_string)) return NULL;
-    if(!GetProperty("operator", m_oper)) return NULL;
-    if(!GetProperty("keyword", m_keyword)) return NULL;
+    if(!GetProperty("background", m_background))
+        return NULL;
+
+    if(wxColour(m_background.colour) == *wxBLACK) {
+        // dont allow real black colour
+        m_background.colour = wxColour(*wxBLACK).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX);
+    }
+
+    if(!GetProperty("foreground", m_foreground))
+        return NULL;
+    if(!GetProperty("selectionForeground", m_selectionForeground))
+        return NULL;
+    if(!GetProperty("selectionBackground", m_selectionBackground))
+        return NULL;
+    if(!GetProperty("lineNumber", m_lineNumber))
+        return NULL;
+    if(!GetProperty("singleLineComment", m_singleLineComment))
+        return NULL;
+    if(!GetProperty("multiLineComment", m_multiLineComment))
+        return NULL;
+    if(!GetProperty("number", m_number))
+        return NULL;
+    if(!GetProperty("string", m_string))
+        return NULL;
+    if(!GetProperty("operator", m_oper))
+        return NULL;
+    if(!GetProperty("keyword", m_keyword))
+        return NULL;
     if(!GetProperty("class", m_klass)) {
         m_klass = m_foreground;
     }
@@ -69,7 +88,7 @@ EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const w
     if(!GetProperty("javadocKeyword", m_javadocKeyword)) {
         m_javadocKeyword = m_multiLineComment;
     }
-    
+
     m_oper = m_foreground;
     return lexer;
 }
@@ -84,7 +103,8 @@ bool EclipseThemeImporterBase::IsDarkTheme() const
 {
     // load the theme background colour
     EclipseThemeImporterBase::Property p;
-    if(!GetProperty("background", p)) return false;
+    if(!GetProperty("background", p))
+        return false;
 
     // test the colour
     return DrawingUtils::IsDark(p.colour);
@@ -92,7 +112,8 @@ bool EclipseThemeImporterBase::IsDarkTheme() const
 
 wxString EclipseThemeImporterBase::GetName() const
 {
-    if(!IsValid()) return "";
+    if(!IsValid())
+        return "";
     return m_doc.GetRoot()->GetAttribute("name");
 }
 
@@ -116,13 +137,8 @@ wxString EclipseThemeImporterBase::GetOutputFile(const wxString& language) const
     return xmlFileName;
 }
 
-void EclipseThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer,
-                                           const wxString& id,
-                                           const wxString& name,
-                                           const wxString& colour,
-                                           const wxString& bgColour,
-                                           bool bold,
-                                           bool italic,
+void EclipseThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name,
+                                           const wxString& colour, const wxString& bgColour, bool bold, bool italic,
                                            bool isEOLFilled)
 {
     wxASSERT(!colour.IsEmpty());
@@ -185,8 +201,8 @@ void EclipseThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
     AddProperty(lexer, "-3", "Caret Colour", IsDarkTheme() ? "white" : "black", background.colour);
     AddProperty(lexer, "-4", "Whitespace", whitespaceColour, background.colour);
     AddProperty(lexer, "38", "Calltip", foreground.colour, background.colour);
-    AddProperty(
-        lexer, "33", "Line Numbers", lineNumber.colour, background.colour, lineNumber.isBold, lineNumber.isItalic);
+    AddProperty(lexer, "33", "Line Numbers", lineNumber.colour, background.colour, lineNumber.isBold,
+                lineNumber.isItalic);
 }
 
 void EclipseThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& words)
@@ -194,6 +210,6 @@ void EclipseThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& 
     wordset.clear();
     wxArrayString arr = ::wxStringTokenize(words, " \t\n", wxTOKEN_STRTOK);
     arr.Sort();
-    
+
     wordset = ::wxJoin(arr, ' ');
 }

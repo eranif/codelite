@@ -26,15 +26,15 @@
 #ifndef ECLIPSETHEMEIMPORTERBASE_H
 #define ECLIPSETHEMEIMPORTERBASE_H
 
-#include "codelite_exports.h"
-#include <wx/xml/xml.h>
-#include <wx/string.h>
-#include <wx/filename.h>
-#include <list>
-#include "smart_ptr.h"
-#include "macros.h"
-#include "lexer_configuration.h"
 #include "JSON.h"
+#include "codelite_exports.h"
+#include "lexer_configuration.h"
+#include "macros.h"
+#include "smart_ptr.h"
+#include <list>
+#include <wx/filename.h>
+#include <wx/string.h>
+#include <wx/xml/xml.h>
 
 class WXDLLIMPEXP_SDK EclipseThemeImporterBase
 {
@@ -74,23 +74,11 @@ protected:
     wxString m_langName;
 
 protected:
-    void AddProperty(LexerConf::Ptr_t lexer,
-                     const wxString& id,
-                     const wxString& name,
-                     const wxString& colour,
-                     const wxString& bgColour,
-                     bool bold = false,
-                     bool italic = false,
-                     bool isEOLFilled = false);
+    void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const wxString& colour,
+                     const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false);
 
-    void AddProperty(LexerConf::Ptr_t lexer,
-                     int id,
-                     const wxString& name,
-                     const wxString& colour,
-                     const wxString& bgColour,
-                     bool bold = false,
-                     bool italic = false,
-                     bool isEOLFilled = false)
+    void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const wxString& colour,
+                     const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false)
     {
         AddProperty(lexer, wxString::Format("%d", id), name, colour, bgColour, bold, italic, isEOLFilled);
     }
@@ -103,7 +91,7 @@ protected:
 public:
     const wxString& GetLangName() const { return m_langName; }
     void SetLangName(const wxString& langName) { this->m_langName = langName; }
-    
+
     // Setters/Getters
     void SetFileExtensions(const wxString& fileExtensions) { this->m_fileExtensions = fileExtensions; }
     const wxString& GetFileExtensions() const { return m_fileExtensions; }

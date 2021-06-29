@@ -18,7 +18,7 @@ del /Q %CL_SRC_DIR%\*.gch
 
 :: Build the 64 bit version
 call :ColorText 0A "Building CodeLite for x86_64"
-call :MAKE_WEEKLY Win_x64_Release codelite64_mingw.iss C:\src\wxWidgets C:\compilers\mingw64\bin
+call :MAKE_WEEKLY Win_x64_Release codelite64_mingw.iss C:\src\wxWidgets C:\msys64\mingw64\bin
 
 cd %CL_SRC_DIR%
 

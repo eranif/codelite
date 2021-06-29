@@ -13,7 +13,7 @@ StaticTextWrapper::StaticTextWrapper()
     PREPEND_STYLE(wxST_NO_AUTORESIZE, false);
 
     SetPropertyString(_("Common Settings"), "wxStaticText");
-    AddProperty(new MultiStringsProperty(PROP_LABEL, wxT("Static Text Label"), wxT("\\n"), _("Label:")));
+    AddProperty(new MultiStringsProperty(PROP_LABEL, _("Static Text Label"), wxT("\\n"), _("Label:")));
     m_properties.Item(PROP_LABEL)->SetValue(_("Static Text Label"));
 
     AddProperty(

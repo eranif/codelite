@@ -41,7 +41,7 @@ PropertyGridWrapper::PropertyGridWrapper()
     AddProperty(new CategoryProperty("wxPGProperty"));
     AddProperty(new StringProperty(PROP_NAME, "", _("The property name")));
     AddProperty(new StringProperty(PROP_LABEL, wxString("My Label") << ++labelCount, _("The property label")));
-    AddProperty(new MultiStringsProperty(PROP_TOOLTIP, "The property help string"));
+    AddProperty(new MultiStringsProperty(PROP_TOOLTIP, _("The property help string")));
     AddProperty(new ColorProperty(PROP_BG, "<Default>", _("Property background colour")));
     AddProperty(new ChoiceProperty(PROP_CUSTOM_EDITOR, customEditors, 0, _("Set custom editor control to a property")));
 

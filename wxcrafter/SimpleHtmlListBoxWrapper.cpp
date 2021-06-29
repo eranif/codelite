@@ -46,7 +46,7 @@ wxString SimpleHtmlListBoxWrapper::CppCtorCode() const
     code << wxT("wxArrayString ") << optionsArr << wxT(";\n");
     for(size_t i = 0; i < options.GetCount(); i++) {
 
-        code << optionsArr << wxT(".Add(_(\"") << wxCrafter::ESCAPE(options.Item(i)) << wxT("\"));\n");
+        code << optionsArr << wxT(".Add(") << wxCrafter::UNDERSCORE(options.Item(i)) << wxT(");\n");
     }
 
     code << GetName() << wxT(" = new ") << GetRealClassName() << "(" << GetWindowParent() << wxT(", ") << WindowID()

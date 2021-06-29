@@ -33,7 +33,7 @@ wxString ChoiceWrapper::CppCtorCode() const
 
     code << wxT("wxArrayString ") << GetName() << wxT("Arr;\n");
     for(size_t i = 0; i < options.GetCount(); i++) {
-        code << GetName() << wxT("Arr.Add(wxT(\"") << options.Item(i) << wxT("\"));\n");
+        code << GetName() << wxT("Arr.Add(") << wxCrafter::UNDERSCORE(options.Item(i)) << wxT(");\n");
     }
 
     code << GetName() << wxT(" = new ") << GetRealClassName() << "(" << GetWindowParent() << wxT(", ") << WindowID()

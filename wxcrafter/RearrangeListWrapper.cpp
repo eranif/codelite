@@ -34,7 +34,7 @@ wxString RearrangeListWrapper::CppCtorCode() const
     code << wxT("wxArrayInt ") << orderArr << wxT(";\n");
     code << wxT("wxArrayString ") << optionsArr << wxT(";\n");
     for(size_t i = 0; i < options.GetCount(); i++) {
-        code << optionsArr << ".Add(" << wxCrafter::WXT(options.Item(i)) << ");\n";
+        code << optionsArr << ".Add(" << wxCrafter::UNDERSCORE(options.Item(i)) << ");\n";
         code << orderArr << ".Add(" << i << ");\n";
     }
 

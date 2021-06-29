@@ -2,6 +2,7 @@
 #include "allocator_mgr.h"
 #include "string_property.h"
 #include "wxgui_defs.h"
+#include "wxgui_helpers.h"
 #include "xmlutils.h"
 #include <wx/html/htmlwin.h>
 
@@ -37,13 +38,12 @@ wxString HtmlWindowWrapper::CppCtorCode() const
 
     wxString htmlCode = PropertyString(PROP_HTMLCODE);
     htmlCode.Trim().Trim(false);
-    htmlCode.Prepend(wxT("wxT(\"")).Append(wxT("\")"));
-
-    if(htmlCode.IsEmpty() == false) { code << GetName() << wxT("->SetPage(") << htmlCode << wxT(");\n"); }
+    if(htmlCode.IsEmpty() == false) { code << GetName() << wxT("->SetPage(") << wxCrafter::WXT(htmlCode) << wxT(");\n"); }
 
     wxString url = PropertyFile(PROP_URL);
     url.Trim().Trim(false);
-    if(url.IsEmpty() == false) { code << GetName() << wxT("->LoadPage(") << url << wxT(");\n"); }
+    if(url.IsEmpty() == false) { code << GetName() << wxT("->LoadPage(") << wxCrafter::WXT(url) << wxT(");\n"); }
+
     code << CPPCommonAttributes();
     return code;
 }

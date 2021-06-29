@@ -42,7 +42,7 @@ wxString RadioBoxWrapper::CppCtorCode() const
     code << wxT("wxArrayString ") << arrname << wxT(";\n");
 
     for(size_t i = 0; i < options.GetCount(); i++) {
-        code << arrname << wxT(".Add(_(\"") << options.Item(i) << wxT("\"));\n");
+        code << arrname << wxT(".Add(") << wxCrafter::UNDERSCORE(options.Item(i)) << wxT(");\n");
     }
 
     // wxRadioBox(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& point, const wxSize& size,

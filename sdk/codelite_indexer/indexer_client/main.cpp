@@ -1,22 +1,24 @@
-#include <stdio.h>
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
 
 #ifdef __WXMSW__
 #include <io.h>
+#else
+#include "unistd.h"
 #endif
 
-#include "network/clindexerprotocol.h"
 #include "network/cl_indexer_reply.h"
 #include "network/cl_indexer_request.h"
+#include "network/clindexerprotocol.h"
 #include "network/named_pipe_client.h"
 #include "network/np_connections_server.h"
 
 #ifdef __WXMSW__
 #define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
 #else
-#define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
+// /tmp/codelite.eran/PID/codelite_indexer.sock
+#define PIPE_NAME "/tmp/codelite.%s/%s/codelite_indexer.sock"
 #endif
 
 int main(int argc, char** argv)
@@ -29,7 +31,11 @@ int main(int argc, char** argv)
     }
 
     char channel_name[1024];
+#ifdef __WXMSW__
     sprintf(channel_name, PIPE_NAME, argv[1]);
+#else
+    sprintf(channel_name, PIPE_NAME, ::getlogin(), argv[1]);
+#endif
 
     clIndexerRequest req;
     clNamedPipeClient client(channel_name);

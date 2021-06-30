@@ -11,7 +11,8 @@
 #define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
 HINSTANCE gHandler = NULL;
 #else
-#define PIPE_NAME "/tmp/codelite_indexer.%s.sock"
+// /tmp/codelite.eran/PID/codelite_indexer.sock
+#define PIPE_NAME "/tmp/codelite.%s/%s/codelite_indexer.sock"
 #endif
 
 static eQueue<clNamedPipe*> g_connectionQueue;
@@ -52,7 +53,11 @@ int main(int argc, char** argv)
 
     // create the connection factory
     char channel_name[1024];
+#ifdef __WXMSW__
     sprintf(channel_name, PIPE_NAME, argv[1]);
+#else
+    sprintf(channel_name, PIPE_NAME, ::getlogin(), argv[1]);
+#endif
 
     clNamedPipeConnectionsServer server(channel_name);
 

@@ -2855,9 +2855,12 @@ IEditor* GitPlugin::OpenFile(const wxString& relativePathFile)
 
 wxString GitPlugin::GetCommitMessageFile() const
 {
-    wxFileName fn(clStandardPaths::Get().GetTempDir() + "/CL_GIT_COMMIT_MSG.TXT");
-    fn.AppendDir(".codelite");
-    return fn.GetFullPath(IsRemoteWorkspace() ? wxPATH_UNIX : wxPATH_NATIVE);
+    if(IsRemoteWorkspace()) {
+        return "/tmp/CL_GIT_COMMIT_MSG.TXT";
+    } else {
+        wxFileName fn(clStandardPaths::Get().GetTempDir() + "/CL_GIT_COMMIT_MSG.TXT");
+        return fn.GetFullPath(IsRemoteWorkspace() ? wxPATH_UNIX : wxPATH_NATIVE);
+    }
 }
 
 wxString GitPlugin::FindRepositoryRoot(const wxString& starting_dir) const

@@ -316,6 +316,7 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
     pentry->SetRemoteLSP(event.GetFlags() & clLanguageServerEvent::kSSHEnabled);
     pentry->SetSshAccount(event.GetSshAccount());
     pentry->SetPriority(event.GetPriority());
+    pentry->SetWorkingDirectory(event.GetRootUri());
     LanguageServerConfig::Get().AddServer(*pentry);
 }
 

@@ -847,6 +847,7 @@ protected:
     wxString m_initOptions;
     wxArrayString m_languages;
     eAction m_action = kInvalidAction;
+    wxString m_rootUri;
 
 public:
     clLanguageServerEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
@@ -872,6 +873,8 @@ public:
     const wxString& GetSshAccount() const { return m_sshAccount; }
     void SetAction(const eAction& action) { this->m_action = action; }
     const eAction& GetAction() const { return m_action; }
+    void SetRootUri(const wxString& rootUri) { this->m_rootUri = rootUri; }
+    const wxString& GetRootUri() const { return m_rootUri; }
 };
 
 typedef void (wxEvtHandler::*clLanguageServerEventFunction)(clLanguageServerEvent&);

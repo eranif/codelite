@@ -280,12 +280,13 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     lspCommand = StringUtils::BuildArgv(command);
 
     wxString rootDir;
-    if(clWorkspaceManager::Get().GetWorkspace() && entry.IsAutoRestart()) {
+    if(clWorkspaceManager::Get().GetWorkspace() && entry.IsAutoRestart() && !entry.IsRemoteLSP()) {
         // we have an opened workspace. if the workspace has a root directory, let's use it
         // otherwise, default to the LSP value
         wxString path = clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath();
         rootDir = path.empty() ? entry.GetWorkingDirectory() : path;
     } else {
+        // Remote LSP will set the *remote* working directory in the configuration
         rootDir = entry.GetWorkingDirectory();
     }
 

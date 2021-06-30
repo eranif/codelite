@@ -538,6 +538,7 @@ clLanguageServerEvent& clLanguageServerEvent::operator=(const clLanguageServerEv
     m_initOptions = src.m_initOptions;
     m_languages = src.m_languages;
     m_action = src.m_action;
+    m_rootUri = src.m_rootUri;
     return *this;
 }
 

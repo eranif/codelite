@@ -665,6 +665,7 @@ void RemotyWorkspace::ConfigureRls(const wxString& exe)
     clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
     configure_event.SetLspName(lsp_name);
     configure_event.SetLanguages(langs);
+    configure_event.SetRootUri(GetRemoteWorkingDir());
 
     // the command: we need to set it to the workspace folder
     wxString lsp_cmd;
@@ -689,6 +690,7 @@ void RemotyWorkspace::ConfigureClangd(const wxString& exe)
     clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
     configure_event.SetLspName(lsp_name);
     configure_event.SetLanguages(langs);
+    configure_event.SetRootUri(GetRemoteWorkingDir());
 
     // the command: we need to set it to the workspace folder
     wxString lsp_cmd;
@@ -1055,7 +1057,7 @@ void RemotyWorkspace::ScanForLSPs()
     m_codeliteRemoteFinder.Locate("/usr/bin", "clangd", wxEmptyString, clangd_versions);
     m_locate_requests.push_back(&RemotyWorkspace::ConfigureClangd);
 
-    m_codeliteRemoteFinder.Locate("$HOME/.cargo/bin", "rust-anaylzer", wxEmptyString, {});
+    m_codeliteRemoteFinder.Locate("/usr/local/bin:/usr/bin:$HOME/.cargo/bin", "rust-analyzer", wxEmptyString, {});
     m_locate_requests.push_back(&RemotyWorkspace::ConfigureRls);
 }
 

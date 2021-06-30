@@ -235,7 +235,9 @@ def locate_in_path(name, path, versions_arr, ext):
     if len(ext) > 0:
         fullpath = "{}.{}".format(fullpath, ext)
     
-    if os.path.exists(fullpath):
+    logging.debug("Checking path: {}".format(fullpath))
+    if os.path.isfile(fullpath) or os.path.islink(fullpath):
+        logging.debug("found: {}".format(fullpath))
         return fullpath
     return ""
 
@@ -257,11 +259,14 @@ def locate(cmd):
     ext = cmd['ext']
     versions_arr = cmd['versions']
     
+    logging.debug("locate: searching for: {}, using paths: {}".format(name, paths));
     for p in paths:
         fullpath = locate_in_path(name, p, versions_arr, ext)
         if len(fullpath) > 0:
+            logging.debug("locate: match found: {}".format(fullpath))
             print(fullpath)
             break
+    logging.debug("locate: No match found :(")
     print_message_terminator()
 
 def main_loop():

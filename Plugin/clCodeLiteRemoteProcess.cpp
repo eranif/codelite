@@ -487,6 +487,7 @@ void clCodeLiteRemoteProcess::OnLocateOutput(const wxString& output, bool is_com
     clCommandEvent event(wxEVT_CODELITE_REMOTE_LOCATE);
 
     // parse the output
+    clDEBUG() << "Locate output: [" << output << "]" << endl;
     wxString fullpath = output;
     fullpath.Trim().Trim(false);
     event.SetFileName(fullpath);

@@ -808,9 +808,8 @@ void wxCrafterPlugin::DoGenerateCode(const NewFormDetails& fd)
         DoSelectWorkspaceTab();
 
     } else {
-        // do it using event, or else the main frame will steal the focus
         wxCommandEvent evtShowDesigner(wxEVT_SHOW_WXCRAFTER_DESIGNER);
-        EventNotifier::Get()->AddPendingEvent(evtShowDesigner);
+        EventNotifier::Get()->ProcessEvent(evtShowDesigner);
     }
 }
 
@@ -819,23 +818,7 @@ bool wxCrafterPlugin::DoShowDesigner(bool createIfNotExist)
     if(!m_mgr)
         return false;
 
-    if(!IsTabMode()) {
-        m_mainFrame->DisplayDesigner();
-        return false;
-    } else {
-        if(m_mainPanel) {
-            m_mgr->SelectPage(m_mainPanel);
-            return false;
-        }
-
-        if(createIfNotExist) {
-            wxPanel* mainBookPanel = m_mgr->GetEditorPaneNotebook();
-            m_mainPanel = new GUICraftMainPanel(mainBookPanel, this, m_treeView->GetTree());
-            m_mgr->AddPage(m_mainPanel, _("[wxCrafter]"), _("wxCrafter Designer"), "blocks", true);
-            DoSelectWorkspaceTab();
-            return true;
-        }
-    }
+    m_mainFrame->DisplayDesigner();
     return false;
 }
 

@@ -1,5 +1,7 @@
 #include "main.h"
 #include "serial_number.h"
+#include "wx/frame.h"
+#include "wx/toplevel.h"
 #include "wxc_aui_tool_stickiness.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
@@ -646,6 +648,7 @@ void MainFrame::DisplayDesigner()
     if(IsIconized()) {
         Restore();
     }
+    Raise();
 }
 
 void MainFrame::OnProjectClosed(wxCommandEvent& event)

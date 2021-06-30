@@ -50,6 +50,7 @@ protected:
     void OnListFilesOutput(const wxString& output, bool is_completed);
     void OnFindOutput(const wxString& buffer, bool is_completed);
     void OnLocateOutput(const wxString& buffer, bool is_completed);
+    void OnFindPathOutput(const wxString& buffer, bool is_completed);
     void OnExecOutput(const wxString& buffer, bool is_completed);
     bool DoExec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env,
                 IProcess* handler = nullptr);
@@ -124,6 +125,12 @@ public:
     void Exec(const wxString& cmd, const wxString& working_directory, const clEnvList_t& env);
 
     /**
+     * @brief find a path from. if path does not exist, check the parent folder
+     * going up until we hit the root path
+     */
+    void FindPath(const wxString& path);
+
+    /**
      * @brief call 'exec' and return an instance of IProcess. This method is for compatability with the
      * CreateAsyncProcess family of functions
      * @note it is up to the caller to delete the return process object
@@ -166,4 +173,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clP
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LOCATE, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LOCATE_DONE, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FINDPATH, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FINDPATH_DONE, clCommandEvent);
 #endif // CLCODELITEREMOTEPROCESS_HPP

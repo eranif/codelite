@@ -168,7 +168,7 @@ class GitPlugin : public IPlugin
     IntMap_t m_treeImageMapping;
     int m_baseImageCount;
     GitConsole* m_console;
-    wxString m_workspaceFilename;
+    wxString m_workspace_file;
     GitCommitListDlg* m_commitListDlg;
     wxArrayString m_filesSelected;
     wxString m_selectedFolder;
@@ -205,12 +205,8 @@ private:
 
     /// Workspace management
     bool IsWorkspaceOpened() const;
-    wxString GetWorkspaceName() const;
-    const wxString& GetWorkspaceFileName() const;
-    wxString GetWorkspacePath() const;
     wxString GetCommitMessageFile() const;
     wxString FindRepositoryRoot(const wxString& starting_dir) const;
-
     void FinishGitListAction(const gitAction& ga);
     void ListBranchAction(const gitAction& ga);
     void GetCurrentBranchAction(const gitAction& ga);
@@ -223,7 +219,7 @@ private:
     void DoResetFiles(const wxArrayString& files);
     void DoGetFileViewSelectedFiles(wxArrayString& files, bool relativeToRepo);
     void DoShowDiffsForFiles(const wxArrayString& files, bool useFileAsBase = false);
-    void DoSetRepoPath();
+    void DoSetRepoPath(const wxString& repo_path = wxEmptyString);
     void DoRecoverFromGitCommandError(bool clear_queue = true);
     void DoLoadBlameInfo(bool clearCache);
     void DoUpdateBlameInfo(const wxString& info, const wxString& fullpath);
@@ -278,6 +274,7 @@ private:
     void OnEditorClosed(wxCommandEvent& event);
     void OnEnableGitRepoExists(wxUpdateUIEvent& e);
     void OnClone(wxCommandEvent& e);
+    void OnSftpFileSaved(clCommandEvent& event);
 
     // Event handlers from folder context menu
     void OnFolderPullRebase(wxCommandEvent& event);
@@ -291,11 +288,14 @@ private:
     void OnGitActionDone(clSourceControlEvent& event);
     bool HandleErrorsOnRemoteRepo(const wxString& output) const;
 
+    // Remote callbacks
+    void OnFindPath(clCommandEvent& event);
+
 public:
     GitPlugin(IManager* manager);
     virtual ~GitPlugin();
 
-    void StoreWorkspaceRepoDetails();
+    const wxString& GetRepositoryPath() const { return m_repositoryDirectory; }
     void WorkspaceClosed();
 
     bool IsRemoteWorkspace() const { return m_isRemoteWorkspace; }
@@ -328,7 +328,6 @@ public:
     void FetchNextCommits(int skip, const wxString& args);
 
     GitConsole* GetConsole() { return m_console; }
-    const wxString& GetRepositoryDirectory() const { return m_repositoryDirectory; }
     IProcess* GetProcess() { return m_process; }
     clCommandProcessor* GetFolderProcess() { return m_commandProcessor; }
 

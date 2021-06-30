@@ -362,7 +362,7 @@ void clSFTPManager::OnFileSaved(clCommandEvent& event)
 
     auto conn_info = GetConnectionPair(cd->GetAccountName());
     CHECK_PTR_RET(conn_info.second);
-    AsyncSaveFile(cd->GetLocalPath(), cd->GetRemotePath(), conn_info.first.GetAccountName(), nullptr);
+    AsyncSaveFile(cd->GetLocalPath(), cd->GetRemotePath(), conn_info.first.GetAccountName(), EventNotifier::Get());
 }
 
 bool clSFTPManager::AwaitSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName)

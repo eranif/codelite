@@ -15,6 +15,7 @@ import logging
 #   {"command":"write_file", "path": "/tmp/myfile.txt", "content": "hello world"}
 #   {"command":"exec", "cmd": "/usr/bin/passwd", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
 #   {"command": "locate", "path": "/usr/bin", "name": "clangd", "ext": "", "versions": [15,14,13,12,11,10,9,8,7,6]}
+#   {"command": "find_path", "path": "$HOME/devl/codelite/LiteEditor/.git"}
 #
 # Command line usage:
 #   python3 codelite-remote.py --context builder
@@ -241,6 +242,30 @@ def locate_in_path(name, path, versions_arr, ext):
         return fullpath
     return ""
 
+def on_find_path(cmd):
+    """
+    find a directory or a file with a given name
+    if the path does not exist, check the parent folder until we hit root /
+    """
+    path = cmd['path']
+    path = os.path.expanduser(path)
+    path = os.path.expandvars(path)
+    
+    # check for this folder and start going up
+    dir_part, dir_name = os.path.split(path)
+    dirs = dir_part.split('/')
+    
+    while len(dirs) > 0:
+        fullpath = "{}/{}".format("/".join(dirs), dir_name)
+        logging.debug("checking for dir {}".format(fullpath))
+        if os.path.exists(fullpath):
+            print("{}".format(fullpath))
+            break
+        
+        # remove last element
+        dirs.pop(len(dirs) - 1)
+    print_message_terminator()
+
 def locate(cmd):
     """
     attempt to locate file with possible version number
@@ -288,7 +313,9 @@ def main_loop():
         "exec": on_exec,
         "write_file": write_file,
         "locate": locate,
+        "find_path": on_find_path,
     }
+    
     logging.info("codelite-remote started in interactive mode")
     while True:
         try:

@@ -333,7 +333,7 @@ void GitConsole::UpdateTreeView(const wxString& output)
             // a directory
             continue;
 
-        GitFileEntry entry(filename, prefix, m_git->GetRepositoryDirectory());
+        GitFileEntry entry(filename, prefix, m_git->GetRepositoryPath());
         lines.push_back(entry);
     }
 
@@ -608,7 +608,7 @@ void GitConsole::Clear()
     });
 }
 
-void GitConsole::OnUpdateUI(wxUpdateUIEvent& event) { event.Enable(!m_git->GetRepositoryDirectory().IsEmpty()); }
+void GitConsole::OnUpdateUI(wxUpdateUIEvent& event) { event.Enable(!m_git->GetRepositoryPath().IsEmpty()); }
 
 void GitConsole::OnUnversionedFileActivated(wxDataViewEvent& event)
 {
@@ -679,15 +679,13 @@ void GitConsole::ShowLog()
 
 wxString GitConsole::GetPrompt() const
 {
-    wxFileName fn(m_git->GetRepositoryDirectory(), wxEmptyString);
-    wxString prompt_str = fn.GetPath();
+    wxString prompt_str = m_git->GetRepositoryPath();
 #ifndef __WXMSW__
     wxString home_dir = ::wxGetHomeDir();
     if(prompt_str.StartsWith(home_dir)) {
         prompt_str.Replace(home_dir, "~", false);
     }
 #endif
-    prompt_str << fn.GetPath() << ">";
     return prompt_str;
 }
 

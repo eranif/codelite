@@ -75,7 +75,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
             m_choiceBranch1->Set(items);
             m_choiceBranch1->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
 
     m_plugin->AsyncRunGitWithCallback(
         " --no-pager tag",
@@ -84,7 +84,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
             m_choiceTag1->Set(items);
             m_choiceTag2->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
 
     // Restrict the commits to 1000: filling a wxChoice with many more froze CodeLite for several minutes
     // and in any case, selecting one particular commit out of hundreds is not easy!
@@ -95,7 +95,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
             m_choiceCommit1->Set(items);
             m_choiceCommit2->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
 }
 
 GitDiffChooseCommitishDlg::~GitDiffChooseCommitishDlg()
@@ -236,7 +236,7 @@ void GitDiffChooseCommitishDlg::OnBranch1Changed(wxCommandEvent& event)
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceCommit1->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
 }
 void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
 {
@@ -251,5 +251,5 @@ void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceCommit2->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryDirectory());
+        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
 }

@@ -483,7 +483,7 @@ void GitBlameDlg::UpdateLogControls(const wxString& commit)
         wxString command_args;
         command_args << "--no-pager show " << commit;
         m_process = m_plugin->AsyncRunGit(this, command_args, IProcessCreateDefault | IProcessWrapInShell,
-                                          m_plugin->GetRepositoryDirectory());
+                                          m_plugin->GetRepositoryPath());
     }
 }
 

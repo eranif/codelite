@@ -76,6 +76,15 @@
 #endif
 
 static GitPlugin* thePlugin = NULL;
+namespace
+{
+wxString GetDirFromPath(const wxString& path)
+{
+    wxString p = path;
+    p.Replace("\\", "/");
+    return p.BeforeLast('/');
+}
+} // namespace
 
 #define GIT_MESSAGE_IF(cond, ...)                          \
     if(cond) {                                             \
@@ -194,6 +203,9 @@ GitPlugin::GitPlugin(IManager* manager)
     m_tabToggler->SetOutputTabBmp(images->Add("git"));
 
     m_progressTimer.SetOwner(this);
+
+    m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
+    m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
 
     clConfig conf("git.conf");
     GitEntry data;
@@ -444,6 +456,10 @@ void GitPlugin::UnPlug()
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderStashPop, this, XRCID("git_stash_pop_folder"));
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &GitPlugin::OnProcessOutput, this);
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitPlugin::OnProcessTerminated, this);
+
+    m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
+    m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
+
     m_tabToggler.reset(NULL);
 }
 
@@ -453,9 +469,14 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
     DoSetRepoPath();
 }
 
-void GitPlugin::DoSetRepoPath()
+void GitPlugin::DoSetRepoPath(const wxString& repo_path)
 {
-    m_repositoryDirectory = FindRepositoryRoot(GetWorkspacePath());
+    if(repo_path.empty()) {
+        m_repositoryDirectory = FindRepositoryRoot(GetDirFromPath(m_workspace_file));
+    } else {
+        m_repositoryDirectory = repo_path;
+    }
+
     AddDefaultActions();
     ProcessGitActionQueue();
 }
@@ -907,10 +928,13 @@ void GitPlugin::ClearCodeLiteRemoteInfo()
 
 void GitPlugin::StartCodeLiteRemote()
 {
-    if(m_isRemoteWorkspace && !m_workspaceFilename.empty() && !m_remoteWorkspaceAccount.empty()) {
-        wxString codelite_remote_script = m_workspaceFilename.BeforeLast('/');
-        codelite_remote_script << "/.codelite/codelite-remote";
+    if(m_isRemoteWorkspace && !m_remoteWorkspaceAccount.empty()) {
+        wxString workspace_dir = GetDirFromPath(m_workspace_file);
+        wxString codelite_remote_script = workspace_dir + "/.codelite/codelite-remote";
         m_remoteProcess.StartInteractive(m_remoteWorkspaceAccount, codelite_remote_script, "git");
+
+        // find the real git root folder
+        m_remoteProcess.FindPath(workspace_dir + "/.git");
     }
 }
 
@@ -920,7 +944,7 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     ClearCodeLiteRemoteInfo();
     DoCleanup();
 
-    m_workspaceFilename = e.GetString();
+    m_workspace_file = e.GetString();
     m_isRemoteWorkspace = e.IsRemote();
     m_remoteWorkspaceAccount = e.GetRemoteAccount();
     StartCodeLiteRemote();
@@ -1761,11 +1785,7 @@ void GitPlugin::InitDefaults()
     conf.Save();
 
     if(IsWorkspaceOpened()) {
-        if(IsRemoteWorkspace()) {
-            m_repositoryDirectory = GetWorkspacePath();
-        } else {
-            m_repositoryDirectory = FindRepositoryRoot(GetWorkspacePath());
-        }
+        m_repositoryDirectory = GetRepositoryPath();
     } else {
         DoCleanup();
     }
@@ -1906,7 +1926,6 @@ void GitPlugin::OnEnableGitRepoExists(wxUpdateUIEvent& e) { e.Enable(m_repositor
 void GitPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 {
     e.Skip();
-    StoreWorkspaceRepoDetails();
     m_blameMap.clear();
     WorkspaceClosed();
     m_lastBlameMessage.clear();
@@ -2114,30 +2133,7 @@ void GitPlugin::OnWorkspaceConfigurationChanged(wxCommandEvent& e)
     ProcessGitActionQueue();
 }
 
-wxString GitPlugin::GetWorkspaceName() const
-{
-    wxString name;
-    name = m_workspaceFilename.AfterLast('/');
-    name = name.BeforeLast('.');
-    return name;
-}
-
-bool GitPlugin::IsWorkspaceOpened() const { return !m_workspaceFilename.empty(); }
-
-const wxString& GitPlugin::GetWorkspaceFileName() const { return m_workspaceFilename; }
-
-wxString GitPlugin::GetWorkspacePath() const
-{
-    wxString path = GetWorkspaceFileName();
-    if(!m_isRemoteWorkspace) {
-        path.Replace("\\", "/");
-        path = path.BeforeLast('/');
-        path.Replace("/", wxFileName::GetPathSeparator());
-    } else {
-        path = path.BeforeLast('/');
-    }
-    return path;
-}
+bool GitPlugin::IsWorkspaceOpened() const { return !m_workspace_file.empty(); }
 
 void GitPlugin::RevertCommit(const wxString& commitId)
 {
@@ -2205,7 +2201,7 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
     wxString right_file;
     if(IsRemoteWorkspace()) {
         // download the file and store it locally
-        wxFileName remote_file(GetWorkspacePath() + "/" + fileName);
+        wxFileName remote_file(GetRepositoryPath() + "/" + fileName);
         right_file =
             clSFTPManager::Get().Download(remote_file.GetFullPath(wxPATH_UNIX), m_remoteWorkspaceAccount).GetFullPath();
     } else {
@@ -2605,25 +2601,12 @@ void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
     DoSetRepoPath();
 }
 
-void GitPlugin::StoreWorkspaceRepoDetails()
-{
-    // store the GIT entry data
-    if(IsWorkspaceOpened()) {
-
-        clConfig conf("git.conf");
-        GitEntry data;
-        conf.ReadItem(&data);
-        data.SetEntry(GetWorkspaceName(), m_repositoryDirectory);
-        conf.WriteItem(&data);
-    }
-}
-
 void GitPlugin::WorkspaceClosed()
 {
     // Clearn any saved data from the current workspace
     // git commands etc
     DoCleanup();
-    m_workspaceFilename.Clear();
+    m_workspace_file.Clear();
 }
 
 void GitPlugin::FetchNextCommits(int skip, const wxString& args)
@@ -2862,7 +2845,7 @@ void GitPlugin::AsyncRunGitWithCallback(const wxString& command_args, std::funct
 
 IEditor* GitPlugin::OpenFile(const wxString& relativePathFile)
 {
-    wxFileName fn(GetRepositoryDirectory() + "/" + relativePathFile);
+    wxFileName fn(GetRepositoryPath() + "/" + relativePathFile);
     if(IsRemoteWorkspace()) {
         return clSFTPManager::Get().OpenFile(fn.GetFullPath(wxPATH_UNIX), m_remoteWorkspaceAccount);
     } else {
@@ -2872,7 +2855,7 @@ IEditor* GitPlugin::OpenFile(const wxString& relativePathFile)
 
 wxString GitPlugin::GetCommitMessageFile() const
 {
-    wxFileName fn(GetWorkspacePath() + "/CL_GIT_COMMIT_MSG.TXT");
+    wxFileName fn(clStandardPaths::Get().GetTempDir() + "/CL_GIT_COMMIT_MSG.TXT");
     fn.AppendDir(".codelite");
     return fn.GetFullPath(IsRemoteWorkspace() ? wxPATH_UNIX : wxPATH_NATIVE);
 }
@@ -2894,4 +2877,28 @@ wxString GitPlugin::FindRepositoryRoot(const wxString& starting_dir) const
         fp.RemoveLastDir();
     }
     return starting_dir;
+}
+
+void GitPlugin::OnFindPath(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(event.GetEventType() == wxEVT_CODELITE_REMOTE_FINDPATH) {
+        if(!event.GetString().empty()) {
+            clDEBUG() << ".git folder found at:" << event.GetString() << endl;
+            wxString new_path = event.GetString();
+            new_path = new_path.BeforeLast('.');
+            clDEBUG() << "Setting repository path at:" << new_path << endl;
+            DoSetRepoPath(new_path);
+            RefreshFileListView();
+        }
+    }
+}
+
+void GitPlugin::OnSftpFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+    if(IsGitEnabled()) {
+        // file saved remotely, refresh the view
+        RefreshFileListView();
+    }
 }

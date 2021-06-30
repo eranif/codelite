@@ -23,6 +23,8 @@ wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_OUTPUT, clProcessEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_EXEC_DONE, clProcessEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LOCATE_DONE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LOCATE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FINDPATH, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, clCommandEvent);
 namespace
 {
 const char msg_terminator[] = ">>codelite-remote-msg-end<<\n";
@@ -377,6 +379,26 @@ void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name,
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnLocateOutput, nullptr });
 }
 
+void clCodeLiteRemoteProcess::FindPath(const wxString& path)
+{
+    if(!m_process) {
+        return;
+    }
+
+    // build the command and send it
+    JSON root(cJSON_Object);
+    auto item = root.toElement();
+    item.addProperty("command", "find_path");
+    item.addProperty("path", path);
+
+    wxString command = item.format(false);
+    m_process->Write(command + "\n");
+    clDEBUG1() << command << endl;
+
+    // push a callback
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindPathOutput, nullptr });
+}
+
 void clCodeLiteRemoteProcess::ResetStates()
 {
     m_fif_matches_count = 0;
@@ -478,6 +500,23 @@ void clCodeLiteRemoteProcess::OnListFilesOutput(const wxString& output, bool is_
 
     if(is_completed) {
         clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LIST_FILES_DONE);
+        AddPendingEvent(event_done);
+    }
+}
+
+void clCodeLiteRemoteProcess::OnFindPathOutput(const wxString& output, bool is_completed)
+{
+    clCommandEvent event(wxEVT_CODELITE_REMOTE_FINDPATH);
+
+    // parse the output
+    clDEBUG1() << "FindPath output: [" << output << "]" << endl;
+    wxString fullpath = output;
+    fullpath.Trim().Trim(false);
+    event.SetString(fullpath);
+    AddPendingEvent(event);
+
+    if(is_completed) {
+        clCommandEvent event_done(wxEVT_CODELITE_REMOTE_FINDPATH_DONE);
         AddPendingEvent(event_done);
     }
 }

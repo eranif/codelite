@@ -392,9 +392,22 @@ void RemotyWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
 void RemotyWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    const wxString& filename = event.GetFileName();
+    wxString filename = event.GetFileName();
     int line_number = event.GetLineNumber();
 
+    clDEBUG() << "Remoty: attempting to open file:" << filename << endl;
+
+    wxFileName fn(filename);
+    if(fn.IsRelative(wxPATH_UNIX)) {
+        // attempt to make it absolute
+        fn.MakeAbsolute(GetRemoteWorkingDir(), wxPATH_UNIX);
+        filename = fn.GetFullPath(wxPATH_UNIX);
+        clDEBUG() << "Remoty: file is relative, converting to fullpath:" << filename << endl;
+    }
+
+    // download the file
+    wxBusyCursor bc;
+    clGetManager()->GetStatusBar()->SetStatusText(_("Downloading file: ") + filename);
     auto editor = clSFTPManager::Get().OpenFile(filename, m_account.GetAccountName());
     if(editor) {
         editor->CenterLine(line_number);

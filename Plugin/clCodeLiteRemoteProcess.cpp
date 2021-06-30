@@ -173,7 +173,7 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
     command.push_back("python3 " + m_scriptPath + " --context " + GetContext());
 
     // start the process
-    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault);
+    m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessRawOutput);
 }
 
 void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, const wxString& scriptPath,
@@ -338,7 +338,7 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir, const wxString& e
 
     wxString command = item.format(false);
     m_process->Write(command + "\n");
-    clDEBUG() << command << endl;
+    clDEBUG1() << command << endl;
 
     // push a callback
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindOutput, nullptr });
@@ -371,7 +371,7 @@ void clCodeLiteRemoteProcess::Locate(const wxString& path, const wxString& name,
 
     wxString command = item.format(false);
     m_process->Write(command + "\n");
-    clDEBUG() << command << endl;
+    clDEBUG1() << command << endl;
 
     // push a callback
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnLocateOutput, nullptr });
@@ -406,7 +406,7 @@ bool clCodeLiteRemoteProcess::DoExec(const wxString& cmd, const wxString& workin
 
     wxString command = item.format(false);
     m_process->Write(command + "\n");
-    clDEBUG() << command << endl;
+    clDEBUG1() << command << endl;
 
     // push a callback
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnExecOutput, handler });
@@ -487,7 +487,7 @@ void clCodeLiteRemoteProcess::OnLocateOutput(const wxString& output, bool is_com
     clCommandEvent event(wxEVT_CODELITE_REMOTE_LOCATE);
 
     // parse the output
-    clDEBUG() << "Locate output: [" << output << "]" << endl;
+    clDEBUG1() << "Locate output: [" << output << "]" << endl;
     wxString fullpath = output;
     fullpath.Trim().Trim(false);
     event.SetFileName(fullpath);
@@ -607,7 +607,7 @@ bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd, const wxString& work
 
         // strip the terminator and make it our output
         *output = m_outputRead.Mid(0, where);
-        clDEBUG() << "SyncExec(" << cmd << "):" << *output << endl;
+        clDEBUG1() << "SyncExec(" << cmd << "):" << *output << endl;
 
         m_outputRead.clear();
         // resume the async nature of the process

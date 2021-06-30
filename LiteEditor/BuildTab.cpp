@@ -259,28 +259,30 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
     CHECK_PTR_RET(cd);
 
     // let the plugins a first chance in handling this line
-    clBuildEvent eventErrorClicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
-    eventErrorClicked.SetFileName(cd->match_pattern.file_path);
-    eventErrorClicked.SetLineNumber(cd->match_pattern.line_number);
-    eventErrorClicked.SetProjectName(cd->project_name);
-    clDEBUG1() << "Letting plugins process it first (" << cd->match_pattern.file_path << ":"
-               << cd->match_pattern.line_number << ")" << endl;
-    if(EventNotifier::Get()->ProcessEvent(eventErrorClicked)) {
-        return;
-    }
-
-    wxFileName fn(cd->match_pattern.file_path);
-    if(fn.FileExists()) {
-        // if we resolved it now, open the file there is no point in searching this file
-        // in m_buildInfoPerFile since the key on this map is kept as full name
-        clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
-        if(!editor) {
-            editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString,
-                                                                 cd->match_pattern.line_number);
+    if(!cd->match_pattern.file_path.empty()) {
+        clBuildEvent eventErrorClicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
+        eventErrorClicked.SetFileName(cd->match_pattern.file_path);
+        eventErrorClicked.SetLineNumber(cd->match_pattern.line_number);
+        eventErrorClicked.SetProjectName(cd->project_name);
+        clDEBUG1() << "Letting plugins process it first (" << cd->match_pattern.file_path << ":"
+                   << cd->match_pattern.line_number << ")" << endl;
+        if(EventNotifier::Get()->ProcessEvent(eventErrorClicked)) {
+            return;
         }
 
-        CHECK_PTR_RET(editor);
-        DoCentreErrorLine(&cd->match_pattern, editor, true);
+        wxFileName fn(cd->match_pattern.file_path);
+        if(fn.FileExists()) {
+            // if we resolved it now, open the file there is no point in searching this file
+            // in m_buildInfoPerFile since the key on this map is kept as full name
+            clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
+            if(!editor) {
+                editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString,
+                                                                     cd->match_pattern.line_number);
+            }
+
+            CHECK_PTR_RET(editor);
+            DoCentreErrorLine(&cd->match_pattern, editor, true);
+        }
     }
 }
 

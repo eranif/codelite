@@ -1216,14 +1216,11 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
     }
     EnsureItemVisible(m_model.ToPtr(nextSelection), fromTop);
 
-#if wxUSE_NATIVE_SCROLLBAR
-    UpdateScrollBar();
-#endif
-
     Refresh();
 #ifndef __WXGTK3__
     wxYieldIfNeeded();
 #endif
+    UpdateScrollBar();
 }
 
 void clTreeCtrl::SelectChildren(const wxTreeItemId& item)

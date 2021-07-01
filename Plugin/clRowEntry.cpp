@@ -588,10 +588,17 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
 {
     wxUnusedVar(win);
     wxUnusedVar(col);
+
+    // fix multiline text
+    wxString fixed_text = text;
+    if(fixed_text.find("\n") != wxString::npos) {
+        fixed_text = fixed_text.BeforeFirst('\n');
+        fixed_text << "\\n..";
+    }
 #ifdef __WXMSW__
     if(m_tree->IsNativeTheme()) {
         dc.SetTextForeground(colours.GetItemTextColour());
-        dc.DrawText(text, x, y);
+        dc.DrawText(fixed_text, x, y);
     } else {
         if(!IsSelected()) {
             dc.SetTextForeground(colours.GetItemTextColour());
@@ -599,7 +606,7 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
             dc.SetTextForeground(win->HasFocus() ? colours.GetSelItemTextColour()
                                                  : colours.GetSelItemTextColourNoFocus());
         }
-        dc.DrawText(text, x, y);
+        dc.DrawText(fixed_text, x, y);
     }
 #else
     if(!IsSelected()) {
@@ -607,7 +614,7 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
     } else {
         dc.SetTextForeground(win->HasFocus() ? colours.GetSelItemTextColour() : colours.GetSelItemTextColourNoFocus());
     }
-    dc.DrawText(text, x, y);
+    dc.DrawText(fixed_text, x, y);
 #endif
 }
 

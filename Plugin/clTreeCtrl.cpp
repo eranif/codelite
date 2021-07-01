@@ -292,6 +292,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
         GetHeader()->Update();
     }
 
+#ifdef __WXMSW__
     // draw a one pixel line at the top of the items area
     // this gives a nice border and UI separation
     wxColour top_border_colour = GetColours().GetBorderColour();
@@ -315,6 +316,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     pt2.x -= 1;
 #endif
     dc.DrawLine(pt1, pt2);
+#endif
 }
 
 wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text,
@@ -1213,11 +1215,15 @@ void clTreeCtrl::ScrollRows(int steps, wxDirection direction)
         SelectItem(nextSelection);
     }
     EnsureItemVisible(m_model.ToPtr(nextSelection), fromTop);
+
+#if wxUSE_NATIVE_SCROLLBAR
+    UpdateScrollBar();
+#endif
+
     Refresh();
 #ifndef __WXGTK3__
     wxYieldIfNeeded();
 #endif
-    UpdateScrollBar();
 }
 
 void clTreeCtrl::SelectChildren(const wxTreeItemId& item)

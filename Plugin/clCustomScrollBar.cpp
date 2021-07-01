@@ -139,8 +139,12 @@ void clCustomScrollBar::UpdateDrag(const wxPoint& pt)
             m_thumbRect.SetX(0);
         }
     }
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
+    // GTK2
+    wxPanel::Refresh();
+#else
     wxPanel::Update();
-
+#endif
     int pos = GetPositionFromPoint(m_thumbRect.GetTopLeft());
     if(m_thumbPosition != pos) {
         m_thumbPosition = pos;

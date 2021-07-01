@@ -186,7 +186,7 @@ void clButtonBase::Initialise()
 
 void clButtonBase::Render(wxDC& dc)
 {
-#if defined(__WXGTK__)
+#if defined(__WXGTK__) && defined(__WXGTK3__)
     // set default
     wxColour parentbgColour =
         GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();

@@ -935,6 +935,7 @@ const wxRect& clRowEntry::GetChoiceRect(size_t col) const
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
+#ifdef __WXMSW__
     wxColour text_colour = colours.GetItemTextColour();
     if(colours.IsLightTheme()) {
         text_colour = text_colour.ChangeLightness(120);
@@ -969,6 +970,14 @@ void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colour
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
         dc.DrawRoundedRectangle(rect, 2.0);
     }
+#else
+    // on mac/linux, use native drawings
+    int flags = wxCONTROL_CURRENT;
+    if(checked) {
+        flags |= wxCONTROL_CHECKED;
+    }
+    wxRendererNative::Get().DrawCheckBox(win, dc, rect, flags);
+#endif
 }
 
 int clRowEntry::GetCheckBoxWidth(wxWindow* win)

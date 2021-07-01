@@ -175,7 +175,7 @@ BuildTargetDlgBase::BuildTargetDlgBase(wxWindow* parent, wxWindowID id, const wx
     m_textCtrlValue->SetLexer(wxSTC_LEX_NULL);
     // Set default font / styles
     m_textCtrlValue->StyleClearAll();
-    m_textCtrlValue->SetWrapMode(2);
+    m_textCtrlValue->SetWrapMode(0);
     m_textCtrlValue->SetIndentationGuides(0);
     m_textCtrlValue->SetKeyWords(0, wxT(""));
     m_textCtrlValue->SetKeyWords(1, wxT(""));
@@ -333,6 +333,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_textCtrlArgs->StyleClearAll();
     m_textCtrlArgs->SetWrapMode(2);
     m_textCtrlArgs->SetIndentationGuides(0);
+    m_textCtrlArgs->SetEOLMode(2);
     m_textCtrlArgs->SetKeyWords(0, wxT(""));
     m_textCtrlArgs->SetKeyWords(1, wxT(""));
     m_textCtrlArgs->SetKeyWords(2, wxT(""));
@@ -528,6 +529,7 @@ FSConfigPageBase::FSConfigPageBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_stcCommands->StyleClearAll();
     m_stcCommands->SetWrapMode(0);
     m_stcCommands->SetIndentationGuides(0);
+    m_stcCommands->SetEOLMode(2);
     m_stcCommands->SetKeyWords(0, wxT(""));
     m_stcCommands->SetKeyWords(1, wxT(""));
     m_stcCommands->SetKeyWords(2, wxT(""));

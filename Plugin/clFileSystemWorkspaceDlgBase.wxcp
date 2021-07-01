@@ -1095,7 +1095,7 @@
 										}, {
 											"type":	"choice",
 											"m_label":	"Wrap Text",
-											"m_selection":	2,
+											"m_selection":	0,
 											"m_options":	["None", "Word", "Char"]
 										}, {
 											"type":	"choice",
@@ -2306,7 +2306,7 @@
 														}, {
 															"type":	"choice",
 															"m_label":	"EOL Mode",
-															"m_selection":	3,
+															"m_selection":	2,
 															"m_options":	["CRLF", "CR", "LF", "Default"]
 														}, {
 															"type":	"bool",
@@ -4429,7 +4429,7 @@
 														}, {
 															"type":	"choice",
 															"m_label":	"EOL Mode",
-															"m_selection":	3,
+															"m_selection":	2,
 															"m_options":	["CRLF", "CR", "LF", "Default"]
 														}, {
 															"type":	"bool",

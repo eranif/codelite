@@ -32,12 +32,10 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent, clFileSyste
         FSConfigPage* page = new FSConfigPage(m_notebook, vt.second, m_usingGlobalSettings);
         m_notebook->AddPage(page, vt.second->GetName(), (selConf == vt.first));
     }
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetTLWindowBestSizeAndPosition(this);
 }
 
-clFileSystemWorkspaceDlg::~clFileSystemWorkspaceDlg()
-{
-}
+clFileSystemWorkspaceDlg::~clFileSystemWorkspaceDlg() {}
 
 void clFileSystemWorkspaceDlg::OnOK(wxCommandEvent& event)
 {

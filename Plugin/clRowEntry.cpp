@@ -54,6 +54,17 @@ struct clClipperHelper {
     }
 };
 
+wxString GetTextForRendering(const wxString& text)
+{
+    if(text.find('\n') != wxString::npos) {
+        wxString fixed_text = text;
+        fixed_text.Replace("\n", "\\n");
+        return fixed_text;
+    } else {
+        return text;
+    }
+}
+
 void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
     wxColour c = win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus();
@@ -501,11 +512,12 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         }
 
         // Draw the text
-        wxRect textRect(m_tree->GetTempDC().GetTextExtent(cell.GetValueString()));
+        wxString text_to_render = GetTextForRendering(cell.GetValueString());
+        wxRect textRect(m_tree->GetTempDC().GetTextExtent(text_to_render));
         textRect = textRect.CenterIn(rowRect, wxVERTICAL);
         int textY = textRect.GetY();
         int textX = (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset;
-        RenderText(win, dc, colours, cell.GetValueString(), textX, textY, i);
+        RenderText(win, dc, colours, text_to_render, textX, textY, i);
         textXOffset += textRect.GetWidth();
         textXOffset += X_SPACER;
 
@@ -590,15 +602,10 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
     wxUnusedVar(col);
 
     // fix multiline text
-    wxString fixed_text = text;
-    if(fixed_text.find("\n") != wxString::npos) {
-        fixed_text = fixed_text.BeforeFirst('\n');
-        fixed_text << "\\n..";
-    }
 #ifdef __WXMSW__
     if(m_tree->IsNativeTheme()) {
         dc.SetTextForeground(colours.GetItemTextColour());
-        dc.DrawText(fixed_text, x, y);
+        dc.DrawText(text, x, y);
     } else {
         if(!IsSelected()) {
             dc.SetTextForeground(colours.GetItemTextColour());
@@ -606,7 +613,7 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
             dc.SetTextForeground(win->HasFocus() ? colours.GetSelItemTextColour()
                                                  : colours.GetSelItemTextColourNoFocus());
         }
-        dc.DrawText(fixed_text, x, y);
+        dc.DrawText(text, x, y);
     }
 #else
     if(!IsSelected()) {
@@ -614,7 +621,7 @@ void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colo
     } else {
         dc.SetTextForeground(win->HasFocus() ? colours.GetSelItemTextColour() : colours.GetSelItemTextColourNoFocus());
     }
-    dc.DrawText(fixed_text, x, y);
+    dc.DrawText(text, x, y);
 #endif
 }
 
@@ -709,7 +716,7 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
         item_width += X_SPACER;
     }
 
-    wxSize textSize = m_tree->GetTempDC().GetTextExtent(cell.GetValueString());
+    wxSize textSize = m_tree->GetTempDC().GetMultiLineTextExtent(cell.GetValueString());
     if((col == 0) && !IsListItem()) {
         // always make room for the twist button
         item_width += rowHeight;

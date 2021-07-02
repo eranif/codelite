@@ -11,13 +11,13 @@
 #include "imanager.h"
 #include "macros.h"
 #include <algorithm>
+#include <wx/dcmemory.h>
 #include <wx/fontenc.h>
 #include <wx/fontmap.h>
 #include <wx/menu.h>
 #include <wx/settings.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
-#include <wx/dcmemory.h>
 
 #define STATUSBAR_SCM_IDX 0
 #define STATUSBAR_LINE_COL_IDX 1
@@ -28,7 +28,9 @@
 #define STATUSBAR_ENCODING_COL_IDX 6
 #define STATUSBAR_ICON_COL_IDX 7
 
-static void GetWhitespaceInfo(wxStyledTextCtrl* ctrl, wxString& whitespace, wxString& eol)
+namespace
+{
+void GetWhitespaceInfo(wxStyledTextCtrl* ctrl, wxString& whitespace, wxString& eol)
 {
     whitespace << (ctrl->GetUseTabs() ? "tabs" : "spaces");
     int eolMode = ctrl->GetEOLMode();
@@ -46,6 +48,7 @@ static void GetWhitespaceInfo(wxStyledTextCtrl* ctrl, wxString& whitespace, wxSt
         break;
     }
 }
+} // namespace
 
 class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
 {
@@ -376,7 +379,9 @@ void clStatusBar::DoUpdateView()
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullPath());
-        if(lexer) { language = lexer->GetName().Upper(); }
+        if(lexer) {
+            language = lexer->GetName().Upper();
+        }
     }
 
     SetLanguage(language);
@@ -389,7 +394,8 @@ void clStatusBar::DoUpdateView()
 void clStatusBar::DoFieldClicked(int fieldIndex)
 {
     if(fieldIndex == STATUSBAR_SCM_IDX) {
-        if(m_sourceControlTabName.IsEmpty()) return;
+        if(m_sourceControlTabName.IsEmpty())
+            return;
         wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_SCM_IDX);
         CHECK_PTR_RET(field);
         // Open the output view only if the bitmap is valid
@@ -400,12 +406,16 @@ void clStatusBar::DoFieldClicked(int fieldIndex)
         wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ICON_COL_IDX);
         CHECK_PTR_RET(field);
         // Open the output view only if the bitmap is valid
-        if(field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) { m_mgr->ToggleOutputPane("Build"); }
+        if(field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) {
+            m_mgr->ToggleOutputPane("Build");
+        }
     } else if(fieldIndex == STATUSBAR_ANIMATION_COL_IDX) {
         wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ANIMATION_COL_IDX);
         CHECK_PTR_RET(field);
         // Open the output view only if the bitmap is valid
-        if(field->Cast<wxCustomStatusBarAnimationField>()->IsRunning()) { m_mgr->ToggleOutputPane("Build"); }
+        if(field->Cast<wxCustomStatusBarAnimationField>()->IsRunning()) {
+            m_mgr->ToggleOutputPane("Build");
+        }
     } else if(fieldIndex == STATUSBAR_ENCODING_COL_IDX) {
         // Show encoding menu
         wxMenu menu;
@@ -425,7 +435,8 @@ void clStatusBar::DoFieldClicked(int fieldIndex)
             encodingMenuItems.insert(std::make_pair(itemEnc->GetId(), encodingName));
         }
         int selectedId = GetPopupMenuSelectionFromUser(menu);
-        if(encodingMenuItems.count(selectedId) == 0) return;
+        if(encodingMenuItems.count(selectedId) == 0)
+            return;
 
         // Change the encoding
         wxString selectedEncodingName = encodingMenuItems.find(selectedId)->second;
@@ -497,7 +508,8 @@ void clStatusBar::DoFieldClicked(int fieldIndex)
             menu.Check(idUseSpaces->GetId(), !stc->GetUseTabs());
             menu.Check(idUseTabs->GetId(), stc->GetUseTabs());
             int selectedId = GetPopupMenuSelectionFromUser(menu);
-            if(selectedId == wxID_NONE) return;
+            if(selectedId == wxID_NONE)
+                return;
 
             if(selectedId == idConvertToTabs->GetId()) {
                 wxCommandEvent evt(wxEVT_MENU, XRCID("convert_indent_to_tabs"));
@@ -548,7 +560,8 @@ void clStatusBar::DoFieldClicked(int fieldIndex)
             menu.Check(idDisplayEOL->GetId(), stc->GetViewEOL());
 
             int selectedId = GetPopupMenuSelectionFromUser(menu);
-            if(selectedId == wxID_NONE) return;
+            if(selectedId == wxID_NONE)
+                return;
 
             if(selectedId == idConvertToCrLF->GetId()) {
                 // This will also change the EOL mode to CRLF

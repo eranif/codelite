@@ -356,6 +356,8 @@
     <File Name="clStrings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Commons">
+    <File Name="mdparser.hpp"/>
+    <File Name="mdparser.cpp"/>
     <File Name="clFileCache.cpp"/>
     <File Name="clFileCache.hpp"/>
     <File Name="clThemeUpdater.cpp"/>

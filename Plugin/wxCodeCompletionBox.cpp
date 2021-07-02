@@ -233,7 +233,7 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
             m_displayedTip = docComment;
 
             // Construct a new tip window and display the tip
-            m_tipWindow = new CCBoxTipWindow(GetParent(), true, docComment, 1, false);
+            m_tipWindow = new CCBoxTipWindow(GetParent(), docComment);
             m_tipWindow->PositionRelativeTo(this, m_stc->PointFromPosition(m_stc->GetCurrentPos()));
 
             // restore focus to the editor

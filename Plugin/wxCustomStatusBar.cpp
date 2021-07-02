@@ -259,8 +259,8 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     wxRect mainRect(0, rect.y, offsetX, rect.height);
     dc.SetClippingRegion(mainRect);
     m_mainText->SetRect(mainRect);
-    m_mainText->Cast<wxCustomStatusBarFieldText>()->Render(dc, mainRect, m_art);
-    m_mainText->Cast<wxCustomStatusBarFieldText>()->SetTooltip(m_text);
+    m_mainText->Render(dc, mainRect, m_art);
+    m_mainText->SetTooltip(m_text);
     dc.DestroyClippingRegion();
 
     //===----------------------
@@ -358,15 +358,19 @@ void wxCustomStatusBar::SetText(const wxString& message, int secondsToLive)
 void wxCustomStatusBar::OnMouseMotion(wxMouseEvent& event)
 {
     event.Skip();
-    SetToolTip(wxEmptyString);
+    wxString current_tip = GetToolTipText();
+    wxString tip_text;
     wxPoint point = event.GetPosition();
     for(size_t i = 0; i < m_fields.size(); ++i) {
         if(m_fields.at(i)->HitTest(point)) {
-            SetToolTip(m_fields.at(i)->GetTooltip());
-            return;
+            tip_text = m_fields.at(i)->GetTooltip();
+            break;
         }
     }
-    SetToolTip(m_text);
+
+    if(current_tip != tip_text) {
+        SetToolTip(tip_text);
+    }
 }
 
 void wxCustomStatusBar::AnimationClicked(wxCustomStatusBarField* field)

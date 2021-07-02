@@ -43,12 +43,12 @@ MarkupParser::MarkupParser(const wxString& tip)
     m_patterns.push_back(MarkupSearchPattern("</color>", COLOR_END));
     m_patterns.push_back(MarkupSearchPattern("^<color=\"[a-zA-Z _]+\">", COLOR_START, true));
     m_patterns.push_back(MarkupSearchPattern("^@link[ \t]+([^ \t\n\v\r]+)", LINK_URL, true, 1));
-    
+
     wxRegEx reParam("@param");
     if(reParam.Matches(m_tip)) {
         reParam.ReplaceAll(&m_tip, "<b>@param</b>");
     }
-    
+
     wxRegEx reReturns("@return[s]{0,1}");
     if(reReturns.Matches(m_tip)) {
         reReturns.ReplaceAll(&m_tip, "<b>@return</b>");

@@ -26,10 +26,10 @@
 #ifndef CCBOXTIPWINDOW_H
 #define CCBOXTIPWINDOW_H
 
-#include <wx/popupwin.h> // Base class: wxPopupTransientWindow
-#include <wx/panel.h>
-#include <vector>
 #include "codelite_exports.h"
+#include <vector>
+#include <wx/panel.h>
+#include <wx/popupwin.h> // Base class: wxPopupTransientWindow
 
 class IEditor;
 class CCBox;
@@ -40,36 +40,18 @@ WXDLLIMPEXP_SDK extern const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN;
 class WXDLLIMPEXP_SDK CCBoxTipWindow : public wxPopupWindow
 {
 protected:
-    class Links
-    {
-    public:
-        wxString m_url;
-        wxRect m_rect;
-    };
-
     wxString m_tip;
-    int m_lineHeight;
     wxFont m_codeFont;
-    wxFont m_commentFont;
-    size_t m_numOfTips;
-    wxRect m_leftTipRect;
-    wxRect m_rightTipRect;
-    std::vector<Links> m_links;
-    bool m_useLightColours;
+    size_t m_numOfTips = 1;
 
 protected:
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
-    void OnMouseLeft(wxMouseEvent& e);
-    wxRect DoPrintText(wxDC& dc, wxString& text, wxPoint& pt, size_t& maxWidth);
-    wxString DoStripMarkups();
-    void DoInitialize(const wxString& tip, size_t numOfTips, bool simpleTip);
-    void DoDrawTip(wxDC& dc, size_t& max_width);
+    void DoInitialize(size_t numOfTips, bool simpleTip);
+    void DoDrawTip(wxDC& dc);
 
 public:
-    CCBoxTipWindow(wxWindow* parent, bool manipulateText, const wxString& tip, size_t numOfTips,
-                   bool simpleTip = false);
-    CCBoxTipWindow(wxWindow* parent, bool manipulateText, const wxString& tip);
+    CCBoxTipWindow(wxWindow* parent, const wxString& tip);
     virtual ~CCBoxTipWindow();
 
     /**

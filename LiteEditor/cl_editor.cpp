@@ -272,14 +272,8 @@ public:
         }
     }
 
-    bool OnDrop(wxCoord x, wxCoord y)
-    {
-        return true;
-    }
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult)
-    {
-        return m_stc->DoDragOver(x, y, defResult);
-    }
+    bool OnDrop(wxCoord x, wxCoord y) { return true; }
+    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult defResult) { return m_stc->DoDragOver(x, y, defResult); }
 };
 
 //=====================================================================
@@ -471,10 +465,7 @@ clEditor::~clEditor()
     }
 }
 
-time_t clEditor::GetFileLastModifiedTime() const
-{
-    return GetFileModificationTime(m_fileName.GetFullPath());
-}
+time_t clEditor::GetFileLastModifiedTime() const { return GetFileModificationTime(m_fileName.GetFullPath()); }
 
 void clEditor::SetSyntaxHighlight(const wxString& lexerName)
 {
@@ -1755,10 +1746,7 @@ void clEditor::UpdateBreakpoints()
     }
 }
 
-wxString clEditor::GetWordAtCaret(bool wordCharsOnly)
-{
-    return GetWordAtPosition(GetCurrentPos(), wordCharsOnly);
-}
+wxString clEditor::GetWordAtCaret(bool wordCharsOnly) { return GetWordAtPosition(GetCurrentPos(), wordCharsOnly); }
 
 //---------------------------------------------------------------------------
 // Most of the functionality for this functionality
@@ -1930,10 +1918,7 @@ void clEditor::OnDwellEnd(wxStyledTextEvent& event)
     m_context->OnDbgDwellEnd(event);
 }
 
-void clEditor::OnCallTipClick(wxStyledTextEvent& event)
-{
-    m_context->OnCallTipClick(event);
-}
+void clEditor::OnCallTipClick(wxStyledTextEvent& event) { m_context->OnCallTipClick(event); }
 
 void clEditor::OnMenuCommand(wxCommandEvent& event)
 {
@@ -2353,15 +2338,9 @@ void clEditor::FindNext(const FindReplaceData& data)
     }
 }
 
-bool clEditor::Replace()
-{
-    return Replace(m_findReplaceDlg->GetData());
-}
+bool clEditor::Replace() { return Replace(m_findReplaceDlg->GetData()); }
 
-bool clEditor::FindAndSelect()
-{
-    return FindAndSelect(m_findReplaceDlg->GetData());
-}
+bool clEditor::FindAndSelect() { return FindAndSelect(m_findReplaceDlg->GetData()); }
 
 bool clEditor::FindAndSelect(const FindReplaceData& data)
 {
@@ -3139,10 +3118,7 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
     return encoding;
 }
 
-void clEditor::DoUpdateLineNumbers()
-{
-    return;
-}
+void clEditor::DoUpdateLineNumbers() { return; }
 
 void clEditor::DoUpdateRelativeLineNumbers()
 {
@@ -4220,10 +4196,7 @@ void clEditor::OnLeftDClick(wxStyledTextEvent& event)
     event.Skip();
 }
 
-bool clEditor::IsCompletionBoxShown()
-{
-    return wxCodeCompletionBoxManager::Get().IsShown();
-}
+bool clEditor::IsCompletionBoxShown() { return wxCodeCompletionBoxManager::Get().IsShown(); }
 
 int clEditor::GetCurrentLine()
 {
@@ -4323,25 +4296,13 @@ void clEditor::ShowFunctionTipFromCurrentPos()
     }
 }
 
-wxString clEditor::GetSelection()
-{
-    return wxStyledTextCtrl::GetSelectedText();
-}
+wxString clEditor::GetSelection() { return wxStyledTextCtrl::GetSelectedText(); }
 
-int clEditor::GetSelectionStart()
-{
-    return wxStyledTextCtrl::GetSelectionStart();
-}
+int clEditor::GetSelectionStart() { return wxStyledTextCtrl::GetSelectionStart(); }
 
-int clEditor::GetSelectionEnd()
-{
-    return wxStyledTextCtrl::GetSelectionEnd();
-}
+int clEditor::GetSelectionEnd() { return wxStyledTextCtrl::GetSelectionEnd(); }
 
-void clEditor::ReplaceSelection(const wxString& text)
-{
-    wxStyledTextCtrl::ReplaceSelection(text);
-}
+void clEditor::ReplaceSelection(const wxString& text) { wxStyledTextCtrl::ReplaceSelection(text); }
 
 void clEditor::ClearUserIndicators()
 {
@@ -4349,15 +4310,9 @@ void clEditor::ClearUserIndicators()
     IndicatorClearRange(0, GetLength());
 }
 
-int clEditor::GetUserIndicatorEnd(int pos)
-{
-    return wxStyledTextCtrl::IndicatorEnd(USER_INDICATOR, pos);
-}
+int clEditor::GetUserIndicatorEnd(int pos) { return wxStyledTextCtrl::IndicatorEnd(USER_INDICATOR, pos); }
 
-int clEditor::GetUserIndicatorStart(int pos)
-{
-    return wxStyledTextCtrl::IndicatorStart(USER_INDICATOR, pos);
-}
+int clEditor::GetUserIndicatorStart(int pos) { return wxStyledTextCtrl::IndicatorStart(USER_INDICATOR, pos); }
 
 void clEditor::SelectText(int startPos, int len)
 {
@@ -4378,15 +4333,9 @@ void clEditor::SetUserIndicatorStyleAndColour(int style, const wxColour& colour)
     IndicatorSetUnder(USER_INDICATOR, true);
 }
 
-int clEditor::GetLexerId()
-{
-    return GetLexer();
-}
+int clEditor::GetLexerId() { return GetLexer(); }
 
-int clEditor::GetStyleAtPos(int pos)
-{
-    return GetStyleAt(pos);
-}
+int clEditor::GetStyleAtPos(int pos) { return GetStyleAt(pos); }
 
 int clEditor::WordStartPos(int pos, bool onlyWordCharacters)
 {
@@ -4532,11 +4481,11 @@ void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip
     wxString tooltip;
     tooltip << title;
     tooltip.Trim().Trim(false);
-    if(!tooltip.IsEmpty()) {
-        tooltip << "\n<hr>";
+    if(!tooltip.empty()) {
+        tooltip << "\n---\n";
     }
     tooltip << tip;
-    m_calltip = new CCBoxTipWindow(this, manipulateText, tooltip);
+    m_calltip = new CCBoxTipWindow(this, tooltip);
     if(pos == wxNOT_FOUND) {
         pt = ::wxGetMousePosition();
     } else {
@@ -5002,10 +4951,7 @@ bool clEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replac
     return (matchCount > 0);
 }
 
-void clEditor::SetLexerName(const wxString& lexerName)
-{
-    SetSyntaxHighlight(lexerName);
-}
+void clEditor::SetLexerName(const wxString& lexerName) { SetSyntaxHighlight(lexerName); }
 
 void clEditor::HighlightWord(StringHighlightOutput* highlightOutput)
 {
@@ -5052,15 +4998,9 @@ void clEditor::ChangeCase(bool toLower)
     }
 }
 
-int clEditor::LineFromPos(int pos)
-{
-    return wxStyledTextCtrl::LineFromPosition(pos);
-}
+int clEditor::LineFromPos(int pos) { return wxStyledTextCtrl::LineFromPosition(pos); }
 
-int clEditor::PosFromLine(int line)
-{
-    return wxStyledTextCtrl::PositionFromLine(line);
-}
+int clEditor::PosFromLine(int line) { return wxStyledTextCtrl::PositionFromLine(line); }
 
 int clEditor::LineEnd(int line)
 {
@@ -5068,15 +5008,9 @@ int clEditor::LineEnd(int line)
     return pos + wxStyledTextCtrl::LineLength(line);
 }
 
-wxString clEditor::GetTextRange(int startPos, int endPos)
-{
-    return wxStyledTextCtrl::GetTextRange(startPos, endPos);
-}
+wxString clEditor::GetTextRange(int startPos, int endPos) { return wxStyledTextCtrl::GetTextRange(startPos, endPos); }
 
-void clEditor::DelayedSetActive()
-{
-    CallAfter(&clEditor::SetActive);
-}
+void clEditor::DelayedSetActive() { CallAfter(&clEditor::SetActive); }
 
 void clEditor::OnFocus(wxFocusEvent& event)
 {
@@ -5107,30 +5041,15 @@ void clEditor::ShowCalltip(clCallTipPtr tip)
     GetFunctionTip()->Activate(pt, GetCurrLineHeight(), StyleGetBackground(wxSTC_C_DEFAULT));
 }
 
-int clEditor::PositionAfterPos(int pos)
-{
-    return wxStyledTextCtrl::PositionAfter(pos);
-}
+int clEditor::PositionAfterPos(int pos) { return wxStyledTextCtrl::PositionAfter(pos); }
 
-int clEditor::GetCharAtPos(int pos)
-{
-    return wxStyledTextCtrl::GetCharAt(pos);
-}
+int clEditor::GetCharAtPos(int pos) { return wxStyledTextCtrl::GetCharAt(pos); }
 
-int clEditor::PositionBeforePos(int pos)
-{
-    return wxStyledTextCtrl::PositionBefore(pos);
-}
+int clEditor::PositionBeforePos(int pos) { return wxStyledTextCtrl::PositionBefore(pos); }
 
-void clEditor::GetChanges(std::vector<int>& changes)
-{
-    m_deltas->GetChanges(changes);
-}
+void clEditor::GetChanges(std::vector<int>& changes) { m_deltas->GetChanges(changes); }
 
-void clEditor::OnFindInFiles()
-{
-    m_deltas->Clear();
-}
+void clEditor::OnFindInFiles() { m_deltas->Clear(); }
 
 void clEditor::OnHighlightWordChecked(wxCommandEvent& e)
 {
@@ -5888,10 +5807,7 @@ void clEditor::ClearCCAnnotations()
     }
 }
 
-void clEditor::ApplyEditorConfig()
-{
-    SetProperties();
-}
+void clEditor::ApplyEditorConfig() { SetProperties(); }
 
 void clEditor::OpenURL(wxCommandEvent& event)
 {
@@ -6088,10 +6004,7 @@ wxString clEditor::GetRemotePath() const
     return wxEmptyString;
 }
 
-bool clEditor::IsRemoteFile() const
-{
-    return GetRemoteData() != nullptr;
-}
+bool clEditor::IsRemoteFile() const { return GetRemoteData() != nullptr; }
 
 SFTPClientData* clEditor::GetRemoteData() const
 {
@@ -6106,13 +6019,7 @@ SFTPClientData* clEditor::GetRemoteData() const
 // SelectionInfo
 // ----------------------------------
 struct SelectorSorter {
-    bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b)
-    {
-        return a.first < b.first;
-    }
+    bool operator()(const std::pair<int, int>& a, const std::pair<int, int>& b) { return a.first < b.first; }
 };
 
-void clEditor::SelectionInfo::Sort()
-{
-    std::sort(this->selections.begin(), this->selections.end(), SelectorSorter());
-}
+void clEditor::SelectionInfo::Sort() { std::sort(this->selections.begin(), this->selections.end(), SelectorSorter()); }

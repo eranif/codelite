@@ -104,7 +104,11 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
         case STATE_NORMAL:
             switch(tok.first) {
             case T_LI:
-                buffer << L"\u2022"; // bullet
+                if(last_state == T_EOL || last_state == T_EOF) {
+                    buffer << L"\u2022"; // bullet
+                } else {
+                    buffer << "-";
+                }
                 break;
                 // below are style styles
             case T_BOLD:
@@ -177,7 +181,9 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
 
 void mdparser::Parser::flush_buffer(wxString& buffer, const Style& style, bool is_eol)
 {
-    write_cb(buffer, style, is_eol);
+    if(!buffer.empty() || is_eol) {
+        write_cb(buffer, style, is_eol);
+    }
     buffer.clear();
 }
 

@@ -1,6 +1,7 @@
 #include "ColoursAndFontsManager.h"
 #include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
+#include "drawingutils.h"
 #include "wx/settings.h"
 
 namespace
@@ -24,10 +25,10 @@ void clMarkdownRenderer::UpdateFont(wxDC& dc, const mdparser::Style& style)
     double point_size = f.GetPointSize();
     switch(style.font_size) {
     case mdparser::Style::FONTSIZE_H1:
-        point_size += 10;
+        point_size += 6;
         break;
     case mdparser::Style::FONTSIZE_H2:
-        point_size += 6;
+        point_size += 4;
         break;
     case mdparser::Style::FONTSIZE_H3:
         point_size += 2;
@@ -63,12 +64,11 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
     wxFont default_font = ColoursAndFontsManager::Get().GetFixedFont();
     dc.SetFont(default_font);
 
-    bool is_dark = clSystemSettings::GetDefaultPanelColour().GetLuminance() < 140;
+    // clear the area
+    wxColour pen_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
+    wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    bool is_dark = DrawingUtils::IsDark(bg_colour); //.GetLuminance() < 128;
     if(do_draw) {
-        // clear the area
-        wxColour pen_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-        wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-
         dc.SetPen(pen_colour);
         dc.SetBrush(bg_colour);
         dc.DrawRectangle(rect);
@@ -76,6 +76,7 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
 
     int height = X_MARGIN;
     int width = Y_MARGIN;
+    int line_height = wxNOT_FOUND;
 
     auto on_write = [&](const wxString& buffer, const mdparser::Style& style, bool is_eol) {
         DCFontLocker font_locker(dc);
@@ -97,45 +98,49 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
 
             // even if text is empty, we still need to have a valid line height
             // so use a dummy "Tp" text for this purpose
-            const int line_height = dc.GetTextExtent("Tp").GetHeight();
+            line_height = dc.GetTextExtent("Tp").GetHeight();
 
-            width = wxMax(text_size.GetWidth(), width);
-            height += line_height;
+            wxColour code_bg_colour = bg_colour.ChangeLightness(is_dark ? 110 : 90);
+            wxColour text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
-            wxColour code_pen_colour =
-                clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW).ChangeLightness(is_dark ? 110 : 90);
-            wxColour code_bg_colour =
-                clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(is_dark ? 110 : 90);
+            if(style.is_code()) {
+                text_colour = is_dark ? wxColour("#cc99ff") : wxColour("#cc0000");
+            }
 
             if(do_draw) {
                 if(style.is_code()) {
                     wxRect code_rect = wxRect({ xx, yy }, text_size);
-                    code_rect.Inflate(1);
-                    dc.SetPen(code_pen_colour);
+                    dc.SetPen(code_bg_colour);
                     dc.SetBrush(code_bg_colour);
                     dc.DrawRoundedRectangle(code_rect, 1.0);
+
                 } else if(style.is_codeblock()) {
                     // colour the entire row
                     wxRect code_rect = wxRect(0, yy, rect.GetWidth(), line_height);
+                    code_rect.Deflate(1, 0);
                     dc.SetPen(code_bg_colour);
                     dc.SetBrush(code_bg_colour);
                     dc.DrawRectangle(code_rect);
                 }
-                dc.SetTextForeground(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+                dc.SetTextForeground(text_colour);
                 dc.DrawText(buffer, xx, yy);
             }
+            xx += text_size.GetWidth();
 
             if(is_eol) {
+                width = wxMax(xx, width);
                 xx = X_MARGIN;
                 yy += line_height;
-            } else {
-                xx += text_size.GetWidth();
+                height = yy;
             }
         }
     };
 
     mdparser::Parser parser;
     parser.parse(text, on_write);
+    width = wxMax(width, xx);
+    height += line_height;
+
     return { width, height };
 }
 

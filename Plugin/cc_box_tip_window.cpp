@@ -27,6 +27,7 @@
 #include "Markup.h"
 #include "bitmap_loader.h"
 #include "cc_box_tip_window.h"
+#include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -34,6 +35,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
+#include "wx/arrstr.h"
 #include "wx/dcclient.h"
 #include "wx/panel.h"
 #include "wx/regex.h"
@@ -58,15 +60,66 @@ void CCBoxTipWindow_ShrinkTip(wxString& str)
 {
     wxString restr = R"str(<[="a-zA-Z _/]+>)str";
     wxRegEx re(restr);
-    if(re.IsValid()) {
-        re.ReplaceAll(&str, wxEmptyString);
+
+    auto lines = wxStringTokenize(str, "\n", wxTOKEN_RET_EMPTY);
+    str.clear();
+
+    wxArrayString lines_trimmed;
+    lines_trimmed.reserve(lines.size());
+
+    for(auto& line : lines) {
+        if(re.IsValid()) {
+            re.ReplaceAll(&line, wxEmptyString);
+        }
+
+        line.Replace("\t", " ");
+        line.Replace("/**", wxEmptyString);
+        line.Replace("/*", wxEmptyString);
+        line.Replace("/*!", wxEmptyString);
+        line.Replace("*/", wxEmptyString);
+
+        bool cont = true;
+        size_t len = 0;
+        for(size_t i = 0; i < line.length() && cont; ++i) {
+            wxChar ch = line[i];
+            switch(ch) {
+            case ' ':
+                // skip leading whitespace
+                break;
+            case '*':
+                // include the start and break
+                len = i + 1;
+                cont = false;
+                break;
+            default:
+                cont = false;
+                break;
+            }
+        }
+
+        if(len) {
+            line.erase(0, len);
+        }
+
+        // check if this line is empty
+        wxString tmp_line = line;
+        tmp_line.Trim();
+
+        bool is_empty_line = tmp_line.empty();
+
+        // remove excessive empty lines
+        if(is_empty_line && (lines_trimmed.empty() || lines_trimmed.Last().empty()))
+            continue;
+
+        if(is_empty_line) {
+            lines_trimmed.Add(tmp_line);
+        } else {
+            lines_trimmed.Add(line);
+        }
     }
-    
-    str.Replace("\t", " ");
-    // strip double empty lines
-    while(str.Replace("\n\n", "\n")) {}
-    
+    str = wxJoin(lines_trimmed, '\n');
 }
+
 wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc)
 {
     wxGraphicsRenderer* renderer = nullptr;
@@ -250,41 +303,6 @@ void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
 
 void CCBoxTipWindow::DoDrawTip(wxDC& dc)
 {
-    wxRect rr = GetClientRect();
-
-    clColours colours = DrawingUtils::GetColours();
-    auto editor = clGetManager()->GetActiveEditor();
-    if(editor) {
-        wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
-        if(DrawingUtils::IsDark(bgColour)) {
-            colours.InitFromColour(bgColour);
-        } else {
-            colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
-        }
-    }
-
-    wxColour penColour = colours.GetBorderColour();
-    wxColour brushColour = colours.GetBgColour();
-    wxColour textColour = colours.GetItemTextColour();
-
-    dc.SetBrush(brushColour);
-    dc.SetPen(penColour);
-
-#ifdef __WXOSX__
-    rr.Inflate(1, 1);
-#endif
-    dc.DrawRectangle(rr);
-    dc.SetFont(m_codeFont);
-
-    int line_height = dc.GetTextExtent("Tp").y;
-    dc.SetTextForeground(textColour);
-
-    auto lines = ::wxStringTokenize(m_tip, "\r\n", wxTOKEN_STRTOK);
-    int xx = 5;
-    int yy = 5;
-    for(auto& line : lines) {
-        dc.DrawText(line, { xx, yy });
-        yy += line_height;
-        xx = 5;
-    }
+    clMarkdownRenderer renderer;
+    renderer.Render(this, dc, m_tip, GetClientRect());
 }

@@ -491,6 +491,8 @@
   </VirtualDirectory>
   <VirtualDirectory Name="GUI">
     <VirtualDirectory Name="Controls">
+      <File Name="clMarkdownRenderer.cpp"/>
+      <File Name="clMarkdownRenderer.hpp"/>
       <File Name="symbol_tree.h"/>
       <File Name="symbol_tree.cpp"/>
       <File Name="clTableLineEditorDlg.cpp"/>

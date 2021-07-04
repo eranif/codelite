@@ -41,7 +41,6 @@ class WXDLLIMPEXP_SDK CCBoxTipWindow : public wxPopupWindow
 {
 protected:
     wxString m_tip;
-    wxFont m_codeFont;
     size_t m_numOfTips = 1;
 
 protected:

@@ -85,7 +85,8 @@ std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
 void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_write)
 {
     constexpr int STATE_NORMAL = 0;
-    constexpr int STATE_CODEBLOCK = 1;
+    constexpr int STATE_CODEBLOCK_HEADER = 1;
+    constexpr int STATE_CODEBLOCK = 2;
     int state = STATE_NORMAL;
 
     write_cb = std::move(on_write);
@@ -129,7 +130,7 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
                 }
                 break;
             case T_CODEBLOCK:
-                state = STATE_CODEBLOCK;
+                state = STATE_CODEBLOCK_HEADER;
                 flush_buffer(buffer, style, false);
                 style.toggle_property(tok.first);
                 break;
@@ -148,6 +149,17 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
                 notify_hr();
                 break;
             case T_EOF:
+                break;
+            }
+            break;
+        case STATE_CODEBLOCK_HEADER:
+            // we are looking for the first EOL
+            switch(tok.first) {
+            case T_EOL:
+                state = STATE_CODEBLOCK;
+                break;
+            default:
+                // ignore anything else
                 break;
             }
             break;

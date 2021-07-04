@@ -61,7 +61,7 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
     int xx = rect.GetTopLeft().x + X_MARGIN;
     int yy = rect.GetTopLeft().y + Y_MARGIN;
 
-    wxFont default_font = ColoursAndFontsManager::Get().GetFixedFont();
+    wxFont default_font = ColoursAndFontsManager::Get().GetFixedFont(true);
     dc.SetFont(default_font);
 
     // clear the area

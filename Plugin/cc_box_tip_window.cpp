@@ -158,9 +158,7 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
     Bind(wxEVT_ERASE_BACKGROUND, &CCBoxTipWindow::OnEraseBG, this);
 }
 
-CCBoxTipWindow::~CCBoxTipWindow()
-{
-}
+CCBoxTipWindow::~CCBoxTipWindow() {}
 
 void CCBoxTipWindow::DoInitialize(size_t numOfTips, bool simpleTip)
 {
@@ -171,15 +169,22 @@ void CCBoxTipWindow::DoInitialize(size_t numOfTips, bool simpleTip)
     wxMemoryDC _memDC(bmp);
     wxGCDC gcdc(_memDC);
 
-    m_codeFont = ColoursAndFontsManager::Get().GetFixedFont();
-    gcdc.SetFont(m_codeFont);
-
     clMarkdownRenderer renderer;
     wxRect text_rect = renderer.GetSize(this, gcdc, m_tip);
     text_rect.Inflate(5);
+
+    // make sure that the tip window, is not bigger than the screen
+    wxDisplay d(this);
+    wxRect display_size = d.GetClientArea();
+    if(text_rect.GetHeight() > display_size.GetHeight()) {
+        text_rect.SetHeight(display_size.GetHeight());
+    }
+    if(text_rect.GetWidth() >= display_size.GetWidth()) {
+        text_rect.SetWidth(display_size.GetWidth());
+    }
+
     SetSizeHints(text_rect.GetSize());
     SetSize(text_rect.GetSize());
-    clDEBUG() << "Tooltip size is set to: (" << text_rect.GetWidth() << "," << text_rect.GetHeight() << ")" << endl;
     Layout();
 }
 
@@ -209,11 +214,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     bool ccBoxIsAboveCaretLine = (windowPos.y < caretPos.y);
     // Check for overflow
     bool vPositioned = false;
-    wxRect displaySize = ::clGetDisplaySize();
-    int displayIndex = wxDisplay::GetFromPoint(pt);
-    if(displayIndex != wxNOT_FOUND) {
-        displaySize = wxDisplay(displayIndex).GetGeometry();
-    }
+    wxRect displaySize = wxDisplay(this).GetClientArea();
 
     if((pt.x + tipSize.x) > (displaySize.GetX() + displaySize.GetWidth())) {
         // Move the tip to the left
@@ -269,10 +270,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     }
 }
 
-void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e)
-{
-    wxUnusedVar(e);
-}
+void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
 
 void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {

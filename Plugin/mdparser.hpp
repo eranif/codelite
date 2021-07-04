@@ -22,6 +22,7 @@ enum Type : int {
     T_ITALIC = (1 << 7),    // *
     T_CODE = (1 << 8),      // `
     T_CODEBLOCK = (1 << 9), // ```
+    T_EOL = (1 << 10),      // \n
     T_EOF = 0,              // End of file
 };
 
@@ -159,7 +160,7 @@ class Parser
     write_callback_t write_cb = nullptr;
 
 private:
-    void flush_buffer(wxString& buffer, const Style& font);
+    void flush_buffer(wxString& buffer, const Style& font, bool is_eol);
     void notify_hr();
 
 public:

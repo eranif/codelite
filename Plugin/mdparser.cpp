@@ -26,6 +26,8 @@ std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
         wxChar ch2 = safe_get_char(m_pos + 2);
         ++m_pos;
         switch(ch0) {
+        case '\n':
+            return { T_EOL, 0 };
         case '*':
             // bold & italic
             if(ch1 == '*') {
@@ -89,11 +91,12 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
     write_cb = std::move(on_write);
     Tokenizer tokenizer(input_str);
     Style style;
+    Type last_state = T_EOF;
     wxString buffer;
     while(true) {
         auto tok = tokenizer.next();
         if(tok.first == T_EOF) {
-            flush_buffer(buffer, style);
+            flush_buffer(buffer, style, false);
             break;
         }
 
@@ -103,34 +106,41 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
             case T_LI:
                 buffer << L"\u2022"; // bullet
                 break;
-
                 // below are style styles
             case T_BOLD:
             case T_ITALIC:
             case T_CODE:
+                flush_buffer(buffer, style, false);
+                style.toggle_property(tok.first);
+                break;
             case T_H1:
             case T_H2:
             case T_H3:
-                flush_buffer(buffer, style);
-                style.toggle_property(tok.first);
+                if(last_state == T_EOL || last_state == T_EOF) {
+                    flush_buffer(buffer, style, false);
+                    style.toggle_property(tok.first);
+                } else {
+                    // handle it as text
+                    buffer << tok.second;
+                }
                 break;
             case T_CODEBLOCK:
                 state = STATE_CODEBLOCK;
-                flush_buffer(buffer, style);
+                flush_buffer(buffer, style, false);
                 style.toggle_property(tok.first);
+                break;
+            case T_EOL:
+                // clear heading
+                flush_buffer(buffer, style, true);
+                style.clear_property(T_H1);
+                style.clear_property(T_H2);
+                style.clear_property(T_H3);
                 break;
             case T_TEXT:
                 buffer << tok.second;
-                if(tok.second == '\n') {
-                    // clear heading
-                    flush_buffer(buffer, style);
-                    style.clear_property(T_H1);
-                    style.clear_property(T_H2);
-                    style.clear_property(T_H3);
-                }
                 break;
             case T_HR:
-                flush_buffer(buffer, style);
+                flush_buffer(buffer, style, false);
                 notify_hr();
                 break;
             case T_EOF:
@@ -138,32 +148,37 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
             }
             break;
         case STATE_CODEBLOCK:
-            if(tok.first == T_CODEBLOCK) {
+            switch(tok.first) {
+            case T_CODEBLOCK:
                 state = STATE_NORMAL;
-                flush_buffer(buffer, style);
-                style.toggle_property(tok.first);
-            } else {
+                flush_buffer(buffer, style, false);
+                style.toggle_property(T_CODEBLOCK);
+                break;
+            case T_EOL:
+                flush_buffer(buffer, style, true);
+                break;
+            default:
                 if(buffer.empty() && tok.second == '\n') {
                     // skip it
                 } else {
                     buffer << tok.second;
                 }
+                break;
             }
-            break;
         }
+
+        if(tok.first == T_TEXT && (tok.second == ' ' || tok.second == '\t')) {
+            // dont change the lasta seen state for whitespace
+            continue;
+        }
+        last_state = tok.first;
     }
 }
 
-void mdparser::Parser::flush_buffer(wxString& buffer, const Style& style)
+void mdparser::Parser::flush_buffer(wxString& buffer, const Style& style, bool is_eol)
 {
-    if(!buffer.empty()) {
-        bool is_eol = buffer[buffer.length() - 1] == '\n';
-        if(is_eol) {
-            buffer.erase(buffer.length() - 1);
-        }
-        write_cb(buffer, style, is_eol);
-        buffer.clear();
-    }
+    write_cb(buffer, style, is_eol);
+    buffer.clear();
 }
 
 void mdparser::Parser::notify_hr()

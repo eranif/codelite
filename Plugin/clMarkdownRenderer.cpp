@@ -50,7 +50,7 @@ void clMarkdownRenderer::Render(wxWindow* win, wxDC& dc, const wxString& text, c
     DoRender(win, dc, text, rect, true);
 }
 
-void clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect, bool do_draw)
+wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect, bool do_draw)
 {
     wxUnusedVar(win);
 
@@ -73,10 +73,10 @@ void clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text,
         dc.SetBrush(bg_colour);
         dc.DrawRectangle(rect);
     }
-    
+
     int height = X_MARGIN;
-    int width = X_MARGIN;
-    
+    int width = Y_MARGIN;
+
     auto on_write = [&](const wxString& buffer, const mdparser::Style& style, bool is_eol) {
         DCFontLocker font_locker(dc);
         if(style.is_horizontal_rule()) {
@@ -89,11 +89,18 @@ void clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text,
             xx = X_MARGIN;
             yy += text_size.GetHeight() / 2;
 
+            height += text_size.GetHeight();
+
         } else {
             UpdateFont(dc, style);
             wxSize text_size = dc.GetTextExtent(buffer);
 
-            const int line_height = text_size.GetHeight();
+            // even if text is empty, we still need to have a valid line height
+            // so use a dummy "Tp" text for this purpose
+            const int line_height = dc.GetTextExtent("Tp").GetHeight();
+
+            width = wxMax(text_size.GetWidth(), width);
+            height += line_height;
 
             wxColour code_pen_colour =
                 clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW).ChangeLightness(is_dark ? 110 : 90);
@@ -103,14 +110,13 @@ void clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text,
             if(do_draw) {
                 if(style.is_code()) {
                     wxRect code_rect = wxRect({ xx, yy }, text_size);
-                    code_rect.Inflate(2);
+                    code_rect.Inflate(1);
                     dc.SetPen(code_pen_colour);
                     dc.SetBrush(code_bg_colour);
                     dc.DrawRoundedRectangle(code_rect, 1.0);
                 } else if(style.is_codeblock()) {
                     // colour the entire row
                     wxRect code_rect = wxRect(0, yy, rect.GetWidth(), line_height);
-                    code_rect.Deflate(2, 0);
                     dc.SetPen(code_bg_colour);
                     dc.SetBrush(code_bg_colour);
                     dc.DrawRectangle(code_rect);
@@ -122,7 +128,6 @@ void clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text,
             if(is_eol) {
                 xx = X_MARGIN;
                 yy += line_height;
-                height += line_height;
             } else {
                 xx += text_size.GetWidth();
             }
@@ -131,10 +136,10 @@ void clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text,
 
     mdparser::Parser parser;
     parser.parse(text, on_write);
+    return { width, height };
 }
 
 wxSize clMarkdownRenderer::GetSize(wxWindow* win, wxDC& dc, const wxString& text)
 {
-    DoRender(win, dc, text, {}, false);
-    return {};
+    return DoRender(win, dc, text, {}, false);
 }

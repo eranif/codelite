@@ -118,6 +118,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str)
         }
     }
     str = wxJoin(lines_trimmed, '\n');
+    clDEBUG() << "Tip\n" << str << endl;
 }
 
 wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc)
@@ -157,26 +158,28 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
     Bind(wxEVT_ERASE_BACKGROUND, &CCBoxTipWindow::OnEraseBG, this);
 }
 
-CCBoxTipWindow::~CCBoxTipWindow() {}
+CCBoxTipWindow::~CCBoxTipWindow()
+{
+}
 
 void CCBoxTipWindow::DoInitialize(size_t numOfTips, bool simpleTip)
 {
+    wxUnusedVar(simpleTip);
+
     m_numOfTips = numOfTips;
-
-    if(!simpleTip && m_numOfTips > 1)
-        m_tip.Prepend(wxT("\n\n")); // Make room for the arrows
-
     wxBitmap bmp(1, 1);
     wxMemoryDC _memDC(bmp);
     wxGCDC gcdc(_memDC);
 
-    wxSize size;
     m_codeFont = ColoursAndFontsManager::Get().GetFixedFont();
     gcdc.SetFont(m_codeFont);
-    wxRect text_rect = gcdc.GetMultiLineTextExtent(m_tip);
 
+    clMarkdownRenderer renderer;
+    wxRect text_rect = renderer.GetSize(this, gcdc, m_tip);
     text_rect.Inflate(5);
+    SetSizeHints(text_rect.GetSize());
     SetSize(text_rect.GetSize());
+    clDEBUG() << "Tooltip size is set to: (" << text_rect.GetWidth() << "," << text_rect.GetHeight() << ")" << endl;
     Layout();
 }
 
@@ -266,7 +269,10 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     }
 }
 
-void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
+void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e)
+{
+    wxUnusedVar(e);
+}
 
 void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {

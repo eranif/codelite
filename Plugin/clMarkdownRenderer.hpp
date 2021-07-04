@@ -9,7 +9,7 @@ class WXDLLIMPEXP_SDK clMarkdownRenderer
 {
 private:
     void UpdateFont(wxDC& dc, const mdparser::Style& style);
-    void DoRender(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect, bool do_draw);
+    wxSize DoRender(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect, bool do_draw);
 
 public:
     clMarkdownRenderer();

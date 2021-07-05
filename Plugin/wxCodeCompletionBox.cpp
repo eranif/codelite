@@ -718,6 +718,7 @@ void wxCodeCompletionBox::DoPopulateList()
     // Fill the control with the entries
     m_list->DeleteAllItems();
 
+    m_list->Begin();
     wxVector<wxVariant> cols;
     for(size_t i = 0; i < m_entries.size(); ++i) {
         wxCodeCompletionBoxEntry::Ptr_t cc_item = m_entries[i];
@@ -725,6 +726,7 @@ void wxCodeCompletionBox::DoPopulateList()
         cols.push_back(::MakeBitmapIndexText(cc_item->GetText(), cc_item->GetImgIndex()));
         m_list->AppendItem(cols, (wxUIntPtr)i);
     }
+    m_list->Commit();
     // Select the first item
     if(m_list->GetItemCount()) {
         m_list->Select(m_list->RowToItem(0));

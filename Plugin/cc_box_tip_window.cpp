@@ -58,8 +58,8 @@ namespace
 {
 void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
 {
-    wxString restr = R"str(<[="a-zA-Z _/]+>)str";
-    wxRegEx re(restr);
+    wxString restr = R"str(<.*?>)str";
+    wxRegEx re(restr, wxRE_ADVANCED);
 
     auto lines = wxStringTokenize(str, "\n", wxTOKEN_RET_EMPTY);
     str.clear();

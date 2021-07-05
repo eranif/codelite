@@ -41,6 +41,7 @@ public:
     {
     }
     std::pair<Type, wxChar> next();
+    void consume_until(wxChar ch);
 };
 
 // font definition

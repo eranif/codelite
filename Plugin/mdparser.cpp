@@ -35,12 +35,17 @@ wxChar mdparser::Tokenizer::safe_get_char(size_t pos) const
         return { TYPE, CHAR };                                                 \
     }
 
+#define IS_ONE_OF2(c, C1, C2) (c == C1 || c == C2)
+#define IS_ONE_OF3(c, C1, C2, C3) (c == C1 || c == C2 || c == C3)
+
 std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
 {
     while(m_pos < m_text.length()) {
         wxChar ch0 = m_text[m_pos];
         wxChar ch1 = safe_get_char(m_pos + 1);
         wxChar ch2 = safe_get_char(m_pos + 2);
+        wxChar ch3 = safe_get_char(m_pos + 3);
+        wxChar before_ch = safe_get_char(m_pos - 1);
         ++m_pos;
         switch(ch0) {
         case '\n':
@@ -72,13 +77,14 @@ std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
             }
             break;
         case '=':
-            if(ch1 == '=' && ch2 == '=') {
+            if(IS_ONE_OF2(before_ch, '\n', 0) && ch1 == '=' && ch2 == '=' && IS_ONE_OF3(ch3, '\n', '\r', 0)) {
                 RETURN_TYPE(T_HR, 0, 2);
             } else {
                 RETURN_TYPE(T_TEXT, ch0, 0);
             }
+            break;
         case '-':
-            if(ch1 == '-' && ch2 == '-') {
+            if(IS_ONE_OF2(before_ch, '\n', 0) && ch1 == '-' && ch2 == '-' && IS_ONE_OF3(ch3, '\n', '\r', 0)) {
                 RETURN_TYPE(T_HR, 0, 2);
             } else if(ch1 != '-') {
                 RETURN_TYPE(T_LI, 0, 0);
@@ -91,6 +97,16 @@ std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
         }
     }
     return { T_EOF, 0 };
+}
+
+void mdparser::Tokenizer::consume_until(wxChar ch)
+{
+    for(; m_pos < m_text.length(); ++m_pos) {
+        if(m_text[m_pos] == ch) {
+            ++m_pos;
+            break;
+        }
+    }
 }
 
 void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_write)
@@ -122,7 +138,7 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
                     buffer << "-";
                 }
                 break;
-                // below are style styles
+            // below are style styles
             case T_BOLD:
             case T_ITALIC:
             case T_CODE:
@@ -158,6 +174,7 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
             case T_HR:
                 flush_buffer(buffer, style, false);
                 notify_hr();
+                tokenizer.consume_until('\n');
                 break;
             case T_EOF:
                 break;

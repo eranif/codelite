@@ -369,11 +369,18 @@ wxColour DrawingUtils::GetThemeTipBgColour()
 
 bool DrawingUtils::IsThemeDark() { return IsDark(GetThemeBgColour()); }
 
-bool DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
+wxDC& DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
 {
-    wxGraphicsRenderer* const renderer = wxGraphicsRenderer::GetDefaultRenderer();
-    wxGraphicsContext* context;
+    wxGraphicsRenderer* renderer = nullptr;
+#if defined(__WXGTK__)
+    renderer = wxGraphicsRenderer::GetCairoRenderer();
+#elif defined(__WXMSW__) && wxUSE_GRAPHICS_DIRECT2D
+    renderer = wxGraphicsRenderer::GetDirect2DRenderer();
+#else
+    renderer = wxGraphicsRenderer::GetDefaultRenderer();
+#endif
 
+    wxGraphicsContext* context;
     if(wxPaintDC* paintdc = wxDynamicCast(&dc, wxPaintDC)) {
         context = renderer->CreateContext(*paintdc);
 
@@ -381,12 +388,11 @@ bool DrawingUtils::GetGCDC(wxDC& dc, wxGCDC& gdc)
         context = renderer->CreateContext(*memdc);
 
     } else {
-        wxFAIL_MSG("Unknown wxDC kind");
-        return false;
+        return dc;
     }
-
+    context->SetAntialiasMode(wxANTIALIAS_DEFAULT);
     gdc.SetGraphicsContext(context);
-    return true;
+    return gdc;
 }
 
 wxColour DrawingUtils::GetAUIPaneBGColour() { return GetPanelBgColour(); }

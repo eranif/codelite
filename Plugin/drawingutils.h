@@ -27,10 +27,10 @@
 
 #include "clColours.h"
 #include "codelite_exports.h"
+#include "ieditor.h"
 #include "wx/colour.h"
 #include "wx/dc.h"
 #include <wx/dcgraph.h>
-#include "ieditor.h"
 
 enum class eButtonState {
     kNormal,
@@ -114,12 +114,10 @@ public:
     static bool DrawStippleBackground(const wxRect& rect, wxDC& dc);
 
     /**
-     * @brief convert wxDC into wxGCDC
-     * @param dc [in] dc
-     * @param gdc [in/out] graphics DC
-     * @return true on success, false otherwise
+     * @brief convert wxDC into wxGCDC. Return the a DC to work with.
+     * This function never fails
      */
-    static bool GetGCDC(wxDC& dc, wxGCDC& gdc);
+    static wxDC& GetGCDC(wxDC& dc, wxGCDC& gdc);
 
     /**
      * @brief Return true if the current theme dominant colour is dark

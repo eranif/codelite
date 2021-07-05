@@ -69,7 +69,8 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 {
     wxUnusedVar(e);
     wxAutoBufferedPaintDC bdc(this);
-    wxGCDC dc(bdc);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(bdc, gcdc);
     PrepareDC(dc);
 
     if(m_args.IsEmpty())
@@ -290,7 +291,7 @@ void clEditorTipWindow::Activate(wxPoint pt, int lineHeight, wxColour parentBgCo
     m_parentBgColour = parentBgColour;
 
     // update the font to the current editor
-    m_font = ColoursAndFontsManager::Get().GetLexer("text")->GetFontForSyle(0, this);
+    m_font = ColoursAndFontsManager::Get().GetFixedFont(true);
 
     DoAdjustPosition();
     if(!IsActive()) {

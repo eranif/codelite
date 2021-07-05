@@ -30,6 +30,7 @@ class Tokenizer
 {
     const wxString& m_text;
     size_t m_pos = 0;
+    int m_text_sequence = 0;
 
 private:
     wxChar safe_get_char(size_t pos) const;

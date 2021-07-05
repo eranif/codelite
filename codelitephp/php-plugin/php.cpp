@@ -26,6 +26,7 @@
 #include "php_workspace_view.h"
 #include "quick_outline_dlg.h"
 #include "ssh_workspace_settings.h"
+#include "wxCodeCompletionBox.h"
 #include "xdebugevent.h"
 #include <cl_config.h>
 #include <cl_standard_paths.h>
@@ -62,10 +63,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 PhpPlugin::PhpPlugin(IManager* manager)
     : IPlugin(manager)
@@ -186,9 +184,7 @@ PhpPlugin::PhpPlugin(IManager* manager)
 #endif // USE_SFTP
 }
 
-PhpPlugin::~PhpPlugin()
-{
-}
+PhpPlugin::~PhpPlugin() {}
 
 bool PhpPlugin::IsWorkspaceViewDetached()
 {
@@ -198,10 +194,7 @@ bool PhpPlugin::IsWorkspaceViewDetached()
     return detachedPanes.Index(PHPStrings::PHP_WORKSPACE_VIEW_TITLE) != wxNOT_FOUND;
 }
 
-void PhpPlugin::CreateToolBar(clToolBar* toolbar)
-{
-    wxUnusedVar(toolbar);
-}
+void PhpPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
 void PhpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
@@ -580,10 +573,7 @@ void PhpPlugin::OnXDebugDeleteAllBreakpoints(clDebugEvent& e)
     EventNotifier::Get()->AddPendingEvent(eventDelAllBP);
 }
 
-void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e)
-{
-    DoEnsureXDebugPanesVisible(_("Breakpoints"));
-}
+void PhpPlugin::OnXDebugShowBreakpointsWindow(wxCommandEvent& e) { DoEnsureXDebugPanesVisible(_("Breakpoints")); }
 
 void PhpPlugin::DoEnsureXDebugPanesVisible(const wxString& selectWindow)
 {
@@ -661,9 +651,7 @@ void PhpPlugin::OnNewProjectFinish(clNewProjectEvent& e)
     }
 }
 
-void PhpPlugin::OnXDebugSettings(wxCommandEvent& e)
-{
-}
+void PhpPlugin::OnXDebugSettings(wxCommandEvent& e) {}
 
 void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
 {
@@ -681,10 +669,7 @@ void PhpPlugin::OnAllEditorsClosed(wxCommandEvent& e)
     }
 }
 
-void PhpPlugin::SetEditorActive(IEditor* editor)
-{
-    editor->SetActive();
-}
+void PhpPlugin::SetEditorActive(IEditor* editor) { editor->SetActive(); }
 
 void PhpPlugin::RunXDebugDiagnostics()
 {
@@ -754,10 +739,7 @@ void PhpPlugin::FinalizeStartup()
     data.Load();
 }
 
-void PhpPlugin::OnGoingDown(clCommandEvent& event)
-{
-    event.Skip();
-}
+void PhpPlugin::OnGoingDown(clCommandEvent& event) { event.Skip(); }
 
 void PhpPlugin::OnFileSysetmUpdated(clFileSystemEvent& event)
 {

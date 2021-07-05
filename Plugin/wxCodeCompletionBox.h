@@ -141,6 +141,11 @@ public:
     void SetStartPos(int startPos) { this->m_startPos = startPos; }
     int GetStartPos() const { return m_startPos; }
 
+    /**
+     * @brief strip HTML tags before showing the tooltip
+     */
+    static void SetStripHtmlTags(bool strip);
+
 protected:
     /**
      * @brief filter the results based on what the user typed in the editor

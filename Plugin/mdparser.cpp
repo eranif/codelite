@@ -18,6 +18,23 @@ wxChar mdparser::Tokenizer::safe_get_char(size_t pos) const
     return m_text[pos];
 }
 
+#define WORD_WRAP_AT_COL 100
+#define RETURN_TYPE(TYPE, CHAR, INCR_POS)                                      \
+    if(TYPE == Type::T_TEXT) {                                                 \
+        m_text_sequence++;                                                     \
+    } else {                                                                   \
+        m_text_sequence = 0;                                                   \
+    }                                                                          \
+    /* implement word wrap */                                                  \
+    if(m_text_sequence >= WORD_WRAP_AT_COL && (CHAR == ' ' || CHAR == '\t')) { \
+        m_text_sequence = 0;                                                   \
+        --m_pos;                                                               \
+        return { T_EOL, 0 };                                                   \
+    } else {                                                                   \
+        m_pos += INCR_POS;                                                     \
+        return { TYPE, CHAR };                                                 \
+    }
+
 std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
 {
     while(m_pos < m_text.length()) {
@@ -27,56 +44,50 @@ std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
         ++m_pos;
         switch(ch0) {
         case '\n':
-            return { T_EOL, 0 };
+            RETURN_TYPE(T_EOL, 0, 0);
         case '*':
             // bold & italic
             if(ch1 == '*') {
-                m_pos += 1;
-                return { T_BOLD, 0 };
+                RETURN_TYPE(T_BOLD, 0, 1);
             } else {
-                return { T_ITALIC, 0 };
+                RETURN_TYPE(T_ITALIC, 0, 0);
             }
             break;
         case '`':
             // code blocks ``` & `
             if(ch1 == '`' && ch2 == '`') {
-                m_pos += 2;
-                return { T_CODEBLOCK, 0 };
+                RETURN_TYPE(T_CODEBLOCK, 0, 2);
             } else {
-                return { T_CODE, 0 };
+                RETURN_TYPE(T_CODE, 0, 0);
             }
             break;
         case '#':
             // Heading, up to 3 x #
             if(ch1 == '#' && ch2 == '#') {
-                m_pos += 2;
-                return { T_H3, 0 };
+                RETURN_TYPE(T_H3, 0, 2);
             } else if(ch1 == '#') {
-                m_pos += 1;
-                return { T_H2, 0 };
+                RETURN_TYPE(T_H2, 0, 1);
             } else {
-                return { T_H1, 0 };
+                RETURN_TYPE(T_H1, 0, 0);
             }
             break;
         case '=':
             if(ch1 == '=' && ch2 == '=') {
-                m_pos += 2;
-                return { T_HR, 0 };
+                RETURN_TYPE(T_HR, 0, 2);
             } else {
-                return { T_TEXT, ch0 };
+                RETURN_TYPE(T_TEXT, ch0, 0);
             }
         case '-':
             if(ch1 == '-' && ch2 == '-') {
-                m_pos += 2;
-                return { T_HR, 0 };
+                RETURN_TYPE(T_HR, 0, 2);
             } else if(ch1 != '-') {
-                return { T_LI, 0 };
+                RETURN_TYPE(T_LI, 0, 0);
             } else {
-                return { T_TEXT, ch0 };
+                RETURN_TYPE(T_TEXT, ch0, 0);
             }
             break;
         default:
-            return { T_TEXT, ch0 };
+            RETURN_TYPE(T_TEXT, ch0, 0);
         }
     }
     return { T_EOF, 0 };

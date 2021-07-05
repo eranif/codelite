@@ -42,6 +42,7 @@ class WXDLLIMPEXP_SDK CCBoxTipWindow : public wxPopupWindow
 protected:
     wxString m_tip;
     size_t m_numOfTips = 1;
+    bool m_stripHtmlTags = false;
 
 protected:
     void OnPaint(wxPaintEvent& e);
@@ -50,7 +51,7 @@ protected:
     void DoDrawTip(wxDC& dc);
 
 public:
-    CCBoxTipWindow(wxWindow* parent, const wxString& tip);
+    CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip_html_tags);
     virtual ~CCBoxTipWindow();
 
     /**

@@ -25,6 +25,7 @@ static int SCROLLBAR_WIDTH = 12;
 static int BOX_WIDTH = 800 + SCROLLBAR_WIDTH;
 
 wxCodeCompletionBox::BmpVec_t wxCodeCompletionBox::m_defaultBitmaps;
+thread_local bool strip_html_tags = false;
 
 wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject, size_t flags)
     : wxCodeCompletionBoxBase(parent)
@@ -65,7 +66,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
     m_list->SetRendererType(eRendererType::RENDERER_DIRECT2D);
     m_list->SetColours(colours);
     m_list->SetDefaultFont(m_ccFont);
-    m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
+    // m_list->SetNeverShowScrollBar(wxHORIZONTAL, true);
     m_list->SetTreeStyle(m_list->GetTreeStyle() | wxTR_FULL_ROW_HIGHLIGHT);
 
     // Calculate a suitable completion dialog width
@@ -233,7 +234,7 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
             m_displayedTip = docComment;
 
             // Construct a new tip window and display the tip
-            m_tipWindow = new CCBoxTipWindow(GetParent(), docComment);
+            m_tipWindow = new CCBoxTipWindow(GetParent(), docComment, strip_html_tags);
             m_tipWindow->PositionRelativeTo(this, m_stc->PointFromPosition(m_stc->GetCurrentPos()));
 
             // restore focus to the editor
@@ -742,3 +743,5 @@ void wxCodeCompletionBox::OnSelectionChanged(wxDataViewEvent& event)
     event.Skip();
     CallAfter(&wxCodeCompletionBox::DoDisplayTipWindow);
 }
+
+void wxCodeCompletionBox::SetStripHtmlTags(bool strip) { strip_html_tags = strip; }

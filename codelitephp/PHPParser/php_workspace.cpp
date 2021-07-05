@@ -17,6 +17,7 @@
 #include <wx/busyinfo.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
+#include "wxCodeCompletionBox.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -85,6 +86,8 @@ bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
     // Notify that workspace has been opened to the plugins
     clWorkspaceEvent closed_event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(closed_event);
+    
+    wxCodeCompletionBox::SetStripHtmlTags(false);
     return true;
 }
 
@@ -172,6 +175,8 @@ bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool creat
     clGetManager()->AddWorkspaceToRecentlyUsedList(GetFilename());
 
     CallAfter(&PHPWorkspace::RestoreWorkspaceSession);
+    
+    wxCodeCompletionBox::SetStripHtmlTags(true);
     // Change the workspace extension
     return true;
 }

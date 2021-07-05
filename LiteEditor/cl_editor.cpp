@@ -4485,7 +4485,7 @@ void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip
         tooltip << "\n---\n";
     }
     tooltip << tip;
-    m_calltip = new CCBoxTipWindow(this, tooltip);
+    m_calltip = new CCBoxTipWindow(this, tooltip, true);
     if(pos == wxNOT_FOUND) {
         pt = ::wxGetMousePosition();
     } else {

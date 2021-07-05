@@ -56,7 +56,7 @@ const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
 
 namespace
 {
-void CCBoxTipWindow_ShrinkTip(wxString& str)
+void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
 {
     wxString restr = R"str(<[="a-zA-Z _/]+>)str";
     wxRegEx re(restr);
@@ -68,7 +68,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str)
     lines_trimmed.reserve(lines.size());
 
     for(auto& line : lines) {
-        if(re.IsValid()) {
+        if(strip_html_tags && re.IsValid()) {
             re.ReplaceAll(&line, wxEmptyString);
         }
 
@@ -118,40 +118,16 @@ void CCBoxTipWindow_ShrinkTip(wxString& str)
         }
     }
     str = wxJoin(lines_trimmed, '\n');
-    clDEBUG() << "Tip\n" << str << endl;
-}
-
-wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc)
-{
-    wxGraphicsRenderer* renderer = nullptr;
-#if defined(__WXMSW__) && wxUSE_GRAPHICS_DIRECT2D
-    renderer = wxGraphicsRenderer::GetDirect2DRenderer();
-#else
-    renderer = wxGraphicsRenderer::GetDefaultRenderer();
-#endif
-
-    wxGraphicsContext* context;
-    if(wxPaintDC* paintdc = wxDynamicCast(&dc, wxPaintDC)) {
-        context = renderer->CreateContext(*paintdc);
-
-    } else if(wxMemoryDC* memdc = wxDynamicCast(&dc, wxMemoryDC)) {
-        context = renderer->CreateContext(*memdc);
-
-    } else {
-        return dc;
-    }
-    context->SetAntialiasMode(wxANTIALIAS_DEFAULT);
-    gdc.SetGraphicsContext(context);
-    return gdc;
 }
 } // namespace
 
-CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip)
+CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip_html_tags)
     : wxPopupWindow(parent)
     , m_tip(tip)
+    , m_stripHtmlTags(strip_html_tags)
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
-    CCBoxTipWindow_ShrinkTip(m_tip);
+    CCBoxTipWindow_ShrinkTip(m_tip, m_stripHtmlTags);
     DoInitialize(1, true);
 
     Bind(wxEVT_PAINT, &CCBoxTipWindow::OnPaint, this);
@@ -276,7 +252,7 @@ void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC bpdc(this);
     wxGCDC gcdc;
-    wxDC& dc = CreateGCDC(bpdc, gcdc);
+    wxDC& dc = DrawingUtils::GetGCDC(bpdc, gcdc);
     PrepareDC(dc);
     DoDrawTip(dc);
 }

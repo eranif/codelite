@@ -477,6 +477,10 @@ void GitPlugin::DoSetRepoPath(const wxString& repo_path)
         m_repositoryDirectory = repo_path;
     }
 
+    if(IsGitEnabled()) {
+        wxBitmap bmp = clGetManager()->GetStdIcons()->LoadBitmap("git");
+        clGetManager()->GetStatusBar()->SetSourceControlBitmap(bmp, "Git", _("Using git\nClick to open the git view"));
+    }
     AddDefaultActions();
     ProcessGitActionQueue();
 }
@@ -1924,6 +1928,7 @@ void GitPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
     WorkspaceClosed();
     m_lastBlameMessage.clear();
     ClearCodeLiteRemoteInfo();
+    clGetManager()->GetStatusBar()->SetSourceControlBitmap(wxNullBitmap, "", "");
 }
 
 void GitPlugin::DoCleanup()

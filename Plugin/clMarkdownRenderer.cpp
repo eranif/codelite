@@ -2,6 +2,7 @@
 #include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
+#include "mdparser.hpp"
 #include "wx/settings.h"
 
 namespace
@@ -25,7 +26,7 @@ void clMarkdownRenderer::UpdateFont(wxDC& dc, const mdparser::Style& style)
     double point_size = f.GetPointSize();
     switch(style.font_size) {
     case mdparser::Style::FONTSIZE_H1:
-        point_size += 6;
+        point_size += 4; // it will receive a different colour
         break;
     case mdparser::Style::FONTSIZE_H2:
         point_size += 4;
@@ -100,11 +101,13 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
             // so use a dummy "Tp" text for this purpose
             line_height = dc.GetTextExtent("Tp").GetHeight();
 
-            wxColour code_bg_colour = bg_colour.ChangeLightness(is_dark ? 110 : 90);
+            wxColour code_bg_colour = bg_colour.ChangeLightness(is_dark ? 110 : 150);
             wxColour text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
             if(style.is_code()) {
                 text_colour = is_dark ? wxColour("#cc99ff") : wxColour("#cc0000");
+            } else if(style.has_flag(mdparser::T_H1)) {
+                text_colour = is_dark ? wxColour("#ff9999") : wxColour("#3399cc");
             }
 
             if(do_draw) {

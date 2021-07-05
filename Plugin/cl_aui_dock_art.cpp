@@ -196,9 +196,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         wxMemoryDC memDc;
         memDc.SelectObject(bmp);
 
-        wxGCDC gdc;
-        DrawingUtils::GetGCDC(memDc, gdc);
-
+        wxGCDC gdc(memDc);
+        
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         gdc.SetFont(f);
 
@@ -248,9 +247,8 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
     wxMemoryDC memDc;
     memDc.SelectObject(bmp);
 
-    wxGCDC gdc;
-    DrawingUtils::GetGCDC(memDc, gdc);
-
+    wxGCDC gdc(memDc);
+    
     gdc.SetPen(m_bgColour);
     gdc.SetBrush(m_bgColour);
     gdc.DrawRectangle(tmpRect);

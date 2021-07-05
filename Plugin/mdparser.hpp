@@ -50,10 +50,8 @@ private:
     size_t font_flags = 0;
     bool horizontal_rule = false;
 
-private:
-    bool has_flag(Type prop) const { return font_flags & prop; }
-
 public:
+    bool has_flag(Type prop) const { return font_flags & prop; }
     enum FontSize {
         FONTSIZE_NORMAL,
         FONTSIZE_H1,

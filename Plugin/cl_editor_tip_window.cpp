@@ -96,6 +96,10 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     highlightFgColour = colours.GetSelItemTextColour();
     wxRect rr = GetClientRect();
 
+#ifdef __WXMAC__
+    rr.Inflate(1);
+#endif
+
     // draw the background using the parent background colour
     dc.SetBrush(bgColour);
 

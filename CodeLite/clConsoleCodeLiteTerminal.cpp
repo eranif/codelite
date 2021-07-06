@@ -1,8 +1,8 @@
 #include "clConsoleCodeLiteTerminal.h"
 #include "cl_standard_paths.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
-#include "file_logger.h"
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
@@ -43,8 +43,12 @@ wxString clConsoleCodeLiteTerminal::PrepareCommand()
         }
 
         wxString wd = GetWorkingDirectory();
-        if(wd.IsEmpty() || !wxFileName::DirExists(wd)) { wd = WrapWithQuotesIfNeeded(wxGetCwd()); }
-        if(IsWaitWhenDone()) { commandToExecute << " --wait "; }
+        if(wd.IsEmpty() || !wxFileName::DirExists(wd)) {
+            wd = WrapWithQuotesIfNeeded(wxGetCwd());
+        }
+        if(IsWaitWhenDone()) {
+            commandToExecute << " --wait ";
+        }
 
         wxString commandFile = tmpfile.GetFullPath();
         commandFile = WrapWithQuotesIfNeeded(commandFile);
@@ -54,7 +58,9 @@ wxString clConsoleCodeLiteTerminal::PrepareCommand()
 
     } else {
         commandToExecute = WrapWithQuotesIfNeeded(GetCommand());
-        if(!GetCommandArgs().IsEmpty()) { commandToExecute << " " << GetCommandArgs(); }
+        if(!GetCommandArgs().IsEmpty()) {
+            commandToExecute << " " << GetCommandArgs();
+        }
     }
     return commandToExecute;
 }
@@ -77,7 +83,9 @@ bool clConsoleCodeLiteTerminal::StartForDebugger()
     sleepCommand << " " << secondsToSleep;
 
     wxString homedir = wxGetHomeDir();
-    if(homedir.Contains(" ")) { homedir.Prepend("\"").Append("\""); }
+    if(homedir.Contains(" ")) {
+        homedir.Prepend("\"").Append("\"");
+    }
     wxString commandToExecute;
     commandToExecute << GetBinary();
 #ifndef __WXOSX__
@@ -104,14 +112,16 @@ bool clConsoleCodeLiteTerminal::StartForDebugger()
             symlinkName.Replace("/dev/pts/", "/tmp/pts");
             wxString lnCommand;
             lnCommand << "ln -sf " << m_tty << " " << symlinkName;
-            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) { m_tty.swap(symlinkName); }
+            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) {
+                m_tty.swap(symlinkName);
+            }
             break;
         }
         wxThread::Sleep(50);
     }
 #ifdef __WXOSX__
     // on OSX, wxExecute return the PID of the open command
-    // we want the sleep command PID (when we kill the 'sleep' the terminal will 
+    // we want the sleep command PID (when we kill the 'sleep' the terminal will
     // close itself)
     m_pid = wxNOT_FOUND;
     wxString psCommand;
@@ -148,8 +158,6 @@ wxString clConsoleCodeLiteTerminal::GetBinary() const
 #ifdef __WXOSX__
     wxString cmd = codeliteTerminal.GetPath();
     cmd = WrapWithQuotesIfNeeded(cmd);
-    cmd.Prepend("open ");
-    cmd << " --args ";
     return cmd;
 #else
     return codeliteTerminal.GetFullPath();

@@ -1,8 +1,8 @@
 #include "MainFrame.h"
-#include <wx/aboutdlg.h>
-#include "wxTerminalCtrl.h"
 #include "SettingsDlg.h"
+#include "wxTerminalCtrl.h"
 #include "wxTerminalOptions.h"
+#include <wx/aboutdlg.h>
 
 MainFrame::MainFrame(wxWindow* parent)
     : MainFrameBaseClass(parent)
@@ -23,6 +23,9 @@ MainFrame::MainFrame(wxWindow* parent)
     m_terminal->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &MainFrame::OnSetTitle, this);
     m_terminal->CallAfter(&wxTerminalCtrl::Focus);
     PostSizeEvent();
+
+    // ensure that this window is raised on startup
+    CallAfter(&wxFrame::Raise);
 }
 
 MainFrame::~MainFrame() {}

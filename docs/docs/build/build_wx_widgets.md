@@ -68,10 +68,10 @@ sudo apt-get install libgtk-3-dev \
 ### GTK3 (**recommended**)
 
 ```bash
-mkdir /home/$USER/devl
-cd /home/$USER/devl
+mkdir $HOME/devl
+cd $HOME/devl
 git clone https://github.com/wxWidgets/wxWidgets.git
-cd /home/$USER/devl/wxWidgets
+cd $HOME/devl/wxWidgets
 git submodule init
 git submodule update
 mkdir build-release-gtk3
@@ -83,10 +83,10 @@ make -j$(nproc) && sudo make install
 ### GTK2 (*Obsolete*)
 
 ```bash
-mkdir /home/$USER/devl
-cd /home/$USER/devl
+mkdir $HOME/devl
+cd $HOME/devl
 git clone https://github.com/wxWidgets/wxWidgets.git
-cd /home/$USER/devl/wxWidgets
+cd $HOME/devl/wxWidgets
 git submodule init
 git submodule update
 mkdir build-release
@@ -110,7 +110,12 @@ make -j$(nproc) && sudo make install
 #### Build wxWidgets
 
 ```bash
-cd /Users/$USER/src/wx-src/
+mkdir $HOME/src
+cd $HOME/src
+git clone https://github.com/wxWidgets/wxWidgets.git
+cd $HOME/src/wxWidgets
+git submodule init
+git submodule update
 mkdir build-release
 cd build-release
 ../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++11 -stdlib=libc++' CC=clang --disable-debug --disable-mediactrl

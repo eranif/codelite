@@ -96,14 +96,17 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     highlightFgColour = colours.GetSelItemTextColour();
     wxRect rr = GetClientRect();
 
+    bool is_dark = DrawingUtils::IsDark(bgColour);
+
 #ifdef __WXMAC__
     rr.Inflate(1);
 #endif
 
     // draw the background using the parent background colour
     dc.SetBrush(bgColour);
+    wxUnusedVar(is_dark);
 
-    wxColour borderColour = penColour.ChangeLightness(DrawingUtils::IsDark(bgColour) ? 140 : 60);
+    wxColour borderColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
     dc.SetPen(borderColour);
     dc.DrawRectangle(rr);
     dc.SetFont(m_font);

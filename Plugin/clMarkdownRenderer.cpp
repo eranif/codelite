@@ -70,9 +70,13 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
     wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     bool is_dark = DrawingUtils::IsDark(bg_colour); //.GetLuminance() < 128;
     if(do_draw) {
+        wxRect bgRect = rect;
+#ifdef __WXMAC__
+        bgRect.Inflate(1);
+#endif
         dc.SetPen(pen_colour);
         dc.SetBrush(bg_colour);
-        dc.DrawRectangle(rect);
+        dc.DrawRectangle(bgRect);
     }
 
     int height = X_MARGIN;

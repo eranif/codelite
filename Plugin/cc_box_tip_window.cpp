@@ -150,7 +150,12 @@ void CCBoxTipWindow::DoInitialize(size_t numOfTips, bool simpleTip)
     text_rect.Inflate(5);
 
     // make sure that the tip window, is not bigger than the screen
+#if wxCHECK_VERSION(3, 1, 2)
     wxDisplay d(this);
+#else
+    wxDisplay d;
+#endif
+
     wxRect display_size = d.GetClientArea();
     if(text_rect.GetHeight() > display_size.GetHeight()) {
         text_rect.SetHeight(display_size.GetHeight());

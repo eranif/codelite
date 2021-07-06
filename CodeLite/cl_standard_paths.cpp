@@ -172,7 +172,7 @@ wxString clStandardPaths::GetTempDir() const
     if(once) {
         wxString username = __get_user_name();
 #if defined(__WXGTK__) || defined(__WXOSX__)
-        tmpdir << "/tmp/codelite." << username << "/";
+        tmpdir << "/tmp/codelite/";
 #else
         tmpdir << wxStandardPaths::Get().GetTempDir() << "\\CodeLite." << username << "\\.";
 #endif

@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "ctags_manager.h"
 #include "CxxTemplateFunction.h"
 #include "CxxVariable.h"
 #include "CxxVariableScanner.h"
@@ -34,7 +35,6 @@
 #include "codelite_exports.h"
 #include "cpp_comment_creator.h"
 #include "cppwordscanner.h"
-#include "ctags_manager.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
@@ -74,7 +74,7 @@
 #ifdef __WXMSW__
 #define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
 #else
-#define PIPE_NAME "/tmp/codelite.%s/%s/codelite_indexer.sock"
+#define PIPE_NAME "/tmp/codelite/%s/codelite_indexer.sock"
 #endif
 
 wxDEFINE_EVENT(wxEVT_TAGS_DB_UPGRADE, wxCommandEvent);
@@ -185,7 +185,7 @@ TagsManager::~TagsManager()
 
         char channel_name[1024];
         memset(channel_name, 0, sizeof(channel_name));
-        sprintf(channel_name, PIPE_NAME, ::getlogin(), s.str().c_str());
+        sprintf(channel_name, PIPE_NAME, s.str().c_str());
         ::unlink(channel_name);
         ::remove(channel_name);
 #endif
@@ -350,11 +350,9 @@ void TagsManager::SourceToTags(const wxFileName& source, wxString& tags, const w
     s << ::wxGetProcessId();
 
     char channel_name[1024];
-#ifdef __WXMSW__
+    memset(channel_name, 0, sizeof(channel_name));
+
     sprintf(channel_name, PIPE_NAME, s.str().c_str());
-#else
-    sprintf(channel_name, PIPE_NAME, ::getlogin(), s.str().c_str());
-#endif
     clNamedPipeClient client(channel_name);
 
     // Build a request for the indexer

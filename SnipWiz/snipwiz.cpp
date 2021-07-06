@@ -123,7 +123,7 @@ SnipWiz::SnipWiz(IManager* manager)
     m_StringDb.SetCompress(true);
 
     if(!m_StringDb.Load(m_configPath + defaultTmplFile)) {
-        // For compatibility with CodeLite < 15.0.5:
+        // For compatibility with CodeLite < 15.0.6:
         // we don't use this directory for storing templates anymore.
         wxString pluginPath = m_mgr->GetStartupDirectory();
         pluginPath += wxFILE_SEP_PATH;

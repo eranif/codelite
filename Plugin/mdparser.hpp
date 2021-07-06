@@ -40,7 +40,7 @@ public:
         : m_text(text)
     {
     }
-    std::pair<Type, wxChar> next();
+    std::pair<Type, wxString> next();
     void consume_until(wxChar ch);
 };
 

@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include <wx/crt.h>
 
 wxChar mdparser::Tokenizer::safe_get_char(size_t pos) const
 {
@@ -19,26 +20,26 @@ wxChar mdparser::Tokenizer::safe_get_char(size_t pos) const
 }
 
 #define WORD_WRAP_AT_COL 100
-#define RETURN_TYPE(TYPE, CHAR, INCR_POS)                                      \
-    if(TYPE == Type::T_TEXT) {                                                 \
-        m_text_sequence++;                                                     \
-    } else {                                                                   \
-        m_text_sequence = 0;                                                   \
-    }                                                                          \
-    /* implement word wrap */                                                  \
-    if(m_text_sequence >= WORD_WRAP_AT_COL && (CHAR == ' ' || CHAR == '\t')) { \
-        m_text_sequence = 0;                                                   \
-        --m_pos;                                                               \
-        return { T_EOL, 0 };                                                   \
-    } else {                                                                   \
-        m_pos += INCR_POS;                                                     \
-        return { TYPE, CHAR };                                                 \
+#define RETURN_TYPE(TYPE, STR, INCR_POS)                                                                       \
+    if(TYPE == Type::T_TEXT) {                                                                                 \
+        m_text_sequence++;                                                                                     \
+    } else {                                                                                                   \
+        m_text_sequence = 0;                                                                                   \
+    }                                                                                                          \
+    /* implement word wrap */                                                                                  \
+    if(m_text_sequence >= WORD_WRAP_AT_COL && (wxStrncmp(STR, " ", 1) == 0 || wxStrncmp(STR, "\t", 1) == 0)) { \
+        m_text_sequence = 0;                                                                                   \
+        --m_pos;                                                                                               \
+        return { T_EOL, "" };                                                                                  \
+    } else {                                                                                                   \
+        m_pos += INCR_POS;                                                                                     \
+        return { TYPE, STR };                                                                                  \
     }
 
 #define IS_ONE_OF2(c, C1, C2) (c == C1 || c == C2)
 #define IS_ONE_OF3(c, C1, C2, C3) (c == C1 || c == C2 || c == C3)
 
-std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
+std::pair<mdparser::Type, wxString> mdparser::Tokenizer::next()
 {
     while(m_pos < m_text.length()) {
         wxChar ch0 = m_text[m_pos];
@@ -49,45 +50,45 @@ std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
         ++m_pos;
         switch(ch0) {
         case '\n':
-            RETURN_TYPE(T_EOL, 0, 0);
+            RETURN_TYPE(T_EOL, "\n", 0);
         case '*':
             // bold & italic
             if(ch1 == '*') {
-                RETURN_TYPE(T_BOLD, 0, 1);
+                RETURN_TYPE(T_BOLD, "**", 1);
             } else {
-                RETURN_TYPE(T_ITALIC, 0, 0);
+                RETURN_TYPE(T_ITALIC, "*", 0);
             }
             break;
         case '`':
             // code blocks ``` & `
             if(ch1 == '`' && ch2 == '`') {
-                RETURN_TYPE(T_CODEBLOCK, 0, 2);
+                RETURN_TYPE(T_CODEBLOCK, "```", 2);
             } else {
-                RETURN_TYPE(T_CODE, 0, 0);
+                RETURN_TYPE(T_CODE, "`", 0);
             }
             break;
         case '#':
             // Heading, up to 3 x #
             if(ch1 == '#' && ch2 == '#') {
-                RETURN_TYPE(T_H3, 0, 2);
+                RETURN_TYPE(T_H3, "###", 2);
             } else if(ch1 == '#') {
-                RETURN_TYPE(T_H2, 0, 1);
+                RETURN_TYPE(T_H2, "##", 1);
             } else {
-                RETURN_TYPE(T_H1, 0, 0);
+                RETURN_TYPE(T_H1, "#", 0);
             }
             break;
         case '=':
             if(IS_ONE_OF2(before_ch, '\n', 0) && ch1 == '=' && ch2 == '=' && IS_ONE_OF3(ch3, '\n', '\r', 0)) {
-                RETURN_TYPE(T_HR, 0, 2);
+                RETURN_TYPE(T_HR, "===", 2);
             } else {
-                RETURN_TYPE(T_TEXT, ch0, 0);
+                RETURN_TYPE(T_TEXT, "=", 0);
             }
             break;
         case '-':
             if(IS_ONE_OF2(before_ch, '\n', 0) && ch1 == '-' && ch2 == '-' && IS_ONE_OF3(ch3, '\n', '\r', 0)) {
-                RETURN_TYPE(T_HR, 0, 2);
+                RETURN_TYPE(T_HR, "---", 2);
             } else if(ch1 != '-') {
-                RETURN_TYPE(T_LI, 0, 0);
+                RETURN_TYPE(T_LI, "-", 0);
             } else {
                 RETURN_TYPE(T_TEXT, ch0, 0);
             }
@@ -96,7 +97,7 @@ std::pair<mdparser::Type, wxChar> mdparser::Tokenizer::next()
             RETURN_TYPE(T_TEXT, ch0, 0);
         }
     }
-    return { T_EOF, 0 };
+    RETURN_TYPE(T_EOF, "", 0);
 }
 
 void mdparser::Tokenizer::consume_until(wxChar ch)

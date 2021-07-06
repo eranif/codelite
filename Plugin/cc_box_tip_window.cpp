@@ -23,10 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cc_box_tip_window.h"
 #include "ColoursAndFontsManager.h"
 #include "Markup.h"
 #include "bitmap_loader.h"
-#include "cc_box_tip_window.h"
 #include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
@@ -195,7 +195,14 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     bool ccBoxIsAboveCaretLine = (windowPos.y < caretPos.y);
     // Check for overflow
     bool vPositioned = false;
-    wxRect displaySize = wxDisplay(this).GetClientArea();
+
+#if wxCHECK_VERSION(3, 1, 2)
+    wxDisplay d(this);
+#else
+    wxDisplay d;
+#endif
+
+    wxRect displaySize = d.GetClientArea();
 
     if((pt.x + tipSize.x) > (displaySize.GetX() + displaySize.GetWidth())) {
         // Move the tip to the left

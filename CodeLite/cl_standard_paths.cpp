@@ -31,7 +31,7 @@
 
 static wxString __get_user_name()
 {
-    wxString squashedname, name = wxGetUserName();
+    wxString squashedname, name = wxGetUserId();
 
     // The wx doc says that 'name' may now be e.g. "Mr. John Smith"
     // So try to make it more suitable to be an extension
@@ -161,7 +161,7 @@ wxString clStandardPaths::GetUserProjectTemplatesDir() const
 
 wxString clStandardPaths::GetExecutablePath() const { return wxStandardPaths::Get().GetExecutablePath(); }
 
-wxString clStandardPaths::GetTempDir() const
+wxString clStandardPaths:: () const
 {
     static bool once = true;
     static wxString tmpdir;

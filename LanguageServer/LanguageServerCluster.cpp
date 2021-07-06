@@ -1,5 +1,5 @@
-#include "CompileCommandsGenerator.h"
 #include "LanguageServerCluster.h"
+#include "CompileCommandsGenerator.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"

@@ -1,5 +1,6 @@
 #include "LanguageServerCluster.h"
 #include "CompileCommandsGenerator.h"
+#include "LSP/LSPEvent.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
@@ -14,6 +15,8 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macromanager.h"
+#include "macros.h"
+#include "wx/arrstr.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <algorithm>
 #include <wx/stc/stc.h>
@@ -35,6 +38,7 @@ LanguageServerCluster::LanguageServerCluster()
     Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
+    Bind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -55,6 +59,7 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
+    Unbind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
 }
 
 void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages)
@@ -174,6 +179,57 @@ void LanguageServerCluster::OnReparseNeeded(LSPEvent& event)
 
     server->CloseEditor(editor);
     server->OpenEditor(editor);
+}
+
+void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
+{
+    LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
+    CHECK_PTR_RET(server);
+
+    clDEBUG() << "Processing semantic tokens. Server:" << server->GetName() << endl;
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    const auto& semanticTokens = event.GetSemanticTokens();
+
+    wxStringSet_t variables_tokens = { "variable", "parameter", "typeParameter", "property" };
+    wxStringSet_t classes_tokens = { "class", "enum", "namespace", "type", "struct" };
+
+    wxStringSet_t classes_set;
+    wxStringSet_t variables_set;
+
+    wxString classes_str;
+    wxString variabls_str;
+
+    for(const auto& token : semanticTokens) {
+        // is this an interesting token?
+        wxString token_type = server->GetSemanticToken(token.token_type);
+        bool is_class = classes_tokens.count(token_type) > 0;
+        bool is_variable = variables_tokens.count(token_type) > 0;
+        // if(!is_class && !is_variable) {
+        //     continue;
+        // }
+
+        // read its name
+        int start_pos = editor->GetCtrl()->PositionFromLine(token.line) + token.column;
+        int end_pos = start_pos + token.length;
+        wxString token_name = editor->GetTextRange(start_pos, end_pos);
+
+        clDEBUG() << "Checking token name:" << token_name << "(" << token_type << ")" << endl;
+        if(is_class && classes_set.count(token_name) == 0) {
+            classes_set.insert(token_name);
+            classes_str << token_name << " ";
+        } else if(is_variable && variables_set.count(token_name) == 0) {
+            variables_set.insert(token_name);
+            variabls_str << token_name << " ";
+        }
+    }
+
+    clDEBUG() << "Semantic classes:" << classes_str << endl;
+    clDEBUG() << "Semantic variables:" << variabls_str << endl;
+
+    editor->SetSemanticTokens(classes_str, variabls_str);
 }
 
 void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)

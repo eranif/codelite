@@ -8,10 +8,10 @@
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "entry.h"
+#include <unordered_set>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wxStringHash.h>
-#include <unordered_set>
 
 class LanguageServerCluster : public wxEvtHandler
 {
@@ -57,6 +57,7 @@ protected:
     void OnSetDiagnostics(LSPEvent& event);
     void OnClearDiagnostics(LSPEvent& event);
     void OnOutlineSymbols(LSPEvent& event);
+    void OnSemanticTokens(LSPEvent& event);
     void OnBuildEnded(clBuildEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     /**

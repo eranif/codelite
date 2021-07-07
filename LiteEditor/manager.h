@@ -232,7 +232,7 @@ protected:
     void DoSetupWorkspace(const wxString& path);
 
     void OnAddWorkspaceToRecentlyUsedList(wxCommandEvent& e);
-    void OnParserThreadSuggestColourTokens(clParseThreadEvent& event);
+
     /**
      * @brief a project was renamed, reload the workspace
      */

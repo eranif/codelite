@@ -62,7 +62,6 @@ private:
                                         wxString& otherfile);
 
 public:
-    virtual void ColourContextTokens(const wxString& workspaceTokensStr, const wxString& localsTokensStr);
     /**
      * @brief
      * @return

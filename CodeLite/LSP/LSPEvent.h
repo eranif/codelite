@@ -3,6 +3,7 @@
 
 #include "LSP/CompletionItem.h"
 #include "LSP/basic_types.h"
+#include "LSP/json_rpc_params.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include <vector>
@@ -15,12 +16,20 @@ class WXDLLIMPEXP_CL LSPEvent : public clCommandEvent
     LSP::SignatureHelp m_signatureHelp;
     std::vector<LSP::Diagnostic> m_diagnostics;
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
+    std::vector<LSP::SemanticTokenRange> m_semanticTokens;
 
 public:
     LSPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     LSPEvent(const LSPEvent& src);
     LSPEvent& operator=(const LSPEvent& other);
     virtual ~LSPEvent();
+
+    void SetSemanticTokens(const std::vector<LSP::SemanticTokenRange>& semanticTokens)
+    {
+        this->m_semanticTokens = semanticTokens;
+    }
+    const std::vector<LSP::SemanticTokenRange>& GetSemanticTokens() const { return m_semanticTokens; }
+
     LSPEvent& SetLocation(const LSP::Location& location)
     {
         this->m_location = location;
@@ -75,5 +84,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SIGNATURE_HELP, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SET_DIAGNOSTICS, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CLEAR_DIAGNOSTICS, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_OPEN_FILE, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SEMANTICS, LSPEvent);
 
 #endif // LSPEVENT_H

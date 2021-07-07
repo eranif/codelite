@@ -26,6 +26,7 @@
 #ifndef ZJSONNODE_H
 #define ZJSONNODE_H
 // clang-format off
+#include "wx/vector.h"
 #include <wx/string.h>
 #include <wx/variant.h>
 #include <wx/filename.h>
@@ -92,6 +93,8 @@ public:
     bool toBool(bool defaultValue = false) const;
     wxString toString(const wxString& defaultValue = wxEmptyString) const;
     wxArrayString toArrayString(const wxArrayString& defaultValue = wxArrayString()) const;
+    wxVector<double> toArray(const wxVector<double>& defaultValue = {}) const;
+    wxVector<int> toArray(const wxVector<int>& defaultValue = {}) const;
     JSONItem arrayItem(int pos) const;
 
     // Retuen the object type

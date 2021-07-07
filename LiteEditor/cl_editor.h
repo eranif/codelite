@@ -334,10 +334,15 @@ public:
      */
     void PageSetup();
 
-    virtual const wxString& GetKeywordClasses() const { return m_keywordClasses; }
-    virtual const wxString& GetKeywordLocals() const { return m_keywordLocals; }
+    const wxString& GetKeywordClasses() const override { return m_keywordClasses; }
+    const wxString& GetKeywordLocals() const override { return m_keywordLocals; }
     virtual void SetKeywordClasses(const wxString& keywordClasses) { this->m_keywordClasses = keywordClasses; }
     virtual void SetKeywordLocals(const wxString& keywordLocals) { this->m_keywordLocals = keywordLocals; }
+
+    /**
+     * @brief set semantic tokens for this editor
+     */
+    void SetSemanticTokens(const wxString& classes, const wxString& variables) override;
 
     /**
      * @brief split the current selection into multiple carets.

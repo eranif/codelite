@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "context_cpp.h"
 #include "AddFunctionsImpDlg.h"
 #include "CTags.hpp"
 #include "CxxScannerTokens.h"
@@ -43,7 +44,6 @@
 #include "code_completion_manager.h"
 #include "codelite_events.h"
 #include "commentconfigdata.h"
-#include "context_cpp.h"
 #include "cpptoken.h"
 #include "ctags_manager.h"
 #include "debuggerasciiviewer.h"
@@ -216,10 +216,7 @@ ContextCpp::~ContextCpp()
     wxDELETE(m_rclickMenu);
 }
 
-ContextBase* ContextCpp::NewInstance(clEditor* container)
-{
-    return new ContextCpp(container);
-}
+ContextBase* ContextCpp::NewInstance(clEditor* container) { return new ContextCpp(container); }
 
 void ContextCpp::OnDwellEnd(wxStyledTextEvent& event)
 {
@@ -874,13 +871,8 @@ void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
 struct ContextCpp_ClientData : public wxClientData {
     TagEntryPtr m_ptr;
 
-    ContextCpp_ClientData(TagEntryPtr ptr)
-    {
-        m_ptr = ptr;
-    }
-    virtual ~ContextCpp_ClientData()
-    {
-    }
+    ContextCpp_ClientData(TagEntryPtr ptr) { m_ptr = ptr; }
+    virtual ~ContextCpp_ClientData() {}
 };
 
 TagEntryPtr ContextCpp::GetTagAtCaret(bool scoped, bool impl)
@@ -2938,14 +2930,9 @@ void ContextCpp::OnGotoNextFunction(wxCommandEvent& event)
     }
 }
 
-void ContextCpp::OnCallTipClick(wxStyledTextEvent& e)
-{
-    e.Skip();
-}
+void ContextCpp::OnCallTipClick(wxStyledTextEvent& e) { e.Skip(); }
 
-void ContextCpp::OnCalltipCancel()
-{
-}
+void ContextCpp::OnCalltipCancel() {}
 
 void ContextCpp::DoUpdateCalltipHighlight()
 {
@@ -3204,10 +3191,7 @@ void ContextCpp::OnFindReferences(wxCommandEvent& e)
                                                   word_start, files);
 }
 
-bool ContextCpp::IsDefaultContext() const
-{
-    return false;
-}
+bool ContextCpp::IsDefaultContext() const { return false; }
 
 void ContextCpp::OnSyncSignatures(wxCommandEvent& e)
 {
@@ -3344,23 +3328,6 @@ void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
     menu.Append(XRCID("find_decl"), _("Go to Declaration"));
     menu.Append(XRCID("find_impl"), _("Go to Implementation"));
     editor->PopupMenu(&menu);
-}
-
-void ContextCpp::ColourContextTokens(const wxString& workspaceTokensStr, const wxString& localsTokensStr)
-{
-    clEditor& ctrl = GetCtrl();
-    size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
-
-    //------------------------------------------
-    // Classes
-    //------------------------------------------
-    wxString flatStrClasses = cc_flags & CC_COLOUR_VARS ? workspaceTokensStr : "";
-    ctrl.SetKeyWords(1, flatStrClasses);
-    ctrl.SetKeywordClasses(flatStrClasses);
-
-    wxString flatStrLocals = cc_flags & CC_COLOUR_VARS ? localsTokensStr : "";
-    ctrl.SetKeyWords(3, flatStrLocals);
-    ctrl.SetKeywordLocals(flatStrLocals);
 }
 
 wxMenu* ContextCpp::GetMenu()

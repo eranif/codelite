@@ -3,6 +3,7 @@
 
 #include "IPathConverter.hpp"
 #include "LSP/MessageWithParams.h"
+#include "wx/string.h"
 #include <wx/filename.h>
 
 namespace LSP
@@ -11,6 +12,7 @@ namespace LSP
 class WXDLLIMPEXP_SDK Request : public LSP::MessageWithParams
 {
     int m_id = wxNOT_FOUND;
+    wxString m_server_name;
 
 public:
     Request();
@@ -50,6 +52,9 @@ public:
         wxUnusedVar(response);
         wxUnusedVar(owner);
     }
+
+    void SetServerName(const wxString& server_name) { this->m_server_name = server_name; }
+    const wxString& GetServerName() const { return m_server_name; }
 };
 }; // namespace LSP
 

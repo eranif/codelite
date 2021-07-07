@@ -144,7 +144,7 @@ public:
     /**
      * @brief return the semantic token at a given index
      */
-    wxString GetSemanticToken(size_t index) const;
+    const wxString& GetSemanticToken(size_t index) const;
 
     bool IsSemanticTokensSupported() const { return !m_semanticTokensTypes.empty(); }
 

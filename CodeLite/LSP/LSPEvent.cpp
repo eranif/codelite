@@ -11,6 +11,7 @@ wxDEFINE_EVENT(wxEVT_LSP_SET_DIAGNOSTICS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_CLEAR_DIAGNOSTICS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_DOCUMENT_SYMBOLS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_OPEN_FILE, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_SEMANTICS, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -32,6 +33,7 @@ LSPEvent& LSPEvent::operator=(const LSPEvent& other)
     m_signatureHelp = other.m_signatureHelp;
     m_diagnostics = other.m_diagnostics;
     m_symbolsInformation = other.m_symbolsInformation;
+    m_semanticTokens = other.m_semanticTokens;
     return *this;
 }
 

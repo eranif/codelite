@@ -64,6 +64,13 @@ public:
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
 };
 
+struct WXDLLIMPEXP_CL SemanticTokenRange {
+    int line = wxNOT_FOUND;
+    int column = wxNOT_FOUND;
+    int length = wxNOT_FOUND;
+    int token_type = wxNOT_FOUND;
+};
+
 //===----------------------------------------------------------------------------------
 // DocumentSymbolParams
 //===----------------------------------------------------------------------------------

@@ -36,6 +36,8 @@
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
 
+thread_local wxString emptyString;
+
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
     : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
     , m_name(name)
@@ -388,6 +390,11 @@ void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
     OpenEditor(editor);
+
+    if(ShouldHandleFile(editor) && IsSemanticTokensSupported()) {
+        // server supports semantic tokens, request it for the current file
+        SendSemanticTokensRequest(GetEditorFilePath(editor));
+    }
 }
 
 void LanguageServerProtocol::OnFileClosed(clCommandEvent& event)
@@ -433,11 +440,6 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
             // If we are about to load a header file, also pass clangd the implementation(s) file
             clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor);
             SendOpenRequest(GetEditorFilePath(editor), fileContent, GetLanguageId(GetEditorFilePath(editor)));
-        }
-
-        if(IsSemanticTokensSupported()) {
-            // server supports semantic tokens, request it for the current file
-            SendSemanticTokensRequest(GetEditorFilePath(editor));
         }
     }
 }
@@ -633,6 +635,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         break;
                     }
                 } else {
+                    clDEBUG() << GetLogPrefix() << "received an error message";
                     if(msg_ptr && msg_ptr->As<LSP::Request>()) {
                         clDEBUG1() << GetLogPrefix() << "received a response";
                         // Check if the reply is still valid
@@ -653,6 +656,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                                !preq->IsValidAt(filename, line, column)) {
                                 clDEBUG1() << "Response is no longer valid. Discarding its result";
                             } else {
+                                preq->SetServerName(GetName());
                                 preq->OnResponse(res, m_owner);
                             }
                         }
@@ -831,10 +835,10 @@ wxString LanguageServerProtocol::GetEditorFilePath(IEditor* editor) const
     }
 }
 
-wxString LanguageServerProtocol::GetSemanticToken(size_t index) const
+const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
 {
     if(index >= m_semanticTokensTypes.size()) {
-        return wxEmptyString;
+        return emptyString;
     }
     return m_semanticTokensTypes[index];
 }

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_editor.h"
 #include "ColoursAndFontsManager.h"
 #include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
@@ -37,7 +38,6 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
-#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
@@ -6013,6 +6013,22 @@ SFTPClientData* clEditor::GetRemoteData() const
         return reinterpret_cast<SFTPClientData*>(cd);
     }
     return nullptr;
+}
+
+void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variables)
+{
+    size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
+
+    //------------------------------------------
+    // Classes
+    //------------------------------------------
+    wxString flatStrClasses = cc_flags & CC_COLOUR_VARS ? classes : "";
+    SetKeyWords(1, flatStrClasses);
+    SetKeywordClasses(flatStrClasses);
+
+    wxString flatStrLocals = cc_flags & CC_COLOUR_VARS ? variables : "";
+    SetKeyWords(3, flatStrLocals);
+    SetKeywordLocals(flatStrLocals);
 }
 
 // ----------------------------------

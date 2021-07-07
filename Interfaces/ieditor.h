@@ -559,6 +559,11 @@ public:
      * @return remote file info, or null if this file is not a remote a file
      */
     virtual SFTPClientData* GetRemoteData() const = 0;
+
+    /**
+     * @brief set semantic tokens for this editor
+     */
+    virtual void SetSemanticTokens(const wxString& classes, const wxString& variables) = 0;
 };
 
 #endif // IEDITOR_H

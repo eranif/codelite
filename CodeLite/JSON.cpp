@@ -27,6 +27,7 @@
 #include "StringUtils.h"
 #include "clFontHelper.h"
 #include "fileutils.h"
+#include "wx/dynarray.h"
 #include <stdlib.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
@@ -93,10 +94,7 @@ JSONItem JSON::toElement() const
     return JSONItem(m_json);
 }
 
-wxString JSON::errorString() const
-{
-    return _errorString;
-}
+wxString JSON::errorString() const { return _errorString; }
 
 JSONItem JSONItem::namedObject(const wxString& name) const
 {
@@ -178,10 +176,7 @@ JSONItem JSONItem::operator[](int index) const
     return JSONItem(NULL);
 }
 
-JSONItem JSONItem::operator[](const wxString& name) const
-{
-    return namedObject(name);
-}
+JSONItem JSONItem::operator[](const wxString& name) const { return namedObject(name); }
 
 JSONItem JSONItem::arrayItem(int pos) const
 {
@@ -471,11 +466,17 @@ wxArrayString JSONItem::toArrayString(const wxArrayString& defaultValue) const
         return defaultValue;
     }
 
-    wxArrayString arr;
     int arr_size = arraySize();
+    if(arr_size == 0) {
+        return defaultValue;
+    }
+
+    wxArrayString arr;
     arr.reserve(arr_size);
-    for(int i = 0; i < arraySize(); i++) {
-        arr.Add(arrayItem(i).toString());
+    auto child = m_json->child;
+    while(child) {
+        arr.push_back(wxString(child->valuestring, wxConvUTF8));
+        child = child->next;
     }
     return arr;
 }
@@ -597,10 +598,7 @@ wxStringMap_t JSONItem::toStringMap() const
     }
     return res;
 }
-JSONItem& JSONItem::addProperty(const wxString& name, size_t value)
-{
-    return addProperty(name, (int)value);
-}
+JSONItem& JSONItem::addProperty(const wxString& name, size_t value) { return addProperty(name, (int)value); }
 
 #if wxUSE_GUI
 JSONItem& JSONItem::addProperty(const wxString& name, const wxColour& colour)
@@ -717,4 +715,54 @@ JSONItem& JSONItem::addProperty(const wxString& name, cJSON* pjson)
     }
     cJSON_AddItemToObject(m_json, name.mb_str(wxConvUTF8).data(), pjson);
     return *this;
+}
+
+wxVector<double> JSONItem::toArray(const wxVector<double>& defaultValue) const
+{
+    if(!m_json) {
+        return defaultValue;
+    }
+
+    if(m_json->type != cJSON_Array) {
+        return defaultValue;
+    }
+
+    int arr_size = arraySize();
+    if(arr_size == 0) {
+        return defaultValue;
+    }
+
+    wxVector<double> arr;
+    arr.reserve(arr_size);
+    auto child = m_json->child;
+    while(child) {
+        arr.push_back(child->valuedouble);
+        child = child->next;
+    }
+    return arr;
+}
+
+wxVector<int> JSONItem::toArray(const wxVector<int>& defaultValue) const
+{
+    if(!m_json) {
+        return defaultValue;
+    }
+
+    if(m_json->type != cJSON_Array) {
+        return defaultValue;
+    }
+
+    int arr_size = arraySize();
+    if(arr_size == 0) {
+        return defaultValue;
+    }
+
+    wxVector<int> arr;
+    arr.reserve(arr_size);
+    auto child = m_json->child;
+    while(child) {
+        arr.push_back(child->valueint);
+        child = child->next;
+    }
+    return arr;
 }

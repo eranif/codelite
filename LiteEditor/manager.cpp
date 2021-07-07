@@ -213,8 +213,6 @@ Manager::Manager(void)
     Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
     Connect(wxPARSE_THREAD_SCAN_INCLUDES_DONE, clParseThreadEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
     Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED, wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
-    Connect(wxPARSE_THREAD_SUGGEST_COLOUR_TOKENS, clParseThreadEventHandler(Manager::OnParserThreadSuggestColourTokens),
-            NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
                                   clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
@@ -3735,24 +3733,6 @@ bool Manager::StartTTY(const wxString& title, wxString& tty)
     wxUnusedVar(tty);
     return false;
 #endif
-}
-
-void Manager::OnParserThreadSuggestColourTokens(clParseThreadEvent& event)
-{
-    const wxArrayString& tokens = event.GetStrings();
-    if(tokens.size() != 2) {
-        return;
-    }
-
-    const wxString& classes = tokens.Item(0);
-    const wxString& locals = tokens.Item(1);
-
-    wxString originatingFile = event.GetFileName();
-
-    clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(originatingFile);
-    if(editor) {
-        editor->GetContext()->ColourContextTokens(classes, locals);
-    }
 }
 
 void Manager::OnProjectRenamed(clCommandEvent& event)

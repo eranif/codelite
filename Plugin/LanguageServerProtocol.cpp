@@ -1,3 +1,4 @@
+#include "LanguageServerProtocol.h"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -13,10 +14,10 @@
 #include "LSP/Request.h"
 #include "LSP/ResponseError.h"
 #include "LSP/ResponseMessage.h"
+#include "LSP/SemanticTokensRquest.hpp"
 #include "LSP/SignatureHelpRequest.h"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
-#include "LanguageServerProtocol.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
@@ -148,11 +149,11 @@ bool LanguageServerProtocol::DoStart()
 {
     DoClear();
 
-    clDEBUG() << GetLogPrefix() << "Starting..." << clEndl;
-    clDEBUG() << GetLogPrefix() << "Command:" << m_startupInfo.GetLspServerCommand() << clEndl;
-    clDEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder << clEndl;
+    clDEBUG() << GetLogPrefix() << "Starting..." << endl;
+    clDEBUG() << GetLogPrefix() << "Command:" << m_startupInfo.GetLspServerCommand() << endl;
+    clDEBUG() << GetLogPrefix() << "Root folder:" << m_rootFolder << endl;
     for(const wxString& lang : m_languages) {
-        clDEBUG() << GetLogPrefix() << "Language:" << lang << clEndl;
+        clDEBUG() << GetLogPrefix() << "Language:" << lang << endl;
     }
     try {
         // apply global environment variables
@@ -322,7 +323,7 @@ void LanguageServerProtocol::SendOpenRequest(const wxString& filename, const std
                                              const wxString& languageId)
 {
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
-        clDEBUG() << GetLogPrefix() << "No changes detected in file:" << filename << clEndl;
+        clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
         return;
     }
     LSP::DidOpenTextDocumentRequest::Ptr_t req =
@@ -337,7 +338,7 @@ void LanguageServerProtocol::SendOpenRequest(const wxString& filename, const std
 void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
 {
     if(m_filesSent.count(filename) == 0) {
-        clDEBUG() << GetLogPrefix() << "LanguageServerProtocol::FileClosed(): file" << filename << "is not opened";
+        clDEBUG1() << GetLogPrefix() << "LanguageServerProtocol::FileClosed(): file" << filename << "is not opened";
         return;
     }
 
@@ -350,7 +351,7 @@ void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
 void LanguageServerProtocol::SendChangeRequest(const wxString& filename, const std::string& fileContent)
 {
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
-        clDEBUG() << GetLogPrefix() << "No changes detected in file:" << filename << clEndl;
+        clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
         return;
     }
 
@@ -405,6 +406,11 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
         SendSaveRequest(GetEditorFilePath(editor), fileContent);
+
+        if(IsSemanticTokensSupported()) {
+            // server supports semantic tokens, request it for the current file
+            SendSemanticTokensRequest(GetEditorFilePath(editor));
+        }
     }
 }
 
@@ -421,12 +427,17 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         editor->GetEditorTextRaw(fileContent);
 
         if(m_filesSent.count(GetEditorFilePath(editor))) {
-            clDEBUG() << "OpenEditor->SendChangeRequest called for:" << GetEditorFilePath(editor);
+            clDEBUG1() << "OpenEditor->SendChangeRequest called for:" << GetEditorFilePath(editor);
             SendChangeRequest(GetEditorFilePath(editor), fileContent);
         } else {
             // If we are about to load a header file, also pass clangd the implementation(s) file
             clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor);
             SendOpenRequest(GetEditorFilePath(editor), fileContent, GetLanguageId(GetEditorFilePath(editor)));
+        }
+
+        if(IsSemanticTokensSupported()) {
+            // server supports semantic tokens, request it for the current file
+            SendSemanticTokensRequest(GetEditorFilePath(editor));
         }
     }
 }
@@ -574,7 +585,7 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 
 void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 {
-    clDEBUG() << GetLogPrefix() << event.GetString();
+    clDEBUG1() << GetLogPrefix() << event.GetString();
     wxString buffer = std::move(event.GetString());
     m_outputBuffer << buffer;
     m_Queue.SetWaitingReponse(false);
@@ -623,15 +634,15 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     }
                 } else {
                     if(msg_ptr && msg_ptr->As<LSP::Request>()) {
-                        clDEBUG() << GetLogPrefix() << "received a response";
+                        clDEBUG1() << GetLogPrefix() << "received a response";
                         // Check if the reply is still valid
                         IEditor* editor = clGetManager()->GetActiveEditor();
                         if(editor) {
                             LSP::Request* preq = msg_ptr->As<LSP::Request>();
                             if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
-                                clDEBUG() << "Received a response for completion message ID#" << preq->GetId()
-                                          << ". However, a newer completion request with ID#"
-                                          << m_lastCompletionRequestId << "was already sent. Dropping response";
+                                clDEBUG1() << "Received a response for completion message ID#" << preq->GetId()
+                                           << ". However, a newer completion request with ID#"
+                                           << m_lastCompletionRequestId << "was already sent. Dropping response";
                                 return;
                             }
                             // let the originating request to handle it
@@ -640,7 +651,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                             size_t column = editor->GetCtrl()->GetColumn(editor->GetCurrentPosition());
                             if(false && preq->IsPositionDependantRequest() &&
                                !preq->IsValidAt(filename, line, column)) {
-                                clDEBUG() << "Response is no longer valid. Discarding its result";
+                                clDEBUG1() << "Response is no longer valid. Discarding its result";
                             } else {
                                 preq->OnResponse(res, m_owner);
                             }
@@ -648,7 +659,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 
                     } else if(res.IsPushDiagnostics()) {
                         // Get the URI
-                        clDEBUG() << GetLogPrefix() << "Received diagnostic message";
+                        clDEBUG1() << GetLogPrefix() << "Received diagnostic message";
                         wxString fn = FileUtils::FilePathFromURI(res.GetDiagnosticsUri());
 #ifndef __WXOSX__
                         // Don't show this message on macOS as it appears in the middle of the screen...
@@ -673,14 +684,14 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                                                  (res.Get("method").toString() == "window/logMessage") ||
                                                  (res.Get("method").toString() == "window/showMessage"))) {
                             if(res.Get("params")["Properties"]["stackTrace"].isOk()) {
-                                clDEBUG() << "LSP backtrace" << clEndl;
-                                clDEBUG() << res.Get("params")["Properties"]["stackTrace"].toString() << clEndl;
+                                clDEBUG1() << "LSP backtrace" << endl;
+                                clDEBUG1() << res.Get("params")["Properties"]["stackTrace"].toString() << endl;
                             } else {
-                                clDEBUG() << "received telemetry/log message:" << clEndl;
-                                clDEBUG() << res.Get("params").format() << clEndl;
+                                clDEBUG1() << "received telemetry/log message:" << endl;
+                                clDEBUG1() << res.Get("params").format() << endl;
                             }
                         } else {
-                            clDEBUG() << GetLogPrefix() << "received an unsupported message";
+                            clDEBUG1() << GetLogPrefix() << "received an unsupported message";
                         }
                     }
                 }
@@ -689,13 +700,19 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                 if(res.GetId() == m_initializeRequestID) {
                     m_state = kInitialized;
 
-                    clDEBUG() << GetLogPrefix() << "Sending InitializedNotification" << clEndl;
+                    // Keep the semantic tokens array
+                    m_semanticTokensTypes =
+                        res["result"]["capabilities"]["semanticTokensProvider"]["legend"]["tokenTypes"].toArrayString();
+
+                    clDEBUG() << GetLogPrefix() << "Server semantic tokens are:" << m_semanticTokensTypes << endl;
+                    clDEBUG() << GetLogPrefix() << "Sending InitializedNotification" << endl;
+
                     LSP::InitializedNotification::Ptr_t initNotification =
                         LSP::MessageWithParams::MakeRequest(new LSP::InitializedNotification());
                     QueueMessage(initNotification);
 
                     // Send LSP::InitializedNotification to the server
-                    clDEBUG() << GetLogPrefix() << "initialization completed" << clEndl;
+                    clDEBUG() << GetLogPrefix() << "initialization completed" << endl;
                     m_initializeRequestID = wxNOT_FOUND;
                     // Notify about this
                     LSPEvent initEvent(wxEVT_LSP_INITIALIZED);
@@ -767,7 +784,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
     // TODO:: for now, we disable this
     return;
 
-    clDEBUG() << "LanguageServerProtocol::OnQuickOutline called" << clEndl;
+    clDEBUG1() << "LanguageServerProtocol::OnQuickOutline called" << endl;
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
 
@@ -792,7 +809,7 @@ void LanguageServerProtocol::UpdateFileSent(const wxString& filename, const std:
 {
     wxString checksum = wxMD5::GetDigest(fileContent);
     m_filesSent.erase(filename);
-    clDEBUG() << "Caching file:" << filename << "with checksum:" << checksum << clEndl;
+    clDEBUG1() << "Caching file:" << filename << "with checksum:" << checksum << endl;
     m_filesSent.insert({ filename, checksum });
 }
 
@@ -812,6 +829,21 @@ wxString LanguageServerProtocol::GetEditorFilePath(IEditor* editor) const
     } else {
         return editor->GetFileName().GetFullPath();
     }
+}
+
+wxString LanguageServerProtocol::GetSemanticToken(size_t index) const
+{
+    if(index >= m_semanticTokensTypes.size()) {
+        return wxEmptyString;
+    }
+    return m_semanticTokensTypes[index];
+}
+
+void LanguageServerProtocol::SendSemanticTokensRequest(const wxString& filename)
+{
+    LSP::DidChangeTextDocumentRequest::Ptr_t req =
+        LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(filename));
+    QueueMessage(req);
 }
 
 //===------------------------------------------------------------------

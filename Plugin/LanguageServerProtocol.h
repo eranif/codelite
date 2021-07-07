@@ -10,6 +10,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "macros.h"
+#include "wx/arrstr.h"
 #include <map>
 #include <queue>
 #include <string>
@@ -65,6 +66,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     wxStringSet_t m_unimplementedMethods;
     bool m_disaplayDiagnostics = true;
     int m_lastCompletionRequestId = wxNOT_FOUND;
+    wxArrayString m_semanticTokensTypes;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -109,6 +111,11 @@ protected:
     void SendCloseRequest(const wxString& filename);
 
     /**
+     * @brief ask the server for semantic tokens
+     */
+    void SendSemanticTokensRequest(const wxString& filename);
+
+    /**
      * @brief report a file-changed notification
      */
     void SendChangeRequest(const wxString& filename, const std::string& fileContent);
@@ -133,6 +140,13 @@ protected:
 public:
     LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner);
     virtual ~LanguageServerProtocol();
+
+    /**
+     * @brief return the semantic token at a given index
+     */
+    wxString GetSemanticToken(size_t index) const;
+
+    bool IsSemanticTokensSupported() const { return !m_semanticTokensTypes.empty(); }
 
     LanguageServerProtocol& SetDisaplayDiagnostics(bool disaplayDiagnostics)
     {

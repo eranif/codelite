@@ -1,6 +1,7 @@
 #ifndef RESPONSEMESSAGE_H
 #define RESPONSEMESSAGE_H
 
+#include "JSON.h"
 #include "LSP/Message.h"
 #include "LSP/basic_types.h"
 #include <macros.h>
@@ -38,6 +39,8 @@ public:
     bool IsOk() const { return m_json && m_json->isOk(); }
     bool Has(const wxString& property) const;
     JSONItem Get(const wxString& property) const;
+
+    JSONItem operator[](const wxString& name) const { return Get(name); }
 
     /**
      * @brief is this a "textDocument/publishDiagnostics" message?

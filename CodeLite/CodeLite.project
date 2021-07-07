@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/SemanticTokensRquest.cpp"/>
+    <File Name="LSP/SemanticTokensRquest.hpp"/>
     <File Name="LSP/FilePath.cpp"/>
     <File Name="LSP/FilePath.hpp"/>
     <File Name="LSP/InitializedNotification.cpp"/>
@@ -123,7 +125,6 @@
     <File Name="clConsoleBase.cpp"/>
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="Network"/>
   <VirtualDirectory Name="src">
     <File Name="clWorkspaceEvent.cpp"/>
     <File Name="clWorkspaceEvent.hpp"/>

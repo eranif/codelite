@@ -47,6 +47,24 @@ public:
 };
 
 //===----------------------------------------------------------------------------------
+// SemanticTokensParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL SemanticTokensParams : public Params
+{
+    TextDocumentIdentifier m_textDocument;
+
+public:
+    SemanticTokensParams();
+    virtual ~SemanticTokensParams() {}
+
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+
+    void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
+    const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+};
+
+//===----------------------------------------------------------------------------------
 // DocumentSymbolParams
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL DocumentSymbolParams : public Params

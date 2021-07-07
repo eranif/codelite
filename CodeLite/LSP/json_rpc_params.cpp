@@ -20,6 +20,19 @@ JSONItem TextDocumentPositionParams::ToJSON(const wxString& name) const
     json.append(m_position.ToJSON("position"));
     return json;
 }
+//===----------------------------------------------
+// SemanticTokensParams
+//===----------------------------------------------
+SemanticTokensParams::SemanticTokensParams() {}
+
+void SemanticTokensParams::FromJSON(const JSONItem& json) { m_textDocument.FromJSON(json["textDocument"]); }
+
+JSONItem SemanticTokensParams::ToJSON(const wxString& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.append(m_textDocument.ToJSON("textDocument"));
+    return json;
+}
 
 //===----------------------------------------------------------------------------------
 // DidOpenTextDocumentParams

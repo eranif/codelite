@@ -416,6 +416,8 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
         SendSaveRequest(editor, fileContent);
+
+        SendSemanticTokensRequest(editor);
     }
 }
 

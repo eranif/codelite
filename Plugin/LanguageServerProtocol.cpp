@@ -29,6 +29,7 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
+#include "macros.h"
 #include "processreaderthread.h"
 #include "wxmd5.h"
 #include <iomanip>
@@ -308,11 +309,11 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
         // we already sent this file over, ask for change parse
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendChangeRequest(filename, fileContent);
+        SendChangeRequest(editor, fileContent);
     } else if(m_filesSent.count(filename) == 0) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendOpenRequest(filename, fileContent, GetLanguageId(filename));
+        SendOpenRequest(editor, fileContent, GetLanguageId(filename));
     }
 
     LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
@@ -321,9 +322,11 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::SendOpenRequest(const wxString& filename, const std::string& fileContent,
+void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const std::string& fileContent,
                                              const wxString& languageId)
 {
+    CHECK_PTR_RET(editor);
+    wxString filename = GetEditorFilePath(editor);
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
         clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
         return;
@@ -350,8 +353,10 @@ void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
     m_filesSent.erase(filename);
 }
 
-void LanguageServerProtocol::SendChangeRequest(const wxString& filename, const std::string& fileContent)
+void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::string& fileContent)
 {
+    CHECK_PTR_RET(editor);
+    wxString filename = GetEditorFilePath(editor);
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
         clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
         return;
@@ -364,16 +369,24 @@ void LanguageServerProtocol::SendChangeRequest(const wxString& filename, const s
 #endif
     UpdateFileSent(filename, fileContent);
     QueueMessage(req);
+
+    if(IsSemanticTokensSupported()) {
+        // server supports semantic tokens, request it for the current file
+        SendSemanticTokensRequest(editor);
+    }
 }
 
-void LanguageServerProtocol::SendSaveRequest(const wxString& filename, const std::string& fileContent)
+void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const std::string& fileContent)
 {
+    CHECK_PTR_RET(editor);
     // For now: report a change event
-    SendChangeRequest(filename, fileContent);
+    SendChangeRequest(editor, fileContent);
 }
 
-void LanguageServerProtocol::SendCodeCompleteRequest(const wxString& filename, size_t line, size_t column)
+void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column)
 {
+    CHECK_PTR_RET(editor);
+    wxString filename = GetEditorFilePath(editor);
     if(ShouldHandleFile(filename)) {
         LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
             new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
@@ -393,7 +406,7 @@ void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
 
     if(ShouldHandleFile(editor) && IsSemanticTokensSupported()) {
         // server supports semantic tokens, request it for the current file
-        SendSemanticTokensRequest(GetEditorFilePath(editor));
+        SendSemanticTokensRequest(editor);
     }
 }
 
@@ -412,12 +425,7 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     if(ShouldHandleFile(editor)) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendSaveRequest(GetEditorFilePath(editor), fileContent);
-
-        if(IsSemanticTokensSupported()) {
-            // server supports semantic tokens, request it for the current file
-            SendSemanticTokensRequest(GetEditorFilePath(editor));
-        }
+        SendSaveRequest(editor, fileContent);
     }
 }
 
@@ -429,17 +437,23 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
     if(!IsInitialized()) {
         return;
     }
+
     if(editor && ShouldHandleFile(editor)) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
 
         if(m_filesSent.count(GetEditorFilePath(editor))) {
             clDEBUG1() << "OpenEditor->SendChangeRequest called for:" << GetEditorFilePath(editor);
-            SendChangeRequest(GetEditorFilePath(editor), fileContent);
+            SendChangeRequest(editor, fileContent);
         } else {
             // If we are about to load a header file, also pass clangd the implementation(s) file
             clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor);
-            SendOpenRequest(GetEditorFilePath(editor), fileContent, GetLanguageId(GetEditorFilePath(editor)));
+            SendOpenRequest(editor, fileContent, GetLanguageId(GetEditorFilePath(editor)));
+        }
+
+        if(IsSemanticTokensSupported()) {
+            // server supports semantic tokens, request it for the current file
+            SendSemanticTokensRequest(editor);
         }
     }
 }
@@ -456,11 +470,11 @@ void LanguageServerProtocol::FunctionHelp(IEditor* editor)
         // we already sent this file over, ask for change parse
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendChangeRequest(filename, fileContent);
+        SendChangeRequest(editor, fileContent);
     } else if(m_filesSent.count(filename) == 0) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendOpenRequest(filename, fileContent, GetLanguageId(filename));
+        SendOpenRequest(editor, fileContent, GetLanguageId(filename));
     }
 
     if(ShouldHandleFile(filename)) {
@@ -481,16 +495,16 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     if(m_filesSent.count(filename) && editor->IsModified()) {
         std::string text;
         editor->GetEditorTextRaw(text);
-        SendChangeRequest(filename, text);
+        SendChangeRequest(editor, text);
 
     } else if(m_filesSent.count(filename) == 0) {
         std::string text;
         editor->GetEditorTextRaw(text);
-        SendOpenRequest(filename, text, GetLanguageId(filename));
+        SendOpenRequest(editor, text, GetLanguageId(filename));
     }
 
     // Now request the for code completion
-    SendCodeCompleteRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
+    SendCodeCompleteRequest(editor, editor->GetCurrentLine(),
                             editor->GetCtrl()->GetColumn(editor->GetCurrentPosition()));
 }
 
@@ -544,11 +558,11 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor)
             // we already sent this file over, ask for change parse
             std::string content;
             editor->GetEditorTextRaw(content);
-            SendChangeRequest(filename, content);
+            SendChangeRequest(editor, content);
         } else if(m_filesSent.count(filename) == 0) {
             std::string content;
             editor->GetEditorTextRaw(content);
-            SendOpenRequest(filename, content, GetLanguageId(filename));
+            SendOpenRequest(editor, content, GetLanguageId(filename));
         }
 
         LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
@@ -670,6 +684,9 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         clGetManager()->SetStatusMessage(
                             wxString() << GetLogPrefix() << "parsing of file: " << fn << " is completed", 1);
 #endif
+                        // time to send semantics request
+                        SendSemanticTokensRequest(clGetManager()->FindEditor(fn));
+
                         std::vector<LSP::Diagnostic> diags = res.GetDiagnostics();
                         if(!diags.empty() && IsDisaplayDiagnostics()) {
                             // report the diagnostics
@@ -767,11 +784,11 @@ void LanguageServerProtocol::FindImplementation(IEditor* editor)
             // we already sent this file over, ask for change parse
             std::string content;
             editor->GetEditorTextRaw(content);
-            SendChangeRequest(filename, content);
+            SendChangeRequest(editor, content);
         } else if(m_filesSent.count(filename) == 0) {
             std::string content;
             editor->GetEditorTextRaw(content);
-            SendOpenRequest(filename, content, GetLanguageId(filename));
+            SendOpenRequest(editor, content, GetLanguageId(filename));
         }
 
         LSP::GotoImplementationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
@@ -843,10 +860,11 @@ const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
     return m_semanticTokensTypes[index];
 }
 
-void LanguageServerProtocol::SendSemanticTokensRequest(const wxString& filename)
+void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
+    CHECK_PTR_RET(editor);
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
-        LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(filename));
+        LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
     QueueMessage(req);
 }
 

@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "CxxPreProcessor.h"
 #include "GCCMetadata.hpp"
+#include "CxxPreProcessor.h"
 #include "clTempFile.hpp"
 #include "environmentconfig.h"
 #include "file_logger.h"
@@ -168,11 +168,11 @@ void GCCMetadata::DoLoad(const wxString& tool, const wxString& rootDir, bool is_
     pp.Parse(cmpMacrosFile, kLexerOpt_CollectMacroValueNumbers);
     m_macros = pp.GetDefinitions();
 
-    clDEBUG() << "GCC Metadata loaded for tool" << tool << endl;
-    clDEBUG() << "Name:" << GetName() << endl;
-    clDEBUG() << "Search paths:" << GetSearchPaths() << endl;
-    clDEBUG() << "Macros:" << GetMacros() << endl;
-    clDEBUG() << "Target:" << GetTarget() << endl;
+    clDEBUG1() << "GCC Metadata loaded for tool" << tool << endl;
+    clDEBUG1() << "Name:" << GetName() << endl;
+    clDEBUG1() << "Search paths:" << GetSearchPaths() << endl;
+    clDEBUG1() << "Macros:" << GetMacros() << endl;
+    clDEBUG1() << "Target:" << GetTarget() << endl;
 }
 
 wxString GCCMetadata::RunCommand(const wxString& command, const wxString& working_directory, clEnvList_t* env)

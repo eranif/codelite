@@ -186,8 +186,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
 
-    clDEBUG() << "Processing semantic tokens. Server:" << server->GetName() << endl;
-
+    clDEBUG1() << "Processing semantic tokens. Server:" << server->GetName() << endl;
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
@@ -207,16 +206,16 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
         wxString token_type = server->GetSemanticToken(token.token_type);
         bool is_class = classes_tokens.count(token_type) > 0;
         bool is_variable = variables_tokens.count(token_type) > 0;
-        // if(!is_class && !is_variable) {
-        //     continue;
-        // }
+        if(!is_class && !is_variable) {
+            continue;
+        }
 
         // read its name
         int start_pos = editor->GetCtrl()->PositionFromLine(token.line) + token.column;
         int end_pos = start_pos + token.length;
         wxString token_name = editor->GetTextRange(start_pos, end_pos);
 
-        clDEBUG() << "Checking token name:" << token_name << "(" << token_type << ")" << endl;
+        // clDEBUG() << "Checking token name:" << token_name << "(" << token_type << ")" << endl;
         if(is_class && classes_set.count(token_name) == 0) {
             classes_set.insert(token_name);
             classes_str << token_name << " ";
@@ -225,9 +224,6 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
             variabls_str << token_name << " ";
         }
     }
-
-    clDEBUG() << "Semantic classes:" << classes_str << endl;
-    clDEBUG() << "Semantic variables:" << variabls_str << endl;
 
     editor->SetSemanticTokens(classes_str, variabls_str);
 }

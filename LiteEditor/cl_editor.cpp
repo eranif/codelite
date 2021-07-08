@@ -74,6 +74,7 @@
 #include "simpletable.h"
 #include "stringhighlighterjob.h"
 #include "stringsearcher.h"
+#include "wx/stc/stc.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/dataobj.h>
 #include <wx/dcmemory.h>
@@ -6018,16 +6019,34 @@ SFTPClientData* clEditor::GetRemoteData() const
 void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variables)
 {
     size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
-
-    //------------------------------------------
-    // Classes
-    //------------------------------------------
     wxString flatStrClasses = cc_flags & CC_COLOUR_VARS ? classes : "";
-    SetKeyWords(1, flatStrClasses);
+    wxString flatStrLocals = cc_flags & CC_COLOUR_VARS ? variables : "";
+
+    int keywords_class = wxNOT_FOUND;
+    int keywords_variables = wxNOT_FOUND;
+
+    switch(GetLexerId()) {
+    case wxSTC_LEX_CPP:
+        clDEBUG1() << "SetSemantics is called for: wxSTC_LEX_CPP" << endl;
+        keywords_class = 1;
+        keywords_variables = 3;
+        break;
+    case wxSTC_LEX_RUST:
+        clDEBUG1() << "SetSemantics is called for: wxSTC_LEX_RUST" << endl;
+        keywords_class = 3;     // wxSTC_RUST_WORD4 - 1 (0 based)
+        keywords_variables = 4; // wxSTC_RUST_WORD5  - 1(0 based)
+        break;
+    default:
+        break;
+    }
+
+    clDEBUG1() << "Classes:" << flatStrClasses << endl;
+    clDEBUG1() << "Variabels:" << flatStrLocals << endl;
+
+    SetKeyWords(keywords_class, flatStrClasses);
     SetKeywordClasses(flatStrClasses);
 
-    wxString flatStrLocals = cc_flags & CC_COLOUR_VARS ? variables : "";
-    SetKeyWords(3, flatStrLocals);
+    SetKeyWords(keywords_variables, flatStrLocals);
     SetKeywordLocals(flatStrLocals);
 }
 

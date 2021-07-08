@@ -103,7 +103,7 @@ protected:
     /**
      * @brief notify about file open
      */
-    void SendOpenRequest(const wxString& filename, const std::string& fileContent, const wxString& languageId);
+    void SendOpenRequest(IEditor* editor, const std::string& fileContent, const wxString& languageId);
 
     /**
      * @brief report a file-close notification
@@ -113,22 +113,22 @@ protected:
     /**
      * @brief ask the server for semantic tokens
      */
-    void SendSemanticTokensRequest(const wxString& filename);
+    void SendSemanticTokensRequest(IEditor* editor);
 
     /**
      * @brief report a file-changed notification
      */
-    void SendChangeRequest(const wxString& filename, const std::string& fileContent);
+    void SendChangeRequest(IEditor* editor, const std::string& fileContent);
 
     /**
      * @brief report a file-save notification
      */
-    void SendSaveRequest(const wxString& filename, const std::string& fileContent);
+    void SendSaveRequest(IEditor* editor, const std::string& fileContent);
 
     /**
      * @brief request for a code completion at a given doc/position
      */
-    void SendCodeCompleteRequest(const wxString& filename, size_t line, size_t column);
+    void SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column);
 
     bool DoStart();
 

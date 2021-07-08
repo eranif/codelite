@@ -6031,23 +6031,30 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
         keywords_class = 1;
         keywords_variables = 3;
         break;
+
+#if wxCHECK_VERSION(3, 1, 2)
     case wxSTC_LEX_RUST:
         clDEBUG1() << "SetSemantics is called for: wxSTC_LEX_RUST" << endl;
         keywords_class = 3;     // wxSTC_RUST_WORD4 - 1 (0 based)
         keywords_variables = 4; // wxSTC_RUST_WORD5  - 1(0 based)
         break;
+#endif
     default:
         break;
     }
 
-    clDEBUG1() << "Classes:" << flatStrClasses << endl;
-    clDEBUG1() << "Variabels:" << flatStrLocals << endl;
+    flatStrClasses.Trim().Trim(false);
+    flatStrLocals.Trim().Trim(false);
 
-    SetKeyWords(keywords_class, flatStrClasses);
-    SetKeywordClasses(flatStrClasses);
+    if(!flatStrClasses.empty()) {
+        SetKeyWords(keywords_class, flatStrClasses);
+        SetKeywordClasses(flatStrClasses);
+    }
 
-    SetKeyWords(keywords_variables, flatStrLocals);
-    SetKeywordLocals(flatStrLocals);
+    if(!flatStrLocals.empty()) {
+        SetKeyWords(keywords_variables, flatStrLocals);
+        SetKeywordLocals(flatStrLocals);
+    }
 }
 
 // ----------------------------------

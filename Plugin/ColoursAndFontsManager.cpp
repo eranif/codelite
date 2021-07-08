@@ -438,6 +438,7 @@ void ColoursAndFontsManager::Save(bool forExport)
 
     wxFileName lexerFiles(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
     lexerFiles.AppendDir("lexers");
+    lexerFiles.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     root.save(lexerFiles);
     SaveGlobalSettings();
 

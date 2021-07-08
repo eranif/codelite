@@ -369,11 +369,6 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::strin
 #endif
     UpdateFileSent(filename, fileContent);
     QueueMessage(req);
-
-    if(IsSemanticTokensSupported()) {
-        // server supports semantic tokens, request it for the current file
-        SendSemanticTokensRequest(editor);
-    }
 }
 
 void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const std::string& fileContent)
@@ -403,11 +398,6 @@ void LanguageServerProtocol::OnFileLoaded(clCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
     OpenEditor(editor);
-
-    if(ShouldHandleFile(editor) && IsSemanticTokensSupported()) {
-        // server supports semantic tokens, request it for the current file
-        SendSemanticTokensRequest(editor);
-    }
 }
 
 void LanguageServerProtocol::OnFileClosed(clCommandEvent& event)
@@ -449,11 +439,6 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
             // If we are about to load a header file, also pass clangd the implementation(s) file
             clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor);
             SendOpenRequest(editor, fileContent, GetLanguageId(GetEditorFilePath(editor)));
-        }
-
-        if(IsSemanticTokensSupported()) {
-            // server supports semantic tokens, request it for the current file
-            SendSemanticTokensRequest(editor);
         }
     }
 }

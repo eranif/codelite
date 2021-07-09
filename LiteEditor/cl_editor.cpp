@@ -5720,6 +5720,9 @@ void clEditor::QuickFindAll()
 
 void clEditor::CenterLineIfNeeded(int line, bool force)
 {
+    // ensure that this line is visible
+    EnsureVisible(line);
+
     // Center this line
     int linesOnScreen = LinesOnScreen();
     if(force || ((line < GetFirstVisibleLine()) || (line > (GetFirstVisibleLine() + LinesOnScreen())))) {

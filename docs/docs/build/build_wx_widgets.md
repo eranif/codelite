@@ -13,7 +13,7 @@ CodeLite uses `MSYS2` for installing compiler and other tools:
 git clone https://github.com/wxWidgets/wxWidgets
 cd ~/wxWidgets
 git submodule update --init
-cd build/mswu
+cd build/msw
 # create a setup.h file
 mingw32-make -f makefile.gcc setup_h SHARED=1 UNICODE=1 BUILD=release VENDOR=cl
 ```
@@ -28,7 +28,7 @@ To do so:
 Start the build process (from within the `MSYS2` terminal):
 
 ```bash
-cd ~/wxWidgets/build/mswu
+cd ~/wxWidgets/build/msw
 mingw32-make -j$(nproc) -f Makefile.gcc SHARED=1 UNICODE=1 BUILD=release VENDOR=cl CXXFLAGS="-fno-keep-inline-dllexport -std=c++11"
 ```
 

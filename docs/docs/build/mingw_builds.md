@@ -10,10 +10,12 @@ This page contains tips for building various components using `MinGW` for Window
 - Open `MSYS2` terminal, and install the following packages:
 
 ```bash
-pacman -S mingw-w64-x86_64-toolchain    \
-          mingw-w64-x86_64-cmake        \
-          mingw-w64-x86_64-gdb          \
-          git                           \
+pacman -S mingw-w64-x86_64-toolchain            \
+          mingw-w64-x86_64-cmake                \
+          mingw-w64-x86_64-gdb                  \
+          mingw64/mingw-w64-x86_64-python-pip   \
+          mingw64/mingw-w64-x86_64-python       \
+          git                                   \
           unzip 
 ```
 
@@ -22,6 +24,16 @@ pacman -S mingw-w64-x86_64-toolchain    \
 ```bash
 echo "export PATH=/mingw64/bin:$PATH" >> ~/.bashrc
 . ~/.bashrc
+```
+
+- If you choose to work with `CMD`, create a script with the following content, name it `MinGW.bat` and place it on your desktop:
+
+```batch
+@echo off
+title [64 bit] MinGW CMD Shell
+set PATH=C:\msys64\mingw64\bin;C:\msys64\usr\bin;%PATH%
+set PATH=C:\Program Files\CodeLite;%PATH%
+cmd
 ```
 
 ## Building `zlib`

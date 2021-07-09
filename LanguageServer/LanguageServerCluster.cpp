@@ -187,7 +187,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     CHECK_PTR_RET(server);
 
     clDEBUG1() << "Processing semantic tokens. Server:" << server->GetName() << endl;
-    IEditor* editor = clGetManager()->GetActiveEditor();
+    IEditor* editor = clGetManager()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
 
     const auto& semanticTokens = event.GetSemanticTokens();

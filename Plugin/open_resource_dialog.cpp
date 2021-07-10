@@ -31,6 +31,7 @@
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
@@ -205,11 +206,14 @@ void OpenResourceDialog::DoPopulateList()
 
     // First add the workspace files
     long nLineNumber;
+    long nColumn;
     wxString modFilter;
-    GetLineNumberFromFilter(name, modFilter, nLineNumber);
+    GetLineAndColumnFromFilter(name, modFilter, nLineNumber, nColumn);
     name.swap(modFilter);
 
+    clDEBUG() << "Open resource:" << name << ":" << nLineNumber << ":" << nColumn << endl;
     m_lineNumber = nLineNumber;
+    m_column = nColumn;
 
     // Prepare the user filter
     m_userFilters.Clear();
@@ -313,6 +317,8 @@ void OpenResourceDialog::Clear()
 
 void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selection, IManager* manager)
 {
+    wxUnusedVar(manager);
+
     // send event to the plugins to see if they want
     // to open this file
     wxString file_path = selection.m_file;
@@ -321,10 +327,13 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
     if(EventNotifier::Get()->ProcessEvent(activateEvent))
         return;
 
-    if(manager && manager->OpenFile(selection.m_file, wxEmptyString, selection.m_line - 1)) {
-        IEditor* editor = manager->GetActiveEditor();
-        if(editor && !selection.m_name.IsEmpty() && !selection.m_pattern.IsEmpty()) {
+    clDEBUG() << "Opening editor:" << selection.m_file << ":" << selection.m_line << ":" << selection.m_column << endl;
+    IEditor* editor = clGetManager()->OpenFile(selection.m_file, wxEmptyString, selection.m_line - 1);
+    if(editor) {
+        if(!selection.m_name.IsEmpty() && !selection.m_pattern.IsEmpty()) {
             editor->FindAndSelectV(selection.m_pattern, selection.m_name);
+        } else if(selection.m_column != wxNOT_FOUND) {
+            editor->CenterLine(selection.m_line - 1, selection.m_column);
         }
     }
 }
@@ -357,20 +366,11 @@ void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void OpenResourceDialog::OnOK(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void OpenResourceDialog::OnOK(wxCommandEvent& event) { event.Skip(); }
 
-void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dataview->GetSelectedItemsCount());
-}
+void OpenResourceDialog::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_dataview->GetSelectedItemsCount()); }
 
-bool OpenResourceDialogItemData::IsOk() const
-{
-    return m_file.IsEmpty() == false;
-}
+bool OpenResourceDialogItemData::IsOk() const { return m_file.IsEmpty() == false; }
 
 void OpenResourceDialog::DoSelectItem(const wxDataViewItem& item)
 {
@@ -428,31 +428,18 @@ int OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)
 
 bool OpenResourceDialog::MatchesFilter(const wxString& name)
 {
-    wxString filter = m_textCtrlResourceName->GetValue();
-    if(filter.Contains(':') == true) {
-        filter = filter.BeforeLast(':');
-    }
-    return FileUtils::FuzzyMatch(filter, name);
+    wxString mod_filter;
+    long line_number, column_number;
+    GetLineAndColumnFromFilter(m_textCtrlResourceName->GetValue(), mod_filter, line_number, column_number);
+    return FileUtils::FuzzyMatch(mod_filter, name);
 }
 
-void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event)
-{
-    DoPopulateList();
-}
-void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event)
-{
-    DoPopulateList();
-}
+void OpenResourceDialog::OnCheckboxfilesCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
+void OpenResourceDialog::OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event) { DoPopulateList(); }
 
-void OpenResourceDialog::OnEnter(wxCommandEvent& event)
-{
-    CallAfter(&OpenResourceDialog::EndModal, wxID_OK);
-}
+void OpenResourceDialog::OnEnter(wxCommandEvent& event) { CallAfter(&OpenResourceDialog::EndModal, wxID_OK); }
 
-void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event)
-{
-    event.Skip();
-}
+void OpenResourceDialog::OnEntrySelected(wxDataViewEvent& event) { event.Skip(); }
 
 std::vector<OpenResourceDialogItemData*> OpenResourceDialog::GetSelections() const
 {
@@ -463,11 +450,16 @@ std::vector<OpenResourceDialogItemData*> OpenResourceDialog::GetSelections() con
         return selections;
     }
 
+    selections.reserve(items.size());
     for(size_t i = 0; i < items.GetCount(); ++i) {
         OpenResourceDialogItemData* data = GetItemData(items.Item(i));
         if(data) {
             if(m_lineNumber != wxNOT_FOUND) {
                 data->m_line = m_lineNumber;
+            }
+
+            if(m_column != wxNOT_FOUND) {
+                data->m_column = m_column;
             }
             selections.push_back(data);
         }
@@ -475,16 +467,36 @@ std::vector<OpenResourceDialogItemData*> OpenResourceDialog::GetSelections() con
     return selections;
 }
 
-void OpenResourceDialog::GetLineNumberFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber)
+void OpenResourceDialog::GetLineAndColumnFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber,
+                                                    long& column)
 {
     modFilter = filter;
-    lineNumber = -1;
-    static wxRegEx reNumber(":([0-9]+)", wxRE_ADVANCED);
-    if(reNumber.IsValid() && reNumber.Matches(modFilter)) {
-        wxString strLineNumber;
-        strLineNumber = reNumber.GetMatch(modFilter, 1);
-        strLineNumber.ToCLong(&lineNumber);
-        reNumber.Replace(&modFilter, "");
+    lineNumber = wxNOT_FOUND;
+    column = wxNOT_FOUND;
+
+    wxString tmpstr = filter;
+    tmpstr.Replace("\\", "/");
+
+    wxString remainder = filter.AfterLast('/');
+    if(remainder.find(':') == wxString::npos) {
+        return;
+    }
+
+    auto parts = ::wxStringTokenize(remainder, ":", wxTOKEN_STRTOK);
+    // the first part is the name
+    modFilter = parts.Item(0);
+    parts.RemoveAt(0);
+
+    if(!parts.empty()) {
+        // line number
+        parts.Item(0).ToCLong(&lineNumber);
+        parts.RemoveAt(0);
+    }
+
+    if(!parts.empty()) {
+        // column number
+        parts.Item(0).ToCLong(&column);
+        parts.RemoveAt(0);
     }
 }
 
@@ -493,7 +505,4 @@ OpenResourceDialogItemData* OpenResourceDialog::GetItemData(const wxDataViewItem
     return reinterpret_cast<OpenResourceDialogItemData*>(m_dataview->GetItemData(item));
 }
 
-void OpenResourceDialog::OnSelectAllText()
-{
-    m_textCtrlResourceName->SelectAll();
-}
+void OpenResourceDialog::OnSelectAllText() { m_textCtrlResourceName->SelectAll(); }

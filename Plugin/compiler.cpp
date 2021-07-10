@@ -693,7 +693,7 @@ wxArrayString Compiler::POSIXGetIncludePaths() const
 const wxArrayString& Compiler::GetBuiltinMacros()
 {
     if(!m_compilerBuiltinDefinitions.IsEmpty()) {
-        clDEBUG() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl;
+        clDEBUG1() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl;
         return m_compilerBuiltinDefinitions;
     }
 
@@ -704,7 +704,7 @@ const wxArrayString& Compiler::GetBuiltinMacros()
         definitions = GetMetadata().GetMacros();
     }
     m_compilerBuiltinDefinitions.swap(definitions);
-    clDEBUG() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl;
+    clDEBUG1() << "Found macros:" << m_compilerBuiltinDefinitions << clEndl;
     return m_compilerBuiltinDefinitions;
 }
 

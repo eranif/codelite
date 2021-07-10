@@ -45,7 +45,8 @@ class WXDLLIMPEXP_SDK OpenResourceDialogItemData : public wxClientData
 {
 public:
     wxString m_file;
-    int m_line;
+    int m_line = 0;
+    int m_column = wxNOT_FOUND;
     wxString m_pattern;
     wxString m_name;
     wxString m_scope;
@@ -73,9 +74,7 @@ public:
     {
     }
 
-    virtual ~OpenResourceDialogItemData()
-    {
-    }
+    virtual ~OpenResourceDialogItemData() {}
 
     bool IsOk() const;
 };
@@ -89,7 +88,8 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
     bool m_needRefresh;
     wxArrayString m_filters;
     wxArrayString m_userFilters;
-    long m_lineNumber;
+    long m_lineNumber = wxNOT_FOUND;
+    long m_column = wxNOT_FOUND;
 
 protected:
     virtual void OnEnter(wxCommandEvent& event);
@@ -120,7 +120,7 @@ protected:
 
     DECLARE_EVENT_TABLE()
 
-    void GetLineNumberFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber);
+    void GetLineAndColumnFromFilter(const wxString& filter, wxString& modFilter, long& lineNumber, long& column);
 
 public:
     /** Constructor */
@@ -128,10 +128,7 @@ public:
     virtual ~OpenResourceDialog();
 
     std::vector<OpenResourceDialogItemData*> GetSelections() const;
-    wxArrayString& GetFilters()
-    {
-        return m_filters;
-    }
+    wxArrayString& GetFilters() { return m_filters; }
 
     /**
      * \brief helper method for opening the selection

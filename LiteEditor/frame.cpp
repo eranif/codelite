@@ -4628,6 +4628,8 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
             clCommandEvent open_resource_event(wxEVT_OPEN_RESOURCE_FILE_SELECTED);
             open_resource_event.SetFileName(item->m_file);
             open_resource_event.SetLineNumber(item->m_line);
+            open_resource_event.SetInt(item->m_column); // use the int field for the column
+
             if(EventNotifier::Get()->ProcessEvent(open_resource_event)) {
                 continue;
             }

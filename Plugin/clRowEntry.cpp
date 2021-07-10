@@ -935,7 +935,7 @@ const wxRect& clRowEntry::GetChoiceRect(size_t col) const
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
-#ifdef __WXMSW__
+#if 0
     wxColour text_colour = colours.GetItemTextColour();
     if(colours.IsLightTheme()) {
         text_colour = text_colour.ChangeLightness(120);

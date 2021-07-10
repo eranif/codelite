@@ -523,8 +523,10 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
     // Make the git console visible
     m_mgr->ShowOutputPane("Git");
 
-    wxString workingDir;
-    workingDir = wxFileName(files.Item(0)).GetPath();
+    wxString workingDir = wxFileName(files.Item(0)).GetPath(wxPATH_UNIX);
+    if(!GetRepositoryPath().empty()) {
+        workingDir = GetRepositoryPath();
+    }
 
     // Pepare the command:
     // git add --no-pager
@@ -587,8 +589,10 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
     // Make the git console visible
     m_mgr->ShowOutputPane("Git");
 
-    wxString workingDir;
-    workingDir = wxFileName(files.Item(0)).GetPath();
+    wxString workingDir = wxFileName(files.Item(0)).GetPath(wxPATH_UNIX);
+    if(!GetRepositoryPath().empty()) {
+        workingDir = GetRepositoryPath();
+    }
 
     // Pepare the command:
     // git add --no-pager

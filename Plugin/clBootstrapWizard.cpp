@@ -125,7 +125,7 @@ public:
     }
 };
 
-#define DARK_THEME "Retta light"
+#define DARK_THEME "Atom One-Dark"
 #define NO_SO_LIGHT_THEME "Roboticket"
 #define LIGHT_THEME "Atom One Light"
 
@@ -186,7 +186,10 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent, bool firstTime)
 #endif
 }
 
-clBootstrapWizard::~clBootstrapWizard() { clConfig::Get().Write("DevelopmentProfile", m_developmentProfile); }
+clBootstrapWizard::~clBootstrapWizard()
+{
+    clConfig::Get().Write("DevelopmentProfile", m_developmentProfile);
+}
 
 void clBootstrapWizard::SetSelectedTheme(const wxString& themeName)
 {
@@ -210,8 +213,7 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
     m_stc24->SetEditable(true);
     int themeID = m_themePicker->GetSelection();
     switch(themeID) {
-    case 0: // System Default
-    {
+    case 0: { // System Default
         auto lexer = ColoursAndFontsManager::Get().GetLexer("c++", m_selectedTheme);
         m_selectedTheme = LIGHT_THEME;
         if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
@@ -221,7 +223,8 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
         if(lexer) {
             lexer->Apply(m_stc24, true);
         }
-    }; break;
+    };
+    break;
     case 1: // Dark
         SetSelectedTheme(DARK_THEME);
         break;

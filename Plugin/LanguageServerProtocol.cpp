@@ -1,4 +1,3 @@
-#include "LanguageServerProtocol.h"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -18,6 +17,7 @@
 #include "LSP/SignatureHelpRequest.h"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
+#include "LanguageServerProtocol.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
@@ -601,7 +601,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                 LSP::MessageWithParams::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 // Is this an error message?
                 if(res.Has("error")) {
-                    clDEBUG() << GetLogPrefix() << "received an error message";
+                    clDEBUG1() << GetLogPrefix() << "received an error message:" << res.GetMessageString() << endl;
                     LSP::ResponseError errMsg(res.GetMessageString());
                     switch(errMsg.GetErrorCode()) {
                     case LSP::ResponseError::kErrorCodeInternalError:
@@ -636,7 +636,6 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         break;
                     }
                 } else {
-                    clDEBUG() << GetLogPrefix() << "received an error message";
                     if(msg_ptr && msg_ptr->As<LSP::Request>()) {
                         clDEBUG1() << GetLogPrefix() << "received a response";
                         // Check if the reply is still valid
@@ -755,35 +754,7 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
     }
 }
 
-void LanguageServerProtocol::FindImplementation(IEditor* editor)
-{
-    if(m_unimplementedMethods.count("textDocument/implementation")) {
-        // this method is not implemented
-        // use 'definition' instead
-        FindDefinition(editor);
-    } else {
-        CHECK_PTR_RET(editor);
-        CHECK_COND_RET(ShouldHandleFile(editor));
-
-        // If the editor is modified, we need to tell the LSP to reparse the source file
-        const wxString& filename = GetEditorFilePath(editor);
-        if(m_filesSent.count(filename) && editor->IsModified()) {
-            // we already sent this file over, ask for change parse
-            std::string content;
-            editor->GetEditorTextRaw(content);
-            SendChangeRequest(editor, content);
-        } else if(m_filesSent.count(filename) == 0) {
-            std::string content;
-            editor->GetEditorTextRaw(content);
-            SendOpenRequest(editor, content, GetLanguageId(filename));
-        }
-
-        LSP::GotoImplementationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-            new LSP::GotoImplementationRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
-                                               editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
-        QueueMessage(req);
-    }
-}
+void LanguageServerProtocol::FindImplementation(IEditor* editor) { FindDefinition(editor); }
 
 void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
 {

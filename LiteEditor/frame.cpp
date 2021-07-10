@@ -3968,7 +3968,9 @@ void clMainFrame::SetFrameTitle(clEditor* editor)
     wxString username = ::wxGetUserId();
     username.Prepend("[ ").Append(" ]");
 
-    wxString workspace = clCxxWorkspaceST::Get()->GetName();
+    wxString workspace =
+        clWorkspaceManager::Get().GetWorkspace() ? clWorkspaceManager::Get().GetWorkspace()->GetName() : wxString();
+
     if(!workspace.IsEmpty()) {
         workspace.Prepend("[ ").Append(" ]");
     }

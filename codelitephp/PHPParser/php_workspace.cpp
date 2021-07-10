@@ -1,3 +1,4 @@
+#include "php_workspace.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "file_logger.h"
@@ -6,7 +7,7 @@
 #include "php_event.h"
 #include "php_parser_thread.h"
 #include "php_strings.h"
-#include "php_workspace.h"
+#include "wxCodeCompletionBox.h"
 #include <algorithm>
 #include <cl_command_event.h>
 #include <dirtraverser.h>
@@ -17,7 +18,6 @@
 #include <wx/busyinfo.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
-#include "wxCodeCompletionBox.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -86,7 +86,7 @@ bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
     // Notify that workspace has been opened to the plugins
     clWorkspaceEvent closed_event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(closed_event);
-    
+
     wxCodeCompletionBox::SetStripHtmlTags(false);
     return true;
 }
@@ -175,7 +175,7 @@ bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool creat
     clGetManager()->AddWorkspaceToRecentlyUsedList(GetFilename());
 
     CallAfter(&PHPWorkspace::RestoreWorkspaceSession);
-    
+
     wxCodeCompletionBox::SetStripHtmlTags(true);
     // Change the workspace extension
     return true;
@@ -739,3 +739,5 @@ wxArrayString PHPWorkspace::GetWorkspaceProjects() const
                   [&](PHPProject::Map_t::value_type p) { projectArr.Add(p.second->GetName()); });
     return projectArr;
 }
+
+wxString PHPWorkspace::GetName() const { return m_workspaceFile.GetName(); }

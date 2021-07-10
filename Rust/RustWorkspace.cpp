@@ -1,7 +1,7 @@
 #include "RustWorkspace.hpp"
 #include "clFileSystemWorkspace.hpp"
-#include "fileextmanager.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 
 RustWorkspace::RustWorkspace() { SetWorkspaceType("Rust"); }
 
@@ -30,3 +30,4 @@ wxArrayString RustWorkspace::GetWorkspaceProjects() const { return {}; }
 bool RustWorkspace::IsBuildSupported() const { return true; }
 bool RustWorkspace::IsProjectSupported() const { return false; }
 
+wxString RustWorkspace::GetName() const { return clFileSystemWorkspace::Get().GetName(); }

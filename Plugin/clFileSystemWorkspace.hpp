@@ -100,18 +100,18 @@ public:
     ///===--------------------------
     /// IWorkspace interface
     ///===--------------------------
-    virtual wxString GetActiveProjectName() const;
-    virtual wxFileName GetFileName() const;
-    virtual wxString GetFilesMask() const;
-    virtual wxString GetExcludeFolders() const;
-    virtual wxFileName GetProjectFileName(const wxString& projectName) const;
-    virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const;
-    virtual wxString GetProjectFromFile(const wxFileName& filename) const;
-    virtual void GetWorkspaceFiles(wxArrayString& files) const;
-    virtual wxArrayString GetWorkspaceProjects() const;
-    virtual bool IsBuildSupported() const;
-    virtual bool IsProjectSupported() const;
+    wxString GetActiveProjectName() const override;
+    wxFileName GetFileName() const override;
+    wxString GetFilesMask() const override;
+    void GetProjectFiles(const wxString& projectName, wxArrayString& files) const override;
+    wxString GetProjectFromFile(const wxFileName& filename) const override;
+    void GetWorkspaceFiles(wxArrayString& files) const override;
+    wxArrayString GetWorkspaceProjects() const override;
+    bool IsBuildSupported() const override;
+    bool IsProjectSupported() const override;
+    wxFileName GetProjectFileName(const wxString& projectName) const override;
 
+    virtual wxString GetExcludeFolders() const;
     clFileSystemWorkspace(bool dummy);
     virtual ~clFileSystemWorkspace();
 
@@ -156,7 +156,7 @@ public:
     void UpdateParserPaths();
     const std::vector<wxFileName>& GetFiles() const { return m_files.GetFiles(); }
 
-    const wxString& GetName() const { return m_settings.GetName(); }
+    wxString GetName() const override { return m_filename.GetName(); }
     void SetName(const wxString& name) { m_settings.SetName(name); }
 
     const clFileSystemWorkspaceSettings& GetSettings() const { return m_settings; }

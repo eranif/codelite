@@ -97,7 +97,12 @@ public:
     PHPProject::Ptr_t GetProject(const wxString& project) const;
     PHPProject::Ptr_t GetActiveProject() const;
     wxString GetPrivateFolder() const;
-
+    
+    /**
+     * @brief return the workspace name
+     */
+    wxString GetName() const override;
+    
     /**
      * @brief check if we can create a project with the given file name
      * This function checks that the project's path is not already included

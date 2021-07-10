@@ -26,10 +26,10 @@
 #ifndef IWORKSPACE_H
 #define IWORKSPACE_H
 
-#include <wx/string.h>
-#include <wx/filename.h>
 #include <list>
 #include <wx/event.h>
+#include <wx/filename.h>
+#include <wx/string.h>
 
 /**
  * @class IWorkspace
@@ -49,10 +49,15 @@ public:
     virtual ~IWorkspace() {}
 
     /**
+     * @brief return the workspace name
+     */
+    virtual wxString GetName() const = 0;
+
+    /**
      * @brief return the project file
      */
     virtual wxFileName GetFileName() const = 0;
-    
+
     /**
      * @brief set the workspace type
      * For example: "C++ Workspace", "PHP Workspace" etc
@@ -99,22 +104,22 @@ public:
      * @param files [output] list of files in absolute path
      */
     virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const = 0;
-    
+
     /**
      * @brief return the active project name. For workspace that does not support
      * projects, return an empty string
      */
-    virtual wxString GetActiveProjectName() const  = 0;
-    
+    virtual wxString GetActiveProjectName() const = 0;
+
     /**
      * @brief return the underlying file for a given project name
      */
-    virtual wxFileName GetProjectFileName(const wxString& projectName) const  = 0;
-    
+    virtual wxFileName GetProjectFileName(const wxString& projectName) const = 0;
+
     /**
      * @brief return list of projects for this workspace
      */
-    virtual wxArrayString GetWorkspaceProjects() const  = 0;
+    virtual wxArrayString GetWorkspaceProjects() const = 0;
 };
 
 #endif // IWORKSPACE_H

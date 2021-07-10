@@ -398,7 +398,7 @@ public:
     /**
      * Return the workspace name
      */
-    wxString GetName() const;
+    wxString GetName() const override;
 
     /**
      * return the project build configuration that matches the

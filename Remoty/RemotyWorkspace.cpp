@@ -1,6 +1,6 @@
+#include "RemotyWorkspace.hpp"
 #include "RemotyNewWorkspaceDlg.h"
 #include "RemotySwitchToWorkspaceDlg.h"
-#include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -1116,3 +1116,5 @@ void RemotyWorkspace::LSPRestore()
     }
     m_old_servers_state.clear();
 }
+
+wxString RemotyWorkspace::GetName() const { return wxFileName(m_localWorkspaceFile).GetName(); }

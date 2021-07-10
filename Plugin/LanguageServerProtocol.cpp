@@ -1,3 +1,4 @@
+#include "LanguageServerProtocol.h"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -17,7 +18,6 @@
 #include "LSP/SignatureHelpRequest.h"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
-#include "LanguageServerProtocol.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
@@ -316,9 +316,8 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
         SendOpenRequest(editor, fileContent, GetLanguageId(filename));
     }
 
-    LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-        new LSP::GotoDefinitionRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
-                                       editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+    LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDefinitionRequest(
+        GetEditorFilePath(editor), editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
     QueueMessage(req);
 }
 
@@ -466,7 +465,7 @@ void LanguageServerProtocol::FunctionHelp(IEditor* editor)
 
     if(ShouldHandleFile(filename)) {
         LSP::SignatureHelpRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::SignatureHelpRequest(
-            filename, editor->GetCurrentLine(), editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+            filename, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
         QueueMessage(req);
     }
 }
@@ -491,8 +490,7 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     }
 
     // Now request the for code completion
-    SendCodeCompleteRequest(editor, editor->GetCurrentLine(),
-                            editor->GetCtrl()->GetColumn(editor->GetCurrentPosition()));
+    SendCodeCompleteRequest(editor, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition()));
 }
 
 void LanguageServerProtocol::ProcessQueue()
@@ -554,7 +552,7 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor)
 
         LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
             new LSP::GotoDeclarationRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
-                                            editor->GetCtrl()->GetColumn(editor->GetCurrentPosition())));
+                                            editor->GetColumnInChars(editor->GetCurrentPosition())));
         QueueMessage(req);
     }
 }
@@ -651,7 +649,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                             // let the originating request to handle it
                             const wxString& filename = GetEditorFilePath(editor);
                             size_t line = editor->GetCurrentLine();
-                            size_t column = editor->GetCtrl()->GetColumn(editor->GetCurrentPosition());
+                            size_t column = editor->GetColumnInChars(editor->GetCurrentPosition());
                             if(false && preq->IsPositionDependantRequest() &&
                                !preq->IsValidAt(filename, line, column)) {
                                 clDEBUG1() << "Response is no longer valid. Discarding its result";

@@ -6060,6 +6060,20 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
     }
 }
 
+int clEditor::GetColumnInChars(int pos)
+{
+    if(GetUseTabs()) {
+        int tab_width = GetTabWidth();
+        SetTabWidth(1);
+        int col = GetColumn(pos);
+        // restore the tab width
+        SetTabWidth(tab_width);
+        return col;
+    } else {
+        return GetColumn(pos);
+    }
+}
+
 // ----------------------------------
 // SelectionInfo
 // ----------------------------------

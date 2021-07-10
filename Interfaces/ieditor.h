@@ -564,6 +564,12 @@ public:
      * @brief set semantic tokens for this editor
      */
     virtual void SetSemanticTokens(const wxString& classes, const wxString& variables) = 0;
+
+    /**
+     * @brief similar to wxStyledTextCtrl::GetColumn(), but treat TAB as a single char
+     * width
+     */
+    virtual int GetColumnInChars(int pos) = 0;
 };
 
 #endif // IEDITOR_H

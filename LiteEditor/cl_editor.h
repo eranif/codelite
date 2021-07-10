@@ -427,10 +427,10 @@ public:
 
     // set this page as active, this usually happened when user changed the notebook
     // page to this one
-    virtual void SetActive();
+    void SetActive() override;
 
     // Ditto, but asynchronously
-    virtual void DelayedSetActive();
+    void DelayedSetActive() override;
 
     // Perform FindNext operation based on the data stored in the FindReplaceData class
     void FindNext(const FindReplaceData& data);
@@ -444,7 +444,7 @@ public:
      * Change the document's syntax highlight
      * \param lexerName the syntax highlight's lexer name (as appear in the liteeditor.xml file)
      */
-    virtual void SetSyntaxHighlight(const wxString& lexerName);
+    void SetSyntaxHighlight(const wxString& lexerName) override;
 
     /**
      * Change the document's syntax highlight - use the file name to determine lexer name
@@ -484,12 +484,12 @@ public:
     /**
      * @brief center the line in the editor
      */
-    void CenterLine(int line, int col = wxNOT_FOUND);
+    void CenterLine(int line, int col = wxNOT_FOUND) override;
 
     /**
      * @brief center the editor at a given line, but preserve the selection
      */
-    void CenterLinePreserveSelection(int line);
+    void CenterLinePreserveSelection(int line) override;
 
     /**
      * @brief Center line if needed (i.e. only if the line is not visible)
@@ -526,7 +526,13 @@ public:
     /**
      * @brief return list of bookmarks (active type)
      */
-    virtual size_t GetFindMarkers(std::vector<std::pair<int, wxString>>& bookmarksVector);
+    size_t GetFindMarkers(std::vector<std::pair<int, wxString>>& bookmarksVector) override;
+
+    /**
+     * @brief similar to wxStyledTextCtrl::GetColumn(), but treat TAB as a single char
+     * width
+     */
+    int GetColumnInChars(int pos) override;
 
     /**
      * Sets whether the currently-active bookmark level is Find', or the current standard-bookmark type

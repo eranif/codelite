@@ -193,7 +193,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     const auto& semanticTokens = event.GetSemanticTokens();
 
     wxStringSet_t variables_tokens = { "variable", "parameter", "typeParameter", "property" };
-    wxStringSet_t classes_tokens = { "class", "enum", "namespace", "type", "struct" };
+    wxStringSet_t classes_tokens = { "class", "enum", "namespace", "type", "struct", "trait", "interface" };
 
     wxStringSet_t classes_set;
     wxStringSet_t variables_set;

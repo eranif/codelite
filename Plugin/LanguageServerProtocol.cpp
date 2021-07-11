@@ -1,4 +1,3 @@
-#include "LanguageServerProtocol.h"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -18,6 +17,7 @@
 #include "LSP/SignatureHelpRequest.h"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
+#include "LanguageServerProtocol.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
@@ -328,6 +328,9 @@ void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const std::string&
     wxString filename = GetEditorFilePath(editor);
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
         clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
+
+        // send a semantic request
+        SendSemanticTokensRequest(editor);
         return;
     }
     LSP::DidOpenTextDocumentRequest::Ptr_t req =
@@ -337,6 +340,9 @@ void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const std::string&
 #endif
     UpdateFileSent(filename, fileContent);
     QueueMessage(req);
+
+    // send a semantic request
+    SendSemanticTokensRequest(editor);
 }
 
 void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
@@ -358,6 +364,9 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::strin
     wxString filename = GetEditorFilePath(editor);
     if(!IsFileChangedSinceLastParse(filename, fileContent)) {
         clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
+
+        // always send a semantic request
+        SendSemanticTokensRequest(editor);
         return;
     }
 
@@ -368,6 +377,9 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::strin
 #endif
     UpdateFileSent(filename, fileContent);
     QueueMessage(req);
+
+    // always send a semantic request
+    SendSemanticTokensRequest(editor);
 }
 
 void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const std::string& fileContent)
@@ -415,8 +427,6 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
         SendSaveRequest(editor, fileContent);
-
-        SendSemanticTokensRequest(editor);
     }
 }
 
@@ -587,8 +597,7 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 {
     clDEBUG1() << GetLogPrefix() << event.GetString();
-    wxString buffer = std::move(event.GetString());
-    m_outputBuffer << buffer;
+    m_outputBuffer << event.GetString();
     m_Queue.SetWaitingReponse(false);
 
     while(true) {
@@ -668,9 +677,6 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                         clGetManager()->SetStatusMessage(
                             wxString() << GetLogPrefix() << "parsing of file: " << fn << " is completed", 1);
 #endif
-                        // time to send semantics request
-                        SendSemanticTokensRequest(clGetManager()->FindEditor(fn));
-
                         std::vector<LSP::Diagnostic> diags = res.GetDiagnostics();
                         if(!diags.empty() && IsDisaplayDiagnostics()) {
                             // report the diagnostics
@@ -749,6 +755,7 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor) {
         OpenEditor(editor);
+        // a semantic tokens request will be sent as part of the `OpenEditor` request
     }
 }
 
@@ -819,6 +826,7 @@ const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
 void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
+    clDEBUG() << "Sending semantic tokens request..." << endl;
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
     QueueMessage(req);

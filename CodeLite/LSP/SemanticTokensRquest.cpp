@@ -1,6 +1,6 @@
-#include "SemanticTokensRquest.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
+#include "SemanticTokensRquest.hpp"
 #include "file_logger.h"
 #include "json_rpc_params.h"
 #include "wx/vector.h"
@@ -26,7 +26,9 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
     wxVector<int> encoded_types;
     encoded_types = response["result"]["data"].toArray(encoded_types);
 
+    clDEBUG() << "OnResponse for SemanticTokensRquest is called" << endl;
     clDEBUG() << "Parsing semantic tokens array (" << encoded_types.size() << ")" << endl;
+
     // sanity: each token is represented a set of 5 integers
     // { line, startChar, length, tokenType, tokenModifiers}
     if(encoded_types.size() % 5 != 0) {

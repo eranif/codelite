@@ -1,6 +1,6 @@
-#include "LanguageServerCluster.h"
 #include "CompileCommandsGenerator.h"
 #include "LSP/LSPEvent.h"
+#include "LanguageServerCluster.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
@@ -121,11 +121,11 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 
 void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
 {
-    wxUnusedVar(event); // Now that the workspace is loaded, parse the active file
+    // Now that the workspace is loaded, parse the active file
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    LanguageServerProtocol::Ptr_t lsp = GetServerForFile(GetEditorFilePath(editor));
+    LanguageServerProtocol::Ptr_t lsp = GetServerByName(event.GetServerName());
     if(lsp) {
         lsp->OpenEditor(editor);
     }

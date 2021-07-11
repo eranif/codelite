@@ -436,6 +436,8 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
     clDEBUG1() << "OpenEditor is called for" << GetEditorFilePath(editor) << endl;
     if(!IsInitialized()) {
+        clDEBUG() << "OpenEditor: server is still not initialized. server:" << GetName()
+                  << ", file:" << GetEditorFilePath(editor) << endl;
         return;
     }
 
@@ -826,7 +828,7 @@ const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
 void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
-    clDEBUG() << "Sending semantic tokens request..." << endl;
+    clDEBUG() << "Sending semantic tokens request for file:" << GetEditorFilePath(editor) << endl;
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
     QueueMessage(req);

@@ -38,10 +38,12 @@
 class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 {
 protected:
+    wxBoxSizer* bSizer1;
     wxPropertyGridManager* m_pgMgrGeneral;
     wxPGProperty* m_pgPropCategoryGeneral;
     wxPGProperty* m_pgPropDisplayLineNumbers;
     wxPGProperty* m_pgPropRelativeLineNumbers;
+    wxPGProperty* m_pgPropHiglightLineNumber;
     wxPGProperty* m_pgPropHighlightMatchedBrace;
     wxPGProperty* m_pgPropHideEditMargin;
     wxPGProperty* m_pgPropShowIndentGuidelines;
@@ -70,6 +72,7 @@ public:
 class EditorOptionsGeneralEditBase : public wxPanel
 {
 protected:
+    wxBoxSizer* boxSizer4;
     wxPropertyGridManager* m_pgMgrEdit;
     wxPGProperty* m_pgProp8;
     wxPGProperty* m_pgPropSmartCurly;

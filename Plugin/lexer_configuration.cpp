@@ -290,6 +290,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
 #if defined(__WXMSW__)
     bool useDirect2D = clConfig::Get().Read("Editor/UseDirect2D", true);
     ctrl->SetTechnology(useDirect2D ? wxSTC_TECHNOLOGY_DIRECTWRITE : wxSTC_TECHNOLOGY_DEFAULT);
+    ctrl->SetBufferedDraw(true);
 #elif defined(__WXGTK__)
     ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
 #endif

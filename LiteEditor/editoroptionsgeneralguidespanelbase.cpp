@@ -23,7 +23,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
         bBitmapLoaded = true;
     }
 
-    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
+    bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
     wxArrayString m_pgMgrGeneralArr;
@@ -45,6 +45,10 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_pgPropRelativeLineNumbers = m_pgMgrGeneral->AppendIn(
         m_pgPropCategoryGeneral, new wxBoolProperty(_("Enable Relative line numbers"), wxPG_LABEL, 0));
     m_pgPropRelativeLineNumbers->SetHelpString(_("Enable Relative line numbers"));
+
+    m_pgPropHiglightLineNumber = m_pgMgrGeneral->AppendIn(
+        m_pgPropCategoryGeneral, new wxBoolProperty(_("Highlight the current line number"), wxPG_LABEL, 1));
+    m_pgPropHiglightLineNumber->SetHelpString(_("Highlight the current line number"));
 
     m_pgPropHighlightMatchedBrace = m_pgMgrGeneral->AppendIn(
         m_pgPropCategoryGeneral, new wxBoolProperty(_("Highlight matched braces"), wxPG_LABEL, 1));
@@ -123,7 +127,9 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
 
     SetName(wxT("EditorOptionsGeneralGuidesPanelBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
 }
 
 EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase() {}
@@ -139,7 +145,7 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
         bBitmapLoaded = true;
     }
 
-    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
+    boxSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer4);
 
     wxArrayString m_pgMgrEditArr;
@@ -205,7 +211,9 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
 
     SetName(wxT("EditorOptionsGeneralEditBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_pgMgrEdit->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EditorOptionsGeneralEditBase::OnValueChanged),
                          NULL, this);

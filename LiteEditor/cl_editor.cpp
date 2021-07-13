@@ -280,7 +280,9 @@ public:
 //=====================================================================
 
 #if defined(__WXMSW__)
-static bool MSWRemoveROFileAttribute(const wxFileName& fileName)
+namespace
+{
+bool MSWRemoveROFileAttribute(const wxFileName& fileName)
 {
     DWORD dwAttrs = GetFileAttributes(fileName.GetFullPath().c_str());
     if(dwAttrs != INVALID_FILE_ATTRIBUTES) {
@@ -303,6 +305,24 @@ static bool MSWRemoveROFileAttribute(const wxFileName& fileName)
     }
     return true;
 }
+
+void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
+{
+    // Use a distinct style to highlight the current line number
+    wxColour bg_colour = ctrl->StyleGetBackground(0);
+    wxColour fg_colour = ctrl->StyleGetForeground(0);
+    if(DrawingUtils::IsDark(bg_colour)) {
+        bg_colour = bg_colour.ChangeLightness(110);
+        fg_colour = fg_colour.ChangeLightness(150);
+    } else {
+        bg_colour = bg_colour.ChangeLightness(95);
+        fg_colour = fg_colour.ChangeLightness(30);
+    }
+
+    ctrl->StyleSetBackground(CUR_LINE_NUMBER_STYLE, bg_colour);
+    ctrl->StyleSetForeground(CUR_LINE_NUMBER_STYLE, fg_colour);
+}
+} // namespace
 #endif
 
 //=====================================================================
@@ -568,6 +588,11 @@ void clEditor::SetProperties()
     UsePopUp(0);
 #endif
 
+    m_lastBeginLine = wxNOT_FOUND;
+    m_lastEndLine = wxNOT_FOUND;
+    m_lastLine = wxNOT_FOUND;
+    m_lastLineCount = 0;
+
     SetRectangularSelectionModifier(wxSTC_KEYMOD_CTRL);
     SetAdditionalSelectionTyping(true);
     OptionsConfigPtr options = GetOptions();
@@ -654,7 +679,7 @@ void clEditor::SetProperties()
     SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
 
     // Line numbers
-    if(options->GetRelativeLineNumbers()) {
+    if(options->GetRelativeLineNumbers() || options->GetHighlightCurrentLineNumber()) {
         SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_RTEXT);
     } else {
         SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
@@ -665,7 +690,10 @@ void clEditor::SetProperties()
                                       mmt_all_breakpoints | mmt_line_marker));
 
     SetMarginType(EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
-    SetMarginWidth(EDIT_TRACKER_MARGIN_ID, options->GetHideChangeMarkerMargin() ? 0 : 3);
+    SetMarginWidth(EDIT_TRACKER_MARGIN_ID, (options->GetHideChangeMarkerMargin() || options->GetRelativeLineNumbers() ||
+                                            options->GetHighlightCurrentLineNumber())
+                                               ? 0
+                                               : 3);
     SetMarginMask(EDIT_TRACKER_MARGIN_ID, 0);
 
     // Separators
@@ -3119,7 +3147,38 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
     return encoding;
 }
 
-void clEditor::DoUpdateLineNumbers() { return; }
+void clEditor::DoUpdateLineNumbers()
+{
+    int beginLine = GetFirstVisibleLine();
+    int curLine = GetCurrentLine();
+    int endLine = GetFirstVisibleLine() + LinesOnScreen();
+    int lastLine = GetNumberOfLines();
+    if((m_lastBeginLine == beginLine) && (m_lastLine == curLine) && (m_lastEndLine == endLine)) {
+        return;
+    }
+
+    m_lastBeginLine = beginLine;
+    m_lastEndLine = endLine;
+    m_lastLine = curLine;
+
+    wxString line_text;
+    line_text.reserve(100);
+
+    SetCurrentLineMarginStyle(GetCtrl());
+
+    // set the line numbers, taking hidden lines into consideration
+    int lines_printed = 0;
+    int line_number = beginLine;
+    for(; lines_printed < lastLine; ++line_number) {
+        if(GetLineVisible(line_number)) {
+            line_text.Printf(" %d", line_number + 1);
+            MarginSetText(line_number, line_text);
+            MarginSetStyle(line_number, line_number == curLine ? CUR_LINE_NUMBER_STYLE : 0);
+            lines_printed++;
+        }
+    }
+    m_lastEndLine = line_number;
+}
 
 void clEditor::DoUpdateRelativeLineNumbers()
 {
@@ -3137,8 +3196,7 @@ void clEditor::DoUpdateRelativeLineNumbers()
     MarginSetText(curLine, (wxString() << " " << (curLine + 1)));
 
     // Use a distinct style to highlight the current line number
-    StyleSetBackground(CUR_LINE_NUMBER_STYLE, m_selTextBgColour);
-    StyleSetForeground(CUR_LINE_NUMBER_STYLE, m_selTextColour);
+    SetCurrentLineMarginStyle(GetCtrl());
     MarginSetStyle(curLine, CUR_LINE_NUMBER_STYLE);
 
     for(int i = std::min(endLine, curLine - 1); i >= beginLine; --i) {
@@ -5966,7 +6024,7 @@ int clEditor::GetFirstNonWhitespacePos(bool backward)
 void clEditor::UpdateLineNumberMarginWidth()
 {
     int newLineCount = GetLineCount();
-    int newWidthCount = log10(newLineCount) + 2;
+    int newWidthCount = log10(newLineCount) + 3;
     SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers()
                                          ? (newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"))
                                          : 0);

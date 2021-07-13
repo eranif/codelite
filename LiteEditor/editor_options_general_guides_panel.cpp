@@ -23,9 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "editor_options_general_guides_panel.h"
 #include "clSystemSettings.h"
 #include "cl_config.h"
-#include "editor_options_general_guides_panel.h"
 #include "globals.h"
 #include <wx/settings.h>
 #include <wx/stc/stc.h>
@@ -53,6 +53,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     m_pgPropWhitespaceVisibility->SetChoiceSelection(options->GetShowWhitspaces());
     m_pgPropCaretLineAlpha->SetValue(options->GetCaretLineAlpha());
     m_pgPropLineSpacing->SetValue(clConfig::Get().Read("extra_line_spacing", (int)0));
+    m_pgPropHiglightLineNumber->SetValue(options->GetHighlightCurrentLineNumber());
 
     // EOL
     // Default;Mac (CR);Windows (CRLF);Unix (LF)
@@ -71,6 +72,7 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 {
     options->SetDisplayLineNumbers(m_pgPropDisplayLineNumbers->GetValue().GetBool());
     options->SetRelativeLineNumbers(m_pgPropRelativeLineNumbers->GetValue().GetBool());
+    options->SetHighlightCurrentLineNumber(m_pgPropHiglightLineNumber->GetValue().GetBool());
     options->SetHighlightMatchedBraces(m_pgPropHighlightMatchedBrace->GetValue().GetBool());
     options->SetShowIndentationGuidelines(m_pgPropShowIndentGuidelines->GetValue().GetBool());
     options->SetHighlightCaretLine(m_pgPropEnableCaretLine->GetValue().GetBool());

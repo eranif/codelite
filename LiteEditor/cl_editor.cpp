@@ -651,6 +651,7 @@ void clEditor::SetProperties()
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT | wxSTC_PERFORMED_UNDO | wxSTC_PERFORMED_REDO |
                     wxSTC_MOD_BEFOREDELETE | wxSTC_MOD_CHANGESTYLE);
 
+#if 0
     int caretSlop = 1;
     int caretZone = 20;
     int caretStrict = 0;
@@ -665,6 +666,7 @@ void clEditor::SetProperties()
     caretEven = 8;
     caretJumps = 0;
     SetYCaretPolicy(caretStrict | caretSlop | caretEven | caretJumps, caretZone);
+#endif
 
     // Set the caret width
     int caretWidth = clConfig::Get().Read("editor/caret_width", 2);

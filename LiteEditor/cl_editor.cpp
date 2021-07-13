@@ -314,7 +314,7 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
     wxColour fg_colour = bg_colour;
     if(DrawingUtils::IsDark(bg_colour)) {
         bg_colour = bg_colour.ChangeLightness(110);
-        fg_colour = fg_colour.ChangeLightness(160);
+        fg_colour = fg_colour.ChangeLightness(170);
     } else {
         bg_colour = bg_colour.ChangeLightness(95);
         fg_colour = fg_colour.ChangeLightness(30);
@@ -330,7 +330,7 @@ void GetLineMarginColours(wxStyledTextCtrl* ctrl, wxColour* bg_colour, wxColour*
     *bg_colour = ctrl->StyleGetBackground(0);
     *fg_colour = *bg_colour;
     if(DrawingUtils::IsDark(*bg_colour)) {
-        *fg_colour = bg_colour->ChangeLightness(140);
+        *fg_colour = bg_colour->ChangeLightness(130);
     } else {
         *fg_colour = bg_colour->ChangeLightness(60);
     }

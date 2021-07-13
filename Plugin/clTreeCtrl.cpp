@@ -1,6 +1,6 @@
+#include "clTreeCtrl.h"
 #include "clRowEntry.h"
 #include "clScrollBar.h"
-#include "clTreeCtrl.h"
 #include "clTreeCtrlModel.h"
 #include "clTreeNodeVisitor.h"
 #include "drawingutils.h"
@@ -292,30 +292,24 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
         GetHeader()->Update();
     }
 
-#ifdef __WXMSW__
-    // draw a one pixel line at the top of the items area
-    // this gives a nice border and UI separation
-    wxColour top_border_colour = GetColours().GetBorderColour();
-    wxColour right_border_colour;
-    if(GetColours().IsLightTheme()) {
-        right_border_colour = *wxWHITE;
-    } else {
+#if 0
+    if(!GetColours().IsLightTheme()) {
+        // draw a one pixel line at the top of the items area
+        // this gives a nice border and UI separation
+        wxColour top_border_colour = GetColours().GetBorderColour();
+        wxColour right_border_colour;
         right_border_colour = GetColours().GetBgColour().ChangeLightness(80);
+
+        dc.SetPen(top_border_colour);
+        dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
+
+        // draw another one pixel line on the right side
+        dc.SetPen(right_border_colour);
+
+        wxPoint pt1 = clientRect.GetTopRight();
+        wxPoint pt2 = clientRect.GetBottomRight();
+        dc.DrawLine(pt1, pt2);
     }
-
-    dc.SetPen(top_border_colour);
-    dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
-
-    // draw another one pixel line on the right side
-    dc.SetPen(right_border_colour);
-
-    wxPoint pt1 = clientRect.GetTopRight();
-    wxPoint pt2 = clientRect.GetBottomRight();
-#ifndef __WXOSX__
-    pt1.x -= 1;
-    pt2.x -= 1;
-#endif
-    dc.DrawLine(pt1, pt2);
 #endif
 }
 

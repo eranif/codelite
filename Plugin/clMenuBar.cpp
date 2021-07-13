@@ -326,7 +326,11 @@ void clMenuBar::DoSetBestSize()
     int buttonHeight = 0;
     {
         wxRect r = dc.GetTextExtent("Tp");
+#if wxVERSION_NUMBER >= 3100
         r.Inflate(FromDIP(4));
+#else
+        r.Inflate(4);
+#endif
         buttonHeight = r.GetHeight();
     }
     SetSizeHints(wxSize(-1, buttonHeight));
@@ -355,7 +359,11 @@ void clMenuBar::DrawButton(wxDC& dc, size_t index, size_t flags)
 
 void clMenuBar::UpdateRects(wxDC& dc)
 {
+#if wxVERSION_NUMBER >= 3100
     int x_spacer = FromDIP(10);
+#else
+    int x_spacer = 10;
+#endif
     int y_spacer = 0;
     int x = 0;
     wxRect client_rect = GetClientRect();

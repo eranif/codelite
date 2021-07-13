@@ -445,15 +445,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             ctrl->StyleSetEOLFilled(sp.GetId(), iter->second.GetEolFilled());
 
             if(iter->second.GetId() == LINE_NUMBERS_ATTR_ID) {
-                // Set the line number colours only if requested
-                // otherwise, use default colours provided by scintilla
-                if(sp.GetBgColour().IsEmpty() == false)
-                    ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
-
-                if(sp.GetFgColour().IsEmpty() == false)
-                    ctrl->StyleSetForeground(sp.GetId(), sp.GetFgColour());
-                else
-                    ctrl->StyleSetForeground(sp.GetId(), wxT("BLACK"));
+                // we will handle this later
 
             } else {
                 ctrl->StyleSetForeground(sp.GetId(), sp.GetFgColour());
@@ -471,6 +463,17 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         }
         } // switch
     }
+
+    // set line number colours
+    wxColour bg_colour = ctrl->StyleGetBackground(0);
+    wxColour fg_colour = bg_colour;
+    if(IsDark()) {
+        fg_colour = bg_colour.ChangeLightness(140);
+    } else {
+        fg_colour = fg_colour.ChangeLightness(50);
+    }
+    ctrl->StyleSetBackground(LINE_NUMBERS_ATTR_ID, bg_colour);
+    ctrl->StyleSetForeground(LINE_NUMBERS_ATTR_ID, fg_colour);
 
     // set the calltip font
     if(!tooltip) {

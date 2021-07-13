@@ -23,10 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_editor.h"
 #include "ColoursAndFontsManager.h"
 #include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
+#include "attribute_style.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "breakpointdlg.h"
@@ -38,6 +38,7 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
+#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
@@ -279,9 +280,9 @@ public:
 
 //=====================================================================
 
-#if defined(__WXMSW__)
 namespace
 {
+#if defined(__WXMSW__)
 bool MSWRemoveROFileAttribute(const wxFileName& fileName)
 {
     DWORD dwAttrs = GetFileAttributes(fileName.GetFullPath().c_str());
@@ -305,15 +306,15 @@ bool MSWRemoveROFileAttribute(const wxFileName& fileName)
     }
     return true;
 }
-
+#endif
 void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
 {
     // Use a distinct style to highlight the current line number
     wxColour bg_colour = ctrl->StyleGetBackground(0);
-    wxColour fg_colour = ctrl->StyleGetForeground(0);
+    wxColour fg_colour = bg_colour;
     if(DrawingUtils::IsDark(bg_colour)) {
         bg_colour = bg_colour.ChangeLightness(110);
-        fg_colour = fg_colour.ChangeLightness(150);
+        fg_colour = fg_colour.ChangeLightness(160);
     } else {
         bg_colour = bg_colour.ChangeLightness(95);
         fg_colour = fg_colour.ChangeLightness(30);
@@ -322,8 +323,19 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
     ctrl->StyleSetBackground(CUR_LINE_NUMBER_STYLE, bg_colour);
     ctrl->StyleSetForeground(CUR_LINE_NUMBER_STYLE, fg_colour);
 }
+
+void GetLineMarginColours(wxStyledTextCtrl* ctrl, wxColour* bg_colour, wxColour* fg_colour)
+{
+    // Use a distinct style to highlight the current line number
+    *bg_colour = ctrl->StyleGetBackground(0);
+    *fg_colour = *bg_colour;
+    if(DrawingUtils::IsDark(*bg_colour)) {
+        *fg_colour = bg_colour->ChangeLightness(140);
+    } else {
+        *fg_colour = bg_colour->ChangeLightness(60);
+    }
+}
 } // namespace
-#endif
 
 //=====================================================================
 clEditor::clEditor(wxWindow* parent)
@@ -3163,8 +3175,13 @@ void clEditor::DoUpdateLineNumbers()
 
     wxString line_text;
     line_text.reserve(100);
-
     SetCurrentLineMarginStyle(GetCtrl());
+
+    wxColour bg_colour, fg_colour;
+    GetLineMarginColours(GetCtrl(), &bg_colour, &fg_colour);
+
+    StyleSetBackground(LINE_NUMBERS_ATTR_ID, StyleGetBackground(0));
+    StyleSetForeground(LINE_NUMBERS_ATTR_ID, fg_colour);
 
     // set the line numbers, taking hidden lines into consideration
     int lines_printed = 0;
@@ -3173,7 +3190,7 @@ void clEditor::DoUpdateLineNumbers()
         if(GetLineVisible(line_number)) {
             line_text.Printf(" %d", line_number + 1);
             MarginSetText(line_number, line_text);
-            MarginSetStyle(line_number, line_number == curLine ? CUR_LINE_NUMBER_STYLE : 0);
+            MarginSetStyle(line_number, line_number == curLine ? CUR_LINE_NUMBER_STYLE : LINE_NUMBERS_ATTR_ID);
             lines_printed++;
         }
     }

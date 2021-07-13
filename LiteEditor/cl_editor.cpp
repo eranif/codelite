@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_editor.h"
 #include "ColoursAndFontsManager.h"
 #include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
@@ -38,7 +39,6 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
-#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
@@ -314,10 +314,10 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
     wxColour fg_colour = bg_colour;
     if(DrawingUtils::IsDark(bg_colour)) {
         bg_colour = bg_colour.ChangeLightness(110);
-        fg_colour = fg_colour.ChangeLightness(170);
+        fg_colour = fg_colour.ChangeLightness(180);
     } else {
         bg_colour = bg_colour.ChangeLightness(95);
-        fg_colour = fg_colour.ChangeLightness(30);
+        fg_colour = fg_colour.ChangeLightness(20);
     }
 
     ctrl->StyleSetBackground(CUR_LINE_NUMBER_STYLE, bg_colour);
@@ -330,9 +330,9 @@ void GetLineMarginColours(wxStyledTextCtrl* ctrl, wxColour* bg_colour, wxColour*
     *bg_colour = ctrl->StyleGetBackground(0);
     *fg_colour = *bg_colour;
     if(DrawingUtils::IsDark(*bg_colour)) {
-        *fg_colour = bg_colour->ChangeLightness(130);
+        *fg_colour = bg_colour->ChangeLightness(125);
     } else {
-        *fg_colour = bg_colour->ChangeLightness(60);
+        *fg_colour = bg_colour->ChangeLightness(70);
     }
 }
 } // namespace
@@ -672,6 +672,11 @@ void clEditor::SetProperties()
     SetCaretWidth(caretWidth);
     SetCaretPeriod(options->GetCaretBlinkPeriod());
     SetMarginLeft(1);
+
+    wxColour line_colour, line_bg_colour;
+    GetLineMarginColours(GetCtrl(), &line_bg_colour, &line_colour);
+    StyleSetBackground(wxSTC_STYLE_LINENUMBER, line_bg_colour);
+    StyleSetForeground(wxSTC_STYLE_LINENUMBER, line_colour);
 
     // Mark current line
     SetCaretLineVisible(options->GetHighlightCaretLine());
@@ -3161,6 +3166,10 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
 
 void clEditor::DoUpdateLineNumbers()
 {
+#ifdef __WXMSW__
+    wxWindowUpdateLocker locker(this);
+#endif
+
     int beginLine = GetFirstVisibleLine();
     int curLine = GetCurrentLine();
     int endLine = GetFirstVisibleLine() + LinesOnScreen();

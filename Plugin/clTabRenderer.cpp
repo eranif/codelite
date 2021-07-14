@@ -114,7 +114,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
     int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
 
-    wxFont font = clTabRenderer::GetTabFont(true);
+    wxFont font = clTabRenderer::GetTabFont(false);
     dc.SetFont(font);
 
     bool bVerticalTabs = IS_VERTICAL_TABS(style);
@@ -255,13 +255,7 @@ clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
 wxFont clTabRenderer::GetTabFont(bool bold)
 {
     wxFont f = DrawingUtils::GetDefaultGuiFont();
-#ifdef __WXOSX__
     wxUnusedVar(bold);
-#else
-    if(bold) {
-        f.SetWeight(wxFONTWEIGHT_BOLD);
-    }
-#endif
     return f;
 }
 

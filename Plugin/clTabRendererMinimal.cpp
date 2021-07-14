@@ -65,10 +65,9 @@ void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         bgColour = activeTabBgColour.ChangeLightness(is_dark ? 120 : 80);
     }
 
-    wxFont font = GetTabFont(false);
-    fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
-    fontDC.SetFont(font);
-    
+    // update the is_dark flag now that we set a bgColour
+    is_dark = DrawingUtils::IsDark(bgColour);
+
     // the visible tab is the part of the rect that is actually seen
     // on the tab area. the tabRect might have negative coordinates for
     // hiding unwanted curves parts of the rect
@@ -84,7 +83,7 @@ void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         visibleTab.y += 2;
         visibleTab.height -= 2;
     }
-    
+
     dc.SetPen(tabInfo.IsActive() ? activeTabBgColour : bgColour);
     dc.SetBrush(tabInfo.IsActive() ? activeTabBgColour : bgColour);
     dc.DrawRoundedRectangle(tabRect, 2.0);
@@ -115,6 +114,11 @@ void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         }
     }
 
+    wxFont font = GetTabFont(false);
+    wxColour text_colour = is_dark ? bgColour.ChangeLightness(170) : bgColour.ChangeLightness(30);
+    fontDC.SetTextForeground(text_colour);
+    fontDC.SetFont(font);
+
     wxRect textRect = dc.GetTextExtent(label);
     textRect = textRect.CenterIn(visibleTab);
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), textRect.GetY());
@@ -122,7 +126,11 @@ void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         // use the adjusted tab rect and not the original one passed to us
         clTabInfo tab_info = tabInfo;
         tab_info.SetRect(tabRect);
-        DrawButton(parent, dc, tab_info, colours, buttonState);
+        clTabColours c = colours;
+        c.activeTabBgColour = activeTabBgColour;
+        c.inactiveTabBgColour = bgColour;
+        c.activeTabTextColour = text_colour;
+        DrawButton(parent, dc, tab_info, c, buttonState);
     }
 }
 

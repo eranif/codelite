@@ -51,13 +51,18 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     clTabColours colours = colors;
 
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.tabAreaColour);
+    wxColour bgColour(colours.tabAreaColour);
+    wxColour activeTabBgColour = colours.activeTabBgColour;
+
+    bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
     // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
-    if(tabInfo.IsActive() && style & kNotebook_DynamicColours) {
+    if(style & kNotebook_DynamicColours) {
         auto editor = clGetManager()->GetActiveEditor();
         if(editor) {
-            bgColour = editor->GetCtrl()->StyleGetBackground(0);
+            activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
         }
+
+        bgColour = activeTabBgColour.ChangeLightness(is_dark ? 120 : 80);
     }
 
     wxFont font = GetTabFont(false);
@@ -73,8 +78,8 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         tabRect.height -= 2;
     }
 
-    dc.SetPen(bgColour);
-    dc.SetBrush(bgColour);
+    dc.SetPen(tabInfo.IsActive() ? activeTabBgColour : bgColour);
+    dc.SetBrush(tabInfo.IsActive() ? activeTabBgColour : bgColour);
     dc.DrawRectangle(tabRect);
 
     // Draw bitmap

@@ -34,7 +34,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     wxUnusedVar(notebookStyle);
     wxColour base_colour = clSystemSettings::GetDefaultPanelColour();
     bool is_dark = DrawingUtils::IsDark(base_colour);
-#if 1
+
     tabAreaColour = base_colour.ChangeLightness(is_dark ? 60 : 90);
     activeTabBgColour = base_colour;
     activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
@@ -46,28 +46,6 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     inactiveTabBgColour = tabAreaColour;
     inactiveTabPenColour = tabAreaColour.ChangeLightness(90);
     inactiveTabInnerPenColour = inactiveTabBgColour;
-
-#else
-    tabAreaColour = base_colour.ChangeLightness(80);
-
-    // active tab colours
-    activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-    activeTabPenColour = tabAreaColour.ChangeLightness(80);
-    if(is_dark) {
-        activeTabBgColour = activeTabPenColour;
-    } else {
-        activeTabBgColour = base_colour.ChangeLightness(110);
-    }
-    activeTabInnerPenColour = activeTabBgColour;
-
-    // inactive tab colours
-    inactiveTabTextColour = activeTabTextColour.ChangeLightness(is_dark ? 85 : 115);
-    inactiveTabBgColour = tabAreaColour.ChangeLightness(110);
-    inactiveTabPenColour = activeTabPenColour.ChangeLightness(110);
-    inactiveTabInnerPenColour = inactiveTabBgColour;
-
-    // the marker colour
-#endif
     markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#dc7633"));
 }
 

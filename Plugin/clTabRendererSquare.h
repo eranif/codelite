@@ -1,9 +1,9 @@
 #ifndef CLTABRENDERERSQUARE_H
 #define CLTABRENDERERSQUARE_H
 
-#include "clTabRendererClassic.h"
+#include "clTabRendererMinimal.hpp"
 
-class WXDLLIMPEXP_SDK clTabRendererSquare : public clTabRendererClassic
+class WXDLLIMPEXP_SDK clTabRendererSquare : public clTabRendererMinimal
 {
 public:
     clTabRendererSquare(const wxWindow* parent);

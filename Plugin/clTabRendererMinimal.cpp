@@ -1,4 +1,4 @@
-#include "clTabRendererClassic.h"
+#include "clTabRendererMinimal.hpp"
 
 #include "clColours.h"
 #include "clGenericNotebook.hpp"
@@ -17,7 +17,7 @@
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-clTabRendererClassic::clTabRendererClassic(const wxWindow* parent)
+clTabRendererMinimal::clTabRendererMinimal(const wxWindow* parent)
     : clTabRenderer("MINIMAL", parent)
 {
     bottomAreaHeight = 0;
@@ -27,22 +27,22 @@ clTabRendererClassic::clTabRendererClassic(const wxWindow* parent)
     verticalOverlapWidth = 0;
 }
 
-clTabRendererClassic::~clTabRendererClassic() {}
+clTabRendererMinimal::~clTabRendererMinimal() {}
 
-void clTabRendererClassic::InitDarkColours(clTabColours& colours, const wxColour& activeTabBGColour)
+void clTabRendererMinimal::InitDarkColours(clTabColours& colours, const wxColour& activeTabBGColour)
 {
     wxUnusedVar(colours);
     wxUnusedVar(activeTabBGColour);
 }
 
-void clTabRendererClassic::InitLightColours(clTabColours& colours, const wxColour& activeTabBGColour)
+void clTabRendererMinimal::InitLightColours(clTabColours& colours, const wxColour& activeTabBGColour)
 {
     // Active tab
     wxUnusedVar(colours);
     wxUnusedVar(activeTabBGColour);
 }
 
-void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
+void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
                                 const clTabColours& colors, size_t style, eButtonState buttonState)
 {
     wxRect tabRect = tabInfo.GetRect();
@@ -68,19 +68,26 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     wxFont font = GetTabFont(false);
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     fontDC.SetFont(font);
-
+    
+    // the visible tab is the part of the rect that is actually seen
+    // on the tab area. the tabRect might have negative coordinates for
+    // hiding unwanted curves parts of the rect
+    // we use the visible tab for centering text
+    wxRect visibleTab = tabRect;
     if(style & kNotebook_BottomTabs) {
         // bottom tabs
-        tabRect.height -= 2;
+        tabRect.y -= 2;
+        visibleTab.height -= 2;
     } else if(!IS_VERTICAL_TABS(style)) {
         // top tabs
         tabRect.y += 2;
-        tabRect.height -= 2;
+        visibleTab.y += 2;
+        visibleTab.height -= 2;
     }
-
+    
     dc.SetPen(tabInfo.IsActive() ? activeTabBgColour : bgColour);
     dc.SetBrush(tabInfo.IsActive() ? activeTabBgColour : bgColour);
-    dc.DrawRectangle(tabRect);
+    dc.DrawRoundedRectangle(tabRect, 2.0);
 
     // Draw bitmap
     if(tabInfo.HasBitmap()) {
@@ -109,7 +116,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     }
 
     wxRect textRect = dc.GetTextExtent(label);
-    textRect = textRect.CenterIn(tabRect);
+    textRect = textRect.CenterIn(visibleTab);
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), textRect.GetY());
     if(style & kNotebook_CloseButtonOnActiveTab) {
         // use the adjusted tab rect and not the original one passed to us
@@ -119,7 +126,7 @@ void clTabRendererClassic::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     }
 }
 
-void clTabRendererClassic::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,
+void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,
                                           wxDC& dc, const clTabColours& colors, size_t style)
 {
     wxUnusedVar(parent);
@@ -130,12 +137,19 @@ void clTabRendererClassic::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tab
     wxUnusedVar(style);
 }
 
-void clTabRendererClassic::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+void clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
                                           size_t style)
 {
     wxColour bg_colour = colours.tabAreaColour;
+
+    bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
+    // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
     if(style & kNotebook_DynamicColours) {
-        bg_colour = clSystemSettings::GetDefaultPanelColour();
+        auto editor = clGetManager()->GetActiveEditor();
+        if(editor) {
+            wxColour activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
+            bg_colour = activeTabBgColour.ChangeLightness(is_dark ? 120 : 80);
+        }
     }
 
     dc.SetBrush(bg_colour);
@@ -143,7 +157,7 @@ void clTabRendererClassic::DrawBackground(wxWindow* parent, wxDC& dc, const wxRe
     dc.DrawRectangle(rect);
 }
 
-void clTabRendererClassic::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
+void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
                                               const wxRect& activeTabRect, const clTabColours& colours, size_t style)
 {
     wxUnusedVar(parent);

@@ -38,7 +38,7 @@
 #include "globals.h"
 
 #include "EditorOptionsGeneralEdit.h"
-#include "clTabRendererClassic.h"
+#include "clTabRendererMinimal.hpp"
 #include "editorsettingsbookmarkspanel.h"
 #include "editorsettingscomments.h"
 #include "editorsettingscommentsdoxygenpanel.h"

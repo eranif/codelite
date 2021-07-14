@@ -2,7 +2,7 @@
 
 #include "JSON.h"
 #include "clSystemSettings.h"
-#include "clTabRendererClassic.h"
+#include "clTabRendererMinimal.hpp"
 #include "clTabRendererCurved.h"
 #include "clTabRendererSquare.h"
 #include "codelite_events.h"

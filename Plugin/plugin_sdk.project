@@ -597,6 +597,8 @@
       <File Name="GotoAnythingDlg.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Notebook">
+      <File Name="clTabRendererMinimal.cpp"/>
+      <File Name="clTabRendererMinimal.hpp"/>
       <File Name="clTabRendererFirefox.cpp"/>
       <File Name="clTabRendererFirefox.hpp"/>
       <File Name="GTKNotebook.hpp"/>
@@ -627,8 +629,6 @@
       <File Name="clTabRendererCurved.cpp"/>
       <File Name="clTabRendererSquare.h"/>
       <File Name="clTabRendererSquare.cpp"/>
-      <File Name="clTabRendererClassic.h"/>
-      <File Name="clTabRendererClassic.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxAUI">
       <File Name="cl_aui_dock_art.h"/>

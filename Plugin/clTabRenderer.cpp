@@ -7,7 +7,7 @@
 #include "clGenericNotebook.hpp"
 #include "clSystemSettings.h"
 #include "clTabRenderer.h"
-#include "clTabRendererClassic.h"
+#include "clTabRendererMinimal.hpp"
 #include "clTabRendererCurved.h"
 #include "clTabRendererFirefox.hpp"
 #include "clTabRendererGTK3.h"
@@ -360,7 +360,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
     if(ms_Renderes.empty()) {
         RegisterRenderer(new clTabRendererSquare(win));
         RegisterRenderer(new clTabRendererGTK3(win));
-        RegisterRenderer(new clTabRendererClassic(win));
+        RegisterRenderer(new clTabRendererMinimal(win));
         RegisterRenderer(new clTabRendererCurved(win));
         RegisterRenderer(new clTabRendererFirefox(win));
     }
@@ -388,7 +388,7 @@ wxArrayString clTabRenderer::GetRenderers()
     if(ms_Renderes.empty()) {
         RegisterRenderer(new clTabRendererSquare(nullptr));
         RegisterRenderer(new clTabRendererGTK3(nullptr));
-        RegisterRenderer(new clTabRendererClassic(nullptr));
+        RegisterRenderer(new clTabRendererMinimal(nullptr));
         RegisterRenderer(new clTabRendererCurved(nullptr));
         RegisterRenderer(new clTabRendererFirefox(nullptr));
     }

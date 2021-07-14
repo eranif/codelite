@@ -17,6 +17,26 @@
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
+namespace
+{
+void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTabBgColour, wxColour* bgColour)
+{
+    *bgColour = colours.tabAreaColour;
+    *activeTabBgColour = colours.activeTabBgColour;
+
+    bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
+    // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
+    if(style & kNotebook_DynamicColours) {
+        auto editor = clGetManager()->GetActiveEditor();
+        if(editor) {
+            *activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
+            is_dark = DrawingUtils::IsDark(*activeTabBgColour);
+        }
+        *bgColour = activeTabBgColour->ChangeLightness(is_dark ? 120 : 80);
+    }
+}
+} // namespace
+
 clTabRendererMinimal::clTabRendererMinimal(const wxWindow* parent)
     : clTabRenderer("MINIMAL", parent)
 {
@@ -51,22 +71,11 @@ void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     clTabColours colours = colors;
 
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
-    wxColour bgColour(colours.tabAreaColour);
-    wxColour activeTabBgColour = colours.activeTabBgColour;
-
-    bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
-    // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
-    if(style & kNotebook_DynamicColours) {
-        auto editor = clGetManager()->GetActiveEditor();
-        if(editor) {
-            activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
-        }
-
-        bgColour = activeTabBgColour.ChangeLightness(is_dark ? 120 : 80);
-    }
+    wxColour bgColour, activeTabBgColour;
+    GetTabColours(colours, style, &activeTabBgColour, &bgColour);
 
     // update the is_dark flag now that we set a bgColour
-    is_dark = DrawingUtils::IsDark(bgColour);
+    bool is_dark = DrawingUtils::IsDark(bgColour);
 
     // the visible tab is the part of the rect that is actually seen
     // on the tab area. the tabRect might have negative coordinates for
@@ -148,17 +157,10 @@ void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tab
 void clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
                                           size_t style)
 {
-    wxColour bg_colour = colours.tabAreaColour;
-
-    bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
-    // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
-    if(style & kNotebook_DynamicColours) {
-        auto editor = clGetManager()->GetActiveEditor();
-        if(editor) {
-            wxColour activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
-            bg_colour = activeTabBgColour.ChangeLightness(is_dark ? 120 : 80);
-        }
-    }
+    wxColour bg_colour;
+    wxColour active_tab_colour;
+    GetTabColours(colours, style, &active_tab_colour, &bg_colour);
+    wxUnusedVar(active_tab_colour);
 
     dc.SetBrush(bg_colour);
     dc.SetPen(bg_colour);

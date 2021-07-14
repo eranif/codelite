@@ -27,13 +27,13 @@
 #define CLTREECTRLPANEL_H
 
 #include "bitmap_loader.h"
+#include "clEnhancedToolBar.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileViwerTreeCtrl.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "wxcrafter_plugin.h"
 #include <imanager.h>
-#include "clEnhancedToolBar.hpp"
 
 class clToolBar;
 class clTreeCtrlPanelDefaultPage;
@@ -158,6 +158,9 @@ protected:
      */
     void GetSelections(wxArrayString& folders, wxArrayTreeItemIds& folderItems, wxArrayString& files,
                        wxArrayTreeItemIds& fileItems);
+
+    // void version of the expandToFile, so it can be called with CallAfter
+    void ExpandToFileVoid(const wxFileName& fn);
 
     // Make the event handler functions virtual
     // so any subclass could override them

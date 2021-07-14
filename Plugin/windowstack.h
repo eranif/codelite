@@ -33,7 +33,7 @@
 #include <vector>
 #include <wx/simplebook.h>
 
-#define wxUSE_WINDOWSTACK_SIMPLEBOOK 1
+#define wxUSE_WINDOWSTACK_SIMPLEBOOK 0
 
 #if !wxUSE_WINDOWSTACK_SIMPLEBOOK
 class WXDLLIMPEXP_SDK WindowStack : public wxWindow

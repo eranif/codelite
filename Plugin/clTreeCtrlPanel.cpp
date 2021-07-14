@@ -684,6 +684,8 @@ void clTreeCtrlPanel::OnRenameFile(wxCommandEvent& event)
     }
 }
 
+void clTreeCtrlPanel::ExpandToFileVoid(const wxFileName& filename) { ExpandToFile(filename); }
+
 bool clTreeCtrlPanel::ExpandToFile(const wxFileName& filename)
 {
     wxArrayString topFolders;
@@ -759,7 +761,7 @@ void clTreeCtrlPanel::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     if(clGetManager()->GetActiveEditor() && (m_options & kLinkToEditor)) {
-        ExpandToFile(clGetManager()->GetActiveEditor()->GetFileName());
+        CallAfter(&clTreeCtrlPanel::ExpandToFileVoid, clGetManager()->GetActiveEditor()->GetFileName());
     }
 }
 
@@ -994,11 +996,11 @@ void clTreeCtrlPanel::OnLinkEditor(wxCommandEvent& event)
     if(GetConfig()) {
         GetConfig()->Write("FileExplorer/Options", m_options);
     }
-    
+
     auto editor = clGetManager()->GetActiveEditor();
     if((m_options & kLinkToEditor) && editor) {
         // show the active editor's item
-        ExpandToFile(clGetManager()->GetActiveEditor()->GetFileName());
+        CallAfter(&clTreeCtrlPanel::ExpandToFileVoid, clGetManager()->GetActiveEditor()->GetFileName());
     }
 }
 

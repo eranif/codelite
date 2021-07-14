@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_editor.h"
 #include "ColoursAndFontsManager.h"
 #include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
@@ -39,6 +38,7 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
+#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
@@ -902,19 +902,14 @@ void clEditor::SetProperties()
     CallTipSetBackground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
+    SetTwoPhaseDraw(true);
+    SetBufferedDraw(true);
+
 #if defined(__WXMAC__)
     // turning off these two greatly improves performance
     // on Mac
-    SetTwoPhaseDraw(true);
-    SetBufferedDraw(true);
     SetLayoutCache(wxSTC_CACHE_DOCUMENT);
-
-#elif defined(__WXGTK__)
-    // SetLayoutCache(wxSTC_CACHE_PAGE);
-
-#else // MSW
-    SetTwoPhaseDraw(true);
-    SetBufferedDraw(true);
+#else
     SetLayoutCache(wxSTC_CACHE_PAGE);
 #endif
 

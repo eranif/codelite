@@ -20,7 +20,7 @@ cmake_minimum_required(VERSION 3.0)
 ##      -DPREVENT_WX_ASSERTS=1|0                   // Prevent those annoying wxASSERTS. In release builds the default is 1, in debug 0                          #
 ##      -DAUTOGEN_REVISION=1|0                     // Should cmake generate makefiles that auto generates the autoversion.cpp file - default is 1               #
 ##      -DWITH_PCH=1|0                             // Enable Pre Compiled Header?                                                                               #
-##      -DGTK_USE_CUSTOMBOOK=1|0                   // use custom Notebook or GtkNotebook (default is 0, i.e. use native)                                           #
+##      -DWITH_NATIVEBOOK=1|0                      // use native Notebook on GTK (otherwise, use the default custombook)                                        #
 ##      -DWITH_WX_CONFIG=<path>                    // Specify a particular wxWidgets wx-config command to use.                                                  #
 ##      -DWITH_WXPATH=<fullpath>                   // Specify a particular wxWidgets build to use. The format must be /path/to/different_wx-config/directory/   #
 ##      -DMAKE_DEB=1|0                             // When set to 1, you can use make package to create .deb file for codelite                                  #
@@ -337,13 +337,13 @@ message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
 
 ## Allow user to use wxAuiNotebook instead of the native notebook
 if(UNIX AND NOT APPLE AND NOT MINGW)
-    if ( GTK_USE_CUSTOMBOOK )
-        add_definitions( -DGTK_USE_NATIVEBOOK=0 )
-        message("-- Using custom Notebook")
-    else ( GTK_USE_CUSTOMBOOK )
+    if ( WITH_NATIVEBOOK )
         add_definitions( -DGTK_USE_NATIVEBOOK=1 )
         message("-- Using Native Notebook class")
-    endif ( GTK_USE_CUSTOMBOOK )
+    else ( WITH_NATIVEBOOK )
+        add_definitions( -DGTK_USE_NATIVEBOOK=0 )
+        message("-- Using custom Notebook")
+    endif ( WITH_NATIVEBOOK )
 else() # NOT LINUX
     add_definitions( -DGTK_USE_NATIVEBOOK=0 )
     message("-- Using custom Notebook")

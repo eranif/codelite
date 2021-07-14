@@ -305,15 +305,7 @@ void WorkspaceTab::OnActiveEditorChanged(wxCommandEvent& e)
         MainBook* mainbook = clMainFrame::Get()->GetMainBook();
         clEditor* editor = mainbook->GetActiveEditor();
         if(editor && !editor->GetProject().IsEmpty()) {
-            m_fileView->ExpandToPath(editor->GetProject(), editor->GetFileName());
-        }
-
-        Notebook* book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
-        if(book) {
-            size_t index = book->GetPageIndex("wxCrafter");
-            if(index == (size_t)book->GetSelection()) {
-                book->SetSelection(0); // The most likely to be wanted
-            }
+            m_fileView->CallAfter(&FileViewTree::ExpandToPath, editor->GetProject(), editor->GetFileName());
         }
     }
 }

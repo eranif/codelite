@@ -1065,7 +1065,6 @@
       <PostBuild>
         <Command Enabled="yes">copy wxgui.zip ..\Runtime</Command>
         <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime\plugins</Command>
-        <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -1098,13 +1097,14 @@
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="wxcLib/"/>
       </Compiler>
-      <Linker Options=";;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon)" Required="yes">
+      <Linker Options=";;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon,richtext)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="wxcLib"/>
+        <Library Value="Ws2_32"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="wxcrafter.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>

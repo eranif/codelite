@@ -2,7 +2,7 @@
 <CodeLite_Project Name="DebuggerGDB" Version="11000">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00040001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug000000000000]]>
+      <![CDATA[00050001N0015WinDebugUnicode0000000000000001N0011WinDebug_290000000000000001N0013WinRelease_290000000000000001N0013Win_x64_Debug0000000000000001N0015Win_x64_Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -164,7 +164,6 @@
       <PostBuild>
         <Command Enabled="yes">if not exist ..\Runtime\debuggers mkdir ..\Runtime\debuggers</Command>
         <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime\debuggers</Command>
-        <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -208,7 +207,7 @@
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --libs);" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>

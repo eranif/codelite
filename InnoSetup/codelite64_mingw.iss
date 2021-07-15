@@ -27,11 +27,12 @@ UninstallDisplayIcon={app}\codelite.exe,0
 ;; 64 bit setup
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "C:\src\wxWidgets"
+#define WXWIN "C:\root"
 #define MSYS2_DIR "C:\Program Files\Git\usr\bin"
 #define MINGW_DIR "C:\msys64\mingw64\bin"
 #define CLANG_DIR "C:\LLVM\bin"
 #define BUILD_BIN_DIR "C:\src\codelite\build-Win_x64_Release\bin"
+#define WX_CONFIG_DIR "C:\src\wx-config-msys2\bin"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -45,7 +46,7 @@ Source: "{#BUILD_BIN_DIR}\codelite.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#BUILD_BIN_DIR}\codelite-echo.exe"; DestDir: "{app}"; Flags: ignoreversion; 
 Source: "{#BUILD_BIN_DIR}\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion; 
 Source: "{#BUILD_BIN_DIR}\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion; 
-Source: "{#BUILD_BIN_DIR}\wx-config.exe"; DestDir: "{app}";
+Source: "{#WX_CONFIG_DIR}\wx-config.exe"; DestDir: "{app}";
 Source: "{#BUILD_BIN_DIR}\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#BUILD_BIN_DIR}\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#BUILD_BIN_DIR}\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
@@ -54,18 +55,18 @@ Source: "{#BUILD_BIN_DIR}\codelite-exec.exe"; DestDir: "{app}"; Flags: ignorever
 Source: "{#BUILD_BIN_DIR}\makedir.exe"; DestDir: "{app}"; Flags: ignoreversion ; 
 
 ;; ---- wxWidgets DLLs
-Source: "{#WXWIN}\lib\gcc_dll\wxbase316u_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxbase316u_net_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxbase316u_xml_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_adv_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_aui_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_core_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_html_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_propgrid_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_richtext_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_stc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_xrc_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
-Source: "{#WXWIN}\lib\gcc_dll\wxmsw316u_ribbon_gcc_cl.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxbase316u_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxbase316u_net_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxbase316u_xml_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_adv_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_aui_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_core_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_html_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_propgrid_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_richtext_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_stc_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_xrc_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
+Source: "{#WXWIN}\lib\gcc_x64_dll\wxmsw316u_ribbon_gcc_custom.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ;; ---- MinGW64 Dlls
 Source: "{#MINGW_DIR}\libgcc_s_seh-1.dll"; DestDir: "{app}"; Flags: ignoreversion;

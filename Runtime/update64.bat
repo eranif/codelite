@@ -7,7 +7,9 @@ set BIN_DIR=%CODELITE_SRC_DIR%\build-Win_x64_Release\bin
 set LIB_DIR=%CODELITE_SRC_DIR%\build-Win_x64_Release\lib
 set SDK_DIR==%CODELITE_SRC_DIR%\sdk
 set RUNTIME_DIR=%CODELITE_SRC_DIR%\Runtime
-set WXWIN=C:\src\wxWidgets
+set WX_CONFIG_DIR=C:\src\wx-config-msys2\bin
+set WXWIN=C:\root
+set LLVM_BIN=C:\LLVM\bin
 
 ::IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
 IF EXIST ..\wxcrafter\wxcrafter.accelerators (set COPY_WXC_RESOURCES=1)
@@ -41,8 +43,8 @@ IF EXIST %RUNTIME_DIR%\PHP.zip ( copy PHP.zip "%TARGET_DIR%\CodeLite\" )
 xcopy %LIB_DIR%\*.dll "%TARGET_DIR%\CodeLite\plugins\" /E /I /H /Y /EXCLUDE:excludes
 
 if "%WXWIN%" == "" GOTO OTHERS
-xcopy %WXWIN%\lib\gcc_dll\wxmsw*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
-xcopy %WXWIN%\lib\gcc_dll\wxbase*u_*gcc_cl.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy %WXWIN%\lib\gcc_x64_dll\wxmsw*u_*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
+xcopy %WXWIN%\lib\gcc_x64_dll\wxbase*u_*.dll "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 :: xcopy %WXWIN%\lib\gcc_dll\wxrc.exe "%TARGET_DIR%\CodeLite\" /E /I /H /Y /EXCLUDE:excludes
 
 if "%COPY_WXC_RESOURCES%" == "1" (copy ..\wxcrafter\wxcrafter.accelerators  "%TARGET_DIR%\CodeLite\plugins\resources" )
@@ -54,7 +56,8 @@ copy %RUNTIME_DIR%\codelite-cc.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite_cppcheck.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite_launcher.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-echo.exe "%TARGET_DIR%\CodeLite\" /Y
-copy %SDK_DIR%\clang\lib\clang-format-64.exe "%TARGET_DIR%\CodeLite\codelite-clang-format.exe" /Y
+copy %LLVM_BIN%\clang-format.exe "%TARGET_DIR%\CodeLite\codelite-clang-format.exe" /Y
+copy %LLVM_BIN%\clang-format.exe "%TARGET_DIR%\CodeLite\clang-format.exe" /Y
 copy %SDK_DIR%\libssh\lib\libssh.dll "%TARGET_DIR%\CodeLite\libssh.dll" /Y
 copy %RUNTIME_DIR%\codelite-exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite.exe "%TARGET_DIR%\CodeLite\" /Y
@@ -64,7 +67,7 @@ copy %RUNTIME_DIR%\rm.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\astyle.sample "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\php.sample "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\pthreadGC2.dll "%TARGET_DIR%\CodeLite\" /Y
-copy %RUNTIME_DIR%\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
+copy %WX_CONFIG_DIR%\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 
 :END
 

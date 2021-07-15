@@ -478,8 +478,8 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
-      <Environment>WXWIN=C:\src\wxWidgets
-WXCFG=gcc_dll\mswu</Environment>
+      <Environment>WXWIN=C:/root
+WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>

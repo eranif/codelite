@@ -303,7 +303,6 @@
         <Library Value="libCodeLiteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="libhunspell.a"/>
-        <Library Value="wxscintilla"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>

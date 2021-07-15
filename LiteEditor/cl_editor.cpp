@@ -3565,15 +3565,14 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         if(!escapeUsed) {
             clMainFrame::Get()->GetMainBook()->ShowQuickBar(
                 false); // There's no easy way to tell if it's actually showing, so just do a Close
-
             // In addition, if we have multiple selections, de-select them
             if(GetSelections()) {
                 clEditorStateLocker editor(this);
                 ClearSelections();
             }
+            clMainFrame::Get()->ViewPane(wxT("Output View"), false);
         }
     }
-
     m_context->OnKeyDown(event);
 }
 

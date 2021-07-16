@@ -91,7 +91,7 @@ WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, co
     m_textCtrlWspEnvVars->SetKeyWords(3, wxT(""));
     m_textCtrlWspEnvVars->SetKeyWords(4, wxT(""));
 
-    bSizer81->Add(m_textCtrlWspEnvVars, 0, wxALL, WXC_FROM_DIP(5));
+    bSizer81->Add(m_textCtrlWspEnvVars, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticline1 =
         new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);

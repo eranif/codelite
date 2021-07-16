@@ -44,6 +44,7 @@ protected:
     void DoCentreErrorLine(Compiler::PatternMatch* match_result, clEditor* editor, bool centerLine);
     void SaveBuildLog();
     void CopySelections();
+    void CopyAll();
     wxString CreateSummaryLine();
 
 public:

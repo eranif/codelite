@@ -321,13 +321,19 @@ void BuildTab::OnContextMenu(wxDataViewEvent& e)
     if(e.GetItem().IsOk()) {
         menu.Append(XRCID("copy-current-lines"), _("Copy selected lines to clipboard"));
         menu.Enable(XRCID("copy-current-lines"), !m_buildInProgress);
+
+        menu.Append(XRCID("copy-all-lines"), _("Copy all"));
+        menu.Enable(XRCID("copy-all-lines"), !m_buildInProgress);
+
         menu.AppendSeparator();
     }
-    menu.Append(wxID_CLEAR);
-    menu.Enable(wxID_CLEAR, !m_buildInProgress);
 
     menu.Append(wxID_SAVEAS);
     menu.Enable(wxID_SAVEAS, !m_buildInProgress);
+
+    menu.AppendSeparator();
+    menu.Append(wxID_CLEAR);
+    menu.Enable(wxID_CLEAR, !m_buildInProgress);
 
     menu.Bind(
         wxEVT_MENU,
@@ -352,6 +358,14 @@ void BuildTab::OnContextMenu(wxDataViewEvent& e)
             CallAfter(&BuildTab::CopySelections);
         },
         XRCID("copy-current-lines"));
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            CallAfter(&BuildTab::CopyAll);
+        },
+        XRCID("copy-all-lines"));
 
     m_view->PopupMenu(&menu);
 }
@@ -393,6 +407,22 @@ void BuildTab::CopySelections()
     for(size_t i = 0; i < items.size(); ++i) {
         wxString str;
         StringUtils::StripTerminalColouring(m_view->GetItemText(items[i]), str);
+        content << str << "\n";
+    }
+    ::CopyToClipboard(content);
+}
+
+void BuildTab::CopyAll()
+{
+    if(m_view->IsEmpty()) {
+        return;
+    }
+
+    wxString content;
+    content.reserve(16 * 1024); // reserve 16K
+    for(size_t i = 0; i < m_view->GetItemCount(); ++i) {
+        wxString str;
+        StringUtils::StripTerminalColouring(m_view->GetItemText(m_view->RowToItem(i)), str);
         content << str << "\n";
     }
     ::CopyToClipboard(content);

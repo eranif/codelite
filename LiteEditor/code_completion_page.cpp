@@ -24,15 +24,20 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "code_completion_page.h"
+#include "ColoursAndFontsManager.h"
+#include "globals.h"
 #include "localworkspace.h"
 #include <wx/tokenzr.h>
-#include "globals.h"
 
 CodeCompletionPage::CodeCompletionPage(wxWindow* parent, int type)
     : CodeCompletionBasePage(parent)
     , m_type(type)
     , m_ccChanged(false)
 {
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    lexer->Apply(m_textCtrlSearchPaths);
+    lexer->Apply(m_textCtrlMacros);
+
     if(m_type == TypeWorkspace) {
 
         wxArrayString excludePaths, includePaths;
@@ -46,9 +51,15 @@ CodeCompletionPage::CodeCompletionPage(wxWindow* parent, int type)
         m_textCtrlSearchPaths->SetValue(wxImplode(includePaths, wxT("\n")));
         m_textCtrlMacros->SetValue(macros);
 
-        m_checkBoxCpp11->SetValue(lw->GetParserFlags() & LocalWorkspace::EnableCpp11);
-        m_checkBoxCpp14->SetValue(lw->GetParserFlags() & LocalWorkspace::EnableCpp14);
-        m_checkBoxCpp17->SetValue(lw->GetParserFlags() & LocalWorkspace::EnableCpp17);
+        if(lw->GetParserFlags() & LocalWorkspace::EnableCpp11) {
+            m_choiceStandard->SetStringSelection("C++11");
+        } else if(lw->GetParserFlags() & LocalWorkspace::EnableCpp14) {
+            m_choiceStandard->SetStringSelection("C++14");
+        } else if(lw->GetParserFlags() & LocalWorkspace::EnableCpp17) {
+            m_choiceStandard->SetStringSelection("C++17");
+        } else if(lw->GetParserFlags() & LocalWorkspace::EnableCpp20) {
+            m_choiceStandard->SetStringSelection("C++20");
+        }
         m_checkBoxSWTLW->SetValue(lw->GetParserFlags() & LocalWorkspace::EnableSWTLW);
     }
 }
@@ -72,13 +83,21 @@ void CodeCompletionPage::Save()
         lw->SetParserPaths(GetIncludePaths(), wxArrayString());
         lw->SetParserMacros(GetMacros());
 
-        if(m_checkBoxCpp11->IsChecked()) flags |= LocalWorkspace::EnableCpp11;
-        if(m_checkBoxCpp14->IsChecked()) flags |= LocalWorkspace::EnableCpp14;
-        if(m_checkBoxCpp17->IsChecked()) flags |= LocalWorkspace::EnableCpp17;
-        if(m_checkBoxSWTLW->IsChecked()) flags |= LocalWorkspace::EnableSWTLW;
+        std::unordered_map<wxString, int> M = { { "C++11", LocalWorkspace::EnableCpp11 },
+                                                { "C++14", LocalWorkspace::EnableCpp14 },
+                                                { "C++17", LocalWorkspace::EnableCpp17 },
+                                                { "C++20", LocalWorkspace::EnableCpp20 } };
+        wxString standard = m_choiceStandard->GetStringSelection();
+        if(M.count(standard)) {
+            flags |= M[standard];
+        }
+
+        if(m_checkBoxSWTLW->IsChecked())
+            flags |= LocalWorkspace::EnableSWTLW;
         lw->SetParserFlags(flags);
         lw->Flush();
     }
 }
 
-void CodeCompletionPage::OnCCContentModified(wxCommandEvent& event) { m_ccChanged = true; }
+void CodeCompletionPage::OnCCContentModified(wxStyledTextEvent& event) { m_ccChanged = true; }
+bool CodeCompletionPage::IsCpp11Enabled() const { return m_choiceStandard->GetStringSelection() == "C++11"; }

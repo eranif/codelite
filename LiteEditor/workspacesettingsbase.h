@@ -4,9 +4,10 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_LITEEDITOR_WORKSPACESETTINGSBASE_BASE_CLASSES_H
-#define CODELITE_LITEEDITOR_WORKSPACESETTINGSBASE_BASE_CLASSES_H
+#ifndef _CODELITE_LITEEDITOR_WORKSPACESETTINGSBASE_BASE_CLASSES_H
+#define _CODELITE_LITEEDITOR_WORKSPACESETTINGSBASE_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -17,12 +18,11 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/imaglist.h>
-#include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
+#include <wx/stc/stc.h>
 #include <wx/statline.h>
-#include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
@@ -33,18 +33,29 @@
 #include <wx/persist/treebook.h>
 #endif
 
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
+// clang-format on
+
 class WorkspaceSettingsBase : public wxDialog
 {
 protected:
+    wxBoxSizer* mainSizer;
     wxNotebook* m_notebook1;
     wxPanel* m_panelEnv;
-    wxStaticText* m_staticText3;
+    wxBoxSizer* bSizer81;
     wxStaticText* m_staticText4;
     wxChoice* m_choiceEnvSets;
-    wxStaticLine* m_staticline2;
-    wxStaticText* m_staticText6;
-    wxTextCtrl* m_textCtrlWspEnvVars;
+    wxStyledTextCtrl* m_textCtrlWspEnvVars;
     wxStaticLine* m_staticline1;
+    wxBoxSizer* buttonSizer;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 
@@ -53,53 +64,51 @@ protected:
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText3() { return m_staticText3; }
     wxStaticText* GetStaticText4() { return m_staticText4; }
     wxChoice* GetChoiceEnvSets() { return m_choiceEnvSets; }
-    wxStaticLine* GetStaticline2() { return m_staticline2; }
-    wxStaticText* GetStaticText6() { return m_staticText6; }
-    wxTextCtrl* GetTextCtrlWspEnvVars() { return m_textCtrlWspEnvVars; }
+    wxStyledTextCtrl* GetTextCtrlWspEnvVars() { return m_textCtrlWspEnvVars; }
     wxPanel* GetPanelEnv() { return m_panelEnv; }
     wxNotebook* GetNotebook1() { return m_notebook1; }
     wxStaticLine* GetStaticline1() { return m_staticline1; }
     wxButton* GetButtonOk() { return m_buttonOk; }
     wxButton* GetButtonCancel() { return m_buttonCancel; }
-    WorkspaceSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    WorkspaceSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"),
+                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~WorkspaceSettingsBase();
 };
-
 
 class CodeCompletionBasePage : public wxPanel
 {
 protected:
+    wxBoxSizer* bSizer9;
     wxSplitterWindow* m_splitter1;
     wxPanel* m_panel8;
+    wxBoxSizer* bSizer24;
     wxStaticText* m_staticText5;
-    wxTextCtrl* m_textCtrlSearchPaths;
+    wxStyledTextCtrl* m_textCtrlSearchPaths;
     wxPanel* m_panel6;
+    wxBoxSizer* bSizer221;
     wxStaticText* m_staticText12;
-    wxTextCtrl* m_textCtrlMacros;
-    wxCheckBox* m_checkBoxCpp11;
-    wxCheckBox* m_checkBoxCpp14;
-    wxCheckBox* m_checkBoxCpp17;
+    wxStyledTextCtrl* m_textCtrlMacros;
+    wxChoice* m_choiceStandard;
     wxCheckBox* m_checkBoxSWTLW;
 
 protected:
-    virtual void OnCCContentModified(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCCContentModified(wxStyledTextEvent& event) { event.Skip(); }
 
 public:
     wxStaticText* GetStaticText5() { return m_staticText5; }
-    wxTextCtrl* GetTextCtrlSearchPaths() { return m_textCtrlSearchPaths; }
+    wxStyledTextCtrl* GetTextCtrlSearchPaths() { return m_textCtrlSearchPaths; }
     wxPanel* GetPanel8() { return m_panel8; }
     wxStaticText* GetStaticText12() { return m_staticText12; }
-    wxTextCtrl* GetTextCtrlMacros() { return m_textCtrlMacros; }
-    wxCheckBox* GetCheckBoxCpp11() { return m_checkBoxCpp11; }
-    wxCheckBox* GetCheckBoxCpp14() { return m_checkBoxCpp14; }
-    wxCheckBox* GetCheckBoxCpp17() { return m_checkBoxCpp17; }
-    wxCheckBox* GetCheckBoxSWTLW() { return m_checkBoxSWTLW; }
+    wxStyledTextCtrl* GetTextCtrlMacros() { return m_textCtrlMacros; }
     wxPanel* GetPanel6() { return m_panel6; }
     wxSplitterWindow* GetSplitter1() { return m_splitter1; }
-    CodeCompletionBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    wxChoice* GetChoiceStandard() { return m_choiceStandard; }
+    wxCheckBox* GetCheckBoxSWTLW() { return m_checkBoxSWTLW; }
+    CodeCompletionBasePage(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~CodeCompletionBasePage();
 };
 

@@ -24,20 +24,24 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "workspacesettingsdlg.h"
+#include "ColoursAndFontsManager.h"
 #include "code_completion_page.h"
-#include "localworkspace.h"
 #include "environmentconfig.h"
 #include "evnvarlist.h"
-#include "windowattrmanager.h"
-#include <wx/dirdlg.h>
-#include <map>
-#include <wx/tokenzr.h>
 #include "globals.h"
+#include "localworkspace.h"
+#include "windowattrmanager.h"
+#include <map>
+#include <wx/dirdlg.h>
+#include <wx/tokenzr.h>
 
 WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* localWorkspace)
     : WorkspaceSettingsBase(parent)
     , m_localWorkspace(localWorkspace)
 {
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    lexer->Apply(m_textCtrlWspEnvVars);
+
     m_ccPage = new CodeCompletionPage(m_notebook1, CodeCompletionPage::TypeWorkspace);
     m_notebook1->AddPage(m_ccPage, _("Code Completion"), false);
 
@@ -81,44 +85,11 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
     envvars.Trim().Trim(false);
 
     m_textCtrlWspEnvVars->SetValue(envvars);
-    SetName("WorkspaceSettingsDlg");
-    WindowAttrManager::Load(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 WorkspaceSettingsDlg::~WorkspaceSettingsDlg() {}
 
-// void WorkspaceSettingsDlg::OnAddIncludePath( wxCommandEvent& event )
-//{
-//	wxUnusedVar(event);
-//	wxString new_path = wxDirSelector(_("Add Parser Search Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition,
-//this);
-//	if (new_path.IsEmpty() == false) {
-//		wxString curpaths = m_textCtrlIncludePaths->GetValue();
-//		curpaths.Trim().Trim(false);
-//		if(curpaths.IsEmpty()) {
-//			curpaths << wxT("\n");
-//		}
-//		curpaths << new_path;
-//		m_textCtrlIncludePaths->SetValue(curpaths);
-//	}
-//}
-//
-// void WorkspaceSettingsDlg::OnAddExcludePath( wxCommandEvent& event )
-//{
-//	wxUnusedVar(event);
-//	wxString new_path = wxDirSelector(_("Add Parser Exclude Path:"), wxT(""), wxDD_DEFAULT_STYLE, wxDefaultPosition,
-//this);
-//	if (new_path.IsEmpty() == false) {
-//		wxString curpaths = m_textCtrlExcludePaths->GetValue();
-//		curpaths.Trim().Trim(false);
-//		if(curpaths.IsEmpty()) {
-//			curpaths << wxT("\n");
-//		}
-//		curpaths << new_path;
-//		m_textCtrlExcludePaths->SetValue(curpaths);
-//	}
-//}
-//
 wxArrayString WorkspaceSettingsDlg::GetExcludePaths() const { return wxArrayString(); }
 
 wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const { return m_ccPage->GetIncludePaths(); }

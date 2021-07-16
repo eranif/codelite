@@ -31,31 +31,26 @@
 class CodeCompletionPage : public CodeCompletionBasePage
 {
 public:
-    enum {
-        TypeWorkspace,
-        TypeProject
-    };
+    enum { TypeWorkspace, TypeProject };
 
 protected:
-    int  m_type;
+    int m_type;
     bool m_ccChanged;
 
 protected:
     // Event handlers
-    void OnCCContentModified(wxCommandEvent& event);
+    void OnCCContentModified(wxStyledTextEvent& event);
 
 public:
-    CodeCompletionPage(wxWindow *parent, int type);
+    CodeCompletionPage(wxWindow* parent, int type);
     virtual ~CodeCompletionPage();
 
     void Save();
 
     wxArrayString GetIncludePaths() const;
-    wxString      GetMacros() const;
-    wxString      GetIncludePathsAsString() const;
-    bool          IsCpp11Enabled() const {
-        return m_checkBoxCpp11->IsChecked();
-    }
+    wxString GetMacros() const;
+    wxString GetIncludePathsAsString() const;
+    bool IsCpp11Enabled() const;
 };
 
 #endif // CODECOMPLETIONPAGE_H

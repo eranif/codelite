@@ -2112,7 +2112,7 @@ resources.cpp: resources.xrc
         <Preprocessor Value="wxUSE_GUI=1"/>
         <Preprocessor Value="CL_DEBUG_BUILD=1"/>
       </Compiler>
-      <Linker Options="-g;$(shell wx-config  --libs std,stc,propgrid --unicode=yes);-Wl,--subsystem,windows -mwindows;" Required="yes">
+      <Linker Options="-g;$(shell wx-config  --libs std,stc,propgrid,richtext --unicode=yes)" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="../sdk/clang/lib"/>
@@ -2151,7 +2151,8 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -2270,8 +2271,7 @@ resources.cpp: resources.xrc
         <CustomPostBuild/>
         <CustomPreBuild>resources.cpp
 resources.cpp: resources.xrc
-	wxrc /c /v /o resources.cpp resources.xrc
-</CustomPreBuild>
+	wxrc /c /v /o resources.cpp resources.xrc</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="yes" EnableCpp14="no">
         <ClangCmpFlagsC/>

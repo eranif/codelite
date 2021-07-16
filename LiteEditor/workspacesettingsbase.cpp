@@ -6,107 +6,124 @@
 
 #include "workspacesettingsbase.h"
 
-
 // Declare the bitmap loading function
 extern void wxC3C39InitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                             const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3C39InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
-    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+
+    mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
-    
-    m_notebook1 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), 0);
+
+    m_notebook1 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_notebook1->SetName(wxT("m_notebook1"));
-    
-    mainSizer->Add(m_notebook1, 1, wxALL|wxEXPAND, 5);
-    
-    m_panelEnv = new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+
+    mainSizer->Add(m_notebook1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panelEnv =
+        new wxPanel(m_notebook1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook1->AddPage(m_panelEnv, _("Environment"), false);
-    
-    wxBoxSizer* bSizer81 = new wxBoxSizer(wxVERTICAL);
+
+    bSizer81 = new wxBoxSizer(wxVERTICAL);
     m_panelEnv->SetSizer(bSizer81);
-    
-    wxStaticBoxSizer* sbSizer3 = new wxStaticBoxSizer( new wxStaticBox(m_panelEnv, wxID_ANY, wxT("")), wxVERTICAL);
-    
-    bSizer81->Add(sbSizer3, 0, wxALL, 5);
-    
-    m_staticText3 = new wxStaticText(m_panelEnv, wxID_ANY, _("By default, CodeLite uses the current active environment variables set as defined in the Settings > Environment Variables dialog.\nHowever, you may choose a different set to become the active set when this workspace is loaded selecting it here."), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    sbSizer3->Add(m_staticText3, 0, wxALL, 5);
-    
-    m_staticText4 = new wxStaticText(m_panelEnv, wxID_ANY, _("Environment sets:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer81->Add(m_staticText4, 0, wxALL|wxEXPAND, 5);
-    
+
+    m_staticText4 = new wxStaticText(m_panelEnv, wxID_ANY, _("Environment sets:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
+    m_staticText4->SetToolTip(
+        _("By default, CodeLite uses the current active environment variables set as defined\nin the Settings > "
+          "Environment Variables dialog.\nHowever, you may choose a different\nset to become the active set when this "
+          "workspace is loaded selecting it here."));
+
+    bSizer81->Add(m_staticText4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxArrayString m_choiceEnvSetsArr;
-    m_choiceEnvSetsArr.Add(wxT("Default"));
-    m_choiceEnvSets = new wxChoice(m_panelEnv, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceEnvSetsArr, 0);
+    m_choiceEnvSetsArr.Add(_("Default"));
+    m_choiceEnvSets = new wxChoice(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)),
+                                   m_choiceEnvSetsArr, 0);
     m_choiceEnvSets->SetSelection(0);
-    
-    bSizer81->Add(m_choiceEnvSets, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticline2 = new wxStaticLine(m_panelEnv, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    bSizer81->Add(m_staticline2, 0, wxALL|wxEXPAND, 5);
-    
-    m_staticText6 = new wxStaticText(m_panelEnv, wxID_ANY, _("Specify here an additional environment variables that will be shared with other people who are using this workspace:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer81->Add(m_staticText6, 0, wxALL|wxEXPAND, 5);
-    
-    m_textCtrlWspEnvVars = new wxTextCtrl(m_panelEnv, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textCtrlWspEnvVarsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textCtrlWspEnvVarsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textCtrlWspEnvVarsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlWspEnvVarsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textCtrlWspEnvVars->SetFont(m_textCtrlWspEnvVarsFont);
-    
-    bSizer81->Add(m_textCtrlWspEnvVars, 1, wxALL|wxEXPAND, 5);
-    
-    m_staticline1 = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxLI_HORIZONTAL);
-    
-    mainSizer->Add(m_staticline1, 0, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    
-    mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_buttonOk = new wxButton(this, wxID_OK, _("&Ok"), wxDefaultPosition, wxSize(-1, -1), 0);
+
+    bSizer81->Add(m_choiceEnvSets, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_textCtrlWspEnvVars =
+        new wxStyledTextCtrl(m_panelEnv, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelEnv, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlWspEnvVars->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlWspEnvVars->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlWspEnvVars->SetMarginSensitive(4, true);
+    m_textCtrlWspEnvVars->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlWspEnvVars->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlWspEnvVars->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlWspEnvVars->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlWspEnvVars->SetMarginWidth(2, 0);
+    m_textCtrlWspEnvVars->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlWspEnvVars->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlWspEnvVars->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlWspEnvVars->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlWspEnvVars->SetMarginMask(3, 0);
+    m_textCtrlWspEnvVars->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlWspEnvVars->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlWspEnvVars->StyleClearAll();
+    m_textCtrlWspEnvVars->SetWrapMode(0);
+    m_textCtrlWspEnvVars->SetIndentationGuides(0);
+    m_textCtrlWspEnvVars->SetKeyWords(0, wxT(""));
+    m_textCtrlWspEnvVars->SetKeyWords(1, wxT(""));
+    m_textCtrlWspEnvVars->SetKeyWords(2, wxT(""));
+    m_textCtrlWspEnvVars->SetKeyWords(3, wxT(""));
+    m_textCtrlWspEnvVars->SetKeyWords(4, wxT(""));
+
+    bSizer81->Add(m_textCtrlWspEnvVars, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_staticline1 =
+        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
+
+    mainSizer->Add(m_staticline1, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_buttonOk = new wxButton(this, wxID_OK, _("&Ok"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOk->SetDefault();
-    
-    buttonSizer->Add(m_buttonOk, 0, wxALL, 5);
-    
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    buttonSizer->Add(m_buttonCancel, 0, wxALL, 5);
-    
-    
-    #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook1)){
+
+    buttonSizer->Add(m_buttonOk, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_buttonCancel =
+        new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    buttonSizer->Add(m_buttonCancel, 0, wxALL, WXC_FROM_DIP(5));
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook1)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook1);
     } else {
         wxPersistenceManager::Get().Restore(m_notebook1);
     }
-    #endif
-    
+#endif
+
     SetName(wxT("WorkspaceSettingsBase"));
-    SetSize(-1,-1);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
@@ -121,123 +138,178 @@ WorkspaceSettingsBase::WorkspaceSettingsBase(wxWindow* parent, wxWindowID id, co
     }
 #endif
     // Connect events
-    m_choiceEnvSets->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceSettingsBase::OnEnvSelected), NULL, this);
-    m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WorkspaceSettingsBase::OnButtonOK), NULL, this);
-    
+    m_choiceEnvSets->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceSettingsBase::OnEnvSelected),
+                             NULL, this);
+    m_buttonOk->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WorkspaceSettingsBase::OnButtonOK), NULL,
+                        this);
 }
 
 WorkspaceSettingsBase::~WorkspaceSettingsBase()
 {
-    m_choiceEnvSets->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(WorkspaceSettingsBase::OnEnvSelected), NULL, this);
-    m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WorkspaceSettingsBase::OnButtonOK), NULL, this);
-    
+    m_choiceEnvSets->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                wxCommandEventHandler(WorkspaceSettingsBase::OnEnvSelected), NULL, this);
+    m_buttonOk->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(WorkspaceSettingsBase::OnButtonOK), NULL,
+                           this);
 }
 
-CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+CodeCompletionBasePage::CodeCompletionBasePage(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+                                               long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC3C39InitBitmapResources();
         bBitmapLoaded = true;
     }
-    
-    wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
+
+    bSizer9 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer9);
-    
-    m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxSP_LIVE_UPDATE|wxSP_NO_XP_THEME|wxSP_3DSASH);
+
+    m_splitter1 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                       wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
     m_splitter1->SetSashGravity(0.5);
     m_splitter1->SetMinimumPaneSize(1);
-    
-    bSizer9->Add(m_splitter1, 1, wxEXPAND, 5);
-    
-    m_panel8 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
-    
-    wxBoxSizer* bSizer24 = new wxBoxSizer(wxVERTICAL);
+
+    bSizer9->Add(m_splitter1, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel8 =
+        new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    bSizer24 = new wxBoxSizer(wxVERTICAL);
     m_panel8->SetSizer(bSizer24);
-    
-    m_staticText5 = new wxStaticText(m_panel8, wxID_ANY, _("Search paths:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer24->Add(m_staticText5, 0, wxLEFT|wxRIGHT|wxTOP, 5);
-    
-    m_textCtrlSearchPaths = new wxTextCtrl(m_panel8, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textCtrlSearchPathsFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textCtrlSearchPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textCtrlSearchPathsFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlSearchPathsFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textCtrlSearchPaths->SetFont(m_textCtrlSearchPathsFont);
-    m_textCtrlSearchPaths->SetToolTip(_("Add here search paths used by clang / ctags for locating include files"));
-    
-    bSizer24->Add(m_textCtrlSearchPaths, 1, wxALL|wxEXPAND, 5);
-    
-    m_panel6 = new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), wxTAB_TRAVERSAL);
+
+    m_staticText5 = new wxStaticText(m_panel8, wxID_ANY, _("Search paths:"), wxDefaultPosition,
+                                     wxDLG_UNIT(m_panel8, wxSize(-1, -1)), 0);
+
+    bSizer24->Add(m_staticText5, 0, wxLEFT | wxRIGHT | wxTOP, WXC_FROM_DIP(5));
+
+    m_textCtrlSearchPaths =
+        new wxStyledTextCtrl(m_panel8, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel8, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_textCtrlSearchPaths->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlSearchPaths->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlSearchPaths->SetMarginSensitive(4, true);
+    m_textCtrlSearchPaths->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlSearchPaths->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlSearchPaths->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlSearchPaths->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlSearchPaths->SetMarginWidth(2, 0);
+    m_textCtrlSearchPaths->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlSearchPaths->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlSearchPaths->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlSearchPaths->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlSearchPaths->SetMarginMask(3, 0);
+    m_textCtrlSearchPaths->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlSearchPaths->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlSearchPaths->StyleClearAll();
+    m_textCtrlSearchPaths->SetWrapMode(0);
+    m_textCtrlSearchPaths->SetIndentationGuides(0);
+    m_textCtrlSearchPaths->SetKeyWords(0, wxT(""));
+    m_textCtrlSearchPaths->SetKeyWords(1, wxT(""));
+    m_textCtrlSearchPaths->SetKeyWords(2, wxT(""));
+    m_textCtrlSearchPaths->SetKeyWords(3, wxT(""));
+    m_textCtrlSearchPaths->SetKeyWords(4, wxT(""));
+
+    bSizer24->Add(m_textCtrlSearchPaths, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel6 =
+        new wxPanel(m_splitter1, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter1, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter1->SplitHorizontally(m_panel8, m_panel6, 0);
-    
-    wxBoxSizer* bSizer221 = new wxBoxSizer(wxVERTICAL);
+
+    bSizer221 = new wxBoxSizer(wxVERTICAL);
     m_panel6->SetSizer(bSizer221);
-    
-    m_staticText12 = new wxStaticText(m_panel6, wxID_ANY, _("Macros (clang):"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer221->Add(m_staticText12, 0, wxLEFT|wxRIGHT|wxTOP, 5);
-    
-    m_textCtrlMacros = new wxTextCtrl(m_panel6, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_PROCESS_TAB|wxTE_MULTILINE);
-    #ifdef __WXMSW__
-    // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to wxFONTFAMILY_TELETYPE
-    wxFont m_textCtrlMacrosFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    m_textCtrlMacrosFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #else
-    wxFont m_textCtrlMacrosFont = wxSystemSettings::GetFont(wxSYS_ANSI_FIXED_FONT);
-    m_textCtrlMacrosFont.SetFamily(wxFONTFAMILY_TELETYPE);
-    #endif
-    m_textCtrlMacros->SetFont(m_textCtrlMacrosFont);
+
+    m_staticText12 =
+        new wxStaticText(m_panel6, wxID_ANY, _("Macros:"), wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
+
+    bSizer221->Add(m_staticText12, 0, wxLEFT | wxRIGHT | wxTOP, WXC_FROM_DIP(5));
+
+    m_textCtrlMacros =
+        new wxStyledTextCtrl(m_panel6, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel6, wxSize(-1, -1)), 0);
     m_textCtrlMacros->SetToolTip(_("Add here macros to pass to clang when generating PCH files\nOne macro per line"));
-    
-    bSizer221->Add(m_textCtrlMacros, 1, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* boxSizer3 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer221->Add(boxSizer3, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
-    m_checkBoxCpp11 = new wxCheckBox(m_panel6, wxID_ANY, _("Enable C++11 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxCpp11->SetValue(false);
-    
-    boxSizer3->Add(m_checkBoxCpp11, 0, wxALL, 5);
-    
-    m_checkBoxCpp14 = new wxCheckBox(m_panel6, wxID_ANY, _("Enable C++14 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxCpp14->SetValue(false);
-    
-    boxSizer3->Add(m_checkBoxCpp14, 0, wxALL, 5);
-	
-	m_checkBoxCpp17 = new wxCheckBox(m_panel6, wxID_ANY, _("Enable C++17 Standard"), wxDefaultPosition, wxSize(-1,-1), 0);
-    m_checkBoxCpp17->SetValue(false);
-    
-    boxSizer3->Add(m_checkBoxCpp17, 0, wxALL, 5);
-    
-    m_checkBoxSWTLW = new wxCheckBox(m_panel6, wxID_ANY, _("Sync to Workspace File"), wxDefaultPosition, wxSize(-1,-1), 0);
+    // Configure the fold margin
+    m_textCtrlMacros->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlMacros->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_textCtrlMacros->SetMarginSensitive(4, true);
+    m_textCtrlMacros->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_textCtrlMacros->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_textCtrlMacros->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_textCtrlMacros->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_textCtrlMacros->SetMarginWidth(2, 0);
+    m_textCtrlMacros->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_textCtrlMacros->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_textCtrlMacros->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_textCtrlMacros->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_textCtrlMacros->SetMarginMask(3, 0);
+    m_textCtrlMacros->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_textCtrlMacros->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_textCtrlMacros->StyleClearAll();
+    m_textCtrlMacros->SetWrapMode(0);
+    m_textCtrlMacros->SetIndentationGuides(0);
+    m_textCtrlMacros->SetKeyWords(0, wxT(""));
+    m_textCtrlMacros->SetKeyWords(1, wxT(""));
+    m_textCtrlMacros->SetKeyWords(2, wxT(""));
+    m_textCtrlMacros->SetKeyWords(3, wxT(""));
+    m_textCtrlMacros->SetKeyWords(4, wxT(""));
+
+    bSizer221->Add(m_textCtrlMacros, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceStandardArr;
+    m_choiceStandardArr.Add(_("C++11"));
+    m_choiceStandardArr.Add(_("C++14"));
+    m_choiceStandardArr.Add(_("C++17"));
+    m_choiceStandardArr.Add(_("C++20"));
+    m_choiceStandard =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceStandardArr, 0);
+    m_choiceStandard->SetSelection(0);
+
+    bSizer9->Add(m_choiceStandard, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxSWTLW = new wxCheckBox(this, wxID_ANY, _("Sync to Workspace File"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxSWTLW->SetValue(false);
-    m_checkBoxSWTLW->SetToolTip(_("When enabled search paths folders for Code Completion will be synced between the Workspace file and the local search paths database."));
-    
-    boxSizer3->Add(m_checkBoxSWTLW, 0, wxALL, 5);
-    
+    m_checkBoxSWTLW->SetToolTip(_("When enabled search paths folders for Code Completion will be synced between the "
+                                  "Workspace file and the local search paths database."));
+
+    bSizer9->Add(m_checkBoxSWTLW, 0, wxALL, WXC_FROM_DIP(5));
+
     SetName(wxT("CodeCompletionBasePage"));
-    SetSize(500,300);
-    if (GetSizer()) {
-         GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
     // Connect events
-    m_textCtrlSearchPaths->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
-    m_textCtrlMacros->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
-    
+    m_textCtrlSearchPaths->Connect(wxEVT_STC_CHANGE,
+                                   wxStyledTextEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
+    m_textCtrlMacros->Connect(wxEVT_STC_CHANGE, wxStyledTextEventHandler(CodeCompletionBasePage::OnCCContentModified),
+                              NULL, this);
 }
 
 CodeCompletionBasePage::~CodeCompletionBasePage()
 {
-    m_textCtrlSearchPaths->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
-    m_textCtrlMacros->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
-    
+    m_textCtrlSearchPaths->Disconnect(
+        wxEVT_STC_CHANGE, wxStyledTextEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
+    m_textCtrlMacros->Disconnect(wxEVT_STC_CHANGE,
+                                 wxStyledTextEventHandler(CodeCompletionBasePage::OnCCContentModified), NULL, this);
 }

@@ -23,11 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "code_completion_manager.h"
 #include "ServiceProviderManager.h"
 #include "bitmap_loader.h"
 #include "cl_editor.h"
 #include "code_completion_api.h"
-#include "code_completion_manager.h"
 #include "compilation_database.h"
 #include "compiler_command_line_parser.h"
 #include "ctags_manager.h"

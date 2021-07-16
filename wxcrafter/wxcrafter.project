@@ -1049,6 +1049,7 @@
         <Library Value="libCodeLiteud.dll"/>
         <Library Value="libwxsqlite3ud.dll"/>
         <Library Value="wxcLib"/>
+        <Library Value="Ws2_32"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
       <General OutputFile="wxcrafter-dbg.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins wxcrafter" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins wxcrafter" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>

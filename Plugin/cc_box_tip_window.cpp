@@ -23,10 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cc_box_tip_window.h"
 #include "ColoursAndFontsManager.h"
 #include "Markup.h"
 #include "bitmap_loader.h"
+#include "cc_box_tip_window.h"
 #include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
@@ -57,6 +57,20 @@ const wxEventType wxEVT_TIP_BTN_CLICKED_DOWN = wxNewEventType();
 
 namespace
 {
+/// mostly needed under linux where the calculate size does not match the actual size required to draw the tooltip
+/// this is probably due to different wxDC types used
+double m_ratio = 0.0;
+
+void InflateSize(wxSize& size, double factor)
+{
+    if(factor > 1.0) {
+        double updated_w = factor * (double)size.GetWidth();
+        double updated_h = factor * (double)size.GetHeight();
+        size.SetWidth(updated_w);
+        size.SetHeight(updated_h);
+    }
+}
+
 void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
 {
     wxString restr = R"str(<.*?>)str";
@@ -168,6 +182,11 @@ void CCBoxTipWindow::DoInitialize(size_t numOfTips, bool simpleTip)
 
     clMarkdownRenderer renderer;
     wxRect text_rect = renderer.GetSize(this, gcdc, m_tip);
+    if(m_ratio > 0.0) {
+        wxSize sz = text_rect.GetSize();
+        InflateSize(sz, m_ratio);
+        text_rect.SetSize(sz);
+    }
     text_rect.Inflate(5);
 
     // make sure that the tip window, is not bigger than the screen
@@ -308,5 +327,15 @@ void CCBoxTipWindow::PositionLeftTo(wxWindow* win, IEditor* focusEditor)
 void CCBoxTipWindow::DoDrawTip(wxDC& dc)
 {
     clMarkdownRenderer renderer;
-    renderer.Render(this, dc, m_tip, GetClientRect());
+    wxSize size = renderer.Render(this, dc, m_tip, GetClientRect());
+    wxSize client_rect = GetClientRect().GetSize();
+
+    if(m_ratio == 0.0 && size.GetWidth() > client_rect.GetWidth()) {
+        m_ratio = (double)size.GetWidth() / (double)client_rect.GetWidth();
+        m_ratio += 0.01; // give it some extra space
+
+        InflateSize(client_rect, m_ratio);
+        SetSizeHints(client_rect);
+        SetSize(client_rect);
+    }
 }

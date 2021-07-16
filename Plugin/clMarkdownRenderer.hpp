@@ -19,7 +19,10 @@ public:
      * @brief do not render, just calculate the size required to draw the text
      */
     wxSize GetSize(wxWindow* win, wxDC& dc, const wxString& text);
-    void Render(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect);
+    /**
+     * @brief Render the tip and return the size required to do so
+     */
+    wxSize Render(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect);
 };
 
 #endif // CLMARKDOWNRENDERER_HPP

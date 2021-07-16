@@ -2,6 +2,7 @@
 #include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
+#include "file_logger.h"
 #include "mdparser.hpp"
 #include "wx/settings.h"
 
@@ -47,9 +48,9 @@ clMarkdownRenderer::clMarkdownRenderer() {}
 
 clMarkdownRenderer::~clMarkdownRenderer() {}
 
-void clMarkdownRenderer::Render(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect)
+wxSize clMarkdownRenderer::Render(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect)
 {
-    DoRender(win, dc, text, rect, true);
+    return DoRender(win, dc, text, rect, true);
 }
 
 wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect, bool do_draw)

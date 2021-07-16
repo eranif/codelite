@@ -41,6 +41,7 @@
 #include "wx/regex.h"
 #include "wx/sizer.h"
 #include <algorithm>
+#include <memory>
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
@@ -119,6 +120,26 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
     }
     str = wxJoin(lines_trimmed, '\n');
 }
+
+/**
+ * @brief return the display for a given window
+ * this function never fails
+ */
+std::unique_ptr<wxDisplay> GetDisplay(const wxWindow* win)
+{
+#if wxCHECK_VERSION(3, 1, 2)
+    wxDisplay* d = new wxDisplay(win);
+#else
+    wxDisplay* d = nullptr;
+    int index = wxDisplay::GetFromWindow(win);
+    if(index == wxNOT_FOUND) {
+        d = new wxDisplay();
+    } else {
+        d = new wxDisplay(index);
+    }
+#endif
+    return std::unique_ptr<wxDisplay>(d);
+}
 } // namespace
 
 CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip_html_tags)
@@ -150,13 +171,9 @@ void CCBoxTipWindow::DoInitialize(size_t numOfTips, bool simpleTip)
     text_rect.Inflate(5);
 
     // make sure that the tip window, is not bigger than the screen
-#if wxCHECK_VERSION(3, 1, 2)
-    wxDisplay d(this);
-#else
-    wxDisplay d;
-#endif
+    auto display = GetDisplay(this);
+    wxRect display_size = display->GetGeometry();
 
-    wxRect display_size = d.GetClientArea();
     if(text_rect.GetHeight() > display_size.GetHeight()) {
         text_rect.SetHeight(display_size.GetHeight());
     }
@@ -196,13 +213,8 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor
     // Check for overflow
     bool vPositioned = false;
 
-#if wxCHECK_VERSION(3, 1, 2)
-    wxDisplay d(this);
-#else
-    wxDisplay d;
-#endif
-
-    wxRect displaySize = d.GetClientArea();
+    auto display = GetDisplay(this);
+    wxRect displaySize = display->GetGeometry();
 
     if((pt.x + tipSize.x) > (displaySize.GetX() + displaySize.GetWidth())) {
         // Move the tip to the left

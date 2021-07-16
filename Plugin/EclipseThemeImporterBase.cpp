@@ -78,7 +78,7 @@ LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& ec
     if(!GetProperty("class", m_klass)) {
         m_klass = m_foreground;
     }
-    if(!GetProperty("parameterVariable", m_variable)) {
+    if(!GetProperty("localVariable", m_variable)) {
         m_variable = m_foreground;
     }
     if(!GetProperty("javadoc", m_javadoc)) {

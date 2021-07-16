@@ -70,6 +70,8 @@ void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
     clTabColours colours = colors;
 
+    constexpr int TAB_RADIUS = 3;
+
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
     wxColour bgColour, activeTabBgColour;
     GetTabColours(colours, style, &activeTabBgColour, &bgColour);
@@ -84,18 +86,18 @@ void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     wxRect visibleTab = tabRect;
     if(style & kNotebook_BottomTabs) {
         // bottom tabs
-        tabRect.y -= 2;
-        visibleTab.height -= 2;
+        tabRect.y -= TAB_RADIUS;
+        visibleTab.height -= TAB_RADIUS;
     } else if(!IS_VERTICAL_TABS(style)) {
         // top tabs
-        tabRect.y += 2;
-        visibleTab.y += 2;
-        visibleTab.height -= 2;
+        tabRect.y += TAB_RADIUS;
+        visibleTab.y += TAB_RADIUS;
+        visibleTab.height -= TAB_RADIUS;
     }
 
     dc.SetPen(tabInfo.IsActive() ? activeTabBgColour : bgColour);
     dc.SetBrush(tabInfo.IsActive() ? activeTabBgColour : bgColour);
-    dc.DrawRoundedRectangle(tabRect, 2.0);
+    dc.DrawRoundedRectangle(tabRect, TAB_RADIUS);
 
     // Draw bitmap
     if(tabInfo.HasBitmap()) {

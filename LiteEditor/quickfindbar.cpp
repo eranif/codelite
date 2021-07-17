@@ -184,8 +184,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
         wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_MATCHCASE); },
         XRCID("case-sensitive"));
     m_toolbar->Bind(
-        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_REGEXP); },
-        XRCID("use-regex"));
+        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_REGEXP); }, XRCID("use-regex"));
     m_toolbar->Bind(
         wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_searchFlags & wxSTC_FIND_WHOLEWORD); },
         XRCID("whole-word"));
@@ -286,7 +285,7 @@ void QuickFindBar::OnText(wxCommandEvent& e)
 {
     e.Skip();
     if(!m_replaceInSelection && !m_disableTextUpdateEvent) {
-        DoFind(FIND_INCREMENT | FIND_GOTOLINE);
+        DoFindWithMessage(FIND_INCREMENT | FIND_GOTOLINE);
     }
 }
 
@@ -355,7 +354,7 @@ void QuickFindBar::OnEnter(wxCommandEvent& e)
     bool shift = wxGetKeyState(WXK_SHIFT);
     size_t find_flags = shift ? FIND_PREV : FIND_DEFAULT;
     find_flags |= FIND_GOTOLINE;
-    DoFind(find_flags);
+    DoFindWithMessage(find_flags);
 
     // Without this call, the caret is placed at the start of the searched
     // text, this at least places the caret at the end
@@ -392,7 +391,7 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
     }
 
     // perform a search
-    DoFind(FIND_DEFAULT | FIND_GOTOLINE, { start_pos, m_sci->GetLastPosition() });
+    DoFindWithMessage(FIND_DEFAULT | FIND_GOTOLINE, { start_pos, static_cast<int>(m_sci->GetLastPosition()) });
 }
 
 int QuickFindBar::DoReplace(const TargetRange& range)
@@ -610,7 +609,7 @@ TargetRange::Vec_t QuickFindBar::DoFindAll()
         return {};
     }
 
-    TargetRange target{ 0, m_sci->GetLastPosition() };
+    TargetRange target{ 0, static_cast<int>(m_sci->GetLastPosition()) };
     // perform a search
 
     TargetRange::Vec_t matches;
@@ -849,8 +848,12 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     if(selectionOnly) {
         target = { m_sci->GetSelectionStart(), m_sci->GetSelectionEnd() };
     } else {
-        target = { 0, m_sci->GetLastPosition() };
+        target = { 0, static_cast<int>(m_sci->GetLastPosition()) };
     }
+
+    // keep the current position, so we can restore it after the replacement
+    // is done
+    int starting_pos = m_sci->GetCurrentPos();
 
     int replacements_done = 0;
     sw.Start();
@@ -881,7 +884,12 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     }
     double ms = sw.Time();
     clDEBUG() << "Replace all took:" << (double)(ms / 1000.0) << "seconds" << endl;
+    if(replacements_done) {
+        CenterLine(m_sci, starting_pos, starting_pos);
+    }
     clGetManager()->SetStatusMessage(wxString::Format(_("Made %d replacements"), replacements_done));
+    Show(false);
+    m_sci->SetFocus();
 }
 
 TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
@@ -963,17 +971,14 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
 void QuickFindBar::OnFind(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    DoFind(FIND_DEFAULT | FIND_GOTOLINE);
+    DoFindWithMessage(FIND_DEFAULT | FIND_GOTOLINE);
 }
 
 void QuickFindBar::OnFindPrev(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    DoFind(FIND_PREV | FIND_GOTOLINE);
+    DoFindWithMessage(FIND_PREV | FIND_GOTOLINE);
 }
-
-void QuickFindBar::OnReplaceTextEnter(wxCommandEvent& event) {}
-void QuickFindBar::OnReplaceTextUpdated(wxCommandEvent& event) {}
 
 void QuickFindBar::OnFindAllUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->IsEmpty()); }
 void QuickFindBar::OnFindPrevUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->IsEmpty()); }
@@ -1044,9 +1049,9 @@ void QuickFindBar::ShowToolBarOnly()
     GetParent()->GetSizer()->Layout();
 }
 
-void QuickFindBar::FindPrevious() { DoFind(FIND_PREV | FIND_GOTOLINE); }
+void QuickFindBar::FindPrevious() { DoFindWithMessage(FIND_PREV | FIND_GOTOLINE); }
 
-void QuickFindBar::FindNext() { DoFind(FIND_DEFAULT | FIND_GOTOLINE); }
+void QuickFindBar::FindNext() { DoFindWithMessage(FIND_DEFAULT | FIND_GOTOLINE); }
 
 size_t QuickFindBar::DoReplaceInBuffer(const TargetRange& range)
 {
@@ -1076,4 +1081,18 @@ bool QuickFindBar::IsReplacementRegex() const
         }
     }
     return false;
+}
+
+TargetRange QuickFindBar::DoFindWithMessage(size_t find_flags, const TargetRange& target)
+{
+    m_matchesFound->SetLabel(wxEmptyString);
+    auto res = DoFind(find_flags);
+    if(!res.IsOk()) {
+        if(find_flags & FIND_PREV) {
+            m_matchesFound->SetLabel(_("Reached the start of the document"));
+        } else {
+            m_matchesFound->SetLabel(_("Reached the end of the document"));
+        }
+    }
+    return res;
 }

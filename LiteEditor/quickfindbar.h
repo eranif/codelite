@@ -41,6 +41,8 @@ struct TargetRange {
     int end_pos = wxNOT_FOUND;
 
     TargetRange() {}
+
+    // this constructor is required to silence errors on macOS with latest clang
     TargetRange(int start, int end)
         : start_pos(start)
         , end_pos(end)
@@ -95,11 +97,10 @@ protected:
     virtual void OnFindPrev(wxCommandEvent& event);
     virtual void OnFindPrevUI(wxUpdateUIEvent& event);
     virtual void OnFindUI(wxUpdateUIEvent& event);
-    virtual void OnReplaceTextEnter(wxCommandEvent& event);
-    virtual void OnReplaceTextUpdated(wxCommandEvent& event);
 
     void DoArrowDown(clTerminalHistory& history, wxTextCtrl* ctrl);
     void DoArrowUp(clTerminalHistory& history, wxTextCtrl* ctrl);
+
     /**
      * @brief find text in the editor the select it
      * @param find_prev should the search go backward? (i.e. from the current position to the start of the document)
@@ -107,6 +108,12 @@ protected:
      * @return a pair of indexes indicating the selection start and end positions
      */
     TargetRange DoFind(size_t find_flags, const TargetRange& target = {});
+
+    /**
+     * @brief same as the above, but also print a message when hitting the bottom or the
+     * top of the document
+     */
+    TargetRange DoFindWithMessage(size_t find_flags, const TargetRange& target = {});
 
 public:
     enum {

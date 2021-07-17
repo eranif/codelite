@@ -95,8 +95,8 @@ protected:
     bool m_highlightCaretLine;
     bool m_clearHighlitWordsOnFind;
     bool m_displayLineNumbers;
-    bool m_relativeLineNumbers = false;
-    bool m_highlightCurLineNumber = true;
+    bool m_relativeLineNumbers;
+    bool m_highlightCurLineNumber;
     bool m_showIndentationGuidelines;
     wxColour m_caretLineColour;
     bool m_indentUsesTabs;

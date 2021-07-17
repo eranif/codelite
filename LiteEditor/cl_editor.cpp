@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_editor.h"
 #include "ColoursAndFontsManager.h"
 #include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
@@ -38,7 +39,6 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
-#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"

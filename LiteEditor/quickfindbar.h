@@ -31,6 +31,7 @@
 #include <wx/combobox.h>
 #include <wx/panel.h>
 
+class wxStaticText;
 class clToolBar;
 class wxStyledTextCtrl;
 
@@ -52,7 +53,7 @@ public:
     bool m_disableTextUpdateEvent;
     clEditEventsHandler::Ptr_t m_findEventsHandler;
     clEditEventsHandler::Ptr_t m_replaceEventsHandler;
-    size_t m_searchFlags;
+    size_t m_searchFlags = 0;
     bool m_highlightMatches;
     bool m_replaceInSelection;
     clTerminalHistory m_searchHistory;
@@ -137,7 +138,7 @@ protected:
     void OnFindPreviousCaret(wxCommandEvent& e);
 
 protected:
-    bool DoShow(bool s, const wxString& findWhat, bool showReplace=false);
+    bool DoShow(bool s, const wxString& findWhat, bool showReplace = false);
     wxStyledTextCtrl* DoCheckPlugins();
 
 public:
@@ -150,7 +151,7 @@ public:
     wxStyledTextCtrl* GetEditor() { return m_sci; }
     void SetEditor(wxStyledTextCtrl* sci);
     void ShowToolBarOnly();
-    
+
     /**
      * @brief search a stc control for 'findwhat'. Use kSearchForward to indicate searching forward, pass 0
      * for backward.

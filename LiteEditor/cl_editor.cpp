@@ -5739,7 +5739,7 @@ void clEditor::QuickAddNext()
     }
 
     // Use the find flags of the quick find bar for this
-    int searchFlags = clMainFrame::Get()->GetMainBook()->GetFindBar()->m_searchFlags;
+    int searchFlags = clMainFrame::Get()->GetMainBook()->GetFindBar()->GetSearchFlags();
     clMainFrame::Get()->GetMainBook()->ShowQuickBarToolBar(true);
 
     wxString findWhat = GetTextRange(start, end);
@@ -5771,7 +5771,7 @@ void clEditor::QuickFindAll()
     int firstMatch(wxNOT_FOUND);
 
     // Use the find flags of the quick find bar for this
-    int searchFlags = clMainFrame::Get()->GetMainBook()->GetFindBar()->m_searchFlags;
+    int searchFlags = clMainFrame::Get()->GetMainBook()->GetFindBar()->GetSearchFlags();
     clMainFrame::Get()->GetMainBook()->ShowQuickBarToolBar(true);
     CallAfter(&clEditor::SetFocus);
 

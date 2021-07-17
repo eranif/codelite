@@ -5866,14 +5866,13 @@ void clMainFrame::OnFindSelection(wxCommandEvent& event)
     clEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
     event.Skip(false);
+
+    auto find_bar = GetMainBook()->GetFindBar();
     wxString selection =
         editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
-    GetMainBook()->GetFindBar()->SetFindWhat(selection);
-    if(GetMainBook()->GetFindBar()->IsShown()) {
-        QuickFindBar::Search(editor->GetCtrl(), selection, QuickFindBar::kSearchForward, GetMainBook()->GetFindBar());
-    } else {
-        QuickFindBar::Search(editor->GetCtrl(), selection, QuickFindBar::kSearchForward, NULL);
-    }
+    find_bar->SetFindWhat(selection);
+    GetMainBook()->ShowQuickBar(true);
+    find_bar->FindNext();
 }
 
 void clMainFrame::OnFindSelectionPrev(wxCommandEvent& event)
@@ -5881,16 +5880,14 @@ void clMainFrame::OnFindSelectionPrev(wxCommandEvent& event)
     event.Skip();
     clEditor* editor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-
     event.Skip(false);
+
+    auto find_bar = GetMainBook()->GetFindBar();
     wxString selection =
         editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
-    GetMainBook()->GetFindBar()->SetFindWhat(selection);
-    if(GetMainBook()->GetFindBar()->IsShown()) {
-        QuickFindBar::Search(editor->GetCtrl(), selection, 0, GetMainBook()->GetFindBar());
-    } else {
-        QuickFindBar::Search(editor->GetCtrl(), selection, 0, NULL);
-    }
+    find_bar->SetFindWhat(selection);
+    GetMainBook()->ShowQuickBar(true);
+    find_bar->FindPrevious();
 }
 
 void clMainFrame::OnFindWordAtCaret(wxCommandEvent& event)

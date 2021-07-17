@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "mainbook.h"
 #include "FilesModifiedDlg.h"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
@@ -42,7 +43,6 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "macros.h"
-#include "mainbook.h"
 #include "manager.h"
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
@@ -1758,11 +1758,25 @@ void MainBook::ShowQuickBarForPlugins()
     }
 }
 
-void MainBook::ShowQuickBar(bool s)
+void MainBook::ShowQuickBar(bool show_it)
 {
     if(m_findBar) {
-        m_findBar->Show(s);
-        GetParent()->GetSizer()->Layout();
+        if(show_it) {
+            if(m_findBar->IsShown())
+                return;
+
+            // requested to show, but it is already shown
+            m_findBar->Show(true);
+            GetParent()->GetSizer()->Layout();
+
+        } else {
+            // hide id
+            if(!m_findBar->IsShown())
+                return;
+
+            m_findBar->Show(false);
+            GetParent()->GetSizer()->Layout();
+        }
     }
 }
 

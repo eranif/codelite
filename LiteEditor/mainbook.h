@@ -28,6 +28,7 @@
 #include "Notebook.h"
 #include "clEditorBar.h"
 #include "cl_command_event.h"
+#include "cl_editor.h"
 #include "editorframe.h"
 #include "filehistory.h"
 #include "navigationmanager.h"
@@ -102,7 +103,7 @@ private:
     void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
     wxWindow* GetOrCreateWelcomePage();
-    
+
     /**
      * @brief return proper tab label for a given filename
      */

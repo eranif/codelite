@@ -37,8 +37,6 @@
     <File Name="IWorkspace.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <Dependencies Name="Common"/>
-  <Dependencies Name="Debug"/>
   <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -181,6 +179,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Common"/>
+  <Dependencies Name="Debug"/>
   <Dependencies Name="Common"/>
   <Dependencies Name="Debug"/>
   <Dependencies Name="Win_x64_Release"/>

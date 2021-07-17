@@ -69,9 +69,6 @@
     <File Name="LLDBVariable.cpp"/>
     <File Name="LLDBVariable.h"/>
   </VirtualDirectory>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
   <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -241,4 +238,7 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

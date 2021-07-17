@@ -22,11 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "debuggergdb.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "dbgcmd.h"
-#include "debuggergdb.h"
 #include "debuggerobserver.h"
 #include "dirkeeper.h"
 #include "environmentconfig.h"
@@ -1310,7 +1310,6 @@ void DbgGdb::OnDataRead(clProcessEvent& e)
 {
     // Data arrived from the debugger
     const wxString& bufferRead = e.GetOutput();
-
     if(!m_gdbProcess || !m_gdbProcess->IsAlive())
         return;
 
@@ -1333,6 +1332,7 @@ void DbgGdb::OnDataRead(clProcessEvent& e)
     }
 
     // make sure we have enough memory for the new lines
+
     m_gdbOutputArr.reserve(m_gdbOutputArr.size() + lines.size());
     for(size_t i = 0; i < lines.GetCount(); ++i) {
         wxString& line = lines.Item(i);

@@ -54,12 +54,6 @@
       <File Name="abbreviationssettingsbase_abbreviation_bitmaps.cpp"/>
     </VirtualDirectory>
   </VirtualDirectory>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="plugin_sdk"/>
-  </Dependencies>
-  <Dependencies Name="Win_x86_Release"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -294,4 +288,10 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug"/>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="plugin_sdk"/>
+  </Dependencies>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

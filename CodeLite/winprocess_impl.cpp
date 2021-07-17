@@ -24,16 +24,17 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #ifdef __WXMSW__
+#include "winprocess_impl.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "processreaderthread.h"
 #include "procutils.h"
 #include "smart_ptr.h"
-#include "winprocess_impl.h"
 #include <atomic>
 #include <memory>
 #include <wx/filefn.h>
 #include <wx/msgqueue.h>
+#include <wx/string.h>
 
 #ifdef _WIN32_WINNT
 #undef _WIN32_WINNT
@@ -560,28 +561,29 @@ void WinProcessImpl::StartReaderThread()
 
 bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
 {
-    DWORD dwRead;
+    DWORD dwRead = 0;
     DWORD dwMode;
     DWORD dwTimeout;
 
     // Make the pipe to non-blocking mode
     dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
-    dwTimeout = 1000;
+    dwTimeout = 100;
     SetNamedPipeHandleState(pipe, &dwMode, NULL, &dwTimeout);
 
     bool read_something = false;
     while(true) {
-        BOOL bRes = ReadFile(pipe, m_buffer, sizeof(m_buffer) - 1, &dwRead, NULL);
-        if(bRes) {
+        BOOL bRes = ReadFile(pipe, m_buffer, BUFFER_SIZE - 1, &dwRead, NULL);
+        if(bRes && (dwRead > 0)) {
             wxString tmpBuff;
+            tmpBuff.reserve(dwRead * 2); // make enough room for the conversion
             // Success read
-            m_buffer[dwRead / sizeof(char)] = 0;
-            tmpBuff = wxString(m_buffer, wxConvUTF8);
+            tmpBuff = wxString(m_buffer, wxConvUTF8, dwRead);
             if(tmpBuff.IsEmpty() && dwRead > 0) {
                 // conversion failed
-                tmpBuff = wxString::From8BitData(m_buffer);
+                tmpBuff = wxString::From8BitData(m_buffer, dwRead);
             }
-            buff << tmpBuff;
+            buff.reserve(buff.size() + tmpBuff.size() + 1);
+            buff.Append(tmpBuff);
             read_something = true;
             continue;
         }

@@ -93,7 +93,6 @@
     <Project Name="makedir" Path="TestDir/makedir.project" Active="No"/>
     <Project Name="codelite_indexer" Path="sdk/codelite_indexer/codelite_indexer.project" Active="No"/>
     <Project Name="codelitegcc" Path="codelitegcc/codelitegcc.project" Active="No"/>
-    <Project Name="wx-config" Path="sdk/wxconfig/wx-config.project" Active="No"/>
     <Project Name="codelite_cppcheck" Path="sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
     <Project Name="codelite_echo" Path="codelite_echo/codelite_echo.project" Active="No"/>
   </VirtualDirectory>
@@ -168,7 +167,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="makedir" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_indexer" ConfigName="Win_x86_Release"/>
       <Project Name="codelitegcc" ConfigName="Win_x86_Release"/>
-      <Project Name="wx-config" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x86_Release"/>
       <Project Name="Rust" ConfigName="Win_x86_Release"/>
@@ -244,7 +242,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
@@ -319,7 +316,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
@@ -395,7 +391,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
@@ -471,7 +466,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
@@ -547,7 +541,6 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="makedir" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_indexer" ConfigName="Win_x64_Release"/>
       <Project Name="codelitegcc" ConfigName="Win_x64_Release"/>
-      <Project Name="wx-config" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
       <Project Name="Rust" ConfigName="Win_x64_Release"/>
@@ -624,7 +617,6 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="Win_x64_Debug"/>
@@ -699,7 +691,6 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
@@ -774,7 +765,6 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
@@ -849,7 +839,6 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
@@ -924,7 +913,6 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="makedir" ConfigName="DebugUnicode"/>
       <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="wx-config" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>

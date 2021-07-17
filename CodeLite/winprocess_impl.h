@@ -37,9 +37,11 @@
 class ProcessReaderThread;
 class WinWriterThread;
 
+#define BUFFER_SIZE 16 * 1024
+
 class WXDLLIMPEXP_CL WinProcessImpl : public IProcess
 {
-    char m_buffer[65537];
+    char m_buffer[BUFFER_SIZE];
     WinWriterThread* m_writerThread = nullptr;
     std::unordered_set<long> m_initialChildren;
 

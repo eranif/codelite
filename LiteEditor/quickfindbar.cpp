@@ -851,9 +851,8 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
         target = { 0, static_cast<int>(m_sci->GetLastPosition()) };
     }
 
-    // keep the current position, so we can restore it after the replacement
-    // is done
-    int starting_pos = m_sci->GetCurrentPos();
+    // keep the current line, we will restore it after the replacment is done
+    int starting_line = m_sci->GetCurrentLine();
 
     int replacements_done = 0;
     sw.Start();
@@ -885,8 +884,10 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     double ms = sw.Time();
     clDEBUG() << "Replace all took:" << (double)(ms / 1000.0) << "seconds" << endl;
     if(replacements_done) {
-        CenterLine(m_sci, starting_pos, starting_pos);
+        int pos = m_sci->PositionFromLine(starting_line);
+        CenterLine(m_sci, pos, pos);
     }
+
     clGetManager()->SetStatusMessage(wxString::Format(_("Made %d replacements"), replacements_done));
     Show(false);
     m_sci->SetFocus();

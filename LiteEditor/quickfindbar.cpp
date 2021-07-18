@@ -23,7 +23,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "quickfindbar.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "clBitmapOverlayCtrl.h"
@@ -41,6 +40,7 @@
 #include "imanager.h"
 #include "manager.h"
 #include "plugin.h"
+#include "quickfindbar.h"
 #include "stringsearcher.h"
 #include <wx/dcbuffer.h>
 #include <wx/gdicmn.h>
@@ -260,7 +260,7 @@ void QuickFindBar::OnText(wxCommandEvent& e)
     e.Skip();
     if(!m_inSelection && !m_disableTextUpdateEvent) {
         // searching down
-        DoFindWithMessage(FIND_INCREMENT | FIND_GOTOLINE);
+        DoFindWithWrap(FIND_INCREMENT | FIND_GOTOLINE);
     }
 }
 
@@ -1040,6 +1040,7 @@ TargetRange QuickFindBar::DoFindWithWrap(size_t find_flags, const TargetRange& t
     if(!res.IsOk()) {
         // reached end or start of the document
         // start from the beginning (the range will switch if FIND_PREV is set)
+        clGetManager()->SetStatusMessage(_("Wrapped past end of file"), 2);
         res = DoFindWithMessage(find_flags, { 0, static_cast<int>(m_sci->GetLastPosition()) });
     }
     return res;

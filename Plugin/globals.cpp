@@ -111,7 +111,7 @@ typedef HRESULT(WINAPI* DSWA)(HWND, DWORD, LPCVOID, DWORD); // DwmSetWindowAttri
 
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
-    bool b = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
+    bool current_theme_is_dark = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
     static const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
     if(huxtheme) {
         static const ADMFA _AllowDarkModeForApp = (ADMFA)GetProcAddress(huxtheme, MAKEINTRESOURCEA(135));
@@ -119,7 +119,7 @@ void MSWSetWindowDarkTheme(wxWindow* win)
         static const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
 
         if(_AllowDarkModeForApp && _AllowDarkModeForWindow) {
-            _AllowDarkModeForApp(b);
+            _AllowDarkModeForApp(current_theme_is_dark);
 
             // bfs the windows
             std::vector<wxWindow*> Q;
@@ -128,12 +128,13 @@ void MSWSetWindowDarkTheme(wxWindow* win)
                 wxWindow* w = Q.front();
                 Q.erase(Q.begin());
 
+                bool use_dark = current_theme_is_dark;
                 if(dynamic_cast<wxTextCtrl*>(w)) {
-                    b = false; // don't allow dark mode for text controls
+                    use_dark = false; // don't allow dark mode for text controls
                 }
 
-                _AllowDarkModeForWindow(w->GetHandle(), b);
-                SetWindowTheme(w->GetHandle(), b ? L"DarkMode_Explorer" : L"Explorer", NULL);
+                _AllowDarkModeForWindow(w->GetHandle(), use_dark);
+                SetWindowTheme(w->GetHandle(), use_dark ? L"DarkMode_Explorer" : L"Explorer", NULL);
 
                 if(_FlushMenuThemes) {
                     _FlushMenuThemes();

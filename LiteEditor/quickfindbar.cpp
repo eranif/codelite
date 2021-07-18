@@ -889,7 +889,7 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
     if(search_options & wxSTC_FIND_MATCHCASE)
         stc_search_options |= wxSTC_FIND_MATCHCASE;
     if(search_options & wxSTC_FIND_WHOLEWORD)
-        stc_search_options |= wxSTC_FIND_MATCHCASE;
+        stc_search_options |= wxSTC_FIND_WHOLEWORD;
 
     m_sci->SetSearchFlags(stc_search_options);
     int where = m_sci->SearchInTarget(m_textCtrlFind->GetValue());

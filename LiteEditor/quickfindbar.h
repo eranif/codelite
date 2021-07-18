@@ -91,7 +91,7 @@ protected:
     clEditEventsHandler::Ptr_t m_replaceEventsHandler;
     size_t m_searchFlags = 0;
     bool m_highlightMatches;
-    bool m_replaceInSelection;
+    bool m_inSelection;
     clTerminalHistory m_searchHistory;
     clTerminalHistory m_replaceHistory;
     wxStaticText* m_matchesFound = nullptr;
@@ -164,10 +164,16 @@ protected:
     void DoFixRegexParen(wxString& findwhat);
     wxString DoGetSelectedText();
     void DoSelectAll();
-    TargetRange::Vec_t DoFindAll();
+    TargetRange::Vec_t DoFindAll(const TargetRange& target);
     size_t DoReplaceInBuffer(const TargetRange& range);
     void DoHighlightMatches(bool checked);
     bool IsReplacementRegex() const;
+
+    /**
+     * @brief return the best target range taking into account
+     * the `In Selection` flag
+     */
+    TargetRange GetBestTargetRange() const;
 
     // Control events
     void OnHide(wxCommandEvent& e);

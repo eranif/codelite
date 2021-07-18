@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "globals.h"
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -41,7 +42,6 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
 #include "macromanager.h"
@@ -59,6 +59,7 @@
 #include "wxmd5.h"
 #include <algorithm>
 #include <set>
+#include <vector>
 #include <wx/app.h>
 #include <wx/clipbrd.h>
 #include <wx/dataobj.h>
@@ -108,42 +109,42 @@ typedef BOOL(WINAPI* ADMFW)(HWND window, BOOL allow);       // AllowDarkModeForW
 typedef void(WINAPI* FMT)();                                // FlushMenuThemes
 typedef HRESULT(WINAPI* DSWA)(HWND, DWORD, LPCVOID, DWORD); // DwmSetWindowAttribute
 
-BOOL CALLBACK DarkExplorerChildProc(HWND hwnd, LPARAM lparam)
-{
-    if(!IsWindow(hwnd))
-        return TRUE;
-
-    const BOOL is_darktheme = (BOOL)lparam;
-    static const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
-
-    if(huxtheme) {
-        SetWindowTheme(hwnd, is_darktheme ? L"DarkMode_Explorer" : L"Explorer", NULL);
-        static const ADMFW _AllowDarkModeForWindow = (ADMFW)GetProcAddress(huxtheme, MAKEINTRESOURCEA(133));
-        if(_AllowDarkModeForWindow)
-            _AllowDarkModeForWindow(hwnd, is_darktheme);
-    }
-    InvalidateRect(hwnd, nullptr, TRUE);
-    return TRUE;
-}
-
 void MSWSetWindowDarkTheme(wxWindow* win)
 {
     bool b = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
     static const HMODULE huxtheme = GetModuleHandle(L"uxtheme.dll");
     if(huxtheme) {
-        SetWindowTheme(win->GetHandle(), b ? L"DarkMode_Explorer" : L"Explorer", NULL);
         static const ADMFA _AllowDarkModeForApp = (ADMFA)GetProcAddress(huxtheme, MAKEINTRESOURCEA(135));
         static const ADMFW _AllowDarkModeForWindow = (ADMFW)GetProcAddress(huxtheme, MAKEINTRESOURCEA(133));
+        static const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
+
         if(_AllowDarkModeForApp && _AllowDarkModeForWindow) {
             _AllowDarkModeForApp(b);
-            _AllowDarkModeForWindow(win->GetHandle(), b);
-            EnumChildWindows(win->GetHandle(), &DarkExplorerChildProc, b);
 
-            const FMT _FlushMenuThemes = (FMT)GetProcAddress(huxtheme, MAKEINTRESOURCEA(136));
+            // bfs the windows
+            std::vector<wxWindow*> Q;
+            Q.push_back(win);
+            while(!Q.empty()) {
+                wxWindow* w = Q.front();
+                Q.erase(Q.begin());
 
-            if(_FlushMenuThemes)
-                _FlushMenuThemes();
-            InvalidateRect(win->GetHandle(), nullptr, FALSE); // HACK
+                if(dynamic_cast<wxTextCtrl*>(w)) {
+                    b = false; // don't allow dark mode for text controls
+                }
+
+                _AllowDarkModeForWindow(w->GetHandle(), b);
+                SetWindowTheme(w->GetHandle(), b ? L"DarkMode_Explorer" : L"Explorer", NULL);
+
+                if(_FlushMenuThemes) {
+                    _FlushMenuThemes();
+                }
+
+                InvalidateRect(w->GetHandle(), nullptr, FALSE); // HACK
+                const auto& children = w->GetChildren();
+                for(auto c : children) {
+                    Q.push_back(c);
+                }
+            }
         }
     }
 }
@@ -2069,7 +2070,8 @@ void clSetEditorFontEncoding(const wxString& encoding)
     EditorConfigST::Get()->SetOptions(options);
 }
 
-bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint, const wxArrayString& suffix_list)
+bool clFindExecutable(const wxString& name, wxFileName& exepath, const wxArrayString& hint,
+                      const wxArrayString& suffix_list)
 {
     return FileUtils::FindExe(name, exepath, hint, suffix_list);
 }
@@ -2280,4 +2282,3 @@ bool clIsWaylandSession()
     return false;
 #endif
 }
-

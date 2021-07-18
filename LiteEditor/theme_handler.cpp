@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "theme_handler.h"
 #include "clSystemSettings.h"
 #include "cl_aui_tb_are.h"
 #include "drawingutils.h"
@@ -30,7 +31,6 @@
 #include "event_notifier.h"
 #include "frame.h"
 #include "globals.h"
-#include "theme_handler.h"
 #include "workspace_pane.h"
 #include <algorithm>
 #include <queue>
@@ -74,4 +74,4 @@ void ThemeHandler::OnColoursChanged(clCommandEvent& e)
     CallAfter(&ThemeHandler::UpdateColours);
 }
 
-void ThemeHandler::UpdateColours() { MSWSetWindowDarkTheme(clMainFrame::Get()); }
+void ThemeHandler::UpdateColours() {}

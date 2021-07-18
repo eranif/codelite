@@ -37,8 +37,15 @@ class clToolBar;
 class wxStyledTextCtrl;
 
 struct TargetRange {
+    enum FailReason {
+        NONE,
+        REACHED_EOF,
+        REACHED_SOF,
+        EMPTY_RANGE,
+    };
     int start_pos = wxNOT_FOUND;
     int end_pos = wxNOT_FOUND;
+    FailReason why = NONE;
 
     TargetRange() {}
 
@@ -46,6 +53,7 @@ struct TargetRange {
     TargetRange(int start, int end)
         : start_pos(start)
         , end_pos(end)
+        , why(NONE)
     {
     }
 
@@ -115,6 +123,11 @@ protected:
      */
     TargetRange DoFindWithMessage(size_t find_flags, const TargetRange& target = {});
 
+    /**
+     * @brief same as the above, but attempt to wrap incase of failure
+     */
+    TargetRange DoFindWithWrap(size_t find_flags, const TargetRange& target = {});
+
 public:
     enum {
         ID_TOOL_REPLACE = 1000,
@@ -156,15 +169,11 @@ protected:
     void DoHighlightMatches(bool checked);
     bool IsReplacementRegex() const;
 
-    // General events
-    static void DoEnsureLineIsVisible(wxStyledTextCtrl* sci, int line = wxNOT_FOUND);
-
     // Control events
     void OnHide(wxCommandEvent& e);
     void OnFindAll(wxCommandEvent& e);
     void OnText(wxCommandEvent& e);
     void OnKeyDown(wxKeyEvent& e);
-    void OnFindMouseWheel(wxMouseEvent& e);
     void OnReplaceAll(wxCommandEvent& e);
     void OnEnter(wxCommandEvent& e);
     void OnReplace(wxCommandEvent& e);

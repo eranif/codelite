@@ -117,8 +117,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_replaceInSelection(false)
 {
     // SetBackgroundStyle(wxBG_STYLE_PAINT);
-    // Add the 'close' button
-    clThemeUpdater::Get().RegisterWindow(this);
 
     // Handle Edit events
     m_findEventsHandler.Reset(new clEditEventsHandler(m_textCtrlFind));
@@ -220,16 +218,10 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& e) { wxUnusedVar(e); });
     GetSizer()->Fit(this);
     Layout();
-    MSWSetWindowDarkTheme(this);
 }
 
 QuickFindBar::~QuickFindBar()
 {
-    // m_findEventsHandler.Reset(nullptr);
-    // m_replaceEventsHandler.Reset(nullptr);
-    // Unbind(wxEVT_PAINT, &QuickFindBar::OnPaint, this);
-    clThemeUpdater::Get().RegisterWindow(this);
-
     // Remember the buttons clicked
     clConfig::Get().Write("FindBar/SearchFlags", (int)DoGetSearchFlags());
     clConfig::Get().Write("FindBar/HighlightOccurences", m_highlightMatches);
@@ -237,22 +229,6 @@ QuickFindBar::~QuickFindBar()
     wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindNextCaret, this, XRCID("find_next_at_caret"));
     wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
     EventNotifier::Get()->Unbind(wxEVT_FINDBAR_RELEASE_EDITOR, &QuickFindBar::OnReleaseEditor, this);
-
-    EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, [&](wxCommandEvent& event) {
-        event.Skip();
-        this->SetEditor(NULL);
-    });
-
-    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, [&](wxCommandEvent& event) {
-        event.Skip();
-        // See if we got a new editor
-        IEditor* editor = clGetManager()->GetActiveEditor();
-        if(editor) {
-            this->SetEditor(editor->GetCtrl());
-            return;
-        }
-        SetEditor(NULL);
-    });
 }
 
 bool QuickFindBar::Show(bool show)
@@ -262,8 +238,6 @@ bool QuickFindBar::Show(bool show)
     }
     return DoShow(show, wxEmptyString);
 }
-
-#define SHOW_STATUS_MESSAGES(searchFlags) (true)
 
 void QuickFindBar::OnHide(wxCommandEvent& e)
 {
@@ -285,6 +259,7 @@ void QuickFindBar::OnText(wxCommandEvent& e)
 {
     e.Skip();
     if(!m_replaceInSelection && !m_disableTextUpdateEvent) {
+        // searching down
         DoFindWithMessage(FIND_INCREMENT | FIND_GOTOLINE);
     }
 }
@@ -354,7 +329,7 @@ void QuickFindBar::OnEnter(wxCommandEvent& e)
     bool shift = wxGetKeyState(WXK_SHIFT);
     size_t find_flags = shift ? FIND_PREV : FIND_DEFAULT;
     find_flags |= FIND_GOTOLINE;
-    DoFindWithMessage(find_flags);
+    DoFindWithWrap(find_flags);
 
     // Without this call, the caret is placed at the start of the searched
     // text, this at least places the caret at the end
@@ -772,44 +747,7 @@ wxString QuickFindBar::DoGetSelectedText()
 }
 
 size_t QuickFindBar::DoGetSearchFlags() const { return m_searchFlags; }
-
 void QuickFindBar::OnFindAll(wxCommandEvent& e) { DoSelectAll(); }
-void QuickFindBar::OnFindMouseWheel(wxMouseEvent& e)
-{
-    // Do nothing and disable the mouse wheel
-    // by not calling 'skip'
-    wxUnusedVar(e);
-}
-
-void QuickFindBar::DoEnsureLineIsVisible(wxStyledTextCtrl* sci, int line)
-{
-    if(line == wxNOT_FOUND) {
-        line = sci->LineFromPosition(sci->GetSelectionStart());
-    }
-    int linesOnScreen = sci->LinesOnScreen();
-    if(!((line > sci->GetFirstVisibleLine()) && (line < (sci->GetFirstVisibleLine() + linesOnScreen)))) {
-        // To place our line in the middle, the first visible line should be
-        // the: line - (linesOnScreen / 2)
-        int firstVisibleLine = line - (linesOnScreen / 2);
-        if(firstVisibleLine < 0) {
-            firstVisibleLine = 0;
-        }
-        sci->SetFirstVisibleLine(firstVisibleLine);
-    }
-    sci->EnsureVisible(line);
-    sci->ScrollToColumn(0);
-    int xScrollPosBefore = sci->GetScrollPos(wxHORIZONTAL);
-    sci->EnsureCaretVisible();
-    int xScrollPosAfter = sci->GetScrollPos(wxHORIZONTAL);
-    if(xScrollPosBefore != xScrollPosAfter) {
-        // EnsureCaretVisible scrolled the page
-        // scroll it a bit more
-        int scrollToPos = sci->GetSelectionStart();
-        if(scrollToPos != wxNOT_FOUND) {
-            sci->ScrollToColumn(sci->GetColumn(scrollToPos));
-        }
-    }
-}
 
 void QuickFindBar::DoFixRegexParen(wxString& findwhat)
 {
@@ -903,21 +841,28 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
     if(target.IsOk()) {
         target_start = target.start_pos;
         target_end = target.end_pos;
+        if(find_flags & FIND_PREV) {
+            // searching backward, switch the range positions
+            wxSwap(target_start, target_end);
+        }
     } else {
         if(m_replaceInSelection) {
             // set the target to fit the selection
             target_start = m_sci->GetSelectionStart();
-            target_end = m_sci->GetSelectionStart();
+            target_end = m_sci->GetSelectionEnd();
+            // if we are searching backward, switch the end and start positions
             if(find_flags & FIND_PREV) {
                 wxSwap(target_start, target_end);
             }
 
         } else {
+            // non selection search
             int sel_start = m_sci->GetSelectionStart();
             int sel_end = m_sci->GetSelectionEnd();
             if(find_flags & FIND_INCREMENT) {
-                // incremental search requested
-                // if we have a selection, use the selection start
+                // incremental search only goes one way: down
+
+                // if we have a text selected in the editor, use the selection start position
                 // as our search point, otherwise, use the current position
                 if(sel_start != wxNOT_FOUND && sel_end != wxNOT_FOUND) {
                     target_start = sel_start;
@@ -926,13 +871,20 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
                 }
                 target_end = m_sci->GetLastPosition();
             } else {
-                // if we have a selection, start the search from the
-                // selection end point, unless we are searching backward
+                // Normal search
+
+                // if we have a text selected in the editor, use the selection position as our search anchor
+                // (depending on the search direction)
                 if(sel_start != wxNOT_FOUND && sel_end != wxNOT_FOUND) {
                     target_start = find_flags & FIND_PREV ? sel_start : sel_end;
                 } else {
+                    // start the search from the current position
                     target_start = m_sci->GetCurrentPos();
                 }
+                // set the range to search:
+                // by default, its the end of the document
+                // unless searching backward and in this case
+                // we set it to the start of the document (0)
                 target_end = m_sci->GetLastPosition();
                 if(find_flags & FIND_PREV) {
                     target_end = 0;
@@ -942,8 +894,11 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
     }
     // do we have a target?
     if(target_end == target_start) {
-        return { wxNOT_FOUND, wxNOT_FOUND };
+        TargetRange res = { wxNOT_FOUND, wxNOT_FOUND };
+        res.why = TargetRange::EMPTY_RANGE;
+        return res;
     }
+
     m_sci->SetTargetRange(target_start, target_end);
     size_t stc_search_options = 0;
 
@@ -965,20 +920,22 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
         }
         return { target_start, target_end };
     } else {
-        return { wxNOT_FOUND, wxNOT_FOUND };
+        TargetRange res = { wxNOT_FOUND, wxNOT_FOUND };
+        res.why = find_flags & FIND_PREV ? TargetRange::REACHED_SOF : TargetRange::REACHED_EOF;
+        return res;
     }
 }
 
 void QuickFindBar::OnFind(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    DoFindWithMessage(FIND_DEFAULT | FIND_GOTOLINE);
+    DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE);
 }
 
 void QuickFindBar::OnFindPrev(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    DoFindWithMessage(FIND_PREV | FIND_GOTOLINE);
+    DoFindWithWrap(FIND_PREV | FIND_GOTOLINE);
 }
 
 void QuickFindBar::OnFindAllUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->IsEmpty()); }
@@ -1050,9 +1007,9 @@ void QuickFindBar::ShowToolBarOnly()
     GetParent()->GetSizer()->Layout();
 }
 
-void QuickFindBar::FindPrevious() { DoFindWithMessage(FIND_PREV | FIND_GOTOLINE); }
+void QuickFindBar::FindPrevious() { DoFindWithWrap(FIND_PREV | FIND_GOTOLINE); }
 
-void QuickFindBar::FindNext() { DoFindWithMessage(FIND_DEFAULT | FIND_GOTOLINE); }
+void QuickFindBar::FindNext() { DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE); }
 
 size_t QuickFindBar::DoReplaceInBuffer(const TargetRange& range)
 {
@@ -1087,13 +1044,24 @@ bool QuickFindBar::IsReplacementRegex() const
 TargetRange QuickFindBar::DoFindWithMessage(size_t find_flags, const TargetRange& target)
 {
     m_matchesFound->SetLabel(wxEmptyString);
-    auto res = DoFind(find_flags);
+    auto res = DoFind(find_flags, target);
     if(!res.IsOk()) {
         if(find_flags & FIND_PREV) {
             m_matchesFound->SetLabel(_("Reached the start of the document"));
         } else {
             m_matchesFound->SetLabel(_("Reached the end of the document"));
         }
+    }
+    return res;
+}
+
+TargetRange QuickFindBar::DoFindWithWrap(size_t find_flags, const TargetRange& target)
+{
+    auto res = DoFindWithMessage(find_flags, target);
+    if(!res.IsOk()) {
+        // reached end or start of the document
+        // start from the beginning (the range will switch if FIND_PREV is set)
+        res = DoFindWithMessage(find_flags, { 0, static_cast<int>(m_sci->GetLastPosition()) });
     }
     return res;
 }

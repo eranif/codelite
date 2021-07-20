@@ -7,11 +7,10 @@
 #include "clGenericNotebook.hpp"
 #include "clSystemSettings.h"
 #include "clTabRenderer.h"
-#include "clTabRendererMinimal.hpp"
-#include "clTabRendererCurved.h"
+#include "clTabRendererDefault.hpp"
 #include "clTabRendererFirefox.hpp"
 #include "clTabRendererGTK3.h"
-#include "clTabRendererSquare.h"
+#include "clTabRendererMinimal.hpp"
 #include "cl_config.h"
 #include "editor_config.h"
 #include "macros.h"
@@ -352,10 +351,9 @@ int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
 clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t tabStyle)
 {
     if(ms_Renderes.empty()) {
-        RegisterRenderer(new clTabRendererSquare(win));
+        RegisterRenderer(new clTabRendererDefault(win));
         RegisterRenderer(new clTabRendererGTK3(win));
         RegisterRenderer(new clTabRendererMinimal(win));
-        RegisterRenderer(new clTabRendererCurved(win));
         RegisterRenderer(new clTabRendererFirefox(win));
     }
 
@@ -380,10 +378,9 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
 wxArrayString clTabRenderer::GetRenderers()
 {
     if(ms_Renderes.empty()) {
-        RegisterRenderer(new clTabRendererSquare(nullptr));
+        RegisterRenderer(new clTabRendererDefault(nullptr));
         RegisterRenderer(new clTabRendererGTK3(nullptr));
         RegisterRenderer(new clTabRendererMinimal(nullptr));
-        RegisterRenderer(new clTabRendererCurved(nullptr));
         RegisterRenderer(new clTabRendererFirefox(nullptr));
     }
 

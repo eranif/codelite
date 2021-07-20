@@ -34,7 +34,6 @@ clTabRendererGTK3::~clTabRendererGTK3() {}
 void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
                              const clTabColours& colours, size_t style, eButtonState buttonState)
 {
-    bool isDark = DrawingUtils::IsDark(colours.activeTabBgColour);
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
 
     wxColour activeTabBgColour = DrawingUtils::IsDark(colours.tabAreaColour)
@@ -77,10 +76,7 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
             DrawingUtils::TruncateText(tabInfo.m_label, newSize, dc, label);
         }
     }
-    if(tabInfo.IsActive()) {
-        wxColour activeTabTextColour = isDark ? colours.markerColour : colours.activeTabTextColour;
-        dc.SetTextForeground(activeTabTextColour);
-    }
+
     fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
     if(style & kNotebook_CloseButtonOnActiveTab) {
         DrawButton(parent, dc, tabInfo, colours, buttonState);
@@ -116,25 +112,25 @@ void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxR
     if(IS_VERTICAL_TABS(style)) {
         return;
     }
-    
+
     wxRect topRect = rect;
     topRect.SetHeight(marginTop);
     dc.SetPen(colours.activeTabBgColour);
     dc.SetBrush(colours.activeTabBgColour);
     dc.DrawRectangle(topRect);
-    
+
     // draw dark line at the bottom of the top rect
     wxColour borderColour = colours.activeTabBgColour.ChangeLightness(50);
     dc.SetPen(borderColour);
     dc.DrawLine(topRect.GetBottomLeft(), topRect.GetBottomRight());
-    
+
     // clear the dark line drawn in the prev lines from the active tab
     wxPoint p1, p2;
     p1 = wxPoint(activeTabRect.GetLeft(), topRect.GetBottom());
     p2 = wxPoint(activeTabRect.GetRight() + 1, topRect.GetBottom());
     dc.SetPen(colours.activeTabBgColour);
     dc.DrawLine(p1, p2);
-    
+
     // draw dark line at the bottom of the active tab
     p1.y = activeTabRect.GetBottom();
     p2.y = p1.y;

@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "clScrolledPanel.h"
 #include "clSystemSettings.h"
-#include "clTabRendererSquare.h"
+#include "clTabRendererDefault.hpp"
 #include "drawingutils.h"
 #include "wx/dc.h"
 #include "wx/settings.h"

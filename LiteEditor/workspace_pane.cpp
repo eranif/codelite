@@ -22,10 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "workspace_pane.h"
 #include "Notebook.h"
+#include "clTabRendererDefault.hpp"
 #include "clTabRendererMinimal.hpp"
-#include "clTabRendererCurved.h"
-#include "clTabRendererSquare.h"
 #include "clTabTogglerHelper.h"
 #include "clWorkspaceView.h"
 #include "cl_aui_dock_art.h"
@@ -51,7 +51,6 @@
 #include "pluginmanager.h"
 #include "tabgroupspane.h"
 #include "windowstack.h"
-#include "workspace_pane.h"
 #include "workspacetab.h"
 #include <algorithm>
 #include <wx/app.h>

@@ -65,12 +65,51 @@ void clTabRendererMinimal::InitLightColours(clTabColours& colours, const wxColou
 void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
                                 const clTabColours& colors, size_t style, eButtonState buttonState)
 {
+    DoDraw(parent, dc, fontDC, tabInfo, colors, style, buttonState);
+}
+
+void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,
+                                          wxDC& dc, const clTabColours& colors, size_t style)
+{
+    wxUnusedVar(parent);
+    wxUnusedVar(tabInfo);
+    wxUnusedVar(clientRect);
+    wxUnusedVar(dc);
+    wxUnusedVar(colors);
+    wxUnusedVar(style);
+}
+
+void clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+                                          size_t style)
+{
+    wxColour bg_colour;
+    wxColour active_tab_colour;
+    GetTabColours(colours, style, &active_tab_colour, &bg_colour);
+    wxUnusedVar(active_tab_colour);
+
+    dc.SetBrush(bg_colour);
+    dc.SetPen(bg_colour);
+    dc.DrawRectangle(rect);
+}
+
+void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
+                                              const wxRect& activeTabRect, const clTabColours& colours, size_t style)
+{
+    wxUnusedVar(parent);
+    wxUnusedVar(dc);
+    wxUnusedVar(clientRect);
+    wxUnusedVar(activeTabRect);
+    wxUnusedVar(colours);
+    wxUnusedVar(style);
+}
+
+wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
+                                    const clTabColours& colors, size_t style, eButtonState buttonState)
+{
     wxRect tabRect = tabInfo.GetRect();
     tabRect.Deflate(1, 0);
 
     clTabColours colours = colors;
-
-    constexpr int TAB_RADIUS = 3;
 
     wxColour penColour(tabInfo.IsActive() ? colours.activeTabPenColour : colours.inactiveTabPenColour);
     wxColour bgColour, activeTabBgColour;
@@ -143,39 +182,5 @@ void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
         c.activeTabTextColour = text_colour;
         DrawButton(parent, dc, tab_info, c, buttonState);
     }
-}
-
-void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,
-                                          wxDC& dc, const clTabColours& colors, size_t style)
-{
-    wxUnusedVar(parent);
-    wxUnusedVar(tabInfo);
-    wxUnusedVar(clientRect);
-    wxUnusedVar(dc);
-    wxUnusedVar(colors);
-    wxUnusedVar(style);
-}
-
-void clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
-                                          size_t style)
-{
-    wxColour bg_colour;
-    wxColour active_tab_colour;
-    GetTabColours(colours, style, &active_tab_colour, &bg_colour);
-    wxUnusedVar(active_tab_colour);
-
-    dc.SetBrush(bg_colour);
-    dc.SetPen(bg_colour);
-    dc.DrawRectangle(rect);
-}
-
-void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
-                                              const wxRect& activeTabRect, const clTabColours& colours, size_t style)
-{
-    wxUnusedVar(parent);
-    wxUnusedVar(dc);
-    wxUnusedVar(clientRect);
-    wxUnusedVar(activeTabRect);
-    wxUnusedVar(colours);
-    wxUnusedVar(style);
+    return tabRect;
 }

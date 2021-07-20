@@ -2,9 +2,8 @@
 
 #include "JSON.h"
 #include "clSystemSettings.h"
+#include "clTabRendererDefault.hpp"
 #include "clTabRendererMinimal.hpp"
-#include "clTabRendererCurved.h"
-#include "clTabRendererSquare.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include <algorithm>

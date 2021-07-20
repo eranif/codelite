@@ -2,11 +2,21 @@
 #define CLTABRENDERERCLASSIC_H
 
 #include "clTabRenderer.h"
+
+#define TAB_RADIUS 3.0
+
 class WXDLLIMPEXP_SDK clTabRendererMinimal : public clTabRenderer
 {
 public:
     static void InitDarkColours(clTabColours& colours, const wxColour& activeTabBGColour);
     static void InitLightColours(clTabColours& colours, const wxColour& activeTabBGColour);
+
+protected:
+    /**
+     * @brief do the actual tab drawing. Return the rect used to round the tab
+     */
+    wxRect DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, const clTabColours& colours,
+                  size_t style, eButtonState buttonState);
 
 public:
     clTabRendererMinimal(const wxWindow* parent);

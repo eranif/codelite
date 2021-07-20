@@ -657,13 +657,13 @@ void clButtonBase::OnFocus(wxFocusEvent& event)
 
 void clButtonBase::OnKeyDown(wxKeyEvent& event)
 {
-    event.Skip();
     if((event.GetKeyCode() == WXK_SPACE) || (event.GetKeyCode() == WXK_NUMPAD_ENTER) ||
        (event.GetKeyCode() == WXK_RETURN)) {
         PostClickEvent();
-        event.Skip(false);
     } else if(event.GetKeyCode() == WXK_TAB) {
         Navigate(event.ShiftDown() ? wxNavigationKeyEvent::IsBackward : wxNavigationKeyEvent::IsForward);
+    } else {
+        event.Skip();
     }
 }
 
@@ -671,7 +671,7 @@ void clButtonBase::PostClickEvent()
 {
     wxCommandEvent eventClick(wxEVT_BUTTON);
     eventClick.SetEventObject(this);
-    GetEventHandler()->AddPendingEvent(eventClick);
+    GetEventHandler()->ProcessEvent(eventClick);
 }
 
 void clButtonBase::OnIdle(wxIdleEvent& event)

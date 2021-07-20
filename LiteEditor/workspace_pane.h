@@ -34,6 +34,7 @@
 #include <wx/bitmap.h>
 #include <wx/filename.h>
 #include <wx/panel.h>
+#include <wx/stattext.h>
 #include <wx/timer.h>
 
 // Forward Declarations
@@ -110,7 +111,7 @@ public:
      * @param tabTitle the tab to select
      */
     void SelectTab(const wxString& tabTitle);
-    
+
     /**
      * @brief show or hide a workspace tab
      */

@@ -23,6 +23,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "quickfindbar.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "clBitmapOverlayCtrl.h"
@@ -40,7 +41,6 @@
 #include "imanager.h"
 #include "manager.h"
 #include "plugin.h"
-#include "quickfindbar.h"
 #include "stringsearcher.h"
 #include <wx/dcbuffer.h>
 #include <wx/gdicmn.h>
@@ -383,7 +383,9 @@ int QuickFindBar::DoReplace(const TargetRange& range)
         return wxNOT_FOUND;
     }
 
-    m_sci->SetTargetRange(target_range.start_pos, target_range.end_pos);
+    m_sci->SetTargetStart(target_range.start_pos);
+    m_sci->SetTargetEnd(target_range.end_pos);
+
     if(m_searchFlags & wxSTC_FIND_REGEXP) {
         return m_sci->ReplaceTargetRE(m_textCtrlReplace->GetValue());
     } else {
@@ -881,7 +883,9 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
         return res;
     }
 
-    m_sci->SetTargetRange(target_start, target_end);
+    m_sci->SetTargetStart(target_start);
+    m_sci->SetTargetEnd(target_end);
+
     size_t stc_search_options = 0;
 
     if(search_options & wxSTC_FIND_REGEXP)

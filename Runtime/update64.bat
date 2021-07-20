@@ -1,14 +1,14 @@
-@echo OFF
+echo OFF
 
+set MSYS2_HOME=C:\msys64\home\eran
 set TARGET_DIR=%ProgramFiles%
 set COPY_WXC_RESOURCES=0
 set CODELITE_SRC_DIR=C:\src\codelite
-set BIN_DIR=%CODELITE_SRC_DIR%\build-Win_x64_Release\bin
 set LIB_DIR=%CODELITE_SRC_DIR%\build-Win_x64_Release\lib
 set SDK_DIR==%CODELITE_SRC_DIR%\sdk
 set RUNTIME_DIR=%CODELITE_SRC_DIR%\Runtime
-set WX_CONFIG_DIR=C:\src\wx-config-msys2\bin
-set WXWIN=C:\root
+set WX_CONFIG_DIR=%MSYS2_HOME%\devl\wx-config-msys2\bin
+set WXWIN=%MSYS2_HOME%\root
 set LLVM_BIN=C:\LLVM\bin
 
 ::IF EXIST D:\software\NUL (set TARGET_DIR=D:\software)
@@ -57,7 +57,10 @@ copy %RUNTIME_DIR%\codelite_cppcheck.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite_launcher.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-echo.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %LLVM_BIN%\clang-format.exe "%TARGET_DIR%\CodeLite\codelite-clang-format.exe" /Y
-copy %LLVM_BIN%\clang-format.exe "%TARGET_DIR%\CodeLite\clang-format.exe" /Y
+copy %LLVM_BIN%\clangd.exe "%TARGET_DIR%\CodeLite\lsp\" /Y
+copy %LLVM_BIN%\msvcp140.dll "%TARGET_DIR%\CodeLite\lsp\" /Y
+copy %LLVM_BIN%\vcruntime140.dll "%TARGET_DIR%\CodeLite\lsp\" /Y
+copy %LLVM_BIN%\vcruntime140_1.dll "%TARGET_DIR%\CodeLite\lsp\" /Y
 copy %SDK_DIR%\libssh\lib\libssh.dll "%TARGET_DIR%\CodeLite\libssh.dll" /Y
 copy %RUNTIME_DIR%\codelite-exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite.exe "%TARGET_DIR%\CodeLite\" /Y

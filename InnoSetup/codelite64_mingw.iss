@@ -27,12 +27,12 @@ UninstallDisplayIcon={app}\codelite.exe,0
 ;; 64 bit setup
 ;;==================================
 #define CODELITE_ROOT "C:\src\codelite"
-#define WXWIN "C:\root"
-#define MSYS2_DIR "C:\Program Files\Git\usr\bin"
+#define WXWIN "C:\msys64\home\eran\root"
+#define MSYS2_DIR "C:\msys64\usr\bin"
 #define MINGW_DIR "C:\msys64\mingw64\bin"
 #define CLANG_DIR "C:\LLVM\bin"
 #define BUILD_BIN_DIR "C:\src\codelite\build-Win_x64_Release\bin"
-#define WX_CONFIG_DIR "C:\src\wx-config-msys2\bin"
+#define WX_CONFIG_DIR "C:\msys64\home\eran\devl\wx-config-msys2\bin"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -83,6 +83,7 @@ Source: "{#CODELITE_ROOT}\Runtime\config\accelerators.conf.default"; DestDir: "{
 Source: "{#CODELITE_ROOT}\Runtime\config\debuggers.xml.default"; DestDir: "{app}\config";
 Source: "{#CODELITE_ROOT}\Runtime\config\build_settings.xml.default.win"; DestDir: "{app}\config"; DestName: "build_settings.xml.default"; 
 Source: "{#CODELITE_ROOT}\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; 
+
 Source: "{#CODELITE_ROOT}\Runtime\astyle.sample"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\php.sample"; DestDir: "{app}"; Flags: ignoreversion ; 
 Source: "{#CODELITE_ROOT}\Runtime\config\codelite.layout.default"; DestDir: "{app}\config"; DestName: codelite.layout; Flags: ignoreversion ; 
@@ -102,7 +103,13 @@ Source: "{#MSYS2_DIR}\msys-iconv-2.dll"; DestDir: "{app}"; Flags: ignoreversion;
 
 ; Copy clangd for Windows
 Source: "{#CLANG_DIR}\clangd.exe"; DestDir: "{app}/lsp"; Flags: ignoreversion;
+Source: "{#CLANG_DIR}\msvcp140.dll"; DestDir: "{app}/lsp"; Flags: ignoreversion;
+Source: "{#CLANG_DIR}\vcruntime140.dll"; DestDir: "{app}/lsp"; Flags: ignoreversion;
+Source: "{#CLANG_DIR}\vcruntime140_1.dll"; DestDir: "{app}/lsp"; Flags: ignoreversion;
 Source: "{#CLANG_DIR}\clang-format.exe"; DestDir: "{app}/"; Flags: ignoreversion;
+Source: "{#CLANG_DIR}\msvcp140.dll"; DestDir: "{app}/"; Flags: ignoreversion;
+Source: "{#CLANG_DIR}\vcruntime140.dll"; DestDir: "{app}/"; Flags: ignoreversion;
+Source: "{#CLANG_DIR}\vcruntime140_1.dll"; DestDir: "{app}/"; Flags: ignoreversion;
 
 ; Override with Windows specific files
 Source: "{#CODELITE_ROOT}\Runtime\templates\projects\dynamic-library\dynamic-library.project.windows"; DestName: dynamic-library.project; DestDir: "{app}\templates\projects\dynamic-library"; Flags: ignoreversion ; 

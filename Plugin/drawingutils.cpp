@@ -22,10 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "drawingutils.h"
+#include "ColoursAndFontsManager.h"
 #include "clScrolledPanel.h"
 #include "clSystemSettings.h"
 #include "clTabRendererDefault.hpp"
-#include "drawingutils.h"
 #include "wx/dc.h"
 #include "wx/settings.h"
 #include <wx/app.h>
@@ -453,14 +454,7 @@ wxColour DrawingUtils::GetCaptionColour()
     return defaultCaptionColour;
 }
 
-wxFont DrawingUtils::GetDefaultFixedFont()
-{
-    wxFont f(GetDefaultGuiFont());
-    f.SetFamily(wxFONTFAMILY_TELETYPE);
-    f.SetFaceName(DEFAULT_FACE_NAME);
-    // f.SetPointSize(DEFAULT_FONT_SIZE);
-    return f;
-}
+wxFont DrawingUtils::GetDefaultFixedFont() { return ColoursAndFontsManager::Get().GetFixedFont(); }
 
 #ifdef __WXOSX__
 double wxOSXGetMainScreenContentScaleFactor();

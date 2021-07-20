@@ -134,7 +134,9 @@ void clButtonBase::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
     wxAutoBufferedPaintDC abdc(this);
-    wxGCDC dc(abdc);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(abdc, gcdc);
+
     PrepareDC(dc);
     Render(dc);
     m_lastPaintFlags = GetDrawingFlags();
@@ -387,17 +389,9 @@ void clButtonBase::Render(wxDC& dc)
 
     if(HasDropDownMenu()) {
         // Draw an arrow
-        wxRect arrowRect(0, 0, rect.GetHeight(), rect.GetHeight());
+        wxRect arrowRect{ { 0, 0 }, dc.GetTextExtent(wxT("\u25BE")) };
         arrowRect = arrowRect.CenterIn(arrow_rect);
-        int arrowHeight = arrowRect.GetHeight() / 4;
-        int arrowWidth = arrowRect.GetWidth() / 2;
-        wxRect r(0, 0, arrowWidth, arrowHeight);
-        r = r.CenterIn(arrowRect);
-
-        wxPoint downCenterPoint = wxPoint(r.GetBottomLeft().x + r.GetWidth() / 2, r.GetBottom());
-        dc.SetPen(wxPen(dropDownColour, 2));
-        dc.DrawLine(r.GetTopLeft(), downCenterPoint);
-        dc.DrawLine(r.GetTopRight(), downCenterPoint);
+        dc.DrawText(wxT("\u25BE"), arrowRect.GetTopLeft());
     }
 
     if(HasFocus()) {

@@ -403,8 +403,8 @@ int clTabRenderer::GetMarkerWidth()
 #endif
 }
 
-void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
-                                   size_t style)
+wxColour clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
+                                       const clTabColours& colours, size_t style)
 {
     wxUnusedVar(parent);
     wxUnusedVar(colours);
@@ -439,6 +439,7 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
     dc.SetPen(colours.inactiveTabPenColour);
     dc.DrawLine(p1, p2);
 #endif
+    return colours.tabAreaColour;
 }
 
 void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,

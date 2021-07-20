@@ -224,8 +224,12 @@ public:
     virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
 
-    virtual void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
-                                size_t style);
+    /**
+     * @brief draw the tab area background, return the colour used to actually
+     * paint it
+     */
+    virtual wxColour DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
+                                    size_t style);
 
     /**
      * @brief finalise the background after all elements have been drawn on the tab area colour. Default is

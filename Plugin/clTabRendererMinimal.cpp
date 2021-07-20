@@ -79,8 +79,8 @@ void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tab
     wxUnusedVar(style);
 }
 
-void clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
-                                          size_t style)
+wxColour clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect,
+                                              const clTabColours& colours, size_t style)
 {
     wxColour bg_colour;
     wxColour active_tab_colour;
@@ -90,6 +90,7 @@ void clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const wxRe
     dc.SetBrush(bg_colour);
     dc.SetPen(bg_colour);
     dc.DrawRectangle(rect);
+    return bg_colour;
 }
 
 void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,

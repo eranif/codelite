@@ -4,6 +4,7 @@
 #include "bitmap_loader.h"
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
+#include "clThemedButton.h"
 #include "cl_command_event.h"
 #include "windowstack.h"
 #include <list>
@@ -69,9 +70,12 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
     wxPoint m_dragStartPos;
 
     clBitmapList* m_bitmaps = nullptr;
+    clButton* m_fileListButton = nullptr;
+    clButton* m_actionButton = nullptr;
 
 protected:
     void DoChangeSelection(size_t index);
+    void PositionFilelistButton();
 
 protected:
     void OnPaint(wxPaintEvent& e);

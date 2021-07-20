@@ -97,13 +97,14 @@ void clTabRendererGTK3::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t active
     wxUnusedVar(clientRect);
 }
 
-void clTabRendererGTK3::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
-                                       size_t style)
+wxColour clTabRendererGTK3::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+                                           size_t style)
 {
     wxColour bgColour(colours.tabAreaColour);
     dc.SetPen(bgColour);
     dc.SetBrush(bgColour);
     dc.DrawRectangle(rect);
+    return bgColour;
 }
 
 void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const wxRect& activeTabRect,

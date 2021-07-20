@@ -13,8 +13,8 @@ public:
                       size_t style, eButtonState buttonState) override;
     void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                         const clTabColours& colours, size_t style) override;
-    void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
-                        size_t style) override;
+    wxColour DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+                            size_t style) override;
     void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const wxRect& activeTabRect,
                             const clTabColours& colours, size_t style) override;
     void AdjustColours(clTabColours& colours, size_t style) override;

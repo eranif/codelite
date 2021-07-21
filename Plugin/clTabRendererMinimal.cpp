@@ -128,7 +128,15 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
         // bottom tabs
         tabRect.y -= TAB_RADIUS;
         visibleTab.height -= TAB_RADIUS;
-    } else if(!IS_VERTICAL_TABS(style)) {
+
+    } else if(style & kNotebook_LeftTabs) {
+        tabRect.x += TAB_RADIUS;
+        tabRect.width += TAB_RADIUS;
+
+    } else if(style & kNotebook_RightTabs) {
+        tabRect.x -= (TAB_RADIUS + 1);
+        
+    } else {
         // top tabs
         tabRect.y += TAB_RADIUS;
         visibleTab.y += TAB_RADIUS;

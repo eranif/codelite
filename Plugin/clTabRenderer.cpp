@@ -357,7 +357,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
         RegisterRenderer(new clTabRendererFirefox(win));
     }
 
-    wxString tab = clConfig::Get().Read("TabStyle", wxString("FIREFOX"));
+    wxString tab = clConfig::Get().Read("TabStyle", wxString("DEFAULT"));
     wxString name = tab.Upper();
 
     clTabRenderer::Ptr_t renderer;
@@ -369,7 +369,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
     } else {
         // make sure the selected renderer supports vertical tabbing
         if(is_vertical && !renderer->IsVerticalTabSupported()) {
-            renderer.reset(Create(win, "FIREFOX"));
+            renderer.reset(Create(win, "DEFAULT"));
         }
     }
     return renderer;

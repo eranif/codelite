@@ -57,6 +57,30 @@ struct DnD_Data {
 };
 
 DnD_Data s_clTabCtrlDnD_Data;
+
+wxRect GetFileListButtonRect(wxWindow* win, size_t style)
+{
+    wxRect client_rect = win->GetClientRect();
+    int button_width, button_height;
+    if(IS_VERTICAL_TABS(style)) {
+        button_width = client_rect.GetWidth();
+        button_height = win->GetTextExtent("Tp").GetHeight() + 10;
+    } else {
+        button_width = client_rect.GetHeight() / 2;
+        button_height = client_rect.GetHeight();
+    }
+
+    wxRect rr = wxRect(wxPoint(0, 0), wxSize(button_width, button_height));
+    // place it on the far right / bottom
+    if(IS_VERTICAL_TABS(style)) {
+        rr.SetX(client_rect.GetX());
+        rr.SetY(client_rect.GetY() + (client_rect.GetHeight() - rr.GetHeight()));
+    } else {
+        rr.SetX(client_rect.GetX() + client_rect.GetWidth() - rr.GetWidth());
+        rr.SetY(client_rect.GetY());
+    }
+    return rr;
+}
 } // namespace
 
 void clGenericNotebook::PositionControls()
@@ -407,6 +431,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         gcdc.SetPen(clSystemSettings::GetDefaultPanelColour());
         gcdc.SetBrush(clSystemSettings::GetDefaultPanelColour());
         gcdc.DrawRectangle(GetClientRect());
+        PositionFilelistButton();
         return;
     }
 
@@ -416,7 +441,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     m_chevronRect = {};
     if(m_style & kNotebook_ShowFileListButton) {
-        m_chevronRect = wxRect(wxPoint(0, 0), wxSize(clientRect.GetHeight(), clientRect.GetHeight()));
+        m_chevronRect = GetFileListButtonRect(this, m_style);
     }
 
 #ifdef __WXOSX__
@@ -434,7 +459,10 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         return;
     }
 
-    if(!IsVerticalTabs()) {
+    if(IsVerticalTabs()) {
+        gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width,
+                               clientRect.height - m_chevronRect.GetHeight());
+    } else {
         gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - m_chevronRect.GetWidth(),
                                clientRect.height);
     }
@@ -470,7 +498,7 @@ void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 {
     int majorDimension = 0;
     if(IsVerticalTabs() && GetStyle() & kNotebook_ShowFileListButton) {
-        majorDimension = CHEVRON_SIZE;
+        majorDimension = 2;
     }
 
     wxRect clientRect = GetClientRect();
@@ -1405,15 +1433,11 @@ void clTabCtrl::OnBeginDrag()
 void clTabCtrl::PositionFilelistButton()
 {
     if(m_style & kNotebook_ShowFileListButton) {
-        wxRect client_rect = GetClientRect();
-        wxRect button_rect_base = wxRect(wxPoint(0, 0), wxSize(client_rect.GetHeight(), client_rect.GetHeight()));
+        wxRect button_rect_base = GetFileListButtonRect(this, m_style);
         m_chevronRect = button_rect_base;
 
-        // place it on the far right
-        m_chevronRect.SetX(client_rect.GetX() + client_rect.GetWidth() - m_chevronRect.GetWidth());
         wxRect button_rect = button_rect_base;
-
-        button_rect.Deflate(5);
+        button_rect.Deflate(2);
         button_rect = button_rect.CenterIn(m_chevronRect);
 
         if(m_fileListButton == nullptr) {

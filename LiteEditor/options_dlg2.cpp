@@ -23,11 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "options_dlg2.h"
 #include "editorsettingscaret.h"
 #include "editorsettingsdockingwidows.h"
 #include "editorsettingsterminal.h"
 #include "globals.h"
-#include "options_dlg2.h"
 #include "plugin.h"
 
 #include "editor_options_general_guides_panel.h"
@@ -57,6 +57,7 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     , restartRquired(false)
 {
     m_treeBook->SetArt(clTabRenderer::CreateRenderer(m_treeBook, m_treeBook->GetStyle()));
+    m_treeBook->EnableStyle(kNotebook_ShowFileListButton, true);
     Initialize();
     ::clSetTLWindowBestSizeAndPosition(this);
 }

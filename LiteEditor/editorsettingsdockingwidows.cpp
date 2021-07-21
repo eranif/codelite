@@ -69,7 +69,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent)
 #endif
 
     m_choiceTabStyle->Append(clTabRenderer::GetRenderers());
-    wxString selection = clConfig::Get().Read("TabStyle", wxString("FIREFOX"));
+    wxString selection = clConfig::Get().Read("TabStyle", wxString("DEFAULT"));
     m_choiceTabStyle->SetStringSelection(selection);
 
     m_checkBoxMouseScrollSwitchTabs->SetValue(options->IsMouseScrollSwitchTabs());

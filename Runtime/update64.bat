@@ -54,7 +54,6 @@ if "%COPY_WXC_RESOURCES%" == "1" (copy ..\wxcrafter\wxcrafter.accelerators  "%TA
 copy %RUNTIME_DIR%\codelite_indexer.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-cc.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite_cppcheck.exe "%TARGET_DIR%\CodeLite\" /Y
-copy %RUNTIME_DIR%\codelite_launcher.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-echo.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %LLVM_BIN%\clang-format.exe "%TARGET_DIR%\CodeLite\codelite-clang-format.exe" /Y
 copy %LLVM_BIN%\clangd.exe "%TARGET_DIR%\CodeLite\lsp\" /Y

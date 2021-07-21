@@ -1125,7 +1125,7 @@ void clTabCtrl::OnContextMenu(wxContextMenuEvent& event)
 void clTabCtrl::DoShowTabList()
 {
     // sanity
-    if(m_tabs.empty() || !m_fileListButton) {
+    if(!m_fileListButton) {
         return;
     }
 

@@ -1453,6 +1453,7 @@ void clTabCtrl::PositionFilelistButton()
         colours.SetBgColour(GetBackgroundColour());
         colours.SetBorderColour(GetBackgroundColour());
         m_fileListButton->SetColours(colours);
+        m_fileListButton->SetSize(button_rect.GetSize());
         m_fileListButton->Move(button_rect.GetTopLeft());
     }
 }

@@ -66,6 +66,9 @@ include(UtilsHelper)
 if(NOT SQLITE3_FOUND)
     set(SQLITE3_INCLUDE_DIR ${CL_SRC_ROOT}/sqlite3)
     set(SQLITE3_LIBRARY "-lsqlite3lib")
+    set(CL_BUILT_SQLITE3 1)
+else()
+    set(CL_BUILT_SQLITE3 0)
 endif()
 
 set( IS_FREEBSD 0 )
@@ -480,20 +483,20 @@ message("-- ARCH_NAME ${ARCH_NAME}")
 if ( MAKE_DEB )
     get_distro_name(distro)
     message("-- Distro name: ${distro}")
-    
+
     set(DEB_DEPS "")
     if ( ${distro} STREQUAL "debian_10" )
         set(DEB_DEPS "clang-tools-7, clang-format-10")
     endif()
-    
+
     if ( ${distro} STREQUAL "ubuntu_1804" )
         set(DEB_DEPS "clangd-10, clang-format-10")
     endif()
-    
+
     if ( ${distro} STREQUAL "ubuntu_2004" )
         set(DEB_DEPS "clangd-10, clang-format-10")
     endif()
-    
+
     message("-- Generating deb target")
     if( ${ARCH} EQUAL 32 )
         message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE i386")
@@ -502,7 +505,7 @@ if ( MAKE_DEB )
         message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64")
         set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
     endif ()
-    
+
     if (GTK_VERSION EQUAL 3)
         set(LIBGTK "libgtk-3-dev")
         set(GTKNAME "gtk3")
@@ -617,7 +620,7 @@ if ( APPLE )
     add_definitions( -mmacosx-version-min=10.8 )
 endif()
 
-if(APPLE)
+if(NOT SQLITE3_FOUND)
     # On Linux, we use the distro's libsqlite3
     add_subdirectory(sqlite3)
 endif()
@@ -715,6 +718,9 @@ if(APPLE)
     if ( USE_PCH )
         add_dependencies(sqlite3lib ${CL_PCH_TARGET})
     endif ( USE_PCH )
+endif()
+
+if(NOT SQLITE3_FOUND)
     add_dependencies(wxsqlite3 sqlite3lib)
 endif()
 

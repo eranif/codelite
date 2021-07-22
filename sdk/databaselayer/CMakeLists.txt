@@ -1,8 +1,8 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.0)
- 
+
 # Our project is called 'databaselayersqlite' this is how it will be called in
-# visual studio, and in our makefiles. 
+# visual studio, and in our makefiles.
 project(databaselayersqlite)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -12,7 +12,7 @@ project(databaselayersqlite)
 include( "${wxWidgets_USE_FILE}" )
 
 # Include paths
-include_directories(./include/wx/dblayer/include src/sqlite3)
+include_directories(./include/wx/dblayer/include ${SQLITE3_INCLUDE_DIR})
 
 if ( USE_PCH )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include ${CL_PCH_FILE} -Winvalid-pch ")
@@ -32,26 +32,22 @@ if ( APPLE )
     add_definitions(-fPIC)
 endif()
 
-if(APPLE)
-    FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
-else()
-    FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp")
-endif()
+FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp")
 
 if ( WITH_MYSQL )
     find_library(LIBMYSQLCLIENT NAMES mysql mysqlclient mariadb mariadbclient)
     find_path(MYSQLCLIENT_INCLUDE NAMES mysql.h PATH_SUFFIXES mysql mariadb)
-    
-    if (  ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND") 
+
+    if (  ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND")
         message( FATAL_ERROR "-- Could not locate libmysqlclient.so" )
     else ( ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND" )
         message( "-- LIBMYSQLCLIENT is set to ${LIBMYSQLCLIENT}" )
     endif ( ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND" )
-    
+
     if ( ${MYSQLCLIENT_INCLUDE} STREQUAL "MYSQLCLIENT_INCLUDE-NOTFOUND" )
         message( FATAL_ERROR "-- Could not locate mysql.h" )
     endif ( ${MYSQLCLIENT_INCLUDE} STREQUAL "MYSQLCLIENT_INCLUDE-NOTFOUND" )
-    
+
     add_definitions( -DDBL_USE_MYSQL=1 )
     include_directories(${MYSQLCLIENT_INCLUDE})
     message("-- Adding MySQL include path: ${MYSQLCLIENT_INCLUDE} ")
@@ -72,7 +68,11 @@ endif ( WITH_MYSQL )
 
 # Define the output
 add_library(databaselayersqlite SHARED ${SRCS} ${MYSQL_SRCS})
-target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
+if( CL_BUILT_SQLITE3 )
+target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" ${SQLITE3_LIBRARY})
+else( CL_BUILT_SQLITE3 )
+target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${SQLITE3_LIBRARY})
+endif( CL_BUILT_SQLITE3 )
 
 if(APPLE)
     install(TARGETS databaselayersqlite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)

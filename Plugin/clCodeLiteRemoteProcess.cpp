@@ -1,8 +1,8 @@
+#include "clCodeLiteRemoteProcess.hpp"
 #include "JSON.h"
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "cJSON.h"
-#include "clCodeLiteRemoteProcess.hpp"
 #include "clSFTPManager.hpp"
 #include "cl_command_event.h"
 #include "file_logger.h"
@@ -185,12 +185,16 @@ void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, co
         return;
     }
 
+#if USE_SFTP
     // upload codelite-remote script and start it once its uploaded
     wxString localCodeLiteRemoteScript = clStandardPaths::Get().GetBinFolder() + "/codelite-remote";
     if(!clSFTPManager::Get().AwaitSaveFile(localCodeLiteRemoteScript, scriptPath, account.GetAccountName())) {
         clERROR() << "Failed to upload file:" << scriptPath << "." << clSFTPManager::Get().GetLastError() << endl;
         return;
     }
+#else
+    clERROR() << "CodeLite is build with NO SFTP support" << endl;
+#endif
 
     m_going_down = false;
     m_context = contextString;

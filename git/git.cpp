@@ -2203,10 +2203,14 @@ void GitPlugin::DoShowDiffViewer(const wxString& headFile, const wxString& fileN
 
     wxString right_file;
     if(IsRemoteWorkspace()) {
+#if USE_SFTP
         // download the file and store it locally
         wxFileName remote_file(GetRepositoryPath() + "/" + fileName);
         right_file =
             clSFTPManager::Get().Download(remote_file.GetFullPath(wxPATH_UNIX), m_remoteWorkspaceAccount).GetFullPath();
+#else
+        return;
+#endif
     } else {
         wxFileName fnWorkingCopy(fileName);
         fnWorkingCopy.MakeAbsolute(m_repositoryDirectory);
@@ -2473,11 +2477,15 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
                 commitArgs << messagefile << " ";
 
                 if(IsRemoteWorkspace()) {
+#if USE_SFTP
                     if(!clSFTPManager::Get().AwaitWriteFile(message, messagefile, m_remoteWorkspaceAccount)) {
                         m_console->AddText(_("ERROR: Failed to write commit message to file: ") + messagefile + "\n" +
                                            clSFTPManager::Get().GetLastError() + "\n");
                         return;
                     }
+#else
+                    return;
+#endif
                 } else {
                     if(!FileUtils::WriteFileContent(messagefile, message)) {
                         m_console->AddText(_("ERROR: Failed to write commit message to file: ") + messagefile + "\n");
@@ -2850,7 +2858,11 @@ IEditor* GitPlugin::OpenFile(const wxString& relativePathFile)
 {
     wxFileName fn(GetRepositoryPath() + "/" + relativePathFile);
     if(IsRemoteWorkspace()) {
+#if USE_SFTP
         return clSFTPManager::Get().OpenFile(fn.GetFullPath(wxPATH_UNIX), m_remoteWorkspaceAccount);
+#else
+        return nullptr;
+#endif
     } else {
         return clGetManager()->OpenFile(fn.GetFullPath());
     }

@@ -22,7 +22,7 @@ pacman -S mingw-w64-x86_64-toolchain            \
 - Next, still in the `MSYS2` terminal, Add the `/mingw64/bin` to your `~/.bashrc` and `source` it:
 
 ```bash
-echo "export PATH=/mingw64/bin:$PATH" >> ~/.bashrc
+echo "export PATH=/mingw64/bin:\$PATH" >> ~/.bashrc
 . ~/.bashrc
 ```
 

@@ -7,33 +7,31 @@
 CodeLite uses `MSYS2` for installing compiler and other tools:
 
 - Prepare a working terminal with all the tools required [as described here][4]
-- Open `MSYS2` terminal, and clone wxWidgets sources and build them:
+- Open `MSYS2` terminal, and clone wxWidgets sources:
 
 ```bash
 git clone https://github.com/wxWidgets/wxWidgets
-cd ~/wxWidgets
+cd wxWidgets
 git submodule update --init
-cd build/msw
-# create a setup.h file
-mingw32-make -f makefile.gcc setup_h SHARED=1 UNICODE=1 BUILD=release VENDOR=cl
 ```
 
-CodeLite requires a wxWidgets build which enables Graphic Context, Direct2D and `wxUSE_SOCKET2` all enabled
-
-To do so: 
-
-- Open the file `~/wxWidgets/lib/gcc_dll/setup.h` in your editor
-- Make sure that `wxUSE_GRAPHICS_CONTEXT`, `wxUSE_GRAPHICS_DIRECT2D` and `wxUSE_SOCKET2` are all set to `1` (if not, change it)
-
-Start the build process (from within the `MSYS2` terminal):
+- For a `Release` build of wxWidgets, run this:
 
 ```bash
-cd ~/wxWidgets/build/msw
-mingw32-make -j$(nproc) -f Makefile.gcc SHARED=1 UNICODE=1 BUILD=release VENDOR=cl CXXFLAGS="-fno-keep-inline-dllexport -std=c++11"
+mkdir build-release
+cd build-release
+cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DwxBUILD_DEBUG_LEVEL=0
+mingw32-make -j$(nproc)
 ```
 
-!!! Tip
-    if you need a `Debug` build of wxWidgets, follow the above steps and replace any occurrence of `BUILD=release` &#8594; `BUILD=debug`
+- For a `Debug` build of wxWidgets, run this:
+
+```bash
+mkdir build-debug
+cd build-debug
+cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DwxBUILD_DEBUG_LEVEL=1
+mingw32-make -j$(nproc)
+```
 
 ## Linux
 ---

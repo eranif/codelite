@@ -60,7 +60,12 @@ else()
     set( CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
 endif()
 
-include(FindSqlite3)
+if( UNIX AND NOT APPLE)
+    include(FindSqlite3)
+    set(SQLITE3_FOUND ${SQLITE3_FOUND})
+else()
+    set(SQLITE3_FOUND FALSE)
+endif()
 include(UtilsHelper)
 
 if(NOT SQLITE3_FOUND)

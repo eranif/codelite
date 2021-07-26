@@ -1,6 +1,6 @@
+#include "clStatusBar.h"
 #include "ColoursAndFontsManager.h"
 #include "bitmap_loader.h"
-#include "clStatusBar.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -49,61 +49,13 @@ void GetWhitespaceInfo(wxStyledTextCtrl* ctrl, wxString& whitespace, wxString& e
     }
 }
 } // namespace
-
-class WXDLLIMPEXP_SDK clStatusBarArtNormal : public wxCustomStatusBarArt
-{
-    wxColour m_bgColour;
-    wxColour m_penColour;
-    wxColour m_textColour;
-    wxColour m_separatorColour;
-
-protected:
-    void InitialiseColours()
-    {
-        m_bgColour = clSystemSettings::GetDefaultPanelColour();
-        bool isdark = DrawingUtils::IsDark(m_bgColour);
-        m_bgColour = m_bgColour.ChangeLightness(isdark ? 105 : 95);
-
-        m_penColour = m_bgColour; // clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-        m_textColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-        m_separatorColour = m_bgColour; // clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-    }
-
-    void OnColoursChanged(clCommandEvent& event)
-    {
-        event.Skip();
-        InitialiseColours();
-    }
-
-public:
-    clStatusBarArtNormal()
-        : wxCustomStatusBarArt("Light")
-    {
-        InitialiseColours();
-        EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clStatusBarArtNormal::OnColoursChanged, this);
-    }
-    virtual ~clStatusBarArtNormal()
-    {
-        EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clStatusBarArtNormal::OnColoursChanged, this);
-    }
-
-    void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRec)
-    {
-        wxUnusedVar(dc);
-        wxUnusedVar(fieldRec);
-    }
-
-    virtual wxColour GetBgColour() const { return m_bgColour; }
-    virtual wxColour GetPenColour() const { return m_penColour; }
-    virtual wxColour GetTextColour() const { return m_textColour; }
-    virtual wxColour GetSeparatorColour() const { return m_separatorColour; }
-};
+typedef wxCustomStatusBarArt clStatusBarArtNormal;
 
 clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     : wxCustomStatusBar(parent)
     , m_mgr(mgr)
 {
-    SetArt(wxCustomStatusBarArt::Ptr_t(new clStatusBarArtNormal));
+    SetArt(wxCustomStatusBarArt::Ptr_t(new clStatusBarArtNormal("Normal")));
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clStatusBar::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clStatusBar::OnThemeChanged, this);
@@ -188,15 +140,15 @@ void clStatusBar::DoUpdateColour()
         wxColour bgColour = editor->GetCtrl()->StyleGetBackground(0);
         if(DrawingUtils::IsDark(bgColour)) {
             // Using dark theme background
-            art.reset(new clStatusBarArtNormal());
+            art.reset(new clStatusBarArtNormal("Normal"));
             SetArt(art);
         } else {
-            art.reset(new clStatusBarArtNormal());
+            art.reset(new clStatusBarArtNormal("Normal"));
             SetArt(art);
         }
     } else {
         // Non editor, set "normal" art
-        art.reset(new clStatusBarArtNormal());
+        art.reset(new clStatusBarArtNormal("Normal"));
         SetArt(art);
     }
     Refresh();

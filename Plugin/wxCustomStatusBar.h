@@ -26,15 +26,15 @@
 #ifndef WXCUSTOMSTATUSBAR_H
 #define WXCUSTOMSTATUSBAR_H
 
-#include <wx/statusbr.h>
+#include "clSystemSettings.h"
+#include "cl_command_event.h"
+#include "codelite_exports.h"
+#include "wxPNGAnimation.h"
+#include <wx/bitmap.h>
 #include <wx/colour.h>
 #include <wx/sharedptr.h>
-#include <wx/bitmap.h>
-#include "codelite_exports.h"
-#include "cl_command_event.h"
-#include "wxPNGAnimation.h"
+#include <wx/statusbr.h>
 #include <wx/timer.h>
-#include "clSystemSettings.h"
 
 class wxCustomStatusBar;
 class WXDLLIMPEXP_SDK wxCustomStatusBarArt : public wxEvtHandler
@@ -52,10 +52,10 @@ public:
     virtual void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
     virtual void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
 
-    virtual wxColour GetBgColour() const { return clSystemSettings::GetDefaultPanelColour(); }
-    virtual wxColour GetPenColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
-    virtual wxColour GetTextColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
-    virtual wxColour GetSeparatorColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW); }
+    virtual wxColour GetBgColour() const;
+    virtual wxColour GetPenColour() const;
+    virtual wxColour GetTextColour() const;
+    virtual wxColour GetSeparatorColour() const;
     void SetName(const wxString& name) { this->m_name = name; }
     const wxString& GetName() const { return m_name; }
 };
@@ -173,8 +173,8 @@ public:
     /**
      * @brief construct animation field.
      */
-    wxCustomStatusBarAnimationField(
-        wxCustomStatusBar* parent, const wxBitmap& sprite, wxOrientation spriteOrientation, const wxSize& animSize);
+    wxCustomStatusBarAnimationField(wxCustomStatusBar* parent, const wxBitmap& sprite, wxOrientation spriteOrientation,
+                                    const wxSize& animSize);
 
     virtual ~wxCustomStatusBarAnimationField();
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
@@ -251,12 +251,12 @@ public:
      * @brief set text in the main status bar text area
      */
     void SetText(const wxString& message, int secondsToLive = wxNOT_FOUND);
-    
+
     /**
      * @brief return the main status bar area text message
      */
     const wxString& GetText() const { return m_text; }
-    
+
     /**
      * @brief clear the main text
      */

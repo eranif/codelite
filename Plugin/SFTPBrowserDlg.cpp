@@ -54,39 +54,22 @@ public:
         wxFileName fn;
         if(m_attribute->IsFolder()) {
             fn = wxFileName(fullpath, "", wxPATH_UNIX);
-            fn.Normalize();
+            fn.Normalize(wxPATH_NORM_DEPR_OLD_DEFAULT);
             m_fullpath = fn.GetPath(false, wxPATH_UNIX);
         } else {
             fn = wxFileName(fullpath, wxPATH_UNIX);
-            fn.Normalize();
+            fn.Normalize(wxPATH_NORM_DEPR_OLD_DEFAULT);
             m_fullpath = fn.GetFullPath(wxPATH_UNIX);
         }
     }
 
-    virtual ~SFTPBrowserEntryClientData()
-    {
-    }
+    virtual ~SFTPBrowserEntryClientData() {}
 
-    const wxString& GetDisplayName() const
-    {
-        return GetAttribute()->GetName();
-    }
-    void SetAttribute(const SFTPAttribute::Ptr_t& attribute)
-    {
-        this->m_attribute = attribute;
-    }
-    void SetFullpath(const wxString& fullpath)
-    {
-        this->m_fullpath = fullpath;
-    }
-    const SFTPAttribute::Ptr_t& GetAttribute() const
-    {
-        return m_attribute;
-    }
-    const wxString& GetFullpath() const
-    {
-        return m_fullpath;
-    }
+    const wxString& GetDisplayName() const { return GetAttribute()->GetName(); }
+    void SetAttribute(const SFTPAttribute::Ptr_t& attribute) { this->m_attribute = attribute; }
+    void SetFullpath(const wxString& fullpath) { this->m_fullpath = fullpath; }
+    const SFTPAttribute::Ptr_t& GetAttribute() const { return m_attribute; }
+    const wxString& GetFullpath() const { return m_fullpath; }
 };
 
 // ================================================================================
@@ -168,10 +151,7 @@ void SFTPBrowserDlg::OnRefresh(wxCommandEvent& event)
     CallAfter(&SFTPBrowserDlg::DoBrowse);
 }
 
-void SFTPBrowserDlg::OnRefreshUI(wxUpdateUIEvent& event)
-{
-    event.Enable(true);
-}
+void SFTPBrowserDlg::OnRefreshUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
 {
@@ -292,10 +272,7 @@ SFTPBrowserEntryClientData* SFTPBrowserDlg::DoGetItemData(const wxDataViewItem& 
     return cd;
 }
 
-wxString SFTPBrowserDlg::GetPath() const
-{
-    return m_textCtrlRemoteFolder->GetValue();
-}
+wxString SFTPBrowserDlg::GetPath() const { return m_textCtrlRemoteFolder->GetValue(); }
 
 void SFTPBrowserDlg::OnItemSelected(wxDataViewEvent& event)
 {
@@ -305,10 +282,7 @@ void SFTPBrowserDlg::OnItemSelected(wxDataViewEvent& event)
     }
 }
 
-wxString SFTPBrowserDlg::GetAccount() const
-{
-    return m_choiceAccount->GetStringSelection();
-}
+wxString SFTPBrowserDlg::GetAccount() const { return m_choiceAccount->GetStringSelection(); }
 
 void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 {
@@ -388,10 +362,7 @@ void SFTPBrowserDlg::OnCdUp(wxCommandEvent& event)
     DoDisplayEntriesForPath("..");
 }
 
-void SFTPBrowserDlg::OnConnectedUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_sftp.get());
-}
+void SFTPBrowserDlg::OnConnectedUI(wxUpdateUIEvent& event) { event.Enable(m_sftp.get()); }
 
 void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
 {

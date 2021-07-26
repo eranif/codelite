@@ -1,5 +1,5 @@
-#include "drawingutils.h"
 #include "wxCustomStatusBar.h"
+#include "drawingutils.h"
 #include <wx/dcbuffer.h>
 #include <wx/dcclient.h>
 #include <wx/dcgraph.h>
@@ -36,6 +36,17 @@ void wxCustomStatusBarArt::DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect)
     bottomPt.y += 1;
     dc.DrawLine(topPt, bottomPt);
 }
+
+wxColour wxCustomStatusBarArt::GetBgColour() const
+{
+    wxColour c = clSystemSettings::GetDefaultPanelColour();
+    bool is_dark = DrawingUtils::IsDark(c);
+    return c.ChangeLightness(is_dark ? 115 : 85);
+}
+
+wxColour wxCustomStatusBarArt::GetPenColour() const { return GetBgColour(); }
+wxColour wxCustomStatusBarArt::GetTextColour() const { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
+wxColour wxCustomStatusBarArt::GetSeparatorColour() const { return GetBgColour(); }
 
 //========================------------------------------------
 //========================------------------------------------
@@ -224,7 +235,8 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
     wxAutoBufferedPaintDC abdc(this);
     PrepareDC(abdc);
-    wxGCDC dc(abdc);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(abdc, gcdc);
     wxRect rect = GetClientRect();
 
     dc.SetFont(DrawingUtils::GetDefaultGuiFont());

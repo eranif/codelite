@@ -54,11 +54,11 @@ public:
         wxFileName fn;
         if(m_attribute->IsFolder()) {
             fn = wxFileName(fullpath, "", wxPATH_UNIX);
-            fn.Normalize(wxPATH_NORM_DEPR_OLD_DEFAULT);
+            fn.Normalize();
             m_fullpath = fn.GetPath(false, wxPATH_UNIX);
         } else {
             fn = wxFileName(fullpath, wxPATH_UNIX);
-            fn.Normalize(wxPATH_NORM_DEPR_OLD_DEFAULT);
+            fn.Normalize();
             m_fullpath = fn.GetFullPath(wxPATH_UNIX);
         }
     }

@@ -1,4 +1,11 @@
-if(UNIX AND NOT APPLE)
+#  Try to find Sqlite3
+#  Once done this will define values if library is found
+#    SQLITE3_FOUND - system has Sqlite3
+#    SQLITE3_INCLUDE_DIR - the Sqlite3 include directory
+#    SQLITE3_LIBRARY - Link these to use Sqlite3
+#
+
+if(NOT DEFINED SQLITE3_FOUND)
     find_library(SQLITE3_LIBRARY
                  NAMES libsqlite3.so
                  HINTS
@@ -17,11 +24,11 @@ if(UNIX AND NOT APPLE)
     if (SQLITE3_INCLUDE_DIR AND SQLITE3_LIBRARY)
        set(SQLITE3_FOUND TRUE)
     endif()
-    
-    if(NOT SQLITE3_FOUND)
-        message(FATAL_ERROR " **** Could not find Sqlite3. Please install libsqlite3-dev package **** ")
-    else()
+
+    if(SQLITE3_FOUND)
         message("-- SQLITE3_INCLUDE_DIR: " ${SQLITE3_INCLUDE_DIR})
         message("-- SQLITE3_LIBRARY: " ${SQLITE3_LIBRARY})
+    else()
+        message(-- "Could not find system Sqlite3. Using bundled sqlite3")
     endif()
 endif()

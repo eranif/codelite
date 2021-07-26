@@ -625,7 +625,7 @@ if ( APPLE )
     add_definitions( -mmacosx-version-min=10.8 )
 endif()
 
-if(APPLE)
+if( NOT SQLITE3_FOUND )
     # On Linux, we use the distro's libsqlite3
     add_subdirectory(sqlite3)
 endif()
@@ -719,7 +719,7 @@ endif()
 ##
 ## Setup the proper dependencies
 ##
-if(APPLE)
+if(NOT SQLITE3_FOUND)
     if ( USE_PCH )
         add_dependencies(sqlite3lib ${CL_PCH_TARGET})
     endif ( USE_PCH )

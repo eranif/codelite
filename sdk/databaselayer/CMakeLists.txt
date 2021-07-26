@@ -32,7 +32,7 @@ if ( APPLE )
     add_definitions(-fPIC)
 endif()
 
-if(APPLE)
+if( NOT SQLITE3_FOUND )
     FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
 else()
     FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp")

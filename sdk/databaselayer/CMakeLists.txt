@@ -1,8 +1,8 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.0)
- 
+
 # Our project is called 'databaselayersqlite' this is how it will be called in
-# visual studio, and in our makefiles. 
+# visual studio, and in our makefiles.
 project(databaselayersqlite)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -41,17 +41,17 @@ endif()
 if ( WITH_MYSQL )
     find_library(LIBMYSQLCLIENT NAMES mysql mysqlclient mariadb mariadbclient)
     find_path(MYSQLCLIENT_INCLUDE NAMES mysql.h PATH_SUFFIXES mysql mariadb)
-    
-    if (  ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND") 
+
+    if (  ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND")
         message( FATAL_ERROR "-- Could not locate libmysqlclient.so" )
     else ( ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND" )
         message( "-- LIBMYSQLCLIENT is set to ${LIBMYSQLCLIENT}" )
     endif ( ${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND" )
-    
+
     if ( ${MYSQLCLIENT_INCLUDE} STREQUAL "MYSQLCLIENT_INCLUDE-NOTFOUND" )
         message( FATAL_ERROR "-- Could not locate mysql.h" )
     endif ( ${MYSQLCLIENT_INCLUDE} STREQUAL "MYSQLCLIENT_INCLUDE-NOTFOUND" )
-    
+
     add_definitions( -DDBL_USE_MYSQL=1 )
     include_directories(${MYSQLCLIENT_INCLUDE})
     message("-- Adding MySQL include path: ${MYSQLCLIENT_INCLUDE} ")

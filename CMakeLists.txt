@@ -488,20 +488,20 @@ message("-- ARCH_NAME ${ARCH_NAME}")
 if ( MAKE_DEB )
     get_distro_name(distro)
     message("-- Distro name: ${distro}")
-    
+
     set(DEB_DEPS "")
     if ( ${distro} STREQUAL "debian_10" )
         set(DEB_DEPS "clang-tools-7, clang-format-10")
     endif()
-    
+
     if ( ${distro} STREQUAL "ubuntu_1804" )
         set(DEB_DEPS "clangd-10, clang-format-10")
     endif()
-    
+
     if ( ${distro} STREQUAL "ubuntu_2004" )
         set(DEB_DEPS "clangd-10, clang-format-10")
     endif()
-    
+
     message("-- Generating deb target")
     if( ${ARCH} EQUAL 32 )
         message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE i386")
@@ -510,7 +510,7 @@ if ( MAKE_DEB )
         message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64")
         set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
     endif ()
-    
+
     if (GTK_VERSION EQUAL 3)
         set(LIBGTK "libgtk-3-dev")
         set(GTKNAME "gtk3")

@@ -14,7 +14,7 @@
    viewBox="0 0 511.99999 511.99999"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
    sodipodi:docname="codelite-logo.svg">
   <title
      id="title6123">CodeLite IDE Logo</title>
@@ -133,7 +133,11 @@
     <filter
        style="color-interpolation-filters:sRGB;"
        inkscape:label="Drop Shadow"
-       id="filter5006">
+       id="filter5006"
+       x="-0.01959358"
+       y="-0.01959358"
+       width="1.0391872"
+       height="1.0391872">
       <feFlood
          flood-opacity="0.498039"
          flood-color="rgb(0,0,0)"
@@ -162,6 +166,71 @@
          result="composite2"
          id="feComposite5016" />
     </filter>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter4916">
+      <feFlood
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         id="feFlood4906" />
+      <feComposite
+         in="flood"
+         in2="SourceGraphic"
+         operator="in"
+         result="composite1"
+         id="feComposite4908" />
+      <feGaussianBlur
+         in="composite1"
+         stdDeviation="5"
+         result="blur"
+         id="feGaussianBlur4910" />
+      <feOffset
+         dx="0"
+         dy="0"
+         result="offset"
+         id="feOffset4912" />
+      <feComposite
+         in="SourceGraphic"
+         in2="offset"
+         operator="over"
+         result="fbSourceGraphic"
+         id="feComposite4914" />
+      <feColorMatrix
+         result="fbSourceGraphicAlpha"
+         in="fbSourceGraphic"
+         values="0 0 0 -1 0 0 0 0 -1 0 0 0 0 -1 0 0 0 0 1 0"
+         id="feColorMatrix4918" />
+      <feFlood
+         id="feFlood4920"
+         flood-opacity="0.498039"
+         flood-color="rgb(0,0,0)"
+         result="flood"
+         in="fbSourceGraphic" />
+      <feComposite
+         in2="fbSourceGraphic"
+         id="feComposite4922"
+         in="flood"
+         operator="in"
+         result="composite1" />
+      <feGaussianBlur
+         id="feGaussianBlur4924"
+         in="composite1"
+         stdDeviation="5"
+         result="blur" />
+      <feOffset
+         id="feOffset4926"
+         dx="0"
+         dy="0"
+         result="offset" />
+      <feComposite
+         in2="offset"
+         id="feComposite4928"
+         in="fbSourceGraphic"
+         operator="over"
+         result="composite2" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -170,19 +239,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.92075429"
-     inkscape:cx="205.15615"
-     inkscape:cy="229.87528"
+     inkscape:zoom="1"
+     inkscape:cx="-160.5"
+     inkscape:cy="229.5"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer3"
      showgrid="false"
      units="px"
      inkscape:showpageshadow="false"
-     inkscape:window-width="1853"
-     inkscape:window-height="1016"
-     inkscape:window-x="67"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="2131"
+     inkscape:window-height="1115"
+     inkscape:window-x="522"
+     inkscape:window-y="126"
+     inkscape:window-maximized="0"
+     inkscape:pagecheckerboard="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -208,39 +278,66 @@
     </rdf:RDF>
   </metadata>
   <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="bg">
+    <rect
+       style="fill:#292929"
+       id="rect1188"
+       width="476"
+       height="489"
+       x="18"
+       y="11.5" />
+    <rect
+       style="fill:#6c535d;stroke:#4d4d4d;stroke-opacity:1;fill-opacity:1;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect1621"
+       width="476"
+       height="489"
+       x="18"
+       y="11.5" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4830"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:Iosevka;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;-inkscape-font-specification:Iosevka;font-stretch:normal;font-variant:normal;"><flowRegion
+         id="flowRegion4832"
+         style="-inkscape-font-specification:Iosevka;font-family:Iosevka;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;"><rect
+           id="rect4834"
+           width="191"
+           height="279"
+           x="74"
+           y="70"
+           style="-inkscape-font-specification:Iosevka;font-family:Iosevka;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;" /></flowRegion><flowPara
+         id="flowPara4836" /></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot4842"
+       style="fill:black;fill-opacity:1;line-height:1.25;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion4844"><rect
+           id="rect4846"
+           width="265"
+           height="279"
+           x="115"
+           y="106" /></flowRegion><flowPara
+         id="flowPara4848"></flowPara></flowRoot>  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="TEXT">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:598.95800781px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffcc00;fill-opacity:1;stroke:#000000;stroke-width:0.93027943;stroke-miterlimit:4;stroke-dasharray:none;filter:url(#filter4916)"
+       x="60.986771"
+       y="533.79242"
+       id="text4840"
+       transform="matrix(1.2964092,0,0,0.81241535,-14.857994,1.1653097)"><tspan
+         sodipodi:role="line"
+         id="tspan4838"
+         x="60.986771"
+         y="533.79242"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Iosevka;-inkscape-font-specification:Iosevka;fill:#ffcc00;stroke:#000000;stroke-width:0.93027943;stroke-miterlimit:4;stroke-dasharray:none">C</tspan></text>
+  </g>
+  <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-540.36219)">
-    <rect
-       style="fill:#1190e6;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
-       id="rect5967-9"
-       width="244.97823"
-       height="244.97823"
-       x="-250.53123"
-       y="547.87305"
-       rx="10.043558"
-       ry="10.043558"
-       transform="matrix(-1.3606651,0,0,1.3606651,170.35601,-27.143102)" />
-    <rect
-       style="fill:#6eca60;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
-       id="rect5967-9-9"
-       width="244.97823"
-       height="244.97823"
-       x="144.21576"
-       y="676.97546"
-       rx="10.043559"
-       ry="10.043559"
-       transform="matrix(1.3606651,0,0,1.3606651,-101.82565,-288.13481)" />
-    <rect
-       style="fill:#ffd748;fill-opacity:1;fill-rule:evenodd;stroke:#d0ffb9;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter5006)"
-       id="rect5967-9-7-5"
-       width="244.97823"
-       height="244.97823"
-       x="-250.53123"
-       y="801.87305"
-       rx="10.043558"
-       ry="10.043558"
-       transform="matrix(-1.3606651,0,0,1.3606651,-2.9418556,-546.04996)" />
-  </g>
+     transform="translate(0,-540.36219)" />
 </svg>

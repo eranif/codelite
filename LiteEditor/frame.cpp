@@ -5615,17 +5615,9 @@ void clMainFrame::OnCopyFilePathRelativeToWorkspaceUI(wxUpdateUIEvent& event)
 void clMainFrame::InitializeLogo()
 {
     BitmapLoader& bmpLoader = *(PluginManager::Get()->GetStdIcons());
-
     wxString baseLogoName = "codelite-logo";
-#ifdef __WXGTK__
-    if(getuid() == 0) {
-        // ROOT_INFO_LUID
-        baseLogoName = "codelite-logo-root";
-    }
-#endif
-
     wxIconBundle app_icons;
-    std::array<int, 5> sizes = { 16, 32, 64, 128, 256 };
+    std::array<int, 5> sizes = { 24, 32, 64, 128, 256 };
     for(int size : sizes) {
         wxBitmap iconBmp = bmpLoader.LoadBitmap(baseLogoName, size);
         wxIcon icn;

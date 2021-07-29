@@ -996,10 +996,15 @@ void QuickFindBar::FindNext() { DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE); }
 
 size_t QuickFindBar::DoReplaceInBuffer(const TargetRange& range)
 {
+    if(!range.IsOk()) {
+        return 0;
+    }
+
     wxString in_buffer = m_sci->GetTextRange(range.start_pos, range.end_pos);
     auto matches = DoFindAll(range);
 
-    int offset = 0;
+    // adjust the replacement position to match the range
+    int offset = -range.start_pos;
     wxString replace_with = m_textCtrlReplace->GetValue();
     size_t replace_with_len = replace_with.length();
     for(const auto& range : matches) {

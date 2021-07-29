@@ -331,6 +331,7 @@ void clTabCtrl::DoSetBestSize()
         SetSizeHints(wxSize(-1, m_nHeight));
         SetSize(-1, m_nHeight);
     }
+    PositionFilelistButton();
 }
 
 bool clTabCtrl::ShiftRight(clTabInfo::Vec_t& tabs)
@@ -409,6 +410,7 @@ void clTabCtrl::OnSize(wxSizeEvent& event)
 {
     event.Skip();
     m_visibleTabs.clear();
+    PositionFilelistButton();
     Refresh();
 }
 
@@ -431,7 +433,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         gcdc.SetPen(clSystemSettings::GetDefaultPanelColour());
         gcdc.SetBrush(clSystemSettings::GetDefaultPanelColour());
         gcdc.DrawRectangle(GetClientRect());
-        PositionFilelistButton();
         return;
     }
 
@@ -489,9 +490,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     if(!IsVerticalTabs()) {
         gcdc.DestroyClippingRegion();
     }
-
     m_art->FinaliseBackground(this, gcdc, clientRect, activeTab ? activeTab->GetRect() : wxRect(), m_colours, m_style);
-    PositionFilelistButton();
 }
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)

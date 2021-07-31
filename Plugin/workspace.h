@@ -57,12 +57,12 @@ class WXDLLIMPEXP_SDK clCxxWorkspace : public IWorkspace
     friend class clCxxWorkspaceST;
 
 public:
-    virtual void GetProjectFiles(const wxString& projectName, wxArrayString& files) const;
-    virtual void GetWorkspaceFiles(wxArrayString& files) const;
-    virtual wxString GetFilesMask() const;
-    virtual bool IsBuildSupported() const;
-    virtual bool IsProjectSupported() const;
-    virtual wxString GetProjectFromFile(const wxFileName& filename) const;
+    void GetProjectFiles(const wxString& projectName, wxArrayString& files) const override;
+    void GetWorkspaceFiles(wxArrayString& files) const override;
+    wxString GetFilesMask() const override;
+    bool IsBuildSupported() const override;
+    bool IsProjectSupported() const override;
+    wxString GetProjectFromFile(const wxFileName& filename) const override;
 
 public:
     typedef std::unordered_map<wxString, ProjectPtr> ProjectMap_t;
@@ -180,7 +180,7 @@ public:
      */
     void CreateCompileFlags() const;
 
-    wxFileName GetFileName() const { return GetWorkspaceFileName(); }
+    wxFileName GetFileName() const override { return GetWorkspaceFileName(); }
     void SetStartupDir(const wxString& startupDir) { this->m_startupDir = startupDir; }
     const wxString& GetStartupDir() const { return m_startupDir; }
 
@@ -314,7 +314,7 @@ public:
     /**
      * \return The active project name or wxEmptyString
      */
-    virtual wxString GetActiveProjectName() const;
+    wxString GetActiveProjectName() const override;
 
     /**
      * @brief return the paths of all projects in the workspace (full paths)
@@ -490,12 +490,12 @@ public:
     /**
      * @brief return the underlying file for a given project name
      */
-    virtual wxFileName GetProjectFileName(const wxString& projectName) const;
+    wxFileName GetProjectFileName(const wxString& projectName) const override;
 
     /**
      * @brief return list of projects for this workspace
      */
-    virtual wxArrayString GetWorkspaceProjects() const;
+    wxArrayString GetWorkspaceProjects() const override;
 
     /**
      * @brief return list of files that are exluded for a given workspace configuration

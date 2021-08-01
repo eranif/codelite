@@ -171,7 +171,7 @@ public:
     /**
      * @brief as defined in IWorkspace
      */
-    wxFileName GetFileName() const { return GetFilename(); }
+    wxFileName GetFileName() const override { return GetFilename(); }
 
     /**
      * @brief return the workspace name
@@ -231,7 +231,7 @@ public:
     /**
      * @brief return the active project name
      */
-    wxString GetActiveProjectName() const;
+    wxString GetActiveProjectName() const override;
     /**
      * @brief save the workspace file
      */

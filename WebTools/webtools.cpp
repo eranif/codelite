@@ -239,7 +239,7 @@ void WebTools::OnTimer(wxTimerEvent& event)
 
     // Sanity
     CHECK_PTR_RET(editor);
-    CHECK_PTR_RET(editor->IsModified());
+    CHECK_PTR_RET(editor->IsEditorModified());
     if(!IsJavaScriptFile(editor->GetFileName()))
         return;
 

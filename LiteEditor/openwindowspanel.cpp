@@ -445,7 +445,7 @@ void OpenWindowsPanel::OnEditorModified(clCommandEvent& event)
         return;
     IEditor* editor = m_mgr->FindEditor(event.GetFileName());
     if(editor) {
-        DoMarkModify(event.GetFileName(), editor->IsModified());
+        DoMarkModify(event.GetFileName(), editor->IsEditorModified());
     }
 }
 

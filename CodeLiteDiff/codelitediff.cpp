@@ -150,7 +150,7 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
         // If we are and it's been edited, diff against the unaltered version
         if(m_leftFile.GetFullPath() == secondFile) {
             IEditor* editor = m_mgr->FindEditor(secondFile);
-            if(editor && editor->IsModified()) {
+            if(editor && editor->IsEditorModified()) {
                 wxFileName rightFn = SaveEditorToTmpfile(editor);
                 if(!rightFn.IsOk()) {
                     CL_DEBUG("CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile");

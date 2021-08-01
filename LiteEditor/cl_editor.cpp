@@ -3570,7 +3570,9 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
                 clEditorStateLocker editor(this);
                 ClearSelections();
             }
+#if 0
             clMainFrame::Get()->ViewPane(wxT("Output View"), false);
+#endif
         }
     }
     m_context->OnKeyDown(event);

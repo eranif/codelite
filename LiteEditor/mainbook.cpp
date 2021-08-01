@@ -436,7 +436,7 @@ void MainBook::GetAllTabs(clTab::Vec_t& tabs)
         clEditor* editor = dynamic_cast<clEditor*>(t.window);
         if(editor) {
             t.isFile = true;
-            t.isModified = editor->IsModified();
+            t.isModified = editor->GetModify();
             t.filename = editor->GetFileName();
         }
         tabs.push_back(t);
@@ -941,7 +941,7 @@ bool MainBook::CloseAllButThis(wxWindow* page)
     std::vector<std::pair<wxFileName, bool>> files;
     std::unordered_map<wxString, clEditor*> M;
     for(clEditor* editor : editors) {
-        if(editor->IsModified()) {
+        if(editor->IsEditorModified()) {
             const wxFileName& fn = editor->GetFileName();
             files.push_back({ fn, true });
             M[fn.GetFullPath()] = editor;
@@ -1078,7 +1078,7 @@ void MainBook::ApplyTabLabelChanges()
         std::vector<clEditor*> editors;
         GetAllEditors(editors, MainBook::kGetAll_IncludeDetached);
         for(size_t i = 0; i < editors.size(); i++) {
-            SetPageTitle(editors[i], editors[i]->GetFileName(), editors[i]->IsModified());
+            SetPageTitle(editors[i], editors[i]->GetFileName(), editors[i]->IsEditorModified());
         }
     }
 }
@@ -1319,7 +1319,7 @@ void MainBook::OnDetachedEditorClosed(clCommandEvent& e)
     IEditor* editor = reinterpret_cast<IEditor*>(e.GetClientData());
     DoEraseDetachedEditor(editor);
 
-    wxString alternateText = (editor && editor->IsModified()) ? editor->GetCtrl()->GetText() : "";
+    wxString alternateText = (editor && editor->IsEditorModified()) ? editor->GetCtrl()->GetText() : "";
     // Open the file again in the main book
     CallAfter(&MainBook::DoOpenFile, e.GetFileName(), alternateText);
 }
@@ -1566,7 +1566,7 @@ void MainBook::GetDetachedTabs(clTab::Vec_t& tabs)
         tabInfo.bitmap = wxNOT_FOUND;
         tabInfo.filename = fr->GetEditor()->GetFileName();
         tabInfo.isFile = true;
-        tabInfo.isModified = fr->GetEditor()->IsModified();
+        tabInfo.isModified = fr->GetEditor()->GetModify();
         tabInfo.text = fr->GetEditor()->GetFileName().GetFullPath();
         tabInfo.window = fr->GetEditor();
         tabs.push_back(tabInfo);

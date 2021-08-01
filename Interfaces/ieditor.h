@@ -96,7 +96,7 @@ public:
     /**
      * @brief return true if the editor is modified
      */
-    virtual bool IsModified() = 0;
+    virtual bool IsEditorModified() const = 0;
 
     /**
      * @brief Get the editor's modification count

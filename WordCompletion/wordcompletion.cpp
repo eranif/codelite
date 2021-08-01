@@ -105,7 +105,7 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
 
     wxStringSet_t words = m_dictionary->GetWords();
     // Parse the current bufer (if modified), to include non saved words
-    if(activeEditor->IsModified()) {
+    if(activeEditor->IsEditorModified()) {
         // For performance (this parsing is done in the main thread)
         // only parse the visible area of the document
         wxStringSet_t unsavedBufferWords;

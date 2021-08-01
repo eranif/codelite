@@ -457,7 +457,7 @@ void CodeFormatter::DoFormatWithRustfmt(IEditor* editor, const wxFileName& fileN
     // - format the file
     // - overwrite the buffer with the modified version on the file system
     bool undo = false;
-    if(editor->IsModified()) {
+    if(editor->IsEditorModified()) {
         if(!editor->Save()) {
             ::wxMessageBox(_("Failed to save file:\n") + fileName.GetFullPath(), "Source Code Formatter",
                            wxOK | wxICON_ERROR);

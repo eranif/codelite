@@ -305,7 +305,7 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
     wxString filename = GetEditorFilePath(editor);
-    if(m_filesSent.count(filename) && editor->IsModified()) {
+    if(m_filesSent.count(filename) && editor->IsEditorModified()) {
         // we already sent this file over, ask for change parse
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
@@ -464,7 +464,7 @@ void LanguageServerProtocol::FunctionHelp(IEditor* editor)
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxString& filename = GetEditorFilePath(editor);
-    if(m_filesSent.count(filename) && editor->IsModified()) {
+    if(m_filesSent.count(filename) && editor->IsEditorModified()) {
         // we already sent this file over, ask for change parse
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
@@ -490,7 +490,7 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxString& filename = GetEditorFilePath(editor);
 
-    if(m_filesSent.count(filename) && editor->IsModified()) {
+    if(m_filesSent.count(filename) && editor->IsEditorModified()) {
         std::string text;
         editor->GetEditorTextRaw(text);
         SendChangeRequest(editor, text);
@@ -551,7 +551,7 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor)
 
         // If the editor is modified, we need to tell the LSP to reparse the source file
         const wxString& filename = GetEditorFilePath(editor);
-        if(m_filesSent.count(filename) && editor->IsModified()) {
+        if(m_filesSent.count(filename) && editor->IsEditorModified()) {
             // we already sent this file over, ask for change parse
             std::string content;
             editor->GetEditorTextRaw(content);

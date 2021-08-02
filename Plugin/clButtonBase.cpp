@@ -391,6 +391,7 @@ void clButtonBase::Render(wxDC& dc)
         // Draw an arrow
         wxRect arrowRect{ { 0, 0 }, dc.GetTextExtent(wxT("\u25BE")) };
         arrowRect = arrowRect.CenterIn(arrow_rect);
+        dc.SetTextForeground(textColour);
         dc.DrawText(wxT("\u25BE"), arrowRect.GetTopLeft());
     }
 

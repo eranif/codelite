@@ -64,4 +64,4 @@ elseif(WIN32)
                         OUTPUT_VARIABLE _OS_NAME OUTPUT_STRIP_TRAILING_WHITESPACE)
         message(FATAL_ERROR "${_OS_NAME}")
     endif(POS GREATER -1)
-endif(WIN32)
+endif() # UNIX -> WIN32

@@ -473,6 +473,9 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     if(!info.namespacesList.IsEmpty()) { WriteNamespacesDeclaration(info.namespacesList, header); }
 
     header << wxT("class ") << info.name;
+    if(!info.isInheritable) {
+        header << wxT(" final");
+    }
 
     if(!info.parents.name.empty()) {
         header << wxT(" : ");
@@ -482,11 +485,18 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     header << wxT("\n{\n");
     if(info.isSingleton) { header << separator << wxT("static ") << info.name << wxT("* ms_instance;\n\n"); }
 
-    if(info.isAssingable == false) {
-        // declare copy constructor & assingment operator as private
+    if(!info.isAssignable || !info.isMovable) {
         header << wxT("private:\n");
-        header << separator << info.name << wxT("(const ") << info.name << wxT("& rhs)") << closeMethod;
-        header << separator << info.name << wxT("& operator=(const ") << info.name << wxT("& rhs)") << closeMethod;
+        if(!info.isAssignable) {
+            // prohibit use of copy constructor & assignment operator
+            header << separator << info.name << wxT("(const ") << info.name << wxT("&) = delete;\n");
+            header << separator << info.name << wxT("& operator=(const ") << info.name << wxT("&) = delete;\n");
+        }
+        if(!info.isMovable) {
+            // prohibit use of move constructor & move assignment operator
+            header << separator << info.name << wxT("(") << info.name << wxT("&&) = delete;\n");
+            header << separator << info.name << wxT("& operator=(") << info.name << wxT("&&) = delete;\n");
+        }
         header << wxT("\n");
     }
 
@@ -556,8 +566,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
         cpp << wxT("#include \"") << info.fileName << headerExt << wxT("\"\n");
 
         if(info.isSingleton) {
-            cpp << "#include <cstdlib> // NULL \n\n";
-            cpp << nsPrefix << info.name << wxT("* ") << nsPrefix << info.name << wxT("::ms_instance = NULL;\n\n");
+            cpp << wxT("\n") << nsPrefix << info.name << wxT("* ") << nsPrefix << info.name << wxT("::ms_instance{ nullptr };\n\n");
         } else {
             cpp << "\n";
         }
@@ -574,18 +583,16 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
         if(info.isSingleton) {
             cpp << info.name << wxT("* ") << info.name << wxT("::Instance()\n");
             cpp << wxT("{\n");
-            cpp << separator << wxT("if (ms_instance == NULL) {\n");
-            cpp << separator << separator << wxT("ms_instance = new ") << info.name << wxT("();\n");
+            cpp << separator << wxT("if (ms_instance == nullptr) {\n");
+            cpp << separator << separator << wxT("ms_instance = new ") << info.name << wxT("{};\n");
             cpp << separator << wxT("}\n");
             cpp << separator << wxT("return ms_instance;\n");
             cpp << wxT("}\n\n");
 
             cpp << wxT("void ") << info.name << wxT("::Release()\n");
             cpp << wxT("{\n");
-            cpp << separator << wxT("if (ms_instance) {\n");
-            cpp << separator << separator << wxT("delete ms_instance;\n");
-            cpp << separator << wxT("}\n");
-            cpp << separator << wxT("ms_instance = NULL;\n");
+            cpp << separator << wxT("delete ms_instance;\n");
+            cpp << separator << wxT("ms_instance = nullptr;\n");
             cpp << wxT("}\n\n");
         }
 

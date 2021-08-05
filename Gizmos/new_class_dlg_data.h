@@ -44,6 +44,8 @@ public:
         HppHeader = (1 << 7),
         UsePragma = (1 << 8),
         UseLowerCase = (1 << 9),
+        NonMovable = (1 << 10),
+        NonInheritable = (1 << 11),
     };
 
 public:

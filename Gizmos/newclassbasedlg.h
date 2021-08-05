@@ -68,12 +68,14 @@ protected:
     wxCheckBox* m_checkBoxLowercaseFileName;
     wxCheckBox* m_checkBoxPragmaOnce;
     wxPanel* m_panel55;
-    wxCheckBox* m_checkBoxVirtualDtor;
-    wxCheckBox* m_checkBoxCopyable;
-    wxCheckBox* m_checkBoxImplVirtual;
     wxCheckBox* m_checkBoxSingleton;
-    wxCheckBox* m_checkBoxImplPureVirtual;
+    wxCheckBox* m_checkBoxVirtualDtor;
     wxCheckBox* m_checkBoxInline;
+    wxCheckBox* m_checkBoxNonInheritable;
+    wxCheckBox* m_checkBoxNonCopyable;
+    wxCheckBox* m_checkBoxNonMovable;
+    wxCheckBox* m_checkBoxImplVirtual;
+    wxCheckBox* m_checkBoxImplPureVirtual;
     wxStdDialogButtonSizer* m_stdBtnSizer30;
     wxButton* m_button32;
     wxButton* m_button34;
@@ -86,8 +88,8 @@ protected:
     virtual void OnBrowseVD(wxCommandEvent& event) { event.Skip(); }
     virtual void OnBrowseFolder(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseLowerCaseFileName(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCheckSingleton(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCheckImpleAllVirtualFunctions(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCheckInline(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
@@ -114,12 +116,14 @@ public:
     wxCheckBox* GetCheckBoxLowercaseFileName() { return m_checkBoxLowercaseFileName; }
     wxCheckBox* GetCheckBoxPragmaOnce() { return m_checkBoxPragmaOnce; }
     wxPanel* GetPanel57() { return m_panel57; }
-    wxCheckBox* GetCheckBoxVirtualDtor() { return m_checkBoxVirtualDtor; }
-    wxCheckBox* GetCheckBoxCopyable() { return m_checkBoxCopyable; }
-    wxCheckBox* GetCheckBoxImplVirtual() { return m_checkBoxImplVirtual; }
     wxCheckBox* GetCheckBoxSingleton() { return m_checkBoxSingleton; }
-    wxCheckBox* GetCheckBoxImplPureVirtual() { return m_checkBoxImplPureVirtual; }
+    wxCheckBox* GetCheckBoxVirtualDtor() { return m_checkBoxVirtualDtor; }
     wxCheckBox* GetCheckBoxInline() { return m_checkBoxInline; }
+    wxCheckBox* GetCheckBoxNonInheritable() { return m_checkBoxNonInheritable; }
+    wxCheckBox* GetCheckBoxNonCopyable() { return m_checkBoxNonCopyable; }
+    wxCheckBox* GetCheckBoxNonMovable() { return m_checkBoxNonMovable; }
+    wxCheckBox* GetCheckBoxImplVirtual() { return m_checkBoxImplVirtual; }
+    wxCheckBox* GetCheckBoxImplPureVirtual() { return m_checkBoxImplPureVirtual; }
     wxPanel* GetPanel55() { return m_panel55; }
     wxNotebook* GetNotebook53() { return m_notebook53; }
     NewClassBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Class"),

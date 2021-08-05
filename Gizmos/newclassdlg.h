@@ -45,7 +45,9 @@ struct NewClassInfo {
     wxString fileName;
     wxString virtualDirectory;
     bool isSingleton;
-    bool isAssingable;
+    bool isAssignable;
+    bool isMovable;
+    bool isInheritable;
     bool isVirtualDtor;
     bool implAllPureVirtual;
     bool implAllVirtual;
@@ -56,7 +58,9 @@ struct NewClassInfo {
 
     NewClassInfo()
         : isSingleton(false)
-        , isAssingable(false)
+        , isAssignable(false)
+        , isMovable(false)
+        , isInheritable(false)
         , isVirtualDtor(false)
         , implAllPureVirtual(false)
         , implAllVirtual(false)
@@ -79,6 +83,8 @@ class NewClassDlg : public NewClassBaseDlg
     wxString m_parentClass;
 
 protected:
+    virtual void OnCheckSingleton(wxCommandEvent& event);
+    virtual void OnCheckImpleAllVirtualFunctions(wxCommandEvent& event);
     virtual void OnUseLowerCaseFileName(wxCommandEvent& event);
     virtual void OnBlockGuardUI(wxUpdateUIEvent& event);
     void OnBrowseParentClass(wxCommandEvent& event);
@@ -86,15 +92,14 @@ protected:
     void OnButtonOK(wxCommandEvent& e);
     bool ValidateInput();
     void OnTextEnter(wxCommandEvent& e);
-    void OnCheckImpleAllVirtualFunctions(wxCommandEvent& e);
     void OnBrowseFolder(wxCommandEvent& e);
     void OnBrowseVD(wxCommandEvent& e);
     void OnBrowseNamespace(wxCommandEvent& e);
-    void OnCheckInline(wxCommandEvent& e);
     void OnOkUpdateUI(wxUpdateUIEvent& event);
 
-    wxString doSpliteByCaptilization(const wxString& str);
+    wxString doSpliteByCaptilization(const wxString& str) const;
     void DoUpdateGeneratedPath();
+    void DoUpdateCheckBoxes();
     void DoSaveOptions();
     wxString CreateFileName() const;
 
@@ -103,17 +108,19 @@ public:
     NewClassDlg(wxWindow* parent, IManager* mgr);
     virtual ~NewClassDlg();
 
-    void GetNewClassInfo(NewClassInfo& info);
+    void GetNewClassInfo(NewClassInfo& info) const;
 
-    void GetInheritance(ClassParentInfo& inheritVec);
-    bool IsSingleton() { return m_checkBoxSingleton->GetValue(); }
-    wxString GetClassName() { return m_textClassName->GetValue(); }
+    void GetInheritance(ClassParentInfo& inheritVec) const;
+    bool IsSingleton() const { return m_checkBoxSingleton->GetValue(); }
+    wxString GetClassName() const { return m_textClassName->GetValue(); }
     wxString GetClassNamespace() const { return m_textCtrlNamespace->GetValue(); }
-    wxString GetClassPath();
-    wxString GetClassFile();
-    bool IsCopyableClass() { return !m_checkBoxCopyable->IsChecked(); }
-    wxString GetVirtualDirectoryPath() { return m_textCtrlVD->GetValue(); }
-    void GetNamespacesList(wxArrayString& namespacesArray);
+    wxString GetClassPath() const;
+    wxString GetClassFile() const;
+    bool IsCopyableClass() const { return !m_checkBoxNonCopyable->IsChecked(); }
+    bool IsMovableClass() const { return !m_checkBoxNonMovable->IsChecked(); }
+    bool IsInheritable() const { return !m_checkBoxNonInheritable->IsChecked(); }
+    wxString GetVirtualDirectoryPath() const { return m_textCtrlVD->GetValue(); }
+    void GetNamespacesList(wxArrayString& namespacesArray) const;
     bool IsInline() const { return m_checkBoxInline->GetValue(); }
     bool HppHeader() const { return m_checkBoxHpp->GetValue(); }
 };

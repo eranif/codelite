@@ -48,7 +48,7 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
 {
     EditorConfigST::Get()->ReadObject(wxT("NewClassDlgData"), &m_options);
 
-    m_checkBoxCopyable->SetValue(m_options.GetFlags() & NewClassDlgData::NonCopyable);
+    m_checkBoxNonCopyable->SetValue(m_options.GetFlags() & NewClassDlgData::NonCopyable);
     m_checkBoxImplPureVirtual->SetValue(m_options.GetFlags() & NewClassDlgData::ImplAllPureVirtualFuncs);
     m_checkBoxImplVirtual->SetValue(m_options.GetFlags() & NewClassDlgData::ImplAllVirtualFuncs);
     m_checkBoxInline->SetValue(m_options.GetFlags() & NewClassDlgData::FileIniline);
@@ -57,6 +57,8 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     m_checkBoxVirtualDtor->SetValue(m_options.GetFlags() & NewClassDlgData::VirtualDtor);
     m_checkBoxPragmaOnce->SetValue(m_options.GetFlags() & NewClassDlgData::UsePragma);
     m_checkBoxLowercaseFileName->SetValue(m_options.GetFlags() & NewClassDlgData::UseLowerCase);
+    m_checkBoxNonMovable->SetValue(m_options.GetFlags() & NewClassDlgData::NonMovable);
+    m_checkBoxNonInheritable->SetValue(m_options.GetFlags() & NewClassDlgData::NonInheritable);
 
     wxString vdPath;
     TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
@@ -81,6 +83,8 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     }
 
     DoUpdateGeneratedPath();
+    DoUpdateCheckBoxes();
+
     GetSizer()->Layout();
     m_textClassName->SetFocus();
 
@@ -98,7 +102,7 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
 
 NewClassDlg::~NewClassDlg() { DoSaveOptions(); }
 
-void NewClassDlg::GetInheritance(ClassParentInfo& parent)
+void NewClassDlg::GetInheritance(ClassParentInfo& parent) const
 {
     parent.access = "public";
     parent.fileName = m_parentClass;
@@ -178,21 +182,18 @@ bool NewClassDlg::ValidateInput()
     return true;
 }
 
-void NewClassDlg::GetNewClassInfo(NewClassInfo& info)
+void NewClassDlg::GetNewClassInfo(NewClassInfo& info) const
 {
     info.name = this->GetClassName();
     this->GetNamespacesList(info.namespacesList);
     this->GetInheritance(info.parents);
-    if(this->IsInline()) {
-        info.isInline = true;
-        info.isSingleton = false;
-    } else {
-        info.isInline = false;
-        info.isSingleton = this->IsSingleton();
-    }
+    info.isInline = this->IsInline();
+    info.isSingleton = this->IsSingleton();
     info.hppHeader = this->HppHeader();
     info.path = this->GetClassPath().Trim().Trim(false);
-    info.isAssingable = this->IsCopyableClass();
+    info.isAssignable = this->IsCopyableClass();
+    info.isMovable = this->IsMovableClass();
+    info.isInheritable = this->IsInheritable();
     info.fileName = wxFileName(GetClassFile()).GetName(); // Ommit any suffix the user might have typed in
     info.isVirtualDtor = m_checkBoxVirtualDtor->IsChecked();
     info.implAllPureVirtual = m_checkBoxImplPureVirtual->IsChecked();
@@ -202,16 +203,27 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo& info)
     info.blockGuard = m_textCtrlBlockGuard->GetValue().Trim().Trim(false);
 }
 
-wxString NewClassDlg::GetClassFile() { return m_textCtrlFileName->GetValue(); }
+wxString NewClassDlg::GetClassFile() const { return m_textCtrlFileName->GetValue(); }
 
-void NewClassDlg::OnTextEnter(wxCommandEvent& e) { m_textCtrlFileName->ChangeValue(CreateFileName()); }
-
-void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent& e)
+void NewClassDlg::OnTextEnter(wxCommandEvent& e)
 {
-    if(e.IsChecked()) { m_checkBoxImplPureVirtual->SetValue(true); }
+    wxUnusedVar(e);
+    m_textCtrlFileName->ChangeValue(CreateFileName());
 }
 
-wxString NewClassDlg::GetClassPath()
+void NewClassDlg::OnCheckSingleton(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoUpdateCheckBoxes();
+}
+
+void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoUpdateCheckBoxes();
+}
+
+wxString NewClassDlg::GetClassPath() const
 {
     if(m_textCtrlGenFilePath->GetValue().Trim().IsEmpty()) {
         return wxT(".");
@@ -262,7 +274,7 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent& e)
     }
 }
 
-void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray)
+void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray) const
 {
     wxString textNamespaces = this->GetClassNamespace();
     textNamespaces.Trim();
@@ -285,18 +297,7 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray)
     namespacesArray.Add(lastToken);
 }
 
-void NewClassDlg::OnCheckInline(wxCommandEvent& e)
-{
-    // Inline implementation conflict with singleton implementation
-    // so disable the relative checkbox
-    if(e.IsChecked()) {
-        if(m_checkBoxSingleton->IsEnabled()) m_checkBoxSingleton->Enable(false);
-    } else {
-        if(!m_checkBoxSingleton->IsEnabled()) m_checkBoxSingleton->Enable(true);
-    }
-}
-
-wxString NewClassDlg::doSpliteByCaptilization(const wxString& str)
+wxString NewClassDlg::doSpliteByCaptilization(const wxString& str) const
 {
     if(str.IsEmpty()) return wxT("");
 
@@ -342,6 +343,28 @@ void NewClassDlg::DoUpdateGeneratedPath()
     if(proj) { m_textCtrlGenFilePath->ChangeValue(proj->GetBestPathForVD(vd)); }
 }
 
+void NewClassDlg::DoUpdateCheckBoxes()
+{
+    bool singleton = m_checkBoxSingleton->IsChecked();
+    bool implVirtual = m_checkBoxImplVirtual->IsChecked();
+
+    if(singleton) {
+        // Singleton class must not be copyable or movable
+        m_checkBoxNonCopyable->SetValue(true);
+        m_checkBoxNonMovable->SetValue(true);
+        // A static pointer variable needs to be defined in the source file
+        m_checkBoxInline->SetValue(false);
+    }
+    if(implVirtual) {
+        m_checkBoxImplPureVirtual->SetValue(true);
+    }
+
+    m_checkBoxNonCopyable->Enable(!singleton);
+    m_checkBoxNonMovable->Enable(!singleton);
+    m_checkBoxInline->Enable(!singleton);
+    m_checkBoxImplPureVirtual->Enable(!implVirtual);
+}
+
 void NewClassDlg::OnOkUpdateUI(wxUpdateUIEvent& event)
 {
     event.Enable(!(GetClassFile().IsEmpty() || GetVirtualDirectoryPath().IsEmpty()));
@@ -353,7 +376,7 @@ void NewClassDlg::DoSaveOptions()
     // Save the check boxes ticked
     size_t flags(0);
 
-    if(m_checkBoxCopyable->IsChecked()) flags |= NewClassDlgData::NonCopyable;
+    if(m_checkBoxNonCopyable->IsChecked()) flags |= NewClassDlgData::NonCopyable;
     if(m_checkBoxImplPureVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllPureVirtualFuncs;
     if(m_checkBoxImplVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllVirtualFuncs;
     if(m_checkBoxInline->IsChecked()) flags |= NewClassDlgData::FileIniline;
@@ -362,6 +385,8 @@ void NewClassDlg::DoSaveOptions()
     if(m_checkBoxVirtualDtor->IsChecked()) flags |= NewClassDlgData::VirtualDtor;
     if(m_checkBoxPragmaOnce->IsChecked()) flags |= NewClassDlgData::UsePragma;
     if(m_checkBoxLowercaseFileName->IsChecked()) flags |= NewClassDlgData::UseLowerCase;
+    if(m_checkBoxNonMovable->IsChecked()) flags |= NewClassDlgData::NonMovable;
+    if(m_checkBoxNonInheritable->IsChecked()) flags |= NewClassDlgData::NonInheritable;
 
     m_options.SetFlags(flags);
     EditorConfigST::Get()->WriteObject(wxT("NewClassDlgData"), &m_options);

@@ -7,25 +7,26 @@
 #ifndef _CODELITE_LITEEDITOR_IMPLEMENTPARENTVIRTUALFUNCTIONSBASE_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_IMPLEMENTPARENTVIRTUALFUNCTIONSBASE_BASE_CLASSES_H
 
-#include "clThemedListCtrl.h"
-#include <wx/artprov.h>
-#include <wx/bannerwindow.h>
-#include <wx/button.h>
-#include <wx/checkbox.h>
-#include <wx/dataview.h>
+// clang-format off
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xh_bmp.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/settings.h>
+#include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/statbox.h>
+#include <wx/bannerwindow.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/xrc/xmlres.h>
+#include <wx/dataview.h>
+#include "clThemedListCtrl.h"
+#include <wx/button.h>
+#include <wx/statbox.h>
+#include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
+#include <wx/persist/bookctrl.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -37,6 +38,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class ImplementParentVirtualFunctionsBase : public wxDialog
 {

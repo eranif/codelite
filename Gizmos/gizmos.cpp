@@ -931,7 +931,7 @@ wxString WizardsPlugin::DoGetVirtualFuncDecl(const NewClassInfo& info, const wxS
     wxString decl;
     for(std::vector<TagEntryPtr>::size_type i = 0; i < tags.size(); i++) {
         TagEntryPtr tt = tags.at(i);
-        wxString ff = m_mgr->GetTagsManager()->FormatFunction(tt);
+        wxString ff = m_mgr->GetTagsManager()->FormatFunction(tt, FunctionFormat_WithVirtual | FunctionFormat_WithOverride);
 
         if(info.isInline) {
             wxString braces;

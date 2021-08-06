@@ -95,7 +95,8 @@ enum NormalizeFuncFlag {
 enum FunctionFormatFlag {
     FunctionFormat_WithVirtual = 0x00000001,
     FunctionFormat_Impl = 0x00000002,
-    FunctionFormat_Arg_Per_Line = 0x00000004
+    FunctionFormat_Arg_Per_Line = 0x00000004,
+    FunctionFormat_WithOverride = 0x00000008
 };
 
 /**

@@ -2028,6 +2028,9 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
     if(flags & FunctionFormat_Impl) {
         body << wxT("\n{\n}\n");
     } else {
+        if(foo.m_isVirtual && (flags & FunctionFormat_WithOverride)) {
+            body << wxT(" override");
+        }
         body << wxT(";\n");
     }
 

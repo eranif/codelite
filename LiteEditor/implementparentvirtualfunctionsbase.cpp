@@ -70,6 +70,8 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase(wxWindo
                                    wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->AppendTextColumn(_("Virtual"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                    wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(_("Override"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                   wxDATAVIEW_COL_RESIZABLE);
     m_dvListCtrl->AppendTextColumn(_("Document"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                    wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer8 = new wxBoxSizer(wxVERTICAL);
@@ -110,7 +112,9 @@ ImplementParentVirtualFunctionsBase::ImplementParentVirtualFunctionsBase(wxWindo
 
     SetName(wxT("ImplementParentVirtualFunctionsBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

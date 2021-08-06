@@ -39,6 +39,7 @@ class clFunctionImplDetails : public wxClientData
 protected:
     wxString m_visibility = "public";
     bool m_prependVirtualKeyword = true;
+    bool m_appendOverrideKeyword = true;
     int m_tagIndex = wxNOT_FOUND;
     bool m_selected = true;
     bool m_doxygen = true;
@@ -54,6 +55,8 @@ public:
     const wxString& GetVisibility() const { return m_visibility; }
     void SetPrependVirtualKeyword(bool prependVirtualKeyword) { this->m_prependVirtualKeyword = prependVirtualKeyword; }
     bool IsPrependVirtualKeyword() const { return m_prependVirtualKeyword; }
+    void SetAppendOverrideKeyword(bool appendOverrideKeyword) { this->m_appendOverrideKeyword = appendOverrideKeyword; }
+    bool IsAppendOverrideKeyword() const { return m_appendOverrideKeyword; }
     void SetSelected(bool selected) { this->m_selected = selected; }
     bool IsSelected() const { return m_selected; }
     void SetDoxygen(bool doxygen) { this->m_doxygen = doxygen; }

@@ -75,7 +75,8 @@ void ImplementParentVirtualFunctionsDialog::DoInitialize(bool updateDoxyOnly)
         cols.push_back(::MakeCheckboxVariant(m_tags.at(i)->GetDisplayName(), true, wxNOT_FOUND)); // generate it, 0
         cols.push_back("public");                                                                 // visibility, 1
         cols.push_back(true);                                                                     // virtual, 2
-        cols.push_back(false);                                                                    // document, 3
+        cols.push_back(true);                                                                     // override, 3
+        cols.push_back(false);                                                                    // document, 4
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)i);
     }
 }
@@ -137,7 +138,8 @@ void ImplementParentVirtualFunctionsDialog::UpdateDetailsForRow(clFunctionImplDe
     details.SetSelected(m_dvListCtrl->IsItemChecked(item, 0));
     details.SetVisibility(m_dvListCtrl->GetItemText(item, 1));
     details.SetPrependVirtualKeyword(m_dvListCtrl->IsItemChecked(item, 2));
-    details.SetDoxygen(m_dvListCtrl->IsItemChecked(item, 3));
+    details.SetAppendOverrideKeyword(m_dvListCtrl->IsItemChecked(item, 3));
+    details.SetDoxygen(m_dvListCtrl->IsItemChecked(item, 4));
     details.SetTagIndex(m_dvListCtrl->GetItemData(item));
 }
 
@@ -198,8 +200,12 @@ wxString clFunctionImplDetails::GetDecl(ImplementParentVirtualFunctionsDialog* d
     wxString decl;
     if(IsDoxygen()) { decl << dlg->DoMakeCommentForTag(tag); }
 
+    size_t format = 0;
+    if(IsPrependVirtualKeyword()) { format |= FunctionFormat_WithVirtual; }
+    if(IsAppendOverrideKeyword()) { format |= FunctionFormat_WithOverride; }
+
     tag->SetScope(dlg->m_scope);
-    decl << TagsManagerST::Get()->FormatFunction(tag, IsPrependVirtualKeyword() ? FunctionFormat_WithVirtual : 0);
+    decl << TagsManagerST::Get()->FormatFunction(tag, format);
     decl.Trim().Trim(false);
     decl << "\n";
     return decl;

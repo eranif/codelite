@@ -61,10 +61,11 @@ if [ "${os_name}" == "Darwin" ]; then
 fi
 
 # create codelite-log.ico
-convert 16-codelite-logo.png  \
-        24-codelite-logo.png  \
-        32-codelite-logo.png  \
-        64-codelite-logo.png  \
-        128-codelite-logo.png \
-        256-codelite-logo.png \
+convert 16-codelite-logo.png    \
+        24-codelite-logo.png    \
+        24-codelite-logo@2x.png \
+        32-codelite-logo.png    \
+        64-codelite-logo.png    \
+        128-codelite-logo.png   \
+        256-codelite-logo.png   \
         ../LiteEditor/res/codelite-logo.ico

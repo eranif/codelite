@@ -221,9 +221,9 @@ using_namespace:	LE_USING LE_NAMESPACE nested_scope_specifier LE_IDENTIFIER ';'
                 ;
 
 /* namespace */
-namespace_decl	:	stmnt_starter LE_NAMESPACE LE_IDENTIFIER '{'
+namespace_decl	:	stmnt_starter LE_NAMESPACE nested_scope_specifier LE_IDENTIFIER '{'
                         {
-                            currentScope.push_back($3);
+                            currentScope.push_back($3+$4);
                             
                         }
                     |	stmnt_starter LE_NAMESPACE '{'

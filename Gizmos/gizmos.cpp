@@ -880,6 +880,10 @@ wxString WizardsPlugin::DoGetVirtualFuncImpl(const NewClassInfo& info)
     // filter out all non virtual functions
     for(std::vector<TagEntryPtr>::size_type i = 0; i < no_dup_tags.size(); i++) {
         TagEntryPtr tt = no_dup_tags.at(i);
+        if(m_mgr->GetTagsManager()->IsFinal(tt)) {
+            continue;
+        }
+
         bool collect(false);
         if(info.implAllVirtual) {
             collect = m_mgr->GetTagsManager()->IsVirtual(tt);
@@ -926,6 +930,9 @@ wxString WizardsPlugin::DoGetVirtualFuncDecl(const NewClassInfo& info, const wxS
 
         // Skip c-tors/d-tors
         if(tt->IsDestructor() || tt->IsConstructor()) continue;
+
+        // Skip final virtual functions
+        if(m_mgr->GetTagsManager()->IsFinal(tt)) continue;
 
         if(info.implAllVirtual && m_mgr->GetTagsManager()->IsVirtual(tt)) {
             tags.push_back(tt);

@@ -217,6 +217,7 @@ function_decl	: 	stmnt_starter opt_template_qualifier virtual_spec const_spec va
 						curr_func.m_isVirtual = $3.find("virtual") != std::string::npos;
 						curr_func.m_isPureVirtual = $13.find("=") != std::string::npos;
 						curr_func.m_isConst = $11.find("const") != std::string::npos;
+						curr_func.m_isFinal = $14.find("final") != std::string::npos;
 						curr_func.m_name = $8;
 						curr_func.m_scope = $7;
 						curr_func.m_retrunValusConst = $4;

@@ -21,10 +21,10 @@ add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 add_definitions(-DASTYLE_LIB)
 
-if ( USE_PCH )
+if ( USE_PCH AND NOT MINGW )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
-endif ( USE_PCH )
+endif()
 
 if (UNIX AND NOT APPLE)
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
@@ -39,6 +39,10 @@ FILE(GLOB SRCS "*.cpp")
 
 # Define the output
 add_executable(CxxLocalVariables ${SRCS})
+
+if( USE_PCH AND MINGW )
+    target_precompile_headers(CxxLocalVariables REUSE_FROM PCH )
+endif( USE_PCH AND MINGW )
 
 # Remove the "lib" prefix from the plugin name
 target_link_libraries(CxxLocalVariables

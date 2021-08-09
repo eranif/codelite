@@ -19,10 +19,10 @@ if (NOT MINGW)
 add_definitions(-fPIC)
 endif (NOT MINGW)
 
-if ( USE_PCH )
+if ( USE_PCH AND NOT MINGW )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
-endif ( USE_PCH )
+endif ()
 
 add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
@@ -50,6 +50,9 @@ add_executable(codelite ${SRCS} ${RES_FILES})
 set( ADDITIONAL_LIBRARIES "" )
 
 if(MINGW)
+    if ( USE_PCH )
+        target_precompile_headers(codelite PRIVATE "codelite_pch.h" )
+    endif()
     set_target_properties(codelite
                           PROPERTIES
                           OUTPUT_NAME codelite

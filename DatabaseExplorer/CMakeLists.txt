@@ -58,10 +58,10 @@ if (UNIX AND NOT APPLE)
 
 endif (UNIX AND NOT APPLE)
 
-if ( USE_PCH )
+if ( USE_PCH AND NOT MINGW )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
-endif ( USE_PCH )
+endif()
 
 # Include paths
 include_directories("${CL_SRC_ROOT}/Plugin" 
@@ -80,6 +80,10 @@ FILE(GLOB SRCS "*.cpp")
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
+
+if( USE_PCH AND MINGW )
+    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH )
+endif( USE_PCH AND MINGW )
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

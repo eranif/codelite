@@ -86,10 +86,10 @@ if(WIN32)
 endif(WIN32)
 add_definitions(-DwxUSE_GUI=1)
 
-if ( USE_PCH )
+if ( USE_PCH AND NOT MINGW )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
-endif ( USE_PCH )
+endif()
 
 if (UNIX AND NOT APPLE)
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
@@ -112,7 +112,9 @@ FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp"
 
 # Define the output
 add_library(libcodelite SHARED ${SRCS})
-
+if( USE_PCH AND MINGW )
+    target_precompile_headers(libcodelite PRIVATE "libcodelite_pch.h" )
+endif( USE_PCH AND MINGW )
 target_link_libraries(libcodelite
                       ${LINKER_OPTIONS}
                       ${wxWidgets_LIBRARIES}

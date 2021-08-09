@@ -52,11 +52,11 @@ add_definitions(-DWXUSINGDLL_WXSQLITE3)
 add_definitions(-DWXUSINGDLL_CL)
 add_definitions(-DWXUSINGDLL_SDK)
 
-if ( USE_PCH )
+if ( USE_PCH AND NOT MINGW )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
     add_definitions(-fPIC)
-endif ( USE_PCH )
+endif()
 
 
 # Add RPATH
@@ -100,6 +100,10 @@ if ( NOT WXC_APP )
 else ( NOT WXC_APP )
     add_executable(${PLUGIN_NAME} ${SRCS})
 endif ( NOT WXC_APP )
+
+if( USE_PCH AND MINGW )
+    target_precompile_headers(${PLUGIN_NAME} PRIVATE "wxcrafter_pch_release.h" )
+endif( USE_PCH AND MINGW )
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

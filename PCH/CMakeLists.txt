@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.0)
 # visual studio, and in our makefiles. 
 project(PCH)
 
+if( USE_PCH AND NOT MINGW )
+
 set(os "")
 
 if(APPLE)
@@ -29,6 +31,7 @@ endif()
 
 message("-- Adding PCH ${CL_PCH_FILE} " )
 
+endif( USE_PCH AND NOT MINGW )
 
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
@@ -36,3 +39,7 @@ include( "${wxWidgets_USE_FILE}" )
 FILE(GLOB SRCS "*.cpp")
 
 add_library(PCH STATIC ${SRCS})
+
+if( USE_PCH AND MINGW )
+    target_precompile_headers(PCH PRIVATE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h" )
+endif( USE_PCH AND MINGW )

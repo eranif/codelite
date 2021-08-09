@@ -1,8 +1,8 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.0)
- 
+
 # Our project is called 'wxsqlite3' this is how it will be called in
-# visual studio, and in our makefiles. 
+# visual studio, and in our makefiles.
 project(wxsqlite3)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -11,7 +11,7 @@ project(wxsqlite3)
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 
-# When building wxsqlite3, use MAKINGDLL 
+# When building wxsqlite3, use MAKINGDLL
 if(WIN32)
     add_definitions(-DWXMAKINGDLL_WXSQLITE3)
 endif(WIN32)
@@ -33,7 +33,7 @@ if ( APPLE )
 endif()
 
 
-# For convenience we define the sources as a variable. You can add 
+# For convenience we define the sources as a variable. You can add
 # header files and cpp/c files and CMake will sort them out
 set(SRCS src/wxsqlite3.cpp)
 

@@ -614,12 +614,18 @@ if ( WITH_PCH )
 endif( WITH_PCH )
 unset(WITH_PCH CACHE)
 
+if( MINGW AND USE_PCH )
+    if( CMAKE_VERSION VERSION_LESS 3.16 )
+        message(FATAL_ERROR " **** MINGW and PCH requires at least cmake version 3.16 **** ")
+    endif()
+endif()
+
 ###########################################
 ## Add the folders, the order matters here
 ###########################################
 if ( USE_PCH )
     add_subdirectory(PCH)
-endif ( USE_PCH )
+endif()
 
 if ( APPLE )
     add_definitions( -mmacosx-version-min=10.8 )
@@ -720,9 +726,9 @@ endif()
 ## Setup the proper dependencies
 ##
 if(NOT SQLITE3_FOUND)
-    if ( USE_PCH )
+    if ( USE_PCH AND NOT MINGW )
         add_dependencies(sqlite3lib ${CL_PCH_TARGET})
-    endif ( USE_PCH )
+    endif()
     add_dependencies(wxsqlite3 sqlite3lib)
 endif()
 

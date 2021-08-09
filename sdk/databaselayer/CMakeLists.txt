@@ -14,9 +14,9 @@ include( "${wxWidgets_USE_FILE}" )
 # Include paths
 include_directories(./include/wx/dblayer/include src/sqlite3)
 
-if ( USE_PCH )
+if ( USE_PCH AND NOT MINGW )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include ${CL_PCH_FILE} -Winvalid-pch ")
-endif ( USE_PCH )
+endif ( USE_PCH AND NOT MINGW )
 
 # Macros
 if(WIN32)

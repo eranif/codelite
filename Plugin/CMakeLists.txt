@@ -19,10 +19,10 @@ if(WIN32)
     add_definitions(-DWXMAKINGDLL_SDK)
 endif(WIN32)
 
-if ( USE_PCH )
+if ( USE_PCH AND NOT MINGW )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
-endif ( USE_PCH )
+endif()
 
 
 if (UNIX AND NOT APPLE)
@@ -89,6 +89,9 @@ FILE(GLOB SRCS "*.cpp")
 
 # Define the output
 add_library(plugin SHARED ${SRCS})
+if( USE_PCH AND MINGW )
+    target_precompile_headers(plugin PRIVATE "libplugin_pch.h" )
+endif( USE_PCH AND MINGW )
 if(GTK2_FOUND)
     target_link_libraries(plugin ${LINKER_OPTIONS} ${ADDITIONAL_LIBRARIES} ${GTK2_LIBRARIES} ${wxWidgets_LIBRARIES} -L"${CL_LIBPATH}" libcodelite)
 elseif (GTK3_FOUND)

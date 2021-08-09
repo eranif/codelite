@@ -28,10 +28,10 @@ add_definitions(-DWXUSINGDLL_SDK)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")        ## No optimization, debug info
 
-if ( USE_PCH )
+if ( USE_PCH AND NOT MINGW )
     add_definitions(-include "${CL_PCH_FILE}")
     add_definitions(-Winvalid-pch)
-endif ( USE_PCH )
+endif()
 
 if (UNIX AND NOT APPLE)
     set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" )
@@ -49,6 +49,10 @@ FILE(GLOB SRCS "*.cpp")
 
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
+
+if( USE_PCH AND MINGW )
+    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH )
+endif( USE_PCH AND MINGW )
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

@@ -650,7 +650,7 @@ void readClassName()
             break;
         }
         
-        if(c == LE_MACRO) {
+        if(c == LE_MACRO || c == LE_FINAL) {
             continue;
             
         } else if(c == LE_IDENTIFIER) {

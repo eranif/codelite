@@ -2059,6 +2059,15 @@ bool TagsManager::IsVirtual(TagEntryPtr tag)
     }
     return foo.m_isVirtual;
 }
+
+bool TagsManager::IsFinal(TagEntryPtr tag)
+{
+    clFunction foo;
+    if(!GetLanguage()->FunctionFromPattern(tag, foo)) {
+        return false;
+    }
+    return foo.m_isFinal;
+}
 void TagsManager::SetLanguage(Language* lang) { m_lang = lang; }
 
 Language* TagsManager::GetLanguage()
@@ -2556,6 +2565,10 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
 
         // Skip c-tors/d-tors
         if(t->IsDestructor() || t->IsConstructor())
+            continue;
+
+        // Skip final virtual functions
+        if(IsFinal(t))
             continue;
 
         if(onlyPureVirtual) {

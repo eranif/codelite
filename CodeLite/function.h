@@ -55,6 +55,7 @@ public:
     bool m_isVirtual;
     bool m_isPureVirtual;
     bool m_isConst;
+    bool m_isFinal;
     std::string m_throws;
     
 public:

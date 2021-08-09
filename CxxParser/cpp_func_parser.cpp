@@ -879,6 +879,7 @@ case 72:
 						curr_func.m_isVirtual = yyvsp[-12].find("virtual") != std::string::npos;
 						curr_func.m_isPureVirtual = yyvsp[-2].find("=") != std::string::npos;
 						curr_func.m_isConst = yyvsp[-4].find("const") != std::string::npos;
+						curr_func.m_isFinal = yyvsp[-1].find("final") != std::string::npos;
 						curr_func.m_name = yyvsp[-7];
 						curr_func.m_scope = yyvsp[-8];
 						curr_func.m_retrunValusConst = yyvsp[-11];

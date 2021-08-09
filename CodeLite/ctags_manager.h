@@ -706,6 +706,12 @@ public:
     bool IsVirtual(TagEntryPtr tag);
 
     /**
+     * @brief return true of the tag contains a final virtual function
+     * @param tag
+     */
+    bool IsFinal(TagEntryPtr tag);
+
+    /**
      * @brief return true if type & scope do exist in the symbols database
      * @param typeName
      * @param scope

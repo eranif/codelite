@@ -1,8 +1,8 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.0)
- 
+
 # Our project is called 'codelite' this is how it will be called in
-# visual studio, and in our makefiles. 
+# visual studio, and in our makefiles.
 project(PCH)
 
 if( USE_PCH AND NOT MINGW )

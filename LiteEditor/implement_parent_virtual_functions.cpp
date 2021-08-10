@@ -51,6 +51,7 @@ ImplementParentVirtualFunctionsDialog::ImplementParentVirtualFunctionsDialog(wxW
     EditorConfigST::Get()->ReadObject(wxT("ImplParentVirtualFunctionsData"), &data);
     m_checkBoxFormat->SetValue(data.GetFlags() & ImplParentVirtualFunctionsData::FormatText);
     DoInitialize(false);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 ImplementParentVirtualFunctionsDialog::~ImplementParentVirtualFunctionsDialog()

@@ -345,18 +345,25 @@ message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
 
 ## Allow user to use wxAuiNotebook instead of the native notebook
 if(UNIX AND NOT APPLE AND NOT MINGW)
-    if ( WITH_NATIVEBOOK )
+    # by default, use GTK native notebook control
+    set(CL_GTK_USE_NATIVEBOOK 1)
+    if (WITH_NATIVEBOOK MATCHES 0)
+        set(CL_GTK_USE_NATIVEBOOK 0)
+    endif()
+
+    if(CL_GTK_USE_NATIVEBOOK MATCHES 1)
         add_definitions( -DGTK_USE_NATIVEBOOK=1 )
         message("-- Using Native Notebook class")
-    else ( WITH_NATIVEBOOK )
+    else()
         add_definitions( -DGTK_USE_NATIVEBOOK=0 )
         message("-- Using custom Notebook")
-    endif ( WITH_NATIVEBOOK )
+    endif()
 else() # NOT LINUX
     add_definitions( -DGTK_USE_NATIVEBOOK=0 )
     message("-- Using custom Notebook")
 endif()
-unset(GTK_USE_CUSTOMBOOK CACHE)
+
+unset(CL_GTK_USE_NATIVEBOOK CACHE)
 
 #############################################
 ## Global optimizations

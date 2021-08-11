@@ -2060,13 +2060,16 @@ bool TagsManager::IsVirtual(TagEntryPtr tag)
     return foo.m_isVirtual;
 }
 
-bool TagsManager::IsFinal(TagEntryPtr tag)
+bool TagsManager::GetVirtualProperty(TagEntryPtr tag, bool& isVirtual, bool& isPureVirtual, bool& isFinal)
 {
     clFunction foo;
     if(!GetLanguage()->FunctionFromPattern(tag, foo)) {
         return false;
     }
-    return foo.m_isFinal;
+    isVirtual = foo.m_isVirtual;
+    isPureVirtual = foo.m_isPureVirtual;
+    isFinal = foo.m_isFinal;
+    return true;
 }
 void TagsManager::SetLanguage(Language* lang) { m_lang = lang; }
 
@@ -2567,28 +2570,18 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
         if(t->IsDestructor() || t->IsConstructor())
             continue;
 
-        // Skip final virtual functions
-        if(IsFinal(t))
+        bool isVirtual, isPureVirtual, isFinal;
+        if(!GetVirtualProperty(t, isVirtual, isPureVirtual, isFinal))
             continue;
 
-        if(onlyPureVirtual) {
+        // Skip final virtual functions
+        if(isFinal)
+            continue;
 
-            // Collect only pure virtual methods
-            if(IsPureVirtual(t)) {
-                TagEntryPtr t = tags.at(i);
-                wxString sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
-                sig.Prepend(t->GetName());
-                parentSignature2tag[sig] = tags.at(i);
-            }
-
-        } else {
-
-            // Collect both virtual and pure virtual
-            if(IsVirtual(tags.at(i)) || IsPureVirtual(tags.at(i))) {
-                wxString sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
-                sig.Prepend(t->GetName());
-                parentSignature2tag[sig] = tags.at(i);
-            }
+        if((!onlyPureVirtual && isVirtual) || isPureVirtual) {
+            wxString sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
+            sig.Prepend(t->GetName());
+            parentSignature2tag[sig] = t;
         }
     }
 

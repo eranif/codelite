@@ -880,18 +880,20 @@ wxString WizardsPlugin::DoGetVirtualFuncImpl(const NewClassInfo& info)
     // filter out all non virtual functions
     for(std::vector<TagEntryPtr>::size_type i = 0; i < no_dup_tags.size(); i++) {
         TagEntryPtr tt = no_dup_tags.at(i);
-        if(m_mgr->GetTagsManager()->IsFinal(tt)) {
+
+        bool isVirtual, isPureVirtual, isFinal;
+        if(!m_mgr->GetTagsManager()->GetVirtualProperty(tt, isVirtual, isPureVirtual, isFinal)) {
             continue;
         }
 
-        bool collect(false);
-        if(info.implAllVirtual) {
-            collect = m_mgr->GetTagsManager()->IsVirtual(tt);
-        } else if(info.implAllPureVirtual) {
-            collect = m_mgr->GetTagsManager()->IsPureVirtual(tt);
+        // Skip final virtual functions
+        if(isFinal) {
+            continue;
         }
 
-        if(collect) { tags.push_back(tt); }
+        if((info.implAllVirtual && isVirtual) || (info.implAllPureVirtual && isPureVirtual)) {
+            tags.push_back(tt);
+        }
     }
 
     wxString impl;
@@ -931,13 +933,13 @@ wxString WizardsPlugin::DoGetVirtualFuncDecl(const NewClassInfo& info, const wxS
         // Skip c-tors/d-tors
         if(tt->IsDestructor() || tt->IsConstructor()) continue;
 
+        bool isVirtual, isPureVirtual, isFinal;
+        if(!m_mgr->GetTagsManager()->GetVirtualProperty(tt, isVirtual, isPureVirtual, isFinal)) continue;
+
         // Skip final virtual functions
-        if(m_mgr->GetTagsManager()->IsFinal(tt)) continue;
+        if(isFinal) continue;
 
-        if(info.implAllVirtual && m_mgr->GetTagsManager()->IsVirtual(tt)) {
-            tags.push_back(tt);
-
-        } else if(info.implAllPureVirtual && m_mgr->GetTagsManager()->IsPureVirtual(tt)) {
+        if((info.implAllVirtual && isVirtual) || (info.implAllPureVirtual && isPureVirtual)) {
             tags.push_back(tt);
         }
     }

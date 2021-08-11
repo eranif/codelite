@@ -706,10 +706,14 @@ public:
     bool IsVirtual(TagEntryPtr tag);
 
     /**
-     * @brief return true of the tag contains a final virtual function
+     * @brief get whether the tag contains virtual, pure virtual or final function
      * @param tag
+     * @param isVirtual [output] true if the function is virtual
+     * @param isPureVirtual [output] true if the function is pure virtual
+     * @param isFinal [output] true if the function is not overridable
+     * @return true on success, false otherwise
      */
-    bool IsFinal(TagEntryPtr tag);
+    bool GetVirtualProperty(TagEntryPtr tag, bool& isVirtual, bool& isPureVirtual, bool& isFinal);
 
     /**
      * @brief return true if type & scope do exist in the symbols database

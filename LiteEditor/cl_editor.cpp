@@ -837,6 +837,11 @@ void clEditor::SetProperties()
         MarkerSetForeground(bmt, options->GetBookmarkFgColour(bmt - smt_FIRST_BMK_TYPE));
     }
 
+    // all bookmarks
+    for(size_t bmt = smt_FIRST_BMK_TYPE; bmt <= smt_line_marker; ++bmt) {
+        MarkerSetAlpha(bmt, 30);
+    }
+
     // Breakpoints
     for(size_t bmt = smt_FIRST_BP_TYPE; bmt <= smt_LAST_BP_TYPE; ++bmt) {
         MarkerSetBackground(smt_breakpoint, "RED");

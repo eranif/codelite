@@ -1467,6 +1467,15 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
         commandLine << "-I" << incl_path << " ";
     }
 
+    // Add the PCH file
+    if(buildConf->GetPchInCommandLine()) {
+        wxString pchFile = buildConf->GetPrecompiledHeader();
+        pchFile.Trim().Trim(false);
+        if(!pchFile.IsEmpty()) {
+            commandLine << "-include " << pchFile << " ";
+        }
+    }
+
     // Get the compile options
     wxString projectCompileOptions =
         (flags & kCxxFile) ? buildConf->GetCompileOptions() : buildConf->GetCCompileOptions();
@@ -2073,6 +2082,15 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
     // Write the include paths
     for(const wxString& path : pathsVec) {
         compile_flags_content << path << "\n";
+    }
+
+    // Write the PCH file
+    if(buildConf->GetPchInCommandLine()) {
+        wxString pchFile = buildConf->GetPrecompiledHeader();
+        pchFile.Trim().Trim(false);
+        if(!pchFile.IsEmpty()) {
+            compile_flags_content << "-include " << pchFile << "\n";
+        }
     }
 
     // Write the macros

@@ -63,6 +63,7 @@ from Table 1, or else use `apt-add-repository` in a terminal:
 Distro/release 	| Lines to append
 ----------------|---------------------------
 debian buster 	| `deb https://repos.codelite.org/debian/ buster devel`
+debian bullseye	| `deb https://repos.codelite.org/debian/ bullseye devel`
 ubuntu focal 	| `deb https://repos.codelite.org/ubuntu/ focal universe`
 ubuntu groovy and hirsute |	`deb https://repos.codelite.org/ubuntu/ groovy universe`
 
@@ -113,7 +114,7 @@ You may wish also to use Package > Lock Version.
 
 For a long time the official debian and ubuntu repositories supplied only the ancient CodeLite 6.1. However since ubuntu `16.04` (xenial) it has been updated to 
 CodeLite 9.1 or later, and debian stretch has 10.0. This is very welcome, but creates a name-clash with any packages we supply. 
-Therefore, starting with CodeLite 9.2, our debian packages have `unofficial` added to the version e.g. `codelite_15.0-1unofficial.buster_amd64.deb`
+Therefore, starting with CodeLite 9.2, our debian packages have `unofficial` added to the version e.g. `codelite_15.0-1unofficial.bullseye_amd64.deb`
 
 This allows you to select which to install using apt (or aptitude or synaptic). 
 

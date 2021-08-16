@@ -33,7 +33,7 @@ If you use a debian-based distro there are the following wxWidgets repositories 
 
 Repository | Available | Versions | Component
 -----------|-----------|----------|-----------
-debian	| `https://repos.codelite.org/wx3.1.5/debian/` | buster testing(bullseye) | libs
+debian	| `https://repos.codelite.org/wx3.1.5/debian/` | buster bullseye | libs
 ubuntu | `https://repos.codelite.org/wx3.1.5/ubuntu/` | focal groovy | universe
 
 !!! Note
@@ -65,7 +65,7 @@ The line to add is different for different distros/versions; choose the appropri
 Distro/release | Line to append
 ---------------|-------------------
 debian buster | `deb https://repos.codelite.org/wx3.1.5/debian/ buster libs`
-debian testing (bullseye)| `deb https://repos.codelite.org/wx3.1.5/debian/ bullseye libs`
+debian bullseye| `deb https://repos.codelite.org/wx3.1.5/debian/ bullseye libs`
 ubuntu focal| `deb https://repos.codelite.org/wx3.1.5/ubuntu/ focal universe`
 ubuntu groovy and hirsute | `deb https://repos.codelite.org/wx3.1.5/ubuntu/ groovy universe`
 

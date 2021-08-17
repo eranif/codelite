@@ -219,6 +219,7 @@ class wxcWidget;
 #define PROP_STC_EOL_MODE wxTRANSLATE("EOL Mode")
 #define PROP_CLASS_DECORATOR wxTRANSLATE("Class Decorator")
 #define PROP_DV_LISTCTRL_COL_TYPES wxTRANSLATE("Column Type")
+#define PROP_DV_LISTCTRL_TEXT_TYPES wxTRANSLATE("Text Column Variant Type")
 #define PROP_DV_LISTCTRL_COL_ALIGN wxTRANSLATE("Alignment")
 #define PROP_DV_MODEL_CLASS_NAME wxTRANSLATE("Generated Model Class Name")
 #define PROP_DV_CELLMODE wxTRANSLATE("Cell Mode")

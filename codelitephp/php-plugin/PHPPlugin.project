@@ -197,6 +197,23 @@
     <File Name="new_class.wxcp"/>
     <File Name="php_ui.wxcp"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug_Unix">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Release_Unix">
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="PHPParser"/>
+  </Dependencies>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="PHPParser"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -364,7 +381,7 @@
         <Preprocessor Value="wxUSE_GUI=1"/>
         <Preprocessor Value="CL_DEBUG_BUILD=1"/>
       </Compiler>
-      <Linker Options="$(shell wx-config  --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config  --libs std,stc,webview,propgrid,aui --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>
@@ -372,8 +389,8 @@
         <Library Value="libPHPParser-dbg.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="PHP-dbg.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <General OutputFile="PHP-dbg.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . " UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP,SFTP" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator - UNIX"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple
 PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
@@ -385,7 +402,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(OutputFile)" ..\..\Runtime\plugins</Command>
+        <Command Enabled="yes">cp "$(OutputFile)" "..\..\Runtime\plugins"</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -428,7 +445,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid,aui --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="../lib"/>
         <Library Value="libplugin_sdku.dll"/>
@@ -437,8 +454,8 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="PHP.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <General OutputFile="lib$(ProjectName).a" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator - UNIX"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -449,7 +466,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(OutputFile)"  ..\..\Runtime\plugins</Command>
+        <Command Enabled="yes">cp "$(OutputFile)"  "..\..\Runtime\plugins"</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -489,7 +506,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid --unicode=yes)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,webview,propgrid,aui --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -497,8 +514,8 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
         <Library Value="libPHPParser.a"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="PHP.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="../../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <General OutputFile="PHP.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins PHP,SFTP" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins PHP" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator - UNIX"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[BISON_SIMPLE=../bin/bison.simple]]>
       </Environment>
@@ -509,7 +526,7 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy "$(OutputFile)"  ..\..\Runtime32\plugins</Command>
+        <Command Enabled="yes">cp "$(OutputFile)"  "..\..\Runtime32\plugins"</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -535,21 +552,4 @@ PATH=$(WXWIN)\lib\gcc_dll;$(PATH)]]>
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug_Unix">
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Release_Unix">
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="libCodeLite"/>
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="libCodeLite"/>
-    <Project Name="PHPParser"/>
-  </Dependencies>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="PHPParser"/>
-  </Dependencies>
 </CodeLite_Project>

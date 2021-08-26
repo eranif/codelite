@@ -641,6 +641,24 @@
     <File Name="Info.plist"/>
     <File Name="resources/DialogTemplate.wxcp"/>
   </VirtualDirectory>
+  <Dependencies Name="CMake_Debug_Application"/>
+  <Dependencies Name="CMake_Debug_Plugin"/>
+  <Dependencies Name="CMake_Release_Application"/>
+  <Dependencies Name="CMake_Release_Plugin"/>
+  <Dependencies Name="Debug_Standalone">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Release_Standalone">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Unix"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="wxcLib"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -1033,9 +1051,9 @@
         <Library Value="wxcLib"/>
         <Library Value="Ws2_32"/>
       </Linker>
-      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="wxcrafter-dbg.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins wxcrafter" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins wxcrafter" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <ResourceCompiler Options="$(shell wx-config --rescomp | sed s'/windres //')" Required="yes"/>
+      <General OutputFile="wxcrafter-dbg.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b . --with-plugins wxcrafter" UseSeparateDebugArgs="yes" DebugArguments="-b . --with-plugins wxcrafter" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator - UNIX"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
         <![CDATA[PATH=$PATH;D:\src\wxWidgets\lib\gcc_dll]]>
       </Environment>
@@ -1046,8 +1064,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy wxgui.zip ..\Runtime</Command>
-        <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime\plugins</Command>
+        <Command Enabled="yes">cp wxgui.zip "..\Runtime"</Command>
+        <Command Enabled="yes">cp "$(OutputFile)" "..\Runtime\plugins"</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -1080,7 +1098,7 @@
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="wxcLib/"/>
       </Compiler>
-      <Linker Options=";;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon,richtext)" Required="yes">
+      <Linker Options=";;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon,richtext,aui)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="lib"/>
         <Library Value="libplugin_sdku.dll"/>
@@ -1089,9 +1107,9 @@
         <Library Value="wxcLib"/>
         <Library Value="Ws2_32"/>
       </Linker>
-      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="wxcrafter.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <ResourceCompiler Options="$(shell wx-config --rescomp | sed s'/windres //')" Required="no"/>
+      <General OutputFile="lib$(ProjectName).a" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator - UNIX"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -1102,8 +1120,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy wxgui.zip ..\Runtime</Command>
-        <Command Enabled="yes">copy "$(OutputFile)"  ..\Runtime\plugins</Command>
+        <Command Enabled="yes">cp wxgui.zip "..\Runtime"</Command>
+        <Command Enabled="yes">cp "$(OutputFile)"  "..\Runtime\plugins"</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -1136,17 +1154,18 @@
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="wxcLib/"/>
       </Compiler>
-      <Linker Options=";-O2;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon)" Required="yes">
+      <Linker Options=";-O2;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon,aui,richtext)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="wxcLib"/>
+        <Library Value="Ws2_32"/>
       </Linker>
-      <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="wxcrafter.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
-      <BuildSystem Name="CodeLite Makefile Generator"/>
+      <ResourceCompiler Options="$(shell wx-config --rescomp | sed s'/windres //')" Required="no"/>
+      <General OutputFile="wxcrafter.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="-b ." UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="CodeLite Makefile Generator - UNIX"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -1157,8 +1176,8 @@
       </Debugger>
       <PreBuild/>
       <PostBuild>
-        <Command Enabled="yes">copy wxgui.zip ..\Runtime32</Command>
-        <Command Enabled="yes">copy "$(OutputFile)"  ..\Runtime32\plugins</Command>
+        <Command Enabled="yes">cp wxgui.zip "..\Runtime32"</Command>
+        <Command Enabled="yes">cp "$(OutputFile)"  "..\Runtime32\plugins"</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -1186,22 +1205,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="CMake_Debug_Application"/>
-  <Dependencies Name="CMake_Debug_Plugin"/>
-  <Dependencies Name="CMake_Release_Application"/>
-  <Dependencies Name="CMake_Release_Plugin"/>
-  <Dependencies Name="Debug_Standalone">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Release_Standalone">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Unix"/>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="wxcLib"/>
-  </Dependencies>
 </CodeLite_Project>

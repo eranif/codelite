@@ -103,17 +103,25 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
       <Project Name="AutoSave" ConfigName="Win_x86_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x86_Release"/>
-      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="CCTest" ConfigName="Win_x86_Release"/>
       <Project Name="CMakePlugin" ConfigName="Win_x86_Release"/>
       <Project Name="CodeFormatter" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite-exec" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_cppcheck" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_echo" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_indexer" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_launcher" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_make" ConfigName="Win_x86_Release"/>
+      <Project Name="codelite_terminal" ConfigName="Win_x86_Release"/>
       <Project Name="codelite_vim" ConfigName="Win_x86_Release"/>
       <Project Name="CodeLiteDiff" ConfigName="Win_x86_Release"/>
+      <Project Name="codelitegcc" ConfigName="Win_x86_Release"/>
       <Project Name="CodeLiteIDE" ConfigName="Win_x86_Release"/>
       <Project Name="ContinuousBuild" ConfigName="Win_x86_Release"/>
       <Project Name="Copyright" ConfigName="Win_x86_Release"/>
       <Project Name="CppChecker" ConfigName="Win_x86_Release"/>
       <Project Name="Cscope" ConfigName="Win_x86_Release"/>
-      <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="CxxParserTests" ConfigName="Win_x86_Release"/>
       <Project Name="DatabaseExplorer" ConfigName="Win_x86_Release"/>
       <Project Name="databaselayer_sqlite" ConfigName="Win_x86_Release"/>
       <Project Name="DebuggerGDB" ConfigName="Win_x86_Release"/>
@@ -132,16 +140,19 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="LLDBDebugger" ConfigName="Win_x86_Release"/>
       <Project Name="LLDBProtocol" ConfigName="Win_x86_Release"/>
       <Project Name="MacBundler" ConfigName="Win_x86_Release"/>
-      <Project Name="MemCheck" ConfigName="DebugUnicode"/>
+      <Project Name="makedir" ConfigName="Win_x86_Release"/>
+      <Project Name="MemCheck" ConfigName="Win_x86_Release"/>
       <Project Name="Outline" ConfigName="Win_x86_Release"/>
       <Project Name="PCH" ConfigName="Win_x86_Release"/>
       <Project Name="PHPLint" ConfigName="Win_x86_Release"/>
       <Project Name="PHPParser" ConfigName="Release"/>
-      <Project Name="PHPParserUnitTests" ConfigName="Release"/>
+      <Project Name="PHPParserUnitTests" ConfigName="Win_x86_Release"/>
       <Project Name="PHPPlugin" ConfigName="Win_x86_Release"/>
       <Project Name="PHPRefactoring" ConfigName="Win_x86_Release"/>
       <Project Name="plugin_sdk" ConfigName="Win_x86_Release"/>
       <Project Name="QMakePlugin" ConfigName="Win_x86_Release"/>
+      <Project Name="Remote" ConfigName="Win_x86_Release"/>
+      <Project Name="Rust" ConfigName="Win_x86_Release"/>
       <Project Name="SampleWorksapce" ConfigName="Debug"/>
       <Project Name="SFTP" ConfigName="Win_x86_Release"/>
       <Project Name="SmartCompletion" ConfigName="Win_x86_Release"/>
@@ -160,17 +171,6 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x86_Release"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x86_Release"/>
-      <Project Name="codelite_launcher" ConfigName="Win_x86_Release"/>
-      <Project Name="codelite_make" ConfigName="Win_x86_Release"/>
-      <Project Name="codelite_terminal" ConfigName="Win_x86_Release"/>
-      <Project Name="codelite-exec" ConfigName="Win_x86_Release"/>
-      <Project Name="makedir" ConfigName="Win_x86_Release"/>
-      <Project Name="codelite_indexer" ConfigName="Win_x86_Release"/>
-      <Project Name="codelitegcc" ConfigName="Win_x86_Release"/>
-      <Project Name="codelite_cppcheck" ConfigName="Win_x86_Release"/>
-      <Project Name="codelite_echo" ConfigName="Win_x86_Release"/>
-      <Project Name="Rust" ConfigName="Win_x86_Release"/>
-      <Project Name="Remote" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release" Selected="no">
       <Environment/>
@@ -475,9 +475,9 @@ WXCFG=gcc_dll\mswu</Environment>
       <Environment>WXWIN=C:/msys64/home/eran/root
 WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
-      <Project Name="CCTest" ConfigName="Debug"/>
-      <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
+      <Project Name="CCTest" ConfigName="Win_x64_Release"/>
+      <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>
       <Project Name="CodeFormatter" ConfigName="Win_x64_Release"/>
       <Project Name="CodeLiteDiff" ConfigName="Win_x64_Release"/>
       <Project Name="CodeLiteIDE" ConfigName="Win_x64_Release"/>
@@ -485,7 +485,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="Copyright" ConfigName="Win_x64_Release"/>
       <Project Name="CppChecker" ConfigName="Win_x64_Release"/>
       <Project Name="Cscope" ConfigName="Win_x64_Release"/>
-      <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="CxxParserTests" ConfigName="Win_x64_Release"/>
       <Project Name="DatabaseExplorer" ConfigName="Win_x64_Release"/>
       <Project Name="DebuggerGDB" ConfigName="Win_x64_Release"/>
       <Project Name="EditorConfigPlugin" ConfigName="Win_x64_Release"/>
@@ -553,9 +553,15 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
-      <Project Name="CCTest" ConfigName="Debug"/>
+      <Project Name="CCTest" ConfigName="Win_x64_Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="CodeFormatter" ConfigName="Win_x64_Debug"/>
+      <Project Name="codelite_cppcheck" ConfigName="Debug"/>
+      <Project Name="codelite_echo" ConfigName="Debug"/>
+      <Project Name="codelite_indexer" ConfigName="Win_x64_Debug"/>
+      <Project Name="codelite_launcher" ConfigName="Debug"/>
+      <Project Name="codelite_make" ConfigName="Debug"/>
+      <Project Name="codelite_terminal" ConfigName="Debug"/>
       <Project Name="codelite_vim" ConfigName="Win_x64_Debug"/>
       <Project Name="CodeLiteDiff" ConfigName="Win_x64_Debug"/>
       <Project Name="CodeLiteIDE" ConfigName="Win_x64_Debug"/>
@@ -577,6 +583,7 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="hunspell" ConfigName="Win_x64_Debug"/>
       <Project Name="Interfaces" ConfigName="Common"/>
       <Project Name="LanguageServer" ConfigName="Win_x64_Debug"/>
+      <Project Name="codelite-exec" ConfigName="Win_x64_Debug"/>
       <Project Name="libCodeLite" ConfigName="Win_x64_Debug"/>
       <Project Name="LLDBApp" ConfigName="Win_x64_Debug"/>
       <Project Name="LLDBDebugger" ConfigName="Win_x64_Debug"/>
@@ -610,15 +617,8 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
-      <Project Name="codelite_launcher" ConfigName="Debug"/>
-      <Project Name="codelite_make" ConfigName="Debug"/>
-      <Project Name="codelite_terminal" ConfigName="Debug"/>
-      <Project Name="codelite-exec" ConfigName="Debug"/>
       <Project Name="makedir" ConfigName="DebugUnicode"/>
-      <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelitegcc" ConfigName="Debug"/>
-      <Project Name="codelite_cppcheck" ConfigName="Debug"/>
-      <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="Win_x64_Debug"/>
       <Project Name="Remote" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>

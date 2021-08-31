@@ -86,4 +86,5 @@ int main(int argc, char* argv[])
     } catch(websocketpp::exception const& e) {
         std::cout << e.what() << std::endl;
     }
+    return 0;
 }

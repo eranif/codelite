@@ -778,7 +778,21 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
 
     int replacements_done = 0;
     sw.Start();
-    if(!IsReplacementRegex()) {
+
+    // Problem: wxStyledTextCtrl reports matches in **bytes**
+    // wxString offsets are in chars. This means that if a double byte
+    // char is found in the text (i.e. no Latin ASCII chars), the replacement
+    // offset is wrong by 1 position.
+    // To workaround this, we only apply replacement optimizations for non UTF8
+    // strings
+
+    bool isUTF8 = false;
+
+    wxString input_buffer = m_sci->GetText();
+    unsigned int utfLen = ::clUTF8Length(input_buffer, input_buffer.length());
+    isUTF8 = (utfLen != input_buffer.length());
+
+    if(!IsReplacementRegex() && !isUTF8) {
         // simple search, we can optimize it by applying the replacement on
         // a buffer instead of the editor
         replacements_done = DoReplaceInBuffer(target);

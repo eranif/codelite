@@ -58,6 +58,12 @@ protected:
     ICompilerLocator::CompilerVec_t m_compilers;
     wxArrayString GetPaths() const;
 
+    /**
+     * @brief windows only: scan registry for uninstall information
+     */
+    void ScanUninstRegKeys();
+    virtual void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder) {}
+
 public:
     ICompilerLocator();
     virtual ~ICompilerLocator();

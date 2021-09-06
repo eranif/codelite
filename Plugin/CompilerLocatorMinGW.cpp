@@ -148,44 +148,7 @@ bool CompilerLocatorMinGW::Locate()
     }
 
     // check uninstall keys
-    std::vector<wxString> unInstKey;
-    unInstKey.push_back("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
-    unInstKey.push_back("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
-
-    std::vector<wxRegKey::StdKey> regBase;
-    regBase.push_back(wxRegKey::HKCU);
-    regBase.push_back(wxRegKey::HKLM);
-
-    for(size_t i = 0; i < regBase.size(); ++i) {
-        for(size_t j = 0; j < unInstKey.size(); ++j) {
-            wxRegKey regKey(regBase[i], unInstKey[j]);
-            if(!regKey.Exists() || !regKey.Open(wxRegKey::Read))
-                continue;
-
-            size_t subkeys = 0;
-            regKey.GetKeyInfo(&subkeys, NULL, NULL, NULL);
-            wxString keyName;
-            long keyIndex = 0;
-            regKey.GetFirstKey(keyName, keyIndex);
-
-            for(size_t k = 0; k < subkeys; ++k) {
-                wxRegKey subKey(regKey, keyName);
-                if(!subKey.Exists() || !subKey.Open(wxRegKey::Read))
-                    continue;
-
-                wxString displayName, installFolder;
-                if(subKey.HasValue("DisplayName") && subKey.HasValue("InstallLocation") &&
-                   subKey.QueryValue("DisplayName", displayName) &&
-                   subKey.QueryValue("InstallLocation", installFolder)) {
-                    CheckRegKey(displayName, installFolder);
-                }
-
-                subKey.Close();
-                regKey.GetNextKey(keyName, keyIndex);
-            }
-            regKey.Close();
-        }
-    }
+    ScanUninstRegKeys();
 
     // Last: many people install MinGW by simply extracting it into the
     // root folder:
@@ -244,7 +207,7 @@ bool CompilerLocatorMinGW::Locate()
     return !m_compilers.empty();
 }
 
-void CompilerLocatorMinGW::CheckRegKey(const wxString& displayName, const wxString& installFolder)
+void CompilerLocatorMinGW::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder)
 {
     if(displayName.StartsWith("TDM-GCC")) {
         wxFileName fnTDMBinFolder(installFolder, "");

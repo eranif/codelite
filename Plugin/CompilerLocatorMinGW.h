@@ -38,7 +38,7 @@ protected:
     void AddTool(CompilerPtr compiler, const wxString &toolname, const wxString &toolpath, const wxString &extraArgs = "");
     wxString FindBinFolder(const wxString &parentPath);
     wxString GetGCCVersion(const wxString &gccBinary);
-    void CheckRegKey(const wxString& displayName, const wxString& installFolder);
+    virtual void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder);
 
 public:
     CompilerLocatorMinGW();

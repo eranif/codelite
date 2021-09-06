@@ -39,6 +39,7 @@ protected:
     void AddTool(CompilerPtr compiler, const wxString &toolname,
                  const wxString &toolpath, const wxString &extraArgs = "");
     CompilerPtr Locate(const wxString& folder, bool clear);
+    bool IsCrossGCC(const wxString& name) const;
 
 public:
     CompilerLocatorCrossGCC();

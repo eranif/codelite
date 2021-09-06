@@ -83,9 +83,25 @@ bool CompilersDetectorManager::Locate()
     for(auto locator : m_detectors) {
         if(locator->Locate()) {
             for(auto compiler : locator->GetCompilers()) {
-                wxFileName fn(compiler->GetInstallationPath(), "cxx");
-                if(S.count(fn.GetFullPath()) == 0) {
-                    S.insert(fn.GetFullPath());
+                // We'll detect the duplicated compilers by:
+                // [1] Recursively resolving the symbolic links, e.g.
+                //       /usr/bin/g++ (GCC)
+                //         -> /usr/bin/g++-9 (GCC-9)
+                //           -> /usr/bin/x86_64-linux-gnu-g++-9
+                // [2] Checking whether an identical compiler has already been found
+                //     (some executables are same, but not symlinked; i.e. a distinct copy or hard-linked),
+                //     e.g.
+                //       /bin/clang++-12 (CLANG-12)
+                //         -> /lib/llvm-12/bin/clang++
+                //           -> /lib/llvm-12/bin/clang
+                //     and
+                //       /usr/bin/clang++-12 (CLANG-12)
+                //         -> /usr/lib/llvm-12/bin/clang++
+                //           -> /usr/lib/llvm-12/bin/clang
+                wxString cxxPath = GetRealCXXPath(compiler);
+                if(S.count(compiler->GetName()) == 0 && !cxxPath.IsEmpty() && S.count(cxxPath) == 0) {
+                    S.insert(compiler->GetName());
+                    S.insert(cxxPath);
                     m_compilersFound.push_back(compiler);
                 }
             }
@@ -183,5 +199,46 @@ void CompilersDetectorManager::MSWFixClangToolChain(CompilerPtr compiler,
             }
         }
     }
+#endif
+}
+
+wxString CompilersDetectorManager::GetRealCXXPath(const CompilerPtr compiler) const
+{
+    if(compiler->GetName() == "rustc") {
+        // rustc is a dummy compiler, do not touch it
+        return compiler->GetTool("CXX");
+    }
+    return ResolveLink(compiler->GetTool("CXX"));
+}
+
+wxString CompilersDetectorManager::ResolveLink(const wxString& path) const
+{
+#if !wxCHECK_VERSION(3, 1, 5)
+    // Try old 'directory-only' comparison
+    return wxFileName(path).GetPath();
+#elif defined(__WXMSW__)
+    // There is no symlink support in Windows
+    return path;
+#else
+    wxString actualPath, symlinkPath = path;
+    wxStringSet_t pathStack;
+    while(true) {
+        actualPath = wxFileName(symlinkPath).ResolveLink().GetFullPath();
+        if(actualPath.IsEmpty()) {
+            // The link is no longer alive
+            return wxEmptyString;
+        }
+        if(actualPath == symlinkPath) {
+            // This is the real file we're looking for
+            break;
+        }
+        if(pathStack.count(actualPath) > 0) {
+            // Infinite-recursion link detected
+            return wxEmptyString;
+        }
+        symlinkPath = actualPath;
+        pathStack.insert(actualPath);
+    }
+    return actualPath;
 #endif
 }

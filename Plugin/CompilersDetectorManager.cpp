@@ -179,22 +179,30 @@ void CompilersDetectorManager::MSWFixClangToolChain(CompilerPtr compiler,
         for(size_t i = 0; i < compilers.size(); ++i) {
             CompilerPtr mingwCmp = compilers.at(i);
             if(mingwCmp->GetCompilerFamily() == COMPILER_FAMILY_MINGW) {
-                compiler->SetTool("MAKE", mingwCmp->GetTool("MAKE"));
-                compiler->SetTool("ResourceCompiler", mingwCmp->GetTool("ResourceCompiler"));
+                // Update the make and windres tool if no effective path is set
+                if(compiler->GetTool("MAKE").StartsWith("mingw32-make.exe")) {
+                    compiler->SetTool("MAKE", mingwCmp->GetTool("MAKE"));
+                }
+                if(compiler->GetTool("ResourceCompiler") == "windres.exe") {
+                    compiler->SetTool("ResourceCompiler", mingwCmp->GetTool("ResourceCompiler"));
+                }
 
-                // Update the include paths
-                GCCMetadata compiler_md("MinGW");
-                wxArrayString includePaths;
-                compiler_md.Load(mingwCmp->GetTool("CXX"), mingwCmp->GetInstallationPath());
-                includePaths = compiler_md.GetSearchPaths();
+                // MSYS2 Clang comes with its own headers and libraries
+                if(!compiler->GetName().Matches("CLANG ??bit ( MSYS2* )")) {
+                    // Update the include paths
+                    GCCMetadata compiler_md("MinGW");
+                    wxArrayString includePaths;
+                    compiler_md.Load(mingwCmp->GetTool("CXX"), mingwCmp->GetInstallationPath());
+                    includePaths = compiler_md.GetSearchPaths();
 
-                // Convert the include paths to semi colon separated list
-                wxString mingwIncludePaths = wxJoin(includePaths, ';');
-                compiler->SetGlobalIncludePath(mingwIncludePaths);
+                    // Convert the include paths to semi colon separated list
+                    wxString mingwIncludePaths = wxJoin(includePaths, ';');
+                    compiler->SetGlobalIncludePath(mingwIncludePaths);
 
-                // Keep the mingw's bin path
-                wxFileName mingwGCC(mingwCmp->GetTool("CXX"));
-                compiler->SetPathVariable(mingwGCC.GetPath());
+                    // Keep the mingw's bin path
+                    wxFileName mingwGCC(mingwCmp->GetTool("CXX"));
+                    compiler->SetPathVariable(mingwGCC.GetPath());
+                }
                 break;
             }
         }

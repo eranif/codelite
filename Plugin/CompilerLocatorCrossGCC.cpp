@@ -74,9 +74,7 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
         }
 #endif
         wxFileName filename(matches.Item(i));
-        if(filename.GetName() == "mingw32-gcc" || filename.GetName() == "x86_64-w64-mingw32-gcc") {
-            // Don't include standard mingw32-gcc (32 and 64 bit) binaries
-            // they will be picked up later by the MinGW locator
+        if(!IsCrossGCC(filename.GetName())) {
             continue;
         }
 
@@ -97,6 +95,23 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
     } else {
         return *m_compilers.begin();
     }
+}
+
+bool CompilerLocatorCrossGCC::IsCrossGCC(const wxString& name) const
+{
+#ifdef __WXMSW__
+    if(name == "mingw32-gcc" || name == "i686-w64-mingw32-gcc" || name == "x86_64-w64-mingw32-gcc") {
+        // Don't include standard mingw32-gcc (32 and 64 bit) binaries
+        // they will be picked up later by the MinGW locator
+        return false;
+    }
+#elif defined(__WXGTK__)
+    if(name == "i686-linux-gnu-gcc" || name == "x86_64-linux-gnu-gcc") {
+        // Standard gcc will be picked up later by the GCC locator
+        return false;
+    }
+#endif
+    return true;
 }
 
 bool CompilerLocatorCrossGCC::Locate()

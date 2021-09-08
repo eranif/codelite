@@ -31,7 +31,6 @@
 #include "fileutils.h"
 #include "GCCMetadata.hpp"
 #include "procutils.h"
-#include <array>
 #include <globals.h>
 #include <wx/regex.h>
 
@@ -283,24 +282,31 @@ bool CompilerLocatorCLANG::ReadMSWInstallLocation(const wxString& regkey, wxStri
 #endif
 }
 
+std::vector<CompilerLocatorCLANG::MSYS2Env> CompilerLocatorCLANG::GetMSYS2Envs() const
+{
+    std::vector<MSYS2Env> msys2Envs;
+    msys2Envs.push_back({ 32, "clang32" });
+    msys2Envs.push_back({ 64, "clang64" });
+    msys2Envs.push_back({ 64, "clangarm64" });
+    msys2Envs.push_back({ 32, "mingw32" });
+    msys2Envs.push_back({ 64, "mingw64" });
+    msys2Envs.push_back({ 64, "ucrt64" });
+
+    return msys2Envs;
+}
+
 void CompilerLocatorCLANG::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder)
 {
     if(displayName.StartsWith("MSYS2")) {
-        // 32bit or 64bit, directory prefix
-        static const std::array<std::pair<int, wxString>, 6> msys2Envs{ { { 32, "clang32" },
-                                                                          { 64, "clang64" },
-                                                                          { 64, "clangarm64" },
-                                                                          { 32, "mingw32" },
-                                                                          { 64, "mingw64" },
-                                                                          { 64, "ucrt64" } } };
+        static const auto msys2Envs = GetMSYS2Envs();
         for(const auto& env : msys2Envs) {
             wxFileName fnBinFolder(installFolder, "");
-            fnBinFolder.AppendDir(env.second);
+            fnBinFolder.AppendDir(env.prefix);
             fnBinFolder.AppendDir("bin");
             fnBinFolder.SetFullName("clang++.exe");
             if(fnBinFolder.FileExists()) {
-                AddCompiler(fnBinFolder.GetPath(), wxString() << "CLANG " << env.first << "bit ( " << displayName
-                                                              << ", " << env.second << " )");
+                AddCompiler(fnBinFolder.GetPath(), wxString() << "CLANG " << env.cpuBits << "bit ( " << displayName
+                                                              << ", " << env.prefix << " )");
             }
         }
     }

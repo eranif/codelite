@@ -54,11 +54,11 @@ wxArrayString ICompilerLocator::GetPaths() const
 void ICompilerLocator::ScanUninstRegKeys()
 {
 #ifdef __WXMSW__
-    static const std::array<wxString, 2> unInstKey{
+    static const std::array<wxString, 2> unInstKey = {
         "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall",
         "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
     };
-    static const std::array<wxRegKey::StdKey, 2> regBase{ wxRegKey::HKCU, wxRegKey::HKLM };
+    static const std::array<wxRegKey::StdKey, 2> regBase = { wxRegKey::HKCU, wxRegKey::HKLM };
 
     for(size_t i = 0; i < regBase.size(); ++i) {
         for(size_t j = 0; j < unInstKey.size(); ++j) {

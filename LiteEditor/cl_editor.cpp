@@ -1063,6 +1063,9 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         } else if(event.GetKey() == '(' && options->IsWrapSelectionBrackets()) {
             DoWrapPrevSelectionWithChars('(', ')');
             return;
+        } else if(event.GetKey() == '{' && options->IsWrapSelectionBrackets()) {
+            DoWrapPrevSelectionWithChars('{', '}');
+            return;
         }
     }
 

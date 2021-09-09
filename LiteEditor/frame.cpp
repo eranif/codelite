@@ -5863,7 +5863,6 @@ void clMainFrame::OnFindSelection(wxCommandEvent& event)
     wxString selection =
         editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
     find_bar->SetFindWhat(selection);
-    GetMainBook()->ShowQuickBar(true);
     find_bar->FindNext();
 }
 
@@ -5878,7 +5877,6 @@ void clMainFrame::OnFindSelectionPrev(wxCommandEvent& event)
     wxString selection =
         editor->GetSelection().IsEmpty() ? GetMainBook()->GetFindBar()->GetFindWhat() : editor->GetSelection();
     find_bar->SetFindWhat(selection);
-    GetMainBook()->ShowQuickBar(true);
     find_bar->FindPrevious();
 }
 

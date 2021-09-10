@@ -613,19 +613,18 @@ bool Compiler::IsGnuCompatibleCompiler() const
 void Compiler::AddDefaultGnuComplierOptions()
 {
     // Add GCC / CLANG default compiler options
-    AddCompilerOption("-O", "Optimize generated code. (for speed)");
-    AddCompilerOption("-O1", "Optimize more (for speed)");
-    AddCompilerOption("-O2", "Optimize even more (for speed)");
-    AddCompilerOption("-O3", "Optimize fully (for speed)");
-    AddCompilerOption("-Os", "Optimize generated code (for size)");
+    AddCompilerOption("-O", "Optimize generated code for speed");
+    AddCompilerOption("-O1", "Optimize more for speed");
+    AddCompilerOption("-O2", "Optimize even more for speed");
+    AddCompilerOption("-O3", "Optimize fully for speed");
+    AddCompilerOption("-Os", "Optimize generated code for size");
     AddCompilerOption("-O0", "Optimize for debugging");
     AddCompilerOption("-W", "Enable standard compiler warnings");
     AddCompilerOption("-Wall", "Enable all compiler warnings");
     AddCompilerOption("-Wfatal-errors", "Stop compiling after first error");
     AddCompilerOption("-Wmain", "Warn if main() is not conformant");
-    AddCompilerOption(
-        "-ansi",
-        "In C mode, support all ISO C90 programs. In C++ mode, remove GNU extensions that conflict with ISO C++");
+    AddCompilerOption("-ansi",
+                      "In C mode, this is equivalent to -std=c90. In C++ mode, it is equivalent to -std=c++98");
     AddCompilerOption("-fexpensive-optimizations", "Expensive optimizations");
     AddCompilerOption("-fopenmp", "Enable OpenMP (compilation)");
     AddCompilerOption("-g", "Produce debugging information");
@@ -633,7 +632,8 @@ void Compiler::AddDefaultGnuComplierOptions()
     AddCompilerOption("-pedantic-errors", "Treat as errors the warnings demanded by strict ISO C and ISO C++");
     AddCompilerOption("-pg", "Profile code when executed");
     AddCompilerOption("-w", "Inhibit all warning messages");
-    AddCompilerOption("-std=c99", "Enable ANSI C99 features");
+    AddCompilerOption("-std=c99", "Enable C99 features");
+    AddCompilerOption("-std=c11", "Enable C11 features");
     AddCompilerOption("-std=c++11", "Enable C++11 features");
     AddCompilerOption("-std=c++14", "Enable C++14 features");
     AddCompilerOption("-std=c++17", "Enable C++17 features");

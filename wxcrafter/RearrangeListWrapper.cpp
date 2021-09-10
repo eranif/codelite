@@ -4,7 +4,7 @@
 
 RearrangeListWrapper::RearrangeListWrapper()
 {
-    SetPropertyString("wxCheckListBox", "wxRearrangeList");
+    SetPropertyString(_("Common Settings"), "wxRearrangeList");
     SetType(ID_WXREARRANGELIST);
     m_namePattern = "m_rearrangelist";
     SetName(GenerateName());

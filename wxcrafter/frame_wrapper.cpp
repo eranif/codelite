@@ -74,7 +74,8 @@ void FrameWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         xrcPrefix = "wxMiniFrame";
     }
     
-    text << XRCPrefix("wxFrame") << wxT("<title>") << PropertyString(PROP_TITLE) << wxT("</title>") << centred
+    text << XRCPrefix("wxFrame") << wxT("<title>") << wxCrafter::CDATA(PropertyString(PROP_TITLE)) << wxT("</title>")
+         << centred
          << XRCStyle(type != wxcWidget::XRC_LIVE) // The parameter is to add the wxSTAY_ON_TOP, but not if we're 'live'
          << XRCSize() << XRCCommonAttributes();
 

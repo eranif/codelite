@@ -41,8 +41,8 @@ wxString ListCtrlColumnWrapper::GetWxClassName() const { return wxT(""); }
 
 void ListCtrlColumnWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    text << wxT("<object class=\"listcol\">") << wxT("<text>") << GetName() << wxT("</text>") << wxT("<width>")
-         << PropertyString(PROP_WIDTH) << wxT("</width>") << wxT("</object>");
+    text << wxT("<object class=\"listcol\">") << wxT("<text>") << wxCrafter::CDATA(GetName()) << wxT("</text>")
+         << wxT("<width>") << PropertyString(PROP_WIDTH) << wxT("</width>") << wxT("</object>");
 }
 
 void ListCtrlColumnWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)

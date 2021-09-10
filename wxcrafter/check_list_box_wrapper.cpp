@@ -71,7 +71,7 @@ void CheckListBoxWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     text << wxT("<content>");
 
     for(size_t i = 0; i < options.GetCount(); i++) {
-        text << wxT("<item checked=\"0\">") << options.Item(i) << wxT("</item>");
+        text << wxT("<item checked=\"0\">") << wxCrafter::XMLEncode(options.Item(i)) << wxT("</item>");
     }
     text << wxT("</content>");
 

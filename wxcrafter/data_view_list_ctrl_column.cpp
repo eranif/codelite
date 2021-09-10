@@ -136,7 +136,7 @@ void DataViewListCtrlColumn::ToXRC(wxString& text, XRC_TYPE type) const
              << PropertyString(PROP_DV_LISTCTRL_COL_TYPES) << wxT("</coltype>") << wxT("<width>")
              << PropertyString(PROP_WIDTH) << wxT("</width>") << wxT("<label>") << wxCrafter::CDATA(GetName())
              << wxT("</label>") << wxT("<align>") << PropertyString(PROP_DV_LISTCTRL_COL_ALIGN) << wxT("</align>")
-             << wxT("<cellmode>") << PropertyString(PROP_DV_CELLMODE) << wxT("</cellmode>") << "<choices>"
-             << PropertyString(PROP_OPTIONS) << "</choices>" << wxT("</object>");
+             << wxT("<cellmode>") << PropertyString(PROP_DV_CELLMODE) << wxT("</cellmode>") << wxT("<choices>")
+             << wxCrafter::XMLEncode(PropertyString(PROP_OPTIONS)) << wxT("</choices>") << wxT("</object>");
     }
 }

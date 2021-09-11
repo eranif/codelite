@@ -333,6 +333,12 @@ public:
     wxString GetCustomData(const wxString& name);
 
     /**
+     * @brief set and get the currently selected build configuration name
+     */
+    void SetSelectedBuildConfiguration(const wxString& confName);
+    wxString GetSelectedBuildConfiguration();
+
+    /**
      * @brief set and get the active environment variables set name
      */
     void SetActiveEnvironmentSet(const wxString& setName);

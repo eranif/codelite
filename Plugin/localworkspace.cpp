@@ -446,6 +446,36 @@ void LocalWorkspace::SetParserFlags(size_t flags)
     SaveXmlFile();
 }
 
+wxString LocalWorkspace::GetSelectedBuildConfiguration()
+{
+    if(!SanityCheck())
+        return wxT("");
+
+    wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("BuildMatrix"));
+    wxString confName;
+    if(node) {
+        confName = node->GetPropVal(wxT("SelectedConfiguration"), wxT(""));
+    }
+    return confName;
+}
+
+void LocalWorkspace::SetSelectedBuildConfiguration(const wxString& confName)
+{
+    if(!SanityCheck())
+        return;
+
+    wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), wxT("BuildMatrix"));
+    if(node) {
+        m_doc.GetRoot()->RemoveChild(node);
+        delete node;
+    }
+    node = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("BuildMatrix"));
+    if(!confName.empty()) {
+        node->AddProperty(wxT("SelectedConfiguration"), confName);
+    }
+    SaveXmlFile();
+}
+
 wxString LocalWorkspace::GetActiveEnvironmentSet()
 {
     if(!SanityCheck())

@@ -61,19 +61,16 @@ public:
 private:
     wxString m_name;
     ConfigMappingList m_mappingList;
-    bool m_isSelected;
     wxString m_environmentVariables;
 
 public:
     void RenameProject(const wxString& oldname, const wxString& newname);
     WorkspaceConfiguration();
     WorkspaceConfiguration(wxXmlNode* node);
-    WorkspaceConfiguration(const wxString& name, bool selected);
+    WorkspaceConfiguration(const wxString& name);
     virtual ~WorkspaceConfiguration();
     wxXmlNode* ToXml() const;
 
-    void SetSelected(bool selected) { m_isSelected = selected; }
-    bool IsSelected() const { return m_isSelected; }
     const wxString& GetName() const { return m_name; }
     const ConfigMappingList& GetMapping() const { return m_mappingList; }
     void SetConfigMappingList(const ConfigMappingList& mapList) { m_mappingList = mapList; }
@@ -90,21 +87,23 @@ typedef SmartPtr<WorkspaceConfiguration> WorkspaceConfigurationPtr;
 class WXDLLIMPEXP_SDK BuildMatrix
 {
     std::list<WorkspaceConfigurationPtr> m_configurationList;
+    wxString m_selectedConfiguration;
 
 protected:
     WorkspaceConfigurationPtr FindConfiguration(const wxString& name) const;
+    void SelectFirstConfiguration();
 
 public:
     void RenameProject(const wxString& oldname, const wxString& newname);
 
-    BuildMatrix(wxXmlNode* node);
+    BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration);
     virtual ~BuildMatrix();
     wxXmlNode* ToXml() const;
-    const std::list<WorkspaceConfigurationPtr>& GetConfigurations() const { return m_configurationList; };
+    const std::list<WorkspaceConfigurationPtr>& GetConfigurations() const { return m_configurationList; }
     void RemoveConfiguration(const wxString& configName);
     void SetConfiguration(WorkspaceConfigurationPtr conf);
     wxString GetProjectSelectedConf(const wxString& configName, const wxString& project) const;
-    wxString GetSelectedConfigurationName() const;
+    wxString GetSelectedConfigurationName() const { return m_selectedConfiguration; }
     void SetSelectedConfigurationName(const wxString& name);
     WorkspaceConfigurationPtr GetConfigurationByName(const wxString& name) const;
 };

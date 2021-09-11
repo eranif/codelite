@@ -167,6 +167,8 @@ void clCxxWorkspace::SetBuildMatrix(BuildMatrixPtr mapping)
     parent->AddChild(mapping->ToXml());
     SaveXmlFile();
 
+    GetLocalWorkspace()->SetSelectedBuildConfiguration(mapping->GetSelectedConfigurationName());
+
     // force regeneration of makefiles for all projects
     for(ProjectMap_t::iterator iter = m_projects.begin(); iter != m_projects.end(); iter++) {
         iter->second->SetModified(true);
@@ -1182,7 +1184,8 @@ void clCxxWorkspace::ReplaceCompilers(wxStringMap_t& compilers)
 
 void clCxxWorkspace::DoUpdateBuildMatrix()
 {
-    m_buildMatrix.Reset(new BuildMatrix(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "BuildMatrix")));
+    m_buildMatrix.Reset(new BuildMatrix(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "BuildMatrix"),
+                                        GetLocalWorkspace()->GetSelectedBuildConfiguration()));
 }
 
 void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newname)

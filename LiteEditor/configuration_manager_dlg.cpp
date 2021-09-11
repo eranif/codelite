@@ -119,7 +119,7 @@ void ConfigurationManagerDlg::PopulateConfigurations()
     } else if(m_choiceConfigurations->GetCount() > 2) {
         m_choiceConfigurations->SetSelection(2);
     } else {
-        m_choiceConfigurations->Append(_("Debug"));
+        m_choiceConfigurations->Append("Debug");
         m_choiceConfigurations->SetSelection(2);
     }
 

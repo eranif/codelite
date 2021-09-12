@@ -38,6 +38,7 @@
 #include "build_settings_config.h"
 #include "cl_config.h"
 #include "environmentconfig.h"
+#include "fileutils.h"
 #include "macros.h"
 #include <wx/arrstr.h>
 #include <wx/choicdlg.h>
@@ -221,6 +222,8 @@ wxString CompilersDetectorManager::GetRealCXXPath(const CompilerPtr compiler) co
 
 wxString CompilersDetectorManager::ResolveLink(const wxString& path) const
 {
+    return FileUtils::RealPath(path);
+#if 0
 #if !wxCHECK_VERSION(3, 1, 5)
     // Try old 'directory-only' comparison
     return wxFileName(path).GetPath();
@@ -248,5 +251,6 @@ wxString CompilersDetectorManager::ResolveLink(const wxString& path) const
         pathStack.insert(actualPath);
     }
     return actualPath;
+#endif
 #endif
 }

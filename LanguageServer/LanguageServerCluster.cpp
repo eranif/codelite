@@ -186,8 +186,22 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
 
-    clDEBUG1() << "Processing semantic tokens. Server:" << server->GetName() << endl;
+    clDEBUG() << "Processing semantic tokens from server:" << server->GetName() << "file:" << event.GetFileName()
+              << endl;
     IEditor* editor = clGetManager()->FindEditor(event.GetFileName());
+    if(!editor) {
+        clDEBUG() << "Could not locate file:" << event.GetFileName() << endl;
+        // maybe the given path is on a remote machine, try again, using the remote path this time
+        IEditor::List_t all_editors;
+        clGetManager()->GetAllEditors(all_editors);
+        for(auto e : all_editors) {
+            if(e->IsRemoteFile() && (e->GetRemotePath() == event.GetFileName())) {
+                editor = e;
+                clDEBUG() << "Found remote file:" << e->GetRemotePath() << endl;
+                break;
+            }
+        }
+    }
     CHECK_PTR_RET(editor);
 
     const auto& semanticTokens = event.GetSemanticTokens();

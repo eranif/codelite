@@ -29,7 +29,7 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
     clDEBUG() << "OnResponse for SemanticTokensRquest is called" << endl;
     clDEBUG() << "Parsing semantic tokens array (" << encoded_types.size() << ")" << endl;
 
-    // sanity: each token is represented a set of 5 integers
+    // sanity: each token is represented by a set of 5 integers
     // { line, startChar, length, tokenType, tokenModifiers}
     if(encoded_types.size() % 5 != 0) {
         return;
@@ -49,8 +49,8 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
         // did we change lines?
         bool changed_line = t.line != last_line;
 
-        // incase we are no a different line, the start_col is relative to 0, otherwise
-        // to the previous column
+        // incase we are on a different line, the start_col is relative to 0, otherwise
+        // it is relative to the previous item column
         t.column = changed_line ? encoded_types[base_index + 1] : encoded_types[base_index + 1] + last_column;
         t.length = encoded_types[base_index + 2];
         t.token_type = encoded_types[base_index + 3];
@@ -65,4 +65,5 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
     event.SetFileName(m_filename);
     event.SetServerName(GetServerName());
     owner->AddPendingEvent(event);
+    clDEBUG() << "Colouring file:" << m_filename << endl;
 }

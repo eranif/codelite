@@ -46,7 +46,7 @@ BuildMatrix::BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration)
     }
 
     // verify the selected configuration
-    if(m_selectedConfiguration.empty() || !FindConfiguration(m_selectedConfiguration)) {
+    if(m_selectedConfiguration.IsEmpty() || !FindConfiguration(m_selectedConfiguration)) {
         SelectFirstConfiguration();
     }
 }

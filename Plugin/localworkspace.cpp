@@ -470,7 +470,7 @@ void LocalWorkspace::SetSelectedBuildConfiguration(const wxString& confName)
         delete node;
     }
     node = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("BuildMatrix"));
-    if(!confName.empty()) {
+    if(!confName.IsEmpty()) {
         node->AddProperty(wxT("SelectedConfiguration"), confName);
     }
     SaveXmlFile();

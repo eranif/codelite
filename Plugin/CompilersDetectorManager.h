@@ -64,7 +64,6 @@ public:
                               const ICompilerLocator::CompilerVec_t& allCompilers = ICompilerLocator::CompilerVec_t());
 
     wxString GetRealCXXPath(const CompilerPtr compiler) const;
-    wxString ResolveLink(const wxString& path) const;
 };
 
 #endif // COMPILERSDETECTORMANAGER_H

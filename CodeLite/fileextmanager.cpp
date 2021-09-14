@@ -23,13 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "JSON.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "JSON.h"
 #include <wx/filename.h>
 #include <wx/regex.h>
-#include <wx/xml/xml.h>
 #include <wx/thread.h>
+#include <wx/xml/xml.h>
 
 struct Matcher {
     SmartPtr<wxRegEx> m_regex;
@@ -184,6 +184,8 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher("<?php", TypePhp, false));
         m_matchers.push_back(Matcher("#!/usr/bin/env node", TypeJS, false));
         m_matchers.push_back(Matcher("#!/usr/bin/env nodejs", TypeJS, false));
+        m_matchers.push_back(Matcher("#!/usr/bin/env python", TypePython, false));
+        m_matchers.push_back(Matcher("#!/usr/bin/env python3", TypePython, false));
         m_matchers.push_back(Matcher("SQLite format 3", TypeDatabase, false));
 
         // STL sources places "-*- C++ -*-" at the top of their headers
@@ -207,7 +209,9 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     wxCriticalSectionLocker locker(m_CS);
 
     wxFileName fn(filename);
-    if(fn.IsOk() == false) { return defaultType; }
+    if(fn.IsOk() == false) {
+        return defaultType;
+    }
 
     wxString e(fn.GetExt());
     e.MakeLower();
@@ -223,7 +227,9 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
         } else {
             // try auto detecting
             FileType autoDetectType = defaultType;
-            if(AutoDetectByContent(filename, autoDetectType)) { return autoDetectType; }
+            if(AutoDetectByContent(filename, autoDetectType)) {
+                return autoDetectType;
+            }
         }
         return defaultType;
     } else if((iter->second == TypeText) && (fn.GetFullName().CmpNoCase("CMakeLists.txt") == 0)) {
@@ -238,7 +244,8 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
                 return TypeWorkspace;
             } else {
                 JSON root(content);
-                if(!root.isOk()) return TypeWorkspace;
+                if(!root.isOk())
+                    return TypeWorkspace;
                 if(root.toElement().hasNamedObject("NodeJS")) {
                     return TypeWorkspaceNodeJS;
                 } else if(root.toElement().hasNamedObject("Docker")) {
@@ -264,7 +271,9 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
         // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) { return false; }
+        if(!AutoDetectByContent(filename, ft)) {
+            return false;
+        }
     }
     return (ft == TypeSourceC) || (ft == TypeSourceCpp) || (ft == TypeHeader);
 }
@@ -273,7 +282,9 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
 {
     wxCriticalSectionLocker locker(m_CS);
     wxString fileContent;
-    if(!FileUtils::ReadBufferFromFile(filename, fileContent, 4096)) { return false; }
+    if(!FileUtils::ReadBufferFromFile(filename, fileContent, 4096)) {
+        return false;
+    }
 
     for(size_t i = 0; i < m_matchers.size(); ++i) {
         if(m_matchers[i].Matches(fileContent)) {
@@ -290,7 +301,9 @@ bool FileExtManager::IsFileType(const wxString& filename, FileExtManager::FileTy
     FileType ft = GetType(filename);
     if(ft == TypeOther) {
         // failed to detect the type
-        if(!AutoDetectByContent(filename, ft)) { return false; }
+        if(!AutoDetectByContent(filename, ft)) {
+            return false;
+        }
     }
     return (ft == type);
 }
@@ -305,7 +318,8 @@ FileExtManager::FileType FileExtManager::GetTypeFromExtension(const wxFileName& 
 {
     wxCriticalSectionLocker locker(m_CS);
     std::unordered_map<wxString, FileExtManager::FileType>::iterator iter = m_map.find(filename.GetExt().Lower());
-    if(iter == m_map.end()) return TypeOther;
+    if(iter == m_map.end())
+        return TypeOther;
     return iter->second;
 }
 

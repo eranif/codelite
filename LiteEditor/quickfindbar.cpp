@@ -578,7 +578,7 @@ void QuickFindBar::DoSelectAll()
         }
     }
     Show(false);
-    clGetManager()->SetStatusMessage(wxString::Format(_("Selected %d matches"), matches.size()));
+    clGetManager()->SetStatusMessage(wxString::Format(_("Selected %lu matches"), matches.size()));
     m_sci->SetMainSelection(0);
 }
 

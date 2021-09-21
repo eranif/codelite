@@ -638,8 +638,7 @@ void QuickFindBar::DoHighlightMatches(bool checked)
         }
 
         wxString message;
-        message << "Found"
-                << " " << (matches.size() > 1 ? _("results") : _("result"));
+        message << _("Found ") << matches.size() << wxPLURAL(" result", " results", matches.size());
         m_matchesFound->SetLabel(message);
 
     } else {

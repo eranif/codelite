@@ -149,9 +149,9 @@ typedef enum eDeclaration {
     DECL_STRUCT,
     DECL_TASK,           /* Vera task */
     DECL_UNION,
-    DECL_COUNT,
     DECL_STRONG_ENUM,
     DECL_USING,
+    DECL_COUNT,
 } declType;
 
 typedef enum eVisibilityType {
@@ -615,7 +615,7 @@ static const char *declString (const declType declaration)
     static const char *const names [] = {
         "?", "base", "class", "enum", "event", "function", "ignore",
         "interface", "namespace", "no mangle", "package", "program",
-        "struct", "task", "union",
+        "struct", "task", "union", "enum class", "using"
     };
     Assert (sizeof (names) / sizeof (names [0]) == DECL_COUNT);
     Assert ((int) declaration < DECL_COUNT);

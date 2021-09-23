@@ -213,7 +213,6 @@ typedef struct sStatementInfo {
     boolean      isNestedNamespace;
     vString*     usingAlias;
     struct sStatementInfo *parent;  /* statement we are nested within */
-    boolean      isUsingAlias;
 } statementInfo;
 
 /*  Describes the type of tag being generated.
@@ -786,7 +785,6 @@ static void reinitStatement (statementInfo *const st, const boolean partial)
     st->tokenIndex		= 0;
     st->isNamespacAlias = FALSE;
     st->isNestedNamespace = FALSE;
-    st->isUsingAlias    = FALSE;
 
     memset(st->namespaceAlias, 0, sizeof(st->namespaceAlias));
 
@@ -1206,7 +1204,7 @@ static void addOtherFields (tagEntryInfo* const tag, const tagType type,
         tag->extensionFields.typeRef [0] = "namespace";
         tag->extensionFields.typeRef [1] = st->namespaceAlias;
 
-    } else if(st->isUsingAlias == TRUE) {
+    } else if(st->declaration == DECL_USING && ! st->assignment) {
         tag->extensionFields.typeRef[0] = "class";
         tag->extensionFields.typeRef[1] = vStringValue(st->usingAlias);
 
@@ -1485,8 +1483,10 @@ static void qualifyVariableTag (const statementInfo *const st,
      */
     if (! isType (nameToken, TOKEN_NAME))
         ;
-    else if (st->scope == SCOPE_TYPEDEF  ||  (st->declaration == DECL_USING && st->assignment))
+    else if (st->scope == SCOPE_TYPEDEF)
         makeTag (nameToken, st, TRUE, TAG_TYPEDEF);
+    else if (st->declaration == DECL_USING)
+        makeTag (nameToken, st, TRUE, st->assignment ? TAG_TYPEDEF : TAG_CLASS);
     else if (st->declaration == DECL_EVENT)
         makeTag (nameToken, st, (boolean) (st->member.access == ACCESS_PRIVATE),
                  TAG_EVENT);
@@ -3371,11 +3371,7 @@ static void readUsingAlias(statementInfo *const st)
     vString *fullQualifiedName = vStringNew();
 
     int c = skipToNonWhite();
-    while( c != '=' && c != ';') {
-        if(iswhite(c)) {
-            c = cppGetc ();
-            continue;
-        }
+    while( !iswhite(c) && c != '=' && c != ';') {
         vStringPut(fullQualifiedName, c);
         if(c == ':') {
             vStringClear(name);
@@ -3395,7 +3391,7 @@ static void readUsingAlias(statementInfo *const st)
         skipStatement (st);
         reinitStatement(st, FALSE);
 
-    } else if(c != '=') {
+    } else {
         // Ok, we got ourself something like:
         // using std::shared_ptr;
         // this line means that shared_ptr is accessible without the prefix std, so what we will do is strip the
@@ -3405,7 +3401,6 @@ static void readUsingAlias(statementInfo *const st)
         vStringCat  (st->usingAlias, fullQualifiedName);
         vStringTerminate(st->usingAlias);
         st->gotName = TRUE;
-        st->isUsingAlias = TRUE;
     }
 
     vStringDelete(fullQualifiedName);

@@ -2103,6 +2103,20 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
         }
         break;
 
+    case KEYWORD_FINAL:
+    case KEYWORD_OVERRIDE:
+        /* C++11 final and override is a context-dependent keyword.
+         * It will be treated as a keyword only if it makes sense.
+         * For final/override member functions, see skipPostArgumentStuff (). */
+        if ( st->declaration == DECL_CLASS || st->declaration == DECL_STRUCT ) {
+            initToken (token);
+        } else {
+            token->type = TOKEN_NAME;
+            token->keyword = KEYWORD_NONE;
+            processName (st);
+        }
+        break;
+
     case KEYWORD_FOR:
     case KEYWORD_FOREACH:
     case KEYWORD_IF:

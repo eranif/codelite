@@ -77,7 +77,7 @@ typedef enum eKeywordId {
     KEYWORD_LOCAL, KEYWORD_LONG,
     KEYWORD_M_BAD_STATE, KEYWORD_M_BAD_TRANS, KEYWORD_M_STATE, KEYWORD_M_TRANS,
     KEYWORD_MUTABLE,
-    KEYWORD_NAMESPACE, KEYWORD_NEW, KEYWORD_NEWCOV, KEYWORD_NATIVE,
+    KEYWORD_NAMESPACE, KEYWORD_NEW, KEYWORD_NEWCOV, KEYWORD_NATIVE, KEYWORD_NOEXCEPT,
     KEYWORD_OPERATOR, KEYWORD_OUTPUT, KEYWORD_OVERLOAD, KEYWORD_OVERRIDE,
     KEYWORD_PACKED, KEYWORD_PORT, KEYWORD_PACKAGE, KEYWORD_PRIVATE,
     KEYWORD_PROGRAM, KEYWORD_PROTECTED, KEYWORD_PUBLIC,
@@ -432,6 +432,7 @@ static const keywordDesc KeywordTable [] = {
     { "native",         KEYWORD_NATIVE,         { 0, 0, 0, 1, 0 } },
     { "new",            KEYWORD_NEW,            { 0, 1, 1, 1, 0 } },
     { "newcov",         KEYWORD_NEWCOV,         { 0, 0, 0, 0, 1 } },
+    { "noexcept",       KEYWORD_NOEXCEPT,       { 0, 1, 0, 0, 0 } },
     { "operator",       KEYWORD_OPERATOR,       { 0, 1, 1, 0, 0 } },
     { "output",         KEYWORD_OUTPUT,         { 0, 0, 0, 0, 1 } },
     { "overload",       KEYWORD_OVERLOAD,       { 0, 1, 0, 0, 0 } },
@@ -2271,12 +2272,15 @@ static boolean skipPostArgumentStuff (
 
                 case KEYWORD_CONST:
                 case KEYWORD_VOLATILE:
+                case KEYWORD_NOEXCEPT:
                 case KEYWORD_OVERRIDE:
                 case KEYWORD_FINAL:
                     if (vStringLength (Signature) > 0) {
                         vStringPut (Signature, ' ');
                         vStringCat (Signature, token->name);
                     }
+                    if (token->keyword == KEYWORD_NOEXCEPT)
+                        skipParens (); // noexcept(...)
                     break;
 
                 case KEYWORD_CATCH:

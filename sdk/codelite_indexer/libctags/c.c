@@ -151,6 +151,7 @@ typedef enum eDeclaration {
     DECL_UNION,
     DECL_COUNT,
     DECL_STRONG_ENUM,
+    DECL_USING,
 } declType;
 
 typedef enum eVisibilityType {
@@ -1476,7 +1477,7 @@ static void qualifyVariableTag (const statementInfo *const st,
      */
     if (! isType (nameToken, TOKEN_NAME))
         ;
-    else if (st->scope == SCOPE_TYPEDEF)
+    else if (st->scope == SCOPE_TYPEDEF  ||  (st->declaration == DECL_USING && st->assignment))
         makeTag (nameToken, st, TRUE, TAG_TYPEDEF);
     else if (st->declaration == DECL_EVENT)
         makeTag (nameToken, st, (boolean) (st->member.access == ACCESS_PRIVATE),
@@ -2053,6 +2054,7 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
         st->declaration = DECL_BASE;
         break;
     case KEYWORD_USING:
+        st->declaration = DECL_USING;
         readUsingAlias(st);
         break;
     case KEYWORD_VOID:
@@ -3330,7 +3332,11 @@ static void readUsingAlias(statementInfo *const st)
     vString *fullQualifiedName = vStringNew();
 
     int c = skipToNonWhite();
-    while( !iswhite(c) && c != ';') {
+    while( c != '=' && c != ';') {
+        if(iswhite(c)) {
+            c = cppGetc ();
+            continue;
+        }
         vStringPut(fullQualifiedName, c);
         if(c == ':') {
             vStringClear(name);
@@ -3350,7 +3356,7 @@ static void readUsingAlias(statementInfo *const st)
         skipStatement (st);
         reinitStatement(st, FALSE);
 
-    } else {
+    } else if(c != '=') {
         // Ok, we got ourself something like:
         // using std::shared_ptr;
         // this line means that shared_ptr is accessible without the prefix std, so what we will do is strip the
@@ -3359,10 +3365,11 @@ static void readUsingAlias(statementInfo *const st)
         vStringClear(st->usingAlias);
         vStringCat  (st->usingAlias, fullQualifiedName);
         vStringTerminate(st->usingAlias);
-        vStringDelete(fullQualifiedName);
         st->gotName = TRUE;
         st->isUsingAlias = TRUE;
     }
+
+    vStringDelete(fullQualifiedName);
 }
 
 /* vi:set tabstop=4 shiftwidth=4 noexpandtab: */

@@ -210,6 +210,7 @@ typedef struct sStatementInfo {
     vString*     parentClasses;  /* parent classes */
     boolean      isNamespacAlias;/* is this a namespace alias? */
     char         namespaceAlias[256]; /* namespace alias */
+    boolean      isNestedNamespace;
     vString*     usingAlias;
     struct sStatementInfo *parent;  /* statement we are nested within */
     boolean      isUsingAlias;
@@ -784,6 +785,7 @@ static void reinitStatement (statementInfo *const st, const boolean partial)
     st->haveQualifyingName = FALSE;
     st->tokenIndex		= 0;
     st->isNamespacAlias = FALSE;
+    st->isNestedNamespace = FALSE;
     st->isUsingAlias    = FALSE;
 
     memset(st->namespaceAlias, 0, sizeof(st->namespaceAlias));
@@ -1143,14 +1145,18 @@ static void addOtherFields (tagEntryInfo* const tag, const tagType type,
     case TAG_TASK:
     case TAG_TYPEDEF:
     case TAG_UNION:
-        if (vStringLength (scope) > 0  &&
-            (isMember (st) || st->parent->declaration == DECL_NAMESPACE)) {
-            if (isType (st->context, TOKEN_NAME))
-                tag->extensionFields.scope [0] = tagName (TAG_CLASS);
-            else
-                tag->extensionFields.scope [0] =
-                    tagName (declToTagType (parentDecl (st)));
-            tag->extensionFields.scope [1] = vStringValue (scope);
+        if (vStringLength (scope) > 0) {
+            if (st->isNestedNamespace && vStringLength (st->context->name) > 0) {
+                tag->extensionFields.scope [0] = tagName (TAG_NAMESPACE);
+                tag->extensionFields.scope [1] = vStringValue (scope);
+            } else if (isMember (st) || st->parent->declaration == DECL_NAMESPACE) {
+                if (isType (st->context, TOKEN_NAME))
+                    tag->extensionFields.scope [0] = tagName (TAG_CLASS);
+                else
+                    tag->extensionFields.scope [0] =
+                        tagName (declToTagType (parentDecl (st)));
+                tag->extensionFields.scope [1] = vStringValue (scope);
+            }
         }
         if ((type == TAG_CLASS  ||  type == TAG_INTERFACE  ||
              type == TAG_STRUCT) && vStringLength (st->parentClasses) > 0) {
@@ -1720,14 +1726,9 @@ static void readPackageName (tokenInfo *const token, const int firstChar)
     cppUngetc (c);        /* unget non-package character */
 }
 
-static void readPackageOrNamespace (statementInfo *const st, const declType declaration)
+static void readPackageOrNamespace (statementInfo *const st)
 {
-    st->declaration = declaration;
-
-    if (declaration == DECL_NAMESPACE && !isLanguage (Lang_csharp)) {
-        /* In C++ a namespace is specified one level at a time. */
-        return;
-    } else {
+    if (st->declaration == DECL_PACKAGE || isLanguage (Lang_csharp)) {
         /* In C#, a namespace can also be specified like a Java package name. */
         tokenInfo *const token = activeToken (st);
         Assert (isType (token, TOKEN_KEYWORD));
@@ -2077,10 +2078,12 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
         break;
 
     case KEYWORD_NAMESPACE:
-        readPackageOrNamespace (st, DECL_NAMESPACE);
+        st->declaration = DECL_NAMESPACE;
+        readPackageOrNamespace (st);
         break;
     case KEYWORD_PACKAGE:
-        readPackageOrNamespace (st, DECL_PACKAGE);
+        st->declaration = DECL_PACKAGE;
+        readPackageOrNamespace (st);
         break;
 
     case KEYWORD_EVENT:
@@ -3034,7 +3037,8 @@ static boolean isStatementEnd (const statementInfo *const st)
          * namespaces. All other blocks require a semicolon to terminate them.
          */
         isEnd = (boolean) (isLanguage (Lang_java) || isLanguage (Lang_csharp) ||
-                           ! isContextualStatement (st));
+                           ! isContextualStatement (st) ||
+                           st->declaration == DECL_NAMESPACE);
     else
         isEnd = FALSE;
 
@@ -3160,6 +3164,17 @@ static void tagCheck (statementInfo *const st)
         }
         break;
 
+    case TOKEN_DOUBLE_COLON:
+        if (st->declaration == DECL_NAMESPACE && ! st->assignment && isType (prev, TOKEN_NAME)) {
+            /* C++17 nested namespace, e.g. namespace A::B::C { ... }.
+             * It will be processed as if it was written like: namespace A { namespace B { namespace C { ... } } }.
+             * For namespace alias, see processNamespaceAlias (). */
+            st->isNestedNamespace = TRUE;
+            copyToken (st->blockName, prev);
+            qualifyBlockTag (st, prev);
+        }
+        break;
+
     default:
         break;
     }
@@ -3187,11 +3202,12 @@ static void createTags (const unsigned int nestLevel,
                              getInputFileName (), getInputLineNumber ());
                     longjmp (Exception, (int) ExceptionBraceFormattingError);
                 }
-            } else if (isType (token, TOKEN_DOUBLE_COLON)) {
+            }
+            tagCheck (st);
+            if (isType (token, TOKEN_DOUBLE_COLON)) {
                 addContext (st, prevToken (st, 1));
                 advanceToken (st);
             } else {
-                tagCheck (st);
                 if (isType (token, TOKEN_BRACE_OPEN))
                     nest (st, nestLevel + 1);
                 checkStatementEnd (st);
@@ -3199,7 +3215,7 @@ static void createTags (const unsigned int nestLevel,
         }
     deleteStatement ();
     DebugStatement ( if (nestLevel > 0) debugParseNest (FALSE, nestLevel - 1); )
-    }
+}
 
 static boolean findCTags (const unsigned int passCount)
 {

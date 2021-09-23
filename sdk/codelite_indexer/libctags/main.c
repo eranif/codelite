@@ -682,6 +682,11 @@ extern void ctags_free(char* ptr)
 
 extern void ctags_batch_parse(const char* filelist, const char* outputfile)
 {
+    /* ctags command line to use */
+    const char* ctags_cmd = getenv("CTAGS_BATCH_CMD");
+    if(!ctags_cmd)
+        ctags_cmd = "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ";
+
     /* Open the filelist and load list of files */
     char* line = (char*)0;
     FILE* fp = NULL;
@@ -714,8 +719,7 @@ extern void ctags_batch_parse(const char* filelist, const char* outputfile)
     int count = l->size;
     while(n) {
         counter++;
-        char* tags =
-            ctags_make_tags("--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ", (char*)n->data);
+        char* tags = ctags_make_tags(ctags_cmd, (char*)n->data);
         free(n->data);
         if(tags) {
             size_t tags_size = strlen(tags);

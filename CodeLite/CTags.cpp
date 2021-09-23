@@ -1,6 +1,7 @@
 #include "CTags.hpp"
 #include "asyncprocess.h"
 #include "cl_standard_paths.h"
+#include "ctags_manager.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "readtags.h"
@@ -72,13 +73,19 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& path)
     wxFileName fnTmpTags =
         FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), outputFile.GetName(), outputFile.GetExt());
 
-    // Invode codelite_indexer
-    wxString cmd;
+    // Pass ctags command line via the environment variable
+    wxString ctagsCmd = "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ";
+    ctagsCmd << TagsManagerST::Get()->GetCtagsOptions().ToString();
+
+    clEnvList_t envList = { { "CTAGS_BATCH_CMD", ctagsCmd } };
+
+    // Invoke codelite_indexer
+    wxString invokeCmd;
     wxString codeliteIndexer = clStandardPaths::Get().GetBinaryFullPath("codelite_indexer");
-    cmd << WrapSpaces(codeliteIndexer) << " --batch " << WrapSpaces(fnFileList.GetFullPath()) << " "
-        << WrapSpaces(fnTmpTags.GetFullPath());
-    clDEBUG() << "CTags:" << cmd << clEndl;
-    IProcess::Ptr_t proc(::CreateSyncProcess(cmd));
+    invokeCmd << WrapSpaces(codeliteIndexer) << " --batch " << WrapSpaces(fnFileList.GetFullPath()) << " "
+              << WrapSpaces(fnTmpTags.GetFullPath());
+    clDEBUG() << "CTags:" << invokeCmd << clEndl;
+    IProcess::Ptr_t proc(::CreateSyncProcess(invokeCmd, IProcessCreateDefault, wxEmptyString, &envList));
     if(proc) {
         wxString dummy;
         proc->WaitForTerminate(dummy);

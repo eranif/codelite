@@ -59,7 +59,7 @@ typedef enum eException {
  */
 typedef enum eKeywordId {
     KEYWORD_NONE = -1,
-    KEYWORD_ATTRIBUTE, KEYWORD_ABSTRACT,
+    KEYWORD_ALIGNAS, KEYWORD_ATTRIBUTE, KEYWORD_ABSTRACT,
     KEYWORD_BOOLEAN, KEYWORD_BYTE, KEYWORD_BAD_STATE, KEYWORD_BAD_TRANS,
     KEYWORD_BIND, KEYWORD_BIND_VAR, KEYWORD_BIT,
     KEYWORD_CASE, KEYWORD_CATCH, KEYWORD_CHAR, KEYWORD_CLASS, KEYWORD_CONST,
@@ -375,6 +375,7 @@ static const keywordDesc KeywordTable [] = {
     /*                                       ANSI C  |  C# Java    */
     /*                                            |  |  |  |  Vera */
     /* keyword          keyword ID                |  |  |  |  |    */
+    { "alignas",        KEYWORD_ALIGNAS,        { 0, 1, 0, 0, 0 } },
     { "__attribute__",  KEYWORD_ATTRIBUTE,      { 1, 1, 1, 0, 0 } },
     { "abstract",       KEYWORD_ABSTRACT,       { 0, 0, 1, 1, 0 } },
     { "bad_state",      KEYWORD_BAD_STATE,      { 0, 0, 0, 0, 1 } },
@@ -1936,6 +1937,10 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
         break;
     case KEYWORD_ABSTRACT:
         st->implementation = IMP_ABSTRACT;
+        break;
+    case KEYWORD_ALIGNAS:
+        skipParens ();
+        initToken (token);
         break;
     case KEYWORD_ATTRIBUTE:
         skipParens ();

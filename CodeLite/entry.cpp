@@ -775,33 +775,33 @@ wxString TagEntry::FormatComment()
     if(IsMethod()) {
 
         if(IsConstructor())
-            m_formattedComment << wxT("<b>[Constructor]</b>\n");
+            m_formattedComment << wxT("[Constructor]\n");
 
         else if(IsDestructor())
-            m_formattedComment << wxT("<b>[Destructor]</b>\n");
+            m_formattedComment << wxT("[Destructor]\n");
 
         TagEntryPtr p(new TagEntry(*this));
-        m_formattedComment << wxT("<code>")
+        m_formattedComment << wxT("```")
                            << TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual |
                                                                           FunctionFormat_Arg_Per_Line)
-                           << wxT("</code>\n");
-        m_formattedComment.Replace(GetName(), wxT("<b>") + GetName() + wxT("</b>"));
+                           << wxT("```\n");
+        m_formattedComment.Replace(GetName(), wxT("") + GetName() + wxT(""));
     } else if(IsClass()) {
 
-        m_formattedComment << wxT("<b>Kind:</b> ");
+        m_formattedComment << wxT("Kind: ");
         m_formattedComment << GetKind() << "\n";
 
         if(GetInheritsAsString().IsEmpty() == false) {
-            m_formattedComment << wxT("<b>Inherits:</b> ");
+            m_formattedComment << wxT("Inherits: ");
             m_formattedComment << GetInheritsAsString() << wxT("\n");
         }
 
     } else if(IsMacro() || IsTypedef() || IsContainer() || GetKind() == wxT("member") || GetKind() == wxT("variable")) {
 
-        m_formattedComment << wxT("<b>Kind:</b> ");
+        m_formattedComment << wxT("Kind: ");
         m_formattedComment << GetKind() << "\n";
 
-        m_formattedComment << wxT("<b>Match Pattern:</b> ");
+        m_formattedComment << wxT("Match Pattern: ");
 
         // Prettify the match pattern
         wxString matchPattern(GetPattern());
@@ -822,8 +822,7 @@ wxString TagEntry::FormatComment()
 
         // BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
         matchPattern = TagsManagerST::Get()->WrapLines(matchPattern);
-        matchPattern.Replace(GetName(), wxT("<b>") + GetName() + wxT("</b>"));
-        m_formattedComment << wxT("<code>") << matchPattern << wxT("</code>\n");
+        m_formattedComment << wxT("```") << matchPattern << wxT("```\n");
     }
 
     // Add comment section
@@ -853,7 +852,7 @@ wxString TagEntry::FormatComment()
         wxString tagComment = wxString::Format(wxT("%s\n"), theComment.c_str());
         if(m_formattedComment.IsEmpty() == false) {
             m_formattedComment.Trim().Trim(false);
-            m_formattedComment << wxT("\n<hr>");
+            m_formattedComment << wxT("\n---\n");
         }
         m_formattedComment << tagComment;
     }
@@ -869,7 +868,7 @@ wxString TagEntry::FormatComment()
     static wxRegEx reFN("([@\\\\]{1}fn)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
 
     if(reDoxyParam.IsValid() && reDoxyParam.Matches(m_formattedComment)) {
-        reDoxyParam.ReplaceAll(&m_formattedComment, "\n<b>Parameter</b>\n<i>\\2</i>");
+        reDoxyParam.ReplaceAll(&m_formattedComment, "\nParameter\n`\\2`");
     }
 
     if(reDoxyBrief.IsValid() && reDoxyBrief.Matches(m_formattedComment)) {
@@ -877,15 +876,15 @@ wxString TagEntry::FormatComment()
     }
 
     if(reDoxyThrow.IsValid() && reDoxyThrow.Matches(m_formattedComment)) {
-        reDoxyThrow.ReplaceAll(&m_formattedComment, "\n<b>Throws</b>\n");
+        reDoxyThrow.ReplaceAll(&m_formattedComment, "\nThrows\n");
     }
 
     if(reDoxyReturn.IsValid() && reDoxyReturn.Matches(m_formattedComment)) {
-        reDoxyReturn.ReplaceAll(&m_formattedComment, "\n<b>Returns</b>\n");
+        reDoxyReturn.ReplaceAll(&m_formattedComment, "\nReturns\n");
     }
 
     if(reDoxyToDo.IsValid() && reDoxyToDo.Matches(m_formattedComment)) {
-        reDoxyToDo.ReplaceAll(&m_formattedComment, "\n<b>TODO</b>\n");
+        reDoxyToDo.ReplaceAll(&m_formattedComment, "\nTODO\n");
     }
 
     if(reDoxyRemark.IsValid() && reDoxyRemark.Matches(m_formattedComment)) {
@@ -893,7 +892,7 @@ wxString TagEntry::FormatComment()
     }
 
     if(reDate.IsValid() && reDate.Matches(m_formattedComment)) {
-        reDate.ReplaceAll(&m_formattedComment, "<b>Date</b> ");
+        reDate.ReplaceAll(&m_formattedComment, "Date ");
     }
 
     if(reFN.IsValid() && reFN.Matches(m_formattedComment)) {

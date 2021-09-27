@@ -156,7 +156,7 @@ void AbbreviationPlugin::GetAbbreviations(wxCodeCompletionBoxEntry::Vec_t& V, co
             if(lcAbbv.StartsWith(lcFilter)) {
                 // Append our entries
                 wxString textHelp;
-                textHelp << "<strong>Abbreviation entry</strong>\n<hr><code>" << vt.second << "</code>";
+                textHelp << "**Abbreviation entry**\n===```" << vt.second << "```";
                 V.push_back(wxCodeCompletionBoxEntry::New(vt.first, textHelp, bmp, new AbbreviationClientData()));
             }
         });

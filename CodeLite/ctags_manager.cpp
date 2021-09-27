@@ -1605,11 +1605,11 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxStr
 
             wxString ret_value = GetFunctionReturnValueFromPattern(t);
             if(ret_value.IsEmpty() == false) {
-                tip << "<b>" << ret_value << wxT("</b> ");
+                tip << "`" << ret_value << wxT("` ");
             } else {
                 wxString retValue = t->GetReturnValue();
                 if(retValue.IsEmpty() == false) {
-                    tip << "<b>" << retValue << wxT("</b> ");
+                    tip << "`" << retValue << wxT("` ");
                 }
             }
 
@@ -1619,7 +1619,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxStr
             }
 
             // name
-            tip << "<b>" << t->GetName() << "</b>";
+            tip << "`" << t->GetName() << "`";
 
             // method signature
             tip << NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Name | Normalize_Func_Default_value);

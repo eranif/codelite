@@ -168,7 +168,7 @@ void clNodeJS::ProcessLintOuput(const wxFileName& fn, const wxString& output)
     file.Trim().Trim(false);
 
     // Use the code font for this error message
-    errorMessage.Prepend("<code>").Append("</code>");
+    errorMessage.Prepend("```").Append("```");
 
     long nLineNumber = -1;
     line.ToCLong(&nLineNumber);

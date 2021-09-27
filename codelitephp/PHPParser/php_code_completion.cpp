@@ -198,7 +198,7 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
     docComment = entry->GetDocComment();
     if(docComment.IsEmpty() == false) {
         docComment.Trim().Trim(false);          // The Doc comment
-        comment << docComment << wxT("\n<hr>"); // HLine
+        comment << docComment << wxT("\n==="); // HLine
     }
 
     wxFileName fn(entry->GetFilename());

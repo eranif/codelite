@@ -97,7 +97,7 @@
     <Project Name="codelite_echo" Path="codelite_echo/codelite_echo.project" Active="No"/>
   </VirtualDirectory>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Win_x86_Release" Selected="no">
+    <WorkspaceConfiguration Name="Win_x86_Release">
       <Environment>WXWIN=C:\src\wxWidgets32
 WXCFG=gcc_dll\mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x86_Release"/>
@@ -172,7 +172,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="Win_x86_Release"/>
       <Project Name="Remote" ConfigName="Win_x86_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Release">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -247,7 +247,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug" Selected="no">
+    <WorkspaceConfiguration Name="CMake_Debug">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="CMake_Debug"/>
@@ -321,7 +321,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Debug" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Debug">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -396,7 +396,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="OSX_Release" Selected="no">
+    <WorkspaceConfiguration Name="OSX_Release">
       <Environment/>
       <Project Name="ZoomNavigator" ConfigName="DebugUnicode"/>
       <Project Name="wxsqlite3" ConfigName="Win_x86_Release"/>
@@ -471,7 +471,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release">
       <Environment>WXWIN=C:/msys64/home/eran/root
 WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
@@ -546,7 +546,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="Rust" ConfigName="Win_x64_Release"/>
       <Project Name="Remote" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug" Selected="no">
+    <WorkspaceConfiguration Name="Win_x64_Debug">
       <Environment>WXWIN=C:/root
 WXCFG=gcc_x64_dll/mswu
 </Environment>
@@ -622,7 +622,7 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="Rust" ConfigName="Win_x64_Debug"/>
       <Project Name="Remote" ConfigName="Win_x64_Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Debug_GTK3" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Debug_GTK3">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -696,7 +696,7 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="CMake_Release_GTK3" Selected="yes">
+    <WorkspaceConfiguration Name="CMake_Release_GTK3">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -770,7 +770,7 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Release_PHP" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Release_PHP">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CCTest" ConfigName="Debug"/>
@@ -844,7 +844,7 @@ WXCFG=gcc_x64_dll/mswu
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins" Selected="yes">
+    <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins">
       <Environment/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>

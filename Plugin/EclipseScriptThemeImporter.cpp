@@ -3,7 +3,7 @@
 EclipseScriptThemeImporter::EclipseScriptThemeImporter()
 {
     SetKeywords0("echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd  cat mkdir rmdir grep "
-                 "awk print printf xargs find mv gzip tar bzip zip gunzip");
+                 "awk print printf xargs find mv gzip tar bzip zip gunzip local return exit function");
     SetFileExtensions("*.bash;*.sh;.tcsh;.bashrc;*.ksh;configure");
     m_langName = "script";
 }

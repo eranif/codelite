@@ -33,7 +33,9 @@ wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_END, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_PROGRESS, clCommandEvent);
 
-static const wxString LexerTextDefaultXML =
+namespace
+{
+const wxString LexerTextDefaultXML =
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     "<Lexer Name=\"text\" Theme=\"Default\" IsActive=\"No\" UseCustomTextSelFgColour=\"Yes\" "
     "StylingWithinPreProcessor=\"yes\" Id=\"1\">"
@@ -84,6 +86,30 @@ static const wxString LexerTextDefaultXML =
     "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
     "  </Properties>"
     "</Lexer>";
+
+void AddLexerKeywords(LexerConf::Ptr_t lexer, int setIndex, const std::vector<wxString>& words)
+{
+    wxString curwords = lexer->GetKeyWords(setIndex);
+    wxArrayString arrWords = ::wxStringTokenize(curwords, " ", wxTOKEN_STRTOK);
+    // use std::set to make sure that the elements are sorted
+    std::set<wxString> uniqueSet;
+    for(size_t i = 0; i < arrWords.size(); ++i) {
+        uniqueSet.insert(arrWords.Item(i));
+    }
+
+    // add the new words
+    for(const wxString& new_word : words) {
+        uniqueSet.insert(new_word);
+    }
+
+    // serialise them back to space delimited string
+    curwords.clear();
+    for(const auto& word : uniqueSet) {
+        curwords << word << " ";
+    }
+    lexer->SetKeyWords(curwords, setIndex);
+}
+} // namespace
 
 class clCommandEvent;
 ColoursAndFontsManager::ColoursAndFontsManager()
@@ -256,19 +282,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
     }
 
     if(lexer->GetName() == "javascript") {
-        wxString jsWords = lexer->GetKeyWords(0);
-        wxArrayString arrWords = ::wxStringTokenize(jsWords, " ", wxTOKEN_STRTOK);
-        // use std::set to make sure that the elements are sorted
-        std::set<wxString> uniqueSet;
-        for(size_t i = 0; i < arrWords.size(); ++i) {
-            uniqueSet.insert(arrWords.Item(i));
-        }
-        uniqueSet.insert("class");
-        uniqueSet.insert("await");
-        uniqueSet.insert("async");
-        jsWords.clear();
-        std::for_each(uniqueSet.begin(), uniqueSet.end(), [&](const wxString& word) { jsWords << word << " "; });
-        lexer->SetKeyWords(jsWords, 0);
+        AddLexerKeywords(lexer, 0, { "class", "await", "async" });
+    }
+
+    // update script lexer with additional keywords
+    if(lexer->GetName() == "script") {
+        AddLexerKeywords(lexer, 0, { "return", "exit", "local", "function" });
     }
 
     // Add *.scss file extension to the css lexer
@@ -911,22 +930,12 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     if(lexer->GetName() == "javascript") {
-        wxString jsWords = lexer->GetKeyWords(0);
-        wxArrayString arrWords = ::wxStringTokenize(jsWords, " ", wxTOKEN_STRTOK);
-        // use std::set to make sure that the elements are sorted
-        std::set<wxString> uniqueSet;
-        for(size_t i = 0; i < arrWords.size(); ++i) {
-            uniqueSet.insert(arrWords.Item(i));
-        }
-        uniqueSet.insert("class");
-        uniqueSet.insert("await");
-        uniqueSet.insert("async");
-        uniqueSet.insert("extends");
-        uniqueSet.insert("constructor");
-        uniqueSet.insert("super");
-        jsWords.clear();
-        std::for_each(uniqueSet.begin(), uniqueSet.end(), [&](const wxString& word) { jsWords << word << " "; });
-        lexer->SetKeyWords(jsWords, 0);
+        AddLexerKeywords(lexer, 0, { "class", "await", "async", "extends", "constructor", "super" });
+    }
+
+    // update script lexer with additional keywords
+    if(lexer->GetName() == "script") {
+        AddLexerKeywords(lexer, 0, { "return", "exit", "local", "function" });
     }
 
     if(lexer->GetName() == "text") {

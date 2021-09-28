@@ -228,10 +228,9 @@ void ContextCpp::OnDwellEnd(wxStyledTextEvent& event)
 bool ContextCpp::GetHoverTip(int pos)
 {
     CHECK_JS_RETURN_FALSE();
+    VALIDATE_WORKSPACE_FALSE();
 
     clEditor& rCtrl = GetCtrl();
-
-    VALIDATE_PROJECT_FALSE(rCtrl);
 
     // before we start, make sure we are the visible window
     if(clMainFrame::Get()->GetMainBook()->GetActiveEditor(true) != &rCtrl) {

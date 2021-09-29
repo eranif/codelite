@@ -117,6 +117,11 @@ bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMB
 
 bool FileUtils::ReadFileContentRaw(const wxFileName& fn, std::string& data)
 {
+    // fopen() may return non NULL for directories too, so we have to test it ourselves
+    if(!fn.FileExists()) {
+        return false;
+    }
+
     wxString filename = fn.GetFullPath();
     data.clear();
     const char* cfile = filename.mb_str(wxConvUTF8).data();

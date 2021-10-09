@@ -122,7 +122,7 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
     bool tempfile(false);
     NewFileComparison dlg(EventNotifier::Get()->TopFrame(), m_leftFile);
     if(dlg.ShowModal() == wxID_OK) {
-        if(m_leftFile.GetName().StartsWith("Untitled")) {
+        if(m_leftFile.GetName().StartsWith(_("Untitled"))) {
             tempfile = true;
             m_leftFile = SaveEditorToTmpfile(m_mgr->GetActiveEditor());
             if(!m_leftFile.IsOk()) {
@@ -131,7 +131,7 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
             }
         }
         wxString secondFile = dlg.GetTextCtrlFileName()->GetValue();
-        if(secondFile.StartsWith("Untitled")) {
+        if(secondFile.StartsWith(_("Untitled"))) {
             tempfile = true;
             IEditor* editor = m_mgr->FindEditor(secondFile);
             if(!editor) {

@@ -12,7 +12,9 @@ NewFileComparison::NewFileComparison(wxWindow* parent, const wxFileName& leftFil
     clGetManager()->GetAllEditors(editors);
     m_textCtrlLeftFile->ChangeValue(leftFile.GetFullPath());
     std::for_each(editors.begin(), editors.end(), [&](IEditor* editor) {
-        m_listBox16->Append(editor->GetFileName().GetFullPath());
+        if(editor->GetFileName() != leftFile) {
+            m_listBox16->Append(editor->GetFileName().GetFullPath());
+        }
     });
 }
 
@@ -35,7 +37,7 @@ void NewFileComparison::OnBrowse(wxCommandEvent& event)
 void NewFileComparison::OnOKUI(wxUpdateUIEvent& event)
 {
     wxFileName fn(m_textCtrlFileName->GetValue());
-    event.Enable(fn.Exists() || m_textCtrlFileName->GetValue().StartsWith("Untitled"));
+    event.Enable(fn.Exists() || m_textCtrlFileName->GetValue().StartsWith(_("Untitled")));
 }
 
 void NewFileComparison::OnFileSelected(wxCommandEvent& event)

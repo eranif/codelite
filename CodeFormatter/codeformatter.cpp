@@ -302,14 +302,8 @@ void CodeFormatter::DoFormatEditor(IEditor* editor, int selStart, int selEnd)
 
 void CodeFormatter::DoFormatPreview(wxString& content, const wxString& ext, const FormatterEngine& engine)
 {
-    wxString path;
-    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        wxString projectname = clWorkspaceManager::Get().GetWorkspace()->GetActiveProjectName();
-        wxFileName filename = clWorkspaceManager::Get().GetWorkspace()->GetProjectFileName(projectname);
-        path = filename.GetPath();
-    }
-
-    wxFileName tempFileName(path, "preview." + ext);
+    wxFileName tempFileName = m_options.GetPreviewFileName();
+    tempFileName.SetExt(ext);
     int cursorPosition = wxNOT_FOUND;
     DoFormatString(content, tempFileName, engine, cursorPosition);
 }
@@ -459,7 +453,7 @@ void CodeFormatter::DoFormatWithRustfmt(IEditor* editor, const wxFileName& fileN
     bool undo = false;
     if(editor->IsEditorModified()) {
         if(!editor->Save()) {
-            ::wxMessageBox(_("Failed to save file:\n") + fileName.GetFullPath(), "Source Code Formatter",
+            ::wxMessageBox(_("Failed to save file:\n") + fileName.GetFullPath(), _("Source Code Formatter"),
                            wxOK | wxICON_ERROR);
             return;
         }

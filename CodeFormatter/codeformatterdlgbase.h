@@ -26,10 +26,10 @@
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/property.h>
 #include <wx/propgrid/advprops.h>
+#include <wx/button.h>
 #include <wx/stc/stc.h>
 #include <wx/textctrl.h>
 #include <wx/filepicker.h>
-#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -70,9 +70,27 @@ protected:
     wxPGProperty* m_pgPropClangFormatExePath;
     wxPGProperty* m_pgPropColumnLimit;
     wxPGProperty* m_pgPropClangBraceBreakStyle;
+    wxPGProperty* m_pgPropClangBraceWrapAfterCaseLabel;
+    wxPGProperty* m_pgPropClangBraceWrapAfterClass;
+    wxPGProperty* m_pgPropClangBraceWrapAfterControlStatement;
+    wxPGProperty* m_pgPropClangBraceWrapAfterEnum;
+    wxPGProperty* m_pgPropClangBraceWrapAfterFunction;
+    wxPGProperty* m_pgPropClangBraceWrapAfterObjCDeclaration;
+    wxPGProperty* m_pgPropClangBraceWrapAfterStruct;
+    wxPGProperty* m_pgPropClangBraceWrapAfterUnion;
+    wxPGProperty* m_pgPropClangBraceWrapAfterExternBlock;
+    wxPGProperty* m_pgPropClangBraceWrapBeforeCatch;
+    wxPGProperty* m_pgPropClangBraceWrapBeforeElse;
+    wxPGProperty* m_pgPropClangBraceWrapBeforeLambdaBody;
+    wxPGProperty* m_pgPropClangBraceWrapBeforeWhile;
+    wxPGProperty* m_pgPropClangBraceWrapIndentBraces;
+    wxPGProperty* m_pgPropClangBraceWrapSplitEmptyFunction;
+    wxPGProperty* m_pgPropClangBraceWrapSplitEmptyRecord;
+    wxPGProperty* m_pgPropClangBraceWrapSplitEmptyNamespace;
     wxPGProperty* m_pgPropClangFormatStyle;
     wxPGProperty* m_pgPropClangUseFile;
     wxPGProperty* m_pgPropClangFormattingOptions;
+    wxButton* m_buttonExportClangFormatFile;
     wxPanel* m_splitterPage173;
     wxStyledTextCtrl* m_textCtrlPreview_Clang;
     wxPanel* m_panelAstyle;
@@ -148,6 +166,7 @@ protected:
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrclangPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnExportClangFormatFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnCustomAstyleFlags(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrphpPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
@@ -166,6 +185,7 @@ public:
     wxChoice* GetChoicePhpFormatter() { return m_choicePhpFormatter; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     wxPropertyGridManager* GetPgMgrClang() { return m_pgMgrClang; }
+    wxButton* GetButtonExportClangFormatFile() { return m_buttonExportClangFormatFile; }
     wxPanel* GetSplitterPage169() { return m_splitterPage169; }
     wxStyledTextCtrl* GetTextCtrlPreview_Clang() { return m_textCtrlPreview_Clang; }
     wxPanel* GetSplitterPage173() { return m_splitterPage173; }

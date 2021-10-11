@@ -32,6 +32,7 @@
 #include "lexer_configuration.h"
 #include "windowattrmanager.h"
 #include <wx/menu.h>
+#include <wx/msgdlg.h>
 
 CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent, IManager* mgr, CodeFormatter* cf, FormatOptions& options,
                                    const wxString& cppSampleCode, const wxString& phpSampleCode)
@@ -155,6 +156,12 @@ void CodeFormatterDlg::InitDialog()
 
     } else if(m_options.GetClangFormatOptions() & kClangFormatLLVM) {
         m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatLLVM, wxPG_FULL_VALUE);
+
+    } else if(m_options.GetClangFormatOptions() & kClangFormatMicrosoft) {
+        m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatMicrosoft, wxPG_FULL_VALUE);
+
+    } else if(m_options.GetClangFormatOptions() & kClangFormatGNU) {
+        m_pgPropClangFormatStyle->SetValueFromInt(kClangFormatGNU, wxPG_FULL_VALUE);
     } else {
         // There should be at least one good formatting option, we choose WebKit for this purpose
         m_options.SetClangFormatOptions(m_options.GetClangFormatOptions() | kClangFormatWebKit);
@@ -165,6 +172,26 @@ void CodeFormatterDlg::InitDialog()
     m_pgPropClangFormattingOptions->SetValue((int)m_options.GetClangFormatOptions());
     m_pgPropClangBraceBreakStyle->SetValue((int)m_options.GetClangBreakBeforeBrace());
     m_pgPropColumnLimit->SetValue((int)m_options.GetClangColumnLimit());
+
+    m_pgPropClangBraceWrapAfterCaseLabel->SetValue((bool)(m_options.GetClangBraceWrap() & kAfterCaseLabel));
+    m_pgPropClangBraceWrapAfterClass->SetValue((bool)(m_options.GetClangBraceWrap() & kAfterClass));
+    m_pgPropClangBraceWrapAfterControlStatement->SetValue(
+        (bool)(m_options.GetClangBraceWrap() & kAfterControlStatement));
+    m_pgPropClangBraceWrapAfterEnum->SetValue((bool)(m_options.GetClangBraceWrap() & kAfterEnum));
+    m_pgPropClangBraceWrapAfterFunction->SetValue((bool)(m_options.GetClangBraceWrap() & kAfterFunction));
+    m_pgPropClangBraceWrapAfterObjCDeclaration->SetValue((bool)(m_options.GetClangBraceWrap() & kAfterObjCDeclaration));
+    m_pgPropClangBraceWrapAfterStruct->SetValue((bool)(m_options.GetClangBraceWrap() & kAfterStruct));
+    m_pgPropClangBraceWrapAfterUnion->SetValue((bool)(m_options.GetClangBraceWrap() & kAfterUnion));
+    m_pgPropClangBraceWrapAfterExternBlock->SetValue((bool)(m_options.GetClangBraceWrap() & kAfterExternBlock));
+    m_pgPropClangBraceWrapBeforeCatch->SetValue((bool)(m_options.GetClangBraceWrap() & kBeforeCatch));
+    m_pgPropClangBraceWrapBeforeElse->SetValue((bool)(m_options.GetClangBraceWrap() & kBeforeElse));
+    m_pgPropClangBraceWrapBeforeLambdaBody->SetValue((bool)(m_options.GetClangBraceWrap() & kBeforeLambdaBody));
+    m_pgPropClangBraceWrapBeforeWhile->SetValue((bool)(m_options.GetClangBraceWrap() & kBeforeWhile));
+    m_pgPropClangBraceWrapIndentBraces->SetValue((bool)(m_options.GetClangBraceWrap() & kIndentBraces));
+    m_pgPropClangBraceWrapSplitEmptyFunction->SetValue((bool)(m_options.GetClangBraceWrap() & kSplitEmptyFunction));
+    m_pgPropClangBraceWrapSplitEmptyRecord->SetValue((bool)(m_options.GetClangBraceWrap() & kSplitEmptyRecord));
+    m_pgPropClangBraceWrapSplitEmptyNamespace->SetValue((bool)(m_options.GetClangBraceWrap() & kSplitEmptyNamespace));
+    UpdateClangBraceWrapProps();
 
     // PHP flags
     m_pgPropPhpFormatterOptions->SetValue((int)m_options.GetPHPFormatterOptions());
@@ -369,7 +396,76 @@ void CodeFormatterDlg::OnPgmgrclangPgChanged(wxPropertyGridEvent& event)
     m_options.SetClangFormatExe(m_pgPropClangFormatExePath->GetValueAsString());
     m_options.SetClangColumnLimit(m_pgPropColumnLimit->GetValue().GetInteger());
 
+    size_t braceWrap(0);
+    if(m_pgPropClangBraceWrapAfterCaseLabel->GetValue().GetBool()) {
+        braceWrap |= kAfterCaseLabel;
+    }
+    if(m_pgPropClangBraceWrapAfterClass->GetValue().GetBool()) {
+        braceWrap |= kAfterClass;
+    }
+    if(m_pgPropClangBraceWrapAfterControlStatement->GetValue().GetBool()) {
+        braceWrap |= kAfterControlStatement;
+    }
+    if(m_pgPropClangBraceWrapAfterEnum->GetValue().GetBool()) {
+        braceWrap |= kAfterEnum;
+    }
+    if(m_pgPropClangBraceWrapAfterFunction->GetValue().GetBool()) {
+        braceWrap |= kAfterFunction;
+    }
+    if(m_pgPropClangBraceWrapAfterObjCDeclaration->GetValue().GetBool()) {
+        braceWrap |= kAfterObjCDeclaration;
+    }
+    if(m_pgPropClangBraceWrapAfterStruct->GetValue().GetBool()) {
+        braceWrap |= kAfterStruct;
+    }
+    if(m_pgPropClangBraceWrapAfterUnion->GetValue().GetBool()) {
+        braceWrap |= kAfterUnion;
+    }
+    if(m_pgPropClangBraceWrapAfterExternBlock->GetValue().GetBool()) {
+        braceWrap |= kAfterExternBlock;
+    }
+    if(m_pgPropClangBraceWrapBeforeCatch->GetValue().GetBool()) {
+        braceWrap |= kBeforeCatch;
+    }
+    if(m_pgPropClangBraceWrapBeforeElse->GetValue().GetBool()) {
+        braceWrap |= kBeforeElse;
+    }
+    if(m_pgPropClangBraceWrapBeforeLambdaBody->GetValue().GetBool()) {
+        braceWrap |= kBeforeLambdaBody;
+    }
+    if(m_pgPropClangBraceWrapBeforeWhile->GetValue().GetBool()) {
+        braceWrap |= kBeforeWhile;
+    }
+    if(m_pgPropClangBraceWrapIndentBraces->GetValue().GetBool()) {
+        braceWrap |= kIndentBraces;
+    }
+    if(m_pgPropClangBraceWrapSplitEmptyFunction->GetValue().GetBool()) {
+        braceWrap |= kSplitEmptyFunction;
+    }
+    if(m_pgPropClangBraceWrapSplitEmptyRecord->GetValue().GetBool()) {
+        braceWrap |= kSplitEmptyRecord;
+    }
+    if(m_pgPropClangBraceWrapSplitEmptyNamespace->GetValue().GetBool()) {
+        braceWrap |= kSplitEmptyNamespace;
+    }
+    m_options.SetClangBraceWrap(braceWrap);
+    UpdateClangBraceWrapProps();
+
     CallAfter(&CodeFormatterDlg::UpdatePreview);
+}
+
+void CodeFormatterDlg::OnExportClangFormatFile(wxCommandEvent& event)
+{
+    wxString defaultDir;
+    if(m_mgr->IsWorkspaceOpen()) {
+        defaultDir = m_mgr->GetWorkspace()->GetFileName().GetPath();
+    }
+    wxFileDialog dialog(this, _("Export .clang-format file..."), defaultDir, ".clang-format",
+                        ".clang-format file (.clang-format)|.clang-format",
+                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_SHOW_HIDDEN);
+    if(dialog.ShowModal() == wxID_OK && !m_options.ExportClangFormatFile(dialog.GetPath())) {
+        ::wxMessageBox(_("Failed to save file:\n") + dialog.GetPath(), _("Source Code Formatter"), wxOK | wxICON_ERROR);
+    }
 }
 
 void CodeFormatterDlg::OnPgmgrphpPgChanged(wxPropertyGridEvent& event)
@@ -442,4 +538,14 @@ void CodeFormatterDlg::UpdatePreviewUI(wxNotebookEvent& event)
 {
     UpdatePreview();
     event.Skip();
+}
+
+void CodeFormatterDlg::UpdateClangBraceWrapProps()
+{
+    bool hide = !(m_options.GetClangBreakBeforeBrace() & kCustom);
+    if(!m_pgPropClangBraceBreakStyle->HasVisibleChildren() != hide) {
+        for(unsigned int i = 0; i < m_pgPropClangBraceBreakStyle->GetChildCount(); ++i) {
+            m_pgPropClangBraceBreakStyle->Item(i)->Hide(hide);
+        }
+    }
 }

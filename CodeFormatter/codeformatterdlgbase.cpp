@@ -61,8 +61,8 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     flexGridSizer158->Add(m_staticText115, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceCxxEngineArr;
-    m_choiceCxxEngineArr.Add(wxT("AStyle"));
-    m_choiceCxxEngineArr.Add(wxT("clang-format"));
+    m_choiceCxxEngineArr.Add(_("AStyle"));
+    m_choiceCxxEngineArr.Add(_("clang-format"));
     m_choiceCxxEngine = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceCxxEngineArr, 0);
     m_choiceCxxEngine->SetToolTip(
@@ -77,9 +77,9 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     flexGridSizer158->Add(m_staticText198, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choicePhpFormatterArr;
-    m_choicePhpFormatterArr.Add(wxT("Builtin"));
-    m_choicePhpFormatterArr.Add(wxT("PHP-CS-Fixer"));
-    m_choicePhpFormatterArr.Add(wxT("PHPCBF"));
+    m_choicePhpFormatterArr.Add(_("Builtin"));
+    m_choicePhpFormatterArr.Add(_("PHP-CS-Fixer"));
+    m_choicePhpFormatterArr.Add(_("PHPCBF"));
     m_choicePhpFormatter = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
                                         wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choicePhpFormatterArr, 0);
     m_choicePhpFormatter->SetToolTip(_("Select the formatter engine for PHP files"));
@@ -149,33 +149,111 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 
     m_pgMgrClangArr.Clear();
     m_pgMgrClangIntArr.Clear();
-    m_pgMgrClangArr.Add(_("Linux"));
-    m_pgMgrClangArr.Add(_("Attach"));
-    m_pgMgrClangArr.Add(_("Stroustrup"));
     m_pgMgrClangArr.Add(_("Allman"));
+    m_pgMgrClangArr.Add(_("Attach"));
     m_pgMgrClangArr.Add(_("GNU"));
-    m_pgMgrClangIntArr.Add(kLinux);
-    m_pgMgrClangIntArr.Add(kAttach);
-    m_pgMgrClangIntArr.Add(kStroustrup);
+    m_pgMgrClangArr.Add(_("Linux"));
+    m_pgMgrClangArr.Add(_("Mozilla"));
+    m_pgMgrClangArr.Add(_("Stroustrup"));
+    m_pgMgrClangArr.Add(_("Whitesmiths"));
+    m_pgMgrClangArr.Add(_("Custom"));
     m_pgMgrClangIntArr.Add(kAllman);
+    m_pgMgrClangIntArr.Add(kAttach);
     m_pgMgrClangIntArr.Add(kGNU);
+    m_pgMgrClangIntArr.Add(kLinux);
+    m_pgMgrClangIntArr.Add(kMozilla);
+    m_pgMgrClangIntArr.Add(kStroustrup);
+    m_pgMgrClangIntArr.Add(kWhitesmiths);
+    m_pgMgrClangIntArr.Add(kCustom);
     m_pgPropClangBraceBreakStyle =
         m_pgMgrClang->AppendIn(m_pgPropClangFormat, new wxEnumProperty(_("Brace breaking style"), wxPG_LABEL,
                                                                        m_pgMgrClangArr, m_pgMgrClangIntArr, 0));
     m_pgPropClangBraceBreakStyle->SetHelpString(_("The brace breaking style to use."));
 
+    m_pgPropClangBraceWrapAfterCaseLabel =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Case Label"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterCaseLabel->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapAfterClass =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Class"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterClass->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapAfterControlStatement = m_pgMgrClang->AppendIn(
+        m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Control Statement"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterControlStatement->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapAfterEnum =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Enum"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterEnum->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapAfterFunction =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Function"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterFunction->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapAfterObjCDeclaration = m_pgMgrClang->AppendIn(
+        m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Objective-C Declaration"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterObjCDeclaration->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapAfterStruct =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Struct"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterStruct->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapAfterUnion =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Union"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterUnion->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapAfterExternBlock = m_pgMgrClang->AppendIn(
+        m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("After Extern Block"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapAfterExternBlock->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapBeforeCatch =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("Before Catch"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapBeforeCatch->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapBeforeElse =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("Before Else"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapBeforeElse->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapBeforeLambdaBody = m_pgMgrClang->AppendIn(
+        m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("Before Lambda Body"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapBeforeLambdaBody->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapBeforeWhile =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("Before While"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapBeforeWhile->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapIndentBraces =
+        m_pgMgrClang->AppendIn(m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("Indent Braces"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapIndentBraces->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapSplitEmptyFunction = m_pgMgrClang->AppendIn(
+        m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("Split Empty Function"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapSplitEmptyFunction->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapSplitEmptyRecord = m_pgMgrClang->AppendIn(
+        m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("Split Empty Record"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapSplitEmptyRecord->SetHelpString(wxT(""));
+
+    m_pgPropClangBraceWrapSplitEmptyNamespace = m_pgMgrClang->AppendIn(
+        m_pgPropClangBraceBreakStyle, new wxBoolProperty(_("Split Empty Namespace"), wxPG_LABEL, 0));
+    m_pgPropClangBraceWrapSplitEmptyNamespace->SetHelpString(wxT(""));
+
     m_pgMgrClangArr.Clear();
     m_pgMgrClangIntArr.Clear();
-    m_pgMgrClangArr.Add(_("LLVM"));
-    m_pgMgrClangArr.Add(_("Google"));
-    m_pgMgrClangArr.Add(_("WebKit"));
     m_pgMgrClangArr.Add(_("Chromium"));
+    m_pgMgrClangArr.Add(_("GNU"));
+    m_pgMgrClangArr.Add(_("Google"));
+    m_pgMgrClangArr.Add(_("LLVM"));
+    m_pgMgrClangArr.Add(_("Microsoft"));
     m_pgMgrClangArr.Add(_("Mozilla"));
-    m_pgMgrClangIntArr.Add(kClangFormatLLVM);
-    m_pgMgrClangIntArr.Add(kClangFormatGoogle);
-    m_pgMgrClangIntArr.Add(kClangFormatWebKit);
+    m_pgMgrClangArr.Add(_("WebKit"));
     m_pgMgrClangIntArr.Add(kClangFormatChromium);
+    m_pgMgrClangIntArr.Add(kClangFormatGNU);
+    m_pgMgrClangIntArr.Add(kClangFormatGoogle);
+    m_pgMgrClangIntArr.Add(kClangFormatLLVM);
+    m_pgMgrClangIntArr.Add(kClangFormatMicrosoft);
     m_pgMgrClangIntArr.Add(kClangFormatMozilla);
+    m_pgMgrClangIntArr.Add(kClangFormatWebKit);
     m_pgPropClangFormatStyle = m_pgMgrClang->AppendIn(
         m_pgPropClangFormat, new wxEnumProperty(_("Style"), wxPG_LABEL, m_pgMgrClangArr, m_pgMgrClangIntArr, 0));
     m_pgPropClangFormatStyle->SetHelpString(_("Coding style"));
@@ -228,6 +306,11 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
         m_pgMgrClang->AppendIn(m_pgPropClangFormat, new wxFlagsProperty(_("Clang Formatting Options"), wxPG_LABEL,
                                                                         m_pgMgrClangArr, m_pgMgrClangIntArr, 0));
     m_pgPropClangFormattingOptions->SetHelpString(wxT(""));
+
+    m_buttonExportClangFormatFile = new wxButton(m_splitterPage169, wxID_ANY, _("Export .clang-format file"),
+                                                 wxDefaultPosition, wxDLG_UNIT(m_splitterPage169, wxSize(-1, -1)), 0);
+
+    boxSizer175->Add(m_buttonExportClangFormatFile, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
 
     m_splitterPage173 = new wxPanel(m_splitter165, wxID_ANY, wxDefaultPosition,
                                     wxDLG_UNIT(m_splitter165, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -1085,6 +1168,8 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
                                   this);
     m_pgMgrClang->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged),
                           NULL, this);
+    m_buttonExportClangFormatFile->Connect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnExportClangFormatFile), NULL, this);
     m_pgMgrAstyle->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrastylePgChanged),
                            NULL, this);
     m_textCtrlUserFlags->Connect(wxEVT_COMMAND_TEXT_UPDATED,
@@ -1117,6 +1202,8 @@ CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
                                      NULL, this);
     m_pgMgrClang->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged),
                              NULL, this);
+    m_buttonExportClangFormatFile->Disconnect(
+        wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(CodeFormatterBaseDlg::OnExportClangFormatFile), NULL, this);
     m_pgMgrAstyle->Disconnect(wxEVT_PG_CHANGED,
                               wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrastylePgChanged), NULL, this);
     m_textCtrlUserFlags->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,

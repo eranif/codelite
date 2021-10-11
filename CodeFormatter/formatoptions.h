@@ -27,6 +27,7 @@
 
 #include "phpoptions.h"
 #include "serialized_object.h"
+#include <wx/any.h>
 
 enum AstyleOptions {
     AS_ANSI = 0x00000001,
@@ -150,6 +151,8 @@ enum ClangFormatStyle {
     kAllowShortFunctionsOnASingleLine = (1 << 22),
     kPointerAlignmentRight = (1 << 23),
     kClangFormatFile = (1 << 24),
+    kClangFormatMicrosoft = (1 << 25),
+    kClangFormatGNU = (1 << 26),
 };
 
 enum ClangBreakBeforeBraceOpt {
@@ -158,6 +161,29 @@ enum ClangBreakBeforeBraceOpt {
     kStroustrup = 0x00000004,
     kAllman = 0x00000008,
     kGNU = 0x00000010,
+    kMozilla = 0x00000020,
+    kWhitesmiths = 0x00000040,
+    kCustom = 0x00000080,
+};
+
+enum ClangBraceWrapOpt {
+    kAfterCaseLabel = (1 << 0),
+    kAfterClass = (1 << 1),
+    kAfterControlStatement = (1 << 2),
+    kAfterEnum = (1 << 3),
+    kAfterFunction = (1 << 4),
+    kAfterObjCDeclaration = (1 << 5),
+    kAfterStruct = (1 << 6),
+    kAfterUnion = (1 << 7),
+    kAfterExternBlock = (1 << 8),
+    kBeforeCatch = (1 << 9),
+    kBeforeElse = (1 << 10),
+    kBeforeLambdaBody = (1 << 11),
+    kBeforeWhile = (1 << 12),
+    kIndentBraces = (1 << 13),
+    kSplitEmptyFunction = (1 << 14),
+    kSplitEmptyRecord = (1 << 15),
+    kSplitEmptyNamespace = (1 << 16),
 };
 
 // Genral options
@@ -167,9 +193,13 @@ enum eCF_GeneralOptions {
 
 class FormatOptions : public SerializedObject
 {
+    using ClangFormatMap = std::map<wxString, wxAny>;
+
+    wxFileName m_previewFileName;
     size_t m_astyleOptions;
     size_t m_clangFormatOptions;
     size_t m_clangBreakBeforeBrace;
+    size_t m_clangBraceWrap;
     wxString m_customFlags;
     CXXFormatterEngine m_engine;
     PHPFormatterEngine m_phpEngine;
@@ -193,18 +223,17 @@ class FormatOptions : public SerializedObject
     wxString m_rustConfigContent;
 
 private:
-    wxString ClangFlagToBool(ClangFormatStyle flag) const;
     wxString ClangBreakBeforeBrace() const;
     /**
      * @brief return the global settings based on the
      * editor settings (namely: tab vs spaces, and tab width)
      */
-    wxString ClangGlobalSettings() const;
+    ClangFormatMap ClangGlobalSettings() const;
 
     /**
      * @brief Check if there is a file of the given name in any of the parent directories of the input file
      */
-    bool HasConfigForFile(const wxFileName& fileName, const wxString& configName, wxFileName& fileloc) const;
+    bool HasConfigForFile(const wxFileName& fileName, const wxString& configName, wxFileName* fileloc) const;
 
 public:
     FormatOptions();
@@ -213,6 +242,7 @@ public:
     void AutodetectSettings();
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
+    const wxFileName& GetPreviewFileName() const { return m_previewFileName; }
     bool HasFlag(eCF_GeneralOptions flag) const { return m_generalFlags & flag; }
     void SetFlag(eCF_GeneralOptions flag, bool b) { b ? m_generalFlags |= flag : m_generalFlags &= ~flag; }
     void SetCustomFlags(const wxString& customFlags) { this->m_customFlags = customFlags; }
@@ -228,10 +258,13 @@ public:
     wxString AstyleOptionsAsString() const;
 
     // Clang
+    ClangFormatMap CompileClangFormat(const wxFileName& fileName) const;
+    wxString ClangFormatMapToYAML(const ClangFormatMap& compiledMap, bool inlineNotation, size_t nestLevel = 0) const;
+    wxString GenerateClangFormat(bool inlineNotation, const wxFileName& fileName = wxFileName()) const;
     wxString ClangFormatCommand(const wxFileName& fileName, wxString originalFileName = "",
                                 const int& cursorPosition = wxNOT_FOUND, const int& selStart = wxNOT_FOUND,
                                 const int& selEnd = wxNOT_FOUND) const;
-    void GenerateClangFormatFile(const wxFileName& fileName) const;
+    bool ExportClangFormatFile(const wxFileName& clangFormatFile) const;
     void SetClangFormatExe(const wxString& clangFormatExe) { this->m_clangFormatExe = clangFormatExe; }
     const wxString& GetClangFormatExe() const { return m_clangFormatExe; }
     void SetClangColumnLimit(size_t clangColumnLimit) { this->m_clangColumnLimit = clangColumnLimit; }
@@ -241,6 +274,8 @@ public:
         this->m_clangBreakBeforeBrace = clangBreakBeforeBrace;
     }
     size_t GetClangBreakBeforeBrace() const { return m_clangBreakBeforeBrace; }
+    void SetClangBraceWrap(size_t clangBraceWrap) { this->m_clangBraceWrap = clangBraceWrap; }
+    size_t GetClangBraceWrap() const { return m_clangBraceWrap; }
     void SetClangFormatOptions(size_t clangFormatOptions) { this->m_clangFormatOptions = clangFormatOptions; }
     size_t GetClangFormatOptions() const { return m_clangFormatOptions; }
 

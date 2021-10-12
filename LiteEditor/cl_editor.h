@@ -270,6 +270,7 @@ protected:
     int m_lastLineCount;
     wxColour m_selTextColour;
     wxColour m_selTextBgColour;
+    bool m_zoomProgrammatically = false;
 
 public:
     static bool m_ccShowPrivateMembers;
@@ -1019,6 +1020,11 @@ private:
     void DoWrapPrevSelectionWithChars(wxChar first, wxChar last);
     int GetFirstSingleLineCommentPos(int from, int commentStyle);
     void DoSelectRange(const LSP::Range& range);
+
+    /**
+     * @brief set the zoom factor
+     */
+    void SetZoomFactor(int zoom_factor);
 
     /**
      * @brief return number of whitespace characters in the beginning of the line

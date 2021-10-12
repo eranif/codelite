@@ -23,7 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_editor.h"
 #include "ColoursAndFontsManager.h"
 #include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
@@ -39,6 +38,7 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
+#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
@@ -6067,6 +6067,20 @@ void clEditor::OnZoom(wxStyledTextEvent& event)
     event.Skip();
     // When zooming, update the line number margin
     UpdateLineNumberMarginWidth();
+    if(m_zoomProgrammatically) {
+        m_zoomProgrammatically = false;
+        return;
+    }
+
+    // User triggered this zoom
+    int curzoom = GetZoom();
+
+    clEditor::Vec_t editors;
+    clMainFrame::Get()->GetMainBook()->GetAllEditors(editors, MainBook::kGetAll_Default);
+
+    for(auto editor : editors) {
+        editor->SetZoomFactor(curzoom);
+    }
 }
 
 void clEditor::DoToggleFold(int line, const wxString& textTag)
@@ -6162,6 +6176,16 @@ int clEditor::GetColumnInChars(int pos)
     } else {
         return GetColumn(pos);
     }
+}
+
+void clEditor::SetZoomFactor(int zoom_factor)
+{
+    int curzoom = GetZoom();
+    if(curzoom == zoom_factor) {
+        return;
+    }
+    m_zoomProgrammatically = true;
+    SetZoom(zoom_factor);
 }
 
 // ----------------------------------

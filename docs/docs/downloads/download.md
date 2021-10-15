@@ -65,7 +65,7 @@ Distro/release 	| Lines to append
 debian buster 	| `deb https://repos.codelite.org/debian/ buster devel`
 debian bullseye	| `deb https://repos.codelite.org/debian/ bullseye devel`
 ubuntu focal 	| `deb https://repos.codelite.org/ubuntu/ focal universe`
-ubuntu groovy and hirsute |	`deb https://repos.codelite.org/ubuntu/ groovy universe`
+ubuntu groovy hirsute and impish |	`deb https://repos.codelite.org/ubuntu/ groovy universe`
 
 
 *Table 2: CodeLite repositories (GTK+2):*

@@ -1,4 +1,5 @@
 #include "RemotySwitchToWorkspaceDlg.h"
+#include "RemotyConfig.hpp"
 #include "SFTPBrowserDlg.h"
 #include "cl_config.h"
 #include "file_logger.h"
@@ -16,7 +17,8 @@ RemotySwitchToWorkspaceDlg::RemotySwitchToWorkspaceDlg(wxWindow* parent)
     m_comboBoxLocal->Append(recentWorkspaces);
 
     // load any recent remote workspaces loaded
-    auto recentRemoteWorkspaces = clConfig::Get().Read("remoty/recent_workspaces", wxArrayString());
+    RemotyConfig config;
+    auto recentRemoteWorkspaces = config.GetRecentWorkspaces();
     wxArrayString paths;
     paths.reserve(recentRemoteWorkspaces.size());
     for(const auto& recent_path : recentRemoteWorkspaces) {
@@ -30,7 +32,6 @@ RemotySwitchToWorkspaceDlg::RemotySwitchToWorkspaceDlg(wxWindow* parent)
 
 RemotySwitchToWorkspaceDlg::~RemotySwitchToWorkspaceDlg()
 {
-    auto recentRemoteWorkspaces = clConfig::Get().Read("remoty/recent_workspaces", wxArrayString());
     auto selection = m_comboBoxRemote->GetValue();
     selection.Trim().Trim(false);
     if(m_displayToRemotePath.count(selection) == 0) {
@@ -38,11 +39,8 @@ RemotySwitchToWorkspaceDlg::~RemotySwitchToWorkspaceDlg()
     }
 
     const wxString& full_path = m_displayToRemotePath[selection];
-    if(!selection.empty() && (recentRemoteWorkspaces.Index(full_path) == wxNOT_FOUND)) {
-        recentRemoteWorkspaces.Add(full_path);
-        recentRemoteWorkspaces.Sort();
-        clConfig::Get().Write("remoty/recent_workspaces", recentRemoteWorkspaces);
-    }
+    RemotyConfig config;
+    config.UpdateRecentWorkspaces(full_path);
 }
 
 void RemotySwitchToWorkspaceDlg::OnLocalBrowse(wxCommandEvent& event)
@@ -85,10 +83,7 @@ void RemotySwitchToWorkspaceDlg::OnRemoteBrowse(wxCommandEvent& event)
     m_displayToRemotePath.insert({ display_path, full_path });
 }
 
-void RemotySwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!GetPath().IsEmpty());
-}
+void RemotySwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!GetPath().IsEmpty()); }
 
 wxString RemotySwitchToWorkspaceDlg::GetPath() const
 {

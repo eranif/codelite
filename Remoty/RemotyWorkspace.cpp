@@ -1,4 +1,5 @@
 #include "RemotyWorkspace.hpp"
+#include "RemotyConfig.hpp"
 #include "RemotyNewWorkspaceDlg.h"
 #include "RemotySwitchToWorkspaceDlg.h"
 #include "RemotyWorkspaceView.hpp"
@@ -451,11 +452,8 @@ void RemotyWorkspace::OnNewWorkspace(clCommandEvent& event)
         uri << "ssh://" << acc.GetUsername() << "@" << acc.GetHost() << ":" << acc.GetPort() << ":" << remote_path;
 
         // add this file to the list of recently opened workspaces
-        auto recentRemoteWorkspaces = clConfig::Get().Read("remoty/recent_workspaces", wxArrayString());
-        if(recentRemoteWorkspaces.Index(uri) == wxNOT_FOUND) {
-            recentRemoteWorkspaces.Add(uri);
-            clConfig::Get().Write("remoty/recent_workspaces", recentRemoteWorkspaces);
-        }
+        RemotyConfig config;
+        config.UpdateRecentWorkspaces(uri);
         DoOpen(uri);
     }
 }

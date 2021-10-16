@@ -34,7 +34,7 @@ If you use a debian-based distro there are the following wxWidgets repositories 
 Repository | Available | Versions | Component
 -----------|-----------|----------|-----------
 debian	| `https://repos.codelite.org/wx3.1.5/debian/` | buster bullseye | libs
-ubuntu | `https://repos.codelite.org/wx3.1.5/ubuntu/` | focal groovy | universe
+ubuntu | `https://repos.codelite.org/wx3.1.5/ubuntu/` | focal groovy impish | universe
 
 !!! Note
     The `groovy` packages also install and work in ubuntu 21.04 (hirsute)
@@ -57,7 +57,7 @@ deb https://repos.codelite.org/wx3.1.5/debian/ buster libs
 or, in a terminal, do something like: 
 
 ```bash
-sudo apt-add-repository 'deb https://repos.codelite.org/wx3.1.5/ubuntu/ groovy universe'
+sudo apt-add-repository 'deb https://repos.codelite.org/wx3.1.5/ubuntu/ impish universe'
 ```
 
 The line to add is different for different distros/versions; choose the appropriate one: 
@@ -68,6 +68,7 @@ debian buster | `deb https://repos.codelite.org/wx3.1.5/debian/ buster libs`
 debian bullseye| `deb https://repos.codelite.org/wx3.1.5/debian/ bullseye libs`
 ubuntu focal| `deb https://repos.codelite.org/wx3.1.5/ubuntu/ focal universe`
 ubuntu groovy and hirsute | `deb https://repos.codelite.org/wx3.1.5/ubuntu/ groovy universe`
+ubuntu impish | `deb https://repos.codelite.org/wx3.1.5/ubuntu/ impish universe`
 
 You then need update the repositories. In synaptic, click the Reload button. If you're doing things by hand, do: 
 

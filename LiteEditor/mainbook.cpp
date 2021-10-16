@@ -941,15 +941,16 @@ bool MainBook::CloseAllButThis(wxWindow* page)
     std::vector<std::pair<wxFileName, bool>> files;
     std::unordered_map<wxString, clEditor*> M;
     for(clEditor* editor : editors) {
-        if(editor->IsEditorModified()) {
+        // collect all modified files, except for "page"
+        if(editor->IsEditorModified() && editor->GetCtrl() != page) {
             const wxFileName& fn = editor->GetFileName();
             files.push_back({ fn, true });
             M[fn.GetFullPath()] = editor;
         }
     }
 
-    if(!UserSelectFiles(files, _("Save Modified Files"),
-                        _("Some files are modified.\nChoose the files you would like to save."))) {
+    if(!files.empty() && !UserSelectFiles(files, _("Save Modified Files"),
+                                          _("Some files are modified.\nChoose the files you would like to save."))) {
         return false;
     }
 

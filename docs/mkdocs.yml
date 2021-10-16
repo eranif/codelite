@@ -39,6 +39,7 @@ nav:
         - wxCrafter: plugins/wxcrafter.md
         - Git: plugins/git.md
         - UnitTest++: plugins/ut.md
+        - Remoty: plugins/remoty.md
     - Debugging:
         - gdb: debuggers/gdb.md
         - lldb: debuggers/lldb.md

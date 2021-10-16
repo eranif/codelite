@@ -39,8 +39,8 @@ The current features are supported by `Remoty`
 ## How does it work?
 ---
 
-Under the hood, CodeLite uploads to the remote machine a one file script `codelite-remote`
-This script is a mini proxy servery capable of executing commands on behalf of CodeLite
+Under the hood, CodeLite uploads to the remote machine a python script `codelite-remote`
+This script is a mini proxy server capable of executing commands on behalf of CodeLite
 
 For example, running `ps -ef|grep codelite-remote` on the remote machine will output this:
 

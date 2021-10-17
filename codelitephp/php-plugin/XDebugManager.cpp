@@ -1,7 +1,7 @@
+#include "XDebugManager.h"
 #include "PHPDebugStartDlg.h"
 #include "XDebugCommThread.h"
 #include "XDebugEvalCmdHandler.h"
-#include "XDebugManager.h"
 #include "XDebugUnknownCommand.h"
 #include "php.h"
 #include "php_configuration_data.h"
@@ -120,7 +120,9 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
     PHPDebugStartDlg debugDlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(),
                               m_plugin->GetManager());
     if(ideInitiate) {
-        if(debugDlg.ShowModal() != wxID_OK) { return; }
+        if(debugDlg.ShowModal() != wxID_OK) {
+            return;
+        }
     }
     wxDELETE(m_readerThread);
     m_readerThread = new XDebugComThread(this, GetPort(), GetHost(), ideInitiate ? 5 : -1);
@@ -217,7 +219,8 @@ void XDebugManager::DoStopDebugger()
 
 bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 {
-    if(buffer.IsEmpty()) return false;
+    if(buffer.IsEmpty())
+        return false;
 
     CL_DEBUGS(wxString() << "XDebug <<< " << buffer);
 
@@ -255,34 +258,45 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 void XDebugManager::DoApplyBreakpoints()
 {
     CL_DEBUG("CodeLite >>> Applying breakpoints");
-    CHECK_PTR_RET(m_readerThread);
+    if(!m_readerThread) {
+        clDEBUG() << "CodeLite (PHP): No XDebug reader thread?" << endl;
+        return;
+    }
 
     PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
-    CHECK_PTR_RET(pProject);
+    if(!pProject) {
+        clDEBUG() << "CodeLite (PHP): No active project!" << endl;
+        return;
+    }
 
     const PHPProjectSettingsData& settings = pProject->GetSettings();
     // bool bRunAsWebserver = (pProject->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite);
 
     XDebugBreakpoint::List_t& breakpoints = m_breakpointsMgr.GetBreakpoints();
-    XDebugBreakpoint::List_t::iterator iter = breakpoints.begin();
-    for(; iter != breakpoints.end(); ++iter) {
+    if(breakpoints.empty()) {
+        clDEBUG() << "CodeLite (PHP): No breakpoints to apply" << endl;
+        return;
+    }
 
+    for(auto& bp : breakpoints) {
         // apply only breakpoints without xdebug-id attached to them
-        if(iter->IsApplied()) { continue; }
+        if(bp.IsApplied()) {
+            clDEBUG() << "CodeLite (PHP): Breakpoint already applied" << endl;
+            continue;
+        }
 
         wxStringMap_t sftpMapping;
         SSHWorkspaceSettings sftpSettings;
         sftpSettings.Load();
         if(!sftpSettings.GetRemoteFolder().IsEmpty() && sftpSettings.IsRemoteUploadEnabled()) {
-            sftpMapping.insert(
-                std::make_pair(PHPWorkspace::Get()->GetFilename().GetPath(), sftpSettings.GetRemoteFolder()));
+            sftpMapping.insert({ PHPWorkspace::Get()->GetFilename().GetPath(), sftpSettings.GetRemoteFolder() });
         }
 
         wxString command;
-        XDebugCommandHandler::Ptr_t handler(new XDebugBreakpointCmdHandler(this, ++TranscationId, *iter));
-        wxString filepath = settings.GetMappdPath(iter->GetFileName(), true, sftpMapping); // : iter->GetFileName();
-        command << "breakpoint_set -i " << handler->GetTransactionId() << " -t line"
-                << " -f " << filepath << " -n " << iter->GetLine();
+        XDebugCommandHandler::Ptr_t handler(new XDebugBreakpointCmdHandler(this, ++TranscationId, bp));
+        wxString filepath = settings.GetMappdPath(bp.GetFileName(), true, sftpMapping);
+        command << "CodeLite (PHP): breakpoint_set -i " << handler->GetTransactionId() << " -t line"
+                << " -f " << filepath << " -n " << bp.GetLine();
         DoSocketWrite(command);
         AddHandler(handler);
     }
@@ -312,7 +326,9 @@ void XDebugManager::DoHandleResponse(wxXmlNode* xml)
         doc.SetRoot(xml);
 
         wxStringOutputStream sos;
-        if(doc.Save(sos)) { CL_DEBUG(sos.GetString()); }
+        if(doc.Save(sos)) {
+            CL_DEBUG(sos.GetString());
+        }
         doc.DetachRoot();
     }
 }
@@ -328,20 +344,14 @@ xInitStruct XDebugManager::ParseInitXML(wxXmlNode* init)
     xInitStruct initData;
     wxURI fileuri(init->GetAttribute("fileuri"));
     initData.filename = fileuri.BuildUnescapedURI();
-    /*
-#ifdef __WXMSW__
-    if(initData.filename.StartsWith("/")) {
-        initData.filename.Remove(0, 1);
-        initData.filename = wxFileName(initData.filename).GetFullPath(); // Convert to native format
-    }
-#endif
- */
     return initData;
 }
 
 void XDebugManager::AddHandler(XDebugCommandHandler::Ptr_t handler)
 {
-    if(m_handlers.count(handler->GetTransactionId())) { m_handlers.erase(handler->GetTransactionId()); }
+    if(m_handlers.count(handler->GetTransactionId())) {
+        m_handlers.erase(handler->GetTransactionId());
+    }
     m_handlers.insert(std::make_pair(handler->GetTransactionId(), handler));
 }
 
@@ -432,7 +442,9 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
 
     // Make sure codelite is "Raised"
     wxFrame* frame = EventNotifier::Get()->TopFrame();
-    if(frame->IsIconized() || !frame->IsShown()) { frame->Raise(); }
+    if(frame->IsIconized() || !frame->IsShown()) {
+        frame->Raise();
+    }
 
     CL_DEBUG("CodeLite: opening file %s:%d", e.GetFileName(),
              e.GetLineNumber() + 1); // The user sees the line number from 1 (while scintilla counts them from 0)
@@ -502,7 +514,9 @@ void XDebugManager::OnXDebugStopped(XDebugEvent& e)
 
 void XDebugManager::DoRefreshDebuggerViews(int requestedStack)
 {
-    if(!m_readerThread) { return; }
+    if(!m_readerThread) {
+        return;
+    }
 
     // We execute here 2 commands in a row
     {
@@ -531,7 +545,9 @@ void XDebugManager::DoRefreshDebuggerViews(int requestedStack)
 static XDebugManager* s_xdebugManager = NULL;
 XDebugManager& XDebugManager::Get()
 {
-    if(!s_xdebugManager) { s_xdebugManager = new XDebugManager(); }
+    if(!s_xdebugManager) {
+        s_xdebugManager = new XDebugManager();
+    }
     return *s_xdebugManager;
 }
 
@@ -598,7 +614,9 @@ void XDebugManager::OnDeleteAllBreakpoints(PHPEvent& e)
     const XDebugBreakpoint::List_t& bps = m_breakpointsMgr.GetBreakpoints();
     XDebugBreakpoint::List_t::const_iterator iter = bps.begin();
     for(; iter != bps.end(); ++iter) {
-        if(iter->IsApplied()) { DoDeleteBreakpoint(iter->GetBreakpointId()); }
+        if(iter->IsApplied()) {
+            DoDeleteBreakpoint(iter->GetBreakpointId());
+        }
     }
 
     // Delete them from the manager
@@ -617,7 +635,9 @@ void XDebugManager::OnDeleteBreakpoint(PHPEvent& e)
         DoDeleteBreakpoint(bpid);
     }
     IEditor* editor = m_plugin->GetManager()->FindEditor(filename);
-    if(editor) { editor->GetCtrl()->MarkerDelete(line - 1, smt_breakpoint); }
+    if(editor) {
+        editor->GetCtrl()->MarkerDelete(line - 1, smt_breakpoint);
+    }
     m_breakpointsMgr.DeleteBreakpoint(filename, line);
 }
 
@@ -688,7 +708,8 @@ void XDebugManager::OnTooltip(clDebugEvent& e)
     CHECK_XDEBUG_SESSION_ACTIVE(e);
 
     wxString expression = e.GetString();
-    if(expression.IsEmpty()) return;
+    if(expression.IsEmpty())
+        return;
 
     expression.Prepend("print_r(").Append(", true)");
     SendEvalCommand(expression, XDebugEvalCmdHandler::kEvalForTooltip);
@@ -713,7 +734,9 @@ void XDebugManager::XDebugNotConnecting()
     wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), _("XDebug did not connect in a timely manner"),
                             "CodeLite", wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
     dlg.SetOKCancelLabels(_("Run XDebug Test"), _("OK"));
-    if(dlg.ShowModal() == wxID_OK) { m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics); }
+    if(dlg.ShowModal() == wxID_OK) {
+        m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics);
+    }
     DoStopDebugger();
 }
 

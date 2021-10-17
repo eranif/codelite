@@ -1,16 +1,16 @@
 #include "xdebugbreakpointsmgr.h"
-#include <algorithm>
-#include <event_notifier.h>
-#include "XDebugManager.h"
-#include "php_workspace.h"
-#include "php_project.h"
-#include <file_logger.h>
 #include "PHPUserWorkspace.h"
+#include "XDebugManager.h"
+#include "globals.h"
+#include "php_project.h"
+#include "php_workspace.h"
+#include "xdebugevent.h"
+#include <algorithm>
+#include <bookmark_manager.h>
+#include <event_notifier.h>
+#include <file_logger.h>
 #include <plugin.h>
 #include <wx/stc/stc.h>
-#include <bookmark_manager.h>
-#include "xdebugevent.h"
-#include "globals.h"
 
 XDebugBreakpointsMgr::XDebugBreakpointsMgr()
 {
@@ -18,8 +18,8 @@ XDebugBreakpointsMgr::XDebugBreakpointsMgr()
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTING, &XDebugBreakpointsMgr::OnXDebugSesstionStarting, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Connect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,
+                                  wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
 }
 
 XDebugBreakpointsMgr::~XDebugBreakpointsMgr()
@@ -28,8 +28,8 @@ XDebugBreakpointsMgr::~XDebugBreakpointsMgr()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTING, &XDebugBreakpointsMgr::OnXDebugSesstionStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(
-        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
+                                     wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
 }
 
 bool XDebugBreakpointsMgr::HasBreakpoint(const wxString& filename, int line) const
@@ -66,7 +66,11 @@ void XDebugBreakpointsMgr::DeleteBreakpoint(const wxString& filename, int line)
 void XDebugBreakpointsMgr::OnXDebugSessionEnded(XDebugEvent& e)
 {
     e.Skip();
-    std::for_each(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::ClearIdFunctor());
+
+    // clear any xdebug ID associated with the breakpoints
+    for(auto& bp : m_breakpoints) {
+        bp.SetBreakpointId(wxNOT_FOUND);
+    }
 }
 
 bool XDebugBreakpointsMgr::GetBreakpoint(const wxString& filename, int line, XDebugBreakpoint& bp) const
@@ -91,7 +95,14 @@ bool XDebugBreakpointsMgr::GetBreakpoint(const wxString& filename, int line, XDe
     return false;
 }
 
-void XDebugBreakpointsMgr::OnXDebugSesstionStarting(XDebugEvent& e) { e.Skip(); }
+void XDebugBreakpointsMgr::OnXDebugSesstionStarting(XDebugEvent& e)
+{
+    e.Skip();
+    // clear any xdebug ID associated with the breakpoints
+    for(auto& bp : m_breakpoints) {
+        bp.SetBreakpointId(wxNOT_FOUND);
+    }
+}
 
 void XDebugBreakpointsMgr::OnWorkspaceClosed(PHPEvent& e)
 {

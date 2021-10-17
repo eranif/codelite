@@ -27,8 +27,8 @@
 #define XDEBUGBREAKPOINTSMGR_H
 
 #include "XDebugBreakpoint.h"
-#include <cl_command_event.h>
 #include "xdebugevent.h"
+#include <cl_command_event.h>
 
 class XDebugBreakpointsMgr : public wxEvtHandler
 {

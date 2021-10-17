@@ -1,6 +1,6 @@
 #include "XDebugBreakpoint.h"
 
-XDebugBreakpoint::XDebugBreakpoint(const wxString &filename, int line)
+XDebugBreakpoint::XDebugBreakpoint(const wxString& filename, int line)
     : m_fileName(filename)
     , m_line(line)
     , m_breakpointId(wxNOT_FOUND)
@@ -13,9 +13,7 @@ XDebugBreakpoint::XDebugBreakpoint()
 {
 }
 
-XDebugBreakpoint::~XDebugBreakpoint()
-{
-}
+XDebugBreakpoint::~XDebugBreakpoint() {}
 
 bool XDebugBreakpoint::operator==(const XDebugBreakpoint& other) const
 {

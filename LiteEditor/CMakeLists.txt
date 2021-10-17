@@ -105,11 +105,6 @@ if(NOT APPLE)
     install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip DESTINATION ${CL_PREFIX}/share/codelite)
     install(FILES ${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip DESTINATION ${CL_PREFIX}/share/codelite)
 
-    # extra clangd + clang-format tools
-    if (UNIX)
-        install(FILES ${CL_SRC_ROOT}/tools/linux/clang-tools.tgz DESTINATION ${CL_PREFIX}/share/codelite)
-    endif()
-
     ## License file
     install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CL_PREFIX}/share/codelite)
 

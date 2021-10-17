@@ -3883,7 +3883,7 @@ void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
 
 void Manager::InstallClangTools()
 {
-#ifdef __WXGTK__
+#if 0
     // Extract clang-tools.tgz if needed
     // see if we need to copy it from the installation folder
     wxFileName toolsFile(clStandardPaths::Get().GetDataDir(), "clang-tools.tgz");

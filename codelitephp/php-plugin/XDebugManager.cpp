@@ -295,8 +295,8 @@ void XDebugManager::DoApplyBreakpoints()
         wxString command;
         XDebugCommandHandler::Ptr_t handler(new XDebugBreakpointCmdHandler(this, ++TranscationId, bp));
         wxString filepath = settings.GetMappdPath(bp.GetFileName(), true, sftpMapping);
-        command << "CodeLite (PHP): breakpoint_set -i " << handler->GetTransactionId() << " -t line"
-                << " -f " << filepath << " -n " << bp.GetLine();
+        command << "breakpoint_set -t line -f " << filepath << " -n " << bp.GetLine() << " -i "
+                << handler->GetTransactionId();
         DoSocketWrite(command);
         AddHandler(handler);
     }

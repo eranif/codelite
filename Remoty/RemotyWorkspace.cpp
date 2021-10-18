@@ -164,7 +164,6 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &RemotyWorkspace::OnShutdown, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
-
     // codelite-remote events
 
     // finder
@@ -280,6 +279,10 @@ void RemotyWorkspace::SaveSettings()
     wxBusyCursor bc;
     m_settings.Save(m_localWorkspaceFile, m_localUserWorkspaceFile);
     clSFTPManager::Get().AsyncSaveFile(m_localWorkspaceFile, m_remoteWorkspaceFile, m_account.GetAccountName());
+
+    // settings change, we must re-configure the LSPs
+    DeleteLspEntries();
+    ScanForLSPs();
 }
 
 void RemotyWorkspace::OnBuildStarting(clBuildEvent& event)
@@ -680,8 +683,24 @@ void RemotyWorkspace::DoConfigureLSP(const wxString& lsp_name, const wxString& c
     configure_event.SetLanguages(langs);
     configure_event.SetRootUri(GetRemoteWorkingDir());
 
+    auto conf = m_settings.GetSelectedConfig();
+    wxString envLine;
+    if(conf) {
+        const wxString& envstr = conf->GetEnvironment();
+        auto env_arr = FileUtils::CreateEnvironment(envstr);
+        // build environment line
+        for(const auto& env_pair : env_arr) {
+            envLine << env_pair.first << "=" << env_pair.second << " ";
+        }
+    }
+
     wxString lsp_cmd;
-    lsp_cmd << "cd " << GetRemoteWorkingDir() << " && " << command;
+    lsp_cmd << "cd " << GetRemoteWorkingDir() << " && ";
+    if(!envLine.empty()) {
+        lsp_cmd << envLine; // it ends with space
+    }
+    lsp_cmd << command;
+
     configure_event.SetLspCommand(lsp_cmd);
     configure_event.SetFlags(clLanguageServerEvent::kEnabled | clLanguageServerEvent::kDisaplyDiags |
                              clLanguageServerEvent::kSSHEnabled);
@@ -951,7 +970,7 @@ void RemotyWorkspace::OnShutdown(clCommandEvent& event)
 
 void RemotyWorkspace::DeleteLspEntries()
 {
-    std::vector<wxString> lsps = { "Remoty - clangd", "Remoty - rust" };
+    std::vector<wxString> lsps = { "Remoty - clangd", "Remoty - rust", "Remoty - pylsp" };
     for(auto lsp : lsps) {
         clLanguageServerEvent delete_event(wxEVT_LSP_DELETE);
         delete_event.SetLspName(lsp);
@@ -1114,5 +1133,5 @@ wxString RemotyWorkspace::GetName() const { return wxFileName(m_localWorkspaceFi
 void RemotyWorkspace::ConfigurePylsp(const wxString& exe)
 {
     clDEBUG() << "Remoty: configureing pylsp (" << exe << ")" << endl;
-    wxUnusedVar(exe);
+    DoConfigureLSP("Remoty - pylsp", exe, { "python" }, 150);
 }

@@ -49,6 +49,9 @@ public:
 protected:
     void ConfigureClangd(const wxString& exe);
     void ConfigureRls(const wxString& exe);
+    void ConfigurePylsp(const wxString& exe);
+    void DoConfigureLSP(const wxString& lsp_name, const wxString& command, const std::vector<wxString>& languages,
+                        size_t priority);
 
     void BindEvents();
     void UnbindEvents();

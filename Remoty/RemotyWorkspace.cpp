@@ -666,53 +666,41 @@ void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
     wd = conf->GetWorkingDirectory().IsEmpty() ? GetFileName().GetPath() : conf->GetWorkingDirectory();
 }
 
-void RemotyWorkspace::ConfigureRls(const wxString& exe)
-{ // Notify LSP to Configure this LSP for us
+void RemotyWorkspace::DoConfigureLSP(const wxString& lsp_name, const wxString& command,
+                                     const std::vector<wxString>& languages, size_t priority)
+{
     wxArrayString langs;
-    langs.Add("rust");
-
-    wxString lsp_name = "Remoty - rust";
+    langs.reserve(languages.size());
+    for(const auto& lang : languages) {
+        langs.Add(lang);
+    }
 
     clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
     configure_event.SetLspName(lsp_name);
     configure_event.SetLanguages(langs);
     configure_event.SetRootUri(GetRemoteWorkingDir());
 
-    // the command: we need to set it to the workspace folder
     wxString lsp_cmd;
-    lsp_cmd << "cd " << GetRemoteWorkingDir() << " && " << exe;
+    lsp_cmd << "cd " << GetRemoteWorkingDir() << " && " << command;
     configure_event.SetLspCommand(lsp_cmd);
     configure_event.SetFlags(clLanguageServerEvent::kEnabled | clLanguageServerEvent::kDisaplyDiags |
                              clLanguageServerEvent::kSSHEnabled);
     configure_event.SetSshAccount(m_account.GetAccountName());
     configure_event.SetConnectionString("stdio");
-    configure_event.SetPriority(150);
+    configure_event.SetPriority(priority);
     EventNotifier::Get()->ProcessEvent(configure_event);
+}
+
+void RemotyWorkspace::ConfigureRls(const wxString& exe)
+{
+    // Notify LSP to Configure this LSP for us
+    DoConfigureLSP("Remoty - rust", exe, { "rust" }, 150);
 }
 
 void RemotyWorkspace::ConfigureClangd(const wxString& exe)
 {
     // Notify LSP to Configure this LSP for us
-    wxArrayString langs;
-    langs.Add("c");
-    langs.Add("cpp");
-
-    wxString lsp_name = "Remoty - clangd";
-    clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
-    configure_event.SetLspName(lsp_name);
-    configure_event.SetLanguages(langs);
-    configure_event.SetRootUri(GetRemoteWorkingDir());
-
-    // the command: we need to set it to the workspace folder
-    wxString lsp_cmd;
-    lsp_cmd << "cd " << GetRemoteWorkingDir() << " && " << exe << " -limit-results=500";
-    configure_event.SetLspCommand(lsp_cmd);
-    configure_event.SetFlags(clLanguageServerEvent::kEnabled | clLanguageServerEvent::kDisaplyDiags |
-                             clLanguageServerEvent::kSSHEnabled);
-    configure_event.SetSshAccount(m_account.GetAccountName());
-    configure_event.SetConnectionString("stdio");
-    configure_event.SetPriority(150);
-    EventNotifier::Get()->ProcessEvent(configure_event);
+    DoConfigureLSP("Remoty - clangd", exe + " -limit-results=500", { "c", "cpp" }, 150);
 }
 
 IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool sync)
@@ -1067,9 +1055,15 @@ void RemotyWorkspace::ScanForLSPs()
     }
     m_codeliteRemoteFinder.Locate("/usr/bin", "clangd", wxEmptyString, clangd_versions);
     m_locate_requests.push_back(&RemotyWorkspace::ConfigureClangd);
+    clDEBUG() << "-- Searching for LSP: clangd" << endl;
 
     m_codeliteRemoteFinder.Locate("/usr/local/bin:/usr/bin:$HOME/.cargo/bin", "rust-analyzer", wxEmptyString, {});
     m_locate_requests.push_back(&RemotyWorkspace::ConfigureRls);
+    clDEBUG() << "-- Searching for LSP: rust-analyzer" << endl;
+
+    m_codeliteRemoteFinder.Locate("/usr/local/bin:/usr/bin:$HOME/.local/bin", "pylsp", wxEmptyString, {});
+    m_locate_requests.push_back(&RemotyWorkspace::ConfigurePylsp);
+    clDEBUG() << "-- Searching for LSP: pylsp" << endl;
 }
 
 void RemotyWorkspace::LSPStoreAndDisableCurrent()
@@ -1116,3 +1110,9 @@ void RemotyWorkspace::LSPRestore()
 }
 
 wxString RemotyWorkspace::GetName() const { return wxFileName(m_localWorkspaceFile).GetName(); }
+
+void RemotyWorkspace::ConfigurePylsp(const wxString& exe)
+{
+    clDEBUG() << "Remoty: configureing pylsp (" << exe << ")" << endl;
+    wxUnusedVar(exe);
+}

@@ -26,6 +26,8 @@
 #if USE_SFTP
 #include "cl_sftp.h"
 #include "cl_standard_paths.h"
+#include "file_logger.h"
+#include "wx/tokenzr.h"
 #include <atomic>
 #include <libssh/sftp.h>
 #include <string.h>
@@ -558,6 +560,76 @@ SFTPAttribute::List_t clSFTP::Chdir(const wxString& remotePath)
         throw clException("Chdir failed. " + remotePath + " is not a directory");
     }
     return List(remotePath, SFTP_BROWSE_FILES | SFTP_BROWSE_FOLDERS);
+}
+
+wxString clSFTP::ExecuteCommand(const wxString& command)
+{
+    if(!m_sftp) {
+        throw clException("SFTP is not initialized");
+    }
+
+    ssh_channel channel = ssh_channel_new(m_ssh->GetSession());
+    if(!channel) {
+        throw clException("Failed to allocate ssh channel");
+    }
+
+    int rc = ssh_channel_open_session(channel);
+    if(rc != SSH_OK) {
+        ssh_channel_free(channel);
+        throw clException("Failed to open ssh channel");
+    }
+    rc = ssh_channel_request_exec(channel, command.mb_str(wxConvUTF8).data());
+    if(rc != SSH_OK) {
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+        throw clException(wxString() << "Failed to execute command: " << command);
+    }
+
+    // read the result
+    char buffer[256];
+    int nbytes;
+
+    wxString result;
+    nbytes = ssh_channel_read(channel, buffer, sizeof(buffer) - 1, 0);
+    while(nbytes > 0) {
+        buffer[nbytes] = 0;
+        result << buffer;
+        nbytes = ssh_channel_read(channel, buffer, sizeof(buffer), 0);
+    }
+
+    if(nbytes < 0) {
+        ssh_channel_close(channel);
+        ssh_channel_free(channel);
+        throw clException(wxString() << "Failed to read from channel. Command: " << command);
+    }
+
+    ssh_channel_send_eof(channel);
+    ssh_channel_close(channel);
+    ssh_channel_free(channel);
+    return result;
+}
+
+bool clSFTP::GetChecksum(const wxString& remoteFile, size_t* checksum)
+{
+    wxString command;
+    command << "cksum " << remoteFile;
+    try {
+        wxString output = ExecuteCommand(command);
+        auto parts = ::wxStringTokenize(output, " \t", wxTOKEN_STRTOK);
+        if(parts.empty()) {
+            return false;
+        }
+        // the checksum is the first part
+        unsigned long ck;
+        if(!parts[0].ToCULong(&ck)) {
+            return false;
+        }
+        *checksum = ck;
+        return true;
+    } catch(clException& e) {
+        clWARNING() << e.What() << endl;
+        return false;
+    }
 }
 
 #endif // USE_SFTP

@@ -307,5 +307,10 @@ public:
      * /home/eran/file.cpp -> /home/eran/file.cpp
      */
     static wxString FilePathFromURI(const wxString& uri);
+
+    /**
+     * @brief calculate checksum of a given file
+     */
+    static bool GetChecksum(const wxString& filepath, size_t* checksum);
 };
 #endif // FILEUTILS_H

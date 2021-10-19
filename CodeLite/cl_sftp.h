@@ -58,6 +58,7 @@ public:
 
 protected:
     wxString GetErrorString() const;
+    wxString ExecuteCommand(const wxString& command);
 
 public:
     clSFTP(clSSH::Ptr_t ssh);
@@ -93,6 +94,12 @@ public:
      * @brief close the scp channel
      */
     void Close();
+
+    /**
+     * @brief return checksum of a remote file
+     * @throws clException
+     */
+    bool GetChecksum(const wxString& remoteFile, size_t* checksum);
 
     /**
      * @brief write the content of local file into a remote file

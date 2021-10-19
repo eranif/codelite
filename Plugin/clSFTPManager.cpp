@@ -239,6 +239,22 @@ bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& l
     auto conn = GetConnectionPtrAddIfMissing(accountName);
     CHECK_PTR_RET_FALSE(conn);
 
+    // if the local file already exists, compare checksums before downloading it
+    if(wxFileName::FileExists(localPath)) {
+        clDEBUG() << "Local file with the same path already exists, comapring checksums..." << endl;
+        try {
+            // read the file size
+            size_t remote_file_checksum, local_file_checksum;
+            if(conn->GetChecksum(remotePath, &remote_file_checksum) &&
+               FileUtils::GetChecksum(localPath, &local_file_checksum) && local_file_checksum == remote_file_checksum) {
+                clDEBUG() << "Using cached local file (checksum are the same)" << endl;
+                return true;
+            }
+        } catch(clException& e) {
+            wxUnusedVar(e);
+        }
+    }
+
     // prepare the download work
     std::promise<bool> download_promise;
     auto future = download_promise.get_future();

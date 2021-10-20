@@ -14,6 +14,7 @@ NodeJSLocator::~NodeJSLocator() {}
 void NodeJSLocator::Locate(const wxArrayString& hints)
 {
     wxArrayString paths = hints;
+    wxFileName fn_npm;
 #if defined(__WXGTK__) || defined(__WXOSX__)
     // Linux
 
@@ -53,7 +54,6 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
         }
     }
 
-    wxFileName fn_npm;
     // On Windows, first try to locate npm.cmd
     if(m_npm.IsEmpty() && ::clFindExecutable("npm.cmd", fn_npm, paths)) {
         m_npm = fn_npm.GetFullPath();

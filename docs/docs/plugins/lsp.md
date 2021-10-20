@@ -8,8 +8,9 @@ From the [Language Server web site][1]: The Language Server Protocol (LSP) is us
 
 By default, CodeLite is able to detect and configure language server for:
 
-- [Python `pylsp` module][6]
 - [C++ (`clangd`)][7]
+- [Python `pylsp` module][6]
+- [JavaScript / TypeScript `typescript-language-server` `npm` module][10]
 - [Rust (`rust-analyzer`)][9]
 - [Rust (`rls`)][8]
 
@@ -23,20 +24,6 @@ CodeLite to run the scan process again. To do this:
 !!! Important
     CodeLite will configure the LSP for you, but it will **NOT** install it for you.
     See below steps for installing language servers
-
-### Install `pylsp` (python)
----
-
-`pylsps` is installed via `pip`. For this, you will need to install the following:
-
-- python 3 installed
-- pip3 installed
-
-```bash
-pip install python-lsp-server
-```
-
-Visit the [project home page][3]
 
 ### Install `clangd` (c++)
 ---
@@ -70,6 +57,37 @@ Once installed, follow the steps in the [manual configuration section](#manual-c
 #### macOS
 
 Like Windows, `clangd` in part of CodeLite bundle
+
+### Install `pylsp` (python)
+---
+
+`pylsps` is installed via `pip`. For this, you will need to install the following:
+
+- python 3 installed
+- pip3 installed
+
+```bash
+pip install python-lsp-server
+```
+
+Visit the [project home page][3]
+
+### Install `typescript-language-server`
+---
+
+- Install [`node`][11]
+- Type:
+
+```bash
+npm install -g typescript-language-server
+```
+
+If you choose to [configure it manually][12] in CodeLite, use this as the command:
+
+```bash
+typescript-language-server --stdio
+```
+
 
 ### Install `rust-analyzer`
 ---
@@ -194,3 +212,6 @@ this way, after running `cmake`, you will get an up-to-date `compile_commands.js
 [7]: #install-clangd-c
 [8]: #install-rls-rust
 [9]: #install-rust-analyzer
+[10]: #install-typescript-language-server
+[11]: https://nodejs.org
+[12]: #manual-configuration

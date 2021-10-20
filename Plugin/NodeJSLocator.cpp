@@ -16,7 +16,7 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
     wxArrayString paths = hints;
 #if defined(__WXGTK__) || defined(__WXOSX__)
     // Linux
-    
+
     // add the standard paths
     paths.Add("/usr/local/bin");
     paths.Add("/usr/bin");
@@ -52,24 +52,24 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
             paths.Add(clInstallFolder);
         }
     }
-    
-    // Still could not find it, try the PATH environment variable
-    wxFileName fn_node;
-    if(::clFindExecutable("node", fn_node, paths)) {
-        m_nodejs = fn_node.GetFullPath();
-    }
-    
+
     wxFileName fn_npm;
     // On Windows, first try to locate npm.cmd
     if(m_npm.IsEmpty() && ::clFindExecutable("npm.cmd", fn_npm, paths)) {
         m_npm = fn_npm.GetFullPath();
     }
+#endif
     
-    // No luck? locate npm (with any given extension...)
-    if(m_npm.IsEmpty() && ::clFindExecutable("npm", fn_npm, paths)) {
+    // Still could not find it, try the PATH environment variable
+    wxFileName fn_node;
+    if(m_nodejs.empty() && ::clFindExecutable("node", fn_node, paths)) {
+        m_nodejs = fn_node.GetFullPath();
+    }
+
+    // No luck? locate npm
+    if(m_npm.empty() && ::clFindExecutable("npm", fn_npm, paths)) {
         m_npm = fn_npm.GetFullPath();
     }
-#endif
 }
 
 bool NodeJSLocator::TryPaths(const wxArrayString& paths, const wxString& fullname, wxFileName& fullpath)

@@ -79,7 +79,7 @@ Visit the [project home page][3]
 - Type:
 
 ```bash
-npm install -g typescript-language-server
+npm install -g typescript typescript-language-server
 ```
 
 If you choose to [configure it manually][12] in CodeLite, use this as the command:

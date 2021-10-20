@@ -6,6 +6,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Detectors">
+    <File Name="LSPTypeScriptDetector.cpp"/>
+    <File Name="LSPTypeScriptDetector.hpp"/>
     <File Name="LSPRlsDetector.hpp"/>
     <File Name="LSPRlsDetector.cpp"/>
     <File Name="LSPPythonDetector.cpp"/>

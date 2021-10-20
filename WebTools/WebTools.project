@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="WebTools" Version="11000">
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp]]>
+    </Extensions>
+    <Topleveldir>/src/codelite/WebTools</Topleveldir>
+  </Reconciliation>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>
@@ -59,12 +68,6 @@
     <File Name="JavaScriptFunctionsLocator.h"/>
     <File Name="JavaScriptSyntaxColourThread.cpp"/>
     <File Name="JavaScriptSyntaxColourThread.h"/>
-    <File Name="JSCodeCompletion.cpp"/>
-    <File Name="JSCodeCompletion.h"/>
-    <File Name="clTernServer.h"/>
-    <File Name="clTernServer.cpp"/>
-    <File Name="clTernWorkerThread.h"/>
-    <File Name="clTernWorkerThread.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
     <File Name="WebToolsSettings.h"/>

@@ -935,7 +935,48 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         if(!lexer->GetFileSpec().Contains(".ts")) {
             lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ts");
         }
-        AddLexerKeywords(lexer, 0, { "class", "await", "async", "extends", "constructor", "super", "const" });
+        const wxString ts_keywords = "break as any "
+                                     "case implements boolean "
+                                     "catch interface constructor "
+                                     "class let declare "
+                                     "const package get "
+                                     "continue private module "
+                                     "debugger protected require "
+                                     "default public number "
+                                     "delete static set "
+                                     "do yield string "
+                                     "else symbol "
+                                     "enum type "
+                                     "export from "
+                                     "extends of "
+                                     "false  "
+                                     "finally  "
+                                     "for  "
+                                     "function  "
+                                     "if  "
+                                     "import  "
+                                     "in  "
+                                     "instanceof  "
+                                     "new  "
+                                     "null  "
+                                     "return  "
+                                     "super  "
+                                     "switch  "
+                                     "this  "
+                                     "throw  "
+                                     "true  "
+                                     "try  "
+                                     "typeof  "
+                                     "var  "
+                                     "void  "
+                                     "while  "
+                                     "with ";
+        wxArrayString arr_keywords = ::wxStringTokenize(ts_keywords, " \t\n", wxTOKEN_STRTOK);
+        std::vector<wxString> vec_keywords;
+        vec_keywords.reserve(arr_keywords.size());
+        vec_keywords.insert(vec_keywords.end(), arr_keywords.begin(), arr_keywords.end());
+
+        AddLexerKeywords(lexer, 0, vec_keywords);
     }
 
     // update script lexer with additional keywords

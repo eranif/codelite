@@ -27,7 +27,6 @@
 #define __WebTools__
 
 #include "CSSCodeCompletion.h"
-#include "JSCodeCompletion.h"
 #include "JavaScriptSyntaxColourThread.h"
 #include "XMLCodeCompletion.h"
 #include "clJSCTags.h"
@@ -44,7 +43,6 @@ class WebTools : public IPlugin
     friend class JavaScriptSyntaxColourThread;
 
     JavaScriptSyntaxColourThread* m_jsColourThread;
-    JSCodeCompletion::Ptr_t m_jsCodeComplete;
     XMLCodeCompletion::Ptr_t m_xmlCodeComplete;
     CSSCodeCompletion::Ptr_t m_cssCodeComplete;
     clJSCTags::Ptr_t m_jsctags;

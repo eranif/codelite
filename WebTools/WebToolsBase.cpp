@@ -37,13 +37,6 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer58 = new wxBoxSizer(wxVERTICAL);
     m_panel56->SetSizer(boxSizer58);
 
-    m_checkBoxEnableJsCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable JavaScript code completion"),
-                                          wxDefaultPosition, wxDLG_UNIT(m_panel56, wxSize(-1, -1)), 0);
-    m_checkBoxEnableJsCC->SetValue(true);
-    m_checkBoxEnableJsCC->SetToolTip(_("Enable JavaScript code completion"));
-
-    boxSizer58->Add(m_checkBoxEnableJsCC, 0, wxALL, WXC_FROM_DIP(5));
-
     m_checkBoxEnableXmlCC = new wxCheckBox(m_panel56, wxID_ANY, _("Enable XML code completion"), wxDefaultPosition,
                                            wxDLG_UNIT(m_panel56, wxSize(-1, -1)), 0);
     m_checkBoxEnableXmlCC->SetValue(true);
@@ -57,90 +50,6 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     m_checkBoxEnableHtmlCC->SetToolTip(_("Enable HTML code completion"));
 
     boxSizer58->Add(m_checkBoxEnableHtmlCC, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_panel12 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1, -1)),
-                            wxTAB_TRAVERSAL);
-    m_notebook10->AddPage(m_panel12, _("JavaScript"), false);
-
-    wxBoxSizer* boxSizer22 = new wxBoxSizer(wxVERTICAL);
-    m_panel12->SetSizer(boxSizer22);
-
-    wxArrayString m_pgMgrArr;
-    wxUnusedVar(m_pgMgrArr);
-    wxArrayInt m_pgMgrIntArr;
-    wxUnusedVar(m_pgMgrIntArr);
-    m_pgMgr = new wxPropertyGridManager(m_panel12, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel12, wxSize(400, 200)),
-                                        wxPG_DESCRIPTION | wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
-
-    boxSizer22->Add(m_pgMgr, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_pgProp26 = m_pgMgr->Append(new wxPropertyCategory(_("General")));
-    m_pgProp26->SetHelpString(wxT(""));
-
-    m_pgPropLogging = m_pgMgr->AppendIn(m_pgProp26, new wxBoolProperty(_("Verbose Logging"), wxPG_LABEL, 1));
-    m_pgPropLogging->SetHelpString(
-        _("The JavaScript code completion uses the \"tern\" engine.\nCheck this option to start tern in verbose mode"));
-
-    m_pgPropPortNumber =
-        m_pgMgr->AppendIn(m_pgProp26, new wxIntProperty(_("Code completion engine port"), wxPG_LABEL, 12089));
-    m_pgPropPortNumber->SetHelpString(_("The port number on which 'tern' listens to\nTern is the code completion "
-                                        "engine used by CodeLite for JavaScript"));
-
-    m_pgProp32 = m_pgMgr->Append(new wxPropertyCategory(_("Libraries")));
-    m_pgProp32->SetHelpString(_("Enable Code Completion for the selected libraries"));
-
-    m_pgPropEcma5 = m_pgMgr->AppendIn(m_pgProp32, new wxBoolProperty(_("Ecma5"), wxPG_LABEL, 1));
-    m_pgPropEcma5->SetHelpString(wxT(""));
-
-    m_pgPropEcma6 = m_pgMgr->AppendIn(m_pgProp32, new wxBoolProperty(_("Ecma6"), wxPG_LABEL, 1));
-    m_pgPropEcma6->SetHelpString(wxT(""));
-
-    m_pgPropJQuery = m_pgMgr->AppendIn(m_pgProp32, new wxBoolProperty(_("jQuery"), wxPG_LABEL, 1));
-    m_pgPropJQuery->SetHelpString(_("Support Code Completion for jQuery framework"));
-
-    m_pgPropUnderscore = m_pgMgr->AppendIn(m_pgProp32, new wxBoolProperty(_("Underscore"), wxPG_LABEL, 1));
-    m_pgPropUnderscore->SetHelpString(_("Enable code completion for the Underscore library"));
-
-    m_pgPropBrowser = m_pgMgr->AppendIn(m_pgProp32, new wxBoolProperty(_("Browser"), wxPG_LABEL, 1));
-    m_pgPropBrowser->SetHelpString(_("Enable code completion for browser mode (DOM, document, window etc)"));
-
-    m_pgPropChai = m_pgMgr->AppendIn(m_pgProp32, new wxBoolProperty(_("Chai"), wxPG_LABEL, 1));
-    m_pgPropChai->SetHelpString(_("Enable code completion for the chain assertion library"));
-
-    m_pgPropQML = m_pgMgr->AppendIn(m_pgProp32, new wxBoolProperty(_("QML"), wxPG_LABEL, 1));
-    m_pgPropQML->SetHelpString(_("Support for Qt's QML extension for JavaScript"));
-
-    m_pgProp46 = m_pgMgr->Append(new wxPropertyCategory(_("Plugins")));
-    m_pgProp46->SetHelpString(wxT(""));
-
-    m_pgPropAngular = m_pgMgr->AppendIn(m_pgProp46, new wxBoolProperty(_("Angular"), wxPG_LABEL, 1));
-    m_pgPropAngular->SetHelpString(
-        _("Adds the angular object to the top-level environment, and tries to wire up some of the bizarre dependency "
-          "management scheme from this library, so that dependency injections get the right types"));
-
-    m_pgPropStrings = m_pgMgr->AppendIn(m_pgProp46, new wxBoolProperty(_("Strings"), wxPG_LABEL, 1));
-    m_pgPropStrings->SetHelpString(
-        _("When enabled, this plugin will gather (short) strings in your code, and completing when inside a string "
-          "will try to complete to previously seen strings"));
-
-    m_pgPropNode = m_pgMgr->AppendIn(m_pgProp46, new wxBoolProperty(_("Node.js"), wxPG_LABEL, 1));
-    m_pgPropNode->SetHelpString(
-        _("Provides variables that are part of the node environment, such as process and require, and hooks up require "
-          "to try and find the dependencies that are being loaded, and assign them the correct types. It also includes "
-          "types for the built-in modules that node.js provides (\"fs\", \"http\", etc)"));
-
-    m_pgPropNodeExpress = m_pgMgr->AppendIn(m_pgProp46, new wxBoolProperty(_("Node Express"), wxPG_LABEL, 1));
-    m_pgPropNodeExpress->SetHelpString(
-        _("A Tern plugin adding support for express web application framework for node. http://expressjs.com/"));
-
-    m_pgPropWebPack = m_pgMgr->AppendIn(m_pgProp46, new wxBoolProperty(_("WebPack"), wxPG_LABEL, 1));
-    m_pgPropWebPack->SetHelpString(_("Support WebPack"));
-
-    m_pgPropRequireJS = m_pgMgr->AppendIn(m_pgProp46, new wxBoolProperty(_("RequireJS"), wxPG_LABEL, 1));
-    m_pgPropRequireJS->SetHelpString(
-        _("This plugin (\"requirejs\") teaches the server to understand RequireJS-style dependency management. It "
-          "defines the global functions define and requirejs, and will do its best to resolve dependencies and give "
-          "them their proper types"));
 
     m_panel237 = new wxPanel(m_notebook10, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook10, wxSize(-1, -1)),
                              wxTAB_TRAVERSAL);
@@ -170,9 +79,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer241->Add(m_filePickerNodeJS, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_button361 = new wxButton(m_panel237, wxID_ANY, _("Suggest..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_panel237, wxSize(-1, -1)), wxBU_EXACTFIT);
+                               wxDLG_UNIT(m_panel237, wxSize(-1, -1)), 0);
 
-    flexGridSizer241->Add(m_button361, 0, wxRIGHT | wxTOP | wxBOTTOM, WXC_FROM_DIP(5));
+    flexGridSizer241->Add(m_button361, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_staticText247 = new wxStaticText(m_panel237, wxID_ANY, _("npm path:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_panel237, wxSize(-1, -1)), 0);
@@ -187,9 +96,9 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
     flexGridSizer241->Add(m_filePickerNpm, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_button363 = new wxButton(m_panel237, wxID_ANY, _("Suggest..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_panel237, wxSize(-1, -1)), wxBU_EXACTFIT);
+                               wxDLG_UNIT(m_panel237, wxSize(-1, -1)), 0);
 
-    flexGridSizer241->Add(m_button363, 0, wxRIGHT | wxTOP | wxBOTTOM, WXC_FROM_DIP(5));
+    flexGridSizer241->Add(m_button363, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     flexGridSizer241->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
@@ -216,20 +125,19 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("WebToolsSettingsBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    m_checkBoxEnableJsCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                  wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_checkBoxEnableXmlCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                    wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_checkBoxEnableHtmlCC->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                     wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
-    m_pgMgr->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL, this);
     m_filePickerNodeJS->Connect(wxEVT_COMMAND_FILEPICKER_CHANGED,
                                 wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNodejsPath), NULL, this);
     m_button361->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
@@ -249,14 +157,10 @@ WebToolsSettingsBase::WebToolsSettingsBase(wxWindow* parent, wxWindowID id, cons
 
 WebToolsSettingsBase::~WebToolsSettingsBase()
 {
-    m_checkBoxEnableJsCC->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                     wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_checkBoxEnableXmlCC->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                       wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
     m_checkBoxEnableHtmlCC->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                        wxCommandEventHandler(WebToolsSettingsBase::OnModified), NULL, this);
-    m_pgMgr->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(WebToolsSettingsBase::OnJSValueChanged), NULL,
-                        this);
     m_filePickerNodeJS->Disconnect(wxEVT_COMMAND_FILEPICKER_CHANGED,
                                    wxFileDirPickerEventHandler(WebToolsSettingsBase::OnNodejsPath), NULL, this);
     m_button361->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
@@ -419,7 +323,9 @@ NodeJSDebuggerDlgBase::NodeJSDebuggerDlgBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("NodeJSDebuggerDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -507,7 +413,9 @@ NodeJSNewWorkspaceDlgBase::NodeJSNewWorkspaceDlgBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("NodeJSNewWorkspaceDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -677,7 +585,9 @@ NodeJSCliDebuggerPaneBase::NodeJSCliDebuggerPaneBase(wxWindow* parent, wxWindowI
 
     SetName(wxT("NodeJSCliDebuggerPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_treeCtrlLocals->Connect(wxEVT_COMMAND_TREE_ITEM_EXPANDING,
                               wxTreeEventHandler(NodeJSCliDebuggerPaneBase::OnLocalExpanding), NULL, this);

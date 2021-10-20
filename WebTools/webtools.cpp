@@ -100,7 +100,6 @@ WebTools::WebTools(IManager* manager)
     Bind(wxEVT_MENU, &WebTools::OnSettings, this, XRCID("webtools_settings"));
     Bind(wxEVT_NODE_COMMAND_TERMINATED, &WebTools::OnNodeCommandCompleted, this);
 
-    m_jsCodeComplete.Reset(new JSCodeCompletion("", this));
     m_xmlCodeComplete.Reset(new XMLCodeCompletion(this));
     m_cssCodeComplete.Reset(new CSSCodeCompletion(this));
     m_jsctags.Reset(new clJSCTags());
@@ -159,7 +158,6 @@ void WebTools::UnPlug()
 
     m_jsColourThread->Stop();
     wxDELETE(m_jsColourThread);
-    m_jsCodeComplete.Reset(NULL);
 }
 
 void WebTools::DoRefreshColours(const wxString& filename)
@@ -217,13 +215,8 @@ void WebTools::OnSettings(wxCommandEvent& event)
     WebToolsSettings settings(m_mgr->GetTheApp()->GetTopWindow());
     if(settings.ShowModal() == wxID_OK) {
         NodeJSWorkspace::Get()->AllocateDebugger();
-        if(m_jsCodeComplete) {
-            m_jsCodeComplete->Reload();
-            m_jsCodeComplete->ClearFatalError();
-        }
         if(m_xmlCodeComplete) {
             m_xmlCodeComplete->Reload();
-            m_jsCodeComplete->ClearFatalError();
         }
     }
 }
@@ -384,19 +377,6 @@ void WebTools::OnWorkspaceLoaded(clWorkspaceEvent& event)
     if(!workspaceFile.IsOk()) {
         return;
     }
-    if(FileExtManager::GetType(workspaceFile.GetFullPath()) == FileExtManager::TypeWorkspaceNodeJS) {
-        // we need to do this in 2 steps: this is the because the service provider will auto register us on destuctions
-        // by NAME this means, that 'reset' will first call 'new' followed by 'delete' so we will end up to be removed
-        // from the list of service providers
-        m_jsCodeComplete.Reset(nullptr);
-        m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath(), this));
-    } else {
-        // For non NodeJS workspaces, create the .tern files under
-        // the .codelite folder
-        workspaceFile.AppendDir(".codelite");
-        m_jsCodeComplete.Reset(nullptr);
-        m_jsCodeComplete.Reset(new JSCodeCompletion(workspaceFile.GetPath(), this));
-    }
 }
 
 bool WebTools::IsCSSFile(IEditor* editor)
@@ -416,9 +396,6 @@ void WebTools::OnFileSaved(clCommandEvent& event)
     DoRefreshColours(event.GetFileName());
     IEditor* editor = m_mgr->GetActiveEditor();
     if(editor && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
-        if(m_jsCodeComplete) {
-            m_jsCodeComplete->ResetTern(false);
-        }
         // Remove all compiler markers
         editor->DelAllCompilerMarkers();
         if(WebToolsConfig::Get().IsLintOnSave()) {
@@ -427,14 +404,7 @@ void WebTools::OnFileSaved(clCommandEvent& event)
     }
 }
 
-void WebTools::OnEditorContextMenu(clContextMenuEvent& event)
-{
-    event.Skip();
-    IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && m_jsCodeComplete && IsJavaScriptFile(editor) && !InsideJSComment(editor)) {
-        m_jsCodeComplete->AddContextMenu(event.GetMenu(), editor);
-    }
-}
+void WebTools::OnEditorContextMenu(clContextMenuEvent& event) { event.Skip(); }
 
 void WebTools::OnIsDebugger(clDebugEvent& event)
 {
@@ -473,15 +443,4 @@ void WebTools::OnNodeJSCliDebuggerStarted(clDebugEvent& event)
     EnsureAuiPaneIsVisible("nodejs_cli_debugger", true);
 }
 
-void WebTools::OnNodeCommandCompleted(clProcessEvent& event)
-{
-    event.Skip();
-    if(event.GetString() == "npm-install-tern") {
-        // tern installation completed, enable the code completion again
-        clGetManager()->SetStatusMessage("tern installed", 5);
-        WebToolsConfig::Get().EnableJavaScriptFlag(WebToolsConfig::kJSEnableCC, true);
-        if(m_jsCodeComplete) {
-            m_jsCodeComplete->ResetTern(true);
-        }
-    }
-}
+void WebTools::OnNodeCommandCompleted(clProcessEvent& event) { event.Skip(); }

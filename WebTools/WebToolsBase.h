@@ -7,6 +7,7 @@
 #ifndef _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 #define _CODELITE_WEBTOOLS_WEBTOOLSBASE_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -18,9 +19,6 @@
 #include <wx/panel.h>
 #include <wx/imaglist.h>
 #include <wx/checkbox.h>
-#include <wx/propgrid/manager.h>
-#include <wx/propgrid/property.h>
-#include <wx/propgrid/advprops.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
 #include <wx/button.h>
@@ -53,34 +51,15 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
+
 class WebToolsSettingsBase : public wxDialog
 {
 protected:
     wxNotebook* m_notebook10;
     wxPanel* m_panel56;
-    wxCheckBox* m_checkBoxEnableJsCC;
     wxCheckBox* m_checkBoxEnableXmlCC;
     wxCheckBox* m_checkBoxEnableHtmlCC;
-    wxPanel* m_panel12;
-    wxPropertyGridManager* m_pgMgr;
-    wxPGProperty* m_pgProp26;
-    wxPGProperty* m_pgPropLogging;
-    wxPGProperty* m_pgPropPortNumber;
-    wxPGProperty* m_pgProp32;
-    wxPGProperty* m_pgPropEcma5;
-    wxPGProperty* m_pgPropEcma6;
-    wxPGProperty* m_pgPropJQuery;
-    wxPGProperty* m_pgPropUnderscore;
-    wxPGProperty* m_pgPropBrowser;
-    wxPGProperty* m_pgPropChai;
-    wxPGProperty* m_pgPropQML;
-    wxPGProperty* m_pgProp46;
-    wxPGProperty* m_pgPropAngular;
-    wxPGProperty* m_pgPropStrings;
-    wxPGProperty* m_pgPropNode;
-    wxPGProperty* m_pgPropNodeExpress;
-    wxPGProperty* m_pgPropWebPack;
-    wxPGProperty* m_pgPropRequireJS;
     wxPanel* m_panel237;
     wxStaticText* m_staticText243;
     wxFilePickerCtrl* m_filePickerNodeJS;
@@ -96,7 +75,6 @@ protected:
 
 protected:
     virtual void OnModified(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnJSValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnNodejsPath(wxFileDirPickerEvent& event) { event.Skip(); }
     virtual void OnSuggestNodeJSPaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnNpmPath(wxFileDirPickerEvent& event) { event.Skip(); }
@@ -106,12 +84,9 @@ protected:
     virtual void OnApply(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxCheckBox* GetCheckBoxEnableJsCC() { return m_checkBoxEnableJsCC; }
     wxCheckBox* GetCheckBoxEnableXmlCC() { return m_checkBoxEnableXmlCC; }
     wxCheckBox* GetCheckBoxEnableHtmlCC() { return m_checkBoxEnableHtmlCC; }
     wxPanel* GetPanel56() { return m_panel56; }
-    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
-    wxPanel* GetPanel12() { return m_panel12; }
     wxStaticText* GetStaticText243() { return m_staticText243; }
     wxFilePickerCtrl* GetFilePickerNodeJS() { return m_filePickerNodeJS; }
     wxButton* GetButton361() { return m_button361; }
@@ -211,7 +186,8 @@ public:
     WebToolsImages();
     const wxBitmap& Bitmap(const wxString& name) const
     {
-        if(!m_bitmaps.count(name + m_resolution)) return wxNullBitmap;
+        if(!m_bitmaps.count(name + m_resolution))
+            return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }
 

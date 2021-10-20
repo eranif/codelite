@@ -30,7 +30,6 @@
 
 class WebToolsConfig : public clConfigItem
 {
-    size_t m_jsFlags;
     size_t m_xmlFlags;
     size_t m_htmlFlags;
     wxString m_nodejs;
@@ -41,24 +40,6 @@ class WebToolsConfig : public clConfigItem
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
-
-    enum eJSFlags {
-        kJSEnableCC = (1 << 0),
-        kJSEnableVerboseLogging = (1 << 1),
-        kJSLibraryJQuery = (1 << 2),
-        kJSLibraryBrowser = (1 << 3),
-        kJSLibraryEcma5 = (1 << 4),
-        kJSLibraryEcma6 = (1 << 5),
-        kJSLibraryChai = (1 << 6),
-        kJSLibraryUnderscore = (1 << 7),
-        kJSPluginNode = (1 << 8),
-        kJSPluginStrings = (1 << 9),
-        kJSPluginAngular = (1 << 10),
-        kJSPluginQML = (1 << 11),
-        kJSPluginRequireJS = (1 << 12),
-        kJSWebPack = (1 << 13),
-        kJSNodeExpress = (1 << 14),
-    };
 
     enum eNodeJSFlags {
         kLintOnSave = (1 << 0),
@@ -89,11 +70,8 @@ public:
 
     void SetPortNumber(int portNumber) { this->m_portNumber = portNumber; }
     int GetPortNumber() const { return m_portNumber; }
-    
-    static WebToolsConfig& Get();
-    bool HasJavaScriptFlag(eJSFlags flag) const { return HasFlag(m_jsFlags, flag); }
-    void EnableJavaScriptFlag(eJSFlags flag, bool b) { EnableFlag(m_jsFlags, flag, b); }
 
+    static WebToolsConfig& Get();
     bool HasXmlFlag(eXmlFlags flag) const { return HasFlag(m_xmlFlags, flag); }
     void EnableXmlFlag(eXmlFlags flag, bool b) { EnableFlag(m_xmlFlags, flag, b); }
 
@@ -107,14 +85,14 @@ public:
 
     bool IsLintOnSave() const { return HasFlag(m_nodeOptions, kLintOnSave); }
     void SetLintOnSave(bool b) { EnableFlag(m_nodeOptions, kLintOnSave, b); }
-    
+
     bool IsNodeInstalled() const;
     bool IsNpmInstalled() const;
-    
+
     wxFileName GetTernScript() const;
     bool IsTernInstalled() const;
     wxString GetTempFolder(bool create = false) const;
-    
+
     /**
      * @brief create tern project file content based on the settings
      */

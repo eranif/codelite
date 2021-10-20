@@ -2,7 +2,6 @@
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSWorkspaceUserConfiguration.h"
 #include "NoteJSWorkspace.h"
-#include "clTernServer.h"
 #include "cl_config.h"
 #include "globals.h"
 #include "imanager.h"

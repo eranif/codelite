@@ -21,20 +21,7 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
     coltype.Add("icontext");
     coltype.Add("progress");
     coltype.Add("choice");
-    
-    wxArrayString texttype;
-    texttype.Add("bool");
-    texttype.Add("char");
-    texttype.Add("datetime");
-    texttype.Add("double");
-    texttype.Add("list");
-    texttype.Add("long");
-    texttype.Add("longlong");
-    texttype.Add("string");
-    texttype.Add("ulonglong");
-    texttype.Add("arrstring");
-    texttype.Add("void*");
-    
+
     wxArrayString alignment;
     alignment.Add("wxALIGN_LEFT");
     alignment.Add("wxALIGN_RIGHT");
@@ -51,9 +38,6 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
                                    _("Column Width (in pixels)\n-1 - special value for column width meaning "
                                      "unspecified/default\n-2 - size the column automatically to fit all values")));
     AddProperty(new ChoiceProperty(PROP_DV_LISTCTRL_COL_TYPES, coltype, 2, _("Column Type")));
-    AddProperty(new ChoiceProperty(PROP_DV_LISTCTRL_TEXT_TYPES, texttype, 7, 
-                                        _("The type of object held in the variant that will be displayed as text\n"
-                                          "Relevant only for column of type 'text'")));
     AddProperty(new MultiStringsProperty(PROP_OPTIONS, _("Choices strings\nRelevant only for column of type 'choice'"),
                                          ";", "Enter choices"));
     AddProperty(new ChoiceProperty(PROP_DV_LISTCTRL_COL_ALIGN, alignment, 0, _("Cell Alignment")));
@@ -75,7 +59,6 @@ wxString DataViewListCtrlColumn::CppCtorCode() const
     wxString alignstring = PropertyString(PROP_DV_LISTCTRL_COL_ALIGN);
     wxString label = wxCrafter::UNDERSCORE(GetName());
     wxString coltype = PropertyString(PROP_DV_LISTCTRL_COL_TYPES);
-    wxString texttype = PropertyString(PROP_DV_LISTCTRL_TEXT_TYPES);    
 
     bool childOfDataViewListCtrl = GetParent()->GetType() == ID_WXDATAVIEWLISTCTRL;
     wxString cellMode = PropertyString(PROP_DV_CELLMODE);
@@ -92,10 +75,9 @@ wxString DataViewListCtrlColumn::CppCtorCode() const
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
     } else if(coltype == "text") {
-        cppCode << parentName << "->AppendColumn(new wxDataViewColumn(" << label << ", "
-                << "new wxDataViewTextRenderer(\"" << texttype << "\", " << cellMode << ", " << alignstring << "), "
-                << parentName << "->GetColumnCount(), "
-                << columnWidth << ", " << alignstring << ", " << colFlag << "), \"" << texttype << "\");";
+        cppCode << parentName << "->AppendTextColumn(" << label << ", ";
+        if(!childOfDataViewListCtrl) cppCode << parentName << "->GetColumnCount(), ";
+        cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
     } else if(coltype == "icontext") {
         cppCode << parentName << "->AppendIconTextColumn(" << label << ", ";

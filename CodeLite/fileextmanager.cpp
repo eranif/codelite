@@ -111,6 +111,7 @@ void FileExtManager::Init()
         m_map[wxT("sass")] = TypeCSS;
         m_map[wxT("js")] = TypeJS;
         m_map[wxT("javascript")] = TypeJS;
+        m_map[wxT("ts")] = TypeJS; // TypeScript, but we consider this a JavaScript
         m_map[wxT("py")] = TypePython;
 
         // Java file

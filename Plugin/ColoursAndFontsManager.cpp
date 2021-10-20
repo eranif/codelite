@@ -925,12 +925,17 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     // Add wxcp file extension to the JavaScript lexer
-    if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
-    }
-
     if(lexer->GetName() == "javascript") {
-        AddLexerKeywords(lexer, 0, { "class", "await", "async", "extends", "constructor", "super" });
+        // wxCrafter files
+        if(!lexer->GetFileSpec().Contains(".wxcp")) {
+            lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
+        }
+
+        // typescript
+        if(!lexer->GetFileSpec().Contains(".ts")) {
+            lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ts");
+        }
+        AddLexerKeywords(lexer, 0, { "class", "await", "async", "extends", "constructor", "super", "const" });
     }
 
     // update script lexer with additional keywords

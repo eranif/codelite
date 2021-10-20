@@ -1,9 +1,9 @@
 #include "EclipseJavaScriptThemeImporter.h"
-#include "globals.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
-#include "xmlutils.h"
+#include "globals.h"
 #include "wx/dir.h"
+#include "xmlutils.h"
 #include <wx/stc/stc.h>
 
 EclipseJavaScriptThemeImporter::EclipseJavaScriptThemeImporter()
@@ -36,8 +36,7 @@ EclipseJavaScriptThemeImporter::EclipseJavaScriptThemeImporter()
 
     // Used for wxSTC_C_GLOBALCLASS ("classes")
     SetKeywords3("Math Array Date document window");
-
-    SetFileExtensions("*.js;*.javascript;*.qml;*.json");
+    SetFileExtensions("*.js;*.javascript;*.qml;*.json;*.ts");
 }
 
 EclipseJavaScriptThemeImporter::~EclipseJavaScriptThemeImporter() {}
@@ -49,89 +48,34 @@ LexerConf::Ptr_t EclipseJavaScriptThemeImporter::Import(const wxFileName& eclips
 
     // Covnert to codelite's XML properties
     AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer,
-                wxSTC_C_COMMENT,
-                "Block comment",
-                m_multiLineComment.colour,
-                m_background.colour,
-                m_multiLineComment.isBold,
-                m_multiLineComment.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_COMMENTLINE,
-                "Single line comment",
-                m_singleLineComment.colour,
-                m_background.colour,
-                m_singleLineComment.isBold,
-                m_singleLineComment.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_COMMENTDOC,
-                "Doxygen block comment",
-                m_javadoc.colour,
-                m_background.colour,
-                m_javadoc.isBold,
-                m_javadoc.isItalic);
-    AddProperty(
-        lexer, wxSTC_C_NUMBER, "Number", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_WORD,
-                "JavaScript keyword",
-                m_keyword.colour,
-                m_background.colour,
-                m_keyword.isBold,
+    AddProperty(lexer, wxSTC_C_COMMENT, "Block comment", m_multiLineComment.colour, m_background.colour,
+                m_multiLineComment.isBold, m_multiLineComment.isItalic);
+    AddProperty(lexer, wxSTC_C_COMMENTLINE, "Single line comment", m_singleLineComment.colour, m_background.colour,
+                m_singleLineComment.isBold, m_singleLineComment.isItalic);
+    AddProperty(lexer, wxSTC_C_COMMENTDOC, "Doxygen block comment", m_javadoc.colour, m_background.colour,
+                m_javadoc.isBold, m_javadoc.isItalic);
+    AddProperty(lexer, wxSTC_C_NUMBER, "Number", m_number.colour, m_background.colour, m_number.isBold,
+                m_number.isItalic);
+    AddProperty(lexer, wxSTC_C_WORD, "JavaScript keyword", m_keyword.colour, m_background.colour, m_keyword.isBold,
                 m_keyword.isItalic);
-    AddProperty(
-        lexer, wxSTC_C_STRING, "String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_CHARACTER,
-                "Character",
-                m_string.colour,
-                m_background.colour,
-                m_string.isBold,
+    AddProperty(lexer, wxSTC_C_STRING, "String", m_string.colour, m_background.colour, m_string.isBold,
+                m_string.isItalic);
+    AddProperty(lexer, wxSTC_C_CHARACTER, "Character", m_string.colour, m_background.colour, m_string.isBold,
                 m_string.isItalic);
     AddProperty(lexer, wxSTC_C_OPERATOR, "Operator", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
-    AddProperty(lexer,
-                wxSTC_C_STRINGEOL,
-                "Open String",
-                m_string.colour,
-                m_background.colour,
-                m_string.isBold,
+    AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string.colour, m_background.colour, m_string.isBold,
                 m_string.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_COMMENTLINEDOC,
-                "Doxygen single line comment",
-                m_javadoc.colour,
-                m_background.colour,
-                m_javadoc.isBold,
+    AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Doxygen single line comment", m_javadoc.colour, m_background.colour,
+                m_javadoc.isBold, m_javadoc.isItalic);
+    AddProperty(lexer, wxSTC_C_WORD2, "JavaScript functions", m_variable.colour, m_background.colour, m_javadoc.isBold,
                 m_javadoc.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_WORD2,
-                "JavaScript functions",
-                m_variable.colour,
-                m_background.colour,
-                m_javadoc.isBold,
-                m_javadoc.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_GLOBALCLASS,
-                "JavaScript global classes",
-                m_klass.colour,
-                m_background.colour,
-                m_javadoc.isBold,
-                m_javadoc.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_COMMENTDOCKEYWORD,
-                "Doxygen keyword",
-                m_javadocKeyword.colour,
-                m_background.colour,
-                m_javadocKeyword.isBold,
-                m_javadocKeyword.isItalic);
-    AddProperty(lexer,
-                wxSTC_C_COMMENTDOCKEYWORDERROR,
-                "Doxygen keyword error",
-                m_javadocKeyword.colour,
-                m_background.colour,
-                m_javadocKeyword.isBold,
-                m_javadocKeyword.isItalic);
+    AddProperty(lexer, wxSTC_C_GLOBALCLASS, "JavaScript global classes", m_klass.colour, m_background.colour,
+                m_javadoc.isBold, m_javadoc.isItalic);
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Doxygen keyword", m_javadocKeyword.colour, m_background.colour,
+                m_javadocKeyword.isBold, m_javadocKeyword.isItalic);
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Doxygen keyword error", m_javadocKeyword.colour,
+                m_background.colour, m_javadocKeyword.isBold, m_javadocKeyword.isItalic);
     FinalizeImport(lexer);
     return lexer;
 }

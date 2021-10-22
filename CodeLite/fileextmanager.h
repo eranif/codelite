@@ -66,7 +66,7 @@ public:
         TypeSvg,
         TypeMakefile,
         TypeText,
-        TypeScript,
+        TypeShellScript,
         TypeWxCrafter,
         TypeXRC,
         TypeSQL,

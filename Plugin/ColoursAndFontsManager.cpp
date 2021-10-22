@@ -521,7 +521,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     FileExtManager::FileType fileType = FileExtManager::TypeOther;
     if(FileExtManager::AutoDetectByContent(filename, fileType) && fileType != FileExtManager::TypeOther) {
         switch(fileType) {
-        case FileExtManager::TypeScript:
+        case FileExtManager::TypeShellScript:
             lexerByContent = GetLexer("script");
             break;
         case FileExtManager::TypeJS:

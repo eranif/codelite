@@ -197,7 +197,7 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-cpp", bitmap_size), FileExtManager::TypeSourceCpp);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-h", bitmap_size), FileExtManager::TypeHeader);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", bitmap_size), FileExtManager::TypeText);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("execute", bitmap_size), FileExtManager::TypeScript);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("execute", bitmap_size), FileExtManager::TypeShellScript);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-xml", bitmap_size), FileExtManager::TypeXml);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt", bitmap_size), FileExtManager::TypeErd);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-python", bitmap_size), FileExtManager::TypePython);

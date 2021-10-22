@@ -116,6 +116,8 @@ wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
         return "lua";
     case FileExtManager::TypeRust:
         return "rust";
+    case FileExtManager::TypeShellScript:
+        return "shellscript";
     default:
         return "";
     }

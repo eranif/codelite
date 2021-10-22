@@ -146,10 +146,10 @@ void FileExtManager::Init()
         m_map[wxT("txt")] = TypeText;
         m_map[wxT("ini")] = TypeText;
 
-        m_map[wxT("script")] = TypeScript;
-        m_map[wxT("sh")] = TypeScript;
-        m_map[wxT("bat")] = TypeScript;
-        m_map[wxT("bash")] = TypeScript;
+        m_map[wxT("script")] = TypeShellScript;
+        m_map[wxT("sh")] = TypeShellScript;
+        m_map[wxT("bat")] = TypeShellScript;
+        m_map[wxT("bash")] = TypeShellScript;
 
         m_map[wxT("wxcp")] = TypeWxCrafter;
         m_map[wxT("xrc")] = TypeXRC;
@@ -171,10 +171,10 @@ void FileExtManager::Init()
         m_map["rs"] = TypeRust;
 
         // Initialize regexes:
-        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript));
-        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeScript));
-        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/sh", TypeScript));
-        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/bash", TypeScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeShellScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeShellScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/sh", TypeShellScript));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/bash", TypeShellScript));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/python", TypePython));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/node", TypeJS));

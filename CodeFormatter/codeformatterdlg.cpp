@@ -22,10 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "codeformatterdlg.h"
 #include "ColoursAndFontsManager.h"
 #include "clSTCLineKeeper.h"
 #include "codeformatter.h"
-#include "codeformatterdlg.h"
 #include "editor_config.h"
 #include "fileextmanager.h"
 #include "globals.h"
@@ -460,11 +460,22 @@ void CodeFormatterDlg::OnExportClangFormatFile(wxCommandEvent& event)
     if(m_mgr->IsWorkspaceOpen()) {
         defaultDir = m_mgr->GetWorkspace()->GetFileName().GetPath();
     }
-    wxFileDialog dialog(this, _("Export .clang-format file..."), defaultDir, ".clang-format",
-                        ".clang-format file (.clang-format)|.clang-format",
-                        wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_SHOW_HIDDEN);
-    if(dialog.ShowModal() == wxID_OK && !m_options.ExportClangFormatFile(dialog.GetPath())) {
-        ::wxMessageBox(_("Failed to save file:\n") + dialog.GetPath(), _("Source Code Formatter"), wxOK | wxICON_ERROR);
+    wxString path = ::wxDirSelector(_("Export .clang-format file..."));
+    if(path.empty()) {
+        return;
+    }
+
+    wxFileName clang_format(path, ".clang-format");
+    if(clang_format.FileExists()) {
+        if(::wxMessageBox(clang_format.GetFullPath() + _(" already exists\nContinue?"), "CodeLite",
+                          wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
+            return;
+        }
+    }
+
+    if(!m_options.ExportClangFormatFile(clang_format.GetFullPath())) {
+        ::wxMessageBox(_("Failed to save file:\n") + clang_format.GetFullPath(), _("Source Code Formatter"),
+                       wxOK | wxICON_ERROR);
     }
 }
 

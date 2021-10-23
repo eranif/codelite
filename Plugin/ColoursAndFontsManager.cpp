@@ -959,6 +959,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
                                      "instanceof  "
                                      "new  "
                                      "null  "
+                                     "readonly "
                                      "return  "
                                      "super  "
                                      "switch  "

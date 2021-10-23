@@ -392,7 +392,7 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
     flexGridSizer432->Add(m_staticText117, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_comboBoxConnectionArr;
-    m_comboBoxConnectionArr.Add(wxT("stdio"));
+    m_comboBoxConnectionArr.Add(_("stdio"));
     m_comboBoxConnection = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
                                           m_comboBoxConnectionArr, 0);
     m_comboBoxConnection->SetToolTip(
@@ -552,3 +552,31 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, co
 }
 
 LSPOutlineViewDlgBase::~LSPOutlineViewDlgBase() {}
+
+LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,
+                                                     const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterCbL3wsInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer194);
+
+    m_dvListCtrl = new clTerminalViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer194->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    SetName(wxT("LanguageServerLogViewBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+}
+
+LanguageServerLogViewBase::~LanguageServerLogViewBase() {}

@@ -30,6 +30,8 @@
     <File Name="UI.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UI">
+    <File Name="LanguageServerLogView.cpp"/>
+    <File Name="LanguageServerLogView.h"/>
     <File Name="LSPOutlineViewDlg.cpp"/>
     <File Name="LSPOutlineViewDlg.h"/>
     <File Name="LanguageServerPage.cpp"/>

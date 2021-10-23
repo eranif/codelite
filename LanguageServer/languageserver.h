@@ -4,6 +4,8 @@
 #include "CompileCommandsGenerator.h"
 #include "LSPDetector.hpp"
 #include "LanguageServerCluster.h"
+#include "LanguageServerLogView.h"
+#include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
 #include "plugin.h"
 
@@ -11,6 +13,8 @@ class LanguageServerPlugin : public IPlugin
 {
     LanguageServerCluster::Ptr_t m_servers;
     IProcess* m_process = nullptr;
+    clTabTogglerHelper::Ptr_t m_tabToggler;
+    LanguageServerLogView* m_logView = nullptr;
 
 protected:
     void OnSettings(wxCommandEvent& e);

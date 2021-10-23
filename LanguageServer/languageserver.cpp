@@ -1,3 +1,4 @@
+#include "languageserver.h"
 #include "CompileCommandsGenerator.h"
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
@@ -8,7 +9,6 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
-#include "languageserver.h"
 #include <macros.h>
 #include <thread>
 #include <wx/app.h>
@@ -43,6 +43,10 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 {
     m_longName = _("Support for Language Server Protocol (LSP)");
     m_shortName = wxT("LanguageServerPlugin");
+
+    m_logView = new LanguageServerLogView(m_mgr->GetOutputPaneNotebook());
+    m_mgr->GetOutputPaneNotebook()->AddPage(m_logView, _("Language Server"));
+    m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
 
     // Load the configuration
     LanguageServerConfig::Get().Load();
@@ -102,6 +106,15 @@ void LanguageServerPlugin::UnPlug()
 
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
+
+    // before this plugin is un-plugged we must remove the tab we added
+    for(size_t i = 0; i < m_mgr->GetOutputPaneNotebook()->GetPageCount(); i++) {
+        if(m_logView == m_mgr->GetOutputPaneNotebook()->GetPage(i)) {
+            m_mgr->GetOutputPaneNotebook()->RemovePage(i);
+            m_logView->Destroy();
+            break;
+        }
+    }
 }
 
 void LanguageServerPlugin::OnSettings(wxCommandEvent& e)

@@ -30,6 +30,7 @@
 #include <wx/slider.h>
 #include <wx/dataview.h>
 #include "clThemedTreeCtrl.h"
+#include "clTerminalViewCtrl.hpp"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -182,6 +183,19 @@ public:
                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~LSPOutlineViewDlgBase();
+};
+
+class LanguageServerLogViewBase : public wxPanel
+{
+protected:
+    clTerminalViewCtrl* m_dvListCtrl;
+
+protected:
+public:
+    clTerminalViewCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    LanguageServerLogViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                              const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    virtual ~LanguageServerLogViewBase();
 };
 
 #endif

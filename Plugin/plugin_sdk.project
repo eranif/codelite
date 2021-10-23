@@ -111,12 +111,12 @@
     <File Name="clButton.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clAnsiEscapeCodeColourBuilder.cpp"/>
+    <File Name="clAnsiEscapeCodeHandler.cpp"/>
+    <File Name="clAnsiEscapeCodeColourBuilder.hpp"/>
+    <File Name="clAnsiEscapeCodeHandler.hpp"/>
     <File Name="clTerminalViewCtrl.cpp"/>
     <File Name="clTerminalViewCtrl.hpp"/>
-    <File Name="clAsciiEscapeColourBuilder.cpp"/>
-    <File Name="clAsciiEscapeColourBuilder.hpp"/>
-    <File Name="clAsciiEscapCodeHandler.hpp"/>
-    <File Name="clAsciiEscapCodeHandler.cpp"/>
     <File Name="clCaptionBar.hpp"/>
     <File Name="clCaptionBar.cpp"/>
     <File Name="clThemedMenuBar.cpp"/>

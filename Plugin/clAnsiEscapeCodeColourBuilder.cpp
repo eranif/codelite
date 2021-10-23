@@ -1,16 +1,16 @@
-#include "clAsciiEscapeColourBuilder.hpp"
+#include "clAnsiEscapeCodeColourBuilder.hpp"
 
 namespace
 {
 constexpr wxChar ESC = 0x1B;
 };
 
-clAsciiEscapeColourBuilder::clAsciiEscapeColourBuilder()
-    : clAsciiEscapeColourBuilder(&m_internalBuffer)
+clAnsiEscapeCodeColourBuilder::clAnsiEscapeCodeColourBuilder()
+    : clAnsiEscapeCodeColourBuilder(&m_internalBuffer)
 {
 }
 
-clAsciiEscapeColourBuilder::clAsciiEscapeColourBuilder(wxString* string)
+clAnsiEscapeCodeColourBuilder::clAnsiEscapeCodeColourBuilder(wxString* string)
     : m_string(string)
 {
     m_activeColours = &m_lightThemeColours;
@@ -28,9 +28,9 @@ clAsciiEscapeColourBuilder::clAsciiEscapeColourBuilder(wxString* string)
     m_darkThemeColours.insert({ eAsciiColours::NORMAL_TEXT, 254 });
 }
 
-clAsciiEscapeColourBuilder::~clAsciiEscapeColourBuilder() {}
+clAnsiEscapeCodeColourBuilder::~clAnsiEscapeCodeColourBuilder() {}
 
-clAsciiEscapeColourBuilder& clAsciiEscapeColourBuilder::Add(const wxString& text, eAsciiColours textColour, bool bold)
+clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString& text, eAsciiColours textColour, bool bold)
 {
     if(m_activeColours->count(textColour) == 0) {
         return *this;
@@ -40,13 +40,13 @@ clAsciiEscapeColourBuilder& clAsciiEscapeColourBuilder::Add(const wxString& text
     return Add(text, colour_number, bold);
 }
 
-clAsciiEscapeColourBuilder& clAsciiEscapeColourBuilder::Add(const wxString& text, int textColour, bool bold)
+clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString& text, int textColour, bool bold)
 {
     DoAddTextToBuffer(m_string, text, textColour, bold);
     return *this;
 }
 
-clAsciiEscapeColourBuilder& clAsciiEscapeColourBuilder::SetTheme(eAsciiTheme theme)
+clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::SetTheme(eAsciiTheme theme)
 {
     if(theme == eAsciiTheme::DARK) {
         m_activeColours = &m_darkThemeColours;
@@ -56,7 +56,7 @@ clAsciiEscapeColourBuilder& clAsciiEscapeColourBuilder::SetTheme(eAsciiTheme the
     return *this;
 }
 
-wxString& clAsciiEscapeColourBuilder::WrapWithColour(wxString& line, eAsciiColours colour, bool bold_font) const
+wxString& clAnsiEscapeCodeColourBuilder::WrapWithColour(wxString& line, eAsciiColours colour, bool bold_font) const
 {
     if(m_activeColours->count(colour) == 0) {
         return line;
@@ -69,7 +69,7 @@ wxString& clAsciiEscapeColourBuilder::WrapWithColour(wxString& line, eAsciiColou
     return line;
 }
 
-void clAsciiEscapeColourBuilder::DoAddTextToBuffer(wxString* buffer, const wxString& text, int textColour,
+void clAnsiEscapeCodeColourBuilder::DoAddTextToBuffer(wxString* buffer, const wxString& text, int textColour,
                                                    bool bold) const
 {
     wxString prefix;

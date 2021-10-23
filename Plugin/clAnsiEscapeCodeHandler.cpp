@@ -1,9 +1,9 @@
-#include "clAsciiEscapCodeHandler.hpp"
+#include "clAnsiEscapeCodeHandler.hpp"
 #include "drawingutils.h"
 #include <wx/tokenzr.h>
 #include "file_logger.h"
 
-clAsciiEscapeCodeHandler::clAsciiEscapeCodeHandler()
+clAnsiEscapeCodeHandler::clAnsiEscapeCodeHandler()
 {
     // Text colours
     m_colours_normal.insert({ 30, wxColour(1, 1, 1) });
@@ -315,7 +315,7 @@ clAsciiEscapeCodeHandler::clAsciiEscapeCodeHandler()
     m_colours = &m_colours_normal;
 }
 
-clAsciiEscapeCodeHandler::~clAsciiEscapeCodeHandler() {}
+clAnsiEscapeCodeHandler::~clAnsiEscapeCodeHandler() {}
 
 #define NEXT(EOL)                                      \
     if(chunk->is_style_reset() || !chunk->d.empty()) { \
@@ -329,7 +329,7 @@ clAsciiEscapeCodeHandler::~clAsciiEscapeCodeHandler() {}
         chunk->line_number = m_lineNumber;             \
     }
 
-void clAsciiEscapeCodeHandler::Parse(const wxString& buffer)
+void clAnsiEscapeCodeHandler::Parse(const wxString& buffer)
 {
     EnsureCurrent();
     auto chunk = &m_chunks.back();
@@ -429,7 +429,7 @@ void clAsciiEscapeCodeHandler::Parse(const wxString& buffer)
     }
 }
 
-void clAsciiEscapeCodeHandler::Reset()
+void clAnsiEscapeCodeHandler::Reset()
 {
     m_chunks.clear();
     m_lines.clear();
@@ -437,7 +437,7 @@ void clAsciiEscapeCodeHandler::Reset()
     m_state = eColourHandlerState::kNormal;
 }
 
-void clAsciiEscapeCodeHandler::EnsureCurrent()
+void clAnsiEscapeCodeHandler::EnsureCurrent()
 {
     if(m_chunks.empty() || (m_chunks.back().flags & kCompleted)) {
         m_chunks.emplace_back();
@@ -450,7 +450,7 @@ void clAsciiEscapeCodeHandler::EnsureCurrent()
     }
 }
 
-void clAsciiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect,
+void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect,
                                       bool isLightTheme)
 {
     // find the line chunks
@@ -505,7 +505,7 @@ void clAsciiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defa
     dc.DestroyClippingRegion();
 }
 
-void clAsciiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxDC& dc, const clRenderDefaultStyle& defaultStyle)
+void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxDC& dc, const clRenderDefaultStyle& defaultStyle)
 {
     constexpr int STATE_NORMAL = 0;
     constexpr int STATE_SET_FG = 1;
@@ -599,7 +599,7 @@ void clAsciiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxDC& dc, const c
     }
 }
 
-const wxColour& clAsciiEscapeCodeHandler::GetColour(const ColoursMap_t& m, int num) const
+const wxColour& clAnsiEscapeCodeHandler::GetColour(const ColoursMap_t& m, int num) const
 {
     if(m.count(num) == 0) {
         return wxNullColour;

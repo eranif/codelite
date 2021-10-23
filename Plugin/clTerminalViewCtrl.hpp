@@ -1,7 +1,7 @@
 #ifndef CLTERMINALVIEWCTRL_HPP
 #define CLTERMINALVIEWCTRL_HPP
 
-#include "clAsciiEscapeColourBuilder.hpp"
+#include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clDataViewListCtrl.h"
 #include "cl_command_event.h"
 #include <codelite_exports.h>
@@ -9,7 +9,7 @@
 class WXDLLIMPEXP_SDK clTerminalViewCtrl : public clDataViewListCtrl
 {
     clControlWithItemsRowRenderer* m_renderer = nullptr;
-    clAsciiEscapeColourBuilder m_builder;
+    clAnsiEscapeCodeColourBuilder m_builder;
     bool m_overwriteLastLine = false;
 
 protected:
@@ -25,7 +25,7 @@ public:
      */
     void AddLine(const wxString& text, bool text_ends_with_cr, wxUIntPtr data = 0);
 
-    clAsciiEscapeColourBuilder& GetBuilder();
+    clAnsiEscapeCodeColourBuilder& GetBuilder(bool clear_it = false);
 };
 
 #endif // CLTERMINALVIEWCTRL_HPP

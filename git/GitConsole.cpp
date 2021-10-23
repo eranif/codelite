@@ -23,11 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ColoursAndFontsManager.h"
 #include "GitConsole.h"
+#include "ColoursAndFontsManager.h"
 #include "GitResetDlg.h"
 #include "bitmap_loader.h"
-#include "clAsciiEscapeColourBuilder.hpp"
+#include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clBitmap.h"
 #include "clCommandProcessor.h"
 #include "clThemeUpdater.h"

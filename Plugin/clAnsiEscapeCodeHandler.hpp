@@ -64,7 +64,7 @@ struct WXDLLIMPEXP_SDK clRenderDefaultStyle {
     }
 };
 
-class WXDLLIMPEXP_SDK clAsciiEscapeCodeHandler
+class WXDLLIMPEXP_SDK clAnsiEscapeCodeHandler
 {
     typedef std::unordered_map<int, wxColour> ColoursMap_t;
     ColoursMap_t m_8_bit_colours_normal;
@@ -86,8 +86,8 @@ private:
     const wxColour& GetColour(const ColoursMap_t& m, int num) const;
 
 public:
-    clAsciiEscapeCodeHandler();
-    ~clAsciiEscapeCodeHandler();
+    clAnsiEscapeCodeHandler();
+    ~clAnsiEscapeCodeHandler();
 
     void Parse(const wxString& buffer);
     void Reset();

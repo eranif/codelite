@@ -1,18 +1,18 @@
-#include "ColoursAndFontsManager.h"
-#include "clAsciiEscapCodeHandler.hpp"
-#include "clSystemSettings.h"
 #include "clTerminalViewCtrl.hpp"
+#include "ColoursAndFontsManager.h"
+#include "clAnsiEscapeCodeHandler.hpp"
+#include "clSystemSettings.h"
 #include "event_notifier.h"
 
 namespace
 {
-class MyAsciiRenderer : public clControlWithItemsRowRenderer
+class MyAnsiCodeRenderer : public clControlWithItemsRowRenderer
 {
-    clAsciiEscapeCodeHandler handler;
+    clAnsiEscapeCodeHandler handler;
     wxFont m_font;
 
 public:
-    MyAsciiRenderer() {}
+    MyAnsiCodeRenderer() {}
 
     void SetFont(const wxFont& f) { this->m_font = f; }
     void Render(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) override
@@ -47,7 +47,7 @@ clTerminalViewCtrl::clTerminalViewCtrl(wxWindow* parent, wxWindowID id, const wx
     SetLineSpacing(0);
 
     SetSortFunction(nullptr);
-    m_renderer = new MyAsciiRenderer();
+    m_renderer = new MyAnsiCodeRenderer();
     SetCustomRenderer(m_renderer);
     AppendIconTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clTerminalViewCtrl::OnSysColourChanged, this);
@@ -70,7 +70,7 @@ void clTerminalViewCtrl::ApplyStyle()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
-        MyAsciiRenderer* r = static_cast<MyAsciiRenderer*>(m_renderer);
+        MyAnsiCodeRenderer* r = static_cast<MyAnsiCodeRenderer*>(m_renderer);
         wxFont f = lexer->GetFontForSyle(0, this);
         r->SetFont(f);
         clColours colours;
@@ -99,8 +99,11 @@ void clTerminalViewCtrl::AddLine(const wxString& text, bool text_ends_with_cr, w
     m_overwriteLastLine = text_ends_with_cr;
 }
 
-clAsciiEscapeColourBuilder& clTerminalViewCtrl::GetBuilder()
+clAnsiEscapeCodeColourBuilder& clTerminalViewCtrl::GetBuilder(bool clear_it)
 {
     m_builder.SetTheme(GetColours().IsLightTheme() ? eAsciiTheme::LIGHT : eAsciiTheme::DARK);
+    if(clear_it) {
+        m_builder.Clear();
+    }
     return m_builder;
 }

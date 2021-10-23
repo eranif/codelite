@@ -26,7 +26,7 @@ template <> struct hash<eAsciiColours> {
 };
 } // namespace std
 
-class WXDLLIMPEXP_SDK clAsciiEscapeColourBuilder
+class WXDLLIMPEXP_SDK clAnsiEscapeCodeColourBuilder
 {
 private:
     wxString* m_string = nullptr;
@@ -40,13 +40,13 @@ protected:
     void DoAddTextToBuffer(wxString* buffer, const wxString& text, int textColour, bool bold) const;
 
 public:
-    clAsciiEscapeColourBuilder(wxString* string);
-    clAsciiEscapeColourBuilder();
-    ~clAsciiEscapeColourBuilder();
+    clAnsiEscapeCodeColourBuilder(wxString* string);
+    clAnsiEscapeCodeColourBuilder();
+    ~clAnsiEscapeCodeColourBuilder();
 
-    clAsciiEscapeColourBuilder& SetTheme(eAsciiTheme theme);
-    clAsciiEscapeColourBuilder& Add(const wxString& text, int textColour, bool bold = false);
-    clAsciiEscapeColourBuilder& Add(const wxString& text, eAsciiColours textColour, bool bold = false);
+    clAnsiEscapeCodeColourBuilder& SetTheme(eAsciiTheme theme);
+    clAnsiEscapeCodeColourBuilder& Add(const wxString& text, int textColour, bool bold = false);
+    clAnsiEscapeCodeColourBuilder& Add(const wxString& text, eAsciiColours textColour, bool bold = false);
 
     /**
      * @brief wrap "line" with colour and optionally, bold font

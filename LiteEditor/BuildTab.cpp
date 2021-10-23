@@ -2,7 +2,7 @@
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
 #include "build_settings_config.h"
-#include "clAsciiEscapCodeHandler.hpp"
+#include "clAnsiEscapeCodeHandler.hpp"
 #include "clStrings.h"
 #include "clTerminalViewCtrl.hpp"
 #include "editor_config.h"
@@ -245,7 +245,7 @@ void BuildTab::ClearView()
 wxString BuildTab::WrapLineInColour(const wxString& line, eAsciiColours colour, bool fold_font) const
 {
     wxString text;
-    clAsciiEscapeColourBuilder text_builder(&text);
+    clAnsiEscapeCodeColourBuilder text_builder(&text);
 
     bool is_light = m_view->GetColours().IsLightTheme();
     text_builder.SetTheme(is_light ? eAsciiTheme::LIGHT : eAsciiTheme::DARK).Add(line, colour, fold_font);

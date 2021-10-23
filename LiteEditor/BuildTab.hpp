@@ -2,7 +2,7 @@
 #define BUILDTAB_HPP
 
 #include "buildtabsettingsdata.h"
-#include "clAsciiEscapeColourBuilder.hpp"
+#include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clTerminalViewCtrl.hpp"
 #include "cl_command_event.h"
 #include "cl_editor.h"

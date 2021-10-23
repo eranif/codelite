@@ -54,6 +54,11 @@ public:
      * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
      */
     virtual void UnPlug();
+
+    /**
+     * @brief log message to the output tab
+     */
+    void LogMessage(const wxString& server_name, const wxString& message, int log_leve);
 };
 
 #endif // LanguageServerPlugin

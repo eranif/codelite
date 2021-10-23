@@ -14,6 +14,7 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
+#include "languageserver.h"
 #include "macromanager.h"
 #include "macros.h"
 #include "wx/arrstr.h"
@@ -21,7 +22,8 @@
 #include <algorithm>
 #include <wx/stc/stc.h>
 
-LanguageServerCluster::LanguageServerCluster()
+LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
+    : m_plugin(plugin)
 {
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
@@ -589,4 +591,8 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const 
     return LanguageServerProtocol::Ptr_t(nullptr);
 }
 
-void LanguageServerCluster::OnLogMessage(LSPEvent& event) { event.Skip(); }
+void LanguageServerCluster::OnLogMessage(LSPEvent& event)
+{
+    event.Skip();
+    m_plugin->LogMessage(event.GetServerName(), event.GetMessage(), event.GetLogMessageSeverity());
+}

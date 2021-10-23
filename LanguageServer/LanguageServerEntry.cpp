@@ -51,10 +51,10 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
     m_command = json.namedObject("command").toString(commandDefault);
     m_initOptions = json["initOptions"].toString();
     m_unimplementedMethods.clear();
-    wxArrayString methods = json.namedObject("unimplementedMethods").toArrayString();
-    for(const wxString& methodName : methods) {
-        m_unimplementedMethods.insert(methodName);
-    }
+    // wxArrayString methods = json.namedObject("unimplementedMethods").toArrayString();
+    // for(const wxString& methodName : methods) {
+    //     m_unimplementedMethods.insert(methodName);
+    // }
 }
 
 JSONItem LanguageServerEntry::ToJSON() const
@@ -80,13 +80,13 @@ JSONItem LanguageServerEntry::ToJSON() const
         envArr.Add(env_entry.first + "=" + env_entry.second);
     }
     json.addProperty("environment", envArr);
-    wxArrayString methods;
-    methods.Alloc(m_unimplementedMethods.size());
-    for(const wxString& methodName : m_unimplementedMethods) {
-        methods.Add(methodName);
-    }
-
-    json.addProperty("unimplementedMethods", methods);
+    //    wxArrayString methods;
+    //    methods.Alloc(m_unimplementedMethods.size());
+    //    for(const wxString& methodName : m_unimplementedMethods) {
+    //        methods.Add(methodName);
+    //    }
+    //
+    //    json.addProperty("unimplementedMethods", methods);
     return json;
 }
 

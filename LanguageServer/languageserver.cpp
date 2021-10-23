@@ -50,7 +50,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     // Load the configuration
     LanguageServerConfig::Get().Load();
-    m_servers.reset(new LanguageServerCluster());
+    m_servers.reset(new LanguageServerCluster(this));
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
@@ -370,4 +370,32 @@ void LanguageServerPlugin::OnLSPDisableServer(clLanguageServerEvent& event)
         return;
     }
     lsp_config.SetEnabled(false);
+}
+
+void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxString& message, int log_leve)
+{
+    auto& builder = m_logView->GetDvListCtrl()->GetBuilder(true);
+
+    eAsciiColours ansi_colour_code = eAsciiColours::NORMAL_TEXT;
+    wxString label = "LOG:     ";
+    switch(log_leve) {
+    case 1:
+        ansi_colour_code = eAsciiColours::RED; // error
+        label = "ERROR:   ";
+        break;
+    case 2:
+        ansi_colour_code = eAsciiColours::YELLOW; // warning
+        label = "WARNING: ";
+        break;
+    case 3:
+        ansi_colour_code = eAsciiColours::GREEN; // info
+        label = "INFO:    ";
+    default:
+        break;
+    }
+
+    builder.Add(label, ansi_colour_code);
+    builder.Add("[" + server_name + "] ", eAsciiColours::NORMAL_TEXT);
+    builder.Add(message, eAsciiColours::NORMAL_TEXT);
+    m_logView->GetDvListCtrl()->AddLine(builder.GetString(), false);
 }

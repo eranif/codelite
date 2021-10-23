@@ -13,6 +13,7 @@
 #include <wx/sharedptr.h>
 #include <wxStringHash.h>
 
+class LanguageServerPlugin;
 class LanguageServerCluster : public wxEvtHandler
 {
     struct CrashInfo {
@@ -22,6 +23,7 @@ class LanguageServerCluster : public wxEvtHandler
 
     std::unordered_map<wxString, LanguageServerProtocol::Ptr_t> m_servers;
     std::unordered_map<wxString, CrashInfo> m_restartCounters;
+    LanguageServerPlugin* m_plugin = nullptr;
 
 public:
     typedef wxSharedPtr<LanguageServerCluster> Ptr_t;
@@ -68,7 +70,7 @@ protected:
     IEditor* FindEditor(const LSPEvent& event) const;
 
 public:
-    LanguageServerCluster();
+    LanguageServerCluster(LanguageServerPlugin* plugin);
     virtual ~LanguageServerCluster();
     /**
      * @brief restart language servers associated with a given languages

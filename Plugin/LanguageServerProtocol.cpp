@@ -758,7 +758,10 @@ const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
 void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
-    clDEBUG() << "Sending semantic tokens request for file:" << GetEditorFilePath(editor) << endl;
+    // check if this is implemented by the server
+    if(m_unimplementedMethods.count("textDocument/semanticTokens/full"))
+        return;
+    clDEBUG1() << "Sending semantic tokens request for file:" << GetEditorFilePath(editor) << endl;
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
     QueueMessage(req);
@@ -777,9 +780,6 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
         m_owner->AddPendingEvent(restartEvent);
     } break;
     case LSP::ResponseError::kErrorCodeMethodNotFound: {
-        // User requested a mesasge which is not supported by this server
-        clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << _("method: ") << msg_ptr->GetMethod()
-                                                    << _(" is not supported"));
         m_unimplementedMethods.insert(msg_ptr->GetMethod());
 
         // Report this missing event
@@ -787,6 +787,13 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
         eventMethodNotFound.SetServerName(GetName());
         eventMethodNotFound.SetString(msg_ptr->GetMethod());
         m_owner->AddPendingEvent(eventMethodNotFound);
+
+        // Log this message
+        LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
+        log_event.SetServerName(GetName());
+        log_event.SetMessage(_("Method: `") + msg_ptr->GetMethod() + _("` is not supported"));
+        log_event.SetLogMessageSeverity(2); // warning
+        m_owner->AddPendingEvent(log_event);
 
     } break;
     case LSP::ResponseError::kErrorCodeInvalidParams: {

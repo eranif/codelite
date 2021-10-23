@@ -36,6 +36,7 @@ protected:
     void OnLSPEnableServer(clLanguageServerEvent& event);
     void OnLSPDisableServer(clLanguageServerEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
 
 public:
     LanguageServerPlugin(IManager* manager);

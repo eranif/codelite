@@ -67,6 +67,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_LSP_OPEN_SETTINGS_DLG, &LanguageServerPlugin::OnLSPShowSettingsDlg, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_ENABLE_SERVER, &LanguageServerPlugin::OnLSPEnableServer, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_DISABLE_SERVER, &LanguageServerPlugin::OnLSPDisableServer, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerPlugin::OnWorkspaceClosed, this);
 }
 
 LanguageServerPlugin::~LanguageServerPlugin() {}
@@ -103,6 +104,7 @@ void LanguageServerPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_LSP_OPEN_SETTINGS_DLG, &LanguageServerPlugin::OnLSPShowSettingsDlg, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_ENABLE_SERVER, &LanguageServerPlugin::OnLSPEnableServer, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_DISABLE_SERVER, &LanguageServerPlugin::OnLSPDisableServer, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerPlugin::OnWorkspaceClosed, this);
 
     LanguageServerConfig::Get().Save();
     m_servers.reset(nullptr);
@@ -398,4 +400,10 @@ void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxStrin
     builder.Add("[" + server_name + "] ", eAsciiColours::NORMAL_TEXT);
     builder.Add(message, eAsciiColours::NORMAL_TEXT);
     m_logView->GetDvListCtrl()->AddLine(builder.GetString(), false);
+}
+
+void LanguageServerPlugin::OnWorkspaceClosed(clWorkspaceEvent& event)
+{
+    event.Skip();
+    m_logView->GetDvListCtrl()->DeleteAllItems();
 }

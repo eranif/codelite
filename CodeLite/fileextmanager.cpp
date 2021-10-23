@@ -170,7 +170,7 @@ void FileExtManager::Init()
         m_map["lua"] = TypeLua;
         m_map["rs"] = TypeRust;
 
-        m_map["patch"] = TypeDiff;
+        m_map["patch"] = TypePatch;
         m_map["diff"] = TypeDiff;
 
         // Initialize regexes:

@@ -44,9 +44,7 @@
 #include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 
-BitmapLoader::~BitmapLoader()
-{
-}
+BitmapLoader::~BitmapLoader() {}
 
 BitmapLoader::BitmapLoader(bool darkTheme)
     : m_bMapPopulated(false)
@@ -68,15 +66,9 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
     return wxNullBitmap;
 }
 
-int BitmapLoader::GetMimeImageId(int type)
-{
-    return GetMimeBitmaps().GetIndex(type);
-}
+int BitmapLoader::GetMimeImageId(int type) { return GetMimeBitmaps().GetIndex(type); }
 
-int BitmapLoader::GetMimeImageId(const wxString& filename)
-{
-    return GetMimeBitmaps().GetIndex(filename);
-}
+int BitmapLoader::GetMimeImageId(const wxString& filename) { return GetMimeBitmaps().GetIndex(filename); }
 
 wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 {
@@ -232,6 +224,8 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-symlink", bitmap_size), FileExtManager::TypeFolderSymlink);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt-symlink", bitmap_size), FileExtManager::TypeFileSymlink);
         m_mimeBitmaps.AddBitmap(LoadBitmap("rust", bitmap_size), FileExtManager::TypeRust);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("diff", bitmap_size), FileExtManager::TypeDiff);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("patch", bitmap_size), FileExtManager::TypePatch);
 
         // Non mime bitmaps
         m_mimeBitmaps.AddBitmap(LoadBitmap("file_save", bitmap_size), kSave);
@@ -272,13 +266,9 @@ const wxBitmap& BitmapLoader::GetBitmapForFile(const wxString& filename) const
 // clMimeBitmaps
 //===---------------------------
 
-clMimeBitmaps::clMimeBitmaps()
-{
-}
+clMimeBitmaps::clMimeBitmaps() {}
 
-clMimeBitmaps::~clMimeBitmaps()
-{
-}
+clMimeBitmaps::~clMimeBitmaps() {}
 
 int clMimeBitmaps::GetIndex(int type) const
 {
@@ -342,10 +332,7 @@ clBitmaps& clBitmaps::Get()
     return *pBitmaps;
 }
 
-BitmapLoader* clBitmaps::GetLoader()
-{
-    return m_activeBitmaps;
-}
+BitmapLoader* clBitmaps::GetLoader() { return m_activeBitmaps; }
 
 void clBitmaps::Initialise()
 {
@@ -468,10 +455,7 @@ void clBitmapList::Delete(size_t index)
     }
 }
 
-void clBitmapList::Delete(const wxString& name)
-{
-    Delete(FindIdByName(name));
-}
+void clBitmapList::Delete(const wxString& name) { Delete(FindIdByName(name)); }
 
 const wxBitmap& clBitmapList::Get(const wxString& name, bool disabledBmp)
 {

@@ -96,6 +96,7 @@ public:
         TypeRust,
         TypeLast,
         TypeDiff,
+        TypePatch,
     };
 
 public:

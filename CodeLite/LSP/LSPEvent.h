@@ -8,8 +8,17 @@
 #include "codelite_exports.h"
 #include <vector>
 
+#define LSP_LOG_ERROR 1
+#define LSP_LOG_WARNING 2
+#define LSP_LOG_INFO 3
+#define LSP_LOG_LOG 4
+
 class WXDLLIMPEXP_CL LSPEvent : public clCommandEvent
 {
+public:
+    // https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#messageType
+
+protected:
     LSP::Location m_location;
     wxString m_serverName;
     LSP::CompletionItem::Vec_t m_completions;
@@ -17,12 +26,19 @@ class WXDLLIMPEXP_CL LSPEvent : public clCommandEvent
     std::vector<LSP::Diagnostic> m_diagnostics;
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
+    int m_logMessageSeverity = LSP_LOG_INFO;
 
 public:
     LSPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     LSPEvent(const LSPEvent& src);
     LSPEvent& operator=(const LSPEvent& other);
     virtual ~LSPEvent();
+
+    void SetLogMessageSeverity(int sev) { m_logMessageSeverity = sev; }
+    int GetLogMessageSeverity() const { return m_logMessageSeverity; }
+
+    void SetMessage(const wxString& message) { SetString(message); }
+    wxString GetMessage() const { return GetString(); }
 
     void SetSemanticTokens(const std::vector<LSP::SemanticTokenRange>& semanticTokens)
     {
@@ -85,5 +101,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SET_DIAGNOSTICS, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CLEAR_DIAGNOSTICS, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_OPEN_FILE, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SEMANTICS, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_LOGMESSAGE, LSPEvent);
 
 #endif // LSPEVENT_H

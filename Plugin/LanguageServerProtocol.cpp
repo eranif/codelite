@@ -1,3 +1,4 @@
+#include "LanguageServerProtocol.h"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -17,7 +18,6 @@
 #include "LSP/SignatureHelpRequest.h"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
-#include "LanguageServerProtocol.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
@@ -600,118 +600,51 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 
 void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 {
-    clDEBUG1() << GetLogPrefix() << event.GetString();
     m_outputBuffer << event.GetString();
     m_Queue.SetWaitingReponse(false);
-
     while(true) {
-        // Did we get a complete message?
-        LSP::ResponseMessage res(m_outputBuffer);
-        if(res.IsOk()) {
+        // attempt to consume a complete JSON payload from the aggregated network buffer
+        auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
+        if(!json) {
+            clDEBUG1() << "Unable to read JSON payload" << endl;
+            break;
+        }
+
+        auto json_item = json->toElement();
+
+        // check the message type
+        wxString message_method = json_item["method"].GetValueString();
+        if(message_method == "window/logMessage" || message_method == "window/showMessage") {
+            // log this message
+            LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
+            log_event.SetServerName(GetName());
+            log_event.SetMessage(json_item["params"]["message"].GetValueString());
+            log_event.SetLogMessageSeverity(json_item["params"]["type"].GetValueNumer());
+            m_owner->AddPendingEvent(log_event);
+
+        } else if(message_method == "telemetry/event") {
+            // show dialog to the user
+            // log this message
+            LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
+            log_event.SetServerName(GetName());
+            log_event.SetMessage(json_item["params"].GetValueString());
+            m_owner->AddPendingEvent(log_event);
+
+        } else {
+            // other response
+            LSP::ResponseMessage res(std::move(json));
             if(IsInitialized()) {
                 LSP::MessageWithParams::Ptr_t msg_ptr = m_Queue.TakePendingReplyMessage(res.GetId());
                 // Is this an error message?
-                if(res.Has("error")) {
-                    clDEBUG1() << GetLogPrefix() << "received an error message:" << res.GetMessageString() << endl;
-                    LSP::ResponseError errMsg(res.GetMessageString());
-                    switch(errMsg.GetErrorCode()) {
-                    case LSP::ResponseError::kErrorCodeInternalError:
-                    case LSP::ResponseError::kErrorCodeInvalidRequest: {
-                        // Restart this server
-                        LSPEvent restartEvent(wxEVT_LSP_RESTART_NEEDED);
-                        restartEvent.SetServerName(GetName());
-                        m_owner->AddPendingEvent(restartEvent);
-                        break;
-                    }
-                    case LSP::ResponseError::kErrorCodeMethodNotFound: {
-                        // User requested a mesasge which is not supported by this server
-                        clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << _("method: ")
-                                                                    << msg_ptr->GetMethod() << _(" is not supported"));
-                        m_unimplementedMethods.insert(msg_ptr->GetMethod());
-
-                        // Report this missing event
-                        LSPEvent eventMethodNotFound(wxEVT_LSP_METHOD_NOT_FOUND);
-                        eventMethodNotFound.SetServerName(GetName());
-                        eventMethodNotFound.SetString(msg_ptr->GetMethod());
-                        m_owner->AddPendingEvent(eventMethodNotFound);
-
-                    } break;
-                    case LSP::ResponseError::kErrorCodeInvalidParams: {
-                        // Recreate this AST (in other words: reparse), by default we reparse the current editor
-                        LSPEvent reparseEvent(wxEVT_LSP_REPARSE_NEEDED);
-                        reparseEvent.SetServerName(GetName());
-                        m_owner->AddPendingEvent(reparseEvent);
-                        break;
-                    }
-                    default:
-                        break;
-                    }
+                if(res.IsErrorResponse()) {
+                    // an error response arrived, handle it
+                    HandleResponseError(res, msg_ptr);
                 } else {
-                    if(msg_ptr && msg_ptr->As<LSP::Request>()) {
-                        clDEBUG1() << GetLogPrefix() << "received a response";
-                        // Check if the reply is still valid
-                        IEditor* editor = clGetManager()->GetActiveEditor();
-                        if(editor) {
-                            LSP::Request* preq = msg_ptr->As<LSP::Request>();
-                            if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
-                                clDEBUG1() << "Received a response for completion message ID#" << preq->GetId()
-                                           << ". However, a newer completion request with ID#"
-                                           << m_lastCompletionRequestId << "was already sent. Dropping response";
-                                return;
-                            }
-                            // let the originating request to handle it
-                            const wxString& filename = GetEditorFilePath(editor);
-                            size_t line = editor->GetCurrentLine();
-                            size_t column = editor->GetColumnInChars(editor->GetCurrentPosition());
-                            if(false && preq->IsPositionDependantRequest() &&
-                               !preq->IsValidAt(filename, line, column)) {
-                                clDEBUG1() << "Response is no longer valid. Discarding its result";
-                            } else {
-                                preq->SetServerName(GetName());
-                                preq->OnResponse(res, m_owner);
-                            }
-                        }
-
-                    } else if(res.IsPushDiagnostics()) {
-                        // Get the URI
-                        clDEBUG1() << GetLogPrefix() << "Received diagnostic message";
-                        wxString fn = FileUtils::FilePathFromURI(res.GetDiagnosticsUri());
-#ifndef __WXOSX__
-                        // Don't show this message on macOS as it appears in the middle of the screen...
-                        clGetManager()->SetStatusMessage(
-                            wxString() << GetLogPrefix() << "parsing of file: " << fn << " is completed", 1);
-#endif
-                        std::vector<LSP::Diagnostic> diags = res.GetDiagnostics();
-                        if(!diags.empty() && IsDisaplayDiagnostics()) {
-                            // report the diagnostics
-                            LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);
-                            eventSetDiags.GetLocation().SetPath(fn);
-                            eventSetDiags.SetDiagnostics(diags);
-                            m_owner->AddPendingEvent(eventSetDiags);
-                        } else if(diags.empty()) {
-                            // clear all diagnostics
-                            LSPEvent eventClearDiags(wxEVT_LSP_CLEAR_DIAGNOSTICS);
-                            eventClearDiags.GetLocation().SetPath(fn);
-                            m_owner->AddPendingEvent(eventClearDiags);
-                        }
-                    } else {
-                        if(res.Has("method") && ((res.Get("method").toString() == "telemetry/event") ||
-                                                 (res.Get("method").toString() == "window/logMessage") ||
-                                                 (res.Get("method").toString() == "window/showMessage"))) {
-                            if(res.Get("params")["Properties"]["stackTrace"].isOk()) {
-                                clDEBUG1() << "LSP backtrace" << endl;
-                                clDEBUG1() << res.Get("params")["Properties"]["stackTrace"].toString() << endl;
-                            } else {
-                                clDEBUG1() << "received telemetry/log message:" << endl;
-                                clDEBUG1() << res.Get("params").format() << endl;
-                            }
-                        } else {
-                            clDEBUG1() << GetLogPrefix() << "received an unsupported message";
-                        }
-                    }
+                    // process a success response from the LSP
+                    HandleResponse(res, msg_ptr);
                 }
             } else {
-                // we only accept initialization responses here
+                // Server is not initialized yet: only accept initialization responses here
                 if(res.GetId() == m_initializeRequestID) {
                     m_state = kInitialized;
 
@@ -737,12 +670,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     clDEBUG() << GetLogPrefix() << "Server not initialized. This message is ignored";
                 }
             }
-            // A message was consumed from the buffer, see if we got more messages
-            if(!m_outputBuffer.empty()) {
-                continue;
-            }
         }
-        break;
     }
     ProcessQueue();
 }
@@ -834,6 +762,93 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
     QueueMessage(req);
+}
+
+void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)
+{
+    clDEBUG() << GetLogPrefix() << "received an error message:" << response.ToString() << endl;
+    LSP::ResponseError errMsg(response.ToString());
+    switch(errMsg.GetErrorCode()) {
+    case LSP::ResponseError::kErrorCodeInternalError:
+    case LSP::ResponseError::kErrorCodeInvalidRequest: {
+        // Restart this server
+        LSPEvent restartEvent(wxEVT_LSP_RESTART_NEEDED);
+        restartEvent.SetServerName(GetName());
+        m_owner->AddPendingEvent(restartEvent);
+    } break;
+    case LSP::ResponseError::kErrorCodeMethodNotFound: {
+        // User requested a mesasge which is not supported by this server
+        clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << _("method: ") << msg_ptr->GetMethod()
+                                                    << _(" is not supported"));
+        m_unimplementedMethods.insert(msg_ptr->GetMethod());
+
+        // Report this missing event
+        LSPEvent eventMethodNotFound(wxEVT_LSP_METHOD_NOT_FOUND);
+        eventMethodNotFound.SetServerName(GetName());
+        eventMethodNotFound.SetString(msg_ptr->GetMethod());
+        m_owner->AddPendingEvent(eventMethodNotFound);
+
+    } break;
+    case LSP::ResponseError::kErrorCodeInvalidParams: {
+        // Recreate this AST (in other words: reparse), by default we reparse the current editor
+        LSPEvent reparseEvent(wxEVT_LSP_REPARSE_NEEDED);
+        reparseEvent.SetServerName(GetName());
+        m_owner->AddPendingEvent(reparseEvent);
+    } break;
+    default:
+        break;
+    }
+}
+
+void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)
+{
+    if(msg_ptr && msg_ptr->As<LSP::Request>()) {
+        clDEBUG1() << GetLogPrefix() << "received a response";
+        // Check if the reply is still valid
+        IEditor* editor = clGetManager()->GetActiveEditor();
+        if(editor) {
+            LSP::Request* preq = msg_ptr->As<LSP::Request>();
+            if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
+                clDEBUG1() << "Received a response for completion message ID#" << preq->GetId()
+                           << ". However, a newer completion request with ID#" << m_lastCompletionRequestId
+                           << "was already sent. Dropping response";
+                return;
+            }
+            // let the originating request to handle it
+            const wxString& filename = GetEditorFilePath(editor);
+            size_t line = editor->GetCurrentLine();
+            size_t column = editor->GetColumnInChars(editor->GetCurrentPosition());
+            if(false && preq->IsPositionDependantRequest() && !preq->IsValidAt(filename, line, column)) {
+                clDEBUG1() << "Response is no longer valid. Discarding its result";
+            } else {
+                preq->SetServerName(GetName());
+                preq->OnResponse(response, m_owner);
+            }
+        }
+
+    } else if(response.IsPushDiagnostics()) {
+        // Get the URI
+        clDEBUG1() << GetLogPrefix() << "Received diagnostic message";
+        wxString fn = FileUtils::FilePathFromURI(response.GetDiagnosticsUri());
+#ifndef __WXOSX__
+        // Don't show this message on macOS as it appears in the middle of the screen...
+        clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << "parsing of file: " << fn << " is completed",
+                                         1);
+#endif
+        std::vector<LSP::Diagnostic> diags = response.GetDiagnostics();
+        if(!diags.empty() && IsDisaplayDiagnostics()) {
+            // report the diagnostics
+            LSPEvent eventSetDiags(wxEVT_LSP_SET_DIAGNOSTICS);
+            eventSetDiags.GetLocation().SetPath(fn);
+            eventSetDiags.SetDiagnostics(diags);
+            m_owner->AddPendingEvent(eventSetDiags);
+        } else if(diags.empty()) {
+            // clear all diagnostics
+            LSPEvent eventClearDiags(wxEVT_LSP_CLEAR_DIAGNOSTICS);
+            eventClearDiags.GetLocation().SetPath(fn);
+            m_owner->AddPendingEvent(eventClearDiags);
+        }
+    }
 }
 
 //===------------------------------------------------------------------

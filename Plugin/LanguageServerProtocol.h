@@ -98,6 +98,8 @@ protected:
     static wxString GetLanguageId(const wxString& fn);
     void UpdateFileSent(const wxString& filename, const std::string& fileContent);
     bool IsFileChangedSinceLastParse(const wxString& filename, const std::string& fileContent) const;
+    void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
+    void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
 
 protected:
     /**

@@ -1,6 +1,6 @@
+#include "LanguageServerCluster.h"
 #include "CompileCommandsGenerator.h"
 #include "LSP/LSPEvent.h"
-#include "LanguageServerCluster.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
@@ -39,6 +39,7 @@ LanguageServerCluster::LanguageServerCluster()
     Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
     Bind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
+    Bind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
 }
 
 LanguageServerCluster::~LanguageServerCluster()
@@ -60,6 +61,7 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
     Unbind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
+    Unbind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
 }
 
 void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages)
@@ -586,3 +588,5 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const 
     }
     return LanguageServerProtocol::Ptr_t(nullptr);
 }
+
+void LanguageServerCluster::OnLogMessage(LSPEvent& event) { event.Skip(); }

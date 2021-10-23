@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "JSON.h"
 #include "fileextmanager.h"
+#include "JSON.h"
 #include "fileutils.h"
 #include <wx/filename.h>
 #include <wx/regex.h>
@@ -169,6 +169,9 @@ void FileExtManager::Init()
         m_map["tags"] = TypeDatabase;
         m_map["lua"] = TypeLua;
         m_map["rs"] = TypeRust;
+
+        m_map["patch"] = TypeDiff;
+        m_map["diff"] = TypeDiff;
 
         // Initialize regexes:
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeShellScript));

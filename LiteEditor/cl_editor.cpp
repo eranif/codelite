@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_editor.h"
 #include "ColoursAndFontsManager.h"
 #include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
@@ -38,7 +39,6 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
-#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
@@ -6153,12 +6153,12 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
     flatStrClasses.Trim().Trim(false);
     flatStrLocals.Trim().Trim(false);
 
-    if(!flatStrClasses.empty()) {
+    if(!flatStrClasses.empty() && keywords_class != wxNOT_FOUND) {
         SetKeyWords(keywords_class, flatStrClasses);
         SetKeywordClasses(flatStrClasses);
     }
 
-    if(!flatStrLocals.empty()) {
+    if(!flatStrLocals.empty() && keywords_variables != wxNOT_FOUND) {
         SetKeyWords(keywords_variables, flatStrLocals);
         SetKeywordLocals(flatStrLocals);
     }

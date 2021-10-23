@@ -26,14 +26,14 @@
 #ifndef __fileextmanager__
 #define __fileextmanager__
 
-#include <wx/filename.h>
-#include <wx/string.h>
-#include <map>
 #include "codelite_exports.h"
-#include <wx/regex.h>
 #include "smart_ptr.h"
-#include <vector>
 #include "wxStringHash.h"
+#include <map>
+#include <vector>
+#include <wx/filename.h>
+#include <wx/regex.h>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL FileExtManager
 {
@@ -95,6 +95,7 @@ public:
         TypeLua,
         TypeRust,
         TypeLast,
+        TypeDiff,
     };
 
 public:
@@ -106,8 +107,8 @@ public:
 
     static bool IsSymlinkFile(const wxString& filename);
     static bool IsSymlinkFile(const wxFileName& filename) { return IsSymlinkFile(filename.GetFullPath()); }
-	
-	static bool IsSymlink(const wxString& filename) { return IsSymlinkFolder(filename) || IsSymlinkFile(filename); }
+
+    static bool IsSymlink(const wxString& filename) { return IsSymlinkFolder(filename) || IsSymlinkFile(filename); }
     static bool IsSymlink(const wxFileName& filename) { return IsSymlinkFolder(filename) || IsSymlinkFile(filename); }
 
     /**

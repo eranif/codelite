@@ -1105,11 +1105,28 @@ void RemotyWorkspace::OnCodeLiteRemoteLocateDone(clCommandEvent& event)
 
 void RemotyWorkspace::ScanForLSPs()
 {
+    auto conf = m_settings.GetSelectedConfig();
+    wxString additional_path;
+    if(conf) {
+        auto envlist = FileUtils::CreateEnvironment(conf->GetEnvironment());
+        for(auto p : envlist) {
+            if(p.first.CmpNoCase("path") == 0) {
+                additional_path = p.second;
+                break;
+            }
+        }
+    }
+
     for(size_t i = 0; i < lsp_metadata_arr.size(); ++i) {
         const auto& md = lsp_metadata_arr[i];
-        m_codeliteRemoteFinder.Locate(md.path, md.name, wxEmptyString, md.get_versions());
+        wxString path_env;
+        if(!additional_path.empty()) {
+            path_env = additional_path + ":";
+        }
+        path_env << md.path;
+        m_codeliteRemoteFinder.Locate(path_env, md.name, wxEmptyString, md.get_versions());
         m_locate_requests.push_back({ &RemotyWorkspace::ConfigureLsp, i });
-        clDEBUG() << "-- Searching for LSP:" << md.name << endl;
+        clDEBUG() << "-- Searching for LSP:" << md.name << "using remote path:" << path_env << endl;
     }
 }
 

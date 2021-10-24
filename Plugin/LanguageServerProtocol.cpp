@@ -1,4 +1,3 @@
-#include "LanguageServerProtocol.h"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -18,6 +17,7 @@
 #include "LSP/SignatureHelpRequest.h"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
+#include "LanguageServerProtocol.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
@@ -611,15 +611,17 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
         }
 
         auto json_item = json->toElement();
-
         // check the message type
-        wxString message_method = json_item["method"].GetValueString();
+        wxString message_method = json_item["method"].toString();
+        //clDEBUG1() << "-- LSP:" << json_item.format(false) << endl;
+        clDEBUG1() << "-- LSP: Message Method is:" << message_method << endl;
+
         if(message_method == "window/logMessage" || message_method == "window/showMessage") {
             // log this message
             LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
             log_event.SetServerName(GetName());
-            log_event.SetMessage(json_item["params"]["message"].GetValueString());
-            log_event.SetLogMessageSeverity(json_item["params"]["type"].GetValueNumer());
+            log_event.SetMessage(json_item["params"]["message"].toString());
+            log_event.SetLogMessageSeverity(json_item["params"]["type"].toInt());
             m_owner->AddPendingEvent(log_event);
 
         } else if(message_method == "telemetry/event") {
@@ -627,7 +629,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
             // log this message
             LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
             log_event.SetServerName(GetName());
-            log_event.SetMessage(json_item["params"].GetValueString());
+            log_event.SetMessage(json_item["params"].toString());
             m_owner->AddPendingEvent(log_event);
 
         } else {

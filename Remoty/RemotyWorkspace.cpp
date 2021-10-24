@@ -1,7 +1,7 @@
-#include "RemotyWorkspace.hpp"
 #include "RemotyConfig.hpp"
 #include "RemotyNewWorkspaceDlg.h"
 #include "RemotySwitchToWorkspaceDlg.h"
+#include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -44,6 +44,54 @@ namespace
 {
 static const char* CONTEXT_BUILDER = "builder";
 static const char* CONTEXT_FINDER = "finder";
+
+struct LspMetadata {
+    wxString name;
+    std::vector<wxString> languages;
+    int priority = 150;
+    wxString extra_command_args;
+    int min_version = wxNOT_FOUND;
+    int max_version = wxNOT_FOUND;
+    // additional search path
+    wxString path = "/usr/local/bin:/usr/bin:$HOME/.cargo/bin:$HOME/bin";
+
+    LspMetadata(const wxString& n, const std::vector<wxString>& langs, int prio, const wxString& extra_flags, int min,
+                int max)
+        : name(n)
+        , languages(langs)
+        , priority(prio)
+        , extra_command_args(extra_flags)
+        , min_version(min)
+        , max_version(max)
+    {
+    }
+
+    wxString get_display_name() const { return "ssh: " + this->name; }
+
+    std::vector<wxString> get_versions() const
+    {
+        if(min_version == wxNOT_FOUND || max_version == wxNOT_FOUND) {
+            return {};
+        }
+
+        if(min_version > max_version) {
+            return {};
+        }
+
+        std::vector<wxString> versions;
+        for(size_t i = max_version; i >= min_version; --i) {
+            versions.push_back(wxString() << i);
+        }
+        return versions;
+    }
+};
+
+std::vector<LspMetadata> lsp_metadata_arr = {
+    { "clangd", { "c", "cpp" }, 150, "-limit-results=500", 7, 20 },
+    { "pylsp", { "python" }, 150, wxEmptyString, wxNOT_FOUND, wxNOT_FOUND },
+    { "rust-analyzer", { "rust" }, 150, wxEmptyString, wxNOT_FOUND, wxNOT_FOUND },
+    { "typescript-language-server", { "typescript", "javascript" }, 150, "--stdio", wxNOT_FOUND, wxNOT_FOUND },
+};
 } // namespace
 
 RemotyWorkspace::RemotyWorkspace()
@@ -251,10 +299,10 @@ void RemotyWorkspace::DoClose(bool notify)
     m_codeliteRemoteBuilder.Stop();
     m_codeliteRemoteFinder.Stop();
 
-    // restore the current state of the LSPs
+    // restore the current state of the lsp_metadata_arr
     LSPRestore();
 
-    // and restart all the LSPs
+    // and restart all the lsp_metadata_arr
     clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
     EventNotifier::Get()->AddPendingEvent(restart_event);
 
@@ -280,7 +328,7 @@ void RemotyWorkspace::SaveSettings()
     m_settings.Save(m_localWorkspaceFile, m_localUserWorkspaceFile);
     clSFTPManager::Get().AsyncSaveFile(m_localWorkspaceFile, m_remoteWorkspaceFile, m_account.GetAccountName());
 
-    // settings change, we must re-configure the LSPs
+    // settings change, we must re-configure the lsp_metadata_arr
     DeleteLspEntries();
     ScanForLSPs();
 }
@@ -554,10 +602,10 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     StartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER);
     ScanForWorkspaceFiles();
 
-    // Disable all local LSPs before we start
+    // Disable all local lsp_metadata_arr before we start
     LSPStoreAndDisableCurrent();
 
-    // Configure remote LSPs for this workspace
+    // Configure remote lsp_metadata_arr for this workspace
     ScanForLSPs();
 
     // Notify that the a new workspace is loaded
@@ -708,18 +756,6 @@ void RemotyWorkspace::DoConfigureLSP(const wxString& lsp_name, const wxString& c
     configure_event.SetConnectionString("stdio");
     configure_event.SetPriority(priority);
     EventNotifier::Get()->ProcessEvent(configure_event);
-}
-
-void RemotyWorkspace::ConfigureRls(const wxString& exe)
-{
-    // Notify LSP to Configure this LSP for us
-    DoConfigureLSP("Remoty - rust", exe, { "rust" }, 150);
-}
-
-void RemotyWorkspace::ConfigureClangd(const wxString& exe)
-{
-    // Notify LSP to Configure this LSP for us
-    DoConfigureLSP("Remoty - clangd", exe + " -limit-results=500", { "c", "cpp" }, 150);
 }
 
 IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool sync)
@@ -970,10 +1006,9 @@ void RemotyWorkspace::OnShutdown(clCommandEvent& event)
 
 void RemotyWorkspace::DeleteLspEntries()
 {
-    std::vector<wxString> lsps = { "Remoty - clangd", "Remoty - rust", "Remoty - pylsp" };
-    for(auto lsp : lsps) {
+    for(const auto& lsp : lsp_metadata_arr) {
         clLanguageServerEvent delete_event(wxEVT_LSP_DELETE);
-        delete_event.SetLspName(lsp);
+        delete_event.SetLspName(lsp.get_display_name());
         EventNotifier::Get()->ProcessEvent(delete_event);
     }
 }
@@ -1047,9 +1082,11 @@ void RemotyWorkspace::OnCodeLiteRemoteLocate(clCommandEvent& event)
         return;
     }
 
-    auto cb = m_locate_requests.front();
+    auto d = m_locate_requests.front();
+    auto cb = d.first;
+    int metadata_index = d.second;
     clDEBUG() << "Found remote lsp:" << exe << endl;
-    (this->*cb)(exe);
+    (this->*cb)(exe, metadata_index);
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteLocateDone(clCommandEvent& event)
@@ -1060,7 +1097,7 @@ void RemotyWorkspace::OnCodeLiteRemoteLocateDone(clCommandEvent& event)
     m_locate_requests.pop_front();
     if(m_locate_requests.empty()) {
         clDEBUG() << "Sending wxEVT_LSP_RESTART_ALL event" << endl;
-        // we are done configuring the LSPs, restart them
+        // we are done configuring the lsp_metadata_arr, restart them
         clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
         EventNotifier::Get()->ProcessEvent(restart_event);
     }
@@ -1068,21 +1105,12 @@ void RemotyWorkspace::OnCodeLiteRemoteLocateDone(clCommandEvent& event)
 
 void RemotyWorkspace::ScanForLSPs()
 {
-    std::vector<wxString> clangd_versions;
-    for(size_t i = 20; i >= 7; --i) {
-        clangd_versions.push_back(wxString() << i);
+    for(size_t i = 0; i < lsp_metadata_arr.size(); ++i) {
+        const auto& md = lsp_metadata_arr[i];
+        m_codeliteRemoteFinder.Locate(md.path, md.name, wxEmptyString, md.get_versions());
+        m_locate_requests.push_back({ &RemotyWorkspace::ConfigureLsp, i });
+        clDEBUG() << "-- Searching for LSP:" << md.name << endl;
     }
-    m_codeliteRemoteFinder.Locate("/usr/bin", "clangd", wxEmptyString, clangd_versions);
-    m_locate_requests.push_back(&RemotyWorkspace::ConfigureClangd);
-    clDEBUG() << "-- Searching for LSP: clangd" << endl;
-
-    m_codeliteRemoteFinder.Locate("/usr/local/bin:/usr/bin:$HOME/.cargo/bin", "rust-analyzer", wxEmptyString, {});
-    m_locate_requests.push_back(&RemotyWorkspace::ConfigureRls);
-    clDEBUG() << "-- Searching for LSP: rust-analyzer" << endl;
-
-    m_codeliteRemoteFinder.Locate("/usr/local/bin:/usr/bin:$HOME/.local/bin", "pylsp", wxEmptyString, {});
-    m_locate_requests.push_back(&RemotyWorkspace::ConfigurePylsp);
-    clDEBUG() << "-- Searching for LSP: pylsp" << endl;
 }
 
 void RemotyWorkspace::LSPStoreAndDisableCurrent()
@@ -1104,7 +1132,7 @@ void RemotyWorkspace::LSPStoreAndDisableCurrent()
                 if(enabled) {
                     wxString name = server["name"].toString();
                     m_old_servers_state.insert({ name, enabled });
-                    clDEBUG() << "StoreLSPsState:" << name << "->" << enabled << endl;
+                    clDEBUG() << "Storelsp_metadata_arrState:" << name << "->" << enabled << endl;
                 }
             }
         },
@@ -1130,8 +1158,12 @@ void RemotyWorkspace::LSPRestore()
 
 wxString RemotyWorkspace::GetName() const { return wxFileName(m_localWorkspaceFile).GetName(); }
 
-void RemotyWorkspace::ConfigurePylsp(const wxString& exe)
+void RemotyWorkspace::ConfigureLsp(const wxString& exe, int metadata_index)
 {
-    clDEBUG() << "Remoty: configureing pylsp (" << exe << ")" << endl;
-    DoConfigureLSP("Remoty - pylsp", exe, { "python" }, 150);
+    const auto& md = lsp_metadata_arr[metadata_index];
+    wxString command = exe;
+    if(!md.extra_command_args.empty()) {
+        command << " " << md.extra_command_args;
+    }
+    DoConfigureLSP(md.get_display_name(), command, md.languages, md.priority);
 }

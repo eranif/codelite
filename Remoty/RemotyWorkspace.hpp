@@ -21,7 +21,7 @@ class RemotyWorkspaceView;
 class RemotyWorkspace : public IWorkspace
 {
 private:
-    typedef void (RemotyWorkspace::*CallbackFunc)(const wxString&);
+    typedef void (RemotyWorkspace::*CallbackFunc)(const wxString&, int);
 
 private:
     bool m_eventsConnected = false;
@@ -38,7 +38,7 @@ private:
     wxArrayString m_workspaceFiles;
     clRemoteFinderHelper m_remoteFinder;
     bool m_buildInProgress = false;
-    std::deque<CallbackFunc> m_locate_requests;
+    std::deque<std::pair<CallbackFunc, int>> m_locate_requests;
     std::unordered_map<wxString, bool> m_old_servers_state;
 
 public:
@@ -47,9 +47,7 @@ public:
     virtual ~RemotyWorkspace();
 
 protected:
-    void ConfigureClangd(const wxString& exe);
-    void ConfigureRls(const wxString& exe);
-    void ConfigurePylsp(const wxString& exe);
+    void ConfigureLsp(const wxString& exe, int metadata_index);
     void DoConfigureLSP(const wxString& lsp_name, const wxString& command, const std::vector<wxString>& languages,
                         size_t priority);
 

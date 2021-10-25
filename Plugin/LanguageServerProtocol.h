@@ -86,6 +86,7 @@ protected:
     void OnFindSymbol(clCodeCompletionEvent& event);
     void OnFunctionCallTip(clCodeCompletionEvent& event);
     void OnQuickOutline(clCodeCompletionEvent& event);
+    void OnSemanticHighlights(clCodeCompletionEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
 

@@ -1193,6 +1193,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
 
     } else {
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
+        event.SetString(editor->GetFileName().GetFullPath());
         EventNotifier::Get()->AddPendingEvent(event);
         UpdateNavBar(editor);
     }

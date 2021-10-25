@@ -1,3 +1,4 @@
+#include "LanguageServerProtocol.h"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -17,7 +18,6 @@
 #include "LSP/SignatureHelpRequest.h"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
-#include "LanguageServerProtocol.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"
@@ -54,6 +54,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
+    Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     EventNotifier::Get()->Bind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
 
     // Use sockets here
@@ -81,6 +82,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
     Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
+    Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
     DoClear();
 }
@@ -332,7 +334,6 @@ void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const std::string&
         clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
 
         // send a semantic request
-        SendSemanticTokensRequest(editor);
         return;
     }
     LSP::DidOpenTextDocumentRequest::Ptr_t req =
@@ -368,7 +369,7 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::strin
         clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
 
         // always send a semantic request
-        SendSemanticTokensRequest(editor);
+        // SendSemanticTokensRequest(editor);
         return;
     }
 
@@ -381,7 +382,7 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::strin
     QueueMessage(req);
 
     // always send a semantic request
-    SendSemanticTokensRequest(editor);
+    // SendSemanticTokensRequest(editor);
 }
 
 void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const std::string& fileContent)
@@ -613,7 +614,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
         auto json_item = json->toElement();
         // check the message type
         wxString message_method = json_item["method"].toString();
-        //clDEBUG1() << "-- LSP:" << json_item.format(false) << endl;
+        // clDEBUG1() << "-- LSP:" << json_item.format(false) << endl;
         clDEBUG1() << "-- LSP: Message Method is:" << message_method << endl;
 
         if(message_method == "window/logMessage" || message_method == "window/showMessage") {
@@ -858,6 +859,21 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
             m_owner->AddPendingEvent(eventClearDiags);
         }
     }
+}
+
+void LanguageServerProtocol::OnSemanticHighlights(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = ::clGetManager()->FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+
+    if(!ShouldHandleFile(editor)) {
+        return;
+    }
+
+    event.Skip(false); // don't let other services to handle this event
+    OpenEditor(editor);
+    SendSemanticTokensRequest(editor);
 }
 
 //===------------------------------------------------------------------

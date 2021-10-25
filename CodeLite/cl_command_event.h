@@ -253,6 +253,10 @@ class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
     wxCodeCompletionBoxEntry::Vec_t m_entries;
     LSP::CompletionItem::eTriggerKind m_triggerKind = LSP::CompletionItem::kTriggerUnknown;
 
+    // semantic highlights. We support 2 types variables and classes
+    wxString m_variables;
+    wxString m_classes;
+
 public:
     clCodeCompletionEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     clCodeCompletionEvent(const clCodeCompletionEvent& event);
@@ -281,6 +285,11 @@ public:
      */
     wxObject* GetEditor() { return m_editor; }
     void SetWord(const wxString& word) { this->m_word = word; }
+
+    void SetClasses(const wxString& classes) { this->m_classes = classes; }
+    void SetVariables(const wxString& variables) { this->m_variables = variables; }
+    const wxString& GetClasses() const { return m_classes; }
+    const wxString& GetVariables() const { return m_variables; }
 
     /**
      * @brief return the user typed word up to the caret position

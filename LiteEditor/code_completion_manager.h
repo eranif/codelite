@@ -26,17 +26,18 @@
 #ifndef CODECOMPLETIONMANAGER_H
 #define CODECOMPLETIONMANAGER_H
 
-#include <wx/string.h>
-#include <wx/filename.h>
-#include "cl_editor.h"
-#include "cl_command_event.h"
-#include <wx/event.h>
-#include "CxxPreProcessorThread.h"
-#include "CxxPreProcessorCache.h"
-#include "CxxUsingNamespaceCollectorThread.h"
-#include <thread>
 #include "CompileCommandsGenerator.h"
+#include "CxxPreProcessorCache.h"
+#include "CxxPreProcessorThread.h"
+#include "CxxUsingNamespaceCollectorThread.h"
 #include "ServiceProvider.h"
+#include "cl_command_event.h"
+#include "cl_editor.h"
+#include "parse_thread.h"
+#include <thread>
+#include <wx/event.h>
+#include <wx/filename.h>
+#include <wx/string.h>
 
 class CodeCompletionManager : public ServiceProvider
 {
@@ -91,11 +92,13 @@ protected:
     void OnFindImpl(clCodeCompletionEvent& event);
     void OnFunctionCalltip(clCodeCompletionEvent& event);
     void OnTypeInfoToolTip(clCodeCompletionEvent& event);
-    
+    void OnSemanticsHighlights(clCodeCompletionEvent& event);
+    void UpdateSemanticTokens(clParseThreadEvent* event);
+
 public:
     CodeCompletionManager();
     virtual ~CodeCompletionManager();
-    
+
     /**
      * @brief force a refresh based on the current settings
      */

@@ -395,6 +395,15 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP
 // CodeLite will display the tooltip if a non empty string is passed. Simple markup is allowed (<br> <hr> etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_TYPEINFO_TIP, clCodeCompletionEvent);
 
+// User is hovering a text, display the typeinfo
+// Request semantics tokens for a given file
+// Input:
+//  - event.GetFileName() for the input file
+// Output:
+//  - event.SetVariables("..")
+//  - event.SetClasses("..")
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_SEMANTICS_HIGHLIGHT, clCodeCompletionEvent);
+
 //===----------------------------------------------------------------------------------------------
 //===----------------------------------------------------------------------------------------------
 //      END ServiceProviderManager events

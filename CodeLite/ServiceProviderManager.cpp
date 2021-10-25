@@ -4,9 +4,18 @@
 #include "file_logger.h"
 #include <algorithm>
 
-ServiceProviderManager::ServiceProviderManager() {}
+ServiceProviderManager::ServiceProviderManager()
+{
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &ServiceProviderManager::OnActiveEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ServiceProviderManager::OnEditorSaved, this);
+}
 
-ServiceProviderManager::~ServiceProviderManager() { m_providers.clear(); }
+ServiceProviderManager::~ServiceProviderManager()
+{
+    m_providers.clear();
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &ServiceProviderManager::OnActiveEditorChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ServiceProviderManager::OnEditorSaved, this);
+}
 
 void ServiceProviderManager::Register(ServiceProvider* provider)
 {
@@ -84,7 +93,7 @@ eServiceType ServiceProviderManager::GetServiceFromEvent(wxEvent& event)
     // Code Completion events
     if(type == wxEVT_CC_CODE_COMPLETE || type == wxEVT_CC_FIND_SYMBOL || type == wxEVT_CC_FIND_SYMBOL_DECLARATION ||
        type == wxEVT_CC_FIND_SYMBOL_DEFINITION || type == wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP ||
-       type == wxEVT_CC_TYPEINFO_TIP || type == wxEVT_CC_WORD_COMPLETE) {
+       type == wxEVT_CC_TYPEINFO_TIP || type == wxEVT_CC_WORD_COMPLETE || type == wxEVT_CC_SEMANTICS_HIGHLIGHT) {
         return eServiceType::kCodeCompletion;
     }
     return eServiceType::kUnknown;
@@ -106,4 +115,23 @@ void ServiceProviderManager::Sort(eServiceType type)
         order << p->GetName() << "(" << p->GetPriority() << ") ";
     }
     clDEBUG() << "Service providers:" << order;
+}
+
+void ServiceProviderManager::OnActiveEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    RequestSemanticsHighlights(event.GetString());
+}
+
+void ServiceProviderManager::OnEditorSaved(clCommandEvent& event)
+{
+    event.Skip();
+    RequestSemanticsHighlights(event.GetFileName());
+}
+
+void ServiceProviderManager::RequestSemanticsHighlights(const wxString& filename)
+{
+    clCodeCompletionEvent event(wxEVT_CC_SEMANTICS_HIGHLIGHT);
+    event.SetFileName(filename);
+    ProcessEvent(event);
 }

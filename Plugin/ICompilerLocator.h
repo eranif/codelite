@@ -28,7 +28,6 @@
 
 #include "codelite_exports.h"
 #include "compiler.h"
-#include <compiler.h>
 #include <vector>
 #include <wx/sharedptr.h>
 
@@ -62,7 +61,13 @@ protected:
      * @brief windows only: scan registry for uninstall information
      */
     void ScanUninstRegKeys();
-    virtual void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder) {}
+    virtual void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
+                                   const wxString& displayVersion)
+    {
+        wxUnusedVar(displayName);
+        wxUnusedVar(installFolder);
+        wxUnusedVar(displayVersion);
+    }
 
 public:
     ICompilerLocator();

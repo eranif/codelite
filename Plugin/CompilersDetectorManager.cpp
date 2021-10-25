@@ -41,6 +41,7 @@
 #include "fileutils.h"
 #include "macros.h"
 #include <wx/arrstr.h>
+#include <wx/busyinfo.h>
 #include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
 #include <wx/stream.h>
@@ -75,6 +76,8 @@ CompilersDetectorManager::~CompilersDetectorManager() {}
 
 bool CompilersDetectorManager::Locate()
 {
+    wxBusyInfo bi(_("Searching for installed compilers..."));
+
     // Apply the enviroment before searching for compilers
     // Some of the locators are relying on PATH environment
     // variable (e.g. MinGW)
@@ -84,12 +87,17 @@ bool CompilersDetectorManager::Locate()
     for(auto locator : m_detectors) {
         if(locator->Locate()) {
             for(auto compiler : locator->GetCompilers()) {
-                // Resolve the symlinks and detect compiler duplication, e.g.:
-                //   /usr/bin/g++ (GCC)
-                //     -> /usr/bin/g++-9 (GCC-9)
-                //       -> /usr/bin/x86_64-linux-gnu-g++-9
+                /* Resolve symlinks and detect compiler duplication, e.g.:
+                 *   /usr/bin/g++ (GCC)
+                 *     -> /usr/bin/g++-9 (GCC-9)
+                 *       -> /usr/bin/x86_64-linux-gnu-g++-9
+                 *
+                 * We skip this check for MSVC compilers because it runs on
+                 * separate environment (vcvars*.bat) and its CXX is just
+                 * 'cl.exe' */
                 wxString cxxPath = GetRealCXXPath(compiler);
-                if(!cxxPath.IsEmpty() && S.count(cxxPath) == 0) {
+                if(compiler->GetCompilerFamily() == COMPILER_FAMILY_VC ||
+                   (!cxxPath.IsEmpty() && S.count(cxxPath) == 0)) {
                     S.insert(cxxPath);
                     m_compilersFound.push_back(compiler);
                 }

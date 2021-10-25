@@ -37,6 +37,7 @@ class WXDLLIMPEXP_SDK CompilerLocatorCLANG : public ICompilerLocator
         int cpuBits;     // 32bit or 64bit
         wxString prefix; // directory prefix
     };
+    std::vector<MSYS2Env> m_msys2Envs;
 
 protected:
     void MSWLocate();
@@ -46,8 +47,8 @@ protected:
     wxString GetClangVersion(const wxString& clangBinary);
     wxString GetCompilerFullName(const wxString& clangBinary);
     bool ReadMSWInstallLocation(const wxString& regkey, wxString& installPath, wxString& llvmVersion);
-    std::vector<MSYS2Env> GetMSYS2Envs() const;
-    virtual void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder);
+    virtual void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
+                                   const wxString& displayVersion);
     CompilerPtr AddCompiler(const wxString& clangFolder, const wxString& name = "", const wxString& suffix = "");
 
 public:

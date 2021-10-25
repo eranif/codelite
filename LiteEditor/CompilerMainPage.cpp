@@ -713,6 +713,7 @@ void CompilerMainPage::InitializeAdvancePage()
     m_textObjectExtension->ChangeValue("");
     m_textDependExtension->ChangeValue("");
     m_textPreprocessExtension->ChangeValue("");
+    m_checkBoxGenerateDependenciesFiles->Enable(false);
     m_checkBoxGenerateDependenciesFiles->SetValue(false);
     m_textCtrlGlobalIncludePath->ChangeValue("");
     m_textCtrlGlobalLibPath->ChangeValue("");
@@ -722,6 +723,7 @@ void CompilerMainPage::InitializeAdvancePage()
     m_textObjectExtension->ChangeValue(m_compiler->GetObjectSuffix());
     m_textDependExtension->ChangeValue(m_compiler->GetDependSuffix());
     m_textPreprocessExtension->ChangeValue(m_compiler->GetPreprocessSuffix());
+    m_checkBoxGenerateDependenciesFiles->Enable(m_compiler->IsGnuCompatibleCompiler());
     m_checkBoxGenerateDependenciesFiles->SetValue(m_compiler->GetGenerateDependeciesFile());
     m_textCtrlGlobalIncludePath->ChangeValue(m_compiler->GetGlobalIncludePath());
     m_textCtrlGlobalLibPath->ChangeValue(m_compiler->GetGlobalLibPath());

@@ -2054,8 +2054,8 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
         ProcessMacros(tmpMacros, macroSet);
 
     } else {
-        wxString cFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", 0);
-        wxString cxxFilePattern = GetCompileLineForCXXFile(compilersGlobalPaths, buildConf, "$FileName", kCxxFile);
+        wxString cFilePattern = GetCompileLineForCXXFile({}, buildConf, "$FileName", 0);
+        wxString cxxFilePattern = GetCompileLineForCXXFile({}, buildConf, "$FileName", kCxxFile);
 
         wxStringSet_t pathsSet;
 
@@ -2089,7 +2089,7 @@ void Project::CreateCompileFlags(const wxStringMap_t& compilersGlobalPaths)
         wxString pchFile = buildConf->GetPrecompiledHeader();
         pchFile.Trim().Trim(false);
         if(!pchFile.IsEmpty()) {
-            compile_flags_content << "-include " << pchFile << "\n";
+            compile_flags_content << "-include\n" << pchFile << "\n";
         }
     }
 

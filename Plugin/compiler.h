@@ -235,11 +235,11 @@ public:
 
     void SetLinkerOptions(const CmpCmdLineOptions& cmpOptions) { m_linkerOptions = cmpOptions; }
 
-    void SetGenerateDependeciesFile(const bool& generateDependeciesFile)
+    void SetGenerateDependeciesFile(bool generateDependeciesFile)
     {
         this->m_generateDependeciesFile = generateDependeciesFile;
     }
-    const bool& GetGenerateDependeciesFile() const { return m_generateDependeciesFile; }
+    bool GetGenerateDependeciesFile() const { return IsGnuCompatibleCompiler() && m_generateDependeciesFile; }
     void SetReadObjectFilesFromList(bool readObjectFilesFromList)
     {
         this->m_readObjectFilesFromList = readObjectFilesFromList;

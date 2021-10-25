@@ -27,6 +27,7 @@
 #define COMPILERLOCATORMSVC_H
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
+#include <wx/filename.h>
 
 //-------------------------------------------------------------------------
 // For a complete list of MSVC compilers
@@ -35,6 +36,8 @@
 
 class CompilerLocatorMSVC : public ICompilerLocator
 {
+    wxArrayString m_vcPlatforms;
+
 public:
     CompilerLocatorMSVC();
     virtual ~CompilerLocatorMSVC();
@@ -42,7 +45,12 @@ public:
     virtual CompilerPtr Locate(const wxString& folder) { return NULL; }
 
 protected:
-    void AddTools(const wxString& masterFolder, const wxString& name, const wxString& platform);
+    virtual void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
+                                   const wxString& displayVersion);
+    void AddTools(const wxString& name, const wxString& platform, const wxFileName& installPath,
+                  const wxFileName& fnVCvars, const wxFileName& fnIdeFolder);
+    void AddToolsVC2005(const wxString& masterFolder, const wxString& name, const wxString& platform);
+    void AddToolsVC2017(const wxString& masterFolder, const wxString& name, const wxString& platform);
     void AddTool(const wxString& toolpath, const wxString& extraArgs, const wxString& toolname, CompilerPtr compiler);
     void AddCompilerOptions(CompilerPtr compiler);
     void AddLinkerOptions(CompilerPtr compiler);

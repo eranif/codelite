@@ -96,7 +96,6 @@ static wxString GetMakeDirCmd(BuildConfigPtr bldConf, const wxString& relPath = 
 
 BuilderNMake::BuilderNMake()
     : Builder(wxT("NMakefile for MSVC toolset"))
-    , m_objectChunks(1)
 {
 }
 
@@ -562,6 +561,8 @@ void BuilderNMake::GenerateMakefile(ProjectPtr proj, const wxString& confToBuild
         text << name << wxT("=") << value << wxT("") << wxT("\n");
     }
 
+    text << wxT("\n\n");
+
     CreateListMacros(proj, confToBuild, text); // list of srcs and list of objects
 
     //-----------------------------------------------------------
@@ -692,10 +693,22 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
     Compiler::CmpFileTypeInfo ft;
     wxString projectPath = proj->GetFileName().GetPath();
 
-    wxString objectsList;
     size_t objCounter = 0;
     int numOfObjectsInCurrentChunk = 0;
     wxString curChunk;
+
+    text << wxT("##\n");
+    text << wxT("## Object Targets Lists \n");
+    text << wxT("##\n");
+
+    // PCH object file needs to be linked as part of them
+    m_hasObjectPCH = false;
+    wxString pchFile = bldConf->GetPrecompiledHeader();
+    pchFile.Trim().Trim(false);
+    if(pchFile.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
+        text << "ObjectPCH=" << pchFile << "$(ObjectSuffix)\n\n";
+        m_hasObjectPCH = true;
+    }
 
     // We break the list of files into a seriese of objects variables
     // each variable contains up to 100 files.
@@ -740,10 +753,6 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
         numOfObjectsInCurrentChunk++;
     }
 
-    text << wxT("##\n");
-    text << wxT("## Object Targets Lists \n");
-    text << wxT("##\n");
-
     // Add any leftovers...
     if(numOfObjectsInCurrentChunk) {
         curChunk.Prepend(wxString() << "Objects" << objCounter << "=");
@@ -753,6 +762,9 @@ void BuilderNMake::CreateObjectList(ProjectPtr proj, const wxString& confToBuild
     }
 
     text << "\n\nObjects=";
+    if(m_hasObjectPCH) {
+        text << "$(ObjectPCH) ";
+    }
     for(size_t i = 0; i < objCounter; ++i)
         text << "$(Objects" << i << ") ";
 
@@ -768,7 +780,6 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
     wxString cmpType = bldConf->GetCompilerType();
     // get the compiler settings
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
-    bool generateDependenciesFiles = cmp->GetGenerateDependeciesFile() && !cmp->GetDependSuffix().IsEmpty();
     bool supportPreprocessOnlyFiles =
         !cmp->GetSwitch(wxT("PreprocessOnly")).IsEmpty() && !cmp->GetPreprocessSuffix().IsEmpty();
 
@@ -837,10 +848,6 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
                 bool isCFile = FileExtManager::GetType(rel_paths.at(i).GetFullName()) == FileExtManager::TypeSourceC;
 
                 objectName << wxT("$(IntermediateDirectory)\\") << objPrefix << fullnameOnly << wxT("$(ObjectSuffix)");
-                if(generateDependenciesFiles) {
-                    dependFile << wxT("$(IntermediateDirectory)\\") << objPrefix << fullnameOnly
-                               << wxT("$(DependSuffix)");
-                }
                 if(supportPreprocessOnlyFiles) {
                     preprocessedFile << wxT("$(IntermediateDirectory)\\") << objPrefix << fullnameOnly
                                      << wxT("$(PreprocessSuffix)");
@@ -848,7 +855,7 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
 
                 if(!isCFile) {
                     // Add the PCH include line
-                    compilationLine.Replace(wxT("$(CXX)"), wxT("$(CXX) $(IncludePCH)"));
+                    compilationLine.Replace(wxT("$(CXX)"), wxT("$(CXX) $(PCHUseFlags)"));
                 }
 
                 // set the file rule
@@ -856,7 +863,7 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
                      << wxT("\n");
                 text << wxT("\t") << compilationLine << wxT("\n");
 
-                wxString cmpOptions(wxT("$(CXXFLAGS) $(IncludePCH)"));
+                wxString cmpOptions(wxT("$(CXXFLAGS) $(PCHUseFlags)"));
                 if(isCFile) {
                     cmpOptions = wxT("$(CFLAGS)");
                 }
@@ -865,17 +872,10 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
                 wxString source_file_to_compile = rel_paths.at(i).GetFullPath(wxPATH_WIN);
 
                 wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_WIN));
-                if(generateDependenciesFiles) {
-                    text << dependFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
-                    text << wxT("\t") << wxT("@") << compilerMacro << wxT(" ") << cmpOptions
-                         << wxT(" $(IncludePath) -MG -MP -MT") << objectName << wxT(" -MF") << dependFile
-                         << wxT(" -MM \"") << source_file_to_compile << wxT("\"\n\n");
-                }
-
                 if(supportPreprocessOnlyFiles) {
                     text << preprocessedFile << wxT(": ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
                     text << wxT("\t") << compilerMacro << wxT(" ") << cmpOptions
-                         << wxT(" $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) ") << preprocessedFile
+                         << wxT(" $(IncludePath) $(PreprocessOnlySwitch) ") << preprocessedFile
                          << wxT(" \"") << source_file_to_compile << wxT("\"\n\n");
                 }
 
@@ -890,11 +890,6 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
                 text << wxT("\t") << compilationLine << wxT("\n");
             }
         }
-    }
-
-    if(generateDependenciesFiles) {
-        text << wxT("\n");
-        text << wxT("-include ") << wxT("$(IntermediateDirectory)\\*$(DependSuffix)\n");
     }
 }
 static wxString GetIntermediateFolder(BuildConfigPtr bldConf)
@@ -939,7 +934,8 @@ void BuilderNMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToBui
         pchFile.Trim().Trim(false);
 
         if(pchFile.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
-            text << wxT("\t") << wxT("del /Q ") << pchFile << wxT(".gch") << wxT("\n");
+            text << wxT("\t") << wxT("@del /Q ") << pchFile << wxT(".pch") << wxT("\n");
+            text << wxT("\t") << wxT("@del /Q ") << pchFile << wxT("$(ObjectSuffix)") << wxT("\n");
         }
 
     } else if(OS_WINDOWS) {
@@ -963,7 +959,8 @@ void BuilderNMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToBui
         pchFile.Trim().Trim(false);
 
         if(pchFile.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
-            text << wxT("\t") << wxT("@del /Q ") << pchFile << wxT(".gch") << wxT("\n");
+            text << wxT("\t") << wxT("@del /Q ") << pchFile << wxT(".pch") << wxT("\n");
+            text << wxT("\t") << wxT("@del /Q ") << pchFile << wxT("$(ObjectSuffix)") << wxT("\n");
         }
     }
     text << wxT("\n\n");
@@ -1039,10 +1036,13 @@ void BuilderNMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, w
     CompilerPtr cmp = bldConf->GetCompiler();
 
     // this is a special target that creates a file with the content of the
-    // $(Objects) variable (to be used with the @<file-name> option of the LD
+    // $(Objects) variable (to be used with the @<file-name> option of the LINK
+    if(m_hasObjectPCH) {
+        text << "\t@echo $(ObjectPCH) > $(ObjectsFileList)\n";
+    }
     for(size_t i = 0; i < m_objectChunks; ++i) {
         wxString oper = ">>";
-        if(i == 0)
+        if(i == 0 && !m_hasObjectPCH)
             oper = " >";
 
         text << "\t@echo $(Objects" << i << ") " << oper << " $(ObjectsFileList)\n";
@@ -1252,7 +1252,6 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     fnObjectsFileName.MakeRelativeTo(proj->GetFileName().GetPath());
 
     text << wxT("ObjectsFileList        =\"") << fnObjectsFileName.GetFullPath() << wxT("\"\n");
-    text << wxT("PCHCompileFlags        =") << bldConf->GetPchCompileFlags() << wxT("\n");
 
     wxString mkdirCommand = cmp->GetTool("MakeDirCommand");
     if(!mkdirCommand.IsEmpty()) {
@@ -1302,19 +1301,33 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     // link options are kept with semi-colons, strip them
     text << wxT("LinkOptions            = ") << linkOpt << wxT("\n");
 
-    // add the global include path followed by the project include path
-    wxString pchFile;
-
-    // If the PCH is required to be in the command line, add it here
-    // otherwise, we just make sure it is generated and the compiler will pick it by itself
-    if(bldConf->GetPchInCommandLine()) {
-        pchFile = bldConf->GetPrecompiledHeader();
-        pchFile.Trim().Trim(false);
-        if(pchFile.IsEmpty() == false) {
-            pchFile.Prepend(wxT(" -include ")).Append(wxT(" "));
+    // Precompiled header flags (compile, use and implicit include)
+    wxString pchFile = bldConf->GetPrecompiledHeader();
+    wxString pchCreateFlags, pchUseFlags;
+    pchFile.Trim().Trim(false);
+    if(pchFile.IsEmpty() == false) {
+        if(bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude) {
+            pchCreateFlags << wxT("/Yc ");
+            pchCreateFlags << wxT("/Fp") << pchFile << wxT(".pch ");
+            pchCreateFlags << wxT("$(ObjectSwitch)") << pchFile << wxT("$(ObjectSuffix)");
+            pchUseFlags << wxT("/Yu") << pchFile << wxT(" ");
+            pchUseFlags << wxT("/Fp") << pchFile << wxT(".pch");
+            // Append PCH compile flags, if any
+            if(!bldConf->GetPchCompileFlags().IsEmpty()) {
+                pchCreateFlags << wxT(" ") << bldConf->GetPchCompileFlags();
+            }
+        }
+        // If the PCH is required to be in the command line, add it here
+        // otherwise, we just make sure it is generated and the compiler will pick it by itself
+        if(bldConf->GetPchInCommandLine()) {
+            pchUseFlags << wxT(" /FI") << pchFile;
         }
     }
 
+    text << wxT("PCHCreateFlags         =") << pchCreateFlags << wxT("\n");
+    text << wxT("PCHUseFlags            =") << pchUseFlags << wxT("\n");
+
+    // add the global include path followed by the project include path
     wxString libraries = bldConf->GetLibraries();
     wxArrayString libsArr = ::wxStringTokenize(libraries, wxT(";"), wxTOKEN_STRTOK);
     libraries.Clear();
@@ -1328,7 +1341,6 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     text << wxT("IncludePath            = ")
          << ParseIncludePath(cmp->GetGlobalIncludePath(), proj->GetName(), bldConf->GetName()) << wxT(" ")
          << ParseIncludePath(bldConf->GetIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
-    text << wxT("IncludePCH             = ") << pchFile << wxT("\n");
     text << wxT("RcIncludePath          = ")
          << ParseIncludePath(bldConf->GetResCmpIncludePath(), proj->GetName(), bldConf->GetName()) << wxT("\n");
     text << wxT("Libs                   = ") << ParseLibs(bldConf->GetLibraries()) << wxT("\n");
@@ -1376,6 +1388,9 @@ wxString BuilderNMake::ParseIncludePath(const wxString& paths, const wxString& p
     while(tkz.HasMoreTokens()) {
         wxString path(tkz.NextToken());
         TrimString(path);
+        if(path.EndsWith("/") || path.EndsWith("\\")) {
+            path.RemoveLast();
+        }
         // path.Replace(wxT("\\"), wxT("/"));
 
         wxString wrapper;
@@ -1397,6 +1412,9 @@ wxString BuilderNMake::ParseLibPath(const wxString& paths, const wxString& proje
     while(tkz.HasMoreTokens()) {
         wxString path(tkz.NextToken());
         path.Trim().Trim(false);
+        if(path.EndsWith("/") || path.EndsWith("\\")) {
+            path.RemoveLast();
+        }
         // path.Replace(wxT("\\"), wxT("/"));
         wxString wrapper;
         if(path.Contains(wxT(" ")))
@@ -1696,7 +1714,7 @@ wxString BuilderNMake::GetProjectMakeCommand(const wxFileName& wspfile, const wx
 
         // Run pre-compiled header compilation if any
         if(precmpheader.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
-            makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".gch") << wxT(" && ");
+            makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".pch") << wxT(" && ");
         }
     }
 
@@ -1746,7 +1764,7 @@ wxString BuilderNMake::GetProjectMakeCommand(ProjectPtr proj, const wxString& co
 
         // Run pre-compiled header compilation if any
         if(precmpheader.IsEmpty() == false && (bldConf->GetPCHFlagsPolicy() != BuildConfig::kPCHJustInclude)) {
-            makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".gch") << wxT(" && ");
+            makeCommand << basicMakeCommand << wxT(" ") << precmpheader << wxT(".pch") << wxT(" && ");
         }
     }
 
@@ -1775,15 +1793,15 @@ void BuilderNMake::CreatePreCompiledHeaderTarget(BuildConfigPtr bldConf, wxStrin
 
     text << wxT("\n");
     text << wxT("# PreCompiled Header\n");
-    text << filename << wxT(".gch: ") << filename << wxT("\n");
+    text << filename << wxT(".pch: ") << filename << wxT("\n");
     switch(pchPolicy) {
     case BuildConfig::kPCHPolicyReplace:
         text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename
-             << wxT(" $(PCHCompileFlags)\n");
+             << wxT(" $(PCHCreateFlags)\n");
         break;
     case BuildConfig::kPCHPolicyAppend:
         text << wxT("\t") << DoGetCompilerMacro(filename) << wxT(" $(SourceSwitch) ") << filename
-             << wxT(" $(PCHCompileFlags) $(CXXFLAGS) $(IncludePath)\n");
+             << wxT(" $(PCHCreateFlags) $(CXXFLAGS) $(IncludePath)\n");
         break;
     case BuildConfig::kPCHJustInclude:
         // for completeness
@@ -1810,9 +1828,6 @@ wxString BuilderNMake::GetPORebuildCommand(const wxString& project, const wxStri
 wxString BuilderNMake::GetBuildToolCommand(const wxString& project, const wxString& confToBuild,
                                            const wxString& arguments, bool isCommandlineCommand) const
 {
-    wxString jobsCmd;
-    wxString buildTool;
-
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
     if(!bldConf)
         return wxEmptyString;
@@ -1822,18 +1837,11 @@ wxString BuilderNMake::GetBuildToolCommand(const wxString& project, const wxStri
         return wxEmptyString;
 
     if(isCommandlineCommand) {
-        buildTool = compiler->GetTool("MAKE");
+        return compiler->GetTool("MAKE") + " /e /f ";
 
     } else {
-        jobsCmd = wxEmptyString;
-        buildTool = wxT("\"$(MAKE)\"");
-    }
-
-    if(isCommandlineCommand) {
-        return buildTool + " -e -f ";
-
-    } else {
-        return buildTool + " -f ";
+        // $(MAKE) is already quoted by NMake
+        return wxT("$(MAKE) /nologo /f ");
     }
 }
 

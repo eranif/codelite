@@ -37,7 +37,8 @@
  */
 class WXDLLIMPEXP_SDK BuilderNMake : public Builder
 {
-    size_t m_objectChunks;
+    size_t m_objectChunks = 1;
+    bool m_hasObjectPCH = false;
     clProjectFile::Vec_t m_allFiles;
 
 public:

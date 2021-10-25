@@ -77,11 +77,12 @@ void ICompilerLocator::ScanUninstRegKeys()
                 if(!subKey.Exists() || !subKey.Open(wxRegKey::Read))
                     continue;
 
-                wxString displayName, installFolder;
+                wxString displayName, installFolder, displayVersion;
                 if(subKey.HasValue("DisplayName") && subKey.HasValue("InstallLocation") &&
-                   subKey.QueryValue("DisplayName", displayName) &&
-                   subKey.QueryValue("InstallLocation", installFolder)) {
-                    CheckUninstRegKey(displayName, installFolder);
+                   subKey.HasValue("DisplayVersion") && subKey.QueryValue("DisplayName", displayName) &&
+                   subKey.QueryValue("InstallLocation", installFolder) &&
+                   subKey.QueryValue("DisplayVersion", displayVersion)) {
+                    CheckUninstRegKey(displayName, installFolder, displayVersion);
                 }
 
                 subKey.Close();

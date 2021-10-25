@@ -63,7 +63,15 @@ bool OSXFindBrewClang(wxFileName& clang)
 }
 #endif
 
-CompilerLocatorCLANG::CompilerLocatorCLANG() {}
+CompilerLocatorCLANG::CompilerLocatorCLANG()
+{
+    m_msys2Envs.push_back({ 32, "clang32" });
+    m_msys2Envs.push_back({ 64, "clang64" });
+    m_msys2Envs.push_back({ 64, "clangarm64" });
+    m_msys2Envs.push_back({ 32, "mingw32" });
+    m_msys2Envs.push_back({ 64, "mingw64" });
+    m_msys2Envs.push_back({ 64, "ucrt64" });
+}
 
 CompilerLocatorCLANG::~CompilerLocatorCLANG() {}
 
@@ -282,24 +290,13 @@ bool CompilerLocatorCLANG::ReadMSWInstallLocation(const wxString& regkey, wxStri
 #endif
 }
 
-std::vector<CompilerLocatorCLANG::MSYS2Env> CompilerLocatorCLANG::GetMSYS2Envs() const
+void CompilerLocatorCLANG::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
+                                             const wxString& displayVersion)
 {
-    std::vector<MSYS2Env> msys2Envs;
-    msys2Envs.push_back({ 32, "clang32" });
-    msys2Envs.push_back({ 64, "clang64" });
-    msys2Envs.push_back({ 64, "clangarm64" });
-    msys2Envs.push_back({ 32, "mingw32" });
-    msys2Envs.push_back({ 64, "mingw64" });
-    msys2Envs.push_back({ 64, "ucrt64" });
+    wxUnusedVar(displayVersion);
 
-    return msys2Envs;
-}
-
-void CompilerLocatorCLANG::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder)
-{
     if(displayName.StartsWith("MSYS2")) {
-        static const auto msys2Envs = GetMSYS2Envs();
-        for(const auto& env : msys2Envs) {
+        for(const auto& env : m_msys2Envs) {
             wxFileName fnBinFolder(installFolder, "");
             fnBinFolder.AppendDir(env.prefix);
             fnBinFolder.AppendDir("bin");

@@ -406,7 +406,12 @@ std::unordered_map<wxString, wxArrayString> BuildSettingsConfig::GetCompilersGlo
         if(!cmp) {
             continue;
         }
-        M.insert({ name, cmp->GetDefaultIncludePaths() });
+        wxArrayString includePaths = cmp->GetDefaultIncludePaths();
+        if(!cmp->GetGlobalIncludePath().IsEmpty()) {
+            wxArrayString globalIncludePaths = ::wxStringTokenize(cmp->GetGlobalIncludePath(), ";", wxTOKEN_STRTOK);
+            includePaths.insert(includePaths.end(), globalIncludePaths.begin(), globalIncludePaths.end());
+        }
+        M.insert({ name, includePaths });
     }
     return M;
 }

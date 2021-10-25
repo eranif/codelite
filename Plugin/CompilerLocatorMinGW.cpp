@@ -207,8 +207,11 @@ bool CompilerLocatorMinGW::Locate()
     return !m_compilers.empty();
 }
 
-void CompilerLocatorMinGW::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder)
+void CompilerLocatorMinGW::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
+                                             const wxString& displayVersion)
 {
+    wxUnusedVar(displayVersion);
+
     if(displayName.StartsWith("TDM-GCC")) {
         wxFileName fnTDMBinFolder(installFolder, "");
         fnTDMBinFolder.AppendDir("bin");

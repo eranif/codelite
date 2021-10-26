@@ -163,7 +163,14 @@ public:
     void ShowQuickBar(const wxString& findWhat, bool showReplace);
     void ShowTabBar(bool b);
     void ShowNavBar(bool s = true);
-    bool IsNavBarShown() { return m_navBar && m_navBar->IsShown(); }
+    /**
+     * @brief is navigation bar enabled by user?
+     */
+    bool IsNavBarEnabled() const { return m_navBar && m_navBar->ShouldShow(); }
+    /**
+     * @brief is navigation bar shown (either by user or automatically)?
+     */
+    bool IsNavBarShown() const { return m_navBar && m_navBar->IsShown(); }
     clEditorBar* GetEditorBar() { return m_navBar; }
     void SetEditorBar(clEditorBar* bar) { m_navBar = bar; }
 

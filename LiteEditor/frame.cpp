@@ -4566,7 +4566,7 @@ bool clMainFrame::SaveLayoutAndSession()
     SetFrameFlag(IsMaximized(), CL_MAXIMIZE_FRAME);
     SetFrameFlag(IsFullScreen(), CL_FULLSCREEN);
     EditorConfigST::Get()->WriteObject(wxT("GeneralInfo"), &m_frameGeneralInfo);
-    EditorConfigST::Get()->SetInteger(wxT("ShowNavBar"), m_mainBook->IsNavBarShown() ? 1 : 0);
+    EditorConfigST::Get()->SetInteger(wxT("ShowNavBar"), m_mainBook->IsNavBarEnabled() ? 1 : 0);
     GetWorkspacePane()->SaveWorkspaceViewTabOrder();
     GetOutputPane()->SaveTabOrder();
 

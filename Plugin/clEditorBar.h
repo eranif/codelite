@@ -40,6 +40,7 @@ public:
     clEditorBar(wxWindow* parent);
     virtual ~clEditorBar();
     void SetMessage(const wxString& className, const wxString& function);
+    bool ShouldShow() const { return m_shouldShow; }
     void DoShow(bool s);
     void SetLabel(const wxString& text);
     void ClearLabel() { SetLabel(wxEmptyString); }

@@ -27,7 +27,13 @@
 #if defined(__WXMSW__) || defined(__WXMAC__)
 #define wxUSE_BUTTON_NATIVE_RENDERER 0
 #else
+// GTK
+#include "cl_defs.h"
+#if CL_USE_NATIVEBOOK
 #define wxUSE_BUTTON_NATIVE_RENDERER 1
+#else
+#define wxUSE_BUTTON_NATIVE_RENDERER 0
+#endif
 #endif
 
 #if defined(__WXGTK__)
@@ -188,7 +194,7 @@ void clButtonBase::Initialise()
 
 void clButtonBase::Render(wxDC& dc)
 {
-#if defined(__WXGTK__) && defined(__WXGTK3__)
+#if wxUSE_BUTTON_NATIVE_RENDERER
     // set default
     wxColour parentbgColour =
         GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();
@@ -208,6 +214,7 @@ void clButtonBase::Render(wxDC& dc)
     wxColour parentbgColour =
         GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();
 #endif
+
     wxRect clientRect = GetClientRect();
     wxRect rect = clientRect;
 
@@ -400,7 +407,7 @@ void clButtonBase::Render(wxDC& dc)
         focus_rect.Deflate(2);
         wxRendererNative::Get().DrawFocusRect(this, dc, focus_rect);
     }
-#else // use wxRendererNative
+#else // use wxUSE_BUTTON_NATIVE_RENDERER
 #ifdef __WXOSX__
     clientRect.Inflate(1);
 #endif

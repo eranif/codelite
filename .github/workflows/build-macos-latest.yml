@@ -89,16 +89,17 @@ jobs:
       id: wxcache
       with:
         path: ${{ github.workspace }}/wxWidgets.git
-        key: wxcache-${{ runner.os }}-${{ matrix.compiler }}-v3.1.4
+        key: wxcache-${{ runner.os }}-${{ matrix.compiler }}-v3.1.5
 
     - name: wxWidgets download and build
       if: steps.wxcache.outputs.cache-hit != 'true'
       shell: bash
       run: |
         cd ${{ github.workspace }}
+        rm -fr wxWidgets.git
         git clone --recursive https://github.com/wxWidgets/wxWidgets.git wxWidgets.git
         cd wxWidgets.git
-        git checkout v3.1.4
+        git checkout v3.1.5
         mkdir build-release
         cd build-release
         ../configure --enable-shared --enable-monolithic --with-osx_cocoa --disable-debug --disable-mediactrl

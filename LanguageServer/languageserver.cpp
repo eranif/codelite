@@ -44,9 +44,13 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_longName = _("Support for Language Server Protocol (LSP)");
     m_shortName = wxT("LanguageServerPlugin");
 
+    // add log view
     m_logView = new LanguageServerLogView(m_mgr->GetOutputPaneNotebook());
-    m_mgr->GetOutputPaneNotebook()->AddPage(m_logView, _("Language Server"));
+    auto outputBook = m_mgr->GetOutputPaneNotebook();
+    int bmp = outputBook->GetBitmaps()->Add("cog");
+    outputBook->AddPage(m_logView, _("Language Server"), false, bmp);
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
+    m_tabToggler->SetOutputTabBmp(bmp);
 
     // Load the configuration
     LanguageServerConfig::Get().Load();

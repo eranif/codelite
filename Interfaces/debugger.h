@@ -147,6 +147,14 @@ typedef std::vector<LocalVariable> LocalVariables;
 typedef std::vector<DisassembleEntry> DisassembleEntryVec_t;
 typedef std::vector<DbgRegister> DbgRegistersVec_t;
 
+#define READ_CONFIG_PARAM(name, value) \
+    {                                  \
+        decltype(value) dummy;         \
+        if(arch.Read(name, dummy)) {   \
+            value = dummy;             \
+        }                              \
+    }
+
 class DebuggerInformation : public SerializedObject
 {
 public:
@@ -238,36 +246,37 @@ public:
 
     void DeSerialize(Archive& arch)
     {
-        arch.Read(wxT("name"), name);
-        arch.Read(wxT("path"), path);
-        arch.Read(wxT("enableDebugLog"), enableDebugLog);
-        arch.Read(wxT("enablePendingBreakpoints"), enablePendingBreakpoints);
-        arch.Read(wxT("breakAtWinMain"), breakAtWinMain);
-        arch.Read(wxT("showTerminal"), showTerminal);
-        arch.Read(wxT("consoleCommand"), consoleCommand);
-        arch.Read(wxT("useRelativeFilePaths"), useRelativeFilePaths);
-        arch.Read(wxT("maxCallStackFrames"), maxCallStackFrames);
-        arch.Read(wxT("catchThrow"), catchThrow);
-        arch.Read(wxT("showTooltips"), showTooltipsOnlyWithControlKeyIsDown);
-        arch.Read(wxT("debugAsserts"), debugAsserts);
+        READ_CONFIG_PARAM("name", name);
+        READ_CONFIG_PARAM("path", path);
+        READ_CONFIG_PARAM("enableDebugLog", enableDebugLog);
+        READ_CONFIG_PARAM("enablePendingBreakpoints", enablePendingBreakpoints);
+        READ_CONFIG_PARAM("breakAtWinMain", breakAtWinMain);
+        READ_CONFIG_PARAM("showTerminal", showTerminal);
+        READ_CONFIG_PARAM("consoleCommand", consoleCommand);
+        READ_CONFIG_PARAM("useRelativeFilePaths", useRelativeFilePaths);
+        READ_CONFIG_PARAM("maxCallStackFrames", maxCallStackFrames);
+        READ_CONFIG_PARAM("catchThrow", catchThrow);
+        READ_CONFIG_PARAM("showTooltipsOnlyWithControlKeyIsDown", showTooltipsOnlyWithControlKeyIsDown);
+        READ_CONFIG_PARAM("debugAsserts", debugAsserts);
 
         arch.ReadCData(wxT("startupCommands"), initFileCommands);
 
-        wxFileName codeliteInstallDir = wxFileName(clStandardPaths::Get().GetUserDataDir(), "gdb_printers");
-        initFileCommands.Replace("$CodeLiteGdbPrinters", codeliteInstallDir.GetFullPath());
+        wxFileName fnPrettyPrintersDir = wxFileName(clStandardPaths::Get().GetUserDataDir(), wxEmptyString);
+        fnPrettyPrintersDir.AppendDir("gdb_printers");
+        initFileCommands.Replace("$CodeLiteGdbPrinters", fnPrettyPrintersDir.GetPath());
         initFileCommands.Trim();
 
-        arch.Read(wxT("maxDisplayStringSize"), maxDisplayStringSize);
-        arch.Read(wxT("maxDisplayElements"), maxDisplayElements);
-        arch.Read(wxT("resolveLocals"), resolveLocals);
-        arch.Read(wxT("autoExpandTipItems"), autoExpandTipItems);
-        arch.Read(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
-        arch.Read(wxT("whenBreakpointHitRaiseCodelite"), whenBreakpointHitRaiseCodelite);
-        arch.Read(wxT("cygwinPathCommand"), cygwinPathCommand);
-        arch.Read(wxT("charArrAsPtr"), charArrAsPtr);
-        arch.Read(wxT("enableGDBPrettyPrinting"), enableGDBPrettyPrinting);
-        arch.Read(wxT("defaultHexDisplay"), defaultHexDisplay);
-        arch.Read("flags", flags);
+        READ_CONFIG_PARAM("maxDisplayStringSize", maxDisplayStringSize);
+        READ_CONFIG_PARAM("maxDisplayElements", maxDisplayElements);
+        READ_CONFIG_PARAM("resolveLocals", resolveLocals);
+        READ_CONFIG_PARAM("autoExpandTipItems", autoExpandTipItems);
+        READ_CONFIG_PARAM("applyBreakpointsAfterProgramStarted", applyBreakpointsAfterProgramStarted);
+        READ_CONFIG_PARAM("whenBreakpointHitRaiseCodelite", whenBreakpointHitRaiseCodelite);
+        READ_CONFIG_PARAM("charArrAsPtr", charArrAsPtr);
+        READ_CONFIG_PARAM("enableGDBPrettyPrinting", enableGDBPrettyPrinting);
+        READ_CONFIG_PARAM("defaultHexDisplay", defaultHexDisplay);
+        READ_CONFIG_PARAM("flags", flags);
+        READ_CONFIG_PARAM("cygwinPathCommand", cygwinPathCommand);
     }
 };
 

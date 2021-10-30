@@ -93,7 +93,7 @@ public:
      * @brief return true if this variable was constructed from a statement like:
      * using MyInt = int;
      */
-    bool IsUsing() const { return GetTypeAsString() == "using"; }
+    bool IsUsing() const { return GetTypeAsString() == "using" && !m_defaultValue.IsEmpty(); }
 
     /**
      * @brief is this a valid variable?

@@ -758,7 +758,7 @@ public:
     void SetErrorMarker(int lineno, const wxString& annotationText) override;
     void DelAllCompilerMarkers() override;
 
-    void DoShowCalltip(int pos, const wxString& title, const wxString& tip, bool manipulateText);
+    void DoShowCalltip(int pos, const wxString& title, const wxString& tip, bool strip_html_tags = true);
     void DoCancelCalltip();
     void DoCancelCodeCompletionBox();
     int DoGetOpenBracePos();

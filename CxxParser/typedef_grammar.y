@@ -21,7 +21,8 @@
 
 int  cl_typedef_parse();
 void syncParser();
-void typedef_consumeDefaultValue(char c1, char c2);
+static std::string typedef_consumBracketsContent(char openBrace);
+static void typedef_consumeDefaultValue(char c1, char c2);
 
 static  VariableList *           gs_vars = NULL;
 static  std::vector<std::string> gs_names;
@@ -143,18 +144,16 @@ external_decl	    :     {curr_var.Reset(); gs_names.clear(); s_tmpString.clear()
                         ;
 /** Typedefs **/
 
-typedefs             : stmnt_starter LE_TYPEDEF real_type new_name ';'
+typedefs             : stmnt_starter LE_TYPEDEF opt_typename_specifier real_type new_name ';'
   					{
-						gs_currentTypedef.m_name = $4;
 						if(gs_currentTypedef.m_realType.m_templateDecl.empty())
 							gs_currentTypedef.m_realType.m_templateDecl = s_templateInitList;
 						s_templateInitList.clear();
 						gs_typedefs.push_back(gs_currentTypedef);
 
 					}
-					 | stmnt_starter LE_TYPEDEF LE_TYPENAME real_type new_name ';'
+					 | stmnt_starter opt_template_qualifier LE_USING new_name '=' opt_typename_specifier real_type ';'
 					 {
-						gs_currentTypedef.m_name = $5;
 						if(gs_currentTypedef.m_realType.m_templateDecl.empty())
 							gs_currentTypedef.m_realType.m_templateDecl = s_templateInitList;
 						s_templateInitList.clear();
@@ -171,6 +170,19 @@ real_type : variable_decl special_star_amp
 
 new_name   : LE_IDENTIFIER { gs_currentTypedef.m_name = $1; }
 		   ;
+
+opt_typename_specifier  :  /* empty */ { $$ = ""; }
+                        |  LE_TYPENAME { $$ = $1; }
+                        ;
+
+/*templates*/
+opt_template_qualifier	: /*empty*/
+                            | LE_TEMPLATE '<' {s_tmpString = typedef_consumBracketsContent('<');}
+                            {
+                                $$ = $1 + $2 + s_tmpString;
+                                s_tmpString.clear();
+                            }
+                            ;
 
 /* the following rules are for template parameters no declarations! */
 parameter_list	: /* empty */        {$$ = "";}

@@ -16,6 +16,10 @@ wxString CxxVariable::GetTypeAsString(const wxStringTable_t& table) const
 }
 wxString CxxVariable::GetTypeAsCxxString(const wxStringTable_t& table) const
 {
+    if(IsUsing()) {
+        // A name of the real data type is parsed as assignment expression
+        return m_defaultValue;
+    }
     return PackType(m_type, m_standard, true, table);
 }
 

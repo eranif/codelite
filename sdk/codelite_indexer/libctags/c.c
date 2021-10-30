@@ -60,7 +60,7 @@ typedef enum eException {
 typedef enum eKeywordId {
     KEYWORD_NONE = -1,
     KEYWORD_ALIGNAS, KEYWORD_ATTRIBUTE, KEYWORD_ABSTRACT,
-    KEYWORD_BOOLEAN, KEYWORD_BYTE, KEYWORD_BAD_STATE, KEYWORD_BAD_TRANS,
+    KEYWORD_BOOL, KEYWORD_BOOLEAN, KEYWORD_BYTE, KEYWORD_BAD_STATE, KEYWORD_BAD_TRANS,
     KEYWORD_BIND, KEYWORD_BIND_VAR, KEYWORD_BIT,
     KEYWORD_CASE, KEYWORD_CATCH, KEYWORD_CHAR, KEYWORD_CLASS, KEYWORD_CONST,
     KEYWORD_CONSTRAINT, KEYWORD_COVERAGE_BLOCK, KEYWORD_COVERAGE_DEF,
@@ -383,6 +383,7 @@ static const keywordDesc KeywordTable [] = {
     { "bind",           KEYWORD_BIND,           { 0, 0, 0, 0, 1 } },
     { "bind_var",       KEYWORD_BIND_VAR,       { 0, 0, 0, 0, 1 } },
     { "bit",            KEYWORD_BIT,            { 0, 0, 0, 0, 1 } },
+    { "bool",           KEYWORD_BOOL,           { 0, 1, 0, 0, 0 } },
     { "boolean",        KEYWORD_BOOLEAN,        { 0, 0, 0, 1, 0 } },
     { "byte",           KEYWORD_BYTE,           { 0, 0, 0, 1, 0 } },
     { "case",           KEYWORD_CASE,           { 1, 1, 1, 1, 0 } },
@@ -1402,6 +1403,31 @@ static boolean isValidTypeSpecifier (const declType declaration)
     return result;
 }
 
+static boolean isCppDataTypeKeyword (const keywordId keyword)
+{
+    boolean result;
+    switch (keyword) {
+        case KEYWORD_NONE:
+        case KEYWORD_BOOL:
+        case KEYWORD_CHAR:
+        case KEYWORD_DOUBLE:
+        case KEYWORD_FLOAT:
+        case KEYWORD_INT:
+        case KEYWORD_LONG:
+        case KEYWORD_SHORT:
+        case KEYWORD_SIGNED:
+        case KEYWORD_UNSIGNED:
+        case KEYWORD_WCHAR_T:
+        result = TRUE;
+        break;
+
+    default:
+        result = FALSE;
+        break;
+    }
+    return result;
+}
+
 static void qualifyEnumeratorTag (const statementInfo *const st,
                                   const tokenInfo *const nameToken)
 {
@@ -1952,6 +1978,12 @@ static void processToken (tokenInfo *const token, statementInfo *const st)
         st->declaration = DECL_BASE;
         break;
     case KEYWORD_BIT:
+        st->declaration = DECL_BASE;
+        break;
+    case KEYWORD_BOOL:
+        st->declaration = DECL_BASE;
+        break;
+    case KEYWORD_BOOLEAN:
         st->declaration = DECL_BASE;
         break;
     case KEYWORD_CATCH:
@@ -3132,7 +3164,7 @@ static void tagCheck (statementInfo *const st)
                 st->blockName->keyword = KEYWORD_NONE;
             }
             qualifyBlockTag (st, prev);
-        } else if ( isType(prev, TOKEN_NAME) && isType(prev2, TOKEN_NAME) ) {
+        } else if ( isType(prev, TOKEN_NAME) && isCppDataTypeKeyword(prev2->keyword) ) {
             // C++11 variable
             // <type> <name> { ... }
             qualifyVariableTag (st, prev);

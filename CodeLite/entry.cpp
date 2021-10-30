@@ -367,7 +367,7 @@ wxString TagEntry::NameFromTyperef(wxString& templateInitList, bool nameIncludeT
     if(GetKind() == wxT("typedef")) {
 
         wxString pat(GetPattern());
-        if(!GetPattern().Contains(wxT("typedef"))) {
+        if(!GetPattern().Contains(wxT("typedef")) && !GetPattern().Contains(wxT("using"))) {
             // The pattern does not contain 'typedef' however this *is* a typedef
             // try to see if this is a macro
             pat.StartsWith(wxT("/^"), &pat);

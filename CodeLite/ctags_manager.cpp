@@ -1590,7 +1590,7 @@ void TagsManager::TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxStr
         tip.Replace(wxT("\\/"), wxT("/"));
 
         // Trim whitespace from right and left
-        static wxString trimString(wxT("{};\r\n\t\v "));
+        static wxString trimString(wxT("{;\r\n\t\v "));
 
         tip.erase(0, tip.find_first_not_of(trimString));
         tip.erase(tip.find_last_not_of(trimString) + 1);

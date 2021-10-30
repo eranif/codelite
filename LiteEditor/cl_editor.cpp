@@ -1929,17 +1929,14 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
             GetBookmarkTooltip(line, tooltip, title);
         }
 
-        bool compilerMarker = false;
         // Compiler marker takes precedence over any other tooltip on that margin
         if((MarkerGet(line) & mmt_compiler) && m_compilerMessagesMap.count(line)) {
-            compilerMarker = true;
             // Get the compiler tooltip
             tooltip = m_compilerMessagesMap.find(line)->second;
         }
 
         if(!tooltip.IsEmpty()) {
-            // if the marker is a compiler marker, dont manipulate the text
-            DoShowCalltip(-1, title, tooltip, !compilerMarker);
+            DoShowCalltip(-1, title, tooltip);
         }
 
     } else if(ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
@@ -1956,7 +1953,7 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         evtTypeinfo.SetInsideCommentOrString(m_context->IsCommentOrString(event.GetPosition()));
         if(ServiceProviderManager::Get().ProcessEvent(evtTypeinfo)) {
             if(!evtTypeinfo.GetTooltip().IsEmpty()) {
-                DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip(), true);
+                DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip());
             }
         }
     }
@@ -4565,7 +4562,7 @@ wxString clEditor::GetEolString()
     return eol;
 }
 
-void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip, bool manipulateText)
+void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip, bool strip_html_tags)
 {
     DoCancelCalltip();
     wxPoint pt;
@@ -4576,7 +4573,7 @@ void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip
         tooltip << "\n---\n";
     }
     tooltip << tip;
-    m_calltip = new CCBoxTipWindow(this, tooltip, true);
+    m_calltip = new CCBoxTipWindow(this, tooltip, strip_html_tags);
     if(pos == wxNOT_FOUND) {
         pt = ::wxGetMousePosition();
     } else {

@@ -98,6 +98,9 @@ typescript-language-server --stdio
 - Install [`rustup`][5]
 - Type:
 
+!!! Important
+    Under Windows, make sure to install the `x86_64-pc-windows-gnu` version of `rust`
+
 ```bash
 rustup update
 rustup +nightly component add rust-src rust-analyzer-preview

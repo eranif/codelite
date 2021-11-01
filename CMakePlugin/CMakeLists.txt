@@ -3,7 +3,7 @@
 #
 
 # Don't support very old versions
-cmake_minimum_required(VERSION 3.0)
+
 
 # Create variable for plugin name
 set(PLUGIN_NAME "CMakePlugin")
@@ -53,9 +53,7 @@ file(GLOB SRCS "*.cpp")
 # Define the output - shared library
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
-if( USE_PCH AND MINGW )
-    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH )
-endif( USE_PCH AND MINGW )
+target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
 
 # Codelite plugins doesn't use the "lib" prefix.
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

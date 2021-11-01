@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
+# 3.16 and later is required so we can build CodeLite with PCH
+cmake_minimum_required(VERSION 3.16)
 
 #################################################################################################################################################################
 ##                                                                                                                                                              #
@@ -39,11 +40,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 ## Defaults
 #############################################
 project( "CodeLite" )
-if(APPLE)
-  execute_process(COMMAND make type=release os=osx clean WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/PCH)
-  execute_process(COMMAND make type=release os=osx WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/PCH)
-endif()
-
 
 if ( PREFIX ) # Apparently cmake uses $PREFIX internally, so we shouldn't set it ourselves
   message("**** Setting -DPREFIX is deprecated. Please use -DCL_PREFIX in future")
@@ -630,10 +626,6 @@ endif()
 ###########################################
 ## Add the folders, the order matters here
 ###########################################
-if ( USE_PCH )
-    add_subdirectory(PCH)
-endif()
-
 if ( APPLE )
     add_definitions( -mmacosx-version-min=10.8 )
 endif()
@@ -648,8 +640,10 @@ add_subdirectory(sdk/wxshapeframework)
 add_subdirectory(sdk/databaselayer)
 add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
+add_subdirectory(PCH)
 
 if(NOT NO_CORE_PLUGINS)
+    add_subdirectory(abbreviation)
     if(NOT DISABLE_CXX)
         add_subdirectory(Gizmos)
         add_subdirectory(Debugger)
@@ -661,9 +655,9 @@ if(NOT NO_CORE_PLUGINS)
         add_subdirectory(cscope)
         add_subdirectory(EOSWiki)
     endif()
+    add_subdirectory(AutoSave)
     add_subdirectory(CodeLiteDiff)
     add_subdirectory(git)
-    add_subdirectory(abbreviation)
     add_subdirectory(Outline)
     add_subdirectory(CodeFormatter)
     add_subdirectory(Copyright)
@@ -673,7 +667,6 @@ if(NOT NO_CORE_PLUGINS)
     add_subdirectory(Subversion2)
     add_subdirectory(ZoomNavigator)
     add_subdirectory(SpellChecker)
-    add_subdirectory(AutoSave)
     add_subdirectory(Tail)
     add_subdirectory(EditorConfigPlugin)
     add_subdirectory(PHPLint)

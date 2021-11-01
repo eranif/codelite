@@ -1,5 +1,5 @@
-# define minimum cmake version
-cmake_minimum_required(VERSION 3.0)
+
+
 
 # set the plugin name here
 set( PLUGIN_NAME "HelpPlugin")
@@ -45,9 +45,8 @@ FILE(GLOB SRCS "*.cpp")
 # Define the output
 add_library(${PLUGIN_NAME} SHARED ${SRCS})
 
-if( USE_PCH AND MINGW )
-    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH )
-endif( USE_PCH AND MINGW )
+target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

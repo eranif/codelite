@@ -1,5 +1,5 @@
-# define minimum cmake version
-cmake_minimum_required(VERSION 3.0)
+
+
 
 if ( WXC_APP )
     message("-- Building wxCrafter as a standalone executable ")
@@ -101,9 +101,7 @@ else ( NOT WXC_APP )
     add_executable(${PLUGIN_NAME} ${SRCS})
 endif ( NOT WXC_APP )
 
-if( USE_PCH AND MINGW )
-    target_precompile_headers(${PLUGIN_NAME} PRIVATE "wxcrafter_pch_release.h" )
-endif( USE_PCH AND MINGW )
+target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

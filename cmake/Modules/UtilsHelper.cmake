@@ -41,6 +41,68 @@ function(get_distro_name DISTRO_NAME)
     endif()
 endfunction()
 
+set(PCH_HEADERS_LIST
+    <wx/wxprec.h>
+    <wx/app.h>
+    <wx/artprov.h>
+    <wx/bitmap.h>
+    <wx/button.h>
+    <wx/checklst.h>
+    <wx/choice.h>
+    <wx/colour.h>
+    <wx/dialog.h>
+    <wx/ffile.h>
+    <wx/filedlg.h>
+    <wx/font.h>
+    <wx/frame.h>
+    <wx/gdicmn.h>
+    <wx/icon.h>
+    <wx/image.h>
+    <wx/imaggif.h>
+    <wx/imaglist.h>
+    <wx/intl.h>
+    <wx/log.h>
+    <wx/menu.h>
+    <wx/msgdlg.h>
+    <wx/notebook.h>
+    <wx/panel.h>
+    <wx/scrolwin.h>
+    <wx/settings.h>
+    <wx/sizer.h>
+    <wx/splitter.h>
+    <wx/statbox.h>
+    <wx/stattext.h>
+    <wx/statusbr.h>
+    <wx/string.h>
+    <wx/textctrl.h>
+    <wx/tooltip.h>
+    <wx/treectrl.h>
+    <wx/wupdlock.h>
+    <wx/xrc/xmlres.h>
+    <set>
+    <unordered_set>
+    <unordered_map>
+    <vector>
+    <list>
+    <map>
+    <memory>
+    )
+macro(codelite_add_exported_pch _TARGET_)
+    target_precompile_headers(
+        ${_TARGET_} 
+    PUBLIC
+        ${PCH_HEADERS_LIST}
+    )
+endmacro()
+
+macro(codelite_add_pch _TARGET_)
+    target_precompile_headers(
+        ${_TARGET_} 
+    PRIVATE
+        ${PCH_HEADERS_LIST}
+    )
+endmacro()
+
 # Determine if we are running on Windows using MSYS2 shell or using MinGW tools (but not using MSYS)
 if (UNIX)
     execute_process(COMMAND /bin/sh "-c" "uname -s|grep MSYS|cut -d_ -f1"

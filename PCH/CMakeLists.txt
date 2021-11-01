@@ -1,45 +1,14 @@
-# define minimum cmake version
-cmake_minimum_required(VERSION 3.0)
-
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles.
 project(PCH)
 
-if( USE_PCH AND NOT MINGW )
-
-set(os "")
-
-if(APPLE)
-    set(os "osx")
-endif()
-
-if ( CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull )
-    add_custom_target (
-        ${CL_PCH_TARGET} ALL
-        DEPENDS "${CL_PCH_FILE}"
-        COMMAND "$(MAKE)" type=debug os=$(os)
-        WORKING_DIRECTORY ${CL_SRC_ROOT}/PCH
-     )
-else()
-    add_custom_target (
-        ${CL_PCH_TARGET} ALL
-        DEPENDS "${CL_PCH_FILE}"
-        COMMAND "$(MAKE)" type=release os=$(os)
-        WORKING_DIRECTORY ${CL_SRC_ROOT}/PCH
-     )
-endif()
-
-message("-- Adding PCH ${CL_PCH_FILE} " )
-
-endif( USE_PCH AND NOT MINGW )
-
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
 
-FILE(GLOB SRCS "*.cpp")
-
+FILE(GLOB SRCS "dummy.cpp")
 add_library(PCH STATIC ${SRCS})
 
-if( USE_PCH AND MINGW )
-    target_precompile_headers(PCH PRIVATE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h" )
-endif( USE_PCH AND MINGW )
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" )
+
+# generate PCH for this project, we will reuse it later
+codelite_add_exported_pch(PCH)

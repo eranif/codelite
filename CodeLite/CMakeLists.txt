@@ -1,12 +1,6 @@
-# define minimum cmake version
-cmake_minimum_required(VERSION 3.0)
-
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles.
 project(libcodelite)
-
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-
 
 # wxWidgets include (this will do all the magic to configure everything)
 include( "${wxWidgets_USE_FILE}" )
@@ -112,9 +106,6 @@ FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp"
 
 # Define the output
 add_library(libcodelite SHARED ${SRCS})
-if( USE_PCH AND MINGW )
-    target_precompile_headers(libcodelite PRIVATE "libcodelite_pch.h" )
-endif( USE_PCH AND MINGW )
 target_link_libraries(libcodelite
                       ${LINKER_OPTIONS}
                       ${wxWidgets_LIBRARIES}
@@ -133,6 +124,8 @@ if(MINGW)
                           RUNTIME_OUTPUT_NAME codelite
                           ARCHIVE_OUTPUT_NAME codelite)
 endif()
+
+codelite_add_pch(libcodelite)
 
 if (NOT MINGW)
     if(APPLE)

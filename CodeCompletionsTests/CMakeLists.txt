@@ -1,5 +1,5 @@
-# define minimum cmake version
-cmake_minimum_required(VERSION 3.0)
+
+
 
 project(CxxCCTests)
 
@@ -40,9 +40,7 @@ FILE(GLOB SRCS "CCTest/*.cpp")
 # Define the output
 add_executable(CxxCCTests ${SRCS})
 
-if( USE_PCH AND MINGW )
-    target_precompile_headers(CxxCCTests REUSE_FROM PCH )
-endif( USE_PCH AND MINGW )
+target_precompile_headers(CxxCCTests REUSE_FROM abbreviation )
 
 # Remove the "lib" prefix from the plugin name
 target_link_libraries(CxxCCTests

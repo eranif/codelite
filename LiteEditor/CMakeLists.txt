@@ -1,5 +1,5 @@
-# define minimum cmake version
-cmake_minimum_required(VERSION 3.0)
+
+
 
 # Our project is called 'codelite' this is how it will be called in
 # visual studio, and in our makefiles.
@@ -50,9 +50,6 @@ add_executable(codelite ${SRCS} ${RES_FILES})
 set( ADDITIONAL_LIBRARIES "" )
 
 if(MINGW)
-    if ( USE_PCH )
-        target_precompile_headers(codelite PRIVATE "codelite_pch.h" )
-    endif()
     set_target_properties(codelite
                           PROPERTIES
                           OUTPUT_NAME codelite
@@ -80,6 +77,8 @@ elseif (GTK3_FOUND)
 else()
     target_link_libraries(codelite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${CLANG_LIBRARY} -L"${CL_LIBPATH}" libcodelite plugin ${ADDITIONAL_LIBRARIES})
 endif()
+
+codelite_add_pch(codelite)
 
 ##################################################################
 ## Install

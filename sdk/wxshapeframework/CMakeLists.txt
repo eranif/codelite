@@ -1,5 +1,5 @@
-# define minimum cmake version
-cmake_minimum_required(VERSION 3.0)
+
+
 
 # Our project is called 'wxshapeframework' this is how it will be called in
 # visual studio, and in our makefiles.
@@ -37,9 +37,8 @@ FILE(GLOB SRCS "src/*.cpp" "src/wxxmlserializer/*.cpp")
 
 # Define the output
 add_library(wxshapeframework SHARED ${SRCS})
-if( USE_PCH AND MINGW )
-    target_precompile_headers(wxshapeframework PRIVATE "${CL_SRC_ROOT}/sdk/wxshapeframework/src/wx_pch.h" )
-endif( USE_PCH AND MINGW )
+
+
 target_link_libraries(wxshapeframework ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
 
 if (NOT MINGW)

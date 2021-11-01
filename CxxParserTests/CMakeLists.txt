@@ -1,5 +1,5 @@
-# define minimum cmake version
-cmake_minimum_required(VERSION 3.0)
+
+
 
 project(CxxLocalVariables)
 
@@ -39,10 +39,7 @@ FILE(GLOB SRCS "*.cpp")
 
 # Define the output
 add_executable(CxxLocalVariables ${SRCS})
-
-if( USE_PCH AND MINGW )
-    target_precompile_headers(CxxLocalVariables REUSE_FROM PCH )
-endif( USE_PCH AND MINGW )
+target_precompile_headers(CxxLocalVariables REUSE_FROM abbreviation)
 
 # Remove the "lib" prefix from the plugin name
 target_link_libraries(CxxLocalVariables

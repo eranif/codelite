@@ -111,7 +111,7 @@ but `wx-common` contains `wxrc` so, if you use this, be aware that there may be 
 
 ## Fedora and openSUSE
 ---
-There are currently rpms available for fedora 33 and 34. openSUSE 15 provides its own wxWidgets 3.1.1 but is unlikely to update that to 3.1.5 so I've provided these too
+There are currently rpms available for fedora 33 and 34. Fedora 35 supplies official wx3.1.5 rpms (but our fedora 33 unofficial ones do also work). openSUSE 15 provides its own wxWidgets 3.1.1 but is unlikely to update that to 3.1.5 so I've provided these too
 
 Distro|Release|x86_64
 ------|-------|------

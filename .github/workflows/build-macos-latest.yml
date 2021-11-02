@@ -16,11 +16,8 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        compiler: [gcc, clang]
+        compiler: [clang]
         include:
-          - compiler: gcc
-            cc: gcc
-            cxx: g++
           - compiler: clang
             cc: clang
             cxx: clang++

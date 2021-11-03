@@ -1003,6 +1003,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
             1);
     }
 
+    if(lexer->GetName() == "python") {
+        AddLexerKeywords(lexer, 0, { "await", "async" });
+    }
+
     if(lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*akefile.in;*akefile.am");
     }

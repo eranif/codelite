@@ -13,9 +13,6 @@ clPythonLocator::~clPythonLocator() {}
 
 bool clPythonLocator::Locate()
 {
-#ifdef __WXMSW__
-    return MSWLocate();
-#else
     wxFileName exepath;
     wxFileName pippath;
     // Search for python3 before we search for python2
@@ -36,11 +33,16 @@ bool clPythonLocator::Locate()
         if(::clFindExecutable("pip", exepath)) {
             m_pip = pippath.GetFullPath();
         } else {
+#ifdef __WXMSW__
+            // try the windows way using registry
+            if(MSWLocate()) {
+                return true;
+            }
+#endif
             return false;
         }
     }
     return exepath.FileExists();
-#endif
 }
 
 bool clPythonLocator::MSWLocate()
@@ -48,7 +50,9 @@ bool clPythonLocator::MSWLocate()
 #ifdef __WXMSW__
     clRegistery reg("SOFTWARE\\Python\\PythonCore");
     wxString child = reg.GetFirstChild();
-    if(child.IsEmpty()) { return false; }
+    if(child.IsEmpty()) {
+        return false;
+    }
 
     clRegistery regChild(child + "\\InstallPath");
     m_python = regChild.ReadValueString("ExecutablePath");

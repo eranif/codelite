@@ -352,7 +352,6 @@ std::string typedef_consumBracketsContent(char openBrace)
 void typedef_consumeDefaultValue(char c1, char c2)
 {
 	int depth = 0;
-	bool cont(true);
 
 	while (depth >= 0) {
     	int ch = cl_scope_lex();

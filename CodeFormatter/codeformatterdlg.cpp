@@ -460,7 +460,7 @@ void CodeFormatterDlg::OnExportClangFormatFile(wxCommandEvent& event)
     if(m_mgr->IsWorkspaceOpen()) {
         defaultDir = m_mgr->GetWorkspace()->GetFileName().GetPath();
     }
-    wxString path = ::wxDirSelector(_("Export .clang-format file..."));
+    wxString path = ::wxDirSelector(_("Export .clang-format file..."), defaultDir);
     if(path.empty()) {
         return;
     }
@@ -473,7 +473,7 @@ void CodeFormatterDlg::OnExportClangFormatFile(wxCommandEvent& event)
         }
     }
 
-    if(!m_options.ExportClangFormatFile(clang_format.GetFullPath())) {
+    if(!m_options.ExportClangFormatFile(clang_format)) {
         ::wxMessageBox(_("Failed to save file:\n") + clang_format.GetFullPath(), _("Source Code Formatter"),
                        wxOK | wxICON_ERROR);
     }

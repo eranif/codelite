@@ -4,20 +4,16 @@
 #include "clWorkspaceManager.h"
 #include "cl_config.h"
 #include "debuggermanager.h"
+#include "macros.h"
 #include "wxStringHash.h"
 #include <globals.h>
 #include <unordered_set>
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>
 
-#define CONFIG_LAST_SELECTED_CATEGORY "NewProject/LastCategory"
-#define CONFIG_LAST_SELECTED_TYPE "NewProject/LastType"
-#define CONFIG_USE_SEPARATE_FOLDER "NewProjectDialog/UseSeparateFolder"
-#define CONFIG_LAST_COMPILER "NewProjectDialog/LastCompiler"
-#define CONFIG_LAST_DEBUGGER "NewProjectDialog/LastDebugger"
-#define CONFIG_LAST_BUILD_SYSTEM "NewProjectDialog/LastBuildSystem"
-
-static bool SetChoiceOptions(wxChoice* choice, const wxArrayString& values, const wxString& defaultValue)
+namespace
+{
+bool SetChoiceOptions(wxChoice* choice, const wxArrayString& values, const wxString& defaultValue)
 {
     int match = wxNOT_FOUND;
     choice->Clear();
@@ -33,6 +29,14 @@ static bool SetChoiceOptions(wxChoice* choice, const wxArrayString& values, cons
     }
     return (match != wxNOT_FOUND);
 }
+wxString GENRATOR_UNIX = "CodeLite Makefile Generator - UNIX";
+wxString CONFIG_LAST_SELECTED_CATEGORY = "NewProject/LastCategory";
+wxString CONFIG_LAST_SELECTED_TYPE = "NewProject/LastType";
+wxString CONFIG_USE_SEPARATE_FOLDER = "NewProjectDialog/UseSeparateFolder";
+wxString CONFIG_LAST_COMPILER = "NewProjectDialog/LastCompiler";
+wxString CONFIG_LAST_DEBUGGER = "NewProjectDialog/LastDebugger";
+wxString CONFIG_LAST_BUILD_SYSTEM = "NewProjectDialog/LastBuildSystem";
+} // namespace
 
 NewProjectDialog::NewProjectDialog(wxWindow* parent)
     : NewProjectDialogBase(parent)
@@ -210,10 +214,17 @@ void NewProjectDialog::OnOK(wxCommandEvent& event)
 
 void NewProjectDialog::OnCompilerChanged(wxCommandEvent& event)
 {
-    static const wxString GENRATOR_UNIX = "CodeLite Makefile Generator - UNIX";
-
+    wxUnusedVar(event);
     wxString newCompiler = m_choiceCompiler->GetStringSelection();
-    if(newCompiler.Contains("MSYS") && m_choiceBuild->GetStringSelection() != GENRATOR_UNIX) {
+
+    auto compiler = BuildSettingsConfigST::Get()->GetCompiler(newCompiler);
+    CHECK_PTR_RET(compiler);
+
+    // Check if the selected compiler is "MSYS", however, its not from the mingwNN repository
+    wxString cxx = compiler->GetTool("CXX");
+    bool isUnixGeneratorRequired = newCompiler.Contains("MSYS") && !cxx.Contains("mingw64") && !cxx.Contains("mingw32");
+
+    if(isUnixGeneratorRequired && m_choiceBuild->GetStringSelection() != GENRATOR_UNIX) {
         if(::wxMessageBox(
                _("MSYS based compiler requires a UNIX Makefile Generator\nWould like CodeLite to fix this for you?"),
                "CodeLite", wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT) != wxYES) {

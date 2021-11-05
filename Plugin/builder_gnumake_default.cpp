@@ -1146,13 +1146,14 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
 
     // Expand the build macros into the generated makefile
     wxString projectName = proj->GetName();
-    wxString projectpath, workspacepath, startupdir;
+    wxString projectpath, workspacepath, startupdir, intermediatedir;
     workspacepath = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();
     projectpath = proj->GetFileName().GetPath();
     startupdir = clCxxWorkspaceST::Get()->GetStartupDir();
     workspacepath.Replace("\\", "/");
     projectpath.Replace("\\", "/");
     startupdir.Replace("\\", "/");
+    intermediatedir = GetIntermediateFolder(proj, workspacepath);
 
     wxFileName fnOutputFile(GetOutputFolder(proj, bldConf), outputFile.AfterLast('/'));
     outputFile = fnOutputFile.GetFullPath();
@@ -1163,8 +1164,8 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << "WorkspaceConfiguration := $(ConfigurationName)\n";
     text << "WorkspacePath          :=" << ::WrapWithQuotes(workspacepath) << "\n";
     text << "ProjectPath            :=" << ::WrapWithQuotes(projectpath) << "\n";
-    text << "IntermediateDirectory  :=" << GetIntermediateFolder(proj, workspacepath) << "\n";
-    text << "OutDir                 :=" << GetIntermediateFolder(proj, workspacepath) << "\n";
+    text << "IntermediateDirectory  :=" << intermediatedir << "\n";
+    text << "OutDir                 :=" << intermediatedir << "\n";
     text << "CurrentFileName        :=\n";
     text << "CurrentFilePath        :=\n";
     text << "CurrentFileFullPath    :=\n";

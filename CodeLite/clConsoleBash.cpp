@@ -42,9 +42,9 @@ wxFileName clConsoleBash::PrepareExecScript() const
             for(size_t i = 0; i < arr.size(); ++i) {
                 fileContent << "args[" << i << "]=\"" << arr[i] << "\"\n";
             }
-            fileContent << cdCommand << "${command} \"${args[@]}\"\n";
+            fileContent << cdCommand << "\"${command}\" \"${args[@]}\"\n";
         } else {
-            fileContent << cdCommand << "${command}\n";
+            fileContent << cdCommand << "\"${command}\"\n";
         }
         if(IsWaitWhenDone()) {
             fileContent << "echo Hit any key to continue...\nread";

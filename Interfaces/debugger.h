@@ -228,7 +228,7 @@ public:
         arch.Write(wxT("useRelativeFilePaths"), useRelativeFilePaths);
         arch.Write(wxT("maxCallStackFrames"), maxCallStackFrames);
         arch.Write(wxT("catchThrow"), catchThrow);
-        arch.Write(wxT("showTooltips"), showTooltipsOnlyWithControlKeyIsDown);
+        arch.Write(wxT("showTooltipsOnlyWithControlKeyIsDown"), showTooltipsOnlyWithControlKeyIsDown);
         arch.Write(wxT("debugAsserts"), debugAsserts);
         arch.WriteCData(wxT("startupCommands"), initFileCommands);
         arch.Write(wxT("maxDisplayStringSize"), maxDisplayStringSize);
@@ -237,11 +237,11 @@ public:
         arch.Write(wxT("autoExpandTipItems"), autoExpandTipItems);
         arch.Write(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
         arch.Write(wxT("whenBreakpointHitRaiseCodelite"), whenBreakpointHitRaiseCodelite);
-        arch.Write(wxT("cygwinPathCommand"), cygwinPathCommand);
         arch.Write(wxT("charArrAsPtr"), charArrAsPtr);
         arch.Write(wxT("enableGDBPrettyPrinting"), enableGDBPrettyPrinting);
         arch.Write(wxT("defaultHexDisplay"), defaultHexDisplay);
         arch.Write("flags", flags);
+        arch.Write(wxT("cygwinPathCommand"), cygwinPathCommand);
     }
 
     void DeSerialize(Archive& arch)

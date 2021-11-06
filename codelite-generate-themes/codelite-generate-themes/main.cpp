@@ -11,6 +11,8 @@
 #include <wx/init.h>
 #include <wx/string.h>
 
+using namespace std;
+
 int main(int argc, char** argv)
 {
     // initialize wxWidgets

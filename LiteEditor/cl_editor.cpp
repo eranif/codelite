@@ -6139,10 +6139,13 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
 #if wxCHECK_VERSION(3, 1, 2)
     case wxSTC_LEX_RUST:
         clDEBUG1() << "SetSemantics is called for: wxSTC_LEX_RUST" << endl;
-        keywords_class = 3;     // wxSTC_RUST_WORD4 - 1 (0 based)
-        keywords_variables = 4; // wxSTC_RUST_WORD5  - 1(0 based)
+        keywords_class = 3;
+        keywords_variables = 4;
         break;
 #endif
+    case wxSTC_LEX_PYTHON:
+        keywords_variables = 1;
+        break;
     default:
         break;
     }

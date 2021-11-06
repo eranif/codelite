@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "syntaxhighlightdlg.h"
 #include "ColoursAndFontsManager.h"
 #include "EclipseCXXThemeImporter.h"
 #include "EclipseThemeImporterManager.h"
@@ -41,7 +42,6 @@
 #include "free_text_dialog.h"
 #include "macros.h"
 #include "manager.h"
-#include "syntaxhighlightdlg.h"
 #include "theme_handler.h"
 #include "windowattrmanager.h"
 #include <algorithm>
@@ -685,15 +685,18 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
     // Ask for confirmation
     if(::wxMessageBox(_("Are you sure you want to restore colours to factory defaults?\nBy choosing 'Yes', you will "
                         "lose all your local modifications"),
-                      _("Confirm"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER, this) == wxYES) {
-        // Restore defaults
-        ColoursAndFontsManager::Get().RestoreDefaults();
-        // Dismiss the dialog
-        EndModal(wxID_OK);
-        // and reload it
-        wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
-        clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
+                      _("Confirm"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER, this) != wxYES) {
+        return;
     }
+
+    // Restore defaults
+    ColoursAndFontsManager::Get().RestoreDefaults();
+
+    // Dismiss the dialog
+    EndModal(wxID_OK);
+    // and reload it
+    wxCommandEvent openEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("syntax_highlight"));
+    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(openEvent);
 }
 
 void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)

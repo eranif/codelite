@@ -2,11 +2,11 @@
 <CodeLite_Workspace Name="codelite-generate-themes" Database="" Version="10000">
   <Project Name="codelite-generate-themes" Path="codelite-generate-themes/codelite-generate-themes.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug">
       <Environment/>
       <Project Name="codelite-generate-themes" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="yes">
+    <WorkspaceConfiguration Name="Release">
       <Environment/>
       <Project Name="codelite-generate-themes" ConfigName="Release"/>
     </WorkspaceConfiguration>

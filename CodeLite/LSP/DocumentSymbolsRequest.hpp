@@ -9,8 +9,13 @@ namespace LSP
 {
 class WXDLLIMPEXP_CL DocumentSymbolsRequest : public LSP::Request
 {
+    // Some LSPs do not provide semanticTokensProvider support
+    // we work around it by using this message to get list of
+    // symbols in the current document
+    bool m_forSemanticHighlight = false;
+
 public:
-    explicit DocumentSymbolsRequest(const wxString& filename);
+    explicit DocumentSymbolsRequest(const wxString& filename, bool forSemanticHighlight);
     virtual ~DocumentSymbolsRequest();
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };

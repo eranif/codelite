@@ -652,10 +652,15 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     m_state = kInitialized;
 
                     // Keep the semantic tokens array
-                    m_semanticTokensTypes =
-                        res["result"]["capabilities"]["semanticTokensProvider"]["legend"]["tokenTypes"].toArrayString();
+                    if(CheckCapability(res, "semanticTokensProvider", "textDocument/semanticTokens/full")) {
+                        m_semanticTokensTypes =
+                            res["result"]["capabilities"]["semanticTokensProvider"]["legend"]["tokenTypes"]
+                                .toArrayString();
+                        clDEBUG() << GetLogPrefix() << "Server semantic tokens are:" << m_semanticTokensTypes << endl;
+                    }
 
-                    clDEBUG() << GetLogPrefix() << "Server semantic tokens are:" << m_semanticTokensTypes << endl;
+                    CheckCapability(res, "documentSymbolProvider", "textDocument/documentSymbol");
+
                     clDEBUG() << GetLogPrefix() << "Sending InitializedNotification" << endl;
 
                     LSP::InitializedNotification::Ptr_t initNotification =
@@ -710,17 +715,18 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
     if(CanHandle(GetEditorFilePath(editor))) {
         // this event is ours to handle
         event.Skip(false);
-        DocumentSymbols(editor);
+        DocumentSymbols(editor, false);
     }
 }
 
-void LanguageServerProtocol::DocumentSymbols(IEditor* editor)
+void LanguageServerProtocol::DocumentSymbols(IEditor* editor, bool forSemanticHighlight)
 {
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     const wxString& filename = GetEditorFilePath(editor);
-    LSP::MessageWithParams::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename));
+    LSP::MessageWithParams::Ptr_t req =
+        LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename, forSemanticHighlight));
     QueueMessage(req);
 }
 
@@ -762,12 +768,17 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     // check if this is implemented by the server
-    if(m_unimplementedMethods.count("textDocument/semanticTokens/full"))
-        return;
-    clDEBUG1() << "Sending semantic tokens request for file:" << GetEditorFilePath(editor) << endl;
-    LSP::DidChangeTextDocumentRequest::Ptr_t req =
-        LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
-    QueueMessage(req);
+    if(IsSemanticTokensSupported()) {
+        clDEBUG() << GetLogPrefix() << "Sending semantic tokens request" << endl;
+        LSP::DidChangeTextDocumentRequest::Ptr_t req =
+            LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
+        QueueMessage(req);
+
+    } else if(IsDocumentSymbolsSupported()) {
+        clDEBUG() << GetLogPrefix() << "Sending semantic tokens request (DocumentSymbols)" << endl;
+        // use DocumentSymbol instead
+        DocumentSymbols(editor, true);
+    }
 }
 
 void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)
@@ -874,6 +885,31 @@ void LanguageServerProtocol::OnSemanticHighlights(clCodeCompletionEvent& event)
     event.Skip(false); // don't let other services to handle this event
     OpenEditor(editor);
     SendSemanticTokensRequest(editor);
+}
+
+bool LanguageServerProtocol::CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName,
+                                             const wxString& lspRequestName)
+{
+    bool capabilitySupported = res["result"]["capabilities"].hasNamedObject(capabilityName);
+    if(!capabilitySupported) {
+        m_unimplementedMethods.insert(lspRequestName);
+    }
+    return capabilitySupported;
+}
+
+bool LanguageServerProtocol::IsCapabilitySupported(const wxString& name) const
+{
+    return m_unimplementedMethods.count(name) == 0;
+}
+
+bool LanguageServerProtocol::IsDocumentSymbolsSupported() const
+{
+    return IsCapabilitySupported("textDocument/documentSymbol");
+}
+
+bool LanguageServerProtocol::IsSemanticTokensSupported() const
+{
+    return IsCapabilitySupported("textDocument/semanticTokens/full");
 }
 
 //===------------------------------------------------------------------

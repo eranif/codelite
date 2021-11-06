@@ -40,6 +40,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
     Bind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
     Bind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
 }
@@ -64,6 +65,7 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
     Unbind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
     Unbind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
 }
 
 void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages)
@@ -595,4 +597,40 @@ void LanguageServerCluster::OnLogMessage(LSPEvent& event)
 {
     event.Skip();
     m_plugin->LogMessage(event.GetServerName(), event.GetMessage(), event.GetLogMessageSeverity());
+}
+
+void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
+{
+    clDEBUG() << "LanguageServerCluster::OnDocumentSymbolsForHighlight called for file:" << event.GetFileName() << endl;
+    IEditor* editor = FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+
+    const auto& symbols = event.GetSymbolsInformation();
+    wxString classes, variables;
+    for(const auto& si : symbols) {
+        switch(si.GetKind()) {
+        case LSP::kSK_Module:
+        case LSP::kSK_Namespace:
+        case LSP::kSK_Package:
+        case LSP::kSK_Class:
+        case LSP::kSK_Enum:
+        case LSP::kSK_Interface:
+        case LSP::kSK_Struct:
+        case LSP::kSK_Object:
+            classes << si.GetName() << " ";
+            break;
+        case LSP::kSK_EnumMember:
+        case LSP::kSK_Property:
+        case LSP::kSK_Field:
+        case LSP::kSK_Variable:
+        case LSP::kSK_Constant:
+            variables << si.GetName() << " ";
+        default:
+            break;
+        }
+    }
+    clDEBUG() << "Setting semantich highlight:" << endl;
+    clDEBUG() << "Classes  :" << classes << endl;
+    clDEBUG() << "Variables:" << variables << endl;
+    editor->SetSemanticTokens(classes, variables);
 }

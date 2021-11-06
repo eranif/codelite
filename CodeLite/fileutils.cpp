@@ -881,7 +881,7 @@ wxString FileUtils::FilePathFromURI(const wxString& uri)
         }
 #endif
         rest = DecodeURI(rest);
-        clDEBUG() << "FilePathFromURI:" << uri << "->" << rest << endl;
+        clDEBUG1() << "FilePathFromURI:" << uri << "->" << rest << endl;
         return rest;
     } else {
         return uri;

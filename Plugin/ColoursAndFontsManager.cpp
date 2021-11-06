@@ -109,6 +109,8 @@ void AddLexerKeywords(LexerConf::Ptr_t lexer, int setIndex, const std::vector<wx
     }
     lexer->SetKeyWords(curwords, setIndex);
 }
+
+wxString DEFAULT_THEME = "Atom One-Dark";
 } // namespace
 
 class clCommandEvent;
@@ -192,13 +194,13 @@ void ColoursAndFontsManager::Load()
         return;
     m_lexersMap.clear();
     m_initialized = true;
-    m_globalTheme = "Default";
+    m_globalTheme = DEFAULT_THEME;
 
     // Load the global settings
     if(GetConfigFile().FileExists()) {
         JSON root(GetConfigFile());
         if(root.isOk()) {
-            m_globalTheme = root.toElement().namedObject("m_globalTheme").toString("Default");
+            m_globalTheme = root.toElement().namedObject("m_globalTheme").toString("Atom One-Dark");
         }
     }
 
@@ -392,7 +394,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
             if(!firstLexer) {
                 firstLexer = lexer;
             }
-            if(!defaultLexer && lexer->GetThemeName() == "Default") {
+            if(!defaultLexer && lexer->GetThemeName() == DEFAULT_THEME) {
                 defaultLexer = lexer;
             }
             if(!defaultDarkLexer && lexer->IsDark()) {
@@ -416,7 +418,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
             // return the first light lexer for this language
             return defaultLightLexer;
         } else if(defaultLexer) {
-            // return the lexer that matches the "Default" theme
+            // return the lexer that matches the DEFAULT_THEME theme
             return defaultLexer;
         } else if(firstLexer) {
             // return the first one that we found
@@ -430,14 +432,14 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         LexerConf::Ptr_t themeDefaultLexer = nullptr;
         for(size_t i = 0; i < lexers.size(); ++i) {
-            if(lexers[i]->GetThemeName() == "Default") {
+            if(lexers[i]->GetThemeName() == DEFAULT_THEME) {
                 themeDefaultLexer = lexers[i];
             }
             if(lexers[i]->GetThemeName() == theme) {
                 return lexers[i];
             }
         }
-        // We failed to find the requested theme for this language. If we have a "Default"
+        // We failed to find the requested theme for this language. If we have a DEFAULT_THEME
         // lexer, return it, else use the minimal lexer ("m_defaultLexer")
         return (themeDefaultLexer ? themeDefaultLexer : m_defaultLexer);
     }
@@ -501,7 +503,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
             } else if(!firstLexer) {
                 firstLexer = *iter;
 
-            } else if(!defaultLexer && (*iter)->GetThemeName() == "Default") {
+            } else if(!defaultLexer && (*iter)->GetThemeName() == DEFAULT_THEME) {
                 defaultLexer = *iter;
             }
         }
@@ -623,6 +625,9 @@ LexerConf::Ptr_t ColoursAndFontsManager::CopyTheme(const wxString& lexerName, co
 
 void ColoursAndFontsManager::RestoreDefaults()
 {
+    wxFont font = GetGlobalFont();
+    wxString globalTheme = GetGlobalTheme();
+
     // First we delete the user settings
     {
         wxLogNull noLog;
@@ -634,6 +639,9 @@ void ColoursAndFontsManager::RestoreDefaults()
 
     // Now, we simply reload the settings
     Reload();
+
+    SetGlobalFont(font);
+    SetGlobalTheme(globalTheme);
 }
 
 wxString ColoursAndFontsManager::ImportEclipseTheme(const wxString& eclipseXml)
@@ -1004,7 +1012,17 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     if(lexer->GetName() == "python") {
-        AddLexerKeywords(lexer, 0, { "await", "async" });
+        AddLexerKeywords(lexer, 0, { "await", "async", "True", "False", "None", "pass" });
+        lexer->SetKeyWords("", 1);
+        lexer->SetKeyWords("", 2);
+        lexer->SetKeyWords("", 3);
+        lexer->SetKeyWords("", 4);
+        auto& sp_word_0 = lexer->GetProperty(wxSTC_P_WORD);
+        auto& sp_word_2 = lexer->GetProperty(wxSTC_P_WORD2);
+        if(sp_word_2.GetFgColour() == sp_word_0.GetFgColour()) {
+            // old configuration, dont set the variables fg colour to the same colour as the keywords
+            sp_word_2.SetFgColour(lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour());
+        }
     }
 
     if(lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
@@ -1015,7 +1033,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     UpdateLexerColours(lexer, false);
 
     if(m_lexersMap.count(lexerName) == 0) {
-        m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
+        m_lexersMap.insert({ lexerName, ColoursAndFontsManager::Vec_t() });
     }
 
     ColoursAndFontsManager::Vec_t& vec = m_lexersMap.find(lexerName)->second;

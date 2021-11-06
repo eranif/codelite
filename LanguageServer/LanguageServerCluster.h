@@ -61,6 +61,7 @@ protected:
     void OnOutlineSymbols(LSPEvent& event);
     void OnSemanticTokens(LSPEvent& event);
     void OnLogMessage(LSPEvent& event);
+    void OnDocumentSymbolsForHighlight(LSPEvent& event);
     void OnBuildEnded(clBuildEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     /**

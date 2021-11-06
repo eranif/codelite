@@ -1449,7 +1449,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 
     if(m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
         // Last action failed, clear queue
-        clWARNING() << "[git]" << m_commandOutput << clEndl;
+        clDEBUG1() << "[git]" << m_commandOutput << clEndl;
         static std::unordered_set<int> recoverableActions = { gitBlameSummary };
         DoRecoverFromGitCommandError(recoverableActions.count(ga.action) == 0);
         GetConsole()->ShowLog();

@@ -1,5 +1,5 @@
-#include "ColoursAndFontsManager.h"
 #include "EclipseThemeImporterBase.h"
+#include "ColoursAndFontsManager.h"
 #include "cl_standard_paths.h"
 #include "drawingutils.h"
 #include "globals.h"
@@ -87,6 +87,9 @@ LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& ec
 
     if(!GetProperty("javadocKeyword", m_javadocKeyword)) {
         m_javadocKeyword = m_multiLineComment;
+    }
+    if(!GetProperty("method", m_function)) {
+        m_function = m_foreground;
     }
 
     m_oper = m_foreground;

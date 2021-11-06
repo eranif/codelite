@@ -89,6 +89,7 @@ protected:
     void OnSemanticHighlights(clCodeCompletionEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
+    bool CheckCapability(const LSP::ResponseMessage &res, const wxString& capabilityName, const wxString& lspRequestName);
 
 protected:
     void DoClear();
@@ -148,8 +149,6 @@ public:
      * @brief return the semantic token at a given index
      */
     const wxString& GetSemanticToken(size_t index) const;
-
-    bool IsSemanticTokensSupported() const { return !m_semanticTokensTypes.empty(); }
 
     LanguageServerProtocol& SetDisaplayDiagnostics(bool disaplayDiagnostics)
     {
@@ -241,7 +240,12 @@ public:
     /**
      * @brief get list of symbols for the current editor
      */
-    void DocumentSymbols(IEditor* editor);
+    void DocumentSymbols(IEditor* editor, bool forSemanticHighlight);
+
+    // helpers
+    bool IsCapabilitySupported(const wxString& name) const;
+    bool IsDocumentSymbolsSupported() const;
+    bool IsSemanticTokensSupported() const;
 };
 
 #endif // CLLANGUAGESERVER_H

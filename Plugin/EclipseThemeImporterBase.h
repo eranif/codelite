@@ -71,6 +71,7 @@ protected:
     Property m_variable;
     Property m_javadoc;
     Property m_javadocKeyword;
+    Property m_function;
     wxString m_langName;
 
 protected:

@@ -3,7 +3,8 @@
 #include "file_logger.h"
 #include "json_rpc_params.h"
 
-LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxString& filename)
+LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxString& filename, bool forSemanticHighlight)
+    : m_forSemanticHighlight(forSemanticHighlight)
 {
     SetMethod("textDocument/documentSymbol");
     // set the params
@@ -21,7 +22,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
         return;
     }
 
-    clDEBUG() << result.format() << clEndl;
+    clDEBUG1() << result.format() << clEndl;
     if(result.isArray()) {
         int size = result.arraySize();
         if(size == 0) {
@@ -30,8 +31,10 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
 
         if(result[0].hasNamedObject("containerName")) {
             // fire an event with all the symbols
-            LSPEvent event(wxEVT_LSP_DOCUMENT_SYMBOLS);
+            LSPEvent event(m_forSemanticHighlight ? wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT
+                                                  : wxEVT_LSP_DOCUMENT_SYMBOLS);
             event.GetSymbolsInformation().reserve(size);
+            event.SetFileName(m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath());
             for(int i = 0; i < size; ++i) {
                 SymbolInformation si;
                 si.FromJSON(result[i]);
@@ -40,6 +43,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
             owner->QueueEvent(event.Clone());
         } else {
             std::vector<DocumentSymbol> symbols;
+            symbols.reserve(size);
             for(int i = 0; i < size; ++i) {
                 DocumentSymbol ds;
                 ds.FromJSON(result[i]);

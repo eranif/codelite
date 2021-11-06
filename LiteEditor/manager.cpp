@@ -3703,13 +3703,24 @@ void Manager::OnBuildStarting(clBuildEvent& event)
 
         // User mapped the old compilers with new ones -> create an alias between the actual compiler and the
         wxStringMap_t table = dlg.GetReplacementTable();
+        wxString defaultCompiler;
 
         // Clone each compiler
         wxStringMap_t::iterator iterTable = table.begin();
         for(; iterTable != table.end(); ++iterTable) {
+            // We can't create a compiler without name, so we'll try to adjust the project setting instead
+            if(iterTable->first.IsEmpty()) {
+                defaultCompiler = iterTable->second;
+                continue;
+            }
             CompilerPtr pCompiler = BuildSettingsConfigST::Get()->GetCompiler(iterTable->second);
             pCompiler->SetName(iterTable->first);
             BuildSettingsConfigST::Get()->SetCompiler(pCompiler);
+        }
+
+        // For projects with no valid compiler set, replace them with the one specified by user
+        if(!defaultCompiler.IsEmpty()) {
+            clCxxWorkspaceST::Get()->ReplaceCompilers({ { "", defaultCompiler } });
         }
 
         // Prompt the user and cancel the build

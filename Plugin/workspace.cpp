@@ -1174,7 +1174,7 @@ void clCxxWorkspace::GetCompilers(wxStringSet_t& compilers)
     }
 }
 
-void clCxxWorkspace::ReplaceCompilers(wxStringMap_t& compilers)
+void clCxxWorkspace::ReplaceCompilers(const wxStringMap_t& compilers)
 {
     clCxxWorkspace::ProjectMap_t::iterator iter = m_projects.begin();
     for(; iter != m_projects.end(); ++iter) {

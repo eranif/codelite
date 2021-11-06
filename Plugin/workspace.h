@@ -193,7 +193,7 @@ public:
      * @brief replace compilers for all projects and build configurations
      * @param compilers a map of compilers where the key is the old compiler and the value is the new compiler
      */
-    void ReplaceCompilers(wxStringMap_t& compilers);
+    void ReplaceCompilers(const wxStringMap_t& compilers);
 
     /**
      * Returns the workspace file name

@@ -140,7 +140,6 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
     projSettingsPtr->SetProjectType(GetPropertyAsString(m_pgPropProjectType));
     buildConf->SetBuildSystemArguments(GetPropertyAsString(m_pgPropMakeGeneratorArgs));
     buildConf->SetBuildSystem(GetPropertyAsString(m_pgPropMakeGenerator));
-    buildConf->SetCompilerType(GetPropertyAsString(m_pgPropCompiler));
     buildConf->SetDebuggerType(GetPropertyAsString(m_pgPropDebugger));
     buildConf->SetPauseWhenExecEnds(GetPropertyAsBool(m_pgPropPause));
     buildConf->SetProjectType(GetPropertyAsString(m_pgPropProjectType));
@@ -148,6 +147,12 @@ void PSGeneralPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettin
     buildConf->SetIsGUIProgram(GetPropertyAsBool(m_pgPropGUIApp));
     buildConf->SetIsProjectEnabled(m_checkBoxEnabled->IsChecked());
     buildConf->SetUseSeparateDebugArgs(GetPropertyAsBool(m_pgPropUseSeparateDebuggerArgs));
+
+    // Do not set an empty compiler, this will be prompted later by the CompilersModifiedDlg
+    wxString compilerType = GetPropertyAsString(m_pgPropCompiler);
+    if(!compilerType.IsEmpty()) {
+        buildConf->SetCompilerType(compilerType);
+    }
 }
 
 void PSGeneralPage::Clear()

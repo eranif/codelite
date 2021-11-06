@@ -409,7 +409,7 @@ public:
      * @brief replace compilers by name. compilers contains a map of the "olbd" compiler
      * name and the new compiler name
      */
-    void ReplaceCompilers(wxStringMap_t& compilers);
+    void ReplaceCompilers(const wxStringMap_t& compilers);
 
     /**
      * @brief the const version of the above

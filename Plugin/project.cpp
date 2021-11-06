@@ -1619,7 +1619,7 @@ void Project::GetCompilers(wxStringSet_t& compilers)
     }
 }
 
-void Project::ReplaceCompilers(wxStringMap_t& compilers)
+void Project::ReplaceCompilers(const wxStringMap_t& compilers)
 {
     ProjectSettingsPtr pSettings = GetSettings();
     CHECK_PTR_RET(pSettings);

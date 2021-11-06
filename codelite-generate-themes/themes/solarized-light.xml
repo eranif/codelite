@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="1013" name="Solarized Light" modified="2011-04-02 23:38:38" author="George" website="http://ethanschoonover.com/solarized">
+    <searchResultIndication color="#ECE7D5" />
+    <filteredSearchResultIndication color="#ECE7D5" />
+    <occurrenceIndication color="#ECE7D5" />
+    <writeOccurrenceIndication color="#ECE7D5" />
+    <findScope color="#BCADAD" />
+    <deletionIndication color="#657A81" />
+    <sourceHoverBackground color="#ECE7D5" />
+    <singleLineComment color="#93A1A1" bold="false" italic="true" />
+    <multiLineComment color="#586E75" italic="true" />
+    <commentTaskTag color="#D33682" italic="true" />
+    <javadoc color="#586E75" italic="false" />
+    <javadocLink color="#D30102" underline="false" strikethrough="false" />
+    <javadocTag color="#D30102" />
+    <javadocKeyword color="#D30102" />
+    <class color="#657A81" />
+    <interface color="#657A81" />
+    <method color="#657A81" />
+    <methodDeclaration color="#657A81" />
+    <bracket color="#657A81" />
+    <number color="#2AA198" />
+    <string color="#2AA198" />
+    <operator color="#657A81" />
+    <keyword color="#B58900" bold="false" />
+    <annotation color="#D30102" />
+    <staticMethod color="#657A81" />
+    <localVariable color="#657A81" />
+    <localVariableDeclaration color="#657A81" />
+    <field color="#657A81" />
+    <staticField color="#657A81" />
+    <staticFinalField color="#657A81" />
+    <deprecatedMember color="#657A81" />
+    <enum color="#657A81" />
+    <inheritedMethod color="#657A81" />
+    <abstractMethod color="#657A81" />
+    <parameterVariable color="#657A81" />
+    <typeArgument color="#657A81" />
+    <typeParameter color="#657A81" />
+    <constant color="#00FF00" />
+    <background color="#FDF6E3" />
+    <currentLine color="#FDF6E3" />
+    <foreground color="#657A81" />
+    <lineNumber color="#586E75" />
+    <selectionBackground color="#ECE7D5" />
+    <selectionForeground color="#596D73" />
+</colorTheme>

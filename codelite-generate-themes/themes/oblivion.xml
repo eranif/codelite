@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="1" name="Oblivion" modified="2011-04-28 07:41:35" author="Roger Dudler" website="http://www.rogerdudler.com/?p=362">
+    <searchResultIndication color="#000000" />
+    <filteredSearchResultIndication color="#000000" />
+    <occurrenceIndication color="#000000" />
+    <writeOccurrenceIndication color="#000000" />
+    <findScope color="#111111" />
+    <deletionIndication color="#D25252" />
+    <sourceHoverBackground color="#000000" />
+    <singleLineComment color="#C7DD0C" italic="false" />
+    <multiLineComment color="#C7DD0C" italic="false" />
+    <commentTaskTag color="#CCDF32" italic="false" />
+    <javadoc color="#CCDF32" italic="false" />
+    <javadocLink color="#D9E577" italic="false" />
+    <javadocTag color="#D9E577" italic="false" />
+    <javadocKeyword color="#D9E577" italic="false" />
+    <class color="#D25252" bold="false" underline="false" strikethrough="false" />
+    <interface color="#D197D9" />
+    <method color="#FFFFFF" />
+    <methodDeclaration color="#BED6FF" />
+    <bracket color="#D8D8D8" />
+    <number color="#7FB347" />
+    <string color="#FFC600" />
+    <operator color="#D8D8D8" />
+    <keyword color="#FFFFFF" bold="false" />
+    <annotation color="#FFFFFF" />
+    <staticMethod color="#BED6FF" />
+    <localVariable color="#79ABFF" />
+    <localVariableDeclaration color="#BED6FF" />
+    <field color="#BED6FF" />
+    <staticField color="#EFC090" />
+    <staticFinalField color="#EFC090" />
+    <deprecatedMember color="#D25252" underline="false" strikethrough="true" />
+    <enum color="#7FB347" />
+    <inheritedMethod color="#BED6FF" />
+    <abstractMethod color="#BED6FF" />
+    <parameterVariable color="#79ABFF" />
+    <typeArgument color="#BFA4A4" />
+    <typeParameter color="#BFA4A4" />
+    <constant color="#EFC090" />
+    <background color="#1E1E1E" />
+    <currentLine color="#2A2A2A" />
+    <foreground color="#D8D8D8" />
+    <lineNumber color="#D0D0D0" />
+    <selectionBackground color="#000000" />
+    <selectionForeground color="#D0D0D0" />
+</colorTheme>

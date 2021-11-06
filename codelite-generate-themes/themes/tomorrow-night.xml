@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="1867" name="Tomorrow Night" modified="2012-10-15 19:55:49" author="Chris Kempson" website="http://github.com/ChrisKempson/Tomorrow-Theme">
+    <searchResultIndication color="#F0C674" />
+    <filteredSearchResultIndication color="#F0C674" />
+    <occurrenceIndication color="#4B4E55" />
+    <writeOccurrenceIndication color="#4B4E55" />
+    <findScope color="#4B4E55" />
+    <deletionIndication color="#DF5F5F" />
+    <sourceHoverBackground color="#4B4E55" />
+    <singleLineComment color="#969896" italic="false" />
+    <multiLineComment color="#969896" italic="false" />
+    <commentTaskTag color="#969896" />
+    <javadoc color="#969896" italic="false" />
+    <javadocLink color="#969896" />
+    <javadocTag color="#CED1CF" />
+    <javadocKeyword color="#CED1CF" />
+    <class color="#F0C674" />
+    <interface color="#B294BB" />
+    <method color="#81A2BE" />
+    <methodDeclaration color="#81A2BE" />
+    <bracket color="#C5C8C6" />
+    <number color="#DE935F" />
+    <string color="#B5BD68" />
+    <operator color="#CED1CF" />
+    <keyword color="#B294BB" />
+    <annotation color="#4B4E55" />
+    <staticMethod color="#81A2BE" />
+    <localVariable color="#CC6666" />
+    <localVariableDeclaration color="#CC6666" />
+    <field color="#DE935F" />
+    <staticField color="#DE935F" />
+    <staticFinalField color="#DE935F" />
+    <deprecatedMember color="#4B4E55" underline="false" strikethrough="false" />
+    <enum color="#DE935F" />
+    <inheritedMethod color="#81A2BE" />
+    <abstractMethod color="#81A2BE" />
+    <parameterVariable color="#CC6666" />
+    <typeArgument color="#DE935F" />
+    <typeParameter color="#DE935F" />
+    <constant color="#DE935F" bold="false" underline="false" strikethrough="false" />
+    <background color="#1D1F21" />
+    <currentLine color="#282A2E" />
+    <foreground color="#C5C8C6" />
+    <lineNumber color="#C5C8C6" />
+    <selectionBackground color="#373B41" />
+    <selectionForeground color="#C5C8C6" />
+</colorTheme>

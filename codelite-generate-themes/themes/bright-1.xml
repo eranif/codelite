@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="847" name="Xcode inspired" modified="2011-11-21 21:04:02" author="Mneorr">
+    <searchResultIndication color="#CCCCCC" />
+    <filteredSearchResultIndication color="#CCCCCC" />
+    <occurrenceIndication color="#DDDDDD" />
+    <writeOccurrenceIndication color="#CCCCCC" />
+    <findScope color="#DDDDDD" />
+    <deletionIndication color="#AB2525" />
+    <sourceHoverBackground color="#EEEEEE" />
+    <singleLineComment color="#1D8711" />
+    <multiLineComment color="#1D8711" />
+    <commentTaskTag color="#1D8711" />
+    <javadoc color="#1D8711" />
+    <javadocLink color="#05314D" />
+    <javadocTag color="#05314D" />
+    <javadocKeyword color="#CC9393" />
+    <class color="#6F33A7" />
+    <interface color="#558186" />
+    <method color="#37595D" />
+    <methodDeclaration color="#000000" bold="false" italic="false" underline="false" strikethrough="false" />
+    <bracket color="#000000" bold="false" />
+    <number color="#340DD4" />
+    <string color="#C81B28" />
+    <operator color="#000000" />
+    <keyword color="#B309A1" />
+    <annotation color="#1D8711" />
+    <staticMethod color="#6F33A7" />
+    <localVariable color="#000000" />
+    <localVariableDeclaration color="#000000" />
+    <field color="#558186" />
+    <staticField color="#558186" />
+    <staticFinalField color="#558186" />
+    <deprecatedMember color="#AB2525" />
+    <enum color="#74482E" />
+    <inheritedMethod color="#37595D" />
+    <abstractMethod color="#37595D" />
+    <parameterVariable color="#000000" />
+    <typeArgument color="#6F33A7" />
+    <typeParameter color="#6F33A7" />
+    <constant color="#6F33A7" />
+    <background color="#FFFFFF" />
+    <currentLine color="#FFFFFF" />
+    <foreground color="#000000" />
+    <lineNumber color="#999999" />
+    <selectionBackground color="#B5D5FF" />
+    <selectionForeground color="#000000" />
+</colorTheme>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="12214" name="Vim Jellybeans Port" modified="2012-11-22 20:40:42" author="Nathan" website="https://github.com/nanotech/jellybeans.vim">
+    <searchResultIndication color="#000000" />
+    <filteredSearchResultIndication color="#000000" />
+    <occurrenceIndication color="#000000" />
+    <writeOccurrenceIndication color="#000000" />
+    <findScope color="#111111" />
+    <deletionIndication color="#D25252" />
+    <sourceHoverBackground color="#000000" />
+    <singleLineComment color="#888888" italic="true" />
+    <multiLineComment color="#888888" italic="true" />
+    <commentTaskTag color="#C7C7C7" bold="true" italic="true" />
+    <javadoc color="#888888" italic="true" />
+    <javadocLink color="#888888" italic="true" />
+    <javadocTag color="#888888" bold="false" italic="true" underline="false" strikethrough="false" />
+    <javadocKeyword color="#888888" italic="true" />
+    <class color="#FFB964" bold="false" underline="false" strikethrough="false" />
+    <interface color="#D197D9" />
+    <method color="#FFFFFF" />
+    <methodDeclaration color="#BED6FF" />
+    <bracket color="#D8D8D8" />
+    <number color="#CF6A4C" />
+    <string color="#99AD6A" />
+    <operator color="#D8D8D8" />
+    <keyword color="#3070A0" bold="false" />
+    <annotation color="#FFFFFF" />
+    <staticMethod color="#BED6FF" />
+    <localVariable color="#79ABFF" />
+    <localVariableDeclaration color="#BED6FF" />
+    <field color="#BED6FF" />
+    <staticField color="#CF6A4C" />
+    <staticFinalField color="#CF6A4C" />
+    <deprecatedMember color="#D25252" underline="false" strikethrough="true" />
+    <enum color="#7FB347" />
+    <inheritedMethod color="#BED6FF" />
+    <abstractMethod color="#BED6FF" />
+    <parameterVariable color="#79ABFF" />
+    <typeArgument color="#BFA4A4" />
+    <typeParameter color="#BFA4A4" />
+    <constant color="#CF6A4C" />
+    <background color="#151515" />
+    <currentLine color="#1C1C1C" />
+    <foreground color="#D8D8D8" />
+    <lineNumber color="#605958" />
+    <selectionBackground color="#404040" />
+    <selectionForeground color="#D0D0D0" />
+</colorTheme>

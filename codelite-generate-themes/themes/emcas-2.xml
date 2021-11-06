@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="30580" name="Emacsen" modified="2014-11-24 18:10:24" author="Colin Strasser" website="http://www.montrosesoftware.com">
+    <searchResultIndication color="#AA5FFF" />
+    <filteredSearchResultIndication color="#AA7FFF" />
+    <occurrenceIndication color="#A740FF" />
+    <writeOccurrenceIndication color="#CF40FF" />
+    <findScope color="#E0E2E4" />
+    <deletionIndication color="#E0E2E4" />
+    <sourceHoverBackground color="#FFFFFF" />
+    <singleLineComment color="#586E75" bold="false" italic="true" />
+    <multiLineComment color="#586E75" italic="true" />
+    <commentTaskTag color="#D33682" bold="true" />
+    <javadoc color="#7D8C93" />
+    <javadocLink color="#268BD2" bold="true" underline="true" strikethrough="false" />
+    <javadocTag color="#DC322F" />
+    <javadocKeyword color="#A082BD" />
+    <class color="#D5A920" bold="false" />
+    <interface color="#E5B930" bold="false" />
+    <method color="#2AA198" />
+    <methodDeclaration color="#2AA198" bold="true" />
+    <bracket color="#999999" />
+    <number color="#C59910" />
+    <string color="#B58900" />
+    <operator color="#678CB1" />
+    <keyword color="#678CB1" />
+    <annotation color="#B37257" />
+    <staticMethod color="#2AA198" italic="true" />
+    <localVariable color="#2B9DED" />
+    <localVariableDeclaration color="#2B9DED" bold="true" />
+    <field color="#E5B930" />
+    <staticField color="#DFA920" italic="true" />
+    <staticFinalField color="#CF9910" italic="true" />
+    <deprecatedMember color="#E0E2E4" underline="false" strikethrough="true" />
+    <enum color="#E0E2E4" />
+    <inheritedMethod color="#E0E2E4" />
+    <abstractMethod color="#E0E2E4" />
+    <parameterVariable color="#E0E2E4" />
+    <typeArgument color="#B58900" />
+    <typeParameter color="#B58900" />
+    <constant color="#2AA198" />
+    <background color="#234059" />
+    <currentLine color="#102B36" />
+    <foreground color="#839496" />
+    <lineNumber color="#758B8B" />
+    <selectionBackground color="#6666FF" />
+    <selectionForeground color="#AFAFAF" />
+</colorTheme>

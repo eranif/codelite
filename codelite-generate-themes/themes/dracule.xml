@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="16963" name="IntelliJ IDEA Dracula" modified="2013-05-29 21:10:32" author="Kenijo">
+    <searchResultIndication color="#425F44" />
+    <filteredSearchResultIndication color="#155221" />
+    <occurrenceIndication color="#424445" />
+    <writeOccurrenceIndication color="#532B2E" />
+    <findScope color="#3A3A3A" />
+    <deletionIndication color="#BBBBBB" underline="false" strikethrough="true" />
+    <sourceHoverBackground color="#287BDE" />
+    <singleLineComment color="#808080" />
+    <multiLineComment color="#808080" italic="true" />
+    <commentTaskTag color="#A8C023" italic="true" />
+    <javadoc color="#629755" italic="false" />
+    <javadocLink color="#77B767" />
+    <javadocTag color="#526D4A" bold="true" italic="true" />
+    <javadocKeyword color="#CC7832" bold="false" />
+    <class color="#769AA5" />
+    <interface color="#A9B7C6" />
+    <method color="#A9B7C6" />
+    <methodDeclaration color="#FFC66D" />
+    <bracket color="#A9B7C6" bold="false" />
+    <number color="#6897BB" />
+    <string color="#A5C25C" />
+    <operator color="#A9B7C6" />
+    <keyword color="#CC7832" bold="true" />
+    <annotation color="#BBB529" />
+    <staticMethod color="#FFC66D" italic="true" />
+    <localVariable color="#A9B7C6" bold="false" underline="false" strikethrough="false" />
+    <localVariableDeclaration color="#A9B7C6" bold="false" />
+    <field color="#9876AA" />
+    <staticField color="#9876AA" italic="true" />
+    <staticFinalField color="#9876AA" italic="true" />
+    <deprecatedMember color="#D25252" underline="false" strikethrough="true" />
+    <enum color="#A9B7C6" />
+    <inheritedMethod color="#A9B7C6" />
+    <abstractMethod color="#A9B7C6" />
+    <parameterVariable color="#A9B7C6" />
+    <typeArgument color="#C4B3A3" />
+    <typeParameter color="#247877" />
+    <constant color="#9876AA" italic="true" />
+    <background color="#2B2B2B" />
+    <currentLine color="#323232" />
+    <foreground color="#A9B7C6" />
+    <lineNumber color="#888888" />
+    <selectionBackground color="#214283" />
+    <selectionForeground color="#A9B7C6" />
+</colorTheme>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="629" name="Clasic Emacs" modified="2011-03-09 13:35:49" author="Ben Morgan">
+    <searchResultIndication color="#D8D8D8" />
+    <filteredSearchResultIndication color="#D8D8D8" />
+    <occurrenceIndication color="#000000" />
+    <writeOccurrenceIndication color="#000000" />
+    <findScope color="#111111" />
+    <deletionIndication color="#D25252" />
+    <sourceHoverBackground color="#000000" />
+    <singleLineComment color="#C7DD0C" />
+    <multiLineComment color="#C7DD0C" />
+    <commentTaskTag color="#CCDF32" />
+    <javadoc color="#CCDF32" />
+    <javadocLink color="#D9E577" />
+    <javadocTag color="#D9E577" />
+    <javadocKeyword color="#D9E577" />
+    <class color="#D25252" bold="false" underline="false" strikethrough="false" />
+    <interface color="#D197D9" />
+    <method color="#FFFFFF" />
+    <methodDeclaration color="#BED6FF" />
+    <bracket color="#D8D8D8" />
+    <number color="#7FB347" />
+    <string color="#FFC600" />
+    <operator color="#D8D8D8" />
+    <keyword color="#FFFFFF" bold="false" />
+    <annotation color="#FFFFFF" />
+    <staticMethod color="#BED6FF" />
+    <localVariable color="#79ABFF" />
+    <localVariableDeclaration color="#BED6FF" />
+    <field color="#BED6FF" />
+    <staticField color="#EFC090" />
+    <staticFinalField color="#EFC090" />
+    <deprecatedMember color="#D25252" underline="false" strikethrough="true" />
+    <enum color="#7FB347" />
+    <inheritedMethod color="#BED6FF" />
+    <abstractMethod color="#BED6FF" />
+    <parameterVariable color="#79ABFF" />
+    <typeArgument color="#BFA4A4" />
+    <typeParameter color="#BFA4A4" />
+    <constant color="#EFC090" />
+    <background color="#2F4F4F" />
+    <currentLine color="#2A2A2A" />
+    <foreground color="#F5DEB3" />
+    <lineNumber color="#D0D0D0" />
+    <selectionBackground color="#000000" />
+    <selectionForeground color="#D0D0D0" />
+</colorTheme>

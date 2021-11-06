@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="1649" name="Classic Eclipse" modified="2011-05-11 09:23:48" author="JRDiaz">
+    <searchResultIndication color="#D8D8D8" />
+    <filteredSearchResultIndication color="#D8D8D8" />
+    <occurrenceIndication color="#000000" />
+    <writeOccurrenceIndication color="#000000" />
+    <sourceHoverBackground color="#D8D8D8" />
+    <singleLineComment color="#557F5F" bold="false" />
+    <multiLineComment color="#557F5F" bold="false" />
+    <commentTaskTag color="#7CA5D5" bold="true" />
+    <javadoc color="#3F55BF" bold="false" />
+    <javadocLink color="#990099" bold="false" underline="false" strikethrough="false" />
+    <javadocTag color="#7F9FBF" bold="true" />
+    <javadocKeyword color="#990099" bold="false" italic="false" />
+    <class color="#006600" bold="false" />
+    <interface color="#666666" bold="true" />
+    <method color="#000099" bold="false" />
+    <methodDeclaration color="#000099" bold="false" italic="false" />
+    <bracket color="#000099" bold="false" italic="false" underline="false" strikethrough="false" />
+    <number color="#FF0000" bold="false" />
+    <string color="#0000C0" bold="false" />
+    <operator color="#0000FF" bold="false" />
+    <keyword color="#7F0055" bold="true" />
+    <annotation color="#990000" bold="false" />
+    <staticMethod color="#000000" italic="true" />
+    <localVariable color="#FF5809" bold="false" italic="false" underline="false" strikethrough="false" />
+    <localVariableDeclaration color="#000099" bold="true" italic="true" />
+    <field color="#0000C0" bold="false" underline="true" strikethrough="false" />
+    <staticField color="#0000C0" bold="false" italic="true" />
+    <staticFinalField color="#552200" bold="false" />
+    <deprecatedMember color="#D8D8D8" underline="false" strikethrough="true" />
+    <enum color="#AF0000" />
+    <inheritedMethod color="#000099" />
+    <abstractMethod color="#000099" />
+    <parameterVariable color="#408080" bold="false" underline="true" strikethrough="false" />
+    <typeArgument color="#0000FF" />
+    <typeParameter color="#006600" />
+    <constant color="#552200" />
+    <background color="#FFFFFF" />
+    <currentLine color="#D8D8D8" />
+    <foreground color="#333333" />
+    <lineNumber color="#D8D8D8" />
+    <selectionBackground color="#D8D8D8" />
+    <selectionForeground color="#333333" />
+</colorTheme>

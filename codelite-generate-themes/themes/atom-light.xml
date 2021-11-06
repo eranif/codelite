@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<colorTheme id="43861" name="Atom One Light" modified="2016-05-18 18:39:18" author="TestYourName">
+    <searchResultIndication color="#EFEFEF" />
+    <filteredSearchResultIndication color="#EFEFEF" />
+    <occurrenceIndication color="#EFEFEF" />
+    <writeOccurrenceIndication color="#EFEFEF" />
+    <findScope color="#BCADAD" />
+    <deletionIndication color="#9b5656" />
+    <sourceHoverBackground color="#EEEEEE" />
+    <singleLineComment color="#A0A1A7" />
+    <multiLineComment color="#A0A1A7" />
+    <commentTaskTag color="#A0A1A7" />
+    <javadoc color="#A0A1A7" />
+    <javadocLink color="#A0A1A7" bold="false" />
+    <javadocTag color="#A0A1A7" bold="true" />
+    <javadocKeyword color="#CC9393" />
+    <class color="#C18401" />
+    <interface color="#50A14F" />
+    <method color="#4078F2" />
+    <methodDeclaration color="#4078F2" />
+    <bracket color="#383A42" />
+    <number color="#986801" />
+    <string color="#50A14F" />
+    <operator color="#383A42" />
+    <keyword color="#A626A4" />
+    <annotation color="#808080" />
+    <staticMethod color="#4078F2" />
+    <localVariable color="#383A42" />
+    <localVariableDeclaration color="#986801" />
+    <field color="#E45649" />
+    <staticField color="#E45649" />
+    <staticFinalField color="#E45649" italic="true" />
+    <deprecatedMember color="#ab2525" underline="false" strikethrough="true" />
+    <enum color="#885d3b" />
+    <inheritedMethod color="#4078F2" />
+    <abstractMethod color="#4078F2" />
+    <parameterVariable color="#5c8198" />
+    <typeArgument color="#885D3B" />
+    <typeParameter color="#885D3B" />
+    <background color="#FFFFFF" />
+    <currentLine color="#EEEEEE" />
+    <foreground color="#383A42" />
+    <lineNumber color="#999999" />
+    <selectionBackground color="#EEEEEE" />
+    <selectionForeground color="#000000" />
+</colorTheme>

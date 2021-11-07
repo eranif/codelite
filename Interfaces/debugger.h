@@ -218,30 +218,30 @@ public:
 
     void Serialize(Archive& arch)
     {
-        arch.Write(wxT("name"), name);
-        arch.Write(wxT("path"), path);
-        arch.Write(wxT("enableDebugLog"), enableDebugLog);
-        arch.Write(wxT("enablePendingBreakpoints"), enablePendingBreakpoints);
-        arch.Write(wxT("breakAtWinMain"), breakAtWinMain);
-        arch.Write(wxT("showTerminal"), showTerminal);
-        arch.Write(wxT("consoleCommand"), consoleCommand);
-        arch.Write(wxT("useRelativeFilePaths"), useRelativeFilePaths);
-        arch.Write(wxT("maxCallStackFrames"), maxCallStackFrames);
-        arch.Write(wxT("catchThrow"), catchThrow);
-        arch.Write(wxT("showTooltipsOnlyWithControlKeyIsDown"), showTooltipsOnlyWithControlKeyIsDown);
-        arch.Write(wxT("debugAsserts"), debugAsserts);
-        arch.WriteCData(wxT("startupCommands"), initFileCommands);
-        arch.Write(wxT("maxDisplayStringSize"), maxDisplayStringSize);
+        arch.Write("name", name);
+        arch.Write("path", path);
+        arch.Write("enableDebugLog", enableDebugLog);
+        arch.Write("enablePendingBreakpoints", enablePendingBreakpoints);
+        arch.Write("breakAtWinMain", breakAtWinMain);
+        arch.Write("showTerminal", showTerminal);
+        arch.Write("consoleCommand", consoleCommand);
+        arch.Write("useRelativeFilePaths", useRelativeFilePaths);
+        arch.Write("maxCallStackFrames", maxCallStackFrames);
+        arch.Write("catchThrow", catchThrow);
+        arch.Write("showTooltipsOnlyWithControlKeyIsDown", showTooltipsOnlyWithControlKeyIsDown);
+        arch.Write("debugAsserts", debugAsserts);
+        arch.WriteCData("startupCommands", initFileCommands);
+        arch.Write("maxDisplayStringSize", maxDisplayStringSize);
         arch.Write("maxDisplayElements", maxDisplayElements);
-        arch.Write(wxT("resolveLocals"), resolveLocals);
-        arch.Write(wxT("autoExpandTipItems"), autoExpandTipItems);
-        arch.Write(wxT("applyBreakpointsAfterProgramStarted"), applyBreakpointsAfterProgramStarted);
-        arch.Write(wxT("whenBreakpointHitRaiseCodelite"), whenBreakpointHitRaiseCodelite);
-        arch.Write(wxT("charArrAsPtr"), charArrAsPtr);
-        arch.Write(wxT("enableGDBPrettyPrinting"), enableGDBPrettyPrinting);
-        arch.Write(wxT("defaultHexDisplay"), defaultHexDisplay);
+        arch.Write("resolveLocals", resolveLocals);
+        arch.Write("autoExpandTipItems", autoExpandTipItems);
+        arch.Write("applyBreakpointsAfterProgramStarted", applyBreakpointsAfterProgramStarted);
+        arch.Write("whenBreakpointHitRaiseCodelite", whenBreakpointHitRaiseCodelite);
+        arch.Write("charArrAsPtr", charArrAsPtr);
+        arch.Write("enableGDBPrettyPrinting", enableGDBPrettyPrinting);
+        arch.Write("defaultHexDisplay", defaultHexDisplay);
         arch.Write("flags", flags);
-        arch.Write(wxT("cygwinPathCommand"), cygwinPathCommand);
+        arch.Write("cygwinPathCommand", cygwinPathCommand);
     }
 
     void DeSerialize(Archive& arch)

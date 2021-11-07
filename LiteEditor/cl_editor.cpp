@@ -1345,6 +1345,10 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
 
+    // keep the last line we visited this method
+    // (m_lastLine will be modified inside UpdateLineNumbers())
+    int lastLine = m_lastLine;
+
     // Update the line numbers if needed (only when using custom drawing line numbers)
     UpdateLineNumbers();
 
@@ -1426,7 +1430,7 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     RecalcHorizontalScrollbar();
 
     // get the current position
-    if((curLine != m_lastLine)) {
+    if((curLine != lastLine)) {
         clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
         evtUpdateNavBar.SetEditor(this);
         evtUpdateNavBar.SetLineNumber(curLine);

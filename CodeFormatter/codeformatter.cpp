@@ -196,27 +196,33 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
 
 FormatterEngine CodeFormatter::FindFormatter(const wxFileName& fileName)
 {
+    // C++
     if(FileExtManager::IsCxxFile(fileName)) {
-        if(m_options.GetEngine() == kCxxFormatEngineClangFormat) {
+        switch(m_options.GetEngine()) {
+        case kCxxFormatEngineClangFormat:
             return kFormatEngineClangFormat;
-        }
-        if(m_options.GetEngine() == kCxxFormatEngineAStyle) {
+        case kCxxFormatEngineAStyle:
             return kFormatEngineAStyle;
+        case kCxxForamtEngineNone:
+            return kFormatEngineNone;
         }
     }
 
+    // PHP
     if(FileExtManager::IsPHPFile(fileName)) {
-        if(m_options.GetPhpEngine() == kPhpFormatEnginePhpCsFixer) {
+        switch(m_options.GetPhpEngine()) {
+        case kPhpFormatEnginePhpCsFixer:
             return kFormatEnginePhpCsFixer;
-        }
-        if(m_options.GetPhpEngine() == kPhpFormatEnginePhpcbf) {
+        case kPhpFormatEnginePhpcbf:
             return kFormatEnginePhpcbf;
-        }
-        if(m_options.GetPhpEngine() == kPhpFormatEngineBuiltin) {
+        case kPhpFormatEngineBuiltin:
             return kFormatEngineBuildInPhp;
+        case kPhpForamtEngineNone:
+            return kFormatEngineNone;
         }
     }
 
+    // XML
     if(FileExtManager::IsFileType(fileName, FileExtManager::TypeXml) ||
        FileExtManager::IsFileType(fileName, FileExtManager::TypeXRC) ||
        FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspace) ||
@@ -224,12 +230,19 @@ FormatterEngine CodeFormatter::FindFormatter(const wxFileName& fileName)
         return kFormatEngineWxXmlDocument;
     }
 
+    // JavaScript / TypeScript
     if(FileExtManager::IsJavascriptFile(fileName) || FileExtManager::IsJavaFile(fileName)) {
         return kFormatEngineClangFormat;
     }
 
+    // Rust
     if(FileExtManager::IsFileType(fileName, FileExtManager::TypeRust)) {
-        return kFormatEngineRust;
+        switch(m_options.GetRustEngine()) {
+        case kRustForamtEngineNone:
+            return kFormatEngineNone;
+        case kRustFormatEngineRustfmt:
+            return kFormatEngineRust;
+        }
     }
 
     return kFormatEngineNone;

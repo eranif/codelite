@@ -63,6 +63,7 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     wxArrayString m_choiceCxxEngineArr;
     m_choiceCxxEngineArr.Add(_("AStyle"));
     m_choiceCxxEngineArr.Add(_("clang-format"));
+    m_choiceCxxEngineArr.Add(_("None"));
     m_choiceCxxEngine = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
                                      wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceCxxEngineArr, 0);
     m_choiceCxxEngine->SetToolTip(
@@ -80,12 +81,27 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_choicePhpFormatterArr.Add(_("Builtin"));
     m_choicePhpFormatterArr.Add(_("PHP-CS-Fixer"));
     m_choicePhpFormatterArr.Add(_("PHPCBF"));
+    m_choicePhpFormatterArr.Add(_("None"));
     m_choicePhpFormatter = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
                                         wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choicePhpFormatterArr, 0);
     m_choicePhpFormatter->SetToolTip(_("Select the formatter engine for PHP files"));
     m_choicePhpFormatter->SetSelection(0);
 
     flexGridSizer158->Add(m_choicePhpFormatter, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText343 = new wxStaticText(m_panelGeneral, wxID_ANY, _("Rust:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer158->Add(m_staticText343, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceRusfmtArr;
+    m_choiceRusfmtArr.Add(_("None"));
+    m_choiceRusfmtArr.Add(_("rustfmt"));
+    m_choiceRusfmt = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
+                                  wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceRusfmtArr, 0);
+    m_choiceRusfmt->SetSelection(1);
+
+    flexGridSizer158->Add(m_choiceRusfmt, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelCxx =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -1166,6 +1182,8 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
     m_choicePhpFormatter->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
                                   wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicephpformatterChoiceSelected), NULL,
                                   this);
+    m_choiceRusfmt->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceRust),
+                            NULL, this);
     m_pgMgrClang->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged),
                           NULL, this);
     m_buttonExportClangFormatFile->Connect(
@@ -1200,6 +1218,8 @@ CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
     m_choicePhpFormatter->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
                                      wxCommandEventHandler(CodeFormatterBaseDlg::OnChoicephpformatterChoiceSelected),
                                      NULL, this);
+    m_choiceRusfmt->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceRust),
+                               NULL, this);
     m_pgMgrClang->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged),
                              NULL, this);
     m_buttonExportClangFormatFile->Disconnect(

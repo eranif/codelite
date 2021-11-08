@@ -137,6 +137,7 @@ void CodeFormatterDlg::InitDialog()
     // Select the proper engine
     m_choiceCxxEngine->SetSelection((int)m_options.GetEngine());
     m_choicePhpFormatter->SetSelection((int)m_options.GetPhpEngine());
+    m_choiceRusfmt->SetSelection((int)m_options.GetRustEngine());
 
     //------------------------------------------------------------------
     // Clang options
@@ -286,11 +287,16 @@ void CodeFormatterDlg::UpdatePreview()
     if(m_notebook->GetSelection() == 1) { // CXX page
         output = m_cppSampleCode;
 
-        if(m_notebookCxx->GetSelection() == 0) { // Clang
+        if(m_notebookCxx->GetSelection() == 0) {
+            // Clang
             m_cf->DoFormatPreview(output, "cpp", kFormatEngineClangFormat);
             UpdatePreviewText(m_textCtrlPreview_Clang, output);
-        } else if(m_notebookCxx->GetSelection() == 1) { // Astyle
+        } else if(m_notebookCxx->GetSelection() == 1) {
+            // Astyle
             m_cf->DoFormatPreview(output, "cpp", kFormatEngineAStyle);
+            UpdatePreviewText(m_textCtrlPreview, output);
+        } else if(m_notebookCxx->GetSelection() == 2) {
+            // None
             UpdatePreviewText(m_textCtrlPreview, output);
         }
     } else if(m_notebook->GetSelection() == 2) { // PHP page
@@ -305,6 +311,8 @@ void CodeFormatterDlg::UpdatePreview()
         } else if(m_notebookPhp->GetSelection() == 2) { // Phpcbf
             m_cf->DoFormatPreview(output, "php", kFormatEnginePhpcbf);
             UpdatePreviewText(m_textCtrlPreview_Phpcbf, output);
+        } else if(m_notebookPhp->GetSelection() == 3) { // None
+            UpdatePreviewText(m_stcPhpPreview, output);
         }
     }
 }
@@ -559,4 +567,9 @@ void CodeFormatterDlg::UpdateClangBraceWrapProps()
             m_pgPropClangBraceBreakStyle->Item(i)->Hide(hide);
         }
     }
+}
+void CodeFormatterDlg::OnChoiceRust(wxCommandEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetRustEngine((RustFormatterEngine)event.GetSelection());
 }

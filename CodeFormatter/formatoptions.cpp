@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "formatoptions.h"
 #include "JSON.h"
 #include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
@@ -30,7 +31,6 @@
 #include "editor_config.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "formatoptions.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "phpoptions.h"
@@ -39,6 +39,7 @@ FormatOptions::FormatOptions()
     : m_astyleOptions(AS_DEFAULT | AS_INDENT_USES_TABS)
     , m_engine(kCxxFormatEngineClangFormat)
     , m_phpEngine(kPhpFormatEngineBuiltin)
+    , m_rustEngine(kRustFormatEngineRustfmt)
     , m_clangFormatOptions(kClangFormatWebKit | kAlignTrailingComments | kBreakConstructorInitializersBeforeComma |
                            kSpaceBeforeAssignmentOperators | kAlignEscapedNewlinesLeft | kClangFormatFile)
     , m_clangBreakBeforeBrace(kLinux)
@@ -67,6 +68,10 @@ void FormatOptions::DeSerialize(Archive& arch)
     int engine = kCxxFormatEngineClangFormat;
     arch.Read("m_engine", engine);
     m_engine = static_cast<CXXFormatterEngine>(engine);
+
+    int rust_engine = kRustFormatEngineRustfmt;
+    arch.Read("m_rustEngine", rust_engine);
+    m_rustEngine = static_cast<RustFormatterEngine>(rust_engine);
 
     engine = kPhpFormatEngineBuiltin;
     arch.Read("m_phpEngine", engine);
@@ -163,6 +168,7 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write(wxT("m_customFlags"), m_customFlags);
     arch.Write("m_engine", static_cast<int>(m_engine));
     arch.Write("m_phpEngine", static_cast<int>(m_phpEngine));
+    arch.Write("m_rustEngine", static_cast<int>(m_rustEngine));
     arch.Write("m_clangFormatOptions", m_clangFormatOptions);
     arch.Write("m_clangFormatExe", m_clangFormatExe);
     arch.Write("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);

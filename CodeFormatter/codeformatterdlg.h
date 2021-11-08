@@ -41,6 +41,7 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
     IManager* m_mgr;
 
 protected:
+    virtual void OnChoiceRust(wxCommandEvent& event);
     virtual void OnExportClangFormatFile(wxCommandEvent& event);
     virtual void UpdatePreviewUI(wxNotebookEvent& event);
     virtual void OnPgmgrPHPCsFixerPgChanged(wxPropertyGridEvent& event);

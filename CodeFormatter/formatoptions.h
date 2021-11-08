@@ -70,16 +70,32 @@ enum AstyleOptions {
                             AS_ONE_LINE_KEEP_STATEMENT | AS_FILL_EMPTY_LINES | AS_ONE_LINE_KEEP_BLOCKS,
 };
 
+// ------------------------------------------------------------
+// ------------------------------------------------------------
+// the engine index matters, do not change this
+// ------------------------------------------------------------
+// ------------------------------------------------------------
+
 enum CXXFormatterEngine {
     kCxxFormatEngineAStyle,
     kCxxFormatEngineClangFormat,
+    kCxxForamtEngineNone,
 };
 
 enum PHPFormatterEngine {
     kPhpFormatEngineBuiltin,
     kPhpFormatEnginePhpCsFixer,
     kPhpFormatEnginePhpcbf,
+    kPhpForamtEngineNone,
 };
+
+enum RustFormatterEngine {
+    kRustForamtEngineNone,
+    kRustFormatEngineRustfmt,
+};
+
+// ------------------------------------------------------------
+// ------------------------------------------------------------
 
 enum PHPFixserFormatterSettings {
     kPHPFixserFormatFile = (1 << 1),
@@ -203,6 +219,7 @@ class FormatOptions : public SerializedObject
     wxString m_customFlags;
     CXXFormatterEngine m_engine;
     PHPFormatterEngine m_phpEngine;
+    RustFormatterEngine m_rustEngine;
     wxString m_clangFormatExe;
     size_t m_clangColumnLimit; // when indenting, limit the line to fit into a column width
     size_t m_phpFormatOptions;
@@ -282,6 +299,9 @@ public:
     // PHP
     void SetPhpEngine(const PHPFormatterEngine& phpEngine) { this->m_phpEngine = phpEngine; }
     const PHPFormatterEngine& GetPhpEngine() const { return m_phpEngine; }
+
+    void SetRustEngine(const RustFormatterEngine& rustEngine) { this->m_rustEngine = rustEngine; }
+    const RustFormatterEngine& GetRustEngine() const { return m_rustEngine; }
 
     // PHP Formatter
     size_t GetPHPFormatterOptions() const { return m_phpFormatOptions; }

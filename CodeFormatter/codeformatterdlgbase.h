@@ -60,6 +60,8 @@ protected:
     wxChoice* m_choiceCxxEngine;
     wxStaticText* m_staticText198;
     wxChoice* m_choicePhpFormatter;
+    wxStaticText* m_staticText343;
+    wxChoice* m_choiceRusfmt;
     wxPanel* m_panelCxx;
     wxNotebook* m_notebookCxx;
     wxPanel* m_panelClangFormat;
@@ -165,6 +167,7 @@ protected:
     virtual void OnFormatOnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoiceRust(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrclangPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnExportClangFormatFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event) { event.Skip(); }
@@ -183,6 +186,8 @@ public:
     wxChoice* GetChoiceCxxEngine() { return m_choiceCxxEngine; }
     wxStaticText* GetStaticText198() { return m_staticText198; }
     wxChoice* GetChoicePhpFormatter() { return m_choicePhpFormatter; }
+    wxStaticText* GetStaticText343() { return m_staticText343; }
+    wxChoice* GetChoiceRusfmt() { return m_choiceRusfmt; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     wxPropertyGridManager* GetPgMgrClang() { return m_pgMgrClang; }
     wxButton* GetButtonExportClangFormatFile() { return m_buttonExportClangFormatFile; }

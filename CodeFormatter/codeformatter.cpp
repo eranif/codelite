@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "codeformatter.h"
 #include "JSON.h"
 #include "asyncprocess.h"
 #include "clEditorConfig.h"
@@ -29,7 +30,6 @@
 #include "clFilesCollector.h"
 #include "clSTCLineKeeper.h"
 #include "clWorkspaceManager.h"
-#include "codeformatter.h"
 #include "codeformatterdlg.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -56,6 +56,16 @@
 
 static int ID_TOOL_SOURCE_CODE_FORMATTER = ::wxNewId();
 FormatOptions CodeFormatter::m_options;
+
+#define CHECK_FORMAT_ENGINE_RETURN(e) \
+    if(e == kFormatEngineNone) {      \
+        return;                       \
+    }
+
+#define CHECK_FORMAT_ENGINE_CONTINUE(e) \
+    if(e == kFormatEngineNone) {        \
+        continue;                       \
+    }
 
 extern "C" char* STDCALL AStyleMain(const char* pSourceIn, const char* pOptions,
                                     void(STDCALL* fpError)(int, const char*), char*(STDCALL* fpAlloc)(unsigned long));
@@ -108,15 +118,11 @@ CodeFormatter::CodeFormatter(IManager* manager)
     m_longName = _("Source Code Formatter");
     m_shortName = _("Source Code Formatter");
 
-    EventNotifier::Get()->Connect(wxEVT_FORMAT_STRING, clSourceFormatEventHandler(CodeFormatter::OnFormatString), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_FORMAT_FILE, clSourceFormatEventHandler(CodeFormatter::OnFormatFile), NULL,
-                                  this);
-    m_mgr->GetTheApp()->Connect(ID_TOOL_SOURCE_CODE_FORMATTER, wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
-    m_mgr->GetTheApp()->Connect(XRCID("format_files"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(CodeFormatter::OnFormatFiles), NULL, this);
+    m_mgr->GetTheApp()->Bind(wxEVT_MENU, &CodeFormatter::OnFormatProject, this, ID_TOOL_SOURCE_CODE_FORMATTER);
+    m_mgr->GetTheApp()->Bind(wxEVT_MENU, &CodeFormatter::OnFormatFiles, this, XRCID("format_files"));
 
+    EventNotifier::Get()->Bind(wxEVT_FORMAT_STRING, &CodeFormatter::OnFormatString, this);
+    EventNotifier::Get()->Bind(wxEVT_FORMAT_FILE, &CodeFormatter::OnFormatFile, this);
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
     EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
@@ -140,14 +146,10 @@ void CodeFormatter::CreateToolBar(clToolBar* toolbar)
     toolbar->AddTool(XRCID("formatter_options"), _("Format Options"), images->Add("cog"),
                      _("Source Code Formatter Options..."));
     // Connect the events to us
-    m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("format_source"), wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("formatter_options"), wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Bind(wxEVT_MENU, &CodeFormatter::OnFormat, this, XRCID("format_source"));
+    m_mgr->GetTheApp()->Bind(wxEVT_MENU, &CodeFormatter::OnFormatOptions, this, XRCID("formatter_options"));
+    m_mgr->GetTheApp()->Bind(wxEVT_UPDATE_UI, &CodeFormatter::OnFormatOptionsUI, this, XRCID("formatter_options"));
+    m_mgr->GetTheApp()->Bind(wxEVT_UPDATE_UI, &CodeFormatter::OnFormatUI, this, XRCID("format_source"));
 }
 
 void CodeFormatter::CreatePluginMenu(wxMenu* pluginsMenu)
@@ -263,9 +265,13 @@ bool CodeFormatter::CanFormatFile(const FormatterEngine& engine)
 
 void CodeFormatter::DoFormatEditor(IEditor* editor, int selStart, int selEnd)
 {
-    wxFileName fileName = editor->GetFileName();
+    const wxFileName& fileName = editor->GetFileName();
 
-    m_mgr->SetStatusMessage(wxString::Format(wxT("%s: %s..."), _("Formatting"), fileName.GetFullPath().c_str()), 0);
+    // find a suitable formatter
+    FormatterEngine engine = FindFormatter(fileName);
+    CHECK_FORMAT_ENGINE_RETURN(engine);
+
+    m_mgr->SetStatusMessage(wxString() << _("Formatting: ") << fileName.GetFullPath(), 0);
 
     // Notify about indentation about to start
     wxCommandEvent evt(wxEVT_CODEFORMATTER_INDENT_STARTING);
@@ -273,7 +279,6 @@ void CodeFormatter::DoFormatEditor(IEditor* editor, int selStart, int selEnd)
     EventNotifier::Get()->ProcessEvent(evt);
 
     int cursorPosition = editor->GetCurrentPosition();
-    FormatterEngine engine = FindFormatter(fileName);
 
     if(engine == kFormatEngineRust) {
         // special handling for rust
@@ -643,24 +648,17 @@ void CodeFormatter::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void CodeFormatter::UnPlug()
 {
-    m_mgr->GetTheApp()->Disconnect(XRCID("format_source"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(CodeFormatter::OnFormat), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(CodeFormatter::OnFormatOptions), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("format_source"), wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(CodeFormatter::OnFormatUI), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("formatter_options"), wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(CodeFormatter::OnFormatOptionsUI), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(ID_TOOL_SOURCE_CODE_FORMATTER, wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(CodeFormatter::OnFormatProject), NULL, this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("format_files"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(CodeFormatter::OnFormatFiles), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FORMAT_STRING, clSourceFormatEventHandler(CodeFormatter::OnFormatString),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FORMAT_FILE, clSourceFormatEventHandler(CodeFormatter::OnFormatFile), NULL,
-                                     this);
-    EventNotifier::Get()->Unbind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave),
-                                 this);
+    m_mgr->GetTheApp()->Unbind(wxEVT_MENU, &CodeFormatter::OnFormat, this, XRCID("format_source"));
+    m_mgr->GetTheApp()->Unbind(wxEVT_UPDATE_UI, &CodeFormatter::OnFormatUI, this, XRCID("format_source"));
+    m_mgr->GetTheApp()->Unbind(wxEVT_MENU, &CodeFormatter::OnFormatOptions, this, XRCID("formatter_options"));
+    m_mgr->GetTheApp()->Unbind(wxEVT_UPDATE_UI, &CodeFormatter::OnFormatOptionsUI, this, XRCID("formatter_options"));
+
+    m_mgr->GetTheApp()->Unbind(wxEVT_MENU, &CodeFormatter::OnFormatProject, this, ID_TOOL_SOURCE_CODE_FORMATTER);
+    m_mgr->GetTheApp()->Unbind(wxEVT_MENU, &CodeFormatter::OnFormatFiles, this, XRCID("format_files"));
+
+    EventNotifier::Get()->Unbind(wxEVT_FORMAT_STRING, &CodeFormatter::OnFormatString, this);
+    EventNotifier::Get()->Unbind(wxEVT_FORMAT_FILE, &CodeFormatter::OnFormatFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_BEFORE_EDITOR_SAVE, &CodeFormatter::OnBeforeFileSave, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
 }
@@ -674,7 +672,10 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
         e.SetFormattedString(content);
         return;
     }
+
     FormatterEngine engine = FindFormatter(e.GetFileName());
+    CHECK_FORMAT_ENGINE_RETURN(engine);
+
     int cursorPosition = wxNOT_FOUND;
     DoFormatString(content, e.GetFileName(), engine, cursorPosition);
     e.SetFormattedString(content);
@@ -715,13 +716,13 @@ wxString CodeFormatter::DoGetGlobalEOLString() const
 
 void CodeFormatter::OnFormatFile(clSourceFormatEvent& e)
 {
-    wxFileName fn = e.GetFileName();
-    std::vector<wxFileName> filesToFormat;
+    const wxFileName& fn = e.GetFileName();
     FormatterEngine engine = FindFormatter(fn);
-    if(engine != kFormatEngineNone) {
-        // TODO skip files based on size, 4.5MB as the default
-        filesToFormat.push_back(fn);
-    }
+    CHECK_FORMAT_ENGINE_RETURN(engine);
+
+    // TODO skip files based on size, 4.5MB as the default
+    std::vector<wxFileName> filesToFormat;
+    filesToFormat.push_back(fn);
     BatchFormat(filesToFormat, true);
 }
 
@@ -739,9 +740,7 @@ void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
             arrfiles.reserve(files.size());
             for(const wxFileName& f : files) {
                 FormatterEngine engine = FindFormatter(f);
-                if(engine == kFormatEngineNone) {
-                    continue;
-                }
+                CHECK_FORMAT_ENGINE_CONTINUE(engine);
                 arrfiles.push_back(f);
             }
             formatter->CallAfter(&CodeFormatter::OnScanFilesCompleted, arrfiles);
@@ -764,14 +763,15 @@ void CodeFormatter::OnFormatProject(wxCommandEvent& event)
     const Project::FilesMap_t& allFiles = pProj->GetFiles();
 
     std::vector<wxFileName> filesToFormat;
+    filesToFormat.reserve(allFiles.size());
 
-    std::for_each(allFiles.begin(), allFiles.end(), [&](const Project::FilesMap_t::value_type& vt) {
+    for(const auto& vt : allFiles) {
         FormatterEngine engine = FindFormatter(vt.second->GetFilename());
-        if(engine != kFormatEngineNone) {
-            // TODO skip files based on size, 4.5MB as the default
-            filesToFormat.push_back(vt.second->GetFilename());
-        }
-    });
+        CHECK_FORMAT_ENGINE_CONTINUE(engine);
+
+        // TODO skip files based on size, 4.5MB as the default
+        filesToFormat.push_back(vt.second->GetFilename());
+    }
     BatchFormat(filesToFormat, false);
 }
 
@@ -803,6 +803,8 @@ void CodeFormatter::BatchFormat(const std::vector<wxFileName>& files, bool silen
         }
 
         FormatterEngine engine = FindFormatter(files.at(i).GetFullPath());
+        CHECK_FORMAT_ENGINE_CONTINUE(engine);
+
         DoFormatFile(files.at(i).GetFullPath(), engine);
     }
 

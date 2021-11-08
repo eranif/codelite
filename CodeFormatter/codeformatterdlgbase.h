@@ -62,6 +62,12 @@ protected:
     wxChoice* m_choicePhpFormatter;
     wxStaticText* m_staticText343;
     wxChoice* m_choiceRusfmt;
+    wxStaticText* m_staticText347;
+    wxChoice* m_choiceXMLFormatter;
+    wxStaticText* m_staticText351;
+    wxChoice* m_choiceJSFormatter;
+    wxStaticText* m_staticText355;
+    wxChoice* m_choiceJSONFormatter;
     wxPanel* m_panelCxx;
     wxNotebook* m_notebookCxx;
     wxPanel* m_panelClangFormat;
@@ -168,6 +174,9 @@ protected:
     virtual void OnChoicecxxengineChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoicephpformatterChoiceSelected(wxCommandEvent& event) { event.Skip(); }
     virtual void OnChoiceRust(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoiceXML(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoiceJavaScript(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnChoiceJSON(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrclangPgChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnExportClangFormatFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnPgmgrastylePgChanged(wxPropertyGridEvent& event) { event.Skip(); }
@@ -188,6 +197,12 @@ public:
     wxChoice* GetChoicePhpFormatter() { return m_choicePhpFormatter; }
     wxStaticText* GetStaticText343() { return m_staticText343; }
     wxChoice* GetChoiceRusfmt() { return m_choiceRusfmt; }
+    wxStaticText* GetStaticText347() { return m_staticText347; }
+    wxChoice* GetChoiceXMLFormatter() { return m_choiceXMLFormatter; }
+    wxStaticText* GetStaticText351() { return m_staticText351; }
+    wxChoice* GetChoiceJSFormatter() { return m_choiceJSFormatter; }
+    wxStaticText* GetStaticText355() { return m_staticText355; }
+    wxChoice* GetChoiceJSONFormatter() { return m_choiceJSONFormatter; }
     wxPanel* GetPanelGeneral() { return m_panelGeneral; }
     wxPropertyGridManager* GetPgMgrClang() { return m_pgMgrClang; }
     wxButton* GetButtonExportClangFormatFile() { return m_buttonExportClangFormatFile; }

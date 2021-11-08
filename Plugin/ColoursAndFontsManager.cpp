@@ -901,11 +901,6 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         lexer->SetFileSpec("*.vbs;*.vbe;*.wsf;*.wsc;*.asp;*.aspx");
     }
 
-    // Hack4: all the HTML support to PHP which have much more colour themes
-    if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".qml")) {
-        lexer->SetFileSpec("*.js;*.javascript;*.qml;*.json");
-    }
-
     // Hack5: all the remove *.scss from the css lexer (it now has its own lexer)
     if(lexer->GetName() == "css" && lexer->GetFileSpec().Contains(".scss")) {
         lexer->SetFileSpec("*.css");
@@ -934,11 +929,26 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
 
     // Add wxcp file extension to the JavaScript lexer
     if(lexer->GetName() == "javascript") {
+#if wxCHECK_VERSION(3, 1, 0)
+        // remove the JSON file from the JavaScript
+        if(lexer->GetFileSpec().Contains("*.json")) {
+            auto specs = ::wxStringTokenize(lexer->GetFileSpec(), ";,", wxTOKEN_STRTOK);
+            int where = specs.Index("*.json");
+            if(where != wxNOT_FOUND) {
+                specs.RemoveAt(where);
+            }
+            lexer->SetFileSpec(wxJoin(specs, ';'));
+        }
+#else
         // wxCrafter files
         if(!lexer->GetFileSpec().Contains(".wxcp")) {
             lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
         }
 
+#endif
+        if(!lexer->GetFileSpec().Contains(".qml")) {
+            lexer->SetFileSpec(lexer->GetFileSpec() + ";*.qml");
+        }
         // typescript
         if(!lexer->GetFileSpec().Contains(".ts")) {
             lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ts");

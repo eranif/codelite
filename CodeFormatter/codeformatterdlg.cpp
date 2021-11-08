@@ -66,15 +66,6 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent, IManager* mgr, CodeFormatte
     m_pgMgrAstyle->GetGrid()->ClearModifiedStatus();
     m_pgMgrClang->GetGrid()->ClearModifiedStatus();
 
-    // set the selection based on the editor
-    IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor && FileExtManager::IsPHPFile(editor->GetFileName())) {
-        m_notebook->SetSelection(2); // PHP page
-    } else if(editor && FileExtManager::IsCxxFile(editor->GetFileName())) {
-        m_notebook->SetSelection(1); // CXX page
-    } else {
-        m_notebook->SetSelection(0); // General
-    }
     m_pgPropClangFormatExePath->SetAttribute("ShowFullPath", 1);
     m_filePickerPHPCsFixerPhar->SetAttribute("ShowFullPath", 1);
     ::clSetDialogBestSizeAndPosition(this);
@@ -138,6 +129,9 @@ void CodeFormatterDlg::InitDialog()
     m_choiceCxxEngine->SetSelection((int)m_options.GetEngine());
     m_choicePhpFormatter->SetSelection((int)m_options.GetPhpEngine());
     m_choiceRusfmt->SetSelection((int)m_options.GetRustEngine());
+    m_choiceXMLFormatter->SetSelection((int)m_options.GetXmlEngine());
+    m_choiceJSONFormatter->SetSelection((int)m_options.GetJsonEngine());
+    m_choiceJSFormatter->SetSelection((int)m_options.GetJavaScriptEngine());
 
     //------------------------------------------------------------------
     // Clang options
@@ -572,4 +566,19 @@ void CodeFormatterDlg::OnChoiceRust(wxCommandEvent& event)
 {
     m_isDirty = true;
     m_options.SetRustEngine((RustFormatterEngine)event.GetSelection());
+}
+void CodeFormatterDlg::OnChoiceXML(wxCommandEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetXmlEngine((XmlFormatterEngine)event.GetSelection());
+}
+void CodeFormatterDlg::OnChoiceJavaScript(wxCommandEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetJavaScriptEngine((JavaScriptFormatterEngine)event.GetSelection());
+}
+void CodeFormatterDlg::OnChoiceJSON(wxCommandEvent& event)
+{
+    m_isDirty = true;
+    m_options.SetJsonEngine((JSONFormatterEngine)event.GetSelection());
 }

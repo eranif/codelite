@@ -113,6 +113,7 @@ void FileExtManager::Init()
         m_map[wxT("javascript")] = TypeJS;
         m_map[wxT("ts")] = TypeJS; // TypeScript, but we consider this a JavaScript
         m_map[wxT("py")] = TypePython;
+        m_map["json"] = TypeJSON;
 
         // Java file
         m_map[wxT("java")] = TypeJava;

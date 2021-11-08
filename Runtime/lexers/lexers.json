@@ -1,4 +1,4384 @@
 [{
+  "Name": "json",
+  "Theme": "Atom One-Dark",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3D4148",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#E0E2E4",
+    "BgColour": "#804000",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3D4148",
+    "BgColour": "#3D4148",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#E0E2E4",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFCD22",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F35151",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#EC7600",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#7D8C93",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#7D8C93",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#E0E2E4",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFC235",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#56AFD7",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C678DD",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C678DD",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#E0E2E4",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#53565C",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#282C34",
+    "BgColour": "#282C34",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#E0E2E4",
+    "BgColour": "#282C34",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Atom One Light",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2F2",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#EEEEEE",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2F2",
+    "BgColour": "#F2F2F2",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#986801",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#383A42",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#50A14F",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A0A1A7",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A0A1A7",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#383A42",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C18401",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#4078F2",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A626A4",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A626A4",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#383A42",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "cyan",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "red",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#383A42",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Xcode inspired",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2F2",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#B5D5FF",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2F2",
+    "BgColour": "#F2F2F2",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#340DD4",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C81B28",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#1D8711",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#1D8711",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6F33A7",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#37595D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B309A1",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B309A1",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "cyan",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "red",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Classic Eclipse",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2F2",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#333333",
+    "BgColour": "#D8D8D8",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2F2",
+    "BgColour": "#F2F2F2",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FF0000",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FF5809",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#0000C0",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#557F5F",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#557F5F",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#333333",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#006600",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000099",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#7F0055",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#7F0055",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#333333",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "cyan",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "red",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#333333",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Dark Flash Builder",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#525252",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DDDDCC",
+    "BgColour": "#111111",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#525252",
+    "BgColour": "#525252",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DDDDCC",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#EDDD3D",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6699CC",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC9393",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#7F9F7F",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#7F9F7F",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DDDDCC",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D25B5B",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2DF",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DFC47D",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DFC47D",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DDDDCC",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#656565",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3F3F3F",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DDDDCC",
+    "BgColour": "#3F3F3F",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Intellij Dracula",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#404040",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D0D0D0",
+    "BgColour": "#214283",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#404040",
+    "BgColour": "#404040",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6897BB",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#79ABFF",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#808080",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#629755",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC7832",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC7832",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#555555",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2B2B2B",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "IntelliJ IDEA Dracula",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#404040",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#214283",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#404040",
+    "BgColour": "#404040",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6897BB",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A5C25C",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#808080",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#808080",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#769AA5",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC7832",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC7832",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#555555",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2B2B2B",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A9B7C6",
+    "BgColour": "#2B2B2B",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Emacsen",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#395369",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#AFAFAF",
+    "BgColour": "#6666FF",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#395369",
+    "BgColour": "#395369",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#839496",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C59910",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2B9DED",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B58900",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#586E75",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#586E75",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#839496",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D5A920",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#678CB1",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#678CB1",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#839496",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#4F667A",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#234059",
+    "BgColour": "#234059",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#839496",
+    "BgColour": "#234059",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Clasic Emacs",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#436060",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D0D0D0",
+    "BgColour": "#000000",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#436060",
+    "BgColour": "#436060",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F5DEB3",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#7FB347",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#79ABFF",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFC600",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C7DD0C",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C7DD0C",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F5DEB3",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D25252",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F5DEB3",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#587272",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2F4F4F",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F5DEB3",
+    "BgColour": "#2F4F4F",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Gedit Original Oblivion",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#42484A",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#eeeeec",
+    "BgColour": "#888a85",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#42484A",
+    "BgColour": "#42484A",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#d3d7cf",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#ce5c00",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#729fcf",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#edd400",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#888a85",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#888a85",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#d3d7cf",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#bbbbbb",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#d3d7cf",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#575C5E",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2e3436",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#d3d7cf",
+    "BgColour": "#2e3436",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "BlueHippo",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2F2",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#87CEEB",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F2F2F2",
+    "BgColour": "#F2F2F2",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#008080",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D87093",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C71585",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#696969",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#696969",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC0866",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CD5C5C",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#1E90FF",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#1E90FF",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "cyan",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "red",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#000000",
+    "BgColour": "#FFFFFF",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Oblivion",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#343434",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D0D0D0",
+    "BgColour": "#000000",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#343434",
+    "BgColour": "#343434",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#7FB347",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#79ABFF",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFC600",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C7DD0C",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C7DD0C",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D25252",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#4B4B4B",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#1E1E1E",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Roboticket",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#E8E8E8",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#484848",
+    "BgColour": "#BDD8F2",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#E8E8E8",
+    "BgColour": "#E8E8E8",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#AF0F91",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#55aa55",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#317ECC",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#AD95AF",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#AD95AF",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#585858",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#AB2525",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#BC5A65",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#295F94",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#295F94",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#585858",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "cyan",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "red",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F5F5F5",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#585858",
+    "BgColour": "#F5F5F5",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Solarized Dark (Alternate 2)",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#343434",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#586E75",
+    "BgColour": "#4E4E4E",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#343434",
+    "BgColour": "#343434",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#999999",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6C71C4",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DC322F",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DC322F",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#586E75",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DC322F",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#93A1A1",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#93A1A1",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#999999",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#859900",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D33682",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D33682",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#999999",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#4B4B4B",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#1E1E1E",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#999999",
+    "BgColour": "#1E1E1E",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Solarized Dark.",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#19404A",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#93A1A1",
+    "BgColour": "#073642",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#19404A",
+    "BgColour": "#19404A",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#839496",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#268BD2",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#586E75",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#586E75",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#839496",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#678CB1",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#678CB1",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B58900",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B58900",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#839496",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#33555E",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#002B36",
+    "BgColour": "#002B36",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#839496",
+    "BgColour": "#002B36",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Solarized Light",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F0E9D7",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#596D73",
+    "BgColour": "#ECE7D5",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F0E9D7",
+    "BgColour": "#F0E9D7",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#657A81",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2AA198",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#93A1A1",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#586E75",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#657A81",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#657A81",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#657A81",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B58900",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B58900",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#657A81",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#6D6D6D",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "cyan",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "black",
+    "BgColour": "red",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FDF6E3",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#657A81",
+    "BgColour": "#FDF6E3",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Sublime Text 2",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3C3D38",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#404040",
+    "BgColour": "#CC9900",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3C3D38",
+    "BgColour": "#3C3D38",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CFBFAD",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C48CFF",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CFBFAD",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#ECE47E",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CFBFAD",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#52E3F6",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#A7EC21",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FF007F",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FF007F",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CFBFAD",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#52534E",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#272822",
+    "BgColour": "#272822",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CFBFAD",
+    "BgColour": "#272822",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Tomorrow Night",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#333537",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C5C8C6",
+    "BgColour": "#373B41",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#333537",
+    "BgColour": "#333537",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C5C8C6",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#DE935F",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CC6666",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B5BD68",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#969896",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#969896",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C5C8C6",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F0C674",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#81A2BE",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B294BB",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B294BB",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C5C8C6",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#4A4B4D",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#1D1F21",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C5C8C6",
+    "BgColour": "#1D1F21",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Vim Desert",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3B3B3B",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F6E06B",
+    "BgColour": "#587B18",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3B3B3B",
+    "BgColour": "#3B3B3B",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#C64947",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#B6B193",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FF8E8D",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#67C3E7",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#67C3E7",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#82F985",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F6E06B",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#F6E06B",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#515151",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#262626",
+    "BgColour": "#262626",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#262626",
+    "Size": 11
+   }]
+ }, {
+  "Name": "json",
+  "Theme": "Vim Jellybeans Port",
+  "Flags": 5,
+  "Id": 120,
+  "KeyWords0": "false null true",
+  "KeyWords1": "",
+  "KeyWords2": "",
+  "KeyWords3": "",
+  "KeyWords4": "",
+  "Extensions": "*.wxcp;*.json",
+  "Properties": [{
+    "Id": -4,
+    "Name": "Whitespace",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2C2C2C",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": -3,
+    "Name": "Caret Colour",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "rgb(255, 128, 0)",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": -2,
+    "Name": "Text Selection",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D0D0D0",
+    "BgColour": "#404040",
+    "Size": 11
+   }, {
+    "Id": -1,
+    "Name": "Fold Margin",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#2C2C2C",
+    "BgColour": "#2C2C2C",
+    "Size": 11
+   }, {
+    "Id": 0,
+    "Name": "Default",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 1,
+    "Name": "Number",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#CF6A4C",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 2,
+    "Name": "String",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 3,
+    "Name": "String EOL",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 4,
+    "Name": "Property Name",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#79ABFF",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 5,
+    "Name": "Escape Sequence",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#99AD6A",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 6,
+    "Name": "Line Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#888888",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 7,
+    "Name": "Block Comment",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#888888",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 8,
+    "Name": "Operator",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 9,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFB964",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 10,
+    "Name": "URI",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#FFFFFF",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 11,
+    "Name": "Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3070A0",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 12,
+    "Name": "LD Keyword",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#3070A0",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 13,
+    "Name": "Error",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 33,
+    "Name": "Line Numbers",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#434343",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 34,
+    "Name": "Brace match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "yellow",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 35,
+    "Name": "Brace bad match",
+    "Flags": 2,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "red",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 37,
+    "Name": "Indent Guide",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#151515",
+    "BgColour": "#151515",
+    "Size": 11
+   }, {
+    "Id": 38,
+    "Name": "Calltip",
+    "Flags": 0,
+    "Alpha": 50,
+    "Face": "",
+    "Colour": "#D8D8D8",
+    "BgColour": "#151515",
+    "Size": 11
+   }]
+ }, {
   "Name": "yaml",
   "Theme": "Atom One-Dark",
   "Flags": 5,
@@ -54008,7 +58388,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -54245,7 +58625,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -54482,7 +58862,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -54719,7 +59099,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -54956,7 +59336,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -55193,7 +59573,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -55430,7 +59810,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -55667,7 +60047,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -55904,7 +60284,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -56141,7 +60521,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -56378,7 +60758,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -56615,7 +60995,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -56852,7 +61232,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -57089,7 +61469,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -57326,7 +61706,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -57563,7 +61943,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -57800,7 +62180,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -58037,7 +62417,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -58274,7 +62654,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",
@@ -58511,7 +62891,7 @@
   "KeyWords2": "",
   "KeyWords3": "Array Date Math document window",
   "KeyWords4": "",
-  "Extensions": "*.js;*.javascript;*.qml;*.json;*.ts;*.wxcp",
+  "Extensions": "*.js;*.javascript;*.qml;*.ts",
   "Properties": [{
     "Id": -4,
     "Name": "Whitespace",

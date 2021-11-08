@@ -41,6 +41,9 @@ class CodeFormatterDlg : public CodeFormatterBaseDlg
     IManager* m_mgr;
 
 protected:
+    virtual void OnChoiceJSON(wxCommandEvent& event);
+    virtual void OnChoiceJavaScript(wxCommandEvent& event);
+    virtual void OnChoiceXML(wxCommandEvent& event);
     virtual void OnChoiceRust(wxCommandEvent& event);
     virtual void OnExportClangFormatFile(wxCommandEvent& event);
     virtual void UpdatePreviewUI(wxNotebookEvent& event);

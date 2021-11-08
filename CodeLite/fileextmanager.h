@@ -94,9 +94,10 @@ public:
         TypeFolderSymlinkExpanded, // For UI purposes only
         TypeLua,
         TypeRust,
-        TypeLast,
         TypeDiff,
         TypePatch,
+        TypeJSON,
+        TypeLast,
     };
 
 public:

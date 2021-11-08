@@ -103,6 +103,48 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
 
     flexGridSizer158->Add(m_choiceRusfmt, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText347 = new wxStaticText(m_panelGeneral, wxID_ANY, _("XML:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer158->Add(m_staticText347, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceXMLFormatterArr;
+    m_choiceXMLFormatterArr.Add(_("None"));
+    m_choiceXMLFormatterArr.Add(_("Builtin"));
+    m_choiceXMLFormatter = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
+                                        wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceXMLFormatterArr, 0);
+    m_choiceXMLFormatter->SetSelection(1);
+
+    flexGridSizer158->Add(m_choiceXMLFormatter, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText351 = new wxStaticText(m_panelGeneral, wxID_ANY, _("JavaScript / TypeScript:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer158->Add(m_staticText351, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceJSFormatterArr;
+    m_choiceJSFormatterArr.Add(_("None"));
+    m_choiceJSFormatterArr.Add(_("clang-format"));
+    m_choiceJSFormatter = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceJSFormatterArr, 0);
+    m_choiceJSFormatter->SetSelection(1);
+
+    flexGridSizer158->Add(m_choiceJSFormatter, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText355 = new wxStaticText(m_panelGeneral, wxID_ANY, _("JSON:"), wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), 0);
+
+    flexGridSizer158->Add(m_staticText355, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceJSONFormatterArr;
+    m_choiceJSONFormatterArr.Add(_("None"));
+    m_choiceJSONFormatterArr.Add(_("Builtin"));
+    m_choiceJSONFormatter = new wxChoice(m_panelGeneral, wxID_ANY, wxDefaultPosition,
+                                         wxDLG_UNIT(m_panelGeneral, wxSize(-1, -1)), m_choiceJSONFormatterArr, 0);
+    m_choiceJSONFormatter->SetSelection(1);
+
+    flexGridSizer158->Add(m_choiceJSONFormatter, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_panelCxx =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook->AddPage(m_panelCxx, _("C++"), false);
@@ -1184,6 +1226,12 @@ CodeFormatterBaseDlg::CodeFormatterBaseDlg(wxWindow* parent, wxWindowID id, cons
                                   this);
     m_choiceRusfmt->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceRust),
                             NULL, this);
+    m_choiceXMLFormatter->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                  wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceXML), NULL, this);
+    m_choiceJSFormatter->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                 wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceJavaScript), NULL, this);
+    m_choiceJSONFormatter->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                   wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceJSON), NULL, this);
     m_pgMgrClang->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged),
                           NULL, this);
     m_buttonExportClangFormatFile->Connect(
@@ -1220,6 +1268,12 @@ CodeFormatterBaseDlg::~CodeFormatterBaseDlg()
                                      NULL, this);
     m_choiceRusfmt->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceRust),
                                NULL, this);
+    m_choiceXMLFormatter->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                     wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceXML), NULL, this);
+    m_choiceJSFormatter->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                    wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceJavaScript), NULL, this);
+    m_choiceJSONFormatter->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                      wxCommandEventHandler(CodeFormatterBaseDlg::OnChoiceJSON), NULL, this);
     m_pgMgrClang->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(CodeFormatterBaseDlg::OnPgmgrclangPgChanged),
                              NULL, this);
     m_buttonExportClangFormatFile->Disconnect(

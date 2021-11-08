@@ -20,6 +20,7 @@
 #include "EclipsePHPThemeImporter.h"
 #include "EclipsePythonThemeImporter.h"
 #if wxCHECK_VERSION(3, 1, 0)
+#include "EclipseJsonThemeImporter.hpp"
 #include "EclipseRustThemeImporter.h"
 #endif
 #include "EclipseSCSSThemeImporter.h"
@@ -58,6 +59,7 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseYAMLThemeImporter());
 #if wxCHECK_VERSION(3, 1, 0)
     m_importers.push_back(new EclipseRustThemeImporter());
+    m_importers.push_back(new EclipseJsonThemeImporter());
 #endif
 }
 

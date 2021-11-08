@@ -59,23 +59,25 @@ FormatOptions::FormatOptions()
 
 FormatOptions::~FormatOptions() {}
 
+#define READ_ENGINE_PROPERTY(property, default_value)           \
+    {                                                           \
+        int tmp_engine = default_value;                         \
+        arch.Read(#property, tmp_engine);                       \
+        property = static_cast<decltype(property)>(tmp_engine); \
+    }
+
 void FormatOptions::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_options"), m_astyleOptions);
     arch.Read(wxT("m_customFlags"), m_customFlags);
 
     // By default, use clang-format as it is more robust and advanced
-    int engine = kCxxFormatEngineClangFormat;
-    arch.Read("m_engine", engine);
-    m_engine = static_cast<CXXFormatterEngine>(engine);
-
-    int rust_engine = kRustFormatEngineRustfmt;
-    arch.Read("m_rustEngine", rust_engine);
-    m_rustEngine = static_cast<RustFormatterEngine>(rust_engine);
-
-    engine = kPhpFormatEngineBuiltin;
-    arch.Read("m_phpEngine", engine);
-    m_phpEngine = static_cast<PHPFormatterEngine>(engine);
+    READ_ENGINE_PROPERTY(m_engine, kCxxFormatEngineClangFormat);
+    READ_ENGINE_PROPERTY(m_rustEngine, kRustFormatEngineRustfmt);
+    READ_ENGINE_PROPERTY(m_phpEngine, kPhpFormatEngineBuiltin);
+    READ_ENGINE_PROPERTY(m_xmlEngine, kXmlFormatEngineBuiltin);
+    READ_ENGINE_PROPERTY(m_javaScriptEngine, kJSFormatEngineClangFormat);
+    READ_ENGINE_PROPERTY(m_jsonEngine, kJSONFormatEngineBuiltin);
 
     arch.Read("m_clangFormatOptions", m_clangFormatOptions);
     arch.Read("m_clangFormatExe", m_clangFormatExe);
@@ -169,6 +171,9 @@ void FormatOptions::Serialize(Archive& arch)
     arch.Write("m_engine", static_cast<int>(m_engine));
     arch.Write("m_phpEngine", static_cast<int>(m_phpEngine));
     arch.Write("m_rustEngine", static_cast<int>(m_rustEngine));
+    arch.Write("m_xmlEngine", static_cast<int>(m_xmlEngine));
+    arch.Write("m_javaScriptEngine", static_cast<int>(m_javaScriptEngine));
+    arch.Write("m_jsonEngine", static_cast<int>(m_jsonEngine));
     arch.Write("m_clangFormatOptions", m_clangFormatOptions);
     arch.Write("m_clangFormatExe", m_clangFormatExe);
     arch.Write("m_clangBreakBeforeBrace", m_clangBreakBeforeBrace);

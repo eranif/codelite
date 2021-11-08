@@ -227,12 +227,22 @@ FormatterEngine CodeFormatter::FindFormatter(const wxFileName& fileName)
        FileExtManager::IsFileType(fileName, FileExtManager::TypeXRC) ||
        FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspace) ||
        FileExtManager::IsFileType(fileName, FileExtManager::TypeProject)) {
-        return kFormatEngineWxXmlDocument;
+        switch(m_options.GetXmlEngine()) {
+        case kXmlForamtEngineNone:
+            return kFormatEngineNone;
+        case kXmlFormatEngineBuiltin:
+            return kFormatEngineWxXmlDocument;
+        }
     }
 
     // JavaScript / TypeScript
     if(FileExtManager::IsJavascriptFile(fileName) || FileExtManager::IsJavaFile(fileName)) {
-        return kFormatEngineClangFormat;
+        switch(m_options.GetJavaScriptEngine()) {
+        case kJSForamtEngineNone:
+            return kFormatEngineNone;
+        case kJSFormatEngineClangFormat:
+            return kFormatEngineClangFormat;
+        }
     }
 
     // Rust
@@ -244,7 +254,6 @@ FormatterEngine CodeFormatter::FindFormatter(const wxFileName& fileName)
             return kFormatEngineRust;
         }
     }
-
     return kFormatEngineNone;
 }
 

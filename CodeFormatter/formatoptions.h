@@ -94,6 +94,21 @@ enum RustFormatterEngine {
     kRustFormatEngineRustfmt,
 };
 
+enum XmlFormatterEngine {
+    kXmlForamtEngineNone,
+    kXmlFormatEngineBuiltin,
+};
+
+enum JSONFormatterEngine {
+    kJSONForamtEngineNone,
+    kJSONFormatEngineBuiltin,
+};
+
+enum JavaScriptFormatterEngine {
+    kJSForamtEngineNone,
+    kJSFormatEngineClangFormat,
+};
+
 // ------------------------------------------------------------
 // ------------------------------------------------------------
 
@@ -220,6 +235,9 @@ class FormatOptions : public SerializedObject
     CXXFormatterEngine m_engine;
     PHPFormatterEngine m_phpEngine;
     RustFormatterEngine m_rustEngine;
+    XmlFormatterEngine m_xmlEngine;
+    JSONFormatterEngine m_jsonEngine;
+    JavaScriptFormatterEngine m_javaScriptEngine;
     wxString m_clangFormatExe;
     size_t m_clangColumnLimit; // when indenting, limit the line to fit into a column width
     size_t m_phpFormatOptions;
@@ -302,6 +320,16 @@ public:
 
     void SetRustEngine(const RustFormatterEngine& rustEngine) { this->m_rustEngine = rustEngine; }
     const RustFormatterEngine& GetRustEngine() const { return m_rustEngine; }
+
+    void SetJavaScriptEngine(const JavaScriptFormatterEngine& javaScriptEngine)
+    {
+        this->m_javaScriptEngine = javaScriptEngine;
+    }
+    void SetJsonEngine(const JSONFormatterEngine& jsonEngine) { this->m_jsonEngine = jsonEngine; }
+    void SetXmlEngine(const XmlFormatterEngine& xmlEngine) { this->m_xmlEngine = xmlEngine; }
+    const JavaScriptFormatterEngine& GetJavaScriptEngine() const { return m_javaScriptEngine; }
+    const JSONFormatterEngine& GetJsonEngine() const { return m_jsonEngine; }
+    const XmlFormatterEngine& GetXmlEngine() const { return m_xmlEngine; }
 
     // PHP Formatter
     size_t GetPHPFormatterOptions() const { return m_phpFormatOptions; }

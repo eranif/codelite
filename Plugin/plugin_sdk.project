@@ -258,6 +258,8 @@
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
     <VirtualDirectory Name="EclipseImporters">
+      <File Name="EclipseJsonThemeImporter.cpp"/>
+      <File Name="EclipseJsonThemeImporter.hpp"/>
       <File Name="EclipseRustThemeImporter.cpp"/>
       <File Name="EclipseRustThemeImporter.h"/>
       <File Name="EclipseYAMLThemeImporter.cpp"/>

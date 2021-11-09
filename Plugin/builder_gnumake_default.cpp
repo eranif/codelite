@@ -1854,3 +1854,17 @@ bool BuilderGnuMake::IsResourceFile(const Compiler::CmpFileTypeInfo& file_type) 
 {
     return file_type.kind == Compiler::CmpFileKindResource;
 }
+
+Builder::OptimalBuildConfig BuilderGnuMake::GetOptimalBuildConfig(const wxString& projectType) const
+{
+    OptimalBuildConfig conf;
+    conf.command = "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
+    conf.workingDirectory = "$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib";
+
+    if(projectType == PROJECT_TYPE_STATIC_LIBRARY || projectType == PROJECT_TYPE_DYNAMIC_LIBRARY) {
+        conf.outputFile << "lib";
+    }
+    conf.outputFile << "$(ProjectName)" << GetOutputFileSuffix(projectType);
+
+    return conf;
+}

@@ -46,37 +46,13 @@ class PSGeneralPage : public PSGeneralPageBase, public IProjectSettingsPage
     wxString m_configName;
 
 protected:
-    enum eFieldType {
-        kFT_OutputFile,
-        kFT_IntermediateFolder,
-        kFT_WorkingDirectory,
-        kFT_Command,
-    };
-
-    enum eBuildSystem {
-        kBS_Default,
-        kBS_CodeLiteMakefileGenerator,
-        kBS_CodeLiteMakefileGeneratorUNIX,
-        kBS_CMake, // via plugin
-        kBS_Other,
-    };
-
-    enum eProjectType {
-        kPT_Executable,
-        kPT_DynamicLibrary,
-        kPT_StatisLibrary,
-    };
-
-protected:
     virtual void OnCustomEditorClicked(wxCommandEvent& event);
     virtual void OnProjectEnabled(wxCommandEvent& event);
+    virtual void OnValueChanging(wxPropertyGridEvent& event);
     virtual void OnValueChanged(wxPropertyGridEvent& event);
 
     wxString GetPropertyAsString(wxPGProperty* prop) const;
     bool GetPropertyAsBool(wxPGProperty* prop) const;
-    wxString GetValueFor(eFieldType fieldType) const;
-    PSGeneralPage::eBuildSystem GetBuildSystemType() const;
-    eProjectType GetProjectType() const;
 
 protected:
     // Handlers for PSGeneralPageBase events.

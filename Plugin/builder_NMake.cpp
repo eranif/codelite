@@ -942,15 +942,7 @@ void BuilderNMake::CreateCleanTargets(ProjectPtr proj, const wxString& confToBui
         text << wxT("\t") << wxT("@del /Q ") << imd << "*$(ObjectSuffix)" << wxT("\n");
         text << wxT("\t") << wxT("@del /Q ") << imd << "*$(DependSuffix)" << wxT("\n");
         // delete the output file as well
-        wxString exeExt(wxEmptyString);
-        if(proj->GetSettings()->GetProjectType(bldConf->GetName()) == PROJECT_TYPE_EXECUTABLE) {
-            // under windows, g++ automatically adds the .exe extension to executable
-            // make sure we delete it as well
-            exeExt = wxT(".exe");
-        }
-
         text << wxT("\t") << wxT("@del /Q ") << wxT("$(OutputFile)") << wxT("\n");
-        text << wxT("\t") << wxT("@del /Q ") << wxT("$(OutputFile)") << exeExt << wxT("\n");
         text << wxT("\t") << wxT("@del /Q ") << DoGetMarkerFileDir(proj->GetName(), proj->GetFileName().GetPath())
              << wxT("\n");
 
@@ -1036,7 +1028,7 @@ void BuilderNMake::CreateTargets(const wxString& type, BuildConfigPtr bldConf, w
     CompilerPtr cmp = bldConf->GetCompiler();
 
     // this is a special target that creates a file with the content of the
-    // $(Objects) variable (to be used with the @<file-name> option of the LINK
+    // $(Objects) variable (to be used with the @<file-name> option of the LINK)
     if(m_hasObjectPCH) {
         text << "\t@echo $(ObjectPCH) > $(ObjectsFileList)\n";
     }
@@ -1944,4 +1936,13 @@ bool BuilderNMake::SendBuildEvent(int eventId, const wxString& projectName, cons
     e.SetProjectName(projectName);
     e.SetConfigurationName(configurationName);
     return EventNotifier::Get()->ProcessEvent(e);
+}
+
+Builder::OptimalBuildConfig BuilderNMake::GetOptimalBuildConfig(const wxString& projectType) const
+{
+    OptimalBuildConfig conf;
+    conf.intermediateDirectory = "$(ConfigurationName)";
+    conf.outputFile << "$(IntermediateDirectory)/$(ProjectName)" << GetOutputFileSuffix(projectType);
+    conf.command = "$(OutputFile)";
+    return conf;
 }

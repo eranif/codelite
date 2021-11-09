@@ -59,6 +59,8 @@ public:
                                           const wxString& arguments, const wxString& fileName, wxString& errMsg);
     virtual wxString GetPORebuildCommand(const wxString& project, const wxString& confToBuild,
                                          const wxString& arguments);
+    virtual OptimalBuildConfig GetOptimalBuildConfig(const wxString& projectType) const;
+    virtual wxString GetStaticLibSuffix() const { return ".lib"; }
 
 protected:
     virtual void CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text);

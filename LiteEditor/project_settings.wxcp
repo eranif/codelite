@@ -1003,6 +1003,13 @@
 									"m_functionNameAndSignature":	"OnCustomEditorClicked(wxCommandEvent& event)",
 									"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the custom editor button is clicked.",
 									"m_noBody":	false
+								}, {
+									"m_eventName":	"wxEVT_PG_CHANGING",
+									"m_eventClass":	"wxPropertyGridEvent",
+									"m_eventHandler":	"wxPropertyGridEventHandler",
+									"m_functionNameAndSignature":	"OnValueChanging(wxPropertyGridEvent& event)",
+									"m_description":	"Respond to wxEVT_PG_CHANGING event, generated when property value is about to be changed by user. Use wxPropertyGridEvent::GetValue() to take a peek at the pending value, and wxPropertyGridEvent::Veto() to prevent change from taking place, if necessary",
+									"m_noBody":	false
 								}],
 							"m_children":	[{
 									"m_type":	4486,

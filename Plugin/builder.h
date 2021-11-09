@@ -155,12 +155,34 @@ public:
         const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
 
     /**
-     * @brief return the output file path. Return here a path for the output file (the executable or library)
-     * Use CodeLite macros to make it 'portable' and configuration aware
-     * @return if an empty string is returned, CodeLite will use the default
-     * $(IntermediateDirectory)/$(ProjectName)
+     * @brief the optimal build config for use with this builder
      */
-    virtual wxString GetOutputFile() const { return wxEmptyString; }
+    struct OptimalBuildConfig {
+        wxString intermediateDirectory; ///< intermediate directory
+        wxString outputFile;            ///< output file name e.g. lib$(ProjectName).a
+        wxString command;               ///< program execution command
+        wxString workingDirectory;      ///< program execution working directory
+    };
+
+    /**
+     * @brief return the optimal build config for use with this builder
+     * Use CodeLite macros to make it 'portable' and configuration aware
+     * @param projectType executable, static library or dynamic library
+     */
+    virtual OptimalBuildConfig GetOptimalBuildConfig(const wxString& projectType) const;
+
+    /**
+     * @brief return the best file extension (depends on platform) for the project type
+     * @param projectType executable, static library or dynamic library
+     * @return .exe / .dll (Windows), .so (Unix), .dylib (macOS), .a / .lib (static library) or empty
+     */
+    wxString GetOutputFileSuffix(const wxString& projectType) const;
+
+    /**
+     * @brief return static library file extension for the targeted compiler
+     * @return usually .a for GCC, .lib for MSVC
+     */
+    virtual wxString GetStaticLibSuffix() const { return ".a"; }
 };
 
 typedef SmartPtr<Builder> BuilderPtr;

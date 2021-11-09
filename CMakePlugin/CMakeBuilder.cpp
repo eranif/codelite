@@ -120,9 +120,13 @@ wxString CMakeBuilder::GetBuildToolCommand(const wxString& project, const wxStri
         return buildTool + " ";
     }
 }
-wxString CMakeBuilder::GetOutputFile() const
+
+Builder::OptimalBuildConfig CMakeBuilder::GetOptimalBuildConfig(const wxString& projectType) const
 {
+    OptimalBuildConfig conf;
     wxChar sep = wxFileName::GetPathSeparator();
-    return wxString() << "$(WorkspacePath)" << sep << CMAKE_BUILD_FOLDER_PREFIX << "$(WorkspaceConfiguration)" << sep
-                      << "output" << sep << "$(ProjectName)";
+    conf.command << "$(WorkspacePath)" << sep << CMAKE_BUILD_FOLDER_PREFIX << "$(WorkspaceConfiguration)" << sep
+                 << "output" << sep << "$(ProjectName)";
+    conf.workingDirectory << "$(WorkspacePath)" << sep << "cmake-build-$(WorkspaceConfiguration)" << sep << "output";
+    return conf;
 }

@@ -115,6 +115,7 @@ protected:
     virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnProjectCustumBuildUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnCustomEditorClicked(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnValueChanging(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:
     wxCheckBox* GetCheckBoxEnabled() { return m_checkBoxEnabled; }

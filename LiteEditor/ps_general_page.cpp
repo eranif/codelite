@@ -23,25 +23,18 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "ps_general_page.h"
 #include "build_settings_config.h"
+#include "builder.h"
 #include "buildmanager.h"
 #include "dirsaver.h"
 #include "globals.h"
 #include "manager.h"
 #include "project.h"
 #include "project_settings_dlg.h"
-#include "ps_general_page.h"
 #include <algorithm>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
-
-#ifdef __WXMSW__
-#define DYNAMIC_LIB_EXT "dll"
-#elif defined(__WXGTK__)
-#define DYNAMIC_LIB_EXT "so"
-#else
-#define DYNAMIC_LIB_EXT "dylib"
-#endif
 
 PSGeneralPage::PSGeneralPage(wxWindow* parent, const wxString& projectName, const wxString& conf,
                              ProjectSettingsDlg* dlg)
@@ -166,11 +159,44 @@ void PSGeneralPage::Clear()
     m_checkBoxEnabled->SetValue(true);
 }
 
+void PSGeneralPage::OnValueChanging(wxPropertyGridEvent& event)
+{
+    event.Skip();
+    if(event.GetProperty() == m_pgPropProjectType) {
+        BuilderPtr builder = BuildManagerST::Get()->GetBuilder(m_pgPropMakeGenerator->GetValueAsString());
+        if(!builder) {
+            return;
+        }
+        // The project type has changed, adjust the output file extension
+        wxVariant variant = event.GetPropertyValue();
+        wxString oldProjectType = m_pgPropProjectType->GetValueAsString(),
+                 newProjectType = m_pgPropProjectType->ValueToString(variant);
+        static const wxRegEx reFileExt("^(.*)(\\.[a-zA-Z]+)$"); // libfoobar.a -> (libfoobar) (.a)
+        wxString outputFile = m_pgPropOutputFile->GetValueAsString();
+        if(outputFile.IsEmpty()) {
+            // The output file was blank, simply set a default value
+            outputFile = builder->GetOptimalBuildConfig(newProjectType).outputFile;
+        } else if(reFileExt.Matches(outputFile) &&
+                  reFileExt.GetMatch(outputFile, 2).IsSameAs(builder->GetOutputFileSuffix(oldProjectType), false)) {
+            // Update the old file extension
+            outputFile = reFileExt.GetMatch(outputFile, 1) + builder->GetOutputFileSuffix(newProjectType);
+        } else {
+            // Append a file extension because no known extension was set
+            outputFile << builder->GetOutputFileSuffix(newProjectType);
+        }
+        m_pgPropOutputFile->SetValue(outputFile);
+    }
+}
+
 void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
 {
     m_dlg->SetIsDirty(true);
 
     if(event.GetProperty() == m_pgPropMakeGenerator) {
+        BuilderPtr builder = BuildManagerST::Get()->GetBuilder(m_pgPropMakeGenerator->GetValueAsString());
+        if(!builder) {
+            return;
+        }
         wxString dlgmsg;
         dlgmsg = _("Adjust settings to fit this generator?");
         if(::wxMessageBox(dlgmsg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
@@ -178,106 +204,12 @@ void PSGeneralPage::OnValueChanged(wxPropertyGridEvent& event)
             return;
         }
         // Update the settings
-        m_pgPropOutputFile->SetValue(GetValueFor(kFT_OutputFile));
-        m_pgPropIntermediateFolder->SetValue(GetValueFor(kFT_IntermediateFolder));
-        m_pgPropWorkingDirectory->SetValue(GetValueFor(kFT_WorkingDirectory));
-        eProjectType projectType = GetProjectType();
-        if(projectType == kPT_Executable) {
-            m_pgPropProgram->SetValue(GetValueFor(kFT_Command));
-        }
-    }
-}
-
-wxString PSGeneralPage::GetValueFor(eFieldType fieldType) const
-{
-    eBuildSystem buildSystem = GetBuildSystemType();
-    eProjectType projectType = GetProjectType();
-    if(buildSystem == kBS_CodeLiteMakefileGenerator || buildSystem == kBS_CodeLiteMakefileGeneratorUNIX) {
-        switch(fieldType) {
-        case kFT_OutputFile: {
-            switch(projectType) {
-            case kPT_Executable:
-                return "$(ProjectName)";
-            case kPT_DynamicLibrary:
-                return "lib$(ProjectName).a";
-            default:
-                return (wxString() << "lib$(ProjectName)." << DYNAMIC_LIB_EXT);
-            }
-        }
-        case kFT_IntermediateFolder:
-            return "";
-        case kFT_WorkingDirectory:
-            return "$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"; // for any dll that this workspace generates
-        case kFT_Command:
-            return "$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)";
-        }
-    } else if(buildSystem == kBS_CMake) {
-        switch(fieldType) {
-        case kFT_OutputFile: {
-            switch(projectType) {
-            case kPT_Executable:
-                return "$(ProjectName)";
-            case kPT_DynamicLibrary:
-                return "lib$(ProjectName).a";
-            default:
-                return (wxString() << "lib$(ProjectName)." << DYNAMIC_LIB_EXT);
-            }
-        }
-        case kFT_IntermediateFolder:
-            return wxEmptyString;
-        case kFT_WorkingDirectory:
-            return "$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output";
-        case kFT_Command:
-            return "$(OutputFile)";
-        }
-    } else { // All other generators are based on the Default generator
-        switch(fieldType) {
-        case kFT_OutputFile: {
-            switch(projectType) {
-            case kPT_Executable:
-                return "$(IntermediateDirectory)/$(ProjectName)";
-            case kPT_DynamicLibrary:
-                return "$(IntermediateDirectory)/lib$(ProjectName).a";
-            default:
-                return (wxString() << "$(IntermediateDirectory)/lib$(ProjectName)." << DYNAMIC_LIB_EXT);
-            }
-        }
-        case kFT_IntermediateFolder:
-            return "$(ConfigurationName)";
-        case kFT_WorkingDirectory:
-            return wxEmptyString;
-        case kFT_Command:
-            return "$(OutputFile)";
-        }
-    }
-    return "";
-}
-
-PSGeneralPage::eProjectType PSGeneralPage::GetProjectType() const
-{
-    wxString projtype = m_pgPropProjectType->GetValueAsString();
-    if(projtype == PROJECT_TYPE_EXECUTABLE) {
-        return kPT_Executable;
-    } else if(projtype == PROJECT_TYPE_STATIC_LIBRARY) {
-        return kPT_StatisLibrary;
-    } else {
-        return kPT_DynamicLibrary;
-    }
-}
-
-PSGeneralPage::eBuildSystem PSGeneralPage::GetBuildSystemType() const
-{
-    wxString generatorName = m_pgPropMakeGenerator->GetValueAsString();
-    if(generatorName == "CodeLite Make Generator" || generatorName == "CodeLite Makefile Generator") {
-        return kBS_CodeLiteMakefileGenerator;
-    } else if(generatorName == "Default") {
-        return kBS_Default;
-    } else if(generatorName == "CMake") {
-        return kBS_CMake;
-    } else if(generatorName == "CodeLite Makefile Generator - UNIX") {
-        return kBS_CodeLiteMakefileGeneratorUNIX;
-    } else {
-        return kBS_Other;
+        Builder::OptimalBuildConfig optimalConf =
+            builder->GetOptimalBuildConfig(m_pgPropProjectType->GetValueAsString());
+        m_pgPropIntermediateFolder->SetValue(optimalConf.intermediateDirectory);
+        m_pgPropOutputFile->SetValue(optimalConf.outputFile);
+        m_pgPropProgram->SetValue(optimalConf.command);
+        m_pgPropWorkingDirectory->SetValue(optimalConf.workingDirectory);
     }
 }
 

@@ -538,10 +538,11 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
     // set the compiler type
     ProjectSettingsCookie cookie;
     BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
+    wxString projectType = settings->GetProjectType(wxEmptyString);
     BuilderPtr builder = BuildManagerST::Get()->GetBuilder(data.m_builderName);
-    wxString outputfile;
+    Builder::OptimalBuildConfig optimalConf;
     if(builder) {
-        outputfile = builder->GetOutputFile();
+        optimalConf = builder->GetOptimalBuildConfig(projectType);
     }
     while(bldConf) {
 #ifndef __WXMSW__
@@ -565,33 +566,14 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
 
         // Update the build system
         bldConf->SetBuildSystem(data.m_builderName);
-        if(data.m_builderName == "CodeLite Make Generator" || data.m_builderName == "CodeLite Makefile Generator") {
-            bldConf->SetIntermediateDirectory("");
-            bldConf->SetOutputFileName("$(ProjectName)");
-            bldConf->SetCommand("$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)");
-            bldConf->SetWorkingDirectory("$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib");
-
-        } else if(data.m_builderName == "CMake") {
-            bldConf->SetIntermediateDirectory("");
-            bldConf->SetOutputFileName("$(ProjectName)");
-            bldConf->SetCommand("$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output/$(ProjectName)");
-            bldConf->SetWorkingDirectory("$(WorkspacePath)/cmake-build-$(WorkspaceConfiguration)/output");
-        } else { // All other generators are based on the "Default" one
-            bldConf->SetIntermediateDirectory("$(ConfigurationName)");
-            bldConf->SetOutputFileName("$(IntermediateDirectory)/$(ProjectName)");
-            bldConf->SetCommand("$(OutputFile)");
-            bldConf->SetWorkingDirectory("");
-        }
-
-        // Set the output file name
-        if(!outputfile.IsEmpty()) {
-            bldConf->SetOutputFileName(wxEmptyString);
-            bldConf->SetCommand(outputfile);
-        }
+        bldConf->SetIntermediateDirectory(optimalConf.intermediateDirectory);
+        bldConf->SetOutputFileName(optimalConf.outputFile);
+        bldConf->SetCommand(optimalConf.command);
+        bldConf->SetWorkingDirectory(optimalConf.workingDirectory);
 
         // Make sure that the build configuration has a project type associated with it
         if(bldConf->GetProjectType().IsEmpty()) {
-            bldConf->SetProjectType(settings->GetProjectType(wxEmptyString));
+            bldConf->SetProjectType(projectType);
         }
         bldConf = settings->GetNextBuildConfiguration(cookie);
     }

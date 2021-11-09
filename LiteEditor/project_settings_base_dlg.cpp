@@ -267,6 +267,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgMgr136->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PSGeneralPageBase::OnProjectCustumBuildUI), NULL, this);
     m_pgMgr136->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PSGeneralPageBase::OnCustomEditorClicked),
                         NULL, this);
+    m_pgMgr136->Connect(wxEVT_PG_CHANGING, wxPropertyGridEventHandler(PSGeneralPageBase::OnValueChanging), NULL, this);
 }
 
 PSGeneralPageBase::~PSGeneralPageBase()
@@ -278,6 +279,8 @@ PSGeneralPageBase::~PSGeneralPageBase()
                            this);
     m_pgMgr136->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                            wxCommandEventHandler(PSGeneralPageBase::OnCustomEditorClicked), NULL, this);
+    m_pgMgr136->Disconnect(wxEVT_PG_CHANGING, wxPropertyGridEventHandler(PSGeneralPageBase::OnValueChanging), NULL,
+                           this);
 }
 
 PSCompilerPageBase::PSCompilerPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,

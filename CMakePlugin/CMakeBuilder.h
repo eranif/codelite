@@ -6,7 +6,7 @@
 class CMakeBuilder : public Builder
 {
 public:
-    virtual wxString GetOutputFile() const;
+    virtual OptimalBuildConfig GetOptimalBuildConfig(const wxString& projectType) const;
     static wxString GetWorkspaceBuildFolder(bool wrapWithQuotes);
     static wxString GetProjectBuildFolder(const wxString& project, bool wrapWithQuotes);
 

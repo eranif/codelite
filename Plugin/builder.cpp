@@ -25,9 +25,10 @@
 
 #include "builder.h"
 #include "build_settings_config.h"
-#include "workspace.h"
 #include "buildmanager.h"
 #include "macros.h"
+#include "project.h"
+#include "workspace.h"
 
 Builder::Builder(const wxString& name)
     : m_name(name)
@@ -69,4 +70,39 @@ void Builder::SetActive()
         else if(builder)
             builder->m_isActive = false;
     }
+}
+
+Builder::OptimalBuildConfig Builder::GetOptimalBuildConfig(const wxString& projectType) const
+{
+    OptimalBuildConfig conf;
+    conf.intermediateDirectory = "$(ConfigurationName)";
+    conf.outputFile = "$(IntermediateDirectory)/";
+    conf.command = "$(OutputFile)";
+
+    if(projectType == PROJECT_TYPE_STATIC_LIBRARY || projectType == PROJECT_TYPE_DYNAMIC_LIBRARY) {
+        conf.outputFile << "lib";
+    }
+    conf.outputFile << "$(ProjectName)" << GetOutputFileSuffix(projectType);
+
+    return conf;
+}
+
+wxString Builder::GetOutputFileSuffix(const wxString& projectType) const
+{
+    if(projectType == PROJECT_TYPE_EXECUTABLE) {
+#ifdef __WXMSW__
+        return ".exe";
+#endif
+    } else if(projectType == PROJECT_TYPE_STATIC_LIBRARY) {
+        return GetStaticLibSuffix();
+    } else if(projectType == PROJECT_TYPE_DYNAMIC_LIBRARY) {
+#ifdef __WXMSW__
+        return ".dll";
+#elif defined(__WXGTK__)
+        return ".so";
+#elif defined(__WXOSX__)
+        return ".dylib";
+#endif
+    }
+    return wxEmptyString;
 }

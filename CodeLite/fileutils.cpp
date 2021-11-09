@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "fileutils.h"
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clConsoleBase.h"
@@ -29,7 +30,6 @@
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
 #include "file_logger.h"
-#include "fileutils.h"
 #include "macros.h"
 #include "procutils.h"
 #include "wx/string.h"
@@ -57,7 +57,22 @@
 #include <functional>
 #include <memory>
 #include <wx/filename.h>
+
 using namespace std;
+// internal helper method
+namespace
+{
+bool write_file_content(const wxFileName& fn, const wxString& content, const wxMBConv& conv)
+{
+    wxFile file(fn.GetFullPath(), wxFile::write);
+    if(file.IsOpened()) {
+        return file.Write(content, conv);
+    } else {
+        return false;
+    }
+}
+} // namespace
+
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
     // Wrap the path with quotes if needed
@@ -91,12 +106,15 @@ void FileUtils::OpenTerminal(const wxString& path, const wxString& user_command,
 
 bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv)
 {
-    wxFile file(fn.GetFullPath(), wxFile::write);
-    if(file.IsOpened()) {
-        return file.Write(content, conv);
-    } else {
+    wxFileName tmpFile = CreateTempFileName(fn.GetPath(), "cltmp", fn.GetExt());
+    // make sure we erase the temp file
+    FileUtils::Deleter d(tmpFile);
+    if(!write_file_content(tmpFile, content, conv)) {
         return false;
     }
+
+    // rename tmp -> real file
+    return ::wxRenameFile(tmpFile.GetFullPath(), fn.GetFullPath(), true);
 }
 
 bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv)

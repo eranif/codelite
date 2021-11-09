@@ -254,6 +254,21 @@ FormatterEngine CodeFormatter::FindFormatter(const wxFileName& fileName)
             return kFormatEngineRust;
         }
     }
+
+    // JSON file types
+    if(FileExtManager::IsFileType(fileName, FileExtManager::TypeJSON) ||
+       FileExtManager::IsFileType(fileName, FileExtManager::TypeWxCrafter) ||
+       FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspaceFileSystem) ||
+       FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspaceNodeJS) ||
+       FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspaceDocker) ||
+       FileExtManager::IsFileType(fileName, FileExtManager::TypeWorkspacePHP)) {
+        switch(m_options.GetJsonEngine()) {
+        case kJSONForamtEngineNone:
+            return kFormatEngineNone;
+        case kJSONFormatEngineBuiltin:
+            return kFormatEngineJSON;
+        }
+    }
     return kFormatEngineNone;
 }
 
@@ -278,7 +293,7 @@ bool CodeFormatter::CanFormatString(const FormatterEngine& engine)
 bool CodeFormatter::CanFormatFile(const FormatterEngine& engine)
 {
     if(engine == kFormatEngineClangFormat || engine == kFormatEnginePhpCsFixer || engine == kFormatEnginePhpcbf ||
-       engine == kFormatEngineWxXmlDocument || engine == kFormatEngineRust) {
+       engine == kFormatEngineWxXmlDocument || engine == kFormatEngineRust || engine == kFormatEngineJSON) {
         return true;
     }
 
@@ -358,20 +373,20 @@ void CodeFormatter::DoFormatWithTempFile(const wxFileName& fileName, wxString& c
     FileUtils::Deleter fd(tempFileName);
 
     if(!FileUtils::WriteFileContent(tempFileName, content)) {
-        clWARNING() << "CodeFormatter: Failed to save file: " << tempFileName << clEndl;
+        clWARNING() << "CodeFormatter: Failed to save file: " << tempFileName << endl;
         return;
     }
 
     DoFormatFile(tempFileName, engine);
 
     if(!FileUtils::ReadFileContent(tempFileName, content)) {
-        clWARNING() << "CodeFormatter: Failed to load file: " << tempFileName << clEndl;
+        clWARNING() << "CodeFormatter: Failed to load file: " << tempFileName << endl;
     }
 }
 
 void CodeFormatter::DoFormatFile(const wxFileName& fileName, const FormatterEngine& engine)
 {
-    clDEBUG() << "CodeFormatter formatting file: " << fileName << clEndl;
+    clDEBUG() << "CodeFormatter formatting file: " << fileName << endl;
 
     if(!CanFormatFile(engine)) {
         DoFormatFileAsString(fileName, engine);
@@ -383,8 +398,10 @@ void CodeFormatter::DoFormatFile(const wxFileName& fileName, const FormatterEngi
         DoFormatWithPhpcbf(fileName);
     } else if(engine == kFormatEngineWxXmlDocument) {
         DoFormatWithWxXmlDocument(fileName);
+    } else if(engine == kFormatEngineJSON) {
+        DoFormatWithcJSON(fileName);
     }
-    clDEBUG() << "CodeFormatter file formatted: " << fileName << clEndl;
+    clDEBUG() << "CodeFormatter file formatted: " << fileName << endl;
 }
 
 void CodeFormatter::DoFormatSelection(IEditor* editor, wxString& content, const FormatterEngine& engine,
@@ -421,7 +438,7 @@ void CodeFormatter::DoFormatWithPhpcbf(const wxFileName& fileName)
 
 wxString CodeFormatter::RunCommand(const wxString& command)
 {
-    clDEBUG() << "CodeFormatter running: " << command << clEndl;
+    clDEBUG() << "CodeFormatter running: " << command << endl;
 
     IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole));
     if(!process) {
@@ -456,7 +473,7 @@ void CodeFormatter::DoFormatWithBuildInPhp(wxString& content)
 void CodeFormatter::DoFormatWithClang(const wxFileName& fileName)
 {
     if(m_options.GetClangFormatExe().IsEmpty()) {
-        clWARNING() << "CodeFormatter: Missing clang_format exec" << clEndl;
+        clWARNING() << "CodeFormatter: Missing clang_format exec" << endl;
         return;
     }
 
@@ -467,7 +484,7 @@ void CodeFormatter::DoFormatWithClang(const wxFileName& fileName)
 void CodeFormatter::DoFormatWithRustfmt(IEditor* editor, const wxFileName& fileName)
 {
     if(m_options.GetRustCommand().IsEmpty()) {
-        clWARNING() << "CodeFormatter: Missing rustfmt command" << clEndl;
+        clWARNING() << "CodeFormatter: Missing rustfmt command" << endl;
         return;
     }
 
@@ -509,7 +526,7 @@ void CodeFormatter::DoFormatWithClang(wxString& content, const wxFileName& fileN
                                       const int& selStart, const int& selEnd)
 {
     if(m_options.GetClangFormatExe().IsEmpty()) {
-        clWARNING() << "CodeFormatter: Missing clang_format exec" << clEndl;
+        clWARNING() << "CodeFormatter: Missing clang_format exec" << endl;
         return;
     }
 
@@ -521,7 +538,7 @@ void CodeFormatter::DoFormatWithClang(wxString& content, const wxFileName& fileN
     wxFileName tempFileName = fileName.GetFullPath() + "-code-formatter-tmp." + fileName.GetExt();
     FileUtils::Deleter fd(tempFileName);
     if(!FileUtils::WriteFileContent(tempFileName, content)) {
-        clWARNING() << "CodeFormatter: Failed to save file: " << tempFileName << clEndl;
+        clWARNING() << "CodeFormatter: Failed to save file: " << tempFileName << endl;
         return;
     }
 
@@ -571,7 +588,7 @@ void CodeFormatter::DoFormatFileAsString(const wxFileName& fileName, const Forma
 {
     wxString content;
     if(!FileUtils::ReadFileContent(fileName, content)) {
-        clWARNING() << "CodeFormatter: Failed to load file: " << fileName << clEndl;
+        clWARNING() << "CodeFormatter: Failed to load file: " << fileName << endl;
         return;
     }
 
@@ -582,7 +599,23 @@ void CodeFormatter::DoFormatFileAsString(const wxFileName& fileName, const Forma
     }
 
     if(!FileUtils::WriteFileContent(fileName, content)) {
-        clWARNING() << "CodeFormatter: Failed to save file: " << fileName << clEndl;
+        clWARNING() << "CodeFormatter: Failed to save file: " << fileName << endl;
+        return;
+    }
+}
+
+void CodeFormatter::DoFormatWithcJSON(const wxFileName& fileName)
+{
+    JSON json(fileName);
+    if(!json.isOk()) {
+        clWARNING() << "CodeFormatter: Failed to load JSON file: " << fileName << endl;
+        return;
+    }
+
+    // prettify the content and save it
+    wxString pretty = json.toElement().format();
+    if(!FileUtils::WriteFileContent(fileName, pretty)) {
+        clWARNING() << "Failed to save file:" << fileName << endl;
         return;
     }
 }
@@ -592,7 +625,7 @@ void CodeFormatter::DoFormatWithWxXmlDocument(const wxFileName& fileName)
     wxString filePaht = fileName.GetFullPath();
     wxXmlDocument doc;
     if(!doc.Load(filePaht) || !doc.Save(filePaht, m_mgr->GetEditorSettings()->GetIndentWidth())) {
-        clWARNING() << "CodeFormatter: Failed to format XML file: " << fileName << clEndl;
+        clWARNING() << "CodeFormatter: Failed to format XML file: " << fileName << endl;
         return;
     }
 }

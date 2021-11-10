@@ -521,7 +521,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     // Use the FileExtManager to get the file type by examinig its content
     LexerConf::Ptr_t lexerByContent; // Null by default
     FileExtManager::FileType fileType = FileExtManager::TypeOther;
-    if(FileExtManager::AutoDetectByContent(filename, fileType) && fileType != FileExtManager::TypeOther) {
+    if(!FileExtManager::AutoDetectByContent(filename, fileType)) {
+        fileType = FileExtManager::GetType(filename);
+    }
+
+    if(fileType != FileExtManager::TypeOther) {
         switch(fileType) {
         case FileExtManager::TypeShellScript:
             lexerByContent = GetLexer("script");
@@ -540,6 +544,17 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
             break;
         case FileExtManager::TypePython:
             lexerByContent = GetLexer("python");
+            break;
+        case FileExtManager::TypeWorkspaceDocker:
+        case FileExtManager::TypeWorkspaceFileSystem:
+        case FileExtManager::TypeWorkspaceNodeJS:
+        case FileExtManager::TypeWorkspacePHP:
+        case FileExtManager::TypeWxCrafter:
+#if wxCHECK_VERSION(3, 1, 0)
+            lexerByContent = GetLexer("json");
+#else
+            lexerByContent = GetLexer("javascript");
+#endif
             break;
         default:
             break;

@@ -547,9 +547,8 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="Remote" ConfigName="Win_x64_Release"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug">
-      <Environment>WXWIN=C:/root
-WXCFG=gcc_x64_dll/mswu
-</Environment>
+      <Environment>WXWIN=C:/msys64/home/eran/root&#xD;
+WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>

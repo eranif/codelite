@@ -59,7 +59,7 @@ bool CompilerLocatorMSVC::Locate()
         }
     }
 
-    // Visual Studio 2017 no longer sets the above environment variable on system-wide
+    // Visual Studio 2017+ no longer sets the above environment variable on system-wide
     ScanUninstRegKeys();
 
     return !m_compilers.empty();
@@ -68,10 +68,11 @@ bool CompilerLocatorMSVC::Locate()
 void CompilerLocatorMSVC::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
                                             const wxString& displayVersion)
 {
-    static const wxRegEx reName("^Visual Studio (Community|Professional|Enterprise) ([0-9]{4})$"),
+    static const wxRegEx reName("^Visual Studio (Community|Professional|Enterprise) ([0-9]{4})( (Current|Preview))?$"),
         reVersion("^([0-9]+).*$");
     if(reName.Matches(displayName) && reVersion.Matches(displayVersion)) {
         wxString vcEdition = reName.GetMatch(displayName, 1);
+        wxString vcChannel = reName.GetMatch(displayName, 4);
         wxString vcVersion = reVersion.GetMatch(displayVersion, 1);
         long lvcVersion;
         if(!vcVersion.ToLong(&lvcVersion) || lvcVersion < 15) {
@@ -79,7 +80,12 @@ void CompilerLocatorMSVC::CheckUninstRegKey(const wxString& displayName, const w
             return;
         }
         for(size_t i = 0; i < m_vcPlatforms.GetCount(); ++i) {
-            wxString compilerName = "Visual C++ " + vcVersion + " " + vcEdition + " (" + m_vcPlatforms[i] + ")";
+            wxString compilerName = "Visual C++ ";
+            compilerName << vcVersion << " " << vcEdition << " ";
+            if(!vcChannel.IsEmpty() && vcChannel != "Current") {
+                compilerName << vcChannel << " ";
+            }
+            compilerName << "(" << m_vcPlatforms[i] << ")";
             AddToolsVC2017(installFolder, compilerName, m_vcPlatforms[i]);
         }
     }

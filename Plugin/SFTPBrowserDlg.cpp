@@ -163,7 +163,14 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
             folder = m_textCtrlRemoteFolder->GetValue();
             if(folder.IsEmpty()) {
                 folder = "/";
+            } else {
+                // if the path contains file name, remmove it
+                wxFileName fn(folder);
+                if(fn.GetFullName().Contains(".")) {
+                    folder = fn.GetPath(wxPATH_UNIX);
+                }
             }
+            folder.Replace("\\", "/");
             attributes = m_sftp->List(folder, m_flags, m_filter);
 
         } else if(path == "..") {

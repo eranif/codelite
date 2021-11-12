@@ -227,8 +227,12 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     clEditor* activeEditor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(activeEditor) { lineNumber = activeEditor->GetCurrentLine(); }
 
-    if(m_replaceWith->FindString(m_replaceWith->GetValue(), true) == wxNOT_FOUND) {
-        m_replaceWith->Append(m_replaceWith->GetValue());
+    wxString replaceText = m_replaceWith->GetValue();
+    int replaceLenInChars = (int)replaceText.Len();
+    int replaceLen = (int)::clUTF8Length(replaceText, replaceLenInChars);
+
+    if(m_replaceWith->FindString(replaceText, true) == wxNOT_FOUND) {
+        m_replaceWith->Append(replaceText);
     }
 
     // Step 1: apply selected replacements
@@ -237,7 +241,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 
     wxString lastFile; // track offsets of pending substitutions caused by previous substitutions
     long lastLine = 0;
-    long delta = 0;
+    long delta = 0, deltaInChars = 0;
 
     // remembers first entry in the file being updated
     MatchInfo_t::iterator firstInFile = m_matchInfo.begin();
@@ -248,36 +252,38 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     clMainFrame::Get()->GetMainBook()->SetUseBuffereLimit(false);
     MatchInfo_t::iterator i = firstInFile;
     for(; i != m_matchInfo.end(); ++i) {
+        SearchResult& res = i->second;
         m_progress->SetValue(m_progress->GetValue() + 1);
         m_progress->Update();
 
-        if(i->second.GetFileName() != lastFile) {
+        if(res.GetFileName() != lastFile) {
             // about to start a different file, save current results
             DoSaveResults(sci, firstInFile, i);
             firstInFile = i;
-            lastFile = i->second.GetFileName();
+            lastFile = res.GetFileName();
             lastLine = 0;
             sci = NULL;
         }
 
-        if(i->second.GetLineNumber() == lastLine) {
+        if(res.GetLineNumber() == lastLine) {
             // prior substitutions affected the location of this one
-            i->second.SetColumn(i->second.GetColumn() + delta);
+            res.SetColumn(res.GetColumn() + delta);
+            res.SetColumnInChars(res.GetColumnInChars() + deltaInChars);
         } else {
-            delta = 0;
+            delta = deltaInChars = 0;
         }
         if((m_sci->MarkerGet(i->first) & 1 << 0x7) == 0)
             // not selected for application
             continue;
 
         // extract originally matched text for safety check later
-        wxString text = i->second.GetPattern().Mid(i->second.GetColumn() - delta, i->second.GetLen());
-        if(text == m_replaceWith->GetValue()) continue; // no change needed
+        wxString text = res.GetPattern().Mid(res.GetColumnInChars() - deltaInChars, res.GetLenInChars());
+        if(text == replaceText) continue; // no change needed
 
         // need an editor for this file (try only once per file though)
         if(!sci && lastLine == 0) {
-            sci = DoGetEditor(i->second.GetFileName());
-            lastLine = i->second.GetLineNumber();
+            sci = DoGetEditor(res.GetFileName());
+            lastLine = res.GetLineNumber();
         }
         if(!sci) {
             // couldn't open file
@@ -285,27 +291,29 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
             continue;
         }
 
-        long pos = sci->PositionFromLine(i->second.GetLineNumber() - 1);
+        long pos = sci->PositionFromLine(res.GetLineNumber() - 1);
         if(pos < 0) {
             // invalid line number
             m_sci->MarkerAdd(i->first, 0x8);
             continue;
         }
-        pos += i->second.GetColumn();
+        pos += res.GetColumn();
 
-        sci->SetSelection(pos, pos + i->second.GetLen());
+        sci->SetSelection(pos, pos + res.GetLen());
         if(sci->GetSelectedText() != text) {
             // couldn't locate the original match (file may have been modified)
             m_sci->MarkerAdd(i->first, 0x8);
             continue;
         }
-        sci->ReplaceSelection(m_replaceWith->GetValue());
+        sci->ReplaceSelection(replaceText);
 
-        delta += m_replaceWith->GetValue().Length() - i->second.GetLen();
-        lastLine = i->second.GetLineNumber();
+        delta += replaceLen - res.GetLen();
+        deltaInChars += replaceLenInChars - res.GetLenInChars();
+        lastLine = res.GetLineNumber();
 
-        i->second.SetPattern(m_sci->GetLine(i->first)); // includes prior updates to same line
-        i->second.SetLen(m_replaceWith->GetValue().Length());
+        res.SetPattern(m_sci->GetLine(i->first)); // includes prior updates to same line
+        res.SetLen(replaceLen);
+        res.SetLenInChars(replaceLenInChars);
     }
     m_progress->SetValue(0);
     DoSaveResults(sci, firstInFile, m_matchInfo.end());

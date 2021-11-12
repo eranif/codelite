@@ -1,7 +1,7 @@
+#include "RemotyWorkspace.hpp"
 #include "RemotyConfig.hpp"
 #include "RemotyNewWorkspaceDlg.h"
 #include "RemotySwitchToWorkspaceDlg.h"
-#include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -255,9 +255,10 @@ void RemotyWorkspace::OnOpenWorkspace(clCommandEvent& event)
     if(!dlg.IsRemote()) {
         event.Skip();
         event.SetFileName(dlg.GetPath());
-        return;
+
+    } else {
+        DoOpen(dlg.GetPath(), dlg.GetAccount());
     }
-    DoOpen(dlg.GetPath());
 }
 
 void RemotyWorkspace::OnCloseWorkspace(clCommandEvent& event)
@@ -498,18 +499,15 @@ void RemotyWorkspace::OnNewWorkspace(clCommandEvent& event)
         }
 
         auto acc = SSHAccountInfo::LoadAccount(account);
-        // Build the workspcae URI and open it
-        wxString uri;
-        uri << "ssh://" << acc.GetUsername() << "@" << acc.GetHost() << ":" << acc.GetPort() << ":" << remote_path;
-
         // add this file to the list of recently opened workspaces
         RemotyConfig config;
-        config.UpdateRecentWorkspaces(uri);
-        DoOpen(uri);
+        RemoteWorkspaceInfo wi{ account, remote_path };
+        config.UpdateRecentWorkspaces(wi);
+        DoOpen(remote_path, account);
     }
 }
 
-void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
+void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
 {
     // Close any opened workspace
     auto frame = EventNotifier::Get()->TopFrame();
@@ -520,21 +518,10 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
     // close any previously opened workspace
     DoClose(true);
 
-    // parse the remote file path
-    wxString remote_path = workspaceFileURI;
-
-    wxString path, scheme, user_name, remote_server, port;
-    FileUtils::ParseURI(remote_path, path, scheme, user_name, remote_server, port);
-
-    long nPort = 22;
-    port.ToCLong(&nPort);
-
     // Load the account
-    auto accounts = SSHAccountInfo::Load([&](const SSHAccountInfo& acc) -> bool {
-        return acc.GetUsername() == user_name && acc.GetPort() == nPort && acc.GetHost() == remote_server;
-    });
+    auto ssh_account = SSHAccountInfo::LoadAccount(account);
 
-    if(accounts.empty()) {
+    if(ssh_account.GetAccountName().IsEmpty()) {
         ::wxMessageBox(_("Could not find a matching SSH account to load the workspace!"), "CodeLite",
                        wxICON_ERROR | wxCENTER);
         return;
@@ -542,8 +529,7 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
 
     wxBusyCursor bc;
     // first: attempt to download the workspace file and store it locally
-    const auto& account = accounts[0];
-    auto localFile = clSFTPManager::Get().Download(path, account.GetAccountName());
+    auto localFile = clSFTPManager::Get().Download(file_path, account);
     if(!localFile.IsOk()) {
         ::wxMessageBox(_("Failed to download remote workspace file!\n") + clSFTPManager::Get().GetLastError(),
                        "CodeLite", wxICON_ERROR | wxCENTER);
@@ -561,21 +547,21 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
         return;
     }
 
-    m_account = accounts[0];
-    m_remoteWorkspaceFile = path;
+    m_account = ssh_account;
+    m_remoteWorkspaceFile = file_path;
     m_localWorkspaceFile = localFile.GetFullPath();
     m_localUserWorkspaceFile = userSettings.GetFullPath();
 
     // If the user has .clang-format file, download it as well and place it next to the root download folder
-    wxString remoteClangFormatFile = path;
+    wxString remoteClangFormatFile = file_path;
     remoteClangFormatFile = remoteClangFormatFile.BeforeLast('/');
     remoteClangFormatFile << "/.clang-format";
 
     // Construct the local file path
-    wxFileName localClangFormatFile = clSFTP::GetLocalFileName(account, remoteClangFormatFile, true);
-    bool hasClangFormatFile = clSFTPManager::Get().IsFileExists(remoteClangFormatFile, account);
+    wxFileName localClangFormatFile = clSFTP::GetLocalFileName(ssh_account, remoteClangFormatFile, true);
+    bool hasClangFormatFile = clSFTPManager::Get().IsFileExists(remoteClangFormatFile, ssh_account);
     if(hasClangFormatFile) {
-        localClangFormatFile = clSFTPManager::Get().Download(remoteClangFormatFile, account.GetAccountName(),
+        localClangFormatFile = clSFTPManager::Get().Download(remoteClangFormatFile, ssh_account.GetAccountName(),
                                                              localClangFormatFile.GetFullPath());
         if(localClangFormatFile.IsOk() && localClangFormatFile.FileExists()) {
             clGetManager()->SetStatusMessage(_("Downloaded .clang-format file"));
@@ -586,7 +572,8 @@ void RemotyWorkspace::DoOpen(const wxString& workspaceFileURI)
         }
     }
 
-    path.Replace("\\", "/");
+    wxString fixed_path = file_path;
+    fixed_path.Replace("\\", "/");
     wxString workspacePath = GetRemoteWorkingDir();
     if(workspacePath.empty()) {
         ::wxMessageBox(_("Invalid empty remote path provided"), "CodeLite", wxICON_ERROR | wxCENTER);

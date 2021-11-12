@@ -72,8 +72,8 @@ protected:
     /// codelite-remote exec handlers
     void DoProcessBuildOutput(const wxString& output, bool is_completed);
 
-    /// open a workspace file. the expected file format is: ssh://user@host:[port:]/path/to/file
-    void DoOpen(const wxString& workspaceFileURI);
+    /// open a workspace file
+    void DoOpen(const wxString& path, const wxString& account);
 
     void DeleteLspEntries();
     void OnCodeLiteRemoteTerminated(clCommandEvent& event);

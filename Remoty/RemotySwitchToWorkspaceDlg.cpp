@@ -9,119 +9,132 @@
 #include "wx/filedlg.h"
 #include <wx/tokenzr.h>
 
+namespace
+{
+template <typename T> void UpdateSelection(T* ctrl, const wxString& str)
+{
+    if((int)ctrl->FindString(str) == wxNOT_FOUND) {
+        ctrl->Append(str);
+    }
+    ctrl->SetStringSelection(str);
+}
+} // namespace
+
 RemotySwitchToWorkspaceDlg::RemotySwitchToWorkspaceDlg(wxWindow* parent)
     : RemotySwitchToWorkspaceDlgBase(parent)
 {
     // populate the recent workspace options
-    auto recentWorkspaces = clConfig::Get().GetRecentWorkspaces();
-    m_comboBoxLocal->Append(recentWorkspaces);
-
-    // load any recent remote workspaces loaded
     RemotyConfig config;
-    auto recentRemoteWorkspaces = config.GetRecentWorkspaces();
-    wxArrayString paths;
-    paths.reserve(recentRemoteWorkspaces.size());
-    for(const auto& recent_path : recentRemoteWorkspaces) {
-        paths.Add(GetDisplayStringFromFullPath(recent_path));
-        m_displayToRemotePath.insert({ paths.Last(), recent_path });
-    }
-    m_comboBoxRemote->Append(paths);
+    bool workspace_type_local = config.IsOpenWorkspaceTypeLocal();
+    m_choiceWorkspaceType->SetStringSelection(workspace_type_local ? "Local" : "Remote");
+
+    InitialiseDialog();
     GetSizer()->Fit(this);
     CenterOnParent();
 }
 
 RemotySwitchToWorkspaceDlg::~RemotySwitchToWorkspaceDlg()
 {
-    auto selection = m_comboBoxRemote->GetValue();
-    selection.Trim().Trim(false);
-    if(m_displayToRemotePath.count(selection) == 0) {
-        return;
-    }
-
-    const wxString& full_path = m_displayToRemotePath[selection];
     RemotyConfig config;
-    config.UpdateRecentWorkspaces(full_path);
+    if(IsRemote()) {
+        RemoteWorkspaceInfo wi{ m_choiceAccount->GetStringSelection(), m_comboBoxPath->GetStringSelection() };
+        config.UpdateRecentWorkspaces(wi);
+    }
+    config.SetOpenWorkspaceTypeLocal(m_choiceWorkspaceType->GetStringSelection() == "Local");
 }
 
-void RemotySwitchToWorkspaceDlg::OnLocalBrowse(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    wxString path = ::wxFileSelector(_("Choose a file"), wxEmptyString, wxEmptyString, wxEmptyString,
-                                     wxT("CodeLite Workspace files (*.workspace)|*.workspace"));
-    if(path.empty()) {
-        return;
-    }
-    m_comboBoxLocal->SetValue(path);
-}
+void RemotySwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_comboBoxPath->GetValue().IsEmpty()); }
 
-void RemotySwitchToWorkspaceDlg::OnRemoteBrowse(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    auto res = ::clRemoteFileSelector(_("Choose a file"), wxEmptyString, "*.workspace", this);
-    if(res.first.empty()) {
-        return;
-    }
-
-    const wxString& account_name = res.first;
-    const wxString& path = res.second;
-
-    // build the file's path
-    auto account = SSHAccountInfo::LoadAccount(account_name);
-    if(account.GetAccountName().empty()) {
-        // should not happen
-        return;
-    }
-
-    // build the path
-    auto parts = ::wxStringTokenize(path, "/", wxTOKEN_STRTOK);
-    wxString full_path;
-    full_path << "ssh://" << account.GetUsername() << "@" << account.GetHost() << ":" << account.GetPort() << ":"
-              << path;
-
-    wxString display_path = GetDisplayStringFromFullPath(full_path);
-    m_comboBoxRemote->SetValue(display_path);
-    m_displayToRemotePath.insert({ display_path, full_path });
-}
-
-void RemotySwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!GetPath().IsEmpty()); }
-
-wxString RemotySwitchToWorkspaceDlg::GetPath() const
+void RemotySwitchToWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
     if(IsRemote()) {
-        auto iter = m_displayToRemotePath.find(m_comboBoxRemote->GetValue());
-        if(iter == m_displayToRemotePath.end()) {
-            return wxEmptyString;
-        } else {
-            return iter->second;
+        auto res = ::clRemoteFileSelector(_("Choose a file"), wxEmptyString, "*.workspace", this);
+        if(res.first.empty()) {
+            return;
         }
+        const wxString& account_name = res.first;
+        const wxString& path = res.second;
+        // update the account drop box
+        UpdateSelection(m_choiceAccount, account_name);
+        // update the path
+        UpdateSelection(m_comboBoxPath, path);
     } else {
-        return m_comboBoxLocal->GetValue();
+        wxString path = ::wxFileSelector(_("Choose a file"), wxEmptyString, wxEmptyString, wxEmptyString,
+                                         wxT("CodeLite Workspace files (*.workspace)|*.workspace"));
+        if(path.empty()) {
+            return;
+        }
+        UpdateSelection(m_comboBoxPath, path);
     }
 }
 
-wxString RemotySwitchToWorkspaceDlg::GetDisplayStringFromFullPath(const wxString& full_path) const
+void RemotySwitchToWorkspaceDlg::OnRemoteUI(wxUpdateUIEvent& event) { event.Enable(IsRemote()); }
+
+void RemotySwitchToWorkspaceDlg::OnChoiceWorkspaceType(wxCommandEvent& event)
 {
-    wxString path, scheme, user_name, remote_server, port;
-    FileUtils::ParseURI(full_path, path, scheme, user_name, remote_server, port);
+    wxUnusedVar(event);
+    InitialiseDialog();
+}
 
-    long nPort = 22;
-    port.ToCLong(&nPort);
+bool RemotySwitchToWorkspaceDlg::IsRemote() const { return m_choiceWorkspaceType->GetStringSelection() == "Remote"; }
 
-    auto accounts = SSHAccountInfo::Load([&](const SSHAccountInfo& acc) -> bool {
-        return acc.GetUsername() == user_name && acc.GetPort() == nPort && acc.GetHost() == remote_server;
-    });
-
-    if(accounts.size() != 1) {
-        return full_path;
+void RemotySwitchToWorkspaceDlg::SyncPathToAccount()
+{
+    int path_index = static_cast<int>(m_comboBoxPath->GetSelection());
+    if(wxNOT_FOUND == path_index || path_index >= static_cast<int>(m_remoteWorkspaces.size())) {
+        return;
     }
-    const auto& account = accounts[0];
 
-    wxString display_path;
-    auto parts = ::wxStringTokenize(path, "/", wxTOKEN_STRTOK);
-    if(!parts.empty()) {
-        display_path = parts.Last() + "@" + account.GetAccountName();
+    m_choiceAccount->SetStringSelection(m_remoteWorkspaces[path_index].account);
+}
+
+wxString RemotySwitchToWorkspaceDlg::GetPath() const { return m_comboBoxPath->GetValue(); }
+
+wxString RemotySwitchToWorkspaceDlg::GetAccount() { return m_choiceAccount->GetStringSelection(); }
+
+void RemotySwitchToWorkspaceDlg::InitialiseDialog()
+{
+    RemotyConfig config;
+    bool workspace_type_local = m_choiceWorkspaceType->GetStringSelection() == "Local";
+
+    m_remoteWorkspaces = config.GetRecentWorkspaces();
+    m_comboBoxPath->Clear();
+    m_choiceAccount->Clear();
+
+    if(workspace_type_local) {
+        auto local_paths = clConfig::Get().GetRecentWorkspaces();
+        m_comboBoxPath->Append(local_paths);
+        if(!local_paths.empty()) {
+            m_comboBoxPath->SetSelection(0);
+        }
     } else {
-        display_path = full_path;
+        // remote workspaces
+        set<wxString> S;
+        if(m_remoteWorkspaces.empty()) {
+            return;
+        }
+        for(size_t i = 0; i < m_remoteWorkspaces.size(); ++i) {
+            m_comboBoxPath->Append(m_remoteWorkspaces[i].path);
+            S.insert(m_remoteWorkspaces[i].account);
+        }
+
+        for(const auto& account : S) {
+            m_choiceAccount->Append(account);
+        }
+        m_comboBoxPath->SetSelection(0);
+        SyncPathToAccount();
     }
-    return display_path;
+}
+
+void RemotySwitchToWorkspaceDlg::OnPathChanged(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if(!IsRemote()) {
+        return;
+    }
+    int sel = m_comboBoxPath->GetSelection();
+    if(sel == wxNOT_FOUND || sel >= (int)m_remoteWorkspaces.size()) {
+        return;
+    }
+    m_choiceAccount->SetStringSelection(m_remoteWorkspaces[sel].account);
 }

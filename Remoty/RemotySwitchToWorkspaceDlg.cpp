@@ -88,7 +88,12 @@ void RemotySwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!
 wxString RemotySwitchToWorkspaceDlg::GetPath() const
 {
     if(IsRemote()) {
-        return m_displayToRemotePath.find(m_comboBoxRemote->GetValue())->second;
+        auto iter = m_displayToRemotePath.find(m_comboBoxRemote->GetValue());
+        if(iter == m_displayToRemotePath.end()) {
+            return wxEmptyString;
+        } else {
+            return iter->second;
+        }
     } else {
         return m_comboBoxLocal->GetValue();
     }

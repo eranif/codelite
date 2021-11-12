@@ -443,11 +443,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	"clThemedChoice"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	"clThemedChoice.h"
+											"m_value":	"clChoice.h"
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
@@ -619,11 +619,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	"clThemedComboBox"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	"clThemedComboBox.hpp"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
@@ -886,11 +886,11 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Class Name:",
-											"m_value":	"clThemedChoice"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Include File:",
-											"m_value":	"clThemedChoice.h"
+											"m_value":	""
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",

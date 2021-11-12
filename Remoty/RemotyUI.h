@@ -19,9 +19,8 @@
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include "clThemedChoice.h"
+#include "clChoice.h"
 #include <wx/combobox.h>
-#include "clThemedComboBox.hpp"
 #include <wx/button.h>
 #include <wx/textctrl.h>
 #if wxVERSION_NUMBER >= 2900
@@ -56,12 +55,12 @@ class RemotySwitchToWorkspaceDlgBase : public wxDialog
 {
 protected:
     wxStaticText* m_staticText77;
-    clThemedChoice* m_choiceWorkspaceType;
+    wxChoice* m_choiceWorkspaceType;
     wxStaticText* m_staticText75;
-    clThemedComboBox* m_comboBoxPath;
+    wxComboBox* m_comboBoxPath;
     wxButton* m_button29;
     wxStaticText* m_staticText81;
-    clThemedChoice* m_choiceAccount;
+    wxChoice* m_choiceAccount;
     wxStdDialogButtonSizer* m_stdBtnSizer9;
     wxButton* m_button11;
     wxButton* m_button13;
@@ -75,12 +74,12 @@ protected:
 
 public:
     wxStaticText* GetStaticText77() { return m_staticText77; }
-    clThemedChoice* GetChoiceWorkspaceType() { return m_choiceWorkspaceType; }
+    wxChoice* GetChoiceWorkspaceType() { return m_choiceWorkspaceType; }
     wxStaticText* GetStaticText75() { return m_staticText75; }
-    clThemedComboBox* GetComboBoxPath() { return m_comboBoxPath; }
+    wxComboBox* GetComboBoxPath() { return m_comboBoxPath; }
     wxButton* GetButton29() { return m_button29; }
     wxStaticText* GetStaticText81() { return m_staticText81; }
-    clThemedChoice* GetChoiceAccount() { return m_choiceAccount; }
+    wxChoice* GetChoiceAccount() { return m_choiceAccount; }
     RemotySwitchToWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                                    const wxString& title = _("Switch to workspace..."),
                                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),

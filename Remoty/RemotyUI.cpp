@@ -63,8 +63,8 @@ RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent,
     wxArrayString m_choiceWorkspaceTypeArr;
     m_choiceWorkspaceTypeArr.Add(_("Local"));
     m_choiceWorkspaceTypeArr.Add(_("Remote"));
-    m_choiceWorkspaceType = new clThemedChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                               m_choiceWorkspaceTypeArr, 0);
+    m_choiceWorkspaceType =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceWorkspaceTypeArr, 0);
     m_choiceWorkspaceType->SetSelection(0);
 
     flexGridSizer15->Add(m_choiceWorkspaceType, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -77,8 +77,8 @@ RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent,
     flexGridSizer15->Add(m_staticText75, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_comboBoxPathArr;
-    m_comboBoxPath = new clThemedComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(250, -1)),
-                                          m_comboBoxPathArr, 0);
+    m_comboBoxPath = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(250, -1)),
+                                    m_comboBoxPathArr, 0);
     m_comboBoxPath->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_comboBoxPath->SetHint(wxT(""));
@@ -97,7 +97,7 @@ RemotySwitchToWorkspaceDlgBase::RemotySwitchToWorkspaceDlgBase(wxWindow* parent,
 
     wxArrayString m_choiceAccountArr;
     m_choiceAccount =
-        new clThemedChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceAccountArr, 0);
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceAccountArr, 0);
 
     flexGridSizer15->Add(m_choiceAccount, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

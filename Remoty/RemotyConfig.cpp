@@ -1,5 +1,6 @@
 #include "RemotyConfig.hpp"
 #include "cl_config.h"
+#include <algorithm>
 
 namespace
 {

@@ -43,6 +43,11 @@ TextCtrlWrapper::TextCtrlWrapper()
     AddProperty(new StringProperty(PROP_HINT, "", _("Sets a hint shown in an empty unfocused text control")));
     AddProperty(new StringProperty(PROP_MAXLENGTH, wxT("0"),
                                    _("The maximum length of user entered text. Only for single-line wxTextCtrls.")));
+#if wxUSE_SPELLCHECK
+    AddProperty(new BoolProperty(PROP_SPELLCHECK, false, 
+        _("Enable spell checking using the operating system provided text proofing tools. "
+          "This function is only available on OSX, Windows 8 (or newer), and GTK3 (or newer).")));
+#endif // wxUSE_SPELLCHECK
     AddProperty(new BoolProperty(
         PROP_AUTO_COMPLETE_DIRS, false,
         _("Enable auto-completion of the text using the file system directories. Notice that currently this function "
@@ -73,6 +78,14 @@ wxString TextCtrlWrapper::CppCtorCode() const
         code << GetName() << "->SetHint(" << wxCrafter::UNDERSCORE(PropertyString(PROP_HINT)) << ");\n";
         code << wxCrafter::WXVER_CHECK_BLOCK_END();
     }
+
+#if wxUSE_SPELLCHECK
+    if(IsPropertyChecked(PROP_SPELLCHECK)) {
+        code << "\n#if wxUSE_SPELLCHECK\n";
+        code << GetName() << "->EnableProofCheck();\n";
+        code << "#endif\n";
+    }
+#endif // wxUSE_SPELLCHECK
 
     if(IsPropertyChecked(PROP_AUTO_COMPLETE_DIRS)) {
         code << GetName() << "->AutoCompleteDirectories();\n";

@@ -269,6 +269,7 @@ class wxcWidget;
 #define PROP_DIRECTION wxTRANSLATE("Direction")
 #define PROP_ANIM_AUTO_PLAY wxTRANSLATE("Load and play")
 #define PROP_PROPORTION wxTRANSLATE("Proportion:")
+#define PROP_SPELLCHECK wxTRANSLATE("Enable Spell Checking")
 ///////////////////////////////////////////////////////////////////////////////////////
 
 struct WxStyleInfo {

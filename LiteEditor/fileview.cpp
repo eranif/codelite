@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "fileview.h"
 #include "ICompilerLocator.h"
 #include "ImportFilesDialogNew.h"
 #include "NewVirtualFolderDlg.h"
@@ -43,7 +44,6 @@
 #include "evnvarlist.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "fileview.h"
 #include "frame.h"
 #include "globals.h"
 #include "importfilessettings.h"
@@ -213,6 +213,7 @@ FileViewTree::FileViewTree(wxWindow* parent, const wxWindowID id, const wxPoint&
                                   wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &FileViewTree::OnActiveProjectChanged, this);
     Bind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Bind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
     Bind(wxEVT_TREE_DELETE_ITEM, &FileViewTree::OnItemExpanding, this);
@@ -237,6 +238,8 @@ FileViewTree::~FileViewTree()
                                      wxCommandEventHandler(FileViewTree::OnCleanProjectOnlyInternal), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CONFIG_CHANGED, &FileViewTree::OnBuildConfigChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &FileViewTree::OnFindInFilesShowing, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &FileViewTree::OnActiveProjectChanged, this);
+
     Unbind(wxEVT_DND_FOLDER_DROPPED, &FileViewTree::OnFolderDropped, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
     Unbind(wxEVT_TREE_ITEM_EXPANDING, &FileViewTree::OnItemExpanding, this);
@@ -777,17 +780,16 @@ void FileViewTree::OnSetActive(wxCommandEvent& WXUNUSED(event))
 
 void FileViewTree::DoSetProjectActive(wxTreeItemId& item)
 {
-    if(item.IsOk()) {
-        FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
-        if(data->GetData().GetKind() == ProjectItem::TypeProject) {
-            UnselectAllProject(); // Clear any previously marked item
-            ManagerST::Get()->SetActiveProject(data->GetData().GetDisplayName());
-            wxFont f = GetDefaultFont();
-            f.SetStyle(wxFONTSTYLE_ITALIC);
-            f.SetWeight(wxFONTWEIGHT_BOLD);
-            SetItemFont(item, f);
-        }
+    if(!item.IsOk()) {
+        return;
     }
+
+    FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
+    if(data->GetData().GetKind() != ProjectItem::TypeProject) {
+        return;
+    }
+    clDEBUG() << "Setting project:" << data->GetData().GetDisplayName() << "as the active project" << endl;
+    ManagerST::Get()->SetActiveProject(data->GetData().GetDisplayName());
 }
 
 void FileViewTree::OnRemoveVirtualFolder(wxCommandEvent& WXUNUSED(event))
@@ -3190,4 +3192,40 @@ void FileViewTree::OnBuildParentProject(wxCommandEvent& e)
     wxCommandEvent eventBuild(wxEVT_CMD_BUILD_PROJECT_ONLY);
     eventBuild.SetString(proj->GetName());
     EventNotifier::Get()->QueueEvent(eventBuild.Clone());
+}
+
+void FileViewTree::OnActiveProjectChanged(clProjectSettingsEvent& e)
+{
+    // someone changed the active project not from the UI
+    e.Skip();
+
+    clDEBUG() << "Active project changed:" << e.GetProjectName() << "is the active project" << endl;
+    clDEBUG() << "Updating the UI" << endl;
+
+    auto iter = m_projectsMap.find(e.GetProjectName());
+    if(iter == m_projectsMap.end()) {
+        return;
+    }
+    e.Skip(false);
+
+    // update the UI
+    DoSetProjectActiveUI(iter->second);
+}
+
+void FileViewTree::DoSetProjectActiveUI(wxTreeItemId& item)
+{
+    if(!item.IsOk()) {
+        return;
+    }
+
+    FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(GetItemData(item));
+    if(data->GetData().GetKind() != ProjectItem::TypeProject) {
+        return;
+    }
+
+    UnselectAllProject(); // Clear any previously marked item
+    wxFont f = GetDefaultFont();
+    f.SetStyle(wxFONTSTYLE_ITALIC);
+    f.SetWeight(wxFONTWEIGHT_BOLD);
+    SetItemFont(item, f);
 }

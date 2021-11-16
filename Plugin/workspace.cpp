@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "workspace.h"
 #include "build_settings_config.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
@@ -38,7 +39,6 @@
 #include "macros.h"
 #include "plugin.h"
 #include "project.h"
-#include "workspace.h"
 #include "wx/regex.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
@@ -634,6 +634,15 @@ void clCxxWorkspace::SetActiveProject(const wxString& name)
     });
 
     SaveXmlFile();
+
+    // Notify about the change
+    ProjectPtr activeProject = GetProject(name);
+    if(activeProject) {
+        clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
+        evt.SetProjectName(name);
+        evt.SetFileName(activeProject->GetFileName().GetFullPath());
+        EventNotifier::Get()->AddPendingEvent(evt);
+    }
 }
 
 bool clCxxWorkspace::CreateVirtualDirectory(const wxString& vdFullPath, wxString& errMsg, bool mkPath)
@@ -1685,3 +1694,5 @@ void clCxxWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
         editor->CenterLine(event.GetLineNumber());
     }
 }
+
+void clCxxWorkspace::SetProjectActive(const wxString& project) { SetActiveProject(project); }

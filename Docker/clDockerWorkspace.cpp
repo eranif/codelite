@@ -1,5 +1,5 @@
-#include "NewDockerWorkspaceDlg.h"
 #include "clDockerWorkspace.h"
+#include "NewDockerWorkspaceDlg.h"
 #include "clDockerWorkspaceView.h"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
@@ -315,3 +315,5 @@ void clDockerWorkspace::RunDockerCompose(const wxFileName& docker_compose)
 {
     m_driver->Run(docker_compose, m_settings);
 }
+
+void clDockerWorkspace::SetProjectActive(const wxString& project) { wxUnusedVar(project); }

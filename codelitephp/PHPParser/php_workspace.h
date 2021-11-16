@@ -69,8 +69,9 @@ protected:
     IManager* m_manager;
     wxStringSet_t m_inSyncProjects;
     wxEvtHandler* m_projectSyncOwner;
-    // IWorkspace API
+
 public:
+    // IWorkspace API
     wxFileName GetProjectFileName(const wxString& projectName) const override;
     wxArrayString GetWorkspaceProjects() const override;
     void GetProjectFiles(const wxString& projectName, wxArrayString& files) const override;
@@ -79,6 +80,7 @@ public:
     wxString GetFilesMask() const override;
     bool IsBuildSupported() const override;
     bool IsProjectSupported() const override;
+    void SetProjectActive(const wxString& project) override;
 
 public:
     static PHPWorkspace* Get();
@@ -204,7 +206,6 @@ public:
      */
     bool AddProject(const wxFileName& projectFile, wxString& errmsg);
 
-    void SetProjectActive(const wxString& project);
     /**
      * @brief delete a file from a project/folder
      */

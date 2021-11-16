@@ -130,6 +130,7 @@ public:
     bool IsBuildSupported() const override;
     bool IsProjectSupported() const override;
     wxString GetName() const override;
+    void SetProjectActive(const wxString& name) override;
 
     // API
     bool IsOpened() const;

@@ -652,6 +652,8 @@ protected:
     void OnWorkspaceSettings(wxCommandEvent& e);
     void OnWorkspaceEditorPreferences(wxCommandEvent& e);
     void OnParserThreadReady(clParseThreadEvent& e);
+    void OnSetActivePoject(wxCommandEvent& e);
+    void OnSetActivePojectUI(wxUpdateUIEvent& e);
 
     // Clang
     void OnPchCacheStarted(wxCommandEvent& e);

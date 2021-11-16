@@ -31,3 +31,5 @@ bool RustWorkspace::IsBuildSupported() const { return true; }
 bool RustWorkspace::IsProjectSupported() const { return false; }
 
 wxString RustWorkspace::GetName() const { return clFileSystemWorkspace::Get().GetName(); }
+
+void RustWorkspace::SetProjectActive(const wxString& name) { wxUnusedVar(name); }

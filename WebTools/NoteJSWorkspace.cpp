@@ -1,10 +1,10 @@
+#include "NoteJSWorkspace.h"
 #include "NodeDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSExecutable.h"
 #include "NodeJSNewWorkspaceDlg.h"
 #include "NodeJSWorkspaceConfiguration.h"
 #include "NodeJSWorkspaceView.h"
-#include "NoteJSWorkspace.h"
 #include "asyncprocess.h"
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
@@ -416,3 +416,5 @@ void NodeJSWorkspace::OnDebugStart(clDebugEvent& event)
 NodeDebugger::Ptr_t NodeJSWorkspace::GetDebugger() { return m_debugger; }
 
 void NodeJSWorkspace::AllocateDebugger() { DoAllocateDebugger(); }
+
+void NodeJSWorkspace::SetProjectActive(const wxString& project) { wxUnusedVar(project); }

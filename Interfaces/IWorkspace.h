@@ -112,6 +112,11 @@ public:
     virtual wxString GetActiveProjectName() const = 0;
 
     /**
+     * @brief set the active project
+     */
+    virtual void SetProjectActive(const wxString& project) = 0;
+
+    /**
      * @brief return the underlying file for a given project name
      */
     virtual wxFileName GetProjectFileName(const wxString& projectName) const = 0;

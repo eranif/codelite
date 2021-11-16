@@ -1171,3 +1171,5 @@ void RemotyWorkspace::ConfigureLsp(const wxString& exe, int metadata_index)
     }
     DoConfigureLSP(md.get_display_name(), command, md.languages, md.priority);
 }
+
+void RemotyWorkspace::SetProjectActive(const wxString& name) { wxUnusedVar(name); }

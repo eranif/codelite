@@ -1,3 +1,4 @@
+#include "clFileSystemWorkspace.hpp"
 #include "CompileCommandsGenerator.h"
 #include "JSON.h"
 #include "NewFileSystemWorkspaceDialog.h"
@@ -6,7 +7,6 @@
 #include "build_settings_config.h"
 #include "clConsoleBase.h"
 #include "clFileSystemEvent.h"
-#include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceView.hpp"
 #include "clFilesCollector.h"
 #include "clSFTPEvent.h"
@@ -1179,3 +1179,5 @@ wxString clFileSystemWorkspace::GetExcludeFolders() const
     }
     return wxEmptyString;
 }
+
+void clFileSystemWorkspace::SetProjectActive(const wxString& project) { wxUnusedVar(project); }

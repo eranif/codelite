@@ -162,6 +162,7 @@ protected:
     void OnStartDebuggerListener(wxCommandEvent& e);
     void OnProjectSyncCompleted(clCommandEvent& event);
     void OnFolderChanged(clFileSystemEvent& event);
+    void OnActiveProjectChanged(clProjectSettingsEvent& e);
 
     // Php parser events
     void OnPhpParserStarted(clParseEvent& event);

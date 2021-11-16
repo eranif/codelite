@@ -80,12 +80,12 @@ public:
      * Destructor .
      */
     virtual ~FileViewTree();
-    
+
     /**
      * @brief build project context menu
      */
     void CreateProjectContextMenu(wxMenu& menu, const wxString& projectName, bool usedByFileView = true);
-    
+
     // Build the actual tree from the workspace
     void BuildTree();
 
@@ -190,7 +190,7 @@ protected:
     virtual void OnBuildTree(wxCommandEvent& e);
     void OnFolderDropped(clCommandEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
-    
+    void OnActiveProjectChanged(clProjectSettingsEvent& e);
     // Called from the context menu of a workspace folder
     void OnWorkspaceNewWorkspaceFolder(wxCommandEvent& evt);
     void OnNewProject(wxCommandEvent& evt);
@@ -246,6 +246,7 @@ private:
     bool DoAddNewItem(wxTreeItemId& item, const wxString& filename, const wxString& vdFullpath);
     void DoRemoveProject(const wxString& name);
     void DoSetProjectActive(wxTreeItemId& item);
+    void DoSetProjectActiveUI(wxTreeItemId& item);
     wxTreeItemId DoAddVirtualFolder(wxTreeItemId& parent, const wxString& text);
     void DoRemoveVirtualFolder(wxTreeItemId& parent);
     void DoRemoveItems();

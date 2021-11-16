@@ -453,6 +453,7 @@ EVT_MENU(XRCID("reconcile_project"), clMainFrame::OnReconcileProject)
 EVT_MENU(XRCID("retag_workspace"), clMainFrame::OnRetagWorkspace)
 EVT_MENU(XRCID("full_retag_workspace"), clMainFrame::OnRetagWorkspace)
 EVT_MENU(XRCID("project_properties"), clMainFrame::OnShowActiveProjectSettings)
+EVT_MENU(XRCID("set_active_project"), clMainFrame::OnSetActivePoject)
 
 EVT_UPDATE_UI(XRCID("local_workspace_prefs"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("local_workspace_settings"), clMainFrame::OnWorkspaceOpen)
@@ -466,6 +467,7 @@ EVT_UPDATE_UI(XRCID("reconcile_project"), clMainFrame::OnShowActiveProjectSettin
 EVT_UPDATE_UI(XRCID("retag_workspace"), clMainFrame::OnRetagWorkspaceUI)
 EVT_UPDATE_UI(XRCID("full_retag_workspace"), clMainFrame::OnRetagWorkspaceUI)
 EVT_UPDATE_UI(XRCID("project_properties"), clMainFrame::OnShowActiveProjectSettingsUI)
+EVT_UPDATE_UI(XRCID("set_active_project"), clMainFrame::OnSetActivePojectUI)
 
 //-------------------------------------------------------
 // Build menu
@@ -6061,3 +6063,34 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
 }
 
 void clMainFrame::DoSysColoursChanged() { MSWSetWindowDarkTheme(this); }
+
+void clMainFrame::OnSetActivePoject(wxCommandEvent& e)
+{
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    CHECK_PTR_RET(workspace);
+
+    auto cur_active_project = workspace->GetActiveProjectName();
+    CHECK_COND_RET(!cur_active_project.IsEmpty());
+
+    auto projects = workspace->GetWorkspaceProjects();
+    CHECK_COND_RET(!projects.empty());
+
+    // sort the entries
+    projects.Sort([](const wxString& first, const wxString& second) { return first.CmpNoCase(second) < 0; });
+
+    int initialSelection = projects.Index(cur_active_project);
+    clSingleChoiceDialog dlg(this, projects, initialSelection == wxNOT_FOUND ? 0 : initialSelection);
+    dlg.SetLabel(_("Select Project"));
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+    wxString new_selection = dlg.GetSelection();
+    workspace->SetProjectActive(new_selection);
+}
+
+void clMainFrame::OnSetActivePojectUI(wxUpdateUIEvent& e)
+{
+    bool enable =
+        clWorkspaceManager::Get().IsWorkspaceOpened() && clWorkspaceManager::Get().GetWorkspace()->IsProjectSupported();
+    e.Enable(enable);
+}

@@ -766,15 +766,6 @@ void Manager::SetActiveProject(const wxString& name)
 {
     clCxxWorkspaceST::Get()->SetActiveProject(name);
     clMainFrame::Get()->SelectBestEnvSet();
-
-    // Notify about the change
-    ProjectPtr activeProject = clCxxWorkspaceST::Get()->GetActiveProject();
-    if(activeProject) {
-        clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
-        evt.SetProjectName(name);
-        evt.SetFileName(activeProject->GetFileName().GetFullPath());
-        EventNotifier::Get()->AddPendingEvent(evt);
-    }
 }
 
 BuildMatrixPtr Manager::GetWorkspaceBuildMatrix() const { return clCxxWorkspaceST::Get()->GetBuildMatrix(); }

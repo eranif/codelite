@@ -9,6 +9,7 @@ clSingleChoiceDialog::clSingleChoiceDialog(wxWindow* parent, const wxArrayString
     DoInitialise();
     if(initialSelection >= 0 && initialSelection < (int)options.size()) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(initialSelection));
+        m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(initialSelection));
     }
     ::clSetSmallDialogBestSizeAndPosition(this);
 }

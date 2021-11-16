@@ -108,6 +108,8 @@ public:
     void GetWorkspaceFiles(wxArrayString& files) const override;
     wxString GetProjectFromFile(const wxFileName& filename) const override;
     wxString GetFilesMask() const override;
+    void SetProjectActive(const wxString& project) override;
+
     NodeJSWorkspace(bool dummy);
     virtual ~NodeJSWorkspace();
 

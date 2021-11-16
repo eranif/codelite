@@ -29,7 +29,7 @@ public:
     wxArrayString GetWorkspaceProjects() const override;
     bool IsBuildSupported() const override;
     bool IsProjectSupported() const override;
-
+    void SetProjectActive(const wxString& project) override;
     const clDockerWorkspaceSettings& GetSettings() const { return m_settings; }
     clDockerWorkspaceSettings& GetSettings() { return m_settings; }
 

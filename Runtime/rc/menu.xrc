@@ -517,6 +517,9 @@
             <object class="wxMenuItem" name="project_properties">
                 <label>&amp;Open Active Project Settings...</label>
             </object>
+            <object class="wxMenuItem" name="set_active_project">
+                <label>&amp;Select Active Project...</label>
+            </object>
             <object class="wxMenuItem" name="wxID_SEPARATOR"/>
             <object class="wxMenuItem" name="full_retag_workspace">
                 <label>Parse Workspace</label>
@@ -1155,6 +1158,7 @@
 
 
 
+    
     
     
     

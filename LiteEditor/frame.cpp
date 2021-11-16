@@ -6069,9 +6069,6 @@ void clMainFrame::OnSetActivePoject(wxCommandEvent& e)
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     CHECK_PTR_RET(workspace);
 
-    auto cur_active_project = workspace->GetActiveProjectName();
-    CHECK_COND_RET(!cur_active_project.IsEmpty());
-
     auto projects = workspace->GetWorkspaceProjects();
     CHECK_COND_RET(!projects.empty());
 

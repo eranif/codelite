@@ -68,16 +68,28 @@ static wxRect get_label_rect(clGTKNotebook* win, int i)
     return wxRect(a.x, a.y, a.width, a.height);
 }
 
-static gboolean button_press_event(GtkWidget*, GdkEventButton* gdk_event, clGTKNotebook* win)
+static gboolean button_press_event(GtkWidget* widget, GdkEventButton* gdk_event, clGTKNotebook* win)
 {
-    wxPoint pt(gdk_event->x, gdk_event->y);
+    // take the current cursor position
+    wxPoint pt = ::wxGetMousePosition();
+
     int click_index = wxNOT_FOUND;
     for(size_t i = 0; i < win->GetPageCount(); ++i) {
         auto box = win->GetNotebookPage(i)->m_box;
         if(!gtk_widget_get_child_visible(box)) {
             continue;
         }
+
+        // convert the label (box) into screen coordinates
+        gint x, y;
+        gdk_window_get_origin(gtk_widget_get_window(box), &x, &y);
+
         auto r = get_label_rect(win, i);
+        // adjust the label coordinates to screen coordinates
+        r.x += x;
+        r.y += y;
+
+        // Check if the label box contains our mouse
         if(r.Contains(pt)) {
             click_index = i;
             break;
@@ -230,6 +242,9 @@ void clGTKNotebook::GTKMiddleDown(int index)
 void clGTKNotebook::GTKRightDown(int index)
 {
     if(m_tabContextMenu) {
+        if(GetSelection() != index) {
+            ChangeSelection(index);
+        }
         PopupMenu(m_tabContextMenu);
     } else {
         // fire an event

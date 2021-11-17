@@ -319,7 +319,7 @@ void BuildTab::OnContextMenu(wxDataViewEvent& e)
 {
     wxMenu menu;
     if(e.GetItem().IsOk()) {
-        menu.Append(XRCID("copy-current-lines"), _("Copy selected lines to clipboard"));
+        menu.Append(XRCID("copy-current-lines"), _("Copy"));
         menu.Enable(XRCID("copy-current-lines"), !m_buildInProgress);
 
         menu.Append(XRCID("copy-all-lines"), _("Copy all"));

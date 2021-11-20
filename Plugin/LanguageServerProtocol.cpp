@@ -578,8 +578,13 @@ void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
     // Send the 'initialize' request
     LSP::InitializeRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest());
     // some LSPs will crash if we path an empty root folder
-    req->As<LSP::InitializeRequest>()->SetRootUri(m_rootFolder.IsEmpty() ? clStandardPaths::Get().GetTempDir()
-                                                                         : m_rootFolder);
+    wxString root_uri = m_rootFolder;
+    if(root_uri.empty()) {
+        root_uri = clWorkspaceManager::Get().IsWorkspaceOpened()
+                       ? clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath()
+                       : clStandardPaths::Get().GetTempDir();
+    }
+    req->As<LSP::InitializeRequest>()->SetRootUri(root_uri);
     req->As<LSP::InitializeRequest>()->SetInitOptions(m_initOptions);
     clDEBUG() << GetLogPrefix() << "Sending initialize request...";
 

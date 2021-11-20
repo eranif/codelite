@@ -95,6 +95,7 @@
     <Project Name="codelitegcc" Path="codelitegcc/codelitegcc.project" Active="No"/>
     <Project Name="codelite_cppcheck" Path="sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
     <Project Name="codelite_echo" Path="codelite_echo/codelite_echo.project" Active="No"/>
+    <Project Name="ctagsd" Path="ctagsd/ctagsd.project" Active="No"/>
   </VirtualDirectory>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release">
@@ -171,6 +172,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Win_x86_Release"/>
       <Project Name="Rust" ConfigName="Win_x86_Release"/>
       <Project Name="Remote" ConfigName="Win_x86_Release"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release">
       <Environment/>
@@ -246,6 +248,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug">
       <Environment/>
@@ -320,6 +323,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug">
       <Environment/>
@@ -395,6 +399,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release">
       <Environment/>
@@ -470,6 +475,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release">
       <Environment>WXWIN=C:/msys64/home/eran/root
@@ -545,6 +551,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
       <Project Name="Rust" ConfigName="Win_x64_Release"/>
       <Project Name="Remote" ConfigName="Win_x64_Release"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug">
       <Environment>WXWIN=C:/msys64/home/eran/root&#xD;
@@ -620,6 +627,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="Win_x64_Debug"/>
       <Project Name="Remote" ConfigName="Win_x64_Debug"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug_GTK3">
       <Environment/>
@@ -694,6 +702,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release_GTK3">
       <Environment/>
@@ -768,6 +777,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release_PHP">
       <Environment/>
@@ -842,6 +852,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins">
       <Environment/>
@@ -916,6 +927,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="codelite_echo" ConfigName="Debug"/>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
+      <Project Name="ctagsd" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

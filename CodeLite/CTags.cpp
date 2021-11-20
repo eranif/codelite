@@ -36,14 +36,14 @@ CTags::~CTags()
     }
 }
 
-bool CTags::Generate(const std::vector<wxFileName>& files, const wxString& path)
+bool CTags::Generate(const std::vector<wxFileName>& files, const wxString& path, const wxString& codelite_indexer)
 {
     // create a file with the list of files
     wxString filesList;
     for(const wxFileName& file : files) {
         filesList << file.GetFullPath() << "\n";
     }
-    return DoGenerate(filesList, path);
+    return DoGenerate(filesList, path, codelite_indexer);
 }
 
 wxString CTags::WrapSpaces(const wxString& file)
@@ -55,13 +55,10 @@ wxString CTags::WrapSpaces(const wxString& file)
     return fixed;
 }
 
-bool CTags::DoGenerate(const wxString& filesContent, const wxString& path)
+bool CTags::DoGenerate(const wxString& filesContent, const wxString& path, const wxString& codelite_indexer)
 {
     clDEBUG() << "Generating ctags files" << clEndl;
     wxFileName outputFile(path, "ctags");
-    if(outputFile.GetDirCount() && outputFile.GetDirs().Last() != ".codelite") {
-        outputFile.AppendDir(".codelite");
-    }
 
     wxFileName fnFileList = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "file-list", "txt");
     FileUtils::WriteFileContent(fnFileList, filesContent);
@@ -81,7 +78,8 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& path)
 
     // Invoke codelite_indexer
     wxString invokeCmd;
-    wxString codeliteIndexer = clStandardPaths::Get().GetBinaryFullPath("codelite_indexer");
+    wxString codeliteIndexer =
+        codelite_indexer.empty() ? clStandardPaths::Get().GetBinaryFullPath("codelite_indexer") : codelite_indexer;
     invokeCmd << WrapSpaces(codeliteIndexer) << " --batch " << WrapSpaces(fnFileList.GetFullPath()) << " "
               << WrapSpaces(fnTmpTags.GetFullPath());
     clDEBUG() << "CTags:" << invokeCmd << clEndl;
@@ -101,14 +99,14 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& path)
     return true;
 }
 
-bool CTags::Generate(const wxArrayString& files, const wxString& path)
+bool CTags::Generate(const wxArrayString& files, const wxString& path, const wxString& codelite_indexer)
 {
     // create a file with the list of files
     wxString filesList;
     for(const auto& file : files) {
         filesList << file << "\n";
     }
-    return DoGenerate(filesList, path);
+    return DoGenerate(filesList, path, codelite_indexer);
 }
 
 size_t CTags::FindTags(const wxArrayString& filter, std::vector<TagEntryPtr>& tags, size_t flags)

@@ -2111,7 +2111,7 @@ resources.cpp: resources.xrc
         <Preprocessor Value="wxUSE_GUI=1"/>
         <Preprocessor Value="CL_DEBUG_BUILD=1"/>
       </Compiler>
-      <Linker Options="-g;$(shell wx-config  --libs std,stc,propgrid,richtext --unicode=yes)" Required="yes">
+      <Linker Options="-g;$(shell wx-config  --libs std,stc,propgrid,richtext --unicode=yes);-mwindows" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="../sdk/clang/lib"/>
@@ -2234,7 +2234,7 @@ resources.cpp: resources.xrc
         <IncludePath Value="../sdk/clang/include"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,richtext);" Required="yes">
+      <Linker Options="$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,richtext);-mwindows" Required="yes">
         <LibraryPath Value="."/>
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="../sdk/clang/lib"/>

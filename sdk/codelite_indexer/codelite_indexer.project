@@ -20,6 +20,7 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="CMakeLists.txt"/>
     <File Name="codelite_index_main.cpp"/>
     <File Name="equeue_win_impl.h"/>
     <File Name="equeue.h"/>

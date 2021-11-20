@@ -1435,9 +1435,11 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
         }
     }
 
-    wxString compilerExe = compiler->GetTool(flags & kCxxFile ? "CXX" : "CC");
-    commandLine << "clang "
-                << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
+    wxString compilerExe = (flags & kCxxFile ? "clang++" : "clang");
+    if(compiler->IsGnuCompatibleCompiler()) {
+        compilerExe = compiler->GetTool(flags & kCxxFile ? "CXX" : "CC");
+    }
+    commandLine << compilerExe << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
 
     // Apply the environment
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());

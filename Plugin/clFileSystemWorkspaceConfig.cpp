@@ -183,6 +183,11 @@ wxArrayString clFileSystemWorkspaceConfig::GetCompilerOptions(clBacktickCache::p
     CompilerPtr compiler = BuildSettingsConfigST::Get()->GetCompiler(GetCompiler());
     if(compiler) {
         wxArrayString compilerPaths = compiler->GetDefaultIncludePaths();
+        if(!compiler->GetGlobalIncludePath().IsEmpty()) {
+            wxArrayString globalIncludePaths =
+                ::wxStringTokenize(compiler->GetGlobalIncludePath(), ";", wxTOKEN_STRTOK);
+            compilerPaths.insert(compilerPaths.end(), globalIncludePaths.begin(), globalIncludePaths.end());
+        }
         for(wxString& compilerPath : compilerPaths) {
             compilerPath.Prepend("-I");
         }
@@ -254,6 +259,8 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
             // -std=NNN
             searchPaths.push_back(cclp.GetStandardWithPrefix());
         }
+        // Other options
+        searchPaths.insert(searchPaths.end(), cclp.GetOtherOptions().begin(), cclp.GetOtherOptions().end());
     }
 
     // expand any macro

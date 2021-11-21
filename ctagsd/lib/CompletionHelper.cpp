@@ -6,7 +6,7 @@
 using namespace std;
 namespace
 {
-#define PREPEND_STRING(tokn) expression.insert(expression.begin(), tokn.GetWXString())
+#define PREPEND_STRING(tokn) expression.insert(expression.begin(), text)
 } // namespace
 
 CompletionHelper::CompletionHelper() {}
@@ -20,19 +20,20 @@ wxString CompletionHelper::get_expression(const wxString& file_content)
     tokenizer.Reset(file_content);
 
     CxxLexerToken token;
-    vector<CxxLexerToken> tokens;
+    vector<pair<wxString, int>> tokens;
     tokens.reserve(10000);
 
     while(tokenizer.NextToken(token)) {
-        tokens.push_back(token);
+        tokens.push_back({ token.GetWXString(), token.GetType() });
     }
 
     vector<wxString> expression;
     int depth = 0;
     bool cont = true;
     for(int i = static_cast<int>(tokens.size() - 1); (i >= 0) && cont; --i) {
-        const auto& t = tokens[i];
-        switch(t.GetType()) {
+        const wxString& text = tokens[i].first;
+        int type = tokens[i].second;
+        switch(type) {
         case '[':
         case '{':
         case '(':

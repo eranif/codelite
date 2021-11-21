@@ -61,7 +61,7 @@
     <Project Name="Remote" Path="Remoty/Remoty.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
-    <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>
+    <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SDK">
     <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
@@ -96,6 +96,8 @@
     <Project Name="codelite_cppcheck" Path="sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
     <Project Name="codelite_echo" Path="codelite_echo/codelite_echo.project" Active="No"/>
     <Project Name="ctagsd" Path="ctagsd/ctagsd.project" Active="No"/>
+    <Project Name="ctagsd-tests" Path="ctagsd/tests/ctagsd-tests.project" Active="Yes"/>
+    <Project Name="ctagsdlib" Path="ctagsd/lib/ctagsdlib.project" Active="No"/>
   </VirtualDirectory>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Win_x86_Release">
@@ -173,6 +175,8 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="Win_x86_Release"/>
       <Project Name="Remote" ConfigName="Win_x86_Release"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release">
       <Environment/>
@@ -249,6 +253,8 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug">
       <Environment/>
@@ -324,6 +330,8 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug">
       <Environment/>
@@ -400,6 +408,8 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release">
       <Environment/>
@@ -476,6 +486,8 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release">
       <Environment>WXWIN=C:/msys64/home/eran/root
@@ -502,6 +514,8 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="CppChecker" ConfigName="Win_x64_Release"/>
       <Project Name="Cscope" ConfigName="Win_x64_Release"/>
       <Project Name="ctagsd" ConfigName="Release"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Release"/>
       <Project Name="CxxParserTests" ConfigName="Debug"/>
       <Project Name="DatabaseExplorer" ConfigName="Win_x64_Release"/>
       <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Release"/>
@@ -628,6 +642,8 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug_GTK3">
       <Environment/>
@@ -703,6 +719,8 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release_GTK3">
       <Environment/>
@@ -778,6 +796,8 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release_PHP">
       <Environment/>
@@ -853,6 +873,8 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins">
       <Environment/>
@@ -928,6 +950,8 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="Rust" ConfigName="DebugUnicode"/>
       <Project Name="Remote" ConfigName="DebugUnicode"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

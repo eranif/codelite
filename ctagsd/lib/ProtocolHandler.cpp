@@ -260,4 +260,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     // get the expression at this given position
     CompletionHelper helper;
     wxString expression = helper.get_expression(m_filesOpened[filepath]);
+    
+    wxUnusedVar(line);
+    wxUnusedVar(character);
 }

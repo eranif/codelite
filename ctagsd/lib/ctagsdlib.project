@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CodeLite_Project Name="ctagsd" Version="11000" InternalType="Console">
+<CodeLite_Project Name="ctagsdlib" Version="11000" InternalType="Library">
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="main.cpp" ExcludeProjConfig=""/>
+    <File Name="ProtocolHandler.hpp"/>
+    <File Name="ProtocolHandler.cpp"/>
+    <File Name="CompletionHelper.hpp"/>
+    <File Name="CompletionHelper.cpp"/>
+    <File Name="Channel.hpp"/>
+    <File Name="Channel.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Release">
-    <Project Name="ctagsdlib"/>
-  </Dependencies>
-  <Dependencies Name="Debug">
-    <Project Name="ctagsdlib"/>
-  </Dependencies>
-  <Settings Type="Executable">
+  <Settings Type="Static Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -21,13 +20,12 @@
       </Linker>
       <ResourceCompiler Options=""/>
     </GlobalSettings>
-    <Configuration Name="Debug" CompilerType="MinGW 64bit ( MSYS2 64bit )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O0;-Wall;$(shell wx-config --cflags);-g" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="./lib"/>
+    <Configuration Name="Debug" CompilerType="MinGW 64bit ( MSYS2 64bit )" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O0;-Wall;$(shell wx-config --cflags);-g" C_Options="-g" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+        <IncludePath Value="../../CodeLite"/>
+        <IncludePath Value="../../Interfaces"/>
+        <IncludePath Value="../../Plugin"/>
+        <IncludePath Value="../../sdk/wxsqlite3/include"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="WXUSINGDLL_SCI"/>
@@ -39,14 +37,9 @@
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
         <Preprocessor Value="USE_SFTP="/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std)" Required="yes">
-        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
-        <Library Value="libcodeliteud.dll"/>
-        <Library Value="libplugin_sdkud.dll"/>
-        <Library Value="ctagsdlib"/>
-      </Linker>
+      <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="lib$(ProjectName).a" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -65,7 +58,7 @@
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <ThirdPartyToolName/>
         <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>
@@ -79,13 +72,12 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="Release" CompilerType="MinGW 64bit ( MSYS2 64bit )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;$(shell wx-config --cflags);" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
-        <IncludePath Value="../CodeLite"/>
-        <IncludePath Value="../Interfaces"/>
-        <IncludePath Value="../Plugin"/>
-        <IncludePath Value="../sdk/wxsqlite3/include"/>
-        <IncludePath Value="./lib"/>
+    <Configuration Name="Release" CompilerType="MinGW 64bit ( MSYS2 64bit )" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-O0;-Wall;$(shell wx-config --cflags);-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+        <IncludePath Value="../../CodeLite"/>
+        <IncludePath Value="../../Interfaces"/>
+        <IncludePath Value="../../Plugin"/>
+        <IncludePath Value="../../sdk/wxsqlite3/include"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="WXUSINGDLL_SCI"/>
@@ -97,15 +89,9 @@
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
         <Preprocessor Value="USE_SFTP="/>
       </Compiler>
-      <Linker Options="$(shell wx-config --libs std)" Required="yes">
-        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
-        <Library Value="libcodeliteu.dll"/>
-        <Library Value="libplugin_sdku.dll"/>
-        <Library Value="libwxsqlite3u"/>
-        <Library Value="ctagsdlib"/>
-      </Linker>
+      <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="lib$(ProjectName).a" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -124,7 +110,7 @@
         <PreprocessFileCommand/>
         <SingleFileCommand/>
         <MakefileGenerationCommand/>
-        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <ThirdPartyToolName/>
         <WorkingDirectory/>
       </CustomBuild>
       <AdditionalRules>

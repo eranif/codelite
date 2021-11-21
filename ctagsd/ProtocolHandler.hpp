@@ -7,6 +7,8 @@
 #include <memory>
 #include <wx/string.h>
 
+#include "istorage.h"
+
 using namespace std;
 
 class ProtocolHandler
@@ -23,6 +25,8 @@ private:
     wxString m_codelite_indexer;
     wxString m_ignore_spec = ".git;.svn;build-debug/;build-release/;build/";
     vector<wxFileName> m_files;
+    wxStringMap_t m_filesOpened;
+    ITagsStoragePtr m_db;
 
 private:
     void build_result(JSONItem& reply, size_t id);
@@ -35,6 +39,10 @@ public:
     void on_initialize(unique_ptr<JSON>&& msg, Channel& channel);
     void on_initialized(unique_ptr<JSON>&& msg, Channel& channel);
     void on_unsupported_message(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_did_open(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_did_change(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_completion(unique_ptr<JSON>&& msg, Channel& channel);
+
     /**
      * @brief send a "window/logMessage" message to the client
      */

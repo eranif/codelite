@@ -1,5 +1,6 @@
 #include "ProtocolHandler.hpp"
 #include "CTags.hpp"
+#include "CompletionHelper.hpp"
 #include "LSP/LSPEvent.h"
 #include "clFilesCollector.h"
 #include "ctags_manager.h"
@@ -99,39 +100,48 @@ void ProtocolHandler::parse_files(Channel& channel)
 
     // build the database
     TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile);
-    ITagsStoragePtr db(new TagsStorageSQLite());
 
-    wxFileName dbfile(m_settings_folder, "tags.db");
-    db->OpenDatabase(dbfile);
+    if(!m_db) {
+        m_db.Reset(new TagsStorageSQLite());
 
+        wxFileName dbfile(m_settings_folder, "tags.db");
+        m_db->OpenDatabase(dbfile);
+    }
+
+    /// TODO: scan the database and filter all non modified files since last parsing was done
     send_log_message(_("Creating symbols database..."), LSP_LOG_INFO, channel);
 
     start_timer();
-    db->Begin();
+    m_db->Begin();
     size_t tagsCount = 0;
     while(ttp) {
         ++tagsCount;
 
         // Send notification to the main window with our progress report
-        db->Store(ttp, {}, false);
-        if(db->InsertFileEntry(curfile, (int)time(NULL)) == TagExist) {
-            db->UpdateFileEntry(curfile, (int)time(NULL));
+        m_db->Store(ttp, {}, false);
+        if(m_db->InsertFileEntry(curfile, (int)time(NULL)) == TagExist) {
+            m_db->UpdateFileEntry(curfile, (int)time(NULL));
         }
 
         if((tagsCount % 1000) == 0) {
             // Commit what we got so far
-            db->Commit();
+            m_db->Commit();
             // Start a new transaction
-            db->Begin();
+            m_db->Begin();
         }
         ttp = ctags.GetTagsTreeForFile(curfile);
     }
 
     // Commit whats left
-    db->Commit();
+    m_db->Commit();
     send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, channel);
 }
 
+//---------------------------------------------------------------------------------
+// protocol handlers
+//---------------------------------------------------------------------------------
+
+// Request <-->
 void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 {
     clDEBUG() << "Received `initialize` request" << endl;
@@ -182,6 +192,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     channel.write_reply(resposne.format(false));
 }
 
+// Request <-->
 void ProtocolHandler::on_unsupported_message(unique_ptr<JSON>&& msg, Channel& channel)
 {
     wxString message;
@@ -189,10 +200,64 @@ void ProtocolHandler::on_unsupported_message(unique_ptr<JSON>&& msg, Channel& ch
     send_log_message(message, LSP_LOG_WARNING, channel);
 }
 
+// Notification -->
 void ProtocolHandler::on_initialized(unique_ptr<JSON>&& msg, Channel& channel)
 {
     // a notification
     wxUnusedVar(msg);
     wxUnusedVar(channel);
     clSYSTEM() << "Received `initialized` message" << endl;
+}
+
+// Notification -->
+void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    wxUnusedVar(channel);
+    // keep the file content in the internal map
+    auto json = msg->toElement();
+
+    wxString filepath = json["params"]["textDocument"]["uri"].toString();
+    filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
+
+    clDEBUG() << "didOpen: caching new content for file:" << filepath << endl;
+    m_filesOpened.erase(filepath);
+    m_filesOpened.insert({ filepath, json["params"]["textDocument"]["text"].toString() });
+}
+
+// Notification -->
+void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    wxUnusedVar(channel);
+    // keep the file content in the internal map
+    auto json = msg->toElement();
+
+    wxString filepath = json["params"]["textDocument"]["uri"].toString();
+    filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
+
+    clDEBUG() << "didChange: caching new content for file:" << filepath << endl;
+    m_filesOpened.erase(filepath);
+    m_filesOpened.insert({ filepath, json["params"]["contentChanges"][0]["text"].toString() });
+}
+
+// Request <-->
+void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    auto json = msg->toElement();
+    wxString filepath = json["params"]["textDocument"]["uri"].toString();
+    filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
+
+    if(m_filesOpened.count(filepath) == 0) {
+        clWARNING() << "File:" << filepath << "is not opened" << endl;
+        send_log_message(wxString() << _("`textDocument/completion` error. File:") << filepath
+                                    << _("is not opened in the server"),
+                         LSP_LOG_WARNING, channel);
+        return;
+    }
+
+    size_t line = json["params"]["position"]["line"].toSize_t();
+    size_t character = json["params"]["position"]["character"].toSize_t();
+
+    // get the expression at this given position
+    CompletionHelper helper;
+    wxString expression = helper.get_expression_from_location(m_filesOpened[filepath], line, character, m_db);
 }

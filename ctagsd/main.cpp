@@ -1,5 +1,5 @@
-#include "ProtocolHandler.hpp"
 #include "Channel.hpp"
+#include "ProtocolHandler.hpp"
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include <iostream>
@@ -14,6 +14,9 @@ namespace
 unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
     { "initialize", &ProtocolHandler::on_initialize },
     { "initialized", &ProtocolHandler::on_initialized },
+    { "textDocument/didOpen", &ProtocolHandler::on_did_open },
+    { "textDocument/didChange", &ProtocolHandler::on_did_change },
+    { "textDocument/completion", &ProtocolHandler::on_completion },
 };
 }
 

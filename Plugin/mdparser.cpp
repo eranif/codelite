@@ -93,6 +93,13 @@ std::pair<mdparser::Type, wxString> mdparser::Tokenizer::next()
                 RETURN_TYPE(T_TEXT, ch0, 0);
             }
             break;
+        case '\\':
+            if(m_enable_backslash_esc) {
+                RETURN_TYPE(T_TEXT, ch1, 1);
+            } else {
+                RETURN_TYPE(T_TEXT, ch0, 0);
+            }
+            break;
         default:
             RETURN_TYPE(T_TEXT, ch0, 0);
         }
@@ -113,8 +120,9 @@ void mdparser::Tokenizer::consume_until(wxChar ch)
 void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_write)
 {
     constexpr int STATE_NORMAL = 0;
-    constexpr int STATE_CODEBLOCK_HEADER = 1;
-    constexpr int STATE_CODEBLOCK = 2;
+    constexpr int STATE_CODE = 1;
+    constexpr int STATE_CODEBLOCK_HEADER = 2;
+    constexpr int STATE_CODEBLOCK = 3;
     int state = STATE_NORMAL;
 
     write_cb = std::move(on_write);
@@ -142,7 +150,6 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
             // below are style styles
             case T_BOLD:
             case T_ITALIC:
-            case T_CODE:
                 flush_buffer(buffer, style, false);
                 style.toggle_property(tok.first);
                 break;
@@ -157,10 +164,12 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
                     buffer << tok.second;
                 }
                 break;
+            case T_CODE:
             case T_CODEBLOCK:
-                state = STATE_CODEBLOCK_HEADER;
+                state = (tok.first == T_CODE ? STATE_CODE : STATE_CODEBLOCK_HEADER);
                 flush_buffer(buffer, style, false);
                 style.toggle_property(tok.first);
+                tokenizer.enable_backslash_esc(false);
                 break;
             case T_EOL:
                 // clear heading
@@ -192,24 +201,23 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
                 break;
             }
             break;
+        case STATE_CODE:
         case STATE_CODEBLOCK:
-            switch(tok.first) {
-            case T_CODEBLOCK:
+            if((state == STATE_CODE && tok.first == T_CODE) || (state == STATE_CODEBLOCK && tok.first == T_CODEBLOCK)) {
                 state = STATE_NORMAL;
                 flush_buffer(buffer, style, false);
-                style.toggle_property(T_CODEBLOCK);
-                break;
-            case T_EOL:
+                style.toggle_property(tok.first);
+                tokenizer.enable_backslash_esc(true);
+            } else if(tok.first == T_EOL) {
                 flush_buffer(buffer, style, true);
-                break;
-            default:
+            } else {
                 if(buffer.empty() && tok.second == '\n') {
                     // skip it
                 } else {
                     buffer << tok.second;
                 }
-                break;
             }
+            break;
         }
 
         if(tok.first == T_TEXT && (tok.second == ' ' || tok.second == '\t')) {

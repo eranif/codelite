@@ -31,6 +31,7 @@ class Tokenizer
     const wxString& m_text;
     size_t m_pos = 0;
     int m_text_sequence = 0;
+    bool m_enable_backslash_esc = true;
 
 private:
     wxChar safe_get_char(size_t pos) const;
@@ -42,6 +43,7 @@ public:
     }
     std::pair<Type, wxString> next();
     void consume_until(wxChar ch);
+    void enable_backslash_esc(bool enable) { m_enable_backslash_esc = enable; }
 };
 
 // font definition

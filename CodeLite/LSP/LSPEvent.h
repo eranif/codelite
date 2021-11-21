@@ -23,6 +23,7 @@ protected:
     wxString m_serverName;
     LSP::CompletionItem::Vec_t m_completions;
     LSP::SignatureHelp m_signatureHelp;
+    LSP::Hover m_hover;
     std::vector<LSP::Diagnostic> m_diagnostics;
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
@@ -72,6 +73,12 @@ public:
         return *this;
     }
     const LSP::SignatureHelp& GetSignatureHelp() const { return m_signatureHelp; }
+    LSPEvent& SetHover(const LSP::Hover& hover)
+    {
+        this->m_hover = hover;
+        return *this;
+    }
+    const LSP::Hover& GetHover() const { return m_hover; }
     LSPEvent& SetDiagnostics(const std::vector<LSP::Diagnostic>& diagnostics)
     {
         this->m_diagnostics = diagnostics;
@@ -98,6 +105,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SIGNATURE_HELP, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_HOVER, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SET_DIAGNOSTICS, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CLEAR_DIAGNOSTICS, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_OPEN_FILE, LSPEvent);

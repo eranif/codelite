@@ -7,6 +7,7 @@ wxDEFINE_EVENT(wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_SIGNATURE_HELP, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_HOVER, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_SET_DIAGNOSTICS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_CLEAR_DIAGNOSTICS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_DOCUMENT_SYMBOLS, LSPEvent);
@@ -33,6 +34,7 @@ LSPEvent& LSPEvent::operator=(const LSPEvent& other)
     m_serverName = other.m_serverName;
     m_completions = other.m_completions;
     m_signatureHelp = other.m_signatureHelp;
+    m_hover = other.m_hover;
     m_diagnostics = other.m_diagnostics;
     m_symbolsInformation = other.m_symbolsInformation;
     m_semanticTokens = other.m_semanticTokens;

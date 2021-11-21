@@ -85,6 +85,7 @@ protected:
     void OnFindSymbolImpl(clCodeCompletionEvent& event);
     void OnFindSymbol(clCodeCompletionEvent& event);
     void OnFunctionCallTip(clCodeCompletionEvent& event);
+    void OnTypeInfoToolTip(clCodeCompletionEvent& event);
     void OnQuickOutline(clCodeCompletionEvent& event);
     void OnSemanticHighlights(clCodeCompletionEvent& event);
 
@@ -226,6 +227,11 @@ public:
      * @brief ask for function call help
      */
     void FunctionHelp(IEditor* editor);
+
+    /**
+     * @brief ask for available hovertip
+     */
+    void HoverTip(IEditor* editor);
 
     /**
      * @brief manually load file into the server

@@ -181,6 +181,11 @@ public:
     virtual const wxString& GetProjectName() const = 0;
 
     /**
+     * @brief return the position under the mouse pointer
+     */
+    virtual int GetPosAtMousePointer() = 0;
+
+    /**
      * \brief return the current word under the caret. May return wxEmptyString
      */
     virtual wxString GetWordAtCaret(bool wordCharsOnly = true) = 0;
@@ -298,6 +303,13 @@ public:
      * @param tip tip to display
      */
     virtual void ShowCalltip(clCallTipPtr tip) = 0;
+
+    /**
+     * @brief display a tooltip
+     * @param tip tip text
+     * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at the mouse
+     */
+    virtual void ShowTooltip(const wxString& tip, const wxString& title, int pos = wxNOT_FOUND) = 0;
 
     /**
      * @brief display a rich tooltip (a tip that supports basic markup, such as <a></a>, <strong></strong> etc)

@@ -147,6 +147,22 @@ public:
     }
     Position() {}
     virtual ~Position() {}
+    bool operator==(const Position& rhs) const
+    {
+        return this->m_line == rhs.m_line && this->m_character == rhs.m_character;
+    }
+    bool operator!=(const Position& rhs) const { return !(*this == rhs); }
+    bool operator<(const Position& rhs) const
+    {
+        if(this->m_line == rhs.m_line) {
+            return this->m_character < rhs.m_character;
+        } else {
+            return this->m_line < rhs.m_line;
+        }
+    }
+    bool operator>(const Position& rhs) const { return rhs < *this; }
+    bool operator<=(const Position& rhs) const { return !(*this > rhs); }
+    bool operator>=(const Position& rhs) const { return !(*this < rhs); }
     Position& SetCharacter(int character)
     {
         this->m_character = character;
@@ -390,6 +406,54 @@ public:
     int GetActiveParameter() const { return m_activeParameter; }
     int GetActiveSignature() const { return m_activeSignature; }
     const SignatureInformation::Vec_t& GetSignatures() const { return m_signatures; }
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+};
+
+class WXDLLIMPEXP_CL MarkupContent : public LSP::Serializable
+{
+    wxString m_kind;
+    wxString m_value;
+
+public:
+    MarkupContent() {}
+    virtual ~MarkupContent() {}
+    MarkupContent& SetKind(const wxString& kind)
+    {
+        this->m_kind = kind;
+        return *this;
+    }
+    const wxString& GetKind() const { return m_kind; }
+    MarkupContent& SetValue(const wxString& value)
+    {
+        this->m_value = value;
+        return *this;
+    }
+    const wxString& GetValue() const { return m_value; }
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+};
+
+class WXDLLIMPEXP_CL Hover : public LSP::Serializable
+{
+    MarkupContent m_contents;
+    Range m_range;
+
+public:
+    Hover() {}
+    virtual ~Hover() {}
+    Hover& SetContents(const MarkupContent& contents)
+    {
+        this->m_contents = contents;
+        return *this;
+    }
+    const MarkupContent& GetContents() const { return m_contents; }
+    Hover& SetRange(const Range& range)
+    {
+        this->m_range = range;
+        return *this;
+    }
+    const Range& GetRange() const { return m_range; }
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
 };

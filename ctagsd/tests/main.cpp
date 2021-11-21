@@ -13,12 +13,18 @@
 
 TEST_FUNC(TestCompletionHelper_get_expression)
 {
-    wxStringMap_t M = { { "m_string.", "m_string." },
-                        { "string name=m_string.", "m_string." },
-                        { "string name=m_string->", "m_string->" },
-                        { "get_details().get_name().", "get_details().get_name()." },
-                        { "foo(){ std::vector<std::string>::", "std::vector<std::string>::" },
-                        { "auto foo = [=](std::ve", "std::ve" } };
+    wxStringMap_t M = {
+        { "m_string.", "m_string." },
+        { "string name=m_string.", "m_string." },
+        { "string name=m_string->", "m_string->" },
+        { "get_details().get_name().", "get_details().get_name()." },
+        { "foo(){ std::vector<std::string>::", "std::vector<std::string>::" },
+        { "auto foo = [=](std::ve", "std::ve" },
+        { "string name", "name" },
+        { "if(!types.empty() && types.back() == T_IDENTIF", "T_IDENTIF" },
+        { "if(!types.empty() && type", "type" },
+        { "if(!typ", "typ" },
+    };
 
     CompletionHelper helper;
     for(const auto& vt : M) {

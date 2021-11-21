@@ -26,7 +26,6 @@ private:
     wxString m_ignore_spec = ".git;.svn;build-debug/;build-release/;build/";
     vector<wxFileName> m_files;
     wxStringMap_t m_filesOpened;
-    ITagsStoragePtr m_db;
 
 private:
     void build_result(JSONItem& reply, size_t id);
@@ -42,6 +41,7 @@ public:
     void on_did_open(unique_ptr<JSON>&& msg, Channel& channel);
     void on_did_change(unique_ptr<JSON>&& msg, Channel& channel);
     void on_completion(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_did_close(unique_ptr<JSON>&& msg, Channel& channel);
 
     /**
      * @brief send a "window/logMessage" message to the client

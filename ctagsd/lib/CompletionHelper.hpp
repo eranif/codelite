@@ -12,7 +12,7 @@ public:
     CompletionHelper();
     ~CompletionHelper();
 
-    wxString get_expression(const wxString& file_content);
+    wxString get_expression(const wxString& file_content, wxString* last_word = nullptr);
     wxString truncate_file_to_location(const wxString& file_content, size_t line, size_t column);
 };
 

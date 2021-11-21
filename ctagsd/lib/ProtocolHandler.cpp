@@ -30,6 +30,21 @@ FileLogger& operator<<(FileLogger& logger, const wxStringMap_t& m)
     return logger;
 }
 
+FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
+{
+    wxString s;
+    s << "[";
+    for(const auto& tag : tags) {
+        s << tag->GetDisplayName() << ", ";
+    }
+    if(s.EndsWith(", ")) {
+        s.RemoveLast(2);
+    }
+    s << "]";
+    logger.Append(s, logger.GetRequestedLogLevel());
+    return logger;
+}
+
 void start_timer() { sw.Start(); }
 
 wxString stop_timer()
@@ -100,40 +115,37 @@ void ProtocolHandler::parse_files(Channel& channel)
 
     // build the database
     TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile);
+    ITagsStoragePtr db(new TagsStorageSQLite());
 
-    if(!m_db) {
-        m_db.Reset(new TagsStorageSQLite());
-
-        wxFileName dbfile(m_settings_folder, "tags.db");
-        m_db->OpenDatabase(dbfile);
-    }
+    wxFileName dbfile(m_settings_folder, "tags.db");
+    db->OpenDatabase(dbfile);
 
     /// TODO: scan the database and filter all non modified files since last parsing was done
     send_log_message(_("Creating symbols database..."), LSP_LOG_INFO, channel);
 
     start_timer();
-    m_db->Begin();
+    db->Begin();
     size_t tagsCount = 0;
     while(ttp) {
         ++tagsCount;
 
         // Send notification to the main window with our progress report
-        m_db->Store(ttp, {}, false);
-        if(m_db->InsertFileEntry(curfile, (int)time(NULL)) == TagExist) {
-            m_db->UpdateFileEntry(curfile, (int)time(NULL));
+        db->Store(ttp, {}, false);
+        if(db->InsertFileEntry(curfile, (int)time(NULL)) == TagExist) {
+            db->UpdateFileEntry(curfile, (int)time(NULL));
         }
 
         if((tagsCount % 1000) == 0) {
             // Commit what we got so far
-            m_db->Commit();
+            db->Commit();
             // Start a new transaction
-            m_db->Begin();
+            db->Begin();
         }
         ttp = ctags.GetTagsTreeForFile(curfile);
     }
 
     // Commit whats left
-    m_db->Commit();
+    db->Commit();
     send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, channel);
 }
 
@@ -189,6 +201,8 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     clDEBUG() << "codelite-indexer:" << m_codelite_indexer << endl;
 
     parse_files(channel);
+    TagsManagerST::Get()->CloseDatabase();
+    TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
     channel.write_reply(resposne.format(false));
 }
 
@@ -225,6 +239,17 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
 }
 
 // Notification -->
+void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    wxUnusedVar(channel);
+    auto json = msg->toElement();
+
+    wxString filepath = json["params"]["textDocument"]["uri"].toString();
+    filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
+    m_filesOpened.erase(filepath);
+}
+
+// Notification -->
 void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
 {
     wxUnusedVar(channel);
@@ -247,20 +272,51 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
     if(m_filesOpened.count(filepath) == 0) {
-        clWARNING() << "File:" << filepath << "is not opened" << endl;
-        send_log_message(wxString() << _("`textDocument/completion` error. File:") << filepath
-                                    << _("is not opened in the server"),
-                         LSP_LOG_WARNING, channel);
-        return;
+        // check if this file exists on the file system -> and load it instead of complaining about it
+        wxString file_content;
+        if(!wxFileExists(filepath) || !FileUtils::ReadFileContent(filepath, file_content)) {
+            clWARNING() << "File:" << filepath << "is not opened" << endl;
+            send_log_message(wxString() << _("`textDocument/completion` error. File: ") << filepath
+                                        << _(" is not opened on the server"),
+                             LSP_LOG_WARNING, channel);
+            return;
+        }
+
+        // update the cache
+        clDEBUG() << "Updated cache with non existing file:" << filepath << "is not opened" << endl;
+        m_filesOpened.insert({ filepath, file_content });
     }
 
     size_t line = json["params"]["position"]["line"].toSize_t();
     size_t character = json["params"]["position"]["character"].toSize_t();
 
     // get the expression at this given position
+    wxString last_word;
     CompletionHelper helper;
-    wxString expression = helper.get_expression(m_filesOpened[filepath]);
-    
-    wxUnusedVar(line);
-    wxUnusedVar(character);
+    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character);
+    wxString expression = helper.get_expression(text, &last_word);
+
+    clDEBUG() << "resolving expression:" << expression << endl;
+
+    bool is_trigger_char =
+        !expression.empty() && (expression.Last() == '>' || expression.Last() == ':' || expression.Last() == '.');
+    bool is_function_calltip = !expression.empty() && expression.Last() == '(';
+
+    if(is_trigger_char) {
+        clDEBUG() << "CodeComplete expression:" << expression << endl;
+        vector<TagEntryPtr> candidates;
+        TagsManagerST::Get()->AutoCompleteCandidates(filepath, line + 1, expression, text, candidates);
+        clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
+        clDEBUG() << candidates << endl;
+    } else if(is_function_calltip) {
+        // TODO:
+        // function calltip
+    } else {
+        // word completion
+        clDEBUG() << "WordComplete expression:" << expression << endl;
+        vector<TagEntryPtr> candidates;
+        TagsManagerST::Get()->WordCompletionCandidates(filepath, line + 1, expression, text, last_word, candidates);
+        clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
+        clDEBUG() << candidates << endl;
+    }
 }

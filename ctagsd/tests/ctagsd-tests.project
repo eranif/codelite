@@ -79,11 +79,29 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="MinGW 64bit ( MSYS2 64bit )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
-        <IncludePath Value="."/>
-        <Preprocessor Value="NDEBUG"/>
+      <Compiler Options="-O2;-Wall;$(shell wx-config --cflags);" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+        <IncludePath Value="../../CodeLite"/>
+        <IncludePath Value="../../Interfaces"/>
+        <IncludePath Value="../../Plugin"/>
+        <IncludePath Value="../../sdk/wxsqlite3/include"/>
+        <IncludePath Value="../lib"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="WXUSINGDLL_SCI"/>
+        <Preprocessor Value="__WX__"/>
+        <Preprocessor Value="WXUSINGDLL"/>
+        <Preprocessor Value="WXUSINGDLL_WXSQLITE3"/>
+        <Preprocessor Value="WXUSINGDLL_SDK"/>
+        <Preprocessor Value="WXUSINGDLL_CL"/>
+        <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
+        <Preprocessor Value="USE_SFTP="/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="$(shell wx-config --libs std)" Required="yes">
+        <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
+        <Library Value="libcodeliteu.dll"/>
+        <Library Value="libplugin_sdku.dll"/>
+        <Library Value="ctagsdlib"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
@@ -119,4 +137,7 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release">
+    <Project Name="ctagsdlib"/>
+  </Dependencies>
 </CodeLite_Project>

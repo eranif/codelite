@@ -18,6 +18,7 @@ unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
     { "textDocument/didOpen", &ProtocolHandler::on_did_open },
     { "textDocument/didChange", &ProtocolHandler::on_did_change },
     { "textDocument/completion", &ProtocolHandler::on_completion },
+    { "textDocument/didClose", &ProtocolHandler::on_did_close },
 };
 }
 
@@ -29,7 +30,7 @@ int main(int argc, char** argv)
     wxFileName logdir(clStandardPaths::Get().GetUserDataDir(), wxEmptyString);
     logdir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
-    FileLogger::OpenLog("ctagsd.log", FileLogger::Developer);
+    FileLogger::OpenLog("ctagsd.log", FileLogger::Dbg);
 
     try {
         Channel channel;

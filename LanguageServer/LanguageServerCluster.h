@@ -47,6 +47,7 @@ public:
 
 protected:
     void OnSignatureHelp(LSPEvent& event);
+    void OnHover(LSPEvent& event);
     void OnSymbolFound(LSPEvent& event);
     void OnCompletionReady(LSPEvent& event);
     void OnReparseNeeded(LSPEvent& event);

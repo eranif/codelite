@@ -5304,6 +5304,13 @@ bool clEditor::IsDetached() const
     return (tlw && (clMainFrame::Get() != tlw));
 }
 
+int clEditor::GetPosAtMousePointer()
+{
+    wxPoint mousePtInScreenCoord = ::wxGetMousePosition();
+    wxPoint clientPt = ScreenToClient(mousePtInScreenCoord);
+    return PositionFromPoint(clientPt);
+}
+
 void clEditor::GetWordAtMousePointer(wxString& word, wxRect& wordRect)
 {
     word.clear();
@@ -5312,9 +5319,7 @@ void clEditor::GetWordAtMousePointer(wxString& word, wxRect& wordRect)
     long start = wxNOT_FOUND;
     long end = wxNOT_FOUND;
     if(GetSelectedText().IsEmpty()) {
-        wxPoint mousePtInScreenCoord = ::wxGetMousePosition();
-        wxPoint clientPt = ScreenToClient(mousePtInScreenCoord);
-        int pos = PositionFromPoint(clientPt);
+        int pos = GetPosAtMousePointer();
         if(pos != wxNOT_FOUND) {
             start = WordStartPosition(pos, true);
             end = WordEndPosition(pos, true);
@@ -5334,6 +5339,11 @@ void clEditor::GetWordAtMousePointer(wxString& word, wxRect& wordRect)
 
     word = GetTextRange(start, end);
     wordRect = rr;
+}
+
+void clEditor::ShowTooltip(const wxString& tip, const wxString& title, int pos)
+{
+    DoShowCalltip(pos, title, tip, false);
 }
 
 void clEditor::ShowRichTooltip(const wxString& tip, const wxString& title, int pos)

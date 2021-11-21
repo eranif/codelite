@@ -35,12 +35,13 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
         }
     }
 
-    auto docFormat = params.AddObject("capabilities")
-                         .AddObject("textDocument")
-                         .AddObject("completion")
-                         .AddObject("completionItem")
-                         .AddArray("documentationFormat");
+    auto textDocumentCapabilities = params.AddObject("capabilities").AddObject("textDocument");
+    auto docFormat =
+        textDocumentCapabilities.AddObject("completion").AddObject("completionItem").AddArray("documentationFormat");
     docFormat.arrayAppend("plaintext");
+    auto hoverFormat = textDocumentCapabilities.AddObject("hover").AddArray("contentFormat");
+    hoverFormat.arrayAppend("markdown");
+    hoverFormat.arrayAppend("plaintext");
     return json;
 }
 

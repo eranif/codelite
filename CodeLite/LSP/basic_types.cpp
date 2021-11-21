@@ -45,8 +45,8 @@ JSONItem VersionedTextDocumentIdentifier::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 void Position::FromJSON(const JSONItem& json)
 {
-    m_line = json.namedObject("line").toInt(0);
-    m_character = json.namedObject("character").toInt(0);
+    m_line = json.namedObject("line").toInt(wxNOT_FOUND);
+    m_character = json.namedObject("character").toInt(wxNOT_FOUND);
 }
 
 JSONItem Position::ToJSON(const wxString& name) const
@@ -206,6 +206,34 @@ JSONItem SignatureHelp::ToJSON(const wxString& name) const
     }
     json.addProperty("activeSignature", m_activeSignature);
     json.addProperty("activeParameter", m_activeParameter);
+    return json;
+}
+
+void MarkupContent::FromJSON(const JSONItem& json)
+{
+    m_kind = json.namedObject("kind").toString();
+    m_value = json.namedObject("value").toString();
+}
+
+JSONItem MarkupContent::ToJSON(const wxString& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.addProperty("kind", m_kind);
+    json.addProperty("value", m_value);
+    return json;
+}
+
+void Hover::FromJSON(const JSONItem& json)
+{
+    m_contents.FromJSON(json.namedObject("contents"));
+    m_range.FromJSON(json.namedObject("range"));
+}
+
+JSONItem Hover::ToJSON(const wxString& name) const
+{
+    JSONItem json = JSONItem::createObject(name);
+    json.append(m_contents.ToJSON("contents"));
+    json.append(m_range.ToJSON("range"));
     return json;
 }
 

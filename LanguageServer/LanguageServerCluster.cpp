@@ -37,6 +37,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     Bind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
     Bind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
+    Bind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
     Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
@@ -60,6 +61,7 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
     Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
     Unbind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
+    Unbind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
     Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
@@ -152,6 +154,37 @@ void LanguageServerCluster::OnSignatureHelp(LSPEvent& event)
         return;
     }
     editor->ShowCalltip(new clCallTip(tags));
+}
+
+void LanguageServerCluster::OnHover(LSPEvent& event)
+{
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    const LSP::Hover& hover = event.GetHover();
+    const LSP::MarkupContent& contents = hover.GetContents();
+    const LSP::Range& range = hover.GetRange();
+
+    if(contents.GetValue().IsEmpty()) {
+        // No available tooltip
+        return;
+    }
+
+    // Sanity check for range (if available)
+    if(range.IsOk()) {
+        // Is the mouse pointer still under the hovered position?
+        int pos = editor->GetPosAtMousePointer();
+        if(pos == wxNOT_FOUND) {
+            return;
+        }
+        LSP::Position cur(editor->LineFromPos(pos), editor->GetColumnInChars(pos));
+        if(cur < range.GetStart() || cur > range.GetEnd()) {
+            // The hover is no longer valid
+            return;
+        }
+    }
+
+    editor->ShowTooltip(contents.GetValue(), "");
 }
 
 void LanguageServerCluster::OnMethodNotFound(LSPEvent& event)

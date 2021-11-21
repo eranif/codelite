@@ -8,6 +8,7 @@
 #include "LSP/GotoDeclarationRequest.h"
 #include "LSP/GotoDefinitionRequest.h"
 #include "LSP/GotoImplementationRequest.h"
+#include "LSP/HoverRequest.hpp"
 #include "LSP/InitializeRequest.h"
 #include "LSP/InitializedNotification.hpp"
 #include "LSP/LSPEvent.h"
@@ -54,6 +55,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
+    Bind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
     Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     EventNotifier::Get()->Bind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
 
@@ -82,6 +84,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
     Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
+    Unbind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
     Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
     DoClear();
@@ -242,6 +245,17 @@ void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
     if(CanHandle(GetEditorFilePath(editor))) {
         event.Skip(false);
         FunctionHelp(editor);
+    }
+}
+
+void LanguageServerProtocol::OnTypeInfoToolTip(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    CHECK_PTR_RET(editor);
+    if(CanHandle(GetEditorFilePath(editor))) {
+        event.Skip(false);
+        HoverTip(editor);
     }
 }
 
@@ -482,6 +496,35 @@ void LanguageServerProtocol::FunctionHelp(IEditor* editor)
         LSP::SignatureHelpRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::SignatureHelpRequest(
             filename, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
         QueueMessage(req);
+    }
+}
+
+void LanguageServerProtocol::HoverTip(IEditor* editor)
+{
+    // sanity
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(ShouldHandleFile(editor));
+
+    // If the editor is modified, we need to tell the LSP to reparse the source file
+    const wxString& filename = GetEditorFilePath(editor);
+    if(m_filesSent.count(filename) && editor->IsEditorModified()) {
+        // we already sent this file over, ask for change parse
+        std::string fileContent;
+        editor->GetEditorTextRaw(fileContent);
+        SendChangeRequest(editor, fileContent);
+    } else if(m_filesSent.count(filename) == 0) {
+        std::string fileContent;
+        editor->GetEditorTextRaw(fileContent);
+        SendOpenRequest(editor, fileContent, GetLanguageId(filename));
+    }
+
+    if(ShouldHandleFile(filename)) {
+        int pos = editor->GetPosAtMousePointer();
+        if(pos != wxNOT_FOUND) {
+            LSP::HoverRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+                new LSP::HoverRequest(filename, editor->LineFromPos(pos), editor->GetColumnInChars(pos)));
+            QueueMessage(req);
+        }
     }
 }
 

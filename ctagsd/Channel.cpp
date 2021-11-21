@@ -11,16 +11,22 @@ Channel::Channel() {}
 
 Channel::~Channel() {}
 
-bool Channel::read_some()
+eReadSome Channel::read_some()
 {
     wxString buffer;
     client->SelectRead();
-    if(client->Read(buffer) != clSocketBase::kSuccess) {
-        clERROR() << "Socket read error. Error code" << client->GetLastError() << endl;
-        return false;
+
+    switch(client->Read(buffer)) {
+    case clSocketBase::kSuccess:
+        m_buffer.Append(buffer);
+        return eReadSome::kSuccess;
+    case clSocketBase::kTimeout:
+        return eReadSome::kTimeout;
+    default:
+    case clSocketBase::kError:
+        clERROR() << "Socket read error. " << client->error() << endl;
+        return eReadSome::kError;
     }
-    m_buffer.Append(buffer);
-    return true;
 }
 
 bool Channel::write_reply(const wxString& message)
@@ -50,8 +56,17 @@ unique_ptr<JSON> Channel::read_message()
         }
 
         // attempt to read some more data from stdin
-        while(!read_some()) {
-            break;
+        bool cont = true;
+        while(cont) {
+            switch(read_some()) {
+            case eReadSome::kError:
+                return nullptr;
+            case eReadSome::kSuccess:
+                cont = false;
+                break;
+            case eReadSome::kTimeout:
+                break;
+            }
         }
     }
 }
@@ -70,4 +85,5 @@ void Channel::open(const wxString& ip, int port)
         clERROR() << "failed to accept new connection. Error code:" << server.GetLastError() << endl;
         exit(1);
     }
+    clSYSTEM() << "Connection established successfully" << endl;
 }

@@ -8,13 +8,19 @@
 
 using namespace std;
 
+enum class eReadSome {
+    kTimeout,
+    kError,
+    kSuccess,
+};
+
 class Channel
 {
     wxString m_buffer;
     clSocketBase::Ptr_t client;
 
 protected:
-    bool read_some();
+    eReadSome read_some();
 
 public:
     Channel();

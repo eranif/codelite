@@ -1,6 +1,7 @@
 #include "Channel.hpp"
 #include "ProtocolHandler.hpp"
 #include "cl_standard_paths.h"
+#include "ctags_manager.h"
 #include "file_logger.h"
 #include <iostream>
 #include <stdio.h>
@@ -58,5 +59,7 @@ int main(int argc, char** argv)
         exit(1);
     }
 
+    // Free resources allocated by the tags manager
+    TagsManagerST::Free();
     return 0;
 }

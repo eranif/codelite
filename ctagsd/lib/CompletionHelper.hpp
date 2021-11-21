@@ -12,8 +12,8 @@ public:
     CompletionHelper();
     ~CompletionHelper();
 
-    wxString get_expression_from_location(const wxString& file_content, size_t line, size_t character,
-                                          ITagsStoragePtr db);
+    wxString get_expression(const wxString& file_content);
+    wxString truncate_file_to_location(const wxString& file_content, size_t line, size_t column);
 };
 
 #endif // COMPLETIONHELPER_HPP

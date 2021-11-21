@@ -1,47 +1,63 @@
+#include "CompletionHelper.hpp"
 #include "CxxTokenizer.h"
 #include "CxxVariableScanner.h"
 #include "ctags_manager.h"
 #include "fileutils.h"
+#include "macros.h"
 #include "tester.hpp"
 #include <iostream>
 #include <stdio.h>
 #include <wx/init.h>
 #include <wx/log.h>
-#include "CompletionHelper.hpp"
+#include <wxStringHash.h>
 
-TEST_FUNC(test_expression_1)
+TEST_FUNC(TestCompletionHelper_get_expression)
 {
+    wxStringMap_t M = { { "m_string.", "m_string." },
+                        { "string name=m_string.", "m_string." },
+                        { "string name=m_string->", "m_string->" },
+                        { "get_details().get_name().", "get_details().get_name()." },
+                        { "foo(){ std::vector<std::string>::", "std::vector<std::string>::" },
+                        { "auto foo = [=](std::ve", "std::ve" } };
+
     CompletionHelper helper;
-    {
-        wxString expr = helper.get_expression_from_location("m_string.", 0, 0, nullptr);
-        CHECK_STRING(expr, "m_string.");
+    for(const auto& vt : M) {
+        const wxString& raw_string = vt.first;
+        const wxString& expected = vt.second;
+        CHECK_STRING(expected, helper.get_expression(raw_string));
     }
+    return true;
+}
 
-    {
-        wxString expr = helper.get_expression_from_location("string name=m_string.", 0, 0, nullptr);
-        CHECK_STRING(expr, "m_string.");
-    }
+TEST_FUNC(TestCompletionHelper_truncate_file_to_location)
+{
+    wxString file_content =
+        R"(
+using namespace std;
+void foo() {
+    vector<string> V;
+    V.empty();
+    // other content goes here
+    // bla bla
+)";
+    CompletionHelper helper;
+    wxString f = helper.truncate_file_to_location(file_content, 4, 6);
+    auto lines = ::wxStringTokenize(f, "\n", wxTOKEN_RET_EMPTY_ALL);
+    CHECK_BOOL(!lines.empty());
+    CHECK_SIZE(lines.size(), 5);
+    CHECK_STRING(lines[4].Trim().Trim(false), "V.");
+    return true;
+}
 
-    {
-        wxString expr = helper.get_expression_from_location("string name=m_string->", 0, 0, nullptr);
-        CHECK_STRING(expr, "m_string->");
-    }
+TEST_FUNC(TestCompletionHelper_truncate_file_to_location_invalid_input)
+{
+    wxString file_content = "";
 
-    {
-        wxString expr = helper.get_expression_from_location("get_details().get_name().", 0, 0, nullptr);
-        CHECK_STRING(expr, "get_details().get_name().");
-    }
-
-    {
-        wxString expr = helper.get_expression_from_location("foo(){ std::vector<std::string>::", 0, 0, nullptr);
-        CHECK_STRING(expr, "std::vector<std::string>::");
-    }
-
-    {
-        wxString expr = helper.get_expression_from_location("auto foo = [=](std::ve", 0, 0, nullptr);
-        CHECK_STRING(expr, "std::ve");
-    }
-
+    CompletionHelper helper;
+    wxString f = helper.truncate_file_to_location(file_content, 4, 6);
+    auto lines = ::wxStringTokenize(f, "\n", wxTOKEN_RET_EMPTY_ALL);
+    CHECK_BOOL(lines.empty());
+    CHECK_SIZE(lines.size(), 0);
     return true;
 }
 

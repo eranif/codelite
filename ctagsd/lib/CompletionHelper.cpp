@@ -13,8 +13,7 @@ CompletionHelper::CompletionHelper() {}
 
 CompletionHelper::~CompletionHelper() {}
 
-wxString CompletionHelper::get_expression_from_location(const wxString& file_content, size_t line, size_t character,
-                                                        ITagsStoragePtr db)
+wxString CompletionHelper::get_expression(const wxString& file_content)
 {
     // tokenize the text
     CxxTokenizer tokenizer;
@@ -92,4 +91,35 @@ wxString CompletionHelper::get_expression_from_location(const wxString& file_con
         expression_string << t;
     }
     return expression_string;
+}
+
+wxString CompletionHelper::truncate_file_to_location(const wxString& file_content, size_t line, size_t column)
+{
+    size_t curline = 0;
+    size_t offset = 0;
+
+    // locate the line
+    for(const auto& ch : file_content) {
+        if(curline == line) {
+            break;
+        }
+        switch(ch.GetValue()) {
+        case '\n':
+            ++curline;
+            ++offset;
+            break;
+        default:
+            ++offset;
+            break;
+        }
+    }
+
+    if(curline != line) {
+        return wxEmptyString;
+    }
+
+    if(offset + column < file_content.size()) {
+        return file_content.Mid(0, offset + column);
+    }
+    return wxEmptyString;
 }

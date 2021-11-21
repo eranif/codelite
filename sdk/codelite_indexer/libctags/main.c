@@ -730,7 +730,6 @@ extern void ctags_batch_parse(const char* filelist, const char* outputfile)
             free(tags);
         }
         n = n->next;
-        fprintf(stdout, "\rProcessing [%d/%d]", counter, count);
     }
     fclose(fp);
     list_destroy(l);

@@ -37,16 +37,30 @@ include_directories("${CL_SRC_ROOT}/Plugin"
                     "${CL_SRC_ROOT}/sdk/wxsqlite3/include"
                     "${CL_SRC_ROOT}/CodeLite"
                     "${CL_SRC_ROOT}/PCH"
-                    "${CL_SRC_ROOT}/Interfaces")
+                    "${CL_SRC_ROOT}/Interfaces"
+                    "${CL_SRC_ROOT}/ctagsd/lib")
 
-FILE(GLOB SRCS "*.cpp")
-add_executable(ctagsd ${SRCS})
 set(UTIL_LIB "")
 if(UNIX)
     set(UTIL_LIB "-lutil -ldl")
 endif(UNIX)
 
+FILE(GLOB LIBSRC "lib/*.cpp")
+add_library(ctagdslib STATIC "${LIBSRC}")
+
+add_executable(ctagsd "main.cpp")
 target_link_libraries(ctagsd
+                      ctagdslib
+                      ${LINKER_OPTIONS}
+                      ${wxWidgets_LIBRARIES}
+                      -L"${CL_LIBPATH}"
+                      libcodelite
+                      plugin
+                      ${UTIL_LIB})
+
+add_executable(ctagsd-tests "tests/main.cpp" "tests/tester.cpp")
+target_link_libraries(ctagsd-tests
+                      ctagdslib
                       ${LINKER_OPTIONS}
                       ${wxWidgets_LIBRARIES}
                       -L"${CL_LIBPATH}"
@@ -55,3 +69,4 @@ target_link_libraries(ctagsd
                       ${UTIL_LIB})
 
 CL_INSTALL_EXECUTABLE(ctagsd)
+CL_INSTALL_EXECUTABLE(ctagsd-tests)

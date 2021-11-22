@@ -12,18 +12,20 @@
 namespace mdparser
 {
 enum Type : int {
-    T_TEXT = (1 << 0),      // normal state
-    T_H1 = (1 << 1),        // #
-    T_H2 = (1 << 2),        // ##
-    T_H3 = (1 << 3),        // ###
-    T_LI = (1 << 4),        // -
-    T_HR = (1 << 5),        // === or ---
-    T_BOLD = (1 << 6),      // **
-    T_ITALIC = (1 << 7),    // *
-    T_CODE = (1 << 8),      // `
-    T_CODEBLOCK = (1 << 9), // ```
-    T_EOL = (1 << 10),      // \n
-    T_EOF = 0,              // End of file
+    // See also: StringUtils::DisableMarkdownStyling()
+    T_TEXT = (1 << 0),       // normal state
+    T_H1 = (1 << 1),         // #
+    T_H2 = (1 << 2),         // ##
+    T_H3 = (1 << 3),         // ###
+    T_LI = (1 << 4),         // -
+    T_HR = (1 << 5),         // === or ---
+    T_BOLD = (1 << 6),       // **
+    T_ITALIC = (1 << 7),     // *
+    T_STRIKE = (1 << 8),     // ~~
+    T_CODE = (1 << 9),       // `
+    T_CODEBLOCK = (1 << 10), // ```
+    T_EOL = (1 << 11),       // \n
+    T_EOF = 0,               // End of file
 };
 
 class Tokenizer
@@ -80,6 +82,7 @@ public:
     FontFamily font_family = FONTFAMILY_NORMAL;
     FontWeight font_weight = FONTWEIGHT_NORMAL;
     FontStyle font_style = FONTSTYLE_NORMAL;
+    bool font_strikethrough = false;
 
     void toggle_property(Type prop)
     {
@@ -98,6 +101,7 @@ public:
         font_family = FONTFAMILY_NORMAL;
         font_weight = FONTWEIGHT_NORMAL;
         font_style = FONTSTYLE_NORMAL;
+        font_strikethrough = has_flag(T_STRIKE);
         horizontal_rule = has_flag(T_HR);
 
         if(has_flag(T_CODE) || has_flag(T_CODEBLOCK)) {
@@ -137,6 +141,9 @@ public:
         }
         if(font_flags & mdparser::T_BOLD) {
             str << ":BOLD";
+        }
+        if(font_flags & mdparser::T_STRIKE) {
+            str << ":STRIKE";
         }
         if(font_flags & mdparser::T_H1) {
             str << ":H1";

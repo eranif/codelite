@@ -59,6 +59,14 @@ std::pair<mdparser::Type, wxString> mdparser::Tokenizer::next()
                 RETURN_TYPE(T_ITALIC, "*", 0);
             }
             break;
+        case '~':
+            // strikethrough
+            if(ch1 == '~') {
+                RETURN_TYPE(T_STRIKE, "~~", 1);
+            } else {
+                RETURN_TYPE(T_TEXT, ch0, 0);
+            }
+            break;
         case '`':
             // code blocks ``` & `
             if(ch1 == '`' && ch2 == '`') {
@@ -150,6 +158,7 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
             // below are style styles
             case T_BOLD:
             case T_ITALIC:
+            case T_STRIKE:
                 flush_buffer(buffer, style, false);
                 style.toggle_property(tok.first);
                 break;

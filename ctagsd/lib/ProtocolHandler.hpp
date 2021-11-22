@@ -7,6 +7,7 @@
 #include <memory>
 #include <wx/string.h>
 
+#include "Settings.hpp"
 #include "istorage.h"
 
 using namespace std;
@@ -17,13 +18,9 @@ public:
     typedef void (ProtocolHandler::*CallbackFunc)(unique_ptr<JSON>&& msg, Channel& channel);
 
 private:
-    wxString m_file_mask = "*.cpp;*.h;*.hpp;*.cxx;*.cc;*.hxx";
-    wxArrayString m_search_path;
-    wxStringMap_t m_tokens;
+    CTagsdSettings m_settings;
     wxString m_root_folder;
     wxString m_settings_folder;
-    wxString m_codelite_indexer;
-    wxString m_ignore_spec = ".git;.svn;build-debug/;build-release/;build/";
     vector<wxFileName> m_files;
     wxStringMap_t m_filesOpened;
 

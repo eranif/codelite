@@ -2,6 +2,7 @@
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "LSP/LSPEvent.h"
+#include "Settings.hpp"
 #include "clFilesCollector.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
@@ -15,21 +16,6 @@
 namespace
 {
 wxStopWatch sw;
-FileLogger& operator<<(FileLogger& logger, const wxStringMap_t& m)
-{
-    wxString s;
-    s << "{";
-    for(const auto& vt : m) {
-        s << "{ " << vt.first << ", " << vt.second << " },";
-    }
-    if(s.EndsWith(",")) {
-        s.RemoveLast();
-    }
-    s << "}";
-    logger.Append(s, logger.GetRequestedLogLevel());
-    return logger;
-}
-
 FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
 {
     wxString s;
@@ -88,14 +74,14 @@ void ProtocolHandler::parse_files(Channel& channel)
 {
     clDEBUG() << "Searching for files to parse..." << endl;
     clFilesScanner scanner;
-    scanner.Scan(m_root_folder, m_files, m_file_mask, wxEmptyString, m_ignore_spec);
+    scanner.Scan(m_root_folder, m_files, m_settings.GetFileMask(), wxEmptyString, m_settings.GetIgnoreSpec());
     clDEBUG() << "Found" << m_files.size() << "files" << endl;
     send_log_message(wxString() << _("Generating `ctags` file for: ") << m_files.size() << _(" files"), LSP_LOG_INFO,
                      channel);
 
     start_timer();
 
-    if(!CTags::Generate(m_files, m_settings_folder, m_codelite_indexer)) {
+    if(!CTags::Generate(m_files, m_settings_folder, m_settings.GetCodeliteIndexer())) {
         send_log_message(_("Failed to generate `ctags` file"), LSP_LOG_ERROR, channel);
         clERROR() << "Failed to generate ctags file!" << endl;
         return;
@@ -182,25 +168,10 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     m_settings_folder = fn_settings_dir.GetPath();
 
     wxFileName fn_config_file(m_settings_folder, "settings.json");
-
-    JSON config_file(fn_config_file);
-    if(!config_file.isOk()) {
-        clWARNING() << "Could not locate configuration file:" << fn_config_file << endl;
-    } else {
-        auto config = config_file.toElement();
-        m_search_path = config["search_path"].toArrayString();
-        m_tokens = config["tokens"].toStringMap();
-        m_file_mask = config["file_mask"].toString(m_file_mask);
-        m_ignore_spec = config["ignore_spec"].toString(m_ignore_spec);
-        m_codelite_indexer = config["codelite_indexer"].toString();
-    }
-
-    clDEBUG() << "search path:" << m_search_path << endl;
-    clDEBUG() << "tokens:" << m_tokens << endl;
-    clDEBUG() << "file_mask:" << m_file_mask << endl;
-    clDEBUG() << "codelite-indexer:" << m_codelite_indexer << endl;
+    m_settings.Load(fn_config_file);
 
     parse_files(channel);
+
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
     channel.write_reply(resposne.format(false));
@@ -307,7 +278,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         vector<TagEntryPtr> candidates;
         TagsManagerST::Get()->AutoCompleteCandidates(filepath, line + 1, expression, text, candidates);
         clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
-        clDEBUG() << candidates << endl;
+        clDEBUG1() << candidates << endl;
     } else if(is_function_calltip) {
         // TODO:
         // function calltip
@@ -317,6 +288,6 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         vector<TagEntryPtr> candidates;
         TagsManagerST::Get()->WordCompletionCandidates(filepath, line + 1, expression, text, last_word, candidates);
         clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
-        clDEBUG() << candidates << endl;
+        clDEBUG1() << candidates << endl;
     }
 }

@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "project.h"
 #include "GCCMetadata.hpp"
 #include "ICompilerLocator.h"
 #include "asyncprocess.h"
@@ -37,7 +38,6 @@
 #include "macromanager.h"
 #include "macros.h"
 #include "plugin.h"
-#include "project.h"
 #include "workspace.h"
 #include "wx/arrstr.h"
 #include "wxArrayStringAppender.h"
@@ -1436,8 +1436,10 @@ wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalP
     }
 
     wxString compilerExe = compiler->GetTool(flags & kCxxFile ? "CXX" : "CC");
-    commandLine << "clang "
-                << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
+    ::WrapWithQuotes(compilerExe);
+
+    // use the real compiler in the command
+    commandLine << compilerExe << " -c " << filenamePlaceholder << " -o " << filenamePlaceholder << ".o " << extraFlags;
 
     // Apply the environment
     EnvSetter es(NULL, NULL, GetName(), buildConf->GetName());

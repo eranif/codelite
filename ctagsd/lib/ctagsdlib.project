@@ -3,6 +3,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="Settings.cpp"/>
+    <File Name="Settings.hpp"/>
     <File Name="ProtocolHandler.hpp"/>
     <File Name="ProtocolHandler.cpp"/>
     <File Name="CompletionHelper.hpp"/>

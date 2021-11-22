@@ -1,7 +1,7 @@
-#include "ProtocolHandler.hpp"
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "LSP/LSPEvent.h"
+#include "ProtocolHandler.hpp"
 #include "Settings.hpp"
 #include "clFilesCollector.h"
 #include "ctags_manager.h"
@@ -63,11 +63,11 @@ void ProtocolHandler::send_log_message(const wxString& message, int level, Chann
     channel.write_reply(notification.format(false));
 }
 
-void ProtocolHandler::build_result(JSONItem& reply, size_t id)
+JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id)
 {
     reply.addProperty("id", id);
     reply.addProperty("jsonrpc", "2.0");
-    reply.AddObject("result");
+    return reply.AddObject("result");
 }
 
 void ProtocolHandler::parse_files(Channel& channel)
@@ -147,10 +147,10 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     size_t id = json["id"].toSize_t();
 
     JSON root(cJSON_Object);
-    JSONItem resposne = root.toElement();
-    build_result(resposne, id);
+    JSONItem response = root.toElement();
+    auto result = build_result(response, id);
 
-    auto capabilities = resposne.AddObject("capabilities");
+    auto capabilities = result.AddObject("capabilities");
     capabilities.addProperty("completionProvider", true);
     capabilities.addProperty("declarationProvider", true);
     capabilities.addProperty("definitionProvider", true);
@@ -174,7 +174,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
-    channel.write_reply(resposne.format(false));
+    channel.write_reply(response.format(false));
 }
 
 // Request <-->
@@ -239,6 +239,8 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
 void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
 {
     auto json = msg->toElement();
+    size_t id = json["id"].toSize_t();
+
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
@@ -273,9 +275,9 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         !expression.empty() && (expression.Last() == '>' || expression.Last() == ':' || expression.Last() == '.');
     bool is_function_calltip = !expression.empty() && expression.Last() == '(';
 
+    vector<TagEntryPtr> candidates;
     if(is_trigger_char) {
         clDEBUG() << "CodeComplete expression:" << expression << endl;
-        vector<TagEntryPtr> candidates;
         TagsManagerST::Get()->AutoCompleteCandidates(filepath, line + 1, expression, text, candidates);
         clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
         clDEBUG1() << candidates << endl;
@@ -285,9 +287,58 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     } else {
         // word completion
         clDEBUG() << "WordComplete expression:" << expression << endl;
-        vector<TagEntryPtr> candidates;
         TagsManagerST::Get()->WordCompletionCandidates(filepath, line + 1, expression, text, last_word, candidates);
         clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
         clDEBUG1() << candidates << endl;
+    }
+
+    if(!candidates.empty()) {
+        JSON root(cJSON_Object);
+        JSONItem response = root.toElement();
+        auto result = build_result(response, id);
+
+        result.addProperty("isIncomplete", false);
+        auto items = result.AddArray("items");
+        // send them over the client
+        for(auto tag : candidates) {
+            auto item = items.AddObject(wxEmptyString);
+            if(!tag->GetComment().empty()) {
+                auto doc = item.AddObject("documentation");
+                doc.addProperty("kind", "plaintext");
+                doc.addProperty("value", tag->GetComment());
+            }
+
+            item.addProperty("label", tag->GetDisplayName());
+            item.addProperty("filterText", tag->GetName());
+            item.addProperty("insertText", tag->GetName());
+            item.addProperty("detail", tag->GetReturnValue());
+
+            // set the kind
+            using LSP::CompletionItem;
+            CompletionItem::eCompletionItemKind kind = CompletionItem::kKindVariable;
+            if(tag->IsMethod() || tag->IsConstructor()) {
+                kind = CompletionItem::kKindFunction;
+            } else if(tag->IsClass()) {
+                kind = CompletionItem::kKindClass;
+            } else if(tag->IsStruct()) {
+                kind = CompletionItem::kKindStruct;
+            } else if(tag->IsLocalVariable()) {
+                kind = CompletionItem::kKindVariable;
+            } else if(tag->IsTypedef()) {
+                kind = CompletionItem::kKindTypeParameter;
+            } else if(tag->IsMacro()) {
+                kind = CompletionItem::kKindTypeParameter;
+            } else if(tag->GetKind() == "namespace") {
+                kind = CompletionItem::kKindModule;
+            } else if(tag->GetKind() == "union") {
+                kind = CompletionItem::kKindStruct;
+            } else if(tag->GetKind() == "enum") {
+                kind = CompletionItem::kKindEnum;
+            } else if(tag->GetKind() == "enumerator") {
+                kind = CompletionItem::kKindEnumMember;
+            }
+            item.addProperty("kind", static_cast<int>(kind));
+        }
+        channel.write_reply(response.format(false));
     }
 }

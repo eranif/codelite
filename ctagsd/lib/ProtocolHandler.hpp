@@ -25,7 +25,7 @@ private:
     wxStringMap_t m_filesOpened;
 
 private:
-    void build_result(JSONItem& reply, size_t id);
+    JSONItem build_result(JSONItem& reply, size_t id);
     void parse_files(Channel& channel);
 
 public:

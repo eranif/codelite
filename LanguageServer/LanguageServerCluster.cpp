@@ -184,7 +184,13 @@ void LanguageServerCluster::OnHover(LSPEvent& event)
         }
     }
 
-    editor->ShowTooltip(contents.GetValue(), "");
+    if(contents.GetKind() == "markdown") {
+        editor->ShowTooltip(contents.GetValue());
+    } else {
+        wxString fixedTip = contents.GetValue();
+        StringUtils::DisableMarkdownStyling(fixedTip);
+        editor->ShowTooltip(fixedTip);
+    }
 }
 
 void LanguageServerCluster::OnMethodNotFound(LSPEvent& event)

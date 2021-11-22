@@ -90,6 +90,17 @@ void StringUtils::StripTerminalColouring(const wxString& buffer, wxString& modbu
     }
 }
 
+void StringUtils::DisableMarkdownStyling(wxString& buffer)
+{
+    buffer.Replace("\\", "\\\\");
+    buffer.Replace("#", "\\#");
+    buffer.Replace("-", "\\-");
+    buffer.Replace("=", "\\=");
+    buffer.Replace("*", "\\*");
+    buffer.Replace("~", "\\~");
+    buffer.Replace("`", "\\`");
+}
+
 #define ARGV_STATE_NORMAL 0
 #define ARGV_STATE_DQUOTE 1
 #define ARGV_STATE_SQUOTE 2

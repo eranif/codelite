@@ -3206,7 +3206,6 @@ void FileViewTree::OnActiveProjectChanged(clProjectSettingsEvent& e)
     if(iter == m_projectsMap.end()) {
         return;
     }
-    e.Skip(false);
 
     // update the UI
     DoSetProjectActiveUI(iter->second);

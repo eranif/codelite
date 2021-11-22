@@ -27,8 +27,8 @@ protected:
 
 protected:
     static wxString WrapSpaces(const wxString& file);
-    static bool DoGenerate(const wxString& filesContent, const wxString& path);
-    
+    static bool DoGenerate(const wxString& filesContent, const wxString& path, const wxString& codelite_indexer);
+
     TagTreePtr TreeFromTags(std::vector<TagEntry>& tags);
 
 public:
@@ -36,7 +36,6 @@ public:
     virtual ~CTags();
 
     bool IsOpened() const { return m_file != nullptr; }
-
 
     /**
      * @brief read from the tags file and return list of all tags from the same file
@@ -50,8 +49,10 @@ public:
     /**
      * @brief given a list of files, generate an output tags file and place it under 'path'
      */
-    static bool Generate(const std::vector<wxFileName>& files, const wxString& path);
-    static bool Generate(const wxArrayString& files, const wxString& path);
+    static bool Generate(const std::vector<wxFileName>& files, const wxString& path,
+                         const wxString& codelite_indexer = wxEmptyString);
+    static bool Generate(const wxArrayString& files, const wxString& path,
+                         const wxString& codelite_indexer = wxEmptyString);
 
     /**
      * @brief search for tags

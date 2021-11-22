@@ -54,8 +54,6 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxFileName>&
                       FileUtils::WildMatch(specArr, filename) /* matches the file spec array */) {
                 // Include this file
                 filesOutput.push_back(fullpath);
-            } else {
-                clDEBUG1() << "Files Collector: ignoring file:" << fullpath;
             }
             cont = dir.GetNext(&filename);
         }
@@ -84,14 +82,14 @@ static bool IsRelPathContainedInSpec(const wxString& rootPath, const wxString& f
     fpDirs.Add(fp.GetFullName()); // Add the last (filename) part into the path array
 
     const wxString pathSeparators = fp.GetPathSeparators();
-    for (const wxString& spec : specSet) {
+    for(const wxString& spec : specSet) {
         // Check if spec matches the beginning of the full path
-        if (fp.GetFullPath().StartsWith(spec)) {
+        if(fp.GetFullPath().StartsWith(spec)) {
             return true;
         }
         // First check if spec is a path-elem (without path separators)
         // Then check if path-elem if found in the array of full path-elements
-        if (!spec.Contains(pathSeparators) && (fpDirs.Index(spec) != wxNOT_FOUND)) {
+        if(!spec.Contains(pathSeparators) && (fpDirs.Index(spec) != wxNOT_FOUND)) {
             return true;
         }
     }
@@ -113,7 +111,7 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
     std::set<wxString> S;
     Q.push(rootFolder);
     S.insert(rootFolder);
-    
+
     while(!Q.empty()) {
         wxString dirpath = Q.front();
         Q.pop();
@@ -143,10 +141,10 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
             if(isDirectory && !isExcludeDir) {
                 // Traverse into this folder
                 wxString realPath = FileUtils::RealPath(fullpath);
-                if (S.insert(realPath).second) {
+                if(S.insert(realPath).second) {
                     Q.push(fullpath);
                 }
-                
+
             } else if(!isDirectory && FileUtils::WildMatch(excludeSpecArr, filename)) {
                 // Do nothing
             } else if(!isDirectory && FileUtils::WildMatch(specArr, filename)) {

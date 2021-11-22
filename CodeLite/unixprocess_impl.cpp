@@ -227,8 +227,6 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
         // We differentiate between stdout and stderr?
         bool stderrRead = ReadFromFd(GetStderrHandle(), rs, buffErr);
         bool stdoutRead = ReadFromFd(GetReadHandle(), rs, buff);
-        clDEBUG1() << "STDOUT:" << buff << endl;
-        clDEBUG1() << "STDERR:" << buffErr << endl;
         return stderrRead || stdoutRead;
 
     } else {

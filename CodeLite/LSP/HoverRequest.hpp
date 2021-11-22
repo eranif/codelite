@@ -1,5 +1,5 @@
-#ifndef HOVERREQUEST_H
-#define HOVERREQUEST_H
+#ifndef HOVERREQUEST_HPP
+#define HOVERREQUEST_HPP
 
 #include "LSP/Request.h"
 #include "LSP/ResponseMessage.h"
@@ -20,4 +20,4 @@ public:
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };
 };     // namespace LSP
-#endif // HOVERREQUEST_H
+#endif // HOVERREQUEST_HPP

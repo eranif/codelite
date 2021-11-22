@@ -4,7 +4,9 @@
 #include "ProtocolHandler.hpp"
 #include "Settings.hpp"
 #include "clFilesCollector.h"
+#include "crawler_include.h"
 #include "ctags_manager.h"
+#include "fc_fileopener.h"
 #include "file_logger.h"
 #include "tags_storage_sqlite3.h"
 #include <iostream>
@@ -44,6 +46,23 @@ wxString stop_timer()
     return elapsed;
 }
 
+void remove_binary_files(wxArrayString& files)
+{
+    wxArrayString res;
+    res.reserve(files.size());
+
+    for(const wxString& s : files) {
+        wxFileName filename(s);
+        filename.MakeAbsolute();
+        filename.Normalize();
+        wxString fullpath = filename.GetFullPath();
+        if(TagsManagerST::Get()->IsBinaryFile(fullpath, {}))
+            continue;
+        res.push_back(fullpath);
+    }
+    files.swap(res);
+}
+
 } // namespace
 
 ProtocolHandler::ProtocolHandler() {}
@@ -73,19 +92,65 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id)
 void ProtocolHandler::parse_files(Channel& channel)
 {
     clDEBUG() << "Searching for files to parse..." << endl;
+
     clFilesScanner scanner;
-    scanner.Scan(m_root_folder, m_files, m_settings.GetFileMask(), wxEmptyString, m_settings.GetIgnoreSpec());
-    clDEBUG() << "Found" << m_files.size() << "files" << endl;
-    send_log_message(wxString() << _("Generating `ctags` file for: ") << m_files.size() << _(" files"), LSP_LOG_INFO,
-                     channel);
+    wxArrayString exclude_folders_arr = ::wxStringTokenize(m_settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
+
+    vector<wxFileName> vfn;
+    scanner.Scan(m_root_folder, vfn, m_settings.GetFileMask(), wxEmptyString, m_settings.GetIgnoreSpec());
+
+    m_files.clear();
+    m_files.reserve(vfn.size());
+    for(const wxFileName& fn : vfn) {
+        m_files.Add(fn.GetFullPath());
+    }
+
+    clDEBUG() << "Found" << vfn.size() << "files" << endl;
 
     start_timer();
 
+    // Now that we got the list of files - include all the "#include" statements
+    fcFileOpener::Get()->ClearResults();
+    fcFileOpener::Get()->ClearSearchPath();
+
+    for(const auto& search_path : m_settings.GetSearchPath()) {
+        const wxCharBuffer path = search_path.mb_str(wxConvUTF8);
+        fcFileOpener::Get()->AddSearchPath(path.data());
+    }
+
+    remove_binary_files(m_files);
+    clDEBUG() << "After binary files filtering there are " << m_files.size() << "files" << endl;
+
+    clDEBUG() << "Searching for included files..." << endl;
+    for(size_t i = 0; i < m_files.size(); i++) {
+        const wxCharBuffer cfile = m_files[i].mb_str(wxConvUTF8);
+        crawlerScan(cfile.data());
+    }
+
+    wxStringSet_t unique_files{ m_files.begin(), m_files.end() };
+
+    const auto& result_set = fcFileOpener::Get()->GetResults();
+    for(const wxString& file : result_set) {
+        unique_files.insert(file);
+    }
+
+    m_files.clear();
+    m_files.reserve(unique_files.size());
+
+    for(const auto& s : unique_files) {
+        m_files.Add(s);
+    }
+    clDEBUG() << "With included files, there are" << m_files.size() << "files" << endl;
+    send_log_message(wxString() << _("Generating `ctags` file for: ") << m_files.size() << _(" files"), LSP_LOG_INFO,
+                     channel);
+
+    clDEBUG() << "Generating ctags files for" << m_files.size() << "files" << endl;
     if(!CTags::Generate(m_files, m_settings_folder, m_settings.GetCodeliteIndexer())) {
         send_log_message(_("Failed to generate `ctags` file"), LSP_LOG_ERROR, channel);
         clERROR() << "Failed to generate ctags file!" << endl;
         return;
     }
+    clDEBUG() << "Success" << endl;
 
     send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, channel);
 
@@ -107,6 +172,9 @@ void ProtocolHandler::parse_files(Channel& channel)
     db->OpenDatabase(dbfile);
 
     /// TODO: scan the database and filter all non modified files since last parsing was done
+
+    /// FIXME: get_expression does not work when a T_IDENTIFIER appears right after
+    ///   PP line
     send_log_message(_("Creating symbols database..."), LSP_LOG_INFO, channel);
 
     start_timer();

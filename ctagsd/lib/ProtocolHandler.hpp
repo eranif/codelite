@@ -21,7 +21,7 @@ private:
     CTagsdSettings m_settings;
     wxString m_root_folder;
     wxString m_settings_folder;
-    vector<wxFileName> m_files;
+    wxArrayString m_files;
     wxStringMap_t m_filesOpened;
 
 private:

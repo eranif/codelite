@@ -12,15 +12,18 @@ class CTagsdSettings
     wxArrayString m_search_path;
     wxStringMap_t m_tokens;
     wxString m_codelite_indexer;
-    wxString m_ignore_spec = ".git;.svn;build-debug/;build-release/;build/;CPack_Packages/";
+    wxString m_ignore_spec = ".git/;.svn/;build-debug/;build-release/;build/;CPack_Packages/";
+
+private:
+    void build_search_path(const wxFileName& filepath);
 
 public:
     CTagsdSettings();
     ~CTagsdSettings();
-    
+
     void Load(const wxFileName& filepath);
     void Save(const wxFileName& filepath);
-    
+
     void SetCodeliteIndexer(const wxString& codelite_indexer) { this->m_codelite_indexer = codelite_indexer; }
     void SetFileMask(const wxString& file_mask) { this->m_file_mask = file_mask; }
     void SetIgnoreSpec(const wxString& ignore_spec) { this->m_ignore_spec = ignore_spec; }

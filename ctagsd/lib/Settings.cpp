@@ -1,7 +1,11 @@
-#include "Settings.hpp"
+#include "CompileCommandsJSON.h"
+#include "CompileFlagsTxt.h"
 #include "JSON.h"
+#include "Settings.hpp"
 #include "file_logger.h"
+#include <set>
 
+using namespace std;
 namespace
 {
 FileLogger& operator<<(FileLogger& logger, const wxStringMap_t& m)
@@ -38,6 +42,8 @@ void CTagsdSettings::Load(const wxFileName& filepath)
         m_codelite_indexer = config["codelite_indexer"].toString();
     }
 
+    build_search_path(filepath);
+
     clDEBUG() << "search path.......:" << m_search_path << endl;
     clDEBUG() << "tokens............:" << m_tokens << endl;
     clDEBUG() << "file_mask.........:" << m_file_mask << endl;
@@ -55,4 +61,31 @@ void CTagsdSettings::Save(const wxFileName& filepath)
     config.addProperty("ignore_spec", m_ignore_spec);
     config.addProperty("codelite_indexer", m_codelite_indexer);
     config_file.save(filepath);
+}
+
+void CTagsdSettings::build_search_path(const wxFileName& filepath)
+{
+    // check the root folder for compile_flags.txt file or compile_commands.json
+    wxFileName fn(filepath);
+    fn.RemoveLastDir();
+
+    wxString path = fn.GetPath();
+
+    wxFileName compile_flags_txt(path, "compile_flags.txt");
+    wxFileName compile_commands_json(path, "compile_commands.json");
+
+    set<wxString> S{ m_search_path.begin(), m_search_path.end() };
+    if(compile_flags_txt.FileExists()) {
+        // we are using the compile_flags.txt file method
+        CompileFlagsTxt cft(compile_flags_txt);
+        S.insert(cft.GetIncludes().begin(), cft.GetIncludes().end());
+    } else if(compile_commands_json.FileExists()) {
+        CompileCommandsJSON ccj(compile_commands_json.GetFullPath());
+        S.insert(ccj.GetIncludes().begin(), ccj.GetIncludes().end());
+    }
+    m_search_path.clear();
+    m_search_path.reserve(S.size());
+    for(const auto& path : S) {
+        m_search_path.Add(path);
+    }
 }

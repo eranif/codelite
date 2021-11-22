@@ -41,6 +41,7 @@ void clMarkdownRenderer::UpdateFont(wxDC& dc, const mdparser::Style& style)
     f.SetPointSize(point_size);
     f.SetWeight(style.font_weight == mdparser::Style::FONTWEIGHT_BOLD ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
     f.SetStyle(style.font_style == mdparser::Style::FONTSTYLE_ITALIC ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
+    f.SetStrikethrough(style.font_strikethrough);
     dc.SetFont(f);
 }
 

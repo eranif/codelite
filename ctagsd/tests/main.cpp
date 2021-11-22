@@ -11,6 +11,14 @@
 #include <wx/log.h>
 #include <wxStringHash.h>
 
+namespace
+{
+const wxString sample_text = R"(
+#ifdef __WXMSW__
+#endif
+m_string.)";
+}
+
 TEST_FUNC(TestCompletionHelper_get_expression)
 {
     wxStringMap_t M = {
@@ -24,13 +32,14 @@ TEST_FUNC(TestCompletionHelper_get_expression)
         { "if(!types.empty() && types.back() == T_IDENTIF", "T_IDENTIF" },
         { "if(!types.empty() && type", "type" },
         { "if(!typ", "typ" },
+        { sample_text, "m_string." },
     };
 
     CompletionHelper helper;
     for(const auto& vt : M) {
         const wxString& raw_string = vt.first;
         const wxString& expected = vt.second;
-        CHECK_STRING(expected, helper.get_expression(raw_string));
+        CHECK_STRING(helper.get_expression(raw_string), expected);
     }
     return true;
 }

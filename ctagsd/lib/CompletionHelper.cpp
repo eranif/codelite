@@ -54,6 +54,33 @@ wxString CompletionHelper::get_expression(const wxString& file_content, wxString
             depth++;
             break;
         case ';':
+        case T_PP_DEFINE:
+        case T_PP_DEFINED:
+        case T_PP_IF:
+        case T_PP_IFNDEF:
+        case T_PP_IFDEF:
+        case T_PP_ELSE:
+        case T_PP_ELIF:
+        case T_PP_LINE:
+        case T_PP_PRAGMA:
+        case T_PP_UNDEF:
+        case T_PP_ERROR:
+        case T_PP_ENDIF:
+        case T_PP_IDENTIFIER:
+        case T_PP_DEC_NUMBER:
+        case T_PP_OCTAL_NUMBER:
+        case T_PP_HEX_NUMBER:
+        case T_PP_FLOAT_NUMBER:
+        case T_PP_STRING:
+        case T_PP_AND:
+        case T_PP_OR:
+        case T_PP_STATE_EXIT:
+        case T_PP_INCLUDE_FILENAME:
+        case T_PP_INCLUDE:
+        case T_PP_GT:
+        case T_PP_GTEQ:
+        case T_PP_LT:
+        case T_PP_LTEQ:
             cont = false;
             break;
         case '=':

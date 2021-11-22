@@ -1,8 +1,12 @@
 #include "CompileCommandsJSON.h"
 #include "CompileFlagsTxt.h"
+#include "GCCMetadata.hpp"
 #include "JSON.h"
 #include "Settings.hpp"
+#include "clTempFile.hpp"
 #include "file_logger.h"
+#include "procutils.h"
+#include "wx/tokenzr.h"
 #include <set>
 
 using namespace std;
@@ -83,6 +87,59 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
         CompileCommandsJSON ccj(compile_commands_json.GetFullPath());
         S.insert(ccj.GetIncludes().begin(), ccj.GetIncludes().end());
     }
+
+#if defined(__WXGTK__) || defined(__WXOSX__)
+    wxString cxx = "/usr/bin/g++";
+
+#ifdef __WXOSX__
+    cxx = "/usr/bin/clang++";
+#endif
+
+    // Common compiler paths - should be placed at top of the include path!
+    wxString command;
+
+    // GCC prints parts of its output to stdout and some to stderr
+    // redirect all output to stdout
+    wxString working_directory;
+    clTempFile tmpfile;
+    tmpfile.Write(wxEmptyString);
+    command << "/bin/bash -c '" << cxx << " -v -x c++ /dev/null -fsyntax-only > " << tmpfile.GetFullPath() << " 2>&1'";
+
+    ProcUtils::SafeExecuteCommand(command);
+
+    wxString content;
+    FileUtils::ReadFileContent(tmpfile.GetFullPath(), content);
+    wxArrayString outputArr = wxStringTokenize(content, wxT("\n\r"), wxTOKEN_STRTOK);
+
+    // Analyze the output
+    bool collect(false);
+    wxArrayString search_paths;
+    for(wxString& line : outputArr) {
+        line.Trim().Trim(false);
+
+        // search the scan starting point
+        if(line.Contains(wxT("#include <...> search starts here:"))) {
+            collect = true;
+            continue;
+        }
+
+        if(line.Contains(wxT("End of search list."))) {
+            break;
+        }
+
+        if(collect) {
+            line.Replace("(framework directory)", wxEmptyString);
+            // on Mac, (framework directory) appears also,
+            // but it is harmless to use it under all OSs
+            wxFileName includePath(line, wxEmptyString);
+            includePath.Normalize();
+            search_paths.Add(includePath.GetPath());
+        }
+    }
+
+    S.insert(search_paths.begin(), search_paths.end());
+#endif
+
     m_search_path.clear();
     m_search_path.reserve(S.size());
     for(const auto& path : S) {

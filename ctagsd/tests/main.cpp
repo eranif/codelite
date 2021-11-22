@@ -33,6 +33,7 @@ TEST_FUNC(TestCompletionHelper_get_expression)
         { "if(!types.empty() && type", "type" },
         { "if(!typ", "typ" },
         { sample_text, "m_string." },
+        { "for(const wxString& a: str", "str" },
     };
 
     CompletionHelper helper;

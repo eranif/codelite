@@ -48,10 +48,17 @@ wxString CompletionHelper::get_expression(const wxString& file_content, wxString
             break;
         case '>':
         case ']':
-        case '}':
         case ')':
             PREPEND_STRING(t);
             depth++;
+            break;
+        case '}':
+            if(depth == 0) {
+                cont = false;
+            } else {
+                PREPEND_STRING(t);
+                depth++;
+            }
             break;
         case ';':
         case T_PP_DEFINE:
@@ -217,6 +224,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, wxString
         case '%':
         case '?':
         case '/':
+        case ':':
             if(depth <= 0) {
                 cont = false;
             } else {

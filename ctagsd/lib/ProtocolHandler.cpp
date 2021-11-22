@@ -105,7 +105,14 @@ void ProtocolHandler::parse_files(Channel& channel)
         m_files.Add(fn.GetFullPath());
     }
 
-    clDEBUG() << "Found" << vfn.size() << "files" << endl;
+    clDEBUG() << "There are" << m_files.size() << "files in the workspace (before filter)" << endl;
+    // create/open db
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    wxFileName dbfile(m_settings_folder, "tags.db");
+    db->OpenDatabase(dbfile);
+
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(m_files, db);
+    clDEBUG() << "Now there are" << m_files.size() << "files to scan (after filter)" << endl;
 
     start_timer();
 
@@ -140,6 +147,10 @@ void ProtocolHandler::parse_files(Channel& channel)
     for(const auto& s : unique_files) {
         m_files.Add(s);
     }
+
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(m_files, db);
+    clDEBUG() << "Final list of files to parse contains:" << m_files.size() << "files" << endl;
+
     clDEBUG() << "With included files, there are" << m_files.size() << "files" << endl;
     send_log_message(wxString() << _("Generating `ctags` file for: ") << m_files.size() << _(" files"), LSP_LOG_INFO,
                      channel);
@@ -166,10 +177,6 @@ void ProtocolHandler::parse_files(Channel& channel)
 
     // build the database
     TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile);
-    ITagsStoragePtr db(new TagsStorageSQLite());
-
-    wxFileName dbfile(m_settings_folder, "tags.db");
-    db->OpenDatabase(dbfile);
 
     /// TODO: scan the database and filter all non modified files since last parsing was done
 

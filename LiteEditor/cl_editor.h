@@ -964,7 +964,7 @@ public:
      * @param tip tip text
      * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at mouse cursor position
      */
-    void ShowTooltip(const wxString& tip, const wxString& title, int pos = wxNOT_FOUND) override;
+    void ShowTooltip(const wxString& tip, const wxString& title = wxEmptyString, int pos = wxNOT_FOUND) override;
 
     /**
      * @brief display a rich tooltip (title + tip)

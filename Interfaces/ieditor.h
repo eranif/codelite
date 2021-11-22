@@ -309,7 +309,7 @@ public:
      * @param tip tip text
      * @param pos position for the tip. If wxNOT_FOUND the tip is positioned at the mouse
      */
-    virtual void ShowTooltip(const wxString& tip, const wxString& title, int pos = wxNOT_FOUND) = 0;
+    virtual void ShowTooltip(const wxString& tip, const wxString& title = wxEmptyString, int pos = wxNOT_FOUND) = 0;
 
     /**
      * @brief display a rich tooltip (a tip that supports basic markup, such as <a></a>, <strong></strong> etc)

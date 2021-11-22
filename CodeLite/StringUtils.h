@@ -26,8 +26,8 @@
 #define STRINGUTILS_H
 
 #include "codelite_exports.h"
-#include <wx/string.h>
 #include <wx/arrstr.h>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL StringUtils
 {
@@ -36,7 +36,7 @@ public:
      * @brief convert string into std::string
      */
     static std::string ToStdString(const wxString& str);
-    
+
     /**
      * @brief remove terminal colours from buffer
      */
@@ -47,17 +47,22 @@ public:
      * @param modbuffer
      */
     static void StripTerminalColouring(const wxString& buffer, wxString& modbuffer);
-    
+
+    /**
+     * @brief add backslash to markdown styling characters
+     */
+    static void DisableMarkdownStyling(wxString& buffer);
+
     /**
      * @brief build argv out of str
      */
-    static char** BuildArgv(const wxString& str, int &argc);
-    
+    static char** BuildArgv(const wxString& str, int& argc);
+
     /**
      * @brief build argv out of str
      */
     static wxArrayString BuildArgv(const wxString& str);
-    
+
     /**
      * @brief free argv created by StringUtils::BuildArgv method
      */

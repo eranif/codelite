@@ -901,6 +901,7 @@ void TagsManager::GetHoverTip(const wxFileName& fileName, int lineno, const wxSt
 
     tmp = expression;
     expression.EndsWith(word, &tmp);
+    tmp.Trim().Trim(false);
     expression = tmp;
 
     wxString curFunctionBody;
@@ -916,6 +917,11 @@ void TagsManager::GetHoverTip(const wxFileName& fileName, int lineno, const wxSt
         RemoveDuplicatesTips(tmpCandidates, candidates);
 
         // we now have a list of tags that matches our word
+        TipsFromTags(candidates, word, tips);
+    } else if(expression == "::") {
+        // global scope resolution operator
+
+        GetGlobalTags(word, candidates, ExactMatch);
         TipsFromTags(candidates, word, tips);
     } else {
         wxString typeName, typeScope;

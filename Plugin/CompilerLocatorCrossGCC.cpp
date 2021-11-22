@@ -106,7 +106,8 @@ bool CompilerLocatorCrossGCC::IsCrossGCC(const wxString& name) const
         return false;
     }
 #elif defined(__WXGTK__)
-    if(name == "i686-linux-gnu-gcc" || name == "x86_64-linux-gnu-gcc") {
+    if(name == "i686-linux-gnu-gcc" || name == "x86_64-linux-gnu-gcc" || name == "i686-pc-linux-gnu-gcc" ||
+       name == "x86_64-pc-linux-gnu-gcc" || name == "i686-redhat-linux-gcc" || name == "x86_64-redhat-linux-gcc") {
         // Standard gcc will be picked up later by the GCC locator
         return false;
     }

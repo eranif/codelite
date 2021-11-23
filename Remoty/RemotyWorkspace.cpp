@@ -79,7 +79,7 @@ struct LspMetadata {
         }
 
         std::vector<wxString> versions;
-        for(size_t i = max_version; i >= min_version; --i) {
+        for(int i = max_version; i >= min_version; --i) {
             versions.push_back(wxString() << i);
         }
         return versions;

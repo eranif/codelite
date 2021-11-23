@@ -1,7 +1,7 @@
+#include "ProtocolHandler.hpp"
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "LSP/LSPEvent.h"
-#include "ProtocolHandler.hpp"
 #include "Settings.hpp"
 #include "clFilesCollector.h"
 #include "crawler_include.h"
@@ -63,6 +63,15 @@ void remove_binary_files(wxArrayString& files)
     files.swap(res);
 }
 
+void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString& files)
+{
+    clDEBUG() << "Searching for files to..." << endl;
+
+    clFilesScanner scanner;
+    wxArrayString exclude_folders_arr = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
+    scanner.Scan(dir, files, settings.GetFileMask(), wxEmptyString, settings.GetIgnoreSpec());
+}
+
 } // namespace
 
 ProtocolHandler::ProtocolHandler() {}
@@ -89,31 +98,16 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id)
     return reply.AddObject("result");
 }
 
-void ProtocolHandler::parse_files(Channel& channel)
+void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
 {
-    clDEBUG() << "Searching for files to parse..." << endl;
-
-    clFilesScanner scanner;
-    wxArrayString exclude_folders_arr = ::wxStringTokenize(m_settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
-
-    vector<wxFileName> vfn;
-    scanner.Scan(m_root_folder, vfn, m_settings.GetFileMask(), wxEmptyString, m_settings.GetIgnoreSpec());
-
-    m_files.clear();
-    m_files.reserve(vfn.size());
-    for(const wxFileName& fn : vfn) {
-        m_files.Add(fn.GetFullPath());
-    }
-
-    clDEBUG() << "There are" << m_files.size() << "files in the workspace (before filter)" << endl;
+    clDEBUG() << "Parsing" << files.size() << "files" << endl;
+    clDEBUG() << "Removing un-modified files and unwanted files..." << endl;
     // create/open db
     ITagsStoragePtr db(new TagsStorageSQLite());
     wxFileName dbfile(m_settings_folder, "tags.db");
     db->OpenDatabase(dbfile);
 
-    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(m_files, db);
-    clDEBUG() << "Now there are" << m_files.size() << "files to scan (after filter)" << endl;
-
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
     start_timer();
 
     // Now that we got the list of files - include all the "#include" statements
@@ -125,45 +119,46 @@ void ProtocolHandler::parse_files(Channel& channel)
         fcFileOpener::Get()->AddSearchPath(path.data());
     }
 
-    remove_binary_files(m_files);
-    clDEBUG() << "After binary files filtering there are " << m_files.size() << "files" << endl;
-
-    clDEBUG() << "Searching for included files..." << endl;
-    for(size_t i = 0; i < m_files.size(); i++) {
-        const wxCharBuffer cfile = m_files[i].mb_str(wxConvUTF8);
+    remove_binary_files(files);
+    clDEBUG() << "Adding #include'ed files..." << endl;
+    for(size_t i = 0; i < files.size(); i++) {
+        const wxCharBuffer cfile = files[i].mb_str(wxConvUTF8);
         crawlerScan(cfile.data());
     }
 
-    wxStringSet_t unique_files{ m_files.begin(), m_files.end() };
+    wxStringSet_t unique_files{ files.begin(), files.end() };
 
     const auto& result_set = fcFileOpener::Get()->GetResults();
     for(const wxString& file : result_set) {
         unique_files.insert(file);
     }
 
-    m_files.clear();
-    m_files.reserve(unique_files.size());
+    files.clear();
+    files.reserve(unique_files.size());
 
     for(const auto& s : unique_files) {
-        m_files.Add(s);
+        files.Add(s);
     }
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
 
-    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(m_files, db);
-    clDEBUG() << "Final list of files to parse contains:" << m_files.size() << "files" << endl;
-
-    clDEBUG() << "With included files, there are" << m_files.size() << "files" << endl;
-    send_log_message(wxString() << _("Generating `ctags` file for: ") << m_files.size() << _(" files"), LSP_LOG_INFO,
-                     channel);
-
-    clDEBUG() << "Generating ctags files for" << m_files.size() << "files" << endl;
-    if(!CTags::Generate(m_files, m_settings_folder, m_settings.GetCodeliteIndexer())) {
-        send_log_message(_("Failed to generate `ctags` file"), LSP_LOG_ERROR, channel);
+    clDEBUG() << "There are total of" << files.size() << "files that require parsing" << endl;
+    if(channel) {
+        send_log_message(wxString() << _("Generating ctags file for: ") << files.size() << _(" files"), LSP_LOG_INFO,
+                         *channel);
+    }
+    clDEBUG() << "Generating ctags file..." << endl;
+    if(!CTags::Generate(files, m_settings_folder, m_settings.GetCodeliteIndexer())) {
+        if(channel) {
+            send_log_message(_("Failed to generate `ctags` file"), LSP_LOG_ERROR, *channel);
+        }
         clERROR() << "Failed to generate ctags file!" << endl;
         return;
     }
     clDEBUG() << "Success" << endl;
 
-    send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, channel);
+    if(channel) {
+        send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, *channel);
+    }
 
     // update the DB
     wxStringSet_t updatedFiles;
@@ -177,14 +172,12 @@ void ProtocolHandler::parse_files(Channel& channel)
 
     // build the database
     TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile);
-
-    /// TODO: scan the database and filter all non modified files since last parsing was done
-
-    /// FIXME: get_expression does not work when a T_IDENTIFIER appears right after
-    ///   PP line
-    send_log_message(_("Creating symbols database..."), LSP_LOG_INFO, channel);
+    if(channel) {
+        send_log_message(_("Updating symbols database..."), LSP_LOG_INFO, *channel);
+    }
 
     start_timer();
+    clDEBUG() << "Updating symbols database..." << endl;
     db->Begin();
     size_t tagsCount = 0;
     while(ttp) {
@@ -207,7 +200,10 @@ void ProtocolHandler::parse_files(Channel& channel)
 
     // Commit whats left
     db->Commit();
-    send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, channel);
+    if(channel) {
+        send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, *channel);
+    }
+    clDEBUG() << "Success" << endl;
 }
 
 //---------------------------------------------------------------------------------
@@ -245,7 +241,9 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     wxFileName fn_config_file(m_settings_folder, "settings.json");
     m_settings.Load(fn_config_file);
 
-    parse_files(channel);
+    wxArrayString files;
+    scan_dir(m_root_folder, m_settings, files);
+    parse_files(files, &channel);
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
@@ -279,7 +277,7 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
-    clDEBUG() << "didOpen: caching new content for file:" << filepath << endl;
+    clDEBUG() << "textDocument/didOpen: caching new content for file:" << filepath << endl;
     m_filesOpened.erase(filepath);
     m_filesOpened.insert({ filepath, json["params"]["textDocument"]["text"].toString() });
 }
@@ -305,7 +303,7 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
-    clDEBUG() << "didChange: caching new content for file:" << filepath << endl;
+    clDEBUG() << "textDocument/didChange: caching new content for file:" << filepath << endl;
     m_filesOpened.erase(filepath);
     m_filesOpened.insert({ filepath, json["params"]["contentChanges"][0]["text"].toString() });
 }
@@ -416,4 +414,22 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         }
         channel.write_reply(response.format(false));
     }
+}
+
+// Notificatin -->
+void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    wxUnusedVar(channel);
+    JSONItem json = msg->toElement();
+    wxString filepath = json["params"]["textDocument"]["uri"].toString();
+    filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
+
+    clDEBUG() << "textDocument/didSave: caching new content for file:" << filepath << endl;
+    m_filesOpened.erase(filepath);
+    m_filesOpened.insert({ filepath, json["params"]["contentChanges"][0]["text"].toString() });
+
+    // re-parse the file
+    wxArrayString files;
+    files.Add(filepath);
+    parse_files(files, nullptr);
 }

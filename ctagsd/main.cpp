@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <unordered_map>
+#include <wx/cmdline.h>
 #include <wx/filename.h>
 #include <wx/init.h>
 #include <wx/stdpaths.h>
@@ -19,6 +20,7 @@ unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
     { "textDocument/didChange", &ProtocolHandler::on_did_change },
     { "textDocument/completion", &ProtocolHandler::on_completion },
     { "textDocument/didClose", &ProtocolHandler::on_did_close },
+    { "textDocument/didSave", &ProtocolHandler::on_did_save },
 };
 }
 
@@ -30,13 +32,27 @@ int main(int argc, char** argv)
     wxFileName logdir(clStandardPaths::Get().GetUserDataDir(), wxEmptyString);
     logdir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
-    FileLogger::OpenLog("ctagsd.log", FileLogger::Dbg);
+    wxCmdLineParser parser(argc, argv);
+    parser.AddOption("p", "port", "Port number", wxCMD_LINE_VAL_NUMBER);
+    parser.AddOption("h", "host", "Hostname");
+    parser.AddLongOption("log-level", "Log level, one of: ERR, WARN, DBG, TRACE");
+    parser.Parse();
+    
+    long port = 38478;
+    wxString host = "127.0.0.1";
+    wxString log_level_str = "ERR";
+    parser.Found("port", &port);
+    parser.Found("host", &host);
+    parser.Found("log-level", &log_level_str);
+    
+    int log_level = FileLogger::GetVerbosityAsNumber(log_level_str);
+    FileLogger::OpenLog("ctagsd.log", log_level);
 
     try {
         Channel channel;
         ProtocolHandler protocol_handler;
         clSYSTEM() << "Started main loop" << endl;
-        channel.open("127.0.0.1", 38478);
+        channel.open(host, port);
 
         wxString message;
         while(true) {

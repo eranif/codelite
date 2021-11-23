@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_standard_paths.h"
 #include "file_logger.h"
+#include "cl_standard_paths.h"
 #include <sys/time.h>
 #include <wx/crt.h>
 #include <wx/filename.h>
@@ -51,13 +51,17 @@ FileLogger::~FileLogger()
 
 void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 {
-    if(msg.IsEmpty()) { return; }
+    if(msg.IsEmpty()) {
+        return;
+    }
     if((m_verbosity >= verbosity)) {
         wxString formattedMsg = Prefix(verbosity);
         formattedMsg << " " << msg;
         formattedMsg.Trim().Trim(false);
         formattedMsg << wxT("\n");
-        if(!m_buffer.empty() && (m_buffer.Last() != '\n')) { m_buffer << "\n"; }
+        if(!m_buffer.empty() && (m_buffer.Last() != '\n')) {
+            m_buffer << "\n";
+        }
         m_buffer << formattedMsg;
     }
 }
@@ -72,19 +76,19 @@ void FileLogger::SetVerbosity(int level)
 
 int FileLogger::GetVerbosityAsNumber(const wxString& verbosity)
 {
-    if(verbosity == wxT("Debug")) {
+    if(verbosity == wxT("Debug") || verbosity == "DBG") {
         return FileLogger::Dbg;
 
-    } else if(verbosity == wxT("Error")) {
+    } else if(verbosity == wxT("Error") || verbosity == "ERR") {
         return FileLogger::Error;
 
-    } else if(verbosity == wxT("Warning")) {
+    } else if(verbosity == wxT("Warning") || verbosity == "WARN") {
         return FileLogger::Warning;
 
-    } else if(verbosity == wxT("System")) {
+    } else if(verbosity == wxT("System") || verbosity == "INFO" || verbosity == "SYS") {
         return FileLogger::System;
 
-    } else if(verbosity == wxT("Developer")) {
+    } else if(verbosity == wxT("Developer") || verbosity == "TRACE") {
         return FileLogger::Developer;
 
     } else {
@@ -130,8 +134,12 @@ void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
 
 void FileLogger::Flush()
 {
-    if(m_buffer.IsEmpty()) { return; }
-    if(!m_fp) { m_fp = wxFopen(m_logfile, wxT("a+")); }
+    if(m_buffer.IsEmpty()) {
+        return;
+    }
+    if(!m_fp) {
+        m_fp = wxFopen(m_logfile, wxT("a+"));
+    }
 
     if(m_fp) {
         wxFprintf(m_fp, "%s\n", m_buffer);
@@ -174,7 +182,9 @@ wxString FileLogger::Prefix(int verbosity)
         }
 
         wxString thread_name = GetCurrentThreadName();
-        if(!thread_name.IsEmpty()) { prefix << " [" << thread_name << "]"; }
+        if(!thread_name.IsEmpty()) {
+            prefix << " [" << thread_name << "]";
+        }
         return prefix;
     } else {
         return wxEmptyString;
@@ -183,10 +193,14 @@ wxString FileLogger::Prefix(int verbosity)
 
 wxString FileLogger::GetCurrentThreadName()
 {
-    if(wxThread::IsMain()) { return "Main"; }
+    if(wxThread::IsMain()) {
+        return "Main";
+    }
     wxCriticalSectionLocker locker(m_cs);
     std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(wxThread::GetCurrentId());
-    if(iter != m_threads.end()) { return iter->second; }
+    if(iter != m_threads.end()) {
+        return iter->second;
+    }
     return "";
 }
 
@@ -194,7 +208,9 @@ void FileLogger::RegisterThread(wxThreadIdType id, const wxString& name)
 {
     wxCriticalSectionLocker locker(m_cs);
     std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(id);
-    if(iter != m_threads.end()) { m_threads.erase(iter); }
+    if(iter != m_threads.end()) {
+        m_threads.erase(iter);
+    }
     m_threads[id] = name;
 }
 
@@ -202,5 +218,7 @@ void FileLogger::UnRegisterThread(wxThreadIdType id)
 {
     wxCriticalSectionLocker locker(m_cs);
     std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(id);
-    if(iter != m_threads.end()) { m_threads.erase(iter); }
+    if(iter != m_threads.end()) {
+        m_threads.erase(iter);
+    }
 }

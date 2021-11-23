@@ -403,7 +403,12 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const std::string&
 {
     CHECK_PTR_RET(editor);
     // For now: report a change event
-    SendChangeRequest(editor, fileContent);
+    wxString filename = GetEditorFilePath(editor);
+    if(ShouldHandleFile(filename)) {
+        LSP::CompletionRequest::Ptr_t req =
+            LSP::MessageWithParams::MakeRequest(new LSP::DidSaveTextDocumentRequest(filename, fileContent));
+        QueueMessage(req);
+    }
 }
 
 void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column)

@@ -3,9 +3,11 @@
 
 #include "codelite_exports.h"
 #include "macros.h"
+
+#include <functional>
 #include <vector>
-#include <wx/string.h>
 #include <wx/filename.h>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL clFilesScanner
 {
@@ -43,6 +45,13 @@ public:
      */
     size_t Scan(const wxString& rootFolder, std::vector<wxFileName>& filesOutput, const wxString& filespec,
                 const wxString& excludeFilespec, const wxString& excludeFoldersSpec);
+    size_t Scan(const wxString& rootFolder, wxArrayString& filesOutput, const wxString& filespec,
+                const wxString& excludeFilespec, const wxString& excludeFoldersSpec);
+    /**
+     * @brief similar to the above, however, whenever a method is found, collect_cb is invoked
+     */
+    size_t Scan(const wxString& rootFolder, const wxString& filespec, const wxString& excludeFilespec,
+                const wxString& excludeFoldersSpec, std::function<bool(const wxString&)>&& collect_cb);
     /**
      * @brief scan folder for files and folders. This function does not recurse into folders. Everything that matches
      * "matchSpec" will get collected.

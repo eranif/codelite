@@ -21,12 +21,11 @@ private:
     CTagsdSettings m_settings;
     wxString m_root_folder;
     wxString m_settings_folder;
-    wxArrayString m_files;
     wxStringMap_t m_filesOpened;
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id);
-    void parse_files(Channel& channel);
+    void parse_files(wxArrayString& files, Channel* channel);
 
 public:
     ProtocolHandler();
@@ -39,6 +38,7 @@ public:
     void on_did_change(unique_ptr<JSON>&& msg, Channel& channel);
     void on_completion(unique_ptr<JSON>&& msg, Channel& channel);
     void on_did_close(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_did_save(unique_ptr<JSON>&& msg, Channel& channel);
 
     /**
      * @brief send a "window/logMessage" message to the client

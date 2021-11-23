@@ -16,64 +16,28 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxFileName>&
 
 {
     filesOutput.clear();
-    if(!wxFileName::DirExists(rootFolder)) {
-        clDEBUG() << "clFilesScanner: No such dir:" << rootFolder << clEndl;
-        return 0;
-    }
-
-    wxArrayString specArr = ::wxStringTokenize(filespec.Lower(), ";,|", wxTOKEN_STRTOK);
-    wxArrayString excludeSpecArr = ::wxStringTokenize(excludeFilespec.Lower(), ";,|", wxTOKEN_STRTOK);
-    wxArrayString excludeFoldersSpecArr = ::wxStringTokenize(excludeFoldersSpec.Lower(), ";,|", wxTOKEN_STRTOK);
-    std::queue<wxString> Q;
-    Q.push(rootFolder);
-
-    while(!Q.empty()) {
-        wxString dirpath = Q.front();
-        Q.pop();
-
-        wxDir dir(dirpath);
-        if(!dir.IsOpened()) {
-            continue;
-        }
-
-        wxString filename;
-        bool cont = dir.GetFirst(&filename);
-        while(cont) {
-            // Check to see if this is a folder
-            wxString fullpath;
-            fullpath << dir.GetNameWithSep() << filename;
-            bool isDirectory = wxFileName::DirExists(fullpath);
-            bool isFile = !isDirectory;
-            // Use FileUtils::RealPath() here to cope with symlinks on Linux
-            if(isDirectory /* a folder */ &&
-               !FileUtils::WildMatch(excludeFoldersSpecArr, filename) /* does not match the exclude folder spec */) {
-                // Traverse into this folder
-                Q.push(fullpath);
-            } else if(isFile && /* a file */
-                      !FileUtils::WildMatch(excludeSpecArr, filename) /* does not match the exclude file spec */ &&
-                      FileUtils::WildMatch(specArr, filename) /* matches the file spec array */) {
-                // Include this file
-                filesOutput.push_back(fullpath);
-            }
-            cont = dir.GetNext(&filename);
-        }
-    }
-    return filesOutput.size();
+    auto cb = [&filesOutput](const wxString& fullpath) -> bool {
+        filesOutput.push_back(fullpath);
+        return true;
+    };
+    return Scan(rootFolder, filespec, excludeFilespec, excludeFoldersSpec, std::move(cb));
 }
 
-#if 0
-static bool IsStringContainsSpec(const wxString& str, const wxStringSet_t& specSet)
+size_t clFilesScanner::Scan(const wxString& rootFolder, wxArrayString& filesOutput, const wxString& filespec,
+                            const wxString& excludeFilespec, const wxString& excludeFoldersSpec)
+
 {
-    for(const wxString& spec : specSet) {
-        if(str.Contains(spec)) {
-            return true;
-        }
-    }
-    return false;
+    filesOutput.clear();
+    auto cb = [&filesOutput](const wxString& fullpath) -> bool {
+        filesOutput.push_back(fullpath);
+        return true;
+    };
+    return Scan(rootFolder, filespec, excludeFilespec, excludeFoldersSpec, std::move(cb));
 }
-#endif
 
-static bool IsRelPathContainedInSpec(const wxString& rootPath, const wxString& fullPath, const wxStringSet_t& specSet)
+namespace
+{
+bool IsRelPathContainedInSpec(const wxString& rootPath, const wxString& fullPath, const wxStringSet_t& specSet)
 {
     wxFileName fp(fullPath);
     fp.MakeRelativeTo(rootPath);
@@ -95,6 +59,7 @@ static bool IsRelPathContainedInSpec(const wxString& rootPath, const wxString& f
     }
     return false;
 }
+} // namespace
 
 size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec,
                             const wxString& excludeFilespec, const wxStringSet_t& excludeFolders)
@@ -108,7 +73,7 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
     wxArrayString specArr = ::wxStringTokenize(filespec.Lower(), ";,|", wxTOKEN_STRTOK);
     wxArrayString excludeSpecArr = ::wxStringTokenize(excludeFilespec.Lower(), ";,|", wxTOKEN_STRTOK);
     std::queue<wxString> Q;
-    std::set<wxString> S;
+    std::unordered_set<wxString> S;
     Q.push(rootFolder);
     S.insert(rootFolder);
 
@@ -155,6 +120,60 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
         }
     }
     return filesOutput.size();
+}
+
+size_t clFilesScanner::Scan(const wxString& rootFolder, const wxString& filespec, const wxString& excludeFilespec,
+                            const wxString& excludeFoldersSpec, std::function<bool(const wxString&)>&& collect_cb)
+{
+    if(!wxFileName::DirExists(rootFolder)) {
+        clDEBUG() << "clFilesScanner: No such directory:" << rootFolder << clEndl;
+        return 0;
+    }
+
+    wxArrayString specArr = ::wxStringTokenize(filespec.Lower(), ";,|", wxTOKEN_STRTOK);
+    wxArrayString excludeSpecArr = ::wxStringTokenize(excludeFilespec.Lower(), ";,|", wxTOKEN_STRTOK);
+    wxArrayString excludeFoldersSpecArr = ::wxStringTokenize(excludeFoldersSpec.Lower(), ";,|", wxTOKEN_STRTOK);
+    std::queue<wxString> Q;
+    Q.push(rootFolder);
+
+    size_t nCount = 0;
+    while(!Q.empty()) {
+        wxString dirpath = Q.front();
+        Q.pop();
+
+        wxDir dir(dirpath);
+        if(!dir.IsOpened()) {
+            continue;
+        }
+
+        wxString filename;
+        bool cont = dir.GetFirst(&filename);
+        while(cont) {
+            // Check to see if this is a folder
+            wxString fullpath;
+            fullpath << dir.GetNameWithSep() << filename;
+            bool isDirectory = wxFileName::DirExists(fullpath);
+            bool isFile = !isDirectory;
+            // Use FileUtils::RealPath() here to cope with symlinks on Linux
+            if(isDirectory /* a folder */ &&
+               !FileUtils::WildMatch(excludeFoldersSpecArr, filename) /* does not match the exclude folder spec */) {
+                // Traverse into this folder
+                Q.push(fullpath);
+            } else if(isFile && /* a file */
+                      !FileUtils::WildMatch(excludeSpecArr, filename) /* does not match the exclude file spec */ &&
+                      FileUtils::WildMatch(specArr, filename) /* matches the file spec array */) {
+                // Include this file
+                if(!collect_cb(fullpath)) {
+                    // requested to stop
+                    break;
+                } else {
+                    ++nCount;
+                }
+            }
+            cont = dir.GetNext(&filename);
+        }
+    }
+    return nCount;
 }
 
 size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder, clFilesScanner::EntryData::Vec_t& results,

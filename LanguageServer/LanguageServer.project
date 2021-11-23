@@ -6,6 +6,10 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="Detectors">
+    <File Name="LSPCTagsdDetector.cpp"/>
+    <File Name="LSPCTagsdDetector.hpp"/>
+    <File Name="LSPRustAnalyzerDetector.hpp"/>
+    <File Name="LSPRustAnalyzerDetector.cpp"/>
     <File Name="LSPTypeScriptDetector.cpp"/>
     <File Name="LSPTypeScriptDetector.hpp"/>
     <File Name="LSPRlsDetector.hpp"/>
@@ -42,8 +46,6 @@
     <File Name="LanguageServerSettingsDlg.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
-    <File Name="LSPRustAnalyzerDetector.hpp"/>
-    <File Name="LSPRustAnalyzerDetector.cpp"/>
     <File Name="PathConverterDefault.cpp"/>
     <File Name="PathConverterDefault.hpp"/>
     <File Name="LanguageServerCluster.cpp"/>

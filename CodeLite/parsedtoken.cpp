@@ -27,141 +27,136 @@
 #include "ctags_manager.h"
 
 ParsedToken::ParsedToken()
-	: m_isTemplate(false)
-	, m_subscriptOperator(false)
-	, m_next(NULL)
-	, m_prev(NULL)
+    : m_isTemplate(false)
+    , m_subscriptOperator(false)
+    , m_next(NULL)
+    , m_prev(NULL)
 {
 }
 
-ParsedToken::~ParsedToken()
-{
-}
+ParsedToken::~ParsedToken() {}
 
 void ParsedToken::DeleteTokens(ParsedToken* head)
 {
-	if( !head ) {
-		return;
-	}
+    if(!head) {
+        return;
+    }
 
-	ParsedToken *n     (head);
-	ParsedToken *tmpPtr(NULL);
-	while( n ) {
-		tmpPtr = n->GetNext();
-		delete n;
+    ParsedToken* n(head);
+    ParsedToken* tmpPtr(NULL);
+    while(n) {
+        tmpPtr = n->GetNext();
+        delete n;
 
-		n = tmpPtr;
-	}
+        n = tmpPtr;
+    }
 }
 
 wxString ParsedToken::GetPath() const
 {
-	wxString path;
-	if (m_typeScope != wxT("<global>"))
-		path << m_typeScope << wxT("::");
+    wxString path;
+    if(m_typeScope != wxT("<global>"))
+        path << m_typeScope << wxT("::");
 
-	path << m_type;
-	return path;
+    path << m_type;
+    return path;
 }
 
 wxString ParsedToken::GetContextScope() const
 {
-	if(GetCurrentScopeName() == GetName() && GetPrev() == NULL) {
-		// the scope name is equal the 'name'?
-		// copy ctor
-		return wxT("<global>");
-	}
+    if(GetCurrentScopeName() == GetName() && GetPrev() == NULL) {
+        // the scope name is equal the 'name'?
+        // copy ctor
+        return wxT("<global>");
+    }
 
-	if(GetPrev() == NULL) {
-		// we are the first in chain, return the current scope name
-		return GetCurrentScopeName();
-	} else {
-		return GetPrev()->GetPath();
-	}
+    if(GetPrev() == NULL) {
+        // we are the first in chain, return the current scope name
+        return GetCurrentScopeName();
+    } else {
+        return GetPrev()->GetPath();
+    }
 }
 
 void ParsedToken::RemoveScopeFromType()
 {
-	//incase the realName already includes the scope, remove it from the typename
-	if (!GetTypeScope().IsEmpty() && GetTypeName().StartsWith(GetTypeScope() + wxT("::"))) {
-		wxString tt;
-		GetTypeName().StartsWith(GetTypeScope() + wxT("::"), &tt);
-		SetTypeName(tt);
-	}
+    // incase the realName already includes the scope, remove it from the typename
+    if(!GetTypeScope().IsEmpty() && GetTypeName().StartsWith(GetTypeScope() + wxT("::"))) {
+        wxString tt;
+        GetTypeName().StartsWith(GetTypeScope() + wxT("::"), &tt);
+        SetTypeName(tt);
+    }
 
-	// If the typeName already contains a scope in it, replace the
-	// scopename with it
-	if(GetTypeName().Contains(wxT("::"))) {
-		m_typeScope.Clear();
-		wxString tmpTypeName(m_type);
-		m_type      = tmpTypeName.AfterLast(wxT(':'));
-		m_typeScope = tmpTypeName.BeforeLast(wxT(':'));
+    // If the typeName already contains a scope in it, replace the
+    // scopename with it
+    if(GetTypeName().Contains(wxT("::"))) {
+        m_typeScope.Clear();
+        wxString tmpTypeName(m_type);
+        m_type = tmpTypeName.AfterLast(wxT(':'));
+        m_typeScope = tmpTypeName.BeforeLast(wxT(':'));
 
-		if(m_typeScope.EndsWith(wxT(":"))) {
-			m_typeScope.Truncate(m_typeScope.Length() - 1);
-		}
-	}
+        if(m_typeScope.EndsWith(wxT(":"))) {
+            m_typeScope.Truncate(m_typeScope.Length() - 1);
+        }
+    }
 }
 
-bool ParsedToken::ResovleTemplate( TagsManager *lookup )
+bool ParsedToken::ResovleTemplate(TagsManager* lookup)
 {
-	wxString oldName = m_type;
-	if (!lookup->GetDatabase()->IsTypeAndScopeExistLimitOne(m_type, m_typeScope)) {
+    wxString oldName = m_type;
+    if(!lookup->GetDatabase()->IsTypeAndScopeExistLimitOne(m_type, m_typeScope)) {
 
-		// Loop until the end of the chain and see if any of the context is template
-		ParsedToken *cur = this;
-		while( cur ) {
-			if( cur->GetIsTemplate() ) {
-				// our context is template
-				wxString newType = cur->TemplateToType( m_type );
+        // Loop until the end of the chain and see if any of the context is template
+        ParsedToken* cur = this;
+        while(cur) {
+            if(cur->GetIsTemplate()) {
+                // our context is template
+                wxString newType = cur->TemplateToType(m_type);
 
-				if(newType != m_type) {
-					m_type = newType;
-					RemoveScopeFromType();
-					return true;
-				}
-			}
-			cur = cur->GetPrev();
-		}
-	}
-	return false;
+                if(newType != m_type) {
+                    m_type = newType;
+                    RemoveScopeFromType();
+                    return true;
+                }
+            }
+            cur = cur->GetPrev();
+        }
+    }
+    return false;
 }
 
 wxString ParsedToken::TemplateToType(const wxString& templateArg)
 {
-	int where = m_templateArgList.Index(templateArg);
-	if (where != wxNOT_FOUND) {
-		// it exists, return the name in the templateInstantiation list
-		if (m_templateInitialization.GetCount() > (size_t)where && m_templateInitialization.Item(where) != templateArg)
-			return m_templateInitialization.Item(where);
-	}
-	return templateArg;
+    int where = m_templateArgList.Index(templateArg);
+    if(where != wxNOT_FOUND) {
+        // it exists, return the name in the templateInstantiation list
+        if(m_templateInitialization.GetCount() > (size_t)where && m_templateInitialization.Item(where) != templateArg)
+            return m_templateInitialization.Item(where);
+    }
+    return templateArg;
 }
 
 void ParsedToken::ResolveTemplateType(TagsManager* lookup)
 {
-	for(size_t i=0; i<m_templateInitialization.GetCount(); i++) {
-		if (!lookup->GetDatabase()->IsTypeAndScopeExistLimitOne(m_templateInitialization.Item(i), wxT("<global>"))) {
+    for(size_t i = 0; i < m_templateInitialization.GetCount(); i++) {
+        if(!lookup->GetDatabase()->IsTypeAndScopeExistLimitOne(m_templateInitialization.Item(i), wxT("<global>"))) {
 
-			// Loop until the end of the chain and see if any of the context is template
-			ParsedToken *cur = this;
-			while( cur ) {
-				if( cur->GetIsTemplate() ) {
-					// our context is template
-					wxString newType = cur->TemplateToType( m_templateInitialization.Item(i) );
+            // Loop until the end of the chain and see if any of the context is template
+            ParsedToken* cur = this;
+            while(cur) {
+                if(cur->GetIsTemplate()) {
+                    // our context is template
+                    wxString newType = cur->TemplateToType(m_templateInitialization.Item(i));
 
-					if(newType != m_templateInitialization.Item(i)) {
-						m_templateInitialization.Item(i) = newType;
-						break;
-					}
-				}
-				cur = cur->GetPrev();
-			}
-		}
-	}
+                    if(newType != m_templateInitialization.Item(i)) {
+                        m_templateInitialization.Item(i) = newType;
+                        break;
+                    }
+                }
+                cur = cur->GetPrev();
+            }
+        }
+    }
 }
 
-bool ParsedToken::IsThis() const
-{
-	return m_name == wxT("this");
-}
+bool ParsedToken::IsThis() const { return m_name == wxT("this"); }

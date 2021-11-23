@@ -25,7 +25,7 @@ private:
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id);
-    void parse_files(wxArrayString& files, Channel* channel);
+    void parse_files(wxArrayString& files, Channel* channel, bool initial_parse);
 
 public:
     ProtocolHandler();

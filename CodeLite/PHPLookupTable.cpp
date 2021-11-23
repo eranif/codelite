@@ -1151,10 +1151,10 @@ void PHPLookupTable::ResetDatabase()
 bool PHPLookupTable::CheckDiskImage(wxSQLite3Database& db, const wxFileName& filename)
 {
     try {
-        wxSQLite3ResultSet res = db.ExecuteQuery("PRAGMA quick_check");
+        wxSQLite3ResultSet res = db.ExecuteQuery("PRAGMA integrity_check");
         if(res.NextRow()) {
             wxString value = res.GetString(0);
-            clDEBUG() << "PHP: 'PRAGMA quick_check' returned:" << value << clEndl;
+            clDEBUG() << "PHP: 'PRAGMA integrity_check' returned:" << value << clEndl;
             return (value.Lower() == "ok");
         } else {
             return false;

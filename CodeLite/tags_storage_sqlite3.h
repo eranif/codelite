@@ -121,7 +121,8 @@ public:
 
     void Close()
     {
-        if(IsOpen()) wxSQLite3Database::Close();
+        if(IsOpen())
+            wxSQLite3Database::Close();
 
         m_statements.clear();
     }
@@ -631,6 +632,8 @@ public:
      */
     void RemoveNonWorkspaceSymbols(const std::vector<wxString>& symbols, std::vector<wxString>& workspaceSymbols,
                                    std::vector<wxString>& nonWorkspaceSymbols);
+
+    virtual bool CheckIntegrity() const;
 };
 
 #endif // CODELITE_TAGS_DATABASE_H

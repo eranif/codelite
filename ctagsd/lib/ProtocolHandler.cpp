@@ -98,14 +98,19 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id)
     return reply.AddObject("result");
 }
 
-void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
+void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool initial_parse)
 {
     clDEBUG() << "Parsing" << files.size() << "files" << endl;
     clDEBUG() << "Removing un-modified files and unwanted files..." << endl;
     // create/open db
-    ITagsStoragePtr db(new TagsStorageSQLite());
     wxFileName dbfile(m_settings_folder, "tags.db");
+
+    ITagsStoragePtr db(new TagsStorageSQLite());
     db->OpenDatabase(dbfile);
+    if(initial_parse && !db->CheckIntegrity()) {
+        // delete the database
+        db->RecreateDatabase();
+    }
 
     TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
     start_timer();
@@ -130,7 +135,9 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
 
     const auto& result_set = fcFileOpener::Get()->GetResults();
     for(const wxString& file : result_set) {
-        unique_files.insert(file);
+        wxFileName fn(file);
+        fn.MakeAbsolute(m_root_folder);
+        unique_files.insert(fn.GetFullPath());
     }
 
     files.clear();
@@ -184,6 +191,7 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
         ++tagsCount;
 
         // Send notification to the main window with our progress report
+        db->DeleteByFileName({}, curfile, false);
         db->Store(ttp, {}, false);
         if(db->InsertFileEntry(curfile, (int)time(NULL)) == TagExist) {
             db->UpdateFileEntry(curfile, (int)time(NULL));
@@ -243,7 +251,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     wxArrayString files;
     scan_dir(m_root_folder, m_settings, files);
-    parse_files(files, &channel);
+    parse_files(files, &channel, true);
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
@@ -431,5 +439,9 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     // re-parse the file
     wxArrayString files;
     files.Add(filepath);
-    parse_files(files, nullptr);
+    parse_files(files, nullptr, false);
+
+    if(TagsManagerST::Get()->GetDatabase()) {
+        TagsManagerST::Get()->ClearTagsCache();
+    }
 }

@@ -27,10 +27,10 @@
 #define ISTORAGE_H
 
 #include "comment.h"
+#include "entry.h"
+#include "fileentry.h"
 #include "pptable.h"
 #include "tag_tree.h"
-#include "fileentry.h"
-#include "entry.h"
 
 #define MAX_SEARCH_LIMIT 250
 
@@ -493,7 +493,7 @@ public:
      * @brief return list of tags for a given partial name
      */
     virtual void GetTagsByPartName(const wxString& partname, std::vector<TagEntryPtr>& tags) = 0;
-    
+
     /**
      * @brief same as above, but allow multiple name parts
      */
@@ -511,6 +511,10 @@ public:
     virtual void RemoveNonWorkspaceSymbols(const std::vector<wxString>& symbols,
                                            std::vector<wxString>& workspaceSymbols,
                                            std::vector<wxString>& nonWorkspaceSymbols) = 0;
+    /**
+     * @brief check the integrity of the database to avoid "malformed disk" errors
+     */
+    virtual bool CheckIntegrity() const = 0;
 };
 
 enum { TagOk = 0, TagExist, TagError };

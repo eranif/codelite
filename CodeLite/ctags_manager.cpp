@@ -2927,21 +2927,37 @@ void TagsManager::InsertFunctionImpl(const wxString& clsname, const wxString& fu
 
 void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
 {
-    TagEntryPtrVector_t publicTags, privateTags, protectedTags;
+    TagEntryPtrVector_t publicTags;
+    TagEntryPtrVector_t protectedTags;
+    TagEntryPtrVector_t privateTags;
+    TagEntryPtrVector_t locals;
+    TagEntryPtrVector_t members;
+    
     for(size_t i = 0; i < tags.size(); ++i) {
 
         TagEntryPtr tag = tags.at(i);
         wxString access = tag->GetAccess();
+        wxString kind = tag->GetKind();
 
-        if(access == "private") {
+        if(kind == "variable") {
+            locals.push_back(tag);
+
+        } else if(kind == "member") {
+            members.push_back(tag);
+
+        } else if(access == "private") {
             privateTags.push_back(tag);
 
         } else if(access == "protected") {
             protectedTags.push_back(tag);
 
         } else if(access == "public") {
-            publicTags.push_back(tag);
-
+            if(tag->GetName().StartsWith("_")) {
+                // methods starting with _ usually are meant to be private
+                privateTags.push_back(tag);
+            } else {
+                publicTags.push_back(tag);
+            }
         } else {
             // assume private
             privateTags.push_back(tag);
@@ -2951,10 +2967,14 @@ void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
     std::sort(privateTags.begin(), privateTags.end(), SAscendingSort());
     std::sort(publicTags.begin(), publicTags.end(), SAscendingSort());
     std::sort(protectedTags.begin(), protectedTags.end(), SAscendingSort());
+    std::sort(members.begin(), members.end(), SAscendingSort());
+    std::sort(locals.begin(), locals.end(), SAscendingSort());
     tags.clear();
+    tags.insert(tags.end(), locals.begin(), locals.end());
     tags.insert(tags.end(), publicTags.begin(), publicTags.end());
     tags.insert(tags.end(), protectedTags.begin(), protectedTags.end());
     tags.insert(tags.end(), privateTags.begin(), privateTags.end());
+    tags.insert(tags.end(), members.begin(), members.end());
 }
 
 void TagsManager::GetScopesByScopeName(const wxString& scopeName, wxArrayString& scopes)

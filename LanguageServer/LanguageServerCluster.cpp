@@ -9,6 +9,7 @@
 #include "cl_calltip.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
+#include "ctags_manager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -379,6 +380,41 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     lsp->SetPriority(entry.GetPriority());
     lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
     lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
+
+    if(lsp->GetName() == "ctagsd") {
+        // set startup callback
+        auto cb = [=]() {
+            wxFileName fn(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath(), wxEmptyString);
+            fn.AppendDir(".ctagsd");
+            fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+            wxFileName settings_json(fn.GetPath(), "settings.json");
+            {
+                if(!settings_json.FileExists()) {
+                    // create an empty json object file
+                    FileUtils::WriteFileContent(settings_json, "{}");
+                } else {
+                    // the file exists, ensure its a valid json
+                    JSON root(settings_json);
+                    if(!root.isOk()) {
+                        FileUtils::WriteFileContent(settings_json, "{}");
+                    }
+                }
+            }
+
+            JSON root(settings_json);
+            JSONItem json = root.toElement();
+            // this table is used during *runtime* (e.g. std::unique_ptr::pointer -> _Tp)
+            wxStringMap_t types_table = TagsManagerST::Get()->GetCtagsOptions().GetTypesMap();
+            // this table is used during *parsing*
+            wxStringMap_t tokens_table = TagsManagerST::Get()->GetCtagsOptions().GetTokensWxMap();
+            json.addProperty("types", types_table);
+            json.addProperty("tokens", tokens_table);
+            json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
+            root.save(settings_json);
+        };
+        lsp->SetStartedCallback(std::move(cb));
+    }
 
     wxString command = entry.GetCommand();
 

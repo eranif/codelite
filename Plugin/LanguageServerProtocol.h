@@ -10,14 +10,18 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "macros.h"
-#include "wx/arrstr.h"
+
+#include <functional>
 #include <map>
 #include <queue>
 #include <string>
 #include <unordered_map>
+#include <wx/arrstr.h>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
 #include <wxStringHash.h>
+
+typedef std::function<void()> LSPOnConnectedCallback_t;
 
 class IEditor;
 class WXDLLIMPEXP_SDK LSPRequestMessageQueue
@@ -67,6 +71,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
     bool m_disaplayDiagnostics = true;
     int m_lastCompletionRequestId = wxNOT_FOUND;
     wxArrayString m_semanticTokensTypes;
+    LSPOnConnectedCallback_t m_onServerStartedCallback = nullptr;
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
@@ -90,7 +95,8 @@ protected:
     void OnSemanticHighlights(clCodeCompletionEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
-    bool CheckCapability(const LSP::ResponseMessage &res, const wxString& capabilityName, const wxString& lspRequestName);
+    bool CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName,
+                         const wxString& lspRequestName);
 
 protected:
     void DoClear();
@@ -145,6 +151,12 @@ protected:
 public:
     LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner);
     virtual ~LanguageServerProtocol();
+
+    /**
+     * @brief set a callnack to be executed once the LSP is up and running
+     * but before the `initialize` request has been sent
+     */
+    void SetStartedCallback(LSPOnConnectedCallback_t&& cb);
 
     /**
      * @brief return the semantic token at a given index

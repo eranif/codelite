@@ -622,6 +622,11 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor)
 
 void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
 {
+    // invoke the custom callback
+    if(m_onServerStartedCallback) {
+        m_onServerStartedCallback();
+    }
+
     // The process started successfully
     // Send the 'initialize' request
     LSP::InitializeRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::InitializeRequest());
@@ -963,6 +968,11 @@ bool LanguageServerProtocol::IsDocumentSymbolsSupported() const
 bool LanguageServerProtocol::IsSemanticTokensSupported() const
 {
     return IsCapabilitySupported("textDocument/semanticTokens/full");
+}
+
+void LanguageServerProtocol::SetStartedCallback(LSPOnConnectedCallback_t&& cb)
+{
+    m_onServerStartedCallback = std::move(cb);
 }
 
 //===------------------------------------------------------------------

@@ -11,6 +11,7 @@ class CTagsdSettings
     wxString m_file_mask = "*.cpp;*.h;*.hpp;*.cxx;*.cc;*.hxx";
     wxArrayString m_search_path;
     wxStringMap_t m_tokens;
+    wxStringMap_t m_types;
     wxString m_codelite_indexer;
     wxString m_ignore_spec = ".git/;.svn/;build-debug/;build-release/;build/;CPack_Packages/";
 
@@ -34,6 +35,8 @@ public:
     const wxString& GetIgnoreSpec() const { return m_ignore_spec; }
     const wxArrayString& GetSearchPath() const { return m_search_path; }
     const wxStringMap_t& GetTokens() const { return m_tokens; }
+    void SetTypes(const wxStringMap_t& types) { this->m_types = types; }
+    const wxStringMap_t& GetTypes() const { return m_types; }
 };
 
 #endif // SETTINGS_HPP

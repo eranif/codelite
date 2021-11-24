@@ -284,6 +284,7 @@ void TagsOptionsData::AddDefaultTokens()
     m_tokens.Add(wxT("_MCRTIMP"));
     m_tokens.Add(wxT("_MRTIMP2"));
     m_tokens.Add(wxT("_NOEXCEPT"));
+    m_tokens.Add(wxT("noexcept"));
     m_tokens.Add(wxT("_NOEXCEPT_(%0)"));
     m_tokens.Add(wxT("_Noreturn"));
     m_tokens.Add(wxT("_PSTL_ASSERT(%0)"));

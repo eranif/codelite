@@ -33,6 +33,19 @@ FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
     return logger;
 }
 
+wxString MapToString(const wxStringMap_t& m)
+{
+    wxString s;
+    for(const auto& vt : m) {
+        s << vt.first;
+        if(!vt.second.empty()) {
+            s << "=" << vt.second;
+        }
+        s << "\n";
+    }
+    return s;
+}
+
 void start_timer() { sw.Start(); }
 
 wxString stop_timer()
@@ -248,6 +261,17 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     wxFileName fn_config_file(m_settings_folder, "settings.json");
     m_settings.Load(fn_config_file);
+
+    // construct TagsOptionsData
+    TagsOptionsData tod;
+    tod.SetFileSpec(m_settings.GetFileMask());
+    tod.SetTokens(MapToString(m_settings.GetTokens()));
+    tod.SetTypes(MapToString(m_settings.GetTypes()));
+    TagsManagerST::Get()->SetCtagsOptions(tod);
+
+    // export CTAGS_REPLACEMENTS
+    wxFileName ctagsReplacements(m_settings_folder, "ctags.replacements");
+    wxSetEnv("CTAGS_REPLACEMENTS", ctagsReplacements.GetFullPath());
 
     wxArrayString files;
     scan_dir(m_root_folder, m_settings, files);

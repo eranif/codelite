@@ -1,8 +1,8 @@
+#include "Settings.hpp"
 #include "CompileCommandsJSON.h"
 #include "CompileFlagsTxt.h"
 #include "GCCMetadata.hpp"
 #include "JSON.h"
-#include "Settings.hpp"
 #include "clTempFile.hpp"
 #include "file_logger.h"
 #include "procutils.h"
@@ -41,6 +41,7 @@ void CTagsdSettings::Load(const wxFileName& filepath)
         auto config = config_file.toElement();
         m_search_path = config["search_path"].toArrayString();
         m_tokens = config["tokens"].toStringMap();
+        m_types = config["types"].toStringMap();
         m_file_mask = config["file_mask"].toString(m_file_mask);
         m_ignore_spec = config["ignore_spec"].toString(m_ignore_spec);
         m_codelite_indexer = config["codelite_indexer"].toString();
@@ -50,6 +51,7 @@ void CTagsdSettings::Load(const wxFileName& filepath)
 
     clDEBUG() << "search path.......:" << m_search_path << endl;
     clDEBUG() << "tokens............:" << m_tokens << endl;
+    clDEBUG() << "tokens............:" << m_types << endl;
     clDEBUG() << "file_mask.........:" << m_file_mask << endl;
     clDEBUG() << "codelite_indexer..:" << m_codelite_indexer << endl;
     clDEBUG() << "ignore_spec.......:" << m_ignore_spec << endl;
@@ -61,6 +63,7 @@ void CTagsdSettings::Save(const wxFileName& filepath)
     auto config = config_file.toElement();
     config.addProperty("search_path", m_search_path);
     config.addProperty("tokens", m_tokens);
+    config.addProperty("types", m_types);
     config.addProperty("file_mask", m_file_mask);
     config.addProperty("ignore_spec", m_ignore_spec);
     config.addProperty("codelite_indexer", m_codelite_indexer);

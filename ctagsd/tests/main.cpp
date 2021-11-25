@@ -1,3 +1,4 @@
+#include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxTokenizer.h"
 #include "CxxVariableScanner.h"
@@ -16,6 +17,24 @@
 using namespace std;
 namespace
 {
+const wxString sample_cxx_file = R"(
+class MyClass {
+    std::string m_name;
+    
+public:
+    std::string GetName() const { return m_name; }
+    void SetName(const std::string& name) { m_name = name; }
+};
+
+int main(int argc, char** argv)
+{
+    std::string name = "hello";
+    MyClass cls, cls2;
+    cls.SetName(name);
+    return 0;
+}
+)";
+
 const wxString sample_text = R"(
 #ifdef __WXMSW__
 #endif
@@ -23,6 +42,7 @@ m_string.)";
 
 thread_local bool cc_initialised = false;
 thread_local bool cc_initialised_successfully = false;
+CTagsdSettings settings;
 
 wxString map_to_wxString(const wxStringMap_t& m)
 {
@@ -49,7 +69,6 @@ bool initialize_cc_tests()
             TagsManagerST::Get()->CloseDatabase();
 
             wxFileName fn_settings(fn.GetPath(), "settings.json");
-            CTagsdSettings settings;
             settings.Load(fn_settings);
 
             TagsOptionsData tod;
@@ -129,6 +148,30 @@ TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
         cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
         return true;
     }
+    vector<TagEntryPtr> candidates;
+    wxString fulltext = "std::unique_ptr<std::string> mystr; mystr->";
+
+    clTempFile tmpfile("cpp");
+    tmpfile.Write(fulltext);
+    TagsManagerST::Get()->AutoCompleteCandidates(tmpfile.GetFullPath(), 1, "mystr->", fulltext, candidates);
+    CHECK_BOOL(!candidates.empty());
+    return true;
+}
+
+TEST_FUNC(TestCTags_documenySymbol)
+{
+    if(!initialize_cc_tests()) {
+        cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
+        return true;
+    }
+
+    clTempFile file("cpp");
+    file.Write(sample_cxx_file);
+
+    auto tags = CTags::Run(file.GetFullPath(), clStandardPaths::Get().GetTempDir(),
+                           "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+pl --C++-kinds=+pl ",
+                           settings.GetCodeliteIndexer());
+
     vector<TagEntryPtr> candidates;
     wxString fulltext = "std::unique_ptr<std::string> mystr; mystr->";
 

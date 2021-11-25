@@ -1,5 +1,6 @@
 #include "CTags.hpp"
 #include "asyncprocess.h"
+#include "clTempFile.hpp"
 #include "cl_standard_paths.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
@@ -55,7 +56,8 @@ wxString CTags::WrapSpaces(const wxString& file)
     return fixed;
 }
 
-bool CTags::DoGenerate(const wxString& filesContent, const wxString& path, const wxString& codelite_indexer)
+bool CTags::DoGenerate(const wxString& filesContent, const wxString& path, const wxString& codelite_indexer,
+                       const wxString& ctags_args, wxString* output)
 {
     clDEBUG() << "Generating ctags files" << clEndl;
     wxFileName outputFile(path, "ctags");
@@ -71,7 +73,11 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& path, const
         FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), outputFile.GetName(), outputFile.GetExt());
 
     // Pass ctags command line via the environment variable
-    wxString ctagsCmd = "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ";
+    wxString ctagsCmd = ctags_args;
+    if(ctagsCmd.empty()) {
+        ctagsCmd = "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ";
+    }
+
     ctagsCmd << TagsManagerST::Get()->GetCtagsOptions().ToString();
 
     clEnvList_t envList = { { "CTAGS_BATCH_CMD", ctagsCmd } };
@@ -89,12 +95,21 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& path, const
         proc->WaitForTerminate(dummy);
     }
 
-    if(!::wxRenameFile(fnTmpTags.GetFullPath(), outputFile.GetFullPath())) {
-        clDEBUG() << "Generating ctags files... ended with an error" << clEndl;
-        clWARNING() << "wxRename error:" << fnTmpTags << "->" << outputFile << clEndl;
+    if(output && !FileUtils::ReadFileContent(fnTmpTags, *output)) {
+        clERROR() << "Failed to read temporary ctags output file" << fnTmpTags.GetFullPath() << endl;
+        FileUtils::Deleter fd(fnTmpTags); // delete the temp file created
         return false;
     }
-    clDEBUG() << "Tags file:" << outputFile << clEndl;
+
+    wxString tmp_ctags = fnTmpTags.GetFullPath();
+    wxString ctags_file = outputFile.GetFullPath();
+    if(!outputFile.GetPath().IsEmpty() && !::wxRenameFile(tmp_ctags, ctags_file)) {
+        clDEBUG() << "Generating ctags files... ended with an error" << clEndl;
+        clWARNING() << "wxRename error:" << tmp_ctags << "->" << ctags_file << clEndl;
+        return false;
+    }
+
+    clDEBUG() << "Tags file:" << ctags_file << clEndl;
     clDEBUG() << "Generating ctags files... success" << clEndl;
     return true;
 }
@@ -239,4 +254,39 @@ TagTreePtr CTags::TreeFromTags(std::vector<TagEntry>& tags)
         }
     }
     return tree;
+}
+
+std::vector<TagEntry> CTags::Run(const wxFileName& filename, const wxString& temp_dir, const wxString& ctags_args,
+                                 const wxString& codelite_indexer)
+{
+    wxString fileList;
+    fileList << filename.GetFullPath() << "\n";
+    // ctags_file is the output, make sure we remove it
+    wxFileName ctags_file(temp_dir, "ctags");
+    FileUtils::Deleter d(ctags_file);
+    if(DoGenerate(fileList, temp_dir, codelite_indexer, ctags_args)) {
+        wxTextFile text_file;
+        if(!text_file.Open(ctags_file.GetFullPath())) {
+            return {};
+        }
+
+        std::vector<TagEntry> tags;
+        tags.reserve(1000); // pre allocate memory
+
+        for(size_t i = 0; i < text_file.GetLineCount(); ++i) {
+            wxString& line = text_file.GetLine(i);
+            line.Trim(false).Trim();
+            if(line.empty()) {
+                continue;
+            }
+            // construct a tag from the line
+            TagEntry t;
+            t.FromLine(line);
+
+            // add it to the vector
+            tags.push_back(t);
+        }
+        return tags;
+    }
+    return {};
 }

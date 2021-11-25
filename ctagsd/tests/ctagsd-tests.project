@@ -7,9 +7,6 @@
     <File Name="tester.cpp"/>
     <File Name="main.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug">
-    <Project Name="ctagsdlib"/>
-  </Dependencies>
   <Dependencies Name="Release">
     <Project Name="ctagsdlib"/>
   </Dependencies>
@@ -140,4 +137,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="ctagsdlib"/>
+  </Dependencies>
 </CodeLite_Project>

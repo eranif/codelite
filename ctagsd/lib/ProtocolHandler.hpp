@@ -24,7 +24,7 @@ private:
     wxStringMap_t m_filesOpened;
 
 private:
-    JSONItem build_result(JSONItem& reply, size_t id);
+    JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
     void parse_files(wxArrayString& files, Channel* channel, bool initial_parse);
 
 public:
@@ -39,6 +39,7 @@ public:
     void on_completion(unique_ptr<JSON>&& msg, Channel& channel);
     void on_did_close(unique_ptr<JSON>&& msg, Channel& channel);
     void on_did_save(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel);
 
     /**
      * @brief send a "window/logMessage" message to the client

@@ -29,6 +29,10 @@ eReadSome Channel::read_some()
     }
 }
 
+bool Channel::write_reply(const JSONItem& message) { return write_reply(message.format(false)); }
+
+bool Channel::write_reply(const JSON& message) { return write_reply(message.toElement().format(false)); }
+
 bool Channel::write_reply(const wxString& message)
 {
     auto cb = message.mb_str(wxConvUTF8);
@@ -42,7 +46,7 @@ bool Channel::write_reply(const wxString& message)
 
     // append the data
     s.append(cb.data(), cb.length());
-    clDEBUG() << "Sending reply:" << s << endl;
+    clDEBUG1() << "Sending reply:" << s << endl;
     client->Send(s);
     return true;
 }

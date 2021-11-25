@@ -27,7 +27,17 @@ protected:
 
 protected:
     static wxString WrapSpaces(const wxString& file);
-    static bool DoGenerate(const wxString& filesContent, const wxString& path, const wxString& codelite_indexer);
+    /**
+     * @brief parse list of files
+     * @param filesContent contains a list of files to be parsed. Each file is placed on its own line
+     * @param path location for the output ctags file. The output is written into `wxFileName(path, "ctags")`;
+     * @param codelite_indexer path to `codelite_indexer`
+     * @param ctags_args arguments to pass to ctags executable. Leave empty for the defaults
+     * @param output if provided, holds the ctags content
+     * @return true on success, false otherwise
+     */
+    static bool DoGenerate(const wxString& filesContent, const wxString& path, const wxString& codelite_indexer,
+                           const wxString& ctags_args = wxEmptyString, wxString* output = nullptr);
 
     TagTreePtr TreeFromTags(std::vector<TagEntry>& tags);
 
@@ -53,6 +63,13 @@ public:
                          const wxString& codelite_indexer = wxEmptyString);
     static bool Generate(const wxArrayString& files, const wxString& path,
                          const wxString& codelite_indexer = wxEmptyString);
+
+    /**
+     * @brief run codelite-indexer on a given filename and return the output
+     */
+    static std::vector<TagEntry> Run(const wxFileName& filename, const wxString& temp_dir,
+                                     const wxString& ctags_args = wxEmptyString,
+                                     const wxString& codelite_indexer = wxEmptyString);
 
     /**
      * @brief search for tags

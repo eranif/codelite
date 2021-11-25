@@ -29,6 +29,8 @@ public:
     void open(const wxString& ip, int port);
 
     bool write_reply(const wxString& message);
+    bool write_reply(const JSONItem& response);
+    bool write_reply(const JSON& response);
     unique_ptr<JSON> read_message();
 };
 

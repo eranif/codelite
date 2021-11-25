@@ -1,7 +1,10 @@
 #include "ProtocolHandler.hpp"
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
+#include "CxxScannerTokens.h"
+#include "CxxVariableScanner.h"
 #include "LSP/LSPEvent.h"
+#include "LSP/basic_types.h"
 #include "Settings.hpp"
 #include "clFilesCollector.h"
 #include "crawler_include.h"
@@ -9,27 +12,37 @@
 #include "fc_fileopener.h"
 #include "file_logger.h"
 #include "tags_storage_sqlite3.h"
+
 #include <iostream>
 #include <wx/filesys.h>
 
-// TODO::
-// 1. CodeLite should generate settings.json file
+using LSP::CompletionItem;
+using LSP::eSymbolKind;
 
 namespace
 {
 wxStopWatch sw;
-FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
+FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
 {
     wxString s;
-    s << "[";
-    for(const auto& tag : tags) {
-        s << tag->GetDisplayName() << ", ";
-    }
-    if(s.EndsWith(", ")) {
-        s.RemoveLast(2);
-    }
-    s << "]";
+    s << tag.GetKind() << ": " << tag.GetDisplayName();
     logger.Append(s, logger.GetRequestedLogLevel());
+    return logger;
+}
+
+FileLogger& operator<<(FileLogger& logger, const vector<TagEntry>& tags)
+{
+    for(const auto& tag : tags) {
+        logger << tag << endl;
+    }
+    return logger;
+}
+
+FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
+{
+    for(const auto& tag : tags) {
+        logger << (*tag) << endl;
+    }
     return logger;
 }
 
@@ -85,6 +98,72 @@ void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString
     scanner.Scan(dir, files, settings.GetFileMask(), wxEmptyString, settings.GetIgnoreSpec());
 }
 
+CompletionItem::eCompletionItemKind get_completion_kind(const TagEntry& tag)
+{
+    CompletionItem::eCompletionItemKind kind = CompletionItem::kKindVariable;
+    if(tag.IsMethod()) {
+        kind = CompletionItem::kKindFunction;
+    } else if(tag.IsConstructor()) {
+        kind = CompletionItem::kKindClass;
+    } else if(tag.IsClass()) {
+        kind = CompletionItem::kKindClass;
+    } else if(tag.IsStruct()) {
+        kind = CompletionItem::kKindStruct;
+    } else if(tag.IsLocalVariable()) {
+        kind = CompletionItem::kKindVariable;
+    } else if(tag.IsTypedef()) {
+        kind = CompletionItem::kKindTypeParameter;
+    } else if(tag.IsMacro()) {
+        kind = CompletionItem::kKindTypeParameter;
+    } else if(tag.GetKind() == "namespace") {
+        kind = CompletionItem::kKindModule;
+    } else if(tag.GetKind() == "union") {
+        kind = CompletionItem::kKindStruct;
+    } else if(tag.GetKind() == "enum") {
+        kind = CompletionItem::kKindEnum;
+    } else if(tag.GetKind() == "enumerator") {
+        kind = CompletionItem::kKindEnumMember;
+    }
+    return kind;
+}
+
+eSymbolKind get_symbol_kind(const TagEntry& tag)
+{
+    eSymbolKind kind = eSymbolKind::kSK_Variable;
+    if(tag.IsMethod()) {
+        kind = eSymbolKind::kSK_Method;
+    } else if(tag.IsConstructor()) {
+        kind = eSymbolKind::kSK_Class;
+    } else if(tag.IsClass()) {
+        kind = eSymbolKind::kSK_Class;
+    } else if(tag.IsStruct()) {
+        kind = eSymbolKind::kSK_Struct;
+    } else if(tag.IsLocalVariable()) {
+        kind = eSymbolKind::kSK_Variable;
+    } else if(tag.IsTypedef()) {
+        kind = eSymbolKind::kSK_TypeParameter;
+    } else if(tag.IsMacro()) {
+        kind = eSymbolKind::kSK_TypeParameter;
+    } else if(tag.GetKind() == "namespace") {
+        kind = eSymbolKind::kSK_Module;
+    } else if(tag.GetKind() == "union") {
+        kind = eSymbolKind::kSK_Struct;
+    } else if(tag.GetKind() == "enum") {
+        kind = eSymbolKind::kSK_Enum;
+    } else if(tag.GetKind() == "enumerator") {
+        kind = eSymbolKind::kSK_EnumMember;
+    }
+    return kind;
+}
+
+TagEntryPtr create_fake_entry(const wxString& name, const wxString& kind)
+{
+    TagEntryPtr t(new TagEntry());
+    t->SetKind(kind);
+    t->SetName(name);
+    t->SetLine(wxNOT_FOUND);
+    return t;
+}
 } // namespace
 
 ProtocolHandler::ProtocolHandler() {}
@@ -104,11 +183,13 @@ void ProtocolHandler::send_log_message(const wxString& message, int level, Chann
     channel.write_reply(notification.format(false));
 }
 
-JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id)
+JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_kind)
 {
     reply.addProperty("id", id);
     reply.addProperty("jsonrpc", "2.0");
-    return reply.AddObject("result");
+
+    auto result = result_kind == cJSON_Array ? reply.AddArray("result") : reply.AddObject("result");
+    return result;
 }
 
 void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool initial_parse)
@@ -240,7 +321,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     JSON root(cJSON_Object);
     JSONItem response = root.toElement();
-    auto result = build_result(response, id);
+    auto result = build_result(response, id, cJSON_Object);
 
     auto capabilities = result.AddObject("capabilities");
     capabilities.addProperty("completionProvider", true);
@@ -400,7 +481,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     if(!candidates.empty()) {
         JSON root(cJSON_Object);
         JSONItem response = root.toElement();
-        auto result = build_result(response, id);
+        auto result = build_result(response, id, cJSON_Object);
 
         result.addProperty("isIncomplete", false);
         auto items = result.AddArray("items");
@@ -419,29 +500,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
             item.addProperty("detail", tag->GetReturnValue());
 
             // set the kind
-            using LSP::CompletionItem;
-            CompletionItem::eCompletionItemKind kind = CompletionItem::kKindVariable;
-            if(tag->IsMethod() || tag->IsConstructor()) {
-                kind = CompletionItem::kKindFunction;
-            } else if(tag->IsClass()) {
-                kind = CompletionItem::kKindClass;
-            } else if(tag->IsStruct()) {
-                kind = CompletionItem::kKindStruct;
-            } else if(tag->IsLocalVariable()) {
-                kind = CompletionItem::kKindVariable;
-            } else if(tag->IsTypedef()) {
-                kind = CompletionItem::kKindTypeParameter;
-            } else if(tag->IsMacro()) {
-                kind = CompletionItem::kKindTypeParameter;
-            } else if(tag->GetKind() == "namespace") {
-                kind = CompletionItem::kKindModule;
-            } else if(tag->GetKind() == "union") {
-                kind = CompletionItem::kKindStruct;
-            } else if(tag->GetKind() == "enum") {
-                kind = CompletionItem::kKindEnum;
-            } else if(tag->GetKind() == "enumerator") {
-                kind = CompletionItem::kKindEnumMember;
-            }
+            CompletionItem::eCompletionItemKind kind = get_completion_kind(*tag.Get());
             item.addProperty("kind", static_cast<int>(kind));
         }
         channel.write_reply(response.format(false));
@@ -468,4 +527,120 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     if(TagsManagerST::Get()->GetDatabase()) {
         TagsManagerST::Get()->ClearTagsCache();
     }
+}
+
+#define __ADD_VEC_TO_MAP(Map, Line)   \
+    {                                 \
+        if(Map.count(Line) == 0) {    \
+            Map.insert({ Line, {} }); \
+        }                             \
+    }
+
+#define ADD_ENTRY_MAP(Map, Visited, __tag)          \
+    if(Visited.count(__tag->GetName()) == 0) {      \
+        Visited.insert(__tag->GetName());           \
+        __ADD_VEC_TO_MAP(Map, __tag->GetLine());    \
+        if(__tag->GetLine() == wxNOT_FOUND) {       \
+            Map[__tag->GetLine()].push_back(__tag); \
+        } else {                                    \
+            Map[__tag->GetLine()].push_back(__tag); \
+        }                                           \
+    }
+
+void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    JSONItem json = msg->toElement();
+    wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
+    wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
+    clDEBUG1() << "textDocument/documentSymbol: for file" << filepath << endl;
+
+    // use CTags to gather local variables
+    wxString tmpdir = clStandardPaths::Get().GetTempDir();
+    auto tags =
+        CTags::Run(filepath, tmpdir, "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+pfl --C++-kinds=+pfl ",
+                   m_settings.GetCodeliteIndexer());
+
+    // map all tags found in this document, ordered by line number
+    // and then by name
+    map<int, vector<TagEntryPtr>> M;
+
+    // Now loop over the symbols fetched from the database and also append them to the
+    // global map
+    wxStringSet_t Visited;
+    for(auto tag_entry : tags) {
+        TagEntryPtr tag(new TagEntry(tag_entry));
+        // add line entry if one does not exist
+        ADD_ENTRY_MAP(M, Visited, tag);
+
+        if(tag->IsLocalVariable()) {
+            ADD_ENTRY_MAP(M, Visited, tag);
+            tag->GetLocalType();
+            auto parts = wxStringTokenize(tag->GetLocalType(), ":", wxTOKEN_STRTOK);
+            for(const wxString& part : parts) {
+                auto fake_tag = create_fake_entry(part, "class");
+                ADD_ENTRY_MAP(M, Visited, fake_tag);
+            }
+        } else if(tag->IsClass() || tag->GetKind() == "enum") {
+            ADD_ENTRY_MAP(M, Visited, tag);
+
+        } else if(tag->IsMethod()) {
+            ADD_ENTRY_MAP(M, Visited, tag);
+            const wxString& path = tag->GetPath();
+            auto parts = wxStringTokenize(path, ":", wxTOKEN_STRTOK);
+            if(!parts.empty()) {
+                // the last part is the method name, we don't want to include it
+                parts.pop_back();
+            }
+            for(const wxString& part : parts) {
+                auto fake_tag = create_fake_entry(part, "class");
+                ADD_ENTRY_MAP(M, Visited, fake_tag);
+            }
+
+            // we also want the method signature arguments
+            wxString signature = tag->GetSignature();
+            CxxVariableScanner scanner(signature, eCxxStandard::kCxx11, {}, true);
+            auto functionArgs = scanner.ParseFunctionArguments();
+            for(const auto& var : functionArgs) {
+                auto fake_tag = create_fake_entry(var->GetName(), "local");
+                ADD_ENTRY_MAP(M, Visited, fake_tag);
+
+                const auto& typeParts = var->GetType();
+                for(const auto& p : typeParts) {
+                    if(p.type == T_IDENTIFIER) {
+                        auto fake_type_tag = create_fake_entry(p.text, "local");
+                        ADD_ENTRY_MAP(M, Visited, fake_type_tag);
+                    }
+                }
+            }
+        }
+    }
+
+    // consruct LSP response from the map
+    // and send it over
+    size_t id = json["id"].toSize_t();
+    JSON root(cJSON_Object);
+    JSONItem response = root.toElement();
+    auto symbols_arr = build_result(response, id, cJSON_Array);
+    clDEBUG() << "Preparing output..." << endl;
+    for(const auto& tags_map : M) {
+        clDEBUG() << "Line" << tags_map.first << ":" << tags_map.second << endl;
+        for(TagEntryPtr tag : tags_map.second) {
+            auto symbol = symbols_arr.AddObject(wxEmptyString);
+            symbol.addProperty("kind", (int)get_symbol_kind(*tag));
+            symbol.addProperty("name", tag->GetName());
+            symbol.addProperty("containerName", tag->GetParent());
+            LSP::Location loc;
+            LSP::Position pos; // we only provide line number
+            LSP::Range range;
+
+            pos.SetCharacter(0).SetLine(tag->GetLine());
+            range.SetStart(pos).SetEnd(pos);
+            loc.SetPath(filepath_uri);
+            loc.SetRange(range);
+            symbol.append(loc.ToJSON("location"));
+        }
+    }
+    clDEBUG() << "Success" << endl;
+    clDEBUG1() << "textDocument/documentSymbol response:" << response.format() << endl;
+    channel.write_reply(response);
 }

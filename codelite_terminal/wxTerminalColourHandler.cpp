@@ -12,7 +12,6 @@
 wxTerminalColourHandler::wxTerminalColourHandler()
 {
     // we use the Ubuntu colour scheme
-
     // Text colours
     m_colours.insert({ 30, wxColour(1, 1, 1) });
     m_colours.insert({ 31, wxColour(222, 56, 43) });

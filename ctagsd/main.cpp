@@ -21,6 +21,7 @@ unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
     { "textDocument/completion", &ProtocolHandler::on_completion },
     { "textDocument/didClose", &ProtocolHandler::on_did_close },
     { "textDocument/didSave", &ProtocolHandler::on_did_save },
+    { "textDocument/documentSymbol", &ProtocolHandler::on_document_symbol },
 };
 }
 
@@ -37,14 +38,14 @@ int main(int argc, char** argv)
     parser.AddOption("h", "host", "Hostname");
     parser.AddLongOption("log-level", "Log level, one of: ERR, WARN, DBG, TRACE");
     parser.Parse();
-    
+
     long port = 38478;
     wxString host = "127.0.0.1";
     wxString log_level_str = "ERR";
     parser.Found("port", &port);
     parser.Found("host", &host);
     parser.Found("log-level", &log_level_str);
-    
+
     int log_level = FileLogger::GetVerbosityAsNumber(log_level_str);
     FileLogger::OpenLog("ctagsd.log", log_level);
 

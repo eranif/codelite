@@ -1,5 +1,6 @@
 #include "LSPUtils.hpp"
 #include "SimpleTokenizer.hpp"
+#include <array>
 
 LSPUtils::LSPUtils() {}
 

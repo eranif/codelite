@@ -279,3 +279,80 @@ wxString CompletionHelper::truncate_file_to_location(const wxString& file_conten
     }
     return wxEmptyString;
 }
+
+thread_local std::unordered_set<wxString> words;
+bool CompletionHelper::is_cxx_keyword(const wxString& word)
+{
+    if(words.empty()) {
+        words.insert("auto");
+        words.insert("break");
+        words.insert("case");
+        words.insert("char");
+        words.insert("const");
+        words.insert("continue");
+        words.insert("default");
+        words.insert("define");
+        words.insert("defined");
+        words.insert("do");
+        words.insert("double");
+        words.insert("elif");
+        words.insert("else");
+        words.insert("endif");
+        words.insert("enum");
+        words.insert("error");
+        words.insert("extern");
+        words.insert("float");
+        words.insert("for");
+        words.insert("goto");
+        words.insert("if");
+        words.insert("ifdef");
+        words.insert("ifndef");
+        words.insert("include");
+        words.insert("int");
+        words.insert("line");
+        words.insert("long");
+        words.insert("bool");
+        words.insert("pragma");
+        words.insert("register");
+        words.insert("return");
+        words.insert("short");
+        words.insert("signed");
+        words.insert("sizeof");
+        words.insert("static");
+        words.insert("struct");
+        words.insert("switch");
+        words.insert("typedef");
+        words.insert("undef");
+        words.insert("union");
+        words.insert("unsigned");
+        words.insert("void");
+        words.insert("volatile");
+        words.insert("while");
+        words.insert("class");
+        words.insert("namespace");
+        words.insert("delete");
+        words.insert("friend");
+        words.insert("inline");
+        words.insert("new");
+        words.insert("operator");
+        words.insert("overload");
+        words.insert("protected");
+        words.insert("private");
+        words.insert("public");
+        words.insert("this");
+        words.insert("virtual");
+        words.insert("template");
+        words.insert("typename");
+        words.insert("dynamic_cast");
+        words.insert("static_cast");
+        words.insert("const_cast");
+        words.insert("reinterpret_cast");
+        words.insert("using");
+        words.insert("throw");
+        words.insert("catch");
+        words.insert("nullptr");
+        words.insert("noexcept");
+        words.insert("override");
+    }
+    return words.count(word) != 0;
+}

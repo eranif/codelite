@@ -162,7 +162,9 @@ public:
     JSONItem& addProperty(const wxString& name, bool value);
     JSONItem& addProperty(const wxString& name, cJSON* pjson);
     JSONItem& addProperty(const wxString& name, const wxFileName& filename);
-
+    JSONItem& addProperty(const wxString& name, const std::vector<int>& arr_int);
+    JSONItem& addProperty(const wxString& name, const wxVector<int>& arr_int);
+    
 #if wxUSE_GUI
     JSONItem& addProperty(const wxString& name, const wxSize& sz);
     JSONItem& addProperty(const wxString& name, const wxPoint& pt);

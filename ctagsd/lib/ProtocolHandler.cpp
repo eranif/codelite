@@ -2,10 +2,13 @@
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxScannerTokens.h"
+#include "CxxTokenizer.h"
 #include "CxxVariableScanner.h"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
+#include "LSPUtils.hpp"
 #include "Settings.hpp"
+#include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
 #include "crawler_include.h"
 #include "ctags_manager.h"
@@ -22,19 +25,28 @@ using LSP::eSymbolKind;
 namespace
 {
 wxStopWatch sw;
+FileLogger& operator<<(FileLogger& logger, const TokenWrapper& wrapper)
+{
+    wxString s;
+    s << "{" << (wrapper.type == TYPE_CLASS ? "class" : "variable") << ", " << wrapper.token.line() << ", "
+      << wrapper.token.column() << ", " << wrapper.token.length() << "}";
+    logger.Append(s, logger.GetRequestedLogLevel());
+    return logger;
+}
+
+FileLogger& operator<<(FileLogger& logger, const vector<TokenWrapper>& arr)
+{
+    for(const auto& d : arr) {
+        logger << d << endl;
+    }
+    return logger;
+}
+
 FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
 {
     wxString s;
     s << tag.GetKind() << ": " << tag.GetDisplayName();
     logger.Append(s, logger.GetRequestedLogLevel());
-    return logger;
-}
-
-FileLogger& operator<<(FileLogger& logger, const vector<TagEntry>& tags)
-{
-    for(const auto& tag : tags) {
-        logger << tag << endl;
-    }
     return logger;
 }
 
@@ -127,43 +139,44 @@ CompletionItem::eCompletionItemKind get_completion_kind(const TagEntry& tag)
     return kind;
 }
 
-eSymbolKind get_symbol_kind(const TagEntry& tag)
-{
-    eSymbolKind kind = eSymbolKind::kSK_Variable;
-    if(tag.IsMethod()) {
-        kind = eSymbolKind::kSK_Method;
-    } else if(tag.IsConstructor()) {
-        kind = eSymbolKind::kSK_Class;
-    } else if(tag.IsClass()) {
-        kind = eSymbolKind::kSK_Class;
-    } else if(tag.IsStruct()) {
-        kind = eSymbolKind::kSK_Struct;
-    } else if(tag.IsLocalVariable()) {
-        kind = eSymbolKind::kSK_Variable;
-    } else if(tag.IsTypedef()) {
-        kind = eSymbolKind::kSK_TypeParameter;
-    } else if(tag.IsMacro()) {
-        kind = eSymbolKind::kSK_TypeParameter;
-    } else if(tag.GetKind() == "namespace") {
-        kind = eSymbolKind::kSK_Module;
-    } else if(tag.GetKind() == "union") {
-        kind = eSymbolKind::kSK_Struct;
-    } else if(tag.GetKind() == "enum") {
-        kind = eSymbolKind::kSK_Enum;
-    } else if(tag.GetKind() == "enumerator") {
-        kind = eSymbolKind::kSK_EnumMember;
-    }
-    return kind;
-}
+// eSymbolKind get_symbol_kind(const TagEntry& tag)
+// {
+//     eSymbolKind kind = eSymbolKind::kSK_Variable;
+//     if(tag.IsMethod()) {
+//         kind = eSymbolKind::kSK_Method;
+//     } else if(tag.IsConstructor()) {
+//         kind = eSymbolKind::kSK_Class;
+//     } else if(tag.IsClass()) {
+//         kind = eSymbolKind::kSK_Class;
+//     } else if(tag.IsStruct()) {
+//         kind = eSymbolKind::kSK_Struct;
+//     } else if(tag.IsLocalVariable()) {
+//         kind = eSymbolKind::kSK_Variable;
+//     } else if(tag.IsTypedef()) {
+//         kind = eSymbolKind::kSK_TypeParameter;
+//     } else if(tag.IsMacro()) {
+//         kind = eSymbolKind::kSK_TypeParameter;
+//     } else if(tag.GetKind() == "namespace") {
+//         kind = eSymbolKind::kSK_Module;
+//     } else if(tag.GetKind() == "union") {
+//         kind = eSymbolKind::kSK_Struct;
+//     } else if(tag.GetKind() == "enum") {
+//         kind = eSymbolKind::kSK_Enum;
+//     } else if(tag.GetKind() == "enumerator") {
+//         kind = eSymbolKind::kSK_EnumMember;
+//     }
+//     return kind;
+// }
 
-TagEntryPtr create_fake_entry(const wxString& name, const wxString& kind)
-{
-    TagEntryPtr t(new TagEntry());
-    t->SetKind(kind);
-    t->SetName(name);
-    t->SetLine(wxNOT_FOUND);
-    return t;
-}
+// TagEntryPtr create_fake_entry(const wxString& name, const wxString& kind)
+//{
+//     TagEntryPtr t(new TagEntry());
+//     t->SetKind(kind);
+//     t->SetName(name);
+//     t->SetLine(wxNOT_FOUND);
+//     return t;
+//}
+
 } // namespace
 
 ProtocolHandler::ProtocolHandler() {}
@@ -329,6 +342,15 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     capabilities.addProperty("definitionProvider", true);
     capabilities.addProperty("documentSymbolProvider", true);
     capabilities.addProperty("hoverProvider", true);
+    auto semanticTokensProvider = capabilities.AddObject("semanticTokensProvider");
+    auto full = semanticTokensProvider.AddObject("full");
+    auto legend = semanticTokensProvider.AddObject("legend");
+    full.addProperty("delta", true);
+
+    legend.AddArray("tokenModifiers"); // empty array
+    auto tokenTypes = legend.AddArray("tokenTypes");
+    tokenTypes.arrayAppend("variable"); // TYPE_VARIABLE
+    tokenTypes.arrayAppend("class");    // TYPE_CLASS
 
     // load the configuration file
     m_root_folder = json["params"]["rootUri"].toString();
@@ -529,30 +551,16 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     }
 }
 
-#define __ADD_VEC_TO_MAP(Map, Line)   \
-    {                                 \
-        if(Map.count(Line) == 0) {    \
-            Map.insert({ Line, {} }); \
-        }                             \
-    }
-
-#define ADD_ENTRY_MAP(Map, Visited, __tag)          \
-    if(Visited.count(__tag->GetName()) == 0) {      \
-        Visited.insert(__tag->GetName());           \
-        __ADD_VEC_TO_MAP(Map, __tag->GetLine());    \
-        if(__tag->GetLine() == wxNOT_FOUND) {       \
-            Map[__tag->GetLine()].push_back(__tag); \
-        } else {                                    \
-            Map[__tag->GetLine()].push_back(__tag); \
-        }                                           \
-    }
-
-void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channel)
 {
+    wxUnusedVar(msg);
+    wxUnusedVar(channel);
+
     JSONItem json = msg->toElement();
+    clDEBUG() << json.format() << endl;
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
-    clDEBUG1() << "textDocument/documentSymbol: for file" << filepath << endl;
+    clDEBUG1() << "textDocument/semanticTokens/full: for file" << filepath << endl;
 
     // use CTags to gather local variables
     wxString tmpdir = clStandardPaths::Get().GetTempDir();
@@ -560,87 +568,84 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
         CTags::Run(filepath, tmpdir, "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+pfl --C++-kinds=+pfl ",
                    m_settings.GetCodeliteIndexer());
 
-    // map all tags found in this document, ordered by line number
-    // and then by name
-    map<int, vector<TagEntryPtr>> M;
+    clDEBUG() << "File tags:" << tags.size() << endl;
 
-    // Now loop over the symbols fetched from the database and also append them to the
-    // global map
-    wxStringSet_t Visited;
-    for(auto tag_entry : tags) {
-        TagEntryPtr tag(new TagEntry(tag_entry));
-        // add line entry if one does not exist
-        ADD_ENTRY_MAP(M, Visited, tag);
+    wxStringSet_t locals_set;
+    wxStringSet_t others_set;
+    for(const auto& tag : tags) {
+        if(tag.IsLocalVariable() && locals_set.count(tag.GetName()) == 0) {
+            locals_set.insert(tag.GetName());
+            wxString local_type = tag.GetLocalType();
+            auto parts = wxStringTokenize(local_type, ":", wxTOKEN_STRTOK);
+            others_set.insert(parts.begin(), parts.end());
+        }
+    }
 
-        if(tag->IsLocalVariable()) {
-            ADD_ENTRY_MAP(M, Visited, tag);
-            tag->GetLocalType();
-            auto parts = wxStringTokenize(tag->GetLocalType(), ":", wxTOKEN_STRTOK);
-            for(const wxString& part : parts) {
-                auto fake_tag = create_fake_entry(part, "class");
-                ADD_ENTRY_MAP(M, Visited, fake_tag);
-            }
-        } else if(tag->IsClass() || tag->GetKind() == "enum") {
-            ADD_ENTRY_MAP(M, Visited, tag);
+    // get list of classes from the database
+    vector<TagEntryPtr> workspace_tags;
+    wxArrayString kinds;
+    kinds.Add("class");
+    kinds.Add("enum");
+    kinds.Add("struct");
+    kinds.Add("namespace");
+    kinds.Add("union");
+    kinds.Add("typedef");
 
-        } else if(tag->IsMethod()) {
-            ADD_ENTRY_MAP(M, Visited, tag);
-            const wxString& path = tag->GetPath();
-            auto parts = wxStringTokenize(path, ":", wxTOKEN_STRTOK);
-            if(!parts.empty()) {
-                // the last part is the method name, we don't want to include it
-                parts.pop_back();
-            }
-            for(const wxString& part : parts) {
-                auto fake_tag = create_fake_entry(part, "class");
-                ADD_ENTRY_MAP(M, Visited, fake_tag);
-            }
+    TagsManagerST::Get()->GetTagsByKindLimit(workspace_tags, kinds, 10000);
+    clDEBUG() << "Workspace tags:" << workspace_tags.size() << endl;
 
-            // we also want the method signature arguments
-            wxString signature = tag->GetSignature();
-            CxxVariableScanner scanner(signature, eCxxStandard::kCxx11, {}, true);
-            auto functionArgs = scanner.ParseFunctionArguments();
-            for(const auto& var : functionArgs) {
-                auto fake_tag = create_fake_entry(var->GetName(), "local");
-                ADD_ENTRY_MAP(M, Visited, fake_tag);
+    for(auto tag : workspace_tags) {
+        others_set.insert(tag->GetName());
+    }
 
-                const auto& typeParts = var->GetType();
-                for(const auto& p : typeParts) {
-                    if(p.type == T_IDENTIFIER) {
-                        auto fake_type_tag = create_fake_entry(p.text, "local");
-                        ADD_ENTRY_MAP(M, Visited, fake_type_tag);
-                    }
-                }
+    wxString buffer;
+    FileUtils::ReadFileContent(filepath, buffer);
+
+    vector<TokenWrapper> tokens_vec;
+    tokens_vec.reserve(1000);
+
+    // collect all interesting tokens from the document
+    SimpleTokenizer tokenizer(buffer);
+    TokenWrapper token_wrapper;
+    wxArrayString words;
+    words.reserve(1000);
+
+    wxStringSet_t unique_tokens;
+    while(tokenizer.next(&token_wrapper.token)) {
+        const auto& tok = token_wrapper.token;
+        wxString word = tok.to_string(buffer);
+        if(!CompletionHelper::is_cxx_keyword(word) && (unique_tokens.count(word) == 0)) {
+            words.push_back(word);
+            unique_tokens.insert(word);
+            if(locals_set.count(word)) {
+                // we know that this one is a variable
+                token_wrapper.type = TYPE_VARIABLE;
+                tokens_vec.push_back(token_wrapper);
+            } else if(others_set.count(word)) {
+                token_wrapper.type = TYPE_CLASS;
+                tokens_vec.push_back(token_wrapper);
             }
         }
     }
 
-    // consruct LSP response from the map
-    // and send it over
+    clDEBUG() << tokens_vec << endl;
+    // build the response
     size_t id = json["id"].toSize_t();
     JSON root(cJSON_Object);
     JSONItem response = root.toElement();
-    auto symbols_arr = build_result(response, id, cJSON_Array);
-    clDEBUG() << "Preparing output..." << endl;
-    for(const auto& tags_map : M) {
-        clDEBUG() << "Line" << tags_map.first << ":" << tags_map.second << endl;
-        for(TagEntryPtr tag : tags_map.second) {
-            auto symbol = symbols_arr.AddObject(wxEmptyString);
-            symbol.addProperty("kind", (int)get_symbol_kind(*tag));
-            symbol.addProperty("name", tag->GetName());
-            symbol.addProperty("containerName", tag->GetParent());
-            LSP::Location loc;
-            LSP::Position pos; // we only provide line number
-            LSP::Range range;
+    auto result = build_result(response, id, cJSON_Object);
 
-            pos.SetCharacter(0).SetLine(tag->GetLine());
-            range.SetStart(pos).SetEnd(pos);
-            loc.SetPath(filepath_uri);
-            loc.SetRange(range);
-            symbol.append(loc.ToJSON("location"));
-        }
-    }
-    clDEBUG() << "Success" << endl;
-    clDEBUG1() << "textDocument/documentSymbol response:" << response.format() << endl;
+    vector<int> encoding;
+    encoding.reserve(5 * tokens_vec.size());
+
+    LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
+    result.addProperty("data", encoding);
+    clDEBUG() << response.format() << endl;
     channel.write_reply(response);
+}
+
+void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    wxUnusedVar(msg);
+    wxUnusedVar(channel);
 }

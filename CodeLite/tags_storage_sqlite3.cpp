@@ -1357,6 +1357,8 @@ void TagsStorageSQLite::GetTagsByKindLimit(const wxArrayString& kinds, const wxS
         sql << wxT(" LIMIT ") << limit;
     }
 
+    size_t tags_limit = limit < 100 ? 100 : limit;
+    tags.reserve(tags_limit);
     DoFetchTags(sql, tags);
 }
 bool TagsStorageSQLite::IsTypeAndScopeExistLimitOne(const wxString& typeName, const wxString& scope)

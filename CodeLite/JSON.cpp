@@ -766,3 +766,30 @@ wxVector<int> JSONItem::toArray(const wxVector<int>& defaultValue) const
     }
     return arr;
 }
+
+JSONItem& JSONItem::addProperty(const wxString& name, const std::vector<int>& arr_int)
+{
+    if(!m_json) {
+        return *this;
+    }
+
+    if(m_type != cJSON_Object) {
+        return *this;
+    }
+
+    // create array
+    JSONItem arr = AddArray(name);
+    for(size_t i = 0; i < arr_int.size(); ++i) {
+        cJSON_AddItemToArray(arr.m_json, cJSON_CreateNumber(arr_int[i]));
+    }
+    return *this;
+}
+
+JSONItem& JSONItem::addProperty(const wxString& name, const wxVector<int>& arr_int)
+{
+    std::vector<int> V;
+    V.reserve(arr_int.size());
+
+    V.insert(V.end(), arr_int.begin(), arr_int.end());
+    return addProperty(name, V);
+}

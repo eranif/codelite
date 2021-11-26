@@ -14,6 +14,7 @@ public:
 
     wxString get_expression(const wxString& file_content, wxString* last_word = nullptr);
     wxString truncate_file_to_location(const wxString& file_content, size_t line, size_t column);
+    static bool is_cxx_keyword(const wxString& word);
 };
 
 #endif // COMPLETIONHELPER_HPP

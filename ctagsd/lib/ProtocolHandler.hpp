@@ -39,6 +39,7 @@ public:
     void on_completion(unique_ptr<JSON>&& msg, Channel& channel);
     void on_did_close(unique_ptr<JSON>&& msg, Channel& channel);
     void on_did_save(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channel);
     void on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel);
 
     /**

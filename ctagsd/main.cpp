@@ -21,7 +21,7 @@ unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
     { "textDocument/completion", &ProtocolHandler::on_completion },
     { "textDocument/didClose", &ProtocolHandler::on_did_close },
     { "textDocument/didSave", &ProtocolHandler::on_did_save },
-    { "textDocument/documentSymbol", &ProtocolHandler::on_document_symbol },
+    { "textDocument/semanticTokens/full", &ProtocolHandler::on_semantic_tokens },
 };
 }
 

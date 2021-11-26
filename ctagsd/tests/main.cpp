@@ -2,7 +2,9 @@
 #include "CompletionHelper.hpp"
 #include "CxxTokenizer.h"
 #include "CxxVariableScanner.h"
+#include "LSPUtils.hpp"
 #include "Settings.hpp"
+#include "SimpleTokenizer.hpp"
 #include "clTempFile.hpp"
 #include "ctags_manager.h"
 #include "fileutils.h"
@@ -158,27 +160,65 @@ TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
     return true;
 }
 
-TEST_FUNC(TestCTags_documenySymbol)
+TEST_FUNC(TestSimeplTokenizer)
 {
-    if(!initialize_cc_tests()) {
-        cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
-        return true;
+    const wxString tokenizer_sample_file = R"(#include <unistd.h>
+/** comment **/
+int main(int argc, char** argv)
+{
+    /**
+        multi line comment
+        
+    **/
+    std::string name = "hello\nworld";
+    MyClass cls, 1cls2;
+    cls.SetName(name);
+    return 0;
+}
+)";
+
+    const wxString tokenizer_sample_file_2 = R"(#include "TextView.h"
+#include "wxTerminalColourHandler.h"
+#include "wxTerminalCtrl.h"
+
+#ifdef __WXMSW__
+#include "wx/msw/wrapwin.h" // includes windows.h
+#endif
+#include <fileutils.h>
+#include <wx/tokenzr.h>
+#include <wx/wupdlock.h>
+
+wxTerminalColourHandler::wxTerminalColourHandler()
+{
+    // we use the Ubuntu colour scheme
+    // Text colours
+    m_colours.insert({ 30, wxColour(1, 1, 1) });
+)";
+    {
+        SimpleTokenizer::Token token;
+        SimpleTokenizer tokenizer(tokenizer_sample_file);
+        vector<SimpleTokenizer::Token> tokens;
+        while(tokenizer.next(&token)) {
+            tokens.push_back(token);
+        }
+        CHECK_SIZE(tokens.size(), 15);
     }
+    {
+        SimpleTokenizer::Token token;
+        wxString file_content;
+        FileUtils::ReadFileContent(wxFileName("C:\\src\\codelite\\codelite_terminal\\wxTerminalColourHandler.cpp"),
+                                   file_content);
+        SimpleTokenizer tokenizer(file_content);
+        vector<SimpleTokenizer::Token> tokens;
+        vector<TokenWrapper> tokens_vec;
 
-    clTempFile file("cpp");
-    file.Write(sample_cxx_file);
+        while(tokenizer.next(&token)) {
+            tokens_vec.push_back({ token, eTokenType::TYPE_CLASS });
+        }
 
-    auto tags = CTags::Run(file.GetFullPath(), clStandardPaths::Get().GetTempDir(),
-                           "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+pl --C++-kinds=+pl ",
-                           settings.GetCodeliteIndexer());
-
-    vector<TagEntryPtr> candidates;
-    wxString fulltext = "std::unique_ptr<std::string> mystr; mystr->";
-
-    clTempFile tmpfile("cpp");
-    tmpfile.Write(fulltext);
-    TagsManagerST::Get()->AutoCompleteCandidates(tmpfile.GetFullPath(), 1, "mystr->", fulltext, candidates);
-    CHECK_BOOL(!candidates.empty());
+        vector<int> encoding;
+        LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
+    }
     return true;
 }
 

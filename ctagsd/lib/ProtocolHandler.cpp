@@ -564,38 +564,47 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
 
     // use CTags to gather local variables
     wxString tmpdir = clStandardPaths::Get().GetTempDir();
-    auto tags =
+    vector<TagEntry> tags =
         CTags::Run(filepath, tmpdir, "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+pfl --C++-kinds=+pfl ",
                    m_settings.GetCodeliteIndexer());
 
     clDEBUG() << "File tags:" << tags.size() << endl;
 
     wxStringSet_t locals_set;
-    wxStringSet_t others_set;
-    for(const auto& tag : tags) {
-        if(tag.IsLocalVariable() && locals_set.count(tag.GetName()) == 0) {
+    wxStringSet_t types_set;
+    for(const TagEntry& tag : tags) {
+        if(tag.IsLocalVariable()) {
+            wxString type = tag.GetLocalType();
+            auto parts = wxStringTokenize(type, ":", wxTOKEN_STRTOK);
+            for(const wxString& part : parts) {
+                types_set.insert(part);
+            }
             locals_set.insert(tag.GetName());
-            wxString local_type = tag.GetLocalType();
-            auto parts = wxStringTokenize(local_type, ":", wxTOKEN_STRTOK);
-            others_set.insert(parts.begin(), parts.end());
+        } else if(tag.IsMethod()) {
+            const wxString& path = tag.GetPath();
+            auto parts = wxStringTokenize(path, ":", wxTOKEN_STRTOK);
+            if(!parts.empty()) {
+                // the last part is the method name, we don't want to include it
+                parts.pop_back();
+            }
+            for(const wxString& part : parts) {
+                types_set.insert(part);
+            }
+
+            // we also want the method signature arguments
+            wxString signature = tag.GetSignature();
+            CxxVariableScanner scanner(signature, eCxxStandard::kCxx11, {}, true);
+            auto functionArgs = scanner.ParseFunctionArguments();
+            for(const auto& var : functionArgs) {
+                locals_set.insert(var->GetName());
+                const auto& typeParts = var->GetType();
+                for(const auto& p : typeParts) {
+                    if(p.type == T_IDENTIFIER) {
+                        types_set.insert(p.text);
+                    }
+                }
+            }
         }
-    }
-
-    // get list of classes from the database
-    vector<TagEntryPtr> workspace_tags;
-    wxArrayString kinds;
-    kinds.Add("class");
-    kinds.Add("enum");
-    kinds.Add("struct");
-    kinds.Add("namespace");
-    kinds.Add("union");
-    kinds.Add("typedef");
-
-    TagsManagerST::Get()->GetTagsByKindLimit(workspace_tags, kinds, 10000);
-    clDEBUG() << "Workspace tags:" << workspace_tags.size() << endl;
-
-    for(auto tag : workspace_tags) {
-        others_set.insert(tag->GetName());
     }
 
     wxString buffer;
@@ -621,7 +630,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
                 // we know that this one is a variable
                 token_wrapper.type = TYPE_VARIABLE;
                 tokens_vec.push_back(token_wrapper);
-            } else if(others_set.count(word)) {
+            } else if(types_set.count(word)) {
                 token_wrapper.type = TYPE_CLASS;
                 tokens_vec.push_back(token_wrapper);
             }

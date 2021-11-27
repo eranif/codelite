@@ -205,9 +205,6 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         // For backward compatibility, if the compiler / linker options are empty - add them
         if(IsGnuCompatibleCompiler()) {
             AddDefaultGnuComplierOptions();
-        }
-
-        if(IsGnuCompatibleCompiler()) {
             AddDefaultGnuLinkerOptions();
         }
 
@@ -607,7 +604,7 @@ bool Compiler::IsGnuCompatibleCompiler() const
 {
     static wxStringSet_t gnu_compilers = { COMPILER_FAMILY_CLANG, COMPILER_FAMILY_MINGW, COMPILER_FAMILY_GCC,
                                            COMPILER_FAMILY_CYGWIN, COMPILER_FAMILY_MSYS2 };
-    return m_compilerFamily.IsEmpty() || gnu_compilers.count(m_compilerFamily);
+    return !m_compilerFamily.IsEmpty() && gnu_compilers.count(m_compilerFamily);
 }
 
 void Compiler::AddDefaultGnuComplierOptions()

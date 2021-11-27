@@ -4823,15 +4823,19 @@ bool clEditor::FindAndSelect(const wxString& pattern, const wxString& what, int 
 void clEditor::DoSelectRange(const LSP::Range& range)
 {
     ClearSelections();
-    int startPos = PositionFromLine(range.GetStart().GetLine());
-    startPos += range.GetStart().GetCharacter();
-
-    int endPos = PositionFromLine(range.GetEnd().GetLine());
-    endPos += range.GetEnd().GetCharacter();
-    SetSelectionStart(startPos);
-    SetSelectionEnd(endPos);
-    int nLineNumber = LineFromPosition(startPos);
-    CallAfter(&clEditor::CenterLinePreserveSelection, nLineNumber);
+    auto getPos = [this](const LSP::Position& param) -> int {
+        int linePos = PositionFromLine(param.GetLine());
+#if wxCHECK_VERSION(3, 1, 0)
+        return PositionRelative(linePos, param.GetCharacter());
+#else
+        wxString text = GetLine(param.GetLine()).Truncate(param.GetCharacter());
+        return linePos + clUTF8Length(text.wc_str(), text.length());
+#endif
+    };
+    SetSelectionStart(getPos(range.GetStart()));
+    SetSelectionEnd(getPos(range.GetEnd()));
+    int lineNumber = range.GetStart().GetLine();
+    CallAfter(&clEditor::CenterLinePreserveSelection, lineNumber);
 }
 
 bool clEditor::SelectRange(const LSP::Range& range)

@@ -1462,14 +1462,14 @@ bool clCxxWorkspace::DoLoadWorkspace(const wxString& fileName, wxString& errMsg)
     m_buildMatrix.Reset(NULL);
     wxFileName workSpaceFile(fileName);
     if(workSpaceFile.FileExists() == false) {
-        errMsg = wxString::Format(wxT("Could not open workspace file: '%s'"), fileName.c_str());
+        errMsg = wxString::Format(_("Could not open workspace file: '%s'"), fileName.c_str());
         return false;
     }
 
     m_fileName = workSpaceFile;
     m_doc.Load(m_fileName.GetFullPath());
     if(!m_doc.IsOk()) {
-        errMsg = wxT("Corrupted workspace file");
+        errMsg = _("Corrupted workspace file");
         return false;
     }
 

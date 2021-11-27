@@ -452,13 +452,13 @@ wxString BuildTab::CreateSummaryLine()
         text << "\n";
         if(m_error_count) {
             text = _("==== build ended with ");
-            text << WrapLineInColour("errors", eAsciiColours::RED, true);
+            text << WrapLineInColour(_("errors"), eAsciiColours::RED, true);
         } else if(m_warn_count) {
             text = _("=== build ended with ");
-            text << WrapLineInColour("warnings", eAsciiColours::YELLOW, true);
+            text << WrapLineInColour(_("warnings"), eAsciiColours::YELLOW, true);
         } else {
             text = _("=== build completed ");
-            text << WrapLineInColour("successfully", eAsciiColours::GREEN, true);
+            text << WrapLineInColour(_("successfully"), eAsciiColours::GREEN, true);
         }
         text << " (" << m_error_count << _(" errors, ") << m_warn_count << _(" warnings)");
         if(!total_time.empty()) {

@@ -247,7 +247,7 @@ void CppCheckSettingsDialog::OnRemoveIncludeDir(wxCommandEvent& WXUNUSED(e))
 void CppCheckSettingsDialog::OnAddDefinition(wxCommandEvent& WXUNUSED(e))
 {
     wxString newitem =
-        wxGetTextFromUser("Enter a definition e.g. 'FOO' or 'BAR=1' (not '-DFoo')", "CodeLite", "", this);
+        wxGetTextFromUser(_("Enter a definition e.g. 'FOO' or 'BAR=1' (not '-DFoo')"), "CodeLite", "", this);
     if(!newitem.empty()) {
         m_listBoxDefinelist->Append(newitem);
     }
@@ -270,7 +270,7 @@ void CppCheckSettingsDialog::OnClearDefinitions(wxCommandEvent& e)
 void CppCheckSettingsDialog::OnAddUndefine(wxCommandEvent& WXUNUSED(e))
 {
     wxString newitem =
-        wxGetTextFromUser("Enter a definition NOT to check e.g. 'FOO' or 'BAR=1' (not '-UFoo')", "CodeLite", "", this);
+        wxGetTextFromUser(_("Enter a definition NOT to check e.g. 'FOO' or 'BAR=1' (not '-UFoo')"), "CodeLite", "", this);
     if(!newitem.empty()) {
         m_listBoxUndefineList->Append(newitem);
     }

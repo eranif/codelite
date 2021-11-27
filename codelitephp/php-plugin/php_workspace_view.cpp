@@ -1566,14 +1566,14 @@ void PHPWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& e)
 void PHPWorkspaceView::OnWorkspaceSyncStart(clCommandEvent& event)
 {
     m_scanInProgress = true;
-    CallAfter(&PHPWorkspaceView::DoSetStatusBarText, "Scanning for PHP files...", wxNOT_FOUND);
+    CallAfter(&PHPWorkspaceView::DoSetStatusBarText, _("Scanning for PHP files..."), wxNOT_FOUND);
     m_treeCtrlView->Enable(false);
 }
 
 void PHPWorkspaceView::OnWorkspaceSyncEnd(clCommandEvent& event)
 {
     m_scanInProgress = false;
-    CallAfter(&PHPWorkspaceView::DoSetStatusBarText, "Scanning for PHP files completed", 3);
+    CallAfter(&PHPWorkspaceView::DoSetStatusBarText, _("Scanning for PHP files completed"), 3);
     PHPWorkspace::Get()->ParseWorkspace(false);
     CallAfter(&PHPWorkspaceView::LoadWorkspaceView);
     m_treeCtrlView->Enable(true);

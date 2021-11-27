@@ -1030,7 +1030,7 @@ void Manager::RetagWorkspace(TagsManager::RetagType type)
         parsingRequest->SetParent(this);
         parsingRequest->SetQuickRetag(type == TagsManager::Retag_Quick);
         ParseThreadST::Get()->Add(parsingRequest);
-        clMainFrame::Get()->GetStatusBar()->SetMessage("Scanning for include files to parse...");
+        clMainFrame::Get()->GetStatusBar()->SetMessage(_("Scanning for include files to parse..."));
 
     } else if(type == TagsManager::Retag_Quick_No_Scan) {
         parsingRequest->SetType(ParseRequest::PR_PARSE_FILE_NO_INCLUDES);

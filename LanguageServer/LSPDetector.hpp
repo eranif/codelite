@@ -16,6 +16,7 @@ protected:
     wxString m_connectionString;
     int m_priority = 50;
     clEnvList_t m_env;
+    bool m_enabled = true;
 
 public:
     typedef wxSharedPtr<LSPDetector> Ptr_t;
@@ -43,6 +44,8 @@ public:
     virtual void GetLanguageServerEntry(LanguageServerEntry& entry);
     void SetEnv(const clEnvList_t& env) { this->m_env = env; }
     const clEnvList_t& GetEnv() const { return m_env; }
+    void SetEnabled(bool enabled) { this->m_enabled = enabled; }
+    bool IsEnabled() const { return m_enabled; }
 };
 
 #endif // LSPDETECTOR_HPP

@@ -159,7 +159,7 @@ void OutlineTab::OnSearchSymbol(wxCommandEvent& event)
     }
     event.Skip(false);
 
-    wxString text = ::wxGetTextFromUser("Find Symbol:", "Outline");
+    wxString text = ::wxGetTextFromUser(_("Find Symbol:"), _("Outline"));
     if(text.empty()) {
         return;
     }

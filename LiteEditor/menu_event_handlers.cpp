@@ -91,7 +91,7 @@ void EditHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
 
     } else if(event.GetId() == XRCID("label_current_state")) {
         wxString label =
-            wxGetTextFromUser("What would you like to call the current state?", "Label current state", "", editor);
+            wxGetTextFromUser(_("What would you like to call the current state?"), _("Label current state"), "", editor);
         if(!label.empty()) { editor->GetCommandsProcessor().SetUserLabel(label); }
 
     } else if(event.GetId() == XRCID("delete_line_end")) {

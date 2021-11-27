@@ -1946,7 +1946,7 @@ bool VimCommand::search_word(SEARCH_DIRECTION direction, int flag, long start_po
     } else {
         pos = start_pos;
     }
-    m_mgr->GetStatusBar()->SetMessage("Searching:" + m_searchWord);
+    m_mgr->GetStatusBar()->SetMessage(_("Searching: ") + m_searchWord);
     bool found = false;
     int pos_prev;
     if(direction == SEARCH_DIRECTION::BACKWARD) {

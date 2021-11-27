@@ -135,7 +135,7 @@ void PHPRefactoring::OnExtractMethod(wxCommandEvent& e)
 
     int startLine = editor->LineFromPos(editor->GetSelectionStart()) + 1;
     int endLine = editor->LineFromPos(editor->GetSelectionEnd()) + 1;
-    wxString method = wxGetTextFromUser("Name the new method");
+    wxString method = wxGetTextFromUser(_("Name the new method"));
     if(method.IsEmpty()) {
         return;
     }
@@ -173,7 +173,7 @@ void PHPRefactoring::RenameVariable(const wxString& action)
         return;
     }
 
-    wxString newName = wxGetTextFromUser("New name for " + oldName);
+    wxString newName = wxGetTextFromUser(_("New name for ") + oldName);
     newName.Trim().Trim(false);
 
     // If it starts with $ sign, remove it

@@ -63,7 +63,7 @@ void MacrosDlg::Initialize()
 
     // Only show third column if we can expand the macros
     if(m_project && m_editor) {
-        m_listCtrlMacros->InsertColumn(2, wxT("Value"));
+        m_listCtrlMacros->InsertColumn(2, _("Value"));
     }
 
     switch(m_content) {

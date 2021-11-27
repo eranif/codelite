@@ -783,7 +783,7 @@ void ReconcileProjectFiletypesDlg::OnIgnoreRemoveUpdateUI(wxUpdateUIEvent& event
 
 void ReconcileProjectFiletypesDlg::OnIgnoreFileBrowse(wxCommandEvent& WXUNUSED(event))
 {
-    wxString name = wxGetTextFromUser("Enter the filename to ignore e.g. foo*.cpp", _("CodeLite"), "", this);
+    wxString name = wxGetTextFromUser(_("Enter the filename to ignore e.g. foo*.cpp"), _("CodeLite"), "", this);
     if(!name.empty()) {
         if(m_listIgnoreFiles->FindString(name) == wxNOT_FOUND) {
             m_listIgnoreFiles->Append(name);

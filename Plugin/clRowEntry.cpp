@@ -166,7 +166,7 @@ void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
     child->SetIndentsCount(GetIndentsCount() + 1);
 
     // We need the last item of this subtree (prev 'this' is the root)
-    if(prev == nullptr) {
+    if(prev == nullptr || prev == this) {
         // make it the first item
         m_children.insert(m_children.begin(), child);
     } else {

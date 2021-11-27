@@ -1196,26 +1196,14 @@ void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapp
         wxTreeItemId insertionItem = beforeItem;
         if(insertBefore) {
             insertionItem = m_treeControls->GetPrevSibling(beforeItem);
-
-            if(insertionItem.IsOk() == false) {
-                item =
-                    m_treeControls->AppendItem(parent, wrapper->GetName(), imgId, imgId, new GUICraftItemData(wrapper));
-                if(itemToSelect.IsOk() == false)
-                    itemToSelect = item;
-
-            } else {
-                item = m_treeControls->InsertItem(parent, insertionItem, wrapper->GetName(), imgId, imgId,
-                                                  new GUICraftItemData(wrapper));
-                if(itemToSelect.IsOk() == false)
-                    itemToSelect = item;
-            }
-
-        } else {
-            item = m_treeControls->InsertItem(parent, insertionItem, wrapper->GetName(), imgId, imgId,
-                                              new GUICraftItemData(wrapper));
-            if(itemToSelect.IsOk() == false)
-                itemToSelect = item;
+            if(insertionItem.IsOk() == false)
+                insertionItem = parent;
         }
+
+        item = m_treeControls->InsertItem(parent, insertionItem, wrapper->GetName(), imgId, imgId,
+                                          new GUICraftItemData(wrapper));
+        if(itemToSelect.IsOk() == false)
+            itemToSelect = item;
 
     } else {
 

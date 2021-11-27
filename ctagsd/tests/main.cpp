@@ -203,6 +203,7 @@ wxTerminalColourHandler::wxTerminalColourHandler()
         }
         CHECK_SIZE(tokens.size(), 15);
     }
+#if 0
     {
         SimpleTokenizer::Token token;
         wxString file_content;
@@ -219,6 +220,7 @@ wxTerminalColourHandler::wxTerminalColourHandler()
         vector<int> encoding;
         LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
     }
+#endif
     return true;
 }
 

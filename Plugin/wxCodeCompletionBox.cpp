@@ -1,5 +1,7 @@
+#include "wxCodeCompletionBox.h"
 #include "ColoursAndFontsManager.h"
 #include "CxxTemplateFunction.h"
+#include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "cc_box_tip_window.h"
 #include "cl_command_event.h"
@@ -11,7 +13,6 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
-#include "wxCodeCompletionBox.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
@@ -641,10 +642,15 @@ wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& c
 
         wxString comment;
         if(!completion->GetDetail().IsEmpty()) {
-            comment << completion->GetDetail();
+            wxString detail = completion->GetDetail();
+            StringUtils::DisableMarkdownStyling(detail);
+            comment << detail;
         }
-        if(!completion->GetDocumentation().IsEmpty()) {
-            comment << "\n" << completion->GetDocumentation();
+        if(!completion->GetDocumentation().GetValue().IsEmpty()) {
+            if(!comment.IsEmpty()) {
+                comment << "\n---\n";
+            }
+            comment << completion->GetDocumentation().GetValue();
         }
 
         // if 'insertText' is provided, use it instead of the label

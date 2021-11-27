@@ -18,10 +18,11 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json)
     if(doc.isOk()) {
         if(doc.isString()) {
             // plain string, nothing more to be done here
-            m_documentation = doc.toString();
+            m_documentation.SetKind("plaintext");
+            m_documentation.SetValue(doc.toString());
         } else {
             // an object of type MarkupContent
-            m_documentation = doc["value"].toString();
+            m_documentation.FromJSON(doc);
         }
     }
 
@@ -42,7 +43,7 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json)
     m_insertText.Trim().Trim(false);
     m_label.Trim().Trim(false);
     m_detail.Trim().Trim(false);
-    m_documentation.Trim().Trim(false);
+    m_documentation.SetValue(wxString(m_documentation.GetValue()).Trim().Trim(false));
     if(json.hasNamedObject("textEdit") && !json.namedObject("textEdit").isNull()) {
         m_textEdit.reset(new LSP::TextEdit());
         m_textEdit->FromJSON(json.namedObject("textEdit"));

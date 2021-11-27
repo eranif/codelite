@@ -17,7 +17,9 @@ LSPDetectorManager::LSPDetectorManager()
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPRlsDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPRustAnalyzerDetector()));
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPTypeScriptDetector()));
+#if 0 // disable this detector until done
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPCTagsdDetector()));
+#endif
 }
 
 LSPDetectorManager::~LSPDetectorManager() {}

@@ -89,6 +89,9 @@ bool wxcApp::OnInit()
 #ifdef __WXGTK__
     // Redirect stdout/error to a file
     wxFileName stdout_err(wxStandardPaths::Get().GetUserDataDir(), "wxcrafter-stdout-stderr.log");
+#ifndef NDEBUG
+    stdout_err.SetPath(stdout_err.GetPath() + "-dbg");
+#endif
     FILE* new_stdout = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stdout);
     FILE* new_stderr = ::freopen(stdout_err.GetFullPath().mb_str(wxConvISO8859_1).data(), "a+b", stderr);
     wxUnusedVar(new_stderr);

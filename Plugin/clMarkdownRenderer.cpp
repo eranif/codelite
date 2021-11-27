@@ -92,7 +92,7 @@ wxSize clMarkdownRenderer::DoRender(wxWindow* win, wxDC& dc, const wxString& tex
 
             yy += text_size.GetHeight() / 2;
             if(do_draw) {
-                dc.DrawLine(xx, yy, rect.GetRight(), yy);
+                dc.DrawLine(xx, yy, rect.GetRight() - X_MARGIN, yy);
             }
             xx = X_MARGIN;
             yy += text_size.GetHeight() / 2;

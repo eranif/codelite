@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>
+#include <wx/regex.h>
 
 namespace
 {
@@ -215,6 +216,7 @@ void NewProjectDialog::OnOK(wxCommandEvent& event)
 void NewProjectDialog::OnCompilerChanged(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+#ifdef __WXMSW__
     wxString newCompiler = m_choiceCompiler->GetStringSelection();
 
     auto compiler = BuildSettingsConfigST::Get()->GetCompiler(newCompiler);
@@ -222,7 +224,8 @@ void NewProjectDialog::OnCompilerChanged(wxCommandEvent& event)
 
     // Check if the selected compiler is "MSYS", however, its not from the mingwNN repository
     wxString cxx = compiler->GetTool("CXX");
-    bool isUnixGeneratorRequired = newCompiler.Contains("MSYS") && !cxx.Contains("mingw64") && !cxx.Contains("mingw32");
+    static const wxRegEx re("(clang(arm)?|mingw|ucrt)(32|64)", wxRE_DEFAULT | wxRE_NOSUB);
+    bool isUnixGeneratorRequired = newCompiler.Contains("MSYS") && !re.Matches(cxx);
 
     if(isUnixGeneratorRequired && m_choiceBuild->GetStringSelection() != GENRATOR_UNIX) {
         if(::wxMessageBox(
@@ -235,4 +238,5 @@ void NewProjectDialog::OnCompilerChanged(wxCommandEvent& event)
             m_choiceBuild->SetSelection(unixMakefiles);
         }
     }
+#endif
 }

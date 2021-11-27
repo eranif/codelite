@@ -922,6 +922,9 @@ wxString wxCrafter::ToolTypeToWX(TOOL_TYPE type)
 wxString wxCrafter::GetUserDataDir()
 {
     wxFileName dir(wxStandardPaths::Get().GetUserDataDir(), wxT("dummy.txt"));
+#ifndef NDEBUG
+    dir.SetPath(dir.GetPath() + "-dbg");
+#endif
     dir.AppendDir(wxT("wxcrafter"));
 
     if(!wxFileName::DirExists(dir.GetPath())) {
@@ -942,6 +945,9 @@ void wxCrafter::SetStatusMessage(const wxString& msg)
 wxString wxCrafter::GetConfigFile()
 {
     wxFileName dir(wxStandardPaths::Get().GetUserDataDir(), wxT("wxcrafter.conf"));
+#ifndef NDEBUG
+    dir.SetPath(dir.GetPath() + "-dbg");
+#endif
     dir.AppendDir(wxT("config"));
 
     if(!wxFileName::DirExists(dir.GetPath())) {

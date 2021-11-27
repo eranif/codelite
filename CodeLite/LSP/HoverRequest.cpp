@@ -1,10 +1,7 @@
-#include "LSP/LSPEvent.h"
 #include "HoverRequest.hpp"
+#include "LSP/LSPEvent.h"
 
 LSP::HoverRequest::HoverRequest(const wxString& filename, size_t line, size_t column)
-    : m_filename(filename)
-    , m_line(line)
-    , m_column(column)
 {
     SetMethod("textDocument/hover");
     m_params.reset(new TextDocumentPositionParams());

@@ -204,7 +204,7 @@ wxTreeItemId clTreeCtrlModel::InsertItem(const wxTreeItemId& parent, const wxTre
 
     clRowEntry* pPrev = ToPtr(previous);
     clRowEntry* parentNode = ToPtr(parent);
-    if(pPrev->GetParent() != parentNode) {
+    if(pPrev != parentNode && pPrev->GetParent() != parentNode) {
         return wxTreeItemId();
     }
 

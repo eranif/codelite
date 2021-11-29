@@ -783,7 +783,7 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
             range.SetStart({ tag->GetLine() - 1, 0 });
             range.SetEnd({ tag->GetLine() - 1, 0 });
             match.append(range.ToJSON("range"));
-            match.addProperty("uri", wxFileName::FileNameToURL(tag->GetFile()));
+            match.addProperty("uri", wxFileSystem::FileNameToURL(tag->GetFile()));
         }
     }
     channel.write_reply(response);

@@ -100,10 +100,10 @@
       </Compiler>
       <Linker Options="$(shell wx-config --libs std)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
+        <Library Value="libctagsdlib.a"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libwxsqlite3u"/>
-        <Library Value="ctagsdlib"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--port 45636" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -116,7 +116,9 @@
         <PostConnectCommands/>
         <StartupCommands/>
       </Debugger>
-      <PreBuild/>
+      <PreBuild>
+        <Command Enabled="yes">if exist "$(WorkspacePath)\build-$(WorkspaceConfiguration)\bin\$(OutputFile)" del "$(WorkspacePath)\build-$(WorkspaceConfiguration)\bin\$(OutputFile)"</Command>
+      </PreBuild>
       <PostBuild>
         <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime</Command>
       </PostBuild>

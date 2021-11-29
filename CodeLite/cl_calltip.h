@@ -25,14 +25,14 @@
 #ifndef CODELITE_CALLTIP_H
 #define CODELITE_CALLTIP_H
 
-#include "tokenizer.h"
-#include "smart_ptr.h"
-#include "entry.h"
 #include "codelite_exports.h"
+#include "entry.h"
+#include "smart_ptr.h"
+#include "tokenizer.h"
 
 struct clTipInfo {
     wxString str;
-    std::vector<std::pair<int, int> > paramLen;
+    std::vector<std::pair<int, int>> paramLen;
 };
 
 /**
@@ -49,20 +49,19 @@ class WXDLLIMPEXP_CL clCallTip
 {
     std::vector<clTipInfo> m_tips;
     int m_curr;
-    void Initialize(const std::vector<TagEntryPtr> &tags);
+    void Initialize(const std::vector<TagEntryPtr>& tags);
 
 public:
-    
     /**
      * @brief format list of tags into calltips
      */
-    static void FormatTagsToTips( const TagEntryPtrVector_t &tags,  std::vector<clTipInfo>& tips);
-    
+    static void FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<clTipInfo>& tips);
+
     /**
      * Constructor
      * \param tips input tips
      */
-    clCallTip(const std::vector<TagEntryPtr> & tips );
+    clCallTip(const std::vector<TagEntryPtr>& tips);
 
     /**
      * default constructor
@@ -91,13 +90,13 @@ public:
      * Show next tip, if we are at last tip, return the first tip or empty string if no tips exists
      * \return next tip
      */
-    wxString Next() ;
+    wxString Next();
 
     /**
      * Show previous tip, if we are at first tip, return the last tip or empty string if no tips exists
      * \return previous tip
      */
-    wxString Prev() ;
+    wxString Prev();
 
     /**
      * return the first tip
@@ -109,13 +108,13 @@ public:
      * @return return the current tip
      */
     wxString Current();
-    
+
     /**
      * @brief select the first tip that has at least argcount
      * @return true if we managed to find this tip, false otherwise
      */
     bool SelectTipToMatchArgCount(size_t argcount);
-    
+
     /**
      * Return number of tips stored in this object
      * \return number of tips
@@ -133,18 +132,15 @@ public:
      * @param start [output]
      * @param len [output]
      */
-    void GetHighlightPos(int index, int &start, int &len);
+    void GetHighlightPos(int index, int& start, int& len);
 
-    int GetCurr() const {
-        return m_curr;
-    }
-    
+    int GetCurr() const { return m_curr; }
+
     /**
      * @brief set the tip to a specific tag
      */
-    void SelectSiganture( const wxString &signature );
-    
-private:
+    void SelectSiganture(const wxString& signature);
+
     wxString TipAt(int at);
 };
 

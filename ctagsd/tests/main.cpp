@@ -19,6 +19,21 @@
 using namespace std;
 namespace
 {
+ostream& operator<<(ostream& stream, const vector<wxString>& arrstr)
+{
+    wxString s;
+    s << "[";
+    for(const auto& str : arrstr) {
+        s << str << ",";
+    }
+    if(!s.empty()) {
+        s.RemoveLast();
+    }
+    s << "]";
+    stream << s;
+    return stream;
+}
+
 const wxString sample_cxx_file = R"(
 class MyClass {
     std::string m_name;
@@ -107,7 +122,7 @@ TEST_FUNC(TestCompletionHelper_get_expression)
     for(const auto& vt : M) {
         const wxString& raw_string = vt.first;
         const wxString& expected = vt.second;
-        CHECK_STRING(helper.get_expression(raw_string), expected);
+        CHECK_STRING(helper.get_expression(raw_string, false), expected);
     }
     return true;
 }
@@ -221,6 +236,60 @@ wxTerminalColourHandler::wxTerminalColourHandler()
         LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
     }
 #endif
+    return true;
+}
+
+TEST_FUNC(TestSplitArgs)
+{
+    const wxString signature_1 = "(const LSP::ResponseMessage& response, wxEvtHandler* owner)";
+    const wxString signature_2 = "(int argc, char** argv) -> int";
+    const wxString signature_3 = "void : (const wxString& name, std::function<void(const JSONItem& item)> "
+                                 "deserialiser_func, const wxFileName& configFile = {})";
+    const wxString signature_4 = "(const wxString& name, std::function<void(const JSONItem& item)> "
+                                 "deserialiser_func, const wxFileName& configFile = {}, std::string value = "
+                                 "\"default_string\") -> std::vector<int>::iterator*";
+    const wxString signature_5 = "(unique_ptr<JSON>&& msg, Channel& channel) -> wxString::size_type";
+    CompletionHelper helper;
+    wxString return_value;
+
+    {
+        return_value.clear();
+        auto args = helper.split_function_signature(signature_1, &return_value);
+        CHECK_SIZE(args.size(), 2);
+        CHECK_BOOL(return_value.empty());
+        cout << args << endl;
+    }
+
+    {
+        return_value.clear();
+        auto args = helper.split_function_signature(signature_2, &return_value);
+        CHECK_SIZE(args.size(), 2);
+        CHECK_STRING(return_value, "int");
+        cout << args << endl;
+    }
+    {
+        return_value.clear();
+        auto args = helper.split_function_signature(signature_3, &return_value);
+        CHECK_SIZE(args.size(), 3);
+        CHECK_BOOL(return_value.empty());
+        cout << args << endl;
+    }
+    {
+        return_value.clear();
+        auto args = helper.split_function_signature(signature_4, &return_value);
+        CHECK_SIZE(args.size(), 4);
+        CHECK_STRING(return_value, "std::vector<int>::iterator*");
+        cout << args << endl;
+    }
+
+    {
+        return_value.clear();
+        auto args = helper.split_function_signature(signature_5, &return_value);
+        CHECK_SIZE(args.size(), 2);
+        CHECK_STRING(return_value, "wxString::size_type");
+        cout << args << endl;
+    }
+
     return true;
 }
 

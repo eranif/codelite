@@ -13,7 +13,7 @@ CompletionHelper::CompletionHelper() {}
 
 CompletionHelper::~CompletionHelper() {}
 
-wxString CompletionHelper::get_expression(const wxString& file_content, wxString* last_word)
+wxString CompletionHelper::get_expression(const wxString& file_content, bool for_calltip, wxString* last_word) const
 {
     // tokenize the text
     CxxTokenizer tokenizer;
@@ -27,11 +27,26 @@ wxString CompletionHelper::get_expression(const wxString& file_content, wxString
         tokens.push_back({ token.GetWXString(), token.GetType() });
     }
 
-    vector<wxString> expression;
-    int depth = 0;
+    int i = static_cast<int>(tokens.size() - 1);
     bool cont = true;
+    if(for_calltip) {
+        // read backwards until we find the first open parentheses
+        for(; (i >= 0) && cont; --i) {
+            switch(tokens[i].second) {
+            case '(':
+                cont = false;
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    vector<wxString> expression;
     std::vector<int> types;
-    for(int i = static_cast<int>(tokens.size() - 1); (i >= 0) && cont; --i) {
+    int depth = 0;
+    cont = true;
+    for(; (i >= 0) && cont; --i) {
         const wxString& text = tokens[i].first;
         int type = tokens[i].second;
         switch(type) {
@@ -249,7 +264,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, wxString
     return expression_string;
 }
 
-wxString CompletionHelper::truncate_file_to_location(const wxString& file_content, size_t line, size_t column)
+wxString CompletionHelper::truncate_file_to_location(const wxString& file_content, size_t line, size_t column) const
 {
     size_t curline = 0;
     size_t offset = 0;
@@ -355,4 +370,242 @@ bool CompletionHelper::is_cxx_keyword(const wxString& word)
         words.insert("override");
     }
     return words.count(word) != 0;
+}
+
+#define ADD_CURRENT_PARAM(current_param) \
+    if(!current_param->empty()) {        \
+        args.push_back(*current_param);  \
+    }                                    \
+    current_param->clear();
+
+#define LAST_TOKEN_IS(token_type) (!types.empty() && (types[types.size() - 1] == token_type))
+#define LAST_TOKEN_IS_ONE_OF_2(t1, t2) (LAST_TOKEN_IS(t1) || LAST_TOKEN_IS(t2))
+#define LAST_TOKEN_IS_ONE_OF_3(t1, t2, t3) (LAST_TOKEN_IS_ONE_OF_2(t1, t2) || LAST_TOKEN_IS(t3))
+#define LAST_TOKEN_IS_ONE_OF_4(t1, t2, t3, t4) (LAST_TOKEN_IS_ONE_OF_3(t1, t2, t3) || LAST_TOKEN_IS(t4))
+#define LAST_TOKEN_IS_ONE_OF_5(t1, t2, t3, t4, t5) (LAST_TOKEN_IS_ONE_OF_4(t1, t2, t3, t4) || LAST_TOKEN_IS(t5))
+#define LAST_TOKEN_IS_CLOSING_PARENTHESES() LAST_TOKEN_IS_ONE_OF_4('}', ']', '>', ')')
+#define LAST_TOKEN_IS_OPEN_PARENTHESES() LAST_TOKEN_IS_ONE_OF_4('{', '[', '<', '(')
+
+#define REMOVE_TRAILING_SPACE()                                                         \
+    if(!current_param->empty() && (*current_param)[current_param->size() - 1] == ' ') { \
+        current_param->RemoveLast();                                                    \
+    }
+
+vector<wxString> CompletionHelper::split_function_signature(const wxString& signature, wxString* return_value) const
+{
+    CxxTokenizer tokenizer;
+    tokenizer.Reset(signature);
+
+    CxxLexerToken token;
+
+    wxString cur_func_param;
+    wxString* current_param = &cur_func_param;
+    vector<wxString> args;
+    vector<wxString> func_args;
+    int depth = 0;
+
+    vector<int> types;
+    // search for the first opening brace
+    while(tokenizer.NextToken(token)) {
+        if(token.GetType() == '(') {
+            depth = 1;
+            break;
+        }
+    }
+
+    bool done_collecting_args = false;
+    while(tokenizer.NextToken(token)) {
+        switch(token.GetType()) {
+        case T_ALIGNAS:
+        case T_ALIGNOF:
+        case T_AND:
+        case T_AND_EQ:
+        case T_ASM:
+        case T_AUTO:
+        case T_BITAND:
+        case T_BITOR:
+        case T_BOOL:
+        case T_BREAK:
+        case T_CATCH:
+        case T_CHAR:
+        case T_CHAR16_T:
+        case T_CHAR32_T:
+        case T_CLASS:
+        case T_COMPL:
+        case T_CONST:
+        case T_CONSTEXPR:
+        case T_CONST_CAST:
+        case T_CONTINUE:
+        case T_DECLTYPE:
+        case T_DEFAULT:
+        case T_DELETE:
+        case T_DO:
+        case T_DOUBLE:
+        case T_DYNAMIC_CAST:
+        case T_ELSE:
+        case T_ENUM:
+        case T_EXPLICIT:
+        case T_EXPORT:
+        case T_EXTERN:
+        case T_FALSE:
+        case T_FINAL:
+        case T_FLOAT:
+        case T_FOR:
+        case T_FRIEND:
+        case T_GOTO:
+        case T_IF:
+        case T_INLINE:
+        case T_INT:
+        case T_LONG:
+        case T_MUTABLE:
+        case T_NAMESPACE:
+        case T_NEW:
+        case T_NOEXCEPT:
+        case T_NOT:
+        case T_NOT_EQ:
+        case T_NULLPTR:
+        case T_OPERATOR:
+        case T_OR:
+        case T_OR_EQ:
+        case T_OVERRIDE:
+        case T_PRIVATE:
+        case T_PROTECTED:
+        case T_PUBLIC:
+        case T_REGISTER:
+        case T_REINTERPRET_CAST:
+        case T_CASE:
+        case T_SHORT:
+        case T_SIGNED:
+        case T_SIZEOF:
+        case T_STATIC:
+        case T_STATIC_ASSERT:
+        case T_STATIC_CAST:
+        case T_STRUCT:
+        case T_SWITCH:
+        case T_TEMPLATE:
+        case T_THREAD_LOCAL:
+        case T_THROW:
+        case T_TRUE:
+        case T_TRY:
+        case T_TYPEDEF:
+        case T_TYPEID:
+        case T_TYPENAME:
+        case T_UNION:
+        case T_UNSIGNED:
+        case T_USING:
+        case T_VIRTUAL:
+        case T_VOID:
+        case T_VOLATILE:
+        case T_WCHAR_T:
+        case T_WHILE:
+        case T_XOR:
+        case T_XOR_EQ:
+        case T_STRING:
+        case T_DOT_STAR:
+        case T_ARROW_STAR:
+        case T_PLUS_PLUS:
+        case T_MINUS_MINUS:
+        case T_LS:
+        case T_LE:
+        case T_GE:
+        case T_EQUAL:
+        case T_NOT_EQUAL:
+        case T_AND_AND:
+        case T_OR_OR:
+        case T_STAR_EQUAL:
+        case T_SLASH_EQUAL:
+        case T_DIV_EQUAL:
+        case T_PLUS_EQUAL:
+        case T_MINUS_EQUAL:
+        case T_LS_ASSIGN:
+        case T_RS_ASSIGN:
+        case T_AND_EQUAL:
+        case T_POW_EQUAL:
+        case T_OR_EQUAL:
+        case T_3_DOTS:
+        case '&':
+        case ':':
+            current_param->Append(token.GetWXString()).Append(" ");
+            break;
+        case '*':
+            if(LAST_TOKEN_IS('*')) {
+                REMOVE_TRAILING_SPACE();
+            }
+            current_param->Append(token.GetWXString()).Append(" ");
+            break;
+        case T_IDENTIFIER:
+            if(LAST_TOKEN_IS_CLOSING_PARENTHESES() || LAST_TOKEN_IS(T_IDENTIFIER)) {
+                current_param->Append(" ");
+            } else if(LAST_TOKEN_IS('*')) {
+                REMOVE_TRAILING_SPACE();
+            }
+            current_param->Append(token.GetWXString());
+            break;
+        case T_ARROW:
+            if(done_collecting_args) {
+                // we are collecting function return value now, disregard it
+            } else {
+                current_param->Append(token.GetWXString());
+            }
+            break;
+        case ',':
+            if(depth == 1) {
+                ADD_CURRENT_PARAM(current_param);
+            } else {
+                current_param->Append(", ");
+            }
+            break;
+        case ']':
+        case '>':
+        case '}':
+            depth--;
+            REMOVE_TRAILING_SPACE();
+            current_param->Append(token.GetWXString());
+            break;
+        case ')':
+            depth--;
+            if(!done_collecting_args && depth == 0) {
+                // reached signature end
+                ADD_CURRENT_PARAM(current_param);
+                func_args.swap(args);
+                done_collecting_args = true;
+            } else {
+                if(LAST_TOKEN_IS_CLOSING_PARENTHESES() || LAST_TOKEN_IS(T_IDENTIFIER)) {
+                    REMOVE_TRAILING_SPACE();
+                }
+                current_param->Append(token.GetWXString());
+            }
+            break;
+        case '[':
+        case '<':
+        case '(':
+        case '{':
+            depth++;
+            REMOVE_TRAILING_SPACE();
+            current_param->Append(token.GetWXString());
+            break;
+        case '=':
+            if(!current_param->empty() && current_param->Last() != ' ') {
+                current_param->Append(" ");
+            }
+            current_param->Append("= ");
+            break;
+        default:
+            current_param->Append(token.GetWXString());
+            break;
+        }
+        types.push_back(token.GetType());
+    }
+
+    if(!done_collecting_args) {
+        // we did not complete
+        func_args.swap(args);
+    } else {
+        // check if we have a return value
+        ADD_CURRENT_PARAM(current_param);
+        if(!args.empty()) {
+            *return_value = args[0].Trim().Trim(false);
+        }
+    }
+    return func_args;
 }

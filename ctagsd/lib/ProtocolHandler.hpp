@@ -26,6 +26,7 @@ private:
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
     void parse_files(wxArrayString& files, Channel* channel, bool initial_parse);
+    bool ensure_file_content_exists(const wxString& filepath, Channel& channel);
 
 public:
     ProtocolHandler();
@@ -41,7 +42,7 @@ public:
     void on_did_save(unique_ptr<JSON>&& msg, Channel& channel);
     void on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channel);
     void on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel);
-
+    void on_document_signature_help(unique_ptr<JSON>&& msg, Channel& channel);
     /**
      * @brief send a "window/logMessage" message to the client
      */

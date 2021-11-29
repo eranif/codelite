@@ -22,10 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "cl_calltip.h"
+#include "ctags_manager.h"
 #include "precompiled_header.h"
 #include <map>
-#include "ctags_manager.h"
-#include "cl_calltip.h"
 
 #ifdef __VISUALC__
 #ifdef _DEBUG
@@ -36,7 +36,7 @@
 struct tagCallTipInfo {
     wxString sig;
     wxString retValue;
-    std::vector<std::pair<int, int> > paramLen;
+    std::vector<std::pair<int, int>> paramLen;
 };
 
 clCallTip::clCallTip()
@@ -54,16 +54,19 @@ clCallTip::clCallTip(const clCallTip& rhs) { *this = rhs; }
 
 clCallTip& clCallTip::operator=(const clCallTip& rhs)
 {
-    if(this == &rhs) return *this;
+    if(this == &rhs)
+        return *this;
     m_tips = rhs.m_tips;
     m_curr = rhs.m_curr;
     return *this;
 }
 
+thread_local wxString empty_tip;
 wxString clCallTip::First()
 {
     m_curr = 0;
-    if(m_tips.empty()) return wxEmptyString;
+    if(m_tips.empty())
+        return wxEmptyString;
     return TipAt(0);
 }
 
@@ -81,7 +84,8 @@ wxString clCallTip::TipAt(int at)
 wxString clCallTip::Next()
 {
     // format a tip string and return it
-    if(m_tips.empty()) return wxEmptyString;
+    if(m_tips.empty())
+        return wxEmptyString;
 
     m_curr++;
     if(m_curr >= (int)m_tips.size()) {
@@ -94,7 +98,8 @@ wxString clCallTip::Next()
 wxString clCallTip::Prev()
 {
     // format a tip string and return it
-    if(m_tips.empty()) return wxEmptyString;
+    if(m_tips.empty())
+        return wxEmptyString;
 
     m_curr--;
     if(m_curr < 0) {
@@ -136,7 +141,8 @@ void clCallTip::GetHighlightPos(int index, int& start, int& len)
 wxString clCallTip::Current()
 {
     // format a tip string and return it
-    if(m_tips.empty()) return wxEmptyString;
+    if(m_tips.empty())
+        return wxEmptyString;
 
     if(m_curr >= (int)m_tips.size() || m_curr < 0) {
         m_curr = 0;
@@ -219,8 +225,7 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
                 // of the
                 // function signature
                 wxString full_signature = TagsManagerST::Get()->NormalizeFunctionSig(
-                    raw_sig,
-                    Normalize_Func_Name | Normalize_Func_Default_value | Normalize_Func_Reverse_Macro,
+                    raw_sig, Normalize_Func_Name | Normalize_Func_Default_value | Normalize_Func_Reverse_Macro,
                     &cti.paramLen);
                 cti.sig = full_signature;
 
@@ -262,10 +267,11 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
     tips.clear();
     for(; iter != mymap.end(); iter++) {
         wxString tip;
-        if(iter->second.retValue.empty() == false) {
-            tip << iter->second.retValue.Trim(false).Trim() << wxT(" : ");
-        }
         tip << iter->second.sig;
+        if(iter->second.retValue.empty() == false) {
+            tip << " -> " << iter->second.retValue.Trim(false).Trim();
+        }
+
         clTipInfo ti;
         ti.paramLen = iter->second.paramLen;
         ti.str = tip;
@@ -275,7 +281,7 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
 
 bool clCallTip::SelectTipToMatchArgCount(size_t argcount)
 {
-    for(size_t i=0; i<m_tips.size(); ++i) {
+    for(size_t i = 0; i < m_tips.size(); ++i) {
         if(m_tips.at(i).paramLen.size() > argcount) {
             m_curr = i;
             return true;

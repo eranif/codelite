@@ -10,6 +10,7 @@
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
+#include "cl_calltip.h"
 #include "crawler_include.h"
 #include "ctags_manager.h"
 #include "fc_fileopener.h"
@@ -33,6 +34,18 @@ FileLogger& operator<<(FileLogger& logger, const TokenWrapper& wrapper)
     logger.Append(s, logger.GetRequestedLogLevel());
     return logger;
 }
+
+// FileLogger& operator<<(FileLogger& logger, clCallTipPtr ct)
+// {
+//     wxString s;
+//     if(!ct) {
+//         s << "{clCallTipPtr: nullptr}";
+//     } else {
+//         s << ct->All();
+//     }
+//     logger.Append(s, logger.GetRequestedLogLevel());
+//     return logger;
+// }
 
 FileLogger& operator<<(FileLogger& logger, const vector<TokenWrapper>& arr)
 {
@@ -321,6 +334,26 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     clDEBUG() << "Success" << endl;
 }
 
+bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel& channel)
+{
+    if(m_filesOpened.count(filepath) == 0) {
+        // check if this file exists on the file system -> and load it instead of complaining about it
+        wxString file_content;
+        if(!wxFileExists(filepath) || !FileUtils::ReadFileContent(filepath, file_content)) {
+            clWARNING() << "File:" << filepath << "is not opened" << endl;
+            send_log_message(wxString() << _("`textDocument/completion` error. File: ") << filepath
+                                        << _(" is not opened on the server"),
+                             LSP_LOG_WARNING, channel);
+            return false;
+        }
+
+        // update the cache
+        clDEBUG() << "Updated cache with non existing file:" << filepath << "is not opened" << endl;
+        m_filesOpened.insert({ filepath, file_content });
+    }
+    return true;
+}
+
 //---------------------------------------------------------------------------------
 // protocol handlers
 //---------------------------------------------------------------------------------
@@ -452,21 +485,8 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
-    if(m_filesOpened.count(filepath) == 0) {
-        // check if this file exists on the file system -> and load it instead of complaining about it
-        wxString file_content;
-        if(!wxFileExists(filepath) || !FileUtils::ReadFileContent(filepath, file_content)) {
-            clWARNING() << "File:" << filepath << "is not opened" << endl;
-            send_log_message(wxString() << _("`textDocument/completion` error. File: ") << filepath
-                                        << _(" is not opened on the server"),
-                             LSP_LOG_WARNING, channel);
-            return;
-        }
-
-        // update the cache
-        clDEBUG() << "Updated cache with non existing file:" << filepath << "is not opened" << endl;
-        m_filesOpened.insert({ filepath, file_content });
-    }
+    if(!ensure_file_content_exists(filepath, channel))
+        return;
 
     size_t line = json["params"]["position"]["line"].toSize_t();
     size_t character = json["params"]["position"]["character"].toSize_t();
@@ -475,7 +495,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     wxString last_word;
     CompletionHelper helper;
     wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character);
-    wxString expression = helper.get_expression(text, &last_word);
+    wxString expression = helper.get_expression(text, false, &last_word);
 
     clDEBUG() << "resolving expression:" << expression << endl;
 
@@ -551,11 +571,9 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     }
 }
 
+// Request <-->
 void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channel)
 {
-    wxUnusedVar(msg);
-    wxUnusedVar(channel);
-
     JSONItem json = msg->toElement();
     clDEBUG() << json.format() << endl;
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
@@ -653,8 +671,70 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
     channel.write_reply(response);
 }
 
+// Request <-->
 void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel)
 {
     wxUnusedVar(msg);
     wxUnusedVar(channel);
+}
+
+// Request <-->
+void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    wxUnusedVar(channel);
+
+    auto json = msg->toElement();
+    size_t id = json["id"].toSize_t();
+
+    clDEBUG() << json.format() << endl;
+    wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
+    wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
+    clDEBUG1() << "textDocument/signatureHelp: for file" << filepath << endl;
+
+    if(!ensure_file_content_exists(filepath, channel))
+        return;
+
+    size_t line = json["params"]["position"]["line"].toSize_t();
+    size_t character = json["params"]["position"]["character"].toSize_t();
+
+    wxString last_word;
+    CompletionHelper helper;
+    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character);
+    wxString expression = helper.get_expression(text, true, &last_word);
+
+    clDEBUG() << "resolving expression:" << expression << endl;
+    clCallTipPtr tip = TagsManagerST::Get()->GetFunctionTip(filepath, line + 1, expression, text, last_word);
+    LSP::SignatureHelp sh;
+    if(tip) {
+        CompletionHelper helper;
+        wxString return_value;
+        LSP::SignatureInformation::Vec_t signatures;
+        signatures.reserve(tip->Count());
+        for(int i = 0; i < tip->Count(); ++i) {
+            wxString tip_text = tip->TipAt(i);
+
+            signatures.emplace_back();
+            LSP::SignatureInformation& si = signatures.back();
+            LSP::ParameterInformation::Vec_t parameters;
+
+            auto params = helper.split_function_signature(tip_text, &return_value);
+            parameters.reserve(params.size());
+
+            for(const auto& param : params) {
+                LSP::ParameterInformation pi;
+                pi.SetLabel(param);
+                parameters.push_back(pi);
+            }
+            si.SetParameters(parameters);
+            si.SetLabel(tip_text);
+        }
+        sh.SetSignatures(signatures);
+    }
+    JSON root(cJSON_Object);
+    JSONItem response = root.toElement();
+    auto result = sh.ToJSON("result");
+    response.addProperty("id", id);
+    response.addProperty("jsonrpc", "2.0");
+    response.append(result);
+    channel.write_reply(response);
 }

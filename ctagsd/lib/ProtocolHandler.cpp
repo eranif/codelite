@@ -494,7 +494,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     // get the expression at this given position
     wxString last_word;
     CompletionHelper helper;
-    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character);
+    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character, false);
     wxString expression = helper.get_expression(text, false, &last_word);
 
     clDEBUG() << "resolving expression:" << expression << endl;
@@ -699,7 +699,7 @@ void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel
 
     wxString last_word;
     CompletionHelper helper;
-    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character);
+    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character, false);
     wxString expression = helper.get_expression(text, true, &last_word);
 
     clDEBUG() << "resolving expression:" << expression << endl;
@@ -736,5 +736,55 @@ void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel
     response.addProperty("id", id);
     response.addProperty("jsonrpc", "2.0");
     response.append(result);
+    channel.write_reply(response);
+}
+
+void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    auto json = msg->toElement();
+    size_t id = json["id"].toSize_t();
+
+    clDEBUG() << json.format() << endl;
+    wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
+    wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
+    clDEBUG1() << "textDocument/definition: for file" << filepath << endl;
+
+    if(!ensure_file_content_exists(filepath, channel))
+        return;
+
+    size_t line = json["params"]["position"]["line"].toSize_t();
+    size_t character = json["params"]["position"]["character"].toSize_t();
+
+    CompletionHelper helper;
+    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character, true);
+
+    wxString last_word;
+    wxString expression = helper.get_expression(text, false, &last_word);
+
+    clDEBUG() << "Calling WordCompletionCandidates with expression:" << expression << ", last_word=" << last_word
+              << endl;
+    vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->WordCompletionCandidates(filepath, line + 1, expression, text, last_word, tags);
+    clDEBUG() << "Found" << tags.size() << "matches" << endl;
+
+    // build the result
+    JSON root(cJSON_Object);
+    JSONItem response = root.toElement();
+    response.addProperty("id", id);
+    response.addProperty("jsonrpc", "2.0");
+    auto result = response.AddArray("result");
+
+    // add all the results
+    for(auto tag : tags) {
+        if(tag->GetName() == last_word) {
+            auto match = result.AddObject(wxEmptyString);
+            // we can only provide line number...
+            LSP::Range range;
+            range.SetStart({ tag->GetLine() - 1, 0 });
+            range.SetEnd({ tag->GetLine() - 1, 0 });
+            match.append(range.ToJSON("range"));
+            match.addProperty("uri", wxFileName::FileNameToURL(tag->GetFile()));
+        }
+    }
     channel.write_reply(response);
 }

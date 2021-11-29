@@ -7,6 +7,14 @@ using namespace std;
 namespace
 {
 #define PREPEND_STRING(tokn) expression.insert(expression.begin(), text)
+
+bool is_word_char(wxChar ch)
+{
+    return (ch >= 65 && ch <= 90)     // uppercase A-Z
+           || (ch >= 97 && ch <= 122) // lowercase a-z
+           || (ch >= 48 && ch <= 57)  // 0-9
+           || (ch == '_');
+}
 } // namespace
 
 CompletionHelper::CompletionHelper() {}
@@ -15,6 +23,7 @@ CompletionHelper::~CompletionHelper() {}
 
 wxString CompletionHelper::get_expression(const wxString& file_content, bool for_calltip, wxString* last_word) const
 {
+#define LAST_TOKEN_IS(token_type) (!types.empty() && (types[types.size() - 1] == token_type))
     // tokenize the text
     CxxTokenizer tokenizer;
     tokenizer.Reset(file_content);
@@ -62,6 +71,13 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             }
             break;
         case '>':
+            if(depth == 0 && LAST_TOKEN_IS(T_IDENTIFIER)) {
+                cont = false;
+            } else {
+                PREPEND_STRING(t);
+                depth++;
+            }
+            break;
         case ']':
         case ')':
             PREPEND_STRING(t);
@@ -113,7 +129,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             }
             break;
         case T_IDENTIFIER:
-            if(!types.empty() && types.back() == T_IDENTIFIER) {
+            if(LAST_TOKEN_IS(T_IDENTIFIER)) {
                 // we do not allow two consecutive T_IDENTIFIER
                 cont = false;
                 break;
@@ -262,9 +278,11 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
         *last_word = expression[expression.size() - 1];
     }
     return expression_string;
+#undef LAST_TOKEN_IS
 }
 
-wxString CompletionHelper::truncate_file_to_location(const wxString& file_content, size_t line, size_t column) const
+wxString CompletionHelper::truncate_file_to_location(const wxString& file_content, size_t line, size_t column,
+                                                     bool only_complete_words) const
 {
     size_t curline = 0;
     size_t offset = 0;
@@ -289,8 +307,27 @@ wxString CompletionHelper::truncate_file_to_location(const wxString& file_conten
         return wxEmptyString;
     }
 
-    if(offset + column < file_content.size()) {
-        return file_content.Mid(0, offset + column);
+    // columns
+    offset += column;
+
+    if(offset < file_content.size()) {
+        if(only_complete_words) {
+            while(true) {
+                size_t next_pos = offset;
+
+                if(next_pos < file_content.size()) {
+                    wxChar next_char = file_content[next_pos];
+                    if(is_word_char(next_char)) {
+                        offset += 1;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+        return file_content.Mid(0, offset);
     }
     return wxEmptyString;
 }
@@ -372,12 +409,16 @@ bool CompletionHelper::is_cxx_keyword(const wxString& word)
     return words.count(word) != 0;
 }
 
+vector<wxString> CompletionHelper::split_function_signature(const wxString& signature, wxString* return_value) const
+{
+    // ---------------------------------------------------------------------------------------------
+    // ----------------macros start-------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
 #define ADD_CURRENT_PARAM(current_param) \
     if(!current_param->empty()) {        \
         args.push_back(*current_param);  \
     }                                    \
     current_param->clear();
-
 #define LAST_TOKEN_IS(token_type) (!types.empty() && (types[types.size() - 1] == token_type))
 #define LAST_TOKEN_IS_ONE_OF_2(t1, t2) (LAST_TOKEN_IS(t1) || LAST_TOKEN_IS(t2))
 #define LAST_TOKEN_IS_ONE_OF_3(t1, t2, t3) (LAST_TOKEN_IS_ONE_OF_2(t1, t2) || LAST_TOKEN_IS(t3))
@@ -385,14 +426,14 @@ bool CompletionHelper::is_cxx_keyword(const wxString& word)
 #define LAST_TOKEN_IS_ONE_OF_5(t1, t2, t3, t4, t5) (LAST_TOKEN_IS_ONE_OF_4(t1, t2, t3, t4) || LAST_TOKEN_IS(t5))
 #define LAST_TOKEN_IS_CLOSING_PARENTHESES() LAST_TOKEN_IS_ONE_OF_4('}', ']', '>', ')')
 #define LAST_TOKEN_IS_OPEN_PARENTHESES() LAST_TOKEN_IS_ONE_OF_4('{', '[', '<', '(')
-
 #define REMOVE_TRAILING_SPACE()                                                         \
     if(!current_param->empty() && (*current_param)[current_param->size() - 1] == ' ') { \
         current_param->RemoveLast();                                                    \
     }
 
-vector<wxString> CompletionHelper::split_function_signature(const wxString& signature, wxString* return_value) const
-{
+    // ---------------------------------------------------------------------------------------------
+    // ----------------macros end-------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
     CxxTokenizer tokenizer;
     tokenizer.Reset(signature);
 
@@ -555,8 +596,8 @@ vector<wxString> CompletionHelper::split_function_signature(const wxString& sign
                 current_param->Append(", ");
             }
             break;
-        case ']':
         case '>':
+        case ']':
         case '}':
             depth--;
             REMOVE_TRAILING_SPACE();
@@ -608,4 +649,13 @@ vector<wxString> CompletionHelper::split_function_signature(const wxString& sign
         }
     }
     return func_args;
+#undef ADD_CURRENT_PARAM
+#undef LAST_TOKEN_IS
+#undef LAST_TOKEN_IS_ONE_OF_2
+#undef LAST_TOKEN_IS_ONE_OF_3
+#undef LAST_TOKEN_IS_ONE_OF_4
+#undef LAST_TOKEN_IS_ONE_OF_5
+#undef LAST_TOKEN_IS_CLOSING_PARENTHESES
+#undef LAST_TOKEN_IS_OPEN_PARENTHESES
+#undef REMOVE_TRAILING_SPACE
 }

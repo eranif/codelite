@@ -412,6 +412,17 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             json.addProperty("tokens", tokens_table);
             json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
             root.save(settings_json);
+
+            // create the file_list.txt file
+            wxFileName file_list(fn.GetPath(), "file_list.txt");
+            wxArrayString files;
+            clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
+
+            wxString file_list_content;
+            for(const auto& filepath : files) {
+                file_list_content << filepath << "\n";
+            }
+            FileUtils::WriteFileContent(file_list, file_list_content);
         };
         lsp->SetStartedCallback(std::move(cb));
     }

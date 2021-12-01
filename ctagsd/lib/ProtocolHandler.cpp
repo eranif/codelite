@@ -409,8 +409,16 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     wxFileName ctagsReplacements(m_settings_folder, "ctags.replacements");
     wxSetEnv("CTAGS_REPLACEMENTS", ctagsReplacements.GetFullPath());
 
+    // build the workspace file list
     wxArrayString files;
-    scan_dir(m_root_folder, m_settings, files);
+    wxFileName file_list(m_settings_folder, "file_list.txt");
+    if(file_list.FileExists()) {
+        wxString file_list_content;
+        FileUtils::ReadFileContent(file_list, file_list_content);
+        files = ::wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
+    } else {
+        scan_dir(m_root_folder, m_settings, files);
+    }
     parse_files(files, &channel, true);
 
     TagsManagerST::Get()->CloseDatabase();

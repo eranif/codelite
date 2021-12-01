@@ -34,6 +34,24 @@ ostream& operator<<(ostream& stream, const vector<wxString>& arrstr)
     return stream;
 }
 
+ostream& operator<<(ostream& stream, const pair<vector<SimpleTokenizer::Token>, wxString>& pr)
+{
+    wxString s;
+    const vector<SimpleTokenizer::Token>& tokens = pr.first;
+    const wxString& source_string = pr.second;
+    s << "[";
+    for(const SimpleTokenizer::Token& token : tokens) {
+        s << token.to_string(source_string) << ",";
+    }
+
+    if(!s.empty()) {
+        s.RemoveLast();
+    }
+    s << "]";
+    stream << s;
+    return stream;
+}
+
 const wxString sample_cxx_file = R"(
 class MyClass {
     std::string m_name;
@@ -176,15 +194,45 @@ TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
         cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
         return true;
     }
-#if 0
+
     vector<TagEntryPtr> candidates;
-    wxString fulltext = "std::unique_ptr<std::string> mystr; mystr->";
+    wxString fulltext = "wxCodeCompletionBoxManager::Get().";
 
     clTempFile tmpfile("cpp");
     tmpfile.Write(fulltext);
-    TagsManagerST::Get()->AutoCompleteCandidates(tmpfile.GetFullPath(), 1, "mystr->", fulltext, candidates);
+    TagsManagerST::Get()->WordCompletionCandidates(tmpfile.GetFullPath(), 1, "wxCodeCompletionBoxManager::Get().",
+                                                   fulltext, "ShowCompletionBox", candidates);
     CHECK_BOOL(!candidates.empty());
-#endif
+
+    return true;
+}
+
+TEST_FUNC(TestSimeplTokenizer_Comments)
+{
+    const wxString tokenizer_sample_file = R"(#include <unistd.h>
+/** comment **/
+int main(int argc, char** argv)
+{
+    /**
+        multi line comment
+        
+    **/
+    std::string name = "hello\nworld";
+    MyClass cls, 1cls2;
+    cls.SetName(name);
+    return 0;
+}
+//last line comment
+//)";
+    SimpleTokenizer::Token token;
+    SimpleTokenizer tokenizer(tokenizer_sample_file);
+    vector<SimpleTokenizer::Token> tokens;
+    while(tokenizer.next_comment(&token)) {
+        tokens.push_back(token);
+    }
+    // we are expecting 2 comments
+    CHECK_SIZE(tokens.size(), 4);
+    cout << make_pair(tokens, tokenizer_sample_file) << endl;
     return true;
 }
 
@@ -231,24 +279,6 @@ wxTerminalColourHandler::wxTerminalColourHandler()
         }
         CHECK_SIZE(tokens.size(), 15);
     }
-#if 0
-    {
-        SimpleTokenizer::Token token;
-        wxString file_content;
-        FileUtils::ReadFileContent(wxFileName("C:\\src\\codelite\\codelite_terminal\\wxTerminalColourHandler.cpp"),
-                                   file_content);
-        SimpleTokenizer tokenizer(file_content);
-        vector<SimpleTokenizer::Token> tokens;
-        vector<TokenWrapper> tokens_vec;
-
-        while(tokenizer.next(&token)) {
-            tokens_vec.push_back({ token, eTokenType::TYPE_CLASS });
-        }
-
-        vector<int> encoding;
-        LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
-    }
-#endif
     return true;
 }
 

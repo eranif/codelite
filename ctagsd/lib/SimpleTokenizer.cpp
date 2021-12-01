@@ -18,42 +18,60 @@ SimpleTokenizer::~SimpleTokenizer() {}
         }                                         \
     }
 
-#define IS_NEXT_CHAR_EQUAL(what) (((m_pos + 1) < m_str.length()) && (what == m_str[m_pos + 1]))
+#define RETURN_COMMENT_TOKEN_IF_POSSIBLE() \
+    if(m_token.ok()) {                     \
+        *token = m_token;                  \
+        m_token.clear();                   \
+        return true;                       \
+    }
+
+#define LOOKAHEAD_1(what) (((m_pos + 1) < m_str.length()) && (what == m_str[m_pos + 1]))
+#define LOOKAHEAD_2(what) (((m_pos + 2) < m_str.length()) && (what == m_str[m_pos + 2]))
 
 #define INCREMENT_LINE() \
     m_line++;            \
     m_line_start_pos = m_pos
 
+#define CHECK_TOKENIZER_MODE(expected_mode) \
+    if(m_mode == TOKNZR_MODE_NONE) {        \
+        m_mode = expected_mode;             \
+    }                                       \
+    if(m_mode != expected_mode) {           \
+        return false;                       \
+    }
+
 bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
 {
-    SimpleTokenizerState escape_return_state = SimpleTokenizerState::DQUOTE_STRING;
+    CHECK_TOKENIZER_MODE(TOKNZR_MODE_NORMAL);
+
+    eSimpleTokenizerState escape_return_state = TOKNZR_STATE_DQUOTE_STRING;
     for(; m_pos < m_str.length(); ++m_pos) {
         wxChar ch = m_str[m_pos];
         switch(m_state) {
-        case SimpleTokenizerState::PREPROCESSOR:
+        case TOKNZR_STATE_PREPROCESSOR:
             switch(ch) {
             case '\n':
                 INCREMENT_LINE();
-                m_state = SimpleTokenizerState::NORMAL;
+                m_state = TOKNZR_STATE_NORMAL;
                 break;
             default:
                 // increments the column
                 break;
             }
             break;
-        case SimpleTokenizerState::NORMAL:
+        case TOKNZR_STATE_NORMAL:
             switch(ch) {
             case '#':
-                m_state = SimpleTokenizerState::PREPROCESSOR;
+                m_state = TOKNZR_STATE_PREPROCESSOR;
                 RETURN_TOKEN_IF_POSSIBLE();
                 break;
             case '/':
-                if(IS_NEXT_CHAR_EQUAL('*')) {
+                if(LOOKAHEAD_1('*')) {
                     ++m_pos;
-                    m_state = SimpleTokenizerState::MULTILINE_COMMENT;
-                } else if(IS_NEXT_CHAR_EQUAL('/')) {
+                    m_state = TOKNZR_STATE_MULTILINE_COMMENT;
+                } else if(LOOKAHEAD_1('/')) {
                     ++m_pos;
-                    m_state = SimpleTokenizerState::LINE_COMMENT;
+                    m_state = TOKNZR_STATE_LINE_COMMENT;
                 }
                 RETURN_TOKEN_IF_POSSIBLE();
                 break;
@@ -132,11 +150,11 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
                 }
                 break;
             case '"':
-                m_state = SimpleTokenizerState::DQUOTE_STRING;
+                m_state = TOKNZR_STATE_DQUOTE_STRING;
                 RETURN_TOKEN_IF_POSSIBLE();
                 break;
             case '\'':
-                m_state = SimpleTokenizerState::SINGLE_STRING;
+                m_state = TOKNZR_STATE_SINGLE_STRING;
                 RETURN_TOKEN_IF_POSSIBLE();
                 break;
             default:
@@ -145,37 +163,37 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
                 break;
             }
             break;
-        case SimpleTokenizerState::DQUOTE_STRING:
+        case TOKNZR_STATE_DQUOTE_STRING:
             switch(ch) {
             case '"':
-                m_state = SimpleTokenizerState::NORMAL;
+                m_state = TOKNZR_STATE_NORMAL;
                 break;
             case '\\':
-                escape_return_state = SimpleTokenizerState::DQUOTE_STRING;
-                m_state = SimpleTokenizerState::ESCAPE;
+                escape_return_state = TOKNZR_STATE_DQUOTE_STRING;
+                m_state = TOKNZR_STATE_ESCAPE;
                 break;
             }
             break;
-        case SimpleTokenizerState::SINGLE_STRING:
+        case TOKNZR_STATE_SINGLE_STRING:
             switch(ch) {
             case '\'':
-                m_state = SimpleTokenizerState::NORMAL;
+                m_state = TOKNZR_STATE_NORMAL;
                 break;
             case '\\':
-                escape_return_state = SimpleTokenizerState::SINGLE_STRING;
-                m_state = SimpleTokenizerState::ESCAPE;
+                escape_return_state = TOKNZR_STATE_SINGLE_STRING;
+                m_state = TOKNZR_STATE_ESCAPE;
                 break;
             }
             break;
-        case SimpleTokenizerState::ESCAPE:
+        case TOKNZR_STATE_ESCAPE:
             m_state = escape_return_state;
             break;
-        case SimpleTokenizerState::MULTILINE_COMMENT:
+        case TOKNZR_STATE_MULTILINE_COMMENT:
             switch(ch) {
             case '*':
-                if(IS_NEXT_CHAR_EQUAL('/')) {
+                if(LOOKAHEAD_1('/')) {
                     ++m_pos;
-                    m_state = SimpleTokenizerState::NORMAL;
+                    m_state = TOKNZR_STATE_NORMAL;
                 }
                 break;
             case '\n':
@@ -186,11 +204,11 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
                 break;
             }
             break;
-        case SimpleTokenizerState::LINE_COMMENT:
+        case TOKNZR_STATE_LINE_COMMENT:
             switch(ch) {
             case '\n':
                 INCREMENT_LINE();
-                m_state = SimpleTokenizerState::NORMAL;
+                m_state = TOKNZR_STATE_NORMAL;
                 break;
             default:
                 // increments the column
@@ -201,5 +219,128 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
     }
     // eof
     RETURN_TOKEN_IF_POSSIBLE();
+    return false;
+}
+
+bool SimpleTokenizer::next_comment(Token* token)
+{
+    CHECK_TOKENIZER_MODE(TOKNZR_MODE_COMMENTS);
+    eSimpleTokenizerState escape_return_state = TOKNZR_STATE_DQUOTE_STRING;
+    for(; m_pos < m_str.length(); ++m_pos) {
+        wxChar ch = m_str[m_pos];
+        switch(m_state) {
+        case TOKNZR_STATE_PREPROCESSOR:
+            switch(ch) {
+            case '\n':
+                INCREMENT_LINE();
+                m_state = TOKNZR_STATE_NORMAL;
+                break;
+            default:
+                // increments the column
+                break;
+            }
+            break;
+        case TOKNZR_STATE_NORMAL:
+            switch(ch) {
+            case '#':
+                m_state = TOKNZR_STATE_PREPROCESSOR;
+                break;
+            case '/':
+                if(LOOKAHEAD_1('*')) {
+                    // check for Javadoc or Qt style
+                    if(LOOKAHEAD_2('*') || LOOKAHEAD_2('!')) {
+                        ++m_pos;
+                    }
+                    ++m_pos;
+                    m_state = TOKNZR_STATE_MULTILINE_COMMENT;
+                    m_token = Token(m_pos + 1, m_line, m_pos - m_line_start_pos, 0);
+                } else if(LOOKAHEAD_1('/')) {
+                    if(LOOKAHEAD_2('/') || LOOKAHEAD_2('!')) {
+                        ++m_pos;
+                    }
+                    ++m_pos;
+                    m_state = TOKNZR_STATE_LINE_COMMENT;
+                    m_token = Token(m_pos + 1, m_line, m_pos - m_line_start_pos, 0);
+                }
+                break;
+            case '\n':
+                INCREMENT_LINE();
+                break;
+            case '"':
+                m_state = TOKNZR_STATE_DQUOTE_STRING;
+                break;
+            case '\'':
+                m_state = TOKNZR_STATE_SINGLE_STRING;
+                break;
+            default:
+                // whitespace
+                break;
+            }
+            break;
+        case TOKNZR_STATE_DQUOTE_STRING:
+            switch(ch) {
+            case '"':
+                m_state = TOKNZR_STATE_NORMAL;
+                break;
+            case '\\':
+                escape_return_state = TOKNZR_STATE_DQUOTE_STRING;
+                m_state = TOKNZR_STATE_ESCAPE;
+                break;
+            }
+            break;
+        case TOKNZR_STATE_SINGLE_STRING:
+            switch(ch) {
+            case '\'':
+                m_state = TOKNZR_STATE_NORMAL;
+                break;
+            case '\\':
+                escape_return_state = TOKNZR_STATE_SINGLE_STRING;
+                m_state = TOKNZR_STATE_ESCAPE;
+                break;
+            }
+            break;
+        case TOKNZR_STATE_ESCAPE:
+            m_state = escape_return_state;
+            break;
+        case TOKNZR_STATE_MULTILINE_COMMENT:
+            switch(ch) {
+            case '*':
+                if(LOOKAHEAD_1('*') && LOOKAHEAD_2('/')) {
+                    m_pos += 2;
+                    m_state = TOKNZR_STATE_NORMAL;
+                    RETURN_COMMENT_TOKEN_IF_POSSIBLE();
+                } else if(LOOKAHEAD_1('/')) {
+                    m_pos += 1;
+                    m_state = TOKNZR_STATE_NORMAL;
+                    RETURN_COMMENT_TOKEN_IF_POSSIBLE();
+                } else {
+                    m_token.inc_length();
+                }
+                break;
+            case '\n':
+                INCREMENT_LINE();
+                break;
+            default:
+                m_token.inc_length();
+                break;
+            }
+            break;
+        case TOKNZR_STATE_LINE_COMMENT:
+            switch(ch) {
+            case '\n':
+                INCREMENT_LINE();
+                m_state = TOKNZR_STATE_NORMAL;
+                RETURN_COMMENT_TOKEN_IF_POSSIBLE();
+                break;
+            default:
+                // increments the column
+                m_token.inc_length();
+                break;
+            }
+            break;
+        }
+    }
+    // eof
+    RETURN_COMMENT_TOKEN_IF_POSSIBLE();
     return false;
 }

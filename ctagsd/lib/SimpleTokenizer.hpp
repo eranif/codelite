@@ -3,14 +3,20 @@
 
 #include <wx/string.h>
 
-enum class SimpleTokenizerState {
-    NORMAL = 0,
-    SINGLE_STRING = 1,
-    DQUOTE_STRING = 2,
-    ESCAPE = 3,
-    LINE_COMMENT = 4,
-    MULTILINE_COMMENT = 5,
-    PREPROCESSOR = 6,
+enum eSimpleTokenizerState {
+    TOKNZR_STATE_NORMAL = 0,
+    TOKNZR_STATE_SINGLE_STRING = 1,
+    TOKNZR_STATE_DQUOTE_STRING = 2,
+    TOKNZR_STATE_ESCAPE = 3,
+    TOKNZR_STATE_LINE_COMMENT = 4,
+    TOKNZR_STATE_MULTILINE_COMMENT = 5,
+    TOKNZR_STATE_PREPROCESSOR = 6,
+};
+
+enum eSimpleTokenizerMode {
+    TOKNZR_MODE_NONE = -1,
+    TOKNZR_MODE_NORMAL = 0,
+    TOKNZR_MODE_COMMENTS = 1,
 };
 
 class SimpleTokenizer
@@ -55,7 +61,7 @@ public:
         void clear() { m_token_length = m_token_column = m_token_line = wxNOT_FOUND; }
         wxString to_string(const wxString& source_string) const
         {
-            if(!ok()) {
+            if(!ok() || length() == 0) {
                 return wxEmptyString;
             }
             return source_string.Mid(m_token_position, m_token_length);
@@ -67,8 +73,8 @@ private:
     size_t m_pos = 0;
     long m_line = 0;
     long m_line_start_pos = 0;
-    SimpleTokenizerState m_state = SimpleTokenizerState::NORMAL;
-
+    eSimpleTokenizerState m_state = TOKNZR_STATE_NORMAL;
+    eSimpleTokenizerMode m_mode = TOKNZR_MODE_NONE;
     Token m_token;
 
 public:
@@ -79,6 +85,10 @@ public:
      * @brief return next token details
      */
     bool next(Token* token);
+    /**
+     * @brief while in this mode, scan for comments only
+     */
+    bool next_comment(Token* token);
 };
 
 #endif // SIMPLETOKENIZER_HPP

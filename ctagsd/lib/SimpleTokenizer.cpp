@@ -1,5 +1,6 @@
 #include "SimpleTokenizer.hpp"
 
+#include <wx/tokenzr.h>
 SimpleTokenizer::SimpleTokenizer(const wxString& str)
     : m_str(str)
 {
@@ -14,6 +15,7 @@ SimpleTokenizer::~SimpleTokenizer() {}
         } else {                                  \
             *token = m_token;                     \
             m_token.clear();                      \
+            ++m_pos;                              \
             return true;                          \
         }                                         \
     }
@@ -22,6 +24,7 @@ SimpleTokenizer::~SimpleTokenizer() {}
     if(m_token.ok()) {                     \
         *token = m_token;                  \
         m_token.clear();                   \
+        ++m_pos;                           \
         return true;                       \
     }
 
@@ -308,10 +311,12 @@ bool SimpleTokenizer::next_comment(Token* token)
                 if(LOOKAHEAD_1('*') && LOOKAHEAD_2('/')) {
                     m_pos += 2;
                     m_state = TOKNZR_STATE_NORMAL;
+                    m_token.set_line(m_line);
                     RETURN_COMMENT_TOKEN_IF_POSSIBLE();
                 } else if(LOOKAHEAD_1('/')) {
                     m_pos += 1;
                     m_state = TOKNZR_STATE_NORMAL;
+                    m_token.set_line(m_line);
                     RETURN_COMMENT_TOKEN_IF_POSSIBLE();
                 } else {
                     m_token.inc_length();
@@ -328,6 +333,7 @@ bool SimpleTokenizer::next_comment(Token* token)
         case TOKNZR_STATE_LINE_COMMENT:
             switch(ch) {
             case '\n':
+                m_token.set_line(m_line);
                 INCREMENT_LINE();
                 m_state = TOKNZR_STATE_NORMAL;
                 RETURN_COMMENT_TOKEN_IF_POSSIBLE();
@@ -343,4 +349,25 @@ bool SimpleTokenizer::next_comment(Token* token)
     // eof
     RETURN_COMMENT_TOKEN_IF_POSSIBLE();
     return false;
+}
+
+thread_local wxString LEFT_TRIM("*!<\r\n\t\v/ ");
+thread_local wxString RIGHT_TRIM(" \n\t\v\r/");
+
+void SimpleTokenizer::strip_comment(wxString& comment)
+{
+    wxArrayString lines = ::wxStringTokenize(comment, "\n", wxTOKEN_STRTOK);
+    comment.clear();
+    for(auto& line : lines) {
+        line.erase(0, line.find_first_not_of(LEFT_TRIM));
+        line.erase(line.find_last_not_of(RIGHT_TRIM) + 1);
+        if(line.empty()) {
+            continue;
+        }
+        comment << line << "\n";
+    }
+
+    if(!comment.empty()) {
+        comment.RemoveLast();
+    }
 }

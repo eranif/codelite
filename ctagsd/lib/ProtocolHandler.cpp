@@ -485,7 +485,7 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
 
     clDEBUG() << "textDocument/didChange: caching new content for file:" << filepath << endl;
     m_filesOpened.erase(filepath);
-    wxString file_content = json["params"]["textDocument"]["text"].toString();
+    wxString file_content = json["params"]["contentChanges"][0]["text"].toString();
     update_comments_for_file(filepath, file_content);
     m_filesOpened.insert({ filepath, file_content });
 }
@@ -535,6 +535,14 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     }
 
     if(!candidates.empty()) {
+        // ensure all relevant files have been parsed for comments
+        for(auto tag : candidates) {
+            wxFileName fn(tag->GetFile());
+            if(!do_comments_exist_for_file(fn.GetFullPath())) {
+                update_comments_for_file(fn.GetFullPath());
+            }
+        }
+
         JSON root(cJSON_Object);
         JSONItem response = root.toElement();
         auto result = build_result(response, id, cJSON_Object);
@@ -553,7 +561,8 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
             item.addProperty("label", tag->GetDisplayName());
             item.addProperty("filterText", tag->GetName());
             item.addProperty("insertText", tag->GetName());
-            item.addProperty("detail", tag->GetReturnValue());
+            wxString doc = get_comment(wxFileName(tag->GetFile()).GetFullPath(), tag->GetLine(), tag->GetReturnValue());
+            item.addProperty("detail", doc);
 
             // set the kind
             CompletionItem::eCompletionItemKind kind = get_completion_kind(*tag.Get());
@@ -803,6 +812,14 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
     channel.write_reply(response);
 }
 
+void ProtocolHandler::update_comments_for_file(const wxString& filepath)
+{
+    wxString file_content;
+    if(FileUtils::ReadFileContent(filepath, file_content)) {
+        update_comments_for_file(filepath, file_content);
+    }
+}
+
 void ProtocolHandler::update_comments_for_file(const wxString& filepath, const wxString& file_content)
 {
     m_comments_cache.erase(filepath);
@@ -814,11 +831,9 @@ void ProtocolHandler::update_comments_for_file(const wxString& filepath, const w
     SimpleTokenizer::Token token;
     CachedComment::Map_t file_cache;
     while(tokenizer.next_comment(&token)) {
-        CachedComment cached_comment;
-        cached_comment.column = token.column();
-        cached_comment.line = token.line();
-        cached_comment.str = token.to_string(file_content);
-        file_cache.insert({ cached_comment.line, cached_comment });
+        wxString comment = token.to_string(file_content);
+        tokenizer.strip_comment(comment);
+        file_cache.insert({ token.line(), comment });
     }
     m_comments_cache.insert({ filepath, file_cache });
 }
@@ -830,10 +845,15 @@ const wxString& ProtocolHandler::get_comment(const wxString& filepath, long line
     }
     const auto& M = m_comments_cache.find(filepath)->second;
     // try to find a comment, 1 or 2 lines above the requested line
-    for(long curline = line; curline < line + 3; ++curline) {
+    for(long curline = line; curline > (line - 3); --curline) {
         if(M.count(curline)) {
-            return M.find(curline)->second.str;
+            return M.find(curline)->second;
         }
     }
     return default_value;
+}
+
+bool ProtocolHandler::do_comments_exist_for_file(const wxString& filepath) const
+{
+    return m_comments_cache.count(filepath) != 0;
 }

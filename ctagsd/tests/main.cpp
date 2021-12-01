@@ -5,10 +5,10 @@
 #include "LSPUtils.hpp"
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
+#include "clFilesCollector.h"
 #include "clTempFile.hpp"
 #include "ctags_manager.h"
 #include "fileutils.h"
-#include "clFilesCollector.h"
 #include "macros.h"
 #include "tester.hpp"
 #include <iostream>
@@ -38,18 +38,17 @@ ostream& operator<<(ostream& stream, const vector<wxString>& arrstr)
 ostream& operator<<(ostream& stream, const pair<vector<SimpleTokenizer::Token>, wxString>& pr)
 {
     wxString s;
+    SimpleTokenizer helper({});
     const vector<SimpleTokenizer::Token>& tokens = pr.first;
     const wxString& source_string = pr.second;
-    s << "[";
     for(const SimpleTokenizer::Token& token : tokens) {
-        s << token.to_string(source_string) << ",";
+        wxString as_str = token.to_string(source_string);
+        helper.strip_comment(as_str);
+        s << "Line: " << token.line() << "\n"
+          << "Comment:\n"
+          << as_str << "\n------------\n";
     }
-
-    if(!s.empty()) {
-        s.RemoveLast();
-    }
-    s << "]";
-    stream << s;
+    stream << s << endl;
     return stream;
 }
 
@@ -234,6 +233,22 @@ int main(int argc, char** argv)
     // we are expecting 2 comments
     CHECK_SIZE(tokens.size(), 4);
     cout << make_pair(tokens, tokenizer_sample_file) << endl;
+    return true;
+}
+
+TEST_FUNC(TestSimeplTokenizer_Comments_From_File)
+{
+    wxString content;
+    FileUtils::ReadFileContent(wxFileName("/home/eran/devl/codelite/Plugin/project.h"), content);
+
+    SimpleTokenizer::Token token;
+    SimpleTokenizer tokenizer(content);
+    vector<SimpleTokenizer::Token> tokens;
+    while(tokenizer.next_comment(&token)) {
+        tokens.push_back(token);
+    }
+    // we are expecting 2 comments
+    cout << make_pair(tokens, content) << endl;
     return true;
 }
 

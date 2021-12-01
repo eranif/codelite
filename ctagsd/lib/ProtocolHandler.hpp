@@ -17,7 +17,7 @@ struct CachedComment {
     long line;
     long column;
     // line to comment map
-    typedef unordered_map<long, CachedComment> Map_t;
+    typedef unordered_map<long, wxString> Map_t;
 };
 
 class ProtocolHandler
@@ -39,7 +39,9 @@ private:
     void parse_files(wxArrayString& files, Channel* channel, bool initial_parse);
     bool ensure_file_content_exists(const wxString& filepath, Channel& channel);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);
+    void update_comments_for_file(const wxString& filepath);
     const wxString& get_comment(const wxString& filepath, long line, const wxString& default_value) const;
+    bool do_comments_exist_for_file(const wxString& filepath) const;
 
 public:
     ProtocolHandler();

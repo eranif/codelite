@@ -66,6 +66,7 @@ public:
             }
             return source_string.Mid(m_token_position, m_token_length);
         }
+        void set_line(long line) { m_token_line = line; }
     };
 
 private:
@@ -89,6 +90,12 @@ public:
      * @brief while in this mode, scan for comments only
      */
     bool next_comment(Token* token);
+
+    /**
+     * @brief remove `*` and other decorators
+     * from a comment
+     */
+    void strip_comment(wxString& comment);
 };
 
 #endif // SIMPLETOKENIZER_HPP

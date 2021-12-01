@@ -384,6 +384,10 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     if(lsp->GetName() == "ctagsd") {
         // set startup callback
         auto cb = [=]() {
+            if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+                return;
+            }
+
             wxFileName fn(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath(), wxEmptyString);
             fn.AppendDir(".ctagsd");
             fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);

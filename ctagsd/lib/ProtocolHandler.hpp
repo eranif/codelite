@@ -12,6 +12,14 @@
 
 using namespace std;
 
+struct CachedComment {
+    wxString str;
+    long line;
+    long column;
+    // line to comment map
+    typedef unordered_map<long, CachedComment> Map_t;
+};
+
 class ProtocolHandler
 {
 public:
@@ -23,10 +31,15 @@ private:
     wxString m_settings_folder;
     wxStringMap_t m_filesOpened;
 
+    // cached parsed comments file <-> comments
+    unordered_map<wxString, CachedComment::Map_t> m_comments_cache;
+
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
     void parse_files(wxArrayString& files, Channel* channel, bool initial_parse);
     bool ensure_file_content_exists(const wxString& filepath, Channel& channel);
+    void update_comments_for_file(const wxString& filepath, const wxString& file_content);
+    const wxString& get_comment(const wxString& filepath, long line, const wxString& default_value) const;
 
 public:
     ProtocolHandler();

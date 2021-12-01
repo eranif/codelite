@@ -8,6 +8,7 @@
 #include "clTempFile.hpp"
 #include "ctags_manager.h"
 #include "fileutils.h"
+#include "clFilesCollector.h"
 #include "macros.h"
 #include "tester.hpp"
 #include <iostream>
@@ -333,6 +334,14 @@ TEST_FUNC(TestSplitArgs)
         cout << args << endl;
     }
 
+    return true;
+}
+
+TEST_FUNC(test_symlink_is_scandir)
+{
+    clFilesScanner scanner;
+    wxArrayString files;
+    scanner.Scan("/tmp/eran", files, "*.cpp", "", "");
     return true;
 }
 

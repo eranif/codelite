@@ -73,9 +73,9 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
     wxArrayString specArr = ::wxStringTokenize(filespec.Lower(), ";,|", wxTOKEN_STRTOK);
     wxArrayString excludeSpecArr = ::wxStringTokenize(excludeFilespec.Lower(), ";,|", wxTOKEN_STRTOK);
     std::queue<wxString> Q;
-    std::unordered_set<wxString> S;
+    std::unordered_set<wxString> Visited;
     Q.push(rootFolder);
-    S.insert(rootFolder);
+    Visited.insert(rootFolder);
 
     while(!Q.empty()) {
         wxString dirpath = Q.front();
@@ -106,7 +106,7 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
             if(isDirectory && !isExcludeDir) {
                 // Traverse into this folder
                 wxString realPath = FileUtils::RealPath(fullpath);
-                if(S.insert(realPath).second) {
+                if(Visited.insert(realPath).second) {
                     Q.push(fullpath);
                 }
 
@@ -134,7 +134,10 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, const wxString& filespec
     wxArrayString excludeSpecArr = ::wxStringTokenize(excludeFilespec.Lower(), ";,|", wxTOKEN_STRTOK);
     wxArrayString excludeFoldersSpecArr = ::wxStringTokenize(excludeFoldersSpec.Lower(), ";,|", wxTOKEN_STRTOK);
     std::queue<wxString> Q;
-    Q.push(rootFolder);
+    std::unordered_set<wxString> Visited;
+
+    Q.push(FileUtils::RealPath(rootFolder));
+    Visited.insert(FileUtils::RealPath(rootFolder));
 
     size_t nCount = 0;
     while(!Q.empty()) {
@@ -158,7 +161,11 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, const wxString& filespec
             if(isDirectory /* a folder */ &&
                !FileUtils::WildMatch(excludeFoldersSpecArr, filename) /* does not match the exclude folder spec */) {
                 // Traverse into this folder
-                Q.push(fullpath);
+                wxString real_path = FileUtils::RealPath(fullpath);
+                if(Visited.count(real_path) == 0) {
+                    Visited.insert(real_path);
+                    Q.push(fullpath);
+                }
             } else if(isFile && /* a file */
                       !FileUtils::WildMatch(excludeSpecArr, filename) /* does not match the exclude file spec */ &&
                       FileUtils::WildMatch(specArr, filename) /* matches the file spec array */) {

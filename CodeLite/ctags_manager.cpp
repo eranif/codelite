@@ -1972,7 +1972,7 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
         CxxTemplateFunction helper(tag);
         helper.ParseDefinitionList();
         for(size_t i = 0; i < helper.GetList().GetCount(); ++i) {
-            body << "typename " << helper.GetList().Item(i) << ", \n";
+            body << "  typename " << helper.GetList().Item(i) << ", \n";
         }
         if(body.EndsWith(", \n")) {
             body.RemoveLast(3);
@@ -2244,7 +2244,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
                                            std::vector<std::pair<int, int>>* paramLen)
 {
     // FIXME: make the standard configurable
-    CxxVariableScanner varScanner(sig, eCxxStandard::kCxx03, wxStringTable_t(), true);
+    CxxVariableScanner varScanner(sig, eCxxStandard::kCxx11, wxStringTable_t(), true);
     CxxVariable::Vec_t vars = varScanner.ParseFunctionArguments();
 
     // construct a function signature from the results

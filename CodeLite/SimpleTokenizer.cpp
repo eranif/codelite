@@ -1,6 +1,7 @@
 #include "SimpleTokenizer.hpp"
 
 #include <wx/tokenzr.h>
+
 SimpleTokenizer::SimpleTokenizer(const wxString& str)
     : m_str(str)
 {

@@ -1,6 +1,7 @@
 #ifndef SIMPLETOKENIZER_HPP
 #define SIMPLETOKENIZER_HPP
 
+#include "codelite_exports.h"
 #include <wx/string.h>
 
 enum eSimpleTokenizerState {
@@ -19,7 +20,7 @@ enum eSimpleTokenizerMode {
     TOKNZR_MODE_COMMENTS = 1,
 };
 
-class SimpleTokenizer
+class WXDLLIMPEXP_CL SimpleTokenizer
 {
 public:
     struct Token {

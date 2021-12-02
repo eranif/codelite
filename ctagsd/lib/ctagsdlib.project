@@ -5,14 +5,10 @@
   <VirtualDirectory Name="src">
     <File Name="LSPUtils.cpp"/>
     <File Name="LSPUtils.hpp"/>
-    <File Name="SimpleTokenizer.cpp"/>
-    <File Name="SimpleTokenizer.hpp"/>
     <File Name="Settings.cpp"/>
     <File Name="Settings.hpp"/>
     <File Name="ProtocolHandler.hpp"/>
     <File Name="ProtocolHandler.cpp"/>
-    <File Name="CompletionHelper.hpp"/>
-    <File Name="CompletionHelper.cpp"/>
     <File Name="Channel.hpp"/>
     <File Name="Channel.cpp"/>
   </VirtualDirectory>

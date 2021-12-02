@@ -10,7 +10,6 @@
   </Dependencies>
   <Dependencies Name="Release">
     <Project Name="libCodeLite"/>
-    <Project Name="ctagsdlib"/>
   </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>

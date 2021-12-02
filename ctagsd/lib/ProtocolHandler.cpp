@@ -550,19 +550,20 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         result.addProperty("isIncomplete", false);
         auto items = result.AddArray("items");
         // send them over the client
-        for(auto tag : candidates) {
+        for(TagEntryPtr tag : candidates) {
+            wxString comment_string =
+                get_comment(wxFileName(tag->GetFile()).GetFullPath(), tag->GetLine() - 1, wxEmptyString);
+            tag->SetComment(comment_string);
             auto item = items.AddObject(wxEmptyString);
-            if(!tag->GetComment().empty()) {
-                auto doc = item.AddObject("documentation");
-                doc.addProperty("kind", "plaintext");
-                doc.addProperty("value", tag->GetComment());
-            }
+            wxString doc_comment = tag->FormatComment();
+            auto documentation = item.AddObject("documentation");
+            documentation.addProperty("kind", "markdown");
+            documentation.addProperty("value", doc_comment);
 
             item.addProperty("label", tag->GetDisplayName());
             item.addProperty("filterText", tag->GetName());
             item.addProperty("insertText", tag->GetName());
-            wxString doc = get_comment(wxFileName(tag->GetFile()).GetFullPath(), tag->GetLine(), tag->GetReturnValue());
-            item.addProperty("detail", doc);
+            item.addProperty("detail", tag->GetReturnValue());
 
             // set the kind
             CompletionItem::eCompletionItemKind kind = get_completion_kind(*tag.Get());

@@ -2,6 +2,7 @@
 #define COMPLETIONHELPER_HPP
 #include "CxxTokenizer.h"
 
+#include "codelite_exports.h"
 #include <functional>
 #include <istorage.h>
 #include <vector>
@@ -9,7 +10,7 @@
 #include <wx/string.h>
 
 using namespace std;
-class CompletionHelper
+class WXDLLIMPEXP_CL CompletionHelper
 {
 public:
     CompletionHelper();

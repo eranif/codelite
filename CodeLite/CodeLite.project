@@ -128,6 +128,10 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="CompletionHelper.hpp"/>
+    <File Name="CompletionHelper.cpp"/>
+    <File Name="SimpleTokenizer.hpp"/>
+    <File Name="SimpleTokenizer.cpp"/>
     <File Name="clWorkspaceEvent.cpp"/>
     <File Name="clWorkspaceEvent.hpp"/>
     <File Name="clTempFile.cpp"/>
@@ -514,11 +518,6 @@
   <Dependencies Name="CMake_Debug"/>
   <Dependencies Name="Win_wxWidgets_29"/>
   <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="wxshapeframework"/>
-  </Dependencies>
   <Dependencies Name="Win_x86_Release">
     <Project Name="PCH"/>
   </Dependencies>
@@ -708,6 +707,7 @@ XmlLexer.cpp: XMLLexer.l
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="libssh"/>
         <Library Value="ws2_32"/>
+        <Library Value="ctagsdlib"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="libcodeliteu.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
@@ -806,4 +806,9 @@ PhpLexer.cpp: PhpLexer.l
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="wxshapeframework"/>
+  </Dependencies>
 </CodeLite_Project>

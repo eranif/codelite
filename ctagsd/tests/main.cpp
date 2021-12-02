@@ -108,7 +108,7 @@ bool initialize_cc_tests()
 
             TagsOptionsData tod;
             tod.SetTypes(map_to_wxString(settings.GetTypes()));
-            tod.SetTypes(map_to_wxString(settings.GetTokens()));
+            tod.SetTokens(map_to_wxString(settings.GetTokens()));
 
             TagsManagerST::Get()->OpenDatabase(fn.GetFullPath());
             TagsManagerST::Get()->SetCtagsOptions(tod);
@@ -188,7 +188,7 @@ TEST_FUNC(TestCompletionHelper_truncate_file_to_location_must_end_with_words)
     return true;
 }
 
-TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
+TEST_FUNC(TestCTagsManager_AutoCandidates)
 {
     if(!initialize_cc_tests()) {
         cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
@@ -204,6 +204,24 @@ TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
                                                    fulltext, "ShowCompletionBox", candidates);
     CHECK_BOOL(!candidates.empty());
 
+    return true;
+}
+
+TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
+{
+    if(!initialize_cc_tests()) {
+        cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
+        return true;
+    }
+
+    vector<TagEntryPtr> candidates;
+    wxString fulltext = "std::unique_ptr<std::string>&& ptr; ptr->";
+
+    clTempFile tmpfile("cpp");
+    tmpfile.Write(fulltext);
+    TagsManagerST::Get()->AutoCompleteCandidates(tmpfile.GetFullPath(), 1, "ptr->",
+                                                   fulltext, candidates);
+    CHECK_BOOL(!candidates.empty());
     return true;
 }
 
@@ -239,7 +257,9 @@ int main(int argc, char** argv)
 TEST_FUNC(TestSimeplTokenizer_Comments_From_File)
 {
     wxString content;
-    FileUtils::ReadFileContent(wxFileName("/home/eran/devl/codelite/Plugin/project.h"), content);
+    if(!FileUtils::ReadFileContent(wxFileName("/home/eran/devl/codelite/Plugin/project.h"), content)) {
+        return true;
+    }
 
     SimpleTokenizer::Token token;
     SimpleTokenizer tokenizer(content);

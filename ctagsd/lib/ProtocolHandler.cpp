@@ -398,13 +398,6 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     wxFileName fn_config_file(m_settings_folder, "settings.json");
     m_settings.Load(fn_config_file);
 
-    // construct TagsOptionsData
-    TagsOptionsData tod;
-    tod.SetFileSpec(m_settings.GetFileMask());
-    tod.SetTokens(MapToString(m_settings.GetTokens()));
-    tod.SetTypes(MapToString(m_settings.GetTypes()));
-    TagsManagerST::Get()->SetCtagsOptions(tod);
-
     // export CTAGS_REPLACEMENTS
     wxFileName ctagsReplacements(m_settings_folder, "ctags.replacements");
     wxSetEnv("CTAGS_REPLACEMENTS", ctagsReplacements.GetFullPath());
@@ -423,6 +416,14 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
+
+    // construct TagsOptionsData
+    TagsOptionsData tod;
+    tod.SetFileSpec(m_settings.GetFileMask());
+    tod.SetTokens(MapToString(m_settings.GetTokens()));
+    tod.SetTypes(MapToString(m_settings.GetTypes()));
+    TagsManagerST::Get()->SetCtagsOptions(tod);
+
     channel.write_reply(response.format(false));
 }
 

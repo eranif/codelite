@@ -835,7 +835,7 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
     clDEBUG() << "Calling WordCompletionCandidates with expression:" << expression << ", last_word=" << last_word
               << endl;
     vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->WordCompletionCandidates(filepath, line + 1, expression, text, last_word, tags);
+    TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, true, false);
     clDEBUG() << "Found" << tags.size() << "matches" << endl;
 
     // build the result

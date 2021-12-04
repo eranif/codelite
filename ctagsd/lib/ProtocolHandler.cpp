@@ -349,7 +349,7 @@ void ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath
         clDEBUG() << "Setting additional scopes of:" << where->second << endl;
         additional_scopes.insert(additional_scopes.end(), where->second.begin(), where->second.end());
     }
-    TagsManagerST::Get()->GetLanguage()->SetAdditionalScopes(additional_scopes, filepath);
+    TagsManagerST::Get()->GetLanguage()->UpdateAdditionalScopesCache(filepath, additional_scopes);
 }
 
 bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel& channel)

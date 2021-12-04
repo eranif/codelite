@@ -26,8 +26,11 @@ void CxxUsingNamespaceCollector::OnToken(CxxLexerToken& token)
             m_preProcessor->DecDepth();
 
             // Append the matched results to the current parser results
-            m_usingNamespaces.insert(m_usingNamespaces.end(), scanner.GetUsingNamespaces().begin(),
-                                     scanner.GetUsingNamespaces().end());
+            for(const auto& ns : scanner.GetUsingNamespaces()) {
+                if(!ns.empty() && m_usingNamespaces.Index(ns) == wxNOT_FOUND) {
+                    m_usingNamespaces.Add(ns);
+                }
+            }
         }
         break;
     }

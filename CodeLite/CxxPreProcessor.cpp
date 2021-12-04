@@ -9,9 +9,7 @@ CxxPreProcessor::CxxPreProcessor()
 {
 }
 
-CxxPreProcessor::~CxxPreProcessor()
-{
-}
+CxxPreProcessor::~CxxPreProcessor() {}
 
 void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
 {
@@ -38,7 +36,7 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
             filteredMap.insert(std::make_pair(p.first, p.second));
         }
     }
-    m_tokens = std::move(filteredMap);
+    m_tokens.swap(filteredMap);
 }
 
 bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxString& includeStatement,
@@ -94,10 +92,7 @@ bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxStrin
     return false;
 }
 
-void CxxPreProcessor::AddIncludePath(const wxString& path)
-{
-    m_includePaths.Add(path);
-}
+void CxxPreProcessor::AddIncludePath(const wxString& path) { m_includePaths.Add(path); }
 
 void CxxPreProcessor::AddDefinition(const wxString& def)
 {
@@ -173,7 +168,4 @@ void CxxPreProcessor::DecDepth()
     }
 }
 
-void CxxPreProcessor::IncDepth()
-{
-    m_currentDepth++;
-}
+void CxxPreProcessor::IncDepth() { m_currentDepth++; }

@@ -1,6 +1,6 @@
+#include "CxxUsingNamespaceCollector.h"
 #include "CxxPreProcessor.h"
 #include "CxxScannerTokens.h"
-#include "CxxUsingNamespaceCollector.h"
 
 CxxUsingNamespaceCollector::CxxUsingNamespaceCollector(CxxPreProcessor* preProcessor, const wxFileName& filename,
                                                        std::unordered_set<wxString>& visitedFiles)
@@ -9,9 +9,7 @@ CxxUsingNamespaceCollector::CxxUsingNamespaceCollector(CxxPreProcessor* preProce
 {
 }
 
-CxxUsingNamespaceCollector::~CxxUsingNamespaceCollector()
-{
-}
+CxxUsingNamespaceCollector::~CxxUsingNamespaceCollector() {}
 
 void CxxUsingNamespaceCollector::OnToken(CxxLexerToken& token)
 {
@@ -58,7 +56,8 @@ void CxxUsingNamespaceCollector::ParseUsingNamespace()
         }
         usingNamespace << token.GetText();
     }
-    if(!usingNamespace.IsEmpty()) {
+
+    if(!usingNamespace.IsEmpty() && m_usingNamespaces.Index(usingNamespace) == wxNOT_FOUND) {
         m_usingNamespaces.Add(usingNamespace);
     }
 }

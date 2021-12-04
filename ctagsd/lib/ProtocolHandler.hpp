@@ -31,6 +31,9 @@ private:
     wxString m_settings_folder;
     wxStringMap_t m_filesOpened;
 
+    // keep track of all calls to "using namespace XXX" for a given file
+    unordered_map<wxString, wxArrayString> m_using_namespace_cache;
+
     // cached parsed comments file <-> comments
     unordered_map<wxString, CachedComment::Map_t> m_comments_cache;
 
@@ -42,6 +45,7 @@ private:
     void update_comments_for_file(const wxString& filepath);
     const wxString& get_comment(const wxString& filepath, long line, const wxString& default_value) const;
     bool do_comments_exist_for_file(const wxString& filepath) const;
+    void update_additional_scopes_for_file(const wxString& filepath);
 
 public:
     ProtocolHandler();

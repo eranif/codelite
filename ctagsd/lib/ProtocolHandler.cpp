@@ -1,8 +1,10 @@
 #include "ProtocolHandler.hpp"
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
+#include "CxxPreProcessor.h"
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
+#include "CxxUsingNamespaceCollector.h"
 #include "CxxVariableScanner.h"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
@@ -15,6 +17,7 @@
 #include "ctags_manager.h"
 #include "fc_fileopener.h"
 #include "file_logger.h"
+#include "tags_options_data.h"
 #include "tags_storage_sqlite3.h"
 
 #include <iostream>
@@ -221,7 +224,7 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
 void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool initial_parse)
 {
     clDEBUG() << "Parsing" << files.size() << "files" << endl;
-    clDEBUG() << "Removing un-modified files and unwanted files..." << endl;
+    clDEBUG() << "Removing un-modified and unwanted files..." << endl;
     // create/open db
     wxFileName dbfile(m_settings_folder, "tags.db");
 
@@ -235,28 +238,32 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
     start_timer();
 
-    // Now that we got the list of files - include all the "#include" statements
-    fcFileOpener::Get()->ClearResults();
-    fcFileOpener::Get()->ClearSearchPath();
-
-    for(const auto& search_path : m_settings.GetSearchPath()) {
-        const wxCharBuffer path = search_path.mb_str(wxConvUTF8);
-        fcFileOpener::Get()->AddSearchPath(path.data());
-    }
+    // keep track of files we visited
+    std::unordered_set<wxString> visited_files;
 
     remove_binary_files(files);
-    clDEBUG() << "Adding #include'ed files..." << endl;
+    clDEBUG() << "Scanning for `#include` files..." << endl;
+    CxxPreProcessor pp{ m_settings.GetSearchPath(), 20 };
     for(size_t i = 0; i < files.size(); i++) {
-        const wxCharBuffer cfile = files[i].mb_str(wxConvUTF8);
-        crawlerScan(cfile.data());
+        if(visited_files.insert(files[i]).second) {
+            // we did not visit this file just yet
+            // parse it and collect both the files included from it
+            // and all calls to "using namespace XXX"
+            CxxUsingNamespaceCollector collector(&pp, files[i], visited_files);
+            collector.Parse();
+            if(m_using_namespace_cache.count(files[i])) {
+                m_using_namespace_cache.erase(files[i]);
+            }
+            m_using_namespace_cache.insert({ files[i], collector.GetUsingNamespaces() });
+        }
     }
-
+    clDEBUG() << "Success" << endl;
     wxStringSet_t unique_files{ files.begin(), files.end() };
-
-    const auto& result_set = fcFileOpener::Get()->GetResults();
-    for(const wxString& file : result_set) {
+    for(const wxString& file : visited_files) {
         wxFileName fn(file);
-        fn.MakeAbsolute(m_root_folder);
+        if(!fn.IsAbsolute()) {
+            fn.MakeAbsolute(m_root_folder);
+        }
         unique_files.insert(fn.GetFullPath());
     }
 
@@ -334,6 +341,17 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     clDEBUG() << "Success" << endl;
 }
 
+void ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath)
+{
+    vector<wxString> additional_scopes;
+    auto where = m_using_namespace_cache.find(filepath);
+    if(where != m_using_namespace_cache.end()) {
+        clDEBUG() << "Setting additional scopes of:" << where->second << endl;
+        additional_scopes.insert(additional_scopes.end(), where->second.begin(), where->second.end());
+    }
+    TagsManagerST::Get()->GetLanguage()->SetAdditionalScopes(additional_scopes, filepath);
+}
+
 bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel& channel)
 {
     if(m_filesOpened.count(filepath) == 0) {
@@ -354,6 +372,51 @@ bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Chann
     return true;
 }
 
+void ProtocolHandler::update_comments_for_file(const wxString& filepath)
+{
+    wxString file_content;
+    if(FileUtils::ReadFileContent(filepath, file_content)) {
+        update_comments_for_file(filepath, file_content);
+    }
+}
+
+void ProtocolHandler::update_comments_for_file(const wxString& filepath, const wxString& file_content)
+{
+    m_comments_cache.erase(filepath);
+    if(file_content.empty()) {
+        return;
+    }
+
+    SimpleTokenizer tokenizer(file_content);
+    SimpleTokenizer::Token token;
+    CachedComment::Map_t file_cache;
+    while(tokenizer.next_comment(&token)) {
+        wxString comment = token.to_string(file_content);
+        tokenizer.strip_comment(comment);
+        file_cache.insert({ token.line(), comment });
+    }
+    m_comments_cache.insert({ filepath, file_cache });
+}
+
+const wxString& ProtocolHandler::get_comment(const wxString& filepath, long line, const wxString& default_value) const
+{
+    if(m_comments_cache.count(filepath) == 0) {
+        return default_value;
+    }
+    const auto& M = m_comments_cache.find(filepath)->second;
+    // try to find a comment, 1 or 2 lines above the requested line
+    for(long curline = line; curline > (line - 3); --curline) {
+        if(M.count(curline)) {
+            return M.find(curline)->second;
+        }
+    }
+    return default_value;
+}
+
+bool ProtocolHandler::do_comments_exist_for_file(const wxString& filepath) const
+{
+    return m_comments_cache.count(filepath) != 0;
+}
 //---------------------------------------------------------------------------------
 // protocol handlers
 //---------------------------------------------------------------------------------
@@ -517,6 +580,8 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     bool is_trigger_char =
         !expression.empty() && (expression.Last() == '>' || expression.Last() == ':' || expression.Last() == '.');
     bool is_function_calltip = !expression.empty() && expression.Last() == '(';
+
+    update_additional_scopes_for_file(filepath);
 
     vector<TagEntryPtr> candidates;
     if(is_trigger_char) {
@@ -834,6 +899,8 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
 
     clDEBUG() << "Calling WordCompletionCandidates with expression:" << expression << ", last_word=" << last_word
               << endl;
+
+    update_additional_scopes_for_file(filepath);
     vector<TagEntryPtr> tags;
     TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, true, false);
     clDEBUG() << "Found" << tags.size() << "matches" << endl;
@@ -858,50 +925,4 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
         }
     }
     channel.write_reply(response);
-}
-
-void ProtocolHandler::update_comments_for_file(const wxString& filepath)
-{
-    wxString file_content;
-    if(FileUtils::ReadFileContent(filepath, file_content)) {
-        update_comments_for_file(filepath, file_content);
-    }
-}
-
-void ProtocolHandler::update_comments_for_file(const wxString& filepath, const wxString& file_content)
-{
-    m_comments_cache.erase(filepath);
-    if(file_content.empty()) {
-        return;
-    }
-
-    SimpleTokenizer tokenizer(file_content);
-    SimpleTokenizer::Token token;
-    CachedComment::Map_t file_cache;
-    while(tokenizer.next_comment(&token)) {
-        wxString comment = token.to_string(file_content);
-        tokenizer.strip_comment(comment);
-        file_cache.insert({ token.line(), comment });
-    }
-    m_comments_cache.insert({ filepath, file_cache });
-}
-
-const wxString& ProtocolHandler::get_comment(const wxString& filepath, long line, const wxString& default_value) const
-{
-    if(m_comments_cache.count(filepath) == 0) {
-        return default_value;
-    }
-    const auto& M = m_comments_cache.find(filepath)->second;
-    // try to find a comment, 1 or 2 lines above the requested line
-    for(long curline = line; curline > (line - 3); --curline) {
-        if(M.count(curline)) {
-            return M.find(curline)->second;
-        }
-    }
-    return default_value;
-}
-
-bool ProtocolHandler::do_comments_exist_for_file(const wxString& filepath) const
-{
-    return m_comments_cache.count(filepath) != 0;
 }

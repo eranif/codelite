@@ -764,6 +764,16 @@ wxString TagEntry::GetPatternClean() const
     return p;
 }
 
+// Update all "doxy" comments and surround them with <green> tags
+thread_local wxRegEx reDoxyParam("([@\\\\]{1}param)[ \t]+([_a-z][a-z0-9_]*)?", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyBrief("([@\\\\]{1}(brief|details))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyThrow("([@\\\\]{1}(throw|throws))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyReturn("([@\\\\]{1}(return|retval|returns))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyToDo("([@\\\\]{1}todo)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyRemark("([@\\\\]{1}(remarks|remark))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDate("([@\\\\]{1}date)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reFN("([@\\\\]{1}fn)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+
 wxString TagEntry::FormatComment()
 {
     if(m_isCommentForamtted)
@@ -785,23 +795,12 @@ wxString TagEntry::FormatComment()
                            << TagsManagerST::Get()->FormatFunction(p, FunctionFormat_WithVirtual |
                                                                           FunctionFormat_Arg_Per_Line)
                            << wxT("```\n");
-        m_formattedComment.Replace(GetName(), wxT("") + GetName() + wxT(""));
     } else if(IsClass()) {
-
-        m_formattedComment << wxT("Kind: ");
-        m_formattedComment << GetKind() << "\n";
-
-        if(GetInheritsAsString().IsEmpty() == false) {
-            m_formattedComment << wxT("Inherits: ");
-            m_formattedComment << GetInheritsAsString() << wxT("\n");
-        }
+        // do nothing
 
     } else if(IsMacro() || IsTypedef() || IsContainer() || GetKind() == wxT("member") || GetKind() == wxT("variable")) {
 
-        m_formattedComment << wxT("Kind: ");
-        m_formattedComment << GetKind() << "\n";
-
-        m_formattedComment << wxT("Match Pattern: ");
+        m_formattedComment << GetKind();
 
         // Prettify the match pattern
         wxString matchPattern(GetPattern());
@@ -822,7 +821,9 @@ wxString TagEntry::FormatComment()
 
         // BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
         matchPattern = TagsManagerST::Get()->WrapLines(matchPattern);
-        m_formattedComment << wxT("```") << matchPattern << wxT("```\n");
+        if(!matchPattern.empty()) {
+            m_formattedComment << wxT("\n```") << matchPattern << wxT("```\n");
+        }
     }
 
     // Add comment section
@@ -857,16 +858,6 @@ wxString TagEntry::FormatComment()
         m_formattedComment << tagComment;
     }
 
-    // Update all "doxy" comments and surround them with <green> tags
-    static wxRegEx reDoxyParam("([@\\\\]{1}param)[ \t]+([_a-z][a-z0-9_]*)?", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyBrief("([@\\\\]{1}(brief|details))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyThrow("([@\\\\]{1}(throw|throws))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyReturn("([@\\\\]{1}(return|retval|returns))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyToDo("([@\\\\]{1}todo)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDoxyRemark("([@\\\\]{1}(remarks|remark))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reDate("([@\\\\]{1}date)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
-    static wxRegEx reFN("([@\\\\]{1}fn)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
-
     if(reDoxyParam.IsValid() && reDoxyParam.Matches(m_formattedComment)) {
         reDoxyParam.ReplaceAll(&m_formattedComment, "\nParameter\n`\\2`");
     }
@@ -876,11 +867,11 @@ wxString TagEntry::FormatComment()
     }
 
     if(reDoxyThrow.IsValid() && reDoxyThrow.Matches(m_formattedComment)) {
-        reDoxyThrow.ReplaceAll(&m_formattedComment, "\nThrows\n");
+        reDoxyThrow.ReplaceAll(&m_formattedComment, "\n`Throws:`\n");
     }
 
     if(reDoxyReturn.IsValid() && reDoxyReturn.Matches(m_formattedComment)) {
-        reDoxyReturn.ReplaceAll(&m_formattedComment, "\nReturns\n");
+        reDoxyReturn.ReplaceAll(&m_formattedComment, "\n`Returns:`\n");
     }
 
     if(reDoxyToDo.IsValid() && reDoxyToDo.Matches(m_formattedComment)) {

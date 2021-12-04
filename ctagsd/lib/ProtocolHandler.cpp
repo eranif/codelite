@@ -764,6 +764,52 @@ void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel
     channel.write_reply(response);
 }
 
+void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    auto json = msg->toElement();
+    size_t id = json["id"].toSize_t();
+    clDEBUG() << json.format() << endl;
+
+    wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
+    wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
+    clDEBUG1() << "textDocument/signatureHelp: for file" << filepath << endl;
+
+    if(!ensure_file_content_exists(filepath, channel))
+        return;
+
+    size_t line = json["params"]["position"]["line"].toSize_t();
+    size_t character = json["params"]["position"]["character"].toSize_t();
+
+    // get the expression at this given position
+    wxString last_word;
+    CompletionHelper helper;
+    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character, true);
+    wxString expression = helper.get_expression(text, false, &last_word);
+
+    clDEBUG() << "resolving expression:" << expression << endl;
+
+    vector<wxString> tips;
+    TagsManagerST::Get()->GetHoverTip(filepath, line + 1, expression, last_word, text, tips);
+
+    // construct the content
+    wxString tip_content;
+    for(wxString& tip : tips) {
+        tip.Trim().Trim(false);
+        if(!tip_content.empty()) {
+            tip_content << "\n---\n";
+        }
+        tip_content << tip;
+    }
+
+    JSON root(cJSON_Object);
+    JSONItem response = root.toElement();
+    auto result = build_result(response, id, cJSON_Object);
+    auto contents = result.AddObject("contents");
+    contents.addProperty("kind", "markdown");
+    contents.addProperty("value", tip_content);
+    channel.write_reply(response);
+}
+
 void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
 {
     auto json = msg->toElement();

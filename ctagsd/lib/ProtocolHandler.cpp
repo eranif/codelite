@@ -487,7 +487,7 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     clDEBUG() << "textDocument/didChange: caching new content for file:" << filepath << endl;
     m_filesOpened.erase(filepath);
     wxString file_content = json["params"]["contentChanges"][0]["text"].toString();
-    update_comments_for_file(filepath, file_content);
+    m_comments_cache.erase(filepath);
     m_filesOpened.insert({ filepath, file_content });
 }
 

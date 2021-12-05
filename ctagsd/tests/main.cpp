@@ -70,6 +70,12 @@ int main(int argc, char** argv)
 }
 )";
 
+const wxString sample_text_language_h = R"(class TemplateHelper
+{
+    std::vector<wxArrayString> templateInstantiationVector;
+};
+)";
+
 const wxString sample_text = R"(
 #ifdef __WXMSW__
 #endif
@@ -219,8 +225,7 @@ TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
 
     clTempFile tmpfile("cpp");
     tmpfile.Write(fulltext);
-    TagsManagerST::Get()->AutoCompleteCandidates(tmpfile.GetFullPath(), 1, "ptr->",
-                                                   fulltext, candidates);
+    TagsManagerST::Get()->AutoCompleteCandidates(tmpfile.GetFullPath(), 1, "ptr->", fulltext, candidates);
     CHECK_BOOL(!candidates.empty());
     return true;
 }
@@ -254,21 +259,33 @@ int main(int argc, char** argv)
     return true;
 }
 
-TEST_FUNC(TestSimeplTokenizer_Comments_From_File)
+TEST_FUNC(TestSimeplTokenizer_2)
 {
-    wxString content;
-    if(!FileUtils::ReadFileContent(wxFileName("/home/eran/devl/codelite/Plugin/project.h"), content)) {
-        return true;
+    SimpleTokenizer::Token token;
+    SimpleTokenizer tokenizer(sample_text_language_h);
+    vector<SimpleTokenizer::Token> tokens;
+    vector<TokenWrapper> tokens_vec;
+    while(tokenizer.next(&token)) {
+        tokens.push_back(token);
+        TokenWrapper t;
+        t.token = token;
+        tokens_vec.push_back(t);
     }
 
-    SimpleTokenizer::Token token;
-    SimpleTokenizer tokenizer(content);
-    vector<SimpleTokenizer::Token> tokens;
-    while(tokenizer.next_comment(&token)) {
-        tokens.push_back(token);
+    // collect all interesting tokens from the document
+    vector<int> encoded_arr;
+    LSPUtils::encode_semantic_tokens(tokens_vec, &encoded_arr);
+    for(size_t i = 0; i < encoded_arr.size() / 5; ++i) {
+        size_t base = i * 5;
+        const auto& tok = tokens_vec[i].token;
+        cout << tok.to_string(sample_text_language_h) << "(" << tok.line() << "," << tok.column() << "," << tok.length()
+             << "): ";
+        cout << encoded_arr[base + 0] << ", ";
+        cout << encoded_arr[base + 1] << ", ";
+        cout << encoded_arr[base + 2] << ", ";
+        cout << encoded_arr[base + 3] << ", ";
+        cout << encoded_arr[base + 4] << endl;
     }
-    // we are expecting 2 comments
-    cout << make_pair(tokens, content) << endl;
     return true;
 }
 

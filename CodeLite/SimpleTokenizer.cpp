@@ -80,8 +80,8 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
                 RETURN_TOKEN_IF_POSSIBLE();
                 break;
             case '\n':
-                RETURN_TOKEN_IF_POSSIBLE();
                 INCREMENT_LINE();
+                RETURN_TOKEN_IF_POSSIBLE();
                 break;
             case 'a':
             case 'b':
@@ -150,7 +150,7 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
                     m_token.inc_length();
                 } else {
                     // start a new token
-                    m_token = Token(m_pos, m_line, m_pos - m_line_start_pos - 1, 1);
+                    m_token = Token(m_pos, m_line, m_pos == 0 ? 0 : (m_pos - m_line_start_pos - 1), 1);
                 }
                 break;
             case '"':

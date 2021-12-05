@@ -128,6 +128,7 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="Trie.hpp"/>
     <File Name="CompletionHelper.hpp"/>
     <File Name="CompletionHelper.cpp"/>
     <File Name="SimpleTokenizer.hpp"/>

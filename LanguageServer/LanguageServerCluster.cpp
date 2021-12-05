@@ -1,6 +1,6 @@
+#include "LanguageServerCluster.h"
 #include "CompileCommandsGenerator.h"
 #include "LSP/LSPEvent.h"
-#include "LanguageServerCluster.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
@@ -266,20 +266,24 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
         wxString token_type = server->GetSemanticToken(token.token_type);
         bool is_class = classes_tokens.count(token_type) > 0;
         bool is_variable = variables_tokens.count(token_type) > 0;
-        if(!is_class && !is_variable) {
-            continue;
-        }
 
         // read its name
         int start_pos = editor->GetCtrl()->PositionFromLine(token.line) + token.column;
         int end_pos = start_pos + token.length;
         wxString token_name = editor->GetTextRange(start_pos, end_pos);
+        clDEBUG() << "Checking token:" << token_name << endl;
+        clDEBUG() << "Token line:" << token.line << ", column:" << token.column << endl;
+        if(!is_class && !is_variable) {
+            clDEBUG() << "Token:" << token_name << "is not CLASS nor VARIABLE" << endl;
+            continue;
+        }
 
-        // clDEBUG() << "Checking token name:" << token_name << "(" << token_type << ")" << endl;
         if(is_class && classes_set.count(token_name) == 0) {
+            clDEBUG() << " -- added to CLASS" << endl;
             classes_set.insert(token_name);
             classes_str << token_name << " ";
         } else if(is_variable && variables_set.count(token_name) == 0) {
+            clDEBUG() << " -- added to VARIABLE" << endl;
             variables_set.insert(token_name);
             variabls_str << token_name << " ";
         }

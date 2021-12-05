@@ -1,3 +1,4 @@
+#include "ProtocolHandler.hpp"
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxPreProcessor.h"
@@ -8,7 +9,6 @@
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LSPUtils.hpp"
-#include "ProtocolHandler.hpp"
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
@@ -29,39 +29,22 @@ using LSP::eSymbolKind;
 namespace
 {
 wxStopWatch sw;
-FileLogger& operator<<(FileLogger& logger, const TokenWrapper& wrapper)
+FileLogger& operator<<(FileLogger& logger, const wxStringSet_t& arr)
 {
     wxString s;
-    s << "{" << (wrapper.type == TYPE_CLASS ? "class" : "variable") << ", " << wrapper.token.line() << ", "
-      << wrapper.token.column() << ", " << wrapper.token.length() << "}";
-    logger.Append(s, logger.GetRequestedLogLevel());
-    return logger;
-}
-
-// FileLogger& operator<<(FileLogger& logger, clCallTipPtr ct)
-// {
-//     wxString s;
-//     if(!ct) {
-//         s << "{clCallTipPtr: nullptr}";
-//     } else {
-//         s << ct->All();
-//     }
-//     logger.Append(s, logger.GetRequestedLogLevel());
-//     return logger;
-// }
-
-FileLogger& operator<<(FileLogger& logger, const vector<TokenWrapper>& arr)
-{
+    s << "[";
     for(const auto& d : arr) {
-        logger << d << endl;
+        s << d << ",";
     }
+    s << "]";
+    logger.Append(s, logger.GetRequestedLogLevel());
     return logger;
 }
 
 FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
 {
     wxString s;
-    s << tag.GetKind() << ": " << tag.GetDisplayName();
+    s << tag.GetKind() << ", " << tag.GetDisplayName() << ", " << tag.GetPatternClean();
     logger.Append(s, logger.GetRequestedLogLevel());
     return logger;
 }
@@ -717,7 +700,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
 
         result.addProperty("isIncomplete", false);
         auto items = result.AddArray("items");
-        
+
         // send them over the client
         for(TagEntryPtr tag : candidates) {
             wxString comment_string =
@@ -770,6 +753,25 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     }
 }
 
+namespace
+{
+void add_to_locals_set(const wxString& name, wxStringSet_t& locals, wxStringSet_t& types)
+{
+    if(types.count(name)) {
+        types.erase(name);
+    }
+    locals.insert(name);
+}
+
+void add_to_types_set(const wxString& name, wxStringSet_t& types, const wxStringSet_t& locals)
+{
+    if(locals.count(name)) {
+        return;
+    }
+    types.insert(name);
+}
+} // namespace
+
 // Request <-->
 void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channel)
 {
@@ -782,21 +784,21 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
     // use CTags to gather local variables
     wxString tmpdir = clStandardPaths::Get().GetTempDir();
     vector<TagEntry> tags =
-        CTags::Run(filepath, tmpdir, "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+pfl --C++-kinds=+pfl ",
+        CTags::Run(filepath, tmpdir, "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+l --C++-kinds=+l ",
                    m_settings.GetCodeliteIndexer());
 
     clDEBUG() << "File tags:" << tags.size() << endl;
-
     wxStringSet_t locals_set;
     wxStringSet_t types_set;
-    for(const TagEntry& tag : tags) {
+
+    for(const auto& tag : tags) {
         if(tag.IsLocalVariable()) {
             wxString type = tag.GetLocalType();
             auto parts = wxStringTokenize(type, ":", wxTOKEN_STRTOK);
             for(const wxString& part : parts) {
-                types_set.insert(part);
+                add_to_types_set(part, types_set, locals_set);
             }
-            locals_set.insert(tag.GetName());
+            add_to_locals_set(tag.GetName(), locals_set, types_set);
         } else if(tag.IsMethod()) {
             const wxString& path = tag.GetPath();
             auto parts = wxStringTokenize(path, ":", wxTOKEN_STRTOK);
@@ -805,24 +807,44 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
                 parts.pop_back();
             }
             for(const wxString& part : parts) {
-                types_set.insert(part);
+                add_to_types_set(part, types_set, locals_set);
             }
 
             // we also want the method signature arguments
             wxString signature = tag.GetSignature();
             CxxVariableScanner scanner(signature, eCxxStandard::kCxx11, {}, true);
-            auto functionArgs = scanner.ParseFunctionArguments();
-            for(const auto& var : functionArgs) {
-                locals_set.insert(var->GetName());
+            auto vars = scanner.ParseFunctionArguments();
+            for(const auto& var : vars) {
+                add_to_locals_set(var->GetName(), locals_set, types_set);
                 const auto& typeParts = var->GetType();
                 for(const auto& p : typeParts) {
                     if(p.type == T_IDENTIFIER) {
-                        types_set.insert(p.text);
+                        add_to_types_set(p.text, types_set, locals_set);
+                    }
+                }
+            }
+        } else if(tag.IsClass() || tag.IsStruct() || tag.GetKind() == "enum") {
+            add_to_types_set(tag.GetName(), types_set, locals_set);
+        } else if(tag.GetKind() == "enumerator") {
+            add_to_locals_set(tag.GetName(), locals_set, types_set);
+        } else if(tag.GetKind() == "member") {
+            add_to_locals_set(tag.GetName(), locals_set, types_set);
+            CxxVariableScanner scanner(tag.GetPatternClean(), eCxxStandard::kCxx11, {}, false);
+            auto vars = scanner.GetVariables();
+            for(const auto& var : vars) {
+                const auto& typeParts = var->GetType();
+                for(const auto& p : typeParts) {
+                    if(p.type == T_IDENTIFIER) {
+                        add_to_types_set(p.text, types_set, locals_set);
                     }
                 }
             }
         }
     }
+
+    clDEBUG() << "The following semantic tokens were found:" << endl;
+    clDEBUG() << "Locals:" << locals_set << endl;
+    clDEBUG() << "Types:" << types_set << endl;
 
     wxString buffer;
     FileUtils::ReadFileContent(filepath, buffer);
@@ -836,25 +858,28 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
     wxArrayString words;
     words.reserve(1000);
 
-    wxStringSet_t unique_tokens;
+    wxStringSet_t visited;
+    wxArrayString simple_tokens;
     while(tokenizer.next(&token_wrapper.token)) {
         const auto& tok = token_wrapper.token;
         wxString word = tok.to_string(buffer);
-        if(!CompletionHelper::is_cxx_keyword(word) && (unique_tokens.count(word) == 0)) {
-            words.push_back(word);
-            unique_tokens.insert(word);
+        simple_tokens.Add(word);
+        if(!CompletionHelper::is_cxx_keyword(word) && (visited.count(word) == 0)) {
+            visited.insert(word);
             if(locals_set.count(word)) {
                 // we know that this one is a variable
                 token_wrapper.type = TYPE_VARIABLE;
                 tokens_vec.push_back(token_wrapper);
+                clDEBUG() << "Adding local:" << word << endl;
+                
             } else if(types_set.count(word)) {
                 token_wrapper.type = TYPE_CLASS;
                 tokens_vec.push_back(token_wrapper);
+                clDEBUG() << "Adding type:" << word << endl;
             }
         }
     }
 
-    // clDEBUG() << tokens_vec << endl;
     // build the response
     size_t id = json["id"].toSize_t();
     JSON root(cJSON_Object);

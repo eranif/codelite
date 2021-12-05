@@ -10,6 +10,8 @@ void LSPUtils::encode_semantic_tokens(const vector<TokenWrapper>& tokens_vec, ve
 {
     TokenWrapper dummy;
     dummy.token = SimpleTokenizer::Token(0, 0, 0, 0);
+
+    encoded_arr->reserve(tokens_vec.size() * 5);
     const auto* prev_token_ptr = &dummy.token;
     for(size_t i = 0; i < tokens_vec.size(); ++i) {
         auto* current_token_ptr = &tokens_vec[i].token;

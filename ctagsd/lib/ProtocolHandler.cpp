@@ -871,7 +871,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
                 token_wrapper.type = TYPE_VARIABLE;
                 tokens_vec.push_back(token_wrapper);
                 clDEBUG() << "Adding local:" << word << endl;
-                
+
             } else if(types_set.count(word)) {
                 token_wrapper.type = TYPE_CLASS;
                 tokens_vec.push_back(token_wrapper);
@@ -1037,6 +1037,11 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
     update_additional_scopes_for_file(filepath);
     vector<TagEntryPtr> tags;
     TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, true, false);
+    if(tags.empty()) {
+        // try the declaration
+        TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, false, false);
+    }
+
     clDEBUG() << "Found" << tags.size() << "matches" << endl;
 
     // build the result

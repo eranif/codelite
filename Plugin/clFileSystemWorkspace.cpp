@@ -64,7 +64,6 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &clFileSystemWorkspace::OnSaveSession, this);
-        Bind(wxPARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
         EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_PULLED, &clFileSystemWorkspace::OnSourceControlPulled, this);
 
         // Build events
@@ -107,7 +106,6 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         // parsing event
         EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
-        Unbind(wxPARSE_THREAD_SCAN_INCLUDES_DONE, &clFileSystemWorkspace::OnParseThreadScanIncludeCompleted, this);
         EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_PULLED, &clFileSystemWorkspace::OnSourceControlPulled, this);
 
         // Build events
@@ -358,9 +356,6 @@ void clFileSystemWorkspace::DoOpen()
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(fnFolder.GetFullPath());
 
-    // Update the parser paths with the active configuration
-    UpdateParserPaths();
-
     // Cache the source files from the workspace directories
     CacheFiles();
 
@@ -469,82 +464,11 @@ void clFileSystemWorkspace::Parse(bool fullParse)
         return;
     }
 
-    // in the case of re-tagging the entire workspace and full re-tagging is enabled
-    // it is faster to drop the tables instead of deleting
     if(fullParse) {
-        TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
+        TagsManagerST::Get()->ParseWorkspaceFull(GetFileName().GetPath());
+    } else {
+        TagsManagerST::Get()->ParseWorkspaceIncremental();
     }
-
-    UpdateParserPaths();
-
-    // Create a parsing request
-    ParseRequest* parsingRequest = new ParseRequest(this);
-
-    // use a deep copy to endure thread safety
-    wxArrayString files;
-    files.Alloc(m_files.GetSize());
-    for(const wxFileName& fn : m_files) {
-        // filter any non valid coding file
-        files.push_back(fn.GetFullPath());
-    }
-    parsingRequest->SetWorkspaceFiles(files);
-    parsingRequest->SetType(ParseRequest::PR_PARSEINCLUDES);
-    parsingRequest->SetDbfile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath());
-    parsingRequest->SetQuickRetag(!fullParse);
-    ParseThreadST::Get()->Add(parsingRequest);
-    clGetManager()->SetStatusMessage(_("Scanning for files to parse..."));
-}
-
-void clFileSystemWorkspace::OnParseThreadScanIncludeCompleted(clParseThreadEvent& event)
-{
-    clGetManager()->SetStatusMessage(_("Parsing..."));
-
-    wxBusyCursor busyCursor;
-    const wxArrayString& files = event.GetFiles();
-
-    wxStringSet_t S;
-    S.reserve(files.size() + m_files.GetSize());
-
-    for(const wxString& file : files) {
-        S.insert(file);
-    }
-
-    // add to this set the workspace files to create a unique list of
-    // files
-    for(const wxFileName& fn : m_files) {
-        S.insert(fn.GetFullPath());
-    }
-
-    // recreate the list in the form of vector (the API requirs vector)
-    std::vector<wxString> vFiles;
-    vFiles.reserve(S.size());
-    vFiles.insert(vFiles.end(), S.begin(), S.end());
-
-    // tag'em
-    TagsManagerST::Get()->RetagFiles(vFiles, event.IsQuickParse() ? TagsManager::Retag_Quick : TagsManager::Retag_Full);
-}
-
-void clFileSystemWorkspace::UpdateParserPaths()
-{
-    if(!GetConfig()) {
-        return;
-    }
-
-    // Apply the environment (incase there are backtick, we spawn a helper process)
-    const clEnvList_t envlist = GetEnvList();
-    clEnvironment env(&envlist);
-
-    // Update the parser paths
-    wxArrayString uniquePaths = GetConfig()->GetSearchPaths(GetFileName());
-
-    // Expand any macros
-    for(wxString& path : uniquePaths) {
-        path = MacroManager::Instance()->Expand(path, nullptr, "", "");
-    }
-
-    ParseThreadST::Get()->SetSearchPaths(uniquePaths, {});
-    clDEBUG() << "[" << GetConfig()->GetName() << "]"
-              << "Parser paths are now set to:" << uniquePaths;
 }
 
 void clFileSystemWorkspace::Close() { DoClose(); }

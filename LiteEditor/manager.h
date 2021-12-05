@@ -349,7 +349,6 @@ public:
      * @brief the parser thread has completed to scan for include files to parse
      * @param event
      */
-    void OnIncludeFilesScanDone(clParseThreadEvent& event);
     void OnDbContentCacherLoaded(wxCommandEvent& event);
 
     /**

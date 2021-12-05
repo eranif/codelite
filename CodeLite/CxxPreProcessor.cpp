@@ -68,21 +68,13 @@ bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxStrin
         wxString tmpfile;
         tmpfile << paths.Item(i) << "/" << includeName;
         wxFileName fn(tmpfile);
-        tmpfile = fn.GetFullPath();
-        // CL_DEBUG(" ... Checking include file: %s\n", fn.GetFullPath());
-        struct stat buff;
-        if((stat(tmpfile.mb_str(wxConvUTF8).data(), &buff) == 0)) {
-            // CL_DEBUG1(" ==> Creating scanner for file: %s\n", tmpfile);
-            wxFileName fixedFileName(tmpfile);
-            if(fixedFileName.FileExists()) {
-                fixedFileName.Normalize(wxPATH_NORM_DOTS);
-                tmpfile = fixedFileName.GetFullPath();
-                m_fileMapping.insert(std::make_pair(includeStatement, tmpfile));
-                outFile = fixedFileName;
-                return true;
-            } else {
-                // CL_DEBUG("Including a folder :/ : %s", fixedFileName.GetFullPath());
-            }
+        if(fn.FileExists()) {
+            fn.MakeAbsolute();
+            m_fileMapping.insert({ includeStatement, fn.GetFullPath() });
+            outFile = fn;
+            return true;
+        } else {
+            // CL_DEBUG("Including a folder :/ : %s", fixedFileName.GetFullPath());
         }
     }
 

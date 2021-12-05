@@ -211,7 +211,6 @@ Manager::Manager(void)
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
 
     Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
-    Connect(wxPARSE_THREAD_SCAN_INCLUDES_DONE, clParseThreadEventHandler(Manager::OnIncludeFilesScanDone), NULL, this);
     Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED, wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
@@ -983,85 +982,18 @@ wxFileName Manager::FindFile(const wxArrayString& files, const wxFileName& fn)
 
 void Manager::RetagWorkspace(TagsManager::RetagType type)
 {
-    SetRetagInProgress(true);
-
-    // in the case of re-tagging the entire workspace and full re-tagging is enabled
-    // it is faster to drop the tables instead of deleting
-    if(type == TagsManager::Retag_Full) {
-        TagsManagerST::Get()->GetDatabase()->RecreateDatabase();
-    }
-
-    clDEBUG() << "Fetching project list..." << clEndl;
-    // Start the parsing by collecing list of files to parse
-    wxArrayString projects;
-    GetProjectList(projects);
-
-    clDEBUG() << "Fetching project list...done" << clEndl;
-    std::vector<wxFileName> projectFiles;
-    for(size_t i = 0; i < projects.GetCount(); i++) {
-        ProjectPtr proj = GetProject(projects.Item(i));
-        if(proj) {
-            clDEBUG1() << "Fetching files for project:" << proj->GetName() << clEndl;
-            proj->GetFilesAsVectorOfFileName(projectFiles);
-            clDEBUG1() << "Fetching files for project:" << proj->GetName() << "...done" << clEndl;
-        }
-    }
-
-    // Create a parsing request
-    ParseRequest* parsingRequest = new ParseRequest(clMainFrame::Get());
-    clDEBUG() << "Filtering non relevant files..." << clEndl;
-    wxArrayString arrfiles;
-    arrfiles.Alloc(projectFiles.size());
-    for(const wxFileName& fn : projectFiles) {
-        arrfiles.Add(fn.GetFullPath());
-    }
-    parsingRequest->SetWorkspaceFiles(arrfiles);
-    clDEBUG() << "Filtering non relevant files...done" << clEndl;
-
-    if(parsingRequest->GetWorkspaceFiles().empty()) {
-        SetRetagInProgress(false);
-        delete parsingRequest;
+    if(!clWorkspaceManager::Get().IsWorkspaceOpened()) {
         return;
     }
 
-    if(type == TagsManager::Retag_Full || type == TagsManager::Retag_Quick) {
-        parsingRequest->SetType(ParseRequest::PR_PARSEINCLUDES);
-        parsingRequest->SetDbfile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath());
-        parsingRequest->SetParent(this);
-        parsingRequest->SetQuickRetag(type == TagsManager::Retag_Quick);
-        ParseThreadST::Get()->Add(parsingRequest);
-        clMainFrame::Get()->GetStatusBar()->SetMessage(_("Scanning for include files to parse..."));
-
-    } else if(type == TagsManager::Retag_Quick_No_Scan) {
-        parsingRequest->SetType(ParseRequest::PR_PARSE_FILE_NO_INCLUDES);
-        parsingRequest->SetDbfile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath());
-        parsingRequest->SetQuickRetag(true);
-        ParseThreadST::Get()->Add(parsingRequest);
+    if(type == TagsManager::Retag_Quick) {
+        TagsManagerST::Get()->ParseWorkspaceIncremental();
+    } else {
+        TagsManagerST::Get()->ParseWorkspaceFull(clWorkspaceManager::Get().GetWorkspace()->GetFileName().GetPath());
     }
 }
 
-void Manager::RetagFile(const wxString& filename)
-{
-    if(IsWorkspaceClosing()) {
-        return;
-    }
-
-    // Is this a C++ file?
-    if(!FileExtManager::IsCxxFile(wxFileName(filename))) {
-        return;
-    }
-
-    wxFileName absFile(filename);
-    absFile.MakeAbsolute();
-
-    // Put a request to the parsing thread
-    ParseRequest* req = new ParseRequest(clMainFrame::Get());
-    req->SetDbfile(TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName().GetFullPath());
-    req->SetFile(absFile.GetFullPath());
-    req->SetType(ParseRequest::PR_FILESAVED);
-    ParseThreadST::Get()->Add(req);
-    clMainFrame::Get()->GetStatusBar()->SetMessage((wxString() << _("Parsing file:") << absFile.GetFullName()));
-}
+void Manager::RetagFile(const wxString& filename) { wxUnusedVar(filename); }
 
 //--------------------------- Project Files Mgmt -----------------------------
 
@@ -1226,7 +1158,7 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
 
     // re-tag the added files
     if(vFiles.empty() == false) {
-        TagsManagerST::Get()->RetagFiles(vFiles, TagsManager::Retag_Quick);
+        TagsManagerST::Get()->ParseWorkspaceIncremental();
     }
 
     if(!actualAdded.IsEmpty()) {
@@ -1426,15 +1358,9 @@ bool Manager::MoveFileToVD(const wxString& fileName, const wxString& srcVD, cons
 
 void Manager::RetagProject(const wxString& projectName, bool quickRetag)
 {
-    ProjectPtr proj = GetProject(projectName);
-    if(!proj)
-        return;
-
-    SetRetagInProgress(true);
-
-    std::vector<wxFileName> projectFiles;
-    proj->GetFilesAsVectorOfFileName(projectFiles);
-    TagsManagerST::Get()->RetagFiles(projectFiles, quickRetag ? TagsManager::Retag_Quick : TagsManager::Retag_Full);
+    wxUnusedVar(projectName);
+    wxUnusedVar(quickRetag);
+    TagsManagerST::Get()->ParseWorkspaceIncremental();
 }
 
 void Manager::GetProjectFiles(const wxString& project, wxArrayString& files)
@@ -3459,56 +3385,6 @@ void Manager::UpdateParserPaths(bool notify)
         clDEBUG() << "Parser paths are now set to:" << inc;
         clDEBUG() << "Parser exclude paths are now set to:" << exc;
     }
-}
-
-void Manager::OnIncludeFilesScanDone(clParseThreadEvent& event)
-{
-    clMainFrame::Get()->GetStatusBar()->SetMessage(_("Retagging..."));
-
-    wxBusyCursor busyCursor;
-    wxStringSet_t uniqueList;
-    wxArrayString projects;
-    GetProjectList(projects);
-
-    clDEBUG() << "Scan for include files is done";
-    clDEBUG() << "Building project file list...";
-
-    std::vector<wxFileName> projectFiles;
-    for(size_t i = 0; i < projects.GetCount(); i++) {
-        ProjectPtr proj = GetProject(projects.Item(i));
-        if(proj) {
-            proj->GetFilesAsVectorOfFileName(projectFiles);
-        }
-    }
-
-    // add to this set the workspace files to create a unique list of
-    // files
-    for(wxFileName& fn : projectFiles) {
-        if(fn.IsRelative()) {
-            fn.MakeAbsolute();
-        }
-        uniqueList.insert(fn.GetFullPath());
-    }
-
-    for(const wxString& file : event.GetFiles()) {
-        uniqueList.insert(file);
-    }
-
-    clDEBUG() << "Building project file list...done";
-    clDEBUG() << "Converting set to vector...";
-
-    wxArrayString arrFiles;
-    arrFiles.Alloc(uniqueList.size());
-
-    for(const wxString& filename : uniqueList) {
-        arrFiles.Add(filename);
-    }
-    // recreate the list in the form of vector (the API requirs vector)
-    clDEBUG() << "Converting set to vector...done";
-
-    // tag'em
-    TagsManagerST::Get()->RetagFiles(arrFiles,
-                                     event.IsQuickParse() ? TagsManager::Retag_Quick : TagsManager::Retag_Full);
 }
 
 void Manager::DoSaveAllFilesBeforeBuild()

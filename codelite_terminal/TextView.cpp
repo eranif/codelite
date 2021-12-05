@@ -6,7 +6,7 @@
 TextView::TextView(wxWindow* parent, wxWindowID winid)
     : wxWindow(parent, winid)
 {
-    SetSizer(new wxBoxSizer(wxVERTICAL));
+    SetSizer(new wxBoxSizer(wxVERTICAL)); 
 #if USE_STC
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY);
     m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);
@@ -201,7 +201,6 @@ int TextView::GetCurrentStyle()
     key << bg.GetAsString() << ":" << textColour.GetAsString() << ":" << (f.GetWeight() == wxFONTWEIGHT_BOLD);
     if(m_styles.count(key)) { return m_styles[key]; }
     ++m_nextStyle;
-
     m_ctrl->StyleSetBackground(m_nextStyle, bg);
     m_ctrl->StyleSetForeground(m_nextStyle, textColour);
     m_ctrl->StyleSetFont(m_nextStyle, f);

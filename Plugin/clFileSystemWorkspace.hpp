@@ -72,7 +72,6 @@ protected:
     void OnAllEditorsClosed(wxCommandEvent& event);
     void OnScanCompleted(clFileSystemEvent& event);
     void OnParseWorkspace(wxCommandEvent& event);
-    void OnParseThreadScanIncludeCompleted(clParseThreadEvent& event);
     void OnBuildProcessTerminated(clProcessEvent& event);
     void OnBuildProcessOutput(clProcessEvent& event);
     void OnSaveSession(clCommandEvent& event);
@@ -111,7 +110,7 @@ public:
     bool IsProjectSupported() const override;
     wxFileName GetProjectFileName(const wxString& projectName) const override;
     void SetProjectActive(const wxString& project) override;
-    
+
     virtual wxString GetExcludeFolders() const;
     clFileSystemWorkspace(bool dummy);
     virtual ~clFileSystemWorkspace();
@@ -154,7 +153,6 @@ public:
      */
     bool IsOpen() const { return m_isLoaded; }
 
-    void UpdateParserPaths();
     const std::vector<wxFileName>& GetFiles() const { return m_files.GetFiles(); }
 
     wxString GetName() const override { return m_filename.GetName(); }

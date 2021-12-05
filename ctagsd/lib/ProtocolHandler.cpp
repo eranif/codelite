@@ -210,7 +210,9 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     clDEBUG() << "Removing un-modified and unwanted files..." << endl;
     // create/open db
     wxFileName dbfile(m_settings_folder, "tags.db");
-
+    if(!dbfile.FileExists()) {
+        clDEBUG() << dbfile << "does not exist, will create it" << endl;
+    }
     ITagsStoragePtr db(new TagsStorageSQLite());
     db->OpenDatabase(dbfile);
     if(initial_parse && !db->CheckIntegrity()) {
@@ -240,7 +242,7 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     }
 
     for(const wxString& file : m_settings.GetSearchPath()) {
-        wxFileName fn(file);
+        wxFileName fn(file, wxEmptyString);
         wxString path = fn.GetPath();
         if(unique_paths.count(path) == 0) {
             search_paths.Add(path);
@@ -249,13 +251,15 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     }
 
     clDEBUG() << "Scanning for `#include` files..." << endl;
-    CxxPreProcessor pp{ search_paths, 20 };
+    clDEBUG() << "Search path:" << search_paths << endl;
+
+    CxxPreProcessor pp{ search_paths, 50 };
     for(size_t i = 0; i < files.size(); i++) {
         if(visited_files.insert(files[i]).second) {
             // we did not visit this file just yet
             // parse it and collect both the files included from it
             // and all calls to "using namespace XXX"
-            CxxUsingNamespaceCollector collector(&pp, files[i], visited_files);
+            CxxUsingNamespaceCollector collector{ &pp, files[i], visited_files };
             collector.Parse();
             if(m_using_namespace_cache.count(files[i])) {
                 m_using_namespace_cache.erase(files[i]);
@@ -870,12 +874,10 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
                 // we know that this one is a variable
                 token_wrapper.type = TYPE_VARIABLE;
                 tokens_vec.push_back(token_wrapper);
-                clDEBUG() << "Adding local:" << word << endl;
 
             } else if(types_set.count(word)) {
                 token_wrapper.type = TYPE_CLASS;
                 tokens_vec.push_back(token_wrapper);
-                clDEBUG() << "Adding type:" << word << endl;
             }
         }
     }

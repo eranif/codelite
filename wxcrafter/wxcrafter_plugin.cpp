@@ -1,3 +1,4 @@
+#include "wxcrafter_plugin.h"
 #include "AboutDlg.h"
 #include "ColoursAndFontsManager.h"
 #include "DefineCustomControlWizard.h"
@@ -48,7 +49,6 @@
 #include "wxcTreeView.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_settings.h"
-#include "wxcrafter_plugin.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_globals.h"
 #include "wxgui_helpers.h"
@@ -544,10 +544,6 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
         std::set<wxString> uniqueFiles;
         wxString sourceFilesVD;
         if(clCxxWorkspaceST::Get()->IsOpen()) {
-            // We will know that the retagging operation completed
-            // by handling the wxEVT_CMD_RETAG_COMPLETED event
-            TagsManagerST::Get()->RetagFiles(filesToRetag, TagsManager::Retag_Quick_No_Scan, this);
-
             wxString vd = wxcProjectMetadata::Get().GetVirtualFolder();
 
             wxString projectName;

@@ -20,7 +20,7 @@ void CxxUsingNamespaceCollector::OnToken(CxxLexerToken& token)
         if(m_preProcessor->CanGoDeeper() && m_preProcessor->ExpandInclude(m_filename, token.GetText(), include) &&
            m_visitedFiles.count(include.GetFullPath()) == 0) {
             m_visitedFiles.insert(include.GetFullPath());
-            CxxUsingNamespaceCollector scanner(m_preProcessor, include, m_visitedFiles);
+            CxxUsingNamespaceCollector scanner{ m_preProcessor, include, m_visitedFiles };
             m_preProcessor->IncDepth();
             scanner.Parse();
             m_preProcessor->DecDepth();

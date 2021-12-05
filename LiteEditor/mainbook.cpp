@@ -913,11 +913,9 @@ void MainBook::ReloadExternallyModified(bool prompt)
             filesToRetag.push_back(files[i].first);
         }
     }
-    if(filesToRetag.size() > 1) {
-        TagsManagerST::Get()->RetagFiles(filesToRetag, TagsManager::Retag_Quick);
 
-    } else if(filesToRetag.size() == 1) {
-        ManagerST::Get()->RetagFile(filesToRetag.at(0).GetFullPath());
+    if(filesToRetag.size() > 1) {
+        TagsManagerST::Get()->ParseWorkspaceIncremental();
     }
 }
 

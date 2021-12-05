@@ -27,14 +27,17 @@
 #include "CxxVariable.h"
 #include "CxxVariableScanner.h"
 #include "asyncprocess.h"
+#include "cl_command_event.h"
 #include "cl_indexer_reply.h"
 #include "cl_indexer_request.h"
 #include "cl_standard_paths.h"
 #include "clindexerprotocol.h"
 #include "code_completion_api.h"
+#include "codelite_events.h"
 #include "codelite_exports.h"
 #include "cpp_comment_creator.h"
 #include "cppwordscanner.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
@@ -1298,88 +1301,6 @@ void TagsManager::DeleteFilesTags(const std::vector<wxFileName>& projectFiles)
         files.push_back(fn.GetFullPath());
     }
     ParseThreadST::Get()->Add(req);
-}
-
-void TagsManager::RetagFiles(const wxArrayString& files, RetagType type, wxEvtHandler* cb)
-{
-    wxArrayString strFiles;
-    strFiles.Alloc(files.size());
-
-    // step 1: remove all non-tags files
-    for(const wxString& filename : files) {
-        if(!IsValidCtagsFile(filename)) {
-            continue;
-        }
-        strFiles.Add(filename);
-    }
-
-    // If there are no files to tag - send the 'end' event
-    if(strFiles.IsEmpty()) {
-#if wxUSE_GUI
-        wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
-        if(frame) {
-            clParseThreadEvent retaggingCompletedEvent(wxPARSE_THREAD_RETAGGING_COMPLETED);
-            frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
-        }
-#endif
-        return;
-    }
-
-    // step 2: remove all files which do not need retag
-    if(type == Retag_Quick || type == Retag_Quick_No_Scan) {
-        DoFilterNonNeededFilesForRetaging(strFiles, GetDatabase());
-    }
-
-    // If there are no files to tag - send the 'end' event
-    if(strFiles.IsEmpty()) {
-#if wxUSE_GUI
-        wxFrame* frame = dynamic_cast<wxFrame*>(wxTheApp->GetTopWindow());
-        if(frame) {
-            clParseThreadEvent retaggingCompletedEvent(wxPARSE_THREAD_RETAGGING_COMPLETED);
-            frame->GetEventHandler()->AddPendingEvent(retaggingCompletedEvent);
-        }
-#endif
-        return;
-    }
-
-    // step 4: Remove tags belonging to these files
-    DeleteFilesTags(strFiles);
-
-    // step 5: build the database
-    ParseRequest* req = new ParseRequest(ParseThreadST::Get()->GetNotifiedWindow());
-    if(cb) {
-        req->SetParent(cb); // Callback window
-    }
-
-    req->SetDbfile(GetDatabase()->GetDatabaseFileName().GetFullPath());
-    req->SetType(type == Retag_Quick_No_Scan ? ParseRequest::PR_PARSE_FILE_NO_INCLUDES
-                                             : ParseRequest::PR_PARSE_AND_STORE);
-    req->SetWorkspaceFiles(strFiles);
-    ParseThreadST::Get()->Add(req);
-}
-
-void TagsManager::RetagFiles(const std::vector<wxFileName>& files, RetagType type, wxEvtHandler* cb)
-{
-    wxArrayString strFiles;
-    strFiles.Alloc(files.size()); // At most files.size() entries
-
-    // Convert the vector<wxFileName> ==> wxArrayString
-    for(const wxFileName& fn : files) {
-        strFiles.Add(fn.GetFullPath());
-    }
-    RetagFiles(strFiles, type, cb);
-}
-
-void TagsManager::RetagFiles(const std::vector<wxString>& files, RetagType type, wxEvtHandler* cb)
-{
-    wxArrayString strFiles;
-    strFiles.Alloc(files.size()); // At most files.size() entries
-
-    // Convert the vector<wxString> ==> wxArrayString
-    for(const wxString& fn : files) {
-        strFiles.Add(fn);
-    }
-    RetagFiles(strFiles, type, cb);
 }
 
 void TagsManager::FindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags)
@@ -2932,7 +2853,7 @@ void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
     TagEntryPtrVector_t privateTags;
     TagEntryPtrVector_t locals;
     TagEntryPtrVector_t members;
-    
+
     for(size_t i = 0; i < tags.size(); ++i) {
 
         TagEntryPtr tag = tags.at(i);
@@ -3314,4 +3235,33 @@ void TagsManager::DoTagsFromText(const wxString& text, std::vector<TagEntryPtr>&
         tag->FromLine(line);
         tags.emplace_back(tag);
     }
+}
+
+void TagsManager::ParseWorkspaceIncremental()
+{
+    // just restart ctagsd
+    // clLanguageServerEvent stop_event{ wxEVT_LSP_RESTART };
+    // stop_event.SetLspName("ctagsd");
+    // EventNotifier::Get()->ProcessEvent(stop_event);
+}
+
+void TagsManager::ParseWorkspaceFull(const wxString& workspace_dir)
+{
+    // stop ctagsd
+    clLanguageServerEvent stop_event{ wxEVT_LSP_STOP };
+    stop_event.SetLspName("ctagsd");
+    EventNotifier::Get()->ProcessEvent(stop_event);
+
+    // delete the tags.db file
+    wxFileName tags_db{ workspace_dir, "tags.db" };
+    tags_db.AppendDir(".ctagsd");
+
+    if(tags_db.FileExists()) {
+        FileUtils::RemoveFile(tags_db, wxEmptyString);
+    }
+
+    // start ctagsd again
+    clLanguageServerEvent start_event{ wxEVT_LSP_START };
+    start_event.SetLspName("ctagsd");
+    EventNotifier::Get()->ProcessEvent(start_event);
 }

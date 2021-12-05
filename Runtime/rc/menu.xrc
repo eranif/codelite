@@ -525,10 +525,6 @@
                 <label>Parse Workspace</label>
                 <help>Reparse the workspace</help>
             </object>
-            <object class="wxMenuItem" name="retag_workspace">
-                <label>Parse Workspace - Incremental</label>
-                <help>Parse modified files only</help>
-            </object>
         </object>
         <object class="wxMenu" name="build_menu">
             <label>&amp;Build</label>

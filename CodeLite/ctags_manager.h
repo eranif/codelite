@@ -391,20 +391,19 @@ public:
     void DeleteTagsByFilePrefix(const wxString& dbfileName, const wxString& filePrefix);
 
     /**
-     * Retag files in the database. 'Retagging' means:
-     * - delete all entries from the database that belongs to one of these files
-     * - parse the files
-     * - update the database again
-     * @param files list of files, in absolute path, to retag
-     */
-    void RetagFiles(const std::vector<wxFileName>& files, RetagType type, wxEvtHandler* cb = NULL);
-    void RetagFiles(const wxArrayString& files, RetagType type, wxEvtHandler* cb = NULL);
-    void RetagFiles(const std::vector<wxString>& files, RetagType type, wxEvtHandler* cb = NULL);
-
-    /**
      * Close the workspace database
      */
     void CloseDatabase();
+
+    /**
+     * @brief trigger a complete parsing of the workspace
+     */
+    void ParseWorkspaceFull(const wxString& workspace_dir);
+
+    /**
+     * @brief trigger an incremental workspace parsing
+     */
+    void ParseWorkspaceIncremental();
 
     /**
      * Get a hover tip. This function is a wrapper around the Language::GetHoverTip.

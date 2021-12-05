@@ -2,11 +2,13 @@
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
 #include <vector>
+#include <wx/regex.h>
 
 using namespace std;
 namespace
 {
 #define PREPEND_STRING(tokn) expression.insert(expression.begin(), text)
+#define MAX_TIP_LINE_SIZE 200
 
 bool is_word_char(wxChar ch)
 {
@@ -15,6 +17,41 @@ bool is_word_char(wxChar ch)
            || (ch >= 48 && ch <= 57)  // 0-9
            || (ch == '_');
 }
+
+wxString wrap_lines(const wxString& str)
+{
+    wxString wrappedString;
+
+    int curLineBytes(0);
+    wxString::const_iterator iter = str.begin();
+    for(; iter != str.end(); iter++) {
+        if(*iter == wxT('\t')) {
+            wrappedString << wxT(" ");
+
+        } else if(*iter == wxT('\n')) {
+            wrappedString << wxT("\n");
+            curLineBytes = 0;
+
+        } else if(*iter == wxT('\r')) {
+            // Skip it
+
+        } else {
+            wrappedString << *iter;
+        }
+        curLineBytes++;
+
+        if(curLineBytes == MAX_TIP_LINE_SIZE) {
+
+            // Wrap the lines
+            if(wrappedString.IsEmpty() == false && wrappedString.Last() != wxT('\n')) {
+                wrappedString << wxT("\n");
+            }
+            curLineBytes = 0;
+        }
+    }
+    return wrappedString;
+}
+
 } // namespace
 
 CompletionHelper::CompletionHelper() {}
@@ -244,6 +281,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
         case T_POW_EQUAL:
         case T_OR_EQUAL:
         case T_3_DOTS:
+        case T_RETURN:
         case ',':
         case '*':
         case '&':
@@ -430,6 +468,10 @@ vector<wxString> CompletionHelper::split_function_signature(const wxString& sign
     if(!current_param->empty() && (*current_param)[current_param->size() - 1] == ' ') { \
         current_param->RemoveLast();                                                    \
     }
+#define APPEND_SPACE_IF_MISSING()                                                         \
+    if(!current_param->empty() && ((*current_param)[current_param->size() - 1] != ' ')) { \
+        current_param->Append(" ");                                                       \
+    }
 
     // ---------------------------------------------------------------------------------------------
     // ----------------macros end-------------------------------------------------------------------
@@ -566,19 +608,19 @@ vector<wxString> CompletionHelper::split_function_signature(const wxString& sign
         case T_3_DOTS:
         case '&':
         case ':':
-            current_param->Append(token.GetWXString()).Append(" ");
+            current_param->Append(token.GetWXString());
+            APPEND_SPACE_IF_MISSING();
             break;
         case '*':
             if(LAST_TOKEN_IS('*')) {
                 REMOVE_TRAILING_SPACE();
             }
-            current_param->Append(token.GetWXString()).Append(" ");
+            current_param->Append(token.GetWXString());
+            APPEND_SPACE_IF_MISSING();
             break;
         case T_IDENTIFIER:
-            if(LAST_TOKEN_IS_CLOSING_PARENTHESES() || LAST_TOKEN_IS(T_IDENTIFIER)) {
-                current_param->Append(" ");
-            } else if(LAST_TOKEN_IS('*')) {
-                REMOVE_TRAILING_SPACE();
+            if(LAST_TOKEN_IS_CLOSING_PARENTHESES() || LAST_TOKEN_IS_ONE_OF_2(T_IDENTIFIER, '*')) {
+                APPEND_SPACE_IF_MISSING();
             }
             current_param->Append(token.GetWXString());
             break;
@@ -593,7 +635,8 @@ vector<wxString> CompletionHelper::split_function_signature(const wxString& sign
             if(depth == 1) {
                 ADD_CURRENT_PARAM(current_param);
             } else {
-                current_param->Append(", ");
+                current_param->Append(",");
+                APPEND_SPACE_IF_MISSING();
             }
             break;
         case '>':
@@ -626,9 +669,7 @@ vector<wxString> CompletionHelper::split_function_signature(const wxString& sign
             current_param->Append(token.GetWXString());
             break;
         case '=':
-            if(!current_param->empty() && current_param->Last() != ' ') {
-                current_param->Append(" ");
-            }
+            APPEND_SPACE_IF_MISSING();
             current_param->Append("= ");
             break;
         default:
@@ -658,4 +699,97 @@ vector<wxString> CompletionHelper::split_function_signature(const wxString& sign
 #undef LAST_TOKEN_IS_CLOSING_PARENTHESES
 #undef LAST_TOKEN_IS_OPEN_PARENTHESES
 #undef REMOVE_TRAILING_SPACE
+}
+
+namespace
+{
+thread_local wxRegEx reDoxyParam("([@\\\\]{1}param)[ \t]+([_a-z][a-z0-9_]*)?", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyBrief("([@\\\\]{1}(brief|details))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyThrow("([@\\\\]{1}(throw|throws))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyReturn("([@\\\\]{1}(return|retval|returns))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyToDo("([@\\\\]{1}todo)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDoxyRemark("([@\\\\]{1}(remarks|remark))[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reDate("([@\\\\]{1}date)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+thread_local wxRegEx reFN("([@\\\\]{1}fn)[ \t]*", wxRE_DEFAULT | wxRE_ICASE);
+} // namespace
+
+wxString CompletionHelper::format_comment(TagEntryPtr tag, const wxString& input_comment) const
+{
+    return format_comment(tag.Get(), input_comment);
+}
+
+wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_comment) const
+{
+    wxString beautified_comment;
+    wxString return_value;
+    if(tag->IsMethod()) {
+        auto args = split_function_signature(tag->GetSignature(), &return_value);
+
+        beautified_comment << "```\n";
+        if(args.empty()) {
+            beautified_comment << tag->GetName() << "()\n";
+        } else {
+            beautified_comment << tag->GetName() << "(\n";
+            for(const wxString& arg : args) {
+                beautified_comment << "  " << arg << ",\n";
+            }
+
+            if(beautified_comment.EndsWith(",\n")) {
+                beautified_comment.RemoveLast(2);
+            }
+            beautified_comment << ")\n";
+        }
+        beautified_comment << "```\n";
+    } else {
+        beautified_comment << tag->GetKind() << "\n";
+    }
+
+    wxString formatted_comment;
+    if(!input_comment.empty()) {
+        formatted_comment = wrap_lines(input_comment);
+
+        if(reDoxyParam.IsValid() && reDoxyParam.Matches(formatted_comment)) {
+            reDoxyParam.ReplaceAll(&formatted_comment, "\nParameter\n`\\2`");
+        }
+
+        if(reDoxyBrief.IsValid() && reDoxyBrief.Matches(formatted_comment)) {
+            reDoxyBrief.ReplaceAll(&formatted_comment, "");
+        }
+
+        if(reDoxyThrow.IsValid() && reDoxyThrow.Matches(formatted_comment)) {
+            reDoxyThrow.ReplaceAll(&formatted_comment, "\n`Throws:`\n");
+        }
+
+        if(reDoxyReturn.IsValid() && reDoxyReturn.Matches(formatted_comment)) {
+            reDoxyReturn.ReplaceAll(&formatted_comment, "\n`Returns:`\n");
+        }
+
+        if(reDoxyToDo.IsValid() && reDoxyToDo.Matches(formatted_comment)) {
+            reDoxyToDo.ReplaceAll(&formatted_comment, "\nTODO\n");
+        }
+
+        if(reDoxyRemark.IsValid() && reDoxyRemark.Matches(formatted_comment)) {
+            reDoxyRemark.ReplaceAll(&formatted_comment, "\n  ");
+        }
+
+        if(reDate.IsValid() && reDate.Matches(formatted_comment)) {
+            reDate.ReplaceAll(&formatted_comment, "Date ");
+        }
+
+        if(reFN.IsValid() && reFN.Matches(formatted_comment)) {
+            size_t fnStart, fnLen, fnEnd;
+            if(reFN.GetMatch(&fnStart, &fnLen)) {
+                fnEnd = formatted_comment.find('\n', fnStart);
+                if(fnEnd != wxString::npos) {
+                    // remove the string from fnStart -> fnEnd (including ther terminating \n)
+                    formatted_comment.Remove(fnStart, (fnEnd - fnStart) + 1);
+                }
+            }
+        }
+
+        // horizontal line
+        beautified_comment << "---\n";
+        beautified_comment << formatted_comment;
+    }
+    return beautified_comment;
 }

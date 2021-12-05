@@ -1,8 +1,10 @@
 #ifndef COMPLETIONHELPER_HPP
 #define COMPLETIONHELPER_HPP
-#include "CxxTokenizer.h"
 
+#include "CxxTokenizer.h"
 #include "codelite_exports.h"
+#include "entry.h"
+
 #include <functional>
 #include <istorage.h>
 #include <vector>
@@ -22,6 +24,17 @@ public:
     vector<wxString> split_function_signature(const wxString& signature, wxString* return_value) const;
 
     static bool is_cxx_keyword(const wxString& word);
+    /**
+     * @brief format a tag comment
+     * @param tag the tag which owns the comment
+     * @param input_comment raw comment
+     * @return formatted comment
+     */
+    wxString format_comment(TagEntryPtr tag, const wxString& input_comment) const;
+    /**
+     * @brief same as the above, but accepts raw pointer
+     */
+    wxString format_comment(TagEntry* tag, const wxString& input_comment) const;
 };
 
 #endif // COMPLETIONHELPER_HPP

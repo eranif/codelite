@@ -46,6 +46,8 @@ private:
     const wxString& get_comment(const wxString& filepath, long line, const wxString& default_value) const;
     bool do_comments_exist_for_file(const wxString& filepath) const;
     void update_additional_scopes_for_file(const wxString& filepath);
+    void update_using_namespace_for_file(const wxString& filepath);
+    size_t read_file_list(wxArrayString& files) const;
 
 public:
     ProtocolHandler();

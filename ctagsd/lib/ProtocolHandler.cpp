@@ -1,4 +1,3 @@
-#include "ProtocolHandler.hpp"
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxPreProcessor.h"
@@ -9,6 +8,7 @@
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LSPUtils.hpp"
+#include "ProtocolHandler.hpp"
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
@@ -242,8 +242,31 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     std::unordered_set<wxString> visited_files;
 
     remove_binary_files(files);
+
+    // build search path which is combinbed for the paths of the workspace files
+    // and from the settings
+    wxArrayString search_paths;
+    wxStringSet_t unique_paths;
+    for(const wxString& file : files) {
+        wxFileName fn(file);
+        wxString path = fn.GetPath();
+        if(unique_paths.count(path) == 0) {
+            search_paths.Add(path);
+            unique_paths.insert(path);
+        }
+    }
+
+    for(const wxString& file : m_settings.GetSearchPath()) {
+        wxFileName fn(file);
+        wxString path = fn.GetPath();
+        if(unique_paths.count(path) == 0) {
+            search_paths.Add(path);
+            unique_paths.insert(path);
+        }
+    }
+
     clDEBUG() << "Scanning for `#include` files..." << endl;
-    CxxPreProcessor pp{ m_settings.GetSearchPath(), 20 };
+    CxxPreProcessor pp{ search_paths, 20 };
     for(size_t i = 0; i < files.size(); i++) {
         if(visited_files.insert(files[i]).second) {
             // we did not visit this file just yet
@@ -417,6 +440,76 @@ bool ProtocolHandler::do_comments_exist_for_file(const wxString& filepath) const
 {
     return m_comments_cache.count(filepath) != 0;
 }
+
+void ProtocolHandler::update_using_namespace_for_file(const wxString& filepath)
+{
+    if(m_using_namespace_cache.count(filepath)) {
+        return;
+    }
+
+    wxArrayString file_list;
+    read_file_list(file_list);
+
+    // build search path which is combinbed for the paths of the workspace files
+    // and from the settings
+    wxArrayString search_paths;
+    wxStringSet_t unique_paths;
+    for(const wxString& file : file_list) {
+        wxFileName fn(file);
+        wxString path = fn.GetPath();
+        if(unique_paths.count(path) == 0) {
+            search_paths.Add(path);
+            unique_paths.insert(path);
+        }
+    }
+
+    for(const wxString& file : m_settings.GetSearchPath()) {
+        wxFileName fn(file);
+        wxString path = fn.GetPath();
+        if(unique_paths.count(path) == 0) {
+            search_paths.Add(path);
+            unique_paths.insert(path);
+        }
+    }
+
+    clDEBUG() << "Updating extra scopes for file" << filepath << endl;
+    CxxPreProcessor pp{ search_paths, 20 };
+
+    // we did not visit this file just yet
+    // parse it and collect both the files included from it
+    // and all calls to "using namespace XXX"
+    wxStringSet_t visited_files;
+    CxxUsingNamespaceCollector collector(&pp, filepath, visited_files);
+    collector.Parse();
+    if(m_using_namespace_cache.count(filepath)) {
+        m_using_namespace_cache.erase(filepath);
+    }
+    wxArrayString scopes;
+    scopes.Add("<global>"); // always include the global namespace
+    for(const wxString& scope : collector.GetUsingNamespaces()) {
+        // filter internal scopes from std
+        if(!scope.StartsWith("std::_")) {
+            scopes.Add(scope);
+        }
+    }
+
+    m_using_namespace_cache.insert({ filepath, scopes });
+    clDEBUG() << "scopes for file:" << filepath << "is now set to:" << scopes << endl;
+    clDEBUG() << "Success" << endl;
+}
+
+size_t ProtocolHandler::read_file_list(wxArrayString& arr) const
+{
+    wxFileName file_list(m_settings_folder, "file_list.txt");
+    if(file_list.FileExists()) {
+        wxString file_list_content;
+        FileUtils::ReadFileContent(file_list, file_list_content);
+        wxArrayString files = ::wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
+        arr.swap(files);
+    }
+    return arr.size();
+}
+
 //---------------------------------------------------------------------------------
 // protocol handlers
 //---------------------------------------------------------------------------------
@@ -467,12 +560,8 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     // build the workspace file list
     wxArrayString files;
-    wxFileName file_list(m_settings_folder, "file_list.txt");
-    if(file_list.FileExists()) {
-        wxString file_list_content;
-        FileUtils::ReadFileContent(file_list, file_list_content);
-        files = ::wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
-    } else {
+    if(read_file_list(files) == 0) {
+        // try the scan dir
         scan_dir(m_root_folder, m_settings, files);
     }
     parse_files(files, &channel, true);
@@ -520,7 +609,13 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
     clDEBUG() << "textDocument/didOpen: caching new content for file:" << filepath << endl;
     m_filesOpened.erase(filepath);
     wxString file_content = json["params"]["textDocument"]["text"].toString();
+    // update comments cache
     update_comments_for_file(filepath, file_content);
+
+    // update using namespace cache
+    update_using_namespace_for_file(filepath);
+
+    // keep the file content in-cache
     m_filesOpened.insert({ filepath, file_content });
 }
 
@@ -534,7 +629,9 @@ void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel& channel)
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
     m_filesOpened.erase(filepath);
     update_comments_for_file(filepath, wxEmptyString);
+    // clear various caches for this file
     m_comments_cache.erase(filepath);
+    m_using_namespace_cache.erase(filepath);
 }
 
 // Notification -->
@@ -552,6 +649,9 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     wxString file_content = json["params"]["contentChanges"][0]["text"].toString();
     m_comments_cache.erase(filepath);
     m_filesOpened.insert({ filepath, file_content });
+
+    // update using namespace cache
+    update_using_namespace_for_file(filepath);
 }
 
 // Request <-->
@@ -602,26 +702,29 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
 
     if(!candidates.empty()) {
         // ensure all relevant files have been parsed for comments
+        clDEBUG() << "Updating comments for matches..." << endl;
         for(auto tag : candidates) {
             wxFileName fn(tag->GetFile());
             if(!do_comments_exist_for_file(fn.GetFullPath())) {
                 update_comments_for_file(fn.GetFullPath());
             }
         }
-
+        clDEBUG() << "Success" << endl;
+        clDEBUG() << "Building reply..." << endl;
         JSON root(cJSON_Object);
         JSONItem response = root.toElement();
         auto result = build_result(response, id, cJSON_Object);
 
         result.addProperty("isIncomplete", false);
         auto items = result.AddArray("items");
+        
         // send them over the client
         for(TagEntryPtr tag : candidates) {
             wxString comment_string =
                 get_comment(wxFileName(tag->GetFile()).GetFullPath(), tag->GetLine() - 1, wxEmptyString);
             tag->SetComment(comment_string);
             auto item = items.AddObject(wxEmptyString);
-            wxString doc_comment = tag->FormatComment();
+            wxString doc_comment = helper.format_comment(tag, comment_string);
             auto documentation = item.AddObject("documentation");
             documentation.addProperty("kind", "markdown");
             documentation.addProperty("value", doc_comment);
@@ -635,7 +738,9 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
             CompletionItem::eCompletionItemKind kind = get_completion_kind(*tag.Get());
             item.addProperty("kind", static_cast<int>(kind));
         }
+        clDEBUG() << "Sending the reply..." << endl;
         channel.write_reply(response.format(false));
+        clDEBUG() << "Success" << endl;
     }
 }
 
@@ -650,6 +755,10 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     clDEBUG() << "textDocument/didSave: caching new content for file:" << filepath << endl;
     m_filesOpened.erase(filepath);
     m_filesOpened.insert({ filepath, json["params"]["contentChanges"][0]["text"].toString() });
+
+    // update the file using namespace
+    m_using_namespace_cache.erase(filepath);
+    update_using_namespace_for_file(filepath);
 
     // re-parse the file
     wxArrayString files;
@@ -745,7 +854,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
         }
     }
 
-    clDEBUG() << tokens_vec << endl;
+    // clDEBUG() << tokens_vec << endl;
     // build the response
     size_t id = json["id"].toSize_t();
     JSON root(cJSON_Object);
@@ -757,7 +866,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
 
     LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
     result.addProperty("data", encoding);
-    clDEBUG() << response.format() << endl;
+    clDEBUG1() << response.format() << endl;
     channel.write_reply(response);
 }
 

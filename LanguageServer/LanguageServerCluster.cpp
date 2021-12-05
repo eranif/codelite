@@ -1,6 +1,6 @@
-#include "LanguageServerCluster.h"
 #include "CompileCommandsGenerator.h"
 #include "LSP/LSPEvent.h"
+#include "LanguageServerCluster.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
@@ -412,6 +412,18 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             wxStringMap_t types_table = TagsManagerST::Get()->GetCtagsOptions().GetTypesMap();
             // this table is used during *parsing*
             wxStringMap_t tokens_table = TagsManagerST::Get()->GetCtagsOptions().GetTokensWxMap();
+            // ensure that we don't have duplicate entries
+            if(json.hasNamedObject("types")) {
+                json.removeProperty("types");
+            }
+            if(json.hasNamedObject("tokens")) {
+                json.removeProperty("tokens");
+            }
+            if(json.hasNamedObject("codelite_indexer")) {
+                json.removeProperty("codelite_indexer");
+            }
+
+            // update the entries
             json.addProperty("types", types_table);
             json.addProperty("tokens", tokens_table);
             json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));

@@ -143,7 +143,6 @@
 #include "pluginmgrdlg.h"
 #include "project.h"
 #include "quickdebugdlg.h"
-#include "quickoutlinedlg.h"
 #include "refactorindexbuildjob.h"
 #include "replaceinfilespanel.h"
 #include "search_thread.h"
@@ -161,15 +160,11 @@
 
 //////////////////////////////////////////////////
 
-// from auto-generated file svninfo.cpp:
-static wxStopWatch gStopWatch;
-static QuickOutlineDlg* gOutlineDialog = nullptr;
-
 // from iconsextra.cpp:
 extern char* cubes_xpm[];
 extern unsigned char cubes_alpha[];
-
 static int FrameTimerId = wxNewId();
+thread_local wxStopWatch gStopWatch;
 
 const wxEventType wxEVT_LOAD_PERSPECTIVE = XRCID("load_perspective");
 const wxEventType wxEVT_REFRESH_PERSPECTIVE_MENU = XRCID("refresh_perspective_menu");
@@ -871,10 +866,6 @@ clMainFrame::~clMainFrame(void)
 {
     wxDELETE(m_singleInstanceThread);
     wxDELETE(m_webUpdate);
-    if(gOutlineDialog) {
-        gOutlineDialog->Destroy();
-        gOutlineDialog = nullptr;
-    }
 
 #ifndef __WXMSW__
     m_zombieReaper.Stop();
@@ -2809,17 +2800,8 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     evt.SetEventObject(this);
     evt.SetEditor(activeEditor);
 
-    if(EventNotifier::Get()->ProcessEvent(evt))
-        return;
-
-    // Show outline dialog
-    if(gOutlineDialog == nullptr) {
-        gOutlineDialog = new QuickOutlineDlg(::wxGetTopLevelParent(activeEditor), wxID_ANY, wxDefaultPosition,
-                                             wxSize(400, 400), wxDEFAULT_DIALOG_STYLE);
-    }
-    if(gOutlineDialog->ParseActiveBuffer()) {
-        gOutlineDialog->ShowModal();
-    }
+    // fire the event so plugins will be able to process it
+    EventNotifier::Get()->ProcessEvent(evt);
     activeEditor->SetActive();
 }
 
@@ -4407,7 +4389,7 @@ void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
     e.SetEventObject(this);
     if(EventNotifier::Get()->ProcessEvent(e))
         return;
-    
+
     // Update the parser paths with the global ones
     ManagerST::Get()->UpdateParserPaths(false);
 

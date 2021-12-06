@@ -281,8 +281,6 @@
       <File Name="DebuggerCallstackView.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="CodeCompletion">
-      <File Name="quickoutlinedlg.cpp"/>
-      <File Name="quickoutlinedlg.h"/>
       <File Name="symbols_dialog.cpp"/>
       <File Name="symbols_dialog.h"/>
       <File Name="symbols_dialog_base.cpp"/>

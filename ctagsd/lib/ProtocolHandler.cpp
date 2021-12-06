@@ -969,7 +969,12 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
     auto response = root.toElement();
     auto result = build_result(response, id, cJSON_Array);
 
+    wxStringSet_t containers_seen;
     for(const TagEntry& tag : tags) {
+        if(tag.IsContainer()) {
+            containers_seen.insert(tag.GetName());
+        }
+
         LSP::SymbolInformation si;
         LSP::Location loc;
         LSP::Range range;
@@ -979,13 +984,15 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
         loc.SetPath(filepath_uri);
 
         si.SetKind(get_symbol_kind(tag));
-        si.SetContainerName(tag.GetScope());
-
-        if(tag.GetParent().empty()) {
-            si.SetName(tag.GetPath() + tag.GetSignature());
-        } else {
+        if(containers_seen.count(tag.GetParent())) {
+            si.SetContainerName(tag.GetParent());
             si.SetName(tag.GetDisplayName());
+        } else {
+            // don't bother adding parent that we did not
+            // see until this point
+            si.SetName(tag.GetFullDisplayName());
         }
+
         si.SetLocation(loc);
         result.arrayAppend(si.ToJSON(wxEmptyString));
     }

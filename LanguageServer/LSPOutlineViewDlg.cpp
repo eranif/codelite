@@ -36,6 +36,15 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInform
     : LSPOutlineViewDlgBase(parent)
     , m_symbols(symbols)
 {
+    clSetDialogBestSizeAndPosition(this);
+    CallAfter(&LSPOutlineViewDlg::DoInitialise);
+}
+
+LSPOutlineViewDlg::~LSPOutlineViewDlg() {}
+
+void LSPOutlineViewDlg::DoInitialise()
+{
+    m_dvTreeCtrll->Begin();
     m_dvTreeCtrll->SetScrollToBottom(false);
 
     // build the tree
@@ -115,14 +124,12 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInform
         }
         m_dvTreeCtrll->AddLine(builder.GetString(), false, (wxUIntPtr)&si);
     }
-    clSetDialogBestSizeAndPosition(this);
     if(!m_dvTreeCtrll->IsEmpty()) {
         m_dvTreeCtrll->SelectRow(0);
     }
+    m_dvTreeCtrll->Commit();
     m_textCtrlFilter->CallAfter(&wxTextCtrl::SetFocus);
 }
-
-LSPOutlineViewDlg::~LSPOutlineViewDlg() {}
 
 void LSPOutlineViewDlg::OnEnter(wxCommandEvent& event)
 {

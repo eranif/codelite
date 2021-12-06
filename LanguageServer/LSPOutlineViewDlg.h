@@ -17,6 +17,7 @@ private:
     void DoSelectionActivate();
     void DoFindNext();
     void DoFindPrev();
+    void DoInitialise();
 
 public:
     LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInformation>& symbols);

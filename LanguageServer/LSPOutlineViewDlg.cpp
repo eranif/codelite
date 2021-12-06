@@ -79,6 +79,8 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInform
         case kSK_Class:
         case kSK_Struct:
         case kSK_Interface:
+        case kSK_Object:
+        case kSK_Enum:
             builder.Add(CLASS_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);
             builder.Add(si.GetName(), class_colour, true);
             break;
@@ -86,8 +88,19 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInform
         case kSK_Function:
         case kSK_Constructor:
             builder.Add(FUNCTION_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);
-            builder.Add(si.GetName(), function_colour);
-            builder.Add("()", operator_colour);
+            if(si.GetName().Contains("(") && si.GetName().Contains(")")) {
+                // the name also has the signature
+                wxString signature = si.GetName().AfterFirst('(');
+                signature = signature.BeforeLast(')');
+                wxString name_only = si.GetName().BeforeFirst('(');
+                builder.Add(name_only, function_colour);
+                builder.Add("(", operator_colour);
+                builder.Add(signature, eAsciiColours::NORMAL_TEXT);
+                builder.Add(")", operator_colour);
+            } else {
+                builder.Add(si.GetName(), function_colour);
+                builder.Add("()", operator_colour);
+            }
             break;
         default:
             builder.Add(VARIABLE_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);

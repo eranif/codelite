@@ -164,34 +164,34 @@ CompletionItem::eCompletionItemKind get_completion_kind(const TagEntry& tag)
     return kind;
 }
 
-// eSymbolKind get_symbol_kind(const TagEntry& tag)
-// {
-//     eSymbolKind kind = eSymbolKind::kSK_Variable;
-//     if(tag.IsMethod()) {
-//         kind = eSymbolKind::kSK_Method;
-//     } else if(tag.IsConstructor()) {
-//         kind = eSymbolKind::kSK_Class;
-//     } else if(tag.IsClass()) {
-//         kind = eSymbolKind::kSK_Class;
-//     } else if(tag.IsStruct()) {
-//         kind = eSymbolKind::kSK_Struct;
-//     } else if(tag.IsLocalVariable()) {
-//         kind = eSymbolKind::kSK_Variable;
-//     } else if(tag.IsTypedef()) {
-//         kind = eSymbolKind::kSK_TypeParameter;
-//     } else if(tag.IsMacro()) {
-//         kind = eSymbolKind::kSK_TypeParameter;
-//     } else if(tag.GetKind() == "namespace") {
-//         kind = eSymbolKind::kSK_Module;
-//     } else if(tag.GetKind() == "union") {
-//         kind = eSymbolKind::kSK_Struct;
-//     } else if(tag.GetKind() == "enum") {
-//         kind = eSymbolKind::kSK_Enum;
-//     } else if(tag.GetKind() == "enumerator") {
-//         kind = eSymbolKind::kSK_EnumMember;
-//     }
-//     return kind;
-// }
+eSymbolKind get_symbol_kind(const TagEntry& tag)
+{
+    eSymbolKind kind = eSymbolKind::kSK_Variable;
+    if(tag.IsMethod()) {
+        kind = eSymbolKind::kSK_Method;
+    } else if(tag.IsConstructor()) {
+        kind = eSymbolKind::kSK_Class;
+    } else if(tag.IsClass()) {
+        kind = eSymbolKind::kSK_Class;
+    } else if(tag.IsStruct()) {
+        kind = eSymbolKind::kSK_Struct;
+    } else if(tag.IsLocalVariable()) {
+        kind = eSymbolKind::kSK_Variable;
+    } else if(tag.IsTypedef()) {
+        kind = eSymbolKind::kSK_TypeParameter;
+    } else if(tag.IsMacro()) {
+        kind = eSymbolKind::kSK_TypeParameter;
+    } else if(tag.GetKind() == "namespace") {
+        kind = eSymbolKind::kSK_Module;
+    } else if(tag.GetKind() == "union") {
+        kind = eSymbolKind::kSK_Struct;
+    } else if(tag.GetKind() == "enum") {
+        kind = eSymbolKind::kSK_Enum;
+    } else if(tag.GetKind() == "enumerator") {
+        kind = eSymbolKind::kSK_EnumMember;
+    }
+    return kind;
+}
 
 // TagEntryPtr create_fake_entry(const wxString& name, const wxString& kind)
 //{
@@ -397,16 +397,20 @@ void ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath
     TagsManagerST::Get()->GetLanguage()->UpdateAdditionalScopesCache(filepath, additional_scopes);
 }
 
-bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel& channel)
+bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id)
 {
     if(m_filesOpened.count(filepath) == 0) {
         // check if this file exists on the file system -> and load it instead of complaining about it
         wxString file_content;
         if(!wxFileExists(filepath) || !FileUtils::ReadFileContent(filepath, file_content)) {
             clWARNING() << "File:" << filepath << "is not opened" << endl;
-            send_log_message(wxString() << _("`textDocument/completion` error. File: ") << filepath
-                                        << _(" is not opened on the server"),
+            send_log_message(wxString() << _("File: `") << filepath << _("` is not opened on the server"),
                              LSP_LOG_WARNING, channel);
+
+            JSON root(cJSON_Object);
+            auto response = root.toElement();
+            auto result = build_result(response, req_id, cJSON_Object);
+            channel.write_reply(response);
             return false;
         }
 
@@ -688,7 +692,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
-    if(!ensure_file_content_exists(filepath, channel))
+    if(!ensure_file_content_exists(filepath, channel, id))
         return;
 
     size_t line = json["params"]["position"]["line"].toSize_t();
@@ -944,6 +948,42 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
 {
     wxUnusedVar(msg);
     wxUnusedVar(channel);
+
+    auto json = msg->toElement();
+    size_t id = json["id"].toSize_t();
+
+    clDEBUG() << json.format() << endl;
+    wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
+    wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
+    clDEBUG1() << "textDocument/documentSymbol: for file" << filepath << endl;
+
+    if(!ensure_file_content_exists(filepath, channel, id))
+        return;
+
+    // parse the file and return the symbols
+    wxString tmpdir = clStandardPaths::Get().GetTempDir();
+    vector<TagEntry> tags = CTags::Run(filepath, tmpdir, wxEmptyString, m_settings.GetCodeliteIndexer());
+    // tags are sorted by line number, just wrap them in JSON and send them over to the client
+
+    JSON root(cJSON_Object);
+    auto response = root.toElement();
+    auto result = build_result(response, id, cJSON_Array);
+    for(const TagEntry& tag : tags) {
+        LSP::SymbolInformation si;
+        LSP::Location loc;
+        LSP::Range range;
+        range.SetStart({ tag.GetLine() - 1, 0 });
+        range.SetEnd({ tag.GetLine() - 1, 0 });
+        loc.SetRange(range);
+        loc.SetPath(filepath_uri);
+
+        si.SetKind(get_symbol_kind(tag));
+        si.SetContainerName(tag.GetScope());
+        si.SetName(tag.GetDisplayName());
+        si.SetLocation(loc);
+        result.arrayAppend(si.ToJSON(wxEmptyString));
+    }
+    channel.write_reply(response);
 }
 
 // Request <-->
@@ -959,7 +999,7 @@ void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG1() << "textDocument/signatureHelp: for file" << filepath << endl;
 
-    if(!ensure_file_content_exists(filepath, channel))
+    if(!ensure_file_content_exists(filepath, channel, id))
         return;
 
     size_t line = json["params"]["position"]["line"].toSize_t();
@@ -1017,7 +1057,7 @@ void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel& channel)
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG1() << "textDocument/signatureHelp: for file" << filepath << endl;
 
-    if(!ensure_file_content_exists(filepath, channel))
+    if(!ensure_file_content_exists(filepath, channel, id))
         return;
 
     size_t line = json["params"]["position"]["line"].toSize_t();
@@ -1063,7 +1103,7 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG1() << "textDocument/definition: for file" << filepath << endl;
 
-    if(!ensure_file_content_exists(filepath, channel))
+    if(!ensure_file_content_exists(filepath, channel, id))
         return;
 
     size_t line = json["params"]["position"]["line"].toSize_t();

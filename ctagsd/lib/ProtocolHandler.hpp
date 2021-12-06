@@ -40,7 +40,7 @@ private:
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
     void parse_files(wxArrayString& files, Channel* channel, bool initial_parse);
-    bool ensure_file_content_exists(const wxString& filepath, Channel& channel);
+    bool ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);
     void update_comments_for_file(const wxString& filepath);
     const wxString& get_comment(const wxString& filepath, long line, const wxString& default_value) const;

@@ -25,6 +25,7 @@ unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
     { "textDocument/signatureHelp", &ProtocolHandler::on_document_signature_help },
     { "textDocument/definition", &ProtocolHandler::on_definition },
     { "textDocument/hover", &ProtocolHandler::on_hover },
+    { "textDocument/documentSymbol", &ProtocolHandler::on_document_symbol },
 };
 }
 

@@ -1,5 +1,5 @@
-#include "JSON.h"
 #include "LSP/basic_types.h"
+#include "JSON.h"
 #include "file_logger.h"
 #include <wx/filesys.h>
 
@@ -306,8 +306,12 @@ void SymbolInformation::FromJSON(const JSONItem& json)
 
 JSONItem SymbolInformation::ToJSON(const wxString& name) const
 {
-    wxASSERT_MSG(false, "LSP::SymbolInformation::ToJSON(): is not implemented");
-    return JSONItem(nullptr);
+    JSONItem json = JSONItem::createObject(name);
+    json.addProperty("kind", (int)kind);
+    json.addProperty("containerName", containerName);
+    json.append(location.ToJSON("location"));
+    json.addProperty("name", this->name);
+    return json;
 }
 
 const wxString& URI::GetPath() const { return m_path; }

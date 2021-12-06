@@ -968,6 +968,7 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
     JSON root(cJSON_Object);
     auto response = root.toElement();
     auto result = build_result(response, id, cJSON_Array);
+
     for(const TagEntry& tag : tags) {
         LSP::SymbolInformation si;
         LSP::Location loc;
@@ -979,7 +980,12 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
 
         si.SetKind(get_symbol_kind(tag));
         si.SetContainerName(tag.GetScope());
-        si.SetName(tag.GetDisplayName());
+
+        if(tag.GetParent().empty()) {
+            si.SetName(tag.GetPath() + tag.GetSignature());
+        } else {
+            si.SetName(tag.GetDisplayName());
+        }
         si.SetLocation(loc);
         result.arrayAppend(si.ToJSON(wxEmptyString));
     }

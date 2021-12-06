@@ -13,6 +13,7 @@ const wxString FUNCTION_SYMBOL = wxT("\u2A10");
 const wxString CLASS_SYMBOL = wxT("\u2394");
 const wxString VARIABLE_SYMBOL = wxT("\u2027");
 const wxString MODULE_SYMBOL = wxT("{}");
+const wxString ENUMERATOR_SYMBOL = wxT("#");
 } // namespace
 
 void LSPOutlineViewDlg::DoSelectionActivate()
@@ -101,6 +102,11 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInform
                 builder.Add(si.GetName(), function_colour);
                 builder.Add("()", operator_colour);
             }
+            break;
+        case kSK_TypeParameter: // define
+        case kSK_EnumMember:
+            builder.Add(ENUMERATOR_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);
+            builder.Add(si.GetName(), eAsciiColours::NORMAL_TEXT);
             break;
         default:
             builder.Add(VARIABLE_SYMBOL + " ", eAsciiColours::NORMAL_TEXT);

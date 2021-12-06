@@ -1,6 +1,7 @@
 #include "LanguageServerCluster.h"
 #include "CompileCommandsGenerator.h"
 #include "LSP/LSPEvent.h"
+#include "LSPOutlineViewDlg.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
@@ -271,19 +272,14 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
         int start_pos = editor->GetCtrl()->PositionFromLine(token.line) + token.column;
         int end_pos = start_pos + token.length;
         wxString token_name = editor->GetTextRange(start_pos, end_pos);
-        clDEBUG() << "Checking token:" << token_name << endl;
-        clDEBUG() << "Token line:" << token.line << ", column:" << token.column << endl;
         if(!is_class && !is_variable) {
-            clDEBUG() << "Token:" << token_name << "is not CLASS nor VARIABLE" << endl;
             continue;
         }
 
         if(is_class && classes_set.count(token_name) == 0) {
-            clDEBUG() << " -- added to CLASS" << endl;
             classes_set.insert(token_name);
             classes_str << token_name << " ";
         } else if(is_variable && variables_set.count(token_name) == 0) {
-            clDEBUG() << " -- added to VARIABLE" << endl;
             variables_set.insert(token_name);
             variabls_str << token_name << " ";
         }
@@ -591,10 +587,8 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
 void LanguageServerCluster::OnOutlineSymbols(LSPEvent& event)
 {
     event.Skip();
-    clDEBUG1() << "============= LSP outline ==================" << clEndl;
-    for(const auto& var : event.GetSymbolsInformation()) {
-        clDEBUG() << var.GetName() << clEndl;
-    }
+    LSPOutlineViewDlg dlg(EventNotifier::Get()->TopFrame(), event.GetSymbolsInformation());
+    dlg.ShowModal();
 }
 
 void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)

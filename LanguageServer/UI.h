@@ -29,7 +29,6 @@
 #include <wx/combobox.h>
 #include <wx/slider.h>
 #include <wx/dataview.h>
-#include "clThemedTreeCtrl.h"
 #include "clTerminalViewCtrl.hpp"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -172,12 +171,17 @@ class LSPOutlineViewDlgBase : public wxDialog
 protected:
     wxPanel* m_panel155;
     wxTextCtrl* m_textCtrlFilter;
-    clThemedTreeCtrl* m_dvTreeCtrll;
+    clTerminalViewCtrl* m_dvTreeCtrll;
 
 protected:
+    virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+
 public:
     wxTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
-    clThemedTreeCtrl* GetDvTreeCtrll() { return m_dvTreeCtrll; }
+    clTerminalViewCtrl* GetDvTreeCtrll() { return m_dvTreeCtrll; }
     wxPanel* GetPanel155() { return m_panel155; }
     LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Outline View"),
                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),

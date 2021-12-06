@@ -10,15 +10,21 @@ class MyAnsiCodeRenderer : public clControlWithItemsRowRenderer
 {
     clAnsiEscapeCodeHandler handler;
     wxFont m_font;
+    clDataViewListCtrl* m_ctrl = nullptr;
 
 public:
-    MyAnsiCodeRenderer() {}
+    MyAnsiCodeRenderer(clDataViewListCtrl* ctrl)
+        : m_ctrl(ctrl)
+    {
+    }
 
     void SetFont(const wxFont& f) { this->m_font = f; }
     void Render(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) override
     {
         wxUnusedVar(window);
         wxUnusedVar(row_index);
+        bool zebraColouring = (m_ctrl->HasStyle(wxTR_ROW_LINES) || m_ctrl->HasStyle(wxDV_ROW_LINES));
+        bool even_row = ((row_index % 2) == 0);
 
         // draw the ascii line
         handler.Reset();
@@ -27,6 +33,11 @@ public:
         if(entry->IsSelected()) {
             dc.SetPen(colours.GetSelItemBgColour());
             dc.SetBrush(colours.GetSelItemBgColour());
+            dc.DrawRectangle(entry->GetItemRect());
+        } else if(zebraColouring) {
+            wxColour bg_colour = even_row ? colours.GetAlternateColour() : colours.GetItemBgColour();
+            dc.SetPen(bg_colour);
+            dc.SetBrush(bg_colour);
             dc.DrawRectangle(entry->GetItemRect());
         }
 
@@ -47,7 +58,7 @@ clTerminalViewCtrl::clTerminalViewCtrl(wxWindow* parent, wxWindowID id, const wx
     SetLineSpacing(0);
 
     SetSortFunction(nullptr);
-    m_renderer = new MyAnsiCodeRenderer();
+    m_renderer = new MyAnsiCodeRenderer(this);
     SetCustomRenderer(m_renderer);
     AppendIconTextColumn(_("Message"), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clTerminalViewCtrl::OnSysColourChanged, this);
@@ -95,7 +106,9 @@ void clTerminalViewCtrl::AddLine(const wxString& text, bool text_ends_with_cr, w
     }
 
     AppendItem(text, wxNOT_FOUND, wxNOT_FOUND, data);
-    ScrollToBottom();
+    if(m_scroll_to_bottom) {
+        ScrollToBottom();
+    }
     m_overwriteLastLine = text_ends_with_cr;
 }
 

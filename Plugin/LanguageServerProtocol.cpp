@@ -767,9 +767,6 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
 {
     event.Skip();
 
-    // TODO:: for now, we disable this
-    return;
-
     clDEBUG1() << "LanguageServerProtocol::OnQuickOutline called" << endl;
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);

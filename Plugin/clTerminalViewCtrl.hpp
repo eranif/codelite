@@ -11,6 +11,7 @@ class WXDLLIMPEXP_SDK clTerminalViewCtrl : public clDataViewListCtrl
     clControlWithItemsRowRenderer* m_renderer = nullptr;
     clAnsiEscapeCodeColourBuilder m_builder;
     bool m_overwriteLastLine = false;
+    bool m_scroll_to_bottom = true;
 
 protected:
     void OnSysColourChanged(clCommandEvent& e);
@@ -26,6 +27,8 @@ public:
     void AddLine(const wxString& text, bool text_ends_with_cr, wxUIntPtr data = 0);
 
     clAnsiEscapeCodeColourBuilder& GetBuilder(bool clear_it = false);
+
+    void SetScrollToBottom(bool b) { this->m_scroll_to_bottom = b; }
 };
 
 #endif // CLTERMINALVIEWCTRL_HPP

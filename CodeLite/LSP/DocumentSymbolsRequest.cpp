@@ -2,6 +2,7 @@
 #include "LSP/LSPEvent.h"
 #include "file_logger.h"
 #include "json_rpc_params.h"
+#include <algorithm>
 
 namespace
 {

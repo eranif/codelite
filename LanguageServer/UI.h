@@ -178,6 +178,7 @@ protected:
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnListKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 public:
     wxTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }

@@ -30,7 +30,8 @@ clAnsiEscapeCodeColourBuilder::clAnsiEscapeCodeColourBuilder(wxString* string)
 
 clAnsiEscapeCodeColourBuilder::~clAnsiEscapeCodeColourBuilder() {}
 
-clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString& text, eAsciiColours textColour, bool bold)
+clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString& text, eAsciiColours textColour,
+                                                                  bool bold)
 {
     if(m_activeColours->count(textColour) == 0) {
         return *this;
@@ -43,6 +44,26 @@ clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString
 clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString& text, int textColour, bool bold)
 {
     DoAddTextToBuffer(m_string, text, textColour, bold);
+    return *this;
+}
+clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString& text, const wxColour& colour,
+                                                                  bool bold)
+{
+    if(!colour.IsOk()) {
+        return Add(text, eAsciiColours::NORMAL_TEXT, bold);
+    }
+
+    wxString prefix;
+    wxString suffix;
+
+    // prepare the prefix
+    prefix << ESC << "[";
+    prefix << "38;2;" << (int)colour.Red() << ";" << (int)colour.Green() << ";" << (int)colour.Blue() << "m";
+
+    // and suffix
+    suffix << ESC << "[0m";
+
+    (*m_string) << prefix << text << suffix;
     return *this;
 }
 
@@ -70,7 +91,7 @@ wxString& clAnsiEscapeCodeColourBuilder::WrapWithColour(wxString& line, eAsciiCo
 }
 
 void clAnsiEscapeCodeColourBuilder::DoAddTextToBuffer(wxString* buffer, const wxString& text, int textColour,
-                                                   bool bold) const
+                                                      bool bold) const
 {
     wxString prefix;
     wxString suffix;

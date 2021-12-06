@@ -525,13 +525,13 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, co
     m_textCtrlFilter->SetHint(wxT(""));
 #endif
 
-    boxSizer157->Add(m_textCtrlFilter, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer157->Add(m_textCtrlFilter, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_dvTreeCtrll =
         new clTerminalViewCtrl(m_panel155, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel155, wxSize(-1, -1)),
                                wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
-    boxSizer157->Add(m_dvTreeCtrll, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer157->Add(m_dvTreeCtrll, 1, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(2));
 
     SetName(wxT("LSPOutlineViewDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
@@ -558,6 +558,7 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, co
     m_textCtrlFilter->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(LSPOutlineViewDlgBase::OnKeyDown), NULL, this);
     m_dvTreeCtrll->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                            wxDataViewEventHandler(LSPOutlineViewDlgBase::OnItemActivated), NULL, this);
+    m_dvTreeCtrll->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(LSPOutlineViewDlgBase::OnListKeyDown), NULL, this);
 }
 
 LSPOutlineViewDlgBase::~LSPOutlineViewDlgBase()
@@ -569,6 +570,7 @@ LSPOutlineViewDlgBase::~LSPOutlineViewDlgBase()
     m_textCtrlFilter->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(LSPOutlineViewDlgBase::OnKeyDown), NULL, this);
     m_dvTreeCtrll->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                               wxDataViewEventHandler(LSPOutlineViewDlgBase::OnItemActivated), NULL, this);
+    m_dvTreeCtrll->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(LSPOutlineViewDlgBase::OnListKeyDown), NULL, this);
 }
 
 LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,

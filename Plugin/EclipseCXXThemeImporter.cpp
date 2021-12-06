@@ -1,5 +1,5 @@
-#include "ColoursAndFontsManager.h"
 #include "EclipseCXXThemeImporter.h"
+#include "ColoursAndFontsManager.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 #include "globals.h"
@@ -61,7 +61,7 @@ LexerConf::Ptr_t EclipseCXXThemeImporter::Import(const wxFileName& eclipseXmlFil
     AddProperty(lexer, "7", "Character", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
     AddProperty(lexer, "8", "Uuid", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
     AddProperty(lexer, "9", "Preprocessor", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "10", "Operator", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "10", "Operator", m_oper.colour, m_background.colour);
     AddProperty(lexer, "11", "Identifier", m_foreground.colour, m_background.colour);
     AddProperty(lexer, "12", "Open String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
     AddProperty(lexer, "15", "Doxygen C++ style comment", m_javadoc.colour, m_background.colour, m_javadoc.isBold,
@@ -114,7 +114,8 @@ std::vector<wxFileName> EclipseCXXThemeImporter::ToEclipseXMLs()
     wxArrayString themes = ColoursAndFontsManager::Get().GetAllThemes();
     for(size_t i = 0; i < themes.size(); ++i) {
         LexerConf::Ptr_t cxxLexer = ColoursAndFontsManager::Get().GetLexer("c++", themes.Item(i));
-        if(!cxxLexer) continue;
+        if(!cxxLexer)
+            continue;
         arr.push_back(ToEclipseXML(cxxLexer, i));
     }
     return arr;

@@ -24,7 +24,7 @@ LexerConf::Ptr_t EclipsePythonThemeImporter::Import(const wxFileName& eclipseXml
     AddProperty(lexer, wxSTC_P_TRIPLEDOUBLE, "Double Triple", m_multiLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_P_CLASSNAME, "Class Name", m_klass.colour, m_background.colour);
     AddProperty(lexer, wxSTC_P_DEFNAME, "Def Name", m_function.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_OPERATOR, "Operator", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_P_OPERATOR, "Operator", m_oper.colour, m_background.colour);
     AddProperty(lexer, wxSTC_P_IDENTIFIER, "Identifier", m_variable.colour, m_background.colour);
     AddProperty(lexer, wxSTC_P_COMMENTBLOCK, "Comment block", m_multiLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_P_STRINGEOL, "String EOL", m_string.colour, m_background.colour);

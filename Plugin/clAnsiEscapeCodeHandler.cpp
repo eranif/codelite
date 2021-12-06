@@ -1,7 +1,7 @@
 #include "clAnsiEscapeCodeHandler.hpp"
 #include "drawingutils.h"
-#include <wx/tokenzr.h>
 #include "file_logger.h"
+#include <wx/tokenzr.h>
 
 clAnsiEscapeCodeHandler::clAnsiEscapeCodeHandler()
 {
@@ -451,7 +451,7 @@ void clAnsiEscapeCodeHandler::EnsureCurrent()
 }
 
 void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect,
-                                      bool isLightTheme)
+                                     bool isLightTheme)
 {
     // find the line chunks
     if(m_lines.count(line) == 0) {
@@ -504,6 +504,16 @@ void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defau
     }
     dc.DestroyClippingRegion();
 }
+
+#define NEXT_ATTR(index, channel)                 \
+    {                                             \
+        long number_attr = wxNOT_FOUND;           \
+        channel = 0;                              \
+        if((index) < attrs.size()) {              \
+            attrs[(index)].ToCLong(&number_attr); \
+            channel = number_attr;                \
+        }                                         \
+    }
 
 void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxDC& dc, const clRenderDefaultStyle& defaultStyle)
 {
@@ -569,6 +579,18 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxDC& dc, const cl
                 switch(number) {
                 case 5:
                     break;
+                case 2: {
+                    // ESC[38;2;R;G;B
+                    wxColour::ChannelType r, g, b;
+                    NEXT_ATTR(i + 1, r);
+                    NEXT_ATTR(i + 2, g);
+                    NEXT_ATTR(i + 3, b);
+                    wxColour c{ r, g, b };
+                    if(c.IsOk()) {
+                        dc.SetTextBackground(c);
+                    }
+                    state = STATE_NORMAL;
+                } break;
                 default: {
                     // use colour table to set the text colour
                     wxColour c = GetColour(*m_8_bit_colours, number);
@@ -583,6 +605,18 @@ void clAnsiEscapeCodeHandler::UpdateStyle(const Chunk& chunk, wxDC& dc, const cl
                 switch(number) {
                 case 5:
                     break;
+                case 2: {
+                    // ESC[38;2;R;G;B
+                    wxColour::ChannelType r, g, b;
+                    NEXT_ATTR(i + 1, r);
+                    NEXT_ATTR(i + 2, g);
+                    NEXT_ATTR(i + 3, b);
+                    wxColour c{ r, g, b };
+                    if(c.IsOk()) {
+                        dc.SetTextForeground(c);
+                    }
+                    state = STATE_NORMAL;
+                } break;
                 default: {
                     // use colour table to set the text colour
                     wxColour c = GetColour(*m_8_bit_colours, number);

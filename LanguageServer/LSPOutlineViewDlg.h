@@ -15,12 +15,15 @@ class LSPOutlineViewDlg : public LSPOutlineViewDlgBase
 
 private:
     void DoSelectionActivate();
+    void DoFindNext();
+    void DoFindPrev();
 
 public:
     LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInformation>& symbols);
     virtual ~LSPOutlineViewDlg();
 
 protected:
+    virtual void OnListKeyDown(wxKeyEvent& event);
     virtual void OnKeyDown(wxKeyEvent& event);
     virtual void OnItemActivated(wxDataViewEvent& event);
     virtual void OnEnter(wxCommandEvent& event);

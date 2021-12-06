@@ -47,6 +47,7 @@ public:
     clAnsiEscapeCodeColourBuilder& SetTheme(eAsciiTheme theme);
     clAnsiEscapeCodeColourBuilder& Add(const wxString& text, int textColour, bool bold = false);
     clAnsiEscapeCodeColourBuilder& Add(const wxString& text, eAsciiColours textColour, bool bold = false);
+    clAnsiEscapeCodeColourBuilder& Add(const wxString& text, const wxColour& colour, bool bold = false);
 
     /**
      * @brief wrap "line" with colour and optionally, bold font

@@ -37,6 +37,7 @@ bool LSPRlsDetector::DoLocate()
     // Add support for the languages
     GetLangugaes().Add("rust");
     SetConnectionString("stdio");
-    SetPriority(90); // clangd should override the default cc engine
+    SetPriority(75);   // rls is the second best choice after rust-analyzer
+    SetEnabled(false); // by default disable this LSP
     return true;
 }

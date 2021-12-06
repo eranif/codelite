@@ -3932,11 +3932,11 @@
 									"m_children":	[{
 											"m_type":	4406,
 											"proportion":	0,
-											"border":	5,
+											"border":	2,
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
 											"m_styles":	["wxTE_PROCESS_ENTER"],
-											"m_sizerFlags":	["wxEXPAND"],
+											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -4040,11 +4040,11 @@
 										}, {
 											"m_type":	4470,
 											"proportion":	1,
-											"border":	5,
+											"border":	2,
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
 											"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_SINGLE"],
-											"m_sizerFlags":	["wxEXPAND"],
+											"m_sizerFlags":	["wxLEFT", "wxRIGHT", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
 													"m_label":	"ID:",
@@ -4108,6 +4108,13 @@
 													"m_eventHandler":	"wxDataViewEventHandler",
 													"m_functionNameAndSignature":	"OnItemActivated(wxDataViewEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
+													"m_noBody":	false
+												}, {
+													"m_eventName":	"wxEVT_KEY_DOWN",
+													"m_eventClass":	"wxKeyEvent",
+													"m_eventHandler":	"wxKeyEventHandler",
+													"m_functionNameAndSignature":	"OnListKeyDown(wxKeyEvent& event)",
+													"m_description":	"Process a wxEVT_KEY_DOWN event (any key has been pressed)",
 													"m_noBody":	false
 												}],
 											"m_children":	[]

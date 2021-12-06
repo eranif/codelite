@@ -346,7 +346,6 @@ void TagsStorageSQLite::DeleteByFileName(const wxFileName& path, const wxString&
         wxString sql;
         sql << "delete from tags where File='" << fileName << "'";
         m_db->ExecuteUpdate(sql);
-
         if(autoCommit)
             m_db->Commit();
     } catch(wxSQLite3Exception& e) {
@@ -355,6 +354,8 @@ void TagsStorageSQLite::DeleteByFileName(const wxFileName& path, const wxString&
             m_db->Rollback();
         }
     }
+    // also remove the file entry associated with this file
+    DeleteFileEntry(fileName);
 }
 
 wxSQLite3ResultSet TagsStorageSQLite::Query(const wxString& sql, const wxFileName& path)

@@ -1,7 +1,7 @@
+#include "wxgui_helpers.h"
 #include "file_logger.h"
 #include "main.h"
 #include "wxc_project_metadata.h"
-#include "wxgui_helpers.h"
 #include "xmlutils.h"
 #include <algorithm>
 #include <cl_command_event.h>
@@ -33,17 +33,21 @@ static wxFont GetSystemFont(const wxString& name)
     // name is in the format of name,style,weight,underlined
     if(!name.IsEmpty()) {
         wxArrayString parts = ::wxStringTokenize(name, wxT(","), wxTOKEN_STRTOK);
-        if(parts.IsEmpty()) return wxNullFont;
+        if(parts.IsEmpty())
+            return wxNullFont;
 
         wxFont font;
         wxString name, style, weight, underlined;
         name = parts.Item(0);
 
-        if(parts.GetCount() > 1) style = parts.Item(1);
+        if(parts.GetCount() > 1)
+            style = parts.Item(1);
 
-        if(parts.GetCount() > 2) weight = parts.Item(2);
+        if(parts.GetCount() > 2)
+            weight = parts.Item(2);
 
-        if(parts.GetCount() > 3) underlined = parts.Item(3);
+        if(parts.GetCount() > 3)
+            underlined = parts.Item(3);
 
         if(name == wxT("wxSYS_OEM_FIXED_FONT"))
             font = wxSystemSettings::GetFont(wxSYS_OEM_FIXED_FONT);
@@ -88,17 +92,23 @@ static wxFont GetSystemFont(const wxString& name)
 wxFontFamily StringToFontFamily(const wxString& str)
 {
     wxFontFamily family = wxFONTFAMILY_DEFAULT;
-    if(str == wxT("decorative")) family = wxFONTFAMILY_DECORATIVE;
+    if(str == wxT("decorative"))
+        family = wxFONTFAMILY_DECORATIVE;
 
-    if(str == wxT("roman")) family = wxFONTFAMILY_ROMAN;
+    if(str == wxT("roman"))
+        family = wxFONTFAMILY_ROMAN;
 
-    if(str == wxT("script")) family = wxFONTFAMILY_SCRIPT;
+    if(str == wxT("script"))
+        family = wxFONTFAMILY_SCRIPT;
 
-    if(str == wxT("swiss")) family = wxFONTFAMILY_SWISS;
+    if(str == wxT("swiss"))
+        family = wxFONTFAMILY_SWISS;
 
-    if(str == wxT("modern")) family = wxFONTFAMILY_MODERN;
+    if(str == wxT("modern"))
+        family = wxFONTFAMILY_MODERN;
 
-    if(str == wxT("teletype")) family = wxFONTFAMILY_TELETYPE;
+    if(str == wxT("teletype"))
+        family = wxFONTFAMILY_TELETYPE;
 
     return family;
 }
@@ -179,13 +189,19 @@ wxFileName wxCrafter::LoadXRC(const wxString& xrcString, const wxString& filenam
                     if(child->GetName() == "object" && child->GetAttribute("name") == "PreviewPanel") {
                         // we got the main view
                         wxXmlNode* captionNode = XmlUtils::FindFirstByTagName(child, "caption-title");
-                        if(captionNode) { caption = captionNode->GetNodeContent(); }
+                        if(captionNode) {
+                            caption = captionNode->GetNodeContent();
+                        }
 
                         wxXmlNode* tlwStyle = XmlUtils::FindFirstByTagName(child, "tlw-style");
-                        if(tlwStyle) { style = tlwStyle->GetNodeContent(); }
+                        if(tlwStyle) {
+                            style = tlwStyle->GetNodeContent();
+                        }
 
                         wxXmlNode* tlwIcon = XmlUtils::FindFirstByTagName(child, "tlw-icon");
-                        if(tlwIcon) { bmppath = tlwIcon->GetNodeContent(); }
+                        if(tlwIcon) {
+                            bmppath = tlwIcon->GetNodeContent();
+                        }
 
                         break;
                     }
@@ -248,7 +264,8 @@ wxArrayString wxCrafter::SplitByString(const wxString& str, const wxString& deli
         wxString token = tmp.Mid(0, where);
         if(!keepEmptyLines) {
             token.Trim().Trim(false);
-            if(!token.IsEmpty()) arr.Add(token);
+            if(!token.IsEmpty())
+                arr.Add(token);
         } else {
             arr.Add(token);
         }
@@ -257,7 +274,8 @@ wxArrayString wxCrafter::SplitByString(const wxString& str, const wxString& deli
         where = tmp.Find(delim);
     }
 
-    if(tmp.IsEmpty() == false) arr.Add(tmp);
+    if(tmp.IsEmpty() == false)
+        arr.Add(tmp);
 
     return arr;
 }
@@ -271,7 +289,9 @@ wxString wxCrafter::Join(const wxArrayString& arr, const wxString& delim)
         res << item << delim;
     }
 
-    if(res.IsEmpty() == false) { res.RemoveLast(delim.Len()); }
+    if(res.IsEmpty() == false) {
+        res.RemoveLast(delim.Len());
+    }
     return res;
 }
 
@@ -465,7 +485,9 @@ wxString wxCrafter::WXT(const wxString& s)
 wxString wxCrafter::FontToString(const wxFont& font)
 {
     wxString str;
-    if(!font.IsOk()) { return wxEmptyString; }
+    if(!font.IsOk()) {
+        return wxEmptyString;
+    }
 
     // size, style, weight, family, underlined, face
 
@@ -528,11 +550,15 @@ wxFont wxCrafter::StringToFont(const wxString& font)
 {
     // is this a system font?
     wxFont f = GetSystemFont(font);
-    if(f.IsOk() == true) { return f; }
+    if(f.IsOk() == true) {
+        return f;
+    }
 
     // Some imported fonts may be missing e.g. a 'face', so use wxTOKEN_RET_EMPTY_ALL
     wxArrayString parts = Split(font, wxT(","), wxTOKEN_RET_EMPTY_ALL);
-    if(parts.GetCount() != 6) { return wxNullFont; }
+    if(parts.GetCount() != 6) {
+        return wxNullFont;
+    }
 
     // size, style, weight, family, underlined, face
     int size = ToNumber(parts.Item(0), -1);
@@ -541,7 +567,8 @@ wxFont wxCrafter::StringToFont(const wxString& font)
     wxFontFamily family = StringToFontFamily(parts.Item(3));
     bool underlined = false;
 
-    if(parts.Item(4) == wxT("1")) underlined = true;
+    if(parts.Item(4) == wxT("1"))
+        underlined = true;
 
     wxString face = parts.Item(5);
 
@@ -558,9 +585,11 @@ wxString wxCrafter::FontToXRC(const wxString& font)
         wxArrayString parts = Split(font, wxT(","));
         xrc << wxT("<sysfont>") << parts.Item(0) << wxT("</sysfont>");
 
-        if(parts.GetCount() > 1) xrc << wxT("<style>") << parts.Item(1) << wxT("</style>");
+        if(parts.GetCount() > 1)
+            xrc << wxT("<style>") << parts.Item(1) << wxT("</style>");
 
-        if(parts.GetCount() > 2) xrc << wxT("<weight>") << parts.Item(2) << wxT("</weight>");
+        if(parts.GetCount() > 2)
+            xrc << wxT("<weight>") << parts.Item(2) << wxT("</weight>");
 
         xrc << wxT("<underlined>") << (f.GetUnderlined() ? wxT("1") : wxT("0")) << wxT("</underlined>");
 
@@ -594,7 +623,9 @@ wxString wxCrafter::XRCToFontstring(const wxXmlNode* node)
     if(!font.IsOk()) {
         // No preferred font, so use the standard one
         font = wxSystemSettings::GetFont(wxSYS_SYSTEM_FONT);
-        if(!font.IsOk()) { return ""; }
+        if(!font.IsOk()) {
+            return "";
+        }
     }
 
     // Now override with any other info
@@ -607,19 +638,31 @@ wxString wxCrafter::XRCToFontstring(const wxXmlNode* node)
             font.SetPixelSize(DecodeSize(content));
         } else {
             int pt = ToNumber(content, -1);
-            if(pt >= 0) { font.SetPointSize(pt); }
+            if(pt >= 0) {
+                font.SetPointSize(pt);
+            }
         }
     }
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("style"));
-    if(propertynode) { font.SetStyle(StringToFontStyle(propertynode->GetNodeContent())); }
+    if(propertynode) {
+        font.SetStyle(StringToFontStyle(propertynode->GetNodeContent()));
+    }
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("weight"));
-    if(propertynode) { font.SetWeight(StringToFontWeight(propertynode->GetNodeContent())); }
+    if(propertynode) {
+        font.SetWeight(StringToFontWeight(propertynode->GetNodeContent()));
+    }
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("family"));
-    if(propertynode) { font.SetFamily(StringToFontFamily(propertynode->GetNodeContent())); }
+    if(propertynode) {
+        font.SetFamily(StringToFontFamily(propertynode->GetNodeContent()));
+    }
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("underlined"));
-    if(propertynode) { font.SetUnderlined(propertynode->GetNodeContent() == "1"); }
+    if(propertynode) {
+        font.SetUnderlined(propertynode->GetNodeContent() == "1");
+    }
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("face"));
-    if(propertynode) { font.SetFaceName(propertynode->GetNodeContent()); }
+    if(propertynode) {
+        font.SetFaceName(propertynode->GetNodeContent());
+    }
 
     return FontToString(font);
 }
@@ -627,7 +670,9 @@ wxString wxCrafter::XRCToFontstring(const wxXmlNode* node)
 wxString wxCrafter::FBToFontstring(const wxString& FBstr)
 {
     wxString str;
-    if(FBstr.empty()) { return str; }
+    if(FBstr.empty()) {
+        return str;
+    }
 
     // Though FBstr is already a comma-delimited string, it's in the wrong order for wxC
     // wxFB supplies:  face,      style, weight, size,  family, underlined
@@ -643,20 +688,25 @@ wxString wxCrafter::FBToFontstring(const wxString& FBstr)
     // This is the same as (the valid) wxFONTSIZE_SMALL but, at least on my system, results in a size of 12 pts which is
     // too large so use the system font size instead
     static int defaultfontsize = wxSystemSettings::GetFont(wxSYS_SYSTEM_FONT).GetPointSize();
-    if(sz == "-1") { sz = wxString::Format("%d", defaultfontsize); }
+    if(sz == "-1") {
+        sz = wxString::Format("%d", defaultfontsize);
+    }
 
     arr.RemoveAt(3);
     arr.Item(0) = sz;
     arr.Add(face);
     wxFont font = wxCrafter::StringToFont(Join(arr, ","));
-    if(font.IsOk()) { str = wxCrafter::FontToString(font); }
+    if(font.IsOk()) {
+        str = wxCrafter::FontToString(font);
+    }
 
     return str;
 }
 
 wxString wxCrafter::FontToCpp(const wxString& font, const wxString& fontMemberName)
 {
-    if(font.IsEmpty()) return wxT("wxNullFont");
+    if(font.IsEmpty())
+        return wxT("wxNullFont");
 
     wxString code;
     if(IsSystemFont(font)) {
@@ -683,17 +733,22 @@ wxString wxCrafter::FontToCpp(const wxString& font, const wxString& fontMemberNa
                  << wxT(");\n");
         }
 
-        if(f.GetStyle() == wxFONTSTYLE_ITALIC) code << fontMemberName << wxT(".SetStyle(wxFONTSTYLE_ITALIC);\n");
+        if(f.GetStyle() == wxFONTSTYLE_ITALIC)
+            code << fontMemberName << wxT(".SetStyle(wxFONTSTYLE_ITALIC);\n");
 
-        if(f.GetUnderlined()) code << fontMemberName << wxT(".SetUnderlined(true);\n");
+        if(f.GetUnderlined())
+            code << fontMemberName << wxT(".SetUnderlined(true);\n");
 
-        if(f.GetWeight() == wxFONTWEIGHT_BOLD) code << fontMemberName << wxT(".SetWeight(wxFONTWEIGHT_BOLD);\n");
+        if(f.GetWeight() == wxFONTWEIGHT_BOLD)
+            code << fontMemberName << wxT(".SetWeight(wxFONTWEIGHT_BOLD);\n");
         return code;
 
     } else {
         // Custom font
         wxArrayString parts = Split(font, wxT(","));
-        if(parts.GetCount() != 6) { return wxT("wxNullFont"); }
+        if(parts.GetCount() != 6) {
+            return wxT("wxNullFont");
+        }
 
         // size, style, weight, family, underlined
         int size = ToNumber(parts.Item(0), -1);
@@ -718,17 +773,23 @@ wxString wxCrafter::FontToCpp(const wxString& font, const wxString& fontMemberNa
         }
 
         // family
-        if(parts.Item(3) == wxT("decorative")) family = wxT("wxFONTFAMILY_DECORATIVE");
+        if(parts.Item(3) == wxT("decorative"))
+            family = wxT("wxFONTFAMILY_DECORATIVE");
 
-        if(parts.Item(3) == wxT("roman")) family = wxT("wxFONTFAMILY_ROMAN");
+        if(parts.Item(3) == wxT("roman"))
+            family = wxT("wxFONTFAMILY_ROMAN");
 
-        if(parts.Item(3) == wxT("script")) family = wxT("wxFONTFAMILY_SCRIPT");
+        if(parts.Item(3) == wxT("script"))
+            family = wxT("wxFONTFAMILY_SCRIPT");
 
-        if(parts.Item(3) == wxT("swiss")) family = wxT("wxFONTFAMILY_SWISS");
+        if(parts.Item(3) == wxT("swiss"))
+            family = wxT("wxFONTFAMILY_SWISS");
 
-        if(parts.Item(3) == wxT("modern")) family = wxT("wxFONTFAMILY_MODERN");
+        if(parts.Item(3) == wxT("modern"))
+            family = wxT("wxFONTFAMILY_MODERN");
 
-        if(parts.Item(3) == wxT("teletype")) family = wxT("wxFONTFAMILY_TELETYPE");
+        if(parts.Item(3) == wxT("teletype"))
+            family = wxT("wxFONTFAMILY_TELETYPE");
 
         if(parts.Item(4) == wxT("1"))
             underlined = wxT("true");
@@ -785,14 +846,18 @@ wxArrayString wxCrafter::MakeUnique(const wxArrayString& arr)
 {
     wxArrayString res;
     for(size_t i = 0; i < arr.GetCount(); i++) {
-        if(res.Index(arr.Item(i)) == wxNOT_FOUND) { res.Add(arr.Item(i)); }
+        if(res.Index(arr.Item(i)) == wxNOT_FOUND) {
+            res.Add(arr.Item(i));
+        }
     }
     return res;
 }
 
 void wxCrafter::WriteFile(const wxFileName& filename, const wxString& content, bool overwriteContent)
 {
-    if(!overwriteContent && filename.FileExists()) { return; }
+    if(!overwriteContent && filename.FileExists()) {
+        return;
+    }
 
     wxFFile fp(filename.GetFullPath(), wxT("w+b"));
     if(fp.IsOpened()) {
@@ -803,7 +868,8 @@ void wxCrafter::WriteFile(const wxFileName& filename, const wxString& content, b
 
 bool wxCrafter::IsTheSame(const wxFileName& f1, const wxFileName& f2)
 {
-    if(f1.FileExists() == false || f2.FileExists() == false) return false;
+    if(f1.FileExists() == false || f2.FileExists() == false)
+        return false;
 
     wxString fileOneContent, fileTwoContent;
 
@@ -822,7 +888,8 @@ bool wxCrafter::IsTheSame(const wxFileName& f1, const wxFileName& f2)
 
 bool wxCrafter::IsTheSame(const wxString& fileContent, const wxFileName& f)
 {
-    if(!f.FileExists()) return false;
+    if(!f.FileExists())
+        return false;
 
     wxString fileOneContent;
 
@@ -830,7 +897,9 @@ bool wxCrafter::IsTheSame(const wxString& fileContent, const wxFileName& f)
 
     if(fileOne.IsOpened()) {
         // Compare the content
-        if(fileOne.ReadAll(&fileOneContent, wxConvUTF8) && fileOneContent == fileContent) { return true; }
+        if(fileOne.ReadAll(&fileOneContent, wxConvUTF8) && fileOneContent == fileContent) {
+            return true;
+        }
     }
     return false;
 }
@@ -865,7 +934,9 @@ wxArrayString wxCrafter::GetToolTypes(bool forToolbar)
     kinds.Add(ITEM_CHECK);
     kinds.Add(ITEM_RADIO);
     kinds.Add(ITEM_SEPARATOR);
-    if(forToolbar) { kinds.Add(ITEM_DROPDOWN); }
+    if(forToolbar) {
+        kinds.Add(ITEM_DROPDOWN);
+    }
     return kinds;
 }
 
@@ -938,7 +1009,9 @@ void wxCrafter::SetStatusMessage(const wxString& msg)
 {
     if(TopFrame()) {
         MainFrame* frame = dynamic_cast<MainFrame*>(TopFrame());
-        if(frame) { frame->SetStatusMessage(msg); }
+        if(frame) {
+            frame->SetStatusMessage(msg);
+        }
     }
 }
 
@@ -974,7 +1047,9 @@ int wxCrafter::GetColourSysIndex(const wxString& name)
     if(where == wxNOT_FOUND) {
         // try the system colours
         where = s_colorSysNames.Index(name);
-        if(where != wxNOT_FOUND) { return s_colorIdx.Item(where); }
+        if(where != wxNOT_FOUND) {
+            return s_colorIdx.Item(where);
+        }
     } else {
         return s_colorIdx.Item(where);
     }
@@ -984,15 +1059,19 @@ int wxCrafter::GetColourSysIndex(const wxString& name)
 wxString wxCrafter::GetColourForXRC(const wxString& name)
 {
     init_color_indexes();
-    if(name == "<Default>" || name.IsEmpty()) return wxEmptyString;
+    if(name == "<Default>" || name.IsEmpty())
+        return wxEmptyString;
 
-    if(s_colorSysNames.Index(name) != wxNOT_FOUND) return name;
+    if(s_colorSysNames.Index(name) != wxNOT_FOUND)
+        return name;
 
     int colorIdx = s_colorNames.Index(name);
     if(colorIdx == wxNOT_FOUND) {
         wxString colname = name;
         colname.Trim().Trim(false);
-        if(colname.StartsWith("(")) { colname.Prepend("rgb"); }
+        if(colname.StartsWith("(")) {
+            colname.Prepend("rgb");
+        }
 
         wxColour col(colname);
         return col.GetAsString(wxC2S_HTML_SYNTAX);
@@ -1005,7 +1084,8 @@ wxString wxCrafter::GetColourForXRC(const wxString& name)
 wxColour wxCrafter::NameToColour(const wxString& name)
 {
     int sysidx = GetColourSysIndex(name);
-    if(sysidx != wxNOT_FOUND) return wxSystemSettings::GetColour((wxSystemColour)sysidx);
+    if(sysidx != wxNOT_FOUND)
+        return wxSystemSettings::GetColour((wxSystemColour)sysidx);
 
     // not a system colour name nor PG name, a custom color then
     wxString colname = name;
@@ -1030,7 +1110,9 @@ wxString wxCrafter::ValueToColourString(const wxString& value)
     wxString str(value);
     // Value might be any of the ways of specifying colour,
     // but it may also be imported from wxFB as rgb() but without the syntax
-    if((value.Left(1) != "(") && (value.BeforeLast(',') != "")) { str = '(' + value + ')'; }
+    if((value.Left(1) != "(") && (value.BeforeLast(',') != "")) {
+        str = '(' + value + ')';
+    }
 
     wxColour col = NameToColour(str);
     return col.GetAsString();
@@ -1075,16 +1157,20 @@ wxString wxCrafter::AddQuotes(const wxString& str)
 {
     wxString s = str;
     s.Trim().Trim(false);
-    if(!s.StartsWith('"')) s.Prepend('"');
+    if(!s.StartsWith('"'))
+        s.Prepend('"');
 
-    if(!s.EndsWith('"')) s.Append('"');
+    if(!s.EndsWith('"'))
+        s.Append('"');
 
     return s;
 }
 
 void wxCrafter::MakeAbsToProject(wxFileName& fn)
 {
-    if(fn.IsRelative()) { fn.MakeAbsolute(wxcProjectMetadata::Get().GetProjectPath()); }
+    if(fn.IsRelative()) {
+        fn.MakeAbsolute(wxcProjectMetadata::Get().GetProjectPath());
+    }
 }
 
 int wxCrafter::ToAligment(const wxString& aligment)
@@ -1106,7 +1192,8 @@ int wxCrafter::ToAligment(const wxString& aligment)
         s_stringToAlignment.insert(std::make_pair("wxALIGN_INVALID", wxALIGN_INVALID));
     }
 
-    if(s_stringToAlignment.count(aligment) == 0) return wxALIGN_NOT;
+    if(s_stringToAlignment.count(aligment) == 0)
+        return wxALIGN_NOT;
     return s_stringToAlignment.find(aligment)->second;
 }
 
@@ -1128,7 +1215,9 @@ int wxCrafter::ColumnFlagsFromString(const wxString& col_flags)
     for(size_t i = 0; i < flagsStringArr.GetCount(); ++i) {
         wxString flagString = flagsStringArr.Item(i).Trim();
         ;
-        if(s_stringToFlag.count(flagString)) { flags |= s_stringToFlag.find(flagString)->second; }
+        if(s_stringToFlag.count(flagString)) {
+            flags |= s_stringToFlag.find(flagString)->second;
+        }
     }
     return flags;
 }
@@ -1200,16 +1289,22 @@ bool wxCrafter::IsArtProviderBitmap(const wxString& bmpString, wxString& artId, 
         artId = parts.Item(0);
         clientID = parts.Item(1);
     }
-    if(parts.GetCount() > 2) { sizeHint = parts.Item(2); }
+    if(parts.GetCount() > 2) {
+        sizeHint = parts.Item(2);
+    }
 
-    if(arr.Index(artId) != wxNOT_FOUND) { return true; }
+    if(arr.Index(artId) != wxNOT_FOUND) {
+        return true;
+    }
     return false;
 }
 
 wxString wxCrafter::MakeWxSizeStr(const wxString& size)
 {
     wxString strSize;
-    if(size.StartsWith("wxSize")) { return size; }
+    if(size.StartsWith("wxSize")) {
+        return size;
+    }
 
     if(size.Contains(",")) {
         strSize << "wxSize(" << size << ")";
@@ -1237,7 +1332,9 @@ wxShowEffect wxCrafter::ShowEffectFromString(const wxString& effect)
     m.insert(std::make_pair("wxSHOW_EFFECT_BLEND", wxSHOW_EFFECT_BLEND));
     m.insert(std::make_pair("wxSHOW_EFFECT_EXPAND", wxSHOW_EFFECT_EXPAND));
 
-    if(m.count(effect)) { return m.find(effect)->second; }
+    if(m.count(effect)) {
+        return m.find(effect)->second;
+    }
 
     return wxSHOW_EFFECT_NONE;
 }
@@ -1253,12 +1350,17 @@ void wxCrafter::NotifyFileSaved(const wxFileName& fn)
 
 void wxCrafter::WrapInIfBlock(const wxString& condname, wxString& codeblock)
 {
-    if(condname.IsEmpty()) return;
+    if(condname.IsEmpty())
+        return;
 
     wxString topBlock, bottomBlock;
-    if(codeblock.StartsWith("\n")) { topBlock << "\n"; }
+    if(codeblock.StartsWith("\n")) {
+        topBlock << "\n";
+    }
 
-    if(!codeblock.EndsWith("\n")) { bottomBlock << "\n"; }
+    if(!codeblock.EndsWith("\n")) {
+        bottomBlock << "\n";
+    }
 
     topBlock << "#if " << condname << "\n";
     bottomBlock << "#endif // " << condname << "\n";
@@ -1278,7 +1380,9 @@ void wxCrafter::GetWorkspaceFiles(wxStringSet_t& files)
 void wxCrafter::GetProjectFiles(const wxString& projectName, wxStringSet_t& files)
 {
     ProjectPtr p = clCxxWorkspaceST::Get()->GetProject(projectName);
-    if(!p) { return; }
+    if(!p) {
+        return;
+    }
     const Project::FilesMap_t& filesMap = p->GetFiles();
     files.reserve(filesMap.size());
     std::for_each(filesMap.begin(), filesMap.end(),
@@ -1288,11 +1392,13 @@ void wxCrafter::GetProjectFiles(const wxString& projectName, wxStringSet_t& file
 void wxCrafter::FormatString(wxString& content, const wxFileName& filename)
 {
 #if !STANDALONE_BUILD
-    clSourceFormatEvent event(wxEVT_FORMAT_STRING);
+    clSourceFormatEvent event{ wxEVT_FORMAT_STRING };
     event.SetFileName(filename.GetFullPath());
     event.SetInputString(content);
     EventNotifier::Get()->ProcessEvent(event);
-    if(!event.GetFormattedString().IsEmpty()) { content = event.GetFormattedString(); }
+    if(!event.GetFormattedString().IsEmpty()) {
+        content = event.GetFormattedString();
+    }
 #endif
 }
 
@@ -1308,7 +1414,9 @@ void wxCrafter::FormatFile(const wxFileName& filename)
 static wxWindow* sTopFrame = NULL;
 wxWindow* wxCrafter::TopFrame()
 {
-    if(!sTopFrame) { return wxTheApp->GetTopWindow(); }
+    if(!sTopFrame) {
+        return wxTheApp->GetTopWindow();
+    }
     return sTopFrame;
 }
 

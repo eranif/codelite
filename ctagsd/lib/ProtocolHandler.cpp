@@ -17,6 +17,7 @@
 #include "ctags_manager.h"
 #include "fc_fileopener.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "tags_options_data.h"
 #include "tags_storage_sqlite3.h"
 
@@ -100,6 +101,30 @@ void remove_binary_files(wxArrayString& files)
     files.swap(res);
 }
 
+/**
+ * @brief given a list of files, remove all non c/c++ files from it
+ */
+void filter_non_cxx_files(wxArrayString& files)
+{
+    wxArrayString tmparr;
+    tmparr.reserve(files.size());
+
+    // filter non c/c++ files
+    for(wxString& file : files) {
+        file.Trim().Trim(false);
+        if(FileExtManager::IsCxxFile(file)) {
+            tmparr.Add(file);
+        }
+    }
+    tmparr.swap(files);
+}
+
+/**
+ * @brief recurse into `dir` collect all files that matches the `settings.GetFileMask`
+ * @param dir root folder to scan
+ * @param settings `settings.json` object
+ * @param files [output]
+ */
 void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString& files)
 {
     clDEBUG() << "Searching for files to..." << endl;
@@ -107,6 +132,7 @@ void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString
     clFilesScanner scanner;
     wxArrayString exclude_folders_arr = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
     scanner.Scan(dir, files, settings.GetFileMask(), wxEmptyString, settings.GetIgnoreSpec());
+    filter_non_cxx_files(files);
 }
 
 CompletionItem::eCompletionItemKind get_completion_kind(const TagEntry& tag)
@@ -215,10 +241,12 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     }
     ITagsStoragePtr db(new TagsStorageSQLite());
     db->OpenDatabase(dbfile);
-    if(initial_parse && !db->CheckIntegrity()) {
-        // delete the database
-        db->RecreateDatabase();
-    }
+    wxUnusedVar(initial_parse);
+
+    // if(initial_parse && !db->CheckIntegrity()) {
+    //     // delete the database
+    //     db->RecreateDatabase();
+    // }
 
     TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
     start_timer();
@@ -324,15 +352,13 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     clDEBUG() << "Updating symbols database..." << endl;
     db->Begin();
     size_t tagsCount = 0;
+    time_t update_time = time(nullptr);
     while(ttp) {
         ++tagsCount;
 
         // Send notification to the main window with our progress report
         db->DeleteByFileName({}, curfile, false);
         db->Store(ttp, {}, false);
-        if(db->InsertFileEntry(curfile, (int)time(NULL)) == TagExist) {
-            db->UpdateFileEntry(curfile, (int)time(NULL));
-        }
 
         if((tagsCount % 1000) == 0) {
             // Commit what we got so far
@@ -341,6 +367,15 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
             db->Begin();
         }
         ttp = ctags.GetTagsTreeForFile(curfile);
+    }
+
+    // update the files table in the database
+    // we do this here, since some files might not yield tags
+    // but we still want to mark them as "parsed"
+    for(const wxString& file : files) {
+        if(db->InsertFileEntry(file, (int)update_time) == TagExist) {
+            db->UpdateFileEntry(file, (int)update_time);
+        }
     }
 
     // Commit whats left
@@ -459,7 +494,7 @@ void ProtocolHandler::update_using_namespace_for_file(const wxString& filepath)
         }
     }
 
-    clDEBUG() << "Updating extra scopes for file" << filepath << endl;
+    clDEBUG() << "  Updating extra scopes for file" << filepath << endl;
     CxxPreProcessor pp{ search_paths, 20 };
 
     // we did not visit this file just yet
@@ -481,17 +516,20 @@ void ProtocolHandler::update_using_namespace_for_file(const wxString& filepath)
     }
 
     m_using_namespace_cache.insert({ filepath, scopes });
-    clDEBUG() << "scopes for file:" << filepath << "is now set to:" << scopes << endl;
+    clDEBUG() << "  Visited" << visited_files.size() << "header files" << endl;
+    clDEBUG() << "  scopes for file:" << filepath << "is now set to:" << scopes << endl;
     clDEBUG() << "Success" << endl;
 }
 
 size_t ProtocolHandler::read_file_list(wxArrayString& arr) const
 {
+    arr.clear();
     wxFileName file_list(m_settings_folder, "file_list.txt");
     if(file_list.FileExists()) {
         wxString file_list_content;
         FileUtils::ReadFileContent(file_list, file_list_content);
-        wxArrayString files = ::wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
+        wxArrayString files = wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
+        filter_non_cxx_files(files);
         arr.swap(files);
     }
     return arr.size();
@@ -747,6 +785,9 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     m_using_namespace_cache.erase(filepath);
     update_using_namespace_for_file(filepath);
 
+    // delete the symbols generated from this file
+    TagsManagerST::Get()->GetDatabase()->DeleteByFileName({}, filepath, true);
+
     // re-parse the file
     wxArrayString files;
     files.Add(filepath);
@@ -780,10 +821,10 @@ void add_to_types_set(const wxString& name, wxStringSet_t& types, const wxString
 void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channel)
 {
     JSONItem json = msg->toElement();
-    clDEBUG() << json.format() << endl;
+    clDEBUG1() << json.format() << endl;
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
-    clDEBUG1() << "textDocument/semanticTokens/full: for file" << filepath << endl;
+    clDEBUG() << "textDocument/semanticTokens/full: for file" << filepath << endl;
 
     // use CTags to gather local variables
     wxString tmpdir = clStandardPaths::Get().GetTempDir();
@@ -791,7 +832,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
         CTags::Run(filepath, tmpdir, "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+l --C++-kinds=+l ",
                    m_settings.GetCodeliteIndexer());
 
-    clDEBUG() << "File tags:" << tags.size() << endl;
+    clDEBUG1() << "File tags:" << tags.size() << endl;
     wxStringSet_t locals_set;
     wxStringSet_t types_set;
 
@@ -846,9 +887,9 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
         }
     }
 
-    clDEBUG() << "The following semantic tokens were found:" << endl;
-    clDEBUG() << "Locals:" << locals_set << endl;
-    clDEBUG() << "Types:" << types_set << endl;
+    clDEBUG1() << "The following semantic tokens were found:" << endl;
+    clDEBUG1() << "Locals:" << locals_set << endl;
+    clDEBUG1() << "Types:" << types_set << endl;
 
     wxString buffer;
     FileUtils::ReadFileContent(filepath, buffer);
@@ -891,6 +932,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
     vector<int> encoding;
     encoding.reserve(5 * tokens_vec.size());
 
+    clDEBUG() << "Found" << tokens_vec.size() << "semantic tokens" << endl;
     LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
     result.addProperty("data", encoding);
     clDEBUG1() << response.format() << endl;

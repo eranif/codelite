@@ -12,6 +12,8 @@
 #include "VirtualDirectorySelectorDlg.h"
 #include "allocator_mgr.h"
 #include "clKeyboardManager.h"
+#include "cl_command_event.h"
+#include "codelite_events.h"
 #include "event_notifier.h"
 #include "functions_parser.h"
 #include "gui.h"
@@ -666,11 +668,10 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
     msg << _("wxCrafter: code generation completed successfully!");
     wxCrafter::SetStatusMessage(msg);
 
-    // post event here to codelite to retag the workspace
-#if !STANDALONE_BUILD
-    wxCommandEvent eventRetag(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(eventRetag);
-#endif
+    // Restart ctagsd
+    clLanguageServerEvent restart_event{ wxEVT_LSP_RESTART };
+    restart_event.SetLspName("ctagsd");
+    EventNotifier::Get()->ProcessEvent(restart_event);
 }
 
 wxMenu* wxCrafterPlugin::DoCreateFolderMenu()

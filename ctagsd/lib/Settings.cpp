@@ -49,12 +49,12 @@ void CTagsdSettings::Load(const wxFileName& filepath)
 
     build_search_path(filepath);
 
-    clDEBUG() << "search path.......:" << m_search_path << endl;
-    clDEBUG() << "tokens............:" << m_tokens << endl;
-    clDEBUG() << "tokens............:" << m_types << endl;
-    clDEBUG() << "file_mask.........:" << m_file_mask << endl;
-    clDEBUG() << "codelite_indexer..:" << m_codelite_indexer << endl;
-    clDEBUG() << "ignore_spec.......:" << m_ignore_spec << endl;
+    clDEBUG1() << "search path.......:" << m_search_path << endl;
+    clDEBUG1() << "tokens............:" << m_tokens << endl;
+    clDEBUG1() << "tokens............:" << m_types << endl;
+    clDEBUG1() << "file_mask.........:" << m_file_mask << endl;
+    clDEBUG1() << "codelite_indexer..:" << m_codelite_indexer << endl;
+    clDEBUG1() << "ignore_spec.......:" << m_ignore_spec << endl;
 }
 
 void CTagsdSettings::Save(const wxFileName& filepath)

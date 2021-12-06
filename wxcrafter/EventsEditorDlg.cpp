@@ -59,7 +59,9 @@ EventsEditorPane::~EventsEditorPane()
 
 void EventsEditorPane::DoInitialize()
 {
-    if(m_control) { m_staticTextEventsPaneTitle->SetLabel(_("Showing events for - ") + m_control->GetName()); }
+    if(m_control) {
+        m_staticTextEventsPaneTitle->SetLabel(_("Showing events for - ") + m_control->GetName());
+    }
 
     m_controlEventsTable->GetGrid()->Clear();
     m_inheritedEventsTable->GetGrid()->Clear();
@@ -90,58 +92,15 @@ void EventsEditorPane::SplitterPositionChanged()
 void EventsEditorPane::Save()
 {
     m_controlEventsTable->Save();
-    if(m_inheritedEventsTable) { m_inheritedEventsTable->Save(); }
+    if(m_inheritedEventsTable) {
+        m_inheritedEventsTable->Save();
+    }
 }
 
 void EventsEditorPane::OpenFunction(const wxString& kind, const wxString& fooname)
 {
-    // TagEntryPtr tag = DoLocateFunction(kind, fooname);
-    // if ( tag ) {
-    //     EndModal(wxID_OK);
-    //     if ( m_plugin->GetManager()->OpenFile(tag->GetFile()) ) {
-    //         IEditor *editor = m_plugin->GetManager()->GetActiveEditor();
-    //         if ( editor ) {
-    //             if( editor->FindAndSelect(tag->GetPattern(), tag->GetName(), 0,
-    //             m_plugin->GetManager()->GetNavigationMgr()) == false ) {
-    //                 // Could not select, clear the selection
-    //                 editor->GetSTC()->SetSelectionStart(wxNOT_FOUND);
-    //                 editor->GetSTC()->SetSelectionEnd(wxNOT_FOUND);
-    //             }
-    //             editor->GetSTC()->SetSTCFocus(true);
-    //             editor->GetSTC()->SetFocus();
-    //         }
-    //     }
-    // }
-}
-
-TagEntryPtr EventsEditorPane::DoLocateFunction(const wxString& kind, const wxString& fooname)
-{
-    wxString parentWin;
-
-    wxcWidget* toplevel = m_control->GetTopLevel();
-    if(toplevel) { parentWin = toplevel->GetName(); }
-
-    if(parentWin.IsEmpty()) return NULL;
-
-    TagEntryPtrVector_t tags;
-    ITagsStoragePtr db = TagsManagerST::Get()->GetDatabase();
-    if(db && db->IsOpen()) {
-
-        wxString path;
-        path << parentWin << "::" << fooname;
-        wxArrayString kinds;
-        kinds.Add(kind); // implementation
-        db->GetTagsByKindAndPath(kinds, path, tags);
-
-        if(tags.size() != 1) {
-            wxMessageBox(_("Could not locate function '") + fooname + "'", "wxCrafter",
-                         wxICON_WARNING | wxOK | wxCENTER);
-            return NULL;
-        } else {
-            return tags.at(0);
-        }
-    }
-    return NULL;
+    wxUnusedVar(kind);
+    wxUnusedVar(fooname);
 }
 
 void EventsEditorPane::OnWidgetSelected(wxCommandEvent& e)
@@ -154,7 +113,9 @@ void EventsEditorPane::OnWidgetSelected(wxCommandEvent& e)
     Clear();
 
     CHECK_PTR_RET(selection->m_wxcWidget);
-    if(selection->m_wxcWidget->IsEventHandler()) { InitEventsForWidget(selection->m_wxcWidget); }
+    if(selection->m_wxcWidget->IsEventHandler()) {
+        InitEventsForWidget(selection->m_wxcWidget);
+    }
 }
 
 void EventsEditorPane::OnUpdatePanes(wxCommandEvent& e) // Called when the current control has been altered
@@ -207,7 +168,9 @@ void EventsEditorPane::OnDoubleClick(wxPropertyGridEvent& e)
     if(!m_control->IsTopWindow()) {
         wxString controlName = m_control->GetName();
         controlName.Replace("m_", "");
-        if(controlName.StartsWith("_")) { controlName = controlName.Mid(1); }
+        if(controlName.StartsWith("_")) {
+            controlName = controlName.Mid(1);
+        }
         controlName.MakeCapitalized();
         eventHandler << controlName;
     }

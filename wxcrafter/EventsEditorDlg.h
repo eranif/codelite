@@ -18,7 +18,6 @@ public:
 
 protected:
     void DoInitialize();
-    TagEntryPtr DoLocateFunction(const wxString& kind, const wxString& fooname);
 
 protected:
     void OnWidgetSelected(wxCommandEvent& e);

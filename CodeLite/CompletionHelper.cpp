@@ -108,17 +108,14 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             }
             break;
         case '>':
+        case ']':
+        case ')':
             if(depth == 0 && LAST_TOKEN_IS(T_IDENTIFIER)) {
                 cont = false;
             } else {
                 PREPEND_STRING(t);
                 depth++;
             }
-            break;
-        case ']':
-        case ')':
-            PREPEND_STRING(t);
-            depth++;
             break;
         case '}':
             if(depth == 0) {

@@ -6,3 +6,5 @@
 2. `Outline Plugin` -> move to LSP
 3. Fix code completion for header file names
 4. All the content of the `Code Generation / Refactoring` should be moved to LSP
+5. Remove parsing of files once saved (this is no longer needed)
+6. Remove `symbols.db` creation (not needed anymore)

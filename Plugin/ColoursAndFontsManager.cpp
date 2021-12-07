@@ -1069,6 +1069,13 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
             sp_word_2.SetFgColour(lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour());
         }
     }
+    
+    // make sure we include Rakefile as a Ruby file
+    if(lexer->GetName() == "ruby") {
+        if(!lexer->GetFileSpec().Contains("Rakefile")) {
+            lexer->SetFileSpec(lexer->GetFileSpec() + ";Rakefile");
+        }
+    }
 
     if(lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*akefile.in;*akefile.am");

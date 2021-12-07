@@ -5,7 +5,7 @@ EclipseRubyThemeImporter::EclipseRubyThemeImporter()
     SetKeywords0("__ENCODING__ __LINE__ __FILE__ BEGIN END alias and begin break case class def defined? do else elsif "
                  "end ensure false for if in module next nil not or redo rescue retry return self super then true "
                  "undef unless until when while yield");
-    SetFileExtensions("*.rb");
+    SetFileExtensions("*.rb;Rakefile");
     m_langName = "ruby";
 }
 

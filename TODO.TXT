@@ -1,24 +1,8 @@
-Removing SQLite:
+`CTagsd` project
 
-- The ctags file should be updated into a single database (using a simple key/value store)
-- Saving a single file should update the database for that file
+# TODO
 
-
-DB format:
-
-
-files.idx
-name.idx
-symbols.data
-
-files.idx
--------------
-{file-path, [1..N]}
-
-name.idx
--------------
-{name, [1...N]}
-
-symbols.data
-------------
-{ID, {TagEntry}}
+1. `Add include file` should be moved to LSP via new event `wxEVT_LSP_FIND_HEADER`
+2. `Outline Plugin` -> move to LSP
+3. Fix code completion for header file names
+4. All the content of the `Code Generation / Refactoring` should be moved to LSP

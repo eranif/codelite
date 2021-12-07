@@ -97,7 +97,13 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& wxdc, wxWindow* wnd, const wxAuiNote
     wxColour penColour = page.active ? m_activeTabPenColour : m_penColour;
     wxColour bgColour = page.active ? m_activeTabBgColour : m_tabBgColour;
 
-    wxSize sz = GetTabSize(dc, wnd, page.caption, page.bitmap, page.active, close_button_state, x_extent);
+#if wxCHECK_VERSION(3, 1, 6)
+    const wxBitmap& bitmap = page.bitmap.GetBitmapFor(wnd);
+#else
+    const wxBitmap& bitmap = page.bitmap;
+#endif
+
+    wxSize sz = GetTabSize(dc, wnd, page.caption, bitmap, page.active, close_button_state, x_extent);
     if(sz.GetHeight() < in_rect.GetHeight()) { sz.SetHeight(in_rect.GetHeight()); }
 
     wxRect rr(in_rect.GetTopLeft(), sz);
@@ -177,10 +183,10 @@ void clAuiMainNotebookTabArt::DrawTab(wxDC& wxdc, wxWindow* wnd, const wxAuiNote
     if(caption == "Tp") { caption.Clear(); }
 
     /// Draw the bitmap
-    if(page.bitmap.IsOk()) {
-        int bmpy = (rr.y + (rr.height - page.bitmap.GetScaledHeight()) / 2);
-        dc.DrawBitmap(page.bitmap, curx, bmpy);
-        curx += page.bitmap.GetScaledWidth();
+    if(bitmap.IsOk()) {
+        int bmpy = (rr.y + (rr.height - bitmap.GetScaledHeight()) / 2);
+        dc.DrawBitmap(bitmap, curx, bmpy);
+        curx += bitmap.GetScaledWidth();
         curx += X_PADDING;
     }
 

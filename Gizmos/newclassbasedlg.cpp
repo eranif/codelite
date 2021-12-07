@@ -68,10 +68,7 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 
     fgSizer1->Add(m_textCtrlNamespace, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_buttonBrowseNamespaces =
-        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
-
-    fgSizer1->Add(m_buttonBrowseNamespaces, 0, wxALL, WXC_FROM_DIP(5));
+    fgSizer1->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     m_staticText45 =
         new wxStaticText(this, wxID_ANY, _("Inherits:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -86,11 +83,7 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 
     fgSizer1->Add(m_textCtrlParentClass, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_button49 =
-        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
-    m_button49->SetToolTip(_("Browse for classes"));
-
-    fgSizer1->Add(m_button49, 0, wxALL, WXC_FROM_DIP(5));
+    fgSizer1->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     m_staticText37 =
         new wxStaticText(this, wxID_ANY, _("File name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -259,18 +252,6 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
 
     fgSizer2->Add(m_checkBoxNonMovable, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxImplVirtual = new wxCheckBox(m_panel55, wxID_ANY, _("Implement all virtual functions"), wxDefaultPosition,
-                                           wxDLG_UNIT(m_panel55, wxSize(-1, -1)), 0);
-    m_checkBoxImplVirtual->SetValue(false);
-
-    fgSizer2->Add(m_checkBoxImplVirtual, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_checkBoxImplPureVirtual = new wxCheckBox(m_panel55, wxID_ANY, _("Implement all pure virtual functions"),
-                                               wxDefaultPosition, wxDLG_UNIT(m_panel55, wxSize(-1, -1)), 0);
-    m_checkBoxImplPureVirtual->SetValue(false);
-
-    fgSizer2->Add(m_checkBoxImplPureVirtual, 0, wxALL, WXC_FROM_DIP(5));
-
     m_stdBtnSizer30 = new wxStdDialogButtonSizer();
 
     bSizer1->Add(m_stdBtnSizer30, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
@@ -311,10 +292,6 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
     // Connect events
     m_textClassName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewClassBaseDlg::OnTextEnter), NULL,
                              this);
-    m_buttonBrowseNamespaces->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                      wxCommandEventHandler(NewClassBaseDlg::OnBrowseNamespace), NULL, this);
-    m_button49->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseParentClass), NULL,
-                        this);
     m_staticText6->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
     m_textCtrlBlockGuard->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
     m_buttonSelectVD->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseVD), NULL,
@@ -325,8 +302,6 @@ NewClassBaseDlg::NewClassBaseDlg(wxWindow* parent, wxWindowID id, const wxString
                                          wxCommandEventHandler(NewClassBaseDlg::OnUseLowerCaseFileName), NULL, this);
     m_checkBoxSingleton->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                  wxCommandEventHandler(NewClassBaseDlg::OnCheckSingleton), NULL, this);
-    m_checkBoxImplVirtual->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                   wxCommandEventHandler(NewClassBaseDlg::OnCheckImpleAllVirtualFunctions), NULL, this);
     m_button34->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonOK), NULL, this);
 }
 
@@ -334,10 +309,6 @@ NewClassBaseDlg::~NewClassBaseDlg()
 {
     m_textClassName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(NewClassBaseDlg::OnTextEnter), NULL,
                                 this);
-    m_buttonBrowseNamespaces->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                                         wxCommandEventHandler(NewClassBaseDlg::OnBrowseNamespace), NULL, this);
-    m_button49->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnBrowseParentClass),
-                           NULL, this);
     m_staticText6->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL, this);
     m_textCtrlBlockGuard->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewClassBaseDlg::OnBlockGuardUI), NULL,
                                      this);
@@ -349,9 +320,6 @@ NewClassBaseDlg::~NewClassBaseDlg()
                                             wxCommandEventHandler(NewClassBaseDlg::OnUseLowerCaseFileName), NULL, this);
     m_checkBoxSingleton->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
                                     wxCommandEventHandler(NewClassBaseDlg::OnCheckSingleton), NULL, this);
-    m_checkBoxImplVirtual->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                      wxCommandEventHandler(NewClassBaseDlg::OnCheckImpleAllVirtualFunctions), NULL,
-                                      this);
     m_button34->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(NewClassBaseDlg::OnButtonOK), NULL,
                            this);
 }

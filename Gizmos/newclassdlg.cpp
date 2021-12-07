@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "newclassdlg.h"
 #include "VirtualDirectorySelectorDlg.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceView.hpp"
@@ -30,7 +31,6 @@
 #include "globals.h"
 #include "imanager.h"
 #include "new_class_dlg_data.h"
-#include "newclassdlg.h"
 #include "open_resource_dialog.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
@@ -49,8 +49,6 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     EditorConfigST::Get()->ReadObject(wxT("NewClassDlgData"), &m_options);
 
     m_checkBoxNonCopyable->SetValue(m_options.GetFlags() & NewClassDlgData::NonCopyable);
-    m_checkBoxImplPureVirtual->SetValue(m_options.GetFlags() & NewClassDlgData::ImplAllPureVirtualFuncs);
-    m_checkBoxImplVirtual->SetValue(m_options.GetFlags() & NewClassDlgData::ImplAllVirtualFuncs);
     m_checkBoxInline->SetValue(m_options.GetFlags() & NewClassDlgData::FileIniline);
     m_checkBoxHpp->SetValue(m_options.GetFlags() & NewClassDlgData::HppHeader);
     m_checkBoxSingleton->SetValue(m_options.GetFlags() & NewClassDlgData::Singleton);
@@ -64,7 +62,9 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
     if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
         wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetWorkspaceTree(), item.m_item, false);
-        if(path.IsEmpty() == false) { m_textCtrlVD->ChangeValue(path); }
+        if(path.IsEmpty() == false) {
+            m_textCtrlVD->ChangeValue(path);
+        }
     }
 
     // set the class path to be the active project path
@@ -78,7 +78,9 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
 
             wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
             ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
-            if(proj) { m_basePath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME); }
+            if(proj) {
+                m_basePath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME);
+            }
         }
     }
 
@@ -92,7 +94,9 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     if(clFileSystemWorkspace::Get().IsOpen()) {
         wxArrayString folders, files;
         clFileSystemWorkspace::Get().GetView()->GetSelections(folders, files);
-        if(folders.size() == 1) { m_textCtrlGenFilePath->ChangeValue(folders.Item(0)); }
+        if(folders.size() == 1) {
+            m_textCtrlGenFilePath->ChangeValue(folders.Item(0));
+        }
         m_textCtrlVD->Disable();
         m_buttonSelectVD->Disable();
         m_staticTextVD->Disable();
@@ -112,7 +116,9 @@ void NewClassDlg::GetInheritance(ClassParentInfo& parent) const
 void NewClassDlg::OnButtonOK(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!ValidateInput()) { return; }
+    if(!ValidateInput()) {
+        return;
+    }
     DoSaveOptions();
     EndModal(wxID_OK);
 }
@@ -196,8 +202,6 @@ void NewClassDlg::GetNewClassInfo(NewClassInfo& info) const
     info.isInheritable = this->IsInheritable();
     info.fileName = wxFileName(GetClassFile()).GetName(); // Ommit any suffix the user might have typed in
     info.isVirtualDtor = m_checkBoxVirtualDtor->IsChecked();
-    info.implAllPureVirtual = m_checkBoxImplPureVirtual->IsChecked();
-    info.implAllVirtual = m_checkBoxImplVirtual->IsChecked();
     info.usePragmaOnce = m_checkBoxPragmaOnce->IsChecked();
     info.virtualDirectory = m_textCtrlVD->GetValue().Trim().Trim(false);
     info.blockGuard = m_textCtrlBlockGuard->GetValue().Trim().Trim(false);
@@ -236,10 +240,14 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     wxString initPath;
-    if(wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())) { initPath = m_textCtrlGenFilePath->GetValue(); }
+    if(wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())) {
+        initPath = m_textCtrlGenFilePath->GetValue();
+    }
     wxString new_path =
         wxDirSelector(_("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if(new_path.IsEmpty() == false) { m_textCtrlGenFilePath->ChangeValue(new_path); }
+    if(new_path.IsEmpty() == false) {
+        m_textCtrlGenFilePath->ChangeValue(new_path);
+    }
 }
 
 void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
@@ -279,7 +287,8 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray) const
     wxString textNamespaces = this->GetClassNamespace();
     textNamespaces.Trim();
 
-    if(textNamespaces.IsEmpty()) return;
+    if(textNamespaces.IsEmpty())
+        return;
 
     int prevPos = 0;
     size_t pos = textNamespaces.find(wxT("::"), prevPos);
@@ -299,7 +308,8 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray) const
 
 wxString NewClassDlg::doSpliteByCaptilization(const wxString& str) const
 {
-    if(str.IsEmpty()) return wxT("");
+    if(str.IsEmpty())
+        return wxT("");
 
     wxString output;
     bool lastWasLower(true);
@@ -327,7 +337,9 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str) const
     while(output.Replace(wxT("__"), wxT("_"))) {}
 
     // remove any underscore from the start of the word
-    if(output.StartsWith(wxT("_"))) { output.Remove(0, 1); }
+    if(output.StartsWith(wxT("_"))) {
+        output.Remove(0, 1);
+    }
     return output;
 }
 
@@ -340,13 +352,14 @@ void NewClassDlg::DoUpdateGeneratedPath()
     vd = vdPath.AfterFirst(wxT(':'));
 
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
-    if(proj) { m_textCtrlGenFilePath->ChangeValue(proj->GetBestPathForVD(vd)); }
+    if(proj) {
+        m_textCtrlGenFilePath->ChangeValue(proj->GetBestPathForVD(vd));
+    }
 }
 
 void NewClassDlg::DoUpdateCheckBoxes()
 {
     bool singleton = m_checkBoxSingleton->IsChecked();
-    bool implVirtual = m_checkBoxImplVirtual->IsChecked();
 
     if(singleton) {
         // Singleton class must not be copyable or movable
@@ -355,14 +368,10 @@ void NewClassDlg::DoUpdateCheckBoxes()
         // A static pointer variable needs to be defined in the source file
         m_checkBoxInline->SetValue(false);
     }
-    if(implVirtual) {
-        m_checkBoxImplPureVirtual->SetValue(true);
-    }
 
     m_checkBoxNonCopyable->Enable(!singleton);
     m_checkBoxNonMovable->Enable(!singleton);
     m_checkBoxInline->Enable(!singleton);
-    m_checkBoxImplPureVirtual->Enable(!implVirtual);
 }
 
 void NewClassDlg::OnOkUpdateUI(wxUpdateUIEvent& event)
@@ -376,17 +385,24 @@ void NewClassDlg::DoSaveOptions()
     // Save the check boxes ticked
     size_t flags(0);
 
-    if(m_checkBoxNonCopyable->IsChecked()) flags |= NewClassDlgData::NonCopyable;
-    if(m_checkBoxImplPureVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllPureVirtualFuncs;
-    if(m_checkBoxImplVirtual->IsChecked()) flags |= NewClassDlgData::ImplAllVirtualFuncs;
-    if(m_checkBoxInline->IsChecked()) flags |= NewClassDlgData::FileIniline;
-    if(m_checkBoxHpp->IsChecked()) flags |= NewClassDlgData::HppHeader;
-    if(m_checkBoxSingleton->IsChecked()) flags |= NewClassDlgData::Singleton;
-    if(m_checkBoxVirtualDtor->IsChecked()) flags |= NewClassDlgData::VirtualDtor;
-    if(m_checkBoxPragmaOnce->IsChecked()) flags |= NewClassDlgData::UsePragma;
-    if(m_checkBoxLowercaseFileName->IsChecked()) flags |= NewClassDlgData::UseLowerCase;
-    if(m_checkBoxNonMovable->IsChecked()) flags |= NewClassDlgData::NonMovable;
-    if(m_checkBoxNonInheritable->IsChecked()) flags |= NewClassDlgData::NonInheritable;
+    if(m_checkBoxNonCopyable->IsChecked())
+        flags |= NewClassDlgData::NonCopyable;
+    if(m_checkBoxInline->IsChecked())
+        flags |= NewClassDlgData::FileIniline;
+    if(m_checkBoxHpp->IsChecked())
+        flags |= NewClassDlgData::HppHeader;
+    if(m_checkBoxSingleton->IsChecked())
+        flags |= NewClassDlgData::Singleton;
+    if(m_checkBoxVirtualDtor->IsChecked())
+        flags |= NewClassDlgData::VirtualDtor;
+    if(m_checkBoxPragmaOnce->IsChecked())
+        flags |= NewClassDlgData::UsePragma;
+    if(m_checkBoxLowercaseFileName->IsChecked())
+        flags |= NewClassDlgData::UseLowerCase;
+    if(m_checkBoxNonMovable->IsChecked())
+        flags |= NewClassDlgData::NonMovable;
+    if(m_checkBoxNonInheritable->IsChecked())
+        flags |= NewClassDlgData::NonInheritable;
 
     m_options.SetFlags(flags);
     EditorConfigST::Get()->WriteObject(wxT("NewClassDlgData"), &m_options);
@@ -400,7 +416,9 @@ void NewClassDlg::OnUseLowerCaseFileName(wxCommandEvent& event)
 
 wxString NewClassDlg::CreateFileName() const
 {
-    if(m_options.HasFlag(NewClassDlgData::UseLowerCase)) { return m_textClassName->GetValue().Lower(); }
+    if(m_options.HasFlag(NewClassDlgData::UseLowerCase)) {
+        return m_textClassName->GetValue().Lower();
+    }
     return m_textClassName->GetValue();
 }
 

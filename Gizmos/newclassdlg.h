@@ -49,8 +49,6 @@ struct NewClassInfo {
     bool isMovable;
     bool isInheritable;
     bool isVirtualDtor;
-    bool implAllPureVirtual;
-    bool implAllVirtual;
     bool isInline;
     bool hppHeader;
     bool usePragmaOnce;
@@ -62,8 +60,6 @@ struct NewClassInfo {
         , isMovable(false)
         , isInheritable(false)
         , isVirtualDtor(false)
-        , implAllPureVirtual(false)
-        , implAllVirtual(false)
         , isInline(false)
         , hppHeader(false)
         , usePragmaOnce(false)

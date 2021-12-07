@@ -10,5 +10,9 @@
       <Environment/>
       <Project Name="codelite-generate-themes" ConfigName="Release"/>
     </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Debug_Linux">
+      <Environment/>
+      <Project Name="codelite-generate-themes" ConfigName="Debug_Linux"/>
+    </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -1,5 +1,5 @@
-#include "EclipseThemeImporterBase.h"
 #include "ColoursAndFontsManager.h"
+#include "EclipseThemeImporterBase.h"
 #include "cl_standard_paths.h"
 #include "drawingutils.h"
 #include "globals.h"
@@ -75,6 +75,8 @@ LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& ec
         return NULL;
     if(!GetProperty("keyword", m_keyword))
         return NULL;
+
+    // Optional
     if(!GetProperty("class", m_klass)) {
         m_klass = m_foreground;
     }
@@ -84,15 +86,18 @@ LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& ec
     if(!GetProperty("javadoc", m_javadoc)) {
         m_javadoc = m_multiLineComment;
     }
-
     if(!GetProperty("javadocKeyword", m_javadocKeyword)) {
         m_javadocKeyword = m_multiLineComment;
     }
     if(!GetProperty("method", m_function)) {
         m_function = m_foreground;
     }
-
-    m_oper = m_foreground;
+    if(!GetProperty("field", m_field)) {
+        m_field = m_foreground;
+    }
+    if(!GetProperty("enum", m_enum)) {
+        m_enum = m_foreground;
+    }
     return lexer;
 }
 

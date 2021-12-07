@@ -72,6 +72,8 @@ protected:
     Property m_javadoc;
     Property m_javadocKeyword;
     Property m_function;
+    Property m_field;
+    Property m_enum;
     wxString m_langName;
 
 protected:

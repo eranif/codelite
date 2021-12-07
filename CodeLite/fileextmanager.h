@@ -94,6 +94,7 @@ public:
         TypeFolderSymlinkExpanded, // For UI purposes only
         TypeLua,
         TypeRust,
+        TypeRuby,
         TypeDiff,
         TypePatch,
         TypeJSON,

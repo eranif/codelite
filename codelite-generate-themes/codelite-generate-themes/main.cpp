@@ -11,12 +11,19 @@
 #include <wx/init.h>
 #include <wx/string.h>
 
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
+#endif
+
 using namespace std;
 
 int main(int argc, char** argv)
 {
     // initialize wxWidgets
     wxInitializer init;
+#ifdef __WXGTK__
+    gtk_init(&argc, &argv);
+#endif
 
     if(argc < 3) {
         std::cout << "Usage: " << wxFileName(argv[0]).GetFullName() << " <path-to-xml-files> <output-folder>" << endl;

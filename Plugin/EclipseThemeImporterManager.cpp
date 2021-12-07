@@ -23,6 +23,7 @@
 #include "EclipseJsonThemeImporter.hpp"
 #include "EclipseRustThemeImporter.h"
 #endif
+#include "EclipseRubyThemeImporter.hpp"
 #include "EclipseSCSSThemeImporter.h"
 #include "EclipseSQLThemeImporter.h"
 #include "EclipseScriptThemeImporter.h"
@@ -57,6 +58,7 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
     m_importers.push_back(new EclipseSCSSThemeImporter());
     m_importers.push_back(new EclipseDockerfileThemeImporter());
     m_importers.push_back(new EclipseYAMLThemeImporter());
+    m_importers.push_back(new EclipseRubyThemeImporter());
 #if wxCHECK_VERSION(3, 1, 0)
     m_importers.push_back(new EclipseRustThemeImporter());
     m_importers.push_back(new EclipseJsonThemeImporter());

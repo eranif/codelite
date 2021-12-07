@@ -23,8 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "fileextmanager.h"
 #include "JSON.h"
+#include "fileextmanager.h"
 #include "fileutils.h"
 #include <wx/filename.h>
 #include <wx/regex.h>
@@ -171,6 +171,8 @@ void FileExtManager::Init()
         m_map["patch"] = TypePatch;
         m_map["diff"] = TypeDiff;
 
+        m_map["rb"] = TypeRuby;
+
         // Initialize regexes:
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeShellScript));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/bash", TypeShellScript));
@@ -178,6 +180,8 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/bash", TypeShellScript));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/python", TypePython));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/python", TypePython));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/ruby", TypeRuby));
+        m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/ruby", TypeRuby));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/node", TypeJS));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/usr/bin/node", TypeJS));
         m_matchers.push_back(Matcher("#[ \t]*![ \t]*/bin/nodejs", TypeJS));
@@ -186,6 +190,7 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher("<?php", TypePhp, false));
         m_matchers.push_back(Matcher("#!/usr/bin/env node", TypeJS, false));
         m_matchers.push_back(Matcher("#!/usr/bin/env nodejs", TypeJS, false));
+        m_matchers.push_back(Matcher("#!/usr/bin/env ruby", TypeRuby, false));
         m_matchers.push_back(Matcher("#!/usr/bin/env python", TypePython, false));
         m_matchers.push_back(Matcher("#!/usr/bin/env python3", TypePython, false));
         m_matchers.push_back(Matcher("SQLite format 3", TypeDatabase, false));

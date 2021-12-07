@@ -226,6 +226,7 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("rust", bitmap_size), FileExtManager::TypeRust);
         m_mimeBitmaps.AddBitmap(LoadBitmap("diff", bitmap_size), FileExtManager::TypeDiff);
         m_mimeBitmaps.AddBitmap(LoadBitmap("patch", bitmap_size), FileExtManager::TypePatch);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("ruby", bitmap_size), FileExtManager::TypeRuby);
 
         // Non mime bitmaps
         m_mimeBitmaps.AddBitmap(LoadBitmap("file_save", bitmap_size), kSave);

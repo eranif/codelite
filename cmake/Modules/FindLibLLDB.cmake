@@ -6,6 +6,14 @@ if (UNIX)
                      HINTS  
                      /usr/lib 
                      /usr/local/lib 
+                     /usr/lib/llvm-20/lib
+                     /usr/lib/llvm-19/lib
+                     /usr/lib/llvm-18/lib
+                     /usr/lib/llvm-17/lib
+                     /usr/lib/llvm-16/lib
+                     /usr/lib/llvm-15/lib
+                     /usr/lib/llvm-14/lib
+                     /usr/lib/llvm-13/lib
                      /usr/lib/llvm-12/lib
                      /usr/lib/llvm-11/lib
                      /usr/lib/llvm-10/lib
@@ -13,6 +21,14 @@ if (UNIX)
                      /usr/lib/llvm-8/lib
                      /usr/lib/llvm-7/lib
                      /usr/lib/llvm-6/lib
+                     /usr/lib/llvm-20.0/lib
+                     /usr/lib/llvm-19.0/lib
+                     /usr/lib/llvm-18.0/lib
+                     /usr/lib/llvm-17.0/lib
+                     /usr/lib/llvm-16.0/lib
+                     /usr/lib/llvm-15.0/lib
+                     /usr/lib/llvm-14.0/lib
+                     /usr/lib/llvm-13.0/lib
                      /usr/lib/llvm-12.0/lib
                      /usr/lib/llvm-11.0/lib
                      /usr/lib/llvm-10.0/lib
@@ -38,11 +54,27 @@ if (UNIX)
 
         find_path(LIBLLDB_INCLUDE_T NAMES lldb/API/SBDebugger.h
                   HINTS 
+                  /usr/lib/llvm-20/include
+                  /usr/lib/llvm-19/include
+                  /usr/lib/llvm-18/include
+                  /usr/lib/llvm-17/include
+                  /usr/lib/llvm-16/include
+                  /usr/lib/llvm-15/include
+                  /usr/lib/llvm-14/include
+                  /usr/lib/llvm-13/include
                   /usr/lib/llvm-12/include
                   /usr/lib/llvm-11/include
                   /usr/lib/llvm-10/include
                   /usr/lib/llvm-9/include
                   /usr/lib/llvm-8/include
+                  /usr/lib/llvm-20.0/include
+                  /usr/lib/llvm-19.0/include
+                  /usr/lib/llvm-18.0/include
+                  /usr/lib/llvm-17.0/include
+                  /usr/lib/llvm-16.0/include
+                  /usr/lib/llvm-15.0/include
+                  /usr/lib/llvm-14.0/include
+                  /usr/lib/llvm-13.0/include
                   /usr/lib/llvm-12.0/include
                   /usr/lib/llvm-11.0/include
                   /usr/lib/llvm-10.0/include

@@ -29,10 +29,10 @@
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
+#include "advanced_settings.h"
 #include "CompilersFoundDlg.h"
 #include "NewCompilerDlg.h"
 #include "advance_settings_base.h"
-#include "advanced_settings.h"
 #include "build_page.h"
 #include "build_settings_config.h"
 #include "buildsettingstab.h"
@@ -43,7 +43,6 @@
 #include "manager.h"
 #include "windowattrmanager.h"
 #include <CompilersDetectorManager.h>
-#include <cl_aui_notebook_art.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
 

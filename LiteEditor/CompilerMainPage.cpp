@@ -32,7 +32,6 @@
 #include <EditDlg.h>
 #include <build_config.h>
 #include <build_settings_config.h>
-#include <cl_aui_notebook_art.h>
 #include <event_notifier.h>
 #include <globals.h>
 #include <windowattrmanager.h>

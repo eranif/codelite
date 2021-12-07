@@ -26,7 +26,6 @@
 #include "FilesModifiedDlg.h"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
-#include "clAuiMainNotebookTabArt.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clImageViewer.h"
 #include "clWorkspaceManager.h"

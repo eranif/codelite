@@ -1,12 +1,11 @@
-#include "ColoursAndFontsManager.h"
 #include "PHPDebugPane.h"
+#include "ColoursAndFontsManager.h"
 #include "XDebugManager.h"
 #include "lexer_configuration.h"
 #include "php_event.h"
 #include "php_utils.h"
 #include "php_workspace.h"
 #include "xdebugevent.h"
-#include <cl_aui_notebook_art.h>
 #include <editor_config.h>
 #include <event_notifier.h>
 #include <globals.h>

@@ -404,6 +404,12 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_TYPEINFO_TIP, clCodeCompletion
 //  - event.SetClasses("..")
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_SEMANTICS_HIGHLIGHT, clCodeCompletionEvent);
 
+// Return a list LSP::SymbolInformation by a given query
+// The query is passed using event.SetString(query)
+// we support fuzzy matching by passing space delimited query
+// event.SetString("get name") -> will match "get_name", "getname", "nameget" etc
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORKSPACE_SYMBOLS, clCodeCompletionEvent);
+
 //===----------------------------------------------------------------------------------------------
 //===----------------------------------------------------------------------------------------------
 //      END ServiceProviderManager events

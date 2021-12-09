@@ -1,8 +1,8 @@
+#include "editorconfigplugin.h"
 #include "EditorConfigSettings.h"
 #include "EditorConfigSettingsDlg.h"
 #include "cl_config.h"
 #include "codelite_events.h"
-#include "editorconfigplugin.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include <wx/filename.h>
@@ -14,7 +14,9 @@ static EditorConfigPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new EditorConfigPlugin(manager); }
+    if(thePlugin == NULL) {
+        thePlugin = new EditorConfigPlugin(manager);
+    }
     return thePlugin;
 }
 
@@ -66,13 +68,14 @@ void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
 {
     event.Skip();
     if(!m_settings.IsEnabled()) {
-        clDEBUG() << "EditorConfig is disabled." << clEndl;
         return;
     }
 
     clEditorConfigSection section;
     wxFileName fn(event.GetFileName());
-    if(!DoGetEditorConfigForFile(fn, section)) { return; }
+    if(!DoGetEditorConfigForFile(fn, section)) {
+        return;
+    }
 
     event.Skip(false);
     event.SetEditorConfig(section);
@@ -82,7 +85,6 @@ void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     if(!m_settings.IsEnabled()) {
-        clDEBUG1() << "EditorConfig is disabled." << clEndl;
         return;
     }
 
@@ -93,7 +95,8 @@ void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
     CHECK_PTR_RET(conf);
 
     clEditorConfigSection section;
-    if(!DoGetEditorConfigForFile(editor->GetFileName(), section)) return;
+    if(!DoGetEditorConfigForFile(editor->GetFileName(), section))
+        return;
     conf->UpdateFromEditorConfig(section);
     editor->ApplyEditorConfig();
 }
@@ -102,21 +105,18 @@ bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, cl
 {
     // Try the cache first
     if(m_cache.Get(filename, section)) {
-        clDEBUG1() << "Using EditorConfig settings for file:" << filename << clEndl;
         section.PrintToLog();
         return true;
     }
 
     // Sanity
     if(!filename.IsOk() || !filename.FileExists()) {
-        //clDEBUG1() << "No EditorConfig file found for file:" << filename << clEndl;
         return false;
     }
 
     clEditorConfig conf;
     if(!conf.GetSectionForFile(filename, section)) {
         // Update the cache
-        clDEBUG1() << "No EditorConfig file found for file:" << filename << clEndl;
         return false;
     }
 

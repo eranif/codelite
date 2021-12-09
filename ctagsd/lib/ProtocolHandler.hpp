@@ -66,6 +66,7 @@ public:
     void on_document_signature_help(unique_ptr<JSON>&& msg, Channel& channel);
     void on_definition(unique_ptr<JSON>&& msg, Channel& channel);
     void on_hover(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_workspace_symbol(unique_ptr<JSON>&& msg, Channel& channel);
 
     /**
      * @brief send a "window/logMessage" message to the client

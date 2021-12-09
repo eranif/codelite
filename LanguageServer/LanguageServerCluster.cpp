@@ -22,6 +22,8 @@
 #include "wx/arrstr.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <algorithm>
+#include <thread>
+#include <unordered_set>
 #include <wx/stc/stc.h>
 
 LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
@@ -32,6 +34,8 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                &LanguageServerCluster::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
+
     Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -55,6 +59,8 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                  &LanguageServerCluster::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
+
+    EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
 
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
@@ -495,6 +501,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 void LanguageServerCluster::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
+    LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
     this->StopAll();
 }
 
@@ -502,6 +509,13 @@ void LanguageServerCluster::OnWorkspaceOpen(clWorkspaceEvent& event)
 {
     event.Skip();
     this->Reload();
+    DiscoverWorkspaceType();
+}
+
+void LanguageServerCluster::SetWorkspaceType(FileExtManager::FileType type)
+{
+    LanguageServerProtocol::workspace_file_type = type;
+    clSYSTEM() << "*** LSP: workspace type is set:" << LanguageServerProtocol::workspace_file_type << "***" << endl;
 }
 
 void LanguageServerCluster::StopAll(const std::unordered_set<wxString>& languages)
@@ -733,4 +747,56 @@ void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
     clDEBUG() << "Classes  :" << classes << endl;
     clDEBUG() << "Variables:" << variables << endl;
     editor->SetSemanticTokens(classes, variables);
+}
+
+void LanguageServerCluster::OnOpenResource(wxCommandEvent& event)
+{
+    event.Skip();
+    DiscoverWorkspaceType();
+}
+
+void LanguageServerCluster::DiscoverWorkspaceType()
+{
+    if(LanguageServerProtocol::workspace_file_type != FileExtManager::TypeOther)
+        return;
+
+    wxArrayString files;
+    clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
+    if(files.empty()) {
+        clWARNING() << "Workspace contains no files" << endl;
+        return;
+    }
+
+    LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
+    std::thread thr(
+        [=](const wxArrayString& files, wxEvtHandler* owner) {
+            // create a table for all the known file types
+            int table[FileExtManager::TypeLast + 1];
+            memset(table, 0, sizeof(table));
+
+            // holds the index to the biggest file type found so far
+            int cur_max = wxNOT_FOUND;
+            FileExtManager::FileType cur_type = FileExtManager::TypeOther;
+
+            std::unordered_set<int> acceptable_file_types = {
+                FileExtManager::TypeSQL,       FileExtManager::TypeShellScript, FileExtManager::TypeSourceC,
+                FileExtManager::TypeSourceCpp, FileExtManager::TypeCSS,         FileExtManager::TypeHeader,
+                FileExtManager::TypeHtml,      FileExtManager::TypeJS,          FileExtManager::TypeJava,
+                FileExtManager::TypeLua,       FileExtManager::TypeRuby,        FileExtManager::TypeRust,
+                FileExtManager::TypePython,
+            };
+            for(const wxString& file : files) {
+                auto file_type = FileExtManager::GetType(file);
+                if(file_type != FileExtManager::TypeOther &&
+                   acceptable_file_types.count(file_type)) { // TypeOther is -1
+                    table[file_type]++;
+                    if(table[file_type] > cur_max) {
+                        cur_type = file_type;
+                    }
+                }
+            }
+            owner->CallAfter(&LanguageServerCluster::SetWorkspaceType, cur_type);
+        },
+        files, this);
+    thr.detach();
 }

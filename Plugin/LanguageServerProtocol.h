@@ -8,7 +8,9 @@
 #include "SocketAPI/clSocketClientAsync.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
+#include "codelite_events.h"
 #include "codelite_exports.h"
+#include "fileextmanager.h"
 #include "macros.h"
 
 #include <functional>
@@ -75,6 +77,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
 
 public:
     typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
+    static FileExtManager::FileType workspace_file_type;
 
 protected:
     void OnNetConnected(clCommandEvent& event);
@@ -84,6 +87,8 @@ protected:
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);
     void OnFileSaved(clCommandEvent& event);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void OnFindSymbolDecl(clCodeCompletionEvent& event);
@@ -93,7 +98,7 @@ protected:
     void OnTypeInfoToolTip(clCodeCompletionEvent& event);
     void OnQuickOutline(clCodeCompletionEvent& event);
     void OnSemanticHighlights(clCodeCompletionEvent& event);
-
+    void OnWorkspaceSymbols(clCodeCompletionEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     bool CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName,
                          const wxString& lspRequestName);
@@ -105,10 +110,12 @@ protected:
     wxString GetLogPrefix() const;
     void ProcessQueue();
     static wxString GetLanguageId(const wxString& fn);
+    static wxString GetLanguageId(FileExtManager::FileType file_type);
     void UpdateFileSent(const wxString& filename, const std::string& fileContent);
     bool IsFileChangedSinceLastParse(const wxString& filename, const std::string& fileContent) const;
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
+    bool CanHandle(FileExtManager::FileType file_type) const;
 
 protected:
     /**
@@ -125,6 +132,11 @@ protected:
      * @brief ask the server for semantic tokens
      */
     void SendSemanticTokensRequest(IEditor* editor);
+
+    /**
+     * @brief query the LSP for a list of workspace symbols that matches a query string
+     */
+    void SendWorkspaceSymbolsRequest(const wxString& query_string);
 
     /**
      * @brief report a file-changed notification

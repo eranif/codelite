@@ -39,6 +39,7 @@ public:
     void StopAll(const std::unordered_set<wxString>& languages = {});
     void StartAll(const std::unordered_set<wxString>& languages = {});
     void ClearAllDiagnostics();
+    void SetWorkspaceType(FileExtManager::FileType type);
 
     /**
      * @brief covnert LSP::SignatureHelp class to TagEntryPtrVector_t
@@ -64,12 +65,16 @@ protected:
     void OnLogMessage(LSPEvent& event);
     void OnDocumentSymbolsForHighlight(LSPEvent& event);
     void OnBuildEnded(clBuildEvent& event);
+    void OnOpenResource(wxCommandEvent& event);
+
     wxString GetEditorFilePath(IEditor* editor) const;
     /**
      * @brief find an editor either by local or remote path
      */
     IEditor* FindEditor(const wxString& path) const;
     IEditor* FindEditor(const LSPEvent& event) const;
+
+    void DiscoverWorkspaceType();
 
 public:
     LanguageServerCluster(LanguageServerPlugin* plugin);

@@ -26,6 +26,8 @@
 #ifndef __open_resource_dialog__
 #define __open_resource_dialog__
 
+#include "LSP/LSPEvent.h"
+#include "LSP/basic_types.h"
 #include "clAnagram.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -83,7 +85,7 @@ class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
 {
     IManager* m_manager;
     std::unordered_multimap<wxString, wxString> m_files;
-    std::unordered_map<wxString, int> m_fileTypeHash;
+    std::unordered_map<LSP::eSymbolKind, int> m_fileTypeHash;
     wxTimer* m_timer;
     bool m_needRefresh;
     wxArrayString m_filters;
@@ -97,15 +99,17 @@ protected:
     virtual void OnEntryActivated(wxDataViewEvent& event);
     virtual void OnCheckboxfilesCheckboxClicked(wxCommandEvent& event);
     virtual void OnCheckboxshowsymbolsCheckboxClicked(wxCommandEvent& event);
+    void OnWorkspaceSymbols(LSPEvent& event);
+
     void DoPopulateList();
     void DoPopulateWorkspaceFile();
     bool MatchesFilter(const wxString& name);
-    void DoPopulateTags();
+    void DoPopulateTags(const vector<LSP::SymbolInformation>& symbols);
     void DoSelectItem(const wxDataViewItem& item);
     void Clear();
     void DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont,
                       OpenResourceDialogItemData* clientData, int imgid);
-    int DoGetTagImg(TagEntryPtr tag);
+    int DoGetTagImg(const LSP::SymbolInformation& symbol);
     OpenResourceDialogItemData* GetItemData(const wxDataViewItem& item) const;
     void OnSelectAllText();
 

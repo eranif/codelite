@@ -17,6 +17,7 @@
 #include "LSP/ResponseMessage.h"
 #include "LSP/SemanticTokensRquest.hpp"
 #include "LSP/SignatureHelpRequest.h"
+#include "LSP/WorkspaceSymbolRequest.hpp"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
 #include "clWorkspaceManager.h"
@@ -35,10 +36,14 @@
 #include "wxmd5.h"
 #include <iomanip>
 #include <sstream>
+#include <thread>
+#include <unordered_map>
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
 
+using namespace std;
 thread_local wxString emptyString;
+FileExtManager::FileType LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
 
 LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner)
     : ServiceProvider(wxString() << "LSP: " << name, eServiceType::kCodeCompletion)
@@ -49,6 +54,8 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
 
     Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
     Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
@@ -57,6 +64,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
     Bind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
     Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
+    Bind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Bind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
 
     // Use sockets here
@@ -75,6 +83,8 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
 
 LanguageServerProtocol::~LanguageServerProtocol()
 {
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LanguageServerProtocol::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
@@ -86,14 +96,14 @@ LanguageServerProtocol::~LanguageServerProtocol()
     Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
     Unbind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
     Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
+    Unbind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
     DoClear();
 }
 
-wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
+wxString LanguageServerProtocol::GetLanguageId(FileExtManager::FileType file_type)
 {
-    FileExtManager::FileType type = FileExtManager::GetType(fn, FileExtManager::TypeText);
-    switch(type) {
+    switch(file_type) {
     case FileExtManager::TypeSourceC:
         return "c";
     case FileExtManager::TypeSourceCpp:
@@ -126,6 +136,12 @@ wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
     default:
         return "";
     }
+}
+
+wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
+{
+    FileExtManager::FileType type = FileExtManager::GetType(fn, FileExtManager::TypeText);
+    return GetLanguageId(type);
 }
 
 std::set<wxString> LanguageServerProtocol::GetSupportedLanguages()
@@ -222,6 +238,12 @@ bool LanguageServerProtocol::IsRunning() const { return m_network->IsConnected()
 bool LanguageServerProtocol::CanHandle(const wxString& filename) const
 {
     wxString lang = GetLanguageId(filename);
+    return m_languages.count(lang) != 0;
+}
+
+bool LanguageServerProtocol::CanHandle(FileExtManager::FileType file_type) const
+{
+    wxString lang = GetLanguageId(file_type);
     return m_languages.count(lang) != 0;
 }
 
@@ -823,6 +845,14 @@ const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
     return m_semanticTokensTypes[index];
 }
 
+void LanguageServerProtocol::SendWorkspaceSymbolsRequest(const wxString& query_string)
+{
+    clDEBUG() << GetLogPrefix() << "Sending semantic tokens request" << endl;
+    LSP::WorkspaceSymbolRequest::Ptr_t req =
+        LSP::MessageWithParams::MakeRequest(new LSP::WorkspaceSymbolRequest(query_string));
+    QueueMessage(req);
+}
+
 void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
@@ -931,6 +961,16 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
     }
 }
 
+void LanguageServerProtocol::OnWorkspaceSymbols(clCodeCompletionEvent& event)
+{
+    event.Skip();
+    if(!CanHandle(workspace_file_type)) {
+        return;
+    }
+    event.Skip(false);
+    SendWorkspaceSymbolsRequest(event.GetString());
+}
+
 void LanguageServerProtocol::OnSemanticHighlights(clCodeCompletionEvent& event)
 {
     event.Skip();
@@ -1028,3 +1068,7 @@ LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::TakePendingReplyMessage(in
     m_pendingReplyMessages.erase(msgid);
     return msgptr;
 }
+
+void LanguageServerProtocol::OnWorkspaceLoaded(clWorkspaceEvent& e) { e.Skip(); }
+
+void LanguageServerProtocol::OnWorkspaceClosed(clWorkspaceEvent& e) { e.Skip(); }

@@ -135,64 +135,6 @@ void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString
     filter_non_cxx_files(files);
 }
 
-CompletionItem::eCompletionItemKind get_completion_kind(const TagEntry& tag)
-{
-    CompletionItem::eCompletionItemKind kind = CompletionItem::kKindVariable;
-    if(tag.IsMethod()) {
-        kind = CompletionItem::kKindFunction;
-    } else if(tag.IsConstructor()) {
-        kind = CompletionItem::kKindClass;
-    } else if(tag.IsClass()) {
-        kind = CompletionItem::kKindClass;
-    } else if(tag.IsStruct()) {
-        kind = CompletionItem::kKindStruct;
-    } else if(tag.IsLocalVariable()) {
-        kind = CompletionItem::kKindVariable;
-    } else if(tag.IsTypedef()) {
-        kind = CompletionItem::kKindTypeParameter;
-    } else if(tag.IsMacro()) {
-        kind = CompletionItem::kKindTypeParameter;
-    } else if(tag.GetKind() == "namespace") {
-        kind = CompletionItem::kKindModule;
-    } else if(tag.GetKind() == "union") {
-        kind = CompletionItem::kKindStruct;
-    } else if(tag.GetKind() == "enum") {
-        kind = CompletionItem::kKindEnum;
-    } else if(tag.GetKind() == "enumerator") {
-        kind = CompletionItem::kKindEnumMember;
-    }
-    return kind;
-}
-
-eSymbolKind get_symbol_kind(const TagEntry& tag)
-{
-    eSymbolKind kind = eSymbolKind::kSK_Variable;
-    if(tag.IsMethod()) {
-        kind = eSymbolKind::kSK_Method;
-    } else if(tag.IsConstructor()) {
-        kind = eSymbolKind::kSK_Class;
-    } else if(tag.IsClass()) {
-        kind = eSymbolKind::kSK_Class;
-    } else if(tag.IsStruct()) {
-        kind = eSymbolKind::kSK_Struct;
-    } else if(tag.IsLocalVariable()) {
-        kind = eSymbolKind::kSK_Variable;
-    } else if(tag.IsTypedef()) {
-        kind = eSymbolKind::kSK_TypeParameter;
-    } else if(tag.IsMacro()) {
-        kind = eSymbolKind::kSK_TypeParameter;
-    } else if(tag.GetKind() == "namespace") {
-        kind = eSymbolKind::kSK_Module;
-    } else if(tag.GetKind() == "union") {
-        kind = eSymbolKind::kSK_Struct;
-    } else if(tag.GetKind() == "enum") {
-        kind = eSymbolKind::kSK_Enum;
-    } else if(tag.GetKind() == "enumerator") {
-        kind = eSymbolKind::kSK_EnumMember;
-    }
-    return kind;
-}
-
 // TagEntryPtr create_fake_entry(const wxString& name, const wxString& kind)
 //{
 //     TagEntryPtr t(new TagEntry());
@@ -764,9 +706,10 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
             item.addProperty("detail", tag->GetReturnValue());
 
             // set the kind
-            CompletionItem::eCompletionItemKind kind = get_completion_kind(*tag.Get());
+            CompletionItem::eCompletionItemKind kind = LSPUtils::get_completion_kind(tag.Get());
             item.addProperty("kind", static_cast<int>(kind));
         }
+
         clDEBUG() << "Sending the reply..." << endl;
         channel.write_reply(response.format(false));
         clDEBUG() << "Success" << endl;
@@ -944,6 +887,30 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
 }
 
 // Request <-->
+void ProtocolHandler::on_workspace_symbol(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    auto json = msg->toElement();
+    size_t id = json["id"].toSize_t();
+
+    wxString query = json["params"]["query"].toString();
+    wxArrayString parts = ::wxStringTokenize(query, " \t", wxTOKEN_STRTOK);
+
+    vector<TagEntryPtr> tags;
+    TagsManagerST::Get()->GetTagsByPartialNames(parts, tags);
+
+    // build the reply
+    JSON root(cJSON_Object);
+    auto response = root.toElement();
+    auto result = build_result(response, id, cJSON_Array);
+
+    auto symbols = LSPUtils::to_symbol_information_array(tags, false);
+    for(const LSP::SymbolInformation& symbol : symbols) {
+        result.arrayAppend(symbol.ToJSON(wxEmptyString));
+    }
+    channel.write_reply(response);
+}
+
+// Request <-->
 void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel)
 {
     wxUnusedVar(msg);
@@ -952,7 +919,7 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
 
-    clDEBUG() << json.format() << endl;
+    clDEBUG1() << json.format() << endl;
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG1() << "textDocument/documentSymbol: for file" << filepath << endl;
@@ -969,32 +936,9 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
     auto response = root.toElement();
     auto result = build_result(response, id, cJSON_Array);
 
-    wxStringSet_t containers_seen;
-    for(const TagEntry& tag : tags) {
-        if(tag.IsContainer()) {
-            containers_seen.insert(tag.GetName());
-        }
-
-        LSP::SymbolInformation si;
-        LSP::Location loc;
-        LSP::Range range;
-        range.SetStart({ tag.GetLine() - 1, 0 });
-        range.SetEnd({ tag.GetLine() - 1, 0 });
-        loc.SetRange(range);
-        loc.SetPath(filepath_uri);
-
-        si.SetKind(get_symbol_kind(tag));
-        if(containers_seen.count(tag.GetParent())) {
-            si.SetContainerName(tag.GetParent());
-            si.SetName(tag.GetDisplayName());
-        } else {
-            // don't bother adding parent that we did not
-            // see until this point
-            si.SetName(tag.GetFullDisplayName());
-        }
-
-        si.SetLocation(loc);
-        result.arrayAppend(si.ToJSON(wxEmptyString));
+    auto symbols = LSPUtils::to_symbol_information_array(tags, true);
+    for(const LSP::SymbolInformation& symbol : symbols) {
+        result.arrayAppend(symbol.ToJSON(wxEmptyString));
     }
     channel.write_reply(response);
 }

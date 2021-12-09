@@ -22,9 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "macros.h"
-#include <wx/event.h>
-
+#include "open_resource_dialog.h"
+#include "ServiceProviderManager.h"
 #include "bitmap_loader.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clWorkspaceManager.h"
@@ -36,14 +35,16 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "open_resource_dialog.h"
+#include "macros.h"
 #include "project.h"
 #include "window_locker.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
+
 #include <algorithm>
 #include <codelite_events.h>
 #include <vector>
+#include <wx/event.h>
 #include <wx/filefn.h>
 #include <wx/imaglist.h>
 #include <wx/wupdlock.h>
@@ -63,32 +64,20 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 {
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
+    EventNotifier::Get()->Bind(wxEVT_LSP_WORKSPACE_SYMBOLS, &OpenResourceDialog::OnWorkspaceSymbols, this);
+
     // initialize the file-type hash
-    m_fileTypeHash["class"] = BitmapLoader::kClass;
-    m_fileTypeHash["struct"] = BitmapLoader::kStruct;
-    m_fileTypeHash["namespace"] = BitmapLoader::kNamespace;
-    m_fileTypeHash["variable"] = BitmapLoader::kMemberPublic;
-    m_fileTypeHash["typedef"] = BitmapLoader::kTypedef;
-    m_fileTypeHash["member_private"] = BitmapLoader::kMemberPrivate;
-    m_fileTypeHash["member_public"] = BitmapLoader::kMemberPublic;
-    m_fileTypeHash["member_protected"] = BitmapLoader::kMemberProtected;
-    m_fileTypeHash["member_protected"] = BitmapLoader::kMemberProtected;
-    m_fileTypeHash["member"] = BitmapLoader::kMemberPublic;
-    m_fileTypeHash["function"] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash["function_private"] = BitmapLoader::kFunctionPrivate;
-    m_fileTypeHash["function_public"] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash["function_protected"] = BitmapLoader::kFunctionProtected;
-    m_fileTypeHash["prototype"] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash["prototype_public"] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash["prototype_private"] = BitmapLoader::kFunctionPrivate;
-    m_fileTypeHash["prototype_protected"] = BitmapLoader::kFunctionProtected;
-    m_fileTypeHash["method"] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash["method_public"] = BitmapLoader::kFunctionPublic;
-    m_fileTypeHash["method_private"] = BitmapLoader::kFunctionPrivate;
-    m_fileTypeHash["method_protected"] = BitmapLoader::kFunctionProtected;
-    m_fileTypeHash["macro"] = BitmapLoader::kMacro;
-    m_fileTypeHash["enum"] = BitmapLoader::kEnum;
-    m_fileTypeHash["enumerator"] = BitmapLoader::kEnumerator;
+    m_fileTypeHash[LSP::kSK_Class] = BitmapLoader::kClass;
+    m_fileTypeHash[LSP::kSK_Struct] = BitmapLoader::kStruct;
+    m_fileTypeHash[LSP::kSK_Namespace] = BitmapLoader::kNamespace;
+    m_fileTypeHash[LSP::kSK_Variable] = BitmapLoader::kMemberPublic;
+    m_fileTypeHash[LSP::kSK_TypeParameter] = BitmapLoader::kTypedef;
+    m_fileTypeHash[LSP::kSK_Property] = BitmapLoader::kMemberPublic;
+    m_fileTypeHash[LSP::kSK_Function] = BitmapLoader::kFunctionPublic;
+    m_fileTypeHash[LSP::kSK_Method] = BitmapLoader::kFunctionPublic;
+    m_fileTypeHash[LSP::kSK_TypeParameter] = BitmapLoader::kMacro;
+    m_fileTypeHash[LSP::kSK_Enum] = BitmapLoader::kEnum;
+    m_fileTypeHash[LSP::kSK_EnumMember] = BitmapLoader::kEnumerator;
 
     m_timer = new wxTimer(this, XRCID("OR_TIMER"));
 
@@ -160,6 +149,8 @@ OpenResourceDialog::~OpenResourceDialog()
     m_timer->Stop();
     wxDELETE(m_timer);
 
+    EventNotifier::Get()->Unbind(wxEVT_LSP_WORKSPACE_SYMBOLS, &OpenResourceDialog::OnWorkspaceSymbols, this);
+
     // Store current values
     clConfig::Get().Write("OpenResourceDialog/ShowFiles", m_checkBoxFiles->IsChecked());
     clConfig::Get().Write("OpenResourceDialog/ShowSymbols", m_checkBoxShowSymbols->IsChecked());
@@ -196,13 +187,12 @@ void OpenResourceDialog::OnEntryActivated(wxDataViewEvent& event)
 
 void OpenResourceDialog::DoPopulateList()
 {
+    Clear();
     wxString name = m_textCtrlResourceName->GetValue();
     name.Trim().Trim(false);
     if(name.IsEmpty()) {
         return;
     }
-
-    Clear();
 
     // First add the workspace files
     long nLineNumber;
@@ -226,49 +216,37 @@ void OpenResourceDialog::DoPopulateList()
     if(m_checkBoxFiles->IsChecked()) {
         DoPopulateWorkspaceFile();
     }
+
     if(m_checkBoxShowSymbols->IsChecked() && (nLineNumber == -1)) {
-        DoPopulateTags();
+        clCodeCompletionEvent workspace_symbols_event{ wxEVT_CC_WORKSPACE_SYMBOLS };
+        workspace_symbols_event.SetString(name);
+
+        // CC events are using ServiceProviderManager
+        ServiceProviderManager::Get().ProcessEvent(workspace_symbols_event);
     }
 }
 
-void OpenResourceDialog::DoPopulateTags()
+void OpenResourceDialog::OnWorkspaceSymbols(LSPEvent& event) { DoPopulateTags(event.GetSymbolsInformation()); }
+
+void OpenResourceDialog::DoPopulateTags(const vector<LSP::SymbolInformation>& symbols)
 {
     // Next, add the tags
-    TagEntryPtrVector_t tags;
-    if(m_userFilters.IsEmpty())
+    if(m_userFilters.IsEmpty() || symbols.empty())
         return;
-    m_manager->GetTagsManager()->GetTagsByPartialNames(m_userFilters, tags);
-    for(size_t i = 0; i < tags.size(); i++) {
-        TagEntryPtr tag = tags.at(i);
 
-        // Filter out non relevanting entries
-        if(!m_filters.IsEmpty() && m_filters.Index(tag->GetKind()) == wxNOT_FOUND)
-            continue;
-
-        if(!MatchesFilter(tag->GetFullDisplayName())) {
+    for(const LSP::SymbolInformation& symbol : symbols) {
+        if(!MatchesFilter(symbol.GetName())) {
             continue;
         }
-
-        wxString name(tag->GetName());
 
         // keep the fullpath
-        wxString fullname;
-        if(tag->IsMethod()) {
-            fullname = wxString::Format(wxT("%s::%s%s"), tag->GetScope().c_str(), tag->GetName().c_str(),
-                                        tag->GetSignature().c_str());
-            DoAppendLine(tag->GetName(), fullname, (tag->GetKind() == wxT("function")),
-                         new OpenResourceDialogItemData(tag->GetFile(), tag->GetLine(), tag->GetPattern(),
-                                                        tag->GetName(), tag->GetScope()),
-                         DoGetTagImg(tag));
-        } else {
-
-            fullname = wxString::Format(wxT("%s::%s"), tag->GetScope().c_str(), tag->GetName().c_str());
-            DoAppendLine(tag->GetName(), fullname, false,
-                         new OpenResourceDialogItemData(tag->GetFile(), tag->GetLine(), tag->GetPattern(),
-                                                        tag->GetName(), tag->GetScope()),
-                         DoGetTagImg(tag));
-        }
+        DoAppendLine(symbol.GetName(), symbol.GetContainerName(), false,
+                     new OpenResourceDialogItemData(symbol.GetLocation().GetPath(),
+                                                    symbol.GetLocation().GetRange().GetEnd().GetLine() + 1,
+                                                    wxEmptyString, symbol.GetName(), symbol.GetContainerName()),
+                     DoGetTagImg(symbol));
     }
+
     wxString filter = (m_userFilters.GetCount() == 1) ? m_userFilters.Item(0) : "";
     if(!filter.IsEmpty()) {
         wxDataViewItem matchedItem =
@@ -407,21 +385,11 @@ void OpenResourceDialog::OnTimer(wxTimerEvent& event)
     }
 }
 
-int OpenResourceDialog::DoGetTagImg(TagEntryPtr tag)
+int OpenResourceDialog::DoGetTagImg(const LSP::SymbolInformation& symbol)
 {
-    wxString kind = tag->GetKind();
-    wxString access = tag->GetAccess();
-
-    // Build the access string
-    wxString accessString;
-    accessString << kind;
-    if(!access.IsEmpty()) {
-        accessString << "_" << access;
-    }
-
     int imgId = BitmapLoader::kMemberPublic; // The default
-    if(m_fileTypeHash.count(accessString)) {
-        imgId = m_fileTypeHash[accessString];
+    if(m_fileTypeHash.count(symbol.GetKind())) {
+        imgId = m_fileTypeHash[symbol.GetKind()];
     }
     return clGetManager()->GetStdIcons()->GetImageIndex(imgId);
 }

@@ -1,5 +1,6 @@
 #include "WorkspaceSymbolRequest.hpp"
 #include "LSPEvent.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 
 namespace
@@ -53,6 +54,8 @@ LSP::WorkspaceSymbolRequest::~WorkspaceSymbolRequest() {}
 
 void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
+    wxUnusedVar(owner);
+
     auto result = response.Get("result");
     if(!result.isOk()) {
         clWARNING() << "LSP::WorkspaceSymbolRequest::OnResponse(): invalid 'result' object";
@@ -65,14 +68,16 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
 
     int size = result.arraySize();
     if(size == 0) {
+        LSPEvent symbols_event{ wxEVT_LSP_WORKSPACE_SYMBOLS };
+        owner->QueueEvent(symbols_event.Clone());
         return;
     }
 
     clDEBUG1() << result.format() << endl;
     // only SymbolInformation has the `location` property
     // fire an event with all the symbols
-    LSPEvent event(wxEVT_LSP_WORKSPACE_SYMBOLS);
-    auto& symbols = event.GetSymbolsInformation();
+    LSPEvent symbols_event{ wxEVT_LSP_WORKSPACE_SYMBOLS };
+    auto& symbols = symbols_event.GetSymbolsInformation();
     symbols.reserve(size);
 
     for(int i = 0; i < size; ++i) {
@@ -81,6 +86,6 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
         symbols.push_back(si);
     }
 
-    clDEBUG1() << event.GetSymbolsInformation() << endl;
-    owner->QueueEvent(event.Clone());
+    clDEBUG1() << symbols_event.GetSymbolsInformation() << endl;
+    EventNotifier::Get()->QueueEvent(symbols_event.Clone());
 }

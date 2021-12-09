@@ -93,7 +93,8 @@ eServiceType ServiceProviderManager::GetServiceFromEvent(wxEvent& event)
     // Code Completion events
     if(type == wxEVT_CC_CODE_COMPLETE || type == wxEVT_CC_FIND_SYMBOL || type == wxEVT_CC_FIND_SYMBOL_DECLARATION ||
        type == wxEVT_CC_FIND_SYMBOL_DEFINITION || type == wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP ||
-       type == wxEVT_CC_TYPEINFO_TIP || type == wxEVT_CC_WORD_COMPLETE || type == wxEVT_CC_SEMANTICS_HIGHLIGHT) {
+       type == wxEVT_CC_TYPEINFO_TIP || type == wxEVT_CC_WORD_COMPLETE || type == wxEVT_CC_SEMANTICS_HIGHLIGHT ||
+       type == wxEVT_CC_WORKSPACE_SYMBOLS) {
         return eServiceType::kCodeCompletion;
     }
     return eServiceType::kUnknown;

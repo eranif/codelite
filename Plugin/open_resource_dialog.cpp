@@ -75,6 +75,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_fileTypeHash[LSP::kSK_Property] = BitmapLoader::kMemberPublic;
     m_fileTypeHash[LSP::kSK_Function] = BitmapLoader::kFunctionPublic;
     m_fileTypeHash[LSP::kSK_Method] = BitmapLoader::kFunctionPublic;
+    m_fileTypeHash[LSP::kSK_Constructor] = BitmapLoader::kFunctionPublic;
     m_fileTypeHash[LSP::kSK_TypeParameter] = BitmapLoader::kMacro;
     m_fileTypeHash[LSP::kSK_Enum] = BitmapLoader::kEnum;
     m_fileTypeHash[LSP::kSK_EnumMember] = BitmapLoader::kEnumerator;

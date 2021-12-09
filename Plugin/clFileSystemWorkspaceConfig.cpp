@@ -1,7 +1,7 @@
+#include "clFileSystemWorkspaceConfig.hpp"
 #include "ICompilerLocator.h"
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
-#include "clFileSystemWorkspaceConfig.hpp"
 #include "compiler_command_line_parser.h"
 #include "ctags_manager.h"
 #include "debuggermanager.h"
@@ -12,7 +12,8 @@
 #include "macromanager.h"
 #include "procutils.h"
 
-#define DEFAULT_FILE_EXTENSIONS "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.py;*.php;*.rb;*.html;*.js"
+#define DEFAULT_FILE_EXTENSIONS \
+    "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.py;*.php;*.rb;*.html;*.js;*.ts;*.rs"
 #define WORKSPACE_TYPE "File System Workspace"
 #define DEFAULT_EXCLUDE_FILE_PATTERN "*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project"
 

@@ -45,6 +45,8 @@
     </Plugin>
   </Plugins>
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/WorkspaceSymbolRequest.cpp"/>
+    <File Name="LSP/WorkspaceSymbolRequest.hpp"/>
     <File Name="LSP/HoverRequest.hpp"/>
     <File Name="LSP/HoverRequest.cpp"/>
     <File Name="LSP/SemanticTokensRquest.cpp"/>

@@ -42,6 +42,11 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
 bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxString& includeStatement,
                                     wxFileName& outFile)
 {
+    // skip STL debug folders
+    if(includeStatement.StartsWith("<debug/")) {
+        return false;
+    }
+
     wxString includeName = includeStatement;
     includeName.Replace("\"", "");
     includeName.Replace("<", "");

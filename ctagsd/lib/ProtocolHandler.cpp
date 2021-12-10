@@ -234,7 +234,7 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
             if(m_using_namespace_cache.count(files[i])) {
                 m_using_namespace_cache.erase(files[i]);
             }
-            m_using_namespace_cache.insert({ files[i], collector.GetUsingNamespaces() });
+            m_using_namespace_cache.insert({ files[i], FilterNonWantedNamespaces(collector.GetUsingNamespaces()) });
         }
     }
     clDEBUG() << "Success" << endl;
@@ -452,18 +452,10 @@ void ProtocolHandler::update_using_namespace_for_file(const wxString& filepath)
     if(m_using_namespace_cache.count(filepath)) {
         m_using_namespace_cache.erase(filepath);
     }
-    wxArrayString scopes;
-    scopes.Add("<global>"); // always include the global namespace
-    for(const wxString& scope : collector.GetUsingNamespaces()) {
-        // filter internal scopes from std
-        if(!scope.StartsWith("std::_")) {
-            scopes.Add(scope);
-        }
-    }
 
-    m_using_namespace_cache.insert({ filepath, scopes });
+    m_using_namespace_cache.insert({ filepath, FilterNonWantedNamespaces(collector.GetUsingNamespaces()) });
     clDEBUG() << "  Visited" << visited_files.size() << "header files" << endl;
-    clDEBUG() << "  scopes for file:" << filepath << "is now set to:" << scopes << endl;
+    clDEBUG() << "  scopes for file:" << filepath << "is now set to:" << m_using_namespace_cache[filepath] << endl;
     clDEBUG() << "Success" << endl;
 }
 
@@ -1108,4 +1100,19 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
         }
     }
     channel.write_reply(response);
+}
+
+wxArrayString ProtocolHandler::FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const
+{
+    wxArrayString scopes;
+    scopes.reserve(namespace_arr.size());
+
+    scopes.Add("<global>"); // always include the global namespace
+    for(const wxString& scope : namespace_arr) {
+        // filter internal scopes from std
+        if(!scope.StartsWith("std::_")) {
+            scopes.Add(scope);
+        }
+    }
+    return scopes;
 }

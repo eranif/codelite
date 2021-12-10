@@ -48,6 +48,7 @@ private:
     void update_additional_scopes_for_file(const wxString& filepath);
     void update_using_namespace_for_file(const wxString& filepath);
     size_t read_file_list(wxArrayString& files) const;
+    wxArrayString FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const;
 
 public:
     ProtocolHandler();

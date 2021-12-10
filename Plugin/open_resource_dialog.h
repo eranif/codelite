@@ -81,6 +81,13 @@ public:
     bool IsOk() const;
 };
 
+namespace std
+{
+template <> struct hash<LSP::eSymbolKind> {
+    std::size_t operator()(LSP::eSymbolKind sk) const { return static_cast<size_t>(sk); }
+};
+} // namespace std
+
 class WXDLLIMPEXP_SDK OpenResourceDialog : public OpenResourceDialogBase
 {
     IManager* m_manager;

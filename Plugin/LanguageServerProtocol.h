@@ -141,7 +141,7 @@ protected:
     /**
      * @brief report a file-changed notification
      */
-    void SendChangeRequest(IEditor* editor, const std::string& fileContent);
+    void SendChangeRequest(IEditor* editor, const std::string& fileContent, bool force_reparse = false);
 
     /**
      * @brief report a file-save notification

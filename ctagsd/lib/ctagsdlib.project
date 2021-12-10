@@ -75,7 +75,7 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="MinGW 64bit ( MSYS2 64bit )" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O0;-Wall;$(shell wx-config --cflags);-g" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-O2;-Wall;$(shell wx-config --cflags);" C_Options="" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="../../CodeLite"/>
         <IncludePath Value="../../Interfaces"/>
         <IncludePath Value="../../Plugin"/>

@@ -397,17 +397,19 @@ void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
     m_filesSent.erase(filename);
 }
 
-void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::string& fileContent)
+void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::string& fileContent, bool force_reparse)
 {
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
-    if(!IsFileChangedSinceLastParse(filename, fileContent)) {
+    if(!force_reparse && !IsFileChangedSinceLastParse(filename, fileContent)) {
         clDEBUG1() << GetLogPrefix() << "No changes detected in file:" << filename << endl;
 
         // always send a semantic request
         // SendSemanticTokensRequest(editor);
         return;
     }
+
+    clDEBUG() << GetLogPrefix() << "Sending ChangeRequest" << endl;
 
     LSP::DidChangeTextDocumentRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DidChangeTextDocumentRequest(filename, fileContent));
@@ -570,7 +572,7 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     if(m_filesSent.count(filename) && editor->IsEditorModified()) {
         std::string text;
         editor->GetEditorTextRaw(text);
-        SendChangeRequest(editor, text);
+        SendChangeRequest(editor, text, true);
 
     } else if(m_filesSent.count(filename) == 0) {
         std::string text;
@@ -628,17 +630,14 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor)
 
         // If the editor is modified, we need to tell the LSP to reparse the source file
         const wxString& filename = GetEditorFilePath(editor);
-        if(m_filesSent.count(filename) && editor->IsEditorModified()) {
-            // we already sent this file over, ask for change parse
-            std::string content;
-            editor->GetEditorTextRaw(content);
-            SendChangeRequest(editor, content);
-        } else if(m_filesSent.count(filename) == 0) {
-            std::string content;
-            editor->GetEditorTextRaw(content);
+        std::string content;
+        content.reserve(editor->GetLength() + 1);
+        editor->GetEditorTextRaw(content);
+        if(m_filesSent.count(filename) == 0) {
             SendOpenRequest(editor, content, GetLanguageId(filename));
+        } else {
+            SendChangeRequest(editor, content);
         }
-
         LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
             new LSP::GotoDeclarationRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
                                             editor->GetColumnInChars(editor->GetCurrentPosition())));

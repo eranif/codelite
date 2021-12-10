@@ -621,6 +621,9 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     m_comments_cache.erase(filepath);
     m_filesOpened.insert({ filepath, file_content });
 
+    clDEBUG() << "Updating content for file:" << filepath << endl;
+    clDEBUG1() << file_content << endl;
+
     // update using namespace cache
     update_using_namespace_for_file(filepath);
 }

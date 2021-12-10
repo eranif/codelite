@@ -1,5 +1,5 @@
-#include "bitmap_loader.h"
 #include "clConfigurationSelectionCtrl.h"
+#include "bitmap_loader.h"
 #include "clThemedChoice.h"
 #include "cl_config.h"
 #include "codelite_events.h"
@@ -168,6 +168,10 @@ void clConfigurationSelectionCtrl::DoOpenConfigurationManagerDlg()
 {
     ConfigurationManagerDlg dlg(EventNotifier::Get()->TopFrame());
     dlg.ShowModal();
+
+    // in case user added configurations, update the choice control
+    DoWorkspaceConfig();
+    DoUpdateChoiceWithProjects();
 
     BuildMatrixPtr matrix = ManagerST::Get()->GetWorkspaceBuildMatrix();
     SetActiveConfiguration(matrix->GetSelectedConfigurationName());

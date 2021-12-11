@@ -689,8 +689,6 @@ EVT_MENU(XRCID("link_action"), clMainFrame::OnStartPageEvent)
 
 EVT_COMMAND(wxID_ANY, wxEVT_ACTIVATE_EDITOR, clMainFrame::OnActivateEditor)
 
-EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE, clMainFrame::OnDatabaseUpgrade)
-EVT_COMMAND(wxID_ANY, wxEVT_TAGS_DB_UPGRADE_INTER, clMainFrame::OnDatabaseUpgradeInternally)
 EVT_COMMAND(wxID_ANY, wxEVT_REFRESH_PERSPECTIVE_MENU, clMainFrame::OnRefreshPerspectiveMenu)
 EVT_MENU(XRCID("update_num_builders_count"), clMainFrame::OnUpdateNumberOfBuildProcesses)
 EVT_MENU(XRCID("goto_codelite_download_url"), clMainFrame::OnGotoCodeLiteDownloadPage)
@@ -1257,9 +1255,7 @@ void clMainFrame::CreateGUIControls()
     TagsManager* tagsManager = TagsManagerST::Get();
 
     // start ctags process
-    TagsManagerST::Get()->SetCodeLiteIndexerPath(clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
     ManagerST::Get()->SetCodeLiteLauncherPath(clStandardPaths::Get().GetBinaryFullPath("codelite_launcher"));
-    tagsManager->StartCodeLiteIndexer();
 
     //--------------------------------------------------------------------------------------
     // Start the parsing thread, the parsing thread and the SymbolTree (or its derived)

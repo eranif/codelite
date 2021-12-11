@@ -65,7 +65,6 @@ protected:
 public:
     enum {
         PR_INVALID = -1,
-        PR_FILESAVED,
         PR_PARSEINCLUDES,
         PR_PARSE_AND_STORE,
         PR_DELETE_TAGS_OF_FILES,
@@ -77,7 +76,7 @@ public:
 public:
     // ctor/dtor
     ParseRequest(wxEvtHandler* handler)
-        : _type(PR_FILESAVED)
+        : _type(PR_PARSE_AND_STORE)
         , m_parent(handler)
         , _quickRetag(false)
         , _uid(-1)

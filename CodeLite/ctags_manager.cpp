@@ -74,26 +74,8 @@
 //#define __PERFORMANCE
 #include "performance.h"
 
-#ifdef __WXMSW__
-#define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
-#else
-#define PIPE_NAME "/tmp/codelite/%s/codelite_indexer.sock"
-#endif
-
-wxDEFINE_EVENT(wxEVT_TAGS_DB_UPGRADE, wxCommandEvent);
-wxDEFINE_EVENT(wxEVT_TAGS_DB_UPGRADE_INTER, wxCommandEvent);
-
 //---------------------------------------------------------------------------
 // Misc
-
-#if 0
-static bool isDarkColor(const wxColour& color)
-{
-    int evg = (color.Red() + color.Green() + color.Blue()) / 3;
-    if(evg < 127) return true;
-    return false;
-}
-#endif
 
 // Descending sorting function
 struct SDescendingSort {
@@ -144,110 +126,28 @@ TagsManager* TagsManagerST::Get()
 
 TagsManager::TagsManager()
     : wxEvtHandler()
-    , m_codeliteIndexerPath(wxT("codelite_indexer"))
-    , m_codeliteIndexerProcess(NULL)
-    , m_canRestartIndexer(true)
     , m_lang(NULL)
     , m_evtHandler(NULL)
     , m_encoding(wxFONTENCODING_DEFAULT)
 {
-    Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &TagsManager::OnIndexerTerminated, this);
-
     m_db = new TagsStorageSQLite();
     m_db->SetSingleSearchLimit(MAX_SEARCH_LIMIT);
-
-    // Create databases
-    m_ctagsCmd = wxT("  --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ");
 
     // CPP keywords that are usually followed by open brace '('
     m_CppIgnoreKeyWords.insert(wxT("while"));
     m_CppIgnoreKeyWords.insert(wxT("if"));
     m_CppIgnoreKeyWords.insert(wxT("for"));
     m_CppIgnoreKeyWords.insert(wxT("switch"));
-    m_symbolsCache.reset(new clCxxFileCacheSymbols());
 }
 
-TagsManager::~TagsManager()
-{
-    m_symbolsCache.reset(nullptr);
-    if(m_codeliteIndexerProcess) {
-
-        // Dont kill the indexer process, just terminate the
-        // reader-thread (this is done by deleting the indexer object)
-        m_canRestartIndexer = false;
-
-#ifndef __WXMSW__
-        m_codeliteIndexerProcess->Terminate();
-#endif
-        wxDELETE(m_codeliteIndexerProcess);
-
-#ifndef __WXMSW__
-        // Clear the socket file
-        std::stringstream s;
-        s << wxGetProcessId();
-
-        char channel_name[1024];
-        memset(channel_name, 0, sizeof(channel_name));
-        sprintf(channel_name, PIPE_NAME, s.str().c_str());
-        ::unlink(channel_name);
-        ::remove(channel_name);
-#endif
-    }
-}
+TagsManager::~TagsManager() {}
 
 void TagsManager::OpenDatabase(const wxFileName& fileName)
 {
     m_dbFile = fileName;
-    ITagsStoragePtr db;
-    db = m_db;
-
-#if wxUSE_GUI
-    bool retagIsRequired = false;
-    if(fileName.FileExists() == false) {
-        retagIsRequired = true;
-    }
-#endif
-
-    db->OpenDatabase(fileName);
-    db->SetEnableCaseInsensitive(!(m_tagsOptions.GetFlags() & CC_IS_CASE_SENSITIVE));
-    db->SetSingleSearchLimit(m_tagsOptions.GetCcNumberOfDisplayItems());
-
-    if(db->GetVersion() != db->GetSchemaVersion()) {
-        db->RecreateDatabase();
-
-        // Send event to the main frame notifying it about database recreation
-        if(m_evtHandler) {
-            wxCommandEvent event(wxEVT_TAGS_DB_UPGRADE_INTER);
-            event.SetEventObject(this);
-            m_evtHandler->ProcessEvent(event);
-        }
-    }
-#if wxUSE_GUI
-    if(retagIsRequired && m_evtHandler) {
-        wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
-        m_evtHandler->AddPendingEvent(e);
-    }
-#endif
-}
-
-TagTreePtr TagsManager::ParseSourceFile(const wxFileName& fp, std::vector<CommentPtr>* comments)
-{
-    wxString tags;
-
-    if(!m_codeliteIndexerProcess) {
-        clWARNING() << "Indexer process is not running..." << clEndl;
-        return TagTreePtr(NULL);
-    }
-    SourceToTags(fp, tags);
-
-    int dummy;
-    TagTreePtr ttp = TagTreePtr(TreeFromTags(tags, dummy));
-
-    if(comments && GetParseComments()) {
-        // parse comments
-        GetLanguage()->ParseComments(fp, comments);
-    }
-    return ttp;
+    m_db->OpenDatabase(m_dbFile);
+    m_db->SetEnableCaseInsensitive(true);
+    m_db->SetSingleSearchLimit(m_tagsOptions.GetCcNumberOfDisplayItems());
 }
 
 TagTreePtr TagsManager::ParseSourceFile2(const wxFileName& fp, const wxString& tags, std::vector<CommentPtr>* comments)
@@ -296,127 +196,9 @@ void TagsManager::Delete(const wxFileName& path, const wxString& fileName)
     GetDatabase()->DeleteByFileName(path, fileName);
 }
 
-//--------------------------------------------------------
-// Process Handling of CTAGS
-//--------------------------------------------------------
-
-void TagsManager::StartCodeLiteIndexer()
-{
-    if(!m_canRestartIndexer)
-        return;
-
-    // Run ctags process
-    wxString cmd;
-    wxString ctagsCmd;
-
-    // build the command, we surround ctags name with double quatations
-    wxString uid;
-    uid << wxGetProcessId();
-
-    if(m_codeliteIndexerPath.FileExists() == false) {
-        CL_ERROR(wxT("ERROR: Could not locate indexer: %s"), m_codeliteIndexerPath.GetFullPath().c_str());
-        m_codeliteIndexerProcess = NULL;
-        return;
-    }
-
-    // concatenate the PID to identifies this channel to this instance of codelite
-    cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\" ") << uid << wxT(" --pid");
-    m_codeliteIndexerProcess =
-        CreateAsyncProcess(this, cmd, IProcessCreateDefault, clStandardPaths::Get().GetUserDataDir());
-}
-
-void TagsManager::RestartCodeLiteIndexer()
-{
-    if(m_codeliteIndexerProcess) {
-        m_codeliteIndexerProcess->Terminate();
-    }
-
-    // no need to call StartCodeLiteIndexer(), since it will be called automatically
-    // by the termination handler
-}
-
-void TagsManager::SetCodeLiteIndexerPath(const wxString& path) { m_codeliteIndexerPath = path; }
-
-void TagsManager::OnIndexerTerminated(clProcessEvent& event)
-{
-    wxUnusedVar(event);
-    wxDELETE(m_codeliteIndexerProcess);
-    StartCodeLiteIndexer();
-}
-
 //---------------------------------------------------------------------
 // Parsing
 //---------------------------------------------------------------------
-void TagsManager::SourceToTags(const wxFileName& source, wxString& tags, const wxString& kinds)
-{
-    std::stringstream s;
-    s << ::wxGetProcessId();
-
-    char channel_name[1024];
-    memset(channel_name, 0, sizeof(channel_name));
-
-    sprintf(channel_name, PIPE_NAME, s.str().c_str());
-    clNamedPipeClient client(channel_name);
-
-    // Build a request for the indexer
-    clIndexerRequest req;
-    // set the command
-    req.setCmd(clIndexerRequest::CLI_PARSE);
-
-    // prepare list of files to be parsed
-    std::vector<std::string> files;
-    files.push_back(source.GetFullPath().mb_str(wxConvUTF8).data());
-    req.setFiles(files);
-
-    // set ctags options to be used
-    wxString ctagsCmd;
-    ctagsCmd << " " << m_tagsOptions.ToString() << " --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=" << kinds
-             << " --c++-kinds=" << kinds << " ";
-    req.setCtagOptions(ctagsCmd.mb_str(wxConvUTF8).data());
-
-    // clDEBUG1() << "Sending CTAGS command:" << ctagsCmd << clEndl;
-    // connect to the indexer
-    if(!client.connect()) {
-        clWARNING() << "Failed to connect to indexer process. Indexer ID:" << wxGetProcessId() << clEndl;
-        return;
-    }
-
-    // send the request
-    if(!clIndexerProtocol::SendRequest(&client, req)) {
-        clWARNING() << "Failed to send request to indexer. Indexer ID:" << wxGetProcessId() << clEndl;
-        return;
-    }
-
-    // read the reply
-    clIndexerReply reply;
-    // clDEBUG1() << "SourceToTags: reading indexer reply" << clEndl;
-    try {
-        std::string errmsg;
-        if(!clIndexerProtocol::ReadReply(&client, reply, errmsg)) {
-            clWARNING() << "Failed to read indexer reply: " << (wxString() << errmsg) << clEndl;
-            RestartCodeLiteIndexer();
-            return;
-        }
-    } catch(std::bad_alloc& ex) {
-        clWARNING() << "std::bad_alloc exception caught" << clEndl;
-        tags.Clear();
-        return;
-    }
-
-    // clDEBUG1() << "SourceToTags: [" << reply.getTags() << "]" << clEndl;
-
-    // convert the data into wxString
-    if(m_encoding == wxFONTENCODING_DEFAULT || m_encoding == wxFONTENCODING_SYSTEM)
-        tags = wxString(reply.getTags().c_str(), wxConvUTF8);
-    else
-        tags = wxString(reply.getTags().c_str(), wxCSConv(m_encoding));
-    if(tags.empty()) {
-        tags = wxString::From8BitData(reply.getTags().c_str());
-    }
-
-    // clDEBUG1() << "Tags:\n" << tags << clEndl;
-}
-
 TagTreePtr TagsManager::TreeFromTags(const wxArrayString& tags, int& count)
 {
     // Load the records and build a language tree
@@ -1693,12 +1475,7 @@ bool TagsManager::GetParseComments() { return m_parseComments; }
 void TagsManager::SetCtagsOptions(const TagsOptionsData& options)
 {
     m_tagsOptions = options;
-    RestartCodeLiteIndexer();
     m_parseComments = m_tagsOptions.GetFlags() & CC_PARSE_COMMENTS ? true : false;
-    ITagsStoragePtr db = GetDatabase();
-    if(db) {
-        db->SetSingleSearchLimit(m_tagsOptions.GetCcNumberOfDisplayItems());
-    }
 }
 
 void TagsManager::GenerateSettersGetters(const wxString& scope, const SettersGettersData& data,
@@ -2298,18 +2075,6 @@ void TagsManager::ClearCachedFile(const wxString& fileName)
 
 bool TagsManager::IsFileCached(const wxString& fileName) const { return fileName == m_cachedFile; }
 
-wxString TagsManager::GetCTagsCmd()
-{
-    wxString cmd;
-    wxString ctagsCmd;
-    ctagsCmd << m_tagsOptions.ToString() << m_ctagsCmd;
-
-    // build the command, we surround ctags name with double quatations
-    cmd << wxT("\"") << m_codeliteIndexerPath.GetFullPath() << wxT("\"") << ctagsCmd;
-
-    return cmd;
-}
-
 wxString TagsManager::DoReplaceMacros(const wxString& name)
 {
     // replace macros:
@@ -2677,20 +2442,8 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
 
 void TagsManager::DoParseModifiedText(const wxString& text, std::vector<TagEntryPtr>& tags)
 {
-    wxFFile fp;
-    wxString fileName = wxFileName::CreateTempFileName(wxT("codelite_mod_file_"), &fp);
-    if(fp.IsOpened()) {
-        fp.Write(text);
-        fp.Close();
-        wxString tagsStr;
-        SourceToTags(wxFileName(fileName), tagsStr);
-
-        // Create tags from the string
-        DoTagsFromText(tagsStr, tags);
-
-        // Delete the modified file
-        clRemoveFile(fileName);
-    }
+    auto _tags = ParseBuffer(text);
+    tags.swap(_tags);
 }
 
 bool TagsManager::IsBinaryFile(const wxString& filepath, const TagsOptionsData& tod)
@@ -3032,25 +2785,20 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
 
 TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
-    if(!m_codeliteIndexerProcess) {
-        return TagEntryPtrVector_t();
+    if(!m_indexer) {
+        return {};
     }
 
-    // Write the content into temporary file
-    wxString tmpfilename = wxFileName::CreateTempFileName("ctagstemp");
-    wxFFile fp(tmpfilename, "w+b");
-    if(!fp.IsOpened())
-        return TagEntryPtrVector_t();
-    fp.Write(content, wxConvUTF8);
-    fp.Close();
+    if(!m_indexer->is_running()) {
+        m_indexer->start();
+    }
+
+    if(!m_indexer->is_running()) {
+        return {};
+    }
 
     wxString tags;
-    SourceToTags(tmpfilename, tags, kinds);
-
-    {
-        wxLogNull noLog;
-        clRemoveFile(tmpfilename);
-    }
+    m_indexer->buffer_to_tags(content, tags);
 
     TagEntryPtrVector_t tagsVec;
     wxArrayString lines = ::wxStringTokenize(tags, "\n", wxTOKEN_STRTOK);
@@ -3210,14 +2958,6 @@ void TagsManager::DoFilterCtorDtorIfNeeded(std::vector<TagEntryPtr>& tags, const
 void TagsManager::GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags)
 {
     GetDatabase()->GetTagsByPartName(partialNames, tags);
-}
-
-void TagsManager::GetDoucmentSymbols(const wxFileName& file, TagEntryPtrVector_t& tags)
-{
-    wxString tagsText;
-    // we are interested in the locals
-    SourceToTags(file, tagsText, "lfp");
-    DoTagsFromText(tagsText, tags);
 }
 
 void TagsManager::DoTagsFromText(const wxString& text, std::vector<TagEntryPtr>& tags)

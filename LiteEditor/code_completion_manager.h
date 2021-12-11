@@ -92,7 +92,6 @@ protected:
     void OnFindImpl(clCodeCompletionEvent& event);
     void OnFunctionCalltip(clCodeCompletionEvent& event);
     void OnTypeInfoToolTip(clCodeCompletionEvent& event);
-    void OnSemanticsHighlights(clCodeCompletionEvent& event);
     void UpdateSemanticTokens(clParseThreadEvent* event);
 
 public:

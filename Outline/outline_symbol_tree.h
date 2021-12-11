@@ -72,8 +72,6 @@ protected:
 
     wxString GetActiveEditorFile() const;
     void OnIncludeStatements(clParseThreadEvent& e);
-    void OnCacheUpdated(clCommandEvent& e);
-    void OnCacheInvalidated(clCommandEvent& e);
     virtual void OnMouseDblClick(wxMouseEvent& event);
     virtual void OnMouseRightUp(wxTreeEvent& event);
     virtual void OnItemActivated(wxTreeEvent& event);

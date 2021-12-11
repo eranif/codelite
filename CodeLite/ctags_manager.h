@@ -26,7 +26,7 @@
 #ifndef CODELITE_CTAGS_MANAGER_H
 #define CODELITE_CTAGS_MANAGER_H
 
-#include "clCxxFileCacheSymbols.h"
+#include "CodeLiteIndexer.hpp"
 #include "cl_calltip.h"
 #include "cl_command_event.h"
 #include "cl_process.h"
@@ -67,13 +67,7 @@ class IProcess;
 // BUG#3082954
 #define MAX_TIP_LINE_SIZE 200
 
-#define TagsGlobal 0
-
 #define USE_TAGS_SQLITE3 1
-
-// send this event whenever the a tags file needs to be updated
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TAGS_DB_UPGRADE, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TAGS_DB_UPGRADE_INTER, wxCommandEvent);
 
 struct DoxygenComment {
     wxString name;
@@ -108,11 +102,6 @@ enum FunctionFormatFlag {
  * Before you use TagsManager, usually you would like to start ctags,
  * this is easily done by writing something like this:
  *
- * @code
- * // Create ctags processes
- * TagsManagerST::Get()->StartCtagsProcess(TagsGlobal);
- * @endcode
- *
  * In the destructor of your main frame it is recommended to call Free() to avoid memory leaks:
  *
  * @code
@@ -144,27 +133,23 @@ public:
     wxCriticalSection m_crawlerLocker;
 
 private:
-    wxFileName m_codeliteIndexerPath;
-    IProcess* m_codeliteIndexerProcess;
-    wxString m_ctagsCmd;
     wxStopWatch m_watch;
     TagsOptionsData m_tagsOptions;
-    bool m_parseComments;
-    bool m_canRestartIndexer;
+    bool m_parseComments = false;
     Language* m_lang;
     std::vector<TagEntryPtr> m_cachedFileFunctionsTags;
     wxString m_cachedFile;
-    bool m_enableCaching;
-    wxEvtHandler* m_evtHandler;
+    bool m_enableCaching = false;
+    wxEvtHandler* m_evtHandler = nullptr;
     wxStringSet_t m_CppIgnoreKeyWords;
     wxArrayString m_projectPaths;
     wxFontEncoding m_encoding;
     wxFileName m_dbFile;
+    CodeLiteIndexer::ptr_t m_indexer;
 
 #if USE_TAGS_SQLITE3
     ITagsStoragePtr m_db;
 #endif
-    clCxxFileCacheSymbols::Ptr_t m_symbolsCache;
 
 public:
     /**
@@ -177,16 +162,11 @@ public:
      */
     static void GetCXXKeywords(wxArrayString& words);
 
-    /**
-     * @brief get the file-symbols cache
-     */
-    clCxxFileCacheSymbols::Ptr_t GetFileCache() { return m_symbolsCache; }
+    void SetIndexer(CodeLiteIndexer::ptr_t indexer) { m_indexer = indexer; }
 
     void SetLanguage(Language* lang);
     Language* GetLanguage();
     void SetEvtHandler(wxEvtHandler* handler) { m_evtHandler = handler; }
-
-    wxString GetCTagsCmd();
 
     /**
      * @brief return the currently cached file
@@ -242,16 +222,7 @@ public:
      * @param comments if not null, comments will be parsed as well, and will be returned as vector
      * @return tag tree
      */
-    TagTreePtr ParseSourceFile(const wxFileName& fp, std::vector<CommentPtr>* comments = NULL);
     TagTreePtr ParseSourceFile2(const wxFileName& fp, const wxString& tags, std::vector<CommentPtr>* comments = NULL);
-
-    /**
-     * @brief Set the full path to ctags executable, else TagsManager will use relative path ctags.
-     * So, if for example, ctags is located at: $/home/eran/bin$, you simply call this function
-     * with SetCtagsPath(_T("/home/eran/bin"));
-     * @param path ctags
-     */
-    void SetCodeLiteIndexerPath(const wxString& path);
 
     /**
      * @brief Store tree of tags into db.
@@ -294,16 +265,6 @@ public:
      * @param fileName File name
      */
     void Delete(const wxFileName& path, const wxString& fileName);
-
-    /**
-     * Start a codelite_indexer process
-     */
-    void StartCodeLiteIndexer();
-
-    /**
-     * Restart ctags process.
-     */
-    void RestartCodeLiteIndexer();
 
     /**
      * Test if filename matches the current ctags file spec.
@@ -527,13 +488,6 @@ public:
      * @return scope name or '<global>' if non found
      */
     wxString GetScopeName(const wxString& scope);
-
-    /**
-     * Pass a source file to ctags process, wait for it to process it and return the output.
-     * @param source Source file name
-     * @param tags String containing the ctags output
-     */
-    void SourceToTags(const wxFileName& source, wxString& tags, const wxString& kinds = "cdefgmnpstuv");
 
     /**
      * return list of files from the database(s). The returned list is ordered
@@ -854,11 +808,6 @@ protected:
 
     void DoParseModifiedText(const wxString& text, std::vector<TagEntryPtr>& tags);
 
-    /**
-     * Handler ctags process termination
-     */
-    void OnIndexerTerminated(clProcessEvent& event);
-
 private:
     /**
      * Construct a TagsManager object, for internal use
@@ -895,12 +844,6 @@ public:
 
     void GetFunctionTipFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word,
                                 std::vector<TagEntryPtr>& tips);
-
-    /**
-     * @brief list document symbols. this is for colouring purposes
-     * this function is thread safe
-     */
-    void GetDoucmentSymbols(const wxFileName& file, TagEntryPtrVector_t& tags);
 
     /**
      * @brief create doxygen comment from a tag

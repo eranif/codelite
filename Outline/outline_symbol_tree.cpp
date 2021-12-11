@@ -64,9 +64,6 @@ svSymbolTree::svSymbolTree(wxWindow* parent, IManager* manager, const wxWindowID
 
     // Parse thread events
     Bind(wxPARSE_INCLUDE_STATEMENTS_DONE, &svSymbolTree::OnIncludeStatements, this);
-    EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &svSymbolTree::OnCacheUpdated, this);
-    EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_INVALIDATED, &svSymbolTree::OnCacheInvalidated, this);
-
     SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 }
 
@@ -282,33 +279,6 @@ void svSymbolTree::Clear()
 void svSymbolTree::OnIncludeStatements(clParseThreadEvent& e) { e.Skip(); }
 
 void svSymbolTree::ClearCache() { m_currentTags.clear(); }
-
-void svSymbolTree::OnCacheInvalidated(clCommandEvent& e)
-{
-    e.Skip();
-    clDEBUG() << "Outline: symbols for file" << e.GetFileName() << "were invalidated";
-    clDEBUG() << "Outline: Rebuilding cache for file:" << e.GetFileName();
-    TagsManagerST::Get()->GetFileCache()->RequestSymbols(e.GetFileName());
-}
-
-void svSymbolTree::OnCacheUpdated(clCommandEvent& e)
-{
-    e.Skip();
-    clDEBUG() << "Outline: symbols cache updated for file:" << e.GetFileName();
-    if(GetActiveEditorFile() != e.GetFileName()) {
-        clDEBUG() << "Outline: active editor does not match the current event filename:" << GetActiveEditorFile()
-                  << "vs" << e.GetFileName();
-        return;
-    }
-
-    TagEntryPtrVector_t tags;
-    if(!TagsManagerST::Get()->GetFileCache()->Find(e.GetFileName(), tags)) {
-        return;
-    }
-
-    // Build the tree
-    DoBuildTree(tags, e.GetFileName());
-}
 
 wxString svSymbolTree::GetActiveEditorFile() const
 {

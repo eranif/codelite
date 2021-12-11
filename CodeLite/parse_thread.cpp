@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "parse_thread.h"
 #include "CTags.hpp"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
@@ -34,7 +35,6 @@
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include "istorage.h"
-#include "parse_thread.h"
 #include "pp_include.h"
 #include "pptable.h"
 #include "precompiled_header.h"
@@ -188,8 +188,6 @@ void ParseThread::ProcessRequest(ThreadRequest* request)
         ProcessIncludeStatements(req);
         break;
     default:
-    case ParseRequest::PR_FILESAVED:
-        ProcessSingleFile(req);
         break;
     }
 
@@ -274,54 +272,7 @@ void ParseThread::ProcessIncludes(ParseRequest* req)
     req->GetParent()->AddPendingEvent(event);
 }
 
-void ParseThread::ProcessSingleFile(ParseRequest* req)
-{
-    const wxString& dbfile = req->GetDbfile();
-    const wxString& file_name = req->GetFile();
-
-    clDEBUG1() << "Parsing saved file:" << file_name << clEndl;
-    // Skip binary file
-
-    if(TagsManagerST::Get()->IsBinaryFile(file_name, m_tod)) {
-        clDEBUG1() << "File:" << file_name << "is binady and will be skipped" << clEndl;
-        return;
-    }
-
-    // convert the file to tags
-    TagsManager* tagmgr = TagsManagerST::Get();
-    ITagsStoragePtr db(new TagsStorageSQLite());
-    db->OpenDatabase(dbfile);
-
-    // convert the file content into tags
-    wxString tags;
-    tagmgr->SourceToTags(file_name, tags);
-
-    clDEBUG1() << "Parsed file output: [" << tags << "]" << clEndl;
-
-    int count;
-    DoStoreTags(tags, file_name, count, db);
-
-    db->Begin();
-    // update the file retag timestamp
-    db->InsertFileEntry(file_name, (int)time(NULL));
-
-    // Parse and store the macros found in this file
-    PPTable::Instance()->Clear();
-    PPScan(file_name, true);
-    db->StoreMacros(PPTable::Instance()->GetTable());
-    PPTable::Instance()->Clear();
-    db->Commit();
-
-    // Parse the saved file to get a list of files to include
-    ParseIncludeFiles(req, file_name, db);
-    CHECK_PTR_RET(req->GetParent());
-
-    clParseThreadEvent clearCacheEvent(wxPARSE_THREAD_CLEAR_TAGS_CACHE);
-    req->GetParent()->AddPendingEvent(clearCacheEvent);
-
-    clParseThreadEvent retaggingCompletedEvent(wxPARSE_THREAD_RETAGGING_COMPLETED);
-    req->GetParent()->AddPendingEvent(retaggingCompletedEvent);
-}
+void ParseThread::ProcessSingleFile(ParseRequest* req) {}
 
 void ParseThread::GetFileListToParse(const wxString& filename, wxArrayString& arrFiles)
 {

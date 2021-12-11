@@ -109,7 +109,6 @@ CodeCompletionManager::CodeCompletionManager()
     Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &CodeCompletionManager::OnFindImpl, this);
     Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &CodeCompletionManager::OnFunctionCalltip, this);
     Bind(wxEVT_CC_TYPEINFO_TIP, &CodeCompletionManager::OnTypeInfoToolTip, this);
-    Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &CodeCompletionManager::OnSemanticsHighlights, this);
 
     // Start the worker threads
     m_preProcessorThread.Start();
@@ -152,7 +151,6 @@ CodeCompletionManager::~CodeCompletionManager()
     Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &CodeCompletionManager::OnFindImpl, this);
     Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &CodeCompletionManager::OnFunctionCalltip, this);
     Unbind(wxEVT_CC_TYPEINFO_TIP, &CodeCompletionManager::OnTypeInfoToolTip, this);
-    Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &CodeCompletionManager::OnSemanticsHighlights, this);
 
     if(m_compileCommandsThread) {
         m_compileCommandsThread->join();
@@ -769,80 +767,6 @@ void CodeCompletionManager::OnTypeInfoToolTip(clCodeCompletionEvent& event)
     bool res = editor && FileExtManager::IsCxxFile(editor->GetFileName()) &&
                editor->GetContext()->GetHoverTip(event.GetPosition());
     event.Skip(!res);
-}
-
-void CodeCompletionManager::OnSemanticsHighlights(clCodeCompletionEvent& event)
-{
-    // handle semantic highlights
-    event.Skip();
-
-    std::thread thr(
-        [=](const wxString& file, CodeCompletionManager* cc_manager) {
-            // try to find list of tokens to highlight
-            TagEntryPtrVector_t tags;
-            TagsManagerST::Get()->GetDoucmentSymbols(file, tags);
-
-            wxStringSet_t localsSet;
-            wxStringSet_t typesSet;
-            for(auto tag : tags) {
-                if(tag->IsLocalVariable()) {
-                    wxString type = tag->GetLocalType();
-                    auto parts = wxStringTokenize(type, ":", wxTOKEN_STRTOK);
-                    for(const wxString& part : parts) {
-                        typesSet.insert(part);
-                    }
-                    localsSet.insert(tag->GetName());
-                } else if(tag->IsMethod()) {
-                    const wxString& path = tag->GetPath();
-                    auto parts = wxStringTokenize(path, ":", wxTOKEN_STRTOK);
-                    if(!parts.empty()) {
-                        // the last part is the method name, we don't want to include it
-                        parts.pop_back();
-                    }
-                    for(const wxString& part : parts) {
-                        typesSet.insert(part);
-                    }
-
-                    // we also want the method signature arguments
-                    wxString signature = tag->GetSignature();
-                    CxxVariableScanner scanner(signature, eCxxStandard::kCxx11, {}, true);
-                    auto functionArgs = scanner.ParseFunctionArguments();
-                    for(const auto& var : functionArgs) {
-                        localsSet.insert(var->GetName());
-                        const auto& typeParts = var->GetType();
-                        for(const auto& p : typeParts) {
-                            if(p.type == T_IDENTIFIER) {
-                                typesSet.insert(p.text);
-                            }
-                        }
-                    }
-                }
-            }
-
-            wxString locals;
-            wxString types;
-            for(const wxString& type : typesSet) {
-                types << type << " ";
-            }
-
-            for(const wxString& name : localsSet) {
-                locals << name << " ";
-            }
-
-            // Notify the main thread
-            {
-                clParseThreadEvent event(wxPARSE_THREAD_SUGGEST_COLOUR_TOKENS);
-                wxArrayString res;
-                res.Add(types);
-                res.Add(locals);
-                event.SetStrings(res);
-                event.SetFileName(file);
-                cc_manager->CallAfter(&CodeCompletionManager::UpdateSemanticTokens,
-                                      static_cast<clParseThreadEvent*>(event.Clone()));
-            }
-        },
-        event.GetFileName(), this);
-    thr.detach();
 }
 
 void CodeCompletionManager::UpdateSemanticTokens(clParseThreadEvent* event)

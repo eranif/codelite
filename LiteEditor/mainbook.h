@@ -97,7 +97,6 @@ private:
     void OnWorkspaceReloadStarted(clWorkspaceEvent& e);
     void OnWorkspaceReloadEnded(clWorkspaceEvent& e);
     void OnEditorSettingsChanged(wxCommandEvent& e);
-    void OnCacheUpdated(clCommandEvent& e);
     void OnUpdateNavigationBar(clCodeCompletionEvent& e);
     void OnNavigationBarMenuShowing(clContextMenuEvent& e);
     void OnNavigationBarMenuSelectionMade(clCommandEvent& e);

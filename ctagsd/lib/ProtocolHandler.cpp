@@ -521,6 +521,11 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     wxFileName ctagsReplacements(m_settings_folder, "ctags.replacements");
     wxSetEnv("CTAGS_REPLACEMENTS", ctagsReplacements.GetFullPath());
 
+    m_codelite_indexer.reset(new CodeLiteIndexer());
+    m_codelite_indexer->set_exe_path(m_settings.GetCodeliteIndexer());
+    m_codelite_indexer->start();
+    TagsManagerST::Get()->SetIndexer(m_codelite_indexer);
+
     // build the workspace file list
     wxArrayString files;
     if(read_file_list(files) == 0) {
@@ -631,6 +636,11 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
 
     if(!ensure_file_content_exists(filepath, channel, id))
         return;
+
+    // ensure the indexer is running
+    if(!m_codelite_indexer->is_running()) {
+        m_codelite_indexer->start();
+    }
 
     size_t line = json["params"]["position"]["line"].toSize_t();
     size_t character = json["params"]["position"]["character"].toSize_t();

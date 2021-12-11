@@ -28,6 +28,7 @@
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 
+#include "CompletionHelper.hpp"
 #include "CxxLexerAPI.h"
 #include "CxxPreProcessor.h"
 #include "CxxScannerTokens.h"
@@ -518,7 +519,7 @@ bool Language::NextToken(wxString& token, wxString& delim, bool& subscriptOperat
 
 void Language::SetAutoCompDeliemters(const std::vector<wxString>& delimArr) { m_delimArr = delimArr; }
 
-bool Language::ProcessExpression(const wxString& stmt, const wxString& text, const wxFileName& fn, int lineno,
+bool Language::ProcessExpression(const wxString& expr, const wxString& text, const wxFileName& fn, int lineno,
                                  wxString& typeName,              // output
                                  wxString& typeScope,             // output
                                  wxString& oper,                  // output
@@ -527,7 +528,7 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
     bool evaluationSucceeded = true;
     m_templateArgs.clear();
 
-    wxString statement(stmt);
+    wxString statement(expr);
 
     // Trim whitespace from right and left
     static wxString trimString(_T("{};\r\n\t\v "));
@@ -535,20 +536,10 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
     statement.erase(0, statement.find_first_not_of(trimString));
     statement.erase(statement.find_last_not_of(trimString) + 1);
 
-    wxString lastFuncSig;
     wxString visibleScope, scopeName, localsBody;
+    wxString lastFuncSig;
+    auto tags = TagsManagerST::Get()->ParseBuffer(text, fn.GetFullPath());
 
-    TagEntryPtr tag = GetTagsManager()->FunctionFromFileLine(fn, lineno);
-    if(tag) {
-        lastFuncSig = tag->GetSignature();
-        lastFuncSig.Trim().Trim(false);
-        if(!lastFuncSig.IsEmpty() && lastFuncSig[0] == '(') {
-            lastFuncSig.Remove(0, 1);
-        }
-        if(!lastFuncSig.IsEmpty() && lastFuncSig[lastFuncSig.size() - 1] == ')') {
-            lastFuncSig.RemoveLast();
-        }
-    }
     wxString textAfterTokensReplacements;
     textAfterTokensReplacements = ApplyCtagsReplacementTokens(text);
 
@@ -562,10 +553,31 @@ bool Language::ProcessExpression(const wxString& stmt, const wxString& text, con
         scanner.OptimizeBuffer(textAfterTokensReplacements, visibleScope);
     }
 
-    if(!lastFuncSig.IsEmpty()) {
-        CxxVariableScanner scanner(lastFuncSig, eCxxStandard::kCxx11, ignoreTokens, true);
-        CxxVariable::Map_t localsMap = scanner.GetVariablesMap();
-        m_locals.insert(localsMap.begin(), localsMap.end());
+    if(!tags.empty()) {
+        // locate the function that matches the given line
+        TagEntryPtr matched_tag;
+        for(TagEntryPtr tag : tags) {
+            if(tag->IsMethod() && tag->GetLine() <= lineno) {
+                matched_tag = tag;
+            } else if(tag->GetLine() > lineno) {
+                break;
+            }
+        }
+
+        // parse the the current function's signature
+        if(matched_tag) {
+            CompletionHelper helper;
+            std::vector<wxString> args = helper.split_function_signature(matched_tag->GetSignature(), nullptr);
+            for(const wxString& arg : args) {
+                lastFuncSig << arg << ",";
+                CxxVariableScanner scanner(arg, eCxxStandard::kCxx11, ignoreTokens, true);
+                CxxVariable::Map_t localsMap = scanner.GetVariablesMap();
+                m_locals.insert(localsMap.begin(), localsMap.end());
+            }
+            if(!lastFuncSig.empty()) {
+                lastFuncSig.RemoveLast();
+            }
+        }
     }
 
     std::vector<wxString> additionalScopes;
@@ -1204,7 +1216,7 @@ bool Language::CorrectUsingNamespace(wxString& type, wxString& typeScope, const 
             return true;
         }
     }
-    
+
     // still no luck, try the typeScope
     scopesToScan = GetTagsManager()->BreakToOuterScopes(typeScope);
     for(size_t i = 0; i < scopesToScan.GetCount(); i++) {

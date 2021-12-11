@@ -25,6 +25,7 @@
 #ifndef CODELITE_LANGUAGE_H
 #define CODELITE_LANGUAGE_H
 
+#include "CodeLiteIndexer.hpp"
 #include "CxxTokenizer.h"
 #include "CxxVariable.h"
 #include "codelite_exports.h"
@@ -102,8 +103,8 @@ private:
     TagsManager* m_tm;
     wxString m_visibleScope;
     wxString m_lastFunctionSignature;
-    std::vector<wxString> m_additionalScopes;                           // collected by parsing 'using namespace XXX'
-    std::map<wxString, std::vector<wxString> > m_additionalScopesCache; // collected by parsing 'using namespace XXX'
+    std::vector<wxString> m_additionalScopes;                          // collected by parsing 'using namespace XXX'
+    std::map<wxString, std::vector<wxString>> m_additionalScopesCache; // collected by parsing 'using namespace XXX'
     TemplateHelper m_templateHelper;
     std::set<wxString> m_templateArgs;
     CxxVariable::Map_t m_locals;
@@ -138,8 +139,8 @@ public:
      *
      * \note The scopes with depth greater then 0 will be removed.
      * This function is useful for searching for local members.
-     * \param srcString Input string
-     * \return visible scope
+     * @param srcString Input string
+     * @return visible scope
      */
     wxString OptimizeScope(const wxString& srcString, int lastFuncLine, wxString& localsScope);
 
@@ -174,26 +175,26 @@ public:
     /**
      * Set the language specific auto completion delimeteres, for example: for C++ you should populate
      * the array with { . , -> , :: }
-     * \param delimArr delimeter array
+     * @param delimArr delimeter array
      */
     void SetAutoCompDeliemters(const std::vector<wxString>& delimArr);
 
     /**
-     * \brief set the tags manager to be used by this language instance
-     * \param tm
+     * @brief set the tags manager to be used by this language instance
+     * @param tm
      */
     void SetTagsManager(TagsManager* tm);
 
     /**
-     * \brief return the available tags manager
-     * \return
+     * @brief return the available tags manager
+     * @return
      */
     TagsManager* GetTagsManager();
 
     /**
      * Parse comments from source file
-     * \param name file name
-     * \param comments [output] returned vector of comments
+     * @param name file name
+     * @param comments [output] returned vector of comments
      */
     void ParseComments(const wxFileName& fileName, std::vector<CommentPtr>* comments);
 
@@ -205,33 +206,34 @@ public:
      * Evaluate a C++ expression. for example, the following expression: '((Notebook*)book)->'
      * will be processed into typeName=Notebook, and typeScope=<global> (assuming Notebook is not
      * placed within any namespace)
-     * \param stmt c++ expression
-     * \param text text where this expression was found
-     * \param fn filename context
-     * \param lineno current line number
-     * \param typeName [output]
-     * \param typeScope [output]
-     * \param oper [output] return the operator used (::, ., ->)
-     * \param scopeTemplateInitList [output] return the scope tempalte intialization (e.g. "std::auto_ptr<wxString>
+     * @param stmt c++ expression
+     * @param text text where this expression was found
+     * @param fn filename context
+     * @param lineno current line number
+     * @param indexer codelite_indexer helper
+     * @param typeName [output]
+     * @param typeScope [output]
+     * @param oper [output] return the operator used (::, ., ->)
+     * @param scopeTemplateInitList [output] return the scope tempalte intialization (e.g. "std::auto_ptr<wxString>
      * str;" -> <wxString>
-     * \return true on success, false otherwise. The output fields are only to be checked with the return
+     * @return true on success, false otherwise. The output fields are only to be checked with the return
      * valus is 'true'
      */
-    bool ProcessExpression(const wxString& stmt, const wxString& text, const wxFileName& fn, int lineno,
+    bool ProcessExpression(const wxString& expr, const wxString& text, const wxFileName& fn, int lineno,
                            wxString& typeName, wxString& typeScope, wxString& oper, wxString& scopeTemplateInitList);
 
     /**
      * return scope name from given input string
-     * \param in input string
-     * \return scope name or empty string
+     * @param in input string
+     * @return scope name or empty string
      */
     wxString GetScopeName(const wxString& in, std::vector<wxString>* additionlNS);
 
     /**
      * parse an expression and return the result. this functions uses
      * the sqlite database as its symbol table
-     * \param in input string expression
-     * \return ExpressionResult, if it fails to parse it, check result.m_name.empty() for success
+     * @param in input string expression
+     * @return ExpressionResult, if it fails to parse it, check result.m_name.empty() for success
      */
     ExpressionResult ParseExpression(const wxString& in);
 
@@ -244,11 +246,11 @@ public:
 
     /**
      * Collect local variables from given scope text (in) and an optional symbol name
-     * \param in scope to search for
-     * \param tags output, since we dont have full information about each token, all local variables returned are of
+     * @param in scope to search for
+     * @param tags output, since we dont have full information about each token, all local variables returned are of
      *type
      *			   'variable' with public access
-     * \param name optional name to look for (name can be partial).
+     * @param name optional name to look for (name can be partial).
      */
     void GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& tags, bool isFuncSignature,
                            const wxString& name = wxEmptyString, size_t flag = PartialMatch);
@@ -319,7 +321,7 @@ private:
     bool OnTemplates(ParsedToken* token);
 
     /**
-     * \brief attempt to expand 'typedef' to their actual value
+     * @brief attempt to expand 'typedef' to their actual value
      */
     bool OnTypedef(ParsedToken* token);
     void DoSimpleTypedef(ParsedToken* token);

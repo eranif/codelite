@@ -1080,17 +1080,6 @@ bool Manager::AddFileToProject(const wxString& fileName, const wxString& vdFullP
         clMainFrame::Get()->GetMainBook()->OpenFile(fileName, project);
     }
 
-    TagTreePtr ttp;
-    if(project.IsEmpty() == false) {
-        std::vector<CommentPtr> comments;
-        if(TagsManagerST::Get()->GetParseComments()) {
-            ttp = TagsManagerST::Get()->ParseSourceFile(fileName, &comments);
-        } else {
-            ttp = TagsManagerST::Get()->ParseSourceFile(fileName);
-        }
-        TagsManagerST::Get()->Store(ttp);
-    }
-
     // send notification command event that files was added to
     // project
     wxArrayString files;

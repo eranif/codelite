@@ -133,7 +133,6 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &MainBook::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
@@ -167,7 +166,6 @@ MainBook::~MainBook()
 
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_CXX_SYMBOLS_CACHE_UPDATED, &MainBook::OnCacheUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
@@ -319,6 +317,7 @@ void MainBook::UpdateNavBar(clEditor* editor)
 {
     TagEntryPtr tag = NULL;
     if(m_navBar && m_navBar->IsShown()) {
+#if 0
         if(editor) {
             TagEntryPtrVector_t tags;
             if(TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags,
@@ -351,6 +350,7 @@ void MainBook::UpdateNavBar(clEditor* editor)
         } else {
             m_navBar->SetMessage("", "");
         }
+#endif
     }
 }
 
@@ -358,14 +358,6 @@ void MainBook::ShowNavBar(bool s)
 {
     if(m_navBar) {
         m_navBar->DoShow(s);
-        clEditor* editor = GetActiveEditor();
-        CHECK_PTR_RET(editor);
-
-        // Update the navigation bar
-        clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
-        evtUpdateNavBar.SetEditor(editor);
-        evtUpdateNavBar.SetLineNumber(editor->GetCtrl()->GetCurrentLine());
-        EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
     }
 }
 
@@ -1185,14 +1177,12 @@ bool MainBook::DoSelectPage(wxWindow* win)
     if(!editor) {
         clMainFrame::Get()->SetFrameTitle(NULL);
         clMainFrame::Get()->GetStatusBar()->SetLinePosColumn(wxEmptyString);
-        UpdateNavBar(NULL);
         SendCmdEvent(wxEVT_CMD_PAGE_CHANGED, win);
 
     } else {
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
         event.SetString(editor->GetFileName().GetFullPath());
         EventNotifier::Get()->AddPendingEvent(event);
-        UpdateNavBar(editor);
     }
     return true;
 }
@@ -1580,12 +1570,6 @@ void MainBook::DoOpenFile(const wxString& filename, const wxString& content)
     }
 }
 
-void MainBook::OnCacheUpdated(clCommandEvent& e)
-{
-    e.Skip();
-    UpdateNavBar(GetActiveEditor());
-}
-
 void MainBook::OnUpdateNavigationBar(clCodeCompletionEvent& e)
 {
     e.Skip();
@@ -1621,33 +1605,7 @@ void MainBook::DoUpdateEditorsThemes()
     }
 }
 
-void MainBook::OnNavigationBarMenuShowing(clContextMenuEvent& e)
-{
-    e.Skip();
-    m_currentNavBarTags.clear();
-    IEditor* editor = GetActiveEditor(true);
-    if(m_navBar && m_navBar->IsShown() && editor) {
-        TagEntryPtrVector_t tags;
-        if(!TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags,
-                                                       clCxxFileCacheSymbols::kFunctions) ||
-           tags.empty()) {
-            return;
-        }
-
-        if(EditorConfigST::Get()->GetOptions()->IsSortNavBarDropdown()) {
-            std::sort(tags.begin(), tags.end(), [](TagEntryPtr pLhs, TagEntryPtr pRhs) {
-                return pLhs->GetFullDisplayName() < pRhs->GetFullDisplayName();
-            });
-        }
-
-        wxMenu* menu = e.GetMenu();
-        std::for_each(tags.begin(), tags.end(), [&](TagEntryPtr tag) {
-            wxString fullname = tag->GetFullDisplayName();
-            menu->Append(wxID_ANY, fullname);
-            m_currentNavBarTags.insert({ fullname, tag });
-        });
-    }
-}
+void MainBook::OnNavigationBarMenuShowing(clContextMenuEvent& e) { e.Skip(); }
 
 void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
 {

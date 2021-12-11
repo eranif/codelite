@@ -286,9 +286,11 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
-    if(event.IsInsideCommentOrString()) {
+
+    if(event.GetTriggerKind() != LSP::CompletionItem::kTriggerUser && event.IsInsideCommentOrString()) {
         return;
     }
+
     if(CanHandle(GetEditorFilePath(editor))) {
         event.Skip(false);
         CodeComplete(editor);

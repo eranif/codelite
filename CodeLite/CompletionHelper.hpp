@@ -35,6 +35,14 @@ public:
      * @brief same as the above, but accepts raw pointer
      */
     wxString format_comment(TagEntry* tag, const wxString& input_comment) const;
+
+    /**
+     * @brief go backward and check if the caret line is an include statement
+     * @param file_content the current file. The caret is assumed at the end of the string
+     * @param file_name [output]
+     * @param suffix [output] does the completion entry should end with '>' or with '"'?
+     */
+    bool is_include_statement(const wxString& file_content, wxString *file_name, wxString* suffix) const;
 };
 
 #endif // COMPLETIONHELPER_HPP

@@ -657,6 +657,9 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         !expression.empty() && (expression.Last() == '>' || expression.Last() == ':' || expression.Last() == '.');
     bool is_function_calltip = !expression.empty() && expression.Last() == '(';
 
+    wxString file_name;
+    wxString suffix;
+    bool is_include_completion = helper.is_include_statement(text, &file_name, &suffix);
     update_additional_scopes_for_file(filepath);
 
     vector<TagEntryPtr> candidates;
@@ -668,6 +671,24 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     } else if(is_function_calltip) {
         // TODO:
         // function calltip
+    } else if(is_include_completion) {
+        // provide a list of files for code completion
+        wxArrayString files;
+        clDEBUG() << "File Completion:" << filepath << endl;
+        TagsManagerST::Get()->GetFilesForCC(file_name, files);
+        candidates.reserve(files.size());
+        clDEBUG() << files << endl;
+        for(const wxString& file : files) {
+            TagEntryPtr tag(new TagEntry());
+
+            wxString display_name = file + suffix;
+            tag->SetKind("file");
+            tag->SetName(display_name); // display name
+            display_name = display_name.AfterLast('/');
+            tag->SetPattern(display_name); // insert text
+            tag->SetLine(-1);
+            candidates.push_back(tag);
+        }
     } else {
         // word completion
         clDEBUG() << "WordComplete expression:" << expression << endl;
@@ -707,7 +728,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
 
             item.addProperty("label", tag->GetDisplayName());
             item.addProperty("filterText", tag->GetName());
-            item.addProperty("insertText", tag->GetName());
+            item.addProperty("insertText", tag->GetKind() == "file" ? tag->GetPattern() : tag->GetName());
             item.addProperty("detail", tag->GetReturnValue());
 
             // set the kind

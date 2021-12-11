@@ -790,3 +790,46 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
     }
     return beautified_comment;
 }
+
+thread_local wxRegEx reIncludeFile("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.\\+\\-]*)");
+
+bool CompletionHelper::is_include_statement(const wxString& f_content, wxString* file_name, wxString* suffix) const
+{
+    // read backward until we find LF
+    if(f_content.empty()) {
+        return false;
+    }
+
+    int i = f_content.size() - 1;
+    for(; i >= 0; --i) {
+        if(f_content[i] == '\n') {
+            break;
+        }
+    }
+
+    wxString line = f_content.Mid(i);
+    line.Trim().Trim(false);
+    line.Replace("\t", " ");
+    // search for the "#"
+    wxString remainder;
+    if(!line.StartsWith("#", &remainder)) {
+        return false;
+    }
+
+    if(!reIncludeFile.Matches(remainder)) {
+        return false;
+    }
+
+    if(file_name) {
+        *file_name = reIncludeFile.GetMatch(remainder, 1);
+    }
+
+    if(suffix) {
+        if(line.Contains("<")) {
+            *suffix = ">";
+        } else {
+            *suffix = "\"";
+        }
+    }
+    return true;
+}

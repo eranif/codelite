@@ -9,3 +9,5 @@
 5. Remove parsing of files once saved (this is no longer needed)
 6. Remove `symbols.db` creation (not needed anymore)
 7. Navigation bar -> move to LSP
+8. #include code completion
+9. function calltip is not working after the first char is typed

@@ -538,7 +538,7 @@ bool Language::ProcessExpression(const wxString& expr, const wxString& text, con
 
     wxString visibleScope, scopeName, localsBody;
     wxString lastFuncSig;
-    auto tags = TagsManagerST::Get()->ParseBuffer(text, fn.GetFullPath());
+    TagEntryPtr matched_tag = TagsManagerST::Get()->FunctionFromBufferLine(text, lineno, fn.GetFullPath());
 
     wxString textAfterTokensReplacements;
     textAfterTokensReplacements = ApplyCtagsReplacementTokens(text);
@@ -553,30 +553,18 @@ bool Language::ProcessExpression(const wxString& expr, const wxString& text, con
         scanner.OptimizeBuffer(textAfterTokensReplacements, visibleScope);
     }
 
-    if(!tags.empty()) {
-        // locate the function that matches the given line
-        TagEntryPtr matched_tag;
-        for(TagEntryPtr tag : tags) {
-            if(tag->IsMethod() && tag->GetLine() <= lineno) {
-                matched_tag = tag;
-            } else if(tag->GetLine() > lineno) {
-                break;
-            }
+    // parse the the current function's signature
+    if(matched_tag) {
+        CompletionHelper helper;
+        std::vector<wxString> args = helper.split_function_signature(matched_tag->GetSignature(), nullptr);
+        for(const wxString& arg : args) {
+            lastFuncSig << arg << ",";
+            CxxVariableScanner scanner(arg, eCxxStandard::kCxx11, ignoreTokens, true);
+            CxxVariable::Map_t localsMap = scanner.GetVariablesMap();
+            m_locals.insert(localsMap.begin(), localsMap.end());
         }
-
-        // parse the the current function's signature
-        if(matched_tag) {
-            CompletionHelper helper;
-            std::vector<wxString> args = helper.split_function_signature(matched_tag->GetSignature(), nullptr);
-            for(const wxString& arg : args) {
-                lastFuncSig << arg << ",";
-                CxxVariableScanner scanner(arg, eCxxStandard::kCxx11, ignoreTokens, true);
-                CxxVariable::Map_t localsMap = scanner.GetVariablesMap();
-                m_locals.insert(localsMap.begin(), localsMap.end());
-            }
-            if(!lastFuncSig.empty()) {
-                lastFuncSig.RemoveLast();
-            }
+        if(!lastFuncSig.empty()) {
+            lastFuncSig.RemoveLast();
         }
     }
 

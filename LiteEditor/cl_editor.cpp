@@ -25,6 +25,7 @@
 
 #include "cl_editor.h"
 #include "ColoursAndFontsManager.h"
+#include "CompletionHelper.hpp"
 #include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
 #include "attribute_style.h"
@@ -86,6 +87,7 @@
 #include <wx/regex.h>
 #include <wx/richtooltip.h> // wxRichToolTip
 #include <wx/wupdlock.h>
+
 //#include "clFileOrFolderDropTarget.h"
 
 #if wxUSE_PRINTING_ARCHITECTURE
@@ -1232,8 +1234,12 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     strTyped << charTyped;
     strTyped2 << firstChar << charTyped;
 
-    if((GetContext()->IsStringTriggerCodeComplete(strTyped) || GetContext()->IsStringTriggerCodeComplete(strTyped2)) &&
-       !GetContext()->IsCommentOrString(GetCurrentPos())) {
+    CompletionHelper helper;
+    if(helper.is_include_statement(GetLine(GetCurrentLine()), nullptr, nullptr)) {
+        CallAfter(&clEditor::CompleteWord, LSP::CompletionItem::kTriggerUser, false);
+    } else if((GetContext()->IsStringTriggerCodeComplete(strTyped) ||
+               GetContext()->IsStringTriggerCodeComplete(strTyped2)) &&
+              !GetContext()->IsCommentOrString(GetCurrentPos())) {
         // this char should trigger a code completion
         CallAfter(&clEditor::CodeComplete, false);
     }
@@ -1814,24 +1820,36 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
 {
     if(EventNotifier::Get()->IsEventsDiabled())
         return;
+
     if(AutoCompActive())
         return; // Don't clobber the boxes
 
-    if(GetContext()->IsAtBlockComment()) {
-        // Check if the current word starts with \ or @
-        int wordStartPos = GetFirstNonWhitespacePos(true);
-        if(wordStartPos != wxNOT_FOUND) {
-            wxChar firstChar = GetCtrl()->GetCharAt(wordStartPos);
-            if((firstChar == '@') || (firstChar == '\\')) {
-                // Change the event to wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE
-                clCodeCompletionEvent evt(wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE);
-                evt.SetPosition(GetCurrentPosition());
-                evt.SetEditor(this);
-                evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-                evt.SetEventObject(this);
-                evt.SetTriggerKind(triggerKind);
-                EventNotifier::Get()->ProcessEvent(evt);
-                return;
+    if(triggerKind == LSP::CompletionItem::kTriggerUser) {
+        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
+        evt.SetPosition(GetCurrentPosition());
+        evt.SetEditor(this);
+        evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+        evt.SetTriggerKind(triggerKind);
+        evt.SetEventObject(this);
+        ServiceProviderManager::Get().ProcessEvent(evt);
+        return;
+    } else {
+        if(GetContext()->IsAtBlockComment()) {
+            // Check if the current word starts with \ or @
+            int wordStartPos = GetFirstNonWhitespacePos(true);
+            if(wordStartPos != wxNOT_FOUND) {
+                wxChar firstChar = GetCtrl()->GetCharAt(wordStartPos);
+                if((firstChar == '@') || (firstChar == '\\')) {
+                    // Change the event to wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE
+                    clCodeCompletionEvent evt(wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE);
+                    evt.SetPosition(GetCurrentPosition());
+                    evt.SetEditor(this);
+                    evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+                    evt.SetEventObject(this);
+                    evt.SetTriggerKind(triggerKind);
+                    EventNotifier::Get()->ProcessEvent(evt);
+                    return;
+                }
             }
         }
     }
@@ -1913,8 +1931,8 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
 
     if(IsContextMenuOn() || IsDragging() || !GetSTCFocus()) {
         // Don't cover the context menu or a potential drop-point with a calltip!
-        // And, especially, try to avoid scintilla's party-piece: placing a permanent calltip on top of some innocent
-        // app!
+        // And, especially, try to avoid scintilla's party-piece: placing a permanent calltip on top of some
+        // innocent app!
 
     } else if(event.GetX() > 0 // It seems that we can get spurious events with x == 0
               && event.GetX() < margin) {
@@ -2576,8 +2594,8 @@ void clEditor::ToggleAllFoldsInSelection()
             continue;
         }
         int BottomOfFold = GetLastChild(line, -1);
-        if(BottomOfFold > (endline + 1)) { // GetLastChild() seems to be 1-based, not zero-based. Without the +1, a } at
-                                           // endline will be considered outside the selection
+        if(BottomOfFold > (endline + 1)) { // GetLastChild() seems to be 1-based, not zero-based. Without the +1, a
+                                           // } at endline will be considered outside the selection
             continue;                      // This fold continues past the end of the selection
         }
         DoRecursivelyExpandFolds(expanding, line, BottomOfFold);
@@ -2588,8 +2606,8 @@ void clEditor::ToggleAllFoldsInSelection()
         // The caret will (surely) be inside the selection, and unless it was on the first line or an unfolded one,
         // it'll now be hidden
         // If so place it at the top, which will be visible. Unfortunately SetCaretAt() destroys the selection,
-        // and I can't find a way to preserve/reinstate it while still setting the caret. DoEnsureCaretIsVisible() also
-        // fails :(
+        // and I can't find a way to preserve/reinstate it while still setting the caret. DoEnsureCaretIsVisible()
+        // also fails :(
         int caretline = LineFromPos(GetCurrentPos());
         if(!GetLineVisible(caretline)) {
             SetCaretAt(selStart);
@@ -2677,8 +2695,8 @@ void clEditor::FoldAll()
     }
 }
 
-// Toggle all the highest-level folds in the selection i.e. if the selection contains folds of level 3, 4 and 5, toggle
-// all the level 3 ones
+// Toggle all the highest-level folds in the selection i.e. if the selection contains folds of level 3, 4 and 5,
+// toggle all the level 3 ones
 void clEditor::ToggleTopmostFoldsInSelection()
 {
     int selStart = GetSelectionStart();
@@ -3506,8 +3524,8 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         m_prevSelectionInfo.Sort();
     }
 
-    bool escapeUsed = false; // If the quickfind bar is open we'll use an ESC to close it; but only if we've not already
-                             // used it for something else
+    bool escapeUsed = false; // If the quickfind bar is open we'll use an ESC to close it; but only if we've not
+                             // already used it for something else
 
     // Hide tooltip dialog if its ON
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -6180,6 +6198,7 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
         SetKeyWords(keywords_variables, flatStrLocals);
         SetKeywordLocals(flatStrLocals);
     }
+    Colourise(0, wxSTC_INVALID_POSITION);
 }
 
 int clEditor::GetColumnInChars(int pos)

@@ -141,6 +141,7 @@
     </Configuration>
   </Settings>
   <Dependencies Name="Release">
+    <Project Name="libCodeLite"/>
     <Project Name="ctagsdlib"/>
   </Dependencies>
 </CodeLite_Project>

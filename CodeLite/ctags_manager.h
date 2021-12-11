@@ -513,6 +513,15 @@ public:
     TagEntryPtr FunctionFromFileLine(const wxFileName& fileName, int lineno, bool nextFunction = false);
 
     /**
+     * @brief Return function that is close to current line number
+     * this is done by parsing `buffer`
+     * @param buffer input source file as string
+     * @param lineno the end buffer line number
+     * @param file_name the returned tag `GetFile()` value
+     */
+    TagEntryPtr FunctionFromBufferLine(const wxString& buffer, int lineno, const wxString& file_name);
+
+    /**
      * @brief return the first function of 'fileName'
      * @param fileName file to scan
      * @return NULL or valid tag

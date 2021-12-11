@@ -326,7 +326,7 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName, int linen
         additionlScopes = GetLanguage()->GetAdditionalScopes();
     }
 
-    TagEntryPtr funcTag = FunctionFromFileLine(fileName, lineno);
+    TagEntryPtr funcTag = FunctionFromBufferLine(text, lineno, fileName.GetFullPath());
     if(funcTag) {
         funcSig = funcTag->GetSignature();
     }
@@ -1553,6 +1553,24 @@ void TagsManager::GetFiles(const wxString& partialName, std::vector<wxFileName>&
     for(size_t i = 0; i < f.size(); i++) {
         files.push_back(wxFileName(f.at(i)->GetFile()));
     }
+}
+
+TagEntryPtr TagsManager::FunctionFromBufferLine(const wxString& buffer, int lineno, const wxString& file_name)
+{
+    auto tags = ParseBuffer(buffer, file_name);
+    if(tags.empty()) {
+        return nullptr;
+    }
+
+    TagEntryPtr matched_tag;
+    for(TagEntryPtr tag : tags) {
+        if(tag->IsMethod() && tag->GetLine() <= lineno) {
+            matched_tag = tag;
+        } else if(tag->GetLine() > lineno) {
+            break;
+        }
+    }
+    return matched_tag;
 }
 
 TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int lineno, bool nextFunction /*false*/)

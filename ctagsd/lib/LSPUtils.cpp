@@ -104,6 +104,8 @@ LSP::CompletionItem::eCompletionItemKind LSPUtils::get_completion_kind(const Tag
         kind = LSP::CompletionItem::kKindEnum;
     } else if(tag->GetKind() == "enumerator") {
         kind = LSP::CompletionItem::kKindEnumMember;
+    } else if(tag->GetKind() == "file") {
+        kind = LSP::CompletionItem::kKindTypeParameter;
     }
     return kind;
 }

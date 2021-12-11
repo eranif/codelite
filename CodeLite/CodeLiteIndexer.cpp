@@ -12,6 +12,7 @@
 #ifdef __WXMSW__
 #define PIPE_NAME "\\\\.\\pipe\\codelite_indexer_%s"
 #else
+#include <sys/wait.h>
 #define PIPE_NAME "/tmp/codelite/%s/codelite_indexer.sock"
 #endif
 
@@ -42,12 +43,22 @@ CodeLiteIndexer::CodeLiteIndexer()
 #endif
 }
 
-CodeLiteIndexer::~CodeLiteIndexer() {}
+CodeLiteIndexer::~CodeLiteIndexer()
+{
+    stop();
+#ifndef __WXMSW__
+    ::waitpid(-1, NULL, WNOHANG);
+#endif
+}
 
 void CodeLiteIndexer::set_exe_path(const wxFileName& exepath) { m_exepath = exepath; }
 
 void CodeLiteIndexer::start()
 {
+#ifndef __WXMSW__
+    ::waitpid(-1, NULL, WNOHANG);
+#endif
+
     wxDELETE(m_process);
     wxString uid;
     uid << wxGetProcessId();

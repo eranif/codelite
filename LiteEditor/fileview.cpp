@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "fileview.h"
+#include "BuildOrderDialog.h"
 #include "ICompilerLocator.h"
 #include "ImportFilesDialogNew.h"
 #include "NewVirtualFolderDlg.h"
@@ -34,7 +35,6 @@
 #include "cl_command_event.h"
 #include "compiler.h"
 #include "ctags_manager.h"
-#include "depends_dlg.h"
 #include "dirtraverser.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -1186,7 +1186,7 @@ void FileViewTree::OnBuildOrder(wxCommandEvent& event)
     wxUnusedVar(event);
     wxTreeItemId item = GetSingleSelection();
     if(item.IsOk()) {
-        DependenciesDlg dlg(clMainFrame::Get(), GetItemText(item));
+        BuildOrderDialog dlg(clMainFrame::Get(), GetItemText(item));
         dlg.ShowModal();
     }
 }

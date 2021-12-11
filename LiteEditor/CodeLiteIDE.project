@@ -353,10 +353,6 @@
     <VirtualDirectory Name="ProjectSettings">
       <File Name="CopyCompilerSettingsDlg.cpp"/>
       <File Name="CopyCompilerSettingsDlg.h"/>
-      <File Name="depend_dlg_page.cpp"/>
-      <File Name="depend_dlg_page.h"/>
-      <File Name="depends_dlg.cpp"/>
-      <File Name="depends_dlg.h"/>
       <File Name="project_settings_base_dlg.cpp"/>
       <File Name="project_settings_dlg.cpp"/>
       <File Name="project_settings_dlg.h"/>
@@ -387,6 +383,8 @@
       <File Name="ProjectCustomBuildTragetDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="ProjectManagement">
+      <File Name="BuildOrderDialog.cpp"/>
+      <File Name="BuildOrderDialog.h"/>
       <File Name="../formbuilder/new_item_dlg.wxcp"/>
       <File Name="new_item_dlg.cpp"/>
       <File Name="new_item_dlg.h"/>
@@ -2294,8 +2292,8 @@ resources.cpp: resources.xrc
     <Project Name="ctagsd"/>
   </Dependencies>
   <Dependencies Name="Win_x64_Debug">
-    <Project Name="sqlite3"/>
     <Project Name="PCH"/>
+    <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="databaselayer_sqlite"/>
     <Project Name="wxshapeframework"/>
@@ -2345,13 +2343,12 @@ resources.cpp: resources.xrc
     <Project Name="EOSWiki"/>
     <Project Name="wxcrafter"/>
     <Project Name="Remote"/>
-    <Project Name="wxcLib"/>
     <Project Name="ctagsdlib"/>
     <Project Name="ctagsd"/>
   </Dependencies>
   <Dependencies Name="Win_x64_Debug">
-    <Project Name="PCH"/>
     <Project Name="sqlite3"/>
+    <Project Name="PCH"/>
     <Project Name="wxsqlite3"/>
     <Project Name="databaselayer_sqlite"/>
     <Project Name="wxshapeframework"/>
@@ -2399,6 +2396,7 @@ resources.cpp: resources.xrc
     <Project Name="LanguageServer"/>
     <Project Name="Rust"/>
     <Project Name="EOSWiki"/>
+    <Project Name="wxcLib"/>
     <Project Name="wxcrafter"/>
     <Project Name="Remote"/>
     <Project Name="ctagsdlib"/>

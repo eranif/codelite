@@ -6,120 +6,181 @@
 
 #include "buildorderbasepage.h"
 
-
 // Declare the bitmap loading function
 extern void wxC312EInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-DependenciesPageBase::DependenciesPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxPanel(parent, id, pos, size, style)
+BuildOrderDialogBase::BuildOrderDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                           const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC312EInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
+    wxBoxSizer* boxSizer32 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer32);
+
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer1);
-    
-    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Select build order for configuration:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    boxSizer1->Add(m_staticText3, 0, wxALL, 5);
-    
+
+    boxSizer32->Add(boxSizer1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+
+    m_staticText3 = new wxStaticText(this, wxID_ANY, wxT("Select build order for configuration:"), wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer1->Add(m_staticText3, 0, wxLEFT | wxRIGHT | wxTOP, WXC_FROM_DIP(10));
+
     wxArrayString m_choiceProjectConfigArr;
-    m_choiceProjectConfig = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_choiceProjectConfigArr, 0);
-    
-    boxSizer1->Add(m_choiceProjectConfig, 0, wxALL|wxEXPAND, 5);
-    
-    wxBoxSizer* bSizer3 = new wxBoxSizer(wxHORIZONTAL);
-    
-    boxSizer1->Add(bSizer3, 1, wxEXPAND, 5);
-    
-    wxBoxSizer* bSizer31 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer3->Add(bSizer31, 5, wxEXPAND, 5);
-    
-    m_staticText1 = new wxStaticText(this, wxID_ANY, _("Projects:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer31->Add(m_staticText1, 0, wxLEFT|wxRIGHT|wxTOP, 5);
-    
-    wxArrayString m_checkListProjectListArr;
-    m_checkListProjectList = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1,-1), m_checkListProjectListArr, wxLB_SINGLE);
-    
-    bSizer31->Add(m_checkListProjectList, 1, wxALL|wxEXPAND, 5);
-    
+    m_choiceProjectConfig =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceProjectConfigArr, 0);
+
+    boxSizer1->Add(m_choiceProjectConfig, 0, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    wxFlexGridSizer* flexGridSizer10 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer10->SetFlexibleDirection(wxBOTH);
+    flexGridSizer10->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer10->AddGrowableCol(0);
+    flexGridSizer10->AddGrowableCol(2);
+    flexGridSizer10->AddGrowableRow(0);
+
+    boxSizer1->Add(flexGridSizer10, 1, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    m_dvListCtrlProjects = new clThemedOrderedListCtrl(this, wxID_ANY, wxDefaultPosition,
+                                                       wxDLG_UNIT(this, wxSize(150, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    flexGridSizer10->Add(m_dvListCtrlProjects, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlProjects->AppendTextColumn(wxT("Projects"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                           wxDATAVIEW_COL_RESIZABLE);
+    wxBoxSizer* boxSizer3 = new wxBoxSizer(wxVERTICAL);
+
+    flexGridSizer10->Add(boxSizer3, 1, wxALL | wxEXPAND | wxALIGN_TOP, WXC_FROM_DIP(5));
+
+    m_button22 = new wxButton(this, wxID_ANY, wxT("-->"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer3->Add(m_button22, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_button24 = new wxButton(this, wxID_ANY, wxT("<--"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer3->Add(m_button24, 0, wxALL, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer3->Add(bSizer4, 6, wxEXPAND, 5);
-    
-    m_staticText2 = new wxStaticText(this, wxID_ANY, _("Build Order:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer4->Add(m_staticText2, 0, wxLEFT|wxRIGHT|wxTOP, 5);
-    
+
+    flexGridSizer10->Add(bSizer4, 6, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxHORIZONTAL);
-    
-    bSizer4->Add(bSizer11, 1, wxEXPAND, 5);
-    
+
+    bSizer4->Add(bSizer11, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer5 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer11->Add(bSizer5, 1, wxEXPAND, 5);
-    
-    wxArrayString m_listBoxBuildOrderArr;
-    m_listBoxBuildOrder = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxSize(-1, -1), m_listBoxBuildOrderArr, 0);
-    
-    bSizer5->Add(m_listBoxBuildOrder, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizer11->Add(bSizer5, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlBuildOrder = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(150, -1)),
+                                                  wxDV_ROW_LINES | wxDV_SINGLE);
+
+    bSizer5->Add(m_dvListCtrlBuildOrder, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlBuildOrder->AppendTextColumn(wxT("Build Order"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                             wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer11->Add(bSizer6, 0, wxEXPAND, 5);
-    
+
+    bSizer11->Add(bSizer6, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer8 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer6->Add(bSizer8, 1, wxEXPAND, 5);
-    
-    m_buttonUp = new wxButton(this, wxID_UP, _("Up"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer8->Add(m_buttonUp, 0, wxALL|wxEXPAND, 5);
-    
-    m_buttonDown = new wxButton(this, wxID_DOWN, _("Down"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer8->Add(m_buttonDown, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer6->Add(bSizer8, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonUp = new wxButton(this, wxID_UP, wxT("Up"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer8->Add(m_buttonUp, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonDown = new wxButton(this, wxID_DOWN, wxT("Down"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    bSizer8->Add(m_buttonDown, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* bSizer7 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer6->Add(bSizer7, 0, 0, 5);
-    
-    m_buttonApply = new wxButton(this, wxID_APPLY, _("Apply"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer7->Add(m_buttonApply, 0, wxALL|wxEXPAND, 5);
-    
-    SetName(wxT("DependenciesPageBase"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+
+    bSizer6->Add(bSizer7, 0, 0, WXC_FROM_DIP(5));
+
+    m_buttonApply =
+        new wxButton(this, wxID_APPLY, wxT("Apply"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonApply->SetDefault();
+    m_buttonApply->SetFocus();
+
+    bSizer7->Add(m_buttonApply, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer52 = new wxStdDialogButtonSizer();
+
+    boxSizer32->Add(m_stdBtnSizer52, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_button54 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button54->SetDefault();
+    m_stdBtnSizer52->AddButton(m_button54);
+
+    m_button56 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer52->AddButton(m_button56);
+    m_stdBtnSizer52->Realize();
+
+    SetName(wxT("BuildOrderDialogBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+#endif
     // Connect events
-    m_choiceProjectConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(DependenciesPageBase::OnConfigChanged), NULL, this);
-    m_checkListProjectList->Connect(wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler(DependenciesPageBase::OnCheckListItemToggled), NULL, this);
-    m_buttonUp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DependenciesPageBase::OnMoveUp), NULL, this);
-    m_buttonDown->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DependenciesPageBase::OnMoveDown), NULL, this);
-    m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DependenciesPageBase::OnApplyButton), NULL, this);
-    m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DependenciesPageBase::OnApplyButtonUI), NULL, this);
-    
+    m_choiceProjectConfig->Connect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                   wxCommandEventHandler(BuildOrderDialogBase::OnConfigChanged), NULL, this);
+    m_button22->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnMoveRight), NULL,
+                        this);
+    m_button22->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildOrderDialogBase::OnMoveRightUI), NULL, this);
+    m_button24->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildOrderDialogBase::OnMoveLeftUI), NULL, this);
+    m_button24->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnMoveLeft), NULL,
+                        this);
+    m_buttonUp->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnMoveUp), NULL,
+                        this);
+    m_buttonDown->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnMoveDown), NULL,
+                          this);
+    m_buttonApply->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnApplyButton),
+                           NULL, this);
+    m_buttonApply->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildOrderDialogBase::OnApplyButtonUI), NULL, this);
+    m_button54->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnButtonOK), NULL,
+                        this);
 }
 
-DependenciesPageBase::~DependenciesPageBase()
+BuildOrderDialogBase::~BuildOrderDialogBase()
 {
-    m_choiceProjectConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(DependenciesPageBase::OnConfigChanged), NULL, this);
-    m_checkListProjectList->Disconnect(wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler(DependenciesPageBase::OnCheckListItemToggled), NULL, this);
-    m_buttonUp->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DependenciesPageBase::OnMoveUp), NULL, this);
-    m_buttonDown->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DependenciesPageBase::OnMoveDown), NULL, this);
-    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(DependenciesPageBase::OnApplyButton), NULL, this);
-    m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(DependenciesPageBase::OnApplyButtonUI), NULL, this);
-    
+    m_choiceProjectConfig->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED,
+                                      wxCommandEventHandler(BuildOrderDialogBase::OnConfigChanged), NULL, this);
+    m_button22->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnMoveRight), NULL,
+                           this);
+    m_button22->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildOrderDialogBase::OnMoveRightUI), NULL, this);
+    m_button24->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildOrderDialogBase::OnMoveLeftUI), NULL, this);
+    m_button24->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnMoveLeft), NULL,
+                           this);
+    m_buttonUp->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnMoveUp), NULL,
+                           this);
+    m_buttonDown->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnMoveDown),
+                             NULL, this);
+    m_buttonApply->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnApplyButton),
+                              NULL, this);
+    m_buttonApply->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(BuildOrderDialogBase::OnApplyButtonUI), NULL,
+                              this);
+    m_button54->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BuildOrderDialogBase::OnButtonOK), NULL,
+                           this);
 }

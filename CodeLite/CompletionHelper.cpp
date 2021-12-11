@@ -682,7 +682,7 @@ vector<wxString> CompletionHelper::split_function_signature(const wxString& sign
     } else {
         // check if we have a return value
         ADD_CURRENT_PARAM(current_param);
-        if(!args.empty()) {
+        if(!args.empty() && return_value) {
             *return_value = args[0].Trim().Trim(false);
         }
     }

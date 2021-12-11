@@ -44,6 +44,15 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp]]>
+    </Extensions>
+    <Topleveldir>/src/codelite/CodeLite</Topleveldir>
+  </Reconciliation>
   <VirtualDirectory Name="LSP">
     <File Name="LSP/WorkspaceSymbolRequest.cpp"/>
     <File Name="LSP/WorkspaceSymbolRequest.hpp"/>
@@ -130,6 +139,8 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="CodeLiteIndexer.hpp"/>
+    <File Name="CodeLiteIndexer.cpp"/>
     <File Name="Trie.hpp"/>
     <File Name="CompletionHelper.hpp"/>
     <File Name="CompletionHelper.cpp"/>
@@ -212,8 +223,6 @@
     <File Name="clEditorConfig.cpp"/>
     <File Name="commentconfigdata.cpp"/>
     <File Name="commentconfigdata.h"/>
-    <File Name="clCxxFileCacheSymbols.h"/>
-    <File Name="clCxxFileCacheSymbols.cpp"/>
     <File Name="clAnagram.h"/>
     <File Name="clAnagram.cpp"/>
     <File Name="clGotoEntry.h"/>

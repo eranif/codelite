@@ -1252,8 +1252,6 @@ void clMainFrame::CreateGUIControls()
     m_tagsOptionsData.Merge(tmp);
     ccConfig.WriteItem(&m_tagsOptionsData);
 
-    TagsManager* tagsManager = TagsManagerST::Get();
-
     // start ctags process
     ManagerST::Get()->SetCodeLiteLauncherPath(clStandardPaths::Get().GetBinaryFullPath("codelite_launcher"));
 

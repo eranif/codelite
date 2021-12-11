@@ -19,6 +19,7 @@ bool LSPCTagsdDetector::DoLocate()
         ConfigureFile(ctagsd);
         return true;
     }
+    return false;
 }
 
 void LSPCTagsdDetector::ConfigureFile(const wxFileName& ctagsd_exe)

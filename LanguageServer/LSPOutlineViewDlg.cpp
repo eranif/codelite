@@ -37,7 +37,7 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInform
     , m_symbols(symbols)
 {
     clSetDialogBestSizeAndPosition(this);
-    CallAfter(&LSPOutlineViewDlg::DoInitialise);
+    DoInitialise();
 }
 
 LSPOutlineViewDlg::~LSPOutlineViewDlg() {}

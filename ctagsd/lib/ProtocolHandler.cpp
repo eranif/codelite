@@ -933,10 +933,9 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
         return;
 
     // parse the file and return the symbols
-    wxString tmpdir = clStandardPaths::Get().GetTempDir();
-    vector<TagEntry> tags = CTags::Run(filepath, tmpdir, wxEmptyString, m_settings.GetCodeliteIndexer());
-    // tags are sorted by line number, just wrap them in JSON and send them over to the client
+    vector<TagEntryPtr> tags = TagsManagerST::Get()->ParseBuffer(m_filesOpened[filepath], filepath);
 
+    // tags are sorted by line number, just wrap them in JSON and send them over to the client
     JSON root(cJSON_Object);
     auto response = root.toElement();
     auto result = build_result(response, id, cJSON_Array);

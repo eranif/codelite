@@ -157,7 +157,7 @@ void ProtocolHandler::send_log_message(const wxString& message, int level, Chann
     notification.addProperty("method", "window/logMessage");
     notification.addProperty("jsonrpc", "2.0");
     auto params = notification.AddObject("params");
-    params.addProperty("message", message);
+    params.addProperty("message", wxString() << "P:" << wxGetProcessId() << ": " << message);
     params.addProperty("type", level);
 
     channel.write_reply(notification.format(false));
@@ -185,10 +185,7 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     db->OpenDatabase(dbfile);
     wxUnusedVar(initial_parse);
 
-    // if(initial_parse && !db->CheckIntegrity()) {
-    //     // delete the database
-    //     db->RecreateDatabase();
-    // }
+    m_using_namespace_cache.clear();
 
     TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
     start_timer();
@@ -231,10 +228,6 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
             // and all calls to "using namespace XXX"
             CxxUsingNamespaceCollector collector{ &pp, files[i], visited_files };
             collector.Parse();
-            if(m_using_namespace_cache.count(files[i])) {
-                m_using_namespace_cache.erase(files[i]);
-            }
-            m_using_namespace_cache.insert({ files[i], FilterNonWantedNamespaces(collector.GetUsingNamespaces()) });
         }
     }
     clDEBUG() << "Success" << endl;
@@ -440,7 +433,7 @@ void ProtocolHandler::update_using_namespace_for_file(const wxString& filepath)
         }
     }
 
-    clDEBUG() << "  Updating extra scopes for file" << filepath << endl;
+    clDEBUG() << "  -> Updating extra scopes for file" << filepath << endl;
     CxxPreProcessor pp{ search_paths, 20 };
 
     // we did not visit this file just yet
@@ -454,8 +447,8 @@ void ProtocolHandler::update_using_namespace_for_file(const wxString& filepath)
     }
 
     m_using_namespace_cache.insert({ filepath, FilterNonWantedNamespaces(collector.GetUsingNamespaces()) });
-    clDEBUG() << "  Visited" << visited_files.size() << "header files" << endl;
-    clDEBUG() << "  scopes for file:" << filepath << "is now set to:" << m_using_namespace_cache[filepath] << endl;
+    clDEBUG() << "  -> Visited" << visited_files.size() << "header files" << endl;
+    clDEBUG() << "  -> scopes for file:" << filepath << "is now set to:" << m_using_namespace_cache[filepath] << endl;
     clDEBUG() << "Success" << endl;
 }
 
@@ -530,12 +523,13 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     TagsManagerST::Get()->SetIndexer(m_codelite_indexer);
 
     // construct TagsOptionsData
-    TagsOptionsData tod;
-    tod.SetFileSpec(m_settings.GetFileMask());
-    tod.SetTokens(MapToString(m_settings.GetTokens()));
-    tod.SetTypes(MapToString(m_settings.GetTypes()));
-    TagsManagerST::Get()->SetCtagsOptions(tod);
-
+    {
+        TagsOptionsData tod;
+        tod.SetFileSpec(m_settings.GetFileMask());
+        tod.SetTokens(MapToString(m_settings.GetTokens()));
+        tod.SetTypes(MapToString(m_settings.GetTypes()));
+        TagsManagerST::Get()->SetCtagsOptions(tod);
+    }
     // build the workspace file list
     wxArrayString files;
     if(read_file_list(files) == 0) {
@@ -546,6 +540,13 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
+    {
+        TagsOptionsData tod;
+        tod.SetFileSpec(m_settings.GetFileMask());
+        tod.SetTokens(MapToString(m_settings.GetTokens()));
+        tod.SetTypes(MapToString(m_settings.GetTypes()));
+        TagsManagerST::Get()->SetCtagsOptions(tod);
+    }
     channel.write_reply(response.format(false));
 }
 

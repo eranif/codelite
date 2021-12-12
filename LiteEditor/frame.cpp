@@ -87,6 +87,7 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
+#include "CodeLiteIndexer.hpp"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -3235,6 +3236,13 @@ void clMainFrame::SetFrameFlag(bool set, int flag)
 
 void clMainFrame::CompleteInitialization()
 {
+    // create indexer to be used by TagsManager
+    CodeLiteIndexer::ptr_t indexer{ new CodeLiteIndexer() };
+    indexer->set_exe_path(clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
+    indexer->start();
+
+    TagsManagerST::Get()->SetIndexer(indexer);
+
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);
 #endif

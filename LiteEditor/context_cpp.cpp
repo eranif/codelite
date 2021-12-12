@@ -26,6 +26,7 @@
 #include "context_cpp.h"
 #include "AddFunctionsImpDlg.h"
 #include "CTags.hpp"
+#include "CodeLiteIndexer.hpp"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "SelectProjectsDlg.h"
@@ -1218,6 +1219,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
 
     wxString text = editor.GetTextRange(0, endPos);
     TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
+
     if(!tags.empty()) {
         // the last tag is our function
         TagEntryPtr t = tags.at(tags.size() - 1);
@@ -1893,16 +1895,16 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
     }
 
     wxStringSet_t implHash;
-    for(auto t : functions) {
+    for(TagEntryPtr t : functions) {
         if(scopeName == t->GetScope()) {
-            implHash.insert(t->GetPath());
+            implHash.insert(t->GetDisplayName());
         }
     }
 
     std::vector<TagEntryPtr> unimplPrototypes;
     for(auto t : prototypes) {
         if(scopeName == t->GetScope()) {
-            if(implHash.count(t->GetPath()) == 0) {
+            if(implHash.count(t->GetDisplayName()) == 0) {
                 // this prototype does not have an implementation
                 unimplPrototypes.push_back(t);
             }

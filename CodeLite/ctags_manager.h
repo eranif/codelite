@@ -816,6 +816,7 @@ protected:
     std::map<wxString, bool> m_typeScopeContainerCache;
 
     void DoParseModifiedText(const wxString& text, std::vector<TagEntryPtr>& tags);
+    bool EnsureIndexerRunning() const;
 
 private:
     /**

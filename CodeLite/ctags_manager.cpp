@@ -2801,10 +2801,10 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
     words.Add("xor_eq");
 }
 
-TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
+bool TagsManager::EnsureIndexerRunning() const
 {
     if(!m_indexer) {
-        return {};
+        return false;
     }
 
     if(!m_indexer->is_running()) {
@@ -2812,11 +2812,19 @@ TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxSt
     }
 
     if(!m_indexer->is_running()) {
+        return false;
+    }
+    return true;
+}
+
+TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
+{
+    if(!EnsureIndexerRunning()) {
         return {};
     }
 
     wxString tags;
-    m_indexer->buffer_to_tags(content, tags);
+    m_indexer->buffer_to_tags(content, tags, kinds);
 
     TagEntryPtrVector_t tagsVec;
     wxArrayString lines = ::wxStringTokenize(tags, "\n", wxTOKEN_STRTOK);

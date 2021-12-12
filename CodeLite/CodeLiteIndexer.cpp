@@ -82,14 +82,14 @@ string CodeLiteIndexer::get_channel_path() const
     return channel_name;
 }
 
-void CodeLiteIndexer::buffer_to_tags(const wxString& content, wxString& tags) const
+void CodeLiteIndexer::buffer_to_tags(const wxString& content, wxString& tags, const wxString& kinds) const
 {
     clTempFile tmpfile("hpp");
     tmpfile.Write(content);
-    source_to_tags(tmpfile.GetFileName(), tags);
+    source_to_tags(tmpfile.GetFileName(), tags, kinds);
 }
 
-void CodeLiteIndexer::source_to_tags(const wxFileName& source, wxString& tags) const
+void CodeLiteIndexer::source_to_tags(const wxFileName& source, wxString& tags, const wxString& kinds) const
 {
     auto channel_path = get_channel_path();
     clNamedPipeClient client(channel_path.c_str());
@@ -106,8 +106,13 @@ void CodeLiteIndexer::source_to_tags(const wxFileName& source, wxString& tags) c
 
     // set ctags options to be used
     wxString ctagsCmd;
+    wxString _kinds = kinds;
+    if(_kinds.empty()) {
+        _kinds = "+p";
+    }
+
     ctagsCmd << TagsManagerST::Get()->GetCtagsOptions().ToString()
-             << " --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --c++-kinds=+p";
+             << " --excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=" << _kinds << " --c++-kinds=" << _kinds;
     req.setCtagOptions(ctagsCmd.mb_str(wxConvUTF8).data());
 
     // clDEBUG1() << "Sending CTAGS command:" << ctagsCmd << clEndl;

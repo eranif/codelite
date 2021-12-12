@@ -29,8 +29,8 @@ public:
     void stop();
     void restart();
     bool is_running() const;
-    void source_to_tags(const wxFileName& source, wxString& tags) const;
-    void buffer_to_tags(const wxString& content, wxString& tags) const;
+    void source_to_tags(const wxFileName& source, wxString& tags, const wxString& kinds = wxEmptyString) const;
+    void buffer_to_tags(const wxString& content, wxString& tags, const wxString& kinds = wxEmptyString) const;
 };
 
 #endif // CODELITEINDEXER_HPP

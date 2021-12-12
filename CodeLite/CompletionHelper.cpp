@@ -721,6 +721,7 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
     wxString return_value;
     if(tag->IsMethod()) {
         auto args = split_function_signature(tag->GetSignature(), &return_value);
+        wxUnusedVar(return_value);
 
         beautified_comment << "```\n";
         if(args.empty()) {
@@ -737,8 +738,16 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
             beautified_comment << ")\n";
         }
         beautified_comment << "```\n";
-    } else {
-        beautified_comment << tag->GetKind() << "\n";
+    } else if(tag->GetKind() == "variable" || tag->GetKind() == "member" || tag->IsLocalVariable()) {
+        wxString clean_pattern = tag->GetPatternClean();
+        clean_pattern.Trim().Trim(false);
+
+        if(!clean_pattern.empty()) {
+            clean_pattern.Replace(tag->GetName(), "`" + tag->GetName() + "`");
+            beautified_comment << clean_pattern << "\n";
+        } else {
+            beautified_comment << tag->GetKind() << "\n";
+        }
     }
 
     wxString formatted_comment;

@@ -387,6 +387,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
     message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")        ## No optimization, debug info
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
 
     ## In debug, only add NDEBUG if the user says so
     if (PREVENT_WX_ASSERTS MATCHES 1)

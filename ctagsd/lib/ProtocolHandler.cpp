@@ -1,4 +1,3 @@
-#include "ProtocolHandler.hpp"
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxPreProcessor.h"
@@ -9,6 +8,7 @@
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LSPUtils.hpp"
+#include "ProtocolHandler.hpp"
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
@@ -508,6 +508,9 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     m_root_folder = json["params"]["rootUri"].toString();
     m_root_folder = wxFileSystem::URLToFileName(m_root_folder).GetFullPath();
 
+    // set the working directory to the workspace folder
+    ::wxSetWorkingDirectory(m_root_folder);
+
     // create the settings directory
     wxFileName fn_settings_dir(m_root_folder, wxEmptyString);
     fn_settings_dir.AppendDir(".ctagsd");
@@ -526,6 +529,13 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     m_codelite_indexer->start();
     TagsManagerST::Get()->SetIndexer(m_codelite_indexer);
 
+    // construct TagsOptionsData
+    TagsOptionsData tod;
+    tod.SetFileSpec(m_settings.GetFileMask());
+    tod.SetTokens(MapToString(m_settings.GetTokens()));
+    tod.SetTypes(MapToString(m_settings.GetTypes()));
+    TagsManagerST::Get()->SetCtagsOptions(tod);
+
     // build the workspace file list
     wxArrayString files;
     if(read_file_list(files) == 0) {
@@ -536,14 +546,6 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
-
-    // construct TagsOptionsData
-    TagsOptionsData tod;
-    tod.SetFileSpec(m_settings.GetFileMask());
-    tod.SetTokens(MapToString(m_settings.GetTokens()));
-    tod.SetTypes(MapToString(m_settings.GetTypes()));
-    TagsManagerST::Get()->SetCtagsOptions(tod);
-
     channel.write_reply(response.format(false));
 }
 

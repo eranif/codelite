@@ -476,11 +476,11 @@ wxString TagsOptionsData::ToString() const
         }
     }
 
-    if(GetLanguages().IsEmpty() == false) {
-        options += wxT(" --language-force=");
-        options += GetLanguages().Item(0);
-        options += wxT(" ");
-    }
+//    if(GetLanguages().IsEmpty() == false) {
+//        options += wxT(" --language-force=");
+//        options += GetLanguages().Item(0);
+//        options += wxT(" ");
+//    }
     return options;
 }
 

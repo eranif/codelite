@@ -55,6 +55,11 @@ int main(int argc, char** argv)
     int log_level = FileLogger::GetVerbosityAsNumber(log_level_str);
     FileLogger::OpenLog("ctagsd.log", log_level);
 
+    // make sure that all shared objects and the main app
+    // are all seeing the same instances of singletons
+    LanguageST::Get()->SetTagsManager(TagsManagerST::Get());
+    TagsManagerST::Get()->SetLanguage(LanguageST::Get());
+
     try {
         Channel channel;
         ProtocolHandler protocol_handler;

@@ -1349,11 +1349,28 @@ bool Language::VariableFromPattern(const wxString& in, const wxString& name, Var
     pattern = pattern.BeforeLast(wxT('$'));
     pattern = pattern.AfterFirst(wxT('^'));
 
+    // remove C++11 angle bracket to use C++98
+    wxString fixed_pattern;
+    for(const wxChar& ch : pattern) {
+        switch(ch) {
+        case '>':
+            fixed_pattern << " >";
+            break;
+        case '<':
+            fixed_pattern << "< ";
+            break;
+        default:
+            fixed_pattern << ch;
+            break;
+        }
+    }
+    pattern.swap(fixed_pattern);
+
     const wxCharBuffer patbuf = _C(pattern);
     li.clear();
 
     TagsManager* mgr = GetTagsManager();
-    std::map<std::string, std::string> ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
+    auto ignoreTokens = mgr->GetCtagsOptions().GetTokensMap();
 
     get_variables(patbuf.data(), li, ignoreTokens, false);
     VariableList::iterator iter = li.begin();
@@ -1361,6 +1378,7 @@ bool Language::VariableFromPattern(const wxString& in, const wxString& name, Var
         Variable v = *iter;
         if(name == _U(v.m_name.c_str())) {
             var = (*iter);
+            var.m_pattern = pattern.mb_str(wxConvUTF8).data();
             return true;
         }
     } // if(li.size() == 1)
@@ -1477,8 +1495,8 @@ void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& t
                                isFuncSignature);
     CxxVariable::Vec_t locals = scanner.GetVariables(false);
 
-    std::for_each(locals.begin(), locals.end(), [&](CxxVariable::Ptr_t local) {
-        wxString tagName = local->GetName();
+    for(CxxVariable::Ptr_t local : locals) {
+        const wxString& tagName = local->GetName();
 
         // if we have name, collect only tags that matches name
         if(!name.IsEmpty()) {
@@ -1491,12 +1509,14 @@ void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& t
             }
 
             if((flags & PartialMatch) && !tmpTagName.StartsWith(tmpName))
-                return;
+                continue;
             // Don't suggest what we have typed so far
             if((flags & PartialMatch) && tmpTagName == tmpName)
-                return;
+                continue;
+            ;
             if((flags & ExactMatch) && tmpTagName != tmpName)
-                return;
+                continue;
+            ;
         } // else no name is specified, collect all tags
 
         TagEntryPtr tag(new TagEntry());
@@ -1505,9 +1525,9 @@ void Language::GetLocalVariables(const wxString& in, std::vector<TagEntryPtr>& t
         tag->SetParent(wxT("<local>"));
         tag->SetScope(local->GetTypeAsCxxString());
         tag->SetAccess("public");
-        tag->SetPattern(local->GetTypeAsCxxString() + " " + local->GetName());
+        tag->SetPattern(local->ToString());
         tags.push_back(tag);
-    });
+    }
 }
 
 bool Language::OnArrowOperatorOverloading(ParsedToken* token)
@@ -1607,15 +1627,7 @@ void Language::DoFixFunctionUsingCtagsReturnValue(clFunction& foo, TagEntryPtr t
         // Use the CTAGS return value
         wxString ctagsRetValue = tag->GetReturnValue();
         DoReplaceTokens(ctagsRetValue, GetTagsManager()->GetCtagsOptions().GetTokensWxMap());
-
-        const wxCharBuffer cbuf = ctagsRetValue.mb_str(wxConvUTF8);
-        std::map<std::string, std::string> ignoreTokens = GetTagsManager()->GetCtagsOptions().GetTokensMap();
-
-        VariableList li;
-        get_variables(cbuf.data(), li, ignoreTokens, false);
-        if(li.size() == 1) {
-            foo.m_returnValue = *li.begin();
-        }
+        VariableFromPattern(ctagsRetValue, tag->GetName(), foo.m_returnValue);
     }
 }
 

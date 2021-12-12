@@ -14,6 +14,7 @@ wxString CxxVariable::GetTypeAsString(const wxStringTable_t& table) const
 {
     return PackType(m_type, m_standard, false, table);
 }
+
 wxString CxxVariable::GetTypeAsCxxString(const wxStringTable_t& table) const
 {
     if(IsUsing()) {
@@ -28,11 +29,17 @@ wxString CxxVariable::ToString(size_t flags, const wxStringTable_t& table) const
     wxString str;
     str << GetTypeAsString(table);
 
-    if(!GetPointerOrReference().IsEmpty()) { str << GetPointerOrReference(); }
+    if(!GetPointerOrReference().IsEmpty()) {
+        str << GetPointerOrReference();
+    }
 
-    if(flags & kToString_Name) { str << " " << GetName(); }
+    if(flags & kToString_Name) {
+        str << " " << GetName();
+    }
 
-    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) { str << " = " << GetDefaultValue(); }
+    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) {
+        str << " = " << GetDefaultValue();
+    }
     return str;
 }
 
@@ -43,10 +50,11 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
     // const std::vector<std::pair<int, int> >& v
     // "strcut stat buff" if we pass "omitClassKeyword" as true, the type is set to "stat" only
     wxString s;
-    std::for_each(type.begin(), type.end(), [&](const CxxVariable::LexerToken& tok) {
+    for(const CxxVariable::LexerToken& tok : type) {
         // "strcut stat buff" if we pass "omitClassKeyword" as true, the type is set to "stat" only
         // we do the same for class, enum and struct
-        if(s.empty() && (tok.type == T_CLASS || tok.type == T_STRUCT || tok.type == T_ENUM) && omitClassKeyword) return;
+        if(s.empty() && (tok.type == T_CLASS || tok.type == T_STRUCT || tok.type == T_ENUM) && omitClassKeyword)
+            continue;
 
         if((!s.empty() && s.Last() == ' ') &&
            ((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')')) {
@@ -92,7 +100,10 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
             s << " ";
             break;
         }
-    });
-    if(!s.empty() && s.EndsWith(" ")) { s.RemoveLast(); }
+    }
+
+    if(!s.empty() && s.EndsWith(" ")) {
+        s.RemoveLast();
+    }
     return s;
 }

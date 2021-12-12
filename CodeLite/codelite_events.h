@@ -370,6 +370,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_JUMP_HYPER_LINK, clCodeComplet
 // Use evt.GetWord() to get the searched string
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL, clCodeCompletionEvent);
 
+// Find header file for a given symbol
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_HEADER_FILE, clCodeCompletionEvent);
+
 // Find symbol declaration. Use evt.GetWord() to get the searched string
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL_DECLARATION, clCodeCompletionEvent);
 

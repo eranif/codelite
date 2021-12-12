@@ -65,6 +65,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     Bind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
     Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     Bind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
+    Bind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
     EventNotifier::Get()->Bind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
 
     // Use sockets here
@@ -97,6 +98,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
     Unbind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
     Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     Unbind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
+    Unbind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
     DoClear();
 }
@@ -306,7 +308,7 @@ void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
     if(CanHandle(GetEditorFilePath(editor))) {
         // this event is ours to handle
         event.Skip(false);
-        FindDeclaration(editor);
+        FindDeclaration(editor, false);
     }
 }
 
@@ -478,7 +480,7 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
     }
 }
 
-wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "[" << GetName() << "] "; }
+wxString LanguageServerProtocol::GetLogPrefix() const { return wxString() << "[" << GetName() << "]"; }
 
 void LanguageServerProtocol::OpenEditor(IEditor* editor)
 {
@@ -620,31 +622,32 @@ void LanguageServerProtocol::CloseEditor(IEditor* editor)
     }
 }
 
-void LanguageServerProtocol::FindDeclaration(IEditor* editor)
+void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missing_header)
 {
-    if(m_unimplementedMethods.count("textDocument/declaration")) {
-        // this method is not implemented
-        // use 'definition' instead
-        FindDefinition(editor);
-    } else {
-        CHECK_PTR_RET(editor);
-        CHECK_COND_RET(ShouldHandleFile(editor));
-
-        // If the editor is modified, we need to tell the LSP to reparse the source file
-        const wxString& filename = GetEditorFilePath(editor);
-        std::string content;
-        content.reserve(editor->GetLength() + 1);
-        editor->GetEditorTextRaw(content);
-        if(m_filesSent.count(filename) == 0) {
-            SendOpenRequest(editor, content, GetLanguageId(filename));
-        } else {
-            SendChangeRequest(editor, content);
-        }
-        LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
-            new LSP::GotoDeclarationRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
-                                            editor->GetColumnInChars(editor->GetCurrentPosition())));
-        QueueMessage(req);
+    if(!IsDeclarationSupported()) {
+        clDEBUG() << GetLogPrefix() << "message `textDocument/declaration` is not supported" << endl;
+        return;
     }
+
+    clDEBUG() << GetLogPrefix() << "FindDeclaration() is called" << endl;
+    CHECK_PTR_RET(editor);
+    CHECK_COND_RET(ShouldHandleFile(editor));
+
+    // If the editor is modified, we need to tell the LSP to reparse the source file
+    const wxString& filename = GetEditorFilePath(editor);
+    std::string content;
+    content.reserve(editor->GetLength() + 1);
+    editor->GetEditorTextRaw(content);
+    if(m_filesSent.count(filename) == 0) {
+        SendOpenRequest(editor, content, GetLanguageId(filename));
+    } else {
+        SendChangeRequest(editor, content);
+    }
+    clDEBUG() << GetLogPrefix() << "Sending GotoDeclarationRequest" << endl;
+    LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDeclarationRequest(
+        GetEditorFilePath(editor), editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition()),
+        for_add_missing_header));
+    QueueMessage(req);
 }
 
 void LanguageServerProtocol::OnNetConnected(clCommandEvent& event)
@@ -745,6 +748,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     }
 
                     CheckCapability(res, "documentSymbolProvider", "textDocument/documentSymbol");
+                    CheckCapability(res, "declarationProvider", "textDocument/declaration");
 
                     clDEBUG() << GetLogPrefix() << "Sending InitializedNotification" << endl;
 
@@ -962,6 +966,20 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
     }
 }
 
+void LanguageServerProtocol::OnFindHeaderFile(clCodeCompletionEvent& event)
+{
+    clDEBUG() << GetLogPrefix() << "OnFindHeaderFile() is called" << endl;
+    event.Skip();
+    IEditor* editor = ::clGetManager()->FindEditor(event.GetFileName());
+    CHECK_PTR_RET(editor);
+
+    if(!ShouldHandleFile(editor)) {
+        return;
+    }
+    event.Skip(false);
+    FindDeclaration(editor, true);
+}
+
 void LanguageServerProtocol::OnWorkspaceSymbols(clCodeCompletionEvent& event)
 {
     event.Skip();
@@ -1005,6 +1023,11 @@ bool LanguageServerProtocol::IsCapabilitySupported(const wxString& name) const
 bool LanguageServerProtocol::IsDocumentSymbolsSupported() const
 {
     return IsCapabilitySupported("textDocument/documentSymbol");
+}
+
+bool LanguageServerProtocol::IsDeclarationSupported() const
+{
+    return IsCapabilitySupported("textDocument/declaration");
 }
 
 bool LanguageServerProtocol::IsSemanticTokensSupported() const

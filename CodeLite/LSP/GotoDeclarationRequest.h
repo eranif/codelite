@@ -12,9 +12,10 @@ class WXDLLIMPEXP_CL GotoDeclarationRequest : public LSP::Request
     wxString m_filename;
     size_t m_line = 0;
     size_t m_column = 0;
+    bool m_for_add_missing_header = false;
 
 public:
-    explicit GotoDeclarationRequest(const wxString& filename, size_t line, size_t column);
+    explicit GotoDeclarationRequest(const wxString& filename, size_t line, size_t column, bool for_add_missing_header);
     virtual ~GotoDeclarationRequest();
 
     void SetColumn(size_t column) { this->m_column = column; }

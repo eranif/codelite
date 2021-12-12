@@ -99,6 +99,7 @@ protected:
     void OnQuickOutline(clCodeCompletionEvent& event);
     void OnSemanticHighlights(clCodeCompletionEvent& event);
     void OnWorkspaceSymbols(clCodeCompletionEvent& event);
+    void OnFindHeaderFile(clCodeCompletionEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     bool CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName,
                          const wxString& lspRequestName);
@@ -239,8 +240,9 @@ public:
     void FindImplementation(IEditor* editor);
     /**
      * @brief find the definition of the item at the caret position
+     * @param for_add_missing_header the context of the `FindDeclaration` is `Add include header` request
      */
-    void FindDeclaration(IEditor* editor);
+    void FindDeclaration(IEditor* editor, bool for_add_missing_header);
 
     /**
      * @brief perform code completion for a given editor
@@ -276,6 +278,7 @@ public:
     bool IsCapabilitySupported(const wxString& name) const;
     bool IsDocumentSymbolsSupported() const;
     bool IsSemanticTokensSupported() const;
+    bool IsDeclarationSupported() const;
 };
 
 #endif // CLLANGUAGESERVER_H

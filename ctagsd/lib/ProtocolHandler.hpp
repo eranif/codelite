@@ -51,6 +51,7 @@ private:
     void update_using_namespace_for_file(const wxString& filepath);
     size_t read_file_list(wxArrayString& files) const;
     wxArrayString FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const;
+    void do_definition(unique_ptr<JSON>&& msg, Channel& channel, bool try_definition_first);
 
 public:
     ProtocolHandler();
@@ -68,6 +69,7 @@ public:
     void on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel);
     void on_document_signature_help(unique_ptr<JSON>&& msg, Channel& channel);
     void on_definition(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_declaration(unique_ptr<JSON>&& msg, Channel& channel);
     void on_hover(unique_ptr<JSON>&& msg, Channel& channel);
     void on_workspace_symbol(unique_ptr<JSON>&& msg, Channel& channel);
 

@@ -1891,11 +1891,19 @@ void clEditor::CodeComplete(bool refreshingList)
     }
 }
 
-//----------------------------------------------------------------
-// Demonstrate how to achieve symbol browsing using the CodeLite
-// library, in addition we implements here a memory for allowing
-// user to go back and forward
-//----------------------------------------------------------------
+void clEditor::FindDeclarationFile()
+{
+    // Let the plugins process this first
+    wxString word = GetWordAtCaret();
+    clCodeCompletionEvent event(wxEVT_CC_FIND_HEADER_FILE, GetId());
+    event.SetEventObject(this);
+    event.SetEditor(this);
+    event.SetWord(word);
+    event.SetPosition(GetCurrentPosition());
+    event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+    ServiceProviderManager::Get().ProcessEvent(event);
+}
+
 void clEditor::GotoDefinition()
 {
     // Let the plugins process this first

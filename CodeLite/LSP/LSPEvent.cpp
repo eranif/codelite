@@ -16,6 +16,7 @@ wxDEFINE_EVENT(wxEVT_LSP_OPEN_FILE, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_SEMANTICS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_LOGMESSAGE, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_WORKSPACE_SYMBOLS, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)

@@ -25,6 +25,7 @@
 #ifndef CONTEXT_CPP_H
 #define CONTEXT_CPP_H
 
+#include "LSP/LSPEvent.h"
 #include "cl_command_event.h"
 #include "context_base.h"
 #include "cpptoken.h"
@@ -47,6 +48,7 @@ class ContextCpp : public ContextBase
 protected:
     void OnShowCodeNavMenu(clCodeCompletionEvent& e);
     void OnCodeCompleteFiles(clCodeCompletionEvent& event);
+    void OnSymbolDeclaraionFound(LSPEvent& event);
 
 private:
     bool TryOpenFile(const wxFileName& fileName, bool lookInEntireWorkspace = true);

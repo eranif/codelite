@@ -679,6 +679,11 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         candidates.reserve(files.size());
         clDEBUG() << files << endl;
         for(const wxString& file : files) {
+            // exclude source file
+            if(FileExtManager::GetType(file) == FileExtManager::TypeSourceC ||
+               FileExtManager::GetType(file) == FileExtManager::TypeSourceCpp) {
+                continue;
+            }
             TagEntryPtr tag(new TagEntry());
 
             wxString display_name = file + suffix;
@@ -1075,7 +1080,7 @@ void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel& channel)
     channel.write_reply(response);
 }
 
-void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bool try_definition_first)
 {
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
@@ -1102,10 +1107,16 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
 
     update_additional_scopes_for_file(filepath);
     vector<TagEntryPtr> tags;
-    TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, true, false);
+
+    bool first_attempt = try_definition_first;
+    bool second_attempt = !try_definition_first;
+    TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, first_attempt, false);
+
+    // No match? try the declaration
     if(tags.empty()) {
         // try the declaration
-        TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, false, false);
+        TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, second_attempt,
+                                           false);
     }
 
     clDEBUG() << "Found" << tags.size() << "matches" << endl;
@@ -1130,6 +1141,16 @@ void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
         }
     }
     channel.write_reply(response);
+}
+
+void ProtocolHandler::on_declaration(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    do_definition(move(msg), channel, false);
+}
+
+void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
+{
+    do_definition(move(msg), channel, true);
 }
 
 wxArrayString ProtocolHandler::FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const

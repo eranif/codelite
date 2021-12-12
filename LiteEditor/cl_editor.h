@@ -408,6 +408,10 @@ public:
 
     // User clicked Ctrl+.
     void GotoDefinition();
+    /**
+     * find declaration file for the current expression
+     */
+    void FindDeclarationFile();
 
     // return the EOL according to the content
     int GetEOLByContent();

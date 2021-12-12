@@ -29,6 +29,7 @@
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "SelectProjectsDlg.h"
+#include "ServiceProviderManager.h"
 #include "addincludefiledlg.h"
 #include "algorithm"
 #include "browse_record.h"
@@ -197,6 +198,7 @@ ContextCpp::ContextCpp(clEditor* container)
     SetName("c++");
     EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU,
                                   clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclaraionFound, this);
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
 }
 
@@ -207,6 +209,7 @@ ContextCpp::ContextCpp()
     EventNotifier::Get()->Connect(wxEVT_CC_SHOW_QUICK_NAV_MENU,
                                   clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_CCBOX_SELECTION_MADE, &ContextCpp::OnCodeCompleteFiles, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, &ContextCpp::OnSymbolDeclaraionFound, this);
 }
 
 ContextCpp::~ContextCpp()
@@ -681,50 +684,13 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
         }
     }
 
-    std::vector<TagEntryPtr> tags;
-    int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition()) + 1;
-    TagsManagerST::Get()->FindImplDecl(rCtrl.GetFileName(), line, expr, word, text, tags, false);
-    if(tags.empty())
-        return;
-
-    std::map<wxString, bool> tmpmap;
-
-    wxArrayString options;
-
-    // remove duplicate file entries
-    for(std::vector<TagEntryPtr>::size_type i = 0; i < tags.size(); i++) {
-        tmpmap[tags.at(i)->GetFile()] = true;
-    }
-
-    // convert the map to wxArrayString
-    std::map<wxString, bool>::iterator iter = tmpmap.begin();
-    for(; iter != tmpmap.end(); iter++) {
-        options.Add(iter->first);
-    }
-
-    // we now got list of tags that matches 'word'
-    wxString choice;
-    if(options.GetCount() > 1) {
-        // multiple matches
-        choice = wxGetSingleChoice(_("Select File to Include:"), _("Add Include File"), options, &GetCtrl());
-    } else {
-        choice = options.Item(0);
-    }
-
-    if(choice.IsEmpty()) {
-        return;
-    }
-
-    // check to see if this file is a workspace file
-    AddIncludeFileDlg dlg(clMainFrame::Get(), choice, rCtrl.GetText(), FindLineToAddInclude());
-    if(dlg.ShowModal() == wxID_OK) {
-        // add the line to the current document
-        wxString lineToAdd = dlg.GetLineToAdd();
-        int line = dlg.GetLine();
-
-        long pos = rCtrl.PositionFromLine(line);
-        rCtrl.InsertText(pos, lineToAdd + rCtrl.GetEolString());
-    }
+    clDEBUG() << "Sending wxEVT_CC_FIND_HEADER_FILE for word:" << word << endl;
+    // using the current location, fire an event requesting the LSP
+    // to locate the header file for the given symbol at the caret position
+    clCodeCompletionEvent find_header_event(wxEVT_CC_FIND_HEADER_FILE);
+    find_header_event.SetWord(word);
+    find_header_event.SetFileName(GetCtrl().GetFileName().GetFullPath());
+    ServiceProviderManager::Get().ProcessEvent(find_header_event);
 }
 
 bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wxString* fileNameUpToCaret)
@@ -3277,6 +3243,32 @@ wxMenu* ContextCpp::GetMenu()
         menu = wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default"));
     }
     return menu;
+}
+
+void ContextCpp::OnSymbolDeclaraionFound(LSPEvent& event)
+{
+    clDEBUG() << "OnSymbolDeclaraionFound() is called for path:" << event.GetFileName() << endl;
+    const wxString& filepath = event.GetFileName();
+    if(filepath != GetCtrl().GetFileName().GetFullPath()) {
+        event.Skip();
+        return;
+    }
+
+    // ours
+    event.Skip(false);
+
+    // display "AddInclude" header file
+    // check to see if this file is a workspace file
+    AddIncludeFileDlg dlg(clMainFrame::Get(), event.GetLocation().GetPath(), GetCtrl().GetText(),
+                          FindLineToAddInclude());
+    if(dlg.ShowModal() == wxID_OK) {
+        // add the line to the current document
+        wxString lineToAdd = dlg.GetLineToAdd();
+        int line = dlg.GetLine();
+
+        long pos = GetCtrl().PositionFromLine(line);
+        GetCtrl().InsertText(pos, lineToAdd + GetCtrl().GetEolString());
+    }
 }
 
 void ContextCpp::OnCodeCompleteFiles(clCodeCompletionEvent& event)

@@ -179,14 +179,10 @@ EVT_MENU(XRCID("insert_doxy_comment"), ContextCpp::OnInsertDoxyComment)
 EVT_MENU(XRCID("move_impl"), ContextCpp::OnMoveImpl)
 EVT_MENU(XRCID("add_impl"), ContextCpp::OnAddImpl)
 EVT_MENU(XRCID("add_multi_impl"), ContextCpp::OnAddMultiImpl)
-EVT_MENU(XRCID("add_virtual_impl"), ContextCpp::OnOverrideParentVritualFunctions)
-EVT_MENU(XRCID("add_pure_virtual_impl"), ContextCpp::OnOverrideParentVritualFunctions)
 EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 EVT_MENU(XRCID("add_forward_decl"), ContextCpp::OnAddForwardDecl)
-EVT_MENU(XRCID("rename_symbol"), ContextCpp::OnRenameGlobalSymbol)
 EVT_MENU(XRCID("find_references"), ContextCpp::OnFindReferences)
-EVT_MENU(XRCID("sync_signatures"), ContextCpp::OnSyncSignatures)
 EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
 EVT_MENU(XRCID("open_include_file"), ContextCpp::OnContextOpenDocument)
 END_EVENT_TABLE()
@@ -1589,7 +1585,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
 
     // Find the tag
     std::vector<TagEntryPtr> tags =
-        TagsManagerST::Get()->ParseBuffer(GetCtrl().GetText(), GetCtrl().GetFileName(), "f");
+        TagsManagerST::Get()->ParseBuffer(GetCtrl().GetText(), GetCtrl().GetFileName().GetFullPath(), "f");
     CHECK_EXPECTED_RETURN(tags.empty(), false);
 
     TagEntryPtr tag;
@@ -1722,106 +1718,6 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& block
     }
 
     return (blockEndPos > blockStartPos) && (blockEndPos != wxNOT_FOUND) && (blockStartPos != wxNOT_FOUND);
-}
-
-void ContextCpp::OnOverrideParentVritualFunctions(wxCommandEvent& e)
-{
-    CHECK_JS_RETURN_VOID();
-    clEditor& rCtrl = GetCtrl();
-    VALIDATE_WORKSPACE();
-
-    // Get the text from the file start point until the current position
-    int pos = rCtrl.GetCurrentPos();
-    wxString context = rCtrl.GetTextRange(0, pos);
-    bool onlyPure = e.GetId() == XRCID("add_pure_virtual_impl");
-
-    wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
-    if(scopeName.IsEmpty() || scopeName == wxT("<global>")) {
-        wxMessageBox(_("Cant resolve scope properly. Found <") + scopeName + wxT(">"), _("CodeLite"),
-                     wxICON_INFORMATION | wxOK);
-        return;
-    }
-
-    // get map of all unimlpemented methods
-    std::vector<TagEntryPtr> protos;
-    TagsManagerST::Get()->GetUnOverridedParentVirtualFunctions(scopeName, onlyPure, protos);
-
-    // No methods to add?
-    if(protos.empty())
-        return;
-
-    // Locate the swapped file
-    wxString targetFile(rCtrl.GetFileName().GetFullPath());
-    FindSwappedFile(rCtrl.GetFileName(), targetFile);
-
-    CommentConfigData data;
-    EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
-
-    // get doxygen comment based on file and line
-    wxChar keyPrefix = '@';
-    if(data.IsUseQtStyle()) {
-        keyPrefix = '\\';
-    }
-
-    ImplementParentVirtualFunctionsDialog dlg(wxTheApp->GetTopWindow(), scopeName, protos, keyPrefix, this);
-    dlg.SetTargetFile(targetFile);
-    if(dlg.ShowModal() == wxID_OK) {
-        wxString implFile = dlg.GetTargetFile();
-        wxString impl = dlg.GetImpl();
-        wxString decl;
-
-        int oldLine = rCtrl.LineFromPos(rCtrl.GetCurrentPos());
-        wxString headerContent;
-
-        // add the declarations (public, protected, private)
-        headerContent = GetCtrl().GetText();
-        decl = dlg.GetDecl("public");
-        if(!decl.IsEmpty()) {
-            if(TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 0))
-                rCtrl.SetText(headerContent);
-            else
-                rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
-        }
-
-        // protected
-        headerContent = GetCtrl().GetText();
-        decl = dlg.GetDecl("protected");
-        if(!decl.IsEmpty()) {
-            if(TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 1))
-                rCtrl.SetText(headerContent);
-            else
-                rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
-        }
-
-        // private
-        headerContent = GetCtrl().GetText();
-        decl = dlg.GetDecl("private");
-        if(!decl.IsEmpty()) {
-            if(TagsManagerST::Get()->InsertFunctionDecl(scopeName, decl, headerContent, 2))
-                rCtrl.SetText(headerContent);
-            else
-                rCtrl.InsertText(rCtrl.GetCurrentPos(), decl); // Insert at the caret position
-        }
-
-        if(dlg.IsFormatAfterInsert())
-            DoFormatEditor(&GetCtrl());
-
-        rCtrl.GotoLine(rCtrl.GetLineCount() > oldLine ? oldLine : rCtrl.GetLineCount());
-
-        // Open the implementation file and format it if needed
-        clEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(implFile);
-        if(implEditor) {
-            int insertedLine = wxNOT_FOUND;
-            wxString sourceContent = implEditor->GetText();
-            TagsManagerST::Get()->InsertFunctionImpl(scopeName, impl, implFile, sourceContent, insertedLine);
-            implEditor->SetText(sourceContent);
-            if(dlg.IsFormatAfterInsert())
-                DoFormatEditor(implEditor);
-        }
-    }
-
-    // Restore this file to be the active one
-    clMainFrame::Get()->GetMainBook()->OpenFile(GetCtrl().GetFileName().GetFullPath());
 }
 
 size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& prototypes,
@@ -2202,69 +2098,6 @@ bool ContextCpp::IsComment(long pos)
     return (style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
             style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
             style == wxSTC_C_COMMENTDOCKEYWORDERROR);
-}
-
-void ContextCpp::OnRenameGlobalSymbol(wxCommandEvent& e)
-{
-    CHECK_JS_RETURN_VOID();
-    VALIDATE_WORKSPACE();
-
-    clEditor& rCtrl = GetCtrl();
-    // get expression
-    int pos = rCtrl.GetCurrentPos();
-    int word_start = rCtrl.WordStartPosition(pos, true);
-    int word_end = rCtrl.WordEndPosition(pos, true);
-
-    // Read the word that we want to refactor
-    wxString word = rCtrl.GetTextRange(word_start, word_end);
-    if(word.IsEmpty())
-        return;
-
-    // Save all files before refactoring
-    if(!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
-        return;
-
-    // Get list of projects to work on
-    wxArrayString projectsCandidateList, projects;
-    clCxxWorkspaceST::Get()->GetProjectList(projectsCandidateList);
-    if(projectsCandidateList.IsEmpty())
-        return;
-
-    if(projectsCandidateList.GetCount() > 1) {
-        SelectProjectsDlg projectSelectorDlg(EventNotifier::Get()->TopFrame());
-        if(projectSelectorDlg.ShowModal() != wxID_OK) {
-            return;
-        }
-        projects = projectSelectorDlg.GetProjects();
-        if(projects.IsEmpty()) {
-            return;
-        }
-    } else {
-        // we have excatly one project. Skip the 'Project Selector' dialog
-        projects.swap(projectsCandidateList);
-    }
-
-    wxArrayString filesArr;
-    for(size_t i = 0; i < projects.GetCount(); ++i) {
-        ManagerST::Get()->GetProjectFiles(projects.Item(i), filesArr);
-    }
-
-    // Convert the array into wxFileList_t
-    wxFileList_t files;
-    files.reserve(filesArr.GetCount());
-    for(size_t i = 0; i < filesArr.GetCount(); ++i) {
-        files.push_back(wxFileName(filesArr.Item(i)));
-    }
-
-    // Invoke the RefactorEngine
-    if(RefactoringEngine::Instance()->IsBusy()) {
-        ::wxMessageBox(_("Refactoring engine is busy with another request. Please try again later"), "CodeLite",
-                       wxOK | wxICON_WARNING);
-        return;
-    }
-
-    RefactoringEngine::Instance()->RenameGlobalSymbol(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos + 1),
-                                                      word_start, files);
 }
 
 void ContextCpp::ReplaceInFiles(const wxString& word, const CppToken::Vec_t& li)
@@ -2984,48 +2817,6 @@ void ContextCpp::OnFindReferences(wxCommandEvent& e)
 }
 
 bool ContextCpp::IsDefaultContext() const { return false; }
-
-void ContextCpp::OnSyncSignatures(wxCommandEvent& e)
-{
-    CHECK_JS_RETURN_VOID();
-    VALIDATE_WORKSPACE();
-
-    clEditor& rCtrl = GetCtrl();
-
-    // get expression
-    int pos = rCtrl.GetCurrentPos();
-    int word_start = rCtrl.WordStartPosition(pos, true);
-    int word_end = rCtrl.WordEndPosition(pos, true);
-
-    // Read the word that we want to refactor
-    wxString word = rCtrl.GetTextRange(word_start, word_end);
-    if(word.IsEmpty())
-        return;
-
-    // Save all files before 'find usage'
-    if(!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
-        return;
-
-    int line = rCtrl.GetCurrentLine() + 1;
-
-    // get the full text of the current page
-    wxString text = rCtrl.GetTextRange(0, pos);
-    wxString expr = GetExpression(word_end, false);
-    TagEntryPtr tag = RefactoringEngine::Instance()->SyncSignature(rCtrl.GetFileName(), line, pos, word, text, expr);
-    if(!tag)
-        return;
-
-    // Locate the function start and end pos
-    clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, 0);
-    if(!editor)
-        return;
-
-    int end, start;
-    if(DoGetSingatureRange(tag->GetLine() - 1, start, end, editor)) {
-        editor->SetSelection(start, end);
-        editor->ReplaceSelection(tag->GetSignature());
-    }
-}
 
 bool ContextCpp::DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl)
 {

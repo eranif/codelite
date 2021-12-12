@@ -672,11 +672,7 @@ EVT_MENU(XRCID("insert_doxy_comment"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("setters_getters"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("move_impl"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("add_impl"), clMainFrame::OnCppContextMenu)
-EVT_MENU(XRCID("sync_signatures"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("add_multi_impl"), clMainFrame::OnCppContextMenu)
-EVT_MENU(XRCID("add_virtual_impl"), clMainFrame::OnCppContextMenu)
-EVT_MENU(XRCID("add_pure_virtual_impl"), clMainFrame::OnCppContextMenu)
-EVT_MENU(XRCID("rename_symbol"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("find_references"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("comment_selection"), clMainFrame::OnCppContextMenu)
 EVT_MENU(XRCID("comment_line"), clMainFrame::OnCppContextMenu)
@@ -3264,7 +3260,6 @@ void clMainFrame::CompleteInitialization()
 
     // Register C++ keyboard shortcuts
     clKeyboardManager::Get()->AddGlobalAccelerator("swap_files", "F12", "C++::Swap Header/Implementation file");
-    clKeyboardManager::Get()->AddGlobalAccelerator("rename_symbol", "Ctrl-Shift-H", "C++::Rename Symbol");
     clKeyboardManager::Get()->AddGlobalAccelerator("open_include_file", "", "Open Include File");
 
     // Load the plugins

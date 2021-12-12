@@ -889,20 +889,6 @@
             <object class="wxMenuItem" name="add_multi_impl">
                 <label>Implement all Un-implemented Functions...</label>
             </object>
-            <object class="wxMenuItem" name="sync_signatures">
-                <label>Synchronize Signatures...</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="add_virtual_impl">
-                <label>Implement inherited virtual Functions...</label>
-            </object>
-            <object class="wxMenuItem" name="add_pure_virtual_impl">
-                <label>Implement inherited pure virtual Functions...</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="rename_symbol">
-                <label>Rename Symbol...\tCtrl-Shift-H</label>
-            </object>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="wxID_COPY">
@@ -1154,6 +1140,7 @@
 
 
 
+    
     
     
     

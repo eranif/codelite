@@ -132,10 +132,7 @@ public:
     virtual void OnMoveImpl(wxCommandEvent& e);
     virtual void OnAddImpl(wxCommandEvent& e);
     virtual void OnAddMultiImpl(wxCommandEvent& e);
-    virtual void OnOverrideParentVritualFunctions(wxCommandEvent& e);
-    virtual void OnRenameGlobalSymbol(wxCommandEvent& e);
     virtual void OnFindReferences(wxCommandEvent& e);
-    virtual void OnSyncSignatures(wxCommandEvent& e);
     virtual void OnRetagFile(wxCommandEvent& e);
     virtual void OnUserTypedXChars(const wxString& word);
     virtual void OnCallTipClick(wxStyledTextEvent& e);

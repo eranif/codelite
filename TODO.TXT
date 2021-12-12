@@ -5,10 +5,10 @@
 1. **DONE** `Add include file` should be moved to LSP via new event `wxEVT_LSP_FIND_HEADER`
 2. `Outline Plugin` -> move to LSP
 3. **DONE** Fix code completion for header file names
-4. All the content of the `Code Generation / Refactoring` should be moved to LSP
+4. **DONE** All the content of the `Code Generation / Refactoring` should be moved to LSP
 5. **DONE** Remove parsing of files once saved (this is no longer needed)
 6. **DONE** Remove `symbols.db` creation (not needed anymore)
 7. Navigation bar -> move to LSP
 8. **DONE** #include code completion
-9. function calltip is not working after the first char is typed
+9. function calltip is not when another method call is inside the outer signature: `foo(GetName(),|` <-- will return calltip for GetName()
 10. Remove ParseThread class

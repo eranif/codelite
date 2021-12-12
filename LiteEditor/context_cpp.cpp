@@ -1862,14 +1862,12 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
     return prototypes.size();
 }
 
-void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
+void ContextCpp::DoAddFunctionImplementation(int line_number)
 {
     CHECK_JS_RETURN_VOID();
-
-    wxUnusedVar(e);
-    clEditor& rCtrl = GetCtrl();
     VALIDATE_WORKSPACE();
 
+    clEditor& rCtrl = GetCtrl();
     std::vector<TagEntryPtr> prototypes;
     std::vector<TagEntryPtr> functions;
     wxString otherfile;
@@ -1900,7 +1898,9 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
         if(scopeName == t->GetScope()) {
             if(implHash.count(t->GetDisplayName()) == 0) {
                 // this prototype does not have an implementation
-                unimplPrototypes.push_back(t);
+                if(line_number == wxNOT_FOUND || t->GetLine() == line_number) {
+                    unimplPrototypes.push_back(t);
+                }
             }
         }
     }
@@ -1938,105 +1938,8 @@ void ContextCpp::OnAddMultiImpl(wxCommandEvent& e)
     }
 }
 
-void ContextCpp::OnAddImpl(wxCommandEvent& e)
-{
-    CHECK_JS_RETURN_VOID();
-
-    wxUnusedVar(e);
-    clEditor& rCtrl = GetCtrl();
-    VALIDATE_WORKSPACE();
-
-    std::vector<TagEntryPtr> prototypes;
-    std::vector<TagEntryPtr> functions;
-    wxString otherfile;
-    if(DoGetEntriesForHeaderAndImpl(prototypes, functions, otherfile) == 0) {
-        wxMessageBox(_("No prototypes were found"), "CodeLite", wxICON_INFORMATION | wxOK);
-        return;
-    }
-
-    // get expression
-    int pos = rCtrl.GetCurrentPos();
-    int line_number = rCtrl.LineFromPos(pos);
-    ++line_number; // ctags report 1-based line numbers
-
-    // See if we can find a function on this line
-    TagEntryPtr prototypeTag;
-    wxString normalizedSignature;
-    for(auto t : prototypes) {
-        if(t->GetLine() > line_number) {
-            break;
-        }
-        if(t->GetLine() == line_number) {
-            prototypeTag = t;
-            normalizedSignature = TagsManagerST::Get()->NormalizeFunctionSig(t->GetSignature());
-            break;
-        }
-    }
-
-    if(!prototypeTag) {
-        wxMessageBox(_("No function was found at the current caret line"), "CodeLite", wxICON_INFORMATION | wxOK);
-        return;
-    }
-
-    // Check for implementations
-    TagEntryPtr implTag;
-    for(auto t : functions) {
-        if(t->GetPath() == prototypeTag->GetPath()) {
-            wxString signature;
-            signature = TagsManagerST::Get()->NormalizeFunctionSig(t->GetSignature());
-            if(signature == normalizedSignature) {
-                implTag = prototypeTag;
-                break;
-            }
-        }
-    }
-
-    if(implTag) {
-        wxMessageBox(_("Function ") + prototypeTag->GetFullDisplayName() + _(" already has an implementation"),
-                     "CodeLite", wxOK | wxICON_INFORMATION);
-        return;
-    }
-
-    // create the functions body
-    // replace the function signature with the normalized one, so default values
-    // will not appear in the function implementation
-    prototypeTag->SetSignature(normalizedSignature);
-    wxString body = TagsManagerST::Get()->FormatFunction(prototypeTag, FunctionFormat_Impl);
-
-    // if no swapped file is found, use the current file
-    if(otherfile.IsEmpty()) {
-        otherfile = rCtrl.GetFileName().GetFullPath();
-    }
-
-    MoveFuncImplDlg dlg(EventNotifier::Get()->TopFrame(), body, otherfile);
-    dlg.SetTitle(_("Add Function Implementation"));
-    if(dlg.ShowModal() == wxID_OK) {
-        // get the updated data
-        otherfile = dlg.GetFileName();
-        body = dlg.GetText();
-        int insertedLine = wxNOT_FOUND;
-
-        // Open the C++ file
-        clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(otherfile, wxEmptyString, 0);
-        if(!editor) {
-            return;
-        }
-
-        // Inser the new functions at the proper location
-        wxString sourceContent = editor->GetText();
-        TagsManagerST::Get()->InsertFunctionImpl(prototypeTag->GetScope(), body, otherfile, sourceContent,
-                                                 insertedLine);
-
-        {
-            clEditorStateLocker locker(editor->GetCtrl());
-            editor->SetText(sourceContent);
-        }
-
-        if(insertedLine != wxNOT_FOUND) {
-            editor->CenterLine(insertedLine);
-        }
-    }
-}
+void ContextCpp::OnAddMultiImpl(wxCommandEvent& e) { DoAddFunctionImplementation(wxNOT_FOUND); }
+void ContextCpp::OnAddImpl(wxCommandEvent& e) { DoAddFunctionImplementation(GetCtrl().GetCurrentLine() + 1); }
 
 void ContextCpp::DoFormatEditor(clEditor* editor)
 {

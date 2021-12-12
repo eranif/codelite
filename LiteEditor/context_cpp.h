@@ -155,6 +155,11 @@ private:
     void DoOpenWorkspaceFile();
     void DoSetProjectPaths();
     bool DoGetSingatureRange(int line, int& start, int& end, clEditor* ctrl);
+    /**
+     * @brief add missing implementaions. If line_number is provided
+     * then only add the function found on this line number
+     */
+    void DoAddFunctionImplementation(int line_number = wxNOT_FOUND);
 
 public:
     void DoMakeDoxyCommentString(DoxygenComment& dc, const wxString& blockPrefix, wxChar keywordPrefix);

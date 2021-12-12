@@ -91,6 +91,7 @@ class SettersGettersDlg : public SettersGettersBaseDlg
 
     std::vector<Candidate> m_candidates;
     std::vector<TagEntryPtr> m_members;
+    std::vector<TagEntryPtr> m_existing_functions;
     wxFileName m_file;
     int m_lineno;
     std::map<wxString, TagEntryPtr> m_tagsMap;
@@ -133,6 +134,7 @@ public:
     wxString GetGenCode();
     bool GetFormatText() const { return m_checkBoxForamtFileWhenDone->IsChecked(); }
 
-    bool Init(const std::vector<TagEntryPtr>& tags, const wxFileName& file, int lineno);
+    bool Init(const std::vector<TagEntryPtr>& tags, const std::vector<TagEntryPtr>& existing_functions,
+              const wxFileName& file, int lineno);
 };
 #endif // __setters_getters_dlg__

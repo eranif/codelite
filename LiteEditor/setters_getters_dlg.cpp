@@ -22,19 +22,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "setters_getters_dlg.h"
 #include "bitmap_loader.h"
 #include "cl_config.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "fileutils.h"
+#include "globals.h"
 #include "language.h"
 #include "macros.h"
 #include "pluginmanager.h"
 #include "precompiled_header.h"
-#include "setters_getters_dlg.h"
 #include "windowattrmanager.h"
 #include "wx/tokenzr.h"
-#include "globals.h"
 
 //----------------------------------------------------
 
@@ -51,11 +51,13 @@ SettersGettersDlg::SettersGettersDlg(wxWindow* parent)
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-bool SettersGettersDlg::Init(const std::vector<TagEntryPtr>& tags, const wxFileName& file, int lineno)
+bool SettersGettersDlg::Init(const std::vector<TagEntryPtr>& tags, const std::vector<TagEntryPtr>& existing_functions,
+                             const wxFileName& file, int lineno)
 {
     m_file = file;
     m_lineno = lineno;
     m_members = tags;
+    m_existing_functions = existing_functions;
     return BuildTree() > 0;
 }
 
@@ -71,10 +73,14 @@ wxString SettersGettersDlg::GenerateFunctions()
     m_checkForDuplicateEntries = true;
     wxString code;
     GenerateSetters(code);
-    if(code.IsEmpty() == false) { code << wxT("\n\n"); }
+    if(code.IsEmpty() == false) {
+        code << wxT("\n\n");
+    }
     wxString settersCode;
     GenerateGetters(settersCode);
-    if(settersCode.IsEmpty() == false) { code << settersCode << wxT("\n"); }
+    if(settersCode.IsEmpty() == false) {
+        code << settersCode << wxT("\n");
+    }
     m_checkForDuplicateEntries = old_value;
     return code;
 }
@@ -87,7 +93,9 @@ void SettersGettersDlg::GenerateGetters(wxString& code)
         SettersGettersTreeData* data = GetItemData(i);
         if(data && (data->m_kind == SettersGettersTreeData::Kind_Getter) && data->m_checked) {
             wxString getter_code = GenerateGetter(data->m_tag, already_exists, display_name);
-            if(!already_exists) { code << getter_code << "\n"; }
+            if(!already_exists) {
+                code << getter_code << "\n";
+            }
         }
     }
 }
@@ -100,7 +108,9 @@ void SettersGettersDlg::GenerateSetters(wxString& code)
         SettersGettersTreeData* data = GetItemData(i);
         if(data && (data->m_kind == SettersGettersTreeData::Kind_Setter) && data->m_checked) {
             wxString setter_code = GenerateSetter(data->m_tag, already_exists, display_name);
-            if(!already_exists) { code << setter_code << "\n"; }
+            if(!already_exists) {
+                code << setter_code << "\n";
+            }
         }
     }
 }
@@ -147,7 +157,9 @@ wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag, bool& alreadyExist, 
             method_signature << wxT("(");
         }
 
-        if(!scope.IsEmpty() && !(scope == wxT("<global>"))) { method_signature << scope << wxT("::"); }
+        if(!scope.IsEmpty() && !(scope == wxT("<global>"))) {
+            method_signature << scope << wxT("::");
+        }
 
         method_signature << _U(var.m_type.c_str()) << _U(var.m_templateDecl.c_str()) << _U(var.m_starAmp.c_str());
         if(var.m_isBasicType) {
@@ -171,7 +183,9 @@ wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag, bool& alreadyExist, 
 
         // add the implementation
         func << wxT(" {this->") << _U(var.m_name.c_str()) << wxT(" = ") << tmpName << wxT(";");
-        if(returnSelf) { func << " return *this;"; }
+        if(returnSelf) {
+            func << " return *this;";
+        }
         func << "}";
 
         if(m_checkForDuplicateEntries) {
@@ -211,12 +225,16 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool& alreadyExist, 
 
         if(!var.m_isPtr && !var.m_isBasicType) {
             func << wxT("const ");
-            if(!scope.IsEmpty() && !(scope == wxT("<global>"))) { func << scope << wxT("::"); }
+            if(!scope.IsEmpty() && !(scope == wxT("<global>"))) {
+                func << scope << wxT("::");
+            }
             func << _U(var.m_type.c_str()) << _U(var.m_templateDecl.c_str()) << _U(var.m_starAmp.c_str()) << wxT("& ");
 
         } else {
             // generate different code for pointer
-            if(!scope.IsEmpty() && !(scope == wxT("<global>"))) { func << scope << wxT("::"); }
+            if(!scope.IsEmpty() && !(scope == wxT("<global>"))) {
+                func << scope << wxT("::");
+            }
             func << _U(var.m_type.c_str()) << _U(var.m_templateDecl.c_str()) << _U(var.m_starAmp.c_str()) << wxT(" ");
         }
 
@@ -224,7 +242,9 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool& alreadyExist, 
         // Make sure that boolean getters are treated differently
         // by making the getter in the format of 'IsXXX' or 'isXXX'
         wxString prefix = wxT("get");
-        if(isBool) { prefix = wxT("is"); }
+        if(isBool) {
+            prefix = wxT("is");
+        }
 
         if(startWithUpper) {
             wxString captializedPrefix = prefix.Mid(0, 1);
@@ -236,7 +256,9 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool& alreadyExist, 
         FormatName(name);
 
         method_name << prefix; // Add the "Get"
-        if(midFrom) { name = name.Mid(midFrom); }
+        if(midFrom) {
+            name = name.Mid(midFrom);
+        }
         method_name << name; // Add the name
 
         // add the method name
@@ -311,13 +333,14 @@ void SettersGettersDlg::OnUpdatePreview(wxCommandEvent& e)
 
 bool SettersGettersDlg::DoCheckExistance(const wxString& scope, const wxString& name, const wxString& method_signature)
 {
-    std::vector<TagEntryPtr> tmp_tags;
-    TagsManagerST::Get()->FindByNameAndScope(name, scope.IsEmpty() ? wxT("<global>") : scope, tmp_tags);
-    for(size_t i = 0; i < tmp_tags.size(); i++) {
-        TagEntryPtr t = tmp_tags.at(i);
+    wxString sig_two = TagsManagerST::Get()->NormalizeFunctionSig(method_signature);
+
+    for(size_t i = 0; i < m_existing_functions.size(); i++) {
+        TagEntryPtr t = m_existing_functions[i];
         wxString sig_one = TagsManagerST::Get()->NormalizeFunctionSig(t->GetSignature());
-        wxString sig_two = TagsManagerST::Get()->NormalizeFunctionSig(method_signature);
-        if(sig_one == sig_two) { return true; }
+        if((sig_one == sig_two) && name == t->GetName()) {
+            return true;
+        }
     }
     return false;
 }
@@ -354,7 +377,8 @@ int SettersGettersDlg::BuildTree()
 
         wxString getter = GenerateGetter(tmpTags.at(i), getter_exist, getter_display_name);
         wxString setter = GenerateSetter(tmpTags.at(i), setter_exist, setter_display_name);
-        if(getter_exist && setter_exist) continue;
+        if(getter_exist && setter_exist)
+            continue;
 
         m_members.push_back(tmpTags.at(i));
         Candidate candidate;
@@ -451,9 +475,12 @@ void SettersGettersDlg::OnButtonOk(wxCommandEvent& e) { e.Skip(); }
 SettersGettersDlg::~SettersGettersDlg()
 {
     size_t flags(0);
-    if(m_checkStartWithUppercase->IsChecked()) flags |= SettersGetterData::FunctionStartWithUpperCase;
-    if(m_checkBoxForamtFileWhenDone->IsChecked()) flags |= SettersGetterData::FormatFileWhenDone;
-    if(m_checkBoxReturnSelf->IsChecked()) flags |= SettersGetterData::SettersReturnReferenceToSelf;
+    if(m_checkStartWithUppercase->IsChecked())
+        flags |= SettersGetterData::FunctionStartWithUpperCase;
+    if(m_checkBoxForamtFileWhenDone->IsChecked())
+        flags |= SettersGetterData::FormatFileWhenDone;
+    if(m_checkBoxReturnSelf->IsChecked())
+        flags |= SettersGetterData::SettersReturnReferenceToSelf;
 
     m_settings.SetFlags(flags);
     clConfig::Get().WriteItem(&m_settings);
@@ -468,7 +495,9 @@ wxString SettersGettersDlg::GetGenCode()
 void SettersGettersDlg::OnValueChanged(wxDataViewEvent& event)
 {
     SettersGettersTreeData* data = GetItemData(event.GetItem());
-    if(!data) { return; }
+    if(!data) {
+        return;
+    }
     data->m_checked = m_dvListCtrl->IsItemChecked(event.GetItem());
 }
 

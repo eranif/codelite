@@ -1303,33 +1303,27 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
     }
 
     TagsManager* tagmgr = TagsManagerST::Get();
-    std::vector<TagEntryPtr> tags;
     // get the scope name that the caret is currently at
 
     wxString text = editor.GetTextRange(0, pos);
     wxString scopeName = tagmgr->GetScopeName(text);
-    tagmgr->TagsByScope(scopeName, wxT("member"), tags, false, false);
-    if(tags.empty()) {
-        return;
+    std::vector<TagEntryPtr> tags =
+        TagsManagerST::Get()->ParseBuffer(editor.GetText(), editor.GetFileName().GetFullPath());
+
+    // filter all tags that are do not belong to the current scope
+    vector<TagEntryPtr> function_tags; // both prototypes + definitions
+    vector<TagEntryPtr> member_tags;   // member variables
+    for(TagEntryPtr tag : tags) {
+        if(tag->GetScope() == scopeName) {
+            if(tag->GetKind() == "member") {
+                member_tags.push_back(tag);
+            } else if(tag->IsMethod()) {
+                function_tags.push_back(tag);
+            }
+        }
     }
 
-    std::vector<TagEntryPtr> classtags;
-    tagmgr->FindByPath(scopeName, classtags);
-    if(classtags.empty() || classtags.size() > 1)
-        return;
-
-    TagEntryPtr tag = classtags.at(0);
-    if(tag->GetFile().CmpNoCase(editor.GetFileName().GetFullPath()) != 0) {
-
-        wxString msg;
-        msg << _("This file does not seem to contain the declaration for '") << tag->GetName() << wxT("'\n");
-        msg << _("The declaration of '") << tag->GetName() << _("' is located at '") << tag->GetFile() << wxT("'\n");
-        msg << _("Would you like CodeLite to open this file for you?");
-
-        if(wxMessageBox(msg, _("CodeLite"), wxYES_NO) == wxYES) {
-            wxString projectName = ManagerST::Get()->GetProjectNameByFile(tag->GetFile());
-            clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), projectName, tag->GetLine());
-        }
+    if(member_tags.empty()) {
         return;
     }
 
@@ -1337,7 +1331,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
 
     // get the file name and line where to insert the setters getters
     SettersGettersDlg dlg(EventNotifier::Get()->TopFrame());
-    if(!dlg.Init(tags, tag->GetFile(), lineno)) {
+    if(!dlg.Init(member_tags, function_tags, editor.GetFileName(), lineno)) {
         ::wxMessageBox(_("Seems like you have all the getters/setters you need..."), _("codelite"));
         return;
     }

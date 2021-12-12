@@ -1575,7 +1575,6 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
     if(word.IsEmpty())
         return;
 
-    std::vector<TagEntryPtr> tags;
     int line = rCtrl.LineFromPosition(rCtrl.GetCurrentPosition()) + 1;
 
     // get this scope name
@@ -1589,73 +1588,68 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
     }
 
     // Find the tag
-    TagsManagerST::Get()->TagsByScopeAndName(scopeName, word, tags, ExactMatch);
-    if(tags.empty())
-        return;
+    std::vector<TagEntryPtr> tags =
+        TagsManagerST::Get()->ParseBuffer(GetCtrl().GetText(), GetCtrl().GetFileName(), "f");
+    CHECK_EXPECTED_RETURN(tags.empty(), false);
 
     TagEntryPtr tag;
     bool match(false);
-    for(std::vector<TagEntryPtr>::size_type i = 0; i < tags.size(); i++) {
-        if(tags.at(i)->GetName() == word && tags.at(i)->GetLine() == line && tags.at(i)->GetKind() == wxT("function") &&
-           tags.at(i)->GetScope() == scopeName) {
+    for(auto t : tags) {
+        if(t->GetName() == word && t->GetLine() == line && t->GetKind() == "function" && t->GetScope() == scopeName) {
             // we got a match
-            tag = tags.at(i);
+            tag = t;
             match = true;
             break;
         }
     }
+    CHECK_EXPECTED_RETURN(match, true);
 
-    if(match) {
+    long curPos = word_end;
+    long blockEndPos(wxNOT_FOUND);
+    long blockStartPos(wxNOT_FOUND);
+    wxString content;
 
-        long curPos = word_end;
-        long blockEndPos(wxNOT_FOUND);
-        long blockStartPos(wxNOT_FOUND);
-        wxString content;
+    CHECK_EXPECTED_RETURN(DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content), true);
 
-        if(DoGetFunctionBody(curPos, blockStartPos, blockEndPos, content)) {
+    // create the functions body
+    wxString body = TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
+    // remove the empty content provided by this function
+    body = body.BeforeLast(wxT('{'));
+    body = body.Trim().Trim(false);
+    body.Prepend(wxT("\n"));
+    body << content << wxT("\n");
 
-            // create the functions body
-            wxString body = TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
-            // remove the empty content provided by this function
-            body = body.BeforeLast(wxT('{'));
-            body = body.Trim().Trim(false);
-            body.Prepend(wxT("\n"));
-            body << content << wxT("\n");
+    wxString targetFile;
+    FindSwappedFile(rCtrl.GetFileName(), targetFile);
+    MoveFuncImplDlg dlg(EventNotifier::Get()->TopFrame(), body, targetFile);
+    CHECK_EXPECTED_RETURN(dlg.ShowModal(), wxID_OK);
 
-            wxString targetFile;
-            FindSwappedFile(rCtrl.GetFileName(), targetFile);
-            MoveFuncImplDlg dlg(EventNotifier::Get()->TopFrame(), body, targetFile);
-            if(dlg.ShowModal() == wxID_OK) {
-                // get the updated data
-                targetFile = dlg.GetFileName();
-                body = dlg.GetText();
+    // get the updated data
+    targetFile = dlg.GetFileName();
+    body = dlg.GetText();
 
-                // Place the implementation in its new home
-                clEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile);
-                if(implEditor) {
+    // Place the implementation in its new home
+    clEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(targetFile);
+    CHECK_PTR_RET(implEditor);
 
-                    // Ensure that the file state is remained
-                    int insertedLine = wxNOT_FOUND;
-                    {
-                        clEditorStateLocker locker(implEditor->GetCtrl());
+    // Ensure that the file state is remained
+    int insertedLine = wxNOT_FOUND;
+    {
+        clEditorStateLocker locker(implEditor->GetCtrl());
 
-                        wxString sourceContent = implEditor->GetText();
-                        TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent,
-                                                                 insertedLine);
-                        implEditor->SetText(sourceContent);
-                        DoFormatEditor(implEditor);
+        wxString sourceContent = implEditor->GetText();
+        TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
+        implEditor->SetText(sourceContent);
+        DoFormatEditor(implEditor);
 
-                        // Remove the current body and replace it with ';'
-                        rCtrl.SetTargetEnd(blockEndPos);
-                        rCtrl.SetTargetStart(blockStartPos);
-                        rCtrl.ReplaceTarget(wxT(";"));
-                    }
-                    if(insertedLine != wxNOT_FOUND) {
-                        implEditor->CenterLine(insertedLine);
-                    }
-                }
-            }
-        }
+        // Remove the current body and replace it with ';'
+        rCtrl.SetTargetEnd(blockEndPos);
+        rCtrl.SetTargetStart(blockStartPos);
+        rCtrl.ReplaceTarget(wxT(";"));
+    }
+
+    if(insertedLine != wxNOT_FOUND) {
+        implEditor->CenterLine(insertedLine);
     }
 }
 

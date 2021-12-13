@@ -47,6 +47,7 @@ private:
     void DoRefresh();
     void CreateBookmarksBitmap();
     const clEditorBar::ScopeEntry& FindByLine(int lineNumber) const;
+    void UpdateScope();
 
 public:
     clEditorBar(wxWindow* parent);

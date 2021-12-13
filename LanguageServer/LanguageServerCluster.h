@@ -8,7 +8,9 @@
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "entry.h"
+
 #include <unordered_set>
+#include <vector>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wxStringHash.h>
@@ -23,6 +25,7 @@ class LanguageServerCluster : public wxEvtHandler
 
     std::unordered_map<wxString, LanguageServerProtocol::Ptr_t> m_servers;
     std::unordered_map<wxString, CrashInfo> m_restartCounters;
+    std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
     LanguageServerPlugin* m_plugin = nullptr;
 
 public:
@@ -60,13 +63,14 @@ protected:
     void OnCompileCommandsGenerated(clCommandEvent& event);
     void OnSetDiagnostics(LSPEvent& event);
     void OnClearDiagnostics(LSPEvent& event);
-    void OnOutlineSymbols(LSPEvent& event);
+    void OnQuickOutlineView(LSPEvent& event);
+    void OnOulineViewSymbols(LSPEvent& event);
     void OnSemanticTokens(LSPEvent& event);
     void OnLogMessage(LSPEvent& event);
     void OnDocumentSymbolsForHighlight(LSPEvent& event);
     void OnBuildEnded(clBuildEvent& event);
     void OnOpenResource(wxCommandEvent& event);
-
+    void OnEditorClosed(clCommandEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     /**
      * @brief find an editor either by local or remote path

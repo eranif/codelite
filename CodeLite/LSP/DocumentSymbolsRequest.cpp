@@ -19,8 +19,8 @@ FileLogger& operator<<(FileLogger& logger, const std::vector<LSP::SymbolInformat
 }
 } // namespace
 
-LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxString& filename, bool forSemanticHighlight)
-    : m_forSemanticHighlight(forSemanticHighlight)
+LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxString& filename, size_t context)
+    : m_context(context)
 {
     SetMethod("textDocument/documentSymbol");
     // set the params
@@ -46,27 +46,34 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
 
         clDEBUG1() << result.format() << endl;
         if(result[0].hasNamedObject("location")) {
-            // only SymbolInformation has the `location` property
-            // fire an event with all the symbols
-            LSPEvent event(m_forSemanticHighlight ? wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT
-                                                  : wxEVT_LSP_DOCUMENT_SYMBOLS);
-            event.GetSymbolsInformation().reserve(size);
-            event.SetFileName(m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath());
+            wxString filename = m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath();
+            std::vector<LSP::SymbolInformation> symbols;
+            symbols.reserve(size);
             for(int i = 0; i < size; ++i) {
                 SymbolInformation si;
                 si.FromJSON(result[i]);
-                event.GetSymbolsInformation().push_back(si);
+                symbols.push_back(si);
             }
 
             // sort the items by line position
-            auto& items = event.GetSymbolsInformation();
-            std::sort(items.begin(), items.end(), [=](const SymbolInformation& a, const SymbolInformation& b) -> int {
-                const LSP::Location& loc_a = a.GetLocation();
-                const LSP::Location& loc_b = b.GetLocation();
-                return loc_a.GetRange().GetStart().GetLine() < loc_b.GetRange().GetStart().GetLine();
-            });
-            clDEBUG1() << event.GetSymbolsInformation() << endl;
-            owner->QueueEvent(event.Clone());
+            std::sort(symbols.begin(), symbols.end(),
+                      [=](const SymbolInformation& a, const SymbolInformation& b) -> int {
+                          const LSP::Location& loc_a = a.GetLocation();
+                          const LSP::Location& loc_b = b.GetLocation();
+                          return loc_a.GetRange().GetStart().GetLine() < loc_b.GetRange().GetStart().GetLine();
+                      });
+            clDEBUG1() << symbols << endl;
+
+            // fire event per context
+            if(m_context & CONTEXT_SEMANTIC_HIGHLIGHT) {
+                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
+            }
+            if(m_context & CONTEXT_QUICK_OUTLINE) {
+                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
+            }
+            if(m_context & CONTEXT_OUTLINE_VIEW) {
+                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+            }
         } else {
             std::vector<DocumentSymbol> symbols;
             symbols.reserve(size);
@@ -78,4 +85,14 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
             wxUnusedVar(symbols);
         }
     }
+}
+
+void LSP::DocumentSymbolsRequest::QueueEvent(wxEvtHandler* owner, const std::vector<LSP::SymbolInformation>& symbols,
+                                             const wxString& filename, const wxEventType& event_type)
+{
+    LSPEvent event{ event_type };
+    event.GetSymbolsInformation().reserve(symbols.size());
+    event.GetSymbolsInformation().insert(event.GetSymbolsInformation().end(), symbols.begin(), symbols.end());
+    event.SetFileName(filename);
+    owner->QueueEvent(event.Clone());
 }

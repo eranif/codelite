@@ -1,6 +1,7 @@
 #ifndef LANGUAG_ESERVER_PROTOCOL_H
 #define LANGUAG_ESERVER_PROTOCOL_H
 
+#include "LSP/DocumentSymbolsRequest.hpp"
 #include "LSP/IPathConverter.hpp"
 #include "LSP/MessageWithParams.h"
 #include "LSPNetwork.h"
@@ -271,8 +272,10 @@ public:
 
     /**
      * @brief get list of symbols for the current editor
+     * @param editor the current editor
+     * @param context_flags request context. See LSP::DocumentSymbolsRequest::eDocumentSymbolsContext (bit or'd)
      */
-    void DocumentSymbols(IEditor* editor, bool forSemanticHighlight);
+    void DocumentSymbols(IEditor* editor, size_t context_flags);
 
     // helpers
     bool IsCapabilitySupported(const wxString& name) const;

@@ -798,21 +798,22 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
     IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(GetEditorFilePath(editor))) {
+    if(CanHandle(GetEditorFilePath(editor)) && IsDocumentSymbolsSupported()) {
         // this event is ours to handle
         event.Skip(false);
-        DocumentSymbols(editor, false);
+        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE |
+                                    LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
     }
 }
 
-void LanguageServerProtocol::DocumentSymbols(IEditor* editor, bool forSemanticHighlight)
+void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_flags)
 {
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
     const wxString& filename = GetEditorFilePath(editor);
     LSP::MessageWithParams::Ptr_t req =
-        LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename, forSemanticHighlight));
+        LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename, context_flags));
     QueueMessage(req);
 }
 
@@ -867,11 +868,15 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
         LSP::DidChangeTextDocumentRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
         QueueMessage(req);
+        // send an extra call for document symbols
+        // we will cache this later
+        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
 
     } else if(IsDocumentSymbolsSupported()) {
         clDEBUG() << GetLogPrefix() << "Sending semantic tokens request (DocumentSymbols)" << endl;
-        // use DocumentSymbol instead
-        DocumentSymbols(editor, true);
+        // Use DocumentSymbol instead
+        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT |
+                                    LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
     }
 }
 

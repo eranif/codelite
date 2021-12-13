@@ -31,6 +31,8 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
 {
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
+
     EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                &LanguageServerCluster::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
@@ -46,7 +48,8 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     Bind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
     Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
-    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LanguageServerCluster::OnQuickOutlineView, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LanguageServerCluster::OnOulineViewSymbols, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
     Bind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
     Bind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
@@ -56,6 +59,8 @@ LanguageServerCluster::~LanguageServerCluster()
 {
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
+
     EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                  &LanguageServerCluster::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
@@ -72,7 +77,8 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
     Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
-    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS, &LanguageServerCluster::OnOutlineSymbols, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LanguageServerCluster::OnQuickOutlineView, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LanguageServerCluster::OnOulineViewSymbols, this);
     Unbind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
     Unbind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
@@ -503,12 +509,14 @@ void LanguageServerCluster::OnWorkspaceClosed(clWorkspaceEvent& event)
     event.Skip();
     LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
     this->StopAll();
+    m_symbols_to_file_cache.clear();
 }
 
 void LanguageServerCluster::OnWorkspaceOpen(clWorkspaceEvent& event)
 {
     event.Skip();
     this->Reload();
+    m_symbols_to_file_cache.clear();
     DiscoverWorkspaceType();
 }
 
@@ -598,9 +606,19 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
     clGetManager()->SetStatusMessage(_("Ready"));
 }
 
-void LanguageServerCluster::OnOutlineSymbols(LSPEvent& event)
+void LanguageServerCluster::OnOulineViewSymbols(LSPEvent& event)
 {
-    event.Skip();
+    // TODO: cache the symbols
+    // we use it for outline + editor bar
+    if(m_symbols_to_file_cache.count(event.GetFileName())) {
+        m_symbols_to_file_cache.erase(event.GetFileName());
+    }
+    m_symbols_to_file_cache.insert({ event.GetFileName(), event.GetSymbolsInformation() });
+    clDEBUG() << "LSP: cached symbols for file" << event.GetFileName() << endl;
+}
+
+void LanguageServerCluster::OnQuickOutlineView(LSPEvent& event)
+{
     LSPOutlineViewDlg dlg(EventNotifier::Get()->TopFrame(), event.GetSymbolsInformation());
     dlg.ShowModal();
 }
@@ -799,4 +817,11 @@ void LanguageServerCluster::DiscoverWorkspaceType()
         },
         files, this);
     thr.detach();
+}
+
+void LanguageServerCluster::OnEditorClosed(clCommandEvent& event)
+{
+    event.Skip();
+    // clear the cache for the closed file
+    m_symbols_to_file_cache.erase(event.GetFileName());
 }

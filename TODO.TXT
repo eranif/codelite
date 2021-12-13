@@ -10,5 +10,5 @@
 6. **DONE** Remove `symbols.db` creation (not needed anymore)
 7. Navigation bar -> move to LSP
 8. **DONE** #include code completion
-9. function calltip is not when another method call is inside the outer signature: `foo(GetName(),|` <-- will return calltip for GetName()
+9. **DONE** function calltip is not when another method call is inside the outer signature: `foo(GetName(),|` <-- will return calltip for GetName()
 10. Remove ParseThread class

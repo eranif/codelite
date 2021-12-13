@@ -75,12 +75,20 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
 
     int i = static_cast<int>(tokens.size() - 1);
     bool cont = true;
+    int parentheses_depth = 0;
     if(for_calltip) {
         // read backwards until we find the first open parentheses
         for(; (i >= 0) && cont; --i) {
             switch(tokens[i].second) {
             case '(':
-                cont = false;
+                if(parentheses_depth == 0) {
+                    cont = false;
+                } else {
+                    parentheses_depth--;
+                }
+                break;
+            case ')':
+                parentheses_depth++;
                 break;
             default:
                 break;

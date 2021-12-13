@@ -1,8 +1,8 @@
+#include "clEditorBar.h"
 #include "ColoursAndFontsManager.h"
 #include "IWorkspace.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
-#include "clEditorBar.h"
 #include "clSystemSettings.h"
 #include "clTabRenderer.h"
 #include "clThemeUpdater.h"
@@ -44,6 +44,7 @@ clEditorBar::clEditorBar(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clEditorBar::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_MARKER_CHANGED, &clEditorBar::OnMarkerChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &clEditorBar::OnUpdate, this);
     m_buttonScope->SetBitmap(m_functionBmp);
     m_buttonScope->SetHasDropDownMenu(true);
     m_buttonFilePath->SetHasDropDownMenu(true);
@@ -57,6 +58,7 @@ clEditorBar::~clEditorBar()
     EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clEditorBar::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clEditorBar::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_MARKER_CHANGED, &clEditorBar::OnMarkerChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &clEditorBar::OnUpdate, this);
 }
 
 void clEditorBar::OnEditorChanged(wxCommandEvent& e)
@@ -65,13 +67,13 @@ void clEditorBar::OnEditorChanged(wxCommandEvent& e)
     CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
-void clEditorBar::SetMessage(const wxString& className, const wxString& function)
+void clEditorBar::SetScopes(const wxString& filename, const clEditorBar::ScopeEntry::vec_t& entries)
 {
-    if((className != m_classname) || (function != m_function)) {
-        m_classname = className;
-        m_function = function;
-        CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
-    }
+    m_scopes = entries;
+    m_scopesFile = filename;
+    std::sort(m_scopes.begin(), m_scopes.end(),
+              [](const ScopeEntry& a, const ScopeEntry& b) { return a.line_number < b.line_number; });
+    CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
 void clEditorBar::DoShow(bool s)
@@ -143,24 +145,24 @@ void clEditorBar::DoRefreshColoursAndFonts()
         m_buttonFilePath->SetText(filepath);
         m_filename = editor->GetFileName().GetFullPath();
 
-        wxString scope;
-        if(!m_classname.IsEmpty()) {
-            scope << m_classname << "::";
-        }
-        if(!m_function.IsEmpty()) {
-            scope << m_function;
-        }
-        if(scope.IsEmpty()) {
+        // update the scope
+        bool hide_scope_button = m_scopes.empty() || m_scopesFile != editor->GetFileName().GetFullPath();
+        if(hide_scope_button) {
             m_buttonScope->Hide();
         } else {
             if(!m_buttonScope->IsShown()) {
                 m_buttonScope->Show();
             }
-            m_buttonScope->SetText(scope);
+            const auto& match = FindByLine(editor->GetCurrentLine());
+            if(match.is_ok()) {
+                m_buttonScope->SetText(match.display_string);
+            } else {
+                m_buttonScope->SetText(wxEmptyString);
+            }
         }
     } else {
-        m_classname.clear();
-        m_function.clear();
+        m_scopes.clear();
+        m_scopesFile.clear();
         m_buttonScope->SetText("");
         m_buttonFilePath->SetText("");
         m_buttonBookmarks->SetText("");
@@ -329,3 +331,27 @@ void clEditorBar::OnButtonScope(wxCommandEvent& event)
 void clEditorBar::SetLabel(const wxString& text) { m_labelText->SetLabel(text); }
 
 wxString clEditorBar::GetLabel() const { return m_labelText->GetLabel(); }
+
+void clEditorBar::OnUpdate(clCodeCompletionEvent& event) { wxUnusedVar(event); }
+
+thread_local clEditorBar::ScopeEntry InvalidScope;
+
+const clEditorBar::ScopeEntry& clEditorBar::FindByLine(int lineNumber) const
+{
+    // lower_bound: find the first entry that !(entry < val)
+    ScopeEntry search_me;
+    search_me.line_number = lineNumber;
+
+    // search for the first entry that its line_number is greater than lineNumber
+    auto iter =
+        std::upper_bound(m_scopes.begin(), m_scopes.end(), search_me,
+                         [&](const ScopeEntry& a, const ScopeEntry& b) { return a.line_number < b.line_number; });
+    if(iter != m_scopes.end()) {
+        return *iter;
+    } else if(!m_scopes.empty()) {
+        // take the last element
+        return m_scopes.back();
+    } else {
+        return InvalidScope;
+    }
+}

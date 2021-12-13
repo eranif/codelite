@@ -1,6 +1,7 @@
 #ifndef CLEDITORBAR_H
 #define CLEDITORBAR_H
 
+#include "cl_command_event.h"
 #include "drawingutils.h"
 #include "wxcrafter_plugin.h"
 #include <vector>
@@ -9,8 +10,18 @@
 
 class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
 {
-    wxString m_classname;
-    wxString m_function;
+public:
+    struct ScopeEntry {
+        wxString display_string;
+        int line_number = wxNOT_FOUND;
+        typedef std::vector<ScopeEntry> vec_t;
+        bool operator<(const ScopeEntry& right) const { return line_number < right.line_number; }
+        bool is_ok() const { return !display_string.empty() && line_number != wxNOT_FOUND; }
+    };
+
+private:
+    ScopeEntry::vec_t m_scopes;
+    wxString m_scopesFile;
     wxFont m_textFont;
     wxRect m_scopeRect;
     wxBitmap m_functionBmp;
@@ -35,11 +46,12 @@ private:
     void DoRefreshColoursAndFonts();
     void DoRefresh();
     void CreateBookmarksBitmap();
+    const clEditorBar::ScopeEntry& FindByLine(int lineNumber) const;
 
 public:
     clEditorBar(wxWindow* parent);
     virtual ~clEditorBar();
-    void SetMessage(const wxString& className, const wxString& function);
+    void SetScopes(const wxString& filename, const clEditorBar::ScopeEntry::vec_t& entries);
     bool ShouldShow() const { return m_shouldShow; }
     void DoShow(bool s);
     void SetLabel(const wxString& text);
@@ -53,5 +65,6 @@ protected:
     void OnMarkerChanged(clCommandEvent& event);
     void OnEditorChanged(wxCommandEvent& e);
     void OnThemeChanged(clCommandEvent& e);
+    void OnUpdate(clCodeCompletionEvent& event);
 };
 #endif // CLEDITORBAR_H

@@ -1,3 +1,4 @@
+#include "php_code_completion.h"
 #include "ColoursAndFontsManager.h"
 #include "PHPEntityBase.h"
 #include "PHPEntityClass.h"
@@ -15,7 +16,6 @@
 #include "globals.h"
 #include "jobqueue.h"
 #include "macros.h"
-#include "php_code_completion.h"
 #include "php_helpers.h"
 #include "php_parser_thread.h"
 #include "php_strings.h"
@@ -71,7 +71,7 @@ PHPCodeCompletion::PHPCodeCompletion()
                                   wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
 
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, clCommandEventHandler(PHPCodeCompletion::OnFileSaved), this);
-
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &PHPCodeCompletion::OnActiveEditorChanged, this);
     EventNotifier::Get()->Connect(wxEVT_CC_CODE_COMPLETE_LANG_KEYWORD,
                                   clCodeCompletionEventHandler(PHPCodeCompletion::OnCodeCompleteLangKeywords), NULL,
                                   this);
@@ -83,10 +83,6 @@ PHPCodeCompletion::PHPCodeCompletion()
     EventNotifier::Get()->Connect(wxEVT_CC_JUMP_HYPER_LINK,
                                   clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &PHPCodeCompletion::OnUpdateNavigationBar, this);
-    EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &PHPCodeCompletion::OnNavigationBarMenuShowing, this);
-    EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE,
-                               &PHPCodeCompletion::OnNavigationBarMenuSelectionMade, this);
 
     // code completion events
     Bind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
@@ -97,7 +93,7 @@ PHPCodeCompletion::PHPCodeCompletion()
 
 PHPCodeCompletion::~PHPCodeCompletion()
 {
-    EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &PHPCodeCompletion::OnUpdateNavigationBar, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &PHPCodeCompletion::OnActiveEditorChanged, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_WORKSPACE,
                                      wxCommandEventHandler(PHPCodeCompletion::OnRetagWorkspace), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CMD_RETAG_WORKSPACE_FULL,
@@ -115,9 +111,6 @@ PHPCodeCompletion::~PHPCodeCompletion()
     EventNotifier::Get()->Disconnect(wxEVT_CC_JUMP_HYPER_LINK,
                                      clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
-    EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &PHPCodeCompletion::OnNavigationBarMenuShowing, this);
-    EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE,
-                                 &PHPCodeCompletion::OnNavigationBarMenuSelectionMade, this);
     // code completion events
     Unbind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
     Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
@@ -197,7 +190,7 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
     wxString comment, docComment;
     docComment = entry->GetDocComment();
     if(docComment.IsEmpty() == false) {
-        docComment.Trim().Trim(false);          // The Doc comment
+        docComment.Trim().Trim(false);         // The Doc comment
         comment << docComment << wxT("\n==="); // HLine
     }
 
@@ -893,82 +886,29 @@ void PHPCodeCompletion::OnParseEnded(clParseEvent& event)
     m_lookupTable.RebuildClassCache();
 }
 
-void PHPCodeCompletion::OnUpdateNavigationBar(clCodeCompletionEvent& e)
-{
-    e.Skip();
-    if(!clGetManager()->GetNavigationBar()->IsShown())
-        return;
-    IEditor* active_editor = clGetManager()->GetActiveEditor();
-    IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
-    if(!editor || !active_editor || editor != active_editor)
-        return;
-    if(FileExtManager::GetTypeFromExtension(editor->GetFileName()) != FileExtManager::TypePhp)
-        return;
-
-    e.Skip(false);
-
-    // Fetch the function closest to the current file
-    PHPEntityBase::Ptr_t func = m_lookupTable.FindFunctionNearLine(editor->GetFileName(), e.GetLineNumber());
-    if(!func) {
-        clGetManager()->GetNavigationBar()->SetMessage("", "");
-        return;
-    }
-    wxString className, functionName;
-    functionName = func->GetShortName();
-
-    wxString fullname = func->GetFullName();
-    int where = fullname.rfind(functionName);
-    if(where != wxNOT_FOUND) {
-        fullname.RemoveLast(functionName.size());
-        if(fullname.EndsWith("\\")) {
-            fullname.RemoveLast();
-        }
-        className.swap(fullname);
-    }
-    clGetManager()->GetNavigationBar()->SetMessage(className, functionName);
-}
-
-void PHPCodeCompletion::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
-{
-    e.Skip();
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    if(!editor || FileExtManager::GetTypeFromExtension(editor->GetFileName()) != FileExtManager::TypePhp) {
-        m_currentNavBarFunctions.clear();
-        return;
-    }
-
-    const wxString& key = e.GetString();
-    if(m_currentNavBarFunctions.count(key) == 0) {
-        m_currentNavBarFunctions.clear();
-        return;
-    }
-
-    e.Skip(false); // ours to handle
-    PHPEntityBase::Ptr_t func = m_currentNavBarFunctions[key];
-    editor->FindAndSelect(func->GetShortName(), func->GetShortName(), editor->PosFromLine(func->GetLine() - 1),
-                          nullptr);
-    m_currentNavBarFunctions.clear();
-}
-
-void PHPCodeCompletion::OnNavigationBarMenuShowing(clContextMenuEvent& e)
+void PHPCodeCompletion::OnActiveEditorChanged(wxCommandEvent& e)
 {
     e.Skip();
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(!editor || FileExtManager::GetTypeFromExtension(editor->GetFileName()) != FileExtManager::TypePhp)
         return;
 
-    // Ours to handle, call Skip(false)
-    e.Skip(false);
-    m_currentNavBarFunctions.clear();
     PHPEntityBase::List_t functions;
     if(m_lookupTable.FindFunctionsByFile(editor->GetFileName(), functions) == 0) {
         return;
     }
 
-    wxMenu* menu = e.GetMenu();
-    std::for_each(functions.begin(), functions.end(), [&](PHPEntityBase::Ptr_t func) {
-        PHPEntityFunction* pFunc = func->Cast<PHPEntityFunction>();
-        menu->Append(wxID_ANY, pFunc->GetFullPath());
-        m_currentNavBarFunctions[pFunc->GetFullPath()] = func;
-    });
+    // prepare list of scopes and send them to the navigation bar
+    clEditorBar::ScopeEntry::vec_t scopes;
+    scopes.reserve(functions.size());
+
+    for(PHPEntityBase::Ptr_t entity : functions) {
+        if(!entity->Is(kEntityTypeFunction))
+            continue;
+        clEditorBar::ScopeEntry scope_entry;
+        scope_entry.line_number = entity->GetLine();
+        scope_entry.display_string = entity->GetDisplayName();
+        scopes.push_back(scope_entry);
+    }
+    clGetManager()->GetNavigationBar()->SetScopes(editor->GetFileName().GetFullPath(), scopes);
 }

@@ -113,12 +113,6 @@ private:
     void DoOpenFile(const wxString& filename, const wxString& content = "");
 
     /**
-     * @brief update the navigation bar (C++)
-     * @param editor
-     */
-    void UpdateNavBar(clEditor* editor);
-
-    /**
      * @brief display the welcome page
      */
     void ShowWelcomePage(bool show);

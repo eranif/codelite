@@ -29,6 +29,7 @@
 #include "PHPEntityBase.h"
 #include "PHPExpression.h"
 #include "PHPLookupTable.h"
+#include "ServiceProvider.h"
 #include "cl_command_event.h"
 #include "ieditor.h"
 #include "php_event.h"
@@ -38,7 +39,6 @@
 #include <cl_command_event.h>
 #include <smart_ptr.h>
 #include <vector>
-#include "ServiceProvider.h"
 
 struct PHPLocation {
     wxString what;     // Token name
@@ -100,9 +100,7 @@ private:
     void OnInsertDoxyBlock(clCodeCompletionEvent& e);
     void OnRetagWorkspace(wxCommandEvent& event);
     void OnParseEnded(clParseEvent& event);
-    void OnUpdateNavigationBar(clCodeCompletionEvent& e);
-    void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
-    void OnNavigationBarMenuShowing(clContextMenuEvent& e);
+    void OnActiveEditorChanged(wxCommandEvent& e);
 
     // Workspace events
     void OnFileSaved(clCommandEvent& event);

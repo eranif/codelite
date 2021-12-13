@@ -133,11 +133,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &MainBook::OnThemeChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
-    EventNotifier::Get()->Bind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, &MainBook::OnNavigationBarMenuSelectionMade,
-                               this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
 }
 
@@ -166,11 +162,7 @@ MainBook::~MainBook()
 
     EventNotifier::Get()->Unbind(wxEVT_DETACHED_EDITOR_CLOSED, &MainBook::OnDetachedEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_UPDATE_NAVBAR, &MainBook::OnUpdateNavigationBar, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SHOWING, &MainBook::OnNavigationBarMenuShowing, this);
-    EventNotifier::Get()->Unbind(wxEVT_NAVBAR_SCOPE_MENU_SELECTION_MADE, &MainBook::OnNavigationBarMenuSelectionMade,
-                                 this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
     if(m_findBar) {
         EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &MainBook::OnAllEditorClosed, this);
@@ -312,47 +304,6 @@ void MainBook::ClearFileHistory()
 }
 
 void MainBook::GetRecentlyOpenedFiles(wxArrayString& files) { files = clConfig::Get().GetRecentFiles(); }
-
-void MainBook::UpdateNavBar(clEditor* editor)
-{
-    TagEntryPtr tag = NULL;
-    if(m_navBar && m_navBar->IsShown()) {
-#if 0
-        if(editor) {
-            TagEntryPtrVector_t tags;
-            if(TagsManagerST::Get()->GetFileCache()->Find(editor->GetFileName(), tags,
-                                                          clCxxFileCacheSymbols::kFunctions)) {
-                // the tags are already sorted by line
-                // find the entry that is closest to the current line
-
-                // lower_bound: find the first entry that !(entry < val)
-                TagEntryPtr dummy(new TagEntry());
-                dummy->SetLine(editor->GetCurrentLine() + 2);
-                TagEntryPtrVector_t::iterator iter =
-                    std::lower_bound(tags.begin(), tags.end(), dummy,
-                                     [&](TagEntryPtr a, TagEntryPtr b) { return a->GetLine() < b->GetLine(); });
-                if(iter != tags.end()) {
-                    if(iter != tags.begin()) {
-                        std::advance(iter, -1); // we want the previous match
-                    }
-                    // we got a match
-                    tag = (*iter);
-                } else if(!tags.empty()) {
-                    // take the last element
-                    tag = tags.back();
-                }
-            } else {
-                TagsManagerST::Get()->GetFileCache()->RequestSymbols(editor->GetFileName());
-            }
-        }
-        if(tag) {
-            m_navBar->SetMessage(tag->GetScope(), tag->GetName());
-        } else {
-            m_navBar->SetMessage("", "");
-        }
-#endif
-    }
-}
 
 void MainBook::ShowNavBar(bool s)
 {
@@ -1570,26 +1521,6 @@ void MainBook::DoOpenFile(const wxString& filename, const wxString& content)
     }
 }
 
-void MainBook::OnUpdateNavigationBar(clCodeCompletionEvent& e)
-{
-    e.Skip();
-    clEditor* activeEditor = GetActiveEditor();
-    CHECK_PTR_RET(activeEditor);
-
-    // This event is no longer valid
-    if(activeEditor->GetCurrentLine() != e.GetLineNumber())
-        return;
-
-    FileExtManager::FileType ft = FileExtManager::GetTypeFromExtension(activeEditor->GetFileName());
-    if((ft != FileExtManager::TypeSourceC) && (ft != FileExtManager::TypeSourceCpp) &&
-       (ft != FileExtManager::TypeHeader))
-        return;
-
-    // A C++ file :)
-    e.Skip(false);
-    UpdateNavBar(activeEditor);
-}
-
 void MainBook::OnColoursAndFontsChanged(clCommandEvent& e)
 {
     e.Skip();
@@ -1603,28 +1534,6 @@ void MainBook::DoUpdateEditorsThemes()
     for(size_t i = 0; i < editors.size(); i++) {
         editors[i]->SetSyntaxHighlight(editors[i]->GetContext()->GetName());
     }
-}
-
-void MainBook::OnNavigationBarMenuShowing(clContextMenuEvent& e) { e.Skip(); }
-
-void MainBook::OnNavigationBarMenuSelectionMade(clCommandEvent& e)
-{
-    e.Skip();
-    const wxString& selection = e.GetString();
-    if(m_currentNavBarTags.count(selection) == 0) {
-        return;
-    }
-
-    TagEntryPtr tag = m_currentNavBarTags[selection];
-    // Ours to handle
-    e.Skip(false);
-
-    IEditor* editor = GetActiveEditor(true);
-    if(!editor) {
-        return;
-    }
-
-    editor->FindAndSelect(tag->GetPattern(), tag->GetName(), editor->PosFromLine(tag->GetLine() - 1), nullptr);
 }
 
 void MainBook::OnSettingsChanged(wxCommandEvent& e)

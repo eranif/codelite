@@ -810,6 +810,8 @@ void LanguageServerCluster::DiscoverWorkspaceType()
                     table[file_type]++;
                     if(table[file_type] > cur_max) {
                         cur_type = file_type;
+                        // update the current max
+                        cur_max = table[file_type];
                     }
                 }
             }

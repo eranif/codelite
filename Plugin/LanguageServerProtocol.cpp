@@ -749,6 +749,7 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 
                     CheckCapability(res, "documentSymbolProvider", "textDocument/documentSymbol");
                     CheckCapability(res, "declarationProvider", "textDocument/declaration");
+                    CheckCapability(res, "workspaceSymbolProvider", "workspace/symbol");
 
                     clDEBUG() << GetLogPrefix() << "Sending InitializedNotification" << endl;
 

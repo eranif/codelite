@@ -5,6 +5,7 @@
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
+#include "clEditorBar.h"
 #include "clSFTPEvent.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
@@ -32,6 +33,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerCluster::OnActiveEditorChanged, this);
 
     EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                &LanguageServerCluster::OnCompileCommandsGenerated, this);
@@ -60,6 +62,7 @@ LanguageServerCluster::~LanguageServerCluster()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerCluster::OnActiveEditorChanged, this);
 
     EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED,
                                  &LanguageServerCluster::OnCompileCommandsGenerated, this);
@@ -608,13 +611,14 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
 
 void LanguageServerCluster::OnOulineViewSymbols(LSPEvent& event)
 {
-    // TODO: cache the symbols
+    event.Skip();
     // we use it for outline + editor bar
     if(m_symbols_to_file_cache.count(event.GetFileName())) {
         m_symbols_to_file_cache.erase(event.GetFileName());
     }
     m_symbols_to_file_cache.insert({ event.GetFileName(), event.GetSymbolsInformation() });
     clDEBUG() << "LSP: cached symbols for file" << event.GetFileName() << endl;
+    UpdateNavigationBar();
 }
 
 void LanguageServerCluster::OnQuickOutlineView(LSPEvent& event)
@@ -826,4 +830,46 @@ void LanguageServerCluster::OnEditorClosed(clCommandEvent& event)
     event.Skip();
     // clear the cache for the closed file
     m_symbols_to_file_cache.erase(event.GetFileName());
+}
+
+void LanguageServerCluster::OnActiveEditorChanged(wxCommandEvent& event)
+{
+    event.Skip();
+    UpdateNavigationBar();
+}
+
+void LanguageServerCluster::UpdateNavigationBar()
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    wxString filename = editor->GetFileName().GetFullPath();
+    if(m_symbols_to_file_cache.count(filename) == 0) {
+        return;
+    }
+
+    auto symbols = m_symbols_to_file_cache.find(filename)->second;
+
+    // prepare list of scopes and send them to the navigation bar
+    clEditorBar::ScopeEntry::vec_t scopes;
+    scopes.reserve(symbols.size());
+
+    for(const LSP::SymbolInformation& symbol : symbols) {
+        // only collect methdos
+        if(symbol.GetKind() != LSP::kSK_Function && symbol.GetKind() != LSP::kSK_Method &&
+           symbol.GetKind() != LSP::kSK_Constructor)
+            continue;
+        clEditorBar::ScopeEntry scope_entry;
+        const LSP::Location& location = symbol.GetLocation();
+        scope_entry.line_number = location.GetRange().GetStart().GetLine();
+
+        wxString display_string;
+        if(!symbol.GetContainerName().empty()) {
+            display_string << symbol.GetContainerName() << ".";
+        }
+        display_string << symbol.GetName();
+        scope_entry.display_string.swap(display_string);
+        scopes.push_back(scope_entry);
+    }
+    clGetManager()->GetNavigationBar()->SetScopes(filename, scopes);
 }

@@ -27,6 +27,7 @@
 #include "AddFunctionsImpDlg.h"
 #include "CTags.hpp"
 #include "CodeLiteIndexer.hpp"
+#include "CompletionHelper.hpp"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "SelectProjectsDlg.h"
@@ -1776,17 +1777,19 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
         return;
     }
 
+    CompletionHelper ch;
     wxStringSet_t implHash;
     for(TagEntryPtr t : functions) {
         if(scopeName == t->GetScope()) {
-            implHash.insert(t->GetDisplayName());
+            implHash.insert(ch.normalize_function(t->GetName(), t->GetSignature()));
         }
     }
 
     std::vector<TagEntryPtr> unimplPrototypes;
     for(auto t : prototypes) {
         if(scopeName == t->GetScope()) {
-            if(implHash.count(t->GetDisplayName()) == 0) {
+            wxString name = ch.normalize_function(t->GetName(), t->GetSignature());
+            if(implHash.count(name) == 0) {
                 // this prototype does not have an implementation
                 if(line_number == wxNOT_FOUND || t->GetLine() == line_number) {
                     unimplPrototypes.push_back(t);
@@ -1823,6 +1826,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
         }
 
         if(insertedLine != wxNOT_FOUND) {
+            editor->EnsureVisible(insertedLine);
             editor->CenterLine(insertedLine);
         }
     }

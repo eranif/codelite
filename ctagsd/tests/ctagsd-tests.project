@@ -45,14 +45,15 @@
       <Linker Options="$(shell wx-config --libs std)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteud.dll"/>
-        <Library Value="libplugin_sdkud.dll"/>
         <Library Value="ctagsdlib"/>
+        <Library Value="libplugin_sdkud"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[TAGS_DB=C:\src\codelite\.ctagsd\tags.db]]>
+        <![CDATA[TAGS_DB=C:\src\codelite\.ctagsd\tags.db
+PATH=C:\src\codelite\Runtime;$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>

@@ -71,6 +71,7 @@ protected:
     void OnBuildEnded(clBuildEvent& event);
     void OnOpenResource(wxCommandEvent& event);
     void OnEditorClosed(clCommandEvent& event);
+    void OnActiveEditorChanged(wxCommandEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     /**
      * @brief find an editor either by local or remote path
@@ -79,6 +80,7 @@ protected:
     IEditor* FindEditor(const LSPEvent& event) const;
 
     void DiscoverWorkspaceType();
+    void UpdateNavigationBar();
 
 public:
     LanguageServerCluster(LanguageServerPlugin* plugin);

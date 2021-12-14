@@ -152,6 +152,35 @@ TEST_FUNC(TestCompletionHelper_get_expression)
     return true;
 }
 
+TEST_FUNC(TestSplitArgsNoArgumentName)
+{
+    wxString signature_1 = "(const LSP::ResponseMessage& response, wxEvtHandler* owner = nullptr)";
+    wxString signature_2 =
+        "(const LSP::ResponseMessage& response, wxEvtHandler* owner = nullptr, const vector<std::string>& response)";
+    wxString signature_3 =
+        "(const LSP::ResponseMessage& response, wxEvtHandler* owner = nullptr, vector<std::string>&& response)";
+    CompletionHelper helper;
+
+    wxString return_value;
+    {
+        auto args =
+            helper.split_function_signature(signature_1, &return_value, CompletionHelper::STRIP_NO_DEFAULT_VALUES);
+        CHECK_SIZE(args.size(), 2);
+    }
+    {
+        auto args = helper.split_function_signature(
+            signature_2, &return_value, CompletionHelper::STRIP_NO_DEFAULT_VALUES | CompletionHelper::STRIP_NO_NAME);
+        CHECK_SIZE(args.size(), 3);
+    }
+
+    {
+        auto args = helper.split_function_signature(
+            signature_3, &return_value, CompletionHelper::STRIP_NO_DEFAULT_VALUES | CompletionHelper::STRIP_NO_NAME);
+        CHECK_SIZE(args.size(), 3);
+    }
+    return true;
+}
+
 TEST_FUNC(TestCompletionHelper_truncate_file_to_location)
 {
     wxString file_content =

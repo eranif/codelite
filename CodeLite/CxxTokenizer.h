@@ -23,6 +23,11 @@ public:
     bool NextToken(CxxLexerToken& token);
 
     /**
+     * @brief return the last token back to the scanner
+     */
+    bool UngetToken();
+
+    /**
      * @brief reset the lexer with a new text buffer
      */
     void Reset(const wxString& buffer);
@@ -58,7 +63,7 @@ public:
      *
      */
     wxString GetVisibleScope(const wxString& inputString);
-    
+
     /**
      * @brief return true if the current scanner position is placed inside a PP section
      */

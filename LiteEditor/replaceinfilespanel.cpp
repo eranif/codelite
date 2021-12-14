@@ -219,6 +219,37 @@ wxStyledTextCtrl* ReplaceInFilesPanel::DoGetEditor(const wxString& fileName)
     return sci;
 }
 
+wxString ReplaceInFilesPanel::DoGetReplaceWith(const SearchResult& res) const
+{
+    const wxString& replaceWith = m_replaceWith->GetValue();
+    if(!(res.GetFlags() & wxSD_REGULAREXPRESSION)) {
+        // not a regular expression search, do nothing
+        return replaceWith;
+    }
+    // replace regular expression backrefs
+    wxString s;
+    for(size_t i = 0; i < replaceWith.length(); ++i) {
+        wxUniChar ch0 = replaceWith[i];
+        wxUniChar ch1 = '\0';
+        if(i + 1 < replaceWith.length()) {
+            ch1 = replaceWith[i + 1];
+        }
+        if(ch0 == '\\' && isdigit(ch1)) {
+            // regex backref (\0 ~ \9)
+            int backref = wxAtoi(ch1);
+            s << res.GetRegexCapture(backref);
+            ++i;
+        } else if(ch0 == '\\' && ch1 == '\\') {
+            // escaped backslash (\\)
+            s << '\\';
+            ++i;
+        } else {
+            s << ch0;
+        }
+    }
+    return s;
+}
+
 void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 {
     m_filesModified.clear();
@@ -227,12 +258,8 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     clEditor* activeEditor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(activeEditor) { lineNumber = activeEditor->GetCurrentLine(); }
 
-    wxString replaceText = m_replaceWith->GetValue();
-    int replaceLenInChars = (int)replaceText.Len();
-    int replaceLen = (int)::clUTF8Length(replaceText, replaceLenInChars);
-
-    if(m_replaceWith->FindString(replaceText, true) == wxNOT_FOUND) {
-        m_replaceWith->Append(replaceText);
+    if(m_replaceWith->FindString(m_replaceWith->GetValue(), true) == wxNOT_FOUND) {
+        m_replaceWith->Append(m_replaceWith->GetValue());
     }
 
     // Step 1: apply selected replacements
@@ -275,6 +302,10 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         if((m_sci->MarkerGet(i->first) & 1 << 0x7) == 0)
             // not selected for application
             continue;
+
+        wxString replaceText = DoGetReplaceWith(res);
+        int replaceLenInChars = (int)replaceText.Len();
+        int replaceLen = (int)::clUTF8Length(replaceText, replaceLenInChars);
 
         // extract originally matched text for safety check later
         wxString text = res.GetPattern().Mid(res.GetColumnInChars() - deltaInChars, res.GetLenInChars());

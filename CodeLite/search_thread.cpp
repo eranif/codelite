@@ -382,6 +382,11 @@ void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const
             result.SetLen(iCorrectedLen);
             result.SetFlags(data->m_flags);
             result.SetFindWhat(data->GetFindString());
+            wxArrayString regexCaptures;
+            for(size_t i = 0; i < re.GetMatchCount(); ++i) {
+                regexCaptures.Add(re.GetMatch(modLine, i));
+            }
+            result.SetRegexCaptures(regexCaptures);
 
             // Make sure our match is not on a comment
             int position(wxNOT_FOUND);
@@ -667,6 +672,7 @@ JSONItem SearchResult::ToJSON() const
     // json.addProperty("findWhat", m_findWhat);
     // json.addProperty("matchState", (int)m_matchState);
     // json.addProperty("scope", m_scope);
+    json.addProperty("regexCaptures", m_regexCaptures);
     return json;
 }
 
@@ -684,6 +690,7 @@ void SearchResult::FromJSON(const JSONItem& json)
     // m_findWhat = json.namedObject("findWhat").toString(m_findWhat);
     // m_matchState = json.namedObject("matchState").toInt(m_matchState);
     // m_scope = json.namedObject("scope").toString(m_scope);
+    m_regexCaptures = json.namedObject("regexCaptures").toArrayString();
 }
 
 JSONItem SearchSummary::ToJSON() const

@@ -165,6 +165,7 @@ class WXDLLIMPEXP_CL SearchResult : public wxObject
     int m_lenInChars;
     short m_matchState;
     wxString m_scope;
+    wxArrayString m_regexCaptures;
 
 public:
     // ctor-dtor, copy constructor and assignment operator
@@ -189,6 +190,7 @@ public:
         m_lenInChars = rhs.m_lenInChars;
         m_matchState = rhs.m_matchState;
         m_scope = rhs.m_scope.c_str();
+        m_regexCaptures = rhs.m_regexCaptures;
         return *this;
     }
 
@@ -233,6 +235,18 @@ public:
 
     void SetScope(const wxString& scope) { this->m_scope = scope.c_str(); }
     const wxString& GetScope() const { return m_scope; }
+
+    void SetRegexCaptures(const wxArrayString& regexCaptures) { this->m_regexCaptures = regexCaptures; }
+    const wxArrayString& GetRegexCaptures() const { return m_regexCaptures; }
+    wxString GetRegexCapture(size_t backref) const
+    {
+        if(m_regexCaptures.size() > backref) {
+            return m_regexCaptures[backref];
+        } else {
+            return wxEmptyString;
+        }
+    }
+
     // return a foramtted message
     wxString GetMessage() const
     {

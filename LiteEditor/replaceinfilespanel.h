@@ -45,6 +45,11 @@ protected:
 
     wxStyledTextCtrl* DoGetEditor(const wxString& fileName);
 
+    /*
+     * @brief get replacement text (regular expression backrefs applied)
+     */
+    wxString DoGetReplaceWith(const SearchResult& res) const;
+
     // Event handlers
     virtual void OnSearchStart(wxCommandEvent& e);
     virtual void OnSearchMatch(wxCommandEvent& e);

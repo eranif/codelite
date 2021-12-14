@@ -902,7 +902,7 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
     size_t stc_search_options = 0;
 
     if(search_options & wxSTC_FIND_REGEXP)
-        stc_search_options |= wxSTC_FIND_REGEXP;
+        stc_search_options |= wxSTC_FIND_REGEXP | wxSTC_FIND_POSIX;
     if(search_options & wxSTC_FIND_MATCHCASE)
         stc_search_options |= wxSTC_FIND_MATCHCASE;
     if(search_options & wxSTC_FIND_WHOLEWORD)

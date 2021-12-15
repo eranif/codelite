@@ -17,6 +17,8 @@
 #include <wx/log.h>
 #include <wxStringHash.h>
 
+#include "strings.hpp"
+
 using namespace std;
 namespace
 {
@@ -51,35 +53,6 @@ ostream& operator<<(ostream& stream, const pair<vector<SimpleTokenizer::Token>, 
     stream << s << endl;
     return stream;
 }
-
-const wxString sample_cxx_file = R"(
-class MyClass {
-    std::string m_name;
-    
-public:
-    std::string GetName() const { return m_name; }
-    void SetName(const std::string& name) { m_name = name; }
-};
-
-int main(int argc, char** argv)
-{
-    std::string name = "hello";
-    MyClass cls, cls2;
-    cls.SetName(name);
-    return 0;
-}
-)";
-
-const wxString sample_text_language_h = R"(class TemplateHelper
-{
-    std::vector<wxArrayString> templateInstantiationVector;
-};
-)";
-
-const wxString sample_text = R"(
-#ifdef __WXMSW__
-#endif
-m_string.)";
 
 thread_local bool cc_initialised = false;
 thread_local bool cc_initialised_successfully = false;
@@ -124,6 +97,24 @@ bool initialize_cc_tests()
     return cc_initialised_successfully;
 }
 } // namespace
+
+TEST_FUNC(TestLSPLocation)
+{
+    if(!initialize_cc_tests()) {
+        cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
+        return true;
+    }
+
+    vector<TagEntryPtr> candidates;
+
+    wxString code = "LSP::SymbolInformation si; si.GetLocation().";
+    clTempFile tmpfile("cpp");
+    tmpfile.Write(code);
+    TagsManagerST::Get()->AutoCompleteCandidates(tmpfile.GetFullPath(), 1, "si.GetLocation().", code, candidates);
+    CHECK_BOOL(!candidates.empty());
+    CHECK_SIZE(candidates.size(), 12);
+    return true;
+}
 
 TEST_FUNC(TestCompletionHelper_get_expression)
 {
@@ -183,15 +174,6 @@ TEST_FUNC(TestSplitArgsNoArgumentName)
 
 TEST_FUNC(TestCompletionHelper_truncate_file_to_location)
 {
-    wxString file_content =
-        R"(
-using namespace std;
-void foo() {
-    vector<string> V;
-    V.empty();
-    // other content goes here
-    // bla bla
-)";
     CompletionHelper helper;
     wxString f = helper.truncate_file_to_location(file_content, 4, 6, false);
     auto lines = ::wxStringTokenize(f, "\n", wxTOKEN_RET_EMPTY_ALL);
@@ -203,10 +185,10 @@ void foo() {
 
 TEST_FUNC(TestCompletionHelper_truncate_file_to_location_invalid_input)
 {
-    wxString file_content = "";
+    wxString file_content_empty = "";
 
     CompletionHelper helper;
-    wxString f = helper.truncate_file_to_location(file_content, 4, 6, false);
+    wxString f = helper.truncate_file_to_location(file_content_empty, 4, 6, false);
     auto lines = ::wxStringTokenize(f, "\n", wxTOKEN_RET_EMPTY_ALL);
     CHECK_BOOL(lines.empty());
     CHECK_SIZE(lines.size(), 0);
@@ -215,10 +197,10 @@ TEST_FUNC(TestCompletionHelper_truncate_file_to_location_invalid_input)
 
 TEST_FUNC(TestCompletionHelper_truncate_file_to_location_must_end_with_words)
 {
-    wxString file_content = "std::vector<TagEntryPtr>";
+    wxString file_content_z = "std::vector<TagEntryPtr>";
 
     CompletionHelper helper;
-    wxString f = helper.truncate_file_to_location(file_content, 0, 15, true);
+    wxString f = helper.truncate_file_to_location(file_content_z, 0, 15, true);
     CHECK_STRING(f, "std::vector<TagEntryPtr");
     return true;
 }
@@ -261,30 +243,15 @@ TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
 
 TEST_FUNC(TestSimeplTokenizer_Comments)
 {
-    const wxString tokenizer_sample_file = R"(#include <unistd.h>
-/** comment **/
-int main(int argc, char** argv)
-{
-    /**
-        multi line comment
-        
-    **/
-    std::string name = "hello\nworld";
-    MyClass cls, 1cls2;
-    cls.SetName(name);
-    return 0;
-}
-//last line comment
-//)";
     SimpleTokenizer::Token token;
-    SimpleTokenizer tokenizer(tokenizer_sample_file);
+    SimpleTokenizer tokenizer(tokenizer_sample_file_0);
     vector<SimpleTokenizer::Token> tokens;
     while(tokenizer.next_comment(&token)) {
         tokens.push_back(token);
     }
     // we are expecting 2 comments
     CHECK_SIZE(tokens.size(), 4);
-    cout << make_pair(tokens, tokenizer_sample_file) << endl;
+    cout << make_pair(tokens, tokenizer_sample_file_0) << endl;
     return true;
 }
 
@@ -320,41 +287,9 @@ TEST_FUNC(TestSimeplTokenizer_2)
 
 TEST_FUNC(TestSimeplTokenizer)
 {
-    const wxString tokenizer_sample_file = R"(#include <unistd.h>
-/** comment **/
-int main(int argc, char** argv)
-{
-    /**
-        multi line comment
-        
-    **/
-    std::string name = "hello\nworld";
-    MyClass cls, 1cls2;
-    cls.SetName(name);
-    return 0;
-}
-)";
-
-    const wxString tokenizer_sample_file_2 = R"(#include "TextView.h"
-#include "wxTerminalColourHandler.h"
-#include "wxTerminalCtrl.h"
-
-#ifdef __WXMSW__
-#include "wx/msw/wrapwin.h" // includes windows.h
-#endif
-#include <fileutils.h>
-#include <wx/tokenzr.h>
-#include <wx/wupdlock.h>
-
-wxTerminalColourHandler::wxTerminalColourHandler()
-{
-    // we use the Ubuntu colour scheme
-    // Text colours
-    m_colours.insert({ 30, wxColour(1, 1, 1) });
-)";
     {
         SimpleTokenizer::Token token;
-        SimpleTokenizer tokenizer(tokenizer_sample_file);
+        SimpleTokenizer tokenizer(tokenizer_sample_file_1);
         vector<SimpleTokenizer::Token> tokens;
         while(tokenizer.next(&token)) {
             tokens.push_back(token);

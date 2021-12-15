@@ -160,3 +160,24 @@ void ParsedToken::ResolveTemplateType(TagsManager* lookup)
 }
 
 bool ParsedToken::IsThis() const { return m_name == wxT("this"); }
+
+wxString ParsedToken::GetFullScope() const
+{
+    // rewind
+    auto cur = this;
+    while(cur && cur->m_prev) {
+        cur = cur->m_prev;
+    }
+    // build the scope
+    wxString scope;
+    while(cur != this) {
+        if(cur->GetTypeName() != "<global>" && !cur->GetTypeName().empty()) {
+            if(!scope.empty()) {
+                scope << "::";
+            }
+            scope << cur->GetTypeName();
+        }
+        cur = cur->m_next;
+    }
+    return scope;
+}

@@ -151,7 +151,11 @@ public:
      * @param lookup
      */
     void ResolveTemplateType(TagsManager* lookup);
-
+    
+    /**
+     * @brief return the full scope (starting from the start until we reach this current token)
+     */
+    wxString GetFullScope() const;
     /**
      * @brief replace template argument with the actual type (std::vector<wxString>: _Tp --> wxString)
      * @param templateArg the template argument to replace

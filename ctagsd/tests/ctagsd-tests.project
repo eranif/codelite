@@ -3,6 +3,7 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="strings.hpp"/>
     <File Name="tester.hpp"/>
     <File Name="tester.cpp"/>
     <File Name="main.cpp"/>

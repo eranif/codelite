@@ -1,3 +1,4 @@
+#include "ProtocolHandler.hpp"
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxPreProcessor.h"
@@ -8,7 +9,6 @@
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LSPUtils.hpp"
-#include "ProtocolHandler.hpp"
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
@@ -1161,12 +1161,13 @@ wxArrayString ProtocolHandler::FilterNonWantedNamespaces(const wxArrayString& na
     wxArrayString scopes;
     scopes.reserve(namespace_arr.size());
 
-    scopes.Add("<global>"); // always include the global namespace
     for(const wxString& scope : namespace_arr) {
         // filter internal scopes from std
         if(!scope.StartsWith("std::_")) {
             scopes.Add(scope);
         }
     }
+    // the global namespace is **always** last
+    scopes.Add("<global>"); // always include the global namespace
     return scopes;
 }

@@ -1678,11 +1678,10 @@ void Language::CheckForTemplateAndTypedef(ParsedToken* token)
         typedefMatch = OnTypedef(token);
         if(typedefMatch) {
             RunUserTypes(token);
+            DoIsTypeAndScopeExist(token);
         }
 
         // Attempt to fix the result
-        DoIsTypeAndScopeExist(token);
-
         if(typedefMatch) {
             DoExtractTemplateInitListFromInheritance(token);
 
@@ -2045,13 +2044,38 @@ bool Language::DoIsTypeAndScopeExist(ParsedToken* token)
         return true;
     }
 
-    wxString type(token->GetTypeName());
-    wxString scope(token->GetTypeScope());
-    bool res = GetTagsManager()->IsTypeAndScopeExists(type, scope);
+    std::vector<wxString> scopes_to_try = GetAdditionalScopes();
+    wxArrayString parent_scopes = ::wxStringTokenize(token->GetFullScope(), ":", wxTOKEN_STRTOK);
 
-    token->SetTypeName(type);
-    token->SetTypeScope(scope);
-    return res;
+    std::vector<wxString> additional_sscopes;
+    while(!parent_scopes.empty()) {
+        wxString tmpscope;
+        for(const wxString& s : parent_scopes) {
+            if(!tmpscope.empty()) {
+                tmpscope << "::";
+            }
+            tmpscope << s;
+        }
+        additional_sscopes.push_back(tmpscope);
+        parent_scopes.pop_back();
+    }
+
+    // prepend the `additional_sscopes` to the `scopes_to_try`
+    scopes_to_try.insert(scopes_to_try.begin(), additional_sscopes.begin(), additional_sscopes.end());
+    wxString type = token->GetTypeName();
+    wxString scope;
+
+    bool res = false;
+    for(const wxString& s : scopes_to_try) {
+        scope = s;
+        res = GetTagsManager()->IsTypeAndScopeExists(type, scope);
+        if(res) {
+            token->SetTypeName(type);
+            token->SetTypeScope(scope);
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Language::DoCorrectUsingNamespaces(ParsedToken* token, std::vector<TagEntryPtr>& tags)

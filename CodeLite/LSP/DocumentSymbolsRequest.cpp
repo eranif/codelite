@@ -57,10 +57,9 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
 
             // sort the items by line position
             std::sort(symbols.begin(), symbols.end(),
-                      [=](const SymbolInformation& a, const SymbolInformation& b) -> int {
-                          const LSP::Location& loc_a = a.GetLocation();
-                          const LSP::Location& loc_b = b.GetLocation();
-                          return loc_a.GetRange().GetStart().GetLine() < loc_b.GetRange().GetStart().GetLine();
+                      [=](const LSP::SymbolInformation& a, const LSP::SymbolInformation& b) -> int {
+                          return a.GetLocation().GetRange().GetStart().GetLine() <
+                                 b.GetLocation().GetRange().GetStart().GetLine();
                       });
             clDEBUG1() << symbols << endl;
 

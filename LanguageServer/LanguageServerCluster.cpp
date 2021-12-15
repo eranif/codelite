@@ -1,7 +1,7 @@
-#include "LanguageServerCluster.h"
 #include "CompileCommandsGenerator.h"
 #include "LSP/LSPEvent.h"
 #include "LSPOutlineViewDlg.h"
+#include "LanguageServerCluster.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
@@ -868,6 +868,9 @@ void LanguageServerCluster::UpdateNavigationBar()
             display_string << symbol.GetContainerName() << ".";
         }
         display_string << symbol.GetName();
+        if(!display_string.Contains("(")) {
+            display_string << "()";
+        }
         scope_entry.display_string.swap(display_string);
         scopes.push_back(scope_entry);
     }

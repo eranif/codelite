@@ -1,8 +1,8 @@
 
 
- 
+
 # Our project is called 'codelite' this is how it will be called in
-# visual studio, and in our makefiles. 
+# visual studio, and in our makefiles.
 project(codelite_indexer)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
@@ -33,6 +33,7 @@ endif (UNIX)
 
 # and finally prepare list of includes directories
 include_directories("${CL_SRC_ROOT}/sdk/codelite_indexer/libctags")
+add_definitions(-DwxDEBUG_LEVEL=0)
 
 # Define the output
 add_executable(codelite_indexer ${SRCS})

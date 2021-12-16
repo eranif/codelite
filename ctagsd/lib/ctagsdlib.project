@@ -3,6 +3,8 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="Scanner.cpp"/>
+    <File Name="Scanner.hpp"/>
     <File Name="LSPUtils.cpp"/>
     <File Name="LSPUtils.hpp"/>
     <File Name="Settings.cpp"/>

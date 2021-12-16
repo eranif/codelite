@@ -2,6 +2,7 @@
 #include "CxxLexerAPI.h"
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
+#include "file_logger.h"
 #include "fileutils.h"
 
 Scanner::Scanner() {}
@@ -13,10 +14,12 @@ void Scanner::scan(const wxFileName& current_file, const wxArrayString& search_p
 {
     CxxTokenizer tokenizer;
     wxString content;
+
     if(!FileUtils::ReadFileContent(current_file, content)) {
         return;
     }
 
+    wxString cur_file_dir = current_file.GetPath();
     wxStringSet_t seen_includes;
     tokenizer.Reset(content);
     CxxLexerToken token;
@@ -24,8 +27,11 @@ void Scanner::scan(const wxFileName& current_file, const wxArrayString& search_p
         switch(token.GetType()) {
         case T_PP_INCLUDE_FILENAME: {
             wxFileName fixed_path;
-            if(seen_includes.count(token.GetWXString()) == 0 &&
-               IsFileExists(current_file, token.GetWXString(), search_path, &fixed_path)) {
+            wxString include_line = fix_include_line(token.GetWXString());
+            if(!include_line.empty() // valid include line
+               && seen_includes.count(include_line) == 0 &&
+               IsFileExists(cur_file_dir, include_line, search_path, &fixed_path)) {
+                seen_includes.insert(include_line);
                 includes_set->insert(fixed_path.GetFullPath());
             }
         } break;
@@ -38,31 +44,60 @@ void Scanner::scan(const wxFileName& current_file, const wxArrayString& search_p
     }
 }
 
-bool Scanner::IsFileExists(const wxFileName& current_file, const wxString& name, const wxArrayString& search_path,
-                           wxFileName* fixed_path) const
+#ifdef __WXMSW__
+#define DIR_SEP "\\"
+#else
+#define DIR_SEP "/"
+#endif
+
+static wxString fix_separators_to_platform(const wxString& str)
 {
+    wxString s = str;
+#ifdef __WXMSW__
+    s.Replace("/", "\\");
+#else
+    s.Replace("\\", "/");
+#endif
+    return s;
+}
 
-    wxFileName fullpath(current_file.GetPath() + "/" + name);
+bool Scanner::IsFileExists(const wxString& current_dir, const wxString& name, const wxArrayString& search_path,
+                           wxFileName* fixed_path)
+{
+    if(m_missing_includes.count(name))
+        return false;
 
-    if(fullpath.FileExists()) {
-        if(fullpath.IsRelative()) {
-            fullpath.MakeAbsolute(current_file.GetPath());
-        }
-        *fixed_path = fullpath;
+    if(m_matches.count(name)) {
+        *fixed_path = m_matches[name];
+        return true;
+    }
+
+    wxStructStat buf;
+    wxString fullpath = current_dir + DIR_SEP + name;
+    fullpath = fix_separators_to_platform(fullpath);
+
+    if(wxStat(fullpath, &buf) == 0) {
+        wxFileName fn(fullpath);
+        fn.MakeAbsolute();
+        *fixed_path = fn;
         return true;
     }
 
     // try the search paths
     for(const wxString& path : search_path) {
-        fullpath = wxFileName(path + "/" + name);
-        if(fullpath.FileExists()) {
-            if(fullpath.IsRelative()) {
-                fullpath.MakeAbsolute(current_file.GetPath());
-            }
-            *fixed_path = fullpath;
+
+        fullpath = path + DIR_SEP + name;
+        fullpath = fix_separators_to_platform(fullpath);
+        if(wxStat(fullpath, &buf) == 0) {
+            wxFileName fn(fullpath);
+            fn.MakeAbsolute();
+            *fixed_path = fn;
+            m_matches.insert({ name, fn.GetFullPath() });
             return true;
         }
     }
+
+    m_missing_includes.insert(name);
     return false;
 }
 
@@ -85,6 +120,23 @@ void Scanner::ParseUsingNamespace(CxxTokenizer& tokenizer, wxStringSet_t* using_
     }
 
     if(!usingNamespace.empty() && using_ns_set->count(usingNamespace) == 0) {
-        using_ns_set->insert(usingNamespace);
+        if(!usingNamespace.StartsWith("std::_") && !usingNamespace.Contains("GLIBCXX") && usingNamespace != "__pstl" &&
+           usingNamespace != "__detail") {
+            using_ns_set->insert(usingNamespace);
+        }
     }
+}
+
+wxString Scanner::fix_include_line(const wxString& include_line)
+{
+    // skip STL debug folders
+    if(include_line.StartsWith("<debug/")) {
+        return "";
+    }
+
+    wxString includeName = include_line;
+    includeName.Replace("\"", "");
+    includeName.Replace("<", "");
+    includeName.Replace(">", "");
+    return includeName;
 }

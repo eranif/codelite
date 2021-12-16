@@ -11,9 +11,15 @@
 using namespace std;
 class Scanner
 {
-    bool IsFileExists(const wxFileName& current_file, const wxString& name, const wxArrayString& search_path,
-                      wxFileName* fixed_path) const;
+    wxStringSet_t m_missing_includes;
+    wxStringMap_t m_matches;
+
+private:
+    bool IsFileExists(const wxString& current_dir, const wxString& name, const wxArrayString& search_path,
+                      wxFileName* fixed_path);
     void ParseUsingNamespace(CxxTokenizer& tokenizer, wxStringSet_t* using_ns_set);
+
+    wxString fix_include_line(const wxString& include_line);
 
 public:
     Scanner();

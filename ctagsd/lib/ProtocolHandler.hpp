@@ -3,7 +3,9 @@
 
 #include "Channel.hpp"
 #include "CodeLiteIndexer.hpp"
+#include "Scanner.hpp"
 #include "macros.h"
+
 #include <JSON.h>
 #include <memory>
 #include <wx/string.h>
@@ -21,6 +23,11 @@ struct CachedComment {
     typedef unordered_map<long, wxString> Map_t;
 };
 
+struct ParsedFileInfo {
+    wxStringSet_t included_files;
+    wxStringSet_t using_namespace;
+};
+
 class ProtocolHandler
 {
 public:
@@ -33,28 +40,27 @@ private:
     wxString m_settings_folder;
     wxStringMap_t m_filesOpened;
 
-    // keep track of all calls to "using namespace XXX" for a given file
-    unordered_map<wxString, wxArrayString> m_using_namespace_cache;
-
     // cached parsed comments file <-> comments
     unordered_map<wxString, CachedComment::Map_t> m_comments_cache;
-
+    unordered_map<wxString, ParsedFileInfo> m_parsed_files_info;
     wxArrayString m_search_paths;
+    Scanner m_file_scanner;
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
-    void parse_files(wxArrayString& files, Channel* channel, bool initial_parse);
+    void parse_files(wxArrayString& files, Channel* channel);
     bool ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);
     void update_comments_for_file(const wxString& filepath);
     const wxString& get_comment(const wxString& filepath, long line, const wxString& default_value) const;
     bool do_comments_exist_for_file(const wxString& filepath) const;
     void update_additional_scopes_for_file(const wxString& filepath);
-    void update_using_namespace_for_file(const wxString& filepath);
     size_t read_file_list(wxArrayString& files) const;
     wxArrayString FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const;
     void do_definition(unique_ptr<JSON>&& msg, Channel& channel, bool try_definition_first);
     void build_search_path();
+    void parse_file_for_includes_and_using_namespace(const wxString& filepath);
+    wxArrayString get_files_to_parse(const wxArrayString& files);
 
 public:
     ProtocolHandler();

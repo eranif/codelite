@@ -9,6 +9,7 @@
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LSPUtils.hpp"
+#include "Scanner.hpp"
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
@@ -21,6 +22,7 @@
 #include "tags_options_data.h"
 #include "tags_storage_sqlite3.h"
 
+#include <deque>
 #include <iostream>
 #include <wx/filesys.h>
 
@@ -134,16 +136,6 @@ void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString
     scanner.Scan(dir, files, settings.GetFileMask(), wxEmptyString, settings.GetIgnoreSpec());
     filter_non_cxx_files(files);
 }
-
-// TagEntryPtr create_fake_entry(const wxString& name, const wxString& kind)
-//{
-//     TagEntryPtr t(new TagEntry());
-//     t->SetKind(kind);
-//     t->SetName(name);
-//     t->SetLine(wxNOT_FOUND);
-//     return t;
-//}
-
 } // namespace
 
 ProtocolHandler::ProtocolHandler() {}
@@ -172,7 +164,7 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
     return result;
 }
 
-void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool initial_parse)
+void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
 {
     clDEBUG() << "Parsing" << files.size() << "files" << endl;
     clDEBUG() << "Removing un-modified and unwanted files..." << endl;
@@ -183,46 +175,9 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     }
     ITagsStoragePtr db(new TagsStorageSQLite());
     db->OpenDatabase(dbfile);
-    wxUnusedVar(initial_parse);
-
-    m_using_namespace_cache.clear();
 
     TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
     start_timer();
-
-    // keep track of files we visited
-    std::unordered_set<wxString> visited_files;
-
-    remove_binary_files(files);
-    clDEBUG() << "Scanning for `#include` files..." << endl;
-
-    CxxPreProcessor pp{ m_search_paths, 50 };
-    for(size_t i = 0; i < files.size(); i++) {
-        if(visited_files.insert(files[i]).second) {
-            // we did not visit this file just yet
-            // parse it and collect both the files included from it
-            // and all calls to "using namespace XXX"
-            CxxUsingNamespaceCollector collector{ &pp, files[i], visited_files };
-            collector.Parse();
-        }
-    }
-    clDEBUG() << "Success" << endl;
-    wxStringSet_t unique_files{ files.begin(), files.end() };
-    for(const wxString& file : visited_files) {
-        wxFileName fn(file);
-        if(!fn.IsAbsolute()) {
-            fn.MakeAbsolute(m_root_folder);
-        }
-        unique_files.insert(fn.GetFullPath());
-    }
-
-    files.clear();
-    files.reserve(unique_files.size());
-
-    for(const auto& s : unique_files) {
-        files.Add(s);
-    }
-    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
 
     clDEBUG() << "There are total of" << files.size() << "files that require parsing" << endl;
     if(channel) {
@@ -299,12 +254,37 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
 
 void ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath)
 {
-    vector<wxString> additional_scopes;
-    auto where = m_using_namespace_cache.find(filepath);
-    if(where != m_using_namespace_cache.end()) {
-        clDEBUG() << "Setting additional scopes of:" << where->second << endl;
-        additional_scopes.insert(additional_scopes.end(), where->second.begin(), where->second.end());
+    // we need to visit each node in the file graph and create a set of all the namespaces
+    wxStringSet_t visited;
+    wxStringSet_t ns;
+    vector<wxString> Q;
+    Q.push_back(filepath);
+    while(!Q.empty()) {
+        // pop the front of queue
+        wxString file = Q.front();
+        Q.erase(Q.begin());
+
+        // sanity
+        if(m_parsed_files_info.count(file) == 0 // no info for this file
+           || visited.count(file))              // already visited this file
+        {
+            continue;
+        }
+        visited.insert(file);
+
+        // keep the info and traverse its children
+        const ParsedFileInfo& info = m_parsed_files_info[file];
+        ns.insert(info.using_namespace.begin(), info.using_namespace.end());
+
+        // append its children
+        Q.insert(Q.end(), info.included_files.begin(), info.included_files.end());
     }
+
+    clDEBUG() << "Setting additional scopes for file:" << filepath << endl;
+    clDEBUG() << "Scopes:" << ns << endl;
+
+    vector<wxString> additional_scopes;
+    additional_scopes.insert(additional_scopes.end(), ns.begin(), ns.end());
     TagsManagerST::Get()->GetLanguage()->UpdateAdditionalScopesCache(filepath, additional_scopes);
 }
 
@@ -376,31 +356,6 @@ const wxString& ProtocolHandler::get_comment(const wxString& filepath, long line
 bool ProtocolHandler::do_comments_exist_for_file(const wxString& filepath) const
 {
     return m_comments_cache.count(filepath) != 0;
-}
-
-void ProtocolHandler::update_using_namespace_for_file(const wxString& filepath)
-{
-    if(m_using_namespace_cache.count(filepath)) {
-        return;
-    }
-
-    clDEBUG() << "  -> Updating extra scopes for file" << filepath << endl;
-    CxxPreProcessor pp{ m_search_paths, 20 };
-
-    // we did not visit this file just yet
-    // parse it and collect both the files included from it
-    // and all calls to "using namespace XXX"
-    wxStringSet_t visited_files;
-    CxxUsingNamespaceCollector collector(&pp, filepath, visited_files);
-    collector.Parse();
-    if(m_using_namespace_cache.count(filepath)) {
-        m_using_namespace_cache.erase(filepath);
-    }
-
-    m_using_namespace_cache.insert({ filepath, FilterNonWantedNamespaces(collector.GetUsingNamespaces()) });
-    clDEBUG() << "  -> Visited" << visited_files.size() << "header files" << endl;
-    clDEBUG() << "  -> scopes for file:" << filepath << "is now set to:" << m_using_namespace_cache[filepath] << endl;
-    clDEBUG() << "Success" << endl;
 }
 
 size_t ProtocolHandler::read_file_list(wxArrayString& arr) const
@@ -488,7 +443,10 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
         scan_dir(m_root_folder, m_settings, files);
     }
     build_search_path();
-    parse_files(files, &channel, true);
+
+    // build a list of files to parse (including all include statements)
+    files = get_files_to_parse(files);
+    parse_files(files, &channel);
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
@@ -536,7 +494,7 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
     update_comments_for_file(filepath, file_content);
 
     // update using namespace cache
-    update_using_namespace_for_file(filepath);
+    parse_file_for_includes_and_using_namespace(filepath);
 
     // keep the file content in-cache
     m_filesOpened.insert({ filepath, file_content });
@@ -554,7 +512,7 @@ void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel& channel)
     update_comments_for_file(filepath, wxEmptyString);
     // clear various caches for this file
     m_comments_cache.erase(filepath);
-    m_using_namespace_cache.erase(filepath);
+    m_parsed_files_info.erase(filepath);
 }
 
 // Notification -->
@@ -577,7 +535,7 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     clDEBUG1() << file_content << endl;
 
     // update using namespace cache
-    update_using_namespace_for_file(filepath);
+    parse_file_for_includes_and_using_namespace(filepath);
 }
 
 // Request <-->
@@ -715,8 +673,7 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     m_filesOpened.insert({ filepath, json["params"]["contentChanges"][0]["text"].toString() });
 
     // update the file using namespace
-    m_using_namespace_cache.erase(filepath);
-    update_using_namespace_for_file(filepath);
+    parse_file_for_includes_and_using_namespace(filepath);
 
     // delete the symbols generated from this file
     TagsManagerST::Get()->GetDatabase()->DeleteByFileName({}, filepath, true);
@@ -724,7 +681,7 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     // re-parse the file
     wxArrayString files;
     files.Add(filepath);
-    parse_files(files, nullptr, false);
+    parse_files(files, nullptr);
 
     if(TagsManagerST::Get()->GetDatabase()) {
         TagsManagerST::Get()->ClearTagsCache();
@@ -1146,11 +1103,47 @@ void ProtocolHandler::build_search_path()
     }
 
     for(const wxString& file : m_settings.GetSearchPath()) {
-        wxFileName fn(file);
+        wxFileName fn(file, wxEmptyString);
         wxString path = fn.GetPath();
         if(unique_paths.count(path) == 0) {
             m_search_paths.Add(path);
             unique_paths.insert(path);
         }
     }
+}
+
+void ProtocolHandler::parse_file_for_includes_and_using_namespace(const wxString& filepath)
+{
+    ParsedFileInfo entry;
+    m_file_scanner.scan(filepath, m_search_paths, &entry.included_files, &entry.using_namespace);
+
+    m_parsed_files_info.erase(filepath);
+    m_parsed_files_info.insert({ filepath, entry });
+}
+
+wxArrayString ProtocolHandler::get_files_to_parse(const wxArrayString& files)
+{
+    clDEBUG() << "Scanning for files to parse (base list contains:" << files.size() << "files)" << endl;
+    deque<wxString> files_to_parse{ files.begin(), files.end() };
+
+    wxArrayString result;
+    result.reserve(10000);
+
+    while(!files_to_parse.empty()) {
+        wxString filepath = files_to_parse.front();
+        files_to_parse.pop_front();
+        if(m_parsed_files_info.count(filepath)) {
+            continue;
+        }
+        result.Add(filepath);
+        parse_file_for_includes_and_using_namespace(filepath);
+
+        const auto& includes = m_parsed_files_info[filepath].included_files;
+        // append all its children to the vector
+        files_to_parse.insert(files_to_parse.end(), includes.begin(), includes.end());
+    }
+
+    result.Shrink();
+    clDEBUG() << "List of files to parse:" << result.size() << endl;
+    return result;
 }

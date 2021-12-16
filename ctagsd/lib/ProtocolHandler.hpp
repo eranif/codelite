@@ -39,6 +39,8 @@ private:
     // cached parsed comments file <-> comments
     unordered_map<wxString, CachedComment::Map_t> m_comments_cache;
 
+    wxArrayString m_search_paths;
+
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
     void parse_files(wxArrayString& files, Channel* channel, bool initial_parse);
@@ -52,6 +54,7 @@ private:
     size_t read_file_list(wxArrayString& files) const;
     wxArrayString FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const;
     void do_definition(unique_ptr<JSON>&& msg, Channel& channel, bool try_definition_first);
+    void build_search_path();
 
 public:
     ProtocolHandler();

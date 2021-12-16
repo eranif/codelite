@@ -194,33 +194,9 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel, bool i
     std::unordered_set<wxString> visited_files;
 
     remove_binary_files(files);
-
-    // build search path which is combinbed for the paths of the workspace files
-    // and from the settings
-    wxArrayString search_paths;
-    wxStringSet_t unique_paths;
-    for(const wxString& file : files) {
-        wxFileName fn(file);
-        wxString path = fn.GetPath();
-        if(unique_paths.count(path) == 0) {
-            search_paths.Add(path);
-            unique_paths.insert(path);
-        }
-    }
-
-    for(const wxString& file : m_settings.GetSearchPath()) {
-        wxFileName fn(file, wxEmptyString);
-        wxString path = fn.GetPath();
-        if(unique_paths.count(path) == 0) {
-            search_paths.Add(path);
-            unique_paths.insert(path);
-        }
-    }
-
     clDEBUG() << "Scanning for `#include` files..." << endl;
-    clDEBUG() << "Search path:" << search_paths << endl;
 
-    CxxPreProcessor pp{ search_paths, 50 };
+    CxxPreProcessor pp{ m_search_paths, 50 };
     for(size_t i = 0; i < files.size(); i++) {
         if(visited_files.insert(files[i]).second) {
             // we did not visit this file just yet
@@ -408,33 +384,8 @@ void ProtocolHandler::update_using_namespace_for_file(const wxString& filepath)
         return;
     }
 
-    wxArrayString file_list;
-    read_file_list(file_list);
-
-    // build search path which is combinbed for the paths of the workspace files
-    // and from the settings
-    wxArrayString search_paths;
-    wxStringSet_t unique_paths;
-    for(const wxString& file : file_list) {
-        wxFileName fn(file);
-        wxString path = fn.GetPath();
-        if(unique_paths.count(path) == 0) {
-            search_paths.Add(path);
-            unique_paths.insert(path);
-        }
-    }
-
-    for(const wxString& file : m_settings.GetSearchPath()) {
-        wxFileName fn(file);
-        wxString path = fn.GetPath();
-        if(unique_paths.count(path) == 0) {
-            search_paths.Add(path);
-            unique_paths.insert(path);
-        }
-    }
-
     clDEBUG() << "  -> Updating extra scopes for file" << filepath << endl;
-    CxxPreProcessor pp{ search_paths, 20 };
+    CxxPreProcessor pp{ m_search_paths, 20 };
 
     // we did not visit this file just yet
     // parse it and collect both the files included from it
@@ -536,6 +487,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
         // try the scan dir
         scan_dir(m_root_folder, m_settings, files);
     }
+    build_search_path();
     parse_files(files, &channel, true);
 
     TagsManagerST::Get()->CloseDatabase();
@@ -1170,4 +1122,35 @@ wxArrayString ProtocolHandler::FilterNonWantedNamespaces(const wxArrayString& na
     // the global namespace is **always** last
     scopes.Add("<global>"); // always include the global namespace
     return scopes;
+}
+
+void ProtocolHandler::build_search_path()
+{
+    // build the workspace file list
+    wxArrayString files;
+    if(read_file_list(files) == 0) {
+        // try the scan dir
+        scan_dir(m_root_folder, m_settings, files);
+    }
+
+    // build search path which is combinbed for the paths of the workspace files
+    // and from the settings
+    wxStringSet_t unique_paths;
+    for(const wxString& file : files) {
+        wxFileName fn(file);
+        wxString path = fn.GetPath();
+        if(unique_paths.count(path) == 0) {
+            m_search_paths.Add(path);
+            unique_paths.insert(path);
+        }
+    }
+
+    for(const wxString& file : m_settings.GetSearchPath()) {
+        wxFileName fn(file);
+        wxString path = fn.GetPath();
+        if(unique_paths.count(path) == 0) {
+            m_search_paths.Add(path);
+            unique_paths.insert(path);
+        }
+    }
 }

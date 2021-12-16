@@ -794,13 +794,6 @@ public:
                             int visibility = 0);
 
     /**
-     * @brief insert functionBody into clsname. This function will search for best location
-     * to place the function body
-     */
-    void InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename,
-                            wxString& sourceContent, int& insertedLine);
-
-    /**
      * @brief insert forward declaration statement at the top of the file
      * @param classname the class name to add
      * @param fileContent [input] the file content

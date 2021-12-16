@@ -268,13 +268,6 @@ public:
     bool InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
                             int visibility = 0);
 
-    /**
-     * @brief insert functionBody into clsname. This function will search for best location
-     * to place the function body
-     */
-    void InsertFunctionImpl(const wxString& clsname, const wxString& functionImpl, const wxString& filename,
-                            wxString& sourceContent, int& insertedLine);
-
 private:
     bool DoSearchByNameAndScope(const wxString& name, const wxString& scopeName, std::vector<TagEntryPtr>& tags,
                                 wxString& type, wxString& typeScope, bool testGlobalScope = true);

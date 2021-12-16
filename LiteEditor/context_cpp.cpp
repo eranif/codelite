@@ -1630,24 +1630,18 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
     CHECK_PTR_RET(implEditor);
 
     // Ensure that the file state is remained
-    int insertedLine = wxNOT_FOUND;
     {
         clEditorStateLocker locker(implEditor->GetCtrl());
-
-        wxString sourceContent = implEditor->GetText();
-        TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, targetFile, sourceContent, insertedLine);
-        implEditor->SetText(sourceContent);
+        implEditor->AppendText("\n" + body);
         DoFormatEditor(implEditor);
-
-        // Remove the current body and replace it with ';'
-        rCtrl.SetTargetEnd(blockEndPos);
-        rCtrl.SetTargetStart(blockStartPos);
-        rCtrl.ReplaceTarget(wxT(";"));
     }
 
-    if(insertedLine != wxNOT_FOUND) {
-        implEditor->CenterLine(insertedLine);
-    }
+    // Remove the current body and replace it with ';'
+    rCtrl.SetTargetEnd(blockEndPos);
+    rCtrl.SetTargetStart(blockStartPos);
+    rCtrl.ReplaceTarget(wxT(";"));
+
+    implEditor->CenterLine(implEditor->LineFromPos(implEditor->GetLastPosition()));
 }
 
 bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& blockEndPos, wxString& content)
@@ -1808,27 +1802,18 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
         // get the updated data
         otherfile = dlg.GetFileName();
         wxString body = dlg.GetText();
-        int insertedLine = wxNOT_FOUND;
 
-        // Open the C++ file
-        clEditor* editor = clMainFrame::Get()->GetMainBook()->OpenFile(otherfile, wxEmptyString, 0);
-        if(!editor) {
-            return;
-        }
+        // open the other editor
+        clEditor* implEditor = clMainFrame::Get()->GetMainBook()->OpenFile(otherfile);
+        CHECK_PTR_RET(implEditor);
 
         // Inser the new functions at the proper location
-        wxString sourceContent = editor->GetText();
-        TagsManagerST::Get()->InsertFunctionImpl(scopeName, body, otherfile, sourceContent, insertedLine);
-
         {
-            clEditorStateLocker locker(editor->GetCtrl());
-            editor->SetText(sourceContent);
+            clEditorStateLocker locker(implEditor->GetCtrl());
+            implEditor->AppendText("\n" + body);
         }
 
-        if(insertedLine != wxNOT_FOUND) {
-            editor->EnsureVisible(insertedLine);
-            editor->CenterLine(insertedLine);
-        }
+        implEditor->CenterLine(implEditor->LineFromPos(implEditor->GetLastPosition()) - 1);
     }
 }
 

@@ -2522,6 +2522,7 @@ void Language::InsertFunctionImpl(const wxString& clsname, const wxString& funct
         type = scanner.yylex();
         if(type == 0) {
             // EOF?
+            insertedLine = insertAtLine;
             sourceContent << functionImpl;
             return;
         }

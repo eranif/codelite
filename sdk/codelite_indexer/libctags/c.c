@@ -3403,7 +3403,12 @@ static void readUsingAlias(statementInfo *const st)
     vString *fullQualifiedName = vStringNew();
 
     int c = skipToNonWhite();
-    while( !iswhite(c) && c != '=' && c != ';') {
+    while(!iswhite(c) && c != '=' && c != ';') {
+        if(c == EOF) {
+            vStringDelete(fullQualifiedName);
+            longjmp (Exception, (int) ExceptionEOF);
+            break;
+        }
         vStringPut(fullQualifiedName, c);
         if(c == ':') {
             vStringClear(name);
@@ -3414,6 +3419,7 @@ static void readUsingAlias(statementInfo *const st)
         }
         c = cppGetc ();
     }
+    
     vStringTerminate (name);
     vStringTerminate (fullQualifiedName);
 

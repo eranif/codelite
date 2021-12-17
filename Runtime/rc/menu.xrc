@@ -848,20 +848,6 @@
         <object class="wxMenuItem" name="web_search_selection">
             <label>Search for selected text with default browser</label>
         </object>
-        <object class="wxMenu" name="editor_search">
-            <label>Search</label>
-            <style>wxMENU_TEAROFF</style>
-            <object class="wxMenuItem" name="go_to_function_start">
-                <label>Goto Beginning of Current Function</label>
-            </object>
-            <object class="wxMenuItem" name="go_to_next_function">
-                <label>Goto Beginning of Next Function</label>
-            </object>
-            <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-            <object class="wxMenuItem" name="find_references">
-                <label>Find References...</label>
-            </object>
-        </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenu" name="code_gen_refactoring">
             <label>Code Generation / Refactoring</label>

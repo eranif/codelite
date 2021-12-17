@@ -161,8 +161,6 @@ wxBitmap ContextCpp::m_otherFileBmp = wxNullBitmap;
 BEGIN_EVENT_TABLE(ContextCpp, wxEvtHandler)
 EVT_UPDATE_UI(XRCID("find_decl"), ContextCpp::OnUpdateUI)
 EVT_UPDATE_UI(XRCID("find_impl"), ContextCpp::OnUpdateUI)
-EVT_UPDATE_UI(XRCID("go_to_function_start"), ContextCpp::OnUpdateUI)
-EVT_UPDATE_UI(XRCID("go_to_next_function"), ContextCpp::OnUpdateUI)
 EVT_UPDATE_UI(XRCID("insert_doxy_comment"), ContextCpp::OnUpdateUI)
 EVT_UPDATE_UI(XRCID("setters_getters"), ContextCpp::OnUpdateUI)
 EVT_UPDATE_UI(XRCID("move_impl"), ContextCpp::OnUpdateUI)
@@ -181,7 +179,6 @@ EVT_MENU(XRCID("add_multi_impl"), ContextCpp::OnAddMultiImpl)
 EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 EVT_MENU(XRCID("add_forward_decl"), ContextCpp::OnAddForwardDecl)
-EVT_MENU(XRCID("find_references"), ContextCpp::OnFindReferences)
 EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
 EVT_MENU(XRCID("open_include_file"), ContextCpp::OnContextOpenDocument)
 END_EVENT_TABLE()
@@ -2329,34 +2326,6 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
     TryOpenFile(wxFileName(new_file));
 }
 
-void ContextCpp::OnGotoFunctionStart(wxCommandEvent& event)
-{
-    CHECK_JS_RETURN_VOID();
-    int line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
-    TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), line_number);
-    if(tag) {
-        // move the caret to the function start
-        BrowseRecord jumpfrom = GetCtrl().CreateBrowseRecord();
-        GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine() - 1));
-        // add an entry to the navigation manager
-        NavMgr::Get()->StoreCurrentLocation(jumpfrom, GetCtrl().CreateBrowseRecord());
-    }
-}
-
-void ContextCpp::OnGotoNextFunction(wxCommandEvent& event)
-{
-    CHECK_JS_RETURN_VOID();
-    int line_number = GetCtrl().LineFromPosition(GetCtrl().GetCurrentPos());
-    TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), line_number + 1, true);
-    if(tag) {
-        // move the caret to the function start
-        BrowseRecord jumpfrom = GetCtrl().CreateBrowseRecord();
-        GetCtrl().SetCaretAt(GetCtrl().PositionFromLine(tag->GetLine() - 1));
-        // add an entry to the navigation manager
-        NavMgr::Get()->StoreCurrentLocation(jumpfrom, GetCtrl().CreateBrowseRecord());
-    }
-}
-
 void ContextCpp::OnCallTipClick(wxStyledTextEvent& e) { e.Skip(); }
 
 void ContextCpp::OnCalltipCancel() {}
@@ -2580,42 +2549,6 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
         expression += wxT(" ");
     }
     return expression;
-}
-
-void ContextCpp::OnFindReferences(wxCommandEvent& e)
-{
-    CHECK_JS_RETURN_VOID();
-    VALIDATE_WORKSPACE();
-
-    clEditor& rCtrl = GetCtrl();
-    // get expression
-    int pos = rCtrl.GetCurrentPos();
-    int word_start = rCtrl.WordStartPosition(pos, true);
-    int word_end = rCtrl.WordEndPosition(pos, true);
-
-    // Read the word that we want to refactor
-    wxString word = rCtrl.GetTextRange(word_start, word_end);
-    if(word.IsEmpty())
-        return;
-
-    // Save all files before 'find usage'
-    if(!clMainFrame::Get()->GetMainBook()->SaveAll(true, false))
-        return;
-
-    // Invoke the RefactorEngine
-    if(RefactoringEngine::Instance()->IsBusy()) {
-        ::wxMessageBox(_("Refactoring engine is busy with another request. Please try again later"), "CodeLite",
-                       wxOK | wxICON_WARNING);
-        return;
-    }
-
-    // Get list of files to search in
-    std::vector<wxFileName> files;
-    ManagerST::Get()->GetWorkspaceFiles(files, true);
-
-    // Invoke the RefactorEngine
-    RefactoringEngine::Instance()->FindReferences(word, rCtrl.GetFileName(), rCtrl.LineFromPosition(pos + 1),
-                                                  word_start, files);
 }
 
 bool ContextCpp::IsDefaultContext() const { return false; }

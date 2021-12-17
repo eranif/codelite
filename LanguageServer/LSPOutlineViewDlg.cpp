@@ -139,6 +139,7 @@ void LSPOutlineViewDlg::DoInitialise()
         m_dvTreeCtrll->SelectRow(0);
     }
     m_dvTreeCtrll->Commit();
+    m_textCtrlFilter->Clear();
     m_textCtrlFilter->CallAfter(&wxTextCtrl::SetFocus);
 }
 

@@ -9,7 +9,7 @@
 		"m_outputFileName":	"buildorderbasepage",
 		"m_firstWindowId":	1000,
 		"m_useEnum":	false,
-		"m_useUnderscoreMacro":	false,
+		"m_useUnderscoreMacro":	true,
 		"m_addHandlers":	true,
 		"m_templateClasses":	[]
 	},

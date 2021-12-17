@@ -69,7 +69,6 @@
 #include "manager.h"
 #include "menumanager.h"
 #include "new_quick_watch_dlg.h"
-#include "parse_thread.h"
 #include "pluginmanager.h"
 #include "precompiled_header.h"
 #include "quickfindbar.h"
@@ -1438,8 +1437,8 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     // get the current position
     if((curLine != lastLine)) {
         clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
-        evtUpdateNavBar.SetEditor(this);
         evtUpdateNavBar.SetLineNumber(curLine);
+        evtUpdateNavBar.SetFileName(GetFileName().GetFullPath());
         EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
     }
 
@@ -1827,11 +1826,10 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
     if(triggerKind == LSP::CompletionItem::kTriggerUser) {
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
         evt.SetPosition(GetCurrentPosition());
-        evt.SetEditor(this);
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
         evt.SetTriggerKind(triggerKind);
-        evt.SetEventObject(this);
-        ServiceProviderManager::Get().ProcessEvent(evt);
+        evt.SetFileName(GetFileName().GetFullPath());
+        ServiceProviderManager::Get().AddPendingEvent(evt);
         return;
     } else {
         if(GetContext()->IsAtBlockComment()) {
@@ -1843,11 +1841,11 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
                     // Change the event to wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE
                     clCodeCompletionEvent evt(wxEVT_CC_BLOCK_COMMENT_WORD_COMPLETE);
                     evt.SetPosition(GetCurrentPosition());
-                    evt.SetEditor(this);
                     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-                    evt.SetEventObject(this);
                     evt.SetTriggerKind(triggerKind);
-                    EventNotifier::Get()->ProcessEvent(evt);
+                    evt.SetFileName(GetFileName().GetFullPath());
+                    // notice the difference that we fire it using EventNotifier!
+                    EventNotifier::Get()->AddPendingEvent(evt);
                     return;
                 }
             }
@@ -1857,11 +1855,10 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
     // Let the plugins a chance to override the default behavior
     clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
     evt.SetPosition(GetCurrentPosition());
-    evt.SetEditor(this);
     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
     evt.SetTriggerKind(triggerKind);
-    evt.SetEventObject(this);
-    ServiceProviderManager::Get().ProcessEvent(evt);
+    evt.SetFileName(GetFileName().GetFullPath());
+    ServiceProviderManager::Get().AddPendingEvent(evt);
 }
 
 //------------------------------------------------------------------
@@ -1882,9 +1879,8 @@ void clEditor::CodeComplete(bool refreshingList)
         evt.SetPosition(GetCurrentPosition());
         evt.SetTriggerKind(LSP::CompletionItem::kTriggerCharacter);
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-        evt.SetEventObject(this);
-        evt.SetEditor(this);
-        ServiceProviderManager::Get().ProcessEvent(evt);
+        evt.SetFileName(GetFileName().GetFullPath());
+        ServiceProviderManager::Get().AddPendingEvent(evt);
 
     } else {
         CompleteWord(LSP::CompletionItem::kTriggerCharacter);
@@ -1896,11 +1892,10 @@ void clEditor::FindDeclarationFile()
     // Let the plugins process this first
     wxString word = GetWordAtCaret();
     clCodeCompletionEvent event(wxEVT_CC_FIND_HEADER_FILE, GetId());
-    event.SetEventObject(this);
-    event.SetEditor(this);
     event.SetWord(word);
     event.SetPosition(GetCurrentPosition());
     event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+    event.SetFileName(GetFileName().GetFullPath());
     ServiceProviderManager::Get().ProcessEvent(event);
 }
 
@@ -1909,11 +1904,10 @@ void clEditor::GotoDefinition()
     // Let the plugins process this first
     wxString word = GetWordAtCaret();
     clCodeCompletionEvent event(wxEVT_CC_FIND_SYMBOL, GetId());
-    event.SetEventObject(this);
-    event.SetEditor(this);
     event.SetWord(word);
     event.SetPosition(GetCurrentPosition());
     event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+    event.SetFileName(GetFileName().GetFullPath());
     ServiceProviderManager::Get().ProcessEvent(event);
 }
 
@@ -1977,10 +1971,9 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         // Allow the plugins to override the default built-in behavior of displaying
         // the type info tooltip
         clCodeCompletionEvent evtTypeinfo(wxEVT_CC_TYPEINFO_TIP, GetId());
-        evtTypeinfo.SetEventObject(this);
-        evtTypeinfo.SetEditor(this);
         evtTypeinfo.SetPosition(event.GetPosition());
         evtTypeinfo.SetInsideCommentOrString(m_context->IsCommentOrString(event.GetPosition()));
+        evtTypeinfo.SetFileName(GetFileName().GetFullPath());
         if(ServiceProviderManager::Get().ProcessEvent(evtTypeinfo)) {
             if(!evtTypeinfo.GetTooltip().IsEmpty()) {
                 DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip());
@@ -3658,9 +3651,9 @@ void clEditor::OnRightDown(wxMouseEvent& event)
         }
 
         clCodeCompletionEvent event(wxEVT_CC_SHOW_QUICK_NAV_MENU);
-        event.SetEditor(this);
         event.SetPosition(pos);
         event.SetInsideCommentOrString(m_context->IsCommentOrString(pos));
+        event.SetFileName(GetFileName().GetFullPath());
         EventNotifier::Get()->AddPendingEvent(event);
 
     } else {
@@ -4406,10 +4399,9 @@ void clEditor::ShowFunctionTipFromCurrentPos()
         int pos = DoGetOpenBracePos();
         // see if any of the plugins want to handle it
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
-        evt.SetEventObject(this);
-        evt.SetEditor(this);
         evt.SetPosition(pos);
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(pos));
+        evt.SetFileName(GetFileName().GetFullPath());
         ServiceProviderManager::Get().ProcessEvent(evt);
     }
 }
@@ -4496,7 +4488,7 @@ void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
         // indicator is highlighted
         long pos = PositionFromPointClose(event.GetX(), event.GetY());
         if(m_hyperLinkIndicatroStart <= pos && pos <= m_hyperLinkIndicatroEnd) {
-            bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
+            //bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
 
             // Let the plugins handle it first
             clCodeCompletionEvent event(wxEVT_CC_JUMP_HYPER_LINK);
@@ -4505,9 +4497,6 @@ void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
             if(EventNotifier::Get()->ProcessEvent(event)) {
                 return;
             }
-
-            // Run the default action
-            m_context->GoHyperlink(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd, m_hyperLinkType, altLink);
         }
     }
 

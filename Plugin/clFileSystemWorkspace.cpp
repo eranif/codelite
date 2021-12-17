@@ -26,7 +26,6 @@
 #include "imanager.h"
 #include "macromanager.h"
 #include "macros.h"
-#include "parse_thread.h"
 #include "processreaderthread.h"
 #include "shell_command.h"
 #include <thread>
@@ -378,11 +377,6 @@ void clFileSystemWorkspace::DoClose()
 
     // Clear the UI
     GetView()->Clear();
-
-    // Restore the parser search paths
-    const wxArrayString& paths = TagsManagerST::Get()->GetCtagsOptions().GetParserSearchPaths();
-    ParseThreadST::Get()->SetSearchPaths(paths, {});
-    clDEBUG() << "Parser paths are now set to:" << paths;
 
     // Notify codelite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);

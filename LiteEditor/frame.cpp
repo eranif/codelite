@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "CodeLiteIndexer.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompilersFoundDlg.h"
 #include "DebuggerToolBar.h"
@@ -87,7 +88,6 @@
 #include <wx/splash.h>
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
-#include "CodeLiteIndexer.hpp"
 
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash
@@ -842,15 +842,6 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
                                                    "Search::Open Shell From File Path");
     clKeyboardManager::Get()->AddGlobalAccelerator("open_file_explorer", "Ctrl-Alt-Shift-T",
                                                    "Search::Open Containing Folder");
-    //-----------------------------------------------------------------
-    // CodeLite-specific events
-    //-----------------------------------------------------------------
-    Bind(wxPARSE_THREAD_MESSAGE, &clMainFrame::OnParsingThreadMessage, this);
-    Bind(wxPARSE_THREAD_CLEAR_TAGS_CACHE, &clMainFrame::OnClearTagsCache, this);
-    Bind(wxPARSE_THREAD_RETAGGING_COMPLETED, &clMainFrame::OnRetaggingCompleted, this);
-    Bind(wxPARSE_THREAD_RETAGGING_PROGRESS, &clMainFrame::OnRetaggingProgress, this);
-    Bind(wxPARSE_THREAD_READY, &clMainFrame::OnParserThreadReady, this);
-
 #ifdef __WXGTK__
     // Try to detect if this is a Wayland session; we have some Wayland-workaround code
     m_isWaylandSession = clIsWaylandSession();
@@ -1251,25 +1242,6 @@ void clMainFrame::CreateGUIControls()
 
     // start ctags process
     ManagerST::Get()->SetCodeLiteLauncherPath(clStandardPaths::Get().GetBinaryFullPath("codelite_launcher"));
-
-    //--------------------------------------------------------------------------------------
-    // Start the parsing thread, the parsing thread and the SymbolTree (or its derived)
-    // Are connected. The constructor of SymbolTree, calls ParseThreadST::Get()->SetNotifyWindow(this)
-    // to allows it to receive events for gui changes.
-    //
-    // If you wish to connect another object for it, simply call ParseThreadST::Get()->SetNotifyWindow(this)
-    // with another object as 'this'
-    //--------------------------------------------------------------------------------------
-
-    // Update the parser thread search paths
-    ParseThreadST::Get()->SetCrawlerEnabeld(m_tagsOptionsData.GetParserEnabled());
-    ParseThreadST::Get()->SetSearchPaths(m_tagsOptionsData.GetParserSearchPaths(),
-                                         m_tagsOptionsData.GetParserExcludePaths());
-
-    ParseThreadST::Get()->Start();
-
-    // Connect this tree to the parse thread
-    ParseThreadST::Get()->SetNotifyWindow(this);
 
     // update ctags options
     TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
@@ -1735,9 +1707,6 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     clCommandEvent eventGoingDown(wxEVT_GOING_DOWN);
     EventNotifier::Get()->ProcessEvent(eventGoingDown);
 
-    // Stop the retag thread
-    ParseThreadST::Get()->Stop();
-
     // Stop the search thread
     ManagerST::Get()->KillProgram();
     SearchThreadST::Get()->StopSearch();
@@ -2194,53 +2163,31 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
 
     wxArrayString pathsBefore = m_tagsOptionsData.GetParserSearchPaths();
     CodeCompletionSettingsDialog dlg(this, m_tagsOptionsData);
-    if(dlg.ShowModal() == wxID_OK) {
-        m_tagsOptionsData = dlg.GetData();
-
-        // Before we update anything, keep the old values
-        wxArrayString oldInc, oldExc;
-        ParseThreadST::Get()->GetSearchPaths(oldInc, oldExc);
-
-        // writes the content into the ctags.replacements file (used by
-        // codelite_indexer)
-        m_tagsOptionsData.SyncData();
-
-        newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-        caseSensitive = (m_tagsOptionsData.GetFlags() & CC_IS_CASE_SENSITIVE);
-
-        TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
-        TagsManagerST::Get()->GetDatabase()->SetEnableCaseInsensitive(!caseSensitive);
-
-        clConfig ccConfig("code-completion.conf");
-        ccConfig.WriteItem(&m_tagsOptionsData);
-
-        // We use this method 'UpdateParserPaths' since it will also update the parser
-        // thread with any workspace search/exclude paths related
-        ManagerST::Get()->UpdateParserPaths(false);
-
-        // Get the new values
-        wxArrayString newInc, newExc;
-        ParseThreadST::Get()->GetSearchPaths(newInc, newExc);
-        TagsManagerST::Get()->GetDatabase()->SetMaxWorkspaceTagToColour(m_tagsOptionsData.GetMaxItemToColour());
-
-        // do we need to colourise?
-        if((newColVars != colVars) || (colourTypes != m_tagsOptionsData.GetCcColourFlags())) {
-            GetMainBook()->UpdateColours();
-        }
-
-        if(newExc != oldExc) {
-            // The exclude list was updated, a full reparse is needed
-            wxCommandEvent e(wxEVT_MENU, XRCID("full_retag_workspace"));
-            AddPendingEvent(e);
-        } else if(newInc != oldInc) {
-            // When new include paths were added, an incremental parse is enough
-            wxCommandEvent e(wxEVT_MENU, XRCID("retag_workspace"));
-            AddPendingEvent(e);
-        }
-
-        // Update the pre-processor dimming feature
-        CodeCompletionManager::Get().RefreshPreProcessorColouring();
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
     }
+    m_tagsOptionsData = dlg.GetData();
+
+    // writes the content into the ctags.replacements file (used by
+    // codelite_indexer)
+    m_tagsOptionsData.SyncData();
+
+    newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
+    caseSensitive = (m_tagsOptionsData.GetFlags() & CC_IS_CASE_SENSITIVE);
+
+    TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
+
+    clConfig ccConfig("code-completion.conf");
+    ccConfig.WriteItem(&m_tagsOptionsData);
+
+    // do we need to colourise?
+    if((newColVars != colVars) || (colourTypes != m_tagsOptionsData.GetCcColourFlags())) {
+        GetMainBook()->UpdateColours();
+    }
+
+    // When new include paths were added, an incremental parse is enough
+    wxCommandEvent e(wxEVT_MENU, XRCID("retag_workspace"));
+    AddPendingEvent(e);
 }
 
 void clMainFrame::RegisterDockWindow(int menuItemId, const wxString& name)
@@ -2788,11 +2735,10 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
 
     // let the plugins process this first
     clCodeCompletionEvent evt(wxEVT_CC_SHOW_QUICK_OUTLINE, GetId());
-    evt.SetEventObject(this);
-    evt.SetEditor(activeEditor);
+    evt.SetFileName(activeEditor->GetFileName().GetFullPath());
 
     // fire the event so plugins will be able to process it
-    EventNotifier::Get()->ProcessEvent(evt);
+    EventNotifier::Get()->AddPendingEvent(evt);
     activeEditor->SetActive();
 }
 
@@ -4616,12 +4562,6 @@ void clMainFrame::OnFindResourceXXX(wxCommandEvent& e)
     }
 }
 
-void clMainFrame::OnParsingThreadMessage(clParseThreadEvent& e)
-{
-    e.Skip();
-    clGetManager()->GetStatusBar()->SetMessage(e.GetString());
-}
-
 void clMainFrame::OnDatabaseUpgradeInternally(wxCommandEvent& e)
 {
     wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
@@ -4751,13 +4691,6 @@ void clMainFrame::SelectBestEnvSet()
     DebuggerConfigTool::Get()->WriteObject(wxT("DebuggerCommands"), &preDefTypeMap);
 }
 
-void clMainFrame::OnClearTagsCache(clParseThreadEvent& e)
-{
-    e.Skip();
-    TagsManagerST::Get()->ClearTagsCache();
-    GetStatusBar()->SetMessage(_("Tags cache cleared"));
-}
-
 void clMainFrame::OnUpdateNumberOfBuildProcesses(wxCommandEvent& e)
 {
     int cpus = wxThread::GetCPUCount();
@@ -4857,33 +4790,6 @@ void clMainFrame::UpdateAUI()
 {
     SetAUIManagerFlags();
     m_mgr.Update();
-}
-
-void clMainFrame::OnRetaggingCompleted(clParseThreadEvent& e)
-{
-    e.Skip();
-
-    // Generate compile_commands.json file
-    ManagerST::Get()->GenerateCompileCommands();
-
-    GetStatusBar()->SetMessage(_("Done"));
-    GetWorkspacePane()->ClearProgress();
-
-    // Clear all cached tags now that we got our database updated
-    TagsManagerST::Get()->ClearAllCaches();
-
-    wxCommandEvent tagEndEvent(wxEVT_CMD_RETAG_COMPLETED);
-    EventNotifier::Get()->AddPendingEvent(tagEndEvent);
-}
-
-void clMainFrame::OnRetaggingProgress(clParseThreadEvent& e)
-{
-    e.Skip();
-    if(e.GetProgressPercentage() == 1) {
-        // parsing started
-        gStopWatch.Start();
-    }
-    GetWorkspacePane()->UpdateProgress(e.GetProgressPercentage());
 }
 
 void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event) { CHECK_SHUTDOWN(); }
@@ -5093,25 +4999,6 @@ void clMainFrame::OnChangePerspectiveUI(wxUpdateUIEvent& e)
     wxString itemName = ManagerST::Get()->GetPerspectiveManager().NameFromMenuId(e.GetId());
 
     e.Check(active.CmpNoCase(itemName) == 0);
-}
-
-void clMainFrame::OnParserThreadReady(clParseThreadEvent& e)
-{
-    e.Skip();
-    ManagerST::Get()->SetRetagInProgress(false);
-
-    if(ManagerST::Get()->IsShutdownInProgress()) {
-        // we are in shutdown progress, dont do anything
-        return;
-    }
-
-    wxUnusedVar(e);
-    GetStatusBar()->SetMessage(wxEmptyString);
-
-    clEditor* editor = GetMainBook()->GetActiveEditor();
-    if(editor) {
-        editor->UpdateColours();
-    }
 }
 
 void clMainFrame::OnFileSaveUI(wxUpdateUIEvent& event) { event.Enable(true); }
@@ -5790,15 +5677,15 @@ void clMainFrame::OnWordComplete(wxCommandEvent& event)
         return;
 
     clCodeCompletionEvent ccEvent(wxEVT_CC_WORD_COMPLETE);
-    ccEvent.SetEditor(editor);
-    ccEvent.SetEventObject(this);
     ccEvent.SetTriggerKind(LSP::CompletionItem::kTriggerUser);
     ccEvent.SetWord(stc->GetTextRange(start, curPos));
+    ccEvent.SetFileName(editor->GetFileName().GetFullPath());
     ServiceProviderManager::Get().ProcessEvent(ccEvent);
 
     const wxCodeCompletionBoxEntry::Vec_t& entries = ccEvent.GetEntries();
     if(entries.empty())
         return;
+
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(
         editor->GetCtrl(), entries,
         wxCodeCompletionBox::kNoShowingEvent, // Don't fire the "wxEVT_CCBOX_SHOWING event

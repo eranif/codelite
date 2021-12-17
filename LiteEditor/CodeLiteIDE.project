@@ -762,10 +762,6 @@
   <VirtualDirectory Name="CodeCompletion">
     <File Name="code_completion_manager.h"/>
     <File Name="code_completion_manager.cpp"/>
-    <File Name="CxxPreProcessorThread.h"/>
-    <File Name="CxxPreProcessorThread.cpp"/>
-    <File Name="CxxUsingNamespaceCollectorThread.h"/>
-    <File Name="CxxUsingNamespaceCollectorThread.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="WinRelease_29">
     <Project Name="wxscintilla"/>

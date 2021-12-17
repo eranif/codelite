@@ -367,22 +367,21 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_JUMP_HYPER_LINK, clCodeComplet
 //===----------------------------------------------------------------------------------------------
 
 // Search the workspace for a symbol
-// Use evt.GetWord() to get the searched string
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL, clCodeCompletionEvent);
 
 // Find header file for a given symbol
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_HEADER_FILE, clCodeCompletionEvent);
 
-// Find symbol declaration. Use evt.GetWord() to get the searched string
+// Find symbol declaration
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL_DECLARATION, clCodeCompletionEvent);
 
-// Find symbol definition. Use evt.GetWord() to get the searched string
+// Find symbol definition
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_FIND_SYMBOL_DEFINITION, clCodeCompletionEvent);
 
 // Request for code completion
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE, clCodeCompletionEvent);
 
-/// User asked for "word completion" (non context code completion event)
+// User asked for "word completion" Ctrl-SPACE
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORD_COMPLETE, clCodeCompletionEvent);
 
 // A function calltip is requesed
@@ -392,7 +391,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_WORD_COMPLETE, clCodeCompletio
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, clCodeCompletionEvent);
 
 // User is hovering a text, display the typeinfo
-// IEditor* editor = dynamic_cast<IEditor*>(evt.GetEditor());
 // Hover position is set in the evt.GetPosition()
 // To pass a new tooltip, just call event.SetTooltip(...)
 // CodeLite will display the tooltip if a non empty string is passed. Simple markup is allowed (<br> <hr> etc)

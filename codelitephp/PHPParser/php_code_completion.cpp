@@ -262,7 +262,7 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
 {
     e.Skip(true);
     if(PHPWorkspace::Get()->IsOpen()) {
-        IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
+        IEditor* editor = GetEditor(e.GetFileName());
         if(editor && IsPHPFile(editor)) {
             e.Skip(false);
 
@@ -280,7 +280,7 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
 
             } else {
                 // Perform the code completion here
-                PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, e.GetPosition())));
+                PHPExpression::Ptr_t expr(new PHPExpression(editor->GetTextRange(0, editor->GetCurrentPosition())));
                 bool isExprStartsWithOpenTag = expr->IsExprStartsWithOpenTag();
                 PHPEntityBase::Ptr_t entity = expr->Resolve(m_lookupTable, editor->GetFileName().GetFullPath());
                 if(entity) {
@@ -316,10 +316,10 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
 {
     e.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
-        if(!CanCodeComplete(e))
+        IEditor* editor = GetEditor(e.GetFileName());
+        if(!CanCodeComplete(e, editor))
             return;
 
-        IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
             // we handle only .php files
             if(IsPHPFile(editor)) {
@@ -327,7 +327,7 @@ void PHPCodeCompletion::OnFunctionCallTip(clCodeCompletionEvent& e)
                 e.Skip(false);
 
                 // get the position
-                PHPEntityBase::Ptr_t resolved = DoGetPHPEntryUnderTheAtPos(editor, e.GetPosition(), true);
+                PHPEntityBase::Ptr_t resolved = DoGetPHPEntryUnderTheAtPos(editor, editor->GetCurrentPosition(), true);
                 if(resolved) {
                     // In PHP there is no overloading, so there can be only one signature for a function
                     // so we simply place our match into TagEntryPtrVector_t structure and pass it to the editor
@@ -352,10 +352,11 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
 {
     e.Skip();
     if(PHPWorkspace::Get()->IsOpen()) {
-        if(!CanCodeComplete(e))
+        IEditor* editor = GetEditor(e.GetFileName());
+        if(!CanCodeComplete(e, editor))
             return;
+
         e.Skip(false);
-        IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
             wxString word = editor->GetWordAtCaret();
             if(word.IsEmpty())
@@ -396,10 +397,10 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
 void PHPCodeCompletion::OnTypeinfoTip(clCodeCompletionEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen()) {
-        if(!CanCodeComplete(e))
+        IEditor* editor = GetEditor(e.GetFileName());
+        if(!CanCodeComplete(e, editor))
             return;
 
-        IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
         if(editor) {
             if(IsPHPFile(editor)) {
                 PHPEntityBase::Ptr_t entity = GetPHPEntityAtPos(editor, e.GetPosition());
@@ -448,14 +449,13 @@ PHPEntityBase::Ptr_t PHPCodeCompletion::GetPHPEntityAtPos(IEditor* editor, int p
 }
 
 /* static */
-bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e)
+bool PHPCodeCompletion::CanCodeComplete(clCodeCompletionEvent& e, IEditor* editor)
 {
     int pos = e.GetPosition();
     if(pos)
         pos -= 1;
-    IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
-    if(!editor)
-        return false;
+
+    CHECK_PTR_RET_FALSE(editor);
 
     // we can get style 0 if we added chars and they were not styled just yet
     // sd we use the first style near our position (backward)
@@ -606,7 +606,7 @@ void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
     CHECK_COND_RET(PHPWorkspace::Get()->IsOpen());
 
     // Sanity
-    IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
+    IEditor* editor = GetEditor(e.GetFileName());
     CHECK_PTR_RET(editor);
 
     // Is this a PHP editor?
@@ -911,4 +911,13 @@ void PHPCodeCompletion::OnActiveEditorChanged(wxCommandEvent& e)
         scopes.push_back(scope_entry);
     }
     clGetManager()->GetNavigationBar()->SetScopes(editor->GetFileName().GetFullPath(), scopes);
+}
+
+IEditor* PHPCodeCompletion::GetEditor(const wxString& filepath) const
+{
+    auto editor = clGetManager()->FindEditor(filepath);
+    if(editor && editor == clGetManager()->GetActiveEditor()) {
+        return editor;
+    }
+    return nullptr;
 }

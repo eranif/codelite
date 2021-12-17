@@ -1,3 +1,4 @@
+#include "php.h"
 #include "NewPHPProjectWizard.h"
 #include "PHPDebugPane.h"
 #include "PHPXDebugSetupWizard.h"
@@ -13,7 +14,6 @@
 #include "globals.h"
 #include "localsview.h"
 #include "new_php_workspace_dlg.h"
-#include "php.h"
 #include "php_code_completion.h"
 #include "php_configuration_data.h"
 #include "php_editor_context_menu.h"
@@ -279,18 +279,19 @@ void PhpPlugin::UnPlug()
 
 void PhpPlugin::OnShowQuickOutline(clCodeCompletionEvent& e)
 {
-    IEditor* editor = dynamic_cast<IEditor*>(e.GetEditor());
-    if(editor) {
-        // we handle only .php files
-        if(!IsPHPFile(editor)) {
-            // get the position
-            e.Skip();
-            return;
-        }
-        PHPQuickOutlineDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), editor, m_mgr);
-        dlg.ShowModal();
-        CallAfter(&PhpPlugin::SetEditorActive, editor);
+    e.Skip();
+    IEditor* editor = clGetManager()->FindEditor(e.GetFileName());
+    CHECK_PTR_RET(editor);
+
+    // we handle only .php files
+    if(!IsPHPFile(editor)) {
+        return;
     }
+    e.Skip(false);
+
+    PHPQuickOutlineDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), editor, m_mgr);
+    dlg.ShowModal();
+    CallAfter(&PhpPlugin::SetEditorActive, editor);
 }
 
 void PhpPlugin::OnNewWorkspace(clCommandEvent& e)

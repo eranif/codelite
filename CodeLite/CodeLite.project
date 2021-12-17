@@ -176,7 +176,6 @@
     <File Name="readtags.cpp"/>
     <File Name="progress_dialog.cpp"/>
     <File Name="procutils.cpp"/>
-    <File Name="parse_thread.cpp"/>
     <File Name="lex.yy.cpp"/>
     <File Name="language.cpp"/>
     <File Name="fileutils.cpp"/>
@@ -242,7 +241,6 @@
     <File Name="fileutils.h"/>
     <File Name="FlexLexer.h"/>
     <File Name="language.h"/>
-    <File Name="parse_thread.h"/>
     <File Name="precompiled_header.h"/>
     <File Name="procutils.h"/>
     <File Name="progress_dialog.h"/>

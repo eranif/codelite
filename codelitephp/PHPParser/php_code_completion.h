@@ -71,8 +71,9 @@ protected:
     PHPLookupTable m_lookupTable;
     std::unordered_map<wxString, PHPEntityBase::Ptr_t> m_currentNavBarFunctions;
 
-    static bool CanCodeComplete(clCodeCompletionEvent& e);
+    static bool CanCodeComplete(clCodeCompletionEvent& e, IEditor* editor);
     void DoShowCompletionBox(const PHPEntityBase::List_t& entries, PHPExpression::Ptr_t expr);
+    IEditor* GetEditor(const wxString& filepath) const;
 
 protected:
     /**

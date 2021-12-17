@@ -69,7 +69,6 @@
 #include "movefuncimpldlg.h"
 #include "navigationmanager.h"
 #include "new_quick_watch_dlg.h"
-#include "parse_thread.h"
 #include "pluginmanager.h"
 #include "precompiled_header.h"
 #include "refactorengine.h"
@@ -82,7 +81,6 @@
 #include "wx/tokenzr.h"
 #include "wx/xrc/xmlres.h"
 #include "wxCodeCompletionBoxManager.h"
-#include <parse_thread.h>
 #include <wx/choicdlg.h>
 #include <wx/file.h>
 #include <wx/progdlg.h>
@@ -736,47 +734,7 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
     return false;
 }
 
-bool ContextCpp::CompleteWord()
-{
-    CHECK_JS_RETURN_FALSE();
-    clEditor& rCtrl = GetCtrl();
-
-    VALIDATE_WORKSPACE_FALSE();
-
-    wxString word;
-    wxString fileName;
-    wxString line = rCtrl.GetCurLine();
-    if(IsIncludeStatement(line, NULL, &fileName)) {
-        DisplayFilesCompletionBox(fileName);
-        return true;
-    }
-
-    // Make sure we are not on a comment section
-    if(IsCommentOrString(rCtrl.GetCurrentPos()))
-        return false;
-
-    // Get the partial word that we have
-    long pos = rCtrl.GetCurrentPos();
-    long start = rCtrl.WordStartPosition(pos, true);
-    word = rCtrl.GetTextRange(start, pos);
-
-    if(word.IsEmpty()) {
-        // incase the 'word' is empty, test the word to the left of the current pos
-        wxChar ch1 = rCtrl.SafeGetChar(pos - 1);
-        wxChar ch2 = rCtrl.SafeGetChar(pos - 2);
-
-        if(ch1 == wxT('.') || (ch2 == wxT('-') && ch1 == wxT('>')) || (ch2 == wxT(':') && ch1 == wxT(':'))) {
-            return CodeComplete();
-        }
-        return false;
-    }
-
-    // get the current expression
-    wxString expr = GetExpression(rCtrl.GetCurrentPos(), true);
-
-    DoSetProjectPaths();
-    return CodeCompletionManager::Get().WordCompletion(&GetCtrl(), expr, word);
-}
+bool ContextCpp::CompleteWord() { return false; }
 
 void ContextCpp::DisplayFilesCompletionBox(const wxString& word)
 {
@@ -1364,14 +1322,19 @@ void ContextCpp::OnKeyDown(wxKeyEvent& event)
 
 void ContextCpp::OnFindImpl(wxCommandEvent& event)
 {
-    CHECK_JS_RETURN_VOID();
-    CodeCompletionManager::Get().GotoImpl(&GetCtrl());
+    wxUnusedVar(event);
+    clCodeCompletionEvent event_definition(wxEVT_CC_FIND_SYMBOL_DEFINITION);
+    event_definition.SetFileName(GetCtrl().GetFileName().GetFullPath());
+    ServiceProviderManager::Get().ProcessEvent(event_definition);
 }
 
 void ContextCpp::OnFindDecl(wxCommandEvent& event)
 {
-    CHECK_JS_RETURN_VOID();
-    CodeCompletionManager::Get().GotoDecl(&GetCtrl());
+    wxUnusedVar(event);
+    wxMessageBox("OnFindImpl");
+    clCodeCompletionEvent event_declaration(wxEVT_CC_FIND_SYMBOL_DECLARATION);
+    event_declaration.SetFileName(GetCtrl().GetFileName().GetFullPath());
+    ServiceProviderManager::Get().ProcessEvent(event_declaration);
 }
 
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent& event)
@@ -2264,128 +2227,7 @@ wxString ContextCpp::CallTipContent()
     return wxEmptyString;
 }
 
-bool ContextCpp::DoCodeComplete(long pos)
-{
-    CHECK_JS_RETURN_FALSE();
-    clDEBUG1() << "ContextCpp::DoCodeComplete(" << pos << ") is called" << clEndl;
-    long currentPosition = pos;
-    bool showFuncProto = false;
-    int pos1, pos2, end;
-    clEditor& editor = GetCtrl();
-    wxChar ch = editor.PreviousChar(pos, pos1);
-
-    //	Make sure we are not on a comment section
-    if(IsCommentOrString(editor.PositionBefore(pos))) {
-        return false;
-    }
-
-    // Search for first non-whitespace wxChar
-    clDEBUG1() << "Triggering char is:" << ch << clEndl;
-    switch(ch) {
-    case '.':
-        // Class / Struct completion
-        editor.PreviousChar(pos1, end);
-        break;
-    case '>':
-        // Check previous character if is '-'
-        // We open drop box as well
-        if(editor.PreviousChar(pos1, pos2) == '-') {
-            editor.PreviousChar(pos2, end);
-        } else {
-            return false;
-        }
-        break;
-    case ':':
-        // Check previous character if is ':'
-        // We open drop box as well
-        if(editor.PreviousChar(pos1, pos2) == wxT(':')) {
-            editor.PreviousChar(pos2, end);
-        } else {
-            return false;
-        }
-        break;
-    case '(':
-        showFuncProto = true;
-        // is this setting is on?
-        if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP)) {
-            return false;
-        }
-        editor.PreviousChar(pos1, end);
-        break;
-    default:
-        return false;
-    }
-
-    // get expression
-    wxString expr = GetExpression(currentPosition, false);
-
-    // get the scope
-    // Optimize the text for large files
-    int line = editor.LineFromPosition(editor.GetCurrentPosition()) + 1;
-    int startPos(0);
-
-    // enable faster scope name resolving if needed
-    if(!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_ACCURATE_SCOPE_RESOLVING)) {
-        TagEntryPtr t = TagsManagerST::Get()->FunctionFromFileLine(editor.GetFileName(), line);
-        if(t) {
-            startPos = editor.PositionFromLine(t->GetLine() - 1);
-            if(startPos > currentPosition) {
-                startPos = 0;
-            }
-        }
-    }
-
-    wxString text = editor.GetTextRange(startPos, currentPosition);
-
-    // collect all text from 0 - first scope found
-    // this will help us detect statements like 'using namespace foo;'
-    if(startPos) { //> 0
-        // get the first function on this file
-        int endPos(0);
-        int endPos1(0);
-        int endPos2(0);
-        TagEntryPtr t2 = TagsManagerST::Get()->FirstFunctionOfFile(editor.GetFileName());
-        if(t2) {
-            endPos1 = editor.PositionFromLine(t2->GetLine() - 1);
-            if(endPos1 > 0 && endPos1 <= startPos) {
-                endPos = endPos1;
-            }
-        }
-
-        TagEntryPtr t3 = TagsManagerST::Get()->FirstScopeOfFile(editor.GetFileName());
-        if(t3) {
-            endPos2 = editor.PositionFromLine(t3->GetLine() - 1);
-            if(endPos2 > 0 && endPos2 <= startPos && endPos2 < endPos1) {
-                endPos = endPos2;
-            }
-        }
-
-        wxString globalText = editor.GetTextRange(0, endPos);
-        globalText.Append(wxT(";"));
-        text.Prepend(globalText);
-    }
-
-    if(showFuncProto) {
-        clDEBUG1() << "Function prototype is requested..." << clEndl;
-        // for function prototype, the last char entered was '(', this will break
-        // the logic of the Getexpression() method to workaround this, we search for
-        // expression one char before the current position
-        expr = GetExpression(editor.PositionBefore(currentPosition), false);
-
-        // display function tooltip
-        int word_end = editor.WordEndPosition(end, true);
-        int word_start = editor.WordStartPosition(end, true);
-
-        // get the token
-        wxString word = editor.GetTextRange(word_start, word_end);
-        clDEBUG1() << "Function prototype is requested for:" << expr << "|" << word << clEndl;
-        return CodeCompletionManager::Get().Calltip(&editor, line, expr, text, word);
-
-    } else {
-        DoSetProjectPaths();
-        return CodeCompletionManager::Get().CodeComplete(&editor, line, expr, text);
-    }
-}
+bool ContextCpp::DoCodeComplete(long pos) { return false; }
 
 int ContextCpp::GetHyperlinkRange(int pos, int& start, int& end)
 {
@@ -2890,8 +2732,8 @@ bool ContextCpp::IsAtLineComment() const
 
 void ContextCpp::OnShowCodeNavMenu(clCodeCompletionEvent& e)
 {
-    clEditor* editor = dynamic_cast<clEditor*>(e.GetEditor());
-    if(!editor || editor != &GetCtrl()) {
+    clEditor* editor = &GetCtrl();
+    if(editor->GetFileName().GetFullPath() != e.GetFileName()) {
         e.Skip();
         return;
     }

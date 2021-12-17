@@ -61,7 +61,6 @@
 #include <entry.h>
 #include <event_notifier.h>
 #include <globals.h>
-#include <parse_thread.h>
 #include <plugin.h>
 #include <project.h>
 #include <workspace.h>

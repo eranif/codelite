@@ -243,7 +243,6 @@ typedef void (wxEvtHandler::*clSourceControlEventFunction)(clSourceControlEvent&
 /// a clCodeCompletionEvent
 class WXDLLIMPEXP_CL clCodeCompletionEvent : public clCommandEvent
 {
-    wxObject* m_editor;
     wxString m_word;
     int m_position;
     wxString m_tooltip;
@@ -272,7 +271,6 @@ public:
     void SetInsideCommentOrString(bool insideCommentOrString) { this->m_insideCommentOrString = insideCommentOrString; }
 
     bool IsInsideCommentOrString() const { return m_insideCommentOrString; }
-    void SetEditor(wxObject* editor) { this->m_editor = editor; }
     void SetEntries(const wxCodeCompletionBoxEntry::Vec_t& entries) { this->m_entries = entries; }
     const wxCodeCompletionBoxEntry::Vec_t& GetEntries() const { return m_entries; }
     wxCodeCompletionBoxEntry::Vec_t& GetEntries() { return m_entries; }
@@ -280,10 +278,6 @@ public:
     const LSP::CompletionItem::eTriggerKind& GetTriggerKind() const { return m_triggerKind; }
     void SetTriggerKind(const LSP::CompletionItem::eTriggerKind& triggerKind) { this->m_triggerKind = triggerKind; }
 
-    /**
-     * @brief return the Editor object
-     */
-    wxObject* GetEditor() { return m_editor; }
     void SetWord(const wxString& word) { this->m_word = word; }
 
     void SetClasses(const wxString& classes) { this->m_classes = classes; }

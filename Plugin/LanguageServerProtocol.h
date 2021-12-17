@@ -118,6 +118,7 @@ protected:
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     bool CanHandle(FileExtManager::FileType file_type) const;
+    IEditor* GetEditor(const clCodeCompletionEvent& event) const;
 
 protected:
     /**

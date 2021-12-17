@@ -42,7 +42,6 @@
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include "named_pipe_client.h"
-#include "parse_thread.h"
 #include "precompiled_header.h"
 #include "processreaderthread.h"
 #include "procutils.h"
@@ -1067,23 +1066,7 @@ void TagsManager::DeleteFilesTags(const wxArrayString& files)
     DeleteFilesTags(files_);
 }
 
-void TagsManager::DeleteFilesTags(const std::vector<wxFileName>& projectFiles)
-{
-    if(projectFiles.empty()) {
-        return;
-    }
-
-    // Put a request to the parsing thread to delete the tags for the 'projectFiles'
-    ParseRequest* req = new ParseRequest(ParseThreadST::Get()->GetNotifiedWindow());
-    req->SetDbfile(GetDatabase()->GetDatabaseFileName().GetFullPath().c_str());
-    req->SetType(ParseRequest::PR_DELETE_TAGS_OF_FILES);
-    wxArrayString files;
-    files.Alloc(projectFiles.size());
-    for(const wxFileName& fn : projectFiles) {
-        files.push_back(fn.GetFullPath());
-    }
-    ParseThreadST::Get()->Add(req);
-}
+void TagsManager::DeleteFilesTags(const std::vector<wxFileName>& projectFiles) { wxUnusedVar(projectFiles); }
 
 void TagsManager::FindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags)
 {

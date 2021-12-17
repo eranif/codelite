@@ -47,7 +47,6 @@
 #include "macros.h"
 #include "manager.h"
 #include "openwindowspanel.h"
-#include "parse_thread.h"
 #include "pluginmanager.h"
 #include "tabgroupspane.h"
 #include "windowstack.h"

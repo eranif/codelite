@@ -41,7 +41,6 @@
 #include "macros.h"
 #include "mainbook.h"
 #include "output_pane.h"
-#include "parse_thread.h"
 #include "refactorengine.h"
 #include "tags_options_dlg.h"
 #include "theme_handler.h"
@@ -543,13 +542,9 @@ protected:
     void OnRenameSymbol(clRefactoringEvent& e);
 
     // handle symbol tree events
-    void OnParsingThreadMessage(clParseThreadEvent& e);
     void OnDatabaseUpgrade(wxCommandEvent& e);
     void OnDatabaseUpgradeInternally(wxCommandEvent& e);
     void OnRefreshPerspectiveMenu(wxCommandEvent& e);
-    void OnClearTagsCache(clParseThreadEvent& e);
-    void OnRetaggingCompleted(clParseThreadEvent& e);
-    void OnRetaggingProgress(clParseThreadEvent& e);
 
     void OnRecentFile(wxCommandEvent& event);
     void OnRecentWorkspace(wxCommandEvent& event);
@@ -651,7 +646,6 @@ protected:
     void OnLoadPerspective(wxCommandEvent& e);
     void OnWorkspaceSettings(wxCommandEvent& e);
     void OnWorkspaceEditorPreferences(wxCommandEvent& e);
-    void OnParserThreadReady(clParseThreadEvent& e);
     void OnSetActivePoject(wxCommandEvent& e);
     void OnSetActivePojectUI(wxUpdateUIEvent& e);
 

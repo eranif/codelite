@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "pluginmanager.h"
+#include "BuildTab.hpp"
 #include "app.h"
 #include "bitmap_loader.h"
 #include "build_settings_config.h"
@@ -49,7 +51,7 @@
 #include "manager.h"
 #include "optionsconfig.h"
 #include "plugin_version.h"
-#include "pluginmanager.h"
+#include "procutils.h"
 #include "sessionmanager.h"
 #include "workspace_pane.h"
 #include "workspacetab.h"
@@ -59,7 +61,6 @@
 #include <wx/log.h>
 #include <wx/tokenzr.h>
 #include <wx/toolbook.h>
-#include "BuildTab.hpp"
 
 PluginManager* PluginManager::Get()
 {
@@ -99,9 +100,7 @@ void PluginManager::UnLoad()
     m_plugins.clear();
 }
 
-PluginManager::~PluginManager()
-{
-}
+PluginManager::~PluginManager() {}
 
 PluginManager::PluginManager()
     : m_bmpLoader(NULL)
@@ -353,10 +352,7 @@ IEditor* PluginManager::GetActiveEditor()
     return NULL;
 }
 
-IConfigTool* PluginManager::GetConfigTool()
-{
-    return EditorConfigST::Get();
-}
+IConfigTool* PluginManager::GetConfigTool() { return EditorConfigST::Get(); }
 
 void PluginManager::HookPopupMenu(wxMenu* menu, MenuType type)
 {
@@ -379,25 +375,13 @@ TreeItemInfo PluginManager::GetSelectedTreeItemInfo(TreeType type)
     }
 }
 
-clTreeCtrl* PluginManager::GetWorkspaceTree()
-{
-    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView();
-}
+clTreeCtrl* PluginManager::GetWorkspaceTree() { return clMainFrame::Get()->GetWorkspaceTab()->GetFileView(); }
 
-clTreeCtrl* PluginManager::GetFileExplorerTree()
-{
-    return clMainFrame::Get()->GetFileExplorer()->GetTree();
-}
+clTreeCtrl* PluginManager::GetFileExplorerTree() { return clMainFrame::Get()->GetFileExplorer()->GetTree(); }
 
-Notebook* PluginManager::GetOutputPaneNotebook()
-{
-    return clMainFrame::Get()->GetOutputPane()->GetNotebook();
-}
+Notebook* PluginManager::GetOutputPaneNotebook() { return clMainFrame::Get()->GetOutputPane()->GetNotebook(); }
 
-Notebook* PluginManager::GetWorkspacePaneNotebook()
-{
-    return clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
-}
+Notebook* PluginManager::GetWorkspacePaneNotebook() { return clMainFrame::Get()->GetWorkspacePane()->GetNotebook(); }
 
 IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& bmpResourceName, const wxString& tooltip)
 {
@@ -418,30 +402,15 @@ IEditor* PluginManager::OpenFile(const wxString& fileName, const wxString& proje
     return editor;
 }
 
-wxString PluginManager::GetStartupDirectory() const
-{
-    return ManagerST::Get()->GetStartupDirectory();
-}
+wxString PluginManager::GetStartupDirectory() const { return ManagerST::Get()->GetStartupDirectory(); }
 
-void PluginManager::AddProject(const wxString& path)
-{
-    ManagerST::Get()->AddProject(path);
-}
+void PluginManager::AddProject(const wxString& path) { ManagerST::Get()->AddProject(path); }
 
-bool PluginManager::IsWorkspaceOpen() const
-{
-    return ManagerST::Get()->IsWorkspaceOpen();
-}
+bool PluginManager::IsWorkspaceOpen() const { return ManagerST::Get()->IsWorkspaceOpen(); }
 
-TagsManager* PluginManager::GetTagsManager()
-{
-    return TagsManagerST::Get();
-}
+TagsManager* PluginManager::GetTagsManager() { return TagsManagerST::Get(); }
 
-clCxxWorkspace* PluginManager::GetWorkspace()
-{
-    return clCxxWorkspaceST::Get();
-}
+clCxxWorkspace* PluginManager::GetWorkspace() { return clCxxWorkspaceST::Get(); }
 
 bool PluginManager::AddFilesToVirtualFolder(wxTreeItemId& item, wxArrayString& paths)
 {
@@ -474,29 +443,17 @@ int PluginManager::GetToolbarIconSize()
     return 24;
 }
 
-wxAuiManager* PluginManager::GetDockingManager()
-{
-    return m_dockingManager;
-}
+wxAuiManager* PluginManager::GetDockingManager() { return m_dockingManager; }
 
-EnvironmentConfig* PluginManager::GetEnv()
-{
-    return EnvironmentConfig::Instance();
-}
+EnvironmentConfig* PluginManager::GetEnv() { return EnvironmentConfig::Instance(); }
 
-JobQueue* PluginManager::GetJobQueue()
-{
-    return JobQueueSingleton::Instance();
-}
+JobQueue* PluginManager::GetJobQueue() { return JobQueueSingleton::Instance(); }
 wxString PluginManager::GetProjectExecutionCommand(const wxString& projectName, wxString& wd)
 {
     return ManagerST::Get()->GetProjectExecutionCommand(projectName, wd, false);
 }
 
-wxApp* PluginManager::GetTheApp()
-{
-    return wxTheApp;
-}
+wxApp* PluginManager::GetTheApp() { return wxTheApp; }
 
 void PluginManager::ReloadWorkspace()
 {
@@ -513,20 +470,11 @@ IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
     return NULL;
 }
 
-wxEvtHandler* PluginManager::GetOutputWindow()
-{
-    return clMainFrame::Get()->GetOutputPane()->GetOutputWindow();
-}
+wxEvtHandler* PluginManager::GetOutputWindow() { return clMainFrame::Get()->GetOutputPane()->GetOutputWindow(); }
 
-bool PluginManager::SaveAll(bool prompt)
-{
-    return clMainFrame::Get()->GetMainBook()->SaveAll(prompt, false);
-}
+bool PluginManager::SaveAll(bool prompt) { return clMainFrame::Get()->GetMainBook()->SaveAll(prompt, false); }
 
-wxString PluginManager::GetInstallDirectory() const
-{
-    return ManagerST::Get()->GetInstallDir();
-}
+wxString PluginManager::GetInstallDirectory() const { return ManagerST::Get()->GetInstallDir(); }
 
 bool PluginManager::CreateVirtualDirectory(const wxString& parentPath, const wxString& vdName)
 {
@@ -589,30 +537,15 @@ void PluginManager::SetStatusMessage(const wxString& msg, int seconds_to_live)
     }
 }
 
-void PluginManager::ProcessCommandQueue()
-{
-    ManagerST::Get()->ProcessCommandQueue();
-}
+void PluginManager::ProcessCommandQueue() { ManagerST::Get()->ProcessCommandQueue(); }
 
-void PluginManager::PushQueueCommand(const QueueCommand& cmd)
-{
-    ManagerST::Get()->PushQueueCommand(cmd);
-}
+void PluginManager::PushQueueCommand(const QueueCommand& cmd) { ManagerST::Get()->PushQueueCommand(cmd); }
 
-void PluginManager::StopAndClearQueue()
-{
-    ManagerST::Get()->StopBuild();
-}
+void PluginManager::StopAndClearQueue() { ManagerST::Get()->StopBuild(); }
 
-bool PluginManager::IsBuildInProgress() const
-{
-    return ManagerST::Get()->IsBuildInProgress();
-}
+bool PluginManager::IsBuildInProgress() const { return ManagerST::Get()->IsBuildInProgress(); }
 
-bool PluginManager::IsBuildEndedSuccessfully() const
-{
-    return ManagerST::Get()->IsBuildEndedSuccessfully();
-}
+bool PluginManager::IsBuildEndedSuccessfully() const { return ManagerST::Get()->IsBuildEndedSuccessfully(); }
 
 wxString PluginManager::GetProjectNameByFile(wxString& fullPathFileName)
 {
@@ -624,20 +557,11 @@ wxString PluginManager::GetProjectNameByFile(const wxString& fullPathFileName)
     return ManagerST::Get()->GetProjectNameByFile(fullPathFileName);
 }
 
-BuildManager* PluginManager::GetBuildManager()
-{
-    return BuildManagerST::Get();
-}
+BuildManager* PluginManager::GetBuildManager() { return BuildManagerST::Get(); }
 
-BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager()
-{
-    return BuildSettingsConfigST::Get();
-}
+BuildSettingsConfig* PluginManager::GetBuildSettingsConfigManager() { return BuildSettingsConfigST::Get(); }
 
-bool PluginManager::ClosePage(const wxString& title)
-{
-    return clMainFrame::Get()->GetMainBook()->ClosePage(title);
-}
+bool PluginManager::ClosePage(const wxString& title) { return clMainFrame::Get()->GetMainBook()->ClosePage(title); }
 bool PluginManager::ClosePage(const wxFileName& filename)
 {
     MainBook* book = clMainFrame::Get()->GetMainBook();
@@ -645,10 +569,7 @@ bool PluginManager::ClosePage(const wxFileName& filename)
     return clMainFrame::Get()->GetMainBook()->ClosePage(editor);
 }
 
-wxWindow* PluginManager::FindPage(const wxString& text)
-{
-    return clMainFrame::Get()->GetMainBook()->FindPage(text);
-}
+wxWindow* PluginManager::FindPage(const wxString& text) { return clMainFrame::Get()->GetMainBook()->FindPage(text); }
 
 bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip,
                             const wxString& bmpResourceName, bool selected)
@@ -657,20 +578,11 @@ bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString&
     return clMainFrame::Get()->GetMainBook()->AddPage(win, text, tooltip, bmp_index, selected);
 }
 
-bool PluginManager::SelectPage(wxWindow* win)
-{
-    return clMainFrame::Get()->GetMainBook()->SelectPage(win);
-}
+bool PluginManager::SelectPage(wxWindow* win) { return clMainFrame::Get()->GetMainBook()->SelectPage(win); }
 
-IEditor* PluginManager::OpenFile(const BrowseRecord& rec)
-{
-    return clMainFrame::Get()->GetMainBook()->OpenFile(rec);
-}
+IEditor* PluginManager::OpenFile(const BrowseRecord& rec) { return clMainFrame::Get()->GetMainBook()->OpenFile(rec); }
 
-NavMgr* PluginManager::GetNavigationMgr()
-{
-    return NavMgr::Get();
-}
+NavMgr* PluginManager::GetNavigationMgr() { return NavMgr::Get(); }
 
 void PluginManager::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName,
                                            const wxString& configName)
@@ -690,15 +602,9 @@ void PluginManager::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxStrin
     }
 }
 
-IEditor* PluginManager::NewEditor()
-{
-    return clMainFrame::Get()->GetMainBook()->NewEditor();
-}
+IEditor* PluginManager::NewEditor() { return clMainFrame::Get()->GetMainBook()->NewEditor(); }
 
-bool PluginManager::IsShutdownInProgress() const
-{
-    return ManagerST::Get()->IsShutdownInProgress();
-}
+bool PluginManager::IsShutdownInProgress() const { return ManagerST::Get()->IsShutdownInProgress(); }
 
 BitmapLoader* PluginManager::GetStdIcons()
 {
@@ -786,20 +692,11 @@ void PluginManager::AddEditorPage(wxWindow* page, const wxString& name, const wx
     clMainFrame::Get()->GetMainBook()->AddPage(page, name, tooltip, wxNOT_FOUND, true);
 }
 
-wxPanel* PluginManager::GetEditorPaneNotebook()
-{
-    return clMainFrame::Get()->GetMainBook();
-}
+wxPanel* PluginManager::GetEditorPaneNotebook() { return clMainFrame::Get()->GetMainBook(); }
 
-wxWindow* PluginManager::GetActivePage()
-{
-    return clMainFrame::Get()->GetMainBook()->GetCurrentPage();
-}
+wxWindow* PluginManager::GetActivePage() { return clMainFrame::Get()->GetMainBook()->GetCurrentPage(); }
 
-wxWindow* PluginManager::GetPage(size_t page)
-{
-    return clMainFrame::Get()->GetMainBook()->GetPage(page);
-}
+wxWindow* PluginManager::GetPage(size_t page) { return clMainFrame::Get()->GetMainBook()->GetPage(page); }
 
 wxString PluginManager::GetPageTitle(wxWindow* win) const
 {
@@ -821,15 +718,9 @@ IEditor* PluginManager::FindEditor(const wxString& filename) const
     return clMainFrame::Get()->GetMainBook()->FindEditor(filename);
 }
 
-void PluginManager::EnableClangCodeCompletion(bool b)
-{
-    wxUnusedVar(b);
-}
+void PluginManager::EnableClangCodeCompletion(bool b) { wxUnusedVar(b); }
 
-size_t PluginManager::GetPageCount() const
-{
-    return clMainFrame::Get()->GetMainBook()->GetPageCount();
-}
+size_t PluginManager::GetPageCount() const { return clMainFrame::Get()->GetMainBook()->GetPageCount(); }
 
 size_t PluginManager::GetAllEditors(IEditor::List_t& editors, bool inOrder)
 {
@@ -851,10 +742,7 @@ size_t PluginManager::GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints
     return breakpoints.size();
 }
 
-void PluginManager::DeleteAllBreakpoints()
-{
-    ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
-}
+void PluginManager::DeleteAllBreakpoints() { ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints(); }
 
 void PluginManager::SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints)
 {
@@ -951,10 +839,7 @@ void PluginManager::OpenFindInFileForPaths(const wxArrayString& paths)
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(ff);
 }
 
-void PluginManager::ShowOutputPane(const wxString& selectedWindow)
-{
-    ManagerST::Get()->ShowOutputPane(selectedWindow);
-}
+void PluginManager::ShowOutputPane(const wxString& selectedWindow) { ManagerST::Get()->ShowOutputPane(selectedWindow); }
 
 size_t PluginManager::GetAllTabs(clTab::Vec_t& tabs)
 {
@@ -999,10 +884,7 @@ void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
     }
 }
 
-clWorkspaceView* PluginManager::GetWorkspaceView()
-{
-    return clMainFrame::Get()->GetWorkspaceTab()->GetView();
-}
+clWorkspaceView* PluginManager::GetWorkspaceView() { return clMainFrame::Get()->GetWorkspaceTab()->GetView(); }
 
 void PluginManager::ShowToolBar(bool show)
 {
@@ -1026,15 +908,9 @@ bool PluginManager::CloseEditor(IEditor* editor, bool prompt)
     return clMainFrame::Get()->GetMainBook()->ClosePage(editor, prompt);
 }
 
-clEditorBar* PluginManager::GetNavigationBar()
-{
-    return clMainFrame::Get()->GetMainBook()->GetEditorBar();
-}
+clEditorBar* PluginManager::GetNavigationBar() { return clMainFrame::Get()->GetMainBook()->GetEditorBar(); }
 
-clToolBar* PluginManager::GetToolBar()
-{
-    return clMainFrame::Get()->GetMainToolBar();
-}
+clToolBar* PluginManager::GetToolBar() { return clMainFrame::Get()->GetMainToolBar(); }
 
 void PluginManager::DisplayMessage(const wxString& message, int flags,
                                    const std::vector<std::pair<wxWindowID, wxString>>& buttons)
@@ -1052,7 +928,4 @@ void PluginManager::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId)
     clMainFrame::Get()->ShowBuildMenu(toolbar, buttonId);
 }
 
-clMenuBar* PluginManager::GetMenuBar()
-{
-    return clMainFrame::Get()->GetMainMenuBar();
-}
+clMenuBar* PluginManager::GetMenuBar() { return clMainFrame::Get()->GetMainMenuBar(); }

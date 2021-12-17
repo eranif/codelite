@@ -219,10 +219,9 @@ void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
     CHECK_PTR_RET(editor);
 
     clCodeCompletionEvent findEvent(wxEVT_CC_FIND_SYMBOL);
-    findEvent.SetEventObject(editor->GetCtrl());
-    findEvent.SetEditor(editor->GetCtrl());
     findEvent.SetPosition(editor->GetCurrentPosition());
-    ServiceProviderManager::Get().ProcessEvent(findEvent);
+    findEvent.SetFileName(editor->GetFileName().GetFullPath());
+    ServiceProviderManager::Get().AddPendingEvent(findEvent);
 }
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)

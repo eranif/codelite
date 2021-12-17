@@ -30,7 +30,6 @@
 #include "ctags_manager.h"
 #include "entry.h"
 #include "map"
-#include "parse_thread.h"
 #include "wx/filename.h"
 
 /**
@@ -158,9 +157,9 @@ public:
      */
     virtual void SetSymbolsImages(BitmapLoader::Vec_t* bitmaps);
 
-    void AddSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
-    void DeleteSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
-    void UpdateSymbols(const std::vector<std::pair<wxString, TagEntry> >& items);
+    void AddSymbols(const std::vector<std::pair<wxString, TagEntry>>& items);
+    void DeleteSymbols(const std::vector<std::pair<wxString, TagEntry>>& items);
+    void UpdateSymbols(const std::vector<std::pair<wxString, TagEntry>>& items);
 
     /**
      * return the file name assocaited with this symbol tree

@@ -26,12 +26,12 @@
 #ifndef CSSCODECOMPLETION_H
 #define CSSCODECOMPLETION_H
 
-#include <wx/event.h> // Base class: wxEvtHandler
+#include "ServiceProvider.h"
+#include "cl_command_event.h"
 #include "smart_ptr.h"
 #include <vector>
 #include <wx/arrstr.h>
-#include "cl_command_event.h"
-#include "ServiceProvider.h"
+#include <wx/event.h> // Base class: wxEvtHandler
 
 class WebTools;
 class IEditor;
@@ -53,6 +53,7 @@ protected:
 protected:
     wxString GetPreviousWord(IEditor* editor, int pos);
     void OnCodeComplete(clCodeCompletionEvent& event);
+    IEditor* GetEditor(const wxString& filename) const;
 
 public:
     CSSCodeCompletion(WebTools* plugin);

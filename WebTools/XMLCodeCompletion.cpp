@@ -1,18 +1,16 @@
 #include "XMLCodeCompletion.h"
-#include "ieditor.h"
-#include <wx/stc/stc.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/app.h>
+#include "WebToolsConfig.h"
 #include "XMLBuffer.h"
-#include "wxCodeCompletionBoxManager.h"
-#include "event_notifier.h"
 #include "codelite_events.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include <wx/xrc/xmlres.h>
-#include "WebToolsConfig.h"
 #include "webtools.h"
+#include "wxCodeCompletionBoxManager.h"
+#include <wx/app.h>
+#include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 XMLCodeCompletion::XMLCodeCompletion(WebTools* plugin)
     : ServiceProvider("WebTools: XML", eServiceType::kCodeCompletion)
@@ -47,7 +45,8 @@ void XMLCodeCompletion::SuggestClosingTag(IEditor* editor, bool html)
     }
 
     XMLBuffer::Scope currentScope = buffer.GetCurrentScope();
-    if(!currentScope.IsOk()) return;
+    if(!currentScope.IsOk())
+        return;
 
     wxCodeCompletionBox::BmpVec_t bitmaps;
     bitmaps.push_back(wxXmlResource::Get()->LoadBitmap("code-tags"));
@@ -63,7 +62,8 @@ void XMLCodeCompletion::SuggestClosingTag(IEditor* editor, bool html)
 
 void XMLCodeCompletion::XmlCodeComplete(IEditor* editor)
 {
-    if(!m_xmlCcEnabled) return;
+    if(!m_xmlCcEnabled)
+        return;
 
     // Perform XML code completion
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
@@ -82,7 +82,8 @@ void XMLCodeCompletion::XmlCodeComplete(IEditor* editor)
 
 void XMLCodeCompletion::HtmlCodeComplete(IEditor* editor)
 {
-    if(!m_htmlCcEnabeld) return;
+    if(!m_htmlCcEnabeld)
+        return;
 
     // Perform HTML code completion
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
@@ -274,11 +275,14 @@ void XMLCodeCompletion::PrepareHtmlCompletions()
 void XMLCodeCompletion::OnCodeCompleted(clCodeCompletionEvent& event)
 {
     event.Skip();
-    if(event.GetEventObject() != this) { return; }
+    if(event.GetEventObject() != this) {
+        return;
+    }
 
     // sanity
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(!editor) return;
+    if(!editor)
+        return;
 
     // HTML triggered the code complete?
     if(m_completeReason == kHtmlOpenSequence) {
@@ -332,7 +336,9 @@ wxString XMLCodeCompletion::GetCompletePattern(const wxString& tag) const
         // The default:
         // <tag>|</tag>
         wxString t = tag;
-        if(t.StartsWith("<")) { t.Remove(0, 1); }
+        if(t.StartsWith("<")) {
+            t.Remove(0, 1);
+        }
         return wxString() << "<" << t << ">|</" << t << ">";
     } else {
         return m_completePattern.find(tag.Lower())->second;
@@ -358,7 +364,9 @@ int XMLCodeCompletion::GetWordStartPos(IEditor* editor)
     int minPos = editor->PosFromLine(editor->GetCurrentLine());
     int curpos = editor->GetCurrentPosition() - 1;
     for(int i = curpos; i >= minPos; --i) {
-        if(editor->GetCharAtPos(i) == '<') { return i; }
+        if(editor->GetCharAtPos(i) == '<') {
+            return i;
+        }
     }
     return editor->WordStartPos(editor->GetCurrentPosition(), true);
 }
@@ -366,7 +374,7 @@ int XMLCodeCompletion::GetWordStartPos(IEditor* editor)
 void XMLCodeCompletion::OnCodeComplete(clCodeCompletionEvent& event)
 {
     event.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* editor = GetEditor(event.GetFileName());
     if(editor && editor->GetCtrl()->GetLexer() == wxSTC_LEX_XML) {
         // an XML file
         event.Skip(false);
@@ -376,4 +384,13 @@ void XMLCodeCompletion::OnCodeComplete(clCodeCompletionEvent& event)
         event.Skip(false);
         HtmlCodeComplete(editor);
     }
+}
+
+IEditor* XMLCodeCompletion::GetEditor(const wxString& filename) const
+{
+    auto editor = clGetManager()->FindEditor(filename);
+    if(editor && editor == clGetManager()->GetActiveEditor()) {
+        return editor;
+    }
+    return nullptr;
 }

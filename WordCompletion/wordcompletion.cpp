@@ -1,3 +1,4 @@
+#include "wordcompletion.h"
 #include "ColoursAndFontsManager.h"
 #include "WordCompletionDictionary.h"
 #include "WordCompletionSettingsDlg.h"
@@ -5,8 +6,8 @@
 #include "clKeyboardManager.h"
 #include "cl_command_event.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include "lexer_configuration.h"
-#include "wordcompletion.h"
 #include "wxCodeCompletionBoxManager.h"
 #include <wx/app.h>
 #include <wx/stc/stc.h>
@@ -17,7 +18,9 @@ static WordCompletionPlugin* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new WordCompletionPlugin(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new WordCompletionPlugin(manager);
+    }
     return thePlugin;
 }
 
@@ -33,7 +36,6 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-
 // Helper
 WordCompleter::WordCompleter(WordCompletionPlugin* plugin)
     : ServiceProvider("Words", eServiceType::kCodeCompletion)
@@ -43,10 +45,7 @@ WordCompleter::WordCompleter(WordCompletionPlugin* plugin)
     Bind(wxEVT_CC_WORD_COMPLETE, &WordCompleter::OnWordComplete, this);
 }
 
-WordCompleter::~WordCompleter()
-{
-    Unbind(wxEVT_CC_WORD_COMPLETE, &WordCompleter::OnWordComplete, this);
-}
+WordCompleter::~WordCompleter() { Unbind(wxEVT_CC_WORD_COMPLETE, &WordCompleter::OnWordComplete, this); }
 void WordCompleter::OnWordComplete(clCodeCompletionEvent& event) { m_plugin->OnWordComplete(event); }
 
 WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
@@ -82,18 +81,22 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
 {
     event.Skip(); // Always skip this
 
-    IEditor* activeEditor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* activeEditor = GetEditor(event.GetFileName());
     CHECK_PTR_RET(activeEditor);
 
     WordCompletionSettings settings;
     settings.Load();
 
     // Enabled?
-    if(!settings.IsEnabled()) { return; }
+    if(!settings.IsEnabled()) {
+        return;
+    }
 
     // Build the suggetsion list
     static wxBitmap sBmp = wxNullBitmap;
-    if(!sBmp.IsOk()) { sBmp = m_mgr->GetStdIcons()->LoadBitmap("word"); }
+    if(!sBmp.IsOk()) {
+        sBmp = m_mgr->GetStdIcons()->LoadBitmap("word");
+    }
 
     // Filter (what the user has typed so far)
     // wxStyledTextCtrl* stc = activeEditor->GetCtrl();
@@ -139,9 +142,13 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
             wxString word = *iter;
             wxString lcWord = word.Lower();
             if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
-                if(lcWord.StartsWith(filter) && filter != word) { filterdSet.insert(word); }
+                if(lcWord.StartsWith(filter) && filter != word) {
+                    filterdSet.insert(word);
+                }
             } else {
-                if(lcWord.Contains(filter) && filter != word) { filterdSet.insert(word); }
+                if(lcWord.Contains(filter) && filter != word) {
+                    filterdSet.insert(word);
+                }
             }
         }
     }
@@ -156,4 +163,13 @@ void WordCompletionPlugin::OnSettings(wxCommandEvent& event)
 {
     WordCompletionSettingsDlg dlg(EventNotifier::Get()->TopFrame());
     dlg.ShowModal();
+}
+
+IEditor* WordCompletionPlugin::GetEditor(const wxString& filepath) const
+{
+    auto editor = clGetManager()->FindEditor(filepath);
+    if(editor && editor == clGetManager()->GetActiveEditor()) {
+        return editor;
+    }
+    return nullptr;
 }

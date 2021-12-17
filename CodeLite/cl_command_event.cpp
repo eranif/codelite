@@ -88,7 +88,6 @@ wxEvent* clCodeCompletionEvent::Clone() const
 
 clCodeCompletionEvent::clCodeCompletionEvent(const clCodeCompletionEvent& event)
     : clCommandEvent(event)
-    , m_editor(NULL)
     , m_insideCommentOrString(false)
 {
     *this = event;
@@ -98,7 +97,6 @@ clCodeCompletionEvent::clCodeCompletionEvent(const clCodeCompletionEvent& event)
 
 clCodeCompletionEvent::clCodeCompletionEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
-    , m_editor(NULL)
     , m_insideCommentOrString(false)
 {
     m_position = wxNOT_FOUND;
@@ -112,7 +110,6 @@ clCodeCompletionEvent& clCodeCompletionEvent::operator=(const clCodeCompletionEv
     // Call parent operator =
     clCommandEvent::operator=(src);
     // Implement our copy c tor
-    m_editor = src.m_editor;
     m_word = src.m_word;
     m_position = src.m_position;
     m_tooltip = src.m_tooltip;

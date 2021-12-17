@@ -264,7 +264,7 @@ bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
 void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
 {
     event.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
     if(CanHandle(GetEditorFilePath(editor))) {
         event.Skip(false);
@@ -275,7 +275,7 @@ void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
 void LanguageServerProtocol::OnTypeInfoToolTip(clCodeCompletionEvent& event)
 {
     event.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
     if(CanHandle(GetEditorFilePath(editor))) {
         event.Skip(false);
@@ -286,7 +286,7 @@ void LanguageServerProtocol::OnTypeInfoToolTip(clCodeCompletionEvent& event)
 void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
 {
     event.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
     if(event.GetTriggerKind() != LSP::CompletionItem::kTriggerUser && event.IsInsideCommentOrString()) {
@@ -302,7 +302,7 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
 void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
 {
     event.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
     if(CanHandle(GetEditorFilePath(editor))) {
@@ -315,7 +315,7 @@ void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
 void LanguageServerProtocol::OnFindSymbolImpl(clCodeCompletionEvent& event)
 {
     event.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
     if(CanHandle(GetEditorFilePath(editor))) {
@@ -328,7 +328,7 @@ void LanguageServerProtocol::OnFindSymbolImpl(clCodeCompletionEvent& event)
 void LanguageServerProtocol::OnFindSymbol(clCodeCompletionEvent& event)
 {
     event.Skip();
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
     if(CanHandle(GetEditorFilePath(editor))) {
@@ -796,7 +796,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
     event.Skip();
 
     clDEBUG1() << "LanguageServerProtocol::OnQuickOutline called" << endl;
-    IEditor* editor = dynamic_cast<IEditor*>(event.GetEditor());
+    IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
     if(CanHandle(GetEditorFilePath(editor)) && IsDocumentSymbolsSupported()) {
@@ -1102,3 +1102,12 @@ LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::TakePendingReplyMessage(in
 void LanguageServerProtocol::OnWorkspaceLoaded(clWorkspaceEvent& e) { e.Skip(); }
 
 void LanguageServerProtocol::OnWorkspaceClosed(clWorkspaceEvent& e) { e.Skip(); }
+
+IEditor* LanguageServerProtocol::GetEditor(const clCodeCompletionEvent& event) const
+{
+    auto editor = clGetManager()->FindEditor(event.GetFileName());
+    if(editor && editor == clGetManager()->GetActiveEditor()) {
+        return editor;
+    }
+    return nullptr;
+}

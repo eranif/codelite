@@ -37,7 +37,6 @@
 #include "ctags_manager.h"
 #include "debuggerobserver.h"
 #include "filehistory.h"
-#include "parse_thread.h"
 #include "perspectivemanager.h"
 #include "queuecommand.h"
 #include "shell_command.h"

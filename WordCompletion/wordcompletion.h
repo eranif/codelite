@@ -26,12 +26,12 @@
 #ifndef __WordCompletion__
 #define __WordCompletion__
 
-#include "plugin.h"
-#include "WordCompletionRequestReply.h"
+#include "ServiceProvider.h"
 #include "UI.h"
+#include "WordCompletionRequestReply.h"
 #include "cl_command_event.h"
 #include "macros.h"
-#include "ServiceProvider.h"
+#include "plugin.h"
 
 class WordCompletionDictionary;
 class WordCompletionPlugin;
@@ -52,6 +52,9 @@ class WordCompletionPlugin : public IPlugin
     WordCompletionDictionary* m_dictionary = nullptr;
     WordCompleter* m_completer = nullptr;
     friend class WordCompleter;
+
+private:
+    IEditor* GetEditor(const wxString& filepath) const;
 
 public:
     void OnWordComplete(clCodeCompletionEvent& event);

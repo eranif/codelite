@@ -97,7 +97,6 @@
 #include "manager.h"
 #include "memoryview.h"
 #include "menumanager.h"
-#include "parse_thread.h"
 #include "pluginmanager.h"
 #include "processreaderthread.h"
 #include "reconcileproject.h"
@@ -267,7 +266,6 @@ Manager::~Manager(void)
     {
         // wxLogNull noLog;
         JobQueueSingleton::Instance()->Stop();
-        ParseThreadST::Get()->Stop();
         SearchThreadST::Get()->Stop();
     }
 
@@ -276,7 +274,6 @@ Manager::~Manager(void)
     ServiceProviderManager::Get().UnregisterAll();
     DebuggerMgr::Free();
     JobQueueSingleton::Release();
-    ParseThreadST::Free(); // since the parser is making use of the TagsManager,
     TagsManagerST::Free(); // it is important to release it *before* the TagsManager
     LanguageST::Free();
     clCxxWorkspaceST::Free();
@@ -392,9 +389,6 @@ void Manager::DoSetupWorkspace(const wxString& path)
         }
     }
 
-    // clear old paths
-    ParseThreadST::Get()->ClearPaths();
-
     // Update the parser search paths
     UpdateParserPaths(false);
     clMainFrame::Get()->SelectBestEnvSet();
@@ -469,9 +463,6 @@ void Manager::CloseWorkspace()
     }
     EnvironmentConfig::Instance()->SetSettings(vars);
     clMainFrame::Get()->SelectBestEnvSet();
-
-    // Clear the parser thread search paths
-    ParseThreadST::Get()->ClearPaths();
 
     if(!IsShutdownInProgress()) {
         clWorkspaceEvent closed_event(wxEVT_WORKSPACE_CLOSED);
@@ -3365,15 +3356,6 @@ void Manager::UpdateParserPaths(bool notify)
         }
     }
     excludePaths.swap(tmpArr);
-
-    ParseThreadST::Get()->SetSearchPaths(searchPaths, excludePaths);
-
-    {
-        wxArrayString inc, exc;
-        ParseThreadST::Get()->GetSearchPaths(inc, exc);
-        clDEBUG() << "Parser paths are now set to:" << inc;
-        clDEBUG() << "Parser exclude paths are now set to:" << exc;
-    }
 }
 
 void Manager::DoSaveAllFilesBeforeBuild()

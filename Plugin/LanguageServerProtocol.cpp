@@ -552,12 +552,9 @@ void LanguageServerProtocol::HoverTip(IEditor* editor)
     }
 
     if(ShouldHandleFile(filename)) {
-        wxString word;
-        wxRect rect;
-        editor->GetWordAtMousePointer(word, rect);
         int pos = editor->GetPosAtMousePointer();
         // trigger a hover request only when we are hovering something
-        if(pos != wxNOT_FOUND && !word.empty()) {
+        if(pos != wxNOT_FOUND && isgraph(editor->GetCharAtPos(pos))) {
             LSP::HoverRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
                 new LSP::HoverRequest(filename, editor->LineFromPos(pos), editor->GetColumnInChars(pos)));
             QueueMessage(req);

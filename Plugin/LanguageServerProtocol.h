@@ -101,6 +101,8 @@ protected:
     void OnSemanticHighlights(clCodeCompletionEvent& event);
     void OnWorkspaceSymbols(clCodeCompletionEvent& event);
     void OnFindHeaderFile(clCodeCompletionEvent& event);
+    void OnQuickJump(clCodeCompletionEvent& event);
+
     wxString GetEditorFilePath(IEditor* editor) const;
     bool CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName,
                          const wxString& lspRequestName);

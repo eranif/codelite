@@ -39,16 +39,6 @@
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
-// static wxColor GetInactiveColor(const wxColor& col)
-//{
-//    wxUnusedVar(col);
-//#ifdef __WXGTK__
-//    return wxColor(wxT("GREY"));
-//#else
-//    return wxColor(wxT("LIGHT GREY"));
-//#endif
-//}
-
 ContextBase::ContextBase(clEditor* container)
     : m_container(container)
     , m_name(wxEmptyString)
@@ -99,25 +89,23 @@ void ContextBase::AutoIndent(const wxChar& ch)
 
 void ContextBase::DoApplySettings(LexerConf::Ptr_t lexPtr) { lexPtr->Apply(&GetCtrl()); }
 
-int ContextBase::GetHyperlinkRange(int pos, int& start, int& end)
+bool ContextBase::GetHyperlinkRange(int& start, int& end)
 {
     clEditor& rCtrl = GetCtrl();
-    if(!IsCommentOrString(rCtrl.GetCurrentPos())) {
-        // get tag as hyperlink
-        start = rCtrl.WordStartPos(pos, true);
-        end = rCtrl.WordEndPos(pos, true);
-        if(start < end)
-            return XRCID("find_tag");
+    wxPoint pt = wxGetMousePosition();
+    if(pt == wxDefaultPosition) {
+        return false;
     }
-    return wxID_NONE;
-}
-
-void ContextBase::GoHyperlink(int start, int end, int type, bool alt)
-{
-    wxUnusedVar(start);
-    wxUnusedVar(end);
-    wxUnusedVar(type);
-    wxUnusedVar(alt);
+    wxPoint clientPt = rCtrl.ScreenToClient(pt);
+    int mouse_pos = rCtrl.PositionFromPointClose(clientPt.x, clientPt.y);
+    if(!IsCommentOrString(mouse_pos)) {
+        // get tag as hyperlink
+        start = rCtrl.WordStartPos(mouse_pos, true);
+        end = rCtrl.WordEndPos(mouse_pos, true);
+        if(start < end)
+            return true;
+    }
+    return false;
 }
 
 wxMenu* ContextBase::GetMenu() { return wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default")); }

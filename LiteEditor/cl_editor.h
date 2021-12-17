@@ -227,7 +227,6 @@ protected:
     bool m_isVisible;
     int m_hyperLinkIndicatroStart;
     int m_hyperLinkIndicatroEnd;
-    int m_hyperLinkType;
     bool m_hightlightMatchedBraces;
     bool m_autoAddMatchedCurlyBrace;
     bool m_autoAddNormalBraces;

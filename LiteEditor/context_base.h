@@ -154,8 +154,7 @@ public:
     virtual int DoGetCalltipParamterIndex();
 
     // ctrl-click style navigation support
-    virtual int GetHyperlinkRange(int pos, int& start, int& end);
-    virtual void GoHyperlink(int start, int end, int type, bool alt);
+    virtual bool GetHyperlinkRange(int& start, int& end);
 
     // override this method if you wish to provide context based right click menu
     virtual wxMenu* GetMenu();

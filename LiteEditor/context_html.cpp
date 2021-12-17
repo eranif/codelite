@@ -198,8 +198,6 @@ wxMenu* ContextHtml::GetMenu() { return ContextBase::GetMenu(); }
 
 TagEntryPtr ContextHtml::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
 
-void ContextHtml::GoHyperlink(int start, int end, int type, bool alt) {}
-
 bool ContextHtml::GotoDefinition() { return false; }
 
 void ContextHtml::GotoPreviousDefintion() {}

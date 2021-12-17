@@ -80,8 +80,6 @@ PHPCodeCompletion::PHPCodeCompletion()
                                   this);
     EventNotifier::Get()->Connect(wxEVT_CC_GENERATE_DOXY_BLOCK,
                                   clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_CC_JUMP_HYPER_LINK,
-                                  clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
     EventNotifier::Get()->Bind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
 
     // code completion events
@@ -89,6 +87,7 @@ PHPCodeCompletion::PHPCodeCompletion()
     Bind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
     Bind(wxEVT_CC_TYPEINFO_TIP, &PHPCodeCompletion::OnTypeinfoTip, this);
     Bind(wxEVT_CC_FIND_SYMBOL, &PHPCodeCompletion::OnFindSymbol, this);
+    Bind(wxEVT_CC_JUMP_HYPER_LINK, &PHPCodeCompletion::OnQuickJump, this);
 }
 
 PHPCodeCompletion::~PHPCodeCompletion()
@@ -108,14 +107,13 @@ PHPCodeCompletion::~PHPCodeCompletion()
                                      NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CC_GENERATE_DOXY_BLOCK,
                                      clCodeCompletionEventHandler(PHPCodeCompletion::OnInsertDoxyBlock), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CC_JUMP_HYPER_LINK,
-                                     clCodeCompletionEventHandler(PHPCodeCompletion::OnQuickJump), NULL, this);
     EventNotifier::Get()->Unbind(wxPHP_PARSE_ENDED, &PHPCodeCompletion::OnParseEnded, this);
     // code completion events
     Unbind(wxEVT_CC_CODE_COMPLETE, &PHPCodeCompletion::OnCodeComplete, this);
     Unbind(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &PHPCodeCompletion::OnFunctionCallTip, this);
     Unbind(wxEVT_CC_TYPEINFO_TIP, &PHPCodeCompletion::OnTypeinfoTip, this);
     Unbind(wxEVT_CC_FIND_SYMBOL, &PHPCodeCompletion::OnFindSymbol, this);
+    Unbind(wxEVT_CC_JUMP_HYPER_LINK, &PHPCodeCompletion::OnQuickJump, this);
 }
 
 PHPCodeCompletion* PHPCodeCompletion::Instance()
@@ -359,8 +357,9 @@ void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)
         e.Skip(false);
         if(editor) {
             wxString word = editor->GetWordAtCaret();
-            if(word.IsEmpty())
+            if(word.IsEmpty()) {
                 return;
+            }
             PHPEntityBase::List_t symbols = m_lookupTable.FindSymbol(word);
             if(symbols.size() == 1) {
                 PHPEntityBase::Ptr_t match = *symbols.begin();
@@ -418,6 +417,7 @@ void PHPCodeCompletion::OnTypeinfoTip(clCodeCompletionEvent& e)
 
 PHPLocation::Ptr_t PHPCodeCompletion::FindDefinition(IEditor* editor, int pos)
 {
+    wxUnusedVar(pos);
     CHECK_PHP_WORKSPACE_RET_NULL();
     PHPLocation::Ptr_t loc; // Null
     if(IsPHPFile(editor)) {
@@ -645,11 +645,19 @@ void PHPCodeCompletion::OnSymbolsCacheError() { clLogMessage("Error encountered 
 
 void PHPCodeCompletion::OnQuickJump(clCodeCompletionEvent& e)
 {
+    // this is identical to "Find Symbol"
     e.Skip();
-    if(PHPWorkspace::Get()->IsOpen()) {
-        e.Skip(false);
-        GotoDefinition(m_manager->GetActiveEditor(), e.GetInt());
-    }
+
+    // Do we have a workspace open?
+    CHECK_COND_RET(PHPWorkspace::Get()->IsOpen());
+
+    // Sanity
+    IEditor* editor = GetEditor(e.GetFileName());
+    CHECK_PTR_RET(editor);
+    CHECK_EXPECTED_RETURN(IsPHPFile(editor), true);
+
+    e.Skip(false);
+    GotoDefinition(editor, editor->GetCurrentPosition());
 }
 
 void PHPCodeCompletion::GotoDefinition(IEditor* editor, int pos)
@@ -674,9 +682,7 @@ void PHPCodeCompletion::DoSelectInEditor(IEditor* editor, const wxString& what, 
 {
     if(editor) {
         editor->GetCtrl()->ClearSelections();
-        if(!editor->FindAndSelect(what, what, from, NULL)) {
-            editor->SetCaretAt(from);
-        }
+        editor->FindAndSelectV(what, what, from, NULL);
     }
 }
 

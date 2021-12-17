@@ -95,11 +95,7 @@ public:
     virtual wxString CallTipContent();
     virtual void SetActive();
     virtual void SemicolonShift();
-
-    // ctrl-click style navigation support
-    virtual int GetHyperlinkRange(int pos, int& start, int& end);
-    virtual void GoHyperlink(int start, int end, int type, bool alt);
-
+    
     // override swapfiles features
     virtual void SwapFiles(const wxFileName& fileName);
 

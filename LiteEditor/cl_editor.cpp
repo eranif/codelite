@@ -347,7 +347,6 @@ clEditor::clEditor(wxWindow* parent)
     , m_isVisible(true)
     , m_hyperLinkIndicatroStart(wxNOT_FOUND)
     , m_hyperLinkIndicatroEnd(wxNOT_FOUND)
-    , m_hyperLinkType(wxID_NONE)
     , m_hightlightMatchedBraces(true)
     , m_autoAddMatchedCurlyBrace(false)
     , m_autoAddNormalBraces(false)
@@ -3609,10 +3608,8 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
 void clEditor::OnLeftUp(wxMouseEvent& event)
 {
     m_isDragging = false; // We can't still be in D'n'D, so stop disabling callticks
-    long value = EditorConfigST::Get()->GetInteger(wxT("QuickCodeNavigationUsesMouseMiddleButton"), 0);
-    if(!value) {
-        DoQuickJump(event, false);
-    }
+    DoQuickJump(event, false);
+
     PostCmdEvent(wxEVT_EDITOR_CLICKED);
     event.Skip();
     UpdateLineNumbers();
@@ -3622,7 +3619,6 @@ void clEditor::OnLeaveWindow(wxMouseEvent& event)
 {
     m_hyperLinkIndicatroStart = wxNOT_FOUND;
     m_hyperLinkIndicatroEnd = wxNOT_FOUND;
-    m_hyperLinkType = wxID_NONE;
 
     SetIndicatorCurrent(HYPERLINK_INDICATOR);
     IndicatorClearRange(0, GetLength());
@@ -3668,7 +3664,6 @@ void clEditor::OnMotion(wxMouseEvent& event)
 
         m_hyperLinkIndicatroStart = wxNOT_FOUND;
         m_hyperLinkIndicatroEnd = wxNOT_FOUND;
-        m_hyperLinkType = wxID_NONE;
 
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         IndicatorClearRange(0, GetLength());
@@ -3696,7 +3691,8 @@ void clEditor::OnLeftDown(wxMouseEvent& event)
     }
 
     int mod = GetCodeNavModifier();
-    if(m_hyperLinkType != wxID_NONE && event.GetModifiers() == mod && mod != wxMOD_NONE) {
+    if(m_hyperLinkIndicatroEnd != wxNOT_FOUND && m_hyperLinkIndicatroStart != wxNOT_FOUND &&
+       event.GetModifiers() == mod && mod != wxMOD_NONE) {
         ClearSelections();
         SetCaretAt(PositionFromPointClose(event.GetX(), event.GetY()));
     }
@@ -4471,8 +4467,7 @@ void clEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
         }
 
         if(pos != wxSTC_INVALID_POSITION) {
-            m_hyperLinkType = m_context->GetHyperlinkRange(pos, m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd);
-            if(m_hyperLinkType != wxID_NONE) {
+            if(m_context->GetHyperlinkRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd)) {
                 IndicatorFillRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd - m_hyperLinkIndicatroStart);
             } else {
                 m_hyperLinkIndicatroStart = wxNOT_FOUND;
@@ -4484,20 +4479,19 @@ void clEditor::DoMarkHyperlink(wxMouseEvent& event, bool isMiddle)
 
 void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
 {
-    if(m_hyperLinkIndicatroStart != wxNOT_FOUND && m_hyperLinkIndicatroEnd != wxNOT_FOUND) {
-        // indicator is highlighted
-        long pos = PositionFromPointClose(event.GetX(), event.GetY());
-        if(m_hyperLinkIndicatroStart <= pos && pos <= m_hyperLinkIndicatroEnd) {
-            //bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
+    wxUnusedVar(isMiddle);
+    if(m_hyperLinkIndicatroStart == wxNOT_FOUND || m_hyperLinkIndicatroEnd == wxNOT_FOUND)
+        return;
 
-            // Let the plugins handle it first
-            clCodeCompletionEvent event(wxEVT_CC_JUMP_HYPER_LINK);
-            event.SetString(GetTextRange(m_hyperLinkIndicatroStart, m_hyperLinkIndicatroEnd));
-            event.SetInt(m_hyperLinkIndicatroStart);
-            if(EventNotifier::Get()->ProcessEvent(event)) {
-                return;
-            }
-        }
+    // indicator is highlighted
+    long pos = PositionFromPointClose(event.GetX(), event.GetY());
+    if(m_hyperLinkIndicatroStart <= pos && pos <= m_hyperLinkIndicatroEnd) {
+        // bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
+
+        // Let the plugins handle it first
+        clCodeCompletionEvent jump_event(wxEVT_CC_JUMP_HYPER_LINK);
+        jump_event.SetFileName(GetFileName().GetFullPath());
+        ServiceProviderManager::Get().ProcessEvent(jump_event);
     }
 
     // clear the hyper link indicators
@@ -5205,7 +5199,7 @@ void clEditor::OnKeyUp(wxKeyEvent& event)
         // Clear hyperlink markers
         SetIndicatorCurrent(HYPERLINK_INDICATOR);
         IndicatorClearRange(0, GetLength());
-        m_hyperLinkType = wxID_NONE;
+        m_hyperLinkIndicatroEnd = m_hyperLinkIndicatroStart = wxNOT_FOUND;
 
         // Clear debugger marker
         SetIndicatorCurrent(DEBUGGER_INDICATOR);

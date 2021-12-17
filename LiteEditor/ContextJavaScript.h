@@ -31,12 +31,12 @@ class ContextJavaScript : public ContextBase
 {
 public:
     ContextJavaScript();
-    ContextJavaScript(clEditor *Editor);
+    ContextJavaScript(clEditor* Editor);
     virtual ~ContextJavaScript();
 
 public:
     virtual int GetActiveKeywordSet() const;
-    virtual int  DoGetCalltipParamterIndex();
+    virtual int DoGetCalltipParamterIndex();
     virtual wxMenu* GetMenu();
     virtual void AddMenuDynamicContent(wxMenu* menu);
     virtual void ApplySettings();
@@ -44,7 +44,6 @@ public:
     virtual wxString CallTipContent();
     virtual wxString GetCurrentScopeName();
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
-    virtual void GoHyperlink(int start, int end, int type, bool alt);
     virtual void GotoPreviousDefintion();
     virtual bool IsComment(long pos);
     virtual bool IsCommentOrString(long pos);

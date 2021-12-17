@@ -45,7 +45,6 @@ public:
     virtual wxString CallTipContent();
     virtual wxString GetCurrentScopeName();
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
-    virtual void GoHyperlink(int start, int end, int type, bool alt);
     virtual bool GotoDefinition();
     virtual void GotoPreviousDefintion();
     virtual bool IsComment(long pos);

@@ -21,90 +21,36 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/xrc/xmlres.h>
-#include <wx/regex.h>
+#include "context_diff.h"
+#include "cl_editor.h"
+#include "editor_config.h"
 #include "frame.h"
 #include "manager.h"
-#include "editor_config.h"
-#include "cl_editor.h"
-#include "context_diff.h"
+#include <wx/regex.h>
+#include <wx/xrc/xmlres.h>
 
 ContextDiff::ContextDiff()
     : ContextBase(wxT("Diff"))
 {
 }
 
-ContextDiff::ContextDiff(clEditor *container)
+ContextDiff::ContextDiff(clEditor* container)
     : ContextBase(container)
 {
     SetName(wxT("diff"));
     ApplySettings();
 }
 
-ContextDiff::~ContextDiff()
-{
-}
+ContextDiff::~ContextDiff() {}
 
-ContextBase* ContextDiff::NewInstance(clEditor* container)
-{
-    return new ContextDiff(container);
-}
+ContextBase* ContextDiff::NewInstance(clEditor* container) { return new ContextDiff(container); }
 
 void ContextDiff::ApplySettings()
 {
-	LexerConf::Ptr_t lexPtr;
-	if (EditorConfigST::Get()->IsOk()) {
-		lexPtr = EditorConfigST::Get()->GetLexer(GetName());
-	}
-	GetCtrl().SetLexer(lexPtr ? lexPtr->GetLexerId() : wxSTC_LEX_NULL);
-	DoApplySettings(lexPtr);
+    LexerConf::Ptr_t lexPtr;
+    if(EditorConfigST::Get()->IsOk()) {
+        lexPtr = EditorConfigST::Get()->GetLexer(GetName());
+    }
+    GetCtrl().SetLexer(lexPtr ? lexPtr->GetLexerId() : wxSTC_LEX_NULL);
+    DoApplySettings(lexPtr);
 }
-
-int ContextDiff::GetHyperlinkRange(int pos, int& start, int& end)
-{
-    clEditor &rCtrl = GetCtrl();
-    int lineNum = rCtrl.LineFromPosition(pos);
-    wxString line = rCtrl.GetLine(lineNum);
-    wxString fileName;
-    if (line.StartsWith(wxT("Index: "), &fileName) || line.StartsWith(wxT("--- "), &fileName) || line.StartsWith(wxT("+++ "), &fileName)) {
-        fileName = fileName.BeforeFirst(wxT('(')).Trim(false).Trim();
-        start = rCtrl.PositionFromLine(lineNum) + line.find(fileName);
-        end = start + fileName.size();
-        return start <= pos && pos <= end ? XRCID("open_working_copy") : wxID_NONE;
-    }
-    wxString edit;
-    if (line.StartsWith(wxT("@@ ")) && line.Trim().EndsWith(wxT(" @@"))) {
-        start = rCtrl.PositionFromLine(lineNum);
-        end = rCtrl.GetLineEndPosition(lineNum);
-        return XRCID("open_at_line");
-    }
-    return wxID_NONE;
-}
-
-void ContextDiff::GoHyperlink(int start, int end, int type, bool alt)
-{
-    clEditor &rCtrl = GetCtrl();
-
-    wxString text = rCtrl.GetTextRange(start, end);
-    wxString fileName;
-    int lineNum = wxNOT_FOUND;
-
-    if (type == XRCID("open_working_copy")) {
-        fileName = text;
-    } else if (type == XRCID("open_at_line")) {
-        wxRegEx re(wxT("@@ -[0-9]+,[0-9]+ \\+([0-9]+),[0-9]+ @@"));
-        size_t start, len;
-        long line;
-        if (re.IsValid() && re.Matches(text) && re.GetMatch(&start, &len, 1) && text.Mid(start,len).ToLong(&line)) {
-            lineNum = line;
-        }
-        // FIXME: search backwards for "+++ filename", since this could be a directory diff
-        rCtrl.GetFileName().GetFullName().EndsWith(wxT(".diff"), &fileName);
-    }
-	
-    wxFileName fn = ManagerST::Get()->FindFile(fileName);
-    if (fn.IsOk()) {
-        clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineNum);
-    }
-}
-

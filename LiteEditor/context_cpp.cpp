@@ -2229,35 +2229,6 @@ wxString ContextCpp::CallTipContent()
 
 bool ContextCpp::DoCodeComplete(long pos) { return false; }
 
-int ContextCpp::GetHyperlinkRange(int pos, int& start, int& end)
-{
-    clEditor& rCtrl = GetCtrl();
-    int lineNum = rCtrl.LineFromPosition(pos);
-    wxString fileName;
-    wxString line = rCtrl.GetLine(lineNum);
-    if(IsIncludeStatement(line, &fileName)) {
-        start = rCtrl.PositionFromLine(lineNum) + line.find(fileName);
-        end = start + fileName.size();
-        return start <= pos && pos <= end ? XRCID("open_include_file") : wxID_NONE;
-    }
-    return ContextBase::GetHyperlinkRange(pos, start, end);
-}
-
-void ContextCpp::GoHyperlink(int start, int end, int type, bool alt)
-{
-    (void)alt;
-
-    if(type == XRCID("open_include_file")) {
-        m_selectedWord = GetCtrl().GetTextRange(start, end);
-        DoOpenWorkspaceFile();
-    } else {
-        if(type == XRCID("find_tag")) {
-            wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("find_impl"));
-            clMainFrame::Get()->GetEventHandler()->AddPendingEvent(e);
-        }
-    }
-}
-
 void ContextCpp::DoOpenWorkspaceFile()
 {
     wxFileName fileName(m_selectedWord);

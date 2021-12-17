@@ -170,8 +170,6 @@ wxMenu* ContextJavaScript::GetMenu() { return ContextBase::GetMenu(); }
 
 TagEntryPtr ContextJavaScript::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
 
-void ContextJavaScript::GoHyperlink(int start, int end, int type, bool alt) {}
-
 void ContextJavaScript::GotoPreviousDefintion() {}
 
 bool ContextJavaScript::IsCommentOrString(long pos)

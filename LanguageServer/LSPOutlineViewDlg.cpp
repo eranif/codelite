@@ -1,5 +1,5 @@
-#include "LSPOutlineViewDlg.h"
 #include "ColoursAndFontsManager.h"
+#include "LSPOutlineViewDlg.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "globals.h"
 #include "imanager.h"
@@ -31,7 +31,7 @@ void LSPOutlineViewDlg::DoSelectionActivate()
     wxString file = loc.GetPath();
     int line = loc.GetRange().GetStart().GetLine();
     clGetManager()->OpenFile(file, "", line);
-    EndModal(wxID_OK);
+    Hide();
 }
 
 LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
@@ -45,9 +45,14 @@ LSPOutlineViewDlg::~LSPOutlineViewDlg() {}
 
 void LSPOutlineViewDlg::DoInitialise()
 {
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_dvTreeCtrll->DeleteAllItems();
     if(m_symbols.empty()) {
-        m_dvTreeCtrll->AddLine(_("Loading..."), false, (wxUIntPtr)0);
+        clAnsiEscapeCodeColourBuilder builder;
+        builder.SetTheme(lexer->IsDark() ? eAsciiTheme::DARK : eAsciiTheme::LIGHT);
+        builder.Add(_("Waiting for server..."), eAsciiColours::NORMAL_TEXT, false);
+        builder.Add(_("(Hit ESC to dismiss)"), eAsciiColours::GRAY, false);
+        m_dvTreeCtrll->AddLine(builder.GetString(), false, (wxUIntPtr)0);
         return;
     }
 
@@ -55,7 +60,6 @@ void LSPOutlineViewDlg::DoInitialise()
     m_dvTreeCtrll->SetScrollToBottom(false);
 
     // build the tree
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     wxColour class_colour = lexer->GetProperty(wxSTC_P_WORD2).GetFgColour();
     wxColour variable_colour = lexer->GetProperty(wxSTC_P_IDENTIFIER).GetFgColour();
     wxColour module_colour = lexer->GetProperty(wxSTC_P_STRING).GetFgColour();
@@ -169,7 +173,7 @@ void LSPOutlineViewDlg::OnKeyDown(wxKeyEvent& event)
 {
     switch(event.GetKeyCode()) {
     case WXK_ESCAPE:
-        EndModal(wxID_CANCEL);
+        Hide();
         break;
     case WXK_DOWN:
         DoFindNext();
@@ -230,7 +234,7 @@ void LSPOutlineViewDlg::DoFindPrev()
 void LSPOutlineViewDlg::OnListKeyDown(wxKeyEvent& event)
 {
     if(event.GetKeyCode() == WXK_ESCAPE) {
-        EndModal(wxID_CANCEL);
+        Hide();
     } else {
         event.Skip();
     }

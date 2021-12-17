@@ -15,6 +15,7 @@
 #include <wx/sharedptr.h>
 #include <wxStringHash.h>
 
+class LSPOutlineViewDlg;
 class LanguageServerPlugin;
 class LanguageServerCluster : public wxEvtHandler
 {
@@ -27,6 +28,7 @@ class LanguageServerCluster : public wxEvtHandler
     std::unordered_map<wxString, CrashInfo> m_restartCounters;
     std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
     LanguageServerPlugin* m_plugin = nullptr;
+    LSPOutlineViewDlg* m_quick_outline_dlg = nullptr;
 
 public:
     typedef wxSharedPtr<LanguageServerCluster> Ptr_t;
@@ -64,6 +66,7 @@ protected:
     void OnSetDiagnostics(LSPEvent& event);
     void OnClearDiagnostics(LSPEvent& event);
     void OnQuickOutlineView(LSPEvent& event);
+    void OnShowQuickOutlineDlg(LSPEvent& event);
     void OnOulineViewSymbols(LSPEvent& event);
     void OnSemanticTokens(LSPEvent& event);
     void OnLogMessage(LSPEvent& event);

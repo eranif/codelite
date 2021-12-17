@@ -20,8 +20,10 @@ private:
     void DoInitialise();
 
 public:
-    LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInformation>& symbols);
+    LSPOutlineViewDlg(wxWindow* parent);
     virtual ~LSPOutlineViewDlg();
+
+    void SetSymbols(const vector<SymbolInformation>& symbols);
 
 protected:
     virtual void OnListKeyDown(wxKeyEvent& event);

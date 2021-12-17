@@ -24,6 +24,8 @@ void LSPOutlineViewDlg::DoSelectionActivate()
     }
 
     LSP::SymbolInformation* si = reinterpret_cast<LSP::SymbolInformation*>(m_dvTreeCtrll->GetItemData(selection));
+    CHECK_PTR_RET(si);
+
     // open the editor and go to
     LSP::Location loc = si->GetLocation();
     wxString file = loc.GetPath();
@@ -32,9 +34,8 @@ void LSPOutlineViewDlg::DoSelectionActivate()
     EndModal(wxID_OK);
 }
 
-LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent, const vector<SymbolInformation>& symbols)
+LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
     : LSPOutlineViewDlgBase(parent)
-    , m_symbols(symbols)
 {
     clSetDialogBestSizeAndPosition(this);
     DoInitialise();
@@ -44,6 +45,12 @@ LSPOutlineViewDlg::~LSPOutlineViewDlg() {}
 
 void LSPOutlineViewDlg::DoInitialise()
 {
+    m_dvTreeCtrll->DeleteAllItems();
+    if(m_symbols.empty()) {
+        m_dvTreeCtrll->AddLine(_("Loading..."), false, (wxUIntPtr)0);
+        return;
+    }
+
     m_dvTreeCtrll->Begin();
     m_dvTreeCtrll->SetScrollToBottom(false);
 
@@ -227,4 +234,10 @@ void LSPOutlineViewDlg::OnListKeyDown(wxKeyEvent& event)
     } else {
         event.Skip();
     }
+}
+
+void LSPOutlineViewDlg::SetSymbols(const vector<SymbolInformation>& symbols)
+{
+    m_symbols = symbols;
+    DoInitialise();
 }

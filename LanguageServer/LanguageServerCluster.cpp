@@ -1,7 +1,7 @@
+#include "LanguageServerCluster.h"
 #include "CompileCommandsGenerator.h"
 #include "LSP/LSPEvent.h"
 #include "LSPOutlineViewDlg.h"
-#include "LanguageServerCluster.h"
 #include "LanguageServerConfig.h"
 #include "PathConverterDefault.hpp"
 #include "StringUtils.h"
@@ -50,6 +50,7 @@ LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     Bind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
     Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
     Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
+    Bind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LanguageServerCluster::OnShowQuickOutlineDlg, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LanguageServerCluster::OnQuickOutlineView, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LanguageServerCluster::OnOulineViewSymbols, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
@@ -70,6 +71,7 @@ LanguageServerCluster::~LanguageServerCluster()
 
     EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
 
+    Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LanguageServerCluster::OnShowQuickOutlineDlg, this);
     Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
     Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
     Unbind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
@@ -85,6 +87,10 @@ LanguageServerCluster::~LanguageServerCluster()
     Unbind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
     Unbind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
+    if(m_quick_outline_dlg) {
+        m_quick_outline_dlg->Destroy();
+        m_quick_outline_dlg = nullptr;
+    }
 }
 
 void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages)
@@ -621,10 +627,23 @@ void LanguageServerCluster::OnOulineViewSymbols(LSPEvent& event)
     UpdateNavigationBar();
 }
 
+void LanguageServerCluster::OnShowQuickOutlineDlg(LSPEvent& event)
+{
+    wxUnusedVar(event);
+    if(m_quick_outline_dlg == nullptr) {
+        m_quick_outline_dlg = new LSPOutlineViewDlg(EventNotifier::Get()->TopFrame());
+    }
+    if(!m_quick_outline_dlg->IsShown()) {
+        m_quick_outline_dlg->Show();
+    }
+    m_quick_outline_dlg->SetSymbols({});
+}
+
 void LanguageServerCluster::OnQuickOutlineView(LSPEvent& event)
 {
-    LSPOutlineViewDlg dlg(EventNotifier::Get()->TopFrame(), event.GetSymbolsInformation());
-    dlg.ShowModal();
+    if(m_quick_outline_dlg && m_quick_outline_dlg->IsShown()) {
+        m_quick_outline_dlg->SetSymbols(event.GetSymbolsInformation());
+    }
 }
 
 void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)

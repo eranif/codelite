@@ -77,7 +77,7 @@ public:
     wxButton* GetButtonUp() { return m_buttonUp; }
     wxButton* GetButtonDown() { return m_buttonDown; }
     wxButton* GetButtonApply() { return m_buttonApply; }
-    BuildOrderDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Build Order"),
+    BuildOrderDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Order"),
                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~BuildOrderDialogBase();

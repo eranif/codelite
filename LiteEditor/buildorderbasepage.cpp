@@ -29,7 +29,7 @@ BuildOrderDialogBase::BuildOrderDialogBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer32->Add(boxSizer1, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
-    m_staticText3 = new wxStaticText(this, wxID_ANY, wxT("Select build order for configuration:"), wxDefaultPosition,
+    m_staticText3 = new wxStaticText(this, wxID_ANY, _("Select build order for configuration:"), wxDefaultPosition,
                                      wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     boxSizer1->Add(m_staticText3, 0, wxLEFT | wxRIGHT | wxTOP, WXC_FROM_DIP(10));
@@ -54,17 +54,17 @@ BuildOrderDialogBase::BuildOrderDialogBase(wxWindow* parent, wxWindowID id, cons
 
     flexGridSizer10->Add(m_dvListCtrlProjects, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlProjects->AppendTextColumn(wxT("Projects"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+    m_dvListCtrlProjects->AppendTextColumn(_("Projects"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                            wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer3 = new wxBoxSizer(wxVERTICAL);
 
     flexGridSizer10->Add(boxSizer3, 1, wxALL | wxEXPAND | wxALIGN_TOP, WXC_FROM_DIP(5));
 
-    m_button22 = new wxButton(this, wxID_ANY, wxT("-->"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button22 = new wxButton(this, wxID_ANY, _("-->"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     boxSizer3->Add(m_button22, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_button24 = new wxButton(this, wxID_ANY, wxT("<--"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button24 = new wxButton(this, wxID_ANY, _("<--"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     boxSizer3->Add(m_button24, 0, wxALL, WXC_FROM_DIP(5));
 
@@ -85,7 +85,7 @@ BuildOrderDialogBase::BuildOrderDialogBase(wxWindow* parent, wxWindowID id, cons
 
     bSizer5->Add(m_dvListCtrlBuildOrder, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlBuildOrder->AppendTextColumn(wxT("Build Order"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+    m_dvListCtrlBuildOrder->AppendTextColumn(_("Build Order"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                              wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
 
@@ -95,11 +95,11 @@ BuildOrderDialogBase::BuildOrderDialogBase(wxWindow* parent, wxWindowID id, cons
 
     bSizer6->Add(bSizer8, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_buttonUp = new wxButton(this, wxID_UP, wxT("Up"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonUp = new wxButton(this, wxID_UP, _("Up"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     bSizer8->Add(m_buttonUp, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_buttonDown = new wxButton(this, wxID_DOWN, wxT("Down"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonDown = new wxButton(this, wxID_DOWN, _("Down"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     bSizer8->Add(m_buttonDown, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -107,8 +107,7 @@ BuildOrderDialogBase::BuildOrderDialogBase(wxWindow* parent, wxWindowID id, cons
 
     bSizer6->Add(bSizer7, 0, 0, WXC_FROM_DIP(5));
 
-    m_buttonApply =
-        new wxButton(this, wxID_APPLY, wxT("Apply"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonApply = new wxButton(this, wxID_APPLY, _("Apply"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonApply->SetDefault();
     m_buttonApply->SetFocus();
 

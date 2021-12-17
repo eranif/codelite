@@ -753,8 +753,7 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     m_frameHelper.Reset(new clMainFrameHelper(this, &m_mgr));
     CreateGUIControls();
 
-    ManagerST::Get();              // Dummy call
-    RefactoringEngine::Instance(); // Dummy call
+    ManagerST::Get(); // Dummy call
 
     // allow the main frame to receive files by drag and drop
     SetDropTarget(new FileDropTarget());
@@ -859,9 +858,6 @@ clMainFrame::~clMainFrame(void)
 
     // Free the code completion manager
     CodeCompletionManager::Release();
-
-    // Release the refactoring engine
-    RefactoringEngine::Shutdown();
 
 // this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
 // see this wxWidgets bug report for more details:

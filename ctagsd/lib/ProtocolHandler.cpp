@@ -106,7 +106,7 @@ void remove_binary_files(wxArrayString& files)
 /**
  * @brief given a list of files, remove all non c/c++ files from it
  */
-void filter_non_cxx_files(wxArrayString& files)
+void filter_non_important_files(wxArrayString& files)
 {
     wxArrayString tmparr;
     tmparr.reserve(files.size());
@@ -114,8 +114,16 @@ void filter_non_cxx_files(wxArrayString& files)
     // filter non c/c++ files
     for(wxString& file : files) {
         file.Trim().Trim(false);
+        wxFileName fn(file);
+        wxString fullpath = fn.GetFullPath(wxPATH_UNIX);
         if(FileExtManager::IsCxxFile(file)) {
             tmparr.Add(file);
+        }
+
+        // ignore any common patterns: (.git/.svn CMakeFiles)
+        if(fullpath.Contains(".git/") || fullpath.Contains(".svn/") || fullpath.Contains("CMakeFiles/") ||
+           fullpath.Contains("/build-") || fullpath.Contains("/build/")) {
+            continue;
         }
     }
     tmparr.swap(files);
@@ -134,7 +142,7 @@ void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString
     clFilesScanner scanner;
     wxArrayString exclude_folders_arr = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
     scanner.Scan(dir, files, settings.GetFileMask(), wxEmptyString, settings.GetIgnoreSpec());
-    filter_non_cxx_files(files);
+    filter_non_important_files(files);
 }
 } // namespace
 
@@ -366,7 +374,7 @@ size_t ProtocolHandler::read_file_list(wxArrayString& arr) const
         wxString file_list_content;
         FileUtils::ReadFileContent(file_list, file_list_content);
         wxArrayString files = wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
-        filter_non_cxx_files(files);
+        filter_non_important_files(files);
         arr.swap(files);
     }
     return arr.size();

@@ -84,10 +84,7 @@ clConfig::clConfig(const wxString& filename)
     }
 }
 
-clConfig::~clConfig()
-{
-    wxDELETE(m_root);
-}
+clConfig::~clConfig() { wxDELETE(m_root); }
 
 clConfig& clConfig::Get()
 {
@@ -211,22 +208,28 @@ void clConfig::Reload()
 
 wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const
 {
-    wxArrayString sArr1, sArr2;
-    sArr1.insert(sArr1.end(), arr1.begin(), arr1.end());
-    sArr2.insert(sArr2.end(), arr2.begin(), arr2.end());
+    // we use set to keep the records sorted
+    std::set<wxString> visited;
 
-    // Sort the arrays
-    std::sort(sArr1.begin(), sArr1.end());
-    std::sort(sArr2.begin(), sArr2.end());
+    for(const wxString& element : arr1) {
+        if(visited.count(element))
+            continue;
+        visited.insert(element);
+    }
 
-    wxArrayString output;
-    std::set_union(sArr1.begin(), sArr1.end(), sArr2.begin(), sArr2.end(), std::back_inserter(output));
-    return output;
+    wxArrayString merged_array;
+    merged_array.reserve(visited.size());
+    for(const wxString& element : visited) {
+        merged_array.Add(element);
+    }
+    return merged_array;
 }
 
 wxStringMap_t clConfig::MergeStringMaps(const wxStringMap_t& map1, const wxStringMap_t& map2) const
 {
     wxStringMap_t output;
+    output.reserve(map1.size() + map2.size());
+
     output.insert(map1.begin(), map1.end());
     output.insert(map2.begin(), map2.end());
     return output;

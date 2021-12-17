@@ -95,7 +95,7 @@ public:
     virtual wxString CallTipContent();
     virtual void SetActive();
     virtual void SemicolonShift();
-    
+
     // override swapfiles features
     virtual void SwapFiles(const wxFileName& fileName);
 
@@ -126,7 +126,6 @@ public:
     virtual void OnMoveImpl(wxCommandEvent& e);
     virtual void OnAddImpl(wxCommandEvent& e);
     virtual void OnAddMultiImpl(wxCommandEvent& e);
-    virtual void OnFindReferences(wxCommandEvent& e);
     virtual void OnRetagFile(wxCommandEvent& e);
     virtual void OnUserTypedXChars(const wxString& word);
     virtual void OnCallTipClick(wxStyledTextEvent& e);

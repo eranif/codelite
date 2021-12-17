@@ -14,3 +14,4 @@
 10. **DONE** Remove ParseThread class
 11. **DONE** ctagsd: change the "Find Symbol" to use the "textDocument/definition" message
 12. Open include file does not work
+13. **DONE** Fix Hyper Link navigation

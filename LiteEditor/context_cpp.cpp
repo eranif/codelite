@@ -71,7 +71,6 @@
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
 #include "precompiled_header.h"
-#include "refactorengine.h"
 #include "refactorindexbuildjob.h"
 #include "renamesymboldlg.h"
 #include "setters_getters_dlg.h"
@@ -170,8 +169,6 @@ EVT_MENU(XRCID("comment_selection"), ContextCpp::OnCommentSelection)
 EVT_MENU(XRCID("comment_line"), ContextCpp::OnCommentLine)
 EVT_MENU(XRCID("find_decl"), ContextCpp::OnFindDecl)
 EVT_MENU(XRCID("find_impl"), ContextCpp::OnFindImpl)
-EVT_MENU(XRCID("go_to_function_start"), ContextCpp::OnGotoFunctionStart)
-EVT_MENU(XRCID("go_to_next_function"), ContextCpp::OnGotoNextFunction)
 EVT_MENU(XRCID("insert_doxy_comment"), ContextCpp::OnInsertDoxyComment)
 EVT_MENU(XRCID("move_impl"), ContextCpp::OnMoveImpl)
 EVT_MENU(XRCID("add_impl"), ContextCpp::OnAddImpl)

@@ -22,12 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "search_thread.h"
 #include "clFilesCollector.h"
-#include "cppwordscanner.h"
 #include "dirtraverser.h"
 #include "fileutils.h"
 #include "macros.h"
-#include "search_thread.h"
 #include "wx/event.h"
 #include <algorithm>
 #include <iostream>
@@ -62,15 +61,9 @@ wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHSTARTED, wxCommandEvent);
 // SearchData
 //----------------------------------------------------------------
 
-const wxString& SearchData::GetExtensions() const
-{
-    return m_validExt;
-}
+const wxString& SearchData::GetExtensions() const { return m_validExt; }
 
-SearchData& SearchData::operator=(const SearchData& rhs)
-{
-    return Copy(rhs);
-}
+SearchData& SearchData::operator=(const SearchData& rhs) { return Copy(rhs); }
 
 SearchData& SearchData::Copy(const SearchData& other)
 {
@@ -107,9 +100,7 @@ SearchThread::SearchThread()
     IndexWordChars();
 }
 
-SearchThread::~SearchThread()
-{
-}
+SearchThread::~SearchThread() {}
 
 void SearchThread::IndexWordChars()
 {
@@ -145,10 +136,7 @@ wxRegEx& SearchThread::GetRegex(const wxString& expr, bool matchCase)
     return m_regex;
 }
 
-void SearchThread::PerformSearch(const SearchData& data)
-{
-    Add(new SearchData(data));
-}
+void SearchThread::PerformSearch(const SearchData& data) { Add(new SearchData(data)); }
 
 void SearchThread::ProcessRequest(ThreadRequest* req)
 {
@@ -279,27 +267,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         return;
     }
 #endif
-    // take a wild guess and see if we really need to construct
-    // a TextStatesPtr object (it is quite an expensive operation)
-    bool shouldCreateStates(true);
-    if(data->IsMatchCase() && !data->IsRegularExpression()) {
-        shouldCreateStates = (fileData.Find(data->GetFindString()) != wxNOT_FOUND);
-
-    } else if(!data->IsMatchCase() && !data->IsRegularExpression()) {
-        // !data->IsMatchCase()
-        wxString tmpData = fileData;
-        shouldCreateStates = (tmpData.MakeLower().Find(data->GetFindString()) != wxNOT_FOUND);
-    }
-
     wxStringTokenizer tkz(fileData, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
-
-    // Incase one of the C++ options is enabled,
-    // create a text states object
-    TextStatesPtr states(NULL);
-    if(data->HasCppOptions() && shouldCreateStates && false) {
-        CppWordScanner scanner("", fileData.mb_str().data(), 0);
-        states = scanner.states();
-    }
 
     int lineOffset = 0;
     if(data->IsRegularExpression()) {
@@ -307,7 +275,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         while(tkz.HasMoreTokens()) {
             // Read the next line
             wxString line = tkz.NextToken();
-            DoSearchLineRE(line, lineNumber, lineOffset, fileName, data, states);
+            DoSearchLineRE(line, lineNumber, lineOffset, fileName, data);
             lineOffset += line.Length() + 1;
             lineNumber++;
         }
@@ -342,7 +310,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
 
             // Read the next line
             wxString line = tkz.NextToken();
-            DoSearchLine(line, lineNumber, lineOffset, fileName, data, findString, filters, states);
+            DoSearchLine(line, lineNumber, lineOffset, fileName, data, findString, filters);
             lineOffset += line.Length() + 1;
             lineNumber++;
         }
@@ -354,7 +322,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
 }
 
 void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const int lineOffset,
-                                  const wxString& fileName, const SearchData* data, TextStatesPtr statesPtr)
+                                  const wxString& fileName, const SearchData* data)
 {
     wxRegEx& re = GetRegex(data->GetFindString(), data->IsMatchCase());
     size_t col = 0;
@@ -389,47 +357,8 @@ void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const
             result.SetRegexCaptures(regexCaptures);
 
             // Make sure our match is not on a comment
-            int position(wxNOT_FOUND);
-            bool canAdd(true);
-
-            if(statesPtr) {
-                position = statesPtr->LineToPos(lineNum - 1);
-                position += iCorrectedCol;
-            }
-
-            if(statesPtr && position != wxNOT_FOUND && data->GetSkipComments()) {
-                if(statesPtr->states.size() > (size_t)position) {
-                    short state = statesPtr->states.at(position).state;
-                    if(state == CppWordScanner::STATE_CPP_COMMENT || state == CppWordScanner::STATE_C_COMMENT) {
-                        canAdd = false;
-                    }
-                }
-            }
-
-            if(statesPtr && position != wxNOT_FOUND && data->GetSkipStrings()) {
-                if(statesPtr->states.size() > (size_t)position) {
-                    short state = statesPtr->states.at(position).state;
-                    if(state == CppWordScanner::STATE_DQ_STRING || state == CppWordScanner::STATE_SINGLE_STRING) {
-                        canAdd = false;
-                    }
-                }
-            }
-
-            result.SetMatchState(CppWordScanner::STATE_NORMAL);
-            if(canAdd && statesPtr && position != wxNOT_FOUND && data->GetColourComments()) {
-                // set the match state
-                if(statesPtr->states.size() > (size_t)position) {
-                    short state = statesPtr->states.at(position).state;
-                    if(state == CppWordScanner::STATE_C_COMMENT || state == CppWordScanner::STATE_CPP_COMMENT) {
-                        result.SetMatchState(state);
-                    }
-                }
-            }
-
-            if(canAdd) {
-                m_results.push_back(result);
-                m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
-            }
+            m_results.push_back(result);
+            m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
 
             col += len;
 
@@ -442,8 +371,7 @@ void SearchThread::DoSearchLineRE(const wxString& line, const int lineNum, const
 }
 
 void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const int lineOffset, const wxString& fileName,
-                                const SearchData* data, const wxString& findWhat, const wxArrayString& filters,
-                                TextStatesPtr statesPtr)
+                                const SearchData* data, const wxString& findWhat, const wxArrayString& filters)
 {
     wxString modLine = line;
 
@@ -519,48 +447,8 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
             result.SetFindWhat(data->GetFindString());
             result.SetFlags(data->m_flags);
 
-            int position(wxNOT_FOUND);
-            bool canAdd(true);
-
-            if(statesPtr) {
-                position = statesPtr->LineToPos(lineNum - 1);
-                position += iCorrectedCol;
-            }
-
-            // Make sure our match is not on a comment
-            if(statesPtr && position != wxNOT_FOUND && data->GetSkipComments()) {
-                if(statesPtr->states.size() > (size_t)position) {
-                    short state = statesPtr->states.at(position).state;
-                    if(state == CppWordScanner::STATE_CPP_COMMENT || state == CppWordScanner::STATE_C_COMMENT) {
-                        canAdd = false;
-                    }
-                }
-            }
-
-            if(statesPtr && position != wxNOT_FOUND && data->GetSkipStrings()) {
-                if(statesPtr->states.size() > (size_t)position) {
-                    short state = statesPtr->states.at(position).state;
-                    if(state == CppWordScanner::STATE_DQ_STRING || state == CppWordScanner::STATE_SINGLE_STRING) {
-                        canAdd = false;
-                    }
-                }
-            }
-
-            result.SetMatchState(CppWordScanner::STATE_NORMAL);
-            if(canAdd && statesPtr && position != wxNOT_FOUND && data->GetColourComments()) {
-                // set the match state
-                if(statesPtr->states.size() > (size_t)position) {
-                    short state = statesPtr->states.at(position).state;
-                    if(state == CppWordScanner::STATE_C_COMMENT || state == CppWordScanner::STATE_CPP_COMMENT) {
-                        result.SetMatchState(state);
-                    }
-                }
-            }
-
-            if(canAdd) {
-                m_results.push_back(result);
-                m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
-            }
+            m_results.push_back(result);
+            m_summary.SetNumMatchesFound(m_summary.GetNumMatchesFound() + 1);
 
             if(!AdjustLine(modLine, pos, findWhat)) {
                 break;
@@ -669,9 +557,6 @@ JSONItem SearchResult::ToJSON() const
     json.addProperty("flags", m_flags);
     json.addProperty("columnInChars", m_columnInChars);
     json.addProperty("lenInChars", m_lenInChars);
-    // json.addProperty("findWhat", m_findWhat);
-    // json.addProperty("matchState", (int)m_matchState);
-    // json.addProperty("scope", m_scope);
     json.addProperty("regexCaptures", m_regexCaptures);
     return json;
 }
@@ -687,9 +572,6 @@ void SearchResult::FromJSON(const JSONItem& json)
     m_flags = json.namedObject("flags").toSize_t(m_flags);
     m_columnInChars = json.namedObject("columnInChars").toInt(m_columnInChars);
     m_lenInChars = json.namedObject("lenInChars").toInt(m_lenInChars);
-    // m_findWhat = json.namedObject("findWhat").toString(m_findWhat);
-    // m_matchState = json.namedObject("matchState").toInt(m_matchState);
-    // m_scope = json.namedObject("scope").toString(m_scope);
     m_regexCaptures = json.namedObject("regexCaptures").toArrayString();
 }
 

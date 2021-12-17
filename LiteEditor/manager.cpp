@@ -100,7 +100,6 @@
 #include "pluginmanager.h"
 #include "processreaderthread.h"
 #include "reconcileproject.h"
-#include "refactorengine.h"
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "simpletable.h"

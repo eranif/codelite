@@ -69,7 +69,6 @@
 #include "open_resource_dialog.h" // New open resource
 #include "precompiled_header.h"
 #include "quickfindbar.h"
-#include "refactorengine.h"
 #include "renamesymboldlg.h"
 #include "save_perspective_as_dlg.h"
 #include "tags_parser_search_path_dlg.h"
@@ -820,8 +819,6 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
     m_infoBar->Bind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
-    EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
-    EventNotifier::Get()->Bind(wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, &clMainFrame::OnRenameSymbol, this);
     EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
     // Start the code completion manager, we do this by calling it once
@@ -883,8 +880,6 @@ clMainFrame::~clMainFrame(void)
                          NULL, this);
     wxTheApp->Disconnect(wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
                          this);
-    EventNotifier::Get()->Unbind(wxEVT_REFACTOR_ENGINE_REFERENCES, &clMainFrame::OnFindReferences, this);
-    EventNotifier::Get()->Unbind(wxEVT_REFACTOR_ENGINE_RENAME_SYMBOL, &clMainFrame::OnRenameSymbol, this);
     EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified,
                                  this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_ENDED, &clMainFrame::OnBuildEnded, this);
@@ -2150,7 +2145,6 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
 
     bool colVars(false);
     bool newColVars(false);
-    bool caseSensitive(false);
 
     size_t colourTypes(0);
 
@@ -2167,9 +2161,7 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     // writes the content into the ctags.replacements file (used by
     // codelite_indexer)
     m_tagsOptionsData.SyncData();
-
     newColVars = (m_tagsOptionsData.GetFlags() & CC_COLOUR_VARS ? true : false);
-    caseSensitive = (m_tagsOptionsData.GetFlags() & CC_IS_CASE_SENSITIVE);
 
     TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
 
@@ -5840,27 +5832,6 @@ void clMainFrame::OnShowMenuBarUI(wxUpdateUIEvent& event)
 }
 
 void clMainFrame::Raise() { wxFrame::Raise(); }
-
-void clMainFrame::OnFindReferences(clRefactoringEvent& e)
-{
-    e.Skip();
-    // Show the results
-    GetOutputPane()->GetShowUsageTab()->ShowUsage(e.GetMatches(), e.GetString());
-}
-
-void clMainFrame::OnRenameSymbol(clRefactoringEvent& e)
-{
-    e.Skip();
-    // display the refactor dialog
-    RenameSymbol dlg(this, e.GetMatches(), e.GetPossibleMatches(), e.GetString());
-    if(dlg.ShowModal() == wxID_OK) {
-        CppToken::Vec_t matches;
-        dlg.GetMatches(matches);
-        if(!matches.empty() && dlg.GetWord() != e.GetString()) {
-            ContextCpp::ReplaceInFiles(dlg.GetWord(), matches);
-        }
-    }
-}
 
 void clMainFrame::OnReportIssue(wxCommandEvent& event)
 {

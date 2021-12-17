@@ -41,7 +41,6 @@
 #include "macros.h"
 #include "mainbook.h"
 #include "output_pane.h"
-#include "refactorengine.h"
 #include "tags_options_dlg.h"
 #include "theme_handler.h"
 #include "wx/aui/aui.h"
@@ -538,8 +537,6 @@ protected:
     void OnWebSearchSelectionUI(wxUpdateUIEvent& e);
     void OnThemeChanged(wxCommandEvent& e);
     void OnEnvironmentVariablesModified(clCommandEvent& e);
-    void OnFindReferences(clRefactoringEvent& e);
-    void OnRenameSymbol(clRefactoringEvent& e);
 
     // handle symbol tree events
     void OnDatabaseUpgrade(wxCommandEvent& e);

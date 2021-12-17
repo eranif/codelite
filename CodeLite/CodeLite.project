@@ -405,8 +405,6 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="RefactorEngine">
-    <File Name="refactorengine.h"/>
-    <File Name="refactorengine.cpp"/>
     <File Name="stringaccessor.h"/>
     <File Name="cpptoken.cpp"/>
     <File Name="cpptoken.h"/>

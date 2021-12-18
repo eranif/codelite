@@ -717,13 +717,8 @@ if(NOT SDK_ONLY)
     add_subdirectory(sdk/codelite_cppcheck)
     add_subdirectory(codelite_echo)
     add_subdirectory(ctagsd)
-    if(DEBUG_BUILD)
-        add_subdirectory(CodeCompletionsTests)
-        add_subdirectory(CxxParserTests)
-    else()
-        message("-- Release build, will not include UnitTest build")
-    endif()
 endif()
+
 ##
 ## Setup the proper dependencies
 ##

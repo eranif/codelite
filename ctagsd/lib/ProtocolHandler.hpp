@@ -43,6 +43,7 @@ private:
     // cached parsed comments file <-> comments
     unordered_map<wxString, CachedComment::Map_t> m_comments_cache;
     unordered_map<wxString, ParsedFileInfo> m_parsed_files_info;
+    unordered_map<wxString, vector<wxString>> m_additional_scopes;
     wxArrayString m_search_paths;
     Scanner m_file_scanner;
 

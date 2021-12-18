@@ -13,5 +13,6 @@
 9. **DONE** function calltip is not when another method call is inside the outer signature: `foo(GetName(),|` <-- will return calltip for GetName()
 10. **DONE** Remove ParseThread class
 11. **DONE** ctagsd: change the "Find Symbol" to use the "textDocument/definition" message
-12. Open include file does not work
+12. **DONE** Open include file does not work
 13. **DONE** Fix Hyper Link navigation
+14. Smart Completion Plugin - make it work with the LSP

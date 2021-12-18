@@ -44,6 +44,18 @@ FileLogger& operator<<(FileLogger& logger, const wxStringSet_t& arr)
     return logger;
 }
 
+FileLogger& operator<<(FileLogger& logger, const vector<wxString>& arr)
+{
+    wxString s;
+    s << "[";
+    for(const auto& d : arr) {
+        s << d << ",";
+    }
+    s << "]";
+    logger.Append(s, logger.GetRequestedLogLevel());
+    return logger;
+}
+
 FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
 {
     wxString s;
@@ -263,36 +275,41 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
 void ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath)
 {
     // we need to visit each node in the file graph and create a set of all the namespaces
-    wxStringSet_t visited;
-    wxStringSet_t ns;
-    vector<wxString> Q;
-    Q.push_back(filepath);
-    while(!Q.empty()) {
-        // pop the front of queue
-        wxString file = Q.front();
-        Q.erase(Q.begin());
-
-        // sanity
-        if(m_parsed_files_info.count(file) == 0 // no info for this file
-           || visited.count(file))              // already visited this file
-        {
-            continue;
-        }
-        visited.insert(file);
-
-        // keep the info and traverse its children
-        const ParsedFileInfo& info = m_parsed_files_info[file];
-        ns.insert(info.using_namespace.begin(), info.using_namespace.end());
-
-        // append its children
-        Q.insert(Q.end(), info.included_files.begin(), info.included_files.end());
-    }
-
-    clDEBUG() << "Setting additional scopes for file:" << filepath << endl;
-    clDEBUG() << "Scopes:" << ns << endl;
-
     vector<wxString> additional_scopes;
-    additional_scopes.insert(additional_scopes.end(), ns.begin(), ns.end());
+    if(m_additional_scopes.count(filepath)) {
+        additional_scopes = m_additional_scopes[filepath];
+    } else {
+        wxStringSet_t visited;
+        wxStringSet_t ns;
+        vector<wxString> Q;
+        Q.push_back(filepath);
+        while(!Q.empty()) {
+            // pop the front of queue
+            wxString file = Q.front();
+            Q.erase(Q.begin());
+
+            // sanity
+            if(m_parsed_files_info.count(file) == 0 // no info for this file
+               || visited.count(file))              // already visited this file
+            {
+                continue;
+            }
+            visited.insert(file);
+
+            // keep the info and traverse its children
+            const ParsedFileInfo& info = m_parsed_files_info[file];
+            ns.insert(info.using_namespace.begin(), info.using_namespace.end());
+
+            // append its children
+            Q.insert(Q.end(), info.included_files.begin(), info.included_files.end());
+        }
+
+        additional_scopes.insert(additional_scopes.end(), ns.begin(), ns.end());
+        // cache the result
+        m_additional_scopes.insert({ filepath, additional_scopes });
+    }
+    clDEBUG() << "Setting additional scopes for file:" << filepath << endl;
+    clDEBUG() << "Scopes:" << additional_scopes << endl;
     TagsManagerST::Get()->GetLanguage()->UpdateAdditionalScopesCache(filepath, additional_scopes);
 }
 
@@ -521,6 +538,7 @@ void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel& channel)
     // clear various caches for this file
     m_comments_cache.erase(filepath);
     m_parsed_files_info.erase(filepath);
+    m_additional_scopes.erase(filepath);
 }
 
 // Notification -->
@@ -569,10 +587,15 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     // get the expression at this given position
     wxString last_word;
     CompletionHelper helper;
+    clDEBUG1() << "Truncating file..." << endl;
     wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
                                                      CompletionHelper::TRUNCATE_EXACT_POS);
+    clDEBUG1() << "Success" << endl;
+
+    clDEBUG1() << "Getting expression..." << endl;
     wxString expression = helper.get_expression(text, false, &last_word);
 
+    clDEBUG1() << "Success" << endl;
     clDEBUG() << "resolving expression:" << expression << endl;
 
     bool is_trigger_char =
@@ -695,6 +718,8 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     if(TagsManagerST::Get()->GetDatabase()) {
         TagsManagerST::Get()->ClearTagsCache();
     }
+    // clear the cached "using namespace"
+    m_additional_scopes.clear();
 }
 
 namespace

@@ -69,8 +69,6 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
     DoInitialize();
     m_timer = new wxTimer(this, TIMER_ID);
     m_timer->Start(50, true);
-    SetName("OpenResourceDlg");
-    WindowAttrManager::Load(this);
 
     wxString lastStringTyped = clConfig::Get().Read("PHP/OpenResourceDialog/SearchString", wxString());
 
@@ -83,6 +81,8 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
         m_textCtrlFilter->ChangeValue(lastStringTyped);
         m_textCtrlFilter->SelectAll();
     }
+
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 void OpenResourceDlg::DoInitialize()

@@ -1,4 +1,5 @@
 #include "ProtocolHandler.hpp"
+
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxPreProcessor.h"
@@ -1033,10 +1034,10 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bo
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
 
-    clDEBUG() << json.format() << endl;
+    clDEBUG1() << json.format() << endl;
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
-    clDEBUG1() << "textDocument/definition: for file" << filepath << endl;
+    clDEBUG() << "textDocument/definition: for file" << filepath << endl;
 
     if(!ensure_file_content_exists(filepath, channel, id))
         return;
@@ -1081,20 +1082,13 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bo
             }
         }
     } else {
-
         update_additional_scopes_for_file(filepath);
-
-        bool first_attempt = try_definition_first;
-        bool second_attempt = !try_definition_first;
-        TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, first_attempt, false);
-
-        // No match? try the declaration
-        if(tags.empty()) {
-            // try the declaration
-            TagsManagerST::Get()->FindImplDecl(filepath, line + 1, expression, last_word, text, tags, second_attempt,
-                                               false);
+        TagEntryPtr match = TagsManagerST::Get()->FindDefinition(filepath, line + 1, expression, last_word, text);
+        if(match) {
+            tags.push_back(match);
         }
-        clDEBUG() << "Found" << tags.size() << "matches" << endl;
+        clDEBUG() << " --> Match found:" << tags.size() << "matches" << endl;
+        clDEBUG() << tags << endl;
     }
 
     // build the result
@@ -1108,19 +1102,18 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bo
         // prepare a single file match result
         auto match = result.AddObject(wxEmptyString);
         LSP::Range range;
-        range.SetStart({ 0, 0 });
-        range.SetEnd({ 0, 0 });
+        range.SetStart({ 0, 0 }).SetEnd({ 0, 0 });
         match.append(range.ToJSON("range"));
         match.addProperty("uri", wxFileSystem::FileNameToURL(file_match));
     } else {
         // add all the results
-        for(auto tag : tags) {
+        for(TagEntryPtr tag : tags) {
             if(tag->GetName() == last_word) {
+                clDEBUG() << " --> Adding tag:" << tag->GetName() << tag->GetFile() << ":" << tag->GetLine() << endl;
                 auto match = result.AddObject(wxEmptyString);
                 // we can only provide line number...
                 LSP::Range range;
-                range.SetStart({ tag->GetLine() - 1, 0 });
-                range.SetEnd({ tag->GetLine() - 1, 0 });
+                range.SetStart({ tag->GetLine() - 1, 0 }).SetEnd({ tag->GetLine() - 1, 0 });
                 match.append(range.ToJSON("range"));
                 match.addProperty("uri", wxFileSystem::FileNameToURL(tag->GetFile()));
             }

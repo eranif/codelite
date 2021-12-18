@@ -31,6 +31,7 @@
 #include "istorage.h"
 #include "tag_tree.h"
 #include "wxStringHash.h"
+
 #include <unordered_map>
 #include <wx/filename.h>
 #include <wx/wxsqlite3.h>
@@ -409,7 +410,8 @@ public:
      */
     virtual void GetTagsByPath(const wxArrayString& path, std::vector<TagEntryPtr>& tags);
     virtual void GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags, int limit = 1);
-
+    virtual void GetTagsByPathAndKind(const wxString& path, std::vector<TagEntryPtr>& tags,
+                                      const std::vector<wxString>& kinds, int limit = 1);
     /**
      * @brief return array of items by name and parent
      * @param path

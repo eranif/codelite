@@ -148,6 +148,8 @@ public:
      */
     virtual void GetTagsByPath(const wxArrayString& path, std::vector<TagEntryPtr>& tags) = 0;
     virtual void GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags, int limit = 1) = 0;
+    virtual void GetTagsByPathAndKind(const wxString& path, std::vector<TagEntryPtr>& tags,
+                                      const std::vector<wxString>& kinds, int limit = 1) = 0;
 
     /**
      * @brief return array of items by name and parent

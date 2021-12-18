@@ -23,9 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "tags_storage_sqlite3.h"
+
 #include "file_logger.h"
 #include "fileutils.h"
 #include "precompiled_header.h"
+
 #include <algorithm>
 #include <wx/longlong.h>
 #include <wx/tokenzr.h>
@@ -1165,7 +1167,7 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes, cons
         DoFetchTags(sql, scope_results, kinds);
         tags.reserve(tags.size() + scope_results.size());
         tags.insert(tags.end(), scope_results.begin(), scope_results.end());
-        if((GetSingleSearchLimit() > 0) && (tags.size() > GetSingleSearchLimit())) {
+        if((GetSingleSearchLimit() > 0) && (static_cast<int>(tags.size()) > GetSingleSearchLimit())) {
             break;
         }
     }
@@ -1820,4 +1822,26 @@ bool TagsStorageSQLite::CheckIntegrity() const
         return false;
     }
     return true;
+}
+
+void TagsStorageSQLite::GetTagsByPathAndKind(const wxString& path, std::vector<TagEntryPtr>& tags,
+                                             const std::vector<wxString>& kinds, int limit)
+{
+    if(path.empty())
+        return;
+
+    wxString sql;
+
+    sql << "select * from tags where path='" << path << "'";
+    if(!kinds.empty()) {
+        sql << " and kind in (";
+        for(const wxString& kind : kinds) {
+            sql << "'" << kind << "',";
+        }
+        sql.RemoveLast();
+        sql << ")";
+    }
+    sql << " limit " << limit;
+    clDEBUG1() << "Running SQL:" << sql << endl;
+    DoFetchTags(sql, tags);
 }

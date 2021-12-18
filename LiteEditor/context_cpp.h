@@ -32,6 +32,7 @@
 #include "ctags_manager.h"
 #include "entry.h"
 #include "macros.h"
+
 #include <map>
 
 class RefactorSource;
@@ -83,7 +84,6 @@ public:
     virtual bool CompleteWord();
     virtual bool CodeComplete(long pos = wxNOT_FOUND);
     virtual bool GotoDefinition();
-    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
     virtual wxString GetCurrentScopeName();
     virtual void AutoIndent(const wxChar&);
     virtual bool IsCommentOrString(long pos);

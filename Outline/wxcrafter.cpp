@@ -36,12 +36,12 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
+    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                           wxDataViewEventHandler(OutlineTabBaseClass::OnItemSelected), NULL, this);
 }
 
 OutlineTabBaseClass::~OutlineTabBaseClass()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
+    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
                              wxDataViewEventHandler(OutlineTabBaseClass::OnItemSelected), NULL, this);
 }

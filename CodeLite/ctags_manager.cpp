@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "ctags_manager.h"
+
 #include "CxxTemplateFunction.h"
 #include "CxxVariable.h"
 #include "CxxVariableScanner.h"
@@ -51,6 +52,7 @@
 #include "wx/timer.h"
 #include "wx/tokenzr.h"
 #include "wxStringHash.h"
+
 #include <algorithm>
 #include <set>
 #include <sstream>
@@ -731,97 +733,59 @@ void TagsManager::GetHoverTip(const wxFileName& fileName, int lineno, const wxSt
     }
 }
 
-void TagsManager::FindImplDecl(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& word,
-                               const wxString& text, std::vector<TagEntryPtr>& tags, bool imp, bool workspaceOnly)
+TagEntryPtr TagsManager::FindDefinition(const wxFileName& fileName, int lineno, const wxString& expr,
+                                        const wxString& word, const wxString& text)
 {
-    // Don't attempt to parse non valid ctags file
-    if(!IsValidCtagsFile(fileName)) {
-        return;
+    // use "WordCompletionCandidates"
+    vector<TagEntryPtr> word_complete_tags;
+    if(!WordCompletionCandidates(fileName, lineno, expr, text, word, word_complete_tags)) {
+        return nullptr;
     }
 
-    wxString path;
-    wxString tmp;
-    std::vector<TagEntryPtr> tmpCandidates;
+    // take the first one with the exact match
+    TagEntryPtr tag;
+    for(TagEntryPtr t : word_complete_tags) {
+        if(t->GetName() == word) {
+            tag = t;
+            break;
+        }
+    }
+    if(!tag) {
+        return nullptr;
+    }
 
-    // remove the word from the expression
-    wxString expression(expr);
+    if(tag->IsMethod()) {
+        // we prefer the definition, unless we are already on it, and in that case, return the declaration
+        // locate both declaration + implementation
+        wxString path = tag->GetPath();
+        vector<TagEntryPtr> impl_vec;
+        vector<TagEntryPtr> decl_vec;
+        clDEBUG1() << "Searching for path:" << path << endl;
+        GetDatabase()->GetTagsByPathAndKind(path, impl_vec, { "function" }, 1);
+        GetDatabase()->GetTagsByPathAndKind(path, decl_vec, { "prototype" }, 1);
 
-    // Trim whitespace from right and left
-    static wxString trimString(wxT("(){};\r\n\t\v "));
-
-    expression.erase(0, expression.find_first_not_of(trimString));
-    expression.erase(expression.find_last_not_of(trimString) + 1);
-    tmp = expression;
-    expression.EndsWith(word, &tmp);
-    expression = tmp;
-    expression.Trim().Trim(false);
-
-    wxString scope(text);
-    std::vector<wxString> visibleScopes;
-    wxString scopeName = GetLanguage()->GetScopeName(scope, &visibleScopes);
-    if(expression.IsEmpty() || expression == wxT("::")) {
-        expression.Clear();
-
-        // add the current scope to the "visibleScopes" to be tested
-        if(scopeName != wxT("<global>")) {
-            visibleScopes.push_back(scopeName);
-            wxArrayString outerScopes = BreakToOuterScopes(scopeName);
-            for(size_t i = 0; i < outerScopes.GetCount(); i++)
-                visibleScopes.push_back(outerScopes.Item(i));
+        if(impl_vec.empty() || decl_vec.empty()) {
+            clDEBUG1() << "impl:" << impl_vec.size() << "decl:" << decl_vec.size() << endl;
+            return tag;
         }
 
-        // collect tags from all the visible scopes
-        for(size_t i = 0; i < visibleScopes.size(); i++)
-            TagsByScopeAndName(visibleScopes.at(i), word, tmpCandidates, ExactMatch);
+        TagEntryPtr impl = impl_vec[0];
+        TagEntryPtr decl = decl_vec[0];
 
-        if(tmpCandidates.empty()) {
-            // no match in the given scope, try to collect from global scope as well
-            GetGlobalTags(word, tmpCandidates, ExactMatch);
+        if(impl->GetLine() == lineno && impl->GetFile() == fileName.GetFullPath()) {
+            // already on the impl line, return the decl
+            return decl;
         }
 
-        if(!imp) {
-            // collect only implementation
-            FilterImplementation(tmpCandidates, tags);
-
-        } else {
-            FilterDeclarations(tmpCandidates, tags);
+        if(decl->GetLine() == lineno && decl->GetFile() == fileName.GetFullPath()) {
+            // already on the decl line, return the decl
+            return impl;
         }
 
-        if(tags.empty()) {
-            TryFindImplDeclUsingNS(scopeName, word, imp, visibleScopes, tags);
-            if(tags.empty())
-                TryReducingScopes(scopeName, word, imp, tags);
-        }
-
+        return impl;
     } else {
-        wxString typeName, typeScope;
-        wxString oper, dummy;
-        bool res = ProcessExpression(fileName, lineno, expression, text, typeName, typeScope, oper, dummy);
-        if(!res) {
-            return;
-        }
-        // get all symbols realted to this scope
-        scope = wxT("");
-        if(typeScope == wxT("<global>"))
-            scope << typeName;
-        else
-            scope << typeScope << wxT("::") << typeName;
-
-        std::vector<TagEntryPtr> tmpCandidates;
-        TagsByScopeAndName(scope, word, tmpCandidates, ExactMatch);
-
-        if(!imp) {
-            // collect only implementation
-            FilterImplementation(tmpCandidates, tags);
-        } else {
-            FilterDeclarations(tmpCandidates, tags);
-        }
-
-        if(tags.empty()) {
-            TryFindImplDeclUsingNS(scope, word, imp, visibleScopes, tags);
-            if(tags.empty())
-                TryReducingScopes(scope, word, imp, tags);
-        }
+        // no need to manipulate this tag
+        return tag;
     }
 }
 

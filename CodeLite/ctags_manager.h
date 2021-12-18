@@ -45,6 +45,7 @@
 #include "wx/event.h"
 #include "wx/process.h"
 #include "wxStringHash.h"
+
 #include <set>
 #include <wx/stopwatch.h>
 #include <wx/thread.h>
@@ -459,16 +460,10 @@ public:
                        bool include_anon = false);
 
     /**
-     * Find implementation/declaration of symbol
-     * @param expr the current expression
-     * @param word the token under the cursor
-     * @param text scope where token was found
-     * @param gotoImpl set to true, if you wish that CodeLite will find the implementation, false to declaration
-     * @param tags the output
+     * Find symbol at a given location
      */
-    void FindImplDecl(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& word,
-                      const wxString& text, std::vector<TagEntryPtr>& tags, bool impl = true,
-                      bool workspaceOnly = false);
+    TagEntryPtr FindDefinition(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& word,
+                               const wxString& text);
 
     /**
      * @brief return a CppToken poiting to the offset of a local variable

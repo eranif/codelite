@@ -14,10 +14,8 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/simplebook.h>
-#include <wx/imaglist.h>
-#include <wx/treectrl.h>
-#include "PHPOutlineTree.h"
+#include <wx/dataview.h>
+#include "clTerminalViewCtrl.hpp"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -39,53 +37,15 @@
 class OutlineTabBaseClass : public wxPanel
 {
 protected:
-    wxSimplebook* m_simpleBook;
-    wxPanel* m_panelCxx;
-    wxPanel* m_panelPhp;
-    PHPOutlineTree* m_treeCtrlPhp;
-    wxPanel* m_panelPlaceHolder;
-    wxPanel* m_panelEmpty;
+    clTerminalViewCtrl* m_dvListCtrl;
 
 protected:
-    virtual void OnPhpItemSelected(wxTreeEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnPhpItemActivated(wxTreeEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxPanel* GetPanelCxx()
-    {
-        return m_panelCxx;
-    }
-    PHPOutlineTree* GetTreeCtrlPhp()
-    {
-        return m_treeCtrlPhp;
-    }
-    wxPanel* GetPanelPhp()
-    {
-        return m_panelPhp;
-    }
-    wxPanel* GetPanelEmpty()
-    {
-        return m_panelEmpty;
-    }
-    wxPanel* GetPanelPlaceHolder()
-    {
-        return m_panelPlaceHolder;
-    }
-    wxSimplebook* GetSimpleBook()
-    {
-        return m_simpleBook;
-    }
-    OutlineTabBaseClass(wxWindow* parent,
-        wxWindowID id = wxID_ANY,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxSize(-1, -1),
-        long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    clTerminalViewCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    OutlineTabBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~OutlineTabBaseClass();
 };
 

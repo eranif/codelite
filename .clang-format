@@ -51,3 +51,4 @@ Standard: C++11
 TabWidth: 4
 UseTab: Never
 SortIncludes: true
+IncludeBlocks: Regroup

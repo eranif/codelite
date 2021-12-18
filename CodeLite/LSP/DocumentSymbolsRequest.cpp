@@ -1,7 +1,10 @@
 #include "LSP/DocumentSymbolsRequest.hpp"
+
 #include "LSP/LSPEvent.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "json_rpc_params.h"
+
 #include <algorithm>
 
 namespace
@@ -73,6 +76,10 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& respons
             if(m_context & CONTEXT_OUTLINE_VIEW) {
                 QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
             }
+
+            // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE for the EventNotifier
+            // so it might be used by other plugins as well, e.g. "Outline"
+            QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
         } else {
             std::vector<DocumentSymbol> symbols;
             symbols.reserve(size);

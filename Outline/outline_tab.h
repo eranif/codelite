@@ -1,82 +1,30 @@
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//
-// copyright            : (C) 2014 Eran Ifrah
-// file name            : outline_tab.h
-//
-// -------------------------------------------------------------------------
-// A
-//              _____           _      _     _ _
-//             /  __ \         | |    | |   (_) |
-//             | /  \/ ___   __| | ___| |    _| |_ ___
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
-//              \____/\___/ \__,_|\___\_____/_|\__\___|
-//
-//                                                  F i l e
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+#ifndef OUTLINETAB_H
+#define OUTLINETAB_H
 
-#ifndef SYMBOLVIEWTABPANEL_H
-#define SYMBOLVIEWTABPANEL_H
-
-#include "cl_command_event.h"
+#include "LSP/LSPEvent.h"
+#include "LSP/basic_types.h"
 #include "wxcrafter.h"
 
-class clToolBar;
-class IManager;
-class svSymbolTree;
+#include <vector>
 
+using namespace std;
 class OutlineTab : public OutlineTabBaseClass
 {
-protected:
-    IManager* m_mgr;
-    svSymbolTree* m_tree;
-    wxFileName m_phpFile;
-    bool m_sortCxxTreeAlphabetically;
-    clToolBar* m_toolbar;
+    wxString m_currentSymbolsFileName;
+    vector<LSP::SymbolInformation> m_symbols;
+
+private:
+    void OnOutlineSymbols(LSPEvent& event);
+    void OnActiveEditorChanged(wxCommandEvent& event);
+    void OnAllEditorsClosed(wxCommandEvent& event);
+    void RenderSymbols(const vector<LSP::SymbolInformation>& symbols, const wxString& filename);
+    void ClearView();
 
 public:
-    bool m_isEnabled;
-
-protected:
-    virtual void OnSortAlpha(wxCommandEvent& event);
-    virtual void OnSortAlphaUI(wxUpdateUIEvent& event);
-    virtual void OnPhpItemActivated(wxTreeEvent& event);
-    virtual void OnPhpItemSelected(wxTreeEvent& event);
-    void OnThemeChanged(clCommandEvent& event);
-
-    bool IsIncludeFileNode();
-
-    void DoRefreshCxxView();
-
-public:
-    OutlineTab(wxWindow* parent, IManager* mgr);
+    OutlineTab(wxWindow* parent);
     virtual ~OutlineTab();
-    void OnSearchSymbol(wxCommandEvent& event);
-    void EditorChanged();
 
-    // Event Handlers
-    ////////////////////////////////////////////////
-    void OnWorkspaceClosed(clWorkspaceEvent& e);
-    void OnActiveEditorChanged(wxCommandEvent& e);
-    void OnEditorClosed(wxCommandEvent& e);
-    void OnAllEditorsClosed(wxCommandEvent& e);
-    void OnFilesTagged(wxCommandEvent& e);
-    void OnMenu(wxContextMenuEvent& e);
-    void OnGotoImpl(wxCommandEvent& e);
-    void OnOpenFile(wxCommandEvent& e);
-    void OnGotoDecl(wxCommandEvent& e);
-    void OnFindReferenes(wxCommandEvent& e);
-    void OnRenameSymbol(wxCommandEvent& e);
-    void OnItemSelectedUI(wxUpdateUIEvent& e);
-    void OnEditorSaved(clCommandEvent& event);
+protected:
+    virtual void OnItemSelected(wxDataViewEvent& event);
 };
-
-#endif // SYMBOLVIEWTABPANEL_H
+#endif // OUTLINETAB_H

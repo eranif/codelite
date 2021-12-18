@@ -1,5 +1,8 @@
 #include "php_code_completion.h"
+
 #include "ColoursAndFontsManager.h"
+#include "LSP/LSPEvent.h"
+#include "LSP/basic_types.h"
 #include "PHPEntityBase.h"
 #include "PHPEntityClass.h"
 #include "PHPEntityFunction.h"
@@ -23,12 +26,16 @@
 #include "php_workspace.h"
 #include "tags_options_data.h"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <algorithm>
 #include <entry.h>
 #include <event_notifier.h>
 #include <imanager.h>
 #include <macros.h>
 #include <plugin.h>
+#include <stack>
+#include <thread>
+#include <vector>
 #include <wx/log.h>
 #include <wx/stc/stc.h>
 
@@ -919,7 +926,75 @@ void PHPCodeCompletion::OnActiveEditorChanged(wxCommandEvent& e)
         scope_entry.display_string << "()";
         scopes.push_back(scope_entry);
     }
+
     clGetManager()->GetNavigationBar()->SetScopes(editor->GetFileName().GetFullPath(), scopes);
+
+    // For the sake of outline view, fire wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE event
+
+    // parse the current source file
+    wxString text = editor->GetTextRange(0, editor->GetLength());
+
+    auto parse_callback = [=](const wxString& text) {
+        PHPSourceFile source(text, NULL);
+        source.SetParseFunctionBody(false);
+        source.SetFilename(editor->GetFileName());
+        source.Parse();
+
+        // get list of all entities
+        // dfs traverse
+        auto top_level = source.Namespace();
+        std::stack<PHPEntityBase::Ptr_t> q;
+        vector<LSP::SymbolInformation> symbols;
+        q.push(top_level);
+        while(!q.empty()) {
+            PHPEntityBase::Ptr_t entity = q.top();
+            q.pop();
+
+            LSP::SymbolInformation si;
+            LSP::Location location;
+            LSP::Range range;
+            // the location
+            range.SetEnd({ entity->GetLine(), 0 }).SetStart({ entity->GetLine(), 0 });
+            location.SetRange(range);
+            si.SetLocation(location);
+
+            si.SetName(entity->GetShortName());
+            if(entity->Parent()) {
+                si.SetContainerName(entity->Parent()->GetShortName());
+            }
+
+            if(entity->Is(kEntityTypeFunction)) {
+                si.SetKind(LSP::kSK_Function);
+            } else if(entity->Is(kEntityTypeClass)) {
+                si.SetKind(LSP::kSK_Class);
+            } else if(entity->Is(kEntityTypeNamespace)) {
+                si.SetKind(LSP::kSK_Namespace);
+            } else if(entity->Is(kEntityTypeVariable)) {
+                si.SetKind(LSP::kSK_Variable);
+            } else {
+                si.SetKind(LSP::kSK_TypeParameter);
+            }
+            symbols.emplace_back(si);
+
+            if(!entity->GetChildren().empty()) {
+                for(auto child : entity->GetChildren()) {
+                    q.push(child);
+                }
+            }
+        }
+
+        LSPEvent symbols_event{ wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE };
+        symbols_event.GetSymbolsInformation().reserve(symbols.size());
+        symbols_event.GetSymbolsInformation().insert(symbols_event.GetSymbolsInformation().end(), symbols.begin(),
+                                                     symbols.end());
+
+        symbols_event.SetFileName(editor->GetFileName().GetFullPath());
+        EventNotifier::Get()->AddPendingEvent(symbols_event);
+    };
+
+    // perform the parsing in the background
+    std::thread thr(parse_callback, text);
+    thr.detach();
 }
 
 IEditor* PHPCodeCompletion::GetEditor(const wxString& filepath) const

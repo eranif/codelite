@@ -1,6 +1,8 @@
 #include "CxxVariableScanner.h"
+
 #include "CxxScannerTokens.h"
 #include "file_logger.h"
+
 #include <algorithm>
 #include <unordered_set>
 
@@ -520,7 +522,14 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bo
             var->SetDefaultValue(varInitialization);
             var->SetPointerOrReference(pointerOrRef);
             var->SetIsAuto(isAuto);
-            if(var->IsOk()) {
+
+            // the below condition fixes this type:
+            // if(something && GetCtrl(). -> we can mistaken this as: VarType: something, VarName: GetCtrl, And
+            // pointerOrRef: &&
+            bool not_ok = varInitialization.Contains("(") && pointerOrRef == "&&";
+            if(not_ok) {
+                break;
+            } else if(var->IsOk()) {
                 vars.push_back(var);
             } else if(!varInitialization.IsEmpty()) {
                 // This means that the above was a function call

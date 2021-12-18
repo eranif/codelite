@@ -1,15 +1,16 @@
+#include "php_open_resource_dlg.h"
 #include "FilesCollector.h"
 #include "PHPLookupTable.h"
 #include "cl_config.h"
 #include "fileutils.h"
-#include "php_open_resource_dlg.h"
+#include "globals.h"
+#include "ieditor.h"
+#include "imanager.h"
+#include "macros.h"
 #include "php_workspace.h"
+#include "windowattrmanager.h"
+
 #include <bitmap_loader.h>
-#include <globals.h>
-#include <ieditor.h>
-#include <imanager.h>
-#include <macros.h>
-#include <windowattrmanager.h>
 #include <wx/imaglist.h>
 #include <wx/tokenzr.h>
 
@@ -37,8 +38,7 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, const ResourceVector_t& items
 
     DoInitialize();
     DoPopulateListCtrl(m_resources);
-    SetName("OpenResourceDlg");
-    WindowAttrManager::Load(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
@@ -185,7 +185,9 @@ void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
         cols.push_back(items.at(i).TypeAsString());
         cols.push_back(items.at(i).filename.GetFullPath());
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new ResourceItem(items.at(i))));
-        if(!selection.IsOk()) { selection = m_dvListCtrl->RowToItem(0); }
+        if(!selection.IsOk()) {
+            selection = m_dvListCtrl->RowToItem(0);
+        }
     }
 
     if(selection.IsOk()) {
@@ -229,7 +231,8 @@ ResourceVector_t OpenResourceDlg::DoGetFiles(const wxString& filter)
         if(FileUtils::FuzzyMatch(filter, filename)) {
             resources.push_back(m_allFiles.at(i));
             // Don't return too many matches...
-            if(resources.size() == 300) break;
+            if(resources.size() == 300)
+                break;
         }
     }
     return resources;

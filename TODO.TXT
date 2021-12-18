@@ -15,4 +15,4 @@
 11. **DONE** ctagsd: change the "Find Symbol" to use the "textDocument/definition" message
 12. **DONE** Open include file does not work
 13. **DONE** Fix Hyper Link navigation
-14. Smart Completion Plugin - make it work with the LSP
+14. **DONE** Smart Completion Plugin - make it work with the LSP

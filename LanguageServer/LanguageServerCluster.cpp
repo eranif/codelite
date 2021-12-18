@@ -886,10 +886,12 @@ void LanguageServerCluster::UpdateNavigationBar()
         if(!symbol.GetContainerName().empty()) {
             display_string << symbol.GetContainerName() << ".";
         }
-        display_string << symbol.GetName();
-        if(!display_string.Contains("(")) {
-            display_string << "()";
-        }
+
+        wxString short_name = symbol.GetName();
+        short_name = short_name.BeforeFirst('(');
+        short_name += "()";
+        display_string << short_name;
+
         scope_entry.display_string.swap(display_string);
         scopes.push_back(scope_entry);
     }

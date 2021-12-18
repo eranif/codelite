@@ -911,9 +911,12 @@ void PHPCodeCompletion::OnActiveEditorChanged(wxCommandEvent& e)
     for(PHPEntityBase::Ptr_t entity : functions) {
         if(!entity->Is(kEntityTypeFunction))
             continue;
+
+        // preapre a display string, exclude the function signature (it takes too much space)
         clEditorBar::ScopeEntry scope_entry;
         scope_entry.line_number = entity->GetLine();
-        scope_entry.display_string = entity->GetDisplayName();
+        scope_entry.display_string = entity->GetFullName();
+        scope_entry.display_string << "()";
         scopes.push_back(scope_entry);
     }
     clGetManager()->GetNavigationBar()->SetScopes(editor->GetFileName().GetFullPath(), scopes);

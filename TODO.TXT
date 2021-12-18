@@ -3,7 +3,7 @@
 # TODO
 
 1. **DONE** `Add include file` should be moved to LSP via new event `wxEVT_LSP_FIND_HEADER`
-2. `Outline Plugin` -> move to LSP
+2. **DONE** `Outline Plugin` -> move to LSP
 3. **DONE** Fix code completion for header file names
 4. **DONE** All the content of the `Code Generation / Refactoring` should be moved to LSP
 5. **DONE** Remove parsing of files once saved (this is no longer needed)

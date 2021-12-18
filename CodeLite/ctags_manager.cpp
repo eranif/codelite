@@ -242,13 +242,13 @@ bool TagsManager::IsValidCtagsFile(const wxFileName& filename) const
 void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString& name, std::vector<TagEntryPtr>& tags,
                                      size_t flags)
 {
-    std::vector<wxString> derivationList;
+    std::vector<std::pair<wxString, int>> derivationList;
     // add this scope as well to the derivation list
 
     wxString _scopeName = DoReplaceMacros(scope);
-    derivationList.push_back(_scopeName);
-    std::set<wxString> scannedInherits;
-    GetDerivationList(_scopeName, NULL, derivationList, scannedInherits);
+    derivationList.push_back({ _scopeName, 0 });
+    std::unordered_set<wxString> visited;
+    GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
 
     // make enough room for max of 500 elements in the vector
     tags.reserve(500);
@@ -256,7 +256,7 @@ void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString& name
 
     for(size_t i = 0; i < derivationList.size(); i++) {
         // try the worksapce database for match
-        scopes.Add(derivationList.at(i));
+        scopes.Add(derivationList.at(i).first);
     }
 
     GetDatabase()->GetTagsByScopeAndName(scopes, name, flags & PartialMatch, tags);
@@ -267,22 +267,22 @@ void TagsManager::TagsByScopeAndName(const wxString& scope, const wxString& name
 
 void TagsManager::TagsByScope(const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
-    std::vector<wxString> derivationList;
+    std::vector<std::pair<wxString, int>> derivationList;
     // add this scope as well to the derivation list
     wxString _scopeName = DoReplaceMacros(scope);
-    derivationList.push_back(_scopeName);
-    std::set<wxString> scannedInherits;
-    GetDerivationList(_scopeName, NULL, derivationList, scannedInherits);
+    derivationList.push_back({ _scopeName, 0 });
+    std::unordered_set<wxString> visited;
+    GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
 
     // make enough room for max of 500 elements in the vector
     tags.reserve(500);
 
     for(size_t i = 0; i < derivationList.size(); i++) {
-        wxString tmpScope(derivationList.at(i));
+        wxString tmpScope(derivationList.at(i).first);
         tmpScope = DoReplaceMacros(tmpScope);
 
         // try the external database for match
-        GetDatabase()->GetTagsByScope(derivationList.at(i), tags);
+        GetDatabase()->GetTagsByScope(derivationList.at(i).first, tags);
     }
 
     // and finally sort the results
@@ -1090,14 +1090,14 @@ void TagsManager::DoFindByNameAndScope(const wxString& name, const wxString& sco
         // try the workspace database for match
         GetDatabase()->GetTagsByNameAndParent(name, wxT("<global>"), tags);
     } else {
-        std::vector<wxString> derivationList;
-        derivationList.push_back(scope);
-        std::set<wxString> scannedInherits;
-        GetDerivationList(scope, NULL, derivationList, scannedInherits);
+        std::vector<std::pair<wxString, int>> derivationList;
+        derivationList.push_back({ scope, 0 });
+        std::unordered_set<wxString> visited;
+        GetDerivationList(scope, NULL, derivationList, visited, 1);
         wxArrayString paths;
         for(size_t i = 0; i < derivationList.size(); i++) {
             wxString path_;
-            path_ << derivationList.at(i) << wxT("::") << name;
+            path_ << derivationList.at(i).first << wxT("::") << name;
             paths.Add(path_);
         }
 
@@ -1157,7 +1157,19 @@ bool TagsManager::IsTypeAndScopeExists(wxString& typeName, wxString& scope)
 }
 
 bool TagsManager::GetDerivationList(const wxString& path, TagEntryPtr derivedClassTag,
-                                    std::vector<wxString>& derivationList, std::set<wxString>& scannedInherits)
+                                    std::vector<std::pair<wxString, int>>& derivationList,
+                                    std::unordered_set<wxString>& visited, int depth)
+{
+    bool res = GetDerivationListInternal(path, derivedClassTag, derivationList, visited, depth);
+    std::sort(
+        derivationList.begin(), derivationList.end(),
+        [](const std::pair<wxString, size_t>& a, const std::pair<wxString, size_t>& b) { return a.second < b.second; });
+    return res;
+}
+
+bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr derivedClassTag,
+                                            std::vector<std::pair<wxString, int>>& derivationList,
+                                            std::unordered_set<wxString>& visited, int depth)
 {
     std::vector<TagEntryPtr> tags;
     TagEntryPtr tag;
@@ -1246,10 +1258,10 @@ bool TagsManager::GetDerivationList(const wxString& path, TagEntryPtr derivedCla
                 }
 
                 // Make sure that this parent was not scanned already
-                if(scannedInherits.find(inherits) == scannedInherits.end()) {
-                    scannedInherits.insert(inherits);
-                    derivationList.push_back(inherits);
-                    GetDerivationList(inherits, tag, derivationList, scannedInherits);
+                if(visited.count(inherits) == 0) {
+                    visited.insert(inherits);
+                    derivationList.push_back({ inherits, depth });
+                    GetDerivationList(inherits, tag, derivationList, visited, depth + 1);
                 }
             }
         }
@@ -1475,12 +1487,12 @@ void TagsManager::TagsByScope(const wxString& scopeName, const wxString& kind, s
                               bool includeInherits, bool applyLimit)
 {
     wxString sql;
-    std::vector<wxString> derivationList;
+    std::vector<std::pair<wxString, int>> derivationList;
     // add this scope as well to the derivation list
-    derivationList.push_back(scopeName);
-    std::set<wxString> scannedInherits;
+    derivationList.push_back({ scopeName, 0 });
+    std::unordered_set<wxString> visited;
     if(includeInherits) {
-        GetDerivationList(scopeName, NULL, derivationList, scannedInherits);
+        GetDerivationList(scopeName, NULL, derivationList, visited, 1);
     }
 
     // make enough room for max of 500 elements in the vector
@@ -1489,13 +1501,15 @@ void TagsManager::TagsByScope(const wxString& scopeName, const wxString& kind, s
     kinds.Add(kind);
 
     for(size_t i = 0; i < derivationList.size(); i++) {
-        scopes.Add(derivationList.at(i));
+        scopes.Add(derivationList.at(i).first);
     }
 
-    if(applyLimit)
+    clDEBUG() << "Reading symbols from scopes:" << scopes << endl;
+    if(applyLimit) {
         GetDatabase()->GetTagsByScopesAndKind(scopes, kinds, tags);
-    else
+    } else {
         GetDatabase()->GetTagsByScopesAndKindNoLimit(scopes, kinds, tags);
+    }
 }
 
 wxString TagsManager::GetScopeName(const wxString& scope)
@@ -2322,22 +2336,21 @@ void TagsManager::SetProjectPaths(const wxArrayString& paths)
 
 void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
-    std::vector<wxString> derivationList;
+    std::vector<std::pair<wxString, int>> derivationList;
 
     // add this scope as well to the derivation list
     wxString _scopeName = DoReplaceMacros(scope);
-    derivationList.push_back(_scopeName);
-    std::set<wxString> scannedInherits;
-    GetDerivationList(_scopeName, NULL, derivationList, scannedInherits);
+    derivationList.push_back({ _scopeName, 0 });
+    std::unordered_set<wxString> visited;
+    GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
 
     // make enough room for max of 500 elements in the vector
     for(size_t i = 0; i < derivationList.size(); i++) {
-        wxString tmpScope(derivationList.at(i));
+        wxString tmpScope(derivationList.at(i).first);
         tmpScope = DoReplaceMacros(tmpScope);
 
         GetDatabase()->GetDereferenceOperator(tmpScope, tags);
         if(!tags.empty()) {
-
             // No need to further check
             break;
         }
@@ -2346,17 +2359,17 @@ void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagE
 
 void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
-    std::vector<wxString> derivationList;
+    std::vector<std::pair<wxString, int>> derivationList;
 
     // add this scope as well to the derivation list
     wxString _scopeName = DoReplaceMacros(scope);
-    derivationList.push_back(_scopeName);
-    std::set<wxString> scannedInherits;
-    GetDerivationList(_scopeName, NULL, derivationList, scannedInherits);
+    derivationList.push_back({ _scopeName, 0 });
+    std::unordered_set<wxString> visited;
+    GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
 
     // make enough room for max of 500 elements in the vector
     for(size_t i = 0; i < derivationList.size(); i++) {
-        wxString tmpScope(derivationList.at(i));
+        wxString tmpScope(derivationList.at(i).first);
         tmpScope = DoReplaceMacros(tmpScope);
 
         GetDatabase()->GetSubscriptOperator(scope, tags);
@@ -2648,16 +2661,16 @@ void TagsManager::DoSortByVisibility(TagEntryPtrVector_t& tags)
 
 void TagsManager::GetScopesByScopeName(const wxString& scopeName, wxArrayString& scopes)
 {
-    std::vector<wxString> derivationList;
+    std::vector<std::pair<wxString, int>> derivationList;
 
     // add this scope as well to the derivation list
     wxString _scopeName = DoReplaceMacros(scopeName);
-    derivationList.push_back(_scopeName);
-    std::set<wxString> scannedInherits;
-    GetDerivationList(_scopeName, NULL, derivationList, scannedInherits);
+    derivationList.push_back({ _scopeName, 0 });
+    std::unordered_set<wxString> visited;
+    GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
 
     for(size_t i = 0; i < derivationList.size(); i++) {
-        wxString tmpScope(derivationList.at(i));
+        wxString tmpScope(derivationList.at(i).first);
         tmpScope = DoReplaceMacros(tmpScope);
         scopes.Add(tmpScope);
     }
@@ -2980,13 +2993,7 @@ void TagsManager::DoTagsFromText(const wxString& text, std::vector<TagEntryPtr>&
     }
 }
 
-void TagsManager::ParseWorkspaceIncremental()
-{
-    // just restart ctagsd
-    // clLanguageServerEvent stop_event{ wxEVT_LSP_RESTART };
-    // stop_event.SetLspName("ctagsd");
-    // EventNotifier::Get()->ProcessEvent(stop_event);
-}
+void TagsManager::ParseWorkspaceIncremental() {}
 
 void TagsManager::ParseWorkspaceFull(const wxString& workspace_dir)
 {

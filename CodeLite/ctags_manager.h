@@ -822,16 +822,21 @@ private:
      */
     virtual ~TagsManager();
 
-public:
     /**
-     *
-     * @param &path
-     * @param &derivationList
-     * @return
+     * @param path
+     * @param parentTag
+     * @param derivationList
+     * @param scannedInherits
      */
-    bool GetDerivationList(const wxString& path, TagEntryPtr parentTag, std::vector<wxString>& derivationList,
-                           std::set<wxString>& scannedInherits);
+    bool GetDerivationList(const wxString& path, TagEntryPtr parentTag,
+                           std::vector<std::pair<wxString, int>>& derivationList, std::unordered_set<wxString>& visited,
+                           int depth);
 
+    bool GetDerivationListInternal(const wxString& path, TagEntryPtr parentTag,
+                                   std::vector<std::pair<wxString, int>>& derivationList,
+                                   std::unordered_set<wxString>& visited, int depth);
+
+public:
     /**
      * @brief return true if the file is binary (by searching for NULL chars)
      * @param filepath file to examine

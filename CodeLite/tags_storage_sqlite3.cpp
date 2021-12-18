@@ -1155,15 +1155,20 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes, cons
         return;
     }
 
-    wxString sql;
-    sql << wxT("select * from tags where scope in (");
-    for(size_t i = 0; i < scopes.GetCount(); i++) {
-        sql << wxT("'") << scopes.Item(i) << wxT("',");
+    // fetch from the scopes, in-order (i.e. first scope tags and so on)
+    for(const wxString& scope : scopes) {
+        wxString sql;
+        sql << "select * from tags where scope = '" << scope << "' ORDER BY NAME";
+        DoAddLimitPartToQuery(sql, tags);
+
+        std::vector<TagEntryPtr> scope_results;
+        DoFetchTags(sql, scope_results, kinds);
+        tags.reserve(tags.size() + scope_results.size());
+        tags.insert(tags.end(), scope_results.begin(), scope_results.end());
+        if((GetSingleSearchLimit() > 0) && (tags.size() > GetSingleSearchLimit())) {
+            break;
+        }
     }
-    sql.RemoveLast();
-    sql << wxT(") ORDER BY NAME ");
-    DoAddLimitPartToQuery(sql, tags);
-    DoFetchTags(sql, tags, kinds);
 }
 
 void TagsStorageSQLite::GetTagsByScopesAndKindNoLimit(const wxArrayString& scopes, const wxArrayString& kinds,

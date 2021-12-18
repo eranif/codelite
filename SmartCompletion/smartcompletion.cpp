@@ -1,8 +1,8 @@
+#include "smartcompletion.h"
 #include "SmartCompletionsSettingsDlg.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "macros.h"
-#include "smartcompletion.h"
 #include <algorithm>
 #include <queue>
 #include <wx/menu.h>
@@ -13,7 +13,9 @@ static SmartCompletion* thePlugin = NULL;
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == NULL) { thePlugin = new SmartCompletion(manager); }
+    if(thePlugin == NULL) {
+        thePlugin = new SmartCompletion(manager);
+    }
     return thePlugin;
 }
 
@@ -73,29 +75,28 @@ void SmartCompletion::UnPlug()
 void SmartCompletion::OnCodeCompletionSelectionMade(clCodeCompletionEvent& event)
 {
     event.Skip();
-    if(!m_config.IsEnabled()) return;
+    if(!m_config.IsEnabled())
+        return;
 
     CHECK_PTR_RET(event.GetEntry());
 
     // Collect info about this match
-    TagEntryPtr tag = event.GetEntry()->GetTag();
-    if(tag) {
-        WeightTable_t& T = *m_pCCWeight;
-        // we have an associated tag
-        wxString k = tag->GetScope() + "::" + tag->GetName();
-        if(T.count(k) == 0) {
-            T[k] = 1;
-        } else {
-            T[k]++;
-        }
-        m_config.GetUsageDb().StoreCCUsage(k, T[k]);
+    WeightTable_t& T = *m_pCCWeight;
+    // we have an associated tag
+    wxString k = event.GetEntry()->GetText();
+    if(T.count(k) == 0) {
+        T[k] = 1;
+    } else {
+        T[k]++;
     }
+    m_config.GetUsageDb().StoreCCUsage(k, T[k]);
 }
 
 void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
 {
     event.Skip();
-    if(!m_config.IsEnabled()) return;
+    if(!m_config.IsEnabled())
+        return;
 
     // Sort the entries by their weight
     wxCodeCompletionBoxEntry::Vec_t& entries = event.GetEntries();
@@ -107,14 +108,10 @@ void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
     wxCodeCompletionBoxEntry::Vec_t::iterator iter = entries.begin();
     for(; iter != entries.end(); ++iter) {
         wxCodeCompletionBoxEntry::Ptr_t entry = (*iter);
-        if(entry->GetTag()) {
-            wxString k = entry->GetTag()->GetScope() + "::" + entry->GetTag()->GetName();
-            if(m_pCCWeight->count(k)) {
-                entry->SetWeight((*m_pCCWeight)[k]);
-                importantEntries.push_back(entry);
-            } else {
-                normalEntries.push_back(entry);
-            }
+        wxString k = entry->GetText();
+        if(m_pCCWeight->count(k)) {
+            entry->SetWeight((*m_pCCWeight)[k]);
+            importantEntries.push_back(entry);
         } else {
             normalEntries.push_back(entry);
         }
@@ -141,14 +138,15 @@ void SmartCompletion::OnSettings(wxCommandEvent& e)
 void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
 {
     event.Skip();
-    if(!m_config.IsEnabled()) return;
+    if(!m_config.IsEnabled())
+        return;
 
     // Sort the entries by their weight
     clGotoEntry::Vec_t& entries = event.GetEntries();
     WeightTable_t& T = *m_pGTAWeight;
     // We dont want to mess with the default sorting. We just want to place the ones with weight at the top
     // so we split the list into 2: entries with weight geater than 0 and 0
-    std::vector<std::pair<int, clGotoEntry> > importantEntries;
+    std::vector<std::pair<int, clGotoEntry>> importantEntries;
     clGotoEntry::Vec_t normalEntries;
     std::for_each(entries.begin(), entries.end(), [&](const clGotoEntry& entry) {
         if(T.count(entry.GetDesc())) {
@@ -176,7 +174,8 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
 void SmartCompletion::OnGotoAnythingSelectionMade(clGotoEvent& event)
 {
     event.Skip();
-    if(!m_config.IsEnabled()) return;
+    if(!m_config.IsEnabled())
+        return;
 
     // Collect info about this match
     WeightTable_t& T = *m_pGTAWeight;

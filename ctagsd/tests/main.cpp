@@ -175,7 +175,7 @@ TEST_FUNC(TestSplitArgsNoArgumentName)
 TEST_FUNC(TestCompletionHelper_truncate_file_to_location)
 {
     CompletionHelper helper;
-    wxString f = helper.truncate_file_to_location(file_content, 4, 6, false);
+    wxString f = helper.truncate_file_to_location(file_content, 4, 6, CompletionHelper::TRUNCATE_EXACT_POS);
     auto lines = ::wxStringTokenize(f, "\n", wxTOKEN_RET_EMPTY_ALL);
     CHECK_BOOL(!lines.empty());
     CHECK_SIZE(lines.size(), 5);
@@ -188,7 +188,7 @@ TEST_FUNC(TestCompletionHelper_truncate_file_to_location_invalid_input)
     wxString file_content_empty = "";
 
     CompletionHelper helper;
-    wxString f = helper.truncate_file_to_location(file_content_empty, 4, 6, false);
+    wxString f = helper.truncate_file_to_location(file_content_empty, 4, 6, CompletionHelper::TRUNCATE_EXACT_POS);
     auto lines = ::wxStringTokenize(f, "\n", wxTOKEN_RET_EMPTY_ALL);
     CHECK_BOOL(lines.empty());
     CHECK_SIZE(lines.size(), 0);
@@ -200,7 +200,7 @@ TEST_FUNC(TestCompletionHelper_truncate_file_to_location_must_end_with_words)
     wxString file_content_z = "std::vector<TagEntryPtr>";
 
     CompletionHelper helper;
-    wxString f = helper.truncate_file_to_location(file_content_z, 0, 15, true);
+    wxString f = helper.truncate_file_to_location(file_content_z, 0, 15, CompletionHelper::TRUNCATE_COMPLETE_WORDS);
     CHECK_STRING(f, "std::vector<TagEntryPtr");
     return true;
 }

@@ -382,25 +382,25 @@ void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxStrin
     auto& builder = m_logView->GetDvListCtrl()->GetBuilder(true);
 
     eAsciiColours ansi_colour_code = eAsciiColours::NORMAL_TEXT;
-    wxString label = "T:";
+    wxString label = "T";
     switch(log_leve) {
     case 1:
         ansi_colour_code = eAsciiColours::RED; // error
-        label = "E:";
+        label = "E";
         break;
     case 2:
         ansi_colour_code = eAsciiColours::YELLOW; // warning
-        label = "W:";
+        label = "W";
         break;
     case 3:
         ansi_colour_code = eAsciiColours::GREEN; // info
-        label = "I:";
+        label = "I";
     default:
         break;
     }
 
     builder.Add(label, ansi_colour_code);
-    builder.Add(server_name + " - ", eAsciiColours::NORMAL_TEXT);
+    builder.Add(server_name + " ", eAsciiColours::NORMAL_TEXT);
     builder.Add(message, eAsciiColours::NORMAL_TEXT);
     m_logView->GetDvListCtrl()->AddLine(builder.GetString(), false);
 }

@@ -50,7 +50,7 @@ void LSPOutlineViewDlg::DoInitialise()
     if(m_symbols.empty()) {
         clAnsiEscapeCodeColourBuilder builder;
         builder.SetTheme(lexer->IsDark() ? eAsciiTheme::DARK : eAsciiTheme::LIGHT);
-        builder.Add(_("Waiting for server..."), eAsciiColours::NORMAL_TEXT, false);
+        builder.Add(_("Language Server is still not ready... "), eAsciiColours::NORMAL_TEXT, false);
         builder.Add(_("(Hit ESC to dismiss)"), eAsciiColours::GRAY, false);
         m_dvTreeCtrll->AddLine(builder.GetString(), false, (wxUIntPtr)0);
         return;

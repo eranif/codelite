@@ -325,7 +325,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
 }
 
 wxString CompletionHelper::truncate_file_to_location(const wxString& file_content, size_t line, size_t column,
-                                                     bool only_complete_words) const
+                                                     size_t flags) const
 {
     size_t curline = 0;
     size_t offset = 0;
@@ -354,16 +354,27 @@ wxString CompletionHelper::truncate_file_to_location(const wxString& file_conten
     offset += column;
 
     if(offset < file_content.size()) {
-        if(only_complete_words) {
+        if(flags & (TRUNCATE_COMPLETE_WORDS | TRUNCATE_COMPLETE_LINES)) {
             while(true) {
                 size_t next_pos = offset;
 
                 if(next_pos < file_content.size()) {
                     wxChar next_char = file_content[next_pos];
-                    if(is_word_char(next_char)) {
-                        offset += 1;
+                    if(flags & TRUNCATE_COMPLETE_WORDS) {
+                        // complete words only
+                        if(is_word_char(next_char)) {
+                            offset += 1;
+                        } else {
+                            break;
+                        }
+
                     } else {
-                        break;
+                        // TRUNCATE_COMPLETE_LINES
+                        if(next_char == '\n') {
+                            break;
+                        } else {
+                            offset += 1;
+                        }
                     }
                 } else {
                     break;

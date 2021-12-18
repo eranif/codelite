@@ -538,23 +538,19 @@ wxString ContextCpp::GetWordUnderCaret()
 
 void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
 {
-    CHECK_JS_RETURN_VOID();
     wxUnusedVar(event);
 
     wxString fileName;
     clEditor& rCtrl = GetCtrl();
     wxString line = rCtrl.GetCurLine();
-    if(IsIncludeStatement(line, &fileName)) {
-        m_selectedWord = fileName;
-    } else {
-        m_selectedWord.clear();
+    if(!IsIncludeStatement(line)) {
+        return;
     }
 
-    // If the event contains a new selection, use it instead of the m_selectedWord
-    if(event.GetString().IsEmpty() == false)
-        m_selectedWord = event.GetString();
-
-    DoOpenWorkspaceFile();
+    // fire "Find Symbol" event
+    clCodeCompletionEvent definition_event{ wxEVT_CC_FIND_SYMBOL_DEFINITION };
+    definition_event.SetFileName(rCtrl.GetFileName().GetFullPath());
+    ServiceProviderManager::Get().AddPendingEvent(definition_event);
 }
 
 void ContextCpp::RemoveMenuDynamicContent(wxMenu* menu)

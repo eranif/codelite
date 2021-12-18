@@ -21,6 +21,12 @@ public:
         STRIP_NO_NAME = (1 << 1),           // do not include the function argument name
     };
 
+    enum eTruncateStyle {
+        TRUNCATE_EXACT_POS = (1 << 0),
+        TRUNCATE_COMPLETE_WORDS = (1 << 1),
+        TRUNCATE_COMPLETE_LINES = (1 << 2),
+    };
+
 public:
     CompletionHelper();
     ~CompletionHelper();
@@ -33,8 +39,7 @@ public:
                                 size_t flags = CompletionHelper::STRIP_NO_DEFAULT_VALUES |
                                                CompletionHelper::STRIP_NO_NAME);
     wxString get_expression(const wxString& file_content, bool for_calltip, wxString* last_word = nullptr) const;
-    wxString truncate_file_to_location(const wxString& file_content, size_t line, size_t column,
-                                       bool only_complete_words) const;
+    wxString truncate_file_to_location(const wxString& file_content, size_t line, size_t column, size_t flags) const;
     vector<wxString> split_function_signature(const wxString& signature, wxString* return_value,
                                               size_t flags = CompletionHelper::STRIP_DEFAULT) const;
     static bool is_cxx_keyword(const wxString& word);

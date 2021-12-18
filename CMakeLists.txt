@@ -718,7 +718,6 @@ if(NOT SDK_ONLY)
     add_subdirectory(codelite_echo)
     add_subdirectory(ctagsd)
 endif()
-
 ##
 ## Setup the proper dependencies
 ##

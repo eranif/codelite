@@ -1,7 +1,7 @@
-#include "clTerminalViewCtrl.hpp"
 #include "ColoursAndFontsManager.h"
 #include "clAnsiEscapeCodeHandler.hpp"
 #include "clSystemSettings.h"
+#include "clTerminalViewCtrl.hpp"
 #include "event_notifier.h"
 
 namespace
@@ -82,12 +82,16 @@ void clTerminalViewCtrl::ApplyStyle()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
         MyAnsiCodeRenderer* r = static_cast<MyAnsiCodeRenderer*>(m_renderer);
-        wxFont f = lexer->GetFontForSyle(0, this);
+        wxFont f = m_rendererFont;
+        if(!f.IsOk()) {
+            f = lexer->GetFontForSyle(0, this);
+        }
         r->SetFont(f);
+        clDataViewListCtrl::SetDefaultFont(f);
+
         clColours colours;
         colours.InitFromColour(lexer->GetProperty(0).GetBgColour());
         colours.SetItemTextColour(lexer->GetProperty(0).GetFgColour());
-        SetDefaultFont(f);
         SetColours(colours);
     }
 }
@@ -119,4 +123,10 @@ clAnsiEscapeCodeColourBuilder& clTerminalViewCtrl::GetBuilder(bool clear_it)
         m_builder.Clear();
     }
     return m_builder;
+}
+
+void clTerminalViewCtrl::SetDefaultFont(const wxFont& font)
+{
+    m_rendererFont = font;
+    ApplyStyle();
 }

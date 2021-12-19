@@ -61,7 +61,7 @@ void OutlineTab::RenderSymbols(const vector<LSP::SymbolInformation>& symbols, co
         clAnsiEscapeCodeColourBuilder builder;
         builder.SetTheme(lexer->IsDark() ? eAsciiTheme::DARK : eAsciiTheme::LIGHT);
         builder.Add(_("Language Server is still not ready... "), eAsciiColours::NORMAL_TEXT, false);
-        builder.Add(_("(hit ESC to dismiss)"), eAsciiColours::GRAY, false);
+        builder.Add(_("(hit ESCAPE key to dismiss)"), eAsciiColours::GRAY, false);
         m_dvListCtrl->AddLine(builder.GetString(), false, (wxUIntPtr)0);
         return;
     }

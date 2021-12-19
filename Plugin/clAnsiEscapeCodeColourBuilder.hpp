@@ -2,7 +2,9 @@
 #define CLASCIIESCAPECOLOURBUILDER_HPP
 
 #include "codelite_exports.h"
+
 #include <unordered_map>
+#include <wx/colour.h>
 #include <wx/string.h>
 
 enum class eAsciiColours : int {

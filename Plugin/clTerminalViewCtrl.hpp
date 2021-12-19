@@ -4,7 +4,9 @@
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clDataViewListCtrl.h"
 #include "cl_command_event.h"
+
 #include <codelite_exports.h>
+#include <wx/font.h>
 
 class WXDLLIMPEXP_SDK clTerminalViewCtrl : public clDataViewListCtrl
 {
@@ -12,6 +14,7 @@ class WXDLLIMPEXP_SDK clTerminalViewCtrl : public clDataViewListCtrl
     clAnsiEscapeCodeColourBuilder m_builder;
     bool m_overwriteLastLine = false;
     bool m_scroll_to_bottom = true;
+    wxFont m_rendererFont;
 
 protected:
     void OnSysColourChanged(clCommandEvent& e);
@@ -29,6 +32,11 @@ public:
     clAnsiEscapeCodeColourBuilder& GetBuilder(bool clear_it = false);
 
     void SetScrollToBottom(bool b) { this->m_scroll_to_bottom = b; }
+
+    /**
+     * @brief set an alternative font for drawing
+     */
+    void SetDefaultFont(const wxFont& font) override;
 };
 
 #endif // CLTERMINALVIEWCTRL_HPP

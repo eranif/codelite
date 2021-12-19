@@ -1,9 +1,11 @@
 #include "ColoursAndFontsManager.h"
 #include "LSPOutlineViewDlg.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
+#include "drawingutils.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
+
 #include <stack>
 #include <wx/dataview.h>
 
@@ -15,24 +17,6 @@ const wxString VARIABLE_SYMBOL = wxT("\u2027");
 const wxString MODULE_SYMBOL = wxT("{}");
 const wxString ENUMERATOR_SYMBOL = wxT("#");
 } // namespace
-
-void LSPOutlineViewDlg::DoSelectionActivate()
-{
-    auto selection = m_dvTreeCtrll->GetSelection();
-    if(!selection.IsOk()) {
-        return;
-    }
-
-    LSP::SymbolInformation* si = reinterpret_cast<LSP::SymbolInformation*>(m_dvTreeCtrll->GetItemData(selection));
-    CHECK_PTR_RET(si);
-
-    // open the editor and go to
-    LSP::Location loc = si->GetLocation();
-    wxString file = loc.GetPath();
-    int line = loc.GetRange().GetStart().GetLine();
-    clGetManager()->OpenFile(file, "", line);
-    Hide();
-}
 
 LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
     : LSPOutlineViewDlgBase(parent)
@@ -47,11 +31,12 @@ void LSPOutlineViewDlg::DoInitialise()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_dvTreeCtrll->DeleteAllItems();
+
     if(m_symbols.empty()) {
         clAnsiEscapeCodeColourBuilder builder;
         builder.SetTheme(lexer->IsDark() ? eAsciiTheme::DARK : eAsciiTheme::LIGHT);
         builder.Add(_("Language Server is still not ready... "), eAsciiColours::NORMAL_TEXT, false);
-        builder.Add(_("(Hit ESC to dismiss)"), eAsciiColours::GRAY, false);
+        builder.Add(_("(hit ESCAPE key to dismiss)"), eAsciiColours::GRAY, false);
         m_dvTreeCtrll->AddLine(builder.GetString(), false, (wxUIntPtr)0);
         return;
     }
@@ -245,4 +230,22 @@ void LSPOutlineViewDlg::SetSymbols(const vector<SymbolInformation>& symbols)
 {
     m_symbols = symbols;
     DoInitialise();
+}
+
+void LSPOutlineViewDlg::DoSelectionActivate()
+{
+    auto selection = m_dvTreeCtrll->GetSelection();
+    if(!selection.IsOk()) {
+        return;
+    }
+
+    LSP::SymbolInformation* si = reinterpret_cast<LSP::SymbolInformation*>(m_dvTreeCtrll->GetItemData(selection));
+    CHECK_PTR_RET(si);
+
+    // open the editor and go to
+    LSP::Location loc = si->GetLocation();
+    wxString file = loc.GetPath();
+    int line = loc.GetRange().GetStart().GetLine();
+    clGetManager()->OpenFile(file, "", line);
+    Hide();
 }

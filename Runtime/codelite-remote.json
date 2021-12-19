@@ -1,0 +1,15 @@
+{
+ "lsp": {
+  "servers": [{
+    "name": "clangd",
+    "command": "/usr/bin/clangd",
+    "languages": ["c", "cpp"],
+    "priority": 80
+   }, {
+    "name": "python",
+    "command": "/mingw64/bin/python -m pylsp",
+    "languages": ["python"],
+    "priority": 80
+   }]
+ }
+}

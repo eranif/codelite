@@ -1,4 +1,5 @@
 #include "LanguageServerProtocol.h"
+
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -34,6 +35,7 @@
 #include "macros.h"
 #include "processreaderthread.h"
 #include "wxmd5.h"
+
 #include <iomanip>
 #include <sstream>
 #include <thread>
@@ -1116,3 +1118,5 @@ IEditor* LanguageServerProtocol::GetEditor(const clCodeCompletionEvent& event) c
 }
 
 void LanguageServerProtocol::OnQuickJump(clCodeCompletionEvent& event) { OnFindSymbol(event); }
+
+bool LanguageServerProtocol::IsLanguageSupported(const wxString& lang) const { return m_languages.count(lang) != 0; }

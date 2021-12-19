@@ -1,4 +1,5 @@
 #include "LanguageServerCluster.h"
+
 #include "CompileCommandsGenerator.h"
 #include "LSP/LSPEvent.h"
 #include "LSPOutlineViewDlg.h"
@@ -22,6 +23,7 @@
 #include "macros.h"
 #include "wx/arrstr.h"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <algorithm>
 #include <thread>
 #include <unordered_set>
@@ -516,6 +518,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 void LanguageServerCluster::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
+    clDEBUG() << "LSP: workspace CLOSED event" << endl;
     LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
     this->StopAll();
     m_symbols_to_file_cache.clear();
@@ -524,6 +527,7 @@ void LanguageServerCluster::OnWorkspaceClosed(clWorkspaceEvent& event)
 void LanguageServerCluster::OnWorkspaceOpen(clWorkspaceEvent& event)
 {
     event.Skip();
+    clDEBUG() << "LSP: workspace OPEN event" << endl;
     this->Reload();
     m_symbols_to_file_cache.clear();
     DiscoverWorkspaceType();
@@ -537,6 +541,7 @@ void LanguageServerCluster::SetWorkspaceType(FileExtManager::FileType type)
 
 void LanguageServerCluster::StopAll(const std::unordered_set<wxString>& languages)
 {
+    clDEBUG() << "LSP: Stopping all servers" << endl;
     if(languages.empty()) {
         // stop all
         for(const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt : m_servers) {
@@ -547,6 +552,7 @@ void LanguageServerCluster::StopAll(const std::unordered_set<wxString>& language
         m_servers.clear();
     } else {
         for(const auto& lang : languages) {
+            clDEBUG() << "Stopping server for language:" << lang << endl;
             auto server = GetServerForLanguage(lang);
             if(server) {
                 // this will stop and remove the server from the list
@@ -554,6 +560,7 @@ void LanguageServerCluster::StopAll(const std::unordered_set<wxString>& language
             }
         }
     }
+    clDEBUG() << "LSP: Success" << endl;
 
     // Clear all markers
     ClearAllDiagnostics();
@@ -564,14 +571,17 @@ void LanguageServerCluster::StartAll(const std::unordered_set<wxString>& languag
     // create a new list
     ClearAllDiagnostics();
 
+    clDEBUG() << "LSP: Staring all servers..." << endl;
     if(languages.empty()) {
         const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
+        clDEBUG() << "  Starting ALL LSP servers" << endl;
         for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
             const LanguageServerEntry& entry = vt.second;
             StartServer(entry);
         }
     } else {
         for(const wxString& lang : languages) {
+            clDEBUG() << "  Starting LSP for language:" << lang << endl;
             const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
             for(const auto& vt : servers) {
                 // start all the LSPs for the current language
@@ -581,6 +591,7 @@ void LanguageServerCluster::StartAll(const std::unordered_set<wxString>& languag
             }
         }
     }
+    clDEBUG() << "LSP: Success" << endl;
 }
 
 void LanguageServerCluster::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp)
@@ -741,7 +752,7 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const 
 {
     for(auto vt : m_servers) {
         auto server = vt.second;
-        if(server->GetSupportedLanguages().count(lang)) {
+        if(server->IsLanguageSupported(lang)) {
             return server;
         }
     }
@@ -784,7 +795,7 @@ void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
             break;
         }
     }
-    clDEBUG() << "Setting semantich highlight:" << endl;
+    clDEBUG() << "Setting semantic highlight:" << endl;
     clDEBUG() << "Classes  :" << classes << endl;
     clDEBUG() << "Variables:" << variables << endl;
     editor->SetSemanticTokens(classes, variables);

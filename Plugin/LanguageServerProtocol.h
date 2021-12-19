@@ -209,6 +209,11 @@ public:
     bool CanHandle(const wxString& filename) const;
 
     /**
+     * @brief return true if this server supports `lang`
+     */
+    bool IsLanguageSupported(const wxString& lang) const;
+
+    /**
      * @brief start LSP server and connect to it (e.g. clangd)
      * @param LSPStartupInfo which contains the command to execute, working directory and other process related stuff
      * @param env environment vriables for this LSP

@@ -1,4 +1,5 @@
 #include "languageserver.h"
+
 #include "CompileCommandsGenerator.h"
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
@@ -9,6 +10,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
+
 #include <macros.h>
 #include <thread>
 #include <wx/app.h>
@@ -193,8 +195,6 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForFile(GetEditorFilePath(editor));
     CHECK_PTR_RET(lsp);
 
-    auto langs = lsp->GetSupportedLanguages();
-
     static wxString cppfile = "file.cpp";
     static wxString phpfile = "file.php";
     // CXX, C and PHP have their own context menus, dont add ours as well
@@ -292,7 +292,7 @@ void LanguageServerPlugin::OnLSPRestartAll(clLanguageServerEvent& event)
 void LanguageServerPlugin::OnLSPStopOne(clLanguageServerEvent& event)
 {
     CHECK_PTR_RET(m_servers);
-    auto lsp = m_servers->GetServerByName(event.GetLspName());
+    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerByName(event.GetLspName());
     CHECK_PTR_RET(lsp);
     lsp->Stop();
 }

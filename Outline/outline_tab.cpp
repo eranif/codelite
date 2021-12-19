@@ -1,11 +1,11 @@
-#include "outline_tab.h"
-
 #include "ColoursAndFontsManager.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
+#include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
+#include "outline_tab.h"
 
 #include <wx/colour.h>
 #include <wx/stc/stc.h>

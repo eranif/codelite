@@ -4,14 +4,13 @@
 #include "Channel.hpp"
 #include "CodeLiteIndexer.hpp"
 #include "Scanner.hpp"
+#include "Settings.hpp"
+#include "istorage.h"
 #include "macros.h"
 
 #include <JSON.h>
 #include <memory>
 #include <wx/string.h>
-
-#include "Settings.hpp"
-#include "istorage.h"
 
 using namespace std;
 
@@ -61,7 +60,15 @@ private:
     void do_definition(unique_ptr<JSON>&& msg, Channel& channel, bool try_definition_first);
     void build_search_path();
     void parse_file_for_includes_and_using_namespace(const wxString& filepath);
+    /**
+     * @brief return list of files for parsing. The list is constructed using the `#include`
+     * statements found in `files` and their children (recursively)
+     */
     wxArrayString get_files_to_parse(const wxArrayString& files);
+    /**
+     * @brief return list of files included directly by `filepath`
+     */
+    wxArrayString get_first_level_includes(const wxString& filepath);
 
 public:
     ProtocolHandler();

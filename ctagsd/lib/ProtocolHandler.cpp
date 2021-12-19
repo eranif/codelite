@@ -714,6 +714,10 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     // re-parse the file
     wxArrayString files;
     files.Add(filepath);
+
+    wxArrayString includes = get_files_to_parse(get_first_level_includes(filepath));
+    files.reserve(files.size() + includes.size());
+    files.insert(files.end(), includes.begin(), includes.end());
     parse_files(files, nullptr);
 
     if(TagsManagerST::Get()->GetDatabase()) {
@@ -1216,4 +1220,18 @@ wxArrayString ProtocolHandler::get_files_to_parse(const wxArrayString& files)
     result.Shrink();
     clDEBUG() << "List of files to parse:" << result.size() << endl;
     return result;
+}
+
+wxArrayString ProtocolHandler::get_first_level_includes(const wxString& filepath)
+{
+    // get list of files included directly by this file
+    wxArrayString files;
+    if(m_parsed_files_info.count(filepath)) {
+        const ParsedFileInfo& parsed_info = m_parsed_files_info[filepath];
+        files.reserve(files.size() + parsed_info.included_files.size());
+        for(const wxString& include : parsed_info.included_files) {
+            files.Add(include);
+        }
+    }
+    return files;
 }

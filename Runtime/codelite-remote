@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 import sys
 import os
 import json
@@ -7,15 +7,20 @@ import argparse
 import subprocess
 import logging
 
+# global configuration object
+configuration = {}
+
 #----------------------------------------------------------------------------------------------------------------------------------
 # Sample usage:
 #
 #   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
+#   {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"C:/src/codelite"}
 #   {"command":"find", "file_extensions": [".cpp",".hpp",".h"], "root_dir": "/c/src/codelite/LiteEditor", "find_what": "frame", "whole_word": false, "icase": true}
 #   {"command":"write_file", "path": "/tmp/myfile.txt", "content": "hello world"}
 #   {"command":"exec", "cmd": "/usr/bin/passwd", "wd": "/c/src/codelite/AutoSave", "env": [{"name":"PATH", "value":"/c/src/codelite/Runtime"}]}
 #   {"command": "locate", "path": "/usr/bin", "name": "clangd", "ext": "", "versions": [15,14,13,12,11,10,9,8,7,6]}
 #   {"command": "find_path", "path": "$HOME/devl/codelite/LiteEditor/.git"}
+#   {"command": "list_lsps"}
 #
 # Command line usage:
 #   python3 codelite-remote.py --context builder
@@ -33,7 +38,7 @@ class string_finder:
         self.whole_word = whole_word
         if self.ignore_case:
             self.find_what = self.find_what.lower()
-    
+
     def set_line(self, line: str):
         self.line = line
         self.last_pos = 0
@@ -71,7 +76,7 @@ def print_message_terminator():
 
 def _get_list_of_files(cmd):
     """
-    helper method to on_find_files - return list of files as array    
+    helper method to on_find_files - return list of files as array
     """
     root_dir = cmd['root_dir']
     root_dir = os.path.expanduser(root_dir)
@@ -79,12 +84,12 @@ def _get_list_of_files(cmd):
     if not os.path.isdir(root_dir):
         logging.error("error: {} is not a directory".format(root_dir))
         return []
-    
+
     # build the extension tuple
     exts_set = set()
     for ext in cmd['file_extensions']:
         exts_set.add(ext)
-    
+
     files_arr = []
     for root, dirs, files in os.walk(root_dir):
         for file in files:
@@ -120,9 +125,9 @@ def on_exec(cmd):
                 env_dict[name] = "{}:{}".format(value, env_dict[name])
         working_directory = os.path.expanduser(cmd['wd'])
         working_directory = os.path.expandvars(working_directory)
-        completed_proc = subprocess.run(args=cmd['cmd'], 
+        completed_proc = subprocess.run(args=cmd['cmd'],
                                         cwd=working_directory,
-                                        shell=True, 
+                                        shell=True,
                                         env=env_dict,
                                         stdin=subprocess.PIPE)
     except Exception as e:
@@ -137,10 +142,10 @@ def on_exec(cmd):
 
 def on_find_files(cmd):
     """
-    Find list of files with a given extension and from a given root directory    
-    
+    Find list of files with a given extension and from a given root directory
+
     Example command:
-    
+
     {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite"}
     """
     arr_files = _get_list_of_files(cmd)
@@ -150,16 +155,16 @@ def on_find_files(cmd):
 
 def on_find_in_files(cmd):
     """
-    Find list of files with a given extension and from a given root directory    
-    
+    Find list of files with a given extension and from a given root directory
+
     Example command:
-    
+
     {"command":"ls", "file_extensions":[".cpp",".hpp",".h"], "root_dir":"/c/src/codelite", "find_what":"wxStringSet_t"}
     """
     files_arr = _get_list_of_files(cmd)
     find_what = cmd['find_what']
     return_obj = []
-    
+
     # search flags
     whole_word = cmd['whole_word']
     ignore_case = cmd['icase']
@@ -169,7 +174,7 @@ def on_find_in_files(cmd):
         "files_scanned": len(files_arr)
     }
     print(json.dumps(files_scanned))
-    
+
     finder = string_finder(find_what, ignore_case, whole_word)
     for file in files_arr:
         try:
@@ -194,7 +199,7 @@ def on_find_in_files(cmd):
                 if len(matches) > 0:
                     for match in matches:
                         entries.append({
-                            "ln": line_number, 
+                            "ln": line_number,
                             "start": match['start'],
                             "end": match['end'],
                             "pattern": line
@@ -215,18 +220,18 @@ def locate_in_path(name, path, versions_arr, ext):
     """
     Attempting to locate "name" in a given path
     with versions suffix (optionally)
-    
+
     Returns
     -------
         full path on success, empty string otherwise
     """
-    
+
     ## first try with suffix
     for version_number in versions_arr:
         fullpath = "{}/{}-{}".format(path, name, version_number)
         if len(ext) > 0:
             fullpath = "{}.{}".format(fullpath, ext)
-        
+
         if os.path.exists(fullpath):
             return fullpath
 
@@ -235,12 +240,20 @@ def locate_in_path(name, path, versions_arr, ext):
     fullpath = "{}/{}".format(path, name)
     if len(ext) > 0:
         fullpath = "{}.{}".format(fullpath, ext)
-    
+
     logging.debug("Checking path: {}".format(fullpath))
     if os.path.isfile(fullpath) or os.path.islink(fullpath):
         logging.debug("found: {}".format(fullpath))
         return fullpath
     return ""
+
+def on_list_lsps(lsps_array):
+    # use the global configuration file
+    global configuration
+    if "lsp" in configuration and "servers" in configuration["lsp"]:
+        for server in configuration["lsp"]["servers"]:
+            print(server)
+    print_message_terminator()
 
 def on_find_path(cmd):
     """
@@ -250,18 +263,18 @@ def on_find_path(cmd):
     path = cmd['path']
     path = os.path.expanduser(path)
     path = os.path.expandvars(path)
-    
+
     # check for this folder and start going up
     dir_part, dir_name = os.path.split(path)
     dirs = dir_part.split('/')
-    
+
     while len(dirs) > 0:
         fullpath = "{}/{}".format("/".join(dirs), dir_name)
         logging.debug("checking for dir {}".format(fullpath))
         if os.path.exists(fullpath):
             print("{}".format(fullpath))
             break
-        
+
         # remove last element
         dirs.pop(len(dirs) - 1)
     print_message_terminator()
@@ -270,20 +283,20 @@ def locate(cmd):
     """
     attempt to locate file with possible version number
     """
-    
+
     # {"command": "locate", "path": "/c/LLVM/bin", "name": "clangd", "ext": "exe", "versions": ["15","14"]}
     path = cmd['path']
     path = os.path.expanduser(path)
     path = os.path.expandvars(path)
-    
+
     # append $PATH content
     path = "{}{}{}".format(path, os.path.pathsep, os.path.expandvars("$PATH"))
-    
+
     paths = path.split(os.path.pathsep)
     name = cmd['name']
     ext = cmd['ext']
     versions_arr = cmd['versions']
-    
+
     logging.debug("locate: searching for: {}, using paths: {}".format(name, paths));
     for p in paths:
         fullpath = locate_in_path(name, p, versions_arr, ext)
@@ -296,35 +309,53 @@ def locate(cmd):
 
 def main_loop():
     """
-    accept input from the user and process the command    
+    accept input from the user and process the command
     """
     parser = argparse.ArgumentParser(description='codelite-remote helper')
-    parser.add_argument('--context', dest='context', help='execution context string')
+    parser.add_argument('--context', dest='context', help='execution context string', required=True)
     args = parser.parse_args()
-    
+
     # configure the log module
-    logging.basicConfig(filename='/tmp/codelite-remote.log', 
+    logging.basicConfig(filename='codelite-remote.log',
                         format="%(asctime)s: {}: %(levelname)s: %(message)s".format(args.context.upper()),
                         level=logging.ERROR)
+
+    # load the configruration file
+    # it should be located next to this file
+    curdir = os.path.dirname(__file__)
+    logging.info("current working directory is set to: {}".format(curdir))
+    config_file = "{}/codelite-remote.json".format(curdir)
+
+    global configuration
+    if os.path.exists(config_file):
+        config_content = open(config_file, "r").read()
+        try:
+            configuration = json.loads(config_content)
+        except json.decoder.JSONDecodeError as e:
+            logging.error("Failed to load configuration file: {}".format(config_file))
+            logging.error(e)
+
+    logging.info("started")
+
     # interactive mode
     handlers = {
-        "ls": on_find_files, 
+        "ls": on_find_files,
         "find": on_find_in_files,
         "exec": on_exec,
         "write_file": write_file,
         "locate": locate,
         "find_path": on_find_path,
+        "list_lsps" : on_list_lsps,
     }
-    
-    logging.info("codelite-remote started in interactive mode")
+    logging.info("codelite-remote started")
     while True:
         try:
             text = input()
             text = text.strip()
-            if text == "exit" or text == "bye" or text == "quit":
+            if text == "exit" or text == "bye" or text == "quit" or text == "q":
                 logging.info("Bye!")
                 exit(0)
-            
+
             if len(text) == 0:
                 continue;
 

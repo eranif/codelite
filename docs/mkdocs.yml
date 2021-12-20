@@ -5,13 +5,13 @@ repo_name: GitHub
 edit_uri: edit/master/docs/docs
 
 nav:
-    - Downloads: 
+    - Downloads:
         - Latest: downloads/download.md
         - Old Linux Repositories:
             - CodeLite 14.0: downloads/oldDownloads/Repositories12.md
             - CodeLite 13.0: downloads/oldDownloads/Repositories13.md
             - CodeLite 12.0: downloads/oldDownloads/Repositories14.md
-    - Build: 
+    - Build:
         - wxWidgets: build/build_wx_widgets.md
         - CodeLite: build/build_from_sources.md
         - MinGW: build/mingw_builds.md
@@ -76,5 +76,7 @@ markdown_extensions:
         - admonition
         - pymdownx.highlight
         - pymdownx.superfences
+        - pymdownx.tabbed:
+            alternate_style: true
         - pymdownx.tasklist:
             custom_checkbox: true

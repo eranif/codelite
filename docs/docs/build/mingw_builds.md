@@ -16,7 +16,8 @@ pacman -S mingw-w64-x86_64-toolchain            \
           mingw64/mingw-w64-x86_64-python-pip   \
           mingw64/mingw-w64-x86_64-python       \
           git                                   \
-          unzip 
+          openssh                               \
+          unzip
 ```
 
 - Next, still in the `MSYS2` terminal, Add the `/mingw64/bin` to your `~/.bashrc` and `source` it:

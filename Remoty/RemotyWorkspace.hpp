@@ -11,6 +11,7 @@
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
 #include "wx/event.h"
+
 #include <deque>
 #include <functional>
 #include <wx/arrstr.h>
@@ -20,9 +21,6 @@
 class RemotyWorkspaceView;
 class RemotyWorkspace : public IWorkspace
 {
-private:
-    typedef void (RemotyWorkspace::*CallbackFunc)(const wxString&, int);
-
 private:
     bool m_eventsConnected = false;
     RemotyWorkspaceView* m_view = nullptr;
@@ -38,8 +36,8 @@ private:
     wxArrayString m_workspaceFiles;
     clRemoteFinderHelper m_remoteFinder;
     bool m_buildInProgress = false;
-    std::deque<std::pair<CallbackFunc, int>> m_locate_requests;
     std::unordered_map<wxString, bool> m_old_servers_state;
+    wxArrayString m_installedLSPs;
 
 public:
     RemotyWorkspace();
@@ -47,7 +45,7 @@ public:
     virtual ~RemotyWorkspace();
 
 protected:
-    void ConfigureLsp(const wxString& exe, int metadata_index);
+    void ConfigureLsp(const wxString& output);
     void DoConfigureLSP(const wxString& lsp_name, const wxString& command, const std::vector<wxString>& languages,
                         size_t priority);
 
@@ -103,8 +101,8 @@ protected:
     void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
     void OnCodeLiteRemoteFindDone(clFindInFilesEvent& event);
 
-    void OnCodeLiteRemoteLocate(clCommandEvent& event);
-    void OnCodeLiteRemoteLocateDone(clCommandEvent& event);
+    void OnCodeLiteRemoteListLSPsOutputDone(clCommandEvent& event);
+    void OnCodeLiteRemoteListLSPsOutput(clCommandEvent& event);
 
     void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
     void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);

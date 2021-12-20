@@ -74,6 +74,41 @@ class string_finder:
 def print_message_terminator():
     print(">>codelite-remote-msg-end<<")
 
+def create_default_config_if_needed():
+    global configuration
+    curdir = os.path.dirname(__file__)
+    config_file = "{}/codelite-remote.json".format(curdir)
+
+    if not os.path.exists(config_file):
+        # create a default configuration file
+        logging.info("configuration file {} does not exist, will create one".format(config_file))
+        fp = open(config_file, "w")
+        config_content = json.dumps({
+                "Language Server Plugin": {
+                    "servers": [{
+                    "name": "clangd",
+                    "command": "/usr/bin/clangd-12 -limit-results=500 -header-insertion-decorators=0",
+                    "languages": ["c", "cpp"],
+                    "priority": 90
+                }, {
+                    "name": "python",
+                    "command": "/usr/bin/python3 -m pylsp",
+                    "languages": ["python"],
+                    "priority": 80
+               }]
+            }
+        }, indent=4)
+        fp.write(config_content)
+        fp.close()
+
+    # load the configuration file
+    config_content = open(config_file, "r").read()
+    try:
+        configuration = json.loads(config_content)
+    except json.decoder.JSONDecodeError as e:
+        logging.error("Failed to load configuration file: {}".format(config_file))
+        logging.error(e)
+
 def _get_list_of_files(cmd):
     """
     helper method to on_find_files - return list of files as array
@@ -250,9 +285,12 @@ def locate_in_path(name, path, versions_arr, ext):
 def on_list_lsps(lsps_array):
     # use the global configuration file
     global configuration
-    if "lsp" in configuration and "servers" in configuration["lsp"]:
-        for server in configuration["lsp"]["servers"]:
-            print(server)
+    if "Language Server Plugin" in configuration and "servers" in configuration["Language Server Plugin"]:
+        for server in configuration["Language Server Plugin"]["servers"]:
+            langstr = ';'.join(server["languages"])
+            server_line = "{},{},{},{}".format(server["name"], server["command"], langstr, server["priority"])
+            logging.info(server_line)
+            print(server_line)
     print_message_terminator()
 
 def on_find_path(cmd):
@@ -315,27 +353,19 @@ def main_loop():
     parser.add_argument('--context', dest='context', help='execution context string', required=True)
     args = parser.parse_args()
 
-    # configure the log module
-    logging.basicConfig(filename='codelite-remote.log',
-                        format="%(asctime)s: {}: %(levelname)s: %(message)s".format(args.context.upper()),
-                        level=logging.ERROR)
-
     # load the configruration file
     # it should be located next to this file
     curdir = os.path.dirname(__file__)
-    logging.info("current working directory is set to: {}".format(curdir))
-    config_file = "{}/codelite-remote.json".format(curdir)
+    log_file = "{}/codelite-remote.{}.log".format(curdir, args.context.lower())
 
-    global configuration
-    if os.path.exists(config_file):
-        config_content = open(config_file, "r").read()
-        try:
-            configuration = json.loads(config_content)
-        except json.decoder.JSONDecodeError as e:
-            logging.error("Failed to load configuration file: {}".format(config_file))
-            logging.error(e)
-
+    # configure the log module
+    logging.basicConfig(filename=log_file,
+                        format="%(asctime)s: {}: %(levelname)s: %(message)s".format(args.context.upper()),
+                        level=logging.DEBUG)
     logging.info("started")
+    logging.info("current working directory is set to: {}".format(curdir))
+
+    create_default_config_if_needed()
 
     # interactive mode
     handlers = {
@@ -347,6 +377,7 @@ def main_loop():
         "find_path": on_find_path,
         "list_lsps" : on_list_lsps,
     }
+
     logging.info("codelite-remote started")
     while True:
         try:

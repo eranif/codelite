@@ -1,4 +1,5 @@
 #include "clCodeLiteRemoteProcess.hpp"
+
 #include "JSON.h"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -9,6 +10,7 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "processreaderthread.h"
+
 #include <functional>
 #include <unordered_map>
 #include <wx/event.h>
@@ -25,6 +27,8 @@ wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LOCATE_DONE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LOCATE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FINDPATH, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_LSPS, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_LSPS_DONE, clCommandEvent);
 namespace
 {
 const char msg_terminator[] = ">>codelite-remote-msg-end<<\n";
@@ -301,6 +305,22 @@ void clCodeLiteRemoteProcess::ProcessOutput()
     }
 }
 
+void clCodeLiteRemoteProcess::ListLSPs()
+{
+    if(!m_process) {
+        return;
+    }
+
+    // build the command and send it
+    JSON root(cJSON_Object);
+    auto item = root.toElement();
+    item.addProperty("command", "list_lsps");
+    m_process->Write(item.format(false) + "\n");
+
+    // push a callback
+    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListLSPsOutput, nullptr });
+}
+
 void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString& extensions)
 {
     if(!m_process) {
@@ -492,6 +512,21 @@ void clCodeLiteRemoteProcess::CreateAsyncProcessCB(const wxString& cmd, std::fun
 // completion handlers
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
+
+void clCodeLiteRemoteProcess::OnListLSPsOutput(const wxString& output, bool is_completed)
+{
+    clCommandEvent event(wxEVT_CODELITE_REMOTE_LIST_LSPS);
+
+    // parse the output
+    wxArrayString lsps = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
+    event.GetStrings().swap(lsps);
+    AddPendingEvent(event);
+
+    if(is_completed) {
+        clCommandEvent event_done(wxEVT_CODELITE_REMOTE_LIST_LSPS_DONE);
+        AddPendingEvent(event_done);
+    }
+}
 
 void clCodeLiteRemoteProcess::OnListFilesOutput(const wxString& output, bool is_completed)
 {

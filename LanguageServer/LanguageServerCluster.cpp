@@ -379,11 +379,11 @@ void LanguageServerCluster::RestartServer(const wxString& name)
 void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 {
     if(!entry.IsEnabled()) {
-        clDEBUG() << "LSP" << entry.GetName() << "is not enabled" << clEndl;
+        clDEBUG1() << "LSP" << entry.GetName() << "is not enabled" << clEndl;
         return;
     }
 
-    clDEBUG() << "Connecting to LSP server:" << entry.GetName();
+    clDEBUG1() << "Connecting to LSP server:" << entry.GetName();
 
     if(!entry.IsValid()) {
         clWARNING() << "LSP Server" << entry.GetName()
@@ -574,14 +574,12 @@ void LanguageServerCluster::StartAll(const std::unordered_set<wxString>& languag
     clDEBUG() << "LSP: Staring all servers..." << endl;
     if(languages.empty()) {
         const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
-        clDEBUG() << "  Starting ALL LSP servers" << endl;
         for(const LanguageServerEntry::Map_t::value_type& vt : servers) {
             const LanguageServerEntry& entry = vt.second;
             StartServer(entry);
         }
     } else {
         for(const wxString& lang : languages) {
-            clDEBUG() << "  Starting LSP for language:" << lang << endl;
             const LanguageServerEntry::Map_t& servers = LanguageServerConfig::Get().GetServers();
             for(const auto& vt : servers) {
                 // start all the LSPs for the current language

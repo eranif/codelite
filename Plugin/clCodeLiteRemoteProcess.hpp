@@ -5,6 +5,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "ssh_account_info.h"
+
 #include <deque>
 #include <functional>
 #include <queue>
@@ -48,6 +49,7 @@ protected:
 
     // prepare an event from list command output
     void OnListFilesOutput(const wxString& output, bool is_completed);
+    void OnListLSPsOutput(const wxString& output, bool is_completed);
     void OnFindOutput(const wxString& buffer, bool is_completed);
     void OnLocateOutput(const wxString& buffer, bool is_completed);
     void OnFindPathOutput(const wxString& buffer, bool is_completed);
@@ -103,6 +105,12 @@ public:
      * @brief find all files on a remote machine from a given directory that matches the extensions list
      */
     void ListFiles(const wxString& root_dir, const wxString& extensions);
+
+    /**
+     * @brief list all configured LSPs on the remote machine
+     * the configuration is read from `codelite-remote.json` config file
+     */
+    void ListLSPs();
 
     /**
      * @brief find in files on a remote machine
@@ -175,4 +183,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LOCATE, clComman
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LOCATE_DONE, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FINDPATH, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_FINDPATH_DONE, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_LSPS, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_CODELITE_REMOTE_LIST_LSPS_DONE, clCommandEvent);
 #endif // CLCODELITEREMOTEPROCESS_HPP

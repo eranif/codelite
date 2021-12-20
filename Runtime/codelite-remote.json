@@ -2,12 +2,12 @@
  "lsp": {
   "servers": [{
     "name": "clangd",
-    "command": "/usr/bin/clangd",
+    "command": "/usr/bin/clangd-12 -limit-results=500 -header-insertion-decorators=0",
     "languages": ["c", "cpp"],
-    "priority": 80
+    "priority": 90
    }, {
     "name": "python",
-    "command": "/mingw64/bin/python -m pylsp",
+    "command": "/usr/bin/python3 -m pylsp",
     "languages": ["python"],
     "priority": 80
    }]

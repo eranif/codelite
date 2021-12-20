@@ -341,7 +341,9 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
 void LanguageServerPlugin::OnLSPDelete(clLanguageServerEvent& event)
 {
     CHECK_PTR_RET(m_servers);
+    clDEBUG() << "Deleting server:" << event.GetLspName() << endl;
     m_servers->DeleteServer(event.GetLspName());
+    clDEBUG() << "Success" << endl;
 }
 
 void LanguageServerPlugin::OnLSPShowSettingsDlg(clLanguageServerEvent& event)

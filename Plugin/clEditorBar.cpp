@@ -121,6 +121,9 @@ void clEditorBar::DoRefreshColoursAndFonts()
         if(!IsShown()) {
             Show();
         }
+
+        wxString current_file = editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath();
+
         // Update bookmarks button
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
         editor->GetFindMarkers(m_bookmarks);
@@ -142,16 +145,19 @@ void clEditorBar::DoRefreshColoursAndFonts()
         }
 
         wxString filepath;
-        const wxFileName& fn = editor->GetFileName();
+
+        wxFileName fn(current_file, editor->IsRemoteFile() ? wxPATH_UNIX : wxPATH_NATIVE);
+        wxString PATH_SEPARATOR = editor->IsRemoteFile() ? wxString("/") : wxFileName::GetPathSeparator();
+
         if(fn.GetDirCount()) {
-            filepath << fn.GetDirs().Last() << wxFileName::GetPathSeparator();
+            filepath << fn.GetDirs().Last() << PATH_SEPARATOR;
         }
         filepath << fn.GetFullName();
         m_buttonFilePath->SetText(filepath);
-        m_filename = editor->GetFileName().GetFullPath();
+        m_filename = current_file;
 
         // update the scope
-        bool hide_scope_button = m_scopes.empty() || m_scopesFile != editor->GetFileName().GetFullPath();
+        bool hide_scope_button = m_scopes.empty() || m_scopesFile != current_file;
         if(hide_scope_button) {
             m_buttonScope->Hide();
         } else {

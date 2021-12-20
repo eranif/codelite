@@ -1,7 +1,8 @@
 #if USE_SFTP
+#include "clSFTPManager.hpp"
+
 #include "SFTPClientData.hpp"
 #include "clSFTPEvent.h"
-#include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
@@ -14,6 +15,7 @@
 #include "macros.h"
 #include "wx/debug.h"
 #include "wx/thread.h"
+
 #include <condition_variable>
 #include <functional>
 #include <future>
@@ -477,7 +479,7 @@ bool clSFTPManager::NewFile(const wxString& path, const SSHAccountInfo& accountI
             conn->CreateEmptyFile(path);
             promise.set_value(true);
         } catch(clException& e) {
-            clERROR() << "NewFile() error." << e.What();
+            clDEBUG() << "NewFile() error." << e.What();
             promise.set_value(false);
         }
     };
@@ -505,7 +507,7 @@ bool clSFTPManager::NewFolder(const wxString& path, const SSHAccountInfo& accoun
             conn->CreateDir(path);
             promise.set_value(true);
         } catch(clException& e) {
-            clERROR() << "NewFile() error." << e.What();
+            clDEBUG() << "NewFolder() error." << e.What();
             promise.set_value(false);
         }
     };

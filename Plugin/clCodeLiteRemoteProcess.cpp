@@ -6,6 +6,7 @@
 #include "cJSON.h"
 #include "clSFTPManager.hpp"
 #include "cl_command_event.h"
+#include "environmentconfig.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
@@ -33,6 +34,17 @@ namespace
 {
 const char msg_terminator[] = ">>codelite-remote-msg-end<<\n";
 size_t msg_terminator_len = sizeof(msg_terminator) - 1;
+
+FileLogger& operator<<(FileLogger& logger, const std::vector<wxString>& arr)
+{
+    wxArrayString wxarr;
+    wxarr.reserve(arr.size());
+    for(const wxString& elem : arr) {
+        wxarr.Add(elem);
+    }
+    logger << wxarr;
+    return logger;
+}
 } // namespace
 
 namespace
@@ -170,7 +182,15 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
     }
 
     // wrap the command in ssh
-    vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
+    wxFileName ssh_exe;
+    EnvSetter setter;
+    if(!FileUtils::FindExe("ssh", ssh_exe)) {
+        clERROR() << "Could not locate ssh executable in your PATH!" << endl;
+        return;
+    }
+
+    vector<wxString> command = { ssh_exe.GetFullPath(), "-o", "ServerAliveInterval=10", "-o",
+                                 "StrictHostKeyChecking=no" };
     command.push_back(m_account.GetUsername() + "@" + m_account.GetHost());
     command.push_back("-p");
     command.push_back(wxString() << m_account.GetPort());
@@ -178,6 +198,7 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
     // start the process in interactive mode
     command.push_back("python3 " + m_scriptPath + " --context " + GetContext());
 
+    clDEBUG() << "Starting codelite-remote:" << command << endl;
     // start the process
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessRawOutput);
 }

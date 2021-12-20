@@ -17,6 +17,7 @@
 #include "clWorkspaceView.h"
 #include "codelite_events.h"
 #include "debuggermanager.h"
+#include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -584,6 +585,16 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     // Notify CodeLite that this workspace is opened
     clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
     clWorkspaceManager::Get().SetWorkspace(this);
+
+    // wrap the command in ssh
+    wxFileName ssh_exe;
+    EnvSetter setter;
+    if(!FileUtils::FindExe("ssh", ssh_exe)) {
+        ::wxMessageBox(
+            _("Could not locate ssh executable in your PATH!\nUpdate your PATH from 'settings -> environment "
+              "variables' to a location that contains your 'ssh' executable"),
+            "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+    }
 
     StartCodeLiteRemote(&m_codeliteRemoteBuilder, CONTEXT_BUILDER);
     StartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER);

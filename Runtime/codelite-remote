@@ -400,7 +400,7 @@ def main_loop():
             else:
                 logging.error("unknown command '{}'".format(command['command']))
         except Exception as e:
-            error_count++
+            error_count += 1
             logging.warning(e)
             if error_count == 10:
                 logging.error("Too many errors. Exiting!")

@@ -92,7 +92,7 @@ public:
      * @brief restart language servers associated with a given languages
      */
     void Reload(const std::unordered_set<wxString>& languages = {});
-    LanguageServerProtocol::Ptr_t GetServerForFile(const wxString& filename);
+    LanguageServerProtocol::Ptr_t GetServerForEditor(IEditor* editor);
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
     LanguageServerProtocol::Ptr_t GetServerForLanguage(const wxString& lang);
     void ClearRestartCounters();

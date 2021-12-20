@@ -107,12 +107,12 @@ void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages
     StartAll(languages);
 }
 
-LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForFile(const wxString& filename)
+LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor* editor)
 {
     std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::iterator iter =
         std::find_if(m_servers.begin(), m_servers.end(),
                      [&](const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt) {
-                         return vt.second->CanHandle(filename);
+                         return vt.second->CanHandle(editor);
                      });
 
     if(iter == m_servers.end()) {
@@ -750,7 +750,8 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const 
 {
     for(auto vt : m_servers) {
         auto server = vt.second;
-        if(server->IsLanguageSupported(lang)) {
+        if(server->IsRunning() && server->IsLanguageSupported(lang)) {
+            clDEBUG() << "Using server" << server->GetName() << "for language" << lang << endl;
             return server;
         }
     }

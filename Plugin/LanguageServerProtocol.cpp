@@ -145,9 +145,14 @@ wxString LanguageServerProtocol::GetLanguageId(FileExtManager::FileType file_typ
     }
 }
 
-wxString LanguageServerProtocol::GetLanguageId(const wxString& fn)
+wxString LanguageServerProtocol::GetLanguageId(IEditor* editor)
 {
-    FileExtManager::FileType type = FileExtManager::GetType(fn, FileExtManager::TypeText);
+    if(!editor) {
+        return wxEmptyString;
+    }
+    FileExtManager::FileType type =
+        FileExtManager::GetType(editor->GetFileName().GetFullPath(), FileExtManager::TypeText);
+    clDEBUG() << "File type for" << editor->GetFileName().GetFullPath() << "is" << type << endl;
     return GetLanguageId(type);
 }
 
@@ -242,9 +247,10 @@ void LanguageServerProtocol::DoClear()
 
 bool LanguageServerProtocol::IsRunning() const { return m_network->IsConnected(); }
 
-bool LanguageServerProtocol::CanHandle(const wxString& filename) const
+bool LanguageServerProtocol::CanHandle(IEditor* editor) const
 {
-    wxString lang = GetLanguageId(filename);
+    // use the local file path
+    wxString lang = GetLanguageId(editor);
     return m_languages.count(lang) != 0;
 }
 
@@ -254,16 +260,13 @@ bool LanguageServerProtocol::CanHandle(FileExtManager::FileType file_type) const
     return m_languages.count(lang) != 0;
 }
 
-bool LanguageServerProtocol::ShouldHandleFile(const wxString& fn) const
-{
-    wxString lang = GetLanguageId(fn);
-    clDEBUG1() << "Language ID for file" << fn << "->" << lang;
-    return (m_languages.count(lang) != 0);
-}
-
 bool LanguageServerProtocol::ShouldHandleFile(IEditor* editor) const
 {
-    return editor && ShouldHandleFile(GetEditorFilePath(editor));
+    // always use the local file path to determine the file path
+    // this to ensure that we can open it in case we will need
+    // to determine the file type based on its content
+    wxString lang = GetLanguageId(editor);
+    return (m_languages.count(lang) != 0);
 }
 
 void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
@@ -271,7 +274,7 @@ void LanguageServerProtocol::OnFunctionCallTip(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
-    if(CanHandle(GetEditorFilePath(editor))) {
+    if(CanHandle(editor)) {
         event.Skip(false);
         FunctionHelp(editor);
     }
@@ -282,7 +285,7 @@ void LanguageServerProtocol::OnTypeInfoToolTip(clCodeCompletionEvent& event)
     event.Skip();
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
-    if(CanHandle(GetEditorFilePath(editor))) {
+    if(CanHandle(editor)) {
         event.Skip(false);
         HoverTip(editor);
     }
@@ -298,7 +301,7 @@ void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
         return;
     }
 
-    if(CanHandle(GetEditorFilePath(editor))) {
+    if(CanHandle(editor)) {
         event.Skip(false);
         CodeComplete(editor);
     }
@@ -310,7 +313,7 @@ void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(GetEditorFilePath(editor))) {
+    if(CanHandle(editor)) {
         // this event is ours to handle
         event.Skip(false);
         FindDeclaration(editor, false);
@@ -323,7 +326,7 @@ void LanguageServerProtocol::OnFindSymbolImpl(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(GetEditorFilePath(editor))) {
+    if(CanHandle(editor)) {
         // this event is ours to handle
         event.Skip(false);
         FindImplementation(editor);
@@ -336,7 +339,7 @@ void LanguageServerProtocol::OnFindSymbol(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(GetEditorFilePath(editor))) {
+    if(CanHandle(editor)) {
         // this event is ours to handle
         event.Skip(false);
         FindDefinition(editor);
@@ -362,7 +365,7 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
     } else if(m_filesSent.count(filename) == 0) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendOpenRequest(editor, fileContent, GetLanguageId(filename));
+        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
     }
 
     LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDefinitionRequest(
@@ -437,7 +440,7 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const std::string&
     CHECK_PTR_RET(editor);
     // For now: report a change event
     wxString filename = GetEditorFilePath(editor);
-    if(ShouldHandleFile(filename)) {
+    if(ShouldHandleFile(editor)) {
         LSP::CompletionRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::DidSaveTextDocumentRequest(filename, fileContent));
         QueueMessage(req);
@@ -448,7 +451,7 @@ void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t lin
 {
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
-    if(ShouldHandleFile(filename)) {
+    if(ShouldHandleFile(editor)) {
         LSP::CompletionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
             new LSP::CompletionRequest(LSP::TextDocumentIdentifier(filename), LSP::Position(line, column)));
         QueueMessage(req);
@@ -506,7 +509,7 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         } else {
             // If we are about to load a header file, also pass clangd the implementation(s) file
             clDEBUG1() << "OpenEditor->SendOpenRequest called for:" << GetEditorFilePath(editor);
-            SendOpenRequest(editor, fileContent, GetLanguageId(GetEditorFilePath(editor)));
+            SendOpenRequest(editor, fileContent, GetLanguageId(editor));
         }
     }
 }
@@ -527,10 +530,10 @@ void LanguageServerProtocol::FunctionHelp(IEditor* editor)
     } else if(m_filesSent.count(filename) == 0) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendOpenRequest(editor, fileContent, GetLanguageId(filename));
+        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
     }
 
-    if(ShouldHandleFile(filename)) {
+    if(ShouldHandleFile(editor)) {
         LSP::SignatureHelpRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::SignatureHelpRequest(
             filename, editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
         QueueMessage(req);
@@ -553,10 +556,10 @@ void LanguageServerProtocol::HoverTip(IEditor* editor)
     } else if(m_filesSent.count(filename) == 0) {
         std::string fileContent;
         editor->GetEditorTextRaw(fileContent);
-        SendOpenRequest(editor, fileContent, GetLanguageId(filename));
+        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
     }
 
-    if(ShouldHandleFile(filename)) {
+    if(ShouldHandleFile(editor)) {
         int pos = editor->GetPosAtMousePointer();
         // trigger a hover request only when we are hovering something
         if(pos != wxNOT_FOUND && isgraph(editor->GetCharAtPos(pos))) {
@@ -583,7 +586,7 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     } else if(m_filesSent.count(filename) == 0) {
         std::string text;
         editor->GetEditorTextRaw(text);
-        SendOpenRequest(editor, text, GetLanguageId(filename));
+        SendOpenRequest(editor, text, GetLanguageId(editor));
     }
 
     // Now request the for code completion
@@ -641,7 +644,7 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missi
     content.reserve(editor->GetLength() + 1);
     editor->GetEditorTextRaw(content);
     if(m_filesSent.count(filename) == 0) {
-        SendOpenRequest(editor, content, GetLanguageId(filename));
+        SendOpenRequest(editor, content, GetLanguageId(editor));
     } else {
         SendChangeRequest(editor, content);
     }
@@ -801,7 +804,7 @@ void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
     IEditor* editor = GetEditor(event);
     CHECK_PTR_RET(editor);
 
-    if(CanHandle(GetEditorFilePath(editor)) && IsDocumentSymbolsSupported()) {
+    if(CanHandle(editor) && IsDocumentSymbolsSupported()) {
         // this event is ours to handle
         event.Skip(false);
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE |

@@ -23,9 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "JSON.h"
 #include "fileextmanager.h"
+
+#include "JSON.h"
 #include "fileutils.h"
+
 #include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/thread.h>
@@ -286,7 +288,6 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
-
     wxString fileContent;
     if(!FileUtils::ReadBufferFromFile(filename, fileContent, 4096)) {
         return false;

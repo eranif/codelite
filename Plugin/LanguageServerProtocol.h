@@ -109,17 +109,15 @@ protected:
 
 protected:
     void DoClear();
-    bool ShouldHandleFile(const wxString& fn) const;
     bool ShouldHandleFile(IEditor* editor) const;
     wxString GetLogPrefix() const;
     void ProcessQueue();
-    static wxString GetLanguageId(const wxString& fn);
+    static wxString GetLanguageId(IEditor* editor);
     static wxString GetLanguageId(FileExtManager::FileType file_type);
     void UpdateFileSent(const wxString& filename, const std::string& fileContent);
     bool IsFileChangedSinceLastParse(const wxString& filename, const std::string& fileContent) const;
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
-    bool CanHandle(FileExtManager::FileType file_type) const;
     IEditor* GetEditor(const clCodeCompletionEvent& event) const;
 
 protected:
@@ -206,7 +204,8 @@ public:
      * @brief return list of all supported languages by LSP. The list contains the abbreviation entry and a description
      */
     static std::set<wxString> GetSupportedLanguages();
-    bool CanHandle(const wxString& filename) const;
+    bool CanHandle(IEditor* editor) const;
+    bool CanHandle(FileExtManager::FileType file_type) const;
 
     /**
      * @brief return true if this server supports `lang`

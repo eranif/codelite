@@ -192,13 +192,12 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForFile(GetEditorFilePath(editor));
+    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForEditor(editor);
     CHECK_PTR_RET(lsp);
 
-    static wxString cppfile = "file.cpp";
-    static wxString phpfile = "file.php";
     // CXX, C and PHP have their own context menus, dont add ours as well
-    if(lsp->CanHandle(cppfile) || lsp->CanHandle(phpfile)) {
+    if(lsp->CanHandle(FileExtManager::TypeSourceC) || lsp->CanHandle(FileExtManager::TypeSourceCpp) ||
+       lsp->CanHandle(FileExtManager::TypePhp)) {
         return;
     }
 

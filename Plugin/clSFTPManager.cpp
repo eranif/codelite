@@ -615,7 +615,7 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo&
             auto d = conn->Stat(fullpath);
             promise.set_value(d->IsFile());
         } catch(clException& e) {
-            clERROR() << "IsFileExists() error." << e.What();
+            clDEBUG() << "IsFileExists() error." << e.What();
             promise.set_value(false);
         }
     };

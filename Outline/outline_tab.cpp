@@ -1,3 +1,5 @@
+#include "outline_tab.h"
+
 #include "ColoursAndFontsManager.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "codelite_events.h"
@@ -5,7 +7,6 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
-#include "outline_tab.h"
 
 #include <wx/colour.h>
 #include <wx/stc/stc.h>
@@ -49,10 +50,17 @@ void OutlineTab::RenderSymbols(const vector<LSP::SymbolInformation>& symbols, co
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    if(editor->GetFileName().GetFullPath() != filename) {
+    wxString remote_path;
+    if(editor->IsRemoteFile()) {
+        remote_path = editor->GetRemotePath();
+    }
+
+    wxString local_path = editor->GetFileName().GetFullPath();
+    if(local_path != filename && remote_path != filename) {
         // the symbols do not match the ative editor
         return;
     }
+
     m_currentSymbolsFileName = filename;
     m_symbols = symbols;
 

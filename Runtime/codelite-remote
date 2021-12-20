@@ -361,7 +361,7 @@ def main_loop():
     # configure the log module
     logging.basicConfig(filename=log_file,
                         format="%(asctime)s: {}: %(levelname)s: %(message)s".format(args.context.upper()),
-                        level=logging.DEBUG)
+                        level=logging.WARNING)
     logging.info("started")
     logging.info("current working directory is set to: {}".format(curdir))
 
@@ -379,6 +379,7 @@ def main_loop():
     }
 
     logging.info("codelite-remote started")
+    error_count = 0
     while True:
         try:
             text = input()
@@ -399,7 +400,12 @@ def main_loop():
             else:
                 logging.error("unknown command '{}'".format(command['command']))
         except Exception as e:
+            error_count++
             logging.warning(e)
+            if error_count == 10:
+                logging.error("Too many errors. Exiting!")
+                exit(1)
+                break
 
 def main():
     main_loop()

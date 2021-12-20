@@ -25,25 +25,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-#include "event_notifier.h"
-#include <stack>
-#include <wx/artprov.h>
-#include <wx/file.h>
-#include <wx/tokenzr.h>
-#include <wx/wx.h>
-#include <wx/xrc/xmlres.h>
-
-#include "globals.h"
-
-#include "workspace.h"
-
 #include "git.h"
-#include "gitCommitDlg.h"
-#include "gitCommitListDlg.h"
-#include "gitDiffDlg.h"
-#include "gitFileDiffDlg.h"
-#include "gitSettingsDlg.h"
-#include "gitentry.h"
 
 #include "DiffSideBySidePanel.h"
 #include "GitApplyPatchDlg.h"
@@ -60,16 +42,32 @@
 #include "clWorkspaceManager.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "gitBlameDlg.h"
 #include "gitCloneDlg.h"
+#include "gitCommitDlg.h"
+#include "gitCommitListDlg.h"
+#include "gitDiffDlg.h"
+#include "gitFileDiffDlg.h"
+#include "gitSettingsDlg.h"
+#include "gitentry.h"
+#include "globals.h"
 #include "overlaytool.h"
 #include "project.h"
+#include "workspace.h"
+
+#include <stack>
 #include <unordered_set>
+#include <wx/artprov.h>
 #include <wx/ffile.h>
+#include <wx/file.h>
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
+#include <wx/tokenzr.h>
 #include <wx/utils.h>
+#include <wx/wx.h>
+#include <wx/xrc/xmlres.h>
 
 #ifdef __WXGTK__
 #include <sys/wait.h>
@@ -2707,10 +2705,13 @@ void GitPlugin::DoLoadBlameInfo(bool clearCache)
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    wxString fullpath = editor->GetFileName().GetFullPath();
+    // use the remote path if available
+    wxString fullpath;
+    editor->IsRemoteFile() ? fullpath = editor->GetRemotePath() : fullpath = editor->GetFileName().GetFullPath();
     if(m_blameMap.count(fullpath) && !clearCache) {
         return;
     }
+
     m_blameMap.erase(fullpath);
     gitAction ga(gitBlameSummary, fullpath);
     m_gitActionQueue.push_back(ga);

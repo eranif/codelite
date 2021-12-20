@@ -361,7 +361,7 @@ def main_loop():
     # configure the log module
     logging.basicConfig(filename=log_file,
                         format="%(asctime)s: {}: %(levelname)s: %(message)s".format(args.context.upper()),
-                        level=logging.WARNING)
+                        level=logging.ERROR)
     logging.info("started")
     logging.info("current working directory is set to: {}".format(curdir))
 

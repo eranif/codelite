@@ -289,7 +289,7 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
     wxString fileContent;
-    if(!FileUtils::ReadBufferFromFile(filename, fileContent, 4096)) {
+    if(!FileUtils::ReadBufferFromFile(filename, fileContent, 1024)) {
         return false;
     }
 

@@ -872,12 +872,12 @@ void LanguageServerCluster::UpdateNavigationBar()
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    wxString filename = editor->GetFileName().GetFullPath();
-    if(m_symbols_to_file_cache.count(filename) == 0) {
+    wxString fullpath = editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath();
+    if(m_symbols_to_file_cache.count(fullpath) == 0) {
         return;
     }
 
-    auto symbols = m_symbols_to_file_cache.find(filename)->second;
+    auto symbols = m_symbols_to_file_cache.find(fullpath)->second;
 
     // prepare list of scopes and send them to the navigation bar
     clEditorBar::ScopeEntry::vec_t scopes;
@@ -905,5 +905,5 @@ void LanguageServerCluster::UpdateNavigationBar()
         scope_entry.display_string.swap(display_string);
         scopes.push_back(scope_entry);
     }
-    clGetManager()->GetNavigationBar()->SetScopes(filename, scopes);
+    clGetManager()->GetNavigationBar()->SetScopes(fullpath, scopes);
 }

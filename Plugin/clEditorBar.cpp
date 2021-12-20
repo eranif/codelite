@@ -1,4 +1,5 @@
 #include "clEditorBar.h"
+
 #include "ColoursAndFontsManager.h"
 #include "IWorkspace.h"
 #include "bitmap_loader.h"
@@ -21,6 +22,7 @@
 #include "lexer_configuration.h"
 #include "macros.h"
 #include "optionsconfig.h"
+
 #include <algorithm>
 #include <unordered_map>
 #include <wx/bitmap.h>
@@ -360,8 +362,9 @@ void clEditorBar::UpdateScope()
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    wxString fileName = editor->GetFileName().GetFullPath();
-    if(fileName != m_scopesFile) {
+    wxString fullpath;
+    editor->IsRemoteFile() ? fullpath = editor->GetRemotePath() : fullpath = editor->GetFileName().GetFullPath();
+    if(fullpath != m_scopesFile) {
         m_scopes.clear();
         m_buttonScope->SetText(wxEmptyString);
         return;

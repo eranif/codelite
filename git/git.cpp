@@ -2706,8 +2706,7 @@ void GitPlugin::DoLoadBlameInfo(bool clearCache)
     CHECK_PTR_RET(editor);
 
     // use the remote path if available
-    wxString fullpath;
-    editor->IsRemoteFile() ? fullpath = editor->GetRemotePath() : fullpath = editor->GetFileName().GetFullPath();
+    wxString fullpath = editor->GetRemotePathOrLocal();
     if(m_blameMap.count(fullpath) && !clearCache) {
         return;
     }
@@ -2760,7 +2759,7 @@ void GitPlugin::OnUpdateNavBar(clCodeCompletionEvent& event)
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    wxString fullpath = editor->GetFileName().GetFullPath();
+    wxString fullpath = editor->GetRemotePathOrLocal();
     clDEBUG1() << "Checking blame info for file:" << fullpath << clEndl;
     auto where = m_blameMap.find(fullpath);
 

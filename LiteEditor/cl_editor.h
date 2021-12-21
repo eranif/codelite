@@ -43,6 +43,7 @@
 #include "stringhighlighterjob.h"
 #include "wx/filename.h"
 #include "wx/menu.h"
+
 #include <map>
 #include <stack>
 #include <vector>
@@ -1014,6 +1015,17 @@ public:
      * @brief incase this editor represents a remote file, return its remote path
      */
     wxString GetRemotePath() const override;
+    /**
+     * @brief if this editor represents a remote file
+     * return its remote path, otherwise return the local path
+     * this is equal for writing:
+     *
+     * ```
+     * wxString fullpath = editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath();
+     * return fullpath;
+     * ```
+     */
+    wxString GetRemotePathOrLocal() const override;
 
     /**
      * @brief return true if this file represents a remote file

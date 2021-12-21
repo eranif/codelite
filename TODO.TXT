@@ -16,6 +16,6 @@
 12. **DONE** Open include file does not work
 13. **DONE** Fix Hyper Link navigation
 14. **DONE** Smart Completion Plugin - make it work with the LSP
-15. Git Blame bar does not work for Remoty
+15. **DONE** Git Blame bar does not work for Remoty
 16. Remoty: find-in-files: use the last used folder and not the current file's folder
 17. Document `Rust` plugin

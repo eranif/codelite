@@ -927,7 +927,7 @@ void PHPCodeCompletion::OnActiveEditorChanged(wxCommandEvent& e)
         scopes.push_back(scope_entry);
     }
 
-    wxString fullpath = editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath();
+    wxString fullpath = editor->GetRemotePathOrLocal();
     clGetManager()->GetNavigationBar()->SetScopes(fullpath, scopes);
 
     // For the sake of outline view, fire wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE event

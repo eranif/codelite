@@ -351,14 +351,7 @@ void LanguageServerPlugin::OnLSPShowSettingsDlg(clLanguageServerEvent& event)
     OnSettings(dummy);
 }
 
-wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const
-{
-    if(editor->IsRemoteFile()) {
-        return editor->GetRemotePath();
-    } else {
-        return editor->GetFileName().GetFullPath();
-    }
-}
+wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const { return editor->GetRemotePathOrLocal(); }
 
 void LanguageServerPlugin::OnLSPEnableServer(clLanguageServerEvent& event)
 {

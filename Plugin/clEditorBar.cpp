@@ -122,7 +122,7 @@ void clEditorBar::DoRefreshColoursAndFonts()
             Show();
         }
 
-        wxString current_file = editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath();
+        wxString current_file = editor->GetRemotePathOrLocal();
 
         // Update bookmarks button
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
@@ -368,8 +368,7 @@ void clEditorBar::UpdateScope()
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    wxString fullpath;
-    editor->IsRemoteFile() ? fullpath = editor->GetRemotePath() : fullpath = editor->GetFileName().GetFullPath();
+    wxString fullpath = editor->GetRemotePathOrLocal();
     if(fullpath != m_scopesFile) {
         m_scopes.clear();
         m_buttonScope->SetText(wxEmptyString);

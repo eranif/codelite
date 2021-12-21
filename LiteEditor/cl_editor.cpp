@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_editor.h"
+
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
 #include "ServiceProviderManager.h"
@@ -77,6 +78,7 @@
 #include "stringsearcher.h"
 #include "wx/stc/stc.h"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <wx/dataobj.h>
 #include <wx/dcmemory.h>
 #include <wx/filefn.h>
@@ -1782,7 +1784,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
 // this function is called before the debugger startup
 void clEditor::UpdateBreakpoints()
 {
-    wxString file_path = IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath();
+    wxString file_path = GetRemotePathOrLocal();
     // if this is a remote file, use that path in the debugger view
     ManagerST::Get()->GetBreakpointsMgr()->DeleteAllBreakpointsByFileName(file_path);
 
@@ -3820,7 +3822,7 @@ void clEditor::AddBreakpoint(int lineno /*= -1*/, const wxString& conditions /*=
         lineno = GetCurrentLine() + 1;
     }
 
-    wxString file_path = IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath();
+    wxString file_path = GetRemotePathOrLocal();
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
     if(!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(file_path, lineno, conditions, is_temp,
                                                                      is_disabled)) {
@@ -3852,7 +3854,7 @@ void clEditor::DelBreakpoint(int lineno /*= -1*/)
     // was triggered by user action
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
 
-    wxString file_path = IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath();
+    wxString file_path = GetRemotePathOrLocal();
     int result = ManagerST::Get()->GetBreakpointsMgr()->DelBreakpointByLineno(file_path, lineno);
     switch(result) {
     case true:
@@ -3878,7 +3880,7 @@ void clEditor::ToggleBreakpoint(int lineno)
         lineno = GetCurrentLine() + 1;
     }
 
-    wxString file_path = IsRemoteFile() ? GetRemotePath() : GetFileName().GetFullPath();
+    wxString file_path = GetRemotePathOrLocal();
     // Does any of the plugins want to handle this?
     clDebugEvent dbgEvent(wxEVT_DBG_UI_TOGGLE_BREAKPOINT);
     dbgEvent.SetInt(lineno);
@@ -6126,6 +6128,15 @@ size_t clEditor::GetEditorTextRaw(std::string& text)
         text.append(cb.data());
     }
     return text.length();
+}
+
+wxString clEditor::GetRemotePathOrLocal() const
+{
+    if(IsRemoteFile()) {
+        return GetRemotePath();
+    } else {
+        return GetFileName().GetFullPath();
+    }
 }
 
 wxString clEditor::GetRemotePath() const

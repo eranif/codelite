@@ -75,6 +75,7 @@
 #include "wxCodeCompletionBoxManager.h"
 #include "wxCustomControls.hpp"
 #include "wxCustomStatusBar.h"
+
 #include <CompilersDetectorManager.h>
 #include <algorithm>
 #include <array>
@@ -156,6 +157,7 @@
 #include "webupdatethread.h"
 #include "workspace_pane.h"
 #include "workspacetab.h"
+
 #include <wx/msgdlg.h>
 
 //////////////////////////////////////////////////
@@ -5602,8 +5604,8 @@ void clMainFrame::OnDebugRunToCursor(wxCommandEvent& e)
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor && dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
         clDebuggerBreakpoint bp;
-        bp.Create(editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath(),
-                  editor->GetCurrentLine() + 1, ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
+        bp.Create(editor->GetRemotePathOrLocal(), editor->GetCurrentLine() + 1,
+                  ManagerST::Get()->GetBreakpointsMgr()->GetNextID());
         bp.bp_type = BP_type_tempbreak;
         dbgr->Break(bp);
         dbgr->Continue();
@@ -5620,8 +5622,7 @@ void clMainFrame::OnDebugJumpToCursor(wxCommandEvent& e)
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
     IEditor* editor = clGetManager()->GetActiveEditor();
     if(editor && dbgr && dbgr->IsRunning() && ManagerST::Get()->DbgCanInteract()) {
-        dbgr->Jump(editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath(),
-                   editor->GetCurrentLine() + 1);
+        dbgr->Jump(editor->GetRemotePathOrLocal(), editor->GetCurrentLine() + 1);
     }
 }
 

@@ -32,6 +32,7 @@
 #include "entry.h"
 #include "optionsconfig.h"
 #include "wx/string.h"
+
 #include <list>
 #include <map>
 #include <string>
@@ -560,6 +561,18 @@ public:
      * @brief incase this editor represents a remote file, return its remote path
      */
     virtual wxString GetRemotePath() const = 0;
+
+    /**
+     * @brief if this editor represents a remote file
+     * return its remote path, otherwise return the local path
+     * this is equal for writing:
+     *
+     * ```
+     * wxString fullpath = editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath();
+     * return fullpath;
+     * ```
+     */
+    virtual wxString GetRemotePathOrLocal() const = 0;
 
     /**
      * @brief return true if this file represents a remote file

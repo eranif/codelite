@@ -74,40 +74,63 @@ class string_finder:
 def print_message_terminator():
     print(">>codelite-remote-msg-end<<")
 
-def create_default_config_if_needed():
-    global configuration
-    curdir = os.path.dirname(__file__)
-    config_file = "{}/codelite-remote.json".format(curdir)
+def _load_config_file(filepath):
+    """
+    attempt to load a configuration file
 
-    if not os.path.exists(config_file):
-        # create a default configuration file
-        logging.info("configuration file {} does not exist, will create one".format(config_file))
-        fp = open(config_file, "w")
-        config_content = json.dumps({
-                "Language Server Plugin": {
-                    "servers": [{
-                    "name": "clangd",
-                    "command": "/usr/bin/clangd-12 -limit-results=500 -header-insertion-decorators=0",
-                    "languages": ["c", "cpp"],
-                    "priority": 90
-                }, {
-                    "name": "python",
-                    "command": "/usr/bin/python3 -m pylsp",
-                    "languages": ["python"],
-                    "priority": 80
-               }]
-            }
-        }, indent=4)
-        fp.write(config_content)
-        fp.close()
+    Returns
+    -------
+        true on success
+    """
+    if not os.path.exists(filepath):
+        return False
 
-    # load the configuration file
-    config_content = open(config_file, "r").read()
+    config_content = open(filepath, "r").read()
     try:
+        global configuration
         configuration = json.loads(config_content)
+        logging.info("successfully loaded configuration file: {}".format(filepath))
+        return True
     except json.decoder.JSONDecodeError as e:
-        logging.error("Failed to load configuration file: {}".format(config_file))
+        logging.error("Failed to load configuration file: {}".format(filepath))
         logging.error(e)
+
+    return False
+
+def _create_empty_config_file(directory):
+    """
+    create empty configuration file with a given path
+    """
+    config_file = "{}/codelite-remote.json".format(directory)
+    if os.path.exists(config_file):
+        return
+
+    # create a default configuration file
+    logging.info("creating empty configuration file: {}".format(config_file))
+    try:
+        # Create the directory in the path
+        os.makedirs(directory, exist_ok = True)
+        logging.info("successfully created directory {}".format(directory))
+    except OSError as error:
+        logging.debug("directory {} already exists".format(directory))
+
+    fp = open(config_file, "w")
+    fp.write("{}")
+    fp.close()
+
+def load_configuration():
+    curdir = os.path.dirname(__file__)
+    local_config_file = "{}/codelite-remote.json".format(curdir)
+
+    # try to load the local configuration first
+    config_loaded = _load_config_file(local_config_file)
+    if not config_loaded:
+        # create new empty configuration file at the given location
+        home_dir = os.path.expandvars("$HOME/.codelite-remote")
+        global_config_file = "{}/codelite-remote.json".format(home_dir)
+        _create_empty_config_file(home_dir)
+        config_loaded = _load_config_file(global_config_file)
+    return config_loaded
 
 def _get_list_of_files(cmd):
     """
@@ -287,10 +310,11 @@ def on_list_lsps(lsps_array):
     global configuration
     if "Language Server Plugin" in configuration and "servers" in configuration["Language Server Plugin"]:
         for server in configuration["Language Server Plugin"]["servers"]:
-            langstr = ';'.join(server["languages"])
-            server_line = "{},{},{},{}".format(server["name"], server["command"], langstr, server["priority"])
-            logging.info(server_line)
-            print(server_line)
+            if "name" in server and "command" in server and "priority" in server and "languages" in server and "working_directory" in server:
+                langstr = ';'.join(server["languages"])
+                server_line = "{},{},{},{},{}".format(server["name"], server["command"], langstr, server["priority"], server["working_directory"])
+                logging.info(server_line)
+                print(server_line)
     print_message_terminator()
 
 def on_find_path(cmd):
@@ -365,7 +389,7 @@ def main_loop():
     logging.info("started")
     logging.info("current working directory is set to: {}".format(curdir))
 
-    create_default_config_if_needed()
+    load_configuration()
 
     # interactive mode
     handlers = {

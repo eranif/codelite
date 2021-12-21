@@ -47,7 +47,7 @@ public:
 protected:
     void ConfigureLsp(const wxString& output);
     void DoConfigureLSP(const wxString& lsp_name, const wxString& command, const std::vector<wxString>& languages,
-                        size_t priority);
+                        size_t priority, const wxString& working_directory);
 
     void BindEvents();
     void UnbindEvents();

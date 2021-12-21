@@ -1,9 +1,8 @@
-#include "RemotyWorkspace.hpp"
-
 #include "JSON.h"
 #include "RemotyConfig.hpp"
 #include "RemotyNewWorkspaceDlg.h"
 #include "RemotySwitchToWorkspaceDlg.h"
+#include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -675,7 +674,8 @@ void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
 }
 
 void RemotyWorkspace::DoConfigureLSP(const wxString& lsp_name, const wxString& command,
-                                     const std::vector<wxString>& languages, size_t priority)
+                                     const std::vector<wxString>& languages, size_t priority,
+                                     const wxString& working_directory)
 {
     wxArrayString langs;
     langs.reserve(languages.size());
@@ -683,10 +683,15 @@ void RemotyWorkspace::DoConfigureLSP(const wxString& lsp_name, const wxString& c
         langs.Add(lang);
     }
 
+    wxString root_uri = working_directory;
+    if(root_uri.empty()) {
+        root_uri = GetRemoteWorkingDir();
+    }
+
     clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
     configure_event.SetLspName(lsp_name);
     configure_event.SetLanguages(langs);
-    configure_event.SetRootUri(GetRemoteWorkingDir());
+    configure_event.SetRootUri(root_uri);
 
     auto conf = m_settings.GetSelectedConfig();
     wxString envLine;
@@ -700,9 +705,10 @@ void RemotyWorkspace::DoConfigureLSP(const wxString& lsp_name, const wxString& c
     }
 
     wxString lsp_cmd;
-    lsp_cmd << "cd " << GetRemoteWorkingDir() << " && ";
+    lsp_cmd << "cd " << root_uri << " && ";
+
     if(!envLine.empty()) {
-        lsp_cmd << envLine; // it ends with space
+        lsp_cmd << envLine << " "; // it ends with space
     }
     lsp_cmd << command;
 
@@ -1110,7 +1116,7 @@ wxString RemotyWorkspace::GetName() const { return wxFileName(m_localWorkspaceFi
 void RemotyWorkspace::ConfigureLsp(const wxString& output)
 {
     wxArrayString parts = ::wxStringTokenize(output, ",", wxTOKEN_STRTOK);
-    if(parts.size() != 4) {
+    if(parts.size() < 4) {
         clWARNING() << "Remoty: invalid LSP line found." << output << endl;
     }
 
@@ -1118,6 +1124,10 @@ void RemotyWorkspace::ConfigureLsp(const wxString& output)
     const wxString& command = parts[1];
     const wxString& languages_str = parts[2];
     const wxString& priority = parts[3];
+    wxString working_directory = wxEmptyString;
+    if(parts.size() > 4) {
+        working_directory = parts[4];
+    }
 
     // configure LSP
     wxArrayString languages = ::wxStringTokenize(languages_str, ";", wxTOKEN_STRTOK);
@@ -1127,7 +1137,7 @@ void RemotyWorkspace::ConfigureLsp(const wxString& output)
         lsp_priority = 75;
     }
 
-    DoConfigureLSP("Remoty." + name, command, vec_langs, lsp_priority);
+    DoConfigureLSP("Remoty." + name, command, vec_langs, lsp_priority, working_directory);
 }
 
 void RemotyWorkspace::SetProjectActive(const wxString& name) { wxUnusedVar(name); }

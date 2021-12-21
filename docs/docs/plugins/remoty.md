@@ -36,86 +36,69 @@ the local machine
 ---
 
 Creating a new workspace is similar to creating a File System Workspace, the difference is that
-the folder is located on the remote machine
+the folder is located on the remote machine.
 
 ## Configuring Code Completion
 ---
 
-CodeLite launches [Language Servers][5] on the remote machine as instruced by [codelite-remote][4].
-Assuming your workspace on the **remote** machine is placed under `/home/eran/test_workspace`
-Then, you should have directory structure similar to this:
+CodeLite launches [Language Servers][5] on the remote machine as described in the `codelite-remote.json`
+configuration file.
 
-```bash
-/home/eran/test_workspace
-|__ .codelite
-    |__ codelite-remote
-    |__ codelite-remote.json
-..
-```
+### `codelite-remote.json` file
+---
 
-Where:
-
-* `codelite-remote` - a python script used by CodeLite to communicate with the remote machine. CodeLite is always uploading this file to the remote machine when you open a remote workspace
-* `codelite-remote.json` - if not there, CodeLite will create one for you with some default settings. However, if the file does exist, CodeLite will not override it
-
-The content of `codelite-remote.json` holds the definitions of the [Language Servers][5] on the remote machine
-that should be executed by CodeLite.
-
-You can add / remove entries from this file by editing it.
-After modifying it, make sure to close and re-open your workspace to ensure that your changes are applied
-
-```json
-{
-    "Language Server Plugin": {
-        "servers": [
-            {
-                "name": "clangd",
-                "command": "/usr/bin/clangd-12 -limit-results=500 -header-insertion-decorators=0",
-                "languages": [
-                    "c",
-                    "cpp"
-                ],
-                "priority": 90
-            },
-            {
-                "name": "python",
-                "command": "/usr/bin/python3 -m pylsp",
-                "languages": [
-                    "python"
-                ],
-                "priority": 80
-            }
-        ]
+- Open a terminal on your remote machine, or connect to it via SSH
+- Type:
+    ```bash
+    mkdir -p ~/.codelite-remote.json
+    touch ~/.codelite-remote/codelite-remote.json
+    ```
+- Add [Language Servers][5] entries so you will end up with `~/.codelite-remote.json` that looks similar to this:
+    ```json
+    {
+     "Language Server Plugin": {
+      "servers": [{
+        "name": "clangd",
+        "command": "/usr/bin/clangd-12 -limit-results=500 -header-insertion-decorators=0",
+        "languages": ["c", "cpp"],
+        "priority": 90,
+        "working_directory": ""
+       }, {
+        "name": "python",
+        "command": "/usr/bin/python3 -m pylsp",
+        "languages": ["python"],
+        "priority": 80,
+        "working_directory": ""
+       }]
+     }
     }
-}
+    ```
+- Modify the `command` field in the above example, to match the actual paths installed on your machine
+- Add / remove more `server` entries
+- Save the file
 
-```
+!!! Note
+    Whenever you modify your `$HOME/.codelite-remote/codelite-remote.json` file,
+    remember to reload your workspace in CodeLite (Close followed by Open)
 
-In the above sample configuration file, we can see that 2 Language Servers are configured:
+!!! Note
+    The following code block contains the complete list of supported languages known to CodeLite:
 
-* [`clangd`][6] for C++/C, with the following interesting fields:
-    * `command` - `clangd` command to execute
-    * `languages` - which languages does this server handles (in our case, `c` and `cpp`)
-
-* [`python`][7] for the python files with the follwing interesting fields:
-    * `command` - `pylsp` command to execute
-    * `languages` - which languages does this server handles (in our case, `python`)
-
-The following code block contains the complete list of supported languages known to CodeLite:
-
-```c++
-    return { "bat",        "bibtex",     "clojure",     "coffeescript",  "c",
-             "cpp",        "csharp",     "css",         "diff",          "dart",
-             "dockerfile", "fsharp",     "git-commit",  "git-rebase",    "go",
-             "groovy",     "handlebars", "html",        "ini",           "java",
-             "javascript", "json",       "latex",       "less",          "lua",
-             "makefile",   "markdown",   "objective-c", "objective-cpp", "perl and perl6",
-             "php",        "powershell", "jade",        "python",        "r",
-             "razor",      "ruby",       "rust",        "scss",          "sass",
-             "scala",      "shaderlab",  "shellscript", "sql",           "swift",
-             "typescript", "tex",        "vb",          "xml",           "xsl",
-             "yaml" };
-```
+    ```json
+    {
+        "bat",        "bibtex",     "clojure",     "coffeescript",  "c",
+        "cpp",        "csharp",     "css",         "diff",          "dart",
+        "dockerfile", "fsharp",     "git-commit",  "git-rebase",    "go",
+        "groovy",     "handlebars", "html",        "ini",           "java",
+        "javascript", "json",       "latex",       "less",          "lua",
+        "makefile",   "markdown",   "objective-c", "objective-cpp", "perl and perl6",
+        "php",        "powershell", "jade",        "python",        "r",
+        "razor",      "ruby",       "rust",        "scss",          "sass",
+        "scala",      "shaderlab",  "shellscript", "sql",           "swift",
+        "typescript", "tex",        "vb",          "xml",           "xsl",
+        "yaml"
+    };
+    ```
 
 ## Supported features
 ---

@@ -4,18 +4,18 @@
 !!! WARNING
     This plugin is deprecated. You should consider using `CMake` instead of `QMake`
 
-The Qmake plugin is a codelite plugin which overrides the default build system of CodeLite, and uses Qt's qmake tool. 
+The Qmake plugin is a codelite plugin which overrides the default build system of CodeLite, and uses Qt's qmake tool.
 It does that by producing a `.pro` file (qmake's project file) from a CodeLite project file (.project) and executing `qmake` on the generated `.pro` file
 Using this plugin, you can quickly create Qt projects using CodeLite
 
 
 ## Defining new qmake
 ---
- 
+
 - From the menu bar, open the qmake settings dialog (`Plugins` &#8594; `Qmake` &#8594; `Settings ...`) , click on the `New` button, give it a name (e.g. MyQmake) and click `OK`
 - You should now have a dialog similar to the one below
 - In the `qmake executable` field, enter the full path to your qmake executable
-- Once the above field is populated properly, you should have a list of options in the `QMAKESPEC` field. Choose the settings that suit you best (on Windows using MinGW you should choose `win32-g++`, while on Linux, choose `linux-g++`). 
+- Once the above field is populated properly, you should have a list of options in the `QMAKESPEC` field. Choose the settings that suit you best (on Windows using MinGW you should choose `win32-g++`, while on Linux, choose `linux-g++`).
 - `QTDIR` should point to your Qt base installation directory
 
 ![qmake settings](images/qmake_settings.png)
@@ -38,10 +38,10 @@ Once you have set up a qmake setting to work with, you are now ready to create y
 
  int main(int argc, char **argv)
  {
- 	QString str;
- 	str = "Hello world from QT";
- 	printf("%s\n", str.toLocal8Bit().constData());
- 	return 0;
+    QString str;
+    str = "Hello world from QT";
+    printf("%s\n", str.toLocal8Bit().constData());
+    return 0;
  }
 ```
 
@@ -51,7 +51,7 @@ Once you have set up a qmake setting to work with, you are now ready to create y
 ## QMake project settings
 ---
 
-For many people the above steps are sufficient to work with Qt, but there are cases when you need to add some tweaks to the .pro file. 
+For many people the above steps are sufficient to work with Qt, but there are cases when you need to add some tweaks to the .pro file.
 This is done from the project settings: right click on the project, and select `settings`
 
 The `Project Settings` dialog pops up, but now it has an additional tab, named `Qmake`

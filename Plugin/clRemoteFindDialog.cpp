@@ -1,5 +1,6 @@
-#include "JSON.h"
 #include "clRemoteFindDialog.h"
+
+#include "JSON.h"
 #include "cl_config.h"
 #include "globals.h"
 #include "ssh_account_info.h"
@@ -24,8 +25,9 @@ struct clRemoteFindDialogData {
     size_t flags = (kWholeWord | kCaseSearch);
 };
 
-clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account_name)
+clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account_name, const wxString& rootpath)
     : clRemoteFindDialogBase(parent)
+    , m_root_path(rootpath)
 {
     auto accounts = SSHAccountInfo::Load();
     if(!accounts.empty()) {
@@ -57,7 +59,7 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     }
 
     UpdateCombo(m_comboBoxFindWhat, data.find_what_arr, data.last_find_what);
-    UpdateCombo(m_comboBoxWhere, data.where_arr, data.last_where);
+    UpdateCombo(m_comboBoxWhere, data.where_arr, data.last_where.empty() ? m_root_path : data.last_where);
     UpdateCombo(m_comboBoxTypes, data.file_types, data.last_file_types);
     m_checkBoxCase->SetValue(data.flags & kCaseSearch);
     m_checkBoxWholeWord->SetValue(data.flags & kWholeWord);
@@ -112,12 +114,15 @@ void clRemoteFindDialog::UpdateCombo(clThemedComboBox* cb, const wxArrayString& 
 {
     cb->Clear();
     cb->Append(options);
-    cb->SetStringSelection(lastSelection);
+    int where = cb->FindString(lastSelection);
+    if(where != wxNOT_FOUND) {
+        cb->SetSelection(where);
+    } else {
+        cb->SetValue(lastSelection);
+    }
 }
 
 void clRemoteFindDialog::OnOK_UI(wxUpdateUIEvent& event) { event.Enable(CanOk()); }
-
-void clRemoteFindDialog::SetWhere(const wxString& where) { m_comboBoxWhere->SetValue(where); }
 
 void clRemoteFindDialog::SetFileTypes(const wxString& filetypes) { m_comboBoxTypes->SetValue(filetypes); }
 

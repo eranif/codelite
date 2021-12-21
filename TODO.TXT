@@ -17,5 +17,5 @@
 13. **DONE** Fix Hyper Link navigation
 14. **DONE** Smart Completion Plugin - make it work with the LSP
 15. **DONE** Git Blame bar does not work for Remoty
-16. Remoty: find-in-files: use the last used folder and not the current file's folder
+16. **DONE** Remoty: find-in-files: use the last used folder and not the current file's folder
 17. Document `Rust` plugin

@@ -8,6 +8,8 @@
 
 class WXDLLIMPEXP_SDK clRemoteFindDialog : public clRemoteFindDialogBase
 {
+    wxString m_root_path;
+
 protected:
     virtual void OnSearch(wxCommandEvent& event);
     virtual void OnOK_UI(wxUpdateUIEvent& event);
@@ -15,10 +17,9 @@ protected:
     bool CanOk() const;
 
 public:
-    clRemoteFindDialog(wxWindow* parent, const wxString& account_name);
+    clRemoteFindDialog(wxWindow* parent, const wxString& account_name, const wxString& rootpath);
     virtual ~clRemoteFindDialog();
 
-    void SetWhere(const wxString& where);
     void SetFileTypes(const wxString& filetypes);
     void SetFindWhat(const wxString& findWhat);
 

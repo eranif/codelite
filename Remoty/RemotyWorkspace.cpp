@@ -48,47 +48,6 @@ namespace
 {
 static const char* CONTEXT_BUILDER = "builder";
 static const char* CONTEXT_FINDER = "finder";
-
-struct LspMetadata {
-    wxString name;
-    std::vector<wxString> languages;
-    int priority = 150;
-    wxString extra_command_args;
-    int min_version = wxNOT_FOUND;
-    int max_version = wxNOT_FOUND;
-    // additional search path
-    wxString path = "/usr/local/bin:/usr/bin:$HOME/.cargo/bin:$HOME/bin";
-
-    LspMetadata(const wxString& n, const std::vector<wxString>& langs, int prio, const wxString& extra_flags, int min,
-                int max)
-        : name(n)
-        , languages(langs)
-        , priority(prio)
-        , extra_command_args(extra_flags)
-        , min_version(min)
-        , max_version(max)
-    {
-    }
-
-    wxString get_display_name() const { return "ssh: " + this->name; }
-
-    std::vector<wxString> get_versions() const
-    {
-        if(min_version == wxNOT_FOUND || max_version == wxNOT_FOUND) {
-            return {};
-        }
-
-        if(min_version > max_version) {
-            return {};
-        }
-
-        std::vector<wxString> versions;
-        for(int i = max_version; i >= min_version; --i) {
-            versions.push_back(wxString() << i);
-        }
-        return versions;
-    }
-};
 } // namespace
 
 RemotyWorkspace::RemotyWorkspace()

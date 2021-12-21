@@ -1,5 +1,6 @@
-#include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
+
+#include "RemotyWorkspace.hpp"
 #include "asyncprocess.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clFileSystemWorkspaceDlg.h"
@@ -17,6 +18,7 @@
 #include "wx/event.h"
 #include "wx/tokenzr.h"
 #include "wx/wxcrt.h"
+
 #include <wx/arrstr.h>
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
@@ -138,24 +140,13 @@ void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
 
     // override the default find in files dialog
     event.Skip(false);
-    clRemoteFindDialog dlg(nullptr, m_workspace->GetAccount().GetAccountName());
+    wxString rootpath = m_workspace->GetRemoteWorkspaceFile();
+    rootpath = rootpath.BeforeLast('/'); // only the path
+
+    clRemoteFindDialog dlg(nullptr, m_workspace->GetAccount().GetAccountName(), rootpath);
     auto editor = ::clGetManager()->GetActiveEditor();
     if(editor && (editor->GetSelectionStart() != editor->GetSelectionEnd())) {
         dlg.SetFindWhat(editor->GetCtrl()->GetSelectedText());
-    }
-
-    wxArrayString folders;
-    m_tree->GetSelectedFolders(folders);
-    if(!folders.empty()) {
-        // use the selected folder
-        dlg.SetWhere(folders[0]);
-    } else if(editor) {
-        // use the current file's path
-        wxString remote_path = editor->GetRemotePath();
-        if(!remote_path.empty()) {
-            remote_path = remote_path.BeforeLast('/');
-            dlg.SetWhere(remote_path);
-        }
     }
 
     if(dlg.ShowModal() != wxID_OK) {

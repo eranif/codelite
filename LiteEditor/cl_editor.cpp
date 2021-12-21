@@ -81,6 +81,7 @@
 
 #include <wx/dataobj.h>
 #include <wx/dcmemory.h>
+#include <wx/display.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/log.h>
@@ -4595,9 +4596,35 @@ void clEditor::DoShowCalltip(int pos, const wxString& title, const wxString& tip
         pt = PointFromPosition(pos);
     }
 
-    // Place the tip on top of the mouse position, not under it
-    pt.y -= m_calltip->GetSize().GetHeight();
+    DoAdjustCalltipPos(pt);
     m_calltip->CallAfter(&CCBoxTipWindow::PositionAt, pt, this);
+}
+
+void clEditor::DoAdjustCalltipPos(wxPoint& pt) const
+{
+    wxSize size = m_calltip->GetSize();
+    int disp = wxDisplay::GetFromPoint(pt);
+    wxRect rect = wxDisplay(disp == wxNOT_FOUND ? 0 : disp).GetClientArea();
+    auto checkX = [&](int xx) { return xx >= rect.GetX() && xx <= rect.GetX() + rect.GetWidth(); };
+    auto checkY = [&](int yy) { return yy >= rect.GetY() && yy <= rect.GetY() + rect.GetHeight(); };
+    // if neither fits, put at the rightmost/topmost of the display screen
+    int x = rect.GetX() + rect.GetWidth() - size.GetWidth();
+    int y = rect.GetY();
+    if(checkX(pt.x + size.GetWidth())) {
+        // right of the mouse position (preferred)
+        x = pt.x;
+    } else if(checkX(pt.x - size.GetWidth())) {
+        // left of the mouse position
+        x = pt.x - size.GetWidth();
+    }
+    if(checkY(pt.y - size.GetHeight())) {
+        // top of the mouse position (preferred)
+        y = pt.y - size.GetHeight();
+    } else if(checkY(pt.y + size.GetHeight())) {
+        // bottom of the mouse position
+        y = pt.y;
+    }
+    pt = { x, y };
 }
 
 void clEditor::DoCancelCalltip()

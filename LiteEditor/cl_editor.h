@@ -763,6 +763,10 @@ public:
     void DelAllCompilerMarkers() override;
 
     void DoShowCalltip(int pos, const wxString& title, const wxString& tip, bool strip_html_tags = true);
+    /**
+     * @brief adjust calltip window position to fit into the display screen
+     */
+    void DoAdjustCalltipPos(wxPoint& pt) const;
     void DoCancelCalltip();
     void DoCancelCodeCompletionBox();
     int DoGetOpenBracePos();

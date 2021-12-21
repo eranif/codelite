@@ -18,9 +18,9 @@ With `CMake` based project, you should see 3 new entries for the project context
 
 To get the build started, select the option `Run CMake` and CodeLite will generate new `CMakeLists.txt` file and will run `CMake` for it
 
-You should output similar to this:
+You should see output similar to this:
 
-```bash
+```batch
 C:\CMake\bin\cmake.exe C:\Users\Eran\Desktop\Test\CMakeTest  -G"MinGW Makefiles"
 -- The C compiler identification is GNU 7.3.0
 -- The CXX compiler identification is GNU 7.3.0
@@ -45,7 +45,7 @@ C:\CMake\bin\cmake.exe C:\Users\Eran\Desktop\Test\CMakeTest  -G"MinGW Makefiles"
 Now you are ready to build your project, by simply clicking ++f7++
 and you should get an output similar to this:
 
-```bash
+```batch
 cd C:\Users\Eran\Desktop\Test\CMakeTest\cmake-build-Debug\CMakeTest && C:/compilers/mingw64/bin/mingw32-make.exe -j24 SHELL=cmd.exe -e
 Scanning dependencies of target CMakeTest
 [ 50%] Building CXX object CMakeFiles/CMakeTest.dir/main.cpp.obj
@@ -131,7 +131,7 @@ set ( CXX_SRCS
 )
 
 set_source_files_properties(
-    ${CXX_SRCS} PROPERTIES COMPILE_FLAGS 
+    ${CXX_SRCS} PROPERTIES COMPILE_FLAGS
     " -g -O0 -Wall")
 
 #{{{{ User Code 2
@@ -146,8 +146,8 @@ target_link_libraries(CMakeProject ${LINK_OPTIONS})
 #}}}}
 ```
 
-There are 3 blocks marked with `#{{{{ User Code 1`, `#{{{{ User Code 2` and `#{{{{ User Code 3` These blocks are placed at the top, 
-middle and at the end of each generated `CMakeLists.txt` file. 
+There are 3 blocks marked with `#{{{{ User Code 1`, `#{{{{ User Code 2` and `#{{{{ User Code 3` These blocks are placed at the top,
+middle and at the end of each generated `CMakeLists.txt` file.
 Any code placed in these enclosed sections will remain there after regeneration of the `CMakeLists.txt`
 
 !!! WARNING

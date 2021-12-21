@@ -40,6 +40,7 @@ nav:
         - Git: plugins/git.md
         - UnitTest++: plugins/ut.md
         - Remoty: plugins/remoty.md
+        - Rust: plugins/rust.md
     - Debugging:
         - gdb: debuggers/gdb.md
         - lldb: debuggers/lldb.md

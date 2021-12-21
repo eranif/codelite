@@ -1,148 +1,136 @@
 ## What is Language Server?
 ---
 
-From the [Language Server web site][1]: The Language Server Protocol (LSP) is used between the IDE and a language smartness provider (the server) to integrate features like auto complete, go to definition, find all references and alike into the tool 
+From the [Language Server web site][1]: The Language Server Protocol (LSP) is used between the IDE and a language smartness provider (the server) to integrate features like auto complete, go to definition, find all references and alike into the tool
 
-## Configuring common Language Servers
+## Install Language Servers
 ---
 
-By default, CodeLite is able to detect and configure language server for:
+Below you may find the installation instructions for the most common Language Servers,
+select the ones you are interested in and then [configure them in CodeLite][14]
 
-- [C++ (`clangd`)][7]
-- [Python `pylsp` module][6]
-- [JavaScript / TypeScript `typescript-language-server` `npm` module][10]
-- [Rust (`rust-analyzer`)][9]
-- [Rust (`rls`)][8]
+=== "clangd"
+    `clangd` is the LSP implementation from the `clang` team. It provide a compiler level completion with an unmatched accuracy
+    Visit the [project home page][7]
 
-On startup CodeLite will attempt to configure all the above language servers.
-However, if you installed them after you started CodeLite, you will need to tell 
-CodeLite to run the scan process again. To do this:
+    **Windows**
 
-- Goto `Plugins` &#8594;  `Language Server` &#8594; `Settings`
-- Click on the `Scan` button
+    On Windows, CodeLite comes with a pre built binary of `clangd` configured and installed.
 
-!!! Important
-    CodeLite will configure the LSP for you, but it will **NOT** install it for you.
-    See below steps for installing language servers
+    ** Linux **
 
-### Install `clangd` (c++)
----
+    On Linux machines, you will need to manually install `clangd` via your package manager.
+    On `Ubuntu` and `Debian` it is usually part of the `clang-tools` package. So to install it, use the below code snippet:
 
-`clangd` is the LSP implementation from the `clang` team. It provide a compiler level completion with an unmatched accuracy
+    ```bash
+    sudo apt-get update
+    sudo apt-get install clang-tools
+    ```
 
+    Once installed, follow the steps in the [manual configuration section](#manual-configuration)
 
-Visit the [project home page][7]
+    !!! Note
+        Often, the `clang-tools` package comes with a version number, e.g. `clang-tools-10`
+        Make sure to install the one with the highest number
 
-#### Windows
+    ** macOS **
 
-On Windows, CodeLite comes with a pre built binary of `clangd` configured and installed.
+    Like Windows, `clangd` in part of CodeLite bundle
 
-#### Linux
+=== "pylsp"
+    `pylsps` is installed via `pip`. For this, you will need to install the following:
 
-On Linux machines, you will need to manually install `clangd` via your package manager.
+    - python 3 installed
+    - pip3 installed
 
-On `Ubuntu` and `Debian` it is usually part of the `clang-tools` package. So to install it, use the below code snippet:
+    ```bash
+    pip install python-lsp-server
+    ```
 
-```bash
-sudo apt-get update
-sudo apt-get install clang-tools
-```
+    Visit the [project home page][3]
 
-Once installed, follow the steps in the [manual configuration section](#manual-configuration)
+=== "TypeScript"
+    - Install [`node`][11]
+    - Type:
 
-!!! Note
-    Often, the `clang-tools` package comes with a version number, e.g. `clang-tools-10`
-    Make sure to install the one with the highest number 
+    ```bash
+    npm install -g typescript typescript-language-server
+    ```
 
-#### macOS
+    If you choose to [configure it manually][12] in CodeLite, use this as the command:
 
-Like Windows, `clangd` in part of CodeLite bundle
+    ```bash
+    typescript-language-server --stdio
+    ```
 
-### Install `pylsp` (python)
----
+=== "rust-analyzer"
+    `rust-analyzer` is the recommended LSP for the rust language. To install it, follow these steps:
 
-`pylsps` is installed via `pip`. For this, you will need to install the following:
+    - [Install rust][13]
+    - Open a terminal and type:
+        - On `macOS` and `Linux`:
+            ```bash
+            rustup update
+            rustup +nightly component add rust-src rust-analyzer-preview
+            ```
+        - On `Windows`:
+            ```batch
+            %USERPROFILE%\.cargo\bin\rustup update
+            %USERPROFILE%\.cargo\bin\rustup +nightly component add rust-src rust-analyzer-preview
+            ```
 
-- python 3 installed
-- pip3 installed
+    You should now have `rust-analyzer` installed under `rustup` local folder, for example, under `Linux` or `macOS`,
+    it can be found here:
 
-```bash
-pip install python-lsp-server
-```
+    ```bash
+    TARGET=$(rustup target list|grep installed|cut -d" " -f1)
+    $HOME/.rustup/toolchains/nightly-$TARGET/bin/rust-analyzer
+    ```
 
-Visit the [project home page][3]
+=== "rls"
+    `rls` is yet another rust language server, but less popular than `rust-analzyer`
 
-### Install `typescript-language-server`
----
+    To install it:
 
-- Install [`node`][11]
-- Type:
-
-```bash
-npm install -g typescript typescript-language-server
-```
-
-If you choose to [configure it manually][12] in CodeLite, use this as the command:
-
-```bash
-typescript-language-server --stdio
-```
-
-
-### Install `rust-analyzer`
----
-
-!!! Note
-    `rust-analyzer` can be installed via the `nightly` channel
-
-- Install [`rustup`][5]
-- Type:
-
-!!! Important
-    Under Windows, make sure to install the `x86_64-pc-windows-gnu` version of `rust`
-
-```bash
-rustup update
-rustup +nightly component add rust-src rust-analyzer-preview
-```
-
-You should now have `rust-analyzer` installed under `rustup` local folder, for example, under `Linux` or `macOS`,
-it can be found here:
-
-```bash
-TARGET=$(rustup target list|grep installed|cut -d" " -f1)
-$HOME/.rustup/toolchains/nightly-$TARGET/bin/rust-analyzer
-```
-
-### Install `rls` (rust)
---- 
-
-- Install [`rustup`][5]
-- Then type:
-
-```bash
-rustup update
-rustup component add rls rust-analysis rust-src
-```
-
-Visit the [project home page][8]
+    - [Install rust][13]
+    - Open a terminal and type:
+        - On `macOS` and `Linux`:
+            ```bash
+            rustup update
+            rustup component add rls rust-analysis rust-src
+            ```
+        - On `Windows`:
+            ```batch
+            %USERPROFILE%\.cargo\bin\rustup update
+            %USERPROFILE%\.cargo\bin\rustup component add rls rust-analysis rust-src
+            ```
+    Visit the [project home page][8]
 
 !!! Important
     The `rls` language server must be started from the cargo project directory
     i.e. the location of the `Cargo.toml` file
 
+
+## Automatic detection
+---
+
+Once you have installed your favourite Language Servers, its time to tell CodeLite about it:
+
+- Goto `Plugins` &#8594;  `Language Server` &#8594; `Settings`
+- Click on the `Scan` button
+
 ## Manual configuration
 ---
 
-To manually configuring new LSP in CodeLite follow these steps:
+The above instructions are for the most common language servers. However, you can install
+and configure any server the follows the LSP protocol. You will however, need to do this manually:
 
 - Install the LSP you want on your computer. You can [visit this site][2] to get a complete list of all LSP implementations out there
 - From the main menu, `Plugins` &#8594; `Language Server` &#8594; `Settings...`
-- You can use the `Scan` button to see if CodeLite supports auto detection of your LSP. If you are in luck, then you can skip the rest of the steps
 - Click on the `Add` button
 - In the dialog that opens, fill the mandatory fields:
 
-Field   | Mandatory | Description 
+Field   | Mandatory | Description
 --------|-----------|-------------
 Enabled | &#10003;        | Is this LSP enabled?
 Name    | &#10003;       | Provide a descriptive name for this LSP
@@ -166,7 +154,7 @@ C++ by ctags |C/C++ |75
 PHP plugin |PHP |50
 WebTools |XML |50
 WebTools |CSS |50
-WebTools |JavaScript |50 
+WebTools |JavaScript |50
 
 Lets explain how the priority resolves conflicts for `C++`:
 
@@ -200,7 +188,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 - and somewhere at the bottom of the top level `CMakeLists.txt` file, add this command:
 
 ```cmake
-execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json 
+execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json
                 ${CMAKE_SOURCE_DIR}/compile_commands.json)
 ```
 
@@ -218,3 +206,5 @@ this way, after running `cmake`, you will get an up-to-date `compile_commands.js
 [10]: #install-typescript-language-server
 [11]: https://nodejs.org
 [12]: #manual-configuration
+[13]: /misc/install_rust
+[14]: #automatic-detection

@@ -22,10 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/settings.h>
 #include "progressctrl.h"
-#include <wx/dcbuffer.h>
+
 #include "drawingutils.h"
+
+#include <wx/dcbuffer.h>
+#include <wx/settings.h>
 
 ProgressCtrl::ProgressCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize&, long style)
     : wxPanel(parent, id, pos, wxDefaultSize, style)

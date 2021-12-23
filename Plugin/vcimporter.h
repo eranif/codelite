@@ -25,13 +25,14 @@
 #ifndef VCIMPORTER_H
 #define VCIMPORTER_H
 
-#include "wx/string.h"
-#include <wx/wfstream.h>
-#include <wx/txtstrm.h>
-#include "map"
-#include "project_settings.h"
-#include "project.h"
 #include "codelite_exports.h"
+#include "map"
+#include "project.h"
+#include "project_settings.h"
+#include "wx/string.h"
+
+#include <wx/txtstrm.h>
+#include <wx/wfstream.h>
 
 struct VcProjectData {
     wxString name;

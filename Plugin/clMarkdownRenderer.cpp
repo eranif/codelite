@@ -1,5 +1,6 @@
-#include "ColoursAndFontsManager.h"
 #include "clMarkdownRenderer.hpp"
+
+#include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
 #include "file_logger.h"

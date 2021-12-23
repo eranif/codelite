@@ -34,6 +34,7 @@
 #include "serialized_object.h"
 #include "singleton.h"
 #include "wx/xml/xml.h"
+
 #include <vector>
 #include <wx/filename.h>
 

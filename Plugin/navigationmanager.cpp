@@ -22,9 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "navigationmanager.h"
+
 #include "codelite_events.h"
 #include "event_notifier.h"
-#include "navigationmanager.h"
 
 NavMgr::NavMgr() { EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NavMgr::OnWorkspaceClosed, this); }
 

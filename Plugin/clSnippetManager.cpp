@@ -1,4 +1,5 @@
 #include "clSnippetManager.hpp"
+
 #include <algorithm>
 
 clSnippetManager::clSnippetManager() {}
@@ -13,7 +14,9 @@ clSnippetManager& clSnippetManager::Get()
 
 void clSnippetManager::Insert(wxStyledTextCtrl* ctrl, const wxString& snippet)
 {
-    if(!ctrl) { return; }
+    if(!ctrl) {
+        return;
+    }
     // Support | for indicating where the caret should be placed
     int caret = snippet.Index('|');
     if(caret != wxNOT_FOUND) {

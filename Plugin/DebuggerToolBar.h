@@ -1,11 +1,12 @@
 #ifndef DEBUGGERTOOLBAR_H
 #define DEBUGGERTOOLBAR_H
 
-#include <wx/minifram.h>
 #include "codelite_exports.h"
+
 #include <wx/frame.h>
-#include <wx/popupwin.h>
+#include <wx/minifram.h>
 #include <wx/panel.h>
+#include <wx/popupwin.h>
 
 class clToolBar;
 class WXDLLIMPEXP_SDK Gripper : public wxPanel

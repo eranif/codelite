@@ -2,10 +2,10 @@
 #define VIRTUALDIRECTORYCOLOUR_H
 
 #include <codelite_exports.h>
-#include <wx/string.h>
-#include <wx/colour.h>
 #include <list>
 #include <map>
+#include <wx/colour.h>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_SDK FolderColour
 {
@@ -47,8 +47,7 @@ public:
     /**
      * @brief Search the list for best match for a given path
      */
-    static const FolderColour& FindForPath(const FolderColour::List_t& sortedList,
-                                                     const wxString& path);
+    static const FolderColour& FindForPath(const FolderColour::List_t& sortedList, const wxString& path);
 };
 
 #endif // VIRTUALDIRECTORYCOLOUR_H

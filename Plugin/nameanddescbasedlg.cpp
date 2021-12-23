@@ -5,90 +5,91 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "nameanddescbasedlg.h"
-#include "codelite_exports.h"
 
+#include "codelite_exports.h"
 
 // Declare the bitmap loading function
 extern void wxC934BInitBitmapResources();
 
 static bool bBitmapLoaded = false;
 
-
-NameAndDescBaseDlg::NameAndDescBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+NameAndDescBaseDlg::NameAndDescBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+                                       const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if ( !bBitmapLoaded ) {
+    if(!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC934BInitBitmapResources();
         bBitmapLoaded = true;
     }
-    
+
     bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
-    
+
     fgSizer1 = new wxFlexGridSizer(2, 2, 0, 0);
-    fgSizer1->SetFlexibleDirection( wxBOTH );
-    fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    fgSizer1->SetFlexibleDirection(wxBOTH);
+    fgSizer1->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer1->AddGrowableCol(1);
-    
-    bSizer1->Add(fgSizer1, 0, wxALL|wxEXPAND, 5);
-    
+
+    bSizer1->Add(fgSizer1, 0, wxALL | wxEXPAND, 5);
+
     m_staticText3 = new wxStaticText(this, wxID_ANY, _("Project name:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer1->Add(m_staticText3, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
+    fgSizer1->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, 5);
+
     m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_textCtrlName->SetToolTip(_("Give a name to the template"));
     m_textCtrlName->SetFocus();
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_textCtrlName->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_textCtrlName, 0, wxALL|wxEXPAND, 5);
-    
+#endif
+
+    fgSizer1->Add(m_textCtrlName, 0, wxALL | wxEXPAND, 5);
+
     m_staticText4 = new wxStaticText(this, wxID_ANY, _("Project category:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    fgSizer1->Add(m_staticText4, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
-    
+
+    fgSizer1->Add(m_staticText4, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, 5);
+
     wxArrayString m_choiceTypeArr;
     m_choiceType = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), m_choiceTypeArr, 0);
     m_choiceType->SetToolTip(_("Choose a category for this template"));
-    #if wxVERSION_NUMBER >= 3000
+#if wxVERSION_NUMBER >= 3000
     m_choiceType->SetHint(wxT(""));
-    #endif
-    
-    fgSizer1->Add(m_choiceType, 0, wxALL|wxEXPAND, 5);
-    
+#endif
+
+    fgSizer1->Add(m_choiceType, 0, wxALL | wxEXPAND, 5);
+
     bSizer3 = new wxBoxSizer(wxVERTICAL);
-    
-    bSizer1->Add(bSizer3, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizer1->Add(bSizer3, 1, wxALL | wxEXPAND, 5);
+
     m_staticText2 = new wxStaticText(this, wxID_ANY, _("Description:"), wxDefaultPosition, wxSize(-1, -1), 0);
-    
-    bSizer3->Add(m_staticText2, 0, wxLEFT|wxRIGHT|wxTOP, 5);
-    
-    m_textCtrlDescription = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2|wxTE_MULTILINE);
+
+    bSizer3->Add(m_staticText2, 0, wxLEFT | wxRIGHT | wxTOP, 5);
+
+    m_textCtrlDescription =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxSize(-1, -1), wxTE_RICH2 | wxTE_MULTILINE);
     m_textCtrlDescription->SetToolTip(_("Set a description to this template"));
-    
-    bSizer3->Add(m_textCtrlDescription, 1, wxALL|wxEXPAND, 5);
-    
+
+    bSizer3->Add(m_textCtrlDescription, 1, wxALL | wxEXPAND, 5);
+
     m_stdBtnSizer2 = new wxStdDialogButtonSizer();
-    
-    bSizer1->Add(m_stdBtnSizer2, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5);
-    
+
+    bSizer1->Add(m_stdBtnSizer2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 5);
+
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer2->AddButton(m_buttonOK);
-    
+
     m_button6 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
     m_stdBtnSizer2->AddButton(m_button6);
     m_stdBtnSizer2->Realize();
-    
+
     SetName(wxT("NameAndDescBaseDlg"));
-    SetSizeHints(-1,-1);
-    if ( GetSizer() ) {
-         GetSizer()->Fit(this);
+    SetSizeHints(-1, -1);
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
     }
     CentreOnParent(wxBOTH);
 #if wxVERSION_NUMBER >= 2900
@@ -100,6 +101,4 @@ NameAndDescBaseDlg::NameAndDescBaseDlg(wxWindow* parent, wxWindowID id, const wx
 #endif
 }
 
-NameAndDescBaseDlg::~NameAndDescBaseDlg()
-{
-}
+NameAndDescBaseDlg::~NameAndDescBaseDlg() {}

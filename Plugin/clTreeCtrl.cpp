@@ -1,10 +1,12 @@
 #include "clTreeCtrl.h"
+
 #include "clRowEntry.h"
 #include "clScrollBar.h"
 #include "clTreeCtrlModel.h"
 #include "clTreeNodeVisitor.h"
 #include "drawingutils.h"
 #include "macros.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>

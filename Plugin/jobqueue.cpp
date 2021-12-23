@@ -23,25 +23,23 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "jobqueue.h"
+
 #include "job.h"
 
 JobQueueWorker::JobQueueWorker(wxMessageQueue<Job*>* queue)
     : wxThread(wxTHREAD_JOINABLE)
-    , m_queue( queue )
+    , m_queue(queue)
 {
 }
 
-JobQueueWorker::~JobQueueWorker()
-{
-}
+JobQueueWorker::~JobQueueWorker() {}
 void JobQueueWorker::Stop()
 {
-    if ( IsAlive() ) {
+    if(IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
 
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);
-
     }
 }
 
@@ -54,14 +52,14 @@ void JobQueueWorker::Start(int priority)
 
 void* JobQueueWorker::Entry()
 {
-    while ( !TestDestroy() ) {
-        Job *job (NULL);
-        if ( (m_queue->ReceiveTimeout(50, job) == wxMSGQUEUE_NO_ERROR) && job ) {
+    while(!TestDestroy()) {
+        Job* job(NULL);
+        if((m_queue->ReceiveTimeout(50, job) == wxMSGQUEUE_NO_ERROR) && job) {
 
             // Call user's implementation for processing request
-            ProcessJob( job );
+            ProcessJob(job);
 
-            wxThread::Sleep(10);  // Allow other threads to work as well
+            wxThread::Sleep(10); // Allow other threads to work as well
             delete job;
             job = NULL;
             continue; // to avoid the sleep
@@ -70,9 +68,9 @@ void* JobQueueWorker::Entry()
     return NULL;
 }
 
-void JobQueueWorker::ProcessJob(Job *job)
+void JobQueueWorker::ProcessJob(Job* job)
 {
-    if ( job ) {
+    if(job) {
         job->Process(this);
     }
 }
@@ -81,30 +79,25 @@ void JobQueueWorker::ProcessJob(Job *job)
 // JobQueue
 //--------------------------------------------------------------
 
-JobQueue::JobQueue()
-{
-}
+JobQueue::JobQueue() {}
 
 JobQueue::~JobQueue()
 {
     // Clear the queue and release it memory
     Job* pJob(NULL);
-    while ( m_queue.ReceiveTimeout(1, pJob) == wxMSGQUEUE_NO_ERROR ) {
-        wxDELETE( pJob );
+    while(m_queue.ReceiveTimeout(1, pJob) == wxMSGQUEUE_NO_ERROR) {
+        wxDELETE(pJob);
     }
 }
 
-void JobQueue::PushJob(Job *job)
-{
-    m_queue.Post( job );
-}
+void JobQueue::PushJob(Job* job) { m_queue.Post(job); }
 
 void JobQueue::Start(size_t poolSize, int priority)
 {
     size_t maxPoolSize = poolSize > 250 ? 250 : poolSize;
-    for(size_t i=0; i<maxPoolSize; i++) {
-        //create new thread
-        JobQueueWorker *worker = new JobQueueWorker( &m_queue );
+    for(size_t i = 0; i < maxPoolSize; i++) {
+        // create new thread
+        JobQueueWorker* worker = new JobQueueWorker(&m_queue);
         worker->Start(priority);
         m_threads.push_back(worker);
     }
@@ -112,12 +105,12 @@ void JobQueue::Start(size_t poolSize, int priority)
 
 void JobQueue::Stop()
 {
-    //first loop and stop all running threads
-    for(size_t i=0; i<m_threads.size(); i++) {
-        JobQueueWorker *worker = m_threads.at(i);
-        //stop it
+    // first loop and stop all running threads
+    for(size_t i = 0; i < m_threads.size(); i++) {
+        JobQueueWorker* worker = m_threads.at(i);
+        // stop it
         worker->Stop();
-        //delete it
+        // delete it
         delete worker;
     }
     m_threads.clear();
@@ -128,22 +121,15 @@ void JobQueue::Stop()
 //-----------------------------------------------------
 JobQueue* JobQueueSingleton::ms_instance = new JobQueue();
 
-JobQueueSingleton::JobQueueSingleton()
-{
-}
+JobQueueSingleton::JobQueueSingleton() {}
 
-JobQueueSingleton::~JobQueueSingleton()
-{
-}
+JobQueueSingleton::~JobQueueSingleton() {}
 
-JobQueue* JobQueueSingleton::Instance()
-{
-    return ms_instance;
-}
+JobQueue* JobQueueSingleton::Instance() { return ms_instance; }
 
 void JobQueueSingleton::Release()
 {
-    if (ms_instance) {
+    if(ms_instance) {
         delete ms_instance;
     }
     ms_instance = 0;

@@ -24,10 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_aui_tb_are.h"
+
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 
@@ -62,7 +64,9 @@ void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 void CLMainAuiTBArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
 {
 #ifdef __WXGTK3__
-    if(!item.GetBitmap().IsOk()) { return; }
+    if(!item.GetBitmap().IsOk()) {
+        return;
+    }
 #endif
     wxAuiDefaultToolBarArt::DrawButton(dc, wnd, item, rect);
 }
@@ -70,7 +74,9 @@ void CLMainAuiTBArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem&
 void CLMainAuiTBArt::DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
 {
 #ifdef __WXGTK3__
-    if(!item.GetBitmap().IsOk()) { return; }
+    if(!item.GetBitmap().IsOk()) {
+        return;
+    }
 #endif
     wxAuiDefaultToolBarArt::DrawDropDownButton(dc, wnd, item, rect);
 }

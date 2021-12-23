@@ -27,6 +27,7 @@
 #define SFTPITEMCOMPARATOR_H
 
 #include "codelite_exports.h"
+
 #include <vector>
 #include <wx/treectrl.h>
 

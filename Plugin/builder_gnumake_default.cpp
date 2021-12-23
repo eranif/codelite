@@ -22,29 +22,30 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "event_notifier.h"
-#include "fileextmanager.h"
-#include "project.h"
-#include <wx/app.h>
-#include <wx/msgdlg.h>
+#include "builder_gnumake_default.h"
 
 #include "StringUtils.h"
 #include "build_settings_config.h"
-#include "builder_gnumake_default.h"
 #include "buildmanager.h"
 #include "cl_command_event.h"
 #include "configuration_mapping.h"
 #include "dirsaver.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
+#include "event_notifier.h"
 #include "evnvarlist.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "macros.h"
+#include "project.h"
 #include "wx/sstream.h"
 #include "wx/tokenzr.h"
+
 #include <algorithm>
+#include <wx/app.h>
+#include <wx/msgdlg.h>
 #include <wx/stopwatch.h>
 
 BuilderGnuMake::BuilderGnuMake()

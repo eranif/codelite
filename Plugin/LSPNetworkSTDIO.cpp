@@ -1,6 +1,7 @@
+#include "LSPNetworkSTDIO.h"
+
 #include "ChildProcess.h"
 #include "JSON.h"
-#include "LSPNetworkSTDIO.h"
 #include "asyncprocess.h"
 #include "cl_exception.h"
 #include "clcommandlineparser.h"
@@ -8,6 +9,7 @@
 #include "file_logger.h"
 #include "processreaderthread.h"
 #include "sftp_settings.h"
+
 #include <sstream>
 
 using namespace std;

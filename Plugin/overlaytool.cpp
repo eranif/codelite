@@ -23,15 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/dcmemory.h>
 #include "overlaytool.h"
-#include <wx/xrc/xmlres.h>
-#include <wx/settings.h>
+
 #include "bitmap_loader.h"
-#include "wx/rawbmp.h"
 #include "drawingutils.h"
 #include "globals.h"
 #include "imanager.h"
+#include "wx/rawbmp.h"
+
+#include <wx/dcmemory.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
 
 wxBitmap OverlayTool::ms_bmpOK;
 wxBitmap OverlayTool::ms_bmpConflict;

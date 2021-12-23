@@ -1,14 +1,15 @@
 #ifndef CLNODEJS_H
 #define CLNODEJS_H
 
-#include <wx/event.h>
-#include <wx/string.h>
-#include <wx/filename.h>
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+
 #include <unordered_map>
+#include <wx/event.h>
+#include <wx/filename.h>
 #include <wx/process.h>
+#include <wx/string.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_NODE_COMMAND_TERMINATED, clProcessEvent);
 

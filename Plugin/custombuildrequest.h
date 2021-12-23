@@ -26,9 +26,9 @@
 #ifndef __custombuildrequest__
 #define __custombuildrequest__
 
-#include "shell_command.h"
 #include "build_config.h"
 #include "codelite_exports.h"
+#include "shell_command.h"
 
 class WXDLLIMPEXP_SDK CustomBuildRequest : public ShellCommand
 {

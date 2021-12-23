@@ -1,8 +1,10 @@
-#include "Notebook.h"
 #include "NotebookNavigationDlg.h"
+
+#include "Notebook.h"
 #include "bitmap_loader.h"
 #include "file_logger.h"
 #include "globals.h"
+
 #include <algorithm>
 #include <imanager.h>
 #include <list>

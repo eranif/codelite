@@ -2,9 +2,10 @@
 #define CLGENERICSTCSTYLER_H
 
 #include "codelite_exports.h"
+
+#include <algorithm>
 #include <tuple>
 #include <vector>
-#include <algorithm>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
@@ -12,8 +13,8 @@
 class WXDLLIMPEXP_SDK clGenericSTCStyler : public wxEvtHandler
 {
     wxStyledTextCtrl* m_ctrl;
-    std::vector<std::pair<wxString, int> > m_words;
-    std::vector<std::tuple<int, wxColour, wxColour> > m_styleInfo;
+    std::vector<std::pair<wxString, int>> m_words;
+    std::vector<std::tuple<int, wxColour, wxColour>> m_styleInfo;
     int m_nextAvailStyle;
 
 public:

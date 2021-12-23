@@ -2,8 +2,9 @@
 #define CLMAINFRAMEHELPER_H
 
 #include "codelite_exports.h"
-#include <wx/event.h>
 #include "smart_ptr.h"
+
+#include <wx/event.h>
 
 class clMainFrame;
 class clDockingManager;
@@ -23,7 +24,7 @@ public:
 
     void SetDebuggerFeatures(size_t debuggerFeatures) { this->m_debuggerFeatures = debuggerFeatures; }
     size_t GetDebuggerFeatures() const { return m_debuggerFeatures; }
-    
+
     /**
      * @brief is the toolbar visible?
      */

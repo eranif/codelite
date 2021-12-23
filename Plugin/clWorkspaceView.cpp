@@ -1,7 +1,9 @@
 #include "clWorkspaceView.h"
+
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "macros.h"
+
 #include <algorithm>
 
 clWorkspaceView::clWorkspaceView(wxSimplebook* book)

@@ -35,6 +35,7 @@
 #include "fileextmanager.h"
 #include "openresourcedialogbase.h"
 #include "wxStringHash.h"
+
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h>

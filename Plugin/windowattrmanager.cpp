@@ -23,8 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editor_config.h"
 #include "windowattrmanager.h"
+
+#include "editor_config.h"
+
 #include <wx/persist.h>
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
@@ -32,7 +34,9 @@
 
 void WindowAttrManager::Load(wxTopLevelWindow* win)
 {
-    if(win->GetName().IsEmpty()) { return; }
+    if(win->GetName().IsEmpty()) {
+        return;
+    }
 #if 0
     // Is this object already registered?
     if(wxPersistenceManager::Get().Find(win)) {
@@ -43,12 +47,15 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
     }
     DoLoad(win, win->GetName(), 0);
 #endif
-    if(win->GetParent()) { win->CentreOnParent(); }
+    if(win->GetParent()) {
+        win->CentreOnParent();
+    }
 }
 
 void WindowAttrManager::DoLoad(wxWindow* win, const wxString& parentName, int depth)
 {
-    if(!win) return;
+    if(!win)
+        return;
     int childIndex(0);
     wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
     while(pclNode) {

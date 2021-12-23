@@ -27,6 +27,7 @@
 #define __memoryview__
 
 #include "memoryviewbase.h"
+
 #include <codelite_exports.h>
 
 /** Implementing MemoryViewBase */
@@ -42,9 +43,9 @@ protected:
     void OnEvaluateUI(wxUpdateUIEvent& event);
     void OnUpdate(wxCommandEvent& e);
     void OnUpdateUI(wxUpdateUIEvent& event);
-    
+
     void UpdateDebuggerPane();
-    
+
 public:
     /** Constructor */
     MemoryView(wxWindow* parent);

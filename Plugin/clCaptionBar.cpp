@@ -1,4 +1,5 @@
 #include "clCaptionBar.hpp"
+
 #include "clMenuBar.hpp"
 #include "drawingutils.h"
 #include "wx/defs.h"

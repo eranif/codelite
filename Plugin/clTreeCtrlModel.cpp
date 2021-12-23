@@ -1,5 +1,7 @@
-#include "clTreeCtrl.h"
 #include "clTreeCtrlModel.h"
+
+#include "clTreeCtrl.h"
+
 #include <algorithm>
 #include <wx/dc.h>
 #include <wx/settings.h>
@@ -619,11 +621,10 @@ clRowEntry* clTreeCtrlModel::GetLastVisibleItem() const
     if(!item) {
         return nullptr;
     }
-    
+
     // get the last child
     while(item && item->HasChildren() && item->IsExpanded()) {
         item = item->GetLastChild();
     }
     return item;
 }
-

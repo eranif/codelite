@@ -28,6 +28,7 @@
 #include "clColours.h"
 #include "cl_command_event.h"
 #include "wxcrafter_plugin.h"
+
 #include <wx/event.h>
 
 class clTreeCtrlPanelDefaultPage : public clTreeCtrlPanelDefaultPageBase

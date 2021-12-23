@@ -1,11 +1,13 @@
+#include "clThemedListCtrl.h"
+
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
 #include "clThemedCtrl.hpp"
-#include "clThemedListCtrl.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "lexer_configuration.h"
+
 #include <wx/settings.h>
 
 #ifdef __WXMSW__

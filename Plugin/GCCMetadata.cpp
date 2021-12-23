@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "GCCMetadata.hpp"
+
 #include "CxxPreProcessor.h"
 #include "clTempFile.hpp"
 #include "environmentconfig.h"
@@ -31,6 +32,7 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "procutils.h"
+
 #include <wx/dir.h>
 #include <wx/fileconf.h>
 #include <wx/tokenzr.h>

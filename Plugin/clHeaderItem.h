@@ -3,6 +3,7 @@
 
 #include "clColours.h"
 #include "codelite_exports.h"
+
 #include <vector>
 #include <wx/bitmap.h>
 #include <wx/gdicmn.h>

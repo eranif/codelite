@@ -1,4 +1,5 @@
 #include "clBitmapOverlayCtrl.h"
+
 #include "bitmap_loader.h"
 #include "globals.h"
 #include "imanager.h"

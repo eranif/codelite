@@ -30,6 +30,7 @@
 #include "entry.h"
 #include "wxCodeCompletionBoxBase.h"
 #include "wxCodeCompletionBoxEntry.hpp"
+
 #include <list>
 #include <vector>
 #include <wx/arrstr.h>

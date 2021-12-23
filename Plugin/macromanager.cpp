@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "macromanager.h"
+
 #include "IWorkspace.h"
 #include "build_config.h"
 #include "clFileSystemWorkspace.hpp"
@@ -30,9 +32,9 @@
 #include "environmentconfig.h"
 #include "globals.h"
 #include "imanager.h"
-#include "macromanager.h"
 #include "project.h"
 #include "workspace.h"
+
 #include <wx/regex.h>
 
 MacroManager::MacroManager() {}

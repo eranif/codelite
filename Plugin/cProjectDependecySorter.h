@@ -1,17 +1,17 @@
 #ifndef CPROJECTDEPENDECYSORTER_H
 #define CPROJECTDEPENDECYSORTER_H
 
+#include "cl_exception.h"
 #include "codelite_exports.h"
-#include <wx/arrstr.h>
+
 #include <unordered_map>
 #include <vector>
-#include "cl_exception.h"
+#include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK clProjectDependecySorter
 {
     enum eVisit { kNone, kTemp, kPerm };
-    struct Node
-    {
+    struct Node {
         eVisit marker;
         wxString name;
         std::vector<Node*> adjacents;
@@ -36,8 +36,7 @@ public:
      * @param buildOrder [output]
      * @return the build order. Throws clException in case of an error
      */
-    void GetProjectBuildOrder(const wxString& projectName, const wxString& configName,
-                              wxArrayString& buildOrder);
+    void GetProjectBuildOrder(const wxString& projectName, const wxString& configName, wxArrayString& buildOrder);
 };
 
 #endif // CPROJECTDEPENDECYSORTER_H

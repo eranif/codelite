@@ -1,5 +1,7 @@
 #include "clHeaderItem.h"
+
 #include "clScrolledPanel.h"
+
 #include <wx/dc.h>
 #include <wx/headercol.h>
 #include <wx/renderer.h>
@@ -47,7 +49,9 @@ void clHeaderItem::SetWidthValue(int width)
         EnableFlag(kHeaderColWidthFitHeader, true);
         return;
     default:
-        if(width < 0) { return; }
+        if(width < 0) {
+            return;
+        }
         EnableFlag(kHeaderColWidthMask, false);
         EnableFlag(kHeaderColWidthUser, true);
         break;
@@ -57,5 +61,7 @@ void clHeaderItem::SetWidthValue(int width)
 
 void clHeaderItem::UpdateWidth(int width)
 {
-    if(width >= 0) { m_rect.SetWidth(width); }
+    if(width >= 0) {
+        m_rect.SetWidth(width);
+    }
 }

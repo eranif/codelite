@@ -1,11 +1,9 @@
 #include "wxPNGAnimation.h"
+
 #include <wx/dcbuffer.h>
 
-wxPNGAnimation::wxPNGAnimation(wxWindow* parent,
-                               const wxBitmap& pngSprite,
-                               wxOrientation spriteOrientation,
-                               const wxSize& singleImageSize,
-                               wxWindowID id)
+wxPNGAnimation::wxPNGAnimation(wxWindow* parent, const wxBitmap& pngSprite, wxOrientation spriteOrientation,
+                               const wxSize& singleImageSize, wxWindowID id)
     : wxPanel(parent, id)
     , m_index(0)
 {
@@ -31,7 +29,7 @@ wxPNGAnimation::wxPNGAnimation(wxWindow* parent,
             m_bitmaps.push_back(bmp);
         }
     }
-    
+
     Bind(wxEVT_PAINT, &wxPNGAnimation::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &wxPNGAnimation::OnEraseBG, this);
     Bind(wxEVT_TIMER, &wxPNGAnimation::OnTimer, this, m_timer->GetId());

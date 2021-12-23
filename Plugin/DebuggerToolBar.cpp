@@ -1,4 +1,5 @@
 #include "DebuggerToolBar.h"
+
 #include "bitmap_loader.h"
 #include "clToolBar.h"
 #include "cl_config.h"
@@ -8,6 +9,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "windowattrmanager.h"
+
 #include <wx/dcbuffer.h>
 #include <wx/frame.h>
 #include <wx/xrc/xmlres.h>

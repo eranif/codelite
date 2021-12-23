@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "project.h"
+
 #include "GCCMetadata.hpp"
 #include "ICompilerLocator.h"
 #include "asyncprocess.h"
@@ -43,6 +44,7 @@
 #include "wxArrayStringAppender.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/ffile.h>

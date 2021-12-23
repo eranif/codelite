@@ -3,6 +3,7 @@
 
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
+
 #include <codelite_exports.h>
 #include <unordered_map>
 

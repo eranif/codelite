@@ -1,12 +1,14 @@
+#include "clBootstrapWizard.h"
+
 #include "ColoursAndFontsManager.h"
 #include "CompilersDetectorManager.h"
 #include "build_settings_config.h"
-#include "clBootstrapWizard.h"
 #include "drawingutils.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
 #include "plugindata.h"
+
 #include <algorithm>
 #include <vector>
 #include <wx/dcmemory.h>
@@ -186,10 +188,7 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent, bool firstTime)
 #endif
 }
 
-clBootstrapWizard::~clBootstrapWizard()
-{
-    clConfig::Get().Write("DevelopmentProfile", m_developmentProfile);
-}
+clBootstrapWizard::~clBootstrapWizard() { clConfig::Get().Write("DevelopmentProfile", m_developmentProfile); }
 
 void clBootstrapWizard::SetSelectedTheme(const wxString& themeName)
 {
@@ -223,8 +222,7 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
         if(lexer) {
             lexer->Apply(m_stc24, true);
         }
-    };
-    break;
+    }; break;
     case 1: // Dark
         SetSelectedTheme(DARK_THEME);
         break;

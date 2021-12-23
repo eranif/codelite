@@ -35,29 +35,29 @@
 // Licence:     wxWindows
 /////////////////////////////////////////////////////////////////////////////
 
-
 #ifndef CLTREELISTCTRL_H
 #define CLTREELISTCTRL_H
 
-#include <wx/treectrl.h>
-#include <wx/control.h>
-#include <wx/pen.h>
-#include <wx/listctrl.h> // for wxListEvent
 #include "codelite_exports.h"
+
+#include <wx/control.h>
+#include <wx/listctrl.h> // for wxListEvent
+#include <wx/pen.h>
+#include <wx/treectrl.h>
 
 class clTreeListItem;
 class clTreeListHeaderWindow;
 class clTreeListMainWindow;
 
 #define wxTR_COLUMN_LINES 0x1000 // put border around items
-#define wxTR_VIRTUAL      0x4000 // The application provides items text on demand.
+#define wxTR_VIRTUAL 0x4000      // The application provides items text on demand.
 
 // Using this typedef removes an ambiguity when calling Remove()
 #ifdef __WXMSW__
 #if !wxCHECK_VERSION(2, 5, 0)
 typedef long wxTreeItemIdValue;
 #else
-typedef void *wxTreeItemIdValue;
+typedef void* wxTreeItemIdValue;
 #endif
 #endif
 
@@ -65,19 +65,15 @@ typedef void *wxTreeItemIdValue;
 // wxTreeListColumnAttrs
 //-----------------------------------------------------------------------------
 
-enum {
-    DEFAULT_COL_WIDTH = 100
-};
+enum { DEFAULT_COL_WIDTH = 100 };
 
-class WXDLLIMPEXP_SDK clTreeListColumnInfo: public wxObject {
+class WXDLLIMPEXP_SDK clTreeListColumnInfo : public wxObject
+{
 
 public:
-    clTreeListColumnInfo (const wxString &text = wxEmptyString,
-                          int width = DEFAULT_COL_WIDTH,
-                          int flag = wxALIGN_LEFT,
-                          int image = -1,
-                          bool shown = true,
-                          bool edit = false) {
+    clTreeListColumnInfo(const wxString& text = wxEmptyString, int width = DEFAULT_COL_WIDTH, int flag = wxALIGN_LEFT,
+                         int image = -1, bool shown = true, bool edit = false)
+    {
         m_text = text;
         m_width = width;
         m_flag = flag;
@@ -87,7 +83,8 @@ public:
         m_edit = edit;
     }
 
-    clTreeListColumnInfo (const clTreeListColumnInfo& other) {
+    clTreeListColumnInfo(const clTreeListColumnInfo& other)
+    {
         m_text = other.m_text;
         m_width = other.m_width;
         m_flag = other.m_flag;
@@ -101,26 +98,53 @@ public:
 
     // get/set
     wxString GetText() const { return m_text; }
-    clTreeListColumnInfo& SetText (const wxString& text) { m_text = text; return *this; }
+    clTreeListColumnInfo& SetText(const wxString& text)
+    {
+        m_text = text;
+        return *this;
+    }
 
     int GetWidth() const { return m_width; }
-    clTreeListColumnInfo& SetWidth (int width) { m_width = width; return *this; }
+    clTreeListColumnInfo& SetWidth(int width)
+    {
+        m_width = width;
+        return *this;
+    }
 
     int GetAlignment() const { return m_flag; }
-    clTreeListColumnInfo& SetAlignment (int flag) { m_flag = flag; return *this; }
+    clTreeListColumnInfo& SetAlignment(int flag)
+    {
+        m_flag = flag;
+        return *this;
+    }
 
     int GetImage() const { return m_image; }
-    clTreeListColumnInfo& SetImage (int image) { m_image = image; return *this; }
+    clTreeListColumnInfo& SetImage(int image)
+    {
+        m_image = image;
+        return *this;
+    }
 
     int GetSelectedImage() const { return m_selected_image; }
-    clTreeListColumnInfo& SetSelectedImage (int image) { m_selected_image = image; return *this; }
+    clTreeListColumnInfo& SetSelectedImage(int image)
+    {
+        m_selected_image = image;
+        return *this;
+    }
 
     bool IsEditable() const { return m_edit; }
-    clTreeListColumnInfo& SetEditable (bool edit)
-        { m_edit = edit; return *this; }
+    clTreeListColumnInfo& SetEditable(bool edit)
+    {
+        m_edit = edit;
+        return *this;
+    }
 
     bool IsShown() const { return m_shown; }
-    clTreeListColumnInfo& SetShown(bool shown) { m_shown = shown; return *this; }
+    clTreeListColumnInfo& SetShown(bool shown)
+    {
+        m_shown = shown;
+        return *this;
+    }
 
 private:
     wxString m_text;
@@ -139,13 +163,13 @@ private:
 // modes for navigation
 const int wxTL_MODE_NAV_FULLTREE = 0x0000; // default
 const int wxTL_MODE_NAV_EXPANDED = 0x0001;
-const int wxTL_MODE_NAV_VISIBLE  = 0x0002;
-const int wxTL_MODE_NAV_LEVEL    = 0x0004;
+const int wxTL_MODE_NAV_VISIBLE = 0x0002;
+const int wxTL_MODE_NAV_LEVEL = 0x0004;
 
 // modes for FindItem
-const int wxTL_MODE_FIND_EXACT   = 0x0000; // default
+const int wxTL_MODE_FIND_EXACT = 0x0000; // default
 const int wxTL_MODE_FIND_PARTIAL = 0x0010;
-const int wxTL_MODE_FIND_NOCASE  = 0x0020;
+const int wxTL_MODE_FIND_NOCASE = 0x0020;
 
 // additional flag for HitTest
 const int wxTREE_HITTEST_ONITEMCOLUMN = 0x2000;
@@ -153,37 +177,37 @@ extern WXDLLIMPEXP_SDK const wxChar* clTreeListCtrlNameStr;
 
 class WXDLLIMPEXP_SDK clTreeListCtrl : public wxControl
 {
-friend class clTreeListHeaderWindow;
-friend class clTreeListMainWindow;
-friend class clTreeListItem;
+    friend class clTreeListHeaderWindow;
+    friend class clTreeListMainWindow;
+    friend class clTreeListItem;
+
 public:
     // creation
     // --------
     clTreeListCtrl()
-        : m_header_win(0), m_main_win(0), m_headerHeight(0)
-    {}
+        : m_header_win(0)
+        , m_main_win(0)
+        , m_headerHeight(0)
+    {
+    }
 
-    clTreeListCtrl(wxWindow *parent, wxWindowID id = -1,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = wxTR_DEFAULT_STYLE,
-               const wxValidator &validator = wxDefaultValidator,
-               const wxString& name = clTreeListCtrlNameStr )
-        : m_header_win(0), m_main_win(0), m_headerHeight(0)
+    clTreeListCtrl(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxDefaultSize, long style = wxTR_DEFAULT_STYLE,
+                   const wxValidator& validator = wxDefaultValidator, const wxString& name = clTreeListCtrlNameStr)
+        : m_header_win(0)
+        , m_main_win(0)
+        , m_headerHeight(0)
     {
         Create(parent, id, pos, size, style, validator, name);
     }
 
     virtual ~clTreeListCtrl() {}
 
-    bool Create(wxWindow *parent, wxWindowID id = -1,
-                const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
-                long style = wxTR_DEFAULT_STYLE,
-                const wxValidator &validator = wxDefaultValidator,
-                const wxString& name = clTreeListCtrlNameStr );
+    bool Create(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize, long style = wxTR_DEFAULT_STYLE,
+                const wxValidator& validator = wxDefaultValidator, const wxString& name = clTreeListCtrlNameStr);
 
-    void Refresh(bool erase=TRUE, const wxRect* rect=NULL);
+    void Refresh(bool erase = TRUE, const wxRect* rect = NULL);
     void SetFocus();
     // accessors
     // ---------
@@ -213,78 +237,70 @@ public:
     // Additionally, the application might choose to show a state icon
     // which corresponds to an app-defined item state (for example,
     // checked/unchecked) which are taken from the state image list.
-    wxImageList *GetImageList() const;
-    wxImageList *GetStateImageList() const;
-    wxImageList *GetButtonsImageList() const;
+    wxImageList* GetImageList() const;
+    wxImageList* GetStateImageList() const;
+    wxImageList* GetButtonsImageList() const;
 
-    void SetImageList(wxImageList *imageList);
-    void SetStateImageList(wxImageList *imageList);
-    void SetButtonsImageList(wxImageList *imageList);
-    void AssignImageList(wxImageList *imageList);
-    void AssignStateImageList(wxImageList *imageList);
-    void AssignButtonsImageList(wxImageList *imageList);
+    void SetImageList(wxImageList* imageList);
+    void SetStateImageList(wxImageList* imageList);
+    void SetButtonsImageList(wxImageList* imageList);
+    void AssignImageList(wxImageList* imageList);
+    void AssignStateImageList(wxImageList* imageList);
+    void AssignButtonsImageList(wxImageList* imageList);
 
     void SetToolTip(const wxString& tip);
-    void SetToolTip (wxToolTip *tip);
-    void SetItemToolTip(const wxTreeItemId& item, const wxString &tip);
+    void SetToolTip(wxToolTip* tip);
+    void SetItemToolTip(const wxTreeItemId& item, const wxString& tip);
 
     // Functions to work with columns
 
     // adds a column
-    void AddColumn (const wxString& text,
-                    int width = DEFAULT_COL_WIDTH,
-                    int flag = wxALIGN_LEFT,
-                    int image = -1,
-                    bool shown = true,
-                    bool edit = false) {
-        AddColumn (clTreeListColumnInfo (text, width, flag, image, shown, edit));
+    void AddColumn(const wxString& text, int width = DEFAULT_COL_WIDTH, int flag = wxALIGN_LEFT, int image = -1,
+                   bool shown = true, bool edit = false)
+    {
+        AddColumn(clTreeListColumnInfo(text, width, flag, image, shown, edit));
     }
-    void AddColumn (const clTreeListColumnInfo& colInfo);
+    void AddColumn(const clTreeListColumnInfo& colInfo);
 
     // inserts a column before the given one
-    void InsertColumn (int before,
-                       const wxString& text,
-                       int width = DEFAULT_COL_WIDTH,
-                       int flag = wxALIGN_LEFT,
-                       int image = -1,
-                       bool shown = true,
-                       bool edit = false) {
-        InsertColumn (before,
-                      clTreeListColumnInfo (text, width, flag, image, shown, edit));
+    void InsertColumn(int before, const wxString& text, int width = DEFAULT_COL_WIDTH, int flag = wxALIGN_LEFT,
+                      int image = -1, bool shown = true, bool edit = false)
+    {
+        InsertColumn(before, clTreeListColumnInfo(text, width, flag, image, shown, edit));
     }
-    void InsertColumn (int before, const clTreeListColumnInfo& colInfo);
+    void InsertColumn(int before, const clTreeListColumnInfo& colInfo);
 
     // deletes the given column - does not delete the corresponding column
-    void RemoveColumn (int column);
+    void RemoveColumn(int column);
 
     // returns the number of columns in the ctrl
     int GetColumnCount() const;
 
     // tells which column is the "main" one, i.e. the "threaded" one
-    void SetMainColumn (int column);
+    void SetMainColumn(int column);
     int GetMainColumn() const;
 
-    void SetColumn (int column, const clTreeListColumnInfo& colInfo);
-    clTreeListColumnInfo& GetColumn (int column);
-    const clTreeListColumnInfo& GetColumn (int column) const;
+    void SetColumn(int column, const clTreeListColumnInfo& colInfo);
+    clTreeListColumnInfo& GetColumn(int column);
+    const clTreeListColumnInfo& GetColumn(int column) const;
 
-    void SetColumnText (int column, const wxString& text);
-    wxString GetColumnText (int column) const;
+    void SetColumnText(int column, const wxString& text);
+    wxString GetColumnText(int column) const;
 
-    void SetColumnWidth (int column, int width);
-    int GetColumnWidth (int column) const;
+    void SetColumnWidth(int column, int width);
+    int GetColumnWidth(int column) const;
 
-    void SetColumnAlignment (int column, int flag);
-    int GetColumnAlignment (int column) const;
+    void SetColumnAlignment(int column, int flag);
+    int GetColumnAlignment(int column) const;
 
-    void SetColumnImage (int column, int image);
-    int GetColumnImage (int column) const;
+    void SetColumnImage(int column, int image);
+    int GetColumnImage(int column) const;
 
-    void SetColumnShown (int column, bool shown = true);
-    bool IsColumnShown (int column) const;
+    void SetColumnShown(int column, bool shown = true);
+    bool IsColumnShown(int column) const;
 
-    void SetColumnEditable (int column, bool edit = true);
-    bool IsColumnEditable (int column) const;
+    void SetColumnEditable(int column, bool edit = true);
+    bool IsColumnEditable(int column) const;
 
     // Functions to work with items.
 
@@ -292,43 +308,41 @@ public:
     // ---------
 
     // retrieve item's label (of the main column)
-    wxString GetItemText (const wxTreeItemId& item) const
-        { return GetItemText (item, GetMainColumn()); }
+    wxString GetItemText(const wxTreeItemId& item) const { return GetItemText(item, GetMainColumn()); }
     // retrieves item's label of the given column
-    wxString GetItemText (const wxTreeItemId& item, int column) const;
+    wxString GetItemText(const wxTreeItemId& item, int column) const;
 
     // get one of the images associated with the item (normal by default)
-    int GetItemImage (const wxTreeItemId& item,
-                      wxTreeItemIcon which = wxTreeItemIcon_Normal) const
-    { return GetItemImage (item, GetMainColumn(), which); }
-    int GetItemImage (const wxTreeItemId& item, int column,
-                      wxTreeItemIcon which = wxTreeItemIcon_Normal) const;
+    int GetItemImage(const wxTreeItemId& item, wxTreeItemIcon which = wxTreeItemIcon_Normal) const
+    {
+        return GetItemImage(item, GetMainColumn(), which);
+    }
+    int GetItemImage(const wxTreeItemId& item, int column, wxTreeItemIcon which = wxTreeItemIcon_Normal) const;
 
     // get the data associated with the item
-    wxTreeItemData *GetItemData (const wxTreeItemId& item) const;
+    wxTreeItemData* GetItemData(const wxTreeItemId& item) const;
 
-    bool GetItemBold (const wxTreeItemId& item) const;
-    wxColour GetItemTextColour (const wxTreeItemId& item) const;
-    wxColour GetItemBackgroundColour (const wxTreeItemId& item) const;
-    wxFont GetItemFont (const wxTreeItemId& item) const;
+    bool GetItemBold(const wxTreeItemId& item) const;
+    wxColour GetItemTextColour(const wxTreeItemId& item) const;
+    wxColour GetItemBackgroundColour(const wxTreeItemId& item) const;
+    wxFont GetItemFont(const wxTreeItemId& item) const;
 
     // modifiers
 
     // set item's label
-    void SetItemText (const wxTreeItemId& item, const wxString& text)
-        { SetItemText (item, GetMainColumn(), text); }
-    void SetItemText (const wxTreeItemId& item, int column, const wxString& text);
+    void SetItemText(const wxTreeItemId& item, const wxString& text) { SetItemText(item, GetMainColumn(), text); }
+    void SetItemText(const wxTreeItemId& item, int column, const wxString& text);
 
     // get one of the images associated with the item (normal by default)
-    void SetItemImage (const wxTreeItemId& item, int image,
-                       wxTreeItemIcon which = wxTreeItemIcon_Normal)
-        { SetItemImage (item, GetMainColumn(), image, which); }
+    void SetItemImage(const wxTreeItemId& item, int image, wxTreeItemIcon which = wxTreeItemIcon_Normal)
+    {
+        SetItemImage(item, GetMainColumn(), image, which);
+    }
     // the which parameter is ignored for all columns but the main one
-    void SetItemImage (const wxTreeItemId& item, int column, int image,
-                       wxTreeItemIcon which = wxTreeItemIcon_Normal);
+    void SetItemImage(const wxTreeItemId& item, int column, int image, wxTreeItemIcon which = wxTreeItemIcon_Normal);
 
     // associate some data with the item
-    void SetItemData (const wxTreeItemId& item, wxTreeItemData *data);
+    void SetItemData(const wxTreeItemId& item, wxTreeItemData* data);
 
     // force appearance of [+] button near the item. This is useful to
     // allow the user to expand the items which don't have any children now
@@ -337,38 +351,38 @@ public:
     void SetItemHasChildren(const wxTreeItemId& item, bool has = true);
 
     // the item will be shown in bold
-    void SetItemBold (const wxTreeItemId& item, bool bold = true);
+    void SetItemBold(const wxTreeItemId& item, bool bold = true);
 
     // set the item's text colour
-    void SetItemTextColour (const wxTreeItemId& item, const wxColour& colour);
+    void SetItemTextColour(const wxTreeItemId& item, const wxColour& colour);
 
     // set the item's background colour
-    void SetItemBackgroundColour (const wxTreeItemId& item, const wxColour& colour);
+    void SetItemBackgroundColour(const wxTreeItemId& item, const wxColour& colour);
 
     // set the item's font (should be of the same height for all items)
-    void SetItemFont (const wxTreeItemId& item, const wxFont& font);
+    void SetItemFont(const wxTreeItemId& item, const wxFont& font);
 
     // set the window font
-    virtual bool SetFont ( const wxFont &font );
+    virtual bool SetFont(const wxFont& font);
 
     // set the styles.
-    void SetWindowStyle (const long styles);
+    void SetWindowStyle(const long styles);
     long GetWindowStyle() const;
-    long GetWindowStyleFlag () const { return GetWindowStyle(); }
+    long GetWindowStyleFlag() const { return GetWindowStyle(); }
 
     // item status inquiries
     // ---------------------
 
     // is the item visible (it might be outside the view or not expanded)?
-    bool IsVisible (const wxTreeItemId& item, bool fullRow = false, bool within = true) const;
+    bool IsVisible(const wxTreeItemId& item, bool fullRow = false, bool within = true) const;
     // does the item has any children?
-    bool HasChildren (const wxTreeItemId& item) const;
+    bool HasChildren(const wxTreeItemId& item) const;
     // is the item expanded (only makes sense if HasChildren())?
-    bool IsExpanded (const wxTreeItemId& item) const;
+    bool IsExpanded(const wxTreeItemId& item) const;
     // is this item currently selected (the same as has focus)?
-    bool IsSelected (const wxTreeItemId& item) const;
+    bool IsSelected(const wxTreeItemId& item) const;
     // is item text in bold font?
-    bool IsBold (const wxTreeItemId& item) const;
+    bool IsBold(const wxTreeItemId& item) const;
     // does the layout include space for a button?
 
     // number of children
@@ -376,7 +390,7 @@ public:
 
     // if 'recursively' is FALSE, only immediate children count, otherwise
     // the returned number is the number of all items in this branch
-    size_t GetChildrenCount (const wxTreeItemId& item, bool recursively = true);
+    size_t GetChildrenCount(const wxTreeItemId& item, bool recursively = true);
 
     // navigation
     // ----------
@@ -390,10 +404,10 @@ public:
     wxTreeItemId GetSelection() const;
 
     // get the items currently selected, return the number of such item
-    size_t GetSelections (wxArrayTreeItemIds&) const;
+    size_t GetSelections(wxArrayTreeItemIds&) const;
 
     // get the parent of this item (may return NULL if root)
-    wxTreeItemId GetItemParent (const wxTreeItemId& item) const;
+    wxTreeItemId GetItemParent(const wxTreeItemId& item) const;
 
     // for this enumeration function you must pass in a "cookie" parameter
     // which is opaque for the application but is necessary for the library
@@ -429,135 +443,124 @@ public:
     wxTreeItemId GetPrevExpanded(const wxTreeItemId& item) const;
 
     // get visible item, see IsVisible()
-    wxTreeItemId GetFirstVisibleItem(                      bool fullRow = false) const;
-    wxTreeItemId GetFirstVisible(                          bool fullRow = false, bool within = true) const;
-    wxTreeItemId GetNextVisible (const wxTreeItemId& item, bool fullRow = false, bool within = true) const;
-    wxTreeItemId GetPrevVisible (const wxTreeItemId& item, bool fullRow = false, bool within = true) const;
-    wxTreeItemId GetLastVisible (                          bool fullRow = false, bool within = true) const;
+    wxTreeItemId GetFirstVisibleItem(bool fullRow = false) const;
+    wxTreeItemId GetFirstVisible(bool fullRow = false, bool within = true) const;
+    wxTreeItemId GetNextVisible(const wxTreeItemId& item, bool fullRow = false, bool within = true) const;
+    wxTreeItemId GetPrevVisible(const wxTreeItemId& item, bool fullRow = false, bool within = true) const;
+    wxTreeItemId GetLastVisible(bool fullRow = false, bool within = true) const;
 
     // operations
     // ----------
 
     // add the root node to the tree
-    wxTreeItemId AddRoot (const wxString& text,
-                          int image = -1, int selectedImage = -1,
-                          wxTreeItemData *data = NULL);
+    wxTreeItemId AddRoot(const wxString& text, int image = -1, int selectedImage = -1, wxTreeItemData* data = NULL);
 
     // insert a new item in as the first child of the parent
-    wxTreeItemId PrependItem (const wxTreeItemId& parent,
-                              const wxString& text,
-                              int image = -1, int selectedImage = -1,
-                              wxTreeItemData *data = NULL);
+    wxTreeItemId PrependItem(const wxTreeItemId& parent, const wxString& text, int image = -1, int selectedImage = -1,
+                             wxTreeItemData* data = NULL);
 
     // insert a new item after a given one
-    wxTreeItemId InsertItem (const wxTreeItemId& parent,
-                             const wxTreeItemId& idPrevious,
-                             const wxString& text,
-                             int image = -1, int selectedImage = -1,
-                             wxTreeItemData *data = NULL);
+    wxTreeItemId InsertItem(const wxTreeItemId& parent, const wxTreeItemId& idPrevious, const wxString& text,
+                            int image = -1, int selectedImage = -1, wxTreeItemData* data = NULL);
 
     // insert a new item before the one with the given index
-    wxTreeItemId InsertItem (const wxTreeItemId& parent,
-                             size_t index,
-                             const wxString& text,
-                             int image = -1, int selectedImage = -1,
-                             wxTreeItemData *data = NULL);
+    wxTreeItemId InsertItem(const wxTreeItemId& parent, size_t index, const wxString& text, int image = -1,
+                            int selectedImage = -1, wxTreeItemData* data = NULL);
 
     // insert a new item in as the last child of the parent
-    wxTreeItemId AppendItem (const wxTreeItemId& parent,
-                             const wxString& text,
-                             int image = -1, int selectedImage = -1,
-                             wxTreeItemData *data = NULL);
+    wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, int image = -1, int selectedImage = -1,
+                            wxTreeItemData* data = NULL);
 
     // delete this item (except root) + children and associated data if any
-    void Delete (const wxTreeItemId& item);
+    void Delete(const wxTreeItemId& item);
     // delete all children (but don't delete the item itself)
-    void DeleteChildren (const wxTreeItemId& item);
+    void DeleteChildren(const wxTreeItemId& item);
     // delete the root and all its children from the tree
     void DeleteRoot();
 
     // expand this item
-    void Expand (const wxTreeItemId& item);
+    void Expand(const wxTreeItemId& item);
     // expand this item and all subitems recursively
-    void ExpandAll (const wxTreeItemId& item);
+    void ExpandAll(const wxTreeItemId& item);
     // collapse the item without removing its children
-    void Collapse (const wxTreeItemId& item);
+    void Collapse(const wxTreeItemId& item);
     // collapse the item and remove all children
     void CollapseAndReset(const wxTreeItemId& item); //? TODO ???
     // toggles the current state
-    void Toggle (const wxTreeItemId& item);
+    void Toggle(const wxTreeItemId& item);
 
     // remove the selection from currently selected item (if any)
     void Unselect();
     void UnselectAll();
     // select this item - return true if selection was allowed (no veto)
-    bool SelectItem (const wxTreeItemId& item,
-                     const wxTreeItemId& last = (wxTreeItemId*)NULL,
-                     bool unselect_others = true);
+    bool SelectItem(const wxTreeItemId& item, const wxTreeItemId& last = (wxTreeItemId*)NULL,
+                    bool unselect_others = true);
     // select all items in the expanded tree
     void SelectAll();
     // make sure this item is visible (expanding the parent item and/or
     // scrolling to this item if necessary)
-    void EnsureVisible (const wxTreeItemId& item);
+    void EnsureVisible(const wxTreeItemId& item);
     // scroll to this item (but don't expand its parent)
-    void ScrollTo (const wxTreeItemId& item);
+    void ScrollTo(const wxTreeItemId& item);
 
     // The first function is more portable (because easier to implement
     // on other platforms), but the second one returns some extra info.
-    wxTreeItemId HitTest (const wxPoint& point)
-        { int flags; int column; return HitTest (point, flags, column); }
-    wxTreeItemId HitTest (const wxPoint& point, int& flags)
-        { int column; return HitTest (point, flags, column); }
-    wxTreeItemId HitTest (const wxPoint& point, int& flags, int& column);
+    wxTreeItemId HitTest(const wxPoint& point)
+    {
+        int flags;
+        int column;
+        return HitTest(point, flags, column);
+    }
+    wxTreeItemId HitTest(const wxPoint& point, int& flags)
+    {
+        int column;
+        return HitTest(point, flags, column);
+    }
+    wxTreeItemId HitTest(const wxPoint& point, int& flags, int& column);
 
     // get the bounding rectangle of the item (or of its label only)
-    bool GetBoundingRect (const wxTreeItemId& item, wxRect& rect,
-                          bool textOnly = false) const;
+    bool GetBoundingRect(const wxTreeItemId& item, wxRect& rect, bool textOnly = false) const;
 
     // Start editing the item label: this (temporarily) replaces the item
     // with a one line edit control. The item will be selected if it hadn't
     // been before.
-    void EditLabel (const wxTreeItemId& item)
-        { EditLabel (item, GetMainColumn()); }
+    void EditLabel(const wxTreeItemId& item) { EditLabel(item, GetMainColumn()); }
     // edit item's label of the given column
-    void EditLabel (const wxTreeItemId& item, int column);
+    void EditLabel(const wxTreeItemId& item, int column);
 
     // virtual mode
-    virtual const wxString& OnGetItemText( wxTreeItemData* item, long column ) const;
+    virtual const wxString& OnGetItemText(wxTreeItemData* item, long column) const;
 
     // sorting
     // this function is called to compare 2 items and should return -1, 0
     // or +1 if the first item is less than, equal to or greater than the
     // second one. The base class version performs alphabetic comparaison
     // of item labels (GetText)
-    virtual int OnCompareItems (const wxTreeItemId& item1, const wxTreeItemId& item2);
+    virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
     // sort the children of this item using OnCompareItems
     // NB: this function is not reentrant and not MT-safe (FIXME)!
     void SortChildren(const wxTreeItemId& item);
 
     // searching
-    wxTreeItemId FindItem (const wxTreeItemId& item, const wxString& str, int mode = 0);
+    wxTreeItemId FindItem(const wxTreeItemId& item, const wxString& str, int mode = 0);
 
     // overridden base class virtuals
-    virtual bool SetBackgroundColour (const wxColour& colour);
-    virtual bool SetForegroundColour (const wxColour& colour);
+    virtual bool SetBackgroundColour(const wxColour& colour);
+    virtual bool SetForegroundColour(const wxColour& colour);
 
     // drop over item
-    void SetDragItem (const wxTreeItemId& item = (wxTreeItemId*)NULL);
-
+    void SetDragItem(const wxTreeItemId& item = (wxTreeItemId*)NULL);
 
     virtual wxSize DoGetBestSize() const;
 
 protected:
     // header window, responsible for column visualization and manipulation
-    clTreeListHeaderWindow* GetHeaderWindow() const
-        { return m_header_win; }
-    clTreeListHeaderWindow* m_header_win;  // future cleanup: make private or remove GetHeaderWindow()
+    clTreeListHeaderWindow* GetHeaderWindow() const { return m_header_win; }
+    clTreeListHeaderWindow* m_header_win; // future cleanup: make private or remove GetHeaderWindow()
 
     // main window, the "true" tree ctrl
-    clTreeListMainWindow* GetMainWindow() const
-        { return m_main_win; }
-    clTreeListMainWindow* m_main_win;  // future cleanup: make private or remove GetMainWindow()
+    clTreeListMainWindow* GetMainWindow() const { return m_main_win; }
+    clTreeListMainWindow* m_main_win; // future cleanup: make private or remove GetMainWindow()
 
     int GetHeaderHeight() const { return m_headerHeight; }
 
@@ -572,4 +575,3 @@ private:
 };
 
 #endif // CLTREELISTCTRL_H
-

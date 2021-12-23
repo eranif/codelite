@@ -26,8 +26,8 @@
 #ifndef MYSTRINGCLIENTDATA_H
 #define MYSTRINGCLIENTDATA_H
 
-#include <wx/string.h>
 #include <wx/clntdata.h>
+#include <wx/string.h>
 
 /**
  * @class MyStringClientData
@@ -40,19 +40,21 @@
 class MyStringClientData : public wxClientData
 {
 public:
-	MyStringClientData() : m_data() { }
-	MyStringClientData( const wxString &data ) : m_data(data) { }
-	virtual ~MyStringClientData() {}
-	
-	void SetData( const wxString &data ) {
-		m_data = data;
-	}
-	const wxString& GetData() const {
-		return m_data;
-	}
+    MyStringClientData()
+        : m_data()
+    {
+    }
+    MyStringClientData(const wxString& data)
+        : m_data(data)
+    {
+    }
+    virtual ~MyStringClientData() {}
+
+    void SetData(const wxString& data) { m_data = data; }
+    const wxString& GetData() const { return m_data; }
 
 private:
-	wxString  m_data;
+    wxString m_data;
 };
 
 #endif // MYSTRINGCLIENTDATA_H

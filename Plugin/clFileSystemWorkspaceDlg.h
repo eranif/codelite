@@ -15,10 +15,7 @@ public:
     clFileSystemWorkspaceDlg(wxWindow* parent, clFileSystemWorkspaceSettings* settings = nullptr);
     virtual ~clFileSystemWorkspaceDlg();
     void SetUseRemoteBrowsing(bool useRemoteBrowsing, const wxString& account);
-    bool IsUseRemoteBrowsing() const
-    {
-        return m_useRemoteBrowsing;
-    }
+    bool IsUseRemoteBrowsing() const { return m_useRemoteBrowsing; }
 
 protected:
     virtual void OnDeleteConfig(wxCommandEvent& event);

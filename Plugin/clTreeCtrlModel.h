@@ -3,6 +3,7 @@
 
 #include "clRowEntry.h"
 #include "codelite_exports.h"
+
 #include <functional>
 #include <vector>
 #include <wx/colour.h>

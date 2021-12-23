@@ -1,4 +1,5 @@
 #include "clEditorWordCharsLocker.h"
+
 #include <algorithm>
 
 clEditorXmlHelper::clEditorXmlHelper(wxStyledTextCtrl* stc)
@@ -14,7 +15,8 @@ wxString clEditorXmlHelper::GetXmlTagAt(int pos, int& startPos, int& endPos) con
 {
     startPos = wxNOT_FOUND;
     endPos = wxNOT_FOUND;
-    if(pos > m_stc->GetLastPosition() || pos < 0) return "";
+    if(pos > m_stc->GetLastPosition() || pos < 0)
+        return "";
 
     // going backward
     startPos = pos;
@@ -65,6 +67,7 @@ wxString clEditorXmlHelper::GetXmlTagAt(int pos, int& startPos, int& endPos) con
 
 int clEditorXmlHelper::GetCharAt(int pos) const
 {
-    if(pos < 0 || pos > m_stc->GetLastPosition()) return 0;
+    if(pos < 0 || pos > m_stc->GetLastPosition())
+        return 0;
     return m_stc->GetCharAt(pos);
 }

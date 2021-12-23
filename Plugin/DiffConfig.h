@@ -87,14 +87,18 @@ public:
     void SetShowLineNumbers(bool flag)
     {
         m_flags &= ~kShowLineNumbers;
-        if(flag) { m_flags |= kShowLineNumbers; }
+        if(flag) {
+            m_flags |= kShowLineNumbers;
+        }
     }
 
     bool IsOverviewBarShown() const { return !(m_flags & kHideOverviewBar); }
     void SetOverviewBarShow(bool b)
     {
         m_flags &= ~kHideOverviewBar;
-        if(!b) { m_flags |= kHideOverviewBar; }
+        if(!b) {
+            m_flags |= kHideOverviewBar;
+        }
     }
 
     void SetFlags(size_t flags) { this->m_flags = flags; }
@@ -103,7 +107,9 @@ public:
     void SetIgnoreWhitespace(bool b)
     {
         m_flags &= ~kIgnoreWhitespace;
-        if(b) { m_flags |= kIgnoreWhitespace; }
+        if(b) {
+            m_flags |= kIgnoreWhitespace;
+        }
     }
 
     DiffConfig& SetLeftFile(const wxString& leftFile)

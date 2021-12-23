@@ -28,6 +28,7 @@
 #include "ICompilerLocator.h"
 #include "clBoostrapWizardBase.h"
 #include "codelite_exports.h"
+
 #include <wx/bitmap.h>
 
 class WXDLLIMPEXP_SDK clBootstrapData

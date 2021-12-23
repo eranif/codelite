@@ -33,11 +33,10 @@
 #ifndef __wxterminalbase__
 #define __wxterminalbase__
 
-#include <wx/intl.h>
-
 #include <wx/colour.h>
 #include <wx/font.h>
 #include <wx/gdicmn.h>
+#include <wx/intl.h>
 #include <wx/panel.h>
 #include <wx/settings.h>
 #include <wx/sizer.h>

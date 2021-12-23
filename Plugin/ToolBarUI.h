@@ -7,19 +7,19 @@
 #ifndef _CODELITE_PLUGIN_TOOLBAR_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_TOOLBAR_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
+#include <wx/artprov.h>
+#include <wx/button.h>
+#include <wx/dataview.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/artprov.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
-#include <wx/dataview.h>
-#include <wx/button.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -31,7 +31,6 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
-
 
 class clCustomiseToolBarBaseDlg : public wxDialog
 {
@@ -46,7 +45,9 @@ protected:
 
 public:
     wxDataViewListCtrl* GetDvListCtrlItems() { return m_dvListCtrlItems; }
-    clCustomiseToolBarBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Customise"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    clCustomiseToolBarBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Customise"),
+                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clCustomiseToolBarBaseDlg();
 };
 

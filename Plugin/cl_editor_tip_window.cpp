@@ -23,8 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ColoursAndFontsManager.h"
 #include "cl_editor_tip_window.h"
+
+#include "ColoursAndFontsManager.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -32,6 +33,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "plugin.h"
+
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
 #include <wx/log.h>

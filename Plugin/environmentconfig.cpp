@@ -22,18 +22,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/window.h>
-#include "wx/utils.h"
-#include "xmlutils.h"
-#include "wx/regex.h"
-#include "wx/filename.h"
 #include "environmentconfig.h"
+
 #include "evnvarlist.h"
-#include "wx_xml_compatibility.h"
-#include <wx/log.h>
-#include "macromanager.h"
 #include "file_logger.h"
+#include "macromanager.h"
+#include "wx/filename.h"
+#include "wx/regex.h"
+#include "wx/utils.h"
+#include "wx_xml_compatibility.h"
+#include "xmlutils.h"
+
 #include <algorithm>
+#include <wx/log.h>
+#include <wx/window.h>
 
 const wxString __NO_SUCH_ENV__ = wxT("__NO_SUCH_ENV__");
 
@@ -229,9 +231,11 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
                 unresolvedVars.insert(std::make_pair(replacement, text));
             }
         }
-        
+
         // dont allow recrusive replacements
-        if(replacement.Contains(text)) { break; }
+        if(replacement.Contains(text)) {
+            break;
+        }
         result.Replace(text, replacement);
     }
 
@@ -240,7 +244,7 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
 
     // and restore all those unresolved variables
     std::for_each(unresolvedVars.begin(), unresolvedVars.end(),
-        [&](const std::pair<wxString, wxString>& p) { result.Replace(p.first, p.second); });
+                  [&](const std::pair<wxString, wxString>& p) { result.Replace(p.first, p.second); });
     return result;
 }
 

@@ -1,4 +1,5 @@
 #include "ThemeImporterSQL.hpp"
+
 #include <wx/stc/stc.h>
 
 ThemeImporterSQL::ThemeImporterSQL()
@@ -51,12 +52,9 @@ LexerConf::Ptr_t ThemeImporterSQL::Import(const wxFileName& eclipseXmlFile)
     AddProperty(lexer, wxSTC_SQL_SQLPLUS_COMMENT, "SQL Plus comment", m_singleLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_SQL_COMMENTLINEDOC, "Comment line doc", m_singleLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_SQL_WORD2, "Word (Set 2)", m_keyword.colour, m_background.colour);
-    AddProperty(
-        lexer, wxSTC_SQL_COMMENTDOCKEYWORD, "Comment doc keyword", m_javadocKeyword.colour, m_background.colour);
-    AddProperty(lexer,
-                wxSTC_SQL_COMMENTDOCKEYWORDERROR,
-                "Comment doc keyword error",
-                m_javadocKeyword.colour,
+    AddProperty(lexer, wxSTC_SQL_COMMENTDOCKEYWORD, "Comment doc keyword", m_javadocKeyword.colour,
+                m_background.colour);
+    AddProperty(lexer, wxSTC_SQL_COMMENTDOCKEYWORDERROR, "Comment doc keyword error", m_javadocKeyword.colour,
                 m_background.colour);
     AddProperty(lexer, wxSTC_SQL_USER1, "User 1", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_SQL_USER1, "User 2", m_foreground.colour, m_background.colour);

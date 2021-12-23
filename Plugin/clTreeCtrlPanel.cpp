@@ -1,7 +1,8 @@
+#include "clTreeCtrlPanel.h"
+
 #include "clFileOrFolderDropTarget.h"
 #include "clFileSystemEvent.h"
 #include "clToolBar.h"
-#include "clTreeCtrlPanel.h"
 #include "clTreeCtrlPanelDefaultPage.h"
 #include "clWorkspaceView.h"
 #include "cl_config.h"
@@ -13,6 +14,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
+
 #include <imanager.h>
 #include <wx/app.h>
 #include <wx/dir.h>

@@ -1,8 +1,9 @@
 #include "clAuiCaptionEnabler.h"
-#include "macros.h"
-#include "event_notifier.h"
+
 #include "codelite_events.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "macros.h"
 
 clAuiCaptionEnabler::clAuiCaptionEnabler()
     : m_aui(NULL)
@@ -67,7 +68,7 @@ void clAuiCaptionEnabler::OnTimer(wxTimerEvent& event)
                 pi.CaptionVisible(false);
                 m_aui->Update();
             }
-        }        
+        }
     }
 }
 

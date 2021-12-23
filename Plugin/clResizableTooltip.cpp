@@ -1,9 +1,11 @@
 #include "clResizableTooltip.h"
+
 #include "cl_config.h"
 #include "event_notifier.h"
+#include "file_logger.h"
+
 #include <wx/gdicmn.h>
 #include <wx/wupdlock.h>
-#include "file_logger.h"
 
 wxDEFINE_EVENT(wxEVT_TOOLTIP_DESTROY, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_TOOLTIP_ITEM_EXPANDING, clCommandEvent);
@@ -16,7 +18,9 @@ clResizableTooltip::clResizableTooltip(wxEvtHandler* owner)
     int height = clConfig::Get().Read("Tooltip/Height", 200);
     int width = clConfig::Get().Read("Tooltip/Width", 300);
     wxSize toolsize(width, height);
-    if((toolsize.GetWidth() < 300) || (toolsize.GetHeight() < 200)) { toolsize = wxSize(300, 200); }
+    if((toolsize.GetWidth() < 300) || (toolsize.GetHeight() < 200)) {
+        toolsize = wxSize(300, 200);
+    }
     SetSize(toolsize);
 }
 
@@ -25,7 +29,7 @@ clResizableTooltip::~clResizableTooltip()
     clConfig::Get().Write("Tooltip/Height", GetSize().GetHeight());
     clConfig::Get().Write("Tooltip/Width", GetSize().GetWidth());
 }
-    
+
 void clResizableTooltip::OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
 
 void clResizableTooltip::Clear() { m_treeCtrl->DeleteAllItems(); }

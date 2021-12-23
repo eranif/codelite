@@ -26,9 +26,10 @@
 #ifndef DEVCPPIMPORTER_H
 #define DEVCPPIMPORTER_H
 
+#include "GenericImporter.h"
+
 #include <wx/filename.h>
 #include <wx/string.h>
-#include "GenericImporter.h"
 
 class DevCppImporter : public GenericImporter
 {

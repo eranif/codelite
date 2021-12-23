@@ -27,6 +27,7 @@
 #define MARKUP_H__
 
 #include "codelite_exports.h"
+
 #include <list>
 #include <wx/regex.h>
 #include <wx/sharedptr.h>

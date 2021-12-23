@@ -1,6 +1,8 @@
-#include "clControlWithItems.h"
 #include "clHeaderBar.h"
+
+#include "clControlWithItems.h"
 #include "clScrolledPanel.h"
+
 #include <wx/cursor.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>

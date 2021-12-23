@@ -22,18 +22,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "compiler.h"
+
 #include "CxxPreProcessor.h"
 #include "GCCMetadata.hpp"
 #include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "build_system.h"
-#include "compiler.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "macros.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <ICompilerLocator.h>
 #include <procutils.h>
 #include <wx/log.h>

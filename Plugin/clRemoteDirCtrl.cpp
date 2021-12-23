@@ -9,6 +9,7 @@
 #include "imanager.h"
 #include "macros.h"
 #include "sftp_item_comparator.hpp"
+
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
@@ -62,15 +63,9 @@ clRemoteDirCtrlItemData* clRemoteDirCtrl::GetItemData(const wxTreeItemId& item) 
     return cd;
 }
 
-void clRemoteDirCtrl::OnItemActivated(wxTreeEvent& event)
-{
-    DoOpenItem(event.GetItem(), kOpenInCodeLite);
-}
+void clRemoteDirCtrl::OnItemActivated(wxTreeEvent& event) { DoOpenItem(event.GetItem(), kOpenInCodeLite); }
 
-void clRemoteDirCtrl::OnItemExpanding(wxTreeEvent& event)
-{
-    DoExpandItem(event.GetItem());
-}
+void clRemoteDirCtrl::OnItemExpanding(wxTreeEvent& event) { DoExpandItem(event.GetItem()); }
 
 bool clRemoteDirCtrl::Open(const wxString& path, const SSHAccountInfo& account)
 {
@@ -446,10 +441,7 @@ void clRemoteDirCtrl::DoDelete(const wxTreeItemId& item)
     }
 }
 
-bool clRemoteDirCtrl::IsConnected() const
-{
-    return !m_treeCtrl->IsEmpty() && !m_account.GetAccountName().IsEmpty();
-}
+bool clRemoteDirCtrl::IsConnected() const { return !m_treeCtrl->IsEmpty() && !m_account.GetAccountName().IsEmpty(); }
 
 wxString clRemoteDirCtrl::GetSelectedFolder() const
 {

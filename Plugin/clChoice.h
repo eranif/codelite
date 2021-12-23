@@ -2,15 +2,17 @@
 #define CLCHOICE_H
 
 #include "clButtonBase.h" // Base class: clButtonBase
+#include "wxCustomControls.hpp"
+
 #include <string>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/choice.h>
-#include "wxCustomControls.hpp"
 
 #if wxUSE_NATIVE_CHOICE
-#include <wx/choice.h>
 #include "clColours.h"
+
+#include <wx/choice.h>
 class WXDLLIMPEXP_SDK clChoice : public wxChoice
 {
 public:
@@ -21,7 +23,7 @@ public:
                 long style = 0, const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxChoiceNameStr);
     virtual ~clChoice();
-    
+
     void SetText(const wxString& text);
     void SetColours(const clColours& WXUNUSED(colour)) {}
     void SetPressed() {}

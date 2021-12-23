@@ -3,6 +3,7 @@
 
 #include "clHeaderItem.h"
 #include "codelite_exports.h"
+
 #include <vector>
 #include <wx/panel.h>
 

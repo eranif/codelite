@@ -26,13 +26,14 @@
 #ifndef CLFILEVIWERTREECTRL_H
 #define CLFILEVIWERTREECTRL_H
 
+#include "clThemedTreeCtrl.h"
 #include "clTreeCtrl.h"
 #include "codelite_exports.h"
 #include "wxStringHash.h"
+
 #include <map>
 #include <wx/filename.h>
 #include <wx/treectrl.h>
-#include "clThemedTreeCtrl.h"
 
 /**
  * @class clTreeNodeIndex

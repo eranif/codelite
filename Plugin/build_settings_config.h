@@ -35,6 +35,7 @@
 #include "wx/filename.h"
 #include "wx/string.h"
 #include "wx/xml/xml.h"
+
 #include <macros.h>
 #include <map>
 #include <vector>

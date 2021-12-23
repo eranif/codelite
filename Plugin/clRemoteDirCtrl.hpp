@@ -7,6 +7,7 @@
 #include "cl_ssh.h"
 #include "codelite_events.h"
 #include "ssh_account_info.h"
+
 #include <wx/panel.h>
 
 using namespace std;
@@ -57,17 +58,17 @@ public:
      * @return
      */
     bool IsConnected() const;
-    
+
     /**
      * @brief return the selected path
      */
     wxString GetSelectedFolder() const;
-    
+
     /**
      * @brief return the selected folders
      */
     size_t GetSelectedFolders(wxArrayString& paths) const;
-    
+
     /**
      * @brief change the new root folder
      */

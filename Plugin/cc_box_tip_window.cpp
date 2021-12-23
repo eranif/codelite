@@ -23,10 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cc_box_tip_window.h"
+
 #include "ColoursAndFontsManager.h"
 #include "Markup.h"
 #include "bitmap_loader.h"
-#include "cc_box_tip_window.h"
 #include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
@@ -40,6 +41,7 @@
 #include "wx/panel.h"
 #include "wx/regex.h"
 #include "wx/sizer.h"
+
 #include <algorithm>
 #include <memory>
 #include <wx/bitmap.h>

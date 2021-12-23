@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "builder.h"
+
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "macros.h"

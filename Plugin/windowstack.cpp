@@ -22,11 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "windowstack.h"
+
 #include "clSystemSettings.h"
 #include "clThemeUpdater.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
-#include "windowstack.h"
+
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/wupdlock.h>

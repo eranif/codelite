@@ -1,4 +1,5 @@
 #include "clChoice.h"
+
 #include "wxCustomControls.hpp"
 
 #if wxUSE_NATIVE_CHOICE

@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 #include "macros.h"
 #include "wxStringHash.h"
+
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 

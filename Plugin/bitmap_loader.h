@@ -30,6 +30,7 @@
 #include "codelite_exports.h"
 #include "fileextmanager.h"
 #include "wxStringHash.h"
+
 #include <vector>
 #include <wx/bitmap.h>
 #include <wx/filename.h>

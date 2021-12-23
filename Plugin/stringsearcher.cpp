@@ -22,9 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "stringsearcher.h"
+
 #include "globals.h"
 #include "search_thread.h"
-#include "stringsearcher.h"
+
 #include <algorithm>
 #include <string>
 #include <wx/regex.h>
@@ -44,15 +46,21 @@ static std::wstring Reverse(const std::wstring& str)
 
 wxString StringFindReplacer::GetString(const wxString& input, int from, bool search_up)
 {
-    if(from < 0) { from = 0; }
+    if(from < 0) {
+        from = 0;
+    }
 
     if(!search_up) {
 
-        if(from >= (int)input.Len()) { return wxEmptyString; }
+        if(from >= (int)input.Len()) {
+            return wxEmptyString;
+        }
         return input.Mid((size_t)from);
 
     } else {
-        if(from >= (int)input.Len()) { from = (int)input.Len(); }
+        if(from >= (int)input.Len()) {
+            from = (int)input.Len();
+        }
         return input.Mid(0, (size_t)from);
     }
 }
@@ -83,7 +91,9 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
                                     int& pos, int& matchLen)
 {
     wxString str = GetString(input, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false);
-    if(str.IsEmpty()) { return false; }
+    if(str.IsEmpty()) {
+        return false;
+    }
 
 #ifndef __WXMAC__
     int re_flags = wxRE_ADVANCED;
@@ -92,12 +102,15 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
 #endif
     wxRegEx re;
     bool matchCase = flags & wxSD_MATCHCASE ? true : false;
-    if(!matchCase) re_flags |= wxRE_ICASE;
+    if(!matchCase)
+        re_flags |= wxRE_ICASE;
     re_flags |= wxRE_NEWLINE; // Handle \n as a special character
     re.Compile(find_what, re_flags);
 
     // incase we are scanning NOT backwared, set the offset
-    if(!(flags & wxSD_SEARCH_BACKWARD)) { pos = startOffset; }
+    if(!(flags & wxSD_SEARCH_BACKWARD)) {
+        pos = startOffset;
+    }
 
     if(re.IsValid()) {
         if(flags & wxSD_SEARCH_BACKWARD) {
@@ -112,13 +125,17 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
                     break;
                 }
                 pos += start;
-                if(matched) { pos += matchLen; }
+                if(matched) {
+                    pos += matchLen;
+                }
                 matchLen = len;
                 matched = true;
                 str = str.Mid(start + len);
             }
 
-            if(matched) { return true; }
+            if(matched) {
+                return true;
+            }
 
         } else if(re.Matches(str)) {
             size_t start, len;
@@ -139,7 +156,9 @@ bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, 
     std::wstring find_what(pfind_what);
 
     int from = startOffset;
-    if(from < 0) { from = 0; }
+    if(from < 0) {
+        from = 0;
+    }
     std::wstring str;
     bool search_up = flags & wxSD_SEARCH_BACKWARD;
     if(!search_up) {
@@ -151,7 +170,9 @@ bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, 
         str = input.substr((size_t)from);
 
     } else {
-        if(from >= (int)input.length()) { from = (int)input.length(); }
+        if(from >= (int)input.length()) {
+            from = (int)input.length();
+        }
         str = input.substr(0, (size_t)from);
     }
 #else
@@ -162,7 +183,9 @@ bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, 
 
     size_t init_size = str.length();
 
-    if(str.empty()) { return false; }
+    if(str.empty()) {
+        return false;
+    }
 
     std::wstring find_str(find_what);
     size_t offset(0);

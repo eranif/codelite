@@ -30,6 +30,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "wxCustomStatusBar.h" // Base class: wxCustomStatusBar
+
 #include <wx/bitmap.h>
 
 class IManager;

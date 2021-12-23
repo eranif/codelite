@@ -35,20 +35,20 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
+
 #include <wx/frame.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif
 
+#include "art_metro.h"
 #include "wx/ribbon/art.h"
 #include "wx/ribbon/art_internal.h"
 #include "wx/ribbon/bar.h"
 #include "wx/ribbon/buttonbar.h"
 #include "wx/ribbon/gallery.h"
 #include "wx/ribbon/toolbar.h"
-
-#include "art_metro.h"
 
 #ifndef WX_PRECOMP
 #include "wx/dcmemory.h"
@@ -84,7 +84,9 @@ wxRibbonMetroArtProvider::wxRibbonMetroArtProvider(bool set_colour_scheme)
     m_button_bar_label_font = m_tab_label_font;
     m_panel_label_font = m_tab_label_font;
 
-    if(set_colour_scheme) { SetColourScheme(wxColour(255, 255, 255), wxColour(120, 174, 229), wxColour(0, 0, 0)); }
+    if(set_colour_scheme) {
+        SetColourScheme(wxColour(255, 255, 255), wxColour(120, 174, 229), wxColour(0, 0, 0));
+    }
 
     m_cached_tab_separator_visibility = -10.0; // valid visibilities are in range [0, 1]
     m_tab_separation_size = 3;
@@ -104,9 +106,12 @@ wxRibbonMetroArtProvider::wxRibbonMetroArtProvider(bool set_colour_scheme)
 wxRibbonMetroArtProvider::~wxRibbonMetroArtProvider() {}
 void wxRibbonMetroArtProvider::GetColourScheme(wxColour* primary, wxColour* secondary, wxColour* tertiary) const
 {
-    if(primary != NULL) *primary = m_primary_scheme_colour;
-    if(secondary != NULL) *secondary = m_secondary_scheme_colour;
-    if(tertiary != NULL) *tertiary = m_tertiary_scheme_colour;
+    if(primary != NULL)
+        *primary = m_primary_scheme_colour;
+    if(secondary != NULL)
+        *secondary = m_secondary_scheme_colour;
+    if(tertiary != NULL)
+        *tertiary = m_tertiary_scheme_colour;
 }
 void wxRibbonMetroArtProvider::SetColourScheme(const wxColour& primary, const wxColour& secondary,
                                                const wxColour& tertiary)
@@ -288,7 +293,8 @@ void wxRibbonMetroArtProvider::DrawTabCtrlBackground(wxDC& dc, wxWindow* WXUNUSE
 
 void wxRibbonMetroArtProvider::DrawTab(wxDC& dc, wxWindow* WXUNUSED(wnd), const wxRibbonPageTabInfo& tab)
 {
-    if(tab.rect.height <= 2) return;
+    if(tab.rect.height <= 2)
+        return;
 
     if(tab.active || tab.hovered) {
         if(tab.active) {
@@ -333,7 +339,8 @@ void wxRibbonMetroArtProvider::DrawTab(wxDC& dc, wxWindow* WXUNUSED(wnd), const 
         wxBitmap icon = tab.page->GetIcon();
         if(icon.IsOk()) {
             int x = tab.rect.x + 4;
-            if((m_flags & wxRIBBON_BAR_SHOW_PAGE_LABELS) == 0) x = tab.rect.x + (tab.rect.width - icon.GetWidth()) / 2;
+            if((m_flags & wxRIBBON_BAR_SHOW_PAGE_LABELS) == 0)
+                x = tab.rect.x + (tab.rect.width - icon.GetWidth()) / 2;
             dc.DrawBitmap(icon, x, tab.rect.y + 1 + (tab.rect.height - 1 - icon.GetHeight()) / 2, true);
         }
     }
@@ -439,7 +446,8 @@ void wxRibbonMetroArtProvider::DrawPanelBackground(wxDC& dc, wxRibbonPanel* wnd,
 
         wxRect label_bg_rect = label_rect;
 
-        if(has_ext_button) label_rect.SetWidth(label_rect.GetWidth() - 13);
+        if(has_ext_button)
+            label_rect.SetWidth(label_rect.GetWidth() - 13);
 
         if(label_size.GetWidth() > label_rect.GetWidth()) {
             // Test if there is enough length for 3 letters and ...
@@ -559,7 +567,8 @@ void wxRibbonMetroArtProvider::DrawMinimisedPanelCommon(wxDC& dc, wxRibbonPanel*
         preview.x = true_rect.x + (true_rect.width - preview.width) / 2;
         preview.y = true_rect.y + 4;
     }
-    if(preview_rect) *preview_rect = preview;
+    if(preview_rect)
+        *preview_rect = preview;
 
     wxCoord label_width, label_height;
     dc.SetFont(m_panel_label_font);
@@ -624,11 +633,15 @@ void wxRibbonMetroArtProvider::DrawPartialPageBackground(wxDC& dc, wxWindow* wnd
             panel = wxDynamicCast(parent, wxRibbonPanel);
             if(panel != NULL) {
                 hovered = allow_hovered && panel->IsHovered();
-                if(panel->GetExpandedDummy() != NULL) { parent = panel->GetExpandedDummy(); }
+                if(panel->GetExpandedDummy() != NULL) {
+                    parent = panel->GetExpandedDummy();
+                }
             }
         }
         page = wxDynamicCast(parent, wxRibbonPage);
-        if(page != NULL) { break; }
+        if(page != NULL) {
+            break;
+        }
         offset += parent->GetPosition();
     }
     if(page != NULL) {
@@ -648,7 +661,8 @@ void wxRibbonMetroArtProvider::DrawButtonBarButton(wxDC& dc, wxWindow* WXUNUSED(
 {
     if(kind == wxRIBBON_BUTTON_TOGGLE) {
         kind = wxRIBBON_BUTTON_NORMAL;
-        if(state & wxRIBBON_BUTTONBAR_BUTTON_TOGGLED) state ^= wxRIBBON_BUTTONBAR_BUTTON_ACTIVE_MASK;
+        if(state & wxRIBBON_BUTTONBAR_BUTTON_TOGGLED)
+            state ^= wxRIBBON_BUTTONBAR_BUTTON_ACTIVE_MASK;
     }
 
     if(state & (wxRIBBON_BUTTONBAR_BUTTON_HOVER_MASK | wxRIBBON_BUTTONBAR_BUTTON_ACTIVE_MASK)) {
@@ -812,12 +826,14 @@ void wxRibbonMetroArtProvider::DrawTool(wxDC& dc, wxWindow* WXUNUSED(wnd), const
                                         wxRibbonButtonKind kind, long state)
 {
     if(kind == wxRIBBON_BUTTON_TOGGLE) {
-        if(state & wxRIBBON_TOOLBAR_TOOL_TOGGLED) state ^= wxRIBBON_TOOLBAR_TOOL_ACTIVE_MASK;
+        if(state & wxRIBBON_TOOLBAR_TOOL_TOGGLED)
+            state ^= wxRIBBON_TOOLBAR_TOOL_ACTIVE_MASK;
     }
 
     wxRect bg_rect(rect);
     bg_rect.Deflate(1);
-    if((state & wxRIBBON_TOOLBAR_TOOL_LAST) == 0) bg_rect.width++;
+    if((state & wxRIBBON_TOOLBAR_TOOL_LAST) == 0)
+        bg_rect.width++;
 
     bool is_split_hybrid = (kind == wxRIBBON_BUTTON_HYBRID &&
                             (state & (wxRIBBON_TOOLBAR_TOOL_HOVER_MASK | wxRIBBON_TOOLBAR_TOOL_ACTIVE_MASK)));

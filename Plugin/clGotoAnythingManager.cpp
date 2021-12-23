@@ -1,6 +1,7 @@
+#include "clGotoAnythingManager.h"
+
 #include "GotoAnythingDlg.h"
 #include "bitmap_loader.h"
-#include "clGotoAnythingManager.h"
 #include "clKeyboardManager.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
@@ -9,6 +10,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
+
 #include <algorithm>
 #include <queue>
 #include <wx/menu.h>

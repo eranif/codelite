@@ -1,10 +1,12 @@
-#include "ColoursAndFontsManager.h"
 #include "ThemeImporterBase.hpp"
+
+#include "ColoursAndFontsManager.h"
 #include "cl_standard_paths.h"
 #include "drawingutils.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "xmlutils.h"
+
 #include <wx/arrstr.h>
 #include <wx/colour.h>
 #include <wx/tokenzr.h>
@@ -34,8 +36,7 @@ bool ThemeImporterBase::GetProperty(const wxString& name, ThemeImporterBase::Pro
     return false;
 }
 
-LexerConf::Ptr_t ThemeImporterBase::InitializeImport(const wxFileName& theme_file, const wxString& langName,
-                                                            int langId)
+LexerConf::Ptr_t ThemeImporterBase::InitializeImport(const wxFileName& theme_file, const wxString& langName, int langId)
 {
     m_langName = langName;
     if(!m_doc.Load(theme_file.GetFullPath()))
@@ -146,8 +147,8 @@ wxString ThemeImporterBase::GetOutputFile(const wxString& language) const
 }
 
 void ThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name,
-                                           const wxString& colour, const wxString& bgColour, bool bold, bool italic,
-                                           bool isEOLFilled)
+                                    const wxString& colour, const wxString& bgColour, bool bold, bool italic,
+                                    bool isEOLFilled)
 {
     wxASSERT(!colour.IsEmpty());
     wxASSERT(!bgColour.IsEmpty());

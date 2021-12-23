@@ -1,6 +1,8 @@
 #include "clAnsiEscapeCodeHandler.hpp"
+
 #include "drawingutils.h"
 #include "file_logger.h"
+
 #include <wx/tokenzr.h>
 
 clAnsiEscapeCodeHandler::clAnsiEscapeCodeHandler()

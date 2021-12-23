@@ -24,10 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilerLocatorGCC.h"
+
 #include "clFilesCollector.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
+
 #include <wx/filename.h>
 #include <wx/regex.h>
 

@@ -27,6 +27,7 @@
 
 #include "codelite_exports.h"
 #include "wx/thread.h"
+
 #include <deque>
 
 /**

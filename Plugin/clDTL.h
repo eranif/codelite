@@ -26,10 +26,11 @@
 #ifndef CLDTL_H
 #define CLDTL_H
 
-#include <wx/string.h>
+#include "codelite_exports.h"
+
 #include <vector>
 #include <wx/filename.h>
-#include "codelite_exports.h"
+#include <wx/string.h>
 
 /**
  * @class clDTL
@@ -66,23 +67,28 @@ class WXDLLIMPEXP_SDK clDTL
 {
 public:
     static const int LINE_PLACEHOLDER = -2;
-    static const int LINE_REMOVED     = -1;
-    static const int LINE_COMMON      = 0;
-    static const int LINE_ADDED       = 1;
+    static const int LINE_REMOVED = -1;
+    static const int LINE_COMMON = 0;
+    static const int LINE_ADDED = 1;
 
     struct WXDLLIMPEXP_SDK LineInfo {
         int m_type;
         wxString m_line;
-        LineInfo(const wxString &line, int type ) : m_type(type), m_line(line) {}
-        LineInfo() : m_type(LINE_PLACEHOLDER), m_line("\n") {}
+        LineInfo(const wxString& line, int type)
+            : m_type(type)
+            , m_line(line)
+        {
+        }
+        LineInfo()
+            : m_type(LINE_PLACEHOLDER)
+            , m_line("\n")
+        {
+        }
     };
     typedef std::vector<LineInfo> LineInfoVec_t;
-    typedef std::vector<std::pair<int, int> > SeqLinePair_t;
-    
-    enum DiffMode {
-        kTwoPanes = 0x01,
-        kOnePane  = 0x02
-    };
+    typedef std::vector<std::pair<int, int>> SeqLinePair_t;
+
+    enum DiffMode { kTwoPanes = 0x01, kOnePane = 0x02 };
 
 private:
     LineInfoVec_t m_resultLeft;
@@ -99,15 +105,9 @@ public:
      */
     void Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode mode);
 
-    const LineInfoVec_t& GetResultLeft() const {
-        return m_resultLeft;
-    }
-    const LineInfoVec_t& GetResultRight() const {
-        return m_resultRight;
-    }
-    const SeqLinePair_t& GetSequences() const {
-        return m_sequences;
-    }
+    const LineInfoVec_t& GetResultLeft() const { return m_resultLeft; }
+    const LineInfoVec_t& GetResultRight() const { return m_resultRight; }
+    const SeqLinePair_t& GetSequences() const { return m_sequences; }
 };
 
 #endif // CLDTL_H

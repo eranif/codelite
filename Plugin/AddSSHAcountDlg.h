@@ -35,7 +35,7 @@ class WXDLLIMPEXP_SDK AddSSHAcountDlg : public AddSSHAcountDlgBase
 {
 public:
     AddSSHAcountDlg(wxWindow* parent);
-    AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo &account);
+    AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account);
     virtual ~AddSSHAcountDlg();
 
 public:

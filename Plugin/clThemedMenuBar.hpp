@@ -10,6 +10,7 @@ typedef clMenuBar clThemedMenuBar;
 #include "codelite_events.h"
 #include "codelite_exports.h"
 #include "event_notifier.h"
+
 #include <wx/menu.h>
 
 class WXDLLIMPEXP_SDK clThemedMenuBar : public clMenuBar

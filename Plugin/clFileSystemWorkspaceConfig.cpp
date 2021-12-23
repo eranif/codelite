@@ -1,4 +1,5 @@
 #include "clFileSystemWorkspaceConfig.hpp"
+
 #include "ICompilerLocator.h"
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"

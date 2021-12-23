@@ -2,6 +2,7 @@
 #define CLSTATUSBARMESSAGE_H
 
 #include "codelite_exports.h"
+
 #include <wx/string.h>
 
 class WXDLLIMPEXP_SDK clStatusBarMessage

@@ -2,8 +2,9 @@
 #define COMPILEFLAGSTXT_H
 
 #include "codelite_exports.h"
-#include <wx/filename.h>
+
 #include <wx/arrstr.h>
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_SDK CompileFlagsTxt
 {

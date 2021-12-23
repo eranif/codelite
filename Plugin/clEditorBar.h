@@ -4,6 +4,7 @@
 #include "cl_command_event.h"
 #include "drawingutils.h"
 #include "wxcrafter_plugin.h"
+
 #include <vector>
 #include <wx/colour.h>
 #include <wx/font.h>

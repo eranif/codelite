@@ -1,14 +1,15 @@
 #include "clNodeJS.h"
+
 #include "NodeJSLocator.h"
-#include "globals.h"
-#include "file_logger.h"
 #include "asyncprocess.h"
-#include "processreaderthread.h"
 #include "clConsoleBase.h"
-#include <algorithm>
-#include "ieditor.h"
+#include "file_logger.h"
 #include "globals.h"
+#include "ieditor.h"
 #include "imanager.h"
+#include "processreaderthread.h"
+
+#include <algorithm>
 
 wxDEFINE_EVENT(wxEVT_NODE_COMMAND_TERMINATED, clProcessEvent);
 
@@ -34,7 +35,9 @@ bool clNodeJS::Initialise(const wxArrayString& hints)
 bool clNodeJS::NpmInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
                           wxEvtHandler* sink, const wxString& uid)
 {
-    if(!IsInitialised()) { return false; }
+    if(!IsInitialised()) {
+        return false;
+    }
 
     // Create the working directory if not exists
     wxFileName wd(workingDirectory, "");
@@ -71,7 +74,9 @@ void clNodeJS::OnProcessTerminated(clProcessEvent& event)
     if(m_processes.count(process)) {
         const ProcessData& d = m_processes[process];
         // Handle lint
-        if(!d.GetOutput().IsEmpty() && d.GetUid() == "lint") { ProcessLintOuput(d.GetFilename(), d.GetOutput()); }
+        if(!d.GetOutput().IsEmpty() && d.GetUid() == "lint") {
+            ProcessLintOuput(d.GetFilename(), d.GetOutput());
+        }
         if(d.GetSink()) {
             clProcessEvent evt(wxEVT_NODE_COMMAND_TERMINATED);
             evt.SetOutput(d.GetOutput());
@@ -122,7 +127,9 @@ void clNodeJS::UnBindEvents()
 
 bool clNodeJS::NpmInit(const wxString& workingDirectory, wxEvtHandler* sink)
 {
-    if(!IsInitialised()) { return false; }
+    if(!IsInitialised()) {
+        return false;
+    }
 
     // Create the working directory if not exists
     wxFileName wd(workingDirectory, "");
@@ -139,7 +146,9 @@ bool clNodeJS::NpmInit(const wxString& workingDirectory, wxEvtHandler* sink)
 
 void clNodeJS::LintFile(const wxFileName& filename)
 {
-    if(!IsInitialised()) { return; }
+    if(!IsInitialised()) {
+        return;
+    }
     wxString wd = filename.GetPath();
 
     wxString command;
@@ -175,13 +184,17 @@ void clNodeJS::ProcessLintOuput(const wxFileName& fn, const wxString& output)
 
     // Mark the editor with error marker
     IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
-    if(editor && (nLineNumber != wxNOT_FOUND)) { editor->SetErrorMarker(nLineNumber - 1, errorMessage); }
+    if(editor && (nLineNumber != wxNOT_FOUND)) {
+        editor->SetErrorMarker(nLineNumber - 1, errorMessage);
+    }
 }
 
 bool clNodeJS::NpmSilentInstall(const wxString& package, const wxString& workingDirectory, const wxString& args,
                                 wxEvtHandler* sink, const wxString& uid)
 {
-    if(!IsInitialised()) { return false; }
+    if(!IsInitialised()) {
+        return false;
+    }
     wxString command;
     command << GetNpm().GetFullPath();
     ::WrapWithQuotes(command);
@@ -199,7 +212,9 @@ bool clNodeJS::NpmSilentInstall(const wxString& package, const wxString& working
 
 wxProcess* clNodeJS::RunScript(const wxArrayString& argv, const wxString& workingDirectory, size_t execFlags)
 {
-    if(!IsInitialised() || argv.IsEmpty()) { return nullptr; }
+    if(!IsInitialised() || argv.IsEmpty()) {
+        return nullptr;
+    }
     wxFileName scriptPath(argv.Item(0));
     if(!scriptPath.FileExists()) {
         clERROR() << "NodeJS: cant run script:" << scriptPath << ". No such file";

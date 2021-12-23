@@ -1,8 +1,10 @@
 #include "cProjectDependecySorter.h"
-#include <algorithm>
-#include "macros.h"
-#include <workspace.h>
+
 #include "cl_exception.h"
+#include "macros.h"
+
+#include <algorithm>
+#include <workspace.h>
 
 clProjectDependecySorter::clProjectDependecySorter() {}
 
@@ -10,8 +12,10 @@ clProjectDependecySorter::~clProjectDependecySorter() {}
 
 void clProjectDependecySorter::Visit(clProjectDependecySorter::Node* node, wxArrayString& buildOrder)
 {
-    if(node->marker == kPerm) return;
-    if(node->marker == kTemp) throw clException("Dependency loop found for node: " + node->name);
+    if(node->marker == kPerm)
+        return;
+    if(node->marker == kTemp)
+        throw clException("Dependency loop found for node: " + node->name);
 
     node->marker = kTemp;
     std::for_each(node->adjacents.begin(), node->adjacents.end(), [&](Node* adj) { Visit(adj, buildOrder); });

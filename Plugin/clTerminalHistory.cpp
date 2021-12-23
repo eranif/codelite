@@ -1,4 +1,5 @@
 #include "clTerminalHistory.h"
+
 #include <algorithm>
 
 static wxString sEmptyStr;
@@ -16,7 +17,9 @@ void clTerminalHistory::Add(const wxString& command)
 {
     std::vector<wxString>::iterator iter =
         std::find_if(m_history.begin(), m_history.end(), [&](const wxString& str) { return str == command; });
-    if(iter != m_history.end()) { m_history.erase(iter); }
+    if(iter != m_history.end()) {
+        m_history.erase(iter);
+    }
     m_history.insert(m_history.begin(), command);
     DoReset();
 }

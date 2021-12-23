@@ -2,6 +2,7 @@
 #define CLCUSTOMISETOOLBARDLG_H
 
 #include "ToolBarUI.h"
+
 #include <codelite_exports.h>
 #include <vector>
 
@@ -15,6 +16,7 @@ class WXDLLIMPEXP_SDK clCustomiseToolBarDlg : public clCustomiseToolBarBaseDlg
 public:
     clCustomiseToolBarDlg(wxWindow* parent, clToolBar* tb);
     virtual ~clCustomiseToolBarDlg();
+
 protected:
     virtual void OnOK(wxCommandEvent& event);
 };

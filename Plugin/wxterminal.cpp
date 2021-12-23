@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "wxterminal.h"
+
 #include "ColoursAndFontsManager.h"
 #include "asyncprocess.h"
 #include "clTerminalHistory.h"
@@ -32,7 +34,7 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "processreaderthread.h"
-#include "wxterminal.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/filename.h>
@@ -71,6 +73,7 @@
 #include "unixprocess_impl.h"
 #elif defined(__WXMAC__)
 #include "unixprocess_impl.h"
+
 #include <util.h>
 #endif
 

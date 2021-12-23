@@ -30,13 +30,11 @@
 class WXDLLIMPEXP_SDK EditDlg : public EditDlgBase
 {
 public:
-    EditDlg(wxWindow* parent, const wxString &text);
+    EditDlg(wxWindow* parent, const wxString& text);
     virtual ~EditDlg();
-    
-    wxString GetText() const {
-        return m_stc10->GetText();
-    }
+
+    wxString GetText() const { return m_stc10->GetText(); }
 };
 
-WXDLLIMPEXP_SDK wxString clGetStringFromUser(const wxString &initialValue, wxWindow* parent = NULL);
+WXDLLIMPEXP_SDK wxString clGetStringFromUser(const wxString& initialValue, wxWindow* parent = NULL);
 #endif // EDITDLG_H

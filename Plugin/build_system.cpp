@@ -24,8 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "build_system.h"
+
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <wx/thread.h>
 
 BuilderConfig::BuilderConfig(wxXmlNode* node)

@@ -1,7 +1,9 @@
-#include "asyncprocess.h"
 #include "clShellHelper.hpp"
+
+#include "asyncprocess.h"
 #include "clTempFile.hpp"
 #include "fileutils.h"
+
 #include <wx/tokenzr.h>
 
 clShellHelper::clShellHelper() {}

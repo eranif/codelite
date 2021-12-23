@@ -32,18 +32,18 @@
 #ifndef CODELITE_PLUGIN_PLUGIN_GENERAL_WXCP_BASE_CLASSES_H
 #define CODELITE_PLUGIN_PLUGIN_GENERAL_WXCP_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/imaglist.h>
-#include <wx/bitmap.h>
-#include <wx/artprov.h>
 #include <map>
+#include <wx/artprov.h>
+#include <wx/bitmap.h>
 #include <wx/icon.h>
+#include <wx/imaglist.h>
+#include <wx/settings.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 #include "codelite_exports.h"
@@ -54,13 +54,12 @@ protected:
     // Maintain a map of all bitmaps representd by their name
     std::map<wxString, wxBitmap> m_bitmaps;
 
-
 protected:
-
 public:
     GeneralImages();
-    const wxBitmap& Bitmap(const wxString &name) const {
-        if ( !m_bitmaps.count(name) )
+    const wxBitmap& Bitmap(const wxString& name) const
+    {
+        if(!m_bitmaps.count(name))
             return wxNullBitmap;
         return m_bitmaps.find(name)->second;
     }

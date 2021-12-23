@@ -1,9 +1,11 @@
+#include "clTreeCtrlPanelDefaultPage.h"
+
 #include "clFileOrFolderDropTarget.h"
 #include "clSystemSettings.h"
-#include "clTreeCtrlPanelDefaultPage.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
 #include <wx/menu.h>

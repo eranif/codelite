@@ -27,6 +27,7 @@
 #define CLAUICAPTIONENABLER_H
 
 #include "codelite_exports.h"
+
 #include <wx/aui/framemanager.h>
 #include <wx/event.h>
 #include <wx/timer.h>
@@ -39,7 +40,7 @@ class WXDLLIMPEXP_SDK clAuiCaptionEnabler : public wxEvtHandler
     bool m_captionAdded;
     wxString m_caption;
     bool m_ensureCaptionsVisible;
-    
+
 protected:
     void OnTimer(wxTimerEvent& event);
     void OnEditorSettingsChanged(wxCommandEvent& event);

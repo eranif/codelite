@@ -29,6 +29,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "wxterminalbase.h"
+
 #include <queue>
 #include <set>
 #include <vector>
@@ -64,7 +65,7 @@ protected:
     void InsertCommandText(const wxString& command);
     wxString GetCommandText();
     void OnKey(wxKeyEvent& event);
-    
+
 protected:
     // Handlers for wxTerminalBase events.
     virtual void OnReadProcessOutput(clProcessEvent& event);

@@ -16,6 +16,7 @@
 #include "codelite_exports.h"
 #include "compiler.h"
 #include "macros.h"
+
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>

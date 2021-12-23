@@ -25,12 +25,13 @@
 #ifndef ATTRIBUTE_STYLE_H
 #define ATTRIBUTE_STYLE_H
 
+#include "JSON.h"
+#include "codelite_exports.h"
 #include "wx/string.h"
+
 #include <list>
 #include <map>
 #include <wx/colour.h>
-#include "JSON.h"
-#include "codelite_exports.h"
 
 // Set default font size per-OS
 #if defined(__WXGTK__)
@@ -102,17 +103,8 @@ protected:
     inline bool HasFlag(eStyleFlags flag) const { return m_flags & flag; }
 
 public:
-    StyleProperty(int id,
-                  const wxString& fgColour,
-                  const wxString& bgColour,
-                  const int fontSize,
-                  const wxString& name,
-                  const wxString& face,
-                  bool bold,
-                  bool italic,
-                  bool underline,
-                  bool eolFilled,
-                  int alpha);
+    StyleProperty(int id, const wxString& fgColour, const wxString& bgColour, const int fontSize, const wxString& name,
+                  const wxString& face, bool bold, bool italic, bool underline, bool eolFilled, int alpha);
     StyleProperty();
     StyleProperty(const StyleProperty& rhs) { *this = rhs; };
     StyleProperty& operator=(const StyleProperty& rhs);
@@ -147,7 +139,8 @@ public:
     bool GetEolFilled() const { return HasFlag(kEolFilled); }
     long GetFontSize() const
     {
-        if(m_fontSize <= 0) return FONT_SIZE;
+        if(m_fontSize <= 0)
+            return FONT_SIZE;
         return m_fontSize;
     }
 

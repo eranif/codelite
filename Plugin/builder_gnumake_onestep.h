@@ -30,10 +30,11 @@
 #define BUILDER_GNUMAKE_ONESTEP_H
 
 #include "builder_gnumake.h"
-#include "workspace.h"
-#include <wx/wfstream.h>
-#include <wx/txtstrm.h>
 #include "codelite_exports.h"
+#include "workspace.h"
+
+#include <wx/txtstrm.h>
+#include <wx/wfstream.h>
 
 class WXDLLIMPEXP_SDK BuilderGnuMakeOneStep : public BuilderGNUMakeClassic
 {

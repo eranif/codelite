@@ -3,6 +3,7 @@
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+
 #include <unordered_set>
 #include <vector>
 #include <wx/window.h>

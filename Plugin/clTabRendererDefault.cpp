@@ -2,6 +2,7 @@
 
 #include "drawingutils.h"
 #include "editor_config.h"
+
 #include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/settings.h>

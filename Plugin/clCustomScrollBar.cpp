@@ -1,5 +1,7 @@
 #include "clCustomScrollBar.h"
+
 #include "drawingutils.h"
+
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
 #include <wx/settings.h>

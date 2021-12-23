@@ -24,7 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilerLocatorMSVC.h"
+
 #include "compiler.h"
+
 #include <globals.h>
 #include <wx/regex.h>
 

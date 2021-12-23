@@ -25,10 +25,11 @@
 #ifndef __evnvarlist__
 #define __evnvarlist__
 
-#include "serialized_object.h"
-#include <wx/arrstr.h>
-#include "macros.h"
 #include "codelite_exports.h"
+#include "macros.h"
+#include "serialized_object.h"
+
+#include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK EnvMap
 {
@@ -62,7 +63,8 @@ public:
 
     void SetActiveSet(const wxString& activeSet)
     {
-        if(activeSet != _("<Use Active Set>") && activeSet != USE_GLOBAL_SETTINGS) this->m_activeSet = activeSet;
+        if(activeSet != _("<Use Active Set>") && activeSet != USE_GLOBAL_SETTINGS)
+            this->m_activeSet = activeSet;
     }
 
     const wxString& GetActiveSet() const { return m_activeSet; }

@@ -1,9 +1,6 @@
 #include "ThemeImporterINI.hpp"
 
-ThemeImporterINI::ThemeImporterINI()
-{
-    SetFileExtensions("*.ini;*.properties;*.desktop;*.toml");
-}
+ThemeImporterINI::ThemeImporterINI() { SetFileExtensions("*.ini;*.properties;*.desktop;*.toml"); }
 
 ThemeImporterINI::~ThemeImporterINI() {}
 

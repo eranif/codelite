@@ -7,6 +7,7 @@
 #include "clScrolledPanel.h"
 #include "clTreeCtrlModel.h"
 #include "codelite_exports.h"
+
 #include <wx/arrstr.h>
 #include <wx/datetime.h>
 #include <wx/dc.h>

@@ -1,4 +1,5 @@
 #include "clNotebookTheme.h"
+
 #include <wx/gdicmn.h>
 #include <wx/settings.h>
 
@@ -17,7 +18,7 @@ clNotebookTheme clNotebookTheme::GetTheme(clNotebookTheme::eNotebookTheme theme)
         notebookTheme.m_activeTabBgColour = *wxWHITE; // Default colour is white
         break;
     case kDark:
-        notebookTheme.m_penColour = *wxBLACK;//wxColour("rgb(60, 61, 56)");
+        notebookTheme.m_penColour = *wxBLACK; // wxColour("rgb(60, 61, 56)");
         notebookTheme.m_activeTabPenColour = wxColour("rgb(60, 61, 56)");
         notebookTheme.m_innerPenColour = wxColour("rgb(102, 102, 100)");
         notebookTheme.m_bgColour = wxColour("rgb(22, 23, 19)");

@@ -26,34 +26,30 @@
 #ifndef __detachedpanesinfo__
 #define __detachedpanesinfo__
 
-#include "serialized_object.h"
-#include <wx/arrstr.h>
 #include "codelite_exports.h"
+#include "serialized_object.h"
+
+#include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK DetachedPanesInfo : public SerializedObject
 {
 protected:
     wxArrayString m_panes;
+
 public:
     DetachedPanesInfo(wxArrayString arr);
     DetachedPanesInfo() {}
     virtual ~DetachedPanesInfo();
 
 public:
-    virtual void DeSerialize(Archive &arch);
-    virtual void Serialize(Archive &arch);
+    virtual void DeSerialize(Archive& arch);
+    virtual void Serialize(Archive& arch);
 
+    // Getters
+    const wxArrayString& GetPanes() const { return m_panes; }
 
-    //Getters
-    const wxArrayString& GetPanes() const {
-        return m_panes;
-    }
-
-    //Setters
-    void SetPanes(const wxArrayString& panes) {
-        this->m_panes = panes;
-    }
-
+    // Setters
+    void SetPanes(const wxArrayString& panes) { this->m_panes = panes; }
 };
 
 #endif // __detachedpanesinfo__

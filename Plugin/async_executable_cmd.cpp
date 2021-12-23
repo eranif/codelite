@@ -22,27 +22,27 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/xrc/xmlres.h>
-#include <wx/tokenzr.h>
-
 #include "async_executable_cmd.h"
-#include "event_notifier.h"
+
 #include "ZombieReaperPOSIX.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
-const wxEventType wxEVT_ASYNC_PROC_ADDLINE    = XRCID("async_proc_addline");
+const wxEventType wxEVT_ASYNC_PROC_ADDLINE = XRCID("async_proc_addline");
 const wxEventType wxEVT_ASYNC_PROC_ADDERRLINE = XRCID("async_proc_adderrline");
-const wxEventType wxEVT_ASYNC_PROC_STARTED    = XRCID("async_proc_started");
-const wxEventType wxEVT_ASYNC_PROC_ENDED      = XRCID("async_proc_ended");
+const wxEventType wxEVT_ASYNC_PROC_STARTED = XRCID("async_proc_started");
+const wxEventType wxEVT_ASYNC_PROC_ENDED = XRCID("async_proc_ended");
 
 static int AsyncExeTimerID = wxNewId();
 
 BEGIN_EVENT_TABLE(AsyncExeCmd, wxEvtHandler)
-    EVT_TIMER(AsyncExeTimerID, AsyncExeCmd::OnTimer)
+EVT_TIMER(AsyncExeTimerID, AsyncExeCmd::OnTimer)
 END_EVENT_TABLE()
 
-AsyncExeCmd::AsyncExeCmd(wxEvtHandler *owner)
+AsyncExeCmd::AsyncExeCmd(wxEvtHandler* owner)
     : m_proc(NULL)
     , m_owner(owner)
     , m_busy(false)
@@ -63,12 +63,12 @@ AsyncExeCmd::~AsyncExeCmd()
     wxDELETE(m_proc);
 };
 
-void AsyncExeCmd::AppendLine(const wxString &line, bool isErr)
+void AsyncExeCmd::AppendLine(const wxString& line, bool isErr)
 {
-    if ( !m_owner)
+    if(!m_owner)
         return;
 
-    wxCommandEvent event(isErr ?  wxEVT_ASYNC_PROC_ADDERRLINE : wxEVT_ASYNC_PROC_ADDLINE);
+    wxCommandEvent event(isErr ? wxEVT_ASYNC_PROC_ADDERRLINE : wxEVT_ASYNC_PROC_ADDLINE);
     event.SetEventObject(this);
     event.SetString(line);
     m_owner->ProcessEvent(event);
@@ -77,15 +77,15 @@ void AsyncExeCmd::AppendLine(const wxString &line, bool isErr)
 void AsyncExeCmd::Stop()
 {
     m_stop = true;
-    //kill the build process
-    if (m_proc) {
+    // kill the build process
+    if(m_proc) {
         m_proc->Terminate();
     }
 }
 
 void AsyncExeCmd::SendStartMsg()
 {
-    if ( !m_owner)
+    if(!m_owner)
         return;
 
     wxCommandEvent event(wxEVT_ASYNC_PROC_STARTED);
@@ -100,7 +100,7 @@ void AsyncExeCmd::SendStartMsg()
 
 void AsyncExeCmd::SendEndMsg(int exitCode)
 {
-    if ( !m_owner)
+    if(!m_owner)
         return;
 
     wxCommandEvent event(wxEVT_ASYNC_PROC_ENDED);
@@ -111,10 +111,10 @@ void AsyncExeCmd::SendEndMsg(int exitCode)
     m_owner->ProcessEvent(event);
 }
 
-void AsyncExeCmd::OnTimer(wxTimerEvent &event)
+void AsyncExeCmd::OnTimer(wxTimerEvent& event)
 {
     wxUnusedVar(event);
-    if ( m_stop ) {
+    if(m_stop) {
         m_proc->Terminate();
         return;
     }
@@ -123,25 +123,25 @@ void AsyncExeCmd::OnTimer(wxTimerEvent &event)
 
 void AsyncExeCmd::PrintOutput()
 {
-    if (m_proc->GetRedirect()) {
+    if(m_proc->GetRedirect()) {
         wxString data, errors;
         m_proc->HasInput(data, errors);
         DoPrintOutput(data, errors);
     }
 }
 
-void AsyncExeCmd::DoPrintOutput(const wxString &out, const wxString &err)
+void AsyncExeCmd::DoPrintOutput(const wxString& out, const wxString& err)
 {
-    if (!out.IsEmpty()) {
+    if(!out.IsEmpty()) {
         wxStringTokenizer tt(out, wxT("\n"));
-        while (tt.HasMoreTokens()) {
+        while(tt.HasMoreTokens()) {
             AppendLine(tt.NextToken() + wxT("\n"));
         }
     }
 
-    if (!err.IsEmpty()) {
+    if(!err.IsEmpty()) {
         wxStringTokenizer tt(err, wxT("\n"));
-        while (tt.HasMoreTokens()) {
+        while(tt.HasMoreTokens()) {
             AppendLine(tt.NextToken() + wxT("\n"), true);
         }
     }
@@ -149,9 +149,9 @@ void AsyncExeCmd::DoPrintOutput(const wxString &out, const wxString &err)
 
 void AsyncExeCmd::ProcessEnd(wxProcessEvent& event)
 {
-    //read all input before stopping the timer
-    if ( !m_stop ) {
-        if (m_proc->GetRedirect()) {
+    // read all input before stopping the timer
+    if(!m_stop) {
+        if(m_proc->GetRedirect()) {
             wxString err;
             wxString out;
             m_proc->ReadAll(out, err);
@@ -161,7 +161,7 @@ void AsyncExeCmd::ProcessEnd(wxProcessEvent& event)
         }
     }
 
-    //stop the timer if needed
+    // stop the timer if needed
     if(m_proc->GetRedirect()) {
         m_timer->Stop();
     }
@@ -172,20 +172,20 @@ void AsyncExeCmd::ProcessEnd(wxProcessEvent& event)
     SendEndMsg(event.GetExitCode());
 }
 
-void AsyncExeCmd::Execute(const wxString &cmdLine, bool hide, bool redirect)
+void AsyncExeCmd::Execute(const wxString& cmdLine, bool hide, bool redirect)
 {
     m_cmdLine = cmdLine;
     SetBusy(true);
     SendStartMsg();
 
     m_proc = new clProcess(wxNewId(), m_cmdLine, redirect);
-    if (m_proc) {
-        if (m_proc->Start(hide) == 0) {
+    if(m_proc) {
+        if(m_proc->Start(hide) == 0) {
             wxDELETE(m_proc);
             SetBusy(false);
-            
+
         } else {
-            //process started successfully, start timer if needed
+            // process started successfully, start timer if needed
             if(m_proc->GetRedirect()) {
                 m_timer->Start(10);
             }
@@ -193,19 +193,16 @@ void AsyncExeCmd::Execute(const wxString &cmdLine, bool hide, bool redirect)
     }
 }
 
-void AsyncExeCmd::Terminate()
-{
-    m_proc->Terminate();
-}
+void AsyncExeCmd::Terminate() { m_proc->Terminate(); }
 
 #ifndef __WXMSW__
 void AsyncExeCmd::OnZombieReaperProcessTerminated(wxProcessEvent& event)
 {
     CL_DEBUG("AsyncExeCmd: process %d terminated. (reported by OnZombieReaperProcessTerminated)", event.GetPid());
     event.Skip();
-    if ( m_proc && (event.GetPid() == m_proc->GetPid()) ) {
+    if(m_proc && (event.GetPid() == m_proc->GetPid())) {
         CL_DEBUG("AsyncExeCmd: this is our process! performing cleanup");
-        ProcessEnd( event );
+        ProcessEnd(event);
         event.Skip(false);
     }
 }

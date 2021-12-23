@@ -8,6 +8,7 @@
 #define _CODELITE_PLUGIN_VIRTUALDIRECTORYSELECTORBASE_BASE_CLASSES_H
 
 #include "clThemedTreeCtrl.h"
+
 #include <wx/artprov.h>
 #include <wx/button.h>
 #include <wx/dialog.h>

@@ -25,14 +25,15 @@
 #ifndef __environmentconfig__
 #define __environmentconfig__
 
-#include "configurationtoolbase.h"
 #include "archive.h"
-#include "evnvarlist.h"
-#include <wx/utils.h>
-#include "macros.h"
-#include <wx/thread.h>
-#include "project.h"
 #include "build_config.h"
+#include "configurationtoolbase.h"
+#include "evnvarlist.h"
+#include "macros.h"
+#include "project.h"
+
+#include <wx/thread.h>
+#include <wx/utils.h>
 
 class EnvSetter;
 

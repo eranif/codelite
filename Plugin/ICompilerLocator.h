@@ -28,6 +28,7 @@
 
 #include "codelite_exports.h"
 #include "compiler.h"
+
 #include <vector>
 #include <wx/sharedptr.h>
 

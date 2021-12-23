@@ -31,6 +31,7 @@
 #include "lexer_configuration.h"
 #include "macros.h"
 #include "smart_ptr.h"
+
 #include <list>
 #include <wx/filename.h>
 #include <wx/string.h>

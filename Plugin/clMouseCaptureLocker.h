@@ -27,6 +27,7 @@
 #define CLMOUSECAPTURELOCKER_H
 
 #include "codelite_exports.h"
+
 #include <wx/window.h>
 
 class WXDLLIMPEXP_SDK clMouseCaptureLocker

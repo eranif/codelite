@@ -1,5 +1,6 @@
-#include "ColoursAndFontsManager.h"
 #include "clFindResultsStyler.h"
+
+#include "ColoursAndFontsManager.h"
 #include "editor_config.h"
 #include "globals.h"
 #include "lexer_configuration.h"
@@ -22,13 +23,17 @@ clFindResultsStyler::clFindResultsStyler(wxStyledTextCtrl* stc)
 
 clFindResultsStyler::~clFindResultsStyler()
 {
-    if(m_stc) { m_stc->Unbind(wxEVT_STC_STYLENEEDED, &clFindResultsStyler::OnStyleNeeded, this); }
+    if(m_stc) {
+        m_stc->Unbind(wxEVT_STC_STYLENEEDED, &clFindResultsStyler::OnStyleNeeded, this);
+    }
 }
 
 void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    if(!lexer) { lexer = ColoursAndFontsManager::Get().GetLexer("text"); }
+    if(!lexer) {
+        lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    }
 
     const StyleProperty& defaultStyle = lexer->GetProperty(0);
     wxFont defaultFont = lexer->GetFontForSyle(0, sci);

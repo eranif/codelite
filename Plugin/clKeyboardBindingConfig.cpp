@@ -1,7 +1,9 @@
 #include "clKeyboardBindingConfig.h"
+
 #include "JSON.h"
-#include <wx/filename.h>
 #include "cl_standard_paths.h"
+
+#include <wx/filename.h>
 
 clKeyboardBindingConfig::clKeyboardBindingConfig() {}
 
@@ -11,7 +13,8 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
 {
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");
     fn.AppendDir("config");
-    if(!fn.Exists()) return *this;
+    if(!fn.Exists())
+        return *this;
 
     m_bindings.clear();
     JSON root(fn);

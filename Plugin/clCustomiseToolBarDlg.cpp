@@ -1,5 +1,6 @@
-#include "bitmap_loader.h"
 #include "clCustomiseToolBarDlg.h"
+
+#include "bitmap_loader.h"
 #include "clToolBar.h"
 #include "clToolBarButtonBase.h"
 #include "editor_config.h"

@@ -1,4 +1,5 @@
 #include "clStatusBarMessage.h"
+
 #include "globals.h"
 #include "imanager.h"
 

@@ -1,6 +1,7 @@
+#include "clThemedComboBox.hpp"
+
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
-#include "clThemedComboBox.hpp"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"

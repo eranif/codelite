@@ -26,8 +26,8 @@
 #ifndef SSHACCOUNTMANAGERDLG_H
 #define SSHACCOUNTMANAGERDLG_H
 #if USE_SFTP
-#include "sftp_ui.h"
 #include "AddSSHAcountDlg.h"
+#include "sftp_ui.h"
 
 class WXDLLIMPEXP_SDK SSHAccountManagerDlg : public SSHAccountManagerDlgBase
 {

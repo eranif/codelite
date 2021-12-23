@@ -2,6 +2,7 @@
 #define CLEDITORCOLOURISELOCKER_H
 
 #include "codelite_exports.h"
+
 #include <wx/stc/stc.h>
 
 class WXDLLIMPEXP_SDK clEditorColouriseLocker

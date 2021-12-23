@@ -1,10 +1,12 @@
 #include "phpoptions.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
+
 #include "cl_standard_paths.h"
-#include <wx/filename.h>
-#include "globals.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "fileutils.h"
+#include "globals.h"
+
+#include <wx/filename.h>
 
 PhpOptions::PhpOptions()
     : clConfigItem("PHPConfigurationData")
@@ -23,7 +25,9 @@ PhpOptions::PhpOptions()
         m_phpExe = oldJson.namedObject("m_phpExe").toString();
         if(m_phpExe.empty()) {
             wxFileName fnPHP;
-            if(::clFindExecutable("php", fnPHP)) { m_phpExe = fnPHP.GetFullPath(); }
+            if(::clFindExecutable("php", fnPHP)) {
+                m_phpExe = fnPHP.GetFullPath();
+            }
         }
 
         m_includePaths = oldJson.namedObject("m_includePaths").toArrayString();
@@ -35,7 +39,9 @@ PhpOptions::PhpOptions()
             FileUtils::WriteFileContent(newConfigFile, "{}");
         }
 
-        if(!newConfigFile.FileExists()) { FileUtils::WriteFileContent(newConfigFile, "{}"); }
+        if(!newConfigFile.FileExists()) {
+            FileUtils::WriteFileContent(newConfigFile, "{}");
+        }
 
         JSON newRoot(newConfigFile);
         JSONItem e = JSONItem::createObject(GetName());

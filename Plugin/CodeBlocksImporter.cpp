@@ -1,8 +1,10 @@
 #include "CodeBlocksImporter.h"
-#include <wx/xml/xml.h>
+
+#include "macros.h"
+
 #include <wx/filefn.h>
 #include <wx/tokenzr.h>
-#include "macros.h"
+#include <wx/xml/xml.h>
 
 bool CodeBlocksImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
 {
@@ -299,7 +301,8 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                             while(makeCommandsChild) {
                                                 if(makeCommandsChild->GetName() == wxT("Build") &&
                                                    makeCommandsChild->HasAttribute(wxT("command"))) {
-                                                    wxString buildCommand = makeCommandsChild->GetAttribute(wxT("command"));
+                                                    wxString buildCommand =
+                                                        makeCommandsChild->GetAttribute(wxT("command"));
 
                                                     if(!genericProjectCfg->enableCustomBuild)
                                                         genericProjectCfg->enableCustomBuild = true;
@@ -307,7 +310,8 @@ void CodeBlocksImporter::GenerateFromProject(GenericWorkspacePtr genericWorkspac
                                                     genericProjectCfg->customBuildCmd = buildCommand;
                                                 } else if(makeCommandsChild->GetName() == wxT("Clean") &&
                                                           makeCommandsChild->HasAttribute(wxT("command"))) {
-                                                    wxString cleanCommand = makeCommandsChild->GetAttribute(wxT("command"));
+                                                    wxString cleanCommand =
+                                                        makeCommandsChild->GetAttribute(wxT("command"));
 
                                                     if(!genericProjectCfg->enableCustomBuild)
                                                         genericProjectCfg->enableCustomBuild = true;

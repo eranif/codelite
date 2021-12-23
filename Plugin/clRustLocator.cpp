@@ -1,5 +1,7 @@
 #include "clRustLocator.hpp"
+
 #include "fileutils.h"
+
 #include <wx/arrstr.h>
 #include <wx/filename.h>
 

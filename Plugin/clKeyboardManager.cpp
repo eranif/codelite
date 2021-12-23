@@ -1,5 +1,6 @@
-#include "clKeyboardBindingConfig.h"
 #include "clKeyboardManager.h"
+
+#include "clKeyboardBindingConfig.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -10,6 +11,7 @@
 #include "macros.h"
 #include "newkeyshortcutdlg.h"
 #include "wxCustomControls.hpp"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/log.h>

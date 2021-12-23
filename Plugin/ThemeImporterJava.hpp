@@ -26,8 +26,8 @@
 #ifndef ECLIPSEJAVATHEMEIMPORTER_H
 #define ECLIPSEJAVATHEMEIMPORTER_H
 
-#include "codelite_exports.h"
 #include "ThemeImporterBase.hpp"
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK ThemeImporterJava : public ThemeImporterBase
 {

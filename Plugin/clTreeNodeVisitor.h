@@ -2,6 +2,7 @@
 #define CLTREENODEVISITOR_H
 
 #include "clTreeCtrlModel.h"
+
 #include <functional>
 #include <vector>
 

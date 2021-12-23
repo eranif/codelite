@@ -1,9 +1,11 @@
 #include "clEditorEditEventsHandler.h"
-#include <wx/stc/stc.h>
+
 #include "event_notifier.h"
-#include <wx/textentry.h>
-#include <wx/textctrl.h>
+
 #include <wx/combobox.h>
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
+#include <wx/textentry.h>
 
 clEditEventsHandler::clEditEventsHandler(wxStyledTextCtrl* wnd)
     : m_stc(wnd)

@@ -1,7 +1,9 @@
 #include "CompileCommandsGenerator.h"
+
 #include "CompileCommandsJSON.h"
 #include "CompileFlagsTxt.h"
 #include "JSON.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clFilesCollector.h"
 #include "cl_config.h"
 #include "clcommandlineparser.h"
@@ -15,9 +17,9 @@
 #include "processreaderthread.h"
 #include "workspace.h"
 #include "wxmd5.h"
+
 #include <macros.h>
 #include <thread>
-#include "clFileSystemWorkspace.hpp"
 
 wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
 
@@ -30,7 +32,9 @@ CompileCommandsGenerator::~CompileCommandsGenerator()
 {
     // If the child process is still running, detach from it. i.e. OnProcessTeraminated() event is not called
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CompileCommandsGenerator::OnProcessTeraminated, this);
-    if(m_process) { m_process->Detach(); }
+    if(m_process) {
+        m_process->Detach();
+    }
     wxDELETE(m_process);
 }
 
@@ -115,11 +119,17 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
 void CompileCommandsGenerator::GenerateCompileCommands()
 {
     // Kill any previous process running
-    if(m_process) { m_process->Detach(); }
+    if(m_process) {
+        m_process->Detach();
+    }
     wxDELETE(m_process);
-    
-    if(!clCxxWorkspaceST::Get()->IsOpen()) { return; }
-    if(!clCxxWorkspaceST::Get()->GetActiveProject()) { return; }
+
+    if(!clCxxWorkspaceST::Get()->IsOpen()) {
+        return;
+    }
+    if(!clCxxWorkspaceST::Get()->GetActiveProject()) {
+        return;
+    }
 
     wxFileName codeliteMake(clStandardPaths::Get().GetBinFolder(), "codelite-make");
 #ifdef __WXMSW__

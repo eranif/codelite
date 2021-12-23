@@ -23,15 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/dataobj.h>
-#include <wx/app.h>
-#include <wx/clipbrd.h>
-#include <wx/menu.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/crt.h>
 #include "macrosdlg.h"
+
 #include "globals.h"
 #include "ieditor.h"
+
+#include <wx/app.h>
+#include <wx/clipbrd.h>
+#include <wx/crt.h>
+#include <wx/dataobj.h>
+#include <wx/menu.h>
+#include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(MacrosDlg, MacrosBaseDlg)
 EVT_MENU(XRCID("copy_macro"), MacrosDlg::OnCopy)
@@ -127,9 +129,8 @@ void MacrosDlg::Initialize()
         AddMacro(wxT("$(OutputSwitch)"), _("The output switch (e.g. -o)"));
         AddMacro(wxT("$(LibraryPathSwitch)"), _("Library switch (e.g. -L)"));
         AddMacro(wxT("$(PreprocessorSwitch)"), _("Preprocessor switch (e.g. -D)"));
-        AddMacro(wxT("$(Preprocessors)"),
-                 _("Expands to all preprocessors set in the project setting where each entry "
-                   "is prefixed with $(PreprocessorSwitch)"));
+        AddMacro(wxT("$(Preprocessors)"), _("Expands to all preprocessors set in the project setting where each entry "
+                                            "is prefixed with $(PreprocessorSwitch)"));
         AddMacro(wxT("$(ArchiveOutputSwitch)"), _("Archive switch, usually not needed (VC compiler sets it to /OUT:"));
         AddMacro(wxT("$(PreprocessOnlySwitch)"), _("The compiler preprocess-only switch (e.g. -E)"));
         AddMacro(wxT("$(LinkOptions)"), _("The linker options as set in the project settings"));

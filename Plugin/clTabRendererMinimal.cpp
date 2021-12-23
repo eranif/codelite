@@ -6,6 +6,7 @@
 #include "drawingutils.h"
 #include "globals.h"
 #include "imanager.h"
+
 #include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/settings.h>
@@ -135,7 +136,7 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
 
     } else if(style & kNotebook_RightTabs) {
         tabRect.x -= (TAB_RADIUS + 1);
-        
+
     } else {
         // top tabs
         tabRect.y += TAB_RADIUS;

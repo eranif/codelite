@@ -26,16 +26,17 @@
 #ifndef BOOKMARKMANAGER_H
 #define BOOKMARKMANAGER_H
 
+#include "cl_defs.h"
+#include "codelite_exports.h"
+#include "ieditor.h"
+
+#include <map>
+#include <unordered_map>
+#include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h>
-#include "codelite_exports.h"
-#include <map>
-#include <vector>
-#include "cl_defs.h"
 #include <wx/menu.h>
 #include <wx/stc/stc.h>
-#include <unordered_map>
-#include "ieditor.h"
 
 #define MAX_BOOKMARK CL_N0_OF_BOOKMARK_TYPES
 

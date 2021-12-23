@@ -30,6 +30,7 @@
 #include "codelite_exports.h"
 #include "configuration_object.h"
 #include "smart_ptr.h"
+
 #include <list>
 #include <map>
 #include <memory>

@@ -7,21 +7,21 @@
 #ifndef _CODELITE_PLUGIN_MEMORYVIEWBASE_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_MEMORYVIEWBASE_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
-#include <wx/panel.h>
+#include <wx/arrstr.h>
 #include <wx/artprov.h>
+#include <wx/button.h>
+#include <wx/choice.h>
+#include <wx/panel.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
-#include <wx/button.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -33,7 +33,6 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
-
 
 class MemoryViewBase : public wxPanel
 {
@@ -67,7 +66,8 @@ public:
     wxTextCtrl* GetTextCtrlMemory() { return m_textCtrlMemory; }
     wxButton* GetButtonEvaluate() { return m_buttonEvaluate; }
     wxButton* GetButtonUpdate() { return m_buttonUpdate; }
-    MemoryViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
+    MemoryViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~MemoryViewBase();
 };
 

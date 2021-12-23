@@ -3,6 +3,7 @@
 
 #include "codelite_exports.h"
 #include "mdparser.hpp"
+
 #include <wx/dc.h>
 
 class WXDLLIMPEXP_SDK clMarkdownRenderer

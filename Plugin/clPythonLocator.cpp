@@ -1,4 +1,5 @@
 #include "clPythonLocator.hpp"
+
 #include "file_logger.h"
 #include "globals.h"
 #include "wx/filename.h"

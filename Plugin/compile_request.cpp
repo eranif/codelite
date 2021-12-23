@@ -22,13 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "compile_request.h"
+
 #include "ICompilerLocator.h"
 #include "asyncprocess.h"
 #include "build_config.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "cl_command_event.h"
-#include "compile_request.h"
 #include "compiler.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
@@ -40,6 +41,7 @@
 #include "plugin.h"
 #include "workspace.h"
 #include "wx/process.h"
+
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>

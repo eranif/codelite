@@ -25,16 +25,17 @@
 #ifndef LEXER_CONFIGURATION_H
 #define LEXER_CONFIGURATION_H
 
-#include "wx/string.h"
-#include "wx/filename.h"
-#include "attribute_style.h"
-#include "wx/xml/xml.h"
-#include <wx/font.h>
-#include "codelite_exports.h"
-#include <wx/stc/stc.h>
-#include <wx/sharedptr.h>
-#include <smart_ptr.h>
 #include "JSON.h"
+#include "attribute_style.h"
+#include "codelite_exports.h"
+#include "wx/filename.h"
+#include "wx/string.h"
+#include "wx/xml/xml.h"
+
+#include <smart_ptr.h>
+#include <wx/font.h>
+#include <wx/sharedptr.h>
+#include <wx/stc/stc.h>
 
 #define ANNOTATION_STYLE_WARNING 210
 #define ANNOTATION_STYLE_ERROR 211

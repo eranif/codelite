@@ -1,4 +1,5 @@
 #include "clSystemSettings.h"
+
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
@@ -7,6 +8,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "wx/app.h"
+
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/settings.h>

@@ -22,12 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "custombuildrequest.h"
+
 #include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "cl_command_event.h"
 #include "compiler.h"
-#include "custombuildrequest.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -37,6 +38,7 @@
 #include "macros.h"
 #include "plugin.h"
 #include "workspace.h"
+
 #include <wx/app.h>
 #include <wx/ffile.h>
 #include <wx/log.h>

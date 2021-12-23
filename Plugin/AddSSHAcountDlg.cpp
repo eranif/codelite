@@ -25,10 +25,11 @@
 
 #include "AddSSHAcountDlg.h"
 #if USE_SFTP
-#include "cl_ssh.h"
 #include "cl_exception.h"
-#include <wx/msgdlg.h>
+#include "cl_ssh.h"
 #include "windowattrmanager.h"
+
+#include <wx/msgdlg.h>
 
 AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent)
     : AddSSHAcountDlgBase(parent)

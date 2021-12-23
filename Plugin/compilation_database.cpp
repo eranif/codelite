@@ -24,20 +24,22 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "compilation_database.h"
+
+#include "JSON.h"
+#include "cl_standard_paths.h"
+#include "compiler_command_line_parser.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "JSON.h"
 #include "project.h"
 #include "workspace.h"
+
 #include <algorithm>
 #include <wx/dir.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/tokenzr.h>
-#include "cl_standard_paths.h"
-#include "compiler_command_line_parser.h"
 
 const wxString DB_VERSION = "2.0";
 
@@ -64,7 +66,9 @@ CompilationDatabase::~CompilationDatabase() { Close(); }
 void CompilationDatabase::Open()
 {
     // Close the old database
-    if(m_db) { Close(); }
+    if(m_db) {
+        Close();
+    }
 
     // Create new one
     try {
@@ -95,7 +99,8 @@ wxFileName CompilationDatabase::GetFileName() const
 
 void CompilationDatabase::CompilationLine(const wxString& filename, wxString& compliationLine, wxString& cwd)
 {
-    if(!IsOpened()) return;
+    if(!IsOpened())
+        return;
 
     try {
 
@@ -152,7 +157,8 @@ void CompilationDatabase::Close()
 void CompilationDatabase::Initialize()
 {
     Open();
-    if(!IsOpened()) return;
+    if(!IsOpened())
+        return;
 
     // get list of files created by cmake
     FileNameVector_t files = GetCompileCommandsFiles();
@@ -164,7 +170,9 @@ void CompilationDatabase::Initialize()
     clCustomCompileFile.SetExt("db.txt");
     if(clCustomCompileFile.Exists()) {
         wxFileName compile_commands = ConvertCodeLiteCompilationDatabaseToCMake(clCustomCompileFile);
-        if(compile_commands.IsOk()) { files.push_back(compile_commands); }
+        if(compile_commands.IsOk()) {
+            files.push_back(compile_commands);
+        }
     }
     // Sort the files by modification time
     std::sort(files.begin(), files.end(), wxFileNameSorter());
@@ -176,10 +184,13 @@ void CompilationDatabase::Initialize()
 
 void CompilationDatabase::CreateDatabase()
 {
-    if(!IsOpened()) return;
+    if(!IsOpened())
+        return;
 
     try {
-        if(GetDbVersion() != DB_VERSION) { DropTables(); }
+        if(GetDbVersion() != DB_VERSION) {
+            DropTables();
+        }
 
         // Create the schema
         m_db->ExecuteUpdate("CREATE TABLE IF NOT EXISTS COMPILATION_TABLE (FILE_NAME TEXT, FILE_PATH TEXT, CWD TEXT, "
@@ -202,7 +213,8 @@ void CompilationDatabase::CreateDatabase()
 
 void CompilationDatabase::DropTables()
 {
-    if(!IsOpened()) return;
+    if(!IsOpened())
+        return;
 
     try {
 
@@ -217,7 +229,8 @@ void CompilationDatabase::DropTables()
 
 wxString CompilationDatabase::GetDbVersion()
 {
-    if(!IsOpened()) return wxT("");
+    if(!IsOpened())
+        return wxT("");
 
     try {
 
@@ -248,7 +261,9 @@ bool CompilationDatabase::IsDbVersionUpToDate(const wxFileName& fn)
         wxSQLite3Statement st = db.PrepareStatement(sql);
         wxSQLite3ResultSet rs = st.ExecuteQuery();
 
-        if(rs.NextRow()) { return rs.GetString(0) == DB_VERSION; }
+        if(rs.NextRow()) {
+            return rs.GetString(0) == DB_VERSION;
+        }
         return false;
 
     } catch(wxSQLite3Exception& e) {
@@ -274,7 +289,7 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
     // Since we can have multiple "compile_commands.json" files, we take the most updated file
     // Prepare a list of files to check
     FileNameVector_t files;
-    std::queue<std::pair<wxString, int> > dirs;
+    std::queue<std::pair<wxString, int>> dirs;
 
     // we start with the current path
     dirs.push(std::make_pair(fn.GetPath(), 0));
@@ -360,14 +375,16 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
         wxString content;
         fp.ReadAll(&content, wxConvUTF8);
 
-        if(content.IsEmpty()) return wxFileName();
+        if(content.IsEmpty())
+            return wxFileName();
 
         JSON root(cJSON_Array);
         JSONItem arr = root.toElement();
         wxArrayString lines = ::wxStringTokenize(content, "\n\r", wxTOKEN_STRTOK);
         for(size_t i = 0; i < lines.GetCount(); ++i) {
             wxArrayString parts = ::wxStringTokenize(lines.Item(i), wxT("|"), wxTOKEN_STRTOK);
-            if(parts.GetCount() != 3) continue;
+            if(parts.GetCount() != 3)
+                continue;
 
             wxString file_name = wxFileName(parts.Item(0).Trim().Trim(false)).GetFullPath();
             wxString cwd = parts.Item(1).Trim().Trim(false);
@@ -386,7 +403,9 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
         {
             wxLogNull nl;
             fp.Close();
-            if(compile_file.Exists()) { clRemoveFile(compile_file.GetFullPath()); }
+            if(compile_file.Exists()) {
+                clRemoveFile(compile_file.GetFullPath());
+            }
         }
         return fn;
     }
@@ -397,7 +416,9 @@ wxArrayString CompilationDatabase::FindIncludePaths(const wxString& rootFolder, 
                                                     time_t& lastCompileCommandsModified)
 {
     FileNameVector_t files = GetCompileCommandsFiles(rootFolder);
-    if(files.empty()) { return wxArrayString(); }
+    if(files.empty()) {
+        return wxArrayString();
+    }
     const wxFileName& compile_commands = files[0]; // we take the first file, which is the most up to date
 
     // If the last compile_commands.json file was already processed, return an empty array
@@ -438,7 +459,7 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles(const wxString& ro
     // Since we can have multiple "compile_commands.json" files, we take the most updated file
     // Prepare a list of files to check
     FileNameVector_t files;
-    std::queue<std::pair<wxString, int> > dirs;
+    std::queue<std::pair<wxString, int>> dirs;
 
     // we start with the current path
     dirs.push(std::make_pair(rootFolder, 0));

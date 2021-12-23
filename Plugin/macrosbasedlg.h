@@ -7,19 +7,19 @@
 #ifndef CODELITE_PLUGIN_MACROSBASEDLG_BASE_CLASSES_H
 #define CODELITE_PLUGIN_MACROSBASEDLG_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
+#include <wx/artprov.h>
+#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
 #include <wx/listctrl.h>
-#include <wx/button.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 #include "codelite_exports.h"
@@ -37,7 +37,9 @@ protected:
 
 public:
     wxListCtrl* GetListCtrlMacros() { return m_listCtrlMacros; }
-    MacrosBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Available Macros"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    MacrosBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Available Macros"),
+                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                  long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~MacrosBaseDlg();
 };
 

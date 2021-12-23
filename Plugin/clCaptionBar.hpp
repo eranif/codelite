@@ -2,7 +2,7 @@
 #define CLCAPTIONBAR_HPP
 
 #include "wxCustomControls.hpp"
-#include <wx/window.h>
+
 #include <clColours.h>
 #include <codelite_exports.h>
 #include <unordered_map>
@@ -12,6 +12,7 @@
 #include <wx/menu.h>
 #include <wx/panel.h>
 #include <wx/toplevel.h>
+#include <wx/window.h>
 
 enum wxCaptionStyle {
     wxCAPTION_STYLE_BOLD_FONT = (1 << 0),

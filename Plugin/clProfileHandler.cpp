@@ -1,11 +1,13 @@
+#include "clProfileHandler.h"
+
 #include "Notebook.h"
 #include "clFileSystemWorkspace.hpp"
-#include "clProfileHandler.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
 #include "workspace.h"
+
 #include <algorithm>
 
 clProfileHandler::clProfileHandler()

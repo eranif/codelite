@@ -4,6 +4,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "openresourcedialogmodel.h"
+
 #include <wx/dvrenderers.h>
 #include <wx/variant.h>
 
@@ -14,10 +15,10 @@
 // -------------------------------------------------
 // Help method
 // -------------------------------------------------
-wxVariant OpenResourceDialogModel::CreateIconTextVariant(const wxString &text, const wxBitmap& bmp)
+wxVariant OpenResourceDialogModel::CreateIconTextVariant(const wxString& text, const wxBitmap& bmp)
 {
     wxIcon icn;
-    icn.CopyFromBitmap( bmp);
+    icn.CopyFromBitmap(bmp);
     wxDataViewIconText ict(text, icn);
     wxVariant v;
     v << ict;
@@ -35,7 +36,7 @@ OpenResourceDialogModel::OpenResourceDialogModel()
 
 OpenResourceDialogModel::~OpenResourceDialogModel()
 {
-    for(size_t i=0; i<m_data.size(); ++i) {
+    for(size_t i = 0; i < m_data.size(); ++i) {
         wxDELETE(m_data.at(i));
     }
     m_data.clear();
@@ -45,30 +46,27 @@ unsigned int OpenResourceDialogModel::GetChildren(const wxDataViewItem& item, wx
 {
     if(item.GetID() == NULL) {
         // Root
-        for(size_t i=0; i<m_data.size(); ++i) {
-            children.Add( wxDataViewItem( m_data.at(i) ) );
+        for(size_t i = 0; i < m_data.size(); ++i) {
+            children.Add(wxDataViewItem(m_data.at(i)));
         }
         return children.size();
     }
 
     children.Clear();
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.m_pItem);
-    if ( node ) {
-        for(size_t i=0; i<node->GetChildren().size(); ++i) {
-            children.Add( wxDataViewItem( node->GetChildren().at(i) ) );
+    if(node) {
+        for(size_t i = 0; i < node->GetChildren().size(); ++i) {
+            children.Add(wxDataViewItem(node->GetChildren().at(i)));
         }
     }
     return children.GetCount();
 }
 
-unsigned int OpenResourceDialogModel::GetColumnCount() const
-{
-    return m_colCount;
-}
+unsigned int OpenResourceDialogModel::GetColumnCount() const { return m_colCount; }
 
 wxString OpenResourceDialogModel::GetColumnType(unsigned int col) const
 {
-    if ( !m_data.empty() && m_data.at(0)->GetData().size() > col ) {
+    if(!m_data.empty() && m_data.at(0)->GetData().size() > col) {
         return m_data.at(0)->GetData().at(col).GetType();
     }
     return "string";
@@ -76,12 +74,12 @@ wxString OpenResourceDialogModel::GetColumnType(unsigned int col) const
 
 wxDataViewItem OpenResourceDialogModel::GetParent(const wxDataViewItem& item) const
 {
-    if ( IsEmpty() ) {
+    if(IsEmpty()) {
         return wxDataViewItem(NULL);
     }
-    
+
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.m_pItem);
-    if ( node ) {
+    if(node) {
         return wxDataViewItem(node->GetParent());
     }
     return wxDataViewItem(NULL);
@@ -90,7 +88,7 @@ wxDataViewItem OpenResourceDialogModel::GetParent(const wxDataViewItem& item) co
 bool OpenResourceDialogModel::IsContainer(const wxDataViewItem& item) const
 {
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.m_pItem);
-    if ( node ) {
+    if(node) {
         return node->IsContainer();
     }
     return false;
@@ -99,78 +97,82 @@ bool OpenResourceDialogModel::IsContainer(const wxDataViewItem& item) const
 void OpenResourceDialogModel::GetValue(wxVariant& variant, const wxDataViewItem& item, unsigned int col) const
 {
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.m_pItem);
-    if ( node && node->GetData().size() > col ) {
+    if(node && node->GetData().size() > col) {
         variant = node->GetData().at(col);
     }
 }
-wxDataViewItem OpenResourceDialogModel::DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData)
+wxDataViewItem OpenResourceDialogModel::DoAppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data,
+                                                     bool isContainer, wxClientData* clientData)
 {
     OpenResourceDialogModel_Item* parentNode = reinterpret_cast<OpenResourceDialogModel_Item*>(parent.m_pItem);
     DoChangeItemType(parent, true);
-    
+
     OpenResourceDialogModel_Item* child = new OpenResourceDialogModel_Item();
     child->SetIsContainer(isContainer);
-    child->SetClientObject( clientData );
-    child->SetData( data );
-    if ( parentNode ) {
-        parentNode->AddChild( child );
+    child->SetClientObject(clientData);
+    child->SetData(data);
+    if(parentNode) {
+        parentNode->AddChild(child);
 
     } else {
-        m_data.push_back( child );
+        m_data.push_back(child);
     }
 
     return wxDataViewItem(child);
 }
 
-wxDataViewItem OpenResourceDialogModel::DoInsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, bool isContainer, wxClientData *clientData)
+wxDataViewItem OpenResourceDialogModel::DoInsertItem(const wxDataViewItem& insertBeforeMe,
+                                                     const wxVector<wxVariant>& data, bool isContainer,
+                                                     wxClientData* clientData)
 {
     OpenResourceDialogModel_Item* child = new OpenResourceDialogModel_Item();
     child->SetIsContainer(isContainer);
-    child->SetClientObject( clientData );
-    child->SetData( data );
+    child->SetClientObject(clientData);
+    child->SetData(data);
 
     // find the location where to insert the new item
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(insertBeforeMe.m_pItem);
-    if ( !node )
+    if(!node)
         return wxDataViewItem();
 
     wxVector<OpenResourceDialogModel_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
 
-    if ( where !=  m_data.end() ) {
+    if(where != m_data.end()) {
         // top level item
-        m_data.insert( where, child );
+        m_data.insert(where, child);
 
     } else {
 
-        if ( !node->GetParent() )
+        if(!node->GetParent())
             return wxDataViewItem();
 
         child->SetParent(node->GetParent());
         where = std::find(node->GetParent()->GetChildren().begin(), node->GetParent()->GetChildren().end(), node);
-        if ( where == node->GetParent()->GetChildren().end() ) {
-            node->GetParent()->GetChildren().push_back( child );
+        if(where == node->GetParent()->GetChildren().end()) {
+            node->GetParent()->GetChildren().push_back(child);
 
         } else {
             node->GetParent()->GetChildren().insert(where, child);
-
         }
     }
 
     return wxDataViewItem(child);
 }
 
-wxDataViewItem OpenResourceDialogModel::AppendItem(const wxDataViewItem &parent, const wxVector<wxVariant>& data, wxClientData *clientData)
+wxDataViewItem OpenResourceDialogModel::AppendItem(const wxDataViewItem& parent, const wxVector<wxVariant>& data,
+                                                   wxClientData* clientData)
 {
     wxDataViewItem ch = DoAppendItem(parent, data, false, clientData);
     ItemAdded(parent, ch);
     return ch;
 }
 
-wxDataViewItemArray OpenResourceDialogModel::AppendItems(const wxDataViewItem &parent, const wxVector<wxVector<wxVariant> >& data)
+wxDataViewItemArray OpenResourceDialogModel::AppendItems(const wxDataViewItem& parent,
+                                                         const wxVector<wxVector<wxVariant>>& data)
 {
     wxDataViewItemArray items;
-    for(size_t i=0; i<data.size(); ++i) {
-        items.push_back( DoAppendItem(parent, data.at(i), false, NULL) );
+    for(size_t i = 0; i < data.size(); ++i) {
+        items.push_back(DoAppendItem(parent, data.at(i), false, NULL));
     }
     ItemsAdded(parent, items);
     return items;
@@ -179,7 +181,7 @@ wxDataViewItemArray OpenResourceDialogModel::AppendItems(const wxDataViewItem &p
 bool OpenResourceDialogModel::SetValue(const wxVariant& variant, const wxDataViewItem& item, unsigned int col)
 {
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.m_pItem);
-    if ( node && node->GetData().size() > col ) {
+    if(node && node->GetData().size() > col) {
         node->GetData().at(col) = variant;
     }
     return true;
@@ -188,36 +190,36 @@ bool OpenResourceDialogModel::SetValue(const wxVariant& variant, const wxDataVie
 void OpenResourceDialogModel::DeleteItem(const wxDataViewItem& item)
 {
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.m_pItem);
-    if ( node ) {
-        
+    if(node) {
+
         OpenResourceDialogModel_Item* parent = node->GetParent();
         wxDataViewItem parentItem(parent);
         ItemDeleted(parentItem, item);
-        
+
         // this will also remove it from its model parent children list
-        if ( parent == NULL ) {
+        if(parent == NULL) {
             // root item, remove it from the roots array
             wxVector<OpenResourceDialogModel_Item*>::iterator where = std::find(m_data.begin(), m_data.end(), node);
-            if ( where != m_data.end() ) {
+            if(where != m_data.end()) {
                 m_data.erase(where);
             }
         }
-        
+
         // If there are no more children, change the item back to 'normal'
-        if ( parent && parent->GetChildren().empty() )
+        if(parent && parent->GetChildren().empty())
             DoChangeItemType(parentItem, false);
-            
+
         wxDELETE(node);
     }
-    
-    if ( IsEmpty() )
+
+    if(IsEmpty())
         Cleared();
 }
 
 void OpenResourceDialogModel::DeleteItems(const wxDataViewItem& parent, const wxDataViewItemArray& items)
 {
     // sanity
-    for(size_t i=0; i<items.GetCount(); ++i) {
+    for(size_t i = 0; i < items.GetCount(); ++i) {
         OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(items.Item(i).m_pItem);
         wxUnusedVar(node);
         wxASSERT(node && node->GetParent() == parent.m_pItem);
@@ -230,30 +232,27 @@ void OpenResourceDialogModel::Clear()
     wxVector<OpenResourceDialogModel_Item*> roots = m_data;
     wxVector<OpenResourceDialogModel_Item*>::iterator iter = roots.begin();
     for(; iter != roots.end(); ++iter) {
-        DeleteItem( wxDataViewItem(*iter) );
+        DeleteItem(wxDataViewItem(*iter));
     }
     m_data.clear();
     Cleared();
 }
 
-bool OpenResourceDialogModel::IsEmpty() const
-{
-    return m_data.empty();
-}
+bool OpenResourceDialogModel::IsEmpty() const { return m_data.empty(); }
 
 wxClientData* OpenResourceDialogModel::GetClientObject(const wxDataViewItem& item) const
 {
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.GetID());
-    if ( node ) {
+    if(node) {
         return node->GetClientObject();
     }
     return NULL;
 }
 
-void OpenResourceDialogModel::SetClientObject(const wxDataViewItem& item, wxClientData *data)
+void OpenResourceDialogModel::SetClientObject(const wxDataViewItem& item, wxClientData* data)
 {
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.GetID());
-    if ( node ) {
+    if(node) {
         node->SetClientObject(data);
     }
 }
@@ -261,16 +260,17 @@ void OpenResourceDialogModel::SetClientObject(const wxDataViewItem& item, wxClie
 void OpenResourceDialogModel::UpdateItem(const wxDataViewItem& item, const wxVector<wxVariant>& data)
 {
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.GetID());
-    if ( node ) {
-        node->SetData( data );
-        ItemChanged( item );
+    if(node) {
+        node->SetData(data);
+        ItemChanged(item);
     }
 }
 
-wxDataViewItem OpenResourceDialogModel::InsertItem(const wxDataViewItem& insertBeforeMe, const wxVector<wxVariant>& data, wxClientData *clientData)
+wxDataViewItem OpenResourceDialogModel::InsertItem(const wxDataViewItem& insertBeforeMe,
+                                                   const wxVector<wxVariant>& data, wxClientData* clientData)
 {
     wxDataViewItem ch = DoInsertItem(insertBeforeMe, data, false, clientData);
-    if ( ch.IsOk() ) {
+    if(ch.IsOk()) {
         OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(ch.GetID());
         ItemAdded(wxDataViewItem(node->GetParent()), ch);
     }
@@ -279,11 +279,11 @@ wxDataViewItem OpenResourceDialogModel::InsertItem(const wxDataViewItem& insertB
 
 wxVector<wxVariant> OpenResourceDialogModel::GetItemColumnsData(const wxDataViewItem& item) const
 {
-    if ( !item.IsOk() )
+    if(!item.IsOk())
         return wxVector<wxVariant>();
 
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.GetID());
-    if ( !node ) {
+    if(!node) {
         return wxVector<wxVariant>();
     }
     return node->GetData();
@@ -291,11 +291,11 @@ wxVector<wxVariant> OpenResourceDialogModel::GetItemColumnsData(const wxDataView
 
 bool OpenResourceDialogModel::HasChildren(const wxDataViewItem& item) const
 {
-    if ( !item.IsOk() )
+    if(!item.IsOk())
         return false;
 
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.GetID());
-    if ( !node ) {
+    if(!node) {
         return false;
     }
     return !node->GetChildren().empty();
@@ -304,16 +304,16 @@ bool OpenResourceDialogModel::HasChildren(const wxDataViewItem& item) const
 void OpenResourceDialogModel::DoChangeItemType(const wxDataViewItem& item, bool changeToContainer)
 {
     OpenResourceDialogModel_Item* node = reinterpret_cast<OpenResourceDialogModel_Item*>(item.GetID());
-    if ( !node )
+    if(!node)
         return;
-    
-    if ( ( changeToContainer && !node->IsContainer())  || // change an item from non-container to container type
-         ( !changeToContainer && node->IsContainer()) ) { // change an item from container to non-container type
+
+    if((changeToContainer && !node->IsContainer()) || // change an item from non-container to container type
+       (!changeToContainer && node->IsContainer())) { // change an item from container to non-container type
 #if defined(__WXGTK__) || defined(__WXMAC__)
         // change the item to container type:
         // 1st we need to delete it
         ItemDeleted(wxDataViewItem(node->GetParent()), item);
-        
+
         // update the node type
         node->SetIsContainer(changeToContainer);
         ItemAdded(wxDataViewItem(node->GetParent()), item);

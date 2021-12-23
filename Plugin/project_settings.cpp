@@ -23,10 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "project_settings.h"
-#include "xmlutils.h"
-#include "project.h"
+
 #include "macros.h"
+#include "project.h"
 #include "wx_xml_compatibility.h"
+#include "xmlutils.h"
 
 ProjectSettings::ProjectSettings(wxXmlNode* node)
 {
@@ -46,8 +47,8 @@ ProjectSettings::ProjectSettings(wxXmlNode* node)
     } else {
         // create new settings with default values
         m_projectType = PROJECT_TYPE_EXECUTABLE;
-        BuildConfig *conf(NULL);
-        
+        BuildConfig* conf(NULL);
+
         conf = new BuildConfig(NULL);
         conf->SetName("Debug");
         conf->SetOutputFileName("$(IntermediateDirectory)/$(ProjectName)");
@@ -163,11 +164,13 @@ BuildConfigPtr ProjectSettings::GetNextBuildConfiguration(ProjectSettingsCookie&
 
 void ProjectSettings::SetBuildConfiguration(const BuildConfigPtr bc)
 {
-    if(!bc) return;
+    if(!bc)
+        return;
 
     // delete the old build configuration pointer if any
     std::map<wxString, BuildConfigPtr>::iterator iter = m_configs.find(bc->GetName());
-    if(iter != m_configs.end()) m_configs.erase(iter);
+    if(iter != m_configs.end())
+        m_configs.erase(iter);
 
     // replace with the new one
     m_configs[bc->GetName()] = bc;

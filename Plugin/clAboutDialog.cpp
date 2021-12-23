@@ -1,10 +1,12 @@
+#include "clAboutDialog.h"
+
 #include "ColoursAndFontsManager.h"
 #include "bitmap_loader.h"
-#include "clAboutDialog.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
+
 #include <wx/filename.h>
 
 clAboutDialog::clAboutDialog(wxWindow* parent, const wxString& version)

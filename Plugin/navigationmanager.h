@@ -30,6 +30,7 @@
 #include "codelite_exports.h"
 #include "ieditor.h"
 #include "imanager.h"
+
 #include <stack>
 
 /**

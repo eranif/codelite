@@ -26,8 +26,9 @@
 #ifndef MACROMANAGER_H
 #define MACROMANAGER_H
 
-#include <wx/string.h>
 #include "codelite_exports.h"
+
+#include <wx/string.h>
 
 class IManager;
 class WXDLLIMPEXP_SDK MacroManager
@@ -40,7 +41,7 @@ private:
     virtual ~MacroManager();
 
     wxString DoExpand(const wxString& expression, IManager* manager, const wxString& project, bool applyEnv,
-        const wxString& confToBuild = wxEmptyString);
+                      const wxString& confToBuild = wxEmptyString);
 
 public:
     /*
@@ -66,13 +67,13 @@ public:
      * $(Selection)
      */
     wxString Expand(const wxString& expression, IManager* manager, const wxString& project,
-        const wxString& confToBuild = wxEmptyString);
+                    const wxString& confToBuild = wxEmptyString);
 
     /**
      * @brief same as above, but don't apply environment variables
      */
-    wxString ExpandNoEnv(
-        const wxString& expression, const wxString& project, const wxString& confToBuild = wxEmptyString);
+    wxString ExpandNoEnv(const wxString& expression, const wxString& project,
+                         const wxString& confToBuild = wxEmptyString);
 
     /**
      * @brief search for variableName and replace all its occurance with 'replaceWith'
@@ -82,8 +83,8 @@ public:
      * $(variableName)
      * %variableName%
      */
-    wxString Replace(
-        const wxString& inString, const wxString& variableName, const wxString& replaceWith, bool bIgnoreCase = false);
+    wxString Replace(const wxString& inString, const wxString& variableName, const wxString& replaceWith,
+                     bool bIgnoreCase = false);
 
     /**
      * @brief search for variable in the inString.

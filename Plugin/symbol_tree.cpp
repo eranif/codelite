@@ -22,14 +22,15 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "fileutils.h"
-#include "precompiled_header.h"
+#include "symbol_tree.h"
 
 #include "bitmap_loader.h"
 #include "ctags_manager.h"
+#include "fileutils.h"
 #include "globals.h"
-#include "symbol_tree.h"
+#include "precompiled_header.h"
 #include "tokenizer.h"
+
 #include <functional>
 #include <imanager.h>
 #include <wx/wupdlock.h>

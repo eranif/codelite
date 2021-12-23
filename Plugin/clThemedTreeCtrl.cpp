@@ -1,13 +1,15 @@
+#include "clThemedTreeCtrl.h"
+
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
 #include "clThemedCtrl.hpp"
-#include "clThemedTreeCtrl.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "wx/treebase.h"
+
 #include <clColours.h>
 #include <wx/settings.h>
 

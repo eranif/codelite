@@ -63,7 +63,9 @@ DiffSelectFoldersBaseDlg::DiffSelectFoldersBaseDlg(wxWindow* parent, wxWindowID 
 
     SetName(wxT("DiffSelectFoldersBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -123,7 +125,9 @@ DiffFoldersBaseDlg::DiffFoldersBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("DiffFoldersBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

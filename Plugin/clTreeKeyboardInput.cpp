@@ -1,6 +1,8 @@
 #include "clTreeKeyboardInput.h"
+
 #include "fileutils.h"
 #include "macros.h"
+
 #include <algorithm>
 #include <wx/textctrl.h>
 #include <wx/treectrl.h>

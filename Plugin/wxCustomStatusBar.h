@@ -30,6 +30,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "wxPNGAnimation.h"
+
 #include <wx/bitmap.h>
 #include <wx/colour.h>
 #include <wx/sharedptr.h>

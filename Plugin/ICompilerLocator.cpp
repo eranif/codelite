@@ -24,8 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ICompilerLocator.h"
+
 #include "file_logger.h"
 #include "macros.h"
+
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 

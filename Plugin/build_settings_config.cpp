@@ -23,14 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "build_settings_config.h"
+
 #include "ICompilerLocator.h"
 #include "JSON.h"
-#include "build_settings_config.h"
 #include "codelite_events.h"
 #include "conffilelocator.h"
 #include "macros.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <algorithm>
 #include <cl_command_event.h>
 #include <event_notifier.h>

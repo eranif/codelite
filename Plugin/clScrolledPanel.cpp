@@ -1,5 +1,7 @@
-#include "clScrollBar.h"
 #include "clScrolledPanel.h"
+
+#include "clScrollBar.h"
+
 #include <wx/dcscreen.h>
 #include <wx/log.h>
 #include <wx/settings.h>

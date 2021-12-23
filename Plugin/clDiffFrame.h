@@ -3,6 +3,7 @@
 
 #include "DiffSideBySidePanel.h"
 #include "codelite_exports.h"
+
 #include <wx/frame.h>
 
 class WXDLLIMPEXP_SDK clDiffFrame : public wxFrame

@@ -5,6 +5,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "VirtualDirectorySelectorBase.h"
+
 #include "codelite_exports.h"
 
 // Declare the bitmap loading function
@@ -68,7 +69,9 @@ VirtualDirectorySelectorDlgBaseClass::VirtualDirectorySelectorDlgBaseClass(wxWin
 
     SetName(wxT("VirtualDirectorySelectorDlgBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

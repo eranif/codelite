@@ -1,7 +1,9 @@
 #include "ThemeImporterCSS.hpp"
-#include "macros.h"
-#include <wx/stc/stc.h>
+
 #include "drawingutils.h"
+#include "macros.h"
+
+#include <wx/stc/stc.h>
 
 ThemeImporterCSS::ThemeImporterCSS()
 {

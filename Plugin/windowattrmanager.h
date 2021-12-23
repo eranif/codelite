@@ -26,10 +26,11 @@
 #ifndef __windowattrmanager__
 #define __windowattrmanager__
 
-#include <wx/window.h>
-#include "iconfigtool.h"
 #include "codelite_exports.h"
+#include "iconfigtool.h"
+
 #include <wx/toplevel.h>
+#include <wx/window.h>
 
 /**
  * @class WindowAttrManager

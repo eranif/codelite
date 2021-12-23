@@ -31,12 +31,14 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "console_frame.h"
+
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
 #include "plugin.h"
 #include "windowattrmanager.h"
+
 #include <wx/app.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -91,8 +93,12 @@ void ConsoleFrame::CreateGUIControls()
 void ConsoleFrame::OnExecuteRemoteCommand(clCommandEvent& event)
 {
     try {
-        if(m_channel->IsOpen()) { return; }
-        if(!m_channel->IsOpen()) { m_channel->Open(); }
+        if(m_channel->IsOpen()) {
+            return;
+        }
+        if(!m_channel->IsOpen()) {
+            m_channel->Open();
+        }
         m_channel->Execute(event.GetString());
 
     } catch(clException& e) {

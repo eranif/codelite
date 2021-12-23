@@ -26,9 +26,10 @@
 #ifndef CLPERSISTENCEMANAGER_H
 #define CLPERSISTENCEMANAGER_H
 
-#include <wx/persist.h> // Base class: wxPersistenceManager
 #include "clIniFile.h"
 #include "codelite_exports.h"
+
+#include <wx/persist.h> // Base class: wxPersistenceManager
 
 class WXDLLIMPEXP_SDK clPersistenceManager : public wxPersistenceManager
 {

@@ -23,10 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "vcimporter.h"
-#include "wx/filename.h"
+
 #include "macros.h"
-#include "wx/tokenzr.h"
 #include "workspace.h"
+#include "wx/filename.h"
+#include "wx/tokenzr.h"
 #include "xmlutils.h"
 
 #define NEXT_LINE(line)   \
@@ -84,7 +85,8 @@ bool VcImporter::Import(wxString& errMsg)
 {
     wxString line;
     while(true) {
-        if(!ReadLine(line)) break;
+        if(!ReadLine(line))
+            break;
         if(line.StartsWith(wxT("Project"))) {
             if(!OnProject(line, errMsg)) {
                 return false;
@@ -193,7 +195,8 @@ bool VcImporter::ConvertProject(VcProjectData& data)
 
     // find the first configuration node
     wxXmlNode* config = XmlUtils::FindFirstByTagName(configs, wxT("Configuration"));
-    if(!config) return false;
+    if(!config)
+        return false;
     // read the configuration type, default is set to Executeable
     long type = XmlUtils::ReadLong(config, wxT("ConfigurationType"), 1);
     wxString projectType;

@@ -33,6 +33,7 @@
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "wxcrafter_plugin.h"
+
 #include <imanager.h>
 
 class clToolBar;

@@ -31,6 +31,7 @@
 #include "sftp_settings.h"
 #include "ssh_account_info.h"
 #include "windowattrmanager.h"
+
 #include <wx/msgdlg.h>
 
 SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)

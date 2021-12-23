@@ -1,10 +1,11 @@
 #ifndef CLCUSTOMSCROLLBAR_H
 #define CLCUSTOMSCROLLBAR_H
 
-#include "codelite_exports.h"
-#include <wx/panel.h>
 #include "clColours.h"
+#include "codelite_exports.h"
+
 #include <wx/event.h>
+#include <wx/panel.h>
 
 /// a wxCommandEvent that takes ownership of the clientData
 class WXDLLIMPEXP_SDK clScrollEvent : public wxCommandEvent

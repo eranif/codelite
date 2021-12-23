@@ -1,4 +1,5 @@
 #include "wxCodeCompletionBox.h"
+
 #include "ColoursAndFontsManager.h"
 #include "CxxTemplateFunction.h"
 #include "StringUtils.h"
@@ -14,6 +15,7 @@
 #include "imanager.h"
 #include "macros.h"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>

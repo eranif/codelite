@@ -22,13 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "buildmanager.h"
+
 #include "BuilderGnuMakeMSYS.hpp"
 #include "builder.h"
 #include "builder_NMake.h"
 #include "builder_gnumake.h"
 #include "builder_gnumake_default.h"
 #include "builder_gnumake_onestep.h"
-#include "buildmanager.h"
 
 BuildManager::BuildManager()
 {

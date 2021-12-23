@@ -23,8 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "build_config.h"
 #include "queuecommand.h"
+
+#include "build_config.h"
 #include "workspace.h"
 
 QueueCommand::QueueCommand(const wxString& project, const wxString& configuration, bool projectOnly, int kind)

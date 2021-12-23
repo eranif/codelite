@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "workspace.h"
+
 #include "build_settings_config.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
@@ -42,6 +43,7 @@
 #include "wx/regex.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <wx/app.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>

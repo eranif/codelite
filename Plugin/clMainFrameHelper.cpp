@@ -1,7 +1,9 @@
+#include "clMainFrameHelper.h"
+
 #include "../LiteEditor/frame.h" // this is daengrous. Only access inline functions
 #include "clDockingManager.h"
-#include "clMainFrameHelper.h"
 #include "clStatusBar.h"
+
 #include <wx/frame.h>
 
 clMainFrameHelper::clMainFrameHelper(clMainFrame* frame, clDockingManager* dockMgr)

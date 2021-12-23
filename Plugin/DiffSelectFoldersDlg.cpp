@@ -1,4 +1,5 @@
 #include "DiffSelectFoldersDlg.h"
+
 #include <wx/filename.h>
 
 DiffSelectFoldersDlg::DiffSelectFoldersDlg(wxWindow* parent, const wxString& left, const wxString& right)

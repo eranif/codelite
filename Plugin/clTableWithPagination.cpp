@@ -1,8 +1,10 @@
-#include "clTableLineEditorDlg.h"
 #include "clTableWithPagination.h"
+
+#include "clTableLineEditorDlg.h"
 #include "clThemedListCtrl.h"
 #include "globals.h"
 #include "macros.h"
+
 #include <wx/dataview.h>
 #include <wx/sizer.h>
 

@@ -2,6 +2,7 @@
 #define CLTABLEWITHPAGINATION_H
 
 #include "codelite_exports.h"
+
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/button.h>

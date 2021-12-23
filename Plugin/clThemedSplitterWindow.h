@@ -1,9 +1,10 @@
 #ifndef CLTHEMEDSPLITTERWINDOW_H
 #define CLTHEMEDSPLITTERWINDOW_H
 
-#include "codelite_exports.h"
-#include <wx/splitter.h>
 #include "cl_command_event.h"
+#include "codelite_exports.h"
+
+#include <wx/splitter.h>
 
 class WXDLLIMPEXP_SDK clThemedSplitterWindow : public wxSplitterWindow
 {

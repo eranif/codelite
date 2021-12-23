@@ -27,6 +27,7 @@
 #define COMPILERLOCATORMINGW_H
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
+
 #include <macros.h>
 
 class WXDLLIMPEXP_SDK CompilerLocatorMinGW : public ICompilerLocator

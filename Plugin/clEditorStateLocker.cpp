@@ -1,5 +1,6 @@
-#include "bookmark_manager.h"
 #include "clEditorStateLocker.h"
+
+#include "bookmark_manager.h"
 
 clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)
@@ -19,7 +20,9 @@ clEditorStateLocker::clEditorStateLocker(wxStyledTextCtrl* ctrl)
 clEditorStateLocker::~clEditorStateLocker()
 {
     // restore the position.
-    if(m_position > m_ctrl->GetLastPosition()) { m_position = m_ctrl->GetLastPosition(); }
+    if(m_position > m_ctrl->GetLastPosition()) {
+        m_position = m_ctrl->GetLastPosition();
+    }
 
     // If the caret is out of screen, scroll the editor to make it visible again
     int caretLine = m_ctrl->LineFromPosition(m_position);
@@ -55,9 +58,13 @@ void clEditorStateLocker::ApplyBookmarks(wxStyledTextCtrl* ctrl, const wxArraySt
         wxString lineno = bookmarks.Item(i).BeforeFirst(':');
         long bmt = smt_bookmark1;
         wxString type = bookmarks.Item(i).AfterFirst(':');
-        if(!type.empty()) { type.ToCLong(&bmt); }
+        if(!type.empty()) {
+            type.ToCLong(&bmt);
+        }
         long line = 0;
-        if(lineno.ToCLong(&line)) { ctrl->MarkerAdd(line, bmt); }
+        if(lineno.ToCLong(&line)) {
+            ctrl->MarkerAdd(line, bmt);
+        }
     }
 }
 
@@ -85,7 +92,9 @@ void clEditorStateLocker::ApplyFolds(wxStyledTextCtrl* ctrl, const clEditorState
         // displacement within the function. But for now...
         if(ctrl->GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
 #if wxVERSION_NUMBER >= 3100
-            if(ctrl->GetFoldExpanded(line)) { ctrl->ToggleFoldShowText(line, "..."); }
+            if(ctrl->GetFoldExpanded(line)) {
+                ctrl->ToggleFoldShowText(line, "...");
+            }
 #else
             if(ctrl->GetFoldExpanded(line)) { // For <wx3.1 check first, and only toggle if needed
                 ctrl->ToggleFold(line);
@@ -111,9 +120,13 @@ void clEditorStateLocker::ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArray
         wxString lineno = breapoints.Item(i).BeforeFirst(':');
         long bmt = smt_bookmark1;
         wxString type = breapoints.Item(i).AfterFirst(':');
-        if(!type.empty()) { type.ToCLong(&bmt); }
+        if(!type.empty()) {
+            type.ToCLong(&bmt);
+        }
         long line = 0;
-        if(lineno.ToCLong(&line)) { ctrl->MarkerAdd(line, bmt); }
+        if(lineno.ToCLong(&line)) {
+            ctrl->MarkerAdd(line, bmt);
+        }
     }
 }
 

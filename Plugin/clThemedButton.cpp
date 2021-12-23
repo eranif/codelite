@@ -1,6 +1,7 @@
+#include "clThemedButton.h"
+
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
-#include "clThemedButton.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"

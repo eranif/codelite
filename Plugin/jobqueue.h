@@ -25,11 +25,12 @@
 #ifndef __jobqueue__
 #define __jobqueue__
 
-#include <wx/thread.h>
+#include "codelite_exports.h"
+
 #include <deque>
 #include <vector>
-#include "codelite_exports.h"
 #include <wx/msgqueue.h>
+#include <wx/thread.h>
 
 class Job;
 
@@ -51,7 +52,7 @@ public:
     virtual ~JobQueueWorker();
 
 private:
-    //declare this class as non copyable
+    // declare this class as non copyable
     JobQueueWorker(const JobQueueWorker& rhs);
     JobQueueWorker& operator=(const JobQueueWorker& rhs);
 
@@ -67,7 +68,6 @@ public:
      */
     void Start(int priority = WXTHREAD_DEFAULT_PRIORITY);
 
-
     /**
      * @brief implementation of the wxThread pure virtual function Entry()
      * @sa wxThread
@@ -79,7 +79,7 @@ public:
      * @param job job to process
      * @sa Job
      */
-    virtual void ProcessJob(Job *job);
+    virtual void ProcessJob(Job* job);
 };
 
 /**
@@ -108,7 +108,7 @@ public:
  */
 class JobQueue
 {
-    wxMessageQueue<Job*>         m_queue;
+    wxMessageQueue<Job*> m_queue;
     std::vector<JobQueueWorker*> m_threads;
 
 public:
@@ -120,7 +120,7 @@ public:
      * note that the job will be freed when processing is done by the job queue
      * @param job job to process allocated on the heap
      */
-    virtual void PushJob(Job *job);
+    virtual void PushJob(Job* job);
 
     /**
      * @brief
@@ -145,7 +145,7 @@ public:
 class WXDLLIMPEXP_SDK JobQueueSingleton
 {
 private:
-    static JobQueue *ms_instance;
+    static JobQueue* ms_instance;
 
 private:
     JobQueueSingleton();
@@ -156,7 +156,7 @@ public:
      * @brief
      * @return
      */
-    static JobQueue *Instance();
+    static JobQueue* Instance();
 
     /**
      * @brief

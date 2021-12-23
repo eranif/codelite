@@ -23,11 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "dockablepane.h"
+
 #include "Notebook.h"
 #include "clSystemSettings.h"
-#include "dockablepane.h"
 #include "globals.h"
 #include "imanager.h"
+
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
 #include <wx/settings.h>

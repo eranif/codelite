@@ -1,10 +1,12 @@
+#include "WSImporter.h"
+
 #include "BorlandCppBuilderImporter.h"
 #include "CodeBlocksImporter.h"
 #include "DevCppImporter.h"
 #include "EnvVarImporterDlg.h"
 #include "VisualCppImporter.h"
-#include "WSImporter.h"
 #include "workspace.h"
+
 #include <wx/tokenzr.h>
 
 WSImporter::WSImporter()
@@ -72,7 +74,8 @@ bool WSImporter::Import(wxString& errMsg)
                     le_settings->RemoveConfiguration(wxT("Debug"));
                     le_settings->SetProjectType(projectType);
 
-                    if(clWorkspace == NULL) clWorkspace = proj->GetWorkspace();
+                    if(clWorkspace == NULL)
+                        clWorkspace = proj->GetWorkspace();
 
                     for(GenericProjectCfgPtr cfg : project->cfgs) {
                         BuildConfigPtr le_conf(new BuildConfig(NULL));
@@ -135,13 +138,17 @@ bool WSImporter::Import(wxString& errMsg)
                         } else
                             le_conf->SetOutputFileName(outputFileName);
 
-                        if(!cfg->cCompilerOptions.IsEmpty()) le_conf->SetCCompileOptions(cfg->cCompilerOptions);
+                        if(!cfg->cCompilerOptions.IsEmpty())
+                            le_conf->SetCCompileOptions(cfg->cCompilerOptions);
 
-                        if(!cfg->cppCompilerOptions.IsEmpty()) le_conf->SetCompileOptions(cfg->cppCompilerOptions);
+                        if(!cfg->cppCompilerOptions.IsEmpty())
+                            le_conf->SetCompileOptions(cfg->cppCompilerOptions);
 
-                        if(!cfg->linkerOptions.IsEmpty()) le_conf->SetLinkOptions(cfg->linkerOptions);
+                        if(!cfg->linkerOptions.IsEmpty())
+                            le_conf->SetLinkOptions(cfg->linkerOptions);
 
-                        if(!cfg->preCompiledHeader.IsEmpty()) le_conf->SetPrecompiledHeader(cfg->preCompiledHeader);
+                        if(!cfg->preCompiledHeader.IsEmpty())
+                            le_conf->SetPrecompiledHeader(cfg->preCompiledHeader);
 
                         wxString outputFileNameCommand, outputFileNameWorkingDirectory;
                         if(!cfg->outputFilename.IsEmpty()) {
@@ -254,7 +261,8 @@ bool WSImporter::Import(wxString& errMsg)
 
                         le_settings->SetBuildConfiguration(le_conf);
 
-                        if(!project->deps.IsEmpty()) proj->SetDependencies(project->deps, cfg->name);
+                        if(!project->deps.IsEmpty())
+                            proj->SetDependencies(project->deps, cfg->name);
                     }
 
                     proj->SetSettings(le_settings);
@@ -297,10 +305,14 @@ bool WSImporter::Import(wxString& errMsg)
                     BuildMatrixPtr clMatrix = clWorkspace->GetBuildMatrix();
 
                     WorkspaceConfigurationPtr wsconf = clMatrix->GetConfigurationByName(wxT("Debug"));
-                    if(wsconf) { wsconf->SetConfigMappingList(cmlDebug); }
+                    if(wsconf) {
+                        wsconf->SetConfigMappingList(cmlDebug);
+                    }
 
                     wsconf = clMatrix->GetConfigurationByName(wxT("Release"));
-                    if(wsconf) { wsconf->SetConfigMappingList(cmlRelease); }
+                    if(wsconf) {
+                        wsconf->SetConfigMappingList(cmlRelease);
+                    }
 
                     clWorkspace->SetBuildMatrix(clMatrix);
                 }
@@ -316,7 +328,8 @@ bool WSImporter::Import(wxString& errMsg)
 bool WSImporter::ContainsEnvVar(std::vector<wxString> elems)
 {
     for(wxString elem : elems) {
-        if(elem.Contains("$(") && elem.Contains(")")) return true;
+        if(elem.Contains("$(") && elem.Contains(")"))
+            return true;
     }
 
     return false;
@@ -329,7 +342,9 @@ std::set<wxString> WSImporter::GetListEnvVarName(std::vector<wxString> elems)
     std::set<wxString> list;
 
     for(wxString elem : elems) {
-        if(!elem.IsEmpty()) { data += elem; }
+        if(!elem.IsEmpty()) {
+            data += elem;
+        }
     }
 
     const int length = data.length();

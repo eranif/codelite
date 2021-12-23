@@ -1,5 +1,6 @@
-#include "clToolBar.h"
 #include "clToolBarButtonBase.h"
+
+#include "clToolBar.h"
 #include "drawingutils.h"
 
 // -----------------------------------------------

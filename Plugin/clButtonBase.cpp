@@ -1,14 +1,14 @@
 #include "clButtonBase.h"
+
+#include "clSystemSettings.h"
+
 #include <wx/anybutton.h>
 #include <wx/buffer.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
-#include <wx/renderer.h>
-#include <wx/settings.h>
-
-#include "clSystemSettings.h"
 #include <wx/gdicmn.h>
 #include <wx/renderer.h>
+#include <wx/settings.h>
 
 #if wxCHECK_VERSION(3, 1, 0)
 #define TEXT_SPACER FromDIP(5)

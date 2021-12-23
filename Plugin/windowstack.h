@@ -29,6 +29,7 @@
 #include "codelite_exports.h"
 #include "wx/panel.h"
 #include "wx/sizer.h"
+
 #include <set>
 #include <vector>
 #include <wx/simplebook.h>

@@ -3,10 +3,7 @@
 #include "cl_standard_paths.h"
 #include "globals.h"
 
-ThemeImporterMakefile::ThemeImporterMakefile()
-{
-    SetFileExtensions("*.mk;makefile;Makefile;*.mak;*.make");
-}
+ThemeImporterMakefile::ThemeImporterMakefile() { SetFileExtensions("*.mk;makefile;Makefile;*.mak;*.make"); }
 
 ThemeImporterMakefile::~ThemeImporterMakefile() {}
 

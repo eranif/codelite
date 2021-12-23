@@ -1,4 +1,5 @@
 #include "clFileSystemWorkspace.hpp"
+
 #include "CompileCommandsGenerator.h"
 #include "JSON.h"
 #include "NewFileSystemWorkspaceDialog.h"
@@ -28,6 +29,7 @@
 #include "macros.h"
 #include "processreaderthread.h"
 #include "shell_command.h"
+
 #include <thread>
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>

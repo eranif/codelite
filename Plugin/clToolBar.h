@@ -4,6 +4,7 @@
 #include "bitmap_loader.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+
 #include <unordered_map>
 #include <vector>
 #include <wx/menu.h>

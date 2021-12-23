@@ -2,6 +2,7 @@
 #define CLSHELLHELPER_HPP
 
 #include "codelite_exports.h"
+
 #include <wx/arrstr.h>
 #include <wx/string.h>
 

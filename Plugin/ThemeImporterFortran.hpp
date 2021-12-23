@@ -35,7 +35,6 @@ public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
     ThemeImporterFortran();
     virtual ~ThemeImporterFortran();
-
 };
 
 #endif // ECLIPSEFORTRANTHEMEIMPORTER_H

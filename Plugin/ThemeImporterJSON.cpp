@@ -1,4 +1,5 @@
 #include "ThemeImporterJSON.hpp"
+
 #include <wx/stc/stc.h>
 
 #if wxCHECK_VERSION(3, 1, 0)

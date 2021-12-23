@@ -1,4 +1,5 @@
 #include "VirtualDirectoryColour.h"
+
 #include <algorithm>
 
 FolderColour::FolderColour() {}

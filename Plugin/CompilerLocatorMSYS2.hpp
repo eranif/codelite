@@ -2,6 +2,7 @@
 #define COMPILERLOCATORMSYS2_HPP
 
 #include "ICompilerLocator.h"
+
 #include <wx/filename.h>
 class WXDLLIMPEXP_SDK CompilerLocatorMSYS2 : public ICompilerLocator
 {

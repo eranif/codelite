@@ -26,8 +26,9 @@
 #ifndef CLFILEORFOLDERDROPTARGET_H
 #define CLFILEORFOLDERDROPTARGET_H
 
-#include <wx/dnd.h> // Base class: wxFileDropTarget
 #include "codelite_exports.h"
+
+#include <wx/dnd.h> // Base class: wxFileDropTarget
 #include <wx/event.h>
 
 /**
@@ -41,6 +42,7 @@
 class WXDLLIMPEXP_SDK clFileOrFolderDropTarget : public wxFileDropTarget
 {
     wxEvtHandler* m_sink;
+
 public:
     clFileOrFolderDropTarget(wxEvtHandler* eventSink);
     virtual ~clFileOrFolderDropTarget();

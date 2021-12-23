@@ -23,22 +23,23 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "editor_config.h"
-#include "globals.h"
 #include "localworkspace.h"
+
+#include "codelite_events.h"
+#include "editor_config.h"
+#include "event_notifier.h"
+#include "globals.h"
 #include "macros.h"
 #include "optionsconfig.h"
 #include "project.h"
 #include "workspace.h"
+#include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
+#include <algorithm>
 #include <wx/fontmap.h>
 #include <wx/log.h>
 #include <wx/utils.h>
-
-#include "codelite_events.h"
-#include "event_notifier.h"
-#include "wx_xml_compatibility.h"
-#include <algorithm>
 
 //-----------------------------------------------------------------------------
 

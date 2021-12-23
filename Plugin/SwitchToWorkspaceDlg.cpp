@@ -1,6 +1,8 @@
 #include "SwitchToWorkspaceDlg.h"
+
 #include "cl_config.h"
 #include "globals.h"
+
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 

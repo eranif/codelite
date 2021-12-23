@@ -1,8 +1,10 @@
+#include "clRowEntry.h"
+
 #include "clCellValue.h"
 #include "clHeaderBar.h"
 #include "clHeaderItem.h"
-#include "clRowEntry.h"
 #include "clTreeCtrl.h"
+
 #include <algorithm>
 #include <drawingutils.h>
 #include <functional>

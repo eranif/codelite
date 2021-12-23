@@ -25,8 +25,8 @@
 #ifndef COMPILE_REQUEST_H
 #define COMPILE_REQUEST_H
 
-#include "shell_command.h"
 #include "codelite_exports.h"
+#include "shell_command.h"
 
 class WXDLLIMPEXP_SDK CompileRequest : public ShellCommand
 {
@@ -41,10 +41,8 @@ public:
      * \param projectName the selected project to build
      * \param configurationName the workspace selected configuration
      */
-    CompileRequest(const QueueCommand& buildInfo,
-        const wxString& fileName = wxEmptyString,
-        bool runPremakeOnly = false,
-        bool preprocessOnly = false);
+    CompileRequest(const QueueCommand& buildInfo, const wxString& fileName = wxEmptyString, bool runPremakeOnly = false,
+                   bool preprocessOnly = false);
 
     /// dtor
     virtual ~CompileRequest();

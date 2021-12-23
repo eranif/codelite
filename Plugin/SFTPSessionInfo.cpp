@@ -2,6 +2,7 @@
 
 #if USE_SFTP
 #include "file_logger.h"
+
 #include <algorithm>
 
 SFTPSessionInfo::SFTPSessionInfo() {}
@@ -114,8 +115,12 @@ SFTPSessionInfo& SFTPSessionInfoList::GetSession(const wxString& accountName)
 
 SFTPSessionInfoList& SFTPSessionInfoList::SetSession(const SFTPSessionInfo& sess)
 {
-    if(sess.GetAccount().IsEmpty()) { return *this; }
-    if(m_sessions.count(sess.GetAccount())) { m_sessions.erase(sess.GetAccount()); }
+    if(sess.GetAccount().IsEmpty()) {
+        return *this;
+    }
+    if(m_sessions.count(sess.GetAccount())) {
+        m_sessions.erase(sess.GetAccount());
+    }
     m_sessions[sess.GetAccount()] = sess;
     return *this;
 }

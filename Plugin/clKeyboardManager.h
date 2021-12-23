@@ -26,9 +26,11 @@
 #ifndef KEYBOARDMANAGER_H
 #define KEYBOARDMANAGER_H
 
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "macros.h"
 #include "wxStringHash.h"
+
 #include <list>
 #include <map>
 #include <vector>
@@ -36,7 +38,6 @@
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/menu.h>
-#include "cl_command_event.h"
 
 struct WXDLLIMPEXP_SDK MenuItemData {
     wxString resourceID;

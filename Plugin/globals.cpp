@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "globals.h"
+
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -57,6 +58,7 @@
 #include "wx/tokenzr.h"
 #include "wx/window.h"
 #include "wxmd5.h"
+
 #include <algorithm>
 #include <set>
 #include <vector>

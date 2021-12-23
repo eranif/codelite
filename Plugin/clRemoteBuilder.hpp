@@ -4,6 +4,7 @@
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>

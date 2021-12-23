@@ -22,24 +22,24 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "project.h"
-#include <wx/app.h>
-#include <wx/msgdlg.h>
-
-#include "editor_config.h"
-#include <wx/stopwatch.h>
-#include "environmentconfig.h"
-#include "evnvarlist.h"
-#include "environmentconfig.h"
 #include "builder_gnumake_onestep.h"
-#include "configuration_mapping.h"
-#include "dirsaver.h"
-#include "wx/tokenzr.h"
-#include "macros.h"
+
 #include "build_settings_config.h"
 #include "buildmanager.h"
-#include "wx/sstream.h"
+#include "configuration_mapping.h"
+#include "dirsaver.h"
+#include "editor_config.h"
+#include "environmentconfig.h"
+#include "evnvarlist.h"
 #include "globals.h"
+#include "macros.h"
+#include "project.h"
+#include "wx/sstream.h"
+#include "wx/tokenzr.h"
+
+#include <wx/app.h>
+#include <wx/msgdlg.h>
+#include <wx/stopwatch.h>
 
 // wxStopWatch g_sw;
 
@@ -76,8 +76,8 @@ void BuilderGnuMakeOneStep::CreateListMacros(ProjectPtr proj, const wxString& co
     BuilderGNUMakeClassic::CreateObjectList(proj, confToBuild, text);
 }
 
-void BuilderGnuMakeOneStep::CreateLinkTargets(
-    const wxString& type, BuildConfigPtr bldConf, wxString& text, wxString& targetName)
+void BuilderGnuMakeOneStep::CreateLinkTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text,
+                                              wxString& targetName)
 {
     // specify outfile dependency directly on source files (only)
     text << wxT("all: $(OutputFile)\n\n");

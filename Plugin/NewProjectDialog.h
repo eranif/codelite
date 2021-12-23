@@ -3,6 +3,7 @@
 
 #include "NewProjectDialogBase.h"
 #include "project.h"
+
 #include <codelite_exports.h>
 #include <list>
 #include <map>

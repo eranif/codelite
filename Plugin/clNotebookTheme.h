@@ -27,22 +27,20 @@
 #define CLNOTEBOOKTHEME_H
 
 #include "codelite_exports.h"
-#include <wx/string.h>
+
 #include <wx/colour.h>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_SDK clNotebookTheme
 {
 public:
-    enum eNotebookTheme {
-        kDefault,
-        kDark
-    };
-    
+    enum eNotebookTheme { kDefault, kDark };
+
 public:
-    clNotebookTheme(){}
-    
+    clNotebookTheme() {}
+
     static clNotebookTheme GetTheme(clNotebookTheme::eNotebookTheme theme);
-    
+
     void SetActiveTabBgColour(const wxColour& activeTabBgColour) { this->m_activeTabBgColour = activeTabBgColour; }
     void SetActiveTabPenColour(const wxColour& activeTabPenColour) { this->m_activeTabPenColour = activeTabPenColour; }
     void SetActiveTabTextColour(const wxColour& activeTabTextColour)
@@ -80,6 +78,5 @@ protected:
     wxColour m_activeTabBgColour;
     wxColour m_tabBgColour;
 };
-
 
 #endif // CLNOTEBOOKTHEME_H

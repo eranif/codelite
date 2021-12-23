@@ -62,11 +62,9 @@ protected:
     void DoSetLocationFocus();
 
 public:
-    SFTPBrowserDlg(wxWindow* parent,
-        const wxString& title,
-        const wxString& filter,
-        size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS,
-        const wxString& selectedAccount = wxEmptyString);
+    SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wxString& filter,
+                   size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS,
+                   const wxString& selectedAccount = wxEmptyString);
     virtual ~SFTPBrowserDlg();
 
     void Initialize(const wxString& account, const wxString& path);

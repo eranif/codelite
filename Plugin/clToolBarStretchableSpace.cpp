@@ -1,5 +1,6 @@
-#include "clSystemSettings.h"
 #include "clToolBarStretchableSpace.h"
+
+#include "clSystemSettings.h"
 #include "drawingutils.h"
 
 clToolBarStretchableSpace::clToolBarStretchableSpace(clToolBar* parent)

@@ -1,4 +1,5 @@
 #include "clStatusBar.h"
+
 #include "ColoursAndFontsManager.h"
 #include "bitmap_loader.h"
 #include "codelite_events.h"
@@ -10,6 +11,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
+
 #include <algorithm>
 #include <wx/dcmemory.h>
 #include <wx/fontenc.h>

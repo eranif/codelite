@@ -24,11 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "bookmark_manager.h"
-#include "event_notifier.h"
-#include "plugin.h"
+
 #include "editor_config.h"
-#include "wx/xrc/xmlres.h"
+#include "event_notifier.h"
 #include "ieditor.h"
+#include "plugin.h"
+#include "wx/xrc/xmlres.h"
 
 BookmarkManager::BookmarkManager()
     : m_activeBookmarkType(smt_bookmark1)

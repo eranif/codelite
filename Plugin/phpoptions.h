@@ -3,6 +3,7 @@
 
 #include "cl_config.h" // Base class: clConfigItem
 #include "codelite_exports.h"
+
 #include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK PhpOptions : public clConfigItem

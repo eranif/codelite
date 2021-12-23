@@ -23,11 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_aui_dock_art.h"
+
 #include "ColoursAndFontsManager.h"
 #include "clStatusBar.h"
 #include "clSystemSettings.h"
 #include "clTabRenderer.h"
-#include "cl_aui_dock_art.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "codelite_events.h"
@@ -35,6 +36,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
+
 #include <editor_config.h>
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
@@ -197,7 +199,7 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         memDc.SelectObject(bmp);
 
         wxGCDC gdc(memDc);
-        
+
         wxFont f = DrawingUtils::GetDefaultGuiFont();
         gdc.SetFont(f);
 
@@ -248,7 +250,7 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
     memDc.SelectObject(bmp);
 
     wxGCDC gdc(memDc);
-    
+
     gdc.SetPen(m_bgColour);
     gdc.SetBrush(m_bgColour);
     gdc.DrawRectangle(tmpRect);

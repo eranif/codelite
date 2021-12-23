@@ -27,17 +27,18 @@
 #define COMPILERLOCATORCROSSGCC_H
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
+
 #include <macros.h>
 
 class WXDLLIMPEXP_SDK CompilerLocatorCrossGCC : public ICompilerLocator
 {
     wxStringSet_t m_locatedFolders;
-    
+
 protected:
-    void AddTools(CompilerPtr compiler, const wxString &binFolder,
-                  const wxString &prefix = "", const wxString &suffix = "");
-    void AddTool(CompilerPtr compiler, const wxString &toolname,
-                 const wxString &toolpath, const wxString &extraArgs = "");
+    void AddTools(CompilerPtr compiler, const wxString& binFolder, const wxString& prefix = "",
+                  const wxString& suffix = "");
+    void AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
+                 const wxString& extraArgs = "");
     CompilerPtr Locate(const wxString& folder, bool clear);
     bool IsCrossGCC(const wxString& name) const;
 

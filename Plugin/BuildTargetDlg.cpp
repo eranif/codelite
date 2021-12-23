@@ -1,16 +1,21 @@
 #include "BuildTargetDlg.h"
-#include "globals.h"
+
 #include "ColoursAndFontsManager.h"
+#include "globals.h"
 
 BuildTargetDlg::BuildTargetDlg(wxWindow* parent, const wxString& name, const wxString& command)
     : BuildTargetDlgBase(parent)
 {
     m_textCtrlaName->ChangeValue(name);
     m_textCtrlValue->ChangeValue(command);
-    if(name == "build" || name == "clean") { m_textCtrlaName->Enable(false); }
+    if(name == "build" || name == "clean") {
+        m_textCtrlaName->Enable(false);
+    }
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_textCtrlValue); }
+    if(lexer) {
+        lexer->Apply(m_textCtrlValue);
+    }
 
     ::clSetDialogBestSizeAndPosition(this);
 }

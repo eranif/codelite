@@ -24,13 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilerLocatorCLANG.h"
+
+#include "GCCMetadata.hpp"
 #include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "clFilesCollector.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "GCCMetadata.hpp"
 #include "procutils.h"
+
 #include <globals.h>
 #include <wx/regex.h>
 

@@ -1,14 +1,16 @@
 #include "clDockingManager.h"
-#include "imanager.h"
-#include "globals.h"
+
 #include "Notebook.h"
-#include <wx/menu.h>
-#include <wx/aui/floatpane.h>
-#include <map>
 #include "codelite_events.h"
-#include "event_notifier.h"
 #include "detachedpanesinfo.h"
 #include "editor_config.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "imanager.h"
+
+#include <map>
+#include <wx/aui/floatpane.h>
+#include <wx/menu.h>
 
 #define WORKSPACE_VIEW "Workspace View"
 #define OUTPUT_VIEW "Output View"
@@ -38,7 +40,7 @@ void clDockingManager::OnButtonClicked(wxAuiManagerEvent& event)
     // }
     // event.Veto();
     // event.Skip(false);
-    // 
+    //
     // if(event.GetPane()->name == OUTPUT_VIEW) {
     //     CallAfter(&clDockingManager::ShowOutputViewOpenTabMenu);
     // } else {
@@ -69,10 +71,8 @@ void clDockingManager::ShowWorkspaceOpenTabMenu()
 {
     // Override the "pin" button to show a window list
     bool show;
-    wxString selection = ShowMenu(GetPane(WORKSPACE_VIEW).window,
-                                  clGetManager()->GetWorkspaceTabs(),
-                                  clGetManager()->GetWorkspacePaneNotebook(),
-                                  show);
+    wxString selection = ShowMenu(GetPane(WORKSPACE_VIEW).window, clGetManager()->GetWorkspaceTabs(),
+                                  clGetManager()->GetWorkspacePaneNotebook(), show);
     CHECK_COND_RET(!selection.IsEmpty());
     clCommandEvent event(wxEVT_SHOW_WORKSPACE_TAB);
     event.SetSelected(show).SetString(selection);
@@ -82,8 +82,8 @@ void clDockingManager::ShowWorkspaceOpenTabMenu()
 void clDockingManager::ShowOutputViewOpenTabMenu()
 {
     bool show;
-    wxString selection = ShowMenu(
-        GetPane(OUTPUT_VIEW).window, clGetManager()->GetOutputTabs(), clGetManager()->GetOutputPaneNotebook(), show);
+    wxString selection = ShowMenu(GetPane(OUTPUT_VIEW).window, clGetManager()->GetOutputTabs(),
+                                  clGetManager()->GetOutputPaneNotebook(), show);
     CHECK_COND_RET(!selection.IsEmpty());
     clCommandEvent event(wxEVT_SHOW_OUTPUT_TAB);
     event.SetSelected(show).SetString(selection);
@@ -112,7 +112,8 @@ wxString clDockingManager::ShowMenu(wxWindow* win, const wxArrayString& tabs, No
     }
 
     int sel = win->GetPopupMenuSelectionFromUser(menu);
-    if(sel == wxID_NONE) return "";
+    if(sel == wxID_NONE)
+        return "";
     const wxString& label = tabsIds.find(sel)->second;
     checked = (book->GetPageIndex(label) == wxNOT_FOUND);
     return label;

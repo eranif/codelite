@@ -1,16 +1,18 @@
 #include "clJSCTags.h"
-#include "event_notifier.h"
-#include "codelite_events.h"
-#include <wx/filename.h>
+
 #include "clZipReader.h"
-#include "jobqueue.h"
-#include "job.h"
 #include "cl_standard_paths.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
+#include "job.h"
+#include "jobqueue.h"
 #include "macros.h"
+
 #include <imanager.h>
-#include "file_logger.h"
+#include <wx/filename.h>
 
 class clJSCTagsZipJob : public Job
 {
@@ -61,7 +63,8 @@ clJSCTags::~clJSCTags()
 void clJSCTags::OnEditorSaved(clCommandEvent& event)
 {
     event.Skip();
-    if(!m_zipExtracted) return;
+    if(!m_zipExtracted)
+        return;
 
     wxString filename = event.GetFileName();
 }
@@ -69,7 +72,8 @@ void clJSCTags::OnEditorSaved(clCommandEvent& event)
 void clJSCTags::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
-    if(!m_zipExtracted) return;
+    if(!m_zipExtracted)
+        return;
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -82,7 +86,8 @@ void clJSCTags::OnInitDone(wxCommandEvent& event)
     event.Skip();
     // Extract the zip file
     wxFileName jsctagsZip(clStandardPaths::Get().GetDataDir(), "jsctags.zip");
-    if(!jsctagsZip.Exists()) return;
+    if(!jsctagsZip.Exists())
+        return;
     wxFileName targetDir(clStandardPaths::Get().GetUserDataDir(), "");
     targetDir.AppendDir("webtools");
     targetDir.AppendDir("jsctags");

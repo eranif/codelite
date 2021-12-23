@@ -26,13 +26,14 @@
 #ifndef CLFUNCTIONTIPWINDOW_H
 #define CLFUNCTIONTIPWINDOW_H
 
-#include <wx/panel.h> // Base class: wxPanel
-#include <wx/bitmap.h>
-#include <vector>
 #include "cl_calltip.h"
-#include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
+
+#include <vector>
 #include <wx/arrstr.h>
+#include <wx/bitmap.h>
+#include <wx/panel.h> // Base class: wxPanel
 
 class WXDLLIMPEXP_SDK clEditorTipWindow : public wxPanel
 {
@@ -54,7 +55,7 @@ protected:
     wxArrayString m_args;
     wxString m_footer; // the line that says  "1 of 2"
     wxString m_header; // The return value line
-    
+
 protected:
     wxSize DoGetTipSize();
     int DoGetTextLen(wxDC& dc, const wxString& txt);

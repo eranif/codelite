@@ -2,11 +2,12 @@
 #define CLBITMAPOVERLAYCTRL_H
 
 #include "codelite_exports.h"
+#include "smart_ptr.h"
+
+#include <wx/event.h>
+#include <wx/statbmp.h>
 #include <wx/string.h>
 #include <wx/window.h>
-#include <wx/statbmp.h>
-#include <wx/event.h>
-#include "smart_ptr.h"
 
 class WXDLLIMPEXP_SDK clBitmapOverlayCtrl : public wxEvtHandler
 {

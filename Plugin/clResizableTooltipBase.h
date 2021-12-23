@@ -7,21 +7,22 @@
 #ifndef _CODELITE_PLUGIN_CLRESIZABLETOOLTIPBASE_BASE_CLASSES_H
 #define _CODELITE_PLUGIN_CLRESIZABLETOOLTIPBASE_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
+#include "clThemedTreeCtrl.h"
+#include "wx/frame.h"
+
+#include <wx/artprov.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
 #include <wx/minifram.h>
-#include "wx/frame.h"
+#include <wx/settings.h>
+#include <wx/sizer.h>
 #include <wx/treectrl.h>
-#include "clThemedTreeCtrl.h"
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -42,21 +43,14 @@ protected:
     clThemedTreeCtrl* m_treeCtrl;
 
 protected:
-    virtual void OnItemExpanding(wxTreeEvent& event)
-    {
-        event.Skip();
-    }
-    virtual void OnKeyDown(wxTreeEvent& event)
-    {
-        event.Skip();
-    }
+    virtual void OnItemExpanding(wxTreeEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxTreeEvent& event) { event.Skip(); }
 
 public:
-    clThemedTreeCtrl* GetTreeCtrl()
-    {
-        return m_treeCtrl;
-    }
-    clResizableTooltipBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Inspect Variable"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300,200), long style = wxRESIZE_BORDER|wxFRAME_NO_TASKBAR);
+    clThemedTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    clResizableTooltipBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Inspect Variable"),
+                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300, 200),
+                           long style = wxRESIZE_BORDER | wxFRAME_NO_TASKBAR);
     virtual ~clResizableTooltipBase();
 };
 

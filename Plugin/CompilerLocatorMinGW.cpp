@@ -24,8 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilerLocatorMinGW.h"
+
 #include "file_logger.h"
 #include "procutils.h"
+
 #include <globals.h>
 #include <wx/dir.h>
 #include <wx/filefn.h>

@@ -1,7 +1,8 @@
+#include "clTerminalViewCtrl.hpp"
+
 #include "ColoursAndFontsManager.h"
 #include "clAnsiEscapeCodeHandler.hpp"
 #include "clSystemSettings.h"
-#include "clTerminalViewCtrl.hpp"
 #include "event_notifier.h"
 
 namespace

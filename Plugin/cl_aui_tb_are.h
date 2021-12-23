@@ -26,15 +26,15 @@
 #ifndef CL_AUI_TOOLBAR_ART_H
 #define CL_AUI_TOOLBAR_ART_H
 
-#include <wx/pen.h>
-#include <wx/sizer.h>
-#include <wx/bitmap.h>
-#include "drawingutils.h"
 #include "cl_defs.h"
 #include "codelite_exports.h"
-#include <wx/event.h>
+#include "drawingutils.h"
 
 #include <wx/aui/auibar.h>
+#include <wx/bitmap.h>
+#include <wx/event.h>
+#include <wx/pen.h>
+#include <wx/sizer.h>
 
 class WXDLLIMPEXP_SDK CLMainAuiTBArt : public wxAuiDefaultToolBarArt, public wxEvtHandler
 {

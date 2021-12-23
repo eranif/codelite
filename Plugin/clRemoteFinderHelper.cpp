@@ -1,6 +1,7 @@
+#include "clRemoteFinderHelper.hpp"
+
 #include "Notebook.h"
 #include "asyncprocess.h"
-#include "clRemoteFinderHelper.hpp"
 #include "cl_command_event.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -8,15 +9,12 @@
 #include "imanager.h"
 #include "processreaderthread.h"
 #include "search_thread.h"
+
 #include <wx/tokenzr.h>
 
-clRemoteFinderHelper::clRemoteFinderHelper()
-{
-}
+clRemoteFinderHelper::clRemoteFinderHelper() {}
 
-clRemoteFinderHelper::~clRemoteFinderHelper()
-{
-}
+clRemoteFinderHelper::~clRemoteFinderHelper() {}
 
 void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, bool is_completed)
 {
@@ -110,7 +108,4 @@ wxWindow* clRemoteFinderHelper::GetSearchTab()
     return nullptr;
 }
 
-void clRemoteFinderHelper::SetCodeLiteRemote(clCodeLiteRemoteProcess* clr)
-{
-    m_codeliteRemote = clr;
-}
+void clRemoteFinderHelper::SetCodeLiteRemote(clCodeLiteRemoteProcess* clr) { m_codeliteRemote = clr; }

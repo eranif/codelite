@@ -1,4 +1,5 @@
 #include "clGetTextFromUserDialog.h"
+
 #include "globals.h"
 #include "windowattrmanager.h"
 

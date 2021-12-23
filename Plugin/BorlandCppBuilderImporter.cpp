@@ -1,7 +1,8 @@
 #include "BorlandCppBuilderImporter.h"
-#include <wx/wfstream.h>
-#include <wx/txtstrm.h>
+
 #include <wx/tokenzr.h>
+#include <wx/txtstrm.h>
+#include <wx/wfstream.h>
 #include <wx/xml/xml.h>
 
 bool BorlandCppBuilderImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)

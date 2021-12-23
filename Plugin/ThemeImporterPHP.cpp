@@ -1,6 +1,8 @@
 #include "ThemeImporterPHP.hpp"
-#include <wx/stc/stc.h>
+
 #include "macros.h"
+
+#include <wx/stc/stc.h>
 
 ThemeImporterPHP::ThemeImporterPHP()
 {

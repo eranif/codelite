@@ -1,20 +1,20 @@
-#include "cl_config.h"
-#include "cl_defs.h"
-#include "globals.h"
+#include "clTabRenderer.h"
 
 #include "ColoursAndFontsManager.h"
 #include "Notebook.h"
 #include "clGenericNotebook.hpp"
 #include "clSystemSettings.h"
-#include "clTabRenderer.h"
 #include "clTabRendererDefault.hpp"
 #include "clTabRendererFirefox.hpp"
 #include "clTabRendererGTK3.h"
 #include "clTabRendererMinimal.hpp"
 #include "cl_config.h"
+#include "cl_defs.h"
 #include "editor_config.h"
+#include "globals.h"
 #include "macros.h"
 #include "wxStringHash.h"
+
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>

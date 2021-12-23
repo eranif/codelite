@@ -34,7 +34,6 @@ class WXDLLIMPEXP_SDK ThemeImporterCobra : public ThemeImporterPython
 public:
     ThemeImporterCobra();
     virtual ~ThemeImporterCobra();
-
 };
 
 #endif // ECLIPSECOBRATHEMEIMPORTER_H

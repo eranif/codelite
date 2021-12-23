@@ -1,9 +1,11 @@
-#include "clSystemSettings.h"
 #include "clThemeUpdater.h"
+
+#include "clSystemSettings.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
+
 #include <algorithm>
 
 clThemeUpdater::clThemeUpdater()

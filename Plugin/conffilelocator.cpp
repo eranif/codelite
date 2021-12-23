@@ -23,11 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_standard_paths.h"
 #include "conffilelocator.h"
+
+#include "cl_standard_paths.h"
+#include "fileutils.h"
+
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
-#include "fileutils.h"
 
 ConfFileLocator* ConfFileLocator::ms_instance = 0;
 
@@ -37,13 +39,17 @@ ConfFileLocator::~ConfFileLocator() {}
 
 ConfFileLocator* ConfFileLocator::Instance()
 {
-    if(ms_instance == 0) { ms_instance = new ConfFileLocator(); }
+    if(ms_instance == 0) {
+        ms_instance = new ConfFileLocator();
+    }
     return ms_instance;
 }
 
 void ConfFileLocator::Release()
 {
-    if(ms_instance) { delete ms_instance; }
+    if(ms_instance) {
+        delete ms_instance;
+    }
     ms_instance = 0;
 }
 
@@ -68,7 +74,9 @@ wxString ConfFileLocator::Locate(const wxString& baseName)
 void ConfFileLocator::DeleteLocalCopy(const wxString& basename)
 {
     wxFileName privateFile(GetLocalCopy(basename));
-    if(privateFile.FileExists()) { clRemoveFile(privateFile.GetFullPath()); }
+    if(privateFile.FileExists()) {
+        clRemoveFile(privateFile.GetFullPath());
+    }
 }
 
 wxString ConfFileLocator::GetLocalCopy(const wxString& baseName)

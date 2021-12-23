@@ -1,8 +1,10 @@
 #include "clTabRendererGTK3.h"
+
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
 #include "editor_config.h"
+
 #include <wx/dcmemory.h>
 #include <wx/font.h>
 #include <wx/settings.h>

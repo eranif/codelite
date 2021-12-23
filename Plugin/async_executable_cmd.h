@@ -25,10 +25,10 @@
 #ifndef ASYNC_EXECUTABLE_CMD_H
 #define ASYNC_EXECUTABLE_CMD_H
 
-#include "wx/event.h"
 #include "cl_process.h"
-#include "wx/timer.h"
 #include "codelite_exports.h"
+#include "wx/event.h"
+#include "wx/timer.h"
 
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SDK, wxEVT_ASYNC_PROC_ADDLINE, wxID_ANY)
 DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SDK, wxEVT_ASYNC_PROC_ADDERRLINE, wxID_ANY)
@@ -38,53 +38,48 @@ DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_SDK, wxEVT_ASYNC_PROC_ENDED, wxID_ANY)
 class WXDLLIMPEXP_SDK AsyncExeCmd : public wxEvtHandler
 {
 protected:
-    clProcess *m_proc;
-    wxEvtHandler *m_owner;
-    wxTimer *m_timer;
+    clProcess* m_proc;
+    wxEvtHandler* m_owner;
+    wxTimer* m_timer;
     bool m_busy;
     bool m_stop;
     wxString m_cmdLine;
 
 protected:
-    virtual void OnTimer(wxTimerEvent &event);
+    virtual void OnTimer(wxTimerEvent& event);
     virtual void PrintOutput();
-    virtual void DoPrintOutput(const wxString &out, const wxString &err);
+    virtual void DoPrintOutput(const wxString& out, const wxString& err);
 
 #ifndef __WXMSW__
-    // A process was terminated and caught by the ZombieReaper - check if it 
+    // A process was terminated and caught by the ZombieReaper - check if it
     // is our process
-    void OnZombieReaperProcessTerminated(wxProcessEvent &event);
+    void OnZombieReaperProcessTerminated(wxProcessEvent& event);
 #endif
 
 public:
-    bool IsBusy() const {
-        return m_busy;
-    }
-    void SetBusy(bool busy) {
-        m_busy = busy;
-    }
+    bool IsBusy() const { return m_busy; }
+    void SetBusy(bool busy) { m_busy = busy; }
     void Stop();
     void ProcessEnd(wxProcessEvent& event);
-    clProcess *GetProcess() {
-        return m_proc;
-    }
+    clProcess* GetProcess() { return m_proc; }
 
 public:
-    //construct a compiler action
-    // \param owner the window owner for this action
-    AsyncExeCmd(wxEvtHandler *owner) ;
+    // construct a compiler action
+    //  \param owner the window owner for this action
+    AsyncExeCmd(wxEvtHandler* owner);
 
     virtual ~AsyncExeCmd();
-    virtual void Execute(const wxString &cmdLine, bool hide = true, bool redirect = true);
+    virtual void Execute(const wxString& cmdLine, bool hide = true, bool redirect = true);
 
-    wxOutputStream *GetOutputStream() {
+    wxOutputStream* GetOutputStream()
+    {
         if(m_proc) {
             return m_proc->GetOutputStream();
         }
         return NULL;
     }
 
-    void AppendLine(const wxString &line, bool isErr = false);
+    void AppendLine(const wxString& line, bool isErr = false);
     void SendStartMsg();
     void SendEndMsg(int exitCode);
     void Terminate();

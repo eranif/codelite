@@ -2,12 +2,13 @@
 #define DIFFFOLDERSFRAME_H
 
 #include "DiffUI.h"
-#include "codelite_exports.h"
-#include <thread>
+#include "bitmap_loader.h"
 #include "clFilesCollector.h"
+#include "codelite_exports.h"
 #include "globals.h"
 #include "imanager.h"
-#include "bitmap_loader.h"
+
+#include <thread>
 
 struct WXDLLIMPEXP_SDK DiffViewEntry {
 protected:
@@ -77,7 +78,9 @@ public:
     DiffViewEntry& GetEntry(const wxString& filename)
     {
         static DiffViewEntry nullEntry;
-        if(HasFile(filename)) { return m_table[filename]; }
+        if(HasFile(filename)) {
+            return m_table[filename];
+        }
         return nullEntry;
     }
 
@@ -115,7 +118,7 @@ protected:
     void DoOpenDiff(const wxDataViewItem& item);
     void StopChecksumThread();
     bool CanUp() const;
-    
+
 protected:
     virtual void OnClose(wxCommandEvent& event);
     virtual void OnNewCmparison(wxCommandEvent& event);

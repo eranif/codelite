@@ -36,6 +36,7 @@
 #include "wx/filename.h"
 #include "wx/string.h"
 #include "wxStringHash.h"
+
 #include <cl_command_event.h>
 #include <map>
 #include <wx/event.h>

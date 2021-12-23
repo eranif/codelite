@@ -7,6 +7,7 @@
 #include "codelite_exports.h"
 #include "macros.h"
 #include "wxStringHash.h"
+
 #include <wx/event.h>
 
 class WXDLLIMPEXP_SDK clProfileHandler : public wxEvtHandler

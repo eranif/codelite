@@ -1,6 +1,7 @@
+#include "clToolBar.h"
+
 #include "cLToolBarControl.h"
 #include "clSystemSettings.h"
-#include "clToolBar.h"
 #include "clToolBarButton.h"
 #include "clToolBarButtonBase.h"
 #include "clToolBarMenuButton.h"
@@ -13,6 +14,7 @@
 #include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
+
 #include <algorithm>
 #include <wx/dcbuffer.h>
 #include <wx/dcmemory.h>

@@ -27,10 +27,11 @@
 #define CLZIPWRITER_H
 
 #include "codelite_exports.h"
-#include <wx/zipstrm.h>
-#include <wx/wfstream.h>
-#include <wx/stream.h>
+
 #include <wx/filename.h>
+#include <wx/stream.h>
+#include <wx/wfstream.h>
+#include <wx/zipstrm.h>
 
 class WXDLLIMPEXP_SDK clZipWriter
 {
@@ -46,19 +47,19 @@ public:
      * @brief add file to the zip
      */
     void Add(const wxFileName& file);
-    
+
     /**
      * @brief add a directory to the archive
      * @param path directory path
      * @param pattern files to add mask
      */
-    void AddDirectory(const wxString& path, const wxString &pattern);
-    
+    void AddDirectory(const wxString& path, const wxString& pattern);
+
     /**
      * @brief return the zip filename
      */
     const wxFileName& GetFilename() const { return m_filename; }
-    
+
     /**
      * @brief close the zip
      */

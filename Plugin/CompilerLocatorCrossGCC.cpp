@@ -24,13 +24,14 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "CompilerLocatorCrossGCC.h"
+
+#include "file_logger.h"
+#include "procutils.h"
+
+#include <globals.h>
 #include <wx/dir.h>
 #include <wx/filefn.h>
 #include <wx/tokenzr.h>
-#include <globals.h>
-#include "file_logger.h"
-#include "procutils.h"
-#include <wx/dir.h>
 
 CompilerLocatorCrossGCC::CompilerLocatorCrossGCC() {}
 
@@ -62,7 +63,8 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
         }
     }
 
-    if(count == 0) return NULL;
+    if(count == 0)
+        return NULL;
 
     for(int i = 0; i < count; ++i) {
 #ifndef __WXMSW__
@@ -127,7 +129,8 @@ bool CompilerLocatorCrossGCC::Locate()
     if(!pathValues.IsEmpty()) {
         wxArrayString pathArray = ::wxStringTokenize(pathValues, wxPATH_SEP, wxTOKEN_STRTOK);
         for(size_t i = 0; i < pathArray.GetCount(); ++i) {
-            if(tried.count(pathArray[i])) continue;
+            if(tried.count(pathArray[i]))
+                continue;
             Locate(pathArray[i], false);
             tried.insert(pathArray[i]);
         }
@@ -136,9 +139,7 @@ bool CompilerLocatorCrossGCC::Locate()
     return !m_compilers.empty();
 }
 
-void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler,
-                                       const wxString& binFolder,
-                                       const wxString& prefix,
+void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler, const wxString& binFolder, const wxString& prefix,
                                        const wxString& suffix)
 {
     compiler->SetName("Cross GCC ( " + prefix + " )");
@@ -163,7 +164,8 @@ void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler,
 
     toolFile.SetFullName(prefix + "-windres");
     toolFile.SetExt(suffix);
-    if(toolFile.FileExists()) AddTool(compiler, "ResourceCompiler", toolFile.GetFullPath());
+    if(toolFile.FileExists())
+        AddTool(compiler, "ResourceCompiler", toolFile.GetFullPath());
 
     toolFile.SetFullName(prefix + "-as");
     toolFile.SetExt(suffix);
@@ -184,12 +186,11 @@ void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler,
     // makeExtraArgs <<  " SHELL=cmd.exe ";
 
     // What to do if there's no make here? (on Windows)
-    if(toolFile.FileExists()) AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
+    if(toolFile.FileExists())
+        AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
 }
 
-void CompilerLocatorCrossGCC::AddTool(CompilerPtr compiler,
-                                      const wxString& toolname,
-                                      const wxString& toolpath,
+void CompilerLocatorCrossGCC::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
                                       const wxString& extraArgs)
 {
     wxString tool = toolpath;

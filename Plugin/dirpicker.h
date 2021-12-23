@@ -25,11 +25,11 @@
 #ifndef DIRPICKER_H
 #define DIRPICKER_H
 
-#include "wx/panel.h"
-#include "wx/button.h"
 #include "codelite_exports.h"
-#include "wx/textctrl.h"
+#include "wx/button.h"
 #include "wx/combobox.h"
+#include "wx/panel.h"
+#include "wx/textctrl.h"
 
 enum { wxDP_USE_TEXTCTRL = 1, wxDP_USE_COMBOBOX = 2 };
 
@@ -60,13 +60,9 @@ protected:
     virtual void OnText(wxCommandEvent& event);
 
 public:
-    DirPicker(wxWindow* parent,
-              wxWindowID id = wxID_ANY,
-              const wxString& buttonCaption = wxT("..."),
-              const wxString& defaultPos = wxEmptyString,
-              const wxString& message = _("Select a folder:"),
-              const wxPoint& pos = wxDefaultPosition,
-              const wxSize& size = wxDefaultSize,
+    DirPicker(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& buttonCaption = wxT("..."),
+              const wxString& defaultPos = wxEmptyString, const wxString& message = _("Select a folder:"),
+              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
               long style = wxDP_USE_TEXTCTRL);
 
     virtual ~DirPicker();

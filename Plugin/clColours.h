@@ -2,6 +2,7 @@
 #define CLCOLOURS_H
 
 #include "codelite_exports.h"
+
 #include <wx/colour.h>
 
 class WXDLLIMPEXP_SDK clColours

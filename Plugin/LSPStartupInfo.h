@@ -2,6 +2,7 @@
 #define LSP_STARTUPINFO_H
 
 #include "codelite_exports.h"
+
 #include <wx/arrstr.h>
 #include <wx/string.h>
 

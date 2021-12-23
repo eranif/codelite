@@ -4,6 +4,7 @@
 #include "clColours.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+
 #include <wx/event.h>
 #include <wx/settings.h>
 

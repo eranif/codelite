@@ -30,6 +30,7 @@
 #include "macros.h"
 #include "window_locker.h"
 #include "workspace.h"
+
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/brush.h>

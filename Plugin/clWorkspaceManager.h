@@ -29,6 +29,7 @@
 #include "IWorkspace.h"
 #include "clWorkspaceEvent.hpp"
 #include "codelite_exports.h"
+
 #include <wx/event.h>
 
 class WXDLLIMPEXP_SDK clWorkspaceManager : public wxEvtHandler

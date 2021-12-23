@@ -23,10 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "memoryview.h"
+
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
-#include "memoryview.h"
+
 #include <wx/msgdlg.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>

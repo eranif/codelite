@@ -2,6 +2,7 @@
 #define CLTHEMEDSTC_HPP
 
 #include "codelite_exports.h"
+
 #include <wx/stc/stc.h>
 
 class WXDLLIMPEXP_SDK clThemedSTC : public wxStyledTextCtrl

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "addincludefiledlg.h"
+
 #include "bitmap_loader.h"
 #include "editor_config.h"
 #include "globals.h"
@@ -31,6 +32,7 @@
 #include "workspace.h"
 #include "wx/filename.h"
 #include "wx/regex.h"
+
 #include <algorithm>
 #include <wx/wupdlock.h>
 

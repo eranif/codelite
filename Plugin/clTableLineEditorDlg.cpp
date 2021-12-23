@@ -1,5 +1,6 @@
-#include "ColoursAndFontsManager.h"
 #include "clTableLineEditorDlg.h"
+
+#include "ColoursAndFontsManager.h"
 
 clTableLineEditorDlg::clTableLineEditorDlg(wxWindow* parent, const wxArrayString& columns, const wxArrayString& data)
     : clTableLineEditorBaseDlg(parent)

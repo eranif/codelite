@@ -23,17 +23,18 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "sessionmanager.h"
-#include "xmlutils.h"
+
+#include "clWorkspaceManager.h"
+#include "cl_config.h"
+#include "cl_standard_paths.h"
+#include "fileutils.h"
 #include "wx/ffile.h"
-#include <wx/log.h>
+#include "wx_xml_compatibility.h"
+#include "xmlutils.h"
 
 #include <memory>
-#include "wx_xml_compatibility.h"
-#include "cl_standard_paths.h"
-#include "cl_config.h"
-#include "clWorkspaceManager.h"
+#include <wx/log.h>
 #include <wx/sstream.h>
-#include "fileutils.h"
 
 // Session entry
 SessionEntry::SessionEntry() {}
@@ -123,7 +124,9 @@ wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxStri
 
     } else {
         wxFileName sessionFileName(name);
-        if(suffix != "tabgroup") { sessionFileName.AppendDir(".codelite"); }
+        if(suffix != "tabgroup") {
+            sessionFileName.AppendDir(".codelite");
+        }
         sessionFileName.SetExt(suffix.IsEmpty() ? wxString("session") : suffix);
         return sessionFileName;
     }
@@ -132,19 +135,23 @@ wxFileName SessionManager::GetSessionFileName(const wxString& name, const wxStri
 bool SessionManager::GetSession(const wxString& workspaceFile, SessionEntry& session, const wxString& suffix,
                                 const wxChar* Tag)
 {
-    if(!m_doc.GetRoot()) { return false; }
+    if(!m_doc.GetRoot()) {
+        return false;
+    }
 
     wxFileName sessionFileName = GetSessionFileName(workspaceFile, suffix);
     wxXmlDocument doc;
 
     if(sessionFileName.FileExists()) {
-        if(!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk()) return false;
+        if(!doc.Load(sessionFileName.GetFullPath()) || !doc.IsOk())
+            return false;
     } else {
         doc.SetRoot(new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag));
     }
 
     wxXmlNode* const node = doc.GetRoot();
-    if(!node || node->GetName() != Tag) return false;
+    if(!node || node->GetName() != Tag)
+        return false;
 
     Archive arch;
     arch.SetXmlNode(node);
@@ -156,9 +163,12 @@ bool SessionManager::GetSession(const wxString& workspaceFile, SessionEntry& ses
 bool SessionManager::Save(const wxString& name, SessionEntry& session, const wxString& suffix /*=wxT("")*/,
                           const wxChar* Tag /*=sessionTag*/)
 {
-    if(!m_doc.GetRoot()) { return false; }
+    if(!m_doc.GetRoot()) {
+        return false;
+    }
 
-    if(name.empty()) return false;
+    if(name.empty())
+        return false;
 
     wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag);
     child->AddProperty(wxT("Name"), name);
@@ -173,14 +183,18 @@ bool SessionManager::Save(const wxString& name, SessionEntry& session, const wxS
     // If we're saving a tabgroup, suffix will be ".tabgroup", not the default ".session"
     wxString content;
     wxStringOutputStream sos(&content);
-    if(!doc.Save(sos)) { return false; }
+    if(!doc.Save(sos)) {
+        return false;
+    }
     const wxFileName& sessionFileName = GetSessionFileName(name, suffix);
     return FileUtils::WriteFileContent(sessionFileName, content);
 }
 
 void SessionManager::SetLastSession(const wxString& name)
 {
-    if(!m_doc.GetRoot()) { return; }
+    if(!m_doc.GetRoot()) {
+        return;
+    }
     // first delete the old entry
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
     while(node) {
@@ -199,13 +213,17 @@ void SessionManager::SetLastSession(const wxString& name)
 
     wxString content;
     wxStringOutputStream sos(&content);
-    if(!m_doc.Save(sos)) { return; }
+    if(!m_doc.Save(sos)) {
+        return;
+    }
     FileUtils::WriteFileContent(m_fileName, content);
 }
 
 wxString SessionManager::GetLastSession()
 {
-    if(!m_doc.GetRoot()) { return defaultSessionName; }
+    if(!m_doc.GetRoot()) {
+        return defaultSessionName;
+    }
     // try to locate the 'LastSession' entry
     // if it does not exist or it exist with value empty return 'Default'
     // otherwise, return its content
@@ -240,7 +258,9 @@ wxString SessionManager::GetFindInFilesMaskForCurrentWorkspace()
     if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
         wxFileName fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();
         SessionEntry s;
-        if(GetSession(fn.GetFullPath(), s)) { return s.GetFindInFilesMask(); }
+        if(GetSession(fn.GetFullPath(), s)) {
+            return s.GetFindInFilesMask();
+        }
     }
     return "";
 }

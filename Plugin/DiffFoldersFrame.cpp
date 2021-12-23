@@ -1,4 +1,5 @@
 #include "DiffFoldersFrame.h"
+
 #include "DiffSelectFoldersDlg.h"
 #include "bitmap_loader.h"
 #include "clDiffFrame.h"
@@ -7,6 +8,7 @@
 #include "cl_config.h"
 #include "fileextmanager.h"
 #include "globals.h"
+
 #include <algorithm>
 #include <atomic>
 #include <imanager.h>

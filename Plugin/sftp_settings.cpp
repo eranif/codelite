@@ -23,8 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "fileutils.h"
 #include "sftp_settings.h"
+
+#include "fileutils.h"
+
 #include <algorithm>
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
@@ -74,7 +76,7 @@ SFTPSettings& SFTPSettings::Load()
 {
     clConfig config("sftp-settings.conf");
     config.ReadItem(this);
-//    MSWImportPuTTYAccounts();
+    //    MSWImportPuTTYAccounts();
     return *this;
 }
 

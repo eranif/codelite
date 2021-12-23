@@ -25,8 +25,9 @@
 #ifndef __progressctrl__
 #define __progressctrl__
 
-#include <wx/panel.h>
 #include "codelite_exports.h"
+
+#include <wx/panel.h>
 
 class WXDLLIMPEXP_SDK ProgressCtrl : public wxPanel
 {
@@ -37,11 +38,8 @@ class WXDLLIMPEXP_SDK ProgressCtrl : public wxPanel
     wxColour m_fillCol;
 
 public:
-    ProgressCtrl(wxWindow* parent,
-                 wxWindowID id = wxID_ANY,
-                 const wxPoint& pos = wxDefaultPosition,
-                 const wxSize& size = wxDefaultSize,
-                 long style = wxBORDER_NONE);
+    ProgressCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                 const wxSize& size = wxDefaultSize, long style = wxBORDER_NONE);
     virtual ~ProgressCtrl();
 
     void Update(size_t value, const wxString& msg);

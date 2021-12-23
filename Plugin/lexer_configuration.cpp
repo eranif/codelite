@@ -22,15 +22,17 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "lexer_configuration.h"
+
 #include "bookmark_manager.h"
 #include "cl_config.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "globals.h"
-#include "lexer_configuration.h"
 #include "macros.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <algorithm>
 #include <wx/settings.h>
 #include <wx/stc/stc.h>

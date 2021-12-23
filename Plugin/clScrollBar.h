@@ -5,6 +5,7 @@
 #include "clCustomScrollBar.h"
 #include "codelite_exports.h"
 #include "wxCustomControls.hpp"
+
 #include <wx/scrolbar.h>
 
 class WXDLLIMPEXP_SDK clScrollBar : public wxScrollBar

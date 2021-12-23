@@ -1,6 +1,8 @@
 #include "CompilerLocatorMSYS2.hpp"
+
 #include "GCCMetadata.hpp"
 #include "compiler.h"
+
 #include <wx/filename.h>
 
 CompilerLocatorMSYS2::CompilerLocatorMSYS2() {}

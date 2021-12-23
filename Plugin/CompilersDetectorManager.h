@@ -26,9 +26,10 @@
 #ifndef COMPILERSDETECTORMANAGER_H
 #define COMPILERSDETECTORMANAGER_H
 
-#include <ICompilerLocator.h>
 #include "codelite_exports.h"
 #include "compiler.h"
+
+#include <ICompilerLocator.h>
 
 class WXDLLIMPEXP_SDK CompilersDetectorManager
 {

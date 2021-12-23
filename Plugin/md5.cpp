@@ -68,8 +68,8 @@ documentation and/or software.
 #include "md5_header.h"
 
 #include <assert.h>
-#include <string.h>
 #include <iostream>
+#include <string.h>
 
 // MD5 simple initialization method
 
@@ -94,7 +94,8 @@ void MD5::update(uint1* input, uint4 input_length)
     buffer_index = (unsigned int)((count[0] >> 3) & 0x3F);
 
     // Update number of bits
-    if((count[0] += ((uint4)input_length << 3)) < ((uint4)input_length << 3)) count[1]++;
+    if((count[0] += ((uint4)input_length << 3)) < ((uint4)input_length << 3))
+        count[1]++;
 
     count[1] += ((uint4)input_length >> 29);
 

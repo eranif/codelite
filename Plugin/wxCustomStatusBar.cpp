@@ -1,5 +1,7 @@
 #include "wxCustomStatusBar.h"
+
 #include "drawingutils.h"
+
 #include <wx/dcbuffer.h>
 #include <wx/dcclient.h>
 #include <wx/dcgraph.h>

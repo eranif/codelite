@@ -1,5 +1,7 @@
 #include "clDataViewListCtrl.h"
+
 #include "clHeaderItem.h"
+
 #include <algorithm>
 #include <wx/dataview.h>
 #include <wx/dcbuffer.h>

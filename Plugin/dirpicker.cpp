@@ -22,27 +22,23 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "dirpicker.h"
+
+#include "file_logger.h"
+#include "macros.h"
 #include "wx/dir.h"
 #include "wx/filename.h"
-#include "dirpicker.h"
-#include "wx/sizer.h"
-#include "macros.h"
 #include "wx/log.h"
+#include "wx/sizer.h"
+
 #include <wx/dirdlg.h>
-#include "file_logger.h"
 
 BEGIN_EVENT_TABLE(DirPicker, wxPanel)
 EVT_TEXT(wxID_ANY, DirPicker::OnText)
 END_EVENT_TABLE()
 
-DirPicker::DirPicker(wxWindow* parent,
-                     wxWindowID id,
-                     const wxString& buttonCaption,
-                     const wxString& defaultPos,
-                     const wxString& message,
-                     const wxPoint& pos,
-                     const wxSize& size,
-                     long style)
+DirPicker::DirPicker(wxWindow* parent, wxWindowID id, const wxString& buttonCaption, const wxString& defaultPos,
+                     const wxString& message, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER)
     , m_path(NULL)
     , m_combo(NULL)
@@ -163,8 +159,7 @@ wxArrayString DirPicker::GetValues() const
 
 int DirPicker::GetCurrentSelection() const
 {
-    wxCHECK_MSG(m_style & wxDP_USE_COMBOBOX,
-                wxNOT_FOUND,
+    wxCHECK_MSG(m_style & wxDP_USE_COMBOBOX, wxNOT_FOUND,
                 wxT("GetCurrentSelection is available only for wxDP_USE_COMBOBOX style"));
 
     int index = wxNOT_FOUND;

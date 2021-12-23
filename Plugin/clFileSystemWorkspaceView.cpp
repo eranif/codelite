@@ -1,7 +1,8 @@
+#include "clFileSystemWorkspaceView.hpp"
+
 #include "StringUtils.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceDlg.h"
-#include "clFileSystemWorkspaceView.hpp"
 #include "clThemedButton.h"
 #include "clToolBar.h"
 #include "clWorkspaceView.h"

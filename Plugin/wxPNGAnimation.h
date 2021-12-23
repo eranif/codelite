@@ -26,12 +26,13 @@
 #ifndef WXPNGANIMATION_H
 #define WXPNGANIMATION_H
 
-#include <wx/panel.h>
-#include <wx/bitmap.h>
-#include <wx/vector.h>
-#include <wx/timer.h>
-#include <wx/colour.h>
 #include "codelite_exports.h"
+
+#include <wx/bitmap.h>
+#include <wx/colour.h>
+#include <wx/panel.h>
+#include <wx/timer.h>
+#include <wx/vector.h>
 
 class WXDLLIMPEXP_SDK wxPNGAnimation : public wxPanel
 {
@@ -56,11 +57,8 @@ public:
      * @param singleImageSize the size of a single bitmap within the map
      * @param id the control ID
      */
-    wxPNGAnimation(wxWindow* parent,
-                   const wxBitmap& pngSprite,
-                   wxOrientation spriteOrientation,
-                   const wxSize& singleImageSize,
-                   wxWindowID id = wxID_ANY);
+    wxPNGAnimation(wxWindow* parent, const wxBitmap& pngSprite, wxOrientation spriteOrientation,
+                   const wxSize& singleImageSize, wxWindowID id = wxID_ANY);
     virtual ~wxPNGAnimation();
 
     /**
@@ -78,13 +76,11 @@ public:
      * @param colour
      */
     void SetPanelColour(const wxColour& colour);
-    
+
     /**
      * @brief is the animation running?
      */
-    bool IsRunning() const {
-        return m_timer && m_timer->IsRunning();
-    }
+    bool IsRunning() const { return m_timer && m_timer->IsRunning(); }
 };
 
 #endif // WXPNGANIMATION_H

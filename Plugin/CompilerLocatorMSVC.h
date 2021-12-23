@@ -27,6 +27,7 @@
 #define COMPILERLOCATORMSVC_H
 
 #include "ICompilerLocator.h" // Base class: ICompilerLocator
+
 #include <wx/filename.h>
 
 //-------------------------------------------------------------------------

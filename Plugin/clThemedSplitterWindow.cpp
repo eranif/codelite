@@ -1,7 +1,9 @@
-#include "clSystemSettings.h"
 #include "clThemedSplitterWindow.h"
+
+#include "clSystemSettings.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
+
 #include <wx/dcbuffer.h>
 
 clThemedSplitterWindow::clThemedSplitterWindow(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,

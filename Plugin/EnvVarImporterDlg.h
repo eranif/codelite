@@ -28,17 +28,14 @@
 
 #include "WSImporterDlgs.h"
 #include "workspace.h"
+
 #include <set>
 
 class EnvVarImporterDlg : public EnvVarImporterDlgBase
 {
 public:
-    EnvVarImporterDlg(wxWindow* parent,
-                      const wxString& projectName,
-                      const wxString& cfgName,
-                      std::set<wxString> listEnvVar,
-                      BuildConfigPtr le_conf,
-                      bool* showDlg);
+    EnvVarImporterDlg(wxWindow* parent, const wxString& projectName, const wxString& cfgName,
+                      std::set<wxString> listEnvVar, BuildConfigPtr le_conf, bool* showDlg);
     virtual ~EnvVarImporterDlg();
 
 protected:

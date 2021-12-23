@@ -28,6 +28,7 @@
 
 #include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 #include "codelite_exports.h"
+
 #include <vector>
 
 class WXDLLIMPEXP_SDK ThemeImporterCXX : public ThemeImporterBase

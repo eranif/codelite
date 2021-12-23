@@ -1,8 +1,9 @@
+#include "FSConfigPage.h"
+
 #include "BuildTargetDlg.h"
 #include "ColoursAndFontsManager.h"
 #include "CompileCommandsGenerator.h"
 #include "EditDlg.h"
-#include "FSConfigPage.h"
 #include "StringUtils.h"
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
@@ -14,6 +15,7 @@
 #include "globals.h"
 #include "macromanager.h"
 #include "macros.h"
+
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 

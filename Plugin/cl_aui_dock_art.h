@@ -28,6 +28,7 @@
 
 #include "codelite_exports.h"
 #include "imanager.h"
+
 #include <wx/aui/auibar.h>
 #include <wx/aui/dockart.h>
 #include <wx/aui/framemanager.h>

@@ -7,16 +7,16 @@
 class WXDLLIMPEXP_SDK clRustLocator
 {
     wxString m_binDir;
-    
+
 public:
     clRustLocator();
     ~clRustLocator();
-    
+
     /**
      * @brief locate rust installation folder
      */
     bool Locate();
-    
+
     wxString GetRustTool(const wxString& name) const;
 };
 

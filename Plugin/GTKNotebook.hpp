@@ -4,16 +4,15 @@
 #include "cl_defs.h"
 
 #ifdef __WXGTK__
+#include "bitmap_loader.h"
 #include "clTabHistory.h"
 #include "clTabRenderer.h"
 #include "cl_command_event.h"
+
 #include <gtk/gtk.h>
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/notebook.h>
-#include <unordered_map>
-#include <wx/notebook.h>
-#include "bitmap_loader.h"
 
 using namespace std;
 class clGTKNotebook : public wxNotebook
@@ -29,7 +28,7 @@ protected:
     wxMenu* m_tabContextMenu = nullptr;
     clTabHistory::Ptr_t m_history;
     clBitmapList* m_bitmaps = nullptr;
-    
+
 protected:
     void DoFinaliseAddPage(wxWindow* page, const wxString& shortlabel, int bmp);
     bool GetPageDetails(wxWindow* page, int& curindex, wxString& label, int& imageId) const;
@@ -57,7 +56,7 @@ public:
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxNotebookNameStr);
     // dtor
     virtual ~clGTKNotebook();
-    
+
     clBitmapList* GetBitmaps() const { return m_bitmaps; }
     int GetPageBitmapIndex(size_t index) const;
     void SetStyle(size_t bookStyle) { this->m_bookStyle = bookStyle; }
@@ -68,8 +67,8 @@ public:
     // API
     void AddPage(wxWindow* page, const wxString& label, bool selected = false, int bmp = wxNOT_FOUND,
                  const wxString& shortLabel = wxEmptyString);
-    bool InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected = false,
-                    int bmp = wxNOT_FOUND, const wxString& shortLabel = wxEmptyString);
+    bool InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected = false, int bmp = wxNOT_FOUND,
+                    const wxString& shortLabel = wxEmptyString);
 
     bool RemovePage(size_t page, bool notify);
     bool DeletePage(size_t page, bool notify);

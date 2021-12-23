@@ -5,6 +5,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "macros.h"
+
 #include <map>
 #include <vector>
 #include <wx/bitmap.h>

@@ -7,23 +7,23 @@
 #ifndef CODELITE_PLUGIN_ENVVAR_TABLE_DLG_BASE_CLASSES_H
 #define CODELITE_PLUGIN_ENVVAR_TABLE_DLG_BASE_CLASSES_H
 
-#include <wx/settings.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/xrc/xh_bmp.h>
+#include <wx/artprov.h>
+#include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
-#include <wx/artprov.h>
-#include <wx/sizer.h>
-#include <wx/stattext.h>
+#include <wx/imaglist.h>
 #include <wx/notebook.h>
 #include <wx/panel.h>
-#include <wx/imaglist.h>
+#include <wx/settings.h>
+#include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <wx/stc/stc.h>
-#include <wx/button.h>
+#include <wx/xrc/xh_bmp.h>
+#include <wx/xrc/xmlres.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
-#include <wx/persist/toplevel.h>
 #include <wx/persist/bookctrl.h>
+#include <wx/persist/toplevel.h>
 #include <wx/persist/treebook.h>
 #endif
 
@@ -72,7 +72,9 @@ public:
     wxButton* GetButton5() { return m_button5; }
     wxButton* GetButton16() { return m_button16; }
     wxButton* GetButton14() { return m_button14; }
-    EnvVarsTableDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Environment Variables"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    EnvVarsTableDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Environment Variables"),
+                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~EnvVarsTableDlgBase();
 };
 

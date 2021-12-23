@@ -1,4 +1,5 @@
 #include "GTKNotebook.hpp"
+
 #include <wx/wupdlock.h>
 
 #ifdef __WXGTK__
@@ -6,6 +7,7 @@
 #include "clTabRenderer.h"
 #include "editor_config.h"
 #include "file_logger.h"
+
 #include <deque>
 #include <gtk/gtk.h>
 #include <iostream>

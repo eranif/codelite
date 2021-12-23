@@ -28,6 +28,7 @@
 
 #include "clWorkspaceEvent.hpp"
 #include "codelite_exports.h"
+
 #include <map>
 #include <vector>
 #include <wx/simplebook.h>

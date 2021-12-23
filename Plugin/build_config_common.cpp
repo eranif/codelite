@@ -24,11 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "build_config_common.h"
+
 #include "globals.h"
-#include "xmlutils.h"
-#include <wx/tokenzr.h>
 #include "macros.h"
 #include "wx_xml_compatibility.h"
+#include "xmlutils.h"
+
+#include <wx/tokenzr.h>
 
 BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
     : m_confType(confType)
@@ -180,11 +182,13 @@ wxString BuildConfigCommon::GetPreprocessor() const
     for(size_t i = 0; i < m_preprocessor.GetCount(); i++) {
         wxString tmp = m_preprocessor.Item(i);
         tmp.Trim().Trim(false);
-        if(tmp.IsEmpty()) continue;
+        if(tmp.IsEmpty())
+            continue;
 
         asString << tmp << wxT(";");
     }
-    if(asString.IsEmpty() == false) asString.RemoveLast();
+    if(asString.IsEmpty() == false)
+        asString.RemoveLast();
 
     return asString;
 }

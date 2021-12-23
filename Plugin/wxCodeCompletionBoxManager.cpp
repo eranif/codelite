@@ -9,6 +9,7 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/stc/stc.h>

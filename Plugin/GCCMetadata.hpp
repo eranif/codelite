@@ -28,6 +28,7 @@
 
 #include "asyncprocess.h"
 #include "codelite_exports.h"
+
 #include <wx/arrstr.h>
 
 // Collect metadata about compiler

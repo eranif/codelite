@@ -23,10 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "evnvarlist.h"
-#include <wx/tokenzr.h>
-#include <wx/log.h>
-#include "workspace.h"
+
 #include "macromanager.h"
+#include "workspace.h"
+
+#include <wx/log.h>
+#include <wx/tokenzr.h>
 
 EvnVarList::EvnVarList()
     : m_activeSet(wxT("Default"))
@@ -55,14 +57,16 @@ void EvnVarList::AddVariable(const wxString& setName, const wxString& name, cons
     wxString currentValueStr = DoGetSetVariablesStr(setName, actualSetName);
     wxArrayString currentValues = wxStringTokenize(currentValueStr, wxT("\r\n"), wxTOKEN_STRTOK);
 
-    if(currentValues.Index(newEntry) == wxNOT_FOUND) currentValues.Add(newEntry);
+    if(currentValues.Index(newEntry) == wxNOT_FOUND)
+        currentValues.Add(newEntry);
 
     currentValueStr.Clear();
     for(size_t i = 0; i < currentValues.GetCount(); i++) {
         currentValueStr << currentValues.Item(i) << wxT("\n");
     }
 
-    if(currentValueStr.IsEmpty() == false) currentValueStr.RemoveLast();
+    if(currentValueStr.IsEmpty() == false)
+        currentValueStr.RemoveLast();
 
     m_envVarSets[actualSetName] = currentValueStr;
 }
@@ -144,7 +148,8 @@ wxString EvnVarList::DoGetSetVariablesStr(const wxString& setName, wxString& sel
         } else {
             selectedSetName = wxT("Default");
             iter = m_envVarSets.find(selectedSetName);
-            if(iter != m_envVarSets.end()) currentValueStr = iter->second;
+            if(iter != m_envVarSets.end())
+                currentValueStr = iter->second;
         }
     }
     return currentValueStr;
@@ -160,7 +165,8 @@ EnvMap::~EnvMap() {}
 bool EnvMap::Get(const wxString& key, wxString& val)
 {
     int where = m_keys.Index(key);
-    if(where == wxNOT_FOUND) return false;
+    if(where == wxNOT_FOUND)
+        return false;
 
     val = m_values.Item(where);
     return true;
@@ -183,7 +189,8 @@ size_t EnvMap::GetCount() { return m_keys.GetCount(); }
 
 bool EnvMap::Get(size_t index, wxString& key, wxString& val)
 {
-    if(index >= m_keys.GetCount()) return false;
+    if(index >= m_keys.GetCount())
+        return false;
 
     key = m_keys.Item(index);
     val = m_values.Item(index);
@@ -199,7 +206,8 @@ wxString EnvMap::String()
         s << m_keys.Item(i) << wxT("=") << m_values.Item(i) << wxT("\n");
     }
 
-    if(s.IsEmpty() == false) s.RemoveLast();
+    if(s.IsEmpty() == false)
+        s.RemoveLast();
 
     return s;
 }

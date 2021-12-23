@@ -6,6 +6,7 @@
 #include "cl_sftp.h"
 #include "codelite_exports.h"
 #include "sync_queue.h"
+
 #include <atomic>
 #include <condition_variable>
 #include <functional>

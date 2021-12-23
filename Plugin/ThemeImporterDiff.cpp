@@ -1,4 +1,5 @@
 #include "ThemeImporterDiff.hpp"
+
 #include <wx/colour.h>
 
 ThemeImporterDiff::ThemeImporterDiff() { SetFileExtensions("*.diff;*.patch;Diff;*.Diff"); }
@@ -25,14 +26,8 @@ LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& eclipseXmlFile)
         AddProperty(lexer, "6", "Line Added", "#80FF80", m_background.colour, false, false, true);
     } else {
         AddProperty(lexer, "5", "Line Deleted", "RED", "PINK", false, false, true);
-        AddProperty(lexer,
-                    "6",
-                    "Line Added",
-                    "DARK GREEN",
-                    wxColour("DARK GREEN").ChangeLightness(170).GetAsString(wxC2S_HTML_SYNTAX),
-                    false,
-                    false,
-                    true);
+        AddProperty(lexer, "6", "Line Added", "DARK GREEN",
+                    wxColour("DARK GREEN").ChangeLightness(170).GetAsString(wxC2S_HTML_SYNTAX), false, false, true);
     }
     //
     // Finalize the importer

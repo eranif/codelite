@@ -1,5 +1,7 @@
 #include "NewFileSystemWorkspaceDialog.h"
+
 #include "globals.h"
+
 #include <wx/filename.h>
 
 NewFileSystemWorkspaceDialog::NewFileSystemWorkspaceDialog(wxWindow* parent, bool autoSetNameFromPath)

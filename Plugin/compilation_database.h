@@ -27,11 +27,12 @@
 #define COMPILATIONDATABASE_H
 
 #include "codelite_exports.h"
-#include <wx/string.h>
-#include <wx/filename.h>
-#include <wx/wxsqlite3.h>
 #include "project.h"
+
+#include <wx/filename.h>
 #include <wx/sharedptr.h>
+#include <wx/string.h>
+#include <wx/wxsqlite3.h>
 
 class WXDLLIMPEXP_SDK CompilationDatabase
 {

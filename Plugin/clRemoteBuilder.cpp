@@ -1,4 +1,5 @@
 #include "clRemoteBuilder.hpp"
+
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -6,6 +7,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "processreaderthread.h"
+
 #include <wx/msgdlg.h>
 
 #if USE_SFTP

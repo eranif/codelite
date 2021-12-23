@@ -4,6 +4,7 @@
 #if USE_SFTP
 
 #include "cl_config.h"
+
 #include <codelite_exports.h>
 #include <vector>
 #include <wx/string.h>

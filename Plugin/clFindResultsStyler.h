@@ -2,8 +2,9 @@
 #define CLFINDRESULTSSTYLER_H
 
 #include "codelite_exports.h"
-#include <wx/stc/stc.h>
 #include "smart_ptr.h"
+
+#include <wx/stc/stc.h>
 
 class WXDLLIMPEXP_SDK clFindResultsStyler : public wxEvtHandler
 {
@@ -61,7 +62,7 @@ public:
      * @return return the clicked line + the style on that line
      */
     virtual int HitTest(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, int& line);
-    
+
     /**
      * @brief same as above, but uses the wxSTC passed in the Ctor
      */

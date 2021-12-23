@@ -26,12 +26,13 @@
 #ifndef WSIMPORTER_H
 #define WSIMPORTER_H
 
-#include <wx/string.h>
-#include <vector>
-#include <set>
-#include <memory>
 #include "GenericImporter.h"
 #include "codelite_exports.h"
+
+#include <memory>
+#include <set>
+#include <vector>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_SDK WSImporter
 {
@@ -51,7 +52,7 @@ private:
     wxString GetVPath(const wxString& filename, const wxString& virtualPath);
 
     wxString filename, defaultCompiler;
-    std::vector<std::shared_ptr<GenericImporter> > importers;
+    std::vector<std::shared_ptr<GenericImporter>> importers;
 };
 
 #endif // WSIMPORTER_H

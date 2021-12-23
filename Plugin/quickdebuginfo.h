@@ -28,6 +28,7 @@
 
 #include "codelite_exports.h"
 #include "serialized_object.h"
+
 #include <wx/arrstr.h>
 #include <wx/string.h>
 

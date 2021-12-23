@@ -23,10 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "nameanddescdlg.h"
+
+#include "globals.h"
 #include "imanager.h"
+
 #include <list>
 #include <set>
-#include "globals.h"
 
 NameAndDescDlg::NameAndDescDlg(wxWindow* parent, IManager* manager, const wxString& name)
     : NameAndDescBaseDlg(parent)
@@ -42,7 +44,8 @@ NameAndDescDlg::NameAndDescDlg(wxWindow* parent, IManager* manager, const wxStri
     categories.insert(wxT("All"));
     for(; iter != projectList.end(); iter++) {
         wxString internalType = (*iter)->GetProjectInternalType();
-        if(internalType.IsEmpty()) internalType = wxT("Others");
+        if(internalType.IsEmpty())
+            internalType = wxT("Others");
         categories.insert(internalType);
     }
 

@@ -23,9 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "DiffSideBySidePanel.h"
+
 #include "ColoursAndFontsManager.h"
 #include "DiffConfig.h"
-#include "DiffSideBySidePanel.h"
 #include "art_metro.h"
 #include "bookmark_manager.h"
 #include "clDTL.h"
@@ -38,6 +39,7 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "plugin.h"
+
 #include <clPluginsFindBar.h>
 #include <wx/filedlg.h>
 #include <wx/menu.h>

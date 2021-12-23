@@ -1,4 +1,5 @@
 #include "NewProjectDialog.h"
+
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "clWorkspaceManager.h"
@@ -6,6 +7,7 @@
 #include "debuggermanager.h"
 #include "macros.h"
 #include "wxStringHash.h"
+
 #include <globals.h>
 #include <unordered_set>
 #include <wx/arrstr.h>

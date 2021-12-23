@@ -1,4 +1,5 @@
 #include "GotoAnythingDlg.h"
+
 #include "bitmap_loader.h"
 #include "clAnagram.h"
 #include "clKeyboardManager.h"
@@ -10,6 +11,7 @@
 #include "imanager.h"
 #include "macros.h"
 #include "windowattrmanager.h"
+
 #include <algorithm>
 #include <wx/app.h>
 

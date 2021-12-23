@@ -22,29 +22,30 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "event_notifier.h"
-#include "fileextmanager.h"
-#include "project.h"
-#include <wx/app.h>
-#include <wx/msgdlg.h>
+#include "builder_gnumake.h"
 
 #include "StringUtils.h"
 #include "build_settings_config.h"
-#include "builder_gnumake.h"
 #include "buildmanager.h"
 #include "cl_command_event.h"
 #include "configuration_mapping.h"
 #include "dirsaver.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
+#include "event_notifier.h"
 #include "evnvarlist.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "macros.h"
+#include "project.h"
 #include "wx/sstream.h"
 #include "wx/tokenzr.h"
+
 #include <algorithm>
+#include <wx/app.h>
+#include <wx/msgdlg.h>
 #include <wx/stopwatch.h>
 
 static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
@@ -238,8 +239,8 @@ bool BuilderGNUMakeClassic::Export(const wxString& project, const wxString& conf
                 continue;
             }
 
-            text << wxT("\t@echo \"") << BUILD_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ")
-                 << projectSelConf << wxT(" ]----------\"\n");
+            text << wxT("\t@echo \"") << BUILD_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ") << projectSelConf
+                 << wxT(" ]----------\"\n");
             // make the paths relative, if it's sensible to do so
             wxFileName fn(dependProj->GetFileName());
             MakeRelativeIfSensible(fn, wspfile.GetPath());
@@ -357,8 +358,8 @@ bool BuilderGNUMakeClassic::Export(const wxString& project, const wxString& conf
                 continue;
             }
 
-            text << wxT("\t@echo \"") << CLEAN_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ")
-                 << projectSelConf << wxT(" ]----------\"\n");
+            text << wxT("\t@echo \"") << CLEAN_PROJECT_PREFIX << dependProj->GetName() << wxT(" - ") << projectSelConf
+                 << wxT(" ]----------\"\n");
 
             // make the paths relative
             wxFileName fn(dependProj->GetFileName());
@@ -906,7 +907,7 @@ void BuilderGNUMakeClassic::CreateCleanTargets(ProjectPtr proj, const wxString& 
     text << wxT("## Clean\n");
     text << wxT("##\n");
     text << wxT("clean:\n");
-    
+
     wxString cwd = proj->GetFileName().GetPath();
     if(!imd.IsEmpty()) {
         // Remove the entire build folder

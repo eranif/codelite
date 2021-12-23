@@ -15,7 +15,7 @@ public:
 
     virtual wxSize CalculateSize(wxDC& dc) const;
     virtual void Render(wxDC& dc, const wxRect& rect);
-    
+
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
 };

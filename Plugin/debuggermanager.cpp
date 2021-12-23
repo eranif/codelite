@@ -22,17 +22,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "debuggermanager.h"
+
 #include "cl_command_event.h"
 #include "cl_defs.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
 #include "codelite_exports.h"
 #include "debuggerconfigtool.h"
-#include "debuggermanager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "wx/filename.h"
+
 #include <wx/dir.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>

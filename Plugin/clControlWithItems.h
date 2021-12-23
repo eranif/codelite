@@ -5,6 +5,7 @@
 #include "clHeaderBar.h"
 #include "clRowEntry.h"
 #include "clScrolledPanel.h"
+
 #include <array>
 #include <memory>
 #include <wx/imaglist.h>

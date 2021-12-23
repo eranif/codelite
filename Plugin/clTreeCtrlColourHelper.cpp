@@ -1,5 +1,7 @@
 #include "clTreeCtrlColourHelper.h"
+
 #include "macros.h"
+
 #include <deque>
 
 clTreeCtrlColourHelper::clTreeCtrlColourHelper(clThemedTreeCtrl* tree)
@@ -16,8 +18,10 @@ void clTreeCtrlColourHelper::DoSetBgColour(const wxTreeItemId& item, const wxCol
     wxString path = GetItemPath(item);
     wxColour bgColour = currentBgColour;
     FolderColour::Map_t::const_iterator iter = coloursMap.find(path);
-    if(iter != coloursMap.end()) { bgColour = iter->second.GetColour(); }
-    
+    if(iter != coloursMap.end()) {
+        bgColour = iter->second.GetColour();
+    }
+
     // It's OK for the colour to be "invalid", it will get reset to the tree's default
     // colouring
     m_tree->SetItemBackgroundColour(item, bgColour);
@@ -38,7 +42,9 @@ void clTreeCtrlColourHelper::DoClearBgColour(const wxTreeItemId& item, const wxC
     CHECK_ITEM_RET(item);
     wxString path = GetItemPath(item);
     FolderColour::Map_t::const_iterator iter = coloursMap.find(path);
-    if(iter != coloursMap.end()) { coloursMap.erase(iter); }
+    if(iter != coloursMap.end()) {
+        coloursMap.erase(iter);
+    }
     m_tree->SetItemBackgroundColour(item, colourToSet);
     if(m_tree->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
@@ -66,7 +72,9 @@ void clTreeCtrlColourHelper::SetBgColour(const wxTreeItemId& item, const wxColou
 {
     wxString path = GetItemPath(item);
     FolderColour vdc(path, currentBgColour);
-    if(coloursMap.count(path)) { coloursMap.erase(path); }
+    if(coloursMap.count(path)) {
+        coloursMap.erase(path);
+    }
     coloursMap.insert(std::make_pair(path, vdc));
     DoSetBgColour(item, currentBgColour, coloursMap);
 }
@@ -90,7 +98,9 @@ wxString clTreeCtrlColourHelper::GetItemPath(clThemedTreeCtrl* tree, const wxTre
         queue.pop_front();
     }
 
-    if(!path.IsEmpty()) { path.RemoveLast(); }
+    if(!path.IsEmpty()) {
+        path.RemoveLast();
+    }
     return path;
 }
 

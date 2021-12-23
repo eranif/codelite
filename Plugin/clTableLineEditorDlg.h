@@ -2,6 +2,7 @@
 #define CLTABLELINEEDITORDLG_H
 
 #include "wxcrafter_plugin.h"
+
 #include <wx/arrstr.h>
 
 class clTableLineEditorDlg : public clTableLineEditorBaseDlg

@@ -25,10 +25,10 @@
 #ifndef BUILDER_H
 #define BUILDER_H
 
-#include "wx/string.h"
+#include "codelite_exports.h"
 #include "smart_ptr.h"
 #include "wx/event.h"
-#include "codelite_exports.h"
+#include "wx/string.h"
 
 /**
  * \ingroup SDK
@@ -92,21 +92,21 @@ public:
      * \return true on success, false otherwise.
      */
     virtual bool Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
-        bool isProjectOnly, bool force, wxString& errMsg) = 0;
+                        bool isProjectOnly, bool force, wxString& errMsg) = 0;
 
     /**
      * Return the command that should be executed for performing the clean
      * task
      */
-    virtual wxString GetCleanCommand(
-        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
+    virtual wxString GetCleanCommand(const wxString& project, const wxString& confToBuild,
+                                     const wxString& arguments) = 0;
 
     /**
      * Return the command that should be executed for performing the build
      * task for a given project
      */
-    virtual wxString GetBuildCommand(
-        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
+    virtual wxString GetBuildCommand(const wxString& project, const wxString& confToBuild,
+                                     const wxString& arguments) = 0;
 
     //-----------------------------------------------------------------
     // Project Only API
@@ -115,15 +115,15 @@ public:
      * Return the command that should be executed for performing the clean
      * task - for the project only (excluding dependencies)
      */
-    virtual wxString GetPOCleanCommand(
-        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
+    virtual wxString GetPOCleanCommand(const wxString& project, const wxString& confToBuild,
+                                       const wxString& arguments) = 0;
 
     /**
      * Return the command that should be executed for performing the build
      * task for a given project - for the project only (excluding dependencies)
      */
-    virtual wxString GetPOBuildCommand(
-        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
+    virtual wxString GetPOBuildCommand(const wxString& project, const wxString& confToBuild,
+                                       const wxString& arguments) = 0;
 
     /**
      * \brief create a command to execute for compiling single source file
@@ -132,8 +132,8 @@ public:
      * \param errMsg [output]
      * \return the command
      */
-    virtual wxString GetSingleFileCmd(
-        const wxString& project, const wxString& confToBuild, const wxString& arguments, const wxString& fileName) = 0;
+    virtual wxString GetSingleFileCmd(const wxString& project, const wxString& confToBuild, const wxString& arguments,
+                                      const wxString& fileName) = 0;
 
     /**
      * \brief create a command to execute for preprocessing single source file
@@ -143,7 +143,7 @@ public:
      * \return the command
      */
     virtual wxString GetPreprocessFileCmd(const wxString& project, const wxString& confToBuild,
-        const wxString& arguments, const wxString& fileName, wxString& errMsg) = 0;
+                                          const wxString& arguments, const wxString& fileName, wxString& errMsg) = 0;
 
     /**
      * @brief return the 'rebuild' command
@@ -151,8 +151,8 @@ public:
      * @param confToBuild
      * @return
      */
-    virtual wxString GetPORebuildCommand(
-        const wxString& project, const wxString& confToBuild, const wxString& arguments) = 0;
+    virtual wxString GetPORebuildCommand(const wxString& project, const wxString& confToBuild,
+                                         const wxString& arguments) = 0;
 
     /**
      * @brief the optimal build config for use with this builder

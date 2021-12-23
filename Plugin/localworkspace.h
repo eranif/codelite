@@ -30,6 +30,7 @@
 #include "codelite_exports.h"
 #include "optionsconfig.h"
 #include "singleton.h"
+
 #include <list>
 #include <map>
 #include <wx/colour.h>

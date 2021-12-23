@@ -29,6 +29,7 @@
 #include "cl_config.h"
 #include "codelite_exports.h"
 #include "plugin_version.h"
+
 #include <map>
 #include <set>
 

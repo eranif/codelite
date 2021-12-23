@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "dockablepanemenumanager.h"
+
 #include <wx/app.h>
 #include <wx/aui/aui.h>
 #include <wx/control.h>
@@ -61,9 +62,7 @@ DockablePaneMenuManager::DockablePaneMenuManager(wxAuiManager* aui)
 {
 }
 
-DockablePaneMenuManager::~DockablePaneMenuManager()
-{
-}
+DockablePaneMenuManager::~DockablePaneMenuManager() {}
 
 void DockablePaneMenuManager::RemoveMenu(const wxString& name)
 {

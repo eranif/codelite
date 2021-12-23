@@ -28,10 +28,11 @@
 
 #include "DiffConfig.h"
 #include "clDTL.h"
+#include "clPluginsFindBar.h"
 #include "wxcrafter_plugin.h"
+
 #include <vector>
 #include <wx/filename.h>
-#include "clPluginsFindBar.h"
 
 class clToolBar;
 class WXDLLIMPEXP_SDK DiffSideBySidePanel : public DiffSideBySidePanelBase
@@ -88,7 +89,7 @@ protected:
 
     bool m_darkTheme;
 
-    std::vector<std::pair<int, int> > m_sequences; // start-line - end-line pairs
+    std::vector<std::pair<int, int>> m_sequences; // start-line - end-line pairs
     int m_cur_sequence;
 
     size_t m_flags;

@@ -7,6 +7,7 @@
 #include "clTabRendererMinimal.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/dcbuffer.h>

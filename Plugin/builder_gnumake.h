@@ -29,6 +29,7 @@
 #include "codelite_exports.h"
 #include "project.h"
 #include "workspace.h"
+
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
 /*

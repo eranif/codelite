@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "CompilersDetectorManager.h"
+
 #include "CompilerLocatorCLANG.h"
 #include "CompilerLocatorCrossGCC.h"
 #include "CompilerLocatorCygwin.h"
@@ -32,7 +34,6 @@
 #include "CompilerLocatorMSYS2.hpp"
 #include "CompilerLocatorMinGW.h"
 #include "CompilerLocatorRustc.hpp"
-#include "CompilersDetectorManager.h"
 #include "GCCMetadata.hpp"
 #include "JSON.h"
 #include "build_settings_config.h"
@@ -40,6 +41,7 @@
 #include "environmentconfig.h"
 #include "fileutils.h"
 #include "macros.h"
+
 #include <wx/arrstr.h>
 #include <wx/busyinfo.h>
 #include <wx/choicdlg.h>

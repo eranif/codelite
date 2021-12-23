@@ -27,9 +27,10 @@
 #define NODEJSLOCATOR_H
 
 #include "codelite_exports.h"
+
+#include <wx/arrstr.h>
 #include <wx/filename.h>
 #include <wx/string.h>
-#include <wx/arrstr.h>
 
 class WXDLLIMPEXP_SDK NodeJSLocator
 {

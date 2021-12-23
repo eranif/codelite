@@ -1,4 +1,5 @@
 #include "clZipWriter.h"
+
 #include <wx/dir.h>
 
 clZipWriter::clZipWriter(const wxFileName& zipfile)

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "renamefiledlg.h"
+
 #include "windowattrmanager.h"
 
 RenameFileDlg::RenameFileDlg(wxWindow* parent, const wxString& replaceWith, std::vector<IncludeStatement>& matches)

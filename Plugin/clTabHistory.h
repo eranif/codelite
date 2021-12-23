@@ -2,10 +2,11 @@
 #define CLTABHISTORY_H
 
 #include "codelite_exports.h"
+
+#include <algorithm>
 #include <vector>
 #include <wx/sharedptr.h>
 #include <wx/window.h>
-#include <algorithm>
 
 class WXDLLIMPEXP_SDK clTabHistory
 {
@@ -20,14 +21,16 @@ public:
 
     void Push(wxWindow* page)
     {
-        if(page == NULL) return;
+        if(page == NULL)
+            return;
         Pop(page);
         m_history.insert(m_history.begin(), page);
     }
 
     void Pop(wxWindow* page)
     {
-        if(!page) return;
+        if(!page)
+            return;
         std::vector<wxWindow*>::iterator iter =
             std::find_if(m_history.begin(), m_history.end(), [&](wxWindow* w) { return w == page; });
         if(iter != m_history.end()) {

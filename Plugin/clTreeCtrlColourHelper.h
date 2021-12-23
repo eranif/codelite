@@ -4,6 +4,7 @@
 #include "VirtualDirectoryColour.h"
 #include "clThemedTreeCtrl.h"
 #include "smart_ptr.h"
+
 #include <codelite_exports.h>
 #include <wx/colour.h>
 #include <wx/treectrl.h>

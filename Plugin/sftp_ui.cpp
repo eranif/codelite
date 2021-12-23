@@ -5,6 +5,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "sftp_ui.h"
+
 #include "codelite_exports.h"
 
 // Declare the bitmap loading function

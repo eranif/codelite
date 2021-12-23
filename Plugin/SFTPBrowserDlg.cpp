@@ -26,6 +26,7 @@
 #if USE_SFTP
 
 #include "SFTPBrowserDlg.h"
+
 #include "SSHAccountManagerDlg.h"
 #include "fileextmanager.h"
 #include "globals.h"
@@ -33,6 +34,7 @@
 #include "sftp_settings.h"
 #include "ssh_account_info.h"
 #include "windowattrmanager.h"
+
 #include <wx/app.h>
 #include <wx/busyinfo.h>
 #include <wx/msgdlg.h>

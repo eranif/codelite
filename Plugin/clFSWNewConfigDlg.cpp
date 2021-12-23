@@ -1,4 +1,5 @@
 #include "clFSWNewConfigDlg.h"
+
 #include "clFileSystemWorkspace.hpp"
 
 clFSWNewConfigDlg::clFSWNewConfigDlg(wxWindow* parent)

@@ -1,3 +1,5 @@
+#include "LanguageServerProtocol.h"
+
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
 #include "LSP/DidCloseTextDocumentRequest.h"
@@ -19,7 +21,6 @@
 #include "LSP/WorkspaceSymbolRequest.hpp"
 #include "LSPNetworkSTDIO.h"
 #include "LSPNetworkSocketClient.h"
-#include "LanguageServerProtocol.h"
 #include "clWorkspaceManager.h"
 #include "cl_exception.h"
 #include "codelite_events.h"

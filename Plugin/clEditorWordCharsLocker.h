@@ -2,9 +2,10 @@
 #define CLEDITORWORDCHARSLOCKER_H
 
 #include "codelite_exports.h"
+#include "wxStringHash.h"
+
 #include <wx/stc/stc.h>
 #include <wx/string.h>
-#include "wxStringHash.h"
 
 class WXDLLIMPEXP_SDK clEditorXmlHelper
 {

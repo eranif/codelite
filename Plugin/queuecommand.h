@@ -27,6 +27,7 @@
 #define __queuecommand__
 
 #include "codelite_exports.h"
+
 #include <wx/string.h>
 
 class WXDLLIMPEXP_SDK QueueCommand

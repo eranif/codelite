@@ -21,6 +21,7 @@
 #include "cl_defs.h"
 #include "drawingutils.h"
 #include "wxStringHash.h"
+
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>

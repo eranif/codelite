@@ -1,6 +1,8 @@
 #include "clColours.h"
+
 #include "clSystemSettings.h"
 #include "drawingutils.h"
+
 #include <wx/gdicmn.h>
 #include <wx/settings.h>
 

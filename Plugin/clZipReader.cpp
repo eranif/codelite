@@ -1,10 +1,12 @@
 #include "clZipReader.h"
-#include "macros.h"
-#include <wx/ffile.h>
-#include <wx/wfstream.h>
+
 #include "file_logger.h"
+#include "macros.h"
+
 #include <cstdlib>
+#include <wx/ffile.h>
 #include <wx/file.h>
+#include <wx/wfstream.h>
 
 clZipReader::clZipReader(const wxFileName& zipfile)
 {
@@ -37,11 +39,15 @@ void clZipReader::Close()
 
 void clZipReader::Extract(const wxString& filename, const wxString& directory)
 {
-    if(!m_zip) { return; }
+    if(!m_zip) {
+        return;
+    }
     wxZipEntry* entry(NULL);
     entry = m_zip->GetNextEntry();
     while(entry) {
-        if(::wxMatchWild(filename, entry->GetName())) { DoExtractEntry(entry, directory); }
+        if(::wxMatchWild(filename, entry->GetName())) {
+            DoExtractEntry(entry, directory);
+        }
         wxDELETE(entry);
         entry = m_zip->GetNextEntry();
     }
@@ -49,11 +55,15 @@ void clZipReader::Extract(const wxString& filename, const wxString& directory)
 
 void clZipReader::ExtractAll(const wxString& directory)
 {
-    if(!m_zip) { return; }
+    if(!m_zip) {
+        return;
+    }
 
     wxZipEntry* entry(NULL);
     wxString basedir = directory;
-    if(basedir.IsEmpty()) { basedir = "."; }
+    if(basedir.IsEmpty()) {
+        basedir = ".";
+    }
 
     entry = m_zip->GetNextEntry();
     while(entry) {
@@ -92,7 +102,9 @@ void clZipReader::DoExtractEntry(wxZipEntry* entry, const wxString& directory)
 void clZipReader::ExtractAll(std::unordered_map<wxString, Entry>& buffers)
 {
     // Incase the entry name has a directory prefix, remove it
-    if(!m_zip) { return; }
+    if(!m_zip) {
+        return;
+    }
     wxZipEntry* entry(NULL);
 
     entry = m_zip->GetNextEntry();

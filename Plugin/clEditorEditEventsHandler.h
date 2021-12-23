@@ -3,6 +3,7 @@
 
 #include "codelite_exports.h"
 #include "smart_ptr.h"
+
 #include <wx/event.h>
 #include <wx/window.h>
 

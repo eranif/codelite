@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "clDebuggerTerminal.h"
+
 #include "file_logger.h"
 #include "globals.h"
 #include "procutils.h"
@@ -46,7 +47,9 @@ void clDebuggerTerminalPOSIX::Launch(const wxString& title)
     ::LaunchTerminalForDebugger(m_title, symblink, m_tty, m_pid);
     wxUnusedVar(symblink);
 
-    if(IsValid()) { CL_DEBUG("clDebuggerTerminalPOSIX successfully started. Process %d. TTY: %s", (int)m_pid, m_tty); }
+    if(IsValid()) {
+        CL_DEBUG("clDebuggerTerminalPOSIX successfully started. Process %d. TTY: %s", (int)m_pid, m_tty);
+    }
 }
 
 bool clDebuggerTerminalPOSIX::IsValid() const
@@ -83,7 +86,9 @@ void clDebuggerTerminalPOSIX::Clear()
         // terminate the process
         ::wxKill(m_pid, wxSIGTERM);
 
-        if(killParent) { ::wxKill(parentID, wxSIGTERM); }
+        if(killParent) {
+            ::wxKill(parentID, wxSIGTERM);
+        }
     }
 #endif
     m_pid = wxNOT_FOUND;

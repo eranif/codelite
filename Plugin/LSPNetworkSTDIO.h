@@ -5,6 +5,7 @@
 #include "SocketAPI/clSocketClientAsync.h"
 #include "asyncprocess.h"
 #include "cl_command_event.h"
+
 #include <wx/ffile.h>
 
 ///===------------------------------

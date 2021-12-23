@@ -7,6 +7,7 @@
 #include "clTreeCtrl.h"
 #include "drawingutils.h"
 #include "lexer_configuration.h"
+
 #include <wx/settings.h>
 
 namespace cl

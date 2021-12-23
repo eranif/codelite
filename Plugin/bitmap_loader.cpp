@@ -36,6 +36,7 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "optionsconfig.h"
+
 #include <algorithm>
 #include <wx/dcscreen.h>
 #include <wx/dir.h>

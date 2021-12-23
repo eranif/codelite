@@ -2,8 +2,9 @@
 #define COMPILECOMMANDSJSON_H
 
 #include "codelite_exports.h"
-#include <wx/filename.h>
+
 #include <wx/arrstr.h>
+#include <wx/filename.h>
 
 class WXDLLIMPEXP_SDK CompileCommandsJSON
 {
@@ -15,7 +16,7 @@ class WXDLLIMPEXP_SDK CompileCommandsJSON
 public:
     CompileCommandsJSON(const wxString& filename);
     virtual ~CompileCommandsJSON();
-    
+
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
     void SetIncludes(const wxArrayString& includes) { this->m_includes = includes; }
     void SetMacros(const wxArrayString& macros) { this->m_macros = macros; }

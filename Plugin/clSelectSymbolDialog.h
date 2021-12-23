@@ -27,10 +27,11 @@
 #define CLSELECTSYMBOLDIALOG_H
 
 #include "clSelectSymbolDialogBase.h"
-#include "codelite_exports.h"
-#include <wx/sharedptr.h>
 #include "cl_command_event.h"
+#include "codelite_exports.h"
+
 #include <list>
+#include <wx/sharedptr.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SYMBOL_SELECTED, clCommandEvent);
 
@@ -56,9 +57,7 @@ public:
     virtual ~clSelectSymbolDialog();
 
 protected:
-    void AddSymbol(const wxString& name,
-                   const wxBitmap& bmp = wxNullBitmap,
-                   const wxString& help = "",
+    void AddSymbol(const wxString& name, const wxBitmap& bmp = wxNullBitmap, const wxString& help = "",
                    wxClientData* clientData = NULL);
 
 public:

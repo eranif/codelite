@@ -1,4 +1,5 @@
 #include "NodeJSLocator.h"
+
 #include "cl_standard_paths.h"
 #include "globals.h"
 
@@ -59,7 +60,7 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
         m_npm = fn_npm.GetFullPath();
     }
 #endif
-    
+
     // Still could not find it, try the PATH environment variable
     wxFileName fn_node;
     if(m_nodejs.empty() && ::clFindExecutable("node", fn_node, paths)) {

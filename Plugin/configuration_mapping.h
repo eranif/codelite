@@ -25,11 +25,11 @@
 #ifndef CONFIGURATION_MAPPING_H
 #define CONFIGURATION_MAPPING_H
 
-#include "wx/string.h"
-#include "wx/xml/xml.h"
+#include "codelite_exports.h"
 #include "list"
 #include "smart_ptr.h"
-#include "codelite_exports.h"
+#include "wx/string.h"
+#include "wx/xml/xml.h"
 
 class WXDLLIMPEXP_SDK ConfigMappingEntry
 {

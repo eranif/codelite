@@ -45,6 +45,7 @@
 #define _WXMD5_H__
 
 #include "codelite_exports.h"
+
 #include <string>
 #include <wx/filename.h>
 

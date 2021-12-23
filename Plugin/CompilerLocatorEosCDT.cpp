@@ -1,7 +1,9 @@
 #include "CompilerLocatorEosCDT.h"
-#include <wx/filename.h>
+
 #include "globals.h"
+
 #include <algorithm>
+#include <wx/filename.h>
 #include <wx/thread.h>
 
 CompilerLocatorEosCDT::CompilerLocatorEosCDT() {}
@@ -13,7 +15,9 @@ bool CompilerLocatorEosCDT::Locate()
     std::vector<wxString> possiblePaths{ "/usr/bin", "/usr/local/bin" };
     std::for_each(possiblePaths.begin(), possiblePaths.end(), [&](const wxString& path) {
         wxString foundPath;
-        if(CheckExists(path, foundPath)) { m_compilers.push_back(CreateCompiler(foundPath)); }
+        if(CheckExists(path, foundPath)) {
+            m_compilers.push_back(CreateCompiler(foundPath));
+        }
     });
     return !m_compilers.empty();
 }
@@ -22,7 +26,9 @@ CompilerPtr CompilerLocatorEosCDT::Locate(const wxString& folder)
 {
     m_compilers.clear();
     wxString foundPath;
-    if(!CheckExists(folder, foundPath)) { return NULL; }
+    if(!CheckExists(folder, foundPath)) {
+        return NULL;
+    }
 
     m_compilers.push_back(CreateCompiler(foundPath));
     return m_compilers[0];
@@ -33,7 +39,9 @@ void CompilerLocatorEosCDT::AddTool(CompilerPtr compiler, const wxString& toolna
 {
     wxString tool = path;
     ::WrapWithQuotes(tool);
-    if(!args.IsEmpty()) { tool << " " << args; }
+    if(!args.IsEmpty()) {
+        tool << " " << args;
+    }
     compiler->SetTool(toolname, tool);
 }
 
@@ -50,7 +58,9 @@ bool CompilerLocatorEosCDT::CheckExists(const wxString& path, wxString& foundPat
         // try to see if we have a bin folder here
         eosio_tool.AppendDir("bin");
         found = eosio_tool.FileExists();
-        if(found) { foundPath = eosio_tool.GetPath(); }
+        if(found) {
+            foundPath = eosio_tool.GetPath();
+        }
     } else {
         foundPath = eosio_tool.GetPath();
     }
@@ -67,7 +77,7 @@ CompilerPtr CompilerLocatorEosCDT::CreateCompiler(const wxString& path) const
     compiler->SetName("eosio");
     compiler->SetGenerateDependeciesFile(true);
     compiler->SetInstallationPath(path);
-    
+
     // Add the tools
     wxFileName eosio_tool(path, "eosio-cc");
 #ifdef __WXMSW__

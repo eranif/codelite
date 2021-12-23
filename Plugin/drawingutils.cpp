@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "drawingutils.h"
+
 #include "ColoursAndFontsManager.h"
 #include "clScrolledPanel.h"
 #include "clSystemSettings.h"
 #include "clTabRendererDefault.hpp"
 #include "wx/dc.h"
 #include "wx/settings.h"
+
 #include <wx/app.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>

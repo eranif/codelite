@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "build_config.h"
+
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "debuggermanager.h"
@@ -33,6 +34,7 @@
 #include "wx/tokenzr.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <wx/tokenzr.h>
 
 const wxString BuildConfig::OVERWRITE_GLOBAL_SETTINGS = "overwrite";
@@ -309,9 +311,7 @@ BuildConfig::BuildConfig(wxXmlNode* node)
     }
 }
 
-BuildConfig::~BuildConfig()
-{
-}
+BuildConfig::~BuildConfig() {}
 
 BuildConfig* BuildConfig::Clone() const
 {
@@ -504,67 +504,28 @@ wxXmlNode* BuildConfig::ToXml() const
     return node;
 }
 
-void BuildConfig::SetPreprocessor(const wxString& pre)
-{
-    m_commonConfig.SetPreprocessor(pre);
-}
+void BuildConfig::SetPreprocessor(const wxString& pre) { m_commonConfig.SetPreprocessor(pre); }
 
-void BuildConfig::SetIncludePath(const wxString& path)
-{
-    m_commonConfig.SetIncludePath(path);
-}
+void BuildConfig::SetIncludePath(const wxString& path) { m_commonConfig.SetIncludePath(path); }
 
-void BuildConfig::SetLibraries(const wxString& libs)
-{
-    m_commonConfig.SetLibraries(libs);
-}
+void BuildConfig::SetLibraries(const wxString& libs) { m_commonConfig.SetLibraries(libs); }
 
-void BuildConfig::SetLibPath(const wxString& paths)
-{
-    m_commonConfig.SetLibPath(paths);
-}
+void BuildConfig::SetLibPath(const wxString& paths) { m_commonConfig.SetLibPath(paths); }
 
-wxString BuildConfig::GetLibPath() const
-{
-    return m_commonConfig.GetLibPath();
-}
+wxString BuildConfig::GetLibPath() const { return m_commonConfig.GetLibPath(); }
 
-wxString BuildConfig::GetLibraries() const
-{
-    return m_commonConfig.GetLibraries();
-}
+wxString BuildConfig::GetLibraries() const { return m_commonConfig.GetLibraries(); }
 
-wxString BuildConfig::GetIncludePath() const
-{
-    return m_commonConfig.GetIncludePath();
-}
+wxString BuildConfig::GetIncludePath() const { return m_commonConfig.GetIncludePath(); }
 
-wxString BuildConfig::GetPreprocessor() const
-{
-    return m_commonConfig.GetPreprocessor();
-}
+wxString BuildConfig::GetPreprocessor() const { return m_commonConfig.GetPreprocessor(); }
 
-wxString BuildConfig::GetOutputFileName() const
-{
-    return NormalizePath(m_outputFile);
-}
+wxString BuildConfig::GetOutputFileName() const { return NormalizePath(m_outputFile); }
 
-wxString BuildConfig::GetIntermediateDirectory() const
-{
-    return NormalizePath(m_intermediateDirectory);
-}
+wxString BuildConfig::GetIntermediateDirectory() const { return NormalizePath(m_intermediateDirectory); }
 
-wxString BuildConfig::GetWorkingDirectory() const
-{
-    return NormalizePath(m_workingDirectory);
-}
+wxString BuildConfig::GetWorkingDirectory() const { return NormalizePath(m_workingDirectory); }
 
-CompilerPtr BuildConfig::GetCompiler() const
-{
-    return BuildSettingsConfigST::Get()->GetCompiler(GetCompilerType());
-}
+CompilerPtr BuildConfig::GetCompiler() const { return BuildSettingsConfigST::Get()->GetCompiler(GetCompilerType()); }
 
-BuilderPtr BuildConfig::GetBuilder()
-{
-    return BuildManagerST::Get()->GetBuilder(GetBuildSystem());
-}
+BuilderPtr BuildConfig::GetBuilder() { return BuildManagerST::Get()->GetBuilder(GetBuildSystem()); }

@@ -2,6 +2,7 @@
 #define CLTAB_H
 
 #include "codelite_exports.h"
+
 #include <vector>
 #include <wx/bitmap.h>
 #include <wx/filename.h>

@@ -1,5 +1,6 @@
-#include "clSystemSettings.h"
 #include "clTabRendererFirefox.hpp"
+
+#include "clSystemSettings.h"
 
 namespace
 {

@@ -1,5 +1,6 @@
-#include "ColoursAndFontsManager.h"
 #include "clGenericSTCStyler.h"
+
+#include "ColoursAndFontsManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 
@@ -59,7 +60,9 @@ int clGenericSTCStyler::GetStyleForLine(const wxString& lineText) const
 {
     wxString lcLine = lineText.Lower();
     for(size_t i = 0; i < m_words.size(); ++i) {
-        if(lcLine.Contains(m_words[i].first)) { return m_words[i].second; }
+        if(lcLine.Contains(m_words[i].first)) {
+            return m_words[i].second;
+        }
     }
 
     // Return the default style, which is 0
@@ -69,7 +72,8 @@ int clGenericSTCStyler::GetStyleForLine(const wxString& lineText) const
 void clGenericSTCStyler::ResetStyles()
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(!lexer) return;
+    if(!lexer)
+        return;
     lexer->Apply(m_ctrl);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
     InitDefaultStyles();
@@ -77,7 +81,9 @@ void clGenericSTCStyler::ResetStyles()
 
 void clGenericSTCStyler::AddStyle(const wxArrayString& words, clGenericSTCStyler::eStyles style)
 {
-    if(words.IsEmpty()) { return; }
+    if(words.IsEmpty()) {
+        return;
+    }
     for(size_t i = 0; i < words.size(); ++i) {
         m_words.push_back({ words.Item(i).Lower(), (int)style });
     }
@@ -85,7 +91,9 @@ void clGenericSTCStyler::AddStyle(const wxArrayString& words, clGenericSTCStyler
 
 void clGenericSTCStyler::AddUserStyle(const wxArrayString& words, const wxColour& fgColour, const wxColour& bgColour)
 {
-    if(words.IsEmpty()) { return; }
+    if(words.IsEmpty()) {
+        return;
+    }
     m_styleInfo.push_back(std::make_tuple(m_nextAvailStyle, fgColour, bgColour));
     for(size_t i = 0; i < words.size(); ++i) {
         m_words.push_back({ words.Item(i).Lower(), m_nextAvailStyle });
@@ -100,7 +108,9 @@ void clGenericSTCStyler::ApplyStyles()
         const wxColour& fgColour = std::get<1>(t);
         const wxColour& bgColour = std::get<2>(t);
         m_ctrl->StyleSetForeground(style, fgColour);
-        if(bgColour.IsOk()) { m_ctrl->StyleSetBackground(style, bgColour); }
+        if(bgColour.IsOk()) {
+            m_ctrl->StyleSetBackground(style, bgColour);
+        }
     });
 }
 
@@ -121,7 +131,8 @@ void clGenericSTCStyler::ClearAllStyles()
 void clGenericSTCStyler::InitDefaultStyles()
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(!lexer) return;
+    if(!lexer)
+        return;
 
     const StyleProperty& defaultStyle = lexer->GetProperty(0);
     bool isDark = lexer->IsDark();

@@ -1,11 +1,7 @@
 #include "EnvVarImporterDlg.h"
 
-EnvVarImporterDlg::EnvVarImporterDlg(wxWindow* parent,
-                                     const wxString& projectName,
-                                     const wxString& cfgName,
-                                     std::set<wxString> listEnvVar,
-                                     BuildConfigPtr le_conf,
-                                     bool* showDlg)
+EnvVarImporterDlg::EnvVarImporterDlg(wxWindow* parent, const wxString& projectName, const wxString& cfgName,
+                                     std::set<wxString> listEnvVar, BuildConfigPtr le_conf, bool* showDlg)
     : EnvVarImporterDlgBase(parent)
     , le_conf(le_conf)
     , showDlg(showDlg)
@@ -21,9 +17,7 @@ EnvVarImporterDlg::EnvVarImporterDlg(wxWindow* parent,
     m_envVars->SetValue(value);
 }
 
-EnvVarImporterDlg::~EnvVarImporterDlg()
-{
-}
+EnvVarImporterDlg::~EnvVarImporterDlg() {}
 
 void EnvVarImporterDlg::OnImport(wxCommandEvent& event)
 {
@@ -31,10 +25,7 @@ void EnvVarImporterDlg::OnImport(wxCommandEvent& event)
     Close();
 }
 
-void EnvVarImporterDlg::OnContinue(wxCommandEvent& event)
-{
-    Close();
-}
+void EnvVarImporterDlg::OnContinue(wxCommandEvent& event) { Close(); }
 
 void EnvVarImporterDlg::OnSkip(wxCommandEvent& event)
 {

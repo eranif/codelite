@@ -1,5 +1,6 @@
-#include "Notebook.h"
 #include "clTabTogglerHelper.h"
+
+#include "Notebook.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"

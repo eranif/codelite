@@ -22,18 +22,20 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "editor_config.h"
+
 #include "ColoursAndFontsManager.h"
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
 #include "dirtraverser.h"
 #include "drawingutils.h"
-#include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "precompiled_header.h"
 #include "workspace.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <wx/ffile.h>
 #include <wx/stdpaths.h>
 #include <wx/xml/xml.h>

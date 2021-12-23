@@ -1,5 +1,7 @@
 #include "mdparser.hpp"
+
 #include "wx/string.h"
+
 #include <cctype>
 #include <iostream>
 #include <memory>

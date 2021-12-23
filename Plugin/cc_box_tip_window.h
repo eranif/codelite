@@ -27,6 +27,7 @@
 #define CCBOXTIPWINDOW_H
 
 #include "codelite_exports.h"
+
 #include <vector>
 #include <wx/panel.h>
 #include <wx/popupwin.h> // Base class: wxPopupTransientWindow

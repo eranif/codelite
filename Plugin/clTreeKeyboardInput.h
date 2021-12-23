@@ -29,6 +29,7 @@
 #include "clTreeCtrl.h"
 #include "codelite_exports.h"
 #include "wx/event.h"
+
 #include <list>
 #include <vector>
 #include <wx/sharedptr.h>

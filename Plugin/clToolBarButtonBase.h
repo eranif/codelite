@@ -2,6 +2,7 @@
 #define CLTOOLBARBUTTONBASE_H
 
 #include "clToolBar.h"
+
 #include <wx/bitmap.h>
 #include <wx/dc.h>
 #include <wx/settings.h>

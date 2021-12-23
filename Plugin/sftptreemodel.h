@@ -59,7 +59,9 @@ public:
         m_children.clear();
 
         // Remove us from the parent
-        if(m_parent) { m_parent->RemoveChild(this); }
+        if(m_parent) {
+            m_parent->RemoveChild(this);
+        }
     }
 
     void SetIsContainer(bool b) { m_isContainer = b; }
@@ -86,7 +88,9 @@ public:
     void RemoveChild(SFTPTreeModel_Item* child)
     {
         wxVector<SFTPTreeModel_Item*>::iterator iter = std::find(m_children.begin(), m_children.end(), child);
-        if(iter != m_children.end()) { m_children.erase(iter); }
+        if(iter != m_children.end()) {
+            m_children.erase(iter);
+        }
     }
 
     /**
@@ -112,7 +116,9 @@ public:
 
     void SetClientObject(wxClientData* data)
     {
-        if(m_clientData) { delete m_clientData; }
+        if(m_clientData) {
+            delete m_clientData;
+        }
         m_clientData = data;
     }
 
@@ -174,7 +180,7 @@ public:
     /**
      * @brief Append a lines to the model
      */
-    virtual wxDataViewItemArray AppendItems(const wxDataViewItem& parent, const wxVector<wxVector<wxVariant> >& data);
+    virtual wxDataViewItemArray AppendItems(const wxDataViewItem& parent, const wxVector<wxVector<wxVariant>>& data);
 
     /**
      * @brief delete an item and all its children

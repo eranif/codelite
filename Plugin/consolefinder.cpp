@@ -23,10 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "consolefinder.h"
+
 #include "exelocator.h"
+#include "file_logger.h"
 #include "macros.h"
 #include "procutils.h"
-#include "file_logger.h"
 
 ConsoleFinder::ConsoleFinder()
     : m_nConsolePid(0)
@@ -46,9 +47,9 @@ void ConsoleFinder::FreeConsole()
 
 int ConsoleFinder::RunConsole(const wxString& title)
 {
-// start the xterm and put the shell to sleep with -e sleep 80000
-// fetch the xterm tty so we can issue to gdb a "tty /dev/pts/#"
-// redirecting program stdin/stdout/stderr to the xterm console.
+    // start the xterm and put the shell to sleep with -e sleep 80000
+    // fetch the xterm tty so we can issue to gdb a "tty /dev/pts/#"
+    // redirecting program stdin/stdout/stderr to the xterm console.
 
 #ifndef __WXMSW__
     wxString cmd;
@@ -114,8 +115,10 @@ wxString ConsoleFinder::GetConsoleTty(int ConsolePid)
         // ?        13365 /home/pecan/proj/conio/conio
         // pts/1    13370 ps x -o tty,pid,command
 
-        if(psCmd.Contains(uniqueSleepTimeStr)) do {  // check for correct "sleep" line
-                if(psCmd.Contains(wxT("-T"))) break; // error;wrong sleep line.
+        if(psCmd.Contains(uniqueSleepTimeStr))
+            do { // check for correct "sleep" line
+                if(psCmd.Contains(wxT("-T")))
+                    break; // error;wrong sleep line.
                 // found "sleep 93343" string, extract tty field
                 ConsTtyStr = wxT("/dev/") + psCmd.BeforeFirst(' ');
                 return ConsTtyStr;
@@ -137,4 +140,3 @@ bool ConsoleFinder::FindConsole(const wxString& title, wxString& consoleName)
     }
     return false;
 }
-

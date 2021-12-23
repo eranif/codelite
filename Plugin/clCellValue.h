@@ -2,6 +2,7 @@
 #define CLCELLVALUE_H
 
 #include "codelite_exports.h"
+
 #include <vector>
 #include <wx/colour.h>
 #include <wx/font.h>

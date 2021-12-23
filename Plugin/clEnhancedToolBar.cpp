@@ -1,4 +1,5 @@
 #include "clEnhancedToolBar.hpp"
+
 #include "clToolBarButtonBase.h"
 #include "file_logger.h"
 

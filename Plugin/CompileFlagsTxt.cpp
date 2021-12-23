@@ -1,5 +1,7 @@
 #include "CompileFlagsTxt.h"
+
 #include "fileutils.h"
+
 #include <wx/tokenzr.h>
 
 CompileFlagsTxt::CompileFlagsTxt(const wxFileName& filename)

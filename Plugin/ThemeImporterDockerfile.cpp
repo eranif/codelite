@@ -11,9 +11,9 @@ ThemeImporterDockerfile::ThemeImporterDockerfile()
 
 ThemeImporterDockerfile::~ThemeImporterDockerfile() {}
 
-LexerConf::Ptr_t ThemeImporterDockerfile::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterDockerfile::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_BASH);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_BASH);
     AddProperty(lexer, wxSTC_SH_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     wxString errorColour;
     if(lexer->IsDark()) {

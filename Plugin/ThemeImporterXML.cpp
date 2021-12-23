@@ -6,9 +6,9 @@ ThemeImporterXML::ThemeImporterXML() { SetFileExtensions("*.xml;*.project;*.xrc;
 
 ThemeImporterXML::~ThemeImporterXML() {}
 
-LexerConf::Ptr_t ThemeImporterXML::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterXML::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "xml", 5);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "xml", 5);
     CHECK_PTR_RET_NULL(lexer);
 
     wxString defaultTextColour;

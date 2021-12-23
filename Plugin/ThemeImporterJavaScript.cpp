@@ -43,9 +43,9 @@ ThemeImporterJavaScript::ThemeImporterJavaScript()
 
 ThemeImporterJavaScript::~ThemeImporterJavaScript() {}
 
-LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "javascript", 3);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "javascript", 3);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties

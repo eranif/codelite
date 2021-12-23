@@ -44,9 +44,9 @@ ThemeImporterInnoSetup::ThemeImporterInnoSetup()
 }
 
 ThemeImporterInnoSetup::~ThemeImporterInnoSetup() {}
-LexerConf::Ptr_t ThemeImporterInnoSetup::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterInnoSetup::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_INNOSETUP);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_INNOSETUP);
     AddProperty(lexer, wxSTC_INNO_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_INNO_COMMENT, "Comment", m_singleLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_INNO_KEYWORD, "Keyword", m_keyword.colour, m_background.colour);

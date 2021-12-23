@@ -257,7 +257,7 @@
     <File Name="unredobase.h"/>
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
-    <VirtualDirectory Name="EclipseImporters">
+    <VirtualDirectory Name="ThemeImporters">
       <File Name="ThemeImporterFortran.hpp"/>
       <File Name="ThemeImporterManager.cpp"/>
       <File Name="ThemeImporterManager.hpp"/>

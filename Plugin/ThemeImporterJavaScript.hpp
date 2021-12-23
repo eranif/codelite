@@ -37,10 +37,10 @@ public:
 
     /**
      * @brief import an eclipse XML colour theme
-     * @param eclipseXmlFile
+     * @param theme_file
      * @param codeliteXml [output] the output file name
      */
-    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };
 
 #endif // ECLIPSEJAVASCRIPTTHEMEIMPORTER_H

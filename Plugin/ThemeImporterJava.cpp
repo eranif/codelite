@@ -12,9 +12,9 @@ ThemeImporterJava::ThemeImporterJava()
 }
 
 ThemeImporterJava::~ThemeImporterJava() {}
-LexerConf::Ptr_t ThemeImporterJava::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterJava::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_CPP);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties

@@ -14,9 +14,9 @@ ThemeImporterRust::ThemeImporterRust()
 
 ThemeImporterRust::~ThemeImporterRust() {}
 
-LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_RUST);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_RUST);
     AddProperty(lexer, wxSTC_RUST_DEFAULT, "Default", m_foreground.colour, m_background.colour);
 
     wxString errorColour;

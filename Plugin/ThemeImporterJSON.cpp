@@ -12,9 +12,9 @@ ThemeImporterJson::ThemeImporterJson()
 
 ThemeImporterJson::~ThemeImporterJson() {}
 
-LexerConf::Ptr_t ThemeImporterJson::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterJson::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_JSON);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_JSON);
     AddProperty(lexer, wxSTC_JSON_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_JSON_NUMBER, "Number", m_number.colour, m_background.colour);
     AddProperty(lexer, wxSTC_JSON_STRING, "String", m_string.colour, m_background.colour);

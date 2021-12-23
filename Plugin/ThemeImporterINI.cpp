@@ -4,9 +4,9 @@ ThemeImporterINI::ThemeImporterINI() { SetFileExtensions("*.ini;*.properties;*.d
 
 ThemeImporterINI::~ThemeImporterINI() {}
 
-LexerConf::Ptr_t ThemeImporterINI::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterINI::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "properties", wxSTC_LEX_PROPERTIES);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "properties", wxSTC_LEX_PROPERTIES);
     CHECK_PTR_RET_NULL(lexer);
 
     AddProperty(lexer, wxSTC_PROPS_DEFAULT, "Default", m_foreground.colour, m_background.colour);

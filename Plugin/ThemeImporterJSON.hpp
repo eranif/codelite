@@ -12,7 +12,7 @@ public:
     virtual ~ThemeImporterJson();
 
 public:
-    LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile) override;
+    LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
 };
 #endif
 #endif // ECLIPSEJSONTHEMEIMPORTER_HPP

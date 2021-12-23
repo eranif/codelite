@@ -43,9 +43,9 @@ ThemeImporterCXX::ThemeImporterCXX()
 
 ThemeImporterCXX::~ThemeImporterCXX() {}
 
-LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "c++", 3);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "c++", 3);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties

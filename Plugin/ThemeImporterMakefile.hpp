@@ -36,7 +36,7 @@ public:
     virtual ~ThemeImporterMakefile();
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };
 
 #endif // ECLIPSEMAKEFILETHEMEIMPORTER_H

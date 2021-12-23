@@ -11,9 +11,9 @@ ThemeImporterRuby::ThemeImporterRuby()
 
 ThemeImporterRuby::~ThemeImporterRuby() {}
 
-LexerConf::Ptr_t ThemeImporterRuby::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterRuby::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_RUBY);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_RUBY);
     AddProperty(lexer, wxSTC_RB_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_RB_COMMENTLINE, "Single Line Comment", m_multiLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_RB_NUMBER, "Number", m_number.colour, m_background.colour);

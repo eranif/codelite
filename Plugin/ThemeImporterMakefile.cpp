@@ -7,9 +7,9 @@ ThemeImporterMakefile::ThemeImporterMakefile() { SetFileExtensions("*.mk;makefil
 
 ThemeImporterMakefile::~ThemeImporterMakefile() {}
 
-LexerConf::Ptr_t ThemeImporterMakefile::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterMakefile::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "makefile", 11);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "makefile", 11);
     CHECK_PTR_RET_NULL(lexer);
 
     AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);

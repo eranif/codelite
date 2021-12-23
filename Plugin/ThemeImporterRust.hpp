@@ -35,7 +35,7 @@ public:
     virtual ~ThemeImporterRust();
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };
 
 #endif // ECLIPSERUSTTHEMEIMPORTER_H

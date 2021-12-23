@@ -9,9 +9,9 @@ ThemeImporterBatch::ThemeImporterBatch()
 }
 
 ThemeImporterBatch::~ThemeImporterBatch() {}
-LexerConf::Ptr_t ThemeImporterBatch::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterBatch::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "batch", wxSTC_LEX_BATCH);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "batch", wxSTC_LEX_BATCH);
     AddProperty(lexer, wxSTC_BAT_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_BAT_COMMENT, "Comment", m_singleLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_BAT_WORD, "Word", m_keyword.colour, m_background.colour);

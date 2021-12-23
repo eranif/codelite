@@ -10,7 +10,7 @@ public:
     virtual ~ThemeImporterDockerfile();
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };
 
 #endif // ECLIPSEDOCKERFILETHEMEIMPORTER_H

@@ -67,10 +67,10 @@ ThemeImporterASM::ThemeImporterASM()
 
 ThemeImporterASM::~ThemeImporterASM() {}
 
-LexerConf::Ptr_t ThemeImporterASM::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterASM::Import(const wxFileName& theme_file)
 {
     // Initialize the import
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "assembly", wxSTC_LEX_ASM);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "assembly", wxSTC_LEX_ASM);
 
     AddProperty(lexer, wxSTC_ASM_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_ASM_COMMENT, "Comment", m_singleLineComment.colour, m_background.colour);

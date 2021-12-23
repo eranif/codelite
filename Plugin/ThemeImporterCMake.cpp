@@ -24,9 +24,9 @@ ThemeImporterCMake::ThemeImporterCMake()
 
 ThemeImporterCMake::~ThemeImporterCMake() {}
 
-LexerConf::Ptr_t ThemeImporterCMake::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterCMake::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "cmake", 80);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "cmake", 80);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties

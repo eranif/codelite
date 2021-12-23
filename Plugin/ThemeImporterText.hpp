@@ -36,7 +36,7 @@ public:
     virtual ~ThemeImporterText();
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };
 
 #endif // ECLIPSETEXTTHEMEIMPORTER_H

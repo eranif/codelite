@@ -50,9 +50,9 @@ ThemeImporterFortran::ThemeImporterFortran()
 
 ThemeImporterFortran::~ThemeImporterFortran() {}
 
-LexerConf::Ptr_t ThemeImporterFortran::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterFortran::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_FORTRAN);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_FORTRAN);
     AddProperty(lexer, wxSTC_F_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_F_COMMENT, "Comment", m_singleLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_F_NUMBER, "Number", m_number.colour, m_background.colour);

@@ -32,7 +32,7 @@
 class WXDLLIMPEXP_SDK ThemeImporterFortran : public ThemeImporterBase
 {
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
     ThemeImporterFortran();
     virtual ~ThemeImporterFortran();
 };

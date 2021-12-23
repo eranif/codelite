@@ -70,9 +70,9 @@ ThemeImporterCSS::ThemeImporterCSS()
 
 ThemeImporterCSS::~ThemeImporterCSS() {}
 
-LexerConf::Ptr_t ThemeImporterCSS::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterCSS::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "css", wxSTC_LEX_CSS);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "css", wxSTC_LEX_CSS);
     CHECK_PTR_RET_NULL(lexer);
 
     // Set error colour

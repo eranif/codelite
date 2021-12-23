@@ -34,9 +34,9 @@ ThemeImporterSQL::ThemeImporterSQL()
 
 ThemeImporterSQL::~ThemeImporterSQL() {}
 
-LexerConf::Ptr_t ThemeImporterSQL::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterSQL::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_SQL);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_SQL);
     AddProperty(lexer, wxSTC_SQL_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_SQL_COMMENT, "Comment line", m_multiLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_SQL_COMMENTLINE, "Comment block", m_singleLineComment.colour, m_background.colour);

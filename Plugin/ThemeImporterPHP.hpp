@@ -35,7 +35,7 @@ public:
     virtual ~ThemeImporterPHP();
 
 public:
-    virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
+    virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };
 
 #endif // ECLIPSEPHPTHEMEIMPORTER_H

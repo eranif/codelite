@@ -6,9 +6,9 @@ ThemeImporterDiff::ThemeImporterDiff() { SetFileExtensions("*.diff;*.patch;Diff;
 
 ThemeImporterDiff::~ThemeImporterDiff() {}
 
-LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "diff", 16);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "diff", 16);
     CHECK_PTR_RET_NULL(lexer);
 
     //

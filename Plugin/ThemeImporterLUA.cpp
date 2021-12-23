@@ -10,9 +10,9 @@ ThemeImporterLua::ThemeImporterLua()
 
 ThemeImporterLua::~ThemeImporterLua() {}
 
-LexerConf::Ptr_t ThemeImporterLua::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterLua::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_LUA);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_LUA);
     AddProperty(lexer, wxSTC_LUA_DEFAULT, "Default", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_LUA_COMMENT, "Block comment", m_multiLineComment.colour, m_background.colour);
     AddProperty(lexer, wxSTC_LUA_COMMENTLINE, "Comment", m_singleLineComment.colour, m_background.colour);

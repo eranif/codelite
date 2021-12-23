@@ -30,6 +30,7 @@
 #include "codelite_exports.h"
 #include "lexer_configuration.h"
 #include "wxStringHash.h"
+
 #include <map>
 #include <vector>
 #include <wx/event.h>
@@ -129,8 +130,9 @@ public:
 
     /**
      * @brief save the lexers into their proper file name
+     * @param lexer_json optional output file
      */
-    void Save(bool forExport = false);
+    void Save(const wxFileName& lexer_json = {});
 
     /**
      * @brief set the active theme for a lexer by name

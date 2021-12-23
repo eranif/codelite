@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "syntaxhighlightdlg.h"
+
 #include "ColoursAndFontsManager.h"
 #include "EclipseCXXThemeImporter.h"
 #include "EclipseThemeImporterManager.h"
@@ -44,6 +45,7 @@
 #include "manager.h"
 #include "theme_handler.h"
 #include "windowattrmanager.h"
+
 #include <algorithm>
 #include <wx/busyinfo.h>
 #include <wx/choicdlg.h>
@@ -666,19 +668,9 @@ void SyntaxHighlightDlg::OnExportSelective(wxCommandEvent& event)
     DoExport(lexersToExport);
 }
 
-void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event)
-{
-    // EclipseThemeImporterManager importer;
-    // importer.ImportCxxToAll();
-    DoExport();
-}
+void SyntaxHighlightDlg::OnExportAll(wxCommandEvent& event) { DoExport(); }
 
-void SyntaxHighlightDlg::OnToolExportAll(wxCommandEvent& event)
-{
-    // EclipseThemeImporterManager importer;
-    // importer.ImportCxxToAll();
-    DoExport();
-}
+void SyntaxHighlightDlg::OnToolExportAll(wxCommandEvent& event) { DoExport(); }
 
 void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 {

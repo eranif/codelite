@@ -1,4 +1,5 @@
 #include "ColoursAndFontsManager.h"
+
 #include "EclipseThemeImporterManager.h"
 #include "JSON.h"
 #include "cl_command_event.h"
@@ -12,6 +13,7 @@
 #include "macros.h"
 #include "wxStringHash.h"
 #include "xmlutils.h"
+
 #include <algorithm>
 #include <codelite_events.h>
 #include <imanager.h>
@@ -465,22 +467,27 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
     }
 }
 
-void ColoursAndFontsManager::Save(bool forExport)
+void ColoursAndFontsManager::Save(const wxFileName& lexer_json)
 {
+    bool for_export = lexer_json.IsOk();
     ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.begin();
     JSON root(cJSON_Array);
     JSONItem element = root.toElement();
     for(; iter != m_lexersMap.end(); ++iter) {
         const ColoursAndFontsManager::Vec_t& lexers = iter->second;
         for(size_t i = 0; i < lexers.size(); ++i) {
-            element.arrayAppend(lexers.at(i)->ToJSON(forExport));
+            element.arrayAppend(lexers.at(i)->ToJSON(for_export));
         }
     }
 
-    wxFileName lexerFiles(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
-    lexerFiles.AppendDir("lexers");
-    lexerFiles.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    root.save(lexerFiles);
+    wxFileName output_file = lexer_json;
+    if(!output_file.IsOk()) {
+        output_file = wxFileName(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
+        output_file.AppendDir("lexers");
+    }
+    output_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+    root.save(output_file);
     SaveGlobalSettings();
 
     clCommandEvent event(wxEVT_CMD_COLOURS_FONTS_UPDATED);
@@ -1069,7 +1076,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
             sp_word_2.SetFgColour(lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour());
         }
     }
-    
+
     // make sure we include Rakefile as a Ruby file
     if(lexer->GetName() == "ruby") {
         if(!lexer->GetFileSpec().Contains("Rakefile")) {

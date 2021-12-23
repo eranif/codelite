@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="codelite-generate-themes" Version="11000" InternalType="Console">
+  <VirtualDirectory Name="wxcrafter">
+    <VirtualDirectory Name="base">
+      <File Name="wxcrafter.cpp"/>
+      <File Name="wxcrafter.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="resources">
+      <File Name="wxcrafter_codelite-generate-themes_bitmaps.cpp"/>
+    </VirtualDirectory>
+    <File Name="wxcrafter.wxcp"/>
+  </VirtualDirectory>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00010001N0005Debug000000000000]]>
@@ -8,6 +18,9 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <File Name="resources.rc"/>
+    <File Name="ImportThemesDialog.cpp"/>
+    <File Name="ImportThemesDialog.h"/>
     <File Name="my_pch.hpp"/>
     <File Name="main.cpp"/>
   </VirtualDirectory>
@@ -26,13 +39,13 @@
         <IncludePath Value="$(CL_HOME)\Plugin"/>
         <IncludePath Value="$(CL_HOME)\\CodeLite"/>
       </Compiler>
-      <Linker Options="$(shell wx-config   --libs --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config   --libs --unicode=yes);-mwindows" Required="yes">
         <LibraryPath Value="$(CL_HOME)/Runtime"/>
         <Library Value="libcodeliteu"/>
         <Library Value="libplugin_sdku"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="$(WorkspacePath)\themes $(WorkspacePath)\themes" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="$(WorkspacePath)\themes $(WorkspacePath)\themes" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[CL_HOME=C:\src\codelite
@@ -112,15 +125,22 @@ LD_LIBRARY_PATH=$CL_LIB_DIR:LD_LIBRARY_PATH]]>
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="MinGW 64bit ( MSYS2 64bit )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="1">
+      <Compiler Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" C_Options="-O2;-Wall;$(shell wx-config --cxxflags --unicode=yes --debug=no)" Assembler="" Required="yes" PreCompiledHeader="my_pch.hpp" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
+        <IncludePath Value="$(CL_HOME)\Plugin"/>
+        <IncludePath Value="$(CL_HOME)\\CodeLite"/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes)" Required="yes"/>
+      <Linker Options=";$(shell wx-config --debug=no --libs --unicode=yes);-mwindows" Required="yes">
+        <LibraryPath Value="$(CL_HOME)/Runtime"/>
+        <Library Value="libcodeliteu"/>
+        <Library Value="libplugin_sdku"/>
+      </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
-        <![CDATA[]]>
+        <![CDATA[CL_HOME=C:\src\codelite
+PATH=$(CL_HOME)\Runtime;$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>

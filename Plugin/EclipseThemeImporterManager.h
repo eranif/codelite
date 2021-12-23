@@ -28,6 +28,7 @@
 
 #include "EclipseThemeImporterBase.h"
 #include "codelite_exports.h"
+
 #include <wx/string.h>
 
 class WXDLLIMPEXP_SDK EclipseThemeImporterManager
@@ -44,13 +45,6 @@ public:
      * @return the new theme name
      */
     wxString Import(const wxString& eclipseXml);
-
-    /**
-     * @brief scan, convert all C++ existing lexers into eclipse XML and then import them
-     * to all other languages that we support. This is used internally and not exposed to
-     * the end user
-     */
-    bool ImportCxxToAll();
 };
 
 #endif // ECLIPSETHEMEIMPORTERMANAGER_H

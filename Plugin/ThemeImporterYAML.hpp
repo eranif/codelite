@@ -3,11 +3,11 @@
 
 #include "ThemeImporterBase.hpp"
 
-class WXDLLIMPEXP_SDK EclipseYAMLThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterYAML : public ThemeImporterBase
 {
 public:
-    EclipseYAMLThemeImporter();
-    virtual ~EclipseYAMLThemeImporter();
+    ThemeImporterYAML();
+    virtual ~ThemeImporterYAML();
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);

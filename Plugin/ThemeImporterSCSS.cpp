@@ -2,7 +2,7 @@
 
 #include "drawingutils.h"
 
-EclipseSCSSThemeImporter::EclipseSCSSThemeImporter()
+ThemeImporterSCSS::ThemeImporterSCSS()
 {
     SetKeywords0("color background-color background-image background-repeat background-attachment background-position "
                  "background font-family"
@@ -65,9 +65,9 @@ EclipseSCSSThemeImporter::EclipseSCSSThemeImporter()
     SetFileExtensions("*.scss");
 }
 
-EclipseSCSSThemeImporter::~EclipseSCSSThemeImporter() {}
+ThemeImporterSCSS::~ThemeImporterSCSS() {}
 
-LexerConf::Ptr_t EclipseSCSSThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterSCSS::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "scss", wxSTC_LEX_CSS);
     CHECK_PTR_RET_NULL(lexer);

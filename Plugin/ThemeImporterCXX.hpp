@@ -26,11 +26,11 @@
 #ifndef ECLIPSECXXTHEMEIMPORTER_H
 #define ECLIPSECXXTHEMEIMPORTER_H
 
-#include "ThemeImporterBase.hpp" // Base class: EclipseThemeImporterBase
+#include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 #include "codelite_exports.h"
 #include <vector>
 
-class WXDLLIMPEXP_SDK ThemeImporterCXX : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterCXX : public ThemeImporterBase
 {
 private:
     /**

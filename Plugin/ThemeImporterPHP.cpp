@@ -2,7 +2,7 @@
 #include <wx/stc/stc.h>
 #include "macros.h"
 
-EclipsePHPThemeImporter::EclipsePHPThemeImporter()
+ThemeImporterPHP::ThemeImporterPHP()
 {
     SetKeywords4("implements abstract and array as bool boolean break case cfunction class const continue declare "
                  "default die directory do double echo else elseif empty enddeclare endfor endforeach endif endswitch "
@@ -24,9 +24,9 @@ EclipsePHPThemeImporter::EclipsePHPThemeImporter()
     SetFileExtensions("*.php;*.php3;*.phtml;*.inc;*.php5");
 }
 
-EclipsePHPThemeImporter::~EclipsePHPThemeImporter() {}
+ThemeImporterPHP::~ThemeImporterPHP() {}
 
-LexerConf::Ptr_t EclipsePHPThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterPHP::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "php", 4);
     CHECK_PTR_RET_NULL(lexer);

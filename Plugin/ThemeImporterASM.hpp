@@ -29,7 +29,7 @@
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK ThemeImporterASM : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterASM : public ThemeImporterBase
 {
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);

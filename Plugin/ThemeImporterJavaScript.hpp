@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseJavaScriptThemeImporter.h
+// File name            : ThemeImporterJavaScript.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -26,14 +26,14 @@
 #ifndef ECLIPSEJAVASCRIPTTHEMEIMPORTER_H
 #define ECLIPSEJAVASCRIPTTHEMEIMPORTER_H
 
-#include "ThemeImporterBase.hpp" // Base class: EclipseThemeImporterBase
+#include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK EclipseJavaScriptThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterJavaScript : public ThemeImporterBase
 {
 public:
-    EclipseJavaScriptThemeImporter();
-    virtual ~EclipseJavaScriptThemeImporter();
+    ThemeImporterJavaScript();
+    virtual ~ThemeImporterJavaScript();
 
     /**
      * @brief import an eclipse XML colour theme

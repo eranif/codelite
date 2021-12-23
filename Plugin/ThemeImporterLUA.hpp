@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseLuaThemeImporter.h
+// File name            : ThemeImporterLua.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -26,14 +26,14 @@
 #ifndef ECLIPSELUATHEMEIMPORTER_H
 #define ECLIPSELUATHEMEIMPORTER_H
 
-#include "ThemeImporterBase.hpp" // Base class: EclipseThemeImporterBase
+#include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK EclipseLuaThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterLua : public ThemeImporterBase
 {
 public:
-    EclipseLuaThemeImporter();
-    virtual ~EclipseLuaThemeImporter();
+    ThemeImporterLua();
+    virtual ~ThemeImporterLua();
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);

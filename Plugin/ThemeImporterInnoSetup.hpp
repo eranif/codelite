@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseInnoSetupThemeImporter.h
+// File name            : ThemeImporterInnoSetup.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -29,12 +29,12 @@
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK EclipseInnoSetupThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterInnoSetup : public ThemeImporterBase
 {
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
-    EclipseInnoSetupThemeImporter();
-    virtual ~EclipseInnoSetupThemeImporter();
+    ThemeImporterInnoSetup();
+    virtual ~ThemeImporterInnoSetup();
 };
 
 #endif // ECLIPSEINNOSETUPTHEMEIMPORTER_H

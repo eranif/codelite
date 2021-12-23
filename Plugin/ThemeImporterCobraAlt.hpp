@@ -26,10 +26,10 @@
 #ifndef ECLIPSECOBRAALTTHEMEIMPORTER_H
 #define ECLIPSECOBRAALTTHEMEIMPORTER_H
 
-#include "ThemeImporterPython.hpp" // Base class: EclipsePythonThemeImporter
+#include "ThemeImporterPython.hpp" // Base class: ThemeImporterPython
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK ThemeImporterCobraAlt : public EclipsePythonThemeImporter
+class WXDLLIMPEXP_SDK ThemeImporterCobraAlt : public ThemeImporterPython
 {
 public:
     ThemeImporterCobraAlt();

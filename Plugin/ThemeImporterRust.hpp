@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseRustThemeImporter.h
+// File name            : ThemeImporterRust.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -26,13 +26,13 @@
 #ifndef ECLIPSERUSTTHEMEIMPORTER_H
 #define ECLIPSERUSTTHEMEIMPORTER_H
 
-#include "ThemeImporterBase.hpp" // Base class: EclipseThemeImporterBase
+#include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 
-class WXDLLIMPEXP_SDK EclipseRustThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterRust : public ThemeImporterBase
 {
 public:
-    EclipseRustThemeImporter();
-    virtual ~EclipseRustThemeImporter();
+    ThemeImporterRust();
+    virtual ~ThemeImporterRust();
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);

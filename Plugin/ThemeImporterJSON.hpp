@@ -1,15 +1,15 @@
 #ifndef ECLIPSEJSONTHEMEIMPORTER_HPP
 #define ECLIPSEJSONTHEMEIMPORTER_HPP
 
-#include "ThemeImporterBase.hpp" // Base class: EclipseThemeImporterBase
+#include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 #include "codelite_exports.h"
 
 #if wxCHECK_VERSION(3, 1, 0)
-class WXDLLIMPEXP_SDK EclipseJsonThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterJson : public ThemeImporterBase
 {
 public:
-    EclipseJsonThemeImporter();
-    virtual ~EclipseJsonThemeImporter();
+    ThemeImporterJson();
+    virtual ~ThemeImporterJson();
 
 public:
     LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile) override;

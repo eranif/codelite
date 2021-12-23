@@ -1,6 +1,6 @@
 #include "ThemeImporterPython.hpp"
 
-EclipsePythonThemeImporter::EclipsePythonThemeImporter()
+ThemeImporterPython::ThemeImporterPython()
 {
     SetKeywords0(
         "and as assert break class continue def del elif else except exec finally for from global if import in "
@@ -9,9 +9,9 @@ EclipsePythonThemeImporter::EclipsePythonThemeImporter()
     m_langName = "python";
 }
 
-EclipsePythonThemeImporter::~EclipsePythonThemeImporter() {}
+ThemeImporterPython::~ThemeImporterPython() {}
 
-LexerConf::Ptr_t EclipsePythonThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterPython::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_PYTHON);
     AddProperty(lexer, wxSTC_P_DEFAULT, "Default", m_foreground.colour, m_background.colour);

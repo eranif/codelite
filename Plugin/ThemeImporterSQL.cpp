@@ -1,7 +1,7 @@
 #include "ThemeImporterSQL.hpp"
 #include <wx/stc/stc.h>
 
-EclipseSQLThemeImporter::EclipseSQLThemeImporter()
+ThemeImporterSQL::ThemeImporterSQL()
 {
     SetKeywords0("absolute action add admin after aggregate  alias all allocate alter and any are array as asc  "
                  "assertion at authorization  before begin binary bit blob boolean both breadth by  call cascade "
@@ -31,9 +31,9 @@ EclipseSQLThemeImporter::EclipseSQLThemeImporter()
     m_langName = "sql";
 }
 
-EclipseSQLThemeImporter::~EclipseSQLThemeImporter() {}
+ThemeImporterSQL::~ThemeImporterSQL() {}
 
-LexerConf::Ptr_t EclipseSQLThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterSQL::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_SQL);
     AddProperty(lexer, wxSTC_SQL_DEFAULT, "Default", m_foreground.colour, m_background.colour);

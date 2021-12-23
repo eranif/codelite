@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseJavaThemeImporter.h
+// File name            : ThemeImporterJava.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -29,12 +29,12 @@
 #include "codelite_exports.h"
 #include "ThemeImporterBase.hpp"
 
-class WXDLLIMPEXP_SDK EclipseJavaThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterJava : public ThemeImporterBase
 {
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
-    EclipseJavaThemeImporter();
-    virtual ~EclipseJavaThemeImporter();
+    ThemeImporterJava();
+    virtual ~ThemeImporterJava();
 };
 
 #endif // ECLIPSEJAVATHEMEIMPORTER_H

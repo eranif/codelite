@@ -26,9 +26,9 @@
 #ifndef ECLIPSECSSTHEMEIMPORTER_H
 #define ECLIPSECSSTHEMEIMPORTER_H
 
-#include "ThemeImporterBase.hpp" // Base class: EclipseThemeImporterBase
+#include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 
-class WXDLLIMPEXP_SDK ThemeImporterCSS : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterCSS : public ThemeImporterBase
 {
 public:
     ThemeImporterCSS();

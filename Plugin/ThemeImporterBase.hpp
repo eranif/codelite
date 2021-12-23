@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseThemeImporterBase.h
+// File name            : ThemeImporterBase.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -36,7 +36,7 @@
 #include <wx/string.h>
 #include <wx/xml/xml.h>
 
-class WXDLLIMPEXP_SDK EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterBase
 {
 public:
     struct Property {
@@ -44,8 +44,8 @@ public:
         bool isBold;
         bool isItalic;
     };
-    typedef SmartPtr<EclipseThemeImporterBase> Ptr_t;
-    typedef std::list<EclipseThemeImporterBase::Ptr_t> List_t;
+    typedef SmartPtr<ThemeImporterBase> Ptr_t;
+    typedef std::list<ThemeImporterBase::Ptr_t> List_t;
 
 protected:
     wxXmlDocument m_doc;
@@ -110,8 +110,8 @@ public:
     const wxString& GetKeywords4() const { return m_keywords4; }
 
 public:
-    EclipseThemeImporterBase();
-    virtual ~EclipseThemeImporterBase();
+    ThemeImporterBase();
+    virtual ~ThemeImporterBase();
     /**
      * @brief load eclispe theme (in xml format)
      */
@@ -128,7 +128,7 @@ public:
      * @param name the property name
      * @param prop [output]
      */
-    bool GetProperty(const wxString& name, EclipseThemeImporterBase::Property& prop) const;
+    bool GetProperty(const wxString& name, ThemeImporterBase::Property& prop) const;
 
     /**
      * @brief return true if the theme is valid

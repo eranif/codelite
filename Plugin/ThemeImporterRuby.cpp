@@ -1,6 +1,6 @@
 #include "ThemeImporterRuby.hpp"
 
-EclipseRubyThemeImporter::EclipseRubyThemeImporter()
+ThemeImporterRuby::ThemeImporterRuby()
 {
     SetKeywords0("__ENCODING__ __LINE__ __FILE__ BEGIN END alias and begin break case class def defined? do else elsif "
                  "end ensure false for if in module next nil not or redo rescue retry return self super then true "
@@ -9,9 +9,9 @@ EclipseRubyThemeImporter::EclipseRubyThemeImporter()
     m_langName = "ruby";
 }
 
-EclipseRubyThemeImporter::~EclipseRubyThemeImporter() {}
+ThemeImporterRuby::~ThemeImporterRuby() {}
 
-LexerConf::Ptr_t EclipseRubyThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterRuby::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_RUBY);
     AddProperty(lexer, wxSTC_RB_DEFAULT, "Default", m_foreground.colour, m_background.colour);

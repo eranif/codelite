@@ -1,6 +1,6 @@
 #include "ThemeImporterInnoSetup.hpp"
 
-EclipseInnoSetupThemeImporter::EclipseInnoSetupThemeImporter()
+ThemeImporterInnoSetup::ThemeImporterInnoSetup()
 {
     SetKeywords0("code components custommessages dirs files icons ini installdelete langoptions languages messages "
                  "registry run setup types tasks uninstalldelete uninstallrun _istool");
@@ -43,8 +43,8 @@ EclipseInnoSetupThemeImporter::EclipseInnoSetupThemeImporter()
     m_langName = "innosetup";
 }
 
-EclipseInnoSetupThemeImporter::~EclipseInnoSetupThemeImporter() {}
-LexerConf::Ptr_t EclipseInnoSetupThemeImporter::Import(const wxFileName& eclipseXmlFile)
+ThemeImporterInnoSetup::~ThemeImporterInnoSetup() {}
+LexerConf::Ptr_t ThemeImporterInnoSetup::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_INNOSETUP);
     AddProperty(lexer, wxSTC_INNO_DEFAULT, "Default", m_foreground.colour, m_background.colour);

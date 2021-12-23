@@ -9,11 +9,11 @@
 #include <wx/colour.h>
 #include <wx/tokenzr.h>
 
-EclipseThemeImporterBase::EclipseThemeImporterBase() {}
+ThemeImporterBase::ThemeImporterBase() {}
 
-EclipseThemeImporterBase::~EclipseThemeImporterBase() {}
+ThemeImporterBase::~ThemeImporterBase() {}
 
-bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImporterBase::Property& prop) const
+bool ThemeImporterBase::GetProperty(const wxString& name, ThemeImporterBase::Property& prop) const
 {
     prop.colour = "";
     prop.isBold = false;
@@ -34,7 +34,7 @@ bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImp
     return false;
 }
 
-LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& theme_file, const wxString& langName,
+LexerConf::Ptr_t ThemeImporterBase::InitializeImport(const wxFileName& theme_file, const wxString& langName,
                                                             int langId)
 {
     m_langName = langName;
@@ -101,16 +101,16 @@ LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& th
     return lexer;
 }
 
-void EclipseThemeImporterBase::FinalizeImport(LexerConf::Ptr_t lexer)
+void ThemeImporterBase::FinalizeImport(LexerConf::Ptr_t lexer)
 {
     AddCommonProperties(lexer);
     ColoursAndFontsManager::Get().UpdateLexerColours(lexer, true);
 }
 
-bool EclipseThemeImporterBase::IsDarkTheme() const
+bool ThemeImporterBase::IsDarkTheme() const
 {
     // load the theme background colour
-    EclipseThemeImporterBase::Property p;
+    ThemeImporterBase::Property p;
     if(!GetProperty("background", p))
         return false;
 
@@ -118,14 +118,14 @@ bool EclipseThemeImporterBase::IsDarkTheme() const
     return DrawingUtils::IsDark(p.colour);
 }
 
-wxString EclipseThemeImporterBase::GetName() const
+wxString ThemeImporterBase::GetName() const
 {
     if(!IsValid())
         return "";
     return m_doc.GetRoot()->GetAttribute("name");
 }
 
-wxString EclipseThemeImporterBase::GetOutputFile(const wxString& language) const
+wxString ThemeImporterBase::GetOutputFile(const wxString& language) const
 {
     wxString name = GetName();
     name.MakeLower();
@@ -145,7 +145,7 @@ wxString EclipseThemeImporterBase::GetOutputFile(const wxString& language) const
     return xmlFileName;
 }
 
-void EclipseThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name,
+void ThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name,
                                            const wxString& colour, const wxString& bgColour, bool bold, bool italic,
                                            bool isEOLFilled)
 {
@@ -159,7 +159,7 @@ void EclipseThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxStrin
     lexer->GetLexerProperties().insert(std::make_pair(sp.GetId(), sp));
 }
 
-void EclipseThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id)
+void ThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id)
 {
     lexer->SetName(lang);
     lexer->SetThemeName(GetName());
@@ -177,7 +177,7 @@ void EclipseThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const w
     lexer->SetFileSpec(GetFileExtensions());
 }
 
-void EclipseThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
+void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
 {
     // Set the brace match based on the background colour
     Property background, foreground, selectionBackground, selectionForeground, lineNumber;
@@ -213,7 +213,7 @@ void EclipseThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
                 lineNumber.isItalic);
 }
 
-void EclipseThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& words)
+void ThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& words)
 {
     wordset.clear();
     wxArrayString arr = ::wxStringTokenize(words, " \t\n", wxTOKEN_STRTOK);

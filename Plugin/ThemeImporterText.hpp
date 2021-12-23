@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseTextThemeImporter.h
+// File name            : ThemeImporterText.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -26,14 +26,14 @@
 #ifndef ECLIPSETEXTTHEMEIMPORTER_H
 #define ECLIPSETEXTTHEMEIMPORTER_H
 
-#include "ThemeImporterBase.hpp" // Base class: EclipseThemeImporterBase
+#include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK EclipseTextThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterText : public ThemeImporterBase
 {
 public:
-    EclipseTextThemeImporter();
-    virtual ~EclipseTextThemeImporter();
+    ThemeImporterText();
+    virtual ~ThemeImporterText();
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);

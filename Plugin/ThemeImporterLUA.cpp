@@ -1,6 +1,6 @@
 #include "ThemeImporterLUA.hpp"
 
-EclipseLuaThemeImporter::EclipseLuaThemeImporter()
+ThemeImporterLua::ThemeImporterLua()
 {
     SetKeywords0(
         "if elseif else then end do while nil true false in for and or function local not repeat return until");
@@ -8,9 +8,9 @@ EclipseLuaThemeImporter::EclipseLuaThemeImporter()
     m_langName = "lua";
 }
 
-EclipseLuaThemeImporter::~EclipseLuaThemeImporter() {}
+ThemeImporterLua::~ThemeImporterLua() {}
 
-LexerConf::Ptr_t EclipseLuaThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterLua::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_LUA);
     AddProperty(lexer, wxSTC_LUA_DEFAULT, "Default", m_foreground.colour, m_background.colour);

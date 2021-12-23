@@ -689,7 +689,7 @@ void ColoursAndFontsManager::RestoreDefaults()
 wxString ColoursAndFontsManager::ImportEclipseTheme(const wxString& theme_file)
 {
     if(!theme_file.IsEmpty()) {
-        EclipseThemeImporterManager importer;
+        ThemeImporterManager importer;
         return importer.Import(theme_file);
     }
     return wxEmptyString;

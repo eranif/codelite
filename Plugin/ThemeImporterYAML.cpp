@@ -1,14 +1,14 @@
 #include "ThemeImporterYAML.hpp"
 
-EclipseYAMLThemeImporter::EclipseYAMLThemeImporter()
+ThemeImporterYAML::ThemeImporterYAML()
 {
     SetFileExtensions("*.yml;*.yaml");
     m_langName = "yaml";
 }
 
-EclipseYAMLThemeImporter::~EclipseYAMLThemeImporter() {}
+ThemeImporterYAML::~ThemeImporterYAML() {}
 
-LexerConf::Ptr_t EclipseYAMLThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterYAML::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_YAML);
     wxString errorColour;

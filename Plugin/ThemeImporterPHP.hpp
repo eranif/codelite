@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipsePHPThemeImporter.h
+// File name            : ThemeImporterPHP.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -26,13 +26,13 @@
 #ifndef ECLIPSEPHPTHEMEIMPORTER_H
 #define ECLIPSEPHPTHEMEIMPORTER_H
 
-#include "ThemeImporterBase.hpp" // Base class: EclipseThemeImporterBase
+#include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 
-class EclipsePHPThemeImporter : public EclipseThemeImporterBase
+class ThemeImporterPHP : public ThemeImporterBase
 {
 public:
-    EclipsePHPThemeImporter();
-    virtual ~EclipsePHPThemeImporter();
+    ThemeImporterPHP();
+    virtual ~ThemeImporterPHP();
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);

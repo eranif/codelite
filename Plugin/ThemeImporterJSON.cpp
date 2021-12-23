@@ -2,16 +2,16 @@
 #include <wx/stc/stc.h>
 
 #if wxCHECK_VERSION(3, 1, 0)
-EclipseJsonThemeImporter::EclipseJsonThemeImporter()
+ThemeImporterJson::ThemeImporterJson()
 {
     SetKeywords0("true false null");
     SetFileExtensions("*.wxcp;*.json");
     m_langName = "json";
 }
 
-EclipseJsonThemeImporter::~EclipseJsonThemeImporter() {}
+ThemeImporterJson::~ThemeImporterJson() {}
 
-LexerConf::Ptr_t EclipseJsonThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterJson::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_JSON);
     AddProperty(lexer, wxSTC_JSON_DEFAULT, "Default", m_foreground.colour, m_background.colour);

@@ -3,7 +3,7 @@
 #if wxCHECK_VERSION(3, 1, 0)
 #include "ThemeImporterRust.hpp"
 
-EclipseRustThemeImporter::EclipseRustThemeImporter()
+ThemeImporterRust::ThemeImporterRust()
 {
     SetKeywords0("as break const continue crate else enum extern false fn for if impl in let loop match mod move mut "
                  "pub ref return self Self static struct super trait true type unsafe use where while async await dyn "
@@ -12,9 +12,9 @@ EclipseRustThemeImporter::EclipseRustThemeImporter()
     m_langName = "rust";
 }
 
-EclipseRustThemeImporter::~EclipseRustThemeImporter() {}
+ThemeImporterRust::~ThemeImporterRust() {}
 
-LexerConf::Ptr_t EclipseRustThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_RUST);
     AddProperty(lexer, wxSTC_RUST_DEFAULT, "Default", m_foreground.colour, m_background.colour);

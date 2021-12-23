@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseThemeImporterManager.h
+// File name            : ThemeImporterManager.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -31,13 +31,13 @@
 
 #include <wx/string.h>
 
-class WXDLLIMPEXP_SDK EclipseThemeImporterManager
+class WXDLLIMPEXP_SDK ThemeImporterManager
 {
-    EclipseThemeImporterBase::List_t m_importers;
+    ThemeImporterBase::List_t m_importers;
 
 public:
-    EclipseThemeImporterManager();
-    virtual ~EclipseThemeImporterManager();
+    ThemeImporterManager();
+    virtual ~ThemeImporterManager();
 
     /**
      * @brief import the XML and create a lexer out of it

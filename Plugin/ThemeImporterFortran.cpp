@@ -1,6 +1,6 @@
 #include "ThemeImporterFortran.hpp"
 
-EclipseFortranThemeImporter::EclipseFortranThemeImporter()
+ThemeImporterFortran::ThemeImporterFortran()
 {
     SetKeywords0("access action advance allocatable allocate  apostrophe assign assignment associate asynchronous "
                  "backspace  bind blank blockdata call case character class close common  complex contains continue "
@@ -48,9 +48,9 @@ EclipseFortranThemeImporter::EclipseFortranThemeImporter()
     m_langName = "fortran";
 }
 
-EclipseFortranThemeImporter::~EclipseFortranThemeImporter() {}
+ThemeImporterFortran::~ThemeImporterFortran() {}
 
-LexerConf::Ptr_t EclipseFortranThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterFortran::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_FORTRAN);
     AddProperty(lexer, wxSTC_F_DEFAULT, "Default", m_foreground.colour, m_background.colour);

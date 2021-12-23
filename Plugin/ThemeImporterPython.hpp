@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipsePythonThemeImporter.h
+// File name            : ThemeImporterPython.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -29,12 +29,12 @@
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK EclipsePythonThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterPython : public ThemeImporterBase
 {
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
-    EclipsePythonThemeImporter();
-    ~EclipsePythonThemeImporter();
+    ThemeImporterPython();
+    ~ThemeImporterPython();
 };
 
 #endif // ECLIPSEPYTHONTHEMEIMPORTER_H

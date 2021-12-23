@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2021 Eran Ifrah
-// File name            : EclipseRubyThemeImporter.hpp
+// File name            : ThemeImporterRuby.hpp
 //
 // -------------------------------------------------------------------------
 // A
@@ -29,12 +29,12 @@
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK EclipseRubyThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterRuby : public ThemeImporterBase
 {
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
-    EclipseRubyThemeImporter();
-    ~EclipseRubyThemeImporter();
+    ThemeImporterRuby();
+    ~ThemeImporterRuby();
 };
 
 #endif // ECLIPSERUBYTHEMEIMPORTER_H

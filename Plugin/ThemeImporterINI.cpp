@@ -1,13 +1,13 @@
 #include "ThemeImporterINI.hpp"
 
-EclipseINIThemeImporter::EclipseINIThemeImporter()
+ThemeImporterINI::ThemeImporterINI()
 {
     SetFileExtensions("*.ini;*.properties;*.desktop;*.toml");
 }
 
-EclipseINIThemeImporter::~EclipseINIThemeImporter() {}
+ThemeImporterINI::~ThemeImporterINI() {}
 
-LexerConf::Ptr_t EclipseINIThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterINI::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "properties", wxSTC_LEX_PROPERTIES);
     CHECK_PTR_RET_NULL(lexer);

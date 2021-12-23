@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseFortranThemeImporter.h
+// File name            : ThemeImporterFortran.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -29,12 +29,12 @@
 #include "ThemeImporterBase.hpp"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK EclipseFortranThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterFortran : public ThemeImporterBase
 {
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);
-    EclipseFortranThemeImporter();
-    virtual ~EclipseFortranThemeImporter();
+    ThemeImporterFortran();
+    virtual ~ThemeImporterFortran();
 
 };
 

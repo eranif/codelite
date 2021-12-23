@@ -6,7 +6,7 @@
 #include "xmlutils.h"
 #include <wx/stc/stc.h>
 
-EclipseJavaScriptThemeImporter::EclipseJavaScriptThemeImporter()
+ThemeImporterJavaScript::ThemeImporterJavaScript()
 {
     // Reserved words
     SetKeywords0("abstract arguments boolean break byte "
@@ -39,9 +39,9 @@ EclipseJavaScriptThemeImporter::EclipseJavaScriptThemeImporter()
     SetFileExtensions("*.js;*.javascript;*.qml;*.json;*.ts");
 }
 
-EclipseJavaScriptThemeImporter::~EclipseJavaScriptThemeImporter() {}
+ThemeImporterJavaScript::~ThemeImporterJavaScript() {}
 
-LexerConf::Ptr_t EclipseJavaScriptThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, "javascript", 3);
     CHECK_PTR_RET_NULL(lexer);

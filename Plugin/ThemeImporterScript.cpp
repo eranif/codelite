@@ -1,6 +1,6 @@
 #include "ThemeImporterScript.hpp"
 
-EclipseScriptThemeImporter::EclipseScriptThemeImporter()
+ThemeImporterScript::ThemeImporterScript()
 {
     SetKeywords0("echo cp rm ls chmod if then fi done touch for in do while switch else cd pwd  cat mkdir rmdir grep "
                  "awk print printf xargs find mv gzip tar bzip zip gunzip local return exit function");
@@ -8,9 +8,9 @@ EclipseScriptThemeImporter::EclipseScriptThemeImporter()
     m_langName = "script";
 }
 
-EclipseScriptThemeImporter::~EclipseScriptThemeImporter() {}
+ThemeImporterScript::~ThemeImporterScript() {}
 
-LexerConf::Ptr_t EclipseScriptThemeImporter::Import(const wxFileName& eclipseXmlFile)
+LexerConf::Ptr_t ThemeImporterScript::Import(const wxFileName& eclipseXmlFile)
 {
     LexerConf::Ptr_t lexer = InitializeImport(eclipseXmlFile, GetLangName(), wxSTC_LEX_BASH);
     AddProperty(lexer, wxSTC_SH_DEFAULT, "Default", m_foreground.colour, m_background.colour);

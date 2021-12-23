@@ -3,7 +3,7 @@
 
 #include "ThemeImporterBase.hpp"
 
-class WXDLLIMPEXP_SDK ThemeImporterDockerfile : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterDockerfile : public ThemeImporterBase
 {
 public:
     ThemeImporterDockerfile();

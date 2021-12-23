@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // Copyright            : (C) 2015 Eran Ifrah
-// File name            : EclipseSCSSThemeImporter.h
+// File name            : ThemeImporterSCSS.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -28,11 +28,11 @@
 
 #include "ThemeImporterBase.hpp"
 
-class WXDLLIMPEXP_SDK EclipseSCSSThemeImporter : public EclipseThemeImporterBase
+class WXDLLIMPEXP_SDK ThemeImporterSCSS : public ThemeImporterBase
 {
 public:
-    EclipseSCSSThemeImporter();
-    virtual ~EclipseSCSSThemeImporter();
+    ThemeImporterSCSS();
+    virtual ~ThemeImporterSCSS();
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& eclipseXmlFile);

@@ -31,45 +31,45 @@
 #include "ThemeImporterXML.hpp"
 #include "ThemeImporterYAML.hpp"
 
-EclipseThemeImporterManager::EclipseThemeImporterManager()
+ThemeImporterManager::ThemeImporterManager()
 {
     m_importers.push_back(new ThemeImporterCXX());
     m_importers.push_back(new ThemeImporterCMake());
-    m_importers.push_back(new EclipseTextThemeImporter());
-    m_importers.push_back(new EclipseMakefileThemeImporter());
+    m_importers.push_back(new ThemeImporterText());
+    m_importers.push_back(new ThemeImporterMakefile());
     m_importers.push_back(new ThemeImporterDiff());
-    m_importers.push_back(new EclipsePHPThemeImporter());
+    m_importers.push_back(new ThemeImporterPHP());
     m_importers.push_back(new ThemeImporterCSS());
     m_importers.push_back(new ThemeImporterXML());
-    m_importers.push_back(new EclipseJavaScriptThemeImporter());
-    m_importers.push_back(new EclipseINIThemeImporter());
+    m_importers.push_back(new ThemeImporterJavaScript());
+    m_importers.push_back(new ThemeImporterINI());
     m_importers.push_back(new ThemeImporterASM());
     m_importers.push_back(new ThemeImporterBatch());
-    m_importers.push_back(new EclipsePythonThemeImporter());
+    m_importers.push_back(new ThemeImporterPython());
     m_importers.push_back(new ThemeImporterCobra());
     m_importers.push_back(new ThemeImporterCobraAlt());
-    m_importers.push_back(new EclipseFortranThemeImporter());
-    m_importers.push_back(new EclipseInnoSetupThemeImporter());
-    m_importers.push_back(new EclipseJavaThemeImporter());
-    m_importers.push_back(new EclipseLuaThemeImporter());
-    m_importers.push_back(new EclipseScriptThemeImporter());
-    m_importers.push_back(new EclipseSQLThemeImporter());
-    m_importers.push_back(new EclipseSCSSThemeImporter());
+    m_importers.push_back(new ThemeImporterFortran());
+    m_importers.push_back(new ThemeImporterInnoSetup());
+    m_importers.push_back(new ThemeImporterJava());
+    m_importers.push_back(new ThemeImporterLua());
+    m_importers.push_back(new ThemeImporterScript());
+    m_importers.push_back(new ThemeImporterSQL());
+    m_importers.push_back(new ThemeImporterSCSS());
     m_importers.push_back(new ThemeImporterDockerfile());
-    m_importers.push_back(new EclipseYAMLThemeImporter());
-    m_importers.push_back(new EclipseRubyThemeImporter());
+    m_importers.push_back(new ThemeImporterYAML());
+    m_importers.push_back(new ThemeImporterRuby());
 #if wxCHECK_VERSION(3, 1, 0)
-    m_importers.push_back(new EclipseRustThemeImporter());
-    m_importers.push_back(new EclipseJsonThemeImporter());
+    m_importers.push_back(new ThemeImporterRust());
+    m_importers.push_back(new ThemeImporterJson());
 #endif
 }
 
-EclipseThemeImporterManager::~EclipseThemeImporterManager() {}
+ThemeImporterManager::~ThemeImporterManager() {}
 
-wxString EclipseThemeImporterManager::Import(const wxString& theme_file)
+wxString ThemeImporterManager::Import(const wxString& theme_file)
 {
     wxString name;
-    EclipseThemeImporterBase::List_t::iterator iter = m_importers.begin();
+    ThemeImporterBase::List_t::iterator iter = m_importers.begin();
     for(; iter != m_importers.end(); ++iter) {
         auto lexer = (*iter)->Import(theme_file);
         if(name.empty()) {

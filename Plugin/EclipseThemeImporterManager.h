@@ -41,10 +41,10 @@ public:
 
     /**
      * @brief import the XML and create a lexer out of it
-     * @param eclipseXml path to the XML file
+     * @param theme_file path to the XML file
      * @return the new theme name
      */
-    wxString Import(const wxString& eclipseXml);
+    wxString Import(const wxString& theme_file);
 };
 
 #endif // ECLIPSETHEMEIMPORTERMANAGER_H

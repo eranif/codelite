@@ -115,7 +115,7 @@ public:
     /**
      * @brief load eclispe theme (in xml format)
      */
-    LexerConf::Ptr_t InitializeImport(const wxFileName& eclipseXml, const wxString& langName, int langId);
+    LexerConf::Ptr_t InitializeImport(const wxFileName& theme_file, const wxString& langName, int langId);
 
     /**
      * @brief Finalize the import by adding the common lexer part (such as the fold margin, text selection etc)

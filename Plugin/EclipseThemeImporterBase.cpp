@@ -34,11 +34,11 @@ bool EclipseThemeImporterBase::GetProperty(const wxString& name, EclipseThemeImp
     return false;
 }
 
-LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& eclipseXml, const wxString& langName,
+LexerConf::Ptr_t EclipseThemeImporterBase::InitializeImport(const wxFileName& theme_file, const wxString& langName,
                                                             int langId)
 {
     m_langName = langName;
-    if(!m_doc.Load(eclipseXml.GetFullPath()))
+    if(!m_doc.Load(theme_file.GetFullPath()))
         return NULL;
 
     LexerConf::Ptr_t lexer(new LexerConf());

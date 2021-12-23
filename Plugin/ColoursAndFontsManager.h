@@ -181,7 +181,7 @@ public:
     /**
      * @brief import an eclipse theme into CodeLite, return its name
      */
-    wxString ImportEclipseTheme(const wxString& eclipseXml);
+    wxString ImportEclipseTheme(const wxString& theme_file);
 
     /**
      * @brief callback called by the helper thread indicating that it finished caching

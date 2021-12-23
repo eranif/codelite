@@ -66,12 +66,12 @@ EclipseThemeImporterManager::EclipseThemeImporterManager()
 
 EclipseThemeImporterManager::~EclipseThemeImporterManager() {}
 
-wxString EclipseThemeImporterManager::Import(const wxString& eclipseXml)
+wxString EclipseThemeImporterManager::Import(const wxString& theme_file)
 {
     wxString name;
     EclipseThemeImporterBase::List_t::iterator iter = m_importers.begin();
     for(; iter != m_importers.end(); ++iter) {
-        auto lexer = (*iter)->Import(eclipseXml);
+        auto lexer = (*iter)->Import(theme_file);
         if(name.empty()) {
             name = lexer->GetThemeName();
         }

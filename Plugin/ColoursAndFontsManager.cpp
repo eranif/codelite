@@ -686,11 +686,11 @@ void ColoursAndFontsManager::RestoreDefaults()
     SetGlobalTheme(globalTheme);
 }
 
-wxString ColoursAndFontsManager::ImportEclipseTheme(const wxString& eclipseXml)
+wxString ColoursAndFontsManager::ImportEclipseTheme(const wxString& theme_file)
 {
-    if(!eclipseXml.IsEmpty()) {
+    if(!theme_file.IsEmpty()) {
         EclipseThemeImporterManager importer;
-        return importer.Import(eclipseXml);
+        return importer.Import(theme_file);
     }
     return wxEmptyString;
 }

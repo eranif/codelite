@@ -113,17 +113,17 @@ if (UNIX)
         set(MSW 1)
     endif()
 elseif(WIN32)
-    execute_process(COMMAND sh "-c" "uname -o|grep Msys|cut -d_ -f1"
+    execute_process(COMMAND sh "-c" "uname -o|grep -E 'Msys|Cygwin'|cut -d_ -f1"
                     OUTPUT_VARIABLE _OS_NAME OUTPUT_STRIP_TRAILING_WHITESPACE)
-    string(FIND "${_OS_NAME}" "Msys" POS)
-    if (POS GREATER -1)
+
+    if ("${_OS_NAME}" MATCHES "Msys|Cygwin")
         set(MSYS_SHELL 1)
         set(MSW 1)
-    else(POS GREATER -1)
+    else()
         set(WIN_CMD_SHELL 1)
         set(MSW 1)
         execute_process(COMMAND sh "-c" "uname -s"
                         OUTPUT_VARIABLE _OS_NAME OUTPUT_STRIP_TRAILING_WHITESPACE)
         message(FATAL_ERROR "${_OS_NAME}")
-    endif(POS GREATER -1)
+    endif()
 endif() # UNIX -> WIN32

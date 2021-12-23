@@ -1,6 +1,6 @@
 #include "ColoursAndFontsManager.h"
 
-#include "EclipseThemeImporterManager.h"
+#include "ThemeImporterManager.hpp"
 #include "JSON.h"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"

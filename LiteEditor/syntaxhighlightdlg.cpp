@@ -26,8 +26,8 @@
 #include "syntaxhighlightdlg.h"
 
 #include "ColoursAndFontsManager.h"
-#include "EclipseCXXThemeImporter.h"
-#include "EclipseThemeImporterManager.h"
+#include "ThemeImporterCXX.hpp"
+#include "ThemeImporterManager.hpp"
 #include "NewThemeDialog.h"
 #include "clSystemSettings.h"
 #include "clZipReader.h"

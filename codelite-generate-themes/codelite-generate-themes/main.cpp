@@ -1,15 +1,15 @@
 #include "ColoursAndFontsManager.h"
-#include "EclipseThemeImporterManager.h"
 #include "ImportThemesDialog.h"
+#include "ThemeImporterManager.hpp"
 #include "cl_standard_paths.h"
 #include "file_logger.h"
-#include "wx/arrstr.h"
-#include "wx/filefn.h"
-#include "wx/filename.h"
 
 #include <iostream>
+#include <wx/arrstr.h>
 #include <wx/crt.h>
 #include <wx/dir.h>
+#include <wx/filefn.h>
+#include <wx/filename.h>
 #include <wx/image.h>
 #include <wx/imagjpeg.h>
 #include <wx/imagpng.h>
@@ -24,17 +24,32 @@ using namespace std;
 
 namespace
 {
-void impomrt_eclipse_theme_files(const wxString& input_dir, const wxString& output_dir)
+void import_files(const wxString& input_dir, const wxString& output_dir)
 {
+    wxFileName output_file(output_dir, "lexers.json");
+    if(output_file.FileExists()) {
+        wxRenameFile(output_file.GetFullPath(), output_file.GetFullPath() + ".orig");
+    }
+
     clStandardPaths::Get().SetUserDataDir(output_dir);
     FileLogger::OpenLog("codelite-theme-importer.log", FileLogger::Dbg);
-    EclipseThemeImporterManager importer;
+
+    ThemeImporterManager importer;
 
     // get list XML files
-    wxArrayString files;
-    wxDir::GetAllFiles(input_dir, &files, "*.xml");
-    for(const wxString& file : files) {
-        clDEBUG() << "Importing" << file << "..." << importer.Import(file) << endl;
+    {
+        wxArrayString xml_files;
+        wxDir::GetAllFiles(input_dir, &xml_files, "*.xml");
+        for(const wxString& file : xml_files) {
+            clDEBUG() << "Importing Eclipse Theme:" << file << "..." << importer.Import(file) << endl;
+        }
+    }
+    {
+        wxArrayString json_files;
+        wxDir::GetAllFiles(input_dir, &json_files, "*.json");
+        for(const wxString& file : json_files) {
+            clDEBUG() << "Importing VSCode Theme:" << file << "..." << importer.Import(file) << endl;
+        }
     }
 
     // save the changes
@@ -70,7 +85,7 @@ public:
         if(dlg.ShowModal() == wxID_OK) {
             wxString input_dir = dlg.GetInputDirectory();
             wxString output_dir = dlg.GetOutputDirectory();
-            impomrt_eclipse_theme_files(input_dir, output_dir);
+            import_files(input_dir, output_dir);
             ::wxMessageBox("CodeLite themes generated successfully!");
         }
         return false;

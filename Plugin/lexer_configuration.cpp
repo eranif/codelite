@@ -265,7 +265,9 @@ wxFont LexerConf::GetFontForSyle(int styleId, const wxWindow* win) const
     return wxNullFont;
 }
 
-static wxColor GetInactiveColor(const StyleProperty& defaultStyle)
+namespace
+{
+wxColor GetInactiveColor(const StyleProperty& defaultStyle)
 {
     wxColour fg = defaultStyle.GetFgColour();
     wxColour bg = defaultStyle.GetBgColour();
@@ -273,6 +275,36 @@ static wxColor GetInactiveColor(const StyleProperty& defaultStyle)
     return fg.ChangeLightness(is_dark ? 50 : 150);
 }
 
+wxColour to_wx_colour(const wxString& colour_as_string)
+{
+    return wxColour(colour_as_string);
+#if 0
+    if(!colour_as_string.StartsWith("#")) {
+        return wxColour(colour_as_string);
+    }
+
+    if(colour_as_string.size() == 9) {
+        // encoding with alpha encoded
+        // #RRGGBBAL
+        try {
+            wxString str = colour_as_string.Mid(1); // skip the #
+            std::string cstr = str.ToStdString(wxConvUTF8);
+            // convert to wxUint32
+            wxUint32 num = std::stoi(cstr, nullptr, 16);
+            wxColour c;
+            c.SetRGBA(num);
+            return c;
+
+        } catch(...) {
+            // default
+            return wxColour(colour_as_string);
+        }
+    }
+    // use default conversion
+    return wxColour(colour_as_string);
+#endif
+}
+} // namespace
 #define CL_LINE_MODIFIED_STYLE 200
 #define CL_LINE_SAVED_STYLE 201
 
@@ -365,7 +397,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         switch(sp.GetId()) {
         case WHITE_SPACE_ATTR_ID: {
             // whitespace colour. We dont allow changing the background colour, only the foreground colour
-            wxColour whitespaceColour = sp.GetFgColour();
+            wxColour whitespaceColour = to_wx_colour(sp.GetFgColour());
             if(whitespaceColour.IsOk()) {
                 ctrl->SetWhitespaceForeground(true, whitespaceColour);
             }
@@ -373,16 +405,16 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         }
         case FOLD_MARGIN_ATTR_ID:
             // fold margin foreground colour
-            ctrl->SetFoldMarginColour(true, sp.GetBgColour());
-            ctrl->SetFoldMarginHiColour(true, sp.GetFgColour());
+            ctrl->SetFoldMarginColour(true, to_wx_colour(sp.GetBgColour()));
+            ctrl->SetFoldMarginHiColour(true, to_wx_colour(sp.GetFgColour()));
             break;
         case SEL_TEXT_ATTR_ID: {
             // selection colour
-            if(wxColour(sp.GetBgColour()).IsOk()) {
-                ctrl->SetSelBackground(true, sp.GetBgColour());
+            if(wxColour(to_wx_colour(sp.GetBgColour())).IsOk()) {
+                ctrl->SetSelBackground(true, to_wx_colour(sp.GetBgColour()));
             }
-            if(IsUseCustomTextSelectionFgColour() && wxColour(sp.GetFgColour()).IsOk()) {
-                ctrl->SetSelForeground(true, sp.GetFgColour());
+            if(IsUseCustomTextSelectionFgColour() && wxColour(to_wx_colour(sp.GetFgColour())).IsOk()) {
+                ctrl->SetSelForeground(true, to_wx_colour(sp.GetFgColour()));
             } else {
                 // provide a "dummy" selection colour (we pass 'false' so it does not matter
                 // which colour we use here)
@@ -392,7 +424,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         }
         case CARET_ATTR_ID: {
             // caret colour
-            wxColour caretColour = sp.GetFgColour();
+            wxColour caretColour = to_wx_colour(sp.GetFgColour());
             if(!caretColour.IsOk()) {
                 caretColour = *wxBLACK;
             }
@@ -450,7 +482,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 // we will handle this later
 
             } else {
-                ctrl->StyleSetForeground(sp.GetId(), sp.GetFgColour());
+                ctrl->StyleSetForeground(sp.GetId(), to_wx_colour(sp.GetFgColour()));
 
                 // Inactive state is greater by 64 from its counterpart
                 wxColor inactiveColor = GetInactiveColor(sp);
@@ -459,7 +491,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 // ctrl->StyleSetSize(sp.GetId() + 64, size);
                 ctrl->StyleSetBackground(sp.GetId() + 64, defaultStyle.GetBgColour());
 
-                ctrl->StyleSetBackground(sp.GetId(), sp.GetBgColour());
+                ctrl->StyleSetBackground(sp.GetId(), to_wx_colour(sp.GetBgColour()));
             }
             break;
         }

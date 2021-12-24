@@ -42,15 +42,13 @@ class WXDLLIMPEXP_SDK ThemeImporterBase
 public:
     struct Property {
         wxString colour;
-        bool isBold;
-        bool isItalic;
+        bool isBold = false;
+        bool isItalic = false;
     };
     typedef SmartPtr<ThemeImporterBase> Ptr_t;
     typedef std::list<ThemeImporterBase::Ptr_t> List_t;
 
 protected:
-    wxXmlDocument m_doc;
-
     wxString m_keywords0;
     wxString m_keywords1;
     wxString m_keywords2;
@@ -76,6 +74,8 @@ protected:
     Property m_field;
     Property m_enum;
     wxString m_langName;
+    wxString m_themeName;
+    bool m_isDarkTheme = false;
 
 protected:
     void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const wxString& colour,
@@ -91,6 +91,17 @@ protected:
 
     void AddCommonProperties(LexerConf::Ptr_t lexer);
     void DoSetKeywords(wxString& wordset, const wxString& words);
+    LexerConf::Ptr_t ImportEclipseXML(const wxFileName& theme_file, const wxString& langName, int langId);
+    LexerConf::Ptr_t ImportVSCodeJSON(const wxFileName& theme_file, const wxString& langName, int langId);
+    wxString GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map, const std::vector<wxString>& scopes);
+
+private:
+    /**
+     * @brief get attributes of a given property
+     * @param name the property name
+     * @param prop [output]
+     */
+    bool GetEclipseXmlProperty(const wxXmlDocument& doc, const wxString& name, ThemeImporterBase::Property& prop) const;
 
 public:
     const wxString& GetLangName() const { return m_langName; }
@@ -123,18 +134,6 @@ public:
      * and saving it the file system
      */
     void FinalizeImport(LexerConf::Ptr_t lexer);
-
-    /**
-     * @brief get attributes of a given property
-     * @param name the property name
-     * @param prop [output]
-     */
-    bool GetProperty(const wxString& name, ThemeImporterBase::Property& prop) const;
-
-    /**
-     * @brief return true if the theme is valid
-     */
-    bool IsValid() const { return m_doc.IsOk(); }
 
     /**
      * @brief return true if the loaded theme is dark or bright

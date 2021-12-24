@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "quickfindbar.h"
+
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "clBitmapOverlayCtrl.h"
@@ -42,6 +43,7 @@
 #include "manager.h"
 #include "plugin.h"
 #include "stringsearcher.h"
+
 #include <wx/dcbuffer.h>
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
@@ -97,11 +99,13 @@ void CenterLine(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
     if(firstVisibleLine < 0) {
         firstVisibleLine = 0;
     }
-    ctrl->EnsureVisible(firstVisibleLine);
-    ctrl->SetFirstVisibleLine(firstVisibleLine);
+
+    ctrl->EnsureCaretVisible();
+    // make sure both ends of the match are visible
+    ctrl->GotoPos(start_pos);
+    ctrl->GotoPos(end_pos);
     ctrl->SetSelectionStart(start_pos);
-    ctrl->SetSelectionEnd(start_pos);
-    ctrl->SetCurrentPos(end_pos);
+    ctrl->SetSelectionEnd(end_pos);
 }
 
 } // namespace

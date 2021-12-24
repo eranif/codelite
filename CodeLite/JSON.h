@@ -94,8 +94,8 @@ public:
     bool toBool(bool defaultValue = false) const;
     wxString toString(const wxString& defaultValue = wxEmptyString) const;
     wxArrayString toArrayString(const wxArrayString& defaultValue = wxArrayString()) const;
-    wxVector<double> toArray(const wxVector<double>& defaultValue = {}) const;
-    wxVector<int> toArray(const wxVector<int>& defaultValue = {}) const;
+    std::vector<double> toDoubleArray(const std::vector<double>& defaultValue = {}) const;
+    std::vector<int> toIntArray(const std::vector<int>& defaultValue = {}) const;
     JSONItem arrayItem(int pos) const;
 
     // Retuen the object type
@@ -165,7 +165,7 @@ public:
     JSONItem& addProperty(const wxString& name, const wxFileName& filename);
     JSONItem& addProperty(const wxString& name, const std::vector<int>& arr_int);
     JSONItem& addProperty(const wxString& name, const wxVector<int>& arr_int);
-    
+
 #if wxUSE_GUI
     JSONItem& addProperty(const wxString& name, const wxSize& sz);
     JSONItem& addProperty(const wxString& name, const wxPoint& pt);
@@ -197,6 +197,10 @@ public:
      */
     void arrayAppend(const JSONItem& element);
     void arrayAppend(const wxString& value);
+    void arrayAppend(const char* value);
+    void arrayAppend(const std::string& value);
+    void arrayAppend(int number);
+    void arrayAppend(double number);
 
     bool isOk() const { return m_json != NULL; }
 

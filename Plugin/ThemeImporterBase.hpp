@@ -54,6 +54,7 @@ protected:
     wxString m_keywords2;
     wxString m_keywords3;
     wxString m_keywords4;
+    wxString m_keywords5;
     wxString m_fileExtensions;
     Property m_background;
     Property m_foreground;
@@ -77,10 +78,23 @@ protected:
     wxString m_themeName;
     bool m_isDarkTheme = false;
 
+    // the index for special word sets
+    int m_classesIndex = wxNOT_FOUND;
+    int m_functionsIndex = wxNOT_FOUND;
+    int m_localsIndex = wxNOT_FOUND;
+    int m_othersIndex = wxNOT_FOUND;
+
 protected:
     void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const wxString& colour,
                      const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false);
-
+    void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const Property& prop)
+    {
+        AddProperty(lexer, id, name, prop.colour, m_background.colour, prop.isBold, prop.isItalic, false);
+    }
+    void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const Property& prop)
+    {
+        AddProperty(lexer, id, name, prop.colour, m_background.colour, prop.isBold, prop.isItalic, false);
+    }
     void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const wxString& colour,
                      const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false)
     {
@@ -115,17 +129,24 @@ public:
     void SetKeywords2(const wxString& keywords2) { DoSetKeywords(this->m_keywords2, keywords2); }
     void SetKeywords3(const wxString& keywords3) { DoSetKeywords(this->m_keywords3, keywords3); }
     void SetKeywords4(const wxString& keywords4) { DoSetKeywords(this->m_keywords4, keywords4); }
+    void SetKeywords5(const wxString& keywords4) { DoSetKeywords(this->m_keywords5, keywords4); }
     const wxString& GetKeywords0() const { return m_keywords0; }
     const wxString& GetKeywords1() const { return m_keywords1; }
     const wxString& GetKeywords2() const { return m_keywords2; }
     const wxString& GetKeywords3() const { return m_keywords3; }
     const wxString& GetKeywords4() const { return m_keywords4; }
+    const wxString& GetKeywords5() const { return m_keywords5; }
+
+    int GetClassWordSetIndex() const { return m_classesIndex; }
+    int GetLocalsSetIndex() const { return m_localsIndex; }
+    int GetFunctionWordSetIndex() const { return m_functionsIndex; }
+    int GetOthersWordSetIndex() const { return m_othersIndex; }
 
 public:
     ThemeImporterBase();
     virtual ~ThemeImporterBase();
     /**
-     * @brief load eclispe theme (in xml format)
+     * @brief intiailise the import by reading base parts of the lexer
      */
     LexerConf::Ptr_t InitializeImport(const wxFileName& theme_file, const wxString& langName, int langId);
 

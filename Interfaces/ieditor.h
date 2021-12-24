@@ -538,6 +538,14 @@ public:
      * @brief return a string representing all the local variables coloured by this editor
      */
     virtual const wxString& GetKeywordLocals() const = 0;
+    /**
+     * @brief return a string representing all the methods coloured by this editor
+     */
+    virtual const wxString& GetKeywordMethods() const = 0;
+    /**
+     * @brief return a string representing all the other tokens
+     */
+    virtual const wxString& GetKeywordOthers() const = 0;
 
     /**
      * @brief get the options associated with this editor
@@ -588,7 +596,8 @@ public:
     /**
      * @brief set semantic tokens for this editor
      */
-    virtual void SetSemanticTokens(const wxString& classes, const wxString& variables) = 0;
+    virtual void SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+                                   const wxString& others) = 0;
 
     /**
      * @brief similar to wxStyledTextCtrl::GetColumn(), but treat TAB as a single char

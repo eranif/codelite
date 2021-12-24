@@ -65,7 +65,7 @@ private:
     virtual ~ColoursAndFontsManager();
 
     void LoadOldXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers = false);
-    LexerConf::Ptr_t DoAddLexer(wxXmlNode* node);
+    LexerConf::Ptr_t DEPRECATRED_DoAddLexer(wxXmlNode* node);
     LexerConf::Ptr_t DoAddLexer(JSONItem json);
     void Clear();
     wxFileName GetConfigFile() const;

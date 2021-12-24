@@ -34,17 +34,6 @@ namespace
 {
 const char msg_terminator[] = ">>codelite-remote-msg-end<<\n";
 size_t msg_terminator_len = sizeof(msg_terminator) - 1;
-
-FileLogger& operator<<(FileLogger& logger, const std::vector<wxString>& arr)
-{
-    wxArrayString wxarr;
-    wxarr.reserve(arr.size());
-    for(const wxString& elem : arr) {
-        wxarr.Add(elem);
-    }
-    logger << wxarr;
-    return logger;
-}
 } // namespace
 
 namespace

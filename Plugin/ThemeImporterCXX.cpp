@@ -9,6 +9,7 @@
 
 ThemeImporterCXX::ThemeImporterCXX()
 {
+    // Primary keywords and identifiers
     SetKeywords0("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast "
                  "continue default delete do double dynamic_cast else enum explicit export extern false final "
                  "float for friend goto if inline int long mutable namespace new not not_eq operator or "
@@ -17,12 +18,7 @@ ThemeImporterCXX::ThemeImporterCXX()
                  "union unsigned using virtual void volatile wchar_t while xor xor_eq alignas alignof "
                  "char16_t char32_t constexpr decltype noexcept nullptr static_assert thread_local");
 
-    SetKeywords1("abstract boolean break byte case catch char class const continue debugger default delete "
-                 "do double else enum export extends final finally float for function goto if implements "
-                 "import in instanceof int interface long native new package private protected public "
-                 "return short static super switch synchronized this throw throws transient try typeof var "
-                 "void volatile while with");
-
+    // Documentation comment keywords
     SetKeywords2("a addindex addtogroup anchor arg attention author b brief bug c callgraph callergraph category class "
                  "code "
                  "cond copybrief copydetails copydoc 	date def defgroup deprecated details dir  dontinclude dot "
@@ -38,42 +34,48 @@ ThemeImporterCXX::ThemeImporterCXX()
                  "see showinitializer since skip skipline struct 	subpage  subsection subsubsection test throw "
                  "todo "
                  "tparam typedef union until var verbatim verbinclude version warning weakgroup xmlonly xrefitem");
-    SetFileExtensions("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.js;*.javascript;*.ipp;*.hxx;*.h++");
+
+    // Secondary keywords and identifiers
+    m_functionsIndex = 1;
+    // Global classes and typedefs
+    m_classesIndex = 3;
+    // PP definitions
+    m_othersIndex = 4;
+
+    // Special task markers
+    // will be styled with SCE_C_TASKMARKER
+    SetKeywords5("TODO FIXME BUG ATTN");
+
+    // Preprocessor definitions (we are going to use it for functions)
+    SetFileExtensions("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++");
 }
 
 ThemeImporterCXX::~ThemeImporterCXX() {}
 
 LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "c++", 3);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "c++", wxSTC_LEX_CPP);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties
-    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "1", "Common C style comment", m_multiLineComment.colour, m_background.colour,
-                m_multiLineComment.isBold, m_multiLineComment.isItalic);
-    AddProperty(lexer, "2", "Common C++ style comment", m_singleLineComment.colour, m_background.colour,
-                m_singleLineComment.isBold, m_singleLineComment.isItalic);
-    AddProperty(lexer, "3", "Doxygen C style comment", m_javadoc.colour, m_background.colour, m_javadoc.isBold,
-                m_javadoc.isItalic);
-    AddProperty(lexer, "4", "Number", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
-    AddProperty(lexer, "5", "C++ keyword", m_keyword.colour, m_background.colour, m_keyword.isBold, m_keyword.isItalic);
-    AddProperty(lexer, "6", "String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
-    AddProperty(lexer, "7", "Character", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
-    AddProperty(lexer, "8", "Uuid", m_number.colour, m_background.colour, m_number.isBold, m_number.isItalic);
-    AddProperty(lexer, "9", "Preprocessor", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "10", "Operator", m_oper.colour, m_background.colour);
-    AddProperty(lexer, "11", "Identifier", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "12", "Open String", m_string.colour, m_background.colour, m_string.isBold, m_string.isItalic);
-    AddProperty(lexer, "15", "Doxygen C++ style comment", m_javadoc.colour, m_background.colour, m_javadoc.isBold,
-                m_javadoc.isItalic);
-    AddProperty(lexer, "17", "Doxygen keyword", m_javadocKeyword.colour, m_background.colour, m_javadocKeyword.isBold,
-                m_javadocKeyword.isItalic);
-    AddProperty(lexer, "18", "Doxygen keyword error", m_javadocKeyword.colour, m_background.colour,
-                m_javadocKeyword.isBold, m_javadocKeyword.isItalic);
-    AddProperty(lexer, "16", "Workspace tags", m_klass.colour, m_background.colour, m_klass.isBold, m_klass.isItalic);
-    AddProperty(lexer, "19", "Local variables", m_variable.colour, m_background.colour, m_variable.isBold,
-                m_variable.isItalic);
+    AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_C_COMMENT, "Common C style comment", m_multiLineComment);
+    AddProperty(lexer, wxSTC_C_COMMENTLINE, "Common C++ style comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_C_COMMENTDOC, "Doxygen C style comment", m_javadoc);
+    AddProperty(lexer, wxSTC_C_NUMBER, "Number", m_number);
+    AddProperty(lexer, wxSTC_C_WORD, "C++ keyword", m_keyword);
+    AddProperty(lexer, wxSTC_C_STRING, "String", m_string);
+    AddProperty(lexer, wxSTC_C_CHARACTER, "Character", m_string);
+    AddProperty(lexer, wxSTC_C_UUID, "Uuid", m_number);
+    AddProperty(lexer, wxSTC_C_PREPROCESSOR, "Preprocessor", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_C_OPERATOR, "Operator", m_oper);
+    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string);
+    AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Doxygen C++ style comment", m_javadoc);
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Doxygen keyword", m_javadocKeyword);
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Doxygen keyword error", m_javadocKeyword);
+    AddProperty(lexer, wxSTC_C_WORD2, "Functions", m_function);
+    AddProperty(lexer, wxSTC_C_GLOBALCLASS, "Classes", m_klass);
 
     FinalizeImport(lexer);
     return lexer;

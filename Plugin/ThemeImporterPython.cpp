@@ -7,6 +7,7 @@ ThemeImporterPython::ThemeImporterPython()
         "is lambda not or pass print raise return try while with yield True False None pass");
     SetFileExtensions("*.py;waf;wscript;wscript_build");
     m_langName = "python";
+    m_localsIndex = 1;
 }
 
 ThemeImporterPython::~ThemeImporterPython() {}
@@ -14,22 +15,22 @@ ThemeImporterPython::~ThemeImporterPython() {}
 LexerConf::Ptr_t ThemeImporterPython::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_PYTHON);
-    AddProperty(lexer, wxSTC_P_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_COMMENTLINE, "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_COMMENTLINE, "Number", m_number.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_STRING, "String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_CHARACTER, "Character", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_WORD, "Word", m_keyword.colour, m_background.colour); // keywords
-    AddProperty(lexer, wxSTC_P_TRIPLE, "Triple", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_TRIPLEDOUBLE, "Double Triple", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_CLASSNAME, "Class Name", m_klass.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_DEFNAME, "Def Name", m_function.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_OPERATOR, "Operator", m_oper.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_IDENTIFIER, "Identifier", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_COMMENTBLOCK, "Comment block", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_STRINGEOL, "String EOL", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_P_WORD2, "Classes", m_klass.colour, m_background.colour); // local variables
-    AddProperty(lexer, wxSTC_P_DECORATOR, "Decorator", m_klass.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_P_DEFAULT, "Default", m_foreground);
+    AddProperty(lexer, wxSTC_P_COMMENTLINE, "Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_P_COMMENTLINE, "Number", m_number);
+    AddProperty(lexer, wxSTC_P_STRING, "String", m_string);
+    AddProperty(lexer, wxSTC_P_CHARACTER, "Character", m_string);
+    AddProperty(lexer, wxSTC_P_WORD, "Word", m_keyword);// keywords
+    AddProperty(lexer, wxSTC_P_TRIPLE, "Triple", m_multiLineComment);
+    AddProperty(lexer, wxSTC_P_TRIPLEDOUBLE, "Double Triple", m_multiLineComment);
+    AddProperty(lexer, wxSTC_P_CLASSNAME, "Class Name", m_klass);
+    AddProperty(lexer, wxSTC_P_DEFNAME, "Def Name", m_function);
+    AddProperty(lexer, wxSTC_P_OPERATOR, "Operator", m_oper);
+    AddProperty(lexer, wxSTC_P_IDENTIFIER, "Identifier", m_variable);
+    AddProperty(lexer, wxSTC_P_COMMENTBLOCK, "Comment block", m_multiLineComment);
+    AddProperty(lexer, wxSTC_P_STRINGEOL, "String EOL", m_string);
+    AddProperty(lexer, wxSTC_P_WORD2, "Locals", m_field);
+    AddProperty(lexer, wxSTC_P_DECORATOR, "Decorator", m_klass);
     FinalizeImport(lexer);
     return lexer;
 }

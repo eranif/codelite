@@ -10,7 +10,7 @@
 
 ThemeImporterJavaScript::ThemeImporterJavaScript()
 {
-    // Reserved words
+    // Primary keywords and identifiers
     SetKeywords0("abstract arguments boolean break byte "
                  "case catch char class const "
                  "continue debugger default delete do "
@@ -25,7 +25,7 @@ ThemeImporterJavaScript::ThemeImporterJavaScript()
                  "try typeof var void volatile "
                  "while with yield prototype undefined StringtoString NaN ");
 
-    // Used for wxSTC_C_WORD2 ("functions")
+    // Secondary keywords and identifiers
     SetKeywords1(
         "activeElement addEventListener adoptNode anchors applets "
         "baseURI body close cookie createAttribute createComment createDocumentFragment createElement createTextNode "
@@ -34,10 +34,34 @@ ThemeImporterJavaScript::ThemeImporterJavaScript()
         "head images implementation importNode inputEncoding lastModified links normalize normalizeDocument open "
         "querySelector"
         "querySelectorAll readyState referrer removeEventListener renameNode scripts strictErrorChecking title URL "
-        "write writeln Math NaN name NumberObject valueOf");
+        "write writeln NaN name NumberObject valueOf");
+
+    // Documentation comment keywords
+    SetKeywords2("a addindex addtogroup anchor arg attention author b brief bug c callgraph callergraph category class "
+                 "code "
+                 "cond copybrief copydetails copydoc 	date def defgroup deprecated details dir  dontinclude dot "
+                 "dotfile e else elseif em endcode endcond enddot endhtmlonly endif endlatexonly endlink endmanonly "
+                 "endmsc "
+                 "endverbatim 	endxmlonly  enum example exception extends  file fn headerfile hideinitializer "
+                 "htmlinclude htmlonly if ifnot image implements include includelineno ingroup internal invariant "
+                 "	"
+                 "interface  latexonly li line link mainpage manonly memberof msc n name namespace nosubgrouping note "
+                 "overload p package page par paragraph param post pre private privatesection property 	protected  "
+                 "protectedsection protocol public publicsection ref relates relatesalso remarks return retval sa "
+                 "section "
+                 "see showinitializer since skip skipline struct 	subpage  subsection subsubsection test throw "
+                 "todo "
+                 "tparam typedef union until var verbatim verbinclude version warning weakgroup xmlonly xrefitem");
 
     // Used for wxSTC_C_GLOBALCLASS ("classes")
-    SetKeywords3("Math Array Date document window");
+    SetKeywords3("Math Array Date document window NumberObject URL");
+
+    // used for functions
+    m_functionsIndex = 1;
+
+    // Global classes and typedefs, it already contains values, so be careful here
+    // so when used, append the values
+    m_classesIndex = 3;
     SetFileExtensions("*.js;*.javascript;*.qml;*.json;*.ts");
 }
 
@@ -45,7 +69,7 @@ ThemeImporterJavaScript::~ThemeImporterJavaScript() {}
 
 LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "javascript", 3);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "javascript", wxSTC_LEX_CPP);
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties
@@ -54,7 +78,7 @@ LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& theme_file)
                 m_multiLineComment.isBold, m_multiLineComment.isItalic);
     AddProperty(lexer, wxSTC_C_COMMENTLINE, "Single line comment", m_singleLineComment.colour, m_background.colour,
                 m_singleLineComment.isBold, m_singleLineComment.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTDOC, "Doxygen block comment", m_javadoc.colour, m_background.colour,
+    AddProperty(lexer, wxSTC_C_COMMENTDOC, "Javadoc block comment", m_javadoc.colour, m_background.colour,
                 m_javadoc.isBold, m_javadoc.isItalic);
     AddProperty(lexer, wxSTC_C_NUMBER, "Number", m_number.colour, m_background.colour, m_number.isBold,
                 m_number.isItalic);
@@ -68,15 +92,15 @@ LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string.colour, m_background.colour, m_string.isBold,
                 m_string.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Doxygen single line comment", m_javadoc.colour, m_background.colour,
+    AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Javadoc single line comment", m_javadoc.colour, m_background.colour,
                 m_javadoc.isBold, m_javadoc.isItalic);
     AddProperty(lexer, wxSTC_C_WORD2, "JavaScript functions", m_variable.colour, m_background.colour, m_javadoc.isBold,
                 m_javadoc.isItalic);
     AddProperty(lexer, wxSTC_C_GLOBALCLASS, "JavaScript global classes", m_klass.colour, m_background.colour,
                 m_javadoc.isBold, m_javadoc.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Doxygen keyword", m_javadocKeyword.colour, m_background.colour,
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Javadoc keyword", m_javadocKeyword.colour, m_background.colour,
                 m_javadocKeyword.isBold, m_javadocKeyword.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Doxygen keyword error", m_javadocKeyword.colour,
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Javadoc keyword error", m_javadocKeyword.colour,
                 m_background.colour, m_javadocKeyword.isBold, m_javadocKeyword.isItalic);
     FinalizeImport(lexer);
     return lexer;

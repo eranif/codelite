@@ -30,7 +30,7 @@ ThemeImporterPHP::~ThemeImporterPHP() {}
 
 LexerConf::Ptr_t ThemeImporterPHP::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "php", 4);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "php", wxSTC_LEX_HTML);
     CHECK_PTR_RET_NULL(lexer);
 
     // PHP can also be found in a file which contains HTML and JavaScript

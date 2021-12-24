@@ -4,6 +4,7 @@
 
 ThemeImporterASM::ThemeImporterASM()
 {
+    // CPU instructions
     SetKeywords0("aaa aad aam aas adc add and call cbw clc cld cli cmc cmp cmps cmpsb cmpsw cwd daa das dec div esc "
                  "hlt idiv imul in inc int into iret ja jae jb jbe jc jcxz je jg jge jl jle jmp jna jnae jnb jnbe jnc "
                  "jne jng jnge jnl jnle jno jnp jns jnz jo jp jpe jpo js jz lahf lds lea les lods lodsb lodsw loop "
@@ -21,7 +22,7 @@ ThemeImporterASM::ThemeImporterASM()
                  "cmpxchg8b loadall loadall286 ibts icebp int1 int3 int01 int03 iretw popaw popfw pushaw pushfw rdmsr "
                  "rdpmc rdshr rdtsc rsdc rsldt rsm rsts salc smi smint smintold svdc svldt svts syscall sysenter "
                  "sysexit sysret ud0 ud1 ud2 umov xbts wrmsr wrshr callq retq");
-
+    // FPU instructions
     SetKeywords1("f2xm1 fabs fadd faddp fbld fbstp fchs fclex fcom fcomp fcompp fdecstp fdisi fdiv fdivp fdivr fdivrp "
                  "feni ffree fiadd ficom ficomp fidiv fidivr fild fimul fincstp finit fist fistp fisub fisubr fld fld1 "
                  "fldcw fldenv fldenvw fldl2e fldl2t fldlg2 fldln2 fldpi fldz fmul fmulp fnclex fndisi fneni fninit "
@@ -30,9 +31,11 @@ ThemeImporterASM::ThemeImporterASM()
                  "fxtract fyl2x fyl2xp1 fsetpm fcos fldenvd fnsaved fnstenvd fprem1 frstord fsaved fsin fsincos "
                  "fstenvd fucom fucomp fucompp fcomi fcomip ffreep fcmovb fcmove fcmovbe fcmovu fcmovnb fcmovne "
                  "fcmovnbe fcmovnu");
+    // Registers
     SetKeywords2("ah al ax bh bl bp bx ch cl cr0 cr2 cr3 cr4 cs cx dh di dl dr0 dr1 dr2 dr3 dr6 dr7 ds dx eax ebp ebx "
                  "ecx edi edx es esi esp fs gs si sp ss st tr3 tr4 tr5 tr6 tr7 st0 st1 st2 st3 st4 st5 st6 st7 mm0 mm1 "
                  "mm2 mm3 mm4 mm5 mm6 mm7 xmm0 xmm1 xmm2 xmm3 xmm4 xmm5 xmm6 xmm7");
+    // Directives
     SetKeywords3(
         ".186 .286 .286c .286p .287 .386 .386c .386p .387 .486 .486p .8086 .8087 .alpha .break .code .const .continue "
         ".cref .data .data? .dosseg .else .elseif .endif .endw .err .err1 .err2 .errb .errdef .errdif .errdifi .erre "
@@ -53,6 +56,7 @@ ThemeImporterASM::ThemeImporterASM()
         "%endrep %exitrep %include %push %pop %repl struct endstruc istruc at iend align alignb %arg %stacksize %local "
         "%line bits use16 use32 section absolute extern global common cpu org section group import export");
 
+    // Directive operands
     SetKeywords4("$ ? @b @f addr basic byte c carry? dword far far16 fortran fword near near16 overflow? parity? "
                  "pascal qword real4 real8 real10 sbyte sdword sign? stdcall sword syscall tbyte vararg word zero? "
                  "flat near32 far32 abs all assumes at casemap common compact cpu dotname emulator epilogue error "

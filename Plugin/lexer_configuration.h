@@ -51,6 +51,11 @@ class WXDLLIMPEXP_SDK LexerConf
     wxString m_themeName;
     size_t m_flags;
 
+    int m_wordSetClassIndex = wxNOT_FOUND;
+    int m_wordSetFunctionsIndex = wxNOT_FOUND;
+    int m_wordSetLocals = wxNOT_FOUND;
+    int m_wordSetOthers = wxNOT_FOUND;
+
 public:
     typedef SmartPtr<LexerConf> Ptr_t;
 
@@ -106,6 +111,18 @@ public:
      * @param json
      */
     void FromJSON(const JSONItem& json);
+
+    void SetWordSetClassIndex(int wordSetClassIndex) { this->m_wordSetClassIndex = wordSetClassIndex; }
+    int GetWordSetClassIndex() const { return m_wordSetClassIndex; }
+
+    void SetWordSetFunctionsIndex(int wordSetFunctionsIndex) { this->m_wordSetFunctionsIndex = wordSetFunctionsIndex; }
+    void SetWordSetLocalsIndex(int wordSetLocalsIndex) { this->m_wordSetLocals = wordSetLocalsIndex; }
+
+    void SetWordSetOthersIndex(int othersIndex) { this->m_wordSetOthers = othersIndex; }
+    int GetWordSetOthersIndex() const { return m_wordSetOthers; }
+
+    int GetWordSetFunctionsIndex() const { return m_wordSetFunctionsIndex; }
+    int GetWordSetLocalsIndex() const { return m_wordSetLocals; }
 
 public:
     LexerConf();

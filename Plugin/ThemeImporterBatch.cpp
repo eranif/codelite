@@ -2,9 +2,14 @@
 
 ThemeImporterBatch::ThemeImporterBatch()
 {
+    // Internal Commands
     SetKeywords0("rem set if exist errorlevel for in do break call chcp cd chdir choice cls country ctty date del "
                  "erase dir echo exit goto loadfix loadhigh mkdir md move path pause prompt rename ren rmdir rd shift "
                  "time type ver verify vol com con lpt nul color copy defined else not start off");
+
+    // External Commands
+    SetKeywords1("");
+
     SetFileExtensions("*.bat;*.batch");
 }
 

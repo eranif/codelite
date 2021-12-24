@@ -27,6 +27,9 @@
 #define FILELOGGER_H
 
 #include "codelite_exports.h"
+#include "macros.h"
+
+#include <wx/colour.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/stopwatch.h>
@@ -66,14 +69,12 @@ public:
 
     int GetRequestedLogLevel() const { return _requestedLogLevel; }
     static int GetCurrentLogLevel() { return m_verbosity; }
-    
+
     /**
      * @brief return true if log_level is lower than the currently set log level
      */
-    static bool CanLog(int log_level) {
-        return log_level <= GetCurrentLogLevel();
-    }
-    
+    static bool CanLog(int log_level) { return log_level <= GetCurrentLogLevel(); }
+
     /**
      * @brief give a thread-id a unique name which will be displayed in log
      */
@@ -114,21 +115,81 @@ public:
         return *this;
     }
 
-    /**
-     * @brief special wxArrayString printing
-     */
-    inline FileLogger& operator<<(const wxArrayString& arr)
+    // special types printing
+    inline FileLogger& operator<<(const std::vector<wxString>& arr)
     {
-        if(GetRequestedLogLevel() > m_verbosity) { return *this; }
-        if(!m_buffer.IsEmpty()) { m_buffer << " "; }
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+        if(!m_buffer.IsEmpty()) {
+            m_buffer << " ";
+        }
         m_buffer << "[";
-        if(!arr.IsEmpty()) {
+        if(!arr.empty()) {
             for(size_t i = 0; i < arr.size(); ++i) {
-                m_buffer << arr.Item(i) << ", ";
+                m_buffer << arr[i] << ", ";
             }
             m_buffer.RemoveLast(2);
         }
         m_buffer << "]";
+        return *this;
+    }
+
+    inline FileLogger& operator<<(const wxStringSet_t& S)
+    {
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+        if(!m_buffer.IsEmpty()) {
+            m_buffer << " ";
+        }
+        m_buffer << "{";
+        if(!S.empty()) {
+            for(const wxString& s : S) {
+                m_buffer << s << ", ";
+            }
+            m_buffer.RemoveLast(2);
+        }
+        m_buffer << "}";
+        return *this;
+    }
+
+    inline FileLogger& operator<<(const wxStringMap_t& M)
+    {
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+        if(!m_buffer.IsEmpty()) {
+            m_buffer << " ";
+        }
+        m_buffer << "{";
+        if(!M.empty()) {
+            for(const auto& vt : M) {
+                m_buffer << "{" << vt.first << ", " << vt.second << "}, ";
+            }
+            m_buffer.RemoveLast(2);
+        }
+        m_buffer << "}";
+        return *this;
+    }
+
+    inline FileLogger& operator<<(const wxArrayString& arr)
+    {
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+        std::vector<wxString> v{ arr.begin(), arr.end() };
+        *this << v;
+        return *this;
+    }
+
+    inline FileLogger& operator<<(const wxColour& colour)
+    {
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+
+        *this << colour.GetAsString(wxC2S_HTML_SYNTAX);
         return *this;
     }
 
@@ -139,8 +200,12 @@ public:
      */
     inline FileLogger& operator<<(const wxString& str)
     {
-        if(GetRequestedLogLevel() > m_verbosity) { return *this; }
-        if(!m_buffer.IsEmpty()) { m_buffer << " "; }
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+        if(!m_buffer.IsEmpty()) {
+            m_buffer << " ";
+        }
         m_buffer << str;
         return *this;
     }
@@ -150,8 +215,12 @@ public:
      */
     inline FileLogger& operator<<(const wxFileName& fn)
     {
-        if(GetRequestedLogLevel() > m_verbosity) { return *this; }
-        if(!m_buffer.IsEmpty()) { m_buffer << " "; }
+        if(GetRequestedLogLevel() > m_verbosity) {
+            return *this;
+        }
+        if(!m_buffer.IsEmpty()) {
+            m_buffer << " ";
+        }
         m_buffer << fn.GetFullPath();
         return *this;
     }
@@ -161,8 +230,12 @@ public:
      */
     template <typename T> FileLogger& Append(const T& elem, int level)
     {
-        if(level > m_verbosity) { return *this; }
-        if(!m_buffer.IsEmpty()) { m_buffer << " "; }
+        if(level > m_verbosity) {
+            return *this;
+        }
+        if(!m_buffer.IsEmpty()) {
+            m_buffer << " ";
+        }
         m_buffer << elem;
         return *this;
     }

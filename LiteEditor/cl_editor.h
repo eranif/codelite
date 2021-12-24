@@ -258,9 +258,9 @@ protected:
     OptionsConfigPtr m_options;
     bool m_hasCCAnnotation;
     wxRichToolTip* m_richTooltip;
-    /// A space delimited list of all the classes in this editor
     wxString m_keywordClasses;
-    /// A space delimited list of all the variables in this editor
+    wxString m_keywordMethods;
+    wxString m_keywordOthers;
     wxString m_keywordLocals;
     int m_editorBitmap = wxNOT_FOUND;
     size_t m_statusBarFields;
@@ -337,13 +337,20 @@ public:
 
     const wxString& GetKeywordClasses() const override { return m_keywordClasses; }
     const wxString& GetKeywordLocals() const override { return m_keywordLocals; }
-    virtual void SetKeywordClasses(const wxString& keywordClasses) { this->m_keywordClasses = keywordClasses; }
-    virtual void SetKeywordLocals(const wxString& keywordLocals) { this->m_keywordLocals = keywordLocals; }
+    const wxString& GetKeywordMethods() const override { return m_keywordMethods; }
+    const wxString& GetKeywordOthers() const override { return m_keywordOthers; }
+
+    // used by other plugins
+    void SetKeywordClasses(const wxString& keywords) { this->m_keywordClasses = keywords; }
+    void SetKeywordLocals(const wxString& keywords) { this->m_keywordLocals = keywords; }
+    void SetKeywordMethods(const wxString& keywords) { this->m_keywordMethods = keywords; }
+    void SetKeywordOthers(const wxString& keywords) { this->m_keywordOthers = keywords; }
 
     /**
      * @brief set semantic tokens for this editor
      */
-    void SetSemanticTokens(const wxString& classes, const wxString& variables) override;
+    void SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+                           const wxString& others) override;
 
     /**
      * @brief split the current selection into multiple carets.

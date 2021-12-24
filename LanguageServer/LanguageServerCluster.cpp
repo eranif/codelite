@@ -278,26 +278,31 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
 
     wxStringSet_t variables_tokens = { "variable", "parameter", "typeParameter", "property" };
     wxStringSet_t classes_tokens = { "class", "enum", "namespace", "type", "struct", "trait", "interface" };
+    wxStringSet_t method_tokens = { "function", "method" };
 
     wxStringSet_t classes_set;
     wxStringSet_t variables_set;
+    wxStringSet_t methods_set;
 
     wxString classes_str;
     wxString variabls_str;
+    wxString method_str;
 
     for(const auto& token : semanticTokens) {
         // is this an interesting token?
         wxString token_type = server->GetSemanticToken(token.token_type);
         bool is_class = classes_tokens.count(token_type) > 0;
         bool is_variable = variables_tokens.count(token_type) > 0;
+        bool is_method = method_tokens.count(token_type) > 0;
 
         // read its name
         int start_pos = editor->GetCtrl()->PositionFromLine(token.line) + token.column;
         int end_pos = start_pos + token.length;
         wxString token_name = editor->GetTextRange(start_pos, end_pos);
-        if(!is_class && !is_variable) {
+        if(!is_class && !is_variable && !is_method) {
             continue;
         }
+        clDEBUG1() << "Checking token:" << token_type << ":" << token_name << endl;
 
         if(is_class && classes_set.count(token_name) == 0) {
             classes_set.insert(token_name);
@@ -305,10 +310,13 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
         } else if(is_variable && variables_set.count(token_name) == 0) {
             variables_set.insert(token_name);
             variabls_str << token_name << " ";
+        } else if(is_method && methods_set.count(token_name) == 0) {
+            methods_set.insert(token_type);
+            method_str << token_name << " ";
         }
     }
 
-    editor->SetSemanticTokens(classes_str, variabls_str);
+    editor->SetSemanticTokens(classes_str, variabls_str, method_str, wxEmptyString);
 }
 
 void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)
@@ -771,7 +779,7 @@ void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
     CHECK_PTR_RET(editor);
 
     const auto& symbols = event.GetSymbolsInformation();
-    wxString classes, variables;
+    wxString classes, variables, methods, others;
     for(const auto& si : symbols) {
         switch(si.GetKind()) {
         case LSP::kSK_Module:
@@ -784,6 +792,13 @@ void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
         case LSP::kSK_Object:
             classes << si.GetName() << " ";
             break;
+        case LSP::kSK_Method:
+        case LSP::kSK_Function:
+            methods << si.GetName() << " ";
+            break;
+        case LSP::kSK_TypeParameter:
+            others << si.GetName() << " ";
+            break;
         case LSP::kSK_EnumMember:
         case LSP::kSK_Property:
         case LSP::kSK_Field:
@@ -794,10 +809,11 @@ void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
             break;
         }
     }
-    clDEBUG() << "Setting semantic highlight:" << endl;
+    clDEBUG() << "Setting semantic highlight (using DocumentSymbolsRequest):" << endl;
     clDEBUG() << "Classes  :" << classes << endl;
     clDEBUG() << "Variables:" << variables << endl;
-    editor->SetSemanticTokens(classes, variables);
+    clDEBUG() << "Methods:" << methods << endl;
+    editor->SetSemanticTokens(classes, variables, methods, others);
 }
 
 void LanguageServerCluster::OnOpenResource(wxCommandEvent& event)

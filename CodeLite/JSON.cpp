@@ -24,10 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "JSON.h"
+
 #include "StringUtils.h"
 #include "clFontHelper.h"
 #include "fileutils.h"
 #include "wx/dynarray.h"
+
 #include <stdlib.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
@@ -280,6 +282,30 @@ void JSONItem::append(const JSONItem& element)
     }
 }
 
+void JSONItem::arrayAppend(const char* value)
+{
+    if(!m_json) {
+        return;
+    }
+    cJSON* p = cJSON_CreateString(value);
+    cJSON_AddItemToArray(m_json, p);
+}
+
+void JSONItem::arrayAppend(const std::string& value) { arrayAppend((const char*)value.c_str()); }
+
+void JSONItem::arrayAppend(double number)
+{
+    if(!m_json) {
+        return;
+    }
+    cJSON* p = cJSON_CreateNumber(number);
+    cJSON_AddItemToArray(m_json, p);
+}
+
+void JSONItem::arrayAppend(int number) { arrayAppend((double)number); }
+
+void JSONItem::arrayAppend(const wxString& value) { arrayAppend((const char*)value.mb_str(wxConvUTF8).data()); }
+
 void JSONItem::arrayAppend(const JSONItem& element)
 {
     if(!m_json) {
@@ -448,12 +474,6 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxArrayString& arr)
     }
     append(arrEle);
     return *this;
-}
-
-void JSONItem::arrayAppend(const wxString& value)
-{
-    const wxCharBuffer cb = value.mb_str(wxConvUTF8);
-    arrayAppend(JSONItem(wxT(""), cb.data(), cb.length()));
 }
 
 wxArrayString JSONItem::toArrayString(const wxArrayString& defaultValue) const
@@ -717,7 +737,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, cJSON* pjson)
     return *this;
 }
 
-wxVector<double> JSONItem::toArray(const wxVector<double>& defaultValue) const
+std::vector<double> JSONItem::toDoubleArray(const std::vector<double>& defaultValue) const
 {
     if(!m_json) {
         return defaultValue;
@@ -732,7 +752,7 @@ wxVector<double> JSONItem::toArray(const wxVector<double>& defaultValue) const
         return defaultValue;
     }
 
-    wxVector<double> arr;
+    std::vector<double> arr;
     arr.reserve(arr_size);
     auto child = m_json->child;
     while(child) {
@@ -742,7 +762,7 @@ wxVector<double> JSONItem::toArray(const wxVector<double>& defaultValue) const
     return arr;
 }
 
-wxVector<int> JSONItem::toArray(const wxVector<int>& defaultValue) const
+std::vector<int> JSONItem::toIntArray(const std::vector<int>& defaultValue) const
 {
     if(!m_json) {
         return defaultValue;
@@ -757,7 +777,7 @@ wxVector<int> JSONItem::toArray(const wxVector<int>& defaultValue) const
         return defaultValue;
     }
 
-    wxVector<int> arr;
+    std::vector<int> arr;
     arr.reserve(arr_size);
     auto child = m_json->child;
     while(child) {

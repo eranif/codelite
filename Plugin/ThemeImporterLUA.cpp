@@ -2,8 +2,13 @@
 
 ThemeImporterLua::ThemeImporterLua()
 {
+    // Keywords
     SetKeywords0(
         "if elseif else then end do while nil true false in for and or function local not repeat return until");
+
+    m_classesIndex = 4;
+    m_functionsIndex = 1;
+    m_localsIndex = 5; // user1
     SetFileExtensions("*.lua;*.glua;*.gluaw;");
     m_langName = "lua";
 }
@@ -20,9 +25,9 @@ LexerConf::Ptr_t ThemeImporterLua::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_LUA_NUMBER, "Number", m_number.colour, m_background.colour);
     AddProperty(lexer, wxSTC_LUA_WORD, "Word (Set 0)", m_keyword.colour, m_background.colour);
     AddProperty(lexer, wxSTC_LUA_WORD2, "Word (Set 1)", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_LUA_WORD3, "Word (Set 2)", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_LUA_WORD4, "Word (Set 3)", m_klass.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_LUA_WORD5, "Word (Set 4)", m_klass.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_LUA_WORD3, "Classes", m_klass.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_LUA_WORD4, "Functions", m_function.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_LUA_WORD5, "Secondary keywords and identifiers", m_variable.colour, m_background.colour);
     AddProperty(lexer, wxSTC_LUA_STRING, "String", m_string.colour, m_background.colour);
     AddProperty(lexer, wxSTC_LUA_CHARACTER, "Character", m_string.colour, m_background.colour);
     AddProperty(lexer, wxSTC_LUA_LITERALSTRING, "Literal string", m_string.colour, m_background.colour);

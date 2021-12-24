@@ -19,7 +19,8 @@ LexerConf::Ptr_t ThemeImporterRuby::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_RB_NUMBER, "Number", m_number.colour, m_background.colour);
     AddProperty(lexer, wxSTC_RB_STRING, "String", m_string.colour, m_background.colour);
     AddProperty(lexer, wxSTC_RB_CHARACTER, "Character", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_RB_WORD, "Word", m_keyword.colour, m_background.colour); // keywords
+    AddProperty(lexer, wxSTC_RB_WORD, "Keyword", m_keyword.colour, m_background.colour);                 // keywords
+    AddProperty(lexer, wxSTC_RB_WORD_DEMOTED, "Keyword demoted", m_keyword.colour, m_background.colour); // keywords
     AddProperty(lexer, wxSTC_RB_DEFNAME, "Def Name", m_function.colour, m_background.colour);
     AddProperty(lexer, wxSTC_RB_CLASSNAME, "Class Name", m_klass.colour, m_background.colour);
     AddProperty(lexer, wxSTC_RB_MODULE_NAME, "Module Name", m_enum.colour, m_background.colour);

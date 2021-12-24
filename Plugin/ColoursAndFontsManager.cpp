@@ -236,11 +236,11 @@ void ColoursAndFontsManager::LoadOldXmls(const std::vector<wxXmlDocument*>& xmlF
     // Each XMl represents a single lexer (the old format)
     for(size_t i = 0; i < xmlFiles.size(); ++i) {
         wxXmlDocument* doc = xmlFiles.at(i);
-        DoAddLexer(doc->GetRoot());
+        DEPRECATRED_DoAddLexer(doc->GetRoot());
     }
 }
 
-LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(wxXmlNode* node)
+LexerConf::Ptr_t ColoursAndFontsManager::DEPRECATRED_DoAddLexer(wxXmlNode* node)
 {
     wxString lexerName = XmlUtils::ReadString(node, "Name");
     lexerName.MakeLower();
@@ -572,11 +572,21 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
         case FileExtManager::TypePython:
             lexerByContent = GetLexer("python");
             break;
+        case FileExtManager::TypeRuby:
+            lexerByContent = GetLexer("ruby");
+            break;
+        case FileExtManager::TypeRust:
+            lexerByContent = GetLexer("rust");
+            break;
+        case FileExtManager::TypeJava:
+            lexerByContent = GetLexer("java");
+            break;
         case FileExtManager::TypeWorkspaceDocker:
         case FileExtManager::TypeWorkspaceFileSystem:
         case FileExtManager::TypeWorkspaceNodeJS:
         case FileExtManager::TypeWorkspacePHP:
         case FileExtManager::TypeWxCrafter:
+        case FileExtManager::TypeJSON:
 #if wxCHECK_VERSION(3, 1, 0)
             lexerByContent = GetLexer("json");
 #else
@@ -913,12 +923,20 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
 
     clDEBUG1() << "Loading lexer:" << lexerName;
 
-    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
-        lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
-    }
-
-    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("override")) {
-        lexer->SetKeyWords(lexer->GetKeyWords(0) + " override", 0);
+    // Fix C++ lexer
+    if(lexer->GetName() == "c++") {
+        wxString keywords = lexer->GetKeyWords(0);
+        if(!keywords.Contains("override")) {
+            keywords << " override";
+        }
+        if(!keywords.Contains("final")) {
+            keywords << " final";
+        }
+        lexer->SetKeyWords(keywords, 0);
+        wxString filespec = lexer->GetFileSpec();
+        filespec.Replace("*.javascript", wxEmptyString);
+        filespec.Replace("*.js", wxEmptyString);
+        lexer->SetFileSpec(filespec);
     }
 
     // Hack: fix Java lexer which is using the same

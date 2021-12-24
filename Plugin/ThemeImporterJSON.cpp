@@ -5,7 +5,12 @@
 #if wxCHECK_VERSION(3, 1, 0)
 ThemeImporterJson::ThemeImporterJson()
 {
+    // normal keywords
     SetKeywords0("true false null");
+
+    // LD JSON
+    SetKeywords1("type context id name");
+
     SetFileExtensions("*.wxcp;*.json");
     m_langName = "json";
 }

@@ -6185,47 +6185,86 @@ SFTPClientData* clEditor::GetRemoteData() const
     return nullptr;
 }
 
-void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variables)
+void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+                                 const wxString& others)
 {
-    size_t cc_flags = TagsManagerST::Get()->GetCtagsOptions().GetFlags();
-    wxString flatStrClasses = cc_flags & CC_COLOUR_VARS ? classes : "";
-    wxString flatStrLocals = cc_flags & CC_COLOUR_VARS ? variables : "";
-
-    int keywords_class = wxNOT_FOUND;
-    int keywords_variables = wxNOT_FOUND;
-
-    switch(GetLexerId()) {
-    case wxSTC_LEX_CPP:
-        clDEBUG1() << "SetSemantics is called for: wxSTC_LEX_CPP" << endl;
-        keywords_class = 1;
-        keywords_variables = 3;
-        break;
-
-#if wxCHECK_VERSION(3, 1, 2)
-    case wxSTC_LEX_RUST:
-        clDEBUG1() << "SetSemantics is called for: wxSTC_LEX_RUST" << endl;
-        keywords_class = 3;
-        keywords_variables = 4;
-        break;
-#endif
-    case wxSTC_LEX_PYTHON:
-        keywords_variables = 1;
-        break;
-    default:
-        break;
-    }
+    wxString flatStrClasses = classes;
+    wxString flatStrLocals = variables;
+    wxString flatStrOthers = others;
+    wxString flatStrMethods = methods;
 
     flatStrClasses.Trim().Trim(false);
     flatStrLocals.Trim().Trim(false);
+    flatStrOthers.Trim().Trim(false);
+    flatStrMethods.Trim().Trim(false);
 
-    if(!flatStrClasses.empty() && keywords_class != wxNOT_FOUND) {
-        SetKeyWords(keywords_class, flatStrClasses);
-        SetKeywordClasses(flatStrClasses);
-    }
+    // locate the lexer
+    auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(GetFileName().GetFullPath());
+    CHECK_PTR_RET(lexer);
 
-    if(!flatStrLocals.empty() && keywords_variables != wxNOT_FOUND) {
-        SetKeyWords(keywords_variables, flatStrLocals);
-        SetKeywordLocals(flatStrLocals);
+    if(lexer->GetWordSetClassIndex() != wxNOT_FOUND) {
+        clDEBUG1() << "Setting semantic tokens:" << endl;
+
+        // a new lexer
+        int keywords_class = lexer->GetWordSetClassIndex();
+        int keywords_variables = lexer->GetWordSetLocalsIndex();
+        int keywords_methods = lexer->GetWordSetFunctionsIndex();
+        int keywords_others = lexer->GetWordSetOthersIndex();
+
+        clDEBUG1() << "Methods:" << keywords_methods << ":" << flatStrMethods << endl;
+        clDEBUG1() << "Locals:" << keywords_variables << ":" << flatStrLocals << endl;
+        clDEBUG1() << "Others:" << keywords_others << ":" << flatStrOthers << endl;
+        clDEBUG1() << "Classes:" << keywords_class << ":" << flatStrClasses << endl;
+
+        if(!flatStrLocals.empty() && keywords_variables != wxNOT_FOUND) {
+            SetKeyWords(keywords_variables, flatStrLocals);
+            SetKeywordLocals(flatStrLocals);
+        }
+        if(!flatStrMethods.empty() && keywords_methods != wxNOT_FOUND) {
+            SetKeyWords(keywords_methods, flatStrMethods);
+            SetKeywordLocals(flatStrMethods);
+        }
+        if(!flatStrClasses.empty() && keywords_class != wxNOT_FOUND) {
+            SetKeyWords(keywords_class, flatStrClasses);
+            SetKeywordClasses(flatStrClasses);
+        }
+
+        if(!flatStrOthers.empty() && keywords_others != wxNOT_FOUND) {
+            SetKeyWords(keywords_others, flatStrOthers);
+            SetKeywordLocals(flatStrOthers);
+        }
+    } else {
+
+        int keywords_class = wxNOT_FOUND;
+        int keywords_variables = wxNOT_FOUND;
+
+        switch(GetLexerId()) {
+        case wxSTC_LEX_CPP:
+            keywords_class = 1;
+            keywords_variables = 3;
+            break;
+
+#if wxCHECK_VERSION(3, 1, 2)
+        case wxSTC_LEX_RUST:
+            keywords_class = 3;
+            keywords_variables = 4;
+            break;
+#endif
+        case wxSTC_LEX_PYTHON:
+            keywords_variables = 1;
+            break;
+        default:
+            break;
+        }
+        if(!flatStrClasses.empty() && keywords_class != wxNOT_FOUND) {
+            SetKeyWords(keywords_class, flatStrClasses);
+            SetKeywordClasses(flatStrClasses);
+        }
+
+        if(!flatStrLocals.empty() && keywords_variables != wxNOT_FOUND) {
+            SetKeyWords(keywords_variables, flatStrLocals);
+            SetKeywordLocals(flatStrLocals);
+        }
     }
     Colourise(0, wxSTC_INVALID_POSITION);
 }

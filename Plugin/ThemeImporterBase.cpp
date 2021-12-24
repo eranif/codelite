@@ -111,6 +111,10 @@ void ThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const wxString
     lexer->SetKeyWords(GetKeywords3(), 3);
     lexer->SetKeyWords(GetKeywords4(), 4);
     lexer->SetFileSpec(GetFileExtensions());
+    lexer->SetWordSetFunctionsIndex(m_functionsIndex);
+    lexer->SetWordSetClassIndex(m_classesIndex);
+    lexer->SetWordSetLocalsIndex(m_localsIndex);
+    lexer->SetWordSetOthersIndex(m_othersIndex);
 }
 
 void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
@@ -298,7 +302,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
     m_multiLineComment.colour = GetVSCodeColour(tokenColoursMap, { "comment", "comments" });
     m_number.colour = GetVSCodeColour(tokenColoursMap, { "constant.numeric" });
     m_string.colour = GetVSCodeColour(tokenColoursMap, { "string" });
-    m_oper.colour = GetVSCodeColour(tokenColoursMap, { "keyword.operator.logical", "keyword.operator" });
+    m_oper.colour = GetVSCodeColour(tokenColoursMap, { "punctuation" });
     m_keyword.colour =
         GetVSCodeColour(tokenColoursMap, { "keyword.operator.expression.delete", "keyword.operator.expression.void",
                                            "keyword", "keyword.control", "storage" });

@@ -633,6 +633,13 @@ JSONItem LexerConf::ToJSON(bool forExport) const
     json.addProperty("KeyWords4", GetKeyWords(4));
     json.addProperty("Extensions", GetFileSpec());
 
+    JSONItem word_set = json.createArray("WordSet");
+    word_set.arrayAppend(m_wordSetClassIndex);
+    word_set.arrayAppend(m_wordSetFunctionsIndex);
+    word_set.arrayAppend(m_wordSetLocals);
+    word_set.arrayAppend(m_wordSetOthers);
+
+    json.addProperty("WordSet", word_set);
     JSONItem properties = JSONItem::createArray("Properties");
     json.append(properties);
 
@@ -645,6 +652,14 @@ JSONItem LexerConf::ToJSON(bool forExport) const
 
 void LexerConf::FromJSON(const JSONItem& json)
 {
+    auto word_set = json["WordSet"].toIntArray();
+    if(word_set.size() == 4) {
+        m_wordSetClassIndex = word_set[0];
+        m_wordSetFunctionsIndex = word_set[1];
+        m_wordSetLocals = word_set[2];
+        m_wordSetOthers = word_set[3];
+    }
+
     m_name = json.namedObject("Name").toString();
     m_lexerId = json.namedObject("Id").toInt();
     m_themeName = json.namedObject("Theme").toString();
@@ -669,7 +684,7 @@ void LexerConf::FromJSON(const JSONItem& json)
         // Construct a style property
         StyleProperty p;
         p.FromJSON(properties.arrayItem(i));
-        m_properties.insert(std::make_pair(p.GetId(), p));
+        m_properties.insert({ p.GetId(), p });
     }
 }
 

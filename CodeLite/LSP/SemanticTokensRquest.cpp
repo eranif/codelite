@@ -1,9 +1,11 @@
+#include "SemanticTokensRquest.hpp"
+
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
-#include "SemanticTokensRquest.hpp"
 #include "file_logger.h"
 #include "json_rpc_params.h"
 #include "wx/vector.h"
+
 #include <vector>
 
 LSP::SemanticTokensRquest::SemanticTokensRquest(const wxString& filename)
@@ -23,8 +25,8 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
         return;
     }
 
-    wxVector<int> encoded_types;
-    encoded_types = response["result"]["data"].toArray(encoded_types);
+    std::vector<int> encoded_types;
+    encoded_types = response["result"]["data"].toIntArray();
 
     clDEBUG() << "OnResponse for SemanticTokensRquest is called" << endl;
     clDEBUG() << "Parsing semantic tokens array (" << encoded_types.size() << ")" << endl;

@@ -1,4 +1,5 @@
 #include "Settings.hpp"
+
 #include "CompileCommandsJSON.h"
 #include "CompileFlagsTxt.h"
 #include "GCCMetadata.hpp"
@@ -7,26 +8,10 @@
 #include "file_logger.h"
 #include "procutils.h"
 #include "wx/tokenzr.h"
+
 #include <set>
 
 using namespace std;
-namespace
-{
-FileLogger& operator<<(FileLogger& logger, const wxStringMap_t& m)
-{
-    wxString s;
-    s << "{";
-    for(const auto& vt : m) {
-        s << "{ " << vt.first << ", " << vt.second << " },";
-    }
-    if(s.EndsWith(",")) {
-        s.RemoveLast();
-    }
-    s << "}";
-    logger.Append(s, logger.GetRequestedLogLevel());
-    return logger;
-}
-} // namespace
 
 CTagsdSettings::CTagsdSettings() {}
 

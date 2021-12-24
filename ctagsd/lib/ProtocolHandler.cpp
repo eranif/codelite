@@ -33,30 +33,6 @@ using LSP::eSymbolKind;
 namespace
 {
 wxStopWatch sw;
-FileLogger& operator<<(FileLogger& logger, const wxStringSet_t& arr)
-{
-    wxString s;
-    s << "[";
-    for(const auto& d : arr) {
-        s << d << ",";
-    }
-    s << "]";
-    logger.Append(s, logger.GetRequestedLogLevel());
-    return logger;
-}
-
-FileLogger& operator<<(FileLogger& logger, const vector<wxString>& arr)
-{
-    wxString s;
-    s << "[";
-    for(const auto& d : arr) {
-        s << d << ",";
-    }
-    s << "]";
-    logger.Append(s, logger.GetRequestedLogLevel());
-    return logger;
-}
-
 FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
 {
     wxString s;

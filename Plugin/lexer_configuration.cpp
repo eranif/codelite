@@ -24,10 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "lexer_configuration.h"
 
+#include "StringUtils.h"
 #include "bookmark_manager.h"
 #include "cl_config.h"
 #include "drawingutils.h"
 #include "editor_config.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "macros.h"
 #include "wx_xml_compatibility.h"
@@ -287,7 +289,7 @@ wxColour to_wx_colour(const wxString& colour_as_string)
         // #RRGGBBAL
         try {
             wxString str = colour_as_string.Mid(1); // skip the #
-            std::string cstr = str.ToStdString(wxConvUTF8);
+            std::string cstr = StringUtils::ToStdString(str);
             // convert to wxUint32
             wxUint32 num = std::stoi(cstr, nullptr, 16);
             wxColour c;

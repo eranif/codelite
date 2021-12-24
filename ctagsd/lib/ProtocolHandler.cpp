@@ -402,8 +402,11 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     legend.AddArray("tokenModifiers"); // empty array
     auto tokenTypes = legend.AddArray("tokenTypes");
+    // we report our supported token types
+    // the order must match the definition in eTokenType
     tokenTypes.arrayAppend("variable"); // TYPE_VARIABLE
     tokenTypes.arrayAppend("class");    // TYPE_CLASS
+    tokenTypes.arrayAppend("function"); // TYPE_FUNCTION
 
     // load the configuration file
     m_root_folder = json["params"]["rootUri"].toString();
@@ -816,7 +819,13 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
         simple_tokens.Add(word);
         if(!CompletionHelper::is_cxx_keyword(word) && (visited.count(word) == 0)) {
             visited.insert(word);
-            if(locals_set.count(word)) {
+            if(tok.following_char_is('(')) {
+                token_wrapper.type = TYPE_FUNCTION;
+                tokens_vec.push_back(token_wrapper);
+            } else if(tok.following_char_is('.')) {
+                token_wrapper.type = TYPE_VARIABLE;
+                tokens_vec.push_back(token_wrapper);
+            } else if(locals_set.count(word)) {
                 // we know that this one is a variable
                 token_wrapper.type = TYPE_VARIABLE;
                 tokens_vec.push_back(token_wrapper);

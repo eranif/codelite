@@ -69,7 +69,7 @@ LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_UUID, "Uuid", m_number);
     AddProperty(lexer, wxSTC_C_PREPROCESSOR, "Preprocessor", m_foreground.colour, m_background.colour);
     AddProperty(lexer, wxSTC_C_OPERATOR, "Operator", m_oper);
-    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_variable.colour, m_background.colour);
     AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string);
     AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Doxygen C++ style comment", m_javadoc);
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Doxygen keyword", m_javadocKeyword);

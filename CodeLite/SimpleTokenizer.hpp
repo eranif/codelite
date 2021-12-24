@@ -2,6 +2,7 @@
 #define SIMPLETOKENIZER_HPP
 
 #include "codelite_exports.h"
+
 #include <wx/string.h>
 
 enum eSimpleTokenizerState {
@@ -30,6 +31,8 @@ public:
         long m_token_line = wxNOT_FOUND;
         long m_token_column = wxNOT_FOUND;
         long m_token_length = wxNOT_FOUND;
+        char m_following_char = 0; // the following char after this token, useful to decide whether we want to handle
+                                   // this token as function or variable
 
     public:
         Token(long pos, long line, long col, long len)
@@ -46,6 +49,9 @@ public:
         {
             return m_token_column != wxNOT_FOUND && m_token_length != wxNOT_FOUND && m_token_line != wxNOT_FOUND;
         }
+
+        bool following_char_is(char c) const { return m_following_char == c; }
+        void set_following_char(char c) { m_following_char = c; }
 
         bool is_valid_identifier(const wxString& input_string) const
         {

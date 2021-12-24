@@ -13,6 +13,7 @@ using namespace std;
 enum eTokenType {
     TYPE_VARIABLE,
     TYPE_CLASS,
+    TYPE_FUNCTION,
 };
 
 struct TokenWrapper {

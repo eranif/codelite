@@ -277,8 +277,7 @@ wxColor GetInactiveColor(const StyleProperty& defaultStyle)
 
 wxColour to_wx_colour(const wxString& colour_as_string)
 {
-    return wxColour(colour_as_string);
-#if 0
+    //    return wxColour(colour_as_string);
     if(!colour_as_string.StartsWith("#")) {
         return wxColour(colour_as_string);
     }
@@ -302,7 +301,7 @@ wxColour to_wx_colour(const wxString& colour_as_string)
     }
     // use default conversion
     return wxColour(colour_as_string);
-#endif
+    //#endif
 }
 } // namespace
 #define CL_LINE_MODIFIED_STYLE 200
@@ -333,11 +332,13 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     bool tooltip(false);
 
     const StyleProperty::Map_t& styles = GetLexerProperties();
-    ctrl->SetProperty(wxT("styling.within.preprocessor"), this->GetStyleWithinPreProcessor() ? wxT("1") : wxT("0"));
+    ctrl->SetProperty(wxT("styling.within.preprocessor"), this->GetStyleWithinPreProcessor() ? "1" : "0");
 
     // turn off PP tracking/updating by default
-    ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), wxT("0"));
-    ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), wxT("0"));
+    if(GetName() == "c++") {
+        // ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), "1");
+        // ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), "1");
+    }
 
     if(GetName() == "scss") {
         // Enable SCSS property (will tell the lexer to search for variables)
@@ -412,6 +413,9 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             // selection colour
             if(wxColour(to_wx_colour(sp.GetBgColour())).IsOk()) {
                 ctrl->SetSelBackground(true, to_wx_colour(sp.GetBgColour()));
+                if(!IsUseCustomTextSelectionFgColour()) {
+                    ctrl->SetSelAlpha(50);
+                }
             }
             if(IsUseCustomTextSelectionFgColour() && wxColour(to_wx_colour(sp.GetFgColour())).IsOk()) {
                 ctrl->SetSelForeground(true, to_wx_colour(sp.GetFgColour()));

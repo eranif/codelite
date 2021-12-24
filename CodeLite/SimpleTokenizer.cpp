@@ -9,16 +9,39 @@ SimpleTokenizer::SimpleTokenizer(const wxString& str)
 
 SimpleTokenizer::~SimpleTokenizer() {}
 
-#define RETURN_TOKEN_IF_POSSIBLE()                \
-    if(m_token.ok()) {                            \
-        if(!m_token.is_valid_identifier(m_str)) { \
-            m_token.clear();                      \
-        } else {                                  \
-            *token = m_token;                     \
-            m_token.clear();                      \
-            ++m_pos;                              \
-            return true;                          \
-        }                                         \
+#define __PEEK_LOOKAHEAD_N(__N, c)       \
+    if((m_pos + __N) < m_str.length()) { \
+        c = m_str[m_pos + __N];          \
+    } else {                             \
+        c = 0;                           \
+    }
+
+#define PEEK_LOOKAHEAD_1(c) __PEEK_LOOKAHEAD_N(1, c)
+#define PEEK_LOOKAHEAD_2(c) __PEEK_LOOKAHEAD_N(2, c)
+#define PEEK_LOOKAHEAD_FIRST_NON_WHITESPACE(c)                                                                \
+    {                                                                                                         \
+                                                                                                              \
+        for(size_t __cur = m_pos; __cur < m_str.length(); ++__cur) {                                          \
+            if(m_str[__cur] != ' ' && m_str[__cur] != '\t' && m_str[__cur] != '\n' && m_str[__cur] != '\r') { \
+                c = m_str[__cur];                                                                             \
+                break;                                                                                        \
+            }                                                                                                 \
+        }                                                                                                     \
+    }
+
+#define RETURN_TOKEN_IF_POSSIBLE()                               \
+    if(m_token.ok()) {                                           \
+        if(!m_token.is_valid_identifier(m_str)) {                \
+            m_token.clear();                                     \
+        } else {                                                 \
+            *token = m_token;                                    \
+            char following_char = 0;                             \
+            PEEK_LOOKAHEAD_FIRST_NON_WHITESPACE(following_char); \
+            token->set_following_char(following_char);           \
+            m_token.clear();                                     \
+            ++m_pos;                                             \
+            return true;                                         \
+        }                                                        \
     }
 
 #define RETURN_COMMENT_TOKEN_IF_POSSIBLE() \

@@ -29,6 +29,7 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
+#include <vector>
 #include <wx/colour.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>

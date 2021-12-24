@@ -682,7 +682,8 @@ void SyntaxHighlightDlg::OnRestoreDefaults(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
 {
-    wxFileDialog selector(this, _("Select eclipse XML theme file"), "", "", "Eclipse Theme Files (*.xml)|*.xml",
+    wxFileDialog selector(this, _("Select theme to import"), "", "",
+                          "VSCode JSON Theme (*.json)|*.json|Eclipse Theme Files (*.xml)|*.xml",
                           wxFD_OPEN | wxFD_FILE_MUST_EXIST);
     if(selector.ShowModal() == wxID_OK) {
 

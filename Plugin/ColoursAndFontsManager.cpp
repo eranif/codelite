@@ -229,6 +229,9 @@ void ColoursAndFontsManager::Load()
     // Load the lexers
     ColoursAndFontsManagerLoaderHelper loader(this);
     loader.Load();
+
+    // read the global font property
+    m_globalFont = clConfig::Get().Read("GlobalThemeFont", DrawingUtils::GetDefaultFixedFont());
 }
 
 void ColoursAndFontsManager::LoadOldXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers)
@@ -488,6 +491,8 @@ void ColoursAndFontsManager::Save(const wxFileName& lexer_json)
     output_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
     root.save(output_file);
+    // store the global font as well
+    clConfig::Get().Write("GlobalThemeFont", m_globalFont);
     SaveGlobalSettings();
 
     clCommandEvent event(wxEVT_CMD_COLOURS_FONTS_UPDATED);

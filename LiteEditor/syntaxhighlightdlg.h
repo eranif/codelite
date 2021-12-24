@@ -91,6 +91,8 @@ protected:
     virtual void OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event);
     virtual void OnText(wxCommandEvent& event);
 
+    void DoFontChanged(StyleProperty& sp, const wxFont& font);
+
     // Handlers for SyntaxHighlightBaseDlg events.
     void OnButtonOK(wxCommandEvent& event);
     void OnButtonCancel(wxCommandEvent& event);

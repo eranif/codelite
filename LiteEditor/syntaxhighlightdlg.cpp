@@ -26,9 +26,9 @@
 #include "syntaxhighlightdlg.h"
 
 #include "ColoursAndFontsManager.h"
+#include "NewThemeDialog.h"
 #include "ThemeImporterCXX.hpp"
 #include "ThemeImporterManager.hpp"
-#include "NewThemeDialog.h"
 #include "clSystemSettings.h"
 #include "clZipReader.h"
 #include "clZipWriter.h"
@@ -73,7 +73,7 @@ const wxString sampleText = "class Demo {\n"
                             "     * Creates a new demo.\n"
                             "     * @param o The object\n"
                             "     */\n"
-                            "    Demo(const Demo &other) {\n"
+                            "    CallMethod(const Demo &other) {\n"
                             "        m_str = other.m_str;\n"
                             "        m_integer = other.m_integer;\n"
                             "    }\n"
@@ -173,15 +173,30 @@ void SyntaxHighlightDlg::DoUpdatePreview()
     // Populate the preview
     LexerConf::Ptr_t previewLexer =
         ColoursAndFontsManager::Get().GetLexer("c++", m_choiceGlobalTheme->GetStringSelection());
+
+    int class_index = 1;
+    int locals_index = 1;
+    int methods_index = 1;
+    int other_index = 1;
+
     if(previewLexer) {
         previewLexer->Apply(m_stcPreview, true);
+        class_index = previewLexer->GetWordSetClassIndex();
+        locals_index = previewLexer->GetWordSetLocalsIndex();
+        methods_index = previewLexer->GetWordSetFunctionsIndex();
+        other_index = previewLexer->GetWordSetOthersIndex();
     }
-    m_stcPreview->SetKeyWords(1, "Demo std string");
-    m_stcPreview->SetKeyWords(3, "other");
+
+    m_stcPreview->SetKeyWords(class_index, "Demo std string");
+    m_stcPreview->SetKeyWords(locals_index, "other");
+    m_stcPreview->SetKeyWords(methods_index, "CallMethod");
+    m_stcPreview->SetKeyWords(other_index, wxEmptyString);
+
     m_stcPreview->SetEditable(true);
     m_stcPreview->SetText(sampleText);
     m_stcPreview->HideSelection(true);
     m_stcPreview->SetEditable(false);
+
     ::clRecalculateSTCHScrollBar(m_stcPreview);
 }
 
@@ -391,25 +406,17 @@ void SyntaxHighlightDlg::OnFontChanged(wxFontPickerEvent& event)
     if(obj == m_fontPicker) {
         wxFont f = event.GetFont();
         StyleProperty::Map_t::iterator iter = GetSelectedStyle();
-
-        iter->second.SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
-        iter->second.SetFaceName(f.GetFaceName());
-        iter->second.SetFontSize(f.GetPointSize());
-        iter->second.SetUnderlined(f.GetUnderlined());
-        iter->second.SetItalic(f.GetStyle() == wxFONTSTYLE_ITALIC);
+        DoFontChanged(iter->second, f);
 
     } else if(obj == m_globalFontPicker) {
         wxFont f = event.GetFont();
         StyleProperty::Map_t::iterator iter = properties.begin();
         for(; iter != properties.end(); ++iter) {
-            iter->second.SetBold(f.GetWeight() == wxFONTWEIGHT_BOLD);
-            iter->second.SetFaceName(f.GetFaceName());
-            iter->second.SetFontSize(f.GetPointSize());
-            iter->second.SetUnderlined(f.GetUnderlined());
-            iter->second.SetItalic(f.GetStyle() == wxFONTSTYLE_ITALIC);
+            DoFontChanged(iter->second, f);
         }
         // update the style f picker as well
         m_fontPicker->SetSelectedFont(f);
+        ColoursAndFontsManager::Get().SetGlobalFont(f);
     }
 }
 
@@ -511,22 +518,14 @@ void SyntaxHighlightDlg::CreateLexerPage()
 
     wxString initialColor = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT).GetAsString(wxC2S_HTML_SYNTAX);
     wxString bgInitialColor = clSystemSettings::GetDefaultPanelColour().GetAsString(wxC2S_HTML_SYNTAX);
-    wxFont initialFont = wxNullFont;
     // bool     initialEolFilled (false);
     bool initialStyleWithinPreProcessor(true);
 
-    if(m_propertyList.empty() == false) {
-        StyleProperty p;
-        p = m_propertyList.begin()->second;
-        initialColor = p.GetFgColour();
-        bgInitialColor = p.GetBgColour();
-
-        int size = p.GetFontSize();
-        wxString face = p.GetFaceName();
-        bool bold = p.IsBold();
-        initialFont = wxFont(size, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL,
-                             bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, face);
+    wxFont initialFont = ColoursAndFontsManager::Get().GetGlobalFont();
+    if(!initialFont.IsOk()) {
+        initialFont = DrawingUtils::GetDefaultFixedFont();
     }
+
     initialStyleWithinPreProcessor = m_lexer->GetStyleWithinPreProcessor();
     const StyleProperty& defaultStyle = m_lexer->GetProperty(0);
     if(!defaultStyle.IsNull()) {
@@ -537,6 +536,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
 
     m_fontPicker->SetSelectedFont(initialFont);
     m_globalFontPicker->SetSelectedFont(initialFont);
+
     m_fileSpec->ChangeValue(m_lexer->GetFileSpec());
     m_styleWithinPreProcessor->SetValue(initialStyleWithinPreProcessor);
 
@@ -842,4 +842,13 @@ void SyntaxHighlightDlg::OnUseCustomBaseColourUI(wxUpdateUIEvent& event)
 #else
     event.Enable(true);
 #endif
+}
+
+void SyntaxHighlightDlg::DoFontChanged(StyleProperty& sp, const wxFont& font)
+{
+    sp.SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
+    sp.SetFaceName(font.GetFaceName());
+    sp.SetFontSize(font.GetPointSize());
+    sp.SetUnderlined(font.GetUnderlined());
+    sp.SetItalic(font.GetStyle() == wxFONTSTYLE_ITALIC);
 }

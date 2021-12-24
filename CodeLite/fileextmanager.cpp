@@ -58,13 +58,12 @@ struct Matcher {
     }
 };
 
-thread_local std::unordered_map<wxString, FileExtManager::FileType> m_map;
-thread_local std::vector<Matcher> m_matchers;
-thread_local bool init_done = false;
+static std::unordered_map<wxString, FileExtManager::FileType> m_map;
+static std::vector<Matcher> m_matchers;
+static bool init_done = false;
 
 void FileExtManager::Init()
 {
-    // per thread initialization
     if(!init_done) {
         init_done = true;
         m_map[wxT("cc")] = TypeSourceCpp;

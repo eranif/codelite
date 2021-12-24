@@ -168,24 +168,10 @@ clBootstrapWizard::clBootstrapWizard(wxWindow* parent, bool firstTime)
     m_themePicker->Append(options);
     m_themePicker->SetSelection(0);
 
-    m_stc24->SetText(sampleText);
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++", m_selectedTheme);
-    if(lexer) {
-        lexer->Apply(m_stc24, true);
-    }
-    m_stc24->SetKeyWords(1, "Demo std string");
-    m_stc24->SetKeyWords(3, "other number");
-
-    ::clRecalculateSTCHScrollBar(m_stc24);
-    m_stc24->SetEditable(false);
+    SetSelectedTheme(m_selectedTheme);
 
     m_developmentProfile = clConfig::Get().Read("DevelopmentProfile", m_developmentProfile);
     m_radioBoxProfile->SetSelection(m_developmentProfile);
-
-#if PHP_BUILD
-    m_radioBoxProfile->SetSelection(3); // PHP
-    m_radioBoxProfile->Enable(false);
-#endif
 }
 
 clBootstrapWizard::~clBootstrapWizard() { clConfig::Get().Write("DevelopmentProfile", m_developmentProfile); }
@@ -201,15 +187,12 @@ void clBootstrapWizard::SetSelectedTheme(const wxString& themeName)
     } else {
         clConfig::Get().Write("UseCustomBaseColour", false);
     }
-    if(lexer) {
-        lexer->Apply(m_stc24, true);
-    }
+    DoUpdatePreview(themeName);
 }
 
 void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
 {
     m_globalThemeChanged = true;
-    m_stc24->SetEditable(true);
     int themeID = m_themePicker->GetSelection();
     switch(themeID) {
     case 0: { // System Default
@@ -218,6 +201,7 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
         if(DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW))) {
             m_selectedTheme = DARK_THEME;
         }
+        SetSelectedTheme(m_selectedTheme);
         clConfig::Get().Write("UseCustomBaseColour", false);
         if(lexer) {
             lexer->Apply(m_stc24, true);
@@ -234,11 +218,6 @@ void clBootstrapWizard::OnThemeSelected(wxCommandEvent& event)
         SetSelectedTheme(LIGHT_THEME);
         break;
     }
-
-    m_stc24->SetKeyWords(1, "Demo std string");
-    m_stc24->SetKeyWords(3, "other");
-    ::clRecalculateSTCHScrollBar(m_stc24);
-    m_stc24->SetEditable(false);
 }
 
 void clBootstrapWizard::OnScanForCompilers(wxCommandEvent& event)
@@ -339,4 +318,34 @@ void clBootstrapWizard::OnCancelWizard(wxCommandEvent& event)
     ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"), "CodeLite",
                    wxOK | wxCENTER | wxICON_INFORMATION, this);
     CallAfter(&clBootstrapWizard::EndModal, wxID_CANCEL);
+}
+
+void clBootstrapWizard::DoUpdatePreview(const wxString& themeName)
+{
+    // Populate the preview
+    LexerConf::Ptr_t previewLexer = ColoursAndFontsManager::Get().GetLexer("c++", themeName);
+
+    int class_index = 1;
+    int locals_index = 1;
+    int methods_index = 1;
+    int other_index = 1;
+
+    if(previewLexer) {
+        previewLexer->Apply(m_stc24, true);
+        class_index = previewLexer->GetWordSetClassIndex();
+        locals_index = previewLexer->GetWordSetLocalsIndex();
+        methods_index = previewLexer->GetWordSetFunctionsIndex();
+        other_index = previewLexer->GetWordSetOthersIndex();
+    }
+
+    m_stc24->SetKeyWords(class_index, "Demo std string");
+    m_stc24->SetKeyWords(locals_index, "other");
+    m_stc24->SetKeyWords(methods_index, "CallMethod");
+    m_stc24->SetKeyWords(other_index, wxEmptyString);
+
+    m_stc24->SetEditable(true);
+    m_stc24->SetText(sampleText);
+    m_stc24->HideSelection(true);
+    m_stc24->SetEditable(false);
+    ::clRecalculateSTCHScrollBar(m_stc24);
 }

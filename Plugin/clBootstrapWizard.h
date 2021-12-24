@@ -66,5 +66,6 @@ protected:
     virtual void OnThemeSelected(wxCommandEvent& event);
 
     void SetSelectedTheme(const wxString& themeName);
+    void DoUpdatePreview(const wxString& themeName);
 };
 #endif // CLBOOSTRAPWIZARD_H

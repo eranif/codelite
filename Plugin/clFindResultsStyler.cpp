@@ -50,25 +50,22 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     // Set the whitespace colours
     sci->SetWhitespaceForeground(true, props[WHITE_SPACE_ATTR_ID].GetFgColour());
 
-    sci->StyleSetForeground(LEX_FIF_HEADER, props[11].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_HEADER, props[11].GetBgColour());
+    sci->StyleSetForeground(LEX_FIF_HEADER, props[0].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_HEADER, props[0].GetBgColour());
 
     // 33 is the style for line numbers
     sci->StyleSetForeground(LEX_FIF_LINE_NUMBER, props[33].GetFgColour());
 
-    // 11 is the style number for "identifier"
-    sci->StyleSetForeground(LEX_FIF_MATCH, props[11].GetFgColour());
-
-    // 16 is the stule for colouring classes
-    sci->StyleSetForeground(LEX_FIF_SCOPE, props[16].GetFgColour());
+    sci->StyleSetForeground(LEX_FIF_MATCH, props[wxSTC_C_WORD2].GetFgColour());
+    sci->StyleSetForeground(LEX_FIF_SCOPE, props[wxSTC_C_GLOBALCLASS].GetFgColour());
 
     sci->StyleSetForeground(LEX_FIF_MATCH_COMMENT, props[wxSTC_C_COMMENTLINE].GetFgColour());
 
     sci->StyleSetForeground(LEX_FIF_FILE, props[wxSTC_C_WORD].GetFgColour());
     sci->StyleSetEOLFilled(LEX_FIF_FILE, true);
 
-    sci->StyleSetForeground(LEX_FIF_DEFAULT, props[11].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_DEFAULT, props[11].GetBgColour());
+    sci->StyleSetForeground(LEX_FIF_DEFAULT, props[0].GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_DEFAULT, props[0].GetBgColour());
 
     sci->StyleSetHotSpot(LEX_FIF_MATCH, true);
     sci->StyleSetHotSpot(LEX_FIF_FILE, true);

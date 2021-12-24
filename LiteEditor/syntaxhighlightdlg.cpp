@@ -124,8 +124,8 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     }
 
     DoUpdatePreview();
+    m_isModified = true;
 
-    m_isModified = false;
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);
     m_toolbar->SetMiniToolBar(false);
@@ -135,8 +135,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_toolbar->AddTool(XRCID("export_all"), _("Export All"), images->Add("file_save_all"));
     m_toolbar->AddTool(XRCID("import_zip"), _("Import from ZIP file"), images->Add("file_open"));
     m_toolbar->AddTool(XRCID("revert_changes"), _("Reaload Default Settings"), images->Add("file_reload"));
-    m_toolbar->AddTool(XRCID("import_eclipse_theme"), _("Import Eclipse Theme"), images->Add("eclipse"), "",
-                       wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("import_eclipse_theme"), _("Import Theme"), images->Add("file_open"));
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnNewTheme, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnExportSelective, this, wxID_SAVE);
@@ -144,16 +143,6 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnImport, this, XRCID("import_zip"));
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnRestoreDefaults, this, XRCID("revert_changes"));
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnImportEclipseTheme, this, XRCID("import_eclipse_theme"));
-    m_toolbar->Bind(
-        wxEVT_TOOL_DROPDOWN,
-        [&](wxCommandEvent& e) {
-            wxMenu m;
-            m.Append(XRCID("load_eclipse_theme_website"), _("Load Eclipse Themes WebSite.."));
-            m.Bind(wxEVT_MENU, &SyntaxHighlightDlg::OnLoadEclipseThemeWebsite, this,
-                   XRCID("load_eclipse_theme_website"));
-            m_toolbar->ShowMenuForButton(XRCID("import_eclipse_theme"), &m);
-        },
-        XRCID("import_eclipse_theme"));
 
     // Theme handling
     wxColour baseColour = clConfig::Get().Read("BaseColour", clSystemSettings::GetDefaultPanelColour());

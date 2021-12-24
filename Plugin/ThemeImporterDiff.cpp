@@ -8,30 +8,23 @@ ThemeImporterDiff::~ThemeImporterDiff() {}
 
 LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& theme_file)
 {
-    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "diff", 16);
+    LexerConf::Ptr_t lexer = InitializeImport(theme_file, "diff", wxSTC_LEX_DIFF);
     CHECK_PTR_RET_NULL(lexer);
 
-    //
-    // Add lexer specific code here
-    //
-    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "1", "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, "2", "Command", m_klass.colour, m_background.colour);
-    AddProperty(lexer, "3", "Header", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, "4", "Position", m_keyword.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_DIFF_DEFAULT, "Default", m_foreground);
+    AddProperty(lexer, wxSTC_DIFF_COMMENT, "Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_DIFF_COMMAND, "Command", m_klass);
+    AddProperty(lexer, wxSTC_DIFF_HEADER, "Header", m_keyword);
+    AddProperty(lexer, wxSTC_DIFF_POSITION, "Position", m_function);
 
     // Use pink and forest green
     if(IsDarkTheme()) {
-        AddProperty(lexer, "5", "Line Deleted", "#FF8080", m_background.colour, false, false, true);
-        AddProperty(lexer, "6", "Line Added", "#80FF80", m_background.colour, false, false, true);
+        AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "#FF8080", m_background.colour, true);
+        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "#80FF80", m_background.colour, true);
     } else {
-        AddProperty(lexer, "5", "Line Deleted", "RED", "PINK", false, false, true);
-        AddProperty(lexer, "6", "Line Added", "DARK GREEN",
-                    wxColour("DARK GREEN").ChangeLightness(170).GetAsString(wxC2S_HTML_SYNTAX), false, false, true);
+        AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "RED", m_background.colour, true);
+        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "DARK GREEN", m_background.colour, true);
     }
-    //
-    // Finalize the importer
-    //
     FinalizeImport(lexer);
     return lexer;
 }

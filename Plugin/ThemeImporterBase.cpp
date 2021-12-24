@@ -226,7 +226,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
     }
 
     // load the theme background colour
-    m_isDarkTheme = lexer->IsDark();
+    m_isDarkTheme = DrawingUtils::IsDark(m_background.colour);
     return lexer;
 }
 
@@ -261,20 +261,26 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
         auto elem_scope = token["scope"];
         wxArrayString outer_scopes;
         if(elem_scope.isArray()) {
+            // if `scope` is array, collect only
+            // complete entries
             int scope_count = elem_scope.arraySize();
             for(int j = 0; j < scope_count; ++j) {
                 outer_scopes.Add(elem_scope[j].toString());
             }
         } else {
-            // scopes is a string
+            // scopes is a string, split it by space|,|; and add them all
             wxString scopes_str = elem_scope.toString();
-            outer_scopes.Add(scopes_str);
+            wxArrayString tmparr = ::wxStringTokenize(scopes_str, " ;,", wxTOKEN_STRTOK);
+            outer_scopes.insert(outer_scopes.end(), tmparr.begin(), tmparr.end());
         }
 
         wxArrayString scopes;
         for(const wxString& outer_scope : outer_scopes) {
             wxArrayString tmparr = ::wxStringTokenize(outer_scope, " ;,", wxTOKEN_STRTOK);
-            scopes.insert(scopes.end(), tmparr.begin(), tmparr.end());
+            if(tmparr.size() == 1) {
+                // only pick entries with a single element
+                scopes.push_back(tmparr[0]);
+            }
         }
 
         for(const wxString& scope : scopes) {
@@ -308,13 +314,14 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
                                            "keyword", "keyword.control", "storage" });
 
     // search for class names
-    m_klass.colour =
-        GetVSCodeColour(tokenColoursMap,
-                        { "storage.type.class", "entity.name.type.class", "entity.name.type.class.cpp",
-                          "meta.block.class.cpp", "entity.name.type.namespace", "entity.name.type", "entity.name.class",
-                          "entity.name.type", "class", "entity.name", "entity.name.scope-resolution" });
-    m_function.colour = GetVSCodeColour(
-        tokenColoursMap, { "entity.name.function", "keyword.other.special-method", "entity.name.function.call.cpp" });
+    m_klass.colour = GetVSCodeColour(tokenColoursMap,
+                                     { "storage.type.class", "entity.name.type.class", "entity.name.type.class.cpp",
+                                       "entity.name.type.class.php", "meta.block.class.cpp",
+                                       "entity.name.type.namespace", "entity.name.type", "entity.name.class",
+                                       "entity.name.type", "class", "entity.name", "entity.name.scope-resolution" });
+    m_function.colour =
+        GetVSCodeColour(tokenColoursMap, { "entity.name.function", "meta.function-call",
+                                           "entity.name.function.call.cpp", "entity.name.function.call.php" });
     m_variable.colour =
         GetVSCodeColour(tokenColoursMap, { "variable", "variable.member", "meta.parameter", "variable.parameter" });
     m_field = m_variable;

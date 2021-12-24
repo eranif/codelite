@@ -279,6 +279,8 @@ wxColor GetInactiveColor(const StyleProperty& defaultStyle)
 
 wxColour to_wx_colour(const wxString& colour_as_string)
 {
+    return wxColour(colour_as_string);
+#if 0
     //    return wxColour(colour_as_string);
     if(!colour_as_string.StartsWith("#")) {
         return wxColour(colour_as_string);
@@ -303,7 +305,7 @@ wxColour to_wx_colour(const wxString& colour_as_string)
     }
     // use default conversion
     return wxColour(colour_as_string);
-    //#endif
+#endif
 }
 } // namespace
 #define CL_LINE_MODIFIED_STYLE 200
@@ -413,19 +415,11 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             break;
         case SEL_TEXT_ATTR_ID: {
             // selection colour
-            if(wxColour(to_wx_colour(sp.GetBgColour())).IsOk()) {
-                ctrl->SetSelBackground(true, to_wx_colour(sp.GetBgColour()));
-                if(!IsUseCustomTextSelectionFgColour()) {
-                    ctrl->SetSelAlpha(50);
-                }
-            }
-            if(IsUseCustomTextSelectionFgColour() && wxColour(to_wx_colour(sp.GetFgColour())).IsOk()) {
-                ctrl->SetSelForeground(true, to_wx_colour(sp.GetFgColour()));
-            } else {
-                // provide a "dummy" selection colour (we pass 'false' so it does not matter
-                // which colour we use here)
-                ctrl->SetSelForeground(false, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-            }
+            wxColour sel_bg_colour = sp.GetBgColour();
+            wxColour sel_fg_colour = sp.GetFgColour();
+            ctrl->SetSelForeground(true, sel_fg_colour);
+            ctrl->SetSelBackground(true, sel_bg_colour);
+            // ctrl->SetSeleectionLa(IsUseCustomTextSelectionFgColour() ? 100 : 50);
             break;
         }
         case CARET_ATTR_ID: {

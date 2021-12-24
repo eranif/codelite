@@ -31,14 +31,14 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     }
     SetIcons(app_icons);
 
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
     m_panel171 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     bSizer1->Add(m_panel171, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer173 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer173 = new wxBoxSizer(wxVERTICAL);
     m_panel171->SetSizer(boxSizer173);
 
     m_toolbar = new clToolBar(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
@@ -58,15 +58,15 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_panelGlobalColours->SetToolTip(_("Set global colours and fonts"));
     m_notebook->AddPage(m_panelGlobalColours, _("General"), true);
 
-    boxSizer82 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer82 = new wxBoxSizer(wxVERTICAL);
     m_panelGlobalColours->SetSizer(boxSizer82);
 
-    staticBoxSizer179 =
+    wxStaticBoxSizer* staticBoxSizer179 =
         new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Editor Colours")), wxVERTICAL);
 
     boxSizer82->Add(staticBoxSizer179, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    flexGridSizer181 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer181 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer181->SetFlexibleDirection(wxBOTH);
     flexGridSizer181->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer181->AddGrowableCol(1);
@@ -75,7 +75,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     m_cbUseCustomBaseColour = new wxCheckBox(m_panelGlobalColours, wxID_ANY, _("Use custom base colour:"),
                                              wxDefaultPosition, wxDLG_UNIT(m_panelGlobalColours, wxSize(-1, -1)), 0);
-    m_cbUseCustomBaseColour->SetValue(false);
+    m_cbUseCustomBaseColour->SetValue(true);
 
     flexGridSizer181->Add(m_cbUseCustomBaseColour, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -88,12 +88,12 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer181->Add(m_colourPickerBaseColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    staticBoxSizer188 =
+    wxStaticBoxSizer* staticBoxSizer188 =
         new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Text Selection")), wxVERTICAL);
 
     boxSizer82->Add(staticBoxSizer188, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer3->SetFlexibleDirection(wxBOTH);
     fgSizer3->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer3->AddGrowableCol(1);
@@ -137,12 +137,12 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     fgSizer3->Add(m_colourPickerSelTextFgColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    staticBoxSizer182 =
+    wxStaticBoxSizer* staticBoxSizer182 =
         new wxStaticBoxSizer(new wxStaticBox(m_panelGlobalColours, wxID_ANY, _("Syntax Highlight")), wxVERTICAL);
 
     boxSizer82->Add(staticBoxSizer182, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer4 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer4->SetFlexibleDirection(wxBOTH);
     fgSizer4->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer4->AddGrowableCol(1);
@@ -219,7 +219,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     m_panelSyntaxHighlight->SetToolTip(_("Customize your colours and font per language"));
     m_notebook->AddPage(m_panelSyntaxHighlight, _("Customize"), false);
 
-    boxSizer21 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxHORIZONTAL);
     m_panelSyntaxHighlight->SetSizer(boxSizer21);
 
     wxArrayString m_listBoxArr;
@@ -234,7 +234,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     boxSizer21->Add(m_panel25, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    bSizer3 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer3 = new wxBoxSizer(wxVERTICAL);
     m_panel25->SetSizer(bSizer3);
 
     m_notebook2 =
@@ -247,10 +247,10 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
         new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panelGlobalSettings, _("Global Settings"), true);
 
-    bSizer6 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer6 = new wxBoxSizer(wxVERTICAL);
     m_panelGlobalSettings->SetSizer(bSizer6);
 
-    fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer2 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer2->SetFlexibleDirection(wxBOTH);
     fgSizer2->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer2->AddGrowableCol(1);
@@ -262,7 +262,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     fgSizer2->Add(m_staticText70, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    boxSizer95 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer95 = new wxBoxSizer(wxHORIZONTAL);
 
     fgSizer2->Add(boxSizer95, 0, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -315,10 +315,10 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
         new wxPanel(m_notebook2, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook2, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook2->AddPage(m_panelCustomize, _("Styles"), false);
 
-    bSizer51 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer51 = new wxBoxSizer(wxVERTICAL);
     m_panelCustomize->SetSizer(bSizer51);
 
-    bSizer8 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer8 = new wxBoxSizer(wxHORIZONTAL);
 
     bSizer51->Add(bSizer8, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -329,11 +329,11 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     bSizer8->Add(m_properties, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    bSizer9 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer9 = new wxBoxSizer(wxVERTICAL);
 
     bSizer8->Add(bSizer9, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* fgSizer1 = new wxFlexGridSizer(0, 2, 0, 0);
     fgSizer1->SetFlexibleDirection(wxBOTH);
     fgSizer1->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer1->AddGrowableCol(1);
@@ -403,7 +403,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     bSizer9->Add(m_staticText1, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    bSizer5 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* bSizer5 = new wxBoxSizer(wxHORIZONTAL);
 
     bSizer9->Add(bSizer5, 0, wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
@@ -432,7 +432,7 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
 
     bSizer5->Add(m_button9, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer19 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer173->Add(boxSizer19, 0, wxALL | wxALIGN_CENTER_HORIZONTAL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -619,10 +619,10 @@ NewThemeDialogBase::NewThemeDialogBase(wxWindow* parent, wxWindowID id, const wx
         bBitmapLoaded = true;
     }
 
-    boxSizer115 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer115 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer115);
 
-    flexGridSizer125 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer125 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer125->SetFlexibleDirection(wxBOTH);
     flexGridSizer125->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer125->AddGrowableCol(1);

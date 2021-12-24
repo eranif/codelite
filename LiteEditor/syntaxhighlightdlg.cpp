@@ -73,7 +73,8 @@ const wxString sampleText = "class Demo {\n"
                             "     * Creates a new demo.\n"
                             "     * @param o The object\n"
                             "     */\n"
-                            "    CallMethod(const Demo &other) {\n"
+                            "    CallMethod(const Demo& other) {\n"
+                            "        std::string a_string = \"hello world\";\n"
                             "        m_str = other.m_str;\n"
                             "        m_integer = other.m_integer;\n"
                             "    }\n"
@@ -125,6 +126,10 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
 
     DoUpdatePreview();
     m_isModified = true;
+
+    // for now, we only allow selection with fg colour
+    m_checkBoxCustomSelectionFgColour->SetValue(true);
+    m_checkBoxCustomSelectionFgColour->Enable(false);
 
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);
@@ -451,9 +456,9 @@ void SyntaxHighlightDlg::OnSelTextChanged(wxColourPickerEvent& event)
     CHECK_PTR_RET(m_lexer);
     event.Skip();
     m_isModified = true;
-    ColoursAndFontsManager::Get().SetThemeTextSelectionColours(
-        m_lexer->GetThemeName(), m_colourPickerSelTextBgColour->GetColour(), m_colourPickerSelTextFgColour->GetColour(),
-        m_checkBoxCustomSelectionFgColour->IsChecked());
+    ColoursAndFontsManager::Get().SetThemeTextSelectionColours(m_lexer->GetThemeName(),
+                                                               m_colourPickerSelTextBgColour->GetColour(),
+                                                               m_colourPickerSelTextFgColour->GetColour(), true);
 }
 
 void SyntaxHighlightDlg::OnStyleWithinPreprocessor(wxCommandEvent& event)
@@ -534,7 +539,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
               << ", fg:" << selTextProperties.GetFgColour() << endl;
     m_colourPickerSelTextBgColour->SetColour(selTextProperties.GetBgColour());
     m_colourPickerSelTextFgColour->SetColour(selTextProperties.GetFgColour());
-    m_checkBoxCustomSelectionFgColour->SetValue(m_lexer->IsUseCustomTextSelectionFgColour());
+    m_checkBoxCustomSelectionFgColour->SetValue(true);
 
     if(m_propertyList.empty()) {
         m_fontPicker->Enable(false);
@@ -578,10 +583,7 @@ void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::OnButtonApplyUI(wxUpdateUIEvent& event) { event.Enable(m_isModified); }
 
-void SyntaxHighlightDlg::OnTextSelFgUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxCustomSelectionFgColour->IsChecked());
-}
+void SyntaxHighlightDlg::OnTextSelFgUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void SyntaxHighlightDlg::OnSelTextFgChanged(wxColourPickerEvent& event)
 {
@@ -601,9 +603,9 @@ void SyntaxHighlightDlg::OnUseCustomFgTextColour(wxCommandEvent& event)
 
 void SyntaxHighlightDlg::UpdateTextSelectionColours()
 {
-    ColoursAndFontsManager::Get().SetThemeTextSelectionColours(
-        m_lexer->GetThemeName(), m_colourPickerSelTextBgColour->GetColour(), m_colourPickerSelTextFgColour->GetColour(),
-        m_checkBoxCustomSelectionFgColour->IsChecked());
+    ColoursAndFontsManager::Get().SetThemeTextSelectionColours(m_lexer->GetThemeName(),
+                                                               m_colourPickerSelTextBgColour->GetColour(),
+                                                               m_colourPickerSelTextFgColour->GetColour(), true);
 }
 
 void SyntaxHighlightDlg::OnNewTheme(wxCommandEvent& event)

@@ -27,8 +27,10 @@
 #define __editorsetthingsbookmarkspanel__
 
 #include "editorsettingsbookmarksbasepanel.h"
+#include "globals.h"
 #include "treebooknodebase.h"
-//#include <vector>
+
+#include <vector>
 
 struct BookmarkData {
     wxColour fg;
@@ -37,16 +39,15 @@ struct BookmarkData {
     wxString defaultLabel;
 };
 
-class EditorSettingsBookmarksPanel
-    : public EditorSettingsBookmarksBasePanel
-    , public TreeBookNode<EditorSettingsBookmarksPanel>
+class EditorSettingsBookmarksPanel : public EditorSettingsBookmarksBasePanel,
+                                     public TreeBookNode<EditorSettingsBookmarksPanel>
 {
     StringManager m_stringManager;
     std::vector<BookmarkData> m_bookmarksData;
     int m_previous;
 
 public:
-    EditorSettingsBookmarksPanel( wxWindow* parent );
+    EditorSettingsBookmarksPanel(wxWindow* parent);
     void Save(OptionsConfigPtr options);
 
 protected:

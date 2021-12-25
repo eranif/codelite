@@ -24,28 +24,27 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "options_dlg2.h"
-#include "editorsettingscaret.h"
-#include "editorsettingsdockingwidows.h"
-#include "editorsettingsterminal.h"
-#include "globals.h"
-#include "plugin.h"
 
+#include "EditorOptionsGeneralEdit.h"
+#include "clTabRendererMinimal.hpp"
 #include "editor_options_general_guides_panel.h"
 #include "editoroptionsgeneralindentationpanel.h"
 #include "editoroptionsgeneralrightmarginpanel.h"
 #include "editoroptionsgeneralsavepanel.h"
-#include "frame.h"
-#include "globals.h"
-
-#include "EditorOptionsGeneralEdit.h"
-#include "clTabRendererMinimal.hpp"
 #include "editorsettingsbookmarkspanel.h"
+#include "editorsettingscaret.h"
 #include "editorsettingscomments.h"
 #include "editorsettingscommentsdoxygenpanel.h"
+#include "editorsettingsdockingwidows.h"
 #include "editorsettingsfolding.h"
 #include "editorsettingsmiscpanel.h"
+#include "editorsettingsterminal.h"
+#include "frame.h"
+#include "globals.h"
 #include "manager.h"
+#include "plugin.h"
 #include "windowattrmanager.h"
+
 #include <wx/persist.h>
 #include <wx/persist/bookctrl.h>
 #include <wx/persist/toplevel.h>
@@ -56,10 +55,8 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     , m_contentObjects()
     , restartRquired(false)
 {
-    m_treeBook->SetArt(clTabRenderer::CreateRenderer(m_treeBook, m_treeBook->GetStyle()));
-    m_treeBook->EnableStyle(kNotebook_ShowFileListButton, true);
     Initialize();
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 PreferencesDialog::~PreferencesDialog() {}

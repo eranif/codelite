@@ -41,8 +41,8 @@ SyntaxHighlightBaseDlg::SyntaxHighlightBaseDlg(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* boxSizer173 = new wxBoxSizer(wxVERTICAL);
     m_panel171->SetSizer(boxSizer173);
 
-    m_toolbar = new clToolBar(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
-                              wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar = new wxToolBar(m_panel171, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel171, wxSize(-1, -1)),
+                              wxTB_HORZ_TEXT | wxTB_NOICONS | wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
     boxSizer173->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));

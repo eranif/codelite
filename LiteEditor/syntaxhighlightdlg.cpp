@@ -148,14 +148,14 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
 
     SetName("SyntaxHighlightDlg");
     WindowAttrManager::Load(this);
-    m_toolbar->SetMiniToolBar(false);
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(wxID_NEW, _("New Theme"), images->Add("file_new"));
-    m_toolbar->AddTool(wxID_SAVE, _("Export"), images->Add("file_save"));
-    m_toolbar->AddTool(XRCID("export_all"), _("Export All"), images->Add("file_save_all"));
-    m_toolbar->AddTool(XRCID("import_zip"), _("Import from ZIP file"), images->Add("file_open"));
-    m_toolbar->AddTool(XRCID("revert_changes"), _("Reaload Default Settings"), images->Add("file_reload"));
-    m_toolbar->AddTool(XRCID("import_eclipse_theme"), _("Import Theme"), images->Add("file_open"));
+    auto images = clGetManager()->GetStdIcons();
+
+    m_toolbar->AddTool(wxID_NEW, _("New.."), images->LoadBitmap("file_new", 24));
+    m_toolbar->AddTool(wxID_SAVE, _("Export.."), images->LoadBitmap("file_save", 24));
+    m_toolbar->AddTool(XRCID("export_all"), _("Export All"), images->LoadBitmap("file_save_all", 24));
+    m_toolbar->AddTool(XRCID("import_zip"), _("Import from ZIP file"), images->LoadBitmap("file_open", 24));
+    m_toolbar->AddTool(XRCID("revert_changes"), _("Restore"), images->LoadBitmap("file_reload", 24));
+    m_toolbar->AddTool(XRCID("import_eclipse_theme"), _("Import"), images->LoadBitmap("file_open", 24));
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnNewTheme, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &SyntaxHighlightDlg::OnExportSelective, this, wxID_SAVE);

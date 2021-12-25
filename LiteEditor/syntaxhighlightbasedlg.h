@@ -17,7 +17,6 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/toolbar.h>
-#include "clToolBar.h"
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/statbox.h>
@@ -54,7 +53,7 @@ class SyntaxHighlightBaseDlg : public wxDialog
 {
 protected:
     wxPanel* m_panel171;
-    clToolBar* m_toolbar;
+    wxToolBar* m_toolbar;
     wxNotebook* m_notebook;
     wxPanel* m_panelGlobalColours;
     wxCheckBox* m_cbUseCustomBaseColour;
@@ -136,7 +135,7 @@ protected:
     virtual void OnButtonApplyUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
+    wxToolBar* GetToolbar() { return m_toolbar; }
     wxCheckBox* GetCbUseCustomBaseColour() { return m_cbUseCustomBaseColour; }
     wxColourPickerCtrl* GetColourPickerBaseColour() { return m_colourPickerBaseColour; }
     wxStaticText* GetStaticText9() { return m_staticText9; }

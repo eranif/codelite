@@ -30,21 +30,21 @@ LexerConf::Ptr_t ThemeImporterCMake::Import(const wxFileName& theme_file)
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties
-    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "1", "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, "2", "String DQ", m_string.colour, m_background.colour);
-    AddProperty(lexer, "3", "String LQ", m_string.colour, m_background.colour);
-    AddProperty(lexer, "4", "String RQ", m_string.colour, m_background.colour);
-    AddProperty(lexer, "5", "Commands", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, "6", "Parameters", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "7", "Variables", m_klass.colour, m_background.colour);
-    AddProperty(lexer, "8", "UserDefined", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "9", "While Def", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, "10", "Foreach Def", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, "11", "If Defined Def", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, "12", "Macro Def", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, "13", "String Var", m_klass.colour, m_background.colour);
-    AddProperty(lexer, "14", "Number", m_number.colour, m_background.colour);
+    AddProperty(lexer, "0", "Default", m_editor);
+    AddProperty(lexer, "1", "Comment", m_singleLineComment);
+    AddProperty(lexer, "2", "String DQ", m_string);
+    AddProperty(lexer, "3", "String LQ", m_string);
+    AddProperty(lexer, "4", "String RQ", m_string);
+    AddProperty(lexer, "5", "Commands", m_keyword);
+    AddProperty(lexer, "6", "Parameters", m_variable);
+    AddProperty(lexer, "7", "Variables", m_variable);
+    AddProperty(lexer, "8", "UserDefined", m_editor);
+    AddProperty(lexer, "9", "While Def", m_keyword);
+    AddProperty(lexer, "10", "Foreach Def", m_keyword);
+    AddProperty(lexer, "11", "If Defined Def", m_keyword);
+    AddProperty(lexer, "12", "Macro Def", m_function);
+    AddProperty(lexer, "13", "String Var", m_klass);
+    AddProperty(lexer, "14", "Number", m_number);
 
     FinalizeImport(lexer);
     return lexer;

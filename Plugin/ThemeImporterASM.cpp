@@ -76,24 +76,23 @@ LexerConf::Ptr_t ThemeImporterASM::Import(const wxFileName& theme_file)
     // Initialize the import
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "assembly", wxSTC_LEX_ASM);
 
-    AddProperty(lexer, wxSTC_ASM_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_COMMENT, "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_NUMBER, "Number", m_number.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_STRING, "String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_OPERATOR, "Operator", m_oper.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_CPUINSTRUCTION, "CPU Instruction", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_MATHINSTRUCTION, "Math Instruction", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_MATHINSTRUCTION, "Math Instruction", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_REGISTER, "Register", m_klass.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_DIRECTIVE, "Directive", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_DIRECTIVEOPERAND, "Directive Operand", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_COMMENTBLOCK, "Comment block", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_CHARACTER, "Character", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_STRINGEOL, "String EOL", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_EXTINSTRUCTION, "Ext Instruction", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_ASM_COMMENTDIRECTIVE, "Comment directive", m_singleLineComment.colour,
-                m_background.colour);
+    AddProperty(lexer, wxSTC_ASM_DEFAULT, "Default", m_editor);
+    AddProperty(lexer, wxSTC_ASM_COMMENT, "Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_ASM_NUMBER, "Number", m_number);
+    AddProperty(lexer, wxSTC_ASM_STRING, "String", m_string);
+    AddProperty(lexer, wxSTC_ASM_OPERATOR, "Operator", m_oper);
+    AddProperty(lexer, wxSTC_ASM_IDENTIFIER, "Identifier", m_editor);
+    AddProperty(lexer, wxSTC_ASM_CPUINSTRUCTION, "CPU Instruction", m_keyword);
+    AddProperty(lexer, wxSTC_ASM_MATHINSTRUCTION, "Math Instruction", m_keyword);
+    AddProperty(lexer, wxSTC_ASM_MATHINSTRUCTION, "Math Instruction", m_keyword);
+    AddProperty(lexer, wxSTC_ASM_REGISTER, "Register", m_klass);
+    AddProperty(lexer, wxSTC_ASM_DIRECTIVE, "Directive", m_editor);
+    AddProperty(lexer, wxSTC_ASM_DIRECTIVEOPERAND, "Directive Operand", m_editor);
+    AddProperty(lexer, wxSTC_ASM_COMMENTBLOCK, "Comment block", m_multiLineComment);
+    AddProperty(lexer, wxSTC_ASM_CHARACTER, "Character", m_string);
+    AddProperty(lexer, wxSTC_ASM_STRINGEOL, "String EOL", m_string);
+    AddProperty(lexer, wxSTC_ASM_EXTINSTRUCTION, "Ext Instruction", m_keyword);
+    AddProperty(lexer, wxSTC_ASM_COMMENTDIRECTIVE, "Comment directive", m_singleLineComment);
 
     // Finalize the import
     FinalizeImport(lexer);

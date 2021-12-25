@@ -37,30 +37,28 @@ ThemeImporterSQL::~ThemeImporterSQL() {}
 LexerConf::Ptr_t ThemeImporterSQL::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_SQL);
-    AddProperty(lexer, wxSTC_SQL_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_COMMENT, "Comment line", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_COMMENTLINE, "Comment block", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_COMMENTDOC, "Comment doc", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_NUMBER, "Number", m_number.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_WORD, "Word", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_STRING, "String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_CHARACTER, "Character", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_SQLPLUS, "SQL Plus", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_SQLPLUS_PROMPT, "SQL Plus prompt", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_OPERATOR, "Operator", m_oper.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_SQLPLUS_COMMENT, "SQL Plus comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_COMMENTLINEDOC, "Comment line doc", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_WORD2, "Word (Set 2)", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_COMMENTDOCKEYWORD, "Comment doc keyword", m_javadocKeyword.colour,
-                m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_COMMENTDOCKEYWORDERROR, "Comment doc keyword error", m_javadocKeyword.colour,
-                m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_USER1, "User 1", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_USER1, "User 2", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_USER1, "User 3", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_USER1, "User 4", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_SQL_QUOTEDIDENTIFIER, "Quoted identifier", m_string.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_SQL_DEFAULT, "Default", m_editor);
+    AddProperty(lexer, wxSTC_SQL_COMMENT, "Comment line", m_multiLineComment);
+    AddProperty(lexer, wxSTC_SQL_COMMENTLINE, "Comment block", m_singleLineComment);
+    AddProperty(lexer, wxSTC_SQL_COMMENTDOC, "Comment doc", m_multiLineComment);
+    AddProperty(lexer, wxSTC_SQL_NUMBER, "Number", m_number);
+    AddProperty(lexer, wxSTC_SQL_WORD, "Word", m_variable);
+    AddProperty(lexer, wxSTC_SQL_STRING, "String", m_string);
+    AddProperty(lexer, wxSTC_SQL_CHARACTER, "Character", m_string);
+    AddProperty(lexer, wxSTC_SQL_SQLPLUS, "SQL Plus", m_editor);
+    AddProperty(lexer, wxSTC_SQL_SQLPLUS_PROMPT, "SQL Plus prompt", m_editor);
+    AddProperty(lexer, wxSTC_SQL_OPERATOR, "Operator", m_oper);
+    AddProperty(lexer, wxSTC_SQL_IDENTIFIER, "Identifier", m_editor);
+    AddProperty(lexer, wxSTC_SQL_SQLPLUS_COMMENT, "SQL Plus comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_SQL_COMMENTLINEDOC, "Comment line doc", m_singleLineComment);
+    AddProperty(lexer, wxSTC_SQL_WORD2, "Word (Set 2)", m_keyword);
+    AddProperty(lexer, wxSTC_SQL_COMMENTDOCKEYWORD, "Comment doc keyword", m_javadocKeyword);
+    AddProperty(lexer, wxSTC_SQL_COMMENTDOCKEYWORDERROR, "Comment doc keyword error", m_javadocKeyword);
+    AddProperty(lexer, wxSTC_SQL_USER1, "User 1", m_editor);
+    AddProperty(lexer, wxSTC_SQL_USER1, "User 2", m_editor);
+    AddProperty(lexer, wxSTC_SQL_USER1, "User 3", m_editor);
+    AddProperty(lexer, wxSTC_SQL_USER1, "User 4", m_editor);
+    AddProperty(lexer, wxSTC_SQL_QUOTEDIDENTIFIER, "Quoted identifier", m_string);
     FinalizeImport(lexer);
     return lexer;
 }

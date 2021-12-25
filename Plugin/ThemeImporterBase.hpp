@@ -33,6 +33,7 @@
 #include "smart_ptr.h"
 
 #include <list>
+#include <unordered_map>
 #include <wx/filename.h>
 #include <wx/string.h>
 #include <wx/xml/xml.h>
@@ -41,10 +42,18 @@ class WXDLLIMPEXP_SDK ThemeImporterBase
 {
 public:
     struct Property {
-        wxString colour;
+        wxString fg_colour;
+        wxString bg_colour;
         bool isBold = false;
         bool isItalic = false;
     };
+
+    struct EclipseProperty {
+        wxString color;
+        bool isBold = false;
+        bool isItalic = false;
+    };
+
     typedef SmartPtr<ThemeImporterBase> Ptr_t;
     typedef std::list<ThemeImporterBase::Ptr_t> List_t;
 
@@ -56,11 +65,11 @@ protected:
     wxString m_keywords4;
     wxString m_keywords5;
     wxString m_fileExtensions;
-    Property m_background;
-    Property m_foreground;
+    Property m_editor;
     Property m_lineNumber;
-    Property m_selectionBackground;
-    Property m_selectionForeground;
+    Property m_lineNumberActive;
+    Property m_selection;
+    Property m_caret;
     Property m_singleLineComment;
     Property m_multiLineComment;
     Property m_number;
@@ -83,22 +92,27 @@ protected:
     int m_functionsIndex = wxNOT_FOUND;
     int m_localsIndex = wxNOT_FOUND;
     int m_othersIndex = wxNOT_FOUND;
+    std::unordered_map<wxString, EclipseProperty> m_xmlProperties;
 
 protected:
     void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const wxString& colour,
                      const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false);
+
     void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const Property& prop)
     {
-        AddProperty(lexer, id, name, prop.colour, m_background.colour, prop.isBold, prop.isItalic, false);
+        AddProperty(lexer, id, name, prop.fg_colour, prop.bg_colour.empty() ? m_editor.bg_colour : prop.bg_colour,
+                    prop.isBold, prop.isItalic, false);
     }
+
     void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const Property& prop)
     {
-        AddProperty(lexer, id, name, prop.colour, m_background.colour, prop.isBold, prop.isItalic, false);
+        AddProperty(lexer, wxString() << id, name, prop);
     }
+
     void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const wxString& colour,
                      const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false)
     {
-        AddProperty(lexer, wxString::Format("%d", id), name, colour, bgColour, bold, italic, isEOLFilled);
+        AddProperty(lexer, wxString() << id, name, colour, bgColour, bold, italic, isEOLFilled);
     }
 
     void AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id);
@@ -107,15 +121,17 @@ protected:
     void DoSetKeywords(wxString& wordset, const wxString& words);
     LexerConf::Ptr_t ImportEclipseXML(const wxFileName& theme_file, const wxString& langName, int langId);
     LexerConf::Ptr_t ImportVSCodeJSON(const wxFileName& theme_file, const wxString& langName, int langId);
-    wxString GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map, const std::vector<wxString>& scopes);
+    void GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map, const std::vector<wxString>& scopes,
+                         Property& colour);
+    void GetEditorVSCodeColour(JSONItem& colours, const wxString& bg_prop, const wxString& fg_prop, Property& colour);
 
 private:
     /**
-     * @brief get attributes of a given property
-     * @param name the property name
-     * @param prop [output]
+     * @brief read the background / foreground properties from the XML into `prop`
+     * if a property is not found, we use the `m_editor` proprties
      */
-    bool GetEclipseXmlProperty(const wxXmlDocument& doc, const wxString& name, ThemeImporterBase::Property& prop) const;
+    void GetEclipseXmlProperty(const wxString& bg_prop, const wxString& fg_prop,
+                               ThemeImporterBase::Property& prop) const;
 
 public:
     const wxString& GetLangName() const { return m_langName; }

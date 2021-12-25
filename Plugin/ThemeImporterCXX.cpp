@@ -58,7 +58,7 @@ LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties
-    AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_editor);
     AddProperty(lexer, wxSTC_C_COMMENT, "Common C style comment", m_multiLineComment);
     AddProperty(lexer, wxSTC_C_COMMENTLINE, "Common C++ style comment", m_singleLineComment);
     AddProperty(lexer, wxSTC_C_COMMENTDOC, "Doxygen C style comment", m_javadoc);
@@ -67,9 +67,9 @@ LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_STRING, "String", m_string);
     AddProperty(lexer, wxSTC_C_CHARACTER, "Character", m_string);
     AddProperty(lexer, wxSTC_C_UUID, "Uuid", m_number);
-    AddProperty(lexer, wxSTC_C_PREPROCESSOR, "Preprocessor", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_C_PREPROCESSOR, "Preprocessor", m_editor);
     AddProperty(lexer, wxSTC_C_OPERATOR, "Operator", m_oper);
-    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_variable.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_variable);
     AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string);
     AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Doxygen C++ style comment", m_javadoc);
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Doxygen keyword", m_javadocKeyword);

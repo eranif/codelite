@@ -23,7 +23,7 @@ ThemeImporterRust::~ThemeImporterRust() {}
 LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_RUST);
-    AddProperty(lexer, wxSTC_RUST_DEFAULT, "Default", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_RUST_DEFAULT, "Default", m_editor);
 
     wxString errorColour;
     if(lexer->IsDark()) {
@@ -32,7 +32,7 @@ LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& theme_file)
         errorColour = "RED";
     }
 
-    AddProperty(lexer, wxSTC_RUST_LEXERROR, "Lex error", errorColour, m_background.colour);
+    AddProperty(lexer, wxSTC_RUST_LEXERROR, "Lex error", errorColour, m_editor.bg_colour);
     AddProperty(lexer, wxSTC_RUST_COMMENTBLOCK, "Comment block", m_multiLineComment);
     AddProperty(lexer, wxSTC_RUST_COMMENTLINE, "Comment line", m_singleLineComment);
     AddProperty(lexer, wxSTC_RUST_COMMENTBLOCKDOC, "Comment block doc", m_javadoc);
@@ -43,18 +43,17 @@ LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_RUST_WORD4, "Struct", m_klass);
     AddProperty(lexer, wxSTC_RUST_WORD5, "Variables", m_variable);
     AddProperty(lexer, wxSTC_RUST_WORD6, "Functions", m_function);
-    AddProperty(lexer, wxSTC_RUST_WORD7, "Word List 7", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_RUST_WORD7, "Word List 7", m_editor);
     AddProperty(lexer, wxSTC_RUST_STRING, "String", m_string);
-    AddProperty(lexer, wxSTC_RUST_STRINGR, "String raw", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_RUST_CHARACTER, "Character", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_RUST_OPERATOR, "Operator", m_oper.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_RUST_STRINGR, "String raw", m_string);
+    AddProperty(lexer, wxSTC_RUST_CHARACTER, "Character", m_string);
+    AddProperty(lexer, wxSTC_RUST_OPERATOR, "Operator", m_oper);
     AddProperty(lexer, wxSTC_RUST_IDENTIFIER, "Identifier", m_variable);
-    AddProperty(lexer, wxSTC_RUST_LIFETIME, "Lifetime", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_RUST_MACRO, "Macro", wxColour(m_klass.colour).GetAsString(wxC2S_HTML_SYNTAX),
-                m_background.colour);
-    AddProperty(lexer, wxSTC_RUST_BYTESTRING, "Byte string", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_RUST_BYTESTRINGR, "Byte string raw", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_RUST_BYTECHARACTER, "Byte character", m_string.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_RUST_LIFETIME, "Lifetime", m_editor);
+    AddProperty(lexer, wxSTC_RUST_MACRO, "Macro", m_klass);
+    AddProperty(lexer, wxSTC_RUST_BYTESTRING, "Byte string", m_string);
+    AddProperty(lexer, wxSTC_RUST_BYTESTRINGR, "Byte string raw", m_string);
+    AddProperty(lexer, wxSTC_RUST_BYTECHARACTER, "Byte character", m_string);
     FinalizeImport(lexer);
     return lexer;
 }

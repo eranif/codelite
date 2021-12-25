@@ -12,7 +12,7 @@ LexerConf::Ptr_t ThemeImporterText::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "text", 1);
     CHECK_PTR_RET_NULL(lexer);
 
-    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "0", "Default", m_editor);
     AddCommonProperties(lexer);
     FinalizeImport(lexer);
     return lexer;

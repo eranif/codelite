@@ -15,7 +15,7 @@ ThemeImporterPython::~ThemeImporterPython() {}
 LexerConf::Ptr_t ThemeImporterPython::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_PYTHON);
-    AddProperty(lexer, wxSTC_P_DEFAULT, "Default", m_foreground);
+    AddProperty(lexer, wxSTC_P_DEFAULT, "Default", m_editor);
     AddProperty(lexer, wxSTC_P_COMMENTLINE, "Comment", m_singleLineComment);
     AddProperty(lexer, wxSTC_P_COMMENTLINE, "Number", m_number);
     AddProperty(lexer, wxSTC_P_STRING, "String", m_string);

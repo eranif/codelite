@@ -12,13 +12,13 @@ LexerConf::Ptr_t ThemeImporterMakefile::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "makefile", 11);
     CHECK_PTR_RET_NULL(lexer);
 
-    AddProperty(lexer, "0", "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, "1", "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, "2", "Preprocessor", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, "3", "Identifier", m_variable.colour, m_background.colour);
-    AddProperty(lexer, "4", "Operator", m_oper.colour, m_background.colour);
-    AddProperty(lexer, "5", "Target", m_klass.colour, m_background.colour);
-    AddProperty(lexer, "9", "ID End Of Line", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, "0", "Default", m_editor);
+    AddProperty(lexer, "1", "Comment", m_singleLineComment);
+    AddProperty(lexer, "2", "Preprocessor", m_keyword);
+    AddProperty(lexer, "3", "Identifier", m_variable);
+    AddProperty(lexer, "4", "Operator", m_oper);
+    AddProperty(lexer, "5", "Target", m_klass);
+    AddProperty(lexer, "9", "ID End Of Line", m_editor);
 
     FinalizeImport(lexer);
     return lexer;

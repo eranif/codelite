@@ -44,22 +44,23 @@ ThemeImporterInnoSetup::ThemeImporterInnoSetup()
 }
 
 ThemeImporterInnoSetup::~ThemeImporterInnoSetup() {}
+
 LexerConf::Ptr_t ThemeImporterInnoSetup::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_INNOSETUP);
-    AddProperty(lexer, wxSTC_INNO_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_COMMENT, "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_KEYWORD, "Keyword", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_PARAMETER, "Parameter", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_SECTION, "Section", m_klass.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_PREPROC, "Pre processor", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_INLINE_EXPANSION, "Inline Expansion", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_COMMENT_PASCAL, "Pascal Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_KEYWORD_PASCAL, "Pascal Keyword", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_KEYWORD_USER, "User Keyword", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_STRING_DOUBLE, "Double string", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_STRING_SINGLE, "Single string", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_INNO_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_INNO_DEFAULT, "Default", m_editor);
+    AddProperty(lexer, wxSTC_INNO_COMMENT, "Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_INNO_KEYWORD, "Keyword", m_keyword);
+    AddProperty(lexer, wxSTC_INNO_PARAMETER, "Parameter", m_variable);
+    AddProperty(lexer, wxSTC_INNO_SECTION, "Section", m_klass);
+    AddProperty(lexer, wxSTC_INNO_PREPROC, "Pre processor", m_string);
+    AddProperty(lexer, wxSTC_INNO_INLINE_EXPANSION, "Inline Expansion", m_string);
+    AddProperty(lexer, wxSTC_INNO_COMMENT_PASCAL, "Pascal Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_INNO_KEYWORD_PASCAL, "Pascal Keyword", m_keyword);
+    AddProperty(lexer, wxSTC_INNO_KEYWORD_USER, "User Keyword", m_keyword);
+    AddProperty(lexer, wxSTC_INNO_STRING_DOUBLE, "Double string", m_string);
+    AddProperty(lexer, wxSTC_INNO_STRING_SINGLE, "Single string", m_string);
+    AddProperty(lexer, wxSTC_INNO_IDENTIFIER, "Identifier", m_editor);
     FinalizeImport(lexer);
     return lexer;
 }

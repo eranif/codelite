@@ -4,6 +4,7 @@
 #include "JSON.h"
 #include "cl_standard_paths.h"
 #include "drawingutils.h"
+#include "file_logger.h"
 #include "fileextmanager.h"
 #include "globals.h"
 #include "lexer_configuration.h"
@@ -13,30 +14,36 @@
 #include <wx/colour.h>
 #include <wx/tokenzr.h>
 
+namespace
+{
+void SetSelectionColour(bool is_dark_theme, ThemeImporterBase::Property& selection)
+{
+    // set the selection colour
+    if(is_dark_theme) {
+        selection.bg_colour = "#CC9900";
+        selection.fg_colour = "#404040";
+    } else {
+        selection.bg_colour = "#BDD8F2";
+        selection.fg_colour = "#484848";
+    }
+}
+} // namespace
+
 ThemeImporterBase::ThemeImporterBase() {}
 
 ThemeImporterBase::~ThemeImporterBase() {}
 
-bool ThemeImporterBase::GetEclipseXmlProperty(const wxXmlDocument& doc, const wxString& name,
+void ThemeImporterBase::GetEclipseXmlProperty(const wxString& bg_prop, const wxString& fg_prop,
                                               ThemeImporterBase::Property& prop) const
 {
-    prop.colour = "";
-    prop.isBold = false;
-    prop.isItalic = false;
-    if(!doc.IsOk())
-        return false;
-
-    wxXmlNode* child = doc.GetRoot()->GetChildren();
-    while(child) {
-        if(child->GetName() == name) {
-            prop.colour = child->GetAttribute("color");
-            prop.isBold = child->GetAttribute("bold", "false") == "true";
-            prop.isItalic = child->GetAttribute("italic", "false") == "true";
-            return true;
-        }
-        child = child->GetNext();
+    prop = m_editor;
+    if(!bg_prop.empty() && m_xmlProperties.count(bg_prop)) {
+        prop.bg_colour = m_xmlProperties.find(bg_prop)->second.color;
     }
-    return false;
+
+    if(!fg_prop.empty() && m_xmlProperties.count(fg_prop)) {
+        prop.fg_colour = m_xmlProperties.find(fg_prop)->second.color;
+    }
 }
 
 LexerConf::Ptr_t ThemeImporterBase::InitializeImport(const wxFileName& theme_file, const wxString& langName, int langId)
@@ -120,35 +127,29 @@ void ThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const wxString
 void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
 {
     // Set the brace match based on the background colour
-    Property background = m_background;
-    Property foreground = m_foreground;
-    Property selectionBackground = m_selectionBackground;
-    Property selectionForeground = m_selectionForeground;
-    Property lineNumber = m_lineNumber;
-
     wxString whitespaceColour;
     if(IsDarkTheme()) {
         // dark theme
         // Whitespace should be a bit lighether
-        whitespaceColour = wxColour(background.colour).ChangeLightness(150).GetAsString(wxC2S_HTML_SYNTAX);
-        AddProperty(lexer, "34", "Brace match", "yellow", background.colour, true);
-        AddProperty(lexer, "35", "Brace bad match", "red", background.colour, true);
-        AddProperty(lexer, "37", "Indent Guide", background.colour, background.colour);
+        whitespaceColour = wxColour(m_editor.bg_colour).ChangeLightness(150).GetAsString(wxC2S_HTML_SYNTAX);
+        AddProperty(lexer, "34", "Brace match", "yellow", m_editor.bg_colour, true);
+        AddProperty(lexer, "35", "Brace bad match", "red", m_editor.bg_colour, true);
+        AddProperty(lexer, "37", "Indent Guide", m_editor.bg_colour, m_editor.bg_colour);
 
     } else {
         // light theme
-        whitespaceColour = wxColour(background.colour).ChangeLightness(50).GetAsString(wxC2S_HTML_SYNTAX);
+        whitespaceColour = wxColour(m_editor.bg_colour).ChangeLightness(50).GetAsString(wxC2S_HTML_SYNTAX);
         AddProperty(lexer, "34", "Brace match", "black", "cyan", true);
         AddProperty(lexer, "35", "Brace bad match", "black", "red", true);
-        AddProperty(lexer, "37", "Indent Guide", whitespaceColour, background.colour);
+        AddProperty(lexer, "37", "Indent Guide", m_editor.bg_colour, m_editor.bg_colour);
     }
-    AddProperty(lexer, "-1", "Fold Margin", background.colour, background.colour);
-    AddProperty(lexer, "-2", "Text Selection", selectionForeground.colour, selectionBackground.colour);
-    AddProperty(lexer, "-3", "Caret Colour", IsDarkTheme() ? "white" : "black", background.colour);
-    AddProperty(lexer, "-4", "Whitespace", whitespaceColour, background.colour);
-    AddProperty(lexer, "38", "Calltip", foreground.colour, background.colour);
-    AddProperty(lexer, "33", "Line Numbers", lineNumber.colour, background.colour, lineNumber.isBold,
-                lineNumber.isItalic);
+
+    AddProperty(lexer, "-1", "Fold Margin", m_editor);
+    AddProperty(lexer, "-2", "Text Selection", m_selection);
+    AddProperty(lexer, "-3", "Caret Colour", IsDarkTheme() ? "white" : "black", m_editor.bg_colour);
+    AddProperty(lexer, "-4", "Whitespace", whitespaceColour, m_editor.bg_colour);
+    AddProperty(lexer, "38", "Calltip", m_editor);
+    AddProperty(lexer, "33", "Line Numbers", m_lineNumber);
 }
 
 void ThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& words)
@@ -162,6 +163,8 @@ void ThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& words)
 
 LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_file, const wxString& langName, int langId)
 {
+    wxUnusedVar(langName);
+    clDEBUG() << "   > Importing Eclipse XML file:" << theme_file << ". Language:" << langName << endl;
     wxXmlDocument doc;
     if(!doc.Load(theme_file.GetFullPath()))
         return NULL;
@@ -169,80 +172,82 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
     m_themeName = doc.GetRoot()->GetAttribute("name");
     LexerConf::Ptr_t lexer(new LexerConf());
 
+    m_xmlProperties.clear();
+
+    // Read all the properties into table
+    wxXmlNode* child = doc.GetRoot()->GetChildren();
+    while(child) {
+        EclipseProperty property;
+        property.color = child->GetAttribute("color");
+        property.isBold = child->GetAttribute("bold", "false") == "true";
+        property.isItalic = child->GetAttribute("italic", "false") == "true";
+        m_xmlProperties.insert({ child->GetName(), property });
+        child = child->GetNext();
+    }
+
     // Add the lexer basic properties (laguage, file extensions, keywords, name)
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
 
-    // Read the basic properties
-    if(!GetEclipseXmlProperty(doc, "background", m_background))
-        return NULL;
+    // Read the basic properties ("m_editor")
+    GetEclipseXmlProperty("background", "foreground", m_editor);
+    m_isDarkTheme = DrawingUtils::IsDark(m_editor.bg_colour);
+    // set the selection colour
+    SetSelectionColour(m_isDarkTheme, m_selection);
 
-    if(wxColour(m_background.colour) == *wxBLACK) {
-        // dont allow real black colour
-        m_background.colour = wxColour(*wxBLACK).ChangeLightness(105).GetAsString(wxC2S_HTML_SYNTAX);
-    }
+    GetEclipseXmlProperty(wxEmptyString, "lineNumber", m_lineNumber);
+    GetEclipseXmlProperty(wxEmptyString, "singleLineComment", m_singleLineComment);
+    GetEclipseXmlProperty(wxEmptyString, "multiLineComment", m_multiLineComment);
+    GetEclipseXmlProperty(wxEmptyString, "number", m_number);
+    GetEclipseXmlProperty(wxEmptyString, "string", m_string);
+    GetEclipseXmlProperty(wxEmptyString, "operator", m_oper);
+    GetEclipseXmlProperty(wxEmptyString, "keyword", m_keyword);
+    GetEclipseXmlProperty(wxEmptyString, "class", m_klass);
+    GetEclipseXmlProperty(wxEmptyString, "localVariable", m_variable);
+    GetEclipseXmlProperty(wxEmptyString, "javadocKeyword", m_javadocKeyword);
+    GetEclipseXmlProperty(wxEmptyString, "method", m_function);
+    GetEclipseXmlProperty(wxEmptyString, "field", m_field);
+    GetEclipseXmlProperty(wxEmptyString, "enum", m_enum);
 
-    if(!GetEclipseXmlProperty(doc, "foreground", m_foreground))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "selectionForeground", m_selectionForeground))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "selectionBackground", m_selectionBackground))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "lineNumber", m_lineNumber))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "singleLineComment", m_singleLineComment))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "multiLineComment", m_multiLineComment))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "number", m_number))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "string", m_string))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "operator", m_oper))
-        return NULL;
-    if(!GetEclipseXmlProperty(doc, "keyword", m_keyword))
-        return NULL;
+    m_javadoc = m_multiLineComment;
+    // set the caret colour
+    m_caret.fg_colour = m_isDarkTheme ? "YELLOW" : "BLACK";
+    m_caret.bg_colour = m_editor.bg_colour;
 
-    // Optional
-    if(!GetEclipseXmlProperty(doc, "class", m_klass)) {
-        m_klass = m_foreground;
-    }
-    if(!GetEclipseXmlProperty(doc, "localVariable", m_variable)) {
-        m_variable = m_foreground;
-    }
-    if(!GetEclipseXmlProperty(doc, "javadoc", m_javadoc)) {
-        m_javadoc = m_multiLineComment;
-    }
-    if(!GetEclipseXmlProperty(doc, "javadocKeyword", m_javadocKeyword)) {
-        m_javadocKeyword = m_multiLineComment;
-    }
-    if(!GetEclipseXmlProperty(doc, "method", m_function)) {
-        m_function = m_foreground;
-    }
-    if(!GetEclipseXmlProperty(doc, "field", m_field)) {
-        m_field = m_foreground;
-    }
-    if(!GetEclipseXmlProperty(doc, "enum", m_enum)) {
-        m_enum = m_foreground;
-    }
-
-    // load the theme background colour
-    m_isDarkTheme = DrawingUtils::IsDark(m_background.colour);
+    // set the active line number colour - reverse of the selection colours
+    m_lineNumberActive.bg_colour = m_selection.fg_colour;
+    m_lineNumberActive.fg_colour = m_selection.bg_colour;
     return lexer;
 }
 
-wxString ThemeImporterBase::GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map,
-                                            const std::vector<wxString>& scopes)
+void ThemeImporterBase::GetEditorVSCodeColour(JSONItem& colours, const wxString& bg_prop, const wxString& fg_prop,
+                                              Property& colour)
 {
+    colour = m_editor;
+    if(!fg_prop.empty() && colours.hasNamedObject(fg_prop)) {
+        colour.fg_colour = colours[fg_prop].toString();
+    }
+
+    if(!bg_prop.empty() && colours.hasNamedObject(bg_prop)) {
+        colour.bg_colour = colours[bg_prop].toString();
+    }
+}
+
+void ThemeImporterBase::GetVSCodeColour(const wxStringMap_t& scopes_to_colours_map, const std::vector<wxString>& scopes,
+                                        Property& colour)
+{
+    // default use editor settings
+    colour = m_editor;
     for(const wxString& scope : scopes) {
         if(scopes_to_colours_map.count(scope)) {
-            return scopes_to_colours_map.find(scope)->second;
+            colour.fg_colour = scopes_to_colours_map.find(scope)->second;
         }
     }
-    return m_foreground.colour;
 }
 
 LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_file, const wxString& langName, int langId)
 {
+    clDEBUG() << "   > Importing VSCode JSON file:" << theme_file << ". Language:" << langName << endl;
+
     JSON root(theme_file);
     if(!root.isOk()) {
         return nullptr;
@@ -291,42 +296,55 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
     }
 
     LexerConf::Ptr_t lexer(new LexerConf());
+    lexer->SetUseCustomTextSelectionFgColour(false);
 
     // Add the lexer basic properties (laguage, file extensions, keywords, name)
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
 
-    // read the common properties
-    m_background.colour = colours["editor.background"].toString();
-    m_foreground.colour = colours["editor.foreground"].toString();
-    m_selectionBackground.colour = colours["editor.selectionBackground"].toString();
-    m_selectionForeground.colour.clear(); // no foreground colour, jus selection bg colour
-    lexer->SetUseCustomTextSelectionFgColour(false);
-    m_lineNumber.colour = colours["editorLineNumber.foreground"].toString();
+    // read the base properties
+    GetEditorVSCodeColour(colours, "editor.background", "editor.foreground", m_editor);
+    m_isDarkTheme = DrawingUtils::IsDark(m_editor.bg_colour);
+
+    // set the selection colour
+    SetSelectionColour(m_isDarkTheme, m_selection);
+
+    GetEditorVSCodeColour(colours, "editor.background", "editorLineNumber.foreground", m_lineNumber);
+
+    // read the caret colours
+    GetEditorVSCodeColour(colours, "editorCursor.background", "editorCursor.foreground", m_caret);
+
+    // active line colours
+    GetEditorVSCodeColour(colours, "editor.lineHighlightBackground", "editor.foreground", m_lineNumberActive);
 
     // token colours
-    m_singleLineComment.colour = GetVSCodeColour(tokenColoursMap, { "comment", "comments" });
-    m_multiLineComment.colour = GetVSCodeColour(tokenColoursMap, { "comment", "comments" });
-    m_number.colour = GetVSCodeColour(tokenColoursMap, { "constant.numeric" });
-    m_string.colour = GetVSCodeColour(tokenColoursMap, { "string" });
-    m_oper.colour = GetVSCodeColour(tokenColoursMap, { "punctuation" });
-    m_keyword.colour =
-        GetVSCodeColour(tokenColoursMap, { "keyword.operator.expression.delete", "keyword.operator.expression.void",
-                                           "keyword", "keyword.control", "storage" });
+    GetVSCodeColour(tokenColoursMap, { "comment", "comments" }, m_singleLineComment);
+    GetVSCodeColour(tokenColoursMap, { "comment", "comments" }, m_multiLineComment);
+    GetVSCodeColour(tokenColoursMap, { "constant.numeric" }, m_number);
+    GetVSCodeColour(tokenColoursMap, { "string" }, m_string);
+    GetVSCodeColour(tokenColoursMap, { "punctuation" }, m_oper);
+    GetVSCodeColour(tokenColoursMap,
+                    { "keyword.operator.expression.delete", "keyword.operator.expression.void", "keyword",
+                      "keyword.control", "storage" },
+                    m_keyword);
 
     // search for class names
-    m_klass.colour = GetVSCodeColour(tokenColoursMap,
-                                     { "storage.type.class", "entity.name.type.class", "entity.name.type.class.cpp",
-                                       "entity.name.type.class.php", "meta.block.class.cpp",
-                                       "entity.name.type.namespace", "entity.name.type", "entity.name.class",
-                                       "entity.name.type", "class", "entity.name", "entity.name.scope-resolution" });
-    m_function.colour =
-        GetVSCodeColour(tokenColoursMap, { "entity.name.function", "meta.function-call",
-                                           "entity.name.function.call.cpp", "entity.name.function.call.php" });
-    m_variable.colour =
-        GetVSCodeColour(tokenColoursMap, { "variable", "variable.member", "meta.parameter", "variable.parameter" });
+    GetVSCodeColour(tokenColoursMap,
+                    { "storage.type.class", "entity.name.type.class", "entity.name.type.class.cpp",
+                      "entity.name.type.class.php", "meta.block.class.cpp", "entity.name.type.namespace",
+                      "entity.name.type", "entity.name.class", "entity.name.type", "class", "entity.name",
+                      "entity.name.scope-resolution" },
+                    m_klass);
+    GetVSCodeColour(tokenColoursMap,
+                    { "entity.name.function", "meta.function-call", "entity.name.function.call.cpp",
+                      "entity.name.function.call.php" },
+                    m_function);
+
+    GetVSCodeColour(tokenColoursMap, { "variable", "variable.member", "meta.parameter", "variable.parameter" },
+                    m_variable);
+
     m_field = m_variable;
     m_enum = m_klass;
-    m_javadoc.colour = m_multiLineComment.colour;
-    m_javadocKeyword = m_function;
+    m_javadoc = m_multiLineComment;
+    m_javadocKeyword = m_klass;
     return lexer;
 }

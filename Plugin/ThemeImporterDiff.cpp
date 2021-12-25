@@ -11,7 +11,7 @@ LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "diff", wxSTC_LEX_DIFF);
     CHECK_PTR_RET_NULL(lexer);
 
-    AddProperty(lexer, wxSTC_DIFF_DEFAULT, "Default", m_foreground);
+    AddProperty(lexer, wxSTC_DIFF_DEFAULT, "Default", m_editor);
     AddProperty(lexer, wxSTC_DIFF_COMMENT, "Comment", m_singleLineComment);
     AddProperty(lexer, wxSTC_DIFF_COMMAND, "Command", m_klass);
     AddProperty(lexer, wxSTC_DIFF_HEADER, "Header", m_keyword);
@@ -19,11 +19,11 @@ LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& theme_file)
 
     // Use pink and forest green
     if(IsDarkTheme()) {
-        AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "#FF8080", m_background.colour, true);
-        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "#80FF80", m_background.colour, true);
+        AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "#FF8080", m_editor.bg_colour, true);
+        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "#80FF80", m_editor.bg_colour, true);
     } else {
-        AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "RED", m_background.colour, true);
-        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "DARK GREEN", m_background.colour, true);
+        AddProperty(lexer, wxSTC_DIFF_DELETED, "Line Deleted", "RED", m_editor.bg_colour, true);
+        AddProperty(lexer, wxSTC_DIFF_ADDED, "Line Added", "DARK GREEN", m_editor.bg_colour, true);
     }
     FinalizeImport(lexer);
     return lexer;

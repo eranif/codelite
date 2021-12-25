@@ -37,44 +37,44 @@ LexerConf::Ptr_t ThemeImporterPHP::Import(const wxFileName& theme_file)
     // so we define them all here
 
     // HTML
-    AddProperty(lexer, wxSTC_H_DEFAULT, "HTML Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_TAG, "HTML Tag", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_TAGUNKNOWN, "Unknown HTML Tag", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_ATTRIBUTE, "HTML Attribute", m_klass.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_ATTRIBUTEUNKNOWN, "Unknown HTML Attribute", m_klass.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_NUMBER, "HTML Number", m_number.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_DOUBLESTRING, "HTML Double String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_SINGLESTRING, "HTML Single String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_OTHER, "HTML Other", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_COMMENT, "HTML Comment", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_H_ENTITY, "HTML Entity", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_H_DEFAULT, "HTML Default", m_editor);
+    AddProperty(lexer, wxSTC_H_TAG, "HTML Tag", m_variable);
+    AddProperty(lexer, wxSTC_H_TAGUNKNOWN, "Unknown HTML Tag", m_variable);
+    AddProperty(lexer, wxSTC_H_ATTRIBUTE, "HTML Attribute", m_klass);
+    AddProperty(lexer, wxSTC_H_ATTRIBUTEUNKNOWN, "Unknown HTML Attribute", m_klass);
+    AddProperty(lexer, wxSTC_H_NUMBER, "HTML Number", m_number);
+    AddProperty(lexer, wxSTC_H_DOUBLESTRING, "HTML Double String", m_string);
+    AddProperty(lexer, wxSTC_H_SINGLESTRING, "HTML Single String", m_string);
+    AddProperty(lexer, wxSTC_H_OTHER, "HTML Other", m_editor);
+    AddProperty(lexer, wxSTC_H_COMMENT, "HTML Comment", m_multiLineComment);
+    AddProperty(lexer, wxSTC_H_ENTITY, "HTML Entity", m_editor);
 
     // Embedded JavaScript
-    AddProperty(lexer, wxSTC_HJ_START, "JS Start", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_DEFAULT, "JS Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_COMMENT, "JS Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_COMMENTLINE, "JS MultiLine Comment", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_COMMENTDOC, "JS Doc Comment", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_NUMBER, "JS Number", m_number.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_WORD, "JS Word", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_KEYWORD, "JS Keyword", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_DOUBLESTRING, "JS Double String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_SINGLESTRING, "JS Single String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_SYMBOLS, "JS Symbols", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_STRINGEOL, "JS String EOL", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HJ_REGEX, "JS Regex", m_klass.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_HJ_START, "JS Start", m_editor);
+    AddProperty(lexer, wxSTC_HJ_DEFAULT, "JS Default", m_editor);
+    AddProperty(lexer, wxSTC_HJ_COMMENT, "JS Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_HJ_COMMENTLINE, "JS MultiLine Comment", m_multiLineComment);
+    AddProperty(lexer, wxSTC_HJ_COMMENTDOC, "JS Doc Comment", m_multiLineComment);
+    AddProperty(lexer, wxSTC_HJ_NUMBER, "JS Number", m_number);
+    AddProperty(lexer, wxSTC_HJ_WORD, "JS Word", m_editor);
+    AddProperty(lexer, wxSTC_HJ_KEYWORD, "JS Keyword", m_keyword);
+    AddProperty(lexer, wxSTC_HJ_DOUBLESTRING, "JS Double String", m_string);
+    AddProperty(lexer, wxSTC_HJ_SINGLESTRING, "JS Single String", m_string);
+    AddProperty(lexer, wxSTC_HJ_SYMBOLS, "JS Symbols", m_editor);
+    AddProperty(lexer, wxSTC_HJ_STRINGEOL, "JS String EOL", m_string);
+    AddProperty(lexer, wxSTC_HJ_REGEX, "JS Regex", m_klass);
 
     // PHP
-    AddProperty(lexer, wxSTC_HPHP_COMPLEX_VARIABLE, "PHP Complex Variable", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_DEFAULT, "PHP Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_HSTRING, "PHP Heredoc String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_SIMPLESTRING, "PHP String", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_WORD, "PHP Word", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_NUMBER, "PHP Number", m_number.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_VARIABLE, "PHP Variable", m_variable.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_COMMENTLINE, "PHP Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_COMMENT, "PHP Multiline Comment", m_multiLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_HPHP_HSTRING_VARIABLE, "PHP Heredoc Variable", m_variable.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_HPHP_COMPLEX_VARIABLE, "PHP Complex Variable", m_variable);
+    AddProperty(lexer, wxSTC_HPHP_DEFAULT, "PHP Default", m_editor);
+    AddProperty(lexer, wxSTC_HPHP_HSTRING, "PHP Heredoc String", m_string);
+    AddProperty(lexer, wxSTC_HPHP_SIMPLESTRING, "PHP String", m_string);
+    AddProperty(lexer, wxSTC_HPHP_WORD, "PHP Word", m_keyword);
+    AddProperty(lexer, wxSTC_HPHP_NUMBER, "PHP Number", m_number);
+    AddProperty(lexer, wxSTC_HPHP_VARIABLE, "PHP Variable", m_variable);
+    AddProperty(lexer, wxSTC_HPHP_COMMENTLINE, "PHP Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_HPHP_COMMENT, "PHP Multiline Comment", m_multiLineComment);
+    AddProperty(lexer, wxSTC_HPHP_HSTRING_VARIABLE, "PHP Heredoc Variable", m_variable);
     FinalizeImport(lexer);
     return lexer;
 }

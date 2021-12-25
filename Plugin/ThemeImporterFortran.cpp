@@ -53,21 +53,21 @@ ThemeImporterFortran::~ThemeImporterFortran() {}
 LexerConf::Ptr_t ThemeImporterFortran::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_FORTRAN);
-    AddProperty(lexer, wxSTC_F_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_COMMENT, "Comment", m_singleLineComment.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_NUMBER, "Number", m_number.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_STRING1, "String 1", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_STRING2, "String 2", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_STRING2, "String 3", m_string.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_OPERATOR, "Operator", m_oper.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_WORD, "Word", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_WORD2, "Word 2", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_WORD3, "Word 3", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_PREPROCESSOR, "Pre processor", m_keyword.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_OPERATOR2, "Operator 2", m_oper.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_LABEL, "Label", m_oper.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_F_CONTINUATION, "Continuation", m_foreground.colour, m_background.colour);
+    AddProperty(lexer, wxSTC_F_DEFAULT, "Default", m_editor);
+    AddProperty(lexer, wxSTC_F_COMMENT, "Comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_F_NUMBER, "Number", m_number);
+    AddProperty(lexer, wxSTC_F_STRING1, "String 1", m_string);
+    AddProperty(lexer, wxSTC_F_STRING2, "String 2", m_string);
+    AddProperty(lexer, wxSTC_F_STRING2, "String 3", m_string);
+    AddProperty(lexer, wxSTC_F_OPERATOR, "Operator", m_oper);
+    AddProperty(lexer, wxSTC_F_IDENTIFIER, "Identifier", m_editor);
+    AddProperty(lexer, wxSTC_F_WORD, "Word", m_keyword);
+    AddProperty(lexer, wxSTC_F_WORD2, "Word 2", m_keyword);
+    AddProperty(lexer, wxSTC_F_WORD3, "Word 3", m_keyword);
+    AddProperty(lexer, wxSTC_F_PREPROCESSOR, "Pre processor", m_keyword);
+    AddProperty(lexer, wxSTC_F_OPERATOR2, "Operator 2", m_oper);
+    AddProperty(lexer, wxSTC_F_LABEL, "Label", m_oper);
+    AddProperty(lexer, wxSTC_F_CONTINUATION, "Continuation", m_editor);
     FinalizeImport(lexer);
     return lexer;
 }

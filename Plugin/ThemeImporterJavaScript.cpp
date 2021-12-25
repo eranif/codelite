@@ -73,35 +73,22 @@ LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& theme_file)
     CHECK_PTR_RET_NULL(lexer);
 
     // Covnert to codelite's XML properties
-    AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_C_COMMENT, "Block comment", m_multiLineComment.colour, m_background.colour,
-                m_multiLineComment.isBold, m_multiLineComment.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTLINE, "Single line comment", m_singleLineComment.colour, m_background.colour,
-                m_singleLineComment.isBold, m_singleLineComment.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTDOC, "Javadoc block comment", m_javadoc.colour, m_background.colour,
-                m_javadoc.isBold, m_javadoc.isItalic);
-    AddProperty(lexer, wxSTC_C_NUMBER, "Number", m_number.colour, m_background.colour, m_number.isBold,
-                m_number.isItalic);
-    AddProperty(lexer, wxSTC_C_WORD, "JavaScript keyword", m_keyword.colour, m_background.colour, m_keyword.isBold,
-                m_keyword.isItalic);
-    AddProperty(lexer, wxSTC_C_STRING, "String", m_string.colour, m_background.colour, m_string.isBold,
-                m_string.isItalic);
-    AddProperty(lexer, wxSTC_C_CHARACTER, "Character", m_string.colour, m_background.colour, m_string.isBold,
-                m_string.isItalic);
-    AddProperty(lexer, wxSTC_C_OPERATOR, "Operator", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_foreground.colour, m_background.colour);
-    AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string.colour, m_background.colour, m_string.isBold,
-                m_string.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Javadoc single line comment", m_javadoc.colour, m_background.colour,
-                m_javadoc.isBold, m_javadoc.isItalic);
-    AddProperty(lexer, wxSTC_C_WORD2, "JavaScript functions", m_variable.colour, m_background.colour, m_javadoc.isBold,
-                m_javadoc.isItalic);
-    AddProperty(lexer, wxSTC_C_GLOBALCLASS, "JavaScript global classes", m_klass.colour, m_background.colour,
-                m_javadoc.isBold, m_javadoc.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Javadoc keyword", m_javadocKeyword.colour, m_background.colour,
-                m_javadocKeyword.isBold, m_javadocKeyword.isItalic);
-    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Javadoc keyword error", m_javadocKeyword.colour,
-                m_background.colour, m_javadocKeyword.isBold, m_javadocKeyword.isItalic);
+    AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_editor);
+    AddProperty(lexer, wxSTC_C_COMMENT, "Block comment", m_multiLineComment);
+    AddProperty(lexer, wxSTC_C_COMMENTLINE, "Single line comment", m_singleLineComment);
+    AddProperty(lexer, wxSTC_C_COMMENTDOC, "Javadoc block comment", m_javadoc);
+    AddProperty(lexer, wxSTC_C_NUMBER, "Number", m_number);
+    AddProperty(lexer, wxSTC_C_WORD, "JavaScript keyword", m_keyword);
+    AddProperty(lexer, wxSTC_C_STRING, "String", m_string);
+    AddProperty(lexer, wxSTC_C_CHARACTER, "Character", m_string);
+    AddProperty(lexer, wxSTC_C_OPERATOR, "Operator", m_oper);
+    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_editor);
+    AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string);
+    AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Javadoc single line comment", m_javadoc);
+    AddProperty(lexer, wxSTC_C_WORD2, "JavaScript functions", m_function);
+    AddProperty(lexer, wxSTC_C_GLOBALCLASS, "JavaScript global classes", m_klass);
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Javadoc keyword", m_javadocKeyword);
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Javadoc keyword error", m_javadocKeyword);
     FinalizeImport(lexer);
     return lexer;
 }

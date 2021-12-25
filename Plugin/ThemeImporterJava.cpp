@@ -38,7 +38,7 @@ LexerConf::Ptr_t ThemeImporterJava::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);
     CHECK_PTR_RET_NULL(lexer);
 
-    AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_foreground);
+    AddProperty(lexer, wxSTC_C_DEFAULT, "Default", m_editor);
     AddProperty(lexer, wxSTC_C_COMMENT, "Block comment", m_multiLineComment);
     AddProperty(lexer, wxSTC_C_COMMENTLINE, "Line comment", m_singleLineComment);
     AddProperty(lexer, wxSTC_C_COMMENTDOC, "Javadoc block comment", m_javadoc);
@@ -47,9 +47,9 @@ LexerConf::Ptr_t ThemeImporterJava::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_STRING, "String", m_string);
     AddProperty(lexer, wxSTC_C_CHARACTER, "Character", m_string);
     AddProperty(lexer, wxSTC_C_UUID, "Uuid", m_number);
-    AddProperty(lexer, wxSTC_C_PREPROCESSOR, "Preprocessor", m_foreground);
+    AddProperty(lexer, wxSTC_C_PREPROCESSOR, "Preprocessor", m_editor);
     AddProperty(lexer, wxSTC_C_OPERATOR, "Operator", m_oper);
-    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_foreground);
+    AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_editor);
     AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string);
     AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Javadoc line comment", m_javadoc);
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Javadoc keyword", m_javadocKeyword);

@@ -26,9 +26,14 @@ void clTabRendererDefault::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 {
     wxRect tabRect = clTabRendererMinimal::DoDraw(parent, dc, fontDC, tabInfo, colours, style, buttonState);
     if(tabInfo.IsActive()) {
-        dc.SetPen(colours.markerColour);
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.DrawRoundedRectangle(tabRect, TAB_RADIUS);
+        if(!IS_VERTICAL_TABS(style)) {
+            dc.SetPen(wxPen(colours.markerColour, 2));
+            if(style & kNotebook_BottomTabs) {
+                DRAW_LINE(tabRect.GetTopLeft(), tabRect.GetTopRight());
+            } else {
+                DRAW_LINE(tabRect.GetBottomLeft(), tabRect.GetBottomRight());
+            }
+        }
     }
 }
 

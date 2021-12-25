@@ -3189,26 +3189,79 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
     return encoding;
 }
 
-void clEditor::DoUpdateLineNumbers()
+void clEditor::DoUpdateLineNumbers(bool relative_numbers)
 {
-#ifdef __WXMSW__
-    wxWindowUpdateLocker locker(this);
-#endif
+    int linesOnScreen = LinesOnScreen();
+    int current_line = GetCurrentLine();
 
-    int beginLine = GetFirstVisibleLine();
-    int curLine = GetCurrentLine();
-    int endLine = GetFirstVisibleLine() + LinesOnScreen();
+    std::vector<int> lines;
+    lines.reserve(linesOnScreen);
+
+    // GetFirstVisibleLine() does not report the correct visible line when
+    // there are folded lines above it, so we calculate it manually
     int lastLine = GetNumberOfLines();
-    if((m_lastBeginLine == beginLine) && (m_lastLine == curLine) && (m_lastEndLine == endLine)) {
-        return;
-    }
+    int counter = 0;
 
-    m_lastBeginLine = beginLine;
-    m_lastEndLine = endLine;
-    m_lastLine = curLine;
+    // this should return the real first visible line number
+    int first_visible_line = DocLineFromVisible(GetFirstVisibleLine());
 
     wxString line_text;
     line_text.reserve(100);
+
+    // now calculate the last line that we want draw
+    int curline = first_visible_line;
+    counter = 0;
+    while((counter < linesOnScreen + 1) && curline <= lastLine) {
+        if(GetLineVisible(curline)) {
+            counter++;
+            lines.push_back(curline);
+        }
+        curline++;
+    }
+
+    // first: the real line number
+    // second: line number to display in the margin
+    // when relative_numbers is TRUE, the values are
+    // different, otherwise, they are identical
+    std::vector<std::pair<int, int>> lines_to_draw;
+
+    // update the lines to relative if needed
+    // this method takes folded / annotations lines into consideration
+    //
+    // 10 | ..
+    // 11 + folded line
+    // 15 | ..
+    // 16 | <== current line
+    // 17 + folded line
+    // 20 | ..
+    //
+    // Becomes:
+    //
+    // ||
+    // \/
+    //
+    // 6  | ..
+    // 5  + folded line
+    // 1  | ..
+    // 16 | <== current line
+    // 1  + folded line
+    // 4  | ..
+    lines_to_draw.reserve(lines.size());
+    for(int line : lines) {
+        if(relative_numbers) {
+            if(line < current_line) {
+                lines_to_draw.push_back({ line, current_line - line });
+            } else if(line == current_line) {
+                // nothing to be done here
+                lines_to_draw.push_back({ line, line });
+            } else {
+                lines_to_draw.push_back({ line, line - current_line });
+            }
+        } else {
+            lines_to_draw.push_back({ line, line });
+        }
+    }
+
     SetCurrentLineMarginStyle(GetCtrl());
 
     wxColour bg_colour, fg_colour;
@@ -3218,45 +3271,12 @@ void clEditor::DoUpdateLineNumbers()
     StyleSetForeground(LINE_NUMBERS_ATTR_ID, fg_colour);
 
     // set the line numbers, taking hidden lines into consideration
-    int lines_printed = 0;
-    int line_number = beginLine;
-    for(; lines_printed < lastLine; ++line_number) {
-        if(GetLineVisible(line_number)) {
-            line_text.Printf(" %d", line_number + 1);
-            MarginSetText(line_number, line_text);
-            MarginSetStyle(line_number, line_number == curLine ? CUR_LINE_NUMBER_STYLE : LINE_NUMBERS_ATTR_ID);
-            lines_printed++;
-        }
-    }
-    m_lastEndLine = line_number;
-}
-
-void clEditor::DoUpdateRelativeLineNumbers()
-{
-    int beginLine = std::max(0, GetFirstVisibleLine() - 10);
-    int curLine = GetCurrentLine();
-    int lineCount = GetLineCount();
-    int endLine = std::min(lineCount, GetFirstVisibleLine() + LinesOnScreen() + 10);
-    if((m_lastBeginLine == beginLine) && (m_lastLine == curLine) && (m_lastEndLine == endLine) &&
-       (m_lastLineCount == lineCount)) {
-        return;
-    }
-    m_lastBeginLine = beginLine;
-    m_lastLineCount = lineCount;
-    m_lastEndLine = endLine;
-    MarginSetText(curLine, (wxString() << " " << (curLine + 1)));
-
-    // Use a distinct style to highlight the current line number
-    SetCurrentLineMarginStyle(GetCtrl());
-    MarginSetStyle(curLine, CUR_LINE_NUMBER_STYLE);
-
-    for(int i = std::min(endLine, curLine - 1); i >= beginLine; --i) {
-        MarginSetText(i, (wxString() << " " << (curLine - i)));
-        MarginSetStyle(i, 0);
-    }
-    for(int i = std::max(beginLine, curLine + 1); i <= endLine; ++i) {
-        MarginSetText(i, (wxString() << " " << (i - curLine)));
-        MarginSetStyle(i, 0);
+    for(auto& p : lines_to_draw) {
+        int line_number = p.first;
+        int line_to_render = p.second;
+        line_text.Printf(" %d", (line_to_render + (relative_numbers ? 0 : 1)));
+        MarginSetText(line_number, line_text);
+        MarginSetStyle(line_number, line_number == current_line ? CUR_LINE_NUMBER_STYLE : LINE_NUMBERS_ATTR_ID);
     }
 }
 
@@ -3265,10 +3285,10 @@ void clEditor::UpdateLineNumbers()
     OptionsConfigPtr c = GetOptions();
     if(!c->GetDisplayLineNumbers()) {
         return;
-    } else if(c->GetRelativeLineNumbers()) {
-        DoUpdateRelativeLineNumbers();
-    } else if(c->GetHighlightCurrentLineNumber()) {
-        DoUpdateLineNumbers();
+    }
+
+    if(c->GetHighlightCurrentLineNumber()) {
+        DoUpdateLineNumbers(c->GetRelativeLineNumbers());
     }
 }
 

@@ -15,7 +15,7 @@
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-static int marginTop = 5;
+static int marginTop = 0;
 clTabRendererGTK3::clTabRendererGTK3(const wxWindow* parent)
     : clTabRenderer("GTK3", parent)
 {
@@ -42,12 +42,14 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
                                      ? colours.tabAreaColour.ChangeLightness(105)
                                      : colours.tabAreaColour.ChangeLightness(125);
 
-    wxColour bgColour(tabInfo.IsActive() ? colours.activeTabBgColour : colours.tabAreaColour);
+    wxColour bgColour(colours.tabAreaColour);
     wxColour penColour(colours.tabAreaColour);
 
     wxFont font = GetTabFont(tabInfo.IsActive());
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
-    // font.SetWeight(wxFONTWEIGHT_BOLD);
+    if(tabInfo.IsActive()) {
+        font.SetWeight(wxFONTWEIGHT_BOLD);
+    }
     fontDC.SetFont(font);
 
     wxRect rr = tabInfo.m_rect;

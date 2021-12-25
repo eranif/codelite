@@ -1095,8 +1095,7 @@ private:
     void DoToggleFold(int line, const wxString& textTag);
 
     // Line numbers drawings
-    void DoUpdateRelativeLineNumbers();
-    void DoUpdateLineNumbers();
+    void DoUpdateLineNumbers(bool relative_numbers);
     void UpdateLineNumbers();
 
     // Event handlers

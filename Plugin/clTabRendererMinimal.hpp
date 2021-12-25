@@ -3,7 +3,7 @@
 
 #include "clTabRenderer.h"
 
-#define TAB_RADIUS 3.0
+#define TAB_RADIUS 0.0
 
 class WXDLLIMPEXP_SDK clTabRendererMinimal : public clTabRenderer
 {

@@ -3253,12 +3253,12 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers)
                 lines_to_draw.push_back({ line, current_line - line });
             } else if(line == current_line) {
                 // nothing to be done here
-                lines_to_draw.push_back({ line, line });
+                lines_to_draw.push_back({ line, line + 1 });
             } else {
                 lines_to_draw.push_back({ line, line - current_line });
             }
         } else {
-            lines_to_draw.push_back({ line, line });
+            lines_to_draw.push_back({ line, line + 1 });
         }
     }
 
@@ -3274,7 +3274,7 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers)
     for(auto& p : lines_to_draw) {
         int line_number = p.first;
         int line_to_render = p.second;
-        line_text.Printf(" %d", (line_to_render + (relative_numbers ? 0 : 1)));
+        line_text.Printf(" %d", line_to_render);
         MarginSetText(line_number, line_text);
         MarginSetStyle(line_number, line_number == current_line ? CUR_LINE_NUMBER_STYLE : LINE_NUMBERS_ATTR_ID);
     }

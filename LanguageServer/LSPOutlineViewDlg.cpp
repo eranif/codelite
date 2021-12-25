@@ -1,5 +1,6 @@
-#include "ColoursAndFontsManager.h"
 #include "LSPOutlineViewDlg.h"
+
+#include "ColoursAndFontsManager.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "drawingutils.h"
 #include "globals.h"
@@ -31,6 +32,7 @@ void LSPOutlineViewDlg::DoInitialise()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_dvTreeCtrll->DeleteAllItems();
+    m_textCtrlFilter->Clear();
 
     if(m_symbols.empty()) {
         clAnsiEscapeCodeColourBuilder builder;
@@ -38,6 +40,7 @@ void LSPOutlineViewDlg::DoInitialise()
         builder.Add(_("Language Server is still not ready... "), eAsciiColours::NORMAL_TEXT, false);
         builder.Add(_("(hit ESCAPE key to dismiss)"), eAsciiColours::GRAY, false);
         m_dvTreeCtrll->AddLine(builder.GetString(), false, (wxUIntPtr)0);
+        m_textCtrlFilter->CallAfter(&wxTextCtrl::SetFocus);
         return;
     }
 
@@ -124,7 +127,6 @@ void LSPOutlineViewDlg::DoInitialise()
         m_dvTreeCtrll->SelectRow(0);
     }
     m_dvTreeCtrll->Commit();
-    m_textCtrlFilter->Clear();
     m_textCtrlFilter->CallAfter(&wxTextCtrl::SetFocus);
 }
 

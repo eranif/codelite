@@ -119,12 +119,27 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
 
     // Set the current editor font to the default one
-    wxFont font = clConfig::Get().Read("GlobalThemeFont", wxNullFont);
-    if(font.IsOk()) {
+    // but first check that we have entry in the configuration file
+    // for this
+    bool found_font = false;
+    wxFont font;
+    clConfig::Get().Read("GlobalThemeFont", [&found_font](const JSONItem& item) { found_font = true; });
+
+    if(found_font) {
+        wxMessageBox("Font found!");
+        wxFont font = clConfig::Get().Read("GlobalThemeFont", wxNullFont);
         m_fontPickerGlobal->SetSelectedFont(font);
     }
 
     DoUpdatePreview();
+
+    // incase we don't have initial font display, use the preview window's font
+    if(!found_font) {
+        wxFont initialFont = m_stcPreview->StyleGetFont(0);
+        if(initialFont.IsOk()) {
+            m_fontPickerGlobal->SetSelectedFont(initialFont);
+        }
+    }
     m_isModified = true;
 
     // for now, we only allow selection with fg colour

@@ -20,5 +20,5 @@
 16. **DONE** Remoty: find-in-files: use the last used folder and not the current file's folder
 17. **DONE** Document `Rust` plugin
 18. Colours and Fonts -> change to native toolbar
-19. Test new installation
-20. FIX: Quick outline dialog: make sure no text is displayed when the dialog is first shown
+19. **DONE** Test new installation
+20. **DONE** FIX: Quick outline dialog: make sure no text is displayed when the dialog is first shown

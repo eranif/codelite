@@ -5596,8 +5596,10 @@ void clEditor::CenterLine(int line, int col)
     if(firstVisibleLine < 0) {
         firstVisibleLine = 0;
     }
-    EnsureVisible(firstVisibleLine);
-    SetFirstVisibleLine(firstVisibleLine);
+    
+    int real_visible_line = VisibleFromDocLine(firstVisibleLine);
+    EnsureVisible(real_visible_line);
+    SetFirstVisibleLine(real_visible_line);
 
     int pos = PositionFromLine(line);
     if(col != wxNOT_FOUND) {

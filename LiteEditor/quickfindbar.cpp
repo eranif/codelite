@@ -86,13 +86,8 @@ void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
 
 void CenterLine(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
 {
-    // ensure that this line is visible
     int line = ctrl->LineFromPosition(start_pos);
-    ctrl->EnsureVisible(line);
-
-    // Center this line
     int linesOnScreen = ctrl->LinesOnScreen();
-
     // To place our line in the middle, the first visible line should be
     // the: line - (linesOnScreen / 2)
     int firstVisibleLine = line - (linesOnScreen / 2);
@@ -100,12 +95,24 @@ void CenterLine(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
         firstVisibleLine = 0;
     }
 
-    ctrl->EnsureCaretVisible();
+    int real_visible_line = ctrl->VisibleFromDocLine(firstVisibleLine);
+    ctrl->EnsureVisible(real_visible_line);
+    ctrl->SetFirstVisibleLine(real_visible_line);
+
     // make sure both ends of the match are visible
-    ctrl->GotoPos(start_pos);
-    ctrl->GotoPos(end_pos);
+    ctrl->SetSelectionStart(start_pos);
+    ctrl->SetSelectionEnd(start_pos);
+    ctrl->SetCurrentPos(start_pos);
+    ctrl->EnsureCaretVisible();
+
+    ctrl->SetSelectionStart(end_pos);
+    ctrl->SetSelectionEnd(end_pos);
+    ctrl->SetCurrentPos(end_pos);
+    ctrl->EnsureCaretVisible();
+
     ctrl->SetSelectionStart(start_pos);
     ctrl->SetSelectionEnd(end_pos);
+    ctrl->SetCurrentPos(end_pos);
 }
 
 } // namespace

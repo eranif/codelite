@@ -210,7 +210,7 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
         menu->Prepend(XRCID("lsp_find_references"), _("Find references"));
     }
     menu->PrependSeparator();
-    if(add_rename_symbol) {
+    if(add_rename_symbol && false) {
         menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
     }
     menu->Prepend(XRCID("lsp_find_symbol"), _("Find symbol"));

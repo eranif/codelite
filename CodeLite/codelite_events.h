@@ -953,4 +953,14 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_ENABLE_SERVER, clLanguageServ
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DISABLE_SERVER, clLanguageServerEvent);
 // open LSPs configuration dialog. If event.GetLspName() is not empty, it will also select its page
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_OPEN_SETTINGS_DLG, clLanguageServerEvent);
+
+// Request to download file with a given path
+// Input: event.GetFilename()
+// Output: event.SetFileName(..) <- contains the local file path
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DOWNLOAD_FILE, clCommandEvent);
+
+// Request to load a file into CodeLite
+// This event is usually sent when a the file name is not a local file
+// Input: event.GetFileName()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_OPEN_FILE, clCommandEvent);
 #endif // CODELITE_EVENTS_H

@@ -581,10 +581,11 @@ void clRowEntry::RenderText(wxWindow* win, wxDC& dc, const clColours& colours, c
             rowRect.SetWidth(sz.GetWidth());
             if(is_match) {
                 // draw a match rectangle
-                dc.SetPen(matchBgColour);
-                dc.SetBrush(matchBgColour);
-                dc.SetTextForeground(matchTextColour);
-                dc.DrawRoundedRectangle(rowRect, 3.0);
+                dc.SetPen(matchBgColour.IsOk() ? matchBgColour : GetBgColour());
+                dc.SetBrush(matchBgColour.IsOk() ? matchBgColour : GetBgColour());
+                dc.SetTextForeground(matchTextColour.IsOk() ? matchTextColour : defaultTextColour);
+                rowRect.Deflate(1);
+                dc.DrawRoundedRectangle(rowRect, 0);
             } else {
                 dc.SetTextForeground(defaultTextColour);
             }

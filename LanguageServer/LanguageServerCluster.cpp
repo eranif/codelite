@@ -218,14 +218,7 @@ void LanguageServerCluster::OnHover(LSPEvent& event)
     }
 }
 
-void LanguageServerCluster::OnMethodNotFound(LSPEvent& event)
-{
-    LanguageServerEntry& entry = LanguageServerConfig::Get().GetServer(event.GetServerName());
-    if(entry.IsValid()) {
-        entry.AddUnImplementedMethod(event.GetString());
-        LanguageServerConfig::Get().Save();
-    }
-}
+void LanguageServerCluster::OnMethodNotFound(LSPEvent& event) { wxUnusedVar(event); }
 
 void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
 {
@@ -410,7 +403,6 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
     lsp->SetPriority(entry.GetPriority());
     lsp->SetDisaplayDiagnostics(entry.IsDisaplayDiagnostics());
-    lsp->SetUnimplementedMethods(entry.GetUnimplementedMethods());
 
     if(lsp->GetName() == "ctagsd") {
         // set startup callback

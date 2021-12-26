@@ -906,8 +906,6 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
         m_owner->AddPendingEvent(restartEvent);
     } break;
     case LSP::ResponseError::kErrorCodeMethodNotFound: {
-        m_unimplementedMethods.insert(msg_ptr->GetMethod());
-
         // Report this missing event
         LSPEvent eventMethodNotFound(wxEVT_LSP_METHOD_NOT_FOUND);
         eventMethodNotFound.SetServerName(GetName());
@@ -1047,16 +1045,13 @@ bool LanguageServerProtocol::CheckCapability(const LSP::ResponseMessage& res, co
                                              const wxString& lspRequestName)
 {
     bool capabilitySupported = res["result"]["capabilities"].hasNamedObject(capabilityName);
-    if(!capabilitySupported) {
-        m_unimplementedMethods.insert(lspRequestName);
+    if(capabilitySupported) {
+        m_providers.insert(lspRequestName);
     }
     return capabilitySupported;
 }
 
-bool LanguageServerProtocol::IsCapabilitySupported(const wxString& name) const
-{
-    return m_unimplementedMethods.count(name) == 0;
-}
+bool LanguageServerProtocol::IsCapabilitySupported(const wxString& name) const { return m_providers.count(name) > 0; }
 
 bool LanguageServerProtocol::IsDocumentSymbolsSupported() const
 {

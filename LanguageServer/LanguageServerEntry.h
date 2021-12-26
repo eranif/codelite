@@ -4,6 +4,7 @@
 #include "LSPNetwork.h"
 #include "asyncprocess.h"
 #include "cl_config.h"
+
 #include <map>
 #include <vector>
 #include <wx/string.h>
@@ -19,7 +20,6 @@ class LanguageServerEntry
     wxArrayString m_languages;
     wxString m_connectionString;
     int m_priority = 50;
-    wxStringSet_t m_unimplementedMethods;
     bool m_disaplayDiagnostics = true;
     wxString m_command;
     wxString m_initOptions;
@@ -43,16 +43,8 @@ public:
     LanguageServerEntry();
     virtual ~LanguageServerEntry();
 
-    const wxStringSet_t& GetUnimplementedMethods() const { return m_unimplementedMethods; }
-
     void SetCommand(const wxString& command) { this->m_command = command; }
     const wxString& GetCommand() const { return m_command; }
-
-    /**
-     * @brief add unimplemented method to this LSP
-     * @param methodName
-     */
-    void AddUnImplementedMethod(const wxString& methodName);
 
     LanguageServerEntry& SetDisaplayDiagnostics(bool disaplayDiagnostics)
     {

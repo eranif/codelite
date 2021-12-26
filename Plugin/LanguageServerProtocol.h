@@ -70,7 +70,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public ServiceProvider
 
     // Parsing queue
     LSPRequestMessageQueue m_Queue;
-    wxStringSet_t m_unimplementedMethods;
+    wxStringSet_t m_providers;
     bool m_disaplayDiagnostics = true;
     int m_lastCompletionRequestId = wxNOT_FOUND;
     wxArrayString m_semanticTokensTypes;
@@ -191,12 +191,7 @@ public:
         return *this;
     }
 
-    LanguageServerProtocol& SetUnimplementedMethods(const wxStringSet_t& unimplementedMethods)
-    {
-        this->m_unimplementedMethods = unimplementedMethods;
-        return *this;
-    }
-    const wxStringSet_t& GetUnimplementedMethods() const { return m_unimplementedMethods; }
+    const wxStringSet_t& GetProviders() const { return m_providers; }
     const wxString& GetName() const { return m_name; }
     bool IsInitialized() const { return (m_state == kInitialized); }
 

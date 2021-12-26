@@ -59,6 +59,8 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnReferences(LSPEvent& event);
     void OnReferencesInProgress(LSPEvent& event);
+    void OnItemActivated(wxTreeEvent& event);
+    void OnItemExpanding(wxTreeEvent& event);
 };
 
 #endif // FINDUSAGETAB_H

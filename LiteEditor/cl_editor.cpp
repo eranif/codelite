@@ -5576,15 +5576,14 @@ void clEditor::SplitSelection()
 
 void clEditor::CenterLinePreserveSelection(int line)
 {
-    int linesOnScreen = LinesOnScreen();
-    // To place our line in the middle, the first visible line should be
-    // the: line - (linesOnScreen / 2)
-    int firstVisibleLine = line - (linesOnScreen / 2);
-    if(firstVisibleLine < 0) {
-        firstVisibleLine = 0;
+    int selection_start = GetSelectionStart();
+    int selection_end = GetSelectionEnd();
+
+    CenterLine(line);
+
+    if(selection_end != wxNOT_FOUND && selection_start != wxNOT_FOUND) {
+        SetSelection(selection_start, selection_end);
     }
-    EnsureVisible(firstVisibleLine);
-    SetFirstVisibleLine(firstVisibleLine);
 }
 
 void clEditor::CenterLine(int line, int col)
@@ -5596,7 +5595,7 @@ void clEditor::CenterLine(int line, int col)
     if(firstVisibleLine < 0) {
         firstVisibleLine = 0;
     }
-    
+
     int real_visible_line = VisibleFromDocLine(firstVisibleLine);
     EnsureVisible(real_visible_line);
     SetFirstVisibleLine(real_visible_line);

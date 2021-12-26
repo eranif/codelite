@@ -20,7 +20,10 @@
 - **DONE** Test new installation
 - **DONE** FIX: Quick outline dialog: make sure no text is displayed when the dialog is first shown
 - **DONE** Colours and Fonts -> change to native toolbar
+- **DONE** Implement "Find References" using the language server
 
+- Implement: `lsp_rename_symbol`
+- Support for remote "Find References"
 - Add un-implemented functions does not work in first time
 - json_rpc_params.cpp:156 -> completion does not work for ctagsd
 - `rls` -> make it disabled by default

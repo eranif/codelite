@@ -1530,3 +1530,23 @@ void clTreeCtrl::SetLineSpacing(size_t pixels)
     UpdateLineHeight();
     Refresh();
 }
+
+void clTreeCtrl::SetItemHighlightInfo(const wxTreeItemId& item, size_t start_pos, size_t len, size_t col)
+{
+    // sanity checks
+    CHECK_ITEM_RET(item);
+    clRowEntry* child = m_model.ToPtr(item);
+    CHECK_PTR_RET(child);
+
+    const wxString& text = child->GetLabel(col);
+    CHECK_EXPECTED_RETURN(start_pos + len < text.length(), true);
+
+    clMatchResult match_result;
+    Str3Arr_t triplet;
+    triplet[0] = text.Mid(0, start_pos);    // before the match
+    triplet[1] = text.Mid(start_pos, len);  // the string to highlight
+    triplet[2] = text.Mid(start_pos + len); // remainder
+
+    match_result.Add(col, triplet);
+    m_model.ToPtr(item)->SetHighlightInfo(match_result);
+}

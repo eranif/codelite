@@ -29,3 +29,5 @@
 - `rls` -> make it disabled by default
 - `ctagsd` -> make it disabled by default
 - wrong `auto` resolved in languageserver.cpp:234
+- ctagsd: highlight <TOKEN><::> as a class
+- line margin: use the colours read from the theme

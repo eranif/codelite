@@ -175,7 +175,7 @@ public:
      * @brief create 'compile_commands' json object for the workspace projects (only the enabled ones)
      * or compile_flags.txt file
      */
-    cJSON* CreateCompileCommandsJSON(bool createCompileFlagsTxt) const;
+    cJSON* CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxArrayString* generated_paths) const;
 
     /**
      * @brief generate compile_flags.txt for each project

@@ -26,12 +26,14 @@ wxDEFINE_EVENT(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, clCommandEvent);
 CompileCommandsGenerator::CompileCommandsGenerator()
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &CompileCommandsGenerator::OnProcessTeraminated, this);
+    Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &CompileCommandsGenerator::OnProcessOutput, this);
 }
 
 CompileCommandsGenerator::~CompileCommandsGenerator()
 {
     // If the child process is still running, detach from it. i.e. OnProcessTeraminated() event is not called
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CompileCommandsGenerator::OnProcessTeraminated, this);
+    Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &CompileCommandsGenerator::OnProcessOutput, this);
     if(m_process) {
         m_process->Detach();
     }
@@ -41,11 +43,16 @@ CompileCommandsGenerator::~CompileCommandsGenerator()
 typedef wxString CheckSum_t;
 static CheckSum_t ComputeFileCheckSum(const wxFileName& fn) { return wxMD5::GetDigest(fn); }
 
+void CompileCommandsGenerator::OnProcessOutput(clProcessEvent& event) { m_capturedOutput << event.GetOutput(); }
+
 void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
 {
     // dont call event.Skip() so we will delete the m_process ourself
     wxDELETE(m_process);
     clGetManager()->SetStatusMessage(_("Ready"));
+
+    wxArrayString generated_paths = ::wxStringTokenize(m_capturedOutput, "\n\r", wxTOKEN_STRTOK);
+    m_capturedOutput.clear();
 
     static std::unordered_map<wxString, CheckSum_t> m_checksumCache;
 
@@ -55,64 +62,47 @@ void CompileCommandsGenerator::OnProcessTeraminated(clProcessEvent& event)
     // Process the compile_flags.txt files starting from the "compile_commands.json" root folder
     // Notify about completion
     std::thread thr(
-        [=](const wxString& compile_commands) {
-            // Calculate the new file checksum
-            CheckSum_t ck = ComputeFileCheckSum(compile_commands);
-            CheckSum_t oldCk;
-            clDEBUG() << "New checksum is:" << ck;
-            if(m_checksumCache.count(compile_commands)) {
-                oldCk = m_checksumCache.find(compile_commands)->second;
-            } else {
-                clDEBUG() << "File:" << compile_commands << "is not found in the cache";
+        [=](const wxArrayString& paths) {
+            clDEBUG() << "Checking paths for changes:" << paths << endl;
+            bool event_is_needed = false;
+            for(const wxString& path : paths) {
+                // Calculate the new file checksum
+                CheckSum_t ck = ComputeFileCheckSum(path);
+                CheckSum_t oldCk;
+                clDEBUG() << "New checksum is: [" << ck << "]" << endl;
+                if(m_checksumCache.count(path)) {
+                    oldCk = m_checksumCache.find(path)->second;
+                } else {
+                    clDEBUG() << "File:" << path << "is not found in the cache";
+                }
+                clDEBUG() << "Old checksum is: [" << oldCk << "]";
+                bool file_exists = wxFileName::FileExists(path);
+                clDEBUG() << "File:" << path << "exists:" << file_exists << endl;
+
+                if(ck != oldCk || !file_exists) {
+                    event_is_needed = true;
+                }
+
+                // update the checksum in the cache
+                m_checksumCache.erase(path);
+                m_checksumCache.insert({ path, ck });
             }
-            clDEBUG() << "Old checksum is:" << oldCk;
-            if(ck == oldCk && wxFileName::FileExists(compile_commands)) {
-                clDEBUG() << "No changes detected in file:" << compile_commands << "processing is ignored";
+
+            if(!event_is_needed) {
+                clDEBUG() << "No changes detected for paths:" << paths << endl;
                 // We fire this event with empty content. This ensures that
                 // a LSP restart will take place
-                clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
-                EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
+                // clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
+                // EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
                 return;
             }
 
-            // store the new checksum
-            m_checksumCache.erase(compile_commands);
-            m_checksumCache.insert({ compile_commands, ck });
-
-            // Process compile_flags.txt files
-            clFilesScanner scanner;
-            wxArrayString includePaths;
-            wxStringSet_t includeSet;
-            std::vector<wxString> files;
-            if(scanner.Scan(wxFileName(compile_commands).GetPath(), files, "compile_flags.txt")) {
-                for(const wxString& file : files) {
-                    CompileFlagsTxt f(file);
-                    includePaths = f.GetIncludes();
-                    includeSet.insert(includePaths.begin(), includePaths.end());
-                }
-            }
-
-            if(generateCompileCommands) {
-                CompileCommandsJSON compileCommands(compile_commands);
-                const wxArrayString& paths = compileCommands.GetIncludes();
-                for(const wxString& path : paths) {
-                    if(includeSet.count(path) == 0) {
-                        includeSet.insert(path);
-                        includePaths.Add(path);
-                    }
-                }
-            }
-            clDEBUG() << "wxEVT_COMPILE_COMMANDS_JSON_GENERATED paths:\n" << includePaths;
-
             // Notify about it
             clCommandEvent eventCompileCommandsGenerated(wxEVT_COMPILE_COMMANDS_JSON_GENERATED);
-            // compile_commands.json
-            eventCompileCommandsGenerated.SetFileName(compile_commands);
-            // include paths found and gathered from all the compile_flags.txt files scanned
-            eventCompileCommandsGenerated.SetStrings(includePaths);
+            eventCompileCommandsGenerated.SetStrings(paths);
             EventNotifier::Get()->QueueEvent(eventCompileCommandsGenerated.Clone());
         },
-        m_outputFile.GetFullPath());
+        generated_paths);
     thr.detach();
 }
 
@@ -154,7 +144,7 @@ void CompileCommandsGenerator::GenerateCompileCommands()
     bool generateCompileCommands = false;
     generateCompileCommands = clConfig::Get().Read(wxString("GenerateCompileCommands"), generateCompileCommands);
 
-    command << " --workspace=" << workspaceFile << " --verbose";
+    command << " --workspace=" << workspaceFile;
 
     // if we are required to generate compile_commands.json, pass the --json flags
     // not passing it means only compile_flags.txt files are generated
@@ -178,9 +168,8 @@ void CompileCommandsGenerator::GenerateCompileCommands()
 
     EnvSetter env(clCxxWorkspaceST::Get()->GetActiveProject());
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell);
+    m_capturedOutput.clear();
 
-    m_outputFile = workspaceFile;
-    m_outputFile.SetFullName(generateCompileCommands ? "compile_commands.json" : "compile_flags.txt");
-
-    clGetManager()->SetStatusMessage(wxString() << _("Generating ") << m_outputFile.GetFullPath(), 2);
+    wxString filename = generateCompileCommands ? wxString("compile_commands.json") : wxString("compile_flags.txt");
+    clGetManager()->SetStatusMessage(wxString() << _("Generating ") << filename, 2);
 }

@@ -7,6 +7,7 @@
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "compiler.h"
+
 #include <wx/panel.h>
 #include <wx/stopwatch.h>
 

@@ -278,6 +278,16 @@ public:
     void CloseEditor(IEditor* editor);
 
     /**
+     * @brief find references of a symbol
+     */
+    void FindReferences(IEditor* editor);
+
+    /**
+     * @brief rename a symbol
+     */
+    void RenameSymbol(IEditor* editor);
+
+    /**
      * @brief get list of symbols for the current editor
      * @param editor the current editor
      * @param context_flags request context. See LSP::DocumentSymbolsRequest::eDocumentSymbolsContext (bit or'd)
@@ -289,6 +299,8 @@ public:
     bool IsDocumentSymbolsSupported() const;
     bool IsSemanticTokensSupported() const;
     bool IsDeclarationSupported() const;
+    bool IsReferencesSupported() const;
+    bool IsRenameSupported() const;
 };
 
 #endif // CLLANGUAGESERVER_H

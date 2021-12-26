@@ -6,6 +6,7 @@
 #include "LSP/DidOpenTextDocumentRequest.h"
 #include "LSP/DidSaveTextDocumentRequest.h"
 #include "LSP/DocumentSymbolsRequest.hpp"
+#include "LSP/FindReferencesRequest.hpp"
 #include "LSP/GotoDeclarationRequest.h"
 #include "LSP/GotoDefinitionRequest.h"
 #include "LSP/GotoImplementationRequest.h"
@@ -154,7 +155,6 @@ wxString LanguageServerProtocol::GetLanguageId(IEditor* editor)
     }
     FileExtManager::FileType type =
         FileExtManager::GetType(editor->GetFileName().GetFullPath(), FileExtManager::TypeText);
-    clDEBUG() << "File type for" << editor->GetFileName().GetFullPath() << "is" << type << endl;
     return GetLanguageId(type);
 }
 
@@ -757,6 +757,8 @@ void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
                     CheckCapability(res, "documentSymbolProvider", "textDocument/documentSymbol");
                     CheckCapability(res, "declarationProvider", "textDocument/declaration");
                     CheckCapability(res, "workspaceSymbolProvider", "workspace/symbol");
+                    CheckCapability(res, "renameProvider", "textDocument/rename");
+                    CheckCapability(res, "referencesProvider", "textDocument/references");
 
                     clDEBUG() << GetLogPrefix() << "Sending InitializedNotification" << endl;
 
@@ -1006,6 +1008,26 @@ void LanguageServerProtocol::OnWorkspaceSymbols(clCodeCompletionEvent& event)
     SendWorkspaceSymbolsRequest(event.GetString());
 }
 
+void LanguageServerProtocol::FindReferences(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+    CHECK_EXPECTED_RETURN(IsReferencesSupported(), true);
+
+    // send "references" message
+    clDEBUG() << GetLogPrefix() << "Sending `find references` request" << endl;
+
+    LSP::FindReferencesRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(
+        new LSP::FindReferencesRequest(GetEditorFilePath(editor), editor->GetCurrentLine(),
+                                       editor->GetColumnInChars(editor->GetCurrentPosition()), false));
+    QueueMessage(req);
+
+    // Notify that operation started
+    LSPEvent event_start{ wxEVT_LSP_REFERENCES_INPROGRESS };
+    EventNotifier::Get()->AddPendingEvent(event_start);
+}
+
+void LanguageServerProtocol::RenameSymbol(IEditor* editor) {}
+
 void LanguageServerProtocol::OnSemanticHighlights(clCodeCompletionEvent& event)
 {
     event.Skip();
@@ -1125,3 +1147,7 @@ IEditor* LanguageServerProtocol::GetEditor(const clCodeCompletionEvent& event) c
 void LanguageServerProtocol::OnQuickJump(clCodeCompletionEvent& event) { OnFindSymbol(event); }
 
 bool LanguageServerProtocol::IsLanguageSupported(const wxString& lang) const { return m_languages.count(lang) != 0; }
+
+bool LanguageServerProtocol::IsReferencesSupported() const { return IsCapabilitySupported("textDocument/references"); }
+
+bool LanguageServerProtocol::IsRenameSupported() const { return IsCapabilitySupported("textDocument/rename"); }

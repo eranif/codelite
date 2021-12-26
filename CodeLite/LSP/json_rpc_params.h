@@ -6,6 +6,7 @@
 #include "LSP/JSONObject.h"
 #include "basic_types.h"
 #include "codelite_exports.h"
+
 #include <vector>
 #include <wx/sharedptr.h>
 
@@ -44,6 +45,23 @@ public:
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
     const Position& GetPosition() const { return m_position; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
+};
+
+//===----------------------------------------------------------------------------------
+// TextDocumentPositionParams
+//===----------------------------------------------------------------------------------
+class WXDLLIMPEXP_CL ReferenceParams : public TextDocumentPositionParams
+{
+    bool m_includeDeclaration = true;
+
+public:
+    ReferenceParams(bool includeDeclaration);
+    virtual ~ReferenceParams() {}
+
+    virtual void FromJSON(const JSONItem& json);
+    virtual JSONItem ToJSON(const wxString& name) const;
+    void SetIncludeDeclaration(bool includeDeclaration) { this->m_includeDeclaration = includeDeclaration; }
+    bool IsIncludeDeclaration() const { return m_includeDeclaration; }
 };
 
 //===----------------------------------------------------------------------------------

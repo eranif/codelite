@@ -19,6 +19,8 @@ wxDEFINE_EVENT(wxEVT_LSP_LOGMESSAGE, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_WORKSPACE_SYMBOLS, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_SYMBOL_DECLARATION_FOUND, LSPEvent);
 wxDEFINE_EVENT(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_REFERENCES, LSPEvent);
+wxDEFINE_EVENT(wxEVT_LSP_REFERENCES_INPROGRESS, LSPEvent);
 
 LSPEvent::LSPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
@@ -43,6 +45,7 @@ LSPEvent& LSPEvent::operator=(const LSPEvent& other)
     m_symbolsInformation = other.m_symbolsInformation;
     m_semanticTokens = other.m_semanticTokens;
     m_logMessageSeverity = other.m_logMessageSeverity;
+    m_locations = other.m_locations;
     return *this;
 }
 

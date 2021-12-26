@@ -26,36 +26,39 @@
 #ifndef FINDUSAGETAB_H
 #define FINDUSAGETAB_H
 
+#include "LSP/LSPEvent.h"
+#include "LSP/basic_types.h"
+#include "clTerminalViewCtrl.hpp"
+#include "clThemedTreeCtrl.h"
 #include "clWorkspaceEvent.hpp"
-#include "cpptoken.h"
-#include "outputtabwindow.h" // Base class OutputTabWindow
 #include "wxStringHash.h"
 
-typedef std::unordered_map<int, CppToken> UsageResultsMap;
+#include <wx/colour.h>
+#include <wx/panel.h>
 
-class FindUsageTab : public OutputTabWindow
+class FindUsageTab : public wxPanel
 {
-    UsageResultsMap m_matches;
+    std::vector<LSP::Location> m_locations;
+    clThemedTreeCtrl* m_ctrl = nullptr;
+    wxColour m_headerColour;
 
-protected:
-    void DoOpenResult(const CppToken& token);
+private:
+    void DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches);
+    void InitialiseView(const std::vector<LSP::Location>& locations);
+    void UpdateStyle();
 
 public:
-    FindUsageTab(wxWindow* parent, const wxString& name);
+    FindUsageTab(wxWindow* parent);
     virtual ~FindUsageTab();
 
-public:
-    virtual void Clear();
-    virtual void OnClearAllUI(wxUpdateUIEvent& e);
-    virtual void OnClearAll(wxCommandEvent& e);
-    virtual void OnMouseDClick(wxStyledTextEvent& e);
-    virtual void OnHoldOpenUpdateUI(wxUpdateUIEvent& e);
-    virtual void OnStyleNeeded(wxStyledTextEvent& e);
-    virtual void OnThemeChanged(wxCommandEvent& e);
+protected:
+    void Clear();
+    void OnClearAllUI(wxUpdateUIEvent& e);
+    void OnClearAll(wxCommandEvent& e);
+    void OnThemeChanged(wxCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
-
-public:
-    void ShowUsage(const CppToken::Vec_t& matches, const wxString& searchWhat);
+    void OnReferences(LSPEvent& event);
+    void OnReferencesInProgress(LSPEvent& event);
 };
 
 #endif // FINDUSAGETAB_H

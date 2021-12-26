@@ -1,24 +1,28 @@
-`CTagsd` project
-
 # TODO
 
-1. **DONE** `Add include file` should be moved to LSP via new event `wxEVT_LSP_FIND_HEADER`
-2. **DONE** `Outline Plugin` -> move to LSP
-3. **DONE** Fix code completion for header file names
-4. **DONE** All the content of the `Code Generation / Refactoring` should be moved to LSP
-5. **DONE** Remove parsing of files once saved (this is no longer needed)
-6. **DONE** Remove `symbols.db` creation (not needed anymore)
-7. **DONE** Navigation bar -> move to LSP
-8. **DONE** #include code completion
-9. **DONE** function calltip is not when another method call is inside the outer signature: `foo(GetName(),|` <-- will return calltip for GetName()
-10. **DONE** Remove ParseThread class
-11. **DONE** ctagsd: change the "Find Symbol" to use the "textDocument/definition" message
-12. **DONE** Open include file does not work
-13. **DONE** Fix Hyper Link navigation
-14. **DONE** Smart Completion Plugin - make it work with the LSP
-15. **DONE** Git Blame bar does not work for Remoty
-16. **DONE** Remoty: find-in-files: use the last used folder and not the current file's folder
-17. **DONE** Document `Rust` plugin
-18. Colours and Fonts -> change to native toolbar
-19. **DONE** Test new installation
-20. **DONE** FIX: Quick outline dialog: make sure no text is displayed when the dialog is first shown
+- **DONE** `Add include file` should be moved to LSP via new event `wxEVT_LSP_FIND_HEADER`
+- **DONE** `Outline Plugin` -> move to LSP
+- **DONE** Fix code completion for header file names
+- **DONE** All the content of the `Code Generation / Refactoring` should be moved to LSP
+- **DONE** Remove parsing of files once saved (this is no longer needed)
+- **DONE** Remove `symbols.db` creation (not needed anymore)
+- **DONE** Navigation bar -> move to LSP
+- **DONE** #include code completion
+- **DONE** function calltip is not when another method call is inside the outer signature: `foo(GetName(),|` <-- will return calltip for GetName()
+- **DONE** Remove ParseThread class
+- **DONE** ctagsd: change the "Find Symbol" to use the "textDocument/definition" message
+- **DONE** Open include file does not work
+- **DONE** Fix Hyper Link navigation
+- **DONE** Smart Completion Plugin - make it work with the LSP
+- **DONE** Git Blame bar does not work for Remoty
+- **DONE** Remoty: find-in-files: use the last used folder and not the current file's folder
+- **DONE** Document `Rust` plugin
+- **DONE** Test new installation
+- **DONE** FIX: Quick outline dialog: make sure no text is displayed when the dialog is first shown
+- **DONE** Colours and Fonts -> change to native toolbar
+
+- Add un-implemented functions does not work in first time
+- json_rpc_params.cpp:156 -> completion does not work for ctagsd
+- `rls` -> make it disabled by default
+- `ctagsd` -> make it disabled by default
+- wrong `auto` resolved in languageserver.cpp:234

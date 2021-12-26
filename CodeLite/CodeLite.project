@@ -54,6 +54,8 @@
     <Topleveldir>/src/codelite/CodeLite</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="LSP">
+    <File Name="LSP/FindReferencesRequest.cpp"/>
+    <File Name="LSP/FindReferencesRequest.hpp"/>
     <File Name="LSP/WorkspaceSymbolRequest.cpp"/>
     <File Name="LSP/WorkspaceSymbolRequest.hpp"/>
     <File Name="LSP/HoverRequest.hpp"/>

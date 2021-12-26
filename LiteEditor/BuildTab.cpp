@@ -1,4 +1,5 @@
 #include "BuildTab.hpp"
+
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
 #include "build_settings_config.h"
@@ -13,6 +14,7 @@
 #include "mainbook.h"
 #include "manager.h"
 #include "shell_command.h"
+
 #include <wx/app.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>

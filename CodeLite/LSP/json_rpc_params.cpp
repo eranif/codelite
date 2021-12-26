@@ -139,4 +139,23 @@ JSONItem DocumentSymbolParams::ToJSON(const wxString& name) const
     json.append(m_textDocument.ToJSON("textDocument"));
     return json;
 }
+
+ReferenceParams::ReferenceParams(bool includeDeclaration)
+    : m_includeDeclaration(includeDeclaration)
+{
+}
+
+void ReferenceParams::FromJSON(const JSONItem& json)
+{
+    TextDocumentPositionParams::FromJSON(json);
+    m_includeDeclaration = json["context"]["includeDeclaration"].toBool(m_includeDeclaration);
+}
+
+JSONItem ReferenceParams::ToJSON(const wxString& name) const
+{
+    JSONItem json = TextDocumentPositionParams::ToJSON(name);
+    auto context = json.AddObject("context");
+    context.addProperty("includeDeclaration", m_includeDeclaration);
+    return json;
+}
 }; // namespace LSP

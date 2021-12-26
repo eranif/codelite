@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "output_pane.h"
+
 #include "BuildTab.hpp"
 #include "clStrings.h"
 #include "clTabTogglerHelper.h"
@@ -32,10 +34,10 @@
 #include "findresultstab.h"
 #include "findusagetab.h"
 #include "frame.h"
-#include "output_pane.h"
 #include "pluginmanager.h"
 #include "replaceinfilespanel.h"
 #include "shelltab.h"
+
 #include <algorithm>
 #include <wx/aui/framemanager.h>
 #include <wx/dcbuffer.h>
@@ -130,12 +132,12 @@ void OutputPane::CreateGUIControls()
     mgr->AddOutputTab(REPLACE_IN_FILES);
 
     // Show Usage ("References")
-    m_showUsageTab = new FindUsageTab(m_book, SHOW_USAGE);
+    m_showUsageTab = new FindUsageTab(m_book);
 #if PHP_BUILD
     m_showUsageTab->Hide();
 #else
     m_book->AddPage(m_showUsageTab, SHOW_USAGE, false, images->Add(wxT("find")));
-    m_tabs.insert(std::make_pair(SHOW_USAGE, Tab(SHOW_USAGE, m_showUsageTab, images->Add(wxT("find")))));
+    m_tabs.insert({ SHOW_USAGE, Tab(SHOW_USAGE, m_showUsageTab, images->Add(wxT("find"))) });
     mgr->AddOutputTab(SHOW_USAGE);
 #endif
     // Output tab

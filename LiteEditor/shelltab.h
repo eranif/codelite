@@ -29,6 +29,8 @@
 #include "clWorkspaceEvent.hpp"
 #include "outputtabwindow.h"
 
+#include <wx/combobox.h>
+
 class wxTerminal;
 class AsyncExeCmd;
 

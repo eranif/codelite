@@ -28,6 +28,7 @@ protected:
     std::vector<LSP::Diagnostic> m_diagnostics;
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
+    std::vector<LSP::Location> m_locations; // used by wxEVT_LSP_REFERENCES
     int m_logMessageSeverity = LSP_LOG_INFO;
 
 public:
@@ -92,6 +93,9 @@ public:
     }
     const std::vector<LSP::SymbolInformation>& GetSymbolsInformation() const { return m_symbolsInformation; }
     std::vector<LSP::SymbolInformation>& GetSymbolsInformation() { return m_symbolsInformation; }
+    void SetLocations(const std::vector<LSP::Location>& locations) { this->m_locations = locations; }
+    const std::vector<LSP::Location>& GetLocations() const { return m_locations; }
+    std::vector<LSP::Location>& GetLocations() { return m_locations; }
 };
 
 typedef void (wxEvtHandler::*LSPEventFunction)(LSPEvent&);
@@ -117,5 +121,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_LOGMESSAGE, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_WORKSPACE_SYMBOLS, LSPEvent);        // EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SYMBOL_DECLARATION_FOUND, LSPEvent); // EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REFERENCES, LSPEvent);            // EventNotifier
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REFERENCES_INPROGRESS, LSPEvent); // EventNotifier
 
 #endif // LSPEVENT_H

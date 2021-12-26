@@ -195,21 +195,50 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForEditor(editor);
     CHECK_PTR_RET(lsp);
 
-    // CXX, C and PHP have their own context menus, dont add ours as well
-    if(lsp->CanHandle(FileExtManager::TypeSourceC) || lsp->CanHandle(FileExtManager::TypeSourceCpp) ||
-       lsp->CanHandle(FileExtManager::TypePhp)) {
+    bool add_find_symbol = !lsp->CanHandle(FileExtManager::TypePhp);
+    bool add_find_references = lsp->IsReferencesSupported();
+    bool add_rename_symbol = lsp->IsRenameSupported();
+
+    // nothing to be done here
+    if(!add_find_symbol && !add_find_references && !add_rename_symbol) {
         return;
     }
 
-    // TODO :: add here
-    // Goto definition
-    // Goto implementation
-    // menu entries
     wxMenu* menu = event.GetMenu();
+    if(add_find_references) {
+        menu->PrependSeparator();
+        menu->Prepend(XRCID("lsp_find_references"), _("Find references"));
+    }
     menu->PrependSeparator();
-    menu->Prepend(XRCID("lsp_find_symbol"), _("Find Symbol"));
+    if(add_rename_symbol) {
+        menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
+    }
+    menu->Prepend(XRCID("lsp_find_symbol"), _("Find symbol"));
 
+    // TODO:
+    // add here "Find References" and "Rename Symbol"
+    // menu entries if supported by the LSP
+    // we always add them to the top of the list
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindSymbol, this, XRCID("lsp_find_symbol"));
+    menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindReferences, this, XRCID("lsp_find_references"));
+    menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuRenameSymbol, this, XRCID("lsp_rename_symbol"));
+}
+
+void LanguageServerPlugin::OnMenuRenameSymbol(wxCommandEvent& event) {}
+
+void LanguageServerPlugin::OnMenuFindReferences(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+
+    clDEBUG() << "OnMenuFindReferences is called" << endl;
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForEditor(editor);
+    CHECK_PTR_RET(lsp);
+
+    lsp->FindReferences(editor);
 }
 
 void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)

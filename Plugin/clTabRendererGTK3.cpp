@@ -38,12 +38,20 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
 {
     wxColour inactiveTabPenColour = colours.inactiveTabPenColour;
 
-    wxColour activeTabBgColour = DrawingUtils::IsDark(colours.tabAreaColour)
-                                     ? colours.tabAreaColour.ChangeLightness(105)
-                                     : colours.tabAreaColour.ChangeLightness(125);
+    wxColour tabBgColour;
+    wxColour tabPenColour;
+    if(tabInfo.IsActive()) {
+        tabBgColour = DrawingUtils::IsDark(colours.tabAreaColour) ? colours.tabAreaColour.ChangeLightness(105)
+                                                                  : colours.tabAreaColour.ChangeLightness(95);
+        tabPenColour = DrawingUtils::IsDark(colours.tabAreaColour) ? colours.tabAreaColour.ChangeLightness(110)
+                                                                   : colours.tabAreaColour.ChangeLightness(90);
+    } else {
+        tabBgColour = colours.tabAreaColour;
+        tabPenColour = colours.tabAreaColour;
+    }
 
-    wxColour bgColour(colours.tabAreaColour);
-    wxColour penColour(colours.tabAreaColour);
+    wxColour bgColour(tabBgColour);
+    wxColour penColour(tabPenColour);
 
     wxFont font = GetTabFont(tabInfo.IsActive());
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
@@ -55,12 +63,8 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
     wxRect rr = tabInfo.m_rect;
 
     dc.SetBrush(bgColour);
-    dc.SetPen(bgColour);
-    dc.DrawRectangle(rr);
-
-    // Restore the pen
-    penColour = bgColour;
     dc.SetPen(penColour);
+    dc.DrawRectangle(rr);
 
     bool bVerticalTabs = IS_VERTICAL_TABS(style);
     // Draw bitmap

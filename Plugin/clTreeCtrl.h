@@ -136,9 +136,9 @@ public:
 
     /**
      * @brief set highlight information for a given item
-     * @param item them item to highlight
-     * @param start_pos positin within the item text
-     * @param len lenght of the string to highlight
+     * @param item the item to highlight
+     * @param start_pos position within the item text
+     * @param len number of characters to highlight
      * @param col which column text should we highlight?
      */
     void SetItemHighlightInfo(const wxTreeItemId& item, size_t start_pos, size_t len, size_t col = 0);

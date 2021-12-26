@@ -26,7 +26,6 @@
 #include "findusagetab.h"
 
 #include "ColoursAndFontsManager.h"
-#include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clStrings.h"
 #include "cl_editor.h"
 #include "ctags_manager.h"
@@ -287,9 +286,6 @@ void FindUsageTab::OnItemExpanding(wxTreeEvent& event)
             const auto& end = item_data->location->GetRange().GetEnd();
 
             if(start.GetLine() == end.GetLine()) {
-                clDEBUG() << "Setting highlight: text size:" << text_buffer.GetLine(line_number).size()
-                          << ", start:" << start.GetCharacter()
-                          << ", len:" << (end.GetCharacter() - start.GetCharacter()) << endl;
                 m_ctrl->SetItemHighlightInfo(child, start.GetCharacter(), end.GetCharacter() - start.GetCharacter());
                 m_ctrl->HighlightText(child, true);
             }

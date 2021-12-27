@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "cl_editor.h"
+
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
 #include "ServiceProviderManager.h"
@@ -39,7 +41,6 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
-#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
@@ -310,21 +311,48 @@ bool MSWRemoveROFileAttribute(const wxFileName& fileName)
     return true;
 }
 #endif
+
+constexpr int STYLE_CURRENT_LINE = (wxSTC_STYLE_MAX - 1);
+constexpr int STYLE_NORMAL_LINE = (wxSTC_STYLE_MAX - 2);
+constexpr int STYLE_MODIFIED_LINE = (wxSTC_STYLE_MAX - 3);
+constexpr int STYLE_SAVED_LINE = (wxSTC_STYLE_MAX - 4);
+constexpr int STYLE_CURRENT_LINE_MODIFIED = (wxSTC_STYLE_MAX - 5);
+constexpr int STYLE_CURRENT_LINE_SAVED = (wxSTC_STYLE_MAX - 6);
+
 void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
 {
     // Use a distinct style to highlight the current line number
-    wxColour bg_colour = ctrl->StyleGetBackground(0);
-    wxColour fg_colour = bg_colour;
-    if(DrawingUtils::IsDark(bg_colour)) {
-        bg_colour = bg_colour.ChangeLightness(110);
-        fg_colour = fg_colour.ChangeLightness(180);
+    wxColour default_bg_colour = ctrl->StyleGetBackground(0);
+    wxColour default_fg_colour = ctrl->StyleGetForeground(0);
+    wxColour current_line_bg_colour = ctrl->StyleGetBackground(0);
+    wxColour current_line_fg_colour = current_line_bg_colour;
+
+    bool is_dark = DrawingUtils::IsDark(current_line_bg_colour);
+    if(is_dark) {
+        current_line_bg_colour = current_line_bg_colour.ChangeLightness(110);
+        current_line_fg_colour = current_line_fg_colour.ChangeLightness(180);
     } else {
-        bg_colour = bg_colour.ChangeLightness(95);
-        fg_colour = fg_colour.ChangeLightness(20);
+        current_line_bg_colour = current_line_bg_colour.ChangeLightness(95);
+        current_line_fg_colour = current_line_fg_colour.ChangeLightness(20);
     }
 
-    ctrl->StyleSetBackground(CUR_LINE_NUMBER_STYLE, bg_colour);
-    ctrl->StyleSetForeground(CUR_LINE_NUMBER_STYLE, fg_colour);
+    ctrl->StyleSetForeground(STYLE_CURRENT_LINE, current_line_fg_colour);
+    ctrl->StyleSetBackground(STYLE_CURRENT_LINE, current_line_bg_colour);
+
+    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_MODIFIED, is_dark ? "ORANGE" : "RED");
+    ctrl->StyleSetBackground(STYLE_CURRENT_LINE_MODIFIED, current_line_bg_colour);
+
+    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_SAVED, "FOREST GREEN");
+    ctrl->StyleSetBackground(STYLE_CURRENT_LINE_SAVED, current_line_bg_colour);
+
+    ctrl->StyleSetForeground(STYLE_NORMAL_LINE, default_fg_colour);
+    ctrl->StyleSetBackground(STYLE_NORMAL_LINE, default_bg_colour);
+
+    ctrl->StyleSetForeground(STYLE_MODIFIED_LINE, is_dark ? "ORANGE" : "RED");
+    ctrl->StyleSetBackground(STYLE_MODIFIED_LINE, default_bg_colour);
+
+    ctrl->StyleSetForeground(STYLE_SAVED_LINE, "FOREST GREEN");
+    ctrl->StyleSetBackground(STYLE_SAVED_LINE, default_bg_colour);
 }
 
 void GetLineMarginColours(wxStyledTextCtrl* ctrl, wxColour* bg_colour, wxColour* fg_colour)
@@ -535,6 +563,7 @@ void clEditor::SetSyntaxHighlight(bool bUpdateColors)
     if(bUpdateColors) {
         UpdateColours();
     }
+    SetCurrentLineMarginStyle(GetCtrl());
 }
 
 // Fills the struct array that marries breakpoint type to marker and mask
@@ -718,10 +747,7 @@ void clEditor::SetProperties()
                                       mmt_all_breakpoints | mmt_line_marker));
 
     SetMarginType(EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
-    SetMarginWidth(EDIT_TRACKER_MARGIN_ID, (options->GetHideChangeMarkerMargin() || options->GetRelativeLineNumbers() ||
-                                            options->GetHighlightCurrentLineNumber())
-                                               ? 0
-                                               : 3);
+    SetMarginWidth(EDIT_TRACKER_MARGIN_ID, 3);
     SetMarginMask(EDIT_TRACKER_MARGIN_ID, 0);
 
     // Separators
@@ -1028,6 +1054,7 @@ void clEditor::SetProperties()
     CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_META, wxSTC_CMD_WORDPARTLEFT);
     CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_META, wxSTC_CMD_WORDPARTRIGHT);
 #endif
+    SetCurrentLineMarginStyle(GetCtrl());
 }
 
 void clEditor::OnSavePoint(wxStyledTextEvent& event)
@@ -1036,21 +1063,14 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
         return;
 
     wxString title;
-    if(!GetModify()) {
-        if(GetMarginWidth(EDIT_TRACKER_MARGIN_ID)) {
-
-            wxWindowUpdateLocker locker(this);
-            int numlines = GetLineCount();
-            for(int i = 0; i < numlines; i++) {
-                int style = MarginGetStyle(i);
-                if(style == CL_LINE_MODIFIED_STYLE) {
-                    MarginSetText(i, wxT(" "));
-                    MarginSetStyle(i, CL_LINE_SAVED_STYLE);
-                }
-            }
-            Refresh();
+    if(!GetModify() && GetMarginWidth(EDIT_TRACKER_MARGIN_ID)) {
+        // mark all modified lines as "saved"
+        for(auto& vt : m_modifiedLines) {
+            vt.second = LINE_SAVED;
         }
+        DoUpdateLineNumbers(GetOptions()->GetRelativeLineNumbers());
     }
+
     clMainFrame::Get()->GetMainBook()->SetPageTitle(this, GetFileName(), GetModify());
     DoUpdateTLWTitle(false);
 }
@@ -3270,21 +3290,33 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers)
         }
     }
 
-    SetCurrentLineMarginStyle(GetCtrl());
+    // wxColour bg_colour, fg_colour;
+    // GetLineMarginColours(GetCtrl(), &bg_colour, &fg_colour);
+    // wxUnusedVar(bg_colour);
 
-    wxColour bg_colour, fg_colour;
-    GetLineMarginColours(GetCtrl(), &bg_colour, &fg_colour);
-
-    StyleSetBackground(LINE_NUMBERS_ATTR_ID, StyleGetBackground(0));
-    StyleSetForeground(LINE_NUMBERS_ATTR_ID, fg_colour);
+    // StyleSetBackground(LINE_NUMBERS_ATTR_ID, StyleGetBackground(0));
+    // StyleSetForeground(LINE_NUMBERS_ATTR_ID, fg_colour);
 
     // set the line numbers, taking hidden lines into consideration
     for(auto& p : lines_to_draw) {
         int line_number = p.first;
         int line_to_render = p.second;
-        line_text.Printf(" %d", line_to_render);
+        line_text.Printf(wxT(" %d"), line_to_render);
         MarginSetText(line_number, line_text);
-        MarginSetStyle(line_number, line_number == current_line ? CUR_LINE_NUMBER_STYLE : LINE_NUMBERS_ATTR_ID);
+
+        bool is_current_line = (line_number == current_line);
+        if(m_modifiedLines.count(line_number)) {
+            if(m_modifiedLines[line_number] == LINE_MODIFIED) {
+                MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE_MODIFIED : STYLE_MODIFIED_LINE);
+            } else {
+                MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE_SAVED : STYLE_SAVED_LINE);
+            }
+        } else if(line_number == current_line) {
+            MarginSetStyle(line_number, STYLE_CURRENT_LINE);
+        } else {
+            // normal line
+            MarginSetStyle(line_number, STYLE_NORMAL_LINE);
+        }
     }
 }
 
@@ -4150,25 +4182,7 @@ void clEditor::OnDbgCustomWatch(wxCommandEvent& event)
     }
 }
 
-void clEditor::UpdateColours()
-{
-    SetKeywordClasses("");
-    SetKeywordLocals("");
-
-    if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS ||
-       TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_MACRO_BLOCKS) {
-        m_context->OnFileSaved();
-
-    } else {
-        if(m_context->GetName() == wxT("C++")) {
-            SetKeyWords(1, wxEmptyString); // Classes
-            SetKeyWords(2, wxEmptyString);
-            SetKeyWords(3, wxEmptyString); // Locals
-            SetKeyWords(4, GetPreProcessorsWords());
-        }
-    }
-    Colourise(0, wxSTC_INVALID_POSITION);
-}
+void clEditor::UpdateColours() { Colourise(0, wxSTC_INVALID_POSITION); }
 
 int clEditor::SafeGetChar(int pos)
 {
@@ -4550,28 +4564,31 @@ void clEditor::TrimText(bool trim, bool appendLf)
         for(int line = 0; line < maxLines; line++) {
 
             // only trim lines modified by the user in this session
-            if(trimOnlyModifiedLInes && (MarginGetStyle(line) != CL_LINE_MODIFIED_STYLE))
+            if(trimOnlyModifiedLInes && (m_modifiedLines.count(line) == 0 /* line is not marked as modified */
+                                         || m_modifiedLines[line] != LINE_MODIFIED) /* line is modified */) {
                 continue;
+            }
 
             // We can trim in the following cases:
-            // 1) line is is NOT the caret line OR
+            // 1) line is NOT the caret line OR
             // 2) line is the caret line, however dontTrimCaretLine is FALSE
             bool canTrim = ((line != currLine) || (line == currLine && !dontTrimCaretLine));
+            if(!canTrim) {
+                continue;
+            }
 
-            if(canTrim) {
-                int lineStart = PositionFromLine(line);
-                int lineEnd = GetLineEndPosition(line);
-                int i = lineEnd - 1;
-                wxChar ch = (wxChar)(GetCharAt(i));
-                while((i >= lineStart) && ((ch == _T(' ')) || (ch == _T('\t')))) {
-                    i--;
-                    ch = (wxChar)(GetCharAt(i));
-                }
-                if(i < (lineEnd - 1)) {
-                    SetTargetStart(i + 1);
-                    SetTargetEnd(lineEnd);
-                    ReplaceTarget(_T(""));
-                }
+            int lineStart = PositionFromLine(line);
+            int lineEnd = GetLineEndPosition(line);
+            int i = lineEnd - 1;
+            wxChar ch = (wxChar)(GetCharAt(i));
+            while((i >= lineStart) && ((ch == _T(' ')) || (ch == _T('\t')))) {
+                i--;
+                ch = (wxChar)(GetCharAt(i));
+            }
+            if(i < (lineEnd - 1)) {
+                SetTargetStart(i + 1);
+                SetTargetEnd(lineEnd);
+                ReplaceTarget(_T(""));
             }
         }
     }
@@ -4850,18 +4867,21 @@ void clEditor::OnChange(wxStyledTextEvent& event)
 
         // ignore this event incase we are in the middle of file reloading
         if(GetReloadingFile() == false && GetMarginWidth(EDIT_TRACKER_MARGIN_ID) /* margin is visible */) {
+            // keep track of modified lines
             int curline(LineFromPosition(event.GetPosition()));
-
             if(numlines == 0) {
                 // probably only the current line was modified
-                MarginSetText(curline, wxT(" "));
-                MarginSetStyle(curline, CL_LINE_MODIFIED_STYLE);
-
+                if(m_modifiedLines.count(curline)) {
+                    m_modifiedLines.erase(curline);
+                }
+                m_modifiedLines.insert({ curline, LINE_MODIFIED });
             } else {
-
                 for(int i = 0; i <= numlines; i++) {
-                    MarginSetText(curline + i, wxT(" "));
-                    MarginSetStyle(curline + i, CL_LINE_MODIFIED_STYLE);
+                    int line_number = curline + i;
+                    if(m_modifiedLines.count(line_number)) {
+                        m_modifiedLines.erase(line_number);
+                    }
+                    m_modifiedLines.insert({ line_number, LINE_MODIFIED });
                 }
             }
         }
@@ -6017,6 +6037,8 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     ReadFileWithConversion(m_fileName.GetFullPath(), text, GetOptions()->GetFileFontEncoding(), &m_fileBom);
 
     SetText(text);
+    // clear the modified lines
+    m_modifiedLines.clear();
     Colourise(0, wxNOT_FOUND);
 
     m_modifyTime = GetFileLastModifiedTime();

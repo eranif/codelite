@@ -58,7 +58,6 @@
 #define HYPERLINK_INDICATOR 4
 #define MARKER_FIND_BAR_WORD_HIGHLIGHT 5
 #define MARKER_CONTEXT_WORD_HIGHLIGHT 6
-#define CUR_LINE_NUMBER_STYLE (wxSTC_STYLE_MAX - 1)
 
 #if(wxVERSION_NUMBER < 3101)
 // Some wxSTC keycodes names were altered in 311, & the old versions deprecated
@@ -208,6 +207,11 @@ private:
         kShowSelectedChars = (1 << 4),
     };
 
+    enum eLineStatus {
+        LINE_MODIFIED,
+        LINE_SAVED,
+    };
+
 protected:
     wxFileName m_fileName;
     wxString m_project;
@@ -271,6 +275,7 @@ protected:
     wxColour m_selTextColour;
     wxColour m_selTextBgColour;
     bool m_zoomProgrammatically = false;
+    std::unordered_map<int, eLineStatus> m_modifiedLines;
 
 public:
     static bool m_ccShowPrivateMembers;

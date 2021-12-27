@@ -359,7 +359,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
         RegisterRenderer(new clTabRendererFirefox(win));
     }
 
-    wxString tab = clConfig::Get().Read("TabStyle", wxString("DEFAULT"));
+    wxString tab = clConfig::Get().Read("TabStyle", wxString("GTK3"));
     wxString name = tab.Upper();
 
     clTabRenderer::Ptr_t renderer;
@@ -367,7 +367,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
     renderer.reset(Create(win, name));
 
     if(!renderer) {
-        renderer = Create(win, "DEFAULT");
+        renderer = Create(win, "GTK3");
     } else {
         // make sure the selected renderer supports vertical tabbing
         if(is_vertical && !renderer->IsVerticalTabSupported()) {

@@ -61,6 +61,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_ctrl = new clThemedTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_HIDE_ROOT | wxTR_ROW_LINES);
+    m_ctrl->SetRendererType(eRendererType::RENDERER_DIRECT2D);
     m_ctrl->SetTreeStyle(wxTR_HIDE_ROOT | wxTR_ROW_LINES);
     m_ctrl->AddRoot("Hidden Root");
 

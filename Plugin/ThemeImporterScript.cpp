@@ -33,7 +33,7 @@ LexerConf::Ptr_t ThemeImporterScript::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_SH_SCALAR, "Scalar", m_editor);
     AddProperty(lexer, wxSTC_SH_PARAM, "Param", m_variable);
     AddProperty(lexer, wxSTC_SH_BACKTICKS, "Backticks", m_string);
-    AddProperty(lexer, wxSTC_SH_HERE_Q, "Here Q", m_klass);
+    AddProperty(lexer, wxSTC_SH_HERE_Q, "Here Q", m_string);
     AddProperty(lexer, wxSTC_SH_HERE_DELIM, "Here delim", m_klass);
     FinalizeImport(lexer);
     return lexer;

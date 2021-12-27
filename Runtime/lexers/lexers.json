@@ -26104,7 +26104,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#006600",
+    "Colour": "#0000C0",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -26324,7 +26324,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#D25252",
+    "Colour": "#FFC600",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -26544,7 +26544,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#D5A920",
+    "Colour": "#B58900",
     "BgColour": "#234059",
     "Size": 11
    }, {
@@ -26764,7 +26764,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#C81B28",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -26984,7 +26984,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#A9B7C6",
+    "Colour": "#A5C25C",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -27204,7 +27204,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C18401",
+    "Colour": "#50A14F",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -27424,7 +27424,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#D25B5B",
+    "Colour": "#CC9393",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -27644,7 +27644,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#bbbbbb",
+    "Colour": "#edd400",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -27864,7 +27864,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#82F985",
+    "Colour": "#FF8E8D",
     "BgColour": "#262626",
     "Size": 11
    }, {
@@ -28084,7 +28084,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#F0C674",
+    "Colour": "#B5BD68",
     "BgColour": "#1D1F21",
     "Size": 11
    }, {
@@ -28304,7 +28304,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFB964",
+    "Colour": "#99AD6A",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -28524,7 +28524,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFC235",
+    "Colour": "#EC7600",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -28744,7 +28744,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#CC0866",
+    "Colour": "#C71585",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -28964,7 +28964,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#52E3F6",
+    "Colour": "#ECE47E",
     "BgColour": "#272822",
     "Size": 11
    }, {
@@ -29184,7 +29184,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#D25252",
+    "Colour": "#FFC600",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -29404,7 +29404,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#AB2525",
+    "Colour": "#317ECC",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -29624,7 +29624,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B58900",
+    "Colour": "#CB4B16",
     "BgColour": "#002B36",
     "Size": 11
    }, {
@@ -29844,7 +29844,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#e5c07b",
+    "Colour": "#98c379",
     "BgColour": "#282c34",
     "Size": 11
    }, {
@@ -30064,7 +30064,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#8ec07c",
+    "Colour": "#b8bb26",
     "BgColour": "#383838",
     "Size": 11
    }, {
@@ -30284,7 +30284,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#89b482",
+    "Colour": "#d8a657",
     "BgColour": "#292828",
     "Size": 11
    }, {
@@ -30504,7 +30504,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#89B482",
+    "Colour": "#D8A657",
     "BgColour": "#22272e",
     "Size": 11
    }, {

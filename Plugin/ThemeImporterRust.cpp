@@ -48,7 +48,7 @@ LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_RUST_STRINGR, "String raw", m_string);
     AddProperty(lexer, wxSTC_RUST_CHARACTER, "Character", m_string);
     AddProperty(lexer, wxSTC_RUST_OPERATOR, "Operator", m_oper);
-    AddProperty(lexer, wxSTC_RUST_IDENTIFIER, "Identifier", m_variable);
+    AddProperty(lexer, wxSTC_RUST_IDENTIFIER, "Identifier", m_editor);
     AddProperty(lexer, wxSTC_RUST_LIFETIME, "Lifetime", m_editor);
     AddProperty(lexer, wxSTC_RUST_MACRO, "Macro", m_klass);
     AddProperty(lexer, wxSTC_RUST_BYTESTRING, "Byte string", m_string);

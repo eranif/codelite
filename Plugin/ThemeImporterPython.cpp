@@ -20,16 +20,16 @@ LexerConf::Ptr_t ThemeImporterPython::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_P_COMMENTLINE, "Number", m_number);
     AddProperty(lexer, wxSTC_P_STRING, "String", m_string);
     AddProperty(lexer, wxSTC_P_CHARACTER, "Character", m_string);
-    AddProperty(lexer, wxSTC_P_WORD, "Word", m_keyword);// keywords
+    AddProperty(lexer, wxSTC_P_WORD, "Word", m_keyword); // keywords
     AddProperty(lexer, wxSTC_P_TRIPLE, "Triple", m_multiLineComment);
     AddProperty(lexer, wxSTC_P_TRIPLEDOUBLE, "Double Triple", m_multiLineComment);
     AddProperty(lexer, wxSTC_P_CLASSNAME, "Class Name", m_klass);
     AddProperty(lexer, wxSTC_P_DEFNAME, "Def Name", m_function);
     AddProperty(lexer, wxSTC_P_OPERATOR, "Operator", m_oper);
-    AddProperty(lexer, wxSTC_P_IDENTIFIER, "Identifier", m_variable);
+    AddProperty(lexer, wxSTC_P_IDENTIFIER, "Identifier", m_editor);
     AddProperty(lexer, wxSTC_P_COMMENTBLOCK, "Comment block", m_multiLineComment);
     AddProperty(lexer, wxSTC_P_STRINGEOL, "String EOL", m_string);
-    AddProperty(lexer, wxSTC_P_WORD2, "Locals", m_field);
+    AddProperty(lexer, wxSTC_P_WORD2, "Locals", m_variable);
     AddProperty(lexer, wxSTC_P_DECORATOR, "Decorator", m_klass);
     FinalizeImport(lexer);
     return lexer;

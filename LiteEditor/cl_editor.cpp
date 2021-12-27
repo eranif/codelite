@@ -590,7 +590,16 @@ BPtoMarker clEditor::GetMarkerForBreakpt(enum BreakpointType bp_type)
 void clEditor::SetCaretAt(long pos)
 {
     DoSetCaretAt(pos);
-    CallAfter(&clEditor::EnsureCaretVisible);
+    int line = LineFromPos(pos);
+
+    // make sure that the line is visible (folded lines mainly)
+    EnsureVisible(line);
+
+    // ensure caret is visible, but only if needed
+    int last_visible_pos = GetLineEndPosition(line); // the last position visible
+    if(pos >= last_visible_pos) {
+        EnsureCaretVisible();
+    }
 }
 
 /// Setup some scintilla properties
@@ -5587,13 +5596,14 @@ void clEditor::CenterLinePreserveSelection(int line)
 
 void clEditor::CenterLine(int line, int col)
 {
-    int line_start_pos = PositionFromLine(line);
+    int caret_pos = PositionFromLine(line);
     if(col != wxNOT_FOUND) {
         // calculate the position
-        line_start_pos += col;
+        caret_pos += col;
     }
+
     // move the caret to the requested line
-    SetCaretAt(line_start_pos);
+    SetCaretAt(caret_pos);
 
     // center that line
     int linesOnScreen = LinesOnScreen();
@@ -5607,7 +5617,6 @@ void clEditor::CenterLine(int line, int col)
     int real_visible_line = VisibleFromDocLine(firstVisibleLine);
     EnsureVisible(real_visible_line);
     SetFirstVisibleLine(real_visible_line);
-    EnsureCaretVisible();
 }
 
 void clEditor::OnEditorConfigChanged(wxCommandEvent& event)

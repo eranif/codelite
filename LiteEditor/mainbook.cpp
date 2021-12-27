@@ -22,7 +22,6 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "mainbook.h"
 #include "FilesModifiedDlg.h"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
@@ -42,11 +41,13 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "macros.h"
+#include "mainbook.h"
 #include "manager.h"
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
 #include "quickfindbar.h"
 #include "theme_handler.h"
+
 #include <algorithm>
 #include <imanager.h>
 #include <unordered_map>
@@ -1556,23 +1557,8 @@ clEditor* MainBook::OpenFile(const BrowseRecord& rec)
 {
     clEditor* editor = OpenFile(rec.filename, rec.project, wxNOT_FOUND, wxNOT_FOUND, OF_None, true);
     if(editor) {
-        if(rec.firstLineInView != wxNOT_FOUND) {
-            editor->GetCtrl()->SetFirstVisibleLine(rec.firstLineInView);
-        }
         // Determine the best position for the caret
-        int line_number = rec.lineno;
-        int column = rec.column;
-
-        if(line_number != wxNOT_FOUND) {
-            int pos = editor->PositionFromLine(line_number);
-            if(column != wxNOT_FOUND) {
-                pos += column;
-            }
-            editor->SetCurrentPos(pos);
-            editor->SetSelectionStart(pos);
-            editor->SetSelectionEnd(pos);
-            editor->EnsureCaretVisible();
-        }
+        editor->CenterLine(rec.lineno, rec.column);
     }
     return editor;
 }

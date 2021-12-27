@@ -23,8 +23,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_editor.h"
-
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
 #include "ServiceProviderManager.h"
@@ -41,6 +39,7 @@
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
 #include "cl_command_event.h"
+#include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
 #include "codelite_events.h"
@@ -5588,6 +5587,15 @@ void clEditor::CenterLinePreserveSelection(int line)
 
 void clEditor::CenterLine(int line, int col)
 {
+    int line_start_pos = PositionFromLine(line);
+    if(col != wxNOT_FOUND) {
+        // calculate the position
+        line_start_pos += col;
+    }
+    // move the caret to the requested line
+    SetCaretAt(line_start_pos);
+
+    // center that line
     int linesOnScreen = LinesOnScreen();
     // To place our line in the middle, the first visible line should be
     // the: line - (linesOnScreen / 2)
@@ -5599,12 +5607,6 @@ void clEditor::CenterLine(int line, int col)
     int real_visible_line = VisibleFromDocLine(firstVisibleLine);
     EnsureVisible(real_visible_line);
     SetFirstVisibleLine(real_visible_line);
-
-    int pos = PositionFromLine(line);
-    if(col != wxNOT_FOUND) {
-        pos += col;
-    }
-    SetCurrentPos(pos);
     EnsureCaretVisible();
 }
 

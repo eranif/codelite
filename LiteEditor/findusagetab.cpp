@@ -67,6 +67,7 @@ FindUsageTab::FindUsageTab(wxWindow* parent)
 
     m_ctrl->Bind(wxEVT_TREE_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
     m_ctrl->Bind(wxEVT_TREE_ITEM_EXPANDING, &FindUsageTab::OnItemExpanding, this);
+    m_ctrl->Bind(wxEVT_TREE_SEL_CHANGED, &FindUsageTab::OnItemActivated, this);
 
     // show context menu for the control
     m_ctrl->Bind(wxEVT_CONTEXT_MENU, [this](wxContextMenuEvent& event) {
@@ -98,8 +99,10 @@ FindUsageTab::~FindUsageTab()
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &FindUsageTab::OnThemeChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &FindUsageTab::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_REFERENCES, &FindUsageTab::OnReferences, this);
+
     EventNotifier::Get()->Unbind(wxEVT_LSP_REFERENCES_INPROGRESS, &FindUsageTab::OnReferencesInProgress, this);
 
+    m_ctrl->Unbind(wxEVT_TREE_SEL_CHANGED, &FindUsageTab::OnItemActivated, this);
     m_ctrl->Unbind(wxEVT_TREE_ITEM_ACTIVATED, &FindUsageTab::OnItemActivated, this);
     m_ctrl->Unbind(wxEVT_TREE_ITEM_EXPANDING, &FindUsageTab::OnItemExpanding, this);
 }
@@ -205,7 +208,7 @@ void FindUsageTab::OnReferencesInProgress(LSPEvent& event)
 
 void FindUsageTab::OnItemActivated(wxTreeEvent& event)
 {
-    wxUnusedVar(event);
+    event.Skip();
     CHECK_ITEM_RET(event.GetItem());
 
     FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(event.GetItem()));

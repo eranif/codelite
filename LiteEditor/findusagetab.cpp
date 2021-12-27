@@ -212,7 +212,16 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     CHECK_ITEM_RET(event.GetItem());
 
     FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(event.GetItem()));
-    CHECK_PTR_RET(item_data);
+    if(!item_data) {
+        // header entry
+        DoExpandItem(event.GetItem());
+        if(m_ctrl->IsExpanded(event.GetItem())) {
+            m_ctrl->Collapse(event.GetItem());
+        } else {
+            m_ctrl->Expand(event.GetItem());
+        }
+        return;
+    }
 
     // Open the file
     wxFileName fn(item_data->location->GetPath());
@@ -244,25 +253,36 @@ void FindUsageTab::OnItemExpanding(wxTreeEvent& event)
     event.Skip();
 
     wxBusyCursor bc;
-    CHECK_ITEM_RET(event.GetItem());
+    if(!DoExpandItem(event.GetItem())) {
+        event.Veto();
+    }
+}
+
+bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
+{
+    wxBusyCursor bc;
+    CHECK_ITEM_RET_FALSE(item);
 
     wxTreeItemIdValue cookie;
-    wxTreeItemId first_child = m_ctrl->GetFirstChild(event.GetItem(), cookie);
-    CHECK_PTR_RET(first_child);
+    wxTreeItemId first_child = m_ctrl->GetFirstChild(item, cookie);
+    if(!first_child) {
+        return true;
+    }
 
     // if the child text is not "dummy_child" -> return
-    CHECK_EXPECTED_RETURN(m_ctrl->GetItemText(first_child) == "dummy_child", true);
+    if(m_ctrl->GetItemText(first_child) != "dummy_child") {
+        return true;
+    }
 
     wxString content;
-    wxString filepath = m_ctrl->GetItemText(event.GetItem());
+    wxString filepath = m_ctrl->GetItemText(item);
     if(!wxFileName::Exists(filepath)) {
         // not a local file, request for file download
         clCommandEvent event_download{ wxEVT_DOWNLOAD_FILE };
         event_download.SetFileName(filepath);
         if(!EventNotifier::Get()->ProcessEvent(event_download)) {
             ::wxMessageBox(_("Failed to download file: ") + filepath, "CodeLite", wxOK | wxOK_DEFAULT | wxICON_ERROR);
-            event.Veto();
-            return;
+            return false;
         }
         filepath = event_download.GetFileName();
     }
@@ -271,13 +291,12 @@ void FindUsageTab::OnItemExpanding(wxTreeEvent& event)
     wxTextFile text_buffer(filepath);
     if(!text_buffer.Open()) {
         ::wxMessageBox(_("Failed to open file: ") + filepath, "CodeLite", wxOK | wxOK_DEFAULT | wxICON_ERROR);
-        event.Veto();
-        return;
+        return false;
     }
 
     // go over the entries and set the actual line
     wxTreeItemIdValue cookie2;
-    wxTreeItemId child = m_ctrl->GetFirstChild(event.GetItem(), cookie2);
+    wxTreeItemId child = m_ctrl->GetFirstChild(item, cookie2);
     while(child.IsOk()) {
         FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(child));
         size_t line_number = item_data->location->GetRange().GetStart().GetLine();
@@ -294,6 +313,7 @@ void FindUsageTab::OnItemExpanding(wxTreeEvent& event)
                 m_ctrl->HighlightText(child, true);
             }
         }
-        child = m_ctrl->GetNextChild(event.GetItem(), cookie2);
+        child = m_ctrl->GetNextChild(item, cookie2);
     }
+    return true;
 }

@@ -46,6 +46,7 @@ private:
     void DoAddFileEntries(const wxString& filename, const std::vector<const LSP::Location*>& matches);
     void InitialiseView(const std::vector<LSP::Location>& locations);
     void UpdateStyle();
+    bool DoExpandItem(const wxTreeItemId& item);
 
 public:
     FindUsageTab(wxWindow* parent);

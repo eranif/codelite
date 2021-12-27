@@ -4,9 +4,10 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef CODELITE_FORMBUILDER_EDITORSETTINGSLOCALBASE_BASE_CLASSES_H
-#define CODELITE_FORMBUILDER_EDITORSETTINGSLOCALBASE_BASE_CLASSES_H
+#ifndef _CODELITE_FORMBUILDER_EDITORSETTINGSLOCALBASE_BASE_CLASSES_H
+#define _CODELITE_FORMBUILDER_EDITORSETTINGSLOCALBASE_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -30,6 +31,17 @@
 #include <wx/persist/treebook.h>
 #endif
 
+#ifdef WXC_FROM_DIP
+#undef WXC_FROM_DIP
+#endif
+#if wxVERSION_NUMBER >= 3100
+#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)
+#else
+#define WXC_FROM_DIP(x) x
+#endif
+
+// clang-format on
+
 class LocalEditorSettingsbase : public wxDialog
 {
 protected:
@@ -49,7 +61,7 @@ protected:
     wxCheckBox* m_checkBoxDisplayFoldMarginEnable;
     wxCheckBox* m_checkBoxDisplayFoldMargin;
     wxCheckBox* m_checkBoxHideChangeMarkerMarginEnable;
-    wxCheckBox* m_checkBoxHideChangeMarkerMargin;
+    wxCheckBox* m_checkBoxTrackEditorChanges;
     wxCheckBox* m_displayLineNumbersEnable;
     wxCheckBox* m_displayLineNumbers;
     wxPanel* m_panel4;
@@ -106,7 +118,7 @@ public:
     wxCheckBox* GetCheckBoxDisplayFoldMarginEnable() { return m_checkBoxDisplayFoldMarginEnable; }
     wxCheckBox* GetCheckBoxDisplayFoldMargin() { return m_checkBoxDisplayFoldMargin; }
     wxCheckBox* GetCheckBoxHideChangeMarkerMarginEnable() { return m_checkBoxHideChangeMarkerMarginEnable; }
-    wxCheckBox* GetCheckBoxHideChangeMarkerMargin() { return m_checkBoxHideChangeMarkerMargin; }
+    wxCheckBox* GetCheckBoxTrackEditorChanges() { return m_checkBoxTrackEditorChanges; }
     wxCheckBox* GetDisplayLineNumbersEnable() { return m_displayLineNumbersEnable; }
     wxCheckBox* GetDisplayLineNumbers() { return m_displayLineNumbers; }
     wxPanel* GetPanel3() { return m_panel3; }
@@ -129,7 +141,9 @@ public:
     wxChoice* GetFileEncoding() { return m_fileEncoding; }
     wxPanel* GetPanel4() { return m_panel4; }
     wxNotebook* GetNotebook23() { return m_notebook23; }
-    LocalEditorSettingsbase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Local Preferences"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    LocalEditorSettingsbase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Local Preferences"),
+                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                            long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~LocalEditorSettingsbase();
 };
 

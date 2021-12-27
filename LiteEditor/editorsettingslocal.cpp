@@ -23,14 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "globals.h"
 #include "editorsettingslocal.h"
+
+#include "globals.h"
 #include "windowattrmanager.h"
-#include <wx/stc/stc.h>
+
 #include <wx/fontmap.h>
+#include <wx/stc/stc.h>
 
 EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions, wxXmlNode* nde, enum prefsLevel level,
-    wxWindow* parent, wxWindowID id, const wxString& title)
+                                         wxWindow* parent, wxWindowID id, const wxString& title)
     : LocalEditorSettingsbase(parent, id, title)
     , higherOptions(hrOptions)
     , node(nde)
@@ -71,12 +73,12 @@ void EditorSettingsLocal::DisplayHigherValues(const OptionsConfigPtr options)
     m_checkBoxTrimLine->SetValue(options->GetTrimLine());
     m_checkBoxAppendLF->SetValue(options->GetAppendLF());
 
-    m_checkBoxHideChangeMarkerMargin->SetValue(options->GetHideChangeMarkerMargin());
+    m_checkBoxTrackEditorChanges->SetValue(options->IsTrackChanges());
     m_checkBoxDisplayFoldMargin->SetValue(options->GetDisplayFoldMargin());
     m_displayBookmarkMargin->SetValue(options->GetDisplayBookmarkMargin());
 
     const wxString WhitespaceStyle[] = { wxTRANSLATE("Invisible"), wxTRANSLATE("Visible always"),
-        wxTRANSLATE("Visible after indentation"), wxTRANSLATE("Indentation only") };
+                                         wxTRANSLATE("Visible after indentation"), wxTRANSLATE("Indentation only") };
     wxString currentWhitespace;
     switch(options->GetShowWhitspaces()) {
     case wxSTC_WS_VISIBLEALWAYS:
@@ -89,12 +91,12 @@ void EditorSettingsLocal::DisplayHigherValues(const OptionsConfigPtr options)
         currentWhitespace = wxT("Invisible");
         break;
     }
-    m_WSstringManager.AddStrings(
-        sizeof(WhitespaceStyle) / sizeof(wxString), WhitespaceStyle, currentWhitespace, m_whitespaceStyle);
+    m_WSstringManager.AddStrings(sizeof(WhitespaceStyle) / sizeof(wxString), WhitespaceStyle, currentWhitespace,
+                                 m_whitespaceStyle);
 
     const wxString EOLChoices[] = { wxTRANSLATE("Default"), wxT("Mac (CR)"), wxT("Windows (CRLF)"), wxT("Unix (LF)") };
-    m_EOLstringManager.AddStrings(
-        sizeof(EOLChoices) / sizeof(wxString), EOLChoices, options->GetEolMode(), m_choiceEOL);
+    m_EOLstringManager.AddStrings(sizeof(EOLChoices) / sizeof(wxString), EOLChoices, options->GetEolMode(),
+                                  m_choiceEOL);
 
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
@@ -153,8 +155,8 @@ void EditorSettingsLocal::DisplayLocalValues(const LocalOptionsConfigPtr options
         m_checkBoxAppendLF->SetValue(options->GetHighlightCaretLine());
         m_checkBoxAppendLFEnable->SetValue(false);
     }
-    if(options->HideChangeMarkerMarginIsValid()) {
-        m_checkBoxHideChangeMarkerMargin->SetValue(options->GetHideChangeMarkerMargin());
+    if(options->IsTrackChangesIsValid()) {
+        m_checkBoxTrackEditorChanges->SetValue(options->IsTrackChanges());
         m_checkBoxHideChangeMarkerMarginEnable->SetValue(false);
     }
     if(options->DisplayFoldMarginIsValid()) {
@@ -230,8 +232,8 @@ void EditorSettingsLocal::OnOK(wxCommandEvent& event)
     if(m_checkBoxAppendLF->IsEnabled()) {
         GetLocalOpts()->SetAppendLF(m_checkBoxAppendLF->GetValue());
     }
-    if(m_checkBoxHideChangeMarkerMargin->IsEnabled()) {
-        GetLocalOpts()->SetHideChangeMarkerMargin(m_checkBoxHideChangeMarkerMargin->GetValue());
+    if(m_checkBoxTrackEditorChanges->IsEnabled()) {
+        GetLocalOpts()->SetTrackChanges(m_checkBoxTrackEditorChanges->GetValue());
     }
     if(m_checkBoxDisplayFoldMargin->IsEnabled()) {
         GetLocalOpts()->SetDisplayFoldMargin(m_checkBoxDisplayFoldMargin->GetValue());
@@ -290,7 +292,7 @@ void EditorSettingsLocal::checkBoxDisplayFoldMarginUpdateUI(wxUpdateUIEvent& eve
 
 void EditorSettingsLocal::checkBoxHideChangeMarkerMarginUpdateUI(wxUpdateUIEvent& event)
 {
-    m_checkBoxHideChangeMarkerMargin->Enable(!((wxCheckBox*)event.GetEventObject())->IsChecked());
+    m_checkBoxTrackEditorChanges->Enable(!((wxCheckBox*)event.GetEventObject())->IsChecked());
 }
 
 void EditorSettingsLocal::displayLineNumbersUpdateUI(wxUpdateUIEvent& event)

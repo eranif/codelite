@@ -77,7 +77,7 @@ class WXDLLIMPEXP_SDK LocalOptionsConfig
     validVar<wxFontEncoding> m_localfileFontEncoding;
     validVar<int> m_localshowWhitspaces;
     validVar<wxString> m_localeolMode;
-    validVar<bool> m_localhideChangeMarkerMargin;
+    validVar<bool> m_localTrackChanges;
 
 public:
     LocalOptionsConfig(); // Used for setting local values
@@ -87,7 +87,7 @@ public:
                        wxXmlNode* node); // Used for storing local values in a previously-empty instance
     virtual ~LocalOptionsConfig(void) {}
 
-    bool HideChangeMarkerMarginIsValid() const { return m_localhideChangeMarkerMargin.isValid(); }
+    bool IsTrackChangesIsValid() const { return m_localTrackChanges.isValid(); }
     bool DisplayFoldMarginIsValid() const { return m_localdisplayFoldMargin.isValid(); }
     bool DisplayBookmarkMarginIsValid() const { return m_localdisplayBookmarkMargin.isValid(); }
     bool HighlightCaretLineIsValid() const { return m_localhighlightCaretLine.isValid(); }
@@ -106,13 +106,14 @@ public:
     // Setters/Getters
     //-------------------------------------
 
-    bool GetHideChangeMarkerMargin() const
+    bool IsTrackChanges() const
     {
-        if(m_localhideChangeMarkerMargin.isValid()) {
-            return m_localhideChangeMarkerMargin.GetDatum();
+        if(m_localTrackChanges.isValid()) {
+            return m_localTrackChanges.GetDatum();
         }
         return false; // It's invalid anyway, so false will do as well as anything
     }
+
     bool GetDisplayFoldMargin() const
     {
         if(m_localdisplayFoldMargin.isValid()) {
@@ -120,6 +121,7 @@ public:
         }
         return false;
     }
+
     bool GetDisplayBookmarkMargin() const
     {
         if(m_localdisplayBookmarkMargin.isValid()) {
@@ -163,10 +165,7 @@ public:
         return false;
     }
 
-    void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin)
-    {
-        m_localhideChangeMarkerMargin.Set(hideChangeMarkerMargin);
-    }
+    void SetTrackChanges(bool b) { m_localTrackChanges.Set(b); }
     void SetDisplayFoldMargin(bool b) { m_localdisplayFoldMargin.Set(b); }
     void SetDisplayBookmarkMargin(bool b) { m_localdisplayBookmarkMargin.Set(b); }
     void SetHighlightCaretLine(bool b) { m_localhighlightCaretLine.Set(b); }

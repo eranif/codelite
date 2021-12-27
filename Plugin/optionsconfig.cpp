@@ -71,7 +71,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_clearHighlitWordsOnFind(true)
     , m_displayLineNumbers(true)
     , m_relativeLineNumbers(false)
-    , m_highlightCurLineNumber(true)
     , m_showIndentationGuidelines(true)
     , m_caretLineColour(wxT("LIGHT BLUE"))
     , m_indentUsesTabs(true)
@@ -93,7 +92,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_copyLineEmptySelection(true)
     , m_programConsoleCommand(TERMINAL_CMD)
     , m_eolMode(wxT("Default"))
-    , m_hideChangeMarkerMargin(true)
+    , m_trackEditorChanges(false)
     , m_hideOutpuPaneOnUserClick(false)
     , m_hideOutputPaneNotIfBuild(false)
     , m_hideOutputPaneNotIfSearch(true)
@@ -159,7 +158,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
         m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"), m_displayLineNumbers);
         m_relativeLineNumbers = XmlUtils::ReadBool(node, wxT("RelativeLineNumber"), m_relativeLineNumbers);
-        m_highlightCurLineNumber = XmlUtils::ReadBool(node, wxT("HighlightLineNumberMargin"), m_highlightCurLineNumber);
         m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"), m_showIndentationGuidelines);
         m_caretLineColour =
             XmlUtils::ReadString(node, wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
@@ -184,7 +182,7 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_smartParen = XmlUtils::ReadBool(node, wxT("SmartParen"), m_smartParen);
         m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
         m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
-        m_hideChangeMarkerMargin = XmlUtils::ReadBool(node, wxT("HideChangeMarkerMargin"));
+        m_trackEditorChanges = XmlUtils::ReadBool(node, wxT("TrackEditorChanges"));
         m_scrollBeyondLastLine = XmlUtils::ReadBool(node, wxT("ScrollBeyondLastLine"), m_scrollBeyondLastLine);
         m_hideOutpuPaneOnUserClick = XmlUtils::ReadBool(node, wxT("HideOutputPaneOnUserClick"));
         m_hideOutputPaneNotIfBuild = XmlUtils::ReadBool(node, wxT("HideOutputPaneNotIfBuild"));
@@ -282,7 +280,6 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("HighlightCaretLine"), BoolToString(m_highlightCaretLine));
     n->AddProperty(wxT("ShowLineNumber"), BoolToString(m_displayLineNumbers));
     n->AddProperty(wxT("RelativeLineNumber"), BoolToString(m_relativeLineNumbers));
-    n->AddProperty("HighlightLineNumberMargin", BoolToString(m_highlightCurLineNumber));
     n->AddProperty(wxT("IndentationGuides"), BoolToString(m_showIndentationGuidelines));
     n->AddProperty(wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
     n->AddProperty(wxT("IndentUsesTabs"), BoolToString(m_indentUsesTabs));
@@ -292,7 +289,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("HighlightMatchedBraces"), BoolToString(m_highlightMatchedBraces));
     n->AddProperty(wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
     n->AddProperty(wxT("AutoAdjustHScrollBarWidth"), BoolToString(m_autoAdjustHScrollBarWidth));
-    n->AddProperty(wxT("HideChangeMarkerMargin"), BoolToString(m_hideChangeMarkerMargin));
+    n->AddProperty(wxT("TrackEditorChanges"), BoolToString(m_trackEditorChanges));
     n->AddProperty(wxT("ScrollBeyondLastLine"), BoolToString(m_scrollBeyondLastLine));
     n->AddProperty(wxT("HideOutputPaneOnUserClick"), BoolToString(m_hideOutpuPaneOnUserClick));
     n->AddProperty(wxT("HideOutputPaneNotIfBuild"), BoolToString(m_hideOutputPaneNotIfBuild));

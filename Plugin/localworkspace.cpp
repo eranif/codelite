@@ -82,8 +82,8 @@ LocalOptionsConfig::LocalOptionsConfig(OptionsConfigPtr opts, wxXmlNode* node)
         if(XmlUtils::ReadBoolIfExists(node, wxT("IndentUsesTabs"), answer)) {
             opts->SetIndentUsesTabs(answer);
         }
-        if(XmlUtils::ReadBoolIfExists(node, wxT("HideChangeMarkerMargin"), answer)) {
-            opts->SetHideChangeMarkerMargin(answer);
+        if(XmlUtils::ReadBoolIfExists(node, wxT("TrackEditorChanges"), answer)) {
+            opts->SetTrackChanges(answer);
         }
         if(XmlUtils::ReadLongIfExists(node, wxT("IndentWidth"), l)) {
             opts->SetIndentWidth(l);
@@ -138,8 +138,8 @@ LocalOptionsConfig::LocalOptionsConfig(LocalOptionsConfigPtr opts, wxXmlNode* no
         if(XmlUtils::ReadBoolIfExists(node, wxT("IndentUsesTabs"), answer)) {
             opts->SetIndentUsesTabs(answer);
         }
-        if(XmlUtils::ReadBoolIfExists(node, wxT("HideChangeMarkerMargin"), answer)) {
-            opts->SetHideChangeMarkerMargin(answer);
+        if(XmlUtils::ReadBoolIfExists(node, wxT("TrackEditorChanges"), answer)) {
+            opts->SetTrackChanges(answer);
         }
         if(XmlUtils::ReadLongIfExists(node, wxT("IndentWidth"), l)) {
             opts->SetIndentWidth(l);
@@ -195,8 +195,8 @@ wxXmlNode* LocalOptionsConfig::ToXml(wxXmlNode* parent /*=NULL*/, const wxString
     if(IndentUsesTabsIsValid()) {
         n->AddProperty(wxT("IndentUsesTabs"), BoolToString(m_localindentUsesTabs.GetDatum()));
     }
-    if(HideChangeMarkerMarginIsValid()) {
-        n->AddProperty(wxT("HideChangeMarkerMargin"), BoolToString(m_localhideChangeMarkerMargin.GetDatum()));
+    if(IsTrackChangesIsValid()) {
+        n->AddProperty(wxT("TrackEditorChanges"), BoolToString(m_localTrackChanges.GetDatum()));
     }
 
     if(EolModeIsValid()) {

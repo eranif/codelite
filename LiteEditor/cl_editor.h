@@ -276,6 +276,7 @@ protected:
     wxColour m_selTextBgColour;
     bool m_zoomProgrammatically = false;
     std::unordered_map<int, eLineStatus> m_modifiedLines;
+    bool m_trackChanges = false;
 
 public:
     static bool m_ccShowPrivateMembers;

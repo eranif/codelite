@@ -24,9 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "editor_options_general_guides_panel.h"
+
 #include "clSystemSettings.h"
 #include "cl_config.h"
 #include "globals.h"
+
 #include <wx/settings.h>
 #include <wx/stc/stc.h>
 
@@ -46,14 +48,13 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
     caretLineColour << options->GetCaretLineColour();
     m_pgPropCaretLineColour->SetValue(caretLineColour);
     m_pgPropDisableSemiColonShift->SetValue(options->GetDisableSemicolonShift());
-    m_pgPropHideEditMargin->SetValue(options->GetHideChangeMarkerMargin());
+    m_pgPropTrackEditorChanges->SetValue(options->IsTrackChanges());
     m_pgPropHighlightDebuggerMarker->SetValue(options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line));
     debuggerLineColour << options->GetDebuggerMarkerLine();
     m_pgPropDebuggerLineColour->SetValue(debuggerLineColour);
     m_pgPropWhitespaceVisibility->SetChoiceSelection(options->GetShowWhitspaces());
     m_pgPropCaretLineAlpha->SetValue(options->GetCaretLineAlpha());
     m_pgPropLineSpacing->SetValue(clConfig::Get().Read("extra_line_spacing", (int)0));
-    m_pgPropHiglightLineNumber->SetValue(options->GetHighlightCurrentLineNumber());
 
     // EOL
     // Default;Mac (CR);Windows (CRLF);Unix (LF)
@@ -72,7 +73,6 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 {
     options->SetDisplayLineNumbers(m_pgPropDisplayLineNumbers->GetValue().GetBool());
     options->SetRelativeLineNumbers(m_pgPropRelativeLineNumbers->GetValue().GetBool());
-    options->SetHighlightCurrentLineNumber(m_pgPropHiglightLineNumber->GetValue().GetBool());
     options->SetHighlightMatchedBraces(m_pgPropHighlightMatchedBrace->GetValue().GetBool());
     options->SetShowIndentationGuidelines(m_pgPropShowIndentGuidelines->GetValue().GetBool());
     options->SetHighlightCaretLine(m_pgPropEnableCaretLine->GetValue().GetBool());
@@ -84,7 +84,7 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
 
     wxString eolMode = m_pgPropEOLMode->GetValueAsString();
     options->SetEolMode(eolMode);
-    options->SetHideChangeMarkerMargin(m_pgPropHideEditMargin->GetValue().GetBool());
+    options->SetTrackChanges(m_pgPropTrackEditorChanges->GetValue().GetBool());
     options->SetDisableSemicolonShift(m_pgPropDisableSemiColonShift->GetValue().GetBool());
     options->SetDebuggerMarkerLine(debuggerLineColour.m_colour);
     options->EnableOption(OptionsConfig::Opt_Mark_Debugger_Line, m_pgPropHighlightDebuggerMarker->GetValue().GetBool());

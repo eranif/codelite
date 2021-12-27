@@ -23,7 +23,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
         bBitmapLoaded = true;
     }
 
-    bSizer1 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
     wxArrayString m_pgMgrGeneralArr;
@@ -46,17 +46,14 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
         m_pgPropCategoryGeneral, new wxBoolProperty(_("Enable Relative line numbers"), wxPG_LABEL, 0));
     m_pgPropRelativeLineNumbers->SetHelpString(_("Enable Relative line numbers"));
 
-    m_pgPropHiglightLineNumber = m_pgMgrGeneral->AppendIn(
-        m_pgPropCategoryGeneral, new wxBoolProperty(_("Highlight the current line number"), wxPG_LABEL, 1));
-    m_pgPropHiglightLineNumber->SetHelpString(_("Highlight the current line number"));
-
     m_pgPropHighlightMatchedBrace = m_pgMgrGeneral->AppendIn(
         m_pgPropCategoryGeneral, new wxBoolProperty(_("Highlight matched braces"), wxPG_LABEL, 1));
     m_pgPropHighlightMatchedBrace->SetHelpString(_("Highlight matched braces"));
 
-    m_pgPropHideEditMargin =
-        m_pgMgrGeneral->AppendIn(m_pgPropCategoryGeneral, new wxBoolProperty(_("Hide the edit margin"), wxPG_LABEL, 1));
-    m_pgPropHideEditMargin->SetHelpString(_("Hide the edit margin ( the red/green marks when a line is modified)"));
+    m_pgPropTrackEditorChanges =
+        m_pgMgrGeneral->AppendIn(m_pgPropCategoryGeneral, new wxBoolProperty(_("Track editor changes"), wxPG_LABEL, 0));
+    m_pgPropTrackEditorChanges->SetHelpString(
+        _("The line number of a modified line will be marked with RED\nwhile saved lines, will be marked with GREEN"));
 
     m_pgPropShowIndentGuidelines = m_pgMgrGeneral->AppendIn(
         m_pgPropCategoryGeneral, new wxBoolProperty(_("Show indentation guidelines"), wxPG_LABEL, 1));
@@ -145,7 +142,7 @@ EditorOptionsGeneralEditBase::EditorOptionsGeneralEditBase(wxWindow* parent, wxW
         bBitmapLoaded = true;
     }
 
-    boxSizer4 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer4);
 
     wxArrayString m_pgMgrEditArr;

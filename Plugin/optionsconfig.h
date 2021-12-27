@@ -96,7 +96,6 @@ protected:
     bool m_clearHighlitWordsOnFind;
     bool m_displayLineNumbers;
     bool m_relativeLineNumbers;
-    bool m_highlightCurLineNumber;
     bool m_showIndentationGuidelines;
     wxColour m_caretLineColour;
     bool m_indentUsesTabs;
@@ -119,7 +118,7 @@ protected:
     bool m_copyLineEmptySelection;
     wxString m_programConsoleCommand;
     wxString m_eolMode;
-    bool m_hideChangeMarkerMargin;
+    bool m_trackEditorChanges;
     bool m_hideOutpuPaneOnUserClick;
     bool m_hideOutputPaneNotIfBuild;
     bool m_hideOutputPaneNotIfSearch;
@@ -337,12 +336,9 @@ public:
         this->m_hideOutputPaneNotIfMemCheck = HideOutpuPaneNotIfMemCheck;
     }
     const bool& GetHideOutputPaneNotIfMemCheck() const { return m_hideOutputPaneNotIfMemCheck; }
-    void SetHideChangeMarkerMargin(bool hideChangeMarkerMargin)
-    {
-        this->m_hideChangeMarkerMargin = hideChangeMarkerMargin;
-    }
 
-    bool GetHideChangeMarkerMargin() const { return m_hideChangeMarkerMargin; }
+    void SetTrackChanges(bool b) { this->m_trackEditorChanges = b; }
+    bool IsTrackChanges() const { return m_trackEditorChanges; }
 
     bool GetIndentedComments() const { return m_indentedComments; }
     bool GetDisplayFoldMargin() const { return m_displayFoldMargin; }
@@ -362,7 +358,6 @@ public:
     bool GetHighlightCaretLine() const { return m_highlightCaretLine; }
     bool GetDisplayLineNumbers() const { return m_displayLineNumbers; }
     bool GetRelativeLineNumbers() const { return m_relativeLineNumbers; }
-    bool GetHighlightCurrentLineNumber() const { return m_highlightCurLineNumber; }
     bool GetShowIndentationGuidelines() const { return m_showIndentationGuidelines; }
     wxColour GetCaretLineColour() const { return m_caretLineColour; }
 
@@ -384,7 +379,6 @@ public:
     void SetHighlightCaretLine(bool b) { m_highlightCaretLine = b; }
     void SetDisplayLineNumbers(bool b) { m_displayLineNumbers = b; }
     void SetRelativeLineNumbers(bool b) { m_relativeLineNumbers = b; }
-    void SetHighlightCurrentLineNumber(bool b) { m_highlightCurLineNumber = b; }
     void SetShowIndentationGuidelines(bool b) { m_showIndentationGuidelines = b; }
     void SetCaretLineColour(wxColour c) { m_caretLineColour = c; }
 

@@ -549,6 +549,7 @@ void clEditor::SetSyntaxHighlight(const wxString& lexerName)
     m_context->ApplySettings();
 
     UpdateColours();
+    SetCurrentLineMarginStyle(GetCtrl());
 }
 
 void clEditor::SetSyntaxHighlight(bool bUpdateColors)
@@ -736,19 +737,20 @@ void clEditor::SetProperties()
     SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
 
     // Line numbers
-    if(options->GetRelativeLineNumbers() || options->GetHighlightCurrentLineNumber()) {
-        SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_RTEXT);
-    } else {
-        SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
-    }
+    SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_RTEXT);
 
     // line number margin displays every thing but folding, bookmarks and breakpoint
     SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler |
                                       mmt_all_breakpoints | mmt_line_marker));
 
-    SetMarginType(EDIT_TRACKER_MARGIN_ID, 4); // Styled Text margin
-    SetMarginWidth(EDIT_TRACKER_MARGIN_ID, 3);
+    // Hide the "Tracker" margin, we use the line numbers instead
+    SetMarginType(EDIT_TRACKER_MARGIN_ID, 4);
+    SetMarginWidth(EDIT_TRACKER_MARGIN_ID, 0);
     SetMarginMask(EDIT_TRACKER_MARGIN_ID, 0);
+    m_trackChanges = GetOptions()->IsTrackChanges();
+    if(!m_trackChanges) {
+        m_modifiedLines.clear();
+    }
 
     // Separators
 #if wxCHECK_VERSION(3, 1, 0)
@@ -1063,7 +1065,7 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
         return;
 
     wxString title;
-    if(!GetModify() && GetMarginWidth(EDIT_TRACKER_MARGIN_ID)) {
+    if(!GetModify() && m_trackChanges) {
         // mark all modified lines as "saved"
         for(auto& vt : m_modifiedLines) {
             vt.second = LINE_SAVED;
@@ -3326,10 +3328,7 @@ void clEditor::UpdateLineNumbers()
     if(!c->GetDisplayLineNumbers()) {
         return;
     }
-
-    if(c->GetHighlightCurrentLineNumber()) {
-        DoUpdateLineNumbers(c->GetRelativeLineNumbers());
-    }
+    DoUpdateLineNumbers(c->GetRelativeLineNumbers());
 }
 
 void clEditor::OpenFile()
@@ -3692,7 +3691,6 @@ void clEditor::OnFocusLost(wxFocusEvent& event)
     event.Skip();
     UpdateLineNumbers();
     if(HasCapture()) {
-        CL_DEBUG("Releasing the mouse...");
         ReleaseMouse();
     }
 }
@@ -4866,7 +4864,7 @@ void clEditor::OnChange(wxStyledTextEvent& event)
         }
 
         // ignore this event incase we are in the middle of file reloading
-        if(GetReloadingFile() == false && GetMarginWidth(EDIT_TRACKER_MARGIN_ID) /* margin is visible */) {
+        if(!GetReloadingFile() && m_trackChanges /* tracking changes */) {
             // keep track of modified lines
             int curline(LineFromPosition(event.GetPosition()));
             if(numlines == 0) {

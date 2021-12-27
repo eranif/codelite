@@ -44,6 +44,6 @@ void wxC77E7InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/editor_options_guides_liteeditor_bitmaps.cpp$_home_ANT.AMAZON.COM_eifrah_devl_codelite_LiteEditor_editor_options_guides_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/editor_options_guides_liteeditor_bitmaps.cpp$_home_ANT.AMAZON.COM_eifrah_devl_codelite_LiteEditor_editor_options_guides_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/editor_options_guides_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_editor_options_guides_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/editor_options_guides_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_editor_options_guides_liteeditor_bitmaps.xrc"));
 }

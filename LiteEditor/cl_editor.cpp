@@ -5604,7 +5604,8 @@ void clEditor::CenterLine(int line, int col)
     if(col != wxNOT_FOUND) {
         pos += col;
     }
-    SetCaretAt(pos);
+    SetCurrentPos(pos);
+    EnsureCaretVisible();
 }
 
 void clEditor::OnEditorConfigChanged(wxCommandEvent& event)

@@ -1,4 +1,5 @@
 #include "NoteJSWorkspace.h"
+
 #include "NodeDebugger.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSExecutable.h"
@@ -15,6 +16,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "processreaderthread.h"
+
 #include <wx/dir.h>
 #include <wx/dirdlg.h>
 #include <wx/msgdlg.h>

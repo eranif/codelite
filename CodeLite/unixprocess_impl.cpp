@@ -107,7 +107,7 @@ static void freeargv(char** vector)
         for(scan = vector; *scan != NULL; scan++) {
             free(*scan);
         }
-        free(vector);
+        delete vector;
     }
 }
 

@@ -30,6 +30,7 @@
 #include "NodeDebugger.h"
 #include "TerminalEmulator.h"
 #include "cl_command_event.h"
+
 #include <wx/filename.h>
 
 class NodeDebugger;
@@ -41,7 +42,7 @@ protected:
     wxArrayString m_folders;
     NodeJSWorkspaceView* m_view;
     bool m_clangOldFlag;
-    bool m_dummy;
+    bool m_dummy = false;
     bool m_showWelcomePage;
     NodeDebugger::Ptr_t m_debugger;
     TerminalEmulator m_terminal;

@@ -104,13 +104,12 @@ extern char* strdup();  /* Duplicate a string */
 
 static void freeargv(char** vector)
 {
-    register char** scan;
-
+    char** scan;
     if(vector != NULL) {
         for(scan = vector; *scan != NULL; scan++) {
             free(*scan);
         }
-        delete vector;
+        delete[] vector;
     }
 }
 

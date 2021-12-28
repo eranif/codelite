@@ -207,7 +207,8 @@ private:
         kShowSelectedChars = (1 << 4),
     };
 
-    enum eLineStatus {
+    enum eLineStatus : short {
+        LINE_NONE,
         LINE_MODIFIED,
         LINE_SAVED,
     };
@@ -275,7 +276,7 @@ protected:
     wxColour m_selTextColour;
     wxColour m_selTextBgColour;
     bool m_zoomProgrammatically = false;
-    std::unordered_map<int, eLineStatus> m_modifiedLines;
+    std::vector<eLineStatus> m_modifiedLines;
     bool m_trackChanges = false;
 
 public:

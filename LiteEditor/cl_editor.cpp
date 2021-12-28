@@ -79,6 +79,7 @@
 #include "wx/stc/stc.h"
 #include "wxCodeCompletionBoxManager.h"
 
+#include <algorithm>
 #include <wx/dataobj.h>
 #include <wx/dcmemory.h>
 #include <wx/display.h>
@@ -1067,8 +1068,10 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
     wxString title;
     if(!GetModify() && m_trackChanges) {
         // mark all modified lines as "saved"
-        for(auto& vt : m_modifiedLines) {
-            vt.second = LINE_SAVED;
+        for(auto& status : m_modifiedLines) {
+            if(status == LINE_MODIFIED) {
+                status = LINE_SAVED;
+            }
         }
         DoUpdateLineNumbers(GetOptions()->GetRelativeLineNumbers());
     }
@@ -3307,11 +3310,14 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers)
         MarginSetText(line_number, line_text);
 
         bool is_current_line = (line_number == current_line);
-        if(m_modifiedLines.count(line_number)) {
+        if((size_t)line_number < m_modifiedLines.size()) {
+            //        ^^ sanity
             if(m_modifiedLines[line_number] == LINE_MODIFIED) {
                 MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE_MODIFIED : STYLE_MODIFIED_LINE);
-            } else {
+            } else if(m_modifiedLines[line_number] == LINE_SAVED) {
                 MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE_SAVED : STYLE_SAVED_LINE);
+            } else {
+                MarginSetStyle(line_number, is_current_line ? STYLE_CURRENT_LINE : STYLE_NORMAL_LINE);
             }
         } else if(line_number == current_line) {
             MarginSetStyle(line_number, STYLE_CURRENT_LINE);
@@ -4562,8 +4568,8 @@ void clEditor::TrimText(bool trim, bool appendLf)
         for(int line = 0; line < maxLines; line++) {
 
             // only trim lines modified by the user in this session
-            if(trimOnlyModifiedLInes && (m_modifiedLines.count(line) == 0 /* line is not marked as modified */
-                                         || m_modifiedLines[line] != LINE_MODIFIED) /* line is modified */) {
+            bool is_modified_line = ((size_t)line < m_modifiedLines.size()) && (m_modifiedLines[line] == LINE_MODIFIED);
+            if(trimOnlyModifiedLInes && !is_modified_line) {
                 continue;
             }
 
@@ -4865,21 +4871,19 @@ void clEditor::OnChange(wxStyledTextEvent& event)
 
         // ignore this event incase we are in the middle of file reloading
         if(!GetReloadingFile() && m_trackChanges /* tracking changes */) {
+            if(m_modifiedLines.size() < (size_t)GetLineCount()) {
+                m_modifiedLines.reserve(GetLineCount());
+                m_modifiedLines.resize(GetLineCount());
+            }
+
             // keep track of modified lines
-            int curline(LineFromPosition(event.GetPosition()));
+            int curline = LineFromPosition(event.GetPosition());
             if(numlines == 0) {
                 // probably only the current line was modified
-                if(m_modifiedLines.count(curline)) {
-                    m_modifiedLines.erase(curline);
-                }
-                m_modifiedLines.insert({ curline, LINE_MODIFIED });
+                m_modifiedLines[curline] = LINE_MODIFIED;
             } else {
                 for(int i = 0; i <= numlines; i++) {
-                    int line_number = curline + i;
-                    if(m_modifiedLines.count(line_number)) {
-                        m_modifiedLines.erase(line_number);
-                    }
-                    m_modifiedLines.insert({ line_number, LINE_MODIFIED });
+                    m_modifiedLines[curline + i] = LINE_MODIFIED;
                 }
             }
         }
@@ -6037,6 +6041,9 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
     SetText(text);
     // clear the modified lines
     m_modifiedLines.clear();
+    m_modifiedLines.reserve(GetLineCount());
+    std::fill(m_modifiedLines.begin(), m_modifiedLines.end(), LINE_NONE);
+
     Colourise(0, wxNOT_FOUND);
 
     m_modifyTime = GetFileLastModifiedTime();

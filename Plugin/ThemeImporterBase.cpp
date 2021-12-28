@@ -202,9 +202,9 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
     GetEclipseXmlProperty(wxEmptyString, "operator", m_oper);
     GetEclipseXmlProperty(wxEmptyString, "keyword", m_keyword);
     GetEclipseXmlProperty(wxEmptyString, "class", m_klass);
-    GetEclipseXmlProperty(wxEmptyString, "localVariable", m_variable);
+    GetEclipseXmlProperty(wxEmptyString, "localVariableDeclaration", m_variable);
     GetEclipseXmlProperty(wxEmptyString, "javadocKeyword", m_javadocKeyword);
-    GetEclipseXmlProperty(wxEmptyString, "method", m_function);
+    GetEclipseXmlProperty(wxEmptyString, "staticMethod", m_function);
     GetEclipseXmlProperty(wxEmptyString, "field", m_field);
     GetEclipseXmlProperty(wxEmptyString, "enum", m_enum);
 

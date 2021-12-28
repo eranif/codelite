@@ -140,18 +140,6 @@ static int ID_OPEN_URL = wxNOT_FOUND;
 #define wxSTC_MARK_BOOKMARK wxSTC_MARK_LEFTRECT
 #endif
 
-static bool IsWordChar(const wxChar& ch)
-{
-    static wxStringSet_t wordsChar;
-    if(wordsChar.empty()) {
-        wxString chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.>";
-        for(size_t i = 0; i < chars.size(); ++i) {
-            wordsChar.insert(chars[i]);
-        }
-    }
-    return (wordsChar.count(ch) != 0);
-}
-
 //---------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------
 
@@ -287,6 +275,33 @@ public:
 
 namespace
 {
+bool IsWordChar(const wxChar& ch)
+{
+    static wxStringSet_t wordsChar;
+    if(wordsChar.empty()) {
+        wxString chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.>";
+        for(size_t i = 0; i < chars.size(); ++i) {
+            wordsChar.insert(chars[i]);
+        }
+    }
+    return (wordsChar.count(ch) != 0);
+}
+
+void scroll_range(wxStyledTextCtrl* ctrl, int selection_start, int selection_end)
+{
+#if wxCHECK_VERSION(3, 1, 0)
+    // ensure the selection is visible
+    ctrl->ScrollRange(selection_start, selection_end);
+#else
+    // implement a wx30 version for ScrollRange()
+    int line_start_pos = ctrl->LineFromPosition(selection_start);
+    int start_column = selection_start - line_start_pos;
+    int end_column = start_column + (selection_end - selection_start);
+    ctrl->ScrollToColumn(end_column);
+    ctrl->ScrollToColumn(start_column);
+#endif
+}
+
 #if defined(__WXMSW__)
 bool MSWRemoveROFileAttribute(const wxFileName& fileName)
 {
@@ -330,7 +345,7 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
     wxColour current_line_fg_colour = current_line_bg_colour;
 
     wxColour RED("RED");
-    wxColour ORANGE("ORANGE");
+    wxColour ORANGE("GOLD");
     wxColour GREEN("FOREST GREEN");
 
     bool is_dark = DrawingUtils::IsDark(current_line_bg_colour);
@@ -633,7 +648,7 @@ void clEditor::SetCaretAt(long pos)
     EnsureVisible(line);
 
     // ensure caret is visible, but only if needed
-    ScrollRange(pos, pos);
+    scroll_range(this, pos, pos);
 }
 
 /// Setup some scintilla properties
@@ -5615,17 +5630,7 @@ void clEditor::CenterLinePreserveSelection(int line)
 
     if(selection_end != wxNOT_FOUND && selection_start != wxNOT_FOUND) {
         SetSelection(selection_start, selection_end);
-#if wxCHECK_VERSION(3, 1, 0)
-        // ensure the selection is visible
-        ScrollRange(selection_start, selection_end);
-#else
-        // implement a wx30 version for ScrollRange()
-        int line_start_pos = LineFromPosition(selection_start);
-        int start_column = selection_start - line_start_pos;
-        int end_column = start_column + (selection_end - selection_start);
-        ScrollToColumn(end_column);
-        ScrollToColumn(start_column);
-#endif
+        scroll_range(this, selection_start, selection_end);
     }
 }
 

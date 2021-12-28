@@ -335,6 +335,15 @@ constexpr int STYLE_SAVED_LINE = (wxSTC_STYLE_MAX - 4);
 constexpr int STYLE_CURRENT_LINE_MODIFIED = (wxSTC_STYLE_MAX - 5);
 constexpr int STYLE_CURRENT_LINE_SAVED = (wxSTC_STYLE_MAX - 6);
 
+wxColour GetContrastColour(const wxColour& c)
+{
+    if(DrawingUtils::IsDark(c)) {
+        return c.ChangeLightness(180);
+    } else {
+        return c.ChangeLightness(40);
+    }
+}
+
 void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
 {
     // Use a distinct style to highlight the current line number
@@ -351,20 +360,20 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
     bool is_dark = DrawingUtils::IsDark(current_line_bg_colour);
     if(is_dark) {
         current_line_bg_colour = current_line_bg_colour.ChangeLightness(110);
-        current_line_fg_colour = current_line_fg_colour.ChangeLightness(180);
+        current_line_fg_colour = GetContrastColour(current_line_bg_colour);
     } else {
         current_line_bg_colour = current_line_bg_colour.ChangeLightness(95);
-        current_line_fg_colour = current_line_fg_colour.ChangeLightness(20);
+        current_line_fg_colour = GetContrastColour(current_line_bg_colour);
     }
     wxColour MODIFIED_COLOUR = is_dark ? ORANGE : RED;
 
-    ctrl->StyleSetForeground(STYLE_CURRENT_LINE, current_line_fg_colour);
+    ctrl->StyleSetForeground(STYLE_CURRENT_LINE, GetContrastColour(current_line_bg_colour));
     ctrl->StyleSetBackground(STYLE_CURRENT_LINE, current_line_bg_colour);
 
-    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_MODIFIED, *wxWHITE);
+    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_MODIFIED, GetContrastColour(MODIFIED_COLOUR));
     ctrl->StyleSetBackground(STYLE_CURRENT_LINE_MODIFIED, MODIFIED_COLOUR);
 
-    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_SAVED, *wxWHITE);
+    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_SAVED, GetContrastColour(GREEN));
     ctrl->StyleSetBackground(STYLE_CURRENT_LINE_SAVED, GREEN);
 
     ctrl->StyleSetForeground(STYLE_NORMAL_LINE, default_fg_colour);

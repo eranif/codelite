@@ -329,6 +329,10 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
     wxColour current_line_bg_colour = ctrl->StyleGetBackground(0);
     wxColour current_line_fg_colour = current_line_bg_colour;
 
+    wxColour RED("RED");
+    wxColour ORANGE("ORANGE");
+    wxColour GREEN("FOREST GREEN");
+
     bool is_dark = DrawingUtils::IsDark(current_line_bg_colour);
     if(is_dark) {
         current_line_bg_colour = current_line_bg_colour.ChangeLightness(110);
@@ -337,23 +341,24 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
         current_line_bg_colour = current_line_bg_colour.ChangeLightness(95);
         current_line_fg_colour = current_line_fg_colour.ChangeLightness(20);
     }
+    wxColour MODIFIED_COLOUR = is_dark ? ORANGE : RED;
 
     ctrl->StyleSetForeground(STYLE_CURRENT_LINE, current_line_fg_colour);
     ctrl->StyleSetBackground(STYLE_CURRENT_LINE, current_line_bg_colour);
 
-    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_MODIFIED, is_dark ? "ORANGE" : "RED");
-    ctrl->StyleSetBackground(STYLE_CURRENT_LINE_MODIFIED, current_line_bg_colour);
+    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_MODIFIED, *wxWHITE);
+    ctrl->StyleSetBackground(STYLE_CURRENT_LINE_MODIFIED, MODIFIED_COLOUR);
 
-    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_SAVED, "FOREST GREEN");
-    ctrl->StyleSetBackground(STYLE_CURRENT_LINE_SAVED, current_line_bg_colour);
+    ctrl->StyleSetForeground(STYLE_CURRENT_LINE_SAVED, *wxWHITE);
+    ctrl->StyleSetBackground(STYLE_CURRENT_LINE_SAVED, GREEN);
 
     ctrl->StyleSetForeground(STYLE_NORMAL_LINE, default_fg_colour);
     ctrl->StyleSetBackground(STYLE_NORMAL_LINE, default_bg_colour);
 
-    ctrl->StyleSetForeground(STYLE_MODIFIED_LINE, is_dark ? "ORANGE" : "RED");
+    ctrl->StyleSetForeground(STYLE_MODIFIED_LINE, is_dark ? ORANGE : RED);
     ctrl->StyleSetBackground(STYLE_MODIFIED_LINE, default_bg_colour);
 
-    ctrl->StyleSetForeground(STYLE_SAVED_LINE, "FOREST GREEN");
+    ctrl->StyleSetForeground(STYLE_SAVED_LINE, GREEN);
     ctrl->StyleSetBackground(STYLE_SAVED_LINE, default_bg_colour);
 }
 

@@ -5610,8 +5610,17 @@ void clEditor::CenterLinePreserveSelection(int line)
 
     if(selection_end != wxNOT_FOUND && selection_start != wxNOT_FOUND) {
         SetSelection(selection_start, selection_end);
+#if wxCHECK_VERSION(3, 1, 0)
         // ensure the selection is visible
         ScrollRange(selection_start, selection_end);
+#else
+        // implement a wx30 version for ScrollRange()
+        int line_start_pos = LineFromPosition(selection_start);
+        int start_column = selection_start - line_start_pos;
+        int end_column = start_column + (selection_end - selection_start);
+        ScrollToColumn(end_column);
+        ScrollToColumn(start_column);
+#endif
     }
 }
 

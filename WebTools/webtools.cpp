@@ -1,3 +1,5 @@
+#include "webtools.h"
+
 #include "NodeDebuggerPane.h"
 #include "NodeJSEvents.h"
 #include "NodeJSWorkspaceView.h"
@@ -19,7 +21,7 @@
 #include "fileutils.h"
 #include "globals.h"
 #include "tags_options_data.h"
-#include "webtools.h"
+
 #include <wx/dirdlg.h>
 #include <wx/menu.h>
 #include <wx/stc/stc.h>
@@ -102,7 +104,6 @@ WebTools::WebTools(IManager* manager)
 
     m_xmlCodeComplete.Reset(new XMLCodeCompletion(this));
     m_cssCodeComplete.Reset(new CSSCodeCompletion(this));
-    m_jsctags.Reset(new clJSCTags());
 
     // Connect the timer
     m_timer = new wxTimer(this);

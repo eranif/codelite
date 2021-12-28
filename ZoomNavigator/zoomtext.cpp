@@ -30,21 +30,22 @@
 //  the Free Software Foundation; either version 2 of the License, or
 //  (at your option) any later version.
 
-#include <wx/xrc/xmlres.h>
-#include "plugin.h"
 #include "zoomtext.h"
-#include "fileextmanager.h"
-#include "lexer_configuration.h"
-#include "editor_config.h"
-#include "zn_config_item.h"
+
 #include "cl_config.h"
-#include <wx/settings.h>
-#include "znSettingsDlg.h"
+#include "editor_config.h"
 #include "event_notifier.h"
-#include "plugin.h"
-#include "macros.h"
+#include "fileextmanager.h"
 #include "globals.h"
+#include "lexer_configuration.h"
+#include "macros.h"
+#include "plugin.h"
+#include "znSettingsDlg.h"
+#include "zn_config_item.h"
+
 #include <wx/app.h>
+#include <wx/settings.h>
+#include <wx/xrc/xmlres.h>
 
 ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                    const wxString& name)
@@ -176,7 +177,8 @@ void ZoomText::HighlightLines(int start, int end)
     if(lastLine < end) {
         end = lastLine;
         start = end - nLineCount;
-        if(start < 0) start = 0;
+        if(start < 0)
+            start = 0;
     }
 
     MarkerDeleteAll(1);

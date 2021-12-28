@@ -33,8 +33,9 @@
 #ifndef ZOOM_NAV_TEXT
 #define ZOOM_NAV_TEXT
 
-#include <wx/stc/stc.h>
 #include "ieditor.h"
+
+#include <wx/stc/stc.h>
 
 class ZoomText : public wxStyledTextCtrl
 {
@@ -44,25 +45,21 @@ class ZoomText : public wxStyledTextCtrl
     wxString m_classes;
     wxString m_locals;
     wxTimer* m_timer;
-    
+
 protected:
     void OnThemeChanged(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);
     void DoClear();
-    
+
 public:
-    ZoomText(wxWindow* parent,
-             wxWindowID id = wxID_ANY,
-             const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize,
-             long style = 0,
-             const wxString& name = wxSTCNameStr);
+    ZoomText(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+             const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxSTCNameStr);
     virtual ~ZoomText();
     void UpdateLexer(IEditor* editor);
     void OnSettingsChanged(wxCommandEvent& e);
     void UpdateText(IEditor* editor);
     void HighlightLines(int start, int end);
-    
+
     void Startup();
 };
 

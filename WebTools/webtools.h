@@ -29,10 +29,10 @@
 #include "CSSCodeCompletion.h"
 #include "JavaScriptSyntaxColourThread.h"
 #include "XMLCodeCompletion.h"
-#include "clJSCTags.h"
 #include "cl_command_event.h"
 #include "ieditor.h"
 #include "plugin.h"
+
 #include <wx/timer.h>
 
 class NodeDebuggerPane;
@@ -45,7 +45,6 @@ class WebTools : public IPlugin
     JavaScriptSyntaxColourThread* m_jsColourThread;
     XMLCodeCompletion::Ptr_t m_xmlCodeComplete;
     CSSCodeCompletion::Ptr_t m_cssCodeComplete;
-    clJSCTags::Ptr_t m_jsctags;
     time_t m_lastColourUpdate;
     wxTimer* m_timer;
 

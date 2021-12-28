@@ -628,10 +628,7 @@ void clEditor::SetCaretAt(long pos)
     EnsureVisible(line);
 
     // ensure caret is visible, but only if needed
-    int last_visible_pos = GetLineEndPosition(line); // the last position visible
-    if(pos >= last_visible_pos) {
-        EnsureCaretVisible();
-    }
+    ScrollRange(pos, pos);
 }
 
 /// Setup some scintilla properties
@@ -5614,6 +5611,8 @@ void clEditor::CenterLinePreserveSelection(int line)
 
     if(selection_end != wxNOT_FOUND && selection_start != wxNOT_FOUND) {
         SetSelection(selection_start, selection_end);
+        // ensure the selection is visible
+        ScrollRange(selection_start, selection_end);
     }
 }
 

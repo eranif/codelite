@@ -24,13 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBCallStack.h"
-#include "LLDBProtocol/LLDBEvent.h"
-#include "LLDBProtocol/LLDBConnector.h"
+
 #include "LLDBPlugin.h"
-#include <wx/wupdlock.h>
-#include "macros.h"
-#include "globals.h"
+#include "LLDBProtocol/LLDBConnector.h"
+#include "LLDBProtocol/LLDBEvent.h"
 #include "file_logger.h"
+#include "globals.h"
+#include "macros.h"
+
+#include <wx/wupdlock.h>
 
 LLDBCallStackPane::LLDBCallStackPane(wxWindow* parent, LLDBPlugin& plugin)
     : LLDBCallStackBase(parent)
@@ -69,7 +71,9 @@ void LLDBCallStackPane::OnBacktrace(LLDBEvent& event)
         cols.push_back(wxString() << (int)(entry.line + 1));
         m_dvListCtrlBacktrace->AppendItem(cols);
         wxDataViewItem item = m_dvListCtrlBacktrace->RowToItem(i);
-        if(bt.GetSelectedFrameId() == entry.id) { selectedItem = item; }
+        if(bt.GetSelectedFrameId() == entry.id) {
+            selectedItem = item;
+        }
     }
 
     if(selectedItem.IsOk()) {

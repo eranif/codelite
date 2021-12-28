@@ -22,34 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "code_completion_manager.h"
-#include "crawler_include.h"
-#include "dbcontentcacher.h"
-#include "debuggerasciiviewer.h"
-#include "debuggerconfigtool.h"
-#include "debuggersettings.h"
-#include "environmentconfig.h"
-#include "event_notifier.h"
-#include "evnvarlist.h"
-#include "fileextmanager.h"
-#include "localstable.h"
-#include "macromanager.h"
-#include "new_quick_watch_dlg.h"
-#include "precompiled_header.h"
-#include "renamefiledlg.h"
-#include <unordered_set>
-#include <wx/aui/auibook.h>
-
-#include <algorithm>
-#include <vector>
-#include <wx/arrstr.h>
-#include <wx/busyinfo.h>
-#include <wx/dir.h>
-#include <wx/file.h>
-#include <wx/progdlg.h>
-#include <wx/regex.h>
-#include <wx/stdpaths.h>
-#include <wx/tokenzr.h>
+#include "manager.h"
 
 #include "BuildTab.hpp"
 #include "CompilersModifiedDlg.h"
@@ -78,28 +51,40 @@
 #include "code_completion_manager.h"
 #include "compile_request.h"
 #include "context_manager.h"
+#include "crawler_include.h"
 #include "ctags_manager.h"
 #include "custombuildrequest.h"
+#include "dbcontentcacher.h"
+#include "debuggerasciiviewer.h"
+#include "debuggerconfigtool.h"
+#include "debuggersettings.h"
 #include "dirsaver.h"
 #include "dockablepanemenumanager.h"
 #include "editor_config.h"
 #include "editorframe.h"
 #include "environmentconfig.h"
+#include "event_notifier.h"
+#include "evnvarlist.h"
 #include "exelocator.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "fileutils.h"
 #include "frame.h"
 #include "globals.h"
 #include "jobqueue.h"
 #include "language.h"
+#include "localstable.h"
 #include "localworkspace.h"
+#include "macromanager.h"
 #include "macros.h"
-#include "manager.h"
 #include "memoryview.h"
 #include "menumanager.h"
+#include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
+#include "precompiled_header.h"
 #include "processreaderthread.h"
 #include "reconcileproject.h"
+#include "renamefiledlg.h"
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "simpletable.h"
@@ -110,7 +95,20 @@
 #include "workspace_pane.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
+
+#include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
+#include <wx/arrstr.h>
+#include <wx/aui/auibook.h>
+#include <wx/busyinfo.h>
+#include <wx/dir.h>
+#include <wx/file.h>
+#include <wx/progdlg.h>
+#include <wx/regex.h>
+#include <wx/stdpaths.h>
+#include <wx/tokenzr.h>
 
 #ifndef __WXMSW__
 #include <sys/wait.h>
@@ -2311,15 +2309,15 @@ void Manager::DbgMarkDebuggerLine(const wxString& fileName, int lineno)
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
     if(editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 && lineno > 0) {
         editor->HighlightLine(lineno);
-        editor->SetEnsureCaretIsVisible(editor->PositionFromLine(lineno - 1), false);
+        editor->CenterLine(lineno);
 
     } else {
         editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineno - 1, wxNOT_FOUND);
         if(editor && lineno > 0) {
             editor->HighlightLine(lineno);
-            editor->SetEnsureCaretIsVisible(
-                editor->PositionFromLine(lineno - 1), false,
-                true); // The 'true' says to delay; needed with wxGTK-3.1 else EnsureVisible() fails
+            // since we need to open the editor, call `CenterLine` using
+            // CallAfter, otherwise the text will not be centered
+            editor->CallAfter(&clEditor::CenterLine, lineno, wxNOT_FOUND);
         }
     }
 }

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBThreadsView.h"
+
 #include "LLDBPlugin.h"
 
 namespace
@@ -66,7 +67,9 @@ void LLDBThreadsView::OnItemActivated(wxDataViewEvent& event)
     CHECK_ITEM_RET(event.GetItem());
     LLDBThreadViewClientData* cd =
         reinterpret_cast<LLDBThreadViewClientData*>(m_dvListCtrlThreads->GetItemData(event.GetItem()));
-    if(cd && !cd->GetThread().IsActive()) { m_plugin->GetLLDB()->SelectThread(cd->GetThread().GetId()); }
+    if(cd && !cd->GetThread().IsActive()) {
+        m_plugin->GetLLDB()->SelectThread(cd->GetThread().GetId());
+    }
 }
 
 void LLDBThreadsView::OnLLDBExited(LLDBEvent& event)
@@ -95,7 +98,9 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
     const LLDBThread::Vect_t& threads = event.GetThreads();
     for(size_t i = 0; i < threads.size(); ++i) {
         const LLDBThread& thr = threads.at(i);
-        if(thr.IsActive()) { m_selectedThread = i; }
+        if(thr.IsActive()) {
+            m_selectedThread = i;
+        }
         wxVector<wxVariant> cols;
         cols.push_back(thr.GetId() == wxNOT_FOUND ? wxString() : wxString() << thr.GetId());
         cols.push_back(thr.GetName());
@@ -108,7 +113,9 @@ void LLDBThreadsView::OnLLDBStopped(LLDBEvent& event)
 
     if((wxNOT_FOUND != m_selectedThread) && ((int)m_dvListCtrlThreads->GetItemCount() > m_selectedThread)) {
         const auto item = m_dvListCtrlThreads->RowToItem(m_selectedThread);
-        if(item.IsOk()) { m_dvListCtrlThreads->EnsureVisible(item); }
+        if(item.IsOk()) {
+            m_dvListCtrlThreads->EnsureVisible(item);
+        }
     }
 }
 
@@ -134,7 +141,9 @@ void LLDBThreadsView::OnContextMenu(wxDataViewEvent& event)
         const auto cd = reinterpret_cast<LLDBThreadViewClientData*>(m_dvListCtrlThreads->GetItemData(item));
         if(cd) {
             const auto threadId = cd->GetThread().GetId();
-            if(threadId != wxNOT_FOUND) { threadIds.push_back(threadId); }
+            if(threadId != wxNOT_FOUND) {
+                threadIds.push_back(threadId);
+            }
         }
     }
 

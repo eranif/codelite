@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "findresultstab.h"
+
 #include "ColoursAndFontsManager.h"
 #include "attribute_style.h"
 #include "bitmap_loader.h"
@@ -36,7 +38,6 @@
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
-#include "findresultstab.h"
 #include "frame.h"
 #include "globals.h"
 #include "lexer_configuration.h"
@@ -45,6 +46,7 @@
 #include "pluginmanager.h"
 #include "search_thread.h"
 #include "theme_handler.h"
+
 #include <algorithm>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
@@ -422,19 +424,11 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                 }
             }
             if(!removed) {
-                editor->SetEnsureCaretIsVisible(
-                    position + resultLength, true,
-                    true); // The 3rd parameter sets a small delay, otherwise it fails for long folded files
                 int lineNumber = editor->LineFromPos(position);
-                if(lineNumber) {
-                    lineNumber--;
-                }
-                editor->SetLineVisible(lineNumber);
+                int lineStartPos = editor->PositionFromLine(lineNumber);
+                int col = position - lineStartPos;
                 editor->SetSelection(position, position + resultLength);
-
-#ifdef __WXGTK__
-                editor->ScrollToColumn(0);
-#endif
+                editor->CenterLinePreserveSelection(lineNumber);
 
                 if(sci) {
                     // remove the previous marker and add the new one

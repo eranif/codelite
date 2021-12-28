@@ -23,12 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "LLDBPlugin.h"
+
 #include "FolderMappingDlg.h"
 #include "JSON.h"
 #include "LLDBCallStack.h"
 #include "LLDBLocalsView.h"
 #include "LLDBOutputView.h"
-#include "LLDBPlugin.h"
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBFormat.h"
 #include "LLDBProtocol/LLDBSettings.h"
@@ -44,6 +45,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "macromanager.h"
+
 #include <wx/aui/framemanager.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>

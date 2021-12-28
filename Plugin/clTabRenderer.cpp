@@ -465,7 +465,11 @@ void clTabRenderer::DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
     if((style & kNotebook_UnderlineActiveTab) == 0) {
         return;
     }
-    wxPen markerPen(colours.markerColour);
+
+    bool is_dark = DrawingUtils::IsDark(colours.tabAreaColour);
+    wxColour marker_colour = colours.tabAreaColour.ChangeLightness(is_dark ? 130 : 70);
+    wxPen markerPen(marker_colour);
+
     // Draw marker line if needed
     // wxRect confinedRect = parent->GetClientRect();
     bool isGTK3 = true;

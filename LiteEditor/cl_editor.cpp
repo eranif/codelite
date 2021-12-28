@@ -292,6 +292,7 @@ void scroll_range(wxStyledTextCtrl* ctrl, int selection_start, int selection_end
 #if wxCHECK_VERSION(3, 1, 0)
     // ensure the selection is visible
     ctrl->ScrollRange(selection_start, selection_end);
+    ctrl->EnsureCaretVisible(); // incase we are inside a folded area
 #else
     // implement a wx30 version for ScrollRange()
     int line_start_pos = ctrl->LineFromPosition(selection_start);
@@ -299,6 +300,7 @@ void scroll_range(wxStyledTextCtrl* ctrl, int selection_start, int selection_end
     int end_column = start_column + (selection_end - selection_start);
     ctrl->ScrollToColumn(end_column);
     ctrl->ScrollToColumn(start_column);
+    ctrl->EnsureCaretVisible(); // incase we are inside a folded area
 #endif
 }
 
@@ -650,14 +652,26 @@ BPtoMarker clEditor::GetMarkerForBreakpt(enum BreakpointType bp_type)
 
 void clEditor::SetCaretAt(long pos)
 {
-    DoSetCaretAt(pos);
-    int line = LineFromPos(pos);
+    DoSetCaretAt(this, pos);
+    int line = LineFromPosition(pos);
 
     // make sure that the line is visible (folded lines mainly)
     EnsureVisible(line);
 
     // ensure caret is visible, but only if needed
     scroll_range(this, pos, pos);
+}
+
+void clEditor::SetCaretAt(wxStyledTextCtrl* ctrl, long pos)
+{
+    DoSetCaretAt(ctrl, pos);
+    int line = ctrl->LineFromPosition(pos);
+
+    // make sure that the line is visible (folded lines mainly)
+    ctrl->EnsureVisible(line);
+
+    // ensure caret is visible, but only if needed
+    scroll_range(ctrl, pos, pos);
 }
 
 /// Setup some scintilla properties
@@ -4385,16 +4399,16 @@ int clEditor::GetCurrentLine()
     return LineFromPosition(pos);
 }
 
-void clEditor::DoSetCaretAt(long pos)
+void clEditor::DoSetCaretAt(wxStyledTextCtrl* ctrl, long pos)
 {
-    SetCurrentPos(pos);
-    SetSelectionStart(pos);
-    SetSelectionEnd(pos);
-    int line = LineFromPosition(pos);
+    ctrl->SetCurrentPos(pos);
+    ctrl->SetSelectionStart(pos);
+    ctrl->SetSelectionEnd(pos);
+    int line = ctrl->LineFromPosition(pos);
     if(line >= 0) {
         // This is needed to unfold the line if it were folded
         // The various other 'EnsureVisible' things don't do this
-        EnsureVisible(line);
+        ctrl->EnsureVisible(line);
     }
 }
 
@@ -5630,32 +5644,35 @@ void clEditor::SplitSelection()
     }
 }
 
-void clEditor::CenterLinePreserveSelection(int line)
+void clEditor::CenterLinePreserveSelection(wxStyledTextCtrl* ctrl, int line)
 {
-    int selection_start = GetSelectionStart();
-    int selection_end = GetSelectionEnd();
+    int selection_start = ctrl->GetSelectionStart();
+    int selection_end = ctrl->GetSelectionEnd();
 
-    CenterLine(line);
+    CenterLine(ctrl, line, wxNOT_FOUND);
 
     if(selection_end != wxNOT_FOUND && selection_start != wxNOT_FOUND) {
-        SetSelection(selection_start, selection_end);
-        scroll_range(this, selection_start, selection_end);
+        ctrl->SetSelection(selection_start, selection_end);
+        scroll_range(ctrl, selection_start, selection_end);
     }
 }
 
-void clEditor::CenterLine(int line, int col)
+void clEditor::CenterLinePreserveSelection(int line) { CenterLinePreserveSelection(this, line); }
+
+void clEditor::CenterLine(wxStyledTextCtrl* ctrl, int line, int col)
 {
-    int caret_pos = PositionFromLine(line);
+    int caret_pos = ctrl->PositionFromLine(line);
     if(col != wxNOT_FOUND) {
         // calculate the position
         caret_pos += col;
     }
 
     // move the caret to the requested line
-    SetCaretAt(caret_pos);
+    ctrl->EnsureVisible(line); // make sure the requested line is visible
+    SetCaretAt(ctrl, caret_pos);
 
     // center that line
-    int linesOnScreen = LinesOnScreen();
+    int linesOnScreen = ctrl->LinesOnScreen();
     // To place our line in the middle, the first visible line should be
     // the: line - (linesOnScreen / 2)
     int firstVisibleLine = line - (linesOnScreen / 2);
@@ -5663,10 +5680,12 @@ void clEditor::CenterLine(int line, int col)
         firstVisibleLine = 0;
     }
 
-    int real_visible_line = VisibleFromDocLine(firstVisibleLine);
-    EnsureVisible(real_visible_line);
-    SetFirstVisibleLine(real_visible_line);
+    int real_visible_line = ctrl->VisibleFromDocLine(firstVisibleLine);
+    ctrl->EnsureVisible(real_visible_line);
+    ctrl->SetFirstVisibleLine(real_visible_line);
 }
+
+void clEditor::CenterLine(int line, int col) { CenterLine(this, line, col); }
 
 void clEditor::OnEditorConfigChanged(wxCommandEvent& event)
 {
@@ -6386,3 +6405,5 @@ struct SelectorSorter {
 };
 
 void clEditor::SelectionInfo::Sort() { std::sort(this->selections.begin(), this->selections.end(), SelectorSorter()); }
+
+void clEditor::DoSetCaretAt(long pos) { clEditor::DoSetCaretAt(this, pos); }

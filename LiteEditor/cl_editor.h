@@ -303,6 +303,22 @@ public:
 
     void NotifyMarkerChanged(int lineNumber = wxNOT_FOUND);
 
+    /**
+     * @brief static version of the below `CenterLine`
+     * so we can use it outside of this class, e.g. from `QuickFindBar`
+     */
+    static void CenterLine(wxStyledTextCtrl* ctrl, int line, int col);
+
+    /**
+     * @brief static version
+     */
+    static void CenterLinePreserveSelection(wxStyledTextCtrl* ctrl, int line);
+
+    /**
+     * @brief static version of the below
+     */
+    static void SetCaretAt(wxStyledTextCtrl* ctrl, long pos);
+
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 
@@ -1138,6 +1154,7 @@ private:
     void OnDragStart(wxStyledTextEvent& e);
     void OnDragEnd(wxStyledTextEvent& e);
     void DoSetCaretAt(long pos);
+    static void DoSetCaretAt(wxStyledTextCtrl* ctrl, long pos);
     void OnFileFormatDone(wxCommandEvent& e);
     void OnFileFormatStarting(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);

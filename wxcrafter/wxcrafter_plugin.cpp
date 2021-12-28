@@ -1,4 +1,5 @@
 #include "wxcrafter_plugin.h"
+
 #include "AboutDlg.h"
 #include "ColoursAndFontsManager.h"
 #include "DefineCustomControlWizard.h"
@@ -55,6 +56,7 @@
 #include "wxgui_globals.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
+
 #include <clStatusBar.h>
 #include <ctags_manager.h>
 #include <editor_config.h>
@@ -168,11 +170,9 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     wxXmlResource::Get()->AddHandler(new MyWxRibbonXmlHandler);
     wxXmlResource::Get()->AddHandler(new MyWxCommandLinkButtonXmlHandler);
     wxXmlResource::Get()->AddHandler(new MyTreeListCtrl);
-    // wxXmlResource::Get()->AddHandler(new MyWxAuiNotebookXmlHandler);
     wxXmlResource::Get()->AddHandler(new MyTextCtrlXrcHandler);
     wxXmlResource::Get()->AddHandler(new MyComboBoxXmlHandler);
     wxXmlResource::Get()->AddHandler(new MyRearrangeListXmlHandler);
-
     wxXmlResource::Get()->InitAllHandlers();
 
     // wxCrafter::ResourceLoader bmps;
@@ -180,11 +180,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     m_shortName = wxT("wxCrafter");
 
     m_useFrame = true;
-
-#if STANDALONE_BUILD
-    m_useFrame = true;
-#endif
-
     if(!m_useFrame) {
 
         Notebook* book = m_mgr->GetWorkspacePaneNotebook();

@@ -29,15 +29,15 @@ struct GeneratedClass {
 
 class wxCrafterPlugin : public IPlugin
 {
-    GUICraftMainPanel* m_mainPanel;
-    wxcTreeView* m_treeView;
-    wxMenuItem* m_separatorItem;
+    GUICraftMainPanel* m_mainPanel = nullptr;
+    wxcTreeView* m_treeView = nullptr;
+    wxMenuItem* m_separatorItem = nullptr;
     GeneratedClass m_generatedClassInfo;
-    bool m_allEditorsClosing;
-    bool m_addFileMenu;
-    bool m_useFrame;
-    MainFrame* m_mainFrame;
-    bool m_serverMode;
+    bool m_allEditorsClosing = false;
+    bool m_addFileMenu = false;
+    bool m_useFrame = true;
+    MainFrame* m_mainFrame = nullptr;
+    bool m_serverMode = false;
     wxcNetworkThread* m_networkThread;
     wxcNetworkManager m_netManager;
     wxFileName m_selectedFile;

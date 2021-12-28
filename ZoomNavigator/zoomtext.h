@@ -36,6 +36,7 @@
 #include "ieditor.h"
 
 #include <wx/stc/stc.h>
+#include <wx/timer.h>
 
 class ZoomText : public wxStyledTextCtrl
 {

@@ -4054,12 +4054,11 @@ void clEditor::HighlightLine(int lineno)
         return;
     }
 
-    int sci_line = lineno - 1;
-    if(GetLineCount() < sci_line - 1) {
-        sci_line = GetLineCount() - 1;
+    if(GetLineCount() < lineno - 1) {
+        lineno = GetLineCount() - 1;
     }
-    MarkerAdd(sci_line, smt_indicator);
-    NotifyMarkerChanged(sci_line);
+    MarkerAdd(lineno, smt_indicator);
+    NotifyMarkerChanged(lineno);
 }
 
 void clEditor::UnHighlightAll()

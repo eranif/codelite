@@ -2308,16 +2308,16 @@ void Manager::DbgMarkDebuggerLine(const wxString& fileName, int lineno)
     wxFileName fn(fileName);
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
     if(editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 && lineno > 0) {
-        editor->HighlightLine(lineno);
-        editor->CenterLine(lineno);
+        editor->HighlightLine(lineno - 1);
+        editor->CenterLine(lineno - 1);
 
     } else {
         editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineno - 1, wxNOT_FOUND);
         if(editor && lineno > 0) {
-            editor->HighlightLine(lineno);
+            editor->HighlightLine(lineno - 1);
             // since we need to open the editor, call `CenterLine` using
             // CallAfter, otherwise the text will not be centered
-            editor->CallAfter(&clEditor::CenterLine, lineno, wxNOT_FOUND);
+            editor->CallAfter(&clEditor::CenterLine, lineno - 1, wxNOT_FOUND);
         }
     }
 }
@@ -3690,7 +3690,7 @@ void Manager::OnDebuggerAtFileLine(clDebugEvent& event)
         if(editor) {
             clEditor* cl_editor = dynamic_cast<clEditor*>(editor);
             if(cl_editor) {
-                cl_editor->HighlightLine(event.GetLineNumber());
+                cl_editor->HighlightLine(event.GetLineNumber() - 1);
                 cl_editor->SetEnsureCaretIsVisible(cl_editor->PositionFromLine(event.GetLineNumber() - 1), false);
             }
         }

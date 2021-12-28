@@ -521,22 +521,30 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     wxString fileNameLowercase = fnFileName.GetFullName();
     fileNameLowercase.MakeLower();
 
-    LexerConf::Ptr_t defaultLexer(NULL);
-    LexerConf::Ptr_t firstLexer(NULL);
+    LexerConf::Ptr_t defaultLexer = nullptr;
+    LexerConf::Ptr_t firstLexer = nullptr;
+    LexerConf::Ptr_t firstLexerForTheme = nullptr;
+
+    // try and find a match for the current theme
+    const wxString& theme_name = GetGlobalTheme();
 
     // Scan the list of lexers, locate the active lexer for it and return it
-    ColoursAndFontsManager::Vec_t::const_iterator iter = m_allLexers.begin();
-    for(; iter != m_allLexers.end(); ++iter) {
-        wxString fileMask = (*iter)->GetFileSpec();
+    for(auto lexer : m_allLexers) {
+        wxString fileMask = lexer->GetFileSpec();
         if(FileUtils::WildMatch(fileMask, filename)) {
-            if((*iter)->IsActive()) {
-                return *iter;
+            if(lexer->IsActive()) {
+                return lexer;
 
             } else if(!firstLexer) {
-                firstLexer = *iter;
+                firstLexer = lexer;
 
-            } else if(!defaultLexer && (*iter)->GetThemeName() == DEFAULT_THEME) {
-                defaultLexer = *iter;
+            } else if(!defaultLexer && lexer->GetThemeName() == DEFAULT_THEME) {
+                defaultLexer = lexer;
+            }
+
+            // try to find a theme that matches the current one
+            if(!firstLexerForTheme && lexer->GetThemeName() == theme_name) {
+                firstLexerForTheme = lexer;
             }
         }
     }
@@ -545,7 +553,9 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     // the file mask. However, if we did find a "firstLexer" it means
     // that we do have a lexer that matches the file extension, its just that it is not
     // set as active
-    if(firstLexer) {
+    if(firstLexerForTheme) {
+        return firstLexerForTheme;
+    } else if(firstLexer) {
         return firstLexer;
     }
 

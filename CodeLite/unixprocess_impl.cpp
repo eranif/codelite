@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "unixprocess_impl.h"
+
 #include "SocketAPI/clSocketBase.h"
 #include "StringUtils.h"
 #include "cl_exception.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "unixprocess_impl.h"
+
 #include <cstring>
 #include <string>
 #include <thread>
@@ -37,6 +39,7 @@
 #if defined(__WXMAC__) || defined(__WXGTK__)
 
 #include "procutils.h"
+
 #include <errno.h>
 #include <signal.h>
 #include <string.h>
@@ -209,8 +212,8 @@ bool UnixProcessImpl::Read(wxString& buff, wxString& buffErr)
         FD_SET(m_stderrHandle, &rs);
     }
 
-    timeout.tv_sec = 0;      // 0 seconds
-    timeout.tv_usec = 50000; // 50 ms
+    timeout.tv_sec = 0;       // 0 seconds
+    timeout.tv_usec = 250000; // 250 ms
 
     int errCode(0);
     errno = 0;

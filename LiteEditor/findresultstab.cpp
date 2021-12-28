@@ -426,7 +426,6 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
             if(!removed) {
                 int lineNumber = editor->LineFromPos(position);
                 int lineStartPos = editor->PositionFromLine(lineNumber);
-                int col = position - lineStartPos;
                 editor->SetSelection(position, position + resultLength);
                 editor->CenterLinePreserveSelection(lineNumber);
 

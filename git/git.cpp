@@ -1312,7 +1312,7 @@ void GitPlugin::GetCurrentBranchAction(const gitAction& ga)
         GIT_MESSAGE1(wxT("Current branch ") + m_currentBranch);
         m_mgr->GetDockingManager()
             ->GetPane(wxT("Workspace View"))
-            .Caption(wxT("Workspace View [") + m_currentBranch + wxT("]"));
+            .Caption(_("Workspace View [") + m_currentBranch + wxT("]"));
         m_mgr->GetDockingManager()->Update();
     }
 }

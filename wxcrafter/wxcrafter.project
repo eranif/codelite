@@ -641,7 +641,25 @@
     <File Name="Info.plist"/>
     <File Name="resources/DialogTemplate.wxcp"/>
   </VirtualDirectory>
-  <Settings Type="Dynamic Library">
+  <Dependencies Name="CMake_Debug_Application"/>
+  <Dependencies Name="CMake_Debug_Plugin"/>
+  <Dependencies Name="CMake_Release_Application"/>
+  <Dependencies Name="CMake_Release_Plugin"/>
+  <Dependencies Name="Debug_Standalone">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Release_Standalone">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Unix"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="wxcLib"/>
+  </Dependencies>
+  <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -895,7 +913,7 @@
 ../Interfaces</SearchPaths>
       </Completion>
     </Configuration>
-    <Configuration Name="Release_Standalone" CompilerType="g++-64" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="Release_Standalone" CompilerType="MinGW 64bit ( MSYS2 64bit )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="$(shell wx-config --cxxflags --unicode=yes --debug=no );-O2" C_Options="-O2" Assembler="" Required="yes" PreCompiledHeader="wxcrafter_pch_release.h" PCHInCommandLine="yes" PCHFlags="" PCHFlagsPolicy="1">
         <IncludePath Value="."/>
         <IncludePath Value="../Interfaces"/>
@@ -903,6 +921,7 @@
         <IncludePath Value="../Plugin"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
+        <IncludePath Value="wxcLib/"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="_WIN32_WINNT=0x501"/>
@@ -913,19 +932,21 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="STANDALONE_BUILD=1"/>
       </Compiler>
-      <Linker Options="$(shell wx-config --debug=no --libs std,stc,propgrid,webview,ribbon --unicode=yes);-mwindows;" Required="yes">
+      <Linker Options="-mwindows;$(shell wx-config --debug=no --libs std,stc,propgrid,webview,ribbon,richtext --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="lib"/>
+        <LibraryPath Value="$(CL_SRC_DIR)/Runtime"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libCodeLiteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="wxcLib"/>
+        <Library Value="Ws2_32"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="yes"/>
-      <General OutputFile="wxcrafter.exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="Runtime" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="$(ProjectName).exe" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="">
-        <![CDATA[]]>
+        <![CDATA[CL_SRC_DIR=$(WorkspacePath)\..]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>
@@ -935,7 +956,7 @@
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy wxgui.zip Runtime</Command>
-        <Command Enabled="yes">copy "$(IntermediateDirectory)\wxcrafter.exe" Runtime</Command>
+        <Command Enabled="yes">copy "$(IntermediateDirectory)\bin\wxcrafter.exe" "$(CL_SRC_DIR)\Runtime\wxcrafter.exe"</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -1186,22 +1207,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="CMake_Debug_Application"/>
-  <Dependencies Name="CMake_Debug_Plugin"/>
-  <Dependencies Name="CMake_Release_Application"/>
-  <Dependencies Name="CMake_Release_Plugin"/>
-  <Dependencies Name="Debug_Standalone">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Release_Standalone">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Unix"/>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="wxcLib"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="wxcLib"/>
-  </Dependencies>
 </CodeLite_Project>

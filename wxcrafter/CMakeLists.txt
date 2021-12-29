@@ -112,7 +112,7 @@ if ( NOT WXC_APP )
 if (NOT OFFICIAL_CL_BUILD)
     target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES}
                           wxsqlite3
-                          ${SQLite3_LIBRARIES}
+                          ${SQLITE3_LIBRARY}
                           libcodelite
                           plugin)
 else(OFFICIAL_CL_BUILD)

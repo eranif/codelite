@@ -33,6 +33,7 @@
 #include "wx/arrstr.h"
 #include "wx/dragimag.h"
 #include "wx/string.h"
+
 #include <set>
 
 class myDragImage;
@@ -41,10 +42,9 @@ class myDragImage;
 
 class BreakptMgr : public wxEvtHandler
 {
-    clDebuggerBreakpoint::Vec_t m_bps; // The vector of breakpoints
-    clDebuggerBreakpoint::Vec_t
-        m_pendingBreakpointsList; // These are any breakpoints that the debugger won't (yet) accept
-                                  // (often because they're in a plugin)
+    clDebuggerBreakpoint::Vec_t m_bps;                    // The vector of breakpoints
+    clDebuggerBreakpoint::Vec_t m_pendingBreakpointsList; // These are any breakpoints that the debugger won't (yet)
+                                                          // accept (often because they're in a plugin)
 
     int NextInternalID; // Used to give each bp a unique internal ID. Start at 10k to avoid confusion with gdb's IDs
 

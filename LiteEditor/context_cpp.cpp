@@ -273,7 +273,7 @@ bool ContextCpp::GetHoverTip(int pos)
         if(tooltip.IsEmpty()) {
             return false;
         }
-        rCtrl.DoShowCalltip(-1, "", tooltip, false);
+        rCtrl.DoShowCalltip(wxNOT_FOUND, "", tooltip, false);
         return true;
     } else {
         return false;

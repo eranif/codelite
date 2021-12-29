@@ -28,6 +28,7 @@
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
 #include "ServiceProviderManager.h"
+#include "StringUtils.h"
 #include "addincludefiledlg.h"
 #include "attribute_style.h"
 #include "bitmap_loader.h"
@@ -2008,10 +2009,12 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         if((MarkerGet(line) & mmt_compiler) && m_compilerMessagesMap.count(line)) {
             // Get the compiler tooltip
             tooltip = m_compilerMessagesMap.find(line)->second;
+            // Disable markdown to ensure it doesn't break anything
+            StringUtils::DisableMarkdownStyling(tooltip);
         }
 
         if(!tooltip.IsEmpty()) {
-            DoShowCalltip(-1, title, tooltip);
+            DoShowCalltip(wxNOT_FOUND, title, tooltip, false);
         }
 
     } else if(ManagerST::Get()->DbgCanInteract() && clientRect.Contains(pt)) {
@@ -3137,7 +3140,7 @@ wxString clEditor::GetBookmarkLabel(sci_marker_types type)
     wxCHECK_MSG(type >= smt_FIRST_BMK_TYPE && type <= smt_LAST_BMK_TYPE, "", "Invalid marker type");
     wxString label = BookmarkManager::Get().GetMarkerLabel(type);
     if(label.empty()) {
-        label = wxString::Format("Type %i", type - smt_FIRST_BMK_TYPE + 1);
+        label = wxString::Format(_("Type %i bookmark"), type - smt_FIRST_BMK_TYPE + 1);
     }
 
     return label;
@@ -3156,14 +3159,12 @@ void clEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
 
 void clEditor::GetBookmarkTooltip(int lineno, wxString& tip, wxString& title)
 {
-    title << "<b>Bookmarks</b>";
+    title << "__" << _("Bookmarks") << "__";
     // If we've arrived here we know there's a bookmark on the line; however we don't know which type(s)
     // If multiple, list each, with the visible one first
     int linebits = MarkerGet(lineno);
     if(linebits & GetActiveBookmarkMask()) {
-        wxString label = GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
-        wxString suffix = label.Lower().Contains("bookmark") ? "" : " bookmark";
-        tip << label << suffix;
+        tip << GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
     }
 
     for(int bmt = smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
@@ -3172,9 +3173,7 @@ void clEditor::GetBookmarkTooltip(int lineno, wxString& tip, wxString& title)
                 if(!tip.empty()) {
                     tip << "\n";
                 }
-                wxString label = GetBookmarkLabel((sci_marker_types)bmt);
-                wxString suffix = label.Lower().Contains("bookmark") ? "" : " bookmark";
-                tip << label << suffix;
+                tip << GetBookmarkLabel((sci_marker_types)bmt);
             }
         }
     }

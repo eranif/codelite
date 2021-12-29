@@ -34,7 +34,7 @@ bool WSImporter::Import(wxString& errMsg)
                         compileName.Contains(wxT("g++")) || compileName.Contains(wxT("mingw"));
 
     for(std::shared_ptr<GenericImporter> importer : importers) {
-        if(importer->OpenWordspace(filename, defaultCompiler)) {
+        if(importer->OpenWorkspace(filename, defaultCompiler)) {
             if(importer->isSupportedWorkspace()) {
                 GenericWorkspacePtr gworskspace = importer->PerformImport();
                 wxString errMsgLocal;
@@ -285,17 +285,18 @@ bool WSImporter::Import(wxString& errMsg)
                             vDir += wxT(":");
                         }
 
-                        proj->AddFile(file->name, vpath);
+                        wxFileName fileNameInfo(project->path + wxFileName::GetPathSeparator() + file->name);
+                        fileNameInfo.Normalize(wxPATH_NORM_DOTS);
+                        proj->AddFile(fileNameInfo.GetFullPath(), vpath);
                     }
 
                     proj->CommitTranscation();
 
                     for(GenericProjectCfgPtr cfg : project->cfgs) {
                         for(GenericProjectFilePtr excludeFile : cfg->excludeFiles) {
-                            wxString vpath = GetVPath(excludeFile->name, excludeFile->vpath);
-
                             wxFileName excludeFileNameInfo(project->path + wxFileName::GetPathSeparator() +
                                                            excludeFile->name);
+                            excludeFileNameInfo.Normalize(wxPATH_NORM_DOTS);
                             proj->AddExcludeConfigForFile(excludeFileNameInfo.GetFullPath());
                         }
                     }

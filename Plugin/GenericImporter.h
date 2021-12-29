@@ -105,7 +105,7 @@ typedef std::shared_ptr<GenericWorkspace> GenericWorkspacePtr;
 class GenericImporter
 {
 public:
-    virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler) = 0;
+    virtual bool OpenWorkspace(const wxString& filename, const wxString& defaultCompiler) = 0;
     virtual bool isSupportedWorkspace() = 0;
     virtual GenericWorkspacePtr PerformImport() = 0;
 };

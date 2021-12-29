@@ -6,7 +6,7 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
-bool CodeBlocksImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
+bool CodeBlocksImporter::OpenWorkspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
 

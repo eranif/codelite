@@ -4,7 +4,7 @@
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
 
-bool VisualCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
+bool VisualCppImporter::OpenWorkspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
 
@@ -426,8 +426,11 @@ void VisualCppImporter::GenerateFromVC7_11(GenericWorkspacePtr genericWorkspace)
             genericProjectData[wxT("projectFullPath")] =
                 wsInfo.GetPath() + wxFileName::GetPathSeparator() + projectFile;
 
-            wxString deps = wxT("");
+            // Fix the paths to match linux style
+            ConvertToLinuxStyle(genericProjectData["projectFile"]);
+            ConvertToLinuxStyle(genericProjectData["projectFullPath"]);
 
+            wxString deps = wxT("");
             while(!fis.Eof()) {
                 line = tis.ReadLine();
 

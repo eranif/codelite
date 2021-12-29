@@ -162,7 +162,6 @@ class GitPlugin : public IPlugin
     bool m_bActionRequiresTreUpdate;
     IProcess* m_process;
     wxEvtHandler* m_eventHandler;
-    wxWindow* m_topWindow;
     clToolBar* m_pluginToolbar;
     wxMenu* m_pluginMenu;
     IntMap_t m_treeImageMapping;
@@ -226,7 +225,6 @@ private:
     DECLARE_EVENT_TABLE()
 
     // Event handlers
-    void OnInitDone(wxCommandEvent& e);
     void OnProgressTimer(wxTimerEvent& Event);
     void OnProcessTerminated(clProcessEvent& event);
     void OnProcessOutput(clProcessEvent& event);

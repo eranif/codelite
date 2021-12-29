@@ -22,9 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "breakpointsmgr.h"
+
 #include "breakpointdlg.h"
 #include "breakpointpropertiesdlg.h"
-#include "breakpointsmgr.h"
 #include "debuggermanager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -181,36 +182,32 @@ void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip,
     }
 
     int id = (bp.debugger_id > 0 ? bp.debugger_id : bp.internal_id - FIRST_INTERNAL_ID);
-    title << _("<b>Breakpoint# ") << id << "</b>";
+    wxString strike = (bp.is_enabled ? "" : "~~");
+    title << "__" << strike << _("Breakpoint# ") << id << strike << "__";
 
-    bool isSimple = true;
-    if(bp.is_temp) {
-        tip << _("Temporary \n");
-        isSimple = false;
+    if(bp.is_temp && !bp.conditions.IsEmpty()) {
+        tip << _("Temporary conditional breakpoint");
+    } else if(bp.is_temp) {
+        tip << _("Temporary breakpoint");
+    } else if(!bp.conditions.IsEmpty()) {
+        tip << _("Conditional breakpoint");
+    } else {
+        tip << _("Normal breakpoint");
     }
 
     if(!bp.is_enabled) {
-        tip << _(" (disabled)\n");
-        isSimple = false;
+        tip << _(" (disabled)");
     }
+    tip << "\n";
 
     if(bp.ignore_number > 0) {
-        tip << wxString::Format(_("Ignore-count = %u\n"), bp.ignore_number);
-        isSimple = false;
+        tip << _("Ignore-count: ") << bp.ignore_number << "\n";
     }
-
     if(!bp.conditions.IsEmpty()) {
-        tip << wxString::Format(_("Condition:\n<code>%s</code>\n"), bp.conditions.c_str());
-        isSimple = false;
+        tip << _("Condition: ") << "`" << bp.conditions << "`\n";
     }
-
     if(!bp.commandlist.IsEmpty()) {
-        tip << wxString::Format(_("Commands:\n<code>%s</code>\n"), bp.commandlist.c_str());
-        isSimple = false;
-    }
-
-    if(isSimple) {
-        tip << _("Normal breakpoint\n");
+        tip << _("Commands: ") << "`" << bp.commandlist << "`\n";
     }
 
     tip.Trim().Trim(false);
@@ -987,10 +984,7 @@ bool BreakptMgr::AreThereEnabledBreakpoints(bool enabled /*= true*/)
     return false;
 }
 
-void BreakptMgr::SaveSession(SessionEntry& session)
-{
-    session.SetBreakpoints(m_bps);
-}
+void BreakptMgr::SaveSession(SessionEntry& session) { session.SetBreakpoints(m_bps); }
 
 void BreakptMgr::LoadSession(const SessionEntry& session)
 {
@@ -1078,10 +1072,7 @@ void myDragImage::OnEndDrag(wxMouseEvent& event)
     }
 }
 
-void BreakptMgr::RefreshBreakpointsForEditor(clEditor* editor)
-{
-    DoRefreshFileBreakpoints(editor);
-}
+void BreakptMgr::RefreshBreakpointsForEditor(clEditor* editor) { DoRefreshFileBreakpoints(editor); }
 
 bool BreakptMgr::IsDuplicate(const clDebuggerBreakpoint& bp, const std::vector<clDebuggerBreakpoint>& bpList)
 {

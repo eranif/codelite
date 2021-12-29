@@ -40,28 +40,14 @@
 #include <wx/stc/stc.h>
 #include <wx/utils.h>
 
-#ifdef __WXMSW__
-#define DEFAULT_FACE_NAME "Consolas"
-#define DEFAULT_FONT_SIZE 12
-#elif defined(__WXMAC__)
-#define DEFAULT_FACE_NAME "monaco"
-#define DEFAULT_FONT_SIZE 14
-#else // GTK, FreeBSD etc
-#define DEFAULT_FACE_NAME "Monospace"
-#define DEFAULT_FONT_SIZE 12
-#endif
-
-#ifdef __WXGTK__
-#define FIX_FONT_SIZE(size, ctrl) clGetSize(size, ctrl)
-#else
-#define FIX_FONT_SIZE(size, ctrl) size
-#endif
-
-static bool StringTolBool(const wxString& s)
+namespace
+{
+bool StringTolBool(const wxString& s)
 {
     bool res = s.CmpNoCase(wxT("Yes")) == 0 ? true : false;
     return res;
 }
+} // namespace
 
 LexerConf::LexerConf()
     : m_flags(kStyleInPP)
@@ -244,27 +230,27 @@ wxXmlNode* LexerConf::ToXml() const
 
 wxFont LexerConf::GetFontForSyle(int styleId, const wxWindow* win) const
 {
-    StyleProperty::Map_t::const_iterator iter = m_properties.find(styleId);
-    if(iter != m_properties.end()) {
-        const StyleProperty& prop = iter->second;
-        int fontSize(prop.GetFontSize());
-        wxString face = prop.GetFaceName();
-        if(face.IsEmpty()) {
-            // defaults
-            fontSize = DEFAULT_FONT_SIZE;
-            face = DEFAULT_FACE_NAME;
-        }
-
-        wxFontInfo fontInfo = wxFontInfo(FIX_FONT_SIZE(fontSize, win))
-                                  .Family(wxFONTFAMILY_MODERN)
-                                  .Italic(prop.GetItalic())
-                                  .Bold(prop.IsBold())
-                                  .Underlined(prop.GetUnderlined())
-                                  .FaceName(face);
-        wxFont font(fontInfo);
-        return font;
+    if(m_properties.count(styleId) == 0) {
+        return DrawingUtils::GetFallbackFixedFont(win);
     }
-    return wxNullFont;
+
+    const StyleProperty& prop = m_properties.find(styleId)->second;
+    if(prop.GetFaceName().empty()) {
+        // no face name, use the fallback font
+        return DrawingUtils::GetFallbackFixedFont(win, prop.IsBold());
+    }
+
+    int fontSize(prop.GetFontSize());
+    const wxString& face = prop.GetFaceName();
+
+    wxFontInfo fontInfo = wxFontInfo(DrawingUtils::FixFontSize(fontSize, win))
+                              .Family(wxFONTFAMILY_MODERN)
+                              .Italic(prop.GetItalic())
+                              .Bold(prop.IsBold())
+                              .Underlined(prop.GetUnderlined())
+                              .FaceName(face);
+    wxFont font(fontInfo);
+    return font;
 }
 
 namespace
@@ -352,7 +338,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // Find the default style
     wxFont defaultFont;
     bool foundDefaultStyle = false;
-    int nDefaultFontSize = FIX_FONT_SIZE(DEFAULT_FONT_SIZE, ctrl);
+    int nDefaultFontSize = DrawingUtils::GetFallbackFixedFontSize(ctrl);
 
     StyleProperty defaultStyle;
     StyleProperty::Map_t::const_iterator iter = styles.begin();
@@ -360,12 +346,14 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         const StyleProperty& prop = iter->second;
         if(prop.GetId() == 0) {
             defaultStyle = prop;
-            wxString fontFace = prop.GetFaceName().IsEmpty() ? DEFAULT_FACE_NAME : prop.GetFaceName();
+            wxString fontFace =
+                prop.GetFaceName().IsEmpty() ? DrawingUtils::GetFallbackFixedFontFace() : prop.GetFaceName();
             if(!prop.GetFaceName().IsEmpty()) {
                 nDefaultFontSize = prop.GetFontSize();
             }
-            wxFont defaultFont(
-                wxFontInfo(FIX_FONT_SIZE(nDefaultFontSize, ctrl)).Family(wxFONTFAMILY_MODERN).FaceName(fontFace));
+            wxFont defaultFont(wxFontInfo(DrawingUtils::FixFontSize(nDefaultFontSize, ctrl))
+                                   .Family(wxFONTFAMILY_MODERN)
+                                   .FaceName(fontFace));
             if(prop.IsBold()) {
                 defaultFont.SetWeight(wxFONTWEIGHT_BOLD);
             }
@@ -438,15 +426,15 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             if(face.IsEmpty()) {
                 // defaults
                 fontSize = nDefaultFontSize;
-                faceName = DEFAULT_FACE_NAME;
+                faceName = DrawingUtils::GetFallbackFixedFontFace();
             }
-            fontSize = FIX_FONT_SIZE(size, ctrl);
+            fontSize = DrawingUtils::FixFontSize(size, ctrl);
             wxFontInfo fontInfo = wxFontInfo(fontSize)
                                       .Family(wxFONTFAMILY_MODERN)
                                       .Italic(italic)
                                       .Bold(bold)
                                       .Underlined(underline)
-                                      .FaceName(faceName.IsEmpty() ? DEFAULT_FACE_NAME : faceName);
+                                      .FaceName(faceName);
             wxFont font(fontInfo);
 
             if(sp.GetId() == 0) { // default
@@ -537,20 +525,14 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     wxColour textColour = IsDark() ? *wxWHITE : *wxBLACK;
     ctrl->StyleSetBackground(ANNOTATION_STYLE_WARNING, defaultStyle.GetBgColour());
     ctrl->StyleSetForeground(ANNOTATION_STYLE_WARNING, textColour);
-    // ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_WARNING, (ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) /
-    // 5);
 
     // Error style
     ctrl->StyleSetBackground(ANNOTATION_STYLE_ERROR, defaultStyle.GetBgColour());
     ctrl->StyleSetForeground(ANNOTATION_STYLE_ERROR, textColour);
-    // ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_ERROR, (ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) /
-    // 5);
 
     // Code completion errors
     ctrl->StyleSetBackground(ANNOTATION_STYLE_CC_ERROR, defaultStyle.GetBgColour());
     ctrl->StyleSetForeground(ANNOTATION_STYLE_CC_ERROR, textColour);
-    // ctrl->StyleSetSizeFractional(ANNOTATION_STYLE_CC_ERROR,
-    //                             (ctrl->StyleGetSizeFractional(wxSTC_STYLE_DEFAULT) * 4) / 5);
 
     // annotation style 'boxed'
     ctrl->AnnotationSetVisible(wxSTC_ANNOTATION_BOXED);

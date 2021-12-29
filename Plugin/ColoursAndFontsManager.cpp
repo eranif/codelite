@@ -492,7 +492,9 @@ void ColoursAndFontsManager::Save(const wxFileName& lexer_json)
 
     root.save(output_file);
     // store the global font as well
-    clConfig::Get().Write("GlobalThemeFont", m_globalFont);
+    if(m_globalFont.IsOk()) {
+        clConfig::Get().Write("GlobalThemeFont", m_globalFont);
+    }
     SaveGlobalSettings();
 
     clCommandEvent event(wxEVT_CMD_COLOURS_FONTS_UPDATED);

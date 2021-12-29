@@ -28,6 +28,7 @@
 #include "clScrolledPanel.h"
 #include "clSystemSettings.h"
 #include "clTabRendererDefault.hpp"
+#include "globals.h"
 #include "wx/dc.h"
 #include "wx/settings.h"
 
@@ -44,17 +45,6 @@
 #include <wx/msw/registry.h>
 #endif
 
-#ifdef __WXMSW__
-#define DEFAULT_FACE_NAME "Consolas"
-#define DEFAULT_FONT_SIZE 12
-#elif defined(__WXMAC__)
-#define DEFAULT_FACE_NAME "monaco"
-#define DEFAULT_FONT_SIZE 12
-#else // GTK, FreeBSD etc
-#define DEFAULT_FACE_NAME "monospace"
-#define DEFAULT_FONT_SIZE 12
-#endif
-
 #ifdef __WXGTK20__
 // We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
 // See http://trac.wxwidgets.org/ticket/10883^M
@@ -63,24 +53,26 @@
 #undef GSocket
 #endif
 
+namespace
+{
 //////////////////////////////////////////////////
 // Colour methods to convert HSL <-> RGB
 //////////////////////////////////////////////////
-static float cl_min(float x, float y, float z)
+float cl_min(float x, float y, float z)
 {
     float m = x < y ? x : y;
     m = m < z ? m : z;
     return m;
 }
 
-static float cl_max(float x, float y, float z)
+float cl_max(float x, float y, float z)
 {
     float m = x > y ? x : y;
     m = m > z ? m : z;
     return m;
 }
 
-static void RGB_2_HSL(float r, float g, float b, float* h, float* s, float* l)
+void RGB_2_HSL(float r, float g, float b, float* h, float* s, float* l)
 {
     float var_R = (r / 255.0); // RGB from 0 to 255
     float var_G = (g / 255.0);
@@ -119,7 +111,7 @@ static void RGB_2_HSL(float r, float g, float b, float* h, float* s, float* l)
     }
 }
 
-static float Hue_2_RGB(float v1, float v2, float vH) // Function Hue_2_RGB
+float Hue_2_RGB(float v1, float v2, float vH) // Function Hue_2_RGB
 {
     if(vH < 0)
         vH += 1;
@@ -134,7 +126,7 @@ static float Hue_2_RGB(float v1, float v2, float vH) // Function Hue_2_RGB
     return (v1);
 }
 
-static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
+void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
 {
     if(s == 0) {        // HSL from 0 to 1
         *r = l * 255.0; // RGB results from 0 to 255
@@ -154,6 +146,7 @@ static void HSL_2_RGB(float h, float s, float l, float* r, float* g, float* b)
         *b = 255.0 * Hue_2_RGB(var_1, var_2, h - (1.0 / 3.0));
     }
 }
+} // namespace
 
 //-------------------------------------------------------------------------------------------------
 // helper functions
@@ -454,6 +447,44 @@ wxColour DrawingUtils::GetCaptionColour()
 {
     wxColour defaultCaptionColour = clSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION);
     return defaultCaptionColour;
+}
+
+namespace
+{
+#ifdef __WXMSW__
+
+const wxString DEFAULT_FACE_NAME = "Consolas";
+constexpr int DEFAULT_FONT_SIZE = 14;
+
+#elif defined(__WXMAC__)
+
+const wxString DEFAULT_FACE_NAME = "monaco";
+constexpr int DEFAULT_FONT_SIZE = 14;
+
+#else // GTK, FreeBSD etc
+
+const wxString DEFAULT_FACE_NAME = "Monospace";
+constexpr int DEFAULT_FONT_SIZE = 14;
+
+#endif
+} // namespace
+
+#ifdef __WXGTK__
+#define FIX_FONT_SIZE(size, ctrl) clGetSize(size, ctrl)
+#else
+#define FIX_FONT_SIZE(size, ctrl) size
+#endif
+
+wxFont DrawingUtils::GetFallbackFixedFont(const wxWindow* win, bool bold, bool italic)
+{
+    wxFontInfo fontInfo = wxFontInfo(FIX_FONT_SIZE(DEFAULT_FONT_SIZE, win))
+                              .Family(wxFONTFAMILY_MODERN)
+                              .Italic(false)
+                              .Bold(false)
+                              .Underlined(false)
+                              .FaceName(DEFAULT_FACE_NAME);
+    wxFont font(fontInfo);
+    return font;
 }
 
 wxFont DrawingUtils::GetDefaultFixedFont() { return ColoursAndFontsManager::Get().GetFixedFont(); }
@@ -860,16 +891,10 @@ clColours& DrawingUtils::GetColours(bool darkColours)
     }
 }
 
-wxFont DrawingUtils::GetBestFixedFont(IEditor* editor)
-{
-    wxFont defaultFont = DrawingUtils::GetDefaultFixedFont();
-    wxFont bestFont = defaultFont;
-    wxUnusedVar(editor);
-    //    if(editor) {
-    //        bestFont = editor->GetCtrl()->StyleGetFont(0);
-    //#if defined(__WXGTK__) && defined(__WXGTK3__)
-    //        bestFont.SetPointSize(defaultFont.GetPointSize());
-    //#endif
-    //    }
-    return bestFont;
-}
+wxFont DrawingUtils::GetBestFixedFont(IEditor* editor) { return DrawingUtils::GetDefaultFixedFont(); }
+
+int DrawingUtils::GetFallbackFixedFontSize(const wxWindow* win) { return FixFontSize(DEFAULT_FONT_SIZE, win); }
+
+const wxString& DrawingUtils::GetFallbackFixedFontFace() { return DEFAULT_FACE_NAME; }
+
+int DrawingUtils::FixFontSize(int size, const wxWindow* win) { return FIX_FONT_SIZE(size, win); }

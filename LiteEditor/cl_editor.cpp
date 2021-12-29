@@ -292,15 +292,14 @@ void scroll_range(wxStyledTextCtrl* ctrl, int selection_start, int selection_end
 {
 #if wxCHECK_VERSION(3, 1, 0)
     // ensure the selection is visible
-    ctrl->ScrollRange(selection_start, selection_end);
+    if(selection_end != selection_start) {
+        ctrl->ScrollRange(selection_start, selection_end);
+    }
     ctrl->EnsureCaretVisible(); // incase we are inside a folded area
 #else
     // implement a wx30 version for ScrollRange()
-    int line_start_pos = ctrl->LineFromPosition(selection_start);
-    int start_column = selection_start - line_start_pos;
-    int end_column = start_column + (selection_end - selection_start);
-    ctrl->ScrollToColumn(end_column);
-    ctrl->ScrollToColumn(start_column);
+    wxUnusedVar(selection_start);
+    wxUnusedVar(selection_end);
     ctrl->EnsureCaretVisible(); // incase we are inside a folded area
 #endif
 }

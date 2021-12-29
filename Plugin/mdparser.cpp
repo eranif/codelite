@@ -54,19 +54,11 @@ std::pair<mdparser::Type, wxString> mdparser::Tokenizer::next()
         case '\n':
             RETURN_TYPE(T_EOL, "\n", 0);
         case '*':
-            // bold (**) & italic (*)
+            // bold & italic
             if(ch1 == '*') {
                 RETURN_TYPE(T_BOLD, "**", 1);
             } else {
                 RETURN_TYPE(T_ITALIC, "*", 0);
-            }
-            break;
-        case '_':
-            // bold (__) & italic (_)
-            if(ch1 == '_') {
-                RETURN_TYPE(T_BOLD, "__", 1);
-            } else {
-                RETURN_TYPE(T_ITALIC, "_", 0);
             }
             break;
         case '~':

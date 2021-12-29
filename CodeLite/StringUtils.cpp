@@ -1,5 +1,4 @@
 #include "StringUtils.h"
-
 #include <vector>
 
 std::string StringUtils::ToStdString(const wxString& str)
@@ -98,7 +97,6 @@ void StringUtils::DisableMarkdownStyling(wxString& buffer)
     buffer.Replace("-", "\\-");
     buffer.Replace("=", "\\=");
     buffer.Replace("*", "\\*");
-    buffer.Replace("_", "\\_");
     buffer.Replace("~", "\\~");
     buffer.Replace("`", "\\`");
 }

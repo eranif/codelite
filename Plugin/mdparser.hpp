@@ -19,8 +19,8 @@ enum Type : int {
     T_H3 = (1 << 3),         // ###
     T_LI = (1 << 4),         // -
     T_HR = (1 << 5),         // === or ---
-    T_BOLD = (1 << 6),       // ** or __
-    T_ITALIC = (1 << 7),     // * or _
+    T_BOLD = (1 << 6),       // **
+    T_ITALIC = (1 << 7),     // *
     T_STRIKE = (1 << 8),     // ~~
     T_CODE = (1 << 9),       // `
     T_CODEBLOCK = (1 << 10), // ```

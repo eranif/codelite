@@ -183,7 +183,7 @@ void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip,
 
     int id = (bp.debugger_id > 0 ? bp.debugger_id : bp.internal_id - FIRST_INTERNAL_ID);
     wxString strike = (bp.is_enabled ? "" : "~~");
-    title << "__" << strike << _("Breakpoint# ") << id << strike << "__";
+    title << "### " << strike << _("Breakpoint# ") << id << strike;
 
     if(bp.is_temp && !bp.conditions.IsEmpty()) {
         tip << _("Temporary conditional breakpoint");

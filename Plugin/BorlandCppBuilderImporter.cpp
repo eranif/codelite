@@ -5,7 +5,7 @@
 #include <wx/wfstream.h>
 #include <wx/xml/xml.h>
 
-bool BorlandCppBuilderImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
+bool BorlandCppBuilderImporter::OpenWorkspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
 

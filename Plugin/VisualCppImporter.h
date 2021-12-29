@@ -35,7 +35,7 @@
 class VisualCppImporter : public GenericImporter
 {
 public:
-    virtual bool OpenWordspace(const wxString& filename, const wxString& defaultCompiler);
+    virtual bool OpenWorkspace(const wxString& filename, const wxString& defaultCompiler);
     virtual bool isSupportedWorkspace();
     virtual GenericWorkspacePtr PerformImport();
 

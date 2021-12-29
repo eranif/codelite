@@ -4,7 +4,7 @@
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
 
-bool DevCppImporter::OpenWordspace(const wxString& filename, const wxString& defaultCompiler)
+bool DevCppImporter::OpenWorkspace(const wxString& filename, const wxString& defaultCompiler)
 {
     wsInfo.Assign(filename);
 

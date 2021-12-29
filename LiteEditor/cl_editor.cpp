@@ -3181,7 +3181,7 @@ void clEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
 
 void clEditor::GetBookmarkTooltip(int lineno, wxString& tip, wxString& title)
 {
-    title << "__" << _("Bookmarks") << "__";
+    title << "### " << _("Bookmarks");
     // If we've arrived here we know there's a bookmark on the line; however we don't know which type(s)
     // If multiple, list each, with the visible one first
     int linebits = MarkerGet(lineno);

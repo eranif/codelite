@@ -38,7 +38,6 @@ void clResizableTooltip::ShowTip()
 {
     m_topLeft = ::wxGetMousePosition();
     Move(m_topLeft);
-    clDEBUG() << "Moving tooltip dialog to: (" << m_topLeft.x << "," << m_topLeft.y << ")";
     CallAfter(&clResizableTooltip::DoSetFocus);
 }
 

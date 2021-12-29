@@ -319,6 +319,11 @@ public:
      */
     static void SetCaretAt(wxStyledTextCtrl* ctrl, long pos);
 
+    /**
+     * @brief wrapper calling CenterLinePreserveSelection using CallAfter()
+     */
+    void CenterLinePreserveSelectionAfter(int line);
+
 public:
     static FindReplaceData& GetFindReplaceData() { return m_findReplaceData; }
 

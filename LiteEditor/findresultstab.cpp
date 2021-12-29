@@ -424,9 +424,14 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                 }
             }
             if(!removed) {
+                // use the "Async" way of loading the file and then selecting the match
+                // this ensures that the results are visible and centered in screen
                 int lineNumber = editor->LineFromPos(position);
-                editor->SetSelection(position, position + resultLength);
-                editor->CenterLinePreserveSelection(lineNumber);
+                auto callback = [=](IEditor* p_editor) {
+                    p_editor->GetCtrl()->SetSelection(position, position + resultLength);
+                    p_editor->CenterLinePreserveSelection(lineNumber);
+                };
+                clGetManager()->OpenFileAndAsyncExecute(editor->GetFileName().GetFullPath(), std::move(callback));
 
                 if(sci) {
                     // remove the previous marker and add the new one

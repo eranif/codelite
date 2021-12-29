@@ -31,6 +31,7 @@
 #include "clMenuBar.hpp"
 #include "clStatusBar.h"
 #include "clTab.h"
+#include "clThemedMenuBar.hpp"
 #include "debugger.h"
 #include "iconfigtool.h"
 #include "ieditor.h"
@@ -39,9 +40,9 @@
 #include "project.h"
 #include "queuecommand.h"
 #include "wx/treectrl.h"
+
 #include <vector>
 #include <wx/aui/framemanager.h>
-#include "clThemedMenuBar.hpp"
 
 class clTreeCtrl;
 class clEditorBar;
@@ -99,28 +100,18 @@ class IManager
     wxArrayString m_outputTabs;
 
 public:
-    IManager()
-    {
-    }
-    virtual ~IManager()
-    {
-    }
+    IManager() {}
+    virtual ~IManager() {}
 
     /**
      * @brief return a list of all possible output tabs registered by the user
      */
-    const wxArrayString& GetOutputTabs() const
-    {
-        return m_outputTabs;
-    }
+    const wxArrayString& GetOutputTabs() const { return m_outputTabs; }
 
     /**
      * @brief return a list of all possible workspace tabs
      */
-    const wxArrayString& GetWorkspaceTabs() const
-    {
-        return m_workspaceTabs;
-    }
+    const wxArrayString& GetWorkspaceTabs() const { return m_workspaceTabs; }
 
     /**
      * @brief register a workspace tab
@@ -203,6 +194,16 @@ public:
      */
     virtual IEditor* OpenFile(const wxString& fileName, const wxString& bmpResourceName,
                               const wxString& tooltip = wxEmptyString) = 0;
+
+    /**
+     * @brief open or select ((if the file is already loaded in CodeLite) editor with a given `file_name` to the
+     * notebook control and make it active Once the page is **visible**, execute the callback provided by the user
+     * @param callback user callback to be executed once the editor is visible on screen
+     * On some platforms (e.g. `GTK`) various operations (e.g. `CenterLine()`) will not work as intended unless the
+     * editor is actually visible on screen. This way you
+     * can delay the call the `CenterLine()` after the editor is visible
+     */
+    virtual void OpenFileAndAsyncExecute(const wxString& fileName, std::function<void(IEditor*)>&& callback) = 0;
 
     /**
      * @brief Open file using browsing record

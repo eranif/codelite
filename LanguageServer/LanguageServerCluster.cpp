@@ -145,11 +145,11 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
         from = oldEditor->CreateBrowseRecord();
     }
 
-    IEditor* editor = clGetManager()->OpenFile(fn.GetFullPath(), "", wxNOT_FOUND, OF_None);
-    if(editor) {
+    auto cb = [=](IEditor* editor) {
         editor->SelectRange(location.GetRange());
         NavMgr::Get()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
-    }
+    };
+    clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));
 }
 
 void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)

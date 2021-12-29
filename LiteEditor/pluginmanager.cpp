@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "pluginmanager.h"
+
 #include "BuildTab.hpp"
 #include "app.h"
 #include "bitmap_loader.h"
@@ -57,6 +58,7 @@
 #include "workspacetab.h"
 #include "wx/filename.h"
 #include "wx/xrc/xmlres.h"
+
 #include <wx/dir.h>
 #include <wx/log.h>
 #include <wx/tokenzr.h>
@@ -575,7 +577,7 @@ bool PluginManager::AddPage(wxWindow* win, const wxString& text, const wxString&
                             const wxString& bmpResourceName, bool selected)
 {
     int bmp_index = clMainFrame::Get()->GetMainBook()->GetBitmapIndexOrAdd(bmpResourceName);
-    return clMainFrame::Get()->GetMainBook()->AddPage(win, text, tooltip, bmp_index, selected);
+    return clMainFrame::Get()->GetMainBook()->AddBookPage(win, text, tooltip, bmp_index, selected, wxNOT_FOUND);
 }
 
 bool PluginManager::SelectPage(wxWindow* win) { return clMainFrame::Get()->GetMainBook()->SelectPage(win); }
@@ -689,7 +691,7 @@ wxArrayString PluginManager::GetProjectCompileFlags(const wxString& projectName,
 
 void PluginManager::AddEditorPage(wxWindow* page, const wxString& name, const wxString& tooltip)
 {
-    clMainFrame::Get()->GetMainBook()->AddPage(page, name, tooltip, wxNOT_FOUND, true);
+    clMainFrame::Get()->GetMainBook()->AddBookPage(page, name, tooltip, wxNOT_FOUND, true, wxNOT_FOUND);
 }
 
 wxPanel* PluginManager::GetEditorPaneNotebook() { return clMainFrame::Get()->GetMainBook(); }
@@ -929,3 +931,8 @@ void PluginManager::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId)
 }
 
 clMenuBar* PluginManager::GetMenuBar() { return clMainFrame::Get()->GetMainMenuBar(); }
+
+void PluginManager::OpenFileAndAsyncExecute(const wxString& fileName, std::function<void(IEditor*)>&& func)
+{
+    clMainFrame::Get()->GetMainBook()->OpenFileAsync(fileName, std::move(func));
+}

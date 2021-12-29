@@ -23,16 +23,18 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "new_quick_watch_dlg.h"
+
 #include "clDebuggerEditItemDlg.h"
 #include "debuggerobserver.h"
 #include "editor_config.h"
 #include "frame.h"
 #include "globals.h"
-#include "new_quick_watch_dlg.h"
 #include "simpletable.h"
 #include "windowattrmanager.h"
 #include "wx/persist/window.h"
 #include "wx/popupwin.h"
+
 #include <cmath>
 #include <wx/cursor.h>
 #include <wx/log.h>

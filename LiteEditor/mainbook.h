@@ -35,15 +35,22 @@
 #include "quickfindbar.h"
 #include "sessionmanager.h"
 #include "wxStringHash.h"
+
+#include <deque>
+#include <functional>
 #include <set>
+#include <vector>
 #include <wx/panel.h>
 
 class FilesModifiedDlg;
 
+class IEditor;
 class MessagePane;
 class clEditorBar;
 class MainBook : public wxPanel
 {
+    typedef std::vector<std::function<void(IEditor*)>> CallbackVec_t;
+
 private:
     FileHistory m_recentFiles;
     clEditorBar* m_navBar;
@@ -56,6 +63,8 @@ private:
     std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
     wxWindow* m_welcomePage = nullptr;
     QuickFindBar* m_findBar;
+    std::unordered_map<wxString, CallbackVec_t> m_callbacksTable;
+    bool m_initDone = false;
 
 public:
     enum {
@@ -97,10 +106,8 @@ private:
     void OnWorkspaceReloadStarted(clWorkspaceEvent& e);
     void OnWorkspaceReloadEnded(clWorkspaceEvent& e);
     void OnEditorSettingsChanged(wxCommandEvent& e);
-    void OnUpdateNavigationBar(clCodeCompletionEvent& e);
-    void OnNavigationBarMenuShowing(clContextMenuEvent& e);
-    void OnNavigationBarMenuSelectionMade(clCommandEvent& e);
     void OnSettingsChanged(wxCommandEvent& e);
+    void OnIdle(wxIdleEvent& event);
     wxWindow* GetOrCreateWelcomePage();
 
     /**
@@ -120,6 +127,10 @@ private:
 
     void OnEditorChanged(wxCommandEvent& event);
     void OnAllEditorClosed(wxCommandEvent& event);
+
+    void push_callback(std::function<void(IEditor*)>&& callback, const wxString& fullpath);
+    void execute_callbacks_for_file(const wxString& fullpath);
+    bool has_callbacks(const wxString& fullpath) const;
 
 public:
     MainBook(wxWindow* parent);
@@ -206,6 +217,16 @@ public:
     int GetBitmapIndexOrAdd(const wxString& name);
     clEditor* NewEditor();
 
+    /**
+     * @brief open or select ((if the file is already loaded in CodeLite) editor with a given `file_name` to the
+     * notebook control and make it active Once the page is **visible**, execute the callback provided by the user
+     * @param callback user callback to be executed once the editor is visible on screen
+     * On some platforms (e.g. `GTK`) various operations (e.g. `CenterLine()`) will not work as intended unless the
+     * editor is actually visible on screen. This way you
+     * can delay the call the `CenterLine()` after the editor is visible
+     */
+    clEditor* OpenFileAsync(const wxString& file_name, std::function<void(IEditor*)>&& callback);
+
     clEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
                        long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
                        int bmp = wxNOT_FOUND, const wxString& tooltip = wxEmptyString);
@@ -222,8 +243,11 @@ public:
         return OpenFile(file_name, "", wxNOT_FOUND, wxNOT_FOUND, OF_AddJump, false, bmp, tooltip);
     }
 
-    bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString, int bmp = wxNOT_FOUND,
-                 bool selected = false, int insert_at_index = wxNOT_FOUND);
+    /**
+     * @brief add page to the main book
+     */
+    bool AddBookPage(wxWindow* win, const wxString& text, const wxString& tooltip, int bmp, bool selected,
+                     int insert_at_index);
     bool SelectPage(wxWindow* win);
 
     bool UserSelectFiles(std::vector<std::pair<wxFileName, bool>>& files, const wxString& title,

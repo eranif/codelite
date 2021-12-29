@@ -226,8 +226,13 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     // Open the file
     wxFileName fn(item_data->location->GetPath());
     IEditor* editor = nullptr;
+
+    // prepare the "after-file-is-loaded" callback
+    auto range = item_data->location->GetRange();
+    auto callback = [=](IEditor* editor) { editor->SelectRange(range); };
+
     if(fn.FileExists()) {
-        editor = clGetManager()->OpenFile(fn.GetFullPath());
+        clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(callback));
 
     } else {
         // the file does not exist
@@ -239,12 +244,7 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
             event.Veto();
             return;
         }
-
-        editor = clGetManager()->FindEditor(open_file_event.GetFileName());
-    }
-
-    if(editor) {
-        editor->SelectRange(item_data->location->GetRange());
+        clGetManager()->OpenFileAndAsyncExecute(open_file_event.GetFileName(), std::move(callback));
     }
 }
 

@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "mainbook.h"
+
 #include "FilesModifiedDlg.h"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
@@ -41,7 +43,6 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "macros.h"
-#include "mainbook.h"
 #include "manager.h"
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
@@ -136,6 +137,7 @@ void MainBook::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
+    Bind(wxEVT_IDLE, &MainBook::OnIdle, this);
 }
 
 MainBook::~MainBook()
@@ -165,6 +167,7 @@ MainBook::~MainBook()
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &MainBook::OnEditorSettingsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_COLOURS_FONTS_UPDATED, &MainBook::OnColoursAndFontsChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &MainBook::OnSettingsChanged, this);
+    Unbind(wxEVT_IDLE, &MainBook::OnIdle, this);
     if(m_findBar) {
         EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &MainBook::OnAllEditorClosed, this);
         EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &MainBook::OnEditorChanged, this);
@@ -501,7 +504,7 @@ clEditor* MainBook::NewEditor()
 
     clEditor* editor = new clEditor(m_book);
     editor->SetFileName(fileName);
-    AddPage(editor, fileName.GetFullName(), fileName.GetFullPath(), wxNOT_FOUND, true);
+    AddBookPage(editor, fileName.GetFullName(), fileName.GetFullPath(), wxNOT_FOUND, true, wxNOT_FOUND);
 
 #if !CL_USE_NATIVEBOOK
     if(m_book->GetSizer()) {
@@ -601,9 +604,9 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
         // The tab label is the filename + last dir
         wxString label = CreateLabel(fileName, false);
         if((extra & OF_PlaceNextToCurrent) && (sel != wxNOT_FOUND)) {
-            AddPage(editor, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp, false, sel + 1);
+            AddBookPage(editor, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp, false, sel + 1);
         } else {
-            AddPage(editor, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp);
+            AddBookPage(editor, label, tooltip.IsEmpty() ? fileName.GetFullPath() : tooltip, bmp, false, wxNOT_FOUND);
         }
         editor->SetSyntaxHighlight();
         ManagerST::Get()->GetBreakpointsMgr()->RefreshBreakpointsForEditor(editor);
@@ -667,8 +670,8 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
     return editor;
 }
 
-bool MainBook::AddPage(wxWindow* win, const wxString& text, const wxString& tooltip, int bmp, bool selected,
-                       int insert_at_index /*=wxNOT_FOUND*/)
+bool MainBook::AddBookPage(wxWindow* win, const wxString& text, const wxString& tooltip, int bmp, bool selected,
+                           int insert_at_index)
 {
     ShowWelcomePage(false);
     if(m_book->GetPageIndex(win) != wxNOT_FOUND)
@@ -1218,6 +1221,7 @@ void MainBook::SetViewWordWrap(bool b)
 void MainBook::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
+    m_initDone = true;
     // Show the welcome page, but only if there are no open files
     if(GetPageCount() == 0) {
         ShowWelcomePage(true);
@@ -1701,4 +1705,76 @@ wxWindow* MainBook::GetOrCreateWelcomePage()
         GetSizer()->Add(m_welcomePage, 1, wxEXPAND);
     }
     return m_welcomePage;
+}
+
+clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(IEditor*)>&& callback)
+{
+    bool execute_now = false;
+    auto editor = FindEditor(file_name);
+    if(editor) {
+        push_callback(std::move(callback), file_name);
+        bool is_active = GetActiveEditor() == editor;
+        if(!is_active) {
+            // make this file the active
+            int index = m_book->GetPageIndex(editor);
+            m_book->SetSelection(index);
+        }
+    } else {
+        editor = OpenFile(file_name);
+        if(editor) {
+            push_callback(std::move(callback), file_name);
+        }
+    }
+    return editor;
+}
+
+void MainBook::push_callback(std::function<void(IEditor*)>&& callabck, const wxString& fullpath)
+{
+    // register a callback for this insert
+    if(m_callbacksTable.count(fullpath) == 0) {
+        m_callbacksTable.insert({ fullpath, {} });
+    }
+    m_callbacksTable[fullpath].emplace_back(std::move(callabck));
+}
+
+bool MainBook::has_callbacks(const wxString& fullpath) const
+{
+    return !m_callbacksTable.empty() && (m_callbacksTable.count(fullpath) > 0);
+}
+
+void MainBook::execute_callbacks_for_file(const wxString& fullpath)
+{
+    if(!has_callbacks(fullpath)) {
+        return;
+    }
+
+    auto& V = m_callbacksTable[fullpath];
+    if(V.empty()) {
+        return; // cant really happen
+    }
+
+    IEditor* editor = FindEditor(fullpath);
+    CHECK_PTR_RET(editor);
+
+    for(auto& callback : V) {
+        callback(editor);
+    }
+
+    // remove the callbacks
+    m_callbacksTable.erase(fullpath);
+}
+
+void MainBook::OnIdle(wxIdleEvent& event)
+{
+    event.Skip();
+
+    // avoid processing if not really needed
+    if(!m_initDone || (m_book->GetPageCount() == 0)) {
+        return;
+    }
+
+    auto editor = GetActiveEditor(false);
+    CHECK_PTR_RET(editor);
+
+    execute_callbacks_for_file(editor->GetFileName().GetFullPath());
 }

@@ -5642,6 +5642,10 @@ void clEditor::SplitSelection()
     }
 }
 
+void clEditor::CenterLinePreserveSelection(int line) { CallAfter(&clEditor::CenterLinePreserveSelectionAfter, line); }
+
+void clEditor::CenterLinePreserveSelectionAfter(int line) { CenterLinePreserveSelection(this, line); }
+
 void clEditor::CenterLinePreserveSelection(wxStyledTextCtrl* ctrl, int line)
 {
     int selection_start = ctrl->GetSelectionStart();
@@ -5654,8 +5658,6 @@ void clEditor::CenterLinePreserveSelection(wxStyledTextCtrl* ctrl, int line)
         scroll_range(ctrl, selection_start, selection_end);
     }
 }
-
-void clEditor::CenterLinePreserveSelection(int line) { CenterLinePreserveSelection(this, line); }
 
 void clEditor::CenterLine(wxStyledTextCtrl* ctrl, int line, int col)
 {

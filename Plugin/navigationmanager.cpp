@@ -26,6 +26,9 @@
 
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "ieditor.h"
+
+#include <wx/stc/stc.h>
 
 NavMgr::NavMgr() { EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &NavMgr::OnWorkspaceClosed, this); }
 
@@ -78,7 +81,13 @@ bool NavMgr::NavigateBackward(IManager* mgr)
         m_nexts.push(m_currentLocation);
     }
     m_currentLocation = new_loc;
-    return mgr->OpenFile(new_loc);
+
+    auto callback = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
+        editor->CenterLine(new_loc.lineno, new_loc.column);
+    };
+    mgr->OpenFileAndAsyncExecute(new_loc.filename, std::move(callback));
+    return true;
 }
 
 bool NavMgr::NavigateForward(IManager* mgr)
@@ -93,7 +102,13 @@ bool NavMgr::NavigateForward(IManager* mgr)
         m_prevs.push(m_currentLocation);
     }
     m_currentLocation = new_loc;
-    return mgr->OpenFile(new_loc);
+
+    auto callback = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
+        editor->CenterLine(new_loc.lineno, new_loc.column);
+    };
+    mgr->OpenFileAndAsyncExecute(new_loc.filename, std::move(callback));
+    return true;
 }
 
 void NavMgr::OnWorkspaceClosed(clWorkspaceEvent& e)

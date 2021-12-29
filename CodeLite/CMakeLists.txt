@@ -110,7 +110,7 @@ target_link_libraries(libcodelite
                       ${LINKER_OPTIONS}
                       ${wxWidgets_LIBRARIES}
                       -L"${CL_LIBPATH}"
-                      ${SQLITE3_LIBRARY}
+                      ${SQLite3_LIBRARIES}
                       wxsqlite3
                       ${LIBSSH_LIB}
                       ${ADDITIONAL_LIBRARIES}

@@ -56,20 +56,16 @@ else()
     set( CL_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}) # which seems to be the same, at least in this situation
 endif()
 
-if( UNIX AND NOT APPLE)
-    include(FindSqlite3)
-    set(SQLITE3_FOUND ${SQLITE3_FOUND})
-else()
-    set(SQLITE3_FOUND FALSE)
-endif()
+find_package(SQLite3)
+
 include(UtilsHelper)
 
-if(NOT SQLITE3_FOUND)
+if(NOT SQLite3_FOUND)
     if(UNIX AND NOT APPLE)
         message(FATAL_ERROR " **** Could not find Sqlite3. Please install libsqlite3-dev package **** ")
     endif()
-    set(SQLITE3_INCLUDE_DIR ${CL_SRC_ROOT}/sqlite3)
-    set(SQLITE3_LIBRARY "-lsqlite3lib")
+    set(SQLite3_INCLUDE_DIRS ${CL_SRC_ROOT}/sqlite3)
+    set(SQLite3_LIBRARIES "-lsqlite3lib")
 endif()
 
 set( IS_FREEBSD 0 )
@@ -631,7 +627,7 @@ if ( APPLE )
     add_definitions( -mmacosx-version-min=10.8 )
 endif()
 
-if( NOT SQLITE3_FOUND )
+if( NOT SQLite3_FOUND )
     # On Linux, we use the distro's libsqlite3
     add_subdirectory(sqlite3)
 endif()
@@ -721,7 +717,7 @@ endif()
 ##
 ## Setup the proper dependencies
 ##
-if(NOT SQLITE3_FOUND)
+if(NOT SQLite3_FOUND)
     if ( USE_PCH AND NOT MINGW )
         add_dependencies(sqlite3lib ${CL_PCH_TARGET})
     endif()

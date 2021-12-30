@@ -75,44 +75,36 @@ wxString stop_timer()
     return elapsed;
 }
 
-void remove_binary_files(wxArrayString& files)
-{
-    wxArrayString res;
-    res.reserve(files.size());
-
-    for(const wxString& s : files) {
-        wxFileName filename(s);
-        filename.MakeAbsolute();
-        filename.Normalize();
-        wxString fullpath = filename.GetFullPath();
-        if(TagsManagerST::Get()->IsBinaryFile(fullpath, {}))
-            continue;
-        res.push_back(fullpath);
-    }
-    files.swap(res);
-}
-
 /**
  * @brief given a list of files, remove all non c/c++ files from it
  */
-void filter_non_important_files(wxArrayString& files)
+void filter_non_important_files(wxArrayString& files, const CTagsdSettings& settings)
 {
     wxArrayString tmparr;
     tmparr.reserve(files.size());
 
     // filter non c/c++ files
+    wxArrayString ignore_spec = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
+    auto should_skip_file = [&](const wxString& file_full_path) -> bool {
+        for(const wxString& spec : ignore_spec) {
+            if(file_full_path.Contains(spec)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
     for(wxString& file : files) {
+
         file.Trim().Trim(false);
         wxFileName fn(file);
         wxString fullpath = fn.GetFullPath(wxPATH_UNIX);
-        if(FileExtManager::IsCxxFile(file)) {
-            tmparr.Add(file);
+        if(should_skip_file(fullpath)) {
+            continue;
         }
 
-        // ignore any common patterns: (.git/.svn CMakeFiles)
-        if(fullpath.Contains(".git/") || fullpath.Contains(".svn/") || fullpath.Contains("CMakeFiles/") ||
-           fullpath.Contains("/build-") || fullpath.Contains("/build/")) {
-            continue;
+        if(FileExtManager::IsCxxFile(file)) {
+            tmparr.Add(file);
         }
     }
     tmparr.swap(files);
@@ -131,7 +123,7 @@ void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString
     clFilesScanner scanner;
     wxArrayString exclude_folders_arr = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
     scanner.Scan(dir, files, settings.GetFileMask(), wxEmptyString, settings.GetIgnoreSpec());
-    filter_non_important_files(files);
+    filter_non_important_files(files, settings);
 }
 } // namespace
 
@@ -368,7 +360,7 @@ size_t ProtocolHandler::read_file_list(wxArrayString& arr) const
         wxString file_list_content;
         FileUtils::ReadFileContent(file_list, file_list_content);
         wxArrayString files = wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
-        filter_non_important_files(files);
+        filter_non_important_files(files, m_settings);
         arr.swap(files);
     }
     return arr.size();
@@ -434,13 +426,14 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     TagsManagerST::Get()->SetIndexer(m_codelite_indexer);
 
     // construct TagsOptionsData
-    {
-        TagsOptionsData tod;
-        tod.SetFileSpec(m_settings.GetFileMask());
-        tod.SetTokens(MapToString(m_settings.GetTokens()));
-        tod.SetTypes(MapToString(m_settings.GetTypes()));
-        TagsManagerST::Get()->SetCtagsOptions(tod);
-    }
+    TagsOptionsData tod;
+    tod.SetFileSpec(m_settings.GetFileMask());
+    tod.SetTokens(MapToString(m_settings.GetTokens()));
+    tod.SetTypes(MapToString(m_settings.GetTypes()));
+    tod.SetCcNumberOfDisplayItems(m_settings.GetLimitResults());
+
+    TagsManagerST::Get()->SetCtagsOptions(tod);
+
     // build the workspace file list
     wxArrayString files;
     if(read_file_list(files) == 0) {
@@ -455,13 +448,8 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
-    {
-        TagsOptionsData tod;
-        tod.SetFileSpec(m_settings.GetFileMask());
-        tod.SetTokens(MapToString(m_settings.GetTokens()));
-        tod.SetTypes(MapToString(m_settings.GetTypes()));
-        TagsManagerST::Get()->SetCtagsOptions(tod);
-    }
+    TagsManagerST::Get()->SetCtagsOptions(tod);
+    TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(tod.GetCcNumberOfDisplayItems());
     channel.write_reply(response.format(false));
 }
 

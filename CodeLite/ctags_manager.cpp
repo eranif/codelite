@@ -2957,7 +2957,13 @@ void TagsManager::DoTagsFromText(const wxString& text, std::vector<TagEntryPtr>&
     }
 }
 
-void TagsManager::ParseWorkspaceIncremental() {}
+void TagsManager::ParseWorkspaceIncremental()
+{
+    // restart ctagsd (this way we ensure that new settings are loaded)
+    clLanguageServerEvent stop_event{ wxEVT_LSP_RESTART };
+    stop_event.SetLspName("ctagsd");
+    EventNotifier::Get()->ProcessEvent(stop_event);
+}
 
 void TagsManager::ParseWorkspaceFull(const wxString& workspace_dir)
 {

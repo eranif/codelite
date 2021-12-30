@@ -30,16 +30,18 @@ void CTagsdSettings::Load(const wxFileName& filepath)
         m_file_mask = config["file_mask"].toString(m_file_mask);
         m_ignore_spec = config["ignore_spec"].toString(m_ignore_spec);
         m_codelite_indexer = config["codelite_indexer"].toString();
+        m_limit_results = config["limit_results"].toSize_t(m_limit_results);
     }
 
     build_search_path(filepath);
 
-    clDEBUG1() << "search path.......:" << m_search_path << endl;
-    clDEBUG1() << "tokens............:" << m_tokens << endl;
-    clDEBUG1() << "tokens............:" << m_types << endl;
-    clDEBUG1() << "file_mask.........:" << m_file_mask << endl;
-    clDEBUG1() << "codelite_indexer..:" << m_codelite_indexer << endl;
-    clDEBUG1() << "ignore_spec.......:" << m_ignore_spec << endl;
+    clDEBUG() << "search path.......:" << m_search_path << endl;
+    clDEBUG() << "tokens............:" << m_tokens << endl;
+    clDEBUG() << "tokens............:" << m_types << endl;
+    clDEBUG() << "file_mask.........:" << m_file_mask << endl;
+    clDEBUG() << "codelite_indexer..:" << m_codelite_indexer << endl;
+    clDEBUG() << "ignore_spec.......:" << m_ignore_spec << endl;
+    clDEBUG() << "limit_results.....:" << m_limit_results << endl;
 }
 
 void CTagsdSettings::Save(const wxFileName& filepath)
@@ -52,6 +54,7 @@ void CTagsdSettings::Save(const wxFileName& filepath)
     config.addProperty("file_mask", m_file_mask);
     config.addProperty("ignore_spec", m_ignore_spec);
     config.addProperty("codelite_indexer", m_codelite_indexer);
+    config.addProperty("limit_results", m_limit_results);
     config_file.save(filepath);
 }
 

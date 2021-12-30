@@ -22,14 +22,16 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "precompiled_header.h"
-#include "istorage.h"
-#include <wx/tokenzr.h>
-#include <wx/ffile.h>
 #include "tags_options_data.h"
-#include <set>
+
 #include "cl_config.h"
 #include "ctags_manager.h"
+#include "istorage.h"
+#include "precompiled_header.h"
+
+#include <set>
+#include <wx/ffile.h>
+#include <wx/tokenzr.h>
 
 wxString TagsOptionsData::CLANG_CACHE_LAZY = "Lazy";
 wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
@@ -83,7 +85,7 @@ TagsOptionsData::TagsOptionsData()
     , m_clangOptions(0)
     , m_clangBinary(wxT(""))
     , m_clangCachePolicy(TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD)
-    , m_ccNumberOfDisplayItems(500)
+    , m_ccNumberOfDisplayItems(250)
     , m_version(0)
 {
     // Initialize defaults
@@ -456,14 +458,16 @@ wxString TagsOptionsData::ToString() const
                 file_content << iter->first << wxT("=") << iter->second << wxT("\n");
             } else {
 
-                if(options.IsEmpty()) options = wxT(" -I");
+                if(options.IsEmpty())
+                    options = wxT(" -I");
 
                 options << iter->first;
                 options << wxT(",");
             }
         }
 
-        if(options.IsEmpty() == false) options.RemoveLast();
+        if(options.IsEmpty() == false)
+            options.RemoveLast();
 
         options += wxT(" ");
     }
@@ -477,11 +481,11 @@ wxString TagsOptionsData::ToString() const
         }
     }
 
-//    if(GetLanguages().IsEmpty() == false) {
-//        options += wxT(" --language-force=");
-//        options += GetLanguages().Item(0);
-//        options += wxT(" ");
-//    }
+    //    if(GetLanguages().IsEmpty() == false) {
+    //        options += wxT(" --language-force=");
+    //        options += GetLanguages().Item(0);
+    //        options += wxT(" ");
+    //    }
     return options;
 }
 
@@ -628,7 +632,8 @@ wxString TagsOptionsData::DoJoinArray(const wxArrayString& arr) const
     for(size_t i = 0; i < arr.GetCount(); ++i)
         s << arr.Item(i) << "\n";
 
-    if(s.IsEmpty() == false) s.RemoveLast();
+    if(s.IsEmpty() == false)
+        s.RemoveLast();
 
     return s;
 }

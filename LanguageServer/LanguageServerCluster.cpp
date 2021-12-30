@@ -446,10 +446,15 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
                 json.removeProperty("codelite_indexer");
             }
 
+            if(json.hasNamedObject("limit_results")) {
+                json.removeProperty("limit_results");
+            }
+
             // update the entries
             json.addProperty("types", types_table);
             json.addProperty("tokens", tokens_table);
             json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
+            json.addProperty("limit_results", TagsManagerST::Get()->GetCtagsOptions().GetCcNumberOfDisplayItems());
             root.save(settings_json);
 
             // create the file_list.txt file

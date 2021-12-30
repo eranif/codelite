@@ -80,7 +80,7 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     m_checkWordAssist->SetValue(m_data.GetFlags() & CC_WORD_ASSIST ? true : false);
     m_checkAutoInsertSingleChoice->SetValue(m_data.GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE ? true : false);
     m_sliderMinWordLen->SetValue(m_data.GetMinWordLen());
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    GetSizer()->Fit(this);
 }
 
 CodeCompletionSettingsDialog::~CodeCompletionSettingsDialog() {}

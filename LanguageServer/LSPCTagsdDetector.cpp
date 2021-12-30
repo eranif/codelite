@@ -1,4 +1,5 @@
 #include "LSPCTagsdDetector.hpp"
+
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -35,6 +36,6 @@ void LSPCTagsdDetector::ConfigureFile(const wxFileName& ctagsd_exe)
     GetLangugaes().Add("c");
     GetLangugaes().Add("cpp");
     SetConnectionString("tcp://127.0.0.1:45634");
-    SetPriority(80);   // ctagsd should override the default cc engine
+    SetPriority(50);   // clangd takes precedence over ctagsd
     SetEnabled(false); // for now, disable it
 }

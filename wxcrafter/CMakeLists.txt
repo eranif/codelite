@@ -1,27 +1,25 @@
-
-
-
-if ( WXC_APP )
+if(WXC_APP)
     message("-- Building wxCrafter as a standalone executable ")
     add_definitions( -DSTANDALONE_BUILD=1 )
     add_definitions( -DINSTALL_PREFIX=\"${CL_PREFIX}\")
-else ( WXC_APP )
+else()
     message("-- Building wxCrafter as codelite plugin ")
     add_definitions( -DWXCAPP=0 )
-if (OFFICIAL_CL_BUILD)
-    message("-- Building wxCrafter for an official CodeLite build")
-endif (OFFICIAL_CL_BUILD)
-
-endif ( WXC_APP )
+endif(WXC_APP)
 
 # set the plugin name here
-if ( WXC_APP )
-    set( PLUGIN_NAME "wxcrafter")
-else ( WXC_APP )
-    set( PLUGIN_NAME "wxCrafter")
-endif ( WXC_APP)
+if(WXC_APP)
+    set(PLUGIN_NAME "wxcrafter")
+else()
+    set(PLUGIN_NAME "wxCrafter")
+endif()
 
-set( WXC_DIR "${CL_SRC_ROOT}/wxcrafter")
+if(NOT CL_SRC_ROOT)
+    message(STATUS "Please set CL_SRC_ROOT to CodeLite source directory as in -DCL_SRC_ROOT=...")
+    message(FATAL_ERROR "Missing CL_SRC_ROOT")
+endif()
+
+set(WXC_DIR "${CL_SRC_ROOT}/wxcrafter")
 
 message("-- Generating makefile for wxCrafter")
 
@@ -101,7 +99,9 @@ else ( NOT WXC_APP )
     add_executable(${PLUGIN_NAME} ${SRCS})
 endif ( NOT WXC_APP )
 
-target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+if(NOT WXC_APP)
+    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
@@ -131,24 +131,23 @@ if ( NOT WXC_APP )
     ## wxCrafter as codelite's plugin
     CL_INSTALL_PLUGIN(${PLUGIN_NAME})
     CL_INSTALL_FILE_SHARED(${WXC_DIR}/wxgui.zip)
-
-else ( NOT WXC_APP )
-
+else ()
     set(CPACK_DEB_COMPONENT_INSTALL 1)
-
     ## Installing an application
     install(TARGETS ${PLUGIN_NAME} DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM} COMPONENT standalone)
-    install(FILES   "${WXC_DIR}/wxgui.zip" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME} COMPONENT standalone)
-    install(FILES   "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblibcodelite.so" DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
-    install(FILES   "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libplugin.so" DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
-    install(FILES   "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libwxsqlite3.so" DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
-    install(FILES   "${CL_SRC_ROOT}/wxcrafter/resources/wxc-logo-64.png" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME} COMPONENT standalone)
-    install(FILES   "${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME}/config RENAME codelite.xml.default  COMPONENT standalone)
+    install(FILES "${WXC_DIR}/wxgui.zip" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME} COMPONENT standalone)
+    install(FILES "${CL_SRC_ROOT}/Runtime/codelite-bitmaps-light.zip" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME} COMPONENT standalone)
+    install(FILES "${CL_SRC_ROOT}/Runtime/codelite-bitmaps-dark.zip" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME} COMPONENT standalone)
+    install(FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/liblibcodelite.so" DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
+    install(FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libplugin.so" DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
+    install(FILES "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libwxsqlite3.so" DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
+    install(FILES "${CL_SRC_ROOT}/wxcrafter/resources/wxc-logo-64.png" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME} COMPONENT standalone)
+    install(FILES "${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk" DESTINATION ${CL_PREFIX}/share/${PLUGIN_NAME}/config RENAME codelite.xml.default  COMPONENT standalone)
 
-if ( NOT DEBUG_BUILD )
-    message("-- Will install ${CL_SRC_ROOT}/wxcrafter/wxCrafter.desktop to /usr/share/applications")
-    install(FILES "${CL_SRC_ROOT}/wxcrafter/wxCrafter.desktop" DESTINATION /usr/share/applications  COMPONENT standalone)
-endif ( NOT DEBUG_BUILD )
+    if ( NOT DEBUG_BUILD )
+        message("-- Will install ${CL_SRC_ROOT}/wxcrafter/wxCrafter.desktop to /usr/share/applications")
+        install(FILES "${CL_SRC_ROOT}/wxcrafter/wxCrafter.desktop" DESTINATION /usr/share/applications  COMPONENT standalone)
+    endif ( NOT DEBUG_BUILD )
 
     ## Install codelite lexer files
     install(
@@ -164,13 +163,8 @@ endif ( NOT DEBUG_BUILD )
     ## CPack
     ##############################################
     message("-- Generating deb target")
-    if( ${ARCH} EQUAL 32 )
-        message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE i386")
-        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "i386")
-    else ()
-        message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64")
-        set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
-    endif ()
+    message("-- CPACK_DEBIAN_PACKAGE_ARCHITECTURE amd64")
+    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
 
     #################################################################
     ## We need to deduce the location of the wx libs to be installed
@@ -199,13 +193,13 @@ endif ( NOT DEBUG_BUILD )
     install(FILES ${wxfilepaths} DESTINATION ${WXC_LIBS_DIR} COMPONENT standalone)
 
     set(CPACK_GENERATOR                   "DEB")
-    set(CPACK_PACKAGE_NAME                "wxCrafter")
+    set(CPACK_PACKAGE_NAME                "wxCrafter${GTKNAME}")
     set(CPACK_PACKAGE_VERSION             "2.9")
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran.ifrah@gmail.com>") #required
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran@codelite.org>") #required
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GUI Rad Tool for wxWidgets")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY     "optional")
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS   "build-essential")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS      "libc6, libssh-4, libsqlite3-dev")
     INCLUDE(CPack)
-endif ( NOT WXC_APP )
+endif(NOT WXC_APP)

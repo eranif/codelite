@@ -84,20 +84,13 @@ wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 void BitmapLoader::Initialize(bool darkTheme)
 {
     wxString zipname;
-    wxFileName fn;
-
-// Under linux, take into account the --prefix
-#ifdef __WXGTK__
-    wxString bitmapPath = wxString(INSTALL_DIR, wxConvUTF8);
-    fn = wxFileName(bitmapPath, zipname);
-#else
-    fn = wxFileName(clStandardPaths::Get().GetDataDir(), zipname);
-#endif
-
     // Load the bitmaps based on the current theme background colour
     wxFileName fnLight(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps-light.zip");
     wxFileName fnDark(clStandardPaths::Get().GetDataDir(), "codelite-bitmaps-dark.zip");
     wxFileName fnNewZip = darkTheme ? fnDark : fnLight;
+
+    clDEBUG() << "Loading bitmap resources:" << fnLight << endl;
+    clDEBUG() << "Loading bitmap resources:" << fnDark << endl;
 
 #ifdef __WXOSX__
     if(fnNewZip.FileExists()) {

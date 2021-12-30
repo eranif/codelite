@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=wxCrafter
+Exec=wxcrafter %f
+Icon=wxcrafter
+Terminal=false
+Type=Application
+Categories=Development;
+StartupNotify=true
+Keywords=development;programming;

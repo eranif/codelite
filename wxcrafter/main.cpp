@@ -1,4 +1,6 @@
 #include "main.h"
+
+#include "file_logger.h"
 #include "serial_number.h"
 #include "wx/frame.h"
 #include "wx/toplevel.h"
@@ -8,6 +10,7 @@
 #include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
 #include "wxguicraft_main_view.h"
+
 #include <ColoursAndFontsManager.h>
 #include <bitmap_loader.h>
 #include <cl_aui_dock_art.h>
@@ -142,6 +145,10 @@ bool wxcApp::OnInit()
     // Initialize the colours and font manager
     ColoursAndFontsManager::Get().Load();
     ColoursAndFontsManager::Get().RestoreDefaults();
+
+    // Open log file
+    FileLogger::OpenLog("wxcrafter.log", FileLogger::Dbg);
+    clDEBUG() << "wxCrafter started" << endl;
 
     m_wxcPlugin = new wxCrafterPlugin(NULL, m_hiddenMainFrame);
     SetTopWindow(m_wxcPlugin->GetMainFrame());

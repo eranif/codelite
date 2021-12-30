@@ -1,7 +1,9 @@
+#include "wxc_settings.h"
+
 #include "FreeTrialVersionDlg.h"
 #include "serial_number.h"
-#include "wxc_settings.h"
 #include "wxgui_helpers.h"
+
 #include <wx/app.h>
 #include <wx/datetime.h>
 #include <wx/filename.h>
@@ -78,7 +80,9 @@ void wxcSettings::Save()
 void wxcSettings::RegisterCustomControl(CustomControlTemplate& cct)
 {
     CustomControlTemplateMap_t::iterator iter = m_templateClasses.find(cct.GetClassName());
-    if(iter != m_templateClasses.end()) { m_templateClasses.erase(iter); }
+    if(iter != m_templateClasses.end()) {
+        m_templateClasses.erase(iter);
+    }
     cct.SetControlId(::wxNewEventType());
     m_templateClasses.insert(std::make_pair(cct.GetClassName(), cct));
 }
@@ -87,7 +91,9 @@ CustomControlTemplate wxcSettings::FindByControlId(int controlId) const
 {
     CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.begin();
     for(; iter != m_templateClasses.end(); ++iter) {
-        if(iter->second.GetControlId() == controlId) { return iter->second; }
+        if(iter->second.GetControlId() == controlId) {
+            return iter->second;
+        }
     }
     return CustomControlTemplate();
 }
@@ -95,14 +101,16 @@ CustomControlTemplate wxcSettings::FindByControlId(int controlId) const
 CustomControlTemplate wxcSettings::FindByControlName(const wxString& name) const
 {
     CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.find(name);
-    if(iter == m_templateClasses.end()) return CustomControlTemplate();
+    if(iter == m_templateClasses.end())
+        return CustomControlTemplate();
     return iter->second;
 }
 
 void wxcSettings::DeleteCustomControl(const wxString& name)
 {
     CustomControlTemplateMap_t::iterator iter = m_templateClasses.find(name);
-    if(iter == m_templateClasses.end()) return;
+    if(iter == m_templateClasses.end())
+        return;
 
     m_templateClasses.erase(iter);
 }
@@ -130,54 +138,19 @@ JSONElement wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) 
     JSONElement arr = JSONElement::createArray(wxT("m_templateClasses"));
     CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.begin();
     for(; iter != m_templateClasses.end(); ++iter) {
-        if(controls.Index(iter->first) != wxNOT_FOUND) arr.append(iter->second.ToJSON());
+        if(controls.Index(iter->first) != wxNOT_FOUND)
+            arr.append(iter->second.ToJSON());
     }
     return arr;
 }
 
 bool wxcSettings::IsLicensed() const { return true; }
 
-bool wxcSettings::IsLicensed2() const
-{
-    // SerialNumber sn;
-    // return sn.Isvalid2(m_serialNumber, m_username) && (m_flags & LICENSE_ACTIVATED);
-    return IsLicensed();
-}
+bool wxcSettings::IsLicensed2() const { return IsLicensed(); }
 
-bool wxcSettings::IsRegistered() const
-{
-    SerialNumber sn;
-    bool isLicensed = sn.IsValid(m_serialNumber, m_username) && (m_flags & LICENSE_ACTIVATED);
-    return isLicensed;
-}
+bool wxcSettings::IsRegistered() const { return true; }
 
-#define ONE_HOUR (60 * 60 * 1)
-
-void wxcSettings::ShowNagDialogIfNeeded()
-{
-#if STANDALONE_BUILD
-    if(!IsRegistered()) {
-        // Free trial version
-        static time_t lastCheck = 0;
-        time_t curtime = time(NULL);
-        if(((curtime - lastCheck) > ONE_HOUR) || true) {
-            lastCheck = curtime;
-            FreeTrialVersionDlg dlg(wxCrafter::TopFrame());
-            dlg.ShowModal();
-            switch(dlg.GetAnswer()) {
-            case FreeTrialVersionDlg::kPurchase:
-                ::wxLaunchDefaultBrowser("http://wxcrafter.codelite.org/checkout.php");
-                break;
-            default:
-                break;
-            }
-        }
-    }
-#else
-    // CodeLite's plugin, nothing to be done here
-    return;
-#endif
-}
+void wxcSettings::ShowNagDialogIfNeeded() {}
 
 // ----------------------------------------------------------------------
 // CustomControlTemplate

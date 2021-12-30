@@ -2306,20 +2306,11 @@ void Manager::DbgMarkDebuggerLine(const wxString& fileName, int lineno)
 
     // try to open the file
     wxFileName fn(fileName);
-    clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor(true);
-    if(editor && editor->GetFileName().GetFullPath().CmpNoCase(fn.GetFullPath()) == 0 && lineno > 0) {
+    auto callback = [=](IEditor* editor) {
         editor->HighlightLine(lineno - 1);
         editor->CenterLine(lineno - 1);
-
-    } else {
-        editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString, lineno - 1, wxNOT_FOUND);
-        if(editor && lineno > 0) {
-            editor->HighlightLine(lineno - 1);
-            // since we need to open the editor, call `CenterLine` using
-            // CallAfter, otherwise the text will not be centered
-            editor->CallAfter(&clEditor::CenterLine, lineno - 1, wxNOT_FOUND);
-        }
-    }
+    };
+    clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), callback);
 }
 
 void Manager::DbgUnMarkDebuggerLine()

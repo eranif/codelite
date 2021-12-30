@@ -604,6 +604,16 @@ public:
      * width
      */
     virtual int GetColumnInChars(int pos) = 0;
+
+    /**
+     * @brief highlight a given line in the editor
+     */
+    virtual void HighlightLine(int lineno) = 0;
+
+    /**
+     * @brief clear all highlights (added by `HighlightLine` calls)
+     */
+    virtual void UnHighlightAll() = 0;
 };
 
 #endif // IEDITOR_H

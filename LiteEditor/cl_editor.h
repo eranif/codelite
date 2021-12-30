@@ -789,8 +789,8 @@ public:
                                      const std::vector<clDebuggerBreakpoint>& li);
     virtual void DelAllBreakpointMarkers();
 
-    virtual void HighlightLine(int lineno);
-    virtual void UnHighlightAll();
+    void HighlightLine(int lineno) override;
+    void UnHighlightAll() override;
 
     // compiler warnings and errors
     void SetWarningMarker(int lineno, const wxString& annotationText) override;

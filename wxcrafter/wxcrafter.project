@@ -626,12 +626,14 @@
     <File Name="gui.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="scripts">
+    <File Name="wxcrafter64_mingw.iss"/>
     <File Name="CMakeLists.txt"/>
     <File Name="resources/pack-icons.bat"/>
     <File Name="resources/pack-icons.sh"/>
     <File Name="make_wxc_bundle.sh"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
+    <File Name="box_software.ico"/>
     <File Name="resources/wxcapp_resources.rc" Flags="0"/>
     <File Name="resources/wxc-logo-64.icns"/>
     <File Name="Info.plist"/>

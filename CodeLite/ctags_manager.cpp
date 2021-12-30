@@ -407,11 +407,15 @@ bool TagsManager::WordCompletionCandidates(const wxFileName& fileName, int linen
         }
 
         // get all symbols realted to this scope
-        scope = wxT("");
-        if(typeScope == wxT("<global>"))
+        scope.clear();
+        if(typeScope == "<global>") {
             scope << typeName;
-        else
+        } else if(!typeName.empty()) {
             scope << typeScope << wxT("::") << typeName;
+        } else {
+            // typename is empty, just try the typscope
+            scope = typeScope;
+        }
 
         std::vector<TagEntryPtr> tmpCandidates, tmpCandidates1;
         TagsByScopeAndName(scope, word, tmpCandidates);
@@ -480,10 +484,14 @@ bool TagsManager::AutoCompleteCandidates(const wxFileName& fileName, int lineno,
 
     // Load all tags from the database that matches typeName & typeScope
     wxString scope;
-    if(typeScope == wxT("<global>"))
+    if(typeScope == "<global>") {
         scope << typeName;
-    else
+    } else if(!typeName.empty()) {
         scope << typeScope << wxT("::") << typeName;
+    } else {
+        // typename is empty, just try the typscope
+        scope = typeScope;
+    }
 
     // this function will retrieve the ineherited tags as well
     // incase the last operator used was '::', retrieve all kinds of tags. Otherwise (-> , . operators were used)

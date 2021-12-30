@@ -31,3 +31,4 @@
 - wrong `auto` resolved in languageserver.cpp:234
 - ctagsd: highlight <TOKEN><::> as a class
 - line margin: use the colours read from the theme
+- debugger: step-out (shift-f11) -> causes to unwanted selection

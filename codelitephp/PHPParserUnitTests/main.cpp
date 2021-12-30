@@ -1,7 +1,7 @@
-#include <stdio.h>
-#include "PHPSourceFile.h"
 #include <wx/ffile.h>
 #include <wx/init.h>
+#include <stdio.h>
+#include "PHPSourceFile.h"
 #include "PHPLookupTable.h"
 #include "PHPExpression.h"
 #include "PHPEntityFunction.h"

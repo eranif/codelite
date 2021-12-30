@@ -12,10 +12,9 @@ You can download pre-built binaries for Windows, macOS and Linux from our **[Dow
 
 More information can be found here:
 
- - [Official Website][3]
- - [Download Page][4]
- - [Wiki][5]
-
+ - [Official website][3]
+ - [Download page][4]
+ - [Our Documentation page][5]
 
 Building and installation
 ===
@@ -28,7 +27,7 @@ Building and installation
   [2]: https://codelite.org/support.php
   [3]: https://codelite.org
   [4]: https://codelite.org/support.php
-  [5]: https://wiki.codelite.org/pmwiki.php
+  [5]: https://docs.codelite.org/
   [9]: https://docs.codelite.org/build/build_from_sources/#windows
   [10]: https://docs.codelite.org/build/build_from_sources/#linux
   [11]: https://docs.codelite.org/build/build_from_sources/#macos

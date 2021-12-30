@@ -1,6 +1,10 @@
-#include "asyncprocess.h"
 #include "clRemoteTerminal.hpp"
+
+#include "asyncprocess.h"
+#include "environmentconfig.h"
+#include "file_logger.h"
 #include "globals.h"
+
 #include <wx/tokenzr.h>
 
 clRemoteTerminal::clRemoteTerminal(const SSHAccountInfo& account)
@@ -11,10 +15,18 @@ clRemoteTerminal::clRemoteTerminal(const SSHAccountInfo& account)
 
 clRemoteTerminal::~clRemoteTerminal() { wxDELETE(m_proc); }
 
-void clRemoteTerminal::Start()
+bool clRemoteTerminal::Start()
 {
     if(m_proc) {
-        return;
+        return true;
+    }
+
+    // wrap the command in ssh
+    wxFileName ssh_exe;
+    EnvSetter setter;
+    if(!FileUtils::FindExe("ssh", ssh_exe)) {
+        clERROR() << "Could not locate ssh executable in your PATH!" << endl;
+        return false;
     }
 
     vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
@@ -27,6 +39,7 @@ void clRemoteTerminal::Start()
     command.push_back(ssh_cmd);
 
     m_proc = ::CreateAsyncProcess(nullptr, command, IProcessCreateConsole | IProcessNoRedirect | IProcessWrapInShell);
+    return m_proc != nullptr;
 }
 
 void clRemoteTerminal::Stop()
@@ -38,6 +51,15 @@ void clRemoteTerminal::Stop()
 
 const wxString& clRemoteTerminal::ReadTty()
 {
+    static wxString empty_string;
+    // wrap the command in ssh
+    wxFileName ssh_exe;
+    EnvSetter setter;
+    if(!FileUtils::FindExe("ssh", ssh_exe)) {
+        clERROR() << "Could not locate ssh executable in your PATH!" << endl;
+        return empty_string;
+    }
+
     vector<wxString> command = { "cat", m_tty_file };
     IProcess::Ptr_t proc(::CreateAsyncProcess(this, command, IProcessCreateSSH | IProcessCreateSync, wxEmptyString,
                                               nullptr, m_account.GetAccountName()));

@@ -27,13 +27,16 @@ class wxEvtHandler;
 class IProcess;
 
 //#include "asyncprocess.h"
-#include "StringUtils.h"
 #include "asyncprocess.h"
+
+#include "StringUtils.h"
 #include "clTempFile.hpp"
 #include "cl_command_event.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "processreaderthread.h"
 #include "ssh_account_info.h"
+
 #include <wx/arrstr.h>
 #include <wx/string.h>
 
@@ -146,14 +149,6 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
 
     // determine the ssh client we have
     wxString ssh_client = "ssh";
-#if 0
-    // TODO: putty does not allow us to capture the output..., so disable it for now
-    auto ssh_client = SSHAccountInfo::GetSSHClient();
-    if(ssh_client.empty()) {
-        ssh_client = "ssh";
-    }
-    bool is_putty = ssh_client.Contains("putty");
-#endif
 
     //----------------------------------------------------------
     // prepare the main command ("args") as a one liner string
@@ -250,6 +245,13 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
 {
     clEnvironment e(env);
     wxArrayString c = args;
+
+    // sanity:
+    // Check that we have SSH executable
+    wxFileName sshpath;
+    if((flags & IProcessCreateSSH) && !FileUtils::FindExe("ssh", sshpath)) {
+        return nullptr;
+    }
 
     clDEBUG1() << "1: CreateAsyncProcess called with:" << c << endl;
 

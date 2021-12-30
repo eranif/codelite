@@ -21,7 +21,7 @@ public:
     clRemoteTerminal(const SSHAccountInfo& account);
     ~clRemoteTerminal();
 
-    void Start();
+    bool Start();
     void Stop();
 
     const wxString& ReadTty();

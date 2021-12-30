@@ -625,12 +625,18 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
 
     // open new terminal on the remote host
     m_remote_terminal.reset(new clRemoteTerminal(m_account));
-    m_remote_terminal->Start();
+    if(!m_remote_terminal->Start()) {
+        ::wxMessageBox(_("Failed to start remote terminal process. Do you have `ssh` client installed and in PATH?"),
+                       "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
+        return;
+    }
 
     // wait for the tty
     wxBusyCursor bc;
     size_t count = 100; // 10 seconds
     wxString tty;
+
+    clDEBUG() << "Waiting for tty..." << endl;
     while(--count) {
         tty = m_remote_terminal->ReadTty();
         if(tty.empty()) {
@@ -639,6 +645,8 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
             break;
         }
     }
+
+    clDEBUG() << "Using remote tty:" << tty << endl;
 
     // convert the envlist into map
     auto envlist = FileUtils::CreateEnvironment(conf->GetEnvironment());
@@ -651,10 +659,12 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
         const wxString& gdbpath = envmap["GDB"];
         sesstion_info.debuggerPath = gdbpath;
     }
-    clDEBUG() << "Using remote tty:" << tty << endl;
+    clDEBUG() << "Using gdb:" << sesstion_info.debuggerPath << endl;
 
     sesstion_info.ttyName = tty;
     sesstion_info.enablePrettyPrinting = true;
+
+    clDEBUG() << "Starting gdb:" << sesstion_info.debuggerPath << endl;
     dbgr->Start(sesstion_info, nullptr);
 
     // Notify that debug session started

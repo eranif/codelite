@@ -246,8 +246,19 @@ void LSPOutlineViewDlg::DoSelectionActivate()
 
     // open the editor and go to
     LSP::Location loc = si->GetLocation();
-    wxString file = loc.GetPath();
-    int line = loc.GetRange().GetStart().GetLine();
-    clGetManager()->OpenFile(file, "", line);
+    IEditor* active_editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(active_editor);
+
+    int sci_line = loc.GetRange().GetStart().GetLine();
+    if(loc.GetRange().GetStart().GetLine() != loc.GetRange().GetEnd().GetLine()) {
+        // different lines, don't select the entire function
+        // just place the caret at the begining of the function
+        int position = active_editor->PosFromLine(sci_line);  // start of line
+        position += loc.GetRange().GetStart().GetCharacter(); // add the column
+        active_editor->SetCaretAt(position);
+    } else {
+        active_editor->SelectRange(loc.GetRange());
+        active_editor->CenterLinePreserveSelection(sci_line);
+    }
     Hide();
 }

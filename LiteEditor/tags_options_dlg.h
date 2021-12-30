@@ -26,11 +26,11 @@
 #ifndef __tags_options_dlg__
 #define __tags_options_dlg__
 
-#include "tags_options_base_dlg.h"
-#include "serialized_object.h"
-#include "wx/filename.h"
-#include "tags_options_data.h"
 #include "clEditorEditEventsHandler.h"
+#include "serialized_object.h"
+#include "tags_options_base_dlg.h"
+#include "tags_options_data.h"
+#include "wx/filename.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class CodeCompletionSettingsDialog
@@ -48,21 +48,10 @@ class CodeCompletionSettingsDialog : public TagsOptionsBaseDlg
 protected:
     virtual void OnButtonCancel(wxCommandEvent& event);
     virtual void OnButtonOk(wxCommandEvent& event);
-    virtual void OnColouringPropertyValueChanged(wxPropertyGridEvent& event);
-    virtual void OnSuggestCtags(wxCommandEvent& event);
-    wxArrayString GetCTagsSearchPaths() const;
-    void DoSuggest(wxStyledTextCtrl* textCtrl);
     void DoSetEditEventsHandler(wxWindow* win);
 
 protected:
-    virtual void OnAddExcludePath(wxCommandEvent& event);
-    virtual void OnAddSearchPath(wxCommandEvent& event);
     virtual void OnAutoShowWordAssitUI(wxUpdateUIEvent& event);
-    virtual void OnFileSelectedUI(wxUpdateUIEvent& event);
-    virtual void OnParse(wxCommandEvent& event);
-
-public:
-    void Parse();
 
 public:
     CodeCompletionSettingsDialog(wxWindow* parent, const TagsOptionsData& data);

@@ -225,7 +225,6 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
 
     // Open the file
     wxFileName fn(item_data->location->GetPath());
-    IEditor* editor = nullptr;
 
     // prepare the "after-file-is-loaded" callback
     auto range = item_data->location->GetRange();

@@ -1709,7 +1709,6 @@ wxWindow* MainBook::GetOrCreateWelcomePage()
 
 clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(IEditor*)>&& callback)
 {
-    bool execute_now = false;
     auto editor = FindEditor(file_name);
     if(editor) {
         push_callback(std::move(callback), file_name);

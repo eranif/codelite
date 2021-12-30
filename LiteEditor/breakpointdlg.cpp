@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "breakpointdlg.h"
+
 #include "breakpointslistctrl.h"
 #include "debuggermanager.h"
 #include "event_notifier.h"
@@ -120,7 +121,12 @@ void BreakpointDlg::OnBreakpointActivated(wxDataViewEvent& event)
     wxString line = m_dvListCtrlBreakpoints->GetItemText(event.GetItem(), m_dvListCtrlBreakpoints->GetLinenoColumn());
     long line_number;
     line.ToLong(&line_number);
-    clMainFrame::Get()->GetMainBook()->OpenFile(file, wxEmptyString, line_number - 1, wxNOT_FOUND, OF_AddJump, false);
+
+    auto callback = [=](IEditor* editor) {
+        editor->CenterLine(line_number - 1);
+        editor->SetActive();
+    };
+    clGetManager()->OpenFileAndAsyncExecute(file, std::move(callback));
 }
 
 void BreakpointDlg::OnEdit(wxCommandEvent& e)

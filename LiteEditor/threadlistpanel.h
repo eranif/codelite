@@ -25,8 +25,8 @@
 #ifndef __threadlistpanel__
 #define __threadlistpanel__
 
-#include "debugger.h"
 #include "ThreadListPanelBase.h"
+#include "debugger.h"
 
 class ThreadListPanel : public ThreadListBasePanel
 {

@@ -23,8 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "threadlistpanel.h"
+
 #include "globals.h"
 #include "manager.h"
+
 #include <wx/wupdlock.h>
 
 class ThreadListClientData : public wxClientData
@@ -48,10 +50,11 @@ ThreadListPanel::~ThreadListPanel() {}
 
 void ThreadListPanel::OnItemActivated(wxDataViewEvent& event)
 {
-    if(!event.GetItem().IsOk()) return;
+    if(!event.GetItem().IsOk())
+        return;
 
     long threadId;
-    wxString str_id = m_dvListCtrl->GetItemText(event.GetItem(), 0);    
+    wxString str_id = m_dvListCtrl->GetItemText(event.GetItem(), 0);
     if(str_id.ToCLong(&threadId)) {
         Manager* mgr = ManagerST::Get();
         mgr->DbgSetThread(threadId);
@@ -103,7 +106,8 @@ void ThreadListPanel::PopulateList(const ThreadEntryArray& threads)
         m_threads.insert(m_threads.end(), threads.begin(), threads.end());
 
         int sel = wxNOT_FOUND;
-        if(m_threads.empty()) return;
+        if(m_threads.empty())
+            return;
 
         for(int i = (int)(m_threads.size() - 1); i >= 0; --i) {
             const ThreadEntry& entry = m_threads.at(i);

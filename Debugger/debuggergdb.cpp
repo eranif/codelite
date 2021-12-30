@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "debuggergdb.h"
+
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
@@ -41,6 +42,7 @@
 #include "wx/filename.h"
 #include "wx/regex.h"
 #include "wx/tokenzr.h"
+
 #include <algorithm>
 #include <wx/ffile.h>
 #include <wx/msgdlg.h>
@@ -240,11 +242,13 @@ void DbgGdb::EmptyQueue()
 bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
 {
     if(si.isSSHDebugging) {
-
+        clDEBUG() << "SSH debugging detected" << endl;
         if(si.sshAccountName.empty()) {
             clERROR() << "Failed to start gdb over ssh: account info not provided" << clEndl;
             return false;
         }
+
+        clDEBUG() << "Using account:" << si.sshAccountName << endl;
 
         wxString dbgExeName = si.debuggerPath;
         wxString cmd = "gdb";
@@ -260,6 +264,10 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
         m_debuggeePid = wxNOT_FOUND;
         m_attachedMode = false;
 
+        clDEBUG() << "Local working directory:" << ::wxGetCwd() << endl;
+        clDEBUG() << "Remote working directory:" << si.cwd << endl;
+        clDEBUG() << "Command:" << cmd << endl;
+
         m_observer->UpdateAddLine(wxString() << _("Debugging over SSH, using account: ") << si.sshAccountName);
         m_observer->UpdateAddLine(wxString() << _("Current working dir: ") << wxGetCwd());
         m_observer->UpdateAddLine(wxString() << _("Launching gdb from : ") << si.cwd);
@@ -268,6 +276,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
         // Launch gdb
         m_gdbProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH, si.cwd, nullptr, si.sshAccountName);
         if(!m_gdbProcess) {
+            clDEBUG() << "Failed to start command:" << cmd << endl;
             return false;
         }
 
@@ -431,7 +440,12 @@ bool DbgGdb::Stop()
         IProcess::Ptr_t proc(::CreateAsyncProcess(this, command,
                                                   IProcessCreateDefault | IProcessCreateSSH | IProcessCreateSync,
                                                   wxEmptyString, nullptr, m_sshAccount));
-        proc->WaitForTerminate(kill_output);
+        if(proc) {
+            proc->WaitForTerminate(kill_output);
+        }
+        if(m_gdbProcess) {
+            m_gdbProcess->Terminate();
+        }
     }
 
     if(!m_attachedMode) {

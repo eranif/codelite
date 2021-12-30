@@ -128,7 +128,7 @@ static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
 }
 
 static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& wd, const wxString& sshAccountName,
-                                     clTempFile& tmpfile)
+                                     clTempFile& tmpfile, const clEnvList_t* env_list)
 {
 #ifndef __WXMSW__
     wxUnusedVar(tmpfile);
@@ -155,13 +155,25 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
     //----------------------------------------------------------
     wxArrayString* p_args = const_cast<wxArrayString*>(&args);
     wxArrayString tmpargs;
+
+    // add any environment variables provided by the caller
+    if(env_list) {
+        for(const std::pair<wxString, wxString>& env_var : *env_list) {
+            tmpargs.Add(env_var.first + "=" + env_var.second);
+        }
+    }
+
     if(!wd.empty()) {
+        // add working directory
         tmpargs.Add("cd");
         tmpargs.Add(wd);
         tmpargs.Add("&&");
-        tmpargs.insert(tmpargs.end(), args.begin(), args.end());
-        p_args = &tmpargs;
     }
+
+    // add the command arguments
+    tmpargs.insert(tmpargs.end(), args.begin(), args.end());
+    p_args = &tmpargs;
+
     wxString oneLiner = wxJoin(*p_args, ' ', 0);
 #ifdef __WXMSW__
     oneLiner.Prepend("\"").Append("\"");
@@ -190,20 +202,6 @@ static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& 
         a.insert(a.end(), sshOptionsArr.begin(), sshOptionsArr.end());
     }
 
-#if 0
-    if(is_putty) {
-        // putty supports password
-        if(!accountInfo.GetPassword().empty()) {
-            a.Add("-pw");
-            a.Add(accountInfo.GetPassword());
-        }
-        // when using putty, we need to prepare a command file
-        tmpfile.Write(oneLiner);
-        a.Add("-m");
-        a.Add(tmpfile.GetFullPath(true));
-        a.Add("-t");
-    }
-#endif
     a.Add(oneLiner);
     return a;
 }
@@ -263,12 +261,12 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
     clTempFile tmpfile; // needed for putty clients
     tmpfile.Persist();  // do not delete this file on destruct
     if(flags & IProcessCreateSSH) {
-        c = __AddSshCommand(c, workingDir, sshAccountName, tmpfile);
+        c = __AddSshCommand(c, workingDir, sshAccountName, tmpfile, env);
     }
 
     // needed on linux where fork does not require the extra quoting
     __FixArgs(c);
-    clDEBUG1() << "2: CreateAsyncProcess called with:" << c << endl;
+    clDEBUG() << "2: CreateAsyncProcess called with:" << c << endl;
 
 #ifdef __WXMSW__
     return WinProcessImpl::Execute(parent, c, flags, workingDir);

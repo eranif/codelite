@@ -274,7 +274,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
         m_observer->UpdateAddLine(wxString() << _("Starting debugger  : ") << cmd);
 
         // Launch gdb
-        m_gdbProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH, si.cwd, nullptr, si.sshAccountName);
+        m_gdbProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH, si.cwd, env_list, si.sshAccountName);
         if(!m_gdbProcess) {
             clDEBUG() << "Failed to start command:" << cmd << endl;
             return false;

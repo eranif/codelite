@@ -65,6 +65,10 @@ const wxString& clRemoteTerminal::ReadTty()
                                               nullptr, m_account.GetAccountName()));
 
     wxString output;
+    if(!proc) {
+        m_tty.Clear();
+        return m_tty;
+    }
     proc->WaitForTerminate(output);
 
     m_tty.clear();

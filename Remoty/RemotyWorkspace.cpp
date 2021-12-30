@@ -666,7 +666,7 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     sesstion_info.enablePrettyPrinting = true;
 
     clDEBUG() << "Starting gdb:" << sesstion_info.debuggerPath << endl;
-    if(!dbgr->Start(sesstion_info, nullptr)) {
+    if(!dbgr->Start(sesstion_info, &envlist)) {
         // message box about this and cancel the debugge session
         ::wxMessageBox(_("Failed to start debugger!"), "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
         clDebugEvent eventStarted(wxEVT_DEBUG_ENDED);

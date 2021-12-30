@@ -94,9 +94,9 @@
     <Excludepaths/>
     <Ignorefiles/>
     <Extensions>
-      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp;*.iss]]>
     </Extensions>
-    <Topleveldir>../wxcrafter</Topleveldir>
+    <Topleveldir>/src/codelite/wxcrafter</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
     <File Name="wxcrafter.cpp"/>
@@ -428,7 +428,6 @@
       <File Name="wxc_notebook_code_helper.h"/>
       <File Name="wxc_project_metadata.cpp"/>
       <File Name="wxc_project_metadata.h"/>
-      <File Name="wxcrafte_pch_debug.h"/>
       <File Name="wxcrafter_pch_release.h"/>
       <File Name="wx_ordered_map.h"/>
       <File Name="wxgui_bitmaploader.cpp"/>
@@ -627,13 +626,10 @@
     <File Name="gui.wxcp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="scripts">
-    <File Name="Installer/pack.iss"/>
     <File Name="CMakeLists.txt"/>
-    <File Name="Installer/pack-standalone.iss" Flags="0"/>
     <File Name="resources/pack-icons.bat"/>
     <File Name="resources/pack-icons.sh"/>
     <File Name="make_wxc_bundle.sh"/>
-    <File Name="Installer/pack-standalone-64.iss"/>
   </VirtualDirectory>
   <VirtualDirectory Name="resources">
     <File Name="resources/wxcapp_resources.rc" Flags="0"/>

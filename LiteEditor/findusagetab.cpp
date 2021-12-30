@@ -215,9 +215,7 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
     if(!item_data) {
         // header entry
         DoExpandItem(event.GetItem());
-        if(m_ctrl->IsExpanded(event.GetItem())) {
-            m_ctrl->Collapse(event.GetItem());
-        } else {
+        if(!m_ctrl->IsExpanded(event.GetItem())) {
             m_ctrl->Expand(event.GetItem());
         }
         return;

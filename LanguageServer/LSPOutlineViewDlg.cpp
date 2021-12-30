@@ -256,6 +256,7 @@ void LSPOutlineViewDlg::DoSelectionActivate()
         int position = active_editor->PosFromLine(sci_line);  // start of line
         position += loc.GetRange().GetStart().GetCharacter(); // add the column
         active_editor->SetCaretAt(position);
+        active_editor->CenterLine(sci_line);
     } else {
         active_editor->SelectRange(loc.GetRange());
         active_editor->CenterLinePreserveSelection(sci_line);

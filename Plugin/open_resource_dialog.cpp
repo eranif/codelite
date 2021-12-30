@@ -308,14 +308,9 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
         return;
 
     clDEBUG() << "Opening editor:" << selection.m_file << ":" << selection.m_line << ":" << selection.m_column << endl;
-    IEditor* editor = clGetManager()->OpenFile(selection.m_file, wxEmptyString, selection.m_line - 1);
-    if(editor) {
-        if(!selection.m_name.IsEmpty() && !selection.m_pattern.IsEmpty()) {
-            editor->FindAndSelectV(selection.m_pattern, selection.m_name);
-        } else if(selection.m_column != wxNOT_FOUND) {
-            editor->CenterLine(selection.m_line - 1, selection.m_column);
-        }
-    }
+
+    auto callback = [=](IEditor* editor) { editor->CenterLine(selection.m_line - 1, selection.m_column); };
+    clGetManager()->OpenFileAndAsyncExecute(selection.m_file, std::move(callback));
 }
 
 void OpenResourceDialog::OnKeyDown(wxKeyEvent& event)

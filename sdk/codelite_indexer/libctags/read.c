@@ -602,7 +602,7 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 	size_t count     = 0;
 	long sizeToRead  = -1;
 
-#if defined(__WXMSW__) || defined(__APPLE__) || defined(__FreeBSD__)
+#if defined(__WXMSW__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__CYGWIN__)
 	if(location < 0)
 		return 0;
 #elif defined(__NetBSD__)
@@ -620,7 +620,7 @@ extern int readChars (char *buffer, size_t bufferSize, fpos_t location, fpos_t e
 
 	memset(buffer, 0, bufferSize);
 
-#if defined(__WXMSW__) || defined(__APPLE__) || defined(__FreeBSD__)
+#if defined(__WXMSW__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__CYGWIN__)
 	sizeToRead = endPos - location;
 #elif defined(__NetBSD__)
 	sizeToRead = endPos._pos - location._pos;

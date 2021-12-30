@@ -229,6 +229,11 @@ IEditor* clSFTPManager::OpenFile(const wxString& path, const wxString& accountNa
             << "Remote: " << cd->GetRemotePath();
 
     auto editor = clGetManager()->OpenFile(localPath.GetFullPath(), "download", tooltip);
+    if(!editor) {
+        // probably opened using the image viewer
+        wxDELETE(cd);
+        return nullptr;
+    }
     editor->SetClientData("sftp", cd);
     return editor;
 }

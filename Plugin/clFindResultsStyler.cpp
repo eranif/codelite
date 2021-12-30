@@ -56,7 +56,7 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     // 33 is the style for line numbers
     sci->StyleSetForeground(LEX_FIF_LINE_NUMBER, props[33].GetFgColour());
 
-    sci->StyleSetForeground(LEX_FIF_MATCH, props[wxSTC_C_WORD2].GetFgColour());
+    sci->StyleSetForeground(LEX_FIF_MATCH, props[wxSTC_C_IDENTIFIER].GetFgColour());
     sci->StyleSetForeground(LEX_FIF_SCOPE, props[wxSTC_C_GLOBALCLASS].GetFgColour());
 
     sci->StyleSetForeground(LEX_FIF_MATCH_COMMENT, props[wxSTC_C_COMMENTLINE].GetFgColour());

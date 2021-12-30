@@ -1,8 +1,9 @@
+#include "RemotyWorkspace.hpp"
+
 #include "JSON.h"
 #include "RemotyConfig.hpp"
 #include "RemotyNewWorkspaceDlg.h"
 #include "RemotySwitchToWorkspaceDlg.h"
-#include "RemotyWorkspace.hpp"
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
 #include "asyncprocess.h"
@@ -121,6 +122,7 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &RemotyWorkspace::OnShutdown, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
+    EventNotifier::Get()->Bind(wxEVT_DOWNLOAD_FILE, &RemotyWorkspace::OnDownloadFile, this);
 
     // codelite-remote events
 
@@ -169,6 +171,8 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &RemotyWorkspace::OnShutdown, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_DOWNLOAD_FILE, &RemotyWorkspace::OnDownloadFile, this);
+
     // codelite-remote events
 
     // finder
@@ -1141,3 +1145,15 @@ void RemotyWorkspace::ConfigureLsp(const wxString& output)
 }
 
 void RemotyWorkspace::SetProjectActive(const wxString& name) { wxUnusedVar(name); }
+
+void RemotyWorkspace::OnDownloadFile(clCommandEvent& event)
+{
+    clDEBUG() << "Downloading file:" << event.GetFileName() << "using accout:" << m_account.GetName() << endl;
+    CHECK_EVENT(event);
+    auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), m_account);
+    if(editor) {
+        // update the event with the local file's fullpath
+        event.SetFileName(editor->GetFileName().GetFullPath());
+        event.Skip(false);
+    }
+}

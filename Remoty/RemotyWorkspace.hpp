@@ -60,6 +60,7 @@ protected:
     void OnShutdown(clCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
     void OnLSPOpenFile(LSPEvent& event);
+    void OnDownloadFile(clCommandEvent& event);
 
     // keep the LSPs state as it were before we added our remote ones
     // and disable them

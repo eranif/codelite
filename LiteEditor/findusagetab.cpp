@@ -279,6 +279,7 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
         // not a local file, request for file download
         clCommandEvent event_download{ wxEVT_DOWNLOAD_FILE };
         event_download.SetFileName(filepath);
+        clDEBUG() << "Sending event wxEVT_DOWNLOAD_FILE" << endl;
         if(!EventNotifier::Get()->ProcessEvent(event_download)) {
             ::wxMessageBox(_("Failed to download file: ") + filepath, "CodeLite", wxOK | wxOK_DEFAULT | wxICON_ERROR);
             return false;
@@ -297,7 +298,11 @@ bool FindUsageTab::DoExpandItem(const wxTreeItemId& item)
     wxTreeItemIdValue cookie2;
     wxTreeItemId child = m_ctrl->GetFirstChild(item, cookie2);
     while(child.IsOk()) {
+
         FindUsageItemData* item_data = static_cast<FindUsageItemData*>(m_ctrl->GetItemData(child));
+        // incase this was a remote file, update the filepath
+        const_cast<LSP::Location*>(item_data->location)->SetPath(filepath);
+
         size_t line_number = item_data->location->GetRange().GetStart().GetLine();
         if(line_number < text_buffer.GetLineCount()) {
             // update the text

@@ -23,9 +23,9 @@
 - **DONE** Implement "Find References" using the language server
 - **DONE** `rls` -> make it disabled by default
 - **DONE** `ctagsd` -> make it disabled by default
+- **DONE** Support for remote "Find References"
 
 - Implement: `lsp_rename_symbol`
-- Support for remote "Find References"
 - Add un-implemented functions does not work in first time
 - json_rpc_params.cpp:156 -> completion does not work for ctagsd
 - wrong `auto` resolved in languageserver.cpp:234

@@ -1,13 +1,13 @@
+#include <wx/arrstr.h>
+#include <wx/regex.h>
+#include <wx/string.h>
+#include <wx/tokenzr.h>
 #include "utils.h"
 #include "pptable.h"
 #include <map>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wx/arrstr.h>
-#include <wx/regex.h>
-#include <wx/string.h>
-#include <wx/tokenzr.h>
 
 #ifdef __WXMSW__
 #include <windows.h>

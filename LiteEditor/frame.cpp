@@ -1658,7 +1658,7 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     // Misc
     info.SetWebSite("https://codelite.org", _("CodeLite Home"));
     info.SetVersion(CODELITE_VERSION_STRING);
-    info.SetCopyright("Eran Ifrah 2007-2021");
+    info.SetCopyright("Eran Ifrah 2007-2022");
 
     // Load the license file
     wxFileName license(clStandardPaths::Get().GetDataDir(), "LICENSE");

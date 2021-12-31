@@ -2307,6 +2307,7 @@ void Manager::DbgMarkDebuggerLine(const wxString& fileName, int lineno)
     // try to open the file
     wxFileName fn(fileName);
     auto callback = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
         editor->HighlightLine(lineno - 1);
         editor->CenterLine(lineno - 1);
     };

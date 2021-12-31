@@ -790,39 +790,84 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
     wxString buffer;
     FileUtils::ReadFileContent(filepath, buffer);
 
-    vector<TokenWrapper> tokens_vec;
-    tokens_vec.reserve(1000);
-
     // collect all interesting tokens from the document
     SimpleTokenizer tokenizer(buffer);
     TokenWrapper token_wrapper;
-    wxArrayString words;
-    words.reserve(1000);
 
     wxStringSet_t visited;
-    wxArrayString simple_tokens;
+
+    unordered_map<wxString, TokenWrapper> variables;
+    unordered_map<wxString, TokenWrapper> classes;
+    unordered_map<wxString, TokenWrapper> functions;
+
     while(tokenizer.next(&token_wrapper.token)) {
         const auto& tok = token_wrapper.token;
         wxString word = tok.to_string(buffer);
-        simple_tokens.Add(word);
-        if(!CompletionHelper::is_cxx_keyword(word) && (visited.count(word) == 0)) {
-            visited.insert(word);
-            if(tok.following_char_is('(')) {
+        if(word == "DebuggerMgr") {
+            int br;
+            br++;
+            wxUnusedVar(br);
+        }
+
+        if(!CompletionHelper::is_cxx_keyword(word)) {
+            if(tok.following_char1_is('(')) {
+                // TOKEN(
                 token_wrapper.type = TYPE_FUNCTION;
-                tokens_vec.push_back(token_wrapper);
-            } else if(tok.following_char_is('.')) {
+                functions.insert({ word, token_wrapper });
+
+            } else if(tok.following_char1_is('.')) {
+                // TOKEN.
                 token_wrapper.type = TYPE_VARIABLE;
-                tokens_vec.push_back(token_wrapper);
+                variables.insert({ word, token_wrapper });
+
+            } else if(tok.following_char1_is('-') && tok.following_char2_is('>')) {
+                // TOKEN->
+                token_wrapper.type = TYPE_VARIABLE;
+                variables.insert({ word, token_wrapper });
+
+            } else if(tok.following_char1_is(':') && tok.following_char2_is(':')) {
+                // TOKEN::
+                token_wrapper.type = TYPE_CLASS;
+                classes.insert({ word, token_wrapper });
+
             } else if(locals_set.count(word)) {
                 // we know that this one is a variable
                 token_wrapper.type = TYPE_VARIABLE;
-                tokens_vec.push_back(token_wrapper);
+                variables.insert({ word, token_wrapper });
 
             } else if(types_set.count(word)) {
+                // A typename
                 token_wrapper.type = TYPE_CLASS;
-                tokens_vec.push_back(token_wrapper);
+                classes.insert({ word, token_wrapper });
             }
         }
+    }
+
+    // remove all duplicate entries
+    vector<TokenWrapper> tokens_vec;
+    tokens_vec.reserve(functions.size() + variables.size() + classes.size());
+
+    for(const auto& vt : classes) {
+        if(functions.count(vt.first)) {
+            functions.erase(vt.first);
+        }
+        if(variables.count(vt.first)) {
+            variables.erase(vt.first);
+        }
+        tokens_vec.emplace_back(vt.second);
+    }
+
+    // remove all duplicates entries that exist both in variables and classes
+    for(const auto& vt : functions) {
+        if(variables.count(vt.first)) {
+            variables.erase(vt.first);
+        }
+        tokens_vec.emplace_back(vt.second);
+    }
+
+    // add the variables
+    for(const auto& vt : variables) {
+        tokens_vec.emplace_back(vt.second);
     }
 
     // build the response

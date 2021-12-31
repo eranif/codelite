@@ -29,19 +29,37 @@ SimpleTokenizer::~SimpleTokenizer() {}
         }                                                                                                     \
     }
 
-#define RETURN_TOKEN_IF_POSSIBLE()                               \
-    if(m_token.ok()) {                                           \
-        if(!m_token.is_valid_identifier(m_str)) {                \
-            m_token.clear();                                     \
-        } else {                                                 \
-            *token = m_token;                                    \
-            char following_char = 0;                             \
-            PEEK_LOOKAHEAD_FIRST_NON_WHITESPACE(following_char); \
-            token->set_following_char(following_char);           \
-            m_token.clear();                                     \
-            ++m_pos;                                             \
-            return true;                                         \
-        }                                                        \
+#define PEEK_LOOKAHEAD_FIRST_2_NON_WHITESPACE(c1, c2)                                                         \
+    {                                                                                                         \
+        size_t __count_found = 0;                                                                             \
+        for(size_t __cur = m_pos; __cur < m_str.length(); ++__cur) {                                          \
+            if(m_str[__cur] != ' ' && m_str[__cur] != '\t' && m_str[__cur] != '\n' && m_str[__cur] != '\r') { \
+                if(__count_found == 0) {                                                                      \
+                    c1 = m_str[__cur];                                                                        \
+                    __count_found = 1;                                                                        \
+                } else {                                                                                      \
+                    c2 = m_str[__cur];                                                                        \
+                    break;                                                                                    \
+                }                                                                                             \
+            }                                                                                                 \
+        }                                                                                                     \
+    }
+
+#define RETURN_TOKEN_IF_POSSIBLE()                                                   \
+    if(m_token.ok()) {                                                               \
+        if(!m_token.is_valid_identifier(m_str)) {                                    \
+            m_token.clear();                                                         \
+        } else {                                                                     \
+            *token = m_token;                                                        \
+            char following_char1 = 0;                                                \
+            char following_char2 = 0;                                                \
+            PEEK_LOOKAHEAD_FIRST_2_NON_WHITESPACE(following_char1, following_char2); \
+            token->set_following_char1(following_char1);                             \
+            token->set_following_char2(following_char2);                             \
+            m_token.clear();                                                         \
+            ++m_pos;                                                                 \
+            return true;                                                             \
+        }                                                                            \
     }
 
 #define RETURN_COMMENT_TOKEN_IF_POSSIBLE() \

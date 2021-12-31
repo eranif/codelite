@@ -31,8 +31,8 @@ public:
         long m_token_line = wxNOT_FOUND;
         long m_token_column = wxNOT_FOUND;
         long m_token_length = wxNOT_FOUND;
-        char m_following_char = 0; // the following char after this token, useful to decide whether we want to handle
-                                   // this token as function or variable
+        char m_following_char1 = 0; // the 1st following char after this token
+        char m_following_char2 = 0; // the 2nd following char after this token
 
     public:
         Token(long pos, long line, long col, long len)
@@ -50,8 +50,10 @@ public:
             return m_token_column != wxNOT_FOUND && m_token_length != wxNOT_FOUND && m_token_line != wxNOT_FOUND;
         }
 
-        bool following_char_is(char c) const { return m_following_char == c; }
-        void set_following_char(char c) { m_following_char = c; }
+        bool following_char1_is(char c) const { return m_following_char1 == c; }
+        bool following_char2_is(char c) const { return m_following_char2 == c; }
+        void set_following_char1(char c) { m_following_char1 = c; }
+        void set_following_char2(char c) { m_following_char2 = c; }
 
         bool is_valid_identifier(const wxString& input_string) const
         {

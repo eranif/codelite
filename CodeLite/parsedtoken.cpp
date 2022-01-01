@@ -56,8 +56,11 @@ wxString ParsedToken::GetPath() const
 {
     wxString path;
     if(m_typeScope != wxT("<global>"))
-        path << m_typeScope << wxT("::");
+        path << m_typeScope;
 
+    if(!path.empty() && !m_type.empty()) {
+        path << "::";
+    }
     path << m_type;
     return path;
 }

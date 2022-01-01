@@ -33,6 +33,7 @@
 #include "macros.h"
 #include "readtags.h"
 #include "smart_ptr.h"
+
 #include <map>
 #include <vector>
 #include <wx/string.h>
@@ -218,6 +219,8 @@ public:
     bool IsStruct() const;
     bool IsScopeGlobal() const;
     bool IsTypedef() const;
+    bool IsMember() const;
+    bool IsNamespace() const;
 
     //------------------------------------------
     // Operations

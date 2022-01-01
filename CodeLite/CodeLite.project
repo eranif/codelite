@@ -141,6 +141,10 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="CxxCodeCompletion.cpp"/>
+    <File Name="CxxCodeCompletion.hpp"/>
+    <File Name="CxxExpression.cpp"/>
+    <File Name="CxxExpression.hpp"/>
     <File Name="CodeLiteIndexer.hpp"/>
     <File Name="CodeLiteIndexer.cpp"/>
     <File Name="Trie.hpp"/>

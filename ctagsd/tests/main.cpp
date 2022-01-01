@@ -1,5 +1,8 @@
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
+#include "CxxCodeCompletion.hpp"
+#include "CxxExpression.hpp"
+#include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
 #include "CxxVariableScanner.h"
 #include "LSPUtils.hpp"
@@ -10,14 +13,14 @@
 #include "ctags_manager.h"
 #include "fileutils.h"
 #include "macros.h"
+#include "strings.hpp"
 #include "tester.hpp"
+
 #include <iostream>
 #include <stdio.h>
 #include <wx/init.h>
 #include <wx/log.h>
 #include <wxStringHash.h>
-
-#include "strings.hpp"
 
 using namespace std;
 namespace
@@ -57,6 +60,12 @@ ostream& operator<<(ostream& stream, const pair<vector<SimpleTokenizer::Token>, 
 thread_local bool cc_initialised = false;
 thread_local bool cc_initialised_successfully = false;
 CTagsdSettings settings;
+
+#define ENSURE_DB_LOADED()                                                                                          \
+    if(!initialize_cc_tests()) {                                                                                    \
+        cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl; \
+        return true;                                                                                                \
+    }
 
 wxString map_to_wxString(const wxStringMap_t& m)
 {
@@ -100,10 +109,7 @@ bool initialize_cc_tests()
 
 TEST_FUNC(TestLSPLocation)
 {
-    if(!initialize_cc_tests()) {
-        cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
-        return true;
-    }
+    ENSURE_DB_LOADED();
 
     vector<TagEntryPtr> candidates;
 
@@ -207,10 +213,7 @@ TEST_FUNC(TestCompletionHelper_truncate_file_to_location_must_end_with_words)
 
 TEST_FUNC(TestCTagsManager_AutoCandidates)
 {
-    if(!initialize_cc_tests()) {
-        cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
-        return true;
-    }
+    ENSURE_DB_LOADED();
 
     vector<TagEntryPtr> candidates;
     wxString fulltext = "wxCodeCompletionBoxManager::Get().";
@@ -226,10 +229,7 @@ TEST_FUNC(TestCTagsManager_AutoCandidates)
 
 TEST_FUNC(TestCTagsManager_AutoCandidates_unique_ptr)
 {
-    if(!initialize_cc_tests()) {
-        cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl;
-        return true;
-    }
+    ENSURE_DB_LOADED();
 
     vector<TagEntryPtr> candidates;
     wxString fulltext = "std::unique_ptr<std::string>&& ptr; ptr->";
@@ -358,6 +358,78 @@ TEST_FUNC(test_symlink_is_scandir)
     clFilesScanner scanner;
     wxArrayString files;
     scanner.Scan("/tmp/eran", files, "*.cpp", "", "");
+    return true;
+}
+
+TEST_FUNC(test_cxx_expression)
+{
+    CxxExpression remainder;
+    vector<CxxExpression> exp1 = CxxExpression::from_expression("std::vector<int>::", &remainder);
+    CHECK_SIZE(exp1.size(), 2);
+    CHECK_EXPECTED(exp1[0].type_name(), "std");
+    CHECK_EXPECTED(exp1[0].operand(), T_DOUBLE_COLONS);
+
+    CHECK_EXPECTED(exp1[1].type_name(), "vector");
+    CHECK_EXPECTED(exp1[1].operand(), T_DOUBLE_COLONS);
+    CHECK_EXPECTED(exp1[1].init_list().size(), 1);
+
+    vector<CxxExpression> exp2 = CxxExpression::from_expression("string.AfterFirst('(').", &remainder);
+    CHECK_SIZE(exp2.size(), 2);
+
+    vector<CxxExpression> exp3 = CxxExpression::from_expression("string.AfterFirst('(')", &remainder);
+    CHECK_SIZE(exp3.size(), 1);
+    CHECK_EXPECTED(remainder.type_name(), "AfterFirst");
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion)
+{
+    ENSURE_DB_LOADED();
+
+    auto lookup = TagsManagerST::Get()->GetDatabase();
+    const wxStringMap_t& tokens_map = TagsManagerST::Get()->GetCtagsOptions().GetTokensWxMap();
+
+    {
+        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_auto_chained };
+        TagEntryPtr resolved = cc.code_complete("str.", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_auto_simple };
+        TagEntryPtr resolved = cc.code_complete("str.", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_simple };
+        TagEntryPtr resolved = cc.code_complete("wxString::", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_simple };
+        TagEntryPtr resolved = cc.code_complete("str.AfterFirst('(').", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_simple };
+        TagEntryPtr resolved = cc.code_complete("str.AfterFirst('(').BeforeFirst().", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_lsp_event };
+        TagEntryPtr resolved = cc.code_complete("event.GetLocation().GetRange().GetStart().", { "LSP", "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "LSP::Position");
+    }
     return true;
 }
 

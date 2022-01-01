@@ -813,3 +813,13 @@ bool CxxVariableScanner::OnLambda(Scanner_t scanner)
     }
     return false;
 }
+
+wxString CxxVariableScanner::ToString(CxxVariable::LexerToken::Vec_t& vartype)
+{
+    wxString str;
+    for(const auto& token : vartype) {
+        str << token.text << " ";
+    }
+    str.Trim();
+    return str;
+}

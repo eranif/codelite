@@ -1,6 +1,8 @@
 #include "CompletionHelper.hpp"
+
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
+
 #include <vector>
 #include <wx/regex.h>
 

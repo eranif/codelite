@@ -23,18 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "CompletionHelper.hpp"
-#include "ctags_manager.h"
-#include "pptable.h"
-#include "precompiled_header.h"
+#include "entry.h"
 
+#include "CompletionHelper.hpp"
 #include "code_completion_api.h"
 #include "comment_parser.h"
-#include "entry.h"
+#include "ctags_manager.h"
 #include "language.h"
 #include "macros.h"
+#include "pptable.h"
+#include "precompiled_header.h"
 #include "tokenizer.h"
 #include "wxStringHash.h"
+
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 
@@ -797,3 +798,7 @@ wxString TagEntry::FormatComment()
 bool TagEntry::IsLocalVariable() const { return GetKind() == "local"; }
 
 wxString TagEntry::GetLocalType() const { return GetExtField("type"); }
+
+bool TagEntry::IsMember() const { return GetKind() == "member"; }
+
+bool TagEntry::IsNamespace() const { return GetKind() == "namespace"; }

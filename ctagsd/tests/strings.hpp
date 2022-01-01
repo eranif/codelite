@@ -3,7 +3,7 @@
 const wxString sample_cxx_file = R"(
 class MyClass {
     std::string m_name;
-    
+
 public:
     std::string GetName() const { return m_name; }
     void SetName(const std::string& name) { m_name = name; }
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 {
     /**
         multi line comment
-        
+
     **/
     std::string name = "hello\nworld";
     MyClass cls, 1cls2;
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 {
     /**
         multi line comment
-        
+
     **/
     std::string name = "hello\nworld";
     MyClass cls, 1cls2;
@@ -86,4 +86,14 @@ wxTerminalColourHandler::wxTerminalColourHandler()
     // we use the Ubuntu colour scheme
     // Text colours
     m_colours.insert({ 30, wxColour(1, 1, 1) });
+)";
+
+// --------------------------- CxxCodeCompletion text ----------------------------------------
+
+const wxString cc_text_simple = R"(wxString str;)";
+const wxString cc_text_lsp_event = R"(LSPEvent& event;)";
+const wxString cc_text_auto_simple = R"(auto str = wxString::AfterFirst();)";
+const wxString cc_text_auto_chained = R"(
+auto arr = wxStringTokenize();
+auto str = arr.Item(0);
 )";

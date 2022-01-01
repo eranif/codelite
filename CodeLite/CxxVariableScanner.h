@@ -6,6 +6,7 @@
 #include "codelite_exports.h"
 #include "macros.h"
 #include "wxStringHash.h"
+
 #include <stack>
 
 class WXDLLIMPEXP_CL CxxVariableScanner
@@ -64,6 +65,11 @@ public:
     CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros,
                        bool isFuncSignature);
     virtual ~CxxVariableScanner();
+
+    /**
+     * @brief helper method to join variable type into a single string
+     */
+    static wxString ToString(CxxVariable::LexerToken::Vec_t& vartype);
 
     /**
      * @brief strip buffer from unreachable code blocks (assuming the caret is at the last position of the bufer)

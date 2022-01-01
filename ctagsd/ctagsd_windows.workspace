@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="ctagsd_windows" Database="" Version="10000">
-  <Project Name="ctagsd" Path="ctagsd.project" Active="Yes"/>
+  <Project Name="ctagsd_app" Path="ctagsd_app.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug">
       <Environment/>
-      <Project Name="ctagsd" ConfigName="Debug"/>
+      <Project Name="ctagsd_app" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Release">
       <Environment/>
-      <Project Name="ctagsd" ConfigName="Release"/>
+      <Project Name="ctagsd_app" ConfigName="Release"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

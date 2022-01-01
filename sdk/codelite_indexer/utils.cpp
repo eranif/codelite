@@ -1,3 +1,4 @@
+// clang-format off
 #include <wx/arrstr.h>
 #include <wx/regex.h>
 #include <wx/string.h>
@@ -35,6 +36,7 @@
 #define strdup _strdup
 #endif
 #endif
+// clang-format on
 
 /**
  * helper string methods

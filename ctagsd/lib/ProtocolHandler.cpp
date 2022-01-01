@@ -830,6 +830,11 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
                 token_wrapper.type = TYPE_CLASS;
                 classes.insert({ word, token_wrapper });
 
+            } else if(tok.following_char1_is('&') || tok.following_char1_is('*') || tok.following_char1_is('<')) {
+                // TOKEN< || TOKEN& || TOKEN*
+                token_wrapper.type = TYPE_CLASS;
+                classes.insert({ word, token_wrapper });
+
             } else if(locals_set.count(word)) {
                 // we know that this one is a variable
                 token_wrapper.type = TYPE_VARIABLE;

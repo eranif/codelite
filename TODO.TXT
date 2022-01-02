@@ -43,10 +43,18 @@ New CTagsd CC engine:
 - **DONE** Support `using namespace`
 - **DONE** Support basic template`
 - **DONE** Support `operator->`
-- Supoprt `this->`
+- **DONE** Supoprt `this->`
+- **DONE** Support `::` (global namespace typing)
+- **DONE** Add recursive safety guards
+- **DONE** Support template inheritance
+- **DONE** Support for member variable
+- **DONE** Support ref rvalue (`&&`)
+- **DONE** Support for function arguments
+- **DONE** Support for completion ("word completion") for locals
+- **DONE** Support for lamda arguments
+
+- Support for ranged for
 - Support `operator[]`
-- Support `::` (global namespace typing)
-- Support template inheritance
-- Support ref rvalue (`&&`)
-- Add recursive safety guards
+
+LOW:
 - User types (do we need them now??)

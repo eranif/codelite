@@ -39,6 +39,12 @@ protected:
     bool OnWhile(Scanner_t scanner);
     bool OnDeclType(Scanner_t scanner);
     bool OnLambda(Scanner_t scanner);
+    /**
+     * @brief parse function definition line and return the
+     * definition buffer. We only return it if the token after
+     * the definition is '{' or -> (C++11 syntax)
+     */
+    bool OnFunction(Scanner_t scanner, wxString& function_args_buffer, bool* push_scope);
 
 protected:
     /**

@@ -19,7 +19,9 @@ private:
     private:
         wxString _type_name;
         wxString _assignment;
+        wxString _name;
         bool _is_auto = false;
+        wxString _pattern;
 
     public:
         bool is_auto() const { return _is_auto; }
@@ -35,6 +37,11 @@ private:
         void set_type_name(const wxString& s) { _type_name = s; }
         void set_assignment(const wxString& s) { _assignment = s; }
         void set_is_auto(bool b) { _is_auto = b; }
+        void set_name(const wxString& name) { _name = name; }
+        const wxString& name() const { return _name; }
+
+        void set_pattern(const wxString& pattern) { _pattern = pattern; }
+        const wxString& pattern() const { return _pattern; }
     };
 
 private:
@@ -43,18 +50,23 @@ private:
     const wxString* m_text = nullptr;
     unordered_map<wxString, __local> m_locals;
     wxString m_optimized_scope;
-    vector<pair<wxStringMap_t, CxxExpression*>> m_template_placeholders;
+    wxStringMap_t m_template_placeholders;
+    wxString m_filename;
+    int m_line_number = 0;
+    wxString m_current_scope_name;
+    size_t m_recurse_protector = 0;
+    bool m_text_parsed = false;
 
 private:
     void reset();
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;
-    TagEntryPtr lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes);
+    TagEntryPtr lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes, TagEntryPtr parent);
     TagEntryPtr lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
                                       const vector<wxString>& kinds);
     TagEntryPtr lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes);
 
     TagEntryPtr lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
-                                    const vector<wxString>& visible_scopes);
+                                    const vector<wxString>& visible_scopes, const vector<wxString>& kinds);
 
     wxString typedef_from_tag(TagEntryPtr tag) const;
     wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals) const;
@@ -66,12 +78,36 @@ private:
     wxString get_return_value(TagEntryPtr tag) const;
     wxString resolve_placeholder(const wxString& s) const;
     vector<wxString> update_visible_scope(const vector<wxString>& curscopes, TagEntryPtr tag);
+    void update_template_table(TagEntryPtr resolved, CxxExpression& curexpr, const vector<wxString>& visible_scopes,
+                               wxStringSet_t& visited);
+
+    /**
+     * @brief based on the file + line number, determine the current scope name
+     */
+    void determine_current_scope();
+
+    size_t parse_locals(const wxString& text, unordered_map<wxString, __local>* locals) const;
 
 public:
-    CxxCodeCompletion(ITagsStoragePtr lookup, const wxStringMap_t* tokens_map, const wxString* text);
+    CxxCodeCompletion(const wxString* text, const wxString& filename = wxEmptyString, int current_line = wxNOT_FOUND);
     ~CxxCodeCompletion();
 
-    TagEntryPtr code_complete(const wxString& expression, const vector<wxString>& visible_scopes);
+    /**
+     * @brief parse an expression and resolve it into a TagEntry. If the expression does not end with
+     * an operand, return the remainder
+     * @param expression
+     * @param visible_scopes [in] addition visible scopes (e.g. "std")
+     * @param remainder [output] holds the last part that was not used. `a.foo().bar().get` -> the remainder will hold
+     * `get`
+     * @return a tag representing the scope
+     */
+    TagEntryPtr code_complete(const wxString& expression, const vector<wxString>& visible_scopes,
+                              CxxExpression* remainder = nullptr);
+
+    /**
+     * @brief return the local variables available for the current scope (passed in the c-tor)
+     */
+    vector<TagEntryPtr> get_locals();
 };
 
 #endif // CXXCODECOMPLETION_HPP

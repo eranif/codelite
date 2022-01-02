@@ -382,22 +382,165 @@ TEST_FUNC(test_cxx_expression)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
+{
+    ENSURE_DB_LOADED();
+    // use a line inside CxxCodeCompletion file
+    wxString filename = R"(C:\src\codelite\CodeLite\ctags_manager.cpp)";
+
+    if(wxFileExists(filename)) {
+        CxxCodeCompletion cc{ nullptr, filename, 149 };
+        TagEntryPtr resolved = cc.code_complete("this->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "TagsManager");
+    }
+
+    {
+        CxxCodeCompletion cc{ nullptr };
+        TagEntryPtr resolved = cc.code_complete("::", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "<global>");
+    }
+    {
+        CxxCodeCompletion cc{ nullptr };
+        CxxExpression remainder;
+        TagEntryPtr resolved = cc.code_complete("wxS", {}, &remainder);
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "<global>");
+        CHECK_STRING(remainder.type_name(), "wxS");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_list_locals)
+{
+    ENSURE_DB_LOADED();
+    {
+        CxxCodeCompletion cc{ &tokenizer_sample_file_0 };
+        auto locals = cc.get_locals();
+        CHECK_SIZE(locals.size(), 0);
+    }
+
+    {
+        CxxCodeCompletion cc{ &tokenizer_sample_file_2 };
+        auto locals = cc.get_locals();
+        CHECK_SIZE(locals.size(), 0);
+    }
+
+    {
+        CxxCodeCompletion cc{ &file_content };
+        auto locals = cc.get_locals();
+        CHECK_SIZE(locals.size(), 1);
+    }
+
+    {
+        CxxCodeCompletion cc{ &cc_text_auto_chained };
+        auto locals = cc.get_locals();
+        CHECK_SIZE(locals.size(), 2);
+        CHECK_STRING(locals[0]->GetName(), "str");
+        CHECK_STRING(locals[1]->GetName(), "arr");
+    }
+
+    {
+        CxxCodeCompletion cc{ &big_file };
+        auto locals = cc.get_locals();
+        // we expect 4 variables
+        CHECK_SIZE(locals.size(), 4);
+    }
+
+    {
+        CxxCodeCompletion cc{ &cc_lamda_text };
+        auto locals = cc.get_locals();
+        CHECK_SIZE(locals.size(), 6);
+    }
+
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_function_arguments)
+{
+    ENSURE_DB_LOADED();
+    {
+        CxxCodeCompletion cc{ &cc_text_function_args_simple };
+        TagEntryPtr resolved = cc.code_complete("str.", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+    {
+        CxxCodeCompletion cc{ &cc_text_function_args_simple };
+        TagEntryPtr resolved = cc.code_complete("json.", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "std::shared_ptr");
+    }
+
+    {
+        CxxCodeCompletion cc{ &cc_text_function_args_simple };
+        TagEntryPtr resolved = cc.code_complete("json->", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "JSON");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_rvalue_reference)
+{
+    ENSURE_DB_LOADED();
+    {
+        wxString text = "TagEntry&& entry;";
+        CxxCodeCompletion cc{ &text };
+        TagEntryPtr resolved = cc.code_complete("entry.m_path.", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_member_variable)
+{
+    ENSURE_DB_LOADED();
+    {
+        wxString text = "TagEntry entry;";
+        CxxCodeCompletion cc{ &text };
+        TagEntryPtr resolved = cc.code_complete("entry.m_path.", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_template)
 {
     ENSURE_DB_LOADED();
-    auto lookup = TagsManagerST::Get()->GetDatabase();
-    const wxStringMap_t& tokens_map = TagsManagerST::Get()->GetCtagsOptions().GetTokensWxMap();
+
     {
         wxString text = "wxVector<wxString> V;";
-        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        CxxCodeCompletion cc{ &text };
         TagEntryPtr resolved = cc.code_complete("V.at(0).", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
+    {
+        // template inheritance in typedef
+        // typedef Singleton<Manager> ManagerST;
+        CxxCodeCompletion cc{ nullptr };
+        TagEntryPtr resolved = cc.code_complete("ManagerST::Get()->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "Manager");
+    }
+
+    {
+        // template inheritance
+        // class ContextManager : public Singleton<ContextManager> {...}
+        // ContextManager::Get()->
+        CxxCodeCompletion cc{ nullptr };
+        TagEntryPtr resolved = cc.code_complete("ContextManager::Get()->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "ContextManager");
+    }
 
     {
         wxString text = "map<wxString, wxArrayString> M;";
-        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        CxxCodeCompletion cc{ &text };
         TagEntryPtr resolved = cc.code_complete("M.at(str).", { "std" });
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxArrayString");
@@ -405,7 +548,7 @@ TEST_FUNC(test_cxx_code_completion_template)
 
     {
         wxString text = "shared_ptr<wxString> P;";
-        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        CxxCodeCompletion cc{ &text };
         TagEntryPtr resolved = cc.code_complete("P.", { "std" });
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "std::shared_ptr");
@@ -413,7 +556,7 @@ TEST_FUNC(test_cxx_code_completion_template)
 
     {
         wxString text = "shared_ptr<wxString> P;";
-        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        CxxCodeCompletion cc{ &text };
         TagEntryPtr resolved = cc.code_complete("P->", { "std" });
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
@@ -425,54 +568,51 @@ TEST_FUNC(test_cxx_code_completion)
 {
     ENSURE_DB_LOADED();
 
-    auto lookup = TagsManagerST::Get()->GetDatabase();
-    const wxStringMap_t& tokens_map = TagsManagerST::Get()->GetCtagsOptions().GetTokensWxMap();
-
     {
         wxString text = "std::string str;";
-        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        CxxCodeCompletion cc{ &text };
         TagEntryPtr resolved = cc.code_complete("str.", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "std::basic_string");
     }
 
     {
-        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_auto_chained };
+        CxxCodeCompletion cc{ &cc_text_auto_chained };
         TagEntryPtr resolved = cc.code_complete("str.", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
-        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_auto_simple };
+        CxxCodeCompletion cc{ &cc_text_auto_simple };
         TagEntryPtr resolved = cc.code_complete("str.", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
-        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_simple };
+        CxxCodeCompletion cc{ &cc_text_simple };
         TagEntryPtr resolved = cc.code_complete("wxString::", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
-        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_simple };
+        CxxCodeCompletion cc{ &cc_text_simple };
         TagEntryPtr resolved = cc.code_complete("str.AfterFirst('(').", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
-        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_simple };
+        CxxCodeCompletion cc{ &cc_text_simple };
         TagEntryPtr resolved = cc.code_complete("str.AfterFirst('(').BeforeFirst().", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
     }
 
     {
-        CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_lsp_event };
+        CxxCodeCompletion cc{ &cc_text_lsp_event };
         TagEntryPtr resolved = cc.code_complete("event.GetLocation().GetRange().GetStart().", { "LSP", "std" });
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "LSP::Position");

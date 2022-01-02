@@ -27,6 +27,10 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
         case T_IDENTIFIER:
             curexpr.m_type_name = tk.GetWXString();
             break;
+        case T_THIS:
+            curexpr.m_type_name = tk.GetWXString();
+            curexpr.m_flags |= FLAGS_THIS;
+            break;
         case T_DOUBLE_COLONS:
         case T_ARROW:
         case '.':
@@ -305,7 +309,7 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
             break;
         }
     }
-    m_template_placeholder_list.swap(arr);
+    m_template_placeholder_list.insert(m_template_placeholder_list.end(), arr.begin(), arr.end());
 
 #undef CHECK_TYPE
 #undef ADD_PLACHOLDER
@@ -345,4 +349,71 @@ void CxxExpression::set_operand(int op)
     default:
         break;
     }
+}
+
+// class ContextManager : public Singleton<ContextManager>, OtherClass, SecondClass<wxString, wxArrayString> {
+vector<wxString> CxxExpression::split_subclass_expression(const wxString& subclass_pattern)
+{
+    CxxLexerToken token;
+    CxxTokenizer tokenizer;
+
+    tokenizer.Reset(subclass_pattern);
+
+    // consume everything until the `:`
+    while(tokenizer.NextToken(token)) {
+        if(token.GetType() == ':') {
+            break;
+        }
+    }
+
+    // Check for possible
+    vector<wxString> result;
+    wxString curexpr;
+
+    int depth = 0;
+    bool cont = true;
+    while(cont && tokenizer.NextToken(token)) {
+        if(token.is_keyword()) {
+            continue;
+        }
+        switch(token.GetType()) {
+        case ',':
+            if(depth == 0) {
+                result.push_back(curexpr);
+                curexpr.clear();
+            } else {
+                curexpr << ",";
+            }
+            break;
+        case '{':
+            if(depth == 0) {
+                cont = false;
+            } else {
+                depth++;
+                curexpr << "{";
+            }
+            break;
+        case '[':
+        case '<':
+        case '(':
+            depth++;
+            curexpr << token.GetWXString();
+            break;
+        case '}':
+        case ']':
+        case '>':
+        case ')':
+            depth--;
+            curexpr << token.GetWXString();
+            break;
+        default:
+            curexpr << token.GetWXString() << " ";
+            break;
+        }
+    }
+
+    if(!curexpr.empty()) {
+        result.push_back(curexpr);
+    }
+    return result;
 }

@@ -274,8 +274,25 @@ void CxxVariableScanner::ConsumeInitialization(wxString& consumed)
     wxString dummy;
     if(!GetNextToken(token))
         return;
+
     int type = wxNOT_FOUND;
     int tokType = token.GetType();
+    if(tokType == '=') {
+        CxxLexerToken next_token;
+        if(!GetNextToken(next_token))
+            return;
+
+        if(next_token.GetType() == '[') {
+            // ... = [ -> we expect lambda to come
+            return;
+        } else if(next_token.GetType() == ']') {
+            // ... =] -> lambda body is expected
+            return;
+        } else {
+            UngetToken(next_token);
+        }
+    }
+
     if(tokType == '(') {
         // Read the initialization
         std::unordered_set<int> delims;
@@ -454,8 +471,15 @@ void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripp
             break;
         case '(':
             buffer << tok.GetWXString();
-            if(lastToken.GetType() == ']') {
-                OnLambda(sc);
+            if(lastToken.GetType() == ']' || lastToken.GetType() == T_IDENTIFIER) {
+                // function, but its basically the same as lambda
+                wxString function_args_buffer;
+                bool push_scope = false;
+                if(OnFunction(sc, function_args_buffer, &push_scope) && push_scope) {
+                    PushBuffer();
+                    // append the function args to the next scope buffer
+                    Buffer() << ";" << function_args_buffer << ";";
+                }
             } else {
                 ++parenthesisDepth;
                 PushBuffer();
@@ -786,6 +810,62 @@ wxString& CxxVariableScanner::PopBuffer()
         m_buffers.erase(m_buffers.begin());
     }
     return m_buffers[0];
+}
+
+bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_buffer, bool* push_scope)
+{
+    CxxLexerToken tok;
+    int depth = 0;
+    bool cont = true;
+    *push_scope = false;
+    while(cont && ::LexerNext(scanner, tok)) {
+        switch(tok.GetType()) {
+        case '(':
+            ++depth;
+            function_args_buffer << tok.GetWXString();
+            break;
+        case ')':
+            if(depth == 0) {
+                cont = false;
+            } else {
+                --depth;
+                function_args_buffer << tok.GetWXString();
+            }
+            break;
+        case ',':
+            if(depth == 0) {
+                // change the , -> ;
+                // this makes it easier to our parser
+                function_args_buffer << ";";
+            } else {
+                function_args_buffer << ",";
+            }
+            break;
+        default:
+            function_args_buffer << tok.GetWXString() << " ";
+            break;
+        }
+    }
+
+    // we got all the function definition buffer
+    // peek at the next token, if it of type `{`
+    // consume it and tell the caller to switch buffer
+    wxString& buffer = Buffer();
+    if(!::LexerNext(scanner, tok)) {
+        buffer << function_args_buffer << " ";
+        return false;
+    }
+
+    if(tok.GetType() == '{') {
+        buffer << "){";     // ")" to close the function definition and the "{"
+        *push_scope = true; // tell the caller to push the current buffer
+                            // append the function definition buffer to the next buffer
+    } else {
+        ::LexerUnget(scanner);
+        // the function buffer should not be visible
+        buffer << ")"; // just close the function
+    }
+    return true;
 }
 
 bool CxxVariableScanner::OnLambda(Scanner_t scanner)

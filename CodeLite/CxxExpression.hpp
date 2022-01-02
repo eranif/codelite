@@ -30,6 +30,7 @@ public:
     enum eFlags {
         FLAGS_NONE = 0,
         FLAGS_AUTO = (1 << 0),
+        FLAGS_THIS = (1 << 1),
     };
 
 private:
@@ -68,6 +69,13 @@ public:
     const wxArrayString& subscript_params() const { return m_subscript_params; }
     const wxArrayString& func_call_params() const { return m_func_call_params; }
     bool is_auto() const { return m_flags & FLAGS_AUTO; }
+    bool is_this() const { return m_flags & FLAGS_THIS; }
+
+    /// example `subclass_pattern`:
+    /// `class ContextManager : public Singleton<ContextManager>, OtherClass, SecondClass<wxString, wxArrayString>`
+    /// returns:
+    /// {"Singleton<ContextManager>", "OtherClass", "SecondClass<wxString, wxArrayString>"}
+    static vector<wxString> split_subclass_expression(const wxString& subclass_pattern);
     static vector<CxxExpression> from_expression(const wxString& expression, CxxExpression* remainder);
 };
 

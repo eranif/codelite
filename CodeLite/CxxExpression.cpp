@@ -30,12 +30,12 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
         case T_DOUBLE_COLONS:
         case T_ARROW:
         case '.':
-            curexpr.m_operand = tk.GetType();
+            curexpr.set_operand(tk.GetType());
             arr.push_back(curexpr);
             curexpr = {};
             break;
         case '<':
-            parse_template(tokenizer, &curexpr.m_init_list);
+            parse_template(tokenizer, &curexpr.m_template_init_list);
             break;
         case '(':
             parse_func_call(tokenizer, &curexpr.m_func_call_params);
@@ -58,6 +58,7 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
 bool CxxExpression::parse_list(CxxTokenizer& tokenizer, wxArrayString* params, int open_char, int close_char)
 {
 #define ADD_IF_NOT_EMPTY(param)   \
+    param.Trim().Trim(false);     \
     if(!param.empty()) {          \
         params->push_back(param); \
     }
@@ -175,4 +176,173 @@ bool CxxExpression::handle_casting(CxxTokenizer& tokenizer, wxString* cast_type)
         }
     }
     return false;
+}
+
+wxString CxxExpression::template_placeholder_to_type(const wxString& placeholder) const
+{
+    if(m_template_placeholder_list.empty()) {
+        return wxEmptyString;
+    }
+
+    size_t index = 0;
+    for(; index < m_template_placeholder_list.size(); ++index) {
+        if(m_template_placeholder_list[index] == placeholder) {
+            break;
+        }
+    }
+
+    if(index == m_template_placeholder_list.size()) {
+        return wxEmptyString;
+    }
+
+    if(index >= m_template_init_list.size()) {
+        return wxEmptyString;
+    }
+    return m_template_init_list[index];
+}
+
+void CxxExpression::parse_template_placeholders(const wxString& expr)
+{
+#define CHECK_TYPE(Type)     \
+    if(tk.GetType() != Type) \
+    return
+#define ADD_PLACHOLDER()            \
+    placeholder.Trim().Trim(false); \
+    if(!placeholder.empty()) {      \
+        arr.Add(placeholder);       \
+        placeholder.clear();        \
+    }
+
+    CxxTokenizer tokenizer;
+    CxxLexerToken tk;
+
+    tokenizer.Reset(expr);
+    tokenizer.NextToken(tk);
+    CHECK_TYPE(T_TEMPLATE);
+
+    tokenizer.NextToken(tk);
+    CHECK_TYPE('<');
+
+    int depth = 1;
+
+    wxString placeholder;
+    wxArrayString arr;
+    bool cont = true;
+    constexpr int STATE_NORMAL = 0;
+    constexpr int STATE_DEFAULT_VALUE = 1;
+    int state = STATE_NORMAL;
+
+    while(cont && tokenizer.NextToken(tk)) {
+        if(tk.is_pp_keyword() || tk.is_keyword()) {
+            continue;
+        }
+        switch(state) {
+        case STATE_NORMAL:
+            switch(tk.GetType()) {
+            case ',':
+                if(depth == 1) {
+                    ADD_PLACHOLDER();
+                } else {
+                    placeholder << ",";
+                }
+                break;
+            case '<':
+                depth++;
+                placeholder << "<";
+                break;
+            case '>':
+                depth--;
+                if(depth == 0) {
+                    // we are done
+                    ADD_PLACHOLDER();
+                    cont = false;
+                } else {
+                    placeholder << ">";
+                }
+                break;
+            case '=':
+                if(depth == 1) {
+                    // default value -> skip it
+                    state = STATE_DEFAULT_VALUE;
+
+                } else {
+                    placeholder << "=";
+                }
+                break;
+
+            default:
+                placeholder << tk.GetWXString();
+                if(tk.is_builtin_type() || tk.GetType() == T_IDENTIFIER) {
+                    placeholder << " ";
+                }
+                break;
+            }
+            break;
+        case STATE_DEFAULT_VALUE:
+            // read until we find "," or end of template definition
+            switch(tk.GetType()) {
+            case '<':
+                depth++;
+                break;
+            case '>':
+                depth--;
+                if(depth == 0) {
+                    state = STATE_NORMAL;
+                    // let the default state handle this case
+                    tokenizer.UngetToken();
+                }
+                break;
+            case ',':
+                if(depth == 0) {
+                    state = STATE_NORMAL;
+                    // let the default state handle this case
+                    tokenizer.UngetToken();
+                }
+                break;
+            default:
+                break;
+            }
+            break;
+        }
+    }
+    m_template_placeholder_list.swap(arr);
+
+#undef CHECK_TYPE
+#undef ADD_PLACHOLDER
+}
+
+wxStringMap_t CxxExpression::get_template_placeholders_map() const
+{
+    wxStringMap_t M;
+    size_t count = min(m_template_placeholder_list.size(), m_template_init_list.size());
+    for(size_t i = 0; i < count; i++) {
+        M.insert({ m_template_placeholder_list[i], m_template_init_list[i] });
+    }
+    return M;
+}
+
+void CxxExpression::copy_template_info(const CxxExpression& other)
+{
+    m_template_placeholder_list = other.m_template_placeholder_list;
+    m_template_init_list = other.m_template_init_list;
+}
+
+const wxString& CxxExpression::operand_string() const { return m_operand_string; }
+
+void CxxExpression::set_operand(int op)
+{
+    m_operand = op;
+    switch(m_operand) {
+    case T_DOUBLE_COLONS:
+        m_operand_string = "::";
+        break;
+    case T_ARROW:
+        m_operand_string = "->";
+        break;
+    case '.':
+        m_operand_string = ".";
+        break;
+    default:
+        break;
+    }
 }

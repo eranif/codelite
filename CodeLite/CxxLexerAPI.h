@@ -26,15 +26,16 @@
 #ifndef CppLexerAPI_H__
 #define CppLexerAPI_H__
 
-#include <wx/filename.h>
+#include "wxStringHash.h"
+
+#include <codelite_exports.h>
+#include <list>
+#include <map>
 #include <string.h>
+#include <vector>
+#include <wx/filename.h>
 #include <wx/string.h>
 #include <wx/variant.h>
-#include <map>
-#include <list>
-#include <vector>
-#include <codelite_exports.h>
-#include "wxStringHash.h"
 
 #if 0
 #define DEBUGMSG wxPrintf
@@ -72,8 +73,7 @@ enum eLexerOptions {
 
 enum class eCxxStandard { kCxx03, kCxx11 };
 
-struct WXDLLIMPEXP_CL CxxLexerException
-{
+struct WXDLLIMPEXP_CL CxxLexerException {
     wxString message;
     CxxLexerException(const wxString& msg)
         : message(msg)
@@ -81,8 +81,7 @@ struct WXDLLIMPEXP_CL CxxLexerException
     }
 };
 
-struct WXDLLIMPEXP_CL CxxLexerToken
-{
+struct WXDLLIMPEXP_CL CxxLexerToken {
 private:
     int lineNumber;
     int column;
@@ -118,7 +117,13 @@ public:
     wxString GetWXComment() const { return wxString(comment.c_str(), wxConvISO8859_1); }
     wxString GetWXString() const { return wxString(text, wxConvISO8859_1); }
     int GetType() const { return type; }
-    
+
+    bool is_builtin_type() const;
+    bool is_keyword() const;
+    bool is_pp_keyword() const;
+    bool is_operator() const;
+    bool is_number() const;
+
     CxxLexerToken()
         : lineNumber(0)
         , column(0)
@@ -139,7 +144,8 @@ public:
 
     CxxLexerToken(const CxxLexerToken& other)
     {
-        if(this == &other) return;
+        if(this == &other)
+            return;
         *this = other;
     }
 
@@ -167,8 +173,7 @@ public:
     typedef std::list<CxxLexerToken> List_t;
 };
 
-struct WXDLLIMPEXP_CL CxxPreProcessorToken
-{
+struct WXDLLIMPEXP_CL CxxPreProcessorToken {
     wxString name;
     wxString value;
     bool deleteOnExit;
@@ -181,8 +186,7 @@ struct WXDLLIMPEXP_CL CxxPreProcessorToken
 /**
  * @class CppLexerUserData
  */
-struct WXDLLIMPEXP_CL CppLexerUserData
-{
+struct WXDLLIMPEXP_CL CppLexerUserData {
 private:
     size_t m_flags;
     std::string m_comment;

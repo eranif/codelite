@@ -382,6 +382,7 @@
     <File Name="pptable.cpp"/>
     <File Name="pptable.h"/>
     <VirtualDirectory Name="CxxPreProcessor">
+      <File Name="CxxLexerAPI.cpp"/>
       <File Name="CxxLexer.cpp"/>
       <File Name="CxxLexerAPI.h"/>
       <File Name="CxxPreProcessor.cpp"/>

@@ -367,11 +367,11 @@ TEST_FUNC(test_cxx_expression)
     vector<CxxExpression> exp1 = CxxExpression::from_expression("std::vector<int>::", &remainder);
     CHECK_SIZE(exp1.size(), 2);
     CHECK_EXPECTED(exp1[0].type_name(), "std");
-    CHECK_EXPECTED(exp1[0].operand(), T_DOUBLE_COLONS);
+    CHECK_EXPECTED(exp1[0].operand_string(), "::");
 
     CHECK_EXPECTED(exp1[1].type_name(), "vector");
-    CHECK_EXPECTED(exp1[1].operand(), T_DOUBLE_COLONS);
-    CHECK_EXPECTED(exp1[1].init_list().size(), 1);
+    CHECK_EXPECTED(exp1[1].operand_string(), "::");
+    CHECK_EXPECTED(exp1[1].template_init_list().size(), 1);
 
     vector<CxxExpression> exp2 = CxxExpression::from_expression("string.AfterFirst('(').", &remainder);
     CHECK_SIZE(exp2.size(), 2);
@@ -382,12 +382,59 @@ TEST_FUNC(test_cxx_expression)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_template)
+{
+    ENSURE_DB_LOADED();
+    auto lookup = TagsManagerST::Get()->GetDatabase();
+    const wxStringMap_t& tokens_map = TagsManagerST::Get()->GetCtagsOptions().GetTokensWxMap();
+    {
+        wxString text = "wxVector<wxString> V;";
+        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        TagEntryPtr resolved = cc.code_complete("V.at(0).", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        wxString text = "map<wxString, wxArrayString> M;";
+        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        TagEntryPtr resolved = cc.code_complete("M.at(str).", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxArrayString");
+    }
+
+    {
+        wxString text = "shared_ptr<wxString> P;";
+        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        TagEntryPtr resolved = cc.code_complete("P.", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "std::shared_ptr");
+    }
+
+    {
+        wxString text = "shared_ptr<wxString> P;";
+        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        TagEntryPtr resolved = cc.code_complete("P->", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion)
 {
     ENSURE_DB_LOADED();
 
     auto lookup = TagsManagerST::Get()->GetDatabase();
     const wxStringMap_t& tokens_map = TagsManagerST::Get()->GetCtagsOptions().GetTokensWxMap();
+
+    {
+        wxString text = "std::string str;";
+        CxxCodeCompletion cc{ lookup, &tokens_map, &text };
+        TagEntryPtr resolved = cc.code_complete("str.", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "std::basic_string");
+    }
 
     {
         CxxCodeCompletion cc{ lookup, &tokens_map, &cc_text_auto_chained };

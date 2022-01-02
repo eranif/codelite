@@ -1,5 +1,7 @@
 #include "CxxTokenizer.h"
+
 #include "CxxScannerTokens.h"
+
 #include <stack>
 
 #define SCP_STATE_NORMAL 0

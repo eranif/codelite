@@ -14,6 +14,7 @@ using namespace std;
 
 class WXDLLIMPEXP_CL CxxCodeCompletion
 {
+private:
     struct __local {
     private:
         wxString _type_name;
@@ -36,28 +37,35 @@ class WXDLLIMPEXP_CL CxxCodeCompletion
         void set_is_auto(bool b) { _is_auto = b; }
     };
 
+private:
     ITagsStoragePtr m_lookup;
     const wxStringMap_t* m_tokens_map = nullptr;
     const wxString* m_text = nullptr;
     unordered_map<wxString, __local> m_locals;
     wxString m_optimized_scope;
+    vector<pair<wxStringMap_t, CxxExpression*>> m_template_placeholders;
 
 private:
     void reset();
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;
-    TagEntryPtr find_by_name_and_path(const wxString& name, const vector<wxString>& visible_scopes) const;
-    TagEntryPtr find_by_name_and_path_and_kind(const wxString& name, const vector<wxString>& visible_scopes,
-                                               const vector<wxString>& kinds) const;
+    TagEntryPtr lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes);
+    TagEntryPtr lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
+                                      const vector<wxString>& kinds);
+    TagEntryPtr lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes);
 
+    TagEntryPtr lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
+                                    const vector<wxString>& visible_scopes);
+
+    wxString typedef_from_tag(TagEntryPtr tag) const;
     wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals) const;
-    TagEntryPtr resolve_expression(const CxxExpression& curexp, TagEntryPtr parent,
-                                   const vector<wxString>& visible_scopes) const;
-    TagEntryPtr resolve_compound_expression(const vector<CxxExpression>& expression,
-                                            const vector<wxString>& visible_scopes) const;
+    TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
+    TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes);
 
     const wxStringMap_t& get_tokens_map() const;
     const wxString& get_text() const;
     wxString get_return_value(TagEntryPtr tag) const;
+    wxString resolve_placeholder(const wxString& s) const;
+    vector<wxString> update_visible_scope(const vector<wxString>& curscopes, TagEntryPtr tag);
 
 public:
     CxxCodeCompletion(ITagsStoragePtr lookup, const wxStringMap_t* tokens_map, const wxString* text);

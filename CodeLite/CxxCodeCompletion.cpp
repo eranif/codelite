@@ -7,6 +7,8 @@
 #include "function.h"
 #include "language.h"
 
+#include <deque>
+
 CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const wxStringMap_t* tokens_map, const wxString* text)
     : m_lookup(lookup)
     , m_tokens_map(tokens_map)
@@ -35,8 +37,8 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
     return resolve_compound_expression(expr_arr, scopes);
 }
 
-TagEntryPtr CxxCodeCompletion::resolve_compound_expression(const vector<CxxExpression>& expression,
-                                                           const vector<wxString>& visible_scopes) const
+TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>& expression,
+                                                           const vector<wxString>& visible_scopes)
 {
     // resolve each expression
     if(expression.empty()) {
@@ -44,7 +46,7 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(const vector<CxxExpre
     }
 
     TagEntryPtr resolved;
-    for(const CxxExpression& curexpr : expression) {
+    for(CxxExpression& curexpr : expression) {
         resolved = resolve_expression(curexpr, resolved, visible_scopes);
         CHECK_PTR_RET_NULL(resolved);
     }
@@ -69,9 +71,80 @@ wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxS
     return trimmed_text;
 }
 
-TagEntryPtr CxxCodeCompletion::find_by_name_and_path_and_kind(const wxString& name,
-                                                              const vector<wxString>& visible_scopes,
-                                                              const vector<wxString>& kinds) const
+TagEntryPtr CxxCodeCompletion::lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes)
+{
+    return lookup_child_symbol(parent, "operator->", visible_scopes);
+}
+
+TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
+                                                   const vector<wxString>& visible_scopes)
+{
+    // to avoid spaces and other stuff that depends on the user typing
+    // we tokenize the symbol name
+    vector<wxString> requested_symbol_tokens;
+    {
+        CxxLexerToken tok;
+        CxxTokenizer tokenizer;
+        tokenizer.Reset(child_symbol);
+        while(tokenizer.NextToken(tok)) {
+            requested_symbol_tokens.push_back(tok.GetWXString());
+        }
+    }
+
+    auto compare_tokens_func = [&requested_symbol_tokens](const wxString& symbol_name) -> bool {
+        CxxLexerToken tok;
+        CxxTokenizer tokenizer;
+        tokenizer.Reset(symbol_name);
+        for(const wxString& token : requested_symbol_tokens) {
+            if(!tokenizer.NextToken(tok)) {
+                return false;
+            }
+
+            if(tok.GetWXString() != token)
+                return false;
+        }
+
+        // if we can read more tokens from the tokenizer, it means that
+        // the comparison is not complete, it "contains" the requested name
+        if(tokenizer.NextToken(tok)) {
+            return false;
+        }
+        return true;
+    };
+
+    deque<TagEntryPtr> q;
+    q.push_front(parent);
+    wxStringSet_t visited;
+    while(!q.empty()) {
+        auto t = q.front();
+        q.pop_front();
+
+        // avoid visiting the same tag twice
+        if(!visited.insert(t->GetPath()).second)
+            continue;
+
+        vector<TagEntryPtr> tags;
+        m_lookup->GetTagsByScope(t->GetPath(), tags);
+        for(TagEntryPtr child : tags) {
+            if(compare_tokens_func(child->GetName())) {
+                return child;
+            }
+        }
+
+        // if we got here, no match
+        wxArrayString inherits = t->GetInheritsAsArrayNoTemplates();
+        for(const wxString& inherit : inherits) {
+            auto match = lookup_symbol_by_kind(inherit, visible_scopes, { "class", "struct" });
+            if(match) {
+                q.push_back(match);
+            }
+        }
+    }
+    return nullptr;
+}
+
+TagEntryPtr CxxCodeCompletion::lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
+                                                     const vector<wxString>& kinds)
 {
     vector<TagEntryPtr> tags;
     for(const wxString& scope : visible_scopes) {
@@ -89,27 +162,63 @@ TagEntryPtr CxxCodeCompletion::find_by_name_and_path_and_kind(const wxString& na
     return tags.empty() ? nullptr : tags[0];
 }
 
-TagEntryPtr CxxCodeCompletion::find_by_name_and_path(const wxString& name, const vector<wxString>& visible_scopes) const
+TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes)
 {
-    // try classes first
-    auto tag =
-        find_by_name_and_path_and_kind(name, visible_scopes, { "class", "struct", "namespace", "enum", "union" });
-    if(!tag) {
-        // try methods
-        return find_by_name_and_path_and_kind(name, visible_scopes, { "function", "prototype" });
+    wxString name_to_find = curexpr.type_name();
+    wxString placeholder_resolved = resolve_placeholder(name_to_find);
+    if(!placeholder_resolved.empty()) {
+        name_to_find = placeholder_resolved;
     }
-    return tag;
+
+    // try classes first
+    auto resolved = lookup_symbol_by_kind(name_to_find, visible_scopes,
+                                          { "typedef", "class", "struct", "namespace", "enum", "union" });
+    if(!resolved) {
+        // try methods
+        resolved = lookup_symbol_by_kind(name_to_find, visible_scopes, { "function", "prototype" });
+    }
+
+    if(resolved) {
+        if(curexpr.is_template()) {
+            // now that we resolved this expression, we can build our template placeholder list
+            curexpr.parse_template_placeholders(resolved->GetPatternClean());
+            m_template_placeholders.insert(m_template_placeholders.begin(),
+                                           { curexpr.get_template_placeholders_map(), &curexpr });
+        }
+
+        // Check for operator-> overloading
+        if(curexpr.operand_string() == "->") {
+            // search for operator-> overloading
+            TagEntryPtr arrow_tag = lookup_operator_arrow(resolved, visible_scopes);
+            if(arrow_tag) {
+                resolved = arrow_tag;
+            }
+        }
+    }
+    return resolved;
 }
 
-TagEntryPtr CxxCodeCompletion::resolve_expression(const CxxExpression& curexp, TagEntryPtr parent,
-                                                  const vector<wxString>& visible_scopes) const
+vector<wxString> CxxCodeCompletion::update_visible_scope(const vector<wxString>& curscopes, TagEntryPtr tag)
+{
+    vector<wxString> scopes;
+    scopes.insert(scopes.end(), curscopes.begin(), curscopes.end());
+
+    if(tag && (tag->IsContainer() || tag->IsTypedef())) {
+        prepend_scope(scopes, tag->GetPath());
+    } else if(tag && tag->IsMethod()) {
+        prepend_scope(scopes, tag->GetScope());
+    }
+    return scopes;
+}
+
+TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntryPtr parent,
+                                                  const vector<wxString>& visible_scopes)
 {
     // test locals first, if its empty, its the first time we are entering here
     if(!parent) {
-        if(curexp.operand() == '.' || curexp.operand() == T_ARROW) {
+        if(curexp.operand_string() == "." || curexp.operand_string() == "->") {
             if(m_locals.count(curexp.type_name())) {
-                wxString exprstr =
-                    m_locals.find(curexp.type_name())->second.type_name() + (wxString() << (char)curexp.operand());
+                wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
                 vector<CxxExpression> expr_arr = CxxExpression::from_expression(exprstr, nullptr);
                 return resolve_compound_expression(expr_arr, visible_scopes);
             }
@@ -117,15 +226,9 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(const CxxExpression& curexp, T
     }
 
     // update the visible scopes
-    vector<wxString> scopes;
-    if(parent && parent->IsContainer()) {
-        prepend_scope(scopes, parent->GetPath());
-    } else if(parent && parent->IsMethod()) {
-        prepend_scope(scopes, parent->GetScope());
-    }
+    vector<wxString> scopes = update_visible_scope(visible_scopes, parent);
 
-    scopes.insert(scopes.end(), visible_scopes.begin(), visible_scopes.end());
-    auto resolved = find_by_name_and_path(curexp.type_name(), scopes);
+    auto resolved = lookup_symbol(curexp, scopes);
     CHECK_PTR_RET_NULL(resolved);
 
     if(resolved->IsContainer()) {
@@ -138,9 +241,17 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(const CxxExpression& curexp, T
         return nullptr;
     }
 
+    // after we resolved the expression, update the scope
+    scopes = update_visible_scope(scopes, resolved);
+
     if(resolved->IsMethod()) {
         // parse the return value
-        wxString new_expr = get_return_value(resolved) + (wxString() << (char)curexp.operand());
+        wxString new_expr = get_return_value(resolved) + curexp.operand_string();
+        vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
+        return resolve_compound_expression(expr_arr, scopes);
+    } else if(resolved->IsTypedef()) {
+        // substitude the type with the typeref
+        wxString new_expr = typedef_from_tag(resolved) + curexp.operand_string();
         vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
         return resolve_compound_expression(expr_arr, scopes);
     }
@@ -194,4 +305,90 @@ void CxxCodeCompletion::reset()
 {
     m_locals.clear();
     m_optimized_scope.clear();
+    m_template_placeholders.clear();
+}
+
+wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
+{
+    if(!tag->IsTypedef()) {
+        return wxEmptyString;
+    }
+
+    wxString pattern = tag->GetPatternClean();
+    CxxTokenizer tkzr;
+    CxxLexerToken tk;
+
+    tkzr.Reset(pattern);
+
+    wxString typedef_str;
+    vector<wxString> V;
+    wxString last_identifier;
+    if(!tkzr.NextToken(tk)) {
+        return wxEmptyString;
+    }
+
+    if(tk.GetType() == T_USING) {
+        // "using" syntax:
+        // using element_type = _Tp;
+        // read until the "=";
+
+        // consume everything until we find the "="
+        while(tkzr.NextToken(tk)) {
+            if(tk.GetType() == '=')
+                break;
+        }
+
+        // read until the ";"
+        while(tkzr.NextToken(tk)) {
+            if(tk.GetType() == ';') {
+                break;
+            }
+            if(tk.is_builtin_type()) {
+                V.push_back((V.empty() ? "" : " ") + tk.GetWXString() + " ");
+            } else {
+                V.push_back(tk.GetWXString());
+            }
+        }
+
+    } else if(tk.GetType() == T_TYPEDEF) {
+        // standard "typedef" syntax:
+        // typedef wxString MyString;
+        while(tkzr.NextToken(tk)) {
+            if(tk.is_keyword()) {
+                continue;
+            }
+            if(tk.GetType() == ';') {
+                // end of typedef
+                if(!V.empty()) {
+                    V.pop_back();
+                }
+                break;
+            } else {
+                if(tk.is_builtin_type()) {
+                    V.push_back((V.empty() ? "" : " ") + tk.GetWXString() + " ");
+                } else {
+                    V.push_back(tk.GetWXString());
+                }
+            }
+        }
+    }
+
+    if(V.empty()) {
+        return wxEmptyString;
+    }
+
+    for(const wxString& s : V) {
+        typedef_str << s;
+    }
+    return typedef_str.Trim();
+}
+
+wxString CxxCodeCompletion::resolve_placeholder(const wxString& s) const
+{
+    for(size_t i = 0; i < m_template_placeholders.size(); ++i) {
+        if(m_template_placeholders[i].first.count(s)) {
+            return m_template_placeholders[i].first.find(s)->second;
+        }
+    }
+    return wxEmptyString;
 }

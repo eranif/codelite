@@ -1,4 +1,6 @@
-# TODO
+---------------------------------------------
+# Move hard coded CC from CodeLite to CTagsd
+---------------------------------------------
 
 - **DONE** `Add include file` should be moved to LSP via new event `wxEVT_LSP_FIND_HEADER`
 - **DONE** `Outline Plugin` -> move to LSP
@@ -29,6 +31,22 @@
 
 - Implement: `lsp_rename_symbol`
 - Add un-implemented functions does not work in first time
-- json_rpc_params.cpp:156 -> completion does not work for ctagsd
-- wrong `auto` resolved in languageserver.cpp:234
 - line margin: use the colours read from the theme
+
+---------------------
+New CTagsd CC engine:
+---------------------
+
+- **DONE** Support `auto` keywords
+- **DONE** support nested `auto` keywords
+- **DONE** Support typedef
+- **DONE** Support `using namespace`
+- **DONE** Support basic template`
+- **DONE** Support `operator->`
+- Supoprt `this->`
+- Support `operator[]`
+- Support `::` (global namespace typing)
+- Support template inheritance
+- Support ref rvalue (`&&`)
+- Add recursive safety guards
+- User types (do we need them now??)

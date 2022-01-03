@@ -276,45 +276,22 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
         if(fn.FileExists()) {
             // if we resolved it now, open the file there is no point in searching this file
             // in m_buildInfoPerFile since the key on this map is kept as full name
-            clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(fn.GetFullPath());
-            if(!editor) {
-                editor = clMainFrame::Get()->GetMainBook()->OpenFile(fn.GetFullPath(), wxEmptyString,
-                                                                     cd->match_pattern.line_number);
-            }
-
-            CHECK_PTR_RET(editor);
-            DoCentreErrorLine(&cd->match_pattern, editor, true);
+            int line_number = cd->match_pattern.line_number;
+            int column = cd->match_pattern.column - 1;
+            auto cb = [=](IEditor* editor) {
+                editor->CenterLine(line_number, column);
+                editor->SetActive();
+            };
+            clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));
         }
     }
 }
 
 void BuildTab::DoCentreErrorLine(Compiler::PatternMatch* match_result, clEditor* editor, bool centerLine)
 {
-    // We already got compiler markers set here, just goto the line
-    clMainFrame::Get()->GetMainBook()->SelectPage(editor);
-    CHECK_PTR_RET(match_result);
-
-    // Convert the compiler column to scintilla's position
-    if(match_result->column != wxNOT_FOUND) {
-        editor->CenterLine(match_result->line_number, match_result->column - 1);
-    } else {
-        editor->CenterLine(match_result->line_number);
-    }
-
-    if(centerLine) {
-        auto stc = editor->GetCtrl();
-        // If the line in the build error tab is not visible, ensure it is
-        int linesOnScreen = stc->LinesOnScreen();
-
-        // Our line is not visible
-        int firstVisibleLine = match_result->line_number - (linesOnScreen / 2);
-        if(firstVisibleLine < 0) {
-            firstVisibleLine = 0;
-        }
-        stc->EnsureVisible(firstVisibleLine);
-        stc->SetFirstVisibleLine(firstVisibleLine);
-    }
-    SetActive(editor);
+    wxUnusedVar(match_result);
+    wxUnusedVar(editor);
+    wxUnusedVar(centerLine);
 }
 
 void BuildTab::OnContextMenu(wxDataViewEvent& e)

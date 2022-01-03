@@ -264,6 +264,11 @@ public:
     virtual void GetSubscriptOperator(const wxString& scope, std::vector<TagEntryPtr>& tags);
 
     /**
+     * @brief determine the current scope based on file name and line number
+     */
+    virtual wxString GetScope(const wxString& filename, int line_number);
+
+    /**
      * Begin transaction.
      */
     void Begin()

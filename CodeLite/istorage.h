@@ -300,6 +300,11 @@ public:
     virtual wxString GetSchemaVersion() const = 0;
 
     /**
+     * @brief determine the current scope based on file name and line number
+     */
+    virtual wxString GetScope(const wxString& filename, int line_number) = 0;
+
+    /**
      * @brief
      * @param fileName
      * @param scopeName

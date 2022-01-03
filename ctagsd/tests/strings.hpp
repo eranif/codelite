@@ -509,6 +509,385 @@ wxTerminalColourHandler::wxTerminalColourHandler()
     m_colours.insert({ 30, wxColour(1, 1, 1) });
 )";
 
+const wxString cc_text_ProtocolHandler = R"(
+#include "CTags.hpp"
+#include "CompletionHelper.hpp"
+#include "CxxCodeCompletion.hpp"
+#include "CxxPreProcessor.h"
+#include "CxxScannerTokens.h"
+#include "CxxTokenizer.h"
+#include "CxxUsingNamespaceCollector.h"
+#include "CxxVariableScanner.h"
+#include "LSP/LSPEvent.h"
+#include "LSP/basic_types.h"
+#include "LSPUtils.hpp"
+#include "ProtocolHandler.hpp"
+#include "Scanner.hpp"
+#include "Settings.hpp"
+#include "SimpleTokenizer.hpp"
+#include "clFilesCollector.h"
+#include "cl_calltip.h"
+#include "crawler_include.h"
+#include "ctags_manager.h"
+#include "fc_fileopener.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
+#include "tags_options_data.h"
+#include "tags_storage_sqlite3.h"
+
+#include <deque>
+#include <iostream>
+#include <wx/filesys.h>
+
+using LSP::CompletionItem;
+using LSP::eSymbolKind;
+
+namespace
+{
+wxStopWatch sw;
+FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
+{
+    wxString s;
+    s << tag.GetKind() << ", " << tag.GetDisplayName() << ", " << tag.GetPatternClean();
+    logger.Append(s, logger.GetRequestedLogLevel());
+    return logger;
+}
+
+FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
+{
+    for(const auto& tag : tags) {
+        logger << (*tag) << endl;
+    }
+    return logger;
+}
+
+wxString MapToString(const wxStringMap_t& m)
+{
+    wxString s;
+    for(const auto& vt : m) {
+        s << vt.first;
+        if(!vt.second.empty()) {
+            s << "=" << vt.second;
+        }
+        s << "\n";
+    }
+    return s;
+}
+
+void start_timer() { sw.Start(); }
+
+wxString stop_timer()
+{
+    long ms = sw.Time();
+    long seconds = ms / 1000;
+    ms = seconds % 1000;
+
+    wxString elapsed;
+    elapsed << _("Time elapsed: ") << seconds << "." << ms << _(" seconds");
+    return elapsed;
+}
+
+/**
+ * @brief given a list of files, remove all non c/c++ files from it
+ */
+void filter_non_important_files(wxArrayString& files, const CTagsdSettings& settings)
+{
+    wxArrayString tmparr;
+    tmparr.reserve(files.size());
+
+    // filter non c/c++ files
+    wxArrayString ignore_spec = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
+    auto should_skip_file = [&](const wxString& file_full_path) -> bool {
+        for(const wxString& spec : ignore_spec) {
+            if(file_full_path.Contains(spec)) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    for(wxString& file : files) {
+
+        file.Trim().Trim(false);
+        wxFileName fn(file);
+        wxString fullpath = fn.GetFullPath(wxPATH_UNIX);
+        if(should_skip_file(fullpath)) {
+            continue;
+        }
+
+        if(FileExtManager::IsCxxFile(file)) {
+            tmparr.Add(file);
+        }
+    }
+    tmparr.swap(files);
+}
+
+/**
+ * @brief recurse into `dir` collect all files that matches the `settings.GetFileMask`
+ * @param dir root folder to scan
+ * @param settings `settings.json` object
+ * @param files [output]
+ */
+void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString& files)
+{
+    clDEBUG() << "Searching for files to..." << endl;
+
+    clFilesScanner scanner;
+    wxArrayString exclude_folders_arr = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
+    scanner.Scan(dir, files, settings.GetFileMask(), wxEmptyString, settings.GetIgnoreSpec());
+    filter_non_important_files(files, settings);
+}
+} // namespace
+
+ProtocolHandler::ProtocolHandler() {}
+
+ProtocolHandler::~ProtocolHandler() {}
+
+void ProtocolHandler::send_log_message(const wxString& message, int level, Channel& channel)
+{
+    JSON root(cJSON_Object);
+    JSONItem notification = root.toElement();
+    notification.addProperty("method", "window/logMessage");
+    notification.addProperty("jsonrpc", "2.0");
+    auto params = notification.AddObject("params");
+    params.addProperty("message", wxString() << "P:" << wxGetProcessId() << ": " << message);
+    params.addProperty("type", level);
+
+    channel.write_reply(notification.format(false));
+}
+
+JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_kind)
+{
+    reply.addProperty("id", id);
+    reply.addProperty("jsonrpc", "2.0");
+
+    auto result = result_kind == cJSON_Array ? reply.AddArray("result") : reply.AddObject("result");
+    return result;
+}
+
+void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
+{
+    clDEBUG() << "Parsing" << files.size() << "files" << endl;
+    clDEBUG() << "Removing un-modified and unwanted files..." << endl;
+    // create/open db
+    wxFileName dbfile(m_settings_folder, "tags.db");
+    if(!dbfile.FileExists()) {
+        clDEBUG() << dbfile << "does not exist, will create it" << endl;
+    }
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    db->OpenDatabase(dbfile);
+
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
+    start_timer();
+
+    clDEBUG() << "There are total of" << files.size() << "files that require parsing" << endl;
+    if(channel) {
+        send_log_message(wxString() << _("Generating ctags file for: ") << files.size() << _(" files"), LSP_LOG_INFO,
+                         *channel);
+    }
+    clDEBUG() << "Generating ctags file..." << endl;
+    if(!CTags::Generate(files, m_settings_folder, m_settings.GetCodeliteIndexer())) {
+        if(channel) {
+            send_log_message(_("Failed to generate `ctags` file"), LSP_LOG_ERROR, *channel);
+        }
+        clERROR() << "Failed to generate ctags file!" << endl;
+        return;
+    }
+    clDEBUG() << "Success" << endl;
+
+    if(channel) {
+        send_log_message(wxString() << _("Success (") << stop_timer() << ") ", LSP_LOG_INFO, *channel);
+    }
+
+    // update the DB
+    wxStringSet_t updatedFiles;
+    CTags ctags(m_settings_folder);
+    if(!ctags.IsOpened()) {
+        clWARNING() << "Failed to open ctags file under:" << m_settings_folder << endl;
+        return;
+    }
+
+    wxString curfile;
+
+    // build the database
+    TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile);
+    if(channel) {
+        send_log_message(_("Updating symbols database..."), LSP_LOG_INFO, *channel);
+    }
+
+    start_timer();
+    clDEBUG() << "Updating symbols database..." << endl;
+    db->Begin();
+    size_t tagsCount = 0;
+    time_t update_time = time(nullptr);
+    while(ttp) {
+        ++tagsCount;
+
+        // Send notification to the main window with our progress report
+        db->DeleteByFileName({}, curfile, false);
+        db->Store(ttp, {}, false);
+
+        if((tagsCount % 1000) == 0) {
+            // Commit what we got so far
+            db->Commit();
+            // Start a new transaction
+            db->Begin();
+        }
+        ttp = ctags.GetTagsTreeForFile(curfile);
+    }
+
+    // update the files table in the database
+    // we do this here, since some files might not yield tags
+    // but we still want to mark them as "parsed"
+    for(const wxString& file : files) {
+        if(db->InsertFileEntry(file, (int)update_time) == TagExist) {
+            db->UpdateFileEntry(file, (int)update_time);
+        }
+    }
+
+    // Commit whats left
+    db->Commit();
+    if(channel) {
+        send_log_message(wxString() << _("Success (") << stop_timer() << ") ", LSP_LOG_INFO, *channel);
+    }
+    clDEBUG() << "Success" << endl;
+}
+
+vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath)
+{
+    // we need to visit each node in the file graph and create a set of all the namespaces
+    vector<wxString> additional_scopes;
+    if(m_additional_scopes.count(filepath)) {
+        additional_scopes = m_additional_scopes[filepath];
+    } else {
+        wxStringSet_t visited;
+        wxStringSet_t ns;
+        vector<wxString> Q;
+        Q.push_back(filepath);
+        while(!Q.empty()) {
+            // pop the front of queue
+            wxString file = Q.front();
+            Q.erase(Q.begin());
+
+            // sanity
+            if(m_parsed_files_info.count(file) == 0 // no info for this file
+               || visited.count(file))              // already visited this file
+            {
+                continue;
+            }
+            visited.insert(file);
+
+            // keep the info and traverse its children
+            const ParsedFileInfo& info = m_parsed_files_info[file];
+            ns.insert(info.using_namespace.begin(), info.using_namespace.end());
+
+            // append its children
+            Q.insert(Q.end(), info.included_files.begin(), info.included_files.end());
+        }
+
+        additional_scopes.insert(additional_scopes.end(), ns.begin(), ns.end());
+        // cache the result
+        m_additional_scopes.insert({ filepath, additional_scopes });
+    }
+    clDEBUG() << "Setting additional scopes for file:" << filepath << endl;
+    clDEBUG() << "Scopes:" << additional_scopes << endl;
+    TagsManagerST::Get()->GetLanguage()->UpdateAdditionalScopesCache(filepath, additional_scopes);
+    return additional_scopes;
+}
+
+bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id)
+{
+    if(m_filesOpened.count(filepath) == 0) {
+        // check if this file exists on the file system -> and load it instead of complaining about it
+        wxString file_content;
+        if(!wxFileExists(filepath) || !FileUtils::ReadFileContent(filepath, file_content)) {
+            clWARNING() << "File:" << filepath << "is not opened" << endl;
+            send_log_message(wxString() << _("File: `") << filepath << _("` is not opened on the server"),
+                             LSP_LOG_WARNING, channel);
+
+            JSON root(cJSON_Object);
+            auto response = root.toElement();
+            auto result = build_result(response, req_id, cJSON_Object);
+            channel.write_reply(response);
+            return false;
+        }
+
+        // update the cache
+        clDEBUG() << "Updated cache with non existing file:" << filepath << "is not opened" << endl;
+        m_filesOpened.insert({ filepath, file_content });
+    }
+    return true;
+}
+
+void ProtocolHandler::update_comments_for_file(const wxString& filepath)
+{
+    wxString file_content;
+    if(FileUtils::ReadFileContent(filepath, file_content)) {
+        update_comments_for_file(filepath, file_content);
+    }
+}
+
+void ProtocolHandler::update_comments_for_file(const wxString& filepath, const wxString& file_content)
+{
+    m_comments_cache.erase(filepath);
+    if(file_content.empty()) {
+        return;
+    }
+
+    SimpleTokenizer tokenizer(file_content);
+    SimpleTokenizer::Token token;
+    CachedComment::Map_t file_cache;
+    while(tokenizer.next_comment(&token)) {
+        wxString comment = token.to_string(file_content);
+        tokenizer.strip_comment(comment);
+        file_cache.insert({ token.line(), comment });
+    }
+    m_comments_cache.insert({ filepath, file_cache });
+}
+
+const wxString& ProtocolHandler::get_comment(const wxString& filepath, long line, const wxString& default_value) const
+{
+    if(m_comments_cache.count(filepath) == 0) {
+        return default_value;
+    }
+    const auto& M = m_comments_cache.find(filepath)->second;
+    // try to find a comment, 1 or 2 lines above the requested line
+    for(long curline = line; curline > (line - 3); --curline) {
+        if(M.count(curline)) {
+            return M.find(curline)->second;
+        }
+    }
+    return default_value;
+}
+
+bool ProtocolHandler::do_comments_exist_for_file(const wxString& filepath) const
+{
+    return m_comments_cache.count(filepath) != 0;
+}
+
+size_t ProtocolHandler::read_file_list(wxArrayString& arr) const
+{
+    arr.clear();
+    wxFileName file_list(m_settings_folder, "file_list.txt");
+    if(file_list.FileExists()) {
+        wxString file_list_content;
+        FileUtils::ReadFileContent(file_list, file_list_content);
+        wxArrayString files = wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
+        filter_non_important_files(files, m_settings);
+        arr.swap(files);
+    }
+    return arr.size();
+}
+
+//---------------------------------------------------------------------------------
+// protocol handlers
+//---------------------------------------------------------------------------------
+
+// Request <-->
+void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
+{
+)";
+
 // --------------------------- CxxCodeCompletion text ----------------------------------------
 
 const wxString cc_text_simple = R"(wxString str;)";

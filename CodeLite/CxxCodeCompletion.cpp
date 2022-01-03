@@ -21,12 +21,8 @@
         return;                     \
     }
 
-CxxCodeCompletion::CxxCodeCompletion(const wxString* text, const wxString& filename, int current_line)
-    : m_lookup(TagsManagerST::Get()->GetDatabase())
-    , m_tokens_map(&TagsManagerST::Get()->GetCtagsOptions().GetTokensWxMap())
-    , m_text(text)
-    , m_filename(filename)
-    , m_line_number(current_line)
+CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup)
+    : m_lookup(lookup)
 {
 }
 
@@ -38,10 +34,8 @@ void CxxCodeCompletion::determine_current_scope()
         return;
     }
 
-    TagEntryPtr func = TagsManagerST::Get()->FunctionFromFileLine(m_filename, m_line_number);
-    if(func) {
-        m_current_scope_name = func->GetScope();
-    }
+    CHECK_PTR_RET(m_lookup);
+    m_current_scope_name = m_lookup->GetScope(m_filename, m_line_number);
 }
 
 TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const vector<wxString>& visible_scopes,
@@ -68,10 +62,6 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
         global_scope->SetPath("<global>");
         return global_scope;
     }
-
-    m_locals.clear();
-    m_optimized_scope = shrink_scope(get_text(), &m_locals);
-    m_text_parsed = true;
     return resolve_compound_expression(expr_arr, scopes);
 }
 
@@ -128,6 +118,7 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, const wxS
                                                    const vector<wxString>& visible_scopes,
                                                    const vector<wxString>& kinds)
 {
+    CHECK_PTR_RET_NULL(m_lookup);
     auto resolved = lookup_symbol_by_kind(child_symbol, visible_scopes, kinds);
     if(resolved) {
         return resolved;
@@ -350,7 +341,8 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
         return resolve_compound_expression(expr_arr, scopes);
     } else if(resolved->IsTypedef()) {
         // substitude the type with the typeref
-        wxString new_expr = typedef_from_tag(resolved) + curexp.operand_string();
+        wxString new_expr = resolve_user_type(typedef_from_tag(resolved));
+        new_expr += curexp.operand_string();
         vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
         return resolve_compound_expression(expr_arr, scopes);
     } else if(resolved->IsMember()) {
@@ -368,23 +360,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
     return nullptr;
 }
 
-const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const
-{
-    static wxStringMap_t empty_map;
-    if(m_tokens_map) {
-        return *m_tokens_map;
-    }
-    return empty_map;
-}
-
-const wxString& CxxCodeCompletion::get_text() const
-{
-    static wxString empty_string;
-    if(m_text) {
-        return *m_text;
-    }
-    return empty_string;
-}
+const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const { return m_macros_table; }
 
 wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
 {
@@ -455,6 +431,10 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
             if(tk.GetType() == ';') {
                 break;
             }
+            if(tk.is_keyword()) {
+                // dont pick keywords
+                continue;
+            }
             if(tk.is_builtin_type()) {
                 V.push_back((V.empty() ? "" : " ") + tk.GetWXString() + " ");
             } else {
@@ -520,11 +500,6 @@ wxString CxxCodeCompletion::resolve_placeholder(const wxString& s) const
 
 vector<TagEntryPtr> CxxCodeCompletion::get_locals()
 {
-    if(!m_text_parsed) {
-        shrink_scope(get_text(), &m_locals);
-        m_text_parsed = true;
-    }
-
     vector<TagEntryPtr> locals;
     locals.reserve(m_locals.size());
 
@@ -542,14 +517,80 @@ vector<TagEntryPtr> CxxCodeCompletion::get_locals()
     return locals;
 }
 
-size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates)
+size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates,
+                                          const vector<wxString>& visible_scopes, size_t limit)
 {
     if(!parent) {
         return 0;
     }
-    lookup_child_symbol(parent, filter, )
+    vector<TagEntryPtr> scopes = get_scopes(parent, visible_scopes);
+    for(TagEntryPtr scope : scopes) {
+        vector<TagEntryPtr> children =
+            get_children_of_scope(scope, { "function", "prototype", "member", "enum", "enumerator" });
+        candidates.insert(candidates.end(), children.begin(), children.end());
+    }
+    return candidates.size();
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent)
+vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vector<wxString>& visible_scopes)
 {
+    vector<TagEntryPtr> scopes;
+    scopes.reserve(100);
+
+    deque<TagEntryPtr> q;
+    q.push_front(parent);
+    wxStringSet_t visited;
+    while(!q.empty()) {
+        auto t = q.front();
+        q.pop_front();
+
+        // avoid visiting the same tag twice
+        if(!visited.insert(t->GetPath()).second)
+            continue;
+
+        scopes.push_back(t);
+
+        // if we got here, no match
+        wxArrayString inherits = t->GetInheritsAsArrayNoTemplates();
+        for(const wxString& inherit : inherits) {
+            auto match = lookup_symbol_by_kind(inherit, visible_scopes, { "class", "struct" });
+            if(match) {
+                q.push_back(match);
+            }
+        }
+    }
+    return scopes;
+}
+
+vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds)
+{
+    if(!m_lookup) {
+        return {};
+    }
+
+    vector<TagEntryPtr> tags;
+    wxArrayString wx_kinds;
+    wx_kinds.reserve(kinds.size());
+    for(const wxString& kind : kinds) {
+        wx_kinds.Add(kind);
+    }
+    m_lookup->GetTagsByScopeAndKind(parent->GetPath(), wx_kinds, tags);
+    return tags;
+}
+
+void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename, int current_line)
+{
+    m_optimized_scope.clear();
+    m_locals.clear();
+    m_optimized_scope = shrink_scope(text, &m_locals);
+    m_filename = filename;
+    m_line_number = current_line;
+}
+
+wxString CxxCodeCompletion::resolve_user_type(const wxString& type) const
+{
+    if(m_types_table.count(type)) {
+        return m_types_table.find(type)->second;
+    }
+    return type;
 }

@@ -7,6 +7,7 @@
 #include "istorage.h"
 #include "macros.h"
 
+#include <memory>
 #include <vector>
 #include <wx/string.h>
 
@@ -46,8 +47,6 @@ private:
 
 private:
     ITagsStoragePtr m_lookup;
-    const wxStringMap_t* m_tokens_map = nullptr;
-    const wxString* m_text = nullptr;
     unordered_map<wxString, __local> m_locals;
     wxString m_optimized_scope;
     wxStringMap_t m_template_placeholders;
@@ -56,9 +55,10 @@ private:
     wxString m_current_scope_name;
     size_t m_recurse_protector = 0;
     bool m_text_parsed = false;
+    wxStringMap_t m_types_table; // helper table to solve what we cant (usually the limitations are coming from ctags)
+    wxStringMap_t m_macros_table;
 
 private:
-    void reset();
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;
     TagEntryPtr lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes, TagEntryPtr parent);
     TagEntryPtr lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
@@ -74,9 +74,14 @@ private:
     TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes);
 
     const wxStringMap_t& get_tokens_map() const;
-    const wxString& get_text() const;
     wxString get_return_value(TagEntryPtr tag) const;
     wxString resolve_placeholder(const wxString& s) const;
+
+    /**
+     * @brief apply user hacks
+     */
+    wxString resolve_user_type(const wxString& type) const;
+
     vector<wxString> update_visible_scope(const vector<wxString>& curscopes, TagEntryPtr tag);
     void update_template_table(TagEntryPtr resolved, CxxExpression& curexpr, const vector<wxString>& visible_scopes,
                                wxStringSet_t& visited);
@@ -92,11 +97,37 @@ private:
      * @brief given `parent` node, return list of all its parents, in order
      * of inheritance. the list contains the `parent` itself as the first entry
      */
-    vector<TagEntryPtr> get_scopes(TagEntryPtr parent);
+    vector<TagEntryPtr> get_scopes(TagEntryPtr parent, const vector<wxString>& visible_scopes);
+
+    vector<TagEntryPtr> get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds);
 
 public:
-    CxxCodeCompletion(const wxString* text, const wxString& filename = wxEmptyString, int current_line = wxNOT_FOUND);
+    typedef shared_ptr<CxxCodeCompletion> ptr_t;
+
+public:
+    CxxCodeCompletion(ITagsStoragePtr lookup);
     ~CxxCodeCompletion();
+
+    /**
+     * @brief reset the completer (clear all cached data)
+     */
+    void reset();
+
+    /**
+     * @brief set the typedef helper table
+     */
+    void set_types_table(const wxStringMap_t& t) { m_types_table = t; }
+
+    /**
+     * @brief set macros table
+     */
+    void set_macros_table(const wxStringMap_t& t) { m_macros_table = t; }
+
+    /**
+     * @brief replace the text
+     * this method resets the completer
+     */
+    void set_text(const wxString& text, const wxString& filename = wxEmptyString, int current_line = wxNOT_FOUND);
 
     /**
      * @brief parse an expression and resolve it into a TagEntry. If the expression does not end with
@@ -118,7 +149,8 @@ public:
     /**
      * @brief return list of completions filtered by name for a given parent
      */
-    size_t get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates);
+    size_t get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates,
+                           const vector<wxString>& visible_scopes, size_t limit = (size_t)-1);
 };
 
 #endif // CXXCODECOMPLETION_HPP

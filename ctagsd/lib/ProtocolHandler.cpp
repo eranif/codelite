@@ -452,6 +452,11 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
     TagsManagerST::Get()->SetCtagsOptions(tod);
     TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(tod.GetCcNumberOfDisplayItems());
+    m_completer.reset(new CxxCodeCompletion(TagsManagerST::Get()->GetDatabase()));
+    m_completer->set_macros_table(tod.GetTokensWxMap());
+
+    // needed for unique_ptr
+    m_completer->set_types_table({ { "_Ptr<_Tp,_Dp>::type", "_Tp" } });
     channel.write_reply(response.format(false));
 }
 
@@ -581,10 +586,12 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     if(is_trigger_char) {
         clDEBUG() << "CodeComplete expression:" << expression << endl;
         CxxExpression remainder;
-        CxxCodeCompletion cc{ &text };
-        TagEntryPtr resolved = cc.code_complete(expression, visible_scopes, &remainder);
+
+        m_completer->set_text(text);
+        TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
         if(resolved) {
-            cc.get_completions(resolved, candidates);
+            clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
+            m_completer->get_completions(resolved, remainder.type_name(), candidates, visible_scopes);
         }
         clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
         clDEBUG1() << candidates << endl;

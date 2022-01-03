@@ -3,6 +3,7 @@
 
 #include "Channel.hpp"
 #include "CodeLiteIndexer.hpp"
+#include "CxxCodeCompletion.hpp"
 #include "Scanner.hpp"
 #include "Settings.hpp"
 #include "istorage.h"
@@ -45,6 +46,7 @@ private:
     unordered_map<wxString, vector<wxString>> m_additional_scopes;
     wxArrayString m_search_paths;
     Scanner m_file_scanner;
+    CxxCodeCompletion::ptr_t m_completer;
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);

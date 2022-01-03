@@ -1845,3 +1845,22 @@ void TagsStorageSQLite::GetTagsByPathAndKind(const wxString& path, std::vector<T
     clDEBUG1() << "Running SQL:" << sql << endl;
     DoFetchTags(sql, tags);
 }
+
+wxString TagsStorageSQLite::GetScope(const wxString& filename, int line_number)
+{
+    if(filename.empty() || line_number == wxNOT_FOUND)
+        return wxEmptyString;
+
+    wxString sql;
+
+    sql << "select * from tags where file='" << filename << "' and line >= " << line_number
+        << " order by line asc limit 1";
+    clDEBUG1() << "Running SQL:" << sql << endl;
+    std::vector<TagEntryPtr> tags;
+    DoFetchTags(sql, tags);
+
+    if(tags.size() == 1) {
+        return tags[0]->GetScope();
+    }
+    return wxEmptyString;
+}

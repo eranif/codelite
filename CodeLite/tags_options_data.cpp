@@ -431,6 +431,7 @@ void TagsOptionsData::AddDefaultTypes()
     m_types.Add(wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>"));
     m_types.Add(wxT("boost::shared_ptr::type=T"));
     m_types.Add(wxT("std::unique_ptr::pointer=_Tp"));
+    m_types.Add(wxT("_Ptr<_Tp,_Dp>::type=_Tp"));
     m_types.Add(wxT("std::shared_ptr::element_type=_Tp"));
 }
 

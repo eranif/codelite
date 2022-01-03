@@ -101,7 +101,7 @@
 // 3. To convert literal strings, use _T()
 /////////////////////////////////////////////////////////////////////////////
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__CYGWIN__)
     #include <ctype.h>
     #undef _C /* _CTYPE_C */
     #undef _U /* _CTYPE_U */

@@ -88,6 +88,12 @@ private:
 
     size_t parse_locals(const wxString& text, unordered_map<wxString, __local>* locals) const;
 
+    /**
+     * @brief given `parent` node, return list of all its parents, in order
+     * of inheritance. the list contains the `parent` itself as the first entry
+     */
+    vector<TagEntryPtr> get_scopes(TagEntryPtr parent);
+
 public:
     CxxCodeCompletion(const wxString* text, const wxString& filename = wxEmptyString, int current_line = wxNOT_FOUND);
     ~CxxCodeCompletion();
@@ -108,6 +114,11 @@ public:
      * @brief return the local variables available for the current scope (passed in the c-tor)
      */
     vector<TagEntryPtr> get_locals();
+
+    /**
+     * @brief return list of completions filtered by name for a given parent
+     */
+    size_t get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates);
 };
 
 #endif // CXXCODECOMPLETION_HPP

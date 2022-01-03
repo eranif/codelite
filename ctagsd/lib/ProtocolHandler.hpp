@@ -54,7 +54,7 @@ private:
     void update_comments_for_file(const wxString& filepath);
     const wxString& get_comment(const wxString& filepath, long line, const wxString& default_value) const;
     bool do_comments_exist_for_file(const wxString& filepath) const;
-    void update_additional_scopes_for_file(const wxString& filepath);
+    vector<wxString> update_additional_scopes_for_file(const wxString& filepath);
     size_t read_file_list(wxArrayString& files) const;
     wxArrayString FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const;
     void do_definition(unique_ptr<JSON>&& msg, Channel& channel, bool try_definition_first);

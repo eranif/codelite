@@ -2,6 +2,7 @@
 
 #include "CTags.hpp"
 #include "CompletionHelper.hpp"
+#include "CxxCodeCompletion.hpp"
 #include "CxxPreProcessor.h"
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
@@ -241,7 +242,7 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
     clDEBUG() << "Success" << endl;
 }
 
-void ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath)
+vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath)
 {
     // we need to visit each node in the file graph and create a set of all the namespaces
     vector<wxString> additional_scopes;
@@ -280,6 +281,7 @@ void ProtocolHandler::update_additional_scopes_for_file(const wxString& filepath
     clDEBUG() << "Setting additional scopes for file:" << filepath << endl;
     clDEBUG() << "Scopes:" << additional_scopes << endl;
     TagsManagerST::Get()->GetLanguage()->UpdateAdditionalScopesCache(filepath, additional_scopes);
+    return additional_scopes;
 }
 
 bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id)
@@ -573,12 +575,17 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     wxString file_name;
     wxString suffix;
     bool is_include_completion = helper.is_include_statement(text, &file_name, &suffix);
-    update_additional_scopes_for_file(filepath);
+    vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
 
     vector<TagEntryPtr> candidates;
     if(is_trigger_char) {
         clDEBUG() << "CodeComplete expression:" << expression << endl;
-        TagsManagerST::Get()->AutoCompleteCandidates(filepath, line + 1, expression, text, candidates);
+        CxxExpression remainder;
+        CxxCodeCompletion cc{ &text };
+        TagEntryPtr resolved = cc.code_complete(expression, visible_scopes, &remainder);
+        if(resolved) {
+            cc.get_completions(resolved, candidates);
+        }
         clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
         clDEBUG1() << candidates << endl;
     } else if(is_function_calltip) {

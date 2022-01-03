@@ -541,3 +541,15 @@ vector<TagEntryPtr> CxxCodeCompletion::get_locals()
     }
     return locals;
 }
+
+size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates)
+{
+    if(!parent) {
+        return 0;
+    }
+    lookup_child_symbol(parent, filter, )
+}
+
+vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent)
+{
+}

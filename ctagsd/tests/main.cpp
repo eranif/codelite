@@ -87,6 +87,7 @@ bool initialize_cc_tests()
         wxString tags_db;
         if(!wxGetEnv("TAGS_DB", &tags_db)) {
             cc_initialised_successfully = false;
+            wxPrintf("Loading TAGS_DB=%s\n", tags_db);
         } else {
             wxFileName fn(tags_db);
             TagsManagerST::Get()->CloseDatabase();

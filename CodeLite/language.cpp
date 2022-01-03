@@ -22,11 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "crawler_include.h"
-#include "file_logger.h"
-#include "precompiled_header.h"
-#include <wx/regex.h>
-#include <wx/tokenzr.h>
+#include "language.h"
 
 #include "CompletionHelper.hpp"
 #include "CxxLexerAPI.h"
@@ -35,21 +31,25 @@
 #include "CxxTemplateFunction.h"
 #include "CxxUsingNamespaceCollector.h"
 #include "CxxVariableScanner.h"
+#include "crawler_include.h"
 #include "ctags_manager.h"
+#include "file_logger.h"
 #include "function.h"
-#include "language.h"
 #include "map"
 #include "pptable.h"
+#include "precompiled_header.h"
 #include "variable.h"
 #include "y.tab.h"
+
 #include <algorithm>
 #include <wx/ffile.h>
+#include <wx/regex.h>
 #include <wx/stopwatch.h>
+#include <wx/tokenzr.h>
 
 //#define __PERFORMANCE
-#include "performance.h"
-
 #include "code_completion_api.h"
+#include "performance.h"
 #include "scope_optimizer.h"
 
 static wxString PathFromNameAndScope(const wxString& typeName, const wxString& typeScope)
@@ -550,7 +550,7 @@ bool Language::ProcessExpression(const wxString& expr, const wxString& text, con
         CxxVariableScanner scanner(textAfterTokensReplacements, eCxxStandard::kCxx11, ignoreTokens, false);
         CxxVariable::Map_t localsMap = scanner.GetVariablesMap();
         m_locals.insert(localsMap.begin(), localsMap.end());
-        scanner.OptimizeBuffer(textAfterTokensReplacements, visibleScope);
+        visibleScope = scanner.GetOptimizeBuffer();
     }
 
     // parse the the current function's signature

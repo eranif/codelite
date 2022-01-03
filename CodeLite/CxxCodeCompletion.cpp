@@ -102,8 +102,8 @@ size_t CxxCodeCompletion::parse_locals(const wxString& text, unordered_map<wxStr
 wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals) const
 {
     CxxVariableScanner scanner(text, eCxxStandard::kCxx11, get_tokens_map(), false);
-    wxString trimmed_text;
-    scanner.OptimizeBuffer(text, trimmed_text);
+    const wxString& trimmed_text = scanner.GetOptimizeBuffer();
+
     CxxVariable::Vec_t variables = scanner.GetVariables(false);
     locals->reserve(variables.size());
 

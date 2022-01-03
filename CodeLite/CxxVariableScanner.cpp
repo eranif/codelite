@@ -33,15 +33,16 @@ CxxVariableScanner::CxxVariableScanner(const wxString& buffer, eCxxStandard stan
     m_nativeTypes.insert(T_UNSIGNED);
     m_nativeTypes.insert(T_VOID);
     m_nativeTypes.insert(T_WCHAR_T);
+    // optimize the buffer
+    DoOptimizeBuffer();
 }
 
 CxxVariableScanner::~CxxVariableScanner() {}
 
 CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
 {
-    wxString strippedBuffer;
-    OptimizeBuffer(m_buffer, strippedBuffer);
-    CxxVariable::Vec_t vars = DoGetVariables(strippedBuffer, sort);
+    // this call does nothing if the buffer was already optimized
+    CxxVariable::Vec_t vars = DoGetVariables(GetOptimizeBuffer(), sort);
     if(sort) {
         std::sort(vars.begin(), vars.end(),
                   [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName() < b->GetName(); });
@@ -427,12 +428,15 @@ bool CxxVariableScanner::GetNextToken(CxxLexerToken& token)
     return res;
 }
 
-void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripped_buffer)
+void CxxVariableScanner::DoOptimizeBuffer()
 {
-    stripped_buffer.Clear();
-    Scanner_t sc = ::LexerNew(buffer);
+    if(m_buffer_optimized) {
+        return;
+    }
+
+    Scanner_t sc = ::LexerNew(m_buffer);
     if(!sc) {
-        clWARNING() << "CxxVariableScanner::OptimizeBuffer(): failed to create Scanner_t" << clEndl;
+        clWARNING() << "CxxVariableScanner::DoOptimizeBuffer(): failed to create Scanner_t" << clEndl;
         return; // Failed to allocate scanner
     }
 
@@ -513,8 +517,11 @@ void CxxVariableScanner::OptimizeBuffer(const wxString& buffer, wxString& stripp
     ::LexerDestroy(&sc);
 
     // Merge the buffers
-    stripped_buffer.Clear();
-    std::for_each(m_buffers.rbegin(), m_buffers.rend(), [&](const wxString& buffer) { stripped_buffer << buffer; });
+    std::for_each(m_buffers.rbegin(), m_buffers.rend(), [&](const wxString& buffer) {
+        // append the buffers in reverse order
+        m_optimized_buffer << buffer;
+    });
+    m_buffer_optimized = true;
 }
 
 CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bool sort)

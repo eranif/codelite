@@ -22,6 +22,8 @@ protected:
     wxStringTable_t m_macros;
     std::vector<wxString> m_buffers;
     bool m_isFuncSignature;
+    wxString m_optimized_buffer;
+    bool m_buffer_optimized = false;
 
 protected:
     bool GetNextToken(CxxLexerToken& token);
@@ -67,6 +69,8 @@ protected:
     CxxVariable::Vec_t DoGetVariables(const wxString& buffer, bool sort);
     CxxVariable::Vec_t DoParseFunctionArguments(const wxString& buffer);
 
+    void DoOptimizeBuffer();
+
 public:
     CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros,
                        bool isFuncSignature);
@@ -78,12 +82,12 @@ public:
     static wxString ToString(CxxVariable::LexerToken::Vec_t& vartype);
 
     /**
-     * @brief strip buffer from unreachable code blocks (assuming the caret is at the last position of the bufer)
+     * @brief return the optimized buffer
      */
-    void OptimizeBuffer(const wxString& buffer, wxString& strippedBuffer);
+    const wxString& GetOptimizeBuffer() const { return m_optimized_buffer; }
 
     /**
-     * @brief parse the buffer and return list of variables
+     * @brief return the variables from the optimized buffer
      * @return
      */
     CxxVariable::Vec_t GetVariables(bool sort = true);

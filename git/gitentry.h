@@ -113,8 +113,8 @@ public:
 
     const wxString& GetWorkspaceName() const { return m_name; }
     void SetWorkspaceName(const wxString& name) { m_name = name; }
-    const wxString GetProjectLastRepoPath(const wxString& projectName);
-    void SetProjectLastRepoPath(const wxString& projectName, const wxString& lastRepoPath);
+    const wxString GetProjectUserEnteredRepoPath(const wxString& projectName);
+    void SetProjectUserEnteredRepoPath(const wxString& projectName, const wxString& userEnteredRepoPath);
 
     void FromJSON(const JSONItem& json);
     void ToJSON(JSONItem& arr) const;
@@ -122,6 +122,7 @@ public:
 protected:
     wxString m_name;
     wxStringMap_t m_projectData;
+    wxStringMap_t m_userEnteredRepoPath;
 };
 
 typedef std::unordered_map<wxString, GitWorkspace> GitWorkspaceMap_t;
@@ -247,9 +248,8 @@ public:
     void AddGitCommandsEntry(GitCommandsEntries& entries, const wxString& entryName);
     void DeleteGitCommandsEntry(const wxString& entryName) { m_commandsMap.erase(entryName); }
 
-    wxString GetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName);
-    void SetProjectLastRepoPath(const wxString& workspaceName, const wxString& projectName,
-                                const wxString& lastRepoPath);
+    wxString GetProjectUserEnteredRepoPath(const wxString& nameHash);
+    void SetProjectUserEnteredRepoPath(const wxString& userEnteredRepoPath, const wxString& nameHash);
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

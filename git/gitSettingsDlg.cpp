@@ -29,9 +29,10 @@
 #include "gitentry.h"
 #include "windowattrmanager.h"
 
-GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
+GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, const wxString& userEnteredRepoPath, const wxString& projectNameHash)
     : GitSettingsDlgBase(parent)
-    , m_localRepoPath(localRepoPath)
+    , m_userEnteredRepoPath(userEnteredRepoPath)
+    , m_projectNameHash(projectNameHash)
 {
     GitEntry data;
     data.Load();
@@ -43,12 +44,13 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath)
     m_checkBoxLog->SetValue(data.GetFlags() & GitEntry::Git_Verbose_Log);
     m_checkBoxTerminal->SetValue(data.GetFlags() & GitEntry::Git_Show_Terminal);
     m_checkBoxShowBlameInStatusBar->SetValue(!(data.GetFlags() & GitEntry::Git_Hide_Blame_Status_Bar));
-    GitEntry::GitProperties props = GitEntry::ReadGitProperties(m_localRepoPath);
+    GitEntry::GitProperties props = GitEntry::ReadGitProperties(localRepoPath);
 
     m_textCtrlGlobalEmail->ChangeValue(props.global_email);
     m_textCtrlGlobalName->ChangeValue(props.global_username);
     m_textCtrlLocalEmail->ChangeValue(props.local_email);
     m_textCtrlLocalName->ChangeValue(props.local_username);
+    m_dirPickerGitRepoPath->SetPath(m_userEnteredRepoPath);
 
     SetName("GitSettingsDlg");
     WindowAttrManager::Load(this);
@@ -60,6 +62,25 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
 {
     GitEntry data;
     data.Load();
+
+    wxString repopath = m_dirPickerGitRepoPath->GetPath();
+    // Sanity-check the entered path: we don't want /foo/bar/.git/, just /foo/bar
+    if(repopath.Right(1) == "/") {
+        repopath.RemoveLast();
+    }
+    if(repopath.Right(5) == "/.git") {
+        repopath.RemoveLast(5);
+    }
+    
+    if (!m_projectNameHash.empty() && (repopath != m_userEnteredRepoPath) ){
+        m_userEnteredRepoPath = repopath;
+        data.SetProjectUserEnteredRepoPath(repopath, m_projectNameHash);
+        data.Save();
+
+        // The git repo path was changed, so we need to  flag a reload
+        EndModal(wxID_REFRESH);
+        return;
+    };
 
     data.SetGITExecutablePath(m_pathGIT->GetPath());
     data.SetGITKExecutablePath(m_pathGITK->GetPath());
@@ -83,7 +104,7 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     props.global_username = m_textCtrlGlobalName->GetValue();
     props.local_email = m_textCtrlLocalEmail->GetValue();
     props.local_username = m_textCtrlLocalName->GetValue();
-    GitEntry::WriteGitProperties(m_localRepoPath, props);
+    GitEntry::WriteGitProperties(m_userEnteredRepoPath, props);
 
     // Notify about configuration changed
     wxCommandEvent evt(wxEVT_GIT_CONFIG_CHANGED);
@@ -92,4 +113,4 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     EndModal(wxID_OK);
 }
 
-void GitSettingsDlg::OnLocalRepoUI(wxUpdateUIEvent& event) { event.Enable(!m_localRepoPath.IsEmpty()); }
+void GitSettingsDlg::OnLocalRepoUI(wxUpdateUIEvent& event) { event.Enable(!m_userEnteredRepoPath.IsEmpty()); }

@@ -467,7 +467,11 @@ void GitPlugin::OnSetGitRepoPath(wxCommandEvent& e)
 void GitPlugin::DoSetRepoPath(const wxString& repo_path)
 {
     if(repo_path.empty()) {
+        if(!m_userEnteredRepositoryDirectory.empty())  {
+            m_repositoryDirectory = m_userEnteredRepositoryDirectory;
+        } else {
         m_repositoryDirectory = FindRepositoryRoot(GetDirFromPath(m_workspace_file));
+        }
     } else {
         m_repositoryDirectory = repo_path;
     }
@@ -482,9 +486,26 @@ void GitPlugin::DoSetRepoPath(const wxString& repo_path)
 
 void GitPlugin::OnSettings(wxCommandEvent& e)
 {
-    GitSettingsDlg dlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory);
-    if(dlg.ShowModal() == wxID_OK) {
+    wxString projectNameHash;
+     if(!m_isRemoteWorkspace) {
+        wxString workspaceName = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetName();
+        wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+        if(!workspaceName.empty() && !projectName.empty()) {
+            projectNameHash << workspaceName << '-' << projectName;
+        }
+     }
 
+    GitSettingsDlg dlg(EventNotifier::Get()->TopFrame(), m_repositoryDirectory, m_userEnteredRepositoryDirectory, projectNameHash);
+    int retValue = dlg.ShowModal();
+
+    if(retValue == wxID_OK || retValue == wxID_REFRESH) {
+        if(retValue == wxID_REFRESH) {
+            // An unusual git repo path was entered (or a previously-entered one removed)
+            m_userEnteredRepositoryDirectory = dlg.GetNewGitRepoPath();
+            m_repositoryDirectory = m_userEnteredRepositoryDirectory;
+            DoSetRepoPath(m_repositoryDirectory);
+            CallAfter(&GitPlugin::DoRefreshView, false);
+    }
         // update the paths
         clConfig conf("git.conf");
         GitEntry data;
@@ -961,7 +982,7 @@ void GitPlugin::OnWorkspaceLoaded(clWorkspaceEvent& e)
     InitDefaults();
     RefreshFileListView();
 
-    // Try to set the repo to the workspace path
+    // Try to set the repo, usually to the workspace path
     DoSetRepoPath();
     CallAfter(&GitPlugin::DoRefreshView, false);
 }
@@ -1785,6 +1806,18 @@ void GitPlugin::InitDefaults()
 
     if(IsWorkspaceOpened()) {
         m_repositoryDirectory = GetRepositoryPath();
+        
+        // Load any unusual git-repo path
+        wxString projectNameHash, UserEnteredRepoPath;
+         if(!m_isRemoteWorkspace) {
+            wxString workspaceName = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetName();
+            wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+            if(!workspaceName.empty() && !projectName.empty()) {
+                projectNameHash << workspaceName << '-' << projectName;
+                m_userEnteredRepositoryDirectory = data.GetProjectUserEnteredRepoPath(projectNameHash);
+                m_repositoryDirectory = m_userEnteredRepositoryDirectory;
+            }
+         }
     } else {
         DoCleanup();
     }
@@ -2605,8 +2638,21 @@ void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
     DoCleanup();
     m_console->UpdateTreeView("");
 
-    wxFileName projectFile(event.GetFileName());
-    DoSetRepoPath();
+    // Load any unusual git-repo path
+    wxString projectNameHash;
+     if(!m_isRemoteWorkspace) {
+        wxString workspaceName = m_mgr->GetWorkspace()->GetWorkspaceFileName().GetName();
+        wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
+        if(!workspaceName.empty() && !projectName.empty()) {
+            projectNameHash << workspaceName << '-' << projectName;
+            clConfig conf("git.conf");
+            GitEntry data;
+            conf.ReadItem(&data);
+            m_userEnteredRepositoryDirectory = data.GetProjectUserEnteredRepoPath(projectNameHash);
+        }
+     }
+
+    DoSetRepoPath(m_userEnteredRepositoryDirectory);
 }
 
 void GitPlugin::WorkspaceClosed()
@@ -2888,6 +2934,10 @@ wxString GitPlugin::FindRepositoryRoot(const wxString& starting_dir) const
         wxFileName gitdir(fp.GetPath(), wxEmptyString);
         gitdir.AppendDir(".git");
         if(wxFileName::DirExists(gitdir.GetPath())) {
+            wxString realfilepath = CLRealPath(gitdir.GetPath());
+            if(realfilepath != gitdir.GetPath() && wxFileName::DirExists(realfilepath)) {
+                return realfilepath.BeforeLast('.');
+            }
             gitdir.RemoveLastDir(); // remove the .git folder
             return gitdir.GetPath();
         }

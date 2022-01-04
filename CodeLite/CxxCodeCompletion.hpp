@@ -13,8 +13,26 @@
 
 using namespace std;
 
+class CxxCodeCompletion;
+
+struct TemplateManager {
+    CxxCodeCompletion* m_completer = nullptr;
+    wxStringMap_t m_table;
+
+    TemplateManager(CxxCodeCompletion* completer)
+        : m_completer(completer)
+    {
+    }
+    void clear();
+    void add_placeholders(const wxStringMap_t& table, const vector<wxString>& visible_scopes);
+    wxString resolve(const wxString& name, const vector<wxString>& visible_scopes) const;
+    typedef shared_ptr<TemplateManager> ptr_t;
+};
+
 class WXDLLIMPEXP_CL CxxCodeCompletion
 {
+    friend class TemplateManager;
+
 private:
     struct __local {
     private:
@@ -49,7 +67,6 @@ private:
     ITagsStoragePtr m_lookup;
     unordered_map<wxString, __local> m_locals;
     wxString m_optimized_scope;
-    wxStringMap_t m_template_placeholders;
     wxString m_filename;
     int m_line_number = 0;
     wxString m_current_scope_name;
@@ -57,6 +74,7 @@ private:
     bool m_text_parsed = false;
     wxStringMap_t m_types_table; // helper table to solve what we cant (usually the limitations are coming from ctags)
     wxStringMap_t m_macros_table;
+    TemplateManager::ptr_t m_template_manager;
 
 private:
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;
@@ -68,19 +86,18 @@ private:
     TagEntryPtr lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
                                     const vector<wxString>& visible_scopes, const vector<wxString>& kinds);
 
-    wxString typedef_from_tag(TagEntryPtr tag) const;
+    wxString typedef_from_pattern(const wxString& pattern) const;
     wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals) const;
     TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
     TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes);
 
     const wxStringMap_t& get_tokens_map() const;
     wxString get_return_value(TagEntryPtr tag) const;
-    wxString resolve_placeholder(const wxString& s) const;
 
     /**
      * @brief apply user hacks
      */
-    wxString resolve_user_type(const wxString& type) const;
+    bool resolve_user_type(const wxString& type, const vector<wxString>& visible_scopes, wxString* resolved) const;
 
     vector<wxString> update_visible_scope(const vector<wxString>& curscopes, TagEntryPtr tag);
     void update_template_table(TagEntryPtr resolved, CxxExpression& curexpr, const vector<wxString>& visible_scopes,
@@ -127,7 +144,7 @@ public:
      * @brief replace the text
      * this method resets the completer
      */
-    void set_text(const wxString& text, const wxString& filename = wxEmptyString, int current_line = wxNOT_FOUND);
+    void set_text(const wxString& text, const wxString& filename, int current_line);
 
     /**
      * @brief parse an expression and resolve it into a TagEntry. If the expression does not end with

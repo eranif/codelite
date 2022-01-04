@@ -4,6 +4,7 @@
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "ctags_manager.h"
+#include "file_logger.h"
 #include "function.h"
 #include "language.h"
 
@@ -24,6 +25,7 @@
 CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup)
     : m_lookup(lookup)
 {
+    m_template_manager.reset(new TemplateManager(this));
 }
 
 CxxCodeCompletion::~CxxCodeCompletion() {}
@@ -43,6 +45,8 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
 {
     // build expression from the expression
     m_recurse_protector = 0;
+    m_template_manager.reset(new TemplateManager(this));
+
     vector<wxString> scopes = { visible_scopes.begin(), visible_scopes.end() };
     vector<CxxExpression> expr_arr = CxxExpression::from_expression(expression, remainder);
     auto where =
@@ -52,6 +56,13 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
         // add the global scope
         scopes.push_back(wxEmptyString);
     }
+
+    // Check the current scope
+    if(!m_current_scope_name.empty()) {
+        prepend_scope(scopes, m_current_scope_name);
+    }
+
+    clDEBUG() << "code_complete() called with scopes:" << scopes << endl;
 
     // handle global scope
     if(expr_arr.empty() ||
@@ -224,7 +235,7 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
     if(curexpr.is_template()) {
         curexpr.parse_template_placeholders(pattern);
         wxStringMap_t M = curexpr.get_template_placeholders_map();
-        m_template_placeholders.insert(M.begin(), M.end());
+        m_template_manager->add_placeholders(M, visible_scopes);
     }
 
     // Check if one of the parents is a template class
@@ -245,9 +256,9 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
                                              TagEntryPtr parent)
 {
     wxString name_to_find = curexpr.type_name();
-    wxString placeholder_resolved = resolve_placeholder(name_to_find);
-    if(!placeholder_resolved.empty()) {
-        name_to_find = placeholder_resolved;
+    auto resolved_name = m_template_manager->resolve(name_to_find, visible_scopes);
+    if(resolved_name != name_to_find) {
+        name_to_find = resolved_name;
     }
 
     // try classes first
@@ -281,7 +292,7 @@ vector<wxString> CxxCodeCompletion::update_visible_scope(const vector<wxString>&
     vector<wxString> scopes;
     scopes.insert(scopes.end(), curscopes.begin(), curscopes.end());
 
-    if(tag && (tag->IsContainer() || tag->IsTypedef())) {
+    if(tag && (tag->IsClass() || tag->IsStruct() || tag->IsNamespace() || tag->GetKind() == "union")) {
         prepend_scope(scopes, tag->GetPath());
     } else if(tag && tag->IsMethod()) {
         prepend_scope(scopes, tag->GetScope());
@@ -341,7 +352,10 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
         return resolve_compound_expression(expr_arr, scopes);
     } else if(resolved->IsTypedef()) {
         // substitude the type with the typeref
-        wxString new_expr = resolve_user_type(typedef_from_tag(resolved));
+        wxString new_expr;
+        if(!resolve_user_type(resolved->GetPath(), visible_scopes, &new_expr)) {
+            new_expr = typedef_from_pattern(resolved->GetPatternClean());
+        }
         new_expr += curexp.operand_string();
         vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
         return resolve_compound_expression(expr_arr, scopes);
@@ -391,18 +405,13 @@ void CxxCodeCompletion::reset()
 {
     m_locals.clear();
     m_optimized_scope.clear();
-    m_template_placeholders.clear();
+    m_template_manager->clear();
     m_recurse_protector = 0;
     m_current_scope_name.clear();
 }
 
-wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
+wxString CxxCodeCompletion::typedef_from_pattern(const wxString& pattern) const
 {
-    if(!tag->IsTypedef()) {
-        return wxEmptyString;
-    }
-
-    wxString pattern = tag->GetPatternClean();
     CxxTokenizer tkzr;
     CxxLexerToken tk;
 
@@ -473,29 +482,6 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
         typedef_str << s;
     }
     return typedef_str.Trim();
-}
-
-wxString CxxCodeCompletion::resolve_placeholder(const wxString& s) const
-{
-    if(m_template_placeholders.count(s) == 0) {
-        return wxEmptyString;
-    }
-
-    wxStringSet_t visited;
-    wxString resolved = s;
-    // recursively resolve
-    while(true) {
-        if(!visited.insert(resolved).second) {
-            return resolved;
-        }
-
-        if(m_template_placeholders.count(resolved) == 0) {
-            return resolved;
-        }
-
-        resolved = m_template_placeholders.find(resolved)->second;
-    }
-    return resolved;
 }
 
 vector<TagEntryPtr> CxxCodeCompletion::get_locals()
@@ -585,12 +571,110 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
     m_optimized_scope = shrink_scope(text, &m_locals);
     m_filename = filename;
     m_line_number = current_line;
+    if(!m_filename.empty() && m_line_number != wxNOT_FOUND) {
+        determine_current_scope();
+    }
 }
 
-wxString CxxCodeCompletion::resolve_user_type(const wxString& type) const
+namespace
 {
-    if(m_types_table.count(type)) {
-        return m_types_table.find(type)->second;
+bool try_resovle_user_type_with_scopes(const wxStringMap_t& M, const wxString& type,
+                                       const vector<wxString>& visible_scopes, wxString* resolved)
+{
+    for(const wxString& scope : visible_scopes) {
+        wxString user_type = scope;
+        if(!user_type.empty()) {
+            user_type << "::";
+        }
+        user_type << type;
+        if(M.count(user_type)) {
+            *resolved = M.find(user_type)->second;
+            return true;
+        }
     }
-    return type;
+    return false;
+}
+}; // namespace
+
+bool CxxCodeCompletion::resolve_user_type(const wxString& type, const vector<wxString>& visible_scopes,
+                                          wxString* resolved) const
+{
+    bool match_found = false;
+    wxStringSet_t visited;
+    *resolved = type;
+    while(true) {
+        if(!visited.insert(*resolved).second) {
+            // already tried this type
+            break;
+        }
+
+        if(!try_resovle_user_type_with_scopes(m_types_table, *resolved, visible_scopes, resolved)) {
+            break;
+        }
+        match_found = true;
+    }
+
+    if(match_found) {
+        return true;
+    }
+    return false;
+}
+
+void TemplateManager::clear() { m_table.clear(); }
+
+void TemplateManager::add_placeholders(const wxStringMap_t& table, const vector<wxString>& visible_scopes)
+{
+    // try to resolve any of the template before we insert them
+    // its important to do it now so we use the correct scope
+    for(const auto& vt : table) {
+        wxString name = vt.first;
+        wxString value;
+
+        auto resolved = m_completer->lookup_child_symbol(
+            nullptr, vt.second, visible_scopes,
+            { "class", "struct", "typedef", "union", "namespace", "enum", "enumerator" });
+        if(resolved) {
+            // use the path found in the db
+            value = resolved->GetPath();
+        } else {
+            value = vt.second;
+        }
+        m_table.insert({ name, value });
+    }
+}
+
+#define STRIP_PLACEHOLDER(__ph)                        \
+    stripped_placeholder.Replace("*", wxEmptyString);  \
+    stripped_placeholder.Replace("->", wxEmptyString); \
+    stripped_placeholder.Replace("&&", wxEmptyString);
+
+namespace
+{
+bool try_resolve_placeholder(const wxStringMap_t& table, const wxString& name, wxString* resolved)
+{
+    // strip operands from `s`
+    wxString stripped_placeholder = name;
+    STRIP_PLACEHOLDER(stripped_placeholder);
+
+    if(table.count(name)) {
+        *resolved = table.find(name)->second;
+        return true;
+    }
+    return false;
+}
+}; // namespace
+
+wxString TemplateManager::resolve(const wxString& name, const vector<wxString>& visible_scopes) const
+{
+    wxStringSet_t visited;
+    wxString resolved = name;
+    while(true) {
+        if(!visited.insert(resolved).second) {
+            break;
+        }
+        if(!try_resolve_placeholder(m_table, resolved, &resolved)) {
+            break;
+        }
+    }
+    return resolved;
 }

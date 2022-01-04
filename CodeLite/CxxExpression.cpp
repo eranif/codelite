@@ -88,6 +88,7 @@ bool CxxExpression::parse_list(CxxTokenizer& tokenizer, wxArrayString* params, i
 
         } else {
             switch(tk.GetType()) {
+            case T_DOUBLE_COLONS:
             case T_IDENTIFIER:
                 curparam << tk.GetWXString();
                 break;

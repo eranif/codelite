@@ -72,8 +72,10 @@ private:
     wxString m_current_scope_name;
     size_t m_recurse_protector = 0;
     bool m_text_parsed = false;
-    wxStringMap_t m_types_table; // helper table to solve what we cant (usually the limitations are coming from ctags)
-    wxStringMap_t m_macros_table;
+    vector<pair<wxString, wxString>>
+        m_types_table; // helper table to solve what we cant (usually the limitations are coming from ctags)
+    wxStringMap_t m_macros_table_map;
+    vector<pair<wxString, wxString>> m_macros_table;
     TemplateManager::ptr_t m_template_manager;
 
 private:
@@ -133,12 +135,12 @@ public:
     /**
      * @brief set the typedef helper table
      */
-    void set_types_table(const wxStringMap_t& t) { m_types_table = t; }
+    void set_types_table(const vector<pair<wxString, wxString>>& t) { m_types_table = t; }
 
     /**
      * @brief set macros table
      */
-    void set_macros_table(const wxStringMap_t& t) { m_macros_table = t; }
+    void set_macros_table(const vector<pair<wxString, wxString>>& t);
 
     /**
      * @brief replace the text

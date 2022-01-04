@@ -171,7 +171,7 @@ public:
     void SetTokens(const wxString& tokens);
     void SetTypes(const wxString& types) { this->m_types = ::wxStringTokenize(types, "\r\n", wxTOKEN_STRTOK); }
     wxString GetTokens() const { return DoJoinArray(m_tokens); }
-    wxString GetTypes() const { return DoJoinArray(m_types); }
+    std::vector<std::pair<wxString, wxString>> GetTypes() const;
 
     std::map<std::string, std::string> GetTokensMap() const;
 
@@ -191,9 +191,9 @@ public:
     // Serialization API
 
     wxString ToString() const;
-    
+
     /**
-     * @brief Sync the data stored in this object with the file system 
+     * @brief Sync the data stored in this object with the file system
      */
     void SyncData();
 

@@ -8,9 +8,6 @@
     <File Name="tester.cpp"/>
     <File Name="main.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Release">
-    <Project Name="ctagsdlib"/>
-  </Dependencies>
   <Dependencies Name="Debug">
     <Project Name="libCodeLite"/>
     <Project Name="ctagsdlib"/>
@@ -144,4 +141,8 @@ PATH=C:\src\codelite\Runtime;$PATH]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Release">
+    <Project Name="ctagsdlib"/>
+    <Project Name="libCodeLite"/>
+  </Dependencies>
 </CodeLite_Project>

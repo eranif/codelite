@@ -30,8 +30,6 @@ namespace
 thread_local bool cc_initialised = false;
 thread_local bool cc_initialised_successfully = false;
 thread_local ITagsStoragePtr lookup_table;
-thread_local wxStringMap_t types_table;
-thread_local wxStringMap_t macros_table;
 thread_local CxxCodeCompletion::ptr_t completer;
 
 CTagsdSettings settings;
@@ -52,34 +50,15 @@ bool initialize_cc_tests()
             wxPrintf("Loading TAGS_DB=%s\n", tags_db);
         } else {
             wxFileName fn(tags_db);
-            wxFileName fn_settings(fn.GetPath(), "settings.json");
+            wxFileName fn_settings(fn.GetPath(), "ctagsd.json");
             settings.Load(fn_settings);
 
             lookup_table = ITagsStoragePtr(new TagsStorageSQLite());
             lookup_table->OpenDatabase(fn);
 
-            types_table = settings.GetTypes();
-            macros_table = settings.GetTokens();
             completer.reset(new CxxCodeCompletion(lookup_table));
-            completer->set_macros_table({});
-
-            // needed for unique_ptr
-            wxStringMap_t types_table = {
-                { "std::unique_ptr::pointer", "_Tp" }, // needed for unique_ptr
-                // {unordered}_map / map / {unordered}_multimap
-                { "std::*map::*iterator", "std::pair<_Key, _Tp>" },
-                { "std::*map::value_type", "std::pair<_Key, _Tp>" },
-                { "std::*map::key_type", "_Key" },
-                // unordered_set / unordered_multiset
-                { "std::unordered_*set::*iterator", "_Value" },
-                { "std::unordered_*set::value_type", "_Value" },
-                // set / multiset
-                { "std::set::*iterator", "_Key" },
-                { "std::multiset::*iterator", "_Key" },
-                { "std::set::value_type", "_Key" },
-            };
-
-            completer->set_types_table(types_table);
+            completer->set_macros_table(settings.GetTokens());
+            completer->set_types_table(settings.GetTypes());
             cc_initialised_successfully = true;
         }
     }

@@ -50,19 +50,6 @@ FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
     return logger;
 }
 
-wxString MapToString(const wxStringMap_t& m)
-{
-    wxString s;
-    for(const auto& vt : m) {
-        s << vt.first;
-        if(!vt.second.empty()) {
-            s << "=" << vt.second;
-        }
-        s << "\n";
-    }
-    return s;
-}
-
 void start_timer() { sw.Start(); }
 
 wxString stop_timer()
@@ -415,8 +402,11 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     fn_settings_dir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_settings_folder = fn_settings_dir.GetPath();
 
-    wxFileName fn_config_file(m_settings_folder, "settings.json");
+    wxFileName fn_config_file(m_settings_folder, "ctagsd.json");
     m_settings.Load(fn_config_file);
+
+    // this will also generate the ctags.replacements file
+    m_settings.Save(fn_config_file);
 
     // export CTAGS_REPLACEMENTS
     wxFileName ctagsReplacements(m_settings_folder, "ctags.replacements");
@@ -426,15 +416,6 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     m_codelite_indexer->set_exe_path(m_settings.GetCodeliteIndexer());
     m_codelite_indexer->start();
     TagsManagerST::Get()->SetIndexer(m_codelite_indexer);
-
-    // construct TagsOptionsData
-    TagsOptionsData tod;
-    tod.SetFileSpec(m_settings.GetFileMask());
-    tod.SetTokens(MapToString(m_settings.GetTokens()));
-    tod.SetTypes(MapToString(m_settings.GetTypes()));
-    tod.SetCcNumberOfDisplayItems(m_settings.GetLimitResults());
-
-    TagsManagerST::Get()->SetCtagsOptions(tod);
 
     // build the workspace file list
     wxArrayString files;
@@ -450,27 +431,10 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
-    TagsManagerST::Get()->SetCtagsOptions(tod);
-    TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(tod.GetCcNumberOfDisplayItems());
+    TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(m_settings.GetLimitResults());
     m_completer.reset(new CxxCodeCompletion(TagsManagerST::Get()->GetDatabase()));
-    m_completer->set_macros_table(tod.GetTokensWxMap());
-
-    // needed for unique_ptr
-    wxStringMap_t types_table = {
-        { "std::unique_ptr::pointer", "_Tp" }, // needed for unique_ptr
-        // {unordered}_map / map / {unordered}_multimap
-        { "std::*map::*iterator", "std::pair<_Key, _Tp>" },
-        { "std::*map::value_type", "std::pair<_Key, _Tp>" },
-        { "std::*map::key_type", "_Key" },
-        // unordered_set / unordered_multiset
-        { "std::unordered_*set::*iterator", "_Value" },
-        { "std::unordered_*set::value_type", "_Value" },
-        // set / multiset
-        { "std::set::*iterator", "_Key" },
-        { "std::multiset::*iterator", "_Key" },
-        { "std::set::value_type", "_Key" },
-    };
-    m_completer->set_types_table(types_table);
+    m_completer->set_macros_table(m_settings.GetTokens());
+    m_completer->set_types_table(m_settings.GetTypes());
     channel.write_reply(response.format(false));
 }
 

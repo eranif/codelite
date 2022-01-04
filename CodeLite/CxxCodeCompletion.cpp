@@ -390,7 +390,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
     return nullptr;
 }
 
-const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const { return m_macros_table; }
+const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const { return m_macros_table_map; }
 
 wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
 {
@@ -531,6 +531,8 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& fi
             get_children_of_scope(scope, { "function", "prototype", "member", "enum", "enumerator" });
         candidates.insert(candidates.end(), children.begin(), children.end());
     }
+
+    // filter the results
     return candidates.size();
 }
 
@@ -597,19 +599,19 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
 namespace
 {
 
-bool find_wild_match(const wxStringMap_t& table, const wxString& find_what, wxString* match)
+bool find_wild_match(const vector<pair<wxString, wxString>>& table, const wxString& find_what, wxString* match)
 {
-    for(const auto& vt : table) {
+    for(const auto& p : table) {
         // we support wildcard matching
-        if(::wxMatchWild(vt.first, find_what)) {
-            *match = table.find(vt.first)->second;
+        if(::wxMatchWild(p.first, find_what)) {
+            *match = p.second;
             return true;
         }
     }
     return false;
 }
 
-bool try_resovle_user_type_with_scopes(const wxStringMap_t& M, const wxString& type,
+bool try_resovle_user_type_with_scopes(const vector<pair<wxString, wxString>>& table, const wxString& type,
                                        const vector<wxString>& visible_scopes, wxString* resolved)
 {
     for(const wxString& scope : visible_scopes) {
@@ -618,7 +620,7 @@ bool try_resovle_user_type_with_scopes(const wxStringMap_t& M, const wxString& t
             user_type << "::";
         }
         user_type << type;
-        if(find_wild_match(M, type, resolved)) {
+        if(find_wild_match(table, type, resolved)) {
             return true;
         }
     }
@@ -704,4 +706,14 @@ wxString TemplateManager::resolve(const wxString& name, const vector<wxString>& 
         try_resolve_placeholder(table, resolved, &resolved);
     }
     return resolved;
+}
+
+void CxxCodeCompletion::set_macros_table(const vector<pair<wxString, wxString>>& t)
+{
+    m_macros_table = t;
+
+    m_macros_table_map.reserve(m_macros_table.size());
+    for(const auto& d : m_macros_table) {
+        m_macros_table_map.insert(d);
+    }
 }

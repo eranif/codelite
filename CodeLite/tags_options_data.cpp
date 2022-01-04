@@ -38,6 +38,8 @@ wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 
 size_t TagsOptionsData::CURRENT_VERSION = 7100;
 
+using namespace std;
+
 static bool _IsValidCppIndetifier(const wxString& id)
 {
     if(id.IsEmpty()) {
@@ -405,34 +407,34 @@ void TagsOptionsData::AddDefaultTokens()
 
 void TagsOptionsData::AddDefaultTypes()
 {
-    m_types.Add(wxT("std::vector::reference=_Tp"));
-    m_types.Add(wxT("std::vector::const_reference=_Tp"));
-    m_types.Add(wxT("std::vector::iterator=_Tp"));
-    m_types.Add(wxT("std::vector::const_iterator=_Tp"));
-    m_types.Add(wxT("std::queue::reference=_Tp"));
-    m_types.Add(wxT("std::queue::const_reference=_Tp"));
-    m_types.Add(wxT("std::priority_queue::reference=_Tp"));
-    m_types.Add(wxT("std::priority_queue::const_reference=_Tp"));
-    m_types.Add(wxT("std::set::const_iterator=_Key"));
-    m_types.Add(wxT("std::set::iterator=_Key"));
-    m_types.Add(wxT("std::unordered_set::const_iterator=_Key"));
-    m_types.Add(wxT("std::unordered_set::iterator=_Key"));
-    m_types.Add(wxT("std::deque::reference=_Tp"));
-    m_types.Add(wxT("std::deque::const_reference=_Tp"));
-    m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>"));
-    m_types.Add(wxT("std::map::const_iterator=std::pair<_Key,_Tp>"));
-    m_types.Add(wxT("std::unordered_map::iterator=std::pair<_Key, _Tp>"));
-    m_types.Add(wxT("std::unordered_map::mapped_type=_Tp"));
-    m_types.Add(wxT("std::unordered_map::const_iterator=std::pair<_Key,_Tp>"));
-    m_types.Add(wxT("std::unordered_map::value_type=std::pair<_Key,_Tp>"));
-    m_types.Add(wxT("std::multimap::iterator=std::pair<_Key,_Tp>"));
-    m_types.Add(wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>"));
-    m_types.Add(wxT("wxOrderedMap::iterator=std::pair<Key,Value>"));
-    m_types.Add(wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>"));
-    m_types.Add(wxT("boost::shared_ptr::type=T"));
-    m_types.Add(wxT("std::unique_ptr::pointer=_Tp"));
-    m_types.Add(wxT("_Ptr<_Tp,_Dp>::type=_Tp"));
-    m_types.Add(wxT("std::shared_ptr::element_type=_Tp"));
+    // m_types.Add(wxT("std::vector::reference=_Tp"));
+    // m_types.Add(wxT("std::vector::const_reference=_Tp"));
+    // m_types.Add(wxT("std::vector::iterator=_Tp"));
+    // m_types.Add(wxT("std::vector::const_iterator=_Tp"));
+    // m_types.Add(wxT("std::queue::reference=_Tp"));
+    // m_types.Add(wxT("std::queue::const_reference=_Tp"));
+    // m_types.Add(wxT("std::priority_queue::reference=_Tp"));
+    // m_types.Add(wxT("std::priority_queue::const_reference=_Tp"));
+    // m_types.Add(wxT("std::set::const_iterator=_Key"));
+    // m_types.Add(wxT("std::set::iterator=_Key"));
+    // m_types.Add(wxT("std::unordered_set::const_iterator=_Key"));
+    // m_types.Add(wxT("std::unordered_set::iterator=_Key"));
+    // m_types.Add(wxT("std::deque::reference=_Tp"));
+    // m_types.Add(wxT("std::deque::const_reference=_Tp"));
+    // m_types.Add(wxT("std::map::iterator=std::pair<_Key, _Tp>"));
+    // m_types.Add(wxT("std::map::const_iterator=std::pair<_Key,_Tp>"));
+    // m_types.Add(wxT("std::unordered_map::iterator=std::pair<_Key, _Tp>"));
+    // m_types.Add(wxT("std::unordered_map::mapped_type=_Tp"));
+    // m_types.Add(wxT("std::unordered_map::const_iterator=std::pair<_Key,_Tp>"));
+    // m_types.Add(wxT("std::unordered_map::value_type=std::pair<_Key,_Tp>"));
+    // m_types.Add(wxT("std::multimap::iterator=std::pair<_Key,_Tp>"));
+    // m_types.Add(wxT("std::multimap::const_iterator=std::pair<_Key,_Tp>"));
+    // m_types.Add(wxT("wxOrderedMap::iterator=std::pair<Key,Value>"));
+    // m_types.Add(wxT("wxOrderedMap::const_iterator=std::pair<Key,Value>"));
+    // m_types.Add(wxT("boost::shared_ptr::type=T"));
+    // m_types.Add(wxT("std::unique_ptr::pointer=_Tp"));
+    // m_types.Add(wxT("_Ptr<_Tp,_Dp>::type=_Tp"));
+    // m_types.Add(wxT("std::shared_ptr::element_type=_Tp"));
 }
 
 wxString TagsOptionsData::ToString() const
@@ -657,4 +659,18 @@ void TagsOptionsData::SyncData()
 {
     DoUpdateTokensWxMap();
     DoUpdateTokensWxMapReversed();
+}
+
+std::vector<std::pair<wxString, wxString>> TagsOptionsData::GetTypes() const
+{
+    std::vector<std::pair<wxString, wxString>> arr;
+    arr.reserve(m_types.size());
+
+    for(const auto& line : m_types) {
+        std::pair<wxString, wxString> p;
+        p.first = line.BeforeFirst('=');
+        p.second = line.AfterFirst('=');
+        arr.emplace_back(p);
+    }
+    return arr;
 }

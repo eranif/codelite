@@ -17,7 +17,7 @@ class CxxCodeCompletion;
 
 struct TemplateManager {
     CxxCodeCompletion* m_completer = nullptr;
-    wxStringMap_t m_table;
+    vector<wxStringMap_t> m_table;
 
     TemplateManager(CxxCodeCompletion* completer)
         : m_completer(completer)

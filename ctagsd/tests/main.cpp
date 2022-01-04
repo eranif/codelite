@@ -66,14 +66,17 @@ bool initialize_cc_tests()
             // needed for unique_ptr
             wxStringMap_t types_table = {
                 { "std::unique_ptr::pointer", "_Tp" }, // needed for unique_ptr
-                { "std::unordered_map::iterator", "std::pair<_Key, _Tp>" },
-                { "std::unordered_map::const_iterator", "std::unordered_map::iterator" },
-                { "std::unordered_set::iterator", "_Value" },
-                { "std::unordered_set::const_iterator", "std::unordered_set::iterator" },
-                { "std::map::iterator", "std::pair<_Key, _Tp>" },
-                { "std::map::const_iterator", "std::map::iterator" },
-                { "std::set::iterator", "_Key" },
-                { "std::set::const_iterator", "std::map::iterator" },
+                // {unordered}_map / map / {unordered}_multimap
+                { "std::*map::*iterator", "std::pair<_Key, _Tp>" },
+                { "std::*map::value_type", "std::pair<_Key, _Tp>" },
+                { "std::*map::key_type", "_Key" },
+                // unordered_set / unordered_multiset
+                { "std::unordered_*set::*iterator", "_Value" },
+                { "std::unordered_*set::value_type", "_Value" },
+                // set / multiset
+                { "std::set::*iterator", "_Key" },
+                { "std::multiset::*iterator", "_Key" },
+                { "std::set::value_type", "_Key" },
             };
 
             completer->set_types_table(types_table);
@@ -87,7 +90,6 @@ bool initialize_cc_tests()
 TEST_FUNC(TestLSPLocation)
 {
     ENSURE_DB_LOADED();
-
     vector<TagEntryPtr> candidates;
 
     wxString code = "LSP::SymbolInformation si; si.GetLocation().";
@@ -120,7 +122,7 @@ TEST_FUNC(TestCompletionHelper_get_expression)
     };
 
     CompletionHelper helper;
-    for(const auto& vt : M) {
+    for(const wxStringMap_t::value_type& vt : M) {
         const wxString& raw_string = vt.first;
         const wxString& expected = vt.second;
         CHECK_STRING(helper.get_expression(raw_string, false), expected);
@@ -360,6 +362,40 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_global_method)
+{
+    ENSURE_DB_LOADED();
+    {
+        auto resolved = completer->code_complete("clGetManager()->", {}, nullptr);
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "IManager");
+    }
+    {
+        // try again, this time with the global namespace prefix
+        auto resolved = completer->code_complete("::clGetManager()->", {}, nullptr);
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "IManager");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_member_variable_in_scope)
+{
+    ENSURE_DB_LOADED();
+    // use a line inside CxxCodeCompletion file
+    wxString filename = R"(C:\src\codelite\CodeLite\ctags_manager.cpp)";
+    if(!wxFileExists(filename)) {
+        return true;
+    }
+    {
+        completer->set_text(wxEmptyString, filename, 210); // inside TagsManager::TreeFromTags
+        auto resolved = completer->code_complete("m_watch.", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxStopWatch");
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_list_locals)
 {
     ENSURE_DB_LOADED();
@@ -465,6 +501,69 @@ TEST_FUNC(test_cxx_code_completion_template_std_set)
         TagEntryPtr resolved = completer->code_complete("S.begin()->", { "std" });
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        TagEntryPtr resolved = completer->code_complete("wxStringSet_t::value_type::", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_template_std_multiset)
+{
+    ENSURE_DB_LOADED();
+    {
+        wxString text = "multiset<wxString> S;";
+        completer->set_text(text, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("S.begin()->", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        TagEntryPtr resolved = completer->code_complete("multiset<wxString>::value_type::", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_template_std_unordered_multiset)
+{
+    ENSURE_DB_LOADED();
+    {
+        wxString text = "unordered_multiset<wxString> S;";
+        completer->set_text(text, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("S.begin()->", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        TagEntryPtr resolved = completer->code_complete("unordered_multiset<wxString>::value_type::", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_template_std_map)
+{
+    ENSURE_DB_LOADED();
+    {
+        wxString text = "map<wxString> M;";
+        completer->set_text(text, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("M.begin()->", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "std::pair");
+    }
+
+    {
+        TagEntryPtr resolved = completer->code_complete("wxStringMap_t::value_type.", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "std::pair");
     }
     return true;
 }
@@ -644,6 +743,10 @@ TEST_FUNC(test_cxx_code_completion)
 int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);
+
+    if(wxMatchWild("std::*map::*iterator", "std::unordered_map::const_iterator")) {
+        cout << "its a match!" << endl;
+    }
     wxLogNull NOLOG;
     Tester::Instance()->RunTests();
     return 0;

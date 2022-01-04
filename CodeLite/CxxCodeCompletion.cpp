@@ -66,12 +66,19 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
 
     // handle global scope
     if(expr_arr.empty() ||
-       (expr_arr.size() == 1 && expr_arr[0].operand_string() == "::" && expr_arr[0].type_name().empty())) {
+       (expr_arr.size() == 1 && expr_arr[0].type_name().empty() && expr_arr[0].operand_string() == "::")) {
         // return a dummy entry representing the global scope
         TagEntryPtr global_scope(new TagEntry());
         global_scope->SetName("<global>");
         global_scope->SetPath("<global>");
         return global_scope;
+    } else if(expr_arr.size() >= 2 && expr_arr[0].type_name().empty() && expr_arr[0].operand_string() == "::") {
+        // explicity requesting for the global namespace
+        // clear the `scopes` and use only the global namespace (empty string)
+        scopes.clear();
+        scopes.push_back(wxEmptyString);
+        // in addition, we can remove the first expression from the array
+        expr_arr.erase(expr_arr.begin());
     }
     return resolve_compound_expression(expr_arr, scopes);
 }
@@ -267,7 +274,7 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
     if(!resolved) {
         // try methods
         // `lookup_child_symbol` takes inheritance into consideration
-        resolved = lookup_child_symbol(parent, name_to_find, visible_scopes, { "function", "prototype" });
+        resolved = lookup_child_symbol(parent, name_to_find, visible_scopes, { "function", "prototype", "member" });
     }
 
     if(resolved) {
@@ -322,6 +329,15 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
                 wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
                 vector<CxxExpression> expr_arr = CxxExpression::from_expression(exprstr, nullptr);
                 return resolve_compound_expression(expr_arr, visible_scopes);
+            } else {
+                determine_current_scope();
+                auto scope_tag =
+                    lookup_symbol_by_kind(m_current_scope_name, visible_scopes, { "class", "struct", "union" });
+                if(scope_tag) {
+                    // we are inside a scope, use the scope as the parent
+                    // and call resolve_expression() again
+                    return resolve_expression(curexp, scope_tag, visible_scopes);
+                }
             }
         }
     }
@@ -571,6 +587,8 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
     m_optimized_scope = shrink_scope(text, &m_locals);
     m_filename = filename;
     m_line_number = current_line;
+    m_current_scope_name.clear();
+
     if(!m_filename.empty() && m_line_number != wxNOT_FOUND) {
         determine_current_scope();
     }
@@ -578,6 +596,19 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
 
 namespace
 {
+
+bool find_wild_match(const wxStringMap_t& table, const wxString& find_what, wxString* match)
+{
+    for(const auto& vt : table) {
+        // we support wildcard matching
+        if(::wxMatchWild(vt.first, find_what)) {
+            *match = table.find(vt.first)->second;
+            return true;
+        }
+    }
+    return false;
+}
+
 bool try_resovle_user_type_with_scopes(const wxStringMap_t& M, const wxString& type,
                                        const vector<wxString>& visible_scopes, wxString* resolved)
 {
@@ -587,8 +618,7 @@ bool try_resovle_user_type_with_scopes(const wxStringMap_t& M, const wxString& t
             user_type << "::";
         }
         user_type << type;
-        if(M.count(user_type)) {
-            *resolved = M.find(user_type)->second;
+        if(find_wild_match(M, type, resolved)) {
             return true;
         }
     }
@@ -626,6 +656,7 @@ void TemplateManager::add_placeholders(const wxStringMap_t& table, const vector<
 {
     // try to resolve any of the template before we insert them
     // its important to do it now so we use the correct scope
+    wxStringMap_t M;
     for(const auto& vt : table) {
         wxString name = vt.first;
         wxString value;
@@ -639,8 +670,9 @@ void TemplateManager::add_placeholders(const wxStringMap_t& table, const vector<
         } else {
             value = vt.second;
         }
-        m_table.insert({ name, value });
+        M.insert({ name, value });
     }
+    m_table.insert(m_table.begin(), M);
 }
 
 #define STRIP_PLACEHOLDER(__ph)                        \
@@ -668,13 +700,8 @@ wxString TemplateManager::resolve(const wxString& name, const vector<wxString>& 
 {
     wxStringSet_t visited;
     wxString resolved = name;
-    while(true) {
-        if(!visited.insert(resolved).second) {
-            break;
-        }
-        if(!try_resolve_placeholder(m_table, resolved, &resolved)) {
-            break;
-        }
+    for(const wxStringMap_t& table : m_table) {
+        try_resolve_placeholder(table, resolved, &resolved);
     }
     return resolved;
 }

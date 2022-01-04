@@ -456,7 +456,21 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     m_completer->set_macros_table(tod.GetTokensWxMap());
 
     // needed for unique_ptr
-    m_completer->set_types_table({ { "_Ptr<_Tp,_Dp>::type", "_Tp" } });
+    wxStringMap_t types_table = {
+        { "std::unique_ptr::pointer", "_Tp" }, // needed for unique_ptr
+        // {unordered}_map / map / {unordered}_multimap
+        { "std::*map::*iterator", "std::pair<_Key, _Tp>" },
+        { "std::*map::value_type", "std::pair<_Key, _Tp>" },
+        { "std::*map::key_type", "_Key" },
+        // unordered_set / unordered_multiset
+        { "std::unordered_*set::*iterator", "_Value" },
+        { "std::unordered_*set::value_type", "_Value" },
+        // set / multiset
+        { "std::set::*iterator", "_Key" },
+        { "std::multiset::*iterator", "_Key" },
+        { "std::set::value_type", "_Key" },
+    };
+    m_completer->set_types_table(types_table);
     channel.write_reply(response.format(false));
 }
 

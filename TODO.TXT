@@ -52,16 +52,11 @@ New CTagsd CC engine:
 - **DONE** Support for function arguments
 - **DONE** Support for completion ("word completion") for locals
 - **DONE** Support for lamda arguments
+- **DONE** User types
+- **DONE** CxxVariable::Map_t varsMap; varsMap.begin()-> // does not work
 
 - Support for ranged for
 - Support `operator[]`
-- FIX: CxxVariable::Map_t varsMap; varsMap.begin()-> // does not work
-
------
-LOW:
------
-
-- User types (do we need them now??)
 
 -----
 BUGS:

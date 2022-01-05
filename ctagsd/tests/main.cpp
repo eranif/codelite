@@ -78,7 +78,7 @@ TEST_FUNC(TestLSPLocation)
         completer->get_completions(resolved, wxEmptyString, candidates, { "LSP" });
     }
     CHECK_BOOL(resolved);
-    CHECK_SIZE(candidates.size(), 18);
+    CHECK_SIZE(candidates.size(), 16);
     return true;
 }
 
@@ -319,13 +319,20 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
     ENSURE_DB_LOADED();
     // use a line inside CxxCodeCompletion file
     wxString filename = R"(C:\src\codelite\CodeLite\ctags_manager.cpp)";
-
+    wxString filename_2 = R"(C:\src\codelite\CodeLite\CxxCodeCompletion.cpp)";
     TagEntryPtr resolved;
     if(wxFileExists(filename)) {
         completer->set_text(wxEmptyString, filename, 149);
         resolved = completer->code_complete("this->", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "TagsManager");
+    }
+
+    if(wxFileExists(filename_2)) {
+        completer->set_text(wxEmptyString, filename_2, 672);
+        resolved = completer->code_complete("m_completer->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");
     }
 
     resolved = completer->code_complete("::", {});

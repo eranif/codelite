@@ -1852,9 +1852,8 @@ wxString TagsStorageSQLite::GetScope(const wxString& filename, int line_number)
         return wxEmptyString;
 
     wxString sql;
-
-    sql << "select * from tags where file='" << filename << "' and line >= " << line_number
-        << " order by line asc limit 1";
+    sql << "select * from tags where file='" << filename << "' and line <= " << line_number
+        << " order by line desc limit 1";
     clDEBUG1() << "Running SQL:" << sql << endl;
     std::vector<TagEntryPtr> tags;
     DoFetchTags(sql, tags);

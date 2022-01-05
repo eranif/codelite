@@ -79,6 +79,7 @@ private:
     TemplateManager::ptr_t m_template_manager;
 
 private:
+    void sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags, const wxString& operand);
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;
     TagEntryPtr lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes, TagEntryPtr parent);
     TagEntryPtr lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,

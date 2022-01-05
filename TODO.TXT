@@ -28,10 +28,12 @@
 - **DONE** Support for remote "Find References"
 - **DONE** ctagsd: highlight <TOKEN><::> as a class
 - **DONE** debugger: step-out (shift-f11) -> causes to unwanted selection
+- **DONE** Sort the results
 
 - Implement: `lsp_rename_symbol`
 - Add un-implemented functions does not work in first time
 - line margin: use the colours read from the theme
+- Use CxxCodeCompletion instead of WordCompletion & function tooltip
 
 ---------------------
 New CTagsd CC engine:

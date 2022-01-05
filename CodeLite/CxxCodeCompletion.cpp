@@ -8,6 +8,7 @@
 #include "function.h"
 #include "language.h"
 
+#include <algorithm>
 #include <deque>
 
 #define RECURSE_GUARD_RETURN_NULLPTR() \
@@ -532,6 +533,11 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& fi
         candidates.insert(candidates.end(), children.begin(), children.end());
     }
 
+    // sort the matches
+    vector<TagEntryPtr> sorted_tags;
+    sort_tags(candidates, sorted_tags, ".");
+    candidates.swap(sorted_tags);
+
     // filter the results
     return candidates.size();
 }
@@ -716,4 +722,81 @@ void CxxCodeCompletion::set_macros_table(const vector<pair<wxString, wxString>>&
     for(const auto& d : m_macros_table) {
         m_macros_table_map.insert(d);
     }
+}
+
+void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags,
+                                  const wxString& operand)
+{
+    TagEntryPtrVector_t publicTags;
+    TagEntryPtrVector_t protectedTags;
+    TagEntryPtrVector_t privateTags;
+    TagEntryPtrVector_t locals;
+    TagEntryPtrVector_t members;
+
+    bool skip_tor = operand == "." || operand == "->";
+
+    // first: remove duplicates
+    unordered_set<int> visited_by_id;
+    unordered_set<wxString> visited_by_name;
+
+    for(size_t i = 0; i < tags.size(); ++i) {
+        TagEntryPtr tag = tags.at(i);
+        if(skip_tor && (tag->IsConstructor() || tag->IsDestructor()))
+            continue;
+
+        bool is_local = tag->IsLocalVariable() || tag->GetScope() == "<local>";
+        // we filter local tags by name
+        if(is_local && !visited_by_name.insert(tag->GetName()).second) {
+            continue;
+        }
+
+        // other tags (loaded from the db) are filtered by their ID
+        if(!is_local && !visited_by_id.insert(tag->GetId()).second) {
+            continue;
+        }
+
+        // filter by type/access
+        wxString access = tag->GetAccess();
+        wxString kind = tag->GetKind();
+
+        if(kind == "variable") {
+            locals.push_back(tag);
+
+        } else if(kind == "member") {
+            members.push_back(tag);
+
+        } else if(access == "private") {
+            privateTags.push_back(tag);
+
+        } else if(access == "protected") {
+            protectedTags.push_back(tag);
+
+        } else if(access == "public") {
+            if(tag->GetName().StartsWith("_") || tag->GetName().Contains("operator")) {
+                // methods starting with _ usually are meant to be private
+                // and also, put the "operator" methdos at the bottom
+                privateTags.push_back(tag);
+            } else {
+                publicTags.push_back(tag);
+            }
+        } else {
+            // assume private
+            privateTags.push_back(tag);
+        }
+    }
+
+    auto sort_func = [=](TagEntryPtr a, TagEntryPtr b) { return a->GetName().CmpNoCase(b->GetName()) < 0; };
+
+    sort(privateTags.begin(), privateTags.end(), sort_func);
+    sort(publicTags.begin(), publicTags.end(), sort_func);
+    sort(protectedTags.begin(), protectedTags.end(), sort_func);
+    sort(members.begin(), members.end(), sort_func);
+    sort(locals.begin(), locals.end(), sort_func);
+
+    sorted_tags.clear();
+    sorted_tags.insert(sorted_tags.end(), locals.begin(), locals.end());
+    sorted_tags.insert(sorted_tags.end(), publicTags.begin(), publicTags.end());
+    sorted_tags.insert(sorted_tags.end(), protectedTags.begin(), protectedTags.end());
+    sorted_tags.insert(sorted_tags.end(), privateTags.begin(), privateTags.end());
+    sorted_tags.insert(sorted_tags.end(), members.begin(), members.end());
 }

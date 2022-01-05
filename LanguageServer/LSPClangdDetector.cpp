@@ -37,7 +37,7 @@ bool LSPClangdDetector::DoLocate()
     // try the obvious name first: "clangd"
     wxFileName fnClangdExe("/usr/bin", "clangd");
     if(fnClangdExe.FileExists()) {
-        clSYSTEM() << "Fonund clangd ==>" << fnClangdExe << endl;
+        clSYSTEM() << "Found clangd ==>" << fnClangdExe << endl;
         ConfigureFile(fnClangdExe);
         return true;
     }
@@ -45,7 +45,7 @@ bool LSPClangdDetector::DoLocate()
     for(size_t i = 20; i >= 7; --i) {
         fnClangdExe.SetFullName(wxString() << "clangd-" << i);
         if(fnClangdExe.FileExists()) {
-            clSYSTEM() << "Fonund clangd ==>" << fnClangdExe << endl;
+            clSYSTEM() << "Found clangd ==>" << fnClangdExe << endl;
             ConfigureFile(fnClangdExe);
             return true;
         }

@@ -18,7 +18,7 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
 #ifdef __WXGTK__
     wxFileName fnClangFormat("/usr/bin", "clang-format");
     if(fnClangFormat.FileExists()) {
-        clSYSTEM() << "Fonund clang-format ==>" << fnClangFormat << endl;
+        clSYSTEM() << "Found clang-format ==>" << fnClangFormat << endl;
         clangFormat = fnClangFormat.GetFullPath();
         return true;
     }
@@ -27,7 +27,7 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
     for(size_t i = 20; i >= 7; --i) {
         fnClangFormat.SetFullName(wxString() << "clang-format-" << i);
         if(fnClangFormat.FileExists()) {
-            clSYSTEM() << "Fonund clang-format ==>" << fnClangFormat << endl;
+            clSYSTEM() << "Found clang-format ==>" << fnClangFormat << endl;
             clangFormat = fnClangFormat.GetFullPath();
             return true;
         }

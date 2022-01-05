@@ -44,6 +44,8 @@ vector<wxString> DEFAULT_TYPES = {
     // vector
     "std::vector::*reference=_Tp",
     "std::vector::*iterator=_Tp",
+    // queue
+    "std::*que*::*reference=_Tp",
 };
 
 vector<wxString> DEFAULT_TOKENS = {

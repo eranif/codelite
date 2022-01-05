@@ -34,6 +34,12 @@ thread_local CxxCodeCompletion::ptr_t completer;
 
 CTagsdSettings settings;
 
+bool is_tag_exists(const wxString& path, const vector<TagEntryPtr>& candidates)
+{
+    auto where = find_if(candidates.begin(), candidates.end(), [=](TagEntryPtr tag) { return tag->GetPath() == path; });
+    return where != candidates.end();
+}
+
 #define ENSURE_DB_LOADED()                                                                                          \
     if(!initialize_cc_tests()) {                                                                                    \
         cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl; \
@@ -78,7 +84,7 @@ TEST_FUNC(TestLSPLocation)
         completer->get_completions(resolved, wxEmptyString, candidates, { "LSP" });
     }
     CHECK_BOOL(resolved);
-    CHECK_SIZE(candidates.size(), 16);
+    CHECK_SIZE(candidates.size(), 10);
     return true;
 }
 
@@ -314,6 +320,49 @@ TEST_FUNC(test_cxx_expression)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_word_completion)
+{
+    ENSURE_DB_LOADED();
+    {
+        CxxExpression remainder;
+        TagEntryPtr resolved = completer->code_complete("wxStr", {}, &remainder);
+        CHECK_STRING(remainder.type_name(), "wxStr");
+        vector<TagEntryPtr> candidates;
+        completer->get_word_completions(remainder.type_name(), candidates, { "std" });
+        CHECK_BOOL(!candidates.empty());
+    }
+    {
+        CxxExpression remainder;
+        TagEntryPtr resolved = completer->code_complete("std::str", {}, &remainder);
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "std");
+        CHECK_STRING(remainder.type_name(), "str");
+        vector<TagEntryPtr> candidates;
+        completer->get_completions(resolved, remainder.type_name(), candidates, {});
+        CHECK_BOOL(!candidates.empty());
+
+        // check that we found "std::string"
+        bool exists = is_tag_exists("std::string", candidates);
+        CHECK_BOOL(exists);
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_word_completion_inside_scope)
+{
+    ENSURE_DB_LOADED();
+    wxString filename = R"(C:\src\codelite\CodeLite\JSON.cpp)";
+
+    if(wxFileExists(filename)) {
+        vector<TagEntryPtr> candidates;
+        completer->set_text(wxEmptyString, filename, 191);
+        size_t count = completer->get_word_completions("addProp", candidates, {});
+        CHECK_BOOL(is_tag_exists("JSONItem::addProperty", candidates));
+        CHECK_BOOL(count > 0);
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
 {
     ENSURE_DB_LOADED();
@@ -329,10 +378,10 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
     }
 
     if(wxFileExists(filename_2)) {
-        completer->set_text(wxEmptyString, filename_2, 672);
-        resolved = completer->code_complete("m_completer->", {});
+        completer->set_text(wxEmptyString, filename_2, 60);
+        resolved = completer->code_complete("m_template_manager->", { "std" });
         CHECK_BOOL(resolved);
-        CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");
+        CHECK_STRING(resolved->GetPath(), "TemplateManager");
     }
 
     resolved = completer->code_complete("::", {});
@@ -341,10 +390,7 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
 
     CxxExpression remainder;
     resolved = completer->code_complete("wxS", {}, &remainder);
-    CHECK_BOOL(resolved);
-    CHECK_STRING(resolved->GetPath(), "<global>");
     CHECK_STRING(remainder.type_name(), "wxS");
-
     return true;
 }
 
@@ -353,7 +399,7 @@ TEST_FUNC(test_cxx_code_completion_global_method)
     ENSURE_DB_LOADED();
     {
         auto resolved = completer->code_complete("clGetManager()->", {}, nullptr);
-        CHECK_BOOL(resolved);
+        CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "IManager");
     }
     {
@@ -387,25 +433,25 @@ TEST_FUNC(test_cxx_code_completion_list_locals)
     ENSURE_DB_LOADED();
     {
         completer->set_text(tokenizer_sample_file_0, wxEmptyString, wxNOT_FOUND);
-        auto locals = completer->get_locals();
+        auto locals = completer->get_locals(wxEmptyString);
         CHECK_SIZE(locals.size(), 0);
     }
 
     {
         completer->set_text(tokenizer_sample_file_2, wxEmptyString, wxNOT_FOUND);
-        auto locals = completer->get_locals();
+        auto locals = completer->get_locals(wxEmptyString);
         CHECK_SIZE(locals.size(), 0);
     }
 
     {
         completer->set_text(file_content, wxEmptyString, wxNOT_FOUND);
-        auto locals = completer->get_locals();
+        auto locals = completer->get_locals(wxEmptyString);
         CHECK_SIZE(locals.size(), 1);
     }
 
     {
         completer->set_text(cc_text_auto_chained, wxEmptyString, wxNOT_FOUND);
-        auto locals = completer->get_locals();
+        auto locals = completer->get_locals(wxEmptyString);
         CHECK_SIZE(locals.size(), 2);
         CHECK_STRING(locals[0]->GetName(), "str");
         CHECK_STRING(locals[1]->GetName(), "arr");
@@ -413,14 +459,14 @@ TEST_FUNC(test_cxx_code_completion_list_locals)
 
     {
         completer->set_text(big_file, wxEmptyString, wxNOT_FOUND);
-        auto locals = completer->get_locals();
+        auto locals = completer->get_locals(wxEmptyString);
         // we expect 4 variables
         CHECK_SIZE(locals.size(), 4);
     }
 
     {
         completer->set_text(cc_lamda_text, wxEmptyString, wxNOT_FOUND);
-        auto locals = completer->get_locals();
+        auto locals = completer->get_locals(wxEmptyString);
         CHECK_SIZE(locals.size(), 6);
     }
 

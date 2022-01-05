@@ -266,7 +266,7 @@ public:
     /**
      * @brief determine the current scope based on file name and line number
      */
-    virtual wxString GetScope(const wxString& filename, int line_number);
+    virtual TagEntryPtr GetScope(const wxString& filename, int line_number);
 
     /**
      * Begin transaction.
@@ -452,6 +452,12 @@ public:
      * @param tags [output]
      */
     virtual void GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds,
+                                       std::vector<TagEntryPtr>& tags, bool applyLimit = true);
+
+    /**
+     * @brief similar to the above, but with filter ("starts_with")
+     */
+    virtual void GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
                                        std::vector<TagEntryPtr>& tags, bool applyLimit = true);
 
     /**

@@ -5,11 +5,24 @@
 #include "CxxVariableScanner.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "function.h"
 #include "language.h"
 
 #include <algorithm>
 #include <deque>
+
+namespace
+{
+TagEntryPtr create_global_scope_tag()
+{
+    TagEntryPtr global_scope(new TagEntry());
+    global_scope->SetName("<global>");
+    global_scope->SetPath("<global>");
+    return global_scope;
+}
+
+} // namespace
 
 #define RECURSE_GUARD_RETURN_NULLPTR() \
     m_recurse_protector++;             \
@@ -31,14 +44,21 @@ CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup)
 
 CxxCodeCompletion::~CxxCodeCompletion() {}
 
-void CxxCodeCompletion::determine_current_scope()
+TagEntryPtr CxxCodeCompletion::determine_current_scope()
 {
     if(!m_current_scope_name.empty() || m_filename.empty() || m_line_number == wxNOT_FOUND) {
-        return;
+        return m_current_scope_tag;
     }
 
-    CHECK_PTR_RET(m_lookup);
-    m_current_scope_name = m_lookup->GetScope(m_filename, m_line_number);
+    if(!m_lookup) {
+        return nullptr;
+    }
+
+    m_current_scope_tag = m_lookup->GetScope(m_filename, m_line_number);
+    if(m_current_scope_tag) {
+        m_current_scope_name = m_current_scope_tag->GetScope();
+    }
+    return m_current_scope_tag;
 }
 
 TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const vector<wxString>& visible_scopes,
@@ -66,13 +86,12 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
     clDEBUG() << "code_complete() called with scopes:" << scopes << endl;
 
     // handle global scope
-    if(expr_arr.empty() ||
-       (expr_arr.size() == 1 && expr_arr[0].type_name().empty() && expr_arr[0].operand_string() == "::")) {
+    if(expr_arr.empty()) {
+        // user types Ctrl+SPACE
+        return nullptr;
+    } else if(expr_arr.size() == 1 && expr_arr[0].type_name().empty() && expr_arr[0].operand_string() == "::") {
         // return a dummy entry representing the global scope
-        TagEntryPtr global_scope(new TagEntry());
-        global_scope->SetName("<global>");
-        global_scope->SetPath("<global>");
-        return global_scope;
+        return create_global_scope_tag();
     } else if(expr_arr.size() >= 2 && expr_arr[0].type_name().empty() && expr_arr[0].operand_string() == "::") {
         // explicity requesting for the global namespace
         // clear the `scopes` and use only the global namespace (empty string)
@@ -501,11 +520,12 @@ wxString CxxCodeCompletion::typedef_from_pattern(const wxString& pattern) const
     return typedef_str.Trim();
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_locals()
+vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
 {
     vector<TagEntryPtr> locals;
     locals.reserve(m_locals.size());
 
+    wxString lowercase_filter = filter.Lower();
     for(const auto& vt : m_locals) {
         const auto& local = vt.second;
         TagEntryPtr tag(new TagEntry());
@@ -515,6 +535,9 @@ vector<TagEntryPtr> CxxCodeCompletion::get_locals()
         tag->SetScope(local.type_name());
         tag->SetAccess("public");
         tag->SetPattern("/^ " + local.pattern() + " $/");
+
+        if(!tag->GetName().Lower().StartsWith(lowercase_filter))
+            continue;
         locals.push_back(tag);
     }
     return locals;
@@ -526,19 +549,36 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& fi
     if(!parent) {
         return 0;
     }
-    vector<TagEntryPtr> scopes = get_scopes(parent, visible_scopes);
-    for(TagEntryPtr scope : scopes) {
-        vector<TagEntryPtr> children =
-            get_children_of_scope(scope, { "function", "prototype", "member", "enum", "enumerator" });
-        candidates.insert(candidates.end(), children.begin(), children.end());
+
+    vector<wxString> kinds = { "function", "prototype", "member", "enum",      "enumerator",
+                               "class",    "struct",    "union",  "namespace", "typedef" };
+    // the global scope
+    candidates = get_children_of_scope(parent, kinds, filter);
+    wxStringSet_t visited;
+
+    vector<TagEntryPtr> unique_candidates;
+    unique_candidates.reserve(candidates.size());
+    for(TagEntryPtr tag : candidates) {
+        if(!visited.insert(tag->GetPath()).second) {
+            // already seen this
+            continue;
+        }
+        unique_candidates.emplace_back(tag);
     }
 
     // sort the matches
-    vector<TagEntryPtr> sorted_tags;
-    sort_tags(candidates, sorted_tags, ".");
-    candidates.swap(sorted_tags);
+    auto sort_cb = [=](TagEntryPtr a, TagEntryPtr b) { return a->GetName().CmpNoCase(b->GetName()) < 0; };
+    sort(unique_candidates.begin(), unique_candidates.end(), sort_cb);
+    // truncate the list to match the limit
+    if(unique_candidates.size() > limit) {
+        unique_candidates.resize(limit);
+    }
+    candidates.swap(unique_candidates);
 
     // filter the results
+    vector<TagEntryPtr> sorted_tags;
+    sort_tags(candidates, sorted_tags, false);
+    candidates.swap(sorted_tags);
     return candidates.size();
 }
 
@@ -572,7 +612,8 @@ vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vect
     return scopes;
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds)
+vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds,
+                                                             const wxString& filter)
 {
     if(!m_lookup) {
         return {};
@@ -584,7 +625,12 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
     for(const wxString& kind : kinds) {
         wx_kinds.Add(kind);
     }
-    m_lookup->GetTagsByScopeAndKind(parent->GetPath(), wx_kinds, tags);
+
+    wxString scope = parent->GetPath();
+    if(parent->IsMethod()) {
+        scope = parent->GetScope();
+    }
+    m_lookup->GetTagsByScopeAndKind(scope, wx_kinds, filter, tags, true);
     return tags;
 }
 
@@ -725,7 +771,7 @@ void CxxCodeCompletion::set_macros_table(const vector<pair<wxString, wxString>>&
 }
 
 void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags,
-                                  const wxString& operand)
+                                  bool include_ctor_dtor)
 {
     TagEntryPtrVector_t publicTags;
     TagEntryPtrVector_t protectedTags;
@@ -733,7 +779,7 @@ void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEnt
     TagEntryPtrVector_t locals;
     TagEntryPtrVector_t members;
 
-    bool skip_tor = operand == "." || operand == "->";
+    bool skip_tor = !include_ctor_dtor;
 
     // first: remove duplicates
     unordered_set<int> visited_by_id;
@@ -799,4 +845,74 @@ void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEnt
     sorted_tags.insert(sorted_tags.end(), protectedTags.begin(), protectedTags.end());
     sorted_tags.insert(sorted_tags.end(), privateTags.begin(), privateTags.end());
     sorted_tags.insert(sorted_tags.end(), members.begin(), members.end());
+}
+
+size_t CxxCodeCompletion::get_file_completions(const wxString& user_typed, vector<TagEntryPtr>& files,
+                                               const wxString& suffix)
+{
+    if(!m_lookup) {
+        return 0;
+    }
+    wxArrayString files_arr;
+    m_lookup->GetFilesForCC(user_typed, files_arr);
+
+    files.reserve(files_arr.size());
+    for(const wxString& file : files_arr) {
+        // exclude source file
+        if(FileExtManager::GetType(file) == FileExtManager::TypeSourceC ||
+           FileExtManager::GetType(file) == FileExtManager::TypeSourceCpp) {
+            continue;
+        }
+        TagEntryPtr tag(new TagEntry());
+
+        wxString display_name = file + suffix;
+        tag->SetKind("file");
+        tag->SetName(display_name); // display name
+        display_name = display_name.AfterLast('/');
+        tag->SetPattern(display_name); // insert text
+        tag->SetLine(-1);
+        files.push_back(tag);
+    }
+    return files.size();
+}
+
+vector<TagEntryPtr> CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& kinds,
+                                                                     const wxString& filter,
+                                                                     const vector<wxString>& visible_scopes)
+{
+    auto scope = determine_current_scope();
+    if(scope) {
+        return get_children_of_scope(scope, kinds, filter);
+    } else {
+        // failed to resolve the current scope
+        return get_children_of_scope(create_global_scope_tag(), kinds, filter);
+    }
+}
+
+size_t CxxCodeCompletion::get_word_completions(const wxString& filter, vector<TagEntryPtr>& candidates,
+                                               const vector<wxString>& visible_scopes)
+{
+    vector<TagEntryPtr> locals;
+    vector<TagEntryPtr> scope_members;
+
+    vector<TagEntryPtr> sorted_locals;
+    vector<TagEntryPtr> sorted_scope_members;
+
+    locals = get_locals(filter);
+    // collect member variabels if we are within a scope
+    scope_members = get_children_of_current_scope(
+        { "member", "function", "prototype", "class", "struct", "namespace", "union", "typedef", "enum" }, filter,
+        visible_scopes);
+
+    // sort the matches:
+    // - locals
+    // - members
+    // - others
+    sort_tags(locals, sorted_locals, true);
+    sort_tags(scope_members, sorted_scope_members, true);
+
+    candidates.reserve(sorted_locals.size() + sorted_scope_members.size());
+    candidates.insert(candidates.end(), sorted_locals.begin(), sorted_locals.end());
+    candidates.insert(candidates.end(), sorted_scope_members.begin(), sorted_scope_members.end());
+    return candidates.size();
 }

@@ -191,6 +191,15 @@ public:
                                        std::vector<TagEntryPtr>& tags, bool applyLimit = true) = 0;
 
     /**
+     * @brief return list by kind and scope while using a filter
+     * @param scope
+     * @param kinds
+     * @param tags [output]
+     */
+    virtual void GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
+                                       std::vector<TagEntryPtr>& tags, bool applyLimit = true) = 0;
+
+    /**
      * @brief get list of tags by kind and file
      * @param kind
      * @param orderingColumn the column that the output should be ordered by (leave empty for no sorting)
@@ -302,7 +311,7 @@ public:
     /**
      * @brief determine the current scope based on file name and line number
      */
-    virtual wxString GetScope(const wxString& filename, int line_number) = 0;
+    virtual TagEntryPtr GetScope(const wxString& filename, int line_number) = 0;
 
     /**
      * @brief

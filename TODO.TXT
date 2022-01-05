@@ -34,6 +34,7 @@
 - Add un-implemented functions does not work in first time
 - line margin: use the colours read from the theme
 - Use CxxCodeCompletion instead of WordCompletion & function tooltip
+-
 
 ---------------------
 New CTagsd CC engine:
@@ -59,6 +60,8 @@ New CTagsd CC engine:
 
 - Support for ranged for
 - Support `operator[]`
+- function variables are not collected if the function is `const`
+- for variables should be discarded after exiting the for buffer
 
 -----
 BUGS:

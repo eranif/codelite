@@ -70,6 +70,7 @@ private:
     wxString m_filename;
     int m_line_number = 0;
     wxString m_current_scope_name;
+    TagEntryPtr m_current_scope_tag;
     size_t m_recurse_protector = 0;
     bool m_text_parsed = false;
     vector<pair<wxString, wxString>>
@@ -79,7 +80,6 @@ private:
     TemplateManager::ptr_t m_template_manager;
 
 private:
-    void sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags, const wxString& operand);
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;
     TagEntryPtr lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes, TagEntryPtr parent);
     TagEntryPtr lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
@@ -106,11 +106,6 @@ private:
     void update_template_table(TagEntryPtr resolved, CxxExpression& curexpr, const vector<wxString>& visible_scopes,
                                wxStringSet_t& visited);
 
-    /**
-     * @brief based on the file + line number, determine the current scope name
-     */
-    void determine_current_scope();
-
     size_t parse_locals(const wxString& text, unordered_map<wxString, __local>* locals) const;
 
     /**
@@ -119,7 +114,8 @@ private:
      */
     vector<TagEntryPtr> get_scopes(TagEntryPtr parent, const vector<wxString>& visible_scopes);
 
-    vector<TagEntryPtr> get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds);
+    vector<TagEntryPtr> get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds,
+                                              const wxString& filter);
 
 public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;
@@ -129,9 +125,19 @@ public:
     ~CxxCodeCompletion();
 
     /**
+     * @brief sort input list of tags to a reasonable order
+     */
+    void sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags, bool include_ctor_dtor);
+
+    /**
      * @brief reset the completer (clear all cached data)
      */
     void reset();
+
+    /**
+     * determine the current scope and return it
+     */
+    TagEntryPtr determine_current_scope();
 
     /**
      * @brief set the typedef helper table
@@ -162,15 +168,32 @@ public:
                               CxxExpression* remainder = nullptr);
 
     /**
+     * return list of files for completion based on the prefix typed
+     */
+    size_t get_file_completions(const wxString& user_typed, vector<TagEntryPtr>& files, const wxString& suffix);
+    /**
      * @brief return the local variables available for the current scope (passed in the c-tor)
      */
-    vector<TagEntryPtr> get_locals();
+    vector<TagEntryPtr> get_locals(const wxString& filter) const;
 
     /**
      * @brief return list of completions filtered by name for a given parent
      */
     size_t get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates,
                            const vector<wxString>& visible_scopes, size_t limit = (size_t)-1);
+    /**
+     * @brief return children tag of the current scope
+     * this method calls internally to `determine_current_scope()`
+     * so make sure you called `set_text` with file and line number
+     */
+    vector<TagEntryPtr> get_children_of_current_scope(const vector<wxString>& kinds, const wxString& filter,
+                                                      const vector<wxString>& visible_scopes);
+
+    /**
+     * return list of completion for non expression attempt
+     */
+    size_t get_word_completions(const wxString& filter, vector<TagEntryPtr>& candidates,
+                                const vector<wxString>& visible_scopes);
 };
 
 #endif // CXXCODECOMPLETION_HPP

@@ -146,6 +146,18 @@ public:
         }                                                                                                       \
     }
 
+#define CHECK_NOT_NULL(ptr)                                                                                       \
+    {                                                                                                             \
+        ++m_testCount;                                                                                            \
+        if((ptr)) {                                                                                               \
+            wxFprintf(stderr, "%-40s(%d): Successfull!\n", __FUNCTION__, m_testCount);                            \
+        } else {                                                                                                  \
+            wxFprintf(stderr, "%-40s(%d): ERROR\n%s:%d: %s is NULL!\n", __FUNCTION__, (int)m_testCount, __FILE__, \
+                      __LINE__, #ptr);                                                                            \
+            return false;                                                                                         \
+        }                                                                                                         \
+    }
+
 #define CHECK_BOOL_INT(cond, actRes)                                                                             \
     {                                                                                                            \
         ++m_testCount;                                                                                           \

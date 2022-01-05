@@ -1234,7 +1234,6 @@ void ContextCpp::OnFindImpl(wxCommandEvent& event)
 void ContextCpp::OnFindDecl(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    wxMessageBox("OnFindImpl");
     clCodeCompletionEvent event_declaration(wxEVT_CC_FIND_SYMBOL_DECLARATION);
     event_declaration.SetFileName(GetCtrl().GetFileName().GetFullPath());
     ServiceProviderManager::Get().ProcessEvent(event_declaration);

@@ -22,15 +22,6 @@
 
 namespace
 {
-// Helper function to post an event to the frame
-void SetActive(clEditor* editor)
-{
-    wxCHECK_RET(editor, wxT("Null editor parameter"));
-    wxCommandEvent event(wxEVT_ACTIVATE_EDITOR);
-    event.SetEventObject(editor);
-    wxPostEvent(clMainFrame::Get(), event);
-}
-
 struct LineClientData {
     wxString project_name;
     Compiler::PatternMatch match_pattern;
@@ -188,7 +179,7 @@ void BuildTab::ProcessBuffer(bool last_line)
             }
 
             // if this line matches a pattern (error or warning) AND
-            // this colour has no colour associated with it (using ASCII escape)
+            // this colour has no colour associated with it (using ANSI escape)
             // add some
             if(!lineHasColours && m.get()) {
                 line = WrapLineInColour(line, m->match_pattern.sev == Compiler::kSevError ? eAsciiColours::RED

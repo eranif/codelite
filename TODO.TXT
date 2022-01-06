@@ -59,8 +59,9 @@ New CTagsd CC engine:
 - **DONE** Support for ranged `for`
 - **DONE** function variables are not collected if the function is `const`
 - **DONE** `for` variables should be discarded after exiting the for buffer
+- **DONE** Use CxxCodeCompletion instead of WordCompletion & function tooltip
+
 - Support `operator[]`
-- Use CxxCodeCompletion instead of WordCompletion & function tooltip
 
 KNOWN ISSUE:
 ------------

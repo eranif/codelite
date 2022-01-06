@@ -967,3 +967,97 @@ size_t CxxCodeCompletion::get_word_completions(const wxString& filter, vector<Ta
     candidates.insert(candidates.end(), sorted_global_scopes_members.begin(), sorted_global_scopes_members.end());
     return candidates.size();
 }
+
+TagEntryPtr CxxCodeCompletion::find_definition(const wxString& filepath, int line, const wxString& expression,
+                                               const wxString& text, const vector<wxString>& visible_scopes)
+{
+    // ----------------------------------
+    // word completion
+    // ----------------------------------
+    vector<TagEntryPtr> candidates;
+    if(word_complete(filepath, line, expression, text, visible_scopes, true, candidates) == 0) {
+        return nullptr;
+    }
+
+    TagEntryPtr first = candidates[0];
+    if(first->IsMethod()) {
+        // we prefer the definition, unless we are already on it, and in that case, return the declaration
+        // locate both declaration + implementation
+        wxString path = first->GetPath();
+        vector<TagEntryPtr> impl_vec;
+        vector<TagEntryPtr> decl_vec;
+        clDEBUG1() << "Searching for path:" << path << endl;
+        m_lookup->GetTagsByPathAndKind(path, impl_vec, { "function" }, 1);
+        m_lookup->GetTagsByPathAndKind(path, decl_vec, { "prototype" }, 1);
+
+        if(impl_vec.empty() || decl_vec.empty()) {
+            clDEBUG1() << "impl:" << impl_vec.size() << "decl:" << decl_vec.size() << endl;
+            return first;
+        }
+
+        TagEntryPtr impl = impl_vec[0];
+        TagEntryPtr decl = decl_vec[0];
+
+        if(impl->GetLine() == line && impl->GetFile() == filepath) {
+            // already on the impl line, return the decl
+            return decl;
+        }
+
+        if(decl->GetLine() == line && decl->GetFile() == filepath) {
+            // already on the decl line, return the decl
+            return impl;
+        }
+
+        return impl;
+    } else {
+        // no need to manipulate this tag
+        return first;
+    }
+}
+
+size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, const wxString& expression,
+                                        const wxString& text, const vector<wxString>& visible_scopes, bool exact_match,
+                                        vector<TagEntryPtr>& candidates)
+{
+    // ----------------------------------
+    // word completion
+    // ----------------------------------
+    clDEBUG() << "find_definition expression:" << expression << endl;
+    set_text(text, filepath, line);
+
+    CxxExpression remainder;
+    TagEntryPtr resolved = code_complete(expression, visible_scopes, &remainder);
+
+    wxString filter = remainder.type_name();
+    if(!resolved) {
+        // to reduce the noise from word completion, provide a list of included headers
+        // + the current file
+        //            wxStringSet_t visible_files;
+        //            get_includes_recrusively(filepath, &visible_files);
+        clDEBUG() << "code_complete failed to resolve:" << expression << endl;
+        clDEBUG() << "filter:" << remainder.type_name() << endl;
+        get_word_completions(remainder.type_name(), candidates, visible_scopes, {});
+
+    } else {
+        // it was resolved into something...
+        clDEBUG() << "code_complete resolved:" << resolved->GetPath() << endl;
+        clDEBUG() << "filter:" << remainder.type_name() << endl;
+        get_completions(resolved, remainder.type_name(), candidates, visible_scopes);
+    }
+    clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
+
+    // take the first one with the exact match
+    if(!exact_match) {
+        return candidates.size();
+    }
+
+    vector<TagEntryPtr> matches;
+    matches.reserve(candidates.size());
+    for(TagEntryPtr t : candidates) {
+        if(t->GetName() == filter) {
+            matches.push_back(t);
+        }
+    }
+    candidates.swap(matches);
+    return candidates.size();
+}

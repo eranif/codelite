@@ -3,6 +3,7 @@
 
 #include "Channel.hpp"
 #include "CodeLiteIndexer.hpp"
+#include "CompletionHelper.hpp"
 #include "CxxCodeCompletion.hpp"
 #include "ParseThread.hpp"
 #include "Scanner.hpp"
@@ -50,6 +51,7 @@ private:
     Scanner m_file_scanner;
     CxxCodeCompletion::ptr_t m_completer;
     ParseThread m_parse_thread;
+    static unordered_map<wxString, vector<TagEntry>> m_tags_cache;
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
@@ -77,14 +79,21 @@ private:
     wxArrayString get_first_level_includes(const wxString& filepath);
 
     size_t get_includes_recrusively(const wxString& filepath, wxStringSet_t* output);
-    wxString minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string);
+    wxString minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string,
+                             CompletionHelper::eTruncateStyle flag = CompletionHelper::TRUNCATE_EXACT_POS);
 
 public:
     ProtocolHandler();
     ~ProtocolHandler();
 
-    static void parse_file(const wxString& filepath, const wxString& file_content, const wxString& settings_folder,
-                           const wxString& indexer_path);
+    // symbols cache API
+    static void cache_set_document_symbols(const wxString& filepath, vector<TagEntry>&& tags);
+    static size_t cache_get_document_symbols(const wxString& filepath, vector<TagEntry>& tags);
+    static void cache_erase_document_symbols(const wxString& filepath);
+
+    // General API
+    static void parse_file_async(const wxString& filepath, const wxString& file_content,
+                                 const wxString& settings_folder, const wxString& indexer_path);
     void on_initialize(unique_ptr<JSON>&& msg, Channel& channel);
     void on_initialized(unique_ptr<JSON>&& msg, Channel& channel);
     void on_unsupported_message(unique_ptr<JSON>&& msg, Channel& channel);

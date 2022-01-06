@@ -169,6 +169,13 @@ public:
                               CxxExpression* remainder = nullptr);
 
     /**
+     * @brief word completion. differ from code_complete by the expression. code_complete is called when user hit
+     * -> or . , while word_completion is used when user types something or in a middle of a word
+     * @return list of tags matches the context and filter placed in: `candidates`
+     */
+    size_t word_complete(const wxString& filepath, int line, const wxString& expression, const wxString& text,
+                         const vector<wxString>& visible_scopes, bool exact_match, vector<TagEntryPtr>& candidates);
+    /**
      * return list of files for completion based on the prefix typed
      */
     size_t get_file_completions(const wxString& user_typed, vector<TagEntryPtr>& files, const wxString& suffix);
@@ -198,6 +205,9 @@ public:
      */
     size_t get_word_completions(const wxString& filter, vector<TagEntryPtr>& candidates,
                                 const vector<wxString>& visible_scopes, const wxStringSet_t& visible_files);
+
+    TagEntryPtr find_definition(const wxString& filepath, int line, const wxString& expr, const wxString& text,
+                                const vector<wxString>& visible_scopes);
 };
 
 #endif // CXXCODECOMPLETION_HPP

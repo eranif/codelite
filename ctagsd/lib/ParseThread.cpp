@@ -28,7 +28,7 @@ void ParseThread::start(const wxString& settings_folder, const wxString& indexer
                     break;
                 }
                 // parse the file
-                ProtocolHandler::parse_file(filepath, file_content, settings_folder, indexer_path);
+                ProtocolHandler::parse_file_async(filepath, file_content, settings_folder, indexer_path);
             }
         },
         ref(m_mutex), ref(m_cv), ref(m_queue));

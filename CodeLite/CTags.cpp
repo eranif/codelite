@@ -190,7 +190,7 @@ size_t CTags::FindTags(const wxString& filter, std::vector<TagEntryPtr>& tags, s
     return tags.size();
 }
 
-TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, const wxString& force_filepath)
+TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, std::vector<TagEntry>& tags, const wxString& force_filepath)
 {
     fullpath.Clear();
     if(!IsOpened()) {
@@ -208,8 +208,11 @@ TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, const wxString& force_f
         return nullptr;
     }
 
-    std::vector<TagEntry> tags;
+    tags.clear();
+    std::vector<TagEntry> tmp_tags;
     tags.reserve(1000); // pre allocate memory
+    tmp_tags.reserve(1000);
+
     size_t i = m_curline;
     for(; i < m_textFile.GetLineCount(); ++i) {
         m_curline = i;
@@ -229,22 +232,23 @@ TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, const wxString& force_f
         }
 
         // add it to the vector
-        tags.push_back(t);
+        tags.push_back(t);     // a copy of the tag
+        tmp_tags.push_back(t); // a copy of the tag
 
         if(fullpath.empty()) {
-            fullpath = tags[0].GetFile();
+            fullpath = tmp_tags[0].GetFile();
         }
 
-        if(fullpath != tags.back().GetFile()) {
+        if(fullpath != tmp_tags.back().GetFile()) {
             // we moved to another file, remove the last tag and leave the loop
-            tags.pop_back();
+            tmp_tags.pop_back();
             break;
         }
     }
-    if(tags.empty()) {
+    if(tmp_tags.empty()) {
         return nullptr;
     }
-    return TreeFromTags(tags);
+    return TreeFromTags(tmp_tags);
 }
 
 TagTreePtr CTags::TreeFromTags(std::vector<TagEntry>& tags)

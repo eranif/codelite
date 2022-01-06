@@ -32,6 +32,8 @@
 using LSP::CompletionItem;
 using LSP::eSymbolKind;
 
+unordered_map<wxString, vector<TagEntry>> ProtocolHandler::m_tags_cache;
+
 namespace
 {
 FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
@@ -128,8 +130,8 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
     return result;
 }
 
-void ProtocolHandler::parse_file(const wxString& filepath, const wxString& file_content,
-                                 const wxString& settings_folder, const wxString& indexer_path)
+void ProtocolHandler::parse_file_async(const wxString& filepath, const wxString& file_content,
+                                       const wxString& settings_folder, const wxString& indexer_path)
 {
     // write the content into a temporary file
     clTempFile tempfile{ "cpp" };
@@ -178,12 +180,15 @@ void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString
     wxString curfile;
 
     // build the database
-    TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile, alternate_filename);
+    vector<TagEntry> tags;
+    TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile, tags, alternate_filename);
     clDEBUG() << "Updating symbols database..." << endl;
     db->Begin();
     size_t tagsCount = 0;
     time_t update_time = time(nullptr);
     while(ttp) {
+        // cache the symbols
+        ProtocolHandler::cache_set_document_symbols(alternate_filename, move(tags));
         ++tagsCount;
 
         // Send notification to the main window with our progress report
@@ -196,7 +201,8 @@ void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString
             // Start a new transaction
             db->Begin();
         }
-        ttp = ctags.GetTagsTreeForFile(curfile);
+        tags.clear();
+        ttp = ctags.GetTagsTreeForFile(curfile, tags, alternate_filename);
     }
 
     // update the files table in the database
@@ -469,6 +475,7 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
 
     // update using namespace cache
     parse_file_for_includes_and_using_namespace(filepath);
+    parse_file_async(filepath, file_content, m_settings_folder, m_settings.GetCodeliteIndexer());
 
     // keep the file content in-cache
     m_filesOpened.insert({ filepath, file_content });
@@ -488,6 +495,7 @@ void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel& channel)
     m_comments_cache.erase(filepath);
     m_parsed_files_info.erase(filepath);
     m_additional_scopes.erase(filepath);
+    cache_erase_document_symbols(filepath);
 }
 
 // Notification -->
@@ -516,7 +524,8 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     parse_file_for_includes_and_using_namespace(filepath);
 }
 
-wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string)
+wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string,
+                                          CompletionHelper::eTruncateStyle flag)
 {
     // optimization: since we know that the file was saved
     // at one point, we can reduce the processing needed by only using the code from
@@ -537,7 +546,7 @@ wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, in
             truncated_text = wxJoin(lines, '\n');
         }
 
-        text = helper.truncate_file_to_location(truncated_text, line, character, CompletionHelper::TRUNCATE_EXACT_POS);
+        text = helper.truncate_file_to_location(truncated_text, line, character, flag);
         clDEBUG1() << "Minimized file into:" << endl;
         clDEBUG1() << text << endl;
     } else {
@@ -620,28 +629,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         // ----------------------------------
         // word completion
         // ----------------------------------
-        clDEBUG() << "WordCompletion expression:" << expression << endl;
-        m_completer->set_text(minimized_buffer, filepath, line);
-
-        CxxExpression remainder;
-        TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
-        if(!resolved) {
-            // to reduce the noise from word completion, provide a list of included headers
-            // + the current file
-            //            wxStringSet_t visible_files;
-            //            get_includes_recrusively(filepath, &visible_files);
-            clDEBUG() << "code_complete failed to resolve:" << expression << endl;
-            clDEBUG() << "filter:" << remainder.type_name() << endl;
-            m_completer->get_word_completions(remainder.type_name(), candidates, visible_scopes, {});
-
-        } else {
-            // it was resolved into something...
-            clDEBUG() << "code_complete resolved:" << resolved->GetPath() << endl;
-            clDEBUG() << "filter:" << remainder.type_name() << endl;
-            m_completer->get_completions(resolved, remainder.type_name(), candidates, visible_scopes);
-        }
-        clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
-        clDEBUG1() << candidates << endl;
+        m_completer->word_complete(filepath, line, expression, minimized_buffer, visible_scopes, false, candidates);
     }
 
     if(!candidates.empty()) {
@@ -958,13 +946,15 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
     clDEBUG1() << json.format() << endl;
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
-    clDEBUG1() << "textDocument/documentSymbol: for file" << filepath << endl;
+    clDEBUG() << "textDocument/documentSymbol: for file" << filepath << endl;
 
     if(!ensure_file_content_exists(filepath, channel, id))
         return;
 
     // parse the file and return the symbols
-    vector<TagEntryPtr> tags = TagsManagerST::Get()->ParseBuffer(m_filesOpened[filepath], filepath);
+    clDEBUG() << "Fetching symbols from cache for file:" << filepath << endl;
+    vector<TagEntry> tags;
+    cache_get_document_symbols(filepath, tags);
 
     // tags are sorted by line number, just wrap them in JSON and send them over to the client
     JSON root(cJSON_Object);
@@ -999,12 +989,15 @@ void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel
 
     wxString last_word;
     CompletionHelper helper;
-    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
-                                                     CompletionHelper::TRUNCATE_EXACT_POS);
+
+    wxString text =
+        minimize_buffer(filepath, line, character, m_filesOpened[filepath], CompletionHelper::TRUNCATE_EXACT_POS);
     wxString expression = helper.get_expression(text, true, &last_word);
 
-    clDEBUG() << "resolving expression:" << expression << endl;
-    clCallTipPtr tip = TagsManagerST::Get()->GetFunctionTip(filepath, line + 1, expression, text, last_word);
+    vector<TagEntryPtr> candidates;
+    vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
+    m_completer->word_complete(filepath, line + 1, expression, text, visible_scopes, true, candidates);
+    clCallTipPtr tip(new clCallTip(candidates));
     LSP::SignatureHelp sh;
     if(tip) {
         CompletionHelper helper;
@@ -1105,8 +1098,8 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bo
 
     CompletionHelper helper;
     wxString last_word;
-    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
-                                                     CompletionHelper::TRUNCATE_COMPLETE_WORDS);
+    wxString text =
+        minimize_buffer(filepath, line, character, m_filesOpened[filepath], CompletionHelper::TRUNCATE_COMPLETE_WORDS);
     wxString expression = helper.get_expression(text, false, &last_word);
 
     // get the last line
@@ -1140,8 +1133,8 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bo
             }
         }
     } else {
-        update_additional_scopes_for_file(filepath);
-        TagEntryPtr match = TagsManagerST::Get()->FindDefinition(filepath, line + 1, expression, last_word, text);
+        vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
+        TagEntryPtr match = m_completer->find_definition(filepath, line + 1, expression, text, visible_scopes);
         if(match) {
             tags.push_back(match);
         }
@@ -1313,4 +1306,33 @@ size_t ProtocolHandler::get_includes_recrusively(const wxString& filepath, wxStr
         Q.insert(Q.end(), include_files.begin(), include_files.end());
     }
     return output->size();
+}
+
+static wxCriticalSection cs;
+
+void ProtocolHandler::cache_set_document_symbols(const wxString& filepath, vector<TagEntry>&& tags)
+{
+    wxCriticalSectionLocker locker{ cs };
+    if(m_tags_cache.count(filepath)) {
+        m_tags_cache.erase(filepath);
+    }
+    m_tags_cache.insert({ filepath, move(tags) });
+}
+
+size_t ProtocolHandler::cache_get_document_symbols(const wxString& filepath, vector<TagEntry>& tags)
+{
+    wxCriticalSectionLocker locker{ cs };
+    if(m_tags_cache.count(filepath) == 0) {
+        return 0;
+    }
+    tags = m_tags_cache.find(filepath)->second;
+    return tags.size();
+}
+
+void ProtocolHandler::cache_erase_document_symbols(const wxString& filepath)
+{
+    wxCriticalSectionLocker locker{ cs };
+    if(m_tags_cache.count(filepath)) {
+        m_tags_cache.erase(filepath);
+    }
 }

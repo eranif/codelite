@@ -52,8 +52,8 @@ public:
      * @brief read from the tags file and return list of all tags from the same file
      * as a tree
      */
-    TagTreePtr GetTagsTreeForFile(wxString& fullpath, const wxString& force_filepath = wxEmptyString);
-
+    TagTreePtr GetTagsTreeForFile(wxString& fullpath, std::vector<TagEntry>& tags,
+                                  const wxString& force_filepath = wxEmptyString);
     size_t FindTags(const wxString& filter, std::vector<TagEntryPtr>& tags, size_t flags = kSearchFullmach);
     size_t FindTags(const wxArrayString& filter, std::vector<TagEntryPtr>& tags, size_t flags = kSearchFullmach);
 

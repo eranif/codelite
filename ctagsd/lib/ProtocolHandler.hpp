@@ -50,7 +50,7 @@ private:
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
-    void parse_files(wxArrayString& files, Channel* channel);
+    static void parse_files(const wxArrayString& files, const wxString& settings_folder, const wxString& indexer_path);
     bool ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);
     void update_comments_for_file(const wxString& filepath);

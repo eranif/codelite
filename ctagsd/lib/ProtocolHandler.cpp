@@ -33,7 +33,6 @@ using LSP::eSymbolKind;
 
 namespace
 {
-wxStopWatch sw;
 FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
 {
     wxString s;
@@ -48,19 +47,6 @@ FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
         logger << (*tag) << endl;
     }
     return logger;
-}
-
-void start_timer() { sw.Start(); }
-
-wxString stop_timer()
-{
-    long ms = sw.Time();
-    long seconds = ms / 1000;
-    ms = seconds % 1000;
-
-    wxString elapsed;
-    elapsed << _("Time elapsed: ") << seconds << "." << ms << _(" seconds");
-    return elapsed;
 }
 
 /**
@@ -141,45 +127,35 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
     return result;
 }
 
-void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
+void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString& settings_folder,
+                                  const wxString& indexer_path)
 {
-    clDEBUG() << "Parsing" << files.size() << "files" << endl;
+    clDEBUG() << "Parsing" << file_list.size() << "files" << endl;
     clDEBUG() << "Removing un-modified and unwanted files..." << endl;
     // create/open db
-    wxFileName dbfile(m_settings_folder, "tags.db");
+    wxFileName dbfile(settings_folder, "tags.db");
     if(!dbfile.FileExists()) {
         clDEBUG() << dbfile << "does not exist, will create it" << endl;
     }
     ITagsStoragePtr db(new TagsStorageSQLite());
     db->OpenDatabase(dbfile);
 
-    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files, db);
-    start_timer();
+    wxArrayString files_to_parse = file_list;
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files_to_parse, db);
 
-    clDEBUG() << "There are total of" << files.size() << "files that require parsing" << endl;
-    if(channel) {
-        send_log_message(wxString() << _("Generating ctags file for: ") << files.size() << _(" files"), LSP_LOG_INFO,
-                         *channel);
-    }
+    clDEBUG() << "There are total of" << files_to_parse.size() << "files that require parsing" << endl;
     clDEBUG() << "Generating ctags file..." << endl;
-    if(!CTags::Generate(files, m_settings_folder, m_settings.GetCodeliteIndexer())) {
-        if(channel) {
-            send_log_message(_("Failed to generate `ctags` file"), LSP_LOG_ERROR, *channel);
-        }
+    if(!CTags::Generate(files_to_parse, settings_folder, indexer_path)) {
         clERROR() << "Failed to generate ctags file!" << endl;
         return;
     }
     clDEBUG() << "Success" << endl;
 
-    if(channel) {
-        send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, *channel);
-    }
-
     // update the DB
     wxStringSet_t updatedFiles;
-    CTags ctags(m_settings_folder);
+    CTags ctags(settings_folder);
     if(!ctags.IsOpened()) {
-        clWARNING() << "Failed to open ctags file under:" << m_settings_folder << endl;
+        clWARNING() << "Failed to open ctags file under:" << settings_folder << endl;
         return;
     }
 
@@ -187,11 +163,6 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
 
     // build the database
     TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile);
-    if(channel) {
-        send_log_message(_("Updating symbols database..."), LSP_LOG_INFO, *channel);
-    }
-
-    start_timer();
     clDEBUG() << "Updating symbols database..." << endl;
     db->Begin();
     size_t tagsCount = 0;
@@ -215,7 +186,7 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
     // update the files table in the database
     // we do this here, since some files might not yield tags
     // but we still want to mark them as "parsed"
-    for(const wxString& file : files) {
+    for(const wxString& file : files_to_parse) {
         if(db->InsertFileEntry(file, (int)update_time) == TagExist) {
             db->UpdateFileEntry(file, (int)update_time);
         }
@@ -223,9 +194,6 @@ void ProtocolHandler::parse_files(wxArrayString& files, Channel* channel)
 
     // Commit whats left
     db->Commit();
-    if(channel) {
-        send_log_message(wxString() << _("Success (") << stop_timer() << ")", LSP_LOG_INFO, *channel);
-    }
     clDEBUG() << "Success" << endl;
 }
 
@@ -427,7 +395,10 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     // build a list of files to parse (including all include statements)
     files = get_files_to_parse(files);
-    parse_files(files, &channel);
+
+    send_log_message(_("Updating symbols database..."), LSP_LOG_INFO, channel);
+    parse_files(files, m_settings_folder, m_settings.GetCodeliteIndexer());
+    send_log_message(_("Success"), LSP_LOG_INFO, channel);
 
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
@@ -513,6 +484,10 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     clDEBUG() << "Updating content for file:" << filepath << endl;
     clDEBUG1() << file_content << endl;
 
+    wxArrayString file_to_parse;
+    file_to_parse.Add(filepath);
+    parse_files(file_to_parse, m_settings_folder, m_settings.GetCodeliteIndexer());
+
     // update using namespace cache
     parse_file_for_includes_and_using_namespace(filepath);
 }
@@ -539,13 +514,13 @@ wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, in
         }
 
         text = helper.truncate_file_to_location(truncated_text, line, character, CompletionHelper::TRUNCATE_EXACT_POS);
-        clDEBUG() << "Minimized file into:" << endl;
-        clDEBUG() << text << endl;
+        clDEBUG1() << "Minimized file into:" << endl;
+        clDEBUG1() << text << endl;
     } else {
         // use the entire file content
         text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
                                                 CompletionHelper::TRUNCATE_EXACT_POS);
-        clDEBUG() << "Unable to minimize the buffer, using the complete buffer" << endl;
+        clDEBUG1() << "Unable to minimize the buffer, using the complete buffer" << endl;
     }
     return text;
 }
@@ -713,7 +688,7 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     files.insert(files.end(), includes.begin(), includes.end());
 
     // reparse the file
-    parse_files(files, nullptr);
+    parse_files(files, m_settings_folder, m_settings.GetCodeliteIndexer());
 
     if(TagsManagerST::Get()->GetDatabase()) {
         TagsManagerST::Get()->ClearTagsCache();

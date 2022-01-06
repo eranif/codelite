@@ -320,6 +320,26 @@ TEST_FUNC(test_cxx_expression)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_variable_scanner_ranged_for)
+{
+    CxxVariableScanner scanner(cc_text_ranged_for, eCxxStandard::kCxx11, {}, false);
+    auto vars = scanner.GetVariables();
+    CHECK_BOOL(vars.size() == 2);
+    CHECK_STRING(vars[0]->GetName(), "array");
+    CHECK_STRING(vars[1]->GetName(), "s");
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_variable_scanner_normal_for)
+{
+    CxxVariableScanner scanner(cc_text_normal_for, eCxxStandard::kCxx11, {}, false);
+    auto vars = scanner.GetVariables();
+    CHECK_BOOL(vars.size() == 2);
+    CHECK_STRING(vars[0]->GetName(), "array");
+    CHECK_STRING(vars[1]->GetName(), "iter");
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_word_completion)
 {
     ENSURE_DB_LOADED();
@@ -328,8 +348,19 @@ TEST_FUNC(test_cxx_code_completion_word_completion)
         TagEntryPtr resolved = completer->code_complete("wxStr", {}, &remainder);
         CHECK_STRING(remainder.type_name(), "wxStr");
         vector<TagEntryPtr> candidates;
-        completer->get_word_completions(remainder.type_name(), candidates, { "std" });
+        completer->get_word_completions(remainder.type_name(), candidates, { "std" }, {});
         CHECK_BOOL(!candidates.empty());
+    }
+    {
+        CxxExpression remainder;
+        wxString filename = R"(C:\src\codelite\CodeLite\ctags_manager.cpp)";
+        completer->set_text(wxEmptyString, filename, 263);
+        TagEntryPtr resolved = completer->code_complete("wxStr", {}, &remainder);
+        CHECK_STRING(remainder.type_name(), "wxStr");
+        vector<TagEntryPtr> candidates;
+        completer->get_word_completions(remainder.type_name(), candidates, { "std" }, {});
+        CHECK_BOOL(!candidates.empty());
+        CHECK_BOOL(is_tag_exists("wxString", candidates));
     }
     {
         CxxExpression remainder;
@@ -356,7 +387,7 @@ TEST_FUNC(test_cxx_word_completion_inside_scope)
     if(wxFileExists(filename)) {
         vector<TagEntryPtr> candidates;
         completer->set_text(wxEmptyString, filename, 191);
-        size_t count = completer->get_word_completions("addProp", candidates, {});
+        size_t count = completer->get_word_completions("addProp", candidates, {}, {});
         CHECK_BOOL(is_tag_exists("JSONItem::addProperty", candidates));
         CHECK_BOOL(count > 0);
     }
@@ -435,6 +466,12 @@ TEST_FUNC(test_cxx_code_completion_list_locals)
         completer->set_text(tokenizer_sample_file_0, wxEmptyString, wxNOT_FOUND);
         auto locals = completer->get_locals(wxEmptyString);
         CHECK_SIZE(locals.size(), 0);
+    }
+    {
+        // test function args from a const method
+        completer->set_text(cc_text_func_const, wxEmptyString, wxNOT_FOUND);
+        auto locals = completer->get_locals(wxEmptyString);
+        CHECK_SIZE(locals.size(), 2);
     }
 
     {
@@ -600,9 +637,31 @@ TEST_FUNC(test_cxx_code_completion_template_std_map)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_typedef_using)
+{
+    ENSURE_DB_LOADED();
+    wxString text = "ClangFormatMap compiledMap;";
+    completer->set_text(text, wxEmptyString, wxNOT_FOUND);
+    TagEntryPtr resolved = completer->code_complete("ClangFormatMap.begin()->first.", { "FormatOptions" });
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetPath(), "wxString");
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_template)
 {
     ENSURE_DB_LOADED();
+
+    if(false) {
+        wxString text = "cJSON* json;";
+        completer->set_text(text, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("json->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "cJSON");
+        vector<TagEntryPtr> tags;
+        completer->get_completions(resolved, wxEmptyString, tags, {});
+        CHECK_BOOL(is_tag_exists("valuestring", tags));
+    }
 
     {
         wxString text = "wxVector<wxString> V;";

@@ -905,3 +905,17 @@ void Foo::Bar(const wxString& str, shared_ptr<JSON>&& json) {
         auto callback = [&](const wxString& variable, const std::vector<std::string>& V) {
             CxxPreProcessor pp;
 )";
+const wxString cc_text_ranged_for = R"(
+wxArrayString array;
+for(auto& s : array) {
+    s.
+)";
+
+const wxString cc_text_normal_for = R"(
+wxArrayString array;
+for(auto iter = array.begin(); iter != array.end(); ++iter) {
+)";
+
+const wxString cc_text_func_const = R"(
+void Foo::Bar(const wxString& str, shared_ptr<JSON>&& json) const {
+)";

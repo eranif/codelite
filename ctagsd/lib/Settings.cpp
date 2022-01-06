@@ -44,10 +44,13 @@ vector<wxString> DEFAULT_TYPES = {
     // vector
     "std::vector::*reference=_Tp",
     "std::vector::*iterator=_Tp",
-    // queue
+    // queue / priority_queue
     "std::*que*::*reference=_Tp",
-    // queue
+    "std::*que*::*iterator=_Tp",
+    // stack
     "std::stack::*reference=_Tp",
+    // list
+    "std::list::*reference=_Tp",
 };
 
 vector<wxString> DEFAULT_TOKENS = {

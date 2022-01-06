@@ -72,6 +72,8 @@ private:
      */
     wxArrayString get_first_level_includes(const wxString& filepath);
 
+    size_t get_includes_recrusively(const wxString& filepath, wxStringSet_t* output);
+
 public:
     ProtocolHandler();
     ~ProtocolHandler();

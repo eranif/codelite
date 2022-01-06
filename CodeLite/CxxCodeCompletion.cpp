@@ -22,6 +22,16 @@ TagEntryPtr create_global_scope_tag()
     return global_scope;
 }
 
+wxArrayString to_wx_array_string(const vector<wxString>& v)
+{
+    wxArrayString a;
+    a.reserve(v.size());
+    for(const wxString& s : v) {
+        a.Add(s);
+    }
+    return a;
+}
+
 } // namespace
 
 #define RECURSE_GUARD_RETURN_NULLPTR() \
@@ -390,7 +400,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
         // substitude the type with the typeref
         wxString new_expr;
         if(!resolve_user_type(resolved->GetPath(), visible_scopes, &new_expr)) {
-            new_expr = typedef_from_pattern(resolved->GetPatternClean());
+            new_expr = typedef_from_tag(resolved);
         }
         new_expr += curexp.operand_string();
         vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
@@ -446,20 +456,26 @@ void CxxCodeCompletion::reset()
     m_current_scope_name.clear();
 }
 
-wxString CxxCodeCompletion::typedef_from_pattern(const wxString& pattern) const
+wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
 {
+    wxString typedef_str;
     CxxTokenizer tkzr;
     CxxLexerToken tk;
 
-    tkzr.Reset(pattern);
-
-    wxString typedef_str;
-    vector<wxString> V;
-    wxString last_identifier;
-    if(!tkzr.NextToken(tk)) {
-        return wxEmptyString;
+    if(!tag->GetTyperef().empty()) {
+        typedef_str = tag->GetTyperef();
+        return typedef_str.Trim();
     }
 
+    wxString pattern = tag->GetPatternClean();
+    tkzr.Reset(pattern);
+
+    vector<wxString> V;
+    wxString last_identifier;
+    // consume the first token which is one of T_USING | T_TYPEDEF
+    tkzr.NextToken(tk);
+
+    bool parse_succeeded = false;
     if(tk.GetType() == T_USING) {
         // "using" syntax:
         // using element_type = _Tp;
@@ -474,6 +490,7 @@ wxString CxxCodeCompletion::typedef_from_pattern(const wxString& pattern) const
         // read until the ";"
         while(tkzr.NextToken(tk)) {
             if(tk.GetType() == ';') {
+                parse_succeeded = true;
                 break;
             }
             if(tk.is_keyword()) {
@@ -499,6 +516,7 @@ wxString CxxCodeCompletion::typedef_from_pattern(const wxString& pattern) const
                 if(!V.empty()) {
                     V.pop_back();
                 }
+                parse_succeeded = true;
                 break;
             } else {
                 if(tk.is_builtin_type()) {
@@ -510,12 +528,12 @@ wxString CxxCodeCompletion::typedef_from_pattern(const wxString& pattern) const
         }
     }
 
-    if(V.empty()) {
+    if(!parse_succeeded) {
         return wxEmptyString;
-    }
-
-    for(const wxString& s : V) {
-        typedef_str << s;
+    } else {
+        for(const wxString& s : V) {
+            typedef_str << s;
+        }
     }
     return typedef_str.Trim();
 }
@@ -577,7 +595,7 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& fi
 
     // filter the results
     vector<TagEntryPtr> sorted_tags;
-    sort_tags(candidates, sorted_tags, false);
+    sort_tags(candidates, sorted_tags, false, {});
     candidates.swap(sorted_tags);
     return candidates.size();
 }
@@ -763,7 +781,6 @@ wxString TemplateManager::resolve(const wxString& name, const vector<wxString>& 
 void CxxCodeCompletion::set_macros_table(const vector<pair<wxString, wxString>>& t)
 {
     m_macros_table = t;
-
     m_macros_table_map.reserve(m_macros_table.size());
     for(const auto& d : m_macros_table) {
         m_macros_table_map.insert(d);
@@ -771,7 +788,7 @@ void CxxCodeCompletion::set_macros_table(const vector<pair<wxString, wxString>>&
 }
 
 void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags,
-                                  bool include_ctor_dtor)
+                                  bool include_ctor_dtor, const wxStringSet_t& visible_files)
 {
     TagEntryPtrVector_t publicTags;
     TagEntryPtrVector_t protectedTags;
@@ -787,6 +804,11 @@ void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEnt
 
     for(size_t i = 0; i < tags.size(); ++i) {
         TagEntryPtr tag = tags.at(i);
+
+        // only include matches from the provided list of files
+        if(!visible_files.empty() && visible_files.count(tag->GetFile()) == 0)
+            continue;
+
         if(skip_tor && (tag->IsConstructor() || tag->IsDestructor()))
             continue;
 
@@ -876,43 +898,60 @@ size_t CxxCodeCompletion::get_file_completions(const wxString& user_typed, vecto
     return files.size();
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& kinds,
-                                                                     const wxString& filter,
-                                                                     const vector<wxString>& visible_scopes)
+size_t CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& kinds, const wxString& filter,
+                                                        const vector<wxString>& visible_scopes,
+                                                        vector<TagEntryPtr>* current_scope_children,
+                                                        vector<TagEntryPtr>* other_scopes_children,
+                                                        vector<TagEntryPtr>* global_scope_children)
 {
-    auto scope = determine_current_scope();
-    if(scope) {
-        return get_children_of_scope(scope, kinds, filter);
-    } else {
-        // failed to resolve the current scope
-        return get_children_of_scope(create_global_scope_tag(), kinds, filter);
+    auto resolved = determine_current_scope();
+    if(resolved) {
+        *current_scope_children = get_children_of_scope(resolved, kinds, filter);
     }
+
+    // collect "other scopes"
+    wxArrayString wx_kinds = to_wx_array_string(kinds);
+    wxArrayString wx_scope = to_wx_array_string(visible_scopes);
+    m_lookup->GetTagsByScopeAndName(wx_scope, filter, true, *other_scopes_children);
+
+    // global scope children
+    *global_scope_children = get_children_of_scope(create_global_scope_tag(), kinds, filter);
+    return current_scope_children->size() + other_scopes_children->size() + global_scope_children->size();
 }
 
 size_t CxxCodeCompletion::get_word_completions(const wxString& filter, vector<TagEntryPtr>& candidates,
-                                               const vector<wxString>& visible_scopes)
+                                               const vector<wxString>& visible_scopes,
+                                               const wxStringSet_t& visible_files)
+
 {
     vector<TagEntryPtr> locals;
     vector<TagEntryPtr> scope_members;
+    vector<TagEntryPtr> other_scopes_members;
+    vector<TagEntryPtr> global_scopes_members;
 
     vector<TagEntryPtr> sorted_locals;
     vector<TagEntryPtr> sorted_scope_members;
+    vector<TagEntryPtr> sorted_other_scopes_members;
+    vector<TagEntryPtr> sorted_global_scopes_members;
 
     locals = get_locals(filter);
     // collect member variabels if we are within a scope
-    scope_members = get_children_of_current_scope(
-        { "member", "function", "prototype", "class", "struct", "namespace", "union", "typedef", "enum" }, filter,
-        visible_scopes);
+    vector<wxString> kinds = { "member",    "function", "prototype", "class", "struct",
+                               "namespace", "union",    "typedef",   "enum" };
+    get_children_of_current_scope(kinds, filter, visible_scopes, &scope_members, &other_scopes_members,
+                                  &global_scopes_members);
 
     // sort the matches:
-    // - locals
-    // - members
-    // - others
-    sort_tags(locals, sorted_locals, true);
-    sort_tags(scope_members, sorted_scope_members, true);
+    sort_tags(locals, sorted_locals, true, {});               // locals are accepted, so dont pass list of files
+    sort_tags(scope_members, sorted_scope_members, true, {}); // members are all accepted
+    sort_tags(other_scopes_members, sorted_other_scopes_members, true, visible_files);
+    sort_tags(global_scopes_members, sorted_global_scopes_members, true, visible_files);
 
-    candidates.reserve(sorted_locals.size() + sorted_scope_members.size());
+    candidates.reserve(sorted_locals.size() + sorted_scope_members.size() + sorted_other_scopes_members.size() +
+                       sorted_global_scopes_members.size());
     candidates.insert(candidates.end(), sorted_locals.begin(), sorted_locals.end());
     candidates.insert(candidates.end(), sorted_scope_members.begin(), sorted_scope_members.end());
+    candidates.insert(candidates.end(), sorted_other_scopes_members.begin(), sorted_other_scopes_members.end());
+    candidates.insert(candidates.end(), sorted_global_scopes_members.begin(), sorted_global_scopes_members.end());
     return candidates.size();
 }

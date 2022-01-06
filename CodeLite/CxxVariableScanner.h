@@ -36,11 +36,14 @@ protected:
     wxString& PushBuffer();
     wxString& PopBuffer();
 
-    bool OnForLoop(Scanner_t scanner);
+    bool OnForLoop(Scanner_t scanner, wxString& variable_definition);
     bool OnCatch(Scanner_t scanner);
     bool OnWhile(Scanner_t scanner);
     bool OnDeclType(Scanner_t scanner);
     bool OnLambda(Scanner_t scanner);
+    bool SkipTo(Scanner_t scanner, int type);
+    bool SkipTo(Scanner_t scanner, const std::unordered_set<int>& type_set);
+
     /**
      * @brief parse function definition line and return the
      * definition buffer. We only return it if the token after

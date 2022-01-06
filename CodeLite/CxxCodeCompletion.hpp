@@ -89,7 +89,7 @@ private:
     TagEntryPtr lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
                                     const vector<wxString>& visible_scopes, const vector<wxString>& kinds);
 
-    wxString typedef_from_pattern(const wxString& pattern) const;
+    wxString typedef_from_tag(TagEntryPtr tag) const;
     wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals) const;
     TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
     TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes);
@@ -127,7 +127,8 @@ public:
     /**
      * @brief sort input list of tags to a reasonable order
      */
-    void sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags, bool include_ctor_dtor);
+    void sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags, bool include_ctor_dtor,
+                   const wxStringSet_t& visible_files);
 
     /**
      * @brief reset the completer (clear all cached data)
@@ -182,18 +183,21 @@ public:
     size_t get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates,
                            const vector<wxString>& visible_scopes, size_t limit = (size_t)-1);
     /**
-     * @brief return children tag of the current scope
+     * @brief return children tag of the current scope and any other relevant scopes
      * this method calls internally to `determine_current_scope()`
      * so make sure you called `set_text` with file and line number
      */
-    vector<TagEntryPtr> get_children_of_current_scope(const vector<wxString>& kinds, const wxString& filter,
-                                                      const vector<wxString>& visible_scopes);
+    size_t get_children_of_current_scope(const vector<wxString>& kinds, const wxString& filter,
+                                         const vector<wxString>& visible_scopes,
+                                         vector<TagEntryPtr>* current_scope_children,
+                                         vector<TagEntryPtr>* other_scopes_children,
+                                         vector<TagEntryPtr>* global_scope_children);
 
     /**
      * return list of completion for non expression attempt
      */
     size_t get_word_completions(const wxString& filter, vector<TagEntryPtr>& candidates,
-                                const vector<wxString>& visible_scopes);
+                                const vector<wxString>& visible_scopes, const wxStringSet_t& visible_files);
 };
 
 #endif // CXXCODECOMPLETION_HPP

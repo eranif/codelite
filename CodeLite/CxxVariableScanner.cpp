@@ -461,9 +461,18 @@ void CxxVariableScanner::DoOptimizeBuffer()
         switch(tok.GetType()) {
         case T_PP_STATE_EXIT:
             break;
-        case T_FOR:
-            OnForLoop(sc);
-            break;
+        case T_FOR: {
+            wxString variable_definition;
+            if(OnForLoop(sc, variable_definition)) {
+                // move the variable to the next scope
+                Buffer() << "for () {";
+                PushBuffer();
+                Buffer() << variable_definition;
+            } else {
+                // single line for()
+                Buffer() << "for ()";
+            }
+        } break;
         case T_CATCH:
             OnCatch(sc);
             break;
@@ -655,7 +664,7 @@ void CxxVariableScanner::UngetToken(const CxxLexerToken& token)
 
 wxString& CxxVariableScanner::Buffer() { return m_buffers[0]; }
 
-bool CxxVariableScanner::OnForLoop(Scanner_t scanner)
+bool CxxVariableScanner::OnForLoop(Scanner_t scanner, wxString& variable_definition)
 {
     CxxLexerToken tok;
 
@@ -667,42 +676,76 @@ bool CxxVariableScanner::OnForLoop(Scanner_t scanner)
     if(tok.GetType() != '(')
         return false;
 
-    int depth(1);
-    wxString& buffer = Buffer();
-    bool lookingForFirstSemiColon = true;
-    while(::LexerNext(scanner, tok)) {
-        // Skip prep processing state
-        // 'for' and 'catch' parenthesis content is kept in the buffer
+    constexpr int STATE_NORMAL = 0;
+    constexpr int STATE_CXX11 = 1;
+    int state = STATE_NORMAL;
+
+    int depth = 0;
+    bool cont = true;
+    while(cont && ::LexerNext(scanner, tok)) {
+        if(tok.is_keyword() || tok.is_builtin_type()) {
+            variable_definition << " " << tok.GetWXString();
+            continue;
+        }
         switch(tok.GetType()) {
         case '(':
+        case '<':
+        case '[':
+        case '{':
             depth++;
-            if(lookingForFirstSemiColon) {
-                buffer << "(";
-            }
+            variable_definition << tok.GetWXString();
+            break;
+        case '>':
+        case ']':
+        case '}':
+            depth--;
+            variable_definition << tok.GetWXString();
             break;
         case ')':
-            depth--;
-            if(lookingForFirstSemiColon) {
-                buffer << ")";
+            if(depth == 0) {
+                // we are done
+                cont = false;
+                if(state == STATE_CXX11) {
+                    // append ".begin()"
+                    variable_definition << ".begin()";
+                }
+                variable_definition << ";";
+            } else {
+                variable_definition << ")";
+                depth--;
             }
-            if(depth == 0)
-                return true;
+            break;
+        case ':':
+            // c++11 ranged for loop
+            state = STATE_CXX11;
+            // we are going to create a variable of this type:
+            // TYPENAME name = CONTAINER.begin();
+            variable_definition << "=";
+            break;
+        case T_IDENTIFIER:
+            variable_definition << " " << tok.GetWXString();
             break;
         case ';':
-        case ':': // C++11 ranged for
-            if(lookingForFirstSemiColon) {
-                buffer << ";";
-            }
-            lookingForFirstSemiColon = false;
+            // no need to check for depth, we cant have ';' in non depth 0
+            variable_definition << ";";
+            cont = false;
             break;
         default:
-            if(lookingForFirstSemiColon) {
-                buffer << tok.GetWXString() << " ";
-            }
+            variable_definition << tok.GetWXString();
             break;
         }
     }
-    return false;
+
+    // read the remainder (for C++11 ranged loop we already consumed the closing parenthesis)
+    if(state == STATE_NORMAL && !SkipTo(scanner, ')')) {
+        return false;
+    }
+
+    // we are now expecting a '{'
+    ::LexerNext(scanner, tok);
+    if(tok.GetType() != '{')
+        return false;
+    return true;
 }
 
 bool CxxVariableScanner::OnCatch(Scanner_t scanner)
@@ -819,6 +862,41 @@ wxString& CxxVariableScanner::PopBuffer()
     return m_buffers[0];
 }
 
+bool CxxVariableScanner::SkipTo(Scanner_t scanner, const std::unordered_set<int>& type_set)
+{
+    int depth = 0;
+    CxxLexerToken tok;
+    while(::LexerNext(scanner, tok)) {
+        if(depth == 0 && type_set.count(tok.GetType())) {
+            return true;
+        }
+        switch(tok.GetType()) {
+        case '<':
+        case '(':
+        case '[':
+        case '{':
+            depth++;
+            break;
+        case '>':
+        case ')':
+        case ']':
+        case '}':
+            depth--;
+            break;
+        default:
+            break;
+        }
+    }
+    return false;
+}
+
+bool CxxVariableScanner::SkipTo(Scanner_t scanner, int type)
+{
+    std::unordered_set<int> type_set;
+    type_set.insert(type);
+    return SkipTo(scanner, type_set);
+}
+
 bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_buffer, bool* push_scope)
 {
     CxxLexerToken tok;
@@ -864,9 +942,30 @@ bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_b
     }
 
     if(tok.GetType() == '{') {
-        buffer << "){";     // ")" to close the function definition and the "{"
+        buffer << ") {";    // ")" to close the function definition and add "{"
         *push_scope = true; // tell the caller to push the current buffer
                             // append the function definition buffer to the next buffer
+    } else if(tok.is_keyword()) {
+
+        // consume all keywords
+        while(::LexerNext(scanner, tok) && tok.is_keyword()) {
+            // do nothing
+            // we read something like const, noexcept etc
+        }
+        if(tok.IsEOF()) {
+            return false;
+        }
+
+        if(tok.GetType() == '{') {
+            buffer << ") {";    // ")" to close the function definition, dont add '{' it will be read later
+            *push_scope = true; // tell the caller to push the current buffer
+            // append the function definition buffer to the next buffer
+            return true;
+        }
+
+        // return the last token which was non keyword
+        ::LexerUnget(scanner);
+        return false;
     } else {
         ::LexerUnget(scanner);
         // the function buffer should not be visible

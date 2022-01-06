@@ -34,7 +34,6 @@
 - Add un-implemented functions does not work in first time
 - line margin: use the colours read from the theme
 - Use CxxCodeCompletion instead of WordCompletion & function tooltip
--
 
 ---------------------
 New CTagsd CC engine:
@@ -57,11 +56,15 @@ New CTagsd CC engine:
 - **DONE** Support for lamda arguments
 - **DONE** User types
 - **DONE** CxxVariable::Map_t varsMap; varsMap.begin()-> // does not work
-
-- Support for ranged for
+- **DONE** global function are not appearing (use: ProtocolHandler::get_files_to_parse() to get only files that are included and filter static methods)
+- **DONE** Support for ranged `for`
+- **DONE** function variables are not collected if the function is `const`
+- **DONE** `for` variables should be discarded after exiting the for buffer
 - Support `operator[]`
-- function variables are not collected if the function is `const`
-- for variables should be discarded after exiting the for buffer
+
+KNOWN ISSUE:
+------------
+- cJSON* -> no CC
 
 -----
 BUGS:

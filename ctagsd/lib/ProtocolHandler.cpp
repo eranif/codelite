@@ -594,7 +594,14 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         CxxExpression remainder;
         TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
         if(!resolved) {
-            m_completer->get_word_completions(remainder.type_name(), candidates, visible_scopes);
+            // to reduce the noise from word completion, provide a list of included headers
+            // + the current file
+            wxStringSet_t visible_files;
+            get_includes_recrusively(filepath, &visible_files);
+
+            clDEBUG() << "word completion using files:" << visible_files << endl;
+            m_completer->get_word_completions(remainder.type_name(), candidates, visible_scopes, visible_files);
+
         } else {
             // it was resolved into something...
             m_completer->get_completions(resolved, remainder.type_name(), candidates, visible_scopes);
@@ -1245,4 +1252,29 @@ wxArrayString ProtocolHandler::get_first_level_includes(const wxString& filepath
         }
     }
     return files;
+}
+
+size_t ProtocolHandler::get_includes_recrusively(const wxString& filepath, wxStringSet_t* output)
+{
+    deque<wxString> Q;
+    Q.push_back(filepath);
+    output->insert(filepath);
+
+    wxStringSet_t visited;
+    while(!Q.empty()) {
+        wxString filepath = Q.front();
+        Q.pop_front();
+        output->insert(filepath);
+
+        if(!visited.insert(filepath).second)
+            continue;
+
+        if(m_parsed_files_info.count(filepath) == 0)
+            continue;
+
+        // append all its children to the vector
+        const auto& include_files = m_parsed_files_info[filepath].included_files;
+        Q.insert(Q.end(), include_files.begin(), include_files.end());
+    }
+    return output->size();
 }

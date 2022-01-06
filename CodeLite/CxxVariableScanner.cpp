@@ -737,7 +737,7 @@ bool CxxVariableScanner::OnForLoop(Scanner_t scanner, wxString& variable_definit
     }
 
     // read the remainder (for C++11 ranged loop we already consumed the closing parenthesis)
-    if(state == STATE_NORMAL && !SkipTo(scanner, ')')) {
+    if(state == STATE_NORMAL && !SkipToClosingParenthesis(scanner)) {
         return false;
     }
 
@@ -862,25 +862,19 @@ wxString& CxxVariableScanner::PopBuffer()
     return m_buffers[0];
 }
 
-bool CxxVariableScanner::SkipTo(Scanner_t scanner, const std::unordered_set<int>& type_set)
+bool CxxVariableScanner::SkipToClosingParenthesis(Scanner_t scanner)
 {
     int depth = 0;
     CxxLexerToken tok;
     while(::LexerNext(scanner, tok)) {
-        if(depth == 0 && type_set.count(tok.GetType())) {
-            return true;
-        }
         switch(tok.GetType()) {
-        case '<':
         case '(':
-        case '[':
-        case '{':
             depth++;
             break;
-        case '>':
         case ')':
-        case ']':
-        case '}':
+            if(depth == 0) {
+                return true;
+            }
             depth--;
             break;
         default:
@@ -888,13 +882,6 @@ bool CxxVariableScanner::SkipTo(Scanner_t scanner, const std::unordered_set<int>
         }
     }
     return false;
-}
-
-bool CxxVariableScanner::SkipTo(Scanner_t scanner, int type)
-{
-    std::unordered_set<int> type_set;
-    type_set.insert(type);
-    return SkipTo(scanner, type_set);
 }
 
 bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_buffer, bool* push_scope)

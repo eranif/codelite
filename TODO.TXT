@@ -62,6 +62,9 @@ New CTagsd CC engine:
 - **DONE** Use CxxCodeCompletion instead of WordCompletion & function tooltip
 
 - Support `operator[]`
+- Support anonymous namespace
+- Support macro completions
+- Fix: find-definition -> we can go to decl, but not backward to the definition
 
 KNOWN ISSUE:
 ------------

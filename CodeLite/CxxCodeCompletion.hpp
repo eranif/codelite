@@ -78,6 +78,7 @@ private:
     wxStringMap_t m_macros_table_map;
     vector<pair<wxString, wxString>> m_macros_table;
     TemplateManager::ptr_t m_template_manager;
+    bool m_first_time = true;
 
 private:
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;

@@ -41,8 +41,7 @@ protected:
     bool OnWhile(Scanner_t scanner);
     bool OnDeclType(Scanner_t scanner);
     bool OnLambda(Scanner_t scanner);
-    bool SkipTo(Scanner_t scanner, int type);
-    bool SkipTo(Scanner_t scanner, const std::unordered_set<int>& type_set);
+    bool SkipToClosingParenthesis(Scanner_t scanner);
 
     /**
      * @brief parse function definition line and return the

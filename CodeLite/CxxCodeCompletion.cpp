@@ -110,6 +110,7 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
         // in addition, we can remove the first expression from the array
         expr_arr.erase(expr_arr.begin());
     }
+    m_first_time = true;
     return resolve_compound_expression(expr_arr, scopes);
 }
 
@@ -127,6 +128,10 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
     for(CxxExpression& curexpr : expression) {
         resolved = resolve_expression(curexpr, resolved, visible_scopes);
         CHECK_PTR_RET_NULL(resolved);
+        // once we resolved something we make it with this flag
+        // this way we avoid checking for locals/global scope etc
+        // since we already have some context
+        m_first_time = false;
     }
     return resolved;
 }
@@ -346,7 +351,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
                                                   const vector<wxString>& visible_scopes)
 {
     // test locals first, if its empty, its the first time we are entering here
-    if(!parent) {
+    if(m_first_time && !parent) {
         if(curexp.is_this()) {
             // this can only work with ->
             if(curexp.operand_string() != "->") {

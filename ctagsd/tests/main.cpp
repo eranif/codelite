@@ -333,6 +333,18 @@ TEST_FUNC(test_cxx_code_completion_inhertiance_children)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_lsp_location_locals)
+{
+    ENSURE_DB_LOADED();
+    CxxExpression remainder;
+    completer->set_text(cc_lsp_location, wxEmptyString, wxNOT_FOUND);
+    vector<TagEntryPtr> locals = completer->get_locals(wxEmptyString);
+    CHECK_BOOL(!locals.empty());
+    CHECK_BOOL(locals.at(0)->GetScope() == "LSP::Location");
+    CHECK_BOOL(locals.at(0)->GetName() == "loc");
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_variable_scanner_ranged_for)
 {
     CxxVariableScanner scanner(cc_text_ranged_for, eCxxStandard::kCxx11, {}, false);

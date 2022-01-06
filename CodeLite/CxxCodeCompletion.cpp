@@ -243,7 +243,12 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol_by_kind(const wxString& name, const
                                                      const vector<wxString>& kinds)
 {
     vector<TagEntryPtr> tags;
-    for(const wxString& scope : visible_scopes) {
+    vector<wxString> scopes_to_check = visible_scopes;
+    if(scopes_to_check.empty()) {
+        scopes_to_check.push_back(wxEmptyString);
+    }
+
+    for(const wxString& scope : scopes_to_check) {
         wxString path;
         if(!scope.empty()) {
             path << scope << "::";
@@ -571,7 +576,7 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& fi
     vector<wxString> kinds = { "function", "prototype", "member", "enum",      "enumerator",
                                "class",    "struct",    "union",  "namespace", "typedef" };
     // the global scope
-    candidates = get_children_of_scope(parent, kinds, filter);
+    candidates = get_children_of_scope(parent, kinds, filter, visible_scopes);
     wxStringSet_t visited;
 
     vector<TagEntryPtr> unique_candidates;
@@ -631,7 +636,8 @@ vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vect
 }
 
 vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds,
-                                                             const wxString& filter)
+                                                             const wxString& filter,
+                                                             const vector<wxString>& visible_scopes)
 {
     if(!m_lookup) {
         return {};
@@ -644,11 +650,17 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
         wx_kinds.Add(kind);
     }
 
-    wxString scope = parent->GetPath();
-    if(parent->IsMethod()) {
-        scope = parent->GetScope();
+    auto parents = get_scopes(parent, visible_scopes);
+    for(auto tag : parents) {
+        wxString scope = tag->GetPath();
+        if(tag->IsMethod()) {
+            scope = tag->GetScope();
+        }
+        vector<TagEntryPtr> parent_tags;
+        m_lookup->GetTagsByScopeAndKind(scope, wx_kinds, filter, parent_tags, true);
+        tags.reserve(tags.size() + parent_tags.size());
+        tags.insert(tags.end(), parent_tags.begin(), parent_tags.end());
     }
-    m_lookup->GetTagsByScopeAndKind(scope, wx_kinds, filter, tags, true);
     return tags;
 }
 
@@ -906,7 +918,7 @@ size_t CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& 
 {
     auto resolved = determine_current_scope();
     if(resolved) {
-        *current_scope_children = get_children_of_scope(resolved, kinds, filter);
+        *current_scope_children = get_children_of_scope(resolved, kinds, filter, visible_scopes);
     }
 
     // collect "other scopes"
@@ -915,7 +927,7 @@ size_t CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& 
     m_lookup->GetTagsByScopeAndName(wx_scope, filter, true, *other_scopes_children);
 
     // global scope children
-    *global_scope_children = get_children_of_scope(create_global_scope_tag(), kinds, filter);
+    *global_scope_children = get_children_of_scope(create_global_scope_tag(), kinds, filter, visible_scopes);
     return current_scope_children->size() + other_scopes_children->size() + global_scope_children->size();
 }
 

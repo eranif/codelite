@@ -114,8 +114,8 @@ private:
      */
     vector<TagEntryPtr> get_scopes(TagEntryPtr parent, const vector<wxString>& visible_scopes);
 
-    vector<TagEntryPtr> get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds,
-                                              const wxString& filter);
+    vector<TagEntryPtr> get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds, const wxString& filter,
+                                              const vector<wxString>& visible_scopes);
 
 public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;

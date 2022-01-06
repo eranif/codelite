@@ -235,7 +235,12 @@ vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const wxStri
     }
     clDEBUG() << "Setting additional scopes for file:" << filepath << endl;
     clDEBUG() << "Scopes:" << additional_scopes << endl;
-    TagsManagerST::Get()->GetLanguage()->UpdateAdditionalScopesCache(filepath, additional_scopes);
+    auto where = find_if(additional_scopes.begin(), additional_scopes.end(),
+                         [](const wxString& scope) { return scope.empty(); });
+    if(where == additional_scopes.end()) {
+        // no globl scope, add it
+        additional_scopes.push_back(wxEmptyString);
+    }
     return additional_scopes;
 }
 
@@ -606,10 +611,14 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
             // + the current file
             //            wxStringSet_t visible_files;
             //            get_includes_recrusively(filepath, &visible_files);
+            clDEBUG() << "code_complete failed to resolve:" << expression << endl;
+            clDEBUG() << "filter:" << remainder.type_name() << endl;
             m_completer->get_word_completions(remainder.type_name(), candidates, visible_scopes, {});
 
         } else {
             // it was resolved into something...
+            clDEBUG() << "code_complete resolved:" << resolved->GetPath() << endl;
+            clDEBUG() << "filter:" << remainder.type_name() << endl;
             m_completer->get_completions(resolved, remainder.type_name(), candidates, visible_scopes);
         }
         clDEBUG() << "Number of completion entries:" << candidates.size() << endl;

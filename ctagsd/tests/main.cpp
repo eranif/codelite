@@ -84,7 +84,7 @@ TEST_FUNC(TestLSPLocation)
         completer->get_completions(resolved, wxEmptyString, candidates, { "LSP" });
     }
     CHECK_BOOL(resolved);
-    CHECK_SIZE(candidates.size(), 10);
+    CHECK_SIZE(candidates.size(), 13);
     return true;
 }
 
@@ -317,6 +317,19 @@ TEST_FUNC(test_cxx_expression)
     vector<CxxExpression> exp3 = CxxExpression::from_expression("string.AfterFirst('(')", &remainder);
     CHECK_SIZE(exp3.size(), 1);
     CHECK_EXPECTED(remainder.type_name(), "AfterFirst");
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_inhertiance_children)
+{
+    ENSURE_DB_LOADED();
+    CxxExpression remainder;
+    TagEntryPtr resolved = completer->code_complete("EventNotifier::Get()->", {}, &remainder);
+    CHECK_NOT_NULL(resolved);
+    vector<TagEntryPtr> candidates;
+    completer->get_completions(resolved, wxEmptyString, candidates, {});
+    CHECK_BOOL(!candidates.empty());
+    CHECK_BOOL(is_tag_exists("wxEvtHandler::Bind", candidates));
     return true;
 }
 

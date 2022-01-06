@@ -15,6 +15,7 @@
 #include "Settings.hpp"
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
+#include "clTempFile.hpp"
 #include "cl_calltip.h"
 #include "crawler_include.h"
 #include "ctags_manager.h"
@@ -103,7 +104,7 @@ void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString
 
 ProtocolHandler::ProtocolHandler() {}
 
-ProtocolHandler::~ProtocolHandler() {}
+ProtocolHandler::~ProtocolHandler() { m_parse_thread.stop(); }
 
 void ProtocolHandler::send_log_message(const wxString& message, int level, Channel& channel)
 {
@@ -127,8 +128,23 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
     return result;
 }
 
+void ProtocolHandler::parse_file(const wxString& filepath, const wxString& file_content,
+                                 const wxString& settings_folder, const wxString& indexer_path)
+{
+    // write the content into a temporary file
+    clTempFile tempfile{ "cpp" };
+    tempfile.Write(file_content);
+
+    // prepare a list of files (size=1)
+    wxArrayString files;
+    files.Add(tempfile.GetFullPath());
+
+    // force the output to the actual file name
+    parse_files(files, settings_folder, indexer_path, filepath);
+}
+
 void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString& settings_folder,
-                                  const wxString& indexer_path)
+                                  const wxString& indexer_path, const wxString& alternate_filename)
 {
     clDEBUG() << "Parsing" << file_list.size() << "files" << endl;
     clDEBUG() << "Removing un-modified and unwanted files..." << endl;
@@ -162,7 +178,7 @@ void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString
     wxString curfile;
 
     // build the database
-    TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile);
+    TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile, alternate_filename);
     clDEBUG() << "Updating symbols database..." << endl;
     db->Begin();
     size_t tagsCount = 0;
@@ -171,7 +187,7 @@ void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString
         ++tagsCount;
 
         // Send notification to the main window with our progress report
-        db->DeleteByFileName({}, curfile, false);
+        db->DeleteByFileName({}, alternate_filename.empty() ? curfile : alternate_filename, false);
         db->Store(ttp, {}, false);
 
         if((tagsCount % 1000) == 0) {
@@ -335,6 +351,7 @@ size_t ProtocolHandler::read_file_list(wxArrayString& arr) const
 // Request <-->
 void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 {
+    // start the parser thread
     clDEBUG() << "Received `initialize` request" << endl;
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
@@ -389,6 +406,9 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     m_codelite_indexer->set_exe_path(m_settings.GetCodeliteIndexer());
     m_codelite_indexer->start();
     TagsManagerST::Get()->SetIndexer(m_codelite_indexer);
+
+    // start the "on_change" parser thread
+    m_parse_thread.start(m_settings_folder, m_settings.GetCodeliteIndexer());
 
     // build the workspace file list
     wxArrayString files;
@@ -489,9 +509,8 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     clDEBUG() << "Updating content for file:" << filepath << endl;
     clDEBUG1() << file_content << endl;
 
-    wxArrayString file_to_parse;
-    file_to_parse.Add(filepath);
-    parse_files(file_to_parse, m_settings_folder, m_settings.GetCodeliteIndexer());
+    // parse this file (async)
+    m_parse_thread.queue_parse_request(filepath, file_content);
 
     // update using namespace cache
     parse_file_for_includes_and_using_namespace(filepath);

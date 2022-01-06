@@ -4,12 +4,14 @@
 #include "Channel.hpp"
 #include "CodeLiteIndexer.hpp"
 #include "CxxCodeCompletion.hpp"
+#include "ParseThread.hpp"
 #include "Scanner.hpp"
 #include "Settings.hpp"
 #include "istorage.h"
 #include "macros.h"
 
 #include <JSON.h>
+#include <algorithm>
 #include <memory>
 #include <wx/string.h>
 
@@ -47,10 +49,12 @@ private:
     wxArrayString m_search_paths;
     Scanner m_file_scanner;
     CxxCodeCompletion::ptr_t m_completer;
+    ParseThread m_parse_thread;
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
-    static void parse_files(const wxArrayString& files, const wxString& settings_folder, const wxString& indexer_path);
+    static void parse_files(const wxArrayString& files, const wxString& settings_folder, const wxString& indexer_path,
+                            const wxString& alternate_filename = wxEmptyString);
     bool ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);
     void update_comments_for_file(const wxString& filepath);
@@ -79,6 +83,8 @@ public:
     ProtocolHandler();
     ~ProtocolHandler();
 
+    static void parse_file(const wxString& filepath, const wxString& file_content, const wxString& settings_folder,
+                           const wxString& indexer_path);
     void on_initialize(unique_ptr<JSON>&& msg, Channel& channel);
     void on_initialized(unique_ptr<JSON>&& msg, Channel& channel);
     void on_unsupported_message(unique_ptr<JSON>&& msg, Channel& channel);

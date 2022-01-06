@@ -1,4 +1,5 @@
 #include "CTags.hpp"
+
 #include "asyncprocess.h"
 #include "clTempFile.hpp"
 #include "cl_standard_paths.h"
@@ -6,6 +7,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "readtags.h"
+
 #include <wx/tokenzr.h>
 
 CTags::CTags(const wxString& path)
@@ -188,7 +190,7 @@ size_t CTags::FindTags(const wxString& filter, std::vector<TagEntryPtr>& tags, s
     return tags.size();
 }
 
-TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath)
+TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, const wxString& force_filepath)
 {
     fullpath.Clear();
     if(!IsOpened()) {
@@ -216,9 +218,16 @@ TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath)
         if(line.empty()) {
             continue;
         }
+
         // construct a tag from the line
         TagEntry t;
         t.FromLine(line);
+
+        // if requested, update the filename
+        if(!force_filepath.empty()) {
+            t.SetFile(force_filepath);
+        }
+
         // add it to the vector
         tags.push_back(t);
 

@@ -233,7 +233,7 @@ void MainBook::OnProjectFileAdded(clCommandEvent& e)
     for(size_t i = 0; i < files.GetCount(); i++) {
         clEditor* editor = FindEditor(files.Item(i));
         if(editor) {
-            wxString fileName = editor->GetFileName().GetFullPath();
+            wxString fileName = CLRealPath(editor->GetFileName().GetFullPath());
             if(files.Index(fileName) != wxNOT_FOUND) {
                 editor->SetProject(ManagerST::Get()->GetProjectNameByFile(fileName));
             }
@@ -247,7 +247,7 @@ void MainBook::OnProjectFileRemoved(clCommandEvent& e)
     const wxArrayString& files = e.GetStrings();
     for(size_t i = 0; i < files.GetCount(); ++i) {
         clEditor* editor = FindEditor(files.Item(i));
-        if(editor && files.Index(editor->GetFileName().GetFullPath()) != wxNOT_FOUND) {
+        if(editor && files.Index(CLRealPath(editor->GetFileName().GetFullPath())) != wxNOT_FOUND) {
             editor->SetProject(wxEmptyString);
         }
     }
@@ -433,7 +433,7 @@ clEditor* MainBook::FindEditor(const wxString& fileName)
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
         if(editor) {
-            wxString unixStyleFile(editor->GetFileName().GetFullPath());
+            wxString unixStyleFile(CLRealPath(editor->GetFileName().GetFullPath()));
             wxString nativeFile(unixStyleFile);
 #ifdef __WXMSW__
             unixStyleFile.Replace(wxT("\\"), wxT("/"));
@@ -476,7 +476,7 @@ wxWindow* MainBook::FindPage(const wxString& text)
 {
     for(size_t i = 0; i < m_book->GetPageCount(); i++) {
         clEditor* editor = dynamic_cast<clEditor*>(m_book->GetPage(i));
-        if(editor && editor->GetFileName().GetFullPath().CmpNoCase(text) == 0) {
+        if(editor && CLRealPath(editor->GetFileName().GetFullPath()).CmpNoCase(text) == 0) {
             return editor;
         }
 
@@ -537,7 +537,7 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
                              OF_extra extra /*=OF_AddJump*/, bool preserveSelection /*=true*/,
                              int bmp /*= wxNullBitmap*/, const wxString& tooltip /* wxEmptyString */)
 {
-    wxFileName fileName(file_name);
+    wxFileName fileName(CLRealPath(file_name));
     fileName.MakeAbsolute();
 
 #ifdef __WXMSW__
@@ -1136,7 +1136,7 @@ bool MainBook::DoSelectPage(wxWindow* win)
 
     } else {
         wxCommandEvent event(wxEVT_ACTIVE_EDITOR_CHANGED);
-        event.SetString(editor->GetFileName().GetFullPath());
+        event.SetString(CLRealPath(editor->GetFileName().GetFullPath()));
         EventNotifier::Get()->AddPendingEvent(event);
     }
     return true;
@@ -1775,5 +1775,5 @@ void MainBook::OnIdle(wxIdleEvent& event)
     auto editor = GetActiveEditor(false);
     CHECK_PTR_RET(editor);
 
-    execute_callbacks_for_file(editor->GetFileName().GetFullPath());
+    execute_callbacks_for_file(CLRealPath(editor->GetFileName().GetFullPath()));
 }

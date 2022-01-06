@@ -517,6 +517,39 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     parse_file_for_includes_and_using_namespace(filepath);
 }
 
+wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string)
+{
+    // optimization: since we know that the file was saved
+    // at one point, we can reduce the processing needed by only using the code from
+    // current function downward
+    CompletionHelper helper;
+    m_completer->set_text(wxEmptyString, filepath, line);
+    auto scope = m_completer->determine_current_scope();
+    wxString truncated_text;
+    wxString text;
+    if(scope) {
+        // remove all the text from the start of text -> scope starting position
+        const wxString& orig_text = m_filesOpened[filepath];
+
+        wxArrayString lines = ::wxStringTokenize(orig_text, "\n", wxTOKEN_RET_EMPTY_ALL);
+        if((size_t)scope->GetLine() < lines.size()) {
+            line -= scope->GetLine() - 1;
+            lines.erase(lines.begin(), lines.begin() + scope->GetLine() - 1);
+            truncated_text = wxJoin(lines, '\n');
+        }
+
+        text = helper.truncate_file_to_location(truncated_text, line, character, CompletionHelper::TRUNCATE_EXACT_POS);
+        clDEBUG() << "Minimized file into:" << endl;
+        clDEBUG() << text << endl;
+    } else {
+        // use the entire file content
+        text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
+                                                CompletionHelper::TRUNCATE_EXACT_POS);
+        clDEBUG() << "Unable to minimize the buffer, using the complete buffer" << endl;
+    }
+    return text;
+}
+
 // Request <-->
 void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
 {
@@ -534,19 +567,19 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         m_codelite_indexer->start();
     }
 
-    size_t line = json["params"]["position"]["line"].toSize_t();
-    size_t character = json["params"]["position"]["character"].toSize_t();
+    int line = json["params"]["position"]["line"].toInt(0);
+    int character = json["params"]["position"]["character"].toInt(0);
 
+    clDEBUG() << "completion requested at:" << filepath << ":" << line << ":" << character << endl;
     // get the expression at this given position
     wxString last_word;
     CompletionHelper helper;
-    clDEBUG1() << "Truncating file..." << endl;
-    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
-                                                     CompletionHelper::TRUNCATE_EXACT_POS);
-    clDEBUG1() << "Success" << endl;
+    wxString full_buffer = m_filesOpened[filepath];
+    wxString minimized_buffer = minimize_buffer(filepath, line, character, full_buffer);
 
+    clDEBUG1() << "Success" << endl;
     clDEBUG1() << "Getting expression..." << endl;
-    wxString expression = helper.get_expression(text, false, &last_word);
+    wxString expression = helper.get_expression(minimized_buffer, false, &last_word);
 
     clDEBUG1() << "Success" << endl;
     clDEBUG() << "resolving expression:" << expression << endl;
@@ -557,7 +590,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
 
     wxString file_name;
     wxString suffix;
-    bool is_include_completion = helper.is_include_statement(text, &file_name, &suffix);
+    bool is_include_completion = helper.is_include_statement(expression, &file_name, &suffix);
     vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
 
     vector<TagEntryPtr> candidates;
@@ -568,7 +601,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         clDEBUG() << "CodeComplete expression:" << expression << endl;
         CxxExpression remainder;
 
-        m_completer->set_text(text, filepath, line);
+        m_completer->set_text(minimized_buffer, filepath, line);
         TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
         if(resolved) {
             clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
@@ -589,18 +622,16 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         // word completion
         // ----------------------------------
         clDEBUG() << "WordCompletion expression:" << expression << endl;
-        m_completer->set_text(text, filepath, line);
+        m_completer->set_text(minimized_buffer, filepath, line);
 
         CxxExpression remainder;
         TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
         if(!resolved) {
             // to reduce the noise from word completion, provide a list of included headers
             // + the current file
-            wxStringSet_t visible_files;
-            get_includes_recrusively(filepath, &visible_files);
-
-            clDEBUG() << "word completion using files:" << visible_files << endl;
-            m_completer->get_word_completions(remainder.type_name(), candidates, visible_scopes, visible_files);
+            //            wxStringSet_t visible_files;
+            //            get_includes_recrusively(filepath, &visible_files);
+            m_completer->get_word_completions(remainder.type_name(), candidates, visible_scopes, {});
 
         } else {
             // it was resolved into something...
@@ -680,6 +711,8 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     wxArrayString includes = get_files_to_parse(get_first_level_includes(filepath));
     files.reserve(files.size() + includes.size());
     files.insert(files.end(), includes.begin(), includes.end());
+
+    // reparse the file
     parse_files(files, nullptr);
 
     if(TagsManagerST::Get()->GetDatabase()) {

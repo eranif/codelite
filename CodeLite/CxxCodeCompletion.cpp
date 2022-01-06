@@ -979,24 +979,38 @@ TagEntryPtr CxxCodeCompletion::find_definition(const wxString& filepath, int lin
     // ----------------------------------
     // word completion
     // ----------------------------------
+    clDEBUG() << "find_definition is called" << endl;
     vector<TagEntryPtr> candidates;
     if(word_complete(filepath, line, expression, text, visible_scopes, true, candidates) == 0) {
         return nullptr;
     }
 
-    TagEntryPtr first = candidates[0];
+    // filter tags with no line numbers
+    vector<TagEntryPtr> good_tags;
+    TagEntryPtr first;
+    for(auto tag : candidates) {
+        if(tag->GetLine() != wxNOT_FOUND && !tag->GetFile().empty()) {
+            first = tag;
+            break;
+        }
+    }
+
+    if(!first) {
+        return nullptr;
+    }
+
     if(first->IsMethod()) {
         // we prefer the definition, unless we are already on it, and in that case, return the declaration
         // locate both declaration + implementation
         wxString path = first->GetPath();
         vector<TagEntryPtr> impl_vec;
         vector<TagEntryPtr> decl_vec;
-        clDEBUG1() << "Searching for path:" << path << endl;
+        clDEBUG() << "Searching for path:" << path << endl;
         m_lookup->GetTagsByPathAndKind(path, impl_vec, { "function" }, 1);
         m_lookup->GetTagsByPathAndKind(path, decl_vec, { "prototype" }, 1);
 
+        clDEBUG() << "impl:" << impl_vec.size() << "decl:" << decl_vec.size() << endl;
         if(impl_vec.empty() || decl_vec.empty()) {
-            clDEBUG1() << "impl:" << impl_vec.size() << "decl:" << decl_vec.size() << endl;
             return first;
         }
 

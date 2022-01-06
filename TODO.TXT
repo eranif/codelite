@@ -60,11 +60,13 @@ New CTagsd CC engine:
 - **DONE** function variables are not collected if the function is `const`
 - **DONE** `for` variables should be discarded after exiting the for buffer
 - **DONE** Use CxxCodeCompletion instead of WordCompletion & function tooltip
+- **DONE** Fix: find-definition -> failed to jump from declaration -> definition
 
 - Support `operator[]`
 - Support anonymous namespace
 - Support macro completions
-- Fix: find-definition -> we can go to decl, but not backward to the definition
+- Add keywords code completion
+
 
 KNOWN ISSUE:
 ------------

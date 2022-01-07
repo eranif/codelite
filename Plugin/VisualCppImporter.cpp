@@ -1,5 +1,6 @@
 #include "VisualCppImporter.h"
 
+#include <wx/regex.h>
 #include <wx/tokenzr.h>
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
@@ -803,11 +804,11 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
             }
 
             if(projectChild->GetName() == wxT("PropertyGroup")) {
+                wxString parentCondition = projectChild->GetAttribute(wxT("Condition"));
+
                 wxXmlNode* propertyGroupChild = projectChild->GetChildren();
 
                 while(propertyGroupChild) {
-                    wxString parentCondition = projectChild->GetAttribute(wxT("Condition"));
-
                     if(propertyGroupChild->GetName() == wxT("ConfigurationType")) {
                         wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
                         wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
@@ -859,6 +860,44 @@ void VisualCppImporter::GenerateFromProjectVC11(GenericWorkspacePtr genericWorks
                         GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
                         if(genericProjectCfg) {
                             genericProjectCfg->envVars[wxT("VS_OutDir")] = outDir;
+                        }
+                    }
+
+                    if(propertyGroupChild->GetName() == wxT("LibraryPath")) {
+                        wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
+                        wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
+
+                        wxString libraryPath = propertyGroupChild->GetNodeContent();
+                        libraryPath.Replace(wxT("\\"), wxT("/"));
+                        libraryPath = ReplaceDefaultEnvVars(libraryPath);
+
+                        // Remove VC++ library path, as it's not relevant for non VC++ environments
+                        static const wxRegEx vcLibraryPath(
+                            R"(\$\((LibraryPath|VC_LibraryPath_\w+|WindowsSDK_LibraryPath_\w+)\);?)");
+                        vcLibraryPath.ReplaceAll(&libraryPath, wxEmptyString);
+
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+                        if(genericProjectCfg) {
+                            genericProjectCfg->libPath = libraryPath;
+                        }
+                    }
+
+                    if(propertyGroupChild->GetName() == wxT("IncludePath")) {
+                        wxString elemCondition = propertyGroupChild->GetAttribute(wxT("Condition"));
+                        wxString projectCfgKey = ExtractProjectCfgName(parentCondition, elemCondition);
+
+                        wxString includePath = propertyGroupChild->GetNodeContent();
+                        includePath.Replace(wxT("\\"), wxT("/"));
+                        includePath = ReplaceDefaultEnvVars(includePath);
+
+                        // Remove VC++ include path, as it's not relevant for non VC++ environments
+                        static const wxRegEx vcIncludePath(
+                            R"(\$\((IncludePath|VC_IncludePath|WindowsSDK_IncludePath)\);?)");
+                        vcIncludePath.ReplaceAll(&includePath, wxEmptyString);
+
+                        GenericProjectCfgPtr genericProjectCfg = genericProjectCfgMap[projectCfgKey];
+                        if(genericProjectCfg) {
+                            genericProjectCfg->includePath = includePath;
                         }
                     }
 

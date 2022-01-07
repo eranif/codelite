@@ -450,6 +450,20 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_pointer_type_in_template)
+{
+    ENSURE_DB_LOADED();
+    CxxExpression remainder;
+
+    wxString code = "vector<ITest*> m_tests;";
+    completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+    auto resolved = completer->code_complete("m_tests.at(i)->tes", { "std" }, &remainder);
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetPath(), "ITest");
+    CHECK_STRING(remainder.type_name(), "tes");
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_global_method)
 {
     ENSURE_DB_LOADED();
@@ -859,10 +873,6 @@ TEST_FUNC(test_cxx_code_completion)
 int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);
-
-    if(wxMatchWild("std::*map::*iterator", "std::unordered_map::const_iterator")) {
-        cout << "its a match!" << endl;
-    }
     wxLogNull NOLOG;
     Tester::Instance()->RunTests();
     return 0;

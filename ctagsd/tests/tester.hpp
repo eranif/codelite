@@ -27,8 +27,11 @@
 #define TESTER_H
 
 #include <vector>
+#include <wx/filename.h>
 #include <wx/string.h>
 #include <wx/wxcrtvararg.h>
+
+using namespace std;
 
 class ITest;
 /**
@@ -40,9 +43,8 @@ class ITest;
  */
 class Tester
 {
-
     static Tester* ms_instance;
-    std::vector<ITest*> m_tests;
+    vector<ITest*> m_tests;
 
 public:
     static Tester* Instance();
@@ -66,7 +68,12 @@ private:
 class ITest
 {
 protected:
-    int m_testCount;
+    int m_testCount = 0;
+    bool m_passed = false;
+    wxString m_summary;
+    wxString m_file;
+    wxString m_test_name;
+    int m_line = 0;
 
 public:
     ITest()
@@ -76,110 +83,107 @@ public:
     }
     virtual ~ITest() {}
     virtual bool test() = 0;
+    const wxString& get_summary() const { return m_summary; }
+    bool is_passed() const { return m_passed; }
+    void set_passed(bool b) { m_passed = b; }
+    void set_summary(const wxString& summary) { m_summary = summary; }
+    void set_file_line(const wxString& file, int l)
+    {
+        m_file = wxFileName(file).GetFullPath();
+        m_line = l;
+    }
+    void set_test_name(const wxString& name) { m_test_name = name; }
+    const wxString& name() const { return m_test_name; }
+    int line() const { return m_line; }
+    const wxString& file() const { return m_file; }
+    int get_check_counter() const { return m_testCount; }
 };
 
 ///////////////////////////////////////////////////////////
 // Helper macros:
 ///////////////////////////////////////////////////////////
 
-#define TEST_FUNC(Name)              \
-    class Test_##Name : public ITest \
-    {                                \
-    public:                          \
-        virtual bool test();         \
-        virtual bool Name();         \
-    };                               \
-    Test_##Name theTest##Name;       \
-    bool Test_##Name::test()         \
-    {                                \
-        printf("---->\n");           \
-        return Name();               \
-    }                                \
+#define TEST_FUNC(Name)                         \
+    class Test_##Name : public ITest            \
+    {                                           \
+    public:                                     \
+        virtual bool test();                    \
+        virtual bool Name();                    \
+    };                                          \
+    Test_##Name theTest##Name;                  \
+    bool Test_##Name::test() { return Name(); } \
     bool Test_##Name::Name()
 
 // Check values macros
-#define CHECK_SIZE(actualSize, expcSize)                                                                    \
-    {                                                                                                       \
-        m_testCount++;                                                                                      \
-        if(actualSize == (int)expcSize) {                                                                   \
-            wxFprintf(stderr, "%-40s(%d): Successfull!\n", __FUNCTION__, (int)m_testCount);                 \
-        } else {                                                                                            \
-            wxFprintf(stderr, "%-40s(%d): ERROR\n%s:%d: Expected size: %d, Actual Size:%d\n", __FUNCTION__, \
-                      (int)m_testCount, __FILE__, __LINE__, (int)expcSize, (int)actualSize);                \
-            return false;                                                                                   \
-        }                                                                                                   \
+
+#define SET_FILE_LINE_NAME()           \
+    set_file_line(__FILE__, __LINE__); \
+    set_test_name(__FUNCTION__)
+
+#define CHECK_SIZE(actualSize, expcSize)                                                                 \
+    {                                                                                                    \
+        m_testCount++;                                                                                   \
+        SET_FILE_LINE_NAME();                                                                            \
+        set_passed(actualSize == (int)expcSize);                                                         \
+        if(!is_passed()) {                                                                               \
+            set_summary(wxString() << "Expected size: " << expcSize << ". Actual size: " << actualSize); \
+            return false;                                                                                \
+        }                                                                                                \
     }
 
-#define CHECK_STRING(str, expcStr)                                                                                   \
-    {                                                                                                                \
-        ++m_testCount;                                                                                               \
-        if(strcmp(str, expcStr) == 0) {                                                                              \
-            wxFprintf(stderr, "%-40s(%d): Successfull!\n", __FUNCTION__, (int)m_testCount);                          \
-        } else {                                                                                                     \
-            wxFprintf(stderr, "%-40s(%d): ERROR\n%s:%d: Expected string: '%s', Actual string: '%s'\n", __FUNCTION__, \
-                      (int)m_testCount, __FILE__, __LINE__, expcStr, str);                                           \
-            return false;                                                                                            \
-        }                                                                                                            \
+#define CHECK_STRING(str, expcStr)                                                                             \
+    {                                                                                                          \
+        ++m_testCount;                                                                                         \
+        SET_FILE_LINE_NAME();                                                                                  \
+        set_passed(strcmp(str, expcStr) == 0);                                                                 \
+        if(!is_passed()) {                                                                                     \
+            set_summary(wxString() << "Expected string: '" << expcStr << "'. Actual string: '" << str << "'"); \
+            return false;                                                                                      \
+        }                                                                                                      \
     }
 
-#define CHECK_WXSTRING(str, expcStr)                                                                                 \
-    {                                                                                                                \
-        ++m_testCount;                                                                                               \
-        if(str == expcStr) {                                                                                         \
-            wxFprintf(stderr, "%-40s(%d): Successfull!\n", __FUNCTION__, (int)m_testCount);                          \
-        } else {                                                                                                     \
-            wxFprintf(stderr, "%-40s(%d): ERROR\n%s:%d: Expected string: '%s', Actual string: '%s'\n", __FUNCTION__, \
-                      (int)m_testCount, __FILE__, __LINE__, expcStr, str);                                           \
-            return false;                                                                                            \
-        }                                                                                                            \
+#define CHECK_WXSTRING(str, expcStr)                                                                           \
+    {                                                                                                          \
+        ++m_testCount;                                                                                         \
+        SET_FILE_LINE_NAME();                                                                                  \
+        set_passed(str == expcStr);                                                                            \
+        if(!is_passed()) {                                                                                     \
+            set_summary(wxString() << "Expected string: '" << expcStr << "'. Actual string: '" << str << "'"); \
+            return false;                                                                                      \
+        }                                                                                                      \
     }
 
-#define CHECK_BOOL(cond)                                                                                        \
-    {                                                                                                           \
-        ++m_testCount;                                                                                          \
-        if((cond)) {                                                                                            \
-            wxFprintf(stderr, "%-40s(%d): Successfull!\n", __FUNCTION__, m_testCount);                          \
-        } else {                                                                                                \
-            wxFprintf(stderr, "%-40s(%d): ERROR\n%s:%d: Condition FALSE: %s\n", __FUNCTION__, (int)m_testCount, \
-                      __FILE__, __LINE__, #cond);                                                               \
-            return false;                                                                                       \
-        }                                                                                                       \
+#define CHECK_BOOL(cond)                                                      \
+    {                                                                         \
+        ++m_testCount;                                                        \
+        SET_FILE_LINE_NAME();                                                 \
+        set_passed((cond));                                                   \
+        if(!is_passed()) {                                                    \
+            set_summary(wxString() << "Condition failed. `" << #cond << "`"); \
+            return false;                                                     \
+        }                                                                     \
     }
 
-#define CHECK_NOT_NULL(ptr)                                                                                       \
-    {                                                                                                             \
-        ++m_testCount;                                                                                            \
-        if((ptr)) {                                                                                               \
-            wxFprintf(stderr, "%-40s(%d): Successfull!\n", __FUNCTION__, m_testCount);                            \
-        } else {                                                                                                  \
-            wxFprintf(stderr, "%-40s(%d): ERROR\n%s:%d: %s is NULL!\n", __FUNCTION__, (int)m_testCount, __FILE__, \
-                      __LINE__, #ptr);                                                                            \
-            return false;                                                                                         \
-        }                                                                                                         \
+#define CHECK_NOT_NULL(ptr)                                 \
+    {                                                       \
+        ++m_testCount;                                      \
+        SET_FILE_LINE_NAME();                               \
+        set_passed((ptr));                                  \
+        if(!is_passed()) {                                  \
+            set_summary(wxString() << #ptr << " is null!"); \
+            return false;                                   \
+        }                                                   \
     }
 
-#define CHECK_BOOL_INT(cond, actRes)                                                                             \
-    {                                                                                                            \
-        ++m_testCount;                                                                                           \
-        if(cond) {                                                                                               \
-            wxFprintf(stderr, "%-40s(%d): Successfull!\n", __FUNCTION__, (int)m_testCount);                      \
-        } else {                                                                                                 \
-            wxFprintf(stderr, "%-40s(%d): ERROR\n%s:%d: Condition FALSE: %s. Actual result: %d\n", __FUNCTION__, \
-                      (int)m_testCount, __FILE__, __LINE__, #cond, (int)actRes);                                 \
-            return false;                                                                                        \
-        }                                                                                                        \
-    }
-
-#define CHECK_EXPECTED(expr, expected)                                                                    \
-    {                                                                                                     \
-        ++m_testCount;                                                                                    \
-        if((expr) == (expected)) {                                                                        \
-            wxFprintf(stderr, "%-40s(%d): Successfull!\n", __FUNCTION__, (int)m_testCount);               \
-        } else {                                                                                          \
-            wxFprintf(stderr, "%-40s(%d): ERROR\n%s:%d: CHECK_EXPECTED failed: %s != %s\n", __FUNCTION__, \
-                      (int)m_testCount, __FILE__, __LINE__, #expr, #expected);                            \
-            return false;                                                                                 \
-        }                                                                                                 \
+#define CHECK_EXPECTED(expr, expected)                                                            \
+    {                                                                                             \
+        ++m_testCount;                                                                            \
+        SET_FILE_LINE_NAME();                                                                     \
+        set_passed((expr) == (expected));                                                         \
+        if(!is_passed()) {                                                                        \
+            set_summary(wxString() << "CHECK_EXPECTED failed. " << #expr << " != " << #expected); \
+            return false;                                                                         \
+        }                                                                                         \
     }
 
 #endif // TESTER_H

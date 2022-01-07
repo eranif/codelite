@@ -118,6 +118,11 @@ private:
     vector<TagEntryPtr> get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds, const wxString& filter,
                                               const vector<wxString>& visible_scopes);
 
+    /**
+     * @brief return parsable pattern from a tag
+     */
+    wxString normalize_pattern(TagEntryPtr tag) const;
+
 public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;
 

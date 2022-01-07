@@ -61,12 +61,15 @@ New CTagsd CC engine:
 - **DONE** `for` variables should be discarded after exiting the for buffer
 - **DONE** Use CxxCodeCompletion instead of WordCompletion & function tooltip
 - **DONE** Fix: find-definition -> failed to jump from declaration -> definition
+- **DONE** ::clGetManager()-> // fails to complete
 
 - Support `operator[]`
 - Support anonymous namespace
 - Support macro completions
 - Add keywords code completion
-
+- eAsciiColours:: <- no completion
+- CodeLite file completion fails to complete
+- vector<pair<wxString, wxString>> does not code complete
 
 KNOWN ISSUE:
 ------------

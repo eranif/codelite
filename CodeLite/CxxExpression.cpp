@@ -86,11 +86,18 @@ bool CxxExpression::parse_list(CxxTokenizer& tokenizer, wxArrayString* params, i
             curparam << tk.GetWXString();
             continue;
 
+        } else if(tk.is_keyword()) {
+            continue;
         } else {
             switch(tk.GetType()) {
             case T_DOUBLE_COLONS:
             case T_IDENTIFIER:
                 curparam << tk.GetWXString();
+                break;
+            case T_AND_AND:
+            case '*':
+            case '&':
+                // ignore these
                 break;
             case ',':
                 if(depth == 0) {
@@ -102,7 +109,12 @@ bool CxxExpression::parse_list(CxxTokenizer& tokenizer, wxArrayString* params, i
                 break;
 
             default:
-                curparam << " " << tk.GetWXString();
+                if(tk.is_builtin_type() || tk.GetType() == T_IDENTIFIER) {
+                    curparam << " " << tk.GetWXString();
+
+                } else {
+                    curparam << tk.GetWXString();
+                }
                 break;
             }
         }

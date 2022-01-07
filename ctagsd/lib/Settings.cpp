@@ -5,6 +5,7 @@
 #include "GCCMetadata.hpp"
 #include "JSON.h"
 #include "clTempFile.hpp"
+#include "ctags_manager.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
@@ -86,6 +87,7 @@ vector<wxString> DEFAULT_TOKENS = {
     "WXDLLIMPEXP_AUI",
     "WXDLLIMPEXP_BASE",
     "WXDLLIMPEXP_CL",
+    "WXDLLIMPEXP_SDK",
     "WXDLLIMPEXP_CORE",
     "WXDLLIMPEXP_FWD_ADV",
     "WXDLLIMPEXP_FWD_AUI",
@@ -438,6 +440,19 @@ void CTagsdSettings::Load(const wxFileName& filepath)
     clDEBUG() << "codelite_indexer..:" << m_codelite_indexer << endl;
     clDEBUG() << "ignore_spec.......:" << m_ignore_spec << endl;
     clDEBUG() << "limit_results.....:" << m_limit_results << endl;
+
+    // conver the tokens to wxArrayString
+    wxArrayString wxarr;
+    wxarr.reserve(m_tokens.size());
+    for(const auto& p : m_tokens) {
+        wxarr.Add(p.first + "=" + p.second);
+    }
+
+    // update ctags manager
+    TagsOptionsData tod;
+    tod.SetCcNumberOfDisplayItems(m_limit_results);
+    tod.SetTokens(wxJoin(wxarr, '\n'));
+    TagsManagerST::Get()->SetCtagsOptions(tod);
 }
 
 void CTagsdSettings::Save(const wxFileName& filepath)

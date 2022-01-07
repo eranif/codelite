@@ -278,7 +278,7 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
     }
 
     // simple template instantiaion line
-    wxString pattern = resolved->GetPatternClean();
+    wxString pattern = normalize_pattern(resolved);
     if(curexpr.is_template()) {
         curexpr.parse_template_placeholders(pattern);
         wxStringMap_t M = curexpr.get_template_placeholders_map();
@@ -286,7 +286,7 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
     }
 
     // Check if one of the parents is a template class
-    vector<wxString> inhertiance_expressions = CxxExpression::split_subclass_expression(resolved->GetPatternClean());
+    vector<wxString> inhertiance_expressions = CxxExpression::split_subclass_expression(normalize_pattern(resolved));
     for(const wxString& inherit : inhertiance_expressions) {
         vector<CxxExpression> more_expressions = CxxExpression::from_expression(inherit + ".", nullptr);
         if(more_expressions.empty())
@@ -371,12 +371,34 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
                 return resolve_compound_expression(expr_arr, visible_scopes);
             } else {
                 determine_current_scope();
-                auto scope_tag =
-                    lookup_symbol_by_kind(m_current_scope_name, visible_scopes, { "class", "struct", "union" });
-                if(scope_tag) {
-                    // we are inside a scope, use the scope as the parent
-                    // and call resolve_expression() again
-                    return resolve_expression(curexp, scope_tag, visible_scopes);
+
+                // try to load the symbol this order:
+                // current-scope::name (if we are in a scope)
+                // other-scopes::name
+                // global-scope::name
+                vector<wxString> paths_to_try;
+                if(!m_current_scope_name.empty()) {
+                    paths_to_try.push_back(m_current_scope_name + "::" + curexp.type_name());
+                }
+
+                // add the other scopes
+                for(auto scope : visible_scopes) {
+                    wxString path_to_try;
+                    if(!scope.empty()) {
+                        path_to_try << scope << "::";
+                    }
+                    path_to_try << curexp.type_name();
+                    paths_to_try.push_back(path_to_try);
+                }
+
+                for(const auto& path_to_try : paths_to_try) {
+                    auto scope_tag = lookup_symbol_by_kind(path_to_try, visible_scopes,
+                                                           { "class", "struct", "union", "prototype", "function" });
+                    if(scope_tag) {
+                        // we are inside a scope, use the scope as the parent
+                        // and call resolve_expression() again
+                        return resolve_expression(curexp, scope_tag, visible_scopes);
+                    }
                 }
             }
         }
@@ -418,7 +440,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
     } else if(resolved->IsMember()) {
         // replace the member variable by its type
         unordered_map<wxString, __local> locals_variables;
-        if((parse_locals(resolved->GetPatternClean(), &locals_variables) == 0) ||
+        if((parse_locals(normalize_pattern(resolved), &locals_variables) == 0) ||
            (locals_variables.count(resolved->GetName()) == 0)) {
             return nullptr;
         }
@@ -435,6 +457,8 @@ const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const { return m_macros
 wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
 {
     clFunction f;
+    wxString pattern = normalize_pattern(tag);
+    tag->SetPattern("/^ " + pattern + " $/");
     if(LanguageST::Get()->FunctionFromPattern(tag, f)) {
         wxString return_value;
         if(!f.m_returnValue.m_typeScope.empty()) {
@@ -477,7 +501,7 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
         return typedef_str.Trim();
     }
 
-    wxString pattern = tag->GetPatternClean();
+    wxString pattern = normalize_pattern(tag);
     tkzr.Reset(pattern);
 
     vector<wxString> V;
@@ -1079,4 +1103,33 @@ size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, cons
     }
     candidates.swap(matches);
     return candidates.size();
+}
+
+wxString CxxCodeCompletion::normalize_pattern(TagEntryPtr tag) const
+{
+    CxxTokenizer tokenizer;
+    CxxLexerToken tk;
+
+    tokenizer.Reset(tag->GetPatternClean());
+    wxString pattern;
+    while(tokenizer.NextToken(tk)) {
+        wxString str = tk.GetWXString();
+        switch(tk.GetType()) {
+        case T_IDENTIFIER:
+            if(m_macros_table_map.count(str) && m_macros_table_map.find(str)->second.empty()) {
+                // skip this token
+            } else {
+                pattern << str << " ";
+            }
+            break;
+        default:
+            if(tk.is_keyword() || tk.is_builtin_type()) {
+                pattern << str << " ";
+            } else {
+                pattern << str;
+            }
+            break;
+        }
+    }
+    return pattern;
 }

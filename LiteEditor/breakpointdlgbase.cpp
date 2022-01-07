@@ -69,7 +69,9 @@ BreakpointTabBase::BreakpointTabBase(wxWindow* parent, wxWindowID id, const wxPo
 
     SetName(wxT("BreakpointTabBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
     m_dvListCtrlBreakpoints->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                      wxDataViewEventHandler(BreakpointTabBase::OnContextMenu), NULL, this);
@@ -290,7 +292,7 @@ BreakpointPropertiesDlgBase::BreakpointPropertiesDlgBase(wxWindow* parent, wxWin
         new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_MULTILINE);
     m_textCond->SetToolTip(
         _("You can add a condition to any breakpoint or watchpoint. The debugger will then stop only if the condition "
-          "is met.\nThe condition can be any simple or complex expression in your programming language,providing it "
+          "is met.\nThe condition can be any simple or complex expression in your programming language, providing it "
           "returns a bool. However any variables that you use must be in scope.\nIf you've previously set a condition "
           "and no longer want it, just clear this textctrl."));
 
@@ -376,7 +378,9 @@ BreakpointPropertiesDlgBase::BreakpointPropertiesDlgBase(wxWindow* parent, wxWin
 
     SetName(wxT("BreakpointPropertiesDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent();
     } else {

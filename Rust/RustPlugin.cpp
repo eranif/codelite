@@ -193,7 +193,7 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
         e.Skip(false);
         // Prompt the user for the folder to run 'cargo new'
         NewFileSystemWorkspaceDialog dlg(EventNotifier::Get()->TopFrame(), false /* do not auto update the name */);
-        dlg.SetLabel("Select the folder to run 'cargo new'");
+        dlg.SetLabel(_("Select the folder to run 'cargo new'"));
         if(dlg.ShowModal() != wxID_OK) {
             return;
         }

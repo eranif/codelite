@@ -23,11 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/msgdlg.h>
+#include "breakpointpropertiesdlg.h"
+
+#include "windowattrmanager.h"
+
 #include <wx/filedlg.h>
 #include <wx/filename.h>
-#include "breakpointpropertiesdlg.h"
-#include "windowattrmanager.h"
+#include <wx/msgdlg.h>
 
 BreakptPropertiesDlg::BreakptPropertiesDlg(wxWindow* parent)
     : BreakpointPropertiesDlgBase(parent)
@@ -79,18 +81,14 @@ void BreakptPropertiesDlg::EnterBPData(const clDebuggerBreakpoint& bp)
     // running
     // as SetSelection(1) causes a wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING event, which is vetoed
     m_choicebook->Disconnect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING,
-                             wxChoicebookEventHandler(BreakptPropertiesDlg::OnPageChanging),
-                             NULL,
-                             this);
+                             wxChoicebookEventHandler(BreakptPropertiesDlg::OnPageChanging), NULL, this);
     if(its_a_breakpt) {
         m_choicebook->SetSelection(0);
     } else {
         m_choicebook->SetSelection(1);
     }
     m_choicebook->Connect(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING,
-                          wxChoicebookEventHandler(BreakptPropertiesDlg::OnPageChanging),
-                          NULL,
-                          this);
+                          wxChoicebookEventHandler(BreakptPropertiesDlg::OnPageChanging), NULL, this);
 
     m_checkDisable->SetValue(!bp.is_enabled);
     m_checkTemp->SetValue(bp.is_temp);
@@ -115,8 +113,7 @@ void BreakptPropertiesDlg::EndModal(int retCode)
         b.watchpt_data = m_textWatchExpression->GetValue();
         if(b.watchpt_data.IsEmpty()) {
             wxMessageBox(_("You don't seem to have entered a variable for the watchpoint to watch. Please try again."),
-                         wxT(":/"),
-                         wxICON_ERROR);
+                         _(":/"), wxICON_ERROR);
             return;
         }
     } else {
@@ -144,8 +141,7 @@ void BreakptPropertiesDlg::EndModal(int retCode)
         case wbc_function:
             b.function_name = m_textFunctionname->GetValue();
             if(b.function_name.IsEmpty()) {
-                wxMessageBox(_("You don't seem to have entered a name for the function. Please try again."),
-                             _(":/"),
+                wxMessageBox(_("You don't seem to have entered a name for the function. Please try again."), _(":/"),
                              wxICON_ERROR);
                 return;
             }
@@ -231,8 +227,7 @@ void BreakptPropertiesDlg::OnPageChanging(wxChoicebookEvent& event)
     if(b.debugger_id != -1) {
         wxMessageBox(
             _("Sorry, you can't change a breakpoint to a watchpoint, or vice versa, while the debugger is running"),
-            _("Not possible"),
-            wxICON_ERROR | wxOK);
+            _("Not possible"), wxICON_ERROR | wxOK);
         event.Veto();
     }
 }
@@ -241,14 +236,17 @@ void BreakptPropertiesDlg::OnPageChanged(wxChoicebookEvent& event)
 {
     its_a_breakpt = m_choicebook->GetPageText(m_choicebook->GetSelection()) == _("Breakpoint");
     // Watchpoints can't have conditions set direct in MI; they need to be created without, then edited to add
-    m_textCond->Enable(its_a_breakpt || GetTitle().StartsWith("Properties")); // The dlg title starts with Properties when editing
-    if (!GetTitle().StartsWith("Properties")) {
-        wxString tip =  (its_a_breakpt ?
-                            "You can add a condition to any breakpoint. The debugger will then stop only if the condition is met.\n \
-The condition can be any simple or complex expression in your programming language, providing it returns a bool. However any variables that you use must be in scope.\n \
-If you've previously set a condition and no longer want it, just clear this textctrl." :
-                        "It is not possible to Add a conditional watchpoint. Create a normal watchpoint first, then Edit it to add the conditon"
-                        );
+    m_textCond->Enable(its_a_breakpt ||
+                       GetTitle().StartsWith("Properties")); // The dlg title starts with Properties when editing
+    if(!GetTitle().StartsWith("Properties")) {
+        wxString tip =
+            (its_a_breakpt
+                 ? _("You can add a condition to any breakpoint. The debugger will then stop only if the condition is "
+                     "met.\nThe condition can be any simple or complex expression in your programming language, "
+                     "providing it returns a bool. However any variables that you use must be in scope.\nIf you've "
+                     "previously set a condition and no longer want it, just clear this textctrl.")
+                 : _("It is not possible to Add a conditional watchpoint. Create a normal watchpoint first, then Edit "
+                     "it to add the conditon"));
         m_textCond->SetToolTip(tip);
     }
     m_checkTemp->Show(its_a_breakpt); // Watchpoints can't be temporary

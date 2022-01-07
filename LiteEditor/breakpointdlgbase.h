@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LITEEDITOR_BREAKPOINTDLG_BASE_CLASSES_H
 #define _CODELITE_LITEEDITOR_BREAKPOINTDLG_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -42,6 +43,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class BreakpointTabBase : public wxPanel
 {

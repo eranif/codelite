@@ -51,6 +51,8 @@ protected:
     void DoInitialize(size_t numOfTips, bool simpleTip);
     void DoDrawTip(wxDC& dc);
 
+    void ShrinkToScreen(wxSize& size) const;
+
 public:
     CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip_html_tags);
     virtual ~CCBoxTipWindow();

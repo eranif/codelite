@@ -191,20 +191,28 @@ void CCBoxTipWindow::DoInitialize(size_t numOfTips, bool simpleTip)
     }
     text_rect.Inflate(5);
 
-    // make sure that the tip window, is not bigger than the screen
-    auto display = GetDisplay(this);
-    wxRect display_size = display->GetGeometry();
-
-    if(text_rect.GetHeight() > display_size.GetHeight()) {
-        text_rect.SetHeight(display_size.GetHeight());
-    }
-    if(text_rect.GetWidth() >= display_size.GetWidth()) {
-        text_rect.SetWidth(display_size.GetWidth());
-    }
+    wxSize shrinked_size = text_rect.GetSize();
+    ShrinkToScreen(shrinked_size);
+    text_rect.SetSize(shrinked_size);
 
     SetSizeHints(text_rect.GetSize());
     SetSize(text_rect.GetSize());
     Layout();
+}
+
+void CCBoxTipWindow::ShrinkToScreen(wxSize& size) const
+{
+    // make sure that the tip window, is not bigger than the screen
+    auto display = GetDisplay(this);
+    // shrink up to the client area to preserve an extra space to un-hover it
+    wxRect display_rect = display->GetClientArea();
+
+    if(size.GetHeight() > display_rect.GetHeight()) {
+        size.SetHeight(display_rect.GetHeight());
+    }
+    if(size.GetWidth() >= display_rect.GetWidth()) {
+        size.SetWidth(display_rect.GetWidth());
+    }
 }
 
 void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, IEditor* focusEdior)
@@ -331,6 +339,8 @@ void CCBoxTipWindow::DoDrawTip(wxDC& dc)
     clMarkdownRenderer renderer;
     wxSize size = renderer.Render(this, dc, m_tip, GetClientRect());
     wxSize client_rect = GetClientRect().GetSize();
+
+    ShrinkToScreen(size);
 
     if(m_ratio == 0.0 && size.GetWidth() > client_rect.GetWidth()) {
         m_ratio = (double)size.GetWidth() / (double)client_rect.GetWidth();

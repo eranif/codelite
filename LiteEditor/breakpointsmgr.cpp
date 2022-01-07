@@ -31,8 +31,10 @@
 #include "file_logger.h"
 #include "frame.h"
 #include "manager.h"
-#include "wx/numdlg.h"
-#include "wx/regex.h"
+
+#include <wx/numdlg.h>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
 
 //---------------------------------------------------------
 BreakptMgr::BreakptMgr()
@@ -207,7 +209,12 @@ void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip,
         tip << _("Condition: ") << "`" << bp.conditions << "`\n";
     }
     if(!bp.commandlist.IsEmpty()) {
-        tip << _("Commands: ") << "`" << bp.commandlist << "`\n";
+        tip << _("Commands: ") << "\n";
+
+        wxArrayString commands = ::wxStringTokenize(bp.commandlist, "\n", wxTOKEN_STRTOK);
+        for(const wxString& command : commands) {
+            tip << "  `" << command << "`\n";
+        }
     }
 
     tip.Trim().Trim(false);

@@ -87,6 +87,7 @@ private:
     TagEntryPtr lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
                                       const vector<wxString>& kinds);
     TagEntryPtr lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes);
+    TagEntryPtr lookup_subscript_operator(TagEntryPtr parent, const vector<wxString>& visible_scopes);
 
     TagEntryPtr lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
                                     const vector<wxString>& visible_scopes, const vector<wxString>& kinds);
@@ -94,7 +95,8 @@ private:
     wxString typedef_from_tag(TagEntryPtr tag) const;
     wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals) const;
     TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
-    TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes);
+    TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes,
+                                            const CxxExpression& orig_expression);
 
     const wxStringMap_t& get_tokens_map() const;
     wxString get_return_value(TagEntryPtr tag) const;

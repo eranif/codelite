@@ -111,11 +111,12 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
         expr_arr.erase(expr_arr.begin());
     }
     m_first_time = true;
-    return resolve_compound_expression(expr_arr, scopes);
+    return resolve_compound_expression(expr_arr, scopes, {});
 }
 
 TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>& expression,
-                                                           const vector<wxString>& visible_scopes)
+                                                           const vector<wxString>& visible_scopes,
+                                                           const CxxExpression& orig_expression)
 {
     RECURSE_GUARD_RETURN_NULLPTR();
 
@@ -126,6 +127,9 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
 
     TagEntryPtr resolved;
     for(CxxExpression& curexpr : expression) {
+        if(orig_expression.check_subscript_operator()) {
+            curexpr.set_subscript_params(orig_expression.subscript_params());
+        }
         resolved = resolve_expression(curexpr, resolved, visible_scopes);
         CHECK_PTR_RET_NULL(resolved);
         // once we resolved something we make it with this flag
@@ -165,6 +169,20 @@ wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxS
 TagEntryPtr CxxCodeCompletion::lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes)
 {
     return lookup_child_symbol(parent, "operator->", visible_scopes, { "function", "prototype" });
+}
+
+TagEntryPtr CxxCodeCompletion::lookup_subscript_operator(TagEntryPtr parent, const vector<wxString>& visible_scopes)
+{
+    CHECK_PTR_RET_NULL(m_lookup);
+    vector<TagEntryPtr> scopes = get_scopes(parent, visible_scopes);
+    for(auto scope : scopes) {
+        vector<TagEntryPtr> tags;
+        m_lookup->GetSubscriptOperator(scope->GetPath(), tags);
+        if(!tags.empty()) {
+            return tags[0];
+        }
+    }
+    return nullptr;
 }
 
 TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
@@ -307,7 +325,7 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
     if(resolved_name != name_to_find) {
         name_to_find = resolved_name;
         auto expressions = CxxExpression::from_expression(name_to_find + curexpr.operand_string(), nullptr);
-        return resolve_compound_expression(expressions, visible_scopes);
+        return resolve_compound_expression(expressions, visible_scopes, curexpr);
     }
 
     // try classes first
@@ -325,7 +343,14 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
         update_template_table(resolved, curexpr, visible_scopes, visited);
 
         // Check for operator-> overloading
-        if(curexpr.operand_string() == "->") {
+        if(curexpr.check_subscript_operator()) {
+            // we check for subscript before ->
+            TagEntryPtr subscript_tag = lookup_subscript_operator(resolved, visible_scopes);
+            if(subscript_tag) {
+                resolved = subscript_tag;
+                curexpr.pop_subscript_operator();
+            }
+        } else if(curexpr.operand_string() == "->") {
             // search for operator-> overloading
             TagEntryPtr arrow_tag = lookup_operator_arrow(resolved, visible_scopes);
             if(arrow_tag) {
@@ -372,13 +397,13 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
             determine_current_scope();
             wxString exprstr = m_current_scope_name + curexp.operand_string();
             vector<CxxExpression> expr_arr = CxxExpression::from_expression(exprstr, nullptr);
-            return resolve_compound_expression(expr_arr, visible_scopes);
+            return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 
         } else if(curexp.operand_string() == "." || curexp.operand_string() == "->") {
             if(m_locals.count(curexp.type_name())) {
                 wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
                 vector<CxxExpression> expr_arr = CxxExpression::from_expression(exprstr, nullptr);
-                return resolve_compound_expression(expr_arr, visible_scopes);
+                return resolve_compound_expression(expr_arr, visible_scopes, curexp);
             } else {
                 determine_current_scope();
 
@@ -437,7 +462,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
         // parse the return value
         wxString new_expr = get_return_value(resolved) + curexp.operand_string();
         vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
-        return resolve_compound_expression(expr_arr, scopes);
+        return resolve_compound_expression(expr_arr, scopes, curexp);
     } else if(resolved->IsTypedef()) {
         // substitude the type with the typeref
         wxString new_expr;
@@ -446,7 +471,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
         }
         new_expr += curexp.operand_string();
         vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
-        return resolve_compound_expression(expr_arr, scopes);
+        return resolve_compound_expression(expr_arr, scopes, curexp);
     } else if(resolved->IsMember()) {
         // replace the member variable by its type
         unordered_map<wxString, __local> locals_variables;
@@ -457,7 +482,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
 
         wxString new_expr = locals_variables[resolved->GetName()].type_name() + curexp.operand_string();
         vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
-        return resolve_compound_expression(expr_arr, scopes);
+        return resolve_compound_expression(expr_arr, scopes, curexp);
     }
     return nullptr;
 }

@@ -63,8 +63,8 @@ New CTagsd CC engine:
 - **DONE** Fix: find-definition -> failed to jump from declaration -> definition
 - **DONE** ::clGetManager()-> // fails to complete
 - **DONE** template of templates are now working properly (e.g. vector<pair<wxString, wxString>>. does not code complete)
+- **DONE** Support `operator[]`
 
-- Support `operator[]`
 - Support anonymous namespace
 - Support macro completions
 - Add keywords code completion

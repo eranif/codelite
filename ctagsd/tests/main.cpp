@@ -333,7 +333,7 @@ TEST_FUNC(test_cxx_code_completion_inhertiance_children)
     return true;
 }
 
-TEST_FUNC(test_cxx_code_completion_operator_subscript)
+TEST_FUNC(test_cxx_code_completion_arrow_operator)
 {
     ENSURE_DB_LOADED();
     {
@@ -354,16 +354,39 @@ TEST_FUNC(test_cxx_code_completion_operator_subscript)
     return true;
 }
 
-TEST_FUNC(test_cxx_code_completion_operator_arrow)
+TEST_FUNC(test_cxx_code_completion_subscript_operator)
 {
     ENSURE_DB_LOADED();
-    // CxxExpression remainder;
-    // TagEntryPtr resolved = completer->code_complete("EventNotifier::Get()->", {}, &remainder);
-    // CHECK_NOT_NULL(resolved);
-    // vector<TagEntryPtr> candidates;
-    // completer->get_completions(resolved, wxEmptyString, candidates, {});
-    // CHECK_BOOL(!candidates.empty());
-    // CHECK_BOOL(is_tag_exists("wxEvtHandler::Bind", candidates));
+    {
+        wxString code = "vector<TagEntry> tags;";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("tags[0].", { "std" }, nullptr);
+        CHECK_NOT_NULL(resolved);
+        CHECK_STRING(resolved->GetPath(), "TagEntry");
+    }
+
+    {
+        wxString code = "vector<vector<wxString>> two_dim_array;";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("two_dim_array[0].", { "std" }, nullptr);
+        CHECK_NOT_NULL(resolved);
+        CHECK_STRING(resolved->GetPath(), "std::vector");
+    }
+    {
+        wxString code = "vector<vector<wxString>> two_dim_array;";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("two_dim_array[0][0].", { "std" }, nullptr);
+        CHECK_NOT_NULL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        wxString code = "vector<vector<wxString>> two_dim_array;";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("two_dim_array[0][0][0].", { "std" }, nullptr);
+        CHECK_NOT_NULL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxUniCharRef");
+    }
     return true;
 }
 

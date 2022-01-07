@@ -45,7 +45,8 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
             parse_func_call(tokenizer, &curexpr.m_func_call_params);
             break;
         case '[':
-            parse_subscript(tokenizer, &curexpr.m_subscript_params);
+            curexpr.m_subscript_params.emplace_back();
+            parse_subscript(tokenizer, &curexpr.m_subscript_params.back());
             break;
         case T_AUTO:
             curexpr.m_flags |= FLAGS_AUTO;
@@ -423,4 +424,9 @@ vector<wxString> CxxExpression::split_subclass_expression(const wxString& subcla
         result.push_back(curexpr);
     }
     return result;
+}
+
+void CxxExpression::set_subscript_params(const vector<wxArrayString>& params)
+{
+    m_subscript_params = params;
 }

@@ -22,7 +22,7 @@ private:
     wxString m_operand_string;                 // string representation for the operand
     wxArrayString m_template_init_list;        // template init list vector<wxString> -> `wxString`
     wxArrayString m_template_placeholder_list; // template placeholders (e.g. `T`)
-    wxArrayString m_subscript_params;          // subscript operator params
+    vector<wxArrayString> m_subscript_params;  // subscript operator params
     wxArrayString m_func_call_params;          // function params
     size_t m_flags = 0;
 
@@ -43,6 +43,8 @@ private:
 public:
     CxxExpression();
     ~CxxExpression();
+
+    bool ok() const { return !m_type_name.empty() || m_operand != 0; }
 
     /**
      * set the operand for this expression
@@ -68,7 +70,8 @@ public:
 
     const wxString& operand_string() const;
     const wxArrayString& template_init_list() const { return m_template_init_list; }
-    const wxArrayString& subscript_params() const { return m_subscript_params; }
+    const vector<wxArrayString>& subscript_params() const { return m_subscript_params; }
+    void set_subscript_params(const vector<wxArrayString>& params);
     const wxArrayString& func_call_params() const { return m_func_call_params; }
     bool is_auto() const { return m_flags & FLAGS_AUTO; }
     bool is_this() const { return m_flags & FLAGS_THIS; }
@@ -79,6 +82,17 @@ public:
     /// {"Singleton<ContextManager>", "OtherClass", "SecondClass<wxString, wxArrayString>"}
     static vector<wxString> split_subclass_expression(const wxString& subclass_pattern);
     static vector<CxxExpression> from_expression(const wxString& expression, CxxExpression* remainder);
+
+    /**
+     * should the code completion check for subscript operator overloading?
+     */
+    bool check_subscript_operator() const { return !m_subscript_params.empty(); }
+    void pop_subscript_operator()
+    {
+        if(!m_subscript_params.empty()) {
+            m_subscript_params.erase(m_subscript_params.begin());
+        }
+    }
 };
 
 #endif // CXXEXPRESSION_HPP

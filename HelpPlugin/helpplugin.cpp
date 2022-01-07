@@ -27,7 +27,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("HelpPlugin"));
-    info.SetDescription(wxT("Provide help based on selected words"));
+    info.SetDescription(_("Provide help based on selected words"));
     info.SetVersion(wxT("v1.0"));
     return &info;
 }

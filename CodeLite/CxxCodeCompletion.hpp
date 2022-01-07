@@ -77,6 +77,7 @@ private:
         m_types_table; // helper table to solve what we cant (usually the limitations are coming from ctags)
     wxStringMap_t m_macros_table_map;
     vector<pair<wxString, wxString>> m_macros_table;
+    wxStringSet_t m_visible_files; // files visible from the current translation unit
     TemplateManager::ptr_t m_template_manager;
     bool m_first_time = true;
 
@@ -180,7 +181,8 @@ public:
      * @return list of tags matches the context and filter placed in: `candidates`
      */
     size_t word_complete(const wxString& filepath, int line, const wxString& expression, const wxString& text,
-                         const vector<wxString>& visible_scopes, bool exact_match, vector<TagEntryPtr>& candidates);
+                         const vector<wxString>& visible_scopes, bool exact_match, vector<TagEntryPtr>& candidates,
+                         const wxStringSet_t& visible_files = {});
     /**
      * return list of files for completion based on the prefix typed
      */

@@ -464,6 +464,17 @@ TEST_FUNC(test_cxx_code_completion_pointer_type_in_template)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_invalid_completions)
+{
+    ENSURE_DB_LOADED();
+    CxxExpression remainder;
+    vector<TagEntryPtr> candidates;
+    completer->word_complete(wxEmptyString, wxNOT_FOUND, "does_not_exist->tes", wxEmptyString, { "std" }, false,
+                             candidates);
+    CHECK_SIZE(candidates.size(), 0);
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_global_method)
 {
     ENSURE_DB_LOADED();

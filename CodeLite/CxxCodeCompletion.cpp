@@ -1060,7 +1060,7 @@ TagEntryPtr CxxCodeCompletion::find_definition(const wxString& filepath, int lin
 
 size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, const wxString& expression,
                                         const wxString& text, const vector<wxString>& visible_scopes, bool exact_match,
-                                        vector<TagEntryPtr>& candidates)
+                                        vector<TagEntryPtr>& candidates, const wxStringSet_t& visible_files)
 {
     // ----------------------------------
     // word completion
@@ -1073,15 +1073,17 @@ size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, cons
 
     wxString filter = remainder.type_name();
     if(!resolved) {
-        // to reduce the noise from word completion, provide a list of included headers
-        // + the current file
-        //            wxStringSet_t visible_files;
-        //            get_includes_recrusively(filepath, &visible_files);
-        clDEBUG() << "code_complete failed to resolve:" << expression << endl;
-        clDEBUG() << "filter:" << remainder.type_name() << endl;
-        get_word_completions(remainder.type_name(), candidates, visible_scopes, {});
-
-    } else {
+        // check if this is a contextual text (A::B or a->b or a.b etc)
+        // we only allow global completion of there is not expression list
+        // and the remainder has something in it (r.type_name() is not empty)
+        CxxExpression r;
+        auto expressions = CxxExpression::from_expression(expression, &r);
+        if(expressions.size() == 0 && !r.type_name().empty()) {
+            clDEBUG() << "code_complete failed to resolve:" << expression << endl;
+            clDEBUG() << "filter:" << remainder.type_name() << endl;
+            get_word_completions(remainder.type_name(), candidates, visible_scopes, visible_files);
+        }
+    } else if(resolved) {
         // it was resolved into something...
         clDEBUG() << "code_complete resolved:" << resolved->GetPath() << endl;
         clDEBUG() << "filter:" << remainder.type_name() << endl;

@@ -30,7 +30,7 @@
   <Dependencies/>
   <VirtualDirectory Name="resources">
     <File Name="my_tree_list_model.cpp"/>
-    <File Name="my_tree_list_model.h"/>
+    <File Name="my_tree_list_model.hpp"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Settings Type="Executable">

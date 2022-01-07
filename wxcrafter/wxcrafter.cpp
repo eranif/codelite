@@ -78,13 +78,13 @@ FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, 
     statixBoxSizer36->Add(m_checkBoxPreDefinedFont, 0, wxEXPAND | wxALL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceSystemFontsArr;
-    m_choiceSystemFontsArr.Add(wxT("wxSYS_DEFAULT_GUI_FONT"));
-    m_choiceSystemFontsArr.Add(wxT("wxSYS_OEM_FIXED_FONT"));
-    m_choiceSystemFontsArr.Add(wxT("wxSYS_ANSI_FIXED_FONT"));
-    m_choiceSystemFontsArr.Add(wxT("wxSYS_ANSI_VAR_FONT"));
-    m_choiceSystemFontsArr.Add(wxT("wxSYS_SYSTEM_FONT"));
-    m_choiceSystemFontsArr.Add(wxT("wxSYS_DEVICE_DEFAULT_FONT"));
-    m_choiceSystemFontsArr.Add(wxT("wxSYS_SYSTEM_FIXED_FONT"));
+    m_choiceSystemFontsArr.Add(_("wxSYS_DEFAULT_GUI_FONT"));
+    m_choiceSystemFontsArr.Add(_("wxSYS_OEM_FIXED_FONT"));
+    m_choiceSystemFontsArr.Add(_("wxSYS_ANSI_FIXED_FONT"));
+    m_choiceSystemFontsArr.Add(_("wxSYS_ANSI_VAR_FONT"));
+    m_choiceSystemFontsArr.Add(_("wxSYS_SYSTEM_FONT"));
+    m_choiceSystemFontsArr.Add(_("wxSYS_DEVICE_DEFAULT_FONT"));
+    m_choiceSystemFontsArr.Add(_("wxSYS_SYSTEM_FIXED_FONT"));
     m_choiceSystemFonts =
         new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceSystemFontsArr, 0);
     m_choiceSystemFonts->SetSelection(0);
@@ -440,7 +440,7 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
 #endif
     m_textCtrlIncludeLine->SetFont(m_textCtrlIncludeLineFont);
     m_textCtrlIncludeLine->SetToolTip(
-        _("Place here the include file that this custom control requires\ne.g. #include <MyCustomControl.h>"));
+        _("Place here the include file that this custom control requires\ne.g. #include <MyCustomControl.hpp>"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlIncludeLine->SetHint(wxT(""));
 #endif
@@ -1462,15 +1462,15 @@ BitmapSelectorDlgBase::BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id, co
     flexGridSizer303->Add(m_staticText319, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceArtClientIDArr;
-    m_choiceArtClientIDArr.Add(wxT("wxART_TOOLBAR"));
-    m_choiceArtClientIDArr.Add(wxT("wxART_MENU"));
-    m_choiceArtClientIDArr.Add(wxT("wxART_FRAME_ICON"));
-    m_choiceArtClientIDArr.Add(wxT("wxART_CMN_DIALOG"));
-    m_choiceArtClientIDArr.Add(wxT("wxART_HELP_BROWSER"));
-    m_choiceArtClientIDArr.Add(wxT("wxART_MESSAGE_BOX"));
-    m_choiceArtClientIDArr.Add(wxT("wxART_BUTTON"));
-    m_choiceArtClientIDArr.Add(wxT("wxART_LIST"));
-    m_choiceArtClientIDArr.Add(wxT("wxART_OTHER"));
+    m_choiceArtClientIDArr.Add(_("wxART_TOOLBAR"));
+    m_choiceArtClientIDArr.Add(_("wxART_MENU"));
+    m_choiceArtClientIDArr.Add(_("wxART_FRAME_ICON"));
+    m_choiceArtClientIDArr.Add(_("wxART_CMN_DIALOG"));
+    m_choiceArtClientIDArr.Add(_("wxART_HELP_BROWSER"));
+    m_choiceArtClientIDArr.Add(_("wxART_MESSAGE_BOX"));
+    m_choiceArtClientIDArr.Add(_("wxART_BUTTON"));
+    m_choiceArtClientIDArr.Add(_("wxART_LIST"));
+    m_choiceArtClientIDArr.Add(_("wxART_OTHER"));
     m_choiceArtClientID =
         new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceArtClientIDArr, 0);
     m_choiceArtClientID->SetToolTip(
@@ -1486,11 +1486,11 @@ BitmapSelectorDlgBase::BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id, co
     flexGridSizer303->Add(m_staticTextHInt, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceSizeArr;
-    m_choiceSizeArr.Add(wxT("wxDefaultSize"));
-    m_choiceSizeArr.Add(wxT("16"));
-    m_choiceSizeArr.Add(wxT("24"));
-    m_choiceSizeArr.Add(wxT("32"));
-    m_choiceSizeArr.Add(wxT("64"));
+    m_choiceSizeArr.Add(_("wxDefaultSize"));
+    m_choiceSizeArr.Add(_("16"));
+    m_choiceSizeArr.Add(_("24"));
+    m_choiceSizeArr.Add(_("32"));
+    m_choiceSizeArr.Add(_("64"));
     m_choiceSize =
         new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceSizeArr, 0);
     m_choiceSize->SetToolTip(_("Size of the returned bitmap or wxDefaultSize if size doesn't matter"));

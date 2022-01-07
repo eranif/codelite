@@ -14452,7 +14452,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	"The filename in which to store the derived class (no need to add the extension).\\ne.g. for a class Foo, stored in files foo.cpp and foo.h, write 'foo' here."
+													"m_value":	"The filename in which to store the derived class (no need to add the extension).\\ne.g. for a class Foo, stored in files foo.cpp and foo.hpp, write 'foo' here."
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",

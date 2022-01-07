@@ -3,7 +3,7 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#include "my_tree_list_model.h"
+#include "my_tree_list_model.hpp"
 #include <wx/dvrenderers.h>
 #include <wx/variant.h>
 

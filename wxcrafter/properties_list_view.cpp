@@ -1,10 +1,12 @@
 #include "properties_list_view.h"
+
+#include "event_notifier.h"
+#include "globals.h"
 #include "int_property.h"
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
-#include <event_notifier.h>
-#include <globals.h>
+
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
 #include <wx/propgrid/advprops.h>
@@ -48,10 +50,10 @@ void PropertiesListView::ConstructProjectSettings()
     AddDirPicker(_("Output Directory"), wxcProjectMetadata::Get().GetGeneratedFilesDir(),
                  _("The generated files' output directory"));
     AddDirPicker(wxGetTranslation(PROP_OUTPUT_FILE_NAME), wxcProjectMetadata::Get().GetOutputFileName(),
-                 _("The generated files' name.\nwxCrafter will generate a $(FILE).cpp and $(FILE).h"));
+                 _("The generated files' name.\nwxCrafter will generate a $(FILE).cpp and $(FILE).hpp"));
     AddLongTextProp(_("Additional Include Files"), filesStr,
                     _("List of additional include files that should be included in the "
-                      "generated files\ne.g. my_header.h ; string.h"));
+                      "generated files\ne.g. my_header.hpp ; string.h"));
     AddTextProp(_("Bitmap Files"), wxcProjectMetadata::Get().GetBitmapsFile(),
                 _("Set here the file name for the bitmaps\nwxCrafter converts all the bitmaps in the project into C++ "
                   "code and will place them in this file"));
@@ -75,14 +77,17 @@ void PropertiesListView::Construct(wxcWidget* wb)
     DoClear();
     m_type = Type_Control;
     m_wxcWidget = wb;
-    if(!m_wxcWidget) return;
+    if(!m_wxcWidget)
+        return;
 
     // Populate the table
     const wxcWidget::MapProperties_t& props = wb->GetProperties();
     wxcWidget::MapProperties_t::const_iterator iter = props.begin();
     for(; iter != props.end(); ++iter) {
         PropertyBase* property = iter->second;
-        if(!property) { continue; }
+        if(!property) {
+            continue;
+        }
 
         wxPGProperty* pgProp = NULL;
         if(property->GetType() == PT_CATEGORY) {
@@ -140,7 +145,9 @@ void PropertiesListView::Construct(wxcWidget* wb)
                               property->GetValueLong(), property->GetTooltip());
         }
 
-        if(pgProp) { pgProp->SetClientData(property); }
+        if(pgProp) {
+            pgProp->SetClientData(property);
+        }
     }
 
     // If the 'Subclass' category is 'empty' i.e. there's no Class Name entry, collapse it
@@ -202,12 +209,16 @@ wxPGProperty* PropertiesListView::AddColorProp(const wxString& label, const wxSt
     }
 
     wxPGProperty* prop = m_pg->Append(new wxPG_Colour(label, wxPG_LABEL, cpv));
-    if(!gChoiceButtonEditor) { gChoiceButtonEditor = new wxcPGChoiceAndButtonEditor(); }
+    if(!gChoiceButtonEditor) {
+        gChoiceButtonEditor = new wxcPGChoiceAndButtonEditor();
+    }
 
     m_pg->SetPropertyEditor(prop, gChoiceButtonEditor);
     prop->SetHelpString(tip);
 
-    if(value == "<Default>") { prop->SetValueToUnspecified(); }
+    if(value == "<Default>") {
+        prop->SetValueToUnspecified();
+    }
     return prop;
 }
 
@@ -251,28 +262,44 @@ void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
         wxPGProperty* p = NULL;
 
         p = m_pg->GetProperty(_("Output Directory"));
-        if(p) { wxcProjectMetadata::Get().SetGeneratedFilesDir(p->GetValueAsString()); }
+        if(p) {
+            wxcProjectMetadata::Get().SetGeneratedFilesDir(p->GetValueAsString());
+        }
 
         p = m_pg->GetProperty(_("Additional Include Files"));
-        if(p) { wxcProjectMetadata::Get().SetIncludeFiles(wxCrafter::Split(p->GetValueAsString(), ";")); }
+        if(p) {
+            wxcProjectMetadata::Get().SetIncludeFiles(wxCrafter::Split(p->GetValueAsString(), ";"));
+        }
 
         p = m_pg->GetProperty(_("Bitmap Files"));
-        if(p) { wxcProjectMetadata::Get().SetBitmapsFile(p->GetValueAsString()); }
+        if(p) {
+            wxcProjectMetadata::Get().SetBitmapsFile(p->GetValueAsString());
+        }
 
         p = m_pg->GetProperty(wxGetTranslation(PROP_OUTPUT_FILE_NAME));
-        if(p) { wxcProjectMetadata::Get().SetOutputFileName(p->GetValueAsString()); }
+        if(p) {
+            wxcProjectMetadata::Get().SetOutputFileName(p->GetValueAsString());
+        }
 
         p = m_pg->GetProperty(_("Generate Window ID"));
-        if(p) { wxcProjectMetadata::Get().SetUseEnum(p->GetValue().GetBool()); }
+        if(p) {
+            wxcProjectMetadata::Get().SetUseEnum(p->GetValue().GetBool());
+        }
 
         p = m_pg->GetProperty(_("First Window ID"));
-        if(p) { wxcProjectMetadata::Get().SetFirstWindowId(p->GetValue().GetInteger()); }
+        if(p) {
+            wxcProjectMetadata::Get().SetFirstWindowId(p->GetValue().GetInteger());
+        }
 
         p = m_pg->GetProperty(_("Generate Translatable Strings"));
-        if(p) { wxcProjectMetadata::Get().SetUseUnderscoreMacro(p->GetValue().GetBool()); }
+        if(p) {
+            wxcProjectMetadata::Get().SetUseUnderscoreMacro(p->GetValue().GetBool());
+        }
 
         p = m_pg->GetProperty(_("Add wxWidgets Handlers if missing"));
-        if(p) { wxcProjectMetadata::Get().SetAddHandlers(p->GetValue().GetBool()); }
+        if(p) {
+            wxcProjectMetadata::Get().SetAddHandlers(p->GetValue().GetBool());
+        }
 
         wxCommandEvent evt(wxEVT_PROJECT_METADATA_MODIFIED);
         EventNotifier::Get()->AddPendingEvent(evt);

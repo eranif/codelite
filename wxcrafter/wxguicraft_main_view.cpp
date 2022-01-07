@@ -1,17 +1,26 @@
+#include "wxguicraft_main_view.h"
+
 #include "AuiToolBarTopLevel.h"
 #include "EventsEditorDlg.h"
 #include "FreeTrialVersionDlg.h"
 #include "ToolBoxPanel.h"
 #include "allocator_mgr.h"
+#include "attribute_style.h"
 #include "button_wrapper.h"
+#include "cl_command_event.h"
+#include "ctags_manager.h"
 #include "custom_control_wrapper.h"
 #include "designer_panel.h"
 #include "dialog_wrapper.h"
 #include "duplicateTLWdlg.h"
+#include "editor_config.h"
+#include "event_notifier.h"
+#include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include "flexgridsizer_wrapper.h"
 #include "frame_wrapper.h"
+#include "globals.h"
 #include "myxh_grid.h"
 #include "myxh_listc.h"
 #include "myxh_richtext.h"
@@ -21,6 +30,7 @@
 #include "notebook_base_wrapper.h"
 #include "notebook_page_wrapper.h"
 #include "panel_wrapper_top_level.h"
+#include "plugin.h"
 #include "popup_window_preview.h"
 #include "popup_window_wrapper.h"
 #include "preview_dialog.h"
@@ -38,17 +48,9 @@
 #include "wxcrafter_plugin.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
-#include "wxguicraft_main_view.h"
 #include "xy_pair.h"
+
 #include <algorithm>
-#include <attribute_style.h>
-#include <cl_command_event.h>
-#include <ctags_manager.h>
-#include <editor_config.h>
-#include <event_notifier.h>
-#include <file_logger.h>
-#include <globals.h>
-#include <plugin.h>
 #include <set>
 #include <wx/app.h>
 #include <wx/busyinfo.h>
@@ -3108,7 +3110,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
     wxFileName sourceFile = wxcProjectMetadata::Get().BaseCppFile();
     wxCrafter::MakeAbsToProject(sourceFile);
 
-    blockGuard.clear();
+    blockGuard = "_"; // Ensure that the blockguard does not start with a number
     wxArrayString dirs = projectFile.GetDirs();
     if(!dirs.IsEmpty()) {
         if(dirs.size() > 2) {
@@ -3117,13 +3119,13 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         blockGuard << dirs.Last() << "_";
     }
     blockGuard << projectFile.GetName();
-    blockGuard.Append("_BASE_CLASSES");
-    blockGuard.Replace(wxT("-"), wxT("_"));
-    blockGuard.Replace(wxT("."), wxT("_"));
-    blockGuard.Replace(wxT("+"), wxT("_"));
-    blockGuard.Replace(wxT(":"), wxT("_"));
-    blockGuard.MakeUpper().Append(wxT("_H"));
-    blockGuard.Prepend("_"); // Ensure that the blockguard does nto start with a number
+    blockGuard.Replace("-", "_");
+    blockGuard.Replace(".", "_");
+    blockGuard.Replace("+", "_");
+    blockGuard.Replace(":", "_");
+    blockGuard << "_BASE_CLASSES";
+    blockGuard << "_" << wxcProjectMetadata::Get().GetHeaderFileExt();
+    blockGuard.MakeUpper();
 
     // Before we start traversing the tree, clear the bitmap code generator content
     wxcCodeGeneratorHelper::Get().Clear();

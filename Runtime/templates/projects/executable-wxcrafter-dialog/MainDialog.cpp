@@ -1,4 +1,4 @@
-#include "MainDialog.h"
+#include "MainDialog.hpp"
 
 MainDialog::MainDialog(wxWindow* parent)
     : MainDialogBaseClass(parent)

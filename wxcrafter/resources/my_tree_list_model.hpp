@@ -3,13 +3,13 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef __MODEL_NAME_GUARD__H__
-#define __MODEL_NAME_GUARD__H__
+#ifndef __BLOCK_GUARD__
+#define __BLOCK_GUARD__
 
-#include <wx/variant.h>
-#include <wx/dataview.h>
 #include <algorithm>
 #include <wx/clntdata.h>
+#include <wx/dataview.h>
+#include <wx/variant.h>
 
 /**
  * @brief each item in the wxDataViewCtrl is represented in the model by this class.
@@ -273,4 +273,4 @@ public:
      */
     virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const;
 };
-#endif // __MODEL_NAME_GUARD__H__
+#endif // __BLOCK_GUARD__

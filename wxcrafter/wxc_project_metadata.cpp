@@ -1,5 +1,7 @@
 #include "wxc_project_metadata.h"
-#include <event_notifier.h>
+
+#include "event_notifier.h"
+
 #include <wx/ffile.h>
 #include <wx/filename.h>
 
@@ -8,6 +10,7 @@ const wxEventType wxEVT_CMD_WXCRAFTER_PROJECT_SYNCHED = wxNewEventType();
 
 wxcProjectMetadata::wxcProjectMetadata()
     : m_objCounter(0)
+    , m_useHpp(true)
     , m_firstWindowId(10000)
     , m_useEnum(true)
     , m_useUnderscoreMacro(true)
@@ -34,7 +37,17 @@ void wxcProjectMetadata::FromJSON(const JSONElement& json)
     m_addHandlers = json.namedObject("m_addHandlers").toBool(m_addHandlers);
 
     wxcSettings::Get().MergeCustomControl(json.namedObject("m_templateClasses"));
-    if(m_bitmapFunction.IsEmpty()) { DoGenerateBitmapFunctionName(); }
+    if(m_bitmapFunction.IsEmpty()) {
+        DoGenerateBitmapFunctionName();
+    }
+
+    // for backward-compatibility, we continue to use .h file extension if it's already there
+    wxFileName headerFile = BaseCppFile();
+    headerFile.SetExt("h");
+    if(headerFile.IsRelative()) {
+        headerFile.MakeAbsolute(GetProjectPath());
+    }
+    m_useHpp = !headerFile.FileExists();
 }
 
 JSONElement wxcProjectMetadata::ToJSON()
@@ -72,7 +85,9 @@ wxString wxcProjectMetadata::GetCppFileName() const
 wxString wxcProjectMetadata::GetXrcFileName() const
 {
     wxFileName xrc(m_projectFile);
-    if(!xrc.IsAbsolute()) { xrc = wxFileName(m_generatedFilesDir, m_projectFile); }
+    if(!xrc.IsAbsolute()) {
+        xrc = wxFileName(m_generatedFilesDir, m_projectFile);
+    }
     xrc.SetExt(wxT("xrc"));
     return xrc.GetFullPath();
 }
@@ -80,7 +95,7 @@ wxString wxcProjectMetadata::GetXrcFileName() const
 wxString wxcProjectMetadata::GetHeaderFileName() const
 {
     wxFileName header(m_generatedFilesDir, m_projectFile);
-    header.SetExt(wxT("h"));
+    header.SetExt(GetHeaderFileExt());
     return header.GetFullPath();
 }
 
@@ -105,17 +120,15 @@ wxString wxcProjectMetadata::GetGeneratedFilesDir() const
 
 wxFileName wxcProjectMetadata::BaseCppFile() const
 {
-    wxFileName sourceFile;
     wxFileName baseFile(GetGeneratedFilesDir(), GetOutputFileName());
-    sourceFile = baseFile;
-    sourceFile.SetExt(wxT("cpp"));
-    return sourceFile;
+    baseFile.SetExt(wxT("cpp"));
+    return baseFile;
 }
 
 wxFileName wxcProjectMetadata::BaseHeaderFile() const
 {
     wxFileName f = BaseCppFile();
-    f.SetExt("h");
+    f.SetExt(GetHeaderFileExt());
     return f;
 }
 
@@ -139,6 +152,7 @@ void wxcProjectMetadata::Reset()
     m_bitmapsFile.Clear();
     m_additionalFiles.clear();
     m_outputFileName.Clear();
+    m_useHpp = true;
     m_useEnum = true;
     m_useUnderscoreMacro = true;
     m_firstWindowId = 10000;
@@ -157,7 +171,8 @@ void wxcProjectMetadata::DoGenerateBitmapFunctionName()
 
 wxString wxcProjectMetadata::DoGenerateBitmapsFile() const
 {
-    if(GetProjectFile().IsEmpty()) return wxT("");
+    if(GetProjectFile().IsEmpty())
+        return wxT("");
 
     wxFileName projectFileName(GetProjectFile());
     wxFileName fn = wxFileName(GetProjectPath(), projectFileName.GetFullName());
@@ -174,7 +189,9 @@ wxString wxcProjectMetadata::DoGenerateBitmapsFile() const
 
 wxString wxcProjectMetadata::GetBitmapsFile() const
 {
-    if(m_bitmapsFile.IsEmpty()) { return DoGenerateBitmapsFile(); }
+    if(m_bitmapsFile.IsEmpty()) {
+        return DoGenerateBitmapsFile();
+    }
 
     return m_bitmapsFile;
 }
@@ -215,6 +232,11 @@ wxString wxcProjectMetadata::GetOutputFileName() const
     return m_outputFileName;
 }
 
+wxString wxcProjectMetadata::GetHeaderFileExt() const
+{
+    return m_useHpp ? "hpp" : "h";
+}
+
 void wxcProjectMetadata::SetProjectFile(const wxString& filename)
 {
     this->m_projectFile = filename;
@@ -223,6 +245,10 @@ void wxcProjectMetadata::SetProjectFile(const wxString& filename)
 
 void wxcProjectMetadata::UpdatePaths()
 {
-    if(m_generatedFilesDir.IsEmpty()) { m_generatedFilesDir = "."; }
-    if(m_bitmapsFile.IsEmpty()) { m_bitmapsFile = DoGenerateBitmapsFile(); }
+    if(m_generatedFilesDir.IsEmpty()) {
+        m_generatedFilesDir = ".";
+    }
+    if(m_bitmapsFile.IsEmpty()) {
+        m_bitmapsFile = DoGenerateBitmapsFile();
+    }
 }

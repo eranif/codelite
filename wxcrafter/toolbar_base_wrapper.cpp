@@ -1,14 +1,16 @@
 #include "toolbar_base_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "tool_bar_item_wrapper.h"
 #include "top_level_win_wrapper.h"
 #include "winid_property.h"
-#include "wx/pen.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 #include "xy_pair.h"
+
 #include <wx/aui/auibar.h>
+#include <wx/pen.h>
 #include <wx/toolbar.h>
 
 ToolbarBaseWrapper::ToolbarBaseWrapper(int type)
@@ -42,12 +44,13 @@ ToolbarBaseWrapper::ToolbarBaseWrapper(int type)
         new StringProperty(PROP_MARGINS, wxT("-1,-1"), _("Sets the values to be used as margins for the toolbar.")));
     AddProperty(new StringProperty(PROP_PADDING, wxT("1"), _("Sets the space between tools.")));
     AddProperty(new StringProperty(PROP_SEPARATOR_SIZE, wxT("5"), _("Sets the width of separators.")));
-    
+
     AddProperty(new CategoryProperty(_("Subclass")));
     AddProperty(new StringProperty(PROP_SUBCLASS_NAME, wxT(""),
                                    _("The name of the derived class. Used both for C++ and XRC generated code.")));
-    AddProperty(new StringProperty(PROP_SUBCLASS_INCLUDE, wxT(""),
-                                   _("(C++ only) The name of any extra header file to be #included e.g. mydialog.h")));
+    AddProperty(
+        new StringProperty(PROP_SUBCLASS_INCLUDE, wxT(""),
+                           _("(C++ only) The name of any extra header file to be #included e.g. mydialog.hpp")));
     AddText(PROP_SUBCLASS_STYLE,
             _("Override the default class style with the content of this field.\nThe style should be | separated"));
     m_namePattern = wxT("m_toolbar");
@@ -72,11 +75,17 @@ wxString ToolbarBaseWrapper::CppCtorCode() const
     code << GetName() << wxT("->SetToolBitmapSize(wxSize") << pr.ToString(true) << wxT(");\n");
 
     XYPair margins(PropertyString(PROP_MARGINS), -1, -1);
-    if(margins != XYPair(-1, -1)) { code << GetName() << wxT("->SetMargins(") << margins.ToString() << wxT(");\n"); }
+    if(margins != XYPair(-1, -1)) {
+        code << GetName() << wxT("->SetMargins(") << margins.ToString() << wxT(");\n");
+    }
     wxString padding = PropertyString(PROP_PADDING);
-    if(padding != "1") { code << GetName() << wxT("->SetToolPacking(") << padding << wxT(");\n"); }
+    if(padding != "1") {
+        code << GetName() << wxT("->SetToolPacking(") << padding << wxT(");\n");
+    }
     wxString sepWidth = PropertyString(PROP_SEPARATOR_SIZE);
-    if(sepWidth != "5") { code << GetName() << wxT("->SetToolSeparation(") << sepWidth << wxT(");\n"); }
+    if(sepWidth != "5") {
+        code << GetName() << wxT("->SetToolSeparation(") << sepWidth << wxT(");\n");
+    }
     return code;
 }
 
@@ -99,12 +108,18 @@ void ToolbarBaseWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     text << XRCPrefix() << XRCStyle() << wxT("<bitmapsize>") << prSize.ToString() << wxT("</bitmapsize>");
 
-    if(prMargins != XYPair(-1, -1)) { text << wxT("<margins>") << prMargins.ToString() << wxT("</margins>"); }
+    if(prMargins != XYPair(-1, -1)) {
+        text << wxT("<margins>") << prMargins.ToString() << wxT("</margins>");
+    }
 
     wxString padding = PropertyString(PROP_PADDING);
-    if(padding != "1") { text << wxT("<packing>") << padding << wxT("</packing>"); }
+    if(padding != "1") {
+        text << wxT("<packing>") << padding << wxT("</packing>");
+    }
     wxString sepWidth = PropertyString(PROP_SEPARATOR_SIZE);
-    if(sepWidth != "5") { text << wxT("<separation>") << sepWidth << wxT("</separation>"); }
+    if(sepWidth != "5") {
+        text << wxT("<separation>") << sepWidth << wxT("</separation>");
+    }
 
     ChildrenXRC(text, type);
     text << XRCSuffix();
@@ -119,7 +134,9 @@ wxString ToolbarBaseWrapper::DesignerXRC() const
 
     toolbarXRC << XRCStyle() << wxT("<bitmapsize>") << prSize.ToString() << wxT("</bitmapsize>");
 
-    if(prMargins != XYPair(-1, -1)) { toolbarXRC << wxT("<margins>") << prMargins.ToString() << wxT("</margins>"); }
+    if(prMargins != XYPair(-1, -1)) {
+        toolbarXRC << wxT("<margins>") << prMargins.ToString() << wxT("</margins>");
+    }
 
     ChildrenXRC(toolbarXRC, XRC_DESIGNER);
     toolbarXRC << XRCSuffix();
@@ -132,16 +149,24 @@ void ToolbarBaseWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmapsize"));
-    if(propertynode) { SetPropertyString(PROP_BITMAP_SIZE, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_BITMAP_SIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("margins"));
-    if(propertynode) { SetPropertyString(PROP_MARGINS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_MARGINS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("packing"));
-    if(propertynode) { SetPropertyString(PROP_PADDING, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_PADDING, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("separation"));
-    if(propertynode) { SetPropertyString(PROP_SEPARATOR_SIZE, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_SEPARATOR_SIZE, propertynode->GetNodeContent());
+    }
 }
 
 void ToolbarBaseWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -151,16 +176,24 @@ void ToolbarBaseWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
 
     // wxC doesn't (yet) do 'separation' or 'packing'
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "bitmapsize");
-    if(propertynode) { SetPropertyString(PROP_BITMAP_SIZE, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_BITMAP_SIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "margins");
-    if(propertynode) { SetPropertyString(PROP_MARGINS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_MARGINS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "packing");
-    if(propertynode) { SetPropertyString(PROP_PADDING, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_PADDING, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "separation");
-    if(propertynode) { SetPropertyString(PROP_SEPARATOR_SIZE, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_SEPARATOR_SIZE, propertynode->GetNodeContent());
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +243,9 @@ wxString AuiToolbarWrapper::CppCtorCode() const
     code << GetName() << wxT("->SetToolBitmapSize(wxSize") << pr.ToString(true) << wxT(");\n");
 
     XYPair margins(PropertyString(PROP_MARGINS), -1, -1);
-    if(margins != XYPair(-1, -1)) { code << GetName() << wxT("->SetMargins(") << margins.ToString() << wxT(");\n"); }
+    if(margins != XYPair(-1, -1)) {
+        code << GetName() << wxT("->SetMargins(") << margins.ToString() << wxT(");\n");
+    }
     return code;
 }
 
@@ -229,7 +264,9 @@ void AuiToolbarWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     text << XRCPrefix() << XRCStyle() << XRCCommonAttributes() << wxT("<bitmapsize>") << prSize.ToString()
          << wxT("</bitmapsize>");
 
-    if(prMargins != XYPair(-1, -1)) { text << wxT("<margins>") << prMargins.ToString() << wxT("</margins>"); }
+    if(prMargins != XYPair(-1, -1)) {
+        text << wxT("<margins>") << prMargins.ToString() << wxT("</margins>");
+    }
 
     ChildrenXRC(text, type);
     text << XRCSuffix();
@@ -242,10 +279,14 @@ void AuiToolbarWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
 
     // wxC doesn't (yet) do 'separation' or 'packing'
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmapsize"));
-    if(propertynode) { SetPropertyString(PROP_BITMAP_SIZE, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_BITMAP_SIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("margins"));
-    if(propertynode) { SetPropertyString(PROP_MARGINS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_MARGINS, propertynode->GetNodeContent());
+    }
 }
 
 void AuiToolbarWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -255,10 +296,14 @@ void AuiToolbarWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
 
     // wxC doesn't (yet) do 'separation' or 'packing'
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "bitmapsize");
-    if(propertynode) { SetPropertyString(PROP_BITMAP_SIZE, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_BITMAP_SIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "margins");
-    if(propertynode) { SetPropertyString(PROP_MARGINS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_MARGINS, propertynode->GetNodeContent());
+    }
 }
 
 wxString AuiToolbarWrapper::CppDtorCode() const { return AuiToolbarWrapperBase::CppDtorCode(this); }

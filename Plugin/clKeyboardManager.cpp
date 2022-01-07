@@ -50,7 +50,7 @@ clKeyboardManager::clKeyboardManager()
     m_keyCodes.insert("ENTER");
     m_keyCodes.insert("CAPITAL");
     m_keyCodes.insert("SCROLL_LOCK");
-    m_keyCodes.insert("PASUE");
+    m_keyCodes.insert("PAUSE");
     m_keyCodes.insert(";");
     m_keyCodes.insert("'");
     m_keyCodes.insert("\\");
@@ -432,6 +432,7 @@ wxArrayString clKeyboardManager::GetAllUnasignedKeyboardShortcuts() const
     wxArrayString allUnasigned;
     std::set_difference(m_allShorcuts.begin(), m_allShorcuts.end(), usedShortcuts.begin(), usedShortcuts.end(),
                         std::back_inserter(allUnasigned));
+    allUnasigned.Sort();
     return allUnasigned;
 }
 

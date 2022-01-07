@@ -3,6 +3,7 @@
 
 #include "json_node.h"
 #include "wxc_widget.h"
+
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/string.h>
@@ -29,6 +30,7 @@ protected:
     CustomControlTemplateMap_t m_projctCustomControls;
     wxStringMap_t m_additionalFiles;
     wxString m_outputFileName;
+    bool m_useHpp;
     int m_firstWindowId;
     bool m_useEnum;
     bool m_useUnderscoreMacro;
@@ -65,6 +67,7 @@ public:
     bool IsUseEnum() const { return m_useEnum; }
     void SetOutputFileName(const wxString& outputFileName) { this->m_outputFileName = outputFileName; }
     wxString GetOutputFileName() const;
+    wxString GetHeaderFileExt() const;
 
     bool IsLoaded() const { return m_projectFile.IsEmpty() == false; }
 

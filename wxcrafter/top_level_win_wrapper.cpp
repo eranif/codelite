@@ -1,10 +1,12 @@
+#include "top_level_win_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
-#include "top_level_win_wrapper.h"
 #include "virtual_folder_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_notebook_code_helper.h"
 #include "wxgui_helpers.h"
+
 #include <wx/arrstr.h>
 #include <wx/ffile.h>
 #include <wx/msgdlg.h>
@@ -32,10 +34,10 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
                       _("Process a wxEVT_MOVE event, which is generated when a window is moved"));
         RegisterEvent(wxT("wxEVT_MOVE_START"), wxT("wxMoveEvent"),
                       _("Process a wxEVT_MOVE_START event, which is generated when the "
-                          "user starts to move or size a window. Windows only"));
+                        "user starts to move or size a window. Windows only"));
         RegisterEvent(wxT("wxEVT_MOVE_END"), wxT("wxMoveEvent"),
                       _("Process a wxEVT_MOVE_END event, which is generated when "
-                          "the user stops moving or sizing a window. Windows only"));
+                        "the user stops moving or sizing a window. Windows only"));
         RegisterEvent(wxT("wxEVT_SHOW"), wxT("wxShowEvent"), _("Process a wxEVT_SHOW event"));
     }
 
@@ -69,7 +71,7 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
                                      "generated class 'FooDialogBase', you might enter 'FooDialog' here.")));
     AddProperty(new StringProperty(PROP_FILE, "",
                                    _("The name for the inherited class's files (without any file "
-                                     "extension).\nwxCrafter will generate a $(FILE).cpp and $(FILE).h\ne.g. "
+                                     "extension).\nwxCrafter will generate a $(FILE).cpp and $(FILE).hpp\ne.g. "
                                      "for an inherited class 'FooDialog', you might enter 'foodialog' here.")));
     AddProperty(new StringProperty(PROP_CLASS_DECORATOR, "",
                                    _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL")));
@@ -119,7 +121,9 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
             dlg.SetOKLabel(_("OK, continue with code generation"));
             dlg.ShowCheckBox(_("Don't show this message again"));
 
-            if(dlg.ShowModal() == wxID_CANCEL) { return; }
+            if(dlg.ShowModal() == wxID_CANCEL) {
+                return;
+            }
             if(dlg.IsCheckBoxChecked()) {
                 wxcSettings::Get().EnableFlag(wxcSettings::DONT_PROMPT_ABOUT_MISSING_SUBCLASS, true);
             }
@@ -150,9 +154,13 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
         wxString fgcol = wxCrafter::ColourToCpp(PropertyString(PROP_FG));
 
         // Add colors and fonts here
-        if(bgcol.IsEmpty() == false) { ctorBody << wxT("    SetBackgroundColour(") << bgcol << wxT(");\n"); }
+        if(bgcol.IsEmpty() == false) {
+            ctorBody << wxT("    SetBackgroundColour(") << bgcol << wxT(");\n");
+        }
 
-        if(fgcol.IsEmpty() == false) { ctorBody << wxT("    SetForegroundColour(") << fgcol << wxT(");\n"); }
+        if(fgcol.IsEmpty() == false) {
+            ctorBody << wxT("    SetForegroundColour(") << fgcol << wxT(");\n");
+        }
     }
 
     ctorBody << FormatCode(wxcNotebookCodeHelper::Get().Code());
@@ -215,21 +223,25 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
         return;
     }
 
-    if(filename.IsEmpty()) { baseOnly = true; }
+    if(filename.IsEmpty()) {
+        baseOnly = true;
+    }
 
     wxFileName headerFile, sourceFile;
     wxFileName baseFile(wxcProjectMetadata::Get().GetGeneratedFilesDir(),
                         wxcProjectMetadata::Get().GetOutputFileName());
 
     // If the files are relative make them abs
-    if(baseFile.IsRelative()) { baseFile.MakeAbsolute(project.GetProjectPath()); }
+    if(baseFile.IsRelative()) {
+        baseFile.MakeAbsolute(project.GetProjectPath());
+    }
 
     wxString dbg = baseFile.GetFullPath();
 
     headerFile = baseFile;
     sourceFile = baseFile;
 
-    headerFile.SetExt(wxT("h"));
+    headerFile.SetExt(wxcProjectMetadata::Get().GetHeaderFileExt());
     sourceFile.SetExt(wxT("cpp"));
 
     dtorCode.Prepend(eventDisconnectCode);
@@ -238,7 +250,9 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     baseCpp << wxT("\n") << BaseCtorImplPrefix() << wxT("{\n") << wxcCodeGeneratorHelper::Get().GenerateInitCode(this)
             << ctorBody;
 
-    if(eventConnectCode.IsEmpty() == false) { baseCpp << wxT("    // Connect events\n") << eventConnectCode; }
+    if(eventConnectCode.IsEmpty() == false) {
+        baseCpp << wxT("    // Connect events\n") << eventConnectCode;
+    }
 
     // Now Connect() any auitoolbar dropdown menu; it must be *after* the normal Connect()s, otherwise it won't be
     // called if the user-code forgets to event.Skip()
@@ -272,12 +286,16 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
                << wxT("protected:\n") << eventFunctions << wxT("\n") << wxT("public:\n") << extraFunctionsCodeDecl
                << BaseCtorDecl() << wxT("    virtual ~") << baseClassName << wxT("();\n") << wxT("};\n\n");
 
-    if(baseOnly) { return; }
+    if(baseOnly) {
+        return;
+    }
 
     wxString inheritedClass = PropertyString(PROP_INHERITED_CLASS);
     inheritedClass.Trim().Trim(false);
 
-    if(inheritedClass.IsEmpty()) { return; }
+    if(inheritedClass.IsEmpty()) {
+        return;
+    }
 
     if(inheritedClass == baseClassName) {
         ::wxMessageBox(_("Base class and inherited class have the same name"), "wxCrafter",
@@ -290,22 +308,26 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     /////////////////////////////////////////////////////////////////////////////////////////
 
     wxFileName derivedClassFileCPP(filename);
-    wxFileName derivedClassFileH(filename);
+    wxFileName derivedClassFileHPP(filename);
 
     derivedClassFileCPP.SetExt(wxT("cpp"));
-    derivedClassFileH.SetExt(wxT("h"));
+    derivedClassFileHPP.SetExt(wxcProjectMetadata::Get().GetHeaderFileExt());
 
     // Fix the paths if needed
     // i.e. if the derived classes are relative, make them use the same
     // path as the base classes file
-    if(derivedClassFileCPP.IsRelative()) { derivedClassFileCPP.SetPath(headerFile.GetPath()); }
+    if(derivedClassFileCPP.IsRelative()) {
+        derivedClassFileCPP.SetPath(headerFile.GetPath());
+    }
 
-    if(derivedClassFileH.IsRelative()) { derivedClassFileH.SetPath(headerFile.GetPath()); }
+    if(derivedClassFileHPP.IsRelative()) {
+        derivedClassFileHPP.SetPath(headerFile.GetPath());
+    }
 
     wxString dCpp, dH, dBlockGuard;
     dBlockGuard << inheritedClass;
+    dBlockGuard << "_" << derivedClassFileHPP.GetExt();
     dBlockGuard.MakeUpper();
-    dBlockGuard << wxT("_H");
 
     // Prepare the Header file content
     dH << wxT("#ifndef ") << dBlockGuard << wxT("\n") << wxT("#define ") << dBlockGuard << wxT("\n")
@@ -317,7 +339,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
        << wxT("\n");
 
     // Prepare the CPP file content
-    dCpp << wxT("#include \"") << derivedClassFileH.GetFullName() << wxT("\"\n\n") << inheritedClass << wxT("::")
+    dCpp << wxT("#include \"") << derivedClassFileHPP.GetFullName() << wxT("\"\n\n") << inheritedClass << wxT("::")
          << inheritedClass << GetDerivedClassCtorSignature() << "\n"
          << wxT("    : ") << baseClassName << GetParentCtorInitArgumentList() << "\n"
          << wxT("{\n") << wxT("}\n\n") << inheritedClass << wxT("::~") << inheritedClass << wxT("()\n") << wxT("{\n")
@@ -325,15 +347,15 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
 
     // Keep track of the generated files
     if(WantsSubclass()) {
-        wxcProjectMetadata::Get().SetGeneratedHeader(derivedClassFileH);
+        wxcProjectMetadata::Get().SetGeneratedHeader(derivedClassFileHPP);
         wxcProjectMetadata::Get().SetGeneratedSource(derivedClassFileCPP);
     }
 
     wxcProjectMetadata::Get().SetGeneratedClassName(inheritedClass);
     wxcProjectMetadata::Get().SetVirtualFolder(GetVirtualFolder());
 
-    if(WantsSubclass() && wxCrafter::IsTheSame(derivedClassFileH, dH) == false) {
-        wxCrafter::WriteFile(derivedClassFileH, dH, false);
+    if(WantsSubclass() && wxCrafter::IsTheSame(derivedClassFileHPP, dH) == false) {
+        wxCrafter::WriteFile(derivedClassFileHPP, dH, false);
     }
 
     if(WantsSubclass() && wxCrafter::IsTheSame(derivedClassFileCPP, dCpp) == false) {

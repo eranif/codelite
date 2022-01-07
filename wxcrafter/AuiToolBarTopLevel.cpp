@@ -1,8 +1,10 @@
 #include "AuiToolBarTopLevel.h"
+
 #include "allocator_mgr.h"
 #include "virtual_folder_property.h"
 #include "winid_property.h"
 #include "xy_pair.h"
+
 #include <wx/aui/auibar.h>
 
 AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
@@ -29,7 +31,7 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
     AddProperty(new StringProperty(
         PROP_FILE, "",
         _("The name for the inherited class's files (without any file extension).\nwxCrafter will generate a "
-          "$(FILE).cpp and $(FILE).h\ne.g. for an inherited class 'FooDialog', you might enter 'foodialog' here.")));
+          "$(FILE).cpp and $(FILE).hpp\ne.g. for an inherited class 'FooDialog', you might enter 'foodialog' here.")));
     AddProperty(new StringProperty(PROP_CLASS_DECORATOR, "",
                                    _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL")));
 
@@ -95,7 +97,9 @@ wxString AuiToolBarTopLevelWrapper::CppCtorCode() const
     code << "SetToolBitmapSize(wxSize" << pr.ToString(true) << ");\n";
 
     XYPair margins(PropertyString(PROP_MARGINS), -1, -1);
-    if(margins != XYPair(-1, -1)) { code << "    SetMargins(" << margins.ToString() << wxT(");\n"); }
+    if(margins != XYPair(-1, -1)) {
+        code << "    SetMargins(" << margins.ToString() << wxT(");\n");
+    }
     return code;
 }
 
@@ -154,7 +158,9 @@ void AuiToolBarTopLevelWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     }
     text << XRCStyle() << XRCCommonAttributes() << wxT("<bitmapsize>") << prSize.ToString() << wxT("</bitmapsize>");
 
-    if(prMargins != XYPair(-1, -1)) { text << wxT("<margins>") << prMargins.ToString() << wxT("</margins>"); }
+    if(prMargins != XYPair(-1, -1)) {
+        text << wxT("<margins>") << prMargins.ToString() << wxT("</margins>");
+    }
 
     ChildrenXRC(text, type);
     text << XRCSuffix();

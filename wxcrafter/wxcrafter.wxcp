@@ -3209,7 +3209,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	"Place here the include file that this custom control requires\\ne.g. #include <MyCustomControl.h>"
+													"m_value":	"Place here the include file that this custom control requires\\ne.g. #include <MyCustomControl.hpp>"
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",

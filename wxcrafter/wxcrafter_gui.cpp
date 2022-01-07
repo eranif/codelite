@@ -5,6 +5,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "wxcrafter_gui.h"
+
 #include "allocator_mgr.h"
 
 // Declare the bitmap loading function
@@ -1409,13 +1410,13 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
     flexGridSizer195->Add(m_staticText184, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceFormTypeArr;
-    m_choiceFormTypeArr.Add(wxT("wxFrame"));
-    m_choiceFormTypeArr.Add(wxT("wxDialog"));
-    m_choiceFormTypeArr.Add(wxT("wxWizard"));
-    m_choiceFormTypeArr.Add(wxT("wxPanel"));
-    m_choiceFormTypeArr.Add(wxT("wxImageList"));
-    m_choiceFormTypeArr.Add(wxT("wxPopupWindow"));
-    m_choiceFormTypeArr.Add(wxT("wxAuiToolBar"));
+    m_choiceFormTypeArr.Add(_("wxFrame"));
+    m_choiceFormTypeArr.Add(_("wxDialog"));
+    m_choiceFormTypeArr.Add(_("wxWizard"));
+    m_choiceFormTypeArr.Add(_("wxPanel"));
+    m_choiceFormTypeArr.Add(_("wxImageList"));
+    m_choiceFormTypeArr.Add(_("wxPopupWindow"));
+    m_choiceFormTypeArr.Add(_("wxAuiToolBar"));
     m_choiceFormType = new wxChoice(m_wizardPageFormType, wxID_ANY, wxDefaultPosition,
                                     wxDLG_UNIT(m_wizardPageFormType, wxSize(-1, -1)), m_choiceFormTypeArr, 0);
     m_choiceFormType->SetToolTip(_("Select the form type"));
@@ -1454,7 +1455,7 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
     flexGridSizer198->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer198->AddGrowableCol(1);
 
-    boxSizer186->Add(flexGridSizer198, 1, wxEXPAND | wxALL, WXC_FROM_DIP(3));
+    boxSizer186->Add(flexGridSizer198, 1, wxALL | wxEXPAND, WXC_FROM_DIP(3));
 
     m_staticText244 = new wxStaticText(m_wizardPageGeneratedCode, wxID_ANY, _("Resource file:"), wxDefaultPosition,
                                        wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), 0);
@@ -1523,7 +1524,7 @@ NewFormWizardBaseClass::NewFormWizardBaseClass(wxWindow* parent, wxWindowID id, 
                                        wxDLG_UNIT(m_wizardPageGeneratedCode, wxSize(-1, -1)), 0);
     m_textCtrFileName->SetToolTip(
         _("The filename in which to store the derived class (no need to add the extension).\ne.g. for a class Foo, "
-          "stored in files foo.cpp and foo.h, write 'foo' here."));
+          "stored in files foo.cpp and foo.hpp, write 'foo' here."));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrFileName->SetHint(wxT(""));
 #endif

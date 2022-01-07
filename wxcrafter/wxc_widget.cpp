@@ -151,8 +151,9 @@ wxcWidget::wxcWidget(int type)
     AddProperty(new CategoryProperty(_("Subclass")));
     AddProperty(new StringProperty(PROP_SUBCLASS_NAME, wxT(""),
                                    _("The name of the derived class. Used both for C++ and XRC generated code.")));
-    AddProperty(new StringProperty(PROP_SUBCLASS_INCLUDE, wxT(""),
-                                   _("(C++ only) The name of any extra header file to be #included e.g. mydialog.h")));
+    AddProperty(
+        new StringProperty(PROP_SUBCLASS_INCLUDE, wxT(""),
+                           _("(C++ only) The name of any extra header file to be #included e.g. mydialog.hpp")));
     AddText(PROP_SUBCLASS_STYLE,
             _("Override the default class style with the content of this field.\nThe style should be | separated"));
     AddProperty(new CategoryProperty(_("Control Specific Settings")));
@@ -464,7 +465,7 @@ void wxcWidget::DoTraverseAndGenCode(wxArrayString& headers, wxString& ctorCode,
 
     GetIncludeFile(headers);
     if(!subinclude.empty()) {
-        // 'subinclude' will probably be just "myfoo.h", but check:
+        // 'subinclude' will probably be just "myfoo.hpp", but check:
         if(!subinclude.Contains("#include")) {
             subinclude = "#include \"" + subinclude + "\"";
         }

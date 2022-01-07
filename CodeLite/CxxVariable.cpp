@@ -1,5 +1,9 @@
-#include "CxxScannerTokens.h"
 #include "CxxVariable.h"
+
+#include "CxxLexerAPI.h"
+#include "CxxScannerTokens.h"
+#include "CxxTokenizer.h"
+
 #include <algorithm>
 
 CxxVariable::CxxVariable(eCxxStandard standard)
@@ -46,64 +50,35 @@ wxString CxxVariable::ToString(size_t flags, const wxStringTable_t& table) const
 wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard, bool omitClassKeyword,
                                const wxStringTable_t& table)
 {
-    // Example:
-    // const std::vector<std::pair<int, int> >& v
-    // "strcut stat buff" if we pass "omitClassKeyword" as true, the type is set to "stat" only
-    wxString s;
+    CxxTokenizer tokenizer;
+    CxxLexerToken token;
+
+    // create a string with spaces
+    wxString packed;
     for(const CxxVariable::LexerToken& tok : type) {
-        // "strcut stat buff" if we pass "omitClassKeyword" as true, the type is set to "stat" only
-        // we do the same for class, enum and struct
-        if(s.empty() && (tok.type == T_CLASS || tok.type == T_STRUCT || tok.type == T_ENUM) && omitClassKeyword)
+        packed << tok.text << " ";
+    }
+
+    tokenizer.Reset(packed);
+    wxString s;
+    while(tokenizer.NextToken(token)) {
+        if(s.empty() && (token.GetType() == T_CLASS || token.GetType() == T_STRUCT || token.GetType() == T_ENUM) &&
+           omitClassKeyword)
             continue;
 
-        if((!s.empty() && s.Last() == ' ') &&
-           ((tok.type == ',') || (tok.type == '>') || tok.type == '(' || tok.type == ')')) {
-            s.RemoveLast();
-        }
-
-        // Do we need to revert macros?
-        if((tok.GetType() == T_IDENTIFIER) && !table.empty() && table.count(tok.text) && (tok.text != "std")) {
-            s << table.find(tok.text)->second;
-        } else {
-            s << tok.text;
-        }
-
-        if(standard == eCxxStandard::kCxx03 && (tok.type == '>')) {
-            if(s.length() > 1 && s.EndsWith(">>")) {
-                s.RemoveLast(2);
-                s << "> >";
+        if(token.is_keyword() || token.is_builtin_type()) {
+            s << token.GetWXString() << " ";
+        } else if(token.is_pp_keyword()) {
+            continue;
+        } else if(token.GetType() == T_IDENTIFIER) {
+            if(!table.empty() && table.count(token.GetWXString())) {
+                s << table.find(token.GetWXString())->second;
+            } else {
+                s << token.GetWXString();
             }
-        }
-
-        switch(tok.type) {
-        case T_AUTO:
-        case T_BOOL:
-        case T_CHAR:
-        case T_CHAR16_T:
-        case T_CHAR32_T:
-        case T_CONST:
-        case T_DOUBLE:
-        case T_FLOAT:
-        case T_INT:
-        case T_LONG:
-        case T_MUTABLE:
-        case T_REGISTER:
-        case T_SHORT:
-        case T_SIGNED:
-        case T_STATIC:
-        case T_UNSIGNED:
-        case T_VOLATILE:
-        case T_VOID:
-        case T_WCHAR_T:
-        case ',':
-        case '>':
-            s << " ";
-            break;
+        } else {
+            s << token.GetWXString();
         }
     }
-
-    if(!s.empty() && s.EndsWith(" ")) {
-        s.RemoveLast();
-    }
-    return s;
+    return s.Trim();
 }

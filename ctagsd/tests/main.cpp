@@ -320,6 +320,34 @@ TEST_FUNC(test_cxx_expression)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_init_from_ctor)
+{
+    ENSURE_DB_LOADED();
+    {
+        wxString code = "JSONItem item = new JSONItem();";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("item->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "JSONItem");
+    }
+
+    {
+        wxString code = "auto item = JSONItem();";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("item[0].", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "JSONItem");
+    }
+    {
+        wxString code = "auto item = JSONItem();";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("item[0][\"index\"].", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "JSONItem");
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_inhertiance_children)
 {
     ENSURE_DB_LOADED();

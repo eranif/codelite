@@ -38,6 +38,7 @@ private:
     private:
         wxString _type_name;
         wxString _assignment;
+        wxString _assignment_raw;
         wxString _name;
         bool _is_auto = false;
         wxString _pattern;
@@ -55,6 +56,7 @@ private:
 
         void set_type_name(const wxString& s) { _type_name = s; }
         void set_assignment(const wxString& s) { _assignment = s; }
+        void set_assignment_raw(const wxString& s) { _assignment_raw = s; }
         void set_is_auto(bool b) { _is_auto = b; }
         void set_name(const wxString& name) { _name = name; }
         const wxString& name() const { return _name; }

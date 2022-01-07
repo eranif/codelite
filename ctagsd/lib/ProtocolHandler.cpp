@@ -629,7 +629,10 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         // ----------------------------------
         // word completion
         // ----------------------------------
-        m_completer->word_complete(filepath, line, expression, minimized_buffer, visible_scopes, false, candidates);
+        wxStringSet_t visible_files;
+        get_includes_recrusively(filepath, &visible_files);
+        m_completer->word_complete(filepath, line, expression, minimized_buffer, visible_scopes, false, candidates,
+                                   visible_files);
     }
 
     if(!candidates.empty()) {

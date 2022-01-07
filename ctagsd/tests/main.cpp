@@ -450,6 +450,18 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_vector_of_pairs)
+{
+    ENSURE_DB_LOADED();
+    CxxExpression remainder;
+
+    completer->set_text(wxEmptyString, wxEmptyString, wxNOT_FOUND);
+    auto resolved = completer->code_complete("vector<pair<wxString, wxString>>.at(0).", { "std" }, &remainder);
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetPath(), "std::pair");
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_pointer_type_in_template)
 {
     ENSURE_DB_LOADED();

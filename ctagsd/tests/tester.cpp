@@ -40,6 +40,7 @@ void Tester::RunTests()
     builder.SetTheme(eAsciiTheme::DARK);
 
     vector<wxString> failures;
+    size_t total_checks = 0;
     for(size_t i = 0; i < m_tests.size(); i++) {
         ITest* test = m_tests[i];
         if(test->test()) {
@@ -52,17 +53,30 @@ void Tester::RunTests()
             builder.Add("FAILED", eAsciiColours::RED);
             builder.Add(wxString() << " (" << test->file() << ":" << test->line() << ")", eAsciiColours::GRAY);
             wxPrintf(wxT("%s\n"), builder.GetString());
-            failures.push_back(builder.GetString());
+            failures.push_back(builder.GetString() + "\n" + test->get_summary());
         }
+        // collect the total number of checks we ran
+        total_checks += test->get_check_counter();
         builder.Clear();
     }
 
     printf("\n====> Summary: <====\n\n");
 
+    builder.Clear();
     if(failures.empty()) {
-        printf("All tests passed successfully!\n");
+        builder.Add("All tests completed ", eAsciiColours::NORMAL_TEXT);
+        builder.Add("successfully", eAsciiColours::GREEN);
+        builder.Add(wxString() << ". Total of ", eAsciiColours::NORMAL_TEXT);
+        builder.Add(wxString() << m_tests.size(), eAsciiColours::NORMAL_TEXT, true);
+        builder.Add(wxString() << " tests and ", eAsciiColours::NORMAL_TEXT);
+        builder.Add(wxString() << total_checks, eAsciiColours::NORMAL_TEXT, true);
+        builder.Add(wxString() << " checks ", eAsciiColours::NORMAL_TEXT);
+        wxPrintf("%s\n", builder.GetString());
     } else {
-        printf("Some tests failed. See summary below\n");
+        builder.Add("Some tests ", eAsciiColours::NORMAL_TEXT);
+        builder.Add("FAILED", eAsciiColours::RED, true);
+        builder.Add(". See summary below", eAsciiColours::NORMAL_TEXT);
+        wxPrintf("%s\n\n", builder.GetString());
         for(const wxString& message : failures) {
             wxPrintf("%s\n", message);
         }

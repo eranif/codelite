@@ -62,6 +62,7 @@ New CTagsd CC engine:
 - **DONE** Use CxxCodeCompletion instead of WordCompletion & function tooltip
 - **DONE** Fix: find-definition -> failed to jump from declaration -> definition
 - **DONE** ::clGetManager()-> // fails to complete
+- **DONE** template of templates are now working properly (e.g. vector<pair<wxString, wxString>>. does not code complete)
 
 - Support `operator[]`
 - Support anonymous namespace
@@ -69,7 +70,6 @@ New CTagsd CC engine:
 - Add keywords code completion
 - eAsciiColours:: <- no completion
 - CodeLite file completion fails to complete
-- vector<pair<wxString, wxString>> does not code complete
 
 KNOWN ISSUE:
 ------------

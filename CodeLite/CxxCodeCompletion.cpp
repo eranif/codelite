@@ -306,6 +306,8 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
     auto resolved_name = m_template_manager->resolve(name_to_find, visible_scopes);
     if(resolved_name != name_to_find) {
         name_to_find = resolved_name;
+        auto expressions = CxxExpression::from_expression(name_to_find + curexpr.operand_string(), nullptr);
+        return resolve_compound_expression(expressions, visible_scopes);
     }
 
     // try classes first
@@ -781,7 +783,14 @@ void TemplateManager::add_placeholders(const wxStringMap_t& table, const vector<
             // use the path found in the db
             value = resolved->GetPath();
         } else {
-            value = vt.second;
+            // lets try and avoid pushing values that are templates
+            // consider
+            // template <typename _Tp> class vector : protected _Vector_base<_Tp> {..}
+            // Looking at the definitio of _Vector_base:
+            // template <typename _Tp> class _Vector_base {...}
+            // this will cause us to push {"_Tp", "_Tp"} (where _Tp is both the key and value)
+            // if the resolve will fail, it will return vt.second unmodified
+            value = this->resolve(vt.second, visible_scopes);
         }
         M.insert({ name, value });
     }

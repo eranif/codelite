@@ -25,6 +25,7 @@
 #include "newkeyshortcutdlg.h"
 
 #include "clSingleChoiceDialog.h"
+#include "globals.h"
 #include "windowattrmanager.h"
 
 #include <wx/tokenzr.h>
@@ -237,6 +238,7 @@ NewKeyShortcutDlg::~NewKeyShortcutDlg() {}
 void NewKeyShortcutDlg::OnSuggest(wxCommandEvent& event)
 {
     clSingleChoiceDialog dlg(this, clKeyboardManager::Get()->GetAllUnasignedKeyboardShortcuts(), 0);
+    ::clSetDialogSizeAndPosition(&dlg, 1.2); // give it a reasonable size
     dlg.SetLabel(_("Select a Keyboard Shortcut"));
     if(dlg.ShowModal() == wxID_OK) {
         Initialise(dlg.GetSelection());

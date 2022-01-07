@@ -39,13 +39,15 @@ private:
     static bool parse_func_call(CxxTokenizer& tokenizer, wxArrayString* func_call_params);
     static bool parse_list(CxxTokenizer& tokenizer, wxArrayString* params, int open_char, int close_char);
     static bool handle_casting(CxxTokenizer& tokenizer, wxString* cast_type);
-    void set_operand(int op);
 
 public:
     CxxExpression();
     ~CxxExpression();
 
-    void copy_template_info(const CxxExpression& other);
+    /**
+     * set the operand for this expression
+     */
+    void set_operand(int op);
 
     const wxString& type_name() const { return m_type_name; }
     wxString template_placeholder_to_type(const wxString& placeholder) const;

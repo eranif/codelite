@@ -338,12 +338,6 @@ wxStringMap_t CxxExpression::get_template_placeholders_map() const
     return M;
 }
 
-void CxxExpression::copy_template_info(const CxxExpression& other)
-{
-    m_template_placeholder_list = other.m_template_placeholder_list;
-    m_template_init_list = other.m_template_init_list;
-}
-
 const wxString& CxxExpression::operand_string() const { return m_operand_string; }
 
 void CxxExpression::set_operand(int op)

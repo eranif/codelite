@@ -330,6 +330,14 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
             TagEntryPtr arrow_tag = lookup_operator_arrow(resolved, visible_scopes);
             if(arrow_tag) {
                 resolved = arrow_tag;
+                // change the operand from -> to .
+                // to avoid extra resolving in case we are resolving expression like this:
+                // ```
+                //  shared_ptr<shared_ptr<wxString>> p;
+                //  p->
+                // ```
+                // without changing the operand, we will get completions for `wxString`
+                curexpr.set_operand('.');
             }
         }
     }

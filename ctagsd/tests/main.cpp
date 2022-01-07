@@ -333,6 +333,40 @@ TEST_FUNC(test_cxx_code_completion_inhertiance_children)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_operator_subscript)
+{
+    ENSURE_DB_LOADED();
+    {
+        TagEntryPtr resolved = completer->code_complete("SmartPtr<wxString>->", {}, nullptr);
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+    {
+        TagEntryPtr resolved = completer->code_complete("SmartPtr<TagEntryPtr>->", {}, nullptr);
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "SmartPtr");
+    }
+    {
+        TagEntryPtr resolved = completer->code_complete("SmartPtr<TagEntryPtr>.Get()->", {}, nullptr);
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "TagEntry");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_operator_arrow)
+{
+    ENSURE_DB_LOADED();
+    // CxxExpression remainder;
+    // TagEntryPtr resolved = completer->code_complete("EventNotifier::Get()->", {}, &remainder);
+    // CHECK_NOT_NULL(resolved);
+    // vector<TagEntryPtr> candidates;
+    // completer->get_completions(resolved, wxEmptyString, candidates, {});
+    // CHECK_BOOL(!candidates.empty());
+    // CHECK_BOOL(is_tag_exists("wxEvtHandler::Bind", candidates));
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_lsp_location_locals)
 {
     ENSURE_DB_LOADED();

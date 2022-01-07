@@ -198,6 +198,7 @@ void clButtonBase::Render(wxDC& dc)
     // set default
     wxColour parentbgColour =
         GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();
+#ifdef __WXGTK3__
     if(GetParent()) {
         GdkRGBA colour;
         auto hParent = GetParent()->GetHandle();
@@ -210,6 +211,7 @@ void clButtonBase::Render(wxDC& dc)
             }
         }
     }
+#endif // __WXGTK3__
 #else
     wxColour parentbgColour =
         GetParent() ? GetParent()->GetBackgroundColour() : clSystemSettings::GetDefaultPanelColour();

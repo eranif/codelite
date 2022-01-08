@@ -57,10 +57,12 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
     if(!curexpr.m_type_name.empty() && remainder) {
         // build the remainder
         remainder->filter = curexpr.type_name();
-        if(!arr.empty()) {
-            // copy the operand string from the last expression in the chain
-            remainder->operand_string = arr.back().operand_string();
-        }
+    }
+
+    // always copy the operand
+    if(remainder && !arr.empty()) {
+        // copy the operand string from the last expression in the chain
+        remainder->operand_string = arr.back().operand_string();
     }
     return arr;
 }

@@ -1306,10 +1306,23 @@ void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope, const wxArr
         sql << "and name LIKE '" << filter << "%%' ESCAPE '^' ";
     }
 
+    if(!kinds.empty()) {
+        sql << " and KIND IN(";
+        wxString kinds_buffer;
+        for(const wxString& kind : kinds) {
+            if(!kinds_buffer.empty()) {
+                kinds_buffer << ",";
+            }
+            kinds_buffer << "'" << kind << "'";
+        }
+        kinds_buffer << ") ";
+        sql << kinds_buffer;
+    }
+
     if(applyLimit) {
         sql << " LIMIT " << GetSingleSearchLimit();
     }
-    DoFetchTags(sql, tags, kinds);
+    DoFetchTags(sql, tags);
 }
 
 void TagsStorageSQLite::GetTagsByFilesKindAndScope(const wxArrayString& files, const wxArrayString& kinds,

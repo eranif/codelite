@@ -572,6 +572,6 @@ void CTagsdSettings::CreateDefault(const wxFileName& filepath)
 {
     m_tokens = to_vector_of_pairs(DEFAULT_TOKENS);
     m_types = to_vector_of_pairs(DEFAULT_TYPES);
-    m_limit_results = 250;
+    m_limit_results = 100;
     Save(filepath);
 }

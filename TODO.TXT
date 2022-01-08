@@ -85,15 +85,5 @@ BUGS:
 
 ----
 
-unordered_map<wxString, ParsedFileInfo> m_parsed_files_info;
-const auto& info = m_parsed_files_info[file];
-
-info. // no CC
-
-----
-
-unordered_map<wxString, ParsedFileInfo> parsed_files_info;
-parsed_files_info[file]. // no cc here
-
-
-get_expression() failes when it starts with "-", "@"
+- Add new API: code_complete_all -> return all matches that fits the criteria (e.g. same method name, different signature)
+- Use the new API in the on_document_signature_help, and on_definition

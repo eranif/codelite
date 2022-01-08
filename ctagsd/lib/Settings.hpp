@@ -16,7 +16,7 @@ class CTagsdSettings
     vector<pair<wxString, wxString>> m_types;
     wxString m_codelite_indexer;
     wxString m_ignore_spec = ".git/;.svn/;/build/;/build-;CPack_Packages/;CMakeFiles/";
-    size_t m_limit_results = 250;
+    size_t m_limit_results = 100;
 
 private:
     void build_search_path(const wxFileName& filepath);

@@ -436,9 +436,15 @@ TEST_FUNC(test_cxx_code_completion_subscript_operator)
         CHECK_STRING_ONE_OF(resolved->GetPath(), "wxUniChar", "wxUniCharRef");
     }
     {
-        auto resolved = completer->code_complete("unordered_map<int, wxString>[0].", { "std" }, nullptr);
+        CxxRemainder remainder;
+        auto resolved = completer->code_complete("unordered_map<int, wxString>[0].Tri", { "std" }, &remainder);
         CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
+
+        vector<TagEntryPtr> candidates;
+        completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates, { "std" });
+        CHECK_BOOL(!candidates.empty());
+        CHECK_BOOL(is_tag_exists("wxString::Trim", candidates));
     }
     return true;
 }

@@ -746,6 +746,9 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& op
 
     vector<wxString> kinds = { "function", "prototype", "member", "enum",      "enumerator",
                                "class",    "struct",    "union",  "namespace", "typedef" };
+    if(operand_string == "." || operand_string == "->") {
+        kinds = { "prototype", "function", "member" };
+    }
     // the global scope
     candidates = get_children_of_scope(parent, kinds, filter, visible_scopes);
     wxStringSet_t visited;

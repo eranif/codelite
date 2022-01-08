@@ -522,6 +522,23 @@ TEST_FUNC(test_cxx_code_completion_macros)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_class_enum)
+{
+    ENSURE_DB_LOADED();
+    CxxRemainder remainder;
+    vector<TagEntryPtr> candidates;
+    TagEntryPtr resolved = completer->code_complete("eCxxStandard::", {});
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetPath(), "eCxxStandard");
+    CHECK_STRING(resolved->GetKind(), "cenum");
+
+    // find the enumerators
+    vector<TagEntryPtr> tags;
+    completer->get_completions(resolved, wxEmptyString, wxEmptyString, tags, {});
+    CHECK_SIZE(tags.size(), 2);
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
 {
     ENSURE_DB_LOADED();
@@ -587,6 +604,16 @@ TEST_FUNC(test_cxx_code_completion_invalid_completions)
     completer->word_complete(wxEmptyString, wxNOT_FOUND, "does_not_exist->tes", wxEmptyString, { "std" }, false,
                              candidates);
     CHECK_SIZE(candidates.size(), 0);
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_word_complete_cenum)
+{
+    ENSURE_DB_LOADED();
+    CxxRemainder remainder;
+    vector<TagEntryPtr> candidates;
+    completer->word_complete(wxEmptyString, wxNOT_FOUND, "eAsc", wxEmptyString, {}, false, candidates);
+    CHECK_BOOL(!candidates.empty());
     return true;
 }
 

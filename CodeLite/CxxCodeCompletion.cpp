@@ -334,11 +334,12 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
 
     // try classes first
     auto resolved = lookup_child_symbol(parent, name_to_find, visible_scopes,
-                                        { "typedef", "class", "struct", "namespace", "enum", "union" });
+                                        { "typedef", "class", "struct", "namespace", "cenum", "enum", "union" });
     if(!resolved) {
         // try methods
         // `lookup_child_symbol` takes inheritance into consideration
-        resolved = lookup_child_symbol(parent, name_to_find, visible_scopes, { "function", "prototype", "member" });
+        resolved = lookup_child_symbol(parent, name_to_find, visible_scopes,
+                                       { "function", "prototype", "member", "enumerator" });
     }
 
     if(resolved) {
@@ -1028,8 +1029,8 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
     if(remainder.operand_string.empty()) {
-        kinds = { "function", "prototype", "class", "struct",     "namespace",
-                  "union",    "typedef",   "enum",  "enumerator", "macro" };
+        kinds = { "function", "prototype", "class",      "struct", "namespace", "union",
+                  "typedef",  "enum",      "enumerator", "macro",  "cenum" };
     } else if(remainder.operand_string == "::") {
         kinds = { "member",    "function", "prototype", "class", "struct",
                   "namespace", "union",    "typedef",   "enum",  "enumerator" };

@@ -803,6 +803,7 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
 void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename, int current_line)
 {
     m_locals.clear();
+    m_local_functions.clear();
     m_filename = filename;
     m_line_number = current_line;
     m_current_scope_name.clear();

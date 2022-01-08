@@ -80,7 +80,6 @@ private:
         m_types_table; // helper table to solve what we cant (usually the limitations are coming from ctags)
     wxStringMap_t m_macros_table_map;
     vector<pair<wxString, wxString>> m_macros_table;
-    wxStringSet_t m_visible_files; // files visible from the current translation unit
     TemplateManager::ptr_t m_template_manager;
     bool m_first_time = true;
 

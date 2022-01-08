@@ -142,6 +142,18 @@ public:
         }                                                                                                      \
     }
 
+#define CHECK_STRING_ONE_OF(str, expected1, expected2)                                            \
+    {                                                                                             \
+        ++m_testCount;                                                                            \
+        SET_FILE_LINE_NAME();                                                                     \
+        set_passed(strcmp(str, expected1) == 0 || strcmp(str, expected2) == 0);                   \
+        if(!is_passed()) {                                                                        \
+            set_summary(wxString() << "Expected string on of: [" << expected1 << "," << expected2 \
+                                   << "]. Actual string: '" << str << "'");                       \
+            return false;                                                                         \
+        }                                                                                         \
+    }
+
 #define CHECK_WXSTRING(str, expcStr)                                                                           \
     {                                                                                                          \
         ++m_testCount;                                                                                         \

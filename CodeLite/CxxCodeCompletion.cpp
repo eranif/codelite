@@ -354,7 +354,9 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
                 resolved = subscript_tag;
                 curexpr.pop_subscript_operator();
             }
-        } else if(curexpr.operand_string() == "->") {
+        }
+
+        if(curexpr.operand_string() == "->") {
             // search for operator-> overloading
             TagEntryPtr arrow_tag = lookup_operator_arrow(resolved, visible_scopes);
             if(arrow_tag) {

@@ -320,6 +320,18 @@ TEST_FUNC(test_cxx_expression)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_both_subscript_and_arrow_operator)
+{
+    ENSURE_DB_LOADED();
+    {
+        completer->set_text(cc_subscript_operator_2, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("my_json[1][2].", { "std" });
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "JSONItem");
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_init_from_ctor)
 {
     ENSURE_DB_LOADED();
@@ -335,13 +347,6 @@ TEST_FUNC(test_cxx_code_completion_init_from_ctor)
         wxString code = "auto item = JSONItem();";
         completer->set_text(code, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("item[0].", {});
-        CHECK_BOOL(resolved);
-        CHECK_STRING(resolved->GetPath(), "JSONItem");
-    }
-    {
-        wxString code = "auto item = JSONItem();";
-        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
-        TagEntryPtr resolved = completer->code_complete("item[0][\"index\"].", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "JSONItem");
     }
@@ -413,7 +418,7 @@ TEST_FUNC(test_cxx_code_completion_subscript_operator)
         completer->set_text(code, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("two_dim_array[0][0][0].", { "std" }, nullptr);
         CHECK_NOT_NULL(resolved);
-        CHECK_STRING(resolved->GetPath(), "wxUniCharRef");
+        CHECK_STRING_ONE_OF(resolved->GetPath(), "wxUniChar", "wxUniCharRef");
     }
     return true;
 }

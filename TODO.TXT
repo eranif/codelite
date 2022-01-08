@@ -64,6 +64,7 @@ New CTagsd CC engine:
 - **DONE** ::clGetManager()-> // fails to complete
 - **DONE** template of templates are now working properly (e.g. vector<pair<wxString, wxString>>. does not code complete)
 - **DONE** Support `operator[]`
+- **DONE** operator-> and operator[] are not mutually exclusive. e.g. auto json = msg->toElement(); json["hello"].
 
 - Support anonymous namespace
 - Support macro completions

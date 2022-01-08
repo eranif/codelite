@@ -938,3 +938,8 @@ void LSP::FindReferencesRequest::OnResponse(const LSP::ResponseMessage& response
         auto d = result[i];
         LSP::Location loc;
 )";
+
+const wxString cc_subscript_operator_2 = R"(
+unique_ptr<JSON> pmsg;
+auto my_json = pmsg->toElement();
+)";

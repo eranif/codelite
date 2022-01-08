@@ -1,5 +1,6 @@
 #include "CxxCodeCompletion.hpp"
 
+#include "CompletionHelper.hpp"
 #include "CxxExpression.hpp"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
@@ -1016,6 +1017,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
 
 {
     vector<TagEntryPtr> locals;
+    vector<TagEntryPtr> keywords;
     vector<TagEntryPtr> scope_members;
     vector<TagEntryPtr> other_scopes_members;
     vector<TagEntryPtr> global_scopes_members;
@@ -1029,6 +1031,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
     auto current_scope = determine_current_scope();
+    bool add_keywords = false;
     if(remainder.operand_string.empty()) {
         kinds = { "function", "prototype", "class",      "struct", "namespace", "union",
                   "typedef",  "enum",      "enumerator", "macro",  "cenum" };
@@ -1036,6 +1039,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
             // if we are inside a scope, add member types
             kinds.push_back("member");
         }
+        add_keywords = true;
     } else if(remainder.operand_string == "::") {
         kinds = { "member",    "function", "prototype", "class", "struct",
                   "namespace", "union",    "typedef",   "enum",  "enumerator" };
@@ -1054,8 +1058,14 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     sort_tags(other_scopes_members, sorted_other_scopes_members, true, visible_files);
     sort_tags(global_scopes_members, sorted_global_scopes_members, true, visible_files);
 
+    if(add_keywords) {
+        get_keywords_tags(remainder.filter, keywords);
+    }
     candidates.reserve(sorted_locals.size() + sorted_scope_members.size() + sorted_other_scopes_members.size() +
-                       sorted_global_scopes_members.size());
+                       sorted_global_scopes_members.size() + keywords.size());
+
+    // place the keywords first
+    candidates.insert(candidates.end(), keywords.begin(), keywords.end());
     candidates.insert(candidates.end(), sorted_locals.begin(), sorted_locals.end());
     candidates.insert(candidates.end(), sorted_scope_members.begin(), sorted_scope_members.end());
     candidates.insert(candidates.end(), sorted_other_scopes_members.begin(), sorted_other_scopes_members.end());
@@ -1200,4 +1210,34 @@ wxString CxxCodeCompletion::normalize_pattern(TagEntryPtr tag) const
         }
     }
     return pattern;
+}
+
+size_t CxxCodeCompletion::get_anonymous_tags(const wxString& name, const wxArrayString& kinds,
+                                             vector<TagEntryPtr>& tags)
+{
+    if(!m_lookup) {
+        return 0;
+    }
+    m_lookup->GetAnonymouseTags(m_filename, name, kinds, tags);
+    return tags.size();
+}
+
+size_t CxxCodeCompletion::get_keywords_tags(const wxString& name, vector<TagEntryPtr>& tags)
+{
+    CompletionHelper helper;
+    vector<wxString> keywords;
+    helper.get_cxx_keywords(keywords);
+    tags.reserve(keywords.size());
+
+    for(const auto& keyword : keywords) {
+        if(keyword.StartsWith(name)) {
+            TagEntryPtr tag(new TagEntry());
+            tag->SetName(keyword);
+            tag->SetPath(keyword);
+            tag->SetKind("keyword");
+            tag->SetFile("<built-in>");
+            tags.push_back(tag);
+        }
+    }
+    return tags.size();
 }

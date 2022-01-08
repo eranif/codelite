@@ -531,6 +531,9 @@ public:
      * @brief check the integrity of the database to avoid "malformed disk" errors
      */
     virtual bool CheckIntegrity() const = 0;
+
+    virtual size_t GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+                                     std::vector<TagEntryPtr>& tags) = 0;
 };
 
 enum { TagOk = 0, TagExist, TagError };

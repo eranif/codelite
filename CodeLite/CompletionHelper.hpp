@@ -43,6 +43,12 @@ public:
     vector<wxString> split_function_signature(const wxString& signature, wxString* return_value,
                                               size_t flags = CompletionHelper::STRIP_DEFAULT) const;
     static bool is_cxx_keyword(const wxString& word);
+
+    /**
+     * @brief return list of keywords
+     */
+    void get_cxx_keywords(std::vector<wxString>& keywords);
+
     /**
      * @brief format a tag comment
      * @param tag the tag which owns the comment

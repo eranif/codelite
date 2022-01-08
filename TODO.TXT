@@ -67,10 +67,10 @@ New CTagsd CC engine:
 - **DONE** operator-> and operator[] are not mutually exclusive. e.g. auto json = msg->toElement(); json["hello"].
 - **DONE** Support macro completions
 - **DONE** eAsciiColours:: <- no completion
+- **DONE** Add keywords code completion
 
-- Add keywords code completion
-- CodeLite file completion fails to complete
 - Support anonymous namespace
+- CodeLite file completion fails to complete
 
 KNOWN ISSUE:
 ------------
@@ -83,3 +83,15 @@ BUGS:
 - Compiler auto selecting line does not focus the line properly
 - Compiler auto selecting line -> ClearSelections before
 - Remote opening file (code completion -> Find symbol) does not focus the line properly
+
+----
+
+unordered_map<wxString, ParsedFileInfo> m_parsed_files_info;
+const auto& info = m_parsed_files_info[file];
+
+info. // no CC
+
+----
+
+unordered_map<wxString, ParsedFileInfo> parsed_files_info;
+parsed_files_info[file]. // no cc here

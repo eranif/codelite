@@ -1879,3 +1879,20 @@ TagEntryPtr TagsStorageSQLite::GetScope(const wxString& filename, int line_numbe
     }
     return nullptr;
 }
+
+size_t TagsStorageSQLite::GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+                                            std::vector<TagEntryPtr>& tags)
+{
+    if(filepath.empty())
+        return 0;
+
+    wxString sql;
+    sql << "select * from tags where file='" << filepath << "' and scope like '__anon%'";
+    if(!name.empty()) {
+        sql << " and name like '" << name << "%'";
+    }
+
+    clDEBUG1() << "Running SQL:" << sql << endl;
+    DoFetchTags(sql, tags, kinds);
+    return tags.size();
+}

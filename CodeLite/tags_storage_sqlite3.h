@@ -647,6 +647,9 @@ public:
                                    std::vector<wxString>& nonWorkspaceSymbols);
 
     virtual bool CheckIntegrity() const;
+
+    virtual size_t GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+                                     std::vector<TagEntryPtr>& tags);
 };
 
 #endif // CODELITE_TAGS_DATABASE_H

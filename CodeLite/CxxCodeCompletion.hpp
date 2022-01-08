@@ -128,6 +128,9 @@ private:
      */
     wxString normalize_pattern(TagEntryPtr tag) const;
 
+    size_t get_anonymous_tags(const wxString& name, const wxArrayString& kinds, vector<TagEntryPtr>& tags);
+    size_t get_keywords_tags(const wxString& name, vector<TagEntryPtr>& tags);
+
 public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;
 

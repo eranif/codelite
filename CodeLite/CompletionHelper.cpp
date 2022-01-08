@@ -389,7 +389,9 @@ wxString CompletionHelper::truncate_file_to_location(const wxString& file_conten
 }
 
 thread_local std::unordered_set<wxString> words;
-bool CompletionHelper::is_cxx_keyword(const wxString& word)
+namespace
+{
+void populate_keywords()
 {
     if(words.empty()) {
         words.insert("auto");
@@ -462,6 +464,11 @@ bool CompletionHelper::is_cxx_keyword(const wxString& word)
         words.insert("noexcept");
         words.insert("override");
     }
+}
+} // namespace
+bool CompletionHelper::is_cxx_keyword(const wxString& word)
+{
+    populate_keywords();
     return words.count(word) != 0;
 }
 
@@ -941,4 +948,13 @@ wxString CompletionHelper::normalize_function(const wxString& name, const wxStri
 
     fullname << funcsig << ")";
     return fullname;
+}
+
+void CompletionHelper::get_cxx_keywords(std::vector<wxString>& keywords)
+{
+    populate_keywords();
+    keywords.reserve(words.size());
+    for(const wxString& word : words) {
+        keywords.push_back(word);
+    }
 }

@@ -332,6 +332,21 @@ TEST_FUNC(test_cxx_code_completion_both_subscript_and_arrow_operator)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
+{
+    wxString filepath = R"(C:\src\codelite\ctagsd\tests\main.cpp)";
+    ENSURE_DB_LOADED();
+    {
+        if(wxFileExists(filepath)) {
+            completer->set_text(filepath, wxEmptyString, wxNOT_FOUND);
+            TagEntryPtr resolved = completer->code_complete("completer->", { "std" });
+            CHECK_BOOL(resolved);
+            CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");
+        }
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_init_from_ctor)
 {
     ENSURE_DB_LOADED();

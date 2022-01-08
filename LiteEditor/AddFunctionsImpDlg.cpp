@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "AddFunctionsImpDlg.h"
+
 #include "ctags_manager.h"
 #include "globals.h"
 #include "windowattrmanager.h"
@@ -46,8 +47,7 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
         // keep the implementation as the client data
         wxString body;
         TagEntryPtr tag = m_tags.at(i);
-        tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig(
-            tag->GetSignature(), Normalize_Func_Name | Normalize_Func_Reverse_Macro));
+        tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig(tag->GetSignature(), Normalize_Func_Name));
         body << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
         body << wxT("\n");
         m_implArr.Add(body);
@@ -67,14 +67,19 @@ wxString AddFunctionsImpDlg::GetText() const
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrl->RowToItem(i);
         if(m_dvListCtrl->IsItemChecked(item, 0)) {
-            if(text.IsEmpty()) text << "\n";
+            if(text.IsEmpty())
+                text << "\n";
             // checked
             wxString* impl = reinterpret_cast<wxString*>(m_dvListCtrl->GetItemData(item));
-            if(impl) { text << (*impl); }
+            if(impl) {
+                text << (*impl);
+            }
         }
     }
 
-    if(!text.IsEmpty()) { text.RemoveLast(); }
+    if(!text.IsEmpty()) {
+        text.RemoveLast();
+    }
     return text;
 }
 

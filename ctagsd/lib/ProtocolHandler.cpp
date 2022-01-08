@@ -579,61 +579,72 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
     int character = json["params"]["position"]["character"].toInt(0);
 
     clDEBUG() << "completion requested at:" << filepath << ":" << line << ":" << character << endl;
-    // get the expression at this given position
+
     wxString last_word;
     CompletionHelper helper;
-    wxString full_buffer = m_filesOpened[filepath];
-    wxString minimized_buffer = minimize_buffer(filepath, line, character, full_buffer);
-
-    clDEBUG1() << "Success" << endl;
-    clDEBUG1() << "Getting expression..." << endl;
-    wxString expression = helper.get_expression(minimized_buffer, false, &last_word);
-
-    clDEBUG1() << "Success" << endl;
-    clDEBUG() << "resolving expression:" << expression << endl;
-
-    bool is_trigger_char =
-        !expression.empty() && (expression.Last() == '>' || expression.Last() == ':' || expression.Last() == '.');
-    bool is_function_calltip = !expression.empty() && expression.Last() == '(';
-
-    wxString file_name;
     wxString suffix;
-    bool is_include_completion = helper.is_include_statement(expression, &file_name, &suffix);
-    vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
-
+    const wxString& full_buffer = m_filesOpened[filepath];
+    bool is_include_completion = false;
+    wxString file_name;
     vector<TagEntryPtr> candidates;
-    if(is_trigger_char) {
-        // ----------------------------------
-        // code completion
-        // ----------------------------------
-        clDEBUG() << "CodeComplete expression:" << expression << endl;
-        CxxRemainder remainder;
 
-        m_completer->set_text(minimized_buffer, filepath, line);
-        TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
-        if(resolved) {
-            clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
-            clDEBUG() << "filter:" << remainder.filter << endl;
-            m_completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates,
-                                         visible_scopes);
-        }
-        clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
-        clDEBUG1() << candidates << endl;
-    } else if(is_function_calltip) {
-        // TODO:
-        // function calltip
-    } else if(is_include_completion) {
+    wxArrayString lines = ::wxStringTokenize(full_buffer, "\n", wxTOKEN_RET_EMPTY_ALL);
+    if(line < (int)lines.size()) {
+        wxString requested_line = lines[line];
+        requested_line.Trim();
+
+        clDEBUG() << "checking for include completion:" << requested_line << endl;
+        is_include_completion = helper.is_line_include_statement(requested_line, &file_name, &suffix);
+    }
+
+    if(is_include_completion) {
         // provide a list of files for code completion
         clDEBUG() << "File Completion:" << filepath << endl;
         m_completer->get_file_completions(file_name, candidates, suffix);
     } else {
-        // ----------------------------------
-        // word completion
-        // ----------------------------------
-        wxStringSet_t visible_files;
-        get_includes_recrusively(filepath, &visible_files);
-        m_completer->word_complete(filepath, line, expression, minimized_buffer, visible_scopes, false, candidates,
-                                   visible_files);
+        wxString minimized_buffer = minimize_buffer(filepath, line, character, full_buffer);
+
+        clDEBUG1() << "Success" << endl;
+        clDEBUG1() << "Getting expression..." << endl;
+        wxString expression = helper.get_expression(minimized_buffer, false, &last_word);
+
+        clDEBUG1() << "Success" << endl;
+        clDEBUG() << "resolving expression:" << expression << endl;
+
+        bool is_trigger_char =
+            !expression.empty() && (expression.Last() == '>' || expression.Last() == ':' || expression.Last() == '.');
+        bool is_function_calltip = !expression.empty() && expression.Last() == '(';
+        vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
+
+        if(is_trigger_char) {
+            // ----------------------------------
+            // code completion
+            // ----------------------------------
+            clDEBUG() << "CodeComplete expression:" << expression << endl;
+            CxxRemainder remainder;
+
+            m_completer->set_text(minimized_buffer, filepath, line);
+            TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
+            if(resolved) {
+                clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
+                clDEBUG() << "filter:" << remainder.filter << endl;
+                m_completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates,
+                                             visible_scopes);
+            }
+            clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
+            clDEBUG1() << candidates << endl;
+        } else if(is_function_calltip) {
+            // TODO:
+            // function calltip
+        } else {
+            // ----------------------------------
+            // word completion
+            // ----------------------------------
+            wxStringSet_t visible_files;
+            get_includes_recrusively(filepath, &visible_files);
+            m_completer->word_complete(filepath, line, expression, minimized_buffer, visible_scopes, false, candidates,
+                                       visible_files);
+        }
     }
 
     if(!candidates.empty()) {

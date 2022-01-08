@@ -1213,7 +1213,7 @@ size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, cons
     // ----------------------------------
     // word completion
     // ----------------------------------
-    clDEBUG() << "find_definition expression:" << expression << endl;
+    clDEBUG() << "word_complete expression:" << expression << endl;
     set_text(text, filepath, line);
 
     CxxRemainder remainder;

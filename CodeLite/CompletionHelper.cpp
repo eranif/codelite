@@ -2,6 +2,7 @@
 
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
+#include "file_logger.h"
 
 #include <vector>
 #include <wx/regex.h>
@@ -890,6 +891,37 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
 
 thread_local wxRegEx reIncludeFile("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.\\+\\-]*)");
 
+bool CompletionHelper::is_line_include_statement(const wxString& line, wxString* file_name, wxString* suffix) const
+{
+    wxString tmp_line = line;
+
+    tmp_line.Trim().Trim(false);
+    tmp_line.Replace("\t", " ");
+
+    // search for the "#"
+    wxString remainder;
+    if(!tmp_line.StartsWith("#", &remainder)) {
+        return false;
+    }
+
+    if(!reIncludeFile.Matches(remainder)) {
+        return false;
+    }
+
+    if(file_name) {
+        *file_name = reIncludeFile.GetMatch(remainder, 1);
+    }
+
+    if(suffix) {
+        if(tmp_line.Contains("<")) {
+            *suffix = ">";
+        } else {
+            *suffix = "\"";
+        }
+    }
+    return true;
+}
+
 bool CompletionHelper::is_include_statement(const wxString& f_content, wxString* file_name, wxString* suffix) const
 {
     // read backward until we find LF
@@ -905,30 +937,8 @@ bool CompletionHelper::is_include_statement(const wxString& f_content, wxString*
     }
 
     wxString line = f_content.Mid(i);
-    line.Trim().Trim(false);
-    line.Replace("\t", " ");
-    // search for the "#"
-    wxString remainder;
-    if(!line.StartsWith("#", &remainder)) {
-        return false;
-    }
-
-    if(!reIncludeFile.Matches(remainder)) {
-        return false;
-    }
-
-    if(file_name) {
-        *file_name = reIncludeFile.GetMatch(remainder, 1);
-    }
-
-    if(suffix) {
-        if(line.Contains("<")) {
-            *suffix = ">";
-        } else {
-            *suffix = "\"";
-        }
-    }
-    return true;
+    clDEBUG() << "Checking line:" << line << "for #include statement..." << endl;
+    return is_line_include_statement(line, file_name, suffix);
 }
 
 wxString CompletionHelper::normalize_function(const wxString& name, const wxString& signature, size_t flags)

@@ -8,7 +8,7 @@ CxxExpression::CxxExpression() {}
 
 CxxExpression::~CxxExpression() {}
 
-vector<CxxExpression> CxxExpression::from_expression(const wxString& expression, CxxExpression* remainder)
+vector<CxxExpression> CxxExpression::from_expression(const wxString& expression, CxxRemainder* remainder)
 {
     CxxTokenizer tokenizer;
     CxxLexerToken tk;
@@ -55,7 +55,12 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
     }
 
     if(!curexpr.m_type_name.empty() && remainder) {
-        *remainder = curexpr;
+        // build the remainder
+        remainder->filter = curexpr.type_name();
+        if(!arr.empty()) {
+            // copy the operand string from the last expression in the chain
+            remainder->operand_string = arr.back().operand_string();
+        }
     }
     return arr;
 }
@@ -426,7 +431,4 @@ vector<wxString> CxxExpression::split_subclass_expression(const wxString& subcla
     return result;
 }
 
-void CxxExpression::set_subscript_params(const vector<wxArrayString>& params)
-{
-    m_subscript_params = params;
-}
+void CxxExpression::set_subscript_params(const vector<wxArrayString>& params) { m_subscript_params = params; }

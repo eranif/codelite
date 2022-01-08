@@ -72,7 +72,7 @@ TagEntryPtr CxxCodeCompletion::determine_current_scope()
 }
 
 TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const vector<wxString>& visible_scopes,
-                                             CxxExpression* remainder)
+                                             CxxRemainder* remainder)
 {
     // build expression from the expression
     m_recurse_protector = 0;
@@ -636,8 +636,9 @@ vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
     return locals;
 }
 
-size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates,
-                                          const vector<wxString>& visible_scopes, size_t limit)
+size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& operand_string, const wxString& filter,
+                                          vector<TagEntryPtr>& candidates, const vector<wxString>& visible_scopes,
+                                          size_t limit)
 {
     if(!parent) {
         return 0;
@@ -1025,8 +1026,8 @@ size_t CxxCodeCompletion::get_word_completions(const wxString& filter, vector<Ta
 
     locals = get_locals(filter);
     // collect member variabels if we are within a scope
-    vector<wxString> kinds = { "member",    "function", "prototype", "class", "struct",
-                               "namespace", "union",    "typedef",   "enum" };
+    vector<wxString> kinds = { "member", "function", "prototype", "class", "struct",    "namespace",
+                               "union",  "typedef",  "enum",      "macro", "enumerator" };
     get_children_of_current_scope(kinds, filter, visible_scopes, &scope_members, &other_scopes_members,
                                   &global_scopes_members);
 
@@ -1116,26 +1117,26 @@ size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, cons
     clDEBUG() << "find_definition expression:" << expression << endl;
     set_text(text, filepath, line);
 
-    CxxExpression remainder;
+    CxxRemainder remainder;
     TagEntryPtr resolved = code_complete(expression, visible_scopes, &remainder);
 
-    wxString filter = remainder.type_name();
+    wxString filter = remainder.filter;
     if(!resolved) {
         // check if this is a contextual text (A::B or a->b or a.b etc)
         // we only allow global completion of there is not expression list
         // and the remainder has something in it (r.type_name() is not empty)
-        CxxExpression r;
+        CxxRemainder r;
         auto expressions = CxxExpression::from_expression(expression, &r);
-        if(expressions.size() == 0 && !r.type_name().empty()) {
+        if(expressions.size() == 0 && !r.filter.empty()) {
             clDEBUG() << "code_complete failed to resolve:" << expression << endl;
-            clDEBUG() << "filter:" << remainder.type_name() << endl;
-            get_word_completions(remainder.type_name(), candidates, visible_scopes, visible_files);
+            clDEBUG() << "filter:" << r.filter << endl;
+            get_word_completions(r.filter, candidates, visible_scopes, visible_files);
         }
     } else if(resolved) {
         // it was resolved into something...
         clDEBUG() << "code_complete resolved:" << resolved->GetPath() << endl;
-        clDEBUG() << "filter:" << remainder.type_name() << endl;
-        get_completions(resolved, remainder.type_name(), candidates, visible_scopes);
+        clDEBUG() << "filter:" << remainder.filter << endl;
+        get_completions(resolved, remainder.operand_string, remainder.filter, candidates, visible_scopes);
     }
     clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
 

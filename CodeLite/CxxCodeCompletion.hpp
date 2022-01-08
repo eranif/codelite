@@ -177,7 +177,7 @@ public:
      * @return a tag representing the scope
      */
     TagEntryPtr code_complete(const wxString& expression, const vector<wxString>& visible_scopes,
-                              CxxExpression* remainder = nullptr);
+                              CxxRemainder* remainder = nullptr);
 
     /**
      * @brief word completion. differ from code_complete by the expression. code_complete is called when user hit
@@ -199,8 +199,9 @@ public:
     /**
      * @brief return list of completions filtered by name for a given parent
      */
-    size_t get_completions(TagEntryPtr parent, const wxString& filter, vector<TagEntryPtr>& candidates,
-                           const vector<wxString>& visible_scopes, size_t limit = (size_t)-1);
+    size_t get_completions(TagEntryPtr parent, const wxString& operand_string, const wxString& filter,
+                           vector<TagEntryPtr>& candidates, const vector<wxString>& visible_scopes,
+                           size_t limit = (size_t)-1);
     /**
      * @brief return children tag of the current scope and any other relevant scopes
      * this method calls internally to `determine_current_scope()`

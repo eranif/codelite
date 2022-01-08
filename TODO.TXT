@@ -66,11 +66,11 @@ New CTagsd CC engine:
 - **DONE** Support `operator[]`
 - **DONE** operator-> and operator[] are not mutually exclusive. e.g. auto json = msg->toElement(); json["hello"].
 
-- Support anonymous namespace
 - Support macro completions
-- Add keywords code completion
 - eAsciiColours:: <- no completion
+- Add keywords code completion
 - CodeLite file completion fails to complete
+- Support anonymous namespace
 
 KNOWN ISSUE:
 ------------
@@ -81,4 +81,5 @@ BUGS:
 -----
 
 - Compiler auto selecting line does not focus the line properly
+- Compiler auto selecting line -> ClearSelections before
 - Remote opening file (code completion -> Find symbol) does not focus the line properly

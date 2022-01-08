@@ -81,7 +81,7 @@ TEST_FUNC(TestLSPLocation)
     completer->set_text(code, wxEmptyString, wxNOT_FOUND);
     TagEntryPtr resolved = completer->code_complete("si.GetLocation().", { "LSP" });
     if(resolved) {
-        completer->get_completions(resolved, wxEmptyString, candidates, { "LSP" });
+        completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, { "LSP" });
     }
     CHECK_BOOL(resolved);
     CHECK_SIZE(candidates.size(), 13);
@@ -187,7 +187,7 @@ TEST_FUNC(TestCTagsManager_AutoCandidates)
     auto resolved = completer->code_complete(fulltext, {});
     CHECK_BOOL(resolved);
 
-    completer->get_completions(resolved, wxEmptyString, candidates, {});
+    completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, {});
     CHECK_BOOL(!candidates.empty());
     return true;
 }
@@ -301,7 +301,7 @@ TEST_FUNC(test_symlink_is_scandir)
 
 TEST_FUNC(test_cxx_expression)
 {
-    CxxExpression remainder;
+    CxxRemainder remainder;
     vector<CxxExpression> exp1 = CxxExpression::from_expression("std::vector<int>::", &remainder);
     CHECK_SIZE(exp1.size(), 2);
     CHECK_EXPECTED(exp1[0].type_name(), "std");
@@ -316,7 +316,7 @@ TEST_FUNC(test_cxx_expression)
 
     vector<CxxExpression> exp3 = CxxExpression::from_expression("string.AfterFirst('(')", &remainder);
     CHECK_SIZE(exp3.size(), 1);
-    CHECK_EXPECTED(remainder.type_name(), "AfterFirst");
+    CHECK_EXPECTED(remainder.filter, "AfterFirst");
     return true;
 }
 
@@ -356,11 +356,11 @@ TEST_FUNC(test_cxx_code_completion_init_from_ctor)
 TEST_FUNC(test_cxx_code_completion_inhertiance_children)
 {
     ENSURE_DB_LOADED();
-    CxxExpression remainder;
+    CxxRemainder remainder;
     TagEntryPtr resolved = completer->code_complete("EventNotifier::Get()->", {}, &remainder);
     CHECK_NOT_NULL(resolved);
     vector<TagEntryPtr> candidates;
-    completer->get_completions(resolved, wxEmptyString, candidates, {});
+    completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, {});
     CHECK_BOOL(!candidates.empty());
     CHECK_BOOL(is_tag_exists("wxEvtHandler::Bind", candidates));
     return true;
@@ -426,7 +426,7 @@ TEST_FUNC(test_cxx_code_completion_subscript_operator)
 TEST_FUNC(test_cxx_code_completion_lsp_location_locals)
 {
     ENSURE_DB_LOADED();
-    CxxExpression remainder;
+    CxxRemainder remainder;
     completer->set_text(cc_lsp_location, wxEmptyString, wxNOT_FOUND);
     vector<TagEntryPtr> locals = completer->get_locals(wxEmptyString);
     CHECK_BOOL(!locals.empty());
@@ -459,32 +459,32 @@ TEST_FUNC(test_cxx_code_completion_word_completion)
 {
     ENSURE_DB_LOADED();
     {
-        CxxExpression remainder;
+        CxxRemainder remainder;
         TagEntryPtr resolved = completer->code_complete("wxStr", {}, &remainder);
-        CHECK_STRING(remainder.type_name(), "wxStr");
+        CHECK_STRING(remainder.filter, "wxStr");
         vector<TagEntryPtr> candidates;
-        completer->get_word_completions(remainder.type_name(), candidates, { "std" }, {});
+        completer->get_word_completions(remainder.filter, candidates, { "std" }, {});
         CHECK_BOOL(!candidates.empty());
     }
     {
-        CxxExpression remainder;
+        CxxRemainder remainder;
         wxString filename = R"(C:\src\codelite\CodeLite\ctags_manager.cpp)";
         completer->set_text(wxEmptyString, filename, 263);
         TagEntryPtr resolved = completer->code_complete("wxStr", {}, &remainder);
-        CHECK_STRING(remainder.type_name(), "wxStr");
+        CHECK_STRING(remainder.filter, "wxStr");
         vector<TagEntryPtr> candidates;
-        completer->get_word_completions(remainder.type_name(), candidates, { "std" }, {});
+        completer->get_word_completions(remainder.filter, candidates, { "std" }, {});
         CHECK_BOOL(!candidates.empty());
         CHECK_BOOL(is_tag_exists("wxString", candidates));
     }
     {
-        CxxExpression remainder;
+        CxxRemainder remainder;
         TagEntryPtr resolved = completer->code_complete("std::str", {}, &remainder);
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "std");
-        CHECK_STRING(remainder.type_name(), "str");
+        CHECK_STRING(remainder.filter, "str");
         vector<TagEntryPtr> candidates;
-        completer->get_completions(resolved, remainder.type_name(), candidates, {});
+        completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates, {});
         CHECK_BOOL(!candidates.empty());
 
         // check that we found "std::string"
@@ -534,16 +534,16 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
     CHECK_BOOL(resolved);
     CHECK_STRING(resolved->GetPath(), "<global>");
 
-    CxxExpression remainder;
+    CxxRemainder remainder;
     resolved = completer->code_complete("wxS", {}, &remainder);
-    CHECK_STRING(remainder.type_name(), "wxS");
+    CHECK_STRING(remainder.filter, "wxS");
     return true;
 }
 
 TEST_FUNC(test_cxx_code_completion_vector_of_pairs)
 {
     ENSURE_DB_LOADED();
-    CxxExpression remainder;
+    CxxRemainder remainder;
 
     completer->set_text(wxEmptyString, wxEmptyString, wxNOT_FOUND);
     auto resolved = completer->code_complete("vector<pair<wxString, wxString>>.at(0).", { "std" }, &remainder);
@@ -555,21 +555,21 @@ TEST_FUNC(test_cxx_code_completion_vector_of_pairs)
 TEST_FUNC(test_cxx_code_completion_pointer_type_in_template)
 {
     ENSURE_DB_LOADED();
-    CxxExpression remainder;
+    CxxRemainder remainder;
 
     wxString code = "vector<ITest*> m_tests;";
     completer->set_text(code, wxEmptyString, wxNOT_FOUND);
     auto resolved = completer->code_complete("m_tests.at(i)->tes", { "std" }, &remainder);
     CHECK_BOOL(resolved);
     CHECK_STRING(resolved->GetPath(), "ITest");
-    CHECK_STRING(remainder.type_name(), "tes");
+    CHECK_STRING(remainder.filter, "tes");
     return true;
 }
 
 TEST_FUNC(test_cxx_code_completion_invalid_completions)
 {
     ENSURE_DB_LOADED();
-    CxxExpression remainder;
+    CxxRemainder remainder;
     vector<TagEntryPtr> candidates;
     completer->word_complete(wxEmptyString, wxNOT_FOUND, "does_not_exist->tes", wxEmptyString, { "std" }, false,
                              candidates);
@@ -811,7 +811,7 @@ TEST_FUNC(test_cxx_code_completion_template)
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "cJSON");
         vector<TagEntryPtr> tags;
-        completer->get_completions(resolved, wxEmptyString, tags, {});
+        completer->get_completions(resolved, wxEmptyString, wxEmptyString, tags, {});
         CHECK_BOOL(is_tag_exists("valuestring", tags));
     }
 

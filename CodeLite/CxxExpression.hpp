@@ -11,6 +11,20 @@
 
 using namespace std;
 
+/// A remainder is the part of an expression chain that was not processed.
+/// Consider the following simple expression:
+///
+/// std::string::size_
+///
+/// Passing the above to CxxExpression::from_expression
+/// and assuming that the it succeed, the mainder will be:
+/// filter -> size_
+/// operand_string -> "::"
+struct WXDLLIMPEXP_CL CxxRemainder {
+    wxString filter;
+    wxString operand_string;
+};
+
 /// a class representing a single expression
 /// in a longer chain of expressions
 class WXDLLIMPEXP_CL CxxExpression
@@ -81,7 +95,7 @@ public:
     /// returns:
     /// {"Singleton<ContextManager>", "OtherClass", "SecondClass<wxString, wxArrayString>"}
     static vector<wxString> split_subclass_expression(const wxString& subclass_pattern);
-    static vector<CxxExpression> from_expression(const wxString& expression, CxxExpression* remainder);
+    static vector<CxxExpression> from_expression(const wxString& expression, CxxRemainder* remainder);
 
     /**
      * should the code completion check for subscript operator overloading?

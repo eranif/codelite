@@ -607,14 +607,15 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         // code completion
         // ----------------------------------
         clDEBUG() << "CodeComplete expression:" << expression << endl;
-        CxxExpression remainder;
+        CxxRemainder remainder;
 
         m_completer->set_text(minimized_buffer, filepath, line);
         TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
         if(resolved) {
             clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
-            clDEBUG() << "filter:" << remainder.type_name() << endl;
-            m_completer->get_completions(resolved, remainder.type_name(), candidates, visible_scopes);
+            clDEBUG() << "filter:" << remainder.filter << endl;
+            m_completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates,
+                                         visible_scopes);
         }
         clDEBUG() << "Number of completion entries:" << candidates.size() << endl;
         clDEBUG1() << candidates << endl;

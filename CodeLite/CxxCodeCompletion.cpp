@@ -1009,7 +1009,7 @@ size_t CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& 
     return current_scope_children->size() + other_scopes_children->size() + global_scope_children->size();
 }
 
-size_t CxxCodeCompletion::get_word_completions(const wxString& filter, vector<TagEntryPtr>& candidates,
+size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, vector<TagEntryPtr>& candidates,
                                                const vector<wxString>& visible_scopes,
                                                const wxStringSet_t& visible_files)
 
@@ -1024,11 +1024,22 @@ size_t CxxCodeCompletion::get_word_completions(const wxString& filter, vector<Ta
     vector<TagEntryPtr> sorted_other_scopes_members;
     vector<TagEntryPtr> sorted_global_scopes_members;
 
-    locals = get_locals(filter);
+    locals = get_locals(remainder.filter);
+    vector<wxString> kinds;
+    // based on the lasts operand, build the list of items to fetch
+    if(remainder.operand_string.empty()) {
+        kinds = { "function", "prototype", "class", "struct",     "namespace",
+                  "union",    "typedef",   "enum",  "enumerator", "macro" };
+    } else if(remainder.operand_string == "::") {
+        kinds = { "member",    "function", "prototype", "class", "struct",
+                  "namespace", "union",    "typedef",   "enum",  "enumerator" };
+    } else {
+        // contextual completions
+        kinds = { "member", "function", "prototype" };
+    }
+
     // collect member variabels if we are within a scope
-    vector<wxString> kinds = { "member", "function", "prototype", "class", "struct",    "namespace",
-                               "union",  "typedef",  "enum",      "macro", "enumerator" };
-    get_children_of_current_scope(kinds, filter, visible_scopes, &scope_members, &other_scopes_members,
+    get_children_of_current_scope(kinds, remainder.filter, visible_scopes, &scope_members, &other_scopes_members,
                                   &global_scopes_members);
 
     // sort the matches:
@@ -1130,7 +1141,7 @@ size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, cons
         if(expressions.size() == 0 && !r.filter.empty()) {
             clDEBUG() << "code_complete failed to resolve:" << expression << endl;
             clDEBUG() << "filter:" << r.filter << endl;
-            get_word_completions(r.filter, candidates, visible_scopes, visible_files);
+            get_word_completions(remainder, candidates, visible_scopes, visible_files);
         }
     } else if(resolved) {
         // it was resolved into something...

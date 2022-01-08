@@ -61,7 +61,7 @@
     <Project Name="Remote" Path="Remoty/Remoty.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Core">
-    <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="No"/>
+    <Project Name="CodeLiteIDE" Path="LiteEditor/CodeLiteIDE.project" Active="Yes"/>
   </VirtualDirectory>
   <VirtualDirectory Name="SDK">
     <Project Name="databaselayer_sqlite" Path="sdk/databaselayer/databaselayer_sqlite.project" Active="No"/>
@@ -96,7 +96,7 @@
     <Project Name="codelite_cppcheck" Path="sdk/codelite_cppcheck/codelite_cppcheck.project" Active="No"/>
     <Project Name="codelite_echo" Path="codelite_echo/codelite_echo.project" Active="No"/>
     <Project Name="ctagsd" Path="ctagsd/ctagsd.project" Active="No"/>
-    <Project Name="ctagsd-tests" Path="ctagsd/tests/ctagsd-tests.project" Active="Yes"/>
+    <Project Name="ctagsd-tests" Path="ctagsd/tests/ctagsd-tests.project" Active="No"/>
     <Project Name="ctagsdlib" Path="ctagsd/lib/ctagsdlib.project" Active="No"/>
   </VirtualDirectory>
   <BuildMatrix>

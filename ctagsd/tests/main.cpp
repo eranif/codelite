@@ -463,7 +463,7 @@ TEST_FUNC(test_cxx_code_completion_word_completion)
         TagEntryPtr resolved = completer->code_complete("wxStr", {}, &remainder);
         CHECK_STRING(remainder.filter, "wxStr");
         vector<TagEntryPtr> candidates;
-        completer->get_word_completions(remainder.filter, candidates, { "std" }, {});
+        completer->get_word_completions(remainder, candidates, { "std" }, {});
         CHECK_BOOL(!candidates.empty());
     }
     {
@@ -473,7 +473,7 @@ TEST_FUNC(test_cxx_code_completion_word_completion)
         TagEntryPtr resolved = completer->code_complete("wxStr", {}, &remainder);
         CHECK_STRING(remainder.filter, "wxStr");
         vector<TagEntryPtr> candidates;
-        completer->get_word_completions(remainder.filter, candidates, { "std" }, {});
+        completer->get_word_completions(remainder, candidates, { "std" }, {});
         CHECK_BOOL(!candidates.empty());
         CHECK_BOOL(is_tag_exists("wxString", candidates));
     }
@@ -502,10 +502,23 @@ TEST_FUNC(test_cxx_word_completion_inside_scope)
     if(wxFileExists(filename)) {
         vector<TagEntryPtr> candidates;
         completer->set_text(wxEmptyString, filename, 191);
-        size_t count = completer->get_word_completions("addProp", candidates, {}, {});
+        CxxRemainder remainder;
+        remainder.filter = "addProp";
+        size_t count = completer->get_word_completions(remainder, candidates, {}, {});
         CHECK_BOOL(is_tag_exists("JSONItem::addProperty", candidates));
         CHECK_BOOL(count > 0);
     }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_macros)
+{
+    ENSURE_DB_LOADED();
+    CxxRemainder remainder;
+    vector<TagEntryPtr> candidates;
+    completer->word_complete(wxEmptyString, wxNOT_FOUND, "CHECK_STRING_ONE", wxEmptyString, {}, false, candidates);
+    CHECK_SIZE(candidates.size(), 1);
+    CHECK_STRING(candidates[0]->GetName(), "CHECK_STRING_ONE_OF");
     return true;
 }
 

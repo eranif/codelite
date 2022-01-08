@@ -32,7 +32,7 @@ if ( APPLE )
     add_definitions(-fPIC)
 endif()
 
-if( NOT SQLITE3_FOUND )
+if( NOT SQLite3_FOUND )
     FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp" "src/sqlite3/*.c")
 else()
     FILE(GLOB SRCS "src/dblayer/Sqlite*.cpp" "src/dblayer/Database*.cpp" "src/dblayer/Prepared*.cpp")
@@ -72,7 +72,7 @@ endif ( WITH_MYSQL )
 
 # Define the output
 add_library(databaselayersqlite SHARED ${SRCS} ${MYSQL_SRCS})
-target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
+target_link_libraries(databaselayersqlite ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES} ${SQLite3_LIBRARIES})
 
 if(APPLE)
     install(TARGETS databaselayersqlite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)

@@ -104,15 +104,25 @@ if (NOT MINGW AND WXC_APP)
 endif ()
 FILE(GLOB SRCS "*.cpp" "../sdk/codelite_indexer/network/*.cpp" "SocketAPI/*.cpp" "LSP/*.cpp")
 
+# Define GTK libraries
+if (GTK2_FOUND)
+    set(GTK_LIBS "${GTK2_LIBRARIES}")
+elseif (GTK3_FOUND)
+    set(GTK_LIBS "${GTK3_LIBRARIES}")
+else()
+    set(GTK_LIBS "")
+endif()
+
 # Define the output
 add_library(libcodelite SHARED ${SRCS})
 target_link_libraries(libcodelite
                       ${LINKER_OPTIONS}
                       ${wxWidgets_LIBRARIES}
                       -L"${CL_LIBPATH}"
-                      ${SQLITE3_LIBRARY}
+                      ${SQLite3_LIBRARIES}
                       wxsqlite3
                       ${LIBSSH_LIB}
+                      ${GTK_LIBS}
                       ${ADDITIONAL_LIBRARIES}
                       ${LIBUCHARDET_LIB})
 

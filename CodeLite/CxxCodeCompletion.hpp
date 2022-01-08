@@ -68,6 +68,7 @@ private:
 private:
     ITagsStoragePtr m_lookup;
     unordered_map<wxString, __local> m_locals;
+    unordered_map<wxString, TagEntryPtr> m_local_functions; // anonymous function
     wxString m_optimized_scope;
     wxString m_filename;
     int m_line_number = 0;
@@ -95,7 +96,8 @@ private:
                                     const vector<wxString>& visible_scopes, const vector<wxString>& kinds);
 
     wxString typedef_from_tag(TagEntryPtr tag) const;
-    wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals) const;
+    wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
+                          unordered_map<wxString, TagEntryPtr>* functions) const;
     TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
     TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes,
                                             const CxxExpression& orig_expression);
@@ -128,8 +130,12 @@ private:
      */
     wxString normalize_pattern(TagEntryPtr tag) const;
 
-    size_t get_anonymous_tags(const wxString& name, const wxArrayString& kinds, vector<TagEntryPtr>& tags);
+    size_t get_anonymous_tags(const wxString& name, const wxArrayString& kinds, vector<TagEntryPtr>& tags) const;
     size_t get_keywords_tags(const wxString& name, vector<TagEntryPtr>& tags);
+
+    TagEntryPtr on_method(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
+    TagEntryPtr on_typedef(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
+    TagEntryPtr on_member(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
 
 public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;

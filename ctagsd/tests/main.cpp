@@ -338,7 +338,7 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
     ENSURE_DB_LOADED();
     {
         if(wxFileExists(filepath)) {
-            completer->set_text(filepath, wxEmptyString, wxNOT_FOUND);
+            completer->set_text(wxEmptyString, filepath, wxNOT_FOUND);
             TagEntryPtr resolved = completer->code_complete("completer->", { "std" });
             CHECK_BOOL(resolved);
             CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");

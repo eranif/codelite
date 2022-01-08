@@ -143,17 +143,43 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
 
 size_t CxxCodeCompletion::parse_locals(const wxString& text, unordered_map<wxString, __local>* locals) const
 {
-    shrink_scope(text, locals);
+    shrink_scope(text, locals, nullptr);
     return locals->size();
 }
 
-wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals) const
+wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
+                                         unordered_map<wxString, TagEntryPtr>* functions) const
 {
     CxxVariableScanner scanner(text, eCxxStandard::kCxx11, get_tokens_map(), false);
     const wxString& trimmed_text = scanner.GetOptimizeBuffer();
 
     CxxVariable::Vec_t variables = scanner.GetVariables(false);
     locals->reserve(variables.size());
+
+    // we also include the anonymous entries for this scope
+    wxArrayString kinds;
+    kinds.Add("class");
+    kinds.Add("struct");
+    kinds.Add("namespace");
+    kinds.Add("member");
+    kinds.Add("function");
+    kinds.Add("variable");
+    kinds.Add("enum");
+    kinds.Add("cenum");
+    kinds.Add("macro");
+    vector<TagEntryPtr> anonymous_tags;
+    get_anonymous_tags(wxEmptyString, kinds, anonymous_tags);
+
+    // create a local variable from the anonymous tags
+    for(auto tag : anonymous_tags) {
+        if(tag->IsMember()) {
+            CxxVariableScanner scanner(normalize_pattern(tag), eCxxStandard::kCxx11, m_macros_table_map, false);
+            auto _variables = scanner.GetVariables(false);
+            variables.insert(variables.end(), _variables.begin(), _variables.end());
+        } else if(tag->IsMethod() && functions) {
+            functions->insert({ tag->GetName(), tag });
+        }
+    }
 
     for(auto var : variables) {
         __local local;
@@ -409,9 +435,15 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
 
         } else if(curexp.operand_string() == "." || curexp.operand_string() == "->") {
             if(m_locals.count(curexp.type_name())) {
+                // local or anonymous member
                 wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
                 vector<CxxExpression> expr_arr = CxxExpression::from_expression(exprstr, nullptr);
                 return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+
+            } else if(m_local_functions.count(curexp.type_name())) {
+                // anonymous / static function
+                return on_method(curexp, m_local_functions.find(curexp.type_name())->second, visible_scopes);
+
             } else {
                 determine_current_scope();
 
@@ -467,32 +499,51 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
     scopes = update_visible_scope(scopes, resolved);
 
     if(resolved->IsMethod()) {
-        // parse the return value
-        wxString new_expr = get_return_value(resolved) + curexp.operand_string();
-        vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
-        return resolve_compound_expression(expr_arr, scopes, curexp);
-    } else if(resolved->IsTypedef()) {
-        // substitude the type with the typeref
-        wxString new_expr;
-        if(!resolve_user_type(resolved->GetPath(), visible_scopes, &new_expr)) {
-            new_expr = typedef_from_tag(resolved);
-        }
-        new_expr += curexp.operand_string();
-        vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
-        return resolve_compound_expression(expr_arr, scopes, curexp);
-    } else if(resolved->IsMember()) {
-        // replace the member variable by its type
-        unordered_map<wxString, __local> locals_variables;
-        if((parse_locals(normalize_pattern(resolved), &locals_variables) == 0) ||
-           (locals_variables.count(resolved->GetName()) == 0)) {
-            return nullptr;
-        }
+        return on_method(curexp, resolved, scopes);
 
-        wxString new_expr = locals_variables[resolved->GetName()].type_name() + curexp.operand_string();
-        vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
-        return resolve_compound_expression(expr_arr, scopes, curexp);
+    } else if(resolved->IsTypedef()) {
+        return on_typedef(curexp, resolved, scopes);
+
+    } else if(resolved->IsMember()) {
+        return on_member(curexp, resolved, scopes);
     }
+
     return nullptr;
+}
+
+TagEntryPtr CxxCodeCompletion::on_typedef(CxxExpression& curexp, TagEntryPtr tag,
+                                          const vector<wxString>& visible_scopes)
+{
+    // substitude the type with the typeref
+    wxString new_expr;
+    if(!resolve_user_type(tag->GetPath(), visible_scopes, &new_expr)) {
+        new_expr = typedef_from_tag(tag);
+    }
+    new_expr += curexp.operand_string();
+    vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
+    return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+}
+
+TagEntryPtr CxxCodeCompletion::on_member(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes)
+{
+    // replace the member variable by its type
+    unordered_map<wxString, __local> locals_variables;
+    if((parse_locals(normalize_pattern(tag), &locals_variables) == 0) ||
+       (locals_variables.count(tag->GetName()) == 0)) {
+        return nullptr;
+    }
+
+    wxString new_expr = locals_variables[tag->GetName()].type_name() + curexp.operand_string();
+    vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
+    return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+}
+
+TagEntryPtr CxxCodeCompletion::on_method(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes)
+{
+    // parse the return value
+    wxString new_expr = get_return_value(tag) + curexp.operand_string();
+    vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
+    return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
 const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const { return m_macros_table_map; }
@@ -739,12 +790,13 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
 
 void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename, int current_line)
 {
-    m_optimized_scope.clear();
     m_locals.clear();
-    m_optimized_scope = shrink_scope(text, &m_locals);
     m_filename = filename;
     m_line_number = current_line;
     m_current_scope_name.clear();
+
+    m_optimized_scope.clear();
+    m_optimized_scope = shrink_scope(text, &m_locals, &m_local_functions);
 
     if(!m_filename.empty() && m_line_number != wxNOT_FOUND) {
         determine_current_scope();
@@ -1213,7 +1265,7 @@ wxString CxxCodeCompletion::normalize_pattern(TagEntryPtr tag) const
 }
 
 size_t CxxCodeCompletion::get_anonymous_tags(const wxString& name, const wxArrayString& kinds,
-                                             vector<TagEntryPtr>& tags)
+                                             vector<TagEntryPtr>& tags) const
 {
     if(!m_lookup) {
         return 0;

@@ -435,6 +435,11 @@ TEST_FUNC(test_cxx_code_completion_subscript_operator)
         CHECK_NOT_NULL(resolved);
         CHECK_STRING_ONE_OF(resolved->GetPath(), "wxUniChar", "wxUniCharRef");
     }
+    {
+        auto resolved = completer->code_complete("unordered_map<int, wxString>[0].", { "std" }, nullptr);
+        CHECK_NOT_NULL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
     return true;
 }
 

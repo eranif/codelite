@@ -35,6 +35,7 @@ vector<wxString> DEFAULT_TYPES = {
     "std::*map::*iterator=std::pair<_Key, _Tp>",
     "std::*map::value_type=std::pair<_Key, _Tp>",
     "std::*map::key_type=_Key",
+    "std::*map::mapped_type=_Tp",
     // unordered_set / unordered_multiset
     "std::unordered_*set::*iterator=_Value",
     "std::unordered_*set::value_type=_Value",

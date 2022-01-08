@@ -7,6 +7,7 @@
 #include "ctags_manager.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "function.h"
 #include "language.h"
 
@@ -584,6 +585,29 @@ void CxxCodeCompletion::reset()
     m_current_scope_name.clear();
 }
 
+namespace
+{
+wxString read_n_lines_from_file(size_t from_line, size_t line_count, const wxString& filepath)
+{
+    wxString content;
+    if(!FileUtils::ReadFileContent(filepath, content)) {
+        return wxEmptyString;
+    }
+    wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_RET_EMPTY_ALL);
+    if(from_line >= lines.size()) {
+        return wxEmptyString;
+    }
+    size_t first_line = from_line;
+    size_t last_line = wxMin(from_line + line_count, lines.size() - 1);
+
+    content.Clear();
+    for(size_t i = first_line; i < last_line; ++i) {
+        content << lines[i];
+    }
+    return content;
+}
+} // namespace
+
 wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
 {
     wxString typedef_str;
@@ -604,6 +628,17 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
     tkzr.NextToken(tk);
 
     bool parse_succeeded = false;
+    if(tk.GetType() == T_TEMPLATE) {
+        // instead of reading the pattern, read 10 lines from the source code and use that instead
+        // (ctags is not that good at collecting typedef properly)
+        pattern = read_n_lines_from_file(tag->GetLine() - 1, 10, tag->GetFile());
+        clDEBUG() << "read 10 lines from file:" << tag->GetLine() << endl;
+        clDEBUG() << pattern << endl;
+        // reset the tokenizer with the new buffer
+        tkzr.Reset(pattern);
+        tkzr.NextToken(tk);
+    }
+
     if(tk.GetType() == T_USING) {
         // "using" syntax:
         // using element_type = _Tp;

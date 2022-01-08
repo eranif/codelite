@@ -302,6 +302,8 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
         case '?':
         case '/':
         case ':':
+        case '-':
+        case '@':
             if(depth <= 0) {
                 cont = false;
             } else {

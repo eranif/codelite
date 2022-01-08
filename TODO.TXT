@@ -94,3 +94,6 @@ info. // no CC
 
 unordered_map<wxString, ParsedFileInfo> parsed_files_info;
 parsed_files_info[file]. // no cc here
+
+
+get_expression() failes when it starts with "-", "@"

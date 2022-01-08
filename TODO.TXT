@@ -74,6 +74,10 @@ New CTagsd CC engine:
 KNOWN ISSUE:
 ------------
 - cJSON* -> no CC
+- wxWindow* -> no CC
+
+- Add new API: code_complete_all -> return all matches that fits the criteria (e.g. same method name, different signature)
+- Use the new API in the on_document_signature_help, and on_definition
 
 -----
 BUGS:
@@ -83,7 +87,3 @@ BUGS:
 - Compiler auto selecting line -> ClearSelections before
 - Remote opening file (code completion -> Find symbol) does not focus the line properly
 
-----
-
-- Add new API: code_complete_all -> return all matches that fits the criteria (e.g. same method name, different signature)
-- Use the new API in the on_document_signature_help, and on_definition

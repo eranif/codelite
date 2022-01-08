@@ -68,8 +68,8 @@ New CTagsd CC engine:
 - **DONE** Support macro completions
 - **DONE** eAsciiColours:: <- no completion
 - **DONE** Add keywords code completion
+- **DONE** Support anonymous namespace
 
-- Support anonymous namespace
 - CodeLite file completion fails to complete
 
 KNOWN ISSUE:

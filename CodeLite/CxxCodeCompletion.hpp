@@ -206,6 +206,11 @@ public:
     vector<TagEntryPtr> get_locals(const wxString& filter) const;
 
     /**
+     * @brief return list local functions
+     */
+    vector<TagEntryPtr> get_local_functions(const wxString& filter) const;
+
+    /**
      * @brief return list of completions filtered by name for a given parent
      */
     size_t get_completions(TagEntryPtr parent, const wxString& operand_string, const wxString& filter,

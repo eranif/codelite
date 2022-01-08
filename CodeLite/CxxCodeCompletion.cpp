@@ -666,6 +666,18 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
     return typedef_str.Trim();
 }
 
+vector<TagEntryPtr> CxxCodeCompletion::get_local_functions(const wxString& filter) const
+{
+    vector<TagEntryPtr> locals;
+    locals.reserve(m_locals.size());
+    for(const auto& vt : m_local_functions) {
+        if(vt.second->GetName().StartsWith(filter)) {
+            locals.push_back(vt.second);
+        }
+    }
+    return locals;
+}
+
 vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
 {
     vector<TagEntryPtr> locals;
@@ -1069,17 +1081,21 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
 
 {
     vector<TagEntryPtr> locals;
+    vector<TagEntryPtr> local_functions;
     vector<TagEntryPtr> keywords;
     vector<TagEntryPtr> scope_members;
     vector<TagEntryPtr> other_scopes_members;
     vector<TagEntryPtr> global_scopes_members;
 
     vector<TagEntryPtr> sorted_locals;
+    vector<TagEntryPtr> sorted_local_functions;
     vector<TagEntryPtr> sorted_scope_members;
     vector<TagEntryPtr> sorted_other_scopes_members;
     vector<TagEntryPtr> sorted_global_scopes_members;
 
     locals = get_locals(remainder.filter);
+    local_functions = get_local_functions(remainder.filter);
+
     vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
     auto current_scope = determine_current_scope();
@@ -1105,7 +1121,9 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
                                   &global_scopes_members);
 
     // sort the matches:
-    sort_tags(locals, sorted_locals, true, {});               // locals are accepted, so dont pass list of files
+    sort_tags(locals, sorted_locals, true, {}); // locals are accepted, so dont pass list of files
+    sort_tags(local_functions, sorted_local_functions, true,
+              {}); // locals fucntions are accepted, so dont pass list of files
     sort_tags(scope_members, sorted_scope_members, true, {}); // members are all accepted
     sort_tags(other_scopes_members, sorted_other_scopes_members, true, visible_files);
     sort_tags(global_scopes_members, sorted_global_scopes_members, true, visible_files);
@@ -1113,12 +1131,13 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     if(add_keywords) {
         get_keywords_tags(remainder.filter, keywords);
     }
-    candidates.reserve(sorted_locals.size() + sorted_scope_members.size() + sorted_other_scopes_members.size() +
-                       sorted_global_scopes_members.size() + keywords.size());
+    candidates.reserve(sorted_local_functions.size() + sorted_locals.size() + sorted_scope_members.size() +
+                       sorted_other_scopes_members.size() + sorted_global_scopes_members.size() + keywords.size());
 
     // place the keywords first
     candidates.insert(candidates.end(), keywords.begin(), keywords.end());
     candidates.insert(candidates.end(), sorted_locals.begin(), sorted_locals.end());
+    candidates.insert(candidates.end(), sorted_local_functions.begin(), sorted_local_functions.end());
     candidates.insert(candidates.end(), sorted_scope_members.begin(), sorted_scope_members.end());
     candidates.insert(candidates.end(), sorted_other_scopes_members.begin(), sorted_other_scopes_members.end());
     candidates.insert(candidates.end(), sorted_global_scopes_members.begin(), sorted_global_scopes_members.end());

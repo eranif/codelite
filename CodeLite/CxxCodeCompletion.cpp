@@ -1028,9 +1028,14 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     locals = get_locals(remainder.filter);
     vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
+    auto current_scope = determine_current_scope();
     if(remainder.operand_string.empty()) {
         kinds = { "function", "prototype", "class",      "struct", "namespace", "union",
                   "typedef",  "enum",      "enumerator", "macro",  "cenum" };
+        if(current_scope) {
+            // if we are inside a scope, add member types
+            kinds.push_back("member");
+        }
     } else if(remainder.operand_string == "::") {
         kinds = { "member",    "function", "prototype", "class", "struct",
                   "namespace", "union",    "typedef",   "enum",  "enumerator" };

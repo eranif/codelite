@@ -52,6 +52,17 @@ FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
     return logger;
 }
 
+inline size_t count_lines(const wxString& content)
+{
+    size_t lf_count = 0;
+    for(wxChar c : content) {
+        if(c == '\n') {
+            lf_count++;
+        }
+    }
+    return lf_count;
+}
+
 /**
  * @brief given a list of files, remove all non c/c++ files from it
  */
@@ -504,20 +515,31 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
+    // Check if a real change was made that requires parsing
+    size_t line_count_before = 0;
+    size_t line_count_after = 0;
+    if(m_filesOpened.count(filepath)) {
+        line_count_before = count_lines(m_filesOpened[filepath]);
+    }
+    wxString file_content = json["params"]["contentChanges"][0]["text"].toString();
+    line_count_after = count_lines(file_content);
+
+    // update the new content
     clDEBUG() << "textDocument/didChange: caching new content for file:" << filepath << endl;
     m_filesOpened.erase(filepath);
-    wxString file_content = json["params"]["contentChanges"][0]["text"].toString();
     m_comments_cache.erase(filepath);
     m_filesOpened.insert({ filepath, file_content });
-
     clDEBUG() << "Updating content for file:" << filepath << endl;
-    clDEBUG1() << file_content << endl;
 
-    // parse this file (async)
-    m_parse_thread.queue_parse_request(filepath, file_content);
+    if(line_count_before != line_count_after) {
+        // parse this file (async)
+        m_parse_thread.queue_parse_request(filepath, file_content);
 
-    // update using namespace cache
-    parse_file_for_includes_and_using_namespace(filepath);
+        // update using namespace cache
+        parse_file_for_includes_and_using_namespace(filepath);
+    } else {
+        clDEBUG() << "No real change detected. Will not re-parse the file" << endl;
+    }
 }
 
 wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string,

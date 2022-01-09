@@ -70,6 +70,7 @@ New CTagsd CC engine:
 - **DONE** Add keywords code completion
 - **DONE** Support anonymous namespace
 - **DONE** file completion fails to complete
+- **DONE** optimization: only reparse the file if the line number changed
 
 KNOWN ISSUE:
 ------------
@@ -78,7 +79,7 @@ KNOWN ISSUE:
 
 - Add new API: code_complete_all -> return all matches that fits the criteria (e.g. same method name, different signature)
 - Use the new API in the on_document_signature_help, and on_definition
-- optimization: only reparse the file if the line number changed
+- No CC in ctor
 
 -----
 BUGS:

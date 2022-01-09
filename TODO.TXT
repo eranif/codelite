@@ -84,7 +84,4 @@ KNOWN ISSUE:
 BUGS:
 -----
 
-- Compiler auto selecting line does not focus the line properly
-- Compiler auto selecting line -> ClearSelections before
-- Remote opening file (code completion -> Find symbol) does not focus the line properly
 

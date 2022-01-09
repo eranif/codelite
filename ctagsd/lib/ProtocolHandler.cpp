@@ -671,7 +671,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
             item.addProperty("label", tag->GetDisplayName());
             item.addProperty("filterText", tag->GetName());
             item.addProperty("insertText", tag->GetKind() == "file" ? tag->GetPattern() : tag->GetName());
-            item.addProperty("detail", tag->GetReturnValue());
+            item.addProperty("detail", tag->IsMethod() ? m_completer->get_return_value(tag) : tag->GetReturnValue());
 
             // set the kind
             CompletionItem::eCompletionItemKind kind = LSPUtils::get_completion_kind(tag.Get());

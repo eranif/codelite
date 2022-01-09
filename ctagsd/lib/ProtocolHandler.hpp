@@ -38,7 +38,6 @@ public:
 
 private:
     CTagsdSettings m_settings;
-    CodeLiteIndexer::ptr_t m_codelite_indexer;
     wxString m_root_folder;
     wxString m_settings_folder;
     wxStringMap_t m_filesOpened;

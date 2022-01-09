@@ -270,19 +270,13 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
             int line_number = cd->match_pattern.line_number;
             int column = cd->match_pattern.column - 1;
             auto cb = [=](IEditor* editor) {
+                editor->GetCtrl()->ClearSelections();
                 editor->CenterLine(line_number, column);
                 editor->SetActive();
             };
             clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));
         }
     }
-}
-
-void BuildTab::DoCentreErrorLine(Compiler::PatternMatch* match_result, clEditor* editor, bool centerLine)
-{
-    wxUnusedVar(match_result);
-    wxUnusedVar(editor);
-    wxUnusedVar(centerLine);
 }
 
 void BuildTab::OnContextMenu(wxDataViewEvent& e)

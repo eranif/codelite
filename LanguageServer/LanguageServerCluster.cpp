@@ -146,6 +146,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
     }
 
     auto cb = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
         editor->SelectRange(location.GetRange());
         NavMgr::Get()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
     };

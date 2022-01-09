@@ -2,6 +2,7 @@
 #define CODELITEINDEXER_HPP
 
 #include "codelite_exports.h"
+
 #include <string>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
@@ -31,6 +32,7 @@ public:
     bool is_running() const;
     void source_to_tags(const wxFileName& source, wxString& tags, const wxString& kinds = wxEmptyString) const;
     void buffer_to_tags(const wxString& content, wxString& tags, const wxString& kinds = wxEmptyString) const;
+    const wxFileName& get_exe_path() const { return m_exepath; }
 };
 
 #endif // CODELITEINDEXER_HPP

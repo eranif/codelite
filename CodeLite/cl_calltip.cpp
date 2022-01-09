@@ -23,8 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "cl_calltip.h"
+
 #include "ctags_manager.h"
 #include "precompiled_header.h"
+
 #include <map>
 
 #ifdef __VISUALC__
@@ -219,14 +221,13 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
 
                 // the key for unique entries is the function prototype without the variables names and
                 // any default values
-                wxString key = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, Normalize_Func_Reverse_Macro);
+                wxString key = TagsManagerST::Get()->NormalizeFunctionSig(raw_sig, 0);
 
                 // the signature that we want to keep is one with name & default values, so try and get the maximum out
                 // of the
                 // function signature
                 wxString full_signature = TagsManagerST::Get()->NormalizeFunctionSig(
-                    raw_sig, Normalize_Func_Name | Normalize_Func_Default_value | Normalize_Func_Reverse_Macro,
-                    &cti.paramLen);
+                    raw_sig, Normalize_Func_Name | Normalize_Func_Default_value, &cti.paramLen);
                 cti.sig = full_signature;
 
                 if(hasDefaultValues) {

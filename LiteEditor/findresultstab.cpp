@@ -428,6 +428,7 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
                 // this ensures that the results are visible and centered in screen
                 int lineNumber = editor->LineFromPos(position);
                 auto callback = [=](IEditor* p_editor) {
+                    p_editor->GetCtrl()->ClearSelections();
                     p_editor->GetCtrl()->SetSelection(position, position + resultLength);
                     p_editor->CenterLinePreserveSelection(lineNumber);
                 };

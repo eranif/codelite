@@ -309,7 +309,10 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
 
     clDEBUG() << "Opening editor:" << selection.m_file << ":" << selection.m_line << ":" << selection.m_column << endl;
 
-    auto callback = [=](IEditor* editor) { editor->CenterLine(selection.m_line - 1, selection.m_column); };
+    auto callback = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
+        editor->CenterLine(selection.m_line - 1, selection.m_column);
+    };
     clGetManager()->OpenFileAndAsyncExecute(selection.m_file, std::move(callback));
 }
 

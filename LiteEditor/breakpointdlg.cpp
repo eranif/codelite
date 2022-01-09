@@ -123,6 +123,7 @@ void BreakpointDlg::OnBreakpointActivated(wxDataViewEvent& event)
     line.ToLong(&line_number);
 
     auto callback = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
         editor->CenterLine(line_number - 1);
         editor->SetActive();
     };

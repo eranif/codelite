@@ -407,11 +407,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     // export CTAGS_REPLACEMENTS
     wxFileName ctagsReplacements(m_settings_folder, "ctags.replacements");
     wxSetEnv("CTAGS_REPLACEMENTS", ctagsReplacements.GetFullPath());
-
-    m_codelite_indexer.reset(new CodeLiteIndexer());
-    m_codelite_indexer->set_exe_path(m_settings.GetCodeliteIndexer());
-    m_codelite_indexer->start();
-    TagsManagerST::Get()->SetIndexer(m_codelite_indexer);
+    TagsManagerST::Get()->SetIndexerPath(m_settings.GetCodeliteIndexer());
 
     // start the "on_change" parser thread
     m_parse_thread.start(m_settings_folder, m_settings.GetCodeliteIndexer());
@@ -570,11 +566,6 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
 
     if(!ensure_file_content_exists(filepath, channel, id))
         return;
-
-    // ensure the indexer is running
-    if(!m_codelite_indexer->is_running()) {
-        m_codelite_indexer->start();
-    }
 
     int line = json["params"]["position"]["line"].toInt(0);
     int character = json["params"]["position"]["character"].toInt(0);

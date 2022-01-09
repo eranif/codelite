@@ -8,6 +8,10 @@
   <Dependencies Name="Debug">
     <Project Name="ctagsdlib"/>
   </Dependencies>
+  <Dependencies Name="Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="ctagsdlib"/>
+  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -54,7 +58,9 @@
         <StartupCommands/>
       </Debugger>
       <PreBuild/>
-      <PostBuild/>
+      <PostBuild>
+        <Command Enabled="yes">copy "$(OutputFile)" ..\Runtime</Command>
+      </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
         <CleanCommand/>
@@ -140,8 +146,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Release">
-    <Project Name="libCodeLite"/>
-    <Project Name="ctagsdlib"/>
-  </Dependencies>
 </CodeLite_Project>

@@ -178,6 +178,7 @@ void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
     if(editor) {
         // sci is 0 based line numbers
         auto callback = [=](IEditor* peditor) {
+            peditor->GetCtrl()->ClearSelections();
             int pos_start = peditor->PosFromLine(loc.line - 1) + loc.column_start;
             int pos_end = peditor->PosFromLine(loc.line - 1) + loc.column_end;
             peditor->GetCtrl()->SetSelection(pos_start, pos_end);

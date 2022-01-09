@@ -78,20 +78,18 @@ struct DoxygenComment {
 // By default the NormalizeFunctionSig returns only the variables type
 enum NormalizeFuncFlag {
     // variable name
-    Normalize_Func_Name = 0x00000001,
+    Normalize_Func_Name = (1 << 0),
     // variable default value
-    Normalize_Func_Default_value = 0x00000002,
-    // re-place back macros
-    Normalize_Func_Reverse_Macro = 0x00000004,
+    Normalize_Func_Default_value = (1 << 1),
     // Each argument is placed on a separate line
-    Normalize_Func_Arg_Per_Line = 0x00000008
+    Normalize_Func_Arg_Per_Line = (1 << 2),
 };
 
 enum FunctionFormatFlag {
-    FunctionFormat_WithVirtual = 0x00000001,
-    FunctionFormat_Impl = 0x00000002,
-    FunctionFormat_Arg_Per_Line = 0x00000004,
-    FunctionFormat_WithOverride = 0x00000008
+    FunctionFormat_WithVirtual = (1 << 0),
+    FunctionFormat_Impl = (1 << 1),
+    FunctionFormat_Arg_Per_Line = (1 << 2),
+    FunctionFormat_WithOverride = (1 << 3),
 };
 
 /**
@@ -146,11 +144,11 @@ private:
     wxArrayString m_projectPaths;
     wxFontEncoding m_encoding;
     wxFileName m_dbFile;
-    CodeLiteIndexer::ptr_t m_indexer;
 
 #if USE_TAGS_SQLITE3
     ITagsStoragePtr m_db;
 #endif
+    wxString m_indexer_path;
 
 public:
     /**
@@ -163,7 +161,8 @@ public:
      */
     static void GetCXXKeywords(wxArrayString& words);
 
-    void SetIndexer(CodeLiteIndexer::ptr_t indexer) { m_indexer = indexer; }
+    void SetIndexerPath(const wxString& indexer_path) { m_indexer_path = indexer_path; }
+    const wxString& GetIndexerPath() const { return m_indexer_path; }
 
     void SetLanguage(Language* lang);
     Language* GetLanguage();
@@ -804,7 +803,6 @@ protected:
     std::map<wxString, bool> m_typeScopeContainerCache;
 
     void DoParseModifiedText(const wxString& text, std::vector<TagEntryPtr>& tags);
-    bool EnsureIndexerRunning() const;
 
 private:
     /**

@@ -226,7 +226,10 @@ void FindUsageTab::OnItemActivated(wxTreeEvent& event)
 
     // prepare the "after-file-is-loaded" callback
     auto range = item_data->location->GetRange();
-    auto callback = [=](IEditor* editor) { editor->SelectRange(range); };
+    auto callback = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
+        editor->SelectRange(range);
+    };
 
     if(fn.FileExists()) {
         clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(callback));

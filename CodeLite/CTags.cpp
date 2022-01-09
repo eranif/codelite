@@ -303,3 +303,11 @@ std::vector<TagEntry> CTags::Run(const wxFileName& filename, const wxString& tem
     }
     return {};
 }
+
+std::vector<TagEntry> CTags::RunOnBuffer(const wxString& buffer, const wxString& temp_dir, const wxString& ctags_args,
+                                         const wxString& codelite_indexer)
+{
+    clTempFile temp_file("cpp");
+    temp_file.Write(buffer);
+    return Run(temp_file.GetFileName(), temp_dir, ctags_args, codelite_indexer);
+}

@@ -3169,11 +3169,7 @@ void clMainFrame::SetFrameFlag(bool set, int flag)
 void clMainFrame::CompleteInitialization()
 {
     // create indexer to be used by TagsManager
-    CodeLiteIndexer::ptr_t indexer{ new CodeLiteIndexer() };
-    indexer->set_exe_path(clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
-    indexer->start();
-
-    TagsManagerST::Get()->SetIndexer(indexer);
+    TagsManagerST::Get()->SetIndexerPath(clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
 
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);

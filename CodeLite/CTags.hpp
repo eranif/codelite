@@ -73,6 +73,13 @@ public:
                                      const wxString& codelite_indexer = wxEmptyString);
 
     /**
+     * @brief run codelite-indexer on a buffer and return list of tags
+     */
+    static std::vector<TagEntry> RunOnBuffer(const wxString& buffer, const wxString& temp_dir,
+                                             const wxString& ctags_args = wxEmptyString,
+                                             const wxString& codelite_indexer = wxEmptyString);
+
+    /**
      * @brief search for tags
      * @param filter tag name or part of it
      * @param ctagsFolder path to the ctags folder

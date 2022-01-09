@@ -1690,9 +1690,9 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
     // Build the flags required by the NormalizeFunctionSig() method
     size_t tmpFlags(0);
     if(flags & FunctionFormat_Impl) {
-        tmpFlags |= Normalize_Func_Name | Normalize_Func_Reverse_Macro;
+        tmpFlags |= Normalize_Func_Name;
     } else {
-        tmpFlags |= Normalize_Func_Name | Normalize_Func_Reverse_Macro | Normalize_Func_Default_value;
+        tmpFlags |= Normalize_Func_Name | Normalize_Func_Default_value;
     }
 
     if(flags & FunctionFormat_Arg_Per_Line)
@@ -1930,7 +1930,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
                                            std::vector<std::pair<int, int>>* paramLen)
 {
     // FIXME: make the standard configurable
-    CxxVariableScanner varScanner(sig, eCxxStandard::kCxx11, wxStringTable_t(), true);
+    CxxVariableScanner varScanner(sig, eCxxStandard::kCxx11, {}, true);
     CxxVariable::Vec_t vars = varScanner.ParseFunctionArguments();
 
     // construct a function signature from the results
@@ -1944,8 +1944,7 @@ wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
         str_output << wxT("\n    ");
     }
 
-    const wxStringTable_t& macrosTable = GetCtagsOptions().GetTokensReversedWxMap();
-    std::for_each(vars.begin(), vars.end(), [&](CxxVariable::Ptr_t var) {
+    for(const auto& var : vars) {
         int start_offset = str_output.length();
 
         // FIXME: the standard should be configurable
@@ -1957,17 +1956,17 @@ wxString TagsManager::NormalizeFunctionSig(const wxString& sig, size_t flags,
             toStringFlags |= CxxVariable::kToString_DefaultValue;
         }
 
-        str_output << var->ToString(toStringFlags,
-                                    (flags & Normalize_Func_Reverse_Macro) ? macrosTable : wxStringTable_t());
+        str_output << var->ToString(toStringFlags, {});
         // keep the length of this argument
         if(paramLen) {
-            paramLen->push_back(std::make_pair(start_offset, str_output.length() - start_offset));
+            paramLen->push_back({ start_offset, str_output.length() - start_offset });
         }
+
         str_output << ", ";
         if((flags & Normalize_Func_Arg_Per_Line) && !vars.empty()) {
             str_output << wxT("\n    ");
         }
-    });
+    }
 
     if(vars.empty() == false) {
         str_output = str_output.BeforeLast(',');
@@ -1995,7 +1994,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
         // override the scope to be our scope...
         tag->SetScope(scopeName);
 
-        key << NormalizeFunctionSig(tag->GetSignature(), Normalize_Func_Reverse_Macro);
+        key << NormalizeFunctionSig(tag->GetSignature(), 0);
         protos[key] = tag;
     }
 
@@ -2005,7 +2004,7 @@ void TagsManager::GetUnImplementedFunctions(const wxString& scopeName, std::map<
     for(size_t i = 0; i < vimpl.size(); i++) {
         TagEntryPtr tag = vimpl.at(i);
         wxString key = tag->GetName();
-        key << NormalizeFunctionSig(tag->GetSignature(), Normalize_Func_Reverse_Macro);
+        key << NormalizeFunctionSig(tag->GetSignature(), 0);
         std::map<wxString, TagEntryPtr>::iterator iter = protos.find(key);
 
         if(iter != protos.end()) {
@@ -2259,7 +2258,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
             continue;
 
         if((!onlyPureVirtual && isVirtual) || isPureVirtual) {
-            wxString sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
+            wxString sig = NormalizeFunctionSig(t->GetSignature(), 0);
             sig.Prepend(t->GetName());
             parentSignature2tag[sig] = t;
         }
@@ -2272,7 +2271,7 @@ void TagsManager::GetUnOverridedParentVirtualFunctions(const wxString& scopeName
     GetDatabase()->GetTagsByScopeAndKind(scopeName, kind, tags, false);
     for(size_t i = 0; i < tags.size(); i++) {
         TagEntryPtr t = tags.at(i);
-        wxString sig = NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Reverse_Macro);
+        wxString sig = NormalizeFunctionSig(t->GetSignature(), 0);
         sig.Prepend(t->GetName());
         classSignature2tag[sig] = t;
     }
@@ -2407,7 +2406,7 @@ CppToken TagsManager::FindLocalVariable(const wxFileName& fileName, int pos, int
         return CppToken();
 
     // get list of variables from the given scope
-    CxxVariableScanner varscanner(states->text, eCxxStandard::kCxx11, GetCtagsOptions().GetTokensWxMap(), false);
+    CxxVariableScanner varscanner(states->text, eCxxStandard::kCxx11, {}, false);
     CxxVariable::Map_t varsMap = varscanner.GetVariablesMap();
 
     bool isLocalVar = (varsMap.count(word) != 0);
@@ -2764,51 +2763,22 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
     words.Add("xor_eq");
 }
 
-bool TagsManager::EnsureIndexerRunning() const
-{
-    if(!m_indexer) {
-        return false;
-    }
-
-    if(!m_indexer->is_running()) {
-        m_indexer->start();
-    }
-
-    if(!m_indexer->is_running()) {
-        return false;
-    }
-    return true;
-}
-
 TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
-    if(!EnsureIndexerRunning()) {
-        return {};
-    }
-
-    wxString tags;
-    m_indexer->buffer_to_tags(content, tags, kinds);
+    wxString ctags_args;
+    ctags_args << "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=" << kinds << " --C++-kinds=" << kinds << " ";
+    vector<TagEntry> tags =
+        CTags::RunOnBuffer(content, clStandardPaths::Get().GetTempDir(), ctags_args, GetIndexerPath());
 
     TagEntryPtrVector_t tagsVec;
-    wxArrayString lines = ::wxStringTokenize(tags, "\n", wxTOKEN_STRTOK);
-    tagsVec.reserve(lines.size());
+    tagsVec.reserve(tags.size());
 
-    for(wxString& line : lines) {
-        line.Trim().Trim(false);
-        if(line.IsEmpty())
+    for(const TagEntry& tag : tags) {
+        if(tag.IsLocalVariable())
             continue;
 
-        TagEntryPtr tag(new TagEntry());
-        tag->FromLine(line);
-
-        // If the caller provided a filename, set it
-        if(!filename.IsEmpty()) {
-            tag->SetFile(filename);
-        }
-
-        if(tag->GetKind() != "local") {
-            tagsVec.emplace_back(tag);
-        }
+        TagEntryPtr tag_ptr(new TagEntry(tag));
+        tagsVec.emplace_back(tag_ptr);
     }
     return tagsVec;
 }

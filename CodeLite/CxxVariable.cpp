@@ -30,8 +30,10 @@ wxString CxxVariable::GetTypeAsCxxString(const wxStringTable_t& table) const
 
 wxString CxxVariable::ToString(size_t flags, const wxStringTable_t& table) const
 {
+    wxUnusedVar(table);
+
     wxString str;
-    str << GetTypeAsString(table);
+    str << GetTypeAsString({});
 
     if(!GetPointerOrReference().IsEmpty()) {
         str << GetPointerOrReference();
@@ -71,7 +73,7 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
         } else if(token.is_pp_keyword()) {
             continue;
         } else if(token.GetType() == T_IDENTIFIER) {
-            if(!table.empty() && table.count(token.GetWXString())) {
+            if(false && !table.empty() && table.count(token.GetWXString())) {
                 s << table.find(token.GetWXString())->second;
             } else {
                 s << token.GetWXString();

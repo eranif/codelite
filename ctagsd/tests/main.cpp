@@ -537,13 +537,22 @@ TEST_FUNC(test_cxx_word_completion_inside_scope)
     }
 
     if(wxFileExists(filename_2)) {
-        vector<TagEntryPtr> candidates;
-        completer->set_text(wxEmptyString, filename_2, 200);
-        CxxRemainder remainder;
-        remainder.filter = "GetCt";
-        size_t count = completer->get_word_completions(remainder, candidates, {}, {});
-        CHECK_BOOL(is_tag_exists("ContextBase::GetCtrl", candidates));
-        CHECK_BOOL(count > 0);
+        {
+            vector<TagEntryPtr> candidates;
+            completer->set_text(wxEmptyString, filename_2, 200);
+            CxxRemainder remainder;
+            remainder.filter = "GetCt";
+            size_t count = completer->get_word_completions(remainder, candidates, {}, {});
+            CHECK_BOOL(count > 0);
+            CHECK_BOOL(is_tag_exists("ContextBase::GetCtrl", candidates));
+        }
+
+        {
+            completer->set_text(wxEmptyString, filename_2, 200);
+            auto resolved = completer->code_complete("GetCtrl().", {}, nullptr);
+            CHECK_NOT_NULL(resolved);
+            CHECK_STRING(resolved->GetPath(), "clEditor");
+        }
     }
     return true;
 }

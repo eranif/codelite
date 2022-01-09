@@ -457,18 +457,31 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
                 // other-scopes::name
                 // global-scope::name
                 vector<wxString> paths_to_try;
+                vector<TagEntryPtr> parent_tags;
+                wxStringSet_t visited;
                 if(m_current_container_tag) {
-                    paths_to_try.push_back(m_current_container_tag->GetPath() + "::" + curexp.type_name());
+                    // get list of scopes to try (including parents)
+                    parent_tags = get_scopes(m_current_container_tag, visible_scopes);
+                    paths_to_try.reserve(parent_tags.size());
+                    for(auto parent : parent_tags) {
+                        wxString fullpath = parent->GetPath() + "::" + curexp.type_name();
+                        if(visited.insert(fullpath).second) {
+                            paths_to_try.push_back(fullpath);
+                        }
+                    }
                 }
 
                 // add the other scopes
                 for(auto scope : visible_scopes) {
+                    // build the path
                     wxString path_to_try;
                     if(!scope.empty()) {
                         path_to_try << scope << "::";
                     }
                     path_to_try << curexp.type_name();
-                    paths_to_try.push_back(path_to_try);
+                    if(visited.insert(path_to_try).second) {
+                        paths_to_try.push_back(path_to_try);
+                    }
                 }
 
                 for(const auto& path_to_try : paths_to_try) {

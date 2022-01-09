@@ -658,14 +658,19 @@ wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const w
 
     // conver the array into string
     wxString as_str;
+    int last_type = 0;
     for(const auto& d : tokens) {
         CxxLexerToken t;
         t.SetType(d.first);
         if(t.is_keyword() || t.is_builtin_type()) {
             as_str << d.second << " ";
+        } else if(d.first == T_IDENTIFIER && last_type == T_IDENTIFIER) {
+            as_str << " " << d.second;
         } else {
             as_str << d.second;
         }
+
+        last_type = d.first;
     }
     return as_str;
 }

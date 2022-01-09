@@ -29,6 +29,43 @@ struct TemplateManager {
     typedef shared_ptr<TemplateManager> ptr_t;
 };
 
+/// internal class used by the code completion
+/// it wraps the real lookup table + unit testing
+/// in-memory table
+struct LookupTable {
+    ITagsStoragePtr pdb;                           // the real database
+    unordered_map<wxString, TagEntryPtr> tests_db; // test database, for unit testings
+    explicit LookupTable(ITagsStoragePtr real_db, const unordered_map<wxString, TagEntryPtr>& unit_tests_db)
+    {
+        pdb = pdb;
+        tests_db = unit_tests_db;
+    }
+    explicit LookupTable(ITagsStoragePtr real_db) { pdb = real_db; }
+    ~LookupTable()
+    {
+        pdb.Reset(nullptr);
+        tests_db.clear();
+    }
+
+    typedef shared_ptr<LookupTable> ptr_t;
+
+    TagEntryPtr GetScope(const wxString& filename, int line_number);
+    void GetTagsByPath(const wxString& path, vector<TagEntryPtr>& tags, int limit = 1);
+    void GetSubscriptOperator(const wxString& scope, vector<TagEntryPtr>& tags);
+    void GetTagsByPathAndKind(const wxString& path, vector<TagEntryPtr>& tags, const vector<wxString>& kinds,
+                              int limit = 1);
+    void GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
+                               vector<TagEntryPtr>& tags, bool applyLimit = true);
+    void GetFilesForCC(const wxString& userTyped, wxArrayString& matches);
+    void GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
+                               vector<TagEntryPtr>& tags);
+    void GetTagsByScopeAndName(const wxArrayString& scope, const wxString& name, bool partialNameAllowed,
+                               vector<TagEntryPtr>& tags);
+    size_t GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+                             vector<TagEntryPtr>& tags);
+    void GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tags);
+};
+
 class WXDLLIMPEXP_CL CxxCodeCompletion
 {
     friend class TemplateManager;
@@ -66,7 +103,7 @@ private:
     };
 
 private:
-    ITagsStoragePtr m_lookup;
+    LookupTable::ptr_t m_lookup;
     unordered_map<wxString, __local> m_locals;
     unordered_map<wxString, TagEntryPtr> m_local_functions; // anonymous function
     wxString m_optimized_scope;
@@ -140,6 +177,7 @@ public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;
 
 public:
+    CxxCodeCompletion(ITagsStoragePtr lookup, const unordered_map<wxString, TagEntryPtr>& unit_tests_db);
     CxxCodeCompletion(ITagsStoragePtr lookup);
     ~CxxCodeCompletion();
 

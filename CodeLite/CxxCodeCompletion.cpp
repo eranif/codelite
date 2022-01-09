@@ -49,8 +49,14 @@ wxArrayString to_wx_array_string(const vector<wxString>& v)
     }
 
 CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup)
-    : m_lookup(lookup)
 {
+    m_lookup.reset(new LookupTable(lookup));
+    m_template_manager.reset(new TemplateManager(this));
+}
+
+CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const unordered_map<wxString, TagEntryPtr>& unit_tests_db)
+{
+    m_lookup.reset(new LookupTable(lookup, unit_tests_db));
     m_template_manager.reset(new TemplateManager(this));
 }
 
@@ -1366,4 +1372,166 @@ size_t CxxCodeCompletion::get_keywords_tags(const wxString& name, vector<TagEntr
         }
     }
     return tags.size();
+}
+
+///====--------------------------------------------------------------------------------
+///====--------------------------------------------------------------------------------
+///
+/// LookupTable
+///
+///====--------------------------------------------------------------------------------
+///====--------------------------------------------------------------------------------
+
+TagEntryPtr LookupTable::GetScope(const wxString& filename, int line_number)
+{
+    CHECK_PTR_RET_NULL(pdb);
+    return pdb->GetScope(filename, line_number);
+}
+
+void LookupTable::GetTagsByPath(const wxString& path, vector<TagEntryPtr>& tags, int limit)
+{
+    if(pdb) {
+        pdb->GetTagsByPath(path, tags, limit);
+    }
+
+    if(!tests_db.empty()) {
+        if(tests_db.count(path)) {
+            tags.push_back(tests_db[path]);
+        }
+    }
+}
+
+void LookupTable::GetSubscriptOperator(const wxString& scope, vector<TagEntryPtr>& tags)
+{
+    if(pdb) {
+        pdb->GetSubscriptOperator(scope, tags);
+    }
+}
+
+void LookupTable::GetTagsByPathAndKind(const wxString& path, vector<TagEntryPtr>& tags, const vector<wxString>& kinds,
+                                       int limit)
+{
+    if(pdb) {
+        pdb->GetTagsByPathAndKind(path, tags, kinds, limit);
+    }
+
+    // add the tests tags
+    if(!tests_db.empty() && tests_db.count(path)) {
+        auto tag = tests_db[path];
+        for(const wxString& kind : kinds) {
+            if(tag->GetKind() == kind) {
+                tags.push_back(tag);
+                break;
+            }
+        }
+    }
+}
+
+void LookupTable::GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
+                                        vector<TagEntryPtr>& tags, bool applyLimit)
+{
+    if(pdb) {
+        pdb->GetTagsByScopeAndKind(scope, kinds, filter, tags, applyLimit);
+    }
+
+    if(!tests_db.empty()) {
+        wxStringSet_t kinds_map = { kinds.begin(), kinds.end() };
+        for(const auto& vt : tests_db) {
+            if(vt.second->GetScope() == scope && kinds_map.count(vt.second->GetKind()) &&
+               vt.second->GetName().StartsWith(filter)) {
+                tags.push_back(vt.second);
+            }
+        }
+    }
+}
+
+void LookupTable::GetFilesForCC(const wxString& userTyped, wxArrayString& matches)
+{
+    CHECK_PTR_RET(pdb);
+    pdb->GetFilesForCC(userTyped, matches);
+}
+
+void LookupTable::GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
+                                        vector<TagEntryPtr>& tags)
+{
+    if(pdb) {
+        pdb->GetTagsByScopeAndName(scope, name, partialNameAllowed, tags);
+    }
+
+    if(!tests_db.empty()) {
+        auto compare_func = [=](const wxString& tag_name) {
+            if(partialNameAllowed) {
+                return tag_name.StartsWith(name);
+            } else {
+                return tag_name == name;
+            }
+        };
+
+        for(const auto& vt : tests_db) {
+            if(vt.second->GetScope() == scope && compare_func(vt.second->GetName())) {
+                tags.push_back(vt.second);
+            }
+        }
+    }
+}
+
+void LookupTable::GetTagsByScopeAndName(const wxArrayString& scopes, const wxString& name, bool partialNameAllowed,
+                                        vector<TagEntryPtr>& tags)
+{
+    if(pdb) {
+        pdb->GetTagsByScopeAndName(scopes, name, partialNameAllowed, tags);
+    }
+
+    if(!tests_db.empty()) {
+        auto compare_func = [=](const wxString& tag_name) {
+            if(partialNameAllowed) {
+                return tag_name.StartsWith(name);
+            } else {
+                return tag_name == name;
+            }
+        };
+
+        // use set instead of array
+        wxStringSet_t scope_set = { scopes.begin(), scopes.end() };
+        for(const auto& vt : tests_db) {
+            if(scope_set.count(vt.second->GetScope()) && compare_func(vt.second->GetName())) {
+                tags.push_back(vt.second);
+            }
+        }
+    }
+}
+
+size_t LookupTable::GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+                                      vector<TagEntryPtr>& tags)
+{
+    if(pdb) {
+        pdb->GetAnonymouseTags(filepath, name, kinds, tags);
+    }
+    if(!tests_db.empty()) {
+        // use set instead of array
+        wxStringSet_t scope_set = { "__anon1", "__anon2", "__anon3", "__anon4", "__anon5" };
+        wxStringSet_t kinds_set = { kinds.begin(), kinds.end() };
+        for(const auto& vt : tests_db) {
+            if(scope_set.count(vt.second->GetScope()) && vt.second->GetFile() == filepath &&
+               vt.second->GetName() == name && kinds_set.count(vt.second->GetKind())) {
+                tags.push_back(vt.second);
+            }
+        }
+    }
+    return tags.size();
+}
+
+void LookupTable::GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tags)
+{
+    if(pdb) {
+        pdb->GetTagsByScope(scope, tags);
+    }
+
+    if(!tests_db.empty()) {
+        for(const auto& vt : tests_db) {
+            if(vt.second->GetScope() == scope) {
+                tags.push_back(vt.second);
+            }
+        }
+    }
 }

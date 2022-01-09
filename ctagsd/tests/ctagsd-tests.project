@@ -3,6 +3,9 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <VirtualDirectory Name="samples">
+      <File Name="src/samples/sample_function_returning_unique_ptr.hpp"/>
+    </VirtualDirectory>
     <File Name="strings.hpp"/>
     <File Name="tester.hpp"/>
     <File Name="tester.cpp"/>

@@ -70,6 +70,22 @@ bool initialize_cc_tests()
     }
     return cc_initialised_successfully;
 }
+
+unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filename)
+{
+    wxFileName current_file(__FILE__);
+    current_file.AppendDir("samples");
+    current_file.SetFullName(filename);
+    auto tags =
+        CTags::Run(current_file, wxStandardPaths::Get().GetTempDir(), wxEmptyString, settings.GetCodeliteIndexer());
+    unordered_map<wxString, TagEntryPtr> tags_map;
+    for(const TagEntry& tag : tags) {
+        if(tags_map.count(tag.GetPath()))
+            continue;
+        tags_map.insert({ tag.GetPath(), new TagEntry(tag) });
+    }
+    return tags_map;
+}
 } // namespace
 
 TEST_FUNC(TestLSPLocation)

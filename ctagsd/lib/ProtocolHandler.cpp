@@ -532,17 +532,18 @@ wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, in
     // current function downward
     CompletionHelper helper;
     m_completer->set_text(wxEmptyString, filepath, line);
-    auto scope = m_completer->determine_current_scope();
+
     wxString truncated_text;
     wxString text;
-    if(scope) {
+    auto curr_function_tag = m_completer->get_current_function_tag();
+    if(curr_function_tag) {
         // remove all the text from the start of text -> scope starting position
         const wxString& orig_text = m_filesOpened[filepath];
 
         wxArrayString lines = ::wxStringTokenize(orig_text, "\n", wxTOKEN_RET_EMPTY_ALL);
-        if((size_t)scope->GetLine() < lines.size()) {
-            line -= scope->GetLine() - 1;
-            lines.erase(lines.begin(), lines.begin() + scope->GetLine() - 1);
+        if((size_t)curr_function_tag->GetLine() < lines.size()) {
+            line -= curr_function_tag->GetLine() - 1;
+            lines.erase(lines.begin(), lines.begin() + curr_function_tag->GetLine() - 1);
             truncated_text = wxJoin(lines, '\n');
         }
 

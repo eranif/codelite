@@ -56,21 +56,24 @@ CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup)
 
 CxxCodeCompletion::~CxxCodeCompletion() {}
 
-TagEntryPtr CxxCodeCompletion::determine_current_scope()
+void CxxCodeCompletion::determine_current_scope()
 {
-    if(!m_current_scope_name.empty() || m_filename.empty() || m_line_number == wxNOT_FOUND) {
-        return m_current_scope_tag;
+    if(m_current_function_tag || m_filename.empty() || m_line_number == wxNOT_FOUND) {
+        return;
     }
 
     if(!m_lookup) {
-        return nullptr;
+        return;
     }
 
-    m_current_scope_tag = m_lookup->GetScope(m_filename, m_line_number);
-    if(m_current_scope_tag) {
-        m_current_scope_name = m_current_scope_tag->GetScope();
+    m_current_function_tag = m_lookup->GetScope(m_filename, m_line_number);
+    if(m_current_function_tag && m_current_function_tag->IsMethod()) {
+        vector<TagEntryPtr> tmp_tags;
+        m_lookup->GetTagsByPath(m_current_function_tag->GetScope(), tmp_tags, 1);
+        if(tmp_tags.size() == 1) {
+            m_current_container_tag = move(tmp_tags[0]);
+        }
     }
-    return m_current_scope_tag;
 }
 
 TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const vector<wxString>& visible_scopes,
@@ -91,8 +94,8 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
     }
 
     // Check the current scope
-    if(!m_current_scope_name.empty()) {
-        prepend_scope(scopes, m_current_scope_name);
+    if(m_current_container_tag) {
+        prepend_scope(scopes, m_current_container_tag->GetPath());
     }
 
     clDEBUG() << "code_complete() called with scopes:" << scopes << endl;
@@ -430,7 +433,8 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
 
             // replace "this" with the current scope name
             determine_current_scope();
-            wxString exprstr = m_current_scope_name + curexp.operand_string();
+            wxString current_scope_name = m_current_container_tag ? m_current_container_tag->GetPath() : wxString();
+            wxString exprstr = current_scope_name + curexp.operand_string();
             vector<CxxExpression> expr_arr = CxxExpression::from_expression(exprstr, nullptr);
             return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 
@@ -453,8 +457,8 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
                 // other-scopes::name
                 // global-scope::name
                 vector<wxString> paths_to_try;
-                if(!m_current_scope_name.empty()) {
-                    paths_to_try.push_back(m_current_scope_name + "::" + curexp.type_name());
+                if(m_current_container_tag) {
+                    paths_to_try.push_back(m_current_container_tag->GetPath() + "::" + curexp.type_name());
                 }
 
                 // add the other scopes
@@ -582,7 +586,8 @@ void CxxCodeCompletion::reset()
     m_optimized_scope.clear();
     m_template_manager->clear();
     m_recurse_protector = 0;
-    m_current_scope_name.clear();
+    m_current_function_tag.Reset(nullptr);
+    m_current_container_tag.Reset(nullptr);
 }
 
 namespace
@@ -844,14 +849,12 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
     m_local_functions.clear();
     m_filename = filename;
     m_line_number = current_line;
-    m_current_scope_name.clear();
+    m_current_container_tag = nullptr;
+    m_current_function_tag = nullptr;
 
     m_optimized_scope.clear();
     m_optimized_scope = shrink_scope(text, &m_locals, &m_local_functions);
-
-    if(!m_filename.empty() && m_line_number != wxNOT_FOUND) {
-        determine_current_scope();
-    }
+    determine_current_scope();
 }
 
 namespace
@@ -1099,9 +1102,9 @@ size_t CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& 
                                                         vector<TagEntryPtr>* other_scopes_children,
                                                         vector<TagEntryPtr>* global_scope_children)
 {
-    auto resolved = determine_current_scope();
-    if(resolved) {
-        *current_scope_children = get_children_of_scope(resolved, kinds, filter, visible_scopes);
+    determine_current_scope();
+    if(m_current_container_tag) {
+        *current_scope_children = get_children_of_scope(m_current_container_tag, kinds, filter, visible_scopes);
     }
 
     // collect "other scopes"
@@ -1137,12 +1140,12 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
 
     vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
-    auto current_scope = determine_current_scope();
+    determine_current_scope();
     bool add_keywords = false;
     if(remainder.operand_string.empty()) {
         kinds = { "function", "prototype", "class",      "struct", "namespace", "union",
                   "typedef",  "enum",      "enumerator", "macro",  "cenum" };
-        if(current_scope) {
+        if(m_current_container_tag) {
             // if we are inside a scope, add member types
             kinds.push_back("member");
         }

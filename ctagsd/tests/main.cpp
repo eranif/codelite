@@ -524,6 +524,7 @@ TEST_FUNC(test_cxx_word_completion_inside_scope)
 {
     ENSURE_DB_LOADED();
     wxString filename = R"(C:\src\codelite\CodeLite\JSON.cpp)";
+    wxString filename_2 = R"(C:\src\codelite\LiteEditor\context_cpp.cpp)";
 
     if(wxFileExists(filename)) {
         vector<TagEntryPtr> candidates;
@@ -532,6 +533,16 @@ TEST_FUNC(test_cxx_word_completion_inside_scope)
         remainder.filter = "addProp";
         size_t count = completer->get_word_completions(remainder, candidates, {}, {});
         CHECK_BOOL(is_tag_exists("JSONItem::addProperty", candidates));
+        CHECK_BOOL(count > 0);
+    }
+
+    if(wxFileExists(filename_2)) {
+        vector<TagEntryPtr> candidates;
+        completer->set_text(wxEmptyString, filename_2, 200);
+        CxxRemainder remainder;
+        remainder.filter = "GetCt";
+        size_t count = completer->get_word_completions(remainder, candidates, {}, {});
+        CHECK_BOOL(is_tag_exists("ContextBase::GetCtrl", candidates));
         CHECK_BOOL(count > 0);
     }
     return true;

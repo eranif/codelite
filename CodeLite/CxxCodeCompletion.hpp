@@ -72,8 +72,8 @@ private:
     wxString m_optimized_scope;
     wxString m_filename;
     int m_line_number = 0;
-    wxString m_current_scope_name;
-    TagEntryPtr m_current_scope_tag;
+    TagEntryPtr m_current_function_tag;
+    TagEntryPtr m_current_container_tag;
     size_t m_recurse_protector = 0;
     bool m_text_parsed = false;
     vector<pair<wxString, wxString>>
@@ -143,6 +143,9 @@ public:
     CxxCodeCompletion(ITagsStoragePtr lookup);
     ~CxxCodeCompletion();
 
+    TagEntryPtr get_current_function_tag() const { return m_current_function_tag; }
+    TagEntryPtr get_current_scope_tag() const { return m_current_container_tag; }
+
     /**
      * @brief sort input list of tags to a reasonable order
      */
@@ -157,7 +160,7 @@ public:
     /**
      * determine the current scope and return it
      */
-    TagEntryPtr determine_current_scope();
+    void determine_current_scope();
 
     /**
      * @brief set the typedef helper table

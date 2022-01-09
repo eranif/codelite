@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "ctags_manager.h"
 
+#include "CTags.hpp"
 #include "CxxTemplateFunction.h"
 #include "CxxVariable.h"
 #include "CxxVariableScanner.h"

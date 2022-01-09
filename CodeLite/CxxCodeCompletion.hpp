@@ -47,6 +47,9 @@ struct LookupTable {
         tests_db.clear();
     }
 
+    void set_tests_db(unordered_map<wxString, TagEntryPtr>& db) { this->tests_db.swap(db); }
+    void clear_tests_db() { this->tests_db.clear(); }
+
     typedef shared_ptr<LookupTable> ptr_t;
 
     TagEntryPtr GetScope(const wxString& filename, int line_number);
@@ -139,7 +142,8 @@ private:
                                             const CxxExpression& orig_expression);
 
     const wxStringMap_t& get_tokens_map() const;
-    wxString get_return_value(TagEntryPtr tag) const;
+
+    wxString do_get_return_value(const wxString& pattern, const wxString& name) const;
 
     /**
      * @brief apply user hacks
@@ -180,6 +184,16 @@ public:
     CxxCodeCompletion(ITagsStoragePtr lookup, const unordered_map<wxString, TagEntryPtr>& unit_tests_db);
     CxxCodeCompletion(ITagsStoragePtr lookup);
     ~CxxCodeCompletion();
+
+    /// Test API - START
+    void test_set_db(unordered_map<wxString, TagEntryPtr>& db) { m_lookup->set_tests_db(db); }
+    void test_clear_db() { m_lookup->clear_tests_db(); }
+    /// Test API - END
+
+    /**
+     * @brief return the return value of a tag (of type function)
+     */
+    wxString get_return_value(TagEntryPtr tag) const;
 
     TagEntryPtr get_current_function_tag() const { return m_current_function_tag; }
     TagEntryPtr get_current_scope_tag() const { return m_current_container_tag; }

@@ -4,6 +4,5 @@
 using namespace std;
 
 /// return unique_ptr of string
-unique_ptr<string> return_unique_ptr_of_string() {}
-
+unique_ptr<string, std::map<int, std::string>> return_unique_ptr_of_string() {}
 

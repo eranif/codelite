@@ -574,18 +574,100 @@ const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const { return m_macros
 
 wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
 {
-    clFunction f;
     wxString pattern = normalize_pattern(tag);
-    tag->SetPattern("/^ " + pattern + " $/");
-    if(LanguageST::Get()->FunctionFromPattern(tag, f)) {
-        wxString return_value;
-        if(!f.m_returnValue.m_typeScope.empty()) {
-            return_value << f.m_returnValue.m_typeScope << "::";
-        }
-        return_value << f.m_returnValue.m_type;
-        return return_value;
+    wxString return_value = do_get_return_value(pattern, tag->GetName());
+    if(return_value.empty()) {
+        pattern = tag->GetReturnValue() + " " + pattern;
+        return_value = do_get_return_value(pattern, tag->GetName());
     }
-    return wxEmptyString;
+    return return_value;
+}
+
+wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const wxString& name) const
+{
+    // parse the function and extract the return type
+    CxxTokenizer tokenizer;
+    CxxLexerToken token;
+    tokenizer.Reset(pattern);
+
+    // when to stop?
+    // when we find our function name
+    int depth = 0;
+    bool cont = true;
+    vector<pair<int, wxString>> tokens;
+    const wxString& function_name = name;
+    wxString peeked_token;
+    while(cont && tokenizer.NextToken(token)) {
+        wxString token_str = token.GetWXString();
+        switch(token.GetType()) {
+        case T_OPERATOR:
+            // operator method, we can stop now
+            cont = false;
+            break;
+        case T_IDENTIFIER:
+            if(depth == 0) {
+                if(token_str == function_name && tokenizer.PeekToken(peeked_token) == '(') {
+                    // found "foo("
+                    cont = false;
+                    break;
+                } else {
+                    tokens.push_back({ token.GetType(), token_str });
+                }
+            } else {
+                tokens.push_back({ token.GetType(), token_str });
+            }
+            break;
+        case '<':
+        case '[':
+        case '{':
+        case '(':
+            depth++;
+            tokens.push_back({ token.GetType(), token_str });
+            break;
+        case '>':
+        case ']':
+        case '}':
+        case ')':
+            depth--;
+            tokens.push_back({ token.GetType(), token_str });
+            break;
+        default:
+            tokens.push_back({ token.GetType(), token_str });
+            break;
+        }
+    }
+
+    if(tokens.empty())
+        return "";
+
+    // remove the scope tokens
+    // assume the signature looks like this:
+    // vector<string> foo::bar::baz::koo::kookoo::
+    // check if the last token is T_DOUBLE_COLONS ->
+    // remove it and the next one after it
+    while(!tokens.empty()) {
+        if(tokens.back().first == T_DOUBLE_COLONS) {
+            tokens.pop_back();
+            if(!tokens.empty()) {
+                tokens.pop_back();
+            }
+        } else {
+            break;
+        }
+    }
+
+    // conver the array into string
+    wxString as_str;
+    for(const auto& d : tokens) {
+        CxxLexerToken t;
+        t.SetType(d.first);
+        if(t.is_keyword() || t.is_builtin_type()) {
+            as_str << d.second << " ";
+        } else {
+            as_str << d.second;
+        }
+    }
+    return as_str;
 }
 
 void CxxCodeCompletion::prepend_scope(vector<wxString>& scopes, const wxString& scope) const

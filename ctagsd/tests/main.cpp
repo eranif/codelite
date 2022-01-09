@@ -74,10 +74,12 @@ bool initialize_cc_tests()
 unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filename)
 {
     wxFileName current_file(__FILE__);
-    current_file.AppendDir("samples");
-    current_file.SetFullName(filename);
-    auto tags =
-        CTags::Run(current_file, wxStandardPaths::Get().GetTempDir(), wxEmptyString, settings.GetCodeliteIndexer());
+    wxFileName test_file(current_file.GetPath(), filename);
+    test_file.AppendDir("src");
+    test_file.AppendDir("samples");
+
+    wxString fullpath = test_file.GetFullPath();
+    auto tags = CTags::Run(fullpath, wxStandardPaths::Get().GetTempDir(), wxEmptyString, settings.GetCodeliteIndexer());
     unordered_map<wxString, TagEntryPtr> tags_map;
     for(const TagEntry& tag : tags) {
         if(tags_map.count(tag.GetPath()))
@@ -87,6 +89,18 @@ unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filenam
     return tags_map;
 }
 } // namespace
+
+/// Helper class for injecting tags loaded from sample files
+/// in the completer object
+struct SampleFileLoaderLocker {
+    SampleFileLoaderLocker(const wxString& filename)
+    {
+        auto db = load_tags_from_file(filename);
+        completer->test_set_db(db);
+    }
+
+    ~SampleFileLoaderLocker() { completer->test_clear_db(); }
+};
 
 TEST_FUNC(TestLSPLocation)
 {
@@ -359,6 +373,24 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
             CHECK_BOOL(resolved);
             CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");
         }
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_func_returning_unique_ptr_into_auto)
+{
+    ENSURE_DB_LOADED();
+    {
+        SampleFileLoaderLocker loader("sample_function_returning_unique_ptr.hpp");
+
+        wxString code = "auto s = return_unique_ptr_of_string();";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        CxxRemainder remainder;
+        TagEntryPtr resolved = completer->code_complete("s->", { "std" }, &remainder);
+        CHECK_NOT_NULL(resolved);
+        vector<TagEntryPtr> tags;
+        completer->get_completions(resolved, remainder.operand_string, remainder.filter, tags, { "std" });
+        CHECK_BOOL(is_tag_exists("std::basic_string::append", tags));
     }
     return true;
 }

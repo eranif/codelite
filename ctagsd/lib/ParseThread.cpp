@@ -12,6 +12,7 @@ void ParseThread::start(const wxString& settings_folder, const wxString& indexer
     stop();
     m_change_thread = new thread(
         [=](mutex& m, condition_variable& cv, vector<pair<wxString, wxString>>& Q) {
+            FileLogger::RegisterThread(wxThread::GetCurrentId(), "Parser");
             while(true) {
                 wxString filepath;
                 wxString file_content;

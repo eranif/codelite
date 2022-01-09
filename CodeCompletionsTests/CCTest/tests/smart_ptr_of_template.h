@@ -1,3 +1,0 @@
-void foo()
-{
-	TagTreePtr ttp;

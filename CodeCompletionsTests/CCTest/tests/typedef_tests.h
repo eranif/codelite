@@ -1,1 +1,0 @@
-VectorTypedef_t myStack;

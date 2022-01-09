@@ -1,1 +1,0 @@
-wxOrderedMap<wxString, wxString> om;

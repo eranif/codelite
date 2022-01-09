@@ -75,11 +75,6 @@
     <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UnitTests">
-    <VirtualDirectory Name="CXX">
-      <Project Name="CxxParserTests" Path="CxxParserTests/CxxParserTests.project" Active="No"/>
-      <Project Name="CCTest" Path="CodeCompletionsTests/CCTest/CCTest.project" Active="No"/>
-      <Project Name="SampleWorksapce" Path="CodeCompletionsTests/SampleWorkspace/SampleWorksapce.project" Active="No"/>
-    </VirtualDirectory>
     <VirtualDirectory Name="PHP">
       <Project Name="PHPParserUnitTests" Path="codelitephp/PHPParserUnitTests/PHPParserUnitTests.project" Active="No"/>
     </VirtualDirectory>

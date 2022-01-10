@@ -441,6 +441,8 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
     TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(m_settings.GetLimitResults());
+    TagsManagerST::Get()->GetDatabase()->SetUseCache(false);
+
     m_completer.reset(new CxxCodeCompletion(TagsManagerST::Get()->GetDatabase()));
     m_completer->set_macros_table(m_settings.GetTokens());
     m_completer->set_types_table(m_settings.GetTypes());

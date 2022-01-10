@@ -703,6 +703,8 @@ bool CodeLiteApp::OnInit()
     // The next line limits the frequency of UpdateUI events to every 100ms
 #ifdef __WXGTK__
     wxUpdateUIEvent::SetUpdateInterval(500);
+#elif defined(__WXMSW__)
+    wxUpdateUIEvent::SetUpdateInterval(50);
 #endif
     return TRUE;
 }

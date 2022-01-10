@@ -600,7 +600,7 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags)
 {
-    if(GetUseCache()) {
+    if(false) {
         clDEBUG1() << "Testing cache for" << sql << clEndl;
         if(m_cache.Get(sql, tags) == true) {
             clDEBUG1() << "[CACHED ITEMS]" << sql << clEndl;
@@ -628,7 +628,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         clWARNING() << "TagsStorageSQLite::DoFetchTags() error:" << e.GetMessage() << clEndl;
     }
     clDEBUG1() << "Fetching from disk...done" << clEndl;
-    if(GetUseCache()) {
+    if(false) {
         clDEBUG1() << "Updating cache" << clEndl;
         m_cache.Store(sql, tags);
         clDEBUG1() << "Updating cache...done (" << tags.size() << "entries)" << clEndl;
@@ -637,7 +637,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags, const wxArrayString& kinds)
 {
-    if(GetUseCache()) {
+    if(false) {
         CL_DEBUG1(wxT("Testing cache for: %s"), sql);
         if(m_cache.Get(sql, kinds, tags) == true) {
             CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql);
@@ -672,7 +672,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         wxUnusedVar(e);
     }
     CL_DEBUG1("Fetching from disk...done");
-    if(GetUseCache()) {
+    if(false) {
         CL_DEBUG1("updating cache");
         m_cache.Store(sql, kinds, tags);
         CL_DEBUG1("updating cache...done");
@@ -900,7 +900,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
         return TagOk;
 
     // does not matter if we insert or update, the cache must be cleared for any related tags
-    if(GetUseCache()) {
+    if(false) {
         ClearCache();
     }
 

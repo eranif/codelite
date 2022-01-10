@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="ctagsd_app" Version="11000" InternalType="Console">
   <VirtualDirectory Name="lib">
+    <File Name="lib/ParseThread.hpp"/>
+    <File Name="lib/ParseThread.cpp"/>
     <File Name="lib/Settings.hpp"/>
     <File Name="lib/Settings.cpp"/>
     <File Name="lib/Scanner.hpp"/>

@@ -1120,7 +1120,7 @@ void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEnt
         if(skip_tor && (tag->IsConstructor() || tag->IsDestructor()))
             continue;
 
-        bool is_local = tag->IsLocalVariable() || tag->GetScope() == "<local>";
+        bool is_local = tag->IsLocalVariable() || tag->GetScope() == "<local>" || tag->GetParent() == "<local>";
         // we filter local tags by name
         if(is_local && !visited_by_name.insert(tag->GetName()).second) {
             continue;

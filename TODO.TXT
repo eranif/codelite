@@ -71,7 +71,8 @@ New CTagsd CC engine:
 - **DONE** Support anonymous namespace
 - **DONE** file completion fails to complete
 - **DONE** optimization: only reparse the file if the line number changed
-- **FIXED** - only one local variabel is displayed by the completion box
+- **FIXED** only one local variabel is displayed by the completion box
+- **DONE** on_did_save(): parse the files in the background
 - **FIXED** overloaded functionn shouls all be displayed now
 - **FIXED** provide calltip for constructors
 
@@ -82,8 +83,6 @@ KNOWN ISSUE:
 
 TODO:
 -----
-
-on_did_save(): parse the files in the background
 
 -----
 BUGS:

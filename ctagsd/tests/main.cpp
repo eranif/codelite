@@ -114,7 +114,7 @@ TEST_FUNC(TestLSPLocation)
         completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, { "LSP" });
     }
     CHECK_BOOL(resolved);
-    CHECK_SIZE(candidates.size(), 13);
+    CHECK_SIZE(candidates.size(), 12);
     return true;
 }
 
@@ -374,6 +374,19 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
             CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");
         }
     }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_overloaded_function)
+{
+    ENSURE_DB_LOADED();
+    TagEntryPtr resolved = completer->code_complete("wxString::Append", { "std" });
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetPath(), "wxString");
+
+    //vector<TagEntryPtr> tags;
+    //completer->get_similar_tags(resolved, tags);
+    //CHECK_SIZE(tags.size(), 10);
     return true;
 }
 

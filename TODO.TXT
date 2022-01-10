@@ -72,13 +72,13 @@ New CTagsd CC engine:
 - **DONE** file completion fails to complete
 - **DONE** optimization: only reparse the file if the line number changed
 - **FIXED** - only one local variabel is displayed by the completion box
+- **FIXED** overloaded functionn shouls all be displayed now
 
 KNOWN ISSUE:
 ------------
 - cJSON* -> no CC
 - wxWindow* -> no CC
 
-- Add new API: code_complete_all -> return all matches that fits the criteria (e.g. same method name, different signature)
 - Use the new API in the on_document_signature_help, and on_definition
 - No CC in ctor
 

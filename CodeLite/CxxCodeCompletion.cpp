@@ -870,11 +870,21 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& op
 
     vector<TagEntryPtr> unique_candidates;
     unique_candidates.reserve(candidates.size());
+    CompletionHelper helper;
     for(TagEntryPtr tag : candidates) {
-        if(!visited.insert(tag->GetPath()).second) {
+        // by default, the path is enough
+        // however, for methods, we also include the method
+        // signature
+        wxString unique_path = tag->GetPath();
+        if(tag->IsMethod()) {
+            unique_path = helper.normalize_function(tag->GetName(), tag->GetSignature());
+        }
+
+        if(!visited.insert(unique_path).second) {
             // already seen this
             continue;
         }
+
         unique_candidates.emplace_back(tag);
     }
 
@@ -1111,7 +1121,7 @@ void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEnt
     unordered_set<wxString> visited_by_name;
 
     for(size_t i = 0; i < tags.size(); ++i) {
-        TagEntryPtr tag = tags.at(i);
+        TagEntryPtr tag = tags[i];
 
         // only include matches from the provided list of files
         if(!visible_files.empty() && visible_files.count(tag->GetFile()) == 0)
@@ -1674,3 +1684,19 @@ bool CxxCodeCompletion::read_template_definition(CxxTokenizer& tokenizer, wxStri
     return false;
 }
 #undef CHECK_EXPECTED
+
+size_t CxxCodeCompletion::get_similar_tags(TagEntryPtr tag, vector<TagEntryPtr>& tags)
+{
+    if(!tag->IsMethod()) {
+        tags.push_back(tag);
+        return tags.size();
+    }
+
+    m_lookup->GetTagsByPathAndKind(tag->GetPath(), tags, { "prototype" });
+
+    vector<TagEntryPtr> sorted_tags;
+    // filter duplicate
+    sort_tags(tags, sorted_tags, true, {});
+    tags.swap(sorted_tags);
+    return tags.size();
+}

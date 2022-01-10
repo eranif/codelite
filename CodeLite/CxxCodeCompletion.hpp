@@ -245,6 +245,13 @@ public:
                               CxxRemainder* remainder = nullptr);
 
     /**
+     * @brief search in the database for all entries with the same path
+     * as `path`. For now, we only support this for method tags. In all other
+     * cases the `tags` output is of size 1 with the source tag in it
+     */
+    size_t get_similar_tags(TagEntryPtr tag, vector<TagEntryPtr>& tags);
+
+    /**
      * @brief word completion. differ from code_complete by the expression. code_complete is called when user hit
      * -> or . , while word_completion is used when user types something or in a middle of a word
      * @return list of tags matches the context and filter placed in: `candidates`

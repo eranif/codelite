@@ -590,6 +590,10 @@ wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const w
     CxxLexerToken token;
     tokenizer.Reset(pattern);
 
+    // strip template definition if any
+    wxString definition;
+    read_template_definition(tokenizer, &definition);
+
     // when to stop?
     // when we find our function name
     int depth = 0;
@@ -1622,3 +1626,51 @@ void LookupTable::GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tag
         }
     }
 }
+
+#define CHECK_EXPECTED(Token, ExpectedType)              \
+    if(Token.IsEOF() || Token.GetType() != ExpectedType) \
+        return false;
+
+bool CxxCodeCompletion::read_template_definition(CxxTokenizer& tokenizer, wxString* definition) const
+{
+    CxxLexerToken token;
+    tokenizer.NextToken(token);
+    if(token.GetType() != T_TEMPLATE || token.IsEOF()) {
+        tokenizer.UngetToken();
+        return false;
+    }
+
+    definition->clear();
+
+    // we are now expecting an open brace
+    tokenizer.NextToken(token);
+    CHECK_EXPECTED(token, '<');
+
+    int depth = 1;
+    while(tokenizer.NextToken(token)) {
+        if(token.is_keyword() || token.is_builtin_type()) {
+            definition->Append(" ");
+            definition->Append(token.GetWXString());
+            continue;
+        }
+        switch(token.GetType()) {
+        case '<':
+            depth++;
+            definition->Append(token.GetWXString());
+            break;
+        case '>':
+            depth--;
+            if(depth == 0) {
+                return true;
+            } else {
+                definition->Append(token.GetWXString());
+            }
+            break;
+        default:
+            definition->Append(token.GetWXString());
+            break;
+        }
+    }
+    return false;
+}
+#undef CHECK_EXPECTED

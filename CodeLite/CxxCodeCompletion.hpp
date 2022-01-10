@@ -145,6 +145,8 @@ private:
 
     wxString do_get_return_value(const wxString& pattern, const wxString& name) const;
 
+    bool read_template_definition(CxxTokenizer& tokenizer, wxString* definition) const;
+
     /**
      * @brief apply user hacks
      */

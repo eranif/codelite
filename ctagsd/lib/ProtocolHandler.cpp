@@ -113,6 +113,28 @@ void scan_dir(const wxString& dir, const CTagsdSettings& settings, wxArrayString
     scanner.Scan(dir, files, settings.GetFileMask(), wxEmptyString, settings.GetIgnoreSpec());
     filter_non_important_files(files, settings);
 }
+
+/**
+ * @brief read a list of files from .ctagsd/file_list.txt
+ * filter all non important files
+ * @param settings_dir
+ * @param arr
+ * @return
+ */
+size_t read_file_list(const wxString& settings_dir, const CTagsdSettings& settings, wxArrayString& arr)
+{
+    arr.clear();
+    wxFileName file_list(settings_dir, "file_list.txt");
+    if(file_list.FileExists()) {
+        wxString file_list_content;
+        FileUtils::ReadFileContent(file_list, file_list_content);
+        wxArrayString files = wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
+        filter_non_important_files(files, settings);
+        arr.swap(files);
+    }
+    return arr.size();
+}
+
 } // namespace
 
 ProtocolHandler::ProtocolHandler() {}
@@ -362,20 +384,6 @@ bool ProtocolHandler::do_comments_exist_for_file(const wxString& filepath) const
     return m_comments_cache.count(filepath) != 0;
 }
 
-size_t ProtocolHandler::read_file_list(wxArrayString& arr) const
-{
-    arr.clear();
-    wxFileName file_list(m_settings_folder, "file_list.txt");
-    if(file_list.FileExists()) {
-        wxString file_list_content;
-        FileUtils::ReadFileContent(file_list, file_list_content);
-        wxArrayString files = wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
-        filter_non_important_files(files, m_settings);
-        arr.swap(files);
-    }
-    return arr.size();
-}
-
 //---------------------------------------------------------------------------------
 // protocol handlers
 //---------------------------------------------------------------------------------
@@ -440,7 +448,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
 
     // build the workspace file list
     wxArrayString files;
-    if(read_file_list(files) == 0) {
+    if(read_file_list(m_settings_folder, m_settings, files) == 0) {
         // try the scan dir
         scan_dir(m_root_folder, m_settings, files);
     }
@@ -1282,7 +1290,7 @@ void ProtocolHandler::build_search_path()
 {
     // build the workspace file list
     wxArrayString files;
-    if(read_file_list(files) == 0) {
+    if(read_file_list(m_settings_folder, m_settings, files) == 0) {
         // try the scan dir
         scan_dir(m_root_folder, m_settings, files);
     }
@@ -1301,7 +1309,7 @@ void ProtocolHandler::build_search_path()
     }
 
     // add the global search paths
-    for(const wxString& file : m_settings.GetSearchPath()) {
+    for(const auto& file : m_settings.GetSearchPath()) {
         wxFileName fn(file, wxEmptyString);
         fn.Normalize(wxPATH_NORM_ENV_VARS | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE);
         wxString path = fn.GetPath();

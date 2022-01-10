@@ -1,5 +1,7 @@
 #include "grid_bag_sizer_wrapper.h"
+
 #include "allocator_mgr.h"
+#include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 
@@ -10,15 +12,17 @@ GridBagSizerWrapper::GridBagSizerWrapper()
     SetPropertyString(_("Common Settings"), "wxGridBagSizer");
     AddProperty(
         new StringProperty(PROP_GROW_COLS, wxT(""), _("Which columns are allowed to grow. Comma separated list")));
-    AddProperty(
-        new StringProperty(PROP_GROW_ROWS, wxT(""), _("Which rows are allowed to grow. Comma separated list")));
+    AddProperty(new StringProperty(PROP_GROW_ROWS, wxT(""), _("Which rows are allowed to grow. Comma separated list")));
     AddProperty(new StringProperty(PROP_HGAP, wxT("0"), _("The horizontal gap between grid cells")));
     AddProperty(new StringProperty(PROP_VGAP, wxT("0"), _("The vertical gap between grid cells")));
 
     EnableSizerFlag("wxEXPAND", true);
     m_sizerItem.SetProportion(1);
 
-    m_namePattern = wxT("gridBagSizer");
+    m_namePattern = "gridBagSizer";
+    if(wxcProjectMetadata::Get().IsKeepSizers()) {
+        m_namePattern.Prepend("m_");
+    }
     SetName(GenerateName());
 }
 
@@ -28,7 +32,8 @@ wxString GridBagSizerWrapper::CppCtorCode() const
 {
     wxString code;
 
-    if(!wxcSettings::Get().HasFlag(wxcSettings::SIZERS_AS_MEMBERS)) code << "wxGridBagSizer* ";
+    if(!wxcProjectMetadata::Get().IsKeepSizers())
+        code << "wxGridBagSizer* ";
 
     code << GetName() << " = new wxGridBagSizer(" << PropertyString(PROP_VGAP) << wxT(", ") << PropertyString(PROP_HGAP)
          << wxT(");\n");
@@ -78,16 +83,24 @@ void GridBagSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 void GridBagSizerWrapper::DoLoadXRCProperties(const wxXmlNode* node)
 {
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("vgap"));
-    if(propertynode) { SetPropertyString(PROP_VGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("hgap"));
-    if(propertynode) { SetPropertyString(PROP_HGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("growablecols"));
-    if(propertynode) { SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("growablerows"));
-    if(propertynode) { SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent());
+    }
 }
 
 void GridBagSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -96,16 +109,24 @@ void GridBagSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "vgap");
-    if(propertynode) { SetPropertyString(PROP_VGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "hgap");
-    if(propertynode) { SetPropertyString(PROP_HGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "growablecols");
-    if(propertynode) { SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "growablerows");
-    if(propertynode) { SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent());
+    }
 }
 
 wxString GridBagSizerWrapper::DoGenerateCppCtorCode_End() const

@@ -970,38 +970,38 @@ ColourPickerDlgbase::ColourPickerDlgbase(wxWindow* parent, wxWindowID id, const 
     bSizer21->Add(bSizer25, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceStandardColorsArr;
-    m_choiceStandardColorsArr.Add(wxT("<Default>"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_SCROLLBAR"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_DESKTOP"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_ACTIVECAPTION"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_INACTIVECAPTION"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_MENU"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_WINDOW"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_WINDOWFRAME"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_MENUTEXT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_WINDOWTEXT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_CAPTIONTEXT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_ACTIVEBORDER"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_INACTIVEBORDER"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_APPWORKSPACE"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_HIGHLIGHT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_HIGHLIGHTTEXT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_BTNFACE"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_BTNSHADOW"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_GRAYTEXT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_BTNTEXT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_INACTIVECAPTIONTEXT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_BTNHIGHLIGHT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_3DDKSHADOW"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_3DLIGHT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_INFOTEXT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_INFOBK"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_LISTBOX"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_HOTLIGHT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_GRADIENTACTIVECAPTION"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_GRADIENTINACTIVECAPTION"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_MENUHILIGHT"));
-    m_choiceStandardColorsArr.Add(wxT("wxSYS_COLOUR_MENUBAR"));
+    m_choiceStandardColorsArr.Add(_("<Default>"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_SCROLLBAR"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_DESKTOP"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_ACTIVECAPTION"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_INACTIVECAPTION"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_MENU"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_WINDOW"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_WINDOWFRAME"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_MENUTEXT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_WINDOWTEXT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_CAPTIONTEXT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_ACTIVEBORDER"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_INACTIVEBORDER"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_APPWORKSPACE"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_HIGHLIGHT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_HIGHLIGHTTEXT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_BTNFACE"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_BTNSHADOW"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_GRAYTEXT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_BTNTEXT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_INACTIVECAPTIONTEXT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_BTNHIGHLIGHT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_3DDKSHADOW"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_3DLIGHT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_INFOTEXT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_INFOBK"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_LISTBOX"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_HOTLIGHT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_GRADIENTACTIVECAPTION"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_GRADIENTINACTIVECAPTION"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_MENUHILIGHT"));
+    m_choiceStandardColorsArr.Add(_("wxSYS_COLOUR_MENUBAR"));
     m_choiceStandardColors =
         new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceStandardColorsArr, 0);
     m_choiceStandardColors->SetToolTip(_("Select a standard color from the list below"));
@@ -1107,12 +1107,6 @@ wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
         new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Code Generation:")), wxVERTICAL);
 
     boxSizer145->Add(staticBoxSizer152, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxSizersAsMembers = new wxCheckBox(this, wxID_ANY, _("Keep wxSizers as class members"), wxDefaultPosition,
-                                               wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxSizersAsMembers->SetValue(false);
-
-    staticBoxSizer152->Add(m_checkBoxSizersAsMembers, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxFormatInheritedFiles = new wxCheckBox(this, wxID_ANY, _("Format inherited files"), wxDefaultPosition,
                                                     wxDLG_UNIT(this, wxSize(-1, -1)), 0);

@@ -1,6 +1,8 @@
 #include "box_sizer_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
+#include "wxc_project_metadata.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
@@ -20,7 +22,10 @@ BoxSizerWrapper::BoxSizerWrapper()
     EnableSizerFlag("wxEXPAND", true);
     m_sizerItem.SetProportion(1);
 
-    m_namePattern = wxT("boxSizer");
+    m_namePattern = "boxSizer";
+    if(wxcProjectMetadata::Get().IsKeepSizers()) {
+        m_namePattern.Prepend("m_");
+    }
     SetName(GenerateName());
 }
 
@@ -31,7 +36,8 @@ wxString BoxSizerWrapper::GetWxClassName() const { return wxT("wxBoxSizer"); }
 wxString BoxSizerWrapper::CppCtorCode() const
 {
     wxString code;
-    if(!wxcSettings::Get().HasFlag(wxcSettings::SIZERS_AS_MEMBERS)) code << "wxBoxSizer* ";
+    if(!wxcProjectMetadata::Get().IsKeepSizers())
+        code << "wxBoxSizer* ";
 
     code << GetName() << " = new wxBoxSizer(" << PropertyString(PROP_ORIENTATION) << ");\n";
 
@@ -67,7 +73,9 @@ void BoxSizerWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("orient"));
-    if(propertynode) { SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent());
+    }
 }
 
 void BoxSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -77,10 +85,14 @@ void BoxSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 
     // wxSmith doesn't use "name" here, but "variable" means the same thing afaict
     wxString value = XmlUtils::ReadString(node, wxT("variable"));
-    if(!value.empty()) { SetName(value); }
+    if(!value.empty()) {
+        SetName(value);
+    }
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("orient"));
-    if(propertynode) { SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent());
+    }
 }
 
 void BoxSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -89,5 +101,7 @@ void BoxSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "orient");
-    if(propertynode) { SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent());
+    }
 }

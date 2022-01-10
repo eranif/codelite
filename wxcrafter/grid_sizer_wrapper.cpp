@@ -1,5 +1,7 @@
 #include "grid_sizer_wrapper.h"
+
 #include "allocator_mgr.h"
+#include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 
@@ -17,7 +19,10 @@ GridSizerWrapper::GridSizerWrapper()
     EnableSizerFlag("wxEXPAND", true);
     m_sizerItem.SetProportion(1);
 
-    m_namePattern = wxT("gridSizer");
+    m_namePattern = "gridSizer";
+    if(wxcProjectMetadata::Get().IsKeepSizers()) {
+        m_namePattern.Prepend("m_");
+    }
     SetName(GenerateName());
 }
 
@@ -27,7 +32,8 @@ wxString GridSizerWrapper::CppCtorCode() const
 {
     wxString code;
 
-    if(!wxcSettings::Get().HasFlag(wxcSettings::SIZERS_AS_MEMBERS)) code << "wxGridSizer* ";
+    if(!wxcProjectMetadata::Get().IsKeepSizers())
+        code << "wxGridSizer* ";
 
     code << GetName() << " = new wxGridSizer(" << PropertyString(PROP_ROWS) << wxT(", ") << PropertyString(PROP_COLS)
          << wxT(", ") << PropertyString(PROP_VGAP) << wxT(", ") << PropertyString(PROP_HGAP) << wxT(");\n");
@@ -72,16 +78,24 @@ void GridSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 void GridSizerWrapper::DoLoadXRCProperties(const wxXmlNode* node)
 {
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("cols"));
-    if(propertynode) { SetPropertyString(PROP_COLS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_COLS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("rows"));
-    if(propertynode) { SetPropertyString(PROP_ROWS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ROWS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("vgap"));
-    if(propertynode) { SetPropertyString(PROP_VGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("hgap"));
-    if(propertynode) { SetPropertyString(PROP_HGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
+    }
 }
 
 void GridSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -90,14 +104,22 @@ void GridSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "cols");
-    if(propertynode) { SetPropertyString(PROP_COLS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_COLS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "rows");
-    if(propertynode) { SetPropertyString(PROP_ROWS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ROWS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "vgap");
-    if(propertynode) { SetPropertyString(PROP_VGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "hgap");
-    if(propertynode) { SetPropertyString(PROP_HGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
+    }
 }

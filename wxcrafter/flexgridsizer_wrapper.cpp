@@ -1,5 +1,7 @@
 #include "flexgridsizer_wrapper.h"
+
 #include "allocator_mgr.h"
+#include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 
@@ -13,15 +15,17 @@ FlexGridSizerWrapper::FlexGridSizerWrapper()
     AddProperty(new StringProperty(PROP_ROWS, wxT("0"), _("Number of rows in the grid")));
     AddProperty(
         new StringProperty(PROP_GROW_COLS, wxT(""), _("Which columns are allowed to grow. Comma separated list")));
-    AddProperty(
-        new StringProperty(PROP_GROW_ROWS, wxT(""), _("Which rows are allowed to grow. Comma separated list")));
+    AddProperty(new StringProperty(PROP_GROW_ROWS, wxT(""), _("Which rows are allowed to grow. Comma separated list")));
     AddProperty(new StringProperty(PROP_HGAP, wxT("0"), _("The horizontal gap between grid cells")));
     AddProperty(new StringProperty(PROP_VGAP, wxT("0"), _("The vertical gap between grid cells")));
-    m_namePattern = wxT("flexGridSizer");
 
     EnableSizerFlag("wxEXPAND", true);
     m_sizerItem.SetProportion(1);
 
+    m_namePattern = "flexGridSizer";
+    if(wxcProjectMetadata::Get().IsKeepSizers()) {
+        m_namePattern.Prepend("m_");
+    }
     SetName(GenerateName());
 }
 
@@ -34,7 +38,8 @@ wxString FlexGridSizerWrapper::CppCtorCode() const
     wxArrayString growCols = wxCrafter::Split(PropertyString(PROP_GROW_COLS), wxT(","));
     wxArrayString growRows = wxCrafter::Split(PropertyString(PROP_GROW_ROWS), wxT(","));
 
-    if(!wxcSettings::Get().HasFlag(wxcSettings::SIZERS_AS_MEMBERS)) code << "wxFlexGridSizer* ";
+    if(!wxcProjectMetadata::Get().IsKeepSizers())
+        code << "wxFlexGridSizer* ";
 
     code << GetName() << " = new wxFlexGridSizer(" << PropertyString(PROP_ROWS) << wxT(", ")
          << PropertyString(PROP_COLS) << wxT(", ") << PropertyString(PROP_VGAP) << wxT(", ")
@@ -89,22 +94,34 @@ void FlexGridSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 void FlexGridSizerWrapper::DoLoadXRCProperties(const wxXmlNode* node)
 {
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("cols"));
-    if(propertynode) { SetPropertyString(PROP_COLS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_COLS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("rows"));
-    if(propertynode) { SetPropertyString(PROP_ROWS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ROWS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("vgap"));
-    if(propertynode) { SetPropertyString(PROP_VGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("hgap"));
-    if(propertynode) { SetPropertyString(PROP_HGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("growablecols"));
-    if(propertynode) { SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("growablerows"));
-    if(propertynode) { SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent());
+    }
 }
 
 void FlexGridSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -113,20 +130,32 @@ void FlexGridSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "cols");
-    if(propertynode) { SetPropertyString(PROP_COLS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_COLS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "rows");
-    if(propertynode) { SetPropertyString(PROP_ROWS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ROWS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "vgap");
-    if(propertynode) { SetPropertyString(PROP_VGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "hgap");
-    if(propertynode) { SetPropertyString(PROP_HGAP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "growablecols");
-    if(propertynode) { SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "growablerows");
-    if(propertynode) { SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent());
+    }
 }

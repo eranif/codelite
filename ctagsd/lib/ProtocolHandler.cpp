@@ -1026,6 +1026,24 @@ void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel
     vector<TagEntryPtr> candidates;
     vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
     m_completer->word_complete(filepath, line + 1, expression, text, visible_scopes, true, candidates);
+
+    // filter everything and just keep the methods tags
+    vector<TagEntryPtr> matches;
+    matches.reserve(candidates.size() * 5);
+    for(TagEntryPtr match : candidates) {
+        if(match->IsClass() || match->IsStruct()) {
+            vector<TagEntryPtr> ctors;
+            m_completer->get_class_constructors(match, ctors);
+            matches.insert(matches.end(), ctors.begin(), ctors.end());
+        } else if(match->IsMethod()) {
+            matches.push_back(match);
+        }
+    }
+
+    // sort the matches
+    candidates.clear();
+    m_completer->sort_tags(matches, candidates, true, {});
+
     clCallTipPtr tip(new clCallTip(candidates));
     LSP::SignatureHelp sh;
     if(tip) {

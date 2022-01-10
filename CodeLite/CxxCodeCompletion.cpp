@@ -1685,14 +1685,13 @@ bool CxxCodeCompletion::read_template_definition(CxxTokenizer& tokenizer, wxStri
 }
 #undef CHECK_EXPECTED
 
-size_t CxxCodeCompletion::get_similar_tags(TagEntryPtr tag, vector<TagEntryPtr>& tags)
+size_t CxxCodeCompletion::get_class_constructors(TagEntryPtr tag, vector<TagEntryPtr>& tags)
 {
-    if(!tag->IsMethod()) {
-        tags.push_back(tag);
+    if(!tag->IsClass() && !tag->IsStruct()) {
+        tags.clear();
         return tags.size();
     }
-
-    m_lookup->GetTagsByPathAndKind(tag->GetPath(), tags, { "prototype" });
+    m_lookup->GetTagsByPathAndKind(tag->GetPath() + "::" + tag->GetName(), tags, { "prototype", "function" }, 250);
 
     vector<TagEntryPtr> sorted_tags;
     // filter duplicate

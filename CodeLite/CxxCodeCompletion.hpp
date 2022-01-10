@@ -245,11 +245,9 @@ public:
                               CxxRemainder* remainder = nullptr);
 
     /**
-     * @brief search in the database for all entries with the same path
-     * as `path`. For now, we only support this for method tags. In all other
-     * cases the `tags` output is of size 1 with the source tag in it
+     * @brief search the database for list of constructors
      */
-    size_t get_similar_tags(TagEntryPtr tag, vector<TagEntryPtr>& tags);
+    size_t get_class_constructors(TagEntryPtr tag, vector<TagEntryPtr>& tags);
 
     /**
      * @brief word completion. differ from code_complete by the expression. code_complete is called when user hit

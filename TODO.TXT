@@ -73,15 +73,17 @@ New CTagsd CC engine:
 - **DONE** optimization: only reparse the file if the line number changed
 - **FIXED** - only one local variabel is displayed by the completion box
 - **FIXED** overloaded functionn shouls all be displayed now
+- **FIXED** provide calltip for constructors
 
 KNOWN ISSUE:
 ------------
 - cJSON* -> no CC
 - wxWindow* -> no CC
 
-- Use the new API in the on_document_signature_help, and on_definition
-- No CC in ctor
+TODO:
+-----
 
+on_did_save(): parse the files in the background
 
 -----
 BUGS:

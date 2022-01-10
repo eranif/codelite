@@ -91,8 +91,11 @@ public:
     static void cache_erase_document_symbols(const wxString& filepath);
 
     // General API
-    static void parse_file_async(const wxString& filepath, const wxString& file_content,
-                                 const wxString& settings_folder, const wxString& indexer_path);
+    static void parse_buffer_async(const wxString& filepath, const wxString& file_content,
+                                   const wxString& settings_folder, const wxString& indexer_path);
+    static void parse_files_async(const vector<wxString>& files, const wxString& settings_folder,
+                                  const wxString& indexer_path);
+
     void on_initialize(unique_ptr<JSON>&& msg, Channel& channel);
     void on_initialized(unique_ptr<JSON>&& msg, Channel& channel);
     void on_unsupported_message(unique_ptr<JSON>&& msg, Channel& channel);

@@ -11,25 +11,21 @@ void ParseThread::start(const wxString& settings_folder, const wxString& indexer
 {
     stop();
     m_change_thread = new thread(
-        [=](mutex& m, condition_variable& cv, vector<pair<wxString, wxString>>& Q) {
+        [=](mutex& m, condition_variable& cv, vector<ParseThreadTaskFunc>& Q) {
             FileLogger::RegisterThread(wxThread::GetCurrentId(), "Parser");
             while(true) {
-                wxString filepath;
-                wxString file_content;
+                ParseThreadTaskFunc task_callback = nullptr;
                 {
                     unique_lock<mutex> lk{ m };
                     cv.wait(lk, [&] { return !Q.empty(); });
-                    filepath = Q.front().first;
-                    file_content = Q.front().second;
+                    task_callback = move(Q.front());
                     Q.erase(Q.begin());
                 }
 
-                if(filepath.empty()) {
-                    clDEBUG() << "requested to go down" << endl;
+                // parse the file
+                if(task_callback() == eParseThreadCallbackRC::RC_EXIT) {
                     break;
                 }
-                // parse the file
-                ProtocolHandler::parse_file_async(filepath, file_content, settings_folder, indexer_path);
             }
         },
         ref(m_mutex), ref(m_cv), ref(m_queue));
@@ -43,25 +39,18 @@ void ParseThread::stop()
     }
 
     // place an empty request
-    queue_parse_request(wxEmptyString, wxEmptyString);
+    ParseThreadTaskFunc stop_callback = []() { return eParseThreadCallbackRC::RC_EXIT; };
+    queue_parse_request(move(stop_callback));
+
     m_change_thread->join();
     wxDELETE(m_change_thread);
     clDEBUG() << "Success" << endl;
 }
 
-void ParseThread::queue_parse_request(const wxString& filepath, const wxString& file_content)
+void ParseThread::queue_parse_request(ParseThreadTaskFunc&& task)
 {
     unique_lock<mutex> lk{ m_mutex };
-    for(auto& d : m_queue) {
-        if(d.first == filepath) {
-            clDEBUG() << "a request for file" << filepath << "already exists in the queue. updateing the request"
-                      << endl;
-            d.second = file_content;
-            return;
-        }
-    }
-
     // add new entry
-    m_queue.push_back({ filepath, file_content });
+    m_queue.emplace_back(move(task));
     m_cv.notify_one();
 }

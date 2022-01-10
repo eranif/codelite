@@ -141,8 +141,23 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
     return result;
 }
 
-void ProtocolHandler::parse_file_async(const wxString& filepath, const wxString& file_content,
-                                       const wxString& settings_folder, const wxString& indexer_path)
+void ProtocolHandler::parse_files_async(const vector<wxString>& files, const wxString& settings_folder,
+                                        const wxString& indexer_path)
+{
+    // prepare a list of files (size=1)
+    wxArrayString wx_files;
+    wx_files.reserve(files.size());
+
+    for(const auto& file : files) {
+        wx_files.Add(file);
+    }
+
+    // force the output to the actual file name
+    parse_files(wx_files, settings_folder, indexer_path);
+}
+
+void ProtocolHandler::parse_buffer_async(const wxString& filepath, const wxString& file_content,
+                                         const wxString& settings_folder, const wxString& indexer_path)
 {
     // write the content into a temporary file
     clTempFile tempfile{ "cpp" };
@@ -484,7 +499,7 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
 
     // update using namespace cache
     parse_file_for_includes_and_using_namespace(filepath);
-    parse_file_async(filepath, file_content, m_settings_folder, m_settings.GetCodeliteIndexer());
+    parse_buffer_async(filepath, file_content, m_settings_folder, m_settings.GetCodeliteIndexer());
 
     // keep the file content in-cache
     m_filesOpened.insert({ filepath, file_content });
@@ -535,7 +550,15 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
 
     if(line_count_before != line_count_after) {
         // parse this file (async)
-        m_parse_thread.queue_parse_request(filepath, file_content);
+        wxString indexer_path = m_settings.GetCodeliteIndexer();
+        wxString settings_folder = m_settings_folder;
+        ParseThreadTaskFunc task = [=]() {
+            clDEBUG() << "on_did_change: parsing modified content of file:" << filepath << endl;
+            ProtocolHandler::parse_buffer_async(filepath, file_content, settings_folder, indexer_path);
+            clDEBUG() << "success" << endl;
+            return eParseThreadCallbackRC::RC_SUCCESS;
+        };
+        m_parse_thread.queue_parse_request(move(task));
 
         // update using namespace cache
         parse_file_for_includes_and_using_namespace(filepath);
@@ -721,25 +744,32 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     m_filesOpened.insert({ filepath, json["params"]["contentChanges"][0]["text"].toString() });
 
     // update the file using namespace
+    clDEBUG() << "did_save: collecting files to parse..." << endl;
     parse_file_for_includes_and_using_namespace(filepath);
+    clDEBUG() << "done" << endl;
 
     // delete the symbols generated from this file
     TagsManagerST::Get()->GetDatabase()->DeleteByFileName({}, filepath, true);
 
     // re-parse the file
-    wxArrayString files;
-    files.Add(filepath);
+    vector<wxString> files;
+    files.push_back(filepath);
 
     wxArrayString includes = get_files_to_parse(get_first_level_includes(filepath));
     files.reserve(files.size() + includes.size());
     files.insert(files.end(), includes.begin(), includes.end());
 
-    // reparse the file
-    parse_files(files, m_settings_folder, m_settings.GetCodeliteIndexer());
+    // parse this file (async)
+    wxString indexer_path = m_settings.GetCodeliteIndexer();
+    wxString settings_folder = m_settings_folder;
+    ParseThreadTaskFunc task = [=]() {
+        clDEBUG() << "on_did_save: parsing" << files.size() << "files..." << endl;
+        ProtocolHandler::parse_files_async(files, settings_folder, indexer_path);
+        clDEBUG() << "success" << endl;
+        return eParseThreadCallbackRC::RC_SUCCESS;
+    };
+    m_parse_thread.queue_parse_request(move(task));
 
-    if(TagsManagerST::Get()->GetDatabase()) {
-        TagsManagerST::Get()->ClearTagsCache();
-    }
     // clear the cached "using namespace"
     m_additional_scopes.clear();
 }

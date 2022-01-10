@@ -44,8 +44,8 @@ The repositories also contain wx3.1.0 to wx3.1.4 builds (including some i386 one
 The ubuntu ones should also work on other *buntus of the same version, and on derivatives e.g. Mint. 
 
 !!! WARNING
-    For Mint 20 the ubuntu focal dev packages don't work. That is because Mint puts its grep and egrep in `/bin/` instead of `/usr/bin/`. 
-    As a result the `wx-config` script doesn't work properly. See [this wxForum thread][1] for possible workarounds.
+    For Mint 20.0 (Ulyana) the ubuntu focal dev packages don't work. That is because that Mint release puts its grep and egrep in `/bin/` instead of `/usr/bin/`. 
+    As a result the `wx-config` script doesn't work properly. See [this wxForum thread][1] for possible workarounds. Mint 20.1 and later should not be affected.
 
 Now let apt know that the repository exits. If you use an apt front-end e.g. synaptic, tell it to Add a repository, using as data the appropriate entry in the table above.
 If you do things by hand, add the appropriate url to /etc/apt/sources.list. Become superuser and either use a text editor to edit `/etc/apt/sources.list`, adding a line similar to: 

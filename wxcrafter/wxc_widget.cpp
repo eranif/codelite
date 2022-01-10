@@ -2711,7 +2711,8 @@ void wxcWidget::DoGenerateGetters(wxString& decl) const
                 firstChar.MakeUpper();
                 memberName.replace(0, 1, firstChar);
 
-                code << "    " << GetRealClassName() << "* Get" << memberName << "() { return " << GetName() << "; }\n";
+                code << "    " << GetRealClassName() << "* Get" << memberName << "() noexcept { return " << GetName()
+                     << "; }\n";
                 decl << code;
             }
         } break;

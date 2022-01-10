@@ -52,9 +52,9 @@ protected:
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxPanel* GetMainPanel() { return m_mainPanel; }
-    wxMenuBar* GetMainMenuBar() { return m_mainMenuBar; }
-    wxToolBar* GetMainToolbar() { return m_mainToolbar; }
+    wxPanel* GetMainPanel() noexcept { return m_mainPanel; }
+    wxMenuBar* GetMainMenuBar() noexcept { return m_mainMenuBar; }
+    wxToolBar* GetMainToolbar() noexcept { return m_mainToolbar; }
     MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("My Frame"),
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
                        long style = wxCAPTION | wxRESIZE_BORDER | wxMAXIMIZE_BOX | wxMINIMIZE_BOX | wxSYSTEM_MENU |

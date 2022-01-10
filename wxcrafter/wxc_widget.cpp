@@ -18,6 +18,7 @@
 #include "winid_property.h"
 #include "wx_collapsible_pane_pane_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
+#include "wxc_project_metadata.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
@@ -2654,11 +2655,7 @@ wxString wxcWidget::BaseDoGenerateClassMember() const
     wxString classname = GetRealClassName();
     if(!IsTopWindow() && !classname.IsEmpty()) {
 
-        bool sizersAsMembers = wxcSettings::Get().HasFlag(wxcSettings::SIZERS_AS_MEMBERS);
-        if(IsSizer() && sizersAsMembers) {
-            memberCode << wxT("    ") << classname << wxT("* ") << GetName() << wxT(";");
-
-        } else if(!IsSizer()) {
+        if(!IsSizer() || wxcProjectMetadata::Get().IsKeepSizers()) {
 
             memberCode << wxT("    ") << classname << wxT("* ") << GetName() << wxT(";");
             WrapInIfBlockIfNeeded(memberCode);

@@ -65,9 +65,9 @@ class MainFrameBase : public wxFrame
 public:
     enum {
         ID_CUSTOM_CONTROL_DELETE = 1001,
-        ID_CUSTOM_CONTROL_NEW = 1002,
-        ID_BATCH_GENERATE_CODE = 1003,
-        ID_CUSTOM_CONTROL_EDIT = 1004,
+        ID_CUSTOM_CONTROL_EDIT = 1002,
+        ID_CUSTOM_CONTROL_NEW = 1003,
+        ID_BATCH_GENERATE_CODE = 1004,
         ID_GENERATE_CODE = 1005,
     };
 
@@ -331,7 +331,6 @@ class wxcSettingsDlgBase : public wxDialog
 {
 protected:
     wxCheckBox* m_checkBoxUseTRay;
-    wxCheckBox* m_checkBoxSizersAsMembers;
     wxCheckBox* m_checkBoxFormatInheritedFiles;
     wxStaticText* m_staticText215;
     wxCheckBox* m_checkBoxKeepAllUsersetNames;
@@ -347,7 +346,6 @@ protected:
 
 public:
     wxCheckBox* GetCheckBoxUseTRay() { return m_checkBoxUseTRay; }
-    wxCheckBox* GetCheckBoxSizersAsMembers() { return m_checkBoxSizersAsMembers; }
     wxCheckBox* GetCheckBoxFormatInheritedFiles() { return m_checkBoxFormatInheritedFiles; }
     wxStaticText* GetStaticText215() { return m_staticText215; }
     wxCheckBox* GetCheckBoxKeepAllUsersetNames() { return m_checkBoxKeepAllUsersetNames; }

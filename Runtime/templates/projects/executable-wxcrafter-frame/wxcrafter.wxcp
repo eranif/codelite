@@ -11,6 +11,7 @@
 		"m_useEnum":	true,
 		"m_useUnderscoreMacro":	true,
 		"m_addHandlers":	true,
+		"m_keepSizers":	false,
 		"m_templateClasses":	[]
 	},
 	"windows":	[{

@@ -50,7 +50,6 @@ public:
     enum {
         DLG_CODE_GENERATED = (1 << 0),
         USE_TABBED_MODE = (1 << 1),
-        SIZERS_AS_MEMBERS = (1 << 2),
         LAYOUT_RESET_DONE = (1 << 3),
         LICENSE_ACTIVATED = (1 << 4),
         DONT_PROMPT_ABOUT_MISSING_SUBCLASS = (1 << 5),

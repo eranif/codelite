@@ -65,11 +65,15 @@ void PropertiesListView::ConstructProjectSettings()
           "the XRCID macro\nWhen left unchecked it is up to the user to provide a header file with the wxWindow IDs"));
     AddIntegerProp(_("First Window ID"), wxcProjectMetadata::Get().GetFirstWindowId(),
                    _("When 'Generate Window ID' is checked, use this as the first enumerator value"));
+
+    m_pg->Append(new wxPropertyCategory(_("Code Generation")));
     AddBoolProp(_("Generate Translatable Strings"), wxcProjectMetadata::Get().IsUseUnderscoreMacro(),
                 _("When enabled, all generated strings are wrapped with the \"_\" macro, otherwise allow users to "
                   "directly enter native text string encapsulated by wxT() macro"));
     AddBoolProp(_("Add wxWidgets Handlers if missing"), wxcProjectMetadata::Get().IsAddHandlers(),
                 _("When enabled, wxCrafter will add missing handlers (e.g. wxBitmapXmlHandler)"));
+    AddBoolProp(_("Keep wxSizers as class members"), wxcProjectMetadata::Get().IsKeepSizers(),
+                _("When enabled, wxSizers are kept as class members and become accessible"));
 }
 
 void PropertiesListView::Construct(wxcWidget* wb)
@@ -299,6 +303,11 @@ void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
         p = m_pg->GetProperty(_("Add wxWidgets Handlers if missing"));
         if(p) {
             wxcProjectMetadata::Get().SetAddHandlers(p->GetValue().GetBool());
+        }
+
+        p = m_pg->GetProperty(_("Keep wxSizers as class members"));
+        if(p) {
+            wxcProjectMetadata::Get().SetKeepSizers(p->GetValue().GetBool());
         }
 
         wxCommandEvent evt(wxEVT_PROJECT_METADATA_MODIFIED);

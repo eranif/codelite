@@ -35,6 +35,7 @@ protected:
     bool m_useEnum;
     bool m_useUnderscoreMacro;
     bool m_addHandlers;
+    bool m_keepSizers;
 
 private:
     wxcProjectMetadata();
@@ -106,6 +107,8 @@ public:
 
     void SetUseUnderscoreMacro(bool useUnderscoreMacro) { this->m_useUnderscoreMacro = useUnderscoreMacro; }
     bool IsUseUnderscoreMacro() const { return m_useUnderscoreMacro; }
+    void SetKeepSizers(bool keepSizers) { this->m_keepSizers = keepSizers; }
+    bool IsKeepSizers() const { return m_keepSizers; }
 
     void GenerateBitmapFunctionName() { DoGenerateBitmapFunctionName(); }
 

@@ -1,7 +1,9 @@
 #include "static_box_sizer_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "string_property.h"
+#include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 
@@ -18,7 +20,10 @@ StaticBoxSizerWrapper::StaticBoxSizerWrapper()
     AddProperty(new ChoiceProperty(PROP_ORIENTATION, arr, 0, _("Sizer orientation")));
     AddProperty(new StringProperty(PROP_LABEL, _("My Label"), _("Label")));
 
-    m_namePattern = wxT("staticBoxSizer");
+    m_namePattern = "staticBoxSizer";
+    if(wxcProjectMetadata::Get().IsKeepSizers()) {
+        m_namePattern.Prepend("m_");
+    }
     SetName(GenerateName());
 }
 
@@ -35,7 +40,8 @@ wxString StaticBoxSizerWrapper::CppCtorCode() const
     wxString staticBox;
     staticBox << wxT(" new wxStaticBox(") << GetWindowParent() << wxT(", wxID_ANY, ") << Label() << wxT(")");
 
-    if(!wxcSettings::Get().HasFlag(wxcSettings::SIZERS_AS_MEMBERS)) code << "wxStaticBoxSizer* ";
+    if(!wxcProjectMetadata::Get().IsKeepSizers())
+        code << "wxStaticBoxSizer* ";
 
     code << GetName() << wxT(" = new wxStaticBoxSizer(") << staticBox << wxT(", ") << orient << wxT(");\n");
     code << GenerateMinSizeCode();

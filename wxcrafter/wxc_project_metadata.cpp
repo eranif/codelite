@@ -15,6 +15,7 @@ wxcProjectMetadata::wxcProjectMetadata()
     , m_useEnum(true)
     , m_useUnderscoreMacro(true)
     , m_addHandlers(true)
+    , m_keepSizers(false)
 {
     SetGenerateCPPCode(true);
     SetGenerateXRC(false);
@@ -35,6 +36,7 @@ void wxcProjectMetadata::FromJSON(const JSONElement& json)
     m_useEnum = json.namedObject("m_useEnum").toBool(true);
     m_useUnderscoreMacro = json.namedObject("m_useUnderscoreMacro").toBool(true);
     m_addHandlers = json.namedObject("m_addHandlers").toBool(m_addHandlers);
+    m_keepSizers = json.namedObject("m_keepSizers").toBool(false);
 
     wxcSettings::Get().MergeCustomControl(json.namedObject("m_templateClasses"));
     if(m_bitmapFunction.IsEmpty()) {
@@ -66,6 +68,7 @@ JSONElement wxcProjectMetadata::ToJSON()
     metadata.addProperty("m_useEnum", m_useEnum);
     metadata.addProperty("m_useUnderscoreMacro", m_useUnderscoreMacro);
     metadata.addProperty("m_addHandlers", m_addHandlers);
+    metadata.addProperty("m_keepSizers", m_keepSizers);
     return metadata;
 }
 
@@ -157,6 +160,7 @@ void wxcProjectMetadata::Reset()
     m_useUnderscoreMacro = true;
     m_firstWindowId = 10000;
     m_addHandlers = true;
+    m_keepSizers = false;
 }
 
 void wxcProjectMetadata::DoGenerateBitmapFunctionName()
@@ -232,10 +236,7 @@ wxString wxcProjectMetadata::GetOutputFileName() const
     return m_outputFileName;
 }
 
-wxString wxcProjectMetadata::GetHeaderFileExt() const
-{
-    return m_useHpp ? "hpp" : "h";
-}
+wxString wxcProjectMetadata::GetHeaderFileExt() const { return m_useHpp ? "hpp" : "h"; }
 
 void wxcProjectMetadata::SetProjectFile(const wxString& filename)
 {

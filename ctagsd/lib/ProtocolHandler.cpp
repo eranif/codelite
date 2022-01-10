@@ -553,9 +553,9 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
         wxString indexer_path = m_settings.GetCodeliteIndexer();
         wxString settings_folder = m_settings_folder;
         ParseThreadTaskFunc task = [=]() {
-            clDEBUG() << "on_did_change: parsing modified content of file:" << filepath << endl;
+            clDEBUG() << "on_did_change: parsing file task:" << filepath << endl;
             ProtocolHandler::parse_buffer_async(filepath, file_content, settings_folder, indexer_path);
-            clDEBUG() << "success" << endl;
+            clDEBUG() << "on_did_change: parsing file task: ... Success" << endl;
             return eParseThreadCallbackRC::RC_SUCCESS;
         };
         m_parse_thread.queue_parse_request(move(task));
@@ -763,9 +763,9 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
     wxString indexer_path = m_settings.GetCodeliteIndexer();
     wxString settings_folder = m_settings_folder;
     ParseThreadTaskFunc task = [=]() {
-        clDEBUG() << "on_did_save: parsing" << files.size() << "files..." << endl;
+        clDEBUG() << "on_did_save: parsing task:" << files.size() << "files..." << endl;
         ProtocolHandler::parse_files_async(files, settings_folder, indexer_path);
-        clDEBUG() << "success" << endl;
+        clDEBUG() << "on_did_save: parsing task: ... Success!" << endl;
         return eParseThreadCallbackRC::RC_SUCCESS;
     };
     m_parse_thread.queue_parse_request(move(task));

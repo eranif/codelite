@@ -847,6 +847,27 @@ TEST_FUNC(test_cxx_code_completion_member_variable)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_template_function)
+{
+    ENSURE_DB_LOADED();
+    SampleFileLoaderLocker loader("template_function.hpp");
+    {
+        TagEntryPtr resolved = completer->code_complete("get_as_type<wxString>()->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    {
+        wxString code = "auto resolved = get_as_type<wxString>();";
+        completer->set_text(code, wxEmptyString, wxNOT_FOUND);
+        TagEntryPtr resolved = completer->code_complete("resolved.", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxString");
+    }
+
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_template_std_set)
 {
     ENSURE_DB_LOADED();

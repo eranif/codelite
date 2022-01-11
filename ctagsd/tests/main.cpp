@@ -93,9 +93,13 @@ unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filenam
 /// Helper class for injecting tags loaded from sample files
 /// in the completer object
 struct SampleFileLoaderLocker {
+    wxString filepath;
     SampleFileLoaderLocker(const wxString& filename)
     {
         auto db = load_tags_from_file(filename);
+        if(!db.empty()) {
+            filepath = db.begin()->second->GetFile();
+        }
         completer->test_set_db(db);
     }
 
@@ -204,6 +208,23 @@ TEST_FUNC(TestCompletionHelper_truncate_file_to_location_must_end_with_words)
     CompletionHelper helper;
     wxString f = helper.truncate_file_to_location(file_content_z, 0, 15, CompletionHelper::TRUNCATE_COMPLETE_WORDS);
     CHECK_STRING(f, "std::vector<TagEntryPtr");
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_complete_member_of_parent_class)
+{
+    ENSURE_DB_LOADED();
+    wxString member_of_parent_class_file;
+    {
+        SampleFileLoaderLocker loader("member_of_parent_class.hpp");
+        member_of_parent_class_file = loader.filepath;
+    }
+
+    // set our scope at MyPlugin::foo
+    completer->set_text(wxEmptyString, member_of_parent_class_file, 8);
+    TagEntryPtr resolved = completer->code_complete("m_mgr->", {});
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetPath(), "IManager");
     return true;
 }
 
@@ -384,9 +405,9 @@ TEST_FUNC(test_cxx_code_completion_overloaded_function)
     CHECK_BOOL(resolved);
     CHECK_STRING(resolved->GetPath(), "wxString");
 
-    //vector<TagEntryPtr> tags;
-    //completer->get_similar_tags(resolved, tags);
-    //CHECK_SIZE(tags.size(), 10);
+    // vector<TagEntryPtr> tags;
+    // completer->get_similar_tags(resolved, tags);
+    // CHECK_SIZE(tags.size(), 10);
     return true;
 }
 

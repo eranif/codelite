@@ -420,7 +420,7 @@ vector<wxString> CxxCodeCompletion::update_visible_scope(const vector<wxString>&
 
     if(tag && (tag->IsClass() || tag->IsStruct() || tag->IsNamespace() || tag->GetKind() == "union")) {
         prepend_scope(scopes, tag->GetPath());
-    } else if(tag && tag->IsMethod()) {
+    } else if(tag && (tag->IsMethod() || tag->IsMember())) {
         prepend_scope(scopes, tag->GetScope());
     }
     return scopes;
@@ -491,8 +491,9 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
                 }
 
                 for(const auto& path_to_try : paths_to_try) {
-                    auto scope_tag = lookup_symbol_by_kind(path_to_try, visible_scopes,
-                                                           { "class", "struct", "union", "prototype", "function" });
+                    // note that we pass here empty visible_scopes since we already prepended it earlier
+                    auto scope_tag = lookup_symbol_by_kind(
+                        path_to_try, {}, { "class", "struct", "union", "prototype", "function", "member" });
                     if(scope_tag) {
                         // we are inside a scope, use the scope as the parent
                         // and call resolve_expression() again

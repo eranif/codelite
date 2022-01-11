@@ -88,4 +88,13 @@ TODO:
 BUGS:
 -----
 
+code completion of static class member do not work
+
+```
+wxString MyClass::m_str;
+
+void MyClass::foo() {
+    m_str. // no cc here
+
+```
 

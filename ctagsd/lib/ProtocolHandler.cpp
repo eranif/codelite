@@ -141,7 +141,7 @@ ProtocolHandler::ProtocolHandler() {}
 
 ProtocolHandler::~ProtocolHandler() { m_parse_thread.stop(); }
 
-void ProtocolHandler::send_log_message(const wxString& message, int level, Channel& channel)
+void ProtocolHandler::send_log_message(const wxString& message, int level, Channel::ptr_t channel)
 {
     JSON root(cJSON_Object);
     JSONItem notification = root.toElement();
@@ -151,7 +151,7 @@ void ProtocolHandler::send_log_message(const wxString& message, int level, Chann
     params.addProperty("message", wxString() << "P:" << wxGetProcessId() << ": " << message);
     params.addProperty("type", level);
 
-    channel.write_reply(notification.format(false));
+    channel->write_reply(notification.format(false));
 }
 
 JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_kind)
@@ -314,7 +314,7 @@ vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const wxStri
     return additional_scopes;
 }
 
-bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id)
+bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel::ptr_t channel, size_t req_id)
 {
     if(m_filesOpened.count(filepath) == 0) {
         // check if this file exists on the file system -> and load it instead of complaining about it
@@ -327,7 +327,7 @@ bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Chann
             JSON root(cJSON_Object);
             auto response = root.toElement();
             auto result = build_result(response, req_id, cJSON_Object);
-            channel.write_reply(response);
+            channel->write_reply(response);
             return false;
         }
 
@@ -389,7 +389,7 @@ bool ProtocolHandler::do_comments_exist_for_file(const wxString& filepath) const
 //---------------------------------------------------------------------------------
 
 // Request <-->
-void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     // start the parser thread
     clDEBUG() << "Received `initialize` request" << endl;
@@ -457,23 +457,31 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel& channel)
     // build a list of files to parse (including all include statements)
     files = get_files_to_parse(files);
 
-    send_log_message(_("Updating symbols database..."), LSP_LOG_INFO, channel);
-    parse_files(files, m_settings_folder, m_settings.GetCodeliteIndexer());
-    send_log_message(_("Success"), LSP_LOG_INFO, channel);
-
     TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
     TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(m_settings.GetLimitResults());
     TagsManagerST::Get()->GetDatabase()->SetUseCache(false);
 
+    // reparse the workspace
+    send_log_message(_("Initialization completed"), LSP_LOG_INFO, channel);
+
+    wxString indexer_path = m_settings.GetCodeliteIndexer();
+    auto parse_callback = [=]() {
+        clDEBUG() << "on_initialize(): parsing files..." << endl;
+        parse_files(files, m_settings_folder, indexer_path);
+        clDEBUG() << "on_initialize(): parsing files... Success" << endl;
+        return eParseThreadCallbackRC::RC_SUCCESS;
+    };
+    m_parse_thread.queue_parse_request(move(parse_callback));
+
     m_completer.reset(new CxxCodeCompletion(TagsManagerST::Get()->GetDatabase()));
     m_completer->set_macros_table(m_settings.GetTokens());
     m_completer->set_types_table(m_settings.GetTypes());
-    channel.write_reply(response.format(false));
+    channel->write_reply(response.format(false));
 }
 
 // Request <-->
-void ProtocolHandler::on_unsupported_message(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_unsupported_message(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     wxString message;
     message << _("unsupported message: `") << msg->toElement()["method"].toString() << "`";
@@ -481,7 +489,7 @@ void ProtocolHandler::on_unsupported_message(unique_ptr<JSON>&& msg, Channel& ch
 }
 
 // Notification -->
-void ProtocolHandler::on_initialized(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_initialized(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     // a notification
     wxUnusedVar(msg);
@@ -490,7 +498,7 @@ void ProtocolHandler::on_initialized(unique_ptr<JSON>&& msg, Channel& channel)
 }
 
 // Notification -->
-void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     wxUnusedVar(channel);
     // keep the file content in the internal map
@@ -514,7 +522,7 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel& channel)
 }
 
 // Notification -->
-void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     wxUnusedVar(channel);
     auto json = msg->toElement();
@@ -531,8 +539,10 @@ void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel& channel)
 }
 
 // Notification -->
-void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
+    static wxStringSet_t empty_set;
+
     wxUnusedVar(channel);
     // keep the file content in the internal map
     auto json = msg->toElement();
@@ -556,20 +566,51 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel& channel)
     m_filesOpened.insert({ filepath, file_content });
     clDEBUG() << "Updating content for file:" << filepath << endl;
 
-    if(line_count_before != line_count_after) {
-        // parse this file (async)
+    // we compare the preamble of both before and after the file
+    // modification
+    // if we see a difference, i.e. new header file was added
+
+    // Note: we make a copy here since the call to `parse_buffer_for_includes_and_using_namespace()`
+    // will update `m_parsed_files_info[filepath].included_files`
+    auto prev_preamble = m_parsed_files_info.count(filepath) ? m_parsed_files_info[filepath].included_files : empty_set;
+    parse_buffer_for_includes_and_using_namespace(filepath, file_content);
+    const auto& curr_preabmle = m_parsed_files_info[filepath].included_files;
+    auto diff = setdiff(curr_preabmle, prev_preamble);
+    wxArrayString new_includes;
+    if(!diff.empty()) {
+        // curr_preabmle contains new headers that do not exist in the
+        // previous preamble - parse them
+        wxArrayString tmp;
+        for(const auto& header_file : diff) {
+            tmp.Add(header_file);
+        }
+        new_includes = get_files_to_parse(tmp);
+        clDEBUG() << "Need to parse these new file:" << new_includes << endl;
+    }
+
+    if(line_count_before != line_count_after || !new_includes.empty()) {
+        // parse the file buffer
         wxString indexer_path = m_settings.GetCodeliteIndexer();
         wxString settings_folder = m_settings_folder;
-        ParseThreadTaskFunc task = [=]() {
-            clDEBUG() << "on_did_change: parsing file task:" << filepath << endl;
+        ParseThreadTaskFunc buffer_parse_task = [=]() {
+            clDEBUG() << "on_did_change(): parsing file task" << filepath << endl;
             ProtocolHandler::parse_buffer_async(filepath, file_content, settings_folder, indexer_path);
-            clDEBUG() << "on_did_change: parsing file task: ... Success" << endl;
+            clDEBUG() << "on_did_change(): parsing file task ... Success" << endl;
             return eParseThreadCallbackRC::RC_SUCCESS;
         };
-        m_parse_thread.queue_parse_request(move(task));
+        m_parse_thread.queue_parse_request(move(buffer_parse_task));
 
-        // update using namespace cache
-        parse_file_for_includes_and_using_namespace(filepath);
+        // parse the files included by this file
+        if(!new_includes.empty()) {
+            vector<wxString> includes_to_parse{ new_includes.begin(), new_includes.end() };
+            ParseThreadTaskFunc headers_parse_task = [=]() {
+                clDEBUG() << "on_did_change(): parsing header files" << includes_to_parse << endl;
+                ProtocolHandler::parse_files_async(includes_to_parse, settings_folder, indexer_path);
+                clDEBUG() << "on_did_change(): parsing header files ... Success" << endl;
+                return eParseThreadCallbackRC::RC_SUCCESS;
+            };
+            m_parse_thread.queue_parse_request(move(headers_parse_task));
+        }
     } else {
         clDEBUG() << "No real change detected. Will not re-parse the file" << endl;
     }
@@ -610,7 +651,7 @@ wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, in
 }
 
 // Request <-->
-void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
@@ -733,13 +774,13 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel& channel)
         }
 
         clDEBUG() << "Sending the reply..." << endl;
-        channel.write_reply(response.format(false));
+        channel->write_reply(response.format(false));
         clDEBUG() << "Success" << endl;
     }
 }
 
 // Notificatin -->
-void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     wxUnusedVar(channel);
     JSONItem json = msg->toElement();
@@ -801,7 +842,7 @@ void add_to_types_set(const wxString& name, wxStringSet_t& types, const wxString
 } // namespace
 
 // Request <-->
-void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     JSONItem json = msg->toElement();
     clDEBUG1() << json.format() << endl;
@@ -975,11 +1016,11 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channe
     LSPUtils::encode_semantic_tokens(tokens_vec, &encoding);
     result.addProperty("data", encoding);
     clDEBUG1() << response.format() << endl;
-    channel.write_reply(response);
+    channel->write_reply(response);
 }
 
 // Request <-->
-void ProtocolHandler::on_workspace_symbol(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_workspace_symbol(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
@@ -999,11 +1040,11 @@ void ProtocolHandler::on_workspace_symbol(unique_ptr<JSON>&& msg, Channel& chann
     for(const LSP::SymbolInformation& symbol : symbols) {
         result.arrayAppend(symbol.ToJSON(wxEmptyString));
     }
-    channel.write_reply(response);
+    channel->write_reply(response);
 }
 
 // Request <-->
-void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     wxUnusedVar(msg);
     wxUnusedVar(channel);
@@ -1033,11 +1074,11 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel& channe
     for(const LSP::SymbolInformation& symbol : symbols) {
         result.arrayAppend(symbol.ToJSON(wxEmptyString));
     }
-    channel.write_reply(response);
+    channel->write_reply(response);
 }
 
 // Request <-->
-void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     wxUnusedVar(channel);
 
@@ -1116,10 +1157,10 @@ void ProtocolHandler::on_document_signature_help(unique_ptr<JSON>&& msg, Channel
     response.addProperty("id", id);
     response.addProperty("jsonrpc", "2.0");
     response.append(result);
-    channel.write_reply(response);
+    channel->write_reply(response);
 }
 
-void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
@@ -1163,10 +1204,10 @@ void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel& channel)
     auto contents = result.AddObject("contents");
     contents.addProperty("kind", "markdown");
     contents.addProperty("value", tip_content);
-    channel.write_reply(response);
+    channel->write_reply(response);
 }
 
-void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bool try_definition_first)
+void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t channel, bool try_definition_first)
 {
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
@@ -1256,15 +1297,15 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bo
             }
         }
     }
-    channel.write_reply(response);
+    channel->write_reply(response);
 }
 
-void ProtocolHandler::on_declaration(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_declaration(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     do_definition(move(msg), channel, false);
 }
 
-void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel& channel)
+void ProtocolHandler::on_definition(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
 {
     do_definition(move(msg), channel, true);
 }
@@ -1317,6 +1358,15 @@ void ProtocolHandler::build_search_path()
             unique_paths.insert(path);
         }
     }
+}
+
+void ProtocolHandler::parse_buffer_for_includes_and_using_namespace(const wxString& filepath, const wxString& buffer)
+{
+    ParsedFileInfo entry;
+    m_file_scanner.scan_buffer(filepath, buffer, m_search_paths, &entry.included_files, &entry.using_namespace);
+
+    m_parsed_files_info.erase(filepath);
+    m_parsed_files_info.insert({ filepath, entry });
 }
 
 void ProtocolHandler::parse_file_for_includes_and_using_namespace(const wxString& filepath)
@@ -1421,4 +1471,18 @@ void ProtocolHandler::cache_erase_document_symbols(const wxString& filepath)
     if(m_tags_cache.count(filepath)) {
         m_tags_cache.erase(filepath);
     }
+}
+
+wxStringSet_t ProtocolHandler::setdiff(const wxStringSet_t& a, const wxStringSet_t& b)
+{
+    wxStringSet_t diff;
+    diff.reserve(a.size());
+
+    // go over the smaller one collect all
+    for(const auto& item : a) {
+        if(b.count(item) == 0) {
+            diff.insert(item);
+        }
+    }
+    return diff;
 }

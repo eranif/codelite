@@ -80,6 +80,7 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& path, const
         ctagsCmd = "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ";
     }
 
+    ctagsCmd << " --language-force=c++ "; // force c++
     ctagsCmd << TagsManagerST::Get()->GetCtagsOptions().ToString();
 
     clEnvList_t envList = { { "CTAGS_BATCH_CMD", ctagsCmd } };

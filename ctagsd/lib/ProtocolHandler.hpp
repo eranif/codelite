@@ -34,7 +34,7 @@ struct ParsedFileInfo {
 class ProtocolHandler
 {
 public:
-    typedef void (ProtocolHandler::*CallbackFunc)(unique_ptr<JSON>&& msg, Channel& channel);
+    typedef void (ProtocolHandler::*CallbackFunc)(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
 
 private:
     CTagsdSettings m_settings;
@@ -56,7 +56,7 @@ private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
     static void parse_files(const wxArrayString& files, const wxString& settings_folder, const wxString& indexer_path,
                             const wxString& alternate_filename = wxEmptyString);
-    bool ensure_file_content_exists(const wxString& filepath, Channel& channel, size_t req_id);
+    bool ensure_file_content_exists(const wxString& filepath, Channel::ptr_t channel, size_t req_id);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);
     void update_comments_for_file(const wxString& filepath);
     const wxString& get_comment(const wxString& filepath, long line, const wxString& default_value) const;
@@ -64,9 +64,11 @@ private:
     vector<wxString> update_additional_scopes_for_file(const wxString& filepath);
 
     wxArrayString FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const;
-    void do_definition(unique_ptr<JSON>&& msg, Channel& channel, bool try_definition_first);
+    void do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t channel, bool try_definition_first);
     void build_search_path();
     void parse_file_for_includes_and_using_namespace(const wxString& filepath);
+    void parse_buffer_for_includes_and_using_namespace(const wxString& filepath, const wxString& buffer);
+
     /**
      * @brief return list of files for parsing. The list is constructed using the `#include`
      * statements found in `files` and their children (recursively)
@@ -80,6 +82,11 @@ private:
     size_t get_includes_recrusively(const wxString& filepath, wxStringSet_t* output);
     wxString minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string,
                              CompletionHelper::eTruncateStyle flag = CompletionHelper::TRUNCATE_EXACT_POS);
+
+    /**
+     * @brief return set of files that exist in `a` but not in `b`
+     */
+    wxStringSet_t setdiff(const wxStringSet_t& a, const wxStringSet_t& b);
 
 public:
     ProtocolHandler();
@@ -96,26 +103,26 @@ public:
     static void parse_files_async(const vector<wxString>& files, const wxString& settings_folder,
                                   const wxString& indexer_path);
 
-    void on_initialize(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_initialized(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_unsupported_message(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_did_open(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_did_change(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_completion(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_did_close(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_did_save(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_semantic_tokens(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_document_symbol(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_document_signature_help(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_definition(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_declaration(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_hover(unique_ptr<JSON>&& msg, Channel& channel);
-    void on_workspace_symbol(unique_ptr<JSON>&& msg, Channel& channel);
+    void on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_initialized(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_unsupported_message(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_did_open(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_did_change(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_completion(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_did_close(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_did_save(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_document_symbol(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_document_signature_help(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_definition(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_declaration(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_hover(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    void on_workspace_symbol(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
 
     /**
      * @brief send a "window/logMessage" message to the client
      */
-    void send_log_message(const wxString& message, int level, Channel& channel);
+    void send_log_message(const wxString& message, int level, Channel::ptr_t channel);
 };
 
 #endif // PROTOCOLHANDLER_HPP

@@ -1,17 +1,25 @@
 #include "Channel.hpp"
+
 #include "LSP/Message.h"
 #include "file_logger.h"
+#include "macros.h"
+
+#include <array>
 #include <iostream>
 #include <sstream>
 #include <string>
 
 using namespace std;
 
-Channel::Channel() {}
+ChannelSocket::ChannelSocket(const wxString& ip, int port)
+    : m_ip(ip)
+    , m_port(port)
+{
+}
 
-Channel::~Channel() {}
+ChannelSocket::~ChannelSocket() {}
 
-eReadSome Channel::read_some()
+eReadSome ChannelSocket::read_some()
 {
     wxString buffer;
     client->SelectRead();
@@ -29,11 +37,11 @@ eReadSome Channel::read_some()
     }
 }
 
-bool Channel::write_reply(const JSONItem& message) { return write_reply(message.format(false)); }
+bool ChannelSocket::write_reply(const JSONItem& message) { return write_reply(message.format(false)); }
 
-bool Channel::write_reply(const JSON& message) { return write_reply(message.toElement().format(false)); }
+bool ChannelSocket::write_reply(const JSON& message) { return write_reply(message.toElement().format(false)); }
 
-bool Channel::write_reply(const wxString& message)
+bool ChannelSocket::write_reply(const wxString& message)
 {
     auto cb = message.mb_str(wxConvUTF8);
 
@@ -51,7 +59,7 @@ bool Channel::write_reply(const wxString& message)
     return true;
 }
 
-unique_ptr<JSON> Channel::read_message()
+unique_ptr<JSON> ChannelSocket::read_message()
 {
     while(true) {
         auto msg = LSP::Message::GetJSONPayload(m_buffer);
@@ -75,11 +83,11 @@ unique_ptr<JSON> Channel::read_message()
     }
 }
 
-void Channel::open(const wxString& ip, int port)
+void ChannelSocket::open()
 {
     clSocketServer server;
     wxString connection_string;
-    connection_string << "tcp://" << ip << ":" << port;
+    connection_string << "tcp://" << m_ip << ":" << m_port;
 
     server.Start(connection_string);
     clSYSTEM() << "Accepting connection on:" << connection_string << endl;

@@ -3,6 +3,7 @@
 #include "cl_standard_paths.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
+
 #include <iostream>
 #include <stdio.h>
 #include <unordered_map>
@@ -61,14 +62,15 @@ int main(int argc, char** argv)
     TagsManagerST::Get()->SetLanguage(LanguageST::Get());
 
     try {
-        Channel channel;
+        Channel::ptr_t channel(new ChannelSocket(host, port));
+        channel->open();
+
         ProtocolHandler protocol_handler;
         clSYSTEM() << "Started main loop" << endl;
-        channel.open(host, port);
 
         wxString message;
         while(true) {
-            auto msg = channel.read_message();
+            auto msg = channel->read_message();
             if(!msg) {
                 break;
             }

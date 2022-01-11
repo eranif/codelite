@@ -1,4 +1,5 @@
 #include "Scanner.hpp"
+
 #include "CxxLexerAPI.h"
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
@@ -12,12 +13,17 @@ Scanner::~Scanner() {}
 void Scanner::scan(const wxFileName& current_file, const wxArrayString& search_path, wxStringSet_t* includes_set,
                    wxStringSet_t* using_ns_set)
 {
-    CxxTokenizer tokenizer;
     wxString content;
-
     if(!FileUtils::ReadFileContent(current_file, content)) {
         return;
     }
+    scan_buffer(current_file, content, search_path, includes_set, using_ns_set);
+}
+
+void Scanner::scan_buffer(const wxFileName& current_file, const wxString& content, const wxArrayString& search_path,
+                          wxStringSet_t* includes_set, wxStringSet_t* using_ns_set)
+{
+    CxxTokenizer tokenizer;
 
     wxString cur_file_dir = current_file.GetPath();
     wxStringSet_t seen_includes;

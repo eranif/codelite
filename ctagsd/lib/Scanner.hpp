@@ -3,6 +3,7 @@
 
 #include "CxxTokenizer.h"
 #include "macros.h"
+
 #include <unordered_map>
 #include <wx/arrstr.h>
 #include <wx/filename.h>
@@ -27,6 +28,8 @@ public:
 
     void scan(const wxFileName& current_file, const wxArrayString& search_path, wxStringSet_t* includes_set,
               wxStringSet_t* using_ns_set);
+    void scan_buffer(const wxFileName& current_file, const wxString& content, const wxArrayString& search_path,
+                     wxStringSet_t* includes_set, wxStringSet_t* using_ns_set);
 };
 
 #endif // SCANNER_HPP

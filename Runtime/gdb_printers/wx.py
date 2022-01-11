@@ -1,74 +1,65 @@
-# Pretty-printers for wxWidgets.
+###############################################################################
+# Name:         misc/gdb/print.py
+# Purpose:      pretty-printers for wx data structures: this file is meant to
+#               be sourced from gdb using "source -p" (or, better, autoloaded
+#               in the future...)
+# Author:       Vadim Zeitlin
+# Created:      2009-01-04
+# Copyright:    (c) 2009 Vadim Zeitlin
+# Licence:      wxWindows licence
+###############################################################################
+
+# Define wxFooPrinter class implementing (at least) to_string() method for each
+# wxFoo class we want to pretty print. Then just add wxFoo to the types array
+# in wxLookupFunction at the bottom of this file.
+
+import datetime
 import gdb
 import itertools
-import re
-import platform
+import sys
 
+if sys.version_info[0] > 2:
+    # Python 3
+    Iterator = object
+
+    long = int
+else:
+    # Python 2, we need to make an adaptor, so we can use Python 3 iterator implementations.
+    class Iterator:
+        def next(self):
+            return self.__next__()
+
+# shamelessly stolen from std::string example
 class wxStringPrinter:
-
     def __init__(self, val):
         self.val = val
-        self.max_string_length = 1024
 
     def to_string(self):
-        ret = ""
-        wx29 = 0
-        try:
-            # wx-28 has m_pchData
-            self.val['m_pchData']
-        except Exception:
-            wx29 = 1
+        return self.val['m_impl']['_M_dataplus']['_M_p']
 
-        try:
-            if wx29:
-                length = self.val['m_impl']['_M_string_length']
-                if length > self.max_string_length:
-                    dataAsCharPointer = '"' + self.val['m_impl']['_M_dataplus']['_M_p'].string(length = self.max_string_length) + '"...'
-                else:
-                    dataAsCharPointer = '"' + self.val['m_impl']['_M_dataplus']['_M_p'].string() + '"'
-            else:
-                dataAsCharPointer = '"' + self.val['m_pchData'].string() + '"'
-            ret = dataAsCharPointer
-        except Exception:
-            # swallow the exception and return empty string
-            pass
-        return ret
+    def display_hint(self):
+        return 'string'
 
-    def display_hint (self):
-        return 'wxString'
-        
-class wxArrayString:
-    class _iterator:
-        def __init__ (self, items, item_count):
-            self.items = items
-            self.item_count = item_count
-            self.count = 0
-            self.max_string_length = 64
+class wxArrayStringPrinter:
+
+    class _iterator(Iterator):
+        def __init__ (self, firstItem, count):
+            self.item = firstItem
+            self.count = count
+            self.current = 0
 
         def __iter__(self):
             return self
 
-        def next(self):
-            count = self.count
-            self.count = self.count + 1
-            if count >= self.item_count or count > 5000: # Even 5000 gives a noticeable pause
-                raise StopIteration
-            try:
-                # Try the wx >=2.9 way first
-                length = self.items[count]['m_impl']['_M_string_length']
-                if length > self.max_string_length:
-                    elt = '"' + self.items[count]['m_impl']['_M_dataplus']['_M_p'].string(length = self.max_string_length) + '"...'
-                else:
-                    elt = '"' + self.items[count]['m_impl']['_M_dataplus']['_M_p'].string() + '"'
-            
-            except Exception:
-                # The wx2.8 way
-                elt = self.items[count]
-            return ('[%d]' % count, elt)
-
-         # Python3 version
         def __next__(self):
-            return self.next()
+            current = self.current
+            self.current = self.current + 1
+
+            if current == self.count:
+                raise StopIteration
+            elt = self.item.dereference()
+            self.item = self.item + 1
+            return ('[%d]' % current, elt)
 
     def __init__(self, val):
         self.val = val
@@ -77,12 +68,26 @@ class wxArrayString:
         return self._iterator(self.val['m_pItems'], self.val['m_nCount'])
 
     def to_string(self):
-        # Ideal would be to return e.g. "wxArrayInt", but how to find the type?
-        return "wxArrayString"
+        count = self.val['m_nCount']
+        capacity = self.val['m_nSize']
+        return ('length %d, capacity %d' % (int (count), int (capacity)))
 
     def display_hint(self):
         return 'array'
 
+class wxDateTimePrinter:
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        # A value of type wxLongLong can't be used in Python arithmetic
+        # expressions directly so we need to convert it to long long first and
+        # then cast to int explicitly to be able to use it as a timestamp.
+        msec = self.val['m_time'].cast(gdb.lookup_type('long long'))
+        if msec == 0x8000000000000000:
+            return 'NONE'
+        sec = int(msec / 1000)
+        return datetime.datetime.fromtimestamp(sec).isoformat(' ')
 
 class wxFileNamePrinter:
     def __init__(self, val):
@@ -95,8 +100,7 @@ class wxFileNamePrinter:
         # debugging using only a core file. If this ever becomes a serious
         # problem, this should be rewritten to use m_dirs and m_name and m_ext.
         return gdb.parse_and_eval('((wxFileName*)%s)->GetFullPath(0)' %
-                                  self.val.address)     
-
+                                  self.val.address)
 
 class wxXYPrinterBase:
     def __init__(self, val):
@@ -120,48 +124,25 @@ class wxRectPrinter(wxXYPrinterBase):
     def to_string(self):
         return '(%d, %d) %d*%d' % (self.x, self.y, self.width, self.height)
 
-def register_wx_printers (obj):
-    if obj == None:
-        obj = gdb
 
-    obj.pretty_printers.append (lookup_function)
+# The function looking up the pretty-printer to use for the given value.
+def wxLookupFunction(val):
+    # Using a list is probably ok for so few items but consider switching to a
+    # set (or a dict and cache class types as the keys in it?) if needed later.
+    types = ['wxString',
+             'wxArrayString',
+             'wxDateTime',
+             'wxFileName',
+             'wxPoint',
+             'wxSize',
+             'wxRect']
 
-def lookup_function (val):
-    "Look-up and return a pretty-printer that can print val."
+    for t in types:
+        if val.type.tag == t:
+            # Not sure if this is the best name to create the object of a class
+            # by name but at least it beats eval()
+            return globals()[t + 'Printer'](val)
 
-    # Get the type.
-    type = val.type;
-
-    # If it points to a reference, get the reference.
-    if type.code == gdb.TYPE_CODE_REF:
-        type = type.target ()
-
-    # Get the unqualified type, stripped of typedefs.
-    type = type.unqualified ().strip_typedefs ()
-
-    # Get the type name.
-    typename = type.tag
-    if typename == None:
-        return None
-
-    # Iterate over local dictionary of types to determine
-    # if a printer is registered for that type.  Return an
-    # instantiation of the printer if found.
-    for function in pretty_printers_dict:
-        if function.search (typename):
-            return pretty_printers_dict[function] (val)
-
-    # Cannot find a pretty printer.  Return None.
     return None
 
-def build_dictionary ():
-    pretty_printers_dict[re.compile('^wxString$')] = lambda val: wxStringPrinter(val)
-    pretty_printers_dict[re.compile('wxArrayString')] = lambda val: wxArrayString(val)
-    if platform.system() != 'Windows':
-        pretty_printers_dict[re.compile('^wxFileName$')] = lambda val: wxFileNamePrinter(val)
-    pretty_printers_dict[re.compile('^wxPoint$')] = lambda val: wxPointPrinter(val)
-    pretty_printers_dict[re.compile('^wxSize$')] = lambda val: wxSizePrinter(val)
-    pretty_printers_dict[re.compile('^wxRect$')] = lambda val: wxRectPrinter(val)
-
-pretty_printers_dict = {}
-build_dictionary ()
+gdb.pretty_printers.append(wxLookupFunction)

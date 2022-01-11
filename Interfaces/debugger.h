@@ -36,6 +36,7 @@
 #include "wx/arrstr.h"
 #include "wx/event.h"
 #include "wx/string.h"
+
 #include <wx/stdpaths.h>
 #include <wx/string.h>
 
@@ -263,8 +264,11 @@ public:
 
         wxFileName fnPrettyPrintersDir = wxFileName(clStandardPaths::Get().GetUserDataDir(), wxEmptyString);
         fnPrettyPrintersDir.AppendDir("gdb_printers");
-        initFileCommands.Replace("$CodeLiteGdbPrinters", fnPrettyPrintersDir.GetPath());
+        initFileCommands.Replace("${CODELITE_GDB_PRINTERS_DIR}", fnPrettyPrintersDir.GetPath());
         initFileCommands.Trim();
+
+        // use Linux style syntax
+        initFileCommands.Replace("\\", "/");
 
         READ_CONFIG_PARAM("maxDisplayStringSize", maxDisplayStringSize);
         READ_CONFIG_PARAM("maxDisplayElements", maxDisplayElements);

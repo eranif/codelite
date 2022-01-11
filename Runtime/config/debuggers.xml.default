@@ -18,16 +18,10 @@
         <CData Name="startupCommands">
             <![CDATA[python
 import sys
-sys.path.insert(0, '$CodeLiteGdbPrinters')
+sys.path.insert(0, "${CODELITE_GDB_PRINTERS_DIR}")
 
 from libstdcxx.v6.printers import register_libstdcxx_printers
-register_libstdcxx_printers (None)
-
-from qt4 import register_qt4_printers
-register_qt4_printers (None)
-
 from wx import register_wx_printers
-register_wx_printers (None)
 
 end]]>
         </CData>

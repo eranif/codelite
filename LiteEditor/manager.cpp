@@ -2136,6 +2136,7 @@ void Manager::DbgStart(long attachPid)
     si.ttyName = m_debuggerTerminal.GetTty();
     si.PID = PID;
     si.enablePrettyPrinting = dinfo.enableGDBPrettyPrinting;
+    si.cmds = ::wxStringTokenize(dinfo.initFileCommands, "\r\n", wxTOKEN_STRTOK);
 
     if(bldConf) {
         si.searchPaths = bldConf->GetDebuggerSearchPaths();

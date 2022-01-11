@@ -603,8 +603,7 @@ wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, in
         clDEBUG1() << text << endl;
     } else {
         // use the entire file content
-        text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
-                                                CompletionHelper::TRUNCATE_EXACT_POS);
+        text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character, flag);
         clDEBUG1() << "Unable to minimize the buffer, using the complete buffer" << endl;
     }
     return text;
@@ -1197,10 +1196,10 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel& channel, bo
                                                       CompletionHelper::TRUNCATE_COMPLETE_LINES);
     bool is_include_completion = helper.is_include_statement(text2, &file_name, &suffix);
     if(is_include_completion) {
-        clDEBUG() << "Resolving #include" << file_name << endl;
+        clDEBUG() << "Is #include for file:" << file_name << endl;
     } else {
-        clDEBUG() << "Calling WordCompletionCandidates with expression:" << expression << ", last_word=" << last_word
-                  << endl;
+        clDEBUG() << "Not #include. will call `find_definition` with expression:" << expression
+                  << ", last_word=" << last_word << endl;
     }
 
     vector<TagEntryPtr> tags;

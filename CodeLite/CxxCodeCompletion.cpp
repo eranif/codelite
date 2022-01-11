@@ -1312,7 +1312,7 @@ TagEntryPtr CxxCodeCompletion::find_definition(const wxString& filepath, int lin
     // ----------------------------------
     // word completion
     // ----------------------------------
-    clDEBUG() << "find_definition is called" << endl;
+    clDEBUG() << "find_definition is called for expression:" << expression << endl;
     vector<TagEntryPtr> candidates;
     if(word_complete(filepath, line, expression, text, visible_scopes, true, candidates) == 0) {
         return nullptr;

@@ -203,28 +203,33 @@ TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, std::vector<TagEntry>& 
         }
     }
 
-    // at eof?
-    if(m_curline == (m_textFile.GetLineCount() - 1)) {
+    if(m_curline >= m_textFile.GetLineCount()) {
         return nullptr;
     }
 
-    tags.clear();
     std::vector<TagEntry> tmp_tags;
-    tags.reserve(1000); // pre allocate memory
     tmp_tags.reserve(1000);
 
-    size_t i = m_curline;
-    for(; i < m_textFile.GetLineCount(); ++i) {
-        m_curline = i;
-        wxString& line = m_textFile.GetLine(i);
+    while(m_curline < m_textFile.GetLineCount()) {
+        wxString& line = m_textFile.GetLine(m_curline);
         line.Trim(false).Trim();
         if(line.empty()) {
+            m_curline++;
             continue;
         }
 
         // construct a tag from the line
         TagEntry t;
         t.FromLine(line);
+        if(fullpath.empty()) {
+            fullpath = t.GetFile();
+        }
+
+        if(t.GetFile() != fullpath) {
+            // we switched to another file, stop
+            // but dont progress the line number
+            break;
+        }
 
         // if requested, update the filename
         if(!force_filepath.empty()) {
@@ -232,22 +237,19 @@ TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, std::vector<TagEntry>& 
         }
 
         // add it to the vector
-        tags.push_back(t);     // a copy of the tag
         tmp_tags.push_back(t); // a copy of the tag
-
-        if(fullpath.empty()) {
-            fullpath = tmp_tags[0].GetFile();
-        }
-
-        if(fullpath != tmp_tags.back().GetFile()) {
-            // we moved to another file, remove the last tag and leave the loop
-            tmp_tags.pop_back();
-            break;
-        }
+        m_curline++;
     }
+
     if(tmp_tags.empty()) {
         return nullptr;
     }
+
+    // copy `tmp_tags` into `tags`
+    tags.clear();
+    tags.reserve(tmp_tags.size());
+    tags.insert(tags.end(), tmp_tags.begin(), tmp_tags.end());
+
     return TreeFromTags(tmp_tags);
 }
 

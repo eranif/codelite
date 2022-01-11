@@ -583,6 +583,40 @@ wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
     return return_value;
 }
 
+namespace
+{
+void remove_template_instantiation(vector<pair<int, wxString>>& tokens)
+{
+    bool is_template_inst = !tokens.empty() && tokens.back().first == '>';
+    if(!is_template_inst)
+        return;
+
+    // remove the open angle bracket
+    tokens.pop_back();
+
+    int depth = 1;
+    bool cont = true;
+    while(cont && !tokens.empty()) {
+        int type = tokens.back().first;
+        switch(type) {
+        case '<':
+            depth--;
+            if(depth == 0) {
+                cont = false;
+            }
+            tokens.pop_back();
+            break;
+        case '>':
+            depth++;
+            tokens.pop_back();
+            break;
+        default:
+            tokens.pop_back();
+            break;
+        }
+    }
+}
+} // namespace
 wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const wxString& name) const
 {
     // parse the function and extract the return type
@@ -646,12 +680,22 @@ wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const w
 
     // remove the scope tokens
     // assume the signature looks like this:
-    // vector<string> foo::bar::baz::koo::kookoo::
+    //
+    //  ```
+    //  vector<string> foo::bar::baz::koo::kookoo::
+    //  ```
+    //
     // check if the last token is T_DOUBLE_COLONS ->
     // remove it and the next one after it
+    // another case:
+    //  ```
+    //  template<typename T> T* CLASS<T>::FUNC
+    //  ```
     while(!tokens.empty()) {
         if(tokens.back().first == T_DOUBLE_COLONS) {
             tokens.pop_back();
+            // handle template instantiation e.g. `template<typename T> T* CLASS<T>::FUNC`
+            remove_template_instantiation(tokens);
             if(!tokens.empty()) {
                 tokens.pop_back();
             }

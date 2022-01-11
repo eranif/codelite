@@ -429,7 +429,7 @@ TEST_FUNC(test_cxx_code_completion_init_from_ctor)
     return true;
 }
 
-TEST_FUNC(test_cxx_code_completion_inhertiance_children)
+TEST_FUNC(test_cxx_code_completion_inheritance_children)
 {
     ENSURE_DB_LOADED();
     CxxRemainder remainder;

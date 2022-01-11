@@ -93,7 +93,7 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuFile->AppendSeparator();
 
     m_menuItemBackToCodelite =
-        new wxMenuItem(m_menuFile, wxID_BACKWARD, _("Back to codelite\tCtrl-Shift-F12"), wxT(""), wxITEM_NORMAL);
+        new wxMenuItem(m_menuFile, wxID_BACKWARD, _("Back to CodeLite\tCtrl-Shift-F12"), wxT(""), wxITEM_NORMAL);
     m_menuFile->Append(m_menuItemBackToCodelite);
 
     m_menuView = new wxMenu();
@@ -227,6 +227,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
                   wxUpdateUIEventHandler(MainFrameBase::OnBatchGenerateCodeUI), NULL, this);
     this->Connect(m_menuItemBackToCodelite->GetId(), wxEVT_UPDATE_UI,
                   wxUpdateUIEventHandler(MainFrameBase::OnSwitchToCodeliteUI), NULL, this);
+    this->Connect(m_menuItemBackToCodelite->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                  wxCommandEventHandler(MainFrameBase::OnSwitchToCodelite), NULL, this);
     this->Connect(m_menuItemPreview->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                   wxCommandEventHandler(MainFrameBase::OnPreview), NULL, this);
     this->Connect(m_menuItemPreview->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBase::OnPreviewUI), NULL,
@@ -302,6 +304,8 @@ MainFrameBase::~MainFrameBase()
                      wxUpdateUIEventHandler(MainFrameBase::OnBatchGenerateCodeUI), NULL, this);
     this->Disconnect(m_menuItemBackToCodelite->GetId(), wxEVT_UPDATE_UI,
                      wxUpdateUIEventHandler(MainFrameBase::OnSwitchToCodeliteUI), NULL, this);
+    this->Disconnect(m_menuItemBackToCodelite->GetId(), wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(MainFrameBase::OnSwitchToCodelite), NULL, this);
     this->Disconnect(m_menuItemPreview->GetId(), wxEVT_COMMAND_MENU_SELECTED,
                      wxCommandEventHandler(MainFrameBase::OnPreview), NULL, this);
     this->Disconnect(m_menuItemPreview->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MainFrameBase::OnPreviewUI),

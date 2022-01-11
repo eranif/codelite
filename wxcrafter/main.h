@@ -6,6 +6,7 @@
 #include "wxcEvent.h"
 #include "wxcTreeView.h"
 #include "wxguicraft_main_view.h"
+
 #include <wx/cmdline.h>
 #include <wx/fdrepdlg.h>
 #include <wx/stc/stc.h>
@@ -45,7 +46,6 @@ protected:
     virtual void OnSettings(wxCommandEvent& event);
     virtual void OnProjectClosed(wxCommandEvent& event);
     virtual void OnHide(wxCommandEvent& event);
-    virtual void OnRestoreFrame(wxCommandEvent& event);
     virtual void OnAbout(wxCommandEvent& event);
     virtual void OnImportFB(wxCommandEvent& event);
     virtual void OnImportSmith(wxCommandEvent& event);
@@ -107,6 +107,9 @@ public:
     wxWindow* GetDesignerParent() { return m_splitterPageDesigner; }
 
     void DisplayDesigner();
+    void MinimizeDesigner();
+    void HideDesigner();
+
     void SetStatusMessage(const wxString& message);
 
 protected:

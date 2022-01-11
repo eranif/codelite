@@ -1,15 +1,17 @@
+#include "wxcTreeView.h"
+
 #include "EventsEditorDlg.h"
 #include "allocator_mgr.h"
 #include "drawingutils.h"
-#include "wxcTreeView.h"
+#include "event_notifier.h"
+#include "globals.h"
+#include "plugin.h"
+#include "workspace.h"
 #include "wxcrafter.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_defs.h"
 #include "wxguicraft_main_view.h"
-#include <event_notifier.h>
-#include <globals.h>
-#include <plugin.h>
-#include <workspace.h>
+
 #include <wx/aui/auibar.h>
 
 const wxEventType wxEVT_SHOW_WXCRAFTER_DESIGNER = wxNewEventType();
@@ -236,11 +238,12 @@ void wxcTreeView::OnSashPositionChanged(wxSplitterEvent& event)
 
 void wxcTreeView::OnChar(wxKeyEvent& event)
 {
-    event.Skip();
     if(event.GetKeyCode() == WXK_DELETE) {
         // Fake the corresponding menu event and throw it at the tree, which is Connect()ed to GUICraftMainPanel
         wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, ID_DELETE_NODE);
         wxPostEvent(m_treeControls, e);
+    } else {
+        event.Skip();
     }
 }
 

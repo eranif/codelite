@@ -1,9 +1,16 @@
 #include "main.h"
 
+#include "ColoursAndFontsManager.h"
+#include "bitmap_loader.h"
+#include "cl_aui_dock_art.h"
+#include "editor_config.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
+#include "imanager.h"
+#include "plugin.h"
 #include "serial_number.h"
-#include "wx/frame.h"
-#include "wx/toplevel.h"
+#include "windowattrmanager.h"
 #include "wxc_aui_tool_stickiness.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
@@ -11,23 +18,15 @@
 #include "wxgui_defs.h"
 #include "wxguicraft_main_view.h"
 
-#include <ColoursAndFontsManager.h>
-#include <bitmap_loader.h>
-#include <cl_aui_dock_art.h>
-#include <editor_config.h>
-#include <event_notifier.h>
-#include <file_logger.h>
-#include <globals.h>
-#include <imanager.h>
-#include <plugin.h>
-#include <windowattrmanager.h>
 #include <wx/dcmemory.h>
 #include <wx/ffile.h>
 #include <wx/filedlg.h>
+#include <wx/frame.h>
 #include <wx/iconbndl.h>
 #include <wx/msgdlg.h>
 #include <wx/socket.h>
 #include <wx/sysopt.h>
+#include <wx/toplevel.h>
 
 #define CHECK_IF_FOCUS_ON_READONLY_STC()    \
     wxStyledTextCtrl* stc = GetActiveSTC(); \
@@ -299,6 +298,7 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
 
 #if !STANDALONE_BUILD
     Hide();
+    SetCanFocus(true);
     SetName("MainFrame");
     WindowAttrManager::Load(this);
 #else
@@ -350,12 +350,8 @@ void MainFrame::OnCloseFrame(wxCloseEvent& event)
 #endif
 
 #else
-    wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
-    if(mainFrame) {
-        mainFrame->Raise();
-        // minimize to the task bar
-        this->Iconize();
-    }
+    wxUnusedVar(event);
+    HideDesigner();
 #endif
 }
 
@@ -585,14 +581,8 @@ void MainFrame::OnBuildUI(wxUpdateUIEvent& event)
 
 void MainFrame::OnSwitchToCodelite(wxCommandEvent& event)
 {
-    if(IsShown()) {
-        wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
-        if(mainFrame) {
-            mainFrame->Raise();
-            // minimize to the task bar
-            this->Iconize();
-        }
-    }
+    wxUnusedVar(event);
+    MinimizeDesigner();
 }
 
 void MainFrame::OnRename(wxCommandEvent& event)
@@ -636,11 +626,12 @@ void MainFrame::OnAbout(wxCommandEvent& event)
 
 void MainFrame::OnHide(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
 #if STANDALONE_BUILD
     m_exiting = true;
     Close();
 #else
-    Hide();
+    HideDesigner();
 #endif
 }
 
@@ -659,6 +650,33 @@ void MainFrame::DisplayDesigner()
         Restore();
     }
     Raise();
+    SetFocus();
+}
+
+void MainFrame::MinimizeDesigner()
+{
+    if(IsShown() && !IsIconized()) {
+        // minimize to the task bar
+        this->Iconize();
+
+        wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
+        if(mainFrame) {
+            mainFrame->Raise();
+        }
+    }
+}
+
+void MainFrame::HideDesigner()
+{
+    if(IsShown()) {
+        // hide the designer
+        this->Hide();
+
+        wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
+        if(mainFrame) {
+            mainFrame->Raise();
+        }
+    }
 }
 
 void MainFrame::OnProjectClosed(wxCommandEvent& event)
@@ -991,15 +1009,6 @@ void MainFrame::OnNetNewForm(wxcNetworkEvent& event)
 }
 
 void MainFrame::EnsureVisibile() { DisplayDesigner(); }
-
-void MainFrame::OnRestoreFrame(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    if(!IsShown()) {
-        Show();
-    }
-    Raise();
-}
 
 void MainFrame::OnBatchGenerateCode(wxCommandEvent& event)
 {

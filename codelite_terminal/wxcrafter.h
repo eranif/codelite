@@ -7,6 +7,7 @@
 #ifndef _CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
 #define _CODELITE_CODELITE_TERMINAL_WXCRAFTER_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -37,6 +38,8 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+// clang-format on
+
 class MainFrameBaseClass : public wxFrame
 {
 protected:
@@ -59,8 +62,8 @@ protected:
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxPanel* GetMainPanel() { return m_mainPanel; }
-    wxMenuBar* GetMenuBar() { return m_menuBar; }
+    wxPanel* GetMainPanel() noexcept { return m_mainPanel; }
+    wxMenuBar* GetMenuBar() noexcept { return m_menuBar; }
     MainFrameBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("codelite-terminal"),
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_FRAME_STYLE);
@@ -81,14 +84,14 @@ protected:
 
 protected:
 public:
-    wxStaticText* GetStaticText31() { return m_staticText31; }
-    wxColourPickerCtrl* GetColourPickerFG() { return m_colourPickerFG; }
-    wxStaticText* GetStaticText35() { return m_staticText35; }
-    wxColourPickerCtrl* GetColourPickerBG() { return m_colourPickerBG; }
-    wxStaticText* GetStaticText39() { return m_staticText39; }
-    wxFontPickerCtrl* GetFontPicker() { return m_fontPicker; }
-    wxButton* GetButton45() { return m_button45; }
-    wxButton* GetButton47() { return m_button47; }
+    wxStaticText* GetStaticText31() noexcept { return m_staticText31; }
+    wxColourPickerCtrl* GetColourPickerFG() noexcept { return m_colourPickerFG; }
+    wxStaticText* GetStaticText35() noexcept { return m_staticText35; }
+    wxColourPickerCtrl* GetColourPickerBG() noexcept { return m_colourPickerBG; }
+    wxStaticText* GetStaticText39() noexcept { return m_staticText39; }
+    wxFontPickerCtrl* GetFontPicker() noexcept { return m_fontPicker; }
+    wxButton* GetButton45() noexcept { return m_button45; }
+    wxButton* GetButton47() noexcept { return m_button47; }
     SettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"),
                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

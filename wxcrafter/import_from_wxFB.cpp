@@ -688,8 +688,8 @@ wxString ImportFromwxFB::GetEventtypeFromHandlerstub(const wxString& stub)
         sm_eventMap.insert(std::pair<wxString, wxString>("EVT_LIST_ITEM_SELECTED", "wxEVT_COMMAND_LIST_ITEM_SELECTED"));
         sm_eventMap.insert(std::pair<wxString, wxString>("OnListKeyDown", "wxEVT_COMMAND_LIST_KEY_DOWN"));
         sm_eventMap.insert(std::pair<wxString, wxString>("EVT_LIST_KEY_DOWN", "wxEVT_COMMAND_LIST_KEY_DOWN"));
-        sm_eventMap.insert(std::pair<wxString, wxString>("OnMenuSelection", "wxEVT_COMMAND_MENU_SELECTED"));
-        sm_eventMap.insert(std::pair<wxString, wxString>("EVT_MENU", "wxEVT_COMMAND_MENU_SELECTED"));
+        sm_eventMap.insert(std::pair<wxString, wxString>("OnMenuSelection", "wxEVT_MENU"));
+        sm_eventMap.insert(std::pair<wxString, wxString>("EVT_MENU", "wxEVT_MENU"));
         sm_eventMap.insert(std::pair<wxString, wxString>("OnNoButtonClick", "wxEVT_COMMAND_BUTTON_CLICKED"));
         sm_eventMap.insert(
             std::pair<wxString, wxString>("OnNotebookPageChanged", "wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED"));

@@ -600,16 +600,7 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags)
 {
-    if(false) {
-        clDEBUG1() << "Testing cache for" << sql << clEndl;
-        if(m_cache.Get(sql, tags) == true) {
-            clDEBUG1() << "[CACHED ITEMS]" << sql << clEndl;
-            return;
-        }
-    }
-
-    clDEBUG1() << "Entry not found in cache" << sql << clEndl;
-    clDEBUG1() << "Fetching from disk..." << clEndl;
+    clDEBUG1() << "Fetching from disk:" << sql << clEndl;
     tags.reserve(1000);
 
     try {
@@ -627,29 +618,16 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
     } catch(wxSQLite3Exception& e) {
         clWARNING() << "TagsStorageSQLite::DoFetchTags() error:" << e.GetMessage() << clEndl;
     }
-    clDEBUG1() << "Fetching from disk...done" << clEndl;
-    if(false) {
-        clDEBUG1() << "Updating cache" << clEndl;
-        m_cache.Store(sql, tags);
-        clDEBUG1() << "Updating cache...done (" << tags.size() << "entries)" << clEndl;
-    }
+    clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << clEndl;
 }
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags, const wxArrayString& kinds)
 {
-    if(false) {
-        CL_DEBUG1(wxT("Testing cache for: %s"), sql);
-        if(m_cache.Get(sql, kinds, tags) == true) {
-            CL_DEBUG1(wxT("[CACHED ITEMS] %s"), sql);
-            return;
-        }
-    }
-
     wxStringSet_t set_kinds;
     set_kinds.insert(kinds.begin(), kinds.end());
     tags.reserve(1000);
 
-    CL_DEBUG1("Fetching from disk");
+    clDEBUG1() << "Fetching from disk:" << sql << endl;
     try {
         wxSQLite3ResultSet ex_rs;
         ex_rs = Query(sql);
@@ -671,12 +649,7 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
     } catch(wxSQLite3Exception& e) {
         wxUnusedVar(e);
     }
-    CL_DEBUG1("Fetching from disk...done");
-    if(false) {
-        CL_DEBUG1("updating cache");
-        m_cache.Store(sql, kinds, tags);
-        CL_DEBUG1("updating cache...done");
-    }
+    clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << endl;
 }
 
 void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,

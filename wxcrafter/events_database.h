@@ -1,9 +1,11 @@
 #ifndef EVENTSDATABASE_H
 #define EVENTSDATABASE_H
 
-#include "wxcLib/json_node.h"
 #include "wx_ordered_map.h"
+#include "wxcLib/json_node.h"
+
 #include <map>
+#include <unordered_map>
 #include <wx/menu.h>
 #include <wx/string.h>
 #include <wx/xrc/xmlres.h>
@@ -14,7 +16,6 @@ protected:
     wxString m_eventName;
     wxString m_eventClass;
     wxString m_description;
-    wxString m_eventHandler;
     wxString m_functionNameAndSignature;
     bool m_noBody;
     wxString m_ifBlock; // In case this event should be wrapped with #if / #endif block, mark it here
@@ -23,12 +24,10 @@ public:
     ConnectDetails() {}
 
     ConnectDetails(const wxString& eventName, const wxString& eventClass, const wxString& description,
-                   const wxString& eventHandlerMacro, const wxString& functionNameAndSignature = wxT(""),
-                   bool noBody = false)
+                   bool noBody = false, const wxString& functionNameAndSignature = "")
         : m_eventName(eventName)
         , m_eventClass(eventClass)
         , m_description(description)
-        , m_eventHandler(eventHandlerMacro)
         , m_functionNameAndSignature(functionNameAndSignature)
         , m_noBody(noBody)
     {
@@ -42,7 +41,6 @@ public:
         JSONElement element = JSONElement::createObject();
         element.addProperty(wxT("m_eventName"), m_eventName);
         element.addProperty(wxT("m_eventClass"), m_eventClass);
-        element.addProperty(wxT("m_eventHandler"), m_eventHandler);
         element.addProperty(wxT("m_functionNameAndSignature"), m_functionNameAndSignature);
         element.addProperty(wxT("m_description"), m_description);
         element.addProperty(wxT("m_noBody"), m_noBody);
@@ -53,7 +51,6 @@ public:
     {
         m_eventName = json.namedObject(wxT("m_eventName")).toString();
         m_eventClass = json.namedObject(wxT("m_eventClass")).toString();
-        m_eventHandler = json.namedObject(wxT("m_eventHandler")).toString();
         m_functionNameAndSignature = json.namedObject(wxT("m_functionNameAndSignature")).toString();
         m_description = json.namedObject(wxT("m_description")).toString();
         m_noBody = json.namedObject(wxT("m_noBody")).toBool();
@@ -65,27 +62,15 @@ public:
 
     const wxString& GetEventClass() const { return m_eventClass; }
 
-    void SetEventHandler(const wxString& eventHandler) { this->m_eventHandler = eventHandler; }
-
     void SetEventName(const wxString& eventName) { this->m_eventName = eventName; }
-
     void SetFunctionNameAndSignature(const wxString& functionNameAndSignature);
-
     void SetNoBody(bool noBody) { this->m_noBody = noBody; }
-
-    const wxString& GetEventHandler() const { return m_eventHandler; }
-
     const wxString& GetEventName() const { return m_eventName; }
-
     const wxString& GetFunctionNameAndSignature() const { return m_functionNameAndSignature; }
-
     bool GetNoBody() const { return m_noBody; }
-
     int GetMenuItemId() const { return wxXmlResource::GetXRCID(m_eventName); }
-
     void GenerateFunctionName(const wxString& controlName);
     void MakeSignatureForName(const wxString& name);
-
     wxString GetFunctionImpl(const wxString& classname) const;
     wxString GetFunctionDecl() const;
 };
@@ -96,7 +81,7 @@ class EventsDatabase
 {
 public:
     typedef wxOrderedMap<wxString, ConnectDetails> MapEvents_t;
-    typedef std::map<int, wxString> MapMenuIdToName_t;
+    typedef std::unordered_map<int, wxString> MapMenuIdToName_t;
 
 protected:
     MapEvents_t m_events;
@@ -111,7 +96,7 @@ public:
 
     void Add(const ConnectDetails& ed);
     void Add(const wxString& eventName, const wxString& className, const wxString& description,
-             const wxString& handlerName, const wxString& functionNameAndSig = "", bool noBody = false);
+             const wxString& functionNameAndSig = "", bool noBody = false);
     void Clear();
     bool Exists(int menuId) const;
     ConnectDetails Item(int menuId) const;

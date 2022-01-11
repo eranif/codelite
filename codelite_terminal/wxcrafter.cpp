@@ -74,7 +74,9 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("MainFrameBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
@@ -88,28 +90,20 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     }
 #endif
     // Connect events
-    this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MainFrameBaseClass::OnClose), NULL, this);
-    this->Connect(m_menuItemClearScreen->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                  wxCommandEventHandler(MainFrameBaseClass::OnClearScreen), NULL, this);
-    this->Connect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                  wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
-    this->Connect(m_menuItemExit->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                  wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
-    this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout),
-                  NULL, this);
+    this->Bind(wxEVT_CLOSE_WINDOW, &MainFrameBaseClass::OnClose, this);
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnClearScreen, this, m_menuItemClearScreen->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnSettings, this, m_menuItemPreferences->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnExit, this, m_menuItemExit->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnAbout, this, m_menuItem9->GetId());
 }
 
 MainFrameBaseClass::~MainFrameBaseClass()
 {
-    this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MainFrameBaseClass::OnClose), NULL, this);
-    this->Disconnect(m_menuItemClearScreen->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(MainFrameBaseClass::OnClearScreen), NULL, this);
-    this->Disconnect(m_menuItemPreferences->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(MainFrameBaseClass::OnSettings), NULL, this);
-    this->Disconnect(m_menuItemExit->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
-    this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
+    this->Bind(wxEVT_CLOSE_WINDOW, &MainFrameBaseClass::OnClose, this);
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnClearScreen, this, m_menuItemClearScreen->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnSettings, this, m_menuItemPreferences->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnExit, this, m_menuItemExit->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnAbout, this, m_menuItem9->GetId());
 }
 
 SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -178,7 +172,9 @@ SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString
 
     SetName(wxT("SettingsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {

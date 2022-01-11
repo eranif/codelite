@@ -1,8 +1,11 @@
 #include "MainFrame.h"
+
 #include "SettingsDlg.h"
 #include "wxTerminalCtrl.h"
 #include "wxTerminalOptions.h"
+
 #include <wx/aboutdlg.h>
+#include <wx/msgdlg.h>
 
 MainFrame::MainFrame(wxWindow* parent)
     : MainFrameBaseClass(parent)

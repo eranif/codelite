@@ -1,4 +1,5 @@
 #include "menu_item_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "choice_property.h"
@@ -19,7 +20,7 @@ MenuItemWrapper::MenuItemWrapper()
     wxString label;
     label << wxT("Item") << (++counter);
 
-    RegisterEventCommand(wxT("wxEVT_COMMAND_MENU_SELECTED"), _("Menu item has been clicked"));
+    RegisterEventCommand(wxT("wxEVT_MENU"), _("Menu item has been clicked"));
 
     m_styles.Clear();
     m_sizerFlags.Clear();
@@ -93,7 +94,9 @@ wxString MenuItemWrapper::CppCtorCode() const
     } else {
         label << PropertyString(PROP_LABEL);
         wxString accel = PropertyString(PROP_ACCELERATOR).Trim().Trim(false);
-        if(!accel.IsEmpty()) { label << wxT("\\t") << accel; }
+        if(!accel.IsEmpty()) {
+            label << wxT("\\t") << accel;
+        }
         label.Trim().Trim(false);
 
         code << GetName() << wxT(" = new ") << GetWxClassName() << wxT("(") << GetWindowParent() << wxT(", ")
@@ -191,22 +194,34 @@ void MenuItemWrapper::DoLoadXRCProperties(const wxXmlNode* node)
     }
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("checkable"));
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_KIND, ITEM_CHECK); }
+    if(propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_KIND, ITEM_CHECK);
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("checked"));
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_CHECKED, "1"); }
+    if(propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_CHECKED, "1");
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("radio"));
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_KIND, ITEM_RADIO); }
+    if(propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_KIND, ITEM_RADIO);
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "bitmap");
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_MENU"); }
+    if(propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_MENU");
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "accel");
-    if(propertynode) { SetPropertyString(PROP_ACCELERATOR, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ACCELERATOR, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "help");
-    if(propertynode) { SetPropertyString(PROP_HELP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_HELP, propertynode->GetNodeContent());
+    }
 }
 
 void MenuItemWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -239,11 +254,17 @@ void MenuItemWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "shortcut");
-    if(propertynode) { SetPropertyString(PROP_ACCELERATOR, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_ACCELERATOR, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "help");
-    if(propertynode) { SetPropertyString(PROP_HELP, propertynode->GetNodeContent()); }
+    if(propertynode) {
+        SetPropertyString(PROP_HELP, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", wxT("checked"));
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_CHECKED, "1"); }
+    if(propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_CHECKED, "1");
+    }
 }

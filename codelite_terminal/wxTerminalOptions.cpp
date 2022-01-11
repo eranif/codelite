@@ -1,7 +1,9 @@
 #include "wxTerminalOptions.h"
+
 #include "fileutils.h"
-#include <drawingutils.h>
+
 #include <cl_standard_paths.h>
+#include <drawingutils.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
@@ -17,6 +19,7 @@ void wxTerminalOptions::SetCommandFromFile(const wxString& command)
 wxTerminalOptions::wxTerminalOptions()
 {
     m_font = DrawingUtils::GetDefaultFixedFont();
+    m_font.SetPointSize(14);
     m_textColour = wxColour("rgb(248, 248, 242)");
     m_bgColour = wxColour("rgb(41, 43, 55)");
 }
@@ -51,7 +54,9 @@ wxTerminalOptions& wxTerminalOptions::Load()
 {
     wxFileName fn(wxStandardPaths::Get().GetUserDataDir(), "wxterminalctrl.conf");
     JSON root(fn);
-    if(root.isOk()) { FromJSON(root.toElement()); }
+    if(root.isOk()) {
+        FromJSON(root.toElement());
+    }
     return *this;
 }
 

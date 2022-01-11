@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	77,
+		"m_objCounter":	87,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxC9ED9InitBitmapResources",
 		"m_bitmapsFile":	"wxcrafter_bitmaps.cpp",
@@ -11,6 +11,7 @@
 		"m_useEnum":	true,
 		"m_useUnderscoreMacro":	true,
 		"m_addHandlers":	true,
+		"m_keepSizers":	false,
 		"m_templateClasses":	[]
 	},
 	"windows":	[{
@@ -131,7 +132,6 @@
 			"m_events":	[{
 					"m_eventName":	"wxEVT_CLOSE_WINDOW",
 					"m_eventClass":	"wxCloseEvent",
-					"m_eventHandler":	"wxCloseEventHandler",
 					"m_functionNameAndSignature":	"OnClose(wxCloseEvent& event)",
 					"m_description":	"Process a close event. This event applies to wxFrame and wxDialog classes",
 					"m_noBody":	false
@@ -388,7 +388,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_MENU_SELECTED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnClearScreen(wxCommandEvent& event)",
 											"m_description":	"Menu item has been clicked",
 											"m_noBody":	false
@@ -483,7 +482,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_MENU_SELECTED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnSettings(wxCommandEvent& event)",
 											"m_description":	"Menu item has been clicked",
 											"m_noBody":	false
@@ -578,7 +576,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_MENU_SELECTED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnExit(wxCommandEvent& event)",
 											"m_description":	"Menu item has been clicked",
 											"m_noBody":	false
@@ -648,7 +645,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_MENU_SELECTED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnAbout(wxCommandEvent& event)",
 											"m_description":	"Menu item has been clicked",
 											"m_noBody":	false

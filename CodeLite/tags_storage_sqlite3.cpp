@@ -616,7 +616,8 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         }
         ex_rs.Finalize();
     } catch(wxSQLite3Exception& e) {
-        clWARNING() << "TagsStorageSQLite::DoFetchTags() error:" << e.GetMessage() << clEndl;
+        clERROR() << "SQLite exception!" << endl;
+        clERROR() << e.GetMessage() << endl;
     }
     clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << clEndl;
 }
@@ -647,7 +648,8 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         ex_rs.Finalize();
 
     } catch(wxSQLite3Exception& e) {
-        wxUnusedVar(e);
+        clERROR() << "SQLite exception!" << endl;
+        clERROR() << e.GetMessage() << endl;
     }
     clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << endl;
 }

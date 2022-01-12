@@ -239,8 +239,7 @@ void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString
         ProtocolHandler::cache_set_document_symbols(alternate_filename, move(tags));
         ++tagsCount;
 
-        // Send notification to the main window with our progress report
-        db->DeleteByFileName({}, alternate_filename.empty() ? curfile : alternate_filename, false);
+        db->DeleteByFileName({}, curfile, false);
         db->Store(ttp, {}, false);
 
         if((tagsCount % 1000) == 0) {

@@ -232,11 +232,6 @@ TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, std::vector<TagEntry>& 
             break;
         }
 
-        // if requested, update the filename
-        if(!force_filepath.empty()) {
-            t.SetFile(force_filepath);
-        }
-
         // add it to the vector
         tmp_tags.push_back(t); // a copy of the tag
         m_curline++;
@@ -244,6 +239,14 @@ TagTreePtr CTags::GetTagsTreeForFile(wxString& fullpath, std::vector<TagEntry>& 
 
     if(tmp_tags.empty()) {
         return nullptr;
+    }
+
+    // if requested, update the filename
+    if(!force_filepath.empty()) {
+        for(auto& tag : tmp_tags) {
+            tag.SetFile(force_filepath);
+        }
+        fullpath = force_filepath;
     }
 
     // copy `tmp_tags` into `tags`

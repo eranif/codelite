@@ -55,7 +55,7 @@ public:
         if(!frame.GetFileName().empty()) {
             line << " (" << frame.GetFileName() << ":" << frame.GetLine() << ")";
         }
-        clERROR() << frame << endl;
+        clERROR() << line << endl;
     }
 };
 #endif

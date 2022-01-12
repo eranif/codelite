@@ -169,8 +169,6 @@ TagTreePtr TagsManager::ParseSourceFile2(const wxFileName& fp, const wxString& t
 // Database operations
 //-----------------------------------------------------------
 
-void TagsManager::Store(TagTreePtr tree, const wxFileName& path) { GetDatabase()->Store(tree, path); }
-
 TagTreePtr TagsManager::Load(const wxFileName& fileName, TagEntryPtrVector_t* tags)
 {
     TagTreePtr tree;
@@ -2765,21 +2763,8 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
 
 TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
-    wxString ctags_args;
-    ctags_args << "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=" << kinds << " --C++-kinds=" << kinds << " ";
-    vector<TagEntry> tags =
-        CTags::RunOnBuffer(content, clStandardPaths::Get().GetTempDir(), ctags_args, GetIndexerPath());
-
     TagEntryPtrVector_t tagsVec;
-    tagsVec.reserve(tags.size());
-
-    for(const TagEntry& tag : tags) {
-        if(tag.IsLocalVariable())
-            continue;
-
-        TagEntryPtr tag_ptr(new TagEntry(tag));
-        tagsVec.emplace_back(tag_ptr);
-    }
+    CTags::ParseBuffer(filename, content, clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"), tagsVec);
     return tagsVec;
 }
 

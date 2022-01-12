@@ -32,7 +32,7 @@
 using LSP::CompletionItem;
 using LSP::eSymbolKind;
 
-unordered_map<wxString, vector<TagEntry>> ProtocolHandler::m_tags_cache;
+unordered_map<wxString, vector<TagEntryPtr>> ProtocolHandler::m_tags_cache;
 
 namespace
 {
@@ -163,38 +163,49 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
     return result;
 }
 
-void ProtocolHandler::parse_files_async(const vector<wxString>& files, const wxString& settings_folder,
-                                        const wxString& indexer_path)
+void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& buffer, const wxString& settings_folder,
+                                   const wxString& indexer_path)
 {
-    // prepare a list of files (size=1)
-    wxArrayString wx_files;
-    wx_files.reserve(files.size());
+    clDEBUG() << "Parsing buffer of file:" << filename << endl;
 
-    for(const auto& file : files) {
-        wx_files.Add(file);
+    // create/open db
+    wxFileName dbfile(settings_folder, "tags.db");
+    if(!dbfile.FileExists()) {
+        clDEBUG() << dbfile << "does not exist, will create it" << endl;
+    }
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    db->OpenDatabase(dbfile);
+    clDEBUG() << "Generating ctags file..." << endl;
+
+    vector<TagEntryPtr> tags;
+    if(!CTags::ParseBuffer(filename, buffer, indexer_path, tags)) {
+        clERROR() << "Failed to generate ctags file!" << endl;
+        return;
+    }
+    clDEBUG() << "Success" << endl;
+    clDEBUG() << "Updating symbols database..." << endl;
+
+    db->Begin();
+    time_t update_time = time(nullptr);
+    db->Store(tags, false);
+
+    if(db->InsertFileEntry(filename.GetFullPath(), (int)update_time) == TagExist) {
+        db->UpdateFileEntry(filename.GetFullPath(), (int)update_time);
     }
 
-    // force the output to the actual file name
-    parse_files(wx_files, settings_folder, indexer_path);
+    // Commit whats left
+    db->Commit();
+    clDEBUG() << "Success" << endl;
 }
 
-void ProtocolHandler::parse_buffer_async(const wxString& filepath, const wxString& file_content,
-                                         const wxString& settings_folder, const wxString& indexer_path)
+void ProtocolHandler::parse_file(const wxFileName& filename, const wxString& settings_folder,
+                                 const wxString& indexer_path)
 {
-    // write the content into a temporary file
-    clTempFile tempfile{ "cpp" };
-    tempfile.Write(file_content);
-
-    // prepare a list of files (size=1)
-    wxArrayString files;
-    files.Add(tempfile.GetFullPath());
-
-    // force the output to the actual file name
-    parse_files(files, settings_folder, indexer_path, filepath);
+    parse_files({ filename.GetFullPath() }, settings_folder, indexer_path);
 }
 
-void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString& settings_folder,
-                                  const wxString& indexer_path, const wxString& alternate_filename)
+void ProtocolHandler::parse_files(const vector<wxString>& file_list, const wxString& settings_folder,
+                                  const wxString& indexer_path)
 {
     clDEBUG() << "Parsing" << file_list.size() << "files" << endl;
     clDEBUG() << "Removing un-modified and unwanted files..." << endl;
@@ -206,51 +217,30 @@ void ProtocolHandler::parse_files(const wxArrayString& file_list, const wxString
     ITagsStoragePtr db(new TagsStorageSQLite());
     db->OpenDatabase(dbfile);
 
-    wxArrayString files_to_parse = file_list;
-    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files_to_parse, db);
+    wxArrayString files_to_parse;
+    files_to_parse.reserve(file_list.size());
+    for(const wxString& file : file_list) {
+        files_to_parse.Add(file);
+    }
 
-    clDEBUG() << "There are total of" << files_to_parse.size() << "files that require parsing" << endl;
+    TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files_to_parse, db);
+    vector<wxString> filtered_file_list = { files_to_parse.begin(), files_to_parse.end() };
+    clDEBUG() << "There are total of" << filtered_file_list.size() << "files that require parsing" << endl;
     clDEBUG() << "Generating ctags file..." << endl;
-    if(!CTags::Generate(files_to_parse, settings_folder, indexer_path)) {
+
+    vector<TagEntryPtr> tags;
+    if(!CTags::ParseFiles(filtered_file_list, indexer_path, tags)) {
         clERROR() << "Failed to generate ctags file!" << endl;
         return;
     }
     clDEBUG() << "Success" << endl;
-
-    // update the DB
-    wxStringSet_t updatedFiles;
-    CTags ctags(settings_folder);
-    if(!ctags.IsOpened()) {
-        clWARNING() << "Failed to open ctags file under:" << settings_folder << endl;
-        return;
-    }
-
-    wxString curfile;
-
-    // build the database
-    vector<TagEntry> tags;
-    TagTreePtr ttp = ctags.GetTagsTreeForFile(curfile, tags, alternate_filename);
     clDEBUG() << "Updating symbols database..." << endl;
+
     db->Begin();
-    size_t tagsCount = 0;
     time_t update_time = time(nullptr);
-    while(ttp) {
-        // cache the symbols
-        ProtocolHandler::cache_set_document_symbols(alternate_filename, move(tags));
-        ++tagsCount;
+    db->Store(tags, false);
 
-        db->DeleteByFileName({}, curfile, false);
-        db->Store(ttp, {}, false);
-
-        if((tagsCount % 1000) == 0) {
-            // Commit what we got so far
-            db->Commit();
-            // Start a new transaction
-            db->Begin();
-        }
-        tags.clear();
-        ttp = ctags.GetTagsTreeForFile(curfile, tags, alternate_filename);
-    }
+    // FIXME: update tags cache
 
     // update the files table in the database
     // we do this here, since some files might not yield tags
@@ -465,10 +455,11 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     send_log_message(_("Initialization completed"), LSP_LOG_INFO, channel);
 
     wxString indexer_path = m_settings.GetCodeliteIndexer();
+    vector<wxString> files_to_parse = { files.begin(), files.end() };
     auto parse_callback = [=]() {
-        clDEBUG() << "on_initialize(): parsing files..." << endl;
-        parse_files(files, m_settings_folder, indexer_path);
-        clDEBUG() << "on_initialize(): parsing files... Success" << endl;
+        clSYSTEM() << "on_initialize(): parsing files..." << endl;
+        ProtocolHandler::parse_files(files_to_parse, m_settings_folder, m_settings.GetCodeliteIndexer());
+        clSYSTEM() << "on_initialize(): parsing files... Success" << endl;
         return eParseThreadCallbackRC::RC_SUCCESS;
     };
     m_parse_thread.queue_parse_request(move(parse_callback));
@@ -514,7 +505,9 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel::ptr_t channel
 
     // update using namespace cache
     parse_file_for_includes_and_using_namespace(filepath);
-    parse_buffer_async(filepath, file_content, m_settings_folder, m_settings.GetCodeliteIndexer());
+
+    // make sure this file is up to date
+    parse_file(filepath, m_settings_folder, m_settings.GetCodeliteIndexer());
 
     // keep the file content in-cache
     m_filesOpened.insert({ filepath, file_content });
@@ -592,9 +585,9 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         wxString indexer_path = m_settings.GetCodeliteIndexer();
         wxString settings_folder = m_settings_folder;
         ParseThreadTaskFunc buffer_parse_task = [=]() {
-            clDEBUG() << "on_did_change(): parsing file task" << filepath << endl;
-            ProtocolHandler::parse_buffer_async(filepath, file_content, settings_folder, indexer_path);
-            clDEBUG() << "on_did_change(): parsing file task ... Success" << endl;
+            clSYSTEM() << "on_did_change(): parsing file task" << filepath << endl;
+            ProtocolHandler::parse_buffer(filepath, file_content, settings_folder, indexer_path);
+            clSYSTEM() << "on_did_change(): parsing file task ... Success" << endl;
             return eParseThreadCallbackRC::RC_SUCCESS;
         };
         m_parse_thread.queue_parse_request(move(buffer_parse_task));
@@ -603,9 +596,9 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         if(!new_includes.empty()) {
             vector<wxString> includes_to_parse{ new_includes.begin(), new_includes.end() };
             ParseThreadTaskFunc headers_parse_task = [=]() {
-                clDEBUG() << "on_did_change(): parsing header files" << includes_to_parse << endl;
-                ProtocolHandler::parse_files_async(includes_to_parse, settings_folder, indexer_path);
-                clDEBUG() << "on_did_change(): parsing header files ... Success" << endl;
+                clSYSTEM() << "on_did_change(): parsing header files" << includes_to_parse << endl;
+                ProtocolHandler::parse_files(includes_to_parse, settings_folder, indexer_path);
+                clSYSTEM() << "on_did_change(): parsing header files ... Success" << endl;
                 return eParseThreadCallbackRC::RC_SUCCESS;
             };
             m_parse_thread.queue_parse_request(move(headers_parse_task));
@@ -811,7 +804,7 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel::ptr_t channel
     wxString settings_folder = m_settings_folder;
     ParseThreadTaskFunc task = [=]() {
         clDEBUG() << "on_did_save: parsing task:" << files.size() << "files..." << endl;
-        ProtocolHandler::parse_files_async(files, settings_folder, indexer_path);
+        ProtocolHandler::parse_files(files, settings_folder, indexer_path);
         clDEBUG() << "on_did_save: parsing task: ... Success!" << endl;
         return eParseThreadCallbackRC::RC_SUCCESS;
     };
@@ -851,24 +844,23 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
 
     // use CTags to gather local variables
     wxString tmpdir = clStandardPaths::Get().GetTempDir();
-    vector<TagEntry> tags =
-        CTags::Run(filepath, tmpdir, "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+l --C++-kinds=+l ",
-                   m_settings.GetCodeliteIndexer());
+    vector<TagEntryPtr> tags;
+    CTags::ParseFile(filepath, m_settings.GetCodeliteIndexer(), tags);
 
     clDEBUG1() << "File tags:" << tags.size() << endl;
     wxStringSet_t locals_set;
     wxStringSet_t types_set;
 
-    for(const auto& tag : tags) {
-        if(tag.IsLocalVariable()) {
-            wxString type = tag.GetLocalType();
+    for(auto tag : tags) {
+        if(tag->IsLocalVariable()) {
+            wxString type = tag->GetLocalType();
             auto parts = wxStringTokenize(type, ":", wxTOKEN_STRTOK);
             for(const wxString& part : parts) {
                 add_to_types_set(part, types_set, locals_set);
             }
-            add_to_locals_set(tag.GetName(), locals_set, types_set);
-        } else if(tag.IsMethod()) {
-            const wxString& path = tag.GetPath();
+            add_to_locals_set(tag->GetName(), locals_set, types_set);
+        } else if(tag->IsMethod()) {
+            const wxString& path = tag->GetPath();
             auto parts = wxStringTokenize(path, ":", wxTOKEN_STRTOK);
             if(!parts.empty()) {
                 // the last part is the method name, we don't want to include it
@@ -879,7 +871,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
             }
 
             // we also want the method signature arguments
-            wxString signature = tag.GetSignature();
+            wxString signature = tag->GetSignature();
             CxxVariableScanner scanner(signature, eCxxStandard::kCxx11, {}, true);
             auto vars = scanner.ParseFunctionArguments();
             for(const auto& var : vars) {
@@ -891,13 +883,13 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
                     }
                 }
             }
-        } else if(tag.IsClass() || tag.IsStruct() || tag.GetKind() == "enum") {
-            add_to_types_set(tag.GetName(), types_set, locals_set);
-        } else if(tag.GetKind() == "enumerator") {
-            add_to_locals_set(tag.GetName(), locals_set, types_set);
-        } else if(tag.GetKind() == "member") {
-            add_to_locals_set(tag.GetName(), locals_set, types_set);
-            CxxVariableScanner scanner(tag.GetPatternClean(), eCxxStandard::kCxx11, {}, false);
+        } else if(tag->IsClass() || tag->IsStruct() || tag->GetKind() == "enum") {
+            add_to_types_set(tag->GetName(), types_set, locals_set);
+        } else if(tag->GetKind() == "enumerator") {
+            add_to_locals_set(tag->GetName(), locals_set, types_set);
+        } else if(tag->GetKind() == "member") {
+            add_to_locals_set(tag->GetName(), locals_set, types_set);
+            CxxVariableScanner scanner(tag->GetPatternClean(), eCxxStandard::kCxx11, {}, false);
             auto vars = scanner.GetVariables();
             for(const auto& var : vars) {
                 const auto& typeParts = var->GetType();
@@ -1061,7 +1053,7 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel::ptr_t 
 
     // parse the file and return the symbols
     clDEBUG() << "Fetching symbols from cache for file:" << filepath << endl;
-    vector<TagEntry> tags;
+    vector<TagEntryPtr> tags;
     cache_get_document_symbols(filepath, tags);
 
     // tags are sorted by line number, just wrap them in JSON and send them over to the client
@@ -1445,16 +1437,16 @@ size_t ProtocolHandler::get_includes_recrusively(const wxString& filepath, wxStr
 
 static wxCriticalSection cs;
 
-void ProtocolHandler::cache_set_document_symbols(const wxString& filepath, vector<TagEntry>&& tags)
+void ProtocolHandler::cache_set_document_symbols(const wxString& filepath, const vector<TagEntryPtr>& tags)
 {
     wxCriticalSectionLocker locker{ cs };
     if(m_tags_cache.count(filepath)) {
         m_tags_cache.erase(filepath);
     }
-    m_tags_cache.insert({ filepath, move(tags) });
+    m_tags_cache.insert({ filepath, tags });
 }
 
-size_t ProtocolHandler::cache_get_document_symbols(const wxString& filepath, vector<TagEntry>& tags)
+size_t ProtocolHandler::cache_get_document_symbols(const wxString& filepath, vector<TagEntryPtr>& tags)
 {
     wxCriticalSectionLocker locker{ cs };
     if(m_tags_cache.count(filepath) == 0) {

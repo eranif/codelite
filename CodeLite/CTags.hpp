@@ -10,22 +10,9 @@
 #include <wx/filename.h>
 #include <wx/textfile.h>
 
+using namespace std;
 class WXDLLIMPEXP_CL CTags
 {
-public:
-    enum eSearchFlags {
-        kSearchFullmach = TAG_FULLMATCH,
-        kSearchPartialMatch = TAG_PARTIALMATCH,
-        kSearchIcase = TAG_IGNORECASE,
-    };
-
-protected:
-    tagFile* m_file = nullptr;
-    tagFileInfo m_fileInfo;
-    wxFileName m_ctagsfile;
-    size_t m_curline = 0;
-    wxTextFile m_textFile;
-
 protected:
     static wxString WrapSpaces(const wxString& file);
     /**
@@ -37,60 +24,26 @@ protected:
      * @param output if provided, holds the ctags content
      * @return true on success, false otherwise
      */
-    static bool DoGenerate(const wxString& filesContent, const wxString& path, const wxString& codelite_indexer,
+    static bool DoGenerate(const wxString& filesContent, const wxString& codelite_indexer,
                            const wxString& ctags_args = wxEmptyString, wxString* output = nullptr);
 
-    TagTreePtr TreeFromTags(std::vector<TagEntry>& tags);
-
 public:
-    CTags(const wxString& path);
-    virtual ~CTags();
-
-    bool IsOpened() const { return m_file != nullptr; }
-
     /**
-     * @brief read from the tags file and return list of all tags from the same file
-     * as a tree
+     * @brief given a list of files, generate an output tags file and place it under 'path'
      */
-    TagTreePtr GetTagsTreeForFile(wxString& fullpath, std::vector<TagEntry>& tags,
-                                  const wxString& force_filepath = wxEmptyString);
-    size_t FindTags(const wxString& filter, std::vector<TagEntryPtr>& tags, size_t flags = kSearchFullmach);
-    size_t FindTags(const wxArrayString& filter, std::vector<TagEntryPtr>& tags, size_t flags = kSearchFullmach);
+    static size_t ParseFiles(const vector<wxString>& files, const wxString& codelite_indexer,
+                             vector<TagEntryPtr>& tags);
 
     /**
      * @brief given a list of files, generate an output tags file and place it under 'path'
      */
-    static bool Generate(const std::vector<wxFileName>& files, const wxString& path,
-                         const wxString& codelite_indexer = wxEmptyString);
-    static bool Generate(const wxArrayString& files, const wxString& path,
-                         const wxString& codelite_indexer = wxEmptyString);
-
-    /**
-     * @brief run codelite-indexer on a given filename and return the output
-     */
-    static std::vector<TagEntry> Run(const wxFileName& filename, const wxString& temp_dir,
-                                     const wxString& ctags_args = wxEmptyString,
-                                     const wxString& codelite_indexer = wxEmptyString);
+    static size_t ParseFile(const wxString& file, const wxString& codelite_indexer, vector<TagEntryPtr>& tags);
 
     /**
      * @brief run codelite-indexer on a buffer and return list of tags
      */
-    static std::vector<TagEntry> RunOnBuffer(const wxString& buffer, const wxString& temp_dir,
-                                             const wxString& ctags_args = wxEmptyString,
-                                             const wxString& codelite_indexer = wxEmptyString);
-
-    /**
-     * @brief search for tags
-     * @param filter tag name or part of it
-     * @param ctagsFolder path to the ctags folder
-     * @param [output] tags
-     * @param flags search flags
-     * @return number of tags found
-     */
-    static size_t FindTags(const wxString& filter, const wxString& ctagsFolder, std::vector<TagEntryPtr>& tags,
-                           size_t flags = kSearchFullmach);
-    static size_t FindTags(const wxArrayString& filter, const wxString& ctagsFolder, std::vector<TagEntryPtr>& tags,
-                           size_t flags = kSearchFullmach);
+    static size_t ParseBuffer(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
+                              vector<TagEntryPtr>& tags);
 };
 
 #endif // CTAGSGENERATOR_HPP

@@ -179,7 +179,7 @@ public:
     void ClearCachedFile(const wxString& fileName);
 
     /**
-     * @brief clear all the cached tags information stored in this class
+     4* @brief clear all the cached tags information stored in this class
      */
     void ClearAllCaches();
 
@@ -223,13 +223,6 @@ public:
      * @return tag tree
      */
     TagTreePtr ParseSourceFile2(const wxFileName& fp, const wxString& tags, std::vector<CommentPtr>* comments = NULL);
-
-    /**
-     * @brief Store tree of tags into db.
-     * @param tree Tags tree to store
-     * @param path Database file name
-     */
-    void Store(TagTreePtr tree, const wxFileName& path = wxFileName());
 
     /**
      * @brief parse source file (from memory) and return list of tags

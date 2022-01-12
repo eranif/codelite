@@ -205,12 +205,10 @@ public:
     void CreateSchema();
 
     /**
-     * Store tree of tags into db.
-     * @param tree Tags tree to store
-     * @param path Database file name
-     * @param autoCommit handle the Store operation inside a transaction or let the user hadle it
+     * store list of tags to store. The list is considered complete and all files
+     * afftected will be erased from the db first
      */
-    void Store(TagTreePtr tree, const wxFileName& path, bool autoCommit = true);
+    void Store(const std::vector<TagEntryPtr>& tags, bool auto_commit = true);
 
     /**
      * Return a result set of tags according to file name.

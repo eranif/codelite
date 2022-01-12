@@ -1,10 +1,11 @@
 #ifndef TEXTVIEW_H
 #define TEXTVIEW_H
 
-#include <wx/textctrl.h>
-#include <wx/stc/stc.h>
 #include "codelite_exports.h"
 #include "wxTerminalColourHandler.h"
+
+#include <wx/stc/stc.h>
+#include <wx/textctrl.h>
 #include <wxStringHash.h>
 
 #ifdef __WXGTK3__

@@ -5,9 +5,6 @@
   <VirtualDirectory Name="src">
     <File Name="main.cpp" ExcludeProjConfig=""/>
   </VirtualDirectory>
-  <Dependencies Name="Debug">
-    <Project Name="ctagsdlib"/>
-  </Dependencies>
   <Dependencies Name="Release">
     <Project Name="libCodeLite"/>
     <Project Name="ctagsdlib"/>
@@ -146,4 +143,8 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="ctagsdlib"/>
+  </Dependencies>
 </CodeLite_Project>

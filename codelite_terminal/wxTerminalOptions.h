@@ -1,8 +1,9 @@
 #ifndef WXTERMINALOPTIONS_H
 #define WXTERMINALOPTIONS_H
 
-#include <wx/string.h>
 #include "JSON.h"
+
+#include <wx/string.h>
 
 enum eTerminalOptions {
     kPrintTTY = (1 << 0),
@@ -83,8 +84,8 @@ public:
 
     void SetLogfile(const wxString& logfile) { this->m_logfile = logfile; }
     const wxString& GetLogfile() const { return m_logfile; }
-    
-    void SetHistory(const wxArrayString& history) ;
+
+    void SetHistory(const wxArrayString& history);
     const wxArrayString& GetHistory() const { return m_history; }
 };
 

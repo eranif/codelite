@@ -50,12 +50,26 @@ private:
     Scanner m_file_scanner;
     CxxCodeCompletion::ptr_t m_completer;
     ParseThread m_parse_thread;
-    static unordered_map<wxString, vector<TagEntry>> m_tags_cache;
+    static unordered_map<wxString, vector<TagEntryPtr>> m_tags_cache;
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
-    static void parse_files(const wxArrayString& files, const wxString& settings_folder, const wxString& indexer_path,
-                            const wxString& alternate_filename = wxEmptyString);
+
+    /**
+     * @brief parse source file
+     */
+    static void parse_file(const wxFileName& filename, const wxString& settings_folder, const wxString& indexer_path);
+    /**
+     * @brief parse buffer of a given file name
+     */
+    static void parse_buffer(const wxFileName& filename, const wxString& buffer, const wxString& settings_folder,
+                             const wxString& indexer_path);
+    /**
+     * @brief parse list of files
+     */
+    static void parse_files(const vector<wxString>& files, const wxString& settings_folder,
+                            const wxString& indexer_path);
+
     bool ensure_file_content_exists(const wxString& filepath, Channel::ptr_t channel, size_t req_id);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);
     void update_comments_for_file(const wxString& filepath);
@@ -93,15 +107,9 @@ public:
     ~ProtocolHandler();
 
     // symbols cache API
-    static void cache_set_document_symbols(const wxString& filepath, vector<TagEntry>&& tags);
-    static size_t cache_get_document_symbols(const wxString& filepath, vector<TagEntry>& tags);
+    static void cache_set_document_symbols(const wxString& filepath, const vector<TagEntryPtr>& tags);
+    static size_t cache_get_document_symbols(const wxString& filepath, vector<TagEntryPtr>& tags);
     static void cache_erase_document_symbols(const wxString& filepath);
-
-    // General API
-    static void parse_buffer_async(const wxString& filepath, const wxString& file_content,
-                                   const wxString& settings_folder, const wxString& indexer_path);
-    static void parse_files_async(const vector<wxString>& files, const wxString& settings_folder,
-                                  const wxString& indexer_path);
 
     void on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
     void on_initialized(unique_ptr<JSON>&& msg, Channel::ptr_t channel);

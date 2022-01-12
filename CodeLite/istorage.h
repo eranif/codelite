@@ -341,7 +341,7 @@ public:
      * @param path Database file name
      * @param autoCommit handle the Store operation inside a transaction or let the user hadle it
      */
-    virtual void Store(TagTreePtr tree, const wxFileName& path, bool autoCommit = true) = 0;
+    virtual void Store(const std::vector<TagEntryPtr>& tags, bool auto_commit = true) = 0;
 
     /**
      * A very dengerous API call, which drops all tables from the database

@@ -1,16 +1,19 @@
 #include "wxTerminalCtrl.h"
-#include <wx/sizer.h>
-#include <processreaderthread.h>
-#include <wx/regex.h>
-#include "procutils.h"
-#include <drawingutils.h>
-#include <wx/wupdlock.h>
-#include <wx/log.h>
-#include "wxTerminalOptions.h"
+
 #include "TextView.h"
+#include "procutils.h"
+#include "wxTerminalOptions.h"
+
+#include <drawingutils.h>
 #include <fileutils.h>
+#include <processreaderthread.h>
+#include <wx/log.h>
+#include <wx/regex.h>
+#include <wx/sizer.h>
+#include <wx/wupdlock.h>
 #ifndef __WXMSW__
 #include "unixprocess_impl.h"
+
 #include <termios.h>
 #include <unistd.h>
 #endif
@@ -26,7 +29,9 @@ wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_SET_TITLE, clCommandEvent);
 ///---------------------------------------------------------------
 static wxString ConvertString(const std::string& str, const wxMBConv& conv = wxConvISO8859_1)
 {
-    if(str.empty()) { return wxEmptyString; }
+    if(str.empty()) {
+        return wxEmptyString;
+    }
     wxString wx_str = wxString(str.c_str(), conv);
     if(wx_str.IsEmpty()) {
         // conversion failed
@@ -34,6 +39,7 @@ static wxString ConvertString(const std::string& str, const wxMBConv& conv = wxC
     }
     return wx_str;
 }
+
 ///---------------------------------------------------------------
 ///
 ///---------------------------------------------------------------
@@ -43,7 +49,9 @@ wxTerminalCtrl::wxTerminalCtrl() {}
 wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxExecuteEnv& env, const wxPoint& pos,
                                const wxSize& size, long style, const wxString& name)
 {
-    if(!Create(parent, winid, env, pos, size, style)) { return; }
+    if(!Create(parent, winid, env, pos, size, style)) {
+        return;
+    }
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_textCtrl = new TextView(this);
     m_textCtrl->SetSink(this);
@@ -95,7 +103,9 @@ void wxTerminalCtrl::PostCreate()
     }
 #else
     shell = "/bin/bash";
-    if(!m_startupCommand.IsEmpty()) { shell << " -c '" << m_startupCommand << "'"; }
+    if(!m_startupCommand.IsEmpty()) {
+        shell << " -c '" << m_startupCommand << "'";
+    }
 #endif
     m_shell = ::CreateAsyncProcess(this, shell, IProcessCreateDefault | IProcessRawOutput, m_workingDirectory);
 
@@ -109,7 +119,9 @@ void wxTerminalCtrl::PostCreate()
             readyEvent.SetString(GetPTS());
         }
 #endif
-        if(m_style & wxTERMINAL_CTRL_USE_EVENTS) { GetEventHandler()->AddPendingEvent(readyEvent); }
+        if(m_style & wxTERMINAL_CTRL_USE_EVENTS) {
+            GetEventHandler()->AddPendingEvent(readyEvent);
+        }
         if(IsPrintTTY()) {
             //  Write the tty into a file
             FileUtils::WriteFileContent(wxFileName(m_ttyfile), GetPTS());
@@ -133,7 +145,9 @@ void wxTerminalCtrl::Run(const wxString& command)
         }
         m_shell->WriteRaw(command + "\n");
         AppendText("\n");
-        if(!m_echoOff && !command.empty() && (command != "exit")) { m_history.Add(command); }
+        if(!m_echoOff && !command.empty() && (command != "exit")) {
+            m_history.Add(command);
+        }
     }
 }
 
@@ -186,7 +200,9 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
         DoProcessTerminated();
         m_waitingForKey = false;
     } else {
-        if(!m_textCtrl->IsEditable()) { return; }
+        if(!m_textCtrl->IsEditable()) {
+            return;
+        }
         if(event.GetKeyCode() == WXK_NUMPAD_ENTER || event.GetKeyCode() == WXK_RETURN) {
             // Execute command
             Run(GetShellCommand());
@@ -220,7 +236,9 @@ void wxTerminalCtrl::OnKeyDown(wxKeyEvent& event)
                 // going backward
                 event.Skip(pos > m_commandOffset);
             } else {
-                if(pos < m_commandOffset) { m_textCtrl->SetInsertionPointEnd(); }
+                if(pos < m_commandOffset) {
+                    m_textCtrl->SetInsertionPointEnd();
+                }
                 event.Skip(true);
             }
         }
@@ -234,7 +252,9 @@ wxString wxTerminalCtrl::GetShellCommand() const
 
 void wxTerminalCtrl::SetShellCommand(const wxString& command)
 {
-    if(command.IsEmpty()) { return; }
+    if(command.IsEmpty()) {
+        return;
+    }
     m_textCtrl->SetCommand(m_commandOffset, command);
     CallAfter(&wxTerminalCtrl::SetCaretAtEnd);
 }
@@ -245,7 +265,9 @@ void wxTerminalCtrl::SetCaretAtEnd() { m_textCtrl->SetCaretEnd(); }
 static void KillPorcessByPID(DWORD pid)
 {
     HANDLE hProcess = OpenProcess(SYNCHRONIZE | PROCESS_TERMINATE, TRUE, pid);
-    if(hProcess != INVALID_HANDLE_VALUE) { TerminateProcess(hProcess, 0); }
+    if(hProcess != INVALID_HANDLE_VALUE) {
+        TerminateProcess(hProcess, 0);
+    }
 }
 #endif
 
@@ -257,7 +279,9 @@ void wxTerminalCtrl::GenerateCtrlC()
     ProcUtils::GetChildren(m_shell->GetPid(), children);
     for(long pid : children) {
         // Don't kill any initial process
-        if(m_initialProcesses.count(pid)) { continue; }
+        if(m_initialProcesses.count(pid)) {
+            continue;
+        }
 #ifdef __WXMSW__
         KillPorcessByPID(pid);
 #else
@@ -276,9 +300,13 @@ void wxTerminalCtrl::ClearScreen()
     Run("");
 #else
     // Delete the entire content excluding the last list
-    if(m_textCtrl->GetNumberOfLines() < 1) { return; }
+    if(m_textCtrl->GetNumberOfLines() < 1) {
+        return;
+    }
     long x, y;
-    if(!m_textCtrl->PositionToXY(m_textCtrl->GetLastPosition(), &x, &y)) { return; }
+    if(!m_textCtrl->PositionToXY(m_textCtrl->GetLastPosition(), &x, &y)) {
+        return;
+    }
     long insertPos = m_textCtrl->GetInsertionPoint();
     long lineStartPos = m_textCtrl->XYToPosition(0, y);
     m_textCtrl->Remove(0, lineStartPos);
@@ -367,4 +395,3 @@ void wxTerminalCtrl::OnIdle(wxIdleEvent& event)
     }
 #endif
 }
-

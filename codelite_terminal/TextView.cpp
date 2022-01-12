@@ -1,12 +1,14 @@
 #include "TextView.h"
-#include <wx/sizer.h>
+
 #include "wxTerminalOptions.h"
+
+#include <wx/sizer.h>
 #include <wx/wupdlock.h>
 
 TextView::TextView(wxWindow* parent, wxWindowID winid)
     : wxWindow(parent, winid)
 {
-    SetSizer(new wxBoxSizer(wxVERTICAL)); 
+    SetSizer(new wxBoxSizer(wxVERTICAL));
 #if USE_STC
     m_ctrl = new wxStyledTextCtrl(this, wxID_ANY);
     m_ctrl->SetCaretStyle(wxSTC_CARETSTYLE_BLOCK);

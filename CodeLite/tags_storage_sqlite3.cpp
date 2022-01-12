@@ -277,46 +277,59 @@ wxString TagsStorageSQLite::GetSchemaVersion() const
     return wxEmptyString;
 }
 
-void TagsStorageSQLite::Store(TagTreePtr tree, const wxFileName& path, bool autoCommit)
+#define SAFE_ROLLBACK_IF_NEEDED(Auto_Commit) \
+    try {                                    \
+        if(Auto_Commit)                      \
+            m_db->Rollback();                \
+    } catch(wxSQLite3Exception&) {           \
+    }
+
+void TagsStorageSQLite::Store(const std::vector<TagEntryPtr>& tags, bool auto_commit)
 {
-    if(!path.IsOk() && !m_fileName.IsOk()) {
-        // An attempt is made to save the tree into db but no database
-        // is provided and none is currently opened to use
+    try {
+        if(auto_commit)
+            m_db->Begin();
+    } catch(wxSQLite3Exception& e) {
+        clWARNING() << "failed to start tx." << e.GetMessage() << endl;
+        SAFE_ROLLBACK_IF_NEEDED(auto_commit);
         return;
     }
 
-    if(!tree)
-        return;
-
-    OpenDatabase(path);
-    TreeWalker<wxString, TagEntry> walker(tree->GetRoot());
+    // build list of files
+    wxStringSet_t files;
+    for(auto tag : tags) {
+        files.insert(tag->GetFile());
+    }
 
     try {
-        // Create the statements before the execution
-        std::vector<TagEntry> updateList;
-
-        // AddChild entries to database
-        if(autoCommit)
-            m_db->Begin();
-
-        for(; !walker.End(); walker++) {
-            // Skip root node
-            if(walker.GetNode() == tree->GetRoot())
-                continue;
-
-            DoInsertTagEntry(walker.GetNode()->GetData());
+        // delete all tags owned by these files
+        for(const wxString& file : files) {
+            DeleteByFileName({}, file, false);
         }
-
-        if(autoCommit)
-            m_db->Commit();
-
     } catch(wxSQLite3Exception& e) {
-        try {
-            if(autoCommit)
-                m_db->Rollback();
-        } catch(wxSQLite3Exception& WXUNUSED(e1)) {
-            wxUnusedVar(e);
+        clWARNING() << "TagsStorageSQLite::Store() error:" << e.GetMessage() << endl;
+        SAFE_ROLLBACK_IF_NEEDED(auto_commit);
+        return;
+    }
+
+    // get list of affected files
+    try {
+        for(auto tag : tags) {
+            DoInsertTagEntry(*tag.Get());
         }
+    } catch(wxSQLite3Exception& e) {
+        clWARNING() << "TagsStorageSQLite::Store(): failed to insert entires into the db." << e.GetMessage() << endl;
+        SAFE_ROLLBACK_IF_NEEDED(auto_commit);
+    }
+
+    // commit
+    try {
+        if(auto_commit)
+            m_db->Commit();
+    } catch(wxSQLite3Exception& e) {
+        clWARNING() << "failed to commit tx." << e.GetMessage() << endl;
+        SAFE_ROLLBACK_IF_NEEDED(auto_commit);
+        return;
     }
 }
 
@@ -616,8 +629,8 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         }
         ex_rs.Finalize();
     } catch(wxSQLite3Exception& e) {
-        clERROR() << "SQLite exception!" << endl;
-        clERROR() << e.GetMessage() << endl;
+        clDEBUG() << "SQLite exception!" << endl;
+        clDEBUG() << e.GetMessage() << endl;
     }
     clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << clEndl;
 }
@@ -648,8 +661,8 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         ex_rs.Finalize();
 
     } catch(wxSQLite3Exception& e) {
-        clERROR() << "SQLite exception!" << endl;
-        clERROR() << e.GetMessage() << endl;
+        clDEBUG() << e.GetMessage() << endl;
+        clDEBUG() << "SQLite exception!" << endl;
     }
     clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << endl;
 }

@@ -1,5 +1,7 @@
 #include "SettingsDlg.h"
+
 #include "wxTerminalOptions.h"
+
 #include <drawingutils.h>
 
 SettingsDlg::SettingsDlg(wxWindow* parent)

@@ -1,5 +1,6 @@
-#include "TextView.h"
 #include "wxTerminalColourHandler.h"
+
+#include "TextView.h"
 #include "wxTerminalCtrl.h"
 
 #ifdef __WXMSW__

@@ -79,12 +79,13 @@ unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filenam
     test_file.AppendDir("samples");
 
     wxString fullpath = test_file.GetFullPath();
-    auto tags = CTags::Run(fullpath, wxStandardPaths::Get().GetTempDir(), wxEmptyString, settings.GetCodeliteIndexer());
+    vector<TagEntryPtr> tags;
+    CTags::ParseFile(fullpath, settings.GetCodeliteIndexer(), tags);
     unordered_map<wxString, TagEntryPtr> tags_map;
-    for(const TagEntry& tag : tags) {
-        if(tags_map.count(tag.GetPath()))
+    for(auto tag : tags) {
+        if(tags_map.count(tag->GetPath()))
             continue;
-        tags_map.insert({ tag.GetPath(), new TagEntry(tag) });
+        tags_map.insert({ tag->GetPath(), tag });
     }
     return tags_map;
 }

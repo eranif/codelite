@@ -178,10 +178,11 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
     clDEBUG() << "Generating ctags file..." << endl;
 
     vector<TagEntryPtr> tags;
-    if(!CTags::ParseBuffer(filename, buffer, indexer_path, tags)) {
-        clERROR() << "Failed to generate ctags file!" << endl;
+    if(CTags::ParseBuffer(filename, buffer, indexer_path, tags) == 0) {
+        clERROR() << "Failed to generate ctags file for buffer. file:" << filename << ". buffer:" << buffer << endl;
         return;
     }
+
     clDEBUG() << "Success" << endl;
     clDEBUG() << "Updating symbols database..." << endl;
 
@@ -228,9 +229,14 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const wxStr
     clDEBUG() << "There are total of" << filtered_file_list.size() << "files that require parsing" << endl;
     clDEBUG() << "Generating ctags file..." << endl;
 
+    if(filtered_file_list.empty()) {
+        return;
+    }
+
     vector<TagEntryPtr> tags;
-    if(!CTags::ParseFiles(filtered_file_list, indexer_path, tags)) {
-        clERROR() << "Failed to generate ctags file!" << endl;
+    if(CTags::ParseFiles(filtered_file_list, indexer_path, tags) == 0) {
+        clERROR() << "Failed to generate ctags file. indexer:" << indexer_path << "file-lists:" << filtered_file_list
+                  << endl;
         return;
     }
     clDEBUG() << "Success" << endl;
@@ -239,8 +245,6 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const wxStr
     db->Begin();
     time_t update_time = time(nullptr);
     db->Store(tags, false);
-
-    // FIXME: update tags cache
 
     // update the files table in the database
     // we do this here, since some files might not yield tags
@@ -253,6 +257,24 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const wxStr
 
     // Commit whats left
     db->Commit();
+
+    // cache the tags
+    vector<TagEntryPtr> per_file_tags;
+    wxString current_file;
+    for(TagEntryPtr tag : tags) {
+        if(tag->GetFile() != current_file && !current_file.empty()) {
+            if(!per_file_tags.empty()) {
+                cache_set_document_symbols(current_file, per_file_tags);
+            }
+            per_file_tags.clear();
+        }
+        per_file_tags.push_back(tag);
+        current_file = tag->GetFile();
+    }
+
+    if(!current_file.empty() && !per_file_tags.empty()) {
+        cache_set_document_symbols(current_file, per_file_tags);
+    }
     clDEBUG() << "Success" << endl;
 }
 
@@ -457,9 +479,9 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     wxString indexer_path = m_settings.GetCodeliteIndexer();
     vector<wxString> files_to_parse = { files.begin(), files.end() };
     auto parse_callback = [=]() {
-        clSYSTEM() << "on_initialize(): parsing files..." << endl;
+        clDEBUG() << "on_initialize(): parsing files..." << endl;
         ProtocolHandler::parse_files(files_to_parse, m_settings_folder, m_settings.GetCodeliteIndexer());
-        clSYSTEM() << "on_initialize(): parsing files... Success" << endl;
+        clDEBUG() << "on_initialize(): parsing files... Success" << endl;
         return eParseThreadCallbackRC::RC_SUCCESS;
     };
     m_parse_thread.queue_parse_request(move(parse_callback));
@@ -484,7 +506,7 @@ void ProtocolHandler::on_initialized(unique_ptr<JSON>&& msg, Channel::ptr_t chan
     // a notification
     wxUnusedVar(msg);
     wxUnusedVar(channel);
-    clSYSTEM() << "Received `initialized` message" << endl;
+    clDEBUG() << "Received `initialized` message" << endl;
 }
 
 // Notification -->
@@ -585,9 +607,9 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         wxString indexer_path = m_settings.GetCodeliteIndexer();
         wxString settings_folder = m_settings_folder;
         ParseThreadTaskFunc buffer_parse_task = [=]() {
-            clSYSTEM() << "on_did_change(): parsing file task" << filepath << endl;
+            clDEBUG() << "on_did_change(): parsing file task" << filepath << endl;
             ProtocolHandler::parse_buffer(filepath, file_content, settings_folder, indexer_path);
-            clSYSTEM() << "on_did_change(): parsing file task ... Success" << endl;
+            clDEBUG() << "on_did_change(): parsing file task ... Success" << endl;
             return eParseThreadCallbackRC::RC_SUCCESS;
         };
         m_parse_thread.queue_parse_request(move(buffer_parse_task));
@@ -596,9 +618,9 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         if(!new_includes.empty()) {
             vector<wxString> includes_to_parse{ new_includes.begin(), new_includes.end() };
             ParseThreadTaskFunc headers_parse_task = [=]() {
-                clSYSTEM() << "on_did_change(): parsing header files" << includes_to_parse << endl;
+                clDEBUG() << "on_did_change(): parsing header files" << includes_to_parse << endl;
                 ProtocolHandler::parse_files(includes_to_parse, settings_folder, indexer_path);
-                clSYSTEM() << "on_did_change(): parsing header files ... Success" << endl;
+                clDEBUG() << "on_did_change(): parsing header files ... Success" << endl;
                 return eParseThreadCallbackRC::RC_SUCCESS;
             };
             m_parse_thread.queue_parse_request(move(headers_parse_task));

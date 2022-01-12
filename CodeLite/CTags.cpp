@@ -28,14 +28,9 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     wxFileName::Mkdir(clStandardPaths::Get().GetTempDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
     // create 2 files: 1 containing list of files to parse and the second is the output file from ctags
-    wxFileName fn_output_file = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "ctags", "txt");
-    wxFileName fn_list_of_files =
-        FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "file-list", "txt");
-    FileUtils::WriteFileContent(fn_list_of_files, filesContent);
-
-    // Make sure we delete these files when we leave this function
-    FileUtils::Deleter d1(fn_list_of_files);
-    FileUtils::Deleter d2(fn_output_file);
+    clTempFile fn_output_file("txt");
+    clTempFile fn_list_of_files("list");
+    fn_list_of_files.Write(filesContent);
 
     // Pass ctags command line via the environment variable
     wxString ctagsCmd = ctags_args;
@@ -60,9 +55,14 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
         proc->WaitForTerminate(dummy);
     }
 
-    if(output && !FileUtils::ReadFileContent(fn_output_file, *output)) {
+    if(output && !FileUtils::ReadFileContent(fn_output_file.GetFullPath(), *output)) {
         clERROR() << "Failed to read temporary ctags output file" << fn_output_file.GetFullPath() << endl;
         return false;
+    }
+
+    if(output && output->empty()) {
+        int i = 0;
+        ++i;
     }
     clDEBUG() << "Generating ctags files... success" << clEndl;
     return true;

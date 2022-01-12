@@ -1,8 +1,10 @@
 #include "clTempFile.hpp"
+
 #include "cl_standard_paths.h"
 
 clTempFile::clTempFile(const wxString& ext)
 {
+    wxFileName::Mkdir(clStandardPaths::Get().GetTempDir(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_filename = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "cltmp", ext);
 }
 

@@ -39,7 +39,7 @@ unordered_map<wxString, vector<TagEntryPtr>> ProtocolHandler::m_tags_cache;
 class MyStackWalker : public wxStackWalker
 {
 public:
-    MyStackWalker();
+    MyStackWalker() {}
     virtual ~MyStackWalker() {}
     void OnStackFrame(const wxStackFrame& frame)
     {

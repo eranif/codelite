@@ -40,7 +40,7 @@ class MyStackWalker : public wxStackWalker
 {
 public:
     MyStackWalker();
-    virtual ~MyStackWalker();
+    virtual ~MyStackWalker() {}
     void OnStackFrame(const wxStackFrame& frame)
     {
         wxString line;

@@ -82,13 +82,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
     this->Bind(wxEVT_CLOSE_WINDOW, &MainFrameBaseClass::OnClose, this);
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnClearScreen, this, m_menuItemClearScreen->GetId());
@@ -99,11 +97,11 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
 
 MainFrameBaseClass::~MainFrameBaseClass()
 {
-    this->Bind(wxEVT_CLOSE_WINDOW, &MainFrameBaseClass::OnClose, this);
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnClearScreen, this, m_menuItemClearScreen->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnSettings, this, m_menuItemPreferences->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnExit, this, m_menuItemExit->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnAbout, this, m_menuItem9->GetId());
+    this->Unbind(wxEVT_CLOSE_WINDOW, &MainFrameBaseClass::OnClose, this);
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnClearScreen, this, m_menuItemClearScreen->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnSettings, this, m_menuItemPreferences->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnExit, this, m_menuItemExit->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnAbout, this, m_menuItem9->GetId());
 }
 
 SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -180,13 +178,11 @@ SettingsDlgBase::SettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 SettingsDlgBase::~SettingsDlgBase() {}

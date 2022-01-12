@@ -190,13 +190,11 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
 
             // Add support for wxPersistenceManager object
             if(wxcSettings::Get().IsLicensed() && IsWxTopLevelWindow() && IsPropertyChecked(PROP_PERSISTENT)) {
-                ctorBody << wxCrafter::WX29_BLOCK_START();
                 ctorBody << "    if(!wxPersistenceManager::Get().Find(this)) {\n";
                 ctorBody << "        wxPersistenceManager::Get().RegisterAndRestore(this);\n";
                 ctorBody << "    } else {\n";
                 ctorBody << "        wxPersistenceManager::Get().Restore(this);\n";
                 ctorBody << "    }\n";
-                ctorBody << "#endif\n";
             }
         }
     }
@@ -205,8 +203,9 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     eventFunctions = FormatCode(eventFunctions);
     eventConnectCode = FormatCode(eventConnectCode);
 
+    // use Unbind syntax
     eventDisconnectCode = eventConnectCode;
-    eventDisconnectCode.Replace(wxT("->Connect("), wxT("->Disconnect("));
+    eventDisconnectCode.Replace(wxT("->Bind("), wxT("->Unbind("));
 
     wxString baseClassName = CreateBaseclassName();
 

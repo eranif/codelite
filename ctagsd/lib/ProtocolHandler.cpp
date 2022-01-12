@@ -28,11 +28,37 @@
 #include <deque>
 #include <iostream>
 #include <wx/filesys.h>
+#include <wx/stackwalk.h>
 
 using LSP::CompletionItem;
 using LSP::eSymbolKind;
 
 unordered_map<wxString, vector<TagEntryPtr>> ProtocolHandler::m_tags_cache;
+
+#if wxUSE_STACKWALKER
+class MyStackWalker : public wxStackWalker
+{
+public:
+    MyStackWalker();
+    virtual ~MyStackWalker();
+    void OnStackFrame(const wxStackFrame& frame)
+    {
+        wxString line;
+        line << "#" << frame.GetLevel() << " ";
+        if(!frame.GetModule().empty()) {
+            line << frame.GetModule() << ".";
+        }
+        if(!frame.GetName().empty()) {
+            line << frame.GetName();
+        }
+
+        if(!frame.GetFileName().empty()) {
+            line << " (" << frame.GetFileName() << ":" << frame.GetLine() << ")";
+        }
+        clERROR() << frame << endl;
+    }
+};
+#endif
 
 namespace
 {
@@ -180,6 +206,10 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
     vector<TagEntryPtr> tags;
     if(CTags::ParseBuffer(filename, buffer, indexer_path, tags) == 0) {
         clERROR() << "Failed to generate ctags file for buffer. file:" << filename << ". buffer:" << buffer << endl;
+#if wxUSE_STACKWALKER
+        MyStackWalker stack{};
+        stack.Walk();
+#endif
         return;
     }
 
@@ -237,8 +267,13 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const wxStr
     if(CTags::ParseFiles(filtered_file_list, indexer_path, tags) == 0) {
         clERROR() << "Failed to generate ctags file. indexer:" << indexer_path << "file-lists:" << filtered_file_list
                   << endl;
+#if wxUSE_STACKWALKER
+        MyStackWalker stack{};
+        stack.Walk();
+#endif
         return;
     }
+
     clDEBUG() << "Success" << endl;
     clDEBUG() << "Updating symbols database..." << endl;
 

@@ -83,7 +83,7 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
         macro_replacements << " ";
     }
 
-    ctagsCmd << " " << macro_replacements << " --language-force=c++ --fields-c++=+{template} -f - ";
+    ctagsCmd << " " << macro_replacements << " --language-force=c++ --fields-c++=+{template}+{properties} -f - ";
     wxStopWatch sw;
 
     sw.Start();

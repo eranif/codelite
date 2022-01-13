@@ -111,7 +111,8 @@ void TagsStorageSQLite::CreateSchema()
 
         sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, "
                   "line integer, kind string, access string, signature string, pattern string, parent string, inherits "
-                  "string, path string, typeref string, scope string, template_definition string );");
+                  "string, path string, typeref string, scope string, template_definition string, function_properties "
+                  "string);");
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("create  table if not exists global_tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, tag_id "
@@ -609,6 +610,7 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
     entry->SetTypename(rs.GetString(11));
     entry->SetScope(rs.GetString(12));
     entry->SetTemplateDefinition(rs.GetString(13));
+    entry->SetFunctionProperties(rs.GetString(14));
     return entry;
 }
 
@@ -895,7 +897,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
 
     try {
         wxSQLite3Statement statement = m_db->GetPrepareStatement(
-            wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+            wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
         statement.Bind(1, tag.GetName());
         statement.Bind(2, wxFileName(tag.GetFile()).GetFullPath());
         statement.Bind(3, tag.GetLine());
@@ -909,6 +911,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
         statement.Bind(11, tag.GetTypename());
         statement.Bind(12, tag.GetScope());
         statement.Bind(13, tag.GetTemplateDefinition());
+        statement.Bind(14, tag.GetFunctionProperties());
         statement.ExecuteUpdate();
     } catch(wxSQLite3Exception& exc) {
         return TagError;
@@ -1765,7 +1768,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
 
 const wxString& TagsStorageSQLite::GetVersion() const
 {
-    static const wxString gTagsDatabaseVersion(wxT("CodeLite Version 16.0"));
+    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.1"));
     return gTagsDatabaseVersion;
 }
 

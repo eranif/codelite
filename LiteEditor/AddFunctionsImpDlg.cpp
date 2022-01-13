@@ -45,12 +45,17 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
         cols.push_back(::MakeCheckboxVariant(m_tags.at(i)->GetDisplayName(), true, functionIndex));
 
         // keep the implementation as the client data
-        wxString body;
-        TagEntryPtr tag = m_tags.at(i);
-        tag->SetSignature(TagsManagerST::Get()->NormalizeFunctionSig(tag->GetSignature(), Normalize_Func_Name));
-        body << TagsManagerST::Get()->FormatFunction(tag, FunctionFormat_Impl);
-        body << wxT("\n");
-        m_implArr.Add(body);
+        TagEntryPtr tag = m_tags[i];
+        wxString body = tag->GetFunctionDefinition();
+        if(tag->GetTypename() == "std::string" || tag->GetTypename() == "string") {
+            body << "\n{ return \"\"; }";
+        } else if(tag->GetTypename() == "bool") {
+            body << "\n{ return false; }";
+        } else {
+            body << "\n{}";
+        }
+
+        m_implArr.Add(body + "\n");
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)&m_implArr.Item(i));
     }
     m_filePicker->SetPath(targetFile);

@@ -40,9 +40,7 @@
 #include <wx/tokenzr.h>
 
 TagEntry::TagEntry(const tagEntry& entry)
-    : m_isClangTag(false)
-    , m_flags(0)
-    , m_isCommentForamtted(false)
+    : m_flags(0)
 {
     Create(entry);
 }
@@ -57,10 +55,7 @@ TagEntry::TagEntry()
     , m_name(wxEmptyString)
     , m_id(wxNOT_FOUND)
     , m_scope(wxEmptyString)
-    , m_differOnByLineNumber(false)
-    , m_isClangTag(false)
     , m_flags(0)
-    , m_isCommentForamtted(false)
 {
 }
 
@@ -82,11 +77,7 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
     m_hti = rhs.m_hti;
 #endif
     m_scope = rhs.m_scope.c_str();
-    m_isClangTag = rhs.m_isClangTag;
-    m_differOnByLineNumber = rhs.m_differOnByLineNumber;
     m_flags = rhs.m_flags;
-    m_formattedComment = rhs.m_formattedComment;
-    m_isCommentForamtted = rhs.m_isCommentForamtted;
 
     // loop over the map and copy item by item
     // we use the c_str() method to force our own copy of the string and to avoid
@@ -107,25 +98,13 @@ bool TagEntry::operator==(const TagEntry& rhs)
                m_pattern == rhs.m_pattern && m_name == rhs.m_name && m_path == rhs.m_path &&
                m_lineNumber == rhs.m_lineNumber && GetInheritsAsString() == rhs.GetInheritsAsString() &&
                GetAccess() == rhs.GetAccess() && GetSignature() == rhs.GetSignature();
-
-    bool res2 = m_scope == rhs.m_scope && m_file == rhs.m_file && m_kind == rhs.m_kind && m_parent == rhs.m_parent &&
-                m_pattern == rhs.m_pattern && m_name == rhs.m_name && m_path == rhs.m_path &&
-                GetInheritsAsString() == rhs.GetInheritsAsString() && GetAccess() == rhs.GetAccess() &&
-                GetSignature() == rhs.GetSignature();
-
-    if(res2 && !res) {
-        // the entries are differs only in the line numbers
-        m_differOnByLineNumber = true;
-    }
     return res;
 }
 
 void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNumber, const wxString& pattern,
                       const wxString& kind, wxStringMap_t& extFields)
 {
-    m_isCommentForamtted = false;
     m_flags = 0;
-    m_isClangTag = false;
     SetName(name);
     SetLine(lineNumber);
     SetKind(kind.IsEmpty() ? "<unknown>" : kind);
@@ -174,6 +153,8 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
         }
     }
 
+    // update the method properties
+    SetFunctionProperties(GetExtField("properties"));
     if(!path.IsEmpty()) {
         SetScope(path);
     } else {
@@ -194,8 +175,6 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
 
 void TagEntry::Create(const tagEntry& entry)
 {
-    m_isCommentForamtted = false;
-    m_isClangTag = false;
     // Get other information from the string data and store it into map
     for(int i = 0; i < entry.fields.count; ++i) {
         wxString key = _U(entry.fields.list[i].key);
@@ -586,3 +565,89 @@ wxString TagEntry::GetLocalType() const { return GetExtField("type"); }
 bool TagEntry::IsMember() const { return GetKind() == "member"; }
 
 bool TagEntry::IsNamespace() const { return GetKind() == "namespace"; }
+
+namespace
+{
+inline void enable_function_flag_if_exists(const wxStringSet_t& S, const wxString& propname, const size_t flag,
+                                           size_t& flags)
+{
+    if(S.count(propname)) {
+        flags |= flag;
+    } else {
+        flags &= ~flag;
+    }
+}
+} // namespace
+
+void TagEntry::SetFunctionProperties(const wxString& props)
+{
+    m_function_properties = props;
+    auto tokens = wxStringTokenize(m_function_properties, ",", wxTOKEN_STRTOK);
+    wxStringSet_t S;
+    for(auto& token : tokens) {
+        token.Trim().Trim(false);
+        S.insert(token);
+    }
+
+    enable_function_flag_if_exists(S, "const", FF_CONST, m_function_flags);
+    enable_function_flag_if_exists(S, "virtual", FF_VIRTUAL, m_function_flags);
+    enable_function_flag_if_exists(S, "default", FF_DEFAULT, m_function_flags);
+    enable_function_flag_if_exists(S, "delete", FF_DELETED, m_function_flags);
+    enable_function_flag_if_exists(S, "static", FF_STATIC, m_function_flags);
+    enable_function_flag_if_exists(S, "inline", FF_INLINE, m_function_flags);
+    enable_function_flag_if_exists(S, "override", FF_OVERRIDE, m_function_flags);
+    enable_function_flag_if_exists(S, "pure", FF_PURE, m_function_flags);
+}
+
+bool TagEntry::is_func_const() const { return m_function_flags & FF_CONST; }
+bool TagEntry::is_func_virtual() const { return m_function_flags & FF_VIRTUAL; }
+bool TagEntry::is_func_static() const { return m_function_flags & FF_STATIC; }
+bool TagEntry::is_func_default() const { return m_function_flags & FF_DEFAULT; }
+bool TagEntry::is_func_override() const { return m_function_flags & FF_OVERRIDE; }
+bool TagEntry::is_func_deleted() const { return m_function_flags & FF_DELETED; }
+bool TagEntry::is_func_inline() const { return m_function_flags & FF_INLINE; }
+bool TagEntry::is_func_pure() const { return m_function_flags & FF_PURE; }
+
+wxString TagEntry::GetFunctionDeclaration() const
+{
+    if(!IsMethod()) {
+        return wxEmptyString;
+    }
+    wxString decl;
+    if(is_func_inline()) {
+        decl << "inline ";
+    }
+    if(is_func_virtual()) {
+        decl << "virtual ";
+    }
+    decl << GetTypename() << " ";
+    if(!GetScope().empty()) {
+        decl << GetScope() << "::";
+    }
+    decl << GetName() << GetSignature();
+    if(is_func_const()) {
+        decl << "const ";
+    }
+    if(is_func_pure()) {
+        decl << "= 0";
+    }
+    decl << ";";
+    return decl;
+}
+
+wxString TagEntry::GetFunctionDefinition() const
+{
+    wxString impl;
+    if(!IsMethod()) {
+        return wxEmptyString;
+    }
+    impl << GetTypename() << " ";
+    if(!GetScope().empty()) {
+        impl << GetScope() << "::";
+    }
+    impl << GetName() << GetSignature();
+    if(is_func_const()) {
+        impl << "const ";
+    }
+    return impl;
+}

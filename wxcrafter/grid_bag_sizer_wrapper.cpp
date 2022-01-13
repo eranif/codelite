@@ -1,7 +1,6 @@
 #include "grid_bag_sizer_wrapper.h"
 
 #include "allocator_mgr.h"
-#include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 
@@ -10,19 +9,15 @@ GridBagSizerWrapper::GridBagSizerWrapper()
     m_type = ID_WXGRIDBAGSIZER;
     m_styles.Clear(); // Sizer has no styles
     SetPropertyString(_("Common Settings"), "wxGridBagSizer");
-    AddProperty(
-        new StringProperty(PROP_GROW_COLS, wxT(""), _("Which columns are allowed to grow. Comma separated list")));
-    AddProperty(new StringProperty(PROP_GROW_ROWS, wxT(""), _("Which rows are allowed to grow. Comma separated list")));
-    AddProperty(new StringProperty(PROP_HGAP, wxT("0"), _("The horizontal gap between grid cells")));
-    AddProperty(new StringProperty(PROP_VGAP, wxT("0"), _("The vertical gap between grid cells")));
+    AddProperty(new StringProperty(PROP_GROW_COLS, "", _("Which columns are allowed to grow. Comma separated list")));
+    AddProperty(new StringProperty(PROP_GROW_ROWS, "", _("Which rows are allowed to grow. Comma separated list")));
+    AddProperty(new StringProperty(PROP_HGAP, "0", _("The horizontal gap between grid cells")));
+    AddProperty(new StringProperty(PROP_VGAP, "0", _("The vertical gap between grid cells")));
 
     EnableSizerFlag("wxEXPAND", true);
     m_sizerItem.SetProportion(1);
 
     m_namePattern = "gridBagSizer";
-    if(wxcProjectMetadata::Get().IsKeepSizers()) {
-        m_namePattern.Prepend("m_");
-    }
     SetName(GenerateName());
 }
 
@@ -32,17 +27,18 @@ wxString GridBagSizerWrapper::CppCtorCode() const
 {
     wxString code;
 
-    if(!wxcProjectMetadata::Get().IsKeepSizers())
+    if(!KeepAsClassMember()) {
         code << "wxGridBagSizer* ";
+    }
 
-    code << GetName() << " = new wxGridBagSizer(" << PropertyString(PROP_VGAP) << wxT(", ") << PropertyString(PROP_HGAP)
-         << wxT(");\n");
+    code << GetName() << " = new wxGridBagSizer(" << PropertyString(PROP_VGAP) << ", " << PropertyString(PROP_HGAP)
+         << ");\n";
     code << GenerateMinSizeCode();
     if(IsMainSizer()) {
         if(GetParent()->IsTopWindow()) {
-            code << wxT("this->SetSizer(") << GetName() << wxT(");\n");
+            code << "this->SetSizer(" << GetName() << ");\n";
         } else {
-            code << GetParent()->GetName() << wxT("->SetSizer(") << GetName() << wxT(");\n");
+            code << GetParent()->GetName() << "->SetSizer(" << GetName() << ");\n";
         }
     }
     return code;
@@ -50,20 +46,21 @@ wxString GridBagSizerWrapper::CppCtorCode() const
 
 void GridBagSizerWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    text << wxT("<object class=\"wxGridBagSizer\">") << GenerateMinSizeXRC() << wxT("<vgap>")
-         << PropertyString(PROP_VGAP) << wxT("</vgap>") << wxT("<hgap>") << PropertyString(PROP_HGAP) << wxT("</hgap>")
-         << wxT("<growablecols>") << PropertyString(PROP_GROW_COLS) << wxT("</growablecols>") << wxT("<growablerows>")
-         << PropertyString(PROP_GROW_ROWS) << wxT("</growablerows>");
+    text << wxT("<object class=\"wxGridBagSizer\">") << GenerateMinSizeXRC() << "<vgap>" << PropertyString(PROP_VGAP)
+         << "</vgap>"
+         << "<hgap>" << PropertyString(PROP_HGAP) << "</hgap>"
+         << "<growablecols>" << PropertyString(PROP_GROW_COLS) << "</growablecols>"
+         << "<growablerows>" << PropertyString(PROP_GROW_ROWS) << "</growablerows>";
     ChildrenXRC(text, type);
-    text << wxT("</object>");
+    text << "</object>";
 }
 
-wxString GridBagSizerWrapper::GetWxClassName() const { return wxT("wxGridBagSizer"); }
+wxString GridBagSizerWrapper::GetWxClassName() const { return "wxGridBagSizer"; }
 
 void GridBagSizerWrapper::GetIncludeFile(wxArrayString& headers) const
 {
     SizerWrapperBase::GetIncludeFile(headers);
-    headers.Add(wxT("#include <wx/gbsizer.h>"));
+    headers.Add("#include <wx/gbsizer.h>");
 }
 
 void GridBagSizerWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
@@ -82,22 +79,22 @@ void GridBagSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 
 void GridBagSizerWrapper::DoLoadXRCProperties(const wxXmlNode* node)
 {
-    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("vgap"));
+    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "vgap");
     if(propertynode) {
         SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
     }
 
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("hgap"));
+    propertynode = XmlUtils::FindFirstByTagName(node, "hgap");
     if(propertynode) {
         SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
     }
 
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("growablecols"));
+    propertynode = XmlUtils::FindFirstByTagName(node, "growablecols");
     if(propertynode) {
         SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent());
     }
 
-    propertynode = XmlUtils::FindFirstByTagName(node, wxT("growablerows"));
+    propertynode = XmlUtils::FindFirstByTagName(node, "growablerows");
     if(propertynode) {
         SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent());
     }
@@ -132,14 +129,14 @@ void GridBagSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
 wxString GridBagSizerWrapper::DoGenerateCppCtorCode_End() const
 {
     wxString code;
-    wxArrayString growCols = wxCrafter::Split(PropertyString(PROP_GROW_COLS), wxT(","));
-    wxArrayString growRows = wxCrafter::Split(PropertyString(PROP_GROW_ROWS), wxT(","));
+    wxArrayString growCols = wxCrafter::Split(PropertyString(PROP_GROW_COLS), ",");
+    wxArrayString growRows = wxCrafter::Split(PropertyString(PROP_GROW_ROWS), ",");
     for(size_t i = 0; i < growCols.GetCount(); i++) {
-        code << GetName() << wxT("->AddGrowableCol(") << growCols.Item(i) << wxT(");\n");
+        code << GetName() << "->AddGrowableCol(" << growCols.Item(i) << ");\n";
     }
 
     for(size_t i = 0; i < growRows.GetCount(); i++) {
-        code << GetName() << wxT("->AddGrowableRow(") << growRows.Item(i) << wxT(");\n");
+        code << GetName() << "->AddGrowableRow(" << growRows.Item(i) << ");\n";
     }
     return code;
 }

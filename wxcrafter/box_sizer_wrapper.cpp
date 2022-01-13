@@ -2,7 +2,6 @@
 
 #include "allocator_mgr.h"
 #include "choice_property.h"
-#include "wxc_project_metadata.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
@@ -13,8 +12,8 @@ BoxSizerWrapper::BoxSizerWrapper()
     m_styles.Clear(); // Sizer has no styles
 
     wxArrayString arr;
-    arr.Add(wxT("wxVERTICAL"));
-    arr.Add(wxT("wxHORIZONTAL"));
+    arr.Add("wxVERTICAL");
+    arr.Add("wxHORIZONTAL");
 
     SetPropertyString(_("Common Settings"), "wxBoxSizer");
     AddProperty(new ChoiceProperty(PROP_ORIENTATION, arr, 0, _("Sizer orientation")));
@@ -23,21 +22,19 @@ BoxSizerWrapper::BoxSizerWrapper()
     m_sizerItem.SetProportion(1);
 
     m_namePattern = "boxSizer";
-    if(wxcProjectMetadata::Get().IsKeepSizers()) {
-        m_namePattern.Prepend("m_");
-    }
     SetName(GenerateName());
 }
 
 BoxSizerWrapper::~BoxSizerWrapper() {}
 
-wxString BoxSizerWrapper::GetWxClassName() const { return wxT("wxBoxSizer"); }
+wxString BoxSizerWrapper::GetWxClassName() const { return "wxBoxSizer"; }
 
 wxString BoxSizerWrapper::CppCtorCode() const
 {
     wxString code;
-    if(!wxcProjectMetadata::Get().IsKeepSizers())
+    if(!KeepAsClassMember()) {
         code << "wxBoxSizer* ";
+    }
 
     code << GetName() << " = new wxBoxSizer(" << PropertyString(PROP_ORIENTATION) << ");\n";
 
@@ -45,10 +42,10 @@ wxString BoxSizerWrapper::CppCtorCode() const
 
     if(IsMainSizer()) {
         if(GetParent()->IsTopWindow()) {
-            code << wxT("this->SetSizer(") << GetName() << wxT(");\n");
+            code << "this->SetSizer(" << GetName() << ");\n";
 
         } else {
-            code << GetWindowParent() << wxT("->SetSizer(") << GetName() << wxT(");\n");
+            code << GetWindowParent() << "->SetSizer(" << GetName() << ");\n";
         }
     }
     return code;
@@ -56,11 +53,10 @@ wxString BoxSizerWrapper::CppCtorCode() const
 
 void BoxSizerWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    text << wxT("<object class=\"wxBoxSizer\">") << wxT("<orient>") << PropertyString(PROP_ORIENTATION)
-         << wxT("</orient>\n");
+    text << wxT("<object class=\"wxBoxSizer\">") << "<orient>" << PropertyString(PROP_ORIENTATION) << "</orient>\n";
     text << GenerateMinSizeXRC();
     ChildrenXRC(text, type);
-    text << wxT("</object>");
+    text << "</object>";
 }
 
 wxcWidget* BoxSizerWrapper::Clone() const { return new BoxSizerWrapper(); }
@@ -72,7 +68,7 @@ void BoxSizerWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     // First call the base-class for the standard things
     wxcWidget::LoadPropertiesFromXRC(node);
 
-    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("orient"));
+    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "orient");
     if(propertynode) {
         SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent());
     }
@@ -84,12 +80,12 @@ void BoxSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     // wxSmith doesn't use "name" here, but "variable" means the same thing afaict
-    wxString value = XmlUtils::ReadString(node, wxT("variable"));
+    wxString value = XmlUtils::ReadString(node, "variable");
     if(!value.empty()) {
         SetName(value);
     }
 
-    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("orient"));
+    wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "orient");
     if(propertynode) {
         SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent());
     }

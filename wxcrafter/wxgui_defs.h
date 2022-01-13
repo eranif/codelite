@@ -2,17 +2,22 @@
 #define WXGUI_DEFS_H
 
 #include "json_node.h"
+
 #include <wx/string.h>
 
 class wxcWidget;
 #define CHECK_POINTER(d) \
-    if(!d) return;
+    if(!d)               \
+        return;
 #define CHECK_POINTER_RET_NULL(d) \
-    if(!d) return NULL;
+    if(!d)                        \
+        return NULL;
 #define CHECK_POINTER_RET_FALSE(d) \
-    if(!d) return false;
+    if(!d)                         \
+        return false;
 #define CHECK_TREEITEM(item) \
-    if(item.IsOk() == false) return;
+    if(item.IsOk() == false) \
+        return;
 
 #define STRINGFY(flag) wxString(#flag, wxConvUTF8)
 
@@ -48,10 +53,11 @@ class wxcWidget;
 
 #define HAS_STYLE(styleBit) m_styles.Contains(wxString(#styleBit, wxConvUTF8))
 
-#define REMOVE_STYLE(styleBit)                             \
-    {                                                      \
-        wxString name = wxString(#styleBit, wxConvUTF8);   \
-        if(m_styles.Contains(name)) m_styles.Remove(name); \
+#define REMOVE_STYLE(styleBit)                           \
+    {                                                    \
+        wxString name = wxString(#styleBit, wxConvUTF8); \
+        if(m_styles.Contains(name))                      \
+            m_styles.Remove(name);                       \
     }
 
 #define ADD_SIZER_FLAG(styleBit, isSet)                     \
@@ -270,6 +276,7 @@ class wxcWidget;
 #define PROP_ANIM_AUTO_PLAY wxTRANSLATE("Load and play")
 #define PROP_PROPORTION wxTRANSLATE("Proportion:")
 #define PROP_SPELLCHECK wxTRANSLATE("Enable Spell Checking")
+#define PROP_KEEP_CLASS_MEMBER wxTRANSLATE("Keep as a class member")
 ///////////////////////////////////////////////////////////////////////////////////////
 
 struct WxStyleInfo {

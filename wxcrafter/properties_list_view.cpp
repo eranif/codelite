@@ -72,8 +72,6 @@ void PropertiesListView::ConstructProjectSettings()
                   "directly enter native text string encapsulated by wxT() macro"));
     AddBoolProp(_("Add wxWidgets Handlers if missing"), wxcProjectMetadata::Get().IsAddHandlers(),
                 _("When enabled, wxCrafter will add missing handlers (e.g. wxBitmapXmlHandler)"));
-    AddBoolProp(_("Keep wxSizers as class members"), wxcProjectMetadata::Get().IsKeepSizers(),
-                _("When enabled, wxSizers are kept as class members and become accessible"));
 }
 
 void PropertiesListView::Construct(wxcWidget* wb)
@@ -81,8 +79,9 @@ void PropertiesListView::Construct(wxcWidget* wb)
     DoClear();
     m_type = Type_Control;
     m_wxcWidget = wb;
-    if(!m_wxcWidget)
+    if(!m_wxcWidget) {
         return;
+    }
 
     // Populate the table
     const wxcWidget::MapProperties_t& props = wb->GetProperties();
@@ -303,11 +302,6 @@ void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
         p = m_pg->GetProperty(_("Add wxWidgets Handlers if missing"));
         if(p) {
             wxcProjectMetadata::Get().SetAddHandlers(p->GetValue().GetBool());
-        }
-
-        p = m_pg->GetProperty(_("Keep wxSizers as class members"));
-        if(p) {
-            wxcProjectMetadata::Get().SetKeepSizers(p->GetValue().GetBool());
         }
 
         wxCommandEvent evt(wxEVT_PROJECT_METADATA_MODIFIED);

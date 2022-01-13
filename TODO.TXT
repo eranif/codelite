@@ -78,7 +78,6 @@ New CTagsd CC engine:
 
 KNOWN ISSUE:
 ------------
-- cJSON* -> no CC
 - wxWindow* -> no CC
 
 TODO:

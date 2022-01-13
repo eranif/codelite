@@ -439,7 +439,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
             // update the entries
             if(!json.hasNamedObject("codelite_indexer")) {
-                json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("ctags"));
+                json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("codelite-ctags"));
             }
 
             json.addProperty("limit_results", TagsManagerST::Get()->GetCtagsOptions().GetCcNumberOfDisplayItems());

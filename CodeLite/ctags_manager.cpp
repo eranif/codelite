@@ -2677,7 +2677,7 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
 TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
     TagEntryPtrVector_t tagsVec;
-    CTags::ParseBuffer(filename, content, clStandardPaths::Get().GetBinaryFullPath("ctags"),
+    CTags::ParseBuffer(filename, content, clStandardPaths::Get().GetBinaryFullPath("codelite-ctags"),
                        GetCtagsOptions().GetTokensWxMap(), tagsVec);
     return tagsVec;
 }

@@ -145,8 +145,6 @@
     <File Name="CxxCodeCompletion.hpp"/>
     <File Name="CxxExpression.cpp"/>
     <File Name="CxxExpression.hpp"/>
-    <File Name="CodeLiteIndexer.hpp"/>
-    <File Name="CodeLiteIndexer.cpp"/>
     <File Name="Trie.hpp"/>
     <File Name="CompletionHelper.hpp"/>
     <File Name="CompletionHelper.cpp"/>

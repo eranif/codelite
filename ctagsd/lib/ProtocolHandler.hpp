@@ -2,7 +2,6 @@
 #define PROTOCOLHANDLER_HPP
 
 #include "Channel.hpp"
-#include "CodeLiteIndexer.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxCodeCompletion.hpp"
 #include "ParseThread.hpp"

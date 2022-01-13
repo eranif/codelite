@@ -27,7 +27,6 @@
 
 #include "AddFunctionsImpDlg.h"
 #include "CTags.hpp"
-#include "CodeLiteIndexer.hpp"
 #include "CompletionHelper.hpp"
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"

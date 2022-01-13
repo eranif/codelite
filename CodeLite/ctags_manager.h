@@ -26,7 +26,6 @@
 #ifndef CODELITE_CTAGS_MANAGER_H
 #define CODELITE_CTAGS_MANAGER_H
 
-#include "CodeLiteIndexer.hpp"
 #include "cl_calltip.h"
 #include "cl_command_event.h"
 #include "cl_process.h"

@@ -25,7 +25,6 @@
 #ifndef CODELITE_LANGUAGE_H
 #define CODELITE_LANGUAGE_H
 
-#include "CodeLiteIndexer.hpp"
 #include "CxxTokenizer.h"
 #include "CxxVariable.h"
 #include "codelite_exports.h"
@@ -40,6 +39,7 @@
 #include "tokenizer.h"
 #include "variable.h"
 #include "y.tab.h"
+
 #include <set>
 #include <vector>
 #include <wx/filename.h>

@@ -76,6 +76,21 @@ FileLogger& operator<<(FileLogger& logger, const vector<TagEntryPtr>& tags)
     return logger;
 }
 
+void remove_db_if_needed(const wxString& dbpath)
+{
+    ITagsStoragePtr db(new TagsStorageSQLite());
+    db->OpenDatabase(dbpath);
+    if(db->GetVersion() != db->GetSchemaVersion()) {
+        clSYSTEM() << "DB version schema upgrade is required" << endl;
+        clSYSTEM() << "New schema version is:" << db->GetVersion() << endl;
+        clSYSTEM() << "Current schema version is:" << db->GetSchemaVersion() << endl;
+        db.Reset(nullptr);
+        FileUtils::RemoveFile(dbpath);
+    } else {
+        clDEBUG() << "No schema changes detected" << endl;
+    }
+}
+
 inline size_t count_lines(const wxString& content)
 {
     size_t lf_count = 0;
@@ -480,10 +495,13 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     // build a list of files to parse (including all include statements)
     files = get_files_to_parse(files);
 
+    // Check the database version
     TagsManagerST::Get()->CloseDatabase();
-    TagsManagerST::Get()->OpenDatabase(wxFileName(m_settings_folder, "tags.db"));
+    wxFileName fn_db_path(m_settings_folder, "tags.db");
+    remove_db_if_needed(fn_db_path.GetFullPath());
+
+    TagsManagerST::Get()->OpenDatabase(fn_db_path);
     TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(m_settings.GetLimitResults());
-    TagsManagerST::Get()->GetDatabase()->SetUseCache(false);
 
     // reparse the workspace
     send_log_message(_("Initialization completed"), LSP_LOG_INFO, channel);

@@ -1339,7 +1339,7 @@ void TagsManager::CloseDatabase()
     m_db = NULL; // Free the current database
     m_db = new TagsStorageSQLite();
     m_db->SetSingleSearchLimit(m_tagsOptions.GetCcNumberOfDisplayItems());
-    m_db->SetUseCache(true);
+    m_db->SetUseCache(false);
 }
 
 DoxygenComment TagsManager::GenerateDoxygenComment(const wxString& file, const int line, wxChar keyPrefix)

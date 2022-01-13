@@ -33,8 +33,6 @@
 using LSP::CompletionItem;
 using LSP::eSymbolKind;
 
-unordered_map<wxString, vector<TagEntryPtr>> ProtocolHandler::m_tags_cache;
-
 #if wxUSE_STACKWALKER
 class MyStackWalker : public wxStackWalker
 {
@@ -289,24 +287,6 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const CTags
 
     // Commit whats left
     db->Commit();
-
-    // cache the tags
-    vector<TagEntryPtr> per_file_tags;
-    wxString current_file;
-    for(TagEntryPtr tag : tags) {
-        if(tag->GetFile() != current_file && !current_file.empty()) {
-            if(!per_file_tags.empty()) {
-                cache_set_document_symbols(current_file, per_file_tags);
-            }
-            per_file_tags.clear();
-        }
-        per_file_tags.push_back(tag);
-        current_file = tag->GetFile();
-    }
-
-    if(!current_file.empty() && !per_file_tags.empty()) {
-        cache_set_document_symbols(current_file, per_file_tags);
-    }
     clDEBUG() << "Success" << endl;
 }
 
@@ -581,7 +561,6 @@ void ProtocolHandler::on_did_close(unique_ptr<JSON>&& msg, Channel::ptr_t channe
     m_comments_cache.erase(filepath);
     m_parsed_files_info.erase(filepath);
     m_additional_scopes.erase(filepath);
-    cache_erase_document_symbols(filepath);
 }
 
 // Notification -->
@@ -1105,10 +1084,10 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel::ptr_t 
     if(!ensure_file_content_exists(filepath, channel, id))
         return;
 
-    // parse the file and return the symbols
-    clDEBUG() << "Fetching symbols from cache for file:" << filepath << endl;
+    // parse hte buffer
     vector<TagEntryPtr> tags;
-    cache_get_document_symbols(filepath, tags);
+    CTags::ParseBuffer(filepath, m_filesOpened[filepath], m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(),
+                       tags);
 
     // tags are sorted by line number, just wrap them in JSON and send them over to the client
     JSON root(cJSON_Object);
@@ -1487,35 +1466,6 @@ size_t ProtocolHandler::get_includes_recrusively(const wxString& filepath, wxStr
         Q.insert(Q.end(), include_files.begin(), include_files.end());
     }
     return output->size();
-}
-
-static wxCriticalSection cs;
-
-void ProtocolHandler::cache_set_document_symbols(const wxString& filepath, const vector<TagEntryPtr>& tags)
-{
-    wxCriticalSectionLocker locker{ cs };
-    if(m_tags_cache.count(filepath)) {
-        m_tags_cache.erase(filepath);
-    }
-    m_tags_cache.insert({ filepath, tags });
-}
-
-size_t ProtocolHandler::cache_get_document_symbols(const wxString& filepath, vector<TagEntryPtr>& tags)
-{
-    wxCriticalSectionLocker locker{ cs };
-    if(m_tags_cache.count(filepath) == 0) {
-        return 0;
-    }
-    tags = m_tags_cache.find(filepath)->second;
-    return tags.size();
-}
-
-void ProtocolHandler::cache_erase_document_symbols(const wxString& filepath)
-{
-    wxCriticalSectionLocker locker{ cs };
-    if(m_tags_cache.count(filepath)) {
-        m_tags_cache.erase(filepath);
-    }
 }
 
 wxStringSet_t ProtocolHandler::setdiff(const wxStringSet_t& a, const wxStringSet_t& b)

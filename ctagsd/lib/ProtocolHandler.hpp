@@ -50,7 +50,6 @@ private:
     Scanner m_file_scanner;
     CxxCodeCompletion::ptr_t m_completer;
     ParseThread m_parse_thread;
-    static unordered_map<wxString, vector<TagEntryPtr>> m_tags_cache;
 
 private:
     JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
@@ -103,11 +102,6 @@ private:
 public:
     ProtocolHandler();
     ~ProtocolHandler();
-
-    // symbols cache API
-    static void cache_set_document_symbols(const wxString& filepath, const vector<TagEntryPtr>& tags);
-    static size_t cache_get_document_symbols(const wxString& filepath, vector<TagEntryPtr>& tags);
-    static void cache_erase_document_symbols(const wxString& filepath);
 
     void on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel);
     void on_initialized(unique_ptr<JSON>&& msg, Channel::ptr_t channel);

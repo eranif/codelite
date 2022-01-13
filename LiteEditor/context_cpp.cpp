@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "context_cpp.h"
+
 #include "AddFunctionsImpDlg.h"
 #include "CTags.hpp"
 #include "CodeLiteIndexer.hpp"
@@ -80,6 +81,7 @@
 #include "wx/tokenzr.h"
 #include "wx/xrc/xmlres.h"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <wx/choicdlg.h>
 #include <wx/file.h>
 #include <wx/progdlg.h>
@@ -1576,7 +1578,6 @@ bool ContextCpp::DoGetFunctionBody(long curPos, long& blockStartPos, long& block
             blockEndPos = rCtrl.PositionAfter(curPos);
         }
     }
-
     return (blockEndPos > blockStartPos) && (blockEndPos != wxNOT_FOUND) && (blockStartPos != wxNOT_FOUND);
 }
 
@@ -1586,9 +1587,19 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
     clEditor& rCtrl = GetCtrl();
     prototypes.clear();
     functions.clear();
-    prototypes = TagsManagerST::Get()->ParseBuffer(rCtrl.GetEditorText(), wxEmptyString, "p");
-    // locate the c++ file
+    vector<TagEntryPtr> tmp_tags;
+    prototypes = TagsManagerST::Get()->ParseBuffer(rCtrl.GetEditorText());
 
+    // filter non prototypes
+    tmp_tags.reserve(prototypes.size());
+    for(TagEntryPtr tag : prototypes) {
+        if(tag->IsPrototype()) {
+            tmp_tags.emplace_back(tag);
+        }
+    }
+    prototypes.swap(tmp_tags);
+
+    // locate the c++ file
     if(!FindSwappedFile(rCtrl.GetFileName(), otherfile)) {
         wxMessageBox(_("Could not locate implementation file!"), "CodeLite", wxICON_WARNING | wxOK);
         return 0;
@@ -1608,7 +1619,16 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
             return 0;
         }
     }
-    functions = TagsManagerST::Get()->ParseBuffer(implContent, wxEmptyString, "f");
+    functions = TagsManagerST::Get()->ParseBuffer(implContent);
+    // filter non functions
+    tmp_tags.clear();
+    tmp_tags.reserve(functions.size());
+    for(TagEntryPtr tag : functions) {
+        if(tag->IsFunction()) {
+            tmp_tags.emplace_back(tag);
+        }
+    }
+    functions.swap(tmp_tags);
     return prototypes.size();
 }
 

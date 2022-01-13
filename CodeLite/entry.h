@@ -92,6 +92,7 @@ class WXDLLIMPEXP_CL TagEntry
     wxString m_comment; // This member is not saved into the database
     wxString m_formattedComment;
     bool m_isCommentForamtted;
+    wxString m_template_definition;
 
 public:
     enum {
@@ -134,6 +135,9 @@ public:
     TagEntry();
 
     void FromLine(const wxString& line);
+
+    bool IsClassTemplate() const;
+    wxString GetTemplateDefinition() const;
 
     /**
      * Copy constructor.
@@ -265,18 +269,15 @@ public:
 
     wxString GetSignature() const { return GetExtField(_T("signature")); }
     void SetSignature(const wxString& sig) { m_extFields[wxT("signature")] = sig; }
-
     void SetInherits(const wxString& inherits) { m_extFields[_T("inherits")] = inherits; }
-    void SetTyperef(const wxString& typeref) { m_extFields[_T("typeref")] = typeref; }
 
     wxString GetInheritsAsString() const;
     wxArrayString GetInheritsAsArrayNoTemplates() const;
     wxArrayString GetInheritsAsArrayWithTemplates() const;
 
-    wxString GetTyperef() const { return GetExtField(_T("typeref")); }
-
-    void SetReturnValue(const wxString& retVal) { m_extFields[_T("returns")] = retVal; }
-    wxString GetReturnValue() const;
+    wxString GetTypename() const;
+    void SetTypename(const wxString& value);
+    void SetTemplateDefinition(const wxString& def) { m_extFields["template"] = def; }
 
     const wxString& GetScope() const { return m_scope; }
     void SetScope(const wxString& scope) { m_scope = scope; }
@@ -312,29 +313,10 @@ public:
      */
     wxString GetFullDisplayName() const;
 
-    /**
-     * Return the actual name as described in the 'typeref' field
-     * \return real name or wxEmptyString
-     */
-    wxString NameFromTyperef(wxString& templateInitList, bool nameIncludeTemplate = false);
-
-    /**
-     * Return the actual type as described in the 'typeref' field
-     * \return real name or wxEmptyString
-     */
-    wxString TypeFromTyperef() const;
-
     //------------------------------------------
     // Extenstion fields
     //------------------------------------------
-    wxString GetExtField(const wxString& extField) const
-    {
-        auto iter = m_extFields.find(extField);
-        if(iter == m_extFields.end()) {
-            return wxEmptyString;
-        }
-        return iter->second;
-    }
+    const wxString& GetExtField(const wxString& extField) const;
 
     /**
      * @brief mark this tag has clang generated tag
@@ -349,19 +331,7 @@ public:
     // Misc
     //------------------------------------------
     void Print();
-
     TagEntryPtr ReplaceSimpleMacro();
-
-    /**
-     * @brief return 0 if the values are the same. < 0 if a < b and > 0 if a > b
-     */
-    int CompareDisplayString(const TagEntryPtr& rhs) const;
-
-    /**
-     * @brief format a comment for this tag. The format uses codelite's syntax formatting
-     * that can be used later on in the various tooltip windows
-     */
-    wxString FormatComment();
 
 private:
     /**
@@ -369,8 +339,6 @@ private:
      * \param path path to add
      */
     void UpdatePath(wxString& path);
-    bool TypedefFromPattern(const wxString& tagPattern, const wxString& typedefName, wxString& name,
-                            wxString& templateInit, bool nameIncludeTemplate = false);
 };
 
 #endif // CODELITE_ENTRY_H

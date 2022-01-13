@@ -189,13 +189,12 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
     return result;
 }
 
-void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& buffer, const wxString& settings_folder,
-                                   const wxString& indexer_path)
+void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& buffer, const CTagsdSettings& settings)
 {
     clDEBUG() << "Parsing buffer of file:" << filename << endl;
 
     // create/open db
-    wxFileName dbfile(settings_folder, "tags.db");
+    wxFileName dbfile(settings.GetSettingsDir(), "tags.db");
     if(!dbfile.FileExists()) {
         clDEBUG() << dbfile << "does not exist, will create it" << endl;
     }
@@ -204,7 +203,7 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
     clDEBUG() << "Generating ctags file..." << endl;
 
     vector<TagEntryPtr> tags;
-    if(CTags::ParseBuffer(filename, buffer, indexer_path, tags) == 0) {
+    if(CTags::ParseBuffer(filename, buffer, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
         clERROR() << "Failed to generate ctags file for buffer. file:" << filename << ". buffer:" << buffer << endl;
 #if wxUSE_STACKWALKER
         MyStackWalker stack{};
@@ -229,19 +228,17 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
     clDEBUG() << "Success" << endl;
 }
 
-void ProtocolHandler::parse_file(const wxFileName& filename, const wxString& settings_folder,
-                                 const wxString& indexer_path)
+void ProtocolHandler::parse_file(const wxFileName& filename, const CTagsdSettings& settings)
 {
-    parse_files({ filename.GetFullPath() }, settings_folder, indexer_path);
+    parse_files({ filename.GetFullPath() }, settings);
 }
 
-void ProtocolHandler::parse_files(const vector<wxString>& file_list, const wxString& settings_folder,
-                                  const wxString& indexer_path)
+void ProtocolHandler::parse_files(const vector<wxString>& file_list, const CTagsdSettings& settings)
 {
     clDEBUG() << "Parsing" << file_list.size() << "files" << endl;
     clDEBUG() << "Removing un-modified and unwanted files..." << endl;
     // create/open db
-    wxFileName dbfile(settings_folder, "tags.db");
+    wxFileName dbfile(settings.GetSettingsDir(), "tags.db");
     if(!dbfile.FileExists()) {
         clDEBUG() << dbfile << "does not exist, will create it" << endl;
     }
@@ -264,9 +261,9 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const wxStr
     }
 
     vector<TagEntryPtr> tags;
-    if(CTags::ParseFiles(filtered_file_list, indexer_path, tags) == 0) {
-        clERROR() << "Failed to generate ctags file. indexer:" << indexer_path << "file-lists:" << filtered_file_list
-                  << endl;
+    if(CTags::ParseFiles(filtered_file_list, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
+        clERROR() << "Failed to generate ctags file. indexer:" << settings.GetCodeliteIndexer()
+                  << "file-lists:" << filtered_file_list << endl;
 #if wxUSE_STACKWALKER
         MyStackWalker stack{};
         stack.Walk();
@@ -515,7 +512,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     vector<wxString> files_to_parse = { files.begin(), files.end() };
     auto parse_callback = [=]() {
         clDEBUG() << "on_initialize(): parsing files..." << endl;
-        ProtocolHandler::parse_files(files_to_parse, m_settings_folder, m_settings.GetCodeliteIndexer());
+        ProtocolHandler::parse_files(files_to_parse, m_settings);
         clDEBUG() << "on_initialize(): parsing files... Success" << endl;
         return eParseThreadCallbackRC::RC_SUCCESS;
     };
@@ -564,7 +561,7 @@ void ProtocolHandler::on_did_open(unique_ptr<JSON>&& msg, Channel::ptr_t channel
     parse_file_for_includes_and_using_namespace(filepath);
 
     // make sure this file is up to date
-    parse_file(filepath, m_settings_folder, m_settings.GetCodeliteIndexer());
+    parse_file(filepath, m_settings);
 
     // keep the file content in-cache
     m_filesOpened.insert({ filepath, file_content });
@@ -643,7 +640,7 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         wxString settings_folder = m_settings_folder;
         ParseThreadTaskFunc buffer_parse_task = [=]() {
             clDEBUG() << "on_did_change(): parsing file task" << filepath << endl;
-            ProtocolHandler::parse_buffer(filepath, file_content, settings_folder, indexer_path);
+            ProtocolHandler::parse_buffer(filepath, file_content, m_settings);
             clDEBUG() << "on_did_change(): parsing file task ... Success" << endl;
             return eParseThreadCallbackRC::RC_SUCCESS;
         };
@@ -654,7 +651,7 @@ void ProtocolHandler::on_did_change(unique_ptr<JSON>&& msg, Channel::ptr_t chann
             vector<wxString> includes_to_parse{ new_includes.begin(), new_includes.end() };
             ParseThreadTaskFunc headers_parse_task = [=]() {
                 clDEBUG() << "on_did_change(): parsing header files" << includes_to_parse << endl;
-                ProtocolHandler::parse_files(includes_to_parse, settings_folder, indexer_path);
+                ProtocolHandler::parse_files(includes_to_parse, m_settings);
                 clDEBUG() << "on_did_change(): parsing header files ... Success" << endl;
                 return eParseThreadCallbackRC::RC_SUCCESS;
             };
@@ -815,7 +812,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel::ptr_t chann
             item.addProperty("label", tag->GetDisplayName());
             item.addProperty("filterText", tag->GetName());
             item.addProperty("insertText", tag->GetKind() == "file" ? tag->GetPattern() : tag->GetName());
-            item.addProperty("detail", tag->IsMethod() ? m_completer->get_return_value(tag) : tag->GetReturnValue());
+            item.addProperty("detail", tag->GetTypename());
 
             // set the kind
             CompletionItem::eCompletionItemKind kind = LSPUtils::get_completion_kind(tag.Get());
@@ -861,7 +858,7 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel::ptr_t channel
     wxString settings_folder = m_settings_folder;
     ParseThreadTaskFunc task = [=]() {
         clDEBUG() << "on_did_save: parsing task:" << files.size() << "files..." << endl;
-        ProtocolHandler::parse_files(files, settings_folder, indexer_path);
+        ProtocolHandler::parse_files(files, m_settings);
         clDEBUG() << "on_did_save: parsing task: ... Success!" << endl;
         return eParseThreadCallbackRC::RC_SUCCESS;
     };
@@ -902,7 +899,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
     // use CTags to gather local variables
     wxString tmpdir = clStandardPaths::Get().GetTempDir();
     vector<TagEntryPtr> tags;
-    CTags::ParseFile(filepath, m_settings.GetCodeliteIndexer(), tags);
+    CTags::ParseFile(filepath, m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(), tags);
 
     clDEBUG1() << "File tags:" << tags.size() << endl;
     wxStringSet_t locals_set;

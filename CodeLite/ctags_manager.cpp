@@ -1242,77 +1242,6 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
 
 void TagsManager::TipsFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word, std::vector<wxString>& tips)
 {
-    wxString retValueColour = "\"white\"";
-    for(size_t i = 0; i < tags.size(); i++) {
-        if(tags.at(i)->GetName() != word)
-            continue;
-
-        wxString tip = tags.at(i)->GetPattern();
-
-        // remove the pattern perfix and suffix
-        tip = tip.Trim().Trim(false);
-        tip = tip.AfterFirst(wxT('^'));
-        if(tip.Find(wxT('$')) != wxNOT_FOUND) {
-            tip = tip.BeforeLast(wxT('$'));
-        } else {
-            if(tip.EndsWith(wxT("/"))) {
-                tip = tip.BeforeLast(wxT('/'));
-            }
-        }
-
-        // since the tip is built from the pattern, which is actually a regex expression
-        // some characters might be escaped (e.g. '/' will appear as '\/')
-        tip.Replace(wxT("\\/"), wxT("/"));
-
-        // Trim whitespace from right and left
-        static wxString trimString(wxT("{;\r\n\t\v "));
-
-        tip.erase(0, tip.find_first_not_of(trimString));
-        tip.erase(tip.find_last_not_of(trimString) + 1);
-        tip.Replace(wxT("\t"), wxT(" "));
-
-        // create a proper tooltip from the stripped pattern
-        TagEntryPtr t = tags.at(i);
-        if(t->IsMethod()) {
-
-            // add return value
-            tip.Clear();
-
-            wxString ret_value = GetFunctionReturnValueFromPattern(t);
-            if(ret_value.IsEmpty() == false) {
-                tip << "`" << ret_value << wxT("` ");
-            } else {
-                wxString retValue = t->GetReturnValue();
-                if(retValue.IsEmpty() == false) {
-                    tip << "`" << retValue << wxT("` ");
-                }
-            }
-
-            // add the scope
-            if(!t->IsScopeGlobal() && !t->IsConstructor() && !t->IsDestructor()) {
-                tip << t->GetScope() << wxT("::");
-            }
-
-            // name
-            tip << "`" << t->GetName() << "`";
-
-            // method signature
-            tip << NormalizeFunctionSig(t->GetSignature(), Normalize_Func_Name | Normalize_Func_Default_value);
-        }
-
-        // remove any extra spaces from the tip
-        while(tip.Replace(wxT("  "), wxT(" "))) {}
-
-        // BUG#3082954: limit the size of the 'match pattern' to a reasonable size (200 chars)
-        tip = WrapLines(tip);
-
-        if(!tips.empty()) {
-            tip.Prepend("\n");
-        }
-
-        // prepend any comment if exists
-        tips.push_back(tip);
-    }
 }
 
 void TagsManager::GetFunctionTipFromTags(const std::vector<TagEntryPtr>& tags, const wxString& word,
@@ -1664,15 +1593,9 @@ wxString TagsManager::FormatFunction(TagEntryPtr tag, size_t flags, const wxStri
         body << ">\n";
     }
 
-    wxString ret_value = GetFunctionReturnValueFromPattern(tag);
-    if(ret_value.IsEmpty() == false) {
-        body << ret_value << wxT(" ");
-
-    } else {
-        wxString retValue = tag->GetReturnValue();
-        if(retValue.IsEmpty() == false) {
-            body << retValue << wxT(" ");
-        }
+    wxString retValue = tag->GetTypename();
+    if(retValue.IsEmpty() == false) {
+        body << retValue << wxT(" ");
     }
 
     if(flags & FunctionFormat_Impl) {
@@ -2559,17 +2482,7 @@ void TagsManager::GetTagsByPartialName(const wxString& partialName, std::vector<
     GetDatabase()->GetTagsByPartName(partialName, tags);
 }
 
-bool TagsManager::AreTheSame(const TagEntryPtrVector_t& v1, const TagEntryPtrVector_t& v2) const
-{
-    // Assuming that v1 and v2 are sorted!
-    if(v1.size() != v2.size())
-        return false;
-    for(size_t i = 0; i < v1.size(); i++) {
-        if(v1.at(i)->CompareDisplayString(v2.at(i)) != 0)
-            return false;
-    }
-    return true;
-}
+bool TagsManager::AreTheSame(const TagEntryPtrVector_t& v1, const TagEntryPtrVector_t& v2) const { return false; }
 
 bool TagsManager::InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
                                      int visibility)
@@ -2764,7 +2677,8 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
 TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
     TagEntryPtrVector_t tagsVec;
-    CTags::ParseBuffer(filename, content, clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"), tagsVec);
+    CTags::ParseBuffer(filename, content, clStandardPaths::Get().GetBinaryFullPath("ctags"),
+                       GetCtagsOptions().GetTokensWxMap(), tagsVec);
     return tagsVec;
 }
 

@@ -136,11 +136,13 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
         return nullptr;
     }
 
+    // copy the subscript operator to the last expression
+    if(!expression.empty() && orig_expression.check_subscript_operator()) {
+        expression.back().set_subscript_params(orig_expression.subscript_params());
+    }
+
     TagEntryPtr resolved;
     for(CxxExpression& curexpr : expression) {
-        if(orig_expression.check_subscript_operator()) {
-            curexpr.set_subscript_params(orig_expression.subscript_params());
-        }
         resolved = resolve_expression(curexpr, resolved, visible_scopes);
         CHECK_PTR_RET_NULL(resolved);
         // once we resolved something we make it with this flag
@@ -175,14 +177,13 @@ wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxS
     kinds.Add("function");
     kinds.Add("variable");
     kinds.Add("enum");
-    kinds.Add("cenum");
     kinds.Add("macro");
     vector<TagEntryPtr> anonymous_tags;
     get_anonymous_tags(wxEmptyString, kinds, anonymous_tags);
 
     // create a local variable from the anonymous tags
     for(auto tag : anonymous_tags) {
-        if(tag->IsMember()) {
+        if(tag->GetKind() == "variable") {
             CxxVariableScanner scanner(normalize_pattern(tag), eCxxStandard::kCxx11, m_macros_table_map, false);
             auto _variables = scanner.GetVariables(false);
             variables.insert(variables.end(), _variables.begin(), _variables.end());
@@ -337,9 +338,8 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
     }
 
     // simple template instantiaion line
-    wxString pattern = normalize_pattern(resolved);
     if(curexpr.is_template()) {
-        curexpr.parse_template_placeholders(pattern);
+        curexpr.parse_template_placeholders(resolved->GetTemplateDefinition());
         wxStringMap_t M = curexpr.get_template_placeholders_map();
         m_template_manager->add_placeholders(M, visible_scopes);
     }
@@ -371,7 +371,7 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
 
     // try classes first
     auto resolved = lookup_child_symbol(parent, name_to_find, visible_scopes,
-                                        { "typedef", "class", "struct", "namespace", "cenum", "enum", "union" });
+                                        { "typedef", "class", "struct", "namespace", "enum", "union" });
     if(!resolved) {
         // try methods
         // `lookup_child_symbol` takes inheritance into consideration
@@ -575,13 +575,14 @@ const wxStringMap_t& CxxCodeCompletion::get_tokens_map() const { return m_macros
 
 wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
 {
-    wxString pattern = normalize_pattern(tag);
-    wxString return_value = do_get_return_value(pattern, tag->GetName());
-    if(return_value.empty()) {
-        pattern = tag->GetReturnValue() + " " + pattern;
-        return_value = do_get_return_value(pattern, tag->GetName());
-    }
-    return return_value;
+    return tag->GetTypename();
+    // wxString pattern = normalize_pattern(tag);
+    // wxString return_value = do_get_return_value(pattern, tag->GetName());
+    // if(return_value.empty()) {
+    //
+    //     return_value = do_get_return_value(pattern, tag->GetName());
+    // }
+    // return return_value;
 }
 
 namespace
@@ -774,8 +775,8 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
     CxxTokenizer tkzr;
     CxxLexerToken tk;
 
-    if(!tag->GetTyperef().empty()) {
-        typedef_str = tag->GetTyperef();
+    if(!tag->GetTypename().empty()) {
+        typedef_str = tag->GetTypename();
         return typedef_str.Trim();
     }
 
@@ -1655,10 +1656,9 @@ size_t LookupTable::GetAnonymouseTags(const wxString& filepath, const wxString& 
     }
     if(!tests_db.empty()) {
         // use set instead of array
-        wxStringSet_t scope_set = { "__anon1", "__anon2", "__anon3", "__anon4", "__anon5" };
         wxStringSet_t kinds_set = { kinds.begin(), kinds.end() };
         for(const auto& vt : tests_db) {
-            if(scope_set.count(vt.second->GetScope()) && vt.second->GetFile() == filepath &&
+            if(vt.second->GetScope().StartsWith("__anon") && vt.second->GetFile() == filepath &&
                vt.second->GetName() == name && kinds_set.count(vt.second->GetKind())) {
                 tags.push_back(vt.second);
             }

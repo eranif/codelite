@@ -17,6 +17,7 @@ class CTagsdSettings
     wxString m_codelite_indexer;
     wxString m_ignore_spec = ".git/;.svn/;/build/;/build-;CPack_Packages/;CMakeFiles/";
     size_t m_limit_results = 500;
+    wxString m_settings_dir;
 
 private:
     void build_search_path(const wxFileName& filepath);
@@ -43,6 +44,8 @@ public:
     const vector<pair<wxString, wxString>>& GetTokens() const { return m_tokens; }
     void SetTypes(const vector<pair<wxString, wxString>>& types) { this->m_types = types; }
     const vector<pair<wxString, wxString>>& GetTypes() const { return m_types; }
+    const wxString& GetSettingsDir() const { return m_settings_dir; }
+    wxStringMap_t GetMacroTable() const;
 };
 
 #endif // SETTINGS_HPP

@@ -80,7 +80,7 @@ unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filenam
 
     wxString fullpath = test_file.GetFullPath();
     vector<TagEntryPtr> tags;
-    CTags::ParseFile(fullpath, settings.GetCodeliteIndexer(), tags);
+    CTags::ParseFile(fullpath, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags);
     unordered_map<wxString, TagEntryPtr> tags_map;
     for(auto tag : tags) {
         if(tags_map.count(tag->GetPath()))
@@ -659,7 +659,7 @@ TEST_FUNC(test_cxx_code_completion_class_enum)
     TagEntryPtr resolved = completer->code_complete("eCxxStandard::", {});
     CHECK_BOOL(resolved);
     CHECK_STRING(resolved->GetPath(), "eCxxStandard");
-    CHECK_STRING(resolved->GetKind(), "cenum");
+    CHECK_STRING(resolved->GetKind(), "enum");
 
     // find the enumerators
     vector<TagEntryPtr> tags;

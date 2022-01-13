@@ -52,7 +52,7 @@ TagEntry::TagEntry()
     , m_file(wxEmptyString)
     , m_lineNumber(-1)
     , m_pattern(wxEmptyString)
-    , m_kind(wxT("<unknown>"))
+    , m_kind("<unknown>")
     , m_parent(wxEmptyString)
     , m_name(wxEmptyString)
     , m_id(wxNOT_FOUND)
@@ -106,13 +106,12 @@ bool TagEntry::operator==(const TagEntry& rhs)
     bool res = m_scope == rhs.m_scope && m_file == rhs.m_file && m_kind == rhs.m_kind && m_parent == rhs.m_parent &&
                m_pattern == rhs.m_pattern && m_name == rhs.m_name && m_path == rhs.m_path &&
                m_lineNumber == rhs.m_lineNumber && GetInheritsAsString() == rhs.GetInheritsAsString() &&
-               GetAccess() == rhs.GetAccess() && GetSignature() == rhs.GetSignature() &&
-               GetTyperef() == rhs.GetTyperef();
+               GetAccess() == rhs.GetAccess() && GetSignature() == rhs.GetSignature();
 
     bool res2 = m_scope == rhs.m_scope && m_file == rhs.m_file && m_kind == rhs.m_kind && m_parent == rhs.m_parent &&
                 m_pattern == rhs.m_pattern && m_name == rhs.m_name && m_path == rhs.m_path &&
                 GetInheritsAsString() == rhs.GetInheritsAsString() && GetAccess() == rhs.GetAccess() &&
-                GetSignature() == rhs.GetSignature() && GetTyperef() == rhs.GetTyperef();
+                GetSignature() == rhs.GetSignature();
 
     if(res2 && !res) {
         // the entries are differs only in the line numbers
@@ -129,49 +128,44 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     m_isClangTag = false;
     SetName(name);
     SetLine(lineNumber);
-    SetKind(kind.IsEmpty() ? wxT("<unknown>") : kind);
+    SetKind(kind.IsEmpty() ? "<unknown>" : kind);
     SetPattern(pattern);
-    SetFile(fileName);
+    SetFile(wxFileName(fileName).GetFullPath());
     SetId(-1);
     m_extFields = extFields;
     wxString path;
 
     // Check if we can get full name (including path)
-    path = GetExtField(wxT("class"));
+    path = GetExtField("class");
     if(!path.IsEmpty()) {
         UpdatePath(path);
     } else {
-        path = GetExtField(wxT("struct"));
+        path = GetExtField("struct");
         if(!path.IsEmpty()) {
             UpdatePath(path);
         } else {
-            path = GetExtField(wxT("namespace"));
+            path = GetExtField("namespace");
             if(!path.IsEmpty()) {
                 UpdatePath(path);
             } else {
-                path = GetExtField(wxT("interface"));
+                path = GetExtField("interface");
                 if(!path.IsEmpty()) {
                     UpdatePath(path);
                 } else {
-                    path = GetExtField(wxT("enum"));
+                    path = GetExtField("enum");
                     if(!path.IsEmpty()) {
                         UpdatePath(path);
                     } else {
-                        path = GetExtField(wxT("cenum"));
+                        path = GetExtField("union");
+                        wxString tmpname = path.AfterLast(':');
                         if(!path.IsEmpty()) {
-                            UpdatePath(path);
-                        } else {
-                            path = GetExtField(wxT("union"));
-                            wxString tmpname = path.AfterLast(wxT(':'));
-                            if(!path.IsEmpty()) {
-                                if(!tmpname.StartsWith(wxT("__anon"))) {
-                                    UpdatePath(path);
-                                } else {
-                                    // anonymouse union, remove the anonymous part from its name
-                                    path = path.BeforeLast(wxT(':'));
-                                    path = path.BeforeLast(wxT(':'));
-                                    UpdatePath(path);
-                                }
+                            if(!tmpname.StartsWith("__anon")) {
+                                UpdatePath(path);
+                            } else {
+                                // anonymouse union, remove the anonymous part from its name
+                                path = path.BeforeLast(':');
+                                path = path.BeforeLast(':');
+                                UpdatePath(path);
                             }
                         }
                     }
@@ -183,7 +177,7 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     if(!path.IsEmpty()) {
         SetScope(path);
     } else {
-        SetScope(wxT("<global>"));
+        SetScope("<global>");
     }
 
     // If there is no path, path is set to name
@@ -191,10 +185,10 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
         SetPath(GetName());
 
     // Get the parent name
-    StringTokenizer tok(GetPath(), wxT("::"));
+    StringTokenizer tok(GetPath(), "::");
     wxString parent;
 
-    (tok.Count() < 2) ? parent = wxT("<global>") : parent = tok[tok.Count() - 2];
+    (tok.Count() < 2) ? parent = "<global>" : parent = tok[tok.Count() - 2];
     SetParent(parent);
 }
 
@@ -232,8 +226,8 @@ void TagEntry::Print()
 wxString TagEntry::Key() const
 {
     wxString key;
-    if(GetKind() == wxT("prototype") || GetKind() == wxT("macro")) {
-        key << GetKind() << wxT(": ");
+    if(GetKind() == "prototype" || GetKind() == "macro") {
+        key << GetKind() << ": ";
     }
 
     key << GetPath() << GetSignature();
@@ -251,10 +245,10 @@ wxString TagEntry::GetFullDisplayName() const
 {
     wxString name;
 
-    if(GetParent() == wxT("<global>")) {
+    if(GetParent() == "<global>") {
         name << GetDisplayName();
     } else {
-        name << GetParent() << wxT("::") << GetName() << GetSignature();
+        name << GetParent() << "::" << GetName() << GetSignature();
     }
 
     return name;
@@ -275,173 +269,35 @@ wxString TagEntry::GetKind() const
 
 const bool TagEntry::IsContainer() const
 {
-    return GetKind() == wxT("class") || GetKind() == wxT("struct") || GetKind() == wxT("union") ||
-           GetKind() == wxT("namespace") || GetKind() == wxT("project") || GetKind() == "cenum";
+    return GetKind() == "class" || GetKind() == "struct" || GetKind() == "union" || GetKind() == "namespace" ||
+           GetKind() == "project" || GetKind() == "enum";
 }
 
 void TagEntry::UpdatePath(wxString& path)
 {
     if(!path.IsEmpty()) {
         wxString name(path);
-        name += wxT("::");
+        name += "::";
         name += GetName();
         SetPath(name);
     }
 }
 
-wxString TagEntry::TypeFromTyperef() const
+const wxString& TagEntry::GetExtField(const wxString& extField) const
 {
-    wxString typeref = GetTyperef();
-    if(typeref.IsEmpty() == false) {
-        wxString name = typeref.BeforeFirst(wxT(':'));
-        return name;
+    static wxString empty_string;
+    if(m_extFields.count(extField) == 0) {
+        return empty_string;
     }
-    return wxEmptyString;
-}
-
-static bool GetMacroArgList(CppScanner& scanner, wxArrayString& argList)
-{
-    int depth(0);
-    int type(0);
-    bool cont(true);
-    bool isOk(false);
-
-    wxString word;
-
-    while(cont) {
-        type = scanner.yylex();
-        if(type == 0) {
-            // eof
-            break;
-        }
-
-        switch(type) {
-        case(int)'(':
-            isOk = true;
-            depth++;
-
-            if(word.empty() == false)
-                word << wxT("(");
-
-            break;
-
-        case(int)')':
-            depth--;
-            if(depth == 0) {
-                cont = false;
-                break;
-            } else {
-                word << wxT(")");
-            }
-            break;
-
-        case(int)',':
-            word.Trim().Trim(false);
-            if(!word.empty()) {
-                argList.Add(word);
-            }
-            word.clear();
-            break;
-
-        default:
-            word << wxString::From8BitData(scanner.YYText()) << wxT(" ");
-            break;
-        }
-    }
-
-    if(word.empty() == false) {
-        argList.Add(word);
-    }
-
-    return (depth == 0) && isOk;
-}
-
-wxString TagEntry::NameFromTyperef(wxString& templateInitList, bool nameIncludeTemplate)
-{
-    wxString typeref = GetTyperef();
-    if(typeref.IsEmpty() == false) {
-        wxString name = typeref.AfterFirst(wxT(':'));
-        return name;
-    }
-
-    // incase our entry is a typedef, and it is not marked as typeref,
-    // try to get the real name from the pattern
-    if(GetKind() == wxT("typedef")) {
-
-        wxString pat(GetPattern());
-        if(!GetPattern().Contains(wxT("typedef")) && !GetPattern().Contains(wxT("using"))) {
-            // The pattern does not contain 'typedef' however this *is* a typedef
-            // try to see if this is a macro
-            pat.StartsWith(wxT("/^"), &pat);
-            pat.Trim().Trim(false);
-
-            // we take the first token
-            CppScanner scanner;
-            scanner.SetText(pat.To8BitData());
-            int type = scanner.yylex();
-            if(type == IDENTIFIER) {
-                wxString token = wxString::From8BitData(scanner.YYText());
-
-                PPToken tok = TagsManagerST::Get()->GetDatabase()->GetMacro(token);
-                if(tok.flags & PPToken::IsValid) {
-                    // we found a match!
-                    if(tok.flags & PPToken::IsFunctionLike) {
-                        wxArrayString argList;
-                        if(GetMacroArgList(scanner, argList)) {
-                            tok.expandOnce(argList);
-                        }
-                    }
-                    pat = tok.replacement;
-                    pat << wxT(";");
-
-                    // Remove double spaces
-                    while(pat.Replace(wxT("  "), wxT(" "))) {}
-                }
-            }
-        }
-
-        wxString name;
-        if(TypedefFromPattern(pat, GetName(), name, templateInitList, nameIncludeTemplate))
-            return name;
-    }
-
-    return wxEmptyString;
-}
-
-bool TagEntry::TypedefFromPattern(const wxString& tagPattern, const wxString& typedefName, wxString& name,
-                                  wxString& templateInit, bool nameIncludeTemplate)
-{
-    wxString pattern(tagPattern);
-
-    pattern.StartsWith(wxT("/^"), &pattern);
-    const wxCharBuffer cdata = pattern.mb_str(wxConvUTF8);
-
-    clTypedefList li;
-    get_typedefs(cdata.data(), li);
-
-    if(li.size() == 1) {
-        clTypedef td = *li.begin();
-        templateInit = _U(td.m_realType.m_templateDecl.c_str());
-        if(td.m_realType.m_typeScope.empty() == false) {
-            name << _U(td.m_realType.m_typeScope.c_str());
-            if(nameIncludeTemplate) {
-                name << templateInit;
-            }
-            name << wxT("::");
-        }
-
-        name << _U(td.m_realType.m_type.c_str());
-        return true;
-    }
-    return false;
+    return m_extFields.find(extField)->second;
 }
 
 wxString TagEntry::GetPattern() const
 {
     wxString pattern(m_pattern);
     // since ctags's pattern is regex, forward slashes are escaped. ('/' becomes '\/')
-    pattern.Replace(wxT("\\\\"), wxT("\\"));
-    pattern.Replace(wxT("\\/"), wxT("/"));
+    pattern.Replace("\\\\", "\\");
+    pattern.Replace("\\/", "/");
     return pattern;
 }
 
@@ -455,24 +311,24 @@ void TagEntry::FromLine(const wxString& line)
     wxStringMap_t extFields;
 
     // get the token name
-    wxString name = strLine.BeforeFirst(wxT('\t'));
-    strLine = strLine.AfterFirst(wxT('\t'));
+    wxString name = strLine.BeforeFirst('\t');
+    strLine = strLine.AfterFirst('\t');
 
     // get the file name
-    wxString fileName = strLine.BeforeFirst(wxT('\t'));
-    strLine = strLine.AfterFirst(wxT('\t'));
+    wxString fileName = strLine.BeforeFirst('\t');
+    strLine = strLine.AfterFirst('\t');
 
     // here we can get two options:
     // pattern followed by ;"
     // or
     // line number followed by ;"
-    int end = strLine.Find(wxT(";\""));
+    int end = strLine.Find(";\"");
     if(end == wxNOT_FOUND) {
         // invalid pattern found
         return;
     }
 
-    if(strLine.StartsWith(wxT("/^"))) {
+    if(strLine.StartsWith("/^")) {
         // regular expression pattern found
         pattern = strLine.Mid(0, end);
         strLine = strLine.Right(strLine.Length() - (end + 2));
@@ -488,44 +344,44 @@ void TagEntry::FromLine(const wxString& line)
     }
 
     // next is the kind of the token
-    if(strLine.StartsWith(wxT("\t"))) {
-        strLine = strLine.AfterFirst(wxT('\t'));
+    if(strLine.StartsWith("\t")) {
+        strLine = strLine.AfterFirst('\t');
     }
 
-    kind = strLine.BeforeFirst(wxT('\t'));
-    strLine = strLine.AfterFirst(wxT('\t'));
+    kind = strLine.BeforeFirst('\t');
+    strLine = strLine.AfterFirst('\t');
 
     if(strLine.IsEmpty() == false) {
-        wxStringTokenizer tkz(strLine, wxT('\t'));
+        wxStringTokenizer tkz(strLine, '\t');
         while(tkz.HasMoreTokens()) {
             wxString token = tkz.NextToken();
-            wxString key = token.BeforeFirst(wxT(':'));
-            wxString val = token.AfterFirst(wxT(':'));
+            wxString key = token.BeforeFirst(':');
+            wxString val = token.AfterFirst(':');
             key = key.Trim();
             key = key.Trim(false);
 
             val = val.Trim();
             val = val.Trim(false);
-            if(key == wxT("line") && !val.IsEmpty()) {
+            if(key == "line" && !val.IsEmpty()) {
                 val.ToLong(&lineNumber);
             } else {
-                if(key == wxT("union") || key == wxT("struct")) {
+                if(key == "union" || key == "struct") {
 
                     // remove the anonymous part of the struct / union
-                    if(!val.StartsWith(wxT("__anon"))) {
+                    if(!val.StartsWith("__anon")) {
                         // an internal anonymous union / struct
                         // remove all parts of the
                         wxArrayString scopeArr;
                         wxString tmp, new_val;
 
-                        scopeArr = wxStringTokenize(val, wxT(":"), wxTOKEN_STRTOK);
+                        scopeArr = wxStringTokenize(val, ":", wxTOKEN_STRTOK);
                         for(size_t i = 0; i < scopeArr.GetCount(); i++) {
-                            if(scopeArr.Item(i).StartsWith(wxT("__anon")) == false) {
-                                tmp << scopeArr.Item(i) << wxT("::");
+                            if(scopeArr.Item(i).StartsWith("__anon") == false) {
+                                tmp << scopeArr.Item(i) << "::";
                             }
                         }
 
-                        tmp.EndsWith(wxT("::"), &new_val);
+                        tmp.EndsWith("::", &new_val);
                         val.swap(new_val);
                     }
                 }
@@ -538,55 +394,12 @@ void TagEntry::FromLine(const wxString& line)
     name = name.Trim();
     fileName = fileName.Trim();
     pattern = pattern.Trim();
-
-    if(kind == "enumerator" && extFields.count("enum")) {
-        // Remove the last parent
-        wxString& scope = extFields["enum"];
-        size_t where = scope.rfind("::");
-        if(where != wxString::npos) {
-            scope = scope.Mid(0, where);
-        } else {
-            // Global enum, remove this ext field
-            extFields.erase("enum");
-        }
-    }
-
-    //    if(kind == wxT("enumerator")) {
-    //        // enums are specials, they are a scope, when they declared as "enum class ..." (C++11),
-    //        // but not a scope when declared as "enum ...". So, for "enum class ..." declaration
-    //        //(and anonymous enums) we appear enumerators when typed:
-    //        // enumName::
-    //        // Is global scope there aren't appears. For "enum ..." declaration we appear
-    //        // enumerators when typed:
-    //        // enumName::
-    //        // and when it global (or same namespace) scope.
-    //        wxStringMap_t::iterator enumField = extFields.find(wxT("enum"));
-    //        if(enumField != extFields.end()) {
-    //            wxString enumName = enumField->second;
-    //            bool isAnonymous = enumName.AfterLast(wxT(':')).StartsWith(wxT("__anon"));
-    //
-    //            bool isInEnumNamespace = false;
-    //            wxStringMap_t::const_iterator isInEnumNamespaceField = extFields.find(wxT("isInEnumNamespace"));
-    //            if(isInEnumNamespaceField != extFields.end()) {
-    //                wxString isInEnumNamespaceValue = isInEnumNamespaceField->second;
-    //                isInEnumNamespace = isInEnumNamespaceValue.AfterLast(wxT(':')) == wxT("1") ? true : false;
-    //            }
-    //
-    //            if(!isInEnumNamespace) {
-    //                enumField->second = enumField->second.BeforeLast(wxT(':')).BeforeLast(wxT(':'));
-    //                if(!isAnonymous) {
-    //                    extFields[wxT("typeref")] = enumName;
-    //                }
-    //            }
-    //        }
-    //    }
-
     this->Create(fileName, name, lineNumber, pattern, kind, extFields);
 }
 
 bool TagEntry::IsConstructor() const
 {
-    if(GetKind() != wxT("function") && GetKind() != wxT("prototype"))
+    if(GetKind() != "function" && GetKind() != "prototype")
         return false;
 
     return GetName() == GetScope();
@@ -594,35 +407,44 @@ bool TagEntry::IsConstructor() const
 
 bool TagEntry::IsDestructor() const
 {
-    if(GetKind() != wxT("function") && GetKind() != wxT("prototype"))
+    if(GetKind() != "function" && GetKind() != "prototype")
         return false;
 
-    return GetName().StartsWith(wxT("~"));
+    return GetName().StartsWith("~");
 }
 
-wxString TagEntry::GetReturnValue() const
+wxString TagEntry::GetTemplateDefinition() const
 {
-    wxString returnValue = GetExtField(_T("returns"));
-    returnValue.Trim().Trim(false);
-    returnValue.Replace(wxT("virtual"), wxT(""));
-    return returnValue;
+    // template:<class T>
+    wxString definition = GetExtField("template");
+    definition.Trim().Trim(false);
+    return definition;
 }
 
-bool TagEntry::IsFunction() const { return GetKind() == wxT("function"); }
+void TagEntry::SetTypename(const wxString& val) { m_extFields["typeref"] = "typename:" + val; }
+
+wxString TagEntry::GetTypename() const
+{
+    // typeref:typename:void
+    const wxString& returnValue = GetExtField("typeref");
+    return returnValue.AfterFirst(':');
+}
+
+bool TagEntry::IsFunction() const { return GetKind() == "function"; }
 
 bool TagEntry::IsMethod() const { return IsPrototype() || IsFunction(); }
 
-bool TagEntry::IsPrototype() const { return GetKind() == wxT("prototype"); }
+bool TagEntry::IsPrototype() const { return GetKind() == "prototype"; }
 
-bool TagEntry::IsClass() const { return GetKind() == wxT("class"); }
+bool TagEntry::IsClass() const { return GetKind() == "class"; }
 
-bool TagEntry::IsMacro() const { return GetKind() == wxT("macro"); }
+bool TagEntry::IsMacro() const { return GetKind() == "macro"; }
 
-bool TagEntry::IsStruct() const { return GetKind() == wxT("struct"); }
+bool TagEntry::IsStruct() const { return GetKind() == "struct"; }
 
-bool TagEntry::IsScopeGlobal() const { return GetScope().IsEmpty() || GetScope() == wxT("<global>"); }
+bool TagEntry::IsScopeGlobal() const { return GetScope().IsEmpty() || GetScope() == "<global>"; }
 
-bool TagEntry::IsTypedef() const { return GetKind() == wxT("typedef"); }
+bool TagEntry::IsTypedef() const { return GetKind() == "typedef"; }
 
 wxString TagEntry::GetInheritsAsString() const { return GetExtField(_T("inherits")); }
 
@@ -638,7 +460,7 @@ wxArrayString TagEntry::GetInheritsAsArrayNoTemplates() const
         wxChar ch = inherits.GetChar(i);
 
         switch(ch) {
-        case wxT('<'):
+        case '<':
             if(depth == 0 && parent.IsEmpty() == false) {
                 parent.Trim().Trim(false);
                 parentsArr.Add(parent);
@@ -647,11 +469,11 @@ wxArrayString TagEntry::GetInheritsAsArrayNoTemplates() const
             depth++;
             break;
 
-        case wxT('>'):
+        case '>':
             depth--;
             break;
 
-        case wxT(','):
+        case ',':
             if(depth == 0 && parent.IsEmpty() == false) {
                 parent.Trim().Trim(false);
                 parentsArr.Add(parent);
@@ -686,17 +508,17 @@ wxArrayString TagEntry::GetInheritsAsArrayWithTemplates() const
         wxChar ch = inherits.GetChar(i);
 
         switch(ch) {
-        case wxT('<'):
+        case '<':
             depth++;
             parent << ch;
             break;
 
-        case wxT('>'):
+        case '>':
             depth--;
             parent << ch;
             break;
 
-        case wxT(','):
+        case ',':
             if(depth == 0 && parent.IsEmpty() == false) {
                 parent.Trim().Trim(false);
                 parentsArr.Add(parent);
@@ -736,15 +558,6 @@ TagEntryPtr TagEntry::ReplaceSimpleMacro()
     return NULL;
 }
 
-int TagEntry::CompareDisplayString(const TagEntryPtr& rhs) const
-{
-    wxString d1, d2;
-
-    d1 << GetReturnValue() << wxT(": ") << GetFullDisplayName() << wxT(":") << GetAccess();
-    d2 << rhs->GetReturnValue() << wxT(": ") << rhs->GetFullDisplayName() << wxT(":") << rhs->GetAccess();
-    return d1.Cmp(d2);
-}
-
 bool TagEntry::IsTemplateFunction() const
 {
     wxString pattern = GetPatternClean();
@@ -756,43 +569,14 @@ wxString TagEntry::GetPatternClean() const
 {
     wxString p = GetPattern();
     p.Trim();
-    if(p.StartsWith(wxT("/^"))) {
-        p.Replace(wxT("/^"), wxT(""));
+    if(p.StartsWith("/^")) {
+        p.Replace("/^", "");
     }
 
-    if(p.EndsWith(wxT("$/"))) {
-        p.Replace(wxT("$/"), wxT(""));
+    if(p.EndsWith("$/")) {
+        p.Replace("$/", "");
     }
     return p;
-}
-
-wxString TagEntry::FormatComment()
-{
-    // Add comment section
-    wxString tagComment;
-    if(!GetFile().IsEmpty()) {
-
-        CommentParseResult comments;
-        ::ParseComments(GetFile().mb_str(wxConvUTF8).data(), comments);
-
-        // search for comment in the current line, the line above it and 2 above it
-        // use the first match we got
-        for(size_t i = 0; i < 3; i++) {
-            wxString comment = comments.getCommentForLine(GetLine() - i);
-            if(!comment.IsEmpty()) {
-                SetComment(comment);
-                break;
-            }
-        }
-    }
-
-    CompletionHelper helper;
-    tagComment = helper.format_comment(const_cast<TagEntry*>(this), GetComment());
-
-    wxString return_value;
-    return_value << " -> `" << GetReturnValue() << "`\n---\n";
-    tagComment.Prepend(return_value);
-    return tagComment;
 }
 
 bool TagEntry::IsLocalVariable() const { return GetKind() == "local"; }

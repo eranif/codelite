@@ -225,7 +225,7 @@ TagEntryPtr PHPCodeCompletion::DoPHPEntityToTagEntry(PHPEntityBase::Ptr_t entry)
         } else {
             t->SetKind("variable");
         }
-        t->SetReturnValue("");
+        t->SetTypename("");
 
     } else if(entry->Is(kEntityTypeFunction) || entry->Is(kEntityTypeFunctionAlias)) {
         PHPEntityFunction* func = NULL;

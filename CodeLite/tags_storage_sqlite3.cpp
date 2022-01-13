@@ -111,7 +111,7 @@ void TagsStorageSQLite::CreateSchema()
 
         sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, "
                   "line integer, kind string, access string, signature string, pattern string, parent string, inherits "
-                  "string, path string, typeref string, scope string, return_value string);");
+                  "string, path string, typeref string, scope string, template_definition string );");
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("create  table if not exists global_tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, tag_id "
@@ -148,7 +148,8 @@ void TagsStorageSQLite::CreateSchema()
         m_db->ExecuteUpdate(trigger2);
 
         // Create unique index on tags table
-        sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS TAGS_UNIQ on tags(kind, path, signature, typeref);");
+        sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS TAGS_UNIQ on tags(kind, path, signature, typeref, "
+                  "template_definition);");
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("CREATE INDEX IF NOT EXISTS KIND_IDX on tags(kind);");
@@ -605,9 +606,9 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
     entry->SetParent(rs.GetString(8));
     entry->SetInherits(rs.GetString(9));
     entry->SetPath(rs.GetString(10));
-    entry->SetTyperef(rs.GetString(11));
+    entry->SetTypename(rs.GetString(11));
     entry->SetScope(rs.GetString(12));
-    entry->SetReturnValue(rs.GetString(13));
+    entry->SetTemplateDefinition(rs.GetString(13));
     return entry;
 }
 
@@ -896,7 +897,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
         wxSQLite3Statement statement = m_db->GetPrepareStatement(
             wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
         statement.Bind(1, tag.GetName());
-        statement.Bind(2, tag.GetFile());
+        statement.Bind(2, wxFileName(tag.GetFile()).GetFullPath());
         statement.Bind(3, tag.GetLine());
         statement.Bind(4, tag.GetKind());
         statement.Bind(5, tag.GetAccess());
@@ -905,9 +906,9 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
         statement.Bind(8, tag.GetParent());
         statement.Bind(9, tag.GetInheritsAsString());
         statement.Bind(10, tag.GetPath());
-        statement.Bind(11, tag.GetTyperef());
+        statement.Bind(11, tag.GetTypename());
         statement.Bind(12, tag.GetScope());
-        statement.Bind(13, tag.GetReturnValue());
+        statement.Bind(13, tag.GetTemplateDefinition());
         statement.ExecuteUpdate();
     } catch(wxSQLite3Exception& exc) {
         return TagError;
@@ -947,7 +948,7 @@ bool TagsStorageSQLite::IsTypeAndScopeContainer(wxString& typeName, wxString& sc
             wxString scopeFounded(rs.GetString(0));
             wxString kindFounded(rs.GetString(1));
 
-            bool containerKind = kindFounded == wxT("struct") || kindFounded == wxT("class") || kindFounded == "cenum";
+            bool containerKind = kindFounded == wxT("struct") || kindFounded == wxT("class") || kindFounded == "enum";
             if(scopeFounded == combinedScope && containerKind) {
                 scope = combinedScope;
                 typeName = typeNameNoScope;
@@ -1764,7 +1765,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
 
 const wxString& TagsStorageSQLite::GetVersion() const
 {
-    static const wxString gTagsDatabaseVersion(wxT("CodeLite Version 11.1"));
+    static const wxString gTagsDatabaseVersion(wxT("CodeLite Version 16.0"));
     return gTagsDatabaseVersion;
 }
 

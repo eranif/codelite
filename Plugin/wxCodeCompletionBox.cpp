@@ -220,10 +220,6 @@ void wxCodeCompletionBox::DoDisplayTipWindow()
 
         wxString docComment = m_entries.at(index)->GetComment();
         docComment.Trim().Trim(false);
-        if(docComment.IsEmpty() && m_entries.at(index)->m_tag) {
-            // Format the comment on demand if the origin was a tag entry
-            docComment = m_entries.at(index)->m_tag->FormatComment();
-        }
 
         if(docComment.IsEmpty()) {
             // No tip to display

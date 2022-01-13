@@ -410,6 +410,8 @@ CTagsdSettings::~CTagsdSettings() {}
 void CTagsdSettings::Load(const wxFileName& filepath)
 {
     JSON config_file(filepath);
+    m_settings_dir = filepath.GetPath();
+
     if(!config_file.isOk()) {
         clWARNING() << "Could not locate configuration file:" << filepath << endl;
         CreateDefault(filepath);
@@ -434,13 +436,14 @@ void CTagsdSettings::Load(const wxFileName& filepath)
         CreateDefault(filepath);
     }
 
-    clDEBUG() << "search path.......:" << m_search_path << endl;
-    clDEBUG() << "tokens............:" << m_tokens << endl;
-    clDEBUG() << "types.............:" << m_types << endl;
-    clDEBUG() << "file_mask.........:" << m_file_mask << endl;
-    clDEBUG() << "codelite_indexer..:" << m_codelite_indexer << endl;
-    clDEBUG() << "ignore_spec.......:" << m_ignore_spec << endl;
-    clDEBUG() << "limit_results.....:" << m_limit_results << endl;
+    clDEBUG() << "search path...........:" << m_search_path << endl;
+    clDEBUG() << "tokens................:" << m_tokens << endl;
+    clDEBUG() << "types.................:" << m_types << endl;
+    clDEBUG() << "file_mask.............:" << m_file_mask << endl;
+    clDEBUG() << "codelite_indexer......:" << m_codelite_indexer << endl;
+    clDEBUG() << "ignore_spec...........:" << m_ignore_spec << endl;
+    clDEBUG() << "limit_results.........:" << m_limit_results << endl;
+    clDEBUG() << "Settings dir is set to:" << m_settings_dir << endl;
 
     // conver the tokens to wxArrayString
     wxArrayString wxarr;
@@ -574,4 +577,14 @@ void CTagsdSettings::CreateDefault(const wxFileName& filepath)
     m_types = to_vector_of_pairs(DEFAULT_TYPES);
     m_limit_results = 500;
     Save(filepath);
+}
+
+wxStringMap_t CTagsdSettings::GetMacroTable() const
+{
+    wxStringMap_t table;
+    table.reserve(m_tokens.size());
+    for(const auto& p : m_tokens) {
+        table.insert(p);
+    }
+    return table;
 }

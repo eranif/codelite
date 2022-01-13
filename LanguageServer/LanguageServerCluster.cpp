@@ -432,16 +432,16 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
             JSON root(settings_json);
             JSONItem json = root.toElement();
-            if(json.hasNamedObject("codelite_indexer")) {
-                json.removeProperty("codelite_indexer");
-            }
 
             if(json.hasNamedObject("limit_results")) {
                 json.removeProperty("limit_results");
             }
 
             // update the entries
-            json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
+            if(!json.hasNamedObject("codelite_indexer")) {
+                json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("ctags"));
+            }
+
             json.addProperty("limit_results", TagsManagerST::Get()->GetCtagsOptions().GetCcNumberOfDisplayItems());
             root.save(settings_json);
 
@@ -602,7 +602,7 @@ void LanguageServerCluster::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& ta
         }
 
         tag->SetSignature(sig);
-        tag->SetReturnValue(returnValue);
+        tag->SetTypename(returnValue);
         tag->SetKind("function");
         tag->SetFlags(TagEntry::Tag_No_Signature_Format);
         tags.push_back(tag);

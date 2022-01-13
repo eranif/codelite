@@ -58,17 +58,15 @@ private:
     /**
      * @brief parse source file
      */
-    static void parse_file(const wxFileName& filename, const wxString& settings_folder, const wxString& indexer_path);
+    static void parse_file(const wxFileName& filename, const CTagsdSettings& settings);
     /**
      * @brief parse buffer of a given file name
      */
-    static void parse_buffer(const wxFileName& filename, const wxString& buffer, const wxString& settings_folder,
-                             const wxString& indexer_path);
+    static void parse_buffer(const wxFileName& filename, const wxString& buffer, const CTagsdSettings& settings);
     /**
      * @brief parse list of files
      */
-    static void parse_files(const vector<wxString>& files, const wxString& settings_folder,
-                            const wxString& indexer_path);
+    static void parse_files(const vector<wxString>& files, const CTagsdSettings& settings);
 
     bool ensure_file_content_exists(const wxString& filepath, Channel::ptr_t channel, size_t req_id);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);

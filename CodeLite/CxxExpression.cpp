@@ -243,7 +243,11 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
 
     tokenizer.Reset(expr);
     tokenizer.NextToken(tk);
-    CHECK_TYPE(T_TEMPLATE);
+
+    // optionally, we expect `template` (depending of the source of the `expr`)
+    if(tk.GetType() != T_TEMPLATE) {
+        tokenizer.UngetToken();
+    }
 
     tokenizer.NextToken(tk);
     CHECK_TYPE('<');

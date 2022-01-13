@@ -56,6 +56,7 @@ copy %RUNTIME_DIR%\codelite-cc.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite_cppcheck.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-echo.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\ctagsd.exe "%TARGET_DIR%\CodeLite\" /Y
+copy %RUNTIME_DIR%\ctags.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %LLVM_BIN%\clang-format.exe "%TARGET_DIR%\CodeLite\codelite-clang-format.exe" /Y
 copy %LLVM_BIN%\clangd.exe "%TARGET_DIR%\CodeLite\lsp\" /Y
 copy %LLVM_BIN%\msvcp140.dll "%TARGET_DIR%\CodeLite\lsp\" /Y

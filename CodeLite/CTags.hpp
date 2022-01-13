@@ -25,25 +25,27 @@ protected:
      * @return true on success, false otherwise
      */
     static bool DoGenerate(const wxString& filesContent, const wxString& codelite_indexer,
-                           const wxString& ctags_args = wxEmptyString, wxString* output = nullptr);
+                           const wxStringMap_t& macro_table, const wxString& ctags_args = wxEmptyString,
+                           wxString* output = nullptr);
 
 public:
     /**
      * @brief given a list of files, generate an output tags file and place it under 'path'
      */
     static size_t ParseFiles(const vector<wxString>& files, const wxString& codelite_indexer,
-                             vector<TagEntryPtr>& tags);
+                             const wxStringMap_t& macro_table, vector<TagEntryPtr>& tags);
 
     /**
      * @brief given a list of files, generate an output tags file and place it under 'path'
      */
-    static size_t ParseFile(const wxString& file, const wxString& codelite_indexer, vector<TagEntryPtr>& tags);
+    static size_t ParseFile(const wxString& file, const wxString& codelite_indexer, const wxStringMap_t& macro_table,
+                            vector<TagEntryPtr>& tags);
 
     /**
      * @brief run codelite-indexer on a buffer and return list of tags
      */
     static size_t ParseBuffer(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
-                              vector<TagEntryPtr>& tags);
+                              const wxStringMap_t& macro_table, vector<TagEntryPtr>& tags);
 };
 
 #endif // CTAGSGENERATOR_HPP

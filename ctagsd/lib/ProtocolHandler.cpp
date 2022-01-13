@@ -217,7 +217,7 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
 
     vector<TagEntryPtr> tags;
     if(CTags::ParseBuffer(filename, buffer, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
-        clERROR() << "Failed to generate ctags file for buffer. file:" << filename << ". buffer:" << buffer << endl;
+        clERROR() << "Failed to generate ctags file for buffer. file:" << endl;
 #if wxUSE_STACKWALKER
         MyStackWalker stack{};
         stack.Walk();
@@ -1106,7 +1106,9 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel::ptr_t 
     vector<TagEntryPtr> tags;
     CTags::ParseBuffer(filepath, m_filesOpened[filepath], m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(),
                        tags);
-
+    if(tags.empty()) {
+        clDEBUG() << "no tags were found in file:" << filepath << endl;
+    }
     // tags are sorted by line number, just wrap them in JSON and send them over to the client
     JSON root(cJSON_Object);
     auto response = root.toElement();

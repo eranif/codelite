@@ -62,16 +62,14 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
 {
     clDEBUG() << "Generating ctags files" << clEndl;
 
-    // Pass ctags command line via the environment variable
-    wxString ctagsCmd = ctags_args;
-    if(ctagsCmd.empty()) {
-        ctagsCmd = "--excmd=pattern --sort=no --fields=aKmSsnit --c-kinds=+p --C++-kinds=+p ";
-    }
+    // prepare the options file
+    // one option per line
+    vector<wxString> options_arr;
+    options_arr.reserve(500);
+    options_arr = { "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--c-kinds=+p", "--C++-kinds=+p" };
 
-    // TODO :
-    // build the -D.. list here
-    wxString macro_replacements;
     for(const auto& vt : macro_table) {
+        wxString macro_replacements;
         wxString fixed_macro_name = fix_macro_entry(vt.first);
         wxString fixed_macro_value = fix_macro_entry(vt.second);
 
@@ -83,10 +81,20 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
             wxString fixed_macro_value = fix_macro_entry(vt.second);
             macro_replacements << "-D\"" << fixed_macro_name << "=" << fixed_macro_value << "\"";
         }
-        macro_replacements << " ";
+        options_arr.push_back(macro_replacements);
     }
 
-    ctagsCmd << " " << macro_replacements << " --language-force=c++ --fields-c++=+{template}+{properties} -f - ";
+    options_arr.push_back("--language-force=c++");
+    options_arr.push_back("--fields-c++=+{template}+{properties}");
+
+    // write the options into a file
+    wxFileName ctags_options_file(clStandardPaths::Get().GetUserDataDir(), "options.ctags");
+    wxString ctags_options_file_content;
+    for(const wxString& option : options_arr) {
+        ctags_options_file_content << option << "\n";
+    }
+    FileUtils::WriteFileContent(ctags_options_file.GetFullPath(), ctags_options_file_content);
+
     wxStopWatch sw;
 
     sw.Start();
@@ -96,20 +104,22 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
 
     wxFileName output_file = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "tags_out", "tags");
     wxString command_to_run;
-    command_to_run << WrapSpaces(codelite_indexer) << " " << ctagsCmd << " -L " << WrapSpaces(file_list.GetFullPath());
-    command_to_run << " > " << WrapSpaces(output_file.GetFullPath());
+    command_to_run << WrapSpaces(codelite_indexer) << " --options=" << WrapSpaces(ctags_options_file.GetFullPath())
+                   << " -L " << WrapSpaces(file_list.GetFullPath()) << " -f - > "
+                   << WrapSpaces(output_file.GetFullPath());
     WrapInShell(command_to_run);
+    clDEBUG() << "Running command:" << command_to_run << endl;
 
     // delete the output file
     FileUtils::Deleter d(output_file.GetFullPath());
 
     ProcUtils::SafeExecuteCommand(command_to_run);
-    long elapsed = sw.Time();
-
     FileUtils::ReadFileContent(output_file.GetFullPath(), *output);
 
+    long elapsed = sw.Time();
+
     clDEBUG() << "Parsing took:" << (elapsed / 1000) << "secs," << (elapsed % 1000) << "ms" << endl;
-    clDEBUG() << "Generating ctags files... Success" << clEndl;
+    clDEBUG() << "Generating ctags files... Success" << endl;
     return true;
 }
 
@@ -139,6 +149,10 @@ size_t CTags::ParseFiles(const vector<wxString>& files, const wxString& codelite
         // construct a tag from the line
         tags.emplace_back(new TagEntry());
         tags.back()->FromLine(line);
+    }
+
+    if(tags.empty()) {
+        clDEBUG() << "0 tags, ctags output:" << content << endl;
     }
     return tags.size();
 }

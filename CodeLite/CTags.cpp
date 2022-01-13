@@ -72,9 +72,12 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     // build the -D.. list here
     wxString macro_replacements;
     for(const auto& vt : macro_table) {
-        if(vt.second.empty()) {
+        wxString fixed_macro_name = fix_macro_entry(vt.first);
+        wxString fixed_macro_value = fix_macro_entry(vt.second);
+
+        if(fixed_macro_value.empty()) {
             // simple -D
-            macro_replacements << "-D" << vt.first;
+            macro_replacements << "-D" << fixed_macro_name;
         } else {
             wxString fixed_macro_name = fix_macro_entry(vt.first);
             wxString fixed_macro_value = fix_macro_entry(vt.second);
@@ -100,7 +103,6 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     // delete the output file
     FileUtils::Deleter d(output_file.GetFullPath());
 
-    clDEBUG() << "Executing" << command_to_run << endl;
     ProcUtils::SafeExecuteCommand(command_to_run);
     long elapsed = sw.Time();
 

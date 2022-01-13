@@ -312,23 +312,7 @@
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies/>
-  <VirtualDirectory Name="codelite_indexer_API">
-    <File Name="../sdk/codelite_indexer/network/np_connections_server.h"/>
-    <File Name="../sdk/codelite_indexer/network/cl_indexer_reply.cpp"/>
-    <File Name="../sdk/codelite_indexer/network/cl_indexer_reply.h"/>
-    <File Name="../sdk/codelite_indexer/network/cl_indexer_request.cpp"/>
-    <File Name="../sdk/codelite_indexer/network/cl_indexer_request.h"/>
-    <File Name="../sdk/codelite_indexer/network/clindexerprotocol.cpp"/>
-    <File Name="../sdk/codelite_indexer/network/clindexerprotocol.h"/>
-    <File Name="../sdk/codelite_indexer/network/named_pipe.cpp"/>
-    <File Name="../sdk/codelite_indexer/network/named_pipe.h"/>
-    <File Name="../sdk/codelite_indexer/network/named_pipe_client.cpp"/>
-    <File Name="../sdk/codelite_indexer/network/named_pipe_client.h"/>
-    <File Name="../sdk/codelite_indexer/network/named_pipe_server.cpp"/>
-    <File Name="../sdk/codelite_indexer/network/named_pipe_server.h"/>
-    <File Name="../sdk/codelite_indexer/network/np_connections_server.cpp"/>
-    <File Name="../sdk/codelite_indexer/network/cl_indexer_macros.h"/>
-  </VirtualDirectory>
+  <VirtualDirectory Name="codelite_indexer_API"/>
   <VirtualDirectory Name="file_crawler">
     <File Name="crawler_lexer.cpp"/>
     <File Name="fc_fileopener.cpp"/>

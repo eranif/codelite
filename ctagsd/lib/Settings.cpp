@@ -347,14 +347,16 @@ vector<wxString> DEFAULT_TOKENS = {
     "wxStatusBar=wxStatusBarBase",
     "wxT",
     "wxWindowNative=wxWindowBase",
-
 #if defined(__WXGTK__)
-    "wxTopLevelWindowNative=wxTopLevelWindowGTK",
-    "wxWindow=wxWindowGTK",
+    "__WXGTK__=1",
+    "__linux__=1",
+    "linux=1",
 #elif defined(__WXMSW__)
-    "wxTopLevelWindowNative=wxTopLevelWindowMSW",
-    "wxWindow=wxWindowMSW",
+    "__WXMSW__=1",
+    "_WIN32=1",
+    "_WIN64=1",
 #else
+    "__APPLE__=1",
     "wxTopLevelWindowNative=wxTopLevelWindowMac",
     "wxWindow=wxWindowMac",
 #endif
@@ -436,14 +438,14 @@ void CTagsdSettings::Load(const wxFileName& filepath)
         CreateDefault(filepath);
     }
 
-    clDEBUG() << "search path...........:" << m_search_path << endl;
-    clDEBUG() << "tokens................:" << m_tokens << endl;
-    clDEBUG() << "types.................:" << m_types << endl;
-    clDEBUG() << "file_mask.............:" << m_file_mask << endl;
-    clDEBUG() << "codelite_indexer......:" << m_codelite_indexer << endl;
-    clDEBUG() << "ignore_spec...........:" << m_ignore_spec << endl;
-    clDEBUG() << "limit_results.........:" << m_limit_results << endl;
-    clDEBUG() << "Settings dir is set to:" << m_settings_dir << endl;
+    clDEBUG1() << "search path...........:" << m_search_path << endl;
+    clDEBUG1() << "tokens................:" << m_tokens << endl;
+    clDEBUG1() << "types.................:" << m_types << endl;
+    clDEBUG1() << "file_mask.............:" << m_file_mask << endl;
+    clDEBUG1() << "codelite_indexer......:" << m_codelite_indexer << endl;
+    clDEBUG1() << "ignore_spec...........:" << m_ignore_spec << endl;
+    clDEBUG1() << "limit_results.........:" << m_limit_results << endl;
+    clDEBUG1() << "Settings dir is set to:" << m_settings_dir << endl;
 
     // conver the tokens to wxArrayString
     wxArrayString wxarr;

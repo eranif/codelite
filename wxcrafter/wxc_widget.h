@@ -13,6 +13,7 @@
 #include "wx_ordered_map.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"
+
 #include <list>
 #include <map>
 #include <set>
@@ -697,6 +698,11 @@ public:
      * @return
      */
     virtual bool HasMainSizer() const;
+
+    /**
+     * @brief return true if this item has to be kept as a class member
+     */
+    virtual bool KeepAsClassMember() const { return true; }
 
     virtual void ChildrenXRC(wxString& text, XRC_TYPE type) const;
 

@@ -57,24 +57,18 @@ MainFrameBaseClass::MainFrameBaseClass(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    this->Connect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnExit),
-                  NULL, this);
-    this->Connect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(MainFrameBaseClass::OnAbout),
-                  NULL, this);
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnExit, this, m_menuItem7->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnAbout, this, m_menuItem9->GetId());
 }
 
 MainFrameBaseClass::~MainFrameBaseClass()
 {
-    this->Disconnect(m_menuItem7->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(MainFrameBaseClass::OnExit), NULL, this);
-    this->Disconnect(m_menuItem9->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(MainFrameBaseClass::OnAbout), NULL, this);
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnExit, this, m_menuItem7->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBaseClass::OnAbout, this, m_menuItem9->GetId());
 }

@@ -56,13 +56,11 @@ MainDialogBaseClass::MainDialogBaseClass(wxWindow* parent, wxWindowID id, const 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 MainDialogBaseClass::~MainDialogBaseClass() {}

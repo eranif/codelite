@@ -18,7 +18,6 @@
 #include "winid_property.h"
 #include "wx_collapsible_pane_pane_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
-#include "wxc_project_metadata.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
@@ -330,13 +329,15 @@ wxString wxcWidget::WrapInSizerXRC(const wxString& objXRC) const
 
 bool wxcWidget::HasMainSizer() const
 {
-    if(IsSizer())
+    if(IsSizer()) {
         return false;
+    }
 
     wxcWidget::List_t::const_iterator iter = m_children.begin();
     for(; iter != m_children.end(); iter++) {
-        if((*iter)->IsSizer())
+        if((*iter)->IsSizer()) {
             return true;
+        }
     }
     return false;
 }
@@ -376,8 +377,9 @@ wxString wxcWidget::StyleFlags(const wxString& deafultStyle) const
             }
         }
 
-        if(s.EndsWith("|"))
+        if(s.EndsWith("|")) {
             s.RemoveLast();
+        }
 
         if(s.IsEmpty()) {
             s = deafultStyle;
@@ -615,8 +617,9 @@ wxString wxcWidget::DoGenerateClassMember() const { return BaseDoGenerateClassMe
 
 bool wxcWidget::IsSizerFlagChecked(const wxString& style) const
 {
-    if(!m_sizerFlags.Contains(style))
+    if(!m_sizerFlags.Contains(style)) {
         return false;
+    }
 
     return m_sizerFlags.Item(style).is_set;
 }
@@ -1223,8 +1226,9 @@ void wxcWidget::RemoveFromParent()
 
 void wxcWidget::MoveDown()
 {
-    if(!m_parent)
+    if(!m_parent) {
         return;
+    }
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
@@ -1248,8 +1252,9 @@ void wxcWidget::MoveDown()
 
 void wxcWidget::MoveUp()
 {
-    if(!m_parent)
+    if(!m_parent) {
         return;
+    }
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
@@ -1330,8 +1335,9 @@ void wxcWidget::InsertWidgetInto(wxcWidget* oldWidget, wxcWidget* newWidget) // 
 
 bool wxcWidget::CanMoveDown() const
 {
-    if(!m_parent)
+    if(!m_parent) {
         return false;
+    }
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
@@ -1342,8 +1348,9 @@ bool wxcWidget::CanMoveDown() const
         }
     }
 
-    if(iter == list.end())
+    if(iter == list.end()) {
         return false;
+    }
 
     // Return true of this iterator is not the last one
     return (++iter) != list.end();
@@ -1351,8 +1358,9 @@ bool wxcWidget::CanMoveDown() const
 
 bool wxcWidget::CanMoveUp() const
 {
-    if(!m_parent)
+    if(!m_parent) {
         return false;
+    }
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
@@ -1363,8 +1371,9 @@ bool wxcWidget::CanMoveUp() const
         }
     }
 
-    if(iter == list.end())
+    if(iter == list.end()) {
         return false;
+    }
 
     return (*iter) != *(list.begin());
 }
@@ -1392,8 +1401,9 @@ wxcWidget::GetAdjacentSiblingSizer(bool* isAbove /*=NULL*/) const // Return an a
 wxcWidget*
 wxcWidget::GetAdjacentSibling(bool previous) const // i.e. the previous (or next) control with the same parent
 {
-    if(!m_parent)
+    if(!m_parent) {
         return NULL;
+    }
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
@@ -1404,8 +1414,9 @@ wxcWidget::GetAdjacentSibling(bool previous) const // i.e. the previous (or next
         }
     }
 
-    if(iter == list.end())
+    if(iter == list.end()) {
         return NULL;
+    }
 
     if(previous) {
         if(iter == list.begin()) {
@@ -1486,10 +1497,11 @@ bool wxcWidget::HasEvent(const wxString& eventName) const { return m_connectedEv
 
 wxString wxcWidget::GetCppName() const
 {
-    if(IsTopWindow())
+    if(IsTopWindow()) {
         return "this";
-    else
+    } else {
         return GetName();
+    }
 }
 
 wxString wxcWidget::CreateBaseclassName() const
@@ -1687,16 +1699,18 @@ wxString wxcWidget::XRCSelection() const
 
 ConnectDetails wxcWidget::GetEventMetaData(const wxString& eventName) const
 {
-    if(!m_controlEvents.GetEvents().Contains(eventName))
+    if(!m_controlEvents.GetEvents().Contains(eventName)) {
         return ConnectDetails();
+    }
 
     return m_controlEvents.GetEvents().Item(eventName);
 }
 
 ConnectDetails wxcWidget::GetEvent(const wxString& eventName) const
 {
-    if(m_connectedEvents.Contains(eventName))
+    if(m_connectedEvents.Contains(eventName)) {
         return m_connectedEvents.Item(eventName);
+    }
     return ConnectDetails();
 }
 
@@ -1768,15 +1782,18 @@ wxString wxcWidget::XRCCommonAttributes() const
     // Enable / Disable + Hidden support
     bool bHide = (PropertyBool(PROP_STATE_HIDDEN) == "true");
     bool bDisable = (PropertyBool(PROP_STATE_DISABLED) == "true");
-    if(bHide)
+    if(bHide) {
         xrc << "<hidden>1</hidden>";
+    }
 
-    if(bDisable)
+    if(bDisable) {
         xrc << "<enabled>0</enabled>";
+    }
 
     bool bFocused = (PropertyBool(PROP_HAS_FOCUS) == "true");
-    if(bFocused)
+    if(bFocused) {
         xrc << "<focused>1</focused>";
+    }
 
     return xrc;
 }
@@ -2166,8 +2183,9 @@ bool wxcWidget::HasMenuBar() const
     const List_t& children = GetChildren();
     List_t::const_iterator iter = children.begin();
     for(; iter != children.end(); ++iter) {
-        if((*iter)->GetType() == ID_WXMENUBAR)
+        if((*iter)->GetType() == ID_WXMENUBAR) {
             return true;
+        }
     }
     return false;
 }
@@ -2177,8 +2195,9 @@ bool wxcWidget::HasStatusBar() const
     const List_t& children = GetChildren();
     List_t::const_iterator iter = children.begin();
     for(; iter != children.end(); ++iter) {
-        if((*iter)->GetType() == ID_WXSTATUSBAR)
+        if((*iter)->GetType() == ID_WXSTATUSBAR) {
             return true;
+        }
     }
     return false;
 }
@@ -2188,8 +2207,9 @@ bool wxcWidget::HasToolBar() const
     const List_t& children = GetChildren();
     List_t::const_iterator iter = children.begin();
     for(; iter != children.end(); ++iter) {
-        if((*iter)->GetType() == ID_WXTOOLBAR)
+        if((*iter)->GetType() == ID_WXTOOLBAR) {
             return true;
+        }
     }
     return false;
 }
@@ -2199,8 +2219,9 @@ wxString wxcWidget::XRCBitmap(const wxString& label, const wxString& bitmap) con
     wxString file = bitmap;
     file.Trim().Trim(false);
 
-    if(file.IsEmpty())
+    if(file.IsEmpty()) {
         return "";
+    }
 
     wxString artId, clientId, sizeHint;
     wxString xrc;
@@ -2222,8 +2243,9 @@ wxString wxcWidget::XRCBitmap(const wxString& labelname) const
     wxString file = PropertyFile(PROP_BITMAP_PATH);
     file.Trim().Trim(false);
 
-    if(file.IsEmpty())
+    if(file.IsEmpty()) {
         return "";
+    }
 
     wxString artId, clientId, sizeHint;
     wxString xrc;
@@ -2244,14 +2266,16 @@ const wxcWidget* wxcWidget::FindChildByName(const wxString& name) const { return
 
 const wxcWidget* wxcWidget::DoFindByName(const wxcWidget* parent, const wxString& name) const
 {
-    if(parent->GetName() == name)
+    if(parent->GetName() == name) {
         return parent;
+    }
 
     List_t::const_iterator iter = parent->GetChildren().begin();
     for(; iter != parent->GetChildren().end(); ++iter) {
         const wxcWidget* match = DoFindByName(*iter, name);
-        if(match)
+        if(match) {
             return match;
+        }
     }
     return NULL;
 }
@@ -2260,8 +2284,9 @@ const wxcWidget* wxcWidget::FindFirstDirectChildOfType(int type) const
 {
     List_t::const_iterator iter = GetChildren().begin();
     for(; iter != GetChildren().end(); ++iter) {
-        if((*iter)->GetType() == type)
+        if((*iter)->GetType() == type) {
             return (*iter);
+        }
     }
     return NULL;
 }
@@ -2352,8 +2377,9 @@ void wxcWidget::EnableSizerFlag(const wxString& flag, bool enable)
 
 int wxcWidget::SizerFakeValue(int realValue)
 {
-    if(s_sizerFlagsValue.count(realValue) == 0)
+    if(s_sizerFlagsValue.count(realValue) == 0) {
         return 0;
+    }
     return s_sizerFlagsValue[realValue];
 }
 
@@ -2402,8 +2428,9 @@ void wxcWidget::DoGetCustomControlsName(const wxcWidget* widget, wxArrayString& 
     if(widget->GetType() == ID_WXCUSTOMCONTROL) {
         const CustomControlWrapper* cs = dynamic_cast<const CustomControlWrapper*>(widget);
         if(cs) {
-            if(controls.Index(cs->GetTemplInfoName()) == wxNOT_FOUND)
+            if(controls.Index(cs->GetTemplInfoName()) == wxNOT_FOUND) {
                 controls.Add(cs->GetTemplInfoName());
+            }
         }
     }
 
@@ -2420,10 +2447,11 @@ wxString wxcWidget::GetRealClassName() const
     wxString subclass = PropertyString(PROP_SUBCLASS_NAME);
     subclass.Trim().Trim(false);
 
-    if(!subclass.IsEmpty())
+    if(!subclass.IsEmpty()) {
         return subclass;
-    else
+    } else {
         return GetWxClassName();
+    }
 }
 
 bool wxcWidget::DoCheckNameUniqueness(const wxString& name, const wxcWidget* widget) const
@@ -2435,8 +2463,9 @@ bool wxcWidget::DoCheckNameUniqueness(const wxString& name, const wxcWidget* wid
     const wxcWidget::List_t& children = widget->GetChildren();
     wxcWidget::List_t::const_iterator iter = children.begin();
     for(; iter != children.end(); ++iter) {
-        if(!DoCheckNameUniqueness(name, *iter))
+        if(!DoCheckNameUniqueness(name, *iter)) {
             return false;
+        }
     }
     return true;
 }
@@ -2646,11 +2675,11 @@ wxString wxcWidget::BaseDoGenerateClassMember() const
 {
     wxString memberCode;
 
-    // For subclasses controls we must use the subclass name
-    wxString classname = GetRealClassName();
-    if(!IsTopWindow() && !classname.IsEmpty()) {
+    if(KeepAsClassMember()) {
 
-        if(!IsSizer() || wxcProjectMetadata::Get().IsKeepSizers()) {
+        // For subclasses controls we must use the subclass name
+        wxString classname = GetRealClassName();
+        if(!IsTopWindow() && !classname.IsEmpty()) {
 
             memberCode << "    " << classname << "* " << GetName() << ";";
             WrapInIfBlockIfNeeded(memberCode);

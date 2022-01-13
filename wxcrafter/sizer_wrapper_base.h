@@ -37,6 +37,11 @@ public:
      * an actual window / control and *not* sizer item
      */
     bool IsMainSizer() const;
+
+    /**
+     * @brief return true if this sizer has to be kept as a class member
+     */
+    virtual bool KeepAsClassMember() const;
 };
 
 #endif // SIZERWRAPPERBASE_H

@@ -638,6 +638,10 @@ add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
+if(UNIX AND NOT APPLE)
+    add_subdirectory(universal-ctags)
+endif()
+
 if (WXC_APP)
     add_subdirectory(wxcrafter)
 else()

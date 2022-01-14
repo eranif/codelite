@@ -829,7 +829,7 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel::ptr_t channel
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
-    wxString file_content = json["params"]["contentChanges"][0]["text"].toString();
+    wxString file_content = json["params"]["text"].toString();
 
     clDEBUG() << "textDocument/didSave: caching new content for file:" << filepath << endl;
     clDEBUG() << "new file content size is:" << file_content.size() << endl;

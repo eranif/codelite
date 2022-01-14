@@ -361,12 +361,11 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
     wxString filename = GetEditorFilePath(editor);
     if(m_filesSent.count(filename) && editor->IsEditorModified()) {
         // we already sent this file over, ask for change parse
-        std::string fileContent;
-        editor->GetEditorTextRaw(fileContent);
+        wxString fileContent = editor->GetEditorText();
         SendChangeRequest(editor, fileContent);
+
     } else if(m_filesSent.count(filename) == 0) {
-        std::string fileContent;
-        editor->GetEditorTextRaw(fileContent);
+        wxString fileContent = editor->GetEditorText();
         SendOpenRequest(editor, fileContent, GetLanguageId(editor));
     }
 
@@ -375,8 +374,7 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const std::string& fileContent,
-                                             const wxString& languageId)
+void LanguageServerProtocol::SendOpenRequest(IEditor* editor, const wxString& fileContent, const wxString& languageId)
 {
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
@@ -411,7 +409,7 @@ void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
     m_filesSent.erase(filename);
 }
 
-void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::string& fileContent, bool force_reparse)
+void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const wxString& fileContent, bool force_reparse)
 {
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
@@ -437,7 +435,7 @@ void LanguageServerProtocol::SendChangeRequest(IEditor* editor, const std::strin
     // SendSemanticTokensRequest(editor);
 }
 
-void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const std::string& fileContent)
+void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fileContent)
 {
     CHECK_PTR_RET(editor);
     // For now: report a change event
@@ -481,12 +479,10 @@ void LanguageServerProtocol::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
     // For now, it does the same as 'OnFileLoaded'
-    IEditor* editor = clGetManager()->GetActiveEditor();
+    IEditor* editor = clGetManager()->FindEditor(event.GetFileName());
     CHECK_PTR_RET(editor);
     if(ShouldHandleFile(editor)) {
-        std::string fileContent;
-        editor->GetEditorTextRaw(fileContent);
-        SendSaveRequest(editor, fileContent);
+        SendSaveRequest(editor, editor->GetEditorText());
     }
 }
 
@@ -502,8 +498,7 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
     }
 
     if(editor && ShouldHandleFile(editor)) {
-        std::string fileContent;
-        editor->GetEditorTextRaw(fileContent);
+        wxString fileContent = editor->GetEditorText();
 
         if(m_filesSent.count(GetEditorFilePath(editor))) {
             clDEBUG1() << "OpenEditor->SendChangeRequest called for:" << GetEditorFilePath(editor);
@@ -526,12 +521,10 @@ void LanguageServerProtocol::FunctionHelp(IEditor* editor)
     const wxString& filename = GetEditorFilePath(editor);
     if(m_filesSent.count(filename) && editor->IsEditorModified()) {
         // we already sent this file over, ask for change parse
-        std::string fileContent;
-        editor->GetEditorTextRaw(fileContent);
+        wxString fileContent = editor->GetEditorText();
         SendChangeRequest(editor, fileContent);
     } else if(m_filesSent.count(filename) == 0) {
-        std::string fileContent;
-        editor->GetEditorTextRaw(fileContent);
+        wxString fileContent = editor->GetEditorText();
         SendOpenRequest(editor, fileContent, GetLanguageId(editor));
     }
 
@@ -552,12 +545,10 @@ void LanguageServerProtocol::HoverTip(IEditor* editor)
     const wxString& filename = GetEditorFilePath(editor);
     if(m_filesSent.count(filename) && editor->IsEditorModified()) {
         // we already sent this file over, ask for change parse
-        std::string fileContent;
-        editor->GetEditorTextRaw(fileContent);
+        wxString fileContent = editor->GetEditorText();
         SendChangeRequest(editor, fileContent);
     } else if(m_filesSent.count(filename) == 0) {
-        std::string fileContent;
-        editor->GetEditorTextRaw(fileContent);
+        wxString fileContent = editor->GetEditorText();
         SendOpenRequest(editor, fileContent, GetLanguageId(editor));
     }
 
@@ -581,14 +572,12 @@ void LanguageServerProtocol::CodeComplete(IEditor* editor)
     const wxString& filename = GetEditorFilePath(editor);
 
     if(m_filesSent.count(filename) && editor->IsEditorModified()) {
-        std::string text;
-        editor->GetEditorTextRaw(text);
-        SendChangeRequest(editor, text, true);
+        wxString fileContent = editor->GetEditorText();
+        SendChangeRequest(editor, fileContent, true);
 
     } else if(m_filesSent.count(filename) == 0) {
-        std::string text;
-        editor->GetEditorTextRaw(text);
-        SendOpenRequest(editor, text, GetLanguageId(editor));
+        wxString fileContent = editor->GetEditorText();
+        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
     }
 
     // Now request the for code completion
@@ -642,13 +631,12 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missi
 
     // If the editor is modified, we need to tell the LSP to reparse the source file
     const wxString& filename = GetEditorFilePath(editor);
-    std::string content;
-    content.reserve(editor->GetLength() + 1);
-    editor->GetEditorTextRaw(content);
+    wxString fileContent = editor->GetEditorText();
+
     if(m_filesSent.count(filename) == 0) {
-        SendOpenRequest(editor, content, GetLanguageId(editor));
+        SendOpenRequest(editor, fileContent, GetLanguageId(editor));
     } else {
-        SendChangeRequest(editor, content);
+        SendChangeRequest(editor, fileContent);
     }
     clDEBUG() << GetLogPrefix() << "Sending GotoDeclarationRequest" << endl;
     LSP::GotoDeclarationRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDeclarationRequest(
@@ -830,7 +818,7 @@ void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_fla
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::UpdateFileSent(const wxString& filename, const std::string& fileContent)
+void LanguageServerProtocol::UpdateFileSent(const wxString& filename, const wxString& fileContent)
 {
     wxString checksum = wxMD5::GetDigest(fileContent);
     m_filesSent.erase(filename);
@@ -838,7 +826,7 @@ void LanguageServerProtocol::UpdateFileSent(const wxString& filename, const std:
     m_filesSent.insert({ filename, checksum });
 }
 
-bool LanguageServerProtocol::IsFileChangedSinceLastParse(const wxString& filename, const std::string& fileContent) const
+bool LanguageServerProtocol::IsFileChangedSinceLastParse(const wxString& filename, const wxString& fileContent) const
 {
     if(m_filesSent.count(filename) == 0) {
         return true;

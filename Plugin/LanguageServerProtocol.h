@@ -114,8 +114,8 @@ protected:
     void ProcessQueue();
     static wxString GetLanguageId(IEditor* editor);
     static wxString GetLanguageId(FileExtManager::FileType file_type);
-    void UpdateFileSent(const wxString& filename, const std::string& fileContent);
-    bool IsFileChangedSinceLastParse(const wxString& filename, const std::string& fileContent) const;
+    void UpdateFileSent(const wxString& filename, const wxString& fileContent);
+    bool IsFileChangedSinceLastParse(const wxString& filename, const wxString& fileContent) const;
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     IEditor* GetEditor(const clCodeCompletionEvent& event) const;
@@ -124,7 +124,7 @@ protected:
     /**
      * @brief notify about file open
      */
-    void SendOpenRequest(IEditor* editor, const std::string& fileContent, const wxString& languageId);
+    void SendOpenRequest(IEditor* editor, const wxString& fileContent, const wxString& languageId);
 
     /**
      * @brief report a file-close notification
@@ -144,12 +144,12 @@ protected:
     /**
      * @brief report a file-changed notification
      */
-    void SendChangeRequest(IEditor* editor, const std::string& fileContent, bool force_reparse = false);
+    void SendChangeRequest(IEditor* editor, const wxString& fileContent, bool force_reparse = false);
 
     /**
      * @brief report a file-save notification
      */
-    void SendSaveRequest(IEditor* editor, const std::string& fileContent);
+    void SendSaveRequest(IEditor* editor, const wxString& fileContent);
 
     /**
      * @brief request for a code completion at a given doc/position

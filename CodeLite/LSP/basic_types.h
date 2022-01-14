@@ -6,6 +6,7 @@
 #include "JSONObject.h"
 #include "codelite_exports.h"
 #include "fileutils.h"
+
 #include <vector>
 #include <wx/sharedptr.h>
 
@@ -63,7 +64,7 @@ public:
 //===----------------------------------------------------------------------------------
 class WXDLLIMPEXP_CL TextDocumentContentChangeEvent : public Serializable
 {
-    std::string m_text;
+    wxString m_text;
 
 public:
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -75,8 +76,8 @@ public:
     {
     }
     virtual ~TextDocumentContentChangeEvent() {}
-    TextDocumentContentChangeEvent& SetText(const std::string& text);
-    const std::string& GetText() const { return m_text; }
+    TextDocumentContentChangeEvent& SetText(const wxString& text);
+    const wxString& GetText() const { return m_text; }
 };
 
 //===----------------------------------------------------------------------------------
@@ -273,14 +274,14 @@ class WXDLLIMPEXP_CL TextDocumentItem : public Serializable
 {
     URI m_uri;
     wxString m_languageId;
-    std::string m_text;
+    wxString m_text;
     int m_version = 1;
 
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
 
-    TextDocumentItem(const wxString& uri, const wxString& langId, const std::string& text, int version = 1)
+    TextDocumentItem(const wxString& uri, const wxString& langId, const wxString& text, int version = 1)
         : m_languageId(langId)
         , m_text(text)
         , m_version(version)
@@ -312,7 +313,7 @@ public:
         return *this;
     }
     const wxString& GetLanguageId() const { return m_languageId; }
-    const std::string& GetText() const { return m_text; }
+    const wxString& GetText() const { return m_text; }
     const wxString& GetPathAsURI() const { return m_uri.GetUrl(); }
     const wxString& GetPath() const { return m_uri.GetPath(); }
     int GetVersion() const { return m_version; }

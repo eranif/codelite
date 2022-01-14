@@ -4,6 +4,7 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="samples">
+      <File Name="src/samples/my_dialog.hpp"/>
       <File Name="src/samples/member_of_parent_class.hpp"/>
       <File Name="src/samples/template_function.hpp"/>
       <File Name="src/samples/sample_function_returning_unique_ptr.hpp"/>

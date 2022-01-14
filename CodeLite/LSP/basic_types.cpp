@@ -254,7 +254,7 @@ JSONItem Diagnostic::ToJSON(const wxString& name) const
     return json;
 }
 
-TextDocumentContentChangeEvent& TextDocumentContentChangeEvent::SetText(const std::string& text)
+TextDocumentContentChangeEvent& TextDocumentContentChangeEvent::SetText(const wxString& text)
 {
     this->m_text.clear();
     if(!text.empty()) {

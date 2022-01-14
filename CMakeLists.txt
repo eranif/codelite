@@ -638,7 +638,7 @@ add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
-if(UNIX AND NOT APPLE)
+if(UNIX)
     add_subdirectory(universal-ctags)
 endif()
 

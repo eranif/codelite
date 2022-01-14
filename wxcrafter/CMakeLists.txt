@@ -194,7 +194,7 @@ else ()
 
     set(CPACK_GENERATOR                   "DEB")
     set(CPACK_PACKAGE_NAME                "wxCrafter${GTKNAME}")
-    set(CPACK_PACKAGE_VERSION             "2.9")
+    set(CPACK_PACKAGE_VERSION             "3.0")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER   "Eran Ifrah <eran@codelite.org>") #required
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "GUI Rad Tool for wxWidgets")
     set(CPACK_DEBIAN_PACKAGE_SECTION      "devel")

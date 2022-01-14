@@ -121,6 +121,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -296,6 +300,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	1,
@@ -322,6 +330,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -424,7 +436,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -506,7 +517,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -588,7 +598,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -670,7 +679,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -764,6 +772,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -866,7 +878,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -948,7 +959,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1030,7 +1040,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1142,6 +1151,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	1,
@@ -1168,6 +1181,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -1270,7 +1287,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1352,7 +1368,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1434,7 +1449,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1516,7 +1530,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1598,7 +1611,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1680,7 +1692,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1762,7 +1773,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1912,7 +1922,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -1994,7 +2003,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -2105,6 +2113,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	1,
@@ -2131,6 +2143,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -2233,7 +2249,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -2315,7 +2330,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -2397,7 +2411,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -2479,7 +2492,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -2561,7 +2573,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -2643,7 +2654,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -2737,6 +2747,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -2839,7 +2853,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -2921,7 +2934,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3003,7 +3015,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3085,7 +3096,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3167,7 +3177,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3249,7 +3258,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3331,7 +3339,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3425,6 +3432,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -3527,7 +3538,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3609,7 +3619,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3703,6 +3712,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -3805,7 +3818,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -3917,6 +3929,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -3944,6 +3960,10 @@
 															"m_label":	"Style:",
 															"m_value":	""
 														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
+														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
 															"m_selection":	1,
@@ -3970,6 +3990,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -4072,7 +4096,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4154,7 +4177,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4236,7 +4258,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4318,7 +4339,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4400,7 +4420,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4482,7 +4501,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4564,7 +4582,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4658,6 +4675,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -4760,7 +4781,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4842,7 +4862,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4924,7 +4943,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5018,6 +5036,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -5120,7 +5142,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5202,7 +5223,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5284,7 +5304,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5366,7 +5385,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5448,7 +5466,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5530,7 +5547,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5612,7 +5628,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5706,6 +5721,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -5808,7 +5827,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5890,7 +5908,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -5972,7 +5989,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6066,6 +6082,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -6168,7 +6188,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6250,7 +6269,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6332,7 +6350,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6414,7 +6431,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6496,7 +6512,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6578,7 +6593,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6660,7 +6674,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6754,6 +6767,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -6856,7 +6873,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -6938,7 +6954,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7020,7 +7035,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7102,7 +7116,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7196,6 +7209,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -7298,7 +7315,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7380,7 +7396,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7462,7 +7477,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7544,7 +7558,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7626,7 +7639,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7708,7 +7720,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7790,7 +7801,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7872,7 +7882,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -7954,7 +7963,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8036,7 +8044,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8149,6 +8156,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -8176,6 +8187,10 @@
 															"m_label":	"Style:",
 															"m_value":	""
 														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
+														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
 															"m_selection":	1,
@@ -8202,6 +8217,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -8304,7 +8323,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8386,7 +8404,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8468,7 +8485,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8550,7 +8566,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8644,6 +8659,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -8746,7 +8765,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8828,7 +8846,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8910,7 +8927,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -8992,7 +9008,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -9086,6 +9101,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
@@ -9188,7 +9207,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -9301,6 +9319,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	1,
@@ -9327,6 +9349,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -9429,7 +9455,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -9511,7 +9536,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -9593,7 +9617,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -9687,6 +9710,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -9789,7 +9816,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -9871,7 +9897,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -9953,7 +9978,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10035,7 +10059,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10117,7 +10140,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10211,6 +10233,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -10313,7 +10339,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10395,7 +10420,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10477,7 +10501,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10559,7 +10582,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10641,7 +10663,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10723,7 +10744,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -10817,6 +10837,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -10919,7 +10943,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11001,7 +11024,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11113,6 +11135,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	1,
@@ -11139,6 +11165,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -11241,7 +11271,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11323,7 +11352,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11405,7 +11433,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11487,7 +11514,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11581,6 +11607,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -11683,7 +11713,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11765,7 +11794,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11847,7 +11875,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -11941,6 +11968,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -12043,7 +12074,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -12125,7 +12155,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -12207,7 +12236,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -12289,7 +12317,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -12316,6 +12343,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -12418,7 +12449,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -12500,7 +12530,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -12594,6 +12623,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -12771,7 +12804,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -12853,7 +12885,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnControlUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -12982,14 +13013,12 @@
 			"m_events":	[{
 					"m_eventName":	"wxEVT_WIZARD_FINISHED",
 					"m_eventClass":	"wxWizardEvent",
-					"m_eventHandler":	"wxWizardEventHandler",
 					"m_functionNameAndSignature":	"OnFinishClicked(wxWizardEvent& event)",
 					"m_description":	"The wizard finished button was pressed.",
 					"m_noBody":	false
 				}, {
 					"m_eventName":	"wxEVT_WIZARD_PAGE_CHANGING",
 					"m_eventClass":	"wxWizardEvent",
-					"m_eventHandler":	"wxWizardEventHandler",
 					"m_functionNameAndSignature":	"OnWizardPageChanging(wxWizardEvent& event)",
 					"m_description":	"The page is being changed (this event can be vetoed).",
 					"m_noBody":	false
@@ -13085,6 +13114,10 @@
 									"m_label":	"Style:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	0,
@@ -13111,6 +13144,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -13288,7 +13325,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_COMMAND_CHOICE_SELECTED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnFormTypeSelected(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
 													"m_noBody":	false
@@ -13370,7 +13406,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnTitleUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -13464,7 +13499,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnTitleUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -13564,6 +13598,10 @@
 									"m_label":	"Style:",
 									"m_value":	""
 								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
+								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
 									"m_selection":	0,
@@ -13590,6 +13628,10 @@
 											"type":	"string",
 											"m_label":	"Style:",
 											"m_value":	""
+										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
 										}, {
 											"type":	"string",
 											"m_label":	"# Columns:",
@@ -13692,7 +13734,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnStandloneAppUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -13718,6 +13759,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -13801,7 +13846,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnStandloneAppUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -13896,7 +13940,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnNewWxcpProject(wxCommandEvent& event)",
 															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 															"m_noBody":	false
@@ -13991,7 +14034,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnBrowseWxcpFile(wxCommandEvent& event)",
 															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 															"m_noBody":	false
@@ -14236,7 +14278,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnInheritedClassNameUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -14330,14 +14371,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnInheritedClassNameUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_SET_FOCUS",
 													"m_eventClass":	"wxFocusEvent",
-													"m_eventHandler":	"wxFocusEventHandler",
 													"m_functionNameAndSignature":	"OnInheritedNameFocus(wxFocusEvent& event)",
 													"m_description":	"Process a wxEVT_SET_FOCUS event",
 													"m_noBody":	false
@@ -14419,7 +14458,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnFilenameUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -14513,14 +14551,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnFilenameUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_SET_FOCUS",
 													"m_eventClass":	"wxFocusEvent",
-													"m_eventHandler":	"wxFocusEventHandler",
 													"m_functionNameAndSignature":	"OnFilenameFocus(wxFocusEvent& event)",
 													"m_description":	"Process a wxEVT_SET_FOCUS event",
 													"m_noBody":	false
@@ -14602,7 +14638,6 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnSelectVDUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -14628,6 +14663,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -14723,7 +14762,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnSelectVDUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -14805,14 +14843,12 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 															"m_eventClass":	"wxCommandEvent",
-															"m_eventHandler":	"wxCommandEventHandler",
 															"m_functionNameAndSignature":	"OnSelectVirtualFolder(wxCommandEvent& event)",
 															"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 															"m_noBody":	false
 														}, {
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnSelectVDUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -14912,14 +14948,12 @@
 			"m_events":	[{
 					"m_eventName":	"wxEVT_SIZE",
 					"m_eventClass":	"wxSizeEvent",
-					"m_eventHandler":	"wxSizeEventHandler",
 					"m_functionNameAndSignature":	"OnSize(wxSizeEvent& event)",
 					"m_description":	"Process a wxEVT_SIZE event",
 					"m_noBody":	false
 				}, {
 					"m_eventName":	"wxEVT_MOVE",
 					"m_eventClass":	"wxMoveEvent",
-					"m_eventHandler":	"wxMoveEventHandler",
 					"m_functionNameAndSignature":	"OnMove(wxMoveEvent& event)",
 					"m_description":	"Process a wxEVT_MOVE event, which is generated when a window is moved.",
 					"m_noBody":	false
@@ -14944,6 +14978,10 @@
 							"type":	"string",
 							"m_label":	"Style:",
 							"m_value":	""
+						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -15169,6 +15207,10 @@
 							"type":	"string",
 							"m_label":	"Style:",
 							"m_value":	""
+						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",

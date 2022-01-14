@@ -1,9 +1,11 @@
 #include "NewFormWizard.h"
+
 #include "VirtualDirectorySelectorDlg.h"
 #include "allocator_mgr.h"
 #include "clFileSystemWorkspace.hpp"
 #include "wxc_project_metadata.h"
 #include "wxc_settings.h"
+
 #include <macros.h>
 #include <project.h>
 #include <workspace.h>
@@ -314,7 +316,14 @@ bool NewFormWizard::IsPopupWindow() const { return m_choiceFormType->GetStringSe
 
 bool NewFormWizard::IsWizard() const { return m_choiceFormType->GetStringSelection() == "wxWizard"; }
 
-void NewFormWizard::OnSelectVDUI(wxUpdateUIEvent& event) { event.Enable(!clFileSystemWorkspace::Get().IsOpen()); }
+void NewFormWizard::OnSelectVDUI(wxUpdateUIEvent& event)
+{
+#if STANDALONE_BUILD
+    event.Enable(false);
+#else
+    event.Enable(!clFileSystemWorkspace::Get().IsOpen());
+#endif
+}
 
 void NewFormWizard::OnBrowseWxcpFile(wxCommandEvent& event)
 {

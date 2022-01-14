@@ -5,7 +5,7 @@
 AppName=wxCrafter
 AppVerName=wxCrafter
 AppPublisher=Eran Ifrah
-AppVersion=2.9
+AppVersion=3.0
 AppPublisherURL=http://wxcrafter.org
 AppSupportURL=http://wxcrafter.org
 AppUpdatesURL=http://wxcrafter.org
@@ -13,7 +13,7 @@ DefaultDirName={pf64}\wxCrafter
 DefaultGroupName=wxCrafter
 LicenseFile=..\LICENSE
 OutputDir=.
-OutputBaseFilename=wxcrafter-amd64-2.9
+OutputBaseFilename=wxcrafter-amd64-3.0
 ChangesEnvironment=yes
 FlatComponentsList=yes
 SetupIconFile=box_software.ico

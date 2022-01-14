@@ -723,13 +723,26 @@ wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const w
 
 void CxxCodeCompletion::prepend_scope(vector<wxString>& scopes, const wxString& scope) const
 {
-    auto where = find_if(scopes.begin(), scopes.end(), [=](const wxString& s) { return s == scope; });
+    auto find_and_erase_cb = [&scopes](const wxString& scope_name) {
+        auto where = find_if(scopes.begin(), scopes.end(), [=](const wxString& __s) { return __s == scope_name; });
+        if(where != scopes.end()) {
+            scopes.erase(where);
+        }
+    };
 
-    if(where != scopes.end()) {
-        scopes.erase(where);
+    // if this is a complex scope, break it and add all possible values
+    wxArrayString parts = ::wxStringTokenize(scope, ":", wxStringTokenizerMode::wxTOKEN_STRTOK);
+    wxString scope_name;
+    for(const wxString& part : parts) {
+        if(!scope_name.empty()) {
+            scope_name << "::";
+        }
+        scope_name << part;
+        // LSP::Params
+        // LSP
+        find_and_erase_cb(scope_name);
+        scopes.insert(scopes.begin(), scope_name);
     }
-
-    scopes.insert(scopes.begin(), scope);
 }
 
 void CxxCodeCompletion::reset()

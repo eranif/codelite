@@ -76,10 +76,6 @@ New CTagsd CC engine:
 - **FIXED** overloaded functionn shouls all be displayed now
 - **FIXED** provide calltip for constructors
 
-KNOWN ISSUE:
-------------
-- wxWindow* -> no CC
-
 TODO:
 -----
 Update the docs with ctagsd

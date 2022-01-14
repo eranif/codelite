@@ -864,6 +864,15 @@ TEST_FUNC(test_cxx_code_completion_list_locals)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_full_ns_path)
+{
+    ENSURE_DB_LOADED();
+    auto resolved = completer->code_complete("LSP::Params::Ptr_t->", {}, nullptr);
+    CHECK_BOOL(resolved);
+    CHECK_STRING(resolved->GetPath(), "LSP::Params");
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_function_arguments)
 {
     ENSURE_DB_LOADED();

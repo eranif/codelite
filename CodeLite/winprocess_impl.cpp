@@ -452,7 +452,7 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
     }
     if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
         if(IsAlive()) {
-            wxThread::Sleep(10);
+            wxThread::Sleep(5);
             return true;
         }
     }

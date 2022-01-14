@@ -14,6 +14,7 @@
 #include <macros.h>
 #include <thread>
 #include <wx/app.h>
+#include <wx/datetime.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
@@ -405,7 +406,7 @@ void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxStrin
     auto& builder = m_logView->GetDvListCtrl()->GetBuilder(true);
 
     eAsciiColours ansi_colour_code = eAsciiColours::NORMAL_TEXT;
-    wxString label = "T ";
+    wxString label = "T "; // trace
     switch(log_leve) {
     case 1:
         ansi_colour_code = eAsciiColours::RED; // error
@@ -423,6 +424,7 @@ void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxStrin
     }
 
     builder.Add(label, ansi_colour_code);
+    builder.Add(wxDateTime::Now().FormatISOTime() + " ", eAsciiColours::GRAY);
     builder.Add(server_name + " ", eAsciiColours::NORMAL_TEXT);
     builder.Add(message, eAsciiColours::NORMAL_TEXT);
     m_logView->GetDvListCtrl()->AddLine(builder.GetString(), false);

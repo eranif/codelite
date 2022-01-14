@@ -82,6 +82,7 @@ KNOWN ISSUE:
 
 TODO:
 -----
+Update the docs with ctagsd
 
 -----
 BUGS:

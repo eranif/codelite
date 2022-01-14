@@ -1,8 +1,10 @@
 #include "wxgui_helpers.h"
+
 #include "file_logger.h"
 #include "main.h"
 #include "wxc_project_metadata.h"
 #include "xmlutils.h"
+
 #include <algorithm>
 #include <cl_command_event.h>
 #include <event_notifier.h>
@@ -992,19 +994,19 @@ wxString wxCrafter::ToolTypeToWX(TOOL_TYPE type)
 
 wxString wxCrafter::GetUserDataDir()
 {
-    wxFileName dir(wxStandardPaths::Get().GetUserDataDir(), wxT("dummy.txt"));
+    wxFileName dir(wxStandardPaths::Get().GetUserDataDir(), wxEmptyString);
 #ifndef NDEBUG
     dir.SetPath(dir.GetPath() + "-dbg");
 #endif
     dir.AppendDir(wxT("wxcrafter"));
-
-    if(!wxFileName::DirExists(dir.GetPath())) {
-        wxLogNull nl;
-        ::wxMkdir(dir.GetPath());
+    static bool once = true;
+    if(once) {
+        dir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        once = false;
     }
-
     return dir.GetPath();
 }
+
 void wxCrafter::SetStatusMessage(const wxString& msg)
 {
     if(TopFrame()) {
@@ -1017,17 +1019,7 @@ void wxCrafter::SetStatusMessage(const wxString& msg)
 
 wxString wxCrafter::GetConfigFile()
 {
-    wxFileName dir(wxStandardPaths::Get().GetUserDataDir(), wxT("wxcrafter.conf"));
-#ifndef NDEBUG
-    dir.SetPath(dir.GetPath() + "-dbg");
-#endif
-    dir.AppendDir(wxT("config"));
-
-    if(!wxFileName::DirExists(dir.GetPath())) {
-        wxLogNull nl;
-        ::wxMkdir(dir.GetPath());
-    }
-
+    wxFileName dir(GetUserDataDir(), wxT("wxcrafter.conf"));
     return dir.GetFullPath();
 }
 

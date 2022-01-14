@@ -53,7 +53,7 @@ public:
         if(!frame.GetFileName().empty()) {
             line << " (" << frame.GetFileName() << ":" << frame.GetLine() << ")";
         }
-        clERROR() << line << endl;
+        clDEBUG() << line << endl;
     }
 };
 #endif
@@ -217,7 +217,7 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
 
     vector<TagEntryPtr> tags;
     if(CTags::ParseBuffer(filename, buffer, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
-        clERROR() << "Failed to generate ctags file for buffer. file:" << endl;
+        clDEBUG() << "Failed to generate ctags file for buffer. file:" << endl;
 #if wxUSE_STACKWALKER
         MyStackWalker stack{};
         stack.Walk();
@@ -275,8 +275,7 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const CTags
 
     vector<TagEntryPtr> tags;
     if(CTags::ParseFiles(filtered_file_list, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
-        clERROR() << "Failed to generate ctags file. indexer:" << settings.GetCodeliteIndexer()
-                  << "file-lists:" << filtered_file_list << endl;
+        clDEBUG() << "Failed to generate ctags file. indexer:" << settings.GetCodeliteIndexer() << endl;
 #if wxUSE_STACKWALKER
         MyStackWalker stack{};
         stack.Walk();

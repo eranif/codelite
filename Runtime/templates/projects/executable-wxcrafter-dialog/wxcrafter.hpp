@@ -44,9 +44,9 @@ protected:
 
 protected:
 public:
-    wxStaticLine* GetStaticLine15() noexcept { return m_staticLine15; }
-    wxButton* GetButtonOK() noexcept { return m_buttonOK; }
-    wxButton* GetButtonCancel() noexcept { return m_buttonCancel; }
+    wxStaticLine* GetStaticLine15() { return m_staticLine15; }
+    wxButton* GetButtonOK() { return m_buttonOK; }
+    wxButton* GetButtonCancel() { return m_buttonCancel; }
     MainDialogBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("My Dialog"),
                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

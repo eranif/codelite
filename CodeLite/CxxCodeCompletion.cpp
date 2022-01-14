@@ -210,7 +210,7 @@ wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxS
 
 TagEntryPtr CxxCodeCompletion::lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes)
 {
-    return lookup_child_symbol(parent, "operator->", visible_scopes, { "function", "prototype" });
+    return lookup_child_symbol(parent, m_template_manager, "operator->", visible_scopes, { "function", "prototype" });
 }
 
 TagEntryPtr CxxCodeCompletion::lookup_subscript_operator(TagEntryPtr parent, const vector<wxString>& visible_scopes)
@@ -227,8 +227,8 @@ TagEntryPtr CxxCodeCompletion::lookup_subscript_operator(TagEntryPtr parent, con
     return nullptr;
 }
 
-TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
-                                                   const vector<wxString>& visible_scopes,
+TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateManager::ptr_t template_manager,
+                                                   const wxString& child_symbol, const vector<wxString>& visible_scopes,
                                                    const vector<wxString>& kinds)
 {
     CHECK_PTR_RET_NULL(m_lookup);
@@ -276,6 +276,7 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, const wxS
     deque<TagEntryPtr> q;
     q.push_front(parent);
     wxStringSet_t visited;
+
     while(!q.empty()) {
         auto t = q.front();
         q.pop_front();
@@ -293,7 +294,7 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, const wxS
         }
 
         // if we got here - try the parents
-        auto parents = get_parents_of_tag_no_recurse(t, visible_scopes);
+        auto parents = get_parents_of_tag_no_recurse(t, template_manager, visible_scopes);
         q.insert(q.end(), parents.begin(), parents.end());
     }
     return nullptr;
@@ -365,12 +366,12 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
     }
 
     // try classes first
-    auto resolved = lookup_child_symbol(parent, name_to_find, visible_scopes,
+    auto resolved = lookup_child_symbol(parent, m_template_manager, name_to_find, visible_scopes,
                                         { "typedef", "class", "struct", "namespace", "enum", "union" });
     if(!resolved) {
         // try methods
         // `lookup_child_symbol` takes inheritance into consideration
-        resolved = lookup_child_symbol(parent, name_to_find, visible_scopes,
+        resolved = lookup_child_symbol(parent, m_template_manager, name_to_find, visible_scopes,
                                        { "function", "prototype", "member", "enumerator" });
     }
 
@@ -953,6 +954,7 @@ vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vect
     deque<TagEntryPtr> q;
     q.push_front(parent);
     wxStringSet_t visited;
+
     while(!q.empty()) {
         auto t = q.front();
         q.pop_front();
@@ -963,7 +965,7 @@ vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vect
 
         scopes.push_back(t);
 
-        auto parents = get_parents_of_tag_no_recurse(t, visible_scopes);
+        auto parents = get_parents_of_tag_no_recurse(t, m_template_manager, visible_scopes);
         q.insert(q.end(), parents.begin(), parents.end());
     }
     return scopes;
@@ -1072,6 +1074,7 @@ void TemplateManager::clear() { m_table.clear(); }
 
 void TemplateManager::add_placeholders(const wxStringMap_t& table, const vector<wxString>& visible_scopes)
 {
+
     // try to resolve any of the template before we insert them
     // its important to do it now so we use the correct scope
     wxStringMap_t M;
@@ -1080,7 +1083,7 @@ void TemplateManager::add_placeholders(const wxStringMap_t& table, const vector<
         wxString value;
 
         auto resolved = m_completer->lookup_child_symbol(
-            nullptr, vt.second, visible_scopes,
+            nullptr, nullptr, vt.second, visible_scopes,
             { "class", "struct", "typedef", "union", "namespace", "enum", "enumerator" });
         if(resolved) {
             // use the path found in the db
@@ -1765,15 +1768,47 @@ wxString& CxxCodeCompletion::simple_pre_process(wxString& name) const
 }
 
 vector<TagEntryPtr> CxxCodeCompletion::get_parents_of_tag_no_recurse(TagEntryPtr parent,
+                                                                     TemplateManager::ptr_t template_manager,
                                                                      const vector<wxString>& visible_scopes)
 {
+    wxArrayString inherits_with_template = parent->GetInheritsAsArrayWithTemplates();
     wxArrayString inherits = parent->GetInheritsAsArrayNoTemplates();
     vector<TagEntryPtr> parents;
     parents.reserve(inherits.size());
 
-    for(wxString& inherit : inherits) {
-        auto match = lookup_symbol_by_kind(simple_pre_process(inherit), visible_scopes, { "class", "struct" });
+    for(size_t i = 0; i < inherits.size(); ++i) {
+        wxString& inherit = inherits[i];
+        wxString to_search = simple_pre_process(inherit);
+        // run it in the template manager as well
+        if(template_manager) {
+            to_search = template_manager->resolve(to_search, visible_scopes);
+        }
+
+        auto match = lookup_symbol_by_kind(to_search, visible_scopes, { "class", "struct" });
         if(match) {
+            if(template_manager && (inherits_with_template.size() == inherits.size()) && match->IsClassTemplate() &&
+               (inherit != inherits_with_template[i])) {
+                // the goal of this `if` branch is to parse the template initialisation
+                // line and update the template manager in case we need this information
+                // later along the way
+                //
+                // parse the template initialisation
+                // class MyClass : public TemplateClass<String> {..}
+                //                        ^                    ^
+                //                         \__________________/
+                //                                   |
+                //                         template initialisation
+                //
+                // we want to extract the value `String`
+                //
+                auto exprs = CxxExpression::from_expression(inherits_with_template[i] + "::", nullptr);
+                if(!exprs.empty()) {
+                    auto& expression = exprs[0];
+                    expression.parse_template_placeholders(match->GetTemplateDefinition());
+                    auto M = expression.get_template_placeholders_map();
+                    template_manager->add_placeholders(M, visible_scopes);
+                }
+            }
             parents.emplace_back(match);
         }
     }

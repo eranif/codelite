@@ -233,6 +233,11 @@ wxString TagEntry::GetFullDisplayName() const
     return name;
 }
 
+bool TagEntry::IsClassTemplate() const
+{
+    return m_extFields.count("template") && !m_extFields.find("template")->second.empty();
+}
+
 //----------------------------------------------------------------------------
 // Database operations
 //----------------------------------------------------------------------------

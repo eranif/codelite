@@ -131,8 +131,9 @@ private:
     TagEntryPtr lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes);
     TagEntryPtr lookup_subscript_operator(TagEntryPtr parent, const vector<wxString>& visible_scopes);
 
-    TagEntryPtr lookup_child_symbol(TagEntryPtr parent, const wxString& child_symbol,
-                                    const vector<wxString>& visible_scopes, const vector<wxString>& kinds);
+    TagEntryPtr lookup_child_symbol(TagEntryPtr parent, TemplateManager::ptr_t template_manager,
+                                    const wxString& child_symbol, const vector<wxString>& visible_scopes,
+                                    const vector<wxString>& kinds);
 
     wxString typedef_from_tag(TagEntryPtr tag) const;
     wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
@@ -194,7 +195,8 @@ private:
     /**
      * @brief return the direct parents of a tag
      */
-    vector<TagEntryPtr> get_parents_of_tag_no_recurse(TagEntryPtr parent, const vector<wxString>& visible_scopes);
+    vector<TagEntryPtr> get_parents_of_tag_no_recurse(TagEntryPtr parent, TemplateManager::ptr_t template_manager,
+                                                      const vector<wxString>& visible_scopes);
 
 public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;

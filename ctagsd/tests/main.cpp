@@ -452,6 +452,17 @@ TEST_FUNC(test_cxx_code_completion_func_returning_unique_ptr_into_auto)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_template_inhertiance)
+{
+    ENSURE_DB_LOADED();
+    {
+        CxxRemainder remainder;
+        TagEntryPtr resolved = completer->code_complete("CxxUTDialog::GetEventHandler()->", {}, &remainder);
+        CHECK_NOT_NULL(resolved);
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_init_from_ctor)
 {
     ENSURE_DB_LOADED();

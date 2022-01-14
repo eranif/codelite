@@ -829,9 +829,13 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel::ptr_t channel
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
+    wxString file_content = json["params"]["contentChanges"][0]["text"].toString();
+
     clDEBUG() << "textDocument/didSave: caching new content for file:" << filepath << endl;
+    clDEBUG() << "new file content size is:" << file_content.size() << endl;
+
     m_filesOpened.erase(filepath);
-    m_filesOpened.insert({ filepath, json["params"]["contentChanges"][0]["text"].toString() });
+    m_filesOpened.insert({ filepath, file_content });
 
     // update the file using namespace
     clDEBUG() << "did_save: collecting files to parse..." << endl;

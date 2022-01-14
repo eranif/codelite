@@ -2696,7 +2696,7 @@ bool wxcWidget::IsParentAuiToolbar() const
 
 void wxcWidget::DoGenerateGetters(wxString& decl) const
 {
-    if(wxcSettings::Get().IsLicensed2()) {
+    if(KeepAsClassMember()) {
         switch(GetWidgetType()) {
         case TYPE_CONTROL:
         case TYPE_LIST_CTRL:

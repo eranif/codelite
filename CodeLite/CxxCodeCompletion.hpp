@@ -179,6 +179,23 @@ private:
     TagEntryPtr on_typedef(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
     TagEntryPtr on_member(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
 
+    /**
+     * @brief similar to CxxExpression::from_expression however, this method also passes
+     * the result tokens in the pre_processor() code to replace any macros before serving them
+     * for processing
+     */
+    vector<CxxExpression> from_expression(const wxString& expression, CxxRemainder* remainder);
+    /**
+     * @brief attempt to perform simple substituation of `name` with
+     * a matached entry from the `m_macros_table_map`
+     */
+    wxString& simple_pre_process(wxString& name) const;
+
+    /**
+     * @brief return the direct parents of a tag
+     */
+    vector<TagEntryPtr> get_parents_of_tag_no_recurse(TagEntryPtr parent, const vector<wxString>& visible_scopes);
+
 public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;
 

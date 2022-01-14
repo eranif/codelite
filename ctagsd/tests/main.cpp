@@ -123,18 +123,6 @@ TEST_FUNC(TestLSPLocation)
     return true;
 }
 
-TEST_FUNC(test_cxx_code_completion_wxwindow)
-{
-    ENSURE_DB_LOADED();
-    vector<TagEntryPtr> candidates;
-    auto resolved = completer->code_complete("EventNotifier::Get()->TopFrame()->", {});
-    CHECK_NOT_NULL(resolved);
-    completer->get_completions(resolved, "->", "GetEventHandler", candidates, {}, 1);
-    CHECK_BOOL(!candidates.empty());
-    CHECK_BOOL(is_tag_exists("wxWindowBase::GetEventHandler", candidates));
-    return true;
-}
-
 TEST_FUNC(TestCompletionHelper_get_expression)
 {
     wxStringMap_t M = {
@@ -408,6 +396,28 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
             CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");
         }
     }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_wxwindow)
+{
+    ENSURE_DB_LOADED();
+    vector<TagEntryPtr> candidates;
+    auto resolved = completer->code_complete("EventNotifier::Get()->TopFrame()->", {});
+    CHECK_NOT_NULL(resolved);
+    completer->get_completions(resolved, "->", "GetEventHandler", candidates, {}, 1);
+    CHECK_BOOL(!candidates.empty());
+    CHECK_BOOL(is_tag_exists("wxWindowBase::GetEventHandler", candidates));
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_wxwindow_get_event_handler)
+{
+    ENSURE_DB_LOADED();
+    vector<TagEntryPtr> candidates;
+    auto resolved = completer->code_complete("EventNotifier::Get()->TopFrame()->GetEventHandler()->", {});
+    CHECK_NOT_NULL(resolved);
+    CHECK_STRING(resolved->GetPath(), "wxEvtHandler");
     return true;
 }
 

@@ -90,7 +90,7 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
     m_template_manager.reset(new TemplateManager(this));
 
     vector<wxString> scopes = { visible_scopes.begin(), visible_scopes.end() };
-    vector<CxxExpression> expr_arr = CxxExpression::from_expression(expression, remainder);
+    vector<CxxExpression> expr_arr = from_expression(expression, remainder);
     auto where =
         find_if(visible_scopes.begin(), visible_scopes.end(), [](const wxString& scope) { return scope.empty(); });
 
@@ -292,14 +292,9 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, const wxS
             }
         }
 
-        // if we got here, no match
-        wxArrayString inherits = t->GetInheritsAsArrayNoTemplates();
-        for(const wxString& inherit : inherits) {
-            auto match = lookup_symbol_by_kind(inherit, visible_scopes, { "class", "struct" });
-            if(match) {
-                q.push_back(match);
-            }
-        }
+        // if we got here - try the parents
+        auto parents = get_parents_of_tag_no_recurse(t, visible_scopes);
+        q.insert(q.end(), parents.begin(), parents.end());
     }
     return nullptr;
 }
@@ -347,7 +342,7 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
     // Check if one of the parents is a template class
     vector<wxString> inhertiance_expressions = CxxExpression::split_subclass_expression(normalize_pattern(resolved));
     for(const wxString& inherit : inhertiance_expressions) {
-        vector<CxxExpression> more_expressions = CxxExpression::from_expression(inherit + ".", nullptr);
+        vector<CxxExpression> more_expressions = from_expression(inherit + ".", nullptr);
         if(more_expressions.empty())
             continue;
 
@@ -365,7 +360,7 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
     auto resolved_name = m_template_manager->resolve(name_to_find, visible_scopes);
     if(resolved_name != name_to_find) {
         name_to_find = resolved_name;
-        auto expressions = CxxExpression::from_expression(name_to_find + curexpr.operand_string(), nullptr);
+        auto expressions = from_expression(name_to_find + curexpr.operand_string(), nullptr);
         return resolve_compound_expression(expressions, visible_scopes, curexpr);
     }
 
@@ -441,14 +436,14 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
             determine_current_scope();
             wxString current_scope_name = m_current_container_tag ? m_current_container_tag->GetPath() : wxString();
             wxString exprstr = current_scope_name + curexp.operand_string();
-            vector<CxxExpression> expr_arr = CxxExpression::from_expression(exprstr, nullptr);
+            vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
             return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 
         } else if(curexp.operand_string() == "." || curexp.operand_string() == "->") {
             if(m_locals.count(curexp.type_name())) {
                 // local or anonymous member
                 wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
-                vector<CxxExpression> expr_arr = CxxExpression::from_expression(exprstr, nullptr);
+                vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
                 return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 
             } else if(m_local_functions.count(curexp.type_name())) {
@@ -545,7 +540,7 @@ TagEntryPtr CxxCodeCompletion::on_typedef(CxxExpression& curexp, TagEntryPtr tag
         new_expr = typedef_from_tag(tag);
     }
     new_expr += curexp.operand_string();
-    vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
+    vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
@@ -559,7 +554,7 @@ TagEntryPtr CxxCodeCompletion::on_member(CxxExpression& curexp, TagEntryPtr tag,
     }
 
     wxString new_expr = locals_variables[tag->GetName()].type_name() + curexp.operand_string();
-    vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
+    vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
@@ -567,7 +562,7 @@ TagEntryPtr CxxCodeCompletion::on_method(CxxExpression& curexp, TagEntryPtr tag,
 {
     // parse the return value
     wxString new_expr = get_return_value(tag) + curexp.operand_string();
-    vector<CxxExpression> expr_arr = CxxExpression::from_expression(new_expr, nullptr);
+    vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
@@ -968,22 +963,8 @@ vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vect
 
         scopes.push_back(t);
 
-        // if we got here, no match
-        wxArrayString inherits = t->GetInheritsAsArrayNoTemplates();
-        for(const wxString& inherit : inherits) {
-            auto match = lookup_symbol_by_kind(inherit, visible_scopes, { "class", "struct" });
-            if(match) {
-                q.push_back(match);
-            } else {
-                // could not find a match, try the macros table
-                if(m_macros_table_map.count(inherit)) {
-                    match = lookup_symbol_by_kind(m_macros_table_map[inherit], visible_scopes, { "class", "struct" });
-                    if(match) {
-                        q.push_back(match);
-                    }
-                }
-            }
-        }
+        auto parents = get_parents_of_tag_no_recurse(t, visible_scopes);
+        q.insert(q.end(), parents.begin(), parents.end());
     }
     return scopes;
 }
@@ -1440,7 +1421,7 @@ size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, cons
         // we only allow global completion of there is not expression list
         // and the remainder has something in it (r.type_name() is not empty)
         CxxRemainder r;
-        auto expressions = CxxExpression::from_expression(expression, &r);
+        auto expressions = from_expression(expression, &r);
         if(expressions.size() == 0 && !r.filter.empty()) {
             clDEBUG() << "code_complete failed to resolve:" << expression << endl;
             clDEBUG() << "filter:" << r.filter << endl;
@@ -1751,4 +1732,50 @@ size_t CxxCodeCompletion::get_class_constructors(TagEntryPtr tag, vector<TagEntr
     sort_tags(tags, sorted_tags, true, {});
     tags.swap(sorted_tags);
     return tags.size();
+}
+
+vector<CxxExpression> CxxCodeCompletion::from_expression(const wxString& expression, CxxRemainder* remainder)
+{
+    auto arr = CxxExpression::from_expression(expression, remainder);
+    for(auto& exp : arr) {
+        simple_pre_process(exp.type_name());
+    }
+    return arr;
+}
+
+wxString& CxxCodeCompletion::simple_pre_process(wxString& name) const
+{
+    wxStringSet_t visited;
+
+    while(true) {
+        if(!visited.insert(name).second) {
+            // entering a loop here...
+            break;
+        }
+
+        if(m_macros_table_map.count(name) == 0) {
+            // no match
+            break;
+        }
+
+        // perform the replacement
+        name = m_macros_table_map.find(name)->second;
+    }
+    return name;
+}
+
+vector<TagEntryPtr> CxxCodeCompletion::get_parents_of_tag_no_recurse(TagEntryPtr parent,
+                                                                     const vector<wxString>& visible_scopes)
+{
+    wxArrayString inherits = parent->GetInheritsAsArrayNoTemplates();
+    vector<TagEntryPtr> parents;
+    parents.reserve(inherits.size());
+
+    for(wxString& inherit : inherits) {
+        auto match = lookup_symbol_by_kind(simple_pre_process(inherit), visible_scopes, { "class", "struct" });
+        if(match) {
+            parents.emplace_back(match);
+        }
+    }
+    return parents;
 }

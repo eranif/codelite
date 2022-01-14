@@ -974,6 +974,14 @@ vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vect
             auto match = lookup_symbol_by_kind(inherit, visible_scopes, { "class", "struct" });
             if(match) {
                 q.push_back(match);
+            } else {
+                // could not find a match, try the macros table
+                if(m_macros_table_map.count(inherit)) {
+                    match = lookup_symbol_by_kind(m_macros_table_map[inherit], visible_scopes, { "class", "struct" });
+                    if(match) {
+                        q.push_back(match);
+                    }
+                }
             }
         }
     }

@@ -123,6 +123,18 @@ TEST_FUNC(TestLSPLocation)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_wxwindow)
+{
+    ENSURE_DB_LOADED();
+    vector<TagEntryPtr> candidates;
+    auto resolved = completer->code_complete("EventNotifier::Get()->TopFrame()->", {});
+    CHECK_NOT_NULL(resolved);
+    completer->get_completions(resolved, "->", "GetEventHandler", candidates, {}, 1);
+    CHECK_BOOL(!candidates.empty());
+    CHECK_BOOL(is_tag_exists("wxWindowBase::GetEventHandler", candidates));
+    return true;
+}
+
 TEST_FUNC(TestCompletionHelper_get_expression)
 {
     wxStringMap_t M = {
@@ -1177,6 +1189,9 @@ int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);
     wxLogNull NOLOG;
+
+    // ensure that the user data dir exists
+    wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxPosixPermissions::wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     Tester::Instance()->RunTests();
     return 0;
 }

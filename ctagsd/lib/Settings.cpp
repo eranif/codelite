@@ -346,19 +346,22 @@ vector<wxString> DEFAULT_TOKENS = {
     "wxOVERRIDE",
     "wxStatusBar=wxStatusBarBase",
     "wxT",
-    "wxWindowNative=wxWindowBase",
 #if defined(__WXGTK__)
     "__WXGTK__=1",
     "__linux__=1",
     "linux=1",
+    "wxTopLevelWindowNative=wxTopLevelWindowGTK",
+    "wxWindowNative=wxWindowGTK",
 #elif defined(__WXMSW__)
     "__WXMSW__=1",
     "_WIN32=1",
     "_WIN64=1",
+    "wxTopLevelWindowNative=wxTopLevelWindowMSW",
+    "wxWindowNative=wxWindowMSW",
 #else
     "__APPLE__=1",
     "wxTopLevelWindowNative=wxTopLevelWindowMac",
-    "wxWindow=wxWindowMac",
+    "wxWindowNative=wxWindowMac",
 #endif
 };
 

@@ -266,7 +266,7 @@
 							"border":	5,
 							"gbSpan":	"1,1",
 							"gbPosition":	"0,0",
-							"m_styles":	["wxDV_ROW_LINES", "wxDV_MULTIPLE"],
+							"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE"],
 							"m_sizerFlags":	["wxEXPAND"],
 							"m_properties":	[{
 									"type":	"winid",

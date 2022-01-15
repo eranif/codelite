@@ -425,6 +425,43 @@ vector<wxString> CxxCodeCompletion::update_visible_scope(const vector<wxString>&
     }
     return scopes;
 }
+TagEntryPtr CxxCodeCompletion::on_local(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+{
+    // local member
+    if(m_locals.count(curexp.type_name()) == 0) {
+        return nullptr;
+    }
+
+    wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
+    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+}
+
+TagEntryPtr CxxCodeCompletion::on_static_local(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+{
+    if(m_static_members.count(curexp.type_name()) == 0) {
+        return nullptr;
+    }
+
+    wxString exprstr = m_static_members.find(curexp.type_name())->second->GetTypename() + curexp.operand_string();
+    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+}
+
+TagEntryPtr CxxCodeCompletion::on_this(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+{
+    // this can only work with ->
+    if(curexp.operand_string() != "->") {
+        return nullptr;
+    }
+
+    // replace "this" with the current scope name
+    determine_current_scope();
+    wxString current_scope_name = m_current_container_tag ? m_current_container_tag->GetPath() : wxString();
+    wxString exprstr = current_scope_name + curexp.operand_string();
+    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+}
 
 TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntryPtr parent,
                                                   const vector<wxString>& visible_scopes)
@@ -432,31 +469,15 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
     // test locals first, if its empty, its the first time we are entering here
     if(m_first_time && !parent) {
         if(curexp.is_this()) {
-            // this can only work with ->
-            if(curexp.operand_string() != "->") {
-                return nullptr;
-            }
-
-            // replace "this" with the current scope name
-            determine_current_scope();
-            wxString current_scope_name = m_current_container_tag ? m_current_container_tag->GetPath() : wxString();
-            wxString exprstr = current_scope_name + curexp.operand_string();
-            vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
-            return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+            return on_this(curexp, visible_scopes);
 
         } else if(curexp.operand_string() == "." || curexp.operand_string() == "->") {
             if(m_locals.count(curexp.type_name())) {
-                // local or anonymous member
-                wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
-                vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
-                return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+                return on_local(curexp, visible_scopes);
 
             } else if(m_static_members.count(curexp.type_name())) {
                 // static member to this file
-                wxString exprstr =
-                    m_static_members.find(curexp.type_name())->second->GetTypename() + curexp.operand_string();
-                vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
-                return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+                return on_static_local(curexp, visible_scopes);
 
             } else if(m_local_functions.count(curexp.type_name())) {
                 // anonymous / static function

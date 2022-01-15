@@ -181,6 +181,9 @@ private:
     TagEntryPtr on_method(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
     TagEntryPtr on_typedef(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
     TagEntryPtr on_member(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
+    TagEntryPtr on_static_local(CxxExpression& curexp, const vector<wxString>& visible_scopes);
+    TagEntryPtr on_local(CxxExpression& curexp, const vector<wxString>& visible_scopes);
+    TagEntryPtr on_this(CxxExpression& curexp, const vector<wxString>& visible_scopes);
 
     /**
      * @brief similar to CxxExpression::from_expression however, this method also passes

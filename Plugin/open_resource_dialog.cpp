@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "open_resource_dialog.h"
 
+#include "ColoursAndFontsManager.h"
 #include "ServiceProviderManager.h"
 #include "bitmap_loader.h"
 #include "clFileSystemWorkspace.hpp"
@@ -63,8 +64,12 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     , m_needRefresh(false)
     , m_lineNumber(wxNOT_FOUND)
 {
+    m_dataview->SetSortFunction(nullptr);
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
-
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if(lexer) {
+        m_dataview->SetDefaultFont(lexer->GetFontForSyle(0, m_dataview));
+    }
     EventNotifier::Get()->Bind(wxEVT_LSP_WORKSPACE_SYMBOLS, &OpenResourceDialog::OnWorkspaceSymbols, this);
 
     // initialize the file-type hash

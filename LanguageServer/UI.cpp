@@ -98,28 +98,20 @@ LanguageServerSettingsDlgBase::LanguageServerSettingsDlgBase(wxWindow* parent, w
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    m_buttonScan->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LanguageServerSettingsDlgBase::OnScan),
-                          NULL, this);
-    m_buttonNew->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                         wxCommandEventHandler(LanguageServerSettingsDlgBase::OnAddServer), NULL, this);
-    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(LanguageServerSettingsDlgBase::OnDeleteLSP), NULL, this);
-    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerSettingsDlgBase::OnDeleteLSPUI), NULL,
-                            this);
-    m_button6->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerSettingsDlgBase::OnOKUI), NULL, this);
+    m_buttonScan->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnScan, this);
+    m_buttonNew->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnAddServer, this);
+    m_buttonDelete->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnDeleteLSP, this);
+    m_buttonDelete->Bind(wxEVT_UPDATE_UI, &LanguageServerSettingsDlgBase::OnDeleteLSPUI, this);
+    m_button6->Bind(wxEVT_UPDATE_UI, &LanguageServerSettingsDlgBase::OnOKUI, this);
 }
 
 LanguageServerSettingsDlgBase::~LanguageServerSettingsDlgBase()
 {
-    m_buttonScan->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LanguageServerSettingsDlgBase::OnScan),
-                             NULL, this);
-    m_buttonNew->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(LanguageServerSettingsDlgBase::OnAddServer), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(LanguageServerSettingsDlgBase::OnDeleteLSP), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerSettingsDlgBase::OnDeleteLSPUI),
-                               NULL, this);
-    m_button6->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerSettingsDlgBase::OnOKUI), NULL, this);
+    m_buttonScan->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnScan, this);
+    m_buttonNew->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnAddServer, this);
+    m_buttonDelete->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerSettingsDlgBase::OnDeleteLSP, this);
+    m_buttonDelete->Unbind(wxEVT_UPDATE_UI, &LanguageServerSettingsDlgBase::OnDeleteLSPUI, this);
+    m_button6->Unbind(wxEVT_UPDATE_UI, &LanguageServerSettingsDlgBase::OnOKUI, this);
 }
 
 LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -433,24 +425,18 @@ LanguageServerPageBase::LanguageServerPageBase(wxWindow* parent, wxWindowID id, 
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_choiceSSHAccounts->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnRemoteServerUI),
-                                 NULL, this);
-    m_stcCommand->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnCommandUI), NULL, this);
-    m_button1153->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LanguageServerPageBase::OnBrowseWD), NULL,
-                          this);
-    m_button115->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                         wxCommandEventHandler(LanguageServerPageBase::OnSuggestLanguages), NULL, this);
+    m_choiceSSHAccounts->Bind(wxEVT_UPDATE_UI, &LanguageServerPageBase::OnRemoteServerUI, this);
+    m_stcCommand->Bind(wxEVT_UPDATE_UI, &LanguageServerPageBase::OnCommandUI, this);
+    m_button1153->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerPageBase::OnBrowseWD, this);
+    m_button115->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerPageBase::OnSuggestLanguages, this);
 }
 
 LanguageServerPageBase::~LanguageServerPageBase()
 {
-    m_choiceSSHAccounts->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnRemoteServerUI),
-                                    NULL, this);
-    m_stcCommand->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LanguageServerPageBase::OnCommandUI), NULL, this);
-    m_button1153->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LanguageServerPageBase::OnBrowseWD),
-                             NULL, this);
-    m_button115->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(LanguageServerPageBase::OnSuggestLanguages), NULL, this);
+    m_choiceSSHAccounts->Unbind(wxEVT_UPDATE_UI, &LanguageServerPageBase::OnRemoteServerUI, this);
+    m_stcCommand->Unbind(wxEVT_UPDATE_UI, &LanguageServerPageBase::OnCommandUI, this);
+    m_button1153->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerPageBase::OnBrowseWD, this);
+    m_button115->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LanguageServerPageBase::OnSuggestLanguages, this);
 }
 
 NewLanguageServerDlgBase::NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -490,12 +476,12 @@ NewLanguageServerDlgBase::NewLanguageServerDlgBase(wxWindow* parent, wxWindowID 
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewLanguageServerDlgBase::OnOKUI), NULL, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &NewLanguageServerDlgBase::OnOKUI, this);
 }
 
 NewLanguageServerDlgBase::~NewLanguageServerDlgBase()
 {
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(NewLanguageServerDlgBase::OnOKUI), NULL, this);
+    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &NewLanguageServerDlgBase::OnOKUI, this);
 }
 
 LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -519,8 +505,8 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* boxSizer157 = new wxBoxSizer(wxVERTICAL);
     m_panel155->SetSizer(boxSizer157);
 
-    m_textCtrlFilter = new wxTextCtrl(m_panel155, wxID_ANY, wxT(""), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panel155, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+    m_textCtrlFilter = new clThemedTextCtrl(m_panel155, wxID_ANY, wxT(""), wxDefaultPosition,
+                                            wxDLG_UNIT(m_panel155, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlFilter->SetHint(wxT(""));
 #endif
@@ -543,34 +529,26 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, co
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(LSPOutlineViewDlgBase::OnTextUpdated),
-                              NULL, this);
-    m_textCtrlFilter->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(LSPOutlineViewDlgBase::OnEnter), NULL,
-                              this);
-    m_textCtrlFilter->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(LSPOutlineViewDlgBase::OnKeyDown), NULL, this);
-    m_dvTreeCtrll->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                           wxDataViewEventHandler(LSPOutlineViewDlgBase::OnItemActivated), NULL, this);
-    m_dvTreeCtrll->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(LSPOutlineViewDlgBase::OnListKeyDown), NULL, this);
+    m_textCtrlFilter->Bind(wxEVT_COMMAND_TEXT_UPDATED, &LSPOutlineViewDlgBase::OnTextUpdated, this);
+    m_textCtrlFilter->Bind(wxEVT_COMMAND_TEXT_ENTER, &LSPOutlineViewDlgBase::OnEnter, this);
+    m_textCtrlFilter->Bind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnKeyDown, this);
+    m_dvTreeCtrll->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LSPOutlineViewDlgBase::OnItemActivated, this);
+    m_dvTreeCtrll->Bind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnListKeyDown, this);
 }
 
 LSPOutlineViewDlgBase::~LSPOutlineViewDlgBase()
 {
-    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                 wxCommandEventHandler(LSPOutlineViewDlgBase::OnTextUpdated), NULL, this);
-    m_textCtrlFilter->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(LSPOutlineViewDlgBase::OnEnter), NULL,
-                                 this);
-    m_textCtrlFilter->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(LSPOutlineViewDlgBase::OnKeyDown), NULL, this);
-    m_dvTreeCtrll->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                              wxDataViewEventHandler(LSPOutlineViewDlgBase::OnItemActivated), NULL, this);
-    m_dvTreeCtrll->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(LSPOutlineViewDlgBase::OnListKeyDown), NULL, this);
+    m_textCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &LSPOutlineViewDlgBase::OnTextUpdated, this);
+    m_textCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_ENTER, &LSPOutlineViewDlgBase::OnEnter, this);
+    m_textCtrlFilter->Unbind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnKeyDown, this);
+    m_dvTreeCtrll->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LSPOutlineViewDlgBase::OnItemActivated, this);
+    m_dvTreeCtrll->Unbind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnListKeyDown, this);
 }
 
 LanguageServerLogViewBase::LanguageServerLogViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,

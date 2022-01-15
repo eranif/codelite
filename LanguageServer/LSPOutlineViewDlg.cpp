@@ -32,7 +32,8 @@ void LSPOutlineViewDlg::DoInitialise()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_dvTreeCtrll->DeleteAllItems();
-    m_textCtrlFilter->Clear();
+    m_dvTreeCtrll->SetSortFunction(nullptr);
+    m_textCtrlFilter->ClearAll();
 
     if(m_symbols.empty()) {
         clAnsiEscapeCodeColourBuilder builder;

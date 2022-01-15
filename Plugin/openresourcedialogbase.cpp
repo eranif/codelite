@@ -25,11 +25,11 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_textCtrlResourceName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition,
-                                            wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
-    m_textCtrlResourceName->SetToolTip(_("Type resource name to open.\nYou may use a space delimited list of words to "
-                                         "narrow down the list of choices\ne.g. Typing: 'Open Dialog' will include "
-                                         "results that contain both words \"Open\" _and_ \"Dialog\""));
+    m_textCtrlResourceName = new clThemedTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition,
+                                                  wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
+    m_textCtrlResourceName->SetToolTip(_(
+        "Type resource name to open.\nYou may use a space delimited list of words to narrow down the list of "
+        "choices\ne.g. Typing: 'Open Dialog' will include results that contain both words \"Open\" _and_ \"Dialog\""));
     m_textCtrlResourceName->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlResourceName->SetHint(wxT(""));
@@ -95,43 +95,30 @@ OpenResourceDialogBase::OpenResourceDialogBase(wxWindow* parent, wxWindowID id, 
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    m_textCtrlResourceName->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenResourceDialogBase::OnKeyDown), NULL, this);
-    m_textCtrlResourceName->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(OpenResourceDialogBase::OnText),
-                                    NULL, this);
-    m_textCtrlResourceName->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OpenResourceDialogBase::OnEnter),
-                                    NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                        wxDataViewEventHandler(OpenResourceDialogBase::OnEntrySelected), NULL, this);
-    m_dataview->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                        wxDataViewEventHandler(OpenResourceDialogBase::OnEntryActivated), NULL, this);
-    m_checkBoxFiles->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                             wxCommandEventHandler(OpenResourceDialogBase::OnCheckboxfilesCheckboxClicked), NULL, this);
-    m_checkBoxShowSymbols->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                   wxCommandEventHandler(OpenResourceDialogBase::OnCheckboxshowsymbolsCheckboxClicked),
-                                   NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OpenResourceDialogBase::OnOK), NULL, this);
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenResourceDialogBase::OnOKUI), NULL, this);
+    m_textCtrlResourceName->Bind(wxEVT_KEY_DOWN, &OpenResourceDialogBase::OnKeyDown, this);
+    m_textCtrlResourceName->Bind(wxEVT_COMMAND_TEXT_UPDATED, &OpenResourceDialogBase::OnText, this);
+    m_textCtrlResourceName->Bind(wxEVT_COMMAND_TEXT_ENTER, &OpenResourceDialogBase::OnEnter, this);
+    m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &OpenResourceDialogBase::OnEntrySelected, this);
+    m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OpenResourceDialogBase::OnEntryActivated, this);
+    m_checkBoxFiles->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &OpenResourceDialogBase::OnCheckboxfilesCheckboxClicked,
+                          this);
+    m_checkBoxShowSymbols->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                &OpenResourceDialogBase::OnCheckboxshowsymbolsCheckboxClicked, this);
+    m_buttonOK->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OpenResourceDialogBase::OnOK, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &OpenResourceDialogBase::OnOKUI, this);
 }
 
 OpenResourceDialogBase::~OpenResourceDialogBase()
 {
-    m_textCtrlResourceName->Disconnect(wxEVT_KEY_DOWN, wxKeyEventHandler(OpenResourceDialogBase::OnKeyDown), NULL,
-                                       this);
-    m_textCtrlResourceName->Disconnect(wxEVT_COMMAND_TEXT_UPDATED,
-                                       wxCommandEventHandler(OpenResourceDialogBase::OnText), NULL, this);
-    m_textCtrlResourceName->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(OpenResourceDialogBase::OnEnter),
-                                       NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                           wxDataViewEventHandler(OpenResourceDialogBase::OnEntrySelected), NULL, this);
-    m_dataview->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                           wxDataViewEventHandler(OpenResourceDialogBase::OnEntryActivated), NULL, this);
-    m_checkBoxFiles->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                wxCommandEventHandler(OpenResourceDialogBase::OnCheckboxfilesCheckboxClicked), NULL,
-                                this);
-    m_checkBoxShowSymbols->Disconnect(
-        wxEVT_COMMAND_CHECKBOX_CLICKED,
-        wxCommandEventHandler(OpenResourceDialogBase::OnCheckboxshowsymbolsCheckboxClicked), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OpenResourceDialogBase::OnOK), NULL,
-                           this);
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(OpenResourceDialogBase::OnOKUI), NULL, this);
+    m_textCtrlResourceName->Unbind(wxEVT_KEY_DOWN, &OpenResourceDialogBase::OnKeyDown, this);
+    m_textCtrlResourceName->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &OpenResourceDialogBase::OnText, this);
+    m_textCtrlResourceName->Unbind(wxEVT_COMMAND_TEXT_ENTER, &OpenResourceDialogBase::OnEnter, this);
+    m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &OpenResourceDialogBase::OnEntrySelected, this);
+    m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OpenResourceDialogBase::OnEntryActivated, this);
+    m_checkBoxFiles->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &OpenResourceDialogBase::OnCheckboxfilesCheckboxClicked,
+                            this);
+    m_checkBoxShowSymbols->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                  &OpenResourceDialogBase::OnCheckboxshowsymbolsCheckboxClicked, this);
+    m_buttonOK->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OpenResourceDialogBase::OnOK, this);
+    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &OpenResourceDialogBase::OnOKUI, this);
 }

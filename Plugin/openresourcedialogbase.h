@@ -16,6 +16,7 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/textctrl.h>
+#include "clThemedTextCtrl.hpp"
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
 #include <wx/checkbox.h>
@@ -41,7 +42,7 @@
 class OpenResourceDialogBase : public wxDialog
 {
 protected:
-    wxTextCtrl* m_textCtrlResourceName;
+    clThemedTextCtrl* m_textCtrlResourceName;
     clThemedListCtrl* m_dataview;
     wxCheckBox* m_checkBoxFiles;
     wxCheckBox* m_checkBoxShowSymbols;
@@ -61,7 +62,7 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxTextCtrl* GetTextCtrlResourceName() { return m_textCtrlResourceName; }
+    clThemedTextCtrl* GetTextCtrlResourceName() { return m_textCtrlResourceName; }
     clThemedListCtrl* GetDataview() { return m_dataview; }
     wxCheckBox* GetCheckBoxFiles() { return m_checkBoxFiles; }
     wxCheckBox* GetCheckBoxShowSymbols() { return m_checkBoxShowSymbols; }

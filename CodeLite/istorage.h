@@ -531,8 +531,12 @@ public:
      * @brief check the integrity of the database to avoid "malformed disk" errors
      */
     virtual bool CheckIntegrity() const = 0;
-
-    virtual size_t GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+    /**
+     * @brief return list of tags only visible to `filepath`
+     * this usually includes static members, or any entity
+     * in an anonymous namespace
+     */
+    virtual size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
                                      std::vector<TagEntryPtr>& tags) = 0;
 };
 

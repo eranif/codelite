@@ -155,12 +155,13 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
 
 size_t CxxCodeCompletion::parse_locals(const wxString& text, unordered_map<wxString, __local>* locals) const
 {
-    shrink_scope(text, locals, nullptr);
+    shrink_scope(text, locals, nullptr, nullptr);
     return locals->size();
 }
 
 wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
-                                         unordered_map<wxString, TagEntryPtr>* functions) const
+                                         unordered_map<wxString, TagEntryPtr>* functions,
+                                         unordered_map<wxString, TagEntryPtr>* static_members) const
 {
     CxxVariableScanner scanner(text, eCxxStandard::kCxx11, get_tokens_map(), false);
     const wxString& trimmed_text = scanner.GetOptimizeBuffer();
@@ -187,7 +188,10 @@ wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxS
             CxxVariableScanner scanner(normalize_pattern(tag), eCxxStandard::kCxx11, m_macros_table_map, false);
             auto _variables = scanner.GetVariables(false);
             variables.insert(variables.end(), _variables.begin(), _variables.end());
-        } else if(tag->IsMethod() && functions) {
+        } else if(static_members && tag->GetKind() == "member") {
+            static_members->insert({ tag->GetName(), tag });
+
+        } else if(functions && tag->IsMethod()) {
             functions->insert({ tag->GetName(), tag });
         }
     }
@@ -444,6 +448,13 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
             if(m_locals.count(curexp.type_name())) {
                 // local or anonymous member
                 wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
+                vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+                return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+
+            } else if(m_static_members.count(curexp.type_name())) {
+                // static member to this file
+                wxString exprstr =
+                    m_static_members.find(curexp.type_name())->second->GetTypename() + curexp.operand_string();
                 vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
                 return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 
@@ -750,6 +761,7 @@ void CxxCodeCompletion::reset()
     m_locals.clear();
     m_optimized_scope.clear();
     m_template_manager->clear();
+    m_static_members.clear();
     m_recurse_protector = 0;
     m_current_function_tag.Reset(nullptr);
     m_current_container_tag.Reset(nullptr);
@@ -1017,13 +1029,14 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
 {
     m_locals.clear();
     m_local_functions.clear();
+    m_static_members.clear();
     m_filename = filename;
     m_line_number = current_line;
     m_current_container_tag = nullptr;
     m_current_function_tag = nullptr;
 
     m_optimized_scope.clear();
-    m_optimized_scope = shrink_scope(text, &m_locals, &m_local_functions);
+    m_optimized_scope = shrink_scope(text, &m_locals, &m_local_functions, &m_static_members);
     determine_current_scope();
 }
 
@@ -1502,7 +1515,7 @@ size_t CxxCodeCompletion::get_anonymous_tags(const wxString& name, const wxArray
     if(!m_lookup) {
         return 0;
     }
-    m_lookup->GetAnonymouseTags(m_filename, name, kinds, tags);
+    m_lookup->GetFileScopedTags(m_filename, name, kinds, tags);
     return tags.size();
 }
 
@@ -1653,11 +1666,11 @@ void LookupTable::GetTagsByScopeAndName(const wxArrayString& scopes, const wxStr
     }
 }
 
-size_t LookupTable::GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+size_t LookupTable::GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
                                       vector<TagEntryPtr>& tags)
 {
     if(pdb) {
-        pdb->GetAnonymouseTags(filepath, name, kinds, tags);
+        pdb->GetFileScopedTags(filepath, name, kinds, tags);
     }
     if(!tests_db.empty()) {
         // use set instead of array

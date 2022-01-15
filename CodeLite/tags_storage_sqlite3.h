@@ -646,7 +646,7 @@ public:
 
     virtual bool CheckIntegrity() const;
 
-    virtual size_t GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+    virtual size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
                                      std::vector<TagEntryPtr>& tags);
 };
 

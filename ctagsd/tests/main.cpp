@@ -399,6 +399,21 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_static_member)
+{
+    wxString filepath = R"(C:\src\codelite\LiteEditor\frame.cpp)";
+    ENSURE_DB_LOADED();
+    {
+        if(wxFileExists(filepath)) {
+            completer->set_text(wxEmptyString, filepath, 1180);
+            TagEntryPtr resolved = completer->code_complete("m_theFrame->", {});
+            CHECK_BOOL(resolved);
+            CHECK_STRING(resolved->GetPath(), "clMainFrame");
+        }
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_wxwindow)
 {
     ENSURE_DB_LOADED();

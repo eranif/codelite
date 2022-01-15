@@ -75,22 +75,10 @@ New CTagsd CC engine:
 - **DONE** on_did_save(): parse the files in the background
 - **FIXED** overloaded functionn shouls all be displayed now
 - **FIXED** provide calltip for constructors
+- **FIXED** code completion of static member
 
 TODO:
 -----
 Update the docs with ctagsd
 
------
-BUGS:
------
-
-code completion of static class member do not work
-
-```
-wxString MyClass::m_str;
-
-void MyClass::foo() {
-    m_str. // no cc here
-
-```
 

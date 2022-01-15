@@ -30,6 +30,7 @@
 #include "precompiled_header.h"
 
 #include <algorithm>
+#include <unordered_set>
 #include <wx/longlong.h>
 #include <wx/tokenzr.h>
 
@@ -1888,19 +1889,55 @@ TagEntryPtr TagsStorageSQLite::GetScope(const wxString& filename, int line_numbe
     return nullptr;
 }
 
-size_t TagsStorageSQLite::GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+size_t TagsStorageSQLite::GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
                                             std::vector<TagEntryPtr>& tags)
 {
     if(filepath.empty())
         return 0;
 
+    // get anoymous tags first
     wxString sql;
+    std::vector<TagEntryPtr> tags_1;
+    std::vector<TagEntryPtr> tags_2;
     sql << "select * from tags where file='" << filepath << "' and scope like '__anon%'";
     if(!name.empty()) {
         sql << " and name like '" << name << "%'";
     }
 
     clDEBUG1() << "Running SQL:" << sql << endl;
-    DoFetchTags(sql, tags, kinds);
+    tags_1.reserve(100);
+    DoFetchTags(sql, tags_1, kinds);
+
+    // get static members
+    sql.Clear();
+    sql << "select * from tags where file='" << filepath << "' and kind in ('member','variable')";
+    if(!name.empty()) {
+        sql << " and name like '" << name << "%'";
+    }
+
+    clDEBUG1() << "Running SQL:" << sql << endl;
+    tags_2.reserve(100);
+    DoFetchTags(sql, tags_2);
+
+    // filter duplicate
+    tags.reserve(tags_2.size() + tags_1.size());
+    std::unordered_set<int> visited;
+    for(auto tag : tags_1) {
+        if(!visited.insert(tag->GetId()).second)
+            continue;
+        tags.emplace_back(tag);
+    }
+
+    for(auto tag : tags_2) {
+        if(!visited.insert(tag->GetId()).second)
+            continue;
+        tags.emplace_back(tag);
+    }
+
+    // sort by line number (asc)
+    std::sort(tags.begin(), tags.end(), [](TagEntryPtr a, TagEntryPtr b) { return a->GetLine() < b->GetLine(); });
+
+    // release the extra memory
+    tags.shrink_to_fit();
     return tags.size();
 }

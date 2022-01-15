@@ -64,7 +64,7 @@ struct LookupTable {
                                vector<TagEntryPtr>& tags);
     void GetTagsByScopeAndName(const wxArrayString& scope, const wxString& name, bool partialNameAllowed,
                                vector<TagEntryPtr>& tags);
-    size_t GetAnonymouseTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+    size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
                              vector<TagEntryPtr>& tags);
     void GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tags);
 };
@@ -109,6 +109,7 @@ private:
     LookupTable::ptr_t m_lookup;
     unordered_map<wxString, __local> m_locals;
     unordered_map<wxString, TagEntryPtr> m_local_functions; // anonymous function
+    unordered_map<wxString, TagEntryPtr> m_static_members;  // anonymous function
     wxString m_optimized_scope;
     wxString m_filename;
     int m_line_number = 0;
@@ -137,7 +138,8 @@ private:
 
     wxString typedef_from_tag(TagEntryPtr tag) const;
     wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
-                          unordered_map<wxString, TagEntryPtr>* functions) const;
+                          unordered_map<wxString, TagEntryPtr>* functions,
+                          unordered_map<wxString, TagEntryPtr>* static_members) const;
     TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
     TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes,
                                             const CxxExpression& orig_expression);

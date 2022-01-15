@@ -200,14 +200,12 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
         case T_COMPL:
         case T_CONST:
         case T_CONSTEXPR:
-        case T_CONST_CAST:
         case T_CONTINUE:
         case T_DECLTYPE:
         case T_DEFAULT:
         case T_DELETE:
         case T_DO:
         case T_DOUBLE:
-        case T_DYNAMIC_CAST:
         case T_ELSE:
         case T_ENUM:
         case T_EXPLICIT:
@@ -238,14 +236,12 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
         case T_PROTECTED:
         case T_PUBLIC:
         case T_REGISTER:
-        case T_REINTERPRET_CAST:
         case T_CASE:
         case T_SHORT:
         case T_SIGNED:
         case T_SIZEOF:
         case T_STATIC:
         case T_STATIC_ASSERT:
-        case T_STATIC_CAST:
         case T_STRUCT:
         case T_SWITCH:
         case T_TEMPLATE:
@@ -310,6 +306,10 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
                 PREPEND_STRING(t);
             }
             break;
+        case T_CONST_CAST:
+        case T_DYNAMIC_CAST:
+        case T_REINTERPRET_CAST:
+        case T_STATIC_CAST:
         default:
             PREPEND_STRING(t);
             break;

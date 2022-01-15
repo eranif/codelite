@@ -82,6 +82,4 @@ TODO:
 - Update the docs with ctagsd
 - ctagsd: Switch to use universal-ctags local parsing instead of our internal one
     need to make sure they handle for-range loop correctly
-- DB explorer: disable the sorting of the tree view
 - Find bar: switch to using wxSTC as the control instead of wxTextCtrl
-- BUG: code completion does not work dynamic_cast/static_cast etc

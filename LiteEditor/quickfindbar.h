@@ -73,6 +73,8 @@ public:
     };
 
 protected:
+    virtual void OnReplaceTextEnter(wxCommandEvent& event);
+    virtual void OnReplaceTextUpdated(wxCommandEvent& event);
     enum eFindFlags {
         FIND_DEFAULT = 0,
         FIND_PREV = (1 << 0),

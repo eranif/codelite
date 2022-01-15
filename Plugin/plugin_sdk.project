@@ -87,6 +87,8 @@
     <File Name="LanguageServerProtocol.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CustomControls">
+    <File Name="clThemedTextCtrl.cpp"/>
+    <File Name="clThemedTextCtrl.hpp"/>
     <File Name="wxCustomControlsMSW.hpp"/>
     <File Name="wxCustomControlsMacOS.hpp"/>
     <File Name="wxCustomControlsGTK.hpp"/>

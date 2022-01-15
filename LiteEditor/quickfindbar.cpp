@@ -258,11 +258,11 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 {
     switch(e.GetKeyCode()) {
     case WXK_DOWN: {
-        DoArrowDown(m_searchHistory, m_textCtrlFind);
+        //DoArrowDown(m_searchHistory, m_textCtrlFind);
         break;
     }
     case WXK_UP: {
-        DoArrowUp(m_searchHistory, m_textCtrlFind);
+        //DoArrowUp(m_searchHistory, m_textCtrlFind);
         break;
     }
     case WXK_ESCAPE: {
@@ -281,11 +281,11 @@ void QuickFindBar::OnReplaceKeyDown(wxKeyEvent& e)
 {
     switch(e.GetKeyCode()) {
     case WXK_DOWN: {
-        DoArrowDown(m_replaceHistory, m_textCtrlReplace);
+        //DoArrowDown(m_replaceHistory, m_textCtrlReplace);
         break;
     }
     case WXK_UP: {
-        DoArrowUp(m_replaceHistory, m_textCtrlReplace);
+        //DoArrowUp(m_replaceHistory, m_textCtrlReplace);
         break;
     }
     case WXK_ESCAPE: {
@@ -1070,3 +1070,5 @@ TargetRange QuickFindBar::GetBestTargetRange() const
         return { 0, static_cast<int>(m_sci->GetLastPosition()) };
     }
 }
+void QuickFindBar::OnReplaceTextEnter(wxCommandEvent& event) {}
+void QuickFindBar::OnReplaceTextUpdated(wxCommandEvent& event) {}

@@ -2836,7 +2836,7 @@ void TagsManager::ParseWorkspaceIncremental()
     // restart ctagsd (this way we ensure that new settings are loaded)
     clLanguageServerEvent stop_event{ wxEVT_LSP_RESTART };
     stop_event.SetLspName("ctagsd");
-    EventNotifier::Get()->ProcessEvent(stop_event);
+    EventNotifier::Get()->AddPendingEvent(stop_event);
 }
 
 void TagsManager::ParseWorkspaceFull(const wxString& workspace_dir)
@@ -2857,5 +2857,5 @@ void TagsManager::ParseWorkspaceFull(const wxString& workspace_dir)
     // start ctagsd again
     clLanguageServerEvent start_event{ wxEVT_LSP_START };
     start_event.SetLspName("ctagsd");
-    EventNotifier::Get()->ProcessEvent(start_event);
+    EventNotifier::Get()->AddPendingEvent(start_event);
 }

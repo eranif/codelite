@@ -352,16 +352,19 @@ vector<wxString> DEFAULT_TOKENS = {
     "linux=1",
     "wxTopLevelWindowNative=wxTopLevelWindowGTK",
     "wxWindowNative=wxWindowGTK",
+    "BUTTON_BASE=wxButton",
 #elif defined(__WXMSW__)
     "__WXMSW__=1",
     "_WIN32=1",
     "_WIN64=1",
     "wxTopLevelWindowNative=wxTopLevelWindowMSW",
     "wxWindowNative=wxWindowMSW",
+    "BUTTON_BASE=wxControl",
 #else
     "__APPLE__=1",
     "wxTopLevelWindowNative=wxTopLevelWindowMac",
     "wxWindowNative=wxWindowMac",
+    "BUTTON_BASE=wxControl",
 #endif
 };
 

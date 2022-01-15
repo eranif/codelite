@@ -23,18 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "AdapterSelectDlg.h"
-#include "DbSettingDialog.h"
 #include "DbViewerPanel.h"
-#include "SqlCommandPanel.h"
-#include "globals.h"
-#include "window_locker.h"
 
+#include "AdapterSelectDlg.h"
 #include "DbExplorerFrame.h"
+#include "DbSettingDialog.h"
+#include "SqlCommandPanel.h"
 #include "SqliteDbAdapter.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "globals.h"
 #include "lexer_configuration.h"
+#include "window_locker.h"
+
 #include <algorithm>
 #include <wx/imaglist.h>
 #include <wx/msgdlg.h>
@@ -45,6 +46,9 @@ DbViewerPanel::DbViewerPanel(wxWindow* parent, wxWindow* notebook, IManager* pMa
     : _DbViewerPanel(parent)
 {
     SetExtraStyle(wxWS_EX_BLOCK_EVENTS);
+
+    // disable the sorting so the user will see the columns in the correct order
+    m_treeDatabases->SetSortFunction(nullptr);
 
     m_pNotebook = notebook;
     m_pGlobalParent = parent;

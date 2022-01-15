@@ -46,10 +46,9 @@
 #include <wx/wx.h>
 
 // other
-#include "IDbItem.h"
-
 #include "DnDTableShape.h"
 #include "IDbAdapter.h"
+#include "IDbItem.h"
 #include "column.h"
 #include "database.h"
 #include "dbconnection.h"
@@ -60,6 +59,7 @@
 #include "ClassGenerateDialog.h"
 #include "LogDialog.h"
 #include "dbitem.h"
+
 #include <unordered_set>
 
 class DbExplorerFrame;

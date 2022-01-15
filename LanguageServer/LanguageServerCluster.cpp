@@ -267,7 +267,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
         }
     }
     CHECK_PTR_RET(editor);
-
+    clDEBUG() << "Found the editor!" << endl;
     const auto& semanticTokens = event.GetSemanticTokens();
 
     wxStringSet_t variables_tokens = { "variable", "parameter", "typeParameter", "property" };
@@ -282,6 +282,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     wxString variabls_str;
     wxString method_str;
 
+    clDEBUG() << "Going over" << semanticTokens.size() << "tokens" << endl;
     for(const auto& token : semanticTokens) {
         // is this an interesting token?
         wxString token_type = server->GetSemanticToken(token.token_type);
@@ -296,7 +297,6 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
         if(!is_class && !is_variable && !is_method) {
             continue;
         }
-        clDEBUG1() << "Checking token:" << token_type << ":" << token_name << endl;
 
         if(is_class && classes_set.count(token_name) == 0) {
             classes_set.insert(token_name);
@@ -309,8 +309,11 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
             method_str << token_name << " ";
         }
     }
+    clDEBUG() << "Done" << endl;
 
+    clDEBUG() << "Calling editor->SetSemanticTokens" << endl;
     editor->SetSemanticTokens(classes_str, variabls_str, method_str, wxEmptyString);
+    clDEBUG() << "Success" << endl;
 }
 
 void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)

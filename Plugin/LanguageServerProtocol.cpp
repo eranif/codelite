@@ -685,6 +685,8 @@ void LanguageServerProtocol::OnNetError(clCommandEvent& event)
 void LanguageServerProtocol::OnNetDataReady(clCommandEvent& event)
 {
     m_outputBuffer << event.GetString();
+    clDEBUG() << "Received data from LSP:" << m_outputBuffer.size() << "bytes" << endl;
+
     m_Queue.SetWaitingReponse(false);
     while(true) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
@@ -854,7 +856,7 @@ const wxString& LanguageServerProtocol::GetSemanticToken(size_t index) const
 
 void LanguageServerProtocol::SendWorkspaceSymbolsRequest(const wxString& query_string)
 {
-    clDEBUG() << GetLogPrefix() << "Sending semantic tokens request" << endl;
+    clDEBUG() << GetLogPrefix() << "Sending workspace symbol request" << endl;
     LSP::WorkspaceSymbolRequest::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::WorkspaceSymbolRequest(query_string));
     QueueMessage(req);
@@ -865,13 +867,16 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
     CHECK_PTR_RET(editor);
     // check if this is implemented by the server
     if(IsSemanticTokensSupported()) {
-        clDEBUG() << GetLogPrefix() << "Sending semantic tokens request" << endl;
+        clDEBUG() << GetLogPrefix() << "Sending semantic tokens request..." << endl;
         LSP::DidChangeTextDocumentRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(GetEditorFilePath(editor)));
         QueueMessage(req);
+        clDEBUG() << GetLogPrefix() << "Success" << endl;
         // send an extra call for document symbols
         // we will cache this later
+        clDEBUG() << GetLogPrefix() << "Sending document symbols request.." << endl;
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
+        clDEBUG() << GetLogPrefix() << "Success" << endl;
 
     } else if(IsDocumentSymbolsSupported()) {
         clDEBUG() << GetLogPrefix() << "Sending semantic tokens request (DocumentSymbols)" << endl;

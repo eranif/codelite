@@ -3852,8 +3852,8 @@ void clEditor::DoBreakptContextMenu(wxPoint pt)
     menu.Append(XRCID("insert_disabled_breakpoint"), wxString(_("Add a Disabled Breakpoint")));
     menu.Append(XRCID("insert_cond_breakpoint"), wxString(_("Add a Conditional Breakpoint..")));
 
-    clDebuggerBreakpoint& bp =
-        ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(CLRealPath(GetFileName().GetFullPath()), GetCurrentLine() + 1);
+    clDebuggerBreakpoint& bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(
+        CLRealPath(GetFileName().GetFullPath()), GetCurrentLine() + 1);
 
     // What we show depends on whether there's already a bp here (or several)
     if(!bp.IsNull()) {
@@ -3908,14 +3908,16 @@ void clEditor::AddOtherBreakpointType(wxCommandEvent& event)
 
 void clEditor::OnIgnoreBreakpoint()
 {
-    if(ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(CLRealPath(GetFileName().GetFullPath()), GetCurrentLine() + 1)) {
+    if(ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(CLRealPath(GetFileName().GetFullPath()),
+                                                             GetCurrentLine() + 1)) {
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
     }
 }
 
 void clEditor::OnEditBreakpoint()
 {
-    ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(CLRealPath(GetFileName().GetFullPath()), GetCurrentLine() + 1);
+    ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(CLRealPath(GetFileName().GetFullPath()),
+                                                                  GetCurrentLine() + 1);
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 

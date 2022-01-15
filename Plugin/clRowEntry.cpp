@@ -4,6 +4,7 @@
 #include "clHeaderBar.h"
 #include "clHeaderItem.h"
 #include "clTreeCtrl.h"
+#include "file_logger.h"
 
 #include <algorithm>
 #include <drawingutils.h>
@@ -168,23 +169,31 @@ void clRowEntry::InsertChild(clRowEntry* child, clRowEntry* prev)
     child->SetIndentsCount(GetIndentsCount() + 1);
 
     // We need the last item of this subtree (prev 'this' is the root)
+    clRowEntry::Vec_t::iterator insert_loc_iter = m_children.end();
     if(prev == nullptr || prev == this) {
         // make it the first item
-        m_children.insert(m_children.begin(), child);
+        insert_loc_iter = m_children.insert(m_children.begin(), child);
     } else {
-        // Insert the item in the parent children list
-        clRowEntry::Vec_t::iterator iter = m_children.end();
-        iter = std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == prev; });
-        if(iter != m_children.end()) {
-            ++iter;
+
+        // optimization:
+        // we often get here by calling AddChild(), so don't loop over the list, check if `prev`
+        // is the last item
+        if(!m_children.empty() && m_children.back() == prev) {
+            insert_loc_iter = m_children.insert(m_children.end(), child);
+        } else {
+            // Insert the item in the parent children list
+            clRowEntry::Vec_t::iterator iter = m_children.end();
+            iter = std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == prev; });
+            if(iter != m_children.end()) {
+                ++iter;
+            }
+            // if iter is end(), than the is actually appending the item
+            insert_loc_iter = m_children.insert(iter, child);
         }
-        // if iter is end(), than the is actually appending the item
-        m_children.insert(iter, child);
     }
 
     // Connect the linked list for sequential iteration
-    clRowEntry::Vec_t::iterator iterCur =
-        std::find_if(m_children.begin(), m_children.end(), [&](clRowEntry* c) { return c == child; });
+    clRowEntry::Vec_t::iterator iterCur = insert_loc_iter;
 
     clRowEntry* nodeBefore = nullptr;
     // Find the item before and after

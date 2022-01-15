@@ -375,6 +375,7 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
     if(GetHeader()->empty()) {
         return;
     }
+
     if(row && row->IsHidden()) {
         return;
     }

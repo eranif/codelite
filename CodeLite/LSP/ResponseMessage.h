@@ -4,6 +4,7 @@
 #include "JSON.h"
 #include "LSP/Message.h"
 #include "LSP/basic_types.h"
+
 #include <macros.h>
 #include <wx/sharedptr.h>
 
@@ -29,10 +30,12 @@ public:
     }
     int GetId() const { return m_id; }
     bool IsOk() const { return m_json && m_json->isOk(); }
+    std::unique_ptr<JSON> take() { return std::move(m_json); }
+
     bool IsErrorResponse() const;
     bool Has(const wxString& property) const;
     JSONItem Get(const wxString& property) const;
-    
+
     JSONItem operator[](const wxString& name) const { return Get(name); }
 
     /**

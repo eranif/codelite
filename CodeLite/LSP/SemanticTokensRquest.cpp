@@ -6,6 +6,7 @@
 #include "json_rpc_params.h"
 #include "wx/vector.h"
 
+#include <thread>
 #include <vector>
 
 LSP::SemanticTokensRquest::SemanticTokensRquest(const wxString& filename)
@@ -25,47 +26,54 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
         return;
     }
 
-    std::vector<int> encoded_types;
-    encoded_types = response["result"]["data"].toIntArray();
-
+    std::vector<int> encoded_types_arr;
     clDEBUG() << "OnResponse for SemanticTokensRquest is called" << endl;
-    clDEBUG() << "Parsing semantic tokens array (" << encoded_types.size() << ")" << endl;
+    encoded_types_arr = response["result"]["data"].toIntArray();
+    clDEBUG() << "Parsing semantic tokens array (" << encoded_types_arr.size() << ")" << endl;
 
-    // sanity: each token is represented by a set of 5 integers
-    // { line, startChar, length, tokenType, tokenModifiers}
-    if(encoded_types.size() % 5 != 0) {
-        return;
-    }
+    // since this is CPU heavy processing, spawn a thread to do the job
+    wxString filename = m_filename;
+    wxString server_name = GetServerName();
+    std::thread(
+        [=](std::vector<int> encoded_types) {
+            // sanity: each token is represented by a set of 5 integers
+            // { line, startChar, length, tokenType, tokenModifiers}
+            if(encoded_types.size() % 5 != 0) {
+                return;
+            }
 
-    int last_line = 0;
-    int last_column = 0;
-    std::vector<LSP::SemanticTokenRange> semantic_tokens;
-    semantic_tokens.reserve(encoded_types.size() / 5);
+            int last_line = 0;
+            int last_column = 0;
+            std::vector<LSP::SemanticTokenRange> semantic_tokens;
+            semantic_tokens.reserve(encoded_types.size() / 5);
 
-    for(size_t i = 0; i < encoded_types.size() / 5; i++) {
-        size_t base_index = 5 * i;
-        LSP::SemanticTokenRange t;
-        // calculate the token line
-        t.line = last_line + encoded_types[base_index];
+            for(size_t i = 0; i < encoded_types.size() / 5; i++) {
+                size_t base_index = 5 * i;
+                LSP::SemanticTokenRange t;
+                // calculate the token line
+                t.line = last_line + encoded_types[base_index];
 
-        // did we change lines?
-        bool changed_line = t.line != last_line;
+                // did we change lines?
+                bool changed_line = t.line != last_line;
 
-        // incase we are on a different line, the start_col is relative to 0, otherwise
-        // it is relative to the previous item column
-        t.column = changed_line ? encoded_types[base_index + 1] : encoded_types[base_index + 1] + last_column;
-        t.length = encoded_types[base_index + 2];
-        t.token_type = encoded_types[base_index + 3];
+                // incase we are on a different line, the start_col is relative to 0, otherwise
+                // it is relative to the previous item column
+                t.column = changed_line ? encoded_types[base_index + 1] : encoded_types[base_index + 1] + last_column;
+                t.length = encoded_types[base_index + 2];
+                t.token_type = encoded_types[base_index + 3];
 
-        last_column = t.column;
-        last_line = t.line;
-        semantic_tokens.emplace_back(t);
-    }
+                last_column = t.column;
+                last_line = t.line;
+                semantic_tokens.emplace_back(t);
+            }
 
-    LSPEvent event(wxEVT_LSP_SEMANTICS);
-    event.SetSemanticTokens(semantic_tokens);
-    event.SetFileName(m_filename);
-    event.SetServerName(GetServerName());
-    owner->AddPendingEvent(event);
-    clDEBUG() << "Colouring file:" << m_filename << endl;
+            LSPEvent event(wxEVT_LSP_SEMANTICS);
+            event.SetSemanticTokens(semantic_tokens);
+            event.SetFileName(filename);
+            event.SetServerName(GetServerName());
+            owner->AddPendingEvent(event);
+            clDEBUG() << "Colouring file:" << filename << endl;
+        },
+        std::move(encoded_types_arr))
+        .detach();
 }

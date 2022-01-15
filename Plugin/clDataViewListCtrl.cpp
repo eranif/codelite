@@ -213,7 +213,9 @@ wxDataViewItem clDataViewListCtrl::AppendItem(const wxString& text, int image, i
     m_model.ToPtr(child)->SetListItem(true);
     wxDataViewItem dvItem = DV_ITEM(child);
     SetItemData(dvItem, data);
-    UpdateScrollBar();
+    if(!m_bulkInsert) {
+        UpdateScrollBar();
+    }
     return dvItem;
 }
 

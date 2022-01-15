@@ -319,9 +319,11 @@ wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent, const wxTreeItem
                                     int image, int selImage, wxTreeItemData* data)
 {
     wxTreeItemId item = m_model.InsertItem(parent, previous, text, image, selImage, data);
-    DoUpdateHeader(item);
-    if(IsExpanded(parent)) {
-        UpdateScrollBar();
+    if(!m_bulkInsert) {
+        DoUpdateHeader(item);
+        if(IsExpanded(parent)) {
+            UpdateScrollBar();
+        }
     }
     return item;
 }
@@ -330,9 +332,11 @@ wxTreeItemId clTreeCtrl::AppendItem(const wxTreeItemId& parent, const wxString& 
                                     wxTreeItemData* data)
 {
     wxTreeItemId item = m_model.AppendItem(parent, text, image, selImage, data);
-    DoUpdateHeader(item);
-    if(IsExpanded(parent)) {
-        UpdateScrollBar();
+    if(!m_bulkInsert) {
+        DoUpdateHeader(item);
+        if(IsExpanded(parent)) {
+            UpdateScrollBar();
+        }
     }
     return item;
 }
@@ -1521,6 +1525,12 @@ void clTreeCtrl::Commit()
 {
     m_bulkInsert = false;
     m_model.SetSortFunction(m_oldSortFunc);
+    const auto& items = m_model.GetOnScreenItems();
+
+    // update the header according to the visible items
+    for(const auto& item : items) {
+        DoUpdateHeader(item);
+    }
     Refresh();
 }
 

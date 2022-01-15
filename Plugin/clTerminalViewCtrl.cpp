@@ -4,6 +4,7 @@
 #include "clAnsiEscapeCodeHandler.hpp"
 #include "clSystemSettings.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 
 namespace
 {

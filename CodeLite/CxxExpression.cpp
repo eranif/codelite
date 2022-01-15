@@ -181,7 +181,8 @@ bool CxxExpression::handle_casting(CxxTokenizer& tokenizer, wxString* cast_type)
 
     // read the cast type
     int depth = 1;
-    while(tokenizer.NextToken(t)) {
+    bool cast_found = false;
+    while(!cast_found && tokenizer.NextToken(t)) {
         switch(t.GetType()) {
         case '<':
             depth++;
@@ -190,7 +191,7 @@ bool CxxExpression::handle_casting(CxxTokenizer& tokenizer, wxString* cast_type)
         case '>':
             depth--;
             if(depth == 0) {
-                return true;
+                cast_found = true;
             } else {
                 cast_type->Append('>');
             }
@@ -200,7 +201,26 @@ bool CxxExpression::handle_casting(CxxTokenizer& tokenizer, wxString* cast_type)
             break;
         }
     }
-    return false;
+    if(!cast_found) {
+        return false;
+    }
+
+    // next token should be `(`
+    if(!tokenizer.NextToken(t) || t.GetType() != '(') {
+        return false;
+    }
+
+    // read the castee
+    wxArrayString dummy;
+    if(!parse_func_call(tokenizer, &dummy)) {
+        return false;
+    }
+
+    // append the remainder to the cast_type
+    while(tokenizer.NextToken(t)) {
+        cast_type->Append(t.GetWXString() + " ");
+    }
+    return true;
 }
 
 wxString CxxExpression::template_placeholder_to_type(const wxString& placeholder) const

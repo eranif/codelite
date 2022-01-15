@@ -711,6 +711,15 @@ TEST_FUNC(test_cxx_code_completion_c_style_enum)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_casting)
+{
+    ENSURE_DB_LOADED();
+    TagEntryPtr resolved = completer->code_complete("dynamic_cast<wxString*>(something)->", {});
+    CHECK_NOT_NULL(resolved);
+    CHECK_STRING(resolved->GetPath(), "wxString");
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_class_enum)
 {
     ENSURE_DB_LOADED();

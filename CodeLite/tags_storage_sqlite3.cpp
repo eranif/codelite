@@ -112,7 +112,7 @@ void TagsStorageSQLite::CreateSchema()
 
         sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, "
                   "line integer, kind string, access string, signature string, pattern string, parent string, inherits "
-                  "string, path string, typeref string, scope string, template_definition string, function_properties "
+                  "string, path string, typeref string, scope string, template_definition string, tag_properties "
                   "string);");
         m_db->ExecuteUpdate(sql);
 
@@ -1769,7 +1769,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
 
 const wxString& TagsStorageSQLite::GetVersion() const
 {
-    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.1"));
+    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.0.1"));
     return gTagsDatabaseVersion;
 }
 

@@ -82,4 +82,4 @@ TODO:
 - Update the docs with ctagsd
 - ctagsd: Switch to use universal-ctags local parsing instead of our internal one
     need to make sure they handle for-range loop correctly
-- Find bar: switch to using wxSTC as the control instead of wxTextCtrl
+- Change the open resource dialog to use clTerminalCtrl view similar to the LSPOutlineView dialog

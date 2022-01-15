@@ -39,12 +39,6 @@
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 
-TagEntry::TagEntry(const tagEntry& entry)
-    : m_flags(0)
-{
-    Create(entry);
-}
-
 TagEntry::TagEntry()
     : m_path(wxEmptyString)
     , m_file(wxEmptyString)
@@ -105,13 +99,14 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
                       const wxString& kind, wxStringMap_t& extFields)
 {
     m_flags = 0;
+    m_extFields = extFields;
     SetName(name);
     SetLine(lineNumber);
     SetKind(kind.IsEmpty() ? "<unknown>" : kind);
     SetPattern(pattern);
     SetFile(wxFileName(fileName).GetFullPath());
     SetId(-1);
-    m_extFields = extFields;
+
     wxString path;
 
     // Check if we can get full name (including path)
@@ -154,7 +149,7 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     }
 
     // update the method properties
-    SetFunctionProperties(GetExtField("properties"));
+    SetTagProperties(GetExtField("properties"));
     if(!path.IsEmpty()) {
         SetScope(path);
     } else {
@@ -171,18 +166,6 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
 
     (tok.Count() < 2) ? parent = "<global>" : parent = tok[tok.Count() - 2];
     SetParent(parent);
-}
-
-void TagEntry::Create(const tagEntry& entry)
-{
-    // Get other information from the string data and store it into map
-    for(int i = 0; i < entry.fields.count; ++i) {
-        wxString key = _U(entry.fields.list[i].key);
-        wxString value = _U(entry.fields.list[i].value);
-        m_extFields[key] = value;
-    }
-    Create(_U(entry.file), _U(entry.name), entry.address.lineNumber, _U(entry.address.pattern), _U(entry.kind),
-           m_extFields);
 }
 
 void TagEntry::Print()
@@ -205,7 +188,7 @@ void TagEntry::Print()
 wxString TagEntry::Key() const
 {
     wxString key;
-    if(GetKind() == "prototype" || GetKind() == "macro") {
+    if(IsPrototype() || IsMacro()) {
         key << GetKind() << ": ";
     }
 
@@ -253,8 +236,7 @@ wxString TagEntry::GetKind() const
 
 const bool TagEntry::IsContainer() const
 {
-    return GetKind() == "class" || GetKind() == "struct" || GetKind() == "union" || GetKind() == "namespace" ||
-           GetKind() == "project" || GetKind() == "enum";
+    return IsClass() || IsStruct() || IsUnion() || IsNamespace() || IsEnumClass();
 }
 
 void TagEntry::UpdatePath(wxString& path)
@@ -378,7 +360,7 @@ void TagEntry::FromLine(const wxString& line)
     name = name.Trim();
     fileName = fileName.Trim();
     pattern = pattern.Trim();
-    this->Create(fileName, name, lineNumber, pattern, kind, extFields);
+    Create(fileName, name, lineNumber, pattern, kind, extFields);
 }
 
 bool TagEntry::IsConstructor() const
@@ -414,21 +396,24 @@ wxString TagEntry::GetTypename() const
     return returnValue.AfterFirst(':');
 }
 
-bool TagEntry::IsFunction() const { return GetKind() == "function"; }
-
+bool TagEntry::IsKeyword() const { return m_tag_kind == eTagKind::TAG_KIND_KEYWORD; }
+bool TagEntry::IsEnum() const { return m_tag_kind == eTagKind::TAG_KIND_ENUM; }
+bool TagEntry::IsEnumerator() const { return m_tag_kind == eTagKind::TAG_KIND_ENUMERATOR; }
+bool TagEntry::IsParameter() const { return m_tag_kind == eTagKind::TAG_KIND_PARAMETER; }
+bool TagEntry::IsVariable() const { return m_tag_kind == eTagKind::TAG_KIND_VARIABLE; }
+bool TagEntry::IsEnumClass() const { return m_tag_kind == eTagKind::TAG_KIND_CENUM; }
+bool TagEntry::IsLocalVariable() const { return m_tag_kind == eTagKind::TAG_KIND_LOCAL; }
+bool TagEntry::IsMember() const { return m_tag_kind == eTagKind::TAG_KIND_MEMBER; }
+bool TagEntry::IsNamespace() const { return m_tag_kind == eTagKind::TAG_KIND_NAMESPACE; }
+bool TagEntry::IsFunction() const { return m_tag_kind == eTagKind::TAG_KIND_FUNCTION; }
+bool TagEntry::IsPrototype() const { return m_tag_kind == eTagKind::TAG_KIND_PROTOTYPE; }
+bool TagEntry::IsClass() const { return m_tag_kind == eTagKind::TAG_KIND_CLASS; }
+bool TagEntry::IsMacro() const { return m_tag_kind == eTagKind::TAG_KIND_MACRO; }
+bool TagEntry::IsStruct() const { return m_tag_kind == eTagKind::TAG_KIND_STRUCT; }
+bool TagEntry::IsUnion() const { return m_tag_kind == eTagKind::TAG_KIND_UNION; }
+bool TagEntry::IsTypedef() const { return m_tag_kind == eTagKind::TAG_KIND_TYPEDEF; }
 bool TagEntry::IsMethod() const { return IsPrototype() || IsFunction(); }
-
-bool TagEntry::IsPrototype() const { return GetKind() == "prototype"; }
-
-bool TagEntry::IsClass() const { return GetKind() == "class"; }
-
-bool TagEntry::IsMacro() const { return GetKind() == "macro"; }
-
-bool TagEntry::IsStruct() const { return GetKind() == "struct"; }
-
 bool TagEntry::IsScopeGlobal() const { return GetScope().IsEmpty() || GetScope() == "<global>"; }
-
-bool TagEntry::IsTypedef() const { return GetKind() == "typedef"; }
 
 wxString TagEntry::GetInheritsAsString() const { return GetExtField(_T("inherits")); }
 
@@ -563,13 +548,7 @@ wxString TagEntry::GetPatternClean() const
     return p;
 }
 
-bool TagEntry::IsLocalVariable() const { return GetKind() == "local"; }
-
 wxString TagEntry::GetLocalType() const { return GetExtField("type"); }
-
-bool TagEntry::IsMember() const { return GetKind() == "member"; }
-
-bool TagEntry::IsNamespace() const { return GetKind() == "namespace"; }
 
 namespace
 {
@@ -584,34 +563,41 @@ inline void enable_function_flag_if_exists(const wxStringSet_t& S, const wxStrin
 }
 } // namespace
 
-void TagEntry::SetFunctionProperties(const wxString& props)
+void TagEntry::SetTagProperties(const wxString& props)
 {
-    m_function_properties = props;
-    auto tokens = wxStringTokenize(m_function_properties, ",", wxTOKEN_STRTOK);
+    m_tag_properties = props;
+    auto tokens = wxStringTokenize(m_tag_properties, ",", wxTOKEN_STRTOK);
     wxStringSet_t S;
     for(auto& token : tokens) {
         token.Trim().Trim(false);
         S.insert(token);
     }
 
-    enable_function_flag_if_exists(S, "const", FF_CONST, m_function_flags);
-    enable_function_flag_if_exists(S, "virtual", FF_VIRTUAL, m_function_flags);
-    enable_function_flag_if_exists(S, "default", FF_DEFAULT, m_function_flags);
-    enable_function_flag_if_exists(S, "delete", FF_DELETED, m_function_flags);
-    enable_function_flag_if_exists(S, "static", FF_STATIC, m_function_flags);
-    enable_function_flag_if_exists(S, "inline", FF_INLINE, m_function_flags);
-    enable_function_flag_if_exists(S, "override", FF_OVERRIDE, m_function_flags);
-    enable_function_flag_if_exists(S, "pure", FF_PURE, m_function_flags);
+    enable_function_flag_if_exists(S, "const", TAG_PROP_CONST, m_tag_properties_flags);
+    enable_function_flag_if_exists(S, "virtual", TAG_PROP_VIRTUAL, m_tag_properties_flags);
+    enable_function_flag_if_exists(S, "default", TAG_PROP_DEFAULT, m_tag_properties_flags);
+    enable_function_flag_if_exists(S, "delete", TAG_PROP_DELETED, m_tag_properties_flags);
+    enable_function_flag_if_exists(S, "static", TAG_PROP_STATIC, m_tag_properties_flags);
+    enable_function_flag_if_exists(S, "inline", TAG_PROP_INLINE, m_tag_properties_flags);
+    enable_function_flag_if_exists(S, "override", TAG_PROP_OVERRIDE, m_tag_properties_flags);
+    enable_function_flag_if_exists(S, "pure", TAG_PROP_PURE, m_tag_properties_flags);
+    enable_function_flag_if_exists(S, "scopedenum", TAG_PROP_SCOPEDENUM, m_tag_properties_flags);
+
+    // change the kind to "enum class"
+    if(is_scoped_enum()) {
+        m_tag_kind = eTagKind::TAG_KIND_CENUM;
+    }
 }
 
-bool TagEntry::is_func_const() const { return m_function_flags & FF_CONST; }
-bool TagEntry::is_func_virtual() const { return m_function_flags & FF_VIRTUAL; }
-bool TagEntry::is_func_static() const { return m_function_flags & FF_STATIC; }
-bool TagEntry::is_func_default() const { return m_function_flags & FF_DEFAULT; }
-bool TagEntry::is_func_override() const { return m_function_flags & FF_OVERRIDE; }
-bool TagEntry::is_func_deleted() const { return m_function_flags & FF_DELETED; }
-bool TagEntry::is_func_inline() const { return m_function_flags & FF_INLINE; }
-bool TagEntry::is_func_pure() const { return m_function_flags & FF_PURE; }
+bool TagEntry::is_func_virtual() const { return m_tag_properties_flags & TAG_PROP_VIRTUAL; }
+bool TagEntry::is_func_default() const { return m_tag_properties_flags & TAG_PROP_DEFAULT; }
+bool TagEntry::is_func_override() const { return m_tag_properties_flags & TAG_PROP_OVERRIDE; }
+bool TagEntry::is_func_deleted() const { return m_tag_properties_flags & TAG_PROP_DELETED; }
+bool TagEntry::is_func_inline() const { return m_tag_properties_flags & TAG_PROP_INLINE; }
+bool TagEntry::is_func_pure() const { return m_tag_properties_flags & TAG_PROP_PURE; }
+bool TagEntry::is_scoped_enum() const { return m_tag_properties_flags & TAG_PROP_SCOPEDENUM; }
+bool TagEntry::is_const() const { return m_tag_properties_flags & TAG_PROP_CONST; }
+bool TagEntry::is_static() const { return m_tag_properties_flags & TAG_PROP_STATIC; }
 
 wxString TagEntry::GetFunctionDeclaration() const
 {
@@ -630,7 +616,7 @@ wxString TagEntry::GetFunctionDeclaration() const
         decl << GetScope() << "::";
     }
     decl << GetName() << GetSignature();
-    if(is_func_const()) {
+    if(is_const()) {
         decl << "const ";
     }
     if(is_func_pure()) {
@@ -651,8 +637,33 @@ wxString TagEntry::GetFunctionDefinition() const
         impl << GetScope() << "::";
     }
     impl << GetName() << GetSignature();
-    if(is_func_const()) {
+    if(is_const()) {
         impl << "const ";
     }
     return impl;
+}
+
+namespace
+{
+std::unordered_map<wxString, eTagKind> g_kind_table = {
+    { "class", eTagKind::TAG_KIND_CLASS },         { "struct", eTagKind::TAG_KIND_STRUCT },
+    { "namespace", eTagKind::TAG_KIND_NAMESPACE }, { "union", eTagKind::TAG_KIND_UNION },
+    { "enum", eTagKind::TAG_KIND_ENUM },           { "member", eTagKind::TAG_KIND_MEMBER },
+    { "variable", eTagKind::TAG_KIND_VARIABLE },   { "macro", eTagKind::TAG_KIND_MACRO },
+    { "typedef", eTagKind::TAG_KIND_TYPEDEF },     { "local", eTagKind::TAG_KIND_LOCAL },
+    { "parameter", eTagKind::TAG_KIND_PARAMETER }, { "prototype", eTagKind::TAG_KIND_PROTOTYPE },
+    { "cpp_keyword", eTagKind::TAG_KIND_KEYWORD }, { "keyword", eTagKind::TAG_KIND_KEYWORD },
+    { "function", eTagKind::TAG_KIND_FUNCTION },   { "enumerator", eTagKind::TAG_KIND_ENUMERATOR },
+};
+}
+
+void TagEntry::SetKind(const wxString& kind)
+{
+    // set the string kind
+    m_kind = kind;
+    // turn on bits
+    m_tag_kind = eTagKind::TAG_KIND_UNKNOWN;
+    if(g_kind_table.count(m_kind)) {
+        m_tag_kind = g_kind_table[m_kind];
+    }
 }

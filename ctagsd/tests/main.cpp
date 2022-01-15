@@ -692,10 +692,22 @@ TEST_FUNC(test_cxx_code_completion_macros)
 {
     ENSURE_DB_LOADED();
     CxxRemainder remainder;
+    {
+        vector<TagEntryPtr> candidates;
+        completer->word_complete(wxEmptyString, wxNOT_FOUND, "CHECK_STRING_ONE", wxEmptyString, {}, false, candidates);
+        CHECK_SIZE(candidates.size(), 1);
+        CHECK_STRING(candidates[0]->GetName(), "CHECK_STRING_ONE_OF");
+    }
+    return true;
+}
+
+TEST_FUNC(test_cxx_code_completion_c_style_enum)
+{
+    ENSURE_DB_LOADED();
     vector<TagEntryPtr> candidates;
-    completer->word_complete(wxEmptyString, wxNOT_FOUND, "CHECK_STRING_ONE", wxEmptyString, {}, false, candidates);
+    completer->word_complete(wxEmptyString, wxNOT_FOUND, "wxTOKEN_ST", wxEmptyString, {}, false, candidates);
     CHECK_SIZE(candidates.size(), 1);
-    CHECK_STRING(candidates[0]->GetName(), "CHECK_STRING_ONE_OF");
+    CHECK_STRING(candidates[0]->GetName(), "wxTOKEN_STRTOK");
     return true;
 }
 

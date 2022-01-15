@@ -611,7 +611,7 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
     entry->SetTypename(rs.GetString(11));
     entry->SetScope(rs.GetString(12));
     entry->SetTemplateDefinition(rs.GetString(13));
-    entry->SetFunctionProperties(rs.GetString(14));
+    entry->SetTagProperties(rs.GetString(14));
     return entry;
 }
 
@@ -912,7 +912,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
         statement.Bind(11, tag.GetTypename());
         statement.Bind(12, tag.GetScope());
         statement.Bind(13, tag.GetTemplateDefinition());
-        statement.Bind(14, tag.GetFunctionProperties());
+        statement.Bind(14, tag.GetTagProperties());
         statement.ExecuteUpdate();
     } catch(wxSQLite3Exception& exc) {
         return TagError;
@@ -1769,7 +1769,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
 
 const wxString& TagsStorageSQLite::GetVersion() const
 {
-    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.0.1"));
+    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.0.2"));
     return gTagsDatabaseVersion;
 }
 

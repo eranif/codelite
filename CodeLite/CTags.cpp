@@ -140,6 +140,7 @@ size_t CTags::ParseFiles(const vector<wxString>& files, const wxString& codelite
     tags.reserve(lines.size());
 
     // convert the lines into tags
+    TagEntryPtr prev_scoped_tag = nullptr;
     for(wxString& line : lines) {
         line.Trim(false).Trim();
         if(line.empty()) {
@@ -148,7 +149,33 @@ size_t CTags::ParseFiles(const vector<wxString>& files, const wxString& codelite
 
         // construct a tag from the line
         tags.emplace_back(new TagEntry());
-        tags.back()->FromLine(line);
+        auto tag = tags.back();
+        tag->FromLine(line);
+
+        if(tag->IsEnumerator()                                // looking at an enumerator
+           && prev_scoped_tag                                 // we have a previously seen scope
+           && prev_scoped_tag->GetFile() == tag->GetFile()    /// and they are on the same file
+           && prev_scoped_tag->GetName() == tag->GetParent()) // and it belongs to it
+        {
+            // remove one part of the scope
+            wxArrayString scopes = ::wxStringTokenize(tag->GetScope(), ":", wxTOKEN_STRTOK);
+            if(scopes.size()) {
+                scopes.pop_back(); // remove the last part of the scope
+                wxString new_scope;
+                for(const wxString& scope : scopes) {
+                    if(!new_scope.empty()) {
+                        new_scope << "::";
+                    }
+                    new_scope << scope;
+                }
+                // update the scope
+                tag->SetScope(new_scope.empty() ? "<global>" : new_scope);
+            }
+        }
+
+        if(tag->IsEnum()) {
+            prev_scoped_tag = tag;
+        }
     }
 
     if(tags.empty()) {

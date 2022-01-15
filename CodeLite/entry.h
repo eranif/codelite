@@ -57,6 +57,27 @@ typedef std::vector<TagEntryPtr> TagEntryPtrVector_t;
 #define KIND_STRUCT "struct"
 #define KIND_FILE "file"
 
+// make it public
+enum class eTagKind {
+    TAG_KIND_UNKNOWN = -1,
+    TAG_KIND_CLASS,
+    TAG_KIND_STRUCT,
+    TAG_KIND_NAMESPACE,
+    TAG_KIND_UNION,
+    TAG_KIND_ENUM,
+    TAG_KIND_ENUMERATOR,
+    TAG_KIND_CENUM, // class enum
+    TAG_KIND_MEMBER,
+    TAG_KIND_VARIABLE,
+    TAG_KIND_MACRO,
+    TAG_KIND_TYPEDEF,
+    TAG_KIND_LOCAL,
+    TAG_KIND_PARAMETER, // function parameter
+    TAG_KIND_FUNCTION,
+    TAG_KIND_PROTOTYPE,
+    TAG_KIND_KEYWORD,
+};
+
 /**
  * TagEntry is a persistent object which is capable of storing and loading itself from
  * various inputs:
@@ -73,6 +94,20 @@ typedef std::vector<TagEntryPtr> TagEntryPtrVector_t;
  */
 class WXDLLIMPEXP_CL TagEntry
 {
+private:
+    enum eTagFlag {
+        TAG_PROP_CONST = (1 << 0),
+        TAG_PROP_VIRTUAL = (1 << 2),
+        TAG_PROP_STATIC = (1 << 3),
+        TAG_PROP_DEFAULT = (1 << 4),
+        TAG_PROP_OVERRIDE = (1 << 5),
+        TAG_PROP_DELETED = (1 << 6),
+        TAG_PROP_INLINE = (1 << 7),
+        TAG_PROP_PURE = (1 << 8),
+        TAG_PROP_SCOPEDENUM = (1 << 9),
+    };
+
+private:
     wxString m_path;    ///< Tag full path
     wxString m_file;    ///< File this tag is found
     int m_lineNumber;   ///< Line number
@@ -89,20 +124,9 @@ class WXDLLIMPEXP_CL TagEntry
     size_t m_flags;     // This member is not saved into the database
     wxString m_comment; // This member is not saved into the database
     wxString m_template_definition;
-    wxString m_function_properties;
-    size_t m_function_flags = 0; // bitwise eFunctionFlag
-
-private:
-    enum eFunctionFlag {
-        FF_CONST,
-        FF_VIRTUAL,
-        FF_STATIC,
-        FF_DEFAULT,
-        FF_OVERRIDE,
-        FF_DELETED,
-        FF_INLINE,
-        FF_PURE,
-    };
+    wxString m_tag_properties;
+    size_t m_tag_properties_flags = 0; // bitwise eTagFlag
+    eTagKind m_tag_kind = eTagKind::TAG_KIND_UNKNOWN;
 
 public:
     enum {
@@ -129,12 +153,6 @@ public:
     };
 
 public:
-    /**
-     * Construct a TagEntry from tagEntry struct
-     * \param entry Tag entry
-     */
-    TagEntry(const tagEntry& entry);
-
     void SetComment(const wxString& comment) { this->m_comment = comment; }
     const wxString& GetComment() const { return m_comment; }
     void SetFlags(size_t flags) { this->m_flags = flags; }
@@ -150,17 +168,18 @@ public:
     wxString GetTemplateDefinition() const;
 
     // function properties
-    bool is_func_const() const;
     bool is_func_virtual() const;
-    bool is_func_static() const;
     bool is_func_default() const;
     bool is_func_override() const;
     bool is_func_deleted() const;
     bool is_func_inline() const;
     bool is_func_pure() const;
+    bool is_const() const;
+    bool is_static() const;
+    bool is_scoped_enum() const;
 
-    void SetFunctionProperties(const wxString& prop);
-    const wxString& GetFunctionProperties() const { return m_function_properties; }
+    void SetTagProperties(const wxString& prop);
+    const wxString& GetTagProperties() const { return m_tag_properties; }
 
     /**
      * @brief create a function signature (including return value + properties)
@@ -259,6 +278,13 @@ public:
     bool IsTypedef() const;
     bool IsMember() const;
     bool IsNamespace() const;
+    bool IsEnum() const;
+    bool IsEnumClass() const;
+    bool IsParameter() const;
+    bool IsVariable() const;
+    bool IsUnion() const;
+    bool IsEnumerator() const;
+    bool IsKeyword() const;
 
     //------------------------------------------
     // Operations
@@ -287,7 +313,7 @@ public:
     void SetPattern(const wxString& pattern) { m_pattern = pattern; }
 
     wxString GetKind() const;
-    void SetKind(const wxString& kind) { m_kind = kind; }
+    void SetKind(const wxString& kind);
 
     const wxString& GetParent() const { return m_parent; }
     void SetParent(const wxString& parent) { m_parent = parent; }

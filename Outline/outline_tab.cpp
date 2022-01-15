@@ -41,6 +41,9 @@ OutlineTab::~OutlineTab()
 void OutlineTab::OnOutlineSymbols(LSPEvent& event)
 {
     event.Skip();
+    if(!IsShown()) {
+        return;
+    }
     RenderSymbols(event.GetSymbolsInformation(), event.GetFileName());
 }
 

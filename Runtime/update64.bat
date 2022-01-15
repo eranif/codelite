@@ -76,3 +76,5 @@ copy %WX_CONFIG_DIR%\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 :END
 
 echo CodeLite was updated into %TARGET_DIR%\CodeLite
+date /T
+time /T

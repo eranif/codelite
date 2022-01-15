@@ -26,54 +26,50 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
         return;
     }
 
-    std::vector<int> encoded_types_arr;
+    std::vector<int> encoded_types;
     clDEBUG() << "OnResponse for SemanticTokensRquest is called" << endl;
-    encoded_types_arr = response["result"]["data"].toIntArray();
-    clDEBUG() << "Parsing semantic tokens array (" << encoded_types_arr.size() << ")" << endl;
+    encoded_types = response["result"]["data"].toIntArray();
+    clDEBUG() << "Parsing semantic tokens array (" << encoded_types.size() << ")" << endl;
 
     // since this is CPU heavy processing, spawn a thread to do the job
     wxString filename = m_filename;
     wxString server_name = GetServerName();
-    std::thread(
-        [=](std::vector<int> encoded_types) {
-            // sanity: each token is represented by a set of 5 integers
-            // { line, startChar, length, tokenType, tokenModifiers}
-            if(encoded_types.size() % 5 != 0) {
-                return;
-            }
 
-            int last_line = 0;
-            int last_column = 0;
-            std::vector<LSP::SemanticTokenRange> semantic_tokens;
-            semantic_tokens.reserve(encoded_types.size() / 5);
+    // sanity: each token is represented by a set of 5 integers
+    // { line, startChar, length, tokenType, tokenModifiers}
+    if(encoded_types.size() % 5 != 0) {
+        return;
+    }
 
-            for(size_t i = 0; i < encoded_types.size() / 5; i++) {
-                size_t base_index = 5 * i;
-                LSP::SemanticTokenRange t;
-                // calculate the token line
-                t.line = last_line + encoded_types[base_index];
+    int last_line = 0;
+    int last_column = 0;
+    std::vector<LSP::SemanticTokenRange> semantic_tokens;
+    semantic_tokens.reserve(encoded_types.size() / 5);
 
-                // did we change lines?
-                bool changed_line = t.line != last_line;
+    for(size_t i = 0; i < encoded_types.size() / 5; i++) {
+        size_t base_index = 5 * i;
+        LSP::SemanticTokenRange t;
+        // calculate the token line
+        t.line = last_line + encoded_types[base_index];
 
-                // incase we are on a different line, the start_col is relative to 0, otherwise
-                // it is relative to the previous item column
-                t.column = changed_line ? encoded_types[base_index + 1] : encoded_types[base_index + 1] + last_column;
-                t.length = encoded_types[base_index + 2];
-                t.token_type = encoded_types[base_index + 3];
+        // did we change lines?
+        bool changed_line = t.line != last_line;
 
-                last_column = t.column;
-                last_line = t.line;
-                semantic_tokens.emplace_back(t);
-            }
+        // incase we are on a different line, the start_col is relative to 0, otherwise
+        // it is relative to the previous item column
+        t.column = changed_line ? encoded_types[base_index + 1] : encoded_types[base_index + 1] + last_column;
+        t.length = encoded_types[base_index + 2];
+        t.token_type = encoded_types[base_index + 3];
 
-            LSPEvent event(wxEVT_LSP_SEMANTICS);
-            event.SetSemanticTokens(semantic_tokens);
-            event.SetFileName(filename);
-            event.SetServerName(GetServerName());
-            owner->AddPendingEvent(event);
-            clDEBUG() << "Colouring file:" << filename << endl;
-        },
-        std::move(encoded_types_arr))
-        .detach();
+        last_column = t.column;
+        last_line = t.line;
+        semantic_tokens.emplace_back(t);
+    }
+
+    LSPEvent event(wxEVT_LSP_SEMANTICS);
+    event.SetSemanticTokens(semantic_tokens);
+    event.SetFileName(filename);
+    event.SetServerName(GetServerName());
+    owner->AddPendingEvent(event);
+    clDEBUG() << "Colouring file:" << filename << endl;
 }

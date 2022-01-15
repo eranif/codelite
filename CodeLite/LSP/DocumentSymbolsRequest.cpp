@@ -54,54 +54,37 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
         wxString filename = m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath();
         auto context = m_context;
         if(result[0].hasNamedObject("location")) {
-            auto parse_data_cb = [filename, size, context, owner](std::unique_ptr<JSON>&& json) {
-                auto result = json->toElement().namedObject("result");
-                clDEBUG() << "(helper thread): Building symbol information..." << endl;
-                std::vector<LSP::SymbolInformation> symbols;
-                symbols.reserve(size);
-                for(int i = 0; i < size; ++i) {
-                    SymbolInformation si;
-                    si.FromJSON(result[i]);
-                    symbols.push_back(si);
-                }
-                clDEBUG() << "(helper thread): Success" << endl;
+            auto result = json->toElement().namedObject("result");
+            std::vector<LSP::SymbolInformation> symbols;
+            symbols.reserve(size);
+            for(int i = 0; i < size; ++i) {
+                SymbolInformation si;
+                si.FromJSON(result[i]);
+                symbols.push_back(si);
+            }
 
-                // sort the items by line position
-                std::sort(symbols.begin(), symbols.end(),
-                          [=](const LSP::SymbolInformation& a, const LSP::SymbolInformation& b) -> int {
-                              return a.GetLocation().GetRange().GetStart().GetLine() <
-                                     b.GetLocation().GetRange().GetStart().GetLine();
-                          });
-                clDEBUG1() << symbols << endl;
+            // sort the items by line position
+            std::sort(symbols.begin(), symbols.end(),
+                      [=](const LSP::SymbolInformation& a, const LSP::SymbolInformation& b) -> int {
+                          return a.GetLocation().GetRange().GetStart().GetLine() <
+                                 b.GetLocation().GetRange().GetStart().GetLine();
+                      });
+            clDEBUG1() << symbols << endl;
 
-                // helper callback
-                auto queue_event = [](wxEvtHandler* owner, const std::vector<LSP::SymbolInformation>& symbols,
-                                      const wxString& filename, const wxEventType& event_type) {
-                    LSPEvent event{ event_type };
-                    event.GetSymbolsInformation().reserve(symbols.size());
-                    event.GetSymbolsInformation().insert(event.GetSymbolsInformation().end(), symbols.begin(),
-                                                         symbols.end());
-                    event.SetFileName(filename);
-                    owner->QueueEvent(event.Clone());
-                };
+            // fire event per context
+            if(context & CONTEXT_SEMANTIC_HIGHLIGHT) {
+                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
+            }
+            if(context & CONTEXT_QUICK_OUTLINE) {
+                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
+            }
+            if(context & CONTEXT_OUTLINE_VIEW) {
+                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+            }
 
-                // fire event per context
-                if(context & CONTEXT_SEMANTIC_HIGHLIGHT) {
-                    queue_event(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
-                }
-                if(context & CONTEXT_QUICK_OUTLINE) {
-                    queue_event(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
-                }
-                if(context & CONTEXT_OUTLINE_VIEW) {
-                    queue_event(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
-                }
-
-                // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE for the EventNotifier
-                // so it might be used by other plugins as well, e.g. "Outline"
-                queue_event(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
-                clDEBUG() << "(helper thread): Done!" << endl;
-            };
-            std::thread(std::move(parse_data_cb), std::move(json)).detach();
+            // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE for the EventNotifier
+            // so it might be used by other plugins as well, e.g. "Outline"
+            QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
         } else {
             std::vector<DocumentSymbol> symbols;
             symbols.reserve(size);

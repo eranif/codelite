@@ -11,6 +11,7 @@
 #include <wx/filename.h>
 #include <wx/init.h>
 #include <wx/stdpaths.h>
+#include <wx/wxcrtvararg.h>
 
 namespace
 {
@@ -32,6 +33,8 @@ unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
 };
 }
 
+#define CTAGSD_VERSION "1.0.1"
+
 /// A wrapper around codelite_indexer that implements
 /// the Language Server Protocol
 int main(int argc, char** argv)
@@ -43,8 +46,14 @@ int main(int argc, char** argv)
     wxCmdLineParser parser(argc, argv);
     parser.AddOption("p", "port", "Port number", wxCMD_LINE_VAL_NUMBER);
     parser.AddOption("h", "host", "Hostname");
+    parser.AddSwitch("v", "version", "Version");
     parser.AddLongOption("log-level", "Log level, one of: ERR, WARN, DBG, TRACE");
     parser.Parse();
+
+    if(parser.Found("v")) {
+        wxPrintf("ctagsd v-%s\n", CTAGSD_VERSION);
+        exit(0);
+    }
 
     long port = 38478;
     wxString host = "127.0.0.1";

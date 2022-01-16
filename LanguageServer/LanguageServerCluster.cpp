@@ -441,7 +441,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
             }
 
             // update the entries
-            if(!json.hasNamedObject("codelite_indexer")) {
+            if(json.hasNamedObject("codelite_indexer")) {
                 json.removeProperty("codelite_indexer");
             }
 

@@ -646,7 +646,7 @@ clEditor* MainBook::OpenFile(const wxString& file_name, const wxString& projectN
         editor->SetLineVisible(editor->LineFromPosition(position));
 
     } else if(lineno != wxNOT_FOUND) {
-        editor->CenterLine(lineno);
+        editor->CallAfter(&clEditor::CenterLine, lineno, wxNOT_FOUND);
     }
 
     if(m_reloadingDoRaise) {

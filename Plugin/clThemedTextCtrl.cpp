@@ -23,7 +23,6 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     rect.Inflate(1);
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
     ::clRecalculateSTCHScrollBar(this);
-    GetSizer()->Fit(this);
 
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT);
 

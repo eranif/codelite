@@ -398,6 +398,13 @@ void clScrolledPanel::DoPositionVScrollbar()
     int x = clientRect.GetWidth() - vsbSize.GetWidth();
     int y = 0;
 
+    if(width < -1) {
+        width = -1;
+    }
+    if(height < -1) {
+        height = -1;
+    }
+
     m_vsb->SetSize(width, height);
     m_vsb->Move(x, y);
 }

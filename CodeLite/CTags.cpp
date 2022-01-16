@@ -79,7 +79,7 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
         } else {
             wxString fixed_macro_name = fix_macro_entry(vt.first);
             wxString fixed_macro_value = fix_macro_entry(vt.second);
-            macro_replacements << "-D\"" << fixed_macro_name << "=" << fixed_macro_value << "\"";
+            macro_replacements << "-D" << fixed_macro_name << "=" << fixed_macro_value;
         }
         options_arr.push_back(macro_replacements);
     }

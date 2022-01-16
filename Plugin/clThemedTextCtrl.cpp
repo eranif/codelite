@@ -1,6 +1,7 @@
 #include "clThemedTextCtrl.hpp"
 
 #include "ColoursAndFontsManager.h"
+#include "event_notifier.h"
 #include "globals.h"
 
 #include <wx/bitmap.h>
@@ -12,23 +13,13 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     : wxStyledTextCtrl(parent, id, pos, size, wxBORDER_NONE)
 {
     wxUnusedVar(style);
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    lexer->Apply(this);
-
-    wxBitmap bmp(1, 1);
-    wxMemoryDC _memDC(bmp);
-    wxGCDC gcdc(_memDC);
-    gcdc.SetFont(lexer->GetFontForSyle(0, this));
-    wxRect rect = gcdc.GetTextExtent("Tp");
-    rect.Inflate(1);
-    SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
-    ::clRecalculateSTCHScrollBar(this);
-
+    ApplySettings();
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT);
 
     // Bind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Bind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Bind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }
 
 clThemedTextCtrl::~clThemedTextCtrl()
@@ -36,6 +27,7 @@ clThemedTextCtrl::~clThemedTextCtrl()
     // Unbind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Unbind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Unbind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }
 
 void clThemedTextCtrl::OnKeyDown(wxKeyEvent& event)
@@ -65,4 +57,25 @@ void clThemedTextCtrl::OnChange(wxStyledTextEvent& event)
         text_enter.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(text_enter);
     }
+}
+
+void clThemedTextCtrl::OnSysColours(clCommandEvent& event)
+{
+    event.Skip();
+    ApplySettings();
+}
+
+void clThemedTextCtrl::ApplySettings()
+{
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    lexer->Apply(this);
+
+    wxBitmap bmp(1, 1);
+    wxMemoryDC _memDC(bmp);
+    wxGCDC gcdc(_memDC);
+    gcdc.SetFont(lexer->GetFontForSyle(0, this));
+    wxRect rect = gcdc.GetTextExtent("Tp");
+    rect.Inflate(1);
+    SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
+    ::clRecalculateSTCHScrollBar(this);
 }

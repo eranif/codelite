@@ -52,50 +52,51 @@ typedef std::vector<parseEntry> partList;
 class CorrectSpellingDlg;
 class SpellCheck;
 class IEditor;
-// ------------------------------------------------------------
+// ------------------------------------------------------------ 
+
+class StringHashOptionalCase
+{
+public:
+    StringHashOptionalCase(const bool isCaseSensitive = true)
+        : m_isCaseSensitive(isCaseSensitive)
+    {
+    }
+
+    size_t operator()(const wxString& str) const
+    {
+        if(m_isCaseSensitive) {
+            return std::hash<wxString>()(str);
+        } else {
+            return std::hash<wxString>()(str.Upper());
+        }
+    }
+
+private:
+    bool m_isCaseSensitive;
+};
+
+class StringCompareOptionalCase
+{
+public:
+    StringCompareOptionalCase(const bool isCaseSensitive = true)
+        : m_isCaseSensitive(isCaseSensitive)
+    {
+    }
+
+    bool operator()(const wxString& lhs, const wxString& rhs) const
+    {
+        if(m_isCaseSensitive)
+            return (0 == lhs.Cmp(rhs));
+        else
+            return (0 == lhs.CmpNoCase(rhs));
+    }
+
+private:
+    bool m_isCaseSensitive;
+};
+
 class IHunSpell
 {
-    class StringHashOptionalCase
-    {
-    public:
-        StringHashOptionalCase(const bool isCaseSensitive = true)
-            : m_isCaseSensitive(isCaseSensitive)
-        {
-        }
-
-        size_t operator()(const wxString& str) const
-        {
-            if(m_isCaseSensitive) {
-                return std::hash<wxString>()(str);
-            } else {
-                return std::hash<wxString>()(str.Upper());
-            }
-        }
-
-    private:
-        bool m_isCaseSensitive;
-    };
-
-    class StringCompareOptionalCase
-    {
-    public:
-        StringCompareOptionalCase(const bool isCaseSensitive = true)
-            : m_isCaseSensitive(isCaseSensitive)
-        {
-        }
-
-        bool operator()(const wxString& lhs, const wxString& rhs) const
-        {
-            if(m_isCaseSensitive)
-                return (0 == lhs.Cmp(rhs));
-            else
-                return (0 == lhs.CmpNoCase(rhs));
-        }
-
-    private:
-        bool m_isCaseSensitive;
-    };
-
 protected:
     /// makes a spell check for the given cpp text. Canceled is set to true when the user cancels.
     void CheckCppSpelling();

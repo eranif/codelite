@@ -306,7 +306,7 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const CTags
 
     // don't parse all files at once, split them into chunks
     // how many chunks?
-    size_t chunk_size = 1000;
+    size_t chunk_size = 2500;
     size_t chunk_count = filtered_file_list.size() / chunk_size + 1;
     clDEBUG() << "Parsing" << filtered_file_list.size() << "files..." << endl;
     for(size_t i = 0; i < chunk_count; ++i) {

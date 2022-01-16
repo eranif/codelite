@@ -438,16 +438,19 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
             if(json.hasNamedObject("limit_results")) {
                 json.removeProperty("limit_results");
+                clDEBUG() << "ctagsd: found limit_results -> removing it" << endl;
             }
 
             // update the entries
             if(json.hasNamedObject("codelite_indexer")) {
                 json.removeProperty("codelite_indexer");
+                clDEBUG() << "ctagsd: found codelite_indexer -> removing it" << endl;
             }
 
             json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("codelite-ctags"));
             json.addProperty("limit_results", TagsManagerST::Get()->GetCtagsOptions().GetCcNumberOfDisplayItems());
             root.save(settings_json);
+            clDEBUG() << "ctagsd: writing new file:" << settings_json << endl;
 
             // create the file_list.txt file
             wxFileName file_list(fn.GetPath(), "file_list.txt");

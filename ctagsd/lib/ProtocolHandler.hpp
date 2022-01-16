@@ -66,6 +66,10 @@ private:
      */
     static void parse_files(const vector<wxString>& files, const CTagsdSettings& settings);
 
+    // helper method for parsing a chunk of files
+    static void do_parse_chunk(ITagsStoragePtr db, const vector<wxString>& files, size_t chunk_id,
+                               const CTagsdSettings& settings);
+
     bool ensure_file_content_exists(const wxString& filepath, Channel::ptr_t channel, size_t req_id);
     void update_comments_for_file(const wxString& filepath, const wxString& file_content);
     void update_comments_for_file(const wxString& filepath);

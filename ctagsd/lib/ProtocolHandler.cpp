@@ -246,6 +246,37 @@ void ProtocolHandler::parse_file(const wxFileName& filename, const CTagsdSetting
     parse_files({ filename.GetFullPath() }, settings);
 }
 
+void ProtocolHandler::do_parse_chunk(ITagsStoragePtr db, const vector<wxString>& file_list, size_t chunk_id,
+                                     const CTagsdSettings& settings)
+{
+    vector<TagEntryPtr> tags;
+    clDEBUG() << "Parsing chunk (" << chunk_id << ") of" << file_list.size() << "files" << endl;
+    if(CTags::ParseFiles(file_list, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
+        clDEBUG() << "0 tags generated. processed:" << file_list.size()
+                  << "files. Indexer:" << settings.GetCodeliteIndexer() << endl;
+        return;
+    }
+
+    clDEBUG1() << "Success" << endl;
+    clDEBUG1() << "Updating symbols database..." << endl;
+
+    db->Begin();
+    time_t update_time = time(nullptr);
+    db->Store(tags, false);
+
+    // update the files table in the database
+    // we do this here, since some files might not yield tags
+    // but we still want to mark them as "parsed"
+    for(const wxString& file : file_list) {
+        if(db->InsertFileEntry(file, (int)update_time) == TagExist) {
+            db->UpdateFileEntry(file, (int)update_time);
+        }
+    }
+
+    // Commit whats left
+    db->Commit();
+}
+
 void ProtocolHandler::parse_files(const vector<wxString>& file_list, const CTagsdSettings& settings)
 {
     clDEBUG() << "Parsing" << file_list.size() << "files" << endl;
@@ -273,34 +304,22 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const CTags
         return;
     }
 
-    vector<TagEntryPtr> tags;
-    if(CTags::ParseFiles(filtered_file_list, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
-        clDEBUG() << "Failed to generate ctags file. indexer:" << settings.GetCodeliteIndexer() << endl;
-#if wxUSE_STACKWALKER
-        MyStackWalker stack{};
-        stack.Walk();
-#endif
-        return;
-    }
-
-    clDEBUG() << "Success" << endl;
-    clDEBUG() << "Updating symbols database..." << endl;
-
-    db->Begin();
-    time_t update_time = time(nullptr);
-    db->Store(tags, false);
-
-    // update the files table in the database
-    // we do this here, since some files might not yield tags
-    // but we still want to mark them as "parsed"
-    for(const wxString& file : files_to_parse) {
-        if(db->InsertFileEntry(file, (int)update_time) == TagExist) {
-            db->UpdateFileEntry(file, (int)update_time);
+    // don't parse all files at once, split them into chunks
+    // how many chunks?
+    size_t chunk_size = 1000;
+    size_t chunk_count = filtered_file_list.size() / chunk_size + 1;
+    clDEBUG() << "Parsing" << filtered_file_list.size() << "files..." << endl;
+    for(size_t i = 0; i < chunk_count; ++i) {
+        // determine the start/end iterators for each range
+        size_t start_offset = i * chunk_size;
+        auto iter_start = filtered_file_list.begin() + start_offset;
+        auto iter_end = iter_start + chunk_size;
+        if((start_offset + chunk_size) > filtered_file_list.size()) {
+            iter_end = filtered_file_list.end();
         }
+        vector<wxString> chunk_vec{ iter_start, iter_end };
+        do_parse_chunk(db, chunk_vec, i, settings);
     }
-
-    // Commit whats left
-    db->Commit();
     clDEBUG() << "Success" << endl;
 }
 

@@ -313,6 +313,12 @@ void ProtocolHandler::parse_files(const vector<wxString>& file_list, const CTags
         // determine the start/end iterators for each range
         size_t start_offset = i * chunk_size;
         auto iter_start = filtered_file_list.begin() + start_offset;
+        if(iter_start == filtered_file_list.end())
+            // last chunk is empty...
+            // this can happen when our initial file list size divides by 1000
+            // with 0 remainder
+            break;
+
         auto iter_end = iter_start + chunk_size;
         if((start_offset + chunk_size) > filtered_file_list.size()) {
             iter_end = filtered_file_list.end();

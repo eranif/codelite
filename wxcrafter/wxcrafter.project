@@ -518,8 +518,6 @@
       <File Name="NewCustomEventDlg.cpp"/>
       <File Name="wxcSettingsDlg.h"/>
       <File Name="wxcSettingsDlg.cpp"/>
-      <File Name="FreeTrialVersionDlg.h"/>
-      <File Name="FreeTrialVersionDlg.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Containers">
       <File Name="notebook_base_wrapper.cpp"/>
@@ -603,10 +601,6 @@
     <File Name="my_panel.cpp"/>
     <File Name="my_dialog.h"/>
     <File Name="my_dialog.cpp"/>
-    <VirtualDirectory Name="SerialNumber">
-      <File Name="serial_number.cpp"/>
-      <File Name="serial_number.h"/>
-    </VirtualDirectory>
     <File Name="AboutDlg.h"/>
     <File Name="AboutDlg.cpp"/>
     <VirtualDirectory Name="NonGUIControls">

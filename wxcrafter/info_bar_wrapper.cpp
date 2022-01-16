@@ -1,7 +1,7 @@
 #include "info_bar_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
-#include "wxc_settings.h"
 #include "wxgui_helpers.h"
 
 InfoBarWrapper::InfoBarWrapper()
@@ -45,5 +45,3 @@ void InfoBarWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         text << XRCSuffix();
     }
 }
-
-bool InfoBarWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

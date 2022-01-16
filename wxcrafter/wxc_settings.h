@@ -2,6 +2,7 @@
 #define WXCSETTINGS_H
 
 #include "wxcLib/json_node.h"
+
 #include <map>
 
 // ----------------------------------------------------------------------
@@ -51,7 +52,6 @@ public:
         DLG_CODE_GENERATED = (1 << 0),
         USE_TABBED_MODE = (1 << 1),
         LAYOUT_RESET_DONE = (1 << 3),
-        LICENSE_ACTIVATED = (1 << 4),
         DONT_PROMPT_ABOUT_MISSING_SUBCLASS = (1 << 5),
         DISPLAY_EVENTS_PANE = (1 << 6),
         DUPLICATE_KEEPS_USERSET_NAMES = (1 << 7),
@@ -68,10 +68,7 @@ protected:
     int m_sashPosition;
     int m_secondarySashPos;
     int m_treeviewSashPos;
-    wxString m_serialNumber;
-    wxString m_username;
     wxArrayString m_history;
-    time_t m_ts;
     bool m_initCompleted;
 
 public:
@@ -130,23 +127,6 @@ public:
     int GetSecondarySashPos() const { return m_secondarySashPos; }
     int GetTreeviewSashPos() const { return m_treeviewSashPos; }
 
-    /**
-     * @brief is licensed with v1 license
-     * @return
-     */
-    bool IsLicensed() const;
-    bool IsRegistered() const;
-
-    /**
-     * @brief is licensed with v2 license
-     * @return
-     */
-    bool IsLicensed2() const;
-
-    void SetSerialNumber(const wxString& serialNumber) { this->m_serialNumber = serialNumber; }
-    void SetUsername(const wxString& username) { this->m_username = username; }
-    const wxString& GetSerialNumber() const { return m_serialNumber; }
-    const wxString& GetUsername() const { return m_username; }
     void SetHistory(const wxArrayString& history) { this->m_history = history; }
     const wxArrayString& GetHistory() const { return m_history; }
 };

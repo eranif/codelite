@@ -1,4 +1,5 @@
 #include "RearrangeListWrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
@@ -25,22 +26,22 @@ void RearrangeListWrapper::ToXRC(wxString& text, XRC_TYPE type) const { CheckLis
 wxString RearrangeListWrapper::CppCtorCode() const
 {
     wxString code;
-    wxArrayString options = wxCrafter::Split(PropertyString(PROP_OPTIONS), wxT(";"));
+    wxArrayString options = wxCrafter::Split(PropertyString(PROP_OPTIONS), ";");
 
     wxString optionsArr, orderArr;
-    optionsArr << GetName() << wxT("Arr");
-    orderArr << GetName() << wxT("OrderArr");
+    optionsArr << GetName() << "Arr";
+    orderArr << GetName() << "OrderArr";
 
-    code << wxT("wxArrayInt ") << orderArr << wxT(";\n");
-    code << wxT("wxArrayString ") << optionsArr << wxT(";\n");
+    code << "wxArrayInt " << orderArr << ";\n";
+    code << "wxArrayString " << optionsArr << ";\n";
     for(size_t i = 0; i < options.GetCount(); i++) {
         code << optionsArr << ".Add(" << wxCrafter::UNDERSCORE(options.Item(i)) << ");\n";
         code << orderArr << ".Add(" << i << ");\n";
     }
 
-    code << GetName() << wxT(" = new ") << GetRealClassName() << "(" << GetWindowParent() << wxT(", ") << WindowID()
-         << wxT(", ") << wxT("wxDefaultPosition, ") << SizeAsString() << wxT(", ") << orderArr << ", " << optionsArr
-         << wxT(", ") << StyleFlags(wxT("0")) << wxT(");\n");
+    code << GetName() << " = new " << GetRealClassName() << "(" << GetWindowParent() << ", " << WindowID() << ", "
+         << "wxDefaultPosition, " << SizeAsString() << ", " << orderArr << ", " << optionsArr << ", " << StyleFlags("0")
+         << ");\n";
     code << CPPCommonAttributes();
     return code;
 }

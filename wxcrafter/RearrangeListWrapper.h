@@ -17,8 +17,7 @@ public:
     virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
     virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
     virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    wxcWidget* Clone() const;
-    bool IsLicensed() const { return wxcSettings::Get().IsLicensed2(); }
+    virtual wxcWidget* Clone() const;
 };
 
 #endif // REARRANGELISTWRAPPER_H

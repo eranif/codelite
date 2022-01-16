@@ -18,7 +18,6 @@ public:
     virtual void ToXRC(wxString& text, XRC_TYPE type) const;
     virtual wxString GetCppName() const;
     virtual bool UseIdInConnect() const { return true; }
-    virtual bool IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
 };
 
 // ------------------------------------ concrete types -------------------------

@@ -1,6 +1,6 @@
 #include "property_grid_manager_wrapper.h"
+
 #include "allocator_mgr.h"
-#include "wxc_settings.h"
 
 PropertyGridManagerWrapper::PropertyGridManagerWrapper()
     : wxcWidget(ID_WXPROPERTYGRIDMANAGER)
@@ -110,13 +110,13 @@ void PropertyGridManagerWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     }
 }
 
-bool PropertyGridManagerWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
-
 wxString PropertyGridManagerWrapper::DoGenerateCppCtorCode_End() const
 {
     wxString cppCode;
 
-    if(IsPropertyChecked(PROP_SPLITTER_LEFT)) { cppCode << GetName() << "->GetGrid()->SetSplitterLeft(true);\n"; }
+    if(IsPropertyChecked(PROP_SPLITTER_LEFT)) {
+        cppCode << GetName() << "->GetGrid()->SetSplitterLeft(true);\n";
+    }
 
     int splitterPos = PropertyInt(PROP_SASH_POS);
     if(splitterPos != wxNOT_FOUND) {

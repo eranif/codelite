@@ -20,13 +20,12 @@ public:
     virtual wxString GetWxClassName() const;
     virtual void ToXRC(wxString& text, XRC_TYPE type) const;
     virtual wxString DoGenerateClassMember() const;
-    void DoGenerateExtraFunctions(wxString& decl, wxString& impl) const;
+    virtual void DoGenerateExtraFunctions(wxString& decl, wxString& impl) const;
     virtual wxString CreateBaseclassName() const { return GetName(); }
     // not a real window
     virtual bool IsWindow() const { return true; }
     // no base class
     virtual bool WantsSubclass() const { return true; }
-    virtual bool IsLicensed() const;
 };
 
 #endif // AUITOOLBARTOPLEVEL_H

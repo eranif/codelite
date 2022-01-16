@@ -2,6 +2,8 @@
 #define __main_panel__
 
 #include "aui_pane_info_list_view.h"
+#include "clTreeCtrl.h"
+#include "cl_command_event.h"
 #include "events_database.h"
 #include "gui.h"
 #include "properties_sheet.h"
@@ -10,10 +12,9 @@
 #include "wxc_edit_manager.h"
 #include "wxc_project_metadata.h"
 #include "wxc_widget.h"
-#include <cl_command_event.h>
+
 #include <wx/aui/auibar.h>
 #include <wx/treectrl.h>
-#include <clTreeCtrl.h>
 
 class EventsEditorPane;
 class EventsEditorDlg;
@@ -100,8 +101,6 @@ protected:
     virtual void OnStylesChanged(wxPropertyGridEvent& event);
     virtual void OnNewFormUI(wxUpdateUIEvent& event);
     virtual void OnCppBookPageChanged(wxBookCtrlEvent& event);
-    virtual void OnRegisterWxCrafter(wxCommandEvent& event);
-    virtual void OnCloseLicenseMessage(wxCommandEvent& event);
     virtual void OnPageChanged(wxBookCtrlEvent& event);
 
     void DoDismissFindBar();
@@ -144,7 +143,6 @@ protected:
     void DoAppendItem(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem, wxcWidget* sourceItemData = NULL);
     void DoChangeOrInsertIntoSizer(int id);
     wxArrayString GetCustomControlsUsed() const;
-    bool DoCheckLicense(int controlType) const;
     wxTreeItemId DoFindItemByWxcWidget(wxcWidget* widget, const wxTreeItemId& item) const;
 
     /**

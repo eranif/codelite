@@ -1,4 +1,5 @@
 #include "BitmapComboxWrapper.h"
+
 #include "BitmapTextArrayProperty.h"
 #include "BmpTextSelectorDlg.h"
 #include "allocator_mgr.h"
@@ -12,16 +13,16 @@ BitmapComboxWrapper::BitmapComboxWrapper()
     SetPropertyString(_("Common Settings"), "wxBitmapComboBox");
     AddProperty(new BitmapTextArrayProperty(PROP_CB_CHOICES, "", _("Combobox drop down choices")));
     AddProperty(new StringProperty(
-        PROP_SELECTION, wxT("-1"),
+        PROP_SELECTION, "-1",
         _("The zero-based position of any initially selected string, or -1 if none are to be selected")));
     AddProperty(new StringProperty(PROP_VALUE, "", _("The combobox initial value")));
 
-    RegisterEventCommand(wxT("wxEVT_COMMAND_COMBOBOX_SELECTED"),
+    RegisterEventCommand("wxEVT_COMMAND_COMBOBOX_SELECTED",
                          _("Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is selected. "
-                             "Note that calling GetValue returns the new value of selection."));
-    RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_UPDATED"),
+                           "Note that calling GetValue returns the new value of selection."));
+    RegisterEventCommand("wxEVT_COMMAND_TEXT_UPDATED",
                          _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."));
-    RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_ENTER"),
+    RegisterEventCommand("wxEVT_COMMAND_TEXT_ENTER",
                          _("Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox."));
 
     PREPEND_STYLE(wxCB_READONLY, false);
@@ -47,16 +48,18 @@ wxString BitmapComboxWrapper::CppCtorCode() const
         labels.Add(arr.at(i).second);
     }
     wxString code;
-    code << GetName() << wxT(" = new ") << GetRealClassName() << "(" << GetWindowParent() << wxT(", ") << WindowID()
-         << wxT(", wxEmptyString") << wxT(", wxDefaultPosition, ") << SizeAsString() << wxT(", wxArrayString(), ")
-         << StyleFlags(wxT("0")) << wxT(");\n");
+    code << GetName() << " = new " << GetRealClassName() << "(" << GetWindowParent() << ", " << WindowID()
+         << ", wxEmptyString"
+         << ", wxDefaultPosition, " << SizeAsString() << ", wxArrayString(), " << StyleFlags("0") << ");\n";
 
     // Append the items
     for(size_t i = 0; i < labels.GetCount(); ++i) {
         code << GetName() << "->Append(" << wxCrafter::UNDERSCORE(labels.Item(i)) << ", " << bitmaps.Item(i) << ");\n";
     }
     int sel = PropertyInt(PROP_SELECTION);
-    if(sel != wxNOT_FOUND && sel < (int)labels.GetCount()) { code << GetName() << "->SetSelection(" << sel << ");\n"; }
+    if(sel != wxNOT_FOUND && sel < (int)labels.GetCount()) {
+        code << GetName() << "->SetSelection(" << sel << ");\n";
+    }
     return code;
 }
 

@@ -1,5 +1,7 @@
 #include "ribbon_button_bar_wrapper.h"
+
 #include "allocator_mgr.h"
+
 #include <wx/ribbon/buttonbar.h>
 
 RibbonButtonBarWrapper::RibbonButtonBarWrapper()

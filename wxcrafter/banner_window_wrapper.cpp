@@ -1,12 +1,13 @@
 #include "banner_window_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "color_property.h"
 #include "file_ficker_property.h"
 #include "multi_strings_property.h"
 #include "wxc_bitmap_code_generator.h"
-#include "wxc_settings.h"
 #include "wxgui_helpers.h"
+
 #include <wx/bannerwindow.h>
 
 BannerWindowWrapper::BannerWindowWrapper()
@@ -31,7 +32,7 @@ BannerWindowWrapper::BannerWindowWrapper()
                              "the bitmap truncated if it's too big to fit\nbut doesn't do anything for the banner "
                              "position, this is supposed to be taken care of in the usual way, e.g. using sizers")));
     AddProperty(new BitmapPickerProperty(
-        PROP_BITMAP_PATH, wxT(""),
+        PROP_BITMAP_PATH, "",
         _("Select the bitmap file\nImportant: You can set text and title OR a bitmap, but not both")));
     AddProperty(new ColorProperty(PROP_COLOR_GRADIENT_START));
     AddProperty(new ColorProperty(PROP_COLOR_GRADIENT_END));
@@ -86,5 +87,3 @@ void BannerWindowWrapper::ToXRC(wxString& text, XRC_TYPE type) const
          << "<gradient-end>" << wxCrafter::GetColourForXRC(PropertyString(PROP_COLOR_GRADIENT_END)) << "</gradient-end>"
          << XRCSuffix();
 }
-
-bool BannerWindowWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

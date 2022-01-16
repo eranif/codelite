@@ -17,7 +17,6 @@ class MainFrame : public MainFrameBase
 protected:
     GUICraftMainPanel* m_wxcView;
     wxcTreeView* m_treeView;
-    wxString m_titlePrefix;
     wxFindReplaceDialog* m_findReplaceDialog;
     wxFindReplaceData m_findData;
     bool m_exiting;
@@ -73,8 +72,6 @@ protected:
     virtual void OnProjectLoaded(wxCommandEvent& e);
     virtual void OnWorkspaceClosed(clWorkspaceEvent& e);
     virtual void OnCodeLiteGotFocus(wxCommandEvent& e);
-    virtual void OnLicenseUpdatedSuccessfully(wxCommandEvent& e);
-    virtual void OnLicenseUpdatedUnSuccessfully(wxCommandEvent& e);
     void OnCodeEditorSelected(wxCommandEvent& e);
 
     // Events arrived from the network
@@ -87,7 +84,6 @@ protected:
 protected:
     wxTextCtrl* GetActiveTextCtrl();
     wxStyledTextCtrl* GetActiveSTC();
-    void DoUpdateTitle();
     bool DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, bool findNext);
     void EnsureVisibile();
     void DoOpenWxcpProject();

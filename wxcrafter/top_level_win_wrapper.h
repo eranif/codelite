@@ -4,6 +4,7 @@
 #include "string_property.h"
 #include "wxc_project_metadata.h"
 #include "wxc_widget.h" // Base class: WrapperBase
+
 #include <wx/gdicmn.h>
 
 class TopLevelWinWrapper : public wxcWidget
@@ -20,8 +21,8 @@ protected:
 public:
     static void WrapXRC(wxString& text);
     virtual wxString DesignerXRC(bool forPreviewDialog) const = 0;
-    
-    wxString CppCtorCode() const;
+
+    virtual wxString CppCtorCode() const;
     /**
      * @brief to avoid code duplications, check if another aui toolbar
      * already registered the helpers for this TLW

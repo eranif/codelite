@@ -2,7 +2,6 @@
 #define POPUPWINDOWWRAPPER_H
 
 #include "top_level_win_wrapper.h"
-#include "wxc_settings.h"
 #include "wxc_widget.h" // Base class: wxcWidget
 
 class PopupWindowWrapper : public TopLevelWinWrapper
@@ -19,7 +18,6 @@ public:
 
     PopupWindowWrapper();
     virtual ~PopupWindowWrapper();
-    bool IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
 };
 
 #endif // POPUPWINDOWWRAPPER_H

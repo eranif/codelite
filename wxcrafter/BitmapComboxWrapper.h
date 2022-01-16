@@ -18,7 +18,6 @@ public:
     virtual void LoadPropertiesFromwxFB(const wxXmlNode* node);
     virtual void LoadPropertiesFromwxSmith(const wxXmlNode* node);
     virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    bool IsLicensed() const { return wxcSettings::Get().IsLicensed2(); }
 };
 
 #endif // BITMAPCOMBOXWRAPPER_H

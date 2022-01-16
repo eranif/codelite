@@ -1,17 +1,11 @@
 #include "wxc_settings.h"
 
-#include "FreeTrialVersionDlg.h"
-#include "serial_number.h"
 #include "wxgui_helpers.h"
 
-#include <wx/app.h>
-#include <wx/datetime.h>
 #include <wx/filename.h>
-#include <wx/stdpaths.h>
 
 wxcSettings::wxcSettings()
     : m_flags(0)
-    , m_ts(time(NULL))
     , m_initCompleted(false)
 {
     Load();
@@ -30,18 +24,14 @@ void wxcSettings::Load()
     wxFileName fn(wxCrafter::GetConfigFile());
     JSONRoot root(fn);
     if(root.isOk()) {
-        time_t nowT = wxDateTime::Now().GetTicks();
-        m_flags = root.toElement().namedObject(wxT("m_annoyDialogs")).toInt(m_flags);
+        m_flags = root.toElement().namedObject("m_annoyDialogs").toInt(m_flags);
         m_flags &= ~USE_TABBED_MODE;
-        m_sashPosition = root.toElement().namedObject(wxT("m_sashPosition")).toInt(150);
-        m_secondarySashPos = root.toElement().namedObject(wxT("m_secondarySashPos")).toInt(-1);
-        m_treeviewSashPos = root.toElement().namedObject(wxT("m_treeviewSashPos")).toInt(-1);
-        m_username = root.toElement().namedObject("username").toString();
-        m_serialNumber = root.toElement().namedObject("serialNumber").toString();
+        m_sashPosition = root.toElement().namedObject("m_sashPosition").toInt(150);
+        m_secondarySashPos = root.toElement().namedObject("m_secondarySashPos").toInt(-1);
+        m_treeviewSashPos = root.toElement().namedObject("m_treeviewSashPos").toInt(-1);
         m_history = root.toElement().namedObject("recentFiles").toArrayString();
-        m_ts = root.toElement().namedObject("activationCode").toInt(nowT);
 
-        JSONElement arr = root.toElement().namedObject(wxT("m_templateClasses"));
+        JSONElement arr = root.toElement().namedObject("m_templateClasses");
         m_templateClasses.clear();
         for(int i = 0; i < arr.arraySize(); ++i) {
             CustomControlTemplate templateControl;
@@ -58,16 +48,13 @@ void wxcSettings::Save()
 
     JSONRoot root(cJSON_Object);
     m_flags &= ~USE_TABBED_MODE;
-    root.toElement().addProperty(wxT("m_annoyDialogs"), (int)m_flags);
-    root.toElement().addProperty(wxT("m_sashPosition"), m_sashPosition);
-    root.toElement().addProperty(wxT("m_secondarySashPos"), m_secondarySashPos);
-    root.toElement().addProperty(wxT("m_treeviewSashPos"), m_treeviewSashPos);
-    root.toElement().addProperty("serialNumber", m_serialNumber);
-    root.toElement().addProperty("username", m_username);
+    root.toElement().addProperty("m_annoyDialogs", (int)m_flags);
+    root.toElement().addProperty("m_sashPosition", m_sashPosition);
+    root.toElement().addProperty("m_secondarySashPos", m_secondarySashPos);
+    root.toElement().addProperty("m_treeviewSashPos", m_treeviewSashPos);
     root.toElement().addProperty("recentFiles", m_history);
-    root.toElement().addProperty("activationCode", (int)m_ts);
 
-    JSONElement arr = JSONElement::createArray(wxT("m_templateClasses"));
+    JSONElement arr = JSONElement::createArray("m_templateClasses");
     root.toElement().append(arr);
 
     CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.begin();
@@ -101,16 +88,18 @@ CustomControlTemplate wxcSettings::FindByControlId(int controlId) const
 CustomControlTemplate wxcSettings::FindByControlName(const wxString& name) const
 {
     CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.find(name);
-    if(iter == m_templateClasses.end())
+    if(iter == m_templateClasses.end()) {
         return CustomControlTemplate();
+    }
     return iter->second;
 }
 
 void wxcSettings::DeleteCustomControl(const wxString& name)
 {
     CustomControlTemplateMap_t::iterator iter = m_templateClasses.find(name);
-    if(iter == m_templateClasses.end())
+    if(iter == m_templateClasses.end()) {
         return;
+    }
 
     m_templateClasses.erase(iter);
 }
@@ -135,20 +124,15 @@ void wxcSettings::MergeCustomControl(const JSONElement& arr)
 
 JSONElement wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) const
 {
-    JSONElement arr = JSONElement::createArray(wxT("m_templateClasses"));
+    JSONElement arr = JSONElement::createArray("m_templateClasses");
     CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.begin();
     for(; iter != m_templateClasses.end(); ++iter) {
-        if(controls.Index(iter->first) != wxNOT_FOUND)
+        if(controls.Index(iter->first) != wxNOT_FOUND) {
             arr.append(iter->second.ToJSON());
+        }
     }
     return arr;
 }
-
-bool wxcSettings::IsLicensed() const { return true; }
-
-bool wxcSettings::IsLicensed2() const { return IsLicensed(); }
-
-bool wxcSettings::IsRegistered() const { return true; }
 
 void wxcSettings::ShowNagDialogIfNeeded() {}
 

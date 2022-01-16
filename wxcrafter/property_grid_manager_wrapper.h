@@ -6,7 +6,6 @@
 class PropertyGridManagerWrapper : public wxcWidget
 {
 public:
-    virtual bool IsLicensed() const;
     virtual void GetIncludeFile(wxArrayString& headers) const;
     virtual wxString GetWxClassName() const;
     virtual void ToXRC(wxString& text, XRC_TYPE type) const;

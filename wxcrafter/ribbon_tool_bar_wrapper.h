@@ -16,7 +16,6 @@ public:
     virtual wxString GetWxClassName() const;
     virtual void ToXRC(wxString& text, XRC_TYPE type) const;
     virtual wxString DoGenerateCppCtorCode_End() const;
-    virtual bool IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
 };
 
 #endif // RIBBONTOOLBARWRAPPER_H

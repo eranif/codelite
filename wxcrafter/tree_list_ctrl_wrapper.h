@@ -6,7 +6,6 @@
 class TreeListCtrlWrapper : public wxcWidget
 {
 public:
-    virtual bool IsLicensed() const;
     TreeListCtrlWrapper();
     virtual ~TreeListCtrlWrapper();
 

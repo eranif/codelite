@@ -16,7 +16,7 @@ public:
     virtual void DoLoadXRCProperties(const wxXmlNode* node); // Shared by LoadPropertiesFromXRC and FromwxSmith
 
 protected:
-    wxString DoGenerateCppCtorCode_End() const;
+    virtual wxString DoGenerateCppCtorCode_End() const;
 
 public:
     virtual void GetIncludeFile(wxArrayString& headers) const;

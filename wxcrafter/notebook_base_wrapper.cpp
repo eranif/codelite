@@ -1,9 +1,11 @@
 #include "notebook_base_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "notebook_page_wrapper.h"
 #include "wxc_notebook_code_helper.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
+
 #include <wx/bookctrl.h>
 #include <wx/imaglist.h>
 
@@ -22,7 +24,7 @@ NotebookBaseWrapper::~NotebookBaseWrapper() {}
 wxString NotebookBaseWrapper::CppCtorCode() const
 {
     wxString code;
-    code << CPPStandardWxCtor(wxT("0"));
+    code << CPPStandardWxCtor("0");
 
     // Set the window name
     code << GetName() << "->SetName(" << wxCrafter::WXT(GetName()) << ");\n";
@@ -45,14 +47,14 @@ wxString NotebookBaseWrapper::CppCtorCode() const
     bool isAuiBook = (GetType() == ID_WXAUINOTEBOOK);
     if((xx != -1 && yy != -1) && !isAuiBook) {
         wxString ilName;
-        ilName << GetName() << wxT("_il");
-        code << wxT("wxImageList* ") << ilName << wxT(" = new wxImageList(") << xx << wxT(", ") << yy << wxT(");\n");
-        code << GetName() << wxT("->AssignImageList(") << ilName << wxT(");\n");
+        ilName << GetName() << "_il";
+        code << "wxImageList* " << ilName << " = new wxImageList(" << xx << ", " << yy << ");\n";
+        code << GetName() << "->AssignImageList(" << ilName << ");\n";
     }
 
     wxString& helperCode = wxcNotebookCodeHelper::Get().Code();
     wxcWidget* tlw = GetTopLevel();
-    if(tlw && tlw->IsPropertyChecked(PROP_PERSISTENT) && wxcSettings::Get().IsLicensed()) {
+    if(tlw && tlw->IsPropertyChecked(PROP_PERSISTENT)) {
         helperCode << "\n";
         helperCode << wxCrafter::WX29_BLOCK_START();
         helperCode << "if(!wxPersistenceManager::Get().Find(" << GetName() << ")){\n";
@@ -81,7 +83,9 @@ NotebookPageWrapper* NotebookBaseWrapper::GetSelection() const
 
         // Check the children of this page and the page itself
         NotebookPageWrapper* sel = DoGetSelection(page);
-        if(sel) { return sel; }
+        if(sel) {
+            return sel;
+        }
     }
     return NULL;
 }
@@ -111,7 +115,9 @@ void NotebookBaseWrapper::DoSetSelection(NotebookPageWrapper* page, wxcWidget* p
 
 NotebookPageWrapper* NotebookBaseWrapper::DoGetSelection(NotebookPageWrapper* page) const
 {
-    if(page->IsSelected()) return page;
+    if(page->IsSelected()) {
+        return page;
+    }
 
     wxcWidget::List_t& list = page->GetChildren();
     wxcWidget::List_t::const_iterator iter = list.begin();
@@ -119,7 +125,9 @@ NotebookPageWrapper* NotebookBaseWrapper::DoGetSelection(NotebookPageWrapper* pa
         NotebookPageWrapper* child = dynamic_cast<NotebookPageWrapper*>(*iter);
         if(child) {
             NotebookPageWrapper* sel = DoGetSelection(child);
-            if(sel) { return sel; }
+            if(sel) {
+                return sel;
+            }
         }
     }
     return NULL;
@@ -131,7 +139,9 @@ int NotebookBaseWrapper::GetPageIndex(const NotebookPageWrapper* page) const
     const wxcWidget::List_t& list = GetChildren();
     wxcWidget::List_t::const_iterator iter = list.begin();
     for(; iter != list.end(); iter++) {
-        if(DoGetPageIndex((const NotebookPageWrapper*)(*iter), page, count)) { return count; }
+        if(DoGetPageIndex((const NotebookPageWrapper*)(*iter), page, count)) {
+            return count;
+        }
     }
     return wxNOT_FOUND;
 }
@@ -139,16 +149,22 @@ int NotebookBaseWrapper::GetPageIndex(const NotebookPageWrapper* page) const
 bool NotebookBaseWrapper::DoGetPageIndex(const NotebookPageWrapper* page, const NotebookPageWrapper* pageToFind,
                                          int& count) const
 {
-    if(page == pageToFind) return true;
+    if(page == pageToFind) {
+        return true;
+    }
 
     count++;
-    if(page->GetChildren().empty()) { return false; }
+    if(page->GetChildren().empty()) {
+        return false;
+    }
 
     List_t::const_iterator iter = page->GetChildren().begin();
     for(; iter != page->GetChildren().end(); iter++) {
         NotebookPageWrapper* child = dynamic_cast<NotebookPageWrapper*>(*iter);
         if(child) {
-            if(DoGetPageIndex(child, pageToFind, count)) { return true; }
+            if(DoGetPageIndex(child, pageToFind, count)) {
+                return true;
+            }
         }
     }
     return false;
@@ -164,7 +180,9 @@ wxcWidget* NotebookBaseWrapper::GetChildPageAtDepth(size_t targetlevel)
     wxcWidget* target = NULL;
 
     NotebookPageWrapper* page = GetLastPage(); // Find the last page of the book
-    if(page) { target = DoGetChildPageAtDepth(page, targetlevel, 0); }
+    if(page) {
+        target = DoGetChildPageAtDepth(page, targetlevel, 0);
+    }
 
     return target;
 }
@@ -172,14 +190,18 @@ wxcWidget* NotebookBaseWrapper::GetChildPageAtDepth(size_t targetlevel)
 NotebookPageWrapper* NotebookBaseWrapper::DoGetChildPageAtDepth(NotebookPageWrapper* page, size_t targetlevel,
                                                                 size_t currentlevel) const
 {
-    if(currentlevel == targetlevel) { return page; }
+    if(currentlevel == targetlevel) {
+        return page;
+    }
 
     // The _last_ child notebookpage is the one to check
     const wxcWidget::List_t& children = page->GetChildren();
     wxcWidget::List_t::const_reverse_iterator riter = children.rbegin();
     for(; riter != children.rend(); ++riter) {
         NotebookPageWrapper* child = dynamic_cast<NotebookPageWrapper*>(*riter);
-        if(child) { return DoGetChildPageAtDepth(child, targetlevel, ++currentlevel); }
+        if(child) {
+            return DoGetChildPageAtDepth(child, targetlevel, ++currentlevel);
+        }
     }
 
     return NULL;

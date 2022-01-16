@@ -1,5 +1,7 @@
 #include "data_view_tree_ctrl_wrapper.h"
+
 #include "allocator_mgr.h"
+
 #include <wx/dataview.h>
 
 DataViewTreeCtrlWrapper::DataViewTreeCtrlWrapper()
@@ -85,5 +87,3 @@ void DataViewTreeCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         text << XRCPrefix() << XRCSize() << XRCStyle() << XRCCommonAttributes() << XRCSuffix();
     }
 }
-
-bool DataViewTreeCtrlWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

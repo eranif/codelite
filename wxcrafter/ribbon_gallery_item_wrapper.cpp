@@ -1,4 +1,5 @@
 #include "ribbon_gallery_item_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "file_ficker_property.h"
 #include "wxc_bitmap_code_generator.h"
@@ -10,7 +11,7 @@ RibbonGalleryItemWrapper::RibbonGalleryItemWrapper()
     : wxcWidget(ID_WXRIBBONGALLERYITME)
 {
     SetPropertyString(_("Common Settings"), "wxRibbonGalleryItem");
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file")));
+    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", _("Select the bitmap file")));
 
     wxCrafter::ResourceLoader bl;
     m_properties.Item(PROP_BITMAP_PATH)->SetValue(bl.GetPlaceHolderImagePath().GetFullPath());

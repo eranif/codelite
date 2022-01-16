@@ -1,8 +1,10 @@
 #include "AnimationCtrlWrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
+
 #include <wx/animate.h>
 #include <wx/mstream.h>
 
@@ -15,10 +17,9 @@ AnimationCtrlWrapper::AnimationCtrlWrapper()
     SetPropertyString(_("Common Settings"), "wxAnimationCtrl");
 
     AddBool(PROP_ANIM_AUTO_PLAY, _("Load and play animation on creation"), false);
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the animation file")));
-    AddProperty(
-        new BitmapPickerProperty(PROP_DISABLED_BITMAP_PATH, wxT(""),
-                                 _("Sets the bitmap to show on the control when it's not playing an animation")));
+    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", _("Select the animation file")));
+    AddProperty(new BitmapPickerProperty(
+        PROP_DISABLED_BITMAP_PATH, "", _("Sets the bitmap to show on the control when it's not playing an animation")));
 
     m_namePattern = "m_animationCtrl";
     SetName(GenerateName());
@@ -36,9 +37,9 @@ wxString AnimationCtrlWrapper::CppCtorCode() const
     // wxAnimationCtrl (wxWindow *parent, wxWindowID id, const wxAnimation &anim=wxNullAnimation, const wxPoint
     // &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, long style=wxAC_DEFAULT_STYLE, const wxString
     // &name=wxAnimationCtrlNameStr)
-    code << GetName() << wxT(" = new ") << GetRealClassName() << "(" << GetWindowParent() << wxT(", ") << WindowID()
-         << wxT(", wxNullAnimation, wxDefaultPosition, ") << SizeAsString() << wxT(", ")
-         << StyleFlags(wxT("wxAC_DEFAULT_STYLE")) << wxT(");\n");
+    code << GetName() << " = new " << GetRealClassName() << "(" << GetWindowParent() << ", " << WindowID()
+         << ", wxNullAnimation, wxDefaultPosition, " << SizeAsString() << ", " << StyleFlags("wxAC_DEFAULT_STYLE")
+         << ");\n";
 
     // Load the image file
     if(PropertyBool(PROP_ANIM_AUTO_PLAY) == "true") {
@@ -58,7 +59,7 @@ void AnimationCtrlWrapper::GetIncludeFile(wxArrayString& headers) const
     headers.Add("#include <wx/animate.h>");
 }
 
-wxString AnimationCtrlWrapper::GetWxClassName() const { return wxT("wxAnimationCtrl"); }
+wxString AnimationCtrlWrapper::GetWxClassName() const { return "wxAnimationCtrl"; }
 
 void AnimationCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {

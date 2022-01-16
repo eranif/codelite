@@ -1,6 +1,6 @@
 #include "web_view_wrapper.h"
+
 #include "allocator_mgr.h"
-#include "wxc_settings.h"
 #include "wxgui_helpers.h"
 
 WebViewWrapper::WebViewWrapper()
@@ -78,5 +78,3 @@ void WebViewWrapper::ToXRC(wxString& text, XRC_TYPE type) const
              << XRCSuffix();
     }
 }
-
-bool WebViewWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

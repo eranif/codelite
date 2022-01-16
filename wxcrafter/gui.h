@@ -30,7 +30,6 @@
 #include <wx/scrolwin.h>
 #include "designer_panel.h"
 #include <wx/stc/stc.h>
-#include <wx/infobar.h>
 #include <wx/propgrid/manager.h>
 #include <wx/dialog.h>
 #include <wx/stattext.h>
@@ -41,7 +40,6 @@
 #include <wx/checkbox.h>
 #include <wx/bitmap.h>
 #include <wx/icon.h>
-#include <wx/commandlinkbutton.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -159,13 +157,13 @@ protected:
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetMainToolbar() noexcept { return m_mainToolbar; }
-    wxPanel* GetSplitterPageTreeView() noexcept { return m_splitterPageTreeView; }
-    wxPanel* GetSplitterPageDesigner() noexcept { return m_splitterPageDesigner; }
-    wxSplitterWindow* GetSplitterMain() noexcept { return m_splitterMain; }
-    wxPanel* GetMainPanel() noexcept { return m_MainPanel; }
-    wxStatusBar* GetStatusBar() noexcept { return m_statusBar; }
-    wxMenuBar* GetMenuBar() noexcept { return m_menuBar; }
+    clToolBar* GetMainToolbar() { return m_mainToolbar; }
+    wxPanel* GetSplitterPageTreeView() { return m_splitterPageTreeView; }
+    wxPanel* GetSplitterPageDesigner() { return m_splitterPageDesigner; }
+    wxSplitterWindow* GetSplitterMain() { return m_splitterMain; }
+    wxPanel* GetMainPanel() { return m_MainPanel; }
+    wxStatusBar* GetStatusBar() { return m_statusBar; }
+    wxMenuBar* GetMenuBar() { return m_menuBar; }
     MainFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("wxCrafter"),
                   const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                   long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxTAB_TRAVERSAL);
@@ -174,11 +172,6 @@ public:
 
 class GUICraftMainPanelBase : public wxPanel
 {
-public:
-    enum {
-        ID_DOWNLOAD = 1001,
-    };
-
 protected:
     wxPanel* m_panelRightSidebar;
     wxSplitterWindow* m_mainSplitter;
@@ -196,7 +189,6 @@ protected:
     wxStyledTextCtrl* m_textCtrlHeaderSource;
     wxPanel* m_xrcNBPage;
     wxStyledTextCtrl* m_textCtrlXrc;
-    wxInfoBar* m_infobarLicense;
     wxPanel* m_panel10;
     wxNotebook* m_notebook2;
     wxPanel* m_pageProps;
@@ -211,41 +203,38 @@ protected:
 protected:
     virtual void OnPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
     virtual void OnCppBookPageChanged(wxBookCtrlEvent& event) { event.Skip(); }
-    virtual void OnRegisterWxCrafter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCloseLicenseMessage(wxCommandEvent& event) { event.Skip(); }
     virtual void OnStylesChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnSizerFlagsChanged(wxPropertyGridEvent& event) { event.Skip(); }
     virtual void OnSizerFlagsUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnAuiPaneInfoChanged(wxPropertyGridEvent& event) { event.Skip(); }
 
 public:
-    wxPanel* GetPanelToolBox() noexcept { return m_panelToolBox; }
-    wxAuiToolBar* GetToolbar() noexcept { return m_toolbar; }
-    DesignerPanel* GetDp() noexcept { return m_dp; }
-    wxPanel* GetDesignerNBPage() noexcept { return m_designerNBPage; }
-    wxStyledTextCtrl* GetTextCtrlCppSource() noexcept { return m_textCtrlCppSource; }
-    wxPanel* GetCppPage() noexcept { return m_cppPage; }
-    wxStyledTextCtrl* GetTextCtrlHeaderSource() noexcept { return m_textCtrlHeaderSource; }
-    wxPanel* GetHeaderPage() noexcept { return m_headerPage; }
-    wxNotebook* GetNotebookCpp() noexcept { return m_notebookCpp; }
-    wxPanel* GetCppNBPage() noexcept { return m_cppNBPage; }
-    wxStyledTextCtrl* GetTextCtrlXrc() noexcept { return m_textCtrlXrc; }
-    wxPanel* GetXrcNBPage() noexcept { return m_xrcNBPage; }
-    OutputNBook* GetMainBook() noexcept { return m_mainBook; }
-    wxInfoBar* GetInfobarLicense() noexcept { return m_infobarLicense; }
-    wxPanel* GetPanelDesigner() noexcept { return m_panelDesigner; }
-    wxPanel* GetPanelProperties() noexcept { return m_panelProperties; }
-    wxPanel* GetPageProps() noexcept { return m_pageProps; }
-    wxPropertyGridManager* GetPgMgrStyles() noexcept { return m_pgMgrStyles; }
-    wxPanel* GetPanelStyles() noexcept { return m_panelStyles; }
-    wxPropertyGridManager* GetPgMgrSizerFlags() noexcept { return m_pgMgrSizerFlags; }
-    wxPanel* GetPanelSizerFlags() noexcept { return m_panelSizerFlags; }
-    wxPropertyGridManager* GetPgMgrAuiProperties() noexcept { return m_pgMgrAuiProperties; }
-    wxPanel* GetPanelAuiPaneInfo() noexcept { return m_panelAuiPaneInfo; }
-    wxNotebook* GetNotebook2() noexcept { return m_notebook2; }
-    wxPanel* GetPanel10() noexcept { return m_panel10; }
-    wxSplitterWindow* GetMainSplitter() noexcept { return m_mainSplitter; }
-    wxPanel* GetPanelRightSidebar() noexcept { return m_panelRightSidebar; }
+    wxPanel* GetPanelToolBox() { return m_panelToolBox; }
+    wxAuiToolBar* GetToolbar() { return m_toolbar; }
+    DesignerPanel* GetDp() { return m_dp; }
+    wxPanel* GetDesignerNBPage() { return m_designerNBPage; }
+    wxStyledTextCtrl* GetTextCtrlCppSource() { return m_textCtrlCppSource; }
+    wxPanel* GetCppPage() { return m_cppPage; }
+    wxStyledTextCtrl* GetTextCtrlHeaderSource() { return m_textCtrlHeaderSource; }
+    wxPanel* GetHeaderPage() { return m_headerPage; }
+    wxNotebook* GetNotebookCpp() { return m_notebookCpp; }
+    wxPanel* GetCppNBPage() { return m_cppNBPage; }
+    wxStyledTextCtrl* GetTextCtrlXrc() { return m_textCtrlXrc; }
+    wxPanel* GetXrcNBPage() { return m_xrcNBPage; }
+    OutputNBook* GetMainBook() { return m_mainBook; }
+    wxPanel* GetPanelDesigner() { return m_panelDesigner; }
+    wxPanel* GetPanelProperties() { return m_panelProperties; }
+    wxPanel* GetPageProps() { return m_pageProps; }
+    wxPropertyGridManager* GetPgMgrStyles() { return m_pgMgrStyles; }
+    wxPanel* GetPanelStyles() { return m_panelStyles; }
+    wxPropertyGridManager* GetPgMgrSizerFlags() { return m_pgMgrSizerFlags; }
+    wxPanel* GetPanelSizerFlags() { return m_panelSizerFlags; }
+    wxPropertyGridManager* GetPgMgrAuiProperties() { return m_pgMgrAuiProperties; }
+    wxPanel* GetPanelAuiPaneInfo() { return m_panelAuiPaneInfo; }
+    wxNotebook* GetNotebook2() { return m_notebook2; }
+    wxPanel* GetPanel10() { return m_panel10; }
+    wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }
+    wxPanel* GetPanelRightSidebar() { return m_panelRightSidebar; }
     GUICraftMainPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~GUICraftMainPanelBase();
@@ -258,7 +247,7 @@ protected:
 
 protected:
 public:
-    wxScrolledWindow* GetMainPanel() noexcept { return m_mainPanel; }
+    wxScrolledWindow* GetMainPanel() { return m_mainPanel; }
     PropertiesSheetBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~PropertiesSheetBase();
@@ -275,8 +264,8 @@ protected:
 
 protected:
 public:
-    wxStaticText* GetStaticTextMessage() noexcept { return m_staticTextMessage; }
-    wxStyledTextCtrl* GetStc() noexcept { return m_stc; }
+    wxStaticText* GetStaticTextMessage() { return m_staticTextMessage; }
+    wxStyledTextCtrl* GetStc() { return m_stc; }
     EnterStringsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Enter Text"),
                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
@@ -292,9 +281,9 @@ protected:
 
 protected:
 public:
-    wxPanel* GetPanel11() noexcept { return m_panel11; }
-    wxButton* GetButton6() noexcept { return m_button6; }
-    wxButton* GetButton7() noexcept { return m_button7; }
+    wxPanel* GetPanel11() { return m_panel11; }
+    wxButton* GetButton6() { return m_button6; }
+    wxButton* GetButton7() { return m_button7; }
     ColorPaletteDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Color"),
                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE);
@@ -317,11 +306,11 @@ protected:
     virtual void OnPaintPreviewColor(wxPaintEvent& event) { event.Skip(); }
 
 public:
-    wxChoice* GetChoiceStandardColors() noexcept { return m_choiceStandardColors; }
-    wxButton* GetButton5() noexcept { return m_button5; }
-    wxPanel* GetPanelColorPreview() noexcept { return m_panelColorPreview; }
-    wxButton* GetButton8() noexcept { return m_button8; }
-    wxButton* GetButton11() noexcept { return m_button11; }
+    wxChoice* GetChoiceStandardColors() { return m_choiceStandardColors; }
+    wxButton* GetButton5() { return m_button5; }
+    wxPanel* GetPanelColorPreview() { return m_panelColorPreview; }
+    wxButton* GetButton8() { return m_button8; }
+    wxButton* GetButton11() { return m_button11; }
     ColourPickerDlgbase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Colour..."),
                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE);
@@ -346,12 +335,12 @@ protected:
     virtual void OnOk(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxCheckBox* GetCheckBoxUseTRay() noexcept { return m_checkBoxUseTRay; }
-    wxCheckBox* GetCheckBoxFormatInheritedFiles() noexcept { return m_checkBoxFormatInheritedFiles; }
-    wxStaticText* GetStaticText215() noexcept { return m_staticText215; }
-    wxCheckBox* GetCheckBoxKeepAllUsersetNames() noexcept { return m_checkBoxKeepAllUsersetNames; }
-    wxCheckBox* GetCheckBoxKeepAllPossibleNames() noexcept { return m_checkBoxKeepAllPossibleNames; }
-    wxCheckBox* GetCheckBoxCopyEventhandlerToo() noexcept { return m_checkBoxCopyEventhandlerToo; }
+    wxCheckBox* GetCheckBoxUseTRay() { return m_checkBoxUseTRay; }
+    wxCheckBox* GetCheckBoxFormatInheritedFiles() { return m_checkBoxFormatInheritedFiles; }
+    wxStaticText* GetStaticText215() { return m_staticText215; }
+    wxCheckBox* GetCheckBoxKeepAllUsersetNames() { return m_checkBoxKeepAllUsersetNames; }
+    wxCheckBox* GetCheckBoxKeepAllPossibleNames() { return m_checkBoxKeepAllPossibleNames; }
+    wxCheckBox* GetCheckBoxCopyEventhandlerToo() { return m_checkBoxCopyEventhandlerToo; }
     wxcSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("wxCrafter Settings"),
                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
@@ -395,28 +384,6 @@ public:
     void SetBitmapResolution(const wxString& res = wxEmptyString) { m_resolution = res; }
 
     virtual ~wxcImages();
-};
-
-class FreeTrialVersionDlgBase : public wxDialog
-{
-protected:
-    wxStaticText* m_staticText270;
-    wxCommandLinkButton* m_cmdLnkBtnPurchase;
-    wxCommandLinkButton* m_cmdLnkBtnCancel;
-
-protected:
-    virtual void OnPurchase(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnTrial(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxStaticText* GetStaticText270() noexcept { return m_staticText270; }
-    wxCommandLinkButton* GetCmdLnkBtnPurchase() noexcept { return m_cmdLnkBtnPurchase; }
-    wxCommandLinkButton* GetCmdLnkBtnCancel() noexcept { return m_cmdLnkBtnCancel; }
-    FreeTrialVersionDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                            const wxString& title = _("This is an unregistered copy of wxCrafter"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                            long style = wxDEFAULT_DIALOG_STYLE);
-    virtual ~FreeTrialVersionDlgBase();
 };
 
 #endif

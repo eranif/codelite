@@ -29,20 +29,20 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
     if(type == ID_WXFRAME || type == ID_WXDIALOG) {
         // a real top level windows
         // add support for wxTopLevelWindow events
-        RegisterEvent(wxT("wxEVT_MAXIMIZE"), wxT("wxMaximizeEvent"), _("Process a wxEVT_MAXIMIZE event"));
-        RegisterEvent(wxT("wxEVT_MOVE"), wxT("wxMoveEvent"),
+        RegisterEvent("wxEVT_MAXIMIZE", "wxMaximizeEvent", _("Process a wxEVT_MAXIMIZE event"));
+        RegisterEvent("wxEVT_MOVE", "wxMoveEvent",
                       _("Process a wxEVT_MOVE event, which is generated when a window is moved"));
-        RegisterEvent(wxT("wxEVT_MOVE_START"), wxT("wxMoveEvent"),
+        RegisterEvent("wxEVT_MOVE_START", "wxMoveEvent",
                       _("Process a wxEVT_MOVE_START event, which is generated when the "
                         "user starts to move or size a window. Windows only"));
-        RegisterEvent(wxT("wxEVT_MOVE_END"), wxT("wxMoveEvent"),
+        RegisterEvent("wxEVT_MOVE_END", "wxMoveEvent",
                       _("Process a wxEVT_MOVE_END event, which is generated when "
                         "the user stops moving or sizing a window. Windows only"));
-        RegisterEvent(wxT("wxEVT_SHOW"), wxT("wxShowEvent"), _("Process a wxEVT_SHOW event"));
+        RegisterEvent("wxEVT_SHOW", "wxShowEvent", _("Process a wxEVT_SHOW event"));
     }
 
     // Default size for top level windows
-    DoSetPropertyStringValue(PROP_SIZE, wxT("500,300"));
+    DoSetPropertyStringValue(PROP_SIZE, "500,300");
     if(IsWxTopLevelWindow()) {
         // Add a persistency object support
         AddBool(PROP_PERSISTENT,
@@ -52,10 +52,10 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
     }
 
     wxArrayString arr;
-    arr.Add(wxT(""));
-    arr.Add(wxT("wxBOTH"));
-    arr.Add(wxT("wxVERTICAL"));
-    arr.Add(wxT("wxHORIZONTAL"));
+    arr.Add("");
+    arr.Add("wxBOTH");
+    arr.Add("wxVERTICAL");
+    arr.Add("wxHORIZONTAL");
 
     AddProperty(new StringProperty(PROP_TITLE, "", _("The title, if any")));
     AddProperty(
@@ -89,12 +89,12 @@ wxString TopLevelWinWrapper::FormatCode(const wxString& chunk) const
 {
     // Format the code a bit
     wxString formattedCode;
-    wxArrayString codeArr = ::wxStringTokenize(chunk, wxT("\n\r"), wxTOKEN_RET_EMPTY_ALL);
+    wxArrayString codeArr = ::wxStringTokenize(chunk, "\n\r", wxTOKEN_RET_EMPTY_ALL);
     for(size_t i = 0; i < codeArr.GetCount(); i++) {
-        formattedCode << wxT("    ") << codeArr.Item(i) << wxT("\n");
+        formattedCode << "    " << codeArr.Item(i) << "\n";
     }
 
-    formattedCode.Replace(wxT("|@@|"), wxT(""));
+    formattedCode.Replace("|@@|", "");
 
     // Remove any double empty lines
     while(formattedCode.Replace("    \n    \n", "    \n")) {}
@@ -138,9 +138,9 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     wxcNotebookCodeHelper::Get().Clear();
     wxString ctorBody, dtorCode, membersChunk, eventFunctions, eventConnectCode, eventDisconnectCode,
         extraFunctionsCodeImpl, extraFunctionsCodeDecl;
-    headers.Add(wxT("#include <wx/settings.h>"));
-    headers.Add(wxT("#include <wx/xrc/xmlres.h>"));
-    headers.Add(wxT("#include <wx/xrc/xh_bmp.h>"));
+    headers.Add("#include <wx/settings.h>");
+    headers.Add("#include <wx/xrc/xmlres.h>");
+    headers.Add("#include <wx/xrc/xh_bmp.h>");
 
     DoTraverseAndGenCode(headers, ctorBody, membersChunk, eventFunctions, eventConnectCode, additionalFiles, dtorCode,
                          extraFunctionsCodeImpl, extraFunctionsCodeDecl);
@@ -155,11 +155,11 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
 
         // Add colors and fonts here
         if(bgcol.IsEmpty() == false) {
-            ctorBody << wxT("    SetBackgroundColour(") << bgcol << wxT(");\n");
+            ctorBody << "    SetBackgroundColour(" << bgcol << ");\n";
         }
 
         if(fgcol.IsEmpty() == false) {
-            ctorBody << wxT("    SetForegroundColour(") << fgcol << wxT(");\n");
+            ctorBody << "    SetForegroundColour(" << fgcol << ");\n";
         }
     }
 
@@ -171,11 +171,11 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
         ctorBody << "    SetName(" << wxCrafter::WXT(GetName()) << ");\n";
         wxSize sz = wxCrafter::DecodeSize(PropertyString(PROP_MINSIZE));
         if(sz != wxDefaultSize) {
-            ctorBody << wxT("    SetMinClientSize(wxSize(" << wxCrafter::EncodeSize(sz) << "));\n");
+            ctorBody << "    SetMinClientSize(wxSize(" << wxCrafter::EncodeSize(sz) << "));\n";
         }
 
         if(GetType() != ID_WXAUITOOLBARTOPLEVEL) {
-            ctorBody << "    SetSize(" << wxCrafter::GetSizeAsDlgUnits(GetSize(), "this") << wxT(");\n");
+            ctorBody << "    SetSize(" << wxCrafter::GetSizeAsDlgUnits(GetSize(), "this") << ");\n";
             ctorBody << "    if (GetSizer()) {\n";
             ctorBody << "         GetSizer()->Fit(this);\n";
             ctorBody << "    }\n";
@@ -189,7 +189,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
             }
 
             // Add support for wxPersistenceManager object
-            if(wxcSettings::Get().IsLicensed() && IsWxTopLevelWindow() && IsPropertyChecked(PROP_PERSISTENT)) {
+            if(IsWxTopLevelWindow() && IsPropertyChecked(PROP_PERSISTENT)) {
                 ctorBody << "    if(!wxPersistenceManager::Get().Find(this)) {\n";
                 ctorBody << "        wxPersistenceManager::Get().RegisterAndRestore(this);\n";
                 ctorBody << "    } else {\n";
@@ -205,7 +205,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
 
     // use Unbind syntax
     eventDisconnectCode = eventConnectCode;
-    eventDisconnectCode.Replace(wxT("->Bind("), wxT("->Unbind("));
+    eventDisconnectCode.Replace("->Bind(", "->Unbind(");
 
     wxString baseClassName = CreateBaseclassName();
 
@@ -218,7 +218,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     if(baseClassName.IsEmpty()) { // meaning that it was empty until BASE_CLASS_SUFFIX was appended
         wxString msg;
         msg << _("Can not generate code.\nMake sure that all toplevel windows have a valid C++ class name");
-        wxMessageBox(msg, wxT("wxCrafter"), wxOK | wxICON_WARNING | wxCENTER);
+        wxMessageBox(msg, "wxCrafter", wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
 
@@ -241,16 +241,17 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     sourceFile = baseFile;
 
     headerFile.SetExt(wxcProjectMetadata::Get().GetHeaderFileExt());
-    sourceFile.SetExt(wxT("cpp"));
+    sourceFile.SetExt("cpp");
 
     dtorCode.Prepend(eventDisconnectCode);
 
     // Write the C++ file
-    baseCpp << wxT("\n") << BaseCtorImplPrefix() << wxT("{\n") << wxcCodeGeneratorHelper::Get().GenerateInitCode(this)
-            << ctorBody;
+    baseCpp << "\n"
+            << BaseCtorImplPrefix() << "{\n"
+            << wxcCodeGeneratorHelper::Get().GenerateInitCode(this) << ctorBody;
 
     if(eventConnectCode.IsEmpty() == false) {
-        baseCpp << wxT("    // Connect events\n") << eventConnectCode;
+        baseCpp << "    // Connect events\n" << eventConnectCode;
     }
 
     // Now Connect() any auitoolbar dropdown menu; it must be *after* the normal Connect()s, otherwise it won't be
@@ -268,8 +269,10 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
                  << "::" << DEFAULT_AUI_DROPDOWN_FUNCTION << "), NULL, this);\n";
     }
 
-    baseCpp << wxT("}\n\n") << baseClassName << wxT("::~") << baseClassName << wxT("()\n") << wxT("{\n") << dtorCode
-            << wxT("}\n");
+    baseCpp << "}\n\n"
+            << baseClassName << "::~" << baseClassName << "()\n"
+            << "{\n"
+            << dtorCode << "}\n";
 
     // Write any extra (i.e. not ctor/dtor) functions
     if(!extraFunctionsCodeImpl.empty()) {
@@ -279,11 +282,17 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     // prepare the enum block for the
     // Write the header file
 
-    baseHeader << wxT("\n") << wxT("class ") << (cppDecorator.IsEmpty() ? "" : cppDecorator + " ") << baseClassName
-               << wxT(" : public ") << superclass << wxT("\n") << wxT("{\n")
-               << wxcCodeGeneratorHelper::Get().GenerateWinIdEnum() << wxT("protected:\n") << membersChunk << wxT("\n")
-               << wxT("protected:\n") << eventFunctions << wxT("\n") << wxT("public:\n") << extraFunctionsCodeDecl
-               << BaseCtorDecl() << wxT("    virtual ~") << baseClassName << wxT("();\n") << wxT("};\n\n");
+    baseHeader << "\n"
+               << "class " << (cppDecorator.IsEmpty() ? "" : cppDecorator + " ") << baseClassName << " : public "
+               << superclass << "\n"
+               << "{\n"
+               << wxcCodeGeneratorHelper::Get().GenerateWinIdEnum() << "protected:\n"
+               << membersChunk << "\n"
+               << "protected:\n"
+               << eventFunctions << "\n"
+               << "public:\n"
+               << extraFunctionsCodeDecl << BaseCtorDecl() << "    virtual ~" << baseClassName << "();\n"
+               << "};\n\n";
 
     if(baseOnly) {
         return;
@@ -309,7 +318,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     wxFileName derivedClassFileCPP(filename);
     wxFileName derivedClassFileHPP(filename);
 
-    derivedClassFileCPP.SetExt(wxT("cpp"));
+    derivedClassFileCPP.SetExt("cpp");
     derivedClassFileHPP.SetExt(wxcProjectMetadata::Get().GetHeaderFileExt());
 
     // Fix the paths if needed
@@ -329,20 +338,28 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
     dBlockGuard.MakeUpper();
 
     // Prepare the Header file content
-    dH << wxT("#ifndef ") << dBlockGuard << wxT("\n") << wxT("#define ") << dBlockGuard << wxT("\n")
-       << wxT("#include \"") << headerFile.GetFullName() << wxT("\"\n") << wxT("\n") << wxT("class ")
-       << (cppDecorator.IsEmpty() ? "" : cppDecorator + " ") << inheritedClass << wxT(" : public ") << derivedSuperclass
-       << wxT("\n") << wxT("{\n") << wxT("public:\n") << wxT("    ") << inheritedClass << GetDerivedClassCtorSignature()
-       << ";\n"
-       << wxT("    virtual ~") << inheritedClass << wxT("();\n") << wxT("};\n") << wxT("#endif // ") << dBlockGuard
-       << wxT("\n");
+    dH << "#ifndef " << dBlockGuard << "\n"
+       << "#define " << dBlockGuard << "\n"
+       << "#include \"" << headerFile.GetFullName() << "\"\n"
+       << "\n"
+       << "class " << (cppDecorator.IsEmpty() ? "" : cppDecorator + " ") << inheritedClass << " : public "
+       << derivedSuperclass << "\n"
+       << "{\n"
+       << "public:\n"
+       << "    " << inheritedClass << GetDerivedClassCtorSignature() << ";\n"
+       << "    virtual ~" << inheritedClass << "();\n"
+       << "};\n"
+       << "#endif // " << dBlockGuard << "\n";
 
     // Prepare the CPP file content
-    dCpp << wxT("#include \"") << derivedClassFileHPP.GetFullName() << wxT("\"\n\n") << inheritedClass << wxT("::")
-         << inheritedClass << GetDerivedClassCtorSignature() << "\n"
-         << wxT("    : ") << baseClassName << GetParentCtorInitArgumentList() << "\n"
-         << wxT("{\n") << wxT("}\n\n") << inheritedClass << wxT("::~") << inheritedClass << wxT("()\n") << wxT("{\n")
-         << wxT("}\n\n");
+    dCpp << "#include \"" << derivedClassFileHPP.GetFullName() << "\"\n\n"
+         << inheritedClass << "::" << inheritedClass << GetDerivedClassCtorSignature() << "\n"
+         << "    : " << baseClassName << GetParentCtorInitArgumentList() << "\n"
+         << "{\n"
+         << "}\n\n"
+         << inheritedClass << "::~" << inheritedClass << "()\n"
+         << "{\n"
+         << "}\n\n";
 
     // Keep track of the generated files
     if(WantsSubclass()) {
@@ -369,9 +386,9 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project, bool pr
 void TopLevelWinWrapper::WrapXRC(wxString& text)
 {
     wxString prefix, sifa;
-    prefix << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>")
-           << wxT("<resource xmlns=\"http://www.wxwidgets.org/wxxrc\">");
-    sifa << wxT("</resource>");
+    prefix << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>"
+           << "<resource xmlns=\"http://www.wxwidgets.org/wxxrc\">";
+    sifa << "</resource>";
     text.Prepend(prefix).Append(sifa);
 }
 

@@ -1,13 +1,14 @@
 #include "command_link_button_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "bitmap_picker_property.h"
 #include "bool_property.h"
 #include "file_ficker_property.h"
-#include "wx/button.h"
 #include "wxc_bitmap_code_generator.h"
-#include "wxc_settings.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
+
+#include <wx/button.h>
 
 CommandLinkButtonWrapper::CommandLinkButtonWrapper()
     : wxcWidget(ID_WXCOMMANDLINKBUTTON)
@@ -22,16 +23,16 @@ CommandLinkButtonWrapper::CommandLinkButtonWrapper()
     DelProperty(_("Control Specific Settings"));
     AddProperty(new CategoryProperty("wxCommandLinkButton"));
 
-    RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
+    RegisterEvent("wxEVT_COMMAND_BUTTON_CLICKED", "wxCommandEvent",
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
-                  wxT("wxCommandEventHandler"));
+                  "wxCommandEventHandler");
 
     AddProperty(new StringProperty(PROP_LABEL, _("Label"),
                                    _("First line of text on the button, typically the label of an action that will be "
                                      "made when the button is pressed")));
     AddProperty(new StringProperty(
-        PROP_NOTE, wxT(""), _("Second line of text describing the action performed when the button is pressed")));
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file")));
+        PROP_NOTE, "", _("Second line of text describing the action performed when the button is pressed")));
+    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", _("Select the bitmap file")));
     AddProperty(new BoolProperty(PROP_DEFAULT_BUTTON, false, _("Make this button the default button")));
 
     m_namePattern = "m_cmdLnkBtn";
@@ -51,9 +52,13 @@ wxString CommandLinkButtonWrapper::CppCtorCode() const
             << "wxDefaultPosition, " << SizeAsString() << ", " << StyleFlags("0") << ");\n";
 
     wxString bmpCpp = wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH));
-    if(bmpCpp != "wxNullBitmap") { cppCode << GetName() << "->SetBitmap(" << bmpCpp << ", wxLEFT );\n"; }
+    if(bmpCpp != "wxNullBitmap") {
+        cppCode << GetName() << "->SetBitmap(" << bmpCpp << ", wxLEFT );\n";
+    }
 
-    if(PropertyBool(PROP_DEFAULT_BUTTON) == "true") { cppCode << GetName() << "->SetDefault();\n"; }
+    if(PropertyBool(PROP_DEFAULT_BUTTON) == "true") {
+        cppCode << GetName() << "->SetDefault();\n";
+    }
 
     cppCode << CPPCommonAttributes();
     return cppCode;
@@ -72,5 +77,3 @@ void CommandLinkButtonWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     text << XRCPrefix() << XRCSize() << XRCStyle() << XRCCommonAttributes() << XRCLabel() << XRCBitmap() << "<note>"
          << wxCrafter::CDATA(PropertyString(PROP_NOTE)) << "</note>" << XRCSuffix();
 }
-
-bool CommandLinkButtonWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

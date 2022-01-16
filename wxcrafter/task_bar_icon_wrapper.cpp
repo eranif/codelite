@@ -1,10 +1,12 @@
 #include "task_bar_icon_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "bitmap_picker_property.h"
 #include "choice_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
+
 #include <wx/taskbar.h>
 
 TaskBarIconWrapper::TaskBarIconWrapper()
@@ -74,5 +76,3 @@ void TaskBarIconWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     wxUnusedVar(text);
     wxUnusedVar(type);
 }
-
-bool TaskBarIconWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

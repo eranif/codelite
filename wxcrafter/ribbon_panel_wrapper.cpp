@@ -1,9 +1,11 @@
 #include "ribbon_panel_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "file_ficker_property.h"
 #include "string_property.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
+
 #include <wx/ribbon/panel.h>
 
 RibbonPanelWrapper::RibbonPanelWrapper()

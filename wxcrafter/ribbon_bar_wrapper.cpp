@@ -1,7 +1,9 @@
 #include "ribbon_bar_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "ribbon_page_wrapper.h"
+
 #include <wx/ribbon/bar.h>
 
 RibbonBarWrapper::RibbonBarWrapper()
@@ -98,7 +100,9 @@ void RibbonBarWrapper::SetSelection(RibbonPageWrapper* page)
     wxcWidget::List_t::iterator iter = children.begin();
     for(; iter != children.end(); ++iter) {
         RibbonPageWrapper* p = dynamic_cast<RibbonPageWrapper*>(*iter);
-        if(p) { p->Select(p == page); }
+        if(p) {
+            p->Select(p == page);
+        }
     }
 }
 
@@ -108,7 +112,9 @@ RibbonPageWrapper* RibbonBarWrapper::GetSelection() const
     wxcWidget::List_t::const_iterator iter = children.begin();
     for(; iter != children.end(); ++iter) {
         RibbonPageWrapper* p = dynamic_cast<RibbonPageWrapper*>(*iter);
-        if(p && p->IsSelected()) { return p; }
+        if(p && p->IsSelected()) {
+            return p;
+        }
     }
     return NULL;
 }

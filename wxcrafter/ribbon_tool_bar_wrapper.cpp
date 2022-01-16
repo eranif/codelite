@@ -1,6 +1,8 @@
 #include "ribbon_tool_bar_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "int_property.h"
+
 #include <wx/ribbon/toolbar.h>
 
 RibbonToolBarWrapper::RibbonToolBarWrapper()

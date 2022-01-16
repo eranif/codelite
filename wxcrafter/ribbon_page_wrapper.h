@@ -20,7 +20,6 @@ public:
     virtual wxString DoGenerateCppCtorCode_End() const;
     void Select(bool b);
     bool IsSelected() const;
-    virtual bool IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
 };
 
 #endif // RIBBONPAGEWRAPPER_H

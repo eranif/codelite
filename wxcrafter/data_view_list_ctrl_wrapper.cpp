@@ -1,6 +1,7 @@
 #include "data_view_list_ctrl_wrapper.h"
+
 #include "allocator_mgr.h"
-#include "wxc_settings.h"
+
 #include <wx/dataview.h>
 
 DataViewListCtrlWrapper::DataViewListCtrlWrapper()
@@ -89,4 +90,3 @@ void DataViewListCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         text << XRCSuffix();
     }
 }
-bool DataViewListCtrlWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

@@ -10,7 +10,7 @@ public:
     virtual ~DataViewTreeListCtrlWrapper();
 
 protected:
-    wxString DoGenerateClassMember() const;
+    virtual wxString DoGenerateClassMember() const;
 
 public:
     virtual wxcWidget* Clone() const;
@@ -20,7 +20,6 @@ public:
     virtual void ToXRC(wxString& text, XRC_TYPE type) const;
     virtual void GenerateAdditionalFiles(wxStringMap_t& extraFile) const;
     wxString AssociateModelCode() const;
-    virtual bool IsLicensed() const;
     wxString GetModelName() const;
 };
 

@@ -24,7 +24,6 @@ public:
     virtual bool IsWindow() const { return false; }
     // no base class
     virtual bool WantsSubclass() const { return false; }
-    virtual bool IsLicensed() const;
 };
 
 #endif // IMAGELISTWRAPPER_H

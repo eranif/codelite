@@ -1,6 +1,7 @@
 #include "tree_list_ctrl_wrapper.h"
+
 #include "allocator_mgr.h"
-#include "wxc_settings.h"
+
 #include <wx/treelist.h>
 
 TreeListCtrlWrapper::TreeListCtrlWrapper()
@@ -14,23 +15,26 @@ TreeListCtrlWrapper::TreeListCtrlWrapper()
     PREPEND_STYLE(wxTL_USER_3STATE, false);
     PREPEND_STYLE(wxTL_DEFAULT_STYLE, true);
 
-    RegisterEvent("wxEVT_TREELIST_SELECTION_CHANGED", "wxTreeListEvent",
-                  _("Process wxEVT_TREELIST_SELECTION_CHANGED event and notifies about the selection change in the "
-                    "control. In the single selection case the item indicated by the event has been selected and "
-                    "previously selected item, if any, was deselected. In multiple selection case, the selection of this "
-                    "item has just changed (it may have been either selected or deselected) but notice that the "
-                    "selection of other items could have changed as well, use wxTreeListCtrl::GetSelections() to "
-                    "retrieve the new selection if necessary."));
+    RegisterEvent(
+        "wxEVT_TREELIST_SELECTION_CHANGED", "wxTreeListEvent",
+        _("Process wxEVT_TREELIST_SELECTION_CHANGED event and notifies about the selection change in the "
+          "control. In the single selection case the item indicated by the event has been selected and "
+          "previously selected item, if any, was deselected. In multiple selection case, the selection of this "
+          "item has just changed (it may have been either selected or deselected) but notice that the "
+          "selection of other items could have changed as well, use wxTreeListCtrl::GetSelections() to "
+          "retrieve the new selection if necessary."));
     RegisterEvent("wxEVT_TREELIST_ITEM_EXPANDING", "wxTreeListEvent",
                   _("Process wxEVT_TREELIST_ITEM_EXPANDING event notifying about the given branch being expanded. This "
                     "event is sent before the expansion occurs and can be vetoed to prevent it from happening."));
-    RegisterEvent("wxEVT_TREELIST_ITEM_EXPANDED", "wxTreeListEvent",
-                  _("Process wxEVT_TREELIST_ITEM_EXPANDED event notifying about the expansion of the given branch. This "
-                    "event is sent after the expansion occurs and can't be vetoed."));
-    RegisterEvent("wxEVT_TREELIST_ITEM_CHECKED", "wxTreeListEvent",
-                  _("Process wxEVT_TREELIST_ITEM_CHECKED event notifying about the user checking or unchecking the item. "
-                    "You can use wxTreeListCtrl::GetCheckedState() to retrieve the new item state and "
-                    "wxTreeListEvent::GetOldCheckedState() to get the previous one."));
+    RegisterEvent(
+        "wxEVT_TREELIST_ITEM_EXPANDED", "wxTreeListEvent",
+        _("Process wxEVT_TREELIST_ITEM_EXPANDED event notifying about the expansion of the given branch. This "
+          "event is sent after the expansion occurs and can't be vetoed."));
+    RegisterEvent(
+        "wxEVT_TREELIST_ITEM_CHECKED", "wxTreeListEvent",
+        _("Process wxEVT_TREELIST_ITEM_CHECKED event notifying about the user checking or unchecking the item. "
+          "You can use wxTreeListCtrl::GetCheckedState() to retrieve the new item state and "
+          "wxTreeListEvent::GetOldCheckedState() to get the previous one."));
     RegisterEvent("wxEVT_TREELIST_ITEM_ACTIVATED", "wxTreeListEvent",
                   _("Process wxEVT_TREELIST_ITEM_ACTIVATED event notifying about the user double clicking the item or "
                     "activating it from keyboard."));
@@ -61,9 +65,8 @@ wxString TreeListCtrlWrapper::CppCtorCode() const
     //    );
 
     wxString code;
-    code << GetName() << wxT(" = new ") << GetRealClassName() << "(" << GetWindowParent() << wxT(", ") << WindowID()
-         << wxT(", ") << wxT("wxDefaultPosition, ") << SizeAsString() << wxT(", ") << StyleFlags("wxTL_DEFAULT_STYLE")
-         << wxT(");\n");
+    code << GetName() << " = new " << GetRealClassName() << "(" << GetWindowParent() << ", " << WindowID() << ", "
+         << "wxDefaultPosition, " << SizeAsString() << ", " << StyleFlags("wxTL_DEFAULT_STYLE") << ");\n";
     code << CPPCommonAttributes();
     return code;
 }
@@ -81,5 +84,3 @@ void TreeListCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     text << XRCSuffix();
 }
-
-bool TreeListCtrlWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

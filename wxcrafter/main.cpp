@@ -9,7 +9,6 @@
 #include "globals.h"
 #include "imanager.h"
 #include "plugin.h"
-#include "serial_number.h"
 #include "windowattrmanager.h"
 #include "wxc_aui_tool_stickiness.h"
 #include "wxc_bitmap_code_generator.h"
@@ -69,7 +68,7 @@ bool wxcApp::OnInit()
         return false;
     }
 
-    if(parser.Found(wxT("h"))) {
+    if(parser.Found("h")) {
         // print usage
         parser.Usage();
         return false;
@@ -181,7 +180,7 @@ EVT_FIND_NEXT(wxID_ANY, MainFrame::OnFindNext)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxWindow* parent, bool hidden)
-    : MainFrameBase(parent, wxID_ANY, _("wxCrafter"), wxDefaultPosition, wxDefaultSize,
+    : MainFrameBase(parent, wxID_ANY, "wxCrafter", wxDefaultPosition, wxDefaultSize,
                     wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL)
     , m_wxcView(NULL)
     , m_treeView(NULL)
@@ -243,8 +242,6 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnGenerateCode, this, XRCID("generate-code"));
     m_mainToolbar->Bind(wxEVT_UPDATE_UI, &MainFrame::OnGenerateCodeUI, this, XRCID("generate-code"));
 
-    DoUpdateTitle();
-
     wxIconBundle icons;
     wxCrafter::ResourceLoader rl;
 
@@ -284,17 +281,13 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
                                   wxCommandEventHandler(MainFrame::OnProjectSynched), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(MainFrame::OnProjectLoaded), NULL,
                                   this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MainFrame::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Connect(wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(MainFrame::OnProjectClosed), NULL,
+    EventNotifier::Get()->Connect(wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(MainFrame::OnProjectClosed), NULL,
                                   this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &MainFrame::OnWorkspaceClosed, this);
     EventNotifier::Get()->Connect(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS,
                                   wxCommandEventHandler(MainFrame::OnCodeLiteGotFocus), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED,
                                   wxCommandEventHandler(MainFrame::OnCodeEditorSelected), NULL, this);
-    wxTheApp->Connect(wxEVT_LICENSE_UPDATED_SUCCESSFULLY,
-                      wxCommandEventHandler(MainFrame::OnLicenseUpdatedSuccessfully), NULL, this);
-    wxTheApp->Connect(wxEVT_LICENSE_UPDATED_UNSUCCESSFULLY,
-                      wxCommandEventHandler(MainFrame::OnLicenseUpdatedUnSuccessfully), NULL, this);
 
 #if !STANDALONE_BUILD
     Hide();
@@ -315,18 +308,13 @@ MainFrame::~MainFrame()
                                      wxCommandEventHandler(MainFrame::OnProjectSynched), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(MainFrame::OnProjectLoaded), NULL,
                                      this);
+    EventNotifier::Get()->Disconnect(wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(MainFrame::OnProjectClosed), NULL,
+                                     this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MainFrame::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(MainFrame::OnProjectClosed),
-                                     NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS,
                                      wxCommandEventHandler(MainFrame::OnCodeLiteGotFocus), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_WXC_CODE_PREVIEW_PAGE_CHANGED,
                                      wxCommandEventHandler(MainFrame::OnCodeEditorSelected), NULL, this);
-
-    wxTheApp->Disconnect(wxEVT_LICENSE_UPDATED_SUCCESSFULLY,
-                         wxCommandEventHandler(MainFrame::OnLicenseUpdatedSuccessfully), NULL, this);
-    wxTheApp->Disconnect(wxEVT_LICENSE_UPDATED_UNSUCCESSFULLY,
-                         wxCommandEventHandler(MainFrame::OnLicenseUpdatedUnSuccessfully), NULL, this);
 
 #if STANDALONE_BUILD
     if(m_findReplaceDialog) {
@@ -381,8 +369,8 @@ void MainFrame::OnProjectModified(wxCommandEvent& e)
 {
     e.Skip();
     wxString title = GetTitle();
-    if(!title.StartsWith(wxT("*"))) {
-        title.Prepend(wxT("*"));
+    if(!title.StartsWith("*")) {
+        title.Prepend("*");
         SetTitle(title);
     }
 }
@@ -391,7 +379,7 @@ void MainFrame::OnProjectSynched(wxCommandEvent& e)
 {
     e.Skip();
     wxString title = GetTitle();
-    if(title.StartsWith(wxT("*"))) {
+    if(title.StartsWith("*")) {
         title.Remove(0, 1);
         SetTitle(title);
     }
@@ -400,7 +388,7 @@ void MainFrame::OnProjectSynched(wxCommandEvent& e)
 void MainFrame::OnProjectLoaded(wxCommandEvent& e)
 {
     e.Skip();
-    SetTitle(wxString() << m_titlePrefix << " - " << e.GetString());
+    SetTitle("wxCrafter - " + e.GetString());
 }
 
 void MainFrame::OnDeleteItem(wxCommandEvent& event)
@@ -682,7 +670,7 @@ void MainFrame::HideDesigner()
 void MainFrame::OnProjectClosed(wxCommandEvent& event)
 {
     event.Skip();
-    SetTitle(m_titlePrefix);
+    SetTitle("wxCrafter");
 }
 
 void MainFrame::OnSwitchToCodeliteUI(wxUpdateUIEvent& event)
@@ -712,16 +700,17 @@ void MainFrame::OnNewProject(wxCommandEvent& event)
 
     wxString wxcpFile = ::wxFileSelector(_("Create an empty wxCrafter project"), wxEmptyString, title, wxEmptyString,
                                          "wxCrafter Project (*.wxcp)|*.wxcp", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-    if(wxcpFile.IsEmpty())
+    if(wxcpFile.IsEmpty()) {
         return;
+    }
 
-    wxFFile fp(wxcpFile, wxT("w+b"));
+    wxFFile fp(wxcpFile, "w+b");
     if(fp.IsOpened()) {
         fp.Close();
 
     } else {
         wxString msg;
-        msg << _("Could not create resource file '") << wxcpFile << wxT("'");
+        msg << _("Could not create resource file '") << wxcpFile << "'";
         ::wxMessageBox(msg, _("wxCrafter"), wxOK | wxICON_WARNING | wxCENTRE);
         return;
     }
@@ -777,30 +766,6 @@ void MainFrame::OnNewCustomControl(wxCommandEvent& event)
     wxUnusedVar(event);
     wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("define_custom_controls"));
     wxTheApp->AddPendingEvent(e);
-}
-
-void MainFrame::OnLicenseUpdatedSuccessfully(wxCommandEvent& e)
-{
-    e.Skip();
-    DoUpdateTitle();
-}
-
-void MainFrame::OnLicenseUpdatedUnSuccessfully(wxCommandEvent& e)
-{
-    e.Skip();
-    DoUpdateTitle();
-}
-
-void MainFrame::DoUpdateTitle()
-{
-    m_titlePrefix.Clear();
-    m_titlePrefix << "wxCrafter ";
-#if STANDALONE_BUILD
-    if(!wxcSettings::Get().IsRegistered()) {
-        m_titlePrefix << "[ Unregistered ] ";
-    }
-#endif
-    SetTitle(m_titlePrefix);
 }
 
 wxStyledTextCtrl* MainFrame::GetActiveSTC()
@@ -928,11 +893,13 @@ bool MainFrame::DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, 
     int flags = frd.GetFlags();
     int stcSearchFlags = 0;
 
-    if(flags & wxFR_MATCHCASE)
+    if(flags & wxFR_MATCHCASE) {
         stcSearchFlags |= wxSTC_FIND_MATCHCASE;
+    }
 
-    if(flags & wxFR_WHOLEWORD)
+    if(flags & wxFR_WHOLEWORD) {
         stcSearchFlags |= wxSTC_FIND_WHOLEWORD;
+    }
 
     int where = stc->FindText(startPos, endPos, frd.GetFindString(), stcSearchFlags);
     if(where != wxNOT_FOUND) {
@@ -1043,8 +1010,9 @@ void MainFrame::OnFileOpen(wxCommandEvent& event) { DoOpenWxcpProject(); }
 void MainFrame::DoCreateRecentMenu(wxMenu& menu, wxArrayString& history)
 {
     history = wxcSettings::Get().GetHistory();
-    if(history.IsEmpty())
+    if(history.IsEmpty()) {
         return;
+    }
 
     wxArrayString tmpHistory;
     for(size_t i = 0; i < history.GetCount(); ++i) {

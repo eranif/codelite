@@ -1,4 +1,5 @@
 #include "property_grid_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "choice_property.h"
@@ -7,7 +8,6 @@
 #include "int_property.h"
 #include "multi_strings_property.h"
 #include "string_property.h"
-#include "wxc_settings.h"
 #include "wxgui_helpers.h"
 
 #define PROP_PG_BOOL_VALUE "Bool Value"
@@ -99,7 +99,9 @@ wxString PropertyGridWrapper::CppCtorCode() const
 {
     wxString grid = GetWindowParent();
     wxString appendFunc = "Append( ";
-    if(GetParent()->GetType() == ID_WXPGPROPERTY) { appendFunc = "AppendIn( " + GetParent()->GetName() + ", "; }
+    if(GetParent()->GetType() == ID_WXPGPROPERTY) {
+        appendFunc = "AppendIn( " + GetParent()->GetName() + ", ";
+    }
 
     wxString cppCode;
 
@@ -115,12 +117,16 @@ wxString PropertyGridWrapper::CppCtorCode() const
     } else if(proptype == "wxIntProperty" || proptype == "wxFloatProperty") {
         strvalue = PropertyString(PROP_PG_STRING_VALUE);
         strvalue.Trim().Trim(false);
-        if(strvalue.IsEmpty()) { strvalue = "0"; }
+        if(strvalue.IsEmpty()) {
+            strvalue = "0";
+        }
 
     } else if(proptype == "wxFlagsProperty") {
         strvalue = PropertyString(PROP_PG_STRING_VALUE);
         strvalue.Trim().Trim(false);
-        if(strvalue.IsEmpty()) { strvalue = "0"; }
+        if(strvalue.IsEmpty()) {
+            strvalue = "0";
+        }
 
     } else {
         strvalue = wxCrafter::UNDERSCORE(PropertyString(PROP_PG_STRING_VALUE));
@@ -161,7 +167,9 @@ wxString PropertyGridWrapper::CppCtorCode() const
         size_t selection = 0;
         for(size_t i = 0; i < options.GetCount(); ++i) {
             cppCode << arrName << ".Add(" << wxCrafter::UNDERSCORE(options.Item(i)) << ");\n";
-            if(wxCrafter::UNDERSCORE(options.Item(i)) == strvalue) { selection = i; }
+            if(wxCrafter::UNDERSCORE(options.Item(i)) == strvalue) {
+                selection = i;
+            }
         }
 
         options = wxCrafter::Split(PropertyString(PROP_PG_CHOICES_VALUES), ";");
@@ -247,7 +255,9 @@ wxString PropertyGridWrapper::CppCtorCode() const
     }
 
     wxString propEditor = PropertyString(PROP_CUSTOM_EDITOR);
-    if(!propEditor.IsEmpty()) { cppCode << propName << "->SetEditor( " << wxCrafter::WXT(propEditor) << " );\n"; }
+    if(!propEditor.IsEmpty()) {
+        cppCode << propName << "->SetEditor( " << wxCrafter::WXT(propEditor) << " );\n";
+    }
     return cppCode;
 }
 
@@ -266,7 +276,9 @@ void PropertyGridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     } else {
         wxString value = wxCrafter::CDATA(PropertyString(PROP_PG_STRING_VALUE));
-        if(PropertyString(PROP_KIND) == "wxBoolProperty") { value = PropertyString(PROP_PG_BOOL_VALUE); }
+        if(PropertyString(PROP_KIND) == "wxBoolProperty") {
+            value = PropertyString(PROP_PG_BOOL_VALUE);
+        }
 
         text << "<object class=\"wxPGProperty\">"
              << "<proptype>" << PropertyString(PROP_KIND) << "</proptype>"
@@ -280,8 +292,6 @@ void PropertyGridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     }
 }
 
-bool PropertyGridWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
-
 bool PropertyGridWrapper::IsValidParent() const { return false; }
 
 bool PropertyGridWrapper::IsWxWindow() const { return false; }
@@ -292,6 +302,8 @@ wxString PropertyGridWrapper::DoGenerateCppCtorCode_End() const
     // all children have been added
     wxString cppCode;
     wxString colorname = wxCrafter::ColourToCpp(PropertyString(PROP_BG));
-    if(!colorname.IsEmpty()) { cppCode << GetName() << "->SetBackgroundColour(" << colorname << ");\n"; }
+    if(!colorname.IsEmpty()) {
+        cppCode << GetName() << "->SetBackgroundColour(" << colorname << ");\n";
+    }
     return cppCode;
 }

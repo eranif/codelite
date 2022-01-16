@@ -1,9 +1,10 @@
 #include "media_ctrl_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
-#include "wxc_settings.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
+
 #include <wx/mediactrl.h>
 
 MediaCtrlWrapper::MediaCtrlWrapper()
@@ -77,5 +78,3 @@ void MediaCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
              << PropertyString(PROP_MC_CONTROLS) << "</controlstyle>" << XRCSuffix();
     }
 }
-
-bool MediaCtrlWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

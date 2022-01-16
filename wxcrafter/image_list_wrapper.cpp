@@ -1,10 +1,10 @@
 #include "image_list_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "category_property.h"
 #include "int_property.h"
 #include "virtual_folder_property.h"
-#include "wxc_settings.h"
 
 ImageListWrapper::ImageListWrapper()
     : TopLevelWinWrapper(ID_WXIMAGELIST)
@@ -51,7 +51,7 @@ wxString ImageListWrapper::BaseCtorImplPrefix() const
 {
     wxString code;
 
-    code << CreateBaseclassName() << wxT("::") << CreateBaseclassName() << wxT("()\n");
+    code << CreateBaseclassName() << "::" << CreateBaseclassName() << "()\n";
     code << "    : " << GetRealClassName() << "(" << PropertyInt(PROP_BITMAP_SIZE) << ", "
          << PropertyInt(PROP_BITMAP_SIZE) << ", " << PropertyBool(PROP_IMGLIST_MASK) << ")\n"
          << "    , m_imagesWidth(" << PropertyInt(PROP_BITMAP_SIZE) << ")\n"
@@ -83,20 +83,20 @@ void ImageListWrapper::GetIncludeFile(wxArrayString& headers) const
 {
     headers.Add("#include <wx/imaglist.h>");
     headers.Add("#include <wx/bitmap.h>");
-    headers.Add(wxT("#include <wx/artprov.h>"));
+    headers.Add("#include <wx/artprov.h>");
     headers.Add("#include <map>");
 }
 
 wxString ImageListWrapper::DoGenerateClassMember() const
 {
     wxString memberCode;
-    memberCode << wxT("    // Maintain a map of all bitmaps representd by their name\n");
-    memberCode << wxT("    std::map<wxString, wxBitmap> m_bitmaps;\n");
-    memberCode << wxT(
-        "    // The requested image resolution (can be one of @2x, @1.5x, @1.25x or an empty string (the default)\n");
-    memberCode << wxT("    wxString m_resolution;\n");
-    memberCode << wxT("    int m_imagesWidth;\n");
-    memberCode << wxT("    int m_imagesHeight;\n");
+    memberCode << "    // Maintain a map of all bitmaps representd by their name\n";
+    memberCode << "    std::map<wxString, wxBitmap> m_bitmaps;\n";
+    memberCode
+        << "    // The requested image resolution (can be one of @2x, @1.5x, @1.25x or an empty string (the default)\n";
+    memberCode << "    wxString m_resolution;\n";
+    memberCode << "    int m_imagesWidth;\n";
+    memberCode << "    int m_imagesHeight;\n";
     return memberCode;
 }
 
@@ -109,5 +109,3 @@ void ImageListWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         WrapXRC(text);
     }
 }
-
-bool ImageListWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

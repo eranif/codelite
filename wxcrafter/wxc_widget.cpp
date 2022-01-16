@@ -1,6 +1,5 @@
 #include "wxc_widget.h"
 
-#include "FreeTrialVersionDlg.h"
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "category_property.h"
@@ -2744,7 +2743,5 @@ void wxcWidget::DoGenerateGetters(wxString& decl) const
         }
     }
 }
-
-bool wxcWidget::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
 
 wxString wxcSizerItem::GetBorderScaled() const { return wxString() << "WXC_FROM_DIP(" << GetBorder() << ")"; }

@@ -20,7 +20,7 @@ public:
     /**
      * @brief can this wrapper be an actual Window parent?
      */
-    bool IsValidParent() const { return false; }
+    virtual bool IsValidParent() const { return false; }
 
     /**
      * @brief Is this a 'real' control, or something else e.g. a sizer or a toolbar separator, that doesn't do events
@@ -33,15 +33,15 @@ public:
     virtual bool IsSizer() const { return true; }
 
     /**
+     * @brief return true if this sizer has to be kept as a class member
+     */
+    virtual bool KeepAsClassMember() const;
+
+    /**
      * @brief return true if this sizer's parent is
      * an actual window / control and *not* sizer item
      */
     bool IsMainSizer() const;
-
-    /**
-     * @brief return true if this sizer has to be kept as a class member
-     */
-    virtual bool KeepAsClassMember() const;
 };
 
 #endif // SIZERWRAPPERBASE_H

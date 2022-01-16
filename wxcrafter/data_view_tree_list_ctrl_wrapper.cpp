@@ -4,7 +4,6 @@
 #include "bool_property.h"
 #include "data_view_list_ctrl_wrapper.h"
 #include "wxc_project_metadata.h"
-#include "wxc_settings.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
 
@@ -102,8 +101,9 @@ void DataViewTreeListCtrlWrapper::GetIncludeFile(wxArrayString& headers) const
     headers.Add("#include <wx/dataview.h>");
 
     wxString modelName = GetModelName();
-    if(modelName.IsEmpty())
+    if(modelName.IsEmpty()) {
         return;
+    }
 
     // Model file name
     wxString headerFileName = modelName;
@@ -143,8 +143,9 @@ void DataViewTreeListCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 void DataViewTreeListCtrlWrapper::GenerateAdditionalFiles(wxStringMap_t& extraFile) const
 {
     wxString modelName = GetModelName();
-    if(modelName.IsEmpty())
+    if(modelName.IsEmpty()) {
         return;
+    }
 
     wxCrafter::ResourceLoader rl;
     wxString modelCpp = rl.File("my_tree_list_model.cpp");
@@ -184,8 +185,9 @@ wxString DataViewTreeListCtrlWrapper::DoGenerateClassMember() const
     members << wxcWidget::DoGenerateClassMember();
 
     wxString modelName = GetModelName();
-    if(modelName.IsEmpty())
+    if(modelName.IsEmpty()) {
         return members;
+    }
 
     // Add the model member
     members << "\n    "
@@ -196,8 +198,9 @@ wxString DataViewTreeListCtrlWrapper::DoGenerateClassMember() const
 wxString DataViewTreeListCtrlWrapper::AssociateModelCode() const
 {
     wxString modelBaseName = GetModelName();
-    if(modelBaseName.IsEmpty())
+    if(modelBaseName.IsEmpty()) {
         return "";
+    }
 
     wxString code;
     wxString modelName = GetName() + "Model";
@@ -207,8 +210,6 @@ wxString DataViewTreeListCtrlWrapper::AssociateModelCode() const
     code << GetName() << "->AssociateModel(" << modelName << ".get() );\n";
     return code;
 }
-
-bool DataViewTreeListCtrlWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
 
 wxString DataViewTreeListCtrlWrapper::GetModelName() const
 {

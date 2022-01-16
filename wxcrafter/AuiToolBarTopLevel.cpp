@@ -18,10 +18,10 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
     AddCategory(_("wxAuiToolBar"));
     AddProperty(new WinIdProperty());
     AddProperty(new StringProperty(PROP_NAME, "", _("The generated C++ class name")));
-    AddProperty(new StringProperty(PROP_SIZE, wxT("-1,-1"),
+    AddProperty(new StringProperty(PROP_SIZE, "-1,-1",
                                    _("The control size. It is recommended to leave it as -1,-1 and "
                                      "let\nthe sizers calculate the best size for the window")));
-    AddProperty(new StringProperty(PROP_TOOLTIP, wxT(""), _("Tooltip")));
+    AddProperty(new StringProperty(PROP_TOOLTIP, "", _("Tooltip")));
 
     AddCategory(_("Inherited C++ Class Properties"));
     AddProperty(new StringProperty(PROP_INHERITED_CLASS, "",
@@ -43,9 +43,8 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
         new VirtualFolderProperty(PROP_VIRTUAL_FOLDER, "", _("codelite's virtual folder for the generated files")));
 
     AddCategory(_("Control Specific Settings"));
-    AddProperty(new StringProperty(PROP_BITMAP_SIZE, wxT("16,16"), _("Sets the default size of each tool bitmap")));
-    AddProperty(
-        new StringProperty(PROP_MARGINS, wxT("-1,-1"), _("Set the values to be used as margins for the toolbar.")));
+    AddProperty(new StringProperty(PROP_BITMAP_SIZE, "16,16", _("Sets the default size of each tool bitmap")));
+    AddProperty(new StringProperty(PROP_MARGINS, "-1,-1", _("Set the values to be used as margins for the toolbar.")));
 
     PREPEND_STYLE_FALSE(wxAUI_TB_TEXT);
     PREPEND_STYLE_FALSE(wxAUI_TB_NO_TOOLTIPS);
@@ -58,7 +57,7 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
     PREPEND_STYLE_TRUE(wxAUI_TB_DEFAULT_STYLE);
     PREPEND_STYLE_TRUE(wxAUI_TB_PLAIN_BACKGROUND);
 
-    m_namePattern = wxT("m_auibar");
+    m_namePattern = "m_auibar";
     SetName(GenerateName());
 }
 
@@ -98,7 +97,7 @@ wxString AuiToolBarTopLevelWrapper::CppCtorCode() const
 
     XYPair margins(PropertyString(PROP_MARGINS), -1, -1);
     if(margins != XYPair(-1, -1)) {
-        code << "    SetMargins(" << margins.ToString() << wxT(");\n");
+        code << "    SetMargins(" << margins.ToString() << ");\n";
     }
     return code;
 }
@@ -130,8 +129,6 @@ void AuiToolBarTopLevelWrapper::GetIncludeFile(wxArrayString& headers) const { B
 
 wxString AuiToolBarTopLevelWrapper::GetWxClassName() const { return "wxAuiToolBar"; }
 
-bool AuiToolBarTopLevelWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
-
 void AuiToolBarTopLevelWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     if(type == XRC_PREVIEW) {
@@ -156,10 +153,10 @@ void AuiToolBarTopLevelWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     } else {
         text << XRCPrefix();
     }
-    text << XRCStyle() << XRCCommonAttributes() << wxT("<bitmapsize>") << prSize.ToString() << wxT("</bitmapsize>");
+    text << XRCStyle() << XRCCommonAttributes() << "<bitmapsize>" << prSize.ToString() << "</bitmapsize>";
 
     if(prMargins != XYPair(-1, -1)) {
-        text << wxT("<margins>") << prMargins.ToString() << wxT("</margins>");
+        text << "<margins>" << prMargins.ToString() << "</margins>";
     }
 
     ChildrenXRC(text, type);

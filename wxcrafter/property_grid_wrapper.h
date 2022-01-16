@@ -6,7 +6,6 @@
 class PropertyGridWrapper : public wxcWidget
 {
 public:
-    virtual bool IsLicensed() const;
     virtual bool IsValidParent() const;
     virtual bool IsWxWindow() const;
     virtual void GetIncludeFile(wxArrayString& headers) const;

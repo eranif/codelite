@@ -16,10 +16,9 @@ public:
     virtual void GetIncludeFile(wxArrayString& headers) const;
     virtual wxString GetWxClassName() const;
     virtual void ToXRC(wxString& text, XRC_TYPE type) const;
-    wxString DoGenerateCppCtorCode_End() const;
+    virtual wxString DoGenerateCppCtorCode_End() const;
     void SetSelection(RibbonPageWrapper* page);
     RibbonPageWrapper* GetSelection() const;
-    virtual bool IsLicensed() const { return wxcSettings::Get().IsLicensed(); }
 };
 
 #endif // RIBBONBARWRAPPER_H

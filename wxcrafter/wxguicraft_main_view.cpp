@@ -2,7 +2,6 @@
 
 #include "AuiToolBarTopLevel.h"
 #include "EventsEditorDlg.h"
-#include "FreeTrialVersionDlg.h"
 #include "ToolBoxPanel.h"
 #include "allocator_mgr.h"
 #include "attribute_style.h"
@@ -178,50 +177,48 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
 
     m_panelToolBox->GetSizer()->Add(new ToolBoxPanel(m_panelToolBox, this), 0, wxEXPAND);
 
-    m_toolbar->AddTool(ID_GENERATE_CODE, _("Generate Code"), bmps.Bitmap(wxT("generate-code")), _("Generate Code"));
+    m_toolbar->AddTool(ID_GENERATE_CODE, _("Generate Code"), bmps.Bitmap("generate-code"), _("Generate Code"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(ID_SHOW_PREVIEW, _("Show Preview..."), bmps.Bitmap(wxT("preview")), _("Show Preview"));
-    m_toolbar->AddTool(ID_CANCEL_PREVIEW, _("Close Preview..."), bmps.Bitmap(wxT("cancel")), _("Close Preview"));
+    m_toolbar->AddTool(ID_SHOW_PREVIEW, _("Show Preview..."), bmps.Bitmap("preview"), _("Show Preview"));
+    m_toolbar->AddTool(ID_CANCEL_PREVIEW, _("Close Preview..."), bmps.Bitmap("cancel"), _("Close Preview"));
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(ID_DELETE_NODE, _("Delete Item"), bmps.Bitmap(wxT("delete")), _("Delete Item"));
+    m_toolbar->AddTool(ID_DELETE_NODE, _("Delete Item"), bmps.Bitmap("delete"), _("Delete Item"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(ID_TOOL_ALIGN_LEFT, _("Align Left"), bmps.Bitmap(wxT("align-left")), _("Align Left"),
-                       wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_HCENTER, _("Align Center"), bmps.Bitmap(wxT("align-center-horizontal")),
+    m_toolbar->AddTool(ID_TOOL_ALIGN_LEFT, _("Align Left"), bmps.Bitmap("align-left"), _("Align Left"), wxITEM_CHECK);
+    m_toolbar->AddTool(ID_TOOL_ALIGN_HCENTER, _("Align Center"), bmps.Bitmap("align-center-horizontal"),
                        _("Align Center Horizontally"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_RIGHT, _("Align Right"), bmps.Bitmap(wxT("align-right")), _("Align Right"),
+    m_toolbar->AddTool(ID_TOOL_ALIGN_RIGHT, _("Align Right"), bmps.Bitmap("align-right"), _("Align Right"),
                        wxITEM_CHECK);
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(ID_TOOL_ALIGN_TOP, _("Align Top"), bmps.Bitmap(wxT("align-top")), _("Align Top"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_VCENTER, _("Align Middle"), bmps.Bitmap(wxT("align-center-vertical")),
+    m_toolbar->AddTool(ID_TOOL_ALIGN_TOP, _("Align Top"), bmps.Bitmap("align-top"), _("Align Top"), wxITEM_CHECK);
+    m_toolbar->AddTool(ID_TOOL_ALIGN_VCENTER, _("Align Middle"), bmps.Bitmap("align-center-vertical"),
                        _("Align Center Vertically"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_ALIGN_BOTTOM, _("Align Bottom"), bmps.Bitmap(wxT("align-bottom")), _("Align Bottom"),
+    m_toolbar->AddTool(ID_TOOL_ALIGN_BOTTOM, _("Align Bottom"), bmps.Bitmap("align-bottom"), _("Align Bottom"),
                        wxITEM_CHECK);
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(ID_TOOL_BORDER_ALL, _("All Borders"), bmps.Bitmap(wxT("wxall")), _("All Borders"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_BORDER_LEFT, _("Left Border"), bmps.Bitmap(wxT("border-left")), _("Left Border"),
+    m_toolbar->AddTool(ID_TOOL_BORDER_ALL, _("All Borders"), bmps.Bitmap("wxall"), _("All Borders"), wxITEM_CHECK);
+    m_toolbar->AddTool(ID_TOOL_BORDER_LEFT, _("Left Border"), bmps.Bitmap("border-left"), _("Left Border"),
                        wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_BORDER_TOP, _("Top Border"), bmps.Bitmap(wxT("border-top")), _("Top Border"),
+    m_toolbar->AddTool(ID_TOOL_BORDER_TOP, _("Top Border"), bmps.Bitmap("border-top"), _("Top Border"), wxITEM_CHECK);
+    m_toolbar->AddTool(ID_TOOL_BORDER_RIGHT, _("Right Border"), bmps.Bitmap("border-right"), _("Right Border"),
                        wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_BORDER_RIGHT, _("Right Border"), bmps.Bitmap(wxT("border-right")), _("Right Border"),
-                       wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_BORDER_BOTTOM, _("Bottom Border"), bmps.Bitmap(wxT("border-bottom")), _("Bottom Border"),
+    m_toolbar->AddTool(ID_TOOL_BORDER_BOTTOM, _("Bottom Border"), bmps.Bitmap("border-bottom"), _("Bottom Border"),
                        wxITEM_CHECK);
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(ID_TOOL_PROP1, _("Set Sizer Proportion to 1"), bmps.Bitmap(wxT("proportion-1")),
+    m_toolbar->AddTool(ID_TOOL_PROP1, _("Set Sizer Proportion to 1"), bmps.Bitmap("proportion-1"),
                        _("Set Sizer Proportion to 1"), wxITEM_CHECK);
-    m_toolbar->AddTool(ID_TOOL_WXEXPAND, _("Expand Item"), bmps.Bitmap(wxT("expand")), _("Expand Item"), wxITEM_CHECK);
+    m_toolbar->AddTool(ID_TOOL_WXEXPAND, _("Expand Item"), bmps.Bitmap("expand"), _("Expand Item"), wxITEM_CHECK);
     m_toolbar->AddSeparator();
 
-    m_toolbar->AddTool(ID_MOVE_NODE_UP, _("Move Up"), bmps.Bitmap(wxT("move-up")), _("Move Up"));
-    m_toolbar->AddTool(ID_MOVE_NODE_DOWN, _("Move Down"), bmps.Bitmap(wxT("move-down")), _("Move Down"));
-    m_toolbar->AddTool(ID_MOVE_NODE_INTO_SIZER, _("Move Left"), bmps.Bitmap(wxT("move-left")),
+    m_toolbar->AddTool(ID_MOVE_NODE_UP, _("Move Up"), bmps.Bitmap("move-up"), _("Move Up"));
+    m_toolbar->AddTool(ID_MOVE_NODE_DOWN, _("Move Down"), bmps.Bitmap("move-down"), _("Move Down"));
+    m_toolbar->AddTool(ID_MOVE_NODE_INTO_SIZER, _("Move Left"), bmps.Bitmap("move-left"),
                        _("Move Left into parent sizer"));
-    m_toolbar->AddTool(ID_MOVE_NODE_INTO_SIBLING, _("Move Right"), bmps.Bitmap(wxT("move-upper-right")),
+    m_toolbar->AddTool(ID_MOVE_NODE_INTO_SIBLING, _("Move Right"), bmps.Bitmap("move-upper-right"),
                        _("Move Right into a sibling sizer"));
 
     wxAuiToolBarItem* item = m_toolbar->FindTool(ID_GENERATE_CODE);
@@ -291,19 +288,20 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
     this->Connect(ID_FORM_TYPE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(GUICraftMainPanel::OnNewFormUI), NULL, this);
 
     int sashPos = wxcSettings::Get().GetSashPosition();
-    if(sashPos != wxNOT_FOUND)
+    if(sashPos != wxNOT_FOUND) {
         m_mainSplitter->SetSashPosition(sashPos);
+    }
 
     // Use codelite's coloring settings
     LexerConf::Ptr_t cppLexer = EditorConfigST::Get()->GetLexer("C++");
     if(cppLexer) {
         cppLexer->Apply(m_textCtrlCppSource);
         cppLexer->Apply(m_textCtrlHeaderSource);
-        m_textCtrlCppSource->SetProperty(wxT("lexer.cpp.track.preprocessor"), "0");
-        m_textCtrlCppSource->SetProperty(wxT("lexer.cpp.update.preprocessor"), "0");
+        m_textCtrlCppSource->SetProperty("lexer.cpp.track.preprocessor", "0");
+        m_textCtrlCppSource->SetProperty("lexer.cpp.update.preprocessor", "0");
 
-        m_textCtrlHeaderSource->SetProperty(wxT("lexer.cpp.track.preprocessor"), "0");
-        m_textCtrlHeaderSource->SetProperty(wxT("lexer.cpp.update.preprocessor"), "0");
+        m_textCtrlHeaderSource->SetProperty("lexer.cpp.track.preprocessor", "0");
+        m_textCtrlHeaderSource->SetProperty("lexer.cpp.update.preprocessor", "0");
     }
 
     LexerConf::Ptr_t xmlLexer = EditorConfigST::Get()->GetLexer("XML");
@@ -447,7 +445,7 @@ void GUICraftMainPanel::OnShowContextMenu(wxCommandEvent& e)
     if(data && data->m_wxcWidget) {
         title = data->m_wxcWidget->GetName();
     }
-    wxMenu menu(title.IsEmpty() ? wxT("") : title);
+    wxMenu menu(title.IsEmpty() ? "" : title);
     Allocator::Instance()->PrepareMenu(menu, data ? data->m_wxcWidget : NULL);
     PopupMenu(&menu);
 }
@@ -501,8 +499,9 @@ void GUICraftMainPanel::DoUpdatePropertiesView()
 GUICraftItemData* GUICraftMainPanel::GetSelItemData()
 {
     wxTreeItemId itemId = m_treeControls->GetSelection();
-    if(itemId.IsOk() == false)
+    if(itemId.IsOk() == false) {
         return NULL;
+    }
 
     GUICraftItemData* data = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(itemId));
     return data;
@@ -714,9 +713,6 @@ void GUICraftMainPanel::OnPropertyChanged(wxCommandEvent& e)
 
 void GUICraftMainPanel::OnNewControl(wxCommandEvent& e)
 {
-    if(!DoCheckLicense(e.GetId()))
-        return;
-
     if(e.GetId() == ID_WXCUSTOMCONTROL) {
         // Custom Controls are handled differently
         e.Skip();
@@ -874,8 +870,9 @@ void GUICraftMainPanel::OnSizerTool(wxCommandEvent& e)
     CHECK_POINTER(itemData->m_wxcWidget);
 
     wxString bitname = GetStyleFromGuiID(e.GetId());
-    if(bitname.IsEmpty())
+    if(bitname.IsEmpty()) {
         return;
+    }
 
     itemData->m_wxcWidget->EnableSizerFlag(bitname, e.IsChecked());
 
@@ -985,7 +982,7 @@ wxString GUICraftMainPanel::GetStyleFromGuiID(int guiId) const
 
 JSONElement GUICraftMainPanel::ToJSON(const wxTreeItemId& fromItem)
 {
-    JSONElement json = JSONElement::createArray(wxT("windows"));
+    JSONElement json = JSONElement::createArray("windows");
     wxTreeItemIdValue cookie;
     wxTreeItemId rootItem = fromItem.IsOk() ? fromItem : m_treeControls->GetRootItem();
     wxTreeItemId child = m_treeControls->GetFirstChild(rootItem, cookie);
@@ -1011,10 +1008,11 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
     wxArrayString customControls = GetCustomControlsUsed();
     if(wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
         wxString path =
-            wxFileSelector(_("Save as"), wxEmptyString, _("my_gui.wxcp"), wxT("wxCrafter Project File(*.wxcp)|*.wxcp"),
+            wxFileSelector(_("Save as"), wxEmptyString, _("my_gui.wxcp"), "wxCrafter Project File(*.wxcp)|*.wxcp",
                            wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_CHANGE_DIR | wxFD_OVERWRITE_PROMPT);
-        if(path.IsEmpty())
+        if(path.IsEmpty()) {
             return;
+        }
 
         wxcProjectMetadata::Get().SetProjectFile(path);
     }
@@ -1031,7 +1029,7 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
     wxcProjectMetadata::Get().AppendCustomControlsJSON(customControls, metadata);
     root.toElement().append(metadata);
 
-    wxFFile fp(wxcProjectMetadata::Get().GetProjectFile(), wxT("w+b"));
+    wxFFile fp(wxcProjectMetadata::Get().GetProjectFile(), "w+b");
     if(fp.IsOpened()) {
         root.toElement().append(ToJSON());
 
@@ -1047,7 +1045,7 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
         wxString msg;
         msg << _("Error occurred while opening file '") << wxcProjectMetadata::Get().GetProjectFile()
             << _("' for writing");
-        wxMessageBox(msg, wxT("wxCrafter"), wxICON_ERROR | wxOK | wxCENTER);
+        wxMessageBox(msg, "wxCrafter", wxICON_ERROR | wxOK | wxCENTER);
     }
 }
 
@@ -1076,7 +1074,7 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
     if(path.IsEmpty()) {
         // User request
         path = wxFileSelector(_("Open wxCrafter project"), wxEmptyString, wxEmptyString, wxEmptyString,
-                              wxT("wxCrafter Project File(*.wxcp)|*.wxcp"), wxFD_OPEN);
+                              "wxCrafter Project File(*.wxcp)|*.wxcp", wxFD_OPEN);
 
     } else {
         // Progrematically
@@ -1102,7 +1100,7 @@ void GUICraftMainPanel::OnOpenProject(wxCommandEvent& e)
         }
 
         wxFileName fn(path);
-        wxFFile fp(fn.GetFullPath(), wxT("r+b"));
+        wxFFile fp(fn.GetFullPath(), "r+b");
         if(fp.IsOpened()) {
             wxString content;
             fp.ReadAll(&content, wxConvUTF8);
@@ -1139,7 +1137,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
 
         // Read the metadata first
         wxcProjectMetadata::Get().SetProjectFile(fn.GetFullPath());
-        wxcProjectMetadata::Get().FromJSON(json.toElement().namedObject(wxT("metadata")));
+        wxcProjectMetadata::Get().FromJSON(json.toElement().namedObject("metadata"));
         wxcProjectMetadata::Get().UpdatePaths();
 
     } else {
@@ -1147,7 +1145,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     }
 
     // Read the top-level windows
-    JSONElement windows = json.toElement().namedObject(wxT("windows"));
+    JSONElement windows = json.toElement().namedObject("windows");
     int nCount = windows.arraySize();
 
 #ifdef __WXMSW__
@@ -1158,7 +1156,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
         m_treeControls->AddRoot(_("wxCrafter Project"), 0, 0);
         project_file = wxcProjectMetadata::Get().GetProjectFile();
         wxcProjectMetadata::Get().FromJSON(
-            json.toElement().namedObject(wxT("metadata"))); // Needed for Redo() to work correctly
+            json.toElement().namedObject("metadata")); // Needed for Redo() to work correctly
         wxcProjectMetadata::Get().UpdatePaths();
     }
 
@@ -1198,20 +1196,23 @@ void GUICraftMainPanel::DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapp
         wxTreeItemId insertionItem = beforeItem;
         if(insertBefore) {
             insertionItem = m_treeControls->GetPrevSibling(beforeItem);
-            if(insertionItem.IsOk() == false)
+            if(insertionItem.IsOk() == false) {
                 insertionItem = parent;
+            }
         }
 
         item = m_treeControls->InsertItem(parent, insertionItem, wrapper->GetName(), imgId, imgId,
                                           new GUICraftItemData(wrapper));
-        if(itemToSelect.IsOk() == false)
+        if(itemToSelect.IsOk() == false) {
             itemToSelect = item;
+        }
 
     } else {
 
         item = m_treeControls->AppendItem(parent, wrapper->GetName(), imgId, imgId, new GUICraftItemData(wrapper));
-        if(itemToSelect.IsOk() == false)
+        if(itemToSelect.IsOk() == false) {
             itemToSelect = item;
+        }
     }
 
     wxcWidget::List_t::const_iterator iter = wrapper->GetChildren().begin();
@@ -1425,11 +1426,13 @@ void GUICraftMainPanel::ExpandToItem(const wxString& name, wxTreeItemId& searchF
 
 void GUICraftMainPanel::DoFindName(const wxTreeItemId& parent, const wxString& name, wxTreeItemId& item)
 {
-    if(item.IsOk())
+    if(item.IsOk()) {
         return;
+    }
 
-    if(parent.IsOk() == false)
+    if(parent.IsOk() == false) {
         return;
+    }
 
     if(m_treeControls->GetItemText(parent) == name) {
         item = parent;
@@ -1441,8 +1444,9 @@ void GUICraftMainPanel::DoFindName(const wxTreeItemId& parent, const wxString& n
         wxTreeItemId child = m_treeControls->GetFirstChild(parent, cookie);
         while(child.IsOk()) {
             DoFindName(child, name, item);
-            if(item.IsOk())
+            if(item.IsOk()) {
                 return;
+            }
             child = m_treeControls->GetNextChild(parent, cookie);
         }
     }
@@ -1497,9 +1501,9 @@ void GUICraftMainPanel::OnMoveItemUI(wxUpdateUIEvent& e)
             control->GetAdjacentSiblingSizer(&isAbove); // Which icon should we use? upper-right or lower-right?
             wxCrafter::ResourceLoader bmps;
             if(isAbove) {
-                m_toolbar->SetToolBitmap(ID_MOVE_NODE_INTO_SIBLING, bmps.Bitmap(wxT("move-upper-right")));
+                m_toolbar->SetToolBitmap(ID_MOVE_NODE_INTO_SIBLING, bmps.Bitmap("move-upper-right"));
             } else {
-                m_toolbar->SetToolBitmap(ID_MOVE_NODE_INTO_SIBLING, bmps.Bitmap(wxT("move-lower-right")));
+                m_toolbar->SetToolBitmap(ID_MOVE_NODE_INTO_SIBLING, bmps.Bitmap("move-lower-right"));
             }
 
             e.Enable(true);
@@ -1661,8 +1665,9 @@ bool GUICraftMainPanel::DoUpdateNotebookSelection(const wxTreeItemId& item)
         }
     }
 
-    if(!page && !ribbonPage)
+    if(!page && !ribbonPage) {
         return false;
+    }
 
     if(page) {
         // Page is an actual notebook page, get the notebook that it represents
@@ -1795,8 +1800,9 @@ void GUICraftMainPanel::OnCut(wxCommandEvent& e)
     // disconnect this item from the its parent
     m_clipboardItem->RemoveFromParent();
 
-    if(m_treeControls->ItemHasChildren(item))
+    if(m_treeControls->ItemHasChildren(item)) {
         m_treeControls->DeleteChildren(item);
+    }
     m_treeControls->Delete(item);
 
     NotifyPreviewChanged();
@@ -2071,12 +2077,14 @@ void GUICraftMainPanel::OnEndDrag(wxTreeEvent& event)
     source = guiSourceItem->m_wxcWidget;
 
     // source and targets are the same?
-    if(source == target)
+    if(source == target) {
         return;
+    }
 
     // target is child of source?
-    if(target->IsDirectOrIndirectChildOf(source))
+    if(target->IsDirectOrIndirectChildOf(source)) {
         return;
+    }
 
     // Can we paste the item to the new location?
     if(!Allocator::Instance()->CanPaste(source, target)) {
@@ -2178,8 +2186,9 @@ void GUICraftMainPanel::DoAppendItem(const wxTreeItemId& sourceItem, const wxTre
         DoUnsetItemData(sourceItem);
 
         // Delete the UI of the dragged item
-        if(m_treeControls->ItemHasChildren(sourceItem))
+        if(m_treeControls->ItemHasChildren(sourceItem)) {
             m_treeControls->DeleteChildren(sourceItem);
+        }
         m_treeControls->Delete(sourceItem);
 
     } else {
@@ -2220,16 +2229,18 @@ void GUICraftMainPanel::DoInsertBefore(const wxTreeItemId& sourceItem, const wxT
         source = guiSourceItem->m_wxcWidget;
 
         // Check if we can perform the insert action
-        if(!DoCheckInsert(source, target))
+        if(!DoCheckInsert(source, target)) {
             return;
+        }
 
         // Disconnect the dragged item from its parent
         source->RemoveFromParent();
         DoUnsetItemData(sourceItem);
 
         // Delete the UI of the dragged item
-        if(m_treeControls->ItemHasChildren(sourceItem))
+        if(m_treeControls->ItemHasChildren(sourceItem)) {
             m_treeControls->DeleteChildren(sourceItem);
+        }
         m_treeControls->Delete(sourceItem);
 
     } else {
@@ -2237,8 +2248,9 @@ void GUICraftMainPanel::DoInsertBefore(const wxTreeItemId& sourceItem, const wxT
         CHECK_POINTER(source);
 
         // Check if we can perform the insert action
-        if(!DoCheckInsert(source, target))
+        if(!DoCheckInsert(source, target)) {
             return;
+        }
     }
 
     // Paste it as a child of the target item
@@ -2284,19 +2296,22 @@ void GUICraftMainPanel::OnShowPreviewUI(wxUpdateUIEvent& e)
 wxcWidget* GUICraftMainPanel::GetActiveWizardPage() const
 {
     wxTreeItemId topLevel = DoGetTopLevelTreeItem();
-    if(topLevel.IsOk() == false)
+    if(topLevel.IsOk() == false) {
         return NULL;
+    }
 
     wxTreeItemId sel = m_treeControls->GetSelection();
-    if(sel.IsOk() == false)
+    if(sel.IsOk() == false) {
         return NULL;
+    }
 
     // Check that this top level is indeed a wxWizard...
     GUICraftItemData* topLevelItemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(topLevel));
     CHECK_POINTER_RET_NULL(topLevelItemData);
     CHECK_POINTER_RET_NULL(topLevelItemData->m_wxcWidget);
-    if(topLevelItemData->m_wxcWidget->GetType() != ID_WXWIZARD)
+    if(topLevelItemData->m_wxcWidget->GetType() != ID_WXWIZARD) {
         return NULL;
+    }
 
     GUICraftItemData* itemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(sel));
     CHECK_POINTER_RET_NULL(itemData);
@@ -2358,11 +2373,11 @@ void GUICraftMainPanel::OnBarItemSelected(wxCommandEvent& e)
     wxString parentname = e.GetString().BeforeFirst(wxT(':'));
 
     const wxcWidget* parnt = NULL;
-    if(parentname == wxT("TOOL_BAR_ID")) {
+    if(parentname == "TOOL_BAR_ID") {
         // direct toolbar child of the main frame
         parnt = tlid->FindFirstDirectChildOfType(ID_WXTOOLBAR);
 
-    } else if(parentname == wxT("MENU_BAR_ID")) {
+    } else if(parentname == "MENU_BAR_ID") {
         // direct toolbar child of the main frame
         parnt = tlid->FindFirstDirectChildOfType(ID_WXMENUBAR);
 
@@ -2389,8 +2404,9 @@ void GUICraftMainPanel::OnBarItemSelected(wxCommandEvent& e)
 
 wxcWidget* GUICraftMainPanel::DoGetItemData(const wxTreeItemId& item) const
 {
-    if(!item.IsOk())
+    if(!item.IsOk()) {
         return NULL;
+    }
 
     GUICraftItemData* id = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(item));
     CHECK_POINTER_RET_NULL(id);
@@ -2522,8 +2538,9 @@ State::Ptr_t GUICraftMainPanel::CurrentState()
 
 void GUICraftMainPanel::DoSelectItemByName(const wxString& name, const wxString& parentTLW)
 {
-    if(name.IsEmpty())
+    if(name.IsEmpty()) {
         return;
+    }
 
     wxTreeItemId startpoint = m_treeControls->GetRootItem();
     if(!parentTLW.IsEmpty()) {
@@ -2563,8 +2580,9 @@ bool GUICraftMainPanel::IsPropertyGridPropertySelected() const
 wxcWidget* GUICraftMainPanel::GetActiveTopLevelWin() const
 {
     wxTreeItemId topLevel = DoGetTopLevelTreeItem();
-    if(topLevel.IsOk() == false)
+    if(topLevel.IsOk() == false) {
         return NULL;
+    }
 
     GUICraftItemData* topLevelItemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(topLevel));
     CHECK_POINTER_RET_NULL(topLevelItemData);
@@ -2731,23 +2749,6 @@ wxArrayString GUICraftMainPanel::GetCustomControlsUsed() const
     return customControls;
 }
 
-bool GUICraftMainPanel::DoCheckLicense(int controlType) const
-{
-    wxcWidget* widget = Allocator::Instance()->Create(controlType);
-    CHECK_POINTER_RET_FALSE(widget);
-
-    bool isLicensed = widget->IsLicensed();
-    wxString controlName = widget->GetWxClassName();
-    wxDELETE(widget);
-
-    if(!isLicensed) {
-        wxString msg;
-        msg << "'" << controlName << "' " << _("is not available in the free edition of wxCrafter");
-        m_infobarLicense->ShowMessage(msg, wxICON_WARNING);
-    }
-    return isLicensed;
-}
-
 void GUICraftMainPanel::OnPageChanged(wxBookCtrlEvent& event)
 {
     event.Skip();
@@ -2778,17 +2779,6 @@ void GUICraftMainPanel::DoUpdateCppPreview()
         event.SetClientData(NULL);
     }
     EventNotifier::Get()->AddPendingEvent(event);
-}
-
-void GUICraftMainPanel::OnCloseLicenseMessage(wxCommandEvent& event)
-{
-    event.Skip();
-    m_infobarLicense->Dismiss();
-}
-
-void GUICraftMainPanel::OnRegisterWxCrafter(wxCommandEvent& event)
-{
-    ::wxLaunchDefaultBrowser("http://wxcrafter.codelite.org/checkout.php");
 }
 
 void GUICraftMainPanel::OnFindBar(clFindEvent& e)
@@ -2865,8 +2855,9 @@ wxTreeItemId GUICraftMainPanel::DoFindItemByWxcWidget(wxcWidget* widget, const w
         return item;
     }
 
-    if(!m_treeControls->HasChildren(item))
+    if(!m_treeControls->HasChildren(item)) {
         return wxTreeItemId();
+    }
 
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_treeControls->GetFirstChild(item, cookie);
@@ -2954,8 +2945,9 @@ void GUICraftMainPanel::DoChangeOrInsertIntoSizer(int id)
         break;
     }
 
-    if(widgetType == wxNOT_FOUND)
+    if(widgetType == wxNOT_FOUND) {
         return;
+    }
 
     wxString label;
     wxcWidget* newWidget = Allocator::Instance()->Create(widgetType);
@@ -3051,32 +3043,35 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
     }
 
     if(!wxcProjectMetadata::Get().GetGenerateCPPCode() && !wxcProjectMetadata::Get().GetGenerateXRC()) {
-        if(silent)
+        if(silent) {
             return;
+        }
         wxString msg;
         msg << _("You need to enable at least one of 'Generate C++ code' and 'Generate XRC'");
-        ::wxMessageBox(msg, wxT("wxCrafter"), wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
+        ::wxMessageBox(msg, "wxCrafter", wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
         return;
     }
 
     wxFileName outputDir(wxcProjectMetadata::Get().GetGeneratedFilesDir(), "");
     wxCrafter::MakeAbsToProject(outputDir);
     if(!outputDir.DirExists()) {
-        if(silent)
+        if(silent) {
             return;
+        }
         wxString msg;
         msg << _("Please set the base classes generated files output directory\nThis can be done by selecting the root "
                  "item of the tree and edit the properties");
-        ::wxMessageBox(msg, wxT("wxCrafter"), wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
+        ::wxMessageBox(msg, "wxCrafter", wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
         return;
     }
 
     if(wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
-        if(silent)
+        if(silent) {
             return;
+        }
         wxString msg;
         msg << _("You must save the project before generating code");
-        ::wxMessageBox(msg, wxT("wxCrafter"), wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
+        ::wxMessageBox(msg, "wxCrafter", wxOK | wxCENTER | wxICON_WARNING, wxCrafter::TopFrame());
         return;
     }
 
@@ -3142,20 +3137,18 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
 
         wxString prefix;
         prefix << autoGenComment;
-        prefix << wxT("#ifndef ") << blockGuard << wxT("\n");
-        prefix << wxT("#define ") << blockGuard << wxT("\n\n");
+        prefix << "#ifndef " << blockGuard << "\n";
+        prefix << "#define " << blockGuard << "\n\n";
         prefix << "// clang-format off\n";
-        prefix << wxCrafter::Join(headers, wxT("\n")) << wxT("\n");
+        prefix << wxCrafter::Join(headers, "\n") << "\n";
 
         // wxPersistence support
-        if(wxcSettings::Get().IsLicensed()) {
-            prefix << wxCrafter::WX29_BLOCK_START();
-            prefix << "#include <wx/persist.h>\n";
-            prefix << "#include <wx/persist/toplevel.h>\n";
-            prefix << "#include <wx/persist/bookctrl.h>\n";
-            prefix << "#include <wx/persist/treebook.h>\n";
-            prefix << "#endif\n";
-        }
+        prefix << wxCrafter::WX29_BLOCK_START();
+        prefix << "#include <wx/persist.h>\n";
+        prefix << "#include <wx/persist/toplevel.h>\n";
+        prefix << "#include <wx/persist/bookctrl.h>\n";
+        prefix << "#include <wx/persist/treebook.h>\n";
+        prefix << "#endif\n";
 
         prefix << "\n";
         prefix << "#ifdef WXC_FROM_DIP\n";
@@ -3171,13 +3164,13 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         wxString projectIncludes;
         const wxArrayString& includes = wxcProjectMetadata::Get().GetIncludeFiles();
         for(size_t i = 0; i < includes.GetCount(); i++) {
-            projectIncludes << wxT("#include ") << wxCrafter::AddQuotes(includes.Item(i)) << wxT("\n");
+            projectIncludes << "#include " << wxCrafter::AddQuotes(includes.Item(i)) << "\n";
         }
         prefix << projectIncludes;
         prefix << "// clang-format on\n";
 
         baseHeader.Prepend(prefix);
-        baseHeader.Append(wxT("#endif\n"));
+        baseHeader.Append("#endif\n");
 
         if(wxCrafter::IsTheSame(baseHeader, headerFile) == false) {
             wxCrafter::WriteFile(headerFile, baseHeader, true);
@@ -3187,12 +3180,12 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
 
         wxString cppPrefix;
         cppPrefix << autoGenComment;
-        cppPrefix << wxT("#include \"") << headerFile.GetFullName() << wxT("\"\n");
-        cppPrefix << projectIncludes << wxT("\n\n");
+        cppPrefix << "#include \"" << headerFile.GetFullName() << "\"\n";
+        cppPrefix << projectIncludes << "\n\n";
 
-        cppPrefix << wxT("// Declare the bitmap loading function\n");
-        cppPrefix << wxcCodeGeneratorHelper::Get().GenerateExternCode() << wxT("\n"); // Add the bitmap extern code
-        cppPrefix << wxT("static bool bBitmapLoaded = false;\n\n");
+        cppPrefix << "// Declare the bitmap loading function\n";
+        cppPrefix << wxcCodeGeneratorHelper::Get().GenerateExternCode() << "\n"; // Add the bitmap extern code
+        cppPrefix << "static bool bBitmapLoaded = false;\n\n";
 
         baseCpp.Prepend(cppPrefix);
         if(wxCrafter::IsTheSame(baseCpp, sourceFile) == false) {
@@ -3257,15 +3250,17 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
     wxUnusedVar(files);
     wxFileDialog openFileDialog(this, _("Select wxCrafter files:"), "", "", "wxCrafter Project Files (*.wxcp)|*.wxcp",
                                 wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
-    if(openFileDialog.ShowModal() != wxID_OK)
+    if(openFileDialog.ShowModal() != wxID_OK) {
         return;
+    }
     openFileDialog.GetPaths(wxcpFiles);
 #else
     wxcpFiles = files;
 #endif
 
-    if(wxcpFiles.IsEmpty())
+    if(wxcpFiles.IsEmpty()) {
         return;
+    }
     if(wxcProjectMetadata::Get().IsLoaded()) {
         ::wxMessageBox(_("Please close the current wxCrafter project before batch generating code"), "wxCrafter",
                        wxOK | wxCENTER | wxICON_ERROR);

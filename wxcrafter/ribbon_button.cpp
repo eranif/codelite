@@ -1,4 +1,5 @@
 #include "ribbon_button.h"
+
 #include "allocator_mgr.h"
 #include "choice_property.h"
 #include "file_ficker_property.h"
@@ -19,18 +20,19 @@ RibbonButtonBase::RibbonButtonBase(int type)
                       type == ID_WXRIBBONTOGGLETOOL);
 
     int selection = 0;
-    if(type == ID_WXRIBBONBUTTON || type == ID_WXRIBBONTOOL)
+    if(type == ID_WXRIBBONBUTTON || type == ID_WXRIBBONTOOL) {
         selection = 0;
-    else if(type == ID_WXRIBBONDROPDOWNBUTTON || type == ID_WXRIBBONDROPDOWNTOOL)
+    } else if(type == ID_WXRIBBONDROPDOWNBUTTON || type == ID_WXRIBBONDROPDOWNTOOL) {
         selection = 1;
-    else if(type == ID_WXRIBBONHYBRIDBUTTON || type == ID_WXRIBBONHYBRIDTOOL)
+    } else if(type == ID_WXRIBBONHYBRIDBUTTON || type == ID_WXRIBBONHYBRIDTOOL) {
         selection = 2;
-    else if(type == ID_WXRIBBONTOGGLEBUTTON || type == ID_WXRIBBONTOGGLETOOL)
+    } else if(type == ID_WXRIBBONTOGGLEBUTTON || type == ID_WXRIBBONTOGGLETOOL) {
         selection = 3;
+    }
 
     AddProperty(new StringProperty(PROP_LABEL, _("Button"), _("The button label")));
-    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, wxT(""), _("Select the bitmap file")));
-    AddProperty(new StringProperty(PROP_HELP, wxT("Help String"), _("Help string")));
+    AddProperty(new BitmapPickerProperty(PROP_BITMAP_PATH, "", _("Select the bitmap file")));
+    AddProperty(new StringProperty(PROP_HELP, "Help String", _("Help string")));
     AddProperty(new ChoiceProperty(PROP_KIND, kind, selection, _("The button type")));
 
     wxCrafter::ResourceLoader bl;

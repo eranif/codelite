@@ -1,7 +1,6 @@
 #ifndef ANIMATIONCTRLWRAPPER_H
 #define ANIMATIONCTRLWRAPPER_H
 
-#include "wxc_settings.h"
 #include "wxc_widget.h" // Base class: wxcWidget
 
 class AnimationCtrlWrapper : public wxcWidget
@@ -15,9 +14,7 @@ public:
     virtual wxString CppCtorCode() const;
     virtual void GetIncludeFile(wxArrayString& headers) const;
     virtual wxString GetWxClassName() const;
-    void ToXRC(wxString& text, XRC_TYPE type) const;
-
-    bool IsLicensed() const { return wxcSettings::Get().IsLicensed2(); }
+    virtual void ToXRC(wxString& text, XRC_TYPE type) const;
 };
 
 #endif // ANIMATIONCTRLWRAPPER_H

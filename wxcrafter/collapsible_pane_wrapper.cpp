@@ -1,9 +1,10 @@
 #include "collapsible_pane_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "bool_property.h"
-#include "wxc_settings.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
+
 #include <wx/collpane.h>
 
 CollapsiblePaneWrapper::CollapsiblePaneWrapper()
@@ -46,12 +47,10 @@ void CollapsiblePaneWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         text << "<style>wxCP_NO_TLW_RESIZE</style>";
 
     } else {
-        text << XRCStyle()  << "<collapsed>" << PropertyString(PROP_COLLAPSED) << "</collapsed>";
+        text << XRCStyle() << "<collapsed>" << PropertyString(PROP_COLLAPSED) << "</collapsed>";
     }
 
     ChildrenXRC(text, type);
 
     text << XRCSuffix();
 }
-
-bool CollapsiblePaneWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

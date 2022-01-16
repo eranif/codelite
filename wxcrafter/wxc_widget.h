@@ -245,11 +245,6 @@ public:
     static CustomControlTemplateMap_t& GetMsCustomControlsUsed() { return ms_customControlsUsed; }
 
     /**
-     * @brief return true if this control can be used (e.g. is it licensed?)
-     */
-    virtual bool IsLicensed() const;
-
-    /**
      * @brief check whether 'name' is unique accross all children of this wxcWidget
      */
     virtual bool IsNameUnique(const wxString& name) const;
@@ -388,11 +383,11 @@ protected:
     void RegisterEvent(const wxString& eventName, const wxString& className, const wxString& description,
                        const wxString& handlerName = "", const wxString& functionNameAndSig = "", bool noBody = false);
     /**
-     * @brief acroynm for RegisterEvent(eventName, wxT("wxCommandEvent"), wxT("wxCommandEventHandler"))
+     * @brief acroynm for RegisterEvent(eventName, "wxCommandEvent", "wxCommandEventHandler")
      */
     void RegisterEventCommand(const wxString& eventName, const wxString& description)
     {
-        RegisterEvent(eventName, wxT("wxCommandEvent"), description, wxT("wxCommandEventHandler"));
+        RegisterEvent(eventName, "wxCommandEvent", description, "wxCommandEventHandler");
     }
 
     const wxcWidget* DoFindByName(const wxcWidget* parent, const wxString& name) const;
@@ -758,7 +753,7 @@ public:
     void RemoveFromParent();
     wxString SizerFlags(const wxString& defaultFlags) const;
     size_t SizerFlagsAsInteger() const;
-    wxString StyleFlags(const wxString& deafultStyle = wxT("")) const;
+    wxString StyleFlags(const wxString& deafultStyle = "") const;
     size_t StyleFlagsAsInteger() const;
     virtual wxMenu* GetEventsMenu() { return m_eventsMenu; }
 

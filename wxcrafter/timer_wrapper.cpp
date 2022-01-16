@@ -1,9 +1,9 @@
 #include "timer_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "category_property.h"
 #include "int_property.h"
-#include "wxc_settings.h"
 #include "wxgui_helpers.h"
 
 TimerWrapper::TimerWrapper()
@@ -60,5 +60,3 @@ wxString TimerWrapper::CppDtorCode() const
     cppCode << "    wxDELETE( " << GetName() << " );\n";
     return cppCode;
 }
-
-bool TimerWrapper::IsLicensed() const { return wxcSettings::Get().IsLicensed(); }

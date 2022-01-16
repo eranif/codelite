@@ -10,7 +10,7 @@ public:
     virtual ~TimerWrapper();
 
 protected:
-    wxString CppDtorCode() const;
+    virtual wxString CppDtorCode() const;
 
 public:
     virtual wxcWidget* Clone() const;
@@ -21,7 +21,6 @@ public:
 
     virtual bool IsValidParent() const { return false; }
     virtual bool IsWxWindow() const { return false; }
-    virtual bool IsLicensed() const;
 };
 
 #endif // TIMERWRAPPER_H

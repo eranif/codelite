@@ -2857,5 +2857,9 @@ void TagsManager::ParseWorkspaceFull(const wxString& workspace_dir)
     // start ctagsd again
     clLanguageServerEvent start_event{ wxEVT_LSP_START };
     start_event.SetLspName("ctagsd");
+#ifdef __WXGTK__
+    EventNotifier::Get()->ProcessEvent(start_event);
+#else
     EventNotifier::Get()->AddPendingEvent(start_event);
+#endif
 }

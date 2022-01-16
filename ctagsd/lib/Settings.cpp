@@ -482,21 +482,7 @@ void CTagsdSettings::Save(const wxFileName& filepath)
 
     auto tokens = config.AddArray("tokens");
     write_to_json(tokens, m_tokens);
-
     config_file.save(filepath);
-
-    // write ctags.replacements file
-    wxFileName fn_replacements(filepath);
-    fn_replacements.SetFullName("ctags.replacements");
-
-    // we only write entries with values
-    wxString content;
-    for(const auto& d : m_tokens) {
-        if(!d.second.empty()) {
-            content << d.first << "=" << d.second << "\n";
-        }
-    }
-    FileUtils::WriteFileContent(fn_replacements, content);
 }
 
 void CTagsdSettings::build_search_path(const wxFileName& filepath)

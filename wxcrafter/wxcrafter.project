@@ -601,6 +601,7 @@
     <File Name="my_panel.cpp"/>
     <File Name="my_dialog.h"/>
     <File Name="my_dialog.cpp"/>
+    <VirtualDirectory Name="SerialNumber"/>
     <File Name="AboutDlg.h"/>
     <File Name="AboutDlg.cpp"/>
     <VirtualDirectory Name="NonGUIControls">

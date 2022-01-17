@@ -90,8 +90,7 @@ public:
     clThemedButton* GetButtonReplace() { return m_buttonReplace; }
     clThemedButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
     QuickFindBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(-1, -1),
-                     long style = wxTAB_TRAVERSAL | wxTRANSPARENT_WINDOW | wxBORDER_NONE);
+                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxTRANSPARENT_WINDOW);
     virtual ~QuickFindBarBase();
 };
 

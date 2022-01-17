@@ -1,6 +1,7 @@
 #include "clThemedTextCtrl.hpp"
 
 #include "ColoursAndFontsManager.h"
+#include "clSystemSettings.h"
 #include "event_notifier.h"
 #include "globals.h"
 

@@ -1,0 +1,227 @@
+diff --git a/Units/parser-c.r/macroexpand-empty-arg.d/args.ctags b/Units/parser-c.r/macroexpand-empty-arg.d/args.ctags
+new file mode 100644
+index 0000000000..273f0b4634
+--- /dev/null
++++ b/Units/parser-c.r/macroexpand-empty-arg.d/args.ctags
+@@ -0,0 +1,4 @@
++--sort=no
++--fields=+n{signature}
++--param-CPreProcessor._expand=1
++--fields-C={macrodef}
+diff --git a/Units/parser-c.r/macroexpand-empty-arg.d/expected.tags b/Units/parser-c.r/macroexpand-empty-arg.d/expected.tags
+new file mode 100644
+index 0000000000..a745bd1c7c
+--- /dev/null
++++ b/Units/parser-c.r/macroexpand-empty-arg.d/expected.tags
+@@ -0,0 +1,69 @@
++X	input.c	/^#define X$/;"	d	line:1	file:	macrodef:
++m0	input.c	/^#define m0(/;"	d	line:2	file:	signature:(Q,W,E,R)	macrodef:int Q
++m1	input.c	/^#define m1(/;"	d	line:3	file:	signature:(Q,W,E,R)	macrodef:int W
++m2	input.c	/^#define m2(/;"	d	line:4	file:	signature:(Q,W,E,R)	macrodef:int E
++m3	input.c	/^#define m3(/;"	d	line:5	file:	signature:(Q,W,E,R)	macrodef:int R
++a	input.c	/^m0(a,b,c,d);$/;"	v	line:7	typeref:typename:int
++a	input.c	/^m0(a,X,c,d);$/;"	v	line:8	typeref:typename:int
++a	input.c	/^m0(a,b,X,d);$/;"	v	line:9	typeref:typename:int
++a	input.c	/^m0(a,b,c,X);$/;"	v	line:10	typeref:typename:int
++a	input.c	/^m0(a,X,X,d);$/;"	v	line:11	typeref:typename:int
++a	input.c	/^m0(a,b,X,X);$/;"	v	line:12	typeref:typename:int
++a	input.c	/^m0(a,X,c,X);$/;"	v	line:13	typeref:typename:int
++a	input.c	/^m0(a,X,X,X);$/;"	v	line:14	typeref:typename:int
++b	input.c	/^m1(a,b,c,d);$/;"	v	line:16	typeref:typename:int
++b	input.c	/^m1(X,b,c,d);$/;"	v	line:17	typeref:typename:int
++b	input.c	/^m1(a,b,X,d);$/;"	v	line:18	typeref:typename:int
++b	input.c	/^m1(a,b,c,X);$/;"	v	line:19	typeref:typename:int
++b	input.c	/^m1(X,b,X,d);$/;"	v	line:20	typeref:typename:int
++b	input.c	/^m1(a,b,X,X);$/;"	v	line:21	typeref:typename:int
++b	input.c	/^m1(X,b,c,X);$/;"	v	line:22	typeref:typename:int
++b	input.c	/^m1(X,b,X,X);$/;"	v	line:23	typeref:typename:int
++c	input.c	/^m2(a,b,c,d);$/;"	v	line:25	typeref:typename:int
++c	input.c	/^m2(X,b,c,d);$/;"	v	line:26	typeref:typename:int
++c	input.c	/^m2(a,X,c,d);$/;"	v	line:27	typeref:typename:int
++c	input.c	/^m2(a,b,c,X);$/;"	v	line:28	typeref:typename:int
++c	input.c	/^m2(X,X,c,d);$/;"	v	line:29	typeref:typename:int
++c	input.c	/^m2(a,X,c,X);$/;"	v	line:30	typeref:typename:int
++c	input.c	/^m2(X,b,c,X);$/;"	v	line:31	typeref:typename:int
++c	input.c	/^m2(X,X,c,X);$/;"	v	line:32	typeref:typename:int
++d	input.c	/^m3(a,b,c,d);$/;"	v	line:34	typeref:typename:int
++d	input.c	/^m3(X,b,c,d);$/;"	v	line:35	typeref:typename:int
++d	input.c	/^m3(a,X,c,d);$/;"	v	line:36	typeref:typename:int
++d	input.c	/^m3(a,b,X,d);$/;"	v	line:37	typeref:typename:int
++d	input.c	/^m3(X,X,c,d);$/;"	v	line:38	typeref:typename:int
++d	input.c	/^m3(a,X,X,d);$/;"	v	line:39	typeref:typename:int
++d	input.c	/^m3(X,b,X,d);$/;"	v	line:40	typeref:typename:int
++d	input.c	/^m3(X,X,X,d);$/;"	v	line:41	typeref:typename:int
++a	input.c	/^m0(a,b,c,d);$/;"	v	line:43	typeref:typename:int
++a	input.c	/^m0(a,,c,d);$/;"	v	line:44	typeref:typename:int
++a	input.c	/^m0(a,b,,d);$/;"	v	line:45	typeref:typename:int
++a	input.c	/^m0(a,b,c,);$/;"	v	line:46	typeref:typename:int
++a	input.c	/^m0(a,,,d);$/;"	v	line:47	typeref:typename:int
++a	input.c	/^m0(a,b,,);$/;"	v	line:48	typeref:typename:int
++a	input.c	/^m0(a,,c,);$/;"	v	line:49	typeref:typename:int
++a	input.c	/^m0(a,,,);$/;"	v	line:50	typeref:typename:int
++b	input.c	/^m1(a,b,c,d);$/;"	v	line:52	typeref:typename:int
++b	input.c	/^m1(,b,c,d);$/;"	v	line:53	typeref:typename:int
++b	input.c	/^m1(a,b,,d);$/;"	v	line:54	typeref:typename:int
++b	input.c	/^m1(a,b,c,);$/;"	v	line:55	typeref:typename:int
++b	input.c	/^m1(,b,,d);$/;"	v	line:56	typeref:typename:int
++b	input.c	/^m1(a,b,,);$/;"	v	line:57	typeref:typename:int
++b	input.c	/^m1(,b,c,);$/;"	v	line:58	typeref:typename:int
++b	input.c	/^m1(,b,,);$/;"	v	line:59	typeref:typename:int
++c	input.c	/^m2(a,b,c,d);$/;"	v	line:61	typeref:typename:int
++c	input.c	/^m2(,b,c,d);$/;"	v	line:62	typeref:typename:int
++c	input.c	/^m2(a,,c,d);$/;"	v	line:63	typeref:typename:int
++c	input.c	/^m2(a,b,c,);$/;"	v	line:64	typeref:typename:int
++c	input.c	/^m2(,,c,d);$/;"	v	line:65	typeref:typename:int
++c	input.c	/^m2(a,,c,);$/;"	v	line:66	typeref:typename:int
++c	input.c	/^m2(,b,c,);$/;"	v	line:67	typeref:typename:int
++c	input.c	/^m2(,,c,);$/;"	v	line:68	typeref:typename:int
++d	input.c	/^m3(a,b,c,d);$/;"	v	line:70	typeref:typename:int
++d	input.c	/^m3(,b,c,d);$/;"	v	line:71	typeref:typename:int
++d	input.c	/^m3(a,,c,d);$/;"	v	line:72	typeref:typename:int
++d	input.c	/^m3(a,b,,d);$/;"	v	line:73	typeref:typename:int
++d	input.c	/^m3(,,c,d);$/;"	v	line:74	typeref:typename:int
++d	input.c	/^m3(a,,,d);$/;"	v	line:75	typeref:typename:int
++d	input.c	/^m3(,b,,d);$/;"	v	line:76	typeref:typename:int
++d	input.c	/^m3(,,,d);$/;"	v	line:77	typeref:typename:int
+diff --git a/Units/parser-c.r/macroexpand-empty-arg.d/input.c b/Units/parser-c.r/macroexpand-empty-arg.d/input.c
+new file mode 100644
+index 0000000000..6e3a07d7a1
+--- /dev/null
++++ b/Units/parser-c.r/macroexpand-empty-arg.d/input.c
+@@ -0,0 +1,77 @@
++#define X
++#define m0(Q,W,E,R) int Q
++#define m1(Q,W,E,R) int W
++#define m2(Q,W,E,R) int E
++#define m3(Q,W,E,R) int R
++
++m0(a,b,c,d);
++m0(a,X,c,d);
++m0(a,b,X,d);
++m0(a,b,c,X);
++m0(a,X,X,d);
++m0(a,b,X,X);
++m0(a,X,c,X);
++m0(a,X,X,X);
++
++m1(a,b,c,d);
++m1(X,b,c,d);
++m1(a,b,X,d);
++m1(a,b,c,X);
++m1(X,b,X,d);
++m1(a,b,X,X);
++m1(X,b,c,X);
++m1(X,b,X,X);
++
++m2(a,b,c,d);
++m2(X,b,c,d);
++m2(a,X,c,d);
++m2(a,b,c,X);
++m2(X,X,c,d);
++m2(a,X,c,X);
++m2(X,b,c,X);
++m2(X,X,c,X);
++
++m3(a,b,c,d);
++m3(X,b,c,d);
++m3(a,X,c,d);
++m3(a,b,X,d);
++m3(X,X,c,d);
++m3(a,X,X,d);
++m3(X,b,X,d);
++m3(X,X,X,d);
++
++m0(a,b,c,d);
++m0(a,,c,d);
++m0(a,b,,d);
++m0(a,b,c,);
++m0(a,,,d);
++m0(a,b,,);
++m0(a,,c,);
++m0(a,,,);
++
++m1(a,b,c,d);
++m1(,b,c,d);
++m1(a,b,,d);
++m1(a,b,c,);
++m1(,b,,d);
++m1(a,b,,);
++m1(,b,c,);
++m1(,b,,);
++
++m2(a,b,c,d);
++m2(,b,c,d);
++m2(a,,c,d);
++m2(a,b,c,);
++m2(,,c,d);
++m2(a,,c,);
++m2(,b,c,);
++m2(,,c,);
++
++m3(a,b,c,d);
++m3(,b,c,d);
++m3(a,,c,d);
++m3(a,b,,d);
++m3(,,c,d);
++m3(a,,,d);
++m3(,b,,d);
++m3(,,,d);
+diff --git a/parsers/cxx/cxx_token_chain.c b/parsers/cxx/cxx_token_chain.c
+index 7cbe7055f4..0baac78841 100644
+--- a/parsers/cxx/cxx_token_chain.c
++++ b/parsers/cxx/cxx_token_chain.c
+@@ -441,6 +441,17 @@ void cxxTokenChainMoveEntryRange(
+ }
+ #endif
+
++static CXXToken * cxxTokenCreatePlaceholder(CXXToken * pToken)
++{
++	CXXToken * pPlaceholder = cxxTokenCreate();
++
++	pPlaceholder->iLineNumber = pToken->iLineNumber;
++	pPlaceholder->oFilePosition = pToken->oFilePosition;
++	pPlaceholder->eType = CXXTokenTypeUnknown;
++
++	return pPlaceholder;
++}
++
+ CXXTokenChain * cxxTokenChainSplitOnComma(CXXTokenChain * tc)
+ {
+ 	if(!tc)
+@@ -457,14 +468,31 @@ CXXTokenChain * cxxTokenChainSplitOnComma(CXXTokenChain * tc)
+
+ 	while(pStart && pToken->pNext)
+ 	{
+-		while(pToken->pNext && (!cxxTokenTypeIs(pToken->pNext,CXXTokenTypeComma)))
+-			pToken = pToken->pNext;
++		CXXToken * pNew = NULL;
+
+-		CXXToken * pNew = cxxTokenChainExtractRange(pStart,pToken,0);
++		if (cxxTokenTypeIs(pToken,CXXTokenTypeComma))
++		{
++			// If nothing is passed as an argument like
++			//
++			// macro(,b),
++			// macro(a,), or
++			// macro(,)
++			//
++			// , we must inject a dummy token to the chain.
++			pNew = cxxTokenCreatePlaceholder(pToken);
++			// we will not update pToken in this case.
++		}
++		else
++		{
++			while(pToken->pNext && (!cxxTokenTypeIs(pToken->pNext,CXXTokenTypeComma)))
++				pToken = pToken->pNext;
++
++			pNew = cxxTokenChainExtractRange(pStart,pToken,0);
++			pToken = pToken->pNext; // comma or nothing
++		}
+ 		if(pNew)
+ 			cxxTokenChainAppend(pRet,pNew);
+
+-		pToken = pToken->pNext; // comma or nothing
+ 		if(pToken)
+ 			pToken = pToken->pNext; // after comma
+ 		pStart = pToken;
+

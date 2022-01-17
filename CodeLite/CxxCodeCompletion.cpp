@@ -947,8 +947,8 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& op
         return 0;
     }
 
-    vector<wxString> kinds = { "function", "prototype", "member", "enum",      "enumerator",
-                               "class",    "struct",    "union",  "namespace", "typedef" };
+    vector<wxString> kinds = { "function", "prototype", "member",    "enum",    "enumerator", "class",
+                               "struct",   "union",     "namespace", "typedef", "variable" };
     if(operand_string == "." || operand_string == "->") {
         kinds = { "prototype", "function", "member" };
     }
@@ -1349,7 +1349,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     bool add_keywords = false;
     if(remainder.operand_string.empty()) {
         kinds = { "function", "prototype", "class",      "struct", "namespace", "union",
-                  "typedef",  "enum",      "enumerator", "macro",  "cenum" };
+                  "typedef",  "enum",      "enumerator", "macro",  "cenum",     "variable" };
         if(m_current_container_tag) {
             // if we are inside a scope, add member types
             kinds.push_back("member");

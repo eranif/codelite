@@ -431,12 +431,7 @@ void CTagsdSettings::Load(const wxFileName& filepath)
         m_ignore_spec = config["ignore_spec"].toString(m_ignore_spec);
         m_codelite_indexer = config["codelite_indexer"].toString();
         m_limit_results = config["limit_results"].toSize_t(m_limit_results);
-
-        auto tokens = config["tokens"];
-        read_from_json(tokens, m_tokens);
-
-        auto types = config["types"];
-        read_from_json(types, m_types);
+        CreateDefault(filepath); // generate the default tokens and types
     }
 
     build_search_path(filepath);
@@ -569,7 +564,6 @@ void CTagsdSettings::CreateDefault(const wxFileName& filepath)
 {
     m_tokens = to_vector_of_pairs(DEFAULT_TOKENS);
     m_types = to_vector_of_pairs(DEFAULT_TYPES);
-    m_limit_results = 500;
     Save(filepath);
 }
 

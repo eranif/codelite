@@ -9,6 +9,7 @@
 #include "procutils.h"
 #include "readtags.h"
 
+#include <set>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 
@@ -66,8 +67,16 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     // one option per line
     vector<wxString> options_arr;
     options_arr.reserve(500);
-    options_arr = { "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--c-kinds=+p", "--C++-kinds=+p" };
+    options_arr = { "--excmd=pattern",
+                    "--sort=no",
+                    "--fields=aKmSsnit",
+                    "--c-kinds=+p",
+                    "--C++-kinds=+p",
+                    "--language-force=c++",
+                    "--fields-c++=+{template}+{properties}" };
 
+    // we want the macros ordered, so we push them into std::set
+    std::set<wxString> macros;
     for(const auto& vt : macro_table) {
         wxString macro_replacements;
         wxString fixed_macro_name = fix_macro_entry(vt.first);
@@ -81,11 +90,8 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
             wxString fixed_macro_value = fix_macro_entry(vt.second);
             macro_replacements << "-D" << fixed_macro_name << "=" << fixed_macro_value;
         }
-        options_arr.push_back(macro_replacements);
+        macros.insert(macro_replacements);
     }
-
-    options_arr.push_back("--language-force=c++");
-    options_arr.push_back("--fields-c++=+{template}+{properties}");
 
     // write the options into a file
     wxFileName ctags_options_file(clStandardPaths::Get().GetUserDataDir(), "options.ctags");
@@ -93,8 +99,15 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     for(const wxString& option : options_arr) {
         ctags_options_file_content << option << "\n";
     }
+
+    // append the macros
+    for(const auto& macro : macros) {
+        ctags_options_file_content << macro << "\n";
+    }
+    ctags_options_file_content.Trim();
     FileUtils::WriteFileContent(ctags_options_file.GetFullPath(), ctags_options_file_content);
 
+    // start timer
     wxStopWatch sw;
 
     sw.Start();

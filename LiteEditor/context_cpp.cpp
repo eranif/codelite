@@ -1659,14 +1659,14 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
     wxStringSet_t implHash;
     for(TagEntryPtr t : functions) {
         if(scopeName == t->GetScope()) {
-            implHash.insert(ch.normalize_function(t->GetName(), t->GetSignature()));
+            implHash.insert(ch.normalize_function(t));
         }
     }
 
     std::vector<TagEntryPtr> unimplPrototypes;
     for(auto t : prototypes) {
         if(scopeName == t->GetScope()) {
-            wxString name = ch.normalize_function(t->GetName(), t->GetSignature());
+            wxString name = ch.normalize_function(t);
             if(implHash.count(name) == 0) {
                 // this prototype does not have an implementation
                 if(line_number == wxNOT_FOUND || t->GetLine() == line_number) {

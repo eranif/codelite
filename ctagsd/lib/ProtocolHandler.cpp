@@ -33,31 +33,6 @@
 using LSP::CompletionItem;
 using LSP::eSymbolKind;
 
-#if wxUSE_STACKWALKER
-class MyStackWalker : public wxStackWalker
-{
-public:
-    MyStackWalker() {}
-    virtual ~MyStackWalker() {}
-    void OnStackFrame(const wxStackFrame& frame)
-    {
-        wxString line;
-        line << "#" << frame.GetLevel() << " ";
-        if(!frame.GetModule().empty()) {
-            line << frame.GetModule() << ".";
-        }
-        if(!frame.GetName().empty()) {
-            line << frame.GetName();
-        }
-
-        if(!frame.GetFileName().empty()) {
-            line << " (" << frame.GetFileName() << ":" << frame.GetLine() << ")";
-        }
-        clDEBUG() << line << endl;
-    }
-};
-#endif
-
 namespace
 {
 FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
@@ -218,10 +193,6 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
     vector<TagEntryPtr> tags;
     if(CTags::ParseBuffer(filename, buffer, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
         clDEBUG() << "Failed to generate ctags file for buffer. file:" << endl;
-#if wxUSE_STACKWALKER
-        MyStackWalker stack{};
-        stack.Walk();
-#endif
         return;
     }
 
@@ -1238,36 +1209,51 @@ void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
     size_t id = json["id"].toSize_t();
     clDEBUG1() << json.format() << endl;
 
-    wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
-    wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
-    clDEBUG1() << "textDocument/signatureHelp: for file" << filepath << endl;
+    vector<TagEntryPtr> tags;
+    do_find_definition_tags(move(msg), channel, true, tags, nullptr);
 
-    if(!ensure_file_content_exists(filepath, channel, id))
-        return;
-
-    size_t line = json["params"]["position"]["line"].toSize_t();
-    size_t character = json["params"]["position"]["character"].toSize_t();
-
-    // get the expression at this given position
-    wxString last_word;
+    // format tip from tag
+    wxStringMap_t functions_map;
+    wxStringSet_t visited;
     CompletionHelper helper;
-    wxString text = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
-                                                     CompletionHelper::TRUNCATE_COMPLETE_WORDS);
-    wxString expression = helper.get_expression(text, false, &last_word);
 
-    clDEBUG() << "resolving expression:" << expression << endl;
+    wxString tooltip;
 
-    vector<wxString> tips;
-    TagsManagerST::Get()->GetHoverTip(filepath, line + 1, expression, last_word, text, tips);
+    if(!tags.empty()) {
+        auto first_tag = tags[0];
+        tooltip << first_tag->GetKind() << " `" << first_tag->GetName() << "`\n";
+        tooltip << "===\n";
+        if(first_tag->IsMethod()) {
+            tooltip.clear();
+            tooltip << "function `" << first_tag->GetName() << "()`:\n";
+            tooltip << "===\n";
+            for(TagEntryPtr tag : tags) {
+                if(tag->IsMethod()) {
+                    if(visited.insert(helper.normalize_function(tag)).second) {
+                        functions_map.insert({ helper.normalize_function(tag, 0), tag->GetTypename() });
+                    }
+                }
+            }
+            tooltip << "```\n";
+            for(const auto& vt : functions_map) {
+                wxString return_value = vt.second.empty() ? wxString("()") : vt.second;
+                tooltip << vt.first << " -> " << return_value << "\n";
+            }
+            tooltip << "```";
 
-    // construct the content
-    wxString tip_content;
-    for(wxString& tip : tips) {
-        tip.Trim().Trim(false);
-        if(!tip_content.empty()) {
-            tip_content << "\n---\n";
+        } else if(first_tag->IsMember()) {
+            tooltip << "```\n";
+            tooltip << first_tag->GetTypename() << " " << first_tag->GetScope() << "::" << first_tag->GetName() << "\n";
+            tooltip << "```";
+        } else if(first_tag->IsVariable()) {
+            tooltip << "```\n";
+            tooltip << first_tag->GetTypename() << " " << first_tag->GetName() << "\n";
+            tooltip << "```";
+        } else {
+            tooltip << "```\n";
+            tooltip << first_tag->GetPatternClean() << "\n";
+            tooltip << "```";
         }
-        tip_content << tip;
     }
 
     JSON root(cJSON_Object);
@@ -1275,14 +1261,17 @@ void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
     auto result = build_result(response, id, cJSON_Object);
     auto contents = result.AddObject("contents");
     contents.addProperty("kind", "markdown");
-    contents.addProperty("value", tip_content);
+    contents.addProperty("value", tooltip);
     channel->write_reply(response);
 }
 
-void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t channel, bool try_definition_first)
+size_t ProtocolHandler::do_find_definition_tags(unique_ptr<JSON>&& msg, Channel::ptr_t channel,
+                                                bool try_definition_first, vector<TagEntryPtr>& tags,
+                                                wxString* file_match)
 {
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
+    tags.clear();
 
     clDEBUG1() << json.format() << endl;
     wxString filepath_uri = json["params"]["textDocument"]["uri"].toString();
@@ -1290,7 +1279,7 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     clDEBUG() << "textDocument/definition: for file" << filepath << endl;
 
     if(!ensure_file_content_exists(filepath, channel, id))
-        return;
+        return 0;
 
     size_t line = json["params"]["position"]["line"].toSize_t();
     size_t character = json["params"]["position"]["character"].toSize_t();
@@ -1303,31 +1292,32 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
 
     // get the last line
     wxString suffix;
-    wxString file_name;
 
     wxString text2 = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
                                                       CompletionHelper::TRUNCATE_COMPLETE_LINES);
-    bool is_include_completion = helper.is_include_statement(text2, &file_name, &suffix);
-    if(is_include_completion) {
-        clDEBUG() << "Is #include for file:" << file_name << endl;
-    } else {
-        clDEBUG() << "Not #include. will call `find_definition` with expression:" << expression
-                  << ", last_word=" << last_word << endl;
+    bool is_include_completion = false;
+
+    if(file_match) {
+        is_include_completion = helper.is_include_statement(text2, file_match, &suffix);
+        if(is_include_completion) {
+            clDEBUG() << "Is #include for file:" << *file_match << endl;
+        } else {
+            clDEBUG() << "Not #include. will call `find_definition` with expression:" << expression
+                      << ", last_word=" << last_word << endl;
+        }
     }
 
-    vector<TagEntryPtr> tags;
-    wxString file_match;
-    if(is_include_completion) {
-        clDEBUG() << "Find incldue file:" << file_name << endl;
+    if(file_match && is_include_completion) {
+        clDEBUG() << "Found incldue file:" << *file_match << endl;
         for(const wxString& search_path : m_search_paths) {
-            wxString full_path = search_path + "/" + file_name;
+            wxString full_path = search_path + "/" + *file_match;
             clDEBUG1() << "Trying path:" << full_path << endl;
             wxFileName fn(full_path);
             fn.Normalize(wxPATH_NORM_ENV_VARS | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE);
             if(fn.FileExists()) {
                 // this is our match, construct a response and send it back
-                file_match = fn.GetFullPath();
-                clDEBUG() << " --> Match found:" << file_match << endl;
+                *file_match = fn.GetFullPath();
+                clDEBUG() << " --> Match found:" << *file_match << endl;
                 break;
             }
         }
@@ -1337,6 +1327,15 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         clDEBUG() << " --> Match found:" << tags.size() << "matches" << endl;
         clDEBUG() << tags << endl;
     }
+    return tags.size();
+}
+
+void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t channel, bool try_definition_first)
+{
+    vector<TagEntryPtr> tags;
+    wxString file_match;
+    size_t id = msg->toElement()["id"].toSize_t();
+    do_find_definition_tags(move(msg), channel, try_definition_first, tags, &file_match);
 
     // build the result
     JSON root(cJSON_Object);
@@ -1345,7 +1344,7 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     response.addProperty("jsonrpc", "2.0");
     auto result = response.AddArray("result");
 
-    if(is_include_completion) {
+    if(!file_match.empty()) {
         // prepare a single file match result
         auto match = result.AddObject(wxEmptyString);
         LSP::Range range;
@@ -1355,15 +1354,13 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     } else {
         // add all the results
         for(TagEntryPtr tag : tags) {
-            if(tag->GetName() == last_word) {
-                clDEBUG() << " --> Adding tag:" << tag->GetName() << tag->GetFile() << ":" << tag->GetLine() << endl;
-                auto match = result.AddObject(wxEmptyString);
-                // we can only provide line number...
-                LSP::Range range;
-                range.SetStart({ tag->GetLine() - 1, 0 }).SetEnd({ tag->GetLine() - 1, 0 });
-                match.append(range.ToJSON("range"));
-                match.addProperty("uri", wxFileSystem::FileNameToURL(tag->GetFile()));
-            }
+            clDEBUG() << " --> Adding tag:" << tag->GetName() << tag->GetFile() << ":" << tag->GetLine() << endl;
+            auto match = result.AddObject(wxEmptyString);
+            // we can only provide line number...
+            LSP::Range range;
+            range.SetStart({ tag->GetLine() - 1, 0 }).SetEnd({ tag->GetLine() - 1, 0 });
+            match.append(range.ToJSON("range"));
+            match.addProperty("uri", wxFileSystem::FileNameToURL(tag->GetFile()));
         }
     }
     channel->write_reply(response);

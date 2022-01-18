@@ -79,6 +79,9 @@ private:
 
     wxArrayString FilterNonWantedNamespaces(const wxArrayString& namespace_arr) const;
     void do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t channel, bool try_definition_first);
+    size_t do_find_definition_tags(unique_ptr<JSON>&& msg, Channel::ptr_t channel, bool try_definition_first,
+                                   vector<TagEntryPtr>& tags, wxString* file_match);
+
     void build_search_path();
     void parse_file_for_includes_and_using_namespace(const wxString& filepath);
     void parse_buffer_for_includes_and_using_namespace(const wxString& filepath, const wxString& buffer);

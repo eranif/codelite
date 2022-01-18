@@ -944,10 +944,13 @@ bool CompletionHelper::is_include_statement(const wxString& f_content, wxString*
     return is_line_include_statement(line, file_name, suffix);
 }
 
-wxString CompletionHelper::normalize_function(const wxString& name, const wxString& signature, size_t flags)
+wxString CompletionHelper::normalize_function(const TagEntry* tag, size_t flags)
 {
     wxString return_value;
     wxString fullname;
+
+    wxString name = tag->GetName();
+    wxString signature = tag->GetSignature();
     fullname << name << "(";
     vector<wxString> args = split_function_signature(signature, &return_value, flags);
     wxString funcsig;
@@ -960,7 +963,15 @@ wxString CompletionHelper::normalize_function(const wxString& name, const wxStri
     }
 
     fullname << funcsig << ")";
+    if(tag->is_const()) {
+        fullname << " const";
+    }
     return fullname;
+}
+
+wxString CompletionHelper::normalize_function(TagEntryPtr tag, size_t flags)
+{
+    return normalize_function(tag.Get(), flags);
 }
 
 void CompletionHelper::get_cxx_keywords(std::vector<wxString>& keywords)

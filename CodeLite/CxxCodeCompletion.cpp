@@ -965,7 +965,7 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& op
         // signature
         wxString unique_path = tag->GetPath();
         if(tag->IsMethod()) {
-            unique_path = helper.normalize_function(tag->GetName(), tag->GetSignature());
+            unique_path = helper.normalize_function(tag);
         }
 
         if(!visited.insert(unique_path).second) {

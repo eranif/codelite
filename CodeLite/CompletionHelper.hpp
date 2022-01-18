@@ -35,9 +35,13 @@ public:
      * @brief normalize function signature by removing from its signature all
      * default values and removing the arguments name (both is configurable via `flags`)
      */
-    wxString normalize_function(const wxString& name, const wxString& signature,
-                                size_t flags = CompletionHelper::STRIP_NO_DEFAULT_VALUES |
-                                               CompletionHelper::STRIP_NO_NAME);
+    wxString normalize_function(TagEntryPtr tag, size_t flags = CompletionHelper::STRIP_NO_DEFAULT_VALUES |
+                                                                CompletionHelper::STRIP_NO_NAME);
+    /**
+     * @brief same as above
+     */
+    wxString normalize_function(const TagEntry* tag, size_t flags = CompletionHelper::STRIP_NO_DEFAULT_VALUES |
+                                                                    CompletionHelper::STRIP_NO_NAME);
     wxString get_expression(const wxString& file_content, bool for_calltip, wxString* last_word = nullptr) const;
     wxString truncate_file_to_location(const wxString& file_content, size_t line, size_t column, size_t flags) const;
     vector<wxString> split_function_signature(const wxString& signature, wxString* return_value,

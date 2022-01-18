@@ -617,10 +617,10 @@ wxString TagEntry::GetFunctionDeclaration() const
     }
     decl << GetName() << GetSignature();
     if(is_const()) {
-        decl << "const ";
+        decl << " const";
     }
     if(is_func_pure()) {
-        decl << "= 0";
+        decl << " = 0";
     }
     decl << ";";
     return decl;
@@ -636,10 +636,11 @@ wxString TagEntry::GetFunctionDefinition() const
     if(!GetScope().empty()) {
         impl << GetScope() << "::";
     }
-    impl << GetName() << GetSignature();
-    if(is_const()) {
-        impl << "const ";
-    }
+
+    CompletionHelper helper;
+    impl << helper.normalize_function(this, CompletionHelper::STRIP_NO_DEFAULT_VALUES);
+    // release the pointer from the smart-ptr
+    // this ensure that `this` is not deleted
     return impl;
 }
 

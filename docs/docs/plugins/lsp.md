@@ -10,7 +10,7 @@ Below you may find the installation instructions for the most common Language Se
 select the ones you are interested in and then [configure them in CodeLite][14]
 
 === "clangd"
-    `clangd` is the LSP implementation from the `clang` team. It provide a compiler level completion with an unmatched accuracy
+    `clangd` is the LSP implementation from the `clang` for `C/C++/Objective-C` team. It provide a compiler level completion with an unmatched accuracy.
     Visit the [project home page][7]
 
     **Windows**
@@ -36,6 +36,14 @@ select the ones you are interested in and then [configure them in CodeLite][14]
     ** macOS **
 
     Like Windows, `clangd` in part of CodeLite bundle
+
+=== "ctagsd"
+    `ctagsd` is CodeLite's builtin code completion engine for `C/C++` that implements the Language Server Protocol.
+    `ctagsd` is installed along with CodeLite on all platforms.
+
+    CodeLite configures `ctagsd` for you, but it is disabled by default. To enable it:
+
+    `Plugins` &#8594; `Settings` &#8594; `ctagsd`
 
 === "pylsp"
     `pylsps` is installed via `pip`. For this, you will need to install the following:
@@ -106,10 +114,11 @@ select the ones you are interested in and then [configure them in CodeLite][14]
             ```
     Visit the [project home page][8]
 
-!!! Important
-    The `rls` language server must be started from the cargo project directory
-    i.e. the location of the `Cargo.toml` file
+    !!! Important
+        The `rls` language server must be started from the cargo project directory
+        i.e. the location of the `Cargo.toml` file
 
+---
 
 ## Automatic detection
 ---
@@ -150,11 +159,9 @@ which are not part of the Language Server plugin, each provider has its own inte
 
 Provider |Language |Priority
 ---------|---------|---------
-C++ by ctags |C/C++ |75
 PHP plugin |PHP |50
 WebTools |XML |50
 WebTools |CSS |50
-WebTools |JavaScript |50
 
 Lets explain how the priority resolves conflicts for `C++`:
 
@@ -164,13 +171,13 @@ However, if your language server is configured with priority `74` (or less), Cod
 and in case `ctags` completion engine fails to complete, CodeLite will use the next language server for `c++` language with the next highest priority.
 This mechanism allows you to control how CodeLite uses the language servers in conjunction with the internal completion engines
 
-## CMake and `clangd`
+## CMake `clangd` / `ctagsd`
 ---
 
 ### `compile_flags.txt` & `compile_commands.json`
 
-`clangd` uses these two files as instructions for how to build any source file.
-`clangd` searches for these file from the active file folder and going up to the parent until it finds a match (or it can't go up any more)
+`clangd` and `ctagsd` uses these two files as instructions for how to build any source file.
+`clangd` and `ctagsd` will searche for these files from the active file folder and going up to the parent until it finds a match (or it can't go up any more)
 In case both files are found on the same directory, `compile_flags.txt` takes precedence.
 
 When using CodeLite's [default C++ workspace](../workspaces/default.md) CodeLite generate these files for your automatically once the build process is completed

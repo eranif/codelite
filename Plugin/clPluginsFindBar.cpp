@@ -288,11 +288,11 @@ void clPluginsFindBar::OnKeyDown(wxKeyEvent& e)
 {
     switch(e.GetKeyCode()) {
     case WXK_DOWN: {
-        DoArrowDown(m_searchHistory, m_textCtrlFind);
+//        DoArrowDown(m_searchHistory, m_textCtrlFind);
         break;
     }
     case WXK_UP: {
-        DoArrowUp(m_searchHistory, m_textCtrlFind);
+//        DoArrowUp(m_searchHistory, m_textCtrlFind);
         break;
     }
     case WXK_ESCAPE: {
@@ -311,11 +311,11 @@ void clPluginsFindBar::OnReplaceKeyDown(wxKeyEvent& e)
 {
     switch(e.GetKeyCode()) {
     case WXK_DOWN: {
-        DoArrowDown(m_replaceHistory, m_textCtrlReplace);
+//        DoArrowDown(m_replaceHistory, m_textCtrlReplace);
         break;
     }
     case WXK_UP: {
-        DoArrowUp(m_replaceHistory, m_textCtrlReplace);
+//        DoArrowUp(m_replaceHistory, m_textCtrlReplace);
         break;
     }
     case WXK_ESCAPE: {

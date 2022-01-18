@@ -123,7 +123,12 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor*
 
 void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 {
-    const LSP::Location& location = event.GetLocation();
+    // if we have more than one location - prompt the user
+    if(event.GetLocations().empty())
+        return;
+
+    // for now, use the first location
+    const auto& location = event.GetLocations()[0];
 
     // let someone else try and open this file first, as it might be a remote file
     LSPEvent open_event(wxEVT_LSP_OPEN_FILE);

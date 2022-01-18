@@ -318,8 +318,8 @@ public:
     size_t get_word_completions(const CxxRemainder& remainder, vector<TagEntryPtr>& candidates,
                                 const vector<wxString>& visible_scopes, const wxStringSet_t& visible_files);
 
-    TagEntryPtr find_definition(const wxString& filepath, int line, const wxString& expr, const wxString& text,
-                                const vector<wxString>& visible_scopes);
+    size_t find_definition(const wxString& filepath, int line, const wxString& expr, const wxString& text,
+                           const vector<wxString>& visible_scopes, vector<TagEntryPtr>& matches);
 };
 
 #endif // CXXCODECOMPLETION_HPP

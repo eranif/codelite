@@ -1391,8 +1391,9 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     return candidates.size();
 }
 
-TagEntryPtr CxxCodeCompletion::find_definition(const wxString& filepath, int line, const wxString& expression,
-                                               const wxString& text, const vector<wxString>& visible_scopes)
+size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, const wxString& expression,
+                                          const wxString& text, const vector<wxString>& visible_scopes,
+                                          vector<TagEntryPtr>& matches)
 {
     // ----------------------------------
     // word completion
@@ -1400,7 +1401,7 @@ TagEntryPtr CxxCodeCompletion::find_definition(const wxString& filepath, int lin
     clDEBUG() << "find_definition is called for expression:" << expression << endl;
     vector<TagEntryPtr> candidates;
     if(word_complete(filepath, line, expression, text, visible_scopes, true, candidates) == 0) {
-        return nullptr;
+        return 0;
     }
 
     // filter tags with no line numbers
@@ -1414,7 +1415,7 @@ TagEntryPtr CxxCodeCompletion::find_definition(const wxString& filepath, int lin
     }
 
     if(!first) {
-        return nullptr;
+        return 0;
     }
 
     if(first->IsMethod()) {
@@ -1424,31 +1425,52 @@ TagEntryPtr CxxCodeCompletion::find_definition(const wxString& filepath, int lin
         vector<TagEntryPtr> impl_vec;
         vector<TagEntryPtr> decl_vec;
         clDEBUG() << "Searching for path:" << path << endl;
-        m_lookup->GetTagsByPathAndKind(path, impl_vec, { "function" }, 1);
-        m_lookup->GetTagsByPathAndKind(path, decl_vec, { "prototype" }, 1);
+        m_lookup->GetTagsByPathAndKind(path, impl_vec, { "function" }, 100);
+        m_lookup->GetTagsByPathAndKind(path, decl_vec, { "prototype" }, 100);
 
         clDEBUG() << "impl:" << impl_vec.size() << "decl:" << decl_vec.size() << endl;
-        if(impl_vec.empty() || decl_vec.empty()) {
-            return first;
+        // if no impl found, return the decl vector
+        if(impl_vec.empty()) {
+            matches.swap(decl_vec);
+            return matches.size();
         }
 
-        TagEntryPtr impl = impl_vec[0];
-        TagEntryPtr decl = decl_vec[0];
-
-        if(impl->GetLine() == line && impl->GetFile() == filepath) {
-            // already on the impl line, return the decl
-            return decl;
+        // if no decl found, return the impl vector (a more rare case, but this can happen)
+        if(decl_vec.empty()) {
+            matches.swap(impl_vec);
+            return matches.size();
         }
 
-        if(decl->GetLine() == line && decl->GetFile() == filepath) {
-            // already on the decl line, return the decl
-            return impl;
+        auto is_on_line = [](const vector<TagEntryPtr>& tags_vec, int line, const wxString& file) {
+            for(auto tag : tags_vec) {
+                if(tag->GetLine() == line && tag->GetFile() == file) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        if(is_on_line(impl_vec, line, filepath)) {
+            matches.swap(decl_vec);
+            return matches.size();
         }
 
-        return impl;
+        if(is_on_line(decl_vec, line, filepath)) {
+            matches.swap(impl_vec);
+            return matches.size();
+        }
+
+        // by default we return the "impl"
+        if(!impl_vec.empty()) {
+            matches.swap(impl_vec);
+        } else {
+            matches.swap(decl_vec);
+        }
+        return matches.size();
     } else {
         // no need to manipulate this tag
-        return first;
+        matches.push_back(first);
+        return matches.size();
     }
 }
 

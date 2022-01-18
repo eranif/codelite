@@ -1,5 +1,7 @@
 #include "GotoDefinitionRequest.h"
+
 #include "LSP/LSPEvent.h"
+#include "file_logger.h"
 
 LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxString& filename, size_t line, size_t column)
     : m_filename(filename)
@@ -20,19 +22,29 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
     if(!result.isOk()) {
         return;
     }
-    LSP::Location loc;
+
+    vector<LSP::Location> locations;
     if(result.isArray()) {
-        loc.FromJSON(result.arrayItem(0));
+        int count = result.arraySize();
+        locations.reserve(count);
+        for(int i = 0; i < count; ++i) {
+            LSP::Location loc;
+            loc.FromJSON(result.arrayItem(i));
+            locations.emplace_back(loc);
+        }
     } else {
+        LSP::Location loc;
         loc.FromJSON(result);
+        locations.push_back(loc);
     }
 
-    if(!loc.GetPath().IsEmpty()) {
-        // Fire an event with the matching location
-        LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
-        definitionEvent.SetLocation(loc);
-        owner->AddPendingEvent(definitionEvent);
-    }
+    if(locations.empty())
+        return;
+
+    // Fire an event with the matching location
+    LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
+    definitionEvent.SetLocations(locations);
+    owner->AddPendingEvent(definitionEvent);
 }
 
 bool LSP::GotoDefinitionRequest::IsValidAt(const wxString& filename, size_t line, size_t col) const

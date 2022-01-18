@@ -1213,7 +1213,7 @@ void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
     do_find_definition_tags(move(msg), channel, true, tags, nullptr);
 
     // format tip from tag
-    wxStringMap_t functions_map;
+    vector<TagEntryPtr> function_tag_arr;
     wxStringSet_t visited;
     CompletionHelper helper;
 
@@ -1225,21 +1225,61 @@ void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
         tooltip << "===\n";
         if(first_tag->IsMethod()) {
             tooltip.clear();
-            tooltip << "function `" << first_tag->GetName() << "()`:\n";
-            tooltip << "===\n";
+            tooltip << "function `" << first_tag->GetName() << "()` ";
+            if(!first_tag->GetScope().empty()) {
+                if(first_tag->GetScope().StartsWith("__anon")) {
+                    tooltip << "of (anonymous scope)\n";
+                } else {
+                    tooltip << "of scope `" << first_tag->GetParent() << "`";
+                }
+            }
+            tooltip << "\n===\n";
             for(TagEntryPtr tag : tags) {
                 if(tag->IsMethod()) {
                     if(visited.insert(helper.normalize_function(tag)).second) {
-                        functions_map.insert({ helper.normalize_function(tag, 0), tag->GetTypename() });
+                        function_tag_arr.push_back(tag);
                     }
                 }
             }
+
             tooltip << "```\n";
-            for(const auto& vt : functions_map) {
-                wxString return_value = vt.second.empty() ? wxString("()") : vt.second;
-                tooltip << vt.first << " -> " << return_value << "\n";
+            bool long_functions = false;
+            for(auto tag : function_tag_arr) {
+                auto params = helper.split_function_signature(tag->GetSignature(), nullptr, 0);
+                tooltip << tag->GetName() << "(";
+                wxString params_str;
+
+                // more than 4 function parameters, put them over multiple lines
+                bool each_param_on_line = (params.size() > 4);
+                if(each_param_on_line) {
+                    tooltip << "\n  ";
+                }
+
+                // remember whether we had "long" functions here
+                if(!long_functions) {
+                    long_functions = each_param_on_line;
+                }
+
+                for(const auto& param : params) {
+                    if(!params_str.empty()) {
+                        if(each_param_on_line) {
+                            params_str << ",\n  ";
+                        } else {
+                            params_str << ", ";
+                        }
+                    }
+                    params_str << param;
+                }
+                tooltip << params_str << ") -> " << (tag->GetTypename().empty() ? wxString("()") : tag->GetTypename())
+                        << "\n";
+                tooltip << "{separator_placeholder}";
             }
             tooltip << "```";
+            if(long_functions) {
+                tooltip.Replace("{separator_placeholder}", "```\n```\n");
+            } else {
+                tooltip.Replace("{separator_placeholder}", "");
+            }
 
         } else if(first_tag->IsMember()) {
             tooltip << "```\n";

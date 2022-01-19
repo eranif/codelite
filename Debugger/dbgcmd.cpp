@@ -22,9 +22,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "dbgcmd.h"
+
 #include "cl_command_event.h"
 #include "codelite_events.h"
-#include "dbgcmd.h"
 #include "debuggergdb.h"
 #include "debuggermanager.h"
 #include "event_notifier.h"
@@ -36,6 +37,7 @@
 #include "procutils.h"
 #include "wx/buffer.h"
 #include "wx/tokenzr.h"
+
 #include <algorithm>
 #include <sstream>
 #include <unordered_map>
@@ -49,7 +51,9 @@ static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
         currentToken = gdb_result_string; \
     }
 
-static void wxGDB_STRIP_QUOATES(wxString& currentToken)
+namespace
+{
+void wxGDB_STRIP_QUOATES(wxString& currentToken)
 {
     size_t where = currentToken.find(wxT("\""));
     if(where != std::string::npos && where == 0) {
@@ -72,7 +76,7 @@ static void wxGDB_STRIP_QUOATES(wxString& currentToken)
     }
 }
 
-static void wxRemoveQuotes(wxString& str)
+void wxRemoveQuotes(wxString& str)
 {
     if(str.IsEmpty()) {
         return;
@@ -84,7 +88,7 @@ static void wxRemoveQuotes(wxString& str)
     }
 }
 
-static wxString wxGdbFixValue(const wxString& value)
+wxString wxGdbFixValue(const wxString& value)
 {
     int type(0);
     std::string currentToken;
@@ -102,17 +106,26 @@ static wxString wxGdbFixValue(const wxString& value)
     return display_line;
 }
 
-static void ParseStackEntry(gdbmi::Node& frame, StackEntry& entry)
+template <typename T> wxString get_file_name(const T& node)
+{
+    wxString file_name;
+    if(!node["fullname"].value.empty()) {
+        file_name = node["fullname"].value;
+    }
+
+    if(file_name.empty() || file_name.StartsWith("/cygdrive")) {
+        file_name = node["file"].value;
+    }
+    return file_name;
+}
+
+void ParseStackEntry(gdbmi::Node& frame, StackEntry& entry)
 {
     entry.level = frame["level"].value;
     entry.address = frame["addr"].value;
     entry.function = frame["func"].value;
-    entry.file = frame["file"].value;
+    entry.file = get_file_name(frame);
     entry.line = frame["line"].value;
-    const auto& fullname = frame["fullname"].value;
-    if(!fullname.empty()) {
-        entry.file = fullname;
-    }
 }
 
 wxString ExtractGdbChild(const std::map<std::string, std::string>& attr, const wxString& name)
@@ -132,7 +145,8 @@ wxString ExtractGdbChild(const std::map<std::string, std::string>& attr, const w
 
 // Keep a cache of all file paths converted from
 // Cygwin path into native path
-static std::map<wxString, wxString> g_fileCache;
+std::map<wxString, wxString> g_fileCache;
+} // namespace
 
 bool DbgCmdHandlerGetLine::ProcessOutput(const wxString& line)
 {
@@ -146,11 +160,7 @@ bool DbgCmdHandlerGetLine::ProcessOutput(const wxString& line)
     long line_number = 0;
 
     // read the file name, giving fullname priority
-    if(!result["fullname"].value.empty()) {
-        filename = result["fullname"].value;
-    } else if(!result["file"].value.empty()) {
-        filename = result["file"].value;
-    }
+    filename = get_file_name(result);
 
     if(!result["line"].value.empty()) {
         lineNumber = result["line"].value;
@@ -709,10 +719,7 @@ bool DbgCmdBreakList::ProcessOutput(const wxString& line)
         // "consume" the values by swapping them
         breakpoint.what.swap(bkpt["what"].value);
         breakpoint.at.swap(bkpt["at"].value);
-        breakpoint.file.swap(bkpt["fullname"].value);
-        if(breakpoint.file.empty()) {
-            breakpoint.file.swap(bkpt["file"].value);
-        }
+        breakpoint.file = get_file_name(bkpt);
 
         wxString lineNumber = bkpt["line"].value;
         if(!lineNumber.empty()) {

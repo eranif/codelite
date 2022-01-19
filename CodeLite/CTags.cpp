@@ -59,7 +59,7 @@ wxString fix_macro_entry(const wxString& macro)
 } // namespace
 
 bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_indexer, const wxStringMap_t& macro_table,
-                       const wxString& ctags_args, wxString* output)
+                       const wxString& ctags_kinds, wxString* output)
 {
     clDEBUG() << "Generating ctags files" << clEndl;
 
@@ -67,13 +67,16 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     // one option per line
     vector<wxString> options_arr;
     options_arr.reserve(500);
-    options_arr = { "--excmd=pattern",
-                    "--sort=no",
-                    "--fields=aKmSsnit",
-                    "--c-kinds=+p",
-                    "--C++-kinds=+p",
-                    "--language-force=c++",
+    options_arr = { "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--language-force=c++",
                     "--fields-c++=+{template}+{properties}" };
+    if(ctags_kinds.empty()) {
+        // default
+        options_arr.push_back("--c-kinds=+p");
+        options_arr.push_back("--C++-kinds=+p");
+    } else {
+        options_arr.push_back("--c-kinds=" + ctags_kinds);
+        options_arr.push_back("--C++-kinds=" + ctags_kinds);
+    }
 
     // we want the macros ordered, so we push them into std::set
     std::set<wxString> macros;
@@ -214,6 +217,45 @@ size_t CTags::ParseBuffer(const wxFileName& filename, const wxString& buffer, co
     // set the file name to the correct file
     for(TagEntryPtr tag : tags) {
         tag->SetFile(filename.GetFullPath());
+    }
+    return tags.size();
+}
+
+size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
+                          const wxStringMap_t& macro_table, vector<TagEntryPtr>& tags)
+{
+    wxString content;
+    {
+        clTempFile temp_file("cpp");
+        temp_file.Write(buffer);
+
+        wxString filesList;
+        filesList << temp_file.GetFullPath() << "\n";
+
+        if(!DoGenerate(filesList, codelite_indexer, macro_table, "lz", &content)) {
+            return 0;
+        }
+    }
+    tags.clear();
+    wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
+    tags.reserve(lines.size());
+
+    // convert the lines into tags
+    for(auto& line : lines) {
+        line.Trim().Trim(false);
+        if(line.empty()) {
+            continue;
+        }
+
+        // construct a tag from the line
+        tags.emplace_back(new TagEntry());
+        auto tag = tags.back();
+        tag->FromLine(line);
+        tag->SetFile(filename.GetFullPath());
+    }
+
+    if(tags.empty()) {
+        clDEBUG() << "0 local tags, ctags output:" << content << endl;
     }
     return tags.size();
 }

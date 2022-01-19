@@ -62,7 +62,7 @@ bool initialize_cc_tests()
             lookup_table = ITagsStoragePtr(new TagsStorageSQLite());
             lookup_table->OpenDatabase(fn);
 
-            completer.reset(new CxxCodeCompletion(lookup_table));
+            completer.reset(new CxxCodeCompletion(lookup_table, settings.GetCodeliteIndexer()));
             completer->set_macros_table(settings.GetTokens());
             completer->set_types_table(settings.GetTypes());
             cc_initialised_successfully = true;

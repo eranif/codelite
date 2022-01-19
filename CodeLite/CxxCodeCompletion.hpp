@@ -110,7 +110,6 @@ private:
     unordered_map<wxString, __local> m_locals;
     unordered_map<wxString, TagEntryPtr> m_local_functions; // anonymous function
     unordered_map<wxString, TagEntryPtr> m_static_members;  // anonymous function
-    wxString m_optimized_scope;
     wxString m_filename;
     int m_line_number = 0;
     TagEntryPtr m_current_function_tag;
@@ -123,6 +122,7 @@ private:
     vector<pair<wxString, wxString>> m_macros_table;
     TemplateManager::ptr_t m_template_manager;
     bool m_first_time = true;
+    wxString m_codelite_indexer;
 
 private:
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;
@@ -137,9 +137,9 @@ private:
                                     const vector<wxString>& kinds);
 
     wxString typedef_from_tag(TagEntryPtr tag) const;
-    wxString shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
-                          unordered_map<wxString, TagEntryPtr>* functions,
-                          unordered_map<wxString, TagEntryPtr>* static_members) const;
+    void shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
+                      unordered_map<wxString, TagEntryPtr>* functions,
+                      unordered_map<wxString, TagEntryPtr>* static_members) const;
     TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
     TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes,
                                             const CxxExpression& orig_expression);
@@ -207,8 +207,9 @@ public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;
 
 public:
-    CxxCodeCompletion(ITagsStoragePtr lookup, const unordered_map<wxString, TagEntryPtr>& unit_tests_db);
-    CxxCodeCompletion(ITagsStoragePtr lookup);
+    CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& codelite_indexer,
+                      const unordered_map<wxString, TagEntryPtr>& unit_tests_db);
+    CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& codelite_indexer);
     ~CxxCodeCompletion();
 
     /// Test API - START

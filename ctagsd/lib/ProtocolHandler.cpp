@@ -511,7 +511,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     };
     m_parse_thread.queue_parse_request(move(parse_callback));
 
-    m_completer.reset(new CxxCodeCompletion(TagsManagerST::Get()->GetDatabase()));
+    m_completer.reset(new CxxCodeCompletion(TagsManagerST::Get()->GetDatabase(), m_settings.GetCodeliteIndexer()));
     m_completer->set_macros_table(m_settings.GetTokens());
     m_completer->set_types_table(m_settings.GetTypes());
     channel->write_reply(response.format(false));

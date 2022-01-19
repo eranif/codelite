@@ -25,7 +25,7 @@ protected:
      * @return true on success, false otherwise
      */
     static bool DoGenerate(const wxString& filesContent, const wxString& codelite_indexer,
-                           const wxStringMap_t& macro_table, const wxString& ctags_args = wxEmptyString,
+                           const wxStringMap_t& macro_table, const wxString& ctags_kinds = wxEmptyString,
                            wxString* output = nullptr);
 
 public:
@@ -45,6 +45,11 @@ public:
      * @brief run codelite-indexer on a buffer and return list of tags
      */
     static size_t ParseBuffer(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
+                              const wxStringMap_t& macro_table, vector<TagEntryPtr>& tags);
+    /**
+     * @brief parse list of local variables from a given source file
+     */
+    static size_t ParseLocals(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
                               const wxStringMap_t& macro_table, vector<TagEntryPtr>& tags);
 };
 

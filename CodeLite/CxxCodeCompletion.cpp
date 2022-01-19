@@ -48,13 +48,16 @@ wxArrayString to_wx_array_string(const vector<wxString>& v)
         return;                     \
     }
 
-CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup)
+CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& codelite_indexer)
+    : m_codelite_indexer(codelite_indexer)
 {
     m_lookup.reset(new LookupTable(lookup));
     m_template_manager.reset(new TemplateManager(this));
 }
 
-CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const unordered_map<wxString, TagEntryPtr>& unit_tests_db)
+CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& codelite_indexer,
+                                     const unordered_map<wxString, TagEntryPtr>& unit_tests_db)
+    : m_codelite_indexer(codelite_indexer)
 {
     m_lookup.reset(new LookupTable(lookup, unit_tests_db));
     m_template_manager.reset(new TemplateManager(this));
@@ -159,13 +162,12 @@ size_t CxxCodeCompletion::parse_locals(const wxString& text, unordered_map<wxStr
     return locals->size();
 }
 
-wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
-                                         unordered_map<wxString, TagEntryPtr>* functions,
-                                         unordered_map<wxString, TagEntryPtr>* static_members) const
+void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
+                                     unordered_map<wxString, TagEntryPtr>* functions,
+                                     unordered_map<wxString, TagEntryPtr>* static_members) const
 {
+    // parse local variables
     CxxVariableScanner scanner(text, eCxxStandard::kCxx11, get_tokens_map(), false);
-    const wxString& trimmed_text = scanner.GetOptimizeBuffer();
-
     CxxVariable::Vec_t variables = scanner.GetVariables(false);
     locals->reserve(variables.size());
 
@@ -209,7 +211,6 @@ wxString CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxS
         local.set_pattern(var->ToString(CxxVariable::kToString_Name | CxxVariable::kToString_DefaultValue));
         locals->insert({ var->GetName(), local });
     }
-    return trimmed_text;
 }
 
 TagEntryPtr CxxCodeCompletion::lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes)
@@ -780,7 +781,6 @@ void CxxCodeCompletion::prepend_scope(vector<wxString>& scopes, const wxString& 
 void CxxCodeCompletion::reset()
 {
     m_locals.clear();
-    m_optimized_scope.clear();
     m_template_manager->clear();
     m_static_members.clear();
     m_recurse_protector = 0;
@@ -1056,8 +1056,7 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
     m_current_container_tag = nullptr;
     m_current_function_tag = nullptr;
 
-    m_optimized_scope.clear();
-    m_optimized_scope = shrink_scope(text, &m_locals, &m_local_functions, &m_static_members);
+    shrink_scope(text, &m_locals, &m_local_functions, &m_static_members);
     determine_current_scope();
 }
 

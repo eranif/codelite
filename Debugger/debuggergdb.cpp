@@ -25,6 +25,7 @@
 #include "debuggergdb.h"
 
 #include "asyncprocess.h"
+#include "clFileName.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "dbgcmd.h"
@@ -481,13 +482,11 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
         breakinsertcmd << wxT("-f ");
     }
 
-    wxFileName fn(bp.file);
-
     // by default, use full paths for the file name when setting breakpoints
-    wxString tmpfileName(fn.GetFullPath());
+    wxString tmpfileName = clFileName::ToCygwin(bp.file);
     if(m_info.useRelativeFilePaths || m_isSSHDebugging) {
         // user set the option to use relative paths (file name w/o the full path)
-        tmpfileName = fn.GetFullName();
+        tmpfileName = wxFileName(tmpfileName).GetFullName();
     }
 
     tmpfileName.Replace(wxT("\\"), wxT("/"));

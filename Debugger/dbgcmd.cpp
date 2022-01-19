@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "dbgcmd.h"
 
+#include "clFileName.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "debuggergdb.h"
@@ -112,10 +113,8 @@ template <typename T> wxString get_file_name(const T& node)
     if(!node["fullname"].value.empty()) {
         file_name = node["fullname"].value;
     }
-
-    if(file_name.empty() || file_name.StartsWith("/cygdrive")) {
-        file_name = node["file"].value;
-    }
+    // in case file is using cygwin path -> change it to Windows style
+    file_name = clFileName::FromCygwin(file_name);
     return file_name;
 }
 

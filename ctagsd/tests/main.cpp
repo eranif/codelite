@@ -34,10 +34,18 @@ thread_local CxxCodeCompletion::ptr_t completer;
 
 CTagsdSettings settings;
 
-bool is_tag_exists(const wxString& path, const vector<TagEntryPtr>& candidates)
+TagEntryPtr find_tag(const wxString& path, const vector<TagEntryPtr>& candidates)
 {
     auto where = find_if(candidates.begin(), candidates.end(), [=](TagEntryPtr tag) { return tag->GetPath() == path; });
-    return where != candidates.end();
+    if(where == candidates.end()) {
+        return NULL;
+    }
+    return *where;
+}
+
+bool is_tag_exists(const wxString& path, const vector<TagEntryPtr>& candidates)
+{
+    return find_tag(path, candidates).Get() != NULL;
 }
 
 #define ENSURE_DB_LOADED()                                                                                          \
@@ -71,14 +79,18 @@ bool initialize_cc_tests()
     return cc_initialised_successfully;
 }
 
-unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filename)
+wxString get_sample_file(const wxString& filename)
 {
     wxFileName current_file(__FILE__);
     wxFileName test_file(current_file.GetPath(), filename);
     test_file.AppendDir("src");
     test_file.AppendDir("samples");
+    return test_file.GetFullPath();
+}
 
-    wxString fullpath = test_file.GetFullPath();
+unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filename)
+{
+    wxString fullpath = get_sample_file(filename);
     vector<TagEntryPtr> tags;
     CTags::ParseFile(fullpath, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags);
     unordered_map<wxString, TagEntryPtr> tags_map;
@@ -577,6 +589,27 @@ TEST_FUNC(test_cxx_code_completion_subscript_operator)
         CHECK_BOOL(!candidates.empty());
         CHECK_BOOL(is_tag_exists("wxString::Trim", candidates));
     }
+    return true;
+}
+
+TEST_FUNC(test_ctags_locals)
+{
+    wxString file = get_sample_file("locals.hpp");
+    wxString content;
+    FileUtils::ReadFileContent(file, content);
+    vector<TagEntryPtr> tags;
+    CTags::ParseLocals({}, content, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags);
+    CHECK_BOOL(!tags.empty());
+
+    TagEntryPtr tag_auto_var = find_tag("auto_var", tags);
+    CHECK_NOT_NULL(tag_auto_var);
+    CHECK_BOOL(tag_auto_var->is_auto());
+    CHECK_STRING(tag_auto_var->get_assigment(), "V[0]");
+
+    TagEntryPtr tag_item = find_tag("item", tags);
+    CHECK_NOT_NULL(tag_item);
+    CHECK_BOOL(tag_item->is_auto());
+    CHECK_STRING(tag_item->get_assigment(), "V.begin()");
     return true;
 }
 

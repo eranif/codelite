@@ -271,7 +271,9 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
             int column = cd->match_pattern.column - 1;
             auto cb = [=](IEditor* editor) {
                 editor->GetCtrl()->ClearSelections();
-                editor->CenterLine(line_number, column);
+                // compilers report line numbers starting from `1`
+                // our editor sees line numbers starting from `0`
+                editor->CenterLine(line_number + 1, column);
                 editor->SetActive();
             };
             clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));

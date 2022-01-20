@@ -31,7 +31,6 @@
 
 #include "codelite_exports.h"
 #include "macros.h"
-#include "readtags.h"
 #include "smart_ptr.h"
 
 #include <map>
@@ -105,6 +104,7 @@ private:
         TAG_PROP_INLINE = (1 << 7),
         TAG_PROP_PURE = (1 << 8),
         TAG_PROP_SCOPEDENUM = (1 << 9),
+        TAG_PROP_AUTO_VARIABLE = (1 << 10),
     };
 
 private:
@@ -127,6 +127,7 @@ private:
     wxString m_tag_properties;
     size_t m_tag_properties_flags = 0; // bitwise eTagFlag
     eTagKind m_tag_kind = eTagKind::TAG_KIND_UNKNOWN;
+    wxString m_assignment;
 
 public:
     enum {
@@ -177,9 +178,22 @@ public:
     bool is_const() const;
     bool is_static() const;
     bool is_scoped_enum() const;
+    bool is_auto() const;
+    const wxString& get_assigment() const { return m_assignment; }
 
     void SetTagProperties(const wxString& prop);
     const wxString& GetTagProperties() const { return m_tag_properties; }
+
+    /**
+     * @brief assuming this tag is a variable, return its rvalue
+     * this is done by parsing the pattern
+     */
+    static wxString TypenameFromPattern(const TagEntry* tag);
+
+    /**
+     * @brief return true if this tag a local variable of type `auto`
+     */
+    static bool IsAuto(const TagEntry* tag);
 
     /**
      * @brief create a function signature (including return value + properties)
@@ -219,12 +233,6 @@ public:
      * @brief return if this tag entry is a function tempalte
      */
     bool IsTemplateFunction() const;
-
-    /**
-     * Construct a TagEntry from tagEntry struct.
-     * \param entry Tag entry
-     */
-    void Create(const tagEntry& entry);
 
     /**
      * @brief is this a local variable?

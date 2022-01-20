@@ -26,6 +26,8 @@
 #include "entry.h"
 
 #include "CompletionHelper.hpp"
+#include "CxxScannerTokens.h"
+#include "CxxTokenizer.h"
 #include "code_completion_api.h"
 #include "comment_parser.h"
 #include "ctags_manager.h"
@@ -166,6 +168,12 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
 
     (tok.Count() < 2) ? parent = "<global>" : parent = tok[tok.Count() - 2];
     SetParent(parent);
+
+    // parse auto
+    m_assignment = TypenameFromPattern(this);
+    if(IsAuto(this)) {
+        m_tag_properties_flags |= TAG_PROP_AUTO_VARIABLE;
+    }
 }
 
 void TagEntry::Print()
@@ -598,6 +606,7 @@ bool TagEntry::is_func_pure() const { return m_tag_properties_flags & TAG_PROP_P
 bool TagEntry::is_scoped_enum() const { return m_tag_properties_flags & TAG_PROP_SCOPEDENUM; }
 bool TagEntry::is_const() const { return m_tag_properties_flags & TAG_PROP_CONST; }
 bool TagEntry::is_static() const { return m_tag_properties_flags & TAG_PROP_STATIC; }
+bool TagEntry::is_auto() const { return m_tag_properties_flags & TAG_PROP_AUTO_VARIABLE; }
 
 wxString TagEntry::GetFunctionDeclaration() const
 {
@@ -667,4 +676,116 @@ void TagEntry::SetKind(const wxString& kind)
     if(g_kind_table.count(m_kind)) {
         m_tag_kind = g_kind_table[m_kind];
     }
+}
+
+namespace
+{
+void read_until_find(CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, int type_2, int* what_was_found,
+                     wxString* consumed)
+{
+    // search until we find the `=`
+    int depth = 0;
+    consumed->clear();
+    *what_was_found = 0;
+    consumed->reserve(256); // 256 bytes should be enough for most cases
+
+    while(tokenizer.NextToken(token)) {
+        if(depth == 0 && token.GetType() == type_1) {
+            *what_was_found = type_1;
+            consumed->Trim().Trim(false);
+            return;
+        } else if(depth == 0 && token.GetType() == type_2) {
+            *what_was_found = type_2;
+            consumed->Trim().Trim(false);
+            return;
+        }
+
+        if(token.is_keyword() || token.is_builtin_type()) {
+            consumed->Append(token.GetWXString() + " ");
+            continue;
+        } else if(token.is_pp_keyword()) {
+            continue;
+        }
+
+        // append it
+        consumed->Append(token.GetWXString());
+        switch(token.GetType()) {
+        case '<':
+        case '{':
+        case '[':
+        case '(':
+            depth++;
+            break;
+        case '>':
+        case '}':
+        case ']':
+        case ')':
+            depth--;
+            break;
+        default:
+            break;
+        }
+    }
+
+    // eof
+    consumed->Trim().Trim(false);
+}
+} // namespace
+
+#define CHECK_FOUND(What, Expected) \
+    if(What != Expected)            \
+    return wxEmptyString
+
+wxString TagEntry::TypenameFromPattern(const TagEntry* tag)
+{
+    if(!tag->IsLocalVariable()) {
+        return wxEmptyString;
+    }
+    CxxTokenizer tokenizer;
+    CxxLexerToken token;
+
+    tokenizer.Reset(tag->GetPatternClean());
+
+    // search until we find the `=`
+    int what_was_found = 0;
+    wxString consumed;
+    read_until_find(tokenizer, token, T_FOR, '=', &what_was_found, &consumed);
+    if(what_was_found == 0) {
+        return wxEmptyString;
+    }
+
+    if(what_was_found == '=') {
+        // read until we reach eof or ';'
+        read_until_find(tokenizer, token, ';', 0, &what_was_found, &consumed);
+        return consumed;
+    } else {
+        // we are in a for loop
+        // search for the ':'
+        read_until_find(tokenizer, token, '(', 0, &what_was_found, &consumed);
+        CHECK_FOUND('(', what_was_found);
+
+        read_until_find(tokenizer, token, ':', 0, &what_was_found, &consumed);
+        CHECK_FOUND(':', what_was_found);
+
+        // we found the ':', now read until we find the ')'
+        read_until_find(tokenizer, token, ')', 0, &what_was_found, &consumed);
+        CHECK_FOUND(')', what_was_found);
+        // for(... : expression)
+        // we return expression.begin()
+        consumed += ".begin()";
+        return consumed;
+    }
+    return wxEmptyString;
+}
+
+bool TagEntry::IsAuto(const TagEntry* tag)
+{
+    CxxTokenizer tokenizer;
+    CxxLexerToken token;
+
+    tokenizer.Reset(tag->GetTypename());
+    int found = 0;
+    wxString consumed;
+    read_until_find(tokenizer, token, T_AUTO, 0, &found, &consumed);
+    return found == T_AUTO;
 }

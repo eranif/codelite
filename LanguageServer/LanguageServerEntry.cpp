@@ -92,7 +92,6 @@ eNetworkType LanguageServerEntry::GetNetType() const
 
 bool LanguageServerEntry::IsValid() const
 {
-    bool is_valid = true;
     if(m_name.IsEmpty()) {
         return false;
     }

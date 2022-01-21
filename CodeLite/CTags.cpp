@@ -232,10 +232,12 @@ size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, co
         wxString filesList;
         filesList << temp_file.GetFullPath() << "\n";
 
-        if(!DoGenerate(filesList, codelite_indexer, macro_table, "lz", &content)) {
+        // we want locals + functions (to resolve the scope)
+        if(!DoGenerate(filesList, codelite_indexer, macro_table, "lzpvf", &content)) {
             return 0;
         }
     }
+
     tags.clear();
     wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
     tags.reserve(lines.size());

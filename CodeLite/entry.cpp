@@ -174,6 +174,9 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     if(IsAuto(this)) {
         m_tag_properties_flags |= TAG_PROP_AUTO_VARIABLE;
     }
+    if(IsFunction() && GetName().StartsWith("__anon")) {
+        m_tag_properties_flags |= TAG_PROP_INLINE;
+    }
 }
 
 void TagEntry::Print()
@@ -607,6 +610,7 @@ bool TagEntry::is_scoped_enum() const { return m_tag_properties_flags & TAG_PROP
 bool TagEntry::is_const() const { return m_tag_properties_flags & TAG_PROP_CONST; }
 bool TagEntry::is_static() const { return m_tag_properties_flags & TAG_PROP_STATIC; }
 bool TagEntry::is_auto() const { return m_tag_properties_flags & TAG_PROP_AUTO_VARIABLE; }
+bool TagEntry::is_lambda() const { return m_tag_properties_flags & TAG_PROP_LAMBDA; }
 
 wxString TagEntry::GetFunctionDeclaration() const
 {
@@ -738,7 +742,7 @@ void read_until_find(CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, 
 
 wxString TagEntry::TypenameFromPattern(const TagEntry* tag)
 {
-    if(!tag->IsLocalVariable()) {
+    if(!tag->IsLocalVariable() && !tag->IsVariable()) {
         return wxEmptyString;
     }
     CxxTokenizer tokenizer;

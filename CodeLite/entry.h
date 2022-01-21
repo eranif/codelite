@@ -105,6 +105,7 @@ private:
         TAG_PROP_PURE = (1 << 8),
         TAG_PROP_SCOPEDENUM = (1 << 9),
         TAG_PROP_AUTO_VARIABLE = (1 << 10),
+        TAG_PROP_LAMBDA = (1 << 11),
     };
 
 private:
@@ -179,6 +180,7 @@ public:
     bool is_static() const;
     bool is_scoped_enum() const;
     bool is_auto() const;
+    bool is_lambda() const;
     const wxString& get_assigment() const { return m_assignment; }
 
     void SetTagProperties(const wxString& prop);

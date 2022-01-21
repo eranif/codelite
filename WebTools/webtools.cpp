@@ -52,7 +52,6 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 WebTools::WebTools(IManager* manager)
     : IPlugin(manager)
-    , m_lastColourUpdate(0)
     , m_clangOldFlag(false)
 {
     m_longName = _("Support for JavaScript, CSS/SCSS, HTML, XML and other web development tools");
@@ -74,11 +73,6 @@ WebTools::WebTools(IManager* manager)
     // Register our new workspace type
     NodeJSWorkspace::Get(); // Instantiate the singleton by faking a call
     clWorkspaceManager::Get().RegisterWorkspace(new NodeJSWorkspace(true));
-
-    // Create the syntax highligher worker thread
-    m_jsColourThread = new JavaScriptSyntaxColourThread(this);
-    m_jsColourThread->Create();
-    m_jsColourThread->Run();
 
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &WebTools::OnFileLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &WebTools::OnFileSaved, this);
@@ -156,41 +150,15 @@ void WebTools::UnPlug()
     Unbind(wxEVT_TIMER, &WebTools::OnTimer, this, m_timer->GetId());
     m_timer->Stop();
     wxDELETE(m_timer);
-
-    m_jsColourThread->Stop();
-    wxDELETE(m_jsColourThread);
 }
 
-void WebTools::DoRefreshColours(const wxString& filename)
-{
-    if(FileExtManager::GetType(filename) == FileExtManager::TypeJS) {
-        m_jsColourThread->QueueFile(filename);
-    }
-}
-
-void WebTools::ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply)
-{
-    IEditor* editor = m_mgr->FindEditor(reply.filename);
-    if(editor) {
-        wxStyledTextCtrl* ctrl = editor->GetCtrl();
-        ctrl->SetKeyWords(1, reply.properties);
-        ctrl->SetKeyWords(3, reply.functions);
-        m_lastColourUpdate = time(NULL);
-    }
-}
+void WebTools::DoRefreshColours(const wxString& filename) { wxUnusedVar(filename); }
 
 void WebTools::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip();
     IEditor::List_t editors;
     m_mgr->GetAllEditors(editors);
-    IEditor::List_t::iterator iter = editors.begin();
-    for(; iter != editors.end(); ++iter) {
-        // Refresh the files' colouring
-        if(IsJavaScriptFile((*iter)->GetFileName())) {
-            m_jsColourThread->QueueFile((*iter)->GetFileName().GetFullPath());
-        }
-    }
 }
 
 bool WebTools::IsJavaScriptFile(const wxFileName& filename)
@@ -222,25 +190,7 @@ void WebTools::OnSettings(wxCommandEvent& event)
     }
 }
 
-void WebTools::OnTimer(wxTimerEvent& event)
-{
-    event.Skip();
-
-    time_t curtime = time(NULL);
-    if((curtime - m_lastColourUpdate) < 5)
-        return;
-    IEditor* editor = m_mgr->GetActiveEditor();
-
-    // Sanity
-    CHECK_PTR_RET(editor);
-    CHECK_PTR_RET(editor->IsEditorModified());
-    if(!IsJavaScriptFile(editor->GetFileName()))
-        return;
-
-    // This file is a modified JS file
-    m_lastColourUpdate = time(NULL);
-    m_jsColourThread->QueueBuffer(editor->GetFileName().GetFullPath(), editor->GetTextRange(0, editor->GetLength()));
-}
+void WebTools::OnTimer(wxTimerEvent& event) { event.Skip(); }
 
 bool WebTools::IsJavaScriptFile(IEditor* editor)
 {

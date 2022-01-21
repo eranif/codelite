@@ -815,8 +815,8 @@ bool Compiler::IsMatchesPattern(CmpInfoPattern& pattern, eSeverity severity, con
     if(pattern.re->GetMatchCount() > (size_t)lineIndex) {
         long lineNumber;
         wxString strLine = pattern.re->GetMatch(line, lineIndex);
-        strLine.ToLong(&lineNumber);
-        match_result->line_number = (lineNumber - 1);
+        strLine.ToCLong(&lineNumber);
+        match_result->line_number = lineNumber;
     }
 
     if(pattern.re->GetMatchCount() > (size_t)colIndex) {

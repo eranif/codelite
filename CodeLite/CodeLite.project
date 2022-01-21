@@ -496,13 +496,7 @@
     </VirtualDirectory>
   </VirtualDirectory>
   <VirtualDirectory Name="JavaScriptScanner">
-    <File Name="JSLexerAPI.h"/>
-    <File Name="JSLexerTokens.h"/>
-    <File Name="JSLexer.cpp"/>
-    <VirtualDirectory Name="BisonJSParser">
-      <File Name="JSLexer.l"/>
-      <File Name="clJSONObjectParser.y"/>
-    </VirtualDirectory>
+    <VirtualDirectory Name="BisonJSParser"/>
   </VirtualDirectory>
   <VirtualDirectory Name="XML">
     <File Name="XMLLexer.l"/>

@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="WebTools" Version="11000">
-  <Reconciliation>
-    <Regexes/>
-    <Excludepaths/>
-    <Ignorefiles/>
-    <Extensions>
-      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp]]>
-    </Extensions>
-    <Topleveldir>/src/codelite/WebTools</Topleveldir>
-  </Reconciliation>
   <Plugins>
     <Plugin Name="qmake">
       <![CDATA[00020001N0015Win_x64_Release0000000000000001N0015Win_x86_Release000000000000]]>
@@ -53,6 +44,15 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp]]>
+    </Extensions>
+    <Topleveldir>/src/codelite/WebTools</Topleveldir>
+  </Reconciliation>
   <VirtualDirectory Name="src">
     <File Name="webtools.cpp"/>
     <File Name="CMakeLists.txt"/>
@@ -63,12 +63,6 @@
     <File Name="webtools.h"/>
   </VirtualDirectory>
   <Dependencies/>
-  <VirtualDirectory Name="JS">
-    <File Name="JavaScriptFunctionsLocator.cpp"/>
-    <File Name="JavaScriptFunctionsLocator.h"/>
-    <File Name="JavaScriptSyntaxColourThread.cpp"/>
-    <File Name="JavaScriptSyntaxColourThread.h"/>
-  </VirtualDirectory>
   <VirtualDirectory Name="UI">
     <File Name="WebToolsSettings.h"/>
     <File Name="WebToolsSettings.cpp"/>

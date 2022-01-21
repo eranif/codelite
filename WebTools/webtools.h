@@ -27,7 +27,6 @@
 #define __WebTools__
 
 #include "CSSCodeCompletion.h"
-#include "JavaScriptSyntaxColourThread.h"
 #include "XMLCodeCompletion.h"
 #include "cl_command_event.h"
 #include "ieditor.h"
@@ -37,15 +36,12 @@
 
 class NodeDebuggerPane;
 class NodeJSWorkspaceView;
-class JavaScriptSyntaxColourThread;
 class WebTools : public IPlugin
 {
     friend class JavaScriptSyntaxColourThread;
 
-    JavaScriptSyntaxColourThread* m_jsColourThread;
     XMLCodeCompletion::Ptr_t m_xmlCodeComplete;
     CSSCodeCompletion::Ptr_t m_cssCodeComplete;
-    time_t m_lastColourUpdate;
     wxTimer* m_timer;
 
     /// Node.js
@@ -63,7 +59,6 @@ protected:
     void OnFileSaved(clCommandEvent& event);
     void OnThemeChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
-    void ColourJavaScript(const JavaScriptSyntaxColourThread::Reply& reply);
     void OnSettings(wxCommandEvent& event);
     void OnTimer(wxTimerEvent& event);
     void OnCommentLine(wxCommandEvent& e);

@@ -268,12 +268,12 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
             // if we resolved it now, open the file there is no point in searching this file
             // in m_buildInfoPerFile since the key on this map is kept as full name
             int line_number = cd->match_pattern.line_number;
-            int column = cd->match_pattern.column - 1;
+            int column = cd->match_pattern.column != wxNOT_FOUND ? cd->match_pattern.column - 1 : wxNOT_FOUND;
             auto cb = [=](IEditor* editor) {
                 editor->GetCtrl()->ClearSelections();
                 // compilers report line numbers starting from `1`
                 // our editor sees line numbers starting from `0`
-                editor->CenterLine(line_number + 1, column);
+                editor->CenterLine(line_number - 1, column);
                 editor->SetActive();
             };
             clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));

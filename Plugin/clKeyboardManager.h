@@ -33,17 +33,88 @@
 
 #include <list>
 #include <map>
+#include <set>
 #include <vector>
 #include <wx/accel.h>
 #include <wx/event.h>
 #include <wx/frame.h>
 #include <wx/menu.h>
 
+class WXDLLIMPEXP_SDK clKeyboardShortcut
+{
+    bool m_ctrl = false;
+    bool m_alt = false;
+    bool m_shift = false;
+    wxString m_keyCode;
+
+    /**
+     * @brief tokenize the accelerator string
+     */
+    wxArrayString Tokenize(const wxString& accelString) const;
+
+public:
+    clKeyboardShortcut() {}
+    clKeyboardShortcut(bool ctrl, bool alt, bool shift, const wxString& keyCode)
+        : m_ctrl(ctrl)
+        , m_alt(alt)
+        , m_shift(shift)
+        , m_keyCode(keyCode)
+    {
+    }
+    clKeyboardShortcut(const char* accelString) { FromString(wxString(accelString)); }
+    clKeyboardShortcut(const wxString& accelString) { FromString(accelString); }
+
+    /**
+     * @brief please use the FromString() instead
+     */
+    clKeyboardShortcut& operator=(const char* accelString) = delete;
+    clKeyboardShortcut& operator=(const wxString& accelString) = delete;
+
+    bool GetCtrl() const { return IsOk() && m_ctrl; }
+    bool GetAlt() const { return IsOk() && m_alt; }
+    bool GetShift() const { return IsOk() && m_shift; }
+    const wxString& GetKeyCode() const { return m_keyCode; }
+
+    /**
+     * @brief equality operators
+     */
+    bool operator==(const clKeyboardShortcut& rhs) const;
+    bool operator!=(const clKeyboardShortcut& rhs) const { return !(*this == rhs); }
+
+    /**
+     * @brief 'less than' operator (may be used in STL containers)
+     */
+    bool operator<(const clKeyboardShortcut& rhs) const;
+
+    /**
+     * @brief returns true if this shortcut is valid, false otherwise
+     */
+    bool IsOk() const;
+
+    /**
+     * @brief clear this accelerator
+     */
+    void Clear();
+
+    /**
+     * @brief construct this object from string representation
+     * e.g.: Ctrl-Alt-1
+     */
+    void FromString(const wxString& accelString);
+    /**
+     * @brief return a string representation of this accelerator
+     */
+    wxString ToString() const;
+
+    using Vec_t = std::vector<clKeyboardShortcut>;
+    using Set_t = std::set<clKeyboardShortcut>;
+};
+
 struct WXDLLIMPEXP_SDK MenuItemData {
     wxString resourceID;
-    wxString accel;
-    wxString action;
     wxString parentMenu; // For display purposes
+    wxString action;
+    clKeyboardShortcut accel;
 
     struct ClearParentMenu {
         void operator()(std::pair<const int, MenuItemData>& iter) { iter.second.parentMenu.Clear(); }
@@ -62,46 +133,30 @@ struct WXDLLIMPEXP_SDK MenuItemData {
 typedef std::unordered_map<wxString, MenuItemData> MenuItemDataMap_t;
 typedef std::unordered_map<int, MenuItemData> MenuItemDataIntMap_t;
 
-struct WXDLLIMPEXP_SDK clKeyboardShortcut {
-    bool m_ctrl;
-    bool m_alt;
-    bool m_shift;
-    wxString m_keyCode;
-
-    clKeyboardShortcut()
-        : m_ctrl(false)
-        , m_alt(false)
-        , m_shift(false)
-    {
-    }
-
-    /**
-     * @brief clear this accelerator
-     */
-    void Clear();
-
-    /**
-     * @brief construct this object from string representation
-     * e.g.: Ctrl-Alt-1
-     */
-    void FromString(const wxString& accelString);
-    /**
-     * @brief return a string representation of this accelerator
-     */
-    wxString ToString() const;
-
-    typedef std::vector<clKeyboardShortcut> Vec_t;
-};
-
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_KEYBOARD_ACCEL_INIT_DONE, clCommandEvent);
 class WXDLLIMPEXP_SDK clKeyboardManager : public wxEvtHandler
 {
 private:
     typedef std::list<wxFrame*> FrameList_t;
-    MenuItemDataMap_t m_menuTable;
-    MenuItemDataMap_t m_globalTable;
+    MenuItemDataMap_t m_accelTable;        // a set of accelerators configured by user
+    MenuItemDataMap_t m_defaultAccelTable; // a set of default accelerators
     wxStringSet_t m_keyCodes;
-    wxStringSet_t m_allShorcuts;
+    clKeyboardShortcut::Set_t m_allShortcuts;
+
+    /**
+     * @brief an internal struct used by the 2nd AddAccelerator() overload
+     */
+    struct AddAccelData {
+        AddAccelData(const wxString& resourceID, const wxString& action, const clKeyboardShortcut& accel = {})
+            : m_resourceID(resourceID)
+            , m_action(action)
+            , m_accel(accel)
+        {
+        }
+        wxString m_resourceID;
+        wxString m_action;
+        clKeyboardShortcut m_accel;
+    };
 
 protected:
     /**
@@ -111,7 +166,7 @@ protected:
     void DoUpdateMenu(wxMenu* menu, MenuItemDataIntMap_t& accels, std::vector<wxAcceleratorEntry>& table);
     void DoUpdateFrame(wxFrame* frame, MenuItemDataIntMap_t& accels);
     void DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuItemDataIntMap_t& intMap);
-    MenuItemDataMap_t DoLoadDefaultAccelerators();
+    MenuItemDataMap_t DoLoadAccelerators(const wxFileName& filename) const;
 
     clKeyboardManager();
     virtual ~clKeyboardManager();
@@ -126,7 +181,7 @@ public:
     /**
      * @brief return an array of all unassigned keyboard shortcuts
      */
-    wxArrayString GetAllUnasignedKeyboardShortcuts() const;
+    clKeyboardShortcut::Vec_t GetAllUnassignedKeyboardShortcuts() const;
 
     /**
      * @brief show a 'Add keyboard shortcut' dialog
@@ -136,7 +191,7 @@ public:
     /**
      * @brief return true if the accelerator is already assigned
      */
-    bool Exists(const wxString& accel) const;
+    bool Exists(const clKeyboardShortcut& accel) const;
 
     /**
      * @brief save the bindings to disk
@@ -150,11 +205,20 @@ public:
 
     /**
      * @brief add keyboard shortcut by specifying the action ID + the shortcut combination
-     * For example: AddAccelerator("wxID_COPY", "Ctrl-Shift-C", "Copy the current selection");
-     * @return true if the action succeeded, false otherwise
+     * For example: AddAccelerator("wxID_COPY", _("Edit"), _("Copy the current selection"), "Ctrl-Shift-C");
      */
-    void AddGlobalAccelerator(const wxString& resourceID, const wxString& keyboardShortcut,
-                              const wxString& description);
+    void AddAccelerator(const wxString& resourceID, const wxString& parentMenu, const wxString& action,
+                        const clKeyboardShortcut& accel = {});
+
+    /**
+     * @brief a convenience overload for AddAccelerator() method
+     * For example:
+     *    AddAccelerator(_("File"), { { "wxID_OPEN", _("Open"), "Ctrl-O" }, { "wxID_CLOSE", _("Close"), "Ctrl-W" } });
+     * is equivalent to:
+     *    AddAccelerator("wxID_OPEN", _("File"), _("Open"), "Ctrl-O");
+     *    AddAccelerator("wxID_CLOSE", _("File"), _("Close"), "Ctrl-W");
+     */
+    void AddAccelerator(const wxString& parentMenu, const std::vector<AddAccelData>& table);
 
     /**
      * @brief replace all acceleratos with 'accels'

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "abbreviation.h"
+
 #include "abbreviationentry.h"
 #include "abbreviationssettingsdlg.h"
 #include "clKeyboardManager.h"
@@ -33,6 +34,7 @@
 #include "macromanager.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 #include "wxCodeCompletionBoxManager.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/bitmap.h>
@@ -57,10 +59,10 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
-    info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("Abbreviation"));
+    info.SetAuthor("Eran Ifrah");
+    info.SetName("Abbreviation");
     info.SetDescription(_("Abbreviation plugin"));
-    info.SetVersion(wxT("v1.1"));
+    info.SetVersion("v1.1");
     return &info;
 }
 
@@ -79,7 +81,7 @@ AbbreviationPlugin::AbbreviationPlugin(IManager* manager)
     , m_config("abbreviations.conf")
 {
     m_longName = _("Abbreviation plugin");
-    m_shortName = wxT("Abbreviation");
+    m_shortName = "Abbreviation";
     m_topWindow = m_mgr->GetTheApp();
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &AbbreviationPlugin::OnAbbrevSelected, this);
 
@@ -139,7 +141,7 @@ void AbbreviationPlugin::GetAbbreviations(wxCodeCompletionBoxEntry::Vec_t& V, co
     if(!m_config.ReadItem(&jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
-        m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+        m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
@@ -185,7 +187,7 @@ void AbbreviationPlugin::InitDefaults()
     if(!m_config.ReadItem(&jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
-        m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+        m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
@@ -196,25 +198,26 @@ void AbbreviationPlugin::InitDefaults()
     if(jsonData.GetEntries().empty()) {
         // fill some default abbreviations
         wxStringMap_t entries;
-        entries["main"] = wxT("int main(int argc, char **argv) {\n    |\n}\n");
-        entries["while"] = wxT("while(|) {\n    \n}\n");
-        entries["dowhile"] = wxT("do {\n    \n} while( | );\n");
-        entries["for_size"] = wxT("for(size_t |=0; |<; ++|) {\n}\n");
-        entries["for_int"] = wxT("for(int |=0; |<; ++|) {\n}\n");
-        entries["for_php"] = wxT("for($|=0; $|<; ++$|) {\n}\n");
+        entries["main"] = "int main(int argc, char **argv) {\n    |\n}\n";
+        entries["while"] = "while(|) {\n    \n}\n";
+        entries["dowhile"] = "do {\n    \n} while( | );\n";
+        entries["for_size"] = "for(size_t |=0; |<; ++|) {\n}\n";
+        entries["for_int"] = "for(int |=0; |<; ++|) {\n}\n";
+        entries["for_php"] = "for($|=0; $|<; ++$|) {\n}\n";
         jsonData.SetEntries(entries);
         m_config.WriteItem(&jsonData);
     }
-    clKeyboardManager::Get()->AddGlobalAccelerator("abbrev_insert", "Ctrl-Alt-SPACE",
-                                                   _("Plugins::Abbreviations::Show abbreviations completion box"));
+    clKeyboardManager::Get()->AddAccelerator("abbrev_insert", _("Abbreviations"),
+                                             _("Show abbreviations completion box"), "Ctrl-Alt-SPACE");
 }
 
 bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 {
     // get the active editor
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(!editor || abbreviation.IsEmpty())
+    if(!editor || abbreviation.IsEmpty()) {
         return false;
+    }
 
     // search for abbreviation that matches str
     // prepate list of abbreviations
@@ -222,7 +225,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
     if(!m_config.ReadItem(&jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
-        m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
+        m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
@@ -249,7 +252,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 
         // format the text to insert
         bool appendEol(false);
-        if(text.EndsWith(wxT("\r")) || text.EndsWith(wxT("\n"))) {
+        if(text.EndsWith("\r") || text.EndsWith("\n")) {
             appendEol = true;
         }
 
@@ -267,13 +270,13 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
             wxString eol;
             switch(editor->GetEOL()) {
             case 1:
-                eol = wxT("\r");
+                eol = "\r";
                 break;
             case 0:
-                eol = wxT("\r\n");
+                eol = "\r\n";
                 break;
             case 2:
-                eol = wxT("\n");
+                eol = "\n";
                 break;
             }
             text << eol;
@@ -287,14 +290,14 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 
         // locate the caret(s)
         std::vector<int> carets;
-        int where = text.Find(wxT("|"));
+        int where = text.Find("|");
         while(where != wxNOT_FOUND) {
             carets.push_back(where);
             where = text.find('|', where + 1);
         }
 
         // remove the pipe (|) character
-        text.Replace(wxT("|"), wxT(" "));
+        text.Replace("|", " ");
 
         if(selEnd - selStart >= 0) {
             editor->SelectText(selStart, selEnd - selStart);

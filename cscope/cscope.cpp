@@ -22,11 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "cscope.h"
+
 #include "CScopeSettingsDlg.h"
 #include "bitmap_loader.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clKeyboardManager.h"
-#include "cscope.h"
 #include "cscopedbbuilderthread.h"
 #include "cscopestatusmessage.h"
 #include "cscopetab.h"
@@ -35,12 +36,13 @@
 #include "event_notifier.h"
 #include "exelocator.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "procutils.h"
 #include "workspace.h"
-#include "wx/ffile.h"
-#include <fileutils.h>
+
 #include <wx/app.h>
 #include <wx/aui/framemanager.h>
+#include <wx/ffile.h>
 #include <wx/imaglist.h>
 #include <wx/log.h>
 #include <wx/menu.h>
@@ -65,10 +67,10 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
-    info.SetAuthor(wxT("Eran Ifrah, patched by Stefan Roesch"));
-    info.SetName(CSCOPE_NAME);
+    info.SetAuthor("Eran Ifrah, patched by Stefan Roesch");
+    info.SetName("CScope");
     info.SetDescription(_("CScope Integration for CodeLite"));
-    info.SetVersion(wxT("v1.1"));
+    info.SetVersion("v1.1");
     return &info;
 }
 
@@ -96,17 +98,14 @@ Cscope::Cscope(IManager* manager)
     CScopeThreadST::Get()->Start();
 
     // Register keyboard shortcuts for CScope
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_find_user_symbol", "Alt-)", "Plugins::CScope::Find");
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_find_symbol", "Alt-0",
-                                                   "Plugins::CScope::Find selected text");
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_find_global_definition", "Alt-1",
-                                                   "Plugins::CScope::Find this global definition");
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_functions_calling_this_function", "Alt-2",
-                                                   "Plugins::CScope::Find functions called by this function");
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_functions_called_by_this_function", "Alt-3",
-                                                   "Plugins::CScope::Find functions calling this function");
-    clKeyboardManager::Get()->AddGlobalAccelerator("cscope_create_db", "Alt-4",
-                                                   "Plugins::CScope::Create CScope database");
+    clKeyboardManager::Get()->AddAccelerator(
+        _("CScope"),
+        { { "cscope_find_user_symbol", _("Find"), "Alt-)" },
+          { "cscope_find_symbol", _("Find selected text"), "Alt-0" },
+          { "cscope_find_global_definition", _("Find this global definition"), "Alt-1" },
+          { "cscope_functions_calling_this_function", _("Find functions called by this function"), "Alt-2" },
+          { "cscope_functions_called_by_this_function", _("Find functions calling this function"), "Alt-3" },
+          { "cscope_create_db", _("Create CScope database"), "Alt-4" } });
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Cscope::OnEditorContentMenu, this);
 }
 
@@ -306,7 +305,7 @@ wxString Cscope::DoCreateListFile(bool force)
 {
     // get the scope
     CScopeConfData settings;
-    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+    m_mgr->GetConfigTool()->ReadObject("CscopeSettings", &settings);
 
     wxArrayString tmpfiles;
     wxString privateFolder = GetWorkingDirectory();
@@ -320,7 +319,7 @@ wxString Cscope::DoCreateListFile(bool force)
                 files.reserve(all_files.size());
                 for(wxFileName fn : all_files) {
                     wxString ext = fn.GetExt();
-                    if(ext == wxT("exe") || ext == wxT("") || ext == wxT("xpm") || ext == wxT("png")) {
+                    if(ext == "exe" || ext == "" || ext == "xpm" || ext == "png") {
                         continue;
                     }
                     fn.MakeRelativeTo(privateFolder);
@@ -351,7 +350,7 @@ wxString Cscope::DoCreateListFile(bool force)
                 for(const wxString& filepath : tmpfiles) {
                     wxFileName fn(filepath);
                     wxString ext = fn.GetExt();
-                    if(ext == wxT("exe") || ext == wxT("") || ext == wxT("xpm") || ext == wxT("png")) {
+                    if(ext == "exe" || ext == "" || ext == "xpm" || ext == "png") {
                         continue;
                     }
                     fn.MakeRelativeTo(privateFolder);
@@ -364,7 +363,7 @@ wxString Cscope::DoCreateListFile(bool force)
         wxString content;
         for(size_t i = 0; i < files.size(); i++) {
             wxFileName fn(files.at(i));
-            content << fn.GetFullPath(wxPATH_UNIX) << wxT("\n");
+            content << fn.GetFullPath(wxPATH_UNIX) << "\n";
         }
         FileUtils::WriteFileContent(list_file, content, wxConvUTF8);
     }
@@ -378,7 +377,7 @@ void Cscope::DoCscopeCommand(const wxString& command, const wxString& findWhat, 
     wxString where;
     if(!ExeLocator::Locate(GetCscopeExeName(), where)) {
         wxString msg;
-        msg << _("I can't find 'cscope' anywhere. Please check if it's installed.") << wxT('\n')
+        msg << _("I can't find 'cscope' anywhere. Please check if it's installed.") << '\n'
             << _("Or tell me where it can be found, from the menu: 'Plugins | CScope | Settings'");
         wxMessageBox(msg, _("CScope not found"), wxOK | wxCENTER | wxICON_WARNING);
         return;
@@ -390,7 +389,7 @@ void Cscope::DoCscopeCommand(const wxString& command, const wxString& findWhat, 
     // make sure that the Output pane is visible
     wxAuiManager* aui = m_mgr->GetDockingManager();
     if(aui) {
-        wxAuiPaneInfo& info = aui->GetPane(wxT("Output View"));
+        wxAuiPaneInfo& info = aui->GetPane("Output View");
         if(info.IsOk() && !info.IsShown()) {
             info.Show();
             aui->Update();
@@ -438,8 +437,8 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent& e)
     // Do the actual search
     wxString command;
     wxString endMsg;
-    command << GetCscopeExeName() << wxT(" -d -L -1 ") << word << wxT(" -i ") << list_file;
-    endMsg << _("cscope results for: find global definition of '") << word << wxT("'");
+    command << GetCscopeExeName() << " -d -L -1 " << word << " -i " << list_file;
+    endMsg << _("cscope results for: find global definition of '") << word << "'";
     DoCscopeCommand(command, word, endMsg);
 }
 
@@ -454,19 +453,19 @@ void Cscope::OnFindFunctionsCalledByThisFunction(wxCommandEvent& e)
     wxString list_file = DoCreateListFile(false);
 
     // get the rebuild option
-    wxString rebuildOption = wxT("");
+    wxString rebuildOption = "";
     CScopeConfData settings;
 
-    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+    m_mgr->GetConfigTool()->ReadObject("CscopeSettings", &settings);
     if(!settings.GetRebuildOption()) {
-        rebuildOption = wxT(" -d");
+        rebuildOption = " -d";
     }
 
     // Do the actual search
     wxString command;
     wxString endMsg;
-    command << GetCscopeExeName() << rebuildOption << wxT(" -L -2 ") << word << wxT(" -i ") << list_file;
-    endMsg << _("cscope results for: functions called by '") << word << wxT("'");
+    command << GetCscopeExeName() << rebuildOption << " -L -2 " << word << " -i " << list_file;
+    endMsg << _("cscope results for: functions called by '") << word << "'";
     DoCscopeCommand(command, word, endMsg);
 }
 
@@ -481,19 +480,19 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent& e)
     wxString list_file = DoCreateListFile(false);
 
     // get the rebuild option
-    wxString rebuildOption = wxT("");
+    wxString rebuildOption = "";
     CScopeConfData settings;
 
-    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+    m_mgr->GetConfigTool()->ReadObject("CscopeSettings", &settings);
     if(!settings.GetRebuildOption()) {
-        rebuildOption = wxT(" -d");
+        rebuildOption = " -d";
     }
 
     // Do the actual search
     wxString command;
     wxString endMsg;
-    command << GetCscopeExeName() << rebuildOption << wxT(" -L -3 ") << word << wxT(" -i ") << list_file;
-    endMsg << _("cscope results for: functions calling '") << word << wxT("'");
+    command << GetCscopeExeName() << rebuildOption << " -L -3 " << word << " -i " << list_file;
+    endMsg << _("cscope results for: functions calling '") << word << "'";
     DoCscopeCommand(command, word, endMsg);
 }
 
@@ -506,13 +505,13 @@ void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent& e)
         // or it'll be the 'h'of filename.h
         // Cscope can cope with just a filename
         word = m_mgr->GetActiveEditor()->GetWordAtCaret();
-        if(word == wxT("h")) {
+        if(word == "h") {
             long pos = m_mgr->GetActiveEditor()->GetCurrentPosition();
             long start = m_mgr->GetActiveEditor()->WordStartPos(pos - 2, true);
             wxString name = m_mgr->GetActiveEditor()->GetTextRange(start, pos - 2);
             // Append the .h  Cscope would be happy with just foo,
             // but would also return #include foobar.h which isn't what's been requested
-            word = name + wxT(".h");
+            word = name + ".h";
         }
         if(word.IsEmpty()) {
             return;
@@ -523,19 +522,19 @@ void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent& e)
     wxString list_file = DoCreateListFile(false);
 
     // get the rebuild option
-    wxString rebuildOption = wxT("");
+    wxString rebuildOption = "";
     CScopeConfData settings;
 
-    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+    m_mgr->GetConfigTool()->ReadObject("CscopeSettings", &settings);
     if(!settings.GetRebuildOption()) {
-        rebuildOption = wxT(" -d");
+        rebuildOption = " -d";
     }
 
     // Do the actual search
     wxString command;
     wxString endMsg;
-    command << GetCscopeExeName() << rebuildOption << wxT(" -L -8 ") << word << wxT(" -i ") << list_file;
-    endMsg << _("cscope results for: files that #include '") << word << wxT("'");
+    command << GetCscopeExeName() << rebuildOption << " -L -8 " << word << " -i " << list_file;
+    endMsg << _("cscope results for: files that #include '") << word << "'";
     DoCscopeCommand(command, word, endMsg);
 }
 
@@ -556,12 +555,12 @@ void Cscope::OnCreateDB(wxCommandEvent& e)
 
     command << GetCscopeExeName();
 
-    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+    m_mgr->GetConfigTool()->ReadObject("CscopeSettings", &settings);
     if(settings.GetBuildRevertedIndexOption()) {
-        command << wxT(" -q");
+        command << " -q";
         endMsg << _("Recreated inverted CScope DB");
     } else {
-        command << wxT(" -b");
+        command << " -b";
         endMsg << _("Recreated CScope DB");
     }
 
@@ -569,7 +568,7 @@ void Cscope::OnCreateDB(wxCommandEvent& e)
     // since the process is always running from the workspace
     // directory, there is no need to specify the full path of the list file
 
-    command << wxT(" -L -i cscope_file.list");
+    command << " -L -i cscope_file.list";
     DoCscopeCommand(command, wxEmptyString, endMsg);
 }
 
@@ -578,20 +577,20 @@ void Cscope::OnDoSettings(wxCommandEvent& e)
     // atm the only setting to set is the cscope filepath
     // First find the current value, if any
     CScopeConfData settings;
-    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+    m_mgr->GetConfigTool()->ReadObject("CscopeSettings", &settings);
     wxString filepath = settings.GetCscopeExe();
 
     CScopeSettingsDlg dlg(EventNotifier::Get()->TopFrame());
     if(dlg.ShowModal() == wxID_OK) {
         settings.SetCscopeExe(dlg.GetPath());
-        m_mgr->GetConfigTool()->WriteObject(wxT("CscopeSettings"), &settings);
+        m_mgr->GetConfigTool()->WriteObject("CscopeSettings", &settings);
     }
 }
 
 wxString Cscope::GetCscopeExeName()
 {
     CScopeConfData settings;
-    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+    m_mgr->GetConfigTool()->ReadObject("CscopeSettings", &settings);
     return settings.GetCscopeExe();
 }
 
@@ -631,8 +630,9 @@ void Cscope::OnWorkspaceOpenUI(wxUpdateUIEvent& e)
 void Cscope::OnFindUserInsertedSymbol(wxCommandEvent& WXUNUSED(e))
 {
     wxString word = GetSearchPattern();
-    if(word.IsEmpty())
+    if(word.IsEmpty()) {
         return;
+    }
 
     DoFindSymbol(word);
 }
@@ -650,7 +650,7 @@ wxString Cscope::GetSearchPattern() const
     }
 
     if(pattern.IsEmpty()) {
-        pattern = wxGetTextFromUser(_("Enter the symbol to search for:"), _("cscope: find symbol"), wxT(""),
+        pattern = wxGetTextFromUser(_("Enter the symbol to search for:"), _("cscope: find symbol"), "",
                                     m_mgr->GetTheApp()->GetTopWindow());
     }
 
@@ -663,19 +663,19 @@ void Cscope::DoFindSymbol(const wxString& word)
     wxString list_file = DoCreateListFile(false);
 
     // get the rebuild option
-    wxString rebuildOption = wxT("");
+    wxString rebuildOption = "";
     CScopeConfData settings;
 
-    m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &settings);
+    m_mgr->GetConfigTool()->ReadObject("CscopeSettings", &settings);
     if(!settings.GetRebuildOption()) {
-        rebuildOption = wxT(" -d");
+        rebuildOption = " -d";
     }
 
     // Do the actual search
     wxString command;
     wxString endMsg;
-    command << GetCscopeExeName() << rebuildOption << wxT(" -L -0 ") << word << wxT(" -i ") << list_file;
-    endMsg << wxT("cscope results for: find C symbol '") << word << wxT("'");
+    command << GetCscopeExeName() << rebuildOption << " -L -0 " << word << " -i " << list_file;
+    endMsg << "cscope results for: find C symbol '" << word << "'";
     DoCscopeCommand(command, word, endMsg);
 }
 

@@ -265,10 +265,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
             PATTERN ".svn" EXCLUDE
             PATTERN ".git" EXCLUDE
         )
-        
-        install(FILES ${CL_SRC_ROOT}/Runtime/config/accelerators.conf.default 
-                DESTINATION 
-                    ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/config)
                     
         install(FILES ${CL_SRC_ROOT}/Runtime/config/codelite.layout.default 
                 DESTINATION 

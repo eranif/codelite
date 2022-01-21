@@ -28,8 +28,6 @@
 #include "globals.h"
 #include "windowattrmanager.h"
 
-#include <wx/tokenzr.h>
-
 static const struct wxKeyName {
     wxKeyCode code;
     const char* name;
@@ -114,15 +112,14 @@ NewKeyShortcutDlg::NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid)
     Initialise(mid.accel);
 }
 
-void NewKeyShortcutDlg::Initialise(const wxString& accel)
+void NewKeyShortcutDlg::Initialise(const clKeyboardShortcut& accel)
 {
-    NewKeyShortcutDlg::KeyboardShortcut ks = FromString(accel);
     m_staticTextAction->SetLabel(m_mid.action);
-    m_textCtrl1->ChangeValue(ks.key);
+    m_textCtrl1->ChangeValue(accel.GetKeyCode());
 
-    m_checkBoxAlt->SetValue(ks.modifiers & kAlt);
-    m_checkBoxCtrl->SetValue(ks.modifiers & kCtrl);
-    m_checkBoxShift->SetValue(ks.modifiers & kShift);
+    m_checkBoxAlt->SetValue(accel.GetAlt());
+    m_checkBoxCtrl->SetValue(accel.GetCtrl());
+    m_checkBoxShift->SetValue(accel.GetShift());
 }
 
 void NewKeyShortcutDlg::OnKeyDown(wxKeyEvent& event)
@@ -134,7 +131,7 @@ void NewKeyShortcutDlg::OnKeyDown(wxKeyEvent& event)
     m_textCtrl1->ChangeValue(text);
 }
 
-wxString NewKeyShortcutDlg::ToString(wxKeyEvent& e)
+wxString NewKeyShortcutDlg::ToString(wxKeyEvent& e) const
 {
     wxString text;
 
@@ -148,13 +145,13 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent& e)
 
     const int code = e.GetKeyCode();
 
-    if(code >= WXK_F1 && code <= WXK_F12)
+    if(code >= WXK_F1 && code <= WXK_F12) {
         text << _("F") << code - WXK_F1 + 1;
-    else if(code >= WXK_NUMPAD0 && code <= WXK_NUMPAD9)
+    } else if(code >= WXK_NUMPAD0 && code <= WXK_NUMPAD9) {
         text << code - WXK_NUMPAD0;
-    else if(code >= WXK_SPECIAL1 && code <= WXK_SPECIAL20)
+    } else if(code >= WXK_SPECIAL1 && code <= WXK_SPECIAL20) {
         text << _("SPECIAL") << code - WXK_SPECIAL1 + 1;
-    else { // check the named keys
+    } else { // check the named keys
         size_t n;
         for(n = 0; n < WXSIZEOF(wxKeyNames); n++) {
             const wxKeyName& kn = wxKeyNames[n];
@@ -177,44 +174,10 @@ wxString NewKeyShortcutDlg::ToString(wxKeyEvent& e)
     return text;
 }
 
-NewKeyShortcutDlg::KeyboardShortcut NewKeyShortcutDlg::FromString(const wxString& accelString)
+clKeyboardShortcut NewKeyShortcutDlg::GetAccel() const
 {
-    wxString tmp_accel = accelString;
-    tmp_accel.MakeLower();
-
-    NewKeyShortcutDlg::KeyboardShortcut ks;
-    wxArrayString tokens = ::wxStringTokenize(accelString, "-+", wxTOKEN_STRTOK);
-
-    for(size_t i = 0; i < tokens.GetCount(); ++i) {
-        wxString token = tokens.Item(i);
-        token.MakeLower();
-        if(token == "shift") {
-            ks.modifiers |= kShift;
-        } else if(token == "alt") {
-            ks.modifiers |= kAlt;
-        } else if(token == "ctrl") {
-            ks.modifiers |= kCtrl;
-        } else {
-            ks.key = tokens.Item(i);
-        }
-    }
-    return ks;
-}
-
-wxString NewKeyShortcutDlg::GetAccel() const
-{
-    wxString accel;
-    if(m_checkBoxCtrl->IsChecked())
-        accel << "Ctrl-";
-    if(m_checkBoxAlt->IsChecked())
-        accel << "Alt-";
-    if(m_checkBoxShift->IsChecked())
-        accel << "Shift-";
-    accel << m_textCtrl1->GetValue();
-    if(accel.EndsWith("-")) {
-        accel.RemoveLast();
-    }
-    return accel;
+    return { m_checkBoxCtrl->IsChecked(), m_checkBoxAlt->IsChecked(), m_checkBoxShift->IsChecked(),
+             m_textCtrl1->GetValue() };
 }
 
 void NewKeyShortcutDlg::OnClear(wxCommandEvent& event)
@@ -235,9 +198,21 @@ void NewKeyShortcutDlg::OnClearUI(wxUpdateUIEvent& event)
 
 NewKeyShortcutDlg::~NewKeyShortcutDlg() {}
 
+wxArrayString NewKeyShortcutDlg::GetSuggestions() const
+{
+    clKeyboardShortcut::Vec_t unassignedShortcuts = clKeyboardManager::Get()->GetAllUnassignedKeyboardShortcuts();
+
+    wxArrayString suggestions;
+    suggestions.Alloc(unassignedShortcuts.size());
+    for(const clKeyboardShortcut& shortcut : unassignedShortcuts) {
+        suggestions.Add(shortcut.ToString());
+    }
+    return suggestions;
+}
+
 void NewKeyShortcutDlg::OnSuggest(wxCommandEvent& event)
 {
-    clSingleChoiceDialog dlg(this, clKeyboardManager::Get()->GetAllUnasignedKeyboardShortcuts(), 0);
+    clSingleChoiceDialog dlg(this, GetSuggestions(), 0);
     ::clSetDialogSizeAndPosition(&dlg, 1.2); // give it a reasonable size
     dlg.SetLabel(_("Select a Keyboard Shortcut"));
     if(dlg.ShowModal() == wxID_OK) {

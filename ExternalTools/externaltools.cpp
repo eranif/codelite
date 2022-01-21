@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "externaltools.h"
+
 #include "ExternalToolsManager.h"
 #include "ExternalToolsProcessManager.h"
 #include "async_executable_cmd.h"
@@ -33,13 +35,13 @@
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "externaltooldlg.h"
-#include "externaltools.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "plugin_version.h"
 #include "processreaderthread.h"
 #include "workspace.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/aui/framemanager.h>
@@ -52,10 +54,7 @@
 static ExternalToolsPlugin* thePlugin = NULL;
 
 struct DecSort {
-    bool operator()(const ToolInfo& t1, const ToolInfo& t2)
-    {
-        return t1.GetName().CmpNoCase(t2.GetName()) < 0;
-    }
+    bool operator()(const ToolInfo& t1, const ToolInfo& t2) { return t1.GetName().CmpNoCase(t2.GetName()) < 0; }
 };
 
 // Define the plugin entry point
@@ -70,17 +69,14 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
-    info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("ExternalTools"));
+    info.SetAuthor("Eran Ifrah");
+    info.SetName("ExternalTools");
     info.SetDescription(_("A plugin that allows user to launch external tools from within CodeLite"));
-    info.SetVersion(wxT("v1.0"));
+    info.SetVersion("v1.0");
     return &info;
 }
 
-CL_PLUGIN_API int GetPluginInterfaceVersion()
-{
-    return PLUGIN_INTERFACE_VERSION;
-}
+CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
 ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
     : IPlugin(manager)
@@ -89,35 +85,36 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
 {
     ToolsTaskManager::Instance(); // Ensure that we allocate the process manager
     m_longName = _("A plugin that allows user to launch external tools from within CodeLite");
-    m_shortName = wxT("ExternalTools");
+    m_shortName = "ExternalTools";
     topWin = m_mgr->GetTheApp();
 
     topWin->Bind(wxEVT_MENU, &ExternalToolsPlugin::OnSettings, this, XRCID("external_tools_settings"));
     topWin->Bind(wxEVT_MENU, &ExternalToolsPlugin::OnShowRunningTools, this, XRCID("external_tools_monitor"));
 
     for(int i = 0; i < MAX_TOOLS; i++) {
-        wxString winid = wxString::Format(wxT("external_tool_%d"), i);
+        wxString winid = wxString::Format("external_tool_%d", i);
         topWin->Connect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED,
                         wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
     }
 
     // Register keyboard shortcuts
     for(int i = 0; i < MAX_TOOLS; i++) {
-        clKeyboardManager::Get()->AddGlobalAccelerator(
-            wxString::Format("external_tool_%d", i), wxString::Format("Ctrl-Shift-%d", i),
-            wxString::Format("Plugins::External Tools::External Tool %d", i));
+        clKeyboardShortcut accel;
+        if(i <= 9) {
+            accel.FromString(wxString::Format("Ctrl-Shift-%d", i));
+        }
+        clKeyboardManager::Get()->AddAccelerator(wxString::Format("external_tool_%d", i), _("External Tools"),
+                                                 wxString::Format(_("External Tool %d"), i), accel);
     }
 
     // Bind the "OnFileSave" event
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ExternalToolsPlugin::OnFileSave, this);
 
     // Load the tools from the configuraton file
-    m_mgr->GetConfigTool()->ReadObject(wxT("ExternalTools"), &m_externalTools);
+    m_mgr->GetConfigTool()->ReadObject("ExternalTools", &m_externalTools);
 }
 
-ExternalToolsPlugin::~ExternalToolsPlugin()
-{
-}
+ExternalToolsPlugin::~ExternalToolsPlugin() {}
 
 void ExternalToolsPlugin::CreateToolBar(clToolBar* toolbar)
 {
@@ -148,7 +145,7 @@ void ExternalToolsPlugin::UnPlug()
     topWin->Unbind(wxEVT_MENU, &ExternalToolsPlugin::OnShowRunningTools, this, XRCID("external_tools_monitor"));
 
     for(int i = 0; i < MAX_TOOLS; ++i) {
-        wxString winid = wxString::Format(wxT("external_tool_%d"), i);
+        wxString winid = wxString::Format("external_tool_%d", i);
         topWin->Disconnect(wxXmlResource::GetXRCID(winid.c_str()), wxEVT_COMMAND_MENU_SELECTED,
                            wxCommandEventHandler(ExternalToolsPlugin::OnLaunchExternalTool), NULL, this);
     }
@@ -166,7 +163,7 @@ void ExternalToolsPlugin::OnSettings(wxCommandEvent& e)
         m_externalTools.SetTools(dlg.GetTools());
 
         // and the file system as well
-        m_mgr->GetConfigTool()->WriteObject(wxT("ExternalTools"), &m_externalTools);
+        m_mgr->GetConfigTool()->WriteObject("ExternalTools", &m_externalTools);
         CallAfter(&ExternalToolsPlugin::OnRecreateTB);
     }
 }

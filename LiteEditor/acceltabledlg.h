@@ -26,9 +26,10 @@
 #define __acceltabledlg__
 
 #include "AccelTableBaseDlg.h"
+#include "clKeyboardManager.h"
+
 #include <map>
 #include <vector>
-#include "clKeyboardManager.h"
 
 struct AccelItemData : public wxClientData {
     MenuItemData m_menuItemData;
@@ -55,7 +56,7 @@ protected:
 
     void DoItemActivated();
     bool IsMatchesFilter(const wxString& filter, const MenuItemData& item);
-    bool HasAccelerator(const wxString& accel, MenuItemData& who);
+    bool HasAccelerator(const clKeyboardShortcut& accel, MenuItemData& who);
     AccelItemData* DoGetItemData(const wxDataViewItem& item);
     wxDataViewItem FindAccel(const MenuItemData& mid);
 

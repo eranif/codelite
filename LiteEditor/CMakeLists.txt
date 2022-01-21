@@ -113,8 +113,6 @@ if(NOT APPLE)
     endif()
 
     ## Copy default configuration files
-    install(FILES ${CL_SRC_ROOT}/Runtime/config/accelerators.conf.default DESTINATION
-            ${CL_PREFIX}/share/codelite/config)
     install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default
             DESTINATION ${CL_PREFIX}/share/codelite/config)
     install(FILES ${CL_SRC_ROOT}/Runtime/config/debuggers.xml.gtk DESTINATION

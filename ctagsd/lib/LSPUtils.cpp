@@ -151,7 +151,7 @@ void LSPUtils::to_symbol_information(const TagEntry* tag, LSP::SymbolInformation
     range.SetStart({ tag->GetLine() - 1, 0 });
     range.SetEnd({ tag->GetLine() - 1, 0 });
     loc.SetRange(range);
-    loc.SetPath(wxFileSystem::FileNameToURL(tag->GetFile()));
+    loc.SetPath(FileUtils::FilePathToURI(tag->GetFile()));
 
     symbol_information.SetKind(get_symbol_kind(tag));
     if(parents_seen) {

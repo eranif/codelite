@@ -1390,7 +1390,7 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         LSP::Range range;
         range.SetStart({ 0, 0 }).SetEnd({ 0, 0 });
         match.append(range.ToJSON("range"));
-        match.addProperty("uri", wxFileSystem::FileNameToURL(file_match));
+        match.addProperty("uri", FileUtils::FilePathToURI(file_match));
     } else {
         // add all the results
         for(TagEntryPtr tag : tags) {
@@ -1400,7 +1400,7 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
             LSP::Range range;
             range.SetStart({ tag->GetLine() - 1, 0 }).SetEnd({ tag->GetLine() - 1, 0 });
             match.append(range.ToJSON("range"));
-            match.addProperty("uri", wxFileSystem::FileNameToURL(tag->GetFile()));
+            match.addProperty("uri", FileUtils::FilePathToURI(tag->GetFile()));
         }
     }
     channel->write_reply(response);

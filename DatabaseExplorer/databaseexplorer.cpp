@@ -23,17 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "databaseexplorer.h"
+
 #include "ErdPanel.h"
 #include "SqlCommandPanel.h"
 #include "clKeyboardManager.h"
-#include "databaseexplorer.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
-#include "wx/wxsf/AutoLayout.h"
+
 #include <wx/aboutdlg.h>
+#include <wx/wxsf/AutoLayout.h>
 #include <wx/xrc/xmlres.h>
 
 //#ifdef DBL_USE_MYSQL
@@ -93,8 +95,8 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
-    info.SetAuthor(wxT("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)"));
-    info.SetName(_("DatabaseExplorer"));
+    info.SetAuthor("Peter Janků, Michal Bližňák, Tomas Bata University in Zlin, Czech Republic (www.fai.utb.cz)");
+    info.SetName("DatabaseExplorer");
     info.SetDescription(_("DatabaseExplorer for CodeLite"));
     info.SetVersion(DBE_VERSION);
     return &info;
@@ -131,19 +133,20 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     wxSFAutoLayout layout;
 
     wxSFLayoutHorizontalTree* pHTreeAlg =
-        wxDynamicCast(layout.GetAlgorithm(wxT("Horizontal Tree")), wxSFLayoutHorizontalTree);
-    if(pHTreeAlg)
+        wxDynamicCast(layout.GetAlgorithm("Horizontal Tree"), wxSFLayoutHorizontalTree);
+    if(pHTreeAlg) {
         pHTreeAlg->SetHSpace(200);
+    }
 
-    wxSFLayoutVerticalTree* pVTreeAlg =
-        wxDynamicCast(layout.GetAlgorithm(wxT("Vertical Tree")), wxSFLayoutVerticalTree);
-    if(pVTreeAlg)
+    wxSFLayoutVerticalTree* pVTreeAlg = wxDynamicCast(layout.GetAlgorithm("Vertical Tree"), wxSFLayoutVerticalTree);
+    if(pVTreeAlg) {
         pVTreeAlg->SetVSpace(75);
+    }
 
     m_longName = _("DatabaseExplorer for CodeLite");
-    m_shortName = wxT("DatabaseExplorer");
+    m_shortName = "DatabaseExplorer";
 
-    clKeyboardManager::Get()->AddGlobalAccelerator("wxEVT_EXECUTE_SQL", "Ctrl-J", _("Execute SQL"));
+    clKeyboardManager::Get()->AddAccelerator("wxEVT_EXECUTE_SQL", _("Database Explorer"), _("Execute SQL"), "Ctrl-J");
     wxTheApp->Bind(wxEVT_MENU, &DatabaseExplorer::OnExecuteSQL, this, XRCID("wxEVT_EXECUTE_SQL"));
 }
 
@@ -198,7 +201,7 @@ bool DatabaseExplorer::IsDbViewDetached()
     wxASSERT(configTool);
 
     DetachedPanesInfo dpi;
-    configTool->ReadObject(wxT("DetachedPanesList"), &dpi);
+    configTool->ReadObject("DetachedPanesList", &dpi);
     const wxArrayString& detachedPanes = dpi.GetPanes();
 
     return detachedPanes.Index(_("DbExplorer")) != wxNOT_FOUND;
@@ -208,7 +211,7 @@ void DatabaseExplorer::OnAbout(wxCommandEvent& e)
 {
     wxString version = wxString::Format(DBE_VERSION);
     wxString desc = _("Cross platform database explorer\n\n");
-    desc << wxbuildinfo(long_f) << wxT("\n\n");
+    desc << wxbuildinfo(long_f) << "\n\n";
 
     wxAboutDialogInfo info;
     info.SetName(_("DatabaseExplorer"));
@@ -216,8 +219,8 @@ void DatabaseExplorer::OnAbout(wxCommandEvent& e)
     info.SetDescription(desc);
     info.SetCopyright(_("2011 - 2015 (C) Tomas Bata University, Zlin, Czech Republic"));
     info.SetWebSite(_("http://www.fai.utb.cz"));
-    info.AddDeveloper(wxT("Peter Janků"));
-    info.AddDeveloper(wxT("Michal Bližňák"));
+    info.AddDeveloper("Peter Janků");
+    info.AddDeveloper("Michal Bližňák");
 
     wxAboutBox(info);
 }

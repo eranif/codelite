@@ -43,6 +43,8 @@ public:
     clKeyboardBindingConfig& Load();
     clKeyboardBindingConfig& Save();
 
+    void MigrateOldResourceID(wxString& resourceID) const;
+
     bool Exists() const
     {
         wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");
@@ -50,10 +52,9 @@ public:
         return fn.Exists();
     }
 
-    clKeyboardBindingConfig& SetBindings(const MenuItemDataMap_t& menus, const MenuItemDataMap_t& globals)
+    clKeyboardBindingConfig& SetBindings(const MenuItemDataMap_t& accels)
     {
-        this->m_bindings = menus;
-        this->m_bindings.insert(globals.begin(), globals.end());
+        this->m_bindings = accels;
         return *this;
     }
     const MenuItemDataMap_t& GetBindings() const { return m_bindings; }

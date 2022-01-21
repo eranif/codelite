@@ -24,10 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "editsnippetsdlg.h"
-#include "snipwiz.h"
-#include <wx/msgdlg.h>
+
 #include "AboutHtml.h"
 #include "clKeyboardManager.h"
+#include "snipwiz.h"
+
+#include <wx/msgdlg.h>
 
 EditSnippetsDlg::EditSnippetsDlg(wxWindow* parent, SnipWiz* plugin, IManager* manager)
     : EditSnippetsBaseDlg(parent)
@@ -62,12 +64,12 @@ void EditSnippetsDlg::DoItemSelected(const wxString& text)
         return;
     }
 
-    m_textCtrlAccelerator->SetValue(wxT(""));
+    m_textCtrlAccelerator->SetValue("");
     MenuItemDataMap_t::iterator iter = accelMap.begin();
     for(; iter != accelMap.end(); ++iter) {
         MenuItemData mid = iter->second;
-        if(mid.action == text) {
-            m_textCtrlAccelerator->SetValue(mid.accel);
+        if(mid.parentMenu == _("SnipWiz") && mid.action == text) {
+            m_textCtrlAccelerator->SetValue(mid.accel.ToString());
         }
     }
 }
@@ -86,10 +88,7 @@ void EditSnippetsDlg::OnAddSnippet(wxCommandEvent& event)
 
 void EditSnippetsDlg::OnAddSnippetUI(wxUpdateUIEvent& event)
 {
-    if(m_textCtrlMenuEntry->GetValue().IsEmpty() || m_textCtrlSnippet->GetValue().IsEmpty())
-        event.Enable(false);
-    else
-        event.Enable(true);
+    event.Enable(!m_textCtrlMenuEntry->GetValue().IsEmpty() && !m_textCtrlSnippet->GetValue().IsEmpty());
 }
 
 void EditSnippetsDlg::OnChangeSnippet(wxCommandEvent& event)
@@ -105,7 +104,9 @@ void EditSnippetsDlg::OnChangeSnippet(wxCommandEvent& event)
     }
 
     // if menu entry has changed, delete old entry in list
-    if(curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0) GetStringDb()->DeleteSnippetKey(curListKey);
+    if(curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0) {
+        GetStringDb()->DeleteSnippetKey(curListKey);
+    }
 
     GetStringDb()->SetSnippetString(m_textCtrlMenuEntry->GetValue(), m_textCtrlSnippet->GetValue());
     m_listBox1->SetString(index, m_textCtrlMenuEntry->GetValue());
@@ -114,10 +115,7 @@ void EditSnippetsDlg::OnChangeSnippet(wxCommandEvent& event)
 
 void EditSnippetsDlg::OnChangeSnippetUI(wxUpdateUIEvent& event)
 {
-    if(m_textCtrlMenuEntry->GetValue().IsEmpty() || m_textCtrlSnippet->GetValue().IsEmpty())
-        event.Enable(false);
-    else
-        event.Enable(true);
+    event.Enable(!m_textCtrlMenuEntry->GetValue().IsEmpty() && !m_textCtrlSnippet->GetValue().IsEmpty());
 }
 
 void EditSnippetsDlg::OnRemoveSnippet(wxCommandEvent& event)
@@ -128,16 +126,15 @@ void EditSnippetsDlg::OnRemoveSnippet(wxCommandEvent& event)
     GetStringDb()->DeleteSnippetKey(key);
     m_listBox1->Delete(index);
 
-    if(m_listBox1->GetCount()) SelectItem(0);
+    if(m_listBox1->GetCount()) {
+        SelectItem(0);
+    }
     m_modified = true;
 }
 
 void EditSnippetsDlg::OnRemoveSnippetUI(wxUpdateUIEvent& event)
 {
-    if(m_listBox1->GetSelection() != wxNOT_FOUND)
-        event.Enable(true);
-    else
-        event.Enable(false);
+    event.Enable(m_listBox1->GetSelection() != wxNOT_FOUND);
 }
 
 void EditSnippetsDlg::Initialize()
@@ -176,18 +173,19 @@ void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
 
         MenuItemData mid;
         mid.resourceID << id;
+        mid.parentMenu = _("SnipWiz");
         mid.action = m_textCtrlMenuEntry->GetValue();
-        
+
         if(clKeyboardManager::Get()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
 
-            if(clKeyboardManager::Get()->Exists(mid.accel) && mid.accel.IsEmpty() == false) {
+            if(clKeyboardManager::Get()->Exists(mid.accel)) {
                 wxMessageBox(_("That accelerator already exists"), _("CodeLite"), wxOK | wxCENTRE, this);
                 return;
             }
 
-            clKeyboardManager::Get()->AddGlobalAccelerator(mid.resourceID, mid.accel, mid.action);
+            clKeyboardManager::Get()->AddAccelerator(mid.resourceID, mid.parentMenu, mid.action, mid.accel);
             clKeyboardManager::Get()->Update();
-            m_textCtrlAccelerator->ChangeValue(mid.accel);
+            m_textCtrlAccelerator->ChangeValue(mid.accel.ToString());
         }
     }
 }

@@ -23,35 +23,39 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "codelitediff.h"
+
+#include "DiffFoldersFrame.h"
 #include "DiffSideBySidePanel.h"
 #include "NewFileComparison.h"
 #include "clDiffFrame.h"
 #include "clKeyboardManager.h"
-#include "codelitediff.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "macros.h"
-#include "wx/menu.h"
+
 #include <wx/ffile.h>
+#include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
-#include "DiffFoldersFrame.h"
 
 static CodeLiteDiff* thePlugin = NULL;
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
-    if(thePlugin == 0) { thePlugin = new CodeLiteDiff(manager); }
+    if(thePlugin == 0) {
+        thePlugin = new CodeLiteDiff(manager);
+    }
     return thePlugin;
 }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
-    info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("Diff Plugin"));
+    info.SetAuthor("Eran Ifrah");
+    info.SetName("Diff Plugin");
     info.SetDescription(_("CodeLite Diff Plugin"));
-    info.SetVersion(wxT("v1.0"));
+    info.SetVersion("v1.0");
     return &info;
 }
 
@@ -61,16 +65,16 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
     : IPlugin(manager)
 {
     m_longName = _("CodeLite Diff Plugin");
-    m_shortName = wxT("Diff Plugin");
+    m_shortName = "Diff Plugin";
 
     Bind(wxEVT_MENU, &CodeLiteDiff::OnDiff, this, XRCID("diff_compare_with"));
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_TAB_LABEL, &CodeLiteDiff::OnTabContextMenu, this);
-    clKeyboardManager::Get()->AddGlobalAccelerator("diff_new_comparison", "Ctrl-Shift-C",
-                                                   "Plugins::Diff Tool::New File Comparison");
-    clKeyboardManager::Get()->AddGlobalAccelerator("diff_new_folder", "Ctrl-Alt-F",
-                                                   "Plugins::Diff Tool::New Folder Comparison");
     wxTheApp->Bind(wxEVT_MENU, &CodeLiteDiff::OnNewDiff, this, XRCID("diff_new_comparison"));
     wxTheApp->Bind(wxEVT_MENU, &CodeLiteDiff::OnNewDiffFolder, this, XRCID("diff_new_folder"));
+
+    clKeyboardManager::Get()->AddAccelerator(_("Diff Tool"),
+                                             { { "diff_new_comparison", _("New File Comparison"), "Ctrl-Shift-C" },
+                                               { "diff_new_folder", _("New Folder Comparison"), "Ctrl-Alt-F" } });
 }
 
 CodeLiteDiff::~CodeLiteDiff() {}
@@ -180,7 +184,9 @@ wxFileName CodeLiteDiff::SaveEditorToTmpfile(IEditor* editor) const
     tpath << wxFileName::GetPathSeparator() << "CLdiff" << wxFileName::GetPathSeparator();
     wxFileName::Mkdir(tpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     wxFileName tmpFile(wxFileName::CreateTempFileName(tpath + editor->GetFileName().GetName()));
-    if(!tmpFile.IsOk()) { return wxFileName(); }
+    if(!tmpFile.IsOk()) {
+        return wxFileName();
+    }
 
     tmpFile.SetExt(editor->GetFileName().GetExt());
     wxFFile fp(tmpFile.GetFullPath(), "w+b");

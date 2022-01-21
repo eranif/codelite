@@ -44,7 +44,6 @@ Source: "..\InnoSetup\license.txt"; DestDir: "{app}"; Flags: ignoreversion ; Com
 Source: "..\sdk\wxconfig\wx-config.exe"; DestDir: "{app}"; Components: Editor
 Source: "..\Runtime\config\codelite.xml.default"; DestDir: "{app}\config"; Components: Editor;
 Source: "..\Runtime\config\plugins.xml.default"; DestDir: "{app}\config";  Components: Editor;
-Source: "..\Runtime\config\accelerators.conf.default"; DestDir: "{app}\config"; Components: Editor;
 Source: "..\Runtime\config\debuggers.xml.default"; DestDir: "{app}\config"; Components: Editor;
 Source: "..\Runtime\config\build_settings.xml.default.win"; DestDir: "{app}\config"; DestName: "build_settings.xml.default"; Components: Editor
 Source: "..\Runtime\rc\*"; DestDir: "{app}\rc"; Flags: ignoreversion ; Components: Editor

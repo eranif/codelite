@@ -560,7 +560,6 @@
     <File Name="code_parser.rc"/>
     <File Name="../Runtime/rc/menu.xrc"/>
     <File Name="resources.xrc"/>
-    <File Name="../Runtime/config/accelerators.conf.default"/>
     <File Name="../Runtime/config/codelite.xml.default.gtk"/>
     <File Name="../Runtime/config/codelite.xml.default"/>
     <File Name="../Runtime/config/codelite.xml.default.mac"/>

@@ -23,11 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "codeformatter.h"
+
 #include "JSON.h"
 #include "asyncprocess.h"
 #include "clEditorConfig.h"
 #include "clEditorStateLocker.h"
 #include "clFilesCollector.h"
+#include "clKeyboardManager.h"
 #include "clSTCLineKeeper.h"
 #include "clWorkspaceManager.h"
 #include "codeformatterdlg.h"
@@ -42,14 +44,14 @@
 #include "precompiled_header.h"
 #include "procutils.h"
 #include "workspace.h"
-#include "wx/ffile.h"
-#include "wx/log.h"
-#include "wx/menu.h"
+
 #include <algorithm>
 #include <thread>
 #include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>
 #include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/progdlg.h>
 #include <wx/xrc/xmlres.h>
@@ -76,7 +78,7 @@ extern "C" char* STDCALL AStyleMain(const char* pSourceIn, const char* pOptions,
 void STDCALL ASErrorHandler(int errorNumber, const char* errorMessage)
 {
     wxString errStr;
-    errStr << _U(errorMessage) << wxT(" (error ") << errorNumber << wxT(")");
+    errStr << _U(errorMessage) << " (error " << errorNumber << ")";
     CL_DEBUG(errStr.c_str());
 }
 
@@ -103,10 +105,10 @@ CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
-    info.SetAuthor(wxT("Eran Ifrah"));
-    info.SetName(wxT("Source Code Formatter"));
+    info.SetAuthor("Eran Ifrah");
+    info.SetName("Source Code Formatter");
     info.SetDescription(_("Source Code Formatter (Supports C/C++/Obj-C/JavaScript/PHP files)"));
-    info.SetVersion(wxT("v2.0"));
+    info.SetVersion("v2.0");
     return &info;
 }
 
@@ -126,6 +128,10 @@ CodeFormatter::CodeFormatter(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_BEFORE_EDITOR_SAVE, clCommandEventHandler(CodeFormatter::OnBeforeFileSave), this);
     EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &CodeFormatter::OnPhpSettingsChanged, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &CodeFormatter::OnContextMenu, this);
+
+    clKeyboardManager::Get()->AddAccelerator(
+        _("Source Code Formatter"),
+        { { "format_source", _("Format Current Source"), "Ctrl-I" }, { "formatter_options", _("Options...") } });
 
     m_optionsPhp.Load();
     if(!m_mgr->GetConfigTool()->ReadObject("FormatterOptions", &m_options)) {
@@ -178,8 +184,9 @@ void CodeFormatter::OnFormat(wxCommandEvent& e)
     }
 
     // get the editor that requires formatting
-    if(!editor)
+    if(!editor) {
         return;
+    }
 
     int selStart = wxNOT_FOUND, selEnd = wxNOT_FOUND;
     if(editor->GetSelectionStart() != wxNOT_FOUND && editor->GetSelectionStart() < editor->GetSelectionEnd()) {
@@ -568,7 +575,7 @@ void CodeFormatter::DoFormatWithAstyle(wxString& content, const bool& appendEOL)
     bool useTabs = m_mgr->GetEditorSettings()->GetIndentUsesTabs();
     int tabWidth = m_mgr->GetEditorSettings()->GetTabWidth();
     int indentWidth = m_mgr->GetEditorSettings()->GetIndentWidth();
-    options << (useTabs && tabWidth == indentWidth ? wxT(" -t") : wxT(" -s")) << indentWidth;
+    options << (useTabs && tabWidth == indentWidth ? " -t" : " -s") << indentWidth;
 
     char* textOut = AStyleMain(_C(content), _C(options), ASErrorHandler, ASMemoryAlloc);
     content.clear();
@@ -663,8 +670,8 @@ void CodeFormatter::OnFormatOptions(wxCommandEvent& e)
     wxUnusedVar(e);
 
     wxString cppSampleFile, phpSampleFile, cppSample, phpSample;
-    cppSampleFile << m_mgr->GetStartupDirectory() << wxT("/astyle.sample");
-    phpSampleFile << m_mgr->GetStartupDirectory() << wxT("/php.sample");
+    cppSampleFile << m_mgr->GetStartupDirectory() << "/astyle.sample";
+    phpSampleFile << m_mgr->GetStartupDirectory() << "/php.sample";
     ReadFileWithConversion(cppSampleFile, cppSample);
     ReadFileWithConversion(phpSampleFile, phpSample);
 
@@ -739,11 +746,11 @@ void CodeFormatter::OnFormatString(clSourceFormatEvent& e)
 int CodeFormatter::DoGetGlobalEOL() const
 {
     OptionsConfigPtr options = m_mgr->GetEditorSettings();
-    if(options->GetEolMode() == wxT("Unix (LF)")) {
+    if(options->GetEolMode() == "Unix (LF)") {
         return 2;
-    } else if(options->GetEolMode() == wxT("Mac (CR)")) {
+    } else if(options->GetEolMode() == "Mac (CR)") {
         return 1;
-    } else if(options->GetEolMode() == wxT("Windows (CRLF)")) {
+    } else if(options->GetEolMode() == "Windows (CRLF)") {
         return 0;
     } else {
 // set the EOL by the hosting OS
@@ -760,12 +767,12 @@ wxString CodeFormatter::DoGetGlobalEOLString() const
 {
     switch(DoGetGlobalEOL()) {
     case 0:
-        return wxT("\r\n");
+        return "\r\n";
     case 1:
-        return wxT("\r");
+        return "\r";
     case 2:
     default:
-        return wxT("\n");
+        return "\n";
     }
 }
 

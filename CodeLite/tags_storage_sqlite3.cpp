@@ -617,6 +617,10 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags)
 {
+    if(GetUseCache() && m_cache.Get(sql, tags)) {
+        return;
+    }
+
     clDEBUG1() << "Fetching from disk:" << sql << clEndl;
     tags.reserve(1000);
 
@@ -637,10 +641,16 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         clDEBUG() << e.GetMessage() << endl;
     }
     clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << clEndl;
+    if(GetUseCache()) {
+        m_cache.Store(sql, tags);
+    }
 }
 
 void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr>& tags, const wxArrayString& kinds)
 {
+    if(GetUseCache() && m_cache.Get(sql, kinds, tags))
+        return;
+
     wxStringSet_t set_kinds;
     set_kinds.insert(kinds.begin(), kinds.end());
     tags.reserve(1000);
@@ -669,6 +679,9 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
         clDEBUG() << "SQLite exception!" << endl;
     }
     clDEBUG1() << "Fetching from disk...done" << tags.size() << "matches found" << endl;
+    if(GetUseCache()) {
+        m_cache.Store(sql, kinds, tags);
+    }
 }
 
 void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
@@ -892,7 +905,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
         return TagOk;
 
     // does not matter if we insert or update, the cache must be cleared for any related tags
-    if(false) {
+    if(GetUseCache()) {
         ClearCache();
     }
 
@@ -1456,11 +1469,7 @@ bool TagsStorageSQLiteCache::Get(const wxString& sql, const wxArrayString& kind,
 
 void TagsStorageSQLiteCache::Store(const wxString& sql, const std::vector<TagEntryPtr>& tags) { DoStore(sql, tags); }
 
-void TagsStorageSQLiteCache::Clear()
-{
-    // CL_DEBUG1(wxT("[CACHE CLEARED]"));
-    m_cache.clear();
-}
+void TagsStorageSQLiteCache::Clear() { m_cache.clear(); }
 
 void TagsStorageSQLiteCache::Store(const wxString& sql, const wxArrayString& kind, const std::vector<TagEntryPtr>& tags)
 {
@@ -1474,9 +1483,10 @@ void TagsStorageSQLiteCache::Store(const wxString& sql, const wxArrayString& kin
 
 bool TagsStorageSQLiteCache::DoGet(const wxString& key, std::vector<TagEntryPtr>& tags)
 {
-    std::unordered_map<wxString, std::vector<TagEntryPtr>>::iterator iter = m_cache.find(key);
+    auto iter = m_cache.find(key);
     if(iter != m_cache.end()) {
         // Append the results to the output tags
+        tags.reserve(tags.size() + iter->second.size());
         tags.insert(tags.end(), iter->second.begin(), iter->second.end());
         return true;
     }
@@ -1485,13 +1495,17 @@ bool TagsStorageSQLiteCache::DoGet(const wxString& key, std::vector<TagEntryPtr>
 
 void TagsStorageSQLiteCache::DoStore(const wxString& key, const std::vector<TagEntryPtr>& tags)
 {
-    m_cache[key].reserve(tags.size());
-    m_cache[key] = tags;
+    if(m_cache.count(key)) {
+        m_cache.erase(key);
+    }
+    m_cache.insert({ key, tags });
 }
 
-void TagsStorageSQLite::ClearCache() { m_cache.Clear(); }
-
-void TagsStorageSQLite::SetUseCache(bool useCache) { ITagsStorage::SetUseCache(useCache); }
+void TagsStorageSQLite::ClearCache()
+{
+    // clear the cache
+    m_cache.Clear();
+}
 
 PPToken TagsStorageSQLite::GetMacro(const wxString& name)
 {
@@ -1511,6 +1525,7 @@ PPToken TagsStorageSQLite::GetMacro(const wxString& name)
     return token;
 }
 
+void TagsStorageSQLite::SetUseCache(bool useCache) { ITagsStorage::SetUseCache(useCache); }
 void TagsStorageSQLite::StoreMacros(const std::map<wxString, PPToken>& table)
 {
     try {

@@ -497,6 +497,7 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t chann
 
     TagsManagerST::Get()->OpenDatabase(fn_db_path);
     TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(m_settings.GetLimitResults());
+    TagsManagerST::Get()->GetDatabase()->SetUseCache(true);
 
     // reparse the workspace
     send_log_message(_("Initialization completed"), LSP_LOG_INFO, channel);
@@ -727,11 +728,15 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         clDEBUG() << "File Completion:" << filepath << endl;
         m_completer->get_file_completions(file_name, candidates, suffix);
     } else {
+        clDEBUG() << "  --> minimize_buffer() " << endl;
         wxString minimized_buffer = minimize_buffer(filepath, line, character, full_buffer);
+        clDEBUG() << "  <-- minimize_buffer() " << endl;
 
         clDEBUG1() << "Success" << endl;
         clDEBUG1() << "Getting expression..." << endl;
+        clDEBUG() << "  --> helper.get_expression() " << endl;
         wxString expression = helper.get_expression(minimized_buffer, false, &last_word);
+        clDEBUG() << "  <-- helper.get_expression() " << endl;
 
         clDEBUG1() << "Success" << endl;
         clDEBUG() << "resolving expression:" << expression << endl;
@@ -739,7 +744,10 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         bool is_trigger_char =
             !expression.empty() && (expression.Last() == '>' || expression.Last() == ':' || expression.Last() == '.');
         bool is_function_calltip = !expression.empty() && expression.Last() == '(';
+
+        clDEBUG() << "  --> update_additional_scopes_for_file() " << endl;
         vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
+        clDEBUG() << "  -<-- update_additional_scopes_for_file() " << endl;
 
         if(is_trigger_char) {
             // ----------------------------------
@@ -748,8 +756,14 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel::ptr_t chann
             clDEBUG() << "CodeComplete expression:" << expression << endl;
             CxxRemainder remainder;
 
+            clDEBUG() << "  --> m_completer->set_text() " << endl;
             m_completer->set_text(minimized_buffer, filepath, line);
+            clDEBUG() << "  <-- m_completer->set_text() " << endl;
+
+            clDEBUG() << "  <-- m_completer->code_complete() " << endl;
             TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
+            clDEBUG() << "  <-- m_completer->code_complete() " << endl;
+
             if(resolved) {
                 clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
                 clDEBUG() << "filter:" << remainder.filter << endl;
@@ -791,7 +805,14 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         auto items = result.AddArray("items");
 
         // send them over the client
+        // truncate the list the match the requested settings
+        size_t counter = 0;
         for(TagEntryPtr tag : candidates) {
+            if(counter >= m_settings.GetLimitResults()) {
+                clDEBUG() << "truncated completion list to:" << m_settings.GetLimitResults()
+                          << "(original list size was:" << candidates.size() << ")" << endl;
+                break;
+            }
             wxString comment_string =
                 get_comment(wxFileName(tag->GetFile()).GetFullPath(), tag->GetLine() - 1, wxEmptyString);
             tag->SetComment(comment_string);
@@ -809,6 +830,7 @@ void ProtocolHandler::on_completion(unique_ptr<JSON>&& msg, Channel::ptr_t chann
             // set the kind
             CompletionItem::eCompletionItemKind kind = LSPUtils::get_completion_kind(tag.Get());
             item.addProperty("kind", static_cast<int>(kind));
+            counter++;
         }
 
         clDEBUG() << "Sending the reply..." << endl;
@@ -858,7 +880,9 @@ void ProtocolHandler::on_did_save(unique_ptr<JSON>&& msg, Channel::ptr_t channel
         clDEBUG() << "on_did_save: parsing task: ... Success!" << endl;
         return eParseThreadCallbackRC::RC_SUCCESS;
     };
+
     m_parse_thread.queue_parse_request(move(task));
+    TagsManagerST::Get()->GetDatabase()->ClearCache();
 
     // clear the cached "using namespace"
     m_additional_scopes.clear();

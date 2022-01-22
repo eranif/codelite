@@ -81,5 +81,5 @@ TODO:
 -----
 - Update the docs with ctagsd
 - ctagsd: Switch to use universal-ctags local parsing instead of our internal one
-    need to make sure they handle for-range loop correctly
 - Change the open resource dialog to use clTerminalCtrl view similar to the LSPOutlineView dialog
+- ctagsd: no code completion for anonymous classes

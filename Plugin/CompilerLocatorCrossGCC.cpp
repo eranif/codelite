@@ -50,7 +50,7 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
 
     // We collect "*-gcc" files
     wxString pattern = "*-gcc";
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__CYGWIN__)
     pattern << ".exe";
 #endif
 
@@ -113,7 +113,19 @@ bool CompilerLocatorCrossGCC::IsCrossGCC(const wxString& name) const
         // Standard gcc will be picked up later by the GCC locator
         return false;
     }
-#endif
+#ifdef __CYGWIN__
+#ifdef __i386__
+    if (name == "i686-pc-cygwin-gcc")
+        // Standard gcc will be picked up later by the GCC locator
+        return false;
+#elif defined(__x86_64__)
+    if (name == "x86_64-pc-cygwin-gcc")
+        // Standard gcc will be picked up later by the GCC locator
+        return false;
+#endif // __x86_64__
+#endif // __CYGWIN__
+#endif // __WXGTK__
+
     return true;
 }
 

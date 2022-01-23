@@ -269,6 +269,8 @@ void clKeyboardManager::Initialize()
 
     // And apply the changes
     Update();
+
+    m_initialized = true;
 }
 
 void clKeyboardManager::GetAllAccelerators(MenuItemDataMap_t& accels) const { accels = m_accelTable; }
@@ -326,12 +328,26 @@ void clKeyboardManager::AddAccelerator(const wxString& resourceID, const wxStrin
                                        const clKeyboardShortcut& accel)
 {
     wxASSERT_MSG(m_defaultAccelTable.count(resourceID) == 0, "An accelerator with this resourceID already exists");
+
     MenuItemData mid;
     mid.resourceID = resourceID;
     mid.parentMenu = parentMenu;
     mid.action = action;
     mid.accel = accel;
-    m_defaultAccelTable.emplace(mid.resourceID, mid);
+
+    // Is the keyboard manager already initialized?
+    // (this may indicate that the accelerator was dynamically generated from e.g. the SnipWiz plugin)
+    if(m_initialized) {
+        // We assume this accelerator as a 'non-persistent' accelerator,
+        // which will be gone when the user restores default accelerators
+        if(Exists(mid.accel)) {
+            mid.accel.Clear();
+        }
+        m_accelTable[mid.resourceID] = mid;
+    } else {
+        // Otherwise, make it a persistent accelerator
+        m_defaultAccelTable.emplace(mid.resourceID, mid);
+    }
 }
 
 void clKeyboardManager::AddAccelerator(const wxString& parentMenu, const std::vector<AddAccelData>& table)
@@ -358,6 +374,8 @@ void clKeyboardManager::RestoreDefaults()
     if(fnNewSettings.Exists()) {
         clRemoveFile(fnNewSettings.GetFullPath());
     }
+
+    m_initialized = false;
 
     // Call initialize again
     Initialize();

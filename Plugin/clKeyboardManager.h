@@ -138,6 +138,7 @@ class WXDLLIMPEXP_SDK clKeyboardManager : public wxEvtHandler
 {
 private:
     typedef std::list<wxFrame*> FrameList_t;
+    bool m_initialized = false;
     MenuItemDataMap_t m_accelTable;        // a set of accelerators configured by user
     MenuItemDataMap_t m_defaultAccelTable; // a set of default accelerators
     wxStringSet_t m_keyCodes;

@@ -34,24 +34,23 @@
 // License:
 /////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------
-static const wxString s_plugName( wxT( "SpellCheck" ) );
-static const wxString s_spOptions( wxT( "SpellCheckOptions" ) );
-static const wxString s_noEditor( wxT( "There is no active editor\n" ) );
-static const wxString s_codeLite( wxT( "CodeLite" ) );
-static const wxString s_userDict( wxT("userwords.dict") );
-static const wxString s_cppDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|_;:\"\'<>/~0123456789`" ) );
-static const wxString s_commentDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/" ) );
-static const wxString s_defDelimiters( wxT( " \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/~0123456789`" ) );
-static const wxString s_dectHex( wxT("^0[xX]([0-9a-f]+|[0-9A-F]+)$"));
+static const wxString s_plugName("SpellCheck");
+static const wxString s_spOptions("SpellCheckOptions");
+static const wxString s_noEditor(wxTRANSLATE("There is no active editor\n"));
+static const wxString s_codeLite("CodeLite");
+static const wxString s_userDict("userwords.dict");
+static const wxString s_cppDelimiters(" \t\r\n.,?!@#$%^&*()-=+[]{}\\|_;:\"\'<>/~0123456789`");
+static const wxString s_commentDelimiters(" \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/");
+static const wxString s_defDelimiters(" \t\r\n.,?!@#$%^&*()-=+[]{}\\|;:\"\'<>/~0123456789`");
+static const wxString s_dectHex("^0[xX]([0-9a-f]+|[0-9A-F]+)$");
 
-static const wxString s_include( wxT( "#include" ) );
-static const wxString s_wsRegEx( wxT( "(\\\\[^\\\\])" ) );
+static const wxString s_include("#include");
+static const wxString s_wsRegEx("(\\\\[^\\\\])");
 
-static const wxString s_doCheckID(wxT("do_spell_check"));
-static const wxString s_contCheckID(wxT("do_continuous_check"));
+static const wxString s_doCheckID("do_spell_check");
+static const wxString s_contCheckID("do_continuous_check");
 
-static const wxString s_PLACE_HOLDER     = "@#)(";
+static const wxString s_PLACE_HOLDER = "@#)(";
 static const wxString s_DOUBLE_BACKSLASH = "\\\\";
 
 //------------------------------------------------------------
-

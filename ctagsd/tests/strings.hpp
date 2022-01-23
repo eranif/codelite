@@ -943,3 +943,42 @@ const wxString cc_subscript_operator_2 = R"(
 unique_ptr<JSON> pmsg;
 auto my_json = pmsg->toElement();
 )";
+
+const wxString cc_zero_locals = R"(
+CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
+{
+    wxString strippedBuffer;
+    OptimizeBuffer(m_buffer, strippedBuffer);
+    CxxVariable::Vec_t vars = DoGetVariables(strippedBuffer, sort);
+    if(sort) {
+        std::sort(vars.begin(), vars.end(),
+                  [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName() < b->GetName(); });
+    }
+    return vars;
+}
+)";
+
+const wxString cc_one_locals = R"(
+CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
+{
+    wxString strippedBuffer;
+    OptimizeBuffer(m_buffer, strippedBuffer);
+    CxxVariable::Vec_t vars = DoGetVariables(strippedBuffer, sort);
+    if(sort) {
+        std::sort(vars.begin(), vars.end(),
+                  [&](CxxVariable::Ptr_t a, CxxVariable::Ptr_t b) { return a->GetName() < b->GetName(); });
+    }
+    return vars;
+}
+
+void CxxVariableScanner::Foo() {
+    wxString one_local;
+)";
+
+const wxString cc_test_function_calls_parsing = R"(
+CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
+{
+    wxString strippedBuffer;
+    OptimizeBuffer(m_buffer, strippedBuffer);
+    CxxVariable::Vec_t vars = DoGetVariables(strippedBuffer, sort);
+)";

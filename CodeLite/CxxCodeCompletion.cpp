@@ -194,6 +194,12 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
 
         } else if(file_tags && tag->IsMethod()) {
             file_tags->add_anonymous_function(tag);
+
+        } else if(file_tags && (tag->IsClass() || tag->IsStruct())) {
+            file_tags->add_anonymous_class(tag);
+
+        } else if(file_tags && (tag->IsEnum() || tag->IsEnumClass())) {
+            file_tags->add_anonymous_enum(tag);
         }
     }
 
@@ -208,6 +214,7 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
         local.set_is_auto(var->IsAuto());
         local.set_name(var->GetName());
         local.set_pattern(var->ToString(CxxVariable::kToString_Name | CxxVariable::kToString_DefaultValue));
+        local.set_line_number(var->GetLineNumber());
         locals->insert({ var->GetName(), local });
     }
 }
@@ -307,6 +314,19 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateM
 TagEntryPtr CxxCodeCompletion::lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
                                                      const vector<wxString>& kinds)
 {
+    // check anonymous namespace first for class/struct/enum
+    auto iter_class =
+        find_if(kinds.begin(), kinds.end(), [](const wxString& kind) { return kind == "class" || kind == "struct"; });
+    if(iter_class != kinds.end() && m_file_tags.is_anonymous_class(name)) {
+        return m_file_tags.get_class(name);
+    }
+
+    // try enum
+    auto iter_enum = find_if(kinds.begin(), kinds.end(), [](const wxString& kind) { return kind == "enum"; });
+    if(iter_enum != kinds.end() && m_file_tags.is_anonymous_enum(name)) {
+        return m_file_tags.get_enum(name);
+    }
+
     vector<TagEntryPtr> tags;
     vector<wxString> scopes_to_check = visible_scopes;
     if(scopes_to_check.empty()) {
@@ -903,18 +923,42 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
     return typedef_str.Trim();
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_local_functions(const wxString& filter) const
+size_t CxxCodeCompletion::get_local_tags(const wxString& filter, const wxStringSet_t& kinds,
+                                         vector<TagEntryPtr>& tags) const
 {
-    unordered_map<wxString, TagEntryPtr> all_functions;
-    m_file_tags.get_all_anonymous_functions(&all_functions);
-    vector<TagEntryPtr> locals;
-    locals.reserve(all_functions.size());
-    for(const auto& vt : all_functions) {
-        if(vt.second->GetName().StartsWith(filter)) {
-            locals.push_back(vt.second);
+    if(kinds.count("function")) {
+        unordered_map<wxString, TagEntryPtr> all_functions;
+        m_file_tags.get_all_anonymous_functions(&all_functions);
+        tags.reserve(all_functions.size());
+        for(const auto& vt : all_functions) {
+            if(vt.second->GetName().StartsWith(filter)) {
+                tags.push_back(vt.second);
+            }
         }
     }
-    return locals;
+
+    if(kinds.count("class")) {
+        unordered_map<wxString, TagEntryPtr> all_functions;
+        m_file_tags.get_all_anonymous_classes(&all_functions);
+        tags.reserve(all_functions.size());
+        for(const auto& vt : all_functions) {
+            if(vt.second->GetName().StartsWith(filter)) {
+                tags.push_back(vt.second);
+            }
+        }
+    }
+
+    if(kinds.count("enum")) {
+        unordered_map<wxString, TagEntryPtr> all_functions;
+        m_file_tags.get_all_anonymous_enums(&all_functions);
+        tags.reserve(all_functions.size());
+        for(const auto& vt : all_functions) {
+            if(vt.second->GetName().StartsWith(filter)) {
+                tags.push_back(vt.second);
+            }
+        }
+    }
+    return tags.size();
 }
 
 vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
@@ -927,12 +971,12 @@ vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
         const auto& local = vt.second;
         TagEntryPtr tag(new TagEntry());
         tag->SetName(local.name());
-        tag->SetKind("variable");
+        tag->SetKind("local");
         tag->SetParent("<local>");
         tag->SetScope(local.type_name());
         tag->SetAccess("public");
         tag->SetPattern("/^ " + local.pattern() + " $/");
-
+        tag->SetLine(local.line_number());
         if(!tag->GetName().Lower().StartsWith(lowercase_filter))
             continue;
         locals.push_back(tag);
@@ -1328,6 +1372,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
 {
     vector<TagEntryPtr> locals;
     vector<TagEntryPtr> local_functions;
+    vector<TagEntryPtr> local_containers;
     vector<TagEntryPtr> keywords;
     vector<TagEntryPtr> scope_members;
     vector<TagEntryPtr> other_scopes_members;
@@ -1340,7 +1385,8 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     vector<TagEntryPtr> sorted_global_scopes_members;
 
     locals = get_locals(remainder.filter);
-    local_functions = get_local_functions(remainder.filter);
+    get_local_tags(remainder.filter, { "function" }, local_functions);
+    get_local_tags(remainder.filter, { "class", "enum", "struct" }, local_containers);
 
     vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
@@ -1378,12 +1424,14 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
         get_keywords_tags(remainder.filter, keywords);
     }
     candidates.reserve(sorted_local_functions.size() + sorted_locals.size() + sorted_scope_members.size() +
-                       sorted_other_scopes_members.size() + sorted_global_scopes_members.size() + keywords.size());
+                       sorted_other_scopes_members.size() + sorted_global_scopes_members.size() + keywords.size() +
+                       local_containers.size());
 
     // place the keywords first
     candidates.insert(candidates.end(), keywords.begin(), keywords.end());
     candidates.insert(candidates.end(), sorted_locals.begin(), sorted_locals.end());
     candidates.insert(candidates.end(), sorted_local_functions.begin(), sorted_local_functions.end());
+    candidates.insert(candidates.end(), local_containers.begin(), local_containers.end());
     candidates.insert(candidates.end(), sorted_scope_members.begin(), sorted_scope_members.end());
     candidates.insert(candidates.end(), sorted_other_scopes_members.begin(), sorted_other_scopes_members.end());
     candidates.insert(candidates.end(), sorted_global_scopes_members.begin(), sorted_global_scopes_members.end());

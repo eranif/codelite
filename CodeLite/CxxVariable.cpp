@@ -72,12 +72,6 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
             s << token.GetWXString() << " ";
         } else if(token.is_pp_keyword()) {
             continue;
-        } else if(token.GetType() == T_IDENTIFIER) {
-            if(false && !table.empty() && table.count(token.GetWXString())) {
-                s << table.find(token.GetWXString())->second;
-            } else {
-                s << token.GetWXString();
-            }
         } else {
             s << token.GetWXString();
         }

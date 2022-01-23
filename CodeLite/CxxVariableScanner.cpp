@@ -179,7 +179,8 @@ bool CxxVariableScanner::ReadType(CxxVariable::LexerToken::Vec_t& vartype, bool&
 }
 
 thread_local std::unordered_set<int> s_validLocalTerminators;
-bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxString& varInitialization)
+bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, int& line_number,
+                                  wxString& varInitialization)
 {
     CxxLexerToken token;
     while(GetNextToken(token)) {
@@ -191,6 +192,7 @@ bool CxxVariableScanner::ReadName(wxString& varname, wxString& pointerOrRef, wxS
                 return false;
             }
             varname = token.GetWXString();
+            line_number = token.GetLineNumber();
             varInitialization.Clear();
             pointerOrRef = "@";
             return true;
@@ -555,13 +557,15 @@ CxxVariable::Vec_t CxxVariableScanner::DoGetVariables(const wxString& buffer, bo
         wxString varname, pointerOrRef, varInitialization;
         bool cont = false;
         do {
-            cont = ReadName(varname, pointerOrRef, varInitialization);
+            int line_number = wxNOT_FOUND;
+            cont = ReadName(varname, pointerOrRef, line_number, varInitialization);
             CxxVariable::Ptr_t var(new CxxVariable(m_standard));
             var->SetName(varname);
             var->SetType(vartype);
             var->SetDefaultValue(varInitialization);
             var->SetPointerOrReference(pointerOrRef);
             var->SetIsAuto(isAuto);
+            var->SetLine(line_number);
 
             // the below condition fixes this type:
             // if(something && GetCtrl(). -> we can mistaken this as: VarType: something, VarName: GetCtrl, And
@@ -634,14 +638,16 @@ CxxVariable::Vec_t CxxVariableScanner::DoParseFunctionArguments(const wxString& 
             continue;
 
         // Get the variable(s) name
+        int line_number = wxNOT_FOUND;
         wxString varname, pointerOrRef, varInitialization;
-        ReadName(varname, pointerOrRef, varInitialization);
+        ReadName(varname, pointerOrRef, line_number, varInitialization);
         CxxVariable::Ptr_t var(new CxxVariable(m_standard));
         var->SetName(varname);
         var->SetType(vartype);
         var->SetDefaultValue(varInitialization);
         var->SetPointerOrReference(pointerOrRef);
         var->SetIsAuto(isAuto);
+        var->SetLine(line_number);
         vars.push_back(var);
     }
     ::LexerDestroy(&m_scanner);
@@ -890,8 +896,35 @@ bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_b
     int depth = 0;
     bool cont = true;
     *push_scope = false;
+
+    // we need to check if this is a function call or function definition
+    wxString first_parameter;
+    int angle_bracket_depth = 0;
+
+    constexpr int EXPR_FUNCTION_UNKNOWN = 0;
+    constexpr int EXPR_FUNCTION_CALL = 1;
+    constexpr int EXPR_FUNCTION_DEFINITION = 2;
+    int is_function_call = EXPR_FUNCTION_UNKNOWN;
     while(cont && ::LexerNext(scanner, tok)) {
         switch(tok.GetType()) {
+        case '<':
+            angle_bracket_depth++;
+            function_args_buffer << tok.GetWXString();
+            break;
+        case '>':
+            angle_bracket_depth--;
+            function_args_buffer << tok.GetWXString();
+            break;
+        case '{':
+        case '[':
+            depth++;
+            function_args_buffer << tok.GetWXString();
+            break;
+        case '}':
+        case ']':
+            depth--;
+            function_args_buffer << tok.GetWXString();
+            break;
         case '(':
             ++depth;
             function_args_buffer << tok.GetWXString();
@@ -899,6 +932,9 @@ bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_b
         case ')':
             if(depth == 0) {
                 cont = false;
+                if(is_function_call == EXPR_FUNCTION_DEFINITION) {
+                    function_args_buffer << ";";
+                }
             } else {
                 --depth;
                 function_args_buffer << tok.GetWXString();
@@ -906,9 +942,28 @@ bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_b
             break;
         case ',':
             if(depth == 0) {
-                // change the , -> ;
-                // this makes it easier to our parser
-                function_args_buffer << ";";
+                if(is_function_call == EXPR_FUNCTION_UNKNOWN && (angle_bracket_depth == 0)) {
+                    // resolve this into a variable (typename + name)
+                    first_parameter = function_args_buffer;
+                    CxxVariableScanner var_scanner(first_parameter, eCxxStandard::kCxx11, {}, false);
+                    auto vars = var_scanner.GetVariablesMap();
+                    if(vars.empty()) {
+                        // a function call
+                        is_function_call = EXPR_FUNCTION_CALL;
+                    } else {
+                        is_function_call = EXPR_FUNCTION_DEFINITION;
+                    }
+                    // change the , -> ;
+                    // this makes it easier to our parser
+                    function_args_buffer << ";";
+                }
+
+                if(is_function_call == EXPR_FUNCTION_CALL || is_function_call == EXPR_FUNCTION_UNKNOWN) {
+                    function_args_buffer << ",";
+                } else {
+                    function_args_buffer << ";"; // use `;` to ensure parsing succeeds later
+                }
+
             } else {
                 function_args_buffer << ",";
             }
@@ -918,11 +973,18 @@ bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_b
             break;
         }
     }
+    wxString& buffer = Buffer();
+
+    // this was a function call
+    if(is_function_call == EXPR_FUNCTION_CALL) {
+        function_args_buffer.clear();
+        buffer << ")"; // add the closing parenthesis
+        return false;
+    }
 
     // we got all the function definition buffer
     // peek at the next token, if it of type `{`
     // consume it and tell the caller to switch buffer
-    wxString& buffer = Buffer();
     if(!::LexerNext(scanner, tok)) {
         buffer << function_args_buffer << " ";
         return false;

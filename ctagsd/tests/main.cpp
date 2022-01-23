@@ -119,6 +119,45 @@ struct SampleFileLoaderLocker {
     ~SampleFileLoaderLocker() { completer->test_clear_db(); }
 };
 
+TEST_FUNC(test_parsing_of_function_parameter)
+{
+    {
+        const wxString code = "void foo(unordered_map<int, int>* M) { wxString str; ";
+        CxxVariableScanner scanner(code, eCxxStandard::kCxx11, {}, false);
+        auto vars = scanner.GetVariablesMap();
+        CHECK_BOOL(vars.count("M"));
+        wxString type_name = vars["M"]->GetTypeAsString();
+        CHECK_STRING(type_name, "unordered_map<int ,int >");
+    }
+    {
+        const wxString code = "size_t CxxCodeCompletion::get_anonymous_tags(const wxString& name, const wxArrayString& "
+                              "kinds, vector<TagEntryPtr>& tags) const {";
+        CxxVariableScanner scanner(code, eCxxStandard::kCxx11, {}, false);
+        auto vars = scanner.GetVariablesMap();
+        CHECK_BOOL(vars.count("tags"));
+        wxString type_name = vars["tags"]->GetTypeAsString();
+        CHECK_STRING(type_name, "vector<TagEntryPtr>");
+    }
+    {
+        CxxVariableScanner scanner(cc_test_function_calls_parsing, eCxxStandard::kCxx11, {}, false);
+        auto vars = scanner.GetVariablesMap();
+        CHECK_SIZE(vars.size(), 3);
+    }
+    {
+        CxxVariableScanner scanner(cc_zero_locals, eCxxStandard::kCxx11, {}, false);
+        auto vars = scanner.GetVariablesMap();
+        CHECK_SIZE(vars.size(), 0);
+    }
+    {
+        CxxVariableScanner scanner(cc_one_locals, eCxxStandard::kCxx11, {}, false);
+        auto vars = scanner.GetVariablesMap();
+        CHECK_SIZE(vars.size(), 1);
+        CHECK_BOOL(vars.count("one_local"));
+        CHECK_STRING(vars["one_local"]->GetTypeAsString(), "wxString");
+    }
+    return true;
+}
+
 TEST_FUNC(TestLSPLocation)
 {
     ENSURE_DB_LOADED();
@@ -410,9 +449,31 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
     }
 
     {
-        completer->set_text("MyAnonStruct anon_struct;", "", -1);
+        // simple case
+        completer->set_text("MyAnonStruct anon_struct;", get_sample_file("anonymous_class.hpp"), -1);
         auto resolved = completer->code_complete("anon_struct.", {}, nullptr);
         CHECK_NOT_NULL(resolved);
+        vector<TagEntryPtr> tags;
+        completer->get_completions(resolved, "->", "", tags, {});
+        CHECK_SIZE(tags.size(), 2);
+    }
+
+    {
+        // test anonymous class within a unique pointer
+        completer->set_text("unique_ptr<MyAnonStruct> P;", get_sample_file("anonymous_class.hpp"), -1);
+        auto resolved = completer->code_complete("P->", { "std" }, nullptr);
+        CHECK_NOT_NULL(resolved);
+        vector<TagEntryPtr> tags;
+        completer->get_completions(resolved, "->", "", tags, {});
+        CHECK_SIZE(tags.size(), 2);
+    }
+
+    {
+        // test anonymous class within a unique pointer
+        vector<TagEntryPtr> tags;
+        auto filepath = get_sample_file("anonymous_class.hpp");
+        completer->word_complete(filepath, -1, "MyAnonSt", "", {}, false, tags, {});
+        CHECK_BOOL(!tags.empty());
     }
     return true;
 }

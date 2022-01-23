@@ -3,13 +3,14 @@
 
 #include "CxxLexerAPI.h"
 #include "codelite_exports.h"
+#include "macros.h"
 #include "smart_ptr.h"
+
 #include <map>
 #include <set>
 #include <unordered_map>
 #include <vector>
 #include <wx/string.h>
-#include "macros.h"
 #include <wxStringHash.h>
 
 class WXDLLIMPEXP_CL CxxVariable
@@ -60,7 +61,8 @@ protected:
     wxString m_defaultValue;
     eCxxStandard m_standard;
     wxString m_pointerOrReference;
-    bool m_isAuto;
+    bool m_isAuto = false;
+    int m_lineNumber = wxNOT_FOUND;
 
 public:
     typedef SmartPtr<CxxVariable> Ptr_t;
@@ -104,6 +106,9 @@ public:
      * @brief is this an "auto" variable?
      */
     bool IsAuto() const { return m_isAuto; }
+
+    void SetLine(int l) { m_lineNumber = l; }
+    int GetLineNumber() const { return m_lineNumber; }
 
     void SetIsAuto(bool b) { m_isAuto = b; }
     /**

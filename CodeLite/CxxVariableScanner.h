@@ -59,7 +59,7 @@ protected:
      * @brief read the variable name. Return true if there are more variables
      * for the current type
      */
-    bool ReadName(wxString& varname, wxString& pointerOrRef, wxString& varInitialization);
+    bool ReadName(wxString& varname, wxString& pointerOrRef, int& line_number, wxString& varInitialization);
 
     /**
      * @brief consume variable initialization

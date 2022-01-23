@@ -147,6 +147,7 @@ private:
         wxString _name;
         bool _is_auto = false;
         wxString _pattern;
+        int _line_numner = wxNOT_FOUND;
 
     public:
         bool is_auto() const { return _is_auto; }
@@ -168,6 +169,9 @@ private:
 
         void set_pattern(const wxString& pattern) { _pattern = pattern; }
         const wxString& pattern() const { return _pattern; }
+
+        int line_number() const { return _line_numner; }
+        void set_line_number(int l) { _line_numner = l; }
     };
 
 private:
@@ -356,7 +360,7 @@ public:
     /**
      * @brief return list local functions
      */
-    vector<TagEntryPtr> get_local_functions(const wxString& filter) const;
+    size_t get_local_tags(const wxString& filter, const wxStringSet_t& kinds, vector<TagEntryPtr>& tags) const;
 
     /**
      * @brief return list of completions filtered by name for a given parent

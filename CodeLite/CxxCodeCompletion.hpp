@@ -37,7 +37,7 @@ struct LookupTable {
     unordered_map<wxString, TagEntryPtr> tests_db; // test database, for unit testings
     explicit LookupTable(ITagsStoragePtr real_db, const unordered_map<wxString, TagEntryPtr>& unit_tests_db)
     {
-        pdb = pdb;
+        pdb = real_db;
         tests_db = unit_tests_db;
     }
     explicit LookupTable(ITagsStoragePtr real_db) { pdb = real_db; }

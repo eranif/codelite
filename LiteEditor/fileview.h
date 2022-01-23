@@ -25,15 +25,16 @@
 #ifndef FILE_VIEW_TREE_H
 #define FILE_VIEW_TREE_H
 
+#include "VirtualDirectoryColour.h"
 #include "clThemedTreeCtrl.h"
 #include "clTreeCtrlColourHelper.h"
 #include "imanager.h"
-#include "map"
 #include "pluginmanager.h"
 #include "project.h"
-#include "wx/treectrl.h"
 #include "wxStringHash.h"
-#include <VirtualDirectoryColour.h>
+
+#include <map>
+#include <wx/treectrl.h>
 
 class wxMenu;
 
@@ -244,11 +245,11 @@ private:
 
     void DoGetProjectIconIndex(const wxString& projectName, int& iconIndex, bool& fromPlugin);
     bool DoAddNewItem(wxTreeItemId& item, const wxString& filename, const wxString& vdFullpath);
-    void DoRemoveProject(const wxString& name);
+    bool DoRemoveProject(const wxString& name);
     void DoSetProjectActive(wxTreeItemId& item);
     void DoSetProjectActiveUI(wxTreeItemId& item);
     wxTreeItemId DoAddVirtualFolder(wxTreeItemId& parent, const wxString& text);
-    void DoRemoveVirtualFolder(wxTreeItemId& parent);
+    bool DoRemoveVirtualFolder(const wxTreeItemId& parent);
     void DoRemoveItems();
     void DoItemActivated(wxTreeItemId& item, wxEvent& event);
     void DoAddItem(ProjectPtr proj, const FileViewItem& item);

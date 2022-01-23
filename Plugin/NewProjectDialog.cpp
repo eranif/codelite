@@ -1,5 +1,6 @@
 #include "NewProjectDialog.h"
 
+#include "ICompilerLocator.h" // for COMPILER_FAMILY_VC
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "clWorkspaceManager.h"
@@ -32,7 +33,8 @@ bool SetChoiceOptions(wxChoice* choice, const wxArrayString& values, const wxStr
     }
     return (match != wxNOT_FOUND);
 }
-wxString GENRATOR_UNIX = "CodeLite Makefile Generator - UNIX";
+wxString GENERATOR_UNIX = "CodeLite Makefile Generator - UNIX";
+wxString GENERATOR_NMAKE = "NMakefile for MSVC toolset";
 wxString CONFIG_LAST_SELECTED_CATEGORY = "NewProject/LastCategory";
 wxString CONFIG_LAST_SELECTED_TYPE = "NewProject/LastType";
 wxString CONFIG_USE_SEPARATE_FOLDER = "NewProjectDialog/UseSeparateFolder";
@@ -229,16 +231,33 @@ void NewProjectDialog::OnCompilerChanged(wxCommandEvent& event)
     static const wxRegEx re("(clang(arm)?|mingw|ucrt)(32|64)", wxRE_DEFAULT | wxRE_NOSUB);
     bool isUnixGeneratorRequired = newCompiler.Contains("MSYS") && !re.Matches(cxx);
 
-    if(isUnixGeneratorRequired && m_choiceBuild->GetStringSelection() != GENRATOR_UNIX) {
+    if(isUnixGeneratorRequired && m_choiceBuild->GetStringSelection() != GENERATOR_UNIX) {
         if(::wxMessageBox(
                _("MSYS based compiler requires a UNIX Makefile Generator\nWould like CodeLite to fix this for you?"),
                "CodeLite", wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT) != wxYES) {
             return;
         }
-        int unixMakefiles = m_choiceBuild->FindString(GENRATOR_UNIX);
+        int unixMakefiles = m_choiceBuild->FindString(GENERATOR_UNIX);
         if(unixMakefiles != wxNOT_FOUND) {
             m_choiceBuild->SetSelection(unixMakefiles);
         }
+        return;
+    }
+
+    // Suggest NMake generator for Visual C++ family compilers
+    bool isNMakeGeneratorRequired = compiler->GetCompilerFamily() == COMPILER_FAMILY_VC;
+
+    if(isNMakeGeneratorRequired && m_choiceBuild->GetStringSelection() != GENERATOR_NMAKE) {
+        if(::wxMessageBox(
+               _("Visual C++ compiler requires an NMake generator\nWould like CodeLite to fix this for you?"),
+               "CodeLite", wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT) != wxYES) {
+            return;
+        }
+        int nMakefiles = m_choiceBuild->FindString(GENERATOR_NMAKE);
+        if(nMakefiles != wxNOT_FOUND) {
+            m_choiceBuild->SetSelection(nMakefiles);
+        }
+        return;
     }
 #endif
 }

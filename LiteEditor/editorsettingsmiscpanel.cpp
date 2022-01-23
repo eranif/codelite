@@ -23,18 +23,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "editorsettingsmiscpanel.h"
+
 #include "cl_config.h"
 #include "ctags_manager.h"
-#include "editorsettingsmiscpanel.h"
 #include "file_logger.h"
 #include "frame.h"
 #include "generalinfo.h"
 #include "globals.h"
 #include "manager.h"
 #include "pluginmanager.h"
-#include "wx/wxprec.h"
+
 #include <wx/fontmap.h>
 #include <wx/intl.h>
+#include <wx/wxprec.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/uxtheme.h>
@@ -58,7 +60,9 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
     m_oldpreferredLocale = options->GetPreferredLocale();
     // Load the available locales and feed them to the wxchoice
     int select = FindAvailableLocales();
-    if(select != wxNOT_FOUND) { m_AvailableLocales->SetSelection(select); }
+    if(select != wxNOT_FOUND) {
+        m_AvailableLocales->SetSelection(select);
+    }
 
     wxArrayString astrEncodings;
     wxFontEncoding fontEnc;
@@ -70,7 +74,9 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent)
             continue;
         }
         astrEncodings.Add(wxFontMapper::GetEncodingName(fontEnc));
-        if(fontEnc == options->GetFileFontEncoding()) { iCurrSelId = i; }
+        if(fontEnc == options->GetFileFontEncoding()) {
+            iCurrSelId = i;
+        }
     }
 
     m_fileEncoding->Append(astrEncodings);
@@ -123,30 +129,36 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     int oldIconSize(24);
 
     OptionsConfigPtr oldOptions = EditorConfigST::Get()->GetOptions();
-    if(oldOptions) { oldIconSize = oldOptions->GetIconsSize(); }
+    if(oldOptions) {
+        oldIconSize = oldOptions->GetIconsSize();
+    }
 
     int iconSize(24);
-    if(m_toolbarIconSize->GetSelection() == 0) { iconSize = 16; }
+    if(m_toolbarIconSize->GetSelection() == 0) {
+        iconSize = 16;
+    }
     options->SetIconsSize(iconSize);
 
     bool setlocale = m_SetLocale->IsChecked();
     options->SetUseLocale(setlocale);
     wxString newLocaleString = m_AvailableLocales->GetStringSelection();
     // I don't think we should check if newLocaleString is empty; that's still useful information
-    newLocaleString = newLocaleString.BeforeFirst(wxT(':')); // Store it as "fr_FR", not "fr_FR: French"
+    newLocaleString = newLocaleString.BeforeFirst(':'); // Store it as "fr_FR", not "fr_FR: French"
     options->SetPreferredLocale(newLocaleString);
-    if((setlocale != m_oldSetLocale) || (newLocaleString != m_oldpreferredLocale)) { m_restartRequired = true; }
+    if((setlocale != m_oldSetLocale) || (newLocaleString != m_oldpreferredLocale)) {
+        m_restartRequired = true;
+    }
 
     // save file font encoding
     options->SetFileFontEncoding(m_fileEncoding->GetStringSelection());
     TagsManagerST::Get()->SetEncoding(options->GetFileFontEncoding());
 
     if(oldIconSize != iconSize) {
-        EditorConfigST::Get()->SetInteger(wxT("LoadSavedPrespective"), 0);
+        EditorConfigST::Get()->SetInteger("LoadSavedPrespective", 0);
         // notify the user
         m_restartRequired = true;
     } else {
-        EditorConfigST::Get()->SetInteger(wxT("LoadSavedPrespective"), 1);
+        EditorConfigST::Get()->SetInteger("LoadSavedPrespective", 1);
     }
 
     size_t flags = options->GetOptions();
@@ -156,14 +168,16 @@ void EditorSettingsMiscPanel::Save(OptionsConfigPtr options)
     flags &= ~(OptionsConfig::Opt_IconSet_FreshFarm);
     flags &= ~(OptionsConfig::Opt_IconSet_Classic_Dark);
     flags |= OptionsConfig::Opt_IconSet_Classic;
-    
+
     clConfig::Get().Write("RedirectLogOutput", m_redirectLogOutput->IsChecked());
     clConfig::Get().Write("PromptForNewReleaseOnly", m_checkBoxPromptReleaseOnly->IsChecked());
     options->SetOptions(flags);
     options->SetWebSearchPrefix(GetWebSearchPrefix()->GetValue());
     bool useDirect2D_Old = clConfig::Get().Read("Editor/UseDirect2D", true);
     clConfig::Get().Write("Editor/UseDirect2D", m_checkBoxDirect2D->IsChecked());
-    m_restartRequired = (useDirect2D_Old != m_checkBoxDirect2D->IsChecked());
+    if(useDirect2D_Old != m_checkBoxDirect2D->IsChecked()) {
+        m_restartRequired = true;
+    }
 }
 
 void EditorSettingsMiscPanel::OnClearUI(wxUpdateUIEvent& e)
@@ -205,7 +219,7 @@ int EditorSettingsMiscPanel::FindAvailableLocales()
             // Check we haven't already seen this item: we may find the system default twice
             if(canonicalNames.Index(info->CanonicalName) == wxNOT_FOUND) {
                 // Display the name as e.g. "en_GB: English (U.K.)"
-                m_AvailableLocales->Append(info->CanonicalName + wxT(": ") + info->Description);
+                m_AvailableLocales->Append(info->CanonicalName + ": " + info->Description);
                 canonicalNames.Add(info->CanonicalName);
 
                 if(info->CanonicalName == m_oldpreferredLocale) {
@@ -234,7 +248,7 @@ void EditorSettingsMiscPanel::OnShowLogFile(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString logfile;
-    logfile << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << wxT("codelite.log");
+    logfile << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << "codelite.log";
 
     clMainFrame::Get()->GetMainBook()->OpenFile(logfile);
 }

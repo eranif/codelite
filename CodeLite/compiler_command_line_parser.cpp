@@ -23,9 +23,11 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "StringUtils.h"
 #include "compiler_command_line_parser.h"
+
+#include "StringUtils.h"
 #include "procutils.h"
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,14 +48,14 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
     // HACK
     // Since our code does not handle \ properly when its part of a directory name
     // we replace it with forward slash
-    c.Replace(wxT("\\\""), wxT("@@GERESH@@"));
-    c.Replace(wxT("\\"), wxT("/"));
-    c.Replace(wxT("@@GERESH@@"), wxT("\\\""));
+    c.Replace("\\\"", "@@GERESH@@");
+    c.Replace("\\", "/");
+    c.Replace("@@GERESH@@", "\\\"");
 
     // Check for makefile directory changes lines
-    if(cmdline.Contains(wxT("Entering directory `"))) {
-        wxString currentDir = cmdline.AfterFirst(wxT('`'));
-        m_diretory = currentDir.BeforeLast(wxT('\''));
+    if(cmdline.Contains("Entering directory `")) {
+        wxString currentDir = cmdline.AfterFirst('`');
+        m_diretory = currentDir.BeforeLast('\'');
 
     } else {
 
@@ -99,17 +101,17 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 m_includesWithPrefix.Add(wxString() << "-I" << include_path);
                 ++i;
 
-            } else if(opt.StartsWith(wxT("-I"), &rest)) {
+            } else if(opt.StartsWith("-I", &rest) || opt.StartsWith("/I", &rest)) {
                 m_includes.Add(rest);
                 m_includesWithPrefix.Add(opt);
             }
 
-            else if(opt.StartsWith(wxT("-D"), &rest)) {
+            else if(opt.StartsWith("-D", &rest) || opt.StartsWith("/D", &rest)) {
                 m_macros.Add(rest);
                 m_macrosWithPrefix.Add(opt);
             }
 
-            else if(opt.StartsWith(wxT("-include-path "), &rest)) {
+            else if(opt.StartsWith("-include-path ", &rest)) {
                 m_includesWithPrefix.Add(rest);
                 rest.Trim().Trim(false);
                 m_pchFile = rest;
@@ -127,8 +129,13 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 ++i;
             }
 
+            else if(opt.StartsWith("/FI", &rest)) {
+                rest.Trim().Trim(false);
+                m_pchFile = rest;
+            }
+
             // Support for Apple's Framework include paths
-            else if(opt.StartsWith(wxT("-F"), &rest)) {
+            else if(opt.StartsWith("-F", &rest)) {
 
                 m_includesWithPrefix.Add(opt);
                 rest.Trim().Trim(false);
@@ -137,12 +144,11 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
             }
 
             // std
-            else if(opt.StartsWith(wxT("-std"), &rest)) {
-                wxString stds = rest.AfterFirst(wxT('='));
-                stds.Trim().Trim(false);
+            else if(opt.StartsWith("-std=", &rest) || opt.StartsWith("/std:", &rest)) {
+                rest.Trim().Trim(false);
 
-                if(!stds.IsEmpty()) {
-                    m_standard = stds;
+                if(!rest.IsEmpty()) {
+                    m_standard = rest;
                 }
                 // keep the std as an option as well
                 m_otherOptions.Add(opt);
@@ -164,11 +170,11 @@ wxString CompilerCommandLineParser::GetCompileLine() const
 {
     wxString s;
     for(size_t i = 0; i < m_includes.GetCount(); i++) {
-        s << wxT("-I") << m_includes.Item(i) << wxT(" ");
+        s << "-I" << m_includes.Item(i) << " ";
     }
 
     for(size_t i = 0; i < m_macros.GetCount(); i++) {
-        s << wxT("-D") << m_macros.Item(i) << wxT(" ");
+        s << "-D" << m_macros.Item(i) << " ";
     }
 
     for(size_t i = 0; i < m_sysroots.size(); ++i) {
@@ -180,10 +186,10 @@ wxString CompilerCommandLineParser::GetCompileLine() const
 
 wxString CompilerCommandLineParser::GetStandardWithPrefix() const
 {
-    if(m_standard.IsEmpty())
-        return wxT("");
-
-    return wxT("-std=") + m_standard;
+    if(m_standard.IsEmpty()) {
+        return "";
+    }
+    return "-std=" + m_standard;
 }
 
 void CompilerCommandLineParser::MakeAbsolute(const wxString& path)
@@ -192,7 +198,7 @@ void CompilerCommandLineParser::MakeAbsolute(const wxString& path)
     incls.reserve(m_includes.size());
 
     for(size_t i = 0; i < m_includes.GetCount(); ++i) {
-        wxFileName fn(m_includes.Item(i), wxT(""));
+        wxFileName fn(m_includes.Item(i), "");
         fn.MakeAbsolute(path);
         incls.Add(fn.GetPath());
     }
@@ -200,11 +206,11 @@ void CompilerCommandLineParser::MakeAbsolute(const wxString& path)
 
     m_includesWithPrefix.Clear();
     for(size_t i = 0; i < m_framworks.GetCount(); ++i) {
-        m_includesWithPrefix.Add(wxT("-F") + m_framworks.Item(i));
+        m_includesWithPrefix.Add("-F" + m_framworks.Item(i));
     }
 
     for(size_t i = 0; i < m_includes.GetCount(); ++i) {
-        m_includesWithPrefix.Add(wxT("-I") + m_includes.Item(i));
+        m_includesWithPrefix.Add("-I" + m_includes.Item(i));
     }
 }
 

@@ -4,7 +4,7 @@ ThemeImporterPython::ThemeImporterPython()
 {
     SetKeywords0(
         "and as assert break class continue def del elif else except exec finally for from global if import in "
-        "is lambda not or pass print raise return try while with yield True False None pass");
+        "is lambda not or pass print raise return try while with yield True False None pass self");
     SetFileExtensions("*.py;waf;wscript;wscript_build");
     m_langName = "python";
     m_localsIndex = 1;

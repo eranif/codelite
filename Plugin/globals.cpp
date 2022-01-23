@@ -1076,6 +1076,7 @@ bool IsCppKeyword(const wxString& word)
         words.insert("nullptr");
         words.insert("noexcept");
         words.insert("override");
+        words.insert("constexpr");
     }
     return words.count(word) != 0;
 }

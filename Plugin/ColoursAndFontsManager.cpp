@@ -942,14 +942,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
 
     // Fix C++ lexer
     if(lexer->GetName() == "c++") {
-        wxString keywords = lexer->GetKeyWords(0);
-        if(!keywords.Contains("override")) {
-            keywords << " override";
-        }
-        if(!keywords.Contains("final")) {
-            keywords << " final";
-        }
-        lexer->SetKeyWords(keywords, 0);
+        AddLexerKeywords(lexer, 0, { "override", "final", "constexpr" });
         wxString filespec = lexer->GetFileSpec();
         filespec.Replace("*.javascript", wxEmptyString);
         filespec.Replace("*.js", wxEmptyString);
@@ -1099,7 +1092,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     if(lexer->GetName() == "python") {
-        AddLexerKeywords(lexer, 0, { "await", "async", "True", "False", "None", "pass" });
+        AddLexerKeywords(lexer, 0, { "await", "async", "True", "False", "None", "pass", "self" });
         lexer->SetKeyWords("", 1);
         lexer->SetKeyWords("", 2);
         lexer->SetKeyWords("", 3);

@@ -997,10 +997,6 @@
             <label>Add an Existing Project</label>
         </object>
         <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-        <object class="wxMenuItem" name="retag_workspace">
-            <label>Parse Workspace - Incremental</label>
-        </object>
-        <object class="wxMenuItem" name="wxID_SEPARATOR"/>
         <object class="wxMenuItem" name="close_workspace">
             <label>Close Workspace</label>
         </object>

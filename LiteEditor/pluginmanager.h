@@ -27,17 +27,16 @@
 
 #include "debugger.h"
 #include "dynamiclibrary.h"
-#include "list"
-#include "map"
 #include "plugin.h"
 #include "plugindata.h"
 #include "project.h"
-#include "vector"
-#include "wx/string.h"
-#include "wx/treectrl.h"
 
+#include <list>
 #include <map>
 #include <set>
+#include <vector>
+#include <wx/string.h>
+#include <wx/treectrl.h>
 
 class clToolBar;
 class clEditorBar;
@@ -179,7 +178,7 @@ public:
     bool IsToolBarShown() const override;
     void ShowToolBar(bool show = true) override;
     void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) override;
-    void OpenFileAndAsyncExecute(const wxString& fileName, std::function<void(IEditor*)>&& func);
+    void OpenFileAndAsyncExecute(const wxString& fileName, std::function<void(IEditor*)>&& func) override;
     /**
      * @brief return list of all breakpoints
      */

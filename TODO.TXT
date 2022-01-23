@@ -79,12 +79,7 @@ New CTagsd CC engine:
 - **FIXED** code completion for anonymous class
 - **FIXED** better parsing of function arguments
 
-
 TODO:
 -----
-- Update the docs with ctagsd
-- ctagsd: Switch to use universal-ctags local parsing instead of our internal one
 - Change the open resource dialog to use clTerminalCtrl view similar to the LSPOutlineView dialog
 
-void foo(const unordered_map<wxString, wxString>& M) {
-    M // is parsed unordered_map<wxString;wxString>

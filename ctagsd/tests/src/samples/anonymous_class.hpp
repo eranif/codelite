@@ -4,12 +4,11 @@ using namespace std;
 namespace
 {
 struct MyAnonStruct {
-    string name;
-    string last_name;
+    string name;      // the name
+    string last_name; // last name
 };
 } // namespace
 
-void foo() {
+void foo()
+{
     MyAnonStruct c;
-    c.
-

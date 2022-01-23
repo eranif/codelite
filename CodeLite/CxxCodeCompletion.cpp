@@ -109,21 +109,6 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
 
     clDEBUG() << "code_complete() called with scopes:" << scopes << endl;
 
-    // handle global scope
-    if(expr_arr.empty()) {
-        // user types Ctrl+SPACE
-        return nullptr;
-    } else if(expr_arr.size() == 1 && expr_arr[0].type_name().empty() && expr_arr[0].operand_string() == "::") {
-        // return a dummy entry representing the global scope
-        return create_global_scope_tag();
-    } else if(expr_arr.size() >= 2 && expr_arr[0].type_name().empty() && expr_arr[0].operand_string() == "::") {
-        // explicity requesting for the global namespace
-        // clear the `scopes` and use only the global namespace (empty string)
-        scopes.clear();
-        scopes.push_back(wxEmptyString);
-        // in addition, we can remove the first expression from the array
-        expr_arr.erase(expr_arr.begin());
-    }
     m_first_time = true;
     return resolve_compound_expression(expr_arr, scopes, {});
 }
@@ -139,6 +124,20 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
         return nullptr;
     }
 
+    // handle global scope
+    vector<wxString> scopes = visible_scopes;
+    if(expression.size() == 1 && expression[0].type_name().empty() && expression[0].operand_string() == "::") {
+        // return a dummy entry representing the global scope
+        return create_global_scope_tag();
+    } else if(expression.size() >= 2 && expression[0].type_name().empty() && expression[0].operand_string() == "::") {
+        // explicity requesting for the global namespace
+        // clear the `scopes` and use only the global namespace (empty string)
+        scopes.clear();
+        scopes.push_back(wxEmptyString);
+        // in addition, we can remove the first expression from the array
+        expression.erase(expression.begin());
+    }
+
     // copy the subscript operator to the last expression
     if(!expression.empty() && orig_expression.check_subscript_operator()) {
         expression.back().set_subscript_params(orig_expression.subscript_params());
@@ -146,7 +145,7 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
 
     TagEntryPtr resolved;
     for(CxxExpression& curexpr : expression) {
-        resolved = resolve_expression(curexpr, resolved, visible_scopes);
+        resolved = resolve_expression(curexpr, resolved, scopes);
         CHECK_PTR_RET_NULL(resolved);
         // once we resolved something we make it with this flag
         // this way we avoid checking for locals/global scope etc

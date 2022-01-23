@@ -178,6 +178,7 @@ private:
     LookupTable::ptr_t m_lookup;
     unordered_map<wxString, CxxCodeCompletion::__local> m_locals;
     LocalTags m_file_tags;
+    vector<wxString> m_local_scopes; // scopes only available for this TU
     wxString m_filename;
     int m_line_number = 0;
     TagEntryPtr m_current_function_tag;

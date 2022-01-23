@@ -158,6 +158,19 @@ TEST_FUNC(test_parsing_of_function_parameter)
     return true;
 }
 
+TEST_FUNC(text_cxx_assignment_from_global_method)
+{
+    ENSURE_DB_LOADED();
+    {
+        wxString code = "auto arr = ::wxStringTokenize();";
+        completer->set_text(code, "", -1);
+        auto resolved = completer->code_complete("arr.", {}, nullptr);
+        CHECK_NOT_NULL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxArrayString");
+    }
+    return true;
+}
+
 TEST_FUNC(TestLSPLocation)
 {
     ENSURE_DB_LOADED();

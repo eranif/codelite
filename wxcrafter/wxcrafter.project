@@ -917,6 +917,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="wxcLib/"/>
+        <Preprocessor Value="NDEBUG"/>
         <Preprocessor Value="__WX__"/>
         <Preprocessor Value="WXUSINGDLL"/>
         <Preprocessor Value="_WIN32_WINNT=0x501"/>
@@ -1095,6 +1096,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="wxcLib/"/>
+        <Preprocessor Value="NDEBUG"/>
       </Compiler>
       <Linker Options=";;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon,richtext)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
@@ -1151,6 +1153,7 @@
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/wxscintilla/include"/>
         <IncludePath Value="wxcLib/"/>
+        <Preprocessor Value="NDEBUG"/>
       </Compiler>
       <Linker Options=";-O2;$(shell wx-config --debug=no --unicode=yes --libs std,stc,propgrid,webview,ribbon)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>

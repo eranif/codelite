@@ -144,6 +144,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     m_bmpUp = wxXmlResource::Get()->LoadBitmap("cc-box-up");
     m_bmpUpEnabled = m_bmpUp.ConvertToDisabled();
+    m_list->SetSortFunction(nullptr);
 }
 
 wxCodeCompletionBox::~wxCodeCompletionBox() { DoDestroyTipWindow(); }

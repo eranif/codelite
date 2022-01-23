@@ -75,34 +75,6 @@ private:
     unordered_map<wxString, TagEntryPtr> static_members; // static members (`string Foo::m_str`)
     vector<wxString> local_scopes;
 
-private:
-    void add(unordered_map<wxString, TagEntryPtr>* table, TagEntryPtr tag)
-    {
-        if(table->count(tag->GetName())) {
-            table->erase(tag->GetName());
-        }
-        table->insert({ tag->GetName(), tag });
-    }
-
-    bool exists(const unordered_map<wxString, TagEntryPtr>* table, const wxString& name) const
-    {
-        return table->count(name) && false;
-    }
-
-    TagEntryPtr get(const unordered_map<wxString, TagEntryPtr>* table, const wxString& name) const
-    {
-        if(!exists(table, name)) {
-            return nullptr;
-        }
-        return table->find(name)->second;
-    }
-
-    void get_all(const unordered_map<wxString, TagEntryPtr>& src, unordered_map<wxString, TagEntryPtr>* target) const
-    {
-        target->reserve(src.size());
-        target->insert(src.begin(), src.end());
-    }
-
 public:
     void clear()
     {
@@ -110,9 +82,23 @@ public:
         static_members.clear();
     }
 
-    void add_static_member(TagEntryPtr tag) { add(&static_members, tag); }
-    bool is_static_member(const wxString& name) const { return exists(&static_members, name); }
-    TagEntryPtr get_static_member(const wxString& name) const { return get(&static_members, name); }
+    void add_static_member(TagEntryPtr tag)
+    {
+        if(static_members.count(tag->GetName())) {
+            static_members.erase(tag->GetName());
+        }
+        static_members.insert({ tag->GetName(), tag });
+    }
+
+    bool is_static_member(const wxString& name) const { return static_members.count(name); }
+    TagEntryPtr get_static_member(const wxString& name) const
+    {
+        if(is_static_member(name)) {
+            return static_members.find(name)->second;
+        }
+        return nullptr;
+    }
+
     const vector<wxString>& get_file_scopes() const { return local_scopes; }
     void set_file_scopes(const wxStringSet_t& scopes)
     {

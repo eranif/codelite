@@ -1184,8 +1184,8 @@ TEST_FUNC(test_cxx_code_completion_typedef_using)
 TEST_FUNC(test_cxx_code_completion_template)
 {
     ENSURE_DB_LOADED();
-
-    if(false) {
+#if 0
+    {
         wxString text = "cJSON* json;";
         completer->set_text(text, wxEmptyString, wxNOT_FOUND);
         TagEntryPtr resolved = completer->code_complete("json->", {});
@@ -1195,6 +1195,7 @@ TEST_FUNC(test_cxx_code_completion_template)
         completer->get_completions(resolved, wxEmptyString, wxEmptyString, tags, {});
         CHECK_BOOL(is_tag_exists("valuestring", tags));
     }
+#endif
 
     {
         wxString text = "wxVector<wxString> V;";

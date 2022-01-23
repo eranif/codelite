@@ -145,6 +145,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -171,6 +175,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -704,6 +712,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",

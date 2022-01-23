@@ -1368,8 +1368,8 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
                        sorted_global_scopes_members.size() + keywords.size());
 
     // place the keywords first
-    candidates.insert(candidates.end(), keywords.begin(), keywords.end());
     candidates.insert(candidates.end(), sorted_locals.begin(), sorted_locals.end());
+    candidates.insert(candidates.end(), keywords.begin(), keywords.end());
     candidates.insert(candidates.end(), sorted_scope_members.begin(), sorted_scope_members.end());
     candidates.insert(candidates.end(), sorted_other_scopes_members.begin(), sorted_other_scopes_members.end());
     candidates.insert(candidates.end(), sorted_global_scopes_members.begin(), sorted_global_scopes_members.end());

@@ -2,6 +2,7 @@
 #define REMOTYSWITCHTOWORKSPACEDLG_H
 #include "RemotyConfig.hpp"
 #include "RemotyUI.h"
+
 #include <unordered_map>
 #include <vector>
 
@@ -18,11 +19,11 @@ public:
     wxString GetAccount();
 
 protected:
-    virtual void OnPathChanged(wxCommandEvent& event);
-    virtual void OnChoiceWorkspaceType(wxCommandEvent& event);
-    virtual void OnBrowse(wxCommandEvent& event);
-    virtual void OnRemoteUI(wxUpdateUIEvent& event);
-    void OnOKUI(wxUpdateUIEvent& event) override;
+    virtual void OnPathChanged(wxCommandEvent& event) override;
+    virtual void OnChoiceWorkspaceType(wxCommandEvent& event) override;
+    virtual void OnBrowse(wxCommandEvent& event) override;
+    virtual void OnRemoteUI(wxUpdateUIEvent& event) override;
+    virtual void OnOKUI(wxUpdateUIEvent& event) override;
     void SyncPathToAccount();
     void InitialiseDialog();
 };

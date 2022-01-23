@@ -94,13 +94,9 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
 
     vector<wxString> scopes = { visible_scopes.begin(), visible_scopes.end() };
     vector<CxxExpression> expr_arr = from_expression(expression, remainder);
-    auto where =
-        find_if(visible_scopes.begin(), visible_scopes.end(), [](const wxString& scope) { return scope.empty(); });
 
-    if(where == visible_scopes.end()) {
-        // add the global scope
-        scopes.push_back(wxEmptyString);
-    }
+    // add extra scopes (global scope, file scopes)
+    scopes = prepend_extra_scopes(scopes);
 
     // Check the current scope
     if(m_current_container_tag) {
@@ -162,7 +158,7 @@ size_t CxxCodeCompletion::parse_locals(const wxString& text, unordered_map<wxStr
 }
 
 void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
-                                     LocalTags* file_tags) const
+                                     FileScope* file_tags) const
 {
     // parse local variables
     CxxVariableScanner scanner(text, eCxxStandard::kCxx11, get_tokens_map(), false);
@@ -182,24 +178,23 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
     vector<TagEntryPtr> anonymous_tags;
     get_anonymous_tags(wxEmptyString, kinds, anonymous_tags);
 
+    wxStringSet_t unique_scopes;
     // create a local variable from the anonymous tags
     for(auto tag : anonymous_tags) {
+        if(tag->GetScope().StartsWith("__anon")) {
+            unique_scopes.insert(tag->GetScope());
+        }
         if(tag->GetKind() == "variable") {
             CxxVariableScanner scanner(normalize_pattern(tag), eCxxStandard::kCxx11, m_macros_table_map, false);
             auto _variables = scanner.GetVariables(false);
             variables.insert(variables.end(), _variables.begin(), _variables.end());
         } else if(file_tags && tag->GetKind() == "member") {
             file_tags->add_static_member(tag);
-
-        } else if(file_tags && tag->IsMethod()) {
-            file_tags->add_anonymous_function(tag);
-
-        } else if(file_tags && (tag->IsClass() || tag->IsStruct())) {
-            file_tags->add_anonymous_class(tag);
-
-        } else if(file_tags && (tag->IsEnum() || tag->IsEnumClass())) {
-            file_tags->add_anonymous_enum(tag);
         }
+    }
+
+    if(file_tags) {
+        file_tags->set_file_scopes(unique_scopes);
     }
 
     for(auto var : variables) {
@@ -313,19 +308,6 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateM
 TagEntryPtr CxxCodeCompletion::lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
                                                      const vector<wxString>& kinds)
 {
-    // check anonymous namespace first for class/struct/enum
-    auto iter_class =
-        find_if(kinds.begin(), kinds.end(), [](const wxString& kind) { return kind == "class" || kind == "struct"; });
-    if(iter_class != kinds.end() && m_file_tags.is_anonymous_class(name)) {
-        return m_file_tags.get_class(name);
-    }
-
-    // try enum
-    auto iter_enum = find_if(kinds.begin(), kinds.end(), [](const wxString& kind) { return kind == "enum"; });
-    if(iter_enum != kinds.end() && m_file_tags.is_anonymous_enum(name)) {
-        return m_file_tags.get_enum(name);
-    }
-
     vector<TagEntryPtr> tags;
     vector<wxString> scopes_to_check = visible_scopes;
     if(scopes_to_check.empty()) {
@@ -458,11 +440,11 @@ TagEntryPtr CxxCodeCompletion::on_local(CxxExpression& curexp, const vector<wxSt
 
 TagEntryPtr CxxCodeCompletion::on_static_local(CxxExpression& curexp, const vector<wxString>& visible_scopes)
 {
-    if(!m_file_tags.is_static_member(curexp.type_name())) {
+    if(!m_file_only_tags.is_static_member(curexp.type_name())) {
         return nullptr;
     }
 
-    wxString exprstr = m_file_tags.get_static_member(curexp.type_name())->GetTypename() + curexp.operand_string();
+    wxString exprstr = m_file_only_tags.get_static_member(curexp.type_name())->GetTypename() + curexp.operand_string();
     vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
@@ -494,13 +476,9 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
             if(m_locals.count(curexp.type_name())) {
                 return on_local(curexp, visible_scopes);
 
-            } else if(m_file_tags.is_static_member(curexp.type_name())) {
+            } else if(m_file_only_tags.is_static_member(curexp.type_name())) {
                 // static member to this file
                 return on_static_local(curexp, visible_scopes);
-
-            } else if(m_file_tags.is_anonymous_function(curexp.type_name())) {
-                // anonymous / static function
-                return on_method(curexp, m_file_tags.get_function(curexp.type_name()), visible_scopes);
 
             } else {
                 determine_current_scope();
@@ -800,7 +778,7 @@ void CxxCodeCompletion::reset()
 {
     m_locals.clear();
     m_template_manager->clear();
-    m_file_tags.clear();
+    m_file_only_tags.clear();
     m_recurse_protector = 0;
     m_current_function_tag.Reset(nullptr);
     m_current_container_tag.Reset(nullptr);
@@ -925,39 +903,7 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
 size_t CxxCodeCompletion::get_local_tags(const wxString& filter, const wxStringSet_t& kinds,
                                          vector<TagEntryPtr>& tags) const
 {
-    if(kinds.count("function")) {
-        unordered_map<wxString, TagEntryPtr> all_functions;
-        m_file_tags.get_all_anonymous_functions(&all_functions);
-        tags.reserve(all_functions.size());
-        for(const auto& vt : all_functions) {
-            if(vt.second->GetName().StartsWith(filter)) {
-                tags.push_back(vt.second);
-            }
-        }
-    }
-
-    if(kinds.count("class")) {
-        unordered_map<wxString, TagEntryPtr> all_functions;
-        m_file_tags.get_all_anonymous_classes(&all_functions);
-        tags.reserve(all_functions.size());
-        for(const auto& vt : all_functions) {
-            if(vt.second->GetName().StartsWith(filter)) {
-                tags.push_back(vt.second);
-            }
-        }
-    }
-
-    if(kinds.count("enum")) {
-        unordered_map<wxString, TagEntryPtr> all_functions;
-        m_file_tags.get_all_anonymous_enums(&all_functions);
-        tags.reserve(all_functions.size());
-        for(const auto& vt : all_functions) {
-            if(vt.second->GetName().StartsWith(filter)) {
-                tags.push_back(vt.second);
-            }
-        }
-    }
-    return tags.size();
+    return 0;
 }
 
 vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
@@ -1093,13 +1039,13 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
 void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename, int current_line)
 {
     m_locals.clear();
-    m_file_tags.clear();
+    m_file_only_tags.clear();
     m_filename = filename;
     m_line_number = current_line;
     m_current_container_tag = nullptr;
     m_current_function_tag = nullptr;
 
-    shrink_scope(text, &m_locals, &m_file_tags);
+    shrink_scope(text, &m_locals, &m_file_only_tags);
     determine_current_scope();
 }
 
@@ -1370,22 +1316,20 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
 
 {
     vector<TagEntryPtr> locals;
-    vector<TagEntryPtr> local_functions;
-    vector<TagEntryPtr> local_containers;
     vector<TagEntryPtr> keywords;
     vector<TagEntryPtr> scope_members;
     vector<TagEntryPtr> other_scopes_members;
     vector<TagEntryPtr> global_scopes_members;
 
     vector<TagEntryPtr> sorted_locals;
-    vector<TagEntryPtr> sorted_local_functions;
     vector<TagEntryPtr> sorted_scope_members;
     vector<TagEntryPtr> sorted_other_scopes_members;
     vector<TagEntryPtr> sorted_global_scopes_members;
 
+    // include the file scopes
+    vector<wxString> scopes = prepend_extra_scopes(visible_scopes);
+
     locals = get_locals(remainder.filter);
-    get_local_tags(remainder.filter, { "function" }, local_functions);
-    get_local_tags(remainder.filter, { "class", "enum", "struct" }, local_containers);
 
     vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
@@ -1408,13 +1352,11 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     }
 
     // collect member variabels if we are within a scope
-    get_children_of_current_scope(kinds, remainder.filter, visible_scopes, &scope_members, &other_scopes_members,
+    get_children_of_current_scope(kinds, remainder.filter, scopes, &scope_members, &other_scopes_members,
                                   &global_scopes_members);
 
     // sort the matches:
-    sort_tags(locals, sorted_locals, true, {}); // locals are accepted, so dont pass list of files
-    sort_tags(local_functions, sorted_local_functions, true,
-              {}); // locals fucntions are accepted, so dont pass list of files
+    sort_tags(locals, sorted_locals, true, {});               // locals are accepted, so dont pass list of files
     sort_tags(scope_members, sorted_scope_members, true, {}); // members are all accepted
     sort_tags(other_scopes_members, sorted_other_scopes_members, true, visible_files);
     sort_tags(global_scopes_members, sorted_global_scopes_members, true, visible_files);
@@ -1422,15 +1364,12 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     if(add_keywords) {
         get_keywords_tags(remainder.filter, keywords);
     }
-    candidates.reserve(sorted_local_functions.size() + sorted_locals.size() + sorted_scope_members.size() +
-                       sorted_other_scopes_members.size() + sorted_global_scopes_members.size() + keywords.size() +
-                       local_containers.size());
+    candidates.reserve(sorted_locals.size() + sorted_scope_members.size() + sorted_other_scopes_members.size() +
+                       sorted_global_scopes_members.size() + keywords.size());
 
     // place the keywords first
     candidates.insert(candidates.end(), keywords.begin(), keywords.end());
     candidates.insert(candidates.end(), sorted_locals.begin(), sorted_locals.end());
-    candidates.insert(candidates.end(), sorted_local_functions.begin(), sorted_local_functions.end());
-    candidates.insert(candidates.end(), local_containers.begin(), local_containers.end());
     candidates.insert(candidates.end(), sorted_scope_members.begin(), sorted_scope_members.end());
     candidates.insert(candidates.end(), sorted_other_scopes_members.begin(), sorted_other_scopes_members.end());
     candidates.insert(candidates.end(), sorted_global_scopes_members.begin(), sorted_global_scopes_members.end());
@@ -1928,4 +1867,24 @@ vector<TagEntryPtr> CxxCodeCompletion::get_parents_of_tag_no_recurse(TagEntryPtr
         }
     }
     return parents;
+}
+
+vector<wxString> CxxCodeCompletion::prepend_extra_scopes(const vector<wxString>& visible_scopes)
+{
+    vector<wxString> scopes = m_file_only_tags.get_file_scopes();
+    wxStringSet_t unique_scopes{ scopes.begin(), scopes.end() };
+
+    // append only unique scopes
+    scopes.reserve(scopes.size() + visible_scopes.size() + 1);
+    for(const wxString& scope : visible_scopes) {
+        if(unique_scopes.insert(scope).second) {
+            scopes.push_back(scope);
+        }
+    }
+
+    if(unique_scopes.count("") == 0) {
+        // add the global scope
+        scopes.push_back(wxEmptyString);
+    }
+    return scopes;
 }

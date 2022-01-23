@@ -70,12 +70,10 @@ struct LookupTable {
 };
 
 // internal to this TU
-struct LocalTags {
+struct FileScope {
 private:
-    unordered_map<wxString, TagEntryPtr> functions;      // anonymous function
     unordered_map<wxString, TagEntryPtr> static_members; // static members (`string Foo::m_str`)
-    unordered_map<wxString, TagEntryPtr> classes;        // anonymous classes/struct
-    unordered_map<wxString, TagEntryPtr> enums;          // anonymous enums
+    vector<wxString> local_scopes;
 
 private:
     void add(unordered_map<wxString, TagEntryPtr>* table, TagEntryPtr tag)
@@ -88,7 +86,7 @@ private:
 
     bool exists(const unordered_map<wxString, TagEntryPtr>* table, const wxString& name) const
     {
-        return table->count(name);
+        return table->count(name) && false;
     }
 
     TagEntryPtr get(const unordered_map<wxString, TagEntryPtr>* table, const wxString& name) const
@@ -108,30 +106,19 @@ private:
 public:
     void clear()
     {
-        functions.clear();
+        local_scopes.clear();
         static_members.clear();
-        classes.clear();
-        enums.clear();
     }
 
     void add_static_member(TagEntryPtr tag) { add(&static_members, tag); }
-    void add_anonymous_enum(TagEntryPtr tag) { add(&enums, tag); }
-    void add_anonymous_class(TagEntryPtr tag) { add(&classes, tag); }
-    void add_anonymous_function(TagEntryPtr tag) { add(&functions, tag); }
-
     bool is_static_member(const wxString& name) const { return exists(&static_members, name); }
-    bool is_anonymous_function(const wxString& name) const { return exists(&functions, name); }
-    bool is_anonymous_class(const wxString& name) const { return exists(&classes, name); }
-    bool is_anonymous_enum(const wxString& name) const { return exists(&enums, name); }
-
     TagEntryPtr get_static_member(const wxString& name) const { return get(&static_members, name); }
-    TagEntryPtr get_enum(const wxString& name) const { return get(&enums, name); }
-    TagEntryPtr get_class(const wxString& name) const { return get(&classes, name); }
-    TagEntryPtr get_function(const wxString& name) const { return get(&functions, name); }
-
-    void get_all_anonymous_functions(unordered_map<wxString, TagEntryPtr>* table) const { get_all(functions, table); }
-    void get_all_anonymous_classes(unordered_map<wxString, TagEntryPtr>* table) const { get_all(classes, table); }
-    void get_all_anonymous_enums(unordered_map<wxString, TagEntryPtr>* table) const { get_all(enums, table); }
+    const vector<wxString>& get_file_scopes() const { return local_scopes; }
+    void set_file_scopes(const wxStringSet_t& scopes)
+    {
+        local_scopes.clear();
+        local_scopes.insert(local_scopes.end(), scopes.begin(), scopes.end());
+    }
 };
 
 class WXDLLIMPEXP_CL CxxCodeCompletion
@@ -177,8 +164,7 @@ private:
 private:
     LookupTable::ptr_t m_lookup;
     unordered_map<wxString, CxxCodeCompletion::__local> m_locals;
-    LocalTags m_file_tags;
-    vector<wxString> m_local_scopes; // scopes only available for this TU
+    FileScope m_file_only_tags;
     wxString m_filename;
     int m_line_number = 0;
     TagEntryPtr m_current_function_tag;
@@ -194,7 +180,15 @@ private:
     wxString m_codelite_indexer;
 
 private:
+    /**
+     * @brief prepend scope to the list of scopes. Place it first
+     */
     void prepend_scope(vector<wxString>& scopes, const wxString& scope) const;
+    /**
+     * @brief prepend the file specific scopes + global scope (if missing) to the requested visible scopes
+     */
+    vector<wxString> prepend_extra_scopes(const vector<wxString>& visible_scopes);
+
     TagEntryPtr lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes, TagEntryPtr parent);
     TagEntryPtr lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
                                       const vector<wxString>& kinds);
@@ -206,7 +200,7 @@ private:
                                     const vector<wxString>& kinds);
 
     wxString typedef_from_tag(TagEntryPtr tag) const;
-    void shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals, LocalTags* file_tags) const;
+    void shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals, FileScope* file_tags) const;
     TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
     TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes,
                                             const CxxExpression& orig_expression);

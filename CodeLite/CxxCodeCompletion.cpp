@@ -158,13 +158,12 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
 
 size_t CxxCodeCompletion::parse_locals(const wxString& text, unordered_map<wxString, __local>* locals) const
 {
-    shrink_scope(text, locals, nullptr, nullptr);
+    shrink_scope(text, locals, nullptr);
     return locals->size();
 }
 
 void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
-                                     unordered_map<wxString, TagEntryPtr>* functions,
-                                     unordered_map<wxString, TagEntryPtr>* static_members) const
+                                     LocalTags* file_tags) const
 {
     // parse local variables
     CxxVariableScanner scanner(text, eCxxStandard::kCxx11, get_tokens_map(), false);
@@ -190,11 +189,11 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
             CxxVariableScanner scanner(normalize_pattern(tag), eCxxStandard::kCxx11, m_macros_table_map, false);
             auto _variables = scanner.GetVariables(false);
             variables.insert(variables.end(), _variables.begin(), _variables.end());
-        } else if(static_members && tag->GetKind() == "member") {
-            static_members->insert({ tag->GetName(), tag });
+        } else if(file_tags && tag->GetKind() == "member") {
+            file_tags->add_static_member(tag);
 
-        } else if(functions && tag->IsMethod()) {
-            functions->insert({ tag->GetName(), tag });
+        } else if(file_tags && tag->IsMethod()) {
+            file_tags->add_anonymous_function(tag);
         }
     }
 
@@ -440,11 +439,11 @@ TagEntryPtr CxxCodeCompletion::on_local(CxxExpression& curexp, const vector<wxSt
 
 TagEntryPtr CxxCodeCompletion::on_static_local(CxxExpression& curexp, const vector<wxString>& visible_scopes)
 {
-    if(m_static_members.count(curexp.type_name()) == 0) {
+    if(!m_file_tags.is_static_member(curexp.type_name())) {
         return nullptr;
     }
 
-    wxString exprstr = m_static_members.find(curexp.type_name())->second->GetTypename() + curexp.operand_string();
+    wxString exprstr = m_file_tags.get_static_member(curexp.type_name())->GetTypename() + curexp.operand_string();
     vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
@@ -476,13 +475,13 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
             if(m_locals.count(curexp.type_name())) {
                 return on_local(curexp, visible_scopes);
 
-            } else if(m_static_members.count(curexp.type_name())) {
+            } else if(m_file_tags.is_static_member(curexp.type_name())) {
                 // static member to this file
                 return on_static_local(curexp, visible_scopes);
 
-            } else if(m_local_functions.count(curexp.type_name())) {
+            } else if(m_file_tags.is_anonymous_function(curexp.type_name())) {
                 // anonymous / static function
-                return on_method(curexp, m_local_functions.find(curexp.type_name())->second, visible_scopes);
+                return on_method(curexp, m_file_tags.get_function(curexp.type_name()), visible_scopes);
 
             } else {
                 determine_current_scope();
@@ -782,7 +781,7 @@ void CxxCodeCompletion::reset()
 {
     m_locals.clear();
     m_template_manager->clear();
-    m_static_members.clear();
+    m_file_tags.clear();
     m_recurse_protector = 0;
     m_current_function_tag.Reset(nullptr);
     m_current_container_tag.Reset(nullptr);
@@ -906,9 +905,11 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
 
 vector<TagEntryPtr> CxxCodeCompletion::get_local_functions(const wxString& filter) const
 {
+    unordered_map<wxString, TagEntryPtr> all_functions;
+    m_file_tags.get_all_anonymous_functions(&all_functions);
     vector<TagEntryPtr> locals;
-    locals.reserve(m_locals.size());
-    for(const auto& vt : m_local_functions) {
+    locals.reserve(all_functions.size());
+    for(const auto& vt : all_functions) {
         if(vt.second->GetName().StartsWith(filter)) {
             locals.push_back(vt.second);
         }
@@ -1049,14 +1050,13 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
 void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename, int current_line)
 {
     m_locals.clear();
-    m_local_functions.clear();
-    m_static_members.clear();
+    m_file_tags.clear();
     m_filename = filename;
     m_line_number = current_line;
     m_current_container_tag = nullptr;
     m_current_function_tag = nullptr;
 
-    shrink_scope(text, &m_locals, &m_local_functions, &m_static_members);
+    shrink_scope(text, &m_locals, &m_file_tags);
     determine_current_scope();
 }
 

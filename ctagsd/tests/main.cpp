@@ -408,6 +408,12 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
             CHECK_STRING(resolved->GetPath(), "CxxCodeCompletion");
         }
     }
+
+    {
+        completer->set_text("MyAnonStruct anon_struct;", "", -1);
+        auto resolved = completer->code_complete("anon_struct.", {}, nullptr);
+        CHECK_NOT_NULL(resolved);
+    }
     return true;
 }
 

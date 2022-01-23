@@ -1925,7 +1925,8 @@ size_t TagsStorageSQLite::GetFileScopedTags(const wxString& filepath, const wxSt
 
     // get static members
     sql.Clear();
-    sql << "select * from tags where file='" << filepath << "' and kind in ('member','variable')";
+    sql << "select * from tags where file='" << filepath
+        << "' and kind in ('member','variable','class','struct','enum')";
     if(!name.empty()) {
         sql << " and name like '" << name << "%'";
     }

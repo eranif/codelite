@@ -69,6 +69,71 @@ struct LookupTable {
     void GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tags);
 };
 
+// internal to this TU
+struct LocalTags {
+private:
+    unordered_map<wxString, TagEntryPtr> functions;      // anonymous function
+    unordered_map<wxString, TagEntryPtr> static_members; // static members (`string Foo::m_str`)
+    unordered_map<wxString, TagEntryPtr> classes;        // anonymous classes/struct
+    unordered_map<wxString, TagEntryPtr> enums;          // anonymous enums
+
+private:
+    void add(unordered_map<wxString, TagEntryPtr>* table, TagEntryPtr tag)
+    {
+        if(table->count(tag->GetName())) {
+            table->erase(tag->GetName());
+        }
+        table->insert({ tag->GetName(), tag });
+    }
+
+    bool exists(const unordered_map<wxString, TagEntryPtr>* table, const wxString& name) const
+    {
+        return table->count(name);
+    }
+
+    TagEntryPtr get(const unordered_map<wxString, TagEntryPtr>* table, const wxString& name) const
+    {
+        if(!exists(table, name)) {
+            return nullptr;
+        }
+        return table->find(name)->second;
+    }
+
+    void get_all(const unordered_map<wxString, TagEntryPtr>& src, unordered_map<wxString, TagEntryPtr>* target) const
+    {
+        target->reserve(src.size());
+        target->insert(src.begin(), src.end());
+    }
+
+public:
+    void clear()
+    {
+        functions.clear();
+        static_members.clear();
+        classes.clear();
+        enums.clear();
+    }
+
+    void add_static_member(TagEntryPtr tag) { add(&static_members, tag); }
+    void add_anonymous_enum(TagEntryPtr tag) { add(&enums, tag); }
+    void add_anonymous_class(TagEntryPtr tag) { add(&classes, tag); }
+    void add_anonymous_function(TagEntryPtr tag) { add(&functions, tag); }
+
+    bool is_static_member(const wxString& name) const { return exists(&static_members, name); }
+    bool is_anonymous_function(const wxString& name) const { return exists(&functions, name); }
+    bool is_anonymous_class(const wxString& name) const { return exists(&classes, name); }
+    bool is_anonymous_enum(const wxString& name) const { return exists(&enums, name); }
+
+    TagEntryPtr get_static_member(const wxString& name) const { return get(&static_members, name); }
+    TagEntryPtr get_enum(const wxString& name) const { return get(&enums, name); }
+    TagEntryPtr get_class(const wxString& name) const { return get(&classes, name); }
+    TagEntryPtr get_function(const wxString& name) const { return get(&functions, name); }
+
+    void get_all_anonymous_functions(unordered_map<wxString, TagEntryPtr>* table) const { get_all(functions, table); }
+    void get_all_anonymous_classes(unordered_map<wxString, TagEntryPtr>* table) const { get_all(classes, table); }
+    void get_all_anonymous_enums(unordered_map<wxString, TagEntryPtr>* table) const { get_all(enums, table); }
+};
+
 class WXDLLIMPEXP_CL CxxCodeCompletion
 {
     friend class TemplateManager;
@@ -107,9 +172,8 @@ private:
 
 private:
     LookupTable::ptr_t m_lookup;
-    unordered_map<wxString, __local> m_locals;
-    unordered_map<wxString, TagEntryPtr> m_local_functions; // anonymous function
-    unordered_map<wxString, TagEntryPtr> m_static_members;  // anonymous function
+    unordered_map<wxString, CxxCodeCompletion::__local> m_locals;
+    LocalTags m_file_tags;
     wxString m_filename;
     int m_line_number = 0;
     TagEntryPtr m_current_function_tag;
@@ -137,9 +201,7 @@ private:
                                     const vector<wxString>& kinds);
 
     wxString typedef_from_tag(TagEntryPtr tag) const;
-    void shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
-                      unordered_map<wxString, TagEntryPtr>* functions,
-                      unordered_map<wxString, TagEntryPtr>* static_members) const;
+    void shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals, LocalTags* file_tags) const;
     TagEntryPtr resolve_expression(CxxExpression& curexp, TagEntryPtr parent, const vector<wxString>& visible_scopes);
     TagEntryPtr resolve_compound_expression(vector<CxxExpression>& expression, const vector<wxString>& visible_scopes,
                                             const CxxExpression& orig_expression);

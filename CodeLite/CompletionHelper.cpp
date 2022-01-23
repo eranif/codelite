@@ -467,6 +467,7 @@ void populate_keywords()
         words.insert("noexcept");
         words.insert("override");
         words.insert("explicit");
+        words.insert("constexpr");
     }
 }
 } // namespace

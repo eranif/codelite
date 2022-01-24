@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "menu_event_handlers.h"
+
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "codelite_events.h"
@@ -289,6 +290,7 @@ void GotoHandler::ProcessCommandEvent(wxWindow* owner, wxCommandEvent& event)
                 continue;
             }
 
+            editor->ClearSelections();
             if(line > 0) {
                 editor->CenterLine(line - 1);
                 break;

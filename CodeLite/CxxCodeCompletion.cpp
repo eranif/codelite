@@ -1253,6 +1253,7 @@ void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEnt
     sort(locals.begin(), locals.end(), sort_func);
 
     sorted_tags.clear();
+    sorted_tags.reserve(locals.size() + publicTags.size() + protectedTags.size() + privateTags.size() + members.size());
     sorted_tags.insert(sorted_tags.end(), locals.begin(), locals.end());
     sorted_tags.insert(sorted_tags.end(), publicTags.begin(), publicTags.end());
     sorted_tags.insert(sorted_tags.end(), protectedTags.begin(), protectedTags.end());

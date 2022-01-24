@@ -359,6 +359,7 @@ vector<wxString> DEFAULT_TOKENS = {
     "_WIN32=1",
     "_WIN64=1",
     "wxTopLevelWindowNative=wxTopLevelWindowMSW",
+    "wxWindow=wxWindowMSW",
     "wxWindowNative=wxWindowMSW",
     "BUTTON_BASE=wxControl",
 #else
@@ -366,6 +367,7 @@ vector<wxString> DEFAULT_TOKENS = {
     "wxTopLevelWindowNative=wxTopLevelWindowMac",
     "wxWindowNative=wxWindowMac",
     "BUTTON_BASE=wxControl",
+    "wxWindow=wxWindowMac",
 #endif
 };
 
@@ -379,21 +381,6 @@ vector<pair<wxString, wxString>> to_vector_of_pairs(const vector<wxString>& arr)
         result.emplace_back(make_pair(k, v));
     }
     return result;
-}
-
-void read_from_json(JSONItem& json_arr, vector<pair<wxString, wxString>>& arr)
-{
-    int types_size = json_arr.arraySize();
-    arr.clear();
-    arr.reserve(types_size);
-
-    for(int i = 0; i < types_size; ++i) {
-        pair<wxString, wxString> entry;
-        auto type = json_arr[i];
-        entry.first = type["key"].toString();
-        entry.second = type["value"].toString();
-        arr.emplace_back(entry);
-    }
 }
 
 void write_to_json(JSONItem& json_arr, const vector<pair<wxString, wxString>>& arr)

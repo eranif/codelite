@@ -23,11 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "subversion_view.h"
+
 #include "DiffSideBySidePanel.h"
 #include "SvnInfoDialog.h"
 #include "bitmap_loader.h"
 #include "clDiffFrame.h"
-#include "clThemeUpdater.h"
 #include "clToolBar.h"
 #include "cl_command_event.h"
 #include "clcommandlineparser.h"
@@ -43,7 +44,6 @@
 #include "subversion2.h"
 #include "subversion2_ui.h"
 #include "subversion_strings.h"
-#include "subversion_view.h"
 #include "svn_checkout_dialog.h"
 #include "svn_command_handlers.h"
 #include "svn_console.h"
@@ -60,6 +60,7 @@
 #include "workspace.h"
 #include "workspacesvnsettings.h"
 #include "wx_tree_traverser.h"
+
 #include <map>
 #include <wx/app.h>
 #include <wx/aui/auibar.h>
@@ -149,8 +150,6 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     , m_diffCommand(plugin)
     , m_fileExplorerLastBaseImgIdx(-1)
 {
-    clThemeUpdater::Get().RegisterWindow(m_splitter);
-
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
 
@@ -184,11 +183,7 @@ SubversionView::SubversionView(wxWindow* parent, Subversion2* plugin)
     wxTheApp->Bind(wxEVT_MENU, &SubversionView::OnUpdateGotoAnything, this, XRCID("gotoanything_svn_update"));
 }
 
-SubversionView::~SubversionView()
-{
-    clThemeUpdater::Get().UnRegisterWindow(m_splitter);
-    DisconnectEvents();
-}
+SubversionView::~SubversionView() { DisconnectEvents(); }
 
 void SubversionView::OnChangeRootDir(wxCommandEvent& event)
 {

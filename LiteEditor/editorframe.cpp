@@ -23,20 +23,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "bookmark_manager.h"
-#include "clThemeUpdater.h"
-#include "cl_editor.h"
 #include "editorframe.h"
+
+#include "bookmark_manager.h"
+#include "cl_editor.h"
 #include "event_notifier.h"
 #include "frame.h"
 #include "mainbook.h"
 #include "manager.h"
 #include "plugin.h"
 #include "quickfindbar.h"
+
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
-class clThemeUpdater;
 wxDEFINE_EVENT(wxEVT_DETACHED_EDITOR_CLOSED, clCommandEvent);
 
 EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyle)
@@ -45,7 +45,6 @@ EditorFrame::EditorFrame(wxWindow* parent, clEditor* editor, size_t notebookStyl
 {
     m_editor->Reparent(m_mainPanel);
     m_mainPanel->GetSizer()->Add(editor, 1, wxEXPAND);
-    clThemeUpdater::Get().RegisterWindow(m_mainPanel);
 
     // Notebook::RemovePage hides the detached tab
     if(!editor->IsShown()) {

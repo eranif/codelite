@@ -29,7 +29,6 @@
 #include "bookmark_manager.h"
 #include "clBitmapOverlayCtrl.h"
 #include "clSystemSettings.h"
-#include "clThemeUpdater.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "cl_editor.h"
@@ -258,11 +257,11 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
 {
     switch(e.GetKeyCode()) {
     case WXK_DOWN: {
-        //DoArrowDown(m_searchHistory, m_textCtrlFind);
+        // DoArrowDown(m_searchHistory, m_textCtrlFind);
         break;
     }
     case WXK_UP: {
-        //DoArrowUp(m_searchHistory, m_textCtrlFind);
+        // DoArrowUp(m_searchHistory, m_textCtrlFind);
         break;
     }
     case WXK_ESCAPE: {
@@ -281,11 +280,11 @@ void QuickFindBar::OnReplaceKeyDown(wxKeyEvent& e)
 {
     switch(e.GetKeyCode()) {
     case WXK_DOWN: {
-        //DoArrowDown(m_replaceHistory, m_textCtrlReplace);
+        // DoArrowDown(m_replaceHistory, m_textCtrlReplace);
         break;
     }
     case WXK_UP: {
-        //DoArrowUp(m_replaceHistory, m_textCtrlReplace);
+        // DoArrowUp(m_replaceHistory, m_textCtrlReplace);
         break;
     }
     case WXK_ESCAPE: {

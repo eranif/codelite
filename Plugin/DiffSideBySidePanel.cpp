@@ -30,7 +30,6 @@
 #include "art_metro.h"
 #include "bookmark_manager.h"
 #include "clDTL.h"
-#include "clThemeUpdater.h"
 #include "clToolBar.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -70,7 +69,6 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
         lexer->Apply(m_stcLeft);
         lexer->Apply(m_stcRight);
     }
-    clThemeUpdater::Get().RegisterWindow(this);
 
     m_findBar = new clPluginsFindBar(this);
     m_findBar->SetEditor(m_stcLeft);

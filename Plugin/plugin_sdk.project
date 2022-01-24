@@ -366,8 +366,6 @@
     <File Name="mdparser.cpp"/>
     <File Name="clFileCache.cpp"/>
     <File Name="clFileCache.hpp"/>
-    <File Name="clThemeUpdater.cpp"/>
-    <File Name="clThemeUpdater.h"/>
     <File Name="clGenericSTCStyler.cpp"/>
     <File Name="clGenericSTCStyler.h"/>
     <File Name="xmlutils.cpp"/>

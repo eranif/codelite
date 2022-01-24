@@ -24,15 +24,16 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cppcheckreportpage.h"
-#include <wx/tokenzr.h>
+
 #include "cppchecker.h"
-#include "plugin.h"
-#include <wx/regex.h>
-#include <wx/log.h>
+#include "editor_config.h"
 #include "event_notifier.h"
 #include "lexer_configuration.h"
-#include "editor_config.h"
-#include "clThemeUpdater.h"
+#include "plugin.h"
+
+#include <wx/log.h>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
 
 static size_t sErrorCount(0);
 
@@ -44,7 +45,6 @@ CppCheckReportPage::CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheck
     , m_mgr(mgr)
     , m_plugin(plugin)
 {
-    clThemeUpdater::Get().RegisterWindow(this);
     DoInitStyle();
     EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CppCheckReportPage::OnThemeChanged),
                                   NULL, this);
@@ -52,7 +52,6 @@ CppCheckReportPage::CppCheckReportPage(wxWindow* parent, IManager* mgr, CppCheck
 
 CppCheckReportPage::~CppCheckReportPage()
 {
-    clThemeUpdater::Get().UnRegisterWindow(this);
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CppCheckReportPage::OnThemeChanged),
                                      NULL, this);
 }
@@ -191,7 +190,9 @@ bool CppCheckReportPage::FindPrevMarker(bool gotoMatch)
     if(nFoundLine == wxNOT_FOUND) {
         return false;
     } else {
-        if(!gotoMatch) { return true; }
+        if(!gotoMatch) {
+            return true;
+        }
         int matchPos = m_stc->PositionFromLine(nFoundLine);
         m_stc->SetCurrentPos(matchPos);
     }
@@ -212,7 +213,9 @@ bool CppCheckReportPage::FindNextMarker(bool gotoMatch)
     if(nFoundLine == wxNOT_FOUND) {
         return false;
     } else {
-        if(!gotoMatch) { return true; }
+        if(!gotoMatch) {
+            return true;
+        }
         int matchPos = m_stc->PositionFromLine(nFoundLine);
         m_stc->SetCurrentPos(matchPos);
     }
@@ -297,7 +300,8 @@ void CppCheckReportPage::DoOpenLine(int outputLine)
             lineNumber.ToCLong(&n);
 
             // Zero based line number
-            if(n) n--;
+            if(n)
+                n--;
             m_mgr->OpenFile(file, wxEmptyString, n);
         }
     }

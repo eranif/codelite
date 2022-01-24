@@ -47,7 +47,6 @@
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
 #include "quickfindbar.h"
-#include "theme_handler.h"
 
 #include <algorithm>
 #include <imanager.h>

@@ -22,14 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <vector>
-#include <wx/progdlg.h>
-#include <wx/xrc/xmlres.h>
+#include "replaceinfilespanel.h"
 
 #include "ColoursAndFontsManager.h"
 #include "clFileSystemEvent.h"
 #include "clStrings.h"
-#include "clThemeUpdater.h"
 #include "clThemedButton.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
@@ -41,15 +38,17 @@
 #include "globals.h"
 #include "macros.h"
 #include "manager.h"
-#include "replaceinfilespanel.h"
+
+#include <vector>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
+#include <wx/progdlg.h>
 #include <wx/renderer.h>
+#include <wx/xrc/xmlres.h>
 
 ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxString& name)
     : FindResultsTab(parent, id, name)
 {
-    clThemeUpdater::Get().RegisterWindow(this);
     Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnHoldOpenUpdateUI, this, XRCID("hold_pane_open"));
     wxBoxSizer* horzSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -99,7 +98,7 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     mainSizer->Layout();
 }
 
-ReplaceInFilesPanel::~ReplaceInFilesPanel() { clThemeUpdater::Get().UnRegisterWindow(this); }
+ReplaceInFilesPanel::~ReplaceInFilesPanel() {}
 
 void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
 {
@@ -120,7 +119,8 @@ void ReplaceInFilesPanel::OnSearchMatch(wxCommandEvent& e)
 {
     e.Skip();
     FindResultsTab::OnSearchMatch(e);
-    if(m_matchInfo.size() != 1 || !m_replaceWith->GetValue().IsEmpty()) return;
+    if(m_matchInfo.size() != 1 || !m_replaceWith->GetValue().IsEmpty())
+        return;
     m_replaceWith->SetValue(m_matchInfo.begin()->second.GetFindWhat());
     m_replaceWith->SetFocus();
 }
@@ -158,7 +158,8 @@ void ReplaceInFilesPanel::OnMarkAll(wxCommandEvent& e)
 {
     MatchInfo_t::const_iterator i = m_matchInfo.begin();
     for(; i != m_matchInfo.end(); ++i) {
-        if(m_sci->MarkerGet(i->first) & 7 << 0x7) continue;
+        if(m_sci->MarkerGet(i->first) & 7 << 0x7)
+            continue;
         m_sci->MarkerAdd(i->first, 0x7);
     }
 }
@@ -173,7 +174,8 @@ void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e)
 void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin,
                                         std::map<int, SearchResult>::iterator end)
 {
-    if(!sci || begin == end) return;
+    if(!sci || begin == end)
+        return;
     bool ok = true;
     if(dynamic_cast<clEditor*>(sci) == NULL) {
         // it's a temp editor, check if we have any changes to save
@@ -192,7 +194,9 @@ void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci, std::map<int, Sea
         delete sci;
     }
     for(; begin != end; begin++) {
-        if((m_sci->MarkerGet(begin->first) & 7 << 0x7) == 1 << 0x7) { m_sci->MarkerAdd(begin->first, ok ? 0x9 : 0x8); }
+        if((m_sci->MarkerGet(begin->first) & 7 << 0x7) == 1 << 0x7) {
+            m_sci->MarkerAdd(begin->first, ok ? 0x9 : 0x8);
+        }
     }
 }
 
@@ -256,7 +260,9 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     // FIX bug#2770561
     int lineNumber(0);
     clEditor* activeEditor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(activeEditor) { lineNumber = activeEditor->GetCurrentLine(); }
+    if(activeEditor) {
+        lineNumber = activeEditor->GetCurrentLine();
+    }
 
     if(m_replaceWith->FindString(m_replaceWith->GetValue(), true) == wxNOT_FOUND) {
         m_replaceWith->Append(m_replaceWith->GetValue());
@@ -309,7 +315,8 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 
         // extract originally matched text for safety check later
         wxString text = res.GetPattern().Mid(res.GetColumnInChars() - deltaInChars, res.GetLenInChars());
-        if(text == replaceText) continue; // no change needed
+        if(text == replaceText)
+            continue; // no change needed
 
         // need an editor for this file (try only once per file though)
         if(!sci && lastLine == 0) {
@@ -380,7 +387,9 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 
         if(m_sci->MarkerGet(line) & 1 << 0x9) {
             clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(lastFile);
-            if(editor && editor->GetModify()) { updatedEditors.insert(lastFile); }
+            if(editor && editor->GetModify()) {
+                updatedEditors.insert(lastFile);
+            }
             // replacement done, remove from map
             m_sci->MarkerDelete(line, 0x9);
             m_sci->SetCurrentPos(m_sci->PositionFromLine(line));
@@ -397,12 +406,16 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     // update the match info map
     for(std::vector<int>::size_type i = 0; i < itemsToRemove.size(); i++) {
         MatchInfo_t::iterator iter = m_matchInfo.find(itemsToRemove.at(i));
-        if(iter != m_matchInfo.end()) { m_matchInfo.erase(iter); }
+        if(iter != m_matchInfo.end()) {
+            m_matchInfo.erase(iter);
+        }
     }
 
     m_sci->SetReadOnly(true);
     m_sci->GotoLine(0);
-    if(m_matchInfo.empty()) { Clear(); }
+    if(m_matchInfo.empty()) {
+        Clear();
+    }
 
     // Step 3: Notify user of changes to already opened files, ask to save
     std::vector<std::pair<wxFileName, bool>> filesToSave;
@@ -415,7 +428,9 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         for(size_t i = 0; i < filesToSave.size(); i++) {
             if(filesToSave[i].second) {
                 clEditor* editor = clMainFrame::Get()->GetMainBook()->FindEditor(filesToSave[i].first.GetFullPath());
-                if(editor) { editor->SaveFile(); }
+                if(editor) {
+                    editor->SaveFile();
+                }
             }
         }
     }
@@ -448,7 +463,9 @@ void ReplaceInFilesPanel::OnReplaceWithComboUI(wxUpdateUIEvent& e)
 void ReplaceInFilesPanel::OnHoldOpenUpdateUI(wxUpdateUIEvent& e)
 {
     int sel = clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetSelection();
-    if(clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) { return; }
+    if(clMainFrame::Get()->GetOutputPane()->GetNotebook()->GetPage(sel) != this) {
+        return;
+    }
 
     if(EditorConfigST::Get()->GetOptions()->GetHideOutpuPaneOnUserClick()) {
         e.Enable(true);
@@ -472,7 +489,9 @@ void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
 
     } else {
         MatchInfo_t::const_iterator m = m_matchInfo.find(clickedLine);
-        if(m != m_matchInfo.end()) { DoOpenSearchResult(m->second, NULL, m->first); }
+        if(m != m_matchInfo.end()) {
+            DoOpenSearchResult(m->second, NULL, m->first);
+        }
     }
 }
 
@@ -483,7 +502,9 @@ static void RenderCheckbox(wxWindow* win, wxDC& dc, const wxColour& bgColour, co
     dc.SetBrush(bgColour);
     dc.SetPen(bgColour);
     dc.DrawRectangle(rect);
-    if(!checked) { return; }
+    if(!checked) {
+        return;
+    }
 
     if(checked) {
         wxRect innerRect = rect;
@@ -508,7 +529,9 @@ void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
     FindResultsTab::SetStyles(sci);
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    if(!lexer) { lexer = ColoursAndFontsManager::Get().GetLexer("text"); }
+    if(!lexer) {
+        lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    }
 
     // render two bitmaps: checked and unchecked
     int size = ::clGetSize(16, sci);

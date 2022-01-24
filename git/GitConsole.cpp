@@ -24,13 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "GitConsole.h"
+
 #include "ColoursAndFontsManager.h"
 #include "GitResetDlg.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clBitmap.h"
 #include "clCommandProcessor.h"
-#include "clThemeUpdater.h"
 #include "clToolBar.h"
 #include "cl_aui_tool_stickness.h"
 #include "cl_config.h"
@@ -43,6 +43,7 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "macros.h"
+
 #include <algorithm>
 #include <wx/datetime.h>
 #include <wx/icon.h>
@@ -152,8 +153,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_dvListCtrlUnversioned->SetSortedColumn(1);
     m_dvListCtrlUnversioned->SetRendererType(eRendererType::RENDERER_DIRECT2D);
 
-    clThemeUpdater::Get().RegisterWindow(m_splitter733);
-
     // Error messages will be coloured with red
     m_errorPatterns = { { "fatal:" },
                         { "error:" },
@@ -240,7 +239,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
 GitConsole::~GitConsole()
 {
-    clThemeUpdater::Get().UnRegisterWindow(m_splitter733);
     EventNotifier::Get()->Disconnect(wxEVT_GIT_CONFIG_CHANGED,
                                      wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &GitConsole::OnWorkspaceClosed, this);

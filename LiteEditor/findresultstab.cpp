@@ -45,7 +45,6 @@
 #include "optionsconfig.h"
 #include "pluginmanager.h"
 #include "search_thread.h"
-#include "theme_handler.h"
 
 #include <algorithm>
 #include <wx/tokenzr.h>

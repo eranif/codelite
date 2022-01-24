@@ -22,7 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "clThemeUpdater.h"
+#include "outputtabwindow.h"
+
 #include "clToolBar.h"
 #include "cl_config.h"
 #include "editor_config.h"
@@ -33,9 +34,9 @@
 #include "macros.h"
 #include "manager.h"
 #include "output_pane.h"
-#include "outputtabwindow.h"
 #include "pluginmanager.h"
 #include "quickfindbar.h"
+
 #include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(OutputTabWindow, wxPanel)
@@ -65,7 +66,6 @@ OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString
     , m_autoAppearErrors(false)
     , m_errorsFirstLine(false)
 {
-    clThemeUpdater::Get().RegisterWindow(this);
     m_styler.Reset(new clFindResultsStyler());
     CreateGUIControls();
     wxTheApp->Connect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL,
@@ -80,7 +80,6 @@ OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString
 
 OutputTabWindow::~OutputTabWindow()
 {
-    clThemeUpdater::Get().UnRegisterWindow(this);
     m_styler.Reset(NULL);
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged),
                                      NULL, this);

@@ -57,7 +57,6 @@
 #include "clInfoBar.h"
 #include "clMainFrameHelper.h"
 #include "clSingleChoiceDialog.h"
-#include "clThemeUpdater.h"
 #include "clThemedMenuBar.hpp"
 #include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
@@ -716,7 +715,6 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_webUpdate(NULL)
     , m_toolbar(NULL)
 {
-    clThemeUpdater::Get().RegisterWindow(this);
     if(!wxFrame::Create(pParent, id, title, pos, size, style)) {
         return;
     }
@@ -1327,8 +1325,6 @@ void clMainFrame::CreateGUIControls()
         e.Skip();
         container->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     });
-
-    clThemeUpdater::Get().RegisterWindow(container);
 
     container->SetSizer(new wxBoxSizer(wxVERTICAL));
     clEditorBar* navbar = new clEditorBar(container);
@@ -6060,6 +6056,8 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
 {
     event.Skip();
     clBitmaps::Get().SysColoursChanged(); // Notify the bitmap manager that system colour has changed
+    DoSysColoursChanged();                // scrollbars etc (MSW only)
+
 #if !wxUSE_NATIVE_CAPTION
     clColours colours;
     colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
@@ -6070,12 +6068,11 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
     // update the bitmap as well
     m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines"));
 #endif
-    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
+    // SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_mainPanel->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_debuggerPane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_outputPane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_workspacePane->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    DoSysColoursChanged();
 }
 
 void clMainFrame::DoSysColoursChanged() { MSWSetWindowDarkTheme(this); }

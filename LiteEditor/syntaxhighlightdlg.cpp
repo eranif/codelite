@@ -43,7 +43,6 @@
 #include "free_text_dialog.h"
 #include "macros.h"
 #include "manager.h"
-#include "theme_handler.h"
 #include "windowattrmanager.h"
 
 #include <algorithm>

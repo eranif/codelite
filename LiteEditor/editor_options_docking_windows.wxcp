@@ -121,6 +121,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -296,6 +300,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -322,6 +330,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"string",
 															"m_label":	"# Columns:",
@@ -499,7 +511,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnUsingNativeBookUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -656,7 +667,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnUsingNativeBookUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -809,7 +819,6 @@
 															"m_events":	[{
 																	"m_eventName":	"wxEVT_UPDATE_UI",
 																	"m_eventClass":	"wxUpdateUIEvent",
-																	"m_eventHandler":	"wxUpdateUIEventHandler",
 																	"m_functionNameAndSignature":	"OnUsingNativeBookUI(wxUpdateUIEvent& event)",
 																	"m_description":	"Process a wxEVT_UPDATE_UI event",
 																	"m_noBody":	false
@@ -1259,7 +1268,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnUsingNativeBookUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -1416,7 +1424,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_UPDATE_UI",
 															"m_eventClass":	"wxUpdateUIEvent",
-															"m_eventHandler":	"wxUpdateUIEventHandler",
 															"m_functionNameAndSignature":	"OnUsingNativeBookUI(wxUpdateUIEvent& event)",
 															"m_description":	"Process a wxEVT_UPDATE_UI event",
 															"m_noBody":	false
@@ -1752,6 +1759,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -1779,6 +1790,10 @@
 															"m_label":	"Style:",
 															"m_value":	""
 														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
+														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
 															"m_selection":	0,
@@ -1805,6 +1820,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Orientation:",
@@ -1917,6 +1936,10 @@
 																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
+																}, {
 																	"type":	"choice",
 																	"m_label":	"Orientation:",
 																	"m_selection":	0,
@@ -1947,6 +1970,10 @@
 																			"type":	"string",
 																			"m_label":	"Style:",
 																			"m_value":	""
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Keep as a class member",
+																			"m_value":	false
 																		}, {
 																			"type":	"string",
 																			"m_label":	"# Columns:",
@@ -2120,7 +2147,6 @@
 																			"m_events":	[{
 																					"m_eventName":	"wxEVT_UPDATE_UI",
 																					"m_eventClass":	"wxUpdateUIEvent",
-																					"m_eventHandler":	"wxUpdateUIEventHandler",
 																					"m_functionNameAndSignature":	"OnUseCustomCaptionColourUI(wxUpdateUIEvent& event)",
 																					"m_description":	"Process a wxEVT_UPDATE_UI event",
 																					"m_noBody":	false
@@ -2278,7 +2304,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -2305,6 +2330,10 @@
 																	"type":	"string",
 																	"m_label":	"Style:",
 																	"m_value":	""
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
 																}, {
 																	"type":	"choice",
 																	"m_label":	"Orientation:",
@@ -2497,6 +2526,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -2759,6 +2792,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -2785,6 +2822,10 @@
 															"type":	"string",
 															"m_label":	"Style:",
 															"m_value":	""
+														}, {
+															"type":	"bool",
+															"m_label":	"Keep as a class member",
+															"m_value":	false
 														}, {
 															"type":	"choice",
 															"m_label":	"Orientation:",
@@ -2888,6 +2929,10 @@
 																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
+																}, {
 																	"type":	"string",
 																	"m_label":	"# Columns:",
 																	"m_value":	"4"
@@ -2989,7 +3034,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3071,7 +3115,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3153,7 +3196,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3235,7 +3277,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3317,7 +3358,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3399,7 +3439,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3481,7 +3520,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3563,7 +3601,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3645,7 +3682,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3727,7 +3763,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3809,7 +3844,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3891,7 +3925,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -3973,7 +4006,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false
@@ -4055,7 +4087,6 @@
 																	"m_events":	[{
 																			"m_eventName":	"wxEVT_UPDATE_UI",
 																			"m_eventClass":	"wxUpdateUIEvent",
-																			"m_eventHandler":	"wxUpdateUIEventHandler",
 																			"m_functionNameAndSignature":	"OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event)",
 																			"m_description":	"Process a wxEVT_UPDATE_UI event",
 																			"m_noBody":	false

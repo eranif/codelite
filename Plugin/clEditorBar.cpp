@@ -6,7 +6,6 @@
 #include "bookmark_manager.h"
 #include "clSystemSettings.h"
 #include "clTabRenderer.h"
-#include "clThemeUpdater.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "cl_config.h"

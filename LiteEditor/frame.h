@@ -42,13 +42,13 @@
 #include "mainbook.h"
 #include "output_pane.h"
 #include "tags_options_dlg.h"
-#include "theme_handler.h"
 #include "wx/aui/aui.h"
 #include "wx/choice.h"
 #include "wx/combobox.h"
 #include "wx/frame.h"
 #include "wx/timer.h"
 #include "wxCustomControls.hpp"
+
 #include <set>
 #include <wx/cmndata.h>
 #include <wx/dcbuffer.h>
@@ -116,7 +116,6 @@ class clMainFrame : public wxFrame
     wxSizer* m_toolbarsSizer = nullptr;
     clThemedMenuBar* m_menuBar;
     wxMenu* m_bookmarksDropDownMenu;
-    ThemeHandler m_themeHandler;
     bool m_noSavePerspectivePrompt;
 
 #ifndef __WXMSW__

@@ -47,7 +47,6 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 #include "clSystemSettings.h"
-#include "clThemeUpdater.h"
 #include <wx/stattext.h>
 // clang-format on
 
@@ -91,10 +90,6 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
     , m_highlightMatches(false)
     , m_replaceInSelection(false)
 {
-    // SetBackgroundStyle(wxBG_STYLE_PAINT);
-    // Add the 'close' button
-    clThemeUpdater::Get().UnRegisterWindow(this);
-
     // Handle Edit events
     m_findEventsHandler.Reset(new clEditEventsHandler(m_textCtrlFind));
     m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace));
@@ -195,11 +190,6 @@ clPluginsFindBar::clPluginsFindBar(wxWindow* parent, wxWindowID id)
 
 clPluginsFindBar::~clPluginsFindBar()
 {
-    // m_findEventsHandler.Reset(nullptr);
-    // m_replaceEventsHandler.Reset(nullptr);
-    // Unbind(wxEVT_PAINT, &clPluginsFindBar::OnPaint, this);
-    clThemeUpdater::Get().RegisterWindow(this);
-
     // Remember the buttons clicked
     clConfig::Get().Write("FindBar/SearchFlags", (int)DoGetSearchFlags());
     clConfig::Get().Write("FindBar/HighlightOccurences", m_highlightMatches);
@@ -288,11 +278,11 @@ void clPluginsFindBar::OnKeyDown(wxKeyEvent& e)
 {
     switch(e.GetKeyCode()) {
     case WXK_DOWN: {
-//        DoArrowDown(m_searchHistory, m_textCtrlFind);
+        //        DoArrowDown(m_searchHistory, m_textCtrlFind);
         break;
     }
     case WXK_UP: {
-//        DoArrowUp(m_searchHistory, m_textCtrlFind);
+        //        DoArrowUp(m_searchHistory, m_textCtrlFind);
         break;
     }
     case WXK_ESCAPE: {
@@ -311,11 +301,11 @@ void clPluginsFindBar::OnReplaceKeyDown(wxKeyEvent& e)
 {
     switch(e.GetKeyCode()) {
     case WXK_DOWN: {
-//        DoArrowDown(m_replaceHistory, m_textCtrlReplace);
+        //        DoArrowDown(m_replaceHistory, m_textCtrlReplace);
         break;
     }
     case WXK_UP: {
-//        DoArrowUp(m_replaceHistory, m_textCtrlReplace);
+        //        DoArrowUp(m_replaceHistory, m_textCtrlReplace);
         break;
     }
     case WXK_ESCAPE: {

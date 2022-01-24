@@ -25,7 +25,6 @@
 #include "windowstack.h"
 
 #include "clSystemSettings.h"
-#include "clThemeUpdater.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
 

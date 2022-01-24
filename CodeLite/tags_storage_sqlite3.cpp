@@ -1881,6 +1881,8 @@ void TagsStorageSQLite::GetTagsByPathAndKind(const wxString& path, std::vector<T
         sql.RemoveLast();
         sql << ")";
     }
+    // to avoid any kind of specialization, sort the entries by DBid
+    sql << " order by ID asc";
     sql << " limit " << limit;
     clDEBUG1() << "Running SQL:" << sql << endl;
     DoFetchTags(sql, tags);

@@ -43,6 +43,15 @@ TagEntryPtr find_tag(const wxString& path, const vector<TagEntryPtr>& candidates
     return *where;
 }
 
+TagEntryPtr find_tag_by_name(const wxString& name, const vector<TagEntryPtr>& candidates)
+{
+    auto where = find_if(candidates.begin(), candidates.end(), [=](TagEntryPtr tag) { return tag->GetName() == name; });
+    if(where == candidates.end()) {
+        return NULL;
+    }
+    return *where;
+}
+
 bool is_tag_exists(const wxString& path, const vector<TagEntryPtr>& candidates)
 {
     return find_tag(path, candidates).Get() != NULL;
@@ -700,8 +709,11 @@ TEST_FUNC(test_cxx_code_completion_lsp_location_locals)
     completer->set_text(cc_lsp_location, wxEmptyString, wxNOT_FOUND);
     vector<TagEntryPtr> locals = completer->get_locals(wxEmptyString);
     CHECK_BOOL(!locals.empty());
-    CHECK_BOOL(locals.at(0)->GetScope() == "LSP::Location");
-    CHECK_BOOL(locals.at(0)->GetName() == "loc");
+
+    auto tag = find_tag_by_name("loc", locals);
+    CHECK_NOT_NULL(tag);
+    CHECK_BOOL(tag->GetName() == "loc");
+    CHECK_BOOL(tag->GetScope() == "LSP::Location");
     return true;
 }
 

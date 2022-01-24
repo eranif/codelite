@@ -1232,7 +1232,7 @@ void wxCrafterPlugin::DoInitDone(wxObject* obj)
 #endif
 
     if(m_useFrame) {
-        m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode);
+        m_mainFrame = new MainFrame(nullptr, m_serverMode);
 
         // Start the network thread if server mode is enabled
         if(m_serverMode) {

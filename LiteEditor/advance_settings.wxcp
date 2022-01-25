@@ -145,6 +145,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -341,7 +345,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnButtonOKClicked(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
@@ -376,14 +379,12 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnApply(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnApplyUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false

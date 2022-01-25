@@ -946,6 +946,27 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& op
     candidates = get_children_of_scope(parent, kinds, filter, visible_scopes);
     wxStringSet_t visited;
 
+    // give prototypes a priority over functions
+    // why? most people will write their comment in the header
+    // file
+    vector<TagEntryPtr> ordered_candidates;
+    vector<TagEntryPtr> functions_candidates; // only of type `function`
+
+    // this is done in O(n)
+    ordered_candidates.reserve(candidates.size());
+    functions_candidates.reserve(candidates.size());
+    for(TagEntryPtr tag : candidates) {
+        if(tag->IsFunction()) {
+            functions_candidates.emplace_back(tag);
+        } else {
+            ordered_candidates.emplace_back(tag);
+        }
+    }
+
+    // join the lists placing all "functions" at the bottom
+    ordered_candidates.insert(ordered_candidates.end(), functions_candidates.begin(), functions_candidates.end());
+    candidates.swap(ordered_candidates);
+
     vector<TagEntryPtr> unique_candidates;
     unique_candidates.reserve(candidates.size());
     CompletionHelper helper;

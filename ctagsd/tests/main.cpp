@@ -305,15 +305,27 @@ TEST_FUNC(test_cxx_code_complete_member_of_parent_class)
 TEST_FUNC(TestCTagsManager_AutoCandidates)
 {
     ENSURE_DB_LOADED();
+    {
+        vector<TagEntryPtr> candidates;
+        wxString fulltext = "wxCodeCompletionBoxManager::Get().";
 
-    vector<TagEntryPtr> candidates;
-    wxString fulltext = "wxCodeCompletionBoxManager::Get().";
+        auto resolved = completer->code_complete(fulltext, {});
+        CHECK_BOOL(resolved);
 
-    auto resolved = completer->code_complete(fulltext, {});
-    CHECK_BOOL(resolved);
-
-    completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, {});
-    CHECK_BOOL(!candidates.empty());
+        completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, {});
+        CHECK_BOOL(!candidates.empty());
+    }
+    {
+        vector<TagEntryPtr> candidates;
+        CxxRemainder remainder;
+        auto resolved = completer->code_complete("StringUtils::StripTerminalColouring", {}, &remainder);
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "StringUtils");
+        CHECK_STRING(remainder.filter, "StripTerminalColouring");
+        completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates, {});
+        CHECK_BOOL(!candidates.empty());
+        CHECK_SIZE(candidates.size(), 2);
+    }
     return true;
 }
 

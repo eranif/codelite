@@ -552,6 +552,12 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         ctrl->SetUseTabs(true);
     }
     ctrl->SetLayoutCache(wxSTC_CACHE_PAGE);
+
+    // caret width and blink
+    int caretWidth = clConfig::Get().Read("editor/caret_width", 2);
+    caretWidth = ::clGetSize(caretWidth, ctrl);
+    ctrl->SetCaretWidth(caretWidth);
+    ctrl->SetCaretPeriod(options->GetCaretBlinkPeriod());
 }
 
 const StyleProperty& LexerConf::GetProperty(int propertyId) const

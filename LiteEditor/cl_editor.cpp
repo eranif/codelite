@@ -91,6 +91,7 @@
 #include <wx/regex.h>
 #include <wx/richtooltip.h> // wxRichToolTip
 #include <wx/wupdlock.h>
+#include <wx/wxcrt.h>
 
 //#include "clFileOrFolderDropTarget.h"
 
@@ -3613,8 +3614,16 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
 
 void clEditor::OnKeyDown(wxKeyEvent& event)
 {
-    // always cancel the tip
-    DoCancelCodeCompletionBox();
+    bool is_pos_before_whitespace = wxIsspace(SafeGetChar(PositionBefore(GetCurrentPos())));
+    if(!is_pos_before_whitespace && (event.GetKeyCode() == WXK_BACK) && !m_calltip) {
+        // try to code complete
+        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
+        evt.SetPosition(GetCurrentPosition());
+        evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+        evt.SetTriggerKind(LSP::CompletionItem::kTriggerUser);
+        evt.SetFileName(GetFileName().GetFullPath());
+        ServiceProviderManager::Get().AddPendingEvent(evt);
+    }
 
     m_prevSelectionInfo.Clear();
     if(HasSelection()) {

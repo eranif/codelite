@@ -68,20 +68,20 @@ protected:
     static wxCodeCompletionBox::BmpVec_t m_defaultBitmaps;
     std::unordered_map<int, int> m_lspCompletionItemImageIndexMap;
     wxString m_displayedTip;
-    wxStyledTextCtrl* m_stc;
+    wxStyledTextCtrl* m_stc = nullptr;
     wxFont m_ccFont;
-    int m_startPos;
+    int m_startPos = wxNOT_FOUND;
 
     /// When firing the various "clCodeCompletionEvent"s, set the event object
     /// to this member. This help distinguish the real trigger of the code completion
     /// box
-    wxEvtHandler* m_eventObject;
+    wxEvtHandler* m_eventObject = nullptr;
 
     /// Code completion tooltip that is shown next to the code completion box
-    CCBoxTipWindow* m_tipWindow;
+    CCBoxTipWindow* m_tipWindow = nullptr;
 
     /// The code completion box flags, see above enum for possible values
-    size_t m_flags;
+    size_t m_flags = 0;
 
     /// Scrollbar bitmaps
     wxBitmap m_bmpUp;
@@ -111,6 +111,12 @@ public:
      * events fired from this object
      */
     wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventObject = NULL, size_t flags = 0);
+
+    /**
+     * @brief reset the code completion box clearing it from all its content and preparing it
+     * for a new usage
+     */
+    void Reset(wxEvtHandler* eventObject = NULL, size_t flags = 0);
 
     /**
      * @brief show the completion box

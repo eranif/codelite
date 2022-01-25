@@ -149,6 +149,18 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
 wxCodeCompletionBox::~wxCodeCompletionBox() { DoDestroyTipWindow(); }
 
+void wxCodeCompletionBox::Reset(wxEvtHandler* eventObject, size_t flags)
+{
+    m_eventObject = eventObject;
+    m_flags = flags;
+    DoDestroyTipWindow();
+    m_allEntries.clear();
+    m_startPos = wxNOT_FOUND;
+    m_stc = nullptr;
+    m_entries.clear();
+    m_list->DeleteAllItems();
+}
+
 void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries)
 {
     m_stc = ctrl;

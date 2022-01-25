@@ -92,11 +92,17 @@ wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
                                                    size_t flags, int startPos, wxEvtHandler* eventObject)
 {
-    DestroyCurrent();
-    CHECK_PTR_RET(ctrl);
-    CHECK_COND_RET(!tags.empty());
+    if(!ctrl || tags.empty()) {
+        DestroyCurrent();
+        return;
+    }
 
-    m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    if(m_box) {
+        m_box->Reset(eventObject);
+    } else {
+        m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    }
+
     m_box->SetFlags(flags);
     m_box->SetStartPos(startPos);
     m_stc = ctrl;
@@ -107,10 +113,16 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    DestroyCurrent();
-    CHECK_PTR_RET(ctrl);
-    CHECK_COND_RET(!entries.empty());
+    if(!ctrl || entries.empty()) {
+        DestroyCurrent();
+        return;
+    }
 
+    if(m_box) {
+        m_box->Reset(eventObject);
+    } else {
+        m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    }
     m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     m_box->SetFlags(flags);
     m_box->SetStartPos(startPos);
@@ -135,11 +147,16 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBox::BmpVec_t& bitmaps, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    DestroyCurrent();
-    CHECK_PTR_RET(ctrl);
-    // CHECK_COND_RET(!entries.empty());
+    if(!ctrl) {
+        DestroyCurrent();
+        return;
+    }
 
-    m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    if(m_box) {
+        m_box->Reset(eventObject);
+    } else {
+        m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    }
     m_box->SetBitmaps(bitmaps);
     m_box->SetFlags(flags);
     m_box->SetStartPos(startPos);
@@ -401,11 +418,16 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const LSP::CompletionItem::Vec_t& completions, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    DestroyCurrent();
-    CHECK_PTR_RET(ctrl);
-    CHECK_COND_RET(!completions.empty());
+    if(!ctrl || completions.empty()) {
+        DestroyCurrent();
+        return;
+    }
 
-    m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    if(m_box) {
+        m_box->Reset(eventObject);
+    } else {
+        m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    }
     m_box->SetFlags(flags);
     m_box->SetStartPos(startPos);
     m_stc = ctrl;

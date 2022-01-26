@@ -238,6 +238,7 @@ class WXDLLIMPEXP_CL Location : public Serializable
 {
     URI m_uri;
     Range m_range;
+    wxString m_pattern;
 
 public:
     virtual void FromJSON(const JSONItem& json);
@@ -265,6 +266,8 @@ public:
     const Range& GetRange() const { return m_range; }
     const wxString& GetPathAsURI() const { return m_uri.GetUrl(); }
     const wxString& GetPath() const { return m_uri.GetPath(); }
+    void SetPattern(const wxString& pattern) { this->m_pattern = pattern; }
+    const wxString& GetPattern() const { return m_pattern; }
 };
 
 //===----------------------------------------------------------------------------------

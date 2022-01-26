@@ -1,6 +1,8 @@
 #include "LSP/basic_types.h"
+
 #include "JSON.h"
 #include "file_logger.h"
+
 #include <wx/filesys.h>
 
 //===------------------------------------------------
@@ -108,6 +110,7 @@ void Location::FromJSON(const JSONItem& json)
 {
     URI::FromString(json.namedObject("uri").toString(), &m_uri);
     m_range.FromJSON(json.namedObject("range"));
+    m_pattern = json["pattern"].toString();
 }
 
 JSONItem Location::ToJSON(const wxString& name) const
@@ -115,6 +118,7 @@ JSONItem Location::ToJSON(const wxString& name) const
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("uri", GetPathAsURI());
     json.append(m_range.ToJSON("range"));
+    json.addProperty("pattern", m_pattern);
     return json;
 }
 

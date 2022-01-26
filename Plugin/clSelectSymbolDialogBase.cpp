@@ -24,55 +24,55 @@ clSelectSymbolDialogBase::clSelectSymbolDialogBase(wxWindow* parent, wxWindowID 
         bBitmapLoaded = true;
     }
 
-    boxSizer2 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
 
-    boxSizer10 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer2->Add(boxSizer10, 1, wxALL | wxEXPAND, 5);
+    boxSizer2->Add(boxSizer10, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(500, 200),
-                                          wxDV_VERT_RULES | wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
     m_dvListCtrl->SetFocus();
 
-    boxSizer10->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, 5);
+    boxSizer10->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, 500, wxALIGN_LEFT);
-    m_dvListCtrl->AppendTextColumn(_("Ext"), wxDATAVIEW_CELL_INERT, 200, wxALIGN_LEFT);
+    m_dvListCtrl->AppendIconTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
+                                       wxDATAVIEW_COL_RESIZABLE);
     m_stdBtnSizer4 = new wxStdDialogButtonSizer();
 
-    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 5);
+    boxSizer2->Add(m_stdBtnSizer4, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
-    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer4->AddButton(m_buttonOK);
 
-    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxSize(-1, -1), 0);
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer4->AddButton(m_buttonCancel);
     m_stdBtnSizer4->Realize();
 
     SetName(wxT("clSelectSymbolDialogBase"));
-    SetSizeHints(-1, -1);
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if(GetSizer()) {
         GetSizer()->Fit(this);
     }
-    CentreOnParent(wxBOTH);
-#if wxVERSION_NUMBER >= 2900
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(clSelectSymbolDialogBase::OnItemActivated), NULL, this);
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSelectSymbolDialogBase::OnOKUI), NULL, this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &clSelectSymbolDialogBase::OnItemActivated, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &clSelectSymbolDialogBase::OnOKUI, this);
 }
 
 clSelectSymbolDialogBase::~clSelectSymbolDialogBase()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(clSelectSymbolDialogBase::OnItemActivated), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clSelectSymbolDialogBase::OnOKUI), NULL, this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &clSelectSymbolDialogBase::OnItemActivated, this);
+    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &clSelectSymbolDialogBase::OnOKUI, this);
 }

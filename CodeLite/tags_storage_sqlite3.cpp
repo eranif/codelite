@@ -1498,7 +1498,21 @@ void TagsStorageSQLiteCache::DoStore(const wxString& key, const std::vector<TagE
     if(m_cache.count(key)) {
         m_cache.erase(key);
     }
-    m_cache.insert({ key, tags });
+
+    // avoid storing entries with __anon entries
+    // since these tags will change their anonymous space
+    // each time we save the file
+    bool can_cache = true;
+    for(auto tag : tags) {
+        if(tag->GetScope().StartsWith("__anon")) {
+            can_cache = false;
+            break;
+        }
+    }
+
+    if(can_cache) {
+        m_cache.insert({ key, tags });
+    }
 }
 
 void TagsStorageSQLite::ClearCache()

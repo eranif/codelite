@@ -8,6 +8,7 @@
 #include "StringUtils.h"
 #include "clEditorBar.h"
 #include "clSFTPEvent.h"
+#include "clSelectSymbolDialog.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
 #include "cl_standard_paths.h"
@@ -28,6 +29,14 @@
 #include <thread>
 #include <unordered_set>
 #include <wx/stc/stc.h>
+
+namespace
+{
+struct SymbolClientData : public wxClientData {
+    SymbolClientData(const LSP::Location& loc) { location = loc; }
+    LSP::Location location;
+};
+} // namespace
 
 LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
     : m_plugin(plugin)
@@ -128,7 +137,26 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
         return;
 
     // for now, use the first location
-    const auto& location = event.GetLocations()[0];
+    LSP::Location location;
+    if(event.GetLocations().size() > 1) {
+        // multiple matches
+        clSelectSymbolDialogEntry::List_t entries;
+        entries.reserve(event.GetLocations().size());
+        for(const auto& loc : event.GetLocations()) {
+            entries.emplace_back();
+            auto& entry = entries.back();
+            entry.name = loc.GetPattern();
+            entry.clientData = new SymbolClientData(loc);
+        }
+
+        clSelectSymbolDialog dlg(nullptr, entries);
+        if(dlg.ShowModal() != wxID_OK) {
+            return;
+        }
+        location = static_cast<SymbolClientData*>(dlg.GetSelection())->location;
+    } else {
+        location = event.GetLocations()[0];
+    }
 
     // let someone else try and open this file first, as it might be a remote file
     LSPEvent open_event(wxEVT_LSP_OPEN_FILE);

@@ -1417,6 +1417,7 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
         match.addProperty("uri", FileUtils::FilePathToURI(file_match));
     } else {
         // add all the results
+        CompletionHelper helper;
         for(TagEntryPtr tag : tags) {
             clDEBUG() << " --> Adding tag:" << tag->GetName() << tag->GetFile() << ":" << tag->GetLine() << endl;
             auto match = result.AddObject(wxEmptyString);
@@ -1425,6 +1426,11 @@ void ProtocolHandler::do_definition(unique_ptr<JSON>&& msg, Channel::ptr_t chann
             range.SetStart({ tag->GetLine() - 1, 0 }).SetEnd({ tag->GetLine() - 1, 0 });
             match.append(range.ToJSON("range"));
             match.addProperty("uri", FileUtils::FilePathToURI(tag->GetFile()));
+            if(tag->IsMethod()) {
+                match.addProperty("pattern", helper.normalize_function(tag, 0));
+            } else {
+                match.addProperty("pattern", tag->GetKind() + " " + tag->GetName());
+            }
         }
     }
     channel->write_reply(response);

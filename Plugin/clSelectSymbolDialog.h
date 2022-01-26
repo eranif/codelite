@@ -30,7 +30,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
-#include <list>
+#include <vector>
 #include <wx/sharedptr.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SYMBOL_SELECTED, clCommandEvent);
@@ -47,7 +47,7 @@ struct WXDLLIMPEXP_SDK clSelectSymbolDialogEntry {
     {
     }
 
-    typedef std::list<clSelectSymbolDialogEntry> List_t;
+    typedef std::vector<clSelectSymbolDialogEntry> List_t;
 };
 
 class WXDLLIMPEXP_SDK clSelectSymbolDialog : public clSelectSymbolDialogBase
@@ -59,6 +59,7 @@ public:
 protected:
     void AddSymbol(const wxString& name, const wxBitmap& bmp = wxNullBitmap, const wxString& help = "",
                    wxClientData* clientData = NULL);
+    void Initialise(const clSelectSymbolDialogEntry::List_t& entries);
 
 public:
     /**

@@ -70,8 +70,7 @@ static bool _IsCppKeyword(const wxString& word)
 
 TagsOptionsData::TagsOptionsData()
     : clConfigItem("code-completion")
-    , m_ccFlags(CC_DISP_TYPE_INFO | CC_DISP_FUNC_CALLTIP | CC_CPP_KEYWORD_ASISST | CC_COLOUR_VARS |
-                CC_ACCURATE_SCOPE_RESOLVING | CC_DEEP_SCAN_USING_NAMESPACE_RESOLVING | CC_WORD_ASSIST)
+    , m_ccFlags(CC_DISP_TYPE_INFO | CC_DISP_FUNC_CALLTIP)
     , m_ccColourFlags(CC_COLOUR_DEFAULT)
     , m_fileSpec("*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hxx;*.h++")
     , m_minWordLen(3)
@@ -652,7 +651,6 @@ void TagsOptionsData::Merge(const TagsOptionsData& tod)
     DoUpdateTokensWxMapReversed();
     DoUpdateTokensWxMap();
     if(m_version != TagsOptionsData::CURRENT_VERSION) {
-        m_ccFlags |= CC_WORD_ASSIST;
         m_ccNumberOfDisplayItems = tod.m_ccNumberOfDisplayItems;
     }
     m_version = TagsOptionsData::CURRENT_VERSION;

@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "context_base.h"
+
 #include "ServiceProviderManager.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
@@ -34,6 +35,7 @@
 #include "frame.h"
 #include "macros.h"
 #include "plugin.h"
+
 #include <vector>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
@@ -190,21 +192,20 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
     }
 
     const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
-    if(options.GetFlags() & CC_WORD_ASSIST) {
-        // Try to call code completion
-        clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
-        ccEvt.SetInsideCommentOrString(IsCommentOrString(GetCtrl().GetCurrentPos()));
-        ccEvt.SetTriggerKind(LSP::CompletionItem::kTriggerKindInvoked);
-        ccEvt.SetFileName(GetCtrl().GetFileName().GetFullPath());
-        ccEvt.SetWord(word);
 
-        if(!ServiceProviderManager::Get().ProcessEvent(ccEvt)) {
-            // This is ugly, since CodeLite should not be calling
-            // the plugins... we take comfort in the fact that it
-            // merely fires an event and not calling it directly
-            wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("simple_word_completion"));
-            EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(wordCompleteEvent);
-        }
+    // Try to call code completion
+    clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
+    ccEvt.SetInsideCommentOrString(IsCommentOrString(GetCtrl().GetCurrentPos()));
+    ccEvt.SetTriggerKind(LSP::CompletionItem::kTriggerKindInvoked);
+    ccEvt.SetFileName(GetCtrl().GetFileName().GetFullPath());
+    ccEvt.SetWord(word);
+
+    if(!ServiceProviderManager::Get().ProcessEvent(ccEvt)) {
+        // This is ugly, since CodeLite should not be calling
+        // the plugins... we take comfort in the fact that it
+        // merely fires an event and not calling it directly
+        wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("simple_word_completion"));
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(wordCompleteEvent);
     }
 }
 

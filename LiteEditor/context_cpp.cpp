@@ -2082,15 +2082,6 @@ void ContextCpp::OnUserTypedXChars(const wxString& word)
     if(IsCommentOrString(GetCtrl().GetCurrentPos())) {
         return;
     }
-
-    if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_CPP_KEYWORD_ASISST) {
-        std::vector<TagEntryPtr> tags;
-        MakeCppKeywordsTags(word, tags);
-        if(tags.empty() == false) {
-            GetCtrl().ShowCompletionBox(tags,  // list of tags
-                                        word); // do not automatically insert word if there is only single choice
-        }
-    }
 }
 
 void ContextCpp::MakeCppKeywordsTags(const wxString& word, std::vector<TagEntryPtr>& tags)

@@ -308,27 +308,6 @@ public:
                             size_t flags = PartialMatch);
 
     /**
-     * Return autocompletion candidates based on parsing an expression and retrieving its member from the database.
-     * @param expr Expression to evaluate, can be complex one, such as ((MyClass&)cls).GetName().GetData() ... )
-     * @param text Scope where the expression is located
-     * @param candidates [output] list of TagEntries that can be displayed in Autucompletion box
-     * @return true if candidates.size() is greater than 0
-     */
-    bool AutoCompleteCandidates(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& text,
-                                std::vector<TagEntryPtr>& candidates);
-
-    /**
-     * Return a word completion candidates. this function is used when user hit Ctrl+Space.
-     * @param expr Expression to evaluate, can be complex one, such as ((MyClass&)cls).GetName().GetData() ... )
-     * @param text Scope where the expression is located
-     * @param &word the partial word entered by user
-     * @param &candidates [output] list of TagEntries that can be displayed in Autucompletion box
-     * @return true if candidates.size() is greater than 0
-     */
-    bool WordCompletionCandidates(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& text,
-                                  const wxString& word, std::vector<TagEntryPtr>& candidates);
-
-    /**
      * Delete all tags related to these files
      * @param files list of files, in absolute path
      */
@@ -369,16 +348,6 @@ public:
      */
     void GetHoverTip(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& word,
                      const wxString& text, std::vector<wxString>& tips);
-
-    /**
-     * Return a function call tip object
-     * @param expression expression where the function was found
-     * @param text local scope
-     * @param word function name
-     * @return call tip object
-     */
-    clCallTipPtr GetFunctionTip(const wxFileName& fileName, int lineno, const wxString& expression,
-                                const wxString& text, const wxString& word);
 
     /**
      * Return true if comment parsing is enabled, false otherwise
@@ -449,12 +418,6 @@ public:
      */
     void TagsByTyperef(const wxString& scopeName, const wxArrayString& kind, std::vector<TagEntryPtr>& tags,
                        bool include_anon = false);
-
-    /**
-     * Find symbol at a given location
-     */
-    TagEntryPtr FindDefinition(const wxFileName& fileName, int lineno, const wxString& expr, const wxString& word,
-                               const wxString& text);
 
     /**
      * @brief return a CppToken poiting to the offset of a local variable
@@ -695,12 +658,6 @@ public:
      * @param text
      */
     void StripComments(const wxString& text, wxString& stippedText);
-
-    /**
-     * @brief return space delimited list of all unique string names in the database
-     * @param tagsList
-     */
-    void GetAllTagsNames(wxArrayString& tagsList);
 
     /**
      * @brief return normalize function signature. This function strips any default values or variable

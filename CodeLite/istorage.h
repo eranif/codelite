@@ -324,12 +324,6 @@ public:
 
     /**
      * @brief return a unique list of names
-     * @param names
-     */
-    virtual void GetAllTagsNames(wxArrayString& names) = 0;
-
-    /**
-     * @brief return a unique list of names
      * @param kind
      * @param names
      */

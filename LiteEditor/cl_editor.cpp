@@ -77,6 +77,7 @@
 #include "simpletable.h"
 #include "stringhighlighterjob.h"
 #include "stringsearcher.h"
+#include "tags_options_data.h"
 #include "wx/stc/stc.h"
 #include "wxCodeCompletionBoxManager.h"
 
@@ -1359,12 +1360,10 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
             m_context->OnUserTypedXChars(GetWordAtCaret());
         }
 
-        if(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_WORD_ASSIST) {
-            if(GetWordAtCaret().Len() == (size_t)TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() &&
-               pos - startPos >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen()) {
-                // We need to use here 'CallAfter' since the style is not updated until next Paint
-                CallAfter(&clEditor::CompleteWord, LSP::CompletionItem::kTriggerKindInvoked, false);
-            }
+        if(GetWordAtCaret().Len() == (size_t)TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen() &&
+           pos - startPos >= TagsManagerST::Get()->GetCtagsOptions().GetMinWordLen()) {
+            // We need to use here 'CallAfter' since the style is not updated until next Paint
+            CallAfter(&clEditor::CompleteWord, LSP::CompletionItem::kTriggerKindInvoked, false);
         }
     }
 
@@ -3615,7 +3614,8 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
 void clEditor::OnKeyDown(wxKeyEvent& event)
 {
     bool is_pos_before_whitespace = wxIsspace(SafeGetChar(PositionBefore(GetCurrentPos())));
-    if(!is_pos_before_whitespace && (event.GetKeyCode() == WXK_BACK) && !m_calltip) {
+    bool backspace_triggers_cc = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_BACKSPACE_TRIGGER;
+    if(backspace_triggers_cc && !is_pos_before_whitespace && (event.GetKeyCode() == WXK_BACK) && !m_calltip) {
         // try to code complete
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
         evt.SetPosition(GetCurrentPosition());

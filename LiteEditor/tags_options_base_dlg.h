@@ -18,7 +18,6 @@
 #include <wx/statbox.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/statline.h>
 #include <wx/checkbox.h>
 #include <wx/slider.h>
 #include <wx/button.h>
@@ -46,15 +45,10 @@ class TagsOptionsBaseDlg : public wxDialog
 protected:
     wxStaticText* m_staticText14;
     wxTextCtrl* m_spinCtrlNumberOfCCItems;
-    wxStaticText* m_staticText123;
-    wxTextCtrl* m_textCtrlFileSpec;
-    wxStaticLine* m_staticLine129;
     wxCheckBox* m_checkDisplayTypeInfo;
     wxCheckBox* m_checkDisplayFunctionTip;
-    wxCheckBox* m_checkBoxKeepFunctionSignature;
-    wxCheckBox* m_checkCppKeywordAssist;
+    wxCheckBox* m_checkBoxBackspaceTriggers;
     wxCheckBox* m_checkBoxGenCompileCommandsJSON;
-    wxCheckBox* m_checkWordAssist;
     wxStaticText* m_staticTextMinWordLen;
     wxSlider* m_sliderMinWordLen;
     wxCheckBox* m_checkAutoInsertSingleChoice;
@@ -69,15 +63,10 @@ protected:
 public:
     wxStaticText* GetStaticText14() { return m_staticText14; }
     wxTextCtrl* GetSpinCtrlNumberOfCCItems() { return m_spinCtrlNumberOfCCItems; }
-    wxStaticText* GetStaticText123() { return m_staticText123; }
-    wxTextCtrl* GetTextCtrlFileSpec() { return m_textCtrlFileSpec; }
-    wxStaticLine* GetStaticLine129() { return m_staticLine129; }
     wxCheckBox* GetCheckDisplayTypeInfo() { return m_checkDisplayTypeInfo; }
     wxCheckBox* GetCheckDisplayFunctionTip() { return m_checkDisplayFunctionTip; }
-    wxCheckBox* GetCheckBoxKeepFunctionSignature() { return m_checkBoxKeepFunctionSignature; }
-    wxCheckBox* GetCheckCppKeywordAssist() { return m_checkCppKeywordAssist; }
+    wxCheckBox* GetCheckBoxBackspaceTriggers() { return m_checkBoxBackspaceTriggers; }
     wxCheckBox* GetCheckBoxGenCompileCommandsJSON() { return m_checkBoxGenCompileCommandsJSON; }
-    wxCheckBox* GetCheckWordAssist() { return m_checkWordAssist; }
     wxStaticText* GetStaticTextMinWordLen() { return m_staticTextMinWordLen; }
     wxSlider* GetSliderMinWordLen() { return m_sliderMinWordLen; }
     wxCheckBox* GetCheckAutoInsertSingleChoice() { return m_checkAutoInsertSingleChoice; }

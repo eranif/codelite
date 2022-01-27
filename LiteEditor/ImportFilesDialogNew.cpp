@@ -24,18 +24,20 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ImportFilesDialogNew.h"
+
 #include "bitmap_loader.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "importfilessettings.h"
 #include "pluginmanager.h"
 #include "windowattrmanager.h"
+
+#include <algorithm>
 #include <tuple>
 #include <vector>
 #include <wx/dir.h>
 #include <wx/dirdlg.h>
 #include <wx/filefn.h>
-#include <algorithm>
 
 class ImportFilesDlgData : public wxClientData
 {
@@ -71,12 +73,8 @@ ImportFilesDialogNew::ImportFilesDialogNew(wxWindow* parent)
     ImportFilesSettings options;
     if(!EditorConfigST::Get()->ReadObject(wxT("import_dir_options"), &options)) {
         // first time, read the settings from the ctags options
-        options.SetFileMask(TagsManagerST::Get()->GetCtagsOptions().GetFileSpec());
-        bool noExt = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_PARSE_EXT_LESS_FILES ? true : false;
+        options.SetFileMask("*.cpp;*.c;*.cxx;*.cc;*.hpp;*.h");
         size_t flags(0);
-        if(noExt) {
-            flags |= IFS_INCLUDE_FILES_WO_EXT;
-        }
         options.SetFlags(flags);
     }
 
@@ -103,7 +101,8 @@ ImportFilesDialogNew::~ImportFilesDialogNew()
     options.SetFileMask(m_textCtrSpec->GetValue());
 
     size_t flags(0);
-    if(m_checkBoxFilesWOExt->IsChecked()) flags |= IFS_INCLUDE_FILES_WO_EXT;
+    if(m_checkBoxFilesWOExt->IsChecked())
+        flags |= IFS_INCLUDE_FILES_WO_EXT;
     options.SetFlags(flags);
     EditorConfigST::Get()->WriteObject(wxT("import_dir_options"), &options);
 }
@@ -123,14 +122,14 @@ void ImportFilesDialogNew::DoBuildTree(const wxDataViewItem& parent, const wxDir
 
     // Sort the directories
     std::sort(D.begin(), D.end());
-    
+
     // Now build the tree
     std::for_each(D.begin(), D.end(), [&](const wxString& path) {
         wxDir childDir(path);
         wxVector<wxVariant> cols;
         cols.push_back(initialState);
         cols.push_back(MakeIconText(wxFileName(path, "").GetDirs().Last(), folderBmp));
-        
+
         wxDataViewItem child =
             m_dataviewModel->AppendItem(parent, cols, new ImportFilesDlgData(childDir.GetName(), initialState));
         // Add dummy columns
@@ -151,7 +150,8 @@ void ImportFilesDialogNew::OnDirChanged(wxCommandEvent& event)
 
 void ImportFilesDialogNew::DoBuildTree()
 {
-    if(!wxFileName::DirExists(m_textCtrlDir->GetValue())) return;
+    if(!wxFileName::DirExists(m_textCtrlDir->GetValue()))
+        return;
     m_dataviewModel->Clear();
 
     wxString curpath = m_textCtrlDir->GetValue();
@@ -292,7 +292,8 @@ void ImportFilesDialogNew::OnBrowse(wxCommandEvent& event)
 {
     wxString new_path = wxDirSelector(_("Select working directory:"), m_textCtrlDir->GetValue(), wxDD_DEFAULT_STYLE,
                                       wxDefaultPosition, this);
-    if(new_path.IsEmpty()) return;
+    if(new_path.IsEmpty())
+        return;
     m_textCtrlDir->ChangeValue(new_path);
     DoBuildTree();
 }

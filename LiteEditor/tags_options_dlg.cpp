@@ -65,19 +65,16 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     //------------------------------------------------------------------
     // Display and behavior
     //------------------------------------------------------------------
-    m_checkDisplayFunctionTip->SetValue(m_data.GetFlags() & CC_DISP_FUNC_CALLTIP ? true : false);
-    m_checkDisplayTypeInfo->SetValue(m_data.GetFlags() & CC_DISP_TYPE_INFO ? true : false);
-    m_checkCppKeywordAssist->SetValue(m_data.GetFlags() & CC_CPP_KEYWORD_ASISST ? true : false);
+    m_checkDisplayFunctionTip->SetValue(m_data.GetFlags() & CC_DISP_FUNC_CALLTIP);
+    m_checkDisplayTypeInfo->SetValue(m_data.GetFlags() & CC_DISP_TYPE_INFO);
+    m_checkBoxBackspaceTriggers->SetValue(m_data.GetFlags() & CC_BACKSPACE_TRIGGER);
 
-    m_checkBoxKeepFunctionSignature->SetValue(m_data.GetFlags() & CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED);
     m_spinCtrlNumberOfCCItems->ChangeValue(::wxIntToString(m_data.GetCcNumberOfDisplayItems()));
-    m_textCtrlFileSpec->ChangeValue(m_data.GetFileSpec());
-    this->m_checkBoxGenCompileCommandsJSON->SetValue(genJsonFile);
+    m_checkBoxGenCompileCommandsJSON->SetValue(genJsonFile);
 
     //----------------------------------------------------
     // Triggering
     //----------------------------------------------------
-    m_checkWordAssist->SetValue(m_data.GetFlags() & CC_WORD_ASSIST ? true : false);
     m_checkAutoInsertSingleChoice->SetValue(m_data.GetFlags() & CC_AUTO_INSERT_SINGLE_CHOICE ? true : false);
     m_sliderMinWordLen->SetValue(m_data.GetMinWordLen());
     GetSizer()->Fit(this);
@@ -99,10 +96,8 @@ void CodeCompletionSettingsDialog::CopyData()
     //----------------------------------------------------
     SetFlag(CC_DISP_FUNC_CALLTIP, m_checkDisplayFunctionTip->IsChecked());
     SetFlag(CC_DISP_TYPE_INFO, m_checkDisplayTypeInfo->IsChecked());
-    SetFlag(CC_CPP_KEYWORD_ASISST, m_checkCppKeywordAssist->IsChecked());
-    SetFlag(CC_KEEP_FUNCTION_SIGNATURE_UNFORMATTED, m_checkBoxKeepFunctionSignature->IsChecked());
+    SetFlag(CC_BACKSPACE_TRIGGER, m_checkBoxBackspaceTriggers->IsChecked());
     m_data.SetCcNumberOfDisplayItems(::wxStringToInt(m_spinCtrlNumberOfCCItems->GetValue(), 100));
-    m_data.SetFileSpec(m_textCtrlFileSpec->GetValue());
     clConfig::Get().Write("GenerateCompileCommands", this->m_checkBoxGenCompileCommandsJSON->IsChecked());
 
     //----------------------------------------------------
@@ -114,7 +109,6 @@ void CodeCompletionSettingsDialog::CopyData()
     // Triggering
     //----------------------------------------------------
     SetFlag(CC_AUTO_INSERT_SINGLE_CHOICE, m_checkAutoInsertSingleChoice->IsChecked());
-    SetFlag(CC_WORD_ASSIST, m_checkWordAssist->IsChecked());
     m_data.SetMinWordLen(m_sliderMinWordLen->GetValue());
 }
 
@@ -136,10 +130,7 @@ void CodeCompletionSettingsDialog::SetColouringFlag(CodeCompletionColourOpts fla
     }
 }
 
-void CodeCompletionSettingsDialog::OnAutoShowWordAssitUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkWordAssist->IsChecked());
-}
+void CodeCompletionSettingsDialog::OnAutoShowWordAssitUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void CodeCompletionSettingsDialog::OnButtonCancel(wxCommandEvent& event)
 {

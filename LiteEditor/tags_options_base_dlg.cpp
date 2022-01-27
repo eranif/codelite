@@ -57,26 +57,6 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer12->Add(m_spinCtrlNumberOfCCItems, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
-    m_staticText123 = new wxStaticText(this, wxID_ANY, _("Additional file extensions to parse:"), wxDefaultPosition,
-                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer12->Add(m_staticText123, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlFileSpec =
-        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlFileSpec->SetToolTip(_("In addition to the default C/C++ file extensions, you may add here\nadditional "
-                                     "file extensions so CodeLite will know to parse them as\nC/C++ files"));
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlFileSpec->SetHint(wxT(""));
-#endif
-
-    flexGridSizer12->Add(m_textCtrlFileSpec, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticLine129 =
-        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
-
-    staticBoxSizer133->Add(m_staticLine129, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     wxFlexGridSizer* flexGridSizer127 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer127->SetFlexibleDirection(wxBOTH);
     flexGridSizer127->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
@@ -97,19 +77,13 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer127->Add(m_checkDisplayFunctionTip, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxKeepFunctionSignature = new wxCheckBox(this, wxID_ANY, _("Keep function signature un-formatted"),
-                                                     wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxKeepFunctionSignature->SetValue(false);
+    m_checkBoxBackspaceTriggers = new wxCheckBox(this, wxID_ANY, _("BACKSPACE triggers code completion"),
+                                                 wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxBackspaceTriggers->SetValue(false);
+    m_checkBoxBackspaceTriggers->SetToolTip(
+        _("Deleting character will cause CodeLite to re-trigger the code completion"));
 
-    flexGridSizer127->Add(m_checkBoxKeepFunctionSignature, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkCppKeywordAssist = new wxCheckBox(this, wxID_ANY, _("Display completion box for language keywords"),
-                                             wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkCppKeywordAssist->SetValue(false);
-    m_checkCppKeywordAssist->SetToolTip(
-        _("When enabled, codelite will auto show the code completion box for C/C++ keywords after typing 2 chars"));
-
-    flexGridSizer127->Add(m_checkCppKeywordAssist, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer127->Add(m_checkBoxBackspaceTriggers, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxGenCompileCommandsJSON = new wxCheckBox(this, wxID_ANY, _("Generate compile_commands.json file"),
                                                       wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -128,19 +102,10 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     sbSizer7->Add(fgSizer4, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkWordAssist = new wxCheckBox(this, wxID_ANY, _("Auto display code completion box when typing"),
-                                       wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkWordAssist->SetValue(false);
-    m_checkWordAssist->SetToolTip(
-        _("When enabled, codelite will auto show the code completion box after N chars were typed"));
-
-    fgSizer4->Add(m_checkWordAssist, 0, wxALL, WXC_FROM_DIP(5));
-
-    fgSizer4->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(5));
-
     m_staticTextMinWordLen = new wxStaticText(this, wxID_ANY, _("Minimum chars to type:"), wxDefaultPosition,
                                               wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_staticTextMinWordLen->SetToolTip(_("Minimum chars to type:"));
+    m_staticTextMinWordLen->SetToolTip(
+        _("The minimum number of characters to type in order for CodeLite\nto trigger code completion"));
 
     fgSizer4->Add(m_staticTextMinWordLen, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -181,32 +146,22 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_staticTextMinWordLen->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI),
-                                    NULL, this);
-    m_sliderMinWordLen->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI),
-                                NULL, this);
-    m_button104->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnButtonOk), NULL,
-                         this);
-    m_button106->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnButtonCancel), NULL,
-                         this);
+    m_staticTextMinWordLen->Bind(wxEVT_UPDATE_UI, &TagsOptionsBaseDlg::OnAutoShowWordAssitUI, this);
+    m_sliderMinWordLen->Bind(wxEVT_UPDATE_UI, &TagsOptionsBaseDlg::OnAutoShowWordAssitUI, this);
+    m_button104->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TagsOptionsBaseDlg::OnButtonOk, this);
+    m_button106->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TagsOptionsBaseDlg::OnButtonCancel, this);
 }
 
 TagsOptionsBaseDlg::~TagsOptionsBaseDlg()
 {
-    m_staticTextMinWordLen->Disconnect(wxEVT_UPDATE_UI,
-                                       wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI), NULL, this);
-    m_sliderMinWordLen->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(TagsOptionsBaseDlg::OnAutoShowWordAssitUI),
-                                   NULL, this);
-    m_button104->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnButtonOk), NULL,
-                            this);
-    m_button106->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(TagsOptionsBaseDlg::OnButtonCancel),
-                            NULL, this);
+    m_staticTextMinWordLen->Unbind(wxEVT_UPDATE_UI, &TagsOptionsBaseDlg::OnAutoShowWordAssitUI, this);
+    m_sliderMinWordLen->Unbind(wxEVT_UPDATE_UI, &TagsOptionsBaseDlg::OnAutoShowWordAssitUI, this);
+    m_button104->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TagsOptionsBaseDlg::OnButtonOk, this);
+    m_button106->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TagsOptionsBaseDlg::OnButtonCancel, this);
 }

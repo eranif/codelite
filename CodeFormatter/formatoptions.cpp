@@ -334,11 +334,11 @@ wxString FormatOptions::RustfmtCommand(const wxFileName& fileName) const
     command = MacroManager::Instance()->Expand(command, nullptr, wxEmptyString);
     ::WrapWithQuotes(command);
 
-    wxString rustfmtConfigFile = MacroManager::Instance()->Expand(GetRustConfigFile(), nullptr, wxEmptyString);
-    GenerateRustfmtTomlFile(fileName, rustfmtConfigFile);
-    ::WrapWithQuotes(rustfmtConfigFile);
+//    wxString rustfmtConfigFile = MacroManager::Instance()->Expand(GetRustConfigFile(), nullptr, wxEmptyString);
+//    GenerateRustfmtTomlFile(fileName, rustfmtConfigFile);
+//    ::WrapWithQuotes(rustfmtConfigFile);
 
-    command << " --config-path " << rustfmtConfigFile;
+//    command << " --config-path " << rustfmtConfigFile;
     filePath = fileName.GetFullPath();
     ::WrapWithQuotes(filePath);
     command << " " << filePath;

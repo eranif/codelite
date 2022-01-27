@@ -512,6 +512,7 @@ void CodeFormatter::DoFormatWithRustfmt(IEditor* editor, const wxFileName& fileN
     }
 
     wxString command = m_options.RustfmtCommand(fileName);
+    clDEBUG() << "Running:" << command << endl;
     RunCommand(command);
 
     // revert the save we did earlier

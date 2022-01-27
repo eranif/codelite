@@ -516,6 +516,10 @@ void DiffSideBySidePanel::SetFilesDetails(const DiffSideBySidePanel::FileInfo& l
 
 void DiffSideBySidePanel::OnNextDiffSequence(wxCommandEvent& event)
 {
+    // sanity
+    if((m_cur_sequence + 1) >= m_sequences.size())
+        return;
+
     m_cur_sequence++; // advance the sequence
     int firstLine = m_sequences.at(m_cur_sequence).first;
     int lastLine = m_sequences.at(m_cur_sequence).second;
@@ -525,6 +529,10 @@ void DiffSideBySidePanel::OnNextDiffSequence(wxCommandEvent& event)
 
 void DiffSideBySidePanel::OnPrevDiffSequence(wxCommandEvent& event)
 {
+    // sanity
+    if((m_cur_sequence - 1) < 0 || (m_cur_sequence - 1) >= m_sequences.size())
+        return;
+
     m_cur_sequence--;
     int firstLine = m_sequences.at(m_cur_sequence).first;
     int lastLine = m_sequences.at(m_cur_sequence).second;

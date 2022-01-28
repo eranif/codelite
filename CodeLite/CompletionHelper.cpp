@@ -468,6 +468,7 @@ void populate_keywords()
         words.insert("override");
         words.insert("explicit");
         words.insert("constexpr");
+        words.insert("thread_local");
     }
 }
 } // namespace

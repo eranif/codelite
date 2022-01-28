@@ -793,3 +793,15 @@ bool TagEntry::IsAuto(const TagEntry* tag)
     read_until_find(tokenizer, token, T_AUTO, 0, &found, &consumed);
     return found == T_AUTO;
 }
+
+wxString TagEntry::GetMacrodef() const { return GetExtField("macrodef"); }
+
+void TagEntry::SetMacrodef(const wxString& value) { set_extra_field("macrodef", value); }
+
+void TagEntry::set_extra_field(const wxString& name, const wxString& value)
+{
+    if(m_extFields.count(name)) {
+        m_extFields.erase(name);
+    }
+    m_extFields.insert({ name, value });
+}

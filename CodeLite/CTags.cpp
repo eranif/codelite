@@ -39,6 +39,9 @@ void WrapInShell(wxString& cmd)
 }
 } // namespace
 
+thread_local bool is_initialised = false;
+thread_local bool is_macrodef_supported = false;
+
 wxString CTags::WrapSpaces(const wxString& file)
 {
     wxString fixed = file;
@@ -61,14 +64,19 @@ wxString fix_macro_entry(const wxString& macro)
 bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_indexer, const wxStringMap_t& macro_table,
                        const wxString& ctags_kinds, wxString* output)
 {
+    Initialise(codelite_indexer);
     clDEBUG() << "Generating ctags files" << clEndl;
 
     // prepare the options file
     // one option per line
     vector<wxString> options_arr;
     options_arr.reserve(500);
-    options_arr = { "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--language-force=c++",
-                    "--fields-c++=+{template}+{properties}" };
+    wxString fields_cxx = "--fields-c++=+{template}+{properties}";
+    if(is_macrodef_supported) {
+        fields_cxx << "+{macrodef}";
+    }
+
+    options_arr = { "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--language-force=c++", fields_cxx };
     if(ctags_kinds.empty()) {
         // default
         options_arr.push_back("--c-kinds=+p");
@@ -260,4 +268,27 @@ size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, co
         clDEBUG() << "0 local tags, ctags output:" << content << endl;
     }
     return tags.size();
+}
+
+void CTags::Initialise(const wxString& codelite_indexer)
+{
+    if(is_initialised)
+        return;
+
+    is_initialised = true;
+    // check whether we have `macrodef` supported
+    wxString output;
+    vector<wxString> command = { codelite_indexer, "--list-fields=c++" };
+    auto process = ::CreateAsyncProcess(nullptr, command, IProcessCreateSync, wxEmptyString, nullptr, wxEmptyString);
+    if(process) {
+        process->WaitForTerminate(output);
+    }
+
+    wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+    for(const auto& line : lines) {
+        if(line.Contains("macrodef")) {
+            is_macrodef_supported = true;
+            break;
+        }
+    }
 }

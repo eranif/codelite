@@ -154,6 +154,8 @@ public:
         }
     };
 
+    void set_extra_field(const wxString& name, const wxString& value);
+
 public:
     void SetComment(const wxString& comment) { this->m_comment = comment; }
     const wxString& GetComment() const { return m_comment; }
@@ -333,19 +335,21 @@ public:
 #endif
 
     wxString GetAccess() const { return GetExtField(_T("access")); }
-    void SetAccess(const wxString& access) { m_extFields[wxT("access")] = access; }
+    void SetAccess(const wxString& access) { set_extra_field("access", access); }
 
     wxString GetSignature() const { return GetExtField(_T("signature")); }
-    void SetSignature(const wxString& sig) { m_extFields[wxT("signature")] = sig; }
-    void SetInherits(const wxString& inherits) { m_extFields[_T("inherits")] = inherits; }
+    void SetSignature(const wxString& sig) { set_extra_field("signature", sig); }
+    void SetInherits(const wxString& inherits) { set_extra_field("inherits", inherits); }
 
     wxString GetInheritsAsString() const;
     wxArrayString GetInheritsAsArrayNoTemplates() const;
     wxArrayString GetInheritsAsArrayWithTemplates() const;
 
     wxString GetTypename() const;
+    wxString GetMacrodef() const;
     void SetTypename(const wxString& value);
-    void SetTemplateDefinition(const wxString& def) { m_extFields["template"] = def; }
+    void SetMacrodef(const wxString& value);
+    void SetTemplateDefinition(const wxString& def) { set_extra_field("template", def); }
 
     const wxString& GetScope() const { return m_scope; }
     void SetScope(const wxString& scope) { m_scope = scope; }

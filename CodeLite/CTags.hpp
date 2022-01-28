@@ -28,6 +28,8 @@ protected:
                            const wxStringMap_t& macro_table, const wxString& ctags_kinds = wxEmptyString,
                            wxString* output = nullptr);
 
+    static void Initialise(const wxString& codelite_indexer);
+
 public:
     /**
      * @brief given a list of files, generate an output tags file and place it under 'path'

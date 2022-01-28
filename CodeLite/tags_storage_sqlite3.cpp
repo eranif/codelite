@@ -107,13 +107,13 @@ void TagsStorageSQLite::CreateSchema()
         sql = wxT("PRAGMA temp_store = MEMORY;");
         m_db->ExecuteUpdate(sql);
 
-        sql = wxT("PRAGMA case_sensitive_like = 1;");
+        sql = wxT("PRAGMA case_sensitive_like = 0;");
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("create  table if not exists tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, file string, "
                   "line integer, kind string, access string, signature string, pattern string, parent string, inherits "
                   "string, path string, typeref string, scope string, template_definition string, tag_properties "
-                  "string);");
+                  "string, macrodef string);");
         m_db->ExecuteUpdate(sql);
 
         sql = wxT("create  table if not exists global_tags (ID INTEGER PRIMARY KEY AUTOINCREMENT, name string, tag_id "
@@ -612,6 +612,7 @@ TagEntry* TagsStorageSQLite::FromSQLite3ResultSet(wxSQLite3ResultSet& rs)
     entry->SetScope(rs.GetString(12));
     entry->SetTemplateDefinition(rs.GetString(13));
     entry->SetTagProperties(rs.GetString(14));
+    entry->SetMacrodef(rs.GetString(15));
     return entry;
 }
 
@@ -911,7 +912,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
 
     try {
         wxSQLite3Statement statement = m_db->GetPrepareStatement(
-            wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+            wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
         statement.Bind(1, tag.GetName());
         statement.Bind(2, wxFileName(tag.GetFile()).GetFullPath());
         statement.Bind(3, tag.GetLine());
@@ -926,6 +927,7 @@ int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
         statement.Bind(12, tag.GetScope());
         statement.Bind(13, tag.GetTemplateDefinition());
         statement.Bind(14, tag.GetTagProperties());
+        statement.Bind(15, tag.GetMacrodef());
         statement.ExecuteUpdate();
     } catch(wxSQLite3Exception& exc) {
         return TagError;
@@ -1780,7 +1782,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
 
 const wxString& TagsStorageSQLite::GetVersion() const
 {
-    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.0.2"));
+    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.0.3"));
     return gTagsDatabaseVersion;
 }
 

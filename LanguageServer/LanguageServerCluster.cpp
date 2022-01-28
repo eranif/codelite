@@ -22,12 +22,12 @@
 #include "languageserver.h"
 #include "macromanager.h"
 #include "macros.h"
-#include "wx/arrstr.h"
 #include "wxCodeCompletionBoxManager.h"
 
 #include <algorithm>
 #include <thread>
 #include <unordered_set>
+#include <wx/arrstr.h>
 #include <wx/stc/stc.h>
 
 namespace
@@ -118,23 +118,27 @@ void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor* editor)
 {
-    std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::iterator iter =
-        std::find_if(m_servers.begin(), m_servers.end(),
-                     [&](const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt) {
-                         return vt.second->CanHandle(editor);
-                     });
-
-    if(iter == m_servers.end()) {
-        return LanguageServerProtocol::Ptr_t(nullptr);
+    LanguageServerProtocol::Ptr_t bestServer(nullptr);
+    for(const auto& vt : m_servers) {
+        const auto& thisServer = vt.second;
+        if(bestServer && thisServer->GetPriority() <= bestServer->GetPriority()) {
+            // this LSP has lower priority, skip
+            continue;
+        }
+        if(thisServer->CanHandle(editor)) {
+            bestServer = thisServer;
+        }
     }
-    return iter->second;
+
+    return bestServer;
 }
 
 void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 {
     // if we have more than one location - prompt the user
-    if(event.GetLocations().empty())
+    if(event.GetLocations().empty()) {
         return;
+    }
 
     // for now, use the first location
     LSP::Location location;
@@ -781,14 +785,22 @@ IEditor* LanguageServerCluster::FindEditor(const wxString& path) const
 
 LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const wxString& lang)
 {
-    for(auto vt : m_servers) {
-        auto server = vt.second;
-        if(server->IsRunning() && server->IsLanguageSupported(lang)) {
-            clDEBUG() << "Using server" << server->GetName() << "for language" << lang << endl;
-            return server;
+    LanguageServerProtocol::Ptr_t bestServer(nullptr);
+    for(const auto& vt : m_servers) {
+        const auto& thisServer = vt.second;
+        if(bestServer && thisServer->GetPriority() <= bestServer->GetPriority()) {
+            // this LSP has lower priority, skip
+            continue;
+        }
+        if(thisServer->IsRunning() && thisServer->IsLanguageSupported(lang)) {
+            bestServer = thisServer;
         }
     }
-    return LanguageServerProtocol::Ptr_t(nullptr);
+
+    if(bestServer) {
+        clDEBUG() << "Using server" << bestServer->GetName() << "for language" << lang << endl;
+    }
+    return bestServer;
 }
 
 void LanguageServerCluster::OnLogMessage(LSPEvent& event)
@@ -849,8 +861,9 @@ void LanguageServerCluster::OnOpenResource(wxCommandEvent& event)
 
 void LanguageServerCluster::DiscoverWorkspaceType()
 {
-    if(LanguageServerProtocol::workspace_file_type != FileExtManager::TypeOther)
+    if(LanguageServerProtocol::workspace_file_type != FileExtManager::TypeOther) {
         return;
+    }
 
     wxArrayString files;
     clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);

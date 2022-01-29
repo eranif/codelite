@@ -123,7 +123,9 @@ void BuildTab::OnBuildEnded(clBuildEvent& e)
     m_buffer.swap(text);
     ProcessBuffer(true);
 
-    SelectFirstErrorOrWarning(0);
+    if(m_buildTabSettings.GetScrollTo() == BuildTabSettingsData::SCROLL_TO_FIRST_ERROR) {
+        SelectFirstErrorOrWarning(0);
+    }
 
     // notify the plugins that the build has ended
     clBuildEvent build_ended_event(wxEVT_BUILD_ENDED);

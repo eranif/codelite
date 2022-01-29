@@ -4025,14 +4025,14 @@ void clEditor::SetWarningMarker(int lineno, const wxString& annotationText)
         m_compilerMessagesMap.insert(std::make_pair(lineno, annotationText));
 
         BuildTabSettingsData options;
-        EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
+        EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &options);
 
-        if(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks) {
+        if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
             MarkerAdd(lineno, smt_warning);
             NotifyMarkerChanged(lineno);
         }
 
-        if(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate) {
+        if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
             // define the warning marker
             AnnotationSetText(lineno, annotationText);
             AnnotationSetStyle(lineno, ANNOTATION_STYLE_WARNING);
@@ -4051,14 +4051,14 @@ void clEditor::SetErrorMarker(int lineno, const wxString& annotationText)
         m_compilerMessagesMap.insert(std::make_pair(lineno, annotationText));
 
         BuildTabSettingsData options;
-        EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
+        EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &options);
 
-        if(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks) {
+        if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
             MarkerAdd(lineno, smt_error);
             NotifyMarkerChanged(lineno);
         }
 
-        if(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate) {
+        if(options.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_ANNOTATE) {
             AnnotationSetText(lineno, annotationText);
             AnnotationSetStyle(lineno, ANNOTATION_STYLE_ERROR);
         }

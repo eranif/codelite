@@ -25,6 +25,7 @@ namespace
 struct LineClientData {
     wxString project_name;
     Compiler::PatternMatch match_pattern;
+    wxString message;
 };
 
 } // namespace
@@ -82,7 +83,7 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
     }
 
     // read the build tab settings
-    EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &m_buildTabSettings);
+    EditorConfigST::Get()->ReadObject(wxT("BuildTabSettings"), &m_buildTabSettings);
 
     // clean the last used compiler
     m_activeCompiler.Reset(nullptr);
@@ -158,6 +159,7 @@ void BuildTab::ProcessBuffer(bool last_line)
             m_view->AppendItem(line);
         } else {
             std::unique_ptr<LineClientData> m(new LineClientData);
+            m->message = line;
 
             // remove the terminal ascii colouring escape code
             wxString modified_line;
@@ -274,6 +276,11 @@ void BuildTab::OnLineActivated(wxDataViewEvent& e)
                 // compilers report line numbers starting from `1`
                 // our editor sees line numbers starting from `0`
                 editor->CenterLine(line_number - 1, column);
+                if(cd->match_pattern.sev == Compiler::kSevError) {
+                    editor->SetErrorMarker(line_number - 1, cd->message);
+                } else {
+                    editor->SetWarningMarker(line_number - 1, cd->message);
+                }
                 editor->SetActive();
             };
             clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));
@@ -491,7 +498,7 @@ void BuildTab::OnNextBuildErrorUI(wxUpdateUIEvent& event) { event.Enable(m_warn_
 
 void BuildTab::SelectFirstErrorOrWarning(size_t from)
 {
-    size_t line_to_select = GetNextLineWithErrorOrWarning(from, m_buildTabSettings.GetSkipWarnings());
+    size_t line_to_select = GetNextLineWithErrorOrWarning(from, m_buildTabSettings.IsSkipWarnings());
     if(line_to_select != wxString::npos) {
         m_view->UnselectAll();
         m_view->SetFirstVisibleRow(line_to_select);

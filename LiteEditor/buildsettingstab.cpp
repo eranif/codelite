@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "buildsettingstab.h"
+
 #include "buildtabsettingsdata.h"
 #include "clFontHelper.h"
 #include "editor_config.h"
@@ -30,6 +31,7 @@
 #include "frame.h"
 #include "globals.h"
 #include "macros.h"
+
 #include <wx/any.h>
 #include <wx/fontdlg.h>
 
@@ -37,61 +39,35 @@ BuildTabSetting::BuildTabSetting(wxWindow* parent)
     : BuildTabSettingsBase(parent)
     , m_isModified(false)
 {
-    ::wxPGPropertyBooleanUseCheckbox(m_pgMgr->GetGrid());
     BuildTabSettingsData options;
-    EditorConfigST::Get()->ReadObject(wxT("build_tab_settings"), &options);
-    m_pgPropJumpWarnings->SetValue(options.GetSkipWarnings());
-
-    wxVariant errorColour, warningColour;
-    errorColour << wxColour(options.GetErrorColour());
-    warningColour << wxColour(options.GetWarnColour());
-
-    m_pgPropErrorColour->SetValue(errorColour);
-    m_pgPropWarningColour->SetValue(warningColour);
-
-    m_pgPropUseMarkers->SetValue((bool)(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Bookmarks));
-    m_pgPropUseAnnotations->SetValue((bool)(options.GetErrorWarningStyle() & BuildTabSettingsData::EWS_Annotate));
+    EditorConfigST::Get()->ReadObject("BuildTabSettings", &options);
+    m_choiceMarkerStyle->SetSelection(static_cast<int>(options.GetErrorWarningStyle()));
+    m_checkBoxScrollToError->SetValue(options.GetScrollTo() == BuildTabSettingsData::SCROLL_TO_FIRST_ERROR);
+    m_checkBoxSkipWarnings->SetValue(options.IsSkipWarnings());
 }
 
 void BuildTabSetting::Save()
 {
     BuildTabSettingsData options;
+    options.SetSkipWarnings(m_checkBoxSkipWarnings->IsChecked());
 
-    wxColour defaultErrorColour(*wxRED);
-    wxColour defaultWarningColour("rgb(128, 128, 0)");
-
-    wxColourPropertyValue errorColour, warningColour;
-    errorColour << m_pgPropErrorColour->GetValue();
-    warningColour << m_pgPropWarningColour->GetValue();
-
-    options.SetErrorColour(errorColour.m_colour.GetAsString(wxC2S_HTML_SYNTAX));
-    options.SetWarnColour(warningColour.m_colour.GetAsString(wxC2S_HTML_SYNTAX));
-    options.SetSkipWarnings(m_pgPropJumpWarnings->GetValue().GetBool());
-
-    int flag(BuildTabSettingsData::EWS_NoMarkers);
-    if(m_pgPropUseMarkers->GetValue().GetBool()) {
-        flag |= BuildTabSettingsData::EWS_Bookmarks;
+    wxString marker_style = m_choiceMarkerStyle->GetStringSelection().Lower();
+    if(marker_style == "none") {
+        options.SetErrorWarningStyle(BuildTabSettingsData::MARKER_NONE);
+    } else if(marker_style == "annotation box") {
+        options.SetErrorWarningStyle(BuildTabSettingsData::MARKER_ANNOTATE);
+    } else {
+        options.SetErrorWarningStyle(BuildTabSettingsData::MARKER_BOOKMARKS);
     }
 
-    if(m_pgPropUseAnnotations->GetValue().GetBool()) {
-        flag |= BuildTabSettingsData::EWS_Annotate;
-    }
-
-    options.SetErrorWarningStyle(flag);
-    EditorConfigST::Get()->WriteObject(wxT("build_tab_settings"), &options);
+    options.SetScrollTo(m_checkBoxScrollToError->IsChecked() ? BuildTabSettingsData::SCROLL_TO_FIRST_ERROR
+                                                             : BuildTabSettingsData::SCROLL_TO_NOWHERE);
+    EditorConfigST::Get()->WriteObject(wxT("BuildTabSettings"), &options);
     m_isModified = false;
 }
 
-void BuildTabSetting::OnUpdateUI(wxUpdateUIEvent& event) {}
-
-void BuildTabSetting::OnCustomButtonClicked(wxCommandEvent& event)
-{
-    wxPGProperty* prop = m_pgMgr->GetSelectedProperty();
-    CHECK_PTR_RET(prop);
-}
-
-void BuildTabSetting::SelectFont() {}
-void BuildTabSetting::OnAppearanceChanged(wxPropertyGridEvent& event)
+void BuildTabSetting::OnUpdateUI(wxUpdateUIEvent& event) { wxUnusedVar(event); }
+void BuildTabSetting::OnChange(wxCommandEvent& event)
 {
     event.Skip();
     m_isModified = true;

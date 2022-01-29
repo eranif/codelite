@@ -32,12 +32,10 @@
 #ifndef __advanced_settings__
 #define __advanced_settings__
 
-#include <wx/wx.h>
-
 #include "CompilerMainPage.h"
 #include "advance_settings_base.h"
-#include "build_page.h"
 #include "compiler.h"
+
 #include <CompilersDetectorManager.h>
 #include <ICompilerLocator.h>
 #include <map>
@@ -47,6 +45,7 @@
 #include <wx/statline.h>
 #include <wx/toolbook.h>
 #include <wx/treebook.h>
+#include <wx/wx.h>
 
 ///////////////////////////////////////////////////////////////////////////
 class BuildTabSetting;
@@ -77,7 +76,6 @@ protected:
     wxStaticText* m_staticText1;
     wxStaticLine* m_staticline2;
     wxStaticLine* m_staticline10;
-    BuildPage* m_buildPage;
     BuildTabSetting* m_buildSettings;
     wxMenu* m_rightclickMenu;
     CompilersDetectorManager m_compilersDetector;

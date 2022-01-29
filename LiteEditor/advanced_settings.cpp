@@ -30,10 +30,10 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "advanced_settings.h"
+
 #include "CompilersFoundDlg.h"
 #include "NewCompilerDlg.h"
 #include "advance_settings_base.h"
-#include "build_page.h"
 #include "build_settings_config.h"
 #include "buildsettingstab.h"
 #include "editor_config.h"
@@ -42,6 +42,7 @@
 #include "macros.h"
 #include "manager.h"
 #include "windowattrmanager.h"
+
 #include <CompilersDetectorManager.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
@@ -54,11 +55,10 @@ BuildSettingsDialog::BuildSettingsDialog(wxWindow* parent, size_t selected_page,
 {
     m_compilersPage = new CompilerMainPage(m_notebook);
     m_notebook->AddPage(m_compilersPage, _("Compilers"), true);
-    m_buildSettings = new BuildTabSetting(m_notebook);
-    m_notebook->AddPage(m_buildSettings, _("Build Output Appearance"), false);
 
-    m_buildPage = new BuildPage(m_notebook);
-    m_notebook->AddPage(m_buildPage, _("Build Systems"), false);
+    m_buildSettings = new BuildTabSetting(m_notebook);
+    m_notebook->AddPage(m_buildSettings, _("Build Panel"), false);
+
     m_rightclickMenu = wxXmlResource::Get()->LoadMenu(wxT("delete_compiler_menu"));
     LoadCompilers();
     clSetDialogBestSizeAndPosition(this);
@@ -110,16 +110,7 @@ bool BuildSettingsDialog::DeleteCompiler(const wxString& name)
     return false;
 }
 
-void BuildSettingsDialog::OnContextMenu(wxContextMenuEvent& e)
-{
-    //    wxTreeCtrl *tree = m_compilersNotebook->GetTreeCtrl();
-    //    wxTreeItemId item = tree->GetSelection();
-    //
-    //    // only compilers have children
-    //    if(item.IsOk() && tree->HasChildren(item)) {
-    //        PopupMenu(m_rightclickMenu);
-    //    }
-}
+void BuildSettingsDialog::OnContextMenu(wxContextMenuEvent& e) { wxUnusedVar(e); }
 
 #define ID_MENU_AUTO_DETECT_COMPILERS 1001
 #define ID_MENU_ADD_COMPILER_BY_PATH 1002
@@ -128,7 +119,6 @@ void BuildSettingsDialog::OnContextMenu(wxContextMenuEvent& e)
 void BuildSettingsDialog::OnAutoDetectCompilers(wxButton* btn)
 {
     // Launch the auto detect compilers code
-
     wxMenu menu;
     menu.Append(ID_MENU_ADD_COMPILER_BY_PATH, _("Add an existing compiler"));
     menu.Append(ID_MENU_CLONE_COMPILER, _("Clone a compiler"));
@@ -185,7 +175,6 @@ void BuildSettingsDialog::OnApply(wxCommandEvent& event)
     // save the build page
     BuildSettingsConfigST::Get()->BeginBatch();
     m_compilersPage->Save();
-    m_buildPage->Save();
     m_buildSettings->Save();
     // mark all the projects as dirty
     wxArrayString projects;

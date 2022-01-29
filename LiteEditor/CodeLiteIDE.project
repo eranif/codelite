@@ -333,8 +333,6 @@
     <VirtualDirectory Name="Build">
       <File Name="configuration_manager_dlg.cpp"/>
       <File Name="configuration_manager_dlg.h"/>
-      <File Name="build_page.cpp"/>
-      <File Name="build_page.h"/>
       <File Name="edit_configuration.cpp"/>
       <File Name="edit_configuration.h"/>
       <File Name="edit_workspace_conf_dlg.cpp"/>

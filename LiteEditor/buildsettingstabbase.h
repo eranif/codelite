@@ -14,9 +14,10 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/propgrid/manager.h>
-#include <wx/propgrid/property.h>
-#include <wx/propgrid/advprops.h>
+#include <wx/checkbox.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -38,23 +39,19 @@
 class BuildTabSettingsBase : public wxPanel
 {
 protected:
-    wxBoxSizer* bSizer1;
-    wxPropertyGridManager* m_pgMgr;
-    wxPGProperty* CAT_COLOURS_AND_FONTS;
-    wxPGProperty* m_pgPropErrorColour;
-    wxPGProperty* m_pgPropWarningColour;
-    wxPGProperty* CAT_GENERAL;
-    wxPGProperty* m_pgPropJumpWarnings;
-    wxPGProperty* CAT_MARKERS;
-    wxPGProperty* m_pgPropUseMarkers;
-    wxPGProperty* m_pgPropUseAnnotations;
+    wxCheckBox* m_checkBoxSkipWarnings;
+    wxCheckBox* m_checkBoxScrollToError;
+    wxStaticText* m_staticText37;
+    wxChoice* m_choiceMarkerStyle;
 
 protected:
-    virtual void OnCustomButtonClicked(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnAppearanceChanged(wxPropertyGridEvent& event) { event.Skip(); }
+    virtual void OnChange(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxPropertyGridManager* GetPgMgr() { return m_pgMgr; }
+    wxCheckBox* GetCheckBoxSkipWarnings() { return m_checkBoxSkipWarnings; }
+    wxCheckBox* GetCheckBoxScrollToError() { return m_checkBoxScrollToError; }
+    wxStaticText* GetStaticText37() { return m_staticText37; }
+    wxChoice* GetChoiceMarkerStyle() { return m_choiceMarkerStyle; }
     BuildTabSettingsBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~BuildTabSettingsBase();

@@ -346,6 +346,8 @@ vector<wxString> DEFAULT_TOKENS = {
     "wxOVERRIDE",
     "wxStatusBar=wxStatusBarBase",
     "wxT",
+    "WXDLLIMPEXP_DATA_BASE(%0)=%0",
+    "WXDLLIMPEXP_DATA_CORE(%0)=%0",
 #if defined(__WXGTK__)
     "__WXGTK__=1",
     "__linux__=1",

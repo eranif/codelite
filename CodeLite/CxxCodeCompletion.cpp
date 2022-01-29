@@ -410,6 +410,15 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
                 curexpr.set_operand('.');
             }
         }
+    } else {
+        // still failed to resolve it, try macro
+        // try macro
+        auto resolved = lookup_symbol_by_kind(curexpr.type_name(), {}, { "macro" });
+        if(resolved && !resolved->GetMacrodef().empty()) {
+            // this is a macro
+            auto expressions = from_expression(resolved->GetMacrodef() + curexpr.operand_string(), nullptr);
+            return resolve_compound_expression(expressions, visible_scopes, curexpr);
+        }
     }
     return resolved;
 }

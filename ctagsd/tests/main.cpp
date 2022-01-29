@@ -303,6 +303,22 @@ TEST_FUNC(test_from_expression_c_cast)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_complete_macro)
+{
+    ENSURE_DB_LOADED();
+    {
+        TagEntryPtr resolved = completer->code_complete("wxTheApp->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxApp");
+    }
+    {
+        TagEntryPtr resolved = completer->code_complete("wxTheClipboard->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxClipboard");
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_complete_member_of_parent_class)
 {
     ENSURE_DB_LOADED();

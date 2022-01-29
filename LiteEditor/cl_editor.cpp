@@ -5761,6 +5761,7 @@ void clEditor::DoCancelCodeCompletionBox()
         m_calltip->Destroy();
         m_calltip = NULL;
     }
+    wxCodeCompletionBoxManager::Get().DestroyCCBox();
 }
 
 void clEditor::SetCodeCompletionAnnotation(const wxString& text, int lineno)

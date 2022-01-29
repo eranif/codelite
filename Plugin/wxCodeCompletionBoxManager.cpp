@@ -147,7 +147,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBox::BmpVec_t& bitmaps, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    if(!ctrl) {
+    if(!ctrl || entries.empty()) {
         DestroyCurrent();
         return;
     }

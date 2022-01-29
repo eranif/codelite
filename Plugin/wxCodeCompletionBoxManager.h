@@ -45,7 +45,6 @@ private:
     ~wxCodeCompletionBoxManager();
 
 protected:
-    void DestroyCCBox();
     void DestroyCurrent();
     void InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match, bool userTriggered);
     void InsertSelectionTemplateFunction(const wxString& selection);
@@ -71,6 +70,11 @@ public:
      * @brief uninitialize all event handlers and destroy the CC box manager
      */
     static void Free();
+
+    /**
+     * @brief destroy the current CC box
+     */
+    void DestroyCCBox();
 
     /**
      * @brief show the completion box

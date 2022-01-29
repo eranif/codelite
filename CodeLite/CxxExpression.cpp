@@ -13,9 +13,9 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
     CxxTokenizer tokenizer;
     CxxLexerToken tk;
     wxString cast_type;
-
     tokenizer.Reset(expression);
-    if(handle_casting(tokenizer, &cast_type)) {
+
+    if(handle_cxx_casting(tokenizer, &cast_type)) {
         tokenizer.Reset(cast_type);
     }
 
@@ -25,7 +25,9 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
     while(tokenizer.NextToken(tk)) {
         switch(tk.GetType()) {
         case T_IDENTIFIER:
-            curexpr.m_type_name = tk.GetWXString();
+            if(curexpr.m_type_name.empty()) {
+                curexpr.m_type_name = tk.GetWXString();
+            }
             break;
         case T_THIS:
             curexpr.m_type_name = tk.GetWXString();
@@ -42,7 +44,23 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
             parse_template(tokenizer, &curexpr.m_template_init_list);
             break;
         case '(':
-            parse_func_call(tokenizer, &curexpr.m_func_call_params);
+            if(curexpr.m_type_name.empty()) {
+                int delim_found = 0;
+                wxString consumed;
+                tokenizer.read_until_find(tk, ')', 0, &delim_found, &consumed);
+                if(delim_found == 0) {
+                    return {}; // unbalacned parenthesis
+                }
+                consumed += ".";
+                auto parts = from_expression(consumed, nullptr);
+                if(!parts.empty()) {
+                    arr.insert(arr.end(), parts.begin(), parts.end() - 1);
+                    parts.back().set_operand(0); // remove the dummy operand
+                    curexpr = parts.back();
+                }
+            } else {
+                parse_func_call(tokenizer, &curexpr.m_func_call_params);
+            }
             break;
         case '[':
             curexpr.m_subscript_params.emplace_back();
@@ -146,7 +164,7 @@ bool CxxExpression::parse_func_call(CxxTokenizer& tokenizer, wxArrayString* func
     return parse_list(tokenizer, func_call_params, '(', ')');
 }
 
-bool CxxExpression::handle_casting(CxxTokenizer& tokenizer, wxString* cast_type)
+bool CxxExpression::handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_type)
 {
     CxxLexerToken t;
     if(!tokenizer.NextToken(t)) {
@@ -155,6 +173,7 @@ bool CxxExpression::handle_casting(CxxTokenizer& tokenizer, wxString* cast_type)
 
     constexpr int STATE_NORMAL = 0;
     constexpr int STATE_CAST = 1;
+    constexpr int STATE_C_CAST = 2;
 
     int state = STATE_NORMAL;
     switch(t.GetType()) {
@@ -172,6 +191,12 @@ bool CxxExpression::handle_casting(CxxTokenizer& tokenizer, wxString* cast_type)
     if(state == STATE_NORMAL) {
         tokenizer.UngetToken();
         return false;
+    } else if(state == STATE_C_CAST) {
+        // append the remainder
+        while(tokenizer.NextToken(t)) {
+            cast_type->Append(t.GetWXString() + " ");
+        }
+        return true;
     }
 
     // we are expecting '<'

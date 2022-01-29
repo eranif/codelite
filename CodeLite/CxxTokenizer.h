@@ -68,6 +68,14 @@ public:
      * @brief return true if the current scanner position is placed inside a PP section
      */
     bool IsInPreProcessorSection() const;
+
+    /**
+     * @brief read until we find `type_1` or `type_2`. Return the string consumed. This function
+     * consumes the delimiter found (`type_1` or `type_2`)
+     * @param what_was_found return value
+     * @return string consumed until delimiter found
+     */
+    void read_until_find(CxxLexerToken& token, int type_1, int type_2, int* what_was_found, wxString* consumed);
 };
 
 #endif // CXXTOKENIZER_H

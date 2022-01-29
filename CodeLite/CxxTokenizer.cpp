@@ -268,3 +268,53 @@ bool CxxTokenizer::IsInPreProcessorSection() const
         return false;
     return GetUserData()->IsInPreProcessorSection();
 }
+
+void CxxTokenizer::read_until_find(CxxLexerToken& token, int type_1, int type_2, int* what_was_found,
+                                   wxString* consumed)
+{
+    int depth = 0;
+    consumed->clear();
+    *what_was_found = 0;
+    consumed->reserve(256); // 256 bytes should be enough for most cases
+
+    while(NextToken(token)) {
+        if(depth == 0 && token.GetType() == type_1) {
+            *what_was_found = type_1;
+            consumed->Trim().Trim(false);
+            return;
+        } else if(depth == 0 && token.GetType() == type_2) {
+            *what_was_found = type_2;
+            consumed->Trim().Trim(false);
+            return;
+        }
+
+        if(token.is_keyword() || token.is_builtin_type()) {
+            consumed->Append(token.GetWXString() + " ");
+            continue;
+        } else if(token.is_pp_keyword()) {
+            continue;
+        }
+
+        // append it
+        consumed->Append(token.GetWXString());
+        switch(token.GetType()) {
+        case '<':
+        case '{':
+        case '[':
+        case '(':
+            depth++;
+            break;
+        case '>':
+        case '}':
+        case ']':
+        case ')':
+            depth--;
+            break;
+        default:
+            break;
+        }
+    }
+
+    // eof
+    consumed->Trim().Trim(false);
+}

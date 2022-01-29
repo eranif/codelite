@@ -52,7 +52,7 @@ private:
     static bool parse_subscript(CxxTokenizer& tokenizer, wxArrayString* subscript_param);
     static bool parse_func_call(CxxTokenizer& tokenizer, wxArrayString* func_call_params);
     static bool parse_list(CxxTokenizer& tokenizer, wxArrayString* params, int open_char, int close_char);
-    static bool handle_casting(CxxTokenizer& tokenizer, wxString* cast_type);
+    static bool handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_type);
 
 public:
     CxxExpression();

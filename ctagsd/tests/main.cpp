@@ -192,7 +192,7 @@ TEST_FUNC(TestLSPLocation)
         completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, { "LSP" });
     }
     CHECK_BOOL(resolved);
-    CHECK_SIZE(candidates.size(), 12);
+    CHECK_SIZE(candidates.size(), 15);
     return true;
 }
 
@@ -282,6 +282,24 @@ TEST_FUNC(TestCompletionHelper_truncate_file_to_location_must_end_with_words)
     CompletionHelper helper;
     wxString f = helper.truncate_file_to_location(file_content_z, 0, 15, CompletionHelper::TRUNCATE_COMPLETE_WORDS);
     CHECK_STRING(f, "std::vector<TagEntryPtr");
+    return true;
+}
+
+TEST_FUNC(test_from_expression_c_cast)
+{
+    {
+        vector<CxxExpression> expr = CxxExpression::from_expression("(wxFontMapper::Get())->", nullptr);
+        CHECK_SIZE(expr.size(), 2);
+        CHECK_STRING(expr[0].type_name(), "wxFontMapper");
+        CHECK_STRING(expr[1].type_name(), "Get");
+    }
+
+    {
+        vector<CxxExpression> expr = CxxExpression::from_expression("((wxString*)something)->Append().", nullptr);
+        CHECK_SIZE(expr.size(), 2);
+        CHECK_STRING(expr[0].type_name(), "wxString");
+        CHECK_STRING(expr[1].type_name(), "Append");
+    }
     return true;
 }
 

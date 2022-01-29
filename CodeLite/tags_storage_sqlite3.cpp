@@ -150,7 +150,7 @@ void TagsStorageSQLite::CreateSchema()
         m_db->ExecuteUpdate(trigger2);
 
         // Create unique index on tags table
-        sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS TAGS_UNIQ on tags(kind, path, signature, typeref, "
+        sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS TAGS_UNIQ on tags(file, kind, path, signature, typeref, "
                   "template_definition);");
         m_db->ExecuteUpdate(sql);
 
@@ -1782,7 +1782,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
 
 const wxString& TagsStorageSQLite::GetVersion() const
 {
-    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.0.3"));
+    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.0.4"));
     return gTagsDatabaseVersion;
 }
 

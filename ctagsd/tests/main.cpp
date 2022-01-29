@@ -897,6 +897,12 @@ TEST_FUNC(test_cxx_code_completion_macros)
         CHECK_SIZE(candidates.size(), 1);
         CHECK_STRING(candidates[0]->GetName(), "CHECK_STRING_ONE_OF");
     }
+    {
+        vector<TagEntryPtr> candidates;
+        completer->word_complete(wxEmptyString, wxNOT_FOUND, "CHECK_BOO", wxEmptyString, {}, false, candidates);
+        CHECK_BOOL(!candidates.empty());
+        CHECK_BOOL(is_tag_exists("CHECK_BOOL", candidates));
+    }
     return true;
 }
 

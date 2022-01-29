@@ -250,6 +250,14 @@ private:
     vector<TagEntryPtr> get_parents_of_tag_no_recurse(TagEntryPtr parent, TemplateManager::ptr_t template_manager,
                                                       const vector<wxString>& visible_scopes);
 
+    TagEntryPtr find_scope_tag(CxxExpression& curexp, const vector<wxString>& visible_scopes);
+    bool is_scope_tag(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+    {
+        return find_scope_tag(curexp, visible_scopes);
+    }
+    TagEntryPtr find_scope_tag_externvar(CxxExpression& curexp, const vector<wxString>& visible_scopes);
+    TagEntryPtr on_extern_var(CxxExpression& curexp, TagEntryPtr var, const vector<wxString>& visible_scopes);
+
 public:
     typedef shared_ptr<CxxCodeCompletion> ptr_t;
 

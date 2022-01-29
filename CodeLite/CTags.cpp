@@ -79,8 +79,8 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     options_arr = { "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--language-force=c++", fields_cxx };
     if(ctags_kinds.empty()) {
         // default
-        options_arr.push_back("--c-kinds=+p");
-        options_arr.push_back("--C++-kinds=+p");
+        options_arr.push_back("--c-kinds=+px");
+        options_arr.push_back("--C++-kinds=+px");
     } else {
         options_arr.push_back("--c-kinds=" + ctags_kinds);
         options_arr.push_back("--C++-kinds=" + ctags_kinds);

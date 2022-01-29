@@ -783,6 +783,34 @@ TEST_FUNC(test_cxx_code_completion_variable_scanner_normal_for)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_word_completion_externvar)
+{
+    ENSURE_DB_LOADED();
+    {
+        CxxRemainder remainder;
+        remainder.filter = "wxEmptyStr";
+        remainder.operand_string = "";
+        vector<TagEntryPtr> candidates;
+        completer->get_word_completions(remainder, candidates, { "std" }, {});
+        CHECK_BOOL(!candidates.empty());
+        CHECK_BOOL(is_tag_exists("wxEmptyString", candidates));
+    }
+    {
+        CxxRemainder remainder;
+        remainder.filter = "wxDefaultSi";
+        remainder.operand_string = "";
+        vector<TagEntryPtr> candidates;
+        completer->get_word_completions(remainder, candidates, { "std" }, {});
+        CHECK_BOOL(!candidates.empty());
+        CHECK_BOOL(is_tag_exists("wxDefaultSize", candidates));
+    }
+    {
+        auto resolved = completer->code_complete("wxDefaultSize.", {}, nullptr);
+        CHECK_NOT_NULL(resolved);
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_word_completion)
 {
     ENSURE_DB_LOADED();

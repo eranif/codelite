@@ -447,6 +447,19 @@ TagEntryPtr CxxCodeCompletion::on_local(CxxExpression& curexp, const vector<wxSt
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
+TagEntryPtr CxxCodeCompletion::on_extern_var(CxxExpression& curexp, TagEntryPtr var,
+                                             const vector<wxString>& visible_scopes)
+{
+    // local member
+    if(!var) {
+        return nullptr;
+    }
+
+    wxString exprstr = var->GetTypename() + curexp.operand_string();
+    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+}
+
 TagEntryPtr CxxCodeCompletion::on_static_local(CxxExpression& curexp, const vector<wxString>& visible_scopes)
 {
     if(!m_file_only_tags.is_static_member(curexp.type_name())) {
@@ -472,6 +485,65 @@ TagEntryPtr CxxCodeCompletion::on_this(CxxExpression& curexp, const vector<wxStr
     vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
+TagEntryPtr CxxCodeCompletion::find_scope_tag_externvar(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+{
+    auto extern_var = lookup_symbol_by_kind(curexp.type_name(), visible_scopes, { "externvar" });
+    if(extern_var) {
+        // we are inside a scope, use the scope as the parent
+        // and call resolve_expression() again
+        return extern_var;
+    }
+    return nullptr;
+}
+
+TagEntryPtr CxxCodeCompletion::find_scope_tag(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+{
+    determine_current_scope();
+
+    // try to load the symbol this order:
+    // current-scope::name (if we are in a scope)
+    // other-scopes::name
+    // global-scope::name
+    vector<wxString> paths_to_try;
+    vector<TagEntryPtr> parent_tags;
+    wxStringSet_t visited;
+    if(m_current_container_tag) {
+        // get list of scopes to try (including parents)
+        parent_tags = get_scopes(m_current_container_tag, visible_scopes);
+        paths_to_try.reserve(parent_tags.size());
+        for(auto parent : parent_tags) {
+            wxString fullpath = parent->GetPath() + "::" + curexp.type_name();
+            if(visited.insert(fullpath).second) {
+                paths_to_try.push_back(fullpath);
+            }
+        }
+    }
+
+    // add the other scopes
+    for(auto scope : visible_scopes) {
+        // build the path
+        wxString path_to_try;
+        if(!scope.empty()) {
+            path_to_try << scope << "::";
+        }
+        path_to_try << curexp.type_name();
+        if(visited.insert(path_to_try).second) {
+            paths_to_try.push_back(path_to_try);
+        }
+    }
+
+    for(const auto& path_to_try : paths_to_try) {
+        // note that we pass here empty visible_scopes since we already prepended it earlier
+        auto scope_tag =
+            lookup_symbol_by_kind(path_to_try, {}, { "class", "struct", "union", "prototype", "function", "member" });
+        if(scope_tag) {
+            // we are inside a scope, use the scope as the parent
+            // and call resolve_expression() again
+            return scope_tag;
+        }
+    }
+    return nullptr;
+}
 
 TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntryPtr parent,
                                                   const vector<wxString>& visible_scopes)
@@ -488,51 +560,12 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
             } else if(m_file_only_tags.is_static_member(curexp.type_name())) {
                 // static member to this file
                 return on_static_local(curexp, visible_scopes);
-
+            } else if(is_scope_tag(curexp, visible_scopes)) {
+                return resolve_expression(curexp, find_scope_tag(curexp, visible_scopes), visible_scopes);
             } else {
-                determine_current_scope();
-
-                // try to load the symbol this order:
-                // current-scope::name (if we are in a scope)
-                // other-scopes::name
-                // global-scope::name
-                vector<wxString> paths_to_try;
-                vector<TagEntryPtr> parent_tags;
-                wxStringSet_t visited;
-                if(m_current_container_tag) {
-                    // get list of scopes to try (including parents)
-                    parent_tags = get_scopes(m_current_container_tag, visible_scopes);
-                    paths_to_try.reserve(parent_tags.size());
-                    for(auto parent : parent_tags) {
-                        wxString fullpath = parent->GetPath() + "::" + curexp.type_name();
-                        if(visited.insert(fullpath).second) {
-                            paths_to_try.push_back(fullpath);
-                        }
-                    }
-                }
-
-                // add the other scopes
-                for(auto scope : visible_scopes) {
-                    // build the path
-                    wxString path_to_try;
-                    if(!scope.empty()) {
-                        path_to_try << scope << "::";
-                    }
-                    path_to_try << curexp.type_name();
-                    if(visited.insert(path_to_try).second) {
-                        paths_to_try.push_back(path_to_try);
-                    }
-                }
-
-                for(const auto& path_to_try : paths_to_try) {
-                    // note that we pass here empty visible_scopes since we already prepended it earlier
-                    auto scope_tag = lookup_symbol_by_kind(
-                        path_to_try, {}, { "class", "struct", "union", "prototype", "function", "member" });
-                    if(scope_tag) {
-                        // we are inside a scope, use the scope as the parent
-                        // and call resolve_expression() again
-                        return resolve_expression(curexp, scope_tag, visible_scopes);
-                    }
+                auto externvar_tag = find_scope_tag_externvar(curexp, visible_scopes);
+                if(externvar_tag) {
+                    return on_extern_var(curexp, externvar_tag, visible_scopes);
                 }
             }
         }
@@ -1367,8 +1400,8 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     determine_current_scope();
     bool add_keywords = false;
     if(remainder.operand_string.empty()) {
-        kinds = { "function", "prototype", "class",      "struct", "namespace", "union",
-                  "typedef",  "enum",      "enumerator", "macro",  "cenum",     "variable" };
+        kinds = { "function", "prototype",  "class", "struct", "namespace", "union",    "typedef",
+                  "enum",     "enumerator", "macro", "cenum",  "variable",  "externvar" };
         if(m_current_container_tag) {
             // if we are inside a scope, add member types
             kinds.push_back("member");

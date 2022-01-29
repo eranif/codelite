@@ -31,7 +31,6 @@
 - **DONE** Sort the results
 
 - Implement: `lsp_rename_symbol`
-- Add un-implemented functions does not work in first time
 - line margin: use the colours read from the theme
 
 ---------------------

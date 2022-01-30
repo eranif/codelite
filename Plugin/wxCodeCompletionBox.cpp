@@ -437,6 +437,7 @@ void wxCodeCompletionBox::DoUpdateList()
     size_t containsCount = 0;
     bool refreshList = FilterResults(true, startsWithCount, containsCount);
     wxUnusedVar(containsCount);
+    wxUnusedVar(refreshList);
 
     // If there a single entry exact match hide the cc box
     if(m_entries.size() == 1) {
@@ -447,15 +448,14 @@ void wxCodeCompletionBox::DoUpdateList()
         }
     }
 
-    int curpos = m_stc->GetCurrentPos();
-    if(m_entries.empty() || curpos < m_startPos || refreshList) {
-        if((m_entries.empty() || refreshList) && (m_flags & kRefreshOnKeyType)) {
-            // Trigger a new CC box
-            wxCommandEvent event(wxEVT_MENU, XRCID("complete_word"));
-            wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
-        }
+    //int curpos = m_stc->GetCurrentPos();
+    if(m_entries.empty() && !m_allEntries.empty()) {
+        // the CC might not reproted all possible matches
+        // (we have a limit to the number of matches we display)
+        // trigger another CC action
+        wxCommandEvent event(wxEVT_MENU, XRCID("complete_word"));
+        wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
         DoDestroy();
-
     } else {
         DoDisplayTipWindow();
         DoPopulateList();

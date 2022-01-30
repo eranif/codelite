@@ -87,6 +87,7 @@ void PostCommandEvent(wxWindow* destination, wxWindow* FocusedControl)
 void CenterLine(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
 {
     // calculate the column
+    ctrl->ClearSelections();
     ctrl->SetSelection(start_pos, end_pos);
 
     int line = ctrl->LineFromPosition(start_pos);

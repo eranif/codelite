@@ -2518,12 +2518,22 @@ void clMainFrame::OnBuildEnded(clBuildEvent& event)
         // If the build process was part of a 'Build and Run' command, check whether an erros
         // occurred during build process, if non, launch the output
         m_buildAndRun = false;
-        if(ManagerST::Get()->IsBuildEndedSuccessfully() ||
-           wxMessageBox(_("Build ended with errors. Continue?"), _("Confirm"), wxYES_NO | wxICON_QUESTION, this) ==
-               wxYES) {
+        wxStandardID answer = wxID_YES;
+        bool build_ended_successfully = ManagerST::Get()->IsBuildEndedSuccessfully();
+        if(!build_ended_successfully) {
+            // The build ended with errors, but the user requested to `Build & Run`
+            // prompt the user whether we should continue
+            answer = ::PromptForYesNoDialogWithCheckbox(_("Build ended with errors\nContinue with execute?"),
+                                                        "BuildAndRunWithErrors", _(" Execute "), _(" Cancel "),
+                                                        _("Remember my answer and don't annoy me again"),
+                                                        wxYES_NO | wxCENTER | wxICON_QUESTION | wxNO_DEFAULT);
+        }
+
+        if(build_ended_successfully || answer == wxID_YES) {
             ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
         }
     }
+
     // Process next command from the queue
     ManagerST::Get()->ProcessCommandQueue();
 }

@@ -89,10 +89,52 @@ wxCodeCompletionBoxManager& wxCodeCompletionBoxManager::Get()
     return *manager;
 }
 
+namespace
+{
+const wxString valid_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_.>@$";
+
+bool CheckCtrlPosition(wxStyledTextCtrl* ctrl, int startPos)
+{
+    // if the box is about to be shown on a different line or near a whitespace
+    // return false
+    int start_pos = startPos == wxNOT_FOUND ? ctrl->GetCurrentPos() : startPos;
+    if(start_pos <= 0 || start_pos >= ctrl->GetLastPosition()) {
+        return false;
+    }
+    int prev_char = ctrl->GetCharAt(ctrl->PositionBefore(start_pos));
+    wxString prev_char_str;
+    prev_char_str << (char)prev_char;
+    if(prev_char_str.find_first_of(valid_chars) != std::string::npos) {
+        return true;
+    }
+    return false;
+}
+} // namespace
+
+void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                                                   const LSP::CompletionItem::Vec_t& completions, size_t flags,
+                                                   int startPos, wxEvtHandler* eventObject)
+{
+    if(!ctrl || completions.empty() || !CheckCtrlPosition(ctrl, startPos)) {
+        DestroyCurrent();
+        return;
+    }
+
+    if(m_box) {
+        m_box->Reset(eventObject);
+    } else {
+        m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+    }
+    m_box->SetFlags(flags);
+    m_box->SetStartPos(startPos);
+    m_stc = ctrl;
+    CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxLSPItems, completions);
+}
+
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
                                                    size_t flags, int startPos, wxEvtHandler* eventObject)
 {
-    if(!ctrl || tags.empty()) {
+    if(!ctrl || tags.empty() || !CheckCtrlPosition(ctrl, startPos)) {
         DestroyCurrent();
         return;
     }
@@ -113,7 +155,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    if(!ctrl || entries.empty()) {
+    if(!ctrl || entries.empty() || !CheckCtrlPosition(ctrl, startPos)) {
         DestroyCurrent();
         return;
     }
@@ -130,24 +172,12 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, entries);
 }
 
-void wxCodeCompletionBoxManager::DestroyCCBox()
-{
-    if(m_box) {
-        if(m_box->IsShown()) {
-            m_box->Hide();
-        }
-        m_box->Destroy();
-    }
-    m_box = NULL;
-    m_stc = NULL;
-}
-
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
                                                    const wxCodeCompletionBox::BmpVec_t& bitmaps, size_t flags,
                                                    int startPos, wxEvtHandler* eventObject)
 {
-    if(!ctrl || entries.empty()) {
+    if(!ctrl || entries.empty() || !CheckCtrlPosition(ctrl, startPos)) {
         DestroyCurrent();
         return;
     }
@@ -162,6 +192,18 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     m_box->SetStartPos(startPos);
     m_stc = ctrl;
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxEntries, entries);
+}
+
+void wxCodeCompletionBoxManager::DestroyCCBox()
+{
+    if(m_box) {
+        if(m_box->IsShown()) {
+            m_box->Hide();
+        }
+        m_box->Destroy();
+    }
+    m_box = NULL;
+    m_stc = NULL;
 }
 
 void wxCodeCompletionBoxManager::DestroyCurrent() { DestroyCCBox(); }
@@ -412,26 +454,6 @@ void wxCodeCompletionBoxManager::InsertSelectionTemplateFunction(const wxString&
             ctrl->ReplaceSelection(entryText);
         }
     }
-}
-
-void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
-                                                   const LSP::CompletionItem::Vec_t& completions, size_t flags,
-                                                   int startPos, wxEvtHandler* eventObject)
-{
-    if(!ctrl || completions.empty()) {
-        DestroyCurrent();
-        return;
-    }
-
-    if(m_box) {
-        m_box->Reset(eventObject);
-    } else {
-        m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
-    }
-    m_box->SetFlags(flags);
-    m_box->SetStartPos(startPos);
-    m_stc = ctrl;
-    CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxLSPItems, completions);
 }
 
 void wxCodeCompletionBoxManager::DoShowCCBoxLSPItems(const LSP::CompletionItem::Vec_t& items)

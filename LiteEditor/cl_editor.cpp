@@ -1900,6 +1900,7 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
     wxString fullpath = CLRealPath(GetFileName().GetFullPath());
 
     if(triggerKind == LSP::CompletionItem::kTriggerUser) {
+        // user hit Ctrl-SPACE
         clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
         evt.SetPosition(GetCurrentPosition());
         evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
@@ -1929,12 +1930,15 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
     }
 
     // Let the plugins a chance to override the default behavior
-    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
-    evt.SetPosition(GetCurrentPosition());
-    evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-    evt.SetTriggerKind(triggerKind);
-    evt.SetFileName(fullpath);
-    ServiceProviderManager::Get().AddPendingEvent(evt);
+    // 24x7 CC (as-we-type)
+    if(!GetContext()->IsAtBlockComment() && !GetContext()->IsAtLineComment()) {
+        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
+        evt.SetPosition(GetCurrentPosition());
+        evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
+        evt.SetTriggerKind(triggerKind);
+        evt.SetFileName(fullpath);
+        ServiceProviderManager::Get().AddPendingEvent(evt);
+    }
 }
 
 //------------------------------------------------------------------

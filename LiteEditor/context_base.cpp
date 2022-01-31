@@ -191,8 +191,6 @@ void ContextBase::OnUserTypedXChars(const wxString& word)
         return;
     }
 
-    const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
-
     // Try to call code completion
     clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
     ccEvt.SetInsideCommentOrString(IsCommentOrString(GetCtrl().GetCurrentPos()));
@@ -387,4 +385,13 @@ void ContextBase::BlockCommentComplete()
     clCodeCompletionEvent ccEvent(wxEVT_CC_BLOCK_COMMENT_CODE_COMPLETE);
     ccEvent.SetFileName(GetCtrl().GetFileName().GetFullPath());
     EventNotifier::Get()->AddPendingEvent(ccEvent);
+}
+
+int ContextBase::PositionBeforeCurrent() const
+{
+    int curpos = GetCtrl().GetCurrentPos();
+    if(curpos == 0) {
+        return 0;
+    }
+    return GetCtrl().PositionBefore(curpos);
 }

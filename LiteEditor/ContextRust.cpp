@@ -175,15 +175,15 @@ int ContextRust::GetActiveKeywordSet() const { return 0; }
 
 bool ContextRust::IsAtBlockComment() const
 {
-    int curpos = GetCtrl().GetCurrentPos();
-    int cur_style = GetCtrl().GetStyleAt(curpos);
+    int pos = PositionBeforeCurrent();
+    int cur_style = GetCtrl().GetStyleAt(pos);
     return cur_style == wxSTC_RUST_COMMENTBLOCK || cur_style == wxSTC_RUST_COMMENTBLOCKDOC;
 }
 
 bool ContextRust::IsAtLineComment() const
 {
-    int curpos = GetCtrl().GetCurrentPos();
-    int cur_style = GetCtrl().GetStyleAt(curpos);
+    int pos = PositionBeforeCurrent();
+    int cur_style = GetCtrl().GetStyleAt(pos);
     return cur_style == wxSTC_RUST_COMMENTLINE || cur_style == wxSTC_RUST_COMMENTLINEDOC;
 }
 

@@ -22,8 +22,10 @@ public:
     ContextPython();
     ContextPython(clEditor* container);
     virtual ~ContextPython();
-    virtual void ApplySettings();
-    virtual ContextBase* NewInstance(clEditor* container);
+    void ApplySettings() override;
+    ContextBase* NewInstance(clEditor* container) override;
+    bool IsAtBlockComment() const override;
+    bool IsAtLineComment() const override;
 };
 
 #endif // CONTEXTPYTHON_HPP

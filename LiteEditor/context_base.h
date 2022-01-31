@@ -31,6 +31,7 @@
 #include "smart_ptr.h"
 #include "wx/filename.h"
 #include "wx/string.h"
+
 #include <set>
 #include <vector>
 #include <wx/stc/stc.h>
@@ -163,6 +164,8 @@ public:
      * @brief process any idle actions by the context
      */
     virtual void ProcessIdleActions() {}
+
+    int PositionBeforeCurrent() const;
 };
 
 typedef SmartPtr<ContextBase> ContextBasePtr;

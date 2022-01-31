@@ -1,8 +1,10 @@
-#include "ColoursAndFontsManager.h"
 #include "ContextPython.hpp"
+
+#include "ColoursAndFontsManager.h"
 #include "cl_editor.h"
 #include "editor_config.h"
 #include "lexer_configuration.h"
+
 #include <wx/msgdlg.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
@@ -132,4 +134,16 @@ bool ContextPython::IsCommentBlock(int pos) const
 {
     int style = GetCtrl().GetStyleAtPos(pos);
     return style == wxSTC_P_COMMENTBLOCK;
+}
+
+bool ContextPython::IsAtBlockComment() const
+{
+    int pos = PositionBeforeCurrent();
+    return IsCommentBlock(pos);
+}
+
+bool ContextPython::IsAtLineComment() const
+{
+    int pos = PositionBeforeCurrent();
+    return IsComment(pos);
 }

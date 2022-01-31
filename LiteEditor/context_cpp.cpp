@@ -2522,15 +2522,15 @@ bool ContextCpp::IsJavaScript() const
 
 bool ContextCpp::IsAtBlockComment() const
 {
-    int curpos = GetCtrl().GetCurrentPos();
-    int cur_style = GetCtrl().GetStyleAt(curpos);
+    int pos = PositionBeforeCurrent();
+    int cur_style = GetCtrl().GetStyleAt(pos);
     return cur_style == wxSTC_C_COMMENTDOC || cur_style == wxSTC_C_COMMENT;
 }
 
 bool ContextCpp::IsAtLineComment() const
 {
-    int curpos = GetCtrl().GetCurrentPos();
-    int cur_style = GetCtrl().GetStyleAt(curpos);
+    int pos = PositionBeforeCurrent();
+    int cur_style = GetCtrl().GetStyleAt(pos);
     return cur_style == wxSTC_C_COMMENTLINE || cur_style == wxSTC_C_COMMENTLINEDOC;
 }
 

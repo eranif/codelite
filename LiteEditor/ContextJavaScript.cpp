@@ -23,9 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ContextJavaScript.h"
+
 #include "cl_editor.h"
-#include "editor_config.h"
 #include "cl_editor_tip_window.h"
+#include "editor_config.h"
 
 ContextJavaScript::ContextJavaScript(clEditor* editor)
     : ContextBase(editor)
@@ -48,7 +49,9 @@ void ContextJavaScript::ApplySettings()
 {
     SetName(wxT("javascript"));
     LexerConf::Ptr_t lexPtr;
-    if(EditorConfigST::Get()->IsOk()) { lexPtr = EditorConfigST::Get()->GetLexer(GetName()); }
+    if(EditorConfigST::Get()->IsOk()) {
+        lexPtr = EditorConfigST::Get()->GetLexer(GetName());
+    }
     clEditor& rCtrl = GetCtrl();
     if(lexPtr) {
         rCtrl.SetLexer(lexPtr->GetLexerId());
@@ -68,8 +71,12 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
 {
     clEditor& rCtrl = GetCtrl();
 
-    if(rCtrl.GetDisableSmartIndent()) { return; }
-    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) { return; }
+    if(rCtrl.GetDisableSmartIndent()) {
+        return;
+    }
+    if(rCtrl.GetLineIndentation(rCtrl.GetCurrentLine()) && nChar == wxT('\n')) {
+        return;
+    }
 
     int curpos = rCtrl.GetCurrentPos();
     if(IsCommentOrString(curpos) && nChar == wxT('\n')) {
@@ -137,9 +144,11 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
     } else if(nChar == wxT('}')) {
 
         long matchPos = wxNOT_FOUND;
-        if(!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos)) return;
+        if(!rCtrl.MatchBraceBack(wxT('}'), rCtrl.PositionBefore(curpos), matchPos))
+            return;
         int secondLine = rCtrl.LineFromPosition(matchPos);
-        if(secondLine == line) return;
+        if(secondLine == line)
+            return;
         rCtrl.SetLineIndentation(line, rCtrl.GetLineIndentation(secondLine));
 
     } else if(nChar == wxT('{')) {
@@ -203,7 +212,9 @@ void ContextJavaScript::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 void ContextJavaScript::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     clEditor& ctrl = GetCtrl();
-    if(ctrl.GetFunctionTip()->IsActive()) { ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex()); }
+    if(ctrl.GetFunctionTip()->IsActive()) {
+        ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
+    }
 }
 
 void ContextJavaScript::RemoveMenuDynamicContent(wxMenu* menu) {}
@@ -253,15 +264,15 @@ int ContextJavaScript::GetActiveKeywordSet() const { return wxNOT_FOUND; }
 
 bool ContextJavaScript::IsAtBlockComment() const
 {
-    int curpos = GetCtrl().GetCurrentPos();
-    int cur_style = GetCtrl().GetStyleAt(curpos);
+    int pos = PositionBeforeCurrent();
+    int cur_style = GetCtrl().GetStyleAt(pos);
     return cur_style == wxSTC_C_COMMENT || cur_style == wxSTC_C_COMMENTDOC || cur_style == wxSTC_C_COMMENTDOCKEYWORD ||
            cur_style == wxSTC_C_COMMENTDOCKEYWORDERROR;
 }
 
 bool ContextJavaScript::IsAtLineComment() const
 {
-    int curpos = GetCtrl().GetCurrentPos();
-    int cur_style = GetCtrl().GetStyleAt(curpos);
+    int pos = PositionBeforeCurrent();
+    int cur_style = GetCtrl().GetStyleAt(pos);
     return cur_style == wxSTC_C_COMMENTLINE || cur_style == wxSTC_C_COMMENTLINEDOC;
 }

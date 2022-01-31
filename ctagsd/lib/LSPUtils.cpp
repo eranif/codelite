@@ -1,6 +1,8 @@
 #include "LSPUtils.hpp"
+
 #include "SimpleTokenizer.hpp"
 #include "macros.h"
+
 #include <array>
 #include <wx/filesys.h>
 
@@ -154,19 +156,30 @@ void LSPUtils::to_symbol_information(const TagEntry* tag, LSP::SymbolInformation
     loc.SetPath(FileUtils::FilePathToURI(tag->GetFile()));
 
     symbol_information.SetKind(get_symbol_kind(tag));
+
+    wxString display_name = tag->GetDisplayName();
+    wxString display_name_full = tag->GetFullDisplayName();
+
+    if(tag->IsMethod() && tag->GetName().StartsWith("__anon")) {
+        // Lambda
+        display_name = display_name_full = "[lambda]" + tag->GetSignature();
+    } else if(tag->IsNamespace() && tag->GetName().StartsWith("__anon")) {
+        display_name = display_name_full = "(anonymous namespace)";
+    }
+
     if(parents_seen) {
         if(parents_seen->count(tag->GetParent())) {
             symbol_information.SetContainerName(tag->GetParent());
-            symbol_information.SetName(tag->GetDisplayName());
+            symbol_information.SetName(display_name);
         } else {
             // don't bother adding parent that we did not
             // see until this point
-            symbol_information.SetName(tag->GetFullDisplayName());
+            symbol_information.SetName(display_name_full);
         }
 
     } else {
         symbol_information.SetContainerName(tag->GetParent());
-        symbol_information.SetName(tag->GetDisplayName());
+        symbol_information.SetName(display_name);
     }
     symbol_information.SetLocation(loc);
 }

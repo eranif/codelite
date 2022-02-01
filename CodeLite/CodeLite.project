@@ -314,7 +314,6 @@
   </VirtualDirectory>
   <Dependencies/>
   <Dependencies/>
-  <VirtualDirectory Name="codelite_indexer_API"/>
   <VirtualDirectory Name="file_crawler">
     <File Name="crawler_lexer.cpp"/>
     <File Name="fc_fileopener.cpp"/>

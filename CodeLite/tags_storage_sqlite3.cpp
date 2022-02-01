@@ -1782,7 +1782,7 @@ void TagsStorageSQLite::RemoveNonWorkspaceSymbols(const std::vector<wxString>& s
 
 const wxString& TagsStorageSQLite::GetVersion() const
 {
-    static const wxString gTagsDatabaseVersion(wxT("CodeLite v16.0.4"));
+    static const wxString gTagsDatabaseVersion = "CodeLite v16.0.5";
     return gTagsDatabaseVersion;
 }
 

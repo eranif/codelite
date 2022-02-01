@@ -2890,7 +2890,9 @@ void clEditor::ToggleMarker()
     if(!LineIsMarked(mmt_standard_bookmarks)) {
         AddMarker();
     } else {
-        DelMarker();
+        while(LineIsMarked(mmt_standard_bookmarks)) {
+            DelMarker();
+        }
     }
 }
 

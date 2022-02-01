@@ -112,40 +112,28 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     wxString path;
 
     // Check if we can get full name (including path)
-    path = GetExtField("class");
-    if(!path.IsEmpty()) {
-        UpdatePath(path);
-    } else {
-        path = GetExtField("struct");
+    static vector<wxString> scope_fields = { "class", "struct", "namespace", "interface", "enum", "function" };
+    for(const wxString& scope_field : scope_fields) {
+        path = GetExtField(scope_field);
         if(!path.IsEmpty()) {
             UpdatePath(path);
-        } else {
-            path = GetExtField("namespace");
-            if(!path.IsEmpty()) {
+            break;
+        }
+    }
+
+    // still no path?
+    // try union
+    if(path.empty()) {
+        path = GetExtField("union");
+        wxString tmpname = path.AfterLast(':');
+        if(!path.IsEmpty()) {
+            if(!tmpname.StartsWith("__anon")) {
                 UpdatePath(path);
             } else {
-                path = GetExtField("interface");
-                if(!path.IsEmpty()) {
-                    UpdatePath(path);
-                } else {
-                    path = GetExtField("enum");
-                    if(!path.IsEmpty()) {
-                        UpdatePath(path);
-                    } else {
-                        path = GetExtField("union");
-                        wxString tmpname = path.AfterLast(':');
-                        if(!path.IsEmpty()) {
-                            if(!tmpname.StartsWith("__anon")) {
-                                UpdatePath(path);
-                            } else {
-                                // anonymouse union, remove the anonymous part from its name
-                                path = path.BeforeLast(':');
-                                path = path.BeforeLast(':');
-                                UpdatePath(path);
-                            }
-                        }
-                    }
-                }
+                // anonymouse union, remove the anonymous part from its name
+                path = path.BeforeLast(':');
+                path = path.BeforeLast(':');
+                UpdatePath(path);
             }
         }
     }

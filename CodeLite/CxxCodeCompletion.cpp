@@ -165,6 +165,13 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
     CxxVariable::Vec_t variables = scanner.GetVariables(false);
     locals->reserve(variables.size());
 
+    vector<TagEntryPtr> parameters;
+    if(m_current_function_tag && m_current_function_tag->IsFunction()) {
+        m_lookup->GetTagsByScopeAndKind(m_current_container_tag->GetPath(), { "parameter" }, wxEmptyString, parameters,
+                                        false);
+        // load all lambda functions (we need their parameters as well)
+    }
+
     // we also include the anonymous entries for this scope
     wxArrayString kinds;
     kinds.Add("class");
@@ -1079,12 +1086,6 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
     }
 
     vector<TagEntryPtr> tags;
-    wxArrayString wx_kinds;
-    wx_kinds.reserve(kinds.size());
-    for(const wxString& kind : kinds) {
-        wx_kinds.Add(kind);
-    }
-
     auto parents = get_scopes(parent, visible_scopes);
     for(auto tag : parents) {
         wxString scope = tag->GetPath();
@@ -1092,7 +1093,7 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
             scope = tag->GetScope();
         }
         vector<TagEntryPtr> parent_tags;
-        m_lookup->GetTagsByScopeAndKind(scope, wx_kinds, filter, parent_tags, true);
+        m_lookup->GetTagsByScopeAndKind(scope, kinds, filter, parent_tags, true);
         tags.reserve(tags.size() + parent_tags.size());
         tags.insert(tags.end(), parent_tags.begin(), parent_tags.end());
     }
@@ -1108,8 +1109,8 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
     m_current_container_tag = nullptr;
     m_current_function_tag = nullptr;
 
-    shrink_scope(text, &m_locals, &m_file_only_tags);
     determine_current_scope();
+    shrink_scope(text, &m_locals, &m_file_only_tags);
 }
 
 namespace
@@ -1684,11 +1685,18 @@ void LookupTable::GetTagsByPathAndKind(const wxString& path, vector<TagEntryPtr>
     }
 }
 
-void LookupTable::GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
+void LookupTable::GetTagsByScopeAndKind(const wxString& scope, const vector<wxString>& kinds, const wxString& filter,
                                         vector<TagEntryPtr>& tags, bool applyLimit)
 {
+    wxArrayString wxkinds;
+    wxkinds.reserve(kinds.size());
+
+    for(const wxString& k : kinds) {
+        wxkinds.Add(k);
+    }
+
     if(pdb) {
-        pdb->GetTagsByScopeAndKind(scope, kinds, filter, tags, applyLimit);
+        pdb->GetTagsByScopeAndKind(scope, wxkinds, filter, tags, applyLimit);
     }
 
     if(!tests_db.empty()) {
@@ -1791,6 +1799,23 @@ void LookupTable::GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tag
         }
     }
 }
+
+size_t LookupTable::GetParameters(const wxString& function_path, const vector<TagEntryPtr>& tags)
+{
+    if(!pdb)
+        return 0;
+    return pdb->GetParameters(function_path, tags);
+}
+size_t LookupTable::GetLambdas(const wxString& parent_function, const vector<TagEntryPtr>& tags)
+{
+    if(!pdb)
+        return 0;
+    return pdb->GetLambdas(parent_function, tags);
+}
+
+///
+/// LookupTable ends here
+///
 
 #define CHECK_EXPECTED(Token, ExpectedType)              \
     if(Token.IsEOF() || Token.GetType() != ExpectedType) \

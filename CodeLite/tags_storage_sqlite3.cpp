@@ -1893,7 +1893,7 @@ TagEntryPtr TagsStorageSQLite::GetScope(const wxString& filename, int line_numbe
 
     wxString sql;
     sql << "select * from tags where file='" << filename << "' and line <= " << line_number
-        << " and name NOT LIKE '__anon%' order by line desc limit 1";
+        << " and name NOT LIKE '__anon%' and KIND NOT IN ('parameter') order by line desc limit 1";
     clDEBUG1() << "Running SQL:" << sql << endl;
     std::vector<TagEntryPtr> tags;
     DoFetchTags(sql, tags);
@@ -1956,4 +1956,18 @@ size_t TagsStorageSQLite::GetFileScopedTags(const wxString& filepath, const wxSt
     // release the extra memory
     tags.shrink_to_fit();
     return tags.size();
+}
+
+size_t TagsStorageSQLite::GetParameters(const wxString& function_path, const std::vector<TagEntryPtr>& tags)
+{
+    wxUnusedVar(function_path);
+    wxUnusedVar(tags);
+    return 0;
+}
+
+size_t TagsStorageSQLite::GetLambdas(const wxString& parent_function, const std::vector<TagEntryPtr>& tags)
+{
+    wxUnusedVar(parent_function);
+    wxUnusedVar(tags);
+    return 0;
 }

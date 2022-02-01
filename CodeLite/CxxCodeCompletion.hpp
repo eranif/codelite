@@ -57,7 +57,7 @@ struct LookupTable {
     void GetSubscriptOperator(const wxString& scope, vector<TagEntryPtr>& tags);
     void GetTagsByPathAndKind(const wxString& path, vector<TagEntryPtr>& tags, const vector<wxString>& kinds,
                               int limit = 1);
-    void GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
+    void GetTagsByScopeAndKind(const wxString& scope, const vector<wxString>& kinds, const wxString& filter,
                                vector<TagEntryPtr>& tags, bool applyLimit = true);
     void GetFilesForCC(const wxString& userTyped, wxArrayString& matches);
     void GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
@@ -67,6 +67,16 @@ struct LookupTable {
     size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
                              vector<TagEntryPtr>& tags);
     void GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tags);
+
+    /**
+     * @brief load function parameters
+     */
+    size_t GetParameters(const wxString& function_path, const vector<TagEntryPtr>& tags);
+
+    /**
+     * @brief load all lambda functions for a given function
+     */
+    size_t GetLambdas(const wxString& parent_function, const vector<TagEntryPtr>& tags);
 };
 
 // internal to this TU

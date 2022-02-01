@@ -532,6 +532,16 @@ public:
      */
     virtual size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
                                      std::vector<TagEntryPtr>& tags) = 0;
+
+    /**
+     * @brief load function parameters
+     */
+    virtual size_t GetParameters(const wxString& function_path, const std::vector<TagEntryPtr>& tags) = 0;
+
+    /**
+     * @brief load all lambda functions for a given function
+     */
+    virtual size_t GetLambdas(const wxString& parent_function, const std::vector<TagEntryPtr>& tags) = 0;
 };
 
 enum { TagOk = 0, TagExist, TagError };

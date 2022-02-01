@@ -1132,6 +1132,18 @@ void ProtocolHandler::on_document_symbol(unique_ptr<JSON>&& msg, Channel::ptr_t 
     if(tags.empty()) {
         clDEBUG() << "no tags were found in file:" << filepath << endl;
     }
+
+    // remove parameters from the list
+    vector<TagEntryPtr> tags_no_parameters;
+    tags_no_parameters.reserve(tags.size());
+    for(auto tag : tags) {
+        if(tag->IsParameter()) {
+            continue;
+        }
+        tags_no_parameters.emplace_back(tag);
+    }
+    tags.swap(tags_no_parameters);
+
     // tags are sorted by line number, just wrap them in JSON and send them over to the client
     JSON root(cJSON_Object);
     auto response = root.toElement();

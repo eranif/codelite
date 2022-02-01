@@ -736,12 +736,12 @@ TEST_FUNC(test_ctags_locals)
     CTags::ParseLocals({}, content, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags);
     CHECK_BOOL(!tags.empty());
 
-    TagEntryPtr tag_auto_var = find_tag("auto_var", tags);
+    TagEntryPtr tag_auto_var = find_tag("MyClass::Foo::auto_var", tags);
     CHECK_NOT_NULL(tag_auto_var);
     CHECK_BOOL(tag_auto_var->is_auto());
     CHECK_STRING(tag_auto_var->get_assigment(), "V[0]");
 
-    TagEntryPtr tag_item = find_tag("item", tags);
+    TagEntryPtr tag_item = find_tag("MyClass::Foo::item", tags);
     CHECK_NOT_NULL(tag_item);
     CHECK_BOOL(tag_item->is_auto());
     CHECK_STRING(tag_item->get_assigment(), "V.begin()");
@@ -957,7 +957,7 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
     }
 
     if(wxFileExists(filename_2)) {
-        completer->set_text(wxEmptyString, filename_2, 60);
+        completer->set_text(wxEmptyString, filename_2, 78);
         resolved = completer->code_complete("m_template_manager->", { "std" });
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "TemplateManager");

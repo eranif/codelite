@@ -165,7 +165,7 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     } else {
         m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
     }
-    m_box = new wxCodeCompletionBox(wxTheApp->GetTopWindow(), eventObject);
+
     m_box->SetFlags(flags);
     m_box->SetStartPos(startPos);
     m_stc = ctrl;

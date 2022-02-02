@@ -11,17 +11,16 @@
 
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
-
 protected:
-    Scanner_t m_scanner;
+    Scanner_t m_scanner = nullptr;
     wxString m_buffer;
-    bool m_eof;
-    int m_parenthesisDepth;
+    bool m_eof = false;
+    int m_parenthesisDepth = 0;
     std::unordered_set<int> m_nativeTypes;
-    eCxxStandard m_standard;
+    eCxxStandard m_standard = eCxxStandard::kCxx11;
     wxStringTable_t m_macros;
     std::vector<wxString> m_buffers;
-    bool m_isFuncSignature;
+    bool m_isFuncSignature = false;
     wxString m_optimized_buffer;
     bool m_buffer_optimized = false;
 
@@ -40,15 +39,7 @@ protected:
     bool OnCatch(Scanner_t scanner);
     bool OnWhile(Scanner_t scanner);
     bool OnDeclType(Scanner_t scanner);
-    bool OnLambda(Scanner_t scanner);
     bool SkipToClosingParenthesis(Scanner_t scanner);
-
-    /**
-     * @brief parse function definition line and return the
-     * definition buffer. We only return it if the token after
-     * the definition is '{' or -> (C++11 syntax)
-     */
-    bool OnFunction(Scanner_t scanner, wxString& function_args_buffer, bool* push_scope);
 
 protected:
     /**
@@ -72,6 +63,20 @@ protected:
     CxxVariable::Vec_t DoParseFunctionArguments(const wxString& buffer);
 
     void DoOptimizeBuffer();
+
+    /**
+     * @brief move the scanner until we find the closing parenthesis `)`
+     * @param scanner
+     * @return true if found, false, when reached EOF
+     */
+    bool skip_parenthesis_block(Scanner_t scanner);
+
+    /**
+     * @brief move the scanner until we find the closing parenthesis `}`
+     * @param scanner
+     * @return true if found, false, when reached EOF
+     */
+    bool skip_curly_brackets_block(Scanner_t scanner);
 
 public:
     CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros,

@@ -486,18 +486,8 @@ void CxxVariableScanner::DoOptimizeBuffer()
             break;
         case '(':
             buffer << tok.GetWXString();
-            if(lastToken.GetType() == ']' || lastToken.GetType() == T_IDENTIFIER) {
-                // function, but its basically the same as lambda
-                wxString function_args_buffer;
-                bool push_scope = false;
-                if(OnFunction(sc, function_args_buffer, &push_scope) && push_scope) {
-                    PushBuffer();
-                    // append the function args to the next scope buffer
-                    Buffer() << ";" << function_args_buffer << ";";
-                }
-            } else {
-                ++parenthesisDepth;
-                PushBuffer();
+            if(skip_parenthesis_block(sc)) {
+                buffer << ")";
             }
             break;
         case '{':
@@ -513,11 +503,6 @@ void CxxVariableScanner::DoOptimizeBuffer()
             --parenthesisDepth;
             buffer = PopBuffer();
             buffer << ")";
-            // The closing curly bracket is added *after* we switch buffers
-            // if(parenthesisDepth == 0) {
-            //     buffer << tok.GetWXString();
-            // } else {
-            // }
             break;
         default:
             buffer << tok.GetWXString() << " ";
@@ -890,165 +875,6 @@ bool CxxVariableScanner::SkipToClosingParenthesis(Scanner_t scanner)
     return false;
 }
 
-bool CxxVariableScanner::OnFunction(Scanner_t scanner, wxString& function_args_buffer, bool* push_scope)
-{
-    CxxLexerToken tok;
-    int depth = 0;
-    bool cont = true;
-    *push_scope = false;
-
-    // we need to check if this is a function call or function definition
-    wxString first_parameter;
-    int angle_bracket_depth = 0;
-
-    constexpr int EXPR_FUNCTION_UNKNOWN = 0;
-    constexpr int EXPR_FUNCTION_CALL = 1;
-    constexpr int EXPR_FUNCTION_DEFINITION = 2;
-    int is_function_call = EXPR_FUNCTION_UNKNOWN;
-    while(cont && ::LexerNext(scanner, tok)) {
-        switch(tok.GetType()) {
-        case '<':
-            angle_bracket_depth++;
-            function_args_buffer << tok.GetWXString();
-            break;
-        case '>':
-            angle_bracket_depth--;
-            function_args_buffer << tok.GetWXString();
-            break;
-        case '{':
-        case '[':
-            depth++;
-            function_args_buffer << tok.GetWXString();
-            break;
-        case '}':
-        case ']':
-            depth--;
-            function_args_buffer << tok.GetWXString();
-            break;
-        case '(':
-            ++depth;
-            function_args_buffer << tok.GetWXString();
-            break;
-        case ')':
-            if(depth == 0) {
-                cont = false;
-                if(is_function_call == EXPR_FUNCTION_DEFINITION) {
-                    function_args_buffer << ";";
-                }
-            } else {
-                --depth;
-                function_args_buffer << tok.GetWXString();
-            }
-            break;
-        case ',':
-            if(depth == 0) {
-                if(is_function_call == EXPR_FUNCTION_UNKNOWN && (angle_bracket_depth == 0)) {
-                    // resolve this into a variable (typename + name)
-                    first_parameter = function_args_buffer;
-                    CxxVariableScanner var_scanner(first_parameter, eCxxStandard::kCxx11, {}, false);
-                    auto vars = var_scanner.GetVariablesMap();
-                    if(vars.empty()) {
-                        // a function call
-                        is_function_call = EXPR_FUNCTION_CALL;
-                    } else {
-                        is_function_call = EXPR_FUNCTION_DEFINITION;
-                    }
-                    // change the , -> ;
-                    // this makes it easier to our parser
-                    function_args_buffer << ";";
-                }
-
-                if(is_function_call == EXPR_FUNCTION_CALL || is_function_call == EXPR_FUNCTION_UNKNOWN) {
-                    function_args_buffer << ",";
-                } else {
-                    function_args_buffer << ";"; // use `;` to ensure parsing succeeds later
-                }
-
-            } else {
-                function_args_buffer << ",";
-            }
-            break;
-        default:
-            function_args_buffer << tok.GetWXString() << " ";
-            break;
-        }
-    }
-    wxString& buffer = Buffer();
-
-    // this was a function call
-    if(is_function_call == EXPR_FUNCTION_CALL) {
-        function_args_buffer.clear();
-        buffer << ")"; // add the closing parenthesis
-        return false;
-    }
-
-    // we got all the function definition buffer
-    // peek at the next token, if it of type `{`
-    // consume it and tell the caller to switch buffer
-    if(!::LexerNext(scanner, tok)) {
-        buffer << function_args_buffer << " ";
-        return false;
-    }
-
-    if(tok.GetType() == '{') {
-        buffer << ") {";    // ")" to close the function definition and add "{"
-        *push_scope = true; // tell the caller to push the current buffer
-                            // append the function definition buffer to the next buffer
-    } else if(tok.is_keyword()) {
-
-        // consume all keywords
-        while(::LexerNext(scanner, tok) && tok.is_keyword()) {
-            // do nothing
-            // we read something like const, noexcept etc
-        }
-        if(tok.IsEOF()) {
-            return false;
-        }
-
-        if(tok.GetType() == '{') {
-            buffer << ") {";    // ")" to close the function definition, dont add '{' it will be read later
-            *push_scope = true; // tell the caller to push the current buffer
-            // append the function definition buffer to the next buffer
-            return true;
-        }
-
-        // return the last token which was non keyword
-        ::LexerUnget(scanner);
-        return false;
-    } else {
-        ::LexerUnget(scanner);
-        // the function buffer should not be visible
-        buffer << ")"; // just close the function
-    }
-    return true;
-}
-
-bool CxxVariableScanner::OnLambda(Scanner_t scanner)
-{
-    CxxLexerToken tok;
-    int depth(1);
-    wxString& buffer = Buffer();
-    while(::LexerNext(scanner, tok)) {
-        switch(tok.GetType()) {
-        case '(':
-            ++depth;
-            buffer << tok.GetWXString();
-            break;
-        case ')':
-            --depth;
-            buffer << tok.GetWXString();
-            if(depth == 0) {
-                return true;
-            }
-            break;
-        default:
-            buffer << tok.GetWXString() << " ";
-            break;
-        }
-    }
-    return false;
-}
-
 wxString CxxVariableScanner::ToString(CxxVariable::LexerToken::Vec_t& vartype)
 {
     wxString str;
@@ -1057,4 +883,50 @@ wxString CxxVariableScanner::ToString(CxxVariable::LexerToken::Vec_t& vartype)
     }
     str.Trim();
     return str;
+}
+
+bool CxxVariableScanner::skip_parenthesis_block(Scanner_t scanner)
+{
+    int depth = 0;
+    CxxLexerToken token;
+    while(::LexerNext(scanner, token)) {
+        // Skip prep processing state
+        switch(token.GetType()) {
+        case '(':
+            depth++;
+            break;
+        case ')':
+            if(depth == 0) {
+                return true;
+            }
+            depth--;
+            break;
+        default:
+            break;
+        }
+    }
+    return false;
+}
+
+bool CxxVariableScanner::skip_curly_brackets_block(Scanner_t scanner)
+{
+    int depth = 0;
+    CxxLexerToken token;
+    while(::LexerNext(scanner, token)) {
+        // Skip prep processing state
+        switch(token.GetType()) {
+        case '{':
+            depth++;
+            break;
+        case '}':
+            if(depth == 0) {
+                return true;
+            }
+            depth--;
+            break;
+        default:
+            break;
+        }
+    }
+    return false;
 }

@@ -131,26 +131,16 @@ struct SampleFileLoaderLocker {
 TEST_FUNC(test_parsing_of_function_parameter)
 {
     {
-        const wxString code = "void foo(unordered_map<int, int>* M) { wxString str; ";
-        CxxVariableScanner scanner(code, eCxxStandard::kCxx11, {}, false);
-        auto vars = scanner.GetVariablesMap();
-        CHECK_BOOL(vars.count("M"));
-        wxString type_name = vars["M"]->GetTypeAsString();
-        CHECK_STRING(type_name, "unordered_map<int ,int >");
-    }
-    {
         const wxString code = "size_t CxxCodeCompletion::get_anonymous_tags(const wxString& name, const wxArrayString& "
                               "kinds, vector<TagEntryPtr>& tags) const {";
         CxxVariableScanner scanner(code, eCxxStandard::kCxx11, {}, false);
         auto vars = scanner.GetVariablesMap();
-        CHECK_BOOL(vars.count("tags"));
-        wxString type_name = vars["tags"]->GetTypeAsString();
-        CHECK_STRING(type_name, "vector<TagEntryPtr>");
+        CHECK_BOOL(vars.empty());
     }
     {
         CxxVariableScanner scanner(cc_test_function_calls_parsing, eCxxStandard::kCxx11, {}, false);
         auto vars = scanner.GetVariablesMap();
-        CHECK_SIZE(vars.size(), 3);
+        CHECK_SIZE(vars.size(), 2);
     }
     {
         CxxVariableScanner scanner(cc_zero_locals, eCxxStandard::kCxx11, {}, false);
@@ -1063,13 +1053,6 @@ TEST_FUNC(test_cxx_code_completion_list_locals)
         CHECK_SIZE(locals.size(), 0);
     }
     {
-        // test function args from a const method
-        completer->set_text(cc_text_func_const, wxEmptyString, wxNOT_FOUND);
-        auto locals = completer->get_locals(wxEmptyString);
-        CHECK_SIZE(locals.size(), 2);
-    }
-
-    {
         completer->set_text(tokenizer_sample_file_2, wxEmptyString, wxNOT_FOUND);
         auto locals = completer->get_locals(wxEmptyString);
         CHECK_SIZE(locals.size(), 0);
@@ -1092,14 +1075,14 @@ TEST_FUNC(test_cxx_code_completion_list_locals)
     {
         completer->set_text(big_file, wxEmptyString, wxNOT_FOUND);
         auto locals = completer->get_locals(wxEmptyString);
-        // we expect 4 variables
-        CHECK_SIZE(locals.size(), 4);
+        // we expect 2 locals
+        CHECK_SIZE(locals.size(), 2);
     }
 
     {
         completer->set_text(cc_lamda_text, wxEmptyString, wxNOT_FOUND);
         auto locals = completer->get_locals(wxEmptyString);
-        CHECK_SIZE(locals.size(), 6);
+        CHECK_SIZE(locals.size(), 2);
     }
 
     return true;
@@ -1117,24 +1100,22 @@ TEST_FUNC(test_cxx_code_completion_full_ns_path)
 TEST_FUNC(test_cxx_code_completion_function_arguments)
 {
     ENSURE_DB_LOADED();
-    {
-        completer->set_text(cc_text_function_args_simple, wxEmptyString, wxNOT_FOUND);
-        TagEntryPtr resolved = completer->code_complete("str.", { "std" });
-        CHECK_BOOL(resolved);
-        CHECK_STRING(resolved->GetPath(), "wxString");
-    }
-    {
-        completer->set_text(cc_text_function_args_simple, wxEmptyString, wxNOT_FOUND);
-        TagEntryPtr resolved = completer->code_complete("json.", { "std" });
-        CHECK_BOOL(resolved);
-        CHECK_STRING(resolved->GetPath(), "std::shared_ptr");
-    }
-
-    {
-        completer->set_text(cc_text_function_args_simple, wxEmptyString, wxNOT_FOUND);
-        TagEntryPtr resolved = completer->code_complete("json->", { "std" });
-        CHECK_BOOL(resolved);
-        CHECK_STRING(resolved->GetPath(), "JSON");
+    wxString filepath = R"(C:\src\codelite\ctagsd\lib\ProtocolHandler.cpp)";
+    if(wxFileExists(filepath)) {
+        {
+            completer->set_text(wxEmptyString, filepath,
+                                430); // ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
+            TagEntryPtr resolved = completer->code_complete("msg->", { "std" });
+            CHECK_BOOL(resolved);
+            CHECK_STRING(resolved->GetPath(), "JSON");
+        }
+        {
+            completer->set_text(wxEmptyString, filepath,
+                                430); // ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
+            TagEntryPtr resolved = completer->code_complete("channel->", { "std" });
+            CHECK_BOOL(resolved);
+            CHECK_STRING(resolved->GetPath(), "Channel");
+        }
     }
     return true;
 }
@@ -1344,12 +1325,6 @@ TEST_FUNC(test_cxx_code_completion_template)
         TagEntryPtr resolved = completer->code_complete("P->", { "std" });
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxString");
-    }
-    {
-        completer->set_text(cc_text_ProtocolHandler, wxEmptyString, wxNOT_FOUND);
-        TagEntryPtr resolved = completer->code_complete("msg->", { "std" });
-        CHECK_BOOL(resolved);
-        CHECK_STRING(resolved->GetPath(), "JSON");
     }
     {
         completer->set_text("CxxVariable::Map_t varsMap;", wxEmptyString, wxNOT_FOUND);

@@ -71,18 +71,19 @@ struct LookupTable {
     /**
      * @brief load function parameters
      */
-    size_t GetParameters(const wxString& function_path, const vector<TagEntryPtr>& tags);
+    size_t GetParameters(const wxString& function_path, vector<TagEntryPtr>& tags);
 
     /**
      * @brief load all lambda functions for a given function
      */
-    size_t GetLambdas(const wxString& parent_function, const vector<TagEntryPtr>& tags);
+    size_t GetLambdas(const wxString& parent_function, vector<TagEntryPtr>& tags);
 };
 
 // internal to this TU
 struct FileScope {
 private:
-    unordered_map<wxString, TagEntryPtr> static_members; // static members (`string Foo::m_str`)
+    unordered_map<wxString, TagEntryPtr> static_members;      // static members (`string Foo::m_str`)
+    unordered_map<wxString, TagEntryPtr> function_parameters; // function parameters
     vector<wxString> local_scopes;
 
 public:
@@ -90,6 +91,7 @@ public:
     {
         local_scopes.clear();
         static_members.clear();
+        function_parameters.clear();
     }
 
     void add_static_member(TagEntryPtr tag)
@@ -101,10 +103,26 @@ public:
     }
 
     bool is_static_member(const wxString& name) const { return static_members.count(name); }
+    bool is_function_parameter(const wxString& name) const { return function_parameters.count(name); }
+    void set_function_parameters(const vector<TagEntryPtr>& params)
+    {
+        function_parameters.reserve(params.size());
+        for(auto t : params) {
+            function_parameters.insert({ t->GetName(), t });
+        }
+    }
+
     TagEntryPtr get_static_member(const wxString& name) const
     {
         if(is_static_member(name)) {
             return static_members.find(name)->second;
+        }
+        return nullptr;
+    }
+    TagEntryPtr get_function_parameter(const wxString& name) const
+    {
+        if(is_function_parameter(name)) {
+            return function_parameters.find(name)->second;
         }
         return nullptr;
     }
@@ -240,6 +258,7 @@ private:
     TagEntryPtr on_member(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes);
     TagEntryPtr on_static_local(CxxExpression& curexp, const vector<wxString>& visible_scopes);
     TagEntryPtr on_local(CxxExpression& curexp, const vector<wxString>& visible_scopes);
+    TagEntryPtr on_parameter(CxxExpression& curexp, const vector<wxString>& visible_scopes);
     TagEntryPtr on_this(CxxExpression& curexp, const vector<wxString>& visible_scopes);
 
     /**

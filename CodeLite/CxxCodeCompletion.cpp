@@ -166,10 +166,16 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
     locals->reserve(variables.size());
 
     vector<TagEntryPtr> parameters;
+    vector<TagEntryPtr> lambdas;
+    vector<TagEntryPtr> lambda_parameters;
     if(m_current_function_tag && m_current_function_tag->IsFunction()) {
-        m_lookup->GetTagsByScopeAndKind(m_current_container_tag->GetPath(), { "parameter" }, wxEmptyString, parameters,
-                                        false);
-        // load all lambda functions (we need their parameters as well)
+        // get the current function parameters
+        m_lookup->GetParameters(m_current_function_tag->GetPath(), parameters);
+        m_lookup->GetLambdas(m_current_function_tag->GetPath(), lambdas);
+    }
+
+    if(file_tags) {
+        file_tags->set_function_parameters(parameters);
     }
 
     // we also include the anonymous entries for this scope
@@ -454,6 +460,19 @@ TagEntryPtr CxxCodeCompletion::on_local(CxxExpression& curexp, const vector<wxSt
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
+TagEntryPtr CxxCodeCompletion::on_parameter(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+{
+    // local member
+    if(!m_file_only_tags.is_function_parameter(curexp.type_name())) {
+        return nullptr;
+    }
+
+    wxString exprstr =
+        m_file_only_tags.get_function_parameter(curexp.type_name())->GetTypename() + curexp.operand_string();
+    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    return resolve_compound_expression(expr_arr, visible_scopes, curexp);
+}
+
 TagEntryPtr CxxCodeCompletion::on_extern_var(CxxExpression& curexp, TagEntryPtr var,
                                              const vector<wxString>& visible_scopes)
 {
@@ -567,7 +586,11 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
             } else if(m_file_only_tags.is_static_member(curexp.type_name())) {
                 // static member to this file
                 return on_static_local(curexp, visible_scopes);
+            } else if(m_file_only_tags.is_function_parameter(curexp.type_name())) {
+                // function parameter
+                return on_parameter(curexp, visible_scopes);
             } else if(is_scope_tag(curexp, visible_scopes)) {
+                // scoped tag (static variable, anonymous namespace tag etc)
                 return resolve_expression(curexp, find_scope_tag(curexp, visible_scopes), visible_scopes);
             } else {
                 auto externvar_tag = find_scope_tag_externvar(curexp, visible_scopes);
@@ -1490,7 +1513,6 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
             matches.swap(impl_vec);
             return matches.size();
         }
-
         auto is_on_line = [](const vector<TagEntryPtr>& tags_vec, int line, const wxString& file) {
             for(auto tag : tags_vec) {
                 if(tag->GetLine() == line && tag->GetFile() == file) {
@@ -1800,13 +1822,13 @@ void LookupTable::GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tag
     }
 }
 
-size_t LookupTable::GetParameters(const wxString& function_path, const vector<TagEntryPtr>& tags)
+size_t LookupTable::GetParameters(const wxString& function_path, vector<TagEntryPtr>& tags)
 {
     if(!pdb)
         return 0;
     return pdb->GetParameters(function_path, tags);
 }
-size_t LookupTable::GetLambdas(const wxString& parent_function, const vector<TagEntryPtr>& tags)
+size_t LookupTable::GetLambdas(const wxString& parent_function, vector<TagEntryPtr>& tags)
 {
     if(!pdb)
         return 0;

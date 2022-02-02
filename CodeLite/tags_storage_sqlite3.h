@@ -647,8 +647,8 @@ public:
     virtual size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
                                      std::vector<TagEntryPtr>& tags);
 
-    virtual size_t GetParameters(const wxString& function_path, const std::vector<TagEntryPtr>& tags);
-    virtual size_t GetLambdas(const wxString& parent_function, const std::vector<TagEntryPtr>& tags);
+    virtual size_t GetParameters(const wxString& function_path, std::vector<TagEntryPtr>& tags);
+    virtual size_t GetLambdas(const wxString& parent_function, std::vector<TagEntryPtr>& tags);
 };
 
 #endif // CODELITE_TAGS_DATABASE_H

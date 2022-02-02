@@ -1958,16 +1958,19 @@ size_t TagsStorageSQLite::GetFileScopedTags(const wxString& filepath, const wxSt
     return tags.size();
 }
 
-size_t TagsStorageSQLite::GetParameters(const wxString& function_path, const std::vector<TagEntryPtr>& tags)
+size_t TagsStorageSQLite::GetParameters(const wxString& function_path, std::vector<TagEntryPtr>& tags)
 {
-    wxUnusedVar(function_path);
-    wxUnusedVar(tags);
-    return 0;
+    wxString sql;
+    sql << "select * from tags where kind = 'parameter' and scope = '" << function_path << "' order by ID asc";
+    DoFetchTags(sql, tags);
+    return tags.size();
 }
 
-size_t TagsStorageSQLite::GetLambdas(const wxString& parent_function, const std::vector<TagEntryPtr>& tags)
+size_t TagsStorageSQLite::GetLambdas(const wxString& parent_function, std::vector<TagEntryPtr>& tags)
 {
-    wxUnusedVar(parent_function);
-    wxUnusedVar(tags);
-    return 0;
+    wxString sql;
+    // assuming `parent_function` is a function, this will return all the lambda children
+    sql << "select * from tags where kind = 'function' and scope = '" << parent_function << "' order by ID asc";
+    DoFetchTags(sql, tags);
+    return tags.size();
 }

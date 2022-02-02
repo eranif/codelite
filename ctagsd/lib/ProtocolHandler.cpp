@@ -1261,19 +1261,51 @@ void ProtocolHandler::on_hover(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
         tooltip << "===\n";
         if(first_tag->IsMethod()) {
             tooltip.clear();
-            tooltip << "function `" << first_tag->GetName() << "()` ";
             if(!first_tag->GetScope().empty()) {
                 if(first_tag->GetScope().StartsWith("__anon")) {
-                    tooltip << "of (anonymous scope)\n";
+                    tooltip << "function: `" << first_tag->GetName() << "()` of `(anonymous scope)`\n";
+                } else if(first_tag->GetScope().empty() || first_tag->GetScope() == "<global>") {
+                    tooltip << "function: `" << first_tag->GetName() << "()`\n";
+                } else if(first_tag->is_static()) {
+                    tooltip << "class-method: `" << first_tag->GetPath() << "()`";
                 } else {
-                    tooltip << "of scope `" << first_tag->GetParent() << "`";
+                    tooltip << "instance-method: `" << first_tag->GetPath() << "()`";
                 }
+            } else {
+                tooltip << "function `" << first_tag->GetName() << "()` ";
             }
             tooltip << "\n===\n";
-            for(TagEntryPtr tag : tags) {
-                if(tag->IsMethod()) {
-                    if(visited.insert(helper.normalize_function(tag)).second) {
-                        function_tag_arr.push_back(tag);
+            if(tags.size() == 1) {
+                // fancy formatting
+                auto args = helper.split_function_signature(first_tag->GetSignature(), nullptr, 0);
+                tooltip << "-> `" << first_tag->GetTypename() << "`\n";
+                if(!args.empty()) {
+                    tooltip << "\n";
+                }
+                for(auto arg : args) {
+                    tooltip << "- `" << arg << "`\n";
+                }
+
+                // build comment string
+                if(!do_comments_exist_for_file(first_tag->GetFile())) {
+                    update_comments_for_file(first_tag->GetFile());
+                }
+
+                wxString comment_string = get_comment(wxFileName(first_tag->GetFile()).GetFullPath(),
+                                                      first_tag->GetLine() - 1, wxEmptyString);
+                wxString doc_comment = helper.format_comment(nullptr, comment_string);
+
+                if(!doc_comment.empty()) {
+                    tooltip << "\n===\n";
+                    tooltip << doc_comment << "\n";
+                }
+            } else {
+                // overloading, use one liner per method
+                for(TagEntryPtr tag : tags) {
+                    if(tag->IsMethod()) {
+                        if(visited.insert(helper.normalize_function(tag)).second) {
+                            function_tag_arr.push_back(tag);
+                        }
                     }
                 }
             }

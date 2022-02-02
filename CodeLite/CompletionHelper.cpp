@@ -812,38 +812,36 @@ wxString CompletionHelper::format_comment(TagEntryPtr tag, const wxString& input
 wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_comment) const
 {
     wxString beautified_comment;
-    wxString return_value;
-    if(tag->IsMethod()) {
-        auto args = split_function_signature(tag->GetSignature(), &return_value);
-        wxUnusedVar(return_value);
+    if(tag) {
+        if(tag->IsMethod()) {
+            auto args = split_function_signature(tag->GetSignature(), nullptr);
+            beautified_comment << "```\n";
+            if(args.empty()) {
+                beautified_comment << tag->GetName() << "()\n";
+            } else {
+                beautified_comment << tag->GetName() << "(\n";
+                for(const wxString& arg : args) {
+                    beautified_comment << "  " << arg << ",\n";
+                }
 
-        beautified_comment << "```\n";
-        if(args.empty()) {
-            beautified_comment << tag->GetName() << "()\n";
-        } else {
-            beautified_comment << tag->GetName() << "(\n";
-            for(const wxString& arg : args) {
-                beautified_comment << "  " << arg << ",\n";
+                if(beautified_comment.EndsWith(",\n")) {
+                    beautified_comment.RemoveLast(2);
+                }
+                beautified_comment << ")\n";
             }
+            beautified_comment << "```\n";
+        } else if(tag->GetKind() == "variable" || tag->GetKind() == "member" || tag->IsLocalVariable()) {
+            wxString clean_pattern = tag->GetPatternClean();
+            clean_pattern.Trim().Trim(false);
 
-            if(beautified_comment.EndsWith(",\n")) {
-                beautified_comment.RemoveLast(2);
+            if(!clean_pattern.empty()) {
+                clean_pattern.Replace(tag->GetName(), "`" + tag->GetName() + "`");
+                beautified_comment << clean_pattern << "\n";
+            } else {
+                beautified_comment << tag->GetKind() << "\n";
             }
-            beautified_comment << ")\n";
-        }
-        beautified_comment << "```\n";
-    } else if(tag->GetKind() == "variable" || tag->GetKind() == "member" || tag->IsLocalVariable()) {
-        wxString clean_pattern = tag->GetPatternClean();
-        clean_pattern.Trim().Trim(false);
-
-        if(!clean_pattern.empty()) {
-            clean_pattern.Replace(tag->GetName(), "`" + tag->GetName() + "`");
-            beautified_comment << clean_pattern << "\n";
-        } else {
-            beautified_comment << tag->GetKind() << "\n";
         }
     }
-
     wxString formatted_comment;
     if(!input_comment.empty()) {
         formatted_comment = wrap_lines(input_comment);
@@ -888,7 +886,9 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
         }
 
         // horizontal line
-        beautified_comment << "---\n";
+        if(!beautified_comment.empty()) {
+            beautified_comment << "---\n";
+        }
         beautified_comment << formatted_comment;
     }
     return beautified_comment;

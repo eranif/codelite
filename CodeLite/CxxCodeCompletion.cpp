@@ -182,7 +182,7 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
         }
 
         for(auto lambda : all_lambdas) {
-            if(lambda->GetLine() <= m_line_number) {
+            if((lambda->GetLine() - 1) <= m_line_number) {
                 // load this lambda parameters and add them
                 vector<TagEntryPtr> lambda_parameters;
                 m_lookup->GetParameters(lambda->GetPath(), lambda_parameters);

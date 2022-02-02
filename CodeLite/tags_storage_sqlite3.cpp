@@ -1893,7 +1893,8 @@ TagEntryPtr TagsStorageSQLite::GetScope(const wxString& filename, int line_numbe
 
     wxString sql;
     sql << "select * from tags where file='" << filename << "' and line <= " << line_number
-        << " and name NOT LIKE '__anon%' and KIND NOT IN ('parameter') order by line desc limit 1";
+        << " and name NOT LIKE '__anon%' and KIND IN ('function', 'class', 'struct', 'namespace') order by line desc "
+           "limit 1";
     clDEBUG1() << "Running SQL:" << sql << endl;
     std::vector<TagEntryPtr> tags;
     DoFetchTags(sql, tags);

@@ -1,13 +1,14 @@
-#include <wx/app.h>
-#include <wx/event.h>
 #include "MainFrame.h"
-#include <wx/image.h>
+#include "clPersistenceManager.h"
+#include "wxTerminalOptions.h"
+
 #include <iostream>
 #include <thread>
+#include <wx/app.h>
 #include <wx/cmdline.h>
-#include "wxTerminalOptions.h"
+#include <wx/event.h>
+#include <wx/image.h>
 #include <wx/persist.h>
-#include "clPersistenceManager.h"
 
 //#ifdef __WXMSW__
 // void RedirectIOToConsole()
@@ -78,7 +79,9 @@ public:
         HINSTANCE user32Dll = LoadLibrary(L"User32.dll");
         if(user32Dll) {
             SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(user32Dll, "SetProcessDPIAware");
-            if(pFunc) { pFunc(); }
+            if(pFunc) {
+                pFunc();
+            }
             FreeLibrary(user32Dll);
         }
 #endif

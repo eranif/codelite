@@ -138,6 +138,12 @@ TEST_FUNC(test_parsing_of_function_parameter)
         CHECK_BOOL(vars.empty());
     }
     {
+        CxxVariableScanner scanner(cc_locals_with_typedef, eCxxStandard::kCxx11, {}, false);
+        auto vars = scanner.GetVariablesMap();
+        CHECK_BOOL(!vars.empty());
+        CHECK_BOOL(vars.count("m_options") != 0);
+    }
+    {
         CxxVariableScanner scanner(cc_test_function_calls_parsing, eCxxStandard::kCxx11, {}, false);
         auto vars = scanner.GetVariablesMap();
         CHECK_SIZE(vars.size(), 2);
@@ -166,6 +172,21 @@ TEST_FUNC(text_cxx_assignment_from_global_method)
         auto resolved = completer->code_complete("arr.", {}, nullptr);
         CHECK_NOT_NULL(resolved);
         CHECK_STRING(resolved->GetPath(), "wxArrayString");
+    }
+    return true;
+}
+
+TEST_FUNC(text_cxx_cc_with_problematic_typedef)
+{
+    ENSURE_DB_LOADED();
+    wxString filepath = R"(C:\src\codelite\codelite_terminal\main.cpp)";
+
+    if(wxFileExists(filepath)) {
+        {
+            completer->set_text(cc_locals_with_typedef, filepath, 88);
+            auto resolved = completer->code_complete("m_options.", {}, nullptr);
+            CHECK_NOT_NULL(resolved);
+        }
     }
     return true;
 }

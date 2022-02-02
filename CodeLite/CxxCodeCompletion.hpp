@@ -127,6 +127,26 @@ public:
         return nullptr;
     }
 
+    /**
+     * @brief return all function paramters that match the filter
+     * if filter is empty, return all of the parameters
+     */
+    vector<TagEntryPtr> get_function_parameters(const wxString& filter) const
+    {
+        vector<TagEntryPtr> tags;
+        tags.reserve(function_parameters.size());
+
+        wxString lowercase_filter = filter.Lower();
+        for(const auto& vt : function_parameters) {
+            if(filter.empty()) {
+                tags.push_back(vt.second);
+            } else if(vt.second->GetName().Lower().StartsWith(lowercase_filter)) {
+                tags.push_back(vt.second);
+            }
+        }
+        return tags;
+    }
+
     const vector<wxString>& get_file_scopes() const { return local_scopes; }
     void set_file_scopes(const wxStringSet_t& scopes)
     {

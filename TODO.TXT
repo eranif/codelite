@@ -81,4 +81,3 @@ New CTagsd CC engine:
 TODO:
 -----
 - Change the open resource dialog to use clTerminalCtrl view similar to the LSPOutlineView dialog
-

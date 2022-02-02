@@ -1101,6 +1101,7 @@ TEST_FUNC(test_cxx_code_completion_function_arguments)
 {
     ENSURE_DB_LOADED();
     wxString filepath = R"(C:\src\codelite\ctagsd\lib\ProtocolHandler.cpp)";
+    wxString filepath2 = R"(C:\src\codelite\Plugin\navigationmanager.cpp)";
     if(wxFileExists(filepath)) {
         {
             completer->set_text(wxEmptyString, filepath,
@@ -1115,6 +1116,23 @@ TEST_FUNC(test_cxx_code_completion_function_arguments)
             TagEntryPtr resolved = completer->code_complete("channel->", { "std" });
             CHECK_BOOL(resolved);
             CHECK_STRING(resolved->GetPath(), "Channel");
+        }
+        {
+            vector<TagEntryPtr> candidates;
+            completer->set_text(wxEmptyString, filepath,
+                                430); // ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
+            size_t count =
+                completer->word_complete(filepath, 430, "channel", wxEmptyString, { "std" }, true, candidates, {});
+            CHECK_BOOL(count > 0);
+            CHECK_BOOL(is_tag_exists("ProtocolHandler::on_initialize::channel", candidates));
+        }
+    }
+    if(wxFileExists(filepath2)) {
+        {
+            vector<TagEntryPtr> candidates;
+            size_t count = completer->word_complete(filepath2, 86, "editor", wxEmptyString, {}, true, candidates, {});
+            CHECK_BOOL(count == 1);
+            CHECK_STRING(candidates[0]->GetTypename(), "IEditor *");
         }
     }
     return true;

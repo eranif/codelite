@@ -166,15 +166,48 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
     locals->reserve(variables.size());
 
     vector<TagEntryPtr> parameters;
-    vector<TagEntryPtr> lambdas;
-    vector<TagEntryPtr> lambda_parameters;
     if(m_current_function_tag && m_current_function_tag->IsFunction()) {
+        vector<TagEntryPtr> all_lambdas;
+        vector<TagEntryPtr> lambdas;
         // get the current function parameters
         m_lookup->GetParameters(m_current_function_tag->GetPath(), parameters);
-        m_lookup->GetLambdas(m_current_function_tag->GetPath(), lambdas);
+        m_lookup->GetLambdas(m_current_function_tag->GetPath(), all_lambdas);
+
+        // read all lambdas paramteres
+        unordered_map<wxString, TagEntryPtr> lambda_parameters_map;
+        unordered_map<wxString, TagEntryPtr> function_parameters_map;
+
+        for(auto param : parameters) {
+            function_parameters_map.insert({ param->GetName(), param });
+        }
+
+        for(auto lambda : all_lambdas) {
+            if(lambda->GetLine() <= m_line_number) {
+                // load this lambda parameters and add them
+                vector<TagEntryPtr> lambda_parameters;
+                m_lookup->GetParameters(lambda->GetPath(), lambda_parameters);
+                for(auto param : lambda_parameters) {
+                    // if a function parameter with this name alrady exists, skip it
+                    if(function_parameters_map.count(param->GetName()))
+                        continue;
+
+                    // if we already encoutered a lambda parameter with this name, replace it
+                    if(lambda_parameters_map.count(param->GetName())) {
+                        lambda_parameters_map.erase(param->GetName());
+                    }
+                    lambda_parameters_map.insert({ param->GetName(), param });
+                }
+            }
+        }
+
+        // all the lambda paramters to the list of parameters
+        for(const auto& vt : lambda_parameters_map) {
+            parameters.emplace_back(vt.second);
+        }
     }
 
     if(file_tags) {
+        // set the function parameters (this includes any lambda parameters)
         file_tags->set_function_parameters(parameters);
     }
 
@@ -1404,6 +1437,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
 
 {
     vector<TagEntryPtr> locals;
+    vector<TagEntryPtr> function_parameters;
     vector<TagEntryPtr> keywords;
     vector<TagEntryPtr> scope_members;
     vector<TagEntryPtr> other_scopes_members;
@@ -1418,6 +1452,7 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
     vector<wxString> scopes = prepend_extra_scopes(visible_scopes);
 
     locals = get_locals(remainder.filter);
+    function_parameters = m_file_only_tags.get_function_parameters(remainder.filter);
 
     vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
@@ -1453,10 +1488,11 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
         get_keywords_tags(remainder.filter, keywords);
     }
     candidates.reserve(sorted_locals.size() + sorted_scope_members.size() + sorted_other_scopes_members.size() +
-                       sorted_global_scopes_members.size() + keywords.size());
+                       sorted_global_scopes_members.size() + keywords.size() + function_parameters.size());
 
     // place the keywords first
     candidates.insert(candidates.end(), sorted_locals.begin(), sorted_locals.end());
+    candidates.insert(candidates.end(), function_parameters.begin(), function_parameters.end());
     candidates.insert(candidates.end(), keywords.begin(), keywords.end());
     candidates.insert(candidates.end(), sorted_scope_members.begin(), sorted_scope_members.end());
     candidates.insert(candidates.end(), sorted_other_scopes_members.begin(), sorted_other_scopes_members.end());

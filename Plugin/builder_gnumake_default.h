@@ -74,8 +74,7 @@ public:
 
 protected:
     virtual wxString MakeDir(const wxString& path);
-    virtual wxString GetIntermediateFolder(ProjectPtr proj, const wxString& workspacepath);
-    virtual wxString GetOutputFolder(ProjectPtr proj, BuildConfigPtr bldConf);
+    virtual wxString GetIntermediateDirectory(ProjectPtr proj, BuildConfigPtr bldConf) const;
 
 protected:
     virtual void CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text);
@@ -96,7 +95,7 @@ protected:
 private:
     void GenerateMakefile(ProjectPtr proj, const wxString& confToBuild, bool force, const wxArrayString& depsProj);
     void CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text);
-    void CreateMakeDirsTarget(ProjectPtr proj, BuildConfigPtr bldConf, const wxString& targetName, wxString& text);
+    void CreateMakeDirsTarget(const wxString& targetName, wxString& text);
     void CreateTargets(const wxString& type, BuildConfigPtr bldConf, wxString& text, const wxString& projName);
     void CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text);
     void CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text);

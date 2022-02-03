@@ -231,6 +231,7 @@ public:
     const wxString& GetName() const { return m_name; }
     bool IsCompilerRequired() const { return m_compilerRequired; }
     bool IsLinkerRequired() const { return m_linkerRequired; }
+    wxString GetOutputDirectory() const;
     wxString GetOutputFileName() const;
     wxString GetIntermediateDirectory() const;
     const wxString& GetCommand() const { return m_command; }

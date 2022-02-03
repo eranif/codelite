@@ -64,6 +64,9 @@ public:
     virtual wxString GetStaticLibSuffix() const { return ".lib"; }
 
 protected:
+    virtual wxString GetIntermediateDirectory(ProjectPtr proj, BuildConfigPtr bldConf) const;
+
+protected:
     virtual void CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text);
     void CreateSrcList(ProjectPtr proj, const wxString& confToBuild, wxString& text);
     void CreateObjectList(ProjectPtr proj, const wxString& confToBuild, wxString& text);

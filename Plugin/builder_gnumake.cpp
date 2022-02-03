@@ -1193,6 +1193,7 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
 
     text << "ProjectName            :=" << projectName << "\n";
     text << "ConfigurationName      :=" << name << "\n";
+    text << "WorkspaceConfiguration :=" << clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() << "\n";
     text << "WorkspacePath          :=" << ::WrapWithQuotes(workspacepath) << "\n";
     text << "ProjectPath            :=" << ::WrapWithQuotes(projectpath) << "\n";
     text << "IntermediateDirectory  :=" << bldConf->GetIntermediateDirectory() << "\n";
@@ -1215,6 +1216,7 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
     text << "LibraryPathSwitch      :=" << cmp->GetSwitch("LibraryPath") << "\n";
     text << "PreprocessorSwitch     :=" << cmp->GetSwitch("Preprocessor") << "\n";
     text << "SourceSwitch           :=" << cmp->GetSwitch("Source") << "\n";
+    text << "OutputDirectory        :=" << bldConf->GetOutputDirectory() << "\n";
     text << "OutputFile             :=" << outputFile << "\n";
     text << "Preprocessors          :=" << ParsePreprocessor(bldConf->GetPreprocessor()) << "\n";
     text << "ObjectSwitch           :=" << cmp->GetSwitch("Object") << "\n";

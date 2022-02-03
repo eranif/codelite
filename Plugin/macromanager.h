@@ -47,6 +47,8 @@ public:
     /*
      * The following macro will be expanded into their real values:
      * $(ProjectPath)
+     * $(WorkspaceName)
+     * $(WorkspaceConfiguration)
      * $(WorkspacePath)
      * $(ProjectName)
      * $(IntermediateDirectory)
@@ -63,6 +65,7 @@ public:
      * $(Date)
      * $(CodeLitePath)
      * $(CurrentSelection)
+     * $(OutputDirectory)
      * $(ProjectOutputFile)
      * $(Selection)
      */

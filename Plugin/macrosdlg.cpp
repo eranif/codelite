@@ -70,77 +70,78 @@ void MacrosDlg::Initialize()
 
     switch(m_content) {
     case MacrosExternalTools:
-        AddMacro(wxT("$(CurrentSelection)"), _("Expands to the selected text in the active editor"));
-        AddMacro(wxT("$(CurrentSelectionRange)"),
+        AddMacro("$(CurrentSelection)", _("Expands to the selected text in the active editor"));
+        AddMacro("$(CurrentSelectionRange)",
                  _("Expands to the selected text range in bytes from beginning of file, eg. 150:200"));
-        AddMacro(wxT("$(ProjectOutputFile)"), _("Expands to the project binary output file"));
-        AddMacro(wxT("$(ProjectWorkingDirectory)"), _("Expands to the project's build working directory"));
-        AddMacro(wxT("$(ProjectRunWorkingDirectory)"), _("Expands to the project's run working directory"));
+        AddMacro("$(ProjectOutputFile)", _("Expands to the project binary output file"));
+        AddMacro("$(ProjectWorkingDirectory)", _("Expands to the project's build working directory"));
+        AddMacro("$(ProjectRunWorkingDirectory)", _("Expands to the project's run working directory"));
     // fall ...
     case MacrosProject:
-        AddMacro(wxT("$(ProjectPath)"), _("Expands to project's path"));
-        AddMacro(wxT("$(WorkspacePath)"), _("Expands to workspace's path"));
-        AddMacro(wxT("$(WorkspaceConfiguration)"), _("Expands to the workspace selected configuration"));
-        AddMacro(wxT("$(ProjectName)"), _("Expands to the current project name as appears in the 'File View'"));
-        AddMacro(wxT("$(IntermediateDirectory)"),
+        AddMacro("$(ProjectPath)", _("Expands to project's path"));
+        AddMacro("$(WorkspacePath)", _("Expands to workspace's path"));
+        AddMacro("$(WorkspaceConfiguration)", _("Expands to the workspace selected configuration"));
+        AddMacro("$(ProjectName)", _("Expands to the current project name as appears in the 'File View'"));
+        AddMacro("$(IntermediateDirectory)",
                  _("Expands to the current project intermediate directory path, as set in the project settings"));
-        AddMacro(wxT("$(ConfigurationName)"), _("Expands to the current project selected configuration"));
-        AddMacro(wxT("$(OutDir)"), _("An alias to $(IntermediateDirectory)"));
-        AddMacro(wxT("$(CurrentFileName)"), _("Expands to current file name (without extension and path)"));
-        AddMacro(wxT("$(CurrentFilePath)"), _("Expands to current file path"));
-        AddMacro(wxT("$(CurrentFileFullPath)"), _("Expands to current file full path (path and full name)"));
-        AddMacro(wxT("$(CurrentFileFullName)"), _("Expands to current file full name (name and extension)"));
-        AddMacro(wxT("$(User)"), _("Expands to logged-in user as defined by the OS"));
-        AddMacro(wxT("$(Date)"), _("Expands to current date"));
-        AddMacro(wxT("$(CodeLitePath)"),
+        AddMacro("$(ConfigurationName)", _("Expands to the current project selected configuration"));
+        AddMacro("$(OutDir)", _("An alias to $(IntermediateDirectory)"));
+        AddMacro("$(CurrentFileName)", _("Expands to current file name (without extension and path)"));
+        AddMacro("$(CurrentFilePath)", _("Expands to current file path"));
+        AddMacro("$(CurrentFileFullPath)", _("Expands to current file full path (path and full name)"));
+        AddMacro("$(CurrentFileFullName)", _("Expands to current file full name (name and extension)"));
+        AddMacro("$(User)", _("Expands to logged-in user as defined by the OS"));
+        AddMacro("$(Date)", _("Expands to current date"));
+        AddMacro("$(CodeLitePath)",
                  _("Expands to CodeLite's startup directory on (e.g. on Unix it expands to ~/.codelite/)"));
         AddMacro(
-            wxT("$(ProjectFiles)"),
+            "$(ProjectFiles)",
             _("A space delimited string containing all of the project files in a relative path to the project file"));
-        AddMacro(wxT("$(ProjectFilesAbs)"),
+        AddMacro("$(ProjectFilesAbs)",
                  _("A space delimited string containing all of the project files in an absolute path"));
-        AddMacro(wxT("`expression`"), _("backticks: evaluates the expression inside the backticks into a string"));
-        AddMacro(wxT("$(OutputFile)"), _("The output file"));
+        AddMacro("`expression`", _("backticks: evaluates the expression inside the backticks into a string"));
+        AddMacro("$(OutputDirectory)", _("The directory part of $(OutputFile)"));
+        AddMacro("$(OutputFile)", _("The output file"));
         break;
 
     case MacrosCompiler:
-        AddMacro(wxT("$(CXX)"), _("Expands to the compiler name as set in the Tools tab"));
-        AddMacro(wxT("$(SourceSwitch)"), _("Expands to the source switch (usually, -c)"));
-        AddMacro(wxT("$(FileFullPath)"), _("The file full path (includes path+name+extension)"));
-        AddMacro(wxT("$(FileFullName)"), _("The file full name (includes name+extension)"));
-        AddMacro(wxT("$(FileName)"), _("The file name (name only)"));
-        AddMacro(wxT("$(FilePath)"), _("The file's path with UNIX slashes, including terminating separator"));
-        AddMacro(wxT("$(CXXFLAGS)"), _("Expands to the compiler options as set in the project settings"));
-        AddMacro(wxT("$(RcCompilerName)"), _("Expands to the resource compiler name"));
-        AddMacro(wxT("$(IntermediateDirectory)"),
+        AddMacro("$(CXX)", _("Expands to the compiler name as set in the Tools tab"));
+        AddMacro("$(SourceSwitch)", _("Expands to the source switch (usually, -c)"));
+        AddMacro("$(FileFullPath)", _("The file full path (includes path+name+extension)"));
+        AddMacro("$(FileFullName)", _("The file full name (includes name+extension)"));
+        AddMacro("$(FileName)", _("The file name (name only)"));
+        AddMacro("$(FilePath)", _("The file's path with UNIX slashes, including terminating separator"));
+        AddMacro("$(CXXFLAGS)", _("Expands to the compiler options as set in the project settings"));
+        AddMacro("$(RcCompilerName)", _("Expands to the resource compiler name"));
+        AddMacro("$(IntermediateDirectory)",
                  _("Expands to the current project intermediate directory path, as set in the project settings"));
-        AddMacro(wxT("$(ConfigurationName)"), _("Expands to the current project selected configuration"));
-        AddMacro(wxT("$(OutDir)"), _("An alias to $(IntermediateDirectory)"));
-        AddMacro(wxT("$(LinkerName)"), _("Expands to the linker name as set in the Tools tab"));
-        AddMacro(wxT("$(AR)"), _("Expands to the archive tool (e.g. ar) name as set in the Tools tab"));
-        AddMacro(wxT("$(SharedObjectLinkerName)"),
-                 _("Expands to the shared object linker name as set in the Tools tab"));
-        AddMacro(wxT("$(ObjectSuffix)"), _("Objects suffix (usually set to .o)"));
-        AddMacro(wxT("$(ObjectName)"), _("The object name (without the suffix)"));
-        AddMacro(wxT("$(DependSuffix)"), _("Objects suffix (usually set to .o.d)"));
-        AddMacro(wxT("$(PreprocessSuffix)"), _("Objects suffix (usually set to .o.i)"));
-        AddMacro(wxT("$(IncludeSwitch)"), _("The compiler include switch"));
-        AddMacro(wxT("$(LibrarySwitch)"), _("The library switch (e.g. -l)"));
-        AddMacro(wxT("$(OutputSwitch)"), _("The output switch (e.g. -o)"));
-        AddMacro(wxT("$(LibraryPathSwitch)"), _("Library switch (e.g. -L)"));
-        AddMacro(wxT("$(PreprocessorSwitch)"), _("Preprocessor switch (e.g. -D)"));
-        AddMacro(wxT("$(Preprocessors)"), _("Expands to all preprocessors set in the project setting where each entry "
-                                            "is prefixed with $(PreprocessorSwitch)"));
-        AddMacro(wxT("$(ArchiveOutputSwitch)"), _("Archive switch, usually not needed (VC compiler sets it to /OUT:"));
-        AddMacro(wxT("$(PreprocessOnlySwitch)"), _("The compiler preprocess-only switch (e.g. -E)"));
-        AddMacro(wxT("$(LinkOptions)"), _("The linker options as set in the project settings"));
-        AddMacro(wxT("$(IncludePath)"), _("All include paths prefixed with $(IncludeSwitch)"));
-        AddMacro(wxT("$(RcIncludePath)"), _("Resource compiler include path as set in the project settings"));
-        AddMacro(wxT("$(Libs)"), _("List of libraries to link with. Each library is prefixed with $(LibrarySwitch)"));
-        AddMacro(wxT("$(LibPath)"),
+        AddMacro("$(ConfigurationName)", _("Expands to the current project selected configuration"));
+        AddMacro("$(OutDir)", _("An alias to $(IntermediateDirectory)"));
+        AddMacro("$(LinkerName)", _("Expands to the linker name as set in the Tools tab"));
+        AddMacro("$(AR)", _("Expands to the archive tool (e.g. ar) name as set in the Tools tab"));
+        AddMacro("$(SharedObjectLinkerName)", _("Expands to the shared object linker name as set in the Tools tab"));
+        AddMacro("$(ObjectSuffix)", _("Objects suffix (usually set to .o)"));
+        AddMacro("$(ObjectName)", _("The object name (without the suffix)"));
+        AddMacro("$(DependSuffix)", _("Objects suffix (usually set to .o.d)"));
+        AddMacro("$(PreprocessSuffix)", _("Objects suffix (usually set to .o.i)"));
+        AddMacro("$(IncludeSwitch)", _("The compiler include switch"));
+        AddMacro("$(LibrarySwitch)", _("The library switch (e.g. -l)"));
+        AddMacro("$(OutputSwitch)", _("The output switch (e.g. -o)"));
+        AddMacro("$(LibraryPathSwitch)", _("Library switch (e.g. -L)"));
+        AddMacro("$(PreprocessorSwitch)", _("Preprocessor switch (e.g. -D)"));
+        AddMacro("$(Preprocessors)", _("Expands to all preprocessors set in the project setting where each entry "
+                                       "is prefixed with $(PreprocessorSwitch)"));
+        AddMacro("$(ArchiveOutputSwitch)", _("Archive switch, usually not needed (VC compiler sets it to /OUT:"));
+        AddMacro("$(PreprocessOnlySwitch)", _("The compiler preprocess-only switch (e.g. -E)"));
+        AddMacro("$(LinkOptions)", _("The linker options as set in the project settings"));
+        AddMacro("$(IncludePath)", _("All include paths prefixed with $(IncludeSwitch)"));
+        AddMacro("$(RcIncludePath)", _("Resource compiler include path as set in the project settings"));
+        AddMacro("$(Libs)", _("List of libraries to link with. Each library is prefixed with $(LibrarySwitch)"));
+        AddMacro("$(LibPath)",
                  _("List of library paths to link with. Each library is prefixed with $(LibraryPathSwitch)"));
-        AddMacro(wxT("$(ProjectOutputFile)"), _("The output file"));
-        AddMacro(wxT("$(OutputFile)"), _("The output file, same as $(ProjectOutputFile)"));
+        AddMacro("$(OutputDirectory)", _("The directory part of $(ProjectOutputFile)"));
+        AddMacro("$(ProjectOutputFile)", _("The output file"));
+        AddMacro("$(OutputFile)", _("The output file, same as $(ProjectOutputFile)"));
         break;
     }
 
@@ -181,11 +182,11 @@ void MacrosDlg::OnCopy(wxCommandEvent& e)
         if(wxTheClipboard->Open()) {
             wxTheClipboard->UsePrimarySelection(false);
             if(!wxTheClipboard->SetData(new wxTextDataObject(value))) {
-                // wxPrintf(wxT("Failed to insert data %s to clipboard"), textToCopy.GetData());
+                // wxPrintf("Failed to insert data %s to clipboard", textToCopy.GetData());
             }
             wxTheClipboard->Close();
         } else {
-            wxPrintf(wxT("Failed to open the clipboard"));
+            wxPrintf("Failed to open the clipboard");
         }
 #endif
     }

@@ -57,18 +57,19 @@ wxString MacroManager::Replace(const wxString& inString, const wxString& variabl
                                bool bIgnoreCase)
 {
     size_t flags = wxRE_DEFAULT;
-    if(bIgnoreCase)
+    if(bIgnoreCase) {
         flags |= wxRE_ICASE;
+    }
 
     wxString strRe1;
     wxString strRe2;
     wxString strRe3;
     wxString strRe4;
 
-    strRe1 << wxT("\\$\\((") << variableName << wxT(")\\)");
-    strRe2 << wxT("\\$\\{(") << variableName << wxT(")\\}");
-    strRe3 << wxT("\\$(") << variableName << wxT(")");
-    strRe4 << wxT("%(") << variableName << wxT(")%");
+    strRe1 << "\\$\\((" << variableName << ")\\)";
+    strRe2 << "\\$\\{(" << variableName << ")\\}";
+    strRe3 << "\\$(" << variableName << ")";
+    strRe4 << "%(" << variableName << ")%";
 
     wxRegEx reOne(strRe1, flags);   // $(variable)
     wxRegEx reTwo(strRe2, flags);   // ${variable}
@@ -103,10 +104,18 @@ bool MacroManager::FindVariable(const wxString& inString, wxString& name, wxStri
     wxString strRe3;
     wxString strRe4;
 
-    strRe1 << wxT("\\$\\((") << wxT("[a-z_0-9]+") << wxT(")\\)");
-    strRe2 << wxT("\\$\\{(") << wxT("[a-z_0-9]+") << wxT(")\\}");
-    strRe3 << wxT("\\$(") << wxT("[a-z_0-9]+") << wxT(")");
-    strRe4 << wxT("%(") << wxT("[a-z_0-9]+") << wxT(")%");
+    strRe1 << "\\$\\(("
+           << "[a-z_0-9]+"
+           << ")\\)";
+    strRe2 << "\\$\\{("
+           << "[a-z_0-9]+"
+           << ")\\}";
+    strRe3 << "\\$("
+           << "[a-z_0-9]+"
+           << ")";
+    strRe4 << "%("
+           << "[a-z_0-9]+"
+           << ")%";
 
     wxRegEx reOne(strRe1, flags);   // $(variable)
     wxRegEx reTwo(strRe2, flags);   // ${variable}
@@ -180,7 +189,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
     while((retries < 5) && FindVariable(expandedString, dummyname, dummyname)) {
         ++retries;
         DollarEscaper de(expandedString);
-        expandedString.Replace(wxT("$(WorkspaceName)"), wspName);
+        expandedString.Replace("$(WorkspaceName)", wspName);
         expandedString.Replace("$(WorkspaceConfiguration)", wspConfig);
         expandedString.Replace("$(WorkspacePath)", wspPath);
         if(workspace) {
@@ -192,14 +201,15 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                 wxString project_name(proj->GetName());
 
                 // make sure that the project name does not contain any spaces
-                project_name.Replace(wxT(" "), wxT("_"));
+                project_name.Replace(" ", "_");
 
                 BuildConfigPtr bldConf = workspace->GetProjBuildConf(proj->GetName(), confToBuild);
                 if(bldConf) {
                     bool isCustom = bldConf->IsCustomBuild();
-                    expandedString.Replace(wxT("$(ProjectOutputFile)"), bldConf->GetOutputFileName());
+                    expandedString.Replace("$(OutputDirectory)", bldConf->GetOutputDirectory());
+                    expandedString.Replace("$(ProjectOutputFile)", bldConf->GetOutputFileName());
                     // An alias
-                    expandedString.Replace(wxT("$(OutputFile)"), bldConf->GetOutputFileName());
+                    expandedString.Replace("$(OutputFile)", bldConf->GetOutputFileName());
 
                     // When custom build project, use the working directory set in the
                     // custom build tab, otherwise use the project file's path
@@ -207,58 +217,60 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                     prjRunWd = bldConf->GetWorkingDirectory();
                 }
 
-                expandedString.Replace(wxT("$(ProjectWorkingDirectory)"), prjBuildWd);
-                expandedString.Replace(wxT("$(ProjectRunWorkingDirectory)"), prjRunWd);
-                expandedString.Replace(wxT("$(ProjectPath)"), proj->GetFileName().GetPath());
-                expandedString.Replace(wxT("$(WorkspacePath)"), workspace->GetWorkspaceFileName().GetPath());
-                expandedString.Replace(wxT("$(ProjectName)"), project_name);
+                expandedString.Replace("$(ProjectWorkingDirectory)", prjBuildWd);
+                expandedString.Replace("$(ProjectRunWorkingDirectory)", prjRunWd);
+                expandedString.Replace("$(ProjectPath)", proj->GetFileName().GetPath());
+                expandedString.Replace("$(WorkspacePath)", workspace->GetWorkspaceFileName().GetPath());
+                expandedString.Replace("$(ProjectName)", project_name);
 
                 if(bldConf) {
-                    expandedString.Replace(wxT("$(IntermediateDirectory)"), bldConf->GetIntermediateDirectory());
-                    expandedString.Replace(wxT("$(ConfigurationName)"), bldConf->GetName());
-                    expandedString.Replace(wxT("$(OutDir)"), bldConf->GetIntermediateDirectory());
+                    expandedString.Replace("$(IntermediateDirectory)", bldConf->GetIntermediateDirectory());
+                    expandedString.Replace("$(ConfigurationName)", bldConf->GetName());
+                    expandedString.Replace("$(OutDir)", bldConf->GetIntermediateDirectory());
 
                     // Compiler-related variables
 
                     wxString cFlags = bldConf->GetCCompileOptions();
-                    cFlags.Replace(wxT(";"), wxT(" "));
-                    expandedString.Replace(wxT("$(CC)"), bldConf->GetCompiler()->GetTool("CC"));
-                    expandedString.Replace(wxT("$(CFLAGS)"), cFlags);
+                    cFlags.Replace(";", " ");
+                    expandedString.Replace("$(CC)", bldConf->GetCompiler()->GetTool("CC"));
+                    expandedString.Replace("$(CFLAGS)", cFlags);
 
                     wxString cxxFlags = bldConf->GetCompileOptions();
-                    cxxFlags.Replace(wxT(";"), wxT(" "));
-                    expandedString.Replace(wxT("$(CXX)"), bldConf->GetCompiler()->GetTool("CXX"));
-                    expandedString.Replace(wxT("$(CXXFLAGS)"), cxxFlags);
+                    cxxFlags.Replace(";", " ");
+                    expandedString.Replace("$(CXX)", bldConf->GetCompiler()->GetTool("CXX"));
+                    expandedString.Replace("$(CXXFLAGS)", cxxFlags);
 
                     wxString ldFlags = bldConf->GetLinkOptions();
-                    ldFlags.Replace(wxT(";"), wxT(" "));
-                    expandedString.Replace(wxT("$(LDFLAGS)"), ldFlags);
+                    ldFlags.Replace(";", " ");
+                    expandedString.Replace("$(LDFLAGS)", ldFlags);
 
                     wxString asFlags = bldConf->GetAssmeblerOptions();
-                    asFlags.Replace(wxT(";"), wxT(" "));
-                    expandedString.Replace(wxT("$(AS)"), bldConf->GetCompiler()->GetTool("AS"));
-                    expandedString.Replace(wxT("$(ASFLAGS)"), asFlags);
+                    asFlags.Replace(";", " ");
+                    expandedString.Replace("$(AS)", bldConf->GetCompiler()->GetTool("AS"));
+                    expandedString.Replace("$(ASFLAGS)", asFlags);
 
                     wxString resFlags = bldConf->GetResCompileOptions();
-                    resFlags.Replace(wxT(";"), wxT(" "));
-                    expandedString.Replace(wxT("$(RES)"), bldConf->GetCompiler()->GetTool("ResourceCompiler"));
-                    expandedString.Replace(wxT("$(RESFLAGS)"), resFlags);
+                    resFlags.Replace(";", " ");
+                    expandedString.Replace("$(RES)", bldConf->GetCompiler()->GetTool("ResourceCompiler"));
+                    expandedString.Replace("$(RESFLAGS)", resFlags);
 
-                    expandedString.Replace(wxT("$(AR)"), bldConf->GetCompiler()->GetTool("AR"));
+                    expandedString.Replace("$(AR)", bldConf->GetCompiler()->GetTool("AR"));
 
-                    expandedString.Replace(wxT("$(MAKE)"), bldConf->GetCompiler()->GetTool("MAKE"));
+                    expandedString.Replace("$(MAKE)", bldConf->GetCompiler()->GetTool("MAKE"));
 
-                    expandedString.Replace(wxT("$(IncludePath)"), bldConf->GetIncludePath());
-                    expandedString.Replace(wxT("$(LibraryPath)"), bldConf->GetLibPath());
-                    expandedString.Replace(wxT("$(ResourcePath)"), bldConf->GetResCmpIncludePath());
-                    expandedString.Replace(wxT("$(LinkLibraries)"), bldConf->GetLibraries());
+                    expandedString.Replace("$(IncludePath)", bldConf->GetIncludePath());
+                    expandedString.Replace("$(LibraryPath)", bldConf->GetLibPath());
+                    expandedString.Replace("$(ResourcePath)", bldConf->GetResCmpIncludePath());
+                    expandedString.Replace("$(LinkLibraries)", bldConf->GetLibraries());
                 }
 
-                if(expandedString.Find(wxT("$(ProjectFiles)")) != wxNOT_FOUND)
-                    expandedString.Replace(wxT("$(ProjectFiles)"), proj->GetFilesAsString(false));
+                if(expandedString.Find("$(ProjectFiles)") != wxNOT_FOUND) {
+                    expandedString.Replace("$(ProjectFiles)", proj->GetFilesAsString(false));
+                }
 
-                if(expandedString.Find(wxT("$(ProjectFilesAbs)")) != wxNOT_FOUND)
-                    expandedString.Replace(wxT("$(ProjectFilesAbs)"), proj->GetFilesAsString(true));
+                if(expandedString.Find("$(ProjectFilesAbs)") != wxNOT_FOUND) {
+                    expandedString.Replace("$(ProjectFilesAbs)", proj->GetFilesAsString(true));
+                }
             }
         }
 
@@ -267,34 +279,34 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
             if(editor) {
                 wxFileName fn(editor->GetFileName());
 
-                expandedString.Replace(wxT("$(CurrentFileName)"), fn.GetName());
+                expandedString.Replace("$(CurrentFileName)", fn.GetName());
 
                 wxString fpath(fn.GetPath());
-                fpath.Replace(wxT("\\"), wxT("/"));
-                expandedString.Replace(wxT("$(CurrentFilePath)"), fpath);
-                expandedString.Replace(wxT("$(CurrentFileExt)"), fn.GetExt());
-                expandedString.Replace(wxT("$(CurrentFileFullName)"), fn.GetFullName());
+                fpath.Replace("\\", "/");
+                expandedString.Replace("$(CurrentFilePath)", fpath);
+                expandedString.Replace("$(CurrentFileExt)", fn.GetExt());
+                expandedString.Replace("$(CurrentFileFullName)", fn.GetFullName());
 
                 wxString ffullpath(fn.GetFullPath());
-                ffullpath.Replace(wxT("\\"), wxT("/"));
-                expandedString.Replace(wxT("$(CurrentFileFullPath)"), ffullpath);
-                expandedString.Replace(wxT("$(CurrentSelection)"), editor->GetSelection());
-                if(expandedString.Find(wxT("$(CurrentSelectionRange)")) != wxNOT_FOUND) {
+                ffullpath.Replace("\\", "/");
+                expandedString.Replace("$(CurrentFileFullPath)", ffullpath);
+                expandedString.Replace("$(CurrentSelection)", editor->GetSelection());
+                if(expandedString.Find("$(CurrentSelectionRange)") != wxNOT_FOUND) {
                     int start = editor->GetSelectionStart(), end = editor->GetSelectionEnd();
 
-                    wxString output = wxString::Format(wxT("%i:%i"), start, end);
-                    expandedString.Replace(wxT("$(CurrentSelectionRange)"), output);
+                    wxString output = wxString::Format("%i:%i", start, end);
+                    expandedString.Replace("$(CurrentSelectionRange)", output);
                 }
             }
         }
 
         // exapand common macros
         wxDateTime now = wxDateTime::Now();
-        expandedString.Replace(wxT("$(User)"), wxGetUserName());
-        expandedString.Replace(wxT("$(Date)"), now.FormatDate());
+        expandedString.Replace("$(User)", wxGetUserName());
+        expandedString.Replace("$(Date)", now.FormatDate());
 
         if(manager && applyEnv) {
-            expandedString.Replace(wxT("$(CodeLitePath)"), manager->GetInstallDirectory());
+            expandedString.Replace("$(CodeLitePath)", manager->GetInstallDirectory());
 
             // Apply the environment and expand the variables
             EnvSetter es(NULL, NULL, project, confToBuild);

@@ -86,7 +86,7 @@ bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
 {
     wxString ext;
 
-#if defined(__WXMSW__)
+#if defined(__WXMSW__) || defined(__CYGWIN__)
     ext = wxT("dll");
 
 #elif defined(__WXMAC__)

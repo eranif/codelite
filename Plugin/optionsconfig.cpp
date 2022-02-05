@@ -158,6 +158,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_highlightCaretLine = XmlUtils::ReadBool(node, wxT("HighlightCaretLine"), m_highlightCaretLine);
         m_displayLineNumbers = XmlUtils::ReadBool(node, wxT("ShowLineNumber"), m_displayLineNumbers);
         m_relativeLineNumbers = XmlUtils::ReadBool(node, wxT("RelativeLineNumber"), m_relativeLineNumbers);
+        m_lineNumberHighlightCurrent =
+            XmlUtils::ReadBool(node, wxT("LineNumbersHighlightCurrent"), m_lineNumberHighlightCurrent);
         m_showIndentationGuidelines = XmlUtils::ReadBool(node, wxT("IndentationGuides"), m_showIndentationGuidelines);
         m_caretLineColour =
             XmlUtils::ReadString(node, wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
@@ -280,6 +282,7 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("HighlightCaretLine"), BoolToString(m_highlightCaretLine));
     n->AddProperty(wxT("ShowLineNumber"), BoolToString(m_displayLineNumbers));
     n->AddProperty(wxT("RelativeLineNumber"), BoolToString(m_relativeLineNumbers));
+    n->AddProperty(wxT("LineNumbersHighlightCurrent"), BoolToString(m_lineNumberHighlightCurrent));
     n->AddProperty(wxT("IndentationGuides"), BoolToString(m_showIndentationGuidelines));
     n->AddProperty(wxT("CaretLineColour"), m_caretLineColour.GetAsString(wxC2S_HTML_SYNTAX));
     n->AddProperty(wxT("IndentUsesTabs"), BoolToString(m_indentUsesTabs));

@@ -429,7 +429,7 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_functionNameAndSignature":	"OnDisplayLineNumbersUI(wxUpdateUIEvent& event)",
+													"m_functionNameAndSignature":	"OnUseRelativeLineNumbersUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}],

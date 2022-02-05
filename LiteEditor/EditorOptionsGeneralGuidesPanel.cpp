@@ -8,7 +8,7 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
 {
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     m_checkBoxLineNumbersShow->SetValue(options->GetDisplayLineNumbers());
-    m_checkBoxLineNumbersHighlightCurrent->SetValue(true);
+    m_checkBoxLineNumbersHighlightCurrent->SetValue(options->IsLineNumberHighlightCurrent());
     m_checkBoxLineNumbersRelative->SetValue(options->GetRelativeLineNumbers());
     m_checkBoxHighlightIndentLines->SetValue(options->GetShowIndentationGuidelines());
     m_checkBoxHighlightBraces->SetValue(options->GetHighlightMatchedBraces());
@@ -56,5 +56,11 @@ void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
     options->SetDebuggerMarkerLine(m_colourPickerDebuggerLineColour->GetColour());
     options->EnableOption(OptionsConfig::Opt_Mark_Debugger_Line, m_checkBoxDebuggerLineEnabled->IsChecked());
     options->SetShowWhitspaces(m_choiceWhitespaceVisibility->GetSelection());
+    options->SetLineNumberHighlightCurrent(m_checkBoxLineNumbersHighlightCurrent->IsChecked());
     clConfig::Get().Write("extra_line_spacing", (int)m_spinCtrlWhitespaceLineSpacing->GetValue());
+}
+
+void EditorOptionsGeneralGuidesPanel::OnUseRelativeLineNumbersUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_checkBoxLineNumbersShow->IsChecked() && m_checkBoxLineNumbersHighlightCurrent->IsChecked());
 }

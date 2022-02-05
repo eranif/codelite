@@ -213,8 +213,8 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     // Connect events
     m_checkBoxLineNumbersHighlightCurrent->Bind(wxEVT_UPDATE_UI,
                                                 &EditorOptionsGeneralGuidesPanelBase::OnDisplayLineNumbersUI, this);
-    m_checkBoxLineNumbersRelative->Bind(wxEVT_UPDATE_UI, &EditorOptionsGeneralGuidesPanelBase::OnDisplayLineNumbersUI,
-                                        this);
+    m_checkBoxLineNumbersRelative->Bind(wxEVT_UPDATE_UI,
+                                        &EditorOptionsGeneralGuidesPanelBase::OnUseRelativeLineNumbersUI, this);
     m_staticText95->Bind(wxEVT_UPDATE_UI, &EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLineUI, this);
     m_colourPickerCaretLineColour->Bind(wxEVT_UPDATE_UI, &EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLineUI,
                                         this);
@@ -229,8 +229,8 @@ EditorOptionsGeneralGuidesPanelBase::~EditorOptionsGeneralGuidesPanelBase()
 {
     m_checkBoxLineNumbersHighlightCurrent->Unbind(wxEVT_UPDATE_UI,
                                                   &EditorOptionsGeneralGuidesPanelBase::OnDisplayLineNumbersUI, this);
-    m_checkBoxLineNumbersRelative->Unbind(wxEVT_UPDATE_UI, &EditorOptionsGeneralGuidesPanelBase::OnDisplayLineNumbersUI,
-                                          this);
+    m_checkBoxLineNumbersRelative->Unbind(wxEVT_UPDATE_UI,
+                                          &EditorOptionsGeneralGuidesPanelBase::OnUseRelativeLineNumbersUI, this);
     m_staticText95->Unbind(wxEVT_UPDATE_UI, &EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLineUI, this);
     m_colourPickerCaretLineColour->Unbind(wxEVT_UPDATE_UI, &EditorOptionsGeneralGuidesPanelBase::OnHighlightCaretLineUI,
                                           this);

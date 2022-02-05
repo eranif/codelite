@@ -65,6 +65,7 @@ protected:
 
 protected:
     virtual void OnDisplayLineNumbersUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUseRelativeLineNumbersUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHighlightCaretLineUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnHighlightDebuggerLineUI(wxUpdateUIEvent& event) { event.Skip(); }
 

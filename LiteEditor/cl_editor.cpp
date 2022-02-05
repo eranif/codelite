@@ -781,7 +781,11 @@ void clEditor::SetProperties()
     SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
 
     // Line numbers
-    SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_RTEXT);
+    if(options->IsLineNumberHighlightCurrent()) {
+        SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_RTEXT);
+    } else {
+        SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
+    }
 
     // line number margin displays every thing but folding, bookmarks and breakpoint
     SetMarginMask(NUMBER_MARGIN_ID, ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler |
@@ -3271,6 +3275,8 @@ wxFontEncoding clEditor::DetectEncoding(const wxString& filename)
 
 void clEditor::DoUpdateLineNumbers(bool relative_numbers)
 {
+    if(!GetOptions()->IsLineNumberHighlightCurrent())
+        return;
     int linesOnScreen = LinesOnScreen();
     int current_line = GetCurrentLine();
 
@@ -3378,7 +3384,7 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers)
 void clEditor::UpdateLineNumbers()
 {
     OptionsConfigPtr c = GetOptions();
-    if(!c->GetDisplayLineNumbers()) {
+    if(!c->GetDisplayLineNumbers() || !c->IsLineNumberHighlightCurrent()) {
         return;
     }
     DoUpdateLineNumbers(c->GetRelativeLineNumbers());

@@ -161,6 +161,7 @@ protected:
     int m_nbTabHeight; // Should notebook tabs be too tall, too short or...
     wxString m_webSearchPrefix;
     bool m_smartParen = true;
+    bool m_lineNumberHighlightCurrent = true;
 
 public:
     // Helpers
@@ -491,6 +492,11 @@ public:
 
     void UpdateFromEditorConfig(const clEditorConfigSection& section);
 
+    void SetLineNumberHighlightCurrent(bool lineNumberHighlightCurrent)
+    {
+        this->m_lineNumberHighlightCurrent = lineNumberHighlightCurrent;
+    }
+    bool IsLineNumberHighlightCurrent() const { return m_lineNumberHighlightCurrent; }
     /**
      * Return an XML representation of this object
      * \return XML node

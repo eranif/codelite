@@ -14,6 +14,7 @@ public:
     void Save(OptionsConfigPtr options) override;
 
 protected:
+    virtual void OnUseRelativeLineNumbersUI(wxUpdateUIEvent& event);
     void OnDisplayLineNumbersUI(wxUpdateUIEvent& event) override;
     void OnHighlightCaretLineUI(wxUpdateUIEvent& event) override;
     void OnHighlightDebuggerLineUI(wxUpdateUIEvent& event) override;

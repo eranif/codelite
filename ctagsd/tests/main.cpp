@@ -97,36 +97,7 @@ wxString get_sample_file(const wxString& filename)
     return test_file.GetFullPath();
 }
 
-unordered_map<wxString, TagEntryPtr> load_tags_from_file(const wxString& filename)
-{
-    wxString fullpath = get_sample_file(filename);
-    vector<TagEntryPtr> tags;
-    CTags::ParseFile(fullpath, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags);
-    unordered_map<wxString, TagEntryPtr> tags_map;
-    for(auto tag : tags) {
-        if(tags_map.count(tag->GetPath()))
-            continue;
-        tags_map.insert({ tag->GetPath(), tag });
-    }
-    return tags_map;
-}
 } // namespace
-
-/// Helper class for injecting tags loaded from sample files
-/// in the completer object
-struct SampleFileLoaderLocker {
-    wxString filepath;
-    SampleFileLoaderLocker(const wxString& filename)
-    {
-        auto db = load_tags_from_file(filename);
-        if(!db.empty()) {
-            filepath = db.begin()->second->GetFile();
-        }
-        completer->test_set_db(db);
-    }
-
-    ~SampleFileLoaderLocker() { completer->test_clear_db(); }
-};
 
 TEST_FUNC(test_parsing_of_function_parameter)
 {
@@ -334,10 +305,7 @@ TEST_FUNC(test_cxx_code_complete_member_of_parent_class)
 {
     ENSURE_DB_LOADED();
     wxString member_of_parent_class_file;
-    {
-        SampleFileLoaderLocker loader("member_of_parent_class.hpp");
-        member_of_parent_class_file = loader.filepath;
-    }
+    member_of_parent_class_file = get_sample_file("member_of_parent_class.hpp");
 
     // set our scope at MyPlugin::foo
     completer->set_text(wxEmptyString, member_of_parent_class_file, 8);
@@ -611,8 +579,6 @@ TEST_FUNC(test_cxx_code_completion_func_returning_unique_ptr_into_auto)
 {
     ENSURE_DB_LOADED();
     {
-        SampleFileLoaderLocker loader("sample_function_returning_unique_ptr.hpp");
-
         wxString code = "auto s = return_unique_ptr_of_string();";
         completer->set_text(code, wxEmptyString, wxNOT_FOUND);
         CxxRemainder remainder;
@@ -1188,7 +1154,6 @@ TEST_FUNC(test_cxx_code_completion_member_variable)
 TEST_FUNC(test_cxx_code_completion_template_function)
 {
     ENSURE_DB_LOADED();
-    SampleFileLoaderLocker loader("template_function.hpp");
     {
         TagEntryPtr resolved = completer->code_complete("get_as_type<wxString>()->", {});
         CHECK_BOOL(resolved);

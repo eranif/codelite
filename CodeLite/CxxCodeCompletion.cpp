@@ -51,7 +51,7 @@ wxArrayString to_wx_array_string(const vector<wxString>& v)
 CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& codelite_indexer)
     : m_codelite_indexer(codelite_indexer)
 {
-    m_lookup.reset(new LookupTable(lookup));
+    m_lookup = lookup;
     m_template_manager.reset(new TemplateManager(this));
 }
 
@@ -59,7 +59,7 @@ CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& cod
                                      const unordered_map<wxString, TagEntryPtr>& unit_tests_db)
     : m_codelite_indexer(codelite_indexer)
 {
-    m_lookup.reset(new LookupTable(lookup, unit_tests_db));
+    m_lookup = lookup;
     m_template_manager.reset(new TemplateManager(this));
 }
 
@@ -1149,7 +1149,7 @@ vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
             scope = tag->GetScope();
         }
         vector<TagEntryPtr> parent_tags;
-        m_lookup->GetTagsByScopeAndKind(scope, kinds, filter, parent_tags, true);
+        m_lookup->GetTagsByScopeAndKind(scope, to_wx_array_string(kinds), filter, parent_tags, true);
         tags.reserve(tags.size() + parent_tags.size());
         tags.insert(tags.end(), parent_tags.begin(), parent_tags.end());
     }
@@ -1507,10 +1507,18 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
     // ----------------------------------
     // word completion
     // ----------------------------------
-    clDEBUG() << "find_definition is called for expression:" << expression << endl;
     vector<TagEntryPtr> candidates;
-    if(word_complete(filepath, line, expression, text, visible_scopes, true, candidates) == 0) {
-        return 0;
+
+    // first check if we are on a line
+    m_lookup->GetTagsByFileAndLine(filepath, line, candidates);
+    if(candidates.empty()) {
+        clDEBUG() << "find_definition(): calling word_complete(): is called for expression:" << expression << endl;
+        if(word_complete(filepath, line, expression, text, visible_scopes, true, candidates) == 0) {
+            return 0;
+        }
+    } else {
+        clDEBUG() << "find_definition(): on a tag:" << candidates[0]->GetFullDisplayName() << "."
+                  << candidates[0]->IsMethod() << endl;
     }
 
     // filter tags with no line numbers
@@ -1689,191 +1697,6 @@ size_t CxxCodeCompletion::get_keywords_tags(const wxString& name, vector<TagEntr
     }
     return tags.size();
 }
-
-///====--------------------------------------------------------------------------------
-///====--------------------------------------------------------------------------------
-///
-/// LookupTable
-///
-///====--------------------------------------------------------------------------------
-///====--------------------------------------------------------------------------------
-
-TagEntryPtr LookupTable::GetScope(const wxString& filename, int line_number)
-{
-    CHECK_PTR_RET_NULL(pdb);
-    return pdb->GetScope(filename, line_number);
-}
-
-void LookupTable::GetTagsByPath(const wxString& path, vector<TagEntryPtr>& tags, int limit)
-{
-    if(pdb) {
-        pdb->GetTagsByPath(path, tags, limit);
-    }
-
-    if(!tests_db.empty()) {
-        if(tests_db.count(path)) {
-            tags.push_back(tests_db[path]);
-        }
-    }
-}
-
-void LookupTable::GetSubscriptOperator(const wxString& scope, vector<TagEntryPtr>& tags)
-{
-    if(pdb) {
-        pdb->GetSubscriptOperator(scope, tags);
-    }
-}
-
-void LookupTable::GetTagsByPathAndKind(const wxString& path, vector<TagEntryPtr>& tags, const vector<wxString>& kinds,
-                                       int limit)
-{
-    if(pdb) {
-        pdb->GetTagsByPathAndKind(path, tags, kinds, limit);
-    }
-
-    // add the tests tags
-    if(!tests_db.empty() && tests_db.count(path)) {
-        auto tag = tests_db[path];
-        for(const wxString& kind : kinds) {
-            if(tag->GetKind() == kind) {
-                tags.push_back(tag);
-                break;
-            }
-        }
-    }
-}
-
-void LookupTable::GetTagsByScopeAndKind(const wxString& scope, const vector<wxString>& kinds, const wxString& filter,
-                                        vector<TagEntryPtr>& tags, bool applyLimit)
-{
-    wxArrayString wxkinds;
-    wxkinds.reserve(kinds.size());
-
-    for(const wxString& k : kinds) {
-        wxkinds.Add(k);
-    }
-
-    if(pdb) {
-        pdb->GetTagsByScopeAndKind(scope, wxkinds, filter, tags, applyLimit);
-    }
-
-    if(!tests_db.empty()) {
-        wxStringSet_t kinds_map = { kinds.begin(), kinds.end() };
-        for(const auto& vt : tests_db) {
-            if(vt.second->GetScope() == scope && kinds_map.count(vt.second->GetKind()) &&
-               vt.second->GetName().StartsWith(filter)) {
-                tags.push_back(vt.second);
-            }
-        }
-    }
-}
-
-void LookupTable::GetFilesForCC(const wxString& userTyped, wxArrayString& matches)
-{
-    CHECK_PTR_RET(pdb);
-    pdb->GetFilesForCC(userTyped, matches);
-}
-
-void LookupTable::GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
-                                        vector<TagEntryPtr>& tags)
-{
-    if(pdb) {
-        pdb->GetTagsByScopeAndName(scope, name, partialNameAllowed, tags);
-    }
-
-    if(!tests_db.empty()) {
-        auto compare_func = [=](const wxString& tag_name) {
-            if(partialNameAllowed) {
-                return tag_name.StartsWith(name);
-            } else {
-                return tag_name == name;
-            }
-        };
-
-        for(const auto& vt : tests_db) {
-            if(vt.second->GetScope() == scope && compare_func(vt.second->GetName())) {
-                tags.push_back(vt.second);
-            }
-        }
-    }
-}
-
-void LookupTable::GetTagsByScopeAndName(const wxArrayString& scopes, const wxString& name, bool partialNameAllowed,
-                                        vector<TagEntryPtr>& tags)
-{
-    if(pdb) {
-        pdb->GetTagsByScopeAndName(scopes, name, partialNameAllowed, tags);
-    }
-
-    if(!tests_db.empty()) {
-        auto compare_func = [=](const wxString& tag_name) {
-            if(partialNameAllowed) {
-                return tag_name.StartsWith(name);
-            } else {
-                return tag_name == name;
-            }
-        };
-
-        // use set instead of array
-        wxStringSet_t scope_set = { scopes.begin(), scopes.end() };
-        for(const auto& vt : tests_db) {
-            if(scope_set.count(vt.second->GetScope()) && compare_func(vt.second->GetName())) {
-                tags.push_back(vt.second);
-            }
-        }
-    }
-}
-
-size_t LookupTable::GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
-                                      vector<TagEntryPtr>& tags)
-{
-    if(pdb) {
-        pdb->GetFileScopedTags(filepath, name, kinds, tags);
-    }
-    if(!tests_db.empty()) {
-        // use set instead of array
-        wxStringSet_t kinds_set = { kinds.begin(), kinds.end() };
-        for(const auto& vt : tests_db) {
-            if(vt.second->GetScope().StartsWith("__anon") && vt.second->GetFile() == filepath &&
-               vt.second->GetName() == name && kinds_set.count(vt.second->GetKind())) {
-                tags.push_back(vt.second);
-            }
-        }
-    }
-    return tags.size();
-}
-
-void LookupTable::GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tags)
-{
-    if(pdb) {
-        pdb->GetTagsByScope(scope, tags);
-    }
-
-    if(!tests_db.empty()) {
-        for(const auto& vt : tests_db) {
-            if(vt.second->GetScope() == scope) {
-                tags.push_back(vt.second);
-            }
-        }
-    }
-}
-
-size_t LookupTable::GetParameters(const wxString& function_path, vector<TagEntryPtr>& tags)
-{
-    if(!pdb)
-        return 0;
-    return pdb->GetParameters(function_path, tags);
-}
-size_t LookupTable::GetLambdas(const wxString& parent_function, vector<TagEntryPtr>& tags)
-{
-    if(!pdb)
-        return 0;
-    return pdb->GetLambdas(parent_function, tags);
-}
-
-///
-/// LookupTable ends here
-///
 
 #define CHECK_EXPECTED(Token, ExpectedType)              \
     if(Token.IsEOF() || Token.GetType() != ExpectedType) \

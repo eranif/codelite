@@ -29,56 +29,6 @@ struct TemplateManager {
     typedef shared_ptr<TemplateManager> ptr_t;
 };
 
-/// internal class used by the code completion
-/// it wraps the real lookup table + unit testing
-/// in-memory table
-struct LookupTable {
-    ITagsStoragePtr pdb;                           // the real database
-    unordered_map<wxString, TagEntryPtr> tests_db; // test database, for unit testings
-    explicit LookupTable(ITagsStoragePtr real_db, const unordered_map<wxString, TagEntryPtr>& unit_tests_db)
-    {
-        pdb = real_db;
-        tests_db = unit_tests_db;
-    }
-    explicit LookupTable(ITagsStoragePtr real_db) { pdb = real_db; }
-    ~LookupTable()
-    {
-        pdb.Reset(nullptr);
-        tests_db.clear();
-    }
-
-    void set_tests_db(unordered_map<wxString, TagEntryPtr>& db) { this->tests_db.swap(db); }
-    void clear_tests_db() { this->tests_db.clear(); }
-
-    typedef shared_ptr<LookupTable> ptr_t;
-
-    TagEntryPtr GetScope(const wxString& filename, int line_number);
-    void GetTagsByPath(const wxString& path, vector<TagEntryPtr>& tags, int limit = 1);
-    void GetSubscriptOperator(const wxString& scope, vector<TagEntryPtr>& tags);
-    void GetTagsByPathAndKind(const wxString& path, vector<TagEntryPtr>& tags, const vector<wxString>& kinds,
-                              int limit = 1);
-    void GetTagsByScopeAndKind(const wxString& scope, const vector<wxString>& kinds, const wxString& filter,
-                               vector<TagEntryPtr>& tags, bool applyLimit = true);
-    void GetFilesForCC(const wxString& userTyped, wxArrayString& matches);
-    void GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
-                               vector<TagEntryPtr>& tags);
-    void GetTagsByScopeAndName(const wxArrayString& scope, const wxString& name, bool partialNameAllowed,
-                               vector<TagEntryPtr>& tags);
-    size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
-                             vector<TagEntryPtr>& tags);
-    void GetTagsByScope(const wxString& scope, vector<TagEntryPtr>& tags);
-
-    /**
-     * @brief load function parameters
-     */
-    size_t GetParameters(const wxString& function_path, vector<TagEntryPtr>& tags);
-
-    /**
-     * @brief load all lambda functions for a given function
-     */
-    size_t GetLambdas(const wxString& parent_function, vector<TagEntryPtr>& tags);
-};
-
 // internal to this TU
 struct FileScope {
 private:
@@ -196,7 +146,7 @@ private:
     };
 
 private:
-    LookupTable::ptr_t m_lookup;
+    ITagsStoragePtr m_lookup;
     unordered_map<wxString, CxxCodeCompletion::__local> m_locals;
     FileScope m_file_only_tags;
     wxString m_filename;
@@ -315,11 +265,6 @@ public:
                       const unordered_map<wxString, TagEntryPtr>& unit_tests_db);
     CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& codelite_indexer);
     ~CxxCodeCompletion();
-
-    /// Test API - START
-    void test_set_db(unordered_map<wxString, TagEntryPtr>& db) { m_lookup->set_tests_db(db); }
-    void test_clear_db() { m_lookup->clear_tests_db(); }
-    /// Test API - END
 
     /**
      * @brief return the return value of a tag (of type function)

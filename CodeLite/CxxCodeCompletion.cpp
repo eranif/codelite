@@ -75,7 +75,7 @@ void CxxCodeCompletion::determine_current_scope()
         return;
     }
 
-    m_current_function_tag = m_lookup->GetScope(m_filename, m_line_number);
+    m_current_function_tag = m_lookup->GetScope(m_filename, m_line_number + 1);
     if(m_current_function_tag && m_current_function_tag->IsMethod()) {
         vector<TagEntryPtr> tmp_tags;
         m_lookup->GetTagsByPath(m_current_function_tag->GetScope(), tmp_tags, 1);

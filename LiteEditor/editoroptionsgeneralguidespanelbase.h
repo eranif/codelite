@@ -14,9 +14,13 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/propgrid/manager.h>
-#include <wx/propgrid/property.h>
-#include <wx/propgrid/advprops.h>
+#include <wx/statbox.h>
+#include <wx/checkbox.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/spinctrl.h>
+#include <wx/clrpicker.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -38,31 +42,55 @@
 class EditorOptionsGeneralGuidesPanelBase : public wxPanel
 {
 protected:
-    wxPropertyGridManager* m_pgMgrGeneral;
-    wxPGProperty* m_pgPropCategoryGeneral;
-    wxPGProperty* m_pgPropDisplayLineNumbers;
-    wxPGProperty* m_pgPropRelativeLineNumbers;
-    wxPGProperty* m_pgPropHighlightMatchedBrace;
-    wxPGProperty* m_pgPropTrackEditorChanges;
-    wxPGProperty* m_pgPropShowIndentGuidelines;
-    wxPGProperty* m_pgPropDisableSemiColonShift;
-    wxPGProperty* m_pgPropWhitespaces;
-    wxPGProperty* m_pgPropWhitespaceVisibility;
-    wxPGProperty* m_pgPropEOLMode;
-    wxPGProperty* m_pgPropLineSpacing;
-    wxPGProperty* m_pgPropCaretLine;
-    wxPGProperty* m_pgPropEnableCaretLine;
-    wxPGProperty* m_pgPropCaretLineColour;
-    wxPGProperty* m_pgPropCaretLineAlpha;
-    wxPGProperty* m_pgPropDebuggerMarker;
-    wxPGProperty* m_pgPropHighlightDebuggerMarker;
-    wxPGProperty* m_pgPropDebuggerLineColour;
+    wxCheckBox* m_checkBoxLineNumbersShow;
+    wxCheckBox* m_checkBoxLineNumbersHighlightCurrent;
+    wxCheckBox* m_checkBoxLineNumbersRelative;
+    wxCheckBox* m_checkBoxHighlightIndentLines;
+    wxCheckBox* m_checkBoxHighlightModifiedLines;
+    wxCheckBox* m_checkBoxHighlightBraces;
+    wxStaticText* m_staticText83;
+    wxChoice* m_choiceWhitespaceVisibility;
+    wxStaticText* m_staticText85;
+    wxChoice* m_choiceWhitespaceEOLMode;
+    wxStaticText* m_staticText87;
+    wxSpinCtrl* m_spinCtrlWhitespaceLineSpacing;
+    wxCheckBox* m_checkBoxCaretLineEnabeldHighlight;
+    wxStaticText* m_staticText95;
+    wxColourPickerCtrl* m_colourPickerCaretLineColour;
+    wxStaticText* m_staticText97;
+    wxSpinCtrl* m_spinCtrlCaretLineAlpha;
+    wxCheckBox* m_checkBoxDebuggerLineEnabled;
+    wxStaticText* m_staticText102;
+    wxColourPickerCtrl* m_colourPickerDebuggerLineColour;
 
 protected:
+    virtual void OnDisplayLineNumbersUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnHighlightCaretLineUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnHighlightDebuggerLineUI(wxUpdateUIEvent& event) { event.Skip(); }
+
 public:
-    wxPropertyGridManager* GetPgMgrGeneral() { return m_pgMgrGeneral; }
+    wxCheckBox* GetCheckBoxLineNumbersShow() { return m_checkBoxLineNumbersShow; }
+    wxCheckBox* GetCheckBoxLineNumbersHighlightCurrent() { return m_checkBoxLineNumbersHighlightCurrent; }
+    wxCheckBox* GetCheckBoxLineNumbersRelative() { return m_checkBoxLineNumbersRelative; }
+    wxCheckBox* GetCheckBoxHighlightIndentLines() { return m_checkBoxHighlightIndentLines; }
+    wxCheckBox* GetCheckBoxHighlightModifiedLines() { return m_checkBoxHighlightModifiedLines; }
+    wxCheckBox* GetCheckBoxHighlightBraces() { return m_checkBoxHighlightBraces; }
+    wxStaticText* GetStaticText83() { return m_staticText83; }
+    wxChoice* GetChoiceWhitespaceVisibility() { return m_choiceWhitespaceVisibility; }
+    wxStaticText* GetStaticText85() { return m_staticText85; }
+    wxChoice* GetChoiceWhitespaceEOLMode() { return m_choiceWhitespaceEOLMode; }
+    wxStaticText* GetStaticText87() { return m_staticText87; }
+    wxSpinCtrl* GetSpinCtrlWhitespaceLineSpacing() { return m_spinCtrlWhitespaceLineSpacing; }
+    wxCheckBox* GetCheckBoxCaretLineEnabeldHighlight() { return m_checkBoxCaretLineEnabeldHighlight; }
+    wxStaticText* GetStaticText95() { return m_staticText95; }
+    wxColourPickerCtrl* GetColourPickerCaretLineColour() { return m_colourPickerCaretLineColour; }
+    wxStaticText* GetStaticText97() { return m_staticText97; }
+    wxSpinCtrl* GetSpinCtrlCaretLineAlpha() { return m_spinCtrlCaretLineAlpha; }
+    wxCheckBox* GetCheckBoxDebuggerLineEnabled() { return m_checkBoxDebuggerLineEnabled; }
+    wxStaticText* GetStaticText102() { return m_staticText102; }
+    wxColourPickerCtrl* GetColourPickerDebuggerLineColour() { return m_colourPickerDebuggerLineColour; }
     EditorOptionsGeneralGuidesPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+                                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                                         long style = wxTAB_TRAVERSAL);
     virtual ~EditorOptionsGeneralGuidesPanelBase();
 };
@@ -70,28 +98,31 @@ public:
 class EditorOptionsGeneralEditBase : public wxPanel
 {
 protected:
-    wxPropertyGridManager* m_pgMgrEdit;
-    wxPGProperty* m_pgProp8;
-    wxPGProperty* m_pgPropSmartCurly;
-    wxPGProperty* m_pgPropSmartParentheses;
-    wxPGProperty* m_pgPropAutoCompleteParen;
-    wxPGProperty* m_pgPropSmartQuotes;
-    wxPGProperty* m_pgPropCopyLineEmptySelection;
-    wxPGProperty* m_pgProp16;
-    wxPGProperty* m_pgPropWrapQuotes;
-    wxPGProperty* m_pgPropWrapBrackets;
-    wxPGProperty* m_pgProp56;
-    wxPGProperty* m_pgPropZoomUsingCtrlScroll;
-    wxPGProperty* m_pgProp565;
-    wxPGProperty* m_pgPropCommentsIndented;
+    wxCheckBox* m_checkBoxEditSmartCurlyBrackets;
+    wxCheckBox* m_checkBoxEditSmartParenthesis;
+    wxCheckBox* m_checkBoxAutoCompleteParen;
+    wxCheckBox* m_checkBoxSmartQuotes;
+    wxCheckBox* m_checkBoxCopyEntireLine;
+    wxCheckBox* m_checkBoxDisableSemicolonShift;
+    wxCheckBox* m_checkBoxWrapWithQuotes;
+    wxCheckBox* m_checkBoxWrapWithBrackets;
+    wxCheckBox* m_checkBoxEnableMouseZoom;
+    wxCheckBox* m_checkBoxIdentLineComments;
 
 protected:
-    virtual void OnValueChanged(wxPropertyGridEvent& event) { event.Skip(); }
-
 public:
-    wxPropertyGridManager* GetPgMgrEdit() { return m_pgMgrEdit; }
+    wxCheckBox* GetCheckBoxEditSmartCurlyBrackets() { return m_checkBoxEditSmartCurlyBrackets; }
+    wxCheckBox* GetCheckBoxEditSmartParenthesis() { return m_checkBoxEditSmartParenthesis; }
+    wxCheckBox* GetCheckBoxAutoCompleteParen() { return m_checkBoxAutoCompleteParen; }
+    wxCheckBox* GetCheckBoxSmartQuotes() { return m_checkBoxSmartQuotes; }
+    wxCheckBox* GetCheckBoxCopyEntireLine() { return m_checkBoxCopyEntireLine; }
+    wxCheckBox* GetCheckBoxDisableSemicolonShift() { return m_checkBoxDisableSemicolonShift; }
+    wxCheckBox* GetCheckBoxWrapWithQuotes() { return m_checkBoxWrapWithQuotes; }
+    wxCheckBox* GetCheckBoxWrapWithBrackets() { return m_checkBoxWrapWithBrackets; }
+    wxCheckBox* GetCheckBoxEnableMouseZoom() { return m_checkBoxEnableMouseZoom; }
+    wxCheckBox* GetCheckBoxIdentLineComments() { return m_checkBoxIdentLineComments; }
     EditorOptionsGeneralEditBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                                 const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+                                 const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
     virtual ~EditorOptionsGeneralEditBase();
 };
 

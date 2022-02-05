@@ -36,8 +36,5 @@ public:
     EditorOptionsGeneralEdit(wxWindow* parent);
     virtual ~EditorOptionsGeneralEdit();
     void Save(OptionsConfigPtr options);
-
-protected:
-    virtual void OnValueChanged(wxPropertyGridEvent& event);
 };
 #endif // EDITOROPTIONSGENERALEDIT_H

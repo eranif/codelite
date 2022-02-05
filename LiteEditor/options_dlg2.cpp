@@ -26,8 +26,8 @@
 #include "options_dlg2.h"
 
 #include "EditorOptionsGeneralEdit.h"
+#include "EditorOptionsGeneralGuidesPanel.h"
 #include "clTabRendererMinimal.hpp"
-#include "editor_options_general_guides_panel.h"
 #include "editoroptionsgeneralindentationpanel.h"
 #include "editoroptionsgeneralrightmarginpanel.h"
 #include "editoroptionsgeneralsavepanel.h"
@@ -55,8 +55,9 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     , m_contentObjects()
     , restartRquired(false)
 {
+    wxWindowUpdateLocker locker(this);
     Initialize();
-    ::clSetDialogBestSizeAndPosition(this);
+    GetSizer()->Fit(this);
 }
 
 PreferencesDialog::~PreferencesDialog() {}
@@ -105,13 +106,13 @@ void PreferencesDialog::Initialize()
     AddPage(new EditorOptionsGeneralEdit(m_treeBook), _("Edit"), false);
     AddPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), _("Indentation"));
     AddPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin"));
-    AddPage(new EditorSettingsCaret(m_treeBook), _("Caret & Scrolling"));
+    AddPage(new EditorSettingsCaret(m_treeBook), _("Caret / Scrolling"));
     AddPage(new EditorOptionsGeneralSavePanel(m_treeBook), _("Save Options"));
     AddPage(new EditorSettingsComments(m_treeBook), _("Code"));
     AddPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Documentation"));
     AddPage(new EditorSettingsFolding(m_treeBook), _("Folding"));
     AddPage(new EditorSettingsBookmarksPanel(m_treeBook), _("Bookmarks"));
-    AddPage(new EditorSettingsDockingWindows(m_treeBook), _("Windows & Tabs"));
+    AddPage(new EditorSettingsDockingWindows(m_treeBook), _("Windows / Tabs"));
     AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
     SetMinSize(wxSize(300, 200));

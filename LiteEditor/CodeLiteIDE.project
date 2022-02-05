@@ -186,8 +186,8 @@
         <File Name="treebooknodebase.h"/>
         <VirtualDirectory Name="General">
           <VirtualDirectory Name="Guides">
-            <File Name="editor_options_general_guides_panel.cpp"/>
-            <File Name="editor_options_general_guides_panel.h"/>
+            <File Name="EditorOptionsGeneralGuidesPanel.cpp"/>
+            <File Name="EditorOptionsGeneralGuidesPanel.h"/>
             <File Name="editoroptionsgeneralguidespanelbase.cpp"/>
             <File Name="editoroptionsgeneralguidespanelbase.h"/>
             <File Name="editor_options_guides.wxcp"/>

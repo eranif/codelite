@@ -1,4 +1,5 @@
 #include "EditorOptionsGeneralEdit.h"
+
 #include "editor_config.h"
 #include "globals.h"
 #include "optionsconfig.h"
@@ -6,37 +7,31 @@
 EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent)
     : EditorOptionsGeneralEditBase(parent)
 {
-    ::wxPGPropertyBooleanUseCheckbox(m_pgMgrEdit->GetGrid());
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    m_pgPropSmartCurly->SetValue(options->GetAutoAddMatchedCurlyBraces());
-    // SmartParen: move one char to the right
-    m_pgPropSmartParentheses->SetValue(options->IsSmartParen());
-    // Auto complete closing paren
-    m_pgPropAutoCompleteParen->SetValue(options->GetAutoAddMatchedNormalBraces());
-    m_pgPropSmartQuotes->SetValue(options->GetAutoCompleteDoubleQuotes());
-    m_pgPropCopyLineEmptySelection->SetValue(options->GetCopyLineEmptySelection());
-    m_pgPropWrapBrackets->SetValue(options->IsWrapSelectionBrackets());
-    m_pgPropWrapQuotes->SetValue(options->IsWrapSelectionWithQuotes());
-    m_pgPropZoomUsingCtrlScroll->SetValue(options->IsMouseZoomEnabled());
-    m_pgPropCommentsIndented->SetValue(options->GetIndentedComments());
+    m_checkBoxEditSmartCurlyBrackets->SetValue(options->GetAutoAddMatchedCurlyBraces());
+    m_checkBoxAutoCompleteParen->SetValue(options->GetAutoAddMatchedNormalBraces());
+    m_checkBoxEditSmartParenthesis->SetValue(options->IsSmartParen());
+    m_checkBoxSmartQuotes->SetValue(options->GetAutoCompleteDoubleQuotes());
+    m_checkBoxCopyEntireLine->SetValue(options->GetCopyLineEmptySelection());
+    m_checkBoxWrapWithBrackets->SetValue(options->IsWrapSelectionBrackets());
+    m_checkBoxWrapWithQuotes->SetValue(options->IsWrapSelectionWithQuotes());
+    m_checkBoxEnableMouseZoom->SetValue(options->IsMouseZoomEnabled());
+    m_checkBoxIdentLineComments->SetValue(options->GetIndentedComments());
+    m_checkBoxDisableSemicolonShift->SetValue(options->GetDisableSemicolonShift());
 }
 
 EditorOptionsGeneralEdit::~EditorOptionsGeneralEdit() {}
 
-void EditorOptionsGeneralEdit::OnValueChanged(wxPropertyGridEvent& event)
-{
-    // event.Skip();
-}
-
 void EditorOptionsGeneralEdit::Save(OptionsConfigPtr options)
 {
-    options->SetAutoAddMatchedCurlyBraces(m_pgPropSmartCurly->GetValue().GetBool());
-    options->SetAutoAddMatchedNormalBraces(m_pgPropAutoCompleteParen->GetValue().GetBool());
-    options->SetSmartParen(m_pgPropSmartParentheses->GetValue().GetBool());
-    options->SetAutoCompleteDoubleQuotes(m_pgPropSmartQuotes->GetValue().GetBool());
-    options->SetCopyLineEmptySelection(m_pgPropCopyLineEmptySelection->GetValue().GetBool());
-    options->SetWrapSelectionBrackets(m_pgPropWrapBrackets->GetValue().GetBool());
-    options->SetWrapSelectionWithQuotes(m_pgPropWrapQuotes->GetValue().GetBool());
-    options->SetMouseZoomEnabled(m_pgPropZoomUsingCtrlScroll->GetValue().GetBool());
-    options->SetIndentedComments(m_pgPropCommentsIndented->GetValue().GetBool());
+    options->SetAutoAddMatchedCurlyBraces(m_checkBoxEditSmartCurlyBrackets->IsChecked());
+    options->SetAutoAddMatchedNormalBraces(m_checkBoxAutoCompleteParen->IsChecked());
+    options->SetSmartParen(m_checkBoxEditSmartParenthesis->IsChecked());
+    options->SetAutoCompleteDoubleQuotes(m_checkBoxSmartQuotes->IsChecked());
+    options->SetCopyLineEmptySelection(m_checkBoxCopyEntireLine->IsChecked());
+    options->SetWrapSelectionBrackets(m_checkBoxWrapWithBrackets->IsChecked());
+    options->SetWrapSelectionWithQuotes(m_checkBoxWrapWithQuotes->IsChecked());
+    options->SetMouseZoomEnabled(m_checkBoxEnableMouseZoom->IsChecked());
+    options->SetIndentedComments(m_checkBoxIdentLineComments->IsChecked());
+    options->SetDisableSemicolonShift(m_checkBoxDisableSemicolonShift->IsChecked());
 }

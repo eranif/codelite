@@ -1510,13 +1510,15 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
     vector<TagEntryPtr> candidates;
 
     // first check if we are on a line
-    m_lookup->GetTagsByFileAndLine(filepath, line, candidates);
-    if(candidates.empty()) {
-        clDEBUG() << "find_definition(): calling word_complete(): is called for expression:" << expression << endl;
-        if(word_complete(filepath, line, expression, text, visible_scopes, true, candidates) == 0) {
+    clDEBUG() << "find_definition(): calling word_complete(): is called for expression:" << expression << endl;
+    word_complete(filepath, line, expression, text, visible_scopes, true, candidates);
+    if(candidates.empty() || candidates.size() == 1 && (candidates[0]->GetLine() == wxNOT_FOUND)) {
+        clDEBUG() << "Unable to complete, checking on the current lcoation" << endl;
+        candidates.clear();
+        m_lookup->GetTagsByFileAndLine(filepath, line, candidates);
+        if(candidates.empty()) {
             return 0;
         }
-    } else {
         clDEBUG() << "find_definition(): on a tag:" << candidates[0]->GetFullDisplayName() << "."
                   << candidates[0]->IsMethod() << endl;
     }

@@ -3359,7 +3359,7 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers)
     for(auto& p : lines_to_draw) {
         int line_number = p.first;
         int line_to_render = p.second;
-        line_text.Printf(wxT(" %d"), line_to_render);
+        line_text.Printf(wxT("%d"), line_to_render);
         MarginSetText(line_number, line_text);
 
         bool is_current_line = (line_number == current_line);
@@ -6239,7 +6239,7 @@ int clEditor::GetFirstNonWhitespacePos(bool backward)
 void clEditor::UpdateLineNumberMarginWidth()
 {
     int newLineCount = GetLineCount();
-    int newWidthCount = log10(newLineCount) + 3;
+    int newWidthCount = log10(newLineCount) + 2;
     SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers()
                                          ? (newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"))
                                          : 0);

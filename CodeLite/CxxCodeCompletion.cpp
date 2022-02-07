@@ -1512,7 +1512,7 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
     // first check if we are on a line
     clDEBUG() << "find_definition(): calling word_complete(): is called for expression:" << expression << endl;
     word_complete(filepath, line, expression, text, visible_scopes, true, candidates);
-    if(candidates.empty() || candidates.size() == 1 && (candidates[0]->GetLine() == wxNOT_FOUND)) {
+    if(candidates.empty() || (candidates.size() == 1 && (candidates[0]->GetLine() == wxNOT_FOUND))) {
         clDEBUG() << "Unable to complete, checking on the current lcoation" << endl;
         candidates.clear();
         m_lookup->GetTagsByFileAndLine(filepath, line, candidates);

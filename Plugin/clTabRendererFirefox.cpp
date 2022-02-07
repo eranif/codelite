@@ -5,7 +5,7 @@
 namespace
 {
 #if defined(__WXOSX__) || defined(__WXMSW__)
-constexpr double TAB_RADIUS = 3.0;
+constexpr double TAB_RADIUS = 0.0;
 #else
 constexpr double TAB_RADIUS = 0.0;
 #endif

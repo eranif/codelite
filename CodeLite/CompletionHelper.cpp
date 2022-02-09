@@ -843,6 +843,15 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
             } else {
                 beautified_comment << tag->GetKind() << "\n";
             }
+        } else {
+            // other
+            wxString clean_pattern = tag->GetPatternClean();
+            clean_pattern.Trim().Trim(false);
+            if(!clean_pattern.empty()) {
+                beautified_comment << "```\n";
+                beautified_comment << clean_pattern << "\n";
+                beautified_comment << "```\n";
+            }
         }
     }
     wxString formatted_comment;

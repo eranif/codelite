@@ -469,6 +469,8 @@ void populate_keywords()
         words.insert("explicit");
         words.insert("constexpr");
         words.insert("thread_local");
+        words.insert("true");
+        words.insert("false");
     }
 }
 } // namespace
@@ -835,8 +837,9 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
             clean_pattern.Trim().Trim(false);
 
             if(!clean_pattern.empty()) {
-                clean_pattern.Replace(tag->GetName(), "`" + tag->GetName() + "`");
+                beautified_comment << "```\n";
                 beautified_comment << clean_pattern << "\n";
+                beautified_comment << "```\n";
             } else {
                 beautified_comment << tag->GetKind() << "\n";
             }

@@ -160,7 +160,7 @@ protected:
      * @param [output] containsCount number of entries that 'starts with' the filter
      * @return Should we refresh the content of the CC box (based on number of "Exact matches" / "Starts with" found)
      */
-    bool FilterResults(bool updateEntries, size_t& startsWithCount, size_t& containsCount);
+    bool FilterResults(bool updateEntries, size_t& startsWithCount, size_t& containsCount, size_t& exactMatchCount);
     void RemoveDuplicateEntries();
     void InsertSelection(wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::Ptr_t(nullptr));
     wxString GetFilter();

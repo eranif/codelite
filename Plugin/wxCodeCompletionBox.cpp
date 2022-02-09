@@ -186,7 +186,8 @@ void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCode
     // Filter results based on user input
     size_t startsWithCount = 0;
     size_t containsCount = 0;
-    FilterResults(true, startsWithCount, containsCount);
+    size_t exactMatchCount = 0;
+    FilterResults(true, startsWithCount, containsCount, exactMatchCount);
     wxUnusedVar(containsCount);
 
     // If we got a single match - insert it
@@ -277,7 +278,8 @@ void wxCodeCompletionBox::StcModified(wxStyledTextEvent& event)
     DoUpdateList();
 }
 
-bool wxCodeCompletionBox::FilterResults(bool updateEntries, size_t& startsWithCount, size_t& containsCount)
+bool wxCodeCompletionBox::FilterResults(bool updateEntries, size_t& startsWithCount, size_t& containsCount,
+                                        size_t& exactMatchCount)
 {
     containsCount = 0;
     startsWithCount = 0;
@@ -324,8 +326,10 @@ bool wxCodeCompletionBox::FilterResults(bool updateEntries, size_t& startsWithCo
             containsI.push_back(m_allEntries.at(i));
         }
     }
+
     startsWithCount = startsWith.size() + startsWithI.size() + exactMatches.size() + exactMatchesI.size();
     containsCount = startsWithCount + contains.size() + containsI.size();
+    exactMatchCount = exactMatches.size();
 
     // Merge the results
     if(updateEntries) {
@@ -435,7 +439,9 @@ void wxCodeCompletionBox::DoUpdateList()
 {
     size_t startsWithCount = 0;
     size_t containsCount = 0;
-    bool refreshList = FilterResults(true, startsWithCount, containsCount);
+    size_t exactMatchCount = 0;
+
+    bool refreshList = FilterResults(true, startsWithCount, containsCount, exactMatchCount);
     wxUnusedVar(containsCount);
     wxUnusedVar(refreshList);
 
@@ -448,9 +454,9 @@ void wxCodeCompletionBox::DoUpdateList()
         }
     }
 
-    //int curpos = m_stc->GetCurrentPos();
-    if(m_entries.empty() && !m_allEntries.empty()) {
-        // the CC might not reproted all possible matches
+    // int curpos = m_stc->GetCurrentPos();
+    if((m_entries.empty() && !m_allEntries.empty())) {
+        // the CC might not reported all possible matches
         // (we have a limit to the number of matches we display)
         // trigger another CC action
         wxCommandEvent event(wxEVT_MENU, XRCID("complete_word"));
@@ -459,6 +465,11 @@ void wxCodeCompletionBox::DoUpdateList()
     } else {
         DoDisplayTipWindow();
         DoPopulateList();
+    }
+
+    if(exactMatchCount == 0) {
+        wxCommandEvent event(wxEVT_MENU, XRCID("complete_word"));
+        wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
     }
 }
 

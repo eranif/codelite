@@ -300,3 +300,12 @@ wxArrayString clConsoleBase::SplitArguments(const wxString& args)
     ADD_CURRENT_TOKEN();
     return outputArr;
 }
+
+void clConsoleBase::SetEnvironment(const clEnvList_t& environment)
+{
+    // convert the list into map
+    m_environment.clear();
+    for(const auto& p : environment) {
+        m_environment.insert({ p.first, p.second });
+    }
+}

@@ -561,6 +561,8 @@ void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
     console->SetWorkingDirectory(wd);
     console->SetWaitWhenDone(true);
     console->SetSink(this);
+    console->SetEnvironment(envList);
+
     if(console->Start()) {
         m_execPID = console->GetPid();
     }

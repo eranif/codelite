@@ -1,8 +1,10 @@
 #include "clConsoleGnomeTerminal.h"
+
 #include "dirsaver.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
+
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 
@@ -22,7 +24,9 @@ bool clConsoleGnomeTerminal::FindProcessByCommand(const wxString& name, wxString
     for(size_t i = 0; i < arrOutput.GetCount(); ++i) {
         wxString curline = arrOutput.Item(i).Trim().Trim(false);
         wxArrayString tokens = ::wxStringTokenize(curline, " ", wxTOKEN_STRTOK);
-        if(tokens.GetCount() < 3) { continue; }
+        if(tokens.GetCount() < 3) {
+            continue;
+        }
 
         // replace tabs with spaces
         curline.Replace("\t", " ");
@@ -59,13 +63,7 @@ clConsoleGnomeTerminal::clConsoleGnomeTerminal()
 
 clConsoleGnomeTerminal::~clConsoleGnomeTerminal() {}
 
-bool clConsoleGnomeTerminal::Start()
-{
-    // Apply the environment variables before we launch the process
-    clConsoleEnvironment env(GetEnvironment());
-    env.Apply();
-    return StartProcess(PrepareCommand());
-}
+bool clConsoleGnomeTerminal::Start() { return StartProcess(PrepareCommand()); }
 
 bool clConsoleGnomeTerminal::StartForDebugger()
 {
@@ -82,7 +80,9 @@ bool clConsoleGnomeTerminal::StartForDebugger()
     sleepCommand << " " << secondsToSleep;
 
     wxString homedir = wxGetHomeDir();
-    if(homedir.Contains(" ")) { homedir.Prepend("\"").Append("\""); }
+    if(homedir.Contains(" ")) {
+        homedir.Prepend("\"").Append("\"");
+    }
     wxString commandToExecute = GetTerminalCommand();
     commandToExecute.Replace("%WD%", homedir);
     commandToExecute.Replace("%COMMAND%", sleepCommand);
@@ -101,7 +101,9 @@ bool clConsoleGnomeTerminal::StartForDebugger()
             symlinkName.Replace("/dev/pts/", "/tmp/pts");
             wxString lnCommand;
             lnCommand << "ln -sf " << m_tty << " " << symlinkName;
-            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) { m_tty.swap(symlinkName); }
+            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) {
+                m_tty.swap(symlinkName);
+            }
             break;
         }
         wxThread::Sleep(50);
@@ -114,12 +116,16 @@ wxString clConsoleGnomeTerminal::PrepareCommand()
     wxString commandToExecute;
     bool hasCommand = !GetCommand().IsEmpty();
     commandToExecute = hasCommand ? GetTerminalCommand() : GetEmptyTerminalCommand();
-    if(!IsTerminalNeeded()) { commandToExecute = "%COMMAND%"; }
+    if(!IsTerminalNeeded()) {
+        commandToExecute = "%COMMAND%";
+    }
 
     if(IsTerminalNeeded()) {
         // set the working directory
         wxString workingDirectory = WrapWithQuotesIfNeeded(GetWorkingDirectory());
-        if(workingDirectory.IsEmpty()) { workingDirectory = "."; }
+        if(workingDirectory.IsEmpty()) {
+            workingDirectory = ".";
+        }
         commandToExecute.Replace("%WD%", workingDirectory);
     }
 

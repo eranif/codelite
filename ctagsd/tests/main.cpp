@@ -191,6 +191,17 @@ TEST_FUNC(text_cxx_assignment_from_global_method)
     return true;
 }
 
+TEST_FUNC(text_code_completion_manager_cc)
+{
+    ENSURE_DB_LOADED();
+    {
+        auto resolved = completer->code_complete("wxCodeCompletionBoxManager::", {}, nullptr);
+        CHECK_NOT_NULL(resolved);
+        CHECK_STRING(resolved->GetPath(), "wxCodeCompletionBoxManager");
+    }
+    return true;
+}
+
 TEST_FUNC(text_cxx_cc_with_problematic_typedef)
 {
     ENSURE_DB_LOADED();

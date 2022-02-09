@@ -455,7 +455,7 @@ void wxCodeCompletionBox::DoUpdateList()
     }
 
     // int curpos = m_stc->GetCurrentPos();
-    if((m_entries.empty() && !m_allEntries.empty())) {
+    if(!GetFilter().empty() && (m_entries.empty() && !m_allEntries.empty())) {
         // the CC might not reported all possible matches
         // (we have a limit to the number of matches we display)
         // trigger another CC action

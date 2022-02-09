@@ -1,4 +1,5 @@
 #include "clConsoleBase.h"
+
 #include "clConsoleCMD.h"
 #include "clConsoleCodeLiteTerminal.h"
 #include "clConsoleGnomeTerminal.h"
@@ -12,6 +13,7 @@
 #include "cl_config.h"
 #include "file_logger.h"
 #include "fileutils.h"
+
 #include <algorithm>
 #include <wx/utils.h>
 
@@ -142,6 +144,10 @@ wxString clConsoleBase::EscapeString(const wxString& str, const wxString& c) con
 
 bool clConsoleBase::StartProcess(const wxString& command)
 {
+    // Apply the environment variables before we launch the process
+    clConsoleEnvironment env(GetEnvironment());
+    env.Apply();
+
     wxProcess* callback = nullptr;
     if(m_callback) {
         // user provided callback

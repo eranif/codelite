@@ -206,7 +206,11 @@ void wxCodeCompletionBoxManager::DestroyCCBox()
     m_stc = NULL;
 }
 
-void wxCodeCompletionBoxManager::DestroyCurrent() { DestroyCCBox(); }
+void wxCodeCompletionBoxManager::DestroyCurrent()
+{
+    clDEBUG() << "DestroyCurrent() is called" << endl;
+    DestroyCCBox();
+}
 
 void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t match, bool userTriggered)
 {

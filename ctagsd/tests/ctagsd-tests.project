@@ -63,6 +63,7 @@
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[TAGS_DB=C:\src\codelite\.ctagsd\tags.db
+CODELITE_SRC_DIR=C:\src\codelite
 PATH=C:\src\codelite\build-Win_x64_Debug\lib;$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">

@@ -117,6 +117,32 @@ wxString get_sample_file(const wxString& filename)
 
 } // namespace
 
+TEST_FUNC(test_lexing_raw_strings)
+{
+    wxString fullpath;
+    if(is_file_exists("ctagsd/tests/strings.hpp", &fullpath)) {
+        size_t raw_strings_counter = 0;
+        CxxTokenizer tokenizer;
+        CxxLexerToken token;
+
+        wxString content;
+        FileUtils::ReadFileContent(fullpath, content);
+        tokenizer.Reset(content);
+
+        while(tokenizer.NextToken(token)) {
+            switch(token.GetType()) {
+            case T_RAW_STRING:
+                raw_strings_counter++;
+                break;
+            default:
+                break;
+            }
+        }
+        CHECK_SIZE(raw_strings_counter, 24); // we expect 24 raw strings
+    }
+    return true;
+}
+
 TEST_FUNC(test_parsing_of_function_parameter)
 {
     {

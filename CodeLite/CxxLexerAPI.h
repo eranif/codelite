@@ -83,11 +83,12 @@ struct WXDLLIMPEXP_CL CxxLexerException {
 
 struct WXDLLIMPEXP_CL CxxLexerToken {
 private:
-    int lineNumber;
-    int column;
-    char* text;
-    int type;
+    int lineNumber = 0;
+    int column = 0;
+    char* text = nullptr;
+    int type = 0;
     std::string comment;
+    std::string raw_string;
 
 private:
     bool m_owned;
@@ -105,6 +106,10 @@ private:
 public:
     void SetColumn(int column) { this->column = column; }
     void SetComment(const std::string& comment) { this->comment = comment; }
+    void SetRawString(const std::string& raw_string) { this->raw_string = raw_string; }
+    const std::string& GetRawString() const { return raw_string; }
+    void ClearRawString() { this->raw_string.clear(); }
+    void ClearComment() { this->comment.clear(); }
     void SetLineNumber(int lineNumber) { this->lineNumber = lineNumber; }
     void SetOwned(bool owned) { this->m_owned = owned; }
     void SetType(int type) { this->type = type; }
@@ -190,6 +195,7 @@ struct WXDLLIMPEXP_CL CppLexerUserData {
 private:
     size_t m_flags;
     std::string m_comment;
+    std::string m_rawString;
     std::string m_rawStringLabel;
     int m_commentStartLine;
     int m_commentEndLine;
@@ -228,6 +234,14 @@ public:
     {
         b ? m_flags |= kLexerState_InPreProcessor : m_flags &= ~kLexerState_InPreProcessor;
     }
+
+    void set_raw_string_label(const char* label, size_t len) { m_rawStringLabel = std::string(label, len); }
+    void clear_raw_string_label() { m_rawStringLabel.clear(); }
+    const std::string& get_raw_string_label() const { return m_rawStringLabel; }
+    const std::string& get_raw_string() const { return m_rawString; }
+    void append_raw_string(const char* s, size_t len) { m_rawString.append(s, len); }
+    void append_raw_string(char c) { m_rawString.append(1, c); }
+    void clear_raw_string() { m_rawString.clear(); }
 
     //==--------------------
     // Comment management

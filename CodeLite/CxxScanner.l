@@ -6,7 +6,7 @@
 //
 // To generate a source file from this .l file, you will need
 // a flex version 2.5.34 and later
-// Under Windows, you will need to run the following command 
+// Under Windows, you will need to run the following command
 // from within *MSYS* terminal (or run codelite from an MSYS shell):
 // /usr/bin/flex --noline --batch --outfile=CxxLexer.cpp CxxScanner.l
 //
@@ -23,7 +23,7 @@ extern "C" int yywrap(void*) { return 1; }
 #define YY_FATAL_ERROR(x)
 #define YYSTYPE char*
 #define ECHO
-#define P(s) 
+#define P(s)
 
 #define YY_NO_UNISTD_H
 #define YY_USER_ACTION  yycolumn += yyleng;
@@ -37,7 +37,7 @@ extern "C" int yywrap(void*) { return 1; }
     if(userData->IsCollectingWhitespace()) {                        \
         return T_NEWLINE;                                           \
     }
-    
+
 %}
 
 /* regex and modes */
@@ -52,11 +52,13 @@ extern "C" int yywrap(void*) { return 1; }
 %x CPP_COMMENT
 %x C_COMMENT
 %x INCLUDE
+%x RAW_STRING
 
 identifier [a-zA-Z_][0-9a-zA-Z_]*
 exponent_part [eE][-+]?[0-9]+
 fractional_constant ([0-9]*"."[0-9]+)|([0-9]+".")
 floating_constant (({fractional_constant}{exponent_part}?)|([0-9]+{exponent_part}))[FfLl]?
+dchar_seq [^()\\[:space:]]{0,16}
 
 integer_suffix_opt ([uU]?[lL]?)|([lL][uU])
 decimal_constant [1-9][0-9]*{integer_suffix_opt}
@@ -78,7 +80,7 @@ c_return [\015]
 
 horizontal_white [ ]|{h_tab}
 
-%% 
+%%
 <<EOF>> {yyterminate();}
 <INITIAL>alignas          { return T_ALIGNAS; }
 <INITIAL>alignof          { return T_ALIGNOF; }
@@ -91,81 +93,82 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>bool             { return T_BOOL;    }
 <INITIAL>break            { return T_BREAK;   }
 <INITIAL>case             { return T_CASE;   }
-<INITIAL>catch            { return T_CATCH;} 
-<INITIAL>char             { return T_CHAR;} 
-<INITIAL>char16_t         { return T_CHAR16_T;} 
-<INITIAL>char32_t         { return T_CHAR32_T;} 
-<INITIAL>class            { return T_CLASS;} 
-<INITIAL>compl            { return T_COMPL;} 
-<INITIAL>const            { return T_CONST;} 
-<INITIAL>constexpr        { return T_CONSTEXPR;} 
-<INITIAL>const_cast       { return T_CONST_CAST;} 
-<INITIAL>continue         { return T_CONTINUE;} 
-<INITIAL>decltype         { return T_DECLTYPE;} 
-<INITIAL>default          { return T_DEFAULT;} 
-<INITIAL>delete           { return T_DELETE;} 
-<INITIAL>do               { return T_DO;} 
-<INITIAL>double           { return T_DOUBLE;} 
-<INITIAL>dynamic_cast     { return T_DYNAMIC_CAST;} 
-<INITIAL>else             { return T_ELSE;} 
-<INITIAL>enum             { return T_ENUM;} 
-<INITIAL>explicit         { return T_EXPLICIT;} 
-<INITIAL>export           { return T_EXPORT;} 
-<INITIAL>extern           { return T_EXTERN;} 
-<INITIAL>false            { return T_FALSE;} 
-<INITIAL>final            { return T_FINAL;} 
-<INITIAL>float            { return T_FLOAT;} 
-<INITIAL>for              { return T_FOR;} 
-<INITIAL>friend           { return T_FRIEND;} 
-<INITIAL>goto             { return T_GOTO;} 
-<INITIAL>if               { return T_IF;} 
-<INITIAL>inline           { return T_INLINE;} 
-<INITIAL>int              { return T_INT;} 
-<INITIAL>long             { return T_LONG;} 
-<INITIAL>mutable          { return T_MUTABLE;} 
-<INITIAL>namespace        { return T_NAMESPACE;} 
-<INITIAL>new              { return T_NEW;} 
-<INITIAL>noexcept         { return T_NOEXCEPT;} 
-<INITIAL>not              { return T_NOT;} 
-<INITIAL>not_eq           { return T_NOT_EQ;} 
-<INITIAL>nullptr          { return T_NULLPTR;} 
-<INITIAL>operator         { return T_OPERATOR;} 
-<INITIAL>or               { return T_OR;} 
-<INITIAL>or_eq            { return T_OR_EQ;} 
-<INITIAL>override         { return T_OVERRIDE;} 
-<INITIAL>private          { return T_PRIVATE;} 
-<INITIAL>protected        { return T_PROTECTED;} 
-<INITIAL>public           { return T_PUBLIC;} 
-<INITIAL>register         { return T_REGISTER;} 
-<INITIAL>reinterpret_cast { return T_REINTERPRET_CAST;}     
-<INITIAL>return           { return T_RETURN;} 
-<INITIAL>short            { return T_SHORT;} 
-<INITIAL>signed           { return T_SIGNED;} 
-<INITIAL>sizeof           { return T_SIZEOF;} 
-<INITIAL>static           { return T_STATIC;} 
-<INITIAL>static_assert    { return T_STATIC_ASSERT;}  
-<INITIAL>static_cast      { return T_STATIC_CAST;} 
-<INITIAL>struct           { return T_STRUCT;} 
-<INITIAL>switch           { return T_SWITCH;} 
-<INITIAL>template         { return T_TEMPLATE;} 
-<INITIAL>this             { return T_THIS;} 
-<INITIAL>thread_local     { return T_THREAD_LOCAL;} 
-<INITIAL>throw            { return T_THROW;} 
-<INITIAL>true             { return T_TRUE;} 
+<INITIAL>catch            { return T_CATCH;}
+<INITIAL>char             { return T_CHAR;}
+<INITIAL>char16_t         { return T_CHAR16_T;}
+<INITIAL>char32_t         { return T_CHAR32_T;}
+<INITIAL>class            { return T_CLASS;}
+<INITIAL>compl            { return T_COMPL;}
+<INITIAL>const            { return T_CONST;}
+<INITIAL>constexpr        { return T_CONSTEXPR;}
+<INITIAL>const_cast       { return T_CONST_CAST;}
+<INITIAL>continue         { return T_CONTINUE;}
+<INITIAL>decltype         { return T_DECLTYPE;}
+<INITIAL>default          { return T_DEFAULT;}
+<INITIAL>delete           { return T_DELETE;}
+<INITIAL>do               { return T_DO;}
+<INITIAL>double           { return T_DOUBLE;}
+<INITIAL>dynamic_cast     { return T_DYNAMIC_CAST;}
+<INITIAL>else             { return T_ELSE;}
+<INITIAL>enum             { return T_ENUM;}
+<INITIAL>explicit         { return T_EXPLICIT;}
+<INITIAL>export           { return T_EXPORT;}
+<INITIAL>extern           { return T_EXTERN;}
+<INITIAL>false            { return T_FALSE;}
+<INITIAL>final            { return T_FINAL;}
+<INITIAL>float            { return T_FLOAT;}
+<INITIAL>for              { return T_FOR;}
+<INITIAL>friend           { return T_FRIEND;}
+<INITIAL>goto             { return T_GOTO;}
+<INITIAL>if               { return T_IF;}
+<INITIAL>inline           { return T_INLINE;}
+<INITIAL>int              { return T_INT;}
+<INITIAL>long             { return T_LONG;}
+<INITIAL>mutable          { return T_MUTABLE;}
+<INITIAL>namespace        { return T_NAMESPACE;}
+<INITIAL>new              { return T_NEW;}
+<INITIAL>noexcept         { return T_NOEXCEPT;}
+<INITIAL>not              { return T_NOT;}
+<INITIAL>not_eq           { return T_NOT_EQ;}
+<INITIAL>nullptr          { return T_NULLPTR;}
+<INITIAL>operator         { return T_OPERATOR;}
+<INITIAL>or               { return T_OR;}
+<INITIAL>or_eq            { return T_OR_EQ;}
+<INITIAL>override         { return T_OVERRIDE;}
+<INITIAL>private          { return T_PRIVATE;}
+<INITIAL>protected        { return T_PROTECTED;}
+<INITIAL>public           { return T_PUBLIC;}
+<INITIAL>register         { return T_REGISTER;}
+<INITIAL>reinterpret_cast { return T_REINTERPRET_CAST;}
+<INITIAL>return           { return T_RETURN;}
+<INITIAL>short            { return T_SHORT;}
+<INITIAL>signed           { return T_SIGNED;}
+<INITIAL>sizeof           { return T_SIZEOF;}
+<INITIAL>static           { return T_STATIC;}
+<INITIAL>static_assert    { return T_STATIC_ASSERT;}
+<INITIAL>static_cast      { return T_STATIC_CAST;}
+<INITIAL>struct           { return T_STRUCT;}
+<INITIAL>switch           { return T_SWITCH;}
+<INITIAL>template         { return T_TEMPLATE;}
+<INITIAL>this             { return T_THIS;}
+<INITIAL>thread_local     { return T_THREAD_LOCAL;}
+<INITIAL>throw            { return T_THROW;}
+<INITIAL>true             { return T_TRUE;}
 <INITIAL>try              { return T_TRY;}
-<INITIAL>typedef          { return T_TYPEDEF;} 
-<INITIAL>typeid           { return T_TYPEID;} 
-<INITIAL>typename         { return T_TYPENAME;} 
-<INITIAL>union            { return T_UNION;} 
-<INITIAL>unsigned         { return T_UNSIGNED;} 
-<INITIAL>using            { return T_USING;} 
-<INITIAL>virtual          { return T_VIRTUAL;} 
-<INITIAL>void             { return T_VOID;} 
-<INITIAL>volatile         { return T_VOLATILE;} 
-<INITIAL>wchar_t          { return T_WCHAR_T;} 
-<INITIAL>while            { return T_WHILE;} 
-<INITIAL>xor              { return T_XOR;} 
+<INITIAL>typedef          { return T_TYPEDEF;}
+<INITIAL>typeid           { return T_TYPEID;}
+<INITIAL>typename         { return T_TYPENAME;}
+<INITIAL>union            { return T_UNION;}
+<INITIAL>unsigned         { return T_UNSIGNED;}
+<INITIAL>using            { return T_USING;}
+<INITIAL>virtual          { return T_VIRTUAL;}
+<INITIAL>void             { return T_VOID;}
+<INITIAL>volatile         { return T_VOLATILE;}
+<INITIAL>wchar_t          { return T_WCHAR_T;}
+<INITIAL>while            { return T_WHILE;}
+<INITIAL>xor              { return T_XOR;}
 <INITIAL>xor_eq           { return T_XOR_EQ;}
+<INITIAL>\n               {}
 <INITIAL>{horizontal_white}+ { RETURN_WHITESPACE(); }
 <INITIAL>({v_tab}|{c_return}|{form_feed})+ {RETURN_WHITESPACE();}
 <INITIAL>({horizontal_white}|{v_tab}|{c_return}|{form_feed})*"\n" { RETURN_NEWLINE(); }
@@ -203,10 +206,17 @@ horizontal_white [ ]|{h_tab}
 <INITIAL>"L"?["]{s_char}*["] {
     return T_STRING;
 }
+<INITIAL>R["]{dchar_seq}[(] {
+    BEGIN(RAW_STRING);
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    // R"<d-char>(
+    userData->set_raw_string_label(yytext + 2 /* skip the `R"` */, yyleng - 3 /* we want just the d-char */);
+    userData->clear_raw_string();
+}
 <INITIAL>"/*" {
     // Clear the comment collected
     BEGIN C_COMMENT;
-    
+
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->ClearComment();
@@ -225,7 +235,7 @@ horizontal_white [ ]|{h_tab}
         return T_C_COMMENT;
     }
 }
-<C_COMMENT>"\n" { 
+<C_COMMENT>"\n" {
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment("\n");
@@ -252,17 +262,17 @@ horizontal_white [ ]|{h_tab}
     }
 }
 
-<CPP_COMMENT>"\\\n" { 
+<CPP_COMMENT>"\\\n" {
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment("\\\n");
-    } 
+    }
 }
-<CPP_COMMENT>"\\\r\n" { 
+<CPP_COMMENT>"\\\r\n" {
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment("\\\r\n");
-    } 
+    }
 }
 <CPP_COMMENT>"\n" {
     BEGIN INITIAL;
@@ -272,94 +282,94 @@ horizontal_white [ ]|{h_tab}
         return T_CXX_COMMENT;
     }
 }
-<CPP_COMMENT>. { 
+<CPP_COMMENT>. {
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
     if(userData->IsCollectingComments()) {
         userData->AppendToComment(yytext[0]);
     }
 }
-<INITIAL>{identifier} { 
+<INITIAL>{identifier} {
     return T_IDENTIFIER;
 }
-<INITIAL>"#" { 
+<INITIAL>"#" {
     BEGIN(PREPR);
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
     userData->SetPreProcessorSection(true);
 }
-<INITIAL>. { 
+<INITIAL>. {
     return yytext[0];
 }
 <PREPR>"\\\n" {
-    /* keep the current state */ 
+    /* keep the current state */
 }
 <PREPR>"\\\r\n" {
-    /* keep the current state */ 
+    /* keep the current state */
 }
 <PREPR>[ \t\r\v\b]+ {
     /* do nothing */
     RETURN_WHITESPACE();
 }
-<PREPR>"\n" { 
+<PREPR>"\n" {
     BEGIN(INITIAL);
     CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
     userData->SetPreProcessorSection(false);
     return T_PP_STATE_EXIT;
 }
-<PREPR>"define" { 
+<PREPR>"define" {
     return T_PP_DEFINE;
 }
-<PREPR>"defined" { 
+<PREPR>"defined" {
     return T_PP_DEFINED;
 }
-<PREPR>"if" { 
+<PREPR>"if" {
     return T_PP_IF;
 }
-<PREPR>"ifdef" { 
+<PREPR>"ifdef" {
     return T_PP_IFDEF;
 }
 <PREPR>"ifndef" {
     return T_PP_IFNDEF;
 }
-<PREPR>"else" { 
+<PREPR>"else" {
     return T_PP_ELSE;
 }
-<PREPR>"elif" { 
+<PREPR>"elif" {
     return T_PP_ELIF;
 }
-<PREPR>"endif" { 
+<PREPR>"endif" {
     return T_PP_ENDIF;
 }
-<PREPR>"line" { 
+<PREPR>"line" {
     return T_PP_LINE;
 }
-<PREPR>"pragma" { 
+<PREPR>"pragma" {
     return T_PP_PRAGMA;
 }
-<PREPR>"undef" { 
+<PREPR>"undef" {
     return T_PP_UNDEF;
 }
-<PREPR>"error" { 
+<PREPR>"error" {
     return T_PP_ERROR;
 }
-<PREPR>"&&" { 
+<PREPR>"&&" {
     return T_PP_AND;
 }
-<PREPR>"||" { 
+<PREPR>"||" {
     return T_PP_OR;
 }
-<PREPR>">" { 
+<PREPR>">" {
     return T_PP_GT;
 }
-<PREPR>">=" { 
+<PREPR>">=" {
     return T_PP_GTEQ;
 }
-<PREPR>"<" { 
+<PREPR>"<" {
     return T_PP_LT;
 }
-<PREPR>"<=" { 
+<PREPR>"<=" {
     return T_PP_LTEQ;
 }
-<PREPR>"include" { 
+<PREPR>"include" {
     BEGIN(INCLUDE);
 }
 <PREPR>"L"?[']{c_char}+['] {
@@ -372,11 +382,29 @@ horizontal_white [ ]|{h_tab}
 <PREPR>{octal_constant}    { return T_PP_OCTAL_NUMBER;}
 <PREPR>{hex_constant}      { return T_PP_HEX_NUMBER; }
 <PREPR>{floating_constant} { return T_PP_FLOAT_NUMBER;}
-<PREPR>{identifier} { 
+<PREPR>{identifier} {
     return T_PP_IDENTIFIER;
 }
-<PREPR>. { 
+<PREPR>. {
     return yytext[0];
+}
+<RAW_STRING>[)]{dchar_seq}["] {
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    std::string delim_found(yytext + 1, yyleng - 2); // we just want the `dchar_seq` sequence
+    if(delim_found == userData->get_raw_string_label()) {
+        BEGIN(INITIAL);
+        return T_RAW_STRING;
+    } else {
+        userData->append_raw_string(yytext, yyleng);
+    }
+}
+<RAW_STRING>\n {
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->append_raw_string('\n');
+}
+<RAW_STRING>. {
+    CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
+    userData->append_raw_string(yytext[0]);
 }
 <INCLUDE>\n {
     BEGIN(INITIAL);
@@ -401,14 +429,15 @@ void* LexerNew(const wxString& content, size_t options )
     yylex_init(&scanner);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     CppLexerUserData *userData = new CppLexerUserData(options);
-    
+
     // keep the file pointer (and make sure we close it at the end)
     userData->SetCurrentPF(NULL);
     yyg->yyextra_r = userData;
-    
+
     wxCharBuffer cb = content.mb_str(wxConvUTF8);
     yy_switch_to_buffer(yy_scan_string(cb.data(), scanner), scanner);
-    yycolumn = 1;
+    yycolumn = 0;
+    yylineno = 0;
     return scanner;
 }
 
@@ -418,7 +447,7 @@ void* LexerNew(const wxFileName& filename, size_t options )
     if(fn.IsRelative()) {
         fn.MakeAbsolute();
     }
-    
+
     FILE* fp = ::fopen(fn.GetFullPath().mb_str(wxConvUTF8).data(), "rb");
     if(!fp) {
         return NULL;
@@ -427,13 +456,14 @@ void* LexerNew(const wxFileName& filename, size_t options )
     yylex_init(&scanner);
     struct yyguts_t * yyg = (struct yyguts_t*)scanner;
     CppLexerUserData *userData = new CppLexerUserData(options);
-    
+
     // keep the file pointer (and make sure we close it at the end)
     userData->SetCurrentPF(fp);
     yyg->yyextra_r = userData;
-    
+
     yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE, scanner), scanner);
     yycolumn = 1;
+    yylineno = 0;
     return scanner;
 }
 
@@ -458,10 +488,17 @@ bool LexerNext(void* scanner, CxxLexerToken& token)
 {
     token.SetColumn(0);
     token.SetType(yylex(scanner));
+    token.ClearComment();
+    token.ClearRawString();
     if(!token.IsEOF()) {
         struct yyguts_t * yyg = (struct yyguts_t*)scanner;
         CppLexerUserData* userData = (CppLexerUserData*)yyg->yyextra_r;
         switch(token.GetType()) {
+        case T_RAW_STRING:
+            token.SetLineNumber(yylineno);
+            token.SetRawString(userData->get_raw_string());
+            userData->clear_raw_string_label();
+            break;
         case T_CXX_COMMENT:
             // One line up for CXX comments
             token.SetLineNumber(userData->GetCommentStartLine());
@@ -469,9 +506,9 @@ bool LexerNext(void* scanner, CxxLexerToken& token)
             userData->ClearComment();
             break;
         case T_C_COMMENT:
+            token.SetLineNumber(userData->GetCommentStartLine());
             token.SetComment(userData->GetComment());
             userData->ClearComment();
-            token.SetLineNumber(userData->GetCommentStartLine());
             break;
         default:
             token.SetLineNumber(yylineno);

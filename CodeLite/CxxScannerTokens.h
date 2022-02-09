@@ -26,7 +26,7 @@
 #ifndef ScannerTokens_H__
 #define ScannerTokens_H__
 
-enum { T_FIRST = 297, T_IDENTIFIER, T_STRING };
+enum { T_FIRST = 296, T_IDENTIFIER, T_STRING, T_RAW_STRING };
 
 // Range 300-400 are for C++ keywords and operators
 enum {
@@ -166,7 +166,7 @@ enum {
     T_PLUS_PLUS,
     T_MINUS_MINUS,
     T_LS, // left Shift
-//    T_RS, // Right Shift
+          //    T_RS, // Right Shift
     T_LE, // less equal
     T_GE, // greater than-equal
     T_EQUAL,

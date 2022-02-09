@@ -94,17 +94,6 @@ wxColour clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const 
     return bg_colour;
 }
 
-void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
-                                              const wxRect& activeTabRect, const clTabColours& colours, size_t style)
-{
-    wxUnusedVar(parent);
-    wxUnusedVar(dc);
-    wxUnusedVar(clientRect);
-    wxUnusedVar(activeTabRect);
-    wxUnusedVar(colours);
-    wxUnusedVar(style);
-}
-
 wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo,
                                     const clTabColours& colors, size_t style, eButtonState buttonState)
 {

@@ -27,8 +27,6 @@ public:
                         const clTabColours& colours, size_t style) override;
     wxColour DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
                             size_t style) override;
-    void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const wxRect& activeTabRect,
-                            const clTabColours& colours, size_t style) override;
     clTabRenderer* New(const wxWindow* parent) const override { return new clTabRendererMinimal(parent); }
     bool IsVerticalTabSupported() const override { return true; }
 };

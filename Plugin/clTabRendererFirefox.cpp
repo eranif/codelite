@@ -1,6 +1,9 @@
 #include "clTabRendererFirefox.hpp"
 
 #include "clSystemSettings.h"
+#include "drawingutils.h"
+#include "globals.h"
+#include "imanager.h"
 
 namespace
 {

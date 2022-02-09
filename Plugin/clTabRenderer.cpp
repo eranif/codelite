@@ -24,7 +24,26 @@
 #include "drawingutils.h"
 #endif
 
-static int X_BUTTON_SIZE = 14;
+namespace
+{
+void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTabBgColour, wxColour* bgColour)
+{
+    *bgColour = colours.tabAreaColour;
+    *activeTabBgColour = colours.activeTabBgColour;
+
+    bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
+    // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
+    if(style & kNotebook_DynamicColours) {
+        auto editor = clGetManager()->GetActiveEditor();
+        if(editor) {
+            *activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
+            is_dark = DrawingUtils::IsDark(*activeTabBgColour);
+        }
+        *bgColour = activeTabBgColour->ChangeLightness(is_dark ? 120 : 80);
+    }
+}
+int X_BUTTON_SIZE = 14;
+} // namespace
 
 clTabColours::clTabColours() { UpdateColours(0); }
 
@@ -448,10 +467,19 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
                                        const wxRect& activeTabRect, const clTabColours& colours, size_t style)
 {
     wxUnusedVar(parent);
-    wxUnusedVar(colours);
-    wxUnusedVar(style);
-    wxUnusedVar(dc);
-    wxUnusedVar(clientRect);
+    wxUnusedVar(activeTabRect);
+
+    if(!IS_VERTICAL_TABS(style) && ((style & kNotebook_BottomTabs) == 0)) {
+        // top tabs
+        wxColour bg_colour;
+        wxColour active_tab_colour;
+        GetTabColours(colours, style, &active_tab_colour, &bg_colour);
+        bool is_dark = DrawingUtils::IsDark(bg_colour);
+        dc.SetPen(bg_colour.ChangeLightness(is_dark ? 60 : 80));
+        dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
+        dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetBottomLeft());
+        dc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
+    }
 }
 
 void clTabRenderer::AdjustColours(clTabColours& colours, size_t style)

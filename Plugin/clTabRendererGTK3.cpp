@@ -121,12 +121,7 @@ wxColour clTabRendererGTK3::DrawBackground(wxWindow* parent, wxDC& dc, const wxR
 void clTabRendererGTK3::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const wxRect& activeTabRect,
                                            const clTabColours& colours, size_t style)
 {
-    wxUnusedVar(parent);
-    wxUnusedVar(dc);
-    wxUnusedVar(rect);
-    wxUnusedVar(activeTabRect);
-    wxUnusedVar(colours);
-    wxUnusedVar(style);
+    clTabRenderer::FinaliseBackground(parent, dc, rect, activeTabRect, colours, style);
 }
 
 void clTabRendererGTK3::AdjustColours(clTabColours& colours, size_t style)

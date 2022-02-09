@@ -55,7 +55,6 @@
 #include "plugin.h"
 #include "project.h"
 #include "workspace.h"
-#include "wxcNetworkThread.h"
 #include "wxcSettingsDlg.h"
 #include "wxcTreeView.h"
 #include "wxc_bitmap_code_generator.h"
@@ -104,7 +103,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     , m_useFrame(true)
     , m_mainFrame(NULL)
     , m_serverMode(serverMode)
-    , m_networkThread(NULL)
 {
     Allocator::Initialize();
     Allocator::Instance()->SetPlugin(this);
@@ -274,11 +272,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
 
 wxCrafterPlugin::~wxCrafterPlugin()
 {
-    if(m_networkThread) {
-        m_networkThread->Stop();
-        wxDELETE(m_networkThread);
-    }
-
     Allocator::Release();
     wxcSettings::Get().Save();
 }
@@ -520,14 +513,6 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
             additionalFiles.Add(f.GetFullPath());
             filesToRetag.push_back(f);
         }
-
-#if STANDALONE_BUILD
-        // Send reply that we got a list of modified files
-        wxcNetworkReply reply;
-        reply.SetFiles(filesToRetag);
-        reply.SetReplyType(wxCrafter::kReplyTypeFilesGenerated);
-        m_netManager.SendReply(reply);
-#endif
 
         m_generatedClassInfo.Clear();
         m_generatedClassInfo.classname = wxcProjectMetadata::Get().GetGeneratedClassName();
@@ -1233,12 +1218,6 @@ void wxCrafterPlugin::DoInitDone(wxObject* obj)
 
     if(m_useFrame) {
         m_mainFrame = new MainFrame(nullptr, m_serverMode);
-
-        // Start the network thread if server mode is enabled
-        if(m_serverMode) {
-            m_networkThread = new wxcNetworkThread();
-            m_networkThread->Start();
-        }
 
         m_treeView = new wxcTreeView(m_mainFrame->GetTreeParent(), this);
         m_mainFrame->Add(m_treeView);

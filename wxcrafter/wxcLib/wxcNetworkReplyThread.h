@@ -1,34 +1,38 @@
 #ifndef WXCNETWORKREPLYTHREAD_H
 #define WXCNETWORKREPLYTHREAD_H
 
-#include <wx/thread.h>
-#include "wxcLib/clSocketBase.h"
+#include "SocketAPI/clSocketBase.h"
+
 #include <wx/event.h>
+#include <wx/thread.h>
 
 class wxcNetworkReplyThread : public wxThread
 {
     clSocketBase::Ptr_t m_socket;
-    wxEvtHandler *      m_parent;
+    wxEvtHandler* m_parent;
+
 public:
-    wxcNetworkReplyThread(wxEvtHandler *parent, socket_t sock);
+    wxcNetworkReplyThread(wxEvtHandler* parent, socket_t sock);
     virtual ~wxcNetworkReplyThread();
 
 public:
     virtual void* Entry();
-    
-    void Stop() {
+
+    void Stop()
+    {
 #if wxCHECK_VERSION(3, 0, 0)
-        if ( IsAlive() ) {
+        if(IsAlive()) {
             Delete(NULL, wxTHREAD_WAIT_BLOCK);
         } else {
-            Wait( wxTHREAD_WAIT_BLOCK );
+            Wait(wxTHREAD_WAIT_BLOCK);
         }
 #else
         Delete();
 #endif
     }
-    
-    void Start() {
+
+    void Start()
+    {
         Create();
         Run();
     }

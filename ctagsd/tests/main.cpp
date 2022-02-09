@@ -57,6 +57,24 @@ bool is_tag_exists(const wxString& path, const vector<TagEntryPtr>& candidates)
     return find_tag(path, candidates).Get() != NULL;
 }
 
+bool is_file_exists(const wxString& suffix, wxString* fullpath)
+{
+    wxString codelite_src_dir;
+    fullpath->clear();
+
+    if(!::wxGetEnv("CODELITE_SRC_DIR", &codelite_src_dir)) {
+        return false;
+    }
+
+    wxString path = codelite_src_dir + "/" + suffix;
+    wxFileName fn(path);
+    if(fn.FileExists()) {
+        *fullpath = fn.GetFullPath();
+        return true;
+    }
+    return false;
+}
+
 #define ENSURE_DB_LOADED()                                                                                          \
     if(!initialize_cc_tests()) {                                                                                    \
         cout << "CC database not loaded. Please set environment variable TAGS_DB that points to `tags.db`" << endl; \
@@ -150,9 +168,9 @@ TEST_FUNC(text_cxx_assignment_from_global_method)
 TEST_FUNC(text_cxx_cc_with_problematic_typedef)
 {
     ENSURE_DB_LOADED();
-    wxString filepath = R"(C:\src\codelite\codelite_terminal\main.cpp)";
 
-    if(wxFileExists(filepath)) {
+    wxString filepath;
+    if(is_file_exists("codelite_terminal/main.cpp", &filepath)) {
         {
             completer->set_text(cc_locals_with_typedef, filepath, 88);
             auto resolved = completer->code_complete("m_options.", {}, nullptr);
@@ -484,10 +502,10 @@ TEST_FUNC(test_cxx_code_completion_both_subscript_and_arrow_operator)
 
 TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
 {
-    wxString filepath = R"(C:\src\codelite\ctagsd\tests\main.cpp)";
     ENSURE_DB_LOADED();
     {
-        if(wxFileExists(filepath)) {
+        wxString filepath;
+        if(is_file_exists("ctagsd/tests/main.cpp", &filepath)) {
             completer->set_text(wxEmptyString, filepath, wxNOT_FOUND);
             TagEntryPtr resolved = completer->code_complete("completer->", { "std" });
             CHECK_BOOL(resolved);
@@ -527,10 +545,10 @@ TEST_FUNC(test_cxx_code_completion_anonymous_namespace)
 
 TEST_FUNC(test_cxx_code_completion_static_member)
 {
-    wxString filepath = R"(C:\src\codelite\LiteEditor\frame.cpp)";
+    wxString filepath;
     ENSURE_DB_LOADED();
     {
-        if(wxFileExists(filepath)) {
+        if(is_file_exists("LiteEditor/frame.cpp", &filepath)) {
             completer->set_text(wxEmptyString, filepath, 1180);
             TagEntryPtr resolved = completer->code_complete("m_theFrame->", {});
             CHECK_BOOL(resolved);
@@ -830,10 +848,10 @@ TEST_FUNC(test_cxx_code_completion_word_completion)
 TEST_FUNC(test_cxx_word_completion_inside_scope)
 {
     ENSURE_DB_LOADED();
-    wxString filename = R"(C:\src\codelite\CodeLite\JSON.cpp)";
-    wxString filename_2 = R"(C:\src\codelite\LiteEditor\context_cpp.cpp)";
+    wxString filename;
+    wxString filename_2;
 
-    if(wxFileExists(filename)) {
+    if(is_file_exists("CodeLite/JSON.cpp", &filename)) {
         vector<TagEntryPtr> candidates;
         completer->set_text(wxEmptyString, filename, 191);
         CxxRemainder remainder;
@@ -843,7 +861,7 @@ TEST_FUNC(test_cxx_word_completion_inside_scope)
         CHECK_BOOL(count > 0);
     }
 
-    if(wxFileExists(filename_2)) {
+    if(is_file_exists("LiteEditor/context_cpp.cpp", &filename_2)) {
         {
             vector<TagEntryPtr> candidates;
             completer->set_text(wxEmptyString, filename_2, 200);
@@ -923,17 +941,17 @@ TEST_FUNC(test_cxx_code_completion_this_and_global_scope)
 {
     ENSURE_DB_LOADED();
     // use a line inside CxxCodeCompletion file
-    wxString filename = R"(C:\src\codelite\CodeLite\ctags_manager.cpp)";
-    wxString filename_2 = R"(C:\src\codelite\CodeLite\CxxCodeCompletion.cpp)";
+    wxString filename;
+    wxString filename_2;
     TagEntryPtr resolved;
-    if(wxFileExists(filename)) {
+    if(is_file_exists("CodeLite/ctags_manager.cpp", &filename)) {
         completer->set_text(wxEmptyString, filename, 149);
         resolved = completer->code_complete("this->", {});
         CHECK_BOOL(resolved);
         CHECK_STRING(resolved->GetPath(), "TagsManager");
     }
 
-    if(wxFileExists(filename_2)) {
+    if(is_file_exists("CodeLite/CxxCodeCompletion.cpp", &filename_2)) {
         completer->set_text(wxEmptyString, filename_2, 78);
         resolved = completer->code_complete("m_template_manager->", { "std" });
         CHECK_BOOL(resolved);
@@ -1018,8 +1036,8 @@ TEST_FUNC(test_cxx_code_completion_member_variable_in_scope)
 {
     ENSURE_DB_LOADED();
     // use a line inside CxxCodeCompletion file
-    wxString filename = R"(C:\src\codelite\CodeLite\ctags_manager.cpp)";
-    if(!wxFileExists(filename)) {
+    wxString filename;
+    if(!is_file_exists("CodeLite/ctags_manager.cpp", &filename)) {
         return true;
     }
     {
@@ -1087,9 +1105,9 @@ TEST_FUNC(test_cxx_code_completion_full_ns_path)
 TEST_FUNC(test_cxx_code_completion_function_arguments)
 {
     ENSURE_DB_LOADED();
-    wxString filepath = R"(C:\src\codelite\ctagsd\lib\ProtocolHandler.cpp)";
-    wxString filepath2 = R"(C:\src\codelite\Plugin\navigationmanager.cpp)";
-    if(wxFileExists(filepath)) {
+    wxString filepath;
+    wxString filepath2;
+    if(is_file_exists("ctagsd/lib/ProtocolHandler.cpp", &filepath)) {
         {
             completer->set_text(wxEmptyString, filepath,
                                 430); // ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t channel)
@@ -1114,7 +1132,7 @@ TEST_FUNC(test_cxx_code_completion_function_arguments)
             CHECK_BOOL(is_tag_exists("ProtocolHandler::on_initialize::channel", candidates));
         }
     }
-    if(wxFileExists(filepath2)) {
+    if(is_file_exists("Plugin/navigationmanager.cpp", &filepath2)) {
         {
             vector<TagEntryPtr> candidates;
             size_t count = completer->word_complete(filepath2, 86, "editor", wxEmptyString, {}, true, candidates, {});

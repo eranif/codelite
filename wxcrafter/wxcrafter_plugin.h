@@ -7,9 +7,7 @@
 #include "import_dlg.h"
 #include "main.h"
 #include "plugin.h"
-#include "wxcNetworkManager.h"
 
-class wxcNetworkThread;
 class EventsEditorPane;
 class GUICraftMainPanel;
 class wxcTreeView;
@@ -38,8 +36,6 @@ class wxCrafterPlugin : public IPlugin
     bool m_useFrame = true;
     MainFrame* m_mainFrame = nullptr;
     bool m_serverMode = false;
-    wxcNetworkThread* m_networkThread;
-    wxcNetworkManager m_netManager;
     wxFileName m_selectedFile;
 
 protected:

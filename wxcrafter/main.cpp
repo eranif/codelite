@@ -148,9 +148,9 @@ bool wxcApp::OnInit()
     FileLogger::OpenLog("wxcrafter.log", FileLogger::Dbg);
     clDEBUG() << "wxCrafter started" << endl;
 
-    m_wxcPlugin = new wxCrafterPlugin(NULL, m_hiddenMainFrame);
+    m_wxcPlugin = new wxCrafterPlugin(NULL, false);
     SetTopWindow(m_wxcPlugin->GetMainFrame());
-    if(m_hiddenMainFrame) {
+    if(false) {
         // Don't show the top window
         return true;
 

@@ -53,33 +53,24 @@
  }]]]>
     </Plugin>
   </Plugins>
+  <Reconciliation>
+    <Regexes/>
+    <Excludepaths/>
+    <Ignorefiles/>
+    <Extensions>
+      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp]]>
+    </Extensions>
+    <Topleveldir>/src/codelite/wxcrafter/wxcLib</Topleveldir>
+  </Reconciliation>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="cJSON.cpp"/>
     <File Name="cJSON.h"/>
-    <File Name="clSocketBase.cpp"/>
-    <File Name="clSocketBase.h"/>
-    <File Name="clSocketClient.cpp"/>
-    <File Name="clSocketClient.h"/>
-    <File Name="clSocketServer.cpp"/>
-    <File Name="clSocketServer.h"/>
     <File Name="json_node.cpp"/>
     <File Name="json_node.h"/>
-    <File Name="wxcEnums.h"/>
-    <File Name="wxcNetworkCommand.cpp"/>
-    <File Name="wxcNetworkCommand.h"/>
-    <File Name="wxcLibAPI.h"/>
-    <File Name="wxcConnector.h"/>
-    <File Name="wxcConnector.cpp"/>
     <File Name="smart_ptr.h"/>
     <File Name="wxcLibDefines.h"/>
-    <File Name="wxcNetworkReply.h"/>
-    <File Name="wxcNetworkReply.cpp"/>
-    <File Name="wxcNetworkReplyThread.h"/>
-    <File Name="wxcNetworkReplyThread.cpp"/>
-    <File Name="wxcReplyEventData.h"/>
-    <File Name="wxcReplyEventData.cpp"/>
   </VirtualDirectory>
   <Dependencies Name="Release"/>
   <Dependencies Name="Release_WX28"/>

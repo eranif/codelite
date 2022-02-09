@@ -3,7 +3,6 @@
 
 // main wxWidgets header file
 #include "gui.h"
-#include "wxcEvent.h"
 #include "wxcTreeView.h"
 #include "wxguicraft_main_view.h"
 
@@ -15,11 +14,11 @@
 class MainFrame : public MainFrameBase
 {
 protected:
-    GUICraftMainPanel* m_wxcView;
-    wxcTreeView* m_treeView;
-    wxFindReplaceDialog* m_findReplaceDialog;
+    GUICraftMainPanel* m_wxcView = nullptr;
+    wxcTreeView* m_treeView = nullptr;
+    wxFindReplaceDialog* m_findReplaceDialog = nullptr;
     wxFindReplaceData m_findData;
-    bool m_exiting;
+    bool m_exiting = false;
 
 protected:
     virtual void OnFileOpen(wxCommandEvent& event);
@@ -73,13 +72,6 @@ protected:
     virtual void OnWorkspaceClosed(clWorkspaceEvent& e);
     virtual void OnCodeLiteGotFocus(wxCommandEvent& e);
     void OnCodeEditorSelected(wxCommandEvent& e);
-
-    // Events arrived from the network
-    void OnNetCommandExit(wxcNetworkEvent& event);
-    void OnNetShowDesigner(wxcNetworkEvent& event);
-    void OnNetOpenFile(wxcNetworkEvent& event);
-    void OnNetGenerateCode(wxcNetworkEvent& event);
-    void OnNetNewForm(wxcNetworkEvent& event);
 
 protected:
     wxTextCtrl* GetActiveTextCtrl();

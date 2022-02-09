@@ -120,12 +120,6 @@
     <File Name="wxc_aui_tool_stickiness.cpp"/>
     <File Name="duplicateTLWdlg.cpp"/>
     <File Name="duplicateTLWdlg.h"/>
-    <File Name="wxcNetworkThread.h"/>
-    <File Name="wxcNetworkThread.cpp"/>
-    <File Name="wxcEvent.h"/>
-    <File Name="wxcEvent.cpp"/>
-    <File Name="wxcNetworkManager.h"/>
-    <File Name="wxcNetworkManager.cpp"/>
     <File Name="AuiToolbarWrapperBase.h"/>
     <File Name="AuiToolbarWrapperBase.cpp"/>
   </VirtualDirectory>

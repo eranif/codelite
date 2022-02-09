@@ -187,14 +187,6 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     , m_findReplaceDialog(NULL)
     , m_exiting(false)
 {
-    // if(hidden) { Hide(); }
-
-    EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_EXIT, &MainFrame::OnNetCommandExit, this);
-    EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_SHOW_DESIGNER, &MainFrame::OnNetShowDesigner, this);
-    EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_LOAD_FILE, &MainFrame::OnNetOpenFile, this);
-    EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_CONN_GEN_CODE, &MainFrame::OnNetGenerateCode, this);
-    EventNotifier::Get()->Bind(wxEVT_NETWORK_COMMAND_NEW_FORM, &MainFrame::OnNetNewForm, this);
-
     m_mainToolbar->SetMiniToolBar(false);
     auto images = m_mainToolbar->GetBitmapsCreateIfNeeded();
 
@@ -917,62 +909,6 @@ void MainFrame::OnFindUI(wxUpdateUIEvent& event)
 {
     wxStyledTextCtrl* stc = m_wxcView->GetPreviewEditor();
     event.Enable(stc != NULL);
-}
-
-void MainFrame::OnNetCommandExit(wxcNetworkEvent& event)
-{
-    event.Skip();
-    // Make sure we are visible before closing (incase wxCrafter needs to prompt about a modified file)
-    EnsureVisibile();
-    Close(true);
-}
-
-void MainFrame::OnNetShowDesigner(wxcNetworkEvent& event)
-{
-    event.Skip();
-    EnsureVisibile();
-}
-
-void MainFrame::OnNetOpenFile(wxcNetworkEvent& event)
-{
-    event.Skip();
-    EnsureVisibile();
-
-    wxCommandEvent evtOpen(wxEVT_WXC_OPEN_PROJECT);
-    evtOpen.SetString(event.GetFileName());
-    EventNotifier::Get()->ProcessEvent(evtOpen);
-}
-
-void MainFrame::OnNetGenerateCode(wxcNetworkEvent& event)
-{
-    event.Skip();
-
-    // First make sure we got the correct file loaded
-    wxCommandEvent evtOpen(wxEVT_WXC_OPEN_PROJECT);
-    evtOpen.SetString(event.GetFileName());
-    EventNotifier::Get()->ProcessEvent(evtOpen);
-
-    // Now, generate the code
-    wxCommandEvent evtGenCode(wxEVT_WXC_CMD_GENERATE_CODE);
-    EventNotifier::Get()->ProcessEvent(evtGenCode);
-}
-
-void MainFrame::OnNetNewForm(wxcNetworkEvent& event)
-{
-    event.Skip();
-
-    // Ensure visibility
-    EnsureVisibile();
-
-    // First make sure we got the correct file loaded
-    wxCommandEvent evtOpen(wxEVT_WXC_OPEN_PROJECT);
-    evtOpen.SetString(event.GetFileName());
-    EventNotifier::Get()->ProcessEvent(evtOpen);
-
-    // Now launch the wizard
-    wxCommandEvent createFormEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("wxcp_new_form"));
-    createFormEvent.SetInt(event.GetFormId());
-    wxTheApp->AddPendingEvent(createFormEvent);
 }
 
 void MainFrame::EnsureVisibile() { DisplayDesigner(); }

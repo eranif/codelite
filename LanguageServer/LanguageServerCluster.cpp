@@ -184,7 +184,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
 
     auto cb = [=](IEditor* editor) {
         editor->GetCtrl()->ClearSelections();
-        editor->SelectRange(location.GetRange());
+        editor->SelectLocation(location);
         NavMgr::Get()->StoreCurrentLocation(from, editor->CreateBrowseRecord());
     };
     clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));

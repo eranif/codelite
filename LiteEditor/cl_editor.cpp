@@ -4987,6 +4987,13 @@ void clEditor::DoSelectRange(const LSP::Range& range)
     CallAfter(&clEditor::CenterLinePreserveSelection, lineNumber);
 }
 
+bool clEditor::SelectLocation(const LSP::Location& location)
+{
+    int lineNumber = location.GetRange().GetStart().GetLine();
+    int pos = PositionFromLine(lineNumber);
+    return DoFindAndSelect(location.GetName(), location.GetName(), pos, nullptr);
+}
+
 bool clEditor::SelectRange(const LSP::Range& range)
 {
     // on GTK, DoSelectRange will probably fail since the file is not really loaded into screen yet
@@ -5773,7 +5780,7 @@ void clEditor::DoCancelCodeCompletionBox()
         m_calltip->Destroy();
         m_calltip = NULL;
     }
-    //wxCodeCompletionBoxManager::Get().DestroyCCBox();
+    // wxCodeCompletionBoxManager::Get().DestroyCCBox();
 }
 
 void clEditor::SetCodeCompletionAnnotation(const wxString& text, int lineno)

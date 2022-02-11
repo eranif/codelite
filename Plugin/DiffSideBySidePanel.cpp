@@ -530,7 +530,7 @@ void DiffSideBySidePanel::OnNextDiffSequence(wxCommandEvent& event)
 void DiffSideBySidePanel::OnPrevDiffSequence(wxCommandEvent& event)
 {
     // sanity
-    if((m_cur_sequence - 1) < 0 || (m_cur_sequence - 1) >= m_sequences.size())
+    if((m_cur_sequence - 1) < 0 || (m_cur_sequence - 1) >= (int)m_sequences.size())
         return;
 
     m_cur_sequence--;

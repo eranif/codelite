@@ -368,6 +368,11 @@ public:
     virtual bool SelectRange(const LSP::Range& range) = 0;
 
     /**
+     * @brief select range from a given location
+     */
+    virtual bool SelectLocation(const LSP::Location& location) = 0;
+
+    /**
      * @brief Similar to the above but returns void, and is implemented asynchronously
      */
     virtual void FindAndSelectV(const wxString& pattern, const wxString& what, int pos = 0, NavMgr* navmgr = NULL) = 0;

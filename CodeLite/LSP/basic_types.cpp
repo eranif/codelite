@@ -111,6 +111,7 @@ void Location::FromJSON(const JSONItem& json)
     URI::FromString(json.namedObject("uri").toString(), &m_uri);
     m_range.FromJSON(json.namedObject("range"));
     m_pattern = json["pattern"].toString();
+    m_name = json["name"].toString();
 }
 
 JSONItem Location::ToJSON(const wxString& name) const
@@ -119,6 +120,7 @@ JSONItem Location::ToJSON(const wxString& name) const
     json.addProperty("uri", GetPathAsURI());
     json.append(m_range.ToJSON("range"));
     json.addProperty("pattern", m_pattern);
+    json.addProperty("name", m_name);
     return json;
 }
 

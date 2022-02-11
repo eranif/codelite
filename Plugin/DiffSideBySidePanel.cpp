@@ -517,7 +517,7 @@ void DiffSideBySidePanel::SetFilesDetails(const DiffSideBySidePanel::FileInfo& l
 void DiffSideBySidePanel::OnNextDiffSequence(wxCommandEvent& event)
 {
     // sanity
-    if((m_cur_sequence + 1) >= m_sequences.size())
+    if((m_cur_sequence + 1) >= (int)m_sequences.size())
         return;
 
     m_cur_sequence++; // advance the sequence

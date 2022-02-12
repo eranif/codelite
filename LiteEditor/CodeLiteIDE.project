@@ -468,8 +468,6 @@
   <VirtualDirectory Name="Controls">
     <File Name="navbar.cpp"/>
     <File Name="navbar.h"/>
-    <File Name="checktreectrl.cpp"/>
-    <File Name="checktreectrl.h"/>
     <File Name="quickfindbar.h"/>
     <File Name="quickfindbar.cpp"/>
     <File Name="filechecklist.cpp"/>

@@ -155,7 +155,7 @@ Display diagnostics | - | When checked, CodeLite will display little red arrows 
 ---
 
 User can configure multiple language servers for the same coding language (e.g. `ctagsd` and `clangd` for `C++`)
-In order to decide which language server to use first, CodeLite uses the `Priority` property of the language server. The server with the highest value is choosed first
+In order to decide which language server to use first, CodeLite uses the `Priority` property of the language server. The server with the highest value is used first
 
 ## CMake `clangd` / `ctagsd`
 ---

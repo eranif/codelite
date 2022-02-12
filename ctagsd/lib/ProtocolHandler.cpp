@@ -919,15 +919,18 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
     // use CTags to gather local variables
     wxString tmpdir = clStandardPaths::Get().GetTempDir();
     vector<TagEntryPtr> tags;
-    CTags::ParseFile(filepath, m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(), tags);
+
+    // get list of local tags
+    CTags::ParseLocals(filepath, m_filesOpened[filepath], m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(),
+                       tags);
 
     clDEBUG1() << "File tags:" << tags.size() << endl;
     wxStringSet_t locals_set;
     wxStringSet_t types_set;
 
     for(auto tag : tags) {
-        if(tag->IsLocalVariable()) {
-            wxString type = tag->GetLocalType();
+        if(tag->IsLocalVariable() || tag->IsParameter() || tag->IsMember()) {
+            wxString type = tag->GetTypename();
             auto parts = wxStringTokenize(type, ":", wxTOKEN_STRTOK);
             for(const wxString& part : parts) {
                 add_to_types_set(part, types_set, locals_set);
@@ -957,22 +960,6 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
                     }
                 }
             }
-        } else if(tag->IsClass() || tag->IsStruct() || tag->GetKind() == "enum") {
-            add_to_types_set(tag->GetName(), types_set, locals_set);
-        } else if(tag->GetKind() == "enumerator") {
-            add_to_locals_set(tag->GetName(), locals_set, types_set);
-        } else if(tag->GetKind() == "member") {
-            add_to_locals_set(tag->GetName(), locals_set, types_set);
-            CxxVariableScanner scanner(tag->GetPatternClean(), eCxxStandard::kCxx11, {}, false);
-            auto vars = scanner.GetVariables();
-            for(const auto& var : vars) {
-                const auto& typeParts = var->GetType();
-                for(const auto& p : typeParts) {
-                    if(p.type == T_IDENTIFIER) {
-                        add_to_types_set(p.text, types_set, locals_set);
-                    }
-                }
-            }
         }
     }
 
@@ -980,8 +967,7 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
     clDEBUG1() << "Locals:" << locals_set << endl;
     clDEBUG1() << "Types:" << types_set << endl;
 
-    wxString buffer;
-    FileUtils::ReadFileContent(filepath, buffer);
+    const wxString& buffer = m_filesOpened[filepath];
 
     // collect all interesting tokens from the document
     SimpleTokenizer tokenizer(buffer);
@@ -995,21 +981,23 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
 
     while(tokenizer.next(&token_wrapper.token)) {
         const auto& tok = token_wrapper.token;
-        wxString word = tok.to_string(buffer);
-        if(word == "DebuggerMgr") {
-            int br;
-            br++;
-            wxUnusedVar(br);
-        }
-
+        auto word = tok.to_string(buffer);
         if(!CompletionHelper::is_cxx_keyword(word)) {
-            if(tok.following_char1_is('(')) {
+            if(locals_set.count(word)) {
+                token_wrapper.type = TYPE_VARIABLE;
+                variables.insert({ word, token_wrapper });
+
+            } else if(types_set.count(word)) {
+                token_wrapper.type = TYPE_CLASS;
+                classes.insert({ word, token_wrapper });
+
+            } else if(tok.following_char1_is('(')) {
                 // TOKEN(
                 token_wrapper.type = TYPE_FUNCTION;
                 functions.insert({ word, token_wrapper });
 
-            } else if(tok.following_char1_is('.')) {
-                // TOKEN.
+            } else if(tok.following_char1_is('.') || tok.following_char1_is('=')) {
+                // TOKEN. or TOKEN =
                 token_wrapper.type = TYPE_VARIABLE;
                 variables.insert({ word, token_wrapper });
 
@@ -1025,16 +1013,6 @@ void ProtocolHandler::on_semantic_tokens(unique_ptr<JSON>&& msg, Channel::ptr_t 
 
             } else if(tok.following_char1_is('&') || tok.following_char1_is('*') || tok.following_char1_is('<')) {
                 // TOKEN< || TOKEN& || TOKEN*
-                token_wrapper.type = TYPE_CLASS;
-                classes.insert({ word, token_wrapper });
-
-            } else if(locals_set.count(word)) {
-                // we know that this one is a variable
-                token_wrapper.type = TYPE_VARIABLE;
-                variables.insert({ word, token_wrapper });
-
-            } else if(types_set.count(word)) {
-                // A typename
                 token_wrapper.type = TYPE_CLASS;
                 classes.insert({ word, token_wrapper });
             }

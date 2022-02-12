@@ -241,7 +241,7 @@ size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, co
         filesList << temp_file.GetFullPath() << "\n";
 
         // we want locals + functions (to resolve the scope)
-        if(!DoGenerate(filesList, codelite_indexer, macro_table, "lzpvf", &content)) {
+        if(!DoGenerate(filesList, codelite_indexer, macro_table, "lzpvfm", &content)) {
             return 0;
         }
     }

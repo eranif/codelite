@@ -229,7 +229,7 @@ TEST_FUNC(TestLSPLocation)
         completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, { "LSP" });
     }
     CHECK_BOOL(resolved);
-    CHECK_SIZE(candidates.size(), 15);
+    CHECK_SIZE(candidates.size(), 18);
     return true;
 }
 

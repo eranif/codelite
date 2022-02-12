@@ -151,25 +151,11 @@ Connection string| &#10003; | Defines the protocol that CodeLite communicates wi
 Priority | &#10003; | Defines this LSP priority compared to other LSPs for the same language, the higher the better
 Display diagnostics | - | When checked, CodeLite will display little red arrows next to potential code errors
 
-## Conflicts
+## Resolving conflicts - using the priority property
 ---
 
-In addition to code completion provided by the Language Server plugin, CodeLite has list of internal code completion providers
-which are not part of the Language Server plugin, each provider has its own internal priority:
-
-Provider |Language |Priority
----------|---------|---------
-PHP plugin |PHP |50
-WebTools |XML |50
-WebTools |CSS |50
-
-Lets explain how the priority resolves conflicts for `C++`:
-
-Assuming your configured language server for `C++` with priority `80`, it will **override** the default `ctags` completion engine.
-However, if your language server is configured with priority `74` (or less), CodeLite will use `ctags` completion engine **first**
-
-and in case `ctags` completion engine fails to complete, CodeLite will use the next language server for `c++` language with the next highest priority.
-This mechanism allows you to control how CodeLite uses the language servers in conjunction with the internal completion engines
+User can configure multiple language servers for the same coding language (e.g. `ctagsd` and `clangd` for `C++`)
+In order to decide which language server to use first, CodeLite uses the `Priority` property of the language server. The server with the highest value is choosed first
 
 ## CMake `clangd` / `ctagsd`
 ---

@@ -1363,8 +1363,10 @@ void Project::SetExcludeConfigsForFile(const wxString& filename, const wxStringS
     SaveXmlFile();
 }
 
-static void ProcessIncludes(const wxArrayString& paths, const wxString& wd, wxStringSet_t& res,
-                            std::vector<wxString>& pathsVec)
+namespace
+{
+void ProcessIncludes(const wxArrayString& paths, const wxString& wd, wxStringSet_t& res,
+                     std::vector<wxString>& pathsVec)
 {
     // Convert the include paths to full path, prepend -I and add them
     for(const wxString& path : paths) {
@@ -1382,7 +1384,7 @@ static void ProcessIncludes(const wxArrayString& paths, const wxString& wd, wxSt
     }
 }
 
-static void ProcessMacros(const wxArrayString& macros, wxStringSet_t& res)
+void ProcessMacros(const wxArrayString& macros, wxStringSet_t& res)
 {
     for(const wxString& macro : macros) {
         wxString tmpMacro = macro;
@@ -1399,7 +1401,7 @@ static void ProcessMacros(const wxArrayString& macros, wxStringSet_t& res)
     }
 }
 
-static wxString GetExtraFlags(CompilerPtr compiler)
+wxString GetExtraFlags(CompilerPtr compiler)
 {
     wxString extra_flags;
     if(compiler->HasMetadata()) {
@@ -1408,6 +1410,7 @@ static wxString GetExtraFlags(CompilerPtr compiler)
     }
     return extra_flags;
 }
+} // namespace
 
 wxString Project::GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
                                            const wxString& filenamePlaceholder, size_t flags)

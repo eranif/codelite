@@ -32,6 +32,14 @@
     <File Name="cl_make_generator_app.h"/>
     <File Name="cl_make_generator_app.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="Debug_Linux"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="plugin_sdk"/>
+  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -57,7 +65,7 @@
         <Library Value="libwxsqlite3ud.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="codelite-make" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--workspace=C:\src\codelite\CodeLiteIDE.workspace --json --verbose --config=Win_x64_Release" UseSeparateDebugArgs="yes" DebugArguments="--config=Release --workspace=C:\Users\Eran\Documents\HelloWorld\HelloWorld.workspace --compile-flags --verbose --settings=C:\Users\Eran\AppData\Roaming\codelite-dbg\config\build_settings.xml" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-make" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="--workspace=C:\src\codelite\CodeLiteIDE.workspace --verbose --config=Win_x64_Release" UseSeparateDebugArgs="yes" DebugArguments="--workspace=C:\Users\eran\Documents\TestCTagsd\TestCTagsd.workspace --compile-flags  --config=Debug --settings=C:\Users\Eran\AppData\Roaming\CodeLite-Debug\config\build_settings.xml" WorkingDirectory="C:/src/codelite/Runtime" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[PATH=$(WorkspacePath)\..\lib\gcc_lib;$PATH]]>
@@ -199,7 +207,7 @@
         <Library Value="libwxsqlite3u.dll"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
-      <General OutputFile="codelite-make" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=/home/eran/Documents/HelloWorld/HelloWorld.workspace --config=Debug --json --versbose" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="codelite-make" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="yes" DebugArguments="--workspace=C:\\Users\\eran\\Documents\\TestCTagsd\\TestCTagsd.workspace --compile-flags  --config=Debug --settings=C:\\Users\\Eran\\AppData\\Roaming\\CodeLite-Debug\\config\\build_settings.xml" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
@@ -285,9 +293,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Debug_Linux"/>
-  <Dependencies Name="Release"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

@@ -101,9 +101,18 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 m_includesWithPrefix.Add(wxString() << "-I" << include_path);
                 ++i;
 
-            } else if(opt.StartsWith("-I", &rest) || opt.StartsWith("/I", &rest)) {
-                m_includes.Add(rest);
-                m_includesWithPrefix.Add(opt);
+            } else if(opt.StartsWith("-I", &rest)) {
+                rest.Replace("\"", wxEmptyString);
+                wxFileName path(rest, wxEmptyString);
+                m_includes.Add(path.GetPath());
+                m_includesWithPrefix.Add("-I" + path.GetPath());
+
+            } else if(opt.StartsWith("/I", &rest)) {
+                rest.Replace("\"", wxEmptyString);
+                wxFileName path(rest, wxEmptyString);
+                m_includes.Add(path.GetPath());
+                m_includesWithPrefix.Add("/I" + path.GetPath());
+
             }
 
             else if(opt.StartsWith("-D", &rest) || opt.StartsWith("/D", &rest)) {

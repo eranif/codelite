@@ -928,26 +928,30 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
 {
     if(msg_ptr && msg_ptr->As<LSP::Request>()) {
         clDEBUG1() << GetLogPrefix() << "received a response";
-        // Check if the reply is still valid
-        IEditor* editor = clGetManager()->GetActiveEditor();
-        if(editor) {
-            LSP::Request* preq = msg_ptr->As<LSP::Request>();
-            if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
-                clDEBUG1() << "Received a response for completion message ID#" << preq->GetId()
-                           << ". However, a newer completion request with ID#" << m_lastCompletionRequestId
-                           << "was already sent. Dropping response";
-                return;
+        if(msg_ptr->GetMethod() == "textDocument/completion") {
+            // this response requires us to check if the reply is still valid
+            IEditor* editor = clGetManager()->GetActiveEditor();
+            if(editor) {
+                LSP::Request* preq = msg_ptr->As<LSP::Request>();
+                if(preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
+                    clDEBUG1() << "Received a response for completion message ID#" << preq->GetId()
+                               << ". However, a newer completion request with ID#" << m_lastCompletionRequestId
+                               << "was already sent. Dropping response";
+                    return;
+                }
+                // let the originating request to handle it
+                const wxString& filename = GetEditorFilePath(editor);
+                size_t line = editor->GetCurrentLine();
+                size_t column = editor->GetColumnInChars(editor->GetCurrentPosition());
+                if(false && preq->IsPositionDependantRequest() && !preq->IsValidAt(filename, line, column)) {
+                    clDEBUG1() << "Response is no longer valid. Discarding its result";
+                } else {
+                    preq->SetServerName(GetName());
+                    preq->OnResponse(response, m_owner);
+                }
             }
-            // let the originating request to handle it
-            const wxString& filename = GetEditorFilePath(editor);
-            size_t line = editor->GetCurrentLine();
-            size_t column = editor->GetColumnInChars(editor->GetCurrentPosition());
-            if(false && preq->IsPositionDependantRequest() && !preq->IsValidAt(filename, line, column)) {
-                clDEBUG1() << "Response is no longer valid. Discarding its result";
-            } else {
-                preq->SetServerName(GetName());
-                preq->OnResponse(response, m_owner);
-            }
+        } else {
+            msg_ptr->As<LSP::Request>()->OnResponse(response, m_owner);
         }
 
     } else if(response.IsPushDiagnostics()) {

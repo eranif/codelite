@@ -1189,7 +1189,6 @@
   <Dependencies Name="CMake_Debug"/>
   <Dependencies Name="Custom"/>
   <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug"/>
   <Dependencies Name="Win_x64_Release">
     <Project Name="libCodeLite"/>
     <Project Name="sqlite3"/>
@@ -1198,4 +1197,7 @@
     <Project Name="wxshapeframework"/>
   </Dependencies>
   <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
 </CodeLite_Project>

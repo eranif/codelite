@@ -426,6 +426,8 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t chann
 {
     // start the parser thread
     clDEBUG() << "Received `initialize` request" << endl;
+    send_log_message(_("Initialization started..."), LSP_LOG_INFO, channel);
+
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
 
@@ -491,26 +493,27 @@ void ProtocolHandler::on_initialize(unique_ptr<JSON>&& msg, Channel::ptr_t chann
     files = get_files_to_parse(files);
 
     // Check the database version
+
+    // sanity: ensure that we don't have an open handle
+    // parse the workspace
     TagsManagerST::Get()->CloseDatabase();
     wxFileName fn_db_path(m_settings_folder, "tags.db");
     remove_db_if_needed(fn_db_path.GetFullPath());
 
+    wxString indexer_path = m_settings.GetCodeliteIndexer();
+    vector<wxString> files_to_parse = { files.begin(), files.end() };
+    clDEBUG() << "on_initialize(): parsing files..." << endl;
+    ProtocolHandler::parse_files(files_to_parse, m_settings);
+    clDEBUG() << "on_initialize(): parsing files... Success" << endl;
+
+    // Now that the database is parsed, re-open it
+    TagsManagerST::Get()->CloseDatabase();
     TagsManagerST::Get()->OpenDatabase(fn_db_path);
     TagsManagerST::Get()->GetDatabase()->SetSingleSearchLimit(m_settings.GetLimitResults());
     TagsManagerST::Get()->GetDatabase()->SetUseCache(true);
 
     // reparse the workspace
     send_log_message(_("Initialization completed"), LSP_LOG_INFO, channel);
-
-    wxString indexer_path = m_settings.GetCodeliteIndexer();
-    vector<wxString> files_to_parse = { files.begin(), files.end() };
-    auto parse_callback = [=]() {
-        clDEBUG() << "on_initialize(): parsing files..." << endl;
-        ProtocolHandler::parse_files(files_to_parse, m_settings);
-        clDEBUG() << "on_initialize(): parsing files... Success" << endl;
-        return eParseThreadCallbackRC::RC_SUCCESS;
-    };
-    m_parse_thread.queue_parse_request(move(parse_callback));
 
     m_completer.reset(new CxxCodeCompletion(TagsManagerST::Get()->GetDatabase(), m_settings.GetCodeliteIndexer()));
     m_completer->set_macros_table(m_settings.GetTokens());

@@ -189,7 +189,7 @@ void clFileSystemWorkspace::CacheFiles(bool force)
         [=](const wxString& rootFolder) {
             clFilesScanner fs;
             std::vector<wxString> files;
-            wxStringSet_t excludeFolders = { ".git", ".svn", ".codelite" };
+            wxStringSet_t excludeFolders = { ".git", ".svn", ".codelite", ".ctagsd" };
 
             wxString excludePaths = GetExcludeFolders();
             wxArrayString paths = StringUtils::BuildArgv(excludePaths);

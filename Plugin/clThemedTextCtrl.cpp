@@ -39,6 +39,14 @@ void clThemedTextCtrl::OnKeyDown(wxKeyEvent& event)
         wxCommandEvent text_enter(wxEVT_COMMAND_TEXT_ENTER);
         text_enter.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(text_enter);
+    } else if(event.GetKeyCode() == WXK_TAB) {
+        event.Skip(false);
+        if(event.GetModifiers() == wxMOD_SHIFT) {
+            // navigate backward
+            Navigate(wxNavigationKeyEvent::IsBackward);
+        } else {
+            Navigate(wxNavigationKeyEvent::IsForward);
+        }
     }
 }
 

@@ -76,7 +76,8 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
         fields_cxx << "+{macrodef}";
     }
 
-    options_arr = { "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--language-force=c++", fields_cxx };
+    options_arr = { "--extras=-p",       "--excmd=pattern",      "--sort=no",
+                    "--fields=aKmSsnit", "--language-force=c++", fields_cxx };
     if(ctags_kinds.empty()) {
         // default
         options_arr.push_back("--c-kinds=+pxz");
@@ -105,7 +106,8 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     }
 
     // write the options into a file
-    wxFileName ctags_options_file(clStandardPaths::Get().GetUserDataDir(), "options.ctags");
+    wxFileName ctags_options_file(clStandardPaths::Get().GetUserDataDir(),
+                                  wxString() << "options-" << wxThread::GetCurrentId() << ".ctags");
     wxString ctags_options_file_content;
     for(const wxString& option : options_arr) {
         ctags_options_file_content << option << "\n";
@@ -123,22 +125,17 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
 
     sw.Start();
     // Split the list of files
-    clTempFile file_list("txt");
-    file_list.Write(filesContent);
+    wxFileName file_list(clStandardPaths::Get().GetTempDir(),
+                         wxString() << "file-list-" << wxThread::GetCurrentId() << ".txt");
+    FileUtils::WriteFileContent(file_list, filesContent);
 
-    wxFileName output_file = FileUtils::CreateTempFileName(clStandardPaths::Get().GetTempDir(), "tags_out", "tags");
     wxString command_to_run;
     command_to_run << WrapSpaces(codelite_indexer) << " --options=" << WrapSpaces(ctags_options_file.GetFullPath())
-                   << " -L " << WrapSpaces(file_list.GetFullPath()) << " -f - > "
-                   << WrapSpaces(output_file.GetFullPath());
+                   << " -L " << WrapSpaces(file_list.GetFullPath()) << " -f - ";
     WrapInShell(command_to_run);
     clDEBUG() << "Running command:" << command_to_run << endl;
 
-    // delete the output file
-    FileUtils::Deleter d(output_file.GetFullPath());
-
-    ProcUtils::SafeExecuteCommand(command_to_run);
-    FileUtils::ReadFileContent(output_file.GetFullPath(), *output);
+    *output = ProcUtils::SafeExecuteCommand(command_to_run);
 
     long elapsed = sw.Time();
 

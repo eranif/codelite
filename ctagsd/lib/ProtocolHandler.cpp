@@ -230,8 +230,9 @@ void ProtocolHandler::do_parse_chunk(ITagsStoragePtr db, const vector<wxString>&
 
     clDEBUG1() << "Success" << endl;
     clDEBUG1() << "Updating symbols database..." << endl;
-
+    clDEBUG() << "Storing" << tags.size() << "tags" << endl;
     db->Begin();
+
     time_t update_time = time(nullptr);
     db->Store(tags, false);
 

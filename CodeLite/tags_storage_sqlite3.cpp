@@ -315,9 +315,12 @@ void TagsStorageSQLite::Store(const std::vector<TagEntryPtr>& tags, bool auto_co
         return;
     }
 
-    // get list of affected files
+    // store the tags
     try {
         for(auto tag : tags) {
+            // we dont store local variables
+            if(tag->IsLocalVariable())
+                continue;
             DoInsertTagEntry(*tag.Get());
         }
     } catch(wxSQLite3Exception& e) {

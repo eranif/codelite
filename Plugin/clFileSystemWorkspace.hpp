@@ -23,6 +23,7 @@
 #include <wx/arrstr.h>
 
 class clFileSystemWorkspaceView;
+
 class WXDLLIMPEXP_SDK clFileSystemWorkspace : public IWorkspace
 {
     clFileCache m_files;

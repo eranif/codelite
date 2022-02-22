@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "fileutils.h"
+
 #include "StringUtils.h"
 #include "asyncprocess.h"
 #include "clConsoleBase.h"
@@ -34,6 +35,7 @@
 #include "procutils.h"
 #include "wx/string.h"
 #include "wxStringHash.h"
+
 #include <algorithm>
 #include <fstream>
 #include <map>
@@ -899,7 +901,6 @@ wxString FileUtils::FilePathFromURI(const wxString& uri)
         }
 #endif
         rest = DecodeURI(rest);
-        clDEBUG1() << "FilePathFromURI:" << uri << "->" << rest << endl;
         return rest;
     } else {
         return uri;

@@ -354,9 +354,6 @@ void clFileSystemWorkspace::DoOpen()
     // and finally, request codelite to keep this workspace in the recently opened workspace list
     clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
 
-    TagsManagerST::Get()->CloseDatabase();
-    TagsManagerST::Get()->OpenDatabase(fnFolder.GetFullPath());
-
     // Cache the source files from the workspace directories
     CacheFiles();
 
@@ -1102,4 +1099,8 @@ wxString clFileSystemWorkspace::GetExcludeFolders() const
     return wxEmptyString;
 }
 
-void clFileSystemWorkspace::SetProjectActive(const wxString& project) { wxUnusedVar(project); }
+void clFileSystemWorkspace::SetProjectActive(const wxString& project)
+{
+    // no projects in a file system workspace
+    wxUnusedVar(project);
+}

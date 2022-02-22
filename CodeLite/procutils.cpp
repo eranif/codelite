@@ -23,12 +23,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #ifdef __FreeBSD__
-#include <sys/param.h>
-#include <sys/sysctl.h>
-#include <sys/user.h>
 #include <fcntl.h>
 #include <kvm.h>
 #include <paths.h>
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <sys/user.h>
 #endif
 
 #include "asyncprocess.h"
@@ -267,10 +267,7 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
 
 void ProcUtils::ExecuteCommand(const wxString& command, wxArrayString& output, long flags)
 {
-#ifdef __WXMSW__
-    wxExecute(command, output, flags);
-#else
-    FILE* fp;
+    FILE* fp = nullptr;
     char line[512];
     memset(line, 0, sizeof(line));
     fp = popen(command.mb_str(wxConvUTF8), "r");
@@ -281,7 +278,6 @@ void ProcUtils::ExecuteCommand(const wxString& command, wxArrayString& output, l
         }
         pclose(fp);
     }
-#endif
 }
 
 void ProcUtils::ExecuteInteractiveCommand(const wxString& command) { wxShell(command); }
@@ -554,58 +550,7 @@ bool ProcUtils::Locate(const wxString& name, wxString& where)
 
 void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& output)
 {
-#ifdef __WXMSW__
-    wxString errMsg;
-    WinProcess* proc = WinProcess::Execute(command, errMsg);
-    if(!proc) {
-        return;
-    }
-
-    // wait for the process to terminate
-    wxString tmpbuf;
-    wxString buff;
-
-    while(proc->IsAlive()) {
-        tmpbuf.Clear();
-        proc->Read(tmpbuf);
-        buff << tmpbuf;
-        wxThread::Sleep(100);
-    }
-    tmpbuf.Clear();
-
-    // Read any unread output
-    proc->Read(tmpbuf);
-    while(!tmpbuf.IsEmpty()) {
-        buff << tmpbuf;
-        tmpbuf.Clear();
-        proc->Read(tmpbuf);
-    }
-
-    // Convert buff into wxArrayString
-    buff.Trim().Trim(false);
-    wxString s;
-    int where = buff.Find(wxT("\n"));
-    while(where != wxNOT_FOUND) {
-        // use c_str() to make sure we create a unique copy
-        s = buff.Mid(0, where).c_str();
-        s.Trim().Trim(false);
-        output.Add(s.c_str());
-        buff.Remove(0, where + 1);
-
-        where = buff.Find(wxT("\n"));
-    }
-
-    if(buff.empty() == false) {
-        s = buff.Trim().Trim(false);
-        output.Add(s.c_str());
-    }
-
-    proc->Cleanup();
-    delete proc;
-
-#else
     ProcUtils::ExecuteCommand(command, output);
-#endif
 }
 
 wxString ProcUtils::SafeExecuteCommand(const wxString& command)

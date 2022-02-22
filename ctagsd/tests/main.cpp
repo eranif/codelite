@@ -1069,6 +1069,28 @@ TEST_FUNC(test_cxx_code_completion_global_method)
     return true;
 }
 
+TEST_FUNC(test_cxx_code_completion_after_adding_func_impl)
+{
+    ENSURE_DB_LOADED();
+    // use a line inside CxxCodeCompletion file
+    wxString filename;
+    if(!is_file_exists("Plugin/clFileSystemWorkspace.cpp", &filename)) {
+        return true;
+    }
+    {
+        completer->set_text(wxEmptyString, filename, 1117); // inside clFileSystemWorkspace::ReloadWorkspace
+        auto resolved = completer->code_complete("this->", {});
+        CHECK_BOOL(resolved);
+        CHECK_STRING(resolved->GetPath(), "clFileSystemWorkspace");
+
+        vector<TagEntryPtr> candidates;
+        completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, {});
+        CHECK_BOOL(!candidates.empty());
+        CHECK_SIZE(candidates.size(), 10);
+    }
+    return true;
+}
+
 TEST_FUNC(test_cxx_code_completion_member_variable_in_scope)
 {
     ENSURE_DB_LOADED();

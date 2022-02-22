@@ -78,13 +78,13 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
 
     options_arr = { "--extras=-p",       "--excmd=pattern",      "--sort=no",
                     "--fields=aKmSsnit", "--language-force=c++", fields_cxx };
+
+    wxString kinds_string;
     if(ctags_kinds.empty()) {
         // default
-        options_arr.push_back("--c-kinds=+pxz");
-        options_arr.push_back("--C++-kinds=+pxz");
+        kinds_string << " --c-kinds=+pxz --C++-kinds=+pxz ";
     } else {
-        options_arr.push_back("--c-kinds=" + ctags_kinds);
-        options_arr.push_back("--C++-kinds=" + ctags_kinds);
+        kinds_string << " --c-kinds=" << ctags_kinds << " --C++-kinds=" << ctags_kinds << " ";
     }
 
     // we want the macros ordered, so we push them into std::set
@@ -131,7 +131,7 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
 
     wxString command_to_run;
     command_to_run << WrapSpaces(codelite_indexer) << " --options=" << WrapSpaces(ctags_options_file.GetFullPath())
-                   << " -L " << WrapSpaces(file_list.GetFullPath()) << " -f - ";
+                   << kinds_string << " -L " << WrapSpaces(file_list.GetFullPath()) << " -f - ";
     WrapInShell(command_to_run);
     clDEBUG() << "Running command:" << command_to_run << endl;
 

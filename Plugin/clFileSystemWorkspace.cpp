@@ -59,6 +59,7 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
     if(!dummy) {
         EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &clFileSystemWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_WORKSPACE, &clFileSystemWorkspace::OnOpenWorkspace, this);
+        EventNotifier::Get()->Bind(wxEVT_CMD_RELOAD_WORKSPACE, &clFileSystemWorkspace::OnReloadWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &clFileSystemWorkspace::OnNewWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clFileSystemWorkspace::OnAllEditorsClosed, this);
         EventNotifier::Get()->Bind(wxEVT_FS_SCAN_COMPLETED, &clFileSystemWorkspace::OnScanCompleted, this);
@@ -99,6 +100,7 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
     if(!m_dummy) {
         EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &clFileSystemWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &clFileSystemWorkspace::OnOpenWorkspace, this);
+        EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_WORKSPACE, &clFileSystemWorkspace::OnReloadWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &clFileSystemWorkspace::OnNewWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_ALL_EDITORS_CLOSED, &clFileSystemWorkspace::OnAllEditorsClosed, this);
         EventNotifier::Get()->Unbind(wxEVT_FS_SCAN_COMPLETED, &clFileSystemWorkspace::OnScanCompleted, this);
@@ -237,13 +239,8 @@ void clFileSystemWorkspace::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 void clFileSystemWorkspace::OnOpenWorkspace(clCommandEvent& event)
 {
     event.Skip();
-    wxFileName workspaceFile(event.GetFileName());
-
-    // Test that this is our workspace
-    if(m_settings.IsOk(workspaceFile) && Load(workspaceFile)) {
+    if(OpenWorkspace(event.GetFileName())) {
         event.Skip(false);
-        DoOpen();
-
     } else {
         m_filename.Clear();
     }
@@ -252,9 +249,8 @@ void clFileSystemWorkspace::OnOpenWorkspace(clCommandEvent& event)
 void clFileSystemWorkspace::OnCloseWorkspace(clCommandEvent& event)
 {
     event.Skip();
-    if(m_isLoaded) {
+    if(CloseWorkspace()) {
         event.Skip(false);
-        DoClose();
     }
 }
 
@@ -357,9 +353,11 @@ void clFileSystemWorkspace::DoOpen()
     // Cache the source files from the workspace directories
     CacheFiles();
 
+    // mark the workspace as loaded before restoring the session
+    m_isLoaded = true;
+
     // Load the workspace session (if any)
     CallAfter(&clFileSystemWorkspace::RestoreSession);
-    m_isLoaded = true;
 }
 
 void clFileSystemWorkspace::DoClose()
@@ -1103,4 +1101,38 @@ void clFileSystemWorkspace::SetProjectActive(const wxString& project)
 {
     // no projects in a file system workspace
     wxUnusedVar(project);
+}
+
+bool clFileSystemWorkspace::OpenWorkspace(const wxString& filepath)
+{
+    // Test that this is our workspace
+    if(m_settings.IsOk(filepath) && Load(filepath)) {
+        DoOpen();
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool clFileSystemWorkspace::CloseWorkspace()
+{
+    if(!IsOpen()) {
+        return false;
+    }
+    DoClose();
+    return true;
+}
+
+void clFileSystemWorkspace::OnReloadWorkspace(clCommandEvent& event)
+{
+    if(!IsOpen()) {
+        event.Skip();
+        return;
+    }
+
+    event.Skip(false);
+    wxString current_file = m_filename.GetFullPath();
+    if(CloseWorkspace()) {
+        OpenWorkspace(current_file);
+    }
 }

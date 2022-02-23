@@ -84,6 +84,7 @@ protected:
     void OnSourceControlPulled(clSourceControlEvent& event);
     void OnDebug(clDebugEvent& event);
     void OnFileSystemUpdated(clFileSystemEvent& event);
+    void OnReloadWorkspace(clCommandEvent& event);
 
 protected:
     bool Load(const wxFileName& file);
@@ -117,6 +118,18 @@ public:
     virtual ~clFileSystemWorkspace();
 
     static clFileSystemWorkspace& Get();
+
+    /**
+     * @brief open a workspace file. return true if the `filepath` is a valid
+     * File System Workspace and the open succeeded
+     */
+    bool OpenWorkspace(const wxString& filepath);
+
+    /**
+     * @brief close the workspace. Return false if the a File System Workspace
+     * was not already opened
+     */
+    bool CloseWorkspace();
 
     ///===--------------------------
     /// Specific API

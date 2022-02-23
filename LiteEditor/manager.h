@@ -25,10 +25,6 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <list>
-#include <map>
-#include <wx/event.h>
-
 #include "async_executable_cmd.h"
 #include "breakpointsmgr.h"
 #include "clDebuggerTerminal.h"
@@ -42,6 +38,10 @@
 #include "shell_command.h"
 #include "singleton.h"
 #include "workspace.h"
+
+#include <list>
+#include <map>
+#include <wx/event.h>
 
 class clEditor;
 class IProcess;
@@ -343,12 +343,6 @@ public:
      * retag workspace
      */
     void RetagWorkspace(TagsManager::RetagType type);
-
-    /**
-     * @brief the parser thread has completed to scan for include files to parse
-     * @param event
-     */
-    void OnDbContentCacherLoaded(wxCommandEvent& event);
 
     /**
      * \brief retag a given file

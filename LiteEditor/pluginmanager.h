@@ -42,7 +42,6 @@ class clToolBar;
 class clEditorBar;
 class wxBookCtrlBase;
 class EnvironmentConfig;
-class JobQueue;
 class BuildSettingsConfig;
 class BuildManager;
 class BitmapLoader;
@@ -110,7 +109,6 @@ public:
     int GetToolbarIconSize() override;
     wxAuiManager* GetDockingManager() override;
     EnvironmentConfig* GetEnv() override;
-    JobQueue* GetJobQueue() override;
     wxString GetProjectExecutionCommand(const wxString& projectName, wxString& wd) override;
     wxApp* GetTheApp() override;
     void ReloadWorkspace() override;

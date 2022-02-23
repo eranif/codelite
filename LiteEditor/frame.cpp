@@ -98,7 +98,6 @@
 #include "generalinfo.h"
 #include "globals.h"
 #include "imanager.h"
-#include "jobqueue.h"
 #include "language.h"
 #include "localstable.h"
 #include "macros.h"
@@ -117,7 +116,6 @@
 #include "project.h"
 #include "quickdebugdlg.h"
 #include "quickfindbar.h"
-#include "refactorindexbuildjob.h"
 #include "renamesymboldlg.h"
 #include "replaceinfilespanel.h"
 #include "save_perspective_as_dlg.h"
@@ -750,9 +748,6 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     // Start the search thread
     SearchThreadST::Get()->SetNotifyWindow(EventNotifier::Get());
     SearchThreadST::Get()->Start(WXTHREAD_MIN_PRIORITY);
-
-    // start the job queue
-    JobQueueSingleton::Instance()->Start(6);
 
     // Create the single instance thread
     m_singleInstanceThread = new clSingleInstanceThread();

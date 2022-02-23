@@ -25,12 +25,11 @@
 #ifndef __stringhighlighterjob__
 #define __stringhighlighterjob__
 
-#include "job.h"
 #include <vector>
 
 struct StringHighlightOutput {
     wxString filename;
-    std::vector<std::pair<int, int> > matches;
+    std::vector<std::pair<int, int>> matches;
 
     StringHighlightOutput()
         : filename(wxT(""))

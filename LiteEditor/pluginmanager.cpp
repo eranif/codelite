@@ -46,7 +46,6 @@
 #include "fileview.h"
 #include "frame.h"
 #include "generalinfo.h"
-#include "jobqueue.h"
 #include "language.h"
 #include "macromanager.h"
 #include "manager.h"
@@ -449,7 +448,6 @@ wxAuiManager* PluginManager::GetDockingManager() { return m_dockingManager; }
 
 EnvironmentConfig* PluginManager::GetEnv() { return EnvironmentConfig::Instance(); }
 
-JobQueue* PluginManager::GetJobQueue() { return JobQueueSingleton::Instance(); }
 wxString PluginManager::GetProjectExecutionCommand(const wxString& projectName, wxString& wd)
 {
     return ManagerST::Get()->GetProjectExecutionCommand(projectName, wd, false);

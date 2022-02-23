@@ -54,7 +54,6 @@
 #include "crawler_include.h"
 #include "ctags_manager.h"
 #include "custombuildrequest.h"
-#include "dbcontentcacher.h"
 #include "debuggerasciiviewer.h"
 #include "debuggerconfigtool.h"
 #include "debuggersettings.h"
@@ -71,7 +70,6 @@
 #include "fileutils.h"
 #include "frame.h"
 #include "globals.h"
-#include "jobqueue.h"
 #include "language.h"
 #include "localstable.h"
 #include "localworkspace.h"
@@ -207,7 +205,6 @@ Manager::Manager(void)
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &Manager::OnProcessEnd, this);
 
     Connect(wxEVT_CMD_RESTART_CODELITE, wxCommandEventHandler(Manager::OnCmdRestart), NULL, this);
-    Connect(wxEVT_CMD_DB_CONTENT_CACHE_COMPLETED, wxCommandEventHandler(Manager::OnDbContentCacherLoaded), NULL, this);
 
     EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
                                   clProjectSettingsEventHandler(Manager::OnProjectSettingsModified), NULL, this);
@@ -262,7 +259,6 @@ Manager::~Manager(void)
         DbgStop();
     {
         // wxLogNull noLog;
-        JobQueueSingleton::Instance()->Stop();
         SearchThreadST::Get()->Stop();
     }
 
@@ -270,7 +266,6 @@ Manager::~Manager(void)
     PluginManager::Get()->UnLoad();
     ServiceProviderManager::Get().UnregisterAll();
     DebuggerMgr::Free();
-    JobQueueSingleton::Release();
     TagsManagerST::Free(); // it is important to release it *before* the TagsManager
     LanguageST::Free();
     clCxxWorkspaceST::Free();
@@ -400,13 +395,6 @@ void Manager::DoSetupWorkspace(const wxString& path)
 
     // Set the encoding for the tags manager
     TagsManagerST::Get()->SetEncoding(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-
-    // Load the tags file content (we load the file and then destroy it) this way the file is forced into
-    // the file system cache and will prevent hangs when first using the tagging system
-    if(TagsManagerST::Get()->GetDatabase()) {
-        wxFileName dbfn = TagsManagerST::Get()->GetDatabase()->GetDatabaseFileName();
-        JobQueueSingleton::Instance()->PushJob(new DbContentCacher(this, dbfn.GetFullPath().c_str()));
-    }
 
     // Ensure that the "C++" view is selected
     clGetManager()->GetWorkspaceView()->SelectPage(clCxxWorkspaceST::Get()->GetWorkspaceType());
@@ -3295,8 +3283,6 @@ void Manager::OnProjectSettingsModified(clProjectSettingsEvent& event)
     // Get the project settings
     clMainFrame::Get()->SelectBestEnvSet();
 }
-
-void Manager::OnDbContentCacherLoaded(wxCommandEvent& event) { clLogMessage(event.GetString()); }
 
 void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
 {

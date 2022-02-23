@@ -71,7 +71,6 @@
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
 #include "precompiled_header.h"
-#include "refactorindexbuildjob.h"
 #include "renamesymboldlg.h"
 #include "setters_getters_dlg.h"
 #include "symbols_dialog.h"

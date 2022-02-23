@@ -63,8 +63,6 @@
 #include "frame.h"
 #include "globals.h"
 #include "imanager.h"
-#include "job.h"
-#include "jobqueue.h"
 #include "lexer_configuration.h"
 #include "localworkspace.h"
 #include "macromanager.h"

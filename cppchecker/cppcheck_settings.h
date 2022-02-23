@@ -26,10 +26,9 @@
 #ifndef __cppcheckjob__
 #define __cppcheckjob__
 
-#include "job.h"
-#include "serialized_object.h"
-#include "project.h"
 #include "macros.h"
+#include "project.h"
+#include "serialized_object.h"
 
 // Define the events needed by this job
 extern const wxEventType wxEVT_CPPCHECKJOB_STATUS_MESSAGE;

@@ -10,14 +10,12 @@
 #include "PHPEntityKeyword.h"
 #include "PHPEntityVariable.h"
 #include "PHPExpression.h"
-#include "PHPSymbolsCacher.h"
 #include "clEditorBar.h"
 #include "clSelectSymbolDialog.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "editor_config.h"
 #include "globals.h"
-#include "jobqueue.h"
 #include "macros.h"
 #include "php_helpers.h"
 #include "php_parser_thread.h"
@@ -595,7 +593,6 @@ void PHPCodeCompletion::Open(const wxFileName& workspaceFile)
     // then closing it
     wxFileName fnDBFile(workspaceFile.GetPath(), "phpsymbols.db");
     fnDBFile.AppendDir(".codelite");
-    JobQueueSingleton::Instance()->PushJob(new PHPSymbolsCacher(this, fnDBFile.GetFullPath()));
 }
 
 void PHPCodeCompletion::Close()

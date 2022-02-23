@@ -50,7 +50,6 @@ class clWorkspaceView;
 class TagsManager;
 class clCxxWorkspace;
 class EnvironmentConfig;
-class JobQueue;
 class wxApp;
 class IPlugin;
 class BuildManager;
@@ -365,11 +364,6 @@ public:
      * @sa EnvironmentConfig
      */
     virtual EnvironmentConfig* GetEnv() = 0;
-    /**
-     * @brief return a pointer to the job queue manager
-     * @return job queue manager
-     */
-    virtual JobQueue* GetJobQueue() = 0;
 
     /**
      * @brief return the project execution command as set in the project's settings

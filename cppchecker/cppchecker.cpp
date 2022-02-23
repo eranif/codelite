@@ -35,7 +35,6 @@
 #include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
-#include "jobqueue.h"
 #include "macros.h"
 #include "processreaderthread.h"
 #include "procutils.h"

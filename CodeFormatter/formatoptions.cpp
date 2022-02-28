@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "formatoptions.h"
+
 #include "JSON.h"
 #include "PHPFormatterBuffer.h"
 #include "clClangFormatLocator.h"
@@ -154,13 +155,9 @@ void FormatOptions::AutodetectSettings()
     }
 
     if(m_rustCommand.empty()) {
-        wxString rustfmt = rustLocator.GetRustTool("rustfmt");
+        wxString rustfmt = rustLocator.GetRustTool("cargo-fmt");
         m_rustCommand = rustfmt;
         clDEBUG() << "rustfmt command is set to" << rustfmt << endl;
-    }
-
-    if(m_rustConfigFile.empty()) {
-        m_rustConfigFile = "$(WorkspacePath)/.rustfmt.toml";
     }
 }
 
@@ -334,15 +331,9 @@ wxString FormatOptions::RustfmtCommand(const wxFileName& fileName) const
     command = MacroManager::Instance()->Expand(command, nullptr, wxEmptyString);
     ::WrapWithQuotes(command);
 
-//    wxString rustfmtConfigFile = MacroManager::Instance()->Expand(GetRustConfigFile(), nullptr, wxEmptyString);
-//    GenerateRustfmtTomlFile(fileName, rustfmtConfigFile);
-//    ::WrapWithQuotes(rustfmtConfigFile);
-
-//    command << " --config-path " << rustfmtConfigFile;
     filePath = fileName.GetFullPath();
     ::WrapWithQuotes(filePath);
-    command << " " << filePath;
-
+    command << " -- " << filePath;
     return command;
 }
 

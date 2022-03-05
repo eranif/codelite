@@ -1398,7 +1398,7 @@ size_t ProtocolHandler::do_find_definition_tags(unique_ptr<JSON>&& msg, Channel:
     }
 
     if(file_match && is_include_completion) {
-        clDEBUG() << "Found incldue file:" << *file_match << endl;
+        clDEBUG() << "Found include file:" << *file_match << endl;
         for(const wxString& search_path : m_search_paths) {
             wxString full_path = search_path + "/" + *file_match;
             clDEBUG1() << "Trying path:" << full_path << endl;

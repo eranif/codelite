@@ -1164,7 +1164,7 @@ void RemotyWorkspace::SetProjectActive(const wxString& name) { wxUnusedVar(name)
 
 void RemotyWorkspace::OnDownloadFile(clCommandEvent& event)
 {
-    clDEBUG() << "Downloading file:" << event.GetFileName() << "using accout:" << m_account.GetName() << endl;
+    clDEBUG() << "Downloading file:" << event.GetFileName() << "using account:" << m_account.GetName() << endl;
     CHECK_EVENT(event);
     auto editor = clSFTPManager::Get().OpenFile(event.GetFileName(), m_account);
     if(editor) {

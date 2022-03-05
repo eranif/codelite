@@ -1316,7 +1316,7 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
     text << wxT("\n");
     text << wxT("##\n");
     text << wxT("## Common variables\n");
-    text << wxT("## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables\n");
+    text << wxT("## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overridden using an environment variable\n");
     text << wxT("##\n");
     text << wxT("AR       := ") << cmp->GetTool(wxT("AR")) << wxT("\n");
     text << wxT("CXX      := ") << cmp->GetTool(wxT("CXX")) << wxT("\n");

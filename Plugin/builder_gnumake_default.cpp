@@ -1284,7 +1284,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << "\n";
     text << "##\n";
     text << "## Common variables\n";
-    text << "## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables\n";
+    text << "## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overridden using an environment variable\n";
     text << "##\n";
     text << "AR       := " << cmp->GetTool("AR") << "\n";
     text << "CXX      := " << cmp->GetTool("CXX") << "\n";

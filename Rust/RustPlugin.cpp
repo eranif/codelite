@@ -123,7 +123,7 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
         }
         auto debug = settings.GetConfig("Debug");
         if(debug) {
-            clDEBUG() << "Setting project perferences..." << endl;
+            clDEBUG() << "Setting project preferences..." << endl;
             debug->SetBuildTargets({ { "build", "cargo build" }, { "clean", "cargo clean" } });
             debug->SetExecutable("./target/debug/" + name);
             debug->SetFileExtensions(debug->GetFileExtensions() + ";*.rs;*.toml");

@@ -2749,20 +2749,22 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent& event)
 
     // Prepare the commands to execute
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
-    wxStandardID res =
-        ::PromptForYesNoDialogWithCheckbox(_("Would you like to build the active project\nbefore executing it?"),
-                                           "PromptForBuildBeforeExecute", _("Build and Execute"), _("Execute"));
-    // Don't do anything if "X" is pressed
-    if(res != wxID_CANCEL) {
-        if(res == wxID_YES) {
-            QueueCommand buildCommand(QueueCommand::kBuild);
-            ManagerST::Get()->PushQueueCommand(buildCommand);
-            commandExecute.SetCheckBuildSuccess(true); // execute only if build was successfull
-        }
-
-        ManagerST::Get()->PushQueueCommand(commandExecute);
-        ManagerST::Get()->ProcessCommandQueue();
+    wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(
+        _("Would you like to build the active project\nbefore executing it?"), "PromptForBuildBeforeExecute",
+        _("Build and Execute"), _("Execute"), _("Cancel"));
+    if(res == wxID_CANCEL) {
+        return;
     }
+
+    // If "YES" is selected, push a build request to the queue
+    if(res == wxID_YES) {
+        QueueCommand buildCommand(QueueCommand::kBuild);
+        ManagerST::Get()->PushQueueCommand(buildCommand);
+        commandExecute.SetCheckBuildSuccess(true); // execute only if build was successfull
+    }
+
+    ManagerST::Get()->PushQueueCommand(commandExecute);
+    ManagerST::Get()->ProcessCommandQueue();
 }
 
 void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)

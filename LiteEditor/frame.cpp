@@ -1119,7 +1119,8 @@ void clMainFrame::AddKeyboardAccelerators()
                                           { "import_from_msvs", _("Import other IDEs solution/workspace files...") },
                                           { "project_properties", _("Open Active Project Settings..."), "Alt-F7" },
                                           { "new_project", _("Create New Project") },
-                                          { "add_project", _("Add an Existing Project") } });
+                                          { "add_project", _("Add an Existing Project") },
+                                          { "full_retag_workspace", _("Parse Workspace") } });
 }
 
 clMainFrame* clMainFrame::Get() { return m_theFrame; }

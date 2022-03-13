@@ -10,6 +10,7 @@
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceView.hpp"
 #include "clFilesCollector.h"
+#include "clKeyboardManager.h"
 #include "clSFTPEvent.h"
 #include "clShellHelper.hpp"
 #include "clWorkspaceManager.h"
@@ -536,6 +537,10 @@ void clFileSystemWorkspace::Initialise()
     }
     m_view = new clFileSystemWorkspaceView(clGetManager()->GetWorkspaceView()->GetBook(), GetWorkspaceType());
     clGetManager()->GetWorkspaceView()->AddPage(m_view, GetWorkspaceType());
+    auto accel_manager = clKeyboardManager::Get();
+
+    // register global accelerators entries
+    accel_manager->AddAccelerator(_("File System Workspace"), { { "fsw_refresh_current_folder", _("Refresh") } });
 }
 
 void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)

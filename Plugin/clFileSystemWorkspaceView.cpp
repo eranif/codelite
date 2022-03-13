@@ -11,6 +11,8 @@
 #include "file_logger.h"
 #include "globals.h"
 
+#include <wx/app.h>
+
 clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxString& viewName)
     : clTreeCtrlPanel(parent)
     , m_config("fs-workspace-config")
@@ -21,6 +23,8 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
 
     clBitmapList* images = GetToolBar()->GetBitmaps();
     GetToolBar()->AddTool(wxID_PREFERENCES, _("Settings"), images->Add("cog"), "", wxITEM_NORMAL);
+    GetToolBar()->AddTool(XRCID("fsw_refresh_current_folder"), _("Refresh"), images->Add("file_reload"), "",
+                          wxITEM_NORMAL);
 
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
     GetToolBar()->AddSeparator();
@@ -34,6 +38,10 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
                                  { XRCID("execute_no_debug"), _("Run program"), images->Add("execute") },
                                  { XRCID("stop_executed_program"), _("Stop running program"), images->Add("stop") },
                                  wxITEM_NORMAL);
+
+    // these events are connected using the App object (to support keyboard shortcuts)
+    wxTheApp->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnRefresh, this, XRCID("fsw_refresh_current_folder"));
+    wxTheApp->Bind(wxEVT_UPDATE_UI, &clFileSystemWorkspaceView::OnRefreshUI, this, XRCID("fsw_refresh_current_folder"));
 
     GetToolBar()->Realize();
 
@@ -315,4 +323,9 @@ void clFileSystemWorkspaceView::OnThemeChanged(clCommandEvent& event)
     event.Skip();
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     Refresh();
+}
+
+void clFileSystemWorkspaceView::OnRefreshUI(wxUpdateUIEvent& event)
+{
+    event.Enable(clFileSystemWorkspace::Get().IsOpen());
 }

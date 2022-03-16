@@ -9,6 +9,7 @@
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
+#include <wx/wxprec.h>
 
 clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos,
                                    const wxSize& size, long style)
@@ -21,7 +22,9 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     // Bind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Bind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Bind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
+#if wxCHECK_VERSION(3, 1, 5)
     Bind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
+#endif
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }
 
@@ -30,7 +33,9 @@ clThemedTextCtrl::~clThemedTextCtrl()
     // Unbind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Unbind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Unbind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
+#if wxCHECK_VERSION(3, 1, 5)
     Unbind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
+#endif
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }
 
@@ -104,8 +109,10 @@ void clThemedTextCtrl::TrimText()
     // change the text into a single line
     wxString text = GetText();
     text = text.BeforeFirst('\n');
+    text.Replace("\r", wxEmptyString);
 
     // replace the text
+    ClearAll();
     SetText(text);
     SetInsertionPointEnd();
 }

@@ -859,25 +859,37 @@ time_t GetFileModificationTime(const wxString& filename)
     return buff.st_mtime;
 }
 
-bool clIsMSYSEnvironment()
+namespace
 {
-#ifdef __WXMSW__
-    static bool isMSYS = false;
+/// helper method:
+/// run `uname -s` command and cache the output
+const wxString& __uname()
+{
+    static wxString uname_output;
     static bool firstTime = true;
 
     if(firstTime) {
         firstTime = false;
-        CL_DEBUG("Testing for MSYS environment...uname -a");
-        wxString out = ProcUtils::SafeExecuteCommand("uname -a");
-        CL_DEBUG("[%s]", out);
-        if(out.IsEmpty()) {
-            isMSYS = false;
-        } else {
-            out.MakeLower();
-            isMSYS = out.Contains("mingw") || out.Contains("msys");
+        wxFileName uname;
+        if(FileUtils::FindExe("uname", uname)) {
+            firstTime = false;
+            clDEBUG() << "Running `uname -s`..." << endl;
+            wxString cmd;
+            cmd << uname.GetFullPath();
+            WrapWithQuotes(cmd);
+            cmd << " -s";
+            uname_output = ProcUtils::SafeExecuteCommand(cmd);
+            clDEBUG() << uname_output << endl;
         }
     }
-    return isMSYS;
+    return uname_output;
+}
+} // namespace
+bool clIsMSYSEnvironment()
+{
+#ifdef __WXMSW__
+    wxString uname_output = __uname();
+    return uname_output.Lower().Contains("MSYS_NT");
 #else
     return false;
 #endif
@@ -886,21 +898,8 @@ bool clIsMSYSEnvironment()
 bool clIsCygwinEnvironment()
 {
 #ifdef __WXMSW__
-    static bool isCygwin = false;
-    static bool firstTime = true;
-
-    if(firstTime) {
-        firstTime = false;
-        CL_DEBUG("Testing for CYGWIN environment...uname -s");
-        wxString out = ProcUtils::SafeExecuteCommand("uname -s");
-        CL_DEBUG("[%s]", out);
-        if(out.IsEmpty()) {
-            isCygwin = false;
-        } else {
-            isCygwin = out.StartsWith("CYGWIN_NT");
-        }
-    }
-    return isCygwin;
+    wxString uname_output = __uname();
+    return uname_output.Lower().Contains("CYGWIN_NT");
 #else
     return false;
 #endif

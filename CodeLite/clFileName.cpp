@@ -1,30 +1,42 @@
 #include "clFileName.hpp"
 
 #include "file_logger.h"
+#include "fileutils.h"
 #include "procutils.h"
 
 namespace
 {
+/// helper method:
+/// run `uname -s` command and cache the output
+const wxString& __uname()
+{
+    static wxString uname_output;
+    static bool firstTime = true;
+
+    if(firstTime) {
+        firstTime = false;
+        wxFileName uname;
+        if(FileUtils::FindExe("uname", uname)) {
+            firstTime = false;
+            clDEBUG() << "Running `uname -s`..." << endl;
+            wxString cmd;
+            cmd << uname.GetFullPath();
+            if(cmd.Contains(" ")) {
+                cmd.Prepend("\"").Append("\"");
+            }
+            cmd << " -s";
+            uname_output = ProcUtils::SafeExecuteCommand(cmd);
+            clDEBUG() << uname_output << endl;
+        }
+    }
+    return uname_output;
+}
+
 bool is_cygwin_env()
 {
 #ifdef __WXMSW__
-    static bool is_cygwin = false;
-    static bool once = true;
-
-    if(once) {
-        once = false;
-        wxString out = ProcUtils::SafeExecuteCommand("uname -s");
-        if(out.empty()) {
-            is_cygwin = false;
-        } else {
-            is_cygwin = out.StartsWith("CYGWIN_NT");
-        }
-        if(is_cygwin) {
-            clSYSTEM() << "Cygwin environment detected" << endl;
-        }
-    }
-
-    return is_cygwin;
+    wxString uname_output = __uname();
+    return uname_output.Lower().Contains("CYGWIN_NT");
 #else
     return false;
 #endif

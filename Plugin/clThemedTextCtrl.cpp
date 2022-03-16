@@ -104,7 +104,6 @@ void clThemedTextCtrl::TrimText()
     // change the text into a single line
     wxString text = GetText();
     text = text.BeforeFirst('\n');
-    text.Trim();
 
     // replace the text
     SetText(text);

@@ -8,6 +8,7 @@
 #include <wx/bitmap.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
+#include <wx/msgdlg.h>
 
 clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos,
                                    const wxSize& size, long style)
@@ -20,6 +21,7 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     // Bind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Bind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Bind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
+    Bind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }
 
@@ -28,6 +30,7 @@ clThemedTextCtrl::~clThemedTextCtrl()
     // Unbind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Unbind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Unbind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
+    Unbind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }
 
@@ -87,4 +90,23 @@ void clThemedTextCtrl::ApplySettings()
     rect.Inflate(1);
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
     ::clRecalculateSTCHScrollBar(this);
+}
+
+void clThemedTextCtrl::OnPaste(wxStyledTextEvent& event)
+{
+    event.Skip();
+    // we don't allow multi-line in this control
+    CallAfter(&clThemedTextCtrl::TrimText);
+}
+
+void clThemedTextCtrl::TrimText()
+{
+    // change the text into a single line
+    wxString text = GetText();
+    text = text.BeforeFirst('\n');
+    text.Trim();
+
+    // replace the text
+    SetText(text);
+    SetInsertionPointEnd();
 }

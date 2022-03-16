@@ -12,9 +12,11 @@ protected:
     void OnKeyDown(wxKeyEvent& event);
     void OnAddChar(wxStyledTextEvent& event);
     void OnChange(wxStyledTextEvent& event);
+    void OnPaste(wxStyledTextEvent& event);
 
 private:
     void ApplySettings();
+    void TrimText();
 
 public:
     virtual ~clThemedTextCtrl();

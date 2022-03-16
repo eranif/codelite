@@ -16,7 +16,8 @@ protected:
 
 private:
     void ApplySettings();
-    void TrimText();
+    wxString TrimText(const wxString& text) const;
+    void TrimCurrentText();
 
 public:
     virtual ~clThemedTextCtrl();
@@ -25,6 +26,8 @@ public:
     clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxString& value = wxEmptyString,
                      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
     void OnSysColours(clCommandEvent& event);
+    void SetText(const wxString& value);
+    void SetValue(const wxString& value) override;
 };
 
 #endif // CLTHEMEDTEXTCTRL_HPP

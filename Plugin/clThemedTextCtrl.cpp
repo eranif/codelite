@@ -101,18 +101,33 @@ void clThemedTextCtrl::OnPaste(wxStyledTextEvent& event)
 {
     event.Skip();
     // we don't allow multi-line in this control
-    CallAfter(&clThemedTextCtrl::TrimText);
+    CallAfter(&clThemedTextCtrl::TrimCurrentText);
 }
 
-void clThemedTextCtrl::TrimText()
+wxString clThemedTextCtrl::TrimText(const wxString& text) const
 {
     // change the text into a single line
-    wxString text = GetText();
-    text = text.BeforeFirst('\n');
-    text.Replace("\r", wxEmptyString);
+    wxString str = text;
+    str = str.BeforeFirst('\n');
+    str.Replace("\r", wxEmptyString);
+    return str;
+}
 
+void clThemedTextCtrl::TrimCurrentText()
+{
+    wxString text = TrimText(GetText());
     // replace the text
     ClearAll();
     SetText(text);
     SetInsertionPointEnd();
 }
+
+void clThemedTextCtrl::SetText(const wxString& value)
+{
+    wxString text = TrimText(value);
+    ClearAll();
+    wxStyledTextCtrl::SetText(text);
+    SetInsertionPointEnd();
+}
+
+void clThemedTextCtrl::SetValue(const wxString& value) { clThemedTextCtrl::SetText(value); }

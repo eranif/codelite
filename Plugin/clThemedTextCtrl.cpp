@@ -18,6 +18,10 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
     ApplySettings();
 
+    SetMarginLeft(0);
+    for(size_t i = 0; i < wxSTC_MAX_MARGIN; ++i) {
+        SetMarginWidth(i, 0);
+    }
     SetUseHorizontalScrollBar(false);
     SetTwoPhaseDraw(true);
     SetBufferedDraw(true);

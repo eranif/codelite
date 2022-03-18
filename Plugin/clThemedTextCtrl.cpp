@@ -11,6 +11,10 @@
 #include <wx/msgdlg.h>
 #include <wx/wxprec.h>
 
+#ifndef wxSTC_MAX_MARGIN
+#define wxSTC_MAX_MARGIN 4
+#endif
+
 clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos,
                                    const wxSize& size, long style)
 {

@@ -23,6 +23,7 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
         SetMarginWidth(i, 0);
     }
     SetUseHorizontalScrollBar(false);
+    SetUseVerticalScrollBar(false);
     SetTwoPhaseDraw(true);
     SetBufferedDraw(true);
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT);

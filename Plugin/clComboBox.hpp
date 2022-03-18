@@ -9,10 +9,11 @@
 
 #define INVALID_SIZE_T static_cast<size_t>(wxNOT_FOUND)
 
+class clThemedTextCtrl;
 class WXDLLIMPEXP_SDK clComboBox : public wxControl
 {
     wxArrayString m_choices;
-    wxTextCtrl* m_textCtrl = nullptr;
+    clThemedTextCtrl* m_textCtrl = nullptr;
     clButton* m_button = nullptr;
     size_t m_selection = INVALID_SIZE_T;
     size_t m_cbStyle = 0;
@@ -71,7 +72,7 @@ public:
     /**
      * @brief Returns true if the text of the combobox is empty.
      */
-    bool IsTextEmpty() const { return m_textCtrl->IsEmpty(); }
+    bool IsTextEmpty() const;
 
     /**
      * @brief Returns the index of the selected item or wxNOT_FOUND if no item is selected.
@@ -141,7 +142,7 @@ public:
      */
     wxArrayString GetStrings() const;
     clButton* GetButton() const { return m_button; }
-    wxTextCtrl* GetTextCtrl() const { return m_textCtrl; }
+    clThemedTextCtrl* GetTextCtrl() const { return m_textCtrl; }
 };
 
 #endif // CLCOMBOBOX_HPP

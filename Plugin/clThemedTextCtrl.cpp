@@ -13,10 +13,14 @@
 
 clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos,
                                    const wxSize& size, long style)
-    : wxStyledTextCtrl(parent, id, pos, size, wxBORDER_NONE)
 {
     wxUnusedVar(style);
+    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
     ApplySettings();
+
+    SetUseHorizontalScrollBar(false);
+    SetTwoPhaseDraw(true);
+    SetBufferedDraw(true);
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT);
 
     // Bind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
@@ -58,13 +62,7 @@ void clThemedTextCtrl::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void clThemedTextCtrl::OnAddChar(wxStyledTextEvent& event)
-{
-    event.Skip();
-    wxCommandEvent event_text(wxEVT_COMMAND_TEXT_UPDATED);
-    event_text.SetEventObject(this);
-    GetEventHandler()->AddPendingEvent(event_text);
-}
+void clThemedTextCtrl::OnAddChar(wxStyledTextEvent& event) { event.Skip(); }
 
 void clThemedTextCtrl::OnChange(wxStyledTextEvent& event)
 {
@@ -94,7 +92,6 @@ void clThemedTextCtrl::ApplySettings()
     wxRect rect = gcdc.GetTextExtent("Tp");
     rect.Inflate(1);
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
-    ::clRecalculateSTCHScrollBar(this);
 }
 
 void clThemedTextCtrl::OnPaste(wxStyledTextEvent& event)
@@ -115,11 +112,11 @@ wxString clThemedTextCtrl::TrimText(const wxString& text) const
 
 void clThemedTextCtrl::TrimCurrentText()
 {
-    wxString text = TrimText(GetText());
-    // replace the text
-    ClearAll();
-    SetText(text);
-    SetInsertionPointEnd();
+    if(GetText().Contains("\n")) {
+        wxString text = TrimText(GetText());
+        // replace the text
+        clThemedTextCtrl::SetText(text);
+    }
 }
 
 void clThemedTextCtrl::SetText(const wxString& value)
@@ -127,7 +124,10 @@ void clThemedTextCtrl::SetText(const wxString& value)
     wxString text = TrimText(value);
     ClearAll();
     wxStyledTextCtrl::SetText(text);
-    SetInsertionPointEnd();
+    SetCurrentPos(GetLastPosition());
+    SetSelection(GetLastPosition(), GetLastPosition());
 }
 
 void clThemedTextCtrl::SetValue(const wxString& value) { clThemedTextCtrl::SetText(value); }
+
+void clThemedTextCtrl::SelectAll() { wxStyledTextCtrl::SelectAll(); }

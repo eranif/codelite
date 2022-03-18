@@ -1,5 +1,7 @@
 #include "clComboBox.hpp"
 
+#include "clThemedTextCtrl.hpp"
+
 #include <wx/button.h>
 #include <wx/sizer.h>
 
@@ -65,7 +67,7 @@ bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, 
 void clComboBox::DoCreate(const wxString& value)
 {
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, value);
+    m_textCtrl = new clThemedTextCtrl(this, wxID_ANY, value);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND | wxALL, 1);
     m_button = new clButton(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     m_button->SetHasDropDownMenu(true);
@@ -264,3 +266,5 @@ void clComboBox::OnFocus(wxFocusEvent& event)
     event.Skip();
     m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }
+
+bool clComboBox::IsTextEmpty() const { return m_textCtrl->IsEmpty(); }

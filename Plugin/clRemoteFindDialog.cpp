@@ -1,6 +1,7 @@
 #include "clRemoteFindDialog.h"
 
 #include "JSON.h"
+#include "clThemedTextCtrl.hpp"
 #include "cl_config.h"
 #include "globals.h"
 #include "ssh_account_info.h"

@@ -69,13 +69,12 @@ void clComboBox::DoCreate(const wxString& value)
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
     m_textCtrl = new clThemedTextCtrl(this, wxID_ANY, value);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND | wxALL, 1);
-    m_button = new clButton(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-    m_button->SetHasDropDownMenu(true);
-#if wxUSE_NATIVE_BUTTON
-    m_button->SetText(wxT("▼")); // this will force size calculation
-#else
-    m_button->SetText(""); // this will force size calculation
-#endif
+    m_button = new wxButton(this, wxID_ANY, wxT(" ⏷ "), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    // m_button->SetHasDropDownMenu(true);
+    // #if wxUSE_NATIVE_BUTTON
+    // #else
+    //     m_button->SetText(""); // this will force size calculation
+    // #endif
     m_button->Bind(wxEVT_BUTTON, &clComboBox::OnButtonClicked, this);
     m_textCtrl->Bind(wxEVT_TEXT, &clComboBox::OnText, this);
     m_textCtrl->Bind(wxEVT_CHAR_HOOK, &clComboBox::OnCharHook, this);
@@ -84,9 +83,29 @@ void clComboBox::DoCreate(const wxString& value)
     if(m_cbStyle & wxCB_READONLY) {
         m_textCtrl->SetEditable(false);
     }
-    GetSizer()->Add(m_button, 0, wxALIGN_CENTER_VERTICAL | wxALL, 1);
+    GetSizer()->Add(m_button, 0, wxALIGN_CENTER_VERTICAL);
     GetSizer()->Fit(this);
+    wxRect textRect = m_textCtrl->GetSize();
+    textRect.Inflate(1);
+    m_button->SetSizeHints(-1, textRect.GetHeight());
 }
+
+namespace
+{
+void ButtonShowMenu(wxButton* button, wxMenu& menu, wxPoint* point)
+{
+    wxPoint menuPos;
+    if(point) {
+        menuPos = *point;
+    } else {
+        menuPos = button->GetClientRect().GetBottomLeft();
+#ifdef __WXOSX__
+        menuPos.y += 5;
+#endif
+    }
+    button->PopupMenu(&menu, menuPos);
+}
+} // namespace
 
 void clComboBox::OnButtonClicked(wxCommandEvent& event)
 {
@@ -114,13 +133,7 @@ void clComboBox::OnButtonClicked(wxCommandEvent& event)
             item->GetId());
     }
 
-    wxPoint menuPos = GetClientRect().GetBottomLeft();
-#ifdef __WXOSX__
-    menuPos.y += 5;
-#endif
-    menuPos = m_button->ScreenToClient(ClientToScreen(menuPos));
-
-    m_button->ShowMenu(menu, &menuPos);
+    ButtonShowMenu(m_button, menu, nullptr);
     m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }
 

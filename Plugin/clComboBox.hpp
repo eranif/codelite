@@ -4,6 +4,7 @@
 #include "clButton.h"
 #include "codelite_exports.h"
 
+#include <wx/button.h>
 #include <wx/combobox.h>
 #include <wx/control.h>
 
@@ -14,7 +15,7 @@ class WXDLLIMPEXP_SDK clComboBox : public wxControl
 {
     wxArrayString m_choices;
     clThemedTextCtrl* m_textCtrl = nullptr;
-    clButton* m_button = nullptr;
+    wxButton* m_button = nullptr;
     size_t m_selection = INVALID_SIZE_T;
     size_t m_cbStyle = 0;
 
@@ -141,7 +142,7 @@ public:
      * @brief return the combo box strings
      */
     wxArrayString GetStrings() const;
-    clButton* GetButton() const { return m_button; }
+    wxButton* GetButton() const { return m_button; }
     clThemedTextCtrl* GetTextCtrl() const { return m_textCtrl; }
 };
 

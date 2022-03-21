@@ -49,9 +49,9 @@
     <Excludepaths/>
     <Ignorefiles/>
     <Extensions>
-      <![CDATA[cpp;c;h;hpp;xrc;wxcp;fbp]]>
+      <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp]]>
     </Extensions>
-    <Topleveldir>../PHPParser</Topleveldir>
+    <Topleveldir>/src/codelite/codelitephp/PHPParser</Topleveldir>
   </Reconciliation>
   <Description/>
   <Dependencies/>
@@ -83,8 +83,6 @@
     <File Name="PHPRefactoring.cpp"/>
     <File Name="PHPSetterGetterEntry.h"/>
     <File Name="PHPSetterGetterEntry.cpp"/>
-    <File Name="PHPSymbolsCacher.cpp"/>
-    <File Name="PHPSymbolsCacher.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Workspace">
     <File Name="php_project.cpp"/>

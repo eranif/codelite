@@ -661,12 +661,7 @@
     <File Name="VirtualDirectoryColour.h"/>
     <File Name="VirtualDirectoryColour.cpp"/>
   </VirtualDirectory>
-  <VirtualDirectory Name="JobQueue">
-    <File Name="jobqueue.cpp"/>
-    <File Name="jobqueue.h"/>
-    <File Name="job.h"/>
-    <File Name="job.cpp"/>
-  </VirtualDirectory>
+  <VirtualDirectory Name="JobQueue"/>
   <Dependencies/>
   <VirtualDirectory Name="BrowsingRecords">
     <File Name="navigationmanager.h"/>

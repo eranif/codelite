@@ -93,8 +93,8 @@
     <Ignorefiles/>
     <Regexes/>
     <Excludepaths>
-      <Path>Win_x64_Release\</Path>
       <Path>Win_x64_Debug\</Path>
+      <Path>Win_x64_Release\</Path>
     </Excludepaths>
     <Extensions>
       <![CDATA[*.cpp;*.c;*.h;*.hpp;*.xrc;*.wxcp;*.fbp;*.iss;*.sh]]>
@@ -533,15 +533,11 @@
     <File Name="colourthread.cpp"/>
     <File Name="colourrequest.cpp"/>
     <File Name="colourrequest.h"/>
-    <File Name="refactorindexbuildjob.cpp"/>
-    <File Name="refactorindexbuildjob.h"/>
     <File Name="implparentvirtualfunctionsdata.h"/>
     <File Name="tabgroupspane.h"/>
     <File Name="tabgroupmanager.cpp"/>
     <File Name="tabgroupmanager.h"/>
     <File Name="tabgroupspane.cpp"/>
-    <File Name="dbcontentcacher.h"/>
-    <File Name="dbcontentcacher.cpp"/>
     <File Name="perspectivemanager.h"/>
     <File Name="perspectivemanager.cpp"/>
     <File Name="manageperspectivesbasedlg.cpp"/>
@@ -584,7 +580,6 @@
       <File Name="../sdk/wxsqlite3/CMakeLists.txt"/>
       <File Name="../sdk/databaselayer/CMakeLists.txt"/>
       <File Name="../sdk/codelite_cppcheck/CMakeLists.txt"/>
-      <File Name="../sdk/codelite_indexer/CMakeLists.txt"/>
       <File Name="../codelitegcc/CMakeLists.txt"/>
       <File Name="../codelite_make/CMakeLists.txt"/>
       <File Name="../codelite_terminal/CMakeLists.txt"/>
@@ -663,7 +658,6 @@
     <File Name="../Runtime/rust-gdb.bat"/>
     <File Name="../Runtime/codelite-remote"/>
     <File Name="res/convert-svgs.sh"/>
-    <File Name="../Runtime/update.bat"/>
     <File Name="../make_src_targz.sh"/>
     <File Name="../mac-build.sh"/>
     <File Name="../Runtime/excludes"/>

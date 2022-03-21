@@ -363,7 +363,7 @@ void Manager::DoSetupWorkspace(const wxString& path)
     evtWorkspaceLoaded.SetFileName(path);
     evtWorkspaceLoaded.SetString(path);
     evtWorkspaceLoaded.SetWorkspaceType(clCxxWorkspaceST::Get()->GetWorkspaceType());
-    EventNotifier::Get()->AddPendingEvent(evtWorkspaceLoaded);
+    EventNotifier::Get()->ProcessEvent(evtWorkspaceLoaded);
 
     // Update the refactoring cache
     wxFileList_t allfiles;

@@ -577,7 +577,7 @@ void LanguageServerCluster::OnWorkspaceOpen(clWorkspaceEvent& event)
 void LanguageServerCluster::SetWorkspaceType(FileExtManager::FileType type)
 {
     LanguageServerProtocol::workspace_file_type = type;
-    clSYSTEM() << "*** LSP: workspace type is set:" << LanguageServerProtocol::workspace_file_type << "***" << endl;
+    clDEBUG() << "*** LSP: workspace type is set:" << LanguageServerProtocol::workspace_file_type << "***" << endl;
 }
 
 void LanguageServerCluster::StopAll(const std::unordered_set<wxString>& languages)

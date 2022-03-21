@@ -1,6 +1,8 @@
 #include "clFilesCollector.h"
+
 #include "file_logger.h"
 #include "fileutils.h"
+
 #include <queue>
 #include <vector>
 #include <wx/dir.h>
@@ -172,7 +174,7 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, const wxString& filespec
                 // Include this file
                 if(!collect_cb(fullpath)) {
                     // requested to stop
-                    break;
+                    return nCount;
                 } else {
                     ++nCount;
                 }

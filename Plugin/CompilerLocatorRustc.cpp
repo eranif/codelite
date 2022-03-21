@@ -15,6 +15,7 @@ bool CompilerLocatorRustc::Locate()
     wxString error_pattern = R"re1(^error\[.*?\]:(.*?)$)re1";
     wxString error_pattern2 = R"re2(^error:[ ]+(.*?))re2";
     wxString warn_pattern = R"re3(-->[ ]*([\\\w\./]+):([\d]+):([\d]+))re3";
+    wxString warn_pattern1 = R"(:::[ ]*([\\\w\./]+):([\d]+):([\d]+))";
     wxString warn_pattern2 = R"re4(^warning:)re4";
     wxString warn_pattern3 = R"re5(^note:)re5";
 
@@ -49,6 +50,16 @@ bool CompilerLocatorRustc::Locate()
         // --> src/main.rs:1:23
         Compiler::CmpInfoPattern pattern;
         pattern.pattern = warn_pattern;
+        pattern.fileNameIndex = "1";
+        pattern.lineNumberIndex = "2";
+        pattern.columnIndex = "3";
+        warnPatterns.push_back(pattern);
+    }
+
+    {
+        // ::: src/main.rs:1:23
+        Compiler::CmpInfoPattern pattern;
+        pattern.pattern = warn_pattern1;
         pattern.fileNameIndex = "1";
         pattern.lineNumberIndex = "2";
         pattern.columnIndex = "3";

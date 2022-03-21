@@ -28,15 +28,18 @@
 
 #include "clFileSystemEvent.h"
 #include "clTabTogglerHelper.h"
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "macros.h"
 #include "plugin.h"
 #include "wxStringHash.h"
+
 #include <unordered_map>
 
 class RustPlugin : public IPlugin
 {
     std::unordered_map<wxString, wxString> m_cargoTomlDigest;
+    wxFileName m_cargoTomlFile;
 
 public:
     RustPlugin(IManager* manager);
@@ -50,6 +53,10 @@ protected:
     void OnBuildErrorLineClicked(clBuildEvent& event);
     void AddRustcCompilerIfMissing();
     void OnBuildEnded(clBuildEvent& event);
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
+
+    wxFileName find_cargo_toml(const wxFileName& workspaceFile) const;
 
 public:
     //--------------------------------------------

@@ -23,15 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "RustPlugin.hpp"
+
 #include "CargoToml.hpp"
 #include "CompilerLocatorRustc.hpp"
 #include "NewFileSystemWorkspaceDialog.h"
-#include "RustPlugin.hpp"
 #include "RustWorkspace.hpp"
 #include "asyncprocess.h"
 #include "build_settings_config.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceConfig.hpp"
+#include "clFilesCollector.h"
 #include "clRustLocator.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_standard_paths.h"
@@ -41,6 +43,8 @@
 #include "globals.h"
 #include "macros.h"
 #include "wxmd5.h"
+
+#include <wx/dir.h>
 #include <wx/msgdlg.h>
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
@@ -77,7 +81,8 @@ RustPlugin::RustPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RustPlugin::OnNewWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RustPlugin::OnBuildErrorLineClicked, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &RustPlugin::OnBuildEnded, this);
-
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &RustPlugin::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &RustPlugin::OnWorkspaceClosed, this);
     clWorkspaceManager::Get().RegisterWorkspace(new RustWorkspace());
     AddRustcCompilerIfMissing(); // make sure we got the rustc compiler if missing
 }
@@ -101,6 +106,8 @@ void RustPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RustPlugin::OnNewWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RustPlugin::OnBuildErrorLineClicked, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &RustPlugin::OnBuildEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &RustPlugin::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &RustPlugin::OnWorkspaceClosed, this);
 }
 
 void RustPlugin::OnFolderContextMenu(clContextMenuEvent& event) { event.Skip(); }
@@ -253,23 +260,27 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     clDEBUG() << "Rust file clicked:" << event.GetFileName() << endl;
 
     // build the file path:
-    // the compiler report the file in relative path to the workspace
-    wxString strfile = clFileSystemWorkspace::Get().GetFileName().GetPath();
+    // the compiler report the file in relative path to the `Cargo.toml` file
+    if(!m_cargoTomlFile.FileExists()) {
+        return;
+    }
+
+    wxString strfile = m_cargoTomlFile.GetPath();
     strfile << wxFILE_SEP_PATH << event.GetFileName();
     wxFileName fnFile(strfile);
     if(!fnFile.FileExists()) {
         return;
     }
 
-    auto editor = clGetManager()->FindEditor(fnFile.GetFullPath());
-    if(!editor) {
-        editor = clGetManager()->OpenFile(fnFile.GetFullPath(), wxEmptyString, event.GetLineNumber());
-    }
-
-    if(editor) {
-        clGetManager()->SelectPage(editor->GetCtrl());
-        editor->CenterLine(event.GetLineNumber());
-    }
+    int line_number = event.GetLineNumber();
+    auto cb = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
+        // compilers report line numbers starting from `1`
+        // our editor sees line numbers starting from `0`
+        editor->CenterLine(line_number - 1, wxNOT_FOUND);
+        editor->SetActive();
+    };
+    clGetManager()->OpenFileAndAsyncExecute(fnFile.GetFullPath(), std::move(cb));
 }
 
 void RustPlugin::AddRustcCompilerIfMissing()
@@ -314,4 +325,43 @@ void RustPlugin::OnBuildEnded(clBuildEvent& event)
         EventNotifier::Get()->ProcessEvent(restart_event);
     }
     m_cargoTomlDigest[cargo_toml] = new_digest;
+}
+
+void RustPlugin::OnWorkspaceLoaded(clWorkspaceEvent& event)
+{
+    event.Skip();
+    if(!clFileSystemWorkspace::Get().IsOpen()) {
+        return;
+    }
+
+    wxFileName workspaceFile = clFileSystemWorkspace::Get().GetFileName();
+    wxFileName cargo_toml{ workspaceFile.GetPath(), "Cargo.toml" };
+
+    if(cargo_toml.FileExists()) {
+        m_cargoTomlFile = cargo_toml;
+    } else {
+        // try the parent folder
+        cargo_toml.RemoveLastDir();
+        if(cargo_toml.FileExists()) {
+            m_cargoTomlFile = cargo_toml;
+        } else {
+            // try one directory below
+            clFilesScanner scanner;
+            scanner.Scan(workspaceFile.GetPath(), "*.toml", wxEmptyString, wxEmptyString,
+                         [&](const wxString& path) -> bool {
+                             if(path.Contains("Cargo.toml")) {
+                                 m_cargoTomlFile = path;
+                                 return false;
+                             }
+                             return true;
+                         });
+        }
+    }
+    clDEBUG() << "Cargo.toml file found:" << m_cargoTomlFile << endl;
+}
+
+void RustPlugin::OnWorkspaceClosed(clWorkspaceEvent& event)
+{
+    event.Skip();
+    m_cargoTomlFile.Clear();
 }

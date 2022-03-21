@@ -124,7 +124,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc,aui --unicode=yes);" Required="yes">
         <LibraryPath Value="../lib"/>
         <Library Value="libpluginu.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -250,7 +250,7 @@
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
         <Preprocessor Value="USE_SFTP=1"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc,propgrid --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc,propgrid,aui --unicode=yes);" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
@@ -307,7 +307,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="ASTYLE_LIB"/>
       </Compiler>
-      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc,propgrid --unicode=yes);" Required="yes">
+      <Linker Options="-O2;$(shell wx-config --debug=no --libs std,stc,propgrid,aui --unicode=yes);" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>

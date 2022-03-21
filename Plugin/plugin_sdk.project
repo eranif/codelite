@@ -869,6 +869,20 @@
     <File Name="NodeJSLocator.h"/>
     <File Name="NodeJSLocator.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="CMake_Debug"/>
+  <Dependencies Name="Custom"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="databaselayer_sqlite"/>
+    <Project Name="wxshapeframework"/>
+  </Dependencies>
+  <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="libCodeLite"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -1085,7 +1099,7 @@
         <Preprocessor Value="USE_SFTP=1"/>
         <Preprocessor Value="CL_BUILD=1"/>
       </Compiler>
-      <Linker Options=";$(shell wx-config --libs std,stc,ribbon,propgrid --debug=no --unicode=yes)" Required="yes">
+      <Linker Options=";$(shell wx-config --libs std,stc,ribbon,propgrid,aui --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
@@ -1157,7 +1171,6 @@
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy "$(OutputFile)"  ..\Runtime32</Command>
-        <Command Enabled="yes"/>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>
@@ -1181,18 +1194,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="CMake_Debug"/>
-  <Dependencies Name="Custom"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="libCodeLite"/>
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="databaselayer_sqlite"/>
-    <Project Name="wxshapeframework"/>
-  </Dependencies>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="libCodeLite"/>
-  </Dependencies>
 </CodeLite_Project>

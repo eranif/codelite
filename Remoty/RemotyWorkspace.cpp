@@ -774,19 +774,23 @@ void RemotyWorkspace::OnRun(clExecuteEvent& event)
         ::wxMessageBox(_("Please specify an executable to run"), "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
         return;
     }
+
+    // the main command to run
     ::WrapWithQuotes(command);
-    command << " ";
-    auto argsArr = ::wxStringTokenize(conf->GetArgs(), "\n\r", wxTOKEN_STRTOK);
-    if(argsArr.size() == 1) {
-        command << conf->GetArgs();
-    } else {
-        // one line per arg
-        for(auto& line : argsArr) {
-            line.Trim().Trim(false);
-            ::WrapWithQuotes(line);
-            command << line << " ";
-        }
+
+    wxString args = conf->GetArgs();
+    args.Replace("\r", wxEmptyString);
+    args.Replace("\n", " ");
+    auto args_arr = StringUtils::BuildArgv(args);
+
+    // append the args
+    for(auto& arg : args_arr) {
+        arg.Trim().Trim(false);
+        // wrap with quotes if required
+        ::WrapWithQuotes(arg);
+        command << " " << arg;
     }
+
     wxString envString = CreateEnvScriptContent();
     wxString wd = conf->GetWorkingDirectory();
     wd.Trim().Trim(false);
@@ -800,7 +804,7 @@ void RemotyWorkspace::OnRun(clExecuteEvent& event)
     scriptContent << "cd " << wd << "\n";
 
     command.Trim().Trim(false);
-    scriptContent << ::WrapWithQuotes(command) << "\n";
+    scriptContent << command << "\n";
     scriptContent << "exit $?";
 
     wxString script_path = UploadScript(scriptContent);

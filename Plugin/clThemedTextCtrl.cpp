@@ -19,9 +19,10 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
                                    const wxSize& size, long style)
 {
     wxUnusedVar(style);
-    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE);
     ApplySettings();
 
+    SetYCaretPolicy(0, 0);
     SetMarginLeft(0);
     for(size_t i = 0; i < wxSTC_MAX_MARGIN; ++i) {
         SetMarginWidth(i, 0);
@@ -31,6 +32,7 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     SetTwoPhaseDraw(true);
     SetBufferedDraw(true);
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT);
+    SetLayoutCache(wxSTC_CACHE_PAGE);
 
     // Bind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Bind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
@@ -99,7 +101,7 @@ void clThemedTextCtrl::ApplySettings()
     wxGCDC gcdc(_memDC);
     gcdc.SetFont(lexer->GetFontForSyle(0, this));
     wxRect rect = gcdc.GetTextExtent("Tp");
-    rect.Inflate(1);
+    rect.Inflate(2);
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
 }
 

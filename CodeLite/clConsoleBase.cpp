@@ -157,6 +157,8 @@ bool clConsoleBase::StartProcess(const wxString& command)
         callback = new ConsoleProcess(m_sink, m_callbackUID);
     }
 
+    clDEBUG() << "Console: running command: `" << command << "`" << endl;
+
     SetPid(::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER | GetExecExtraFlags(), callback));
     // reset the m_callback (it will auto-delete itself)
     m_callback = nullptr;

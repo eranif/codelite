@@ -1009,6 +1009,22 @@ void clFileSystemWorkspace::GetExecutable(wxString& exe, wxString& args, wxStrin
     args = GetConfig()->GetArgs();
     wd = GetConfig()->GetWorkingDirectory().IsEmpty() ? GetFileName().GetPath() : GetConfig()->GetWorkingDirectory();
 
+    // build the arguments
+    args.Replace("\r", wxEmptyString);
+    args.Replace("\n", " ");
+    auto args_arr = StringUtils::BuildArgv(args);
+
+    args.clear();
+    for(auto& arg : args_arr) {
+        if(!args.empty()) {
+            args << " ";
+        }
+        arg.Trim().Trim(false);
+        // wrap with quotes if required
+        ::WrapWithQuotes(arg);
+        args << arg;
+    }
+
     exe = MacroManager::Instance()->Expand(exe, nullptr, wxEmptyString);
     args = MacroManager::Instance()->Expand(args, nullptr, wxEmptyString);
     wd = MacroManager::Instance()->Expand(wd, nullptr, wxEmptyString);

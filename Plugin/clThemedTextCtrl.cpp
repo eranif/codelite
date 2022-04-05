@@ -19,7 +19,12 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
                                    const wxSize& size, long style)
 {
     wxUnusedVar(style);
+#ifdef __WXMSW__
     wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE);
+#else
+    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_DEFAULT);
+#endif
+
     ApplySettings();
 
     SetYCaretPolicy(0, 0);

@@ -41,6 +41,7 @@
 #include "clPrintout.h"
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
+#include "clTempDC.hpp"
 #include "cl_command_event.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
@@ -5488,10 +5489,10 @@ void clEditor::GetWordAtMousePointer(wxString& word, wxRect& wordRect)
     }
 
     wxFont font = StyleGetFont(0);
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memdc(bmp);
-    memdc.SetFont(font);
-    wxSize sz = memdc.GetTextExtent(GetTextRange(start, end));
+    clTempDC tmp_dc;
+
+    tmp_dc.GetDC().SetFont(font);
+    wxSize sz = tmp_dc.GetDC().GetTextExtent(GetTextRange(start, end));
     wxPoint ptStart = PointFromPosition(start);
     wxRect rr(ptStart, sz);
 

@@ -1,6 +1,7 @@
 #include "clButtonBase.h"
 
 #include "clSystemSettings.h"
+#include "clTempDC.hpp"
 
 #include <wx/anybutton.h>
 #include <wx/buffer.h>
@@ -139,7 +140,7 @@ void clButtonBase::UnBindEvents()
 void clButtonBase::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
-    wxAutoBufferedPaintDC abdc(this);
+    wxPaintDC abdc(this);
     wxGCDC gcdc;
     wxDC& dc = DrawingUtils::GetGCDC(abdc, gcdc);
 
@@ -371,10 +372,8 @@ void clButtonBase::Render(wxDC& dc)
         wxRect textBoundingRect = text_rect;
         textBoundingRect = textBoundingRect.CenterIn(rect, (has_sub_text ? (wxVERTICAL) : (wxVERTICAL | wxHORIZONTAL)));
         if(has_sub_text) {
-            textBoundingRect.x += TEXT_SPACER;
             sub_text_rect = textBoundingRect;
             sub_text_rect.width = dc.GetTextExtent(subtext).x;
-            sub_text_rect.x += sub_text_x_spacer; // align the text with the actual text and not the with the arrow
             sub_text_rect.y += sub_text_rect.height;
             sub_text_rect.y += TEXT_SPACER; // spacer between texts
             textBoundingRect.y -= (sub_text_rect.height / 2);
@@ -584,9 +583,8 @@ void clButtonBase::OnLeave(wxMouseEvent& event)
 
 wxSize clButtonBase::GetBestSize() const
 {
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
-    wxGCDC dc(memDC);
+    clTempDC tdc;
+    auto& dc = tdc.GetDC();
 
     wxFont f = DrawingUtils::GetDefaultGuiFont();
     if(!GetSubText().empty()) {

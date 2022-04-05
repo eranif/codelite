@@ -127,13 +127,10 @@ bool clTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 
 void clTreeCtrl::UpdateLineHeight()
 {
-    wxMemoryDC tmpDC;
-    wxBitmap bmp(1, 1);
-    tmpDC.SelectObject(bmp);
-    wxGCDC gcdc(tmpDC);
+    auto& dc = GetTempDC();
 
-    gcdc.SetFont(GetDefaultFont());
-    wxSize textSize = gcdc.GetTextExtent("Tp");
+    dc.SetFont(GetDefaultFont());
+    wxSize textSize = dc.GetTextExtent("Tp");
 
     SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);
     SetIndent(GetLineHeight());
@@ -639,7 +636,7 @@ void clTreeCtrl::SetIndent(int size)
     Refresh();
 }
 
-int clTreeCtrl::GetIndent() const { return m_model.GetIndentSize(); }
+int clTreeCtrl::GetIndent() const { return clGetSize(m_model.GetIndentSize(), this); }
 
 bool clTreeCtrl::IsEmpty() const { return m_model.IsEmpty(); }
 

@@ -1,6 +1,7 @@
 #include "clScrolledPanel.h"
 
 #include "clScrollBar.h"
+#include "drawingutils.h"
 
 #include <wx/dcscreen.h>
 #include <wx/log.h>
@@ -85,7 +86,8 @@ void clScrolledPanel::DoInitialize()
 #endif
     m_tmpBmp = wxBitmap(1, 1);
     m_memDC = new wxMemoryDC(m_tmpBmp);
-    m_gcdc = new wxGCDC(*m_memDC);
+    m_gcdc = new wxGCDC();
+    DrawingUtils::GetGCDC(*m_memDC, *m_gcdc);
 }
 
 clScrolledPanel::~clScrolledPanel()
@@ -375,11 +377,6 @@ wxFont clScrolledPanel::GetDefaultFont()
 #else
     int pointSize = f.GetPointSize() * ratio;
     f.SetPointSize(pointSize);
-#endif
-#elif defined(__WXMSW__)
-#if wxCHECK_VERSION(3, 1, 2)
-    float pointSize = f.GetFractionalPointSize() * 1.0;
-    f.SetFractionalPointSize(pointSize);
 #endif
 #endif
     return f;

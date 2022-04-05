@@ -30,6 +30,7 @@
 #include "bitmap_loader.h"
 #include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
+#include "clTempDC.hpp"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -165,7 +166,7 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip
 {
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     CCBoxTipWindow_ShrinkTip(m_tip, m_stripHtmlTags);
-    DoInitialize(1, true);
+    DoInitialize(1);
 
     Bind(wxEVT_PAINT, &CCBoxTipWindow::OnPaint, this);
     Bind(wxEVT_ERASE_BACKGROUND, &CCBoxTipWindow::OnEraseBG, this);
@@ -173,17 +174,13 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip
 
 CCBoxTipWindow::~CCBoxTipWindow() {}
 
-void CCBoxTipWindow::DoInitialize(size_t numOfTips, bool simpleTip)
+void CCBoxTipWindow::DoInitialize(size_t numOfTips)
 {
-    wxUnusedVar(simpleTip);
-
     m_numOfTips = numOfTips;
-    wxBitmap bmp(1, 1);
-    wxMemoryDC _memDC(bmp);
-    wxGCDC gcdc(_memDC);
+    wxClientDC dc(this);
 
     clMarkdownRenderer renderer;
-    wxRect text_rect = renderer.GetSize(this, gcdc, m_tip);
+    wxRect text_rect = renderer.GetSize(this, dc, m_tip);
     if(m_ratio > 0.0) {
         wxSize sz = text_rect.GetSize();
         InflateSize(sz, m_ratio);
@@ -303,9 +300,7 @@ void CCBoxTipWindow::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
 
 void CCBoxTipWindow::OnPaint(wxPaintEvent& e)
 {
-    wxAutoBufferedPaintDC bpdc(this);
-    wxGCDC gcdc;
-    wxDC& dc = DrawingUtils::GetGCDC(bpdc, gcdc);
+    wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
     DoDrawTip(dc);
 }

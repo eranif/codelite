@@ -113,6 +113,8 @@
     <File Name="clButton.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="clTreeCtrl">
+    <File Name="clTempDC.cpp"/>
+    <File Name="clTempDC.hpp"/>
     <File Name="clAnsiEscapeCodeColourBuilder.cpp"/>
     <File Name="clAnsiEscapeCodeHandler.cpp"/>
     <File Name="clAnsiEscapeCodeColourBuilder.hpp"/>

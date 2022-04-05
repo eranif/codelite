@@ -71,7 +71,9 @@ void clTabRendererFirefox::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
 
     wxRect rr = tabInfo.m_rect;
     wxString label = tabInfo.GetBestLabel(style);
-    fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), tabInfo.m_textY + rr.GetY());
+    wxRect text_rect = fontDC.GetTextExtent(label);
+    text_rect = text_rect.CenterIn(rr, wxVERTICAL);
+    fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), text_rect.GetY());
     if(style & kNotebook_CloseButtonOnActiveTab) {
         DrawButton(parent, dc, tabInfo, colours, buttonState);
     }

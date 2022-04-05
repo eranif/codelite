@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "WelcomePage.h"
+
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
 #include "cl_defs.h"
@@ -36,6 +37,7 @@
 #include "plugin.h"
 #include "pluginmanager.h"
 #include "window_locker.h"
+
 #include <wx/arrstr.h>
 #include <wx/clntdata.h>
 

@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <drawingutils.h>
 #include <functional>
+#include <globals.h>
 #include <wx/dataview.h>
 #include <wx/dc.h>
 #include <wx/renderer.h>
@@ -79,7 +80,7 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
 
 #ifdef __WXMSW__
 int clRowEntry::X_SPACER = 4;
-int clRowEntry::Y_SPACER = 0;
+int clRowEntry::Y_SPACER = 2;
 #elif defined(__WXOSX__)
 int clRowEntry::X_SPACER = 4;
 int clRowEntry::Y_SPACER = 2;
@@ -378,6 +379,61 @@ static int GetSizeDIP(int size, wxWindow* win)
 }
 #endif
 
+vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
+{
+    vector<size_t> v;
+    wxRect rowRect = GetItemRect();
+    bool hasHeader = (m_tree->GetHeader() && !m_tree->GetHeader()->empty());
+    int itemIndent = IsListItem() ? clHeaderItem::X_SPACER : (GetIndentsCount() * m_tree->GetIndent());
+    wxFont f = m_tree->GetDefaultFont();
+    dc.SetFont(f);
+    v.reserve(m_cells.size());
+
+    for(size_t i = 0; i < m_cells.size(); ++i) {
+        auto& cell = m_cells[i];
+        v.emplace_back();
+        size_t& width = v.back();
+
+        if((i == 0) && !IsListItem()) {
+            // space for the button
+            width += rowRect.GetHeight();
+        }
+
+        if(cell.IsBool()) {
+            // Render the checkbox
+            width += X_SPACER;
+            width += GetCheckBoxWidth(win);
+            width += X_SPACER;
+        }
+
+        int bitmapIndex = cell.GetBitmapIndex();
+        if(IsExpanded() && HasChildren() && cell.GetBitmapSelectedIndex() != wxNOT_FOUND) {
+            bitmapIndex = cell.GetBitmapSelectedIndex();
+        }
+
+        if(bitmapIndex != wxNOT_FOUND) {
+            const wxBitmap& bmp = m_tree->GetBitmap(bitmapIndex);
+            if(bmp.IsOk()) {
+                width += IsListItem() ? 0 : X_SPACER;
+                width += bmp.GetScaledWidth();
+                width += X_SPACER;
+            }
+        }
+
+        wxString text_to_render = GetTextForRendering(cell.GetValueString());
+        width += (i == 0 ? itemIndent : clHeaderItem::X_SPACER);
+        width += dc.GetTextExtent(text_to_render).GetWidth();
+        width += X_SPACER;
+
+        if(cell.IsChoice()) {
+            width += X_SPACER;
+            width += GetCheckBoxWidth(win);
+            width += X_SPACER;
+        }
+    }
+    return v;
+}
+
 void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index, clSearchText* searcher)
 {
     wxUnusedVar(searcher);
@@ -419,10 +475,10 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         bool last_cell = (i == (m_cells.size() - 1));
         colours = c; // reset the colours
         clCellValue& cell = GetColumn(i);
-        wxFont f = cell.GetFont().IsOk() ? cell.GetFont() : m_tree->GetDefaultFont();
-        if(cell.GetFont().IsOk()) {
-            f = cell.GetFont();
-        }
+        wxFont f = m_tree->GetDefaultFont();
+        // if(cell.GetFont().IsOk()) {
+        //     f = cell.GetFont();
+        // }
         if(cell.GetTextColour().IsOk()) {
             colours.SetItemTextColour(cell.GetTextColour());
         }
@@ -436,7 +492,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         // We use a helper class to clip the drawings this ensures that if we exit the scope
         // the clipping region is restored properly
         clClipperHelper clipper(dc);
-        if(hasHeader) {
+        if(hasHeader && !last_cell) {
             clipper.Clip(cellRect);
         }
 
@@ -524,7 +580,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 
         // Draw the text
         wxString text_to_render = GetTextForRendering(cell.GetValueString());
-        wxRect textRect(m_tree->GetTempDC().GetTextExtent(text_to_render));
+        wxRect textRect(dc.GetTextExtent(text_to_render));
         textRect = textRect.CenterIn(rowRect, wxVERTICAL);
         int textY = textRect.GetY();
         int textX = (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset;
@@ -571,6 +627,7 @@ void clRowEntry::RenderText(wxWindow* win, wxDC& dc, const clColours& colours, c
             RenderTextSimple(win, dc, colours, text, x, y, col);
             return;
         }
+        dc.SetFont(m_tree->GetDefaultFont());
 #ifdef __WXMSW__
         const wxColour& defaultTextColour =
             m_tree->IsNativeTheme() ? colours.GetItemTextColour()
@@ -585,7 +642,7 @@ void clRowEntry::RenderText(wxWindow* win, wxDC& dc, const clColours& colours, c
         for(size_t i = 0; i < arr.size(); ++i) {
             wxString str = arr[i];
             bool is_match = (i == 1); // the middle entry is always the matched string
-            wxSize sz = m_tree->GetTempDC().GetTextExtent(str);
+            wxSize sz = dc.GetTextExtent(str);
             rowRect.SetX(xx);
             rowRect.SetWidth(sz.GetWidth());
             if(is_match) {
@@ -712,26 +769,22 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
     }
 
     clCellValue& cell = GetColumn(col);
-    // wxFont f = GetFont().IsOk() ? GetFont() : m_tree->GetDefaultFont();
-    // if(cell.GetFont().IsOk()) {
-    //     f = cell.GetFont();
-    // }
-    // dc.SetFont(f);
 
     int item_width = X_SPACER;
     if(cell.IsBool()) {
         // add the checkbox size
-        item_width += rowHeight;
+        item_width += clGetSize(rowHeight, m_tree);
         item_width += X_SPACER;
     } else if(cell.IsChoice()) {
-        item_width += rowHeight;
+        item_width += clGetSize(rowHeight, m_tree);
         item_width += X_SPACER;
     }
 
-    wxSize textSize = m_tree->GetTempDC().GetMultiLineTextExtent(cell.GetValueString());
+    dc.SetFont(m_tree->GetDefaultFont());
+    wxSize textSize = dc.GetTextExtent(cell.GetValueString());
     if((col == 0) && !IsListItem()) {
         // always make room for the twist button
-        item_width += rowHeight;
+        item_width += clGetSize(rowHeight, m_tree);
     }
     int bitmapIndex = cell.GetBitmapIndex();
     if(IsExpanded() && HasChildren() && cell.GetBitmapSelectedIndex() != wxNOT_FOUND) {
@@ -741,17 +794,17 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
     if(bitmapIndex != wxNOT_FOUND) {
         const wxBitmap& bmp = m_tree->GetBitmap(bitmapIndex);
         if(bmp.IsOk()) {
-            item_width += X_SPACER;
+            item_width += clGetSize(X_SPACER, m_tree);
             item_width += bmp.GetScaledWidth();
-            item_width += X_SPACER;
+            item_width += clGetSize(X_SPACER, m_tree);
         }
     }
     if((col == 0) && !IsListItem()) {
         int itemIndent = (GetIndentsCount() * m_tree->GetIndent());
-        item_width += itemIndent;
+        item_width += clGetSize(itemIndent, m_tree);
     }
     item_width += textSize.GetWidth();
-    item_width += clHeaderItem::X_SPACER;
+    item_width += clGetSize(clHeaderItem::X_SPACER, m_tree);
     return item_width;
 }
 

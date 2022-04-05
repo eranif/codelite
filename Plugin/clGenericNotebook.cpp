@@ -5,6 +5,7 @@
 #include "clSystemSettings.h"
 #include "clTabRendererDefault.hpp"
 #include "clTabRendererMinimal.hpp"
+#include "clTempDC.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 
@@ -295,9 +296,8 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 
 void clTabCtrl::DoSetBestSize()
 {
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memoryDC(bmp);
-    wxGCDC gcdc(memoryDC);
+    clTempDC tmp_dc;
+    auto& gcdc = tmp_dc.GetDC();
 
     wxFont font = clTabRenderer::GetTabFont(true);
     gcdc.SetFont(font);
@@ -422,6 +422,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
     wxGCDC gcdc(dc);
+
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3)
         return;
@@ -452,7 +453,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     GetArt()->DrawBackground(this, gcdc, clientRect, m_colours, m_style);
     for(size_t i = 0; i < m_tabs.size(); ++i) {
-        m_tabs[i]->CalculateOffsets(GetStyle());
+        m_tabs[i]->CalculateOffsets(GetStyle(), gcdc);
     }
 
     // Sanity

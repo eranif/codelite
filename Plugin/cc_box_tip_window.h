@@ -48,7 +48,7 @@ protected:
 protected:
     void OnPaint(wxPaintEvent& e);
     void OnEraseBG(wxEraseEvent& e);
-    void DoInitialize(size_t numOfTips, bool simpleTip);
+    void DoInitialize(size_t numOfTips);
     void DoDrawTip(wxDC& dc);
 
     void ShrinkToScreen(wxSize& size) const;

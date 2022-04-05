@@ -1,6 +1,7 @@
 #include "clControlWithItems.h"
 
 #include "clTreeCtrl.h"
+#include "file_logger.h"
 
 #include <cmath>
 #include <wx/minifram.h>
@@ -248,6 +249,25 @@ wxRect clControlWithItems::GetItemsRect() const
 void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
 {
     AssignRects(items);
+    vector<size_t> max_widths;
+
+    // calculate the width of the cells
+    for(size_t i = 0; i < items.size(); ++i) {
+        clRowEntry* curitem = items[i];
+        auto v_width = curitem->GetColumnWidths(this, dc);
+        if(max_widths.empty()) {
+            max_widths.swap(v_width);
+        } else {
+            for(size_t index = 0; index < v_width.size(); ++index) {
+                max_widths[index] = wxMax(max_widths[index], v_width[index]);
+            }
+        }
+    }
+
+    if(GetHeader()) {
+        GetHeader()->SetColumnsWidth(max_widths);
+    }
+
     for(size_t i = 0; i < items.size(); ++i) {
         clRowEntry* curitem = items[i];
         if(curitem->IsHidden()) {
@@ -379,7 +399,9 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
     if(row && row->IsHidden()) {
         return;
     }
+
     wxDC& dc = GetTempDC();
+    dc.SetFont(GetDefaultFont());
 
     // Null row means: set the header bar to fit the column's label
     bool forceUpdate = (row == nullptr);

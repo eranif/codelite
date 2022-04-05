@@ -2,7 +2,9 @@
 
 #include "clControlWithItems.h"
 #include "clScrolledPanel.h"
+#include "clTempDC.hpp"
 
+#include <file_logger.h>
 #include <wx/cursor.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
@@ -81,12 +83,11 @@ void clHeaderBar::DoUpdateSize()
 
 wxSize clHeaderBar::GetTextSize(const wxString& label) const
 {
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
-    wxGCDC gcdc(memDC);
+    clTempDC tmp_dc;
+    auto& dc = tmp_dc.GetDC();
     wxFont font = GetHeaderFont().IsOk() ? GetHeaderFont() : clScrolledPanel::GetDefaultFont();
-    gcdc.SetFont(font);
-    wxSize textSize = gcdc.GetTextExtent(label);
+    dc.SetFont(font);
+    wxSize textSize = dc.GetTextExtent(label);
     return textSize;
 }
 
@@ -248,5 +249,20 @@ void clHeaderBar::DoCancelDrag()
     m_previousCursor = wxCursor();
     if(HasCapture()) {
         ReleaseMouse();
+    }
+}
+
+void clHeaderBar::SetColumnsWidth(const vector<size_t>& v_width)
+{
+    if(v_width.size() != m_columns.size()) {
+        return;
+    }
+
+    size_t x = 0;
+    for(size_t i = 0; i < m_columns.size(); ++i) {
+        auto& column = m_columns[i];
+        column.SetX(x);
+        column.SetWidthValue(v_width[i]);
+        x += v_width[i];
     }
 }

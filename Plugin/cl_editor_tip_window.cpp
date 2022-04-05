@@ -26,6 +26,7 @@
 #include "cl_editor_tip_window.h"
 
 #include "ColoursAndFontsManager.h"
+#include "clTempDC.hpp"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -70,9 +71,7 @@ void clEditorTipWindow::OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }
 void clEditorTipWindow::OnPaint(wxPaintEvent& e)
 {
     wxUnusedVar(e);
-    wxAutoBufferedPaintDC bdc(this);
-    wxGCDC gcdc;
-    wxDC& dc = DrawingUtils::GetGCDC(bdc, gcdc);
+    wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
 
     if(m_args.IsEmpty())
@@ -318,9 +317,7 @@ void clEditorTipWindow::Deactivate()
 
 wxSize clEditorTipWindow::DoGetTipSize()
 {
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
-    wxGCDC dc(memDC);
+    wxClientDC dc(this);
     PrepareDC(dc);
 
     wxFont f = m_font;

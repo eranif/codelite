@@ -117,9 +117,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(wxID_CLOSE, _("Close"), images->Add("file_close"), _("Close"), wxITEM_NORMAL);
     m_toolbar->AddSeparator();
-    m_matchesFound = new wxStaticText(m_toolbar, wxID_ANY, "", wxDefaultPosition, wxSize(250, -1),
-                                      wxST_NO_AUTORESIZE | wxALIGN_LEFT);
-    m_toolbar->AddControl(m_matchesFound);
     m_toolbar->AddStretchableSpace();
     m_toolbar->AddTool(XRCID("case-sensitive"), _("Case Sensitive"), images->Add("case-sensitive"), "", wxITEM_CHECK);
     m_toolbar->AddTool(XRCID("whole-word"), _("Whole word"), images->Add("whole-word"), "", wxITEM_CHECK);
@@ -629,7 +626,7 @@ void QuickFindBar::DoHighlightMatches(bool checked)
 
         wxString message;
         message << _("Found ") << matches.size() << wxPLURAL(" result", " results", matches.size());
-        m_matchesFound->SetLabel(message);
+        clGetManager()->GetStatusBar()->SetMessage(message);
 
     } else {
         editor->SetFindBookmarksActive(false);
@@ -642,7 +639,7 @@ void QuickFindBar::DoHighlightMatches(bool checked)
             pEditor->GetCtrl()->SetIndicatorCurrent(MARKER_FIND_BAR_WORD_HIGHLIGHT);
             pEditor->GetCtrl()->IndicatorClearRange(0, pEditor->GetCtrl()->GetLength());
         });
-        m_matchesFound->SetLabel("");
+        clGetManager()->GetStatusBar()->SetMessage(wxEmptyString);
     }
     clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
 }
@@ -1034,13 +1031,13 @@ bool QuickFindBar::IsReplacementRegex() const
 
 TargetRange QuickFindBar::DoFindWithMessage(size_t find_flags, const TargetRange& target)
 {
-    m_matchesFound->SetLabel(wxEmptyString);
+    clGetManager()->GetStatusBar()->SetMessage(wxEmptyString);
     auto res = DoFind(find_flags, target);
     if(!res.IsOk()) {
         if(find_flags & FIND_PREV) {
-            m_matchesFound->SetLabel(_("Reached the start of the document"));
+            clGetManager()->GetStatusBar()->SetMessage(_("Reached the start of the document"));
         } else {
-            m_matchesFound->SetLabel(_("Reached the end of the document"));
+            clGetManager()->GetStatusBar()->SetMessage(_("Reached the end of the document"));
         }
     }
     return res;

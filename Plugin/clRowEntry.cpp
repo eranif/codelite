@@ -80,7 +80,7 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
 
 #ifdef __WXMSW__
 int clRowEntry::X_SPACER = 4;
-int clRowEntry::Y_SPACER = 1;
+int clRowEntry::Y_SPACER = 0;
 #elif defined(__WXOSX__)
 int clRowEntry::X_SPACER = 4;
 int clRowEntry::Y_SPACER = 2;
@@ -383,7 +383,6 @@ vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
 {
     vector<size_t> v;
     wxRect rowRect = GetItemRect();
-    bool hasHeader = (m_tree->GetHeader() && !m_tree->GetHeader()->empty());
     int itemIndent = IsListItem() ? clHeaderItem::X_SPACER : (GetIndentsCount() * m_tree->GetIndent());
     wxFont f = m_tree->GetDefaultFont();
     dc.SetFont(f);

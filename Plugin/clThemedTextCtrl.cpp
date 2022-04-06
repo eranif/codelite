@@ -6,6 +6,7 @@
 #include "globals.h"
 
 #include <wx/bitmap.h>
+#include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
@@ -101,11 +102,9 @@ void clThemedTextCtrl::ApplySettings()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     lexer->Apply(this);
 
-    wxBitmap bmp(1, 1);
-    wxMemoryDC _memDC(bmp);
-    wxGCDC gcdc(_memDC);
-    gcdc.SetFont(lexer->GetFontForSyle(0, this));
-    wxRect rect = gcdc.GetTextExtent("Tp");
+    wxClientDC dc(this);
+    dc.SetFont(lexer->GetFontForSyle(0, this));
+    wxRect rect = dc.GetTextExtent("Tp");
     rect.Inflate(2);
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
 }

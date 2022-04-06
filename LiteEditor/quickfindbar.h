@@ -28,6 +28,7 @@
 #include "clEditorEditEventsHandler.h"
 #include "clTerminalHistory.h"
 #include "quickfindbarbase.h"
+
 #include <vector>
 #include <wx/combobox.h>
 #include <wx/panel.h>
@@ -96,7 +97,6 @@ protected:
     bool m_inSelection;
     clTerminalHistory m_searchHistory;
     clTerminalHistory m_replaceHistory;
-    wxStaticText* m_matchesFound = nullptr;
 
 protected:
     virtual void OnButtonKeyDown(wxKeyEvent& event);

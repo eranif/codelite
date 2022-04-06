@@ -44,6 +44,19 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
     }
 }
 int X_BUTTON_SIZE = 14;
+
+void SetBestXButtonSize(wxWindow* win)
+{
+    static bool once = true;
+
+    if(once) {
+        once = false;
+        wxClientDC dc(win);
+        dc.SetFont(DrawingUtils::GetDefaultGuiFont());
+        wxSize sz = dc.GetTextExtent("T");
+        X_BUTTON_SIZE = wxMax(sz.x, sz.y);
+    }
+}
 } // namespace
 
 clTabColours::clTabColours() { UpdateColours(0); }
@@ -70,22 +83,6 @@ void clTabColours::UpdateColours(size_t notebookStyle)
 
 bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }
 
-static void SetBestXButtonSize(wxWindow* win)
-{
-    wxUnusedVar(win);
-    static bool once = true;
-
-    if(once) {
-        once = false;
-        wxBitmap bmp(1, 1);
-        wxMemoryDC dc(bmp);
-        wxGCDC gcdc(dc);
-        gcdc.SetFont(DrawingUtils::GetDefaultGuiFont());
-        wxSize sz = gcdc.GetTextExtent("T");
-        X_BUTTON_SIZE = wxMax(sz.x, sz.y);
-    }
-}
-
 clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, int bmp)
     : m_bitmap(bmp)
     , m_tabCtrl(tabCtrl)
@@ -95,7 +92,7 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxS
     , m_textWidth(0)
     , m_xButtonState(eButtonState::kDisabled)
 {
-    SetBestXButtonSize(nullptr);
+    SetBestXButtonSize(tabCtrl);
     CalculateOffsets(style);
     CreateDisabledBitmap();
 }
@@ -119,7 +116,7 @@ clTabInfo::clTabInfo(clTabCtrl* tabCtrl)
     , m_textWidth(0)
     , m_xButtonState(eButtonState::kDisabled)
 {
-    SetBestXButtonSize(nullptr);
+    SetBestXButtonSize(tabCtrl);
     CalculateOffsets(0);
 }
 

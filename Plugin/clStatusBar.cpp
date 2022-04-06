@@ -13,6 +13,7 @@
 #include "macros.h"
 
 #include <algorithm>
+#include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/fontenc.h>
 #include <wx/fontmap.h>
@@ -590,12 +591,9 @@ void clStatusBar::OnActionSelected(clGotoEvent& e)
 int clStatusBar::GetTextWidth(const wxString& text) const
 {
     const int SPACER = 10;
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memDc;
-    memDc.SelectObject(bmp);
-    wxGCDC gcdc(memDc);
-    gcdc.SetFont(DrawingUtils::GetDefaultGuiFont());
-    int textWidth = gcdc.GetTextExtent(text).GetWidth();
+    wxClientDC dc(const_cast<clStatusBar*>(this));
+    dc.SetFont(DrawingUtils::GetDefaultGuiFont());
+    int textWidth = dc.GetTextExtent(text).GetWidth();
     textWidth += 2 * SPACER;
     return textWidth;
 }

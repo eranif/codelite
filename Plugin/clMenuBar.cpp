@@ -7,6 +7,7 @@
 #include <drawingutils.h>
 #include <wx/dc.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/frame.h>
 #include <wx/msgdlg.h>
@@ -318,9 +319,7 @@ void clMenuBar::SetColours(const clColours& colours)
 
 void clMenuBar::DoSetBestSize()
 {
-    wxBitmap bmp(1, 1);
-    wxMemoryDC memDC(bmp);
-    wxGCDC dc(memDC);
+    wxClientDC dc(this);
     dc.SetFont(DrawingUtils::GetDefaultGuiFont());
 
     int buttonHeight = 0;

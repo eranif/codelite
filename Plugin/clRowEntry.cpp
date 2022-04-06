@@ -80,7 +80,7 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
 
 #ifdef __WXMSW__
 int clRowEntry::X_SPACER = 4;
-int clRowEntry::Y_SPACER = 2;
+int clRowEntry::Y_SPACER = 1;
 #elif defined(__WXOSX__)
 int clRowEntry::X_SPACER = 4;
 int clRowEntry::Y_SPACER = 2;

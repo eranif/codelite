@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/dnd.h>
@@ -128,9 +129,9 @@ bool clTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 
 void clTreeCtrl::UpdateLineHeight()
 {
-    auto& dc = GetTempDC();
-
+    wxClientDC dc(this);
     dc.SetFont(GetDefaultFont());
+
     wxSize textSize = dc.GetTextExtent("Tp");
 
     SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);

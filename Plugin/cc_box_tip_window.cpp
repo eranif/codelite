@@ -30,7 +30,6 @@
 #include "bitmap_loader.h"
 #include "clMarkdownRenderer.hpp"
 #include "clSystemSettings.h"
-#include "clTempDC.hpp"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"

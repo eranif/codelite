@@ -8,7 +8,6 @@
 #include "clTabRendererFirefox.hpp"
 #include "clTabRendererGTK3.h"
 #include "clTabRendererMinimal.hpp"
-#include "clTempDC.hpp"
 #include "cl_config.h"
 #include "cl_defs.h"
 #include "editor_config.h"
@@ -16,6 +15,7 @@
 #include "macros.h"
 #include "wxStringHash.h"
 
+#include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
@@ -200,9 +200,11 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
 
 void clTabInfo::CalculateOffsets(size_t style)
 {
-    clTempDC tmp_dc;
-    tmp_dc.GetDC().SetFont(DrawingUtils::GetDefaultGuiFont());
-    CalculateOffsets(style, tmp_dc.GetDC());
+    if(m_tabCtrl) {
+        wxClientDC dc(m_tabCtrl);
+        dc.SetFont(DrawingUtils::GetDefaultGuiFont());
+        CalculateOffsets(style, dc);
+    }
 }
 
 void clTabInfo::SetBitmap(int bitmap, size_t style)

@@ -5,7 +5,6 @@
 #include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "cc_box_tip_window.h"
-#include "clTempDC.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
@@ -19,6 +18,7 @@
 
 #include <wx/app.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/display.h>
@@ -75,10 +75,10 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     // Calculate a suitable completion dialog width
     {
-        clTempDC tmp_dc;
-        auto& gcdc = tmp_dc.GetDC();
-        gcdc.SetFont(m_ccFont);
-        wxSize textSize = gcdc.GetTextExtent(wxString('X', 70));
+        wxClientDC dc(this);
+        dc.SetFont(m_ccFont);
+
+        wxSize textSize = dc.GetTextExtent(wxString('X', 70));
         SetSizeHints(textSize.GetWidth(), (textSize.GetHeight() * 10));
         SetSize(textSize.GetWidth(), (textSize.GetHeight() * 10));
     }

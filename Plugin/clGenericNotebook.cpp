@@ -5,7 +5,6 @@
 #include "clSystemSettings.h"
 #include "clTabRendererDefault.hpp"
 #include "clTabRendererMinimal.hpp"
-#include "clTempDC.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 
@@ -296,11 +295,10 @@ clTabCtrl::clTabCtrl(wxWindow* notebook, size_t style)
 
 void clTabCtrl::DoSetBestSize()
 {
-    clTempDC tmp_dc;
-    auto& gcdc = tmp_dc.GetDC();
+    wxClientDC dc(this);
 
     wxFont font = clTabRenderer::GetTabFont(true);
-    gcdc.SetFont(font);
+    dc.SetFont(font);
 
     wxString text;
     for(clTabInfo::Ptr_t ti : m_tabs) {
@@ -311,7 +309,7 @@ void clTabCtrl::DoSetBestSize()
     if(text.empty()) {
         text = "__WORKSPACE__";
     }
-    wxSize sz = gcdc.GetTextExtent(text);
+    wxSize sz = dc.GetTextExtent(text);
     int bmpHeight = clTabRenderer::GetDefaultBitmapHeight(GetArt()->ySpacer);
 
     m_nHeight = sz.GetHeight() + (4 * GetArt()->ySpacer);

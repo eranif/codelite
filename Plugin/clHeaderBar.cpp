@@ -2,11 +2,11 @@
 
 #include "clControlWithItems.h"
 #include "clScrolledPanel.h"
-#include "clTempDC.hpp"
 
 #include <file_logger.h>
 #include <wx/cursor.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcclient.h>
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/event.h>
@@ -83,8 +83,7 @@ void clHeaderBar::DoUpdateSize()
 
 wxSize clHeaderBar::GetTextSize(const wxString& label) const
 {
-    clTempDC tmp_dc;
-    auto& dc = tmp_dc.GetDC();
+    wxClientDC dc(const_cast<clHeaderBar*>(this));
     wxFont font = GetHeaderFont().IsOk() ? GetHeaderFont() : clScrolledPanel::GetDefaultFont();
     dc.SetFont(font);
     wxSize textSize = dc.GetTextExtent(label);

@@ -26,7 +26,6 @@
 #include "cl_editor_tip_window.h"
 
 #include "ColoursAndFontsManager.h"
-#include "clTempDC.hpp"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"

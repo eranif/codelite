@@ -5,6 +5,7 @@
 #include "clTreeCtrlModel.h"
 #include "clTreeNodeVisitor.h"
 #include "drawingutils.h"
+#include "globals.h"
 #include "macros.h"
 
 #include <algorithm>

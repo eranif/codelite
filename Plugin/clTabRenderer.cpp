@@ -125,12 +125,11 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     m_bmpCloseX = wxNOT_FOUND;
     m_bmpCloseY = wxNOT_FOUND;
 
-    int Y_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->ySpacer : 5;
-    int X_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->xSpacer : 5;
-    int M_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->majorCurveWidth : 5;
-    int S_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->smallCurveWidth : 2;
+    int Y_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->ySpacer : 10;
+    int X_spacer = m_tabCtrl ? m_tabCtrl->GetArt()->xSpacer : 10;
+    bool using_bold_font = m_tabCtrl ? m_tabCtrl->GetArt()->IsUseBoldFont() : false;
 
-    wxFont font = clTabRenderer::GetTabFont(true);
+    wxFont font = clTabRenderer::GetTabFont(using_bold_font);
     dc.SetFont(font);
 
     bool bVerticalTabs = IS_VERTICAL_TABS(style);
@@ -139,14 +138,12 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     wxSize fixedHeight = dc.GetTextExtent("Tp");
     m_height = fixedHeight.GetHeight() + (4 * Y_spacer);
 
-    // Make that the tab can contain at least the miimum bitmap height
+    // Make that the tab can contain at least the minimum bitmap height
     int bmpHeight = clTabRenderer::GetDefaultBitmapHeight(Y_spacer);
     m_height = wxMax(m_height, bmpHeight);
 
     m_width = 0;
     m_width += X_spacer;
-    m_width += M_spacer;
-    m_width += S_spacer;
 
     // bitmap
     m_bmpX = wxNOT_FOUND;
@@ -177,13 +174,10 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
         m_width += X_spacer;
     }
 
-    // Extra spacers
-    m_width += M_spacer;
-    m_width += S_spacer;
-
     if((style & kNotebook_UnderlineActiveTab) && bVerticalTabs) {
         m_width += 8;
     }
+
     // Update the rect width
     m_rect.SetWidth(m_width);
     m_rect.SetHeight(m_height);
@@ -265,7 +259,7 @@ clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     , ySpacer(5)
     , m_name(name)
 {
-    xSpacer = ::clGetSize(10, parent);
+    xSpacer = 10;
     ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;
 }
 

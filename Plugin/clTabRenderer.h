@@ -209,6 +209,7 @@ public:
     int ySpacer;
     wxString m_name;
     static std::unordered_map<wxString, clTabRenderer*> ms_Renderes;
+    bool use_bold_font = false;
 
 protected:
     void ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours, size_t style);
@@ -224,6 +225,9 @@ public:
                       size_t style, eButtonState buttonState) = 0;
     virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
                                 const clTabColours& colours, size_t style) = 0;
+
+    void SetUseBoldFont(bool use_bold_font) { this->use_bold_font = use_bold_font; }
+    bool IsUseBoldFont() const { return use_bold_font; }
 
     /**
      * @brief draw the tab area background, return the colour used to actually

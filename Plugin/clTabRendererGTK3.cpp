@@ -27,6 +27,7 @@ clTabRendererGTK3::clTabRendererGTK3(const wxWindow* parent)
     smallCurveWidth = 0;
     overlapWidth = 0;
     verticalOverlapWidth = 0;
+    SetUseBoldFont(true);
 }
 
 clTabRendererGTK3::~clTabRendererGTK3() {}
@@ -51,7 +52,7 @@ void clTabRendererGTK3::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clT
     wxColour bgColour(tabBgColour);
     wxColour penColour(tabPenColour);
 
-    wxFont font = GetTabFont(tabInfo.IsActive());
+    wxFont font = GetTabFont(tabInfo.IsActive() && IsUseBoldFont());
     fontDC.SetTextForeground(tabInfo.IsActive() ? colours.activeTabTextColour : colours.inactiveTabTextColour);
     if(tabInfo.IsActive()) {
         font.SetWeight(wxFONTWEIGHT_BOLD);

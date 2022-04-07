@@ -163,7 +163,7 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
         }
     }
 
-    wxFont font = GetTabFont(false);
+    wxFont font = GetTabFont(tabInfo.IsActive() && IsUseBoldFont());
     wxColour text_colour = is_dark ? bgColour.ChangeLightness(170) : bgColour.ChangeLightness(30);
     fontDC.SetTextForeground(text_colour);
     fontDC.SetFont(font);

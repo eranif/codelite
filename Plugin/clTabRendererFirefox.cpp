@@ -59,7 +59,7 @@ void clTabRendererFirefox::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const 
     }
 
     // text and close button
-    wxFont font = GetTabFont(false);
+    wxFont font = GetTabFont(tabInfo.IsActive() && IsUseBoldFont());
     fontDC.SetFont(font);
     wxColour text_colour;
     if(is_light_colours) {

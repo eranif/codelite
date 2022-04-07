@@ -92,10 +92,10 @@ bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label
     wxUnusedVar(name);
     wxUnusedVar(validator);
     m_buttonStyle = style;
-    SetText(label);
     if(!wxControl::Create(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)) {
         return false;
     }
+    SetText(label);
     Initialise();
     return true;
 }

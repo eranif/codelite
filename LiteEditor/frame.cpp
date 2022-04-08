@@ -1155,7 +1155,7 @@ void clMainFrame::CreateGUIControls()
     m_mgr.SetArtProvider(new clAuiDockArt(PluginManager::Get()));
     SetAUIManagerFlags();
 
-    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
+    m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
     // Get the best caption size
     int captionSize = GetBestXButtonSize(this);
     int extra = ::clGetSize(8, this);
@@ -1163,6 +1163,16 @@ void clMainFrame::CreateGUIControls()
 
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_CAPTION_SIZE, captionSize);
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR, DrawingUtils::GetPanelBgColour());
+
+#ifdef __WXMSW__
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
+                                     clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
+                                     clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
+                                     clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+#endif
+
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, DrawingUtils::GetPanelBgColour());
 
     // initialize debugger configuration tool
@@ -4924,7 +4934,7 @@ void clMainFrame::OnRestoreDefaultLayout(wxCommandEvent& e)
 void clMainFrame::SetAUIManagerFlags()
 {
     // Set the manager flags
-    unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_ALLOW_ACTIVE_PANE;
+    unsigned int auiMgrFlags = wxAUI_MGR_ALLOW_FLOATING;
 
     int dockingStyle = EditorConfigST::Get()->GetOptions()->GetDockingStyle();
     switch(dockingStyle) {

@@ -55,6 +55,7 @@ bool IsRectOK(wxDC& dc, const wxRect& rect)
     return (true);
 }
 
+#ifndef __WXMSW__
 wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 {
     wxCoord x, y;
@@ -81,6 +82,7 @@ wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
     ret += wxT("...");
     return ret;
 }
+#endif
 } // namespace
 // ------------------------------------------------------------
 
@@ -102,6 +104,9 @@ clAuiDockArt::~clAuiDockArt()
 void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
                                   wxAuiPaneInfo& pane)
 {
+#ifdef __WXMSW__
+    wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, _rect, pane);
+#else
     wxRect buttonRect = _rect;
 
     if(!IsRectOK(dc, _rect))
@@ -146,6 +151,7 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
         wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, _rect, pane);
         break;
     }
+#endif
 }
 
 void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect,
@@ -190,6 +196,8 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     wxString draw_text = wxAuiChopText(dc, text, clip_rect.width);
     wxSize textSize = dc.GetTextExtent(draw_text);
     dc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
+#elif defined(__WXMSW__)
+    wxAuiDefaultDockArt::DrawCaption(dc, window, text, rect, pane);
 #else
     tmpRect = rect;
     tmpRect.SetPosition(wxPoint(0, 0));
@@ -198,16 +206,14 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
         wxMemoryDC memDc;
         memDc.SelectObject(bmp);
 
-        wxGCDC gdc(memDc);
-
         wxFont f = DrawingUtils::GetDefaultGuiFont();
-        gdc.SetFont(f);
+        memDc.SetFont(f);
 
         // we inflate the rect by 1 to fix a one pixel glitch
-        gdc.SetPen(*wxTRANSPARENT_PEN);
-        gdc.SetBrush(m_captionColour);
+        memDc.SetPen(*wxTRANSPARENT_PEN);
+        memDc.SetBrush(m_captionColour);
         tmpRect.Inflate(2);
-        gdc.DrawRectangle(tmpRect);
+        memDc.DrawRectangle(tmpRect);
 
         int caption_offset = 5;
         wxRect clip_rect = tmpRect;
@@ -221,14 +227,14 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
             clip_rect.width -= m_buttonSize;
 
         // Truncate the text if needed
-        wxString draw_text = wxAuiChopText(gdc, text, clip_rect.width);
-        wxSize textSize = gdc.GetTextExtent(draw_text);
+        wxString draw_text = wxAuiChopText(memDc, text, clip_rect.width);
+        wxSize textSize = memDc.GetTextExtent(draw_text);
         wxRect textRect(textSize);
         textRect = textRect.CenterIn(clip_rect, wxVERTICAL);
         textRect.SetX(caption_offset);
 
-        gdc.SetTextForeground(m_captionTextColour);
-        gdc.DrawText(draw_text, textRect.GetTopLeft());
+        memDc.SetTextForeground(m_captionTextColour);
+        memDc.DrawText(draw_text, textRect.GetTopLeft());
         memDc.SelectObject(wxNullBitmap);
     }
     dc.DrawBitmap(bmp, rect.x, rect.y, true);

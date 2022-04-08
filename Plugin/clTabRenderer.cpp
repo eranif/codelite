@@ -43,20 +43,9 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
         *bgColour = activeTabBgColour->ChangeLightness(is_dark ? 120 : 80);
     }
 }
-int X_BUTTON_SIZE = 14;
+int X_BUTTON_SIZE = 20;
+void SetBestXButtonSize(wxWindow* win) { wxUnusedVar(win); }
 
-void SetBestXButtonSize(wxWindow* win)
-{
-    static bool once = true;
-
-    if(once) {
-        once = false;
-        wxClientDC dc(win);
-        dc.SetFont(DrawingUtils::GetDefaultGuiFont());
-        wxSize sz = dc.GetTextExtent("T");
-        X_BUTTON_SIZE = wxMax(sz.x, sz.y);
-    }
-}
 } // namespace
 
 clTabColours::clTabColours() { UpdateColours(0); }

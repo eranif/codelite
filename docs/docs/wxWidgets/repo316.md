@@ -116,7 +116,7 @@ There are also source rpms for [Fedora][26] and [openSUSE][27]. The fedora srpm 
 Either download the required rpms and install them as usual, or download and install in one step; e.g. 
 
 ```bash
-rpm -Uvh https://repos.codelite.org/wx3.1.6/wx3.1-packages/suse/wxWidgets-3_1-3.1.6-1.src.rpm
+rpm -Uvh https://repos.codelite.org/wx3.1.6/wx3.1-packages/suse/wxWidgets-3_1-3.1.6-0.src.rpm
 ```
 
 !!! Note

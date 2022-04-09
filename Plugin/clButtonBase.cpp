@@ -15,6 +15,8 @@
 #define TEXT_SPACER FromDIP(5)
 #else
 #define TEXT_SPACER 5
+#endif
+#if !wxCHECK_VERSION(3, 1, 2)
 #define SetFractionalPointSize SetPointSize
 #define wxFONTWEIGHT_SEMIBOLD wxFONTWEIGHT_BOLD
 #endif

@@ -4,7 +4,8 @@
 ## Preface
 ---
 
-This page is for the latest development release, wx3.1.5
+**This page is for the previous development release, wx3.1.5. The latest release is currently [wx3.1.6](https://docs.codelite.org/wxWidgets/repo316/).**  
+  
 The CodeLite packages for Linux now use wxWidgets 3.1. As wx3.1 is a development branch, few distros will supply it. 
 I've therefore built 3.1.5 packages for the commonest ones. 
 

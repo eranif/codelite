@@ -804,12 +804,3 @@ JSONItem& JSONItem::addProperty(const wxString& name, const std::vector<int>& ar
     }
     return *this;
 }
-
-JSONItem& JSONItem::addProperty(const wxString& name, const wxVector<int>& arr_int)
-{
-    std::vector<int> V;
-    V.reserve(arr_int.size());
-
-    V.insert(V.end(), arr_int.begin(), arr_int.end());
-    return addProperty(name, V);
-}

@@ -131,6 +131,13 @@ public:
         }                                                                                                \
     }
 
+static int strcmp(const wxString& str, const char* expc) {
+    return strcmp(str.ToStdString().c_str(), expc);
+}
+static int strcmp(const wxString& str, const wxString& expc) {
+    return strcmp(str.ToStdString().c_str(), expc.ToStdString().c_str());
+}
+
 #define CHECK_STRING(str, expcStr)                                                                             \
     {                                                                                                          \
         ++m_testCount;                                                                                         \

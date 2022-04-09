@@ -311,7 +311,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 
         wxString replaceText = DoGetReplaceWith(res);
         int replaceLenInChars = (int)replaceText.Len();
-        int replaceLen = (int)::clUTF8Length(replaceText, replaceLenInChars);
+        int replaceLen = (int)::clUTF8Length(replaceText.ToStdWstring().c_str(), replaceLenInChars);
 
         // extract originally matched text for safety check later
         wxString text = res.GetPattern().Mid(res.GetColumnInChars() - deltaInChars, res.GetLenInChars());

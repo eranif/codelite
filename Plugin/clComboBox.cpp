@@ -69,7 +69,7 @@ void clComboBox::DoCreate(const wxString& value)
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
     m_textCtrl = new clThemedTextCtrl(this, wxID_ANY, value);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND | wxALL, 1);
-    m_button = new wxButton(this, wxID_ANY, wxT(" ⏷ "), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    m_button = new wxButton(this, wxID_ANY, wxT(" ▼ "), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
     // m_button->SetHasDropDownMenu(true);
     // #if wxUSE_NATIVE_BUTTON
     // #else

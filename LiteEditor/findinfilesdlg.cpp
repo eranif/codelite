@@ -22,12 +22,13 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "findinfilesdlg.h"
+
 #include "ColoursAndFontsManager.h"
 #include "FindInFilesLocationsDlg.h"
 #include "clWorkspaceManager.h"
 #include "dirpicker.h"
 #include "event_notifier.h"
-#include "findinfilesdlg.h"
 #include "findresultstab.h"
 #include "frame.h"
 #include "globals.h"
@@ -39,6 +40,7 @@
 #include "sessionmanager.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
+
 #include <algorithm>
 #include <project.h>
 #include <wx/fontmap.h>
@@ -120,18 +122,14 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wx
     // Set the file mask
     DoSetFileMask();
     SetName("FindInFilesDialog");
+    CallAfter(&FindInFilesDialog::DoSelectAll);
 
     // Fit the initial size and set it as the default minimum size
     GetSizer()->Fit(this);
     SetMinSize(GetSize());
-    CallAfter(&FindInFilesDialog::DoSelectAll);
-    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-FindInFilesDialog::~FindInFilesDialog()
-{
-    BuildFindReplaceData();
-}
+FindInFilesDialog::~FindInFilesDialog() { BuildFindReplaceData(); }
 
 void FindInFilesDialog::DoSetFileMask()
 {
@@ -342,10 +340,7 @@ SearchData FindInFilesDialog::DoGetSearchData()
     return data;
 }
 
-void FindInFilesDialog::OnClose(wxCloseEvent& e)
-{
-    Destroy();
-}
+void FindInFilesDialog::OnClose(wxCloseEvent& e) { Destroy(); }
 
 void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
 {
@@ -437,10 +432,7 @@ int FindInFilesDialog::ShowDialog()
     return wxDialog::ShowModal();
 }
 
-void FindInFilesDialog::DoSaveSearchPaths()
-{
-    m_data.SetSearchPaths(m_stcPaths->GetText());
-}
+void FindInFilesDialog::DoSaveSearchPaths() { m_data.SetSearchPaths(m_stcPaths->GetText()); }
 
 void FindInFilesDialog::DoSaveOpenFiles()
 {
@@ -472,10 +464,7 @@ void FindInFilesDialog::OnReplace(wxCommandEvent& event)
     DoSearchReplace();
 }
 
-void FindInFilesDialog::OnButtonClose(wxCommandEvent& event)
-{
-    EndModal(wxID_CANCEL);
-}
+void FindInFilesDialog::OnButtonClose(wxCommandEvent& event) { EndModal(wxID_CANCEL); }
 
 size_t FindInFilesDialog::GetSearchFlags()
 {
@@ -520,10 +509,7 @@ void FindInFilesDialog::OnReplaceUI(wxUpdateUIEvent& event)
     event.Enable(!m_findString->GetValue().IsEmpty() && !paths.IsEmpty());
 }
 
-void FindInFilesDialog::OnLookInKeyDown(wxKeyEvent& event)
-{
-    event.Skip();
-}
+void FindInFilesDialog::OnLookInKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void FindInFilesDialog::DoAddProjectFiles(const wxString& projectName, wxArrayString& files)
 {
@@ -595,15 +581,9 @@ void FindInFilesDialog::OnFindEnter(wxCommandEvent& event)
     OnFind(event);
 }
 
-void FindInFilesDialog::OnReplaceEnter(wxCommandEvent& event)
-{
-    OnReplace(event);
-}
+void FindInFilesDialog::OnReplaceEnter(wxCommandEvent& event) { OnReplace(event); }
 
-void FindInFilesDialog::DoSelectAll()
-{
-    m_findString->GetTextCtrl()->SelectAll();
-}
+void FindInFilesDialog::DoSelectAll() { m_findString->GetTextCtrl()->SelectAll(); }
 
 void FindInFilesDialog::OnATTN(wxCommandEvent& event)
 {

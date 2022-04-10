@@ -360,7 +360,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
         RegisterRenderer(new clTabRendererFirefox(win));
     }
 
-    wxString tab = clConfig::Get().Read("TabStyle", wxString("GTK3"));
+    wxString tab = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
     wxString name = tab.Upper();
 
     clTabRenderer::Ptr_t renderer;

@@ -82,7 +82,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     fgSizer41->Add(m_staticText3, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_fileTypesArr;
-    m_fileTypesArr.Add(wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"));
+    m_fileTypesArr.Add(_("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"));
     m_fileTypes =
         new clThemedComboBox(m_panelMainPanel, wxID_ANY, wxT("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc"),
                              wxDefaultPosition, wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), m_fileTypesArr, 0);
@@ -104,7 +104,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     fgSizer41->Add(m_staticText2, 0, wxALL | wxALIGN_RIGHT | wxALIGN_TOP, WXC_FROM_DIP(5));
 
     m_stcPaths = new wxStyledTextCtrl(m_panelMainPanel, wxID_ANY, wxDefaultPosition,
-                                      wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), 0);
+                                      wxDLG_UNIT(m_panelMainPanel, wxSize(300, -1)), 0);
     // Configure the fold margin
     m_stcPaths->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcPaths->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -295,64 +295,42 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_findString->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FindInFilesDialogBase::OnFindEnter), NULL,
-                          this);
-    m_replaceString->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FindInFilesDialogBase::OnReplaceEnter),
-                             NULL, this);
-    m_find->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnFind), NULL, this);
-    m_find->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesDialogBase::OnFindWhatUI), NULL, this);
-    m_replaceAll->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnReplace), NULL,
-                          this);
-    m_replaceAll->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesDialogBase::OnReplaceUI), NULL, this);
-    m_cancel->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnButtonClose), NULL,
-                      this);
-    m_btnAddPath->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnAddPath), NULL,
-                          this);
-    m_regualrExpression->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnRegex),
-                                 NULL, this);
-    m_checkBoxTODO->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnTODO), NULL,
-                            this);
-    m_checkBoxATTN->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnATTN), NULL,
-                            this);
-    m_checkBoxBUG->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnBUG), NULL,
-                           this);
-    m_checkBoxFIXME->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnFIXME),
-                             NULL, this);
+    m_findString->Bind(wxEVT_COMMAND_TEXT_ENTER, &FindInFilesDialogBase::OnFindEnter, this);
+    m_replaceString->Bind(wxEVT_COMMAND_TEXT_ENTER, &FindInFilesDialogBase::OnReplaceEnter, this);
+    m_find->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesDialogBase::OnFind, this);
+    m_find->Bind(wxEVT_UPDATE_UI, &FindInFilesDialogBase::OnFindWhatUI, this);
+    m_replaceAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesDialogBase::OnReplace, this);
+    m_replaceAll->Bind(wxEVT_UPDATE_UI, &FindInFilesDialogBase::OnReplaceUI, this);
+    m_cancel->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesDialogBase::OnButtonClose, this);
+    m_btnAddPath->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesDialogBase::OnAddPath, this);
+    m_regualrExpression->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnRegex, this);
+    m_checkBoxTODO->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnTODO, this);
+    m_checkBoxATTN->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnATTN, this);
+    m_checkBoxBUG->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnBUG, this);
+    m_checkBoxFIXME->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnFIXME, this);
 }
 
 FindInFilesDialogBase::~FindInFilesDialogBase()
 {
-    m_findString->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FindInFilesDialogBase::OnFindEnter), NULL,
-                             this);
-    m_replaceString->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(FindInFilesDialogBase::OnReplaceEnter),
-                                NULL, this);
-    m_find->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnFind), NULL, this);
-    m_find->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesDialogBase::OnFindWhatUI), NULL, this);
-    m_replaceAll->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnReplace),
-                             NULL, this);
-    m_replaceAll->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesDialogBase::OnReplaceUI), NULL, this);
-    m_cancel->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnButtonClose),
-                         NULL, this);
-    m_btnAddPath->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnAddPath),
-                             NULL, this);
-    m_regualrExpression->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                    wxCommandEventHandler(FindInFilesDialogBase::OnRegex), NULL, this);
-    m_checkBoxTODO->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnTODO),
-                               NULL, this);
-    m_checkBoxATTN->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnATTN),
-                               NULL, this);
-    m_checkBoxBUG->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnBUG), NULL,
-                              this);
-    m_checkBoxFIXME->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(FindInFilesDialogBase::OnFIXME),
-                                NULL, this);
+    m_findString->Unbind(wxEVT_COMMAND_TEXT_ENTER, &FindInFilesDialogBase::OnFindEnter, this);
+    m_replaceString->Unbind(wxEVT_COMMAND_TEXT_ENTER, &FindInFilesDialogBase::OnReplaceEnter, this);
+    m_find->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesDialogBase::OnFind, this);
+    m_find->Unbind(wxEVT_UPDATE_UI, &FindInFilesDialogBase::OnFindWhatUI, this);
+    m_replaceAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesDialogBase::OnReplace, this);
+    m_replaceAll->Unbind(wxEVT_UPDATE_UI, &FindInFilesDialogBase::OnReplaceUI, this);
+    m_cancel->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesDialogBase::OnButtonClose, this);
+    m_btnAddPath->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesDialogBase::OnAddPath, this);
+    m_regualrExpression->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnRegex, this);
+    m_checkBoxTODO->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnTODO, this);
+    m_checkBoxATTN->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnATTN, this);
+    m_checkBoxBUG->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnBUG, this);
+    m_checkBoxFIXME->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FindInFilesDialogBase::OnFIXME, this);
 }
 
 FindInFilesLocationsDlgBase::FindInFilesLocationsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -416,28 +394,20 @@ FindInFilesLocationsDlgBase::FindInFilesLocationsDlgBase(wxWindow* parent, wxWin
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_buttonAdd->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesLocationsDlgBase::OnAddPath),
-                         NULL, this);
-    m_buttonDelete->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
-                            wxCommandEventHandler(FindInFilesLocationsDlgBase::OnDeletePath), NULL, this);
-    m_buttonDelete->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesLocationsDlgBase::OnDeletePathUI), NULL,
-                            this);
+    m_buttonAdd->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesLocationsDlgBase::OnAddPath, this);
+    m_buttonDelete->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesLocationsDlgBase::OnDeletePath, this);
+    m_buttonDelete->Bind(wxEVT_UPDATE_UI, &FindInFilesLocationsDlgBase::OnDeletePathUI, this);
 }
 
 FindInFilesLocationsDlgBase::~FindInFilesLocationsDlgBase()
 {
-    m_buttonAdd->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(FindInFilesLocationsDlgBase::OnAddPath),
-                            NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
-                               wxCommandEventHandler(FindInFilesLocationsDlgBase::OnDeletePath), NULL, this);
-    m_buttonDelete->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FindInFilesLocationsDlgBase::OnDeletePathUI),
-                               NULL, this);
+    m_buttonAdd->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesLocationsDlgBase::OnAddPath, this);
+    m_buttonDelete->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindInFilesLocationsDlgBase::OnDeletePath, this);
+    m_buttonDelete->Unbind(wxEVT_UPDATE_UI, &FindInFilesLocationsDlgBase::OnDeletePathUI, this);
 }

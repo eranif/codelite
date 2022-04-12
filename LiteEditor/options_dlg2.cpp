@@ -57,8 +57,6 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
 {
     wxWindowUpdateLocker locker(this);
     Initialize();
-    GetSizer()->Fit(this);
-    CentreOnParent();
 }
 
 PreferencesDialog::~PreferencesDialog() {}
@@ -117,5 +115,5 @@ void PreferencesDialog::Initialize()
     AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
     SetMinSize(wxSize(500, 300));
-    clSetSmallDialogBestSizeAndPosition(this);
+    clSetDialogBestSizeAndPosition(this);
 }

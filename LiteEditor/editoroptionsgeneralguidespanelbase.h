@@ -14,13 +14,14 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/gbsizer.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/stattext.h>
+#include <wx/clrpicker.h>
+#include <wx/spinctrl.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
-#include <wx/spinctrl.h>
-#include <wx/clrpicker.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -48,12 +49,6 @@ protected:
     wxCheckBox* m_checkBoxHighlightIndentLines;
     wxCheckBox* m_checkBoxHighlightModifiedLines;
     wxCheckBox* m_checkBoxHighlightBraces;
-    wxStaticText* m_staticText83;
-    wxChoice* m_choiceWhitespaceVisibility;
-    wxStaticText* m_staticText85;
-    wxChoice* m_choiceWhitespaceEOLMode;
-    wxStaticText* m_staticText87;
-    wxSpinCtrl* m_spinCtrlWhitespaceLineSpacing;
     wxCheckBox* m_checkBoxCaretLineEnabeldHighlight;
     wxStaticText* m_staticText95;
     wxColourPickerCtrl* m_colourPickerCaretLineColour;
@@ -62,6 +57,12 @@ protected:
     wxCheckBox* m_checkBoxDebuggerLineEnabled;
     wxStaticText* m_staticText102;
     wxColourPickerCtrl* m_colourPickerDebuggerLineColour;
+    wxStaticText* m_staticText83;
+    wxChoice* m_choiceWhitespaceVisibility;
+    wxStaticText* m_staticText85;
+    wxChoice* m_choiceWhitespaceEOLMode;
+    wxStaticText* m_staticText87;
+    wxSpinCtrl* m_spinCtrlWhitespaceLineSpacing;
 
 protected:
     virtual void OnDisplayLineNumbersUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -76,12 +77,6 @@ public:
     wxCheckBox* GetCheckBoxHighlightIndentLines() { return m_checkBoxHighlightIndentLines; }
     wxCheckBox* GetCheckBoxHighlightModifiedLines() { return m_checkBoxHighlightModifiedLines; }
     wxCheckBox* GetCheckBoxHighlightBraces() { return m_checkBoxHighlightBraces; }
-    wxStaticText* GetStaticText83() { return m_staticText83; }
-    wxChoice* GetChoiceWhitespaceVisibility() { return m_choiceWhitespaceVisibility; }
-    wxStaticText* GetStaticText85() { return m_staticText85; }
-    wxChoice* GetChoiceWhitespaceEOLMode() { return m_choiceWhitespaceEOLMode; }
-    wxStaticText* GetStaticText87() { return m_staticText87; }
-    wxSpinCtrl* GetSpinCtrlWhitespaceLineSpacing() { return m_spinCtrlWhitespaceLineSpacing; }
     wxCheckBox* GetCheckBoxCaretLineEnabeldHighlight() { return m_checkBoxCaretLineEnabeldHighlight; }
     wxStaticText* GetStaticText95() { return m_staticText95; }
     wxColourPickerCtrl* GetColourPickerCaretLineColour() { return m_colourPickerCaretLineColour; }
@@ -90,6 +85,12 @@ public:
     wxCheckBox* GetCheckBoxDebuggerLineEnabled() { return m_checkBoxDebuggerLineEnabled; }
     wxStaticText* GetStaticText102() { return m_staticText102; }
     wxColourPickerCtrl* GetColourPickerDebuggerLineColour() { return m_colourPickerDebuggerLineColour; }
+    wxStaticText* GetStaticText83() { return m_staticText83; }
+    wxChoice* GetChoiceWhitespaceVisibility() { return m_choiceWhitespaceVisibility; }
+    wxStaticText* GetStaticText85() { return m_staticText85; }
+    wxChoice* GetChoiceWhitespaceEOLMode() { return m_choiceWhitespaceEOLMode; }
+    wxStaticText* GetStaticText87() { return m_staticText87; }
+    wxSpinCtrl* GetSpinCtrlWhitespaceLineSpacing() { return m_spinCtrlWhitespaceLineSpacing; }
     EditorOptionsGeneralGuidesPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY,
                                         const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                                         long style = wxTAB_TRAVERSAL);

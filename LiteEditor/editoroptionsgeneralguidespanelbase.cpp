@@ -26,14 +26,14 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
 
-    wxBoxSizer* boxSizer72 = new wxBoxSizer(wxVERTICAL);
+    wxGridBagSizer* gridBagSizer128 = new wxGridBagSizer(0, 0);
 
-    bSizer1->Add(boxSizer72, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer1->Add(gridBagSizer128, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer73 =
         new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Line Numbers")), wxVERTICAL);
 
-    boxSizer72->Add(staticBoxSizer73, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    gridBagSizer128->Add(staticBoxSizer73, wxGBPosition(0, 0), wxGBSpan(1, 1), wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxLineNumbersShow = new wxCheckBox(this, wxID_ANY, _("Display line numbers"), wxDefaultPosition,
                                                wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -56,7 +56,7 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     wxStaticBoxSizer* staticBoxSizer77 =
         new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Highlight")), wxVERTICAL);
 
-    boxSizer72->Add(staticBoxSizer77, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    gridBagSizer128->Add(staticBoxSizer77, wxGBPosition(0, 1), wxGBSpan(1, 1), wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxHighlightIndentLines =
         new wxCheckBox(this, wxID_ANY, _("Indentation Lines"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -76,10 +76,84 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
 
     staticBoxSizer77->Add(m_checkBoxHighlightBraces, 0, wxALL, WXC_FROM_DIP(5));
 
+    wxStaticBoxSizer* staticBoxSizer89 =
+        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Highlight Caret Line")), wxVERTICAL);
+
+    gridBagSizer128->Add(staticBoxSizer89, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer91 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer91->SetFlexibleDirection(wxBOTH);
+    flexGridSizer91->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer91->AddGrowableCol(1);
+
+    staticBoxSizer89->Add(flexGridSizer91, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxCaretLineEnabeldHighlight =
+        new wxCheckBox(this, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxCaretLineEnabeldHighlight->SetValue(false);
+
+    flexGridSizer91->Add(m_checkBoxCaretLineEnabeldHighlight, 0, wxALL, WXC_FROM_DIP(5));
+
+    flexGridSizer91->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText95 =
+        new wxStaticText(this, wxID_ANY, _("Colour:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer91->Add(m_staticText95, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_colourPickerCaretLineColour =
+        new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(120,188,188)")), wxDefaultPosition,
+                               wxDLG_UNIT(this, wxSize(-1, -1)), wxCLRP_DEFAULT_STYLE);
+
+    flexGridSizer91->Add(m_colourPickerCaretLineColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText97 =
+        new wxStaticText(this, wxID_ANY, _("Alpha:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer91->Add(m_staticText97, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_spinCtrlCaretLineAlpha =
+        new wxSpinCtrl(this, wxID_ANY, wxT("30"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_ARROW_KEYS);
+    m_spinCtrlCaretLineAlpha->SetRange(0, 255);
+    m_spinCtrlCaretLineAlpha->SetValue(30);
+
+    flexGridSizer91->Add(m_spinCtrlCaretLineAlpha, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxStaticBoxSizer* staticBoxSizer90 =
+        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Highlight Debugger Line")), wxVERTICAL);
+
+    gridBagSizer128->Add(staticBoxSizer90, wxGBPosition(1, 1), wxGBSpan(1, 1), wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer92 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer92->SetFlexibleDirection(wxBOTH);
+    flexGridSizer92->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer92->AddGrowableCol(1);
+
+    staticBoxSizer90->Add(flexGridSizer92, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxDebuggerLineEnabled =
+        new wxCheckBox(this, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxDebuggerLineEnabled->SetValue(false);
+
+    flexGridSizer92->Add(m_checkBoxDebuggerLineEnabled, 0, wxALL, WXC_FROM_DIP(5));
+
+    flexGridSizer92->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText102 =
+        new wxStaticText(this, wxID_ANY, _("Colour:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer92->Add(m_staticText102, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_colourPickerDebuggerLineColour =
+        new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(128,255,128)")), wxDefaultPosition,
+                               wxDLG_UNIT(this, wxSize(-1, -1)), wxCLRP_DEFAULT_STYLE);
+
+    flexGridSizer92->Add(m_colourPickerDebuggerLineColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxStaticBoxSizer* staticBoxSizer81 =
         new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Whitespaces")), wxVERTICAL);
 
-    boxSizer72->Add(staticBoxSizer81, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    gridBagSizer128->Add(staticBoxSizer81, wxGBPosition(2, 0), wxGBSpan(1, 2), wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxFlexGridSizer* flexGridSizer82 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer82->SetFlexibleDirection(wxBOTH);
@@ -129,81 +203,9 @@ EditorOptionsGeneralGuidesPanelBase::EditorOptionsGeneralGuidesPanelBase(wxWindo
     m_spinCtrlWhitespaceLineSpacing->SetRange(-10, 10);
     m_spinCtrlWhitespaceLineSpacing->SetValue(0);
 
-    flexGridSizer82->Add(m_spinCtrlWhitespaceLineSpacing, 0, wxALL, WXC_FROM_DIP(5));
-
-    wxStaticBoxSizer* staticBoxSizer89 =
-        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Highlight Caret Line")), wxVERTICAL);
-
-    boxSizer72->Add(staticBoxSizer89, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxFlexGridSizer* flexGridSizer91 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer91->SetFlexibleDirection(wxBOTH);
-    flexGridSizer91->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer91->AddGrowableCol(1);
-
-    staticBoxSizer89->Add(flexGridSizer91, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxCaretLineEnabeldHighlight =
-        new wxCheckBox(this, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxCaretLineEnabeldHighlight->SetValue(false);
-
-    flexGridSizer91->Add(m_checkBoxCaretLineEnabeldHighlight, 0, wxALL, WXC_FROM_DIP(5));
-
-    flexGridSizer91->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_staticText95 =
-        new wxStaticText(this, wxID_ANY, _("Colour:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer91->Add(m_staticText95, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_colourPickerCaretLineColour =
-        new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(120,188,188)")), wxDefaultPosition,
-                               wxDLG_UNIT(this, wxSize(-1, -1)), wxCLRP_DEFAULT_STYLE);
-
-    flexGridSizer91->Add(m_colourPickerCaretLineColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_staticText97 =
-        new wxStaticText(this, wxID_ANY, _("Alpha:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer91->Add(m_staticText97, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_spinCtrlCaretLineAlpha =
-        new wxSpinCtrl(this, wxID_ANY, wxT("30"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_ARROW_KEYS);
-    m_spinCtrlCaretLineAlpha->SetRange(0, 255);
-    m_spinCtrlCaretLineAlpha->SetValue(30);
-
-    flexGridSizer91->Add(m_spinCtrlCaretLineAlpha, 0, wxALL, WXC_FROM_DIP(5));
-
-    wxStaticBoxSizer* staticBoxSizer90 =
-        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Highlight Debugger Line")), wxVERTICAL);
-
-    boxSizer72->Add(staticBoxSizer90, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    wxFlexGridSizer* flexGridSizer92 = new wxFlexGridSizer(0, 2, 0, 0);
-    flexGridSizer92->SetFlexibleDirection(wxBOTH);
-    flexGridSizer92->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
-    flexGridSizer92->AddGrowableCol(1);
-
-    staticBoxSizer90->Add(flexGridSizer92, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_checkBoxDebuggerLineEnabled =
-        new wxCheckBox(this, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxDebuggerLineEnabled->SetValue(false);
-
-    flexGridSizer92->Add(m_checkBoxDebuggerLineEnabled, 0, wxALL, WXC_FROM_DIP(5));
-
-    flexGridSizer92->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    m_staticText102 =
-        new wxStaticText(this, wxID_ANY, _("Colour:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer92->Add(m_staticText102, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_colourPickerDebuggerLineColour =
-        new wxColourPickerCtrl(this, wxID_ANY, wxColour(wxT("rgb(128,255,128)")), wxDefaultPosition,
-                               wxDLG_UNIT(this, wxSize(-1, -1)), wxCLRP_DEFAULT_STYLE);
-
-    flexGridSizer92->Add(m_colourPickerDebuggerLineColour, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer82->Add(m_spinCtrlWhitespaceLineSpacing, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    gridBagSizer128->AddGrowableCol(0);
+    gridBagSizer128->AddGrowableCol(1);
 
     SetName(wxT("EditorOptionsGeneralGuidesPanelBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

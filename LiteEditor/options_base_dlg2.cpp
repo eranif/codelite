@@ -29,11 +29,20 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
 
     mainSizer->Add(innerSizer, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_treeBook = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+    m_scrollWin23 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                         wxHSCROLL | wxVSCROLL);
+    m_scrollWin23->SetScrollRate(5, 5);
+
+    innerSizer->Add(m_scrollWin23, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer24 = new wxBoxSizer(wxVERTICAL);
+    m_scrollWin23->SetSizer(boxSizer24);
+
+    m_treeBook = new wxNotebook(m_scrollWin23, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_scrollWin23, wxSize(-1, -1)),
                                 wxNB_MULTILINE | wxBK_DEFAULT);
     m_treeBook->SetName(wxT("m_treeBook"));
 
-    innerSizer->Add(m_treeBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer24->Add(m_treeBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* btnSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -54,7 +63,7 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
     btnSizer->Add(m_applyButton, 0, wxALL, WXC_FROM_DIP(5));
 
     SetName(wxT("OptionsBaseDlg2"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) {
         GetSizer()->Fit(this);
     }
@@ -64,23 +73,18 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    this->Connect(wxEVT_ACTIVATE, wxActivateEventHandler(OptionsBaseDlg2::OnActivate), NULL, this);
-    this->Connect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(OptionsBaseDlg2::OnInitDialog), NULL, this);
-    m_okButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OptionsBaseDlg2::OnButtonOK), NULL, this);
-    m_cancelButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OptionsBaseDlg2::OnButtonCancel), NULL,
-                            this);
-    m_applyButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OptionsBaseDlg2::OnButtonApply), NULL,
-                           this);
+    this->Bind(wxEVT_ACTIVATE, &OptionsBaseDlg2::OnActivate, this);
+    this->Bind(wxEVT_INIT_DIALOG, &OptionsBaseDlg2::OnInitDialog, this);
+    m_okButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OptionsBaseDlg2::OnButtonOK, this);
+    m_cancelButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OptionsBaseDlg2::OnButtonCancel, this);
+    m_applyButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OptionsBaseDlg2::OnButtonApply, this);
 }
 
 OptionsBaseDlg2::~OptionsBaseDlg2()
 {
-    this->Disconnect(wxEVT_ACTIVATE, wxActivateEventHandler(OptionsBaseDlg2::OnActivate), NULL, this);
-    this->Disconnect(wxEVT_INIT_DIALOG, wxInitDialogEventHandler(OptionsBaseDlg2::OnInitDialog), NULL, this);
-    m_okButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OptionsBaseDlg2::OnButtonOK), NULL,
-                           this);
-    m_cancelButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OptionsBaseDlg2::OnButtonCancel),
-                               NULL, this);
-    m_applyButton->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(OptionsBaseDlg2::OnButtonApply), NULL,
-                              this);
+    this->Unbind(wxEVT_ACTIVATE, &OptionsBaseDlg2::OnActivate, this);
+    this->Unbind(wxEVT_INIT_DIALOG, &OptionsBaseDlg2::OnInitDialog, this);
+    m_okButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OptionsBaseDlg2::OnButtonOK, this);
+    m_cancelButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OptionsBaseDlg2::OnButtonCancel, this);
+    m_applyButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OptionsBaseDlg2::OnButtonApply, this);
 }

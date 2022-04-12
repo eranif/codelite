@@ -127,8 +127,8 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
     SetChoiceOptions(m_choiceBuild, knownBuilders, lastBuildSystem);
 
     m_checkBoxSepFolder->SetValue(checked);
+    GetSizer()->Fit(this);
     CenterOnParent();
-    ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 NewProjectDialog::~NewProjectDialog()

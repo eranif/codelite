@@ -21,6 +21,7 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
         wxCrafterx2PVqnInitBitmapResources();
         bBitmapLoaded = true;
     }
+    this->Hide();
 
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);

@@ -36,6 +36,7 @@ protected:
     long m_treeStyle = 0;
     int m_scrollLines = 0;
     bool m_bulkInsert = false;
+    bool m_drawBorder = false;
     clSortFunc_t m_oldSortFunc;
     eRendererType m_renderer = eRendererType::RENDERER_DEFAULT;
     size_t m_spacerY = clRowEntry::Y_SPACER;

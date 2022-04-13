@@ -55,7 +55,6 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     , m_contentObjects()
     , restartRquired(false)
 {
-    wxWindowUpdateLocker locker(this);
     Initialize();
 }
 

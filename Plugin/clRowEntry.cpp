@@ -365,20 +365,6 @@ void clRowEntry::ClearRects()
     m_rowRect = wxRect();
 }
 
-#if 0
-static int GetSizeDIP(int size, wxWindow* win)
-{
-    if(!win) {
-        return size;
-    }
-#if wxCHECK_VERSION(3, 1, 0)
-    return win->FromDIP(size);
-#else
-    return size;
-#endif
-}
-#endif
-
 vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
 {
     vector<size_t> v;
@@ -592,17 +578,17 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             wxRect dropDownRect(cellRect.GetTopRight().x - rowRect.GetHeight(), rowRect.GetY(), rowRect.GetHeight(),
                                 rowRect.GetHeight());
             dropDownRect = dropDownRect.CenterIn(rowRect, wxVERTICAL);
-            DrawingUtils::DrawDropDownArrow(win, dc, dropDownRect, wxNullColour);
+            dropDownRect.Deflate(1);
+            dc.SetPen(colours.GetHeaderVBorderColour());
+            dc.SetBrush(colours.GetHeaderVBorderColour());
+            dc.DrawRectangle(dropDownRect);
+            dropDownRect.Inflate(1);
+            DrawingUtils::DrawDropDownArrow(win, dc, dropDownRect,
+                                            colours.IsLightTheme() ? wxColour("DARK GREY") : wxColour("WHITE"));
             // Keep the rect to test clicks
             cell.SetDropDownRect(dropDownRect);
             textXOffset += dropDownRect.GetWidth();
             textXOffset += X_SPACER;
-
-            // Draw a separator line between the drop down arrow and the rest of the cell content
-            dropDownRect.Deflate(3);
-            dropDownRect = dropDownRect.CenterIn(rowRect, wxVERTICAL);
-            dc.SetPen(wxPen(colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
-            dc.DrawLine(dropDownRect.GetTopLeft(), dropDownRect.GetBottomLeft());
 
         } else {
             cell.SetDropDownRect(wxRect());
@@ -999,49 +985,12 @@ const wxRect& clRowEntry::GetChoiceRect(size_t col) const
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
 {
-#if 0
-    wxColour text_colour = colours.GetItemTextColour();
-    if(colours.IsLightTheme()) {
-        text_colour = text_colour.ChangeLightness(120);
-    }
-
-    if(checked) {
-        dc.SetPen(text_colour);
-        dc.SetBrush(text_colour);
-        dc.DrawRoundedRectangle(rect, 2.0);
-
-        // draw the checkbox
-        wxRect inner_rect = rect;
-        inner_rect.Deflate(2);
-
-        wxPoint left_middle = inner_rect.GetTopLeft();
-        left_middle.y += inner_rect.GetHeight() / 2;
-
-        wxPoint bottom_middle = inner_rect.GetBottomLeft();
-        bottom_middle.x += inner_rect.GetWidth() / 4;
-        bottom_middle.y -= 2;
-
-        wxPoint top_right = inner_rect.GetTopRight();
-        top_right.y += 2;
-
-        const wxColour& penColour = colours.GetBgColour();
-        dc.SetPen(wxPen(penColour, 3));
-        dc.DrawLine(left_middle, bottom_middle);
-        dc.DrawLine(bottom_middle, top_right);
-
-    } else {
-        dc.SetPen(wxPen(text_colour, 2));
-        dc.SetBrush(*wxTRANSPARENT_BRUSH);
-        dc.DrawRoundedRectangle(rect, 2.0);
-    }
-#else
     // on mac/linux, use native drawings
     int flags = wxCONTROL_CURRENT;
     if(checked) {
         flags |= wxCONTROL_CHECKED;
     }
     wxRendererNative::Get().DrawCheckBox(win, dc, rect, flags);
-#endif
 }
 
 int clRowEntry::GetCheckBoxWidth(wxWindow* win)

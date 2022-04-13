@@ -102,11 +102,15 @@ wxDC& CreateGCDC(wxDC& dc, wxGCDC& gdc, eRendererType t)
     gdc.SetGraphicsContext(context);
     return gdc;
 }
+
+bool ShouldDrawBorder(long style) { return style & wxBORDER_MASK; }
+
 } // namespace
 
 clTreeCtrl::clTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : clControlWithItems(parent, id, pos, size, style | wxWANTS_CHARS)
+    : clControlWithItems(parent, id, pos, size, (style | wxWANTS_CHARS))
     , m_model(this)
+    , m_drawBorder(ShouldDrawBorder(style))
 {
     m_treeStyle = style & ~wxWINDOW_STYLE_MASK; // remove the non window style
     DoInitialize();
@@ -120,7 +124,8 @@ clTreeCtrl::clTreeCtrl()
 bool clTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
     m_treeStyle = style & ~wxWINDOW_STYLE_MASK;
-    if(!clControlWithItems::Create(parent, id, pos, size, style | wxWANTS_CHARS)) {
+    m_drawBorder = ShouldDrawBorder(style);
+    if(!clControlWithItems::Create(parent, id, pos, size, (style | wxWANTS_CHARS))) {
         return false;
     }
     DoInitialize();
@@ -292,26 +297,6 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     if(GetHeader() && GetHeader()->IsShown()) {
         GetHeader()->Update();
     }
-
-#if 0
-    if(!GetColours().IsLightTheme()) {
-        // draw a one pixel line at the top of the items area
-        // this gives a nice border and UI separation
-        wxColour top_border_colour = GetColours().GetBorderColour();
-        wxColour right_border_colour;
-        right_border_colour = GetColours().GetBgColour().ChangeLightness(80);
-
-        dc.SetPen(top_border_colour);
-        dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetTopRight());
-
-        // draw another one pixel line on the right side
-        dc.SetPen(right_border_colour);
-
-        wxPoint pt1 = clientRect.GetTopRight();
-        wxPoint pt2 = clientRect.GetBottomRight();
-        dc.DrawLine(pt1, pt2);
-    }
-#endif
 }
 
 wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text,

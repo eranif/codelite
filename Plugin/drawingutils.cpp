@@ -732,28 +732,18 @@ void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRe
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
 {
     // Draw an arrow
-    wxRect buttonRect(rect);
-    int sz = wxMin(rect.GetHeight(), rect.GetWidth());
-    sz = wxMin(10, sz);
-    double height = ((double)sz / 3.0) * 2;
-    buttonRect.SetHeight(height);
-    buttonRect.SetWidth(sz);
-    buttonRect = buttonRect.CenterIn(rect);
+    const wxString arrowSymbol = wxT("\u25BE");
+    wxRect arrowRect{ { 0, 0 }, dc.GetTextExtent(arrowSymbol) };
+    arrowRect = arrowRect.CenterIn(rect);
 
     wxColour buttonColour = colour;
     if(!buttonColour.IsOk()) {
         // No colour provided, provide one
-        wxColour buttonFace = clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE);
-        if(IsDark(buttonFace)) {
-            buttonColour = buttonFace.ChangeLightness(150);
-        } else {
-            buttonColour = clSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
-        }
+        buttonColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     }
-    wxPoint downCenterPoint = wxPoint(buttonRect.GetBottomLeft().x + buttonRect.GetWidth() / 2, buttonRect.GetBottom());
-    dc.SetPen(wxPen(buttonColour, 2));
-    dc.DrawLine(buttonRect.GetTopLeft(), downCenterPoint);
-    dc.DrawLine(buttonRect.GetTopRight(), downCenterPoint);
+
+    dc.SetTextForeground(buttonColour);
+    dc.DrawText(arrowSymbol, arrowRect.GetTopLeft());
 }
 
 wxColour DrawingUtils::GetCaptionTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT); }

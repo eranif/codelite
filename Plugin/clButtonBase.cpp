@@ -399,10 +399,7 @@ void clButtonBase::Render(wxDC& dc)
 
     if(HasDropDownMenu()) {
         // Draw an arrow
-        wxRect arrowRect{ { 0, 0 }, dc.GetTextExtent(wxT("\u25BE")) };
-        arrowRect = arrowRect.CenterIn(arrow_rect);
-        dc.SetTextForeground(textColour);
-        dc.DrawText(wxT("▼"), arrowRect.GetTopLeft());
+        DrawingUtils::DrawDropDownArrow(this, dc, arrow_rect, textColour);
     }
 
     if(HasFocus()) {

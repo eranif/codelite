@@ -60,7 +60,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wx
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
-        lexer->Apply(m_stcPaths);
+        lexer->ApplySystemColours(m_stcPaths);
     }
     m_stcPaths->SetEOLMode(wxSTC_EOL_LF);
 

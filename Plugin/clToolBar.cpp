@@ -86,14 +86,10 @@ clToolBar::~clToolBar()
 void clToolBar::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
-#ifdef __WXOSX__
+    wxGCDC gcdc;
     wxPaintDC dc(this);
-#else
-    wxAutoBufferedPaintDC dc(this);
-#endif
-
-    PrepareDC(dc);
-    wxGCDC gcdc(dc);
+    DrawingUtils::GetGCDC(dc, gcdc);
+    PrepareDC(gcdc);
 
     m_overflowButtons.clear();
     m_visibleButtons.clear();

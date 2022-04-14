@@ -149,6 +149,11 @@ public:
     void Apply(wxStyledTextCtrl* ctrl, bool applyKeywords = false);
 
     /**
+     * @brief similar to `Apply`, but use the system colours instead of the theme colours
+     */
+    void ApplySystemColours(wxStyledTextCtrl* ctrl);
+
+    /**
      * Get the lexer ID, which should be in sync with values of Scintilla
      * \return
      */

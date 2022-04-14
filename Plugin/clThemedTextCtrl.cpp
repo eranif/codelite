@@ -100,7 +100,7 @@ void clThemedTextCtrl::OnSysColours(clCommandEvent& event)
 void clThemedTextCtrl::ApplySettings()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    lexer->Apply(this);
+    lexer->ApplySystemColours(this);
 
     wxClientDC dc(this);
     dc.SetFont(lexer->GetFontForSyle(0, this));

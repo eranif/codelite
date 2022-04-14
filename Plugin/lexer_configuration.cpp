@@ -26,6 +26,7 @@
 
 #include "StringUtils.h"
 #include "bookmark_manager.h"
+#include "clSystemSettings.h"
 #include "cl_config.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -683,4 +684,19 @@ void LexerConf::SetKeyWords(const wxString& keywords, int set)
     content.Replace("\n", " ");
     content.Replace("\\", " ");
     m_keyWords[set] = content;
+}
+
+void LexerConf::ApplySystemColours(wxStyledTextCtrl* ctrl)
+{
+    Apply(ctrl);
+    wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
+    if(!DrawingUtils::IsDark(bg_colour)) {
+        bg_colour = *wxWHITE;
+    }
+
+    wxColour fg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+        ctrl->StyleSetBackground(i, bg_colour);
+        ctrl->StyleSetForeground(i, fg_colour);
+    }
 }

@@ -130,6 +130,15 @@ void clComboBox::OnButtonClicked(wxCommandEvent& event)
             item->GetId());
     }
 
+    if(!m_custom_commands.IsEmpty()) {
+        menu.AppendSeparator();
+        for(auto item : m_custom_commands) {
+            menu.Append(item.first, item.second);
+            menu.Bind(
+                wxEVT_MENU, [this](wxCommandEvent& e) { GetEventHandler()->ProcessEvent(e); }, item.first);
+        }
+    }
+
     ButtonShowMenu(m_button, menu, nullptr);
     m_textCtrl->CallAfter(&wxTextCtrl::SetFocus);
 }
@@ -198,7 +207,7 @@ void clComboBox::SetStringSelection(const wxString& text)
 
 void clComboBox::SetFocus() { m_textCtrl->SetFocus(); }
 
-void clComboBox::Append(const std::vector<wxString>& strings)
+void clComboBox::Append(const vector<wxString>& strings)
 {
     if(strings.empty()) {
         return;
@@ -278,3 +287,11 @@ void clComboBox::OnFocus(wxFocusEvent& event)
 }
 
 bool clComboBox::IsTextEmpty() const { return m_textCtrl->IsEmpty(); }
+
+void clComboBox::AddCommand(int command_id, const wxString& label)
+{
+    if(m_custom_commands.Contains(command_id)) {
+        m_custom_commands.Remove(command_id);
+    }
+    m_custom_commands.PushBack(command_id, label);
+}

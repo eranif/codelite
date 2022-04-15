@@ -22,10 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "editor_config.h"
 #include "findreplacedlg.h"
+
+#include "editor_config.h"
 #include "macros.h"
 #include "windowattrmanager.h"
+
 #include <algorithm>
 #include <wx/button.h>
 #include <wx/checkbox.h>
@@ -73,7 +75,8 @@ bool FindReplaceDialog::Create(wxWindow* parent, const FindReplaceData& data, wx
                                const wxPoint& pos, const wxSize& size, long style)
 {
     m_kind = FIND_DLG;
-    if(!wxDialog::Create(parent, id, caption, pos, size, style)) return false;
+    if(!wxDialog::Create(parent, id, caption, pos, size, style))
+        return false;
 
     m_data = data;
     m_owner = NULL;
@@ -269,7 +272,9 @@ void FindReplaceDialog::OnClick(wxCommandEvent& event)
     }
 
     // Set the updated flags, unless it was ReplaceAll which does this itself
-    if(btnClicked != m_replaceAll) { m_data.SetFlags(flags); }
+    if(btnClicked != m_replaceAll) {
+        m_data.SetFlags(flags);
+    }
 
 // update the data of the find/replace dialog, in particular,
 // update the history of the Find What / replace with controls
@@ -376,7 +381,9 @@ void FindReplaceDialog::SendEvent(wxEventType type)
 bool FindReplaceDialog::Show(int kind)
 {
     if(IsShown()) {
-        if(m_kind == kind) { return true; }
+        if(m_kind == kind) {
+            return true;
+        }
         // change the dialog
         ShowReplaceControls(true);
         return true;
@@ -405,7 +412,9 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
     isFindDlg = gbSizer->GetItemPosition(sz) == wxGBPosition(1, 0);
     if(show == false) {
         // is this dialog is already a 'Find' dialog?
-        if(isFindDlg) { return; }
+        if(isFindDlg) {
+            return;
+        }
 
         // remove 'Replace' dialog items
         gbSizer->Detach(m_replaceWithLabel);
@@ -417,7 +426,9 @@ void FindReplaceDialog::ShowReplaceControls(bool show)
 
     } else {
         // is this dialog is already a 'Replace' dialog?
-        if(!isFindDlg) { return; }
+        if(!isFindDlg) {
+            return;
+        }
 
         // remmove the 'Options' item frmo pos 1,0
         gbSizer->Detach(sz);
@@ -466,9 +477,10 @@ void FindReplaceDialog::OnSelectionOnlyUI(wxUpdateUIEvent& event)
 
 void FindReplaceData::SetReplaceString(const wxString& str)
 {
-
     int where = m_replaceString.Index(str);
-    if(where != wxNOT_FOUND) { m_replaceString.RemoveAt(where); }
+    if(where != wxNOT_FOUND) {
+        m_replaceString.RemoveAt(where);
+    }
     m_replaceString.Insert(str, 0);
 
     long max_value = clConfig::Get().Read(kConfigMaxItemsInFindReplaceDialog, 15);
@@ -478,7 +490,9 @@ void FindReplaceData::SetReplaceString(const wxString& str)
 void FindReplaceData::SetFindString(const wxString& str)
 {
     int where = m_findString.Index(str);
-    if(where != wxNOT_FOUND) { m_findString.RemoveAt(where); }
+    if(where != wxNOT_FOUND) {
+        m_findString.RemoveAt(where);
+    }
     m_findString.Insert(str, 0);
 
     long max_value = clConfig::Get().Read(kConfigMaxItemsInFindReplaceDialog, 15);

@@ -3,7 +3,10 @@
 
 #include "clButton.h"
 #include "codelite_exports.h"
+#include "wx_ordered_map.h"
 
+#include <functional>
+#include <unordered_map>
 #include <wx/button.h>
 #include <wx/combobox.h>
 #include <wx/control.h>
@@ -11,6 +14,8 @@
 #define INVALID_SIZE_T static_cast<size_t>(wxNOT_FOUND)
 
 class clThemedTextCtrl;
+using namespace std;
+
 class WXDLLIMPEXP_SDK clComboBox : public wxControl
 {
     wxArrayString m_choices;
@@ -18,6 +23,7 @@ class WXDLLIMPEXP_SDK clComboBox : public wxControl
     wxButton* m_button = nullptr;
     size_t m_selection = INVALID_SIZE_T;
     size_t m_cbStyle = 0;
+    wxOrderedMap<int, wxString> m_custom_commands;
 
 protected:
     void DoCreate(const wxString& value);
@@ -46,14 +52,21 @@ public:
                 const wxArrayString& choices, long style = 0, const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxComboBoxNameStr);
     virtual ~clComboBox();
+
     /**
      * @brief set the focus to the text entry
      */
     void SetFocus();
+
     /**
      * @brief set text hint
      */
     void SetHint(const wxString& hint);
+
+    /**
+     * @brief add custom command to be added to the drop down menu
+     */
+    void AddCommand(int command_id, const wxString& label);
 
     /**
      * @brief select item from the list of choices
@@ -107,7 +120,7 @@ public:
      */
     void SetStringSelection(const wxString& text);
 
-    void Append(const std::vector<wxString>& strings);
+    void Append(const vector<wxString>& strings);
     void Append(const wxArrayString& strings);
     size_t Append(const wxString& text);
     /**

@@ -26,6 +26,7 @@
 #define FIND_REPLACE_DLG_H
 
 #include "cl_config.h"
+
 #include <wx/dialog.h>
 
 class wxTextCtrl;
@@ -113,6 +114,8 @@ public:
     size_t GetFlags() const { return m_flags; }
     const wxString& GetSearchPaths() const { return m_paths; }
     const wxString& GetSelectedMask() const { return m_selectedMask; }
+    void SetFindStrings(const wxArrayString& findStrings) { this->m_findString = findStrings; }
+    void SetReplaceStrings(const wxArrayString& replaceStrings) { this->m_replaceString = replaceStrings; }
 };
 
 class wxStaticText;

@@ -48,10 +48,13 @@
 #include <wx/wupdlock.h>
 #include <wxStringHash.h>
 
-static const wxString RE_TODO = "(/[/\\*]+ *TODO)";
-static const wxString RE_BUG = "(/[/\\*]+ *BUG)";
-static const wxString RE_ATTN = "(/[/\\*]+ *ATTN)";
-static const wxString RE_FIXME = "(/[/\\*]+ *FIXME)";
+namespace
+{
+const wxString RE_TODO = "(/[/\\*]+ *TODO)";
+const wxString RE_BUG = "(/[/\\*]+ *BUG)";
+const wxString RE_ATTN = "(/[/\\*]+ *ATTN)";
+const wxString RE_FIXME = "(/[/\\*]+ *FIXME)";
+} // namespace
 
 FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wxWindow* handler)
     : FindInFilesDialogBase(parent, wxID_ANY)
@@ -72,12 +75,38 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wx
     DoSetSearchPaths(m_data.GetSearchPaths());
 
     // Search for
+    m_findString->AddCommand(wxID_CLEAR, _("Clear history"));
     m_findString->Clear();
     m_findString->Append(m_data.GetFindStringArr());
+    m_findString->Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            m_findString->Clear();
+        },
+        wxID_CLEAR);
+
     m_findString->SetValue(m_data.GetFindString());
+    m_replaceString->AddCommand(wxID_CLEAR, _("Clear history"));
     m_replaceString->Append(m_data.GetReplaceStringArr());
     m_replaceString->SetValue(m_data.GetReplaceString());
+    m_replaceString->Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            m_replaceString->Clear();
+        },
+        wxID_CLEAR);
+
+    m_fileTypes->AddCommand(wxID_CLEAR, _("Clear history"));
     m_fileTypes->SetSelection(0);
+    m_fileTypes->Bind(
+        wxEVT_MENU,
+        [&](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            m_fileTypes->Clear();
+        },
+        wxID_CLEAR);
 
     m_matchCase->SetValue(m_data.GetFlags() & wxFRD_MATCHCASE);
     m_matchWholeWord->SetValue(m_data.GetFlags() & wxFRD_MATCHWHOLEWORD);
@@ -344,7 +373,7 @@ void FindInFilesDialog::OnClose(wxCloseEvent& e) { Destroy(); }
 
 void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
 {
-#ifdef __WXOSX__
+#if 0
     // There is a bug in OSX that prevents popup menu from being displayed from dialogs
     // so we use an alternative way
     FindInFilesLocationsDlg dlg(this, GetPathsAsArray());
@@ -545,8 +574,12 @@ void FindInFilesDialog::BuildFindReplaceData()
     }
 
     m_data.SetFlags(GetSearchFlags());
+    m_data.SetFindStrings(m_findString->GetStrings());
     m_data.SetFindString(m_findString->GetValue());
+
+    m_data.SetReplaceStrings(m_replaceString->GetStrings());
     m_data.SetReplaceString(m_replaceString->GetValue());
+
     m_data.SetEncoding(m_choiceEncoding->GetStringSelection());
     wxString value = m_fileTypes->GetValue();
     value.Trim().Trim(false);

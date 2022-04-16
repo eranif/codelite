@@ -28,7 +28,7 @@ public:
     void OnSysColours(clCommandEvent& event);
     void SetText(const wxString& value);
     void SetValue(const wxString& value) override;
-    void SelectAll();
+    void SelectAll() override;
 };
 
 #endif // CLTHEMEDTEXTCTRL_HPP

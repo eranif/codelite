@@ -5,6 +5,33 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
+namespace
+{
+class clComboBoxROLocker
+{
+    clComboBox* m_cb = nullptr;
+    bool m_isReadOnly = true;
+
+public:
+    clComboBoxROLocker(clComboBox* cb)
+        : m_cb(cb)
+        , m_isReadOnly(m_cb && !m_cb->GetTextCtrl()->IsEditable())
+    {
+        if(m_isReadOnly) {
+            m_cb->GetTextCtrl()->SetEditable(true);
+        }
+    }
+
+    ~clComboBoxROLocker()
+    {
+        if(!m_isReadOnly) {
+            return;
+        }
+        m_cb->GetTextCtrl()->SetEditable(false);
+    }
+};
+} // namespace
+
 clComboBox::clComboBox(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
                        size_t n, const wxString choices[], long style, const wxValidator& validator,
                        const wxString& name)
@@ -118,6 +145,7 @@ void clComboBox::OnButtonClicked(wxCommandEvent& event)
                 wxUnusedVar(e);
 
                 // update the selected text
+                clComboBoxROLocker locker(this);
                 m_textCtrl->ChangeValue(choice);
                 m_selection = i;
 
@@ -131,7 +159,9 @@ void clComboBox::OnButtonClicked(wxCommandEvent& event)
     }
 
     if(!m_custom_commands.IsEmpty()) {
-        menu.AppendSeparator();
+        if(!m_choices.empty()) {
+            menu.AppendSeparator();
+        }
         for(auto item : m_custom_commands) {
             menu.Append(item.first, item.second);
             menu.Bind(
@@ -189,6 +219,7 @@ void clComboBox::SetString(size_t n, const wxString& text)
 
 void clComboBox::SetValue(const wxString& text)
 {
+    clComboBoxROLocker locker(this);
     m_textCtrl->SetValue(text);
     SetStringSelection(text);
 }
@@ -197,10 +228,12 @@ wxString clComboBox::GetStringSelection() const { return m_textCtrl->GetValue();
 
 void clComboBox::SetStringSelection(const wxString& text)
 {
+    clComboBoxROLocker locker(this);
     for(size_t i = 0; i < m_choices.size(); ++i) {
         if(m_choices.Item(i).CmpNoCase(text) == 0) {
             m_textCtrl->ChangeValue(m_choices.Item(i));
             m_selection = i;
+            break;
         }
     }
 }
@@ -237,6 +270,7 @@ void clComboBox::Clear()
 {
     m_choices.Clear();
     m_selection = INVALID_SIZE_T;
+    clComboBoxROLocker locker(this);
     m_textCtrl->ChangeValue(wxEmptyString);
 }
 
@@ -249,6 +283,7 @@ void clComboBox::Delete(size_t index)
         // the removed item is _before_ the selected item
         // invalidate the selection
         m_selection = INVALID_SIZE_T;
+        clComboBoxROLocker locker(this);
         m_textCtrl->ChangeValue(wxEmptyString);
     }
     m_choices.RemoveAt(index);

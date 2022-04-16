@@ -67,7 +67,7 @@ protected:
     void DoSelectAll();
 
     // Set new search paths
-    void DoSetSearchPaths(const wxString& paths);
+    void DoAppendSearchPath(const wxString& path);
 
     // Event Handlers
     virtual void OnClose(wxCloseEvent& event);

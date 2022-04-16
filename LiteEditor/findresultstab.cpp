@@ -153,6 +153,7 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
         if(!fifPaths.IsEmpty()) {
             dlg.SetSearchPaths(fifPaths, !transientPaths.IsEmpty());
         }
+
         if(!mask.IsEmpty()) {
             dlg.SetFileMask(mask);
         }
@@ -162,7 +163,7 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
             // Notify about the dialog dismissal
             clFindInFilesEvent eventDismiss(wxEVT_FINDINFILES_DLG_DISMISSED);
             eventDismiss.SetFileMask(frd.GetSelectedMask());
-            eventDismiss.SetPaths(frd.GetSearchPaths());
+            eventDismiss.SetPaths(frd.GetWhere());
             EventNotifier::Get()->ProcessEvent(eventDismiss);
         }
     }

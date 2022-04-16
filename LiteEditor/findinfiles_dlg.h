@@ -20,12 +20,8 @@
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include "clThemedComboBox.hpp"
-#include <wx/stc/stc.h>
-#include <wx/choice.h>
-#include "clThemedChoice.h"
 #include <wx/button.h>
-#include <wx/notebook.h>
-#include <wx/imaglist.h>
+#include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/checklst.h>
 #if wxVERSION_NUMBER >= 2900
@@ -52,26 +48,23 @@ protected:
     wxPanel* m_panelMainPanel;
     wxStaticText* m_staticText1;
     clThemedComboBox* m_findString;
+    wxButton* m_find;
     wxStaticText* m_staticText102;
     clThemedComboBox* m_replaceString;
+    wxButton* m_replaceAll;
     wxStaticText* m_staticText3;
     clThemedComboBox* m_fileTypes;
     wxStaticText* m_staticText2;
-    wxStyledTextCtrl* m_stcPaths;
-    wxStaticText* m_staticText5;
-    clThemedChoice* m_choiceEncoding;
-    wxButton* m_find;
-    wxButton* m_replaceAll;
-    wxButton* m_cancel;
+    clThemedComboBox* m_comboBoxWhere;
     wxButton* m_btnAddPath;
-    wxNotebook* m_notebook150;
-    wxPanel* m_panel152;
+    wxStaticText* m_staticText5;
+    clThemedComboBox* m_comboBoxEncoding;
+    wxButton* m_cancel;
     wxCheckBox* m_matchCase;
     wxCheckBox* m_matchWholeWord;
     wxCheckBox* m_regualrExpression;
     wxCheckBox* m_checkBoxPipeForGrep;
     wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
-    wxPanel* m_panel154;
     wxCheckBox* m_checkBoxTODO;
     wxCheckBox* m_checkBoxATTN;
     wxCheckBox* m_checkBoxBUG;
@@ -79,13 +72,13 @@ protected:
 
 protected:
     virtual void OnFindEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnReplaceEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFind(wxCommandEvent& event) { event.Skip(); }
     virtual void OnFindWhatUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnReplaceEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplace(wxCommandEvent& event) { event.Skip(); }
     virtual void OnReplaceUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnButtonClose(wxCommandEvent& event) { event.Skip(); }
     virtual void OnAddPath(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnButtonClose(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRegex(wxCommandEvent& event) { event.Skip(); }
     virtual void OnTODO(wxCommandEvent& event) { event.Skip(); }
     virtual void OnATTN(wxCommandEvent& event) { event.Skip(); }
@@ -95,31 +88,28 @@ protected:
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
     clThemedComboBox* GetFindString() { return m_findString; }
+    wxButton* GetFind() { return m_find; }
     wxStaticText* GetStaticText102() { return m_staticText102; }
     clThemedComboBox* GetReplaceString() { return m_replaceString; }
+    wxButton* GetReplaceAll() { return m_replaceAll; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
     clThemedComboBox* GetFileTypes() { return m_fileTypes; }
     wxStaticText* GetStaticText2() { return m_staticText2; }
-    wxStyledTextCtrl* GetStcPaths() { return m_stcPaths; }
-    wxStaticText* GetStaticText5() { return m_staticText5; }
-    clThemedChoice* GetChoiceEncoding() { return m_choiceEncoding; }
-    wxButton* GetFind() { return m_find; }
-    wxButton* GetReplaceAll() { return m_replaceAll; }
-    wxButton* GetCancel() { return m_cancel; }
+    clThemedComboBox* GetComboBoxWhere() { return m_comboBoxWhere; }
     wxButton* GetBtnAddPath() { return m_btnAddPath; }
+    wxStaticText* GetStaticText5() { return m_staticText5; }
+    clThemedComboBox* GetComboBoxEncoding() { return m_comboBoxEncoding; }
+    wxButton* GetCancel() { return m_cancel; }
     wxPanel* GetPanelMainPanel() { return m_panelMainPanel; }
     wxCheckBox* GetMatchCase() { return m_matchCase; }
     wxCheckBox* GetMatchWholeWord() { return m_matchWholeWord; }
     wxCheckBox* GetRegualrExpression() { return m_regualrExpression; }
     wxCheckBox* GetCheckBoxPipeForGrep() { return m_checkBoxPipeForGrep; }
     wxCheckBox* GetCheckBoxSaveFilesBeforeSearching() { return m_checkBoxSaveFilesBeforeSearching; }
-    wxPanel* GetPanel152() { return m_panel152; }
     wxCheckBox* GetCheckBoxTODO() { return m_checkBoxTODO; }
     wxCheckBox* GetCheckBoxATTN() { return m_checkBoxATTN; }
     wxCheckBox* GetCheckBoxBUG() { return m_checkBoxBUG; }
     wxCheckBox* GetCheckBoxFIXME() { return m_checkBoxFIXME; }
-    wxPanel* GetPanel154() { return m_panel154; }
-    wxNotebook* GetNotebook150() { return m_notebook150; }
     FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find In Files"),
                           const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

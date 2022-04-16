@@ -72,8 +72,8 @@ class FindReplaceData : public clConfigItem
 {
     wxArrayString m_replaceString;
     wxArrayString m_findString;
+    wxArrayString m_findWhere;
     size_t m_flags;
-    wxString m_paths;
     wxString m_encoding;
     wxArrayString m_fileMask;
     wxString m_selectedMask;
@@ -107,12 +107,13 @@ public:
     void SetEncoding(const wxString& encoding) { this->m_encoding = encoding; }
     void SetFileMask(const wxArrayString& fileMask) { this->m_fileMask = fileMask; }
     void SetFlags(size_t flags) { this->m_flags = flags; }
-    void SetSearchPaths(const wxString& searchPaths);
+    void SetWhereOptions(const wxArrayString& where);
+    wxString GetWhere() const;
     void SetSelectedMask(const wxString& selectedMask) { this->m_selectedMask = selectedMask; }
     const wxString& GetEncoding() const { return m_encoding; }
     const wxArrayString& GetFileMask() const { return m_fileMask; }
     size_t GetFlags() const { return m_flags; }
-    const wxString& GetSearchPaths() const { return m_paths; }
+    const wxArrayString& GetWhereOptions() const { return m_findWhere; }
     const wxString& GetSelectedMask() const { return m_selectedMask; }
     void SetFindStrings(const wxArrayString& findStrings) { this->m_findString = findStrings; }
     void SetReplaceStrings(const wxArrayString& replaceStrings) { this->m_replaceString = replaceStrings; }

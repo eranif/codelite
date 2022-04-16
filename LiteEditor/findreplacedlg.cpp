@@ -529,7 +529,7 @@ void FindReplaceData::FromJSON(const JSONItem& json)
     m_findString = json.namedObject("m_findString").toArrayString();
     m_replaceString = json.namedObject("m_replaceString").toArrayString();
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);
-    m_paths = json.namedObject("m_paths").toString(m_paths);
+    m_findWhere = json.namedObject("m_findWhere").toArrayString(m_findWhere);
     m_encoding = json.namedObject("m_encoding").toString(m_encoding);
     m_fileMask = json.namedObject("m_fileMask").toArrayString();
     m_selectedMask = json.namedObject("m_selectedMask").toString(m_selectedMask);
@@ -550,7 +550,7 @@ JSONItem FindReplaceData::ToJSON() const
     element.addProperty("m_findString", m_findString);
     element.addProperty("m_replaceString", m_replaceString);
     element.addProperty("m_flags", m_flags);
-    element.addProperty("m_paths", m_paths);
+    element.addProperty("m_findWhere", m_findWhere);
     element.addProperty("m_encoding", m_encoding);
     element.addProperty("m_fileMask", m_fileMask);
     element.addProperty("m_selectedMask", m_selectedMask);
@@ -582,14 +582,31 @@ wxArrayString FindReplaceData::GetReplaceStringArr() const
 FindReplaceData::FindReplaceData()
     : clConfigItem("FindReplaceData")
     , m_flags(wxFRD_SEPARATETAB_DISPLAY | wxFRD_MATCHCASE | wxFRD_MATCHWHOLEWORD | wxFRD_ENABLE_PIPE_SUPPORT)
-    , m_paths(SEARCH_IN_WORKSPACE)
     , m_selectedMask("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.plist;*.txt") // Default file mask
 {
+    m_findWhere.Add(SEARCH_IN_WORKSPACE);
     m_fileMask.Add("*.c;*.cpp;*.cxx;*.cc;*.h;*.hpp;*.inc;*.mm;*.m;*.xrc;*.xml;*.json;*.sql");
 }
 
-void FindReplaceData::SetSearchPaths(const wxString& searchPaths)
+wxString FindReplaceData::GetWhere() const
 {
-    m_paths = searchPaths;
-    m_paths.Trim().Trim(false);
+    if(m_findWhere.empty()) {
+        return SEARCH_IN_WORKSPACE;
+    }
+    return m_findWhere[0];
+}
+
+void FindReplaceData::SetWhereOptions(const wxArrayString& where)
+{
+    std::unordered_set<wxString> visited;
+    wxArrayString normalized_list;
+    normalized_list.reserve(where.size());
+
+    for(const wxString& str : where) {
+        if(!visited.insert(str).second || str.empty()) {
+            continue;
+        }
+        normalized_list.Add(str);
+    }
+    m_findWhere.swap(normalized_list);
 }

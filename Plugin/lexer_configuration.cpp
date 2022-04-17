@@ -689,12 +689,16 @@ void LexerConf::SetKeyWords(const wxString& keywords, int set)
 void LexerConf::ApplySystemColours(wxStyledTextCtrl* ctrl)
 {
     Apply(ctrl);
+    wxColour fg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
     if(!DrawingUtils::IsDark(bg_colour)) {
         bg_colour = *wxWHITE;
+    } else {
+        // dark colour, make it a bit darker
+        bg_colour = bg_colour.ChangeLightness(50);
+        fg_colour = wxColour(*wxWHITE).ChangeLightness(90);
     }
 
-    wxColour fg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
         ctrl->StyleSetBackground(i, bg_colour);
         ctrl->StyleSetForeground(i, fg_colour);

@@ -174,6 +174,11 @@ wxColour clSystemSettings::GetDefaultPanelColour()
 {
     wxColour panel_colour;
     panel_colour = GetColour(IS_GTK ? wxSYS_COLOUR_WINDOW : wxSYS_COLOUR_3DFACE);
+#ifdef __WXGTK__
+    if(!m_useCustomColours && !DrawingUtils::IsDark(panel_colour)) {
+        panel_colour = panel_colour.ChangeLightness(95);
+    }
+#endif
     return panel_colour;
 }
 

@@ -16,16 +16,19 @@
 #define wxSTC_MAX_MARGIN 4
 #endif
 
+#if defined(__WXMSW__)
+#define BORDER_STYLE wxBORDER_SIMPLE
+#elif defined(__WXGTK__)
+#define BORDER_STYLE wxBORDER_DEFAULT
+#else
+#define BORDER_STYLE wxBORDER_DEFAULT
+#endif
+
 clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos,
                                    const wxSize& size, long style)
 {
     wxUnusedVar(style);
-#ifdef __WXMSW__
-    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE);
-#else
-    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_DEFAULT);
-#endif
-
+    wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, BORDER_STYLE);
     ApplySettings();
 
     SetYCaretPolicy(0, 0);

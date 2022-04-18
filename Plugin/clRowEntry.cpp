@@ -461,9 +461,10 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         colours = c; // reset the colours
         clCellValue& cell = GetColumn(i);
         wxFont f = m_tree->GetDefaultFont();
-        // if(cell.GetFont().IsOk()) {
-        //     f = cell.GetFont();
-        // }
+        if(cell.GetFont().IsOk()) {
+            f = cell.GetFont();
+        }
+
         if(cell.GetTextColour().IsOk()) {
             colours.SetItemTextColour(cell.GetTextColour());
         }

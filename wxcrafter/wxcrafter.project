@@ -646,7 +646,7 @@
   <Dependencies Name="Win_x86_Release">
     <Project Name="wxcLib"/>
   </Dependencies>
-  <Settings Type="Dynamic Library">
+  <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
         <IncludePath Value="."/>
@@ -922,7 +922,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="STANDALONE_BUILD=1"/>
       </Compiler>
-      <Linker Options="-mwindows;$(shell wx-config --debug=no --libs std,stc,propgrid,webview,ribbon,richtext --unicode=yes)" Required="yes">
+      <Linker Options="-mwindows;$(shell wx-config --debug=no --libs std,stc,propgrid,webview,ribbon,richtext,aui --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <LibraryPath Value="lib"/>
         <LibraryPath Value="$(CL_SRC_DIR)/Runtime"/>

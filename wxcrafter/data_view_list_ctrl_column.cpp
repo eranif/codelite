@@ -1,10 +1,12 @@
+#include "data_view_list_ctrl_column.h"
+
 #include "allocator_mgr.h"
 #include "bool_property.h"
 #include "choice_property.h"
 #include "col_header_flags_property.h"
-#include "data_view_list_ctrl_column.h"
 #include "multi_strings_property.h"
 #include "wxgui_helpers.h"
+
 #include <wx/dataview.h>
 
 DataViewListCtrlColumn::DataViewListCtrlColumn()
@@ -43,9 +45,8 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
     AddProperty(new ChoiceProperty(PROP_DV_LISTCTRL_COL_ALIGN, alignment, 0, _("Cell Alignment")));
     AddProperty(
         new ChoiceProperty(PROP_DV_CELLMODE, cellType, 0, _("Cell mode (can be editable, activatable or inert)")));
-    AddProperty(new ColHeaderFlagsProperty(PROP_DV_COLFLAGS, wxDATAVIEW_COL_RESIZABLE,
-                                           _("One or more flags of the wxDataViewColumnFlags enumeration"),
-                                           eColumnKind::kDataView));
+    AddProperty(new ColHeaderFlagsProperty(
+        PROP_DV_COLFLAGS, 0, _("One or more flags of the wxDataViewColumnFlags enumeration"), eColumnKind::kDataView));
 }
 
 DataViewListCtrlColumn::~DataViewListCtrlColumn() {}
@@ -62,7 +63,7 @@ wxString DataViewListCtrlColumn::CppCtorCode() const
 
     bool childOfDataViewListCtrl = GetParent()->GetType() == ID_WXDATAVIEWLISTCTRL;
     wxString cellMode = PropertyString(PROP_DV_CELLMODE);
-    wxString colFlag = PropertyString(PROP_COL_FLAGS, "wxDATAVIEW_COL_RESIZABLE");
+    wxString colFlag = PropertyString(PROP_COL_FLAGS, "0");
     wxString columnWidth;
     columnWidth << "WXC_FROM_DIP(" << PropertyString(PROP_WIDTH) << ")";
     if(coltype == "bitmap") {
@@ -71,22 +72,26 @@ wxString DataViewListCtrlColumn::CppCtorCode() const
 
     } else if(coltype == "check") {
         cppCode << parentName << "->AppendToggleColumn(" << label << ", ";
-        if(!childOfDataViewListCtrl) cppCode << parentName << "->GetColumnCount(), ";
+        if(!childOfDataViewListCtrl)
+            cppCode << parentName << "->GetColumnCount(), ";
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
     } else if(coltype == "text") {
         cppCode << parentName << "->AppendTextColumn(" << label << ", ";
-        if(!childOfDataViewListCtrl) cppCode << parentName << "->GetColumnCount(), ";
+        if(!childOfDataViewListCtrl)
+            cppCode << parentName << "->GetColumnCount(), ";
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
     } else if(coltype == "icontext") {
         cppCode << parentName << "->AppendIconTextColumn(" << label << ", ";
-        if(!childOfDataViewListCtrl) cppCode << parentName << "->GetColumnCount(), ";
+        if(!childOfDataViewListCtrl)
+            cppCode << parentName << "->GetColumnCount(), ";
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
     } else if(coltype == "progress") {
         cppCode << parentName << "->AppendProgressColumn(" << label << ", ";
-        if(!childOfDataViewListCtrl) cppCode << parentName << "->GetColumnCount(), ";
+        if(!childOfDataViewListCtrl)
+            cppCode << parentName << "->GetColumnCount(), ";
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
     } else if(coltype == "choice") {
         cppCode << "{\n";

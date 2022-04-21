@@ -145,6 +145,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -166,7 +170,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Size:",
-									"m_value":	"500,300"
+									"m_value":	"-1,-1"
 								}, {
 									"type":	"string",
 									"m_label":	"Minimum Size:",
@@ -320,6 +324,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -393,7 +401,7 @@
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Label:",
-															"m_value":	"CodeLite IDE, an open source, C/C++/PHP and JavaScript IDE"
+															"m_value":	"CodeLite IDE, an open source, C/C++/Rust/Python/PHP and JavaScript IDE"
 														}, {
 															"type":	"string",
 															"m_label":	"Wrap:",
@@ -488,6 +496,10 @@
 																	"m_label":	"Style:",
 																	"m_value":	""
 																}, {
+																	"type":	"bool",
+																	"m_label":	"Keep as a class member",
+																	"m_value":	false
+																}, {
 																	"type":	"choice",
 																	"m_label":	"Orientation:",
 																	"m_selection":	0,
@@ -514,6 +526,10 @@
 																			"type":	"string",
 																			"m_label":	"Style:",
 																			"m_value":	""
+																		}, {
+																			"type":	"bool",
+																			"m_label":	"Keep as a class member",
+																			"m_value":	false
 																		}, {
 																			"type":	"string",
 																			"m_label":	"# Columns:",
@@ -1110,6 +1126,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -1131,7 +1151,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Size:",
-															"m_value":	"-1,-1"
+															"m_value":	"300,200"
 														}, {
 															"type":	"string",
 															"m_label":	"Minimum Size:",
@@ -1339,6 +1359,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",

@@ -25,7 +25,7 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer2 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer2);
 
-    m_notebook8 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxBK_DEFAULT);
+    m_notebook8 = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebook8->SetName(wxT("m_notebook8"));
 
     boxSizer2->Add(m_notebook8, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -37,9 +37,9 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     m_panelAbout->SetSizer(boxSizer16);
 
-    m_staticTextTitle =
-        new wxStaticText(m_panelAbout, wxID_ANY, _("CodeLite IDE, an open source, C/C++/PHP and JavaScript IDE"),
-                         wxDefaultPosition, wxDLG_UNIT(m_panelAbout, wxSize(-1, -1)), 0);
+    m_staticTextTitle = new wxStaticText(m_panelAbout, wxID_ANY,
+                                         _("CodeLite IDE, an open source, C/C++/Rust/Python/PHP and JavaScript IDE"),
+                                         wxDefaultPosition, wxDLG_UNIT(m_panelAbout, wxSize(-1, -1)), 0);
     wxFont m_staticTextTitleFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticTextTitleFont.SetStyle(wxFONTSTYLE_ITALIC);
     m_staticTextTitle->SetFont(m_staticTextTitleFont);
@@ -112,8 +112,8 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
     m_paneLicense->SetSizer(boxSizer18);
 
-    m_stcLicense =
-        new wxStyledTextCtrl(m_paneLicense, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_paneLicense, wxSize(-1, -1)), 0);
+    m_stcLicense = new wxStyledTextCtrl(m_paneLicense, wxID_ANY, wxDefaultPosition,
+                                        wxDLG_UNIT(m_paneLicense, wxSize(300, 200)), 0);
     // Configure the fold margin
     m_stcLicense->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLicense->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -224,13 +224,11 @@ clAboutDialogBase::clAboutDialogBase(wxWindow* parent, wxWindowID id, const wxSt
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 clAboutDialogBase::~clAboutDialogBase() {}

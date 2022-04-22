@@ -139,7 +139,7 @@ yaourt -S codelite
 wxCrafter binary packages
 ----
 
-As the above CodeLite 13.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](../Repositories12).
+As the above CodeLite 13.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](../oldDownloads/Repositories12.md).
 
 [1]: https://downloads.codelite.org
 [4]: https://aur.archlinux.org/packages/codelite/

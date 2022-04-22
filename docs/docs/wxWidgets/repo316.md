@@ -32,13 +32,13 @@ If you use a debian-based distro there are the following wxWidgets repositories 
 Repository | Available | Versions | Component
 -----------|-----------|----------|-----------
 debian	| `https://repos.codelite.org/wx3.1.6/debian/` | bullseye | libs
-ubuntu | `https://repos.codelite.org/wx3.1.6/ubuntu/` | focal impish | universe
+ubuntu | `https://repos.codelite.org/wx3.1.6/ubuntu/` | focal impish (and jammy) | universe
 
 
 
 The repositories also contain wx3.1.0 to wx3.1.5 builds (including some i386 ones) for debian stretch and buster, and ubuntu trusty, wily to hirsute.
 
-The ubuntu ones should also work on other *buntus of the same version, and on derivatives e.g. Mint. 
+The ubuntu ones should also work on other *buntus of the same version, and on derivatives e.g. Mint. The impish ones also work on jammy.
 
 
 Now let apt know that the repository exits. If you use an apt front-end e.g. synaptic, tell it to Add a repository, using as data the appropriate entry in the table above.
@@ -60,7 +60,7 @@ Distro/release | Line to append
 ---------------|-------------------
 debian bullseye| `deb https://repos.codelite.org/wx3.1.6/debian/ bullseye libs`
 ubuntu focal| `deb https://repos.codelite.org/wx3.1.6/ubuntu/ focal universe`
-ubuntu impish | `deb https://repos.codelite.org/wx3.1.6/ubuntu/ impish universe`
+ubuntu impish and jammy | `deb https://repos.codelite.org/wx3.1.6/ubuntu/ impish universe`
 
 You then need to update the repositories. In synaptic, click the Reload button. If you're doing things by hand, do: 
 

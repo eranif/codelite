@@ -164,12 +164,12 @@ sudo gdebi -n /path/to/codelite.deb
 ### Previous CodeLite releases
 ---
 
-See [this page](../oldDownloads/Repositories14) for links to Linux packages from previous CodeLite and wxCrafter releases. 
+See [this page](../oldDownloads/Repositories14.md) for links to Linux packages from previous CodeLite and wxCrafter releases. 
 
 ### wxCrafter binary packages
 ---
 
-As the above CodeLite 15.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](../oldDownloads/Repositories12). 
+As the above CodeLite 15.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](../oldDownloads/Repositories12.md). 
 
 [1]: https://downloads.codelite.org
 [2]: https://repos.codelite.org/rpms-15.0/fedora/codelite-15.0.1-1.fc.src.rpm

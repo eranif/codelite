@@ -124,7 +124,7 @@ rpm -Uvh https://repos.codelite.org/rpms-14.0/fedora/codelite-14.0-2.fc32.x86_64
 
 There are also source rpms for [fedora](https://repos.codelite.org/rpms-14.0/fedora/codelite-14.0-2.fc.src.rpm)  and [openSUSE](https://repos.codelite.org/rpms-14.0/suse/codelite-14.0-1.gtk3suse.src.rpm).
 
-! ArchLinux
+### ArchLinux
 ----
 
 CodeLite is available on ArchLinux via their [AUR repository][4]
@@ -135,13 +135,16 @@ To install codelite:
 yaourt -S codelite
 ```
 
+### Previous CodeLite releases
+---
+
+See [this page](../oldDownloads/Repositories13.md) for links to Linux packages from previous CodeLite and wxCrafter releases. 
 
 
-
-!wxCrafter binary packages
+### wxCrafter binary packages
 ----
 
-As the above CodeLite 14.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](../Repositories12).
+As the above CodeLite 14.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](../oldDownloads/Repositories12.md).
 
 [1]: https://downloads.codelite.org
 [4]: https://aur.archlinux.org/packages/codelite/

@@ -26,18 +26,14 @@ Download macOS bundle from [CodeLite downloads page][1]
 
 #### Setup
 
-This page gives links to the available binary packages for CodeLite 15.0. Its RAD plugin wxCrafter, which is now Free Open-Source Software, 
+This page gives links to the available binary packages for CodeLite 16.0. Its RAD plugin wxCrafter, which is now Free Open-Source Software, 
 is included in all the CodeLite packages.
 
-Note that the CodeLite packages incorporate the required wxWidgets libraries (`wx3.1.5`), so there is no need to install wxWidgets too. 
+Note that the CodeLite packages incorporate the required wxWidgets libraries (`wx3.1.6`), so there is no need to install wxWidgets too. 
 Of course you can if you wish, and you'll need to do so to build apps against wxWidgets. 
 CodeLite doesn't (yet) require wx3.1 though, and you can still build your own against wx3.0.x if you prefer. 
 
 Ubuntu `16.04` (`xenial`) and later have official CodeLite packages. Therefore, to avoid a name-clash, our CodeLite packages have `unofficial` appended to the name
-
-!!! Important
-    Except for fedora, CodeLite 13.0 provided both GTK+2 and GTK+3-based packages; previous CodeLite releases used only GTK+2. Since CodeLite 14.0 we are providing only GTK+3-based packages. 
-    To avoid conflicts and reduce confusion, there are separate GTK+2 and GTK+3 repositories. 
 
 To download CodeLite for Debian based systems (Debian / Mint / Ubuntu etc):
 
@@ -51,11 +47,11 @@ sudo apt-key adv --fetch-keys http://repos.codelite.org/CodeLite.asc
     - If you use an `apt` front-end e.g. synaptic, tell it to Add a repository, using as data the appropriate entry from the tables below
     - If you do things by hand, add the appropriate URLs from the tables to `/etc/apt/sources.list` (you need to become superuser) : 
 
-For example, if you use Ubuntu focal (20.04), either open `/etc/apt/sources.list` in an editor (as superuser) and append the proper line
+For example, if you use Ubuntu jammy (22.04), either open `/etc/apt/sources.list` in an editor (as superuser) and append the proper line
 from Table 1, or else use `apt-add-repository` in a terminal: 
 
 ```bash
- sudo apt-add-repository 'deb https://repos.codelite.org/ubuntu/ focal universe'
+ sudo apt-add-repository 'deb https://repos.codelite.org/ubuntu/ jammy universe'
 ```
 
 *Table 1: CodeLite repositories (GTK+3):* 
@@ -65,26 +61,14 @@ Distro/release 	| Lines to append
 debian buster 	| `deb https://repos.codelite.org/debian/ buster devel`
 debian bullseye	| `deb https://repos.codelite.org/debian/ bullseye devel`
 ubuntu focal 	| `deb https://repos.codelite.org/ubuntu/ focal universe`
-ubuntu groovy hirsute and impish |	`deb https://repos.codelite.org/ubuntu/ groovy universe`
-
-
-*Table 2: CodeLite repositories (GTK+2):*
-
-Distro/release 	| Lines to append
-----------------|------------------
-debian stretch  | `deb https://repos.codelite.org/debian2/ stretch devel`
-debian buster 	|`deb https://repos.codelite.org/debian2/ buster devel`
-ubuntu xenial 	|`deb https://repos.codelite.org/ubuntu2/ xenial universe`
-ubuntu bionic 	|`deb https://repos.codelite.org/ubuntu2/ bionic universe`
-ubuntu cosmic 	|`deb https://repos.codelite.org/ubuntu2/ cosmic universe`
-ubuntu disco 	|`deb https://repos.codelite.org/ubuntu2/ disco universe`
-ubuntu eoan 	|`deb https://repos.codelite.org/ubuntu2/ eoan universe`
+ubuntu impish |	`deb https://repos.codelite.org/ubuntu/ impish universe`
+ubuntu jammy |	`deb https://repos.codelite.org/ubuntu/ jammy universe`
 
 - You then need to update your repositories. In synaptic, click the `Reload` button. If you're doing things by hand, do: 
 
 ```bash
- sudo apt-get update
- sudo apt-get install codelite
+ sudo apt update
+ sudo apt install codelite
 ```
 
 !!! Tip
@@ -98,10 +82,10 @@ You can see which versions are available by doing:
  apt-cache madison codelite
 ```
 
-Then you can select which version to install. For example, to prefer the official 12.0 package in debian buster, use the line: 
+Then you can select which version to install. For example, to prefer the official 14.0 package in debian buster, use the line: 
 
 ```bash
- sudo apt-get install codelite=12.0*
+ sudo apt install codelite=14.0*
 ```
 
 #### Synaptic
@@ -114,19 +98,19 @@ You may wish also to use Package > Lock Version.
 
 For a long time the official debian and ubuntu repositories supplied only the ancient CodeLite 6.1. However since ubuntu `16.04` (xenial) it has been updated to 
 CodeLite 9.1 or later, and debian stretch has 10.0. This is very welcome, but creates a name-clash with any packages we supply. 
-Therefore, starting with CodeLite 9.2, our debian packages have `unofficial` added to the version e.g. `codelite_15.0-1unofficial.bullseye_amd64.deb`
+Therefore, starting with CodeLite 9.2, our debian packages have `unofficial` added to the version e.g. `codelite_16.0-1unofficial.bullseye_amd64.deb`
 
 This allows you to select which to install using apt (or aptitude or synaptic). 
 
 ### CodeLite RPMs
 ---
 
-There are rpms available for fedora 33/34/35, and openSUSE Leap 15.2/15.3: 
+There are rpms available for fedora 35, and openSUSE Leap 15.3: 
 
 Distro	| x86_64 GTK+3
 --------|----------------
-fedora	| [`33 & 34 & 35`][5]
-openSUSE |	[`15.2 & 15.3`][6]
+fedora	| [`35`][5]
+openSUSE |	[`15.3`][6]
 
 
 First tell rpm about the CodeLite public key. As superuser do: 
@@ -136,7 +120,7 @@ First tell rpm about the CodeLite public key. As superuser do:
  ```
 Then either download the required rpm and install it as usual, or download and install in one step; e.g. 
 ```bash
-  rpm -Uvh https://repos.codelite.org/rpms-15.0/fedora/33/codelite-15.0.1-1.fc33.x86_64.rpm
+  rpm -Uvh https://repos.codelite.org/rpms-16.0/fedora/35/codelite-16.0-1.fc35.x86_64.rpm
 ```
 There are also source rpms for [fedora][2] and [OpenSUSE][3]
 
@@ -157,23 +141,23 @@ For Linux, we also offer release candidate builds for Ubuntu `18.04` and `20.04`
 You can download the deb file from our [download page][1] and install it using `gdebi` :
 
 ```bash
-sudo apt-get install gdebi
+sudo apt install gdebi
 sudo gdebi -n /path/to/codelite.deb
 ```
 
 ### Previous CodeLite releases
 ---
 
-See [this page](../oldDownloads/Repositories14) for links to Linux packages from previous CodeLite and wxCrafter releases. 
+See [this page](../oldDownloads/Repositories15) for links to Linux packages from previous CodeLite and wxCrafter releases. 
 
 ### wxCrafter binary packages
 ---
 
-As the above CodeLite 15.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](../oldDownloads/Repositories12). 
+As the above CodeLite 16.0 packages already contain wxCrafter, its gui-designer plugin, there is no need for a separate download. However if you wish to use wxCrafter with CodeLite 12.0 or older, please see [this page](../oldDownloads/Repositories12). 
 
 [1]: https://downloads.codelite.org
-[2]: https://repos.codelite.org/rpms-15.0/fedora/codelite-15.0.1-1.fc.src.rpm
-[3]: https://repos.codelite.org/rpms-15.0/suse/codelite-15.0.1-1.suse.src.rpm
+[2]: https://repos.codelite.org/rpms-16.0/fedora/codelite-16.0-1.fc.src.rpm
+[3]: https://repos.codelite.org/rpms-16.0/suse/codelite-16.0-1.suse.src.rpm
 [4]: https://aur.archlinux.org/packages/codelite/
-[5]: https://repos.codelite.org/rpms-15.0/fedora/33/codelite-15.0.1-1.fc33.x86_64.rpm
-[6]: https://repos.codelite.org/rpms-15.0/suse/15.2/codelite-15.0.1-1.suse.x86_64.rpm
+[5]: https://repos.codelite.org/rpms-16.0/fedora/35/codelite-16.0-1.fc35.x86_64.rpm
+[6]: https://repos.codelite.org/rpms-16.0/suse/15.3/codelite-16.0-1.suse.x86_64.rpm

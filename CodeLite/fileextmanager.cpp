@@ -26,11 +26,13 @@
 #include "fileextmanager.h"
 
 #include "JSON.h"
+#include "file_logger.h"
 #include "fileutils.h"
 
 #include <wx/filename.h>
 #include <wx/regex.h>
 #include <wx/thread.h>
+#include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
 struct Matcher {
@@ -50,11 +52,16 @@ struct Matcher {
 
     bool Matches(const wxString& in) const
     {
-        if(m_regex) {
-            return m_regex->Matches(in);
-        } else {
-            return in.Find(m_exactMatch) != wxNOT_FOUND;
+        auto lines = ::wxStringTokenize(in, "\r\n", wxTOKEN_STRTOK);
+        bool use_regex = m_regex;
+        for(const auto& line : lines) {
+            if(use_regex && m_regex->Matches(line)) {
+                return true;
+            } else if(!use_regex && line.Find(m_exactMatch) != wxNOT_FOUND) {
+                return true;
+            }
         }
+        return false;
     }
 };
 
@@ -274,13 +281,19 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
+    clDEBUG() << "Using file content to determine its type. File:" << filename << endl;
     wxString fileContent;
     if(!FileUtils::ReadBufferFromFile(filename, fileContent, 1024)) {
+        clWARNING() << "Failed to read file's content" << endl;
         return false;
     }
 
     for(size_t i = 0; i < m_matchers.size(); ++i) {
         if(m_matchers[i].Matches(fileContent)) {
+            clDEBUG() << "file:" << filename << "is of type:" << m_matchers[i].m_fileType << endl;
+            if(m_matchers[i].m_regex) {
+                clDEBUG() << "Matching part is:" << m_matchers[i].m_regex->GetMatch(fileContent, 0) << endl;
+            }
             fileType = m_matchers[i].m_fileType;
             return true;
         }

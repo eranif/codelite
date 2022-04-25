@@ -56,6 +56,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #endif
+#include <cstring>
 #include <functional>
 #include <memory>
 #include <wx/filename.h>
@@ -73,6 +74,8 @@ bool write_file_content(const wxFileName& fn, const wxString& content, const wxM
         return false;
     }
 }
+
+const char ELF_STR[] = { 0x7f, 'E', 'L', 'F' };
 } // namespace
 
 void FileUtils::OpenFileExplorer(const wxString& path)
@@ -986,4 +989,29 @@ bool cksum(const std::string& file, size_t* checksum)
 bool FileUtils::GetChecksum(const wxString& filepath, size_t* checksum)
 {
     return cksum(ToStdString(filepath), checksum);
+}
+
+bool FileUtils::IsBinaryExecutable(const wxString& filename)
+{
+#ifdef __WXMSW__
+    // check extension first
+    wxString extension = filename.AfterLast('.');
+    if(extension == "exe" || extension == "dll") {
+        return true;
+    }
+
+    // check the file itself
+    DWORD type;
+    return GetBinaryType(filename, &type) == TRUE;
+#else
+    // do ELF check by comparing the first 4 bytes of the file to the ELF magic string
+    char buffer[4];
+    FILE* fp = ::fopen(filename.mb_str(wxConvUTF8).data(), "rb");
+    if(!fp) {
+        return false;
+    }
+    int count = ::fread(buffer, sizeof(char), sizeof(buffer), fp);
+    ::fclose(fp);
+    return (count == 4 && ::memcmp(buffer, ELF_STR, 4) == 0);
+#endif
 }

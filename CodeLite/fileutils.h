@@ -29,6 +29,7 @@
 #include "codelite_exports.h"
 #include "macros.h"
 #include "wx/filename.h"
+
 #include <wx/filename.h>
 #include <wx/log.h>
 
@@ -196,6 +197,14 @@ public:
      * @brief return true if filename is a symlink
      */
     static bool IsDirectory(const wxString& filename);
+
+    /**
+     * @brief is `filename` an executable?
+     * on Linux/macOS, we check if the file is an ELF file, on Windows, we check if the
+     * file has the extension `.exe` or `.dll`
+     */
+    static bool IsBinaryExecutable(const wxString& filename);
+    static bool IsBinaryExecutable(const wxFileName& filename) { return IsBinaryExecutable(filename.GetFullPath()); }
 
     /**
      * @brief set permissions to filename

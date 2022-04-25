@@ -58,6 +58,16 @@ public:
      */
     size_t ScanNoRecurse(const wxString& rootFolder, clFilesScanner::EntryData::Vec_t& results,
                          const wxString& matchSpec = "*");
+
+    /**
+     * @brief a raw version for scanning files
+     * @param rootFolder the root folder
+     * @param on_folder_cb called whenever a folder is found. return true to traverse into this folder or false to skip
+     * it
+     * @param on_file_cb called when a file is found.
+     */
+    void ScanWithCallbacks(const wxString& rootFolder, std::function<bool(const wxString&)>&& on_folder_cb,
+                           std::function<void(const wxString&)>&& on_file_cb);
 };
 
 #endif // CLFILESCOLLECTOR_H

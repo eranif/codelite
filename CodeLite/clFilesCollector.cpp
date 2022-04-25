@@ -226,3 +226,50 @@ size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder, clFilesScanner:
     }
     return results.size();
 }
+
+void clFilesScanner::ScanWithCallbacks(const wxString& rootFolder, std::function<bool(const wxString&)>&& on_folder_cb,
+                                       std::function<void(const wxString&)>&& on_file_cb)
+{
+    if(!wxFileName::DirExists(rootFolder)) {
+        clDEBUG() << "clFilesScanner: No such directory:" << rootFolder << clEndl;
+        return;
+    }
+
+    std::queue<wxString> Q;
+    std::unordered_set<wxString> Visited;
+
+    Q.push(FileUtils::RealPath(rootFolder));
+    Visited.insert(FileUtils::RealPath(rootFolder));
+
+    while(!Q.empty()) {
+        wxString dirpath = Q.front();
+        Q.pop();
+
+        wxDir dir(dirpath);
+        if(!dir.IsOpened()) {
+            continue;
+        }
+
+        wxString filename;
+        bool cont = dir.GetFirst(&filename);
+        while(cont) {
+            // Check to see if this is a folder
+            wxString fullpath;
+            fullpath << dir.GetNameWithSep() << filename;
+            bool isDirectory = wxFileName::DirExists(fullpath);
+            bool isFile = !isDirectory;
+            if(isDirectory) {
+                if(on_folder_cb(fullpath)) {
+                    // Traverse into this folder
+                    wxString real_path = FileUtils::RealPath(fullpath);
+                    if(Visited.insert(real_path).second) {
+                        Q.push(fullpath);
+                    }
+                }
+            } else if(isFile) {
+                on_file_cb(fullpath);
+            }
+            cont = dir.GetNext(&filename);
+        }
+    }
+}

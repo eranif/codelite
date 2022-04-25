@@ -23,11 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "search_thread.h"
+
 #include "clFilesCollector.h"
 #include "dirtraverser.h"
 #include "fileutils.h"
 #include "macros.h"
 #include "wx/event.h"
+
 #include <algorithm>
 #include <iostream>
 #include <set>
@@ -162,22 +164,34 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
 
     // Populate "scannedFiles" with list of files to scan
     scannedFiles.insert(files.begin(), files.end());
+    files.reserve(5000);
 
+    wxStringSet_t visited_dirs;
     for(size_t i = 0; i < rootDirs.size(); ++i) {
+        // collect only unique files that are matching the pattern
+        auto on_file = [&](const wxString& fullpath) {
+            const wxArrayString& excludePatterns = data->GetExcludePatterns();
+            const wxString& mask = data->GetExtensions();
+            if(scannedFiles.insert(fullpath).second && FileUtils::WildMatch(mask, fullpath) &&
+               !FileUtils::WildMatch(excludePatterns, fullpath)) {
+                files.Add(fullpath);
+            }
+        };
+
+        // do not traverse into excluded directories or directories that
+        // we already visited
+        auto on_folder = [&](const wxString& fullpath) -> bool {
+            const wxArrayString& excludePatterns = data->GetExcludePatterns();
+            return visited_dirs.insert(fullpath).second && !FileUtils::WildMatch(excludePatterns, fullpath);
+        };
+
         // make sure it's really a dir (not a fifo, etc.)
         clFilesScanner scanner;
-        std::vector<wxString> filesV;
-        if(scanner.Scan(rootDirs.Item(i), filesV, data->GetExtensions())) {
-            std::for_each(filesV.begin(), filesV.end(), [&](const wxString& file) { scannedFiles.insert(file); });
-        }
+        scanner.ScanWithCallbacks(rootDirs.Item(i), on_folder, on_file);
     }
 
-    files.clear();
-    files.Alloc(scannedFiles.size());
-    std::for_each(scannedFiles.begin(), scannedFiles.end(), [&](const wxString& file) { files.Add(file); });
-
-    // Filter all non matching files
-    FilterFiles(files, data);
+    // sort the files found
+    files.Sort([](const wxString& f1, const wxString& f2) -> int { return f1.CmpNoCase(f2); });
 }
 
 void SearchThread::DoSearchFiles(ThreadRequest* req)
@@ -243,6 +257,11 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
     // Process single lines
     int lineNumber = 1;
     if(!wxFileName::FileExists(fileName)) {
+        return;
+    }
+
+    // ignore binary executables
+    if(FileUtils::IsBinaryExecutable(fileName)) {
         return;
     }
 

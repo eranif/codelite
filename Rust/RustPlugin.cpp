@@ -345,16 +345,18 @@ void RustPlugin::OnWorkspaceLoaded(clWorkspaceEvent& event)
         if(cargo_toml.FileExists()) {
             m_cargoTomlFile = cargo_toml;
         } else {
-            // try one directory below
-            clFilesScanner scanner;
-            scanner.Scan(workspaceFile.GetPath(), "*.toml", wxEmptyString, wxEmptyString,
-                         [&](const wxString& path) -> bool {
-                             if(path.Contains("Cargo.toml")) {
-                                 m_cargoTomlFile = path;
-                                 return false;
-                             }
-                             return true;
-                         });
+            // We might placed our Cargo.toml in one of the children folers (1 level below)
+            // check them
+            wxArrayString dirs;
+            wxDir::GetAllFiles(workspaceFile.GetPath(), &dirs, wxEmptyString, wxDIR_DIRS | wxDIR_NO_FOLLOW);
+            for(const auto& dir : dirs) {
+                cargo_toml = wxFileName(workspaceFile.GetPath(), "Cargo.toml");
+                cargo_toml.AppendDir(dir);
+                if(cargo_toml.FileExists()) {
+                    m_cargoTomlFile = cargo_toml;
+                    break;
+                }
+            }
         }
     }
     clDEBUG() << "Cargo.toml file found:" << m_cargoTomlFile << endl;

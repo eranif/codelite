@@ -533,6 +533,7 @@ void FindReplaceData::FromJSON(const JSONItem& json)
     m_encoding = json.namedObject("m_encoding").toString(m_encoding);
     m_fileMask = json.namedObject("m_fileMask").toArrayString();
     m_selectedMask = json.namedObject("m_selectedMask").toString(m_selectedMask);
+    m_file_scanner_flags = json.namedObject("m_file_scanner_flags").toSize_t(m_file_scanner_flags);
 
     long max_value = clConfig::Get().Read(kConfigMaxItemsInFindReplaceDialog, 15);
     TruncateArray(m_replaceString, (size_t)max_value);
@@ -554,6 +555,7 @@ JSONItem FindReplaceData::ToJSON() const
     element.addProperty("m_encoding", m_encoding);
     element.addProperty("m_fileMask", m_fileMask);
     element.addProperty("m_selectedMask", m_selectedMask);
+    element.addProperty("m_file_scanner_flags", m_file_scanner_flags);
     return element;
 }
 

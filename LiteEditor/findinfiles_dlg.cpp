@@ -33,16 +33,12 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* boxSizer132 = new wxBoxSizer(wxHORIZONTAL);
     m_panelMainPanel->SetSizer(boxSizer132);
 
-    wxBoxSizer* boxSizer95 = new wxBoxSizer(wxVERTICAL);
-
-    boxSizer132->Add(boxSizer95, 1, wxEXPAND, WXC_FROM_DIP(5));
-
     wxFlexGridSizer* fgSizer41 = new wxFlexGridSizer(0, 3, 0, 0);
     fgSizer41->SetFlexibleDirection(wxBOTH);
     fgSizer41->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     fgSizer41->AddGrowableCol(1);
 
-    boxSizer95->Add(fgSizer41, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer132->Add(fgSizer41, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText1 = new wxStaticText(m_panelMainPanel, wxID_ANY, _("Find :"), wxDefaultPosition,
                                      wxDLG_UNIT(m_panelMainPanel, wxSize(-1, -1)), 0);
@@ -151,14 +147,15 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
 
     fgSizer41->Add(m_cancel, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer169 = new wxBoxSizer(wxHORIZONTAL);
+    wxGridBagSizer* gridBagSizer174 = new wxGridBagSizer(0, 0);
 
-    boxSizer7->Add(boxSizer169, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer7->Add(gridBagSizer174, 0, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer170 =
         new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Options:")), wxHORIZONTAL);
 
-    boxSizer169->Add(staticBoxSizer170, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    gridBagSizer174->Add(staticBoxSizer170, wxGBPosition(0, 0), wxGBSpan(1, 2), wxALL | wxEXPAND | wxALIGN_LEFT,
+                         WXC_FROM_DIP(5));
 
     m_matchCase = new wxCheckBox(this, wxID_ANY, _("Case"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_matchCase->SetValue(false);
@@ -196,10 +193,29 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
 
     staticBoxSizer170->Add(m_checkBoxSaveFilesBeforeSearching, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    wxStaticBoxSizer* staticBoxSizer175 =
+        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("File System:")), wxHORIZONTAL);
+
+    gridBagSizer174->Add(staticBoxSizer175, wxGBPosition(1, 0), wxGBSpan(1, 1), wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxFollowSymlinks =
+        new wxCheckBox(this, wxID_ANY, _("Symlinks"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxFollowSymlinks->SetValue(false);
+    m_checkBoxFollowSymlinks->SetToolTip(_("When enabled, follow symbolic links folders"));
+
+    staticBoxSizer175->Add(m_checkBoxFollowSymlinks, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_checkBoxIncludeHiddenFolders =
+        new wxCheckBox(this, wxID_ANY, _("Hidden folders"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxIncludeHiddenFolders->SetValue(false);
+    m_checkBoxIncludeHiddenFolders->SetToolTip(_("Search in hidden folders"));
+
+    staticBoxSizer175->Add(m_checkBoxIncludeHiddenFolders, 0, wxALL, WXC_FROM_DIP(5));
+
     wxStaticBoxSizer* staticBoxSizer171 =
         new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Presets:")), wxHORIZONTAL);
 
-    boxSizer169->Add(staticBoxSizer171, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    gridBagSizer174->Add(staticBoxSizer171, wxGBPosition(1, 1), wxGBSpan(1, 1), wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxTODO = new wxCheckBox(this, wxID_ANY, _("TODO"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxTODO->SetValue(false);
@@ -211,7 +227,7 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_checkBoxATTN->SetValue(false);
     m_checkBoxATTN->SetToolTip(_("Search for ATTN patterns in the code\nThis options enables regular expression"));
 
-    staticBoxSizer171->Add(m_checkBoxATTN, 0, wxALL, WXC_FROM_DIP(5));
+    staticBoxSizer171->Add(m_checkBoxATTN, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_checkBoxBUG = new wxCheckBox(this, wxID_ANY, _("BUG"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxBUG->SetValue(false);
@@ -224,7 +240,9 @@ FindInFilesDialogBase::FindInFilesDialogBase(wxWindow* parent, wxWindowID id, co
     m_checkBoxFIXME->SetValue(false);
     m_checkBoxFIXME->SetToolTip(_("Search for FIXME patterns in the code\nThis options enables regular expression"));
 
-    staticBoxSizer171->Add(m_checkBoxFIXME, 0, wxALL, WXC_FROM_DIP(5));
+    staticBoxSizer171->Add(m_checkBoxFIXME, 1, wxALL, WXC_FROM_DIP(5));
+    gridBagSizer174->AddGrowableCol(0);
+    gridBagSizer174->AddGrowableCol(1);
 
     SetName(wxT("FindInFilesDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

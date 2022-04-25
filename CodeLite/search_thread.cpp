@@ -87,6 +87,7 @@ SearchData& SearchData::Copy(const SearchData& other)
     m_excludePatterns.insert(m_excludePatterns.end(), other.m_excludePatterns.begin(), other.m_excludePatterns.end());
     m_files.clear();
     m_files.reserve(other.m_files.size());
+    m_file_scanner_flags = other.m_file_scanner_flags;
     for(size_t i = 0; i < other.m_files.size(); ++i) {
         m_files.Add(other.m_files.Item(i).c_str());
     }

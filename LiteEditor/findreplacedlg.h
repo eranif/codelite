@@ -25,6 +25,7 @@
 #ifndef FIND_REPLACE_DLG_H
 #define FIND_REPLACE_DLG_H
 
+#include "clFilesCollector.h"
 #include "cl_config.h"
 
 #include <wx/dialog.h>
@@ -77,6 +78,7 @@ class FindReplaceData : public clConfigItem
     wxString m_encoding;
     wxArrayString m_fileMask;
     wxString m_selectedMask;
+    size_t m_file_scanner_flags = clFilesScanner::SF_DEFAULT;
 
 protected:
     void TruncateArray(wxArrayString& arr, size_t maxSize);
@@ -94,6 +96,9 @@ public:
     virtual JSONItem ToJSON() const;
     FindReplaceData();
     virtual ~FindReplaceData() {}
+
+    void SetFileScannerFlags(size_t f) { m_file_scanner_flags = f; }
+    size_t GetFileScannerFlags() const { return m_file_scanner_flags; }
 
     wxString GetFindString() const;
     wxString GetReplaceString() const;

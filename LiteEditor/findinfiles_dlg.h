@@ -21,6 +21,7 @@
 #include <wx/arrstr.h>
 #include "clThemedComboBox.hpp"
 #include <wx/button.h>
+#include <wx/gbsizer.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
 #include <wx/checklst.h>
@@ -65,6 +66,8 @@ protected:
     wxCheckBox* m_regualrExpression;
     wxCheckBox* m_checkBoxPipeForGrep;
     wxCheckBox* m_checkBoxSaveFilesBeforeSearching;
+    wxCheckBox* m_checkBoxFollowSymlinks;
+    wxCheckBox* m_checkBoxIncludeHiddenFolders;
     wxCheckBox* m_checkBoxTODO;
     wxCheckBox* m_checkBoxATTN;
     wxCheckBox* m_checkBoxBUG;
@@ -106,6 +109,8 @@ public:
     wxCheckBox* GetRegualrExpression() { return m_regualrExpression; }
     wxCheckBox* GetCheckBoxPipeForGrep() { return m_checkBoxPipeForGrep; }
     wxCheckBox* GetCheckBoxSaveFilesBeforeSearching() { return m_checkBoxSaveFilesBeforeSearching; }
+    wxCheckBox* GetCheckBoxFollowSymlinks() { return m_checkBoxFollowSymlinks; }
+    wxCheckBox* GetCheckBoxIncludeHiddenFolders() { return m_checkBoxIncludeHiddenFolders; }
     wxCheckBox* GetCheckBoxTODO() { return m_checkBoxTODO; }
     wxCheckBox* GetCheckBoxATTN() { return m_checkBoxATTN; }
     wxCheckBox* GetCheckBoxBUG() { return m_checkBoxBUG; }

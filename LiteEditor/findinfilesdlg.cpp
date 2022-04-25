@@ -26,6 +26,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FindInFilesLocationsDlg.h"
+#include "clFilesCollector.h"
 #include "clWorkspaceManager.h"
 #include "dirpicker.h"
 #include "event_notifier.h"
@@ -248,6 +249,19 @@ SearchData FindInFilesDialog::DoGetSearchData()
     data.SetSkipStrings(flags & wxFRD_SKIP_STRINGS);
     data.SetColourComments(flags & wxFRD_COLOUR_COMMENTS);
     data.SetEnablePipeSupport(flags & wxFRD_ENABLE_PIPE_SUPPORT);
+
+    size_t search_flags = clFilesScanner::SF_DEFAULT;
+    if(m_checkBoxFollowSymlinks->IsChecked()) {
+        search_flags &= ~clFilesScanner::SF_DONT_FOLLOW_SYMLINKS;
+    }
+    if(m_checkBoxIncludeHiddenFolders->IsChecked()) {
+        search_flags &= ~clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS;
+    }
+    data.SetFileScannerFlags(search_flags);
+
+    // for persisntency
+    m_data.SetFileScannerFlags(search_flags);
+
     wxArrayString searchWhere = GetPathsAsArray();
     wxArrayString files;
     wxArrayString rootDirs;

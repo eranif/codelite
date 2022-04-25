@@ -1912,24 +1912,17 @@ void ContextCpp::AutoAddComment()
 
                     // Join the lines back
                     wxString doxyBlock = ::clJoinLinesWithEOL(lines, rCtrl.GetEOL());
+                    int where = doxyBlock.Find('|');
+                    if(where == wxNOT_FOUND) {
+                        where = startPos;
+                    } else {
+                        where += startPos; // we are removing the marker from the string, hence the -1
+                    }
+
                     doxyBlock.Replace("|", ""); // Remove any marker position
                     rCtrl.SetSelection(startPos, curpos);
                     rCtrl.ReplaceSelection(doxyBlock);
-
-                    // Try to place the caret after the @brief
-                    wxRegEx reBrief("[@\\]brief[ \t]*");
-                    if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
-                        wxString match = reBrief.GetMatch(doxyBlock);
-                        // Get the index
-                        int where = doxyBlock.Find(match);
-                        if(where != wxNOT_FOUND) {
-                            where += match.length();
-                            int caretPos = startPos + where;
-                            rCtrl.SetCaretAt(caretPos);
-                        }
-                    } else {
-                        rCtrl.SetCaretAt(startPos);
-                    }
+                    rCtrl.SetCaretAt(where);
                     return;
                 }
             }

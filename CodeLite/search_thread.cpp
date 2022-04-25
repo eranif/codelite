@@ -25,15 +25,18 @@
 #include "search_thread.h"
 
 #include "clFilesCollector.h"
+#include "clWildMatch.hpp"
 #include "dirtraverser.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "macros.h"
-#include "wx/event.h"
 
 #include <algorithm>
 #include <iostream>
 #include <set>
 #include <wx/dir.h>
+#include <wx/event.h>
+#include <wx/stopwatch.h>
 #if wxUSE_GUI
 #include <wx/fontmap.h>
 #endif
@@ -157,6 +160,8 @@ void SearchThread::ProcessRequest(ThreadRequest* req)
 
 void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
 {
+    wxStopWatch sw;
+    clDEBUG() << "Building list of files ..." << endl;
     wxStringSet_t scannedFiles;
 
     const wxArrayString& rootDirs = data->GetRootDirs();
@@ -165,33 +170,46 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
     // Populate "scannedFiles" with list of files to scan
     scannedFiles.insert(files.begin(), files.end());
     files.reserve(5000);
+    clDEBUG() << "Scanning directories..." << endl;
+    sw.Start();
+
+    clFileExtensionMatcher ext_matcher{ data->GetExtensions() };
+    clPathExcluder path_excluder{ wxJoin(data->GetExcludePatterns(), ';') };
 
     wxStringSet_t visited_dirs;
     for(size_t i = 0; i < rootDirs.size(); ++i) {
+        clDEBUG() << "    scanning root directory:" << rootDirs.Item(i) << endl;
         // collect only unique files that are matching the pattern
-        auto on_file = [&](const wxString& fullpath) {
-            const wxArrayString& excludePatterns = data->GetExcludePatterns();
-            const wxString& mask = data->GetExtensions();
-            if(scannedFiles.insert(fullpath).second && FileUtils::WildMatch(mask, fullpath) &&
-               !FileUtils::WildMatch(excludePatterns, fullpath)) {
-                files.Add(fullpath);
+        auto on_files = [&](const wxArrayString& paths) {
+            files.reserve(files.size() + paths.size());
+            for(const wxString& fullpath : paths) {
+                if(scannedFiles.insert(fullpath).second && ext_matcher.matches(fullpath)) {
+                    files.Add(fullpath);
+                }
             }
         };
 
         // do not traverse into excluded directories or directories that
         // we already visited
         auto on_folder = [&](const wxString& fullpath) -> bool {
-            const wxArrayString& excludePatterns = data->GetExcludePatterns();
-            return visited_dirs.insert(fullpath).second && !FileUtils::WildMatch(excludePatterns, fullpath);
+            return visited_dirs.insert(fullpath).second && !path_excluder.is_exclude_path(fullpath);
         };
 
         // make sure it's really a dir (not a fifo, etc.)
         clFilesScanner scanner;
-        scanner.ScanWithCallbacks(rootDirs.Item(i), on_folder, on_file);
+        scanner.ScanWithCallbacks(rootDirs.Item(i), on_folder, on_files, data->GetFileScannerFlags());
+        clDEBUG() << "    scanning root directory:" << rootDirs.Item(i) << "..done" << endl;
     }
 
+    wxString duration;
+    duration << sw.Time() / 1000 << "." << sw.Time() % 1000;
+    clDEBUG() << "Scanning directories... done (" << duration << ")" << endl;
+    clDEBUG() << "Found" << files.size() << "files" << endl;
+
     // sort the files found
+    clDEBUG() << "Sorting the matches..." << endl;
     files.Sort([](const wxString& f1, const wxString& f2) -> int { return f1.CmpNoCase(f2); });
+    clDEBUG() << "Sorting the matches... done" << endl;
 }
 
 void SearchThread::DoSearchFiles(ThreadRequest* req)

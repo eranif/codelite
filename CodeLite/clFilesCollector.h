@@ -26,6 +26,13 @@ public:
         kIsSymlink = (1 << 3),
     };
 
+    enum eSearchFlags {
+        SF_NONE = 0,
+        SF_EXCLUDE_HIDDEN_DIRS = (1 << 0),
+        SF_DONT_FOLLOW_SYMLINKS = (1 << 1),
+        SF_DEFAULT = SF_EXCLUDE_HIDDEN_DIRS | SF_DONT_FOLLOW_SYMLINKS,
+    };
+
 public:
     clFilesScanner();
     virtual ~clFilesScanner();
@@ -67,7 +74,7 @@ public:
      * @param on_file_cb called when a file is found.
      */
     void ScanWithCallbacks(const wxString& rootFolder, std::function<bool(const wxString&)>&& on_folder_cb,
-                           std::function<void(const wxString&)>&& on_file_cb);
+                           std::function<void(const wxArrayString&)>&& on_file_cb, size_t search_flags = SF_DEFAULT);
 };
 
 #endif // CLFILESCOLLECTOR_H

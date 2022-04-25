@@ -227,49 +227,75 @@ size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder, clFilesScanner:
     return results.size();
 }
 
+#ifdef __WXMSW__
+#define DIR_SEPARATOR "\\"
+#else
+#define DIR_SEPARATOR "/"
+#endif
+
 void clFilesScanner::ScanWithCallbacks(const wxString& rootFolder, std::function<bool(const wxString&)>&& on_folder_cb,
-                                       std::function<void(const wxString&)>&& on_file_cb)
+                                       std::function<void(const wxArrayString&)>&& on_file_cb, size_t search_flags)
 {
     if(!wxFileName::DirExists(rootFolder)) {
         clDEBUG() << "clFilesScanner: No such directory:" << rootFolder << clEndl;
         return;
     }
 
-    std::queue<wxString> Q;
+    std::vector<wxString> Q;
     std::unordered_set<wxString> Visited;
 
-    Q.push(FileUtils::RealPath(rootFolder));
+    Q.push_back(FileUtils::RealPath(rootFolder));
     Visited.insert(FileUtils::RealPath(rootFolder));
 
     while(!Q.empty()) {
         wxString dirpath = Q.front();
-        Q.pop();
+        Q.erase(Q.begin());
 
         wxDir dir(dirpath);
         if(!dir.IsOpened()) {
             continue;
         }
 
+        // container for the files found
+        wxArrayString files;
+        files.reserve(1000);
+
         wxString filename;
         bool cont = dir.GetFirst(&filename);
         while(cont) {
             // Check to see if this is a folder
             wxString fullpath;
-            fullpath << dir.GetNameWithSep() << filename;
+            fullpath << dirpath << DIR_SEPARATOR << filename;
+
             bool isDirectory = wxFileName::DirExists(fullpath);
             bool isFile = !isDirectory;
             if(isDirectory) {
+                // A hidden folder?
+                if((search_flags & SF_EXCLUDE_HIDDEN_DIRS) && FileUtils::IsHidden(fullpath)) {
+                    cont = dir.GetNext(&filename);
+                    continue;
+                }
+
+                // A symlink?
+                if((search_flags & SF_DONT_FOLLOW_SYMLINKS) && FileUtils::IsSymlink(fullpath)) {
+                    cont = dir.GetNext(&filename);
+                    continue;
+                }
+
                 if(on_folder_cb(fullpath)) {
                     // Traverse into this folder
                     wxString real_path = FileUtils::RealPath(fullpath);
                     if(Visited.insert(real_path).second) {
-                        Q.push(fullpath);
+                        Q.push_back(fullpath);
                     }
                 }
             } else if(isFile) {
-                on_file_cb(fullpath);
+                files.Add(fullpath);
             }
             cont = dir.GetNext(&filename);
         }
+
+        // notify about this batch of files
+        on_file_cb(files);
     }
 }

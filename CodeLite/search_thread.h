@@ -26,12 +26,14 @@
 #define SEARCH_THREAD_H
 
 #include "JSON.h"
+#include "clFilesCollector.h"
 #include "codelite_exports.h"
 #include "singleton.h"
 #include "worker_thread.h"
 #include "wx/event.h"
 #include "wx/filename.h"
 #include "wxStringHash.h"
+
 #include <deque>
 #include <list>
 #include <map>
@@ -72,6 +74,7 @@ class WXDLLIMPEXP_CL SearchData : public ThreadRequest
     wxEvtHandler* m_owner;
     wxString m_encoding;
     wxArrayString m_excludePatterns;
+    size_t m_file_scanner_flags = clFilesScanner::SF_DONT_FOLLOW_SYMLINKS | clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS;
     friend class SearchThread;
 
 private:
@@ -106,6 +109,8 @@ public:
     //------------------------------------------
     // Setters / Getters
     //------------------------------------------
+    size_t GetFileScannerFlags() const { return m_file_scanner_flags; }
+    void SetFileScannerFlags(size_t flags) { m_file_scanner_flags = flags; }
     bool IsMatchCase() const { return m_flags & wxSD_MATCHCASE ? true : false; }
     bool IsEnablePipeSupport() const { return m_flags & wxSD_ENABLE_PIPE_SUPPORT; }
     void SetEnablePipeSupport(bool b) { SetOption(wxSD_ENABLE_PIPE_SUPPORT, b); }

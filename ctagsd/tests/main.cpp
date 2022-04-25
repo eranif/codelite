@@ -10,6 +10,7 @@
 #include "SimpleTokenizer.hpp"
 #include "clFilesCollector.h"
 #include "clTempFile.hpp"
+#include "clWildMatch.hpp"
 #include "ctags_manager.h"
 #include "fileutils.h"
 #include "macros.h"
@@ -1517,6 +1518,44 @@ int main(int argc, char** argv)
 {
     wxInitializer initializer(argc, argv);
     wxLogNull NOLOG;
+#if 0
+    clFileExtensionMatcher ext_matcher{ "*.rs" };
+    // clPathExcluder path_excluder{ "*/build" };
+    clPathExcluder path_excluder{ wxEmptyString };
+
+    wxArrayString files;
+    wxStringSet_t visited_dirs;
+    wxStringSet_t scannedFiles;
+    wxArrayString rootDirs;
+    rootDirs.Add("/home/ANT.AMAZON.COM/eifrah/workplace/ElastiCacheProxyRust/src/ElastiCacheProxyRust");
+    for(size_t i = 0; i < rootDirs.size(); ++i) {
+        // collect only unique files that are matching the pattern
+        auto on_file = [&](const wxArrayString& paths) {
+            for(const auto& fullpath : paths) {
+                if(scannedFiles.insert(fullpath).second && ext_matcher.matches(fullpath)) {
+                    files.Add(fullpath);
+                }
+            }
+        };
+
+        // do not traverse into excluded directories or directories that
+        // we already visited
+        auto on_folder = [&](const wxString& fullpath) -> bool {
+            if(!visited_dirs.insert(fullpath).second) {
+                return false;
+            }
+            return !path_excluder.is_exclude_path(fullpath);
+        };
+
+        // make sure it's really a dir (not a fifo, etc.)
+        clFilesScanner scanner;
+        scanner.ScanWithCallbacks(rootDirs.Item(i), on_folder, on_file,
+                                  clFilesScanner::SF_DONT_FOLLOW_SYMLINKS | clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS);
+    }
+
+    cout << "found: " << files.size() << " files" << endl;
+    return 0;
+#endif
 
     // ensure that the user data dir exists
     wxFileName::Mkdir(clStandardPaths::Get().GetUserDataDir(), wxPosixPermissions::wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);

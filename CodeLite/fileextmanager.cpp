@@ -281,7 +281,7 @@ bool FileExtManager::IsCxxFile(const wxString& filename)
 
 bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType)
 {
-    clDEBUG() << "Using file content to determine its type. File:" << filename << endl;
+    clDEBUG1() << "Using file content to determine its type. File:" << filename << endl;
     wxString fileContent;
     if(!FileUtils::ReadBufferFromFile(filename, fileContent, 1024)) {
         clWARNING() << "Failed to read file's content" << endl;
@@ -290,9 +290,9 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
 
     for(size_t i = 0; i < m_matchers.size(); ++i) {
         if(m_matchers[i].Matches(fileContent)) {
-            clDEBUG() << "file:" << filename << "is of type:" << m_matchers[i].m_fileType << endl;
+            clDEBUG1() << "file:" << filename << "is of type:" << m_matchers[i].m_fileType << endl;
             if(m_matchers[i].m_regex) {
-                clDEBUG() << "Matching part is:" << m_matchers[i].m_regex->GetMatch(fileContent, 0) << endl;
+                clDEBUG1() << "Matching part is:" << m_matchers[i].m_regex->GetMatch(fileContent, 0) << endl;
             }
             fileType = m_matchers[i].m_fileType;
             return true;

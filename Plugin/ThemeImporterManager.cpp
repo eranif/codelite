@@ -71,9 +71,9 @@ wxString ThemeImporterManager::Import(const wxString& theme_file)
     // we add all or nothing
     wxString name;
     vector<LexerConf::Ptr_t> lexers;
-    ThemeImporterBase::List_t::iterator iter = m_importers.begin();
-    for(; iter != m_importers.end(); ++iter) {
-        auto lexer = (*iter)->Import(theme_file);
+    lexers.reserve(m_importers.size());
+    for(auto importer : m_importers) {
+        auto lexer = importer->Import(theme_file);
         if(!lexer) {
             return wxEmptyString;
         }
@@ -81,6 +81,7 @@ wxString ThemeImporterManager::Import(const wxString& theme_file)
         if(name.empty()) {
             name = lexer->GetThemeName();
         }
+        lexers.emplace_back(lexer);
     }
 
     // add the lexers

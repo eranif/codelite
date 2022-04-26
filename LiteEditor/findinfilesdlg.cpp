@@ -154,6 +154,9 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, FindReplaceData& data, wx
         m_comboBoxEncoding->SetSelection(selection);
     }
 
+    m_checkBoxFollowSymlinks->SetValue(!(m_data.GetFileScannerFlags() & clFilesScanner::SF_DONT_FOLLOW_SYMLINKS));
+    m_checkBoxIncludeHiddenFolders->SetValue(!(m_data.GetFileScannerFlags() & clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS));
+
     // Set the file mask
     DoSetFileMask();
     SetName("FindInFilesDialog");
@@ -619,6 +622,15 @@ void FindInFilesDialog::BuildFindReplaceData()
     // store the "Where"
     wxArrayString where_arr = GetComboBoxStrings(m_comboBoxWhere);
     m_data.SetWhereOptions(where_arr);
+
+    size_t search_flags = clFilesScanner::SF_DEFAULT;
+    if(m_checkBoxFollowSymlinks->IsChecked()) {
+        search_flags &= ~clFilesScanner::SF_DONT_FOLLOW_SYMLINKS;
+    }
+    if(m_checkBoxIncludeHiddenFolders->IsChecked()) {
+        search_flags &= ~clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS;
+    }
+    m_data.SetFileScannerFlags(search_flags);
 }
 
 void FindInFilesDialog::SetFileMask(const wxString& mask)

@@ -68,13 +68,23 @@ ThemeImporterManager::~ThemeImporterManager() {}
 
 wxString ThemeImporterManager::Import(const wxString& theme_file)
 {
+    // we add all or nothing
     wxString name;
+    vector<LexerConf::Ptr_t> lexers;
     ThemeImporterBase::List_t::iterator iter = m_importers.begin();
     for(; iter != m_importers.end(); ++iter) {
         auto lexer = (*iter)->Import(theme_file);
+        if(!lexer) {
+            return wxEmptyString;
+        }
+
         if(name.empty()) {
             name = lexer->GetThemeName();
         }
+    }
+
+    // add the lexers
+    for(auto lexer : lexers) {
         ColoursAndFontsManager::Get().AddLexer(lexer);
     }
     return name;

@@ -709,6 +709,11 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
 
         wxBusyCursor bc;
         wxString theme_name = ColoursAndFontsManager::Get().ImportEclipseTheme(path);
+        if(theme_name.empty()) {
+            ::wxMessageBox(_("Failed to import theme file: ") + path + _("\nInvalid file"), "CodeLite",
+                           wxICON_WARNING | wxOK | wxOK_DEFAULT, this);
+            return;
+        }
 
         wxString message;
         message << _("Theme : '") << theme_name << _("' imported successfully!");

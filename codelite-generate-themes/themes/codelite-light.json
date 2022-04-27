@@ -1,0 +1,57 @@
+{
+ "type": "dark",
+ "name": "CodeLite Light",
+ "colors": {
+  "editor.background": "#faf1dc",
+  "editor.foreground": "#343b58"
+ },
+ "tokenColors": [{
+   "scope": "comment",
+   "settings": {
+    "foreground": "#8ca6a6",
+    "fontStyle": ""
+   }
+  },{
+   "scope": "comments",
+   "settings": {
+    "foreground": "#9995b7",
+    "fontStyle": ""
+   }
+  }, {
+   "scope": "constant.numeric",
+   "settings": {
+    "foreground": "#5842ff",
+    "fontStyle": ""
+   }
+  }, {
+   "scope": "string",
+   "settings": {
+    "foreground": "#00b368",
+    "fontStyle": ""
+   }
+  }, {
+   "scope": "keyword",
+   "settings": {
+    "foreground": "#ff5792",
+    "fontStyle": ""
+   }
+  }, {
+   "scope": "class",
+   "settings": {
+    "foreground": "#0094f0",
+    "fontStyle": ""
+   }
+  }, {
+   "scope": "entity.name.function",
+   "settings": {
+    "foreground": "#e64100",
+    "fontStyle": ""
+   }
+  }, {
+   "scope": "variable",
+   "settings": {
+    "foreground": "#f49725",
+    "fontStyle": ""
+   }
+  }]
+}

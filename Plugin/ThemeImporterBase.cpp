@@ -318,7 +318,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
     // token colours
     GetVSCodeColour(tokenColoursMap, { "comment", "comments" }, m_singleLineComment);
-    GetVSCodeColour(tokenColoursMap, { "comment", "comments" }, m_multiLineComment);
+    GetVSCodeColour(tokenColoursMap, { "comments", "comment" }, m_multiLineComment);
     GetVSCodeColour(tokenColoursMap, { "constant.numeric" }, m_number);
     GetVSCodeColour(tokenColoursMap, { "string" }, m_string);
     GetVSCodeColour(tokenColoursMap, { "punctuation" }, m_oper);

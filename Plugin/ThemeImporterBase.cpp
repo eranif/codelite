@@ -302,12 +302,23 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
     AddBaseProperties(lexer, m_langName, wxString::Format("%d", langId));
 
     // read the base properties
+    m_editor = {};
     GetEditorVSCodeColour(colours, "editor.background", "editor.foreground", m_editor);
+    // in case no fg colour provided, guess it
+    if(m_editor.fg_colour.empty()) {
+        if(DrawingUtils::IsDark(m_editor.bg_colour)) {
+            // if its dark colour, use light text
+            wxColour fg_colour = wxColour("WHITE").ChangeLightness(90);
+            m_editor.fg_colour = fg_colour.GetAsString(wxC2S_HTML_SYNTAX);
+        } else {
+            m_editor.fg_colour = "#000000";
+        }
+    }
+
     m_isDarkTheme = DrawingUtils::IsDark(m_editor.bg_colour);
 
     // set the selection colour
     SetSelectionColour(m_isDarkTheme, m_selection);
-
     GetEditorVSCodeColour(colours, "editor.background", "editorLineNumber.foreground", m_lineNumber);
 
     // read the caret colours

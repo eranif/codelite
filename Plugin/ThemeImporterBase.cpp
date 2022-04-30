@@ -118,10 +118,10 @@ void ThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const wxString
     lexer->SetKeyWords(GetKeywords3(), 3);
     lexer->SetKeyWords(GetKeywords4(), 4);
     lexer->SetFileSpec(GetFileExtensions());
-    lexer->SetWordSetFunctionsIndex(m_functionsIndex);
-    lexer->SetWordSetClassIndex(m_classesIndex);
-    lexer->SetWordSetLocalsIndex(m_localsIndex);
-    lexer->SetWordSetOthersIndex(m_othersIndex);
+    lexer->SetWordSetFunctionsIndex(GetFunctionWordSetIndex());
+    lexer->SetWordSetClassIndex(GetClassWordSetIndex());
+    lexer->SetWordSetLocalsIndex(GetLocalsSetIndex());
+    lexer->SetWordSetOthersIndex(GetOthersWordSetIndex());
 }
 
 void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)

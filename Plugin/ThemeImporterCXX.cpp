@@ -42,6 +42,11 @@ ThemeImporterCXX::ThemeImporterCXX()
     // PP definitions
     m_othersIndex = 4;
 
+#ifdef wxSTC_C_WORD3
+    // Local variables
+    m_localsIndex = 6;
+#endif
+
     // Special task markers
     // will be styled with SCE_C_TASKMARKER
     SetKeywords5("TODO FIXME BUG ATTN");
@@ -72,10 +77,13 @@ LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_editor);
     AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string);
     AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Doxygen C++ style comment", m_javadoc);
-    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Doxygen keyword", m_variable);
+    AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Doxygen keyword", m_javadocKeyword);
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Doxygen keyword error", m_javadocKeyword);
     AddProperty(lexer, wxSTC_C_WORD2, "Functions", m_function);
     AddProperty(lexer, wxSTC_C_GLOBALCLASS, "Classes", m_klass);
+#ifdef wxSTC_C_WORD3
+    AddProperty(lexer, wxSTC_C_WORD3, "Variables", m_variable);
+#endif
 
     FinalizeImport(lexer);
     return lexer;

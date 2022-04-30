@@ -88,7 +88,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -308,7 +308,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -582,7 +582,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -748,7 +748,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -802,7 +802,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -1022,7 +1022,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -1188,7 +1188,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -1242,7 +1242,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -1628,7 +1628,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -1682,7 +1682,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -1902,7 +1902,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -2122,7 +2122,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -2288,7 +2288,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -2342,7 +2342,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -2508,7 +2508,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -2562,7 +2562,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -2728,7 +2728,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -2782,7 +2782,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -3608,7 +3608,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -3662,7 +3662,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -5060,7 +5060,7 @@
    }]
  }, {
   "Name": "json",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 120,
   "KeyWords0": "false null true",
@@ -5280,7 +5280,7 @@
    }]
  }, {
   "Name": "json",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 120,
   "KeyWords0": "false null true",
@@ -5660,7 +5660,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -5669,7 +5669,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -5970,7 +5970,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -5979,7 +5979,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -6235,7 +6235,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -6545,7 +6545,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -6590,7 +6590,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -6599,7 +6599,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -6855,7 +6855,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -7165,7 +7165,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -7210,7 +7210,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -7219,7 +7219,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -7785,7 +7785,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -7830,7 +7830,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -7839,7 +7839,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -8095,7 +8095,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -8405,7 +8405,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -8715,7 +8715,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -8760,7 +8760,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -8769,7 +8769,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -9025,7 +9025,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -9070,7 +9070,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -9079,7 +9079,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -9335,7 +9335,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -9380,7 +9380,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -9389,7 +9389,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -10575,7 +10575,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -10620,7 +10620,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -10629,7 +10629,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -12630,7 +12630,7 @@
    }]
  }, {
   "Name": "ruby",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 22,
   "KeyWords0": "BEGIN END __ENCODING__ __FILE__ __LINE__ alias and begin break case class def defined? do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield",
@@ -12940,7 +12940,7 @@
    }]
  }, {
   "Name": "ruby",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 22,
   "KeyWords0": "BEGIN END __ENCODING__ __FILE__ __LINE__ alias and begin break case class def defined? do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield",
@@ -13347,7 +13347,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -13531,7 +13531,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -13899,7 +13899,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -14267,7 +14267,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -14635,7 +14635,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -15187,7 +15187,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -15371,7 +15371,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -15555,7 +15555,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -16291,7 +16291,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -17482,7 +17482,7 @@
    }]
  }, {
   "Name": "yaml",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 48,
   "KeyWords0": "",
@@ -17666,7 +17666,7 @@
    }]
  }, {
   "Name": "yaml",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 48,
   "KeyWords0": "",
@@ -17992,7 +17992,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -18212,7 +18212,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -18652,7 +18652,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -19092,7 +19092,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -19532,7 +19532,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -20192,7 +20192,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -20412,7 +20412,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -20632,7 +20632,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -21512,7 +21512,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -22910,7 +22910,7 @@
    }]
  }, {
   "Name": "dockerfile",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 62,
   "KeyWords0": "ADD ARG CMD COPY ENTRYPOINT ENV EXPOSE FROM LABEL MAINTAINER ONBUILD RUN STOPSIGNAL USER VOLUME WORKDIR awk bzip cat cd chmod cp do done echo else fi find for grep gunzip gzip if in ls mkdir mv print printf pwd rm rmdir switch tar then touch while xargs zip",
@@ -23130,7 +23130,7 @@
    }]
  }, {
   "Name": "dockerfile",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 62,
   "KeyWords0": "ADD ARG CMD COPY ENTRYPOINT ENV EXPOSE FROM LABEL MAINTAINER ONBUILD RUN STOPSIGNAL USER VOLUME WORKDIR awk bzip cat cd chmod cp do done echo else fi find for grep gunzip gzip if in ls mkdir mv print printf pwd rm rmdir switch tar then touch while xargs zip",
@@ -23447,7 +23447,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -23712,7 +23712,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -24242,7 +24242,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -24772,7 +24772,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -25302,7 +25302,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -26097,7 +26097,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -26362,7 +26362,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -26627,7 +26627,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -27687,7 +27687,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -29445,7 +29445,7 @@
    }]
  }, {
   "Name": "sql",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 7,
   "KeyWords0": "absolute action add admin after aggregate alias all allocate alter and any are array as asc assertion at authorization before begin binary bit blob boolean both breadth by call cascade cascaded case cast catalog char character check class clob close collate collation column commit completion connect connection constraint constraints constructor continue corresponding create cross cube current current_date current_path current_role current_time current_timestamp current_user cursor cycle data date day deallocate dec decimal declare default deferrable deferred delete depth deref desc describe descriptor destroy destructor deterministic diagnostics dictionary disconnect distinct domain double drop dynamic each else end end-exec equals escape every except exception exec execute exists external false fetch first float for foreign found free from full function general get global go goto grant group grouping having host hour identity if ignore immediate in index indicator initialize initially inner inout input insert int integer intersect interval into is isolation iterate join key language large last lateral leading left less level like limit local localtime localtimestamp locator map match minute modifies modify module month names national natural nchar nclob new next no none not null numeric object of off old on only open operation option or order ordinality out outer output pad parameter parameters partial path postfix precision prefix preorder prepare preserve primary prior privileges procedure public read reads real recursive ref references referencing relative replace restrict result return returns revoke right role rollback rollup routine row rows savepoint schema scope scroll search second section select sequence session session_user set sets size smallint some| space specific specifictype sql sqlexception sqlstate sqlwarning start state statement static structure system_user table temporary terminate than then time timestamp timezone_hour timezone_minute to trailing transaction translation treat trigger true under union unique unknown unnest update usage user using value values varchar variable varying view when whenever where with without work write year zone",
@@ -29710,7 +29710,7 @@
    }]
  }, {
   "Name": "sql",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 7,
   "KeyWords0": "absolute action add admin after aggregate alias all allocate alter and any are array as asc assertion at authorization before begin binary bit blob boolean both breadth by call cascade cascaded case cast catalog char character check class clob close collate collation column commit completion connect connection constraint constraints constructor continue corresponding create cross cube current current_date current_path current_role current_time current_timestamp current_user cursor cycle data date day deallocate dec decimal declare default deferrable deferred delete depth deref desc describe descriptor destroy destructor deterministic diagnostics dictionary disconnect distinct domain double drop dynamic each else end end-exec equals escape every except exception exec execute exists external false fetch first float for foreign found free from full function general get global go goto grant group grouping having host hour identity if ignore immediate in index indicator initialize initially inner inout input insert int integer intersect interval into is isolation iterate join key language large last lateral leading left less level like limit local localtime localtimestamp locator map match minute modifies modify module month names national natural nchar nclob new next no none not null numeric object of off old on only open operation option or order ordinality out outer output pad parameter parameters partial path postfix precision prefix preorder prepare preserve primary prior privileges procedure public read reads real recursive ref references referencing relative replace restrict result return returns revoke right role rollback rollup routine row rows savepoint schema scope scroll search second section select sequence session session_user set sets size smallint some| space specific specifictype sql sqlexception sqlstate sqlwarning start state statement static structure system_user table temporary terminate than then time timestamp timezone_hour timezone_minute to trailing transaction translation treat trigger true under union unique unknown unnest update usage user using value values varchar variable varying view when whenever where with without work write year zone",
@@ -30117,7 +30117,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -30337,7 +30337,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -30777,7 +30777,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -31217,7 +31217,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -31657,7 +31657,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -32317,7 +32317,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -32537,7 +32537,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -32757,7 +32757,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -33637,7 +33637,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -35035,7 +35035,7 @@
    }]
  }, {
   "Name": "script",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 62,
   "KeyWords0": "awk bzip cat cd chmod cp do done echo else exit fi find for function grep gunzip gzip if in local ls mkdir mv print printf pwd return rm rmdir switch tar then touch while xargs zip ",
@@ -35255,7 +35255,7 @@
    }]
  }, {
   "Name": "script",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 62,
   "KeyWords0": "awk bzip cat cd chmod cp do done echo else exit fi find for function grep gunzip gzip if in local ls mkdir mv print printf pwd return rm rmdir switch tar then touch while xargs zip ",
@@ -35644,7 +35644,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -35671,7 +35671,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -35900,7 +35900,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -35927,7 +35927,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -36174,7 +36174,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -36412,7 +36412,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -36430,7 +36430,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -36439,7 +36439,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -36686,7 +36686,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -36924,7 +36924,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -36942,7 +36942,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -36951,7 +36951,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -37436,7 +37436,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -37454,7 +37454,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -37463,7 +37463,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -37710,7 +37710,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -37966,7 +37966,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -38204,7 +38204,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -38222,7 +38222,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -38231,7 +38231,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -38460,7 +38460,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -38478,7 +38478,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -38487,7 +38487,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -38716,7 +38716,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -38734,7 +38734,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -38743,7 +38743,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -39740,7 +39740,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -39758,7 +39758,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -39767,7 +39767,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -41363,7 +41363,7 @@
    }]
  }, {
   "Name": "lua",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 15,
   "KeyWords0": "and do else elseif end false for function if in local nil not or repeat return then true until while",
@@ -41619,7 +41619,7 @@
    }]
  }, {
   "Name": "lua",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 15,
   "KeyWords0": "and do else elseif end false for function if in local nil not or repeat return then true until while",
@@ -42565,7 +42565,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -42821,7 +42821,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -43077,7 +43077,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -43333,7 +43333,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -43845,7 +43845,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -44101,7 +44101,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -44357,7 +44357,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -44613,7 +44613,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -44869,7 +44869,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -45125,7 +45125,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -46149,7 +46149,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -47763,7 +47763,7 @@
    }]
  }, {
   "Name": "java",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 3,
   "KeyWords0": "abstract assert boolean break byte case catch char class const continue default do double else extends final finally float for future generic goto if implements import inner instanceof int interface long native new null outer package private protected public rest return short static super switch synchronized this throw throws transient try var void volatile while",
@@ -48019,7 +48019,7 @@
    }]
  }, {
   "Name": "java",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 3,
   "KeyWords0": "abstract assert boolean break byte case catch char class const continue default do double else extends final finally float for future generic goto if implements import inner instanceof int interface long native new null outer package private protected public rest return short static super switch synchronized this throw throws transient try var void volatile while",
@@ -48408,7 +48408,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -48709,7 +48709,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -49019,7 +49019,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -49311,7 +49311,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -49320,7 +49320,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -49621,7 +49621,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -49913,7 +49913,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -49922,7 +49922,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -50515,7 +50515,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -50524,7 +50524,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -50825,7 +50825,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -51126,7 +51126,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -51418,7 +51418,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -51427,7 +51427,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -51719,7 +51719,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -51728,7 +51728,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -52020,7 +52020,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -52029,7 +52029,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -53224,7 +53224,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -53233,7 +53233,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -55198,7 +55198,7 @@
    }]
  }, {
   "Name": "rust",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 111,
   "KeyWords0": "Self abstract as async await become box break const continue crate do dyn else enum extern false final fn for if impl in let loop macro match mod move mut override priv pub ref return self static struct super trait true try type typeof union unsafe unsized use virtual where while yield",
@@ -55499,7 +55499,7 @@
    }]
  }, {
   "Name": "rust",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 111,
   "KeyWords0": "Self abstract as async await become box break const continue crate do dyn else enum extern false final fn for if impl in let loop macro match mod move mut override priv pub ref return self static struct super trait true try type typeof union unsafe unsized use virtual where while yield",
@@ -60860,7 +60860,7 @@
    }]
  }, {
   "Name": "fortran",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 36,
   "KeyWords0": "access action advance allocatable allocate apostrophe assign assignment associate asynchronous backspace bind blank blockdata call case character class close common complex contains continue cycle data deallocate decimal default delim dimension direct do double doubleprecision dowhile else elseif elsewhere encoding end endassociate endblockdata enddo endfile endforall endfunction endif endinterface endmodule endprogram endselect endsubroutine endtype endwhere entry eor equivalence err errmsg exist exit external file flush fmt forall form format formatted function go goto id if implicit in include inout inquire integer intent interface intrinsic iolength iomsg iostat kind len logical module name named namelist nextrec nml none nullify number only open opened operator optional out pad parameter pass pause pending pointer pos position precision print private program protected public quote read readwrite real rec recl recursive result return rewind save select selectcase selecttype sequential sign size stat status stop stream subroutine target then to type unformatted unit use value volatile wait where while write",
@@ -61080,7 +61080,7 @@
    }]
  }, {
   "Name": "fortran",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 36,
   "KeyWords0": "access action advance allocatable allocate apostrophe assign assignment associate asynchronous backspace bind blank blockdata call case character class close common complex contains continue cycle data deallocate decimal default delim dimension direct do double doubleprecision dowhile else elseif elsewhere encoding end endassociate endblockdata enddo endfile endforall endfunction endif endinterface endmodule endprogram endselect endsubroutine endtype endwhere entry eor equivalence err errmsg exist exit external file flush fmt forall form format formatted function go goto id if implicit in include inout inquire integer intent interface intrinsic iolength iomsg iostat kind len logical module name named namelist nextrec nml none nullify number only open opened operator optional out pad parameter pass pause pending pointer pos position precision print private program protected public quote read readwrite real rec recl recursive result return rewind save select selectcase selecttype sequential sign size stat status stop stream subroutine target then to type unformatted unit use value volatile wait where while write",
@@ -61469,7 +61469,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -61698,7 +61698,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -61882,7 +61882,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -62111,7 +62111,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -62156,7 +62156,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -62340,7 +62340,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -62569,7 +62569,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -62614,7 +62614,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -63027,7 +63027,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -63072,7 +63072,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -63256,7 +63256,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -63485,7 +63485,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -63714,7 +63714,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -63759,7 +63759,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -63943,7 +63943,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -63988,7 +63988,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -64172,7 +64172,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -64217,7 +64217,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -65088,7 +65088,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -65133,7 +65133,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -66567,7 +66567,7 @@
    }]
  }, {
   "Name": "cobraalt",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 2,
   "KeyWords0": "adds all and any as assert base body bool branch break callable catch char class const continue cue decimal def do dynamic each else end ensure enum event every except expect extend false finally float for from get has if ignore implements implies import in inherits inlined int interface invariant is listen lock mixin must namespace new nil not number objc of old or pass passthrough post print pro raise ref require return same set sig stop struct success test this throw to trace true try uint use using var where while yield",
@@ -66796,7 +66796,7 @@
    }]
  }, {
   "Name": "cobraalt",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 2,
   "KeyWords0": "adds all and any as assert base body bool branch break callable catch char class const continue cue decimal def do dynamic each else end ensure enum event every except expect extend false finally float for from get has if ignore implements implies import in inherits inlined int interface invariant is listen lock mixin must namespace new nil not number objc of old or pass passthrough post print pro raise ref require return same set sig stop struct success test this throw to trace true try uint use using var where while yield",
@@ -67194,7 +67194,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -67423,7 +67423,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -67607,7 +67607,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -67836,7 +67836,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -67881,7 +67881,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -68065,7 +68065,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -68294,7 +68294,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -68339,7 +68339,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -68752,7 +68752,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -68797,7 +68797,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -68981,7 +68981,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -69210,7 +69210,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -69439,7 +69439,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -69484,7 +69484,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -69668,7 +69668,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -69713,7 +69713,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -69897,7 +69897,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -69942,7 +69942,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -70813,7 +70813,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -70858,7 +70858,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -72292,7 +72292,7 @@
    }]
  }, {
   "Name": "cobra",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 2,
   "KeyWords0": "abstract adds all and any as assert base body bool branch break callable catch char class const continue cue decimal def do dynamic each else end ensure enum event every except expect extend extern fake false finally float for from get has if ignore implements implies import in inherits inlined inout int interface internal invariant is listen lock mixin must namespace new nil nonvirtual not number objc of old or out override partial pass passthrough post print private pro protected public raise ref require return same set shared sig stop struct success test this throw to to? trace true try uint use using var vari virtual where while yield",
@@ -72521,7 +72521,7 @@
    }]
  }, {
   "Name": "cobra",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 2,
   "KeyWords0": "abstract adds all and any as assert base body bool branch break callable catch char class const continue cue decimal def do dynamic each else end ensure enum event every except expect extend extern fake false finally float for from get has if ignore implements implies import in inherits inlined inout int interface internal invariant is listen lock mixin must namespace new nil nonvirtual not number objc of old or out override partial pass passthrough post print private pro protected public raise ref require return same set shared sig stop struct success test this throw to to? trace true try uint use using var vari virtual where while yield",
@@ -75119,7 +75119,7 @@
    }]
  }, {
   "Name": "text",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 1,
   "KeyWords0": "",
@@ -75222,7 +75222,7 @@
    }]
  }, {
   "Name": "text",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 1,
   "KeyWords0": "",
@@ -80592,7 +80592,7 @@
    }]
  }, {
   "Name": "xml",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 5,
   "KeyWords0": "",
@@ -80821,7 +80821,7 @@
    }]
  }, {
   "Name": "xml",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 5,
   "KeyWords0": "",
@@ -81686,7 +81686,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -81924,7 +81924,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -82162,7 +82162,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -82400,7 +82400,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -82876,7 +82876,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -83114,7 +83114,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -83352,7 +83352,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -83590,7 +83590,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -83828,7 +83828,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -84066,7 +84066,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -85018,7 +85018,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -86524,7 +86524,7 @@
    }]
  }, {
   "Name": "javascript",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 3,
   "KeyWords0": "NaN StringtoString abstract any arguments as boolean break byte case catch char class const constructor continue debugger declare default delete do double else enum eval export extends false final finally float for from function get goto if implements import in instanceof int interface let long module native new null number of package private protected prototype public readonly require return set short static string super switch symbol synchronized this throw throws transient true try type typeof undefined var void volatile while with yield ",
@@ -86762,7 +86762,7 @@
    }]
  }, {
   "Name": "javascript",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 3,
   "KeyWords0": "NaN StringtoString abstract any arguments as boolean break byte case catch char class const constructor continue debugger declare default delete do double else enum eval export extends false final finally float for from function get goto if implements import in instanceof int interface let long module native new null number of package private protected prototype public readonly require return set short static string super switch symbol synchronized this throw throws transient true try type typeof undefined var void volatile while with yield ",
@@ -87214,7 +87214,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -87479,7 +87479,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -87708,7 +87708,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -87973,7 +87973,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -88009,7 +88009,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -88238,7 +88238,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -88503,7 +88503,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -88539,7 +88539,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -89033,7 +89033,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -89069,7 +89069,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -89298,7 +89298,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -89563,7 +89563,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -89828,7 +89828,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -89864,7 +89864,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -90093,7 +90093,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -90129,7 +90129,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -90358,7 +90358,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -90394,7 +90394,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -91418,7 +91418,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -91454,7 +91454,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -93095,7 +93095,7 @@
    }]
  }, {
   "Name": "c++",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 3,
   "KeyWords0": "alignas alignof and and_eq asm auto bitand bitor bool break case catch char char16_t char32_t class compl const const_cast constexpr continue decltype default delete do double dynamic_cast else enum explicit export extern false final float for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq override private protected public register reinterpret_cast return short signed sizeof static static_assert static_cast struct switch template this thread_local throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq ",
@@ -93360,7 +93360,7 @@
    }]
  }, {
   "Name": "c++",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 3,
   "KeyWords0": "alignas alignof and and_eq asm auto bitand bitor bool break case catch char char16_t char32_t class compl const const_cast constexpr continue decltype default delete do double dynamic_cast else enum explicit export extern false final float for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq override private protected public register reinterpret_cast return short signed sizeof static static_assert static_cast struct switch template this thread_local throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq ",
@@ -93794,7 +93794,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -94023,7 +94023,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -94207,7 +94207,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -94436,7 +94436,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -94481,7 +94481,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -94665,7 +94665,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -94894,7 +94894,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -94939,7 +94939,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -95352,7 +95352,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -95397,7 +95397,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -95581,7 +95581,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -95810,7 +95810,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -96039,7 +96039,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -96084,7 +96084,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -96268,7 +96268,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -96313,7 +96313,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -96497,7 +96497,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -96542,7 +96542,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -97413,7 +97413,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -97458,7 +97458,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -98892,7 +98892,7 @@
    }]
  }, {
   "Name": "python",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 2,
   "KeyWords0": "False None True and as assert async await break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return self try while with yield ",
@@ -99121,7 +99121,7 @@
    }]
  }, {
   "Name": "python",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 2,
   "KeyWords0": "False None True and as assert async await break class continue def del elif else except exec finally for from global if import in is lambda not or pass print raise return self try while with yield ",
@@ -99456,7 +99456,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -99465,7 +99465,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -99685,7 +99685,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -99694,7 +99694,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -99968,7 +99968,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -100143,7 +100143,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -100152,7 +100152,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -100197,7 +100197,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -100426,7 +100426,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -100601,7 +100601,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -100610,7 +100610,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -100655,7 +100655,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -101059,7 +101059,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -101068,7 +101068,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -101113,7 +101113,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -101342,7 +101342,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -101571,7 +101571,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -101746,7 +101746,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -101755,7 +101755,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -101800,7 +101800,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -101975,7 +101975,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -101984,7 +101984,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -102029,7 +102029,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -102204,7 +102204,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -102213,7 +102213,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -102258,7 +102258,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -103120,7 +103120,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -103129,7 +103129,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -103174,7 +103174,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -104617,7 +104617,7 @@
    }]
  }, {
   "Name": "cmake",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 80,
   "KeyWords0": "add_custom_command add_custom_target add_definitions add_dependencies add_executable add_library add_subdirectory add_test aux_source_directory build_command build_name cmake_minimum_required configure_file create_test_sourcelist else elseif enable_language enable_testing endforeach endfunction endif endmacro endwhile exec_program execute_process export_library_dependencies file find_file find_library find_package find_path find_program fltk_wrap_ui foreach function get_cmake_property get_directory_property get_filename_component get_source_file_property get_target_property get_test_property if include include_directories include_external_msproject include_regular_expression install install_files install_programs install_targets link_directories link_libraries list load_cache load_command macro make_directory mark_as_advanced math message option output_required_files project qt_wrap_cpp qt_wrap_ui remove remove_definitions separate_arguments set set_directory_properties set_source_files_properties set_target_properties set_tests_properties site_name source_group string subdir_depends subdirs target_link_libraries try_compile try_run unset use_mangled_mesa utility_source variable_requires vtk_make_instantiator vtk_wrap_java vtk_wrap_python vtk_wrap_tcl while write_file",
@@ -104846,7 +104846,7 @@
    }]
  }, {
   "Name": "cmake",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 80,
   "KeyWords0": "add_custom_command add_custom_target add_definitions add_dependencies add_executable add_library add_subdirectory add_test aux_source_directory build_command build_name cmake_minimum_required configure_file create_test_sourcelist else elseif enable_language enable_testing endforeach endfunction endif endmacro endwhile exec_program execute_process export_library_dependencies file find_file find_library find_package find_path find_program fltk_wrap_ui foreach function get_cmake_property get_directory_property get_filename_component get_source_file_property get_target_property get_test_property if include include_directories include_external_msproject include_regular_expression install install_files install_programs install_targets link_directories link_libraries list load_cache load_command macro make_directory mark_as_advanced math message option output_required_files project qt_wrap_cpp qt_wrap_ui remove remove_definitions separate_arguments set set_directory_properties set_source_files_properties set_target_properties set_tests_properties site_name source_group string subdir_depends subdirs target_link_libraries try_compile try_run unset use_mangled_mesa utility_source variable_requires vtk_make_instantiator vtk_wrap_java vtk_wrap_python vtk_wrap_tcl while write_file",
@@ -105181,7 +105181,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -105190,7 +105190,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -105217,7 +105217,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -105262,7 +105262,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -105280,7 +105280,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -105298,7 +105298,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -105334,7 +105334,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -105491,7 +105491,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -105500,7 +105500,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -105527,7 +105527,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -105572,7 +105572,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -105590,7 +105590,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -105608,7 +105608,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -105644,7 +105644,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -106111,7 +106111,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -106120,7 +106120,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -106147,7 +106147,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -106192,7 +106192,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -106210,7 +106210,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -106228,7 +106228,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -106264,7 +106264,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -106731,7 +106731,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -106740,7 +106740,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -106767,7 +106767,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -106812,7 +106812,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -106830,7 +106830,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -106848,7 +106848,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -106884,7 +106884,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -107351,7 +107351,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -107360,7 +107360,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -107387,7 +107387,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -107432,7 +107432,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -107450,7 +107450,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -107468,7 +107468,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -107504,7 +107504,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -108281,7 +108281,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -108290,7 +108290,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -108317,7 +108317,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -108362,7 +108362,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -108380,7 +108380,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -108398,7 +108398,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -108434,7 +108434,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -108591,7 +108591,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -108600,7 +108600,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -108627,7 +108627,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -108672,7 +108672,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -108690,7 +108690,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -108708,7 +108708,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -108744,7 +108744,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -108901,7 +108901,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -108910,7 +108910,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -108937,7 +108937,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -108982,7 +108982,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -109000,7 +109000,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -109018,7 +109018,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -109054,7 +109054,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -110141,7 +110141,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -110150,7 +110150,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -110177,7 +110177,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -110222,7 +110222,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -110240,7 +110240,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -110258,7 +110258,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -110294,7 +110294,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -112205,7 +112205,7 @@
    }]
  }, {
   "Name": "scss",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 38,
   "KeyWords0": "aqua auto background background-attachment background-color background-image background-position background-repeat baseline black blink block blue bold bolder border border-bottom border-bottom-width border-color border-left border-left-width border-right border-right-width border-style border-top border-top-width border-width both bottom capitalize center circle clear color dashed decimal disc display dotted double fixed float font font-family font-size font-style font-variant font-weight fuchsia gray green groove height inline inset inside italic justify large larger left letter-spacing lighter lime line-height line-through list-item list-style list-style-image list-style-position list-style-type lower-alpha lower-roman lowercase margin margin-bottom margin-left margin-right margin-top maroon medium medium middle navy no-repeat no-wrap none normal oblique olive outset outside overline padding padding-bottom padding-left padding-right padding-top pre purple red repeat repeat-x repeat-y ridge right scroll silver small small-caps smaller solid square sub super tealwhite text-align text-bottom text-decoration text-indent text-top text-transform thick thin top transparent underline upper-alpha upper-roman uppercase vertical-align white-space width word-spacing x-large x-small xx-large xx-small yellow",
@@ -112515,7 +112515,7 @@
    }]
  }, {
   "Name": "scss",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 38,
   "KeyWords0": "aqua auto background background-attachment background-color background-image background-position background-repeat baseline black blink block blue bold bolder border border-bottom border-bottom-width border-color border-left border-left-width border-right border-right-width border-style border-top border-top-width border-width both bottom capitalize center circle clear color dashed decimal disc display dotted double fixed float font font-family font-size font-style font-variant font-weight fuchsia gray green groove height inline inset inside italic justify large larger left letter-spacing lighter lime line-height line-through list-item list-style list-style-image list-style-position list-style-type lower-alpha lower-roman lowercase margin margin-bottom margin-left margin-right margin-top maroon medium medium middle navy no-repeat no-wrap none normal oblique olive outset outside overline padding padding-bottom padding-left padding-right padding-top pre purple red repeat repeat-x repeat-y ridge right scroll silver small small-caps smaller solid square sub super tealwhite text-align text-bottom text-decoration text-indent text-top text-transform thick thin top transparent underline upper-alpha upper-roman uppercase vertical-align white-space width word-spacing x-large x-small xx-large xx-small yellow",
@@ -112886,7 +112886,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -112895,7 +112895,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -113138,7 +113138,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -113192,7 +113192,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -113219,7 +113219,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }]
@@ -113286,7 +113286,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -113295,7 +113295,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -113538,7 +113538,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -113592,7 +113592,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -113619,7 +113619,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }]
@@ -114086,7 +114086,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -114095,7 +114095,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -114338,7 +114338,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -114392,7 +114392,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -114419,7 +114419,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }]
@@ -114886,7 +114886,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -114895,7 +114895,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -115138,7 +115138,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -115192,7 +115192,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -115219,7 +115219,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }]
@@ -115686,7 +115686,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -115695,7 +115695,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -115938,7 +115938,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -115992,7 +115992,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -116019,7 +116019,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }]
@@ -116886,7 +116886,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -116895,7 +116895,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -117138,7 +117138,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -117192,7 +117192,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -117219,7 +117219,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }]
@@ -117286,7 +117286,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -117295,7 +117295,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -117538,7 +117538,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -117592,7 +117592,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -117619,7 +117619,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }]
@@ -117686,7 +117686,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -117695,7 +117695,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -117938,7 +117938,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -117992,7 +117992,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -118019,7 +118019,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }]
@@ -119286,7 +119286,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -119295,7 +119295,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -119538,7 +119538,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -119592,7 +119592,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -119619,7 +119619,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }]
@@ -122025,7 +122025,7 @@
    }]
  }, {
   "Name": "php",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 4,
   "KeyWords0": "",
@@ -122425,7 +122425,7 @@
    }]
  }, {
   "Name": "php",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 4,
   "KeyWords0": "",
@@ -122904,7 +122904,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -123061,7 +123061,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -123375,7 +123375,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -123689,7 +123689,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -124003,7 +124003,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -124474,7 +124474,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -124631,7 +124631,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -124788,7 +124788,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -125416,7 +125416,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -126436,7 +126436,7 @@
    }]
  }, {
   "Name": "makefile",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 11,
   "KeyWords0": "",
@@ -126593,7 +126593,7 @@
    }]
  }, {
   "Name": "makefile",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 11,
   "KeyWords0": "",
@@ -132224,7 +132224,7 @@
    }]
  }, {
   "Name": "assembly",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 34,
   "KeyWords0": "aaa aad aam aas adc add and arpl bound bsf bsr bswap bt btc btr bts call callq cbw cdq cflush clc cld cli clts cmc cmova cmovae cmovb cmovbe cmovc cmove cmovg cmovge cmovl cmovle cmovna cmovnae cmovnb cmovnbe cmovnc cmovne cmovng cmovnge cmovnl cmovnle cmovno cmovnp cmovns cmovnz cmovo cmovp cmovpe cmovpo cmovs cmovz cmp cmps cmpsb cmpsd cmpsw cmpxchg cmpxchg486 cmpxchg8b cpuid cwd cwde daa das dec div emms enter esc femms hlt ibts icebp idiv imul in inc ins insb insd insw int int01 int03 int1 int3 into invd invlpg iret iretd iretdf iretf iretw ja jae jb jbe jc jcxz je jecxz jg jge jl jle jmp jna jnae jnb jnbe jnc jne jng jnge jnl jnle jno jnp jns jnz jo jp jpe jpo js jz lahf lar lds lea leave les lfs lgdt lgs lidt lldt lmsw loadall loadall286 lock lods lodsb lodsd lodsw loop loopd loope looped loopew loopne loopned loopnew loopnz loopnzd loopnzw loopw loopz loopzd loopzw lsl lss ltr mov movs movsb movsd movsw movsx movzx mul neg nop not or out outs outsb outsd outsw pop popa popad popaw popf popfd popfw push pusha pushad pushaw pushd pushf pushfd pushfw pushw rcl rcr rdmsr rdpmc rdshr rdtsc rep repe repne repnz repz ret retf retn retq rol ror rsdc rsldt rsm rsts sahf sal salc sar sbb scas scasb scasd scasw seta setae setb setbe setc sete setg setge setl setle setna setnae setnb setnbe setnc setne setng setnge setnl setnle setno setnp setns setnz seto setp setpe setpo sets setz sgdt shl shld shr shrd sidt sldt smi smint smintold smsw stc std sti stos stosb stosd stosw str sub svdc svldt svts syscall sysenter sysexit sysret test ud0 ud1 ud2 umov verr verw wait wbinvd wrmsr wrshr xadd xbts xchg xlat xlatb xor",
@@ -132462,7 +132462,7 @@
    }]
  }, {
   "Name": "assembly",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 34,
   "KeyWords0": "aaa aad aam aas adc add and arpl bound bsf bsr bswap bt btc btr bts call callq cbw cdq cflush clc cld cli clts cmc cmova cmovae cmovb cmovbe cmovc cmove cmovg cmovge cmovl cmovle cmovna cmovnae cmovnb cmovnbe cmovnc cmovne cmovng cmovnge cmovnl cmovnle cmovno cmovnp cmovns cmovnz cmovo cmovp cmovpe cmovpo cmovs cmovz cmp cmps cmpsb cmpsd cmpsw cmpxchg cmpxchg486 cmpxchg8b cpuid cwd cwde daa das dec div emms enter esc femms hlt ibts icebp idiv imul in inc ins insb insd insw int int01 int03 int1 int3 into invd invlpg iret iretd iretdf iretf iretw ja jae jb jbe jc jcxz je jecxz jg jge jl jle jmp jna jnae jnb jnbe jnc jne jng jnge jnl jnle jno jnp jns jnz jo jp jpe jpo js jz lahf lar lds lea leave les lfs lgdt lgs lidt lldt lmsw loadall loadall286 lock lods lodsb lodsd lodsw loop loopd loope looped loopew loopne loopned loopnew loopnz loopnzd loopnzw loopw loopz loopzd loopzw lsl lss ltr mov movs movsb movsd movsw movsx movzx mul neg nop not or out outs outsb outsd outsw pop popa popad popaw popf popfd popfw push pusha pushad pushaw pushd pushf pushfd pushfw pushw rcl rcr rdmsr rdpmc rdshr rdtsc rep repe repne repnz repz ret retf retn retq rol ror rsdc rsldt rsm rsts sahf sal salc sar sbb scas scasb scasd scasw seta setae setb setbe setc sete setg setge setl setle setna setnae setnb setnbe setnc setne setng setnge setnl setnle setno setnp setns setnz seto setp setpe setpo sets setz sgdt shl shld shr shrd sidt sldt smi smint smintold smsw stc std sti stos stosb stosd stosw str sub svdc svldt svts syscall sysenter sysexit sysret test ud0 ud1 ud2 umov verr verw wait wbinvd wrmsr wrshr xadd xbts xchg xlat xlatb xor",
@@ -132779,7 +132779,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -132990,7 +132990,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -133412,7 +133412,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -133834,7 +133834,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -134256,7 +134256,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -134889,7 +134889,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -135100,7 +135100,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -135311,7 +135311,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -136155,7 +136155,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -137553,7 +137553,7 @@
    }]
  }, {
   "Name": "innosetup",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 76,
   "KeyWords0": "_istool code components custommessages dirs files icons ini installdelete langoptions languages messages registry run setup tasks types uninstalldelete uninstallrun",
@@ -137764,7 +137764,7 @@
    }]
  }, {
   "Name": "innosetup",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 76,
   "KeyWords0": "_istool code components custommessages dirs files icons ini installdelete langoptions languages messages registry run setup tasks types uninstalldelete uninstallrun",
@@ -138377,7 +138377,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#6F33A7",
+    "Colour": "#37595D",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -138534,7 +138534,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000000",
+    "Colour": "#000099",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -138691,7 +138691,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#F2F2DF",
     "BgColour": "#3F3F3F",
     "Size": 11
    }, {
@@ -138848,7 +138848,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#A9B7C6",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -139162,7 +139162,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -139319,7 +139319,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#2e3436",
     "Size": 11
    }, {
@@ -139476,7 +139476,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#FFA500",
+    "Colour": "#CD5C5C",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -139633,7 +139633,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -139790,7 +139790,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#D0D0D0",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -139947,7 +139947,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C4C4B7",
+    "Colour": "#BC5A65",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -140575,7 +140575,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#FFFFFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -141586,7 +141586,7 @@
    }]
  }, {
   "Name": "diff",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 16,
   "KeyWords0": "",
@@ -141743,7 +141743,7 @@
    }]
  }, {
   "Name": "diff",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 16,
   "KeyWords0": "",
@@ -141997,7 +141997,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -142145,7 +142145,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -142441,7 +142441,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -142737,7 +142737,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -143033,7 +143033,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -143477,7 +143477,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -143625,7 +143625,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -143773,7 +143773,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -144365,7 +144365,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -145304,7 +145304,7 @@
    }]
  }, {
   "Name": "properties",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 9,
   "KeyWords0": "",
@@ -145452,7 +145452,7 @@
    }]
  }, {
   "Name": "properties",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 9,
   "KeyWords0": "",
@@ -145706,7 +145706,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -145715,7 +145715,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -145742,7 +145742,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -145787,7 +145787,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -145805,7 +145805,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -145823,7 +145823,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -145859,7 +145859,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -146016,7 +146016,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146025,7 +146025,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146052,7 +146052,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146097,7 +146097,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146115,7 +146115,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146133,7 +146133,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146169,7 +146169,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146636,7 +146636,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146645,7 +146645,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146672,7 +146672,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146717,7 +146717,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146735,7 +146735,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146753,7 +146753,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -146789,7 +146789,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -147256,7 +147256,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -147265,7 +147265,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -147292,7 +147292,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -147337,7 +147337,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -147355,7 +147355,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -147373,7 +147373,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -147409,7 +147409,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -147876,7 +147876,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -147885,7 +147885,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -147912,7 +147912,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -147957,7 +147957,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -147975,7 +147975,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -147993,7 +147993,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -148029,7 +148029,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -148806,7 +148806,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -148815,7 +148815,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -148842,7 +148842,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -148887,7 +148887,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -148905,7 +148905,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -148923,7 +148923,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -148959,7 +148959,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -149116,7 +149116,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -149125,7 +149125,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -149152,7 +149152,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -149197,7 +149197,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -149215,7 +149215,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -149233,7 +149233,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -149269,7 +149269,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -149426,7 +149426,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -149435,7 +149435,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -149462,7 +149462,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -149507,7 +149507,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -149525,7 +149525,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -149543,7 +149543,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -149579,7 +149579,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -150666,7 +150666,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -150675,7 +150675,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -150702,7 +150702,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -150747,7 +150747,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -150765,7 +150765,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -150783,7 +150783,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -150819,7 +150819,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -152730,7 +152730,7 @@
    }]
  }, {
   "Name": "css",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 38,
   "KeyWords0": "aqua auto background background-attachment background-color background-image background-position background-repeat baseline black blink block blue bold bolder border border-bottom border-bottom-width border-color border-left border-left-width border-right border-right-width border-style border-top border-top-width border-width both bottom capitalize center circle clear color dashed decimal disc display dotted double fixed float font font-family font-size font-style font-variant font-weight fuchsia gray green groove height inline inset inside italic justify large larger left letter-spacing lighter lime line-height line-through list-item list-style list-style-image list-style-position list-style-type lower-alpha lower-roman lowercase margin margin-bottom margin-left margin-right margin-top maroon medium medium middle navy no-repeat no-wrap none normal oblique olive outset outside overline padding padding-bottom padding-left padding-right padding-top pre purple red repeat repeat-x repeat-y ridge right scroll silver small small-caps smaller solid square sub super tealwhite text-align text-bottom text-decoration text-indent text-top text-transform thick thin top transparent underline upper-alpha upper-roman uppercase vertical-align white-space width word-spacing x-large x-small xx-large xx-small yellow",
@@ -153040,7 +153040,7 @@
    }]
  }, {
   "Name": "css",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 38,
   "KeyWords0": "aqua auto background background-attachment background-color background-image background-position background-repeat baseline black blink block blue bold bolder border border-bottom border-bottom-width border-color border-left border-left-width border-right border-right-width border-style border-top border-top-width border-width both bottom capitalize center circle clear color dashed decimal disc display dotted double fixed float font font-family font-size font-style font-variant font-weight fuchsia gray green groove height inline inset inside italic justify large larger left letter-spacing lighter lime line-height line-through list-item list-style list-style-image list-style-position list-style-type lower-alpha lower-roman lowercase margin margin-bottom margin-left margin-right margin-top maroon medium medium middle navy no-repeat no-wrap none normal oblique olive outset outside overline padding padding-bottom padding-left padding-right padding-top pre purple red repeat repeat-x repeat-y ridge right scroll silver small small-caps smaller solid square sub super tealwhite text-align text-bottom text-decoration text-indent text-top text-transform thick thin top transparent underline upper-alpha upper-roman uppercase vertical-align white-space width word-spacing x-large x-small xx-large xx-small yellow",
@@ -153456,7 +153456,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#C13B3B",
+    "Colour": "#F35151",
     "BgColour": "#282C34",
     "Size": 11
    }, {
@@ -153622,7 +153622,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#986801",
+    "Colour": "#383A42",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -153954,7 +153954,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#000099",
+    "Colour": "#FF5809",
     "BgColour": "#FFFFFF",
     "Size": 11
    }, {
@@ -154286,7 +154286,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2B2B2B",
     "Size": 11
    }, {
@@ -154618,7 +154618,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#2F4F4F",
     "Size": 11
    }, {
@@ -155116,7 +155116,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#1E1E1E",
     "Size": 11
    }, {
@@ -155282,7 +155282,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#101020",
     "Size": 11
    }, {
@@ -155448,7 +155448,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#B05A65",
+    "Colour": "#55aa55",
     "BgColour": "#F5F5F5",
     "Size": 11
    }, {
@@ -156112,7 +156112,7 @@
     "Flags": 0,
     "Alpha": 50,
     "Face": "",
-    "Colour": "#BED6FF",
+    "Colour": "#79ABFF",
     "BgColour": "#151515",
     "Size": 11
    }, {
@@ -157168,7 +157168,7 @@
    }]
  }, {
   "Name": "batch",
-  "Theme": "Tokio Light",
+  "Theme": "Tokyo Light",
   "Flags": 5,
   "Id": 12,
   "KeyWords0": "break call cd chcp chdir choice cls color com con copy country ctty date defined del dir do echo else erase errorlevel exist exit for goto if in loadfix loadhigh lpt md mkdir move not nul off path pause prompt rd rem ren rename rmdir set shift start time type ver verify vol",
@@ -157334,7 +157334,7 @@
    }]
  }, {
   "Name": "batch",
-  "Theme": "Tokio Night",
+  "Theme": "Tokyo Night",
   "Flags": 5,
   "Id": 12,
   "KeyWords0": "break call cd chcp chdir choice cls color com con copy country ctty date defined del dir do echo else erase errorlevel exist exit for goto if in loadfix loadhigh lpt md mkdir move not nul off path pause prompt rd rem ren rename rmdir set shift start time type ver verify vol",

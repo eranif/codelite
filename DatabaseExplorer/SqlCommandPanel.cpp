@@ -72,10 +72,10 @@ SQLCommandPanel::SQLCommandPanel(wxWindow* parent, IDbAdapter* dbAdapter, const 
         // determine how an operator and a comment are styled
         const auto& lexerProperties = lexerSQL->GetLexerProperties();
         auto operatorStyle = std::find_if(lexerProperties.begin(), lexerProperties.end(),
-                                          [](const auto& prop) { return prop.GetName() == "Operator"; });
+                                          [](const StyleProperty& prop) { return prop.GetName() == "Operator"; });
 
         auto commentStyle = std::find_if(lexerProperties.begin(), lexerProperties.end(),
-                                         [](const auto& prop) { return prop.GetName() == "Comment block"; });
+                                         [](const StyleProperty& prop) { return prop.GetName() == "Comment block"; });
 
         if(std::end(lexerProperties) != operatorStyle) {
             m_OperatorStyle = operatorStyle->GetId();

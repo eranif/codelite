@@ -46,26 +46,33 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
 
     // Show/hide whitespace
     sci->SetViewWhiteSpace(EditorConfigST::Get()->GetOptions()->GetShowWhitspaces());
-    StyleProperty::Map_t& props = lexer->GetLexerProperties();
-    // Set the whitespace colours
-    sci->SetWhitespaceForeground(true, props[WHITE_SPACE_ATTR_ID].GetFgColour());
+    auto white_space_prop = lexer->GetProperty(WHITE_SPACE_ATTR_ID);
+    auto default_prop = lexer->GetProperty(0);
+    auto line_numbers_prop = lexer->GetProperty(33);
+    auto identifier_prop = lexer->GetProperty(wxSTC_C_IDENTIFIER);
+    auto class_prop = lexer->GetProperty(wxSTC_C_GLOBALCLASS);
+    auto comment_prop = lexer->GetProperty(wxSTC_C_COMMENTLINE);
+    auto word_prop = lexer->GetProperty(wxSTC_C_WORD);
 
-    sci->StyleSetForeground(LEX_FIF_HEADER, props[0].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_HEADER, props[0].GetBgColour());
+    // Set the whitespace colours
+    sci->SetWhitespaceForeground(true, white_space_prop.GetFgColour());
+
+    sci->StyleSetForeground(LEX_FIF_HEADER, default_prop.GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_HEADER, default_prop.GetBgColour());
 
     // 33 is the style for line numbers
-    sci->StyleSetForeground(LEX_FIF_LINE_NUMBER, props[33].GetFgColour());
+    sci->StyleSetForeground(LEX_FIF_LINE_NUMBER, line_numbers_prop.GetFgColour());
 
-    sci->StyleSetForeground(LEX_FIF_MATCH, props[wxSTC_C_IDENTIFIER].GetFgColour());
-    sci->StyleSetForeground(LEX_FIF_SCOPE, props[wxSTC_C_GLOBALCLASS].GetFgColour());
+    sci->StyleSetForeground(LEX_FIF_MATCH, identifier_prop.GetFgColour());
+    sci->StyleSetForeground(LEX_FIF_SCOPE, class_prop.GetFgColour());
 
-    sci->StyleSetForeground(LEX_FIF_MATCH_COMMENT, props[wxSTC_C_COMMENTLINE].GetFgColour());
+    sci->StyleSetForeground(LEX_FIF_MATCH_COMMENT, comment_prop.GetFgColour());
 
-    sci->StyleSetForeground(LEX_FIF_FILE, props[wxSTC_C_WORD].GetFgColour());
+    sci->StyleSetForeground(LEX_FIF_FILE, word_prop.GetFgColour());
     sci->StyleSetEOLFilled(LEX_FIF_FILE, true);
 
-    sci->StyleSetForeground(LEX_FIF_DEFAULT, props[0].GetFgColour());
-    sci->StyleSetBackground(LEX_FIF_DEFAULT, props[0].GetBgColour());
+    sci->StyleSetForeground(LEX_FIF_DEFAULT, default_prop.GetFgColour());
+    sci->StyleSetBackground(LEX_FIF_DEFAULT, default_prop.GetBgColour());
 
     sci->StyleSetHotSpot(LEX_FIF_MATCH, true);
     sci->StyleSetHotSpot(LEX_FIF_FILE, true);

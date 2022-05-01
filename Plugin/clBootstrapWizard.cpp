@@ -324,24 +324,12 @@ void clBootstrapWizard::DoUpdatePreview(const wxString& themeName)
 {
     // Populate the preview
     LexerConf::Ptr_t previewLexer = ColoursAndFontsManager::Get().GetLexer("c++", themeName);
-
-    int class_index = 1;
-    int locals_index = 1;
-    int methods_index = 1;
-    int other_index = 1;
-
     if(previewLexer) {
         previewLexer->Apply(m_stc24, true);
-        class_index = previewLexer->GetWordSetClassIndex();
-        locals_index = previewLexer->GetWordSetLocalsIndex();
-        methods_index = previewLexer->GetWordSetFunctionsIndex();
-        other_index = previewLexer->GetWordSetOthersIndex();
+        previewLexer->ApplyWordSet(m_stc24, LexerConf::WS_CLASS, "Demo std string");
+        previewLexer->ApplyWordSet(m_stc24, LexerConf::WS_VARIABLES, "other m_integer m_str");
+        previewLexer->ApplyWordSet(m_stc24, LexerConf::WS_FUNCTIONS, "CallMethod");
     }
-
-    m_stc24->SetKeyWords(class_index, "Demo std string");
-    m_stc24->SetKeyWords(locals_index, "other");
-    m_stc24->SetKeyWords(methods_index, "CallMethod");
-    m_stc24->SetKeyWords(other_index, wxEmptyString);
 
     m_stc24->SetEditable(true);
     m_stc24->SetText(sampleText);

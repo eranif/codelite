@@ -57,11 +57,11 @@ ThemeImporterJavaScript::ThemeImporterJavaScript()
     SetKeywords3("Math Array Date document window NumberObject URL");
 
     // used for functions
-    m_functionsIndex = 1;
+    SetFunctionsWordSetIndex(1);
 
     // Global classes and typedefs, it already contains values, so be careful here
     // so when used, append the values
-    m_classesIndex = 3;
+    SetClassWordSetIndex(3);
     SetFileExtensions("*.js;*.javascript;*.qml;*.json;*.ts");
 }
 

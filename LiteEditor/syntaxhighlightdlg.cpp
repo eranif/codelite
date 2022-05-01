@@ -182,29 +182,17 @@ void SyntaxHighlightDlg::DoUpdatePreview()
     LexerConf::Ptr_t previewLexer =
         ColoursAndFontsManager::Get().GetLexer("c++", m_choiceGlobalTheme->GetStringSelection());
 
-    int class_index = 1;
-    int locals_index = 1;
-    int methods_index = 1;
-    int other_index = 1;
-
     if(previewLexer) {
         previewLexer->Apply(m_stcPreview, true);
-        class_index = previewLexer->GetWordSetClassIndex();
-        locals_index = previewLexer->GetWordSetLocalsIndex();
-        methods_index = previewLexer->GetWordSetFunctionsIndex();
-        other_index = previewLexer->GetWordSetOthersIndex();
+        previewLexer->ApplyWordSet(m_stcPreview, LexerConf::WS_CLASS, "Demo std string");
+        previewLexer->ApplyWordSet(m_stcPreview, LexerConf::WS_VARIABLES, "other m_integer m_str a_string");
+        previewLexer->ApplyWordSet(m_stcPreview, LexerConf::WS_FUNCTIONS, "CallMethod");
     }
-
-    m_stcPreview->SetKeyWords(class_index, "Demo std string");
-    m_stcPreview->SetKeyWords(locals_index, "other");
-    m_stcPreview->SetKeyWords(methods_index, "CallMethod");
-    m_stcPreview->SetKeyWords(other_index, wxEmptyString);
 
     m_stcPreview->SetEditable(true);
     m_stcPreview->SetText(sampleText);
     m_stcPreview->HideSelection(true);
     m_stcPreview->SetEditable(false);
-
     ::clRecalculateSTCHScrollBar(m_stcPreview);
 }
 
@@ -338,15 +326,15 @@ void SyntaxHighlightDlg::OnColourChanged(wxColourPickerEvent& event)
     wxObject* obj = event.GetEventObject();
     if(obj == m_colourPicker) {
         wxColour colour = event.GetColour();
-        StyleProperty::Map_t::iterator iter = GetSelectedStyle();
-        iter->second.SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+        StyleProperty::Vec_t::iterator iter = GetSelectedStyle();
+        iter->SetFgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 
     } else if(obj == m_bgColourPicker) {
 
         wxColour colour = event.GetColour();
-        StyleProperty::Map_t::iterator iter = GetSelectedStyle();
+        StyleProperty::Vec_t::iterator iter = GetSelectedStyle();
 
-        iter->second.SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+        iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
 
     } else if(obj == m_globalBgColourPicker) {
         wxColour colour = event.GetColour();
@@ -396,10 +384,10 @@ void SyntaxHighlightDlg::OnEolFilled(wxCommandEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
     m_isModified = true;
-    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
-    StyleProperty::Map_t::iterator iter = GetSelectedStyle();
+    StyleProperty::Vec_t& properties = m_lexer->GetLexerProperties();
+    StyleProperty::Vec_t::iterator iter = GetSelectedStyle();
     if(iter != properties.end()) {
-        iter->second.SetEolFilled(event.IsChecked());
+        iter->SetEolFilled(event.IsChecked());
     }
 }
 
@@ -408,19 +396,19 @@ void SyntaxHighlightDlg::OnFontChanged(wxFontPickerEvent& event)
     CHECK_PTR_RET(m_lexer);
     m_isModified = true;
 
-    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
+    StyleProperty::Vec_t& properties = m_lexer->GetLexerProperties();
     // update f
     wxObject* obj = event.GetEventObject();
     if(obj == m_fontPicker) {
         wxFont f = event.GetFont();
-        StyleProperty::Map_t::iterator iter = GetSelectedStyle();
-        DoFontChanged(iter->second, f);
+        StyleProperty::Vec_t::iterator iter = GetSelectedStyle();
+        DoFontChanged(*iter, f);
 
     } else if(obj == m_globalFontPicker) {
         wxFont f = event.GetFont();
-        StyleProperty::Map_t::iterator iter = properties.begin();
+        StyleProperty::Vec_t::iterator iter = properties.begin();
         for(; iter != properties.end(); ++iter) {
-            DoFontChanged(iter->second, f);
+            DoFontChanged(*iter, f);
         }
         // update the style f picker as well
         m_fontPicker->SetSelectedFont(f);
@@ -434,12 +422,10 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
 
     // update colour picker & font pickers
     wxString selectionString = event.GetString();
-    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
-    StyleProperty::Map_t::iterator iter = properties.begin();
-    for(; iter != properties.end(); ++iter) {
-        if(iter->second.GetName() == selectionString) {
+    StyleProperty::Vec_t& properties = m_lexer->GetLexerProperties();
+    for(const auto& p : properties) {
+        if(p.GetName() == selectionString) {
             // update font & color
-            StyleProperty p = iter->second;
             wxString colour = p.GetFgColour();
             wxString bgColour = p.GetBgColour();
 
@@ -486,11 +472,11 @@ void SyntaxHighlightDlg::OnStyleWithingPreProcessorUI(wxUpdateUIEvent& event)
 {
     CHECK_PTR_RET(m_lexer);
 
-    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
-    StyleProperty::Map_t::iterator iter = GetSelectedStyle();
+    StyleProperty::Vec_t& properties = m_lexer->GetLexerProperties();
+    StyleProperty::Vec_t::iterator iter = GetSelectedStyle();
     if(iter == properties.end())
         event.Enable(false);
-    else if(iter->second.GetName() == "Preprocessor")
+    else if(iter->GetName() == "Preprocessor")
         event.Enable(true);
     else
         event.Enable(false);
@@ -508,15 +494,15 @@ void SyntaxHighlightDlg::CreateLexerPage()
 {
     CHECK_PTR_RET(m_lexer);
 
-    const StyleProperty::Map_t& m_propertyList = m_lexer->GetLexerProperties();
-    StyleProperty::Map_t::const_iterator it = m_propertyList.begin();
+    const StyleProperty::Vec_t& m_propertyList = m_lexer->GetLexerProperties();
+    StyleProperty::Vec_t::const_iterator it = m_propertyList.begin();
     StyleProperty selTextProperties;
 
     for(; it != m_propertyList.end(); it++) {
-        if(it->second.GetId() != SEL_TEXT_ATTR_ID) {
-            m_properties->Append(it->second.GetName());
+        if(it->GetId() != SEL_TEXT_ATTR_ID) {
+            m_properties->Append(it->GetName());
         } else {
-            selTextProperties = it->second;
+            selTextProperties = *it;
         }
     }
 
@@ -573,11 +559,12 @@ void SyntaxHighlightDlg::CreateLexerPage()
     }
 }
 
-StyleProperty::Map_t::iterator SyntaxHighlightDlg::GetSelectedStyle()
+StyleProperty::Vec_t::iterator SyntaxHighlightDlg::GetSelectedStyle()
 {
     wxString selectedProperty = m_properties->GetStringSelection();
-    StyleProperty::Map_t& lexerProperties = m_lexer->GetLexerProperties();
-    return std::find_if(lexerProperties.begin(), lexerProperties.end(), StyleProperty::FindByName(selectedProperty));
+    StyleProperty::Vec_t& lexerProperties = m_lexer->GetLexerProperties();
+    return std::find_if(lexerProperties.begin(), lexerProperties.end(),
+                        [&selectedProperty](const StyleProperty& prop) { return prop.GetName() == selectedProperty; });
 }
 
 void SyntaxHighlightDlg::OnLexerSelected(wxCommandEvent& event)
@@ -776,13 +763,13 @@ void SyntaxHighlightDlg::OnGlobalFontSelected(wxFontPickerEvent& event)
 
 void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
 {
-    StyleProperty::Map_t& properties = m_lexer->GetLexerProperties();
-    StyleProperty::Map_t::iterator iter = properties.begin();
+    StyleProperty::Vec_t& properties = m_lexer->GetLexerProperties();
+    StyleProperty::Vec_t::iterator iter = properties.begin();
     for(; iter != properties.end(); ++iter) {
         // Dont change the text selection using the global font picker
-        if(iter->second.GetName() == wxT("Text Selection"))
+        if(iter->GetName() == wxT("Text Selection"))
             continue;
-        iter->second.SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
+        iter->SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));
     }
 
     // update the style background colour as well

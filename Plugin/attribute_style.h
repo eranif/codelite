@@ -31,7 +31,9 @@
 
 #include <list>
 #include <map>
+#include <vector>
 #include <wx/colour.h>
+#include <wx/stc/stc.h>
 
 // Set default font size per-OS
 #if defined(__WXGTK__)
@@ -52,13 +54,13 @@
 
 class WXDLLIMPEXP_SDK StyleProperty
 {
-    int m_id;
+    int m_id = 0;
     wxString m_fgColour;
     wxString m_bgColour;
-    long m_fontSize;
+    long m_fontSize = 12;
     wxString m_name;
     wxString m_faceName;
-    size_t m_flags;
+    size_t m_flags = 0;
     int m_alpha;
 
 public:
@@ -68,27 +70,11 @@ public:
         kBold = (1 << 1),
         kUnderline = (1 << 2),
         kEolFilled = (1 << 3),
+        kIsSubStyle = (1 << 4),
     };
 
 public:
-    typedef std::map<long, StyleProperty> Map_t;
-    struct FindByName {
-        wxString m_name;
-        FindByName(const wxString& name)
-            : m_name(name)
-        {
-        }
-        bool operator()(const std::pair<long, StyleProperty>& other) const { return m_name == other.second.GetName(); }
-    };
-
-    struct FindByID {
-        int m_id;
-        FindByID(int id)
-            : m_id(id)
-        {
-        }
-        bool operator()(const std::pair<long, StyleProperty>& other) const { return m_id == other.first; }
-    };
+    typedef std::vector<StyleProperty> Vec_t;
 
 protected:
     inline void EnableFlag(eStyleFlags flag, bool b)
@@ -106,9 +92,10 @@ public:
     StyleProperty(int id, const wxString& fgColour, const wxString& bgColour, const int fontSize, const wxString& name,
                   const wxString& face, bool bold, bool italic, bool underline, bool eolFilled, int alpha);
     StyleProperty();
-    StyleProperty(const StyleProperty& rhs) { *this = rhs; };
-    StyleProperty& operator=(const StyleProperty& rhs);
     ~StyleProperty() {}
+
+    bool IsSubstyle() const { return m_flags & kIsSubStyle; }
+    void SetSubstyle() { m_flags |= kIsSubStyle; }
 
     //----------------------------
     // Serialization

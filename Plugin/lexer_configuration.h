@@ -41,20 +41,61 @@
 #define ANNOTATION_STYLE_ERROR 211
 #define ANNOTATION_STYLE_CC_ERROR 212
 
+struct WXDLLIMPEXP_SDK WordSetIndex {
+    int index = wxNOT_FOUND;
+    // when set to true, the `index` is the style to which we append substyles
+    bool is_substyle = false;
+    WordSetIndex(int idx, bool b)
+        : index(idx)
+        , is_substyle(b)
+    {
+    }
+    WordSetIndex() {}
+    JSONItem to_json() const
+    {
+        auto item = JSONItem::createObject();
+        item.addProperty("index", index);
+        item.addProperty("is_substyle", is_substyle);
+        return item;
+    }
+
+    void from_json(const JSONItem& json)
+    {
+        if(json.isNumber()) {
+            // old style, for migration purposes
+            index = json.toInt(wxNOT_FOUND);
+        } else {
+            index = json["index"].toInt(wxNOT_FOUND);
+            is_substyle = json["is_substyle"].toBool(false);
+        }
+    }
+
+    bool is_ok() const { return index != wxNOT_FOUND; }
+};
+
 class WXDLLIMPEXP_SDK LexerConf
 {
-    StyleProperty::Map_t m_properties;
+public:
+    enum eWordSetIndex {
+        WS_FIRST = 0,
+        WS_CLASS = WS_FIRST,
+        WS_FUNCTIONS,
+        WS_VARIABLES,
+        WS_OTHERS,
+        WS_LAST = WS_OTHERS,
+    };
+
+private:
+    StyleProperty::Vec_t m_properties;
     int m_lexerId;
     wxString m_name;
     wxString m_extension;
     wxString m_keyWords[10];
     wxString m_themeName;
-    size_t m_flags;
+    size_t m_flags = 0;
 
-    int m_wordSetClassIndex = wxNOT_FOUND;
-    int m_wordSetFunctionsIndex = wxNOT_FOUND;
-    int m_wordSetLocals = wxNOT_FOUND;
-    int m_wordSetOthers = wxNOT_FOUND;
+    WordSetIndex m_wordSets[4];
+    int m_substyleBase = wxNOT_FOUND;
 
 public:
     typedef SmartPtr<LexerConf> Ptr_t;
@@ -101,6 +142,10 @@ public:
     // Parse lexer object from xml node
     void FromXml(wxXmlNode* node);
 
+    void SetSubstyleBase(int style) { m_substyleBase = style; }
+    int GetSubStyleBase() const { return m_substyleBase; }
+    bool IsSubstyleSupported() const { return m_substyleBase != wxNOT_FOUND; }
+
     /**
      * @brief convert the lexer settings into a JSON object
      */
@@ -112,17 +157,9 @@ public:
      */
     void FromJSON(const JSONItem& json);
 
-    void SetWordSetClassIndex(int wordSetClassIndex) { this->m_wordSetClassIndex = wordSetClassIndex; }
-    int GetWordSetClassIndex() const { return m_wordSetClassIndex; }
-
-    void SetWordSetFunctionsIndex(int wordSetFunctionsIndex) { this->m_wordSetFunctionsIndex = wordSetFunctionsIndex; }
-    void SetWordSetLocalsIndex(int wordSetLocalsIndex) { this->m_wordSetLocals = wordSetLocalsIndex; }
-
-    void SetWordSetOthersIndex(int othersIndex) { this->m_wordSetOthers = othersIndex; }
-    int GetWordSetOthersIndex() const { return m_wordSetOthers; }
-
-    int GetWordSetFunctionsIndex() const { return m_wordSetFunctionsIndex; }
-    int GetWordSetLocalsIndex() const { return m_wordSetLocals; }
+    void SetWordSet(eWordSetIndex index, const WordSetIndex& word_set) { this->m_wordSets[index] = word_set; }
+    const WordSetIndex& GetWordSet(eWordSetIndex index) const { return m_wordSets[index]; }
+    void ApplyWordSet(wxStyledTextCtrl* ctrl, eWordSetIndex index, const wxString& keywords);
 
 public:
     LexerConf();
@@ -155,13 +192,13 @@ public:
 
     /**
      * Get the lexer ID, which should be in sync with values of Scintilla
-     * \return
+     * @return
      */
     int GetLexerId() const { return m_lexerId; }
 
     /**
      * Set the lexer ID
-     * \param id
+     * @param id
      */
     void SetLexerId(int id) { m_lexerId = id; }
 
@@ -173,7 +210,7 @@ public:
     void SetName(const wxString& name) { m_name = name; }
     /**
      * Return the lexer keywords
-     * \return
+     * @return
      */
     const wxString& GetKeyWords(int set) const { return m_keyWords[set]; }
 
@@ -185,15 +222,15 @@ public:
     const wxString& GetFileSpec() const { return m_extension; }
     /**
      * Return a list of the lexer properties
-     * \return
+     * @return
      */
-    const StyleProperty::Map_t& GetLexerProperties() const { return m_properties; }
+    const StyleProperty::Vec_t& GetLexerProperties() const { return m_properties; }
 
     /**
      * Return a list of the lexer properties
-     * \return
+     * @return
      */
-    StyleProperty::Map_t& GetLexerProperties() { return m_properties; }
+    StyleProperty::Vec_t& GetLexerProperties() { return m_properties; }
 
     /**
      * @brief return property. Check for IsNull() to make sure we got a valid property
@@ -215,12 +252,12 @@ public:
 
     /**
      * Set the lexer properties
-     * \param &properties
+     * @param &properties
      */
-    void SetProperties(StyleProperty::Map_t& properties) { m_properties.swap(properties); }
+    void SetProperties(StyleProperty::Vec_t& properties) { m_properties.swap(properties); }
     /**
      * Set file spec for the lexer
-     * \param &spec
+     * @param &spec
      */
     void SetFileSpec(const wxString& spec) { m_extension = spec; }
 

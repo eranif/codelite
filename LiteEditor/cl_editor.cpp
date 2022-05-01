@@ -6337,37 +6337,18 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
     auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(CLRealPath(GetFileName().GetFullPath()));
     CHECK_PTR_RET(lexer);
 
-    if(lexer->GetWordSetClassIndex() != wxNOT_FOUND) {
+    SetKeywordLocals(flatStrLocals);
+    SetKeywordLocals(flatStrOthers);
+    SetKeywordLocals(flatStrMethods);
+    SetKeywordClasses(flatStrClasses);
+
+    if(lexer->GetWordSet(LexerConf::WS_CLASS).is_ok()) {
         clDEBUG1() << "Setting semantic tokens:" << endl;
+        lexer->ApplyWordSet(this, LexerConf::WS_CLASS, flatStrClasses);
+        lexer->ApplyWordSet(this, LexerConf::WS_FUNCTIONS, flatStrMethods);
+        lexer->ApplyWordSet(this, LexerConf::WS_VARIABLES, flatStrLocals);
+        lexer->ApplyWordSet(this, LexerConf::WS_OTHERS, flatStrOthers);
 
-        // a new lexer
-        int keywords_class = lexer->GetWordSetClassIndex();
-        int keywords_variables = lexer->GetWordSetLocalsIndex();
-        int keywords_methods = lexer->GetWordSetFunctionsIndex();
-        int keywords_others = lexer->GetWordSetOthersIndex();
-
-        clDEBUG1() << "Methods:" << keywords_methods << ":" << flatStrMethods << endl;
-        clDEBUG1() << "Locals:" << keywords_variables << ":" << flatStrLocals << endl;
-        clDEBUG1() << "Others:" << keywords_others << ":" << flatStrOthers << endl;
-        clDEBUG1() << "Classes:" << keywords_class << ":" << flatStrClasses << endl;
-
-        if(!flatStrLocals.empty() && keywords_variables != wxNOT_FOUND) {
-            SetKeyWords(keywords_variables, flatStrLocals);
-            SetKeywordLocals(flatStrLocals);
-        }
-        if(!flatStrMethods.empty() && keywords_methods != wxNOT_FOUND) {
-            SetKeyWords(keywords_methods, flatStrMethods);
-            SetKeywordLocals(flatStrMethods);
-        }
-        if(!flatStrClasses.empty() && keywords_class != wxNOT_FOUND) {
-            SetKeyWords(keywords_class, flatStrClasses);
-            SetKeywordClasses(flatStrClasses);
-        }
-
-        if(!flatStrOthers.empty() && keywords_others != wxNOT_FOUND) {
-            SetKeyWords(keywords_others, flatStrOthers);
-            SetKeywordLocals(flatStrOthers);
-        }
     } else {
 
         int keywords_class = wxNOT_FOUND;

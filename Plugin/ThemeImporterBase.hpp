@@ -86,17 +86,20 @@ protected:
     wxString m_langName;
     wxString m_themeName;
     bool m_isDarkTheme = false;
-
-    // the index for special word sets
-    int m_classesIndex = wxNOT_FOUND;
-    int m_functionsIndex = wxNOT_FOUND;
-    int m_localsIndex = wxNOT_FOUND;
-    int m_othersIndex = wxNOT_FOUND;
     std::unordered_map<wxString, EclipseProperty> m_xmlProperties;
+
+private:
+    // the index for special word sets
+    WordSetIndex m_classesIndex;
+    WordSetIndex m_functionsIndex;
+    WordSetIndex m_localsIndex;
+    WordSetIndex m_othersIndex;
 
 protected:
     void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const wxString& colour,
                      const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false);
+
+    void AddPropertySubstyle(LexerConf::Ptr_t lexer, int id, const wxString& name, const Property& prop);
 
     void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const Property& prop)
     {
@@ -146,6 +149,7 @@ public:
     void SetKeywords3(const wxString& keywords3) { DoSetKeywords(this->m_keywords3, keywords3); }
     void SetKeywords4(const wxString& keywords4) { DoSetKeywords(this->m_keywords4, keywords4); }
     void SetKeywords5(const wxString& keywords4) { DoSetKeywords(this->m_keywords5, keywords4); }
+
     const wxString& GetKeywords0() const { return m_keywords0; }
     const wxString& GetKeywords1() const { return m_keywords1; }
     const wxString& GetKeywords2() const { return m_keywords2; }
@@ -153,10 +157,34 @@ public:
     const wxString& GetKeywords4() const { return m_keywords4; }
     const wxString& GetKeywords5() const { return m_keywords5; }
 
-    int GetClassWordSetIndex() const { return m_classesIndex; }
-    int GetLocalsSetIndex() const { return m_localsIndex; }
-    int GetFunctionWordSetIndex() const { return m_functionsIndex; }
-    int GetOthersWordSetIndex() const { return m_othersIndex; }
+    const WordSetIndex& GetClassWordSetIndex() const { return m_classesIndex; }
+    const WordSetIndex& GetLocalsSetIndex() const { return m_localsIndex; }
+    const WordSetIndex& GetFunctionWordSetIndex() const { return m_functionsIndex; }
+    const WordSetIndex& GetOthersWordSetIndex() const { return m_othersIndex; }
+
+    void SetClassWordSetIndex(int index, bool is_substyle = false)
+    {
+        m_classesIndex.is_substyle = is_substyle;
+        m_classesIndex.index = index;
+    }
+
+    void SetLocalsWordSetIndex(int index, bool is_substyle = false)
+    {
+        m_localsIndex.is_substyle = is_substyle;
+        m_localsIndex.index = index;
+    }
+
+    void SetFunctionsWordSetIndex(int index, bool is_substyle = false)
+    {
+        m_functionsIndex.is_substyle = is_substyle;
+        m_functionsIndex.index = index;
+    }
+
+    void SetOthersWordSetIndex(int index, bool is_substyle = false)
+    {
+        m_othersIndex.is_substyle = is_substyle;
+        m_othersIndex.index = index;
+    }
 
 public:
     ThemeImporterBase();

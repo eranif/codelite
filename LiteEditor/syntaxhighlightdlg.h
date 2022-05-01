@@ -103,7 +103,7 @@ protected:
     void SaveChanges();
     void Clear();
     void CreateLexerPage();
-    StyleProperty::Map_t::iterator GetSelectedStyle();
+    StyleProperty::Vec_t::iterator GetSelectedStyle();
     void EditKeyWords(int set);
 
     void DoUpdatePreview();

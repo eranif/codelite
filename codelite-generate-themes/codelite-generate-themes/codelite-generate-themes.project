@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="codelite-generate-themes" Version="11000" InternalType="Console">
+  <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
+  </Plugins>
   <VirtualDirectory Name="wxcrafter">
     <VirtualDirectory Name="base">
       <File Name="wxcrafter.cpp"/>
@@ -10,11 +15,6 @@
     </VirtualDirectory>
     <File Name="wxcrafter.wxcp"/>
   </VirtualDirectory>
-  <Plugins>
-    <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
-    </Plugin>
-  </Plugins>
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
@@ -40,16 +40,16 @@
         <IncludePath Value="$(CL_HOME)\\CodeLite"/>
       </Compiler>
       <Linker Options="$(shell wx-config   --libs --unicode=yes);-mwindows" Required="yes">
-        <LibraryPath Value="$(CL_HOME)/Runtime"/>
-        <Library Value="libcodeliteu"/>
-        <Library Value="libplugin_sdku"/>
+        <LibraryPath Value="$(CL_HOME)/build-Win_x64_Debug/lib"/>
+        <Library Value="libcodeliteud"/>
+        <Library Value="libplugin_sdkud"/>
       </Linker>
       <ResourceCompiler Options="$(shell wx-config --rcflags)" Required="no"/>
       <General OutputFile="$(ProjectName)" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="$(WorkspacePath)\themes $(WorkspacePath)\themes" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[CL_HOME=C:\src\codelite
-PATH=$(CL_HOME)\Runtime;$PATH]]>
+PATH=$(CL_HOME)\build-Win_x64_Debug\lib;$PATH]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
         <DebuggerSearchPaths/>

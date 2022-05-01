@@ -6,11 +6,11 @@ ThemeImporterLua::ThemeImporterLua()
     SetKeywords0(
         "if elseif else then end do while nil true false in for and or function local not repeat return until");
 
-    m_classesIndex = 4;
-    m_functionsIndex = 1;
-    m_localsIndex = 5; // user1
+    SetClassWordSetIndex(4);
+    SetFunctionsWordSetIndex(2);
+    SetLocalsWordSetIndex(5);
     SetFileExtensions("*.lua;*.glua;*.gluaw;");
-    m_langName = "lua";
+    SetLangName("lua");
 }
 
 ThemeImporterLua::~ThemeImporterLua() {}

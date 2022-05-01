@@ -22,25 +22,12 @@ StyleProperty::StyleProperty()
     : m_id(0)
     , m_fgColour(_T("BLACK"))
     , m_bgColour(_T("WHITE"))
-    , m_fontSize(10)
+    , m_fontSize(12)
     , m_name(wxEmptyString)
     , m_faceName(_T("Courier"))
     , m_flags(0)
     , m_alpha(0)
 {
-}
-
-StyleProperty& StyleProperty::operator=(const StyleProperty& rhs)
-{
-    m_fgColour = rhs.m_fgColour;
-    m_bgColour = rhs.m_bgColour;
-    m_faceName = rhs.m_faceName;
-    m_fontSize = rhs.m_fontSize;
-    m_name = rhs.m_name;
-    m_id = rhs.m_id;
-    m_alpha = rhs.m_alpha;
-    m_flags = rhs.m_flags;
-    return *this;
 }
 
 void StyleProperty::FromJSON(JSONItem json)

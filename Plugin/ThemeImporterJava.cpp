@@ -25,14 +25,14 @@ ThemeImporterJava::ThemeImporterJava()
                  "todo "
                  "tparam typedef union until var verbatim verbinclude version warning weakgroup xmlonly xrefitem");
     // Secondary keywords and identifiers
-    m_functionsIndex = 1;
-    // Global classes and typedefs
-    m_classesIndex = 3;
+    SetFunctionsWordSetIndex(1);
+    SetClassWordSetIndex(3);
+    SetLangName("java");
     SetFileExtensions("*.java");
-    m_langName = "java";
 }
 
 ThemeImporterJava::~ThemeImporterJava() {}
+
 LexerConf::Ptr_t ThemeImporterJava::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);

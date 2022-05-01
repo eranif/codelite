@@ -98,8 +98,18 @@ void ThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxString& id, 
     long ID;
     id.ToCLong(&ID);
 
-    StyleProperty sp(ID, colour, bgColour, 11, name, "", bold, italic, false, isEOLFilled, 50);
-    lexer->GetLexerProperties().insert(std::make_pair(sp.GetId(), sp));
+    StyleProperty sp(ID, colour, bgColour, 12, name, "", bold, italic, false, isEOLFilled, 50);
+    lexer->GetLexerProperties().push_back(sp);
+}
+
+void ThemeImporterBase::AddPropertySubstyle(LexerConf::Ptr_t lexer, int id, const wxString& name, const Property& prop)
+{
+    wxASSERT(!colour.IsEmpty());
+    wxASSERT(!bgColour.IsEmpty());
+
+    StyleProperty sp(id, prop.fg_colour, prop.bg_colour, 12, name, "", prop.isBold, prop.isItalic, false, false, 50);
+    sp.SetSubstyle();
+    lexer->GetLexerProperties().push_back(sp);
 }
 
 void ThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id)
@@ -118,10 +128,10 @@ void ThemeImporterBase::AddBaseProperties(LexerConf::Ptr_t lexer, const wxString
     lexer->SetKeyWords(GetKeywords3(), 3);
     lexer->SetKeyWords(GetKeywords4(), 4);
     lexer->SetFileSpec(GetFileExtensions());
-    lexer->SetWordSetFunctionsIndex(GetFunctionWordSetIndex());
-    lexer->SetWordSetClassIndex(GetClassWordSetIndex());
-    lexer->SetWordSetLocalsIndex(GetLocalsSetIndex());
-    lexer->SetWordSetOthersIndex(GetOthersWordSetIndex());
+    lexer->SetWordSet(LexerConf::WS_FUNCTIONS, GetFunctionWordSetIndex());
+    lexer->SetWordSet(LexerConf::WS_CLASS, GetClassWordSetIndex());
+    lexer->SetWordSet(LexerConf::WS_VARIABLES, GetLocalsSetIndex());
+    lexer->SetWordSet(LexerConf::WS_OTHERS, GetOthersWordSetIndex());
 }
 
 void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)

@@ -12,10 +12,10 @@ ThemeImporterRust::ThemeImporterRust()
     // built in types (std::collection)
     SetKeywords1("vec String str array Vec VecDeque LinkedList HashMap BTreeMap HashSet BTreeSet BinaryHeap");
     SetFileExtensions("*.rs");
-    m_langName = "rust";
-    m_classesIndex = 3;
-    m_localsIndex = 4;
-    m_functionsIndex = 5;
+    SetClassWordSetIndex(3);
+    SetLocalsWordSetIndex(4);
+    SetFunctionsWordSetIndex(5);
+    SetLangName("rust");
 }
 
 ThemeImporterRust::~ThemeImporterRust() {}

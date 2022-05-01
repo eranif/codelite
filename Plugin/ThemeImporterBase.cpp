@@ -104,8 +104,8 @@ void ThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxString& id, 
 
 void ThemeImporterBase::AddPropertySubstyle(LexerConf::Ptr_t lexer, int id, const wxString& name, const Property& prop)
 {
-    wxASSERT(!colour.IsEmpty());
-    wxASSERT(!bgColour.IsEmpty());
+    wxASSERT(!prop.fg_colour.IsEmpty());
+    wxASSERT(!prop.bg_colour.IsEmpty());
 
     StyleProperty sp(id, prop.fg_colour, prop.bg_colour, 12, name, "", prop.isBold, prop.isItalic, false, false, 50);
     sp.SetSubstyle();

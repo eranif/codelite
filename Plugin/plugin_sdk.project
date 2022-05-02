@@ -260,6 +260,8 @@
     <File Name="ColoursAndFontsManager.h"/>
     <File Name="ColoursAndFontsManager.cpp"/>
     <VirtualDirectory Name="ThemeImporters">
+      <File Name="ThemeImporterMarkdown.cpp"/>
+      <File Name="ThemeImporterMarkdown.hpp"/>
       <File Name="ThemeImporterFortran.hpp"/>
       <File Name="ThemeImporterManager.cpp"/>
       <File Name="ThemeImporterManager.hpp"/>

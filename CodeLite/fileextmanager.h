@@ -23,12 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __fileextmanager__
-#define __fileextmanager__
+#ifndef __FILEEXTMANAGER__
+#define __FILEEXTMANAGER__
 
 #include "codelite_exports.h"
 #include "smart_ptr.h"
 #include "wxStringHash.h"
+
 #include <map>
 #include <vector>
 #include <wx/filename.h>
@@ -98,6 +99,7 @@ public:
         TypeDiff,
         TypePatch,
         TypeJSON,
+        TypeMarkdown,
         TypeLast,
     };
 

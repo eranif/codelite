@@ -1,3 +1,5 @@
+#include "ThemeImporterManager.hpp"
+
 #include "ColoursAndFontsManager.h"
 #include "ThemeImporterASM.hpp"
 #include "ThemeImporterBatch.hpp"
@@ -15,14 +17,9 @@
 #include "ThemeImporterJavaScript.hpp"
 #include "ThemeImporterLUA.hpp"
 #include "ThemeImporterMakefile.hpp"
+#include "ThemeImporterMarkdown.hpp"
 #include "ThemeImporterPHP.hpp"
 #include "ThemeImporterPython.hpp"
-#include "wx/versioninfo.h"
-#if wxCHECK_VERSION(3, 1, 0)
-#include "ThemeImporterJSON.hpp"
-#include "ThemeImporterRust.hpp"
-#endif
-#include "ThemeImporterManager.hpp"
 #include "ThemeImporterRuby.hpp"
 #include "ThemeImporterSCSS.hpp"
 #include "ThemeImporterSQL.hpp"
@@ -30,6 +27,13 @@
 #include "ThemeImporterText.hpp"
 #include "ThemeImporterXML.hpp"
 #include "ThemeImporterYAML.hpp"
+
+#if wxCHECK_VERSION(3, 1, 0)
+#include "ThemeImporterJSON.hpp"
+#include "ThemeImporterRust.hpp"
+#endif
+
+#include <wx/versioninfo.h>
 
 ThemeImporterManager::ThemeImporterManager()
 {
@@ -58,6 +62,7 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(new ThemeImporterDockerfile());
     m_importers.push_back(new ThemeImporterYAML());
     m_importers.push_back(new ThemeImporterRuby());
+    m_importers.push_back(new ThemeImporterMarkdown());
 #if wxCHECK_VERSION(3, 1, 0)
     m_importers.push_back(new ThemeImporterRust());
     m_importers.push_back(new ThemeImporterJson());

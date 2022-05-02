@@ -180,6 +180,7 @@ void FileExtManager::Init()
         m_map["diff"] = TypeDiff;
 
         m_map["rb"] = TypeRuby;
+        m_map["md"] = TypeMarkdown;
 
         // Initialize regexes:
         m_matchers.push_back(Matcher("#[ \t]*!(.*?)sh", TypeShellScript));
@@ -218,13 +219,15 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
     e.MakeLower();
     e.Trim().Trim(false);
 
-    std::unordered_map<wxString, FileType>::iterator iter = m_map.find(e);
+    auto iter = m_map.find(e);
     if(iter == m_map.end()) {
         // try to see if the file is a makefile
         if(fn.GetFullName().CmpNoCase(wxT("makefile")) == 0) {
             return TypeMakefile;
         } else if(fn.GetFullName().Lower() == "dockerfile") {
             return TypeDockerfile;
+        } else if(fn.GetFullName().CmpNoCase("README") == 0) {
+            return TypeMarkdown;
         } else {
             // try auto detecting
             FileType autoDetectType = defaultType;

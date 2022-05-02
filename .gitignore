@@ -17,3 +17,11 @@ Debug/
 Release/
 build-Debug*/
 *build-debug*/
+build-*release*/
+build-*debug*/
+.cache/
+ctags/
+.ctagsd/
+compile_commands.json
+compile_flags.txt
+

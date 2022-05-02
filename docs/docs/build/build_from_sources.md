@@ -6,9 +6,13 @@
 - Install compiler and other required tools (`git` etc) [as described here][10]
 - Build wxWidgets from sources. See build instructions [here][5]
 - Clone CodeLite sources:
+
 ```bash
 git clone https://github.com/eranif/codelite.git
+cd codelite
+git submodule update --init
 ```
+
 - Download and install CodeLite for Windows (`64 bit`) from our [Download Page][8]
 - Open the workspace `CodeLiteIDE.workspace` (located in the CodeLite's folder)
 - Make sure that the project `CodeLiteIDE` is selected (the active project uses **bold** font)
@@ -24,14 +28,18 @@ git clone https://github.com/eranif/codelite.git
 - Install `libssh-dev` and `libsqlite3-dev` packages (or similar, depending on your distro). On **Ubuntu / Debian**, you can use this command:
 
 ```bash
-    sudo apt install build-essential git cmake \
-                     libssh-dev libsqlite3-dev 
+    sudo apt install build-essential            \
+                     git cmake                  \
+                     libssh-dev libsqlite3-dev  \
+                     libpcre2-dev
 ```
 
 - Git clone the sources:
 
 ```bash
     git clone https://github.com/eranif/codelite.git
+    cd codelite
+    git submodule update --init
 ```
 
 - Build CodeLite:
@@ -83,9 +91,13 @@ Preparation:
 Clone the repo (I will assume that your development folder is: `/Users/$USER/src`)
 
 ```bash
-cd /Users/$USER/src
-git clone https://github.com/eranif/codelite.git
+    mkdir -p /Users/$USER/src
+    cd /Users/$USER/src
+    git clone https://github.com/eranif/codelite.git
+    cd codelite
+    git submodule update --init
 ```
+
  the above will create the folder `/Users/$USER/src/codelite`
 
  To build CodeLite:

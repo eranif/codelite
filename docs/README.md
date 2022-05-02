@@ -7,7 +7,7 @@ Install the following
 - install mkdocs + extensions
 - If you are under MSYS2, make sure to install libcrypt-devel & python3:
 
-MSYS2:
+# MSYS2:
 
 ```bash
 pacman -S libcrypt-devel
@@ -18,7 +18,7 @@ echo 'export PATH=/home/eran/.local/bin;$PATH' >> ~/.bashrc
 . ~/.bashrc
 ```
 
-Ubuntu / Debian:
+# Ubuntu / Debian:
 
 ```bash
 # make sure we got curl installed

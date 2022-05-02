@@ -649,6 +649,7 @@ add_subdirectory(PCH)
 if(APPLE)
     add_subdirectory(universal-ctags)
 elseif(UNIX AND NOT APPLE)
+    # on linux, we build ctags
     add_subdirectory(ctags)
 endif()
 
@@ -754,3 +755,12 @@ else()
     ## Scan for user plugins
     CL_SCAN_FOR_PLUGINS()
 endif() # NOT WXC_APP
+
+if (UNIX AND NOT APPLE)
+    set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
+    install(TARGETS ctags DESTINATION ${CL_PREFIX}/bin PERMISSIONS ${EXE_PERM})
+elseif(APPLE)
+    set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
+    install(TARGETS ctags DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS PERMISSIONS ${EXE_PERM})
+    CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-ctags)
+endif()

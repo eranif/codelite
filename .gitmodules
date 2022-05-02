@@ -1,0 +1,3 @@
+[submodule "ctags"]
+	path = ctags
+	url = https://github.com/eranif/ctags

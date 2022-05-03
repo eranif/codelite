@@ -387,10 +387,9 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             break;
         }
         case FOLD_MARGIN_ATTR_ID:
-            // fold margin foreground colour
-            ctrl->SetFoldMarginColour(true, to_wx_colour(sp.GetBgColour()));
-            ctrl->SetFoldMarginHiColour(true, to_wx_colour(sp.GetFgColour()));
+            // fold margin, we set it at the end using the default style
             break;
+
         case SEL_TEXT_ATTR_ID: {
             // selection colour
             wxColour sel_bg_colour = sp.GetBgColour();
@@ -459,15 +458,15 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 ctrl->StyleSetEOLFilled(style_id, sp.GetEolFilled());
 
                 if(style_id != LINE_NUMBERS_ATTR_ID) {
-                    ctrl->StyleSetForeground(style_id, to_wx_colour(sp.GetFgColour()));
                     // Inactive state is greater by 64 from its counterpart
                     wxColor inactiveColor = GetInactiveColor(sp);
+                    ctrl->StyleSetForeground(style_id, to_wx_colour(sp.GetFgColour()));
                     ctrl->StyleSetForeground(style_id + 64, inactiveColor);
-                    ctrl->StyleSetFont(style_id + 64, font);
-                    // ctrl->StyleSetSize(style_id + 64, size);
-                    ctrl->StyleSetBackground(style_id + 64, defaultStyle.GetBgColour());
 
+                    ctrl->StyleSetBackground(style_id + 64, defaultStyle.GetBgColour());
                     ctrl->StyleSetBackground(style_id, to_wx_colour(sp.GetBgColour()));
+
+                    ctrl->StyleSetFont(style_id + 64, font);
                 }
             }
         } break;
@@ -500,13 +499,20 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     }
 
     // by default indicators are set to be opaque rounded box
-    if(DrawingUtils::IsDark(defaultStyle.GetBgColour())) {
+    bool is_dark = DrawingUtils::IsDark(defaultStyle.GetBgColour());
+    if(is_dark) {
         ctrl->IndicatorSetStyle(1, wxSTC_INDIC_BOX);
         ctrl->IndicatorSetStyle(2, wxSTC_INDIC_BOX);
     } else {
         ctrl->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
         ctrl->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
     }
+
+    wxColour default_bg_colour = defaultStyle.GetBgColour();
+    default_bg_colour = default_bg_colour.ChangeLightness(is_dark ? 105 : 95);
+
+    ctrl->SetFoldMarginColour(true, default_bg_colour);
+    ctrl->SetFoldMarginHiColour(true, default_bg_colour);
 
     // Annotations markers
     // Warning style

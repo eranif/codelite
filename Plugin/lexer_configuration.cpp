@@ -43,12 +43,6 @@
 #include <wx/utils.h>
 namespace
 {
-bool StringTolBool(const wxString& s)
-{
-    bool res = s.CmpNoCase(wxT("Yes")) == 0 ? true : false;
-    return res;
-}
-
 /**
  * @brief allocate substyles for the control for a given base style. Do nothing
  * if the substyles have already been allocated
@@ -70,176 +64,7 @@ LexerConf::LexerConf()
 {
 }
 
-void LexerConf::FromXml(wxXmlNode* element)
-{
-    if(element) {
-        m_flags = 0;
-        m_name = element->GetPropVal(wxT("Name"), wxEmptyString);
-        m_name.MakeLower();
-
-        m_lexerId = XmlUtils::ReadLong(element, wxT("Id"), 0);
-        m_themeName = XmlUtils::ReadString(element, "Theme", "Default");
-        EnableFlag(kIsActive, XmlUtils::ReadBool(element, "IsActive", false));
-        EnableFlag(kUseCustomTextSelectionFgColour, XmlUtils::ReadBool(element, "UseCustomTextSelFgColour", false));
-        EnableFlag(kStyleInPP,
-                   element->GetPropVal(wxT("StylingWithinPreProcessor"), wxT("yes")) == wxT("yes") ? true : false);
-
-        // load key words
-        wxXmlNode* node = NULL;
-        for(int i = 0; i < 10; ++i) {
-            wxString tagName = "KeyWords";
-            tagName << i;
-            node = XmlUtils::FindFirstByTagName(element, tagName);
-            if(node) {
-                wxString content = node->GetNodeContent();
-                content.Replace("\r", "");
-                content.Replace("\n", " ");
-                content.Replace("\\", " ");
-                m_keyWords[i] = content;
-            }
-        }
-
-        // load extensions
-        node = XmlUtils::FindFirstByTagName(element, wxT("Extensions"));
-        if(node) {
-            m_extension = node->GetNodeContent();
-            // Make sure that CMake includes the CMakeLists.txt file
-            if(m_lexerId == wxSTC_LEX_CMAKE) {
-                if(!m_extension.Contains("CMakeLists.txt")) {
-                    m_extension = "*.cmake;*.CMAKE;*CMakeLists.txt";
-                }
-            }
-        }
-
-        // Hack: add RawString property to the lexers if not exist
-        // By default, we use the settings defined for the wxSTC_C_STRING
-        // property
-        bool isCxxLexer = (m_lexerId == wxSTC_LEX_CPP);
-        bool hasRawString = false;
-
-        // Keey NULL property
-        StyleProperty stringProp;
-        stringProp.SetId(STYLE_PROPERTY_NULL_ID);
-
-        // load properties
-        // Search for <properties>
-        node = XmlUtils::FindFirstByTagName(element, wxT("Properties"));
-        if(node) {
-            // We found the element, read the attributes
-            wxXmlNode* prop = node->GetChildren();
-            while(prop) {
-                if(prop->GetName() == wxT("Property")) {
-                    // Read the font attributes
-                    wxString Name = XmlUtils::ReadString(prop, wxT("Name"), wxT("DEFAULT"));
-                    wxString bold = XmlUtils::ReadString(prop, wxT("Bold"), wxT("no"));
-                    wxString italic = XmlUtils::ReadString(prop, wxT("Italic"), wxT("no"));
-                    wxString eolFill = XmlUtils::ReadString(prop, wxT("EolFilled"), wxT("no"));
-                    wxString underline = XmlUtils::ReadString(prop, wxT("Underline"), wxT("no"));
-                    wxString strikeout = XmlUtils::ReadString(prop, wxT("Strikeout"), wxT("no"));
-                    wxString face = XmlUtils::ReadString(prop, wxT("Face"), wxT("Courier"));
-                    wxString colour = XmlUtils::ReadString(prop, wxT("Colour"), wxT("black"));
-                    wxString bgcolour = XmlUtils::ReadString(prop, wxT("BgColour"), wxT("white"));
-                    long fontSize = XmlUtils::ReadLong(prop, wxT("Size"), 10);
-                    long propId = XmlUtils::ReadLong(prop, wxT("Id"), 0);
-                    long alpha = XmlUtils::ReadLong(prop, wxT("Alpha"), 50);
-
-                    // Mainly for upgrade purposes: check if already read
-                    // the StringRaw propery
-                    if(isCxxLexer && !hasRawString && propId == wxSTC_C_STRINGRAW) {
-                        hasRawString = true;
-                    }
-                    StyleProperty property =
-                        StyleProperty(propId, colour, bgcolour, fontSize, Name, face, StringTolBool(bold),
-                                      StringTolBool(italic), StringTolBool(underline), StringTolBool(eolFill), alpha);
-                    if(isCxxLexer && propId == wxSTC_C_STRING) {
-                        stringProp = property;
-                    }
-                    m_properties.push_back(property);
-                }
-                prop = prop->GetNext();
-            }
-
-            // If we don't have the raw string style property,
-            // copy the string property and add it
-            if(isCxxLexer && !hasRawString && !stringProp.IsNull()) {
-                stringProp.SetId(wxSTC_C_STRINGRAW);
-                stringProp.SetName("Raw String");
-                m_properties.push_back(stringProp);
-            }
-        }
-    }
-}
-
 LexerConf::~LexerConf() {}
-
-wxXmlNode* LexerConf::ToXml() const
-{
-    // convert the lexer back xml node
-    wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Lexer"));
-    // set the lexer name
-    node->AddProperty(wxT("Name"), GetName());
-    node->AddProperty("Theme", GetThemeName());
-    node->AddProperty("IsActive", IsActive() ? "Yes" : "No");
-    node->AddAttribute("UseCustomTextSelFgColour", IsUseCustomTextSelectionFgColour() ? "Yes" : "No");
-    node->AddProperty(wxT("StylingWithinPreProcessor"), BoolToString(GetStyleWithinPreProcessor()));
-    wxString strId;
-    strId << GetLexerId();
-    node->AddProperty(wxT("Id"), strId);
-
-    // set the keywords node
-    wxXmlNode* keyWords0 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords0"));
-    XmlUtils::SetNodeContent(keyWords0, GetKeyWords(0));
-    node->AddChild(keyWords0);
-
-    wxXmlNode* keyWords1 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords1"));
-    XmlUtils::SetNodeContent(keyWords1, GetKeyWords(1));
-    node->AddChild(keyWords1);
-
-    wxXmlNode* keyWords2 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords2"));
-    XmlUtils::SetNodeContent(keyWords2, GetKeyWords(2));
-    node->AddChild(keyWords2);
-
-    wxXmlNode* keyWords3 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords3"));
-    XmlUtils::SetNodeContent(keyWords3, GetKeyWords(3));
-    node->AddChild(keyWords3);
-
-    wxXmlNode* keyWords4 = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("KeyWords4"));
-    XmlUtils::SetNodeContent(keyWords4, GetKeyWords(4));
-    node->AddChild(keyWords4);
-
-    // set the extensions node
-    wxXmlNode* extesions = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Extensions"));
-    XmlUtils::SetNodeContent(extesions, GetFileSpec());
-    node->AddChild(extesions);
-
-    // set the properties
-    wxXmlNode* properties = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Properties"));
-    for(const StyleProperty& p : m_properties) {
-        wxXmlNode* property = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Property"));
-        strId.Clear();
-        strId << p.GetId();
-        property->AddProperty(wxT("Id"), strId);
-        property->AddProperty(wxT("Name"), p.GetName());
-        property->AddProperty(wxT("Bold"), BoolToString(p.IsBold()));
-        property->AddProperty(wxT("Face"), p.GetFaceName());
-        property->AddProperty(wxT("Colour"), p.GetFgColour());
-        property->AddProperty(wxT("BgColour"), p.GetBgColour());
-        property->AddProperty(wxT("Italic"), BoolToString(p.GetItalic()));
-        property->AddProperty(wxT("Underline"), BoolToString(p.GetUnderlined()));
-        property->AddProperty(wxT("EolFilled"), BoolToString(p.GetEolFilled()));
-
-        strId.Clear();
-        strId << p.GetAlpha();
-        property->AddProperty(wxT("Alpha"), strId);
-
-        wxString strSize;
-        strSize << p.GetFontSize();
-        property->AddProperty(wxT("Size"), strSize);
-        properties->AddChild(property);
-    }
-    node->AddChild(properties);
-    return node;
-}
 
 wxFont LexerConf::GetFontForSyle(int styleId, const wxWindow* win) const
 {
@@ -247,22 +72,8 @@ wxFont LexerConf::GetFontForSyle(int styleId, const wxWindow* win) const
     if(prop.IsNull()) {
         return DrawingUtils::GetFallbackFixedFont(win);
     }
-
-    if(prop.GetFaceName().empty()) {
-        // no face name, use the fallback font
-        return DrawingUtils::GetFallbackFixedFont(win, prop.IsBold());
-    }
-
-    int fontSize(prop.GetFontSize());
-    const wxString& face = prop.GetFaceName();
-
-    wxFontInfo fontInfo = wxFontInfo(DrawingUtils::FixFontSize(fontSize, win))
-                              .Family(wxFONTFAMILY_MODERN)
-                              .Italic(prop.GetItalic())
-                              .Bold(prop.IsBold())
-                              .Underlined(prop.GetUnderlined())
-                              .FaceName(face);
-    wxFont font(fontInfo);
+    auto font = DrawingUtils::GetFallbackFixedFont(win);
+    prop.FromAttributes(&font);
     return font;
 }
 
@@ -323,33 +134,19 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     }
 
     // Find the default style
-    wxFont defaultFont;
+    wxFont defaultFont = DrawingUtils::GetFallbackFixedFont(ctrl);
     bool foundDefaultStyle = false;
-    int nDefaultFontSize = DrawingUtils::GetFallbackFixedFontSize(ctrl);
 
     StyleProperty defaultStyle;
     for(const auto& prop : GetLexerProperties()) {
         if(prop.GetId() == 0 && !prop.IsSubstyle()) {
             defaultStyle = prop;
-
-            wxString fontFace =
-                prop.GetFaceName().IsEmpty() ? DrawingUtils::GetFallbackFixedFontFace() : prop.GetFaceName();
-            if(!prop.GetFaceName().IsEmpty()) {
-                nDefaultFontSize = prop.GetFontSize();
-            }
-
-            defaultFont = wxFont(wxFontInfo(nDefaultFontSize).Family(wxFONTFAMILY_MODERN).FaceName(fontFace));
-            if(prop.IsBold()) {
-                defaultFont.SetWeight(wxFONTWEIGHT_BOLD);
-            }
-            if(prop.GetUnderlined()) {
-                defaultFont.SetStyle(wxFONTSTYLE_ITALIC);
-            }
+            prop.FromAttributes(&defaultFont);
             foundDefaultStyle = true;
             if(!defaultFont.IsOk()) {
                 clWARNING() << "Found default font, but the font is NOT OK !?" << endl;
                 // make sure we have a font...
-                defaultFont = DrawingUtils::GetDefaultFixedFont();
+                defaultFont = DrawingUtils::GetFallbackFixedFont(ctrl);
             }
             break;
         }
@@ -370,12 +167,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     }
 
     for(const auto& sp : GetLexerProperties()) {
-        int size = nDefaultFontSize;
-        wxString face = sp.GetFaceName();
-        bool bold = sp.IsBold();
-        bool italic = sp.GetItalic();
-        bool underline = sp.GetUnderlined();
-
         // handle special cases
         switch(sp.GetId()) {
         case WHITE_SPACE_ATTR_ID: {
@@ -408,21 +199,8 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             break;
         }
         default: {
-            wxString faceName = face;
-            int fontSize(size);
-            if(face.IsEmpty()) {
-                // defaults
-                fontSize = nDefaultFontSize;
-                faceName = DrawingUtils::GetFallbackFixedFontFace();
-            }
-            fontSize = DrawingUtils::FixFontSize(size, ctrl);
-            wxFontInfo fontInfo = wxFontInfo(fontSize)
-                                      .Family(wxFONTFAMILY_MODERN)
-                                      .Italic(italic)
-                                      .Bold(bold)
-                                      .Underlined(underline)
-                                      .FaceName(faceName);
-            wxFont font(fontInfo);
+            wxFont font = defaultFont;
+            sp.FromAttributes(&font);
 
             if(sp.GetId() == 0) { // default
                 ctrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
@@ -437,12 +215,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                 ctrl->StyleSetBackground(wxSTC_STYLE_DEFAULT, sp.GetBgColour());
                 ctrl->StyleSetFont(wxSTC_STYLE_LINENUMBER + 64, font);
 
-            } else if(sp.GetId() == wxSTC_STYLE_CALLTIP) {
-                tooltip = true;
-                if(sp.GetFaceName().IsEmpty()) {
-                    font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-                    fontSize = font.GetPointSize();
-                }
             } else {
 
                 int style_id = sp.GetId();

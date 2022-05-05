@@ -24,10 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cl_config.h"
+
 #include "cl_defs.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 #include "wx/filename.h"
+
 #include <algorithm>
 #include <wx/filefn.h>
 #include <wx/log.h>
@@ -555,21 +557,17 @@ wxFont clConfig::Read(const wxString& name, const wxFont& defaultValue)
     // Unserialize the font
     wxFont font;
     JSONItem f = general.namedObject(name);
+    if(!f.hasNamedObject("fontDesc"))
+        return defaultValue;
 
-    font.SetPointSize(f.namedObject("pointSize").toInt());
-    font.SetFaceName(f.namedObject("face").toString());
-    font.SetWeight(f.namedObject("bold").toBool() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
-    font.SetStyle(f.namedObject("italic").toBool() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
+    font.SetNativeFontInfo(f.namedObject("fontDesc").toString());
     return font;
 }
 
 void clConfig::Write(const wxString& name, const wxFont& value)
 {
     JSONItem font = JSONItem::createObject(name);
-    font.addProperty("pointSize", value.GetPointSize());
-    font.addProperty("face", value.GetFaceName());
-    font.addProperty("bold", (value.GetWeight() == wxFONTWEIGHT_BOLD));
-    font.addProperty("italic", (value.GetStyle() == wxFONTSTYLE_ITALIC));
+    font.addProperty("fontDesc", value.GetNativeFontInfoDesc());
 
     JSONItem general = GetGeneralSetting();
     if(general.hasNamedObject(name)) {

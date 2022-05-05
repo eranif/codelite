@@ -136,12 +136,6 @@ public:
     };
 
 public:
-    // Return an xml representation from this object
-    wxXmlNode* ToXml() const;
-
-    // Parse lexer object from xml node
-    void FromXml(wxXmlNode* node);
-
     void SetSubstyleBase(int style) { m_substyleBase = style; }
     int GetSubStyleBase() const { return m_substyleBase; }
     bool IsSubstyleSupported() const { return m_substyleBase != wxNOT_FOUND; }

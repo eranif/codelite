@@ -118,17 +118,10 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
 
     // Set the current editor font to the default one
-    // but first check that we have entry in the configuration file
-    // for this
     bool found_font = false;
-    wxFont font;
-    clConfig::Get().Read("GlobalThemeFont", [&found_font](const JSONItem& item) { found_font = true; });
-
-    if(found_font) {
-        wxMessageBox("Font found!");
-        wxFont font = clConfig::Get().Read("GlobalThemeFont", wxNullFont);
-        m_fontPickerGlobal->SetSelectedFont(font);
-    }
+    wxFont font = DrawingUtils::GetFallbackFixedFont(this);
+    clConfig::Get().Read("GlobalThemeFont", font);
+    m_fontPickerGlobal->SetSelectedFont(font);
 
     DoUpdatePreview();
 
@@ -423,18 +416,17 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
     // update colour picker & font pickers
     wxString selectionString = event.GetString();
     StyleProperty::Vec_t& properties = m_lexer->GetLexerProperties();
+    wxFont default_font = DrawingUtils::GetFallbackFixedFont(this);
+
     for(const auto& p : properties) {
         if(p.GetName() == selectionString) {
             // update font & color
             wxString colour = p.GetFgColour();
             wxString bgColour = p.GetBgColour();
 
-            int size = p.GetFontSize();
-            wxString face = p.GetFaceName();
-            bool bold = p.IsBold();
+            wxFont font = default_font;
+            p.FromAttributes(&font);
 
-            wxFont font = wxFont(size, wxFONTFAMILY_TELETYPE, p.GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
-                                 bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, p.GetUnderlined(), face);
             m_fontPicker->SetSelectedFont(font);
             m_bgColourPicker->SetColour(bgColour);
             m_colourPicker->SetColour(colour);
@@ -844,9 +836,5 @@ void SyntaxHighlightDlg::OnUseCustomBaseColourUI(wxUpdateUIEvent& event)
 
 void SyntaxHighlightDlg::DoFontChanged(StyleProperty& sp, const wxFont& font)
 {
-    sp.SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
-    sp.SetFaceName(font.GetFaceName());
-    sp.SetFontSize(font.GetPointSize());
-    sp.SetUnderlined(font.GetUnderlined());
-    sp.SetItalic(font.GetStyle() == wxFONTSTYLE_ITALIC);
+    sp.SetFontInfoDesc(font.GetNativeFontInfoDesc());
 }

@@ -29,7 +29,7 @@
 
 // Upgrade macros
 #define LEXERS_VERSION_STRING "LexersVersion"
-#define LEXERS_VERSION 6
+#define LEXERS_VERSION 7
 
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_START, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_END, clCommandEvent);
@@ -37,58 +37,7 @@ wxDEFINE_EVENT(wxEVT_UPGRADE_LEXERS_PROGRESS, clCommandEvent);
 
 namespace
 {
-const wxString LexerTextDefaultXML =
-    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-    "<Lexer Name=\"text\" Theme=\"Default\" IsActive=\"No\" UseCustomTextSelFgColour=\"Yes\" "
-    "StylingWithinPreProcessor=\"yes\" Id=\"1\">"
-    "  <KeyWords0/>"
-    "  <KeyWords1/>"
-    "  <KeyWords2/>"
-    "  <KeyWords3/>"
-    "  <KeyWords4/>"
-    "  <Extensions/>"
-    "  <Properties>"
-    "    <Property Id=\"0\" Name=\"Default\" Bold=\"no\" Face=\"\" Colour=\"black\" BgColour=\"white\" Italic=\"no\" "
-    "Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"34\" Name=\"Brace match\" Bold=\"yes\" Face=\"\" Colour=\"black\" BgColour=\"cyan\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"35\" Name=\"Brace bad match\" Bold=\"yes\" Face=\"\" Colour=\"black\" BgColour=\"red\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"37\" Name=\"Indent Guide\" Bold=\"no\" Face=\"\" Colour=\"#7F7F7F\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"-1\" Name=\"Fold Margin\" Bold=\"no\" Face=\"\" Colour=\"white\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"-2\" Name=\"Text Selection\" Bold=\"no\" Face=\"\" Colour=\"#4E687D\" BgColour=\"#D6D2D0\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"-3\" Name=\"Caret Colour\" Bold=\"no\" Face=\"\" Colour=\"black\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"-4\" Name=\"Whitespace\" Bold=\"no\" Face=\"\" Colour=\"#7F7F7F\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"38\" Name=\"Calltip\" Bold=\"no\" Face=\"\" Colour=\"black\" BgColour=\"white\" Italic=\"no\" "
-    "Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"33\" Name=\"Line Numbers\" Bold=\"no\" Face=\"\" Colour=\"black\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"34\" Name=\"Brace match\" Bold=\"yes\" Face=\"\" Colour=\"black\" BgColour=\"cyan\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"35\" Name=\"Brace bad match\" Bold=\"yes\" Face=\"\" Colour=\"black\" BgColour=\"red\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"37\" Name=\"Indent Guide\" Bold=\"no\" Face=\"\" Colour=\"#7F7F7F\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"-1\" Name=\"Fold Margin\" Bold=\"no\" Face=\"\" Colour=\"white\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"-2\" Name=\"Text Selection\" Bold=\"no\" Face=\"\" Colour=\"#4E687D\" BgColour=\"#D6D2D0\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"-3\" Name=\"Caret Colour\" Bold=\"no\" Face=\"\" Colour=\"black\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"-4\" Name=\"Whitespace\" Bold=\"no\" Face=\"\" Colour=\"#7F7F7F\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"38\" Name=\"Calltip\" Bold=\"no\" Face=\"\" Colour=\"black\" BgColour=\"white\" Italic=\"no\" "
-    "Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "    <Property Id=\"33\" Name=\"Line Numbers\" Bold=\"no\" Face=\"\" Colour=\"black\" BgColour=\"white\" "
-    "Italic=\"no\" Underline=\"no\" EolFilled=\"no\" Alpha=\"50\" Size=\"11\"/>"
-    "  </Properties>"
-    "</Lexer>";
-
+wxString DEFAULT_THEME = "Atom One-Dark";
 void AddLexerKeywords(LexerConf::Ptr_t lexer, int setIndex, const std::vector<wxString>& words)
 {
     wxString curwords = lexer->GetKeyWords(setIndex);
@@ -112,8 +61,6 @@ void AddLexerKeywords(LexerConf::Ptr_t lexer, int setIndex, const std::vector<wx
     lexer->SetKeyWords(curwords, setIndex);
 }
 
-wxString DEFAULT_THEME = "Atom One-Dark";
-
 void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
 {
     wxString spec = lexer->GetFileSpec();
@@ -133,19 +80,297 @@ void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
     }
 }
 
+const wxString DefaultLexerJSON = R"EOF(
+{
+ "Name": "c++",
+ "Theme": "Atom One-Dark",
+ "Flags": 5,
+ "Id": 3,
+ "KeyWords0": "alignas alignof and and_eq asm auto bitand bitor bool break case catch char char16_t char32_t class compl const const_cast constexpr continue decltype default delete do double dynamic_cast else enum explicit export extern false final float for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq override private protected public register reinterpret_cast return short signed sizeof static static_assert static_cast struct switch template this thread_local throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq ",
+ "KeyWords1": "",
+ "KeyWords2": "a addindex addtogroup anchor arg attention author b brief bug c callergraph callgraph category class code cond copybrief copydetails copydoc date def defgroup deprecated details dir dontinclude dot dotfile e else elseif em endcode endcond enddot endhtmlonly endif endlatexonly endlink endmanonly endmsc endverbatim endxmlonly enum example exception extends file fn headerfile hideinitializer htmlinclude htmlonly if ifnot image implements include includelineno ingroup interface internal invariant latexonly li line link mainpage manonly memberof msc n name namespace nosubgrouping note overload p package page par paragraph param post pre private privatesection property protected protectedsection protocol public publicsection ref relates relatesalso remarks return retval sa section see showinitializer since skip skipline struct subpage subsection subsubsection test throw todo tparam typedef union until var verbatim verbinclude version warning weakgroup xmlonly xrefitem",
+ "KeyWords3": "",
+ "KeyWords4": "",
+ "Extensions": "*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++;*.ino",
+ "SubstyleBase": 11,
+ "WordSet": [{
+   "index": 3,
+   "is_substyle": false
+  }, {
+   "index": 1,
+   "is_substyle": false
+  }, {
+   "index": 2,
+   "is_substyle": true
+  }, {
+   "index": 4,
+   "is_substyle": false
+  }],
+ "Properties": [{
+   "Id": 0,
+   "Name": "Default",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#53565C",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 1,
+   "Name": "Common C style comment",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#7D8C93",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 2,
+   "Name": "Common C++ style comment",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#7D8C93",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 3,
+   "Name": "Doxygen C style comment",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#7D8C93",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 4,
+   "Name": "Number",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#FFCD22",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 5,
+   "Name": "C++ keyword",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#C678DD",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 6,
+   "Name": "String",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#EC7600",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 7,
+   "Name": "Character",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#EC7600",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 8,
+   "Name": "Uuid",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#FFCD22",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 9,
+   "Name": "Preprocessor",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#E0E2E4",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 10,
+   "Name": "Operator",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#E8E2B7",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 11,
+   "Name": "Identifier",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#E0E2E4",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 12,
+   "Name": "Open String",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#EC7600",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 15,
+   "Name": "Doxygen C++ style comment",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#7D8C93",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 17,
+   "Name": "Doxygen keyword",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#A082BD",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 18,
+   "Name": "Doxygen keyword error",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#A082BD",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 16,
+   "Name": "Functions",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#56AFD7",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 19,
+   "Name": "Classes",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#FFC235",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 2,
+   "Name": "Variables",
+   "Flags": 16,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#F35151",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 34,
+   "Name": "Brace match",
+   "Flags": 2,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "yellow",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 35,
+   "Name": "Brace bad match",
+   "Flags": 2,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "red",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 37,
+   "Name": "Indent Guide",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#282C34",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": -1,
+   "Name": "Fold Margin",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#3D4148",
+   "BgColour": "#3D4148",
+   "Size": 12
+  }, {
+   "Id": -2,
+   "Name": "Text Selection",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#404040",
+   "BgColour": "#CC9900",
+   "Size": 12
+  }, {
+   "Id": -3,
+   "Name": "Caret Colour",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "rgb(255, 128, 0)",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": -4,
+   "Name": "Whitespace",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#3D4148",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 38,
+   "Name": "Calltip",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#E0E2E4",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 33,
+   "Name": "Line Numbers",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#53565C",
+   "BgColour": "#282C34",
+   "Size": 12
+  }]
+}
+)EOF";
 } // namespace
 
 class clCommandEvent;
 ColoursAndFontsManager::ColoursAndFontsManager()
     : m_initialized(false)
 {
-    // Create a "go to lexer" when all is broken
-    wxStringInputStream sis(LexerTextDefaultXML);
-    wxXmlDocument doc;
-    if(doc.Load(sis)) {
-        m_defaultLexer.Reset(new LexerConf());
-        m_defaultLexer->FromXml(doc.GetRoot());
-    }
+    JSON json(DefaultLexerJSON);
+    m_defaultLexer.Reset(new LexerConf());
+    m_defaultLexer->FromJSON(json.toElement());
+
     m_lexersVersion = clConfig::Get().Read(LEXERS_VERSION_STRING, LEXERS_UPGRADE_LINENUM_DEFAULT_COLOURS);
     EventNotifier::Get()->Bind(wxEVT_INFO_BAR_BUTTON, &ColoursAndFontsManager::OnAdjustTheme, this);
 }
@@ -161,54 +386,6 @@ ColoursAndFontsManager& ColoursAndFontsManager::Get()
     static ColoursAndFontsManager s_theManager;
     return s_theManager;
 }
-
-/**
- * @class ColoursAndFontsManagerLoaderHelper
- * @brief
- */
-struct ColoursAndFontsManagerLoaderHelper {
-    ColoursAndFontsManager* m_manager;
-    ColoursAndFontsManagerLoaderHelper(ColoursAndFontsManager* manager)
-        : m_manager(manager)
-    {
-    }
-
-    void Load()
-    {
-        std::vector<wxXmlDocument*> userLexers;
-        wxArrayString files;
-
-        //---------------------------------------------
-        // Load user lexers (new format only)
-        //---------------------------------------------
-        files.Clear();
-        wxFileName userLexersPath(clStandardPaths::Get().GetUserDataDir(), "");
-        userLexersPath.AppendDir("lexers");
-
-        CL_DEBUG("Loading users lexers");
-        wxDir::GetAllFiles(userLexersPath.GetPath(), &files, "lexer_*.xml");
-        // Each XMl represents a single lexer
-        for(size_t i = 0; i < files.GetCount(); ++i) {
-            wxString content;
-            wxFFile xmlFile(files.Item(i), "rb");
-            if(!xmlFile.IsOpened())
-                continue;
-            if(xmlFile.ReadAll(&content, wxConvUTF8)) {
-                wxXmlDocument* doc = new wxXmlDocument();
-                wxStringInputStream sis(content);
-                if(doc->Load(sis)) {
-                    userLexers.push_back(doc);
-                } else {
-                    wxDELETE(doc);
-                }
-            }
-            xmlFile.Close();
-            clRemoveFile(files.Item(i));
-        }
-        CL_DEBUG("Loading users lexers...done");
-        m_manager->OnLexerFilesLoaded(userLexers);
-    }
-};
 
 void ColoursAndFontsManager::Load()
 {
@@ -227,161 +404,26 @@ void ColoursAndFontsManager::Load()
     }
 
     // Load the lexers
-    ColoursAndFontsManagerLoaderHelper loader(this);
-    loader.Load();
+    LoadLexersFromFile();
 
     // read the global font property
     m_globalFont = clConfig::Get().Read("GlobalThemeFont", DrawingUtils::GetDefaultFixedFont());
 }
 
-void ColoursAndFontsManager::LoadOldXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers)
-{
-    // Each XMl represents a single lexer (the old format)
-    for(size_t i = 0; i < xmlFiles.size(); ++i) {
-        wxXmlDocument* doc = xmlFiles.at(i);
-        DEPRECATRED_DoAddLexer(doc->GetRoot());
-    }
-}
-
-LexerConf::Ptr_t ColoursAndFontsManager::DEPRECATRED_DoAddLexer(wxXmlNode* node)
-{
-    wxString lexerName = XmlUtils::ReadString(node, "Name");
-    lexerName.MakeLower();
-    if(lexerName.IsEmpty())
-        return NULL;
-
-    LexerConf::Ptr_t lexer(new LexerConf);
-    lexer->FromXml(node);
-
-    // ensure that the theme name is capitalized - this helps
-    // when displaying the content in a wxListBox sorted
-    wxString themeName = lexer->GetThemeName();
-    themeName = themeName.Mid(0, 1).Capitalize() + themeName.Mid(1);
-    lexer->SetThemeName(themeName);
-
-    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("final")) {
-        lexer->SetKeyWords(lexer->GetKeyWords(0) + " final", 0);
-    }
-
-    // Add C++ keyword "override"
-    if(lexer->GetName() == "c++" && !lexer->GetKeyWords(0).Contains("override")) {
-        lexer->SetKeyWords(lexer->GetKeyWords(0) + " override", 0);
-    }
-
-    // Hack: fix Java lexer which is using the same
-    // file extensions as C++...
-    if(lexer->GetName() == "java" && lexer->GetFileSpec().Contains(".cpp")) {
-        lexer->SetFileSpec("*.java");
-    }
-
-    // Append *.sqlite to the SQL lexer if missing
-    if(lexer->GetName() == "sql" && !lexer->GetFileSpec().Contains(".sqlite")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.sqlite");
-    }
-
-    // Hack2: since we now provide our own PHP and javaScript lexer, remove the PHP/JS extensions from
-    // the HTML lexer
-    if(lexer->GetName() == "html" && (lexer->GetFileSpec().Contains(".php") || lexer->GetFileSpec().Contains("*.js"))) {
-        lexer->SetFileSpec("*.htm;*.html;*.xhtml");
-    }
-
-    // Hack3: all the HTML support to PHP which have much more colour themes
-    if(lexer->GetName() == "html" && lexer->GetFileSpec().Contains(".html")) {
-        lexer->SetFileSpec("*.vbs;*.vbe;*.wsf;*.wsc;*.asp;*.aspx");
-    }
-
-    // Hack4: all the HTML support to PHP which have much more colour themes
-    if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".qml")) {
-        lexer->SetFileSpec("*.js;*.javascript;*.qml;*.json");
-    }
-
-    if(lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
-    }
-
-    if(lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
-        lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
-    }
-
-    // Add wxcp file extension to the JavaScript lexer
-    if(lexer->GetName() == "javascript" && !lexer->GetFileSpec().Contains(".wxcp")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.wxcp");
-    }
-
-    if(lexer->GetName() == "javascript") {
-        AddLexerKeywords(lexer, 0, { "class", "await", "async" });
-    }
-
-    // update script lexer with additional keywords
-    if(lexer->GetName() == "script") {
-        AddLexerKeywords(lexer, 0, { "return", "exit", "local", "function" });
-    }
-
-    // Add *.scss file extension to the css lexer
-    if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".scss")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.scss");
-    }
-
-    // Add *.less file extension to the css lexer
-    if(lexer->GetName() == "css" && !lexer->GetFileSpec().Contains(".less")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.less");
-    }
-
-    // Set the JavaScript keywords
-    if(lexer->GetName() == "php" && !lexer->GetKeyWords(1).Contains("instanceof")) {
-        lexer->SetKeyWords(
-            "break do instanceof typeof case else new var catch finally return void continue for switch while "
-            "debugger function this with default if throw delete in try abstract  export interface  static "
-            "boolean  extends "
-            "long super"
-            "byte final native synchronized char float package throws class goto private transient const "
-            "implements  protected "
-            " volatile double import  public enum "
-            "int short null true false",
-            1);
-    }
-
-    if(lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*akefile.in;*akefile.am");
-    }
-
-    // Upgrade the lexer colours
-    UpdateLexerColours(lexer, false);
-
-    if(m_lexersMap.count(lexerName) == 0) {
-        m_lexersMap.insert(std::make_pair(lexerName, ColoursAndFontsManager::Vec_t()));
-    }
-
-    ColoursAndFontsManager::Vec_t& vec = m_lexersMap.find(lexerName)->second;
-
-    // Locate an instance with this name and theme in
-    // both the m_alllexers and vector for this lexer
-    // name
-    ColoursAndFontsManager::Vec_t::iterator iter =
-        std::find_if(vec.begin(), vec.end(), LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
-    if(iter != vec.end()) {
-        vec.erase(iter);
-    }
-    iter = std::find_if(m_allLexers.begin(), m_allLexers.end(),
-                        LexerConf::FindByNameAndTheme(lexer->GetName(), lexer->GetThemeName()));
-    if(iter != m_allLexers.end()) {
-        m_allLexers.erase(iter);
-    }
-    vec.push_back(lexer);
-    m_allLexers.push_back(lexer);
-    return lexer;
-}
-
 wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString& lexerName) const
 {
-    ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.find(lexerName.Lower());
-    if(iter == m_lexersMap.end())
-        return wxArrayString();
+    const wxString lowerCaseName = lexerName.Lower();
+    if(m_lexersMap.count(lowerCaseName) == 0) {
+        return {};
+    }
+
+    const ColoursAndFontsManager::Vec_t& lexers = m_lexersMap.find(lowerCaseName)->second;
 
     wxArrayString themes;
-    const ColoursAndFontsManager::Vec_t& lexers = iter->second;
+    themes.reserve(lexers.size());
+
     for(size_t i = 0; i < lexers.size(); ++i) {
-        themes.Add(lexers.at(i)->GetThemeName());
+        themes.Add(lexers[i]->GetThemeName());
     }
 
     // sort the list
@@ -663,7 +705,7 @@ wxFileName ColoursAndFontsManager::GetConfigFile() const
     return fnSettings;
 }
 
-void ColoursAndFontsManager::SaveGlobalSettings()
+void ColoursAndFontsManager::SaveGlobalSettings(bool notify)
 {
     // save the global settings
     JSON root(cJSON_Object);
@@ -671,8 +713,10 @@ void ColoursAndFontsManager::SaveGlobalSettings()
     wxFileName fnSettings = GetConfigFile();
     root.save(fnSettings.GetFullPath());
 
-    wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
-    EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
+    if(notify) {
+        wxCommandEvent evtThemeChanged(wxEVT_CL_THEME_CHANGED);
+        EventNotifier::Get()->AddPendingEvent(evtThemeChanged);
+    }
 }
 
 LexerConf::Ptr_t ColoursAndFontsManager::CopyTheme(const wxString& lexerName, const wxString& themeName,
@@ -722,7 +766,7 @@ wxString ColoursAndFontsManager::ImportEclipseTheme(const wxString& theme_file)
     return wxEmptyString;
 }
 
-void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*>& userLexers)
+void ColoursAndFontsManager::LoadLexersFromFile()
 {
     // User lexers
     wxFileName fnUserLexers(clStandardPaths::Get().GetUserDataDir(), "lexers.json");
@@ -734,18 +778,23 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
     defaultLexersFileName.AppendDir("lexers");
     defaultLexersFileName.SetFullName("lexers.json");
 
-    wxString str_defaultLexersFileName = defaultLexersFileName.GetFullPath();
-    wxUnusedVar(str_defaultLexersFileName);
-
     m_allLexers.clear();
     m_lexersMap.clear();
+
+    if((m_lexersVersion < 7) && fnUserLexers.FileExists()) {
+        // an upgrade is needed
+        wxString user_settings = fnUserLexers.GetFullPath();
+        fnUserLexers.SetFullName("lexers.json.orig");
+        clSYSTEM() << "User's lexers.json file is too old, loading default settings" << endl;
+        ::wxRenameFile(user_settings, fnUserLexers.GetFullPath());
+        m_lexersVersion = LEXERS_VERSION;
+        m_globalTheme = DEFAULT_THEME;
+        SaveGlobalSettings(false);
+    }
 
     if(!fnUserLexers.FileExists()) {
         // Load default settings
         LoadJSON(defaultLexersFileName);
-
-        // Use old XML files
-        LoadOldXmls(userLexers);
 
         // Call save to create an initial user settings
         Save();
@@ -754,6 +803,7 @@ void ColoursAndFontsManager::OnLexerFilesLoaded(const std::vector<wxXmlDocument*
         // Load the user settings
         LoadJSON(fnUserLexers);
     }
+
     // Update lexers versions
     clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION);
 }
@@ -883,7 +933,7 @@ void ColoursAndFontsManager::SetTheme(const wxString& themeName)
     bool isDark = lexer->IsDark();
     wxString fallbackTheme;
     if(isDark) {
-        fallbackTheme = "One Dark Like";
+        fallbackTheme = "Atom One-Dark";
     } else {
         fallbackTheme = "Atom One Light";
     }
@@ -915,12 +965,15 @@ void ColoursAndFontsManager::LoadJSON(const wxFileName& path)
     JSON root(path);
     JSONItem arr = root.toElement();
     int arrSize = arr.arraySize();
-    CL_DEBUG("Loading JSON file: %s (contains %d lexers)", path.GetFullPath(), arrSize);
+    clDEBUG() << "Loading:" << path << endl;
+    clDEBUG() << "Found" << arrSize << "lexers" << endl;
+
     for(int i = 0; i < arrSize; ++i) {
         JSONItem json = arr.arrayItem(i);
         DoAddLexer(json);
     }
-    CL_DEBUG("Loading JSON file...done");
+
+    clDEBUG() << "Success" << endl;
 }
 
 LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
@@ -1161,11 +1214,7 @@ void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
     for(auto lexer : m_allLexers) {
         auto& props = lexer->GetLexerProperties();
         for(auto& sp : props) {
-            sp.SetFaceName(font.GetFaceName());
-            sp.SetFontSize(font.GetPointSize());
-            sp.SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
-            sp.SetItalic(font.GetStyle() == wxFONTSTYLE_ITALIC);
-            sp.SetUnderlined(font.GetUnderlined());
+            sp.SetFontInfoDesc(font.GetNativeFontInfoDesc());
         }
     }
 }

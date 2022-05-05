@@ -64,8 +64,6 @@ private:
     ColoursAndFontsManager();
     virtual ~ColoursAndFontsManager();
 
-    void LoadOldXmls(const std::vector<wxXmlDocument*>& xmlFiles, bool userLexers = false);
-    LexerConf::Ptr_t DEPRECATRED_DoAddLexer(wxXmlNode* node);
     LexerConf::Ptr_t DoAddLexer(JSONItem json);
     void Clear();
     wxFileName GetConfigFile() const;
@@ -99,7 +97,7 @@ public:
     /**
      * @brief save the global settings
      */
-    void SaveGlobalSettings();
+    void SaveGlobalSettings(bool notify = true);
     /**
      * @brief adjust the lexer colours to fit codelite's general look and feel
      */
@@ -184,10 +182,9 @@ public:
     wxString ImportEclipseTheme(const wxString& theme_file);
 
     /**
-     * @brief callback called by the helper thread indicating that it finished caching
-     * the XML files
+     * @brief load lexers from lexers.json
      */
-    void OnLexerFilesLoaded(const std::vector<wxXmlDocument*>& userLexers);
+    void LoadLexersFromFile();
 
     /**
      * @brief set a unified theme for all lexers. If the requested theme is not available for a given lexer,

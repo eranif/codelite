@@ -1,16 +1,12 @@
 #include "attribute_style.h"
 
-StyleProperty::StyleProperty(int id, const wxString& fgColour, const wxString& bgColour, const int fontSize,
-                             const wxString& name, const wxString& face, bool bold, bool italic, bool underline,
-                             bool eolFilled, int alpha)
+StyleProperty::StyleProperty(int id, const wxString& name, const wxString& fgColour, const wxString& bgColour,
+                             const int fontSize, bool bold, bool italic, bool underline, bool eolFilled)
     : m_id(id)
+    , m_name(name)
     , m_fgColour(fgColour)
     , m_bgColour(bgColour)
     , m_fontSize(fontSize)
-    , m_name(name)
-    , m_faceName(face)
-    , m_flags(0)
-    , m_alpha(alpha)
 {
     EnableFlag(kBold, bold);
     EnableFlag(kItalic, italic);
@@ -19,15 +15,20 @@ StyleProperty::StyleProperty(int id, const wxString& fgColour, const wxString& b
 }
 
 StyleProperty::StyleProperty()
-    : m_id(0)
-    , m_fgColour(_T("BLACK"))
-    , m_bgColour(_T("WHITE"))
-    , m_fontSize(12)
-    , m_name(wxEmptyString)
-    , m_faceName(_T("Courier"))
-    , m_flags(0)
-    , m_alpha(0)
+    : m_fgColour("BLACK")
+    , m_bgColour("WHITE")
 {
+}
+
+StyleProperty::StyleProperty(int id, const wxString& name, const wxString& fontDesc, const wxString& fgColour,
+                             const wxString& bgColour, bool eolFilled)
+    : m_id(id)
+    , m_name(name)
+    , m_fontDesc(fontDesc)
+    , m_fgColour(fgColour)
+    , m_bgColour(bgColour)
+{
+    EnableFlag(kEolFilled, eolFilled);
 }
 
 void StyleProperty::FromJSON(JSONItem json)
@@ -35,8 +36,7 @@ void StyleProperty::FromJSON(JSONItem json)
     m_id = json.namedObject("Id").toInt(0);
     m_name = json.namedObject("Name").toString("DEFAULT");
     m_flags = json.namedObject("Flags").toSize_t(0);
-    m_alpha = json.namedObject("Alpha").toInt(50);
-    m_faceName = json.namedObject("Face").toString("Courier");
+    m_fontDesc = json.namedObject("FontDesc").toString();
     m_fgColour = json.namedObject("Colour").toString("BLACK");
     m_bgColour = json.namedObject("BgColour").toString("WHITE");
     m_fontSize = json.namedObject("Size").toInt(10);
@@ -48,10 +48,21 @@ JSONItem StyleProperty::ToJSON(bool portable) const
     json.addProperty("Id", GetId());
     json.addProperty("Name", GetName());
     json.addProperty("Flags", m_flags);
-    json.addProperty("Alpha", GetAlpha());
-    json.addProperty("Face", portable ? wxString() : GetFaceName());
+    json.addProperty("FontDesc", portable ? wxString() : GetFontInfoDesc());
     json.addProperty("Colour", GetFgColour());
     json.addProperty("BgColour", GetBgColour());
     json.addProperty("Size", GetFontSize());
     return json;
+}
+
+void StyleProperty::FromAttributes(wxFont* font) const
+{
+    if(GetFontInfoDesc().empty()) {
+        font->SetUnderlined(GetUnderlined());
+        font->SetWeight(IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
+        font->SetStyle(GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
+        font->SetPointSize(GetFontSize());
+    } else {
+        font->SetNativeFontInfo(GetFontInfoDesc());
+    }
 }

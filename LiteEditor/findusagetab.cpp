@@ -161,7 +161,7 @@ void FindUsageTab::OnThemeChanged(wxCommandEvent& e)
 void FindUsageTab::UpdateStyle()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    m_ctrl->SetDefaultFont(lexer->GetFontForSyle(0, this));
+    m_ctrl->SetDefaultFont(lexer->GetFontForStyle(0, this));
 
     m_headerColour = lexer->GetProperty(wxSTC_C_GLOBALCLASS).GetFgColour();
 

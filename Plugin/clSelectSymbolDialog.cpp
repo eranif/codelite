@@ -52,7 +52,7 @@ void clSelectSymbolDialog::Initialise(const clSelectSymbolDialogEntry::List_t& e
     });
 
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    wxFont f = lexer->GetFontForSyle(0, m_dvListCtrl);
+    wxFont f = lexer->GetFontForStyle(0, m_dvListCtrl);
     m_dvListCtrl->SetDefaultFont(f);
     m_dvListCtrl->Begin();
     for(const auto& entry : entries) {

@@ -66,7 +66,7 @@ LexerConf::LexerConf()
 
 LexerConf::~LexerConf() {}
 
-wxFont LexerConf::GetFontForSyle(int styleId, const wxWindow* win) const
+wxFont LexerConf::GetFontForStyle(int styleId, const wxWindow* win) const
 {
     const auto& prop = GetProperty(styleId);
     if(prop.IsNull()) {

@@ -68,7 +68,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     m_dataview->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
-        m_dataview->SetDefaultFont(lexer->GetFontForSyle(0, m_dataview));
+        m_dataview->SetDefaultFont(lexer->GetFontForStyle(0, m_dataview));
     }
     EventNotifier::Get()->Bind(wxEVT_LSP_WORKSPACE_SYMBOLS, &OpenResourceDialog::OnWorkspaceSymbols, this);
 

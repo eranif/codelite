@@ -106,7 +106,7 @@ void clThemedTextCtrl::ApplySettings()
     lexer->ApplySystemColours(this);
 
     wxClientDC dc(this);
-    dc.SetFont(lexer->GetFontForSyle(0, this));
+    dc.SetFont(lexer->GetFontForStyle(0, this));
     wxRect rect = dc.GetTextExtent("Tp");
     rect.Inflate(2);
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button

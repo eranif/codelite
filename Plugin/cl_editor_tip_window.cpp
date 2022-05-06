@@ -414,7 +414,7 @@ void clEditorTipWindow::OnEditoConfigChanged(clCommandEvent& e)
 {
     e.Skip();
     // the lexers were modified by the user, reload the font
-    m_font = ColoursAndFontsManager::Get().GetLexer("text")->GetFontForSyle(0, this);
+    m_font = ColoursAndFontsManager::Get().GetLexer("text")->GetFontForStyle(0, this);
     Refresh();
 }
 

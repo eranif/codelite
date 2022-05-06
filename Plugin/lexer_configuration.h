@@ -259,7 +259,7 @@ public:
      * @brief return the font for a given style id
      * @return return wxNullFont if error occurred or could locate the style
      */
-    wxFont GetFontForSyle(int styleId, const wxWindow* win) const;
+    wxFont GetFontForStyle(int styleId, const wxWindow* win) const;
 };
 
 #endif // LEXER_CONFIGURATION_H

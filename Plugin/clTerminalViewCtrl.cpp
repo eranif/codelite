@@ -86,7 +86,7 @@ void clTerminalViewCtrl::ApplyStyle()
         MyAnsiCodeRenderer* r = static_cast<MyAnsiCodeRenderer*>(m_renderer);
         wxFont f = m_rendererFont;
         if(!f.IsOk()) {
-            f = lexer->GetFontForSyle(0, this);
+            f = lexer->GetFontForStyle(0, this);
         }
         r->SetFont(f);
         clDataViewListCtrl::SetDefaultFont(f);

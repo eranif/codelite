@@ -1379,7 +1379,7 @@ void ColoursAndFontsManager::SetThemeTextSelectionColours(const wxString& theme_
 wxFont ColoursAndFontsManager::GetFixedFont(bool small) const
 {
     auto lexer = GetLexer("text");
-    auto font = lexer->GetFontForSyle(0, EventNotifier::Get()->TopFrame());
+    auto font = lexer->GetFontForStyle(0, EventNotifier::Get()->TopFrame());
 #ifndef __WXMAC__
     if(small) {
 #if wxCHECK_VERSION(3, 1, 2)

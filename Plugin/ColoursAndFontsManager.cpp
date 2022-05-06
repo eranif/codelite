@@ -1,5 +1,6 @@
 #include "ColoursAndFontsManager.h"
 
+#include "FontUtils.hpp"
 #include "JSON.h"
 #include "ThemeImporterManager.hpp"
 #include "cl_command_event.h"
@@ -1214,7 +1215,7 @@ void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
     for(auto lexer : m_allLexers) {
         auto& props = lexer->GetLexerProperties();
         for(auto& sp : props) {
-            sp.SetFontInfoDesc(font.GetNativeFontInfoDesc());
+            sp.SetFontInfoDesc(FontUtils::GetFontInfo(font));
         }
     }
 }

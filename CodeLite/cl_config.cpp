@@ -25,6 +25,7 @@
 
 #include "cl_config.h"
 
+#include "FontUtils.hpp"
 #include "cl_defs.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
@@ -560,14 +561,14 @@ wxFont clConfig::Read(const wxString& name, const wxFont& defaultValue)
     if(!f.hasNamedObject("fontDesc"))
         return defaultValue;
 
-    font.SetNativeFontInfo(f.namedObject("fontDesc").toString());
+    font.SetNativeFontInfo(FontUtils::GetFontInfo(f.namedObject("fontDesc").toString()));
     return font;
 }
 
 void clConfig::Write(const wxString& name, const wxFont& value)
 {
     JSONItem font = JSONItem::createObject(name);
-    font.addProperty("fontDesc", value.GetNativeFontInfoDesc());
+    font.addProperty("fontDesc", FontUtils::GetFontInfo(value));
 
     JSONItem general = GetGeneralSetting();
     if(general.hasNamedObject(name)) {

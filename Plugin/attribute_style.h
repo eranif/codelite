@@ -129,14 +129,15 @@ public:
         return m_fontSize;
     }
 
-    const wxString& GetFontInfoDesc() const { return m_fontDesc; }
+    wxString GetFontInfoDesc() const;
+    bool HasFontInfoDesc() const { return !m_fontDesc.empty(); }
+    void SetFontInfoDesc(const wxString& desc);
     bool IsBold() const { return HasFlag(kBold); }
     const wxString& GetName() const { return m_name; }
     int GetId() const { return m_id; }
     void SetBgColour(const wxString& colour) { m_bgColour = colour; }
     void SetFgColour(const wxString& colour) { m_fgColour = colour; }
     void SetFontSize(long size) { m_fontSize = size; }
-    void SetFontInfoDesc(const wxString& face) { m_fontDesc = face; }
     void SetBold(bool bold) { EnableFlag(kBold, bold); }
     void SetId(int id) { m_id = id; }
     void SetItalic(bool italic) { EnableFlag(kItalic, italic); }

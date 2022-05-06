@@ -141,6 +141,8 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="FontUtils.hpp"/>
+    <File Name="FontUtils.cpp"/>
     <File Name="clWildMatch.hpp"/>
     <File Name="clWildMatch.cpp"/>
     <File Name="clFileName.cpp"/>

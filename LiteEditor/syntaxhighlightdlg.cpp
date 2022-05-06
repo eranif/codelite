@@ -26,6 +26,7 @@
 #include "syntaxhighlightdlg.h"
 
 #include "ColoursAndFontsManager.h"
+#include "FontUtils.hpp"
 #include "NewThemeDialog.h"
 #include "ThemeImporterCXX.hpp"
 #include "ThemeImporterManager.hpp"
@@ -836,5 +837,5 @@ void SyntaxHighlightDlg::OnUseCustomBaseColourUI(wxUpdateUIEvent& event)
 
 void SyntaxHighlightDlg::DoFontChanged(StyleProperty& sp, const wxFont& font)
 {
-    sp.SetFontInfoDesc(font.GetNativeFontInfoDesc());
+    sp.SetFontInfoDesc(FontUtils::GetFontInfo(font));
 }

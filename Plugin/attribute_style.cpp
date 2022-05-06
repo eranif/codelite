@@ -1,5 +1,8 @@
 #include "attribute_style.h"
 
+#include "FontUtils.hpp"
+#include "macros.h"
+
 StyleProperty::StyleProperty(int id, const wxString& name, const wxString& fgColour, const wxString& bgColour,
                              const int fontSize, bool bold, bool italic, bool underline, bool eolFilled)
     : m_id(id)
@@ -57,12 +60,17 @@ JSONItem StyleProperty::ToJSON(bool portable) const
 
 void StyleProperty::FromAttributes(wxFont* font) const
 {
-    if(GetFontInfoDesc().empty()) {
+    CHECK_PTR_RET(font);
+    if(HasFontInfoDesc()) {
+        font->SetNativeFontInfo(GetFontInfoDesc());
+    } else {
         font->SetUnderlined(GetUnderlined());
         font->SetWeight(IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
         font->SetStyle(GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
         font->SetPointSize(GetFontSize());
-    } else {
-        font->SetNativeFontInfo(GetFontInfoDesc());
     }
 }
+
+wxString StyleProperty::GetFontInfoDesc() const { return FontUtils::GetFontInfo(m_fontDesc); }
+
+void StyleProperty::SetFontInfoDesc(const wxString& desc) { m_fontDesc = FontUtils::GetFontInfo(desc); }

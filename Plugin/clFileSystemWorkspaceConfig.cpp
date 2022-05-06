@@ -170,9 +170,11 @@ static wxArrayString GetExtraFlags(CompilerPtr compiler)
 {
     wxArrayString flags;
     if(compiler->HasMetadata()) {
-        flags.Add("-target");
         auto md = compiler->GetMetadata();
-        flags.Add(md.GetTarget());
+        if(!md.GetTarget().IsEmpty()) {
+            flags.Add("-target");
+            flags.Add(md.GetTarget());
+        }
     }
     return flags;
 }

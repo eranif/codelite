@@ -30,12 +30,12 @@
 #include "macros.h"
 #include "processreaderthread.h"
 #include "shell_command.h"
+#include "wxStringHash.h"
 
 #include <thread>
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
-#include <wxStringHash.h>
 
 #define CHECK_ACTIVE_CONFIG()                \
     if(!GetSettings().GetSelectedConfig()) { \
@@ -363,8 +363,9 @@ void clFileSystemWorkspace::DoOpen()
 
 void clFileSystemWorkspace::DoClose()
 {
-    if(!m_isLoaded)
+    if(!m_isLoaded) {
         return;
+    }
 
     // Store the session
     clGetManager()->StoreWorkspaceSession(m_filename);
@@ -969,8 +970,9 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
     // Fire "starting" event
     clDebugEvent eventStarting(wxEVT_DEBUG_STARTING);
     eventStarting.SetClientData(&session_info);
-    if(EventNotifier::Get()->ProcessEvent(eventStarting))
+    if(EventNotifier::Get()->ProcessEvent(eventStarting)) {
         return;
+    }
 
     // Check if any plugins provided us with new breakpoints
     if(!eventStarting.GetBreakpoints().empty()) {

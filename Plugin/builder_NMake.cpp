@@ -1326,9 +1326,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
         wxString rcBuildOpts = bldConf->GetResCompileOptions();
         rcBuildOpts.Replace(";", " ");
         text << "RcCmpOptions           =" << rcBuildOpts << "\n";
-        wxString rcCompilerstr(cmp->GetTool("ResourceCompiler"));
-        rcCompilerstr.Replace("/", "\\");
-        text << "RcCompilerName         =" << rcCompilerstr << "\n";
+        text << "RcCompilerName         =" << cmp->GetTool("ResourceCompiler") << "\n";
     }
 
     wxString linkOpt = bldConf->GetLinkOptions();

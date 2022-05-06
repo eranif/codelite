@@ -131,7 +131,7 @@ void MacrosDlg::Initialize()
         AddMacro("$(PreprocessorSwitch)", _("Preprocessor switch (e.g. -D)"));
         AddMacro("$(Preprocessors)", _("Expands to all preprocessors set in the project setting where each entry "
                                        "is prefixed with $(PreprocessorSwitch)"));
-        AddMacro("$(ArchiveOutputSwitch)", _("Archive switch, usually not needed (VC compiler sets it to /OUT:"));
+        AddMacro("$(ArchiveOutputSwitch)", _("Archive switch, usually not needed (VC compiler sets it to /OUT:)"));
         AddMacro("$(PreprocessOnlySwitch)", _("The compiler preprocess-only switch (e.g. -E)"));
         AddMacro("$(LinkOptions)", _("The linker options as set in the project settings"));
         AddMacro("$(IncludePath)", _("All include paths prefixed with $(IncludeSwitch)"));

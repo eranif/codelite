@@ -408,7 +408,7 @@ void ColoursAndFontsManager::Load()
     LoadLexersFromFile();
 
     // read the global font property
-    m_globalFont = clConfig::Get().Read("GlobalThemeFont", DrawingUtils::GetDefaultFixedFont());
+    m_globalFont = clConfig::Get().Read("GlobalThemeFont", FontUtils::GetDefaultMonospacedFont());
 }
 
 wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString& lexerName) const

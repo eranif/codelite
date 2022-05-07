@@ -119,20 +119,10 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
     m_choiceGlobalTheme->SetStringSelection(ColoursAndFontsManager::Get().GetGlobalTheme());
 
     // Set the current editor font to the default one
-    bool found_font = false;
-    wxFont font = DrawingUtils::GetFallbackFixedFont(this);
-    clConfig::Get().Read("GlobalThemeFont", font);
+    wxFont font = clConfig::Get().Read("GlobalThemeFont", FontUtils::GetDefaultMonospacedFont());
     m_fontPickerGlobal->SetSelectedFont(font);
-
     DoUpdatePreview();
 
-    // incase we don't have initial font display, use the preview window's font
-    if(!found_font) {
-        wxFont initialFont = m_stcPreview->StyleGetFont(0);
-        if(initialFont.IsOk()) {
-            m_fontPickerGlobal->SetSelectedFont(initialFont);
-        }
-    }
     m_isModified = true;
 
     // for now, we only allow selection with fg colour
@@ -417,7 +407,7 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
     // update colour picker & font pickers
     wxString selectionString = event.GetString();
     StyleProperty::Vec_t& properties = m_lexer->GetLexerProperties();
-    wxFont default_font = DrawingUtils::GetFallbackFixedFont(this);
+    wxFont default_font = FontUtils::GetDefaultMonospacedFont();
 
     for(const auto& p : properties) {
         if(p.GetName() == selectionString) {
@@ -510,7 +500,7 @@ void SyntaxHighlightDlg::CreateLexerPage()
 
     wxFont initialFont = ColoursAndFontsManager::Get().GetGlobalFont();
     if(!initialFont.IsOk()) {
-        initialFont = DrawingUtils::GetDefaultFixedFont();
+        initialFont = FontUtils::GetDefaultMonospacedFont();
     }
 
     initialStyleWithinPreProcessor = m_lexer->GetStyleWithinPreProcessor();

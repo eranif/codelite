@@ -98,7 +98,7 @@ void ThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxString& id, 
     long ID;
     id.ToCLong(&ID);
 
-    StyleProperty sp(ID, name, colour, bgColour, 12, bold, italic, false, isEOLFilled);
+    StyleProperty sp(ID, name, colour, bgColour, wxNOT_FOUND, bold, italic, false, isEOLFilled);
     lexer->GetLexerProperties().push_back(sp);
 }
 
@@ -107,7 +107,7 @@ void ThemeImporterBase::AddPropertySubstyle(LexerConf::Ptr_t lexer, int id, cons
     wxASSERT(!prop.fg_colour.IsEmpty());
     wxASSERT(!prop.bg_colour.IsEmpty());
 
-    StyleProperty sp(id, name, prop.fg_colour, prop.bg_colour, 12, prop.isBold, prop.isItalic, false, false);
+    StyleProperty sp(id, name, prop.fg_colour, prop.bg_colour, wxNOT_FOUND, prop.isBold, prop.isItalic, false, false);
     sp.SetSubstyle();
     lexer->GetLexerProperties().push_back(sp);
 }

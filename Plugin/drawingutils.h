@@ -66,24 +66,17 @@ public:
     static void PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor,
                                          const wxColour& endColor, bool vertical);
     static bool IsDark(const wxColour& col);
-    /**
-     * @brief return the default fixed font. We use the ColoursAndFontsManager to pick
-     * the best font
-     */
-    static wxFont GetDefaultFixedFont();
 
     /**
      * @brief return a fallback fixed font incase we could not locate one in the
      * settings
-     * @param win a window object. requires for DPI calculations
+     * @param win unused
      */
-    static wxFont GetFallbackFixedFont(const wxWindow* win, bool bold = false, bool italic = false);
+    static wxFont GetFallbackFixedFont();
+    static int GetFallbackFixedFontSize();
 
-    static int GetFallbackFixedFontSize(const wxWindow* win);
-    static const wxString& GetFallbackFixedFontFace();
-    static int FixFontSize(int size, const wxWindow* win);
+    static wxString GetFallbackFixedFontFace();
 
-    static wxFont GetBestFixedFont(IEditor* editor = nullptr);
     static wxFont GetDefaultGuiFont();
     static wxBitmap CreateDisabledBitmap(const wxBitmap& bmp);
     static wxSize GetBestSize(const wxString& label, int xspacer = 5, int yspacer = 5);

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "lexer_configuration.h"
 
+#include "FontUtils.hpp"
 #include "StringUtils.h"
 #include "bookmark_manager.h"
 #include "clSystemSettings.h"
@@ -68,11 +69,12 @@ LexerConf::~LexerConf() {}
 
 wxFont LexerConf::GetFontForStyle(int styleId, const wxWindow* win) const
 {
+    wxUnusedVar(win);
     const auto& prop = GetProperty(styleId);
     if(prop.IsNull()) {
-        return DrawingUtils::GetFallbackFixedFont(win);
+        return FontUtils::GetDefaultMonospacedFont();
     }
-    auto font = DrawingUtils::GetFallbackFixedFont(win);
+    auto font = FontUtils::GetDefaultMonospacedFont();
     prop.FromAttributes(&font);
     return font;
 }
@@ -134,7 +136,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     }
 
     // Find the default style
-    wxFont defaultFont = DrawingUtils::GetFallbackFixedFont(ctrl);
+    wxFont defaultFont = FontUtils::GetDefaultMonospacedFont();
     bool foundDefaultStyle = false;
 
     StyleProperty defaultStyle;
@@ -146,7 +148,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
             if(!defaultFont.IsOk()) {
                 clWARNING() << "Found default font, but the font is NOT OK !?" << endl;
                 // make sure we have a font...
-                defaultFont = DrawingUtils::GetFallbackFixedFont(ctrl);
+                defaultFont = FontUtils::GetDefaultMonospacedFont();
             }
             break;
         }

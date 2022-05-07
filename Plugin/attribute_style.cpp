@@ -42,7 +42,7 @@ void StyleProperty::FromJSON(JSONItem json)
     m_fontDesc = json.namedObject("FontDesc").toString();
     m_fgColour = json.namedObject("Colour").toString("BLACK");
     m_bgColour = json.namedObject("BgColour").toString("WHITE");
-    m_fontSize = json.namedObject("Size").toInt(10);
+    m_fontSize = json.namedObject("Size").toInt(wxNOT_FOUND);
 }
 
 JSONItem StyleProperty::ToJSON(bool portable) const
@@ -54,7 +54,7 @@ JSONItem StyleProperty::ToJSON(bool portable) const
     json.addProperty("FontDesc", portable ? wxString() : GetFontInfoDesc());
     json.addProperty("Colour", GetFgColour());
     json.addProperty("BgColour", GetBgColour());
-    json.addProperty("Size", GetFontSize());
+    json.addProperty("Size", m_fontSize);
     return json;
 }
 
@@ -67,7 +67,9 @@ void StyleProperty::FromAttributes(wxFont* font) const
         font->SetUnderlined(GetUnderlined());
         font->SetWeight(IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
         font->SetStyle(GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
-        font->SetPointSize(GetFontSize());
+        if(m_fontSize != wxNOT_FOUND) {
+            font->SetPointSize(m_fontSize);
+        }
     }
 }
 

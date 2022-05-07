@@ -1,5 +1,6 @@
 #include "wxTerminalOptions.h"
 
+#include "FontUtils.hpp"
 #include "fileutils.h"
 
 #include <cl_standard_paths.h>
@@ -18,7 +19,7 @@ void wxTerminalOptions::SetCommandFromFile(const wxString& command)
 
 wxTerminalOptions::wxTerminalOptions()
 {
-    m_font = DrawingUtils::GetDefaultFixedFont();
+    m_font = FontUtils::GetDefaultMonospacedFont();
     m_font.SetPointSize(14);
     m_textColour = wxColour("rgb(248, 248, 242)");
     m_bgColour = wxColour("rgb(41, 43, 55)");

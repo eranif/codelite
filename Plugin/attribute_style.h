@@ -35,15 +35,6 @@
 #include <wx/colour.h>
 #include <wx/stc/stc.h>
 
-// Set default font size per-OS
-#if defined(__WXGTK__)
-#define FONT_SIZE 12
-#elif defined(__WXMSW__)
-#define FONT_SIZE 12
-#else
-#define FONT_SIZE 14
-#endif
-
 // Special attributes IDs
 #define FOLD_MARGIN_ATTR_ID -1
 #define SEL_TEXT_ATTR_ID -2
@@ -59,7 +50,7 @@ class WXDLLIMPEXP_SDK StyleProperty
     wxString m_fontDesc;
     wxString m_fgColour;
     wxString m_bgColour;
-    long m_fontSize = 12;
+    int m_fontSize = wxNOT_FOUND;
     size_t m_flags = 0;
 
 public:
@@ -122,13 +113,6 @@ public:
 
     void SetEolFilled(bool eolFilled) { EnableFlag(kEolFilled, eolFilled); }
     bool GetEolFilled() const { return HasFlag(kEolFilled); }
-    long GetFontSize() const
-    {
-        if(m_fontSize <= 0)
-            return FONT_SIZE;
-        return m_fontSize;
-    }
-
     wxString GetFontInfoDesc() const;
     bool HasFontInfoDesc() const { return !m_fontDesc.empty(); }
     void SetFontInfoDesc(const wxString& desc);
@@ -137,7 +121,6 @@ public:
     int GetId() const { return m_id; }
     void SetBgColour(const wxString& colour) { m_bgColour = colour; }
     void SetFgColour(const wxString& colour) { m_fgColour = colour; }
-    void SetFontSize(long size) { m_fontSize = size; }
     void SetBold(bool bold) { EnableFlag(kBold, bold); }
     void SetId(int id) { m_id = id; }
     void SetItalic(bool italic) { EnableFlag(kItalic, italic); }
@@ -146,5 +129,6 @@ public:
     bool GetUnderlined() const { return HasFlag(kUnderline); }
     void SetName(const wxString& name) { this->m_name = name; }
     void FromAttributes(wxFont* font) const;
+    void SetFontSize(int size) { m_fontSize = size; }
 };
 #endif

@@ -25,6 +25,7 @@
 #include "drawingutils.h"
 
 #include "ColoursAndFontsManager.h"
+#include "FontUtils.hpp"
 #include "clScrolledPanel.h"
 #include "clSystemSettings.h"
 #include "clTabRendererDefault.hpp"
@@ -449,45 +450,7 @@ wxColour DrawingUtils::GetCaptionColour()
     return defaultCaptionColour;
 }
 
-namespace
-{
-#ifdef __WXMSW__
-
-const wxString DEFAULT_FACE_NAME = "Consolas";
-constexpr int DEFAULT_FONT_SIZE = 14;
-
-#elif defined(__WXMAC__)
-
-const wxString DEFAULT_FACE_NAME = "monaco";
-constexpr int DEFAULT_FONT_SIZE = 14;
-
-#else // GTK, FreeBSD etc
-
-const wxString DEFAULT_FACE_NAME = "Monospace";
-constexpr int DEFAULT_FONT_SIZE = 14;
-
-#endif
-} // namespace
-
-#ifdef __WXGTK__
-#define FIX_FONT_SIZE(size, ctrl) clGetSize(size, ctrl)
-#else
-#define FIX_FONT_SIZE(size, ctrl) size
-#endif
-
-wxFont DrawingUtils::GetFallbackFixedFont(const wxWindow* win, bool bold, bool italic)
-{
-    wxFontInfo fontInfo = wxFontInfo(FIX_FONT_SIZE(DEFAULT_FONT_SIZE, win))
-                              .Family(wxFONTFAMILY_MODERN)
-                              .Italic(false)
-                              .Bold(false)
-                              .Underlined(false)
-                              .FaceName(DEFAULT_FACE_NAME);
-    wxFont font(fontInfo);
-    return font;
-}
-
-wxFont DrawingUtils::GetDefaultFixedFont() { return ColoursAndFontsManager::Get().GetFixedFont(); }
+wxFont DrawingUtils::GetFallbackFixedFont() { return FontUtils::GetDefaultMonospacedFont(); }
 
 #ifdef __WXOSX__
 double wxOSXGetMainScreenContentScaleFactor();
@@ -881,10 +844,5 @@ clColours& DrawingUtils::GetColours(bool darkColours)
     }
 }
 
-wxFont DrawingUtils::GetBestFixedFont(IEditor* editor) { return DrawingUtils::GetDefaultFixedFont(); }
-
-int DrawingUtils::GetFallbackFixedFontSize(const wxWindow* win) { return FixFontSize(DEFAULT_FONT_SIZE, win); }
-
-const wxString& DrawingUtils::GetFallbackFixedFontFace() { return DEFAULT_FACE_NAME; }
-
-int DrawingUtils::FixFontSize(int size, const wxWindow* win) { return FIX_FONT_SIZE(size, win); }
+int DrawingUtils::GetFallbackFixedFontSize() { return GetFallbackFixedFont().GetPointSize(); }
+wxString DrawingUtils::GetFallbackFixedFontFace() { return GetFallbackFixedFont().GetFaceName(); }

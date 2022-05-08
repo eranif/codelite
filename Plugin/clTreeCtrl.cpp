@@ -134,10 +134,14 @@ bool clTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, con
 
 void clTreeCtrl::UpdateLineHeight()
 {
-    wxClientDC dc(this);
-    dc.SetFont(GetDefaultFont());
+    wxBitmap bmp;
+    bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
+    wxMemoryDC memDC(bmp);
+    wxGCDC gcdc;
+    DrawingUtils::GetGCDC(memDC, gcdc);
 
-    wxSize textSize = dc.GetTextExtent("Tp");
+    gcdc.SetFont(GetDefaultFont());
+    wxSize textSize = gcdc.GetTextExtent("Tp");
 
     SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);
     SetIndent(GetLineHeight());

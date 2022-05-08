@@ -105,10 +105,17 @@ void clThemedTextCtrl::ApplySettings()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     lexer->ApplySystemColours(this);
 
-    wxClientDC dc(this);
-    dc.SetFont(lexer->GetFontForStyle(0, this));
-    wxRect rect = dc.GetTextExtent("Tp");
-    rect.Inflate(2);
+    // Create wxGCDC from wxMemoryDC
+    wxBitmap bmp;
+    bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
+    wxMemoryDC memDC(bmp);
+    wxGCDC gcdc;
+    DrawingUtils::GetGCDC(memDC, gcdc);
+
+    gcdc.SetFont(lexer->GetFontForStyle(0, this));
+    wxRect rect = gcdc.GetTextExtent("Tp");
+    rect.Inflate(1);
+
     SetSizeHints(wxNOT_FOUND, rect.GetHeight()); // use the height of the button
 }
 

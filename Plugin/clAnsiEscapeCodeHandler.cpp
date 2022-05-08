@@ -472,11 +472,11 @@ void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defau
 
     const auto& v = m_lines[line];
 
+    dc.SetFont(defaultStyle.font);
     int text_height = dc.GetTextExtent("Tp").GetHeight();
 
     wxRect tmpRect(0, 0, 20, text_height);
     tmpRect = tmpRect.CenterIn(rect, wxVERTICAL);
-    dc.SetFont(defaultStyle.font);
     dc.SetTextForeground(defaultStyle.fg_colour);
 
     int yy = rect.y;

@@ -16,7 +16,10 @@ const wxString DEFAULT_FACE_NAME = "Monospace";
 constexpr int DEFAULT_FONT_SIZE = 14;
 #endif
 
-const unordered_set<wxString> words = { "SemiBold", "Semibold", "Extended" };
+#ifdef __WXMSW__
+const unordered_set<wxString> words = { "SemiBold", "Semibold", "Extended", "Semi Bold", "Semi bold" };
+#endif
+
 unordered_map<wxString, wxString> fixed_fonts_cache;
 
 const wxString& GetFontInfo(const wxFont& font) { return GetFontInfo(font.GetNativeFontInfoDesc()); }
@@ -28,6 +31,9 @@ const wxString& GetFontInfo(const wxString& font_desc)
         return fixed_fonts_cache[font_desc];
     }
 
+#ifdef __WXMSW__
+    // on MSW, we need to manipulate the info by remiving
+    // "Semi Bold" (on all its variants) from teh font's info
     wxString desc = font_desc;
     for(const wxString& word : words) {
         desc.Replace(word, wxEmptyString);
@@ -37,6 +43,7 @@ const wxString& GetFontInfo(const wxString& font_desc)
     while(desc.Replace("  ", " "))
         ;
     desc.Trim();
+#endif
 
     // update the cache
     fixed_fonts_cache.insert({ font_desc, desc });

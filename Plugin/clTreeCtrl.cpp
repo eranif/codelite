@@ -206,6 +206,15 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     wxDC& dc = pdc;
 #endif
 
+    // calculate the line height using the drawing DC
+    dc.SetFont(GetDefaultFont());
+    wxSize textSize = dc.GetTextExtent("Tp");
+    SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);
+
+    // set the indent to match the line height
+    clControlWithItems::SetIndent(GetLineHeight());
+    m_model.SetIndentSize(GetLineHeight());
+
     // Call the parent's Render method
     Render(dc);
 

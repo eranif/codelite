@@ -385,11 +385,6 @@ private:
      */
     void GetFiles(const SearchData* data, wxArrayString& files);
 
-    /**
-     * Index the word chars from the array into a map
-     */
-    void IndexWordChars();
-
     // Test to see if user asked to cancel the search
     bool TestStopSearch();
 

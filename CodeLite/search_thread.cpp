@@ -105,12 +105,9 @@ SearchThread::SearchThread()
     : WorkerThread()
     , m_reExpr(wxT(""))
 {
-    IndexWordChars();
 }
 
 SearchThread::~SearchThread() {}
-
-void SearchThread::IndexWordChars() {}
 
 wxRegEx& SearchThread::GetRegex(const wxString& expr, bool matchCase)
 {

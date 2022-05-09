@@ -154,7 +154,7 @@
         <Preprocessor Value="wxUSE_GUI=1"/>
         <Preprocessor Value="CL_DEBUG_BUILD=1"/>
       </Compiler>
-      <Linker Options="$(shell wx-config  --libs std,stc --unicode=yes)" Required="yes">
+      <Linker Options="$(shell wx-config  --libs std,stc,aui --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
         <Library Value="libplugin_sdkud.dll"/>
         <Library Value="libCodeLiteud.dll"/>

@@ -37,6 +37,7 @@
 #include <deque>
 #include <list>
 #include <map>
+#include <vector>
 #include <wx/regex.h>
 #include <wx/string.h>
 
@@ -257,7 +258,7 @@ public:
     }
 };
 
-typedef std::list<SearchResult> SearchResultList;
+typedef std::vector<SearchResult> SearchResultList;
 
 class WXDLLIMPEXP_CL SearchSummary : public wxObject
 {
@@ -339,7 +340,6 @@ class WXDLLIMPEXP_CL SearchThread : public WorkerThread
 {
     friend class SearchThreadST;
     wxString m_wordChars;
-    std::unordered_map<wxChar, bool> m_wordCharsMap; //< Internal
     SearchResultList m_results;
     bool m_stopSearch;
     SearchSummary m_summary;
@@ -376,15 +376,6 @@ public:
      * \note This call must be called from the context of other thread (e.g. main thread)
      */
     void StopSearch(bool stop = true);
-
-    /**
-     *  The search thread has several functions that operate on words,
-     *  which are defined to be contiguous sequences of characters from a particular set of characters.
-     *  Defines which characters are members of that set. The default is set to:
-     * "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
-     * \param chars sequence of characters that are considered part of a word
-     */
-    void SetWordChars(const wxString& chars);
 
 private:
     /**

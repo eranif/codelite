@@ -8,8 +8,8 @@
 #include <wx/string.h>
 
 struct _Mask {
-    bool is_wild = false;
     wxString pattern;
+    bool is_wild = false;
 
     _Mask(const wxString& pat, bool b)
         : pattern(pat)

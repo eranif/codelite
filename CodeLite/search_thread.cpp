@@ -65,11 +65,14 @@ wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHSTARTED, wxCommandEvent);
 //----------------------------------------------------------------
 // SearchData
 //----------------------------------------------------------------
+namespace
+{
+bool is_word_char(wxChar ch) { return ch == '_' || wxIsalnum(ch); }
+
+} // namespace
 
 const wxString& SearchData::GetExtensions() const { return m_validExt; }
-
 SearchData& SearchData::operator=(const SearchData& rhs) { return Copy(rhs); }
-
 SearchData& SearchData::Copy(const SearchData& other)
 {
     if(this == &other) {
@@ -100,7 +103,6 @@ SearchData& SearchData::Copy(const SearchData& other)
 
 SearchThread::SearchThread()
     : WorkerThread()
-    , m_wordChars(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"))
     , m_reExpr(wxT(""))
 {
     IndexWordChars();
@@ -108,19 +110,7 @@ SearchThread::SearchThread()
 
 SearchThread::~SearchThread() {}
 
-void SearchThread::IndexWordChars()
-{
-    m_wordCharsMap.clear();
-    for(size_t i = 0; i < m_wordChars.Length(); i++) {
-        m_wordCharsMap[m_wordChars.GetChar(i)] = true;
-    }
-}
-
-void SearchThread::SetWordChars(const wxString& chars)
-{
-    m_wordChars = chars;
-    IndexWordChars();
-}
+void SearchThread::IndexWordChars() {}
 
 wxRegEx& SearchThread::GetRegex(const wxString& expr, bool matchCase)
 {
@@ -305,14 +295,13 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         return;
     }
 #endif
-    wxStringTokenizer tkz(fileData, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
+    wxArrayString lines = ::wxStringTokenize(fileData, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);
 
     int lineOffset = 0;
     if(data->IsRegularExpression()) {
         // regular expression search
-        while(tkz.HasMoreTokens()) {
+        for(const wxString& line : lines) {
             // Read the next line
-            wxString line = tkz.NextToken();
             DoSearchLineRE(line, lineNumber, lineOffset, fileName, data);
             lineOffset += line.Length() + 1;
             lineNumber++;
@@ -344,10 +333,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
         if(!data->IsMatchCase()) {
             findString.MakeLower();
         }
-        while(tkz.HasMoreTokens()) {
-
-            // Read the next line
-            wxString line = tkz.NextToken();
+        for(const wxString& line : lines) {
             DoSearchLine(line, lineNumber, lineOffset, fileName, data, findString, filters);
             lineOffset += line.Length() + 1;
             lineNumber++;
@@ -443,9 +429,8 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
             if(data->IsMatchWholeWord()) {
 
                 // make sure that the word before is not in the wordChars map
-                if((pos > 0) && (m_wordCharsMap.find(modLine.GetChar(pos - 1)) != m_wordCharsMap.end())) {
+                if(pos > 0 && is_word_char(modLine.GetChar(pos - 1))) {
                     if(!AdjustLine(modLine, pos, findWhat)) {
-
                         break;
                     } else {
                         col += (int)findWhat.Length();
@@ -456,9 +441,8 @@ void SearchThread::DoSearchLine(const wxString& line, const int lineNum, const i
                 // in the wordCharsMap
                 if(pos + findWhat.Length() <= modLine.Length()) {
                     wxChar nextCh = modLine.GetChar(pos + findWhat.Length());
-                    if(m_wordCharsMap.find(nextCh) != m_wordCharsMap.end()) {
+                    if(is_word_char(nextCh)) {
                         if(!AdjustLine(modLine, pos, findWhat)) {
-
                             break;
                         } else {
                             col += (int)findWhat.Length();

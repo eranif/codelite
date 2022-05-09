@@ -2,6 +2,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
+#include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
 

@@ -31,10 +31,10 @@ const wxString& GetFontInfo(const wxString& font_desc)
         return fixed_fonts_cache[font_desc];
     }
 
+    wxString desc = font_desc;
 #ifdef __WXMSW__
     // on MSW, we need to manipulate the info by remiving
     // "Semi Bold" (on all its variants) from teh font's info
-    wxString desc = font_desc;
     for(const wxString& word : words) {
         desc.Replace(word, wxEmptyString);
     }

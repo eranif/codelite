@@ -201,10 +201,14 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
 void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
 {
     SearchResultList* res = (SearchResultList*)e.GetClientData();
-    if(!res)
+    if(!res) {
         return;
+    }
 
+    wxWindowUpdateLocker locker{ m_sci };
     SearchResultList::iterator iter = res->begin();
+    m_indicators.reserve(m_indicators.size() + res->size());
+
     for(; iter != res->end(); ++iter) {
         if(m_matchInfo.empty() || m_matchInfo.rbegin()->second.GetFileName() != iter->GetFileName()) {
             if(!m_matchInfo.empty()) {
@@ -218,23 +222,10 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
         wxString text = iter->GetPattern();
 
         wxString linenum = wxString::Format(wxT(" %5u: "), iter->GetLineNumber());
-        SearchData* d = GetSearchData();
-        // Print the scope name
-        if(d->GetDisplayScope()) {
-            TagEntryPtr tag = TagsManagerST::Get()->FunctionFromFileLine(iter->GetFileName(), iter->GetLineNumber());
-            wxString scopeName(wxT("global"));
-            if(tag) {
-                scopeName = tag->GetPath();
-            }
-
-            linenum << wxT("[ ") << scopeName << wxT(" ] ");
-            iter->SetScope(scopeName);
-        }
-
         AppendText(linenum + text + wxT("\n"));
         int indicatorStartPos = m_sci->PositionFromLine(lineno) + iter->GetColumn() + linenum.Length();
         int indicatorLen = iter->GetLen();
-        m_indicators.push_back(indicatorStartPos);
+        m_indicators.emplace_back(indicatorStartPos);
         m_sci->IndicatorFillRange(indicatorStartPos, indicatorLen);
     }
     wxDELETE(res);

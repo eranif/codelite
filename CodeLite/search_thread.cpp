@@ -506,10 +506,9 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
     } else if(type == wxEVT_SEARCH_THREAD_MATCHFOUND) {
         // a match event, but we did not meet the minimum number of files
         m_counter++;
-        wxThread::Sleep(10);
 
     } else if((type == wxEVT_SEARCH_THREAD_SEARCHEND) || (type == wxEVT_SEARCH_THREAD_SEARCHCANCELED)) {
-        // search eneded, if we got any matches "buffed" send them before the
+        // search eneded, if we got any matches "buffered" send them before the
         // the summary event
         if(m_results.empty() == false) {
             wxCommandEvent evt(wxEVT_SEARCH_THREAD_MATCHFOUND, GetId());

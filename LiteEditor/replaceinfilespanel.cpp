@@ -171,8 +171,7 @@ void ReplaceInFilesPanel::OnUnmarkAllUI(wxUpdateUIEvent& e)
     e.Enable((m_sci->GetLength() > 0) && !m_searchInProgress);
 }
 
-void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci, std::map<int, SearchResult>::iterator begin,
-                                        std::map<int, SearchResult>::iterator end)
+void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci, MatchInfo_t::iterator begin, MatchInfo_t::iterator end)
 {
     if(!sci || begin == end)
         return;

@@ -25,19 +25,19 @@
 #ifndef __findresultstab__
 #define __findresultstab__
 
-#include "wx/debug.h"
-#include <list>
-#include <map>
-#include <vector>
-#include <wx/stc/stc.h>
-
 #include "Notebook.h"
 #include "clWorkspaceEvent.hpp"
 #include "findinfilesdlg.h"
 #include "outputtabwindow.h"
 #include "search_thread.h"
+#include "wx/debug.h"
 #include "wx_ordered_map.h"
+
+#include <map>
+#include <unordered_map>
+#include <vector>
 #include <wx/aui/auibar.h>
+#include <wx/stc/stc.h>
 
 // Map between the line numbers and a search results
 typedef std::map<int, SearchResult> MatchInfo_t;
@@ -47,7 +47,7 @@ class FindResultsTab : public OutputTabWindow
 protected:
     SearchData m_searchData;
     wxString m_searchTitle;
-    std::list<int> m_indicators;
+    std::vector<int> m_indicators;
     bool m_searchInProgress;
     bool m_searchEventsConnected = false;
 
@@ -56,7 +56,7 @@ protected:
         SearchData searchData;
         wxString text;
         MatchInfo_t matchInfo;
-        std::list<int> indicators;
+        std::vector<int> indicators;
         typedef wxOrderedMap<wxString, History> Map_t;
     };
 

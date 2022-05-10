@@ -69,6 +69,9 @@ namespace
 {
 bool is_word_char(wxChar ch) { return ch == '_' || wxIsalnum(ch); }
 
+// Minumum of 10ms between events that this thread is sending to the main thread
+constexpr long MIN_SEND_INTERVAL_MS = 1;
+
 } // namespace
 
 const wxString& SearchData::GetExtensions() const { return m_validExt; }
@@ -105,6 +108,7 @@ SearchThread::SearchThread()
     : WorkerThread()
     , m_reExpr(wxT(""))
 {
+    m_stopWatch.Start();
 }
 
 SearchThread::~SearchThread() {}
@@ -494,18 +498,21 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
     if(!m_notifiedWindow && !owner)
         return;
 
-    wxCommandEvent event(type, GetId());
+    long curts = m_stopWatch.Time();
 
-    if(type == wxEVT_SEARCH_THREAD_MATCHFOUND && m_counter == 10) {
+    // if more than 10ms passed since we last sent an event, allow it now
+    bool can_send = (curts - m_msPassed) > MIN_SEND_INTERVAL_MS;
+
+    wxCommandEvent event(type, GetId());
+    if(type == wxEVT_SEARCH_THREAD_MATCHFOUND && can_send) {
         // match found and we scanned 10 files
-        m_counter = 0;
         event.SetClientData(new SearchResultList(m_results));
         m_results.clear();
+        m_msPassed = m_stopWatch.Time();
         SEND_ST_EVENT();
 
     } else if(type == wxEVT_SEARCH_THREAD_MATCHFOUND) {
-        // a match event, but we did not meet the minimum number of files
-        m_counter++;
+        // a match event, but we did not meet the minimum criteria for sending a match result
 
     } else if((type == wxEVT_SEARCH_THREAD_SEARCHEND) || (type == wxEVT_SEARCH_THREAD_SEARCHCANCELED)) {
         // search eneded, if we got any matches "buffered" send them before the
@@ -519,9 +526,8 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
                 wxPostEvent(m_notifiedWindow, evt);
             }
         }
-
+        m_msPassed = 0; // this ensures that the next search will always start by sending events
         m_results.clear();
-        m_counter = 0;
 
         // Now send the summary event
         event.SetClientData(type == wxEVT_SEARCH_THREAD_SEARCHEND ? new SearchSummary(m_summary) : nullptr);

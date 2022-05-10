@@ -39,6 +39,7 @@
 #include <map>
 #include <vector>
 #include <wx/regex.h>
+#include <wx/stopwatch.h>
 #include <wx/string.h>
 
 class wxEvtHandler;
@@ -347,7 +348,8 @@ class WXDLLIMPEXP_CL SearchThread : public WorkerThread
     wxRegEx m_regex;
     bool m_matchCase;
     wxCriticalSection m_cs;
-    int m_counter = 0;
+    wxStopWatch m_stopWatch;
+    long m_msPassed = 0;
 
 public:
     /**

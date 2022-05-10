@@ -700,7 +700,7 @@ bool clMainFrame::m_initCompleted = false;
 
 clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos,
                          const wxSize& size, long style)
-    : m_buildAndRun(false)
+    : m_postBuildEndAction(ePostBuildEndAction::kNone)
     , m_cppMenu(NULL)
     , m_highlightWord(false)
     , m_workspaceRetagIsRequired(false)
@@ -2520,10 +2520,12 @@ void clMainFrame::OnAdvanceSettings(wxCommandEvent& event)
 void clMainFrame::OnBuildEnded(clBuildEvent& event)
 {
     event.Skip();
-    if(m_buildAndRun) {
+    switch(m_postBuildEndAction) {
+    case ePostBuildEndAction::kNone:
+        break;
+    case ePostBuildEndAction::kRunProject: {
         // If the build process was part of a 'Build and Run' command, check whether an erros
         // occurred during build process, if non, launch the output
-        m_buildAndRun = false;
         wxStandardID answer = wxID_YES;
         bool build_ended_successfully = ManagerST::Get()->IsBuildEndedSuccessfully();
         if(!build_ended_successfully) {
@@ -2536,19 +2538,25 @@ void clMainFrame::OnBuildEnded(clBuildEvent& event)
         }
 
         if(build_ended_successfully || answer == wxID_YES) {
-            ManagerST::Get()->ExecuteNoDebug(ManagerST::Get()->GetActiveProjectName());
+            ExecuteNoDebug(false);
         }
+    } break;
+    case ePostBuildEndAction::kRebuildProject:
+        // Restart the build process only when the previous 'clean' command was succeeded
+        if(ManagerST::Get()->IsBuildEndedSuccessfully()) {
+            BuildProject(ManagerST::Get()->GetActiveProjectName());
+        }
+        break;
     }
+    m_postBuildEndAction = ePostBuildEndAction::kNone;
 
     // Process next command from the queue
     ManagerST::Get()->ProcessCommandQueue();
 }
 
 // Build operations
-void clMainFrame::OnBuildProject(wxCommandEvent& event)
+void clMainFrame::BuildProject(const wxString& projectName)
 {
-    wxUnusedVar(event);
-
     // Let the plugins handle this first
     clBuildEvent buildEvent(wxEVT_BUILD_STARTING);
     buildEvent.SetKind("build");
@@ -2556,7 +2564,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         return;
     }
 
-    bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
+    bool enable = !ManagerST::Get()->IsBuildInProgress() && !projectName.IsEmpty();
     if(enable) {
 
         // Make sure that the working folder is set to the correct path
@@ -2565,9 +2573,7 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
         clDEBUG() << "Setting working directory to" << workspacePath;
         GetStatusBar()->SetMessage(_("Build starting..."));
 
-        wxString conf, projectName;
-        projectName = ManagerST::Get()->GetActiveProjectName();
-
+        wxString conf;
         // get the selected configuration to be built
         BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
         if(bldConf) {
@@ -2584,6 +2590,12 @@ void clMainFrame::OnBuildProject(wxCommandEvent& event)
 
         GetStatusBar()->SetMessage("");
     }
+}
+
+void clMainFrame::OnBuildProject(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    BuildProject(ManagerST::Get()->GetActiveProjectName());
 }
 
 void clMainFrame::OnBuildCustomTarget(wxCommandEvent& event)
@@ -2613,9 +2625,18 @@ void clMainFrame::OnBuildCustomTarget(wxCommandEvent& event)
 void clMainFrame::OnBuildAndRunProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+
+    // Let the plugins handle this first
+    clBuildEvent buildEvent(wxEVT_BUILD_STARTING);
+    buildEvent.SetKind("build");
+    if(EventNotifier::Get()->ProcessEvent(buildEvent)) {
+        m_postBuildEndAction = ePostBuildEndAction::kRunProject;
+        return;
+    }
+
     bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
     if(enable) {
-        m_buildAndRun = true;
+        m_postBuildEndAction = ePostBuildEndAction::kRunProject;
 
         wxString projectName = ManagerST::Get()->GetActiveProjectName();
         wxString conf;
@@ -2729,7 +2750,7 @@ void clMainFrame::OnCleanProjectUI(wxUpdateUIEvent& event)
     event.Enable(enable);
 }
 
-void clMainFrame::OnExecuteNoDebug(wxCommandEvent& event)
+void clMainFrame::ExecuteNoDebug(bool promptToBuild)
 {
     // Sanity
     if(clCxxWorkspaceST::Get()->IsOpen() && !clCxxWorkspaceST::Get()->GetActiveProject()) {
@@ -2755,22 +2776,30 @@ void clMainFrame::OnExecuteNoDebug(wxCommandEvent& event)
 
     // Prepare the commands to execute
     QueueCommand commandExecute(QueueCommand::kExecuteNoDebug);
-    wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(
-        _("Would you like to build the active project\nbefore executing it?"), "PromptForBuildBeforeExecute",
-        _("Build and Execute"), _("Execute"), _("Cancel"));
-    if(res == wxID_CANCEL) {
-        return;
-    }
+    if(promptToBuild) {
+        wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(
+            _("Would you like to build the active project\nbefore executing it?"), "PromptForBuildBeforeExecute",
+            _("Build and Execute"), _("Execute"), _("Cancel"));
+        if(res == wxID_CANCEL) {
+            return;
+        }
 
-    // If "YES" is selected, push a build request to the queue
-    if(res == wxID_YES) {
-        QueueCommand buildCommand(QueueCommand::kBuild);
-        ManagerST::Get()->PushQueueCommand(buildCommand);
-        commandExecute.SetCheckBuildSuccess(true); // execute only if build was successfull
+        // If "YES" is selected, push a build request to the queue
+        if(res == wxID_YES) {
+            QueueCommand buildCommand(QueueCommand::kBuild);
+            ManagerST::Get()->PushQueueCommand(buildCommand);
+            commandExecute.SetCheckBuildSuccess(true); // execute only if build was successfull
+        }
     }
 
     ManagerST::Get()->PushQueueCommand(commandExecute);
     ManagerST::Get()->ProcessCommandQueue();
+}
+
+void clMainFrame::OnExecuteNoDebug(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    ExecuteNoDebug(true);
 }
 
 void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
@@ -3981,7 +4010,17 @@ void clMainFrame::OnReloadWorkspaceUI(wxUpdateUIEvent& event)
 
 void clMainFrame::RebuildProject(const wxString& projectName)
 {
-    bool enable = !ManagerST::Get()->IsBuildInProgress() && !ManagerST::Get()->GetActiveProjectName().IsEmpty();
+    // Let the plugins handle this first
+    clBuildEvent buildEvent(wxEVT_BUILD_STARTING);
+    buildEvent.SetKind("clean");
+    if(EventNotifier::Get()->ProcessEvent(buildEvent)) {
+        // For plugin-based workspaces, invoke the rebuild event afterward
+        m_postBuildEndAction = ePostBuildEndAction::kRebuildProject;
+        return;
+    }
+
+    // For C++ workspace, push 'clean' and 'build' command into a queue
+    bool enable = !ManagerST::Get()->IsBuildInProgress() && !projectName.IsEmpty();
     if(enable) {
         wxString conf;
         // get the selected configuration to be built

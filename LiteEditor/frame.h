@@ -42,21 +42,21 @@
 #include "mainbook.h"
 #include "output_pane.h"
 #include "tags_options_dlg.h"
-#include "wx/aui/aui.h"
-#include "wx/choice.h"
-#include "wx/combobox.h"
-#include "wx/frame.h"
-#include "wx/timer.h"
 #include "wxCustomControls.hpp"
 
 #include <set>
+#include <wx/aui/aui.h>
+#include <wx/choice.h>
 #include <wx/cmndata.h>
+#include <wx/combobox.h>
 #include <wx/dcbuffer.h>
+#include <wx/frame.h>
 #include <wx/html/htmlwin.h>
 #include <wx/infobar.h>
 #include <wx/minifram.h>
 #include <wx/process.h>
 #include <wx/splash.h>
+#include <wx/timer.h>
 
 // forward decls
 class OnSysColoursChanged;
@@ -91,6 +91,8 @@ struct StartPageData {
 
 class clMainFrame : public wxFrame
 {
+    enum class ePostBuildEndAction { kNone, kRunProject, kRebuildProject };
+
     MainBook* m_mainBook;
     static clMainFrame* m_theFrame;
     clDockingManager m_mgr;
@@ -101,7 +103,7 @@ class clMainFrame : public wxFrame
     std::map<int, wxString> m_viewAsMap;
     TagsOptionsData m_tagsOptionsData;
     DebuggerPane* m_debuggerPane;
-    bool m_buildAndRun;
+    ePostBuildEndAction m_postBuildEndAction;
     GeneralInfo m_frameGeneralInfo;
     std::map<int, wxString> m_toolbars;
     std::map<int, wxString> m_panes;
@@ -304,10 +306,22 @@ public:
     void OnSingleInstanceRaise(clCommandEvent& e);
 
     /**
-     * @brief rebuild the give project
+     * @brief build the given project
+     * @param projectName
+     */
+    void BuildProject(const wxString& projectName);
+
+    /**
+     * @brief rebuild the given project
      * @param projectName
      */
     void RebuildProject(const wxString& projectName);
+
+    /**
+     * @brief execute a built program without attaching a debugger
+     * @param promptToBuild
+     */
+    void ExecuteNoDebug(bool promptToBuild);
 
     /**
      * @brief handle custom build targets events

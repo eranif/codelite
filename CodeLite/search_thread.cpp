@@ -36,11 +36,9 @@
 #include <set>
 #include <wx/dir.h>
 #include <wx/event.h>
-#include <wx/stopwatch.h>
-#if wxUSE_GUI
 #include <wx/fontmap.h>
-#endif
 #include <wx/log.h>
+#include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
@@ -69,7 +67,8 @@ namespace
 bool is_word_char(wxChar ch) { return ch == '_' || wxIsalnum(ch); }
 
 // Minumum of 10ms between events that this thread is sending to the main thread
-constexpr long MIN_SEND_INTERVAL_MS = 0;
+constexpr long MIN_SEND_INTERVAL_MS = 1;
+size_t send_count = 0;
 
 } // namespace
 
@@ -497,21 +496,12 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
     if(!m_notifiedWindow && !owner)
         return;
 
-    long curts = m_stopWatch.Time();
-
-    // if more than 10ms passed since we last sent an event, allow it now
-    bool can_send = (curts - m_msPassed) > MIN_SEND_INTERVAL_MS;
-
     wxCommandEvent event(type, GetId());
-    if(type == wxEVT_SEARCH_THREAD_MATCHFOUND && can_send) {
+    if(type == wxEVT_SEARCH_THREAD_MATCHFOUND) {
         // match found and we scanned 10 files
         event.SetClientData(new SearchResultList(m_results));
         m_results.clear();
-        m_msPassed = m_stopWatch.Time();
         SEND_ST_EVENT();
-
-    } else if(type == wxEVT_SEARCH_THREAD_MATCHFOUND) {
-        // a match event, but we did not meet the minimum criteria for sending a match result
 
     } else if((type == wxEVT_SEARCH_THREAD_SEARCHEND) || (type == wxEVT_SEARCH_THREAD_SEARCHCANCELED)) {
         // search eneded, if we got any matches "buffered" send them before the
@@ -525,12 +515,17 @@ void SearchThread::SendEvent(wxEventType type, wxEvtHandler* owner)
                 wxPostEvent(m_notifiedWindow, evt);
             }
         }
-        m_msPassed = 0; // this ensures that the next search will always start by sending events
         m_results.clear();
-
         // Now send the summary event
         event.SetClientData(type == wxEVT_SEARCH_THREAD_SEARCHEND ? new SearchSummary(m_summary) : nullptr);
         SEND_ST_EVENT();
+    }
+    // to avoid flooding the UI with search events, sleep for 1ms after each
+    // send_event call
+    ++send_count;
+    if(send_count >= 10) {
+        wxThread::Sleep(1);
+        send_count = 0;
     }
 }
 

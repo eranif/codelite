@@ -25,11 +25,13 @@
 
 #ifdef __WXMSW__
 #include "winprocess_impl.h"
+
 #include "file_logger.h"
 #include "fileutils.h"
 #include "processreaderthread.h"
 #include "procutils.h"
 #include "smart_ptr.h"
+
 #include <atomic>
 #include <memory>
 #include <wx/filefn.h>
@@ -103,10 +105,11 @@ template <typename T> bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hPr
         DWORD dwWritten = 0;
         if(!WriteFile(hStdin, buffer.c_str() + offset, bytesLeft, &dwWritten, NULL)) {
             int errorCode = GetLastError();
-            clERROR() << ">> WriteStdin: (WriteFile) error:" << errorCode;
+            clDEBUG() << ">> WriteStdin: (WriteFile) error:" << errorCode << endl;
             return false;
         }
         if(!CheckIsAlive(hProcess)) {
+            clDEBUG() << "WriteStdin failed. Process is not alive" << endl;
             return false;
         }
         if(dwWritten == 0) {
@@ -158,9 +161,7 @@ public:
         while(!thr->m_shutdown.load()) {
             std::string cstr;
             if(Q.ReceiveTimeout(50, cstr) == wxMSGQUEUE_NO_ERROR) {
-                if(!WriteStdin(cstr, hStdin, thr->m_hProcess)) {
-                    clERROR() << "WriteFile error:" << GetLastError();
-                } else {
+                if(WriteStdin(cstr, hStdin, thr->m_hProcess)) {
                     clDEBUG1() << "Writer thread: wrote buffer of" << cstr.length() << "bytes";
                 }
             }

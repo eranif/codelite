@@ -1,86 +1,70 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="32"
-   height="32"
-   viewBox="0 0 32 32"
    version="1.1"
-   id="svg14"
+   width="160"
+   height="160"
+   id="YAML_Logo"
+   data-name="YAML Logo"
+   viewBox="0 0 512 470.647"
    sodipodi:docname="yml.svg"
-   inkscape:version="0.92.1 r15371">
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview12"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="true"
+     showgrid="false"
+     inkscape:zoom="5.45625"
+     inkscape:cx="80"
+     inkscape:cy="80"
+     inkscape:window-width="2190"
+     inkscape:window-height="1091"
+     inkscape:window-x="380"
+     inkscape:window-y="126"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="YAML_Logo" />
+  <title
+     id="title-001">YAML logo</title>
+  <defs
+     id="defs5">
+    <style
+       id="style3">.cls-1{fill:#cb171e;}</style>
+  </defs>
+  <polygon
+     id="L"
+     points="512 422.735 395.638 422.735 395.638 250.125 347.442 250.125 347.442 469.647 512 469.647 512 422.737 512 422.735"
+     style="fill:#ffcc00" />
+  <polygon
+     id="M"
+     points="87.701 250.177 87.701 470.647 135.004 470.647 135.004 318.569 184.509 420.789 221.743 420.789 272.939 314.976 272.939 470.602 318.318 470.602 318.318 250.177 256.358 250.177 201.381 349.883 149.021 250.177 87.701 250.177 87.701 250.177"
+     style="fill:#ffcc00" />
+  <path
+     id="A"
+     class="cls-1"
+     d="M330.294,195.39H228.433l-20.717,50.024H162.61L257.99,20.465h46.137l91.51,224.949h-48.2L330.293,195.39Zm-16.92-44.911-31.226-82.55-34.837,82.55h66.063Z"
+     transform="translate(0 -19.939)"
+     style="fill:#fff6d5" />
+  <polygon
+     id="Y"
+     points="235.793 0 143.978 137.674 143.978 224.949 87.702 224.949 87.702 137.674 0 0 63.25 0 119.018 88.646 175.243 0 235.793 0 235.793 0"
+     style="fill:#ffcc00" />
   <metadata
-     id="metadata20">
+     id="metadata829">
     <rdf:RDF>
       <cc:Work
          rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>icon</dc:title>
+        <dc:title>YAML logo</dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <defs
-     id="defs18" />
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1563"
-     inkscape:window-height="991"
-     id="namedview16"
-     showgrid="false"
-     inkscape:zoom="3.2526912"
-     inkscape:cx="-60"
-     inkscape:cy="69.454451"
-     inkscape:window-x="2204"
-     inkscape:window-y="346"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg14" />
-  <title
-     id="title2">icon</title>
-  <g
-     id="g3713"
-     transform="translate(28,4)">
-    <g
-       id="g3705">
-      <circle
-         cx="-12"
-         cy="12"
-         id="circle4"
-         style="fill:#c2bfbc;stroke-width:0.12903225"
-         r="16" />
-    </g>
-    <path
-       style="fill:#333333;stroke:#333333;stroke-width:0.38709679;stroke-linecap:round;stroke-linejoin:round"
-       inkscape:connector-curvature="0"
-       id="path6"
-       d="m -21.23871,13.303226 c 0.51613,0 0.941936,0.4 0.941936,0.993548 a 0.9419355,0.9419355 0 1 1 -1.883871,0 c 0,-0.593548 0.412903,-0.993548 0.941935,-0.993548 z" />
-    <path
-       style="fill:#333333;stroke:#333333;stroke-width:0.38709679;stroke-linecap:round;stroke-linejoin:round"
-       inkscape:connector-curvature="0"
-       id="path8"
-       d="m -18.451613,16.76129 c 0.787097,0 1.264516,-0.516129 1.548387,-1.212903 l 0.167742,-0.412903 -2.632258,-5.651613 H -18.4 l 1.367742,3.122581 c 0.219355,0.503225 0.464516,1.096774 0.696774,1.638709 h 0.05161 l 0.606452,-1.638709 1.225806,-3.122581 h 0.903226 l -2.477419,6.103226 c -0.412903,1.109677 -1.109678,1.96129 -2.387097,1.96129 a 2.3741936,2.3741936 0 0 1 -0.748387,-0.116129 l 0.193548,-0.748387 a 1.8064516,1.8064516 0 0 0 0.516129,0.07742 z" />
-    <path
-       style="fill:#333333;stroke:#333333;stroke-width:0.38709679;stroke-linecap:round;stroke-linejoin:round"
-       inkscape:connector-curvature="0"
-       id="path10"
-       d="m -12.451613,9.483871 h 0.748387 l 0.07742,0.748387 h 0.03871 c 0.28387,-0.516129 0.632258,-0.8774193 1.264516,-0.8774193 0.6322577,0 0.9290319,0.3225807 1.0709674,0.9806453 0.3354839,-0.5935485 0.7096774,-0.9806453 1.3290323,-0.9806453 0.6193548,0 1.2258065,0.6193549 1.2258065,1.7419353 v 4.03871 H -7.6129029 V 11.16129 c 0,-0.658064 -0.1935484,-0.993548 -0.6193548,-0.993548 -0.4258065,0 -0.6709678,0.283871 -0.967742,0.864516 v 4.090323 H -9.96129 V 11.16129 c 0,-0.658064 -0.219355,-0.993548 -0.645161,-0.993548 -0.425807,0 -0.645162,0.283871 -0.941936,0.864516 v 4.090323 h -0.916129 z" />
-    <path
-       style="fill:#333333;stroke:#333333;stroke-width:0.38709679;stroke-linecap:round;stroke-linejoin:round"
-       inkscape:connector-curvature="0"
-       id="path12"
-       d="m -6.3354835,6.8516129 h 2.8774194 v 6.4387101 c 0,0.825806 0.4258065,1.174193 1.0967742,1.174193 a 2.567742,2.567742 0 0 0 1.0709678,-0.270968 l 0.2451613,0.722581 c -0.5161291,0.180645 -0.9032259,0.335484 -1.5225807,0.335484 -1.2,0 -1.8451613,-0.696774 -1.8451613,-2.025806 V 7.6387097 h -1.9225807 z" />
-  </g>
 </svg>

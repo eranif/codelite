@@ -59,8 +59,7 @@ wxDEFINE_EVENT(wxEVT_SEARCH_THREAD_SEARCHSTARTED, wxCommandEvent);
         wxPostEvent(owner, event);            \
     } else if(m_notifiedWindow) {             \
         wxPostEvent(m_notifiedWindow, event); \
-    }                                         \
-    wxThread::Sleep(1);
+    }
 
 //----------------------------------------------------------------
 // SearchData
@@ -70,7 +69,7 @@ namespace
 bool is_word_char(wxChar ch) { return ch == '_' || wxIsalnum(ch); }
 
 // Minumum of 10ms between events that this thread is sending to the main thread
-constexpr long MIN_SEND_INTERVAL_MS = 1;
+constexpr long MIN_SEND_INTERVAL_MS = 0;
 
 } // namespace
 

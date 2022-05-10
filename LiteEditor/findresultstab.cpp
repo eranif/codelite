@@ -96,10 +96,13 @@ FindResultsTab::~FindResultsTab()
 
 void FindResultsTab::SetStyles(wxStyledTextCtrl* sci) { m_styler->SetStyles(sci); }
 
-void FindResultsTab::AppendText(const wxString& line)
+void FindResultsTab::AppendLine(const wxString& line, bool scroll_to_bottom)
 {
     m_sci->SetIndicatorCurrent(1);
     OutputTabWindow::AppendText(line);
+    if(scroll_to_bottom) {
+        ScrollToBottom();
+    }
 }
 
 void FindResultsTab::Clear()
@@ -186,7 +189,8 @@ void FindResultsTab::OnSearchStart(wxCommandEvent& e)
                 << (data->IsMatchCase() ? _("true") : _("false")) << _(" ; Match whole word: ")
                 << (data->IsMatchWholeWord() ? _("true") : _("false")) << _(" ; Regular expression: ")
                 << (data->IsRegularExpression() ? _("true") : _("false")) << wxT(" ======\n");
-        AppendText(message);
+        AppendLine(message);
+        ScrollToBottom();
     }
     wxDELETE(data);
 
@@ -206,15 +210,15 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
     }
 
     wxWindowUpdateLocker locker{ m_sci };
-    SearchResultList::iterator iter = res->begin();
     m_indicators.reserve(m_indicators.size() + res->size());
 
+    auto iter = res->begin();
     for(; iter != res->end(); ++iter) {
         if(m_matchInfo.empty() || m_matchInfo.rbegin()->second.GetFileName() != iter->GetFileName()) {
             if(!m_matchInfo.empty()) {
-                AppendText("\n");
+                AppendLine("\n", false);
             }
-            AppendText(iter->GetFileName() + wxT("\n"));
+            AppendLine(iter->GetFileName() + wxT("\n"), false);
         }
 
         int lineno = m_sci->GetLineCount() - 1;
@@ -222,12 +226,13 @@ void FindResultsTab::OnSearchMatch(wxCommandEvent& e)
         wxString text = iter->GetPattern();
 
         wxString linenum = wxString::Format(wxT(" %5u: "), iter->GetLineNumber());
-        AppendText(linenum + text + wxT("\n"));
+        AppendLine(linenum + text + wxT("\n"), false);
         int indicatorStartPos = m_sci->PositionFromLine(lineno) + iter->GetColumn() + linenum.Length();
         int indicatorLen = iter->GetLen();
         m_indicators.emplace_back(indicatorStartPos);
         m_sci->IndicatorFillRange(indicatorStartPos, indicatorLen);
     }
+    ScrollToBottom();
     wxDELETE(res);
 }
 
@@ -239,7 +244,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
         return;
 
     // did the page closed before the search ended?
-    AppendText(summary->GetMessage() + wxT("\n"));
+    AppendLine(summary->GetMessage() + wxT("\n"));
 
     if(m_tb->FindById(XRCID("scroll_on_output")) && m_tb->FindById(XRCID("scroll_on_output"))->IsChecked()) {
         m_sci->GotoLine(0);
@@ -274,7 +279,7 @@ void FindResultsTab::OnSearchEnded(wxCommandEvent& e)
     }
 }
 
-void FindResultsTab::OnSearchCancel(wxCommandEvent& e) { AppendText(_("====== Search cancelled by user ======\n")); }
+void FindResultsTab::OnSearchCancel(wxCommandEvent& e) { AppendLine(_("====== Search cancelled by user ======\n")); }
 
 void FindResultsTab::OnClearAll(wxCommandEvent& e)
 {

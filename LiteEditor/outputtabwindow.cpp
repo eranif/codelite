@@ -236,30 +236,12 @@ void OutputTabWindow::AppendText(const wxString& text)
         // enable writing
         m_sci->SetReadOnly(false);
 
-        if(m_outputScrolls) {
-            // the next 4 lines make sure that the caret is at last line
-            // and is visible
-            m_sci->SetSelectionEnd(m_sci->GetLength());
-            m_sci->SetSelectionStart(m_sci->GetLength());
-            m_sci->SetCurrentPos(m_sci->GetLength());
-            m_sci->EnsureCaretVisible();
-        }
-
         // Strip any terminal escape chars from the buffer
         wxString modText;
         ::clStripTerminalColouring(text, modText);
 
         // add the text
         m_sci->InsertText(m_sci->GetLength(), modText);
-
-        if(m_outputScrolls) {
-            // the next 4 lines make sure that the caret is at last line
-            // and is visible
-            m_sci->SetSelectionEnd(m_sci->GetLength());
-            m_sci->SetSelectionStart(m_sci->GetLength());
-            m_sci->SetCurrentPos(m_sci->GetLength());
-            m_sci->EnsureCaretVisible();
-        }
 
         // enable readonly mode
         m_sci->SetReadOnly(true);
@@ -393,4 +375,16 @@ void OutputTabWindow::OnThemeChanged(wxCommandEvent& e)
     if(m_sci) {
         InitStyle(m_sci, m_sci->GetLexer(), m_sci->GetMarginWidth(4) == 6);
     }
+}
+
+void OutputTabWindow::ScrollToBottom()
+{
+    CHECK_PTR_RET(m_sci);
+
+    // the next 4 lines make sure that the caret is at last line
+    // and is visible
+    m_sci->SetSelectionEnd(m_sci->GetLength());
+    m_sci->SetSelectionStart(m_sci->GetLength());
+    m_sci->SetCurrentPos(m_sci->GetLength());
+    m_sci->EnsureCaretVisible();
 }

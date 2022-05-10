@@ -67,7 +67,7 @@ protected:
     void UnbindSearchEvents(wxEvtHandler* binder);
     void BindSearchEvents(wxEvtHandler* binder);
 
-    void AppendText(const wxString& line);
+    void AppendLine(const wxString& line, bool scroll_to_bottom = true);
     void Clear();
     void SaveSearchData();
     void LoadSearch(const History& h);

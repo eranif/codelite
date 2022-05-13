@@ -144,7 +144,7 @@ void clTreeCtrl::UpdateLineHeight()
     wxSize textSize = gcdc.GetTextExtent("Tp");
 
     SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);
-    SetIndent(GetLineHeight());
+    SetIndent(GetLineHeight() / 2);
 }
 
 void clTreeCtrl::DoInitialize()
@@ -216,8 +216,8 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);
 
     // set the indent to match the line height
-    clControlWithItems::SetIndent(GetLineHeight());
-    m_model.SetIndentSize(GetLineHeight());
+    clControlWithItems::SetIndent(GetLineHeight() / 2);
+    m_model.SetIndentSize(GetLineHeight() / 2);
 
     // Call the parent's Render method
     Render(dc);
@@ -778,7 +778,7 @@ void clTreeCtrl::DoBitmapAdded()
     }
     heighestBitmap += 2 * m_spacerY;
     SetLineHeight(wxMax(heighestBitmap, GetLineHeight()));
-    SetIndent(GetLineHeight());
+    SetIndent(GetLineHeight() / 2);
 }
 
 void clTreeCtrl::SetBitmaps(BitmapVec_t* bitmaps)

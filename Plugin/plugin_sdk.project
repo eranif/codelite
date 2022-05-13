@@ -200,6 +200,7 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="DefaultLexerJSON.cpp"/>
     <File Name="clCodeLiteRemoteProcess.hpp"/>
     <File Name="clCodeLiteRemoteProcess.cpp"/>
     <File Name="libplugin_pch.h"/>

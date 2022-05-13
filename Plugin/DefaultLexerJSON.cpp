@@ -1,0 +1,283 @@
+#include <wx/string.h>
+
+const wxString DefaultLexerJSON = R"EOF(
+{
+ "Name": "c++",
+ "Theme": "Atom One-Dark",
+ "Flags": 5,
+ "Id": 3,
+ "KeyWords0": "alignas alignof and and_eq asm auto bitand bitor bool break case catch char char16_t char32_t class compl const const_cast constexpr continue decltype default delete do double dynamic_cast else enum explicit export extern false final float for friend goto if inline int long mutable namespace new noexcept not not_eq nullptr operator or or_eq override private protected public register reinterpret_cast return short signed sizeof static static_assert static_cast struct switch template this thread_local throw true try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq ",
+ "KeyWords1": "",
+ "KeyWords2": "a addindex addtogroup anchor arg attention author b brief bug c callergraph callgraph category class code cond copybrief copydetails copydoc date def defgroup deprecated details dir dontinclude dot dotfile e else elseif em endcode endcond enddot endhtmlonly endif endlatexonly endlink endmanonly endmsc endverbatim endxmlonly enum example exception extends file fn headerfile hideinitializer htmlinclude htmlonly if ifnot image implements include includelineno ingroup interface internal invariant latexonly li line link mainpage manonly memberof msc n name namespace nosubgrouping note overload p package page par paragraph param post pre private privatesection property protected protectedsection protocol public publicsection ref relates relatesalso remarks return retval sa section see showinitializer since skip skipline struct subpage subsection subsubsection test throw todo tparam typedef union until var verbatim verbinclude version warning weakgroup xmlonly xrefitem",
+ "KeyWords3": "",
+ "KeyWords4": "",
+ "Extensions": "*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++;*.ino",
+ "SubstyleBase": 11,
+ "WordSet": [{
+   "index": 3,
+   "is_substyle": false
+  }, {
+   "index": 1,
+   "is_substyle": false
+  }, {
+   "index": 2,
+   "is_substyle": true
+  }, {
+   "index": 4,
+   "is_substyle": false
+  }],
+ "Properties": [{
+   "Id": 0,
+   "Name": "Default",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#53565C",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 1,
+   "Name": "Common C style comment",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#7D8C93",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 2,
+   "Name": "Common C++ style comment",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#7D8C93",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 3,
+   "Name": "Doxygen C style comment",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#7D8C93",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 4,
+   "Name": "Number",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#FFCD22",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 5,
+   "Name": "C++ keyword",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#C678DD",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 6,
+   "Name": "String",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#EC7600",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 7,
+   "Name": "Character",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#EC7600",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 8,
+   "Name": "Uuid",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#FFCD22",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 9,
+   "Name": "Preprocessor",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#E0E2E4",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 10,
+   "Name": "Operator",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#E8E2B7",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 11,
+   "Name": "Identifier",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#E0E2E4",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 12,
+   "Name": "Open String",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#EC7600",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 15,
+   "Name": "Doxygen C++ style comment",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#7D8C93",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 17,
+   "Name": "Doxygen keyword",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#A082BD",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 18,
+   "Name": "Doxygen keyword error",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#A082BD",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 16,
+   "Name": "Functions",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#56AFD7",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 19,
+   "Name": "Classes",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#FFC235",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 2,
+   "Name": "Variables",
+   "Flags": 16,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#F35151",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 34,
+   "Name": "Brace match",
+   "Flags": 2,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "yellow",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 35,
+   "Name": "Brace bad match",
+   "Flags": 2,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "red",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 37,
+   "Name": "Indent Guide",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#282C34",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": -1,
+   "Name": "Fold Margin",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#3D4148",
+   "BgColour": "#3D4148",
+   "Size": 12
+  }, {
+   "Id": -2,
+   "Name": "Text Selection",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#404040",
+   "BgColour": "#CC9900",
+   "Size": 12
+  }, {
+   "Id": -3,
+   "Name": "Caret Colour",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "rgb(255, 128, 0)",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": -4,
+   "Name": "Whitespace",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#3D4148",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 38,
+   "Name": "Calltip",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#E0E2E4",
+   "BgColour": "#282C34",
+   "Size": 12
+  }, {
+   "Id": 33,
+   "Name": "Line Numbers",
+   "Flags": 0,
+   "Alpha": 50,
+   "FontDesc": "",
+   "Colour": "#53565C",
+   "BgColour": "#282C34",
+   "Size": 12
+  }]
+}
+)EOF";

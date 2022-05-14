@@ -41,4 +41,4 @@ void clThemedComboBox::OnThemeChanged(wxCommandEvent& event)
     ApplyTheme();
 }
 
-void clThemedComboBox::ApplyTheme() {}
+void clThemedComboBox::ApplyTheme() { SetBackgroundColour(clSystemSettings::GetDefaultPanelColour()); }

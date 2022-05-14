@@ -29,15 +29,13 @@
 
 #include <wx/gauge.h>
 
+class clThemedComboBox;
 class ReplaceInFilesPanel : public FindResultsTab
 {
 protected:
-    wxComboBox* m_replaceWith;
+    clThemedComboBox* m_replaceWith;
     wxGauge* m_progress;
-    wxStaticText* m_replaceWithText;
     wxArrayString m_filesModified;
-    wxBitmap m_bmpChecked;
-    wxBitmap m_bmpUnchecked;
     bool m_bmpsForDarkTheme = false;
 
 protected:

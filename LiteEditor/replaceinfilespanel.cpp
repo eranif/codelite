@@ -62,21 +62,14 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     mark->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnMarkAll, this);
     mark->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnMarkAllUI, this);
 
-    m_replaceWithText = new wxStaticText(this, wxID_ANY, _("Replace With:"));
-    horzSizer->Add(m_replaceWithText, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT | wxLEFT, 5);
-    m_replaceWithText->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceWithComboUI, this);
-
-    m_replaceWith = new wxComboBox(this, wxID_ANY);
+    m_replaceWith = new clThemedComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, {});
     horzSizer->Add(m_replaceWith, 2, wxALIGN_CENTER_VERTICAL | wxRIGHT | wxLEFT, 5);
     m_replaceWith->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceWithComboUI, this);
 
-    clThemedButton* repl = new clThemedButton(this, wxID_ANY, _("&Replace Marked"));
+    clThemedButton* repl = new clThemedButton(this, wxID_ANY, _("Replace"));
     horzSizer->Add(repl, 0, wxRIGHT | wxLEFT | wxALIGN_CENTER_VERTICAL, 5);
     repl->Bind(wxEVT_BUTTON, &ReplaceInFilesPanel::OnReplace, this);
     repl->Bind(wxEVT_UPDATE_UI, &ReplaceInFilesPanel::OnReplaceUI, this);
-
-    m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
-    horzSizer->Add(m_progress, 1, wxALIGN_CENTER_VERTICAL | wxALL | wxGA_SMOOTH, 5);
 
     wxBoxSizer* vertSizer = new wxBoxSizer(wxVERTICAL);
     vertSizer->Add(horzSizer, 0, wxEXPAND | wxTOP | wxBOTTOM);
@@ -95,6 +88,9 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 #else
     mainSizer->Add(vertSizer, 1, wxEXPAND);
 #endif
+    m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
+    m_progress->Hide();
+    m_vSizer->Add(m_progress, wxSizerFlags().Expand().Border(5));
     mainSizer->Layout();
 }
 
@@ -105,7 +101,7 @@ void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
     e.Skip();
     // set the "Replace With" field with the user value
     SearchData* data = (SearchData*)e.GetClientData();
-    m_replaceWith->ChangeValue(data->GetReplaceWith());
+    m_replaceWith->SetValue(data->GetReplaceWith());
     FindResultsTab::OnSearchStart(e);
 
     // Make sure that the Output view & the "Replace" tab
@@ -132,7 +128,7 @@ void ReplaceInFilesPanel::OnSearchEnded(wxCommandEvent& e)
     CHECK_PTR_RET(summary);
 
     // set the "Replace With" field with the user value
-    m_replaceWith->ChangeValue(summary->GetReplaceWith());
+    m_replaceWith->SetValue(summary->GetReplaceWith());
 
     FindResultsTab::OnSearchEnded(e);
     OnMarkAll(e);
@@ -255,15 +251,20 @@ wxString ReplaceInFilesPanel::DoGetReplaceWith(const SearchResult& res) const
 
 void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
 {
+    if(!m_progress->IsShown()) {
+        m_progress->Show();
+        GetSizer()->Layout();
+    }
+
     m_filesModified.clear();
     // FIX bug#2770561
-    int lineNumber(0);
+    int lineNumber = 0;
     clEditor* activeEditor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     if(activeEditor) {
         lineNumber = activeEditor->GetCurrentLine();
     }
 
-    if(m_replaceWith->FindString(m_replaceWith->GetValue(), true) == wxNOT_FOUND) {
+    if(m_replaceWith->FindString(m_replaceWith->GetValue(), true) == wxString::npos) {
         m_replaceWith->Append(m_replaceWith->GetValue());
     }
 
@@ -352,7 +353,12 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         res.SetLen(replaceLen);
         res.SetLenInChars(replaceLenInChars);
     }
+
+    // hide the progress bar
     m_progress->SetValue(0);
+    m_progress->Hide();
+    GetSizer()->Layout();
+
     DoSaveResults(sci, firstInFile, m_matchInfo.end());
 
     // Disable the 'buffer limit' feature during replace
@@ -366,6 +372,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
     lastFile.Clear();
     m_sci->MarkerDeleteAll(0x7);
     m_sci->SetReadOnly(false);
+    m_replaceWith->SetValue(wxEmptyString);
 
     std::vector<int> itemsToRemove;
     i = m_matchInfo.begin();
@@ -494,35 +501,6 @@ void ReplaceInFilesPanel::OnMouseDClick(wxStyledTextEvent& e)
     }
 }
 
-static void RenderCheckbox(wxWindow* win, wxDC& dc, const wxColour& bgColour, const wxColour& penColour,
-                           const wxRect& _rect, bool checked)
-{
-    wxRect rect = _rect;
-    dc.SetBrush(bgColour);
-    dc.SetPen(bgColour);
-    dc.DrawRectangle(rect);
-    if(!checked) {
-        return;
-    }
-
-    if(checked) {
-        wxRect innerRect = rect;
-        innerRect.Deflate(::clGetSize(4, win));
-        dc.SetPen(wxPen(penColour, ::clGetSize(2, win)));
-
-        wxPoint p1, p2, p3;
-        p1.x = innerRect.GetTopLeft().x;
-        p1.y = innerRect.GetTopLeft().y + (innerRect.GetHeight() / 2);
-
-        p2.x = innerRect.GetBottomLeft().x + (innerRect.GetWidth() / 3);
-        p2.y = innerRect.GetBottomLeft().y;
-
-        p3 = innerRect.GetTopRight();
-        dc.DrawLine(p1, p2);
-        dc.DrawLine(p2, p3);
-    }
-}
-
 void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
 {
     FindResultsTab::SetStyles(sci);
@@ -532,26 +510,16 @@ void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
         lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
 
-    // render two bitmaps: checked and unchecked
-    int size = ::clGetSize(16, sci);
     const StyleProperty& styleProperty = lexer->GetProperty(0);
-
     wxColour bgColour = styleProperty.GetBgColour();
-    wxColour fgColour = lexer->IsDark() ? *wxYELLOW : *wxBLACK;
-    {
-        wxMemoryDC memDC;
-        m_bmpChecked = wxBitmap(size, size);
-        memDC.SelectObject(m_bmpChecked);
-        wxGCDC gcdc(memDC);
-        wxRect rect(0, 0, size, size);
-        RenderCheckbox(sci, gcdc, bgColour, fgColour, rect, true);
-        memDC.SelectObject(wxNullBitmap); // Apply the changes
-    }
+
 #if wxCHECK_VERSION(3, 1, 0)
     sci->SetMarginWidth(3, clGetSize(1, sci)); // separator margin
     sci->SetMarginBackground(3, lexer->IsDark() ? bgColour.ChangeLightness(130) : bgColour.ChangeLightness(50));
 #else
     sci->SetMarginWidth(3, 0); // separator margin
 #endif
-    sci->MarkerDefineBitmap(7, m_bmpChecked);
+    sci->MarkerDefine(7, wxSTC_MARK_ARROW);
+    sci->MarkerSetBackground(7, lexer->IsDark() ? "WHITE" : "DARK GREY");
+    sci->MarkerSetForeground(7, lexer->IsDark() ? "WHITE" : "DARK GREY");
 }

@@ -461,8 +461,6 @@
     <File Name="WelcomePage.cpp"/>
     <File Name="WelcomePage.h"/>
     <File Name="autoversion.cpp"/>
-    <File Name="clInitializeDialog.h"/>
-    <File Name="clInitializeDialog.cpp"/>
     <File Name="autoversion.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Controls">
@@ -873,7 +871,6 @@
     <File Name="new_virtual_folder.wxcp"/>
     <File Name="quickfindbarbase.wxcp"/>
     <File Name="CompilersFoundDlg.wxcp"/>
-    <File Name="CodeLiteUpgradeFrame.wxcp"/>
     <File Name="ConfigManagerBaseDlg.wxcp"/>
   </VirtualDirectory>
   <Dependencies Name="Unix">

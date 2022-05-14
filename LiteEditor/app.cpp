@@ -23,14 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "app.h"
+
 #include "BuildTab.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocatorCygwin.h"
 #include "SocketAPI/clSocketClient.h"
-#include "app.h"
 #include "asyncprocess.h" // IProcess
 #include "autoversion.h"
-#include "clInitializeDialog.h"
 #include "clKeyboardManager.h"
 #include "clSystemSettings.h"
 #include "cl_config.h"
@@ -56,6 +56,7 @@
 #include "workspace_pane.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
 #include <CompilerLocatorMinGW.h>
 #include <wx/imagjpeg.h>
 #include <wx/persist.h>

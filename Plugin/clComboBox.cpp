@@ -3,6 +3,7 @@
 #include "clThemedTextCtrl.hpp"
 
 #include <wx/button.h>
+#include <wx/settings.h>
 #include <wx/sizer.h>
 
 namespace
@@ -96,9 +97,12 @@ void clComboBox::DoCreate(const wxString& value)
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
     m_textCtrl = new clThemedTextCtrl(this, wxID_ANY, value);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND | wxALL, 1);
-    const wxString arrowSymbol = wxT(" \u25BE ");
+    const wxString arrowSymbol = wxT(" \u25BC ");
 
     m_button = new wxButton(this, wxID_ANY, arrowSymbol, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    wxColour text_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    m_button->SetForegroundColour(DrawingUtils::IsDark(text_colour) ? text_colour.ChangeLightness(120)
+                                                                    : text_colour.ChangeLightness(80));
     m_button->Bind(wxEVT_BUTTON, &clComboBox::OnButtonClicked, this);
     m_textCtrl->Bind(wxEVT_TEXT, &clComboBox::OnText, this);
     m_textCtrl->Bind(wxEVT_CHAR_HOOK, &clComboBox::OnCharHook, this);

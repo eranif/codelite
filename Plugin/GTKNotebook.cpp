@@ -461,7 +461,7 @@ void clGTKNotebook::Initialise(long style)
     }
 
     if(m_bookStyle & kNotebook_ShowFileListButton) {
-        GtkToolItem* button = gtk_tool_button_new(nullptr, "\u25BE");
+        GtkToolItem* button = gtk_tool_button_new(nullptr, "\u25BC");
         gtk_box_pack_end(GTK_BOX(box), GTK_WIDGET(button), false, true, 10);
         g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(on_action_button_clicked), this);
     }

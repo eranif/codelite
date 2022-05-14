@@ -695,7 +695,7 @@ void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRe
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
 {
     // Draw an arrow
-    const wxString arrowSymbol = wxT("\u25BE");
+    const wxString arrowSymbol = wxT("\u25BC");
     wxRect arrowRect{ { 0, 0 }, dc.GetTextExtent(arrowSymbol) };
     arrowRect = arrowRect.CenterIn(rect);
 
@@ -703,6 +703,7 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     if(!buttonColour.IsOk()) {
         // No colour provided, provide one
         buttonColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+        buttonColour = IsDark(buttonColour) ? buttonColour.ChangeLightness(120) : buttonColour.ChangeLightness(80);
     }
 
     dc.SetTextForeground(buttonColour);

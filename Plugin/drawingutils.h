@@ -104,6 +104,8 @@ public:
      * pass an invalid colour to let this function determine the best colour to use
      */
     static void DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour = wxColour());
+    static void DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour,
+                                 const wxColour& bgColour = wxColour());
 
     static void DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                  const wxBitmap& bmp = wxNullBitmap,

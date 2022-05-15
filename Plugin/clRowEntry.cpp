@@ -22,6 +22,8 @@
 
 namespace
 {
+const wxString COLOUR_TEXT = " #FFFFFF ";
+
 struct clClipperHelper {
     bool m_used = false;
     wxRect m_oldRect;
@@ -374,6 +376,9 @@ vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
     dc.SetFont(f);
     v.reserve(m_cells.size());
 
+    int COLOUR_TEXT_LEN = wxNOT_FOUND;
+    COLOUR_TEXT_LEN = wxNOT_FOUND;
+
     for(size_t i = 0; i < m_cells.size(); ++i) {
         auto& cell = m_cells[i];
         v.emplace_back();
@@ -382,6 +387,13 @@ vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
         if((i == 0) && !IsListItem()) {
             // space for the button
             width += rowRect.GetHeight();
+        }
+
+        if(cell.IsColour()) {
+            if(COLOUR_TEXT_LEN == wxNOT_FOUND) {
+                COLOUR_TEXT_LEN = dc.GetTextExtent(COLOUR_TEXT).GetWidth();
+            }
+            width += COLOUR_TEXT_LEN;
         }
 
         if(cell.IsBool()) {
@@ -405,10 +417,13 @@ vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
             }
         }
 
-        wxString text_to_render = GetTextForRendering(cell.GetValueString());
-        width += (i == 0 ? itemIndent : clHeaderItem::X_SPACER);
-        width += dc.GetTextExtent(text_to_render).GetWidth();
-        width += X_SPACER;
+        // do we have text to redner?
+        if(!cell.GetValueString().empty()) {
+            wxString text_to_render = GetTextForRendering(cell.GetValueString());
+            width += (i == 0 ? itemIndent : clHeaderItem::X_SPACER);
+            width += dc.GetTextExtent(text_to_render).GetWidth();
+            width += X_SPACER;
+        }
 
         if(cell.IsChoice()) {
             width += X_SPACER;
@@ -551,6 +566,13 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             cell.SetCheckboxRect(wxRect()); // clear the checkbox rect
         }
 
+        if(cell.IsColour()) {
+            wxRect rr = cellRect;
+            rr.Deflate(2);
+            rr = rr.CenterIn(cellRect);
+            DrawingUtils::DrawColourPicker(win, dc, rr, cell.GetValueColour());
+        }
+
         // Draw the bitmap
         if(bitmapIndex != wxNOT_FOUND) {
             const wxBitmap& bmp = m_tree->GetBitmap(bitmapIndex);
@@ -565,14 +587,16 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         }
 
         // Draw the text
-        wxString text_to_render = GetTextForRendering(cell.GetValueString());
-        wxRect textRect(dc.GetTextExtent(text_to_render));
-        textRect = textRect.CenterIn(rowRect, wxVERTICAL);
-        int textY = textRect.GetY();
-        int textX = (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset;
-        RenderText(win, dc, colours, text_to_render, textX, textY, i);
-        textXOffset += textRect.GetWidth();
-        textXOffset += X_SPACER;
+        if(!cell.GetValueString().empty()) {
+            wxString text_to_render = GetTextForRendering(cell.GetValueString());
+            wxRect textRect(dc.GetTextExtent(text_to_render));
+            textRect = textRect.CenterIn(rowRect, wxVERTICAL);
+            int textY = textRect.GetY();
+            int textX = (i == 0 ? itemIndent : clHeaderItem::X_SPACER) + textXOffset;
+            RenderText(win, dc, colours, text_to_render, textX, textY, i);
+            textXOffset += textRect.GetWidth();
+            textXOffset += X_SPACER;
+        }
 
         if(cell.IsChoice()) {
             // draw the drop down arrow. Make it aligned to the right
@@ -757,6 +781,14 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
     clCellValue& cell = GetColumn(col);
 
     int item_width = X_SPACER;
+    // colour items occupying the entire cell
+    if(cell.IsColour()) {
+        dc.SetFont(cell.GetFont().IsOk() ? cell.GetFont() : m_tree->GetDefaultFont());
+        item_width += dc.GetTextExtent(COLOUR_TEXT).GetWidth();
+        item_width += X_SPACER;
+        return item_width;
+    }
+
     if(cell.IsBool()) {
         // add the checkbox size
         item_width += clGetSize(rowHeight, m_tree);
@@ -766,7 +798,7 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
         item_width += X_SPACER;
     }
 
-    dc.SetFont(m_tree->GetDefaultFont());
+    dc.SetFont(cell.GetFont().IsOk() ? cell.GetFont() : m_tree->GetDefaultFont());
     wxSize textSize = dc.GetTextExtent(cell.GetValueString());
     if((col == 0) && !IsListItem()) {
         // always make room for the twist button
@@ -1024,4 +1056,22 @@ bool clRowEntry::IsChoice(size_t col) const
         return false;
     }
     return cell.IsChoice();
+}
+
+void clRowEntry::SetColour(const wxColour& colour, size_t col)
+{
+    auto& cell = GetColumn(col);
+    if(cell.IsOk()) {
+        return;
+    }
+    cell.SetType(clCellValue::kTypeColour);
+}
+
+bool clRowEntry::IsColour(size_t col) const
+{
+    const clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) {
+        return false;
+    }
+    return cell.IsColour();
 }

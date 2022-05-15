@@ -16,6 +16,7 @@ public:
         kTypeString = 1,
         kTypeBool = 2,
         kTypeChoice = 3,
+        kTypeColour = 4,
     };
 
 protected:
@@ -29,6 +30,7 @@ protected:
     wxColour m_bgColour;
     wxRect m_checkboxRect;
     wxRect m_dropDownRect;
+    wxColour m_colourValue;
 
 public:
     clCellValue();
@@ -42,9 +44,12 @@ public:
     void SetType(eType type) { m_type = type; }
     void SetValue(const wxString& text);
     void SetValue(bool b) { this->m_boolValue = b; }
+    void SetValue(const wxColour& c) { this->m_colourValue = c; }
     const wxString& GetValueString() const;
     bool GetValueBool() const { return m_boolValue; }
+    const wxColour& GetValueColour() const { return m_colourValue; }
     bool IsChoice() const { return m_type == kTypeChoice; }
+    bool IsColour() const { return m_type == kTypeColour; }
 
     int GetBitmapIndex() const { return m_bitmapIndex; }
     int GetBitmapSelectedIndex() const { return m_bitmapSelectedIndex; }

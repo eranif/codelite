@@ -20,6 +20,7 @@
 #define wxTR_SORT_TOP_LEVEL 0x0100
 
 static const int wxTREE_HITTEST_ONDROPDOWNARROW = 0x2000;
+static const int wxTREE_HITTEST_ONCOLOURPICKER = 0x4000;
 
 class clScrollBar;
 enum class eRendererType {
@@ -64,6 +65,10 @@ private:
 
     void DoInitialize();
     clRowEntry* DoFind(clRowEntry* from, const wxString& what, size_t col, size_t searchFlags, bool next);
+    /**
+     * @brief display a colour picker dialog for the given item
+     */
+    void ShowColourPicker(const wxTreeItemId& item, int column);
 
 protected:
     void UpdateScrollBar() override;

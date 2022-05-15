@@ -847,3 +847,20 @@ clColours& DrawingUtils::GetColours(bool darkColours)
 
 int DrawingUtils::GetFallbackFixedFontSize() { return GetFallbackFixedFont().GetPointSize(); }
 wxString DrawingUtils::GetFallbackFixedFontFace() { return GetFallbackFixedFont().GetFaceName(); }
+
+void DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour,
+                                    const wxColour& bgColour)
+{
+    bool is_dark = bgColour.IsOk() ? IsDark(bgColour) : IsDark(clSystemSettings::GetDefaultPanelColour());
+    clColours c;
+    if(is_dark) {
+        c.InitDarkDefaults();
+    } else {
+        c.InitDefaults();
+    }
+
+    wxUnusedVar(win);
+    dc.SetPen(c.GetDarkBorderColour());
+    dc.SetBrush(pickerColour.IsOk() ? pickerColour : *wxBLACK);
+    dc.DrawRectangle(rect);
+}

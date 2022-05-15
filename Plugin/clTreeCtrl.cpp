@@ -12,6 +12,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <wx/app.h>
+#include <wx/colordlg.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcclient.h>
 #include <wx/dcgraph.h>
@@ -406,7 +407,11 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
             if(flags & wxTREE_HITTEST_ONITEMSTATEICON) {
                 // Change the state
                 Check(where, !IsChecked(where, column), column);
+            } else if(flags & wxTREE_HITTEST_ONCOLOURPICKER) {
+                // Show colour picker dialog
+                CallAfter(&clTreeCtrl::ShowColourPicker, where, column);
             }
+
             bool has_multiple_selection = (m_model.GetSelectionsCount() > 1);
             if(HasStyle(wxTR_MULTIPLE)) {
                 if(event.ControlDown()) {
@@ -497,6 +502,7 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
             flags = wxTREE_HITTEST_ONITEM;
             if(GetHeader() && !GetHeader()->empty()) {
                 for(size_t col = 0; col < GetHeader()->size(); ++col) {
+                    const clCellValue& cell = item->GetColumn(col);
                     // Check which column was clicked
                     wxRect cellRect = item->GetCellRect(col);
                     // We need to fix the x-axis to reflect any horizontal scrollbar
@@ -516,6 +522,8 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
                             if(dropDownRect.Contains(point)) {
                                 flags |= wxTREE_HITTEST_ONDROPDOWNARROW;
                             }
+                        } else if(cell.IsColour()) {
+                            flags |= wxTREE_HITTEST_ONCOLOURPICKER;
                         }
                         column = col;
                         break;
@@ -1557,4 +1565,22 @@ void clTreeCtrl::SetItemHighlightInfo(const wxTreeItemId& item, size_t start_pos
 
     match_result.Add(col, triplet);
     m_model.ToPtr(item)->SetHighlightInfo(match_result);
+}
+
+void clTreeCtrl::ShowColourPicker(const wxTreeItemId& item, int column)
+{
+    CHECK_ITEM_RET(item);
+    const auto ptr = m_model.ToPtr(item);
+
+    CHECK_PTR_RET(ptr);
+    auto& cell = ptr->GetColumn(column);
+
+    CHECK_COND_RET(cell.IsOk());
+
+    const auto& colour = cell.GetValueColour();
+    auto sel = ::wxGetColourFromUser(nullptr, colour.IsOk() ? colour : *wxBLACK);
+    CHECK_COND_RET(sel.IsOk());
+
+    cell.SetValue(sel);
+    Refresh();
 }

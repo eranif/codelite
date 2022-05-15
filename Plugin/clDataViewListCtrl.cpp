@@ -21,6 +21,9 @@ IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK);
 wxIMPLEMENT_DYNAMIC_CLASS(clDataViewChoice, wxObject);
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewChoice, WXDLLIMPEXP_SDK);
 
+wxIMPLEMENT_DYNAMIC_CLASS(clDataViewColour, wxObject);
+IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewColour, WXDLLIMPEXP_SDK);
+
 wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CHOICE_BUTTON, wxDataViewEvent);
@@ -380,6 +383,10 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
         row->SetLabel(wxString() << value.GetDouble(), col);
     } else if(variantType == "datetime") {
         row->SetLabel(value.GetDateTime().FormatDate(), col);
+    } else if(variantType == "clDataViewColour") {
+        clDataViewColour c;
+        c << value;
+        row->SetColour(c.GetColour(), col);
     }
     // Call this to update the view + update the header bar
     clTreeCtrl::SetItemText(wxTreeItemId(row), row->GetLabel(col), col);

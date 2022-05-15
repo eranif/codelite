@@ -347,6 +347,37 @@ public:
 
 DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewChoice, WXDLLIMPEXP_SDK)
 
+// Helper class passing bitmap bool + label with possible bitmap index
+class WXDLLIMPEXP_SDK clDataViewColour : public wxObject
+{
+private:
+    wxColour m_colour;
+
+public:
+    clDataViewColour(const wxColour& colour)
+        : m_colour(colour)
+    {
+    }
+
+    clDataViewColour(const clDataViewColour& other)
+        : wxObject()
+        , m_colour(other.m_colour)
+    {
+    }
+
+    clDataViewColour() {}
+    virtual ~clDataViewColour() {}
+
+    void SetColour(const wxColour& colour) { this->m_colour = colour; }
+    const wxColour& GetColour() const { return m_colour; }
+    bool IsSameAs(const clDataViewColour& other) const { return m_colour.IsSameAs(other.m_colour); }
+    bool operator==(const clDataViewColour& other) const { return IsSameAs(other); }
+    bool operator!=(const clDataViewColour& other) const { return !IsSameAs(other); }
+    wxDECLARE_DYNAMIC_CLASS(clDataViewColour);
+};
+
+DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewColour, WXDLLIMPEXP_SDK)
+
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CHOICE_BUTTON, wxDataViewEvent);

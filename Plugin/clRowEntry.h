@@ -92,8 +92,6 @@ protected:
      * @brief return the nth visible item
      */
     clRowEntry* GetVisibleItem(int index);
-    clCellValue& GetColumn(size_t col = 0);
-    const clCellValue& GetColumn(size_t col = 0) const;
     void DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours);
     void RenderText(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col);
     void RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y,
@@ -105,6 +103,8 @@ public:
     clRowEntry* GetLastChild() const;
     clRowEntry* GetFirstChild() const;
 
+    const clCellValue& GetColumn(size_t col = 0) const;
+    clCellValue& GetColumn(size_t col = 0);
     clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex = wxNOT_FOUND,
                int bitmapSelectedIndex = wxNOT_FOUND);
     clRowEntry(clTreeCtrl* tree, bool checked, const wxString& label, int bitmapIndex = wxNOT_FOUND,
@@ -197,6 +197,9 @@ public:
      */
     void SetChoice(bool b, size_t col = 0);
     bool IsChoice(size_t col) const;
+
+    void SetColour(const wxColour& colour, size_t col = 0);
+    bool IsColour(size_t col) const;
 
     // Set this cell as "checkable" cell with possible label
     void SetChecked(bool checked, int bitmapIndex, const wxString& label, size_t col = 0);

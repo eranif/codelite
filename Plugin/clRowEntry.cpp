@@ -62,9 +62,12 @@ struct clClipperHelper {
 
 wxString GetTextForRendering(const wxString& text)
 {
-    if(text.find('\n') != wxString::npos) {
-        wxString fixed_text = text;
-        fixed_text.Replace("\n", "\\n");
+    size_t pos = text.find('\n');
+    if(pos != wxString::npos) {
+        wxString fixed_text = text.Mid(0, pos - 1);
+        if(fixed_text.length() != text.length()) {
+            fixed_text << "...";
+        }
         return fixed_text;
     } else {
         return text;
@@ -825,7 +828,8 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
     }
 
     dc.SetFont(cell.GetFont().IsOk() ? cell.GetFont() : m_tree->GetDefaultFont());
-    wxSize textSize = dc.GetTextExtent(cell.GetValueString());
+    wxString text_to_render = GetTextForRendering(cell.GetValueString());
+    wxSize textSize = dc.GetTextExtent(text_to_render);
     if((col == 0) && !IsListItem()) {
         // always make room for the twist button
         item_width += clGetSize(rowHeight, m_tree);
@@ -1088,10 +1092,11 @@ bool clRowEntry::HasButton(size_t col) const
 void clRowEntry::SetColour(const wxColour& colour, size_t col)
 {
     auto& cell = GetColumn(col);
-    if(cell.IsOk()) {
+    if(!cell.IsOk()) {
         return;
     }
     cell.SetType(clCellValue::kTypeColour);
+    cell.SetValue(colour);
 }
 
 bool clRowEntry::IsColour(size_t col) const

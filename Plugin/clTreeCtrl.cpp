@@ -699,8 +699,15 @@ wxString clTreeCtrl::GetItemText(const wxTreeItemId& item, size_t col) const
 {
     if(!item.GetID())
         return "";
+
     clRowEntry* node = m_model.ToPtr(item);
-    return node->GetLabel(col);
+    clCellValue& cell = node->GetColumn(col);
+    if(cell.IsColour()) {
+        // if the cell is of type colour, return the HTML colour encoding
+        return cell.GetValueColour().GetAsString(wxC2S_HTML_SYNTAX);
+    } else {
+        return node->GetLabel(col);
+    }
 }
 
 wxTreeItemData* clTreeCtrl::GetItemData(const wxTreeItemId& item) const

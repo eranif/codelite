@@ -506,7 +506,7 @@ void clDataViewListCtrl::ShowMenuForItem(const wxDataViewItem& item, wxMenu& men
         return;
     }
 
-    wxRect r = row->GetCellRect(col);
+    wxRect r = row->GetCellButtonRect(col);
     PopupMenu(&menu, r.GetBottomLeft());
 }
 
@@ -534,7 +534,7 @@ void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, con
             }
         },
         wxID_ANY);
-    wxRect r = row->GetCellRect(col);
+    wxRect r = row->GetCellButtonRect(col);
     PopupMenu(&menu, r.GetBottomLeft());
     if(!selectedString.IsEmpty()) {
         // fire selection made event

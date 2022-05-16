@@ -25,6 +25,7 @@
 #include "output_pane.h"
 
 #include "BuildTab.hpp"
+#include "clPropertiesPage.hpp"
 #include "clStrings.h"
 #include "clTabTogglerHelper.h"
 #include "detachedpanesinfo.h"
@@ -102,16 +103,6 @@ void OutputPane::CreateGUIControls()
     IManager* mgr = PluginManager::Get();
 
     auto images = m_book->GetBitmaps();
-    // Build tab
-    //    m_buildWin = new NewBuildTab(m_book);
-    //#if PHP_BUILD
-    //    m_buildWin->Hide();
-    //#else
-    //    m_book->AddPage(m_buildWin, BUILD_WIN, true, images->Add(wxT("build")));
-    //    m_tabs.insert(std::make_pair(BUILD_WIN, Tab(BUILD_WIN, m_buildWin, wxNOT_FOUND)));
-    //    mgr->AddOutputTab(BUILD_WIN);
-    //#endif
-
     m_build_tab = new BuildTab(m_book);
     m_book->AddPage(m_build_tab, BUILD_WIN, true, images->Add(wxT("build")));
     m_tabs.insert(std::make_pair(BUILD_WIN, Tab(BUILD_WIN, m_build_tab, wxNOT_FOUND)));
@@ -133,18 +124,25 @@ void OutputPane::CreateGUIControls()
 
     // Show Usage ("References")
     m_showUsageTab = new FindUsageTab(m_book);
-#if PHP_BUILD
-    m_showUsageTab->Hide();
-#else
     m_book->AddPage(m_showUsageTab, SHOW_USAGE, false, images->Add(wxT("find")));
     m_tabs.insert({ SHOW_USAGE, Tab(SHOW_USAGE, m_showUsageTab, images->Add(wxT("find"))) });
     mgr->AddOutputTab(SHOW_USAGE);
-#endif
+
     // Output tab
     m_outputWind = new OutputTab(m_book, wxID_ANY, OUTPUT_WIN);
     m_book->AddPage(m_outputWind, OUTPUT_WIN, false, images->Add(wxT("console")));
     m_tabs.insert(std::make_pair(OUTPUT_WIN, Tab(OUTPUT_WIN, m_outputWind, images->Add(wxT("console")))));
     mgr->AddOutputTab(OUTPUT_WIN);
+#if 0
+    auto props = new clPropertiesPage(m_book);
+    props->AddProperty("Options1", wxString("Valus string"));
+    props->AddProperty("Options1", { "Hello", "World", "From", "clPropertiesPage" });
+    props->AddProperty("Choose a colour R", wxColour("RED"));
+    props->AddProperty("Choose a colour G", wxColour("GREEN"));
+    props->AddProperty("Choose a colour B", wxColour("BLUE"));
+    props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" });
+    m_book->AddPage(props, "Properties", false, images->Add(wxT("console")));
+#endif
     SetMinSize(wxSize(200, 100));
     mainSizer->Layout();
 }

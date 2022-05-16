@@ -84,7 +84,9 @@ void clScrolledPanel::DoInitialize()
         }
     });
 #endif
-    m_tmpBmp = wxBitmap(1, 1);
+
+    // use scaling factor
+    m_tmpBmp.CreateWithDIPSize(1, 1, GetDPIScaleFactor());
     m_memDC = new wxMemoryDC(m_tmpBmp);
     m_gcdc = new wxGCDC();
     DrawingUtils::GetGCDC(*m_memDC, *m_gcdc);

@@ -1,7 +1,9 @@
 #include "AddOptionsDialog.h"
+
 #include "ColoursAndFontsManager.h"
 #include "StringUtils.h"
 #include "file_logger.h"
+
 #include <globals.h>
 #include <wx/sstream.h>
 #include <wx/tokenzr.h>
@@ -15,9 +17,7 @@ AddOptionsDialog::AddOptionsDialog(wxWindow* parent, const wxString& value)
 
     wxArrayString lines = StringUtils::BuildArgv(value);
     wxString content;
-    clSYSTEM() << "Splitting:" << value << clEndl;
     for(const wxString& line : lines) {
-        clSYSTEM() << "AddOptionsDialog:" << line << clEndl;
         content << line << "\n";
     }
     if(!content.IsEmpty()) {

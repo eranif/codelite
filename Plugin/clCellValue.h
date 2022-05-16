@@ -15,9 +15,10 @@ public:
         kTypeNull = 0,
         kTypeString = 1,
         kTypeBool = 2,
-        kTypeChoice = 3,
+        kTypeButton = 3,
         kTypeColour = 4,
     };
+    typedef std::vector<clCellValue> Vect_t;
 
 protected:
     bool m_boolValue = false;
@@ -29,8 +30,9 @@ protected:
     wxColour m_textColour;
     wxColour m_bgColour;
     wxRect m_checkboxRect;
-    wxRect m_dropDownRect;
+    wxRect m_buttonRect;
     wxColour m_colourValue;
+    wxString m_buttonUnicodeSymbol;
 
 public:
     clCellValue();
@@ -48,7 +50,7 @@ public:
     const wxString& GetValueString() const;
     bool GetValueBool() const { return m_boolValue; }
     const wxColour& GetValueColour() const { return m_colourValue; }
-    bool IsChoice() const { return m_type == kTypeChoice; }
+    bool HasButton() const { return m_type == kTypeButton; }
     bool IsColour() const { return m_type == kTypeColour; }
 
     int GetBitmapIndex() const { return m_bitmapIndex; }
@@ -63,9 +65,10 @@ public:
     const wxColour& GetTextColour() const { return m_textColour; }
     void SetCheckboxRect(const wxRect& checkboxRect) { this->m_checkboxRect = checkboxRect; }
     const wxRect& GetCheckboxRect() const { return m_checkboxRect; }
-    void SetDropDownRect(const wxRect& dropDownRect) { this->m_dropDownRect = dropDownRect; }
-    const wxRect& GetDropDownRect() const { return m_dropDownRect; }
-    typedef std::vector<clCellValue> Vect_t;
+    void SetButtonRect(const wxRect& dropDownRect) { this->m_buttonRect = dropDownRect; }
+    const wxRect& GetButtonRect() const { return m_buttonRect; }
+    void SetButtonUnicodeSymbol(const wxString& symbol) { m_buttonUnicodeSymbol = symbol; }
+    const wxString& GetButtonUnicodeSymbol() const { return m_buttonUnicodeSymbol; }
 };
 
 #endif // CLCELLVALUE_H

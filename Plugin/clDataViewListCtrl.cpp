@@ -18,15 +18,15 @@ IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewTextBitmap, WXDLLIMPEXP_SDK);
 wxIMPLEMENT_DYNAMIC_CLASS(clDataViewCheckbox, wxObject);
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK);
 
-wxIMPLEMENT_DYNAMIC_CLASS(clDataViewChoice, wxObject);
-IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewChoice, WXDLLIMPEXP_SDK);
+wxIMPLEMENT_DYNAMIC_CLASS(clDataViewButton, wxObject);
+IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewButton, WXDLLIMPEXP_SDK);
 
 wxIMPLEMENT_DYNAMIC_CLASS(clDataViewColour, wxObject);
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewColour, WXDLLIMPEXP_SDK);
 
 wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
-wxDEFINE_EVENT(wxEVT_DATAVIEW_CHOICE_BUTTON, wxDataViewEvent);
+wxDEFINE_EVENT(wxEVT_DATAVIEW_ACTION_BUTTON, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CHOICE, wxDataViewEvent);
 
 std::unordered_map<int, int> clDataViewListCtrl::m_stylesMap;
@@ -65,7 +65,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
 
     // Translate the following events to wxDVC events
     Bind(wxEVT_TREE_ITEM_VALUE_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
-    Bind(wxEVT_TREE_CHOICE, &clDataViewListCtrl::OnConvertEvent, this);
+    Bind(wxEVT_TREE_ACTIONBUTTON_CLICKED, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_BEGIN_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_END_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Bind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
@@ -80,7 +80,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
 clDataViewListCtrl::~clDataViewListCtrl()
 {
     Unbind(wxEVT_TREE_BEGIN_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
-    Unbind(wxEVT_TREE_CHOICE, &clDataViewListCtrl::OnConvertEvent, this);
+    Unbind(wxEVT_TREE_ACTIONBUTTON_CLICKED, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_END_DRAG, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_SEL_CHANGED, &clDataViewListCtrl::OnConvertEvent, this);
     Unbind(wxEVT_TREE_ITEM_ACTIVATED, &clDataViewListCtrl::OnConvertEvent, this);
@@ -165,8 +165,8 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
         type = wxEVT_DATAVIEW_CLEAR_SEARCH;
     } else if(event.GetEventType() == wxEVT_TREE_ITEM_VALUE_CHANGED) {
         type = wxEVT_DATAVIEW_ITEM_VALUE_CHANGED;
-    } else if(event.GetEventType() == wxEVT_TREE_CHOICE) {
-        type = wxEVT_DATAVIEW_CHOICE_BUTTON;
+    } else if(event.GetEventType() == wxEVT_TREE_ACTIONBUTTON_CLICKED) {
+        type = wxEVT_DATAVIEW_ACTION_BUTTON;
     }
     if(type != wxEVT_ANY) {
         SendDataViewEvent(type, event, eventText);
@@ -373,10 +373,10 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
         //  update the row with the icon + text
         row->SetLabel(iconText.GetText(), col);
         row->SetBitmapIndex(iconText.GetBitmapIndex(), col);
-    } else if(variantType == "clDataViewChoice") {
-        clDataViewChoice choice;
+    } else if(variantType == "clDataViewButton") {
+        clDataViewButton choice;
         choice << value;
-        row->SetChoice(true, col);
+        row->SetHasButton(true, choice.GetButtonUnicodeSymbol(), col);
         row->SetBitmapIndex(choice.GetBitmapIndex(), col);
         row->SetLabel(choice.GetLabel(), col);
     } else if(variantType == "double") {

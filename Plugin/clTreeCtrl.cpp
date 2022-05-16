@@ -44,7 +44,7 @@
     }
 
 wxDEFINE_EVENT(wxEVT_TREE_ITEM_VALUE_CHANGED, wxTreeEvent);
-wxDEFINE_EVENT(wxEVT_TREE_CHOICE, wxTreeEvent);
+wxDEFINE_EVENT(wxEVT_TREE_ACTIONBUTTON_CLICKED, wxTreeEvent);
 
 namespace
 {
@@ -447,8 +447,8 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
                 }
             }
 
-            if((flags & wxTREE_HITTEST_ONDROPDOWNARROW) && !has_multiple_selection) {
-                wxTreeEvent evt(wxEVT_TREE_CHOICE);
+            if((flags & wxTREE_HITTEST_ONACTIONBUTTON) && !has_multiple_selection) {
+                wxTreeEvent evt(wxEVT_TREE_ACTIONBUTTON_CLICKED);
                 evt.SetInt(column);
                 evt.SetEventObject(this);
                 evt.SetItem(where);
@@ -510,7 +510,7 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
                     if(cellRect.Contains(point)) {
                         // Check if click was made on the checkbox ("state icon")
                         wxRect checkboxRect = item->GetCheckboxRect(col);
-                        wxRect dropDownRect = item->GetChoiceRect(col);
+                        wxRect dropDownRect = item->GetCellButtonRect(col);
                         if(!checkboxRect.IsEmpty()) {
                             // Adjust the coordiantes incase we got h-scroll
                             checkboxRect.SetX(checkboxRect.GetX() - GetFirstColumn());
@@ -520,7 +520,7 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
                         } else if(!dropDownRect.IsEmpty()) {
                             dropDownRect.SetX(dropDownRect.GetX() - GetFirstColumn());
                             if(dropDownRect.Contains(point)) {
-                                flags |= wxTREE_HITTEST_ONDROPDOWNARROW;
+                                flags |= wxTREE_HITTEST_ONACTIONBUTTON;
                             }
                         } else if(cell.IsColour()) {
                             flags |= wxTREE_HITTEST_ONCOLOURPICKER;

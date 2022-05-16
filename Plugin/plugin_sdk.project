@@ -87,6 +87,8 @@
     <File Name="LanguageServerProtocol.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="CustomControls">
+    <File Name="clPropertiesPage.cpp"/>
+    <File Name="clPropertiesPage.hpp"/>
     <File Name="clThemedTextCtrl.cpp"/>
     <File Name="clThemedTextCtrl.hpp"/>
     <File Name="wxCustomControlsMSW.hpp"/>

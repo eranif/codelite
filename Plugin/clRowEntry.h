@@ -164,7 +164,7 @@ public:
     const wxRect& GetItemRect() const { return m_rowRect; }
     const wxRect& GetButtonRect() const { return m_buttonRect; }
     const wxRect& GetCheckboxRect(size_t col = 0) const;
-    const wxRect& GetChoiceRect(size_t col = 0) const;
+    const wxRect& GetCellButtonRect(size_t col) const;
 
     void AddChild(clRowEntry* child);
 
@@ -193,10 +193,10 @@ public:
     void SetBitmapSelectedIndex(int bitmapIndex, size_t col = 0);
     void SetLabel(const wxString& label, size_t col = 0);
     /**
-     * @brief make this specific cell as "choice" (dropdown will drawn to the right)
+     * @brief add button to the right of the cell
      */
-    void SetChoice(bool b, size_t col = 0);
-    bool IsChoice(size_t col) const;
+    void SetHasButton(bool b, const wxString& symbol, size_t col = 0);
+    bool HasButton(size_t col) const;
 
     void SetColour(const wxColour& colour, size_t col = 0);
     bool IsColour(size_t col) const;

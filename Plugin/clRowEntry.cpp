@@ -78,6 +78,34 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
     dc.SetBrush(c);
     dc.DrawRectangle(rect);
 }
+
+void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clColours& colours, const wxString& symbol)
+{
+    wxColour base_colour = colours.GetHeaderVBorderColour();
+    wxColour light_pen = base_colour.ChangeLightness(150);
+    wxColour dark_pen = base_colour.ChangeLightness(50);
+
+    dc.SetPen(base_colour);
+    dc.SetBrush(base_colour);
+    dc.DrawRectangle(button_rect);
+
+    dc.SetPen(light_pen);
+    dc.DrawLine(button_rect.GetTopLeft(), button_rect.GetTopRight());
+    dc.DrawLine(button_rect.GetTopLeft(), button_rect.GetBottomLeft());
+
+    dc.SetPen(dark_pen);
+    dc.DrawLine(button_rect.GetBottomLeft(), button_rect.GetBottomRight());
+    dc.DrawLine(button_rect.GetBottomRight(), button_rect.GetTopRight());
+
+    // Draw an arrow
+    if(!symbol.empty()) {
+        wxRect textRect{ { 0, 0 }, dc.GetTextExtent(symbol) };
+        textRect = textRect.CenterIn(button_rect);
+
+        dc.SetTextForeground(colours.GetItemTextColour());
+        dc.DrawText(symbol, textRect.GetTopLeft());
+    }
+}
 } // namespace
 
 #ifdef __WXMSW__
@@ -425,7 +453,7 @@ vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
             width += X_SPACER;
         }
 
-        if(cell.IsChoice()) {
+        if(cell.HasButton()) {
             width += X_SPACER;
             width += GetCheckBoxWidth(win);
             width += X_SPACER;
@@ -598,25 +626,23 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             textXOffset += X_SPACER;
         }
 
-        if(cell.IsChoice()) {
+        if(cell.HasButton()) {
             // draw the drop down arrow. Make it aligned to the right
-            wxRect dropDownRect(cellRect.GetTopRight().x - rowRect.GetHeight(), rowRect.GetY(), rowRect.GetHeight(),
-                                rowRect.GetHeight());
-            dropDownRect = dropDownRect.CenterIn(rowRect, wxVERTICAL);
-            dropDownRect.Deflate(1);
-            dc.SetPen(colours.GetHeaderVBorderColour());
-            dc.SetBrush(colours.GetHeaderVBorderColour());
-            dc.DrawRectangle(dropDownRect);
-            dropDownRect.Inflate(1);
-            DrawingUtils::DrawDropDownArrow(win, dc, dropDownRect,
-                                            colours.IsLightTheme() ? wxColour("DARK GREY") : wxColour("WHITE"));
+            wxRect button_rect(cellRect.GetTopRight().x - rowRect.GetHeight(), rowRect.GetY(), rowRect.GetHeight(),
+                               rowRect.GetHeight());
+            button_rect = button_rect.CenterIn(rowRect, wxVERTICAL);
+            button_rect.Deflate(1);
+
+            // Draw a button with the unicode symbol in it
+            DrawButton(win, dc, button_rect, colours, cell.GetButtonUnicodeSymbol());
+
             // Keep the rect to test clicks
-            cell.SetDropDownRect(dropDownRect);
-            textXOffset += dropDownRect.GetWidth();
+            cell.SetButtonRect(button_rect);
+            textXOffset += button_rect.GetWidth();
             textXOffset += X_SPACER;
 
         } else {
-            cell.SetDropDownRect(wxRect());
+            cell.SetButtonRect(wxRect());
         }
 
         if(!last_cell) {
@@ -793,7 +819,7 @@ int clRowEntry::CalcItemWidth(wxDC& dc, int rowHeight, size_t col)
         // add the checkbox size
         item_width += clGetSize(rowHeight, m_tree);
         item_width += X_SPACER;
-    } else if(cell.IsChoice()) {
+    } else if(cell.HasButton()) {
         item_width += clGetSize(rowHeight, m_tree);
         item_width += X_SPACER;
     }
@@ -1006,14 +1032,14 @@ const wxRect& clRowEntry::GetCheckboxRect(size_t col) const
     return cell.GetCheckboxRect();
 }
 
-const wxRect& clRowEntry::GetChoiceRect(size_t col) const
+const wxRect& clRowEntry::GetCellButtonRect(size_t col) const
 {
     const clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) {
         static wxRect emptyRect;
         return emptyRect;
     }
-    return cell.GetDropDownRect();
+    return cell.GetButtonRect();
 }
 
 void clRowEntry::RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked)
@@ -1039,23 +1065,24 @@ int clRowEntry::GetCheckBoxWidth(wxWindow* win)
     return width;
 }
 
-void clRowEntry::SetChoice(bool b, size_t col)
+void clRowEntry::SetHasButton(bool b, const wxString& symbol, size_t col)
 {
     wxUnusedVar(b);
     clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) {
         return;
     }
-    cell.SetType(clCellValue::kTypeChoice);
+    cell.SetType(clCellValue::kTypeButton);
+    cell.SetButtonUnicodeSymbol(symbol);
 }
 
-bool clRowEntry::IsChoice(size_t col) const
+bool clRowEntry::HasButton(size_t col) const
 {
     const clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) {
         return false;
     }
-    return cell.IsChoice();
+    return cell.HasButton();
 }
 
 void clRowEntry::SetColour(const wxColour& colour, size_t col)

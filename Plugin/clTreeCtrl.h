@@ -19,7 +19,7 @@
 // Sorting is applied for top level items (i.e. items whom their direct parent is the root item)
 #define wxTR_SORT_TOP_LEVEL 0x0100
 
-static const int wxTREE_HITTEST_ONDROPDOWNARROW = 0x2000;
+static const int wxTREE_HITTEST_ONACTIONBUTTON = 0x2000;
 static const int wxTREE_HITTEST_ONCOLOURPICKER = 0x4000;
 
 class clScrollBar;
@@ -473,5 +473,5 @@ protected:
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_ITEM_VALUE_CHANGED, wxTreeEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_CHOICE, wxTreeEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TREE_ACTIONBUTTON_CLICKED, wxTreeEvent);
 #endif // CLTREECTRL_H

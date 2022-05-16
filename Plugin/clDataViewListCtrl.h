@@ -304,48 +304,41 @@ public:
 DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK)
 
 // Helper class passing bitmap bool + label with possible bitmap index
-class WXDLLIMPEXP_SDK clDataViewChoice : public wxObject
+class WXDLLIMPEXP_SDK clDataViewButton : public wxObject
 {
 private:
     wxString m_label;
     int m_bitmapIndex = wxNOT_FOUND;
+    wxString m_buttonUnicodeSymbol;
 
 public:
-    clDataViewChoice(const wxString& label, int bitmapIndex = wxNOT_FOUND)
+    clDataViewButton(const wxString& label, wxString unicodeSymbol, int bitmapIndex)
         : m_label(label)
         , m_bitmapIndex(bitmapIndex)
+        , m_buttonUnicodeSymbol(unicodeSymbol)
     {
     }
 
-    clDataViewChoice(const clDataViewChoice& other)
-        : wxObject()
-        , m_label(other.m_label)
-        , m_bitmapIndex(other.m_bitmapIndex)
-    {
-    }
-
-    clDataViewChoice() {}
-
-    virtual ~clDataViewChoice() {}
+    clDataViewButton() {}
+    virtual ~clDataViewButton() {}
 
     void SetBitmapIndex(int index) { m_bitmapIndex = index; }
     int GetBitmapIndex() const { return m_bitmapIndex; }
 
     void SetLabel(const wxString& label) { this->m_label = label; }
     const wxString& GetLabel() const { return m_label; }
+    const wxString& GetButtonUnicodeSymbol() const { return m_buttonUnicodeSymbol; }
 
-    bool IsSameAs(const clDataViewChoice& other) const
+    bool IsSameAs(const clDataViewButton& other) const
     {
         return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex;
     }
-
-    bool operator==(const clDataViewChoice& other) const { return IsSameAs(other); }
-    bool operator!=(const clDataViewChoice& other) const { return !IsSameAs(other); }
-
-    wxDECLARE_DYNAMIC_CLASS(clDataViewChoice);
+    bool operator==(const clDataViewButton& other) const { return IsSameAs(other); }
+    bool operator!=(const clDataViewButton& other) const { return !IsSameAs(other); }
+    wxDECLARE_DYNAMIC_CLASS(clDataViewButton);
 };
 
-DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewChoice, WXDLLIMPEXP_SDK)
+DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewButton, WXDLLIMPEXP_SDK)
 
 // Helper class passing bitmap bool + label with possible bitmap index
 class WXDLLIMPEXP_SDK clDataViewColour : public wxObject
@@ -380,7 +373,7 @@ DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewColour, WXDLLIMPEXP_SDK)
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CHOICE_BUTTON, wxDataViewEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_ACTION_BUTTON, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CHOICE, wxDataViewEvent);
 
 #endif // CLDATAVIEWLISTCTRL_H

@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "configuration_manager_dlg.h"
+
 #include "edit_configuration.h"
 #include "edit_workspace_conf_dlg.h"
 #include "macros.h"
 #include "manager.h"
 #include "new_configuration_dlg.h"
 #include "windowattrmanager.h"
+
 #include <algorithm>
 #include <wx/wupdlock.h>
 
@@ -46,7 +48,7 @@ ConfigurationManagerDlg::ConfigurationManagerDlg(wxWindow* parent)
     CentreOnParent();
     SetName("ConfigurationManagerDlg");
     WindowAttrManager::Load(this);
-    m_dvListCtrl->Bind(wxEVT_DATAVIEW_CHOICE_BUTTON, &ConfigurationManagerDlg::OnShowConfigList, this);
+    m_dvListCtrl->Bind(wxEVT_DATAVIEW_ACTION_BUTTON, &ConfigurationManagerDlg::OnShowConfigList, this);
     m_dvListCtrl->Bind(wxEVT_DATAVIEW_CHOICE, &ConfigurationManagerDlg::OnValueChanged, this);
 }
 
@@ -132,7 +134,7 @@ void ConfigurationManagerDlg::PopulateConfigurations()
     for(size_t i = 0; i < projects.GetCount(); ++i) {
         size_t index = wxString::npos;
         wxArrayString choices = GetChoicesForProject(projects[i], m_currentWorkspaceConfiguration, index);
-        clDataViewChoice c(index != wxString::npos ? choices[index] : "");
+        clDataViewButton c(index != wxString::npos ? choices[index] : "", wxT("\u25BC"), wxNOT_FOUND);
         wxVariant v;
         v << c;
         wxVector<wxVariant> cols;

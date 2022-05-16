@@ -90,7 +90,7 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
 #endif
     m_progress = new wxGauge(this, wxID_ANY, 1, wxDefaultPosition, wxSize(-1, 15), wxGA_HORIZONTAL);
     m_progress->Hide();
-    m_vSizer->Add(m_progress, wxSizerFlags().Expand().Border(5));
+    m_vSizer->Add(m_progress, wxSizerFlags().Expand().Border(wxALL, 5));
     mainSizer->Layout();
 }
 

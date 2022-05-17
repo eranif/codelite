@@ -1,6 +1,7 @@
 #ifndef CLDATAVIEWLISTCTRL_H
 #define CLDATAVIEWLISTCTRL_H
 
+#include "clCellValue.h"
 #include "clTreeCtrl.h"
 
 #include <unordered_map>
@@ -18,6 +19,15 @@
 #define wxDV_SEARCH_ICASE wxTR_SEARCH_ICASE
 #define wxDV_SEARCH_INCLUDE_CURRENT_ITEM wxTR_SEARCH_INCLUDE_CURRENT_ITEM
 #define wxDV_SEARCH_DEFAULT wxTR_SEARCH_DEFAULT
+
+enum class CellType {
+    UNKNOWN = -1,
+    TEXT = 0,
+    COLOUR = 1,
+    CHECKBOX_TEXT = 2,
+    TEXT_EDIT = 3,
+    TEXT_OPTIONS = 4,
+};
 
 /**
  * @brief a thin wrapper around clTreeCtrl which provides basic compatiblity API (such as adding columns)
@@ -40,6 +50,12 @@ public:
     virtual ~clDataViewListCtrl();
 
     void ScrollToBottom();
+
+    /**
+     * @brief return the cell data type
+     */
+    CellType GetCellDataType(size_t row, size_t col) const;
+    CellType GetCellDataType(const wxDataViewItem& item, size_t col) const;
 
     /**
      * @brief make row the first visible row in the view
@@ -310,13 +326,13 @@ class WXDLLIMPEXP_SDK clDataViewButton : public wxObject
 private:
     wxString m_label;
     int m_bitmapIndex = wxNOT_FOUND;
-    wxString m_buttonUnicodeSymbol;
+    eCellButtonType m_button_kind = eCellButtonType::BT_NONE;
 
 public:
-    clDataViewButton(const wxString& label, wxString unicodeSymbol, int bitmapIndex)
+    clDataViewButton(const wxString& label, eCellButtonType button, int bitmapIndex)
         : m_label(label)
         , m_bitmapIndex(bitmapIndex)
-        , m_buttonUnicodeSymbol(unicodeSymbol)
+        , m_button_kind(button)
     {
     }
 
@@ -326,9 +342,11 @@ public:
     void SetBitmapIndex(int index) { m_bitmapIndex = index; }
     int GetBitmapIndex() const { return m_bitmapIndex; }
 
+    eCellButtonType GetButtonType() const { return m_button_kind; }
+
     void SetLabel(const wxString& label) { this->m_label = label; }
     const wxString& GetLabel() const { return m_label; }
-    const wxString& GetButtonUnicodeSymbol() const { return m_buttonUnicodeSymbol; }
+    const wxString& GetButtonUnicodeSymbol() const;
 
     bool IsSameAs(const clDataViewButton& other) const
     {

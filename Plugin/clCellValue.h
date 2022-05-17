@@ -8,6 +8,12 @@
 #include <wx/font.h>
 #include <wx/string.h>
 
+enum class eCellButtonType {
+    BT_NONE = -1,
+    BT_DROPDOWN_ARROW = 0,
+    BT_ELLIPSIS = 1,
+};
+
 class WXDLLIMPEXP_SDK clCellValue
 {
 public:
@@ -24,6 +30,7 @@ protected:
     bool m_boolValue = false;
     wxString m_stringValue;
     eType m_type = kTypeNull;
+    eCellButtonType m_button_type = eCellButtonType::BT_NONE;
     int m_bitmapIndex = wxNOT_FOUND;
     int m_bitmapSelectedIndex = wxNOT_FOUND;
     wxFont m_font;
@@ -52,6 +59,12 @@ public:
     const wxColour& GetValueColour() const { return m_colourValue; }
     bool HasButton() const { return m_type == kTypeButton; }
     bool IsColour() const { return m_type == kTypeColour; }
+    eCellButtonType GetButtonType() const { return m_button_type; }
+    void SetButtonType(eCellButtonType type, const wxString& unicode_symbol)
+    {
+        m_button_type = type;
+        m_buttonUnicodeSymbol = unicode_symbol;
+    }
 
     int GetBitmapIndex() const { return m_bitmapIndex; }
     int GetBitmapSelectedIndex() const { return m_bitmapSelectedIndex; }
@@ -67,7 +80,6 @@ public:
     const wxRect& GetCheckboxRect() const { return m_checkboxRect; }
     void SetButtonRect(const wxRect& dropDownRect) { this->m_buttonRect = dropDownRect; }
     const wxRect& GetButtonRect() const { return m_buttonRect; }
-    void SetButtonUnicodeSymbol(const wxString& symbol) { m_buttonUnicodeSymbol = symbol; }
     const wxString& GetButtonUnicodeSymbol() const { return m_buttonUnicodeSymbol; }
 };
 

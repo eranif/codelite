@@ -30,6 +30,27 @@ wxDEFINE_EVENT(wxEVT_DATAVIEW_ACTION_BUTTON, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CHOICE, wxDataViewEvent);
 
 std::unordered_map<int, int> clDataViewListCtrl::m_stylesMap;
+
+namespace
+{
+const wxString DROPDOWN_ARROW_UNICODE = wxT("\u25BC");
+const wxString ELLIPSIS_UNICODE = wxT("\u22EF");
+const wxString NO_BUTTON_UNICODE = wxT("");
+} // namespace
+
+const wxString& clDataViewButton::GetButtonUnicodeSymbol() const
+{
+    switch(m_button_kind) {
+    case eCellButtonType::BT_ELLIPSIS:
+        return ELLIPSIS_UNICODE;
+    case eCellButtonType::BT_DROPDOWN_ARROW:
+        return DROPDOWN_ARROW_UNICODE;
+    default:
+    case eCellButtonType::BT_NONE:
+        return NO_BUTTON_UNICODE;
+    }
+}
+
 clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                                        long style)
     : clTreeCtrl(parent, id, pos, size, style)
@@ -381,7 +402,7 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
     } else if(variantType == "clDataViewButton") {
         clDataViewButton choice;
         choice << value;
-        row->SetHasButton(true, choice.GetButtonUnicodeSymbol(), col);
+        row->SetButton(choice.GetButtonType(), choice.GetButtonUnicodeSymbol(), col);
         row->SetBitmapIndex(choice.GetBitmapIndex(), col);
         row->SetLabel(choice.GetLabel(), col);
     } else if(variantType == "double") {
@@ -632,4 +653,40 @@ void clDataViewListCtrl::CenterRow(size_t row)
     }
     size_t first_row = row - max_rows + (max_rows / 2);
     SetFirstVisibleRow(first_row);
+}
+
+CellType clDataViewListCtrl::GetCellDataType(size_t row, size_t col) const
+{
+    return GetCellDataType(RowToItem(row), col);
+}
+
+CellType clDataViewListCtrl::GetCellDataType(const wxDataViewItem& item, size_t col) const
+{
+    auto row = m_model.ToPtr(TREE_ITEM(item));
+    if(!row) {
+        return CellType::UNKNOWN;
+    }
+    const auto& cell = row->GetColumn(col);
+    if(!cell.IsOk()) {
+        return CellType::UNKNOWN;
+    }
+
+    if(cell.IsColour()) {
+        return CellType::COLOUR;
+
+    } else if(cell.IsBool()) {
+        return CellType::CHECKBOX_TEXT;
+
+    } else if(cell.IsString()) {
+        return CellType::TEXT;
+
+    } else if(cell.HasButton() && cell.GetButtonType() == eCellButtonType::BT_DROPDOWN_ARROW) {
+        return CellType::TEXT_OPTIONS;
+
+    } else if(cell.HasButton() && cell.GetButtonType() == eCellButtonType::BT_ELLIPSIS) {
+        return CellType::TEXT_EDIT;
+
+    } else {
+        return CellType::UNKNOWN;
+    }
 }

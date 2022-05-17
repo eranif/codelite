@@ -195,7 +195,7 @@ public:
     /**
      * @brief add button to the right of the cell
      */
-    void SetHasButton(bool b, const wxString& symbol, size_t col = 0);
+    void SetButton(eCellButtonType button_type, const wxString& unicode_symbol, size_t col = 0);
     bool HasButton(size_t col) const;
 
     void SetColour(const wxColour& colour, size_t col = 0);

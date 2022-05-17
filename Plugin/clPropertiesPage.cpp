@@ -35,13 +35,12 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& c
     wxVector<wxVariant> cols;
     cols.push_back(label);
 
-    clDataViewButton choice(sel < choices.size() ? choices[sel] : wxString(), wxT("\u25BC"), wxNOT_FOUND);
+    clDataViewButton choice(sel < choices.size() ? choices[sel] : wxString(), eCellButtonType::BT_DROPDOWN_ARROW,
+                            wxNOT_FOUND);
     wxVariant v;
     v << choice;
     cols.push_back(v);
     m_view->AppendItem(cols, (wxUIntPtr) new wxArrayString(choices));
-    size_t row = m_view->GetItemCount() - 1;
-    SetCellType(row, 1, PropertyType::STRING_ARRAY);
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, bool checked)
@@ -54,8 +53,6 @@ void clPropertiesPage::AddProperty(const wxString& label, bool checked)
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    size_t row = m_view->GetItemCount() - 1;
-    SetCellType(row, 1, PropertyType::CHECKBOX);
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxString& value)
@@ -64,13 +61,11 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxString& value)
     cols.push_back(label);
 
     // horizontal 3 dots symbol
-    clDataViewButton c(value, wxT("\u22EF"), wxNOT_FOUND);
+    clDataViewButton c(value, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    size_t row = m_view->GetItemCount() - 1;
-    SetCellType(row, 1, PropertyType::STRING);
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxColour& value)
@@ -83,9 +78,6 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxColour& value)
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-
-    size_t row = m_view->GetItemCount() - 1;
-    SetCellType(row, 1, PropertyType::COLOUR);
 }
 
 void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
@@ -94,53 +86,27 @@ void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
     int col = e.GetColumn();
     int row = m_view->ItemToRow(item);
 
-    PropertyType cell_type = GetCellType(row, col);
-    if(cell_type == PropertyType::INVALID) {
+    auto cell_type = m_view->GetCellDataType(row, col);
+    if(cell_type == CellType::UNKNOWN) {
         return;
     }
 
     switch(cell_type) {
-    case PropertyType::STRING:
+    case CellType::TEXT_EDIT:
         ShowTextEditor(item, col);
         break;
-    case PropertyType::CHECKBOX:
+    case CellType::CHECKBOX_TEXT:
         break;
-    case PropertyType::STRING_ARRAY:
+    case CellType::TEXT_OPTIONS:
         ShowStringSelectionMenu(item, col);
         break;
-    case PropertyType::COLOUR:
+    case CellType::COLOUR:
         ShowColourPicker(item, col);
         break;
-    case PropertyType::INVALID:
+    case CellType::UNKNOWN:
     default:
         break;
     }
-}
-
-PropertyType clPropertiesPage::GetCellType(size_t row, size_t col) const
-{
-    if(m_cellTypes.count(row) == 0) {
-        return PropertyType::INVALID;
-    }
-
-    const unordered_map<size_t, PropertyType>& columns = m_cellTypes.find(row)->second;
-    if(columns.count(col) == 0) {
-        return PropertyType::INVALID;
-    }
-
-    return columns.find(col)->second;
-}
-
-void clPropertiesPage::SetCellType(size_t row, size_t col, PropertyType type)
-{
-    if(m_cellTypes.count(row) == 0) {
-        m_cellTypes.insert({ row, {} });
-    }
-    auto& columns = m_cellTypes[row];
-    if(columns.count(col)) {
-        columns.erase(col);
-    }
-    columns.insert({ col, type });
 }
 
 void clPropertiesPage::ShowColourPicker(const wxDataViewItem& item, size_t col)
@@ -169,7 +135,7 @@ void clPropertiesPage::ShowTextEditor(const wxDataViewItem& item, size_t col)
     }
 
     // update the cell value
-    clDataViewButton c(new_text, wxT("\u22EF"), wxNOT_FOUND);
+    clDataViewButton c(new_text, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     m_view->SetValue(v, m_view->ItemToRow(item), col);

@@ -13,24 +13,12 @@
 
 class clThemedListCtrl;
 using namespace std;
-enum class PropertyType {
-    INVALID,
-    STRING,
-    STRING_ARRAY,
-    COLOUR,
-    CHECKBOX,
-};
-
 class WXDLLIMPEXP_SDK clPropertiesPage : public wxPanel
 {
     clThemedListCtrl* m_view = nullptr;
-    unordered_map<size_t, unordered_map<size_t, PropertyType>> m_cellTypes;
 
 protected:
     void OnActionButton(wxDataViewEvent& e);
-    PropertyType GetCellType(size_t row, size_t col) const;
-    void SetCellType(size_t row, size_t col, PropertyType type);
-
     void ShowColourPicker(const wxDataViewItem& item, size_t col);
     void ShowTextEditor(const wxDataViewItem& item, size_t col);
     void ShowStringSelectionMenu(const wxDataViewItem& item, size_t col);

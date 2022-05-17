@@ -134,7 +134,8 @@ void ConfigurationManagerDlg::PopulateConfigurations()
     for(size_t i = 0; i < projects.GetCount(); ++i) {
         size_t index = wxString::npos;
         wxArrayString choices = GetChoicesForProject(projects[i], m_currentWorkspaceConfiguration, index);
-        clDataViewButton c(index != wxString::npos ? choices[index] : "", wxT("\u25BC"), wxNOT_FOUND);
+        clDataViewButton c(index != wxString::npos ? choices[index] : "", eCellButtonType::BT_DROPDOWN_ARROW,
+                           wxNOT_FOUND);
         wxVariant v;
         v << c;
         wxVector<wxVariant> cols;

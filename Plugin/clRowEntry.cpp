@@ -1069,15 +1069,14 @@ int clRowEntry::GetCheckBoxWidth(wxWindow* win)
     return width;
 }
 
-void clRowEntry::SetHasButton(bool b, const wxString& symbol, size_t col)
+void clRowEntry::SetButton(eCellButtonType button_type, const wxString& unicode_symbol, size_t col)
 {
-    wxUnusedVar(b);
     clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) {
         return;
     }
     cell.SetType(clCellValue::kTypeButton);
-    cell.SetButtonUnicodeSymbol(symbol);
+    cell.SetButtonType(button_type, unicode_symbol);
 }
 
 bool clRowEntry::HasButton(size_t col) const

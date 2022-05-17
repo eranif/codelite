@@ -40,6 +40,7 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
         m_stylesMap.insert({ wxDV_ROW_LINES, wxTR_ROW_LINES });
         m_stylesMap.insert({ wxDV_MULTIPLE, wxTR_MULTIPLE });
         m_stylesMap.insert({ wxDV_ENABLE_SEARCH, wxTR_ENABLE_SEARCH });
+        m_stylesMap.insert({ wxDV_COLUMN_WIDTH_NEVER_SHRINKS, wxTR_COLUMN_WIDTH_NEVER_SHRINKS });
     }
 
     int my_style = 0;
@@ -52,6 +53,10 @@ clDataViewListCtrl::clDataViewListCtrl(wxWindow* parent, wxWindowID id, const wx
     if(style & wxDV_NO_HEADER) {
         SetShowHeader(false);
     }
+    if(style & wxDV_COLUMN_WIDTH_NEVER_SHRINKS) {
+        my_style |= wxTR_COLUMN_WIDTH_NEVER_SHRINKS;
+    }
+
     my_style |= wxTR_HIDE_ROOT;
     m_treeStyle = my_style;
 

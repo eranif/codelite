@@ -79,6 +79,7 @@ protected:
     bool m_nativeTheme = false;
     std::unique_ptr<clControlWithItemsRowRenderer> m_customRenderer;
     wxFont m_defaultFont = wxNullFont;
+    bool m_recalcColumnWidthOnPaint = true;
 
 protected:
     void DoInitialize();

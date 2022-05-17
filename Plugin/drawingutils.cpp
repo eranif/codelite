@@ -848,8 +848,8 @@ clColours& DrawingUtils::GetColours(bool darkColours)
 int DrawingUtils::GetFallbackFixedFontSize() { return GetFallbackFixedFont().GetPointSize(); }
 wxString DrawingUtils::GetFallbackFixedFontFace() { return GetFallbackFixedFont().GetFaceName(); }
 
-void DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour,
-                                    const wxColour& bgColour)
+wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour,
+                                      const wxColour& bgColour)
 {
     bool is_dark = bgColour.IsOk() ? IsDark(bgColour) : IsDark(clSystemSettings::GetDefaultPanelColour());
     clColours c;
@@ -859,8 +859,23 @@ void DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect,
         c.InitDefaults();
     }
 
+    // split "rect" into 2 rectangles:
+    // we use one for writing the colour text and the one on the right
+    // to draw the colour
+    wxRect right_rect(rect.GetX(), rect.GetY(), rect.GetHeight(), rect.GetHeight());
+    wxRect left_rect(rect.GetX(), rect.GetY(), rect.GetWidth() - right_rect.GetWidth(), rect.GetHeight());
+    right_rect.SetX(left_rect.GetRight());
+
     wxUnusedVar(win);
-    dc.SetPen(c.GetDarkBorderColour());
+    // draw the text
+    wxString text = pickerColour.GetAsString(wxC2S_HTML_SYNTAX);
+    wxRect text_rect = dc.GetTextExtent(text);
+    text_rect = text_rect.CenterIn(left_rect);
+    dc.DrawText(text, text_rect.GetTopLeft());
+
+    // draw the colour button
+    dc.SetPen(wxPen(c.GetDarkBorderColour(), 2));
     dc.SetBrush(pickerColour.IsOk() ? pickerColour : *wxBLACK);
-    dc.DrawRectangle(rect);
+    dc.DrawRectangle(right_rect);
+    return right_rect;
 }

@@ -597,13 +597,6 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             cell.SetCheckboxRect(wxRect()); // clear the checkbox rect
         }
 
-        if(cell.IsColour()) {
-            wxRect rr = cellRect;
-            rr.Deflate(2);
-            rr = rr.CenterIn(cellRect);
-            DrawingUtils::DrawColourPicker(win, dc, rr, cell.GetValueColour());
-        }
-
         // Draw the bitmap
         if(bitmapIndex != wxNOT_FOUND) {
             const wxBitmap& bmp = m_tree->GetBitmap(bitmapIndex);
@@ -629,6 +622,8 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             textXOffset += X_SPACER;
         }
 
+        // By default, a cell has no action button
+        cell.SetButtonRect(wxRect());
         if(cell.HasButton()) {
             // draw the drop down arrow. Make it aligned to the right
             wxRect button_rect(cellRect.GetTopRight().x - rowRect.GetHeight(), rowRect.GetY(), rowRect.GetHeight(),
@@ -643,9 +638,14 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             cell.SetButtonRect(button_rect);
             textXOffset += button_rect.GetWidth();
             textXOffset += X_SPACER;
+        }
 
-        } else {
-            cell.SetButtonRect(wxRect());
+        if(cell.IsColour()) {
+            wxRect rr = cellRect;
+            rr.Deflate(2);
+            rr = rr.CenterIn(cellRect);
+            wxRect button_rect = DrawingUtils::DrawColourPicker(win, dc, rr, cell.GetValueColour());
+            cell.SetButtonRect(button_rect);
         }
 
         if(!last_cell) {

@@ -298,6 +298,11 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     // Set the width of the clipping region to match the header's width
     clientRect.SetWidth(clientRect.GetWidth() + m_firstColumn + 1);
     dc.SetClippingRegion(clientRect);
+
+    // when the style wxTR_COLUMN_WIDTH_NEVER_SHRINKS is set,
+    // we set the column width to match the visible content
+    m_recalcColumnWidthOnPaint = !(m_treeStyle & wxTR_COLUMN_WIDTH_NEVER_SHRINKS);
+
     RenderItems(dc, items);
     dc.DestroyClippingRegion();
 
@@ -407,9 +412,6 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
             if(flags & wxTREE_HITTEST_ONITEMSTATEICON) {
                 // Change the state
                 Check(where, !IsChecked(where, column), column);
-            } else if(flags & wxTREE_HITTEST_ONCOLOURPICKER) {
-                // Show colour picker dialog
-                CallAfter(&clTreeCtrl::ShowColourPicker, where, column);
             }
 
             bool has_multiple_selection = (m_model.GetSelectionsCount() > 1);
@@ -498,11 +500,11 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
                 return wxTreeItemId(const_cast<clRowEntry*>(item));
             }
         }
+
         if(item->GetItemRect().Contains(point)) {
             flags = wxTREE_HITTEST_ONITEM;
             if(GetHeader() && !GetHeader()->empty()) {
                 for(size_t col = 0; col < GetHeader()->size(); ++col) {
-                    const clCellValue& cell = item->GetColumn(col);
                     // Check which column was clicked
                     wxRect cellRect = item->GetCellRect(col);
                     // We need to fix the x-axis to reflect any horizontal scrollbar
@@ -510,20 +512,18 @@ wxTreeItemId clTreeCtrl::HitTest(const wxPoint& point, int& flags, int& column) 
                     if(cellRect.Contains(point)) {
                         // Check if click was made on the checkbox ("state icon")
                         wxRect checkboxRect = item->GetCheckboxRect(col);
-                        wxRect dropDownRect = item->GetCellButtonRect(col);
+                        wxRect action_button = item->GetCellButtonRect(col);
                         if(!checkboxRect.IsEmpty()) {
                             // Adjust the coordiantes incase we got h-scroll
                             checkboxRect.SetX(checkboxRect.GetX() - GetFirstColumn());
                             if(checkboxRect.Contains(point)) {
                                 flags |= wxTREE_HITTEST_ONITEMSTATEICON;
                             }
-                        } else if(!dropDownRect.IsEmpty()) {
-                            dropDownRect.SetX(dropDownRect.GetX() - GetFirstColumn());
-                            if(dropDownRect.Contains(point)) {
+                        } else if(!action_button.IsEmpty()) {
+                            action_button.SetX(action_button.GetX() - GetFirstColumn());
+                            if(action_button.Contains(point)) {
                                 flags |= wxTREE_HITTEST_ONACTIONBUTTON;
                             }
-                        } else if(cell.IsColour()) {
-                            flags |= wxTREE_HITTEST_ONCOLOURPICKER;
                         }
                         column = col;
                         break;
@@ -1585,7 +1585,7 @@ void clTreeCtrl::ShowColourPicker(const wxTreeItemId& item, int column)
     CHECK_COND_RET(cell.IsOk());
 
     const auto& colour = cell.GetValueColour();
-    auto sel = ::wxGetColourFromUser(nullptr, colour.IsOk() ? colour : *wxBLACK);
+    auto sel = ::wxGetColourFromUser(this, colour.IsOk() ? colour : *wxBLACK);
     CHECK_COND_RET(sel.IsOk());
 
     cell.SetValue(sel);

@@ -12,7 +12,9 @@ clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    m_view = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_ROW_LINES | wxDV_NO_HEADER);
+    m_view = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                  wxDV_ROW_LINES | wxDV_NO_HEADER | wxDV_COLUMN_WIDTH_NEVER_SHRINKS);
+
     GetSizer()->Add(m_view, wxSizerFlags(1).Expand());
     m_view->AppendTextColumn(_("Property Name"));
     m_view->AppendTextColumn(_("Property Value"));

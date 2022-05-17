@@ -8,6 +8,7 @@
 
 // Extra styles supported by this class
 #define wxDV_ENABLE_SEARCH wxTR_ENABLE_SEARCH
+#define wxDV_COLUMN_WIDTH_NEVER_SHRINKS wxTR_COLUMN_WIDTH_NEVER_SHRINKS
 
 // Search flags
 // See wxTR_SEARCH* for more info

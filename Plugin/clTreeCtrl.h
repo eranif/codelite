@@ -16,11 +16,12 @@
 #include <wx/scrolwin.h>
 
 #define wxTR_ENABLE_SEARCH 0x4000
+#define wxTR_COLUMN_WIDTH_NEVER_SHRINKS 0x8000
+
 // Sorting is applied for top level items (i.e. items whom their direct parent is the root item)
 #define wxTR_SORT_TOP_LEVEL 0x0100
 
 static const int wxTREE_HITTEST_ONACTIONBUTTON = 0x2000;
-static const int wxTREE_HITTEST_ONCOLOURPICKER = 0x4000;
 
 class clScrollBar;
 enum class eRendererType {

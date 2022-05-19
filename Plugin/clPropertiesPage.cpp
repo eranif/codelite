@@ -2,7 +2,10 @@
 
 #include "EditDlg.h"
 #include "clDataViewListCtrl.h"
+#include "clSystemSettings.h"
 #include "clThemedListCtrl.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "macros.h"
 
 #include <wx/colordlg.h>
@@ -19,11 +22,17 @@ clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
     m_view->AppendTextColumn(_("Property Name"));
     m_view->AppendTextColumn(_("Property Value"));
     m_view->Bind(wxEVT_DATAVIEW_ACTION_BUTTON, &clPropertiesPage::OnActionButton, this);
+
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
     GetSizer()->Layout();
 }
 
 clPropertiesPage::~clPropertiesPage()
 {
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
+    if(m_events_connected) {
+        EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clPropertiesPage::OnThemeChanged, this);
+    }
     m_view->DeleteAllItems([](wxUIntPtr d) {
         wxArrayString* choices = reinterpret_cast<wxArrayString*>(d);
         wxDELETE(choices);
@@ -159,4 +168,51 @@ void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>
         arr.Add(s);
     }
     AddProperty(label, arr, sel);
+}
+
+void clPropertiesPage::AddHeader(const wxString& label)
+{
+    // keep the header row number
+    m_header_rows.push_back(m_view->GetItemCount());
+
+    auto item = m_view->AppendItem(label);
+    SetHeaderColours(item);
+}
+
+void clPropertiesPage::SetHeaderColours(const wxDataViewItem& item)
+{
+    const auto& colours = m_view->GetColours();
+
+    wxColour header_bg_colour;
+    wxColour header_text_colour;
+    if(colours.IsLightTheme()) {
+        header_bg_colour = "GREY";
+        header_text_colour = "BLACK";
+    } else {
+        header_bg_colour = "BLACK";
+        header_text_colour = "WHITE";
+    }
+
+    m_view->SetItemBold(item, true);
+    m_view->SetItemBackgroundColour(item, header_bg_colour, 0);
+    m_view->SetItemBackgroundColour(item, header_bg_colour, 1);
+
+    m_view->SetItemTextColour(item, header_text_colour, 0);
+    m_view->SetItemTextColour(item, header_text_colour, 1);
+}
+
+void clPropertiesPage::OnThemeChanged(clCommandEvent& event)
+{
+    event.Skip();
+    for(size_t row : m_header_rows) {
+        wxDataViewItem item = m_view->RowToItem(row);
+        SetHeaderColours(item);
+    }
+}
+
+void clPropertiesPage::OnInitDone(wxCommandEvent& event)
+{
+    event.Skip();
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clPropertiesPage::OnThemeChanged, this);
+    m_events_connected = true;
 }

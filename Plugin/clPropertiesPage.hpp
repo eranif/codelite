@@ -1,6 +1,7 @@
 #ifndef CLPROPERTIESPAGE_HPP
 #define CLPROPERTIESPAGE_HPP
 
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 
 #include <unordered_map>
@@ -16,12 +17,17 @@ using namespace std;
 class WXDLLIMPEXP_SDK clPropertiesPage : public wxPanel
 {
     clThemedListCtrl* m_view = nullptr;
+    vector<size_t> m_header_rows;
+    bool m_events_connected = false;
 
 protected:
     void OnActionButton(wxDataViewEvent& e);
     void ShowColourPicker(const wxDataViewItem& item, size_t col);
     void ShowTextEditor(const wxDataViewItem& item, size_t col);
     void ShowStringSelectionMenu(const wxDataViewItem& item, size_t col);
+    void OnThemeChanged(clCommandEvent& event);
+    void SetHeaderColours(const wxDataViewItem& item);
+    void OnInitDone(wxCommandEvent& event);
 
 public:
     clPropertiesPage(wxWindow* parent, wxWindowID id = wxID_ANY);
@@ -33,6 +39,7 @@ public:
     void AddProperty(const wxString& label, const wxString& value);
     void AddProperty(const wxString& label, const char* value) { AddProperty(label, wxString(value)); }
     void AddProperty(const wxString& label, const wxColour& value);
+    void AddHeader(const wxString& label);
 };
 
 #endif // CLPROPERTIESPAGE_HPP

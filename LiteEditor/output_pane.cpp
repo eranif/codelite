@@ -135,11 +135,16 @@ void OutputPane::CreateGUIControls()
     mgr->AddOutputTab(OUTPUT_WIN);
 #if 0
     auto props = new clPropertiesPage(m_book);
+    props->AddHeader("General Settings");
     props->AddProperty("Options1", wxString("Valus string"));
     props->AddProperty("Options1", { "Hello", "World", "From", "clPropertiesPage" });
+    props->AddHeader("Colours");
     props->AddProperty("Choose a colour R", wxColour("RED"));
     props->AddProperty("Choose a colour G", wxColour("GREEN"));
     props->AddProperty("Choose a colour B", wxColour("BLUE"));
+
+    props->AddHeader("Misc");
+    props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" });
     props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" });
     m_book->AddPage(props, "Properties", false, images->Add(wxT("console")));
 #endif

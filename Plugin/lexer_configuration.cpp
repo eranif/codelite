@@ -466,18 +466,23 @@ void LexerConf::ApplySystemColours(wxStyledTextCtrl* ctrl)
     Apply(ctrl);
     wxColour fg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
+
+    wxColour caret_colour;
     if(!DrawingUtils::IsDark(bg_colour)) {
         bg_colour = *wxWHITE;
+        caret_colour = *wxBLACK;
     } else {
         // dark colour, make it a bit darker
         bg_colour = bg_colour.ChangeLightness(50);
         fg_colour = wxColour(*wxWHITE).ChangeLightness(90);
+        caret_colour = *wxWHITE;
     }
 
     for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
         ctrl->StyleSetBackground(i, bg_colour);
         ctrl->StyleSetForeground(i, fg_colour);
     }
+    ctrl->SetCaretForeground(caret_colour);
 }
 
 void LexerConf::ApplyWordSet(wxStyledTextCtrl* ctrl, eWordSetIndex index, const wxString& keywords)

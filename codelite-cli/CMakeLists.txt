@@ -22,7 +22,11 @@ if(APPLE)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
-set(CL_WX_CONFIG "wx-config")
+
+if(NOT CL_WX_CONFIG)
+    set(CL_WX_CONFIG "wx-config")
+endif
+
 # we need wxWidgets flags to be set only for the c++ files, so we do it like this
 # by setting the CMAKE_CXX_FLAGS
 if(NOT MINGW)

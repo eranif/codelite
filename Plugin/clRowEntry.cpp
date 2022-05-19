@@ -88,6 +88,9 @@ void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clColo
     wxColour light_pen = base_colour.ChangeLightness(150);
     wxColour dark_pen = base_colour.ChangeLightness(50);
 
+    wxFont orig_font = dc.GetFont();
+
+    dc.SetFont(clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     dc.SetPen(base_colour);
     dc.SetBrush(base_colour);
     dc.DrawRectangle(button_rect);
@@ -107,6 +110,11 @@ void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clColo
 
         dc.SetTextForeground(colours.GetItemTextColour());
         dc.DrawText(symbol, textRect.GetTopLeft());
+    }
+
+    // restore the font
+    if(orig_font.IsOk()) {
+        dc.SetFont(orig_font);
     }
 }
 } // namespace
@@ -473,7 +481,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     bool even_row = ((row_index % 2) == 0);
 
     // Define the clipping region
-    bool hasHeader = (m_tree->GetHeader() && !m_tree->GetHeader()->empty());
+    // bool hasHeader = (m_tree->GetHeader() && !m_tree->GetHeader()->empty());
 
     // Not cell related
     clColours colours = c;
@@ -520,13 +528,6 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         dc.SetFont(f);
         wxColour buttonColour = IsSelected() ? colours.GetSelItemTextColour() : colours.GetItemTextColour();
         wxRect cellRect = GetCellRect(i);
-
-        // We use a helper class to clip the drawings this ensures that if we exit the scope
-        // the clipping region is restored properly
-        clClipperHelper clipper(dc);
-        if(hasHeader && !last_cell) {
-            clipper.Clip(cellRect);
-        }
 
         int textXOffset = cellRect.GetX();
         if((i == 0) && !IsListItem()) {
@@ -612,6 +613,14 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 
         // Draw the text
         if(!cell.GetValueString().empty()) {
+            // clip the drawing region
+            wxRect clip_rect = cellRect;
+            if(cell.HasButton()) {
+                clip_rect.SetWidth(clip_rect.GetWidth() - clip_rect.GetHeight() - 1);
+            }
+            clClipperHelper clipper(dc);
+            clipper.Clip(clip_rect);
+
             wxString text_to_render = GetTextForRendering(cell.GetValueString());
             wxRect textRect(dc.GetTextExtent(text_to_render));
             textRect = textRect.CenterIn(rowRect, wxVERTICAL);
@@ -644,6 +653,10 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             wxRect rr = cellRect;
             rr.Deflate(2);
             rr = rr.CenterIn(cellRect);
+            // since the method `DrawingUtils::DrawColourPicker` is not familiar with our spacing policy
+            // move the drawing rectangle to the X_SPACER position
+            rr.SetX(rr.GetX() + X_SPACER);
+            rr.SetWidth(rr.GetWidth() - X_SPACER);
             wxRect button_rect = DrawingUtils::DrawColourPicker(win, dc, rr, cell.GetValueColour());
             cell.SetButtonRect(button_rect);
         }

@@ -707,7 +707,12 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     }
 
     dc.SetTextForeground(buttonColour);
+    wxFont origfont = dc.GetFont();
+    dc.SetFont(clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     dc.DrawText(arrowSymbol, arrowRect.GetTopLeft());
+    if(origfont.IsOk()) {
+        dc.SetFont(origfont);
+    }
 }
 
 wxColour DrawingUtils::GetCaptionTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT); }
@@ -870,11 +875,12 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     // draw the text
     wxString text = pickerColour.GetAsString(wxC2S_HTML_SYNTAX);
     wxRect text_rect = dc.GetTextExtent(text);
-    text_rect = text_rect.CenterIn(left_rect);
+    text_rect = text_rect.CenterIn(left_rect, wxVERTICAL);
+    text_rect.SetX(left_rect.GetX());
     dc.DrawText(text, text_rect.GetTopLeft());
 
     // draw the colour button
-    dc.SetPen(wxPen(c.GetDarkBorderColour(), 2));
+    dc.SetPen(wxPen(c.GetDarkBorderColour(), 1));
     dc.SetBrush(pickerColour.IsOk() ? pickerColour : *wxBLACK);
     dc.DrawRectangle(right_rect);
     return right_rect;

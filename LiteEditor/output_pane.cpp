@@ -146,7 +146,17 @@ void OutputPane::CreateGUIControls()
     props->AddHeader("Misc");
     props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" });
     props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" });
+
+    props->AddHeader("Checkboxes");
+    props->AddProperty("Is it good?", true);
+    props->AddProperty("Should we do it?", false);
+
+    props->AddHeader("paths");
+    props->AddPropertyFilePicker("Choose first file", wxEmptyString);
+    props->AddPropertyFilePicker("Choose second file", wxEmptyString);
+
     m_book->AddPage(props, "Properties", false, images->Add(wxT("console")));
+
 #endif
     SetMinSize(wxSize(200, 100));
     mainSizer->Layout();

@@ -25,6 +25,7 @@
 
 #include "AddFunctionsImpDlg.h"
 
+#include "ColoursAndFontsManager.h"
 #include "ctags_manager.h"
 #include "globals.h"
 #include "windowattrmanager.h"
@@ -33,8 +34,12 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
     : AddFunctionsImplBaseDlg(parent)
 {
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    m_dvListCtrl->SetDefaultFont(lexer->GetFontForStyle(0, m_dvListCtrl));
+
     int functionIndex = clGetManager()->GetStdIcons()->GetMimeImageId(BitmapLoader::kFunctionPublic);
     m_dvListCtrl->SetSortFunction(nullptr); // Disable sorting
+
     // Keep the tags
     m_tags = tags;
     // Clear the impl array

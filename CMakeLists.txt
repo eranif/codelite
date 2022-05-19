@@ -114,7 +114,7 @@ else ( APPLE )
   set(WX_COMPONENTS "std aui propgrid stc ribbon richtext")
 endif()
 
-if(UNIX AND NOT APPLE)
+if(UNIX)
     find_path(CTAGS_SUBMODULE CMakeLists.txt PATHS ${CMAKE_SOURCE_DIR}/ctags/)
     if (NOT CTAGS_SUBMODULE)
         message(STATUS "Could not locate `${CMAKE_SOURCE_DIR}/ctags/CMakeLists.txt` file")
@@ -646,10 +646,7 @@ add_subdirectory(CodeLite)
 add_subdirectory(Plugin)
 add_subdirectory(PCH)
 
-if(APPLE)
-    add_subdirectory(universal-ctags)
-elseif(UNIX AND NOT APPLE)
-    # on linux, we build ctags
+if(UNIX)
     add_subdirectory(ctags)
 endif()
 
@@ -764,3 +761,5 @@ elseif(APPLE)
     install(TARGETS ctags DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS PERMISSIONS ${EXE_PERM})
     CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite-ctags)
 endif()
+
+

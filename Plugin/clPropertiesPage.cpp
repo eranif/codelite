@@ -179,8 +179,13 @@ void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
         ShowFilePicker(row, path);
         break;
     }
-    case LineKind::DIR_PICKER:
+    case LineKind::DIR_PICKER: {
+        wxString path;
+        if(!data->value.GetAs(&path))
+            return;
+        ShowDirPicker(row, path);
         break;
+    }
     case LineKind::CHECKBOX:
     case LineKind::UNKNOWN:
     default:
@@ -246,7 +251,20 @@ void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
     SetLineData(line, LineKind::FILE_PICKER, new_path);
 }
 
-void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path) {}
+void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
+{
+    wxString new_path = wxDirSelector(_("Choose a directory"), path);
+    if(new_path.empty()) {
+        return;
+    }
+
+    // update the view
+    clDataViewButton c(new_path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    wxVariant v;
+    v << c;
+    m_view->SetValue(v, line, 1);
+    SetLineData(line, LineKind::DIR_PICKER, new_path);
+}
 
 void clPropertiesPage::SetHeaderColours(const wxDataViewItem& item)
 {

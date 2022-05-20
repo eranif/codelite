@@ -12,21 +12,22 @@
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 
+wxDEFINE_EVENT(wxEVT_PROPERTIES_PAGE_MODIFIED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_PROPERTIES_PAGE_SAVED, clCommandEvent);
+
 clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-
     m_view = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                   wxDV_ROW_LINES | wxDV_NO_HEADER | wxDV_COLUMN_WIDTH_NEVER_SHRINKS);
 
     GetSizer()->Add(m_view, wxSizerFlags(1).Expand());
     m_view->AppendTextColumn(_("Property Name"));
     m_view->AppendTextColumn(_("Property Value"));
+
     m_view->Bind(wxEVT_DATAVIEW_ACTION_BUTTON, &clPropertiesPage::OnActionButton, this);
-
-    m_view->SetColumnWidth(1, 300);
-
+    m_view->Bind(wxEVT_DATAVIEW_CHOICE, &clPropertiesPage::OnChoice, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
     GetSizer()->Layout();
 }
@@ -34,7 +35,10 @@ clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
 clPropertiesPage::~clPropertiesPage()
 {
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
-    if(m_events_connected) {
+    m_view->Unbind(wxEVT_DATAVIEW_CHOICE, &clPropertiesPage::OnChoice, this);
+    m_view->Unbind(wxEVT_DATAVIEW_ACTION_BUTTON, &clPropertiesPage::OnActionButton, this);
+
+    if(m_theme_event_connected) {
         EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clPropertiesPage::OnThemeChanged, this);
     }
     m_view->DeleteAllItems();
@@ -205,12 +209,13 @@ void clPropertiesPage::ShowColourPicker(size_t line, const wxColour& colour)
     var << v;
     m_view->SetValue(var, line, 1);
     SetLineData(line, LineKind::COLOUR, c);
+    SetModified();
 }
 
 void clPropertiesPage::ShowTextEditor(size_t line, const wxString& text)
 {
     wxString new_text = ::clGetStringFromUser(text, wxGetTopLevelParent(this));
-    if(new_text.empty()) {
+    if(new_text.empty() || new_text == text) {
         return;
     }
 
@@ -220,6 +225,7 @@ void clPropertiesPage::ShowTextEditor(size_t line, const wxString& text)
     v << c;
     m_view->SetValue(v, line, 1);
     SetLineData(line, LineKind::TEXT_EDIT, new_text);
+    SetModified();
 }
 
 void clPropertiesPage::ShowStringSelectionMenu(size_t line, const wxArrayString& options)
@@ -249,6 +255,7 @@ void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
     v << c;
     m_view->SetValue(v, line, 1);
     SetLineData(line, LineKind::FILE_PICKER, new_path);
+    SetModified();
 }
 
 void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
@@ -264,6 +271,7 @@ void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
     v << c;
     m_view->SetValue(v, line, 1);
     SetLineData(line, LineKind::DIR_PICKER, new_path);
+    SetModified();
 }
 
 void clPropertiesPage::SetHeaderColours(const wxDataViewItem& item)
@@ -300,7 +308,7 @@ void clPropertiesPage::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clPropertiesPage::OnThemeChanged, this);
-    m_events_connected = true;
+    m_theme_event_connected = true;
 }
 
 bool clPropertiesPage::GetLineData(size_t line, const LineData** data) const
@@ -315,4 +323,26 @@ bool clPropertiesPage::GetLineData(size_t line, const LineData** data) const
 
     *data = &(iter->second);
     return true;
+}
+
+void clPropertiesPage::OnChoice(wxDataViewEvent& event)
+{
+    event.Skip();
+    SetModified();
+}
+
+void clPropertiesPage::SetModified()
+{
+    m_isModified = true;
+    clCommandEvent modified_event(wxEVT_PROPERTIES_PAGE_MODIFIED);
+    modified_event.SetEventObject(this);
+    GetEventHandler()->AddPendingEvent(modified_event);
+}
+
+void clPropertiesPage::ClearModified()
+{
+    m_isModified = false;
+    clCommandEvent modified_event(wxEVT_PROPERTIES_PAGE_SAVED);
+    modified_event.SetEventObject(this);
+    GetEventHandler()->AddPendingEvent(modified_event);
 }

@@ -154,6 +154,7 @@ void OutputPane::CreateGUIControls()
     props->AddHeader("paths");
     props->AddPropertyFilePicker("Choose first file", wxEmptyString);
     props->AddPropertyFilePicker("Choose second file", wxEmptyString);
+    props->AddPropertyDirPicker("Choose directory", wxEmptyString);
 
     m_book->AddPage(props, "Properties", false, images->Add(wxT("console")));
 

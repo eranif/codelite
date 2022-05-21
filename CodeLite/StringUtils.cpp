@@ -6,15 +6,7 @@ using namespace std;
 
 std::string StringUtils::ToStdString(const wxString& str)
 {
-#if 0
-    wxCharBuffer cb = str.ToAscii();
-    const char* data = cb.data();
-    if(!data) {
-        data = str.mb_str(wxConvUTF8).data();
-    }
-#else
     const char* data = str.mb_str(wxConvUTF8).data();
-#endif
     if(!data) {
         data = str.To8BitData();
     }
@@ -210,7 +202,11 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 dollar_paren_depth--; // reduce the depth
                 // if the depth reached 0, we should leave this state
                 if(dollar_paren_depth == 0) {
-                    PUSH_CURTOKEN();
+                    // check if the expression is of type `$(shell ...)` or just
+                    // a variable defined like `$(VariableName)`
+                    if(curstr.StartsWith("$(shell ")) {
+                        PUSH_CURTOKEN();
+                    }
                     pop_state(states);
                 }
                 break;

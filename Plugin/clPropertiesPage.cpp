@@ -28,6 +28,7 @@ clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
 
     m_view->Bind(wxEVT_DATAVIEW_ACTION_BUTTON, &clPropertiesPage::OnActionButton, this);
     m_view->Bind(wxEVT_DATAVIEW_CHOICE, &clPropertiesPage::OnChoice, this);
+    m_view->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &clPropertiesPage::OnValueChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
     GetSizer()->Layout();
 }
@@ -37,6 +38,7 @@ clPropertiesPage::~clPropertiesPage()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
     m_view->Unbind(wxEVT_DATAVIEW_CHOICE, &clPropertiesPage::OnChoice, this);
     m_view->Unbind(wxEVT_DATAVIEW_ACTION_BUTTON, &clPropertiesPage::OnActionButton, this);
+    m_view->Unbind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &clPropertiesPage::OnValueChanged, this);
 
     if(m_theme_event_connected) {
         EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clPropertiesPage::OnThemeChanged, this);
@@ -44,7 +46,8 @@ clPropertiesPage::~clPropertiesPage()
     m_view->DeleteAllItems();
 }
 
-void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& choices, size_t sel)
+void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& choices,
+                                   clPropertiesPage::Callback_t update_cb, size_t sel)
 {
     wxVector<wxVariant> cols;
     cols.push_back(label);
@@ -55,10 +58,10 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& c
     v << choice;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    SetLastLineData(LineKind::CHOICE, choices);
+    UpdateLastLineData(LineKind::CHOICE, choices, move(update_cb));
 }
 
-void clPropertiesPage::AddProperty(const wxString& label, bool checked)
+void clPropertiesPage::AddProperty(const wxString& label, bool checked, clPropertiesPage::Callback_t update_cb)
 {
     wxVector<wxVariant> cols;
     cols.push_back(label);
@@ -68,10 +71,10 @@ void clPropertiesPage::AddProperty(const wxString& label, bool checked)
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    SetLastLineData(LineKind::CHECKBOX, checked);
+    UpdateLastLineData(LineKind::CHECKBOX, checked, move(update_cb));
 }
 
-void clPropertiesPage::AddProperty(const wxString& label, const wxString& value)
+void clPropertiesPage::AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb)
 {
     wxVector<wxVariant> cols;
     cols.push_back(label);
@@ -82,10 +85,10 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxString& value)
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    SetLastLineData(LineKind::TEXT_EDIT, value);
+    UpdateLastLineData(LineKind::TEXT_EDIT, value, move(update_cb));
 }
 
-void clPropertiesPage::AddProperty(const wxString& label, const wxColour& value)
+void clPropertiesPage::AddProperty(const wxString& label, const wxColour& value, clPropertiesPage::Callback_t update_cb)
 {
     wxVector<wxVariant> cols;
     cols.push_back(label);
@@ -95,10 +98,11 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxColour& value)
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    SetLastLineData(LineKind::COLOUR, value);
+    UpdateLastLineData(LineKind::COLOUR, value, move(update_cb));
 }
 
-void clPropertiesPage::AddPropertyFilePicker(const wxString& label, const wxString& path)
+void clPropertiesPage::AddPropertyFilePicker(const wxString& label, const wxString& path,
+                                             clPropertiesPage::Callback_t update_cb)
 {
     wxVector<wxVariant> cols;
     cols.push_back(label);
@@ -109,10 +113,11 @@ void clPropertiesPage::AddPropertyFilePicker(const wxString& label, const wxStri
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    SetLastLineData(LineKind::FILE_PICKER, path);
+    UpdateLastLineData(LineKind::FILE_PICKER, path, move(update_cb));
 }
 
-void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxString& path)
+void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxString& path,
+                                            clPropertiesPage::Callback_t update_cb)
 {
     wxVector<wxVariant> cols;
     cols.push_back(label);
@@ -123,17 +128,18 @@ void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxStrin
     v << c;
     cols.push_back(v);
     m_view->AppendItem(cols);
-    SetLastLineData(LineKind::DIR_PICKER, path);
+    UpdateLastLineData(LineKind::DIR_PICKER, path, move(update_cb));
 }
 
-void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>& choices, size_t sel)
+void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>& choices,
+                                   clPropertiesPage::Callback_t update_cb, size_t sel)
 {
     wxArrayString arr;
     arr.reserve(choices.size());
     for(const auto& s : choices) {
         arr.Add(s);
     }
-    AddProperty(label, arr, sel);
+    AddProperty(label, arr, move(update_cb), sel);
 }
 
 void clPropertiesPage::AddHeader(const wxString& label)
@@ -208,7 +214,9 @@ void clPropertiesPage::ShowColourPicker(size_t line, const wxColour& colour)
     wxVariant var;
     var << v;
     m_view->SetValue(var, line, 1);
-    SetLineData(line, LineKind::COLOUR, c);
+    UpdateLineData(line, LineKind::COLOUR, c, nullptr);
+    // call the user callback for this change
+    NotifyChange(line);
     SetModified();
 }
 
@@ -224,13 +232,16 @@ void clPropertiesPage::ShowTextEditor(size_t line, const wxString& text)
     wxVariant v;
     v << c;
     m_view->SetValue(v, line, 1);
-    SetLineData(line, LineKind::TEXT_EDIT, new_text);
+    UpdateLineData(line, LineKind::TEXT_EDIT, new_text, nullptr);
+    // call the user callback for this change
+    NotifyChange(line);
     SetModified();
 }
 
 void clPropertiesPage::ShowStringSelectionMenu(size_t line, const wxArrayString& options)
 {
     m_view->ShowStringSelectionMenu(m_view->RowToItem(line), options, 1);
+    // any change is handled inside the `OnChoice` method
 }
 
 void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
@@ -254,7 +265,9 @@ void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
     wxVariant v;
     v << c;
     m_view->SetValue(v, line, 1);
-    SetLineData(line, LineKind::FILE_PICKER, new_path);
+    UpdateLineData(line, LineKind::FILE_PICKER, new_path, nullptr);
+    // call the user callback for this change
+    NotifyChange(line);
     SetModified();
 }
 
@@ -270,7 +283,9 @@ void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
     wxVariant v;
     v << c;
     m_view->SetValue(v, line, 1);
-    SetLineData(line, LineKind::DIR_PICKER, new_path);
+    UpdateLineData(line, LineKind::DIR_PICKER, new_path, nullptr);
+    // call the user callback for this change
+    NotifyChange(line);
     SetModified();
 }
 
@@ -328,6 +343,22 @@ bool clPropertiesPage::GetLineData(size_t line, const LineData** data) const
 void clPropertiesPage::OnChoice(wxDataViewEvent& event)
 {
     event.Skip();
+    size_t line = m_view->ItemToRow(event.GetItem());
+    UpdateLineData(line, LineKind::CHOICE, event.GetString(), nullptr);
+
+    // call the user callback for this change
+    NotifyChange(line);
+    SetModified();
+}
+
+void clPropertiesPage::OnValueChanged(wxDataViewEvent& event)
+{
+    event.Skip();
+    size_t line = m_view->ItemToRow(event.GetItem());
+    UpdateLineData(line, LineKind::CHECKBOX, m_view->IsItemChecked(event.GetItem(), 1), nullptr);
+
+    // call the user callback for this change
+    NotifyChange(line);
     SetModified();
 }
 
@@ -345,4 +376,15 @@ void clPropertiesPage::ClearModified()
     clCommandEvent modified_event(wxEVT_PROPERTIES_PAGE_SAVED);
     modified_event.SetEventObject(this);
     GetEventHandler()->AddPendingEvent(modified_event);
+}
+
+void clPropertiesPage::NotifyChange(size_t line)
+{
+    const LineData* line_data = nullptr;
+    if(!GetLineData(line, &line_data))
+        return;
+
+    if(line_data->callback) {
+        line_data->callback(m_view->GetItemText(m_view->RowToItem(line)), line_data->value);
+    }
 }

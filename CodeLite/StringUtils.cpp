@@ -182,6 +182,8 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 dollar_paren_depth++; // makes it 1
                 break;
             case ';':
+            case ' ':
+            case '\t':
                 PUSH_CURTOKEN();
                 pop_state(states);
                 break;

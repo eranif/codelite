@@ -23,36 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editorsetthingsbookmarkspanel__
-#define __editorsetthingsbookmarkspanel__
+#ifndef __EDITORSETTHINGSBOOKMARKSPANEL__
+#define __EDITORSETTHINGSBOOKMARKSPANEL__
 
-#include "editorsettingsbookmarksbasepanel.h"
-#include "globals.h"
-#include "treebooknodebase.h"
+#include "OptionsConfigPage.hpp"
 
-#include <vector>
-
-struct BookmarkData {
-    wxColour fg;
-    wxColour bg;
-    wxString label;
-    wxString defaultLabel;
-};
-
-class EditorSettingsBookmarksPanel : public EditorSettingsBookmarksBasePanel,
-                                     public TreeBookNode<EditorSettingsBookmarksPanel>
+class EditorSettingsBookmarksPanel : public OptionsConfigPage
 {
-    StringManager m_stringManager;
-    std::vector<BookmarkData> m_bookmarksData;
-    int m_previous;
-
 public:
-    EditorSettingsBookmarksPanel(wxWindow* parent);
-    void Save(OptionsConfigPtr options);
-
-protected:
-    virtual void OnBookmarkChanged(wxCommandEvent& event);
-    void ChangeSelection(int index);
+    EditorSettingsBookmarksPanel(wxWindow* parent, OptionsConfigPtr options);
+    virtual ~EditorSettingsBookmarksPanel() {}
 };
 
-#endif // __editorsetthingsbookmarkspanel__
+#endif // __EDITORSETTHINGSBOOKMARKSPANEL__

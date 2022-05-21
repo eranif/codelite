@@ -834,9 +834,10 @@ void clEditor::SetProperties()
     SetMarginSensitive(SYMBOLS_MARGIN_ID, true);
 
     // Right margin
-    SetEdgeMode(options->GetEdgeMode());
-    SetEdgeColumn(options->GetEdgeColumn());
-    SetEdgeColour(options->GetEdgeColour());
+    SetEdgeMode(options->IsShowRightMarginIndicator() ? wxSTC_EDGE_LINE : wxSTC_EDGE_NONE);
+    SetEdgeColumn(options->GetRightMarginColumn());
+    wxColour bg_colour = StyleGetBackground(0);
+    SetEdgeColour(DrawingUtils::IsDark(bg_colour) ? bg_colour.ChangeLightness(110) : bg_colour.ChangeLightness(80));
 
     //---------------------------------------------------
     // Fold settings

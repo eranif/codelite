@@ -3,64 +3,70 @@
 #include "cl_config.h"
 #include "editor_config.h"
 
-EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* parent)
-    : EditorOptionsGeneralGuidesPanelBase(parent)
+EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* parent, OptionsConfigPtr options)
+    : OptionsConfigPage(parent, options)
 {
-    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    m_checkBoxLineNumbersShow->SetValue(options->GetDisplayLineNumbers());
-    m_checkBoxLineNumbersHighlightCurrent->SetValue(options->IsLineNumberHighlightCurrent());
-    m_checkBoxLineNumbersRelative->SetValue(options->GetRelativeLineNumbers());
-    m_checkBoxHighlightIndentLines->SetValue(options->GetShowIndentationGuidelines());
-    m_checkBoxHighlightBraces->SetValue(options->GetHighlightMatchedBraces());
-    m_checkBoxCaretLineEnabeldHighlight->SetValue(options->GetHighlightCaretLine());
-    m_colourPickerCaretLineColour->SetColour(options->GetCaretLineColour());
-    m_spinCtrlCaretLineAlpha->SetValue(options->GetCaretLineAlpha());
-    m_checkBoxHighlightModifiedLines->SetValue(options->IsTrackChanges());
-    m_checkBoxDebuggerLineEnabled->SetValue(options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line));
-    m_colourPickerDebuggerLineColour->SetColour(options->GetDebuggerMarkerLine());
-    m_choiceWhitespaceVisibility->SetSelection(options->GetShowWhitspaces());
-    m_choiceWhitespaceEOLMode->SetStringSelection(options->GetEolMode());
-    m_spinCtrlWhitespaceLineSpacing->SetValue(clConfig::Get().Read("extra_line_spacing", (int)0));
+    AddHeader("Line numbers");
+    AddProperty("Display line numbers", m_options->GetDisplayLineNumbers(), UPDATE_BOOL_CB(SetDisplayLineNumbers));
+    AddProperty("Highlight current line number", m_options->IsLineNumberHighlightCurrent(),
+                UPDATE_BOOL_CB(SetLineNumberHighlightCurrent));
+    AddProperty("Use relative line numbers", m_options->GetRelativeLineNumbers(),
+                UPDATE_BOOL_CB(SetRelativeLineNumbers));
+
+    AddHeader("What to highlight?");
+    AddProperty("Indentation lines", m_options->GetShowIndentationGuidelines(),
+                UPDATE_BOOL_CB(SetShowIndentationGuidelines));
+    AddProperty("Matching braces", m_options->GetHighlightMatchedBraces(), UPDATE_BOOL_CB(SetHighlightMatchedBraces));
+    AddProperty("Modified lines", m_options->IsTrackChanges(), UPDATE_BOOL_CB(SetTrackChanges));
+
+    AddHeader("Caret line");
+    AddProperty("Enable background colour", m_options->GetHighlightCaretLine(), UPDATE_BOOL_CB(SetHighlightCaretLine));
+    AddProperty("Background colour", m_options->GetCaretLineColour(), UPDATE_COLOUR_CB(SetCaretLineColour));
+
+    AddHeader(_("Right margin indicator"));
+    AddProperty(_("Show right margin indicator"), m_options->IsShowRightMarginIndicator(),
+                UPDATE_BOOL_CB(SetShowRightMarginIndicator));
+    AddProperty(_("Indicator column"), m_options->GetRightMarginColumn(), UPDATE_INT_CB(SetRightMarginColumn));
+
+    AddHeader("Debugger line");
+    AddProperty("Enable background colour", m_options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line),
+                UPDATE_OPTION_CB(Opt_Mark_Debugger_Line));
+    AddProperty("Background colour", m_options->GetDebuggerMarkerLine(), UPDATE_COLOUR_CB(SetDebuggerMarkerLine));
+
+    AddHeader("Whitespace");
+    {
+        wxArrayString options;
+        options.Add("Invisible");
+        options.Add("Visible always");
+        options.Add("Visible after indentation");
+        AddProperty("Indentation visibility", options, m_options->GetShowWhitspaces(),
+                    [this, options](const wxString& label, const wxAny& value) {
+                        wxString value_str;
+                        if(value.GetAs(&value_str)) {
+                            size_t where = options.Index(value_str);
+                            if(where != wxString::npos) {
+                                m_options->SetShowWhitspaces(static_cast<int>(where));
+                            }
+                        }
+                    });
+    }
+
+    {
+        wxArrayString options;
+        options.Add("Default");
+        options.Add("Mac (CR)");
+        options.Add("Unix (LF)");
+        AddProperty("EOL Style", options, m_options->GetEolMode(), UPDATE_TEXT_CB(SetEolMode));
+    }
+
+    long line_spacing = clConfig::Get().Read("extra_line_spacing", (int)0);
+    AddProperty("Line spacing", line_spacing, [&](const wxString& label, const wxAny& value) {
+        wxUnusedVar(label);
+        long spacing;
+        if(value.GetAs(&spacing)) {
+            clConfig::Get().Write("extra_line_spacing", static_cast<int>(spacing));
+        }
+    });
 }
 
 EditorOptionsGeneralGuidesPanel::~EditorOptionsGeneralGuidesPanel() {}
-
-void EditorOptionsGeneralGuidesPanel::OnDisplayLineNumbersUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxLineNumbersShow->IsChecked());
-}
-
-void EditorOptionsGeneralGuidesPanel::OnHighlightCaretLineUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxCaretLineEnabeldHighlight->IsChecked());
-}
-
-void EditorOptionsGeneralGuidesPanel::OnHighlightDebuggerLineUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxDebuggerLineEnabled->IsChecked());
-}
-
-void EditorOptionsGeneralGuidesPanel::Save(OptionsConfigPtr options)
-{
-    options->SetDisplayLineNumbers(m_checkBoxLineNumbersShow->IsChecked());
-    options->SetRelativeLineNumbers(m_checkBoxLineNumbersRelative->IsChecked());
-    options->SetHighlightMatchedBraces(m_checkBoxHighlightBraces->IsChecked());
-    options->SetShowIndentationGuidelines(m_checkBoxHighlightIndentLines->IsChecked());
-    options->SetHighlightCaretLine(m_checkBoxCaretLineEnabeldHighlight->IsChecked());
-
-    options->SetCaretLineColour(m_colourPickerCaretLineColour->GetColour());
-    options->SetCaretLineAlpha(m_spinCtrlCaretLineAlpha->GetValue());
-
-    options->SetEolMode(m_choiceWhitespaceEOLMode->GetStringSelection());
-    options->SetTrackChanges(m_checkBoxHighlightModifiedLines->IsChecked());
-    options->SetDebuggerMarkerLine(m_colourPickerDebuggerLineColour->GetColour());
-    options->EnableOption(OptionsConfig::Opt_Mark_Debugger_Line, m_checkBoxDebuggerLineEnabled->IsChecked());
-    options->SetShowWhitspaces(m_choiceWhitespaceVisibility->GetSelection());
-    options->SetLineNumberHighlightCurrent(m_checkBoxLineNumbersHighlightCurrent->IsChecked());
-    clConfig::Get().Write("extra_line_spacing", (int)m_spinCtrlWhitespaceLineSpacing->GetValue());
-}
-
-void EditorOptionsGeneralGuidesPanel::OnUseRelativeLineNumbersUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBoxLineNumbersShow->IsChecked() && m_checkBoxLineNumbersHighlightCurrent->IsChecked());
-}

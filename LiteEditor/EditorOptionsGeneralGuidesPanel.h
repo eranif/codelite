@@ -1,22 +1,12 @@
 #ifndef EDITOROPTIONSGENERALGUIDESPANEL_H
 #define EDITOROPTIONSGENERALGUIDESPANEL_H
 
-#include "editoroptionsgeneralguidespanelbase.h"
-#include "optionsconfig.h"
-#include "treebooknodebase.h"
+#include "OptionsConfigPage.hpp"
 
-class EditorOptionsGeneralGuidesPanel : public EditorOptionsGeneralGuidesPanelBase,
-                                        public TreeBookNode<EditorOptionsGeneralGuidesPanel>
+class EditorOptionsGeneralGuidesPanel : public OptionsConfigPage
 {
 public:
-    EditorOptionsGeneralGuidesPanel(wxWindow* parent);
+    EditorOptionsGeneralGuidesPanel(wxWindow* parent, OptionsConfigPtr options);
     virtual ~EditorOptionsGeneralGuidesPanel();
-    void Save(OptionsConfigPtr options) override;
-
-protected:
-    virtual void OnUseRelativeLineNumbersUI(wxUpdateUIEvent& event);
-    void OnDisplayLineNumbersUI(wxUpdateUIEvent& event) override;
-    void OnHighlightCaretLineUI(wxUpdateUIEvent& event) override;
-    void OnHighlightDebuggerLineUI(wxUpdateUIEvent& event) override;
 };
 #endif // EDITOROPTIONSGENERALGUIDESPANEL_H

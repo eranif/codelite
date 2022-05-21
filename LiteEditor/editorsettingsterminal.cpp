@@ -23,32 +23,33 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "editorsettingsterminal.h"
+
 #include "clConsoleBase.h"
 #include "cl_config.h"
 #include "editor_config.h"
-#include "editorsettingsterminal.h"
+
 #include <exelocator.h>
 
-EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent)
-    : EditorSettingsTerminalBase(parent)
-    , TreeBookNode<EditorSettingsTerminal>()
+EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent, OptionsConfigPtr options)
+    : OptionsConfigPage(parent, options)
 {
     wxArrayString terminals = clConsoleBase::GetAvailaleTerminals();
 #if defined(__WXGTK__)
     wxString where; // GetAvailableTerminals() doesn't, it gets a list of supported ones; so check for existence
-    for (size_t t=terminals.GetCount(); t >0 ; --t) { 
-        if(!ExeLocator::Locate(terminals.Item(t-1), where)) {
-            terminals.RemoveAt(t-1);
+    for(size_t t = terminals.GetCount(); t > 0; --t) {
+        if(!ExeLocator::Locate(terminals.Item(t - 1), where)) {
+            terminals.RemoveAt(t - 1);
         }
     }
 #endif
-    m_choiceTerminals->Append(terminals);
-    wxString selection = clConsoleBase::GetSelectedTerminalName();
-    if(!selection.IsEmpty()) { m_choiceTerminals->SetStringSelection(selection); }
-}
+    AddHeader(_("Terminals"));
 
-void EditorSettingsTerminal::Save(OptionsConfigPtr options)
-{
-    wxUnusedVar(options);
-    clConfig::Get().Write("Terminal", m_choiceTerminals->GetStringSelection());
+    wxString selection = clConsoleBase::GetSelectedTerminalName();
+    AddProperty(_("Choose your terminal"), terminals, selection, [&](const wxString& label, const wxAny& value) {
+        wxString value_str;
+        if(value.GetAs(&value_str)) {
+            clConfig::Get().Write("Terminal", value_str);
+        }
+    });
 }

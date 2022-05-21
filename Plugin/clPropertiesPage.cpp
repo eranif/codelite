@@ -11,6 +11,7 @@
 #include <wx/colordlg.h>
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
+#include <wx/numdlg.h>
 
 wxDEFINE_EVENT(wxEVT_PROPERTIES_PAGE_MODIFIED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_PROPERTIES_PAGE_SAVED, clCommandEvent);
@@ -47,7 +48,39 @@ clPropertiesPage::~clPropertiesPage()
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& choices,
-                                   clPropertiesPage::Callback_t update_cb, size_t sel)
+                                   const wxString& string_selection, clPropertiesPage::Callback_t update_cb)
+{
+    size_t index = choices.Index(string_selection);
+    if(index == wxString::npos) {
+        index = 0;
+    }
+    AddProperty(label, choices, static_cast<int>(index), move(update_cb));
+}
+
+void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>& choices, size_t sel,
+                                   clPropertiesPage::Callback_t update_cb)
+{
+    wxArrayString arr;
+    arr.reserve(choices.size());
+    for(const auto& s : choices) {
+        arr.Add(s);
+    }
+    AddProperty(label, arr, sel, move(update_cb));
+}
+
+void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>& choices, const wxString& selection,
+                                   clPropertiesPage::Callback_t update_cb)
+{
+    wxArrayString arr;
+    arr.reserve(choices.size());
+    for(const auto& s : choices) {
+        arr.Add(s);
+    }
+    AddProperty(label, arr, selection, move(update_cb));
+}
+
+void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& choices, size_t sel,
+                                   clPropertiesPage::Callback_t update_cb)
 {
     wxVector<wxVariant> cols;
     cols.push_back(label);
@@ -72,6 +105,19 @@ void clPropertiesPage::AddProperty(const wxString& label, bool checked, clProper
     cols.push_back(v);
     m_view->AppendItem(cols);
     UpdateLastLineData(LineKind::CHECKBOX, checked, move(update_cb));
+}
+
+void clPropertiesPage::AddProperty(const wxString& label, long value, clPropertiesPage::Callback_t update_cb)
+{
+    wxVector<wxVariant> cols;
+    cols.push_back(label);
+
+    clDataViewButton c(wxString() << value, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    wxVariant v;
+    v << c;
+    cols.push_back(v);
+    m_view->AppendItem(cols);
+    UpdateLastLineData(LineKind::INTEGER, value, move(update_cb));
 }
 
 void clPropertiesPage::AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb)
@@ -131,17 +177,6 @@ void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxStrin
     UpdateLastLineData(LineKind::DIR_PICKER, path, move(update_cb));
 }
 
-void clPropertiesPage::AddProperty(const wxString& label, const vector<wxString>& choices,
-                                   clPropertiesPage::Callback_t update_cb, size_t sel)
-{
-    wxArrayString arr;
-    arr.reserve(choices.size());
-    for(const auto& s : choices) {
-        arr.Add(s);
-    }
-    AddProperty(label, arr, move(update_cb), sel);
-}
-
 void clPropertiesPage::AddHeader(const wxString& label)
 {
     // keep the header row number
@@ -194,6 +229,13 @@ void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
         if(!data->value.GetAs(&path))
             return;
         ShowDirPicker(row, path);
+        break;
+    }
+    case LineKind::INTEGER: {
+        long value;
+        if(!data->value.GetAs(&value))
+            return;
+        ShowNumberPicker(row, value);
         break;
     }
     case LineKind::CHECKBOX:
@@ -289,6 +331,25 @@ void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
     SetModified();
 }
 
+void clPropertiesPage::ShowNumberPicker(size_t line, long number)
+{
+    wxString label = m_view->GetItemText(m_view->RowToItem(line));
+    wxNumberEntryDialog dlg(EventNotifier::Get()->TopFrame(), label, wxEmptyString, _("Choose a number"), number,
+                            -10000, 10000);
+    if(dlg.ShowModal() != wxID_OK)
+        return;
+
+    int new_number = dlg.GetValue();
+    clDataViewButton c(wxString() << new_number, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    wxVariant v;
+    v << c;
+    m_view->SetValue(v, line, 1);
+    UpdateLineData(line, LineKind::INTEGER, new_number, nullptr);
+    // call the user callback for this change
+    NotifyChange(line);
+    SetModified();
+}
+
 void clPropertiesPage::SetHeaderColours(const wxDataViewItem& item)
 {
     // Notice that we can't use here m_view->GetColours()
@@ -298,8 +359,12 @@ void clPropertiesPage::SetHeaderColours(const wxDataViewItem& item)
     wxColour header_bg_colour;
     wxColour header_text_colour;
 
-    header_bg_colour = baseColour.ChangeLightness(50);
-    header_text_colour = "WHITE";
+    header_bg_colour = baseColour.ChangeLightness(80);
+    if(DrawingUtils::IsDark(header_bg_colour)) {
+        header_text_colour = "WHITE";
+    } else {
+        header_text_colour = "BLACK";
+    }
 
     m_view->SetItemBold(item, true);
     m_view->SetItemBackgroundColour(item, header_bg_colour, 0);
@@ -344,10 +409,15 @@ void clPropertiesPage::OnChoice(wxDataViewEvent& event)
 {
     event.Skip();
     size_t line = m_view->ItemToRow(event.GetItem());
-    UpdateLineData(line, LineKind::CHOICE, event.GetString(), nullptr);
 
-    // call the user callback for this change
-    NotifyChange(line);
+    // Get the user callback and call it with the new value
+    const LineData* line_data = nullptr;
+    if(!GetLineData(line, &line_data))
+        return;
+
+    if(line_data->callback) {
+        line_data->callback(m_view->GetItemText(m_view->RowToItem(line)), event.GetString());
+    }
     SetModified();
 }
 

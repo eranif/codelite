@@ -23,20 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editorsettingscaret__
-#define __editorsettingscaret__
+#ifndef __EDITORSETTINGSCARET__
+#define __EDITORSETTINGSCARET__
 
-#include "editor_options_caret.h"
-#include "treebooknodebase.h"
+#include "OptionsConfigPage.hpp"
 
-class EditorSettingsCaret : public EditorSettingsCaretBase, public TreeBookNode<EditorSettingsCaret>
+class EditorSettingsCaret : public OptionsConfigPage
 {
 public:
-    /** Constructor */
-    EditorSettingsCaret( wxWindow* parent );
-    void Save(OptionsConfigPtr options);
-protected:
-    virtual void OnCaretWidthUI(wxUpdateUIEvent& event);
+    EditorSettingsCaret(wxWindow* parent, OptionsConfigPtr options);
+    virtual ~EditorSettingsCaret() {}
 };
 
-#endif // __editorsettingscaret__
+#endif // __EDITORSETTINGSCARET__

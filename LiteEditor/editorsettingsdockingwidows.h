@@ -23,28 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editorsettingsdockingwidows__
-#define __editorsettingsdockingwidows__
+#ifndef __EDITORSETTINGSDOCKINGWIDOWS__
+#define __EDITORSETTINGSDOCKINGWIDOWS__
 
-#include "editorsettingsdockingwindowsbase.h"
-#include "treebooknodebase.h"
-#include "optionsconfig.h"
+#include "OptionsConfigPage.hpp"
 
-class EditorSettingsDockingWindows : public EditorSettingsDockingWindowsBase,
-                                     public TreeBookNode<EditorSettingsDockingWindows>
+class EditorSettingsDockingWindows : public OptionsConfigPage
 {
-    void OnHideOutputPaneNotIfDebugUI(wxUpdateUIEvent& event);
-
 public:
-    /** Constructor */
-    EditorSettingsDockingWindows(wxWindow* parent);
-    virtual void Save(OptionsConfigPtr options);
-    bool IsRestartRequired();
-
-protected:
-    virtual void OnUsingNativeBookUI(wxUpdateUIEvent& event);
-    virtual void OnUseCustomCaptionColourUI(wxUpdateUIEvent& event);
-    virtual void OnEnsureCaptionsVisibleUI(wxUpdateUIEvent& event);
+    EditorSettingsDockingWindows(wxWindow* parent, OptionsConfigPtr options);
+    virtual ~EditorSettingsDockingWindows() {}
 };
 
-#endif // __editorsettingsdockingwidows__
+#endif // __EDITORSETTINGSDOCKINGWIDOWS__

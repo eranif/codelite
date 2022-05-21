@@ -26,15 +26,12 @@
 #ifndef EDITOROPTIONSGENERALEDIT_H
 #define EDITOROPTIONSGENERALEDIT_H
 
-#include "editoroptionsgeneralguidespanelbase.h"
-#include "optionsconfig.h"
-#include "treebooknodebase.h"
+#include "OptionsConfigPage.hpp"
 
-class EditorOptionsGeneralEdit : public EditorOptionsGeneralEditBase, public TreeBookNode<EditorOptionsGeneralEdit>
+class EditorOptionsGeneralEdit : public OptionsConfigPage
 {
 public:
-    EditorOptionsGeneralEdit(wxWindow* parent);
+    EditorOptionsGeneralEdit(wxWindow* parent, OptionsConfigPtr options);
     virtual ~EditorOptionsGeneralEdit();
-    void Save(OptionsConfigPtr options);
 };
 #endif // EDITOROPTIONSGENERALEDIT_H

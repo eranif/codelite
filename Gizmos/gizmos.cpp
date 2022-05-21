@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "gizmos.h"
+
 #include "PluginWizard.h"
 #include "clFileSystemWorkspace.hpp"
 #include "cl_command_event.h"
@@ -41,6 +42,7 @@
 #include "newwxprojectdlg.h"
 #include "workspace.h"
 #include "wx/ffile.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/log.h>
@@ -604,8 +606,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     if(clCxxWorkspaceST::Get()->IsOpen()) {
         // We have a .cpp and an .h file, and there may well be a :src and an :include folder available
         // So try to place the files appropriately. If that fails, dump both in the selected folder
-        bool smartAddFiles = EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles;
-        if(!smartAddFiles || !m_mgr->AddFilesToVirtualFolderIntelligently(info.virtualDirectory, paths))
+        if(!m_mgr->AddFilesToVirtualFolderIntelligently(info.virtualDirectory, paths))
             m_mgr->AddFilesToVirtualFolder(info.virtualDirectory, paths);
     }
 

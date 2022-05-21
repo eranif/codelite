@@ -178,37 +178,23 @@
       <File Name="syntaxhighlightbasedlg.h"/>
       <File Name="syntaxhighlightdlg.cpp"/>
       <VirtualDirectory Name="EditorOptionsDlg">
+        <File Name="OptionsConfigPage.hpp"/>
         <File Name="options_base_dlg2.cpp"/>
         <File Name="options_base_dlg2.h"/>
         <File Name="options_dlg2.cpp"/>
         <File Name="options_dlg2.h"/>
-        <File Name="treebooknodebase.cpp"/>
-        <File Name="treebooknodebase.h"/>
         <VirtualDirectory Name="General">
           <VirtualDirectory Name="Guides">
             <File Name="EditorOptionsGeneralGuidesPanel.cpp"/>
             <File Name="EditorOptionsGeneralGuidesPanel.h"/>
-            <File Name="editoroptionsgeneralguidespanelbase.cpp"/>
-            <File Name="editoroptionsgeneralguidespanelbase.h"/>
-            <File Name="editor_options_guides.wxcp"/>
           </VirtualDirectory>
           <VirtualDirectory Name="Indentation">
             <File Name="editoroptionsgeneralindentationpanel.cpp"/>
             <File Name="editoroptionsgeneralindentationpanel.h"/>
-            <File Name="editoroptionsgeneralindetationpanelbase.cpp"/>
-            <File Name="editoroptionsgeneralindetationpanelbase.h"/>
-          </VirtualDirectory>
-          <VirtualDirectory Name="Right Margin">
-            <File Name="editoroptionsgeneralrightmarginpanel.cpp"/>
-            <File Name="editoroptionsgeneralrightmarginpanel.h"/>
-            <File Name="editoroptionsgeneralrightmarginpanelbase.cpp"/>
-            <File Name="editoroptionsgeneralrightmarginpanelbase.h"/>
           </VirtualDirectory>
           <VirtualDirectory Name="Save Options">
             <File Name="editoroptionsgeneralsavepanel.cpp"/>
             <File Name="editoroptionsgeneralsavepanel.h"/>
-            <File Name="editoroptionsgeneralsavepanelbase.cpp"/>
-            <File Name="editoroptionsgeneralsavepanelbase.h"/>
           </VirtualDirectory>
           <VirtualDirectory Name="Edit">
             <File Name="EditorOptionsGeneralEdit.h"/>
@@ -218,29 +204,16 @@
         <VirtualDirectory Name="Comments">
           <File Name="editorsettingscomments.cpp"/>
           <File Name="editorsettingscomments.h"/>
-          <File Name="editorsettingscommentsbase.cpp"/>
-          <File Name="editorsettingscommentsbase.h"/>
-          <File Name="editorsettingscommentsdoxygenpanel.cpp"/>
-          <File Name="editorsettingscommentsdoxygenpanel.h"/>
-          <File Name="editorsettingscommentsdoxygenpanelbase.cpp"/>
-          <File Name="editorsettingscommentsdoxygenpanelbase.h"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Bookmarks">
-          <File Name="editorsettingsbookmarksbasepanel.cpp"/>
-          <File Name="editorsettingsbookmarksbasepanel.h"/>
           <File Name="editorsettingsbookmarkspanel.h"/>
           <File Name="editorsettingsbookmarkspanel.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Folding">
           <File Name="editorsettingsfolding.cpp"/>
           <File Name="editorsettingsfolding.h"/>
-          <File Name="editorsettingsfoldingbase.cpp"/>
-          <File Name="editorsettingsfoldingbase.h"/>
-          <File Name="editor_options_folding.wxcp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Misc">
-          <File Name="editorsettingsmiscbasepanel.cpp"/>
-          <File Name="editorsettingsmiscbasepanel.h"/>
           <File Name="editorsettingsmiscpanel.cpp"/>
           <File Name="editorsettingsmiscpanel.h"/>
         </VirtualDirectory>
@@ -249,24 +222,14 @@
           <File Name="editorsettingscaret.cpp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="Terminal">
-          <File Name="editorsettings_terminal_base.cpp"/>
-          <File Name="editorsettings_terminal_base.h"/>
           <File Name="editorsettingsterminal.h"/>
           <File Name="editorsettingsterminal.cpp"/>
-          <File Name="editor_options_terminal.wxcp"/>
         </VirtualDirectory>
         <VirtualDirectory Name="DockingWindows">
-          <File Name="editorsettingsdockingwindowsbase.cpp"/>
-          <File Name="editorsettingsdockingwindowsbase.h"/>
           <File Name="editorsettingsdockingwidows.h"/>
           <File Name="editorsettingsdockingwidows.cpp"/>
         </VirtualDirectory>
         <File Name="optionsdialogbase2.wxcp"/>
-        <File Name="editor_options_misc.wxcp"/>
-        <File Name="editor_options_caret.wxcp"/>
-        <VirtualDirectory Name="Code">
-          <File Name="editor_options_comments_base.wxcp"/>
-        </VirtualDirectory>
       </VirtualDirectory>
       <File Name="SyntaxHighlightBaseDlg.wxcp"/>
       <File Name="editor_options_bookmarks.wxcp"/>
@@ -667,15 +630,6 @@
     <File Name="debuggerasciiviewerbase.fbp"/>
     <File Name="tagsparsersearchpathsbasedlg.fbp"/>
     <File Name="tasksfindwhatdlgbase.fbp"/>
-    <File Name="editor_options_codenav.fbp"/>
-    <File Name="editor_options_right_margin.fbp"/>
-    <File Name="editor_options_guides.fbp"/>
-    <File Name="editor_options_save.fbp"/>
-    <File Name="editor_options_bookmarks.fbp"/>
-    <File Name="editor_options_comments.fbp"/>
-    <File Name="editor_options_indetation.fbp"/>
-    <File Name="editor_options_dialogs.fbp"/>
-    <File Name="editor_options_terminal.fbp"/>
     <File Name="manageperspectivesbasedlg.fbp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
@@ -800,8 +754,6 @@
       <File Name="AccelTableBaseDlg.cpp"/>
       <File Name="new_virtual_folder.h"/>
       <File Name="new_virtual_folder.cpp"/>
-      <File Name="editor_options_caret.h"/>
-      <File Name="editor_options_caret.cpp"/>
       <File Name="advance_settings_base.h"/>
       <File Name="advance_settings_base.cpp"/>
       <File Name="compilersfoundmodel.cpp"/>
@@ -833,18 +785,14 @@
       <File Name="listctrlpanel_formbuilder_bitmaps.cpp"/>
       <File Name="DebuggerSettingsBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="project_settings_liteeditor_bitmaps.cpp"/>
-      <File Name="editor_options_comments_doxygen_liteeditor_bitmaps.cpp"/>
       <File Name="rename_symbool_dlg_formbuilder_bitmaps.cpp"/>
       <File Name="workspacesettingsbase_liteeditor_bitmaps.cpp"/>
       <File Name="compiler_page_plugin_bitmaps.cpp"/>
       <File Name="messagepane_liteeditor_bitmaps.cpp"/>
       <File Name="AccelTableBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="tags_options_base_dlg_formbuilder_bitmaps.cpp"/>
-      <File Name="editor_options_guides_liteeditor_bitmaps.cpp"/>
-      <File Name="editor_options_terminal_liteeditor_bitmaps.cpp"/>
       <File Name="optionsdialogbase2_liteeditor_bitmaps.cpp"/>
       <File Name="new_virtual_folder_liteeditor_bitmaps.cpp"/>
-      <File Name="editor_options_misc_liteeditor_bitmaps.cpp"/>
       <File Name="editor_options_caret_liteeditor_bitmaps.cpp"/>
       <File Name="plugindlgbase_liteeditor_bitmaps.cpp"/>
       <File Name="advance_settings_liteeditor_bitmaps.cpp"/>
@@ -854,8 +802,6 @@
       <File Name="new_workspace_dlg_liteeditor_bitmaps.cpp"/>
       <File Name="quickdebug_formbuilder_bitmaps.cpp"/>
       <File Name="CodeLiteUpgradeFrame_liteeditor_bitmaps.cpp"/>
-      <File Name="editor_options_comments_base_liteeditor_bitmaps.cpp"/>
-      <File Name="editor_options_folding_liteeditor_bitmaps.cpp"/>
       <File Name="ThreadListPanelBase_liteeditor_bitmaps.cpp"/>
       <File Name="AttachDbgProcBaseDlg_liteeditor_bitmaps.cpp"/>
       <File Name="ConfigManagerBaseDlg_liteeditor_bitmaps.cpp"/>

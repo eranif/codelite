@@ -153,7 +153,7 @@ void OutputPane::CreateGUIControls()
     auto props = new clPropertiesPage(m_book);
     props->AddHeader("General Settings");
     props->AddProperty("Options1", wxString("Valus string"), change_callbck);
-    props->AddProperty("Options1", { "Hello", "World", "From", "clPropertiesPage" }, change_callbck);
+    props->AddProperty("Options1", { "Hello", "World", "From", "clPropertiesPage" }, 0, change_callbck);
 
     props->AddHeader("Colours");
     props->AddProperty("Choose a colour R", wxColour("RED"), change_callbck);
@@ -161,8 +161,8 @@ void OutputPane::CreateGUIControls()
     props->AddProperty("Choose a colour B", wxColour("BLUE"), change_callbck);
 
     props->AddHeader("Misc");
-    props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" }, change_callbck);
-    props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" }, change_callbck);
+    props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" }, 1, change_callbck);
+    props->AddProperty("Options2", { "Alpha", "Beta", "Gamma", "Prod" }, 2, change_callbck);
 
     props->AddHeader("Checkboxes");
     props->AddProperty("Is it good?", true, change_callbck);

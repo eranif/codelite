@@ -24,6 +24,7 @@ enum class LineKind {
     CHECKBOX,
     FILE_PICKER,
     DIR_PICKER,
+    INTEGER,
 };
 
 struct WXDLLIMPEXP_SDK LineData {
@@ -60,6 +61,7 @@ protected:
     void ShowStringSelectionMenu(size_t line, const wxArrayString& options);
     void ShowFilePicker(size_t line, const wxString& path);
     void ShowDirPicker(size_t line, const wxString& path);
+    void ShowNumberPicker(size_t line, long number);
     void SetModified();
 
     bool GetLineData(size_t line, const LineData** data) const;
@@ -78,7 +80,6 @@ protected:
         if(update_cb != nullptr) {
             d.callback = move(update_cb);
         }
-        m_lines.insert({ line, d });
     }
 
     template <typename T> void UpdateLastLineData(LineKind kind, const T& data, clPropertiesPage::Callback_t update_cb)
@@ -97,10 +98,15 @@ public:
     clPropertiesPage(wxWindow* parent, wxWindowID id = wxID_ANY);
     ~clPropertiesPage();
 
-    void AddProperty(const wxString& label, const wxArrayString& choices, clPropertiesPage::Callback_t update_cb,
-                     size_t sel = 0);
-    void AddProperty(const wxString& label, const vector<wxString>& choices, clPropertiesPage::Callback_t update_cb,
-                     size_t sel = 0);
+    void AddProperty(const wxString& label, const wxArrayString& choices, size_t sel,
+                     clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, const vector<wxString>& choices, size_t sel,
+                     clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, const vector<wxString>& choices, const wxString& selection,
+                     clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, const wxArrayString& choices, const wxString& selection,
+                     clPropertiesPage::Callback_t update_cb);
+
     void AddProperty(const wxString& label, bool checked, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, const char* value, clPropertiesPage::Callback_t update_cb)
@@ -108,6 +114,12 @@ public:
         AddProperty(label, wxString(value), move(update_cb));
     }
     void AddProperty(const wxString& label, const wxColour& value, clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, long value, clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, int value, clPropertiesPage::Callback_t update_cb)
+    {
+        AddProperty(label, (long)value, move(update_cb));
+    }
+
     void AddPropertyFilePicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
     void AddPropertyDirPicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
     void AddHeader(const wxString& label);

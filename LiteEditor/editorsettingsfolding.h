@@ -23,23 +23,16 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __editorsettingsfolding__
-#define __editorsettingsfolding__
+#ifndef __EDITORSETTINGSFOLDING__
+#define __EDITORSETTINGSFOLDING__
 
-#include "editorsettingsfoldingbase.h"
-#include "treebooknodebase.h"
+#include "OptionsConfigPage.hpp"
 
-/** Implementing EditorSettingsFoldingBase */
-class EditorSettingsFolding : public EditorSettingsFoldingBase, public TreeBookNode<EditorSettingsFolding>
+class EditorSettingsFolding : public OptionsConfigPage
 {
-    void OnFoldingMarginUI(wxUpdateUIEvent& event);
-
-    StringManager m_stringManager;
-
 public:
-    /** Constructor */
-    EditorSettingsFolding(wxWindow* parent);
-    void Save(OptionsConfigPtr options);
+    EditorSettingsFolding(wxWindow* parent, OptionsConfigPtr options);
+    virtual ~EditorSettingsFolding() {}
 };
 
-#endif // __editorsettingsfolding__
+#endif // __EDITORSETTINGSFOLDING__

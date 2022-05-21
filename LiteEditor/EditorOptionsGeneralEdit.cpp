@@ -4,34 +4,33 @@
 #include "globals.h"
 #include "optionsconfig.h"
 
-EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent)
-    : EditorOptionsGeneralEditBase(parent)
+EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent, OptionsConfigPtr options)
+    : OptionsConfigPage(parent, options)
 {
-    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    m_checkBoxEditSmartCurlyBrackets->SetValue(options->GetAutoAddMatchedCurlyBraces());
-    m_checkBoxAutoCompleteParen->SetValue(options->GetAutoAddMatchedNormalBraces());
-    m_checkBoxEditSmartParenthesis->SetValue(options->IsSmartParen());
-    m_checkBoxSmartQuotes->SetValue(options->GetAutoCompleteDoubleQuotes());
-    m_checkBoxCopyEntireLine->SetValue(options->GetCopyLineEmptySelection());
-    m_checkBoxWrapWithBrackets->SetValue(options->IsWrapSelectionBrackets());
-    m_checkBoxWrapWithQuotes->SetValue(options->IsWrapSelectionWithQuotes());
-    m_checkBoxEnableMouseZoom->SetValue(options->IsMouseZoomEnabled());
-    m_checkBoxIdentLineComments->SetValue(options->GetIndentedComments());
-    m_checkBoxDisableSemicolonShift->SetValue(options->GetDisableSemicolonShift());
+    AddHeader(_("Edit"));
+    AddProperty(_("Smart curly brackets"), m_options->GetAutoAddMatchedCurlyBraces(),
+                UPDATE_BOOL_CB(SetAutoAddMatchedCurlyBraces));
+    AddProperty(_("Smart square brackets and parentheses"), m_options->GetAutoAddMatchedNormalBraces(),
+                UPDATE_BOOL_CB(SetAutoAddMatchedNormalBraces));
+    AddProperty(_("Auto complete closing bracket and parentheses"), m_options->IsSmartParen(),
+                UPDATE_BOOL_CB(SetSmartParen));
+    AddProperty(_("Smart quotes"), m_options->GetAutoCompleteDoubleQuotes(),
+                UPDATE_BOOL_CB(SetAutoCompleteDoubleQuotes));
+    AddProperty(_("Copying empty selection copies caret line"), m_options->GetCopyLineEmptySelection(),
+                UPDATE_BOOL_CB(SetCopyLineEmptySelection));
+    AddProperty(_("Disable semicolon shift"), m_options->GetDisableSemicolonShift(),
+                UPDATE_BOOL_CB(SetDisableSemicolonShift));
+
+    AddHeader(_("Typing in Selection"));
+    AddProperty(_("Wrap with quotes"), m_options->IsWrapSelectionWithQuotes(),
+                UPDATE_BOOL_CB(SetWrapSelectionWithQuotes));
+    AddProperty(_("Wrap with brackets"), m_options->IsWrapSelectionBrackets(),
+                UPDATE_BOOL_CB(SetWrapSelectionBrackets));
+
+    AddHeader(_("Other"));
+    AddProperty(_("Enable zoom with mouse scroll"), m_options->IsMouseZoomEnabled(),
+                UPDATE_BOOL_CB(SetMouseZoomEnabled));
+    AddProperty(_("Indent line comments"), m_options->GetIndentedComments(), UPDATE_BOOL_CB(SetIndentedComments));
 }
 
 EditorOptionsGeneralEdit::~EditorOptionsGeneralEdit() {}
-
-void EditorOptionsGeneralEdit::Save(OptionsConfigPtr options)
-{
-    options->SetAutoAddMatchedCurlyBraces(m_checkBoxEditSmartCurlyBrackets->IsChecked());
-    options->SetAutoAddMatchedNormalBraces(m_checkBoxAutoCompleteParen->IsChecked());
-    options->SetSmartParen(m_checkBoxEditSmartParenthesis->IsChecked());
-    options->SetAutoCompleteDoubleQuotes(m_checkBoxSmartQuotes->IsChecked());
-    options->SetCopyLineEmptySelection(m_checkBoxCopyEntireLine->IsChecked());
-    options->SetWrapSelectionBrackets(m_checkBoxWrapWithBrackets->IsChecked());
-    options->SetWrapSelectionWithQuotes(m_checkBoxWrapWithQuotes->IsChecked());
-    options->SetMouseZoomEnabled(m_checkBoxEnableMouseZoom->IsChecked());
-    options->SetIndentedComments(m_checkBoxIdentLineComments->IsChecked());
-    options->SetDisableSemicolonShift(m_checkBoxDisableSemicolonShift->IsChecked());
-}

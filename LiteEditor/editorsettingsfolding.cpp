@@ -23,50 +23,29 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "globals.h"
 #include "editorsettingsfolding.h"
 
-EditorSettingsFolding::EditorSettingsFolding(wxWindow* parent)
-    : EditorSettingsFoldingBase(parent)
-    , TreeBookNode<EditorSettingsFolding>()
+#include "globals.h"
+
+EditorSettingsFolding::EditorSettingsFolding(wxWindow* parent, OptionsConfigPtr options)
+    : OptionsConfigPage(parent, options)
 {
-    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    m_displayMargin->SetValue(options->GetDisplayFoldMargin());
-    m_underlineFolded->SetValue(options->GetUnderlineFoldLine());
-    m_foldPreprocessors->SetValue(options->GetFoldPreprocessor());
-    m_foldCompact->SetValue(options->GetFoldCompact());
-    m_foldElse->SetValue(options->GetFoldAtElse());
-    m_checkBoxHighlightFolding->SetValue(options->IsHighlightFoldWhenActive());
-    
-    const wxString FoldStyles[] = { wxTRANSLATE("Simple"),
-                                    wxTRANSLATE("Arrows"),
-                                    wxTRANSLATE("Flatten Tree Square Headers"),
-                                    wxTRANSLATE("Flatten Tree Circular Headers") };
+    const vector<wxString> fold_styles = { wxT("Simple"), wxT("Arrows"), wxT("Flatten Tree Square Headers"),
+                                           wxT("Flatten Tree Circular Headers") };
 
-    m_stringManager.AddStrings(sizeof(FoldStyles) / sizeof(wxString), FoldStyles, options->GetFoldStyle(), m_foldStyle);
+    AddHeader(_("Folding"));
+    AddProperty(_("Show folding margin"), m_options->GetDisplayFoldMargin(), UPDATE_BOOL_CB(SetDisplayFoldMargin));
+    AddProperty(_("Appearance"), fold_styles, m_options->GetFoldStyle(), [&](const wxString&, const wxAny& value) {
+        wxString value_str;
+        if(value.GetAs(&value_str)) {
+            m_options->SetFoldStyle(value_str);
+        }
+    });
+    AddHeader(_("Folding options"));
+    AddProperty(_("Underline folded line"), m_options->GetUnderlineFoldLine(), UPDATE_BOOL_CB(SetUnderlineFoldLine));
+    AddProperty(_("Fold `else` blocks"), m_options->GetFoldAtElse(), UPDATE_BOOL_CB(SetFoldAtElse));
+    AddProperty(_("Fold pre-processor blocks"), m_options->GetFoldPreprocessor(), UPDATE_BOOL_CB(SetFoldPreprocessor));
+    AddProperty(_("Fold compact"), m_options->GetFoldCompact(), UPDATE_BOOL_CB(SetFoldCompact));
+    AddProperty(_("Highlight active fold block"), m_options->IsHighlightFoldWhenActive(),
+                UPDATE_BOOL_CB(SetHighlightFoldWhenActive));
 }
-
-void EditorSettingsFolding::Save(OptionsConfigPtr options)
-{
-    options->SetDisplayFoldMargin(m_displayMargin->GetValue());
-    options->SetUnderlineFoldLine(m_underlineFolded->GetValue());
-    options->SetFoldPreprocessor(m_foldPreprocessors->GetValue());
-    options->SetFoldCompact(m_foldCompact->GetValue());
-    options->SetFoldAtElse(m_foldElse->GetValue());
-    options->SetHighlightFoldWhenActive(m_checkBoxHighlightFolding->IsChecked());
-    
-    // Get the foldstyle selection, unlocalised
-    wxString foldStyle = m_stringManager.GetStringSelection();
-
-    // thses 2 styles no longer exists...
-    if(foldStyle == _("Arrows with Background Colour") || foldStyle == _("Simple with Background Colour"))
-        foldStyle.Clear();
-
-    if(foldStyle.IsEmpty()) {
-        foldStyle = wxT("Arrows");
-    }
-
-    options->SetFoldStyle(foldStyle);
-}
-
-void EditorSettingsFolding::OnFoldingMarginUI(wxUpdateUIEvent& event) { event.Enable(m_displayMargin->IsChecked()); }

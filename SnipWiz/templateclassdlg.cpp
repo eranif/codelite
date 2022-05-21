@@ -23,22 +23,24 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "templateclassdlg.h"
+
 #include "ColoursAndFontsManager.h"
 #include "VirtualDirectorySelectorDlg.h"
 #include "editor_config.h"
+#include "event_notifier.h"
 #include "imanager.h"
 #include "project.h"
 #include "snipwiz.h"
 #include "swGlobals.h"
 #include "swStringDb.h"
-#include "templateclassdlg.h"
 #include "workspace.h"
+
 #include <wx/dirdlg.h>
 #include <wx/filefn.h>
 #include <wx/msgdlg.h>
 #include <wx/textbuf.h>
 #include <wx/textfile.h>
-#include "event_notifier.h"
 
 static const wxString swHeader = wxT("header");
 static const wxString swSource = wxT("source");
@@ -186,10 +188,10 @@ void TemplateClassDlg::OnGenerate(wxCommandEvent& event)
         msg << wxString::Format(wxT("%s%s"), files.Item(0), eol[m_curEol])
             << wxString::Format(wxT("%s%s%s"), files.Item(1), eol[m_curEol], eol[m_curEol])
             << _("Files successfully created.");
+
         // We have a .cpp and an .h file, and there may well be a :src and an :include folder available
         // So try to place the files appropriately. If that fails, dump both in the selected folder
-
-        bool smartAddFiles = EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles;
+        bool smartAddFiles = true;
 
         if((smartAddFiles && m_pManager->AddFilesToVirtualFolderIntelligently(m_textCtrlVD->GetValue(), files)) ||
            m_pManager->AddFilesToVirtualFolder(m_textCtrlVD->GetValue(), files)) {

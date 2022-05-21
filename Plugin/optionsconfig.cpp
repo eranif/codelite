@@ -81,9 +81,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     , m_foldCompact(false)
     , m_foldAtElse(false)
     , m_foldPreprocessor(false)
-    , m_edgeMode(0 /*wxSCI_EDGE_NONE*/)
-    , m_edgeColumn(120)
-    , m_edgeColour(wxColour(wxT("LIGHT GREY")))
     , m_highlightMatchedBraces(true)
     , m_foldBgColour(wxColour(240, 240, 240))
     , m_autoAdjustHScrollBarWidth(false)
@@ -171,9 +168,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_foldCompact = XmlUtils::ReadBool(node, wxT("FoldCompact"), m_foldCompact);
         m_foldAtElse = XmlUtils::ReadBool(node, wxT("FoldAtElse"), m_foldAtElse);
         m_foldPreprocessor = XmlUtils::ReadBool(node, wxT("FoldPreprocessor"), m_foldPreprocessor);
-        m_edgeMode = XmlUtils::ReadLong(node, wxT("EdgeMode"), m_edgeMode);
-        m_edgeColumn = XmlUtils::ReadLong(node, wxT("EdgeColumn"), m_edgeColumn);
-        m_edgeColour = XmlUtils::ReadString(node, wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
         m_highlightMatchedBraces = XmlUtils::ReadBool(node, wxT("HighlightMatchedBraces"), m_highlightMatchedBraces);
         m_foldBgColour = XmlUtils::ReadString(node, wxT("FoldBgColour"), m_foldBgColour.GetAsString(wxC2S_HTML_SYNTAX));
         m_autoAdjustHScrollBarWidth =
@@ -182,6 +176,9 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_caretWidth = XmlUtils::ReadLong(node, wxT("CaretWidth"), m_caretWidth);
         m_copyLineEmptySelection = XmlUtils::ReadBool(node, wxT("CopyLineEmptySelection"), m_copyLineEmptySelection);
         m_smartParen = XmlUtils::ReadBool(node, wxT("SmartParen"), m_smartParen);
+        m_showRightMarginIndicator = XmlUtils::ReadBool(node, wxT("ShowRightMargin"), m_showRightMarginIndicator);
+        m_rightMarginColumn = XmlUtils::ReadLong(node, wxT("RightMarginnColumn"), m_rightMarginColumn);
+
         m_programConsoleCommand = XmlUtils::ReadString(node, wxT("ConsoleCommand"), m_programConsoleCommand);
         m_eolMode = XmlUtils::ReadString(node, wxT("EOLMode"), m_eolMode);
         m_trackEditorChanges = XmlUtils::ReadBool(node, wxT("TrackEditorChanges"));
@@ -332,6 +329,8 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddProperty(wxT("IndentedComments"), BoolToString(m_indentedComments));
     n->AddProperty(wxT("CopyLineEmptySelection"), BoolToString(m_copyLineEmptySelection));
     n->AddProperty(wxT("SmartParen"), BoolToString(m_smartParen));
+    n->AddProperty(wxT("ShowRightMargin"), BoolToString(m_showRightMarginIndicator));
+    n->AddProperty(wxT("RightMarginnColumn"), wxString() << m_rightMarginColumn);
 
     wxString tmp;
     tmp << m_indentWidth;
@@ -348,16 +347,6 @@ wxXmlNode* OptionsConfig::ToXml() const
     tmp.clear();
     tmp << m_showWhitspaces;
     n->AddProperty(wxT("ShowWhitespaces"), tmp);
-
-    tmp.clear();
-    tmp << m_edgeMode;
-    n->AddProperty(wxT("EdgeMode"), tmp);
-
-    tmp.clear();
-    tmp << m_edgeColumn;
-    n->AddProperty(wxT("EdgeColumn"), tmp);
-
-    n->AddProperty(wxT("EdgeColour"), m_edgeColour.GetAsString(wxC2S_HTML_SYNTAX));
 
     tmp.clear();
     tmp << m_caretWidth;

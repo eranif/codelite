@@ -29,12 +29,10 @@
 #include "EditorOptionsGeneralGuidesPanel.h"
 #include "clTabRendererMinimal.hpp"
 #include "editoroptionsgeneralindentationpanel.h"
-#include "editoroptionsgeneralrightmarginpanel.h"
 #include "editoroptionsgeneralsavepanel.h"
 #include "editorsettingsbookmarkspanel.h"
 #include "editorsettingscaret.h"
 #include "editorsettingscomments.h"
-#include "editorsettingscommentsdoxygenpanel.h"
 #include "editorsettingsdockingwidows.h"
 #include "editorsettingsfolding.h"
 #include "editorsettingsmiscpanel.h"
@@ -52,8 +50,6 @@
 
 PreferencesDialog::PreferencesDialog(wxWindow* parent)
     : OptionsBaseDlg2(parent)
-    , m_contentObjects()
-    , restartRquired(false)
 {
     Initialize();
 }
@@ -72,24 +68,7 @@ void PreferencesDialog::OnButtonApply(wxCommandEvent&) { DoSave(); }
 
 void PreferencesDialog::DoSave()
 {
-    // construct an OptionsConfig object and update the configuration
-    OptionsConfigPtr options(new OptionsConfig(NULL));
-
-    // for performance reasons, we start a transaction for the configuration
-    // file
-    EditorConfigST::Get()->Begin();
-    for(auto it = m_contentObjects.begin(), end = m_contentObjects.end(); it != end; ++it) {
-        if(*it) {
-            TreeBookNodeBase* child = *it;
-            child->Save(options);
-
-            if(!this->restartRquired) {
-                this->restartRquired = child->IsRestartRequired();
-            }
-        }
-    }
-
-    EditorConfigST::Get()->SetOptions(options);
+    EditorConfigST::Get()->SetOptions(m_options);
 
     // save the modifications to the disk
     EditorConfigST::Get()->Save();
@@ -100,19 +79,18 @@ void PreferencesDialog::DoSave()
 
 void PreferencesDialog::Initialize()
 {
-    AddPage(new EditorOptionsGeneralGuidesPanel(m_treeBook), _("Guides"), true);
-    AddPage(new EditorOptionsGeneralEdit(m_treeBook), _("Edit"), false);
-    AddPage(new EditorOptionsGeneralIndentationPanel(m_treeBook), _("Indentation"));
-    AddPage(new EditorOptionsGeneralRightMarginPanel(m_treeBook), _("Right Margin"));
-    AddPage(new EditorSettingsCaret(m_treeBook), _("Caret / Scrolling"));
-    AddPage(new EditorOptionsGeneralSavePanel(m_treeBook), _("Save Options"));
-    AddPage(new EditorSettingsComments(m_treeBook), _("Code"));
-    AddPage(new EditorSettingsCommentsDoxygenPanel(m_treeBook), _("Documentation"));
-    AddPage(new EditorSettingsFolding(m_treeBook), _("Folding"));
-    AddPage(new EditorSettingsBookmarksPanel(m_treeBook), _("Bookmarks"));
-    AddPage(new EditorSettingsDockingWindows(m_treeBook), _("Windows / Tabs"));
-    AddPage(new EditorSettingsTerminal(m_treeBook), _("Terminal"));
-    AddPage(new EditorSettingsMiscPanel(m_treeBook), _("Misc"));
-    SetMinSize(wxSize(500, 300));
-    clSetDialogBestSizeAndPosition(this);
+    m_options = EditorConfigST::Get()->GetOptions();
+
+    AddPage(new EditorOptionsGeneralGuidesPanel(m_treeBook, m_options), _("Guides"), true);
+    AddPage(new EditorOptionsGeneralEdit(m_treeBook, m_options), _("Edit"), false);
+    AddPage(new EditorOptionsGeneralIndentationPanel(m_treeBook, m_options), _("Indentation"));
+    AddPage(new EditorSettingsCaret(m_treeBook, m_options), _("Caret / Scrolling"));
+    AddPage(new EditorOptionsGeneralSavePanel(m_treeBook, m_options), _("Save Options"));
+    AddPage(new EditorSettingsComments(m_treeBook, m_options), _("Code"));
+    AddPage(new EditorSettingsFolding(m_treeBook, m_options), _("Folding"));
+    AddPage(new EditorSettingsDockingWindows(m_treeBook, m_options), _("Tabs"));
+    AddPage(new EditorSettingsBookmarksPanel(m_treeBook, m_options), _("Bookmarks"));
+    AddPage(new EditorSettingsTerminal(m_treeBook, m_options), _("Terminal"));
+    AddPage(new EditorSettingsMiscPanel(m_treeBook, m_options), _("Misc"));
+    clSetSmallDialogBestSizeAndPosition(this);
 }

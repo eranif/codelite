@@ -107,9 +107,6 @@ protected:
     bool m_foldCompact;
     bool m_foldAtElse;
     bool m_foldPreprocessor;
-    int m_edgeMode;
-    int m_edgeColumn;
-    wxColour m_edgeColour;
     bool m_highlightMatchedBraces;
     wxColour m_foldBgColour;
     bool m_autoAdjustHScrollBarWidth;
@@ -162,6 +159,8 @@ protected:
     wxString m_webSearchPrefix;
     bool m_smartParen = true;
     bool m_lineNumberHighlightCurrent = true;
+    bool m_showRightMarginIndicator = false;
+    int m_rightMarginColumn = 120;
 
 public:
     // Helpers
@@ -406,14 +405,13 @@ public:
     void SetFoldPreprocessor(const bool& foldPreprocessor) { this->m_foldPreprocessor = foldPreprocessor; }
     const bool& GetFoldPreprocessor() const { return m_foldPreprocessor; }
 
-    void SetEdgeColour(const wxColour& edgeColour) { this->m_edgeColour = edgeColour; }
-    void SetEdgeColumn(int edgeColumn) { this->m_edgeColumn = edgeColumn; }
-    void SetEdgeMode(int edgeMode) { this->m_edgeMode = edgeMode; }
-
-    const wxColour& GetEdgeColour() const { return m_edgeColour; }
-    int GetEdgeColumn() const { return m_edgeColumn; }
-    int GetEdgeMode() const { return m_edgeMode; }
-
+    void SetShowRightMarginIndicator(bool showRightMarginIndicator)
+    {
+        this->m_showRightMarginIndicator = showRightMarginIndicator;
+    }
+    void SetRightMarginColumn(int rightMarginColumn) { this->m_rightMarginColumn = rightMarginColumn; }
+    bool IsShowRightMarginIndicator() const { return m_showRightMarginIndicator; }
+    int GetRightMarginColumn() const { return m_rightMarginColumn; }
     void SetHighlightMatchedBraces(const bool& highlightMatchedBraces)
     {
         this->m_highlightMatchedBraces = highlightMatchedBraces;

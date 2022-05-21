@@ -24,56 +24,79 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "editorsettingscomments.h"
+
 #include "commentconfigdata.h"
 
-EditorSettingsComments::EditorSettingsComments( wxWindow* parent )
-    : EditorSettingsCommentsBase( parent )
-    , TreeBookNode<EditorSettingsComments>()
+EditorSettingsComments::EditorSettingsComments(wxWindow* parent, OptionsConfigPtr options)
+    : OptionsConfigPage(parent, options)
 {
-    CommentConfigData data;
-    EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+    EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &m_data);
 
-    m_checkBoxContCComment->SetValue( data.GetAddStarOnCComment() );
-    m_checkBoxContinueCppComment->SetValue( data.GetContinueCppComment() );
-    m_checkBoxSmartAddFiles->SetValue( EditorConfigST::Get()->GetOptions()->GetOptions() & OptionsConfig::Opt_SmartAddFiles );
-    
-    size_t flags = EditorConfigST::Get()->GetOptions()->GetOptions();
-    
-    if ( !(flags & (OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control)) ) {
-        flags = OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control; // force the least-instrusive meta key default
+    AddHeader(_("Comments"));
+    AddProperty(_("Hitting ENTER in C comment, adds `*`"), m_data.GetAddStarOnCComment(),
+                [this](const wxString& label, const wxAny& value) mutable {
+                    bool value_bool;
+                    if(value.GetAs(&value_bool)) {
+                        m_data.SetAddStarOnCComment(value_bool);
+                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+                    }
+                });
+
+    AddProperty(_("Hitting ENTER in C++ comment, adds `//`"), m_data.GetContinueCppComment(),
+                [this](const wxString& label, const wxAny& value) mutable {
+                    bool value_bool;
+                    if(value.GetAs(&value_bool)) {
+                        m_data.SetContinueCppComment(value_bool);
+                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+                    }
+                });
+
+    AddHeader(_("Code navigation shortcut is: Mouse left button and:"));
+    size_t flags = m_options->GetOptions();
+    if(!(flags & (OptionsConfig::Opt_NavKey_Alt | OptionsConfig::Opt_NavKey_Control))) {
+        flags = OptionsConfig::Opt_NavKey_Alt |
+                OptionsConfig::Opt_NavKey_Control; // force the least-instrusive meta key default
     }
-    
-    m_checkBoxAlt->SetValue( flags & OptionsConfig::Opt_NavKey_Alt );
-    m_checkBoxCtrl->SetValue( flags & OptionsConfig::Opt_NavKey_Control );
-}
 
-void EditorSettingsComments::Save(OptionsConfigPtr options)
-{
-    CommentConfigData data;
-    EditorConfigST::Get()->ReadObject(wxT("CommentConfigData"), &data);
+    bool use_alt = flags & OptionsConfig::Opt_NavKey_Alt;
+    bool use_ctrl = flags & OptionsConfig::Opt_NavKey_Control;
+    AddProperty(_("Control Key"), use_ctrl, UPDATE_OPTION_CB(Opt_NavKey_Control));
+    AddProperty(_("Alt Key"), use_alt, UPDATE_OPTION_CB(Opt_NavKey_Alt));
 
-    data.SetAddStarOnCComment(m_checkBoxContCComment->IsChecked());
-    data.SetContinueCppComment(m_checkBoxContinueCppComment->IsChecked());
+    AddHeader(_("Generated doc comments"));
+    AddProperty(_("Class template"), m_data.GetClassPattern(),
+                [this](const wxString& label, const wxAny& value) mutable {
+                    wxString value_str;
+                    if(value.GetAs(&value_str)) {
+                        m_data.SetClassPattern(value_str);
+                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+                    }
+                });
 
-    EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &data);
-    size_t flags = options->GetOptions();
-    if( m_checkBoxSmartAddFiles->IsChecked() )
-        flags |= OptionsConfig::Opt_SmartAddFiles;
-    else
-        flags &= ~OptionsConfig::Opt_SmartAddFiles;
-    
-    // clear the navigation key code
-    flags &= ~(OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control|OptionsConfig::Opt_NavKey_Shift);
-   
-    if( m_checkBoxCtrl->IsChecked() )
-        flags |= OptionsConfig::Opt_NavKey_Control;
-        
-    if( m_checkBoxAlt->IsChecked() )
-        flags |= OptionsConfig::Opt_NavKey_Alt;
-    
-    if ( !(flags & (OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control)) ) {
-        flags |= OptionsConfig::Opt_NavKey_Alt|OptionsConfig::Opt_NavKey_Control; // force the least-instrusive meta key default
-    }
-    
-    options->SetOptions(flags);
+    AddProperty(_("Function template"), m_data.GetFunctionPattern(),
+                [this](const wxString& label, const wxAny& value) mutable {
+                    wxString value_str;
+                    if(value.GetAs(&value_str)) {
+                        m_data.SetFunctionPattern(value_str);
+                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+                    }
+                });
+
+    AddProperty(_("Auto generate on ENTER"), m_data.IsAutoInsert(),
+                [this](const wxString& label, const wxAny& value) mutable {
+                    bool value_bool;
+                    if(value.GetAs(&value_bool)) {
+                        m_data.SetAutoInsert(value_bool);
+                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+                    }
+                });
+
+    AddProperty(_("Use Qt style docs"), m_data.IsUseQtStyle(),
+                [this](const wxString& label, const wxAny& value) mutable {
+                    bool value_bool;
+                    if(value.GetAs(&value_bool)) {
+                        m_data.SetUseQtStyle(value_bool);
+                        EditorConfigST::Get()->WriteObject(wxT("CommentConfigData"), &m_data);
+                    }
+                });
 }

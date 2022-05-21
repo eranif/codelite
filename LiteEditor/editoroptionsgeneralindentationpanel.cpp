@@ -24,23 +24,16 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "editoroptionsgeneralindentationpanel.h"
+
 #include "globals.h"
 
-EditorOptionsGeneralIndentationPanel::EditorOptionsGeneralIndentationPanel( wxWindow* parent )
-    : EditorOptionsGeneralIndetationPanelBase( parent )
-    , TreeBookNode<EditorOptionsGeneralIndentationPanel>()
+EditorOptionsGeneralIndentationPanel::EditorOptionsGeneralIndentationPanel(wxWindow* parent, OptionsConfigPtr options)
+    : OptionsConfigPage(parent, options)
 {
-    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    m_checkBoxDisableSmartIdent->SetValue(options->GetDisableSmartIndent());
-    m_indentsUsesTabs->SetValue(options->GetIndentUsesTabs());
-    m_indentWidth->SetValue( ::wxIntToString(options->GetIndentWidth()) ) ;
-    m_tabWidth->SetValue( ::wxIntToString(options->GetTabWidth()));
-}
-
-void EditorOptionsGeneralIndentationPanel::Save(OptionsConfigPtr options)
-{
-    options->SetIndentUsesTabs(m_indentsUsesTabs->IsChecked());
-    options->SetIndentWidth( ::wxStringToInt(m_indentWidth->GetValue(), 4, 1, 20) );
-    options->SetTabWidth( ::wxStringToInt(m_tabWidth->GetValue(), 4, 1, 20) );
-    options->SetDisableSmartIndent(m_checkBoxDisableSmartIdent->IsChecked());
+    AddHeader(_("Indentation settings"));
+    AddProperty(_("Disable Smart Indentation"), m_options->GetDisableSmartIndent(),
+                UPDATE_BOOL_CB(SetDisableSmartIndent));
+    AddProperty(_("Use tabs"), m_options->GetIndentUsesTabs(), UPDATE_BOOL_CB(SetIndentUsesTabs));
+    AddProperty(_("Columns per indentation level"), m_options->GetIndentWidth(), UPDATE_INT_CB(SetIndentWidth));
+    AddProperty(_("Tab width"), m_options->GetTabWidth(), UPDATE_INT_CB(SetTabWidth));
 }

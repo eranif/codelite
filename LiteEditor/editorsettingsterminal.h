@@ -26,16 +26,13 @@
 #ifndef __editorsettingsterminal__
 #define __editorsettingsterminal__
 
-#include "editorsettings_terminal_base.h"
-#include "treebooknodebase.h"
+#include "OptionsConfigPage.hpp"
 
-/** Implementing EditorSettingsTerminalBase */
-class EditorSettingsTerminal : public EditorSettingsTerminalBase, public TreeBookNode<EditorSettingsTerminal>
+class EditorSettingsTerminal : public OptionsConfigPage
 {
 public:
-    /** Constructor */
-    EditorSettingsTerminal(wxWindow* parent);
-    void Save(OptionsConfigPtr options);
+    EditorSettingsTerminal(wxWindow* parent, OptionsConfigPtr options);
+    virtual ~EditorSettingsTerminal() {}
 };
 
 #endif // __editorsettingsterminal__

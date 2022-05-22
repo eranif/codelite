@@ -32,6 +32,7 @@ clPropertiesPage::clPropertiesPage(wxWindow* parent, wxWindowID id)
     m_view->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &clPropertiesPage::OnValueChanged, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clPropertiesPage::OnInitDone, this);
     GetSizer()->Layout();
+    Begin();
 }
 
 clPropertiesPage::~clPropertiesPage()
@@ -458,3 +459,7 @@ void clPropertiesPage::NotifyChange(size_t line)
         line_data->callback(m_view->GetItemText(m_view->RowToItem(line)), line_data->value);
     }
 }
+
+void clPropertiesPage::Finalize() { m_view->Commit(); }
+
+void clPropertiesPage::Begin() { m_view->Begin(); }

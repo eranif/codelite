@@ -92,5 +92,11 @@ void PreferencesDialog::Initialize()
     AddPage(new EditorSettingsBookmarksPanel(m_treeBook, m_options), _("Bookmarks"));
     AddPage(new EditorSettingsTerminal(m_treeBook, m_options), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook, m_options), _("Misc"));
+    for(size_t i = 0; i < m_treeBook->GetPageCount(); ++i) {
+        OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_treeBook->GetPage(i));
+        if(p) {
+            p->Finalize();
+        }
+    }
     clSetSmallDialogBestSizeAndPosition(this);
 }

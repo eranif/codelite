@@ -126,6 +126,16 @@ public:
 
     bool IsModified() const { return m_isModified; }
     void ClearModified();
+
+    /**
+     * @brief call this method to tell the control what we are done adding items
+     */
+    void Finalize();
+    /**
+     * @brief tell the control that we are about to add multiple items, so avoid un-needed drawings
+     * once done, call `Finalize`
+     */
+    void Begin();
 };
 
 #endif // CLPROPERTIESPAGE_HPP

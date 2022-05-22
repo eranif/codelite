@@ -204,11 +204,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
                 dollar_paren_depth--; // reduce the depth
                 // if the depth reached 0, we should leave this state
                 if(dollar_paren_depth == 0) {
-                    // check if the expression is of type `$(shell ...)` or just
-                    // a variable defined like `$(VariableName)`
-                    if(curstr.StartsWith("$(shell ")) {
-                        PUSH_CURTOKEN();
-                    }
+                    // leave the state
                     pop_state(states);
                 }
                 break;

@@ -88,7 +88,14 @@ void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const wxStri
     wxFont orig_font = dc.GetFont();
     wxColour orig_colour = dc.GetTextForeground();
     dc.SetFont(clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+#ifdef __WXMSW__
+    dc.SetTextForeground(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+#else
     dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+#endif
+
     wxRendererNative::Get().DrawPushButton(win, dc, button_rect, 0);
 
     if(!symbol.empty()) {

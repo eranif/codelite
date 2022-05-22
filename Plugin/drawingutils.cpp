@@ -882,11 +882,11 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     wxRendererNative::Get().DrawPushButton(win, dc, right_rect, 0);
 
     wxRect label_rect = right_rect;
-    label_rect.Deflate(2);
+    label_rect.Deflate(3);
 
     label_rect = label_rect.CenterIn(right_rect);
     dc.SetPen(wxPen(c.GetDarkBorderColour(), 1));
     dc.SetBrush(pickerColour.IsOk() ? pickerColour : *wxBLACK);
-    dc.DrawRoundedRectangle(label_rect, 2.0);
+    dc.DrawRoundedRectangle(label_rect, 0.0);
     return right_rect;
 }

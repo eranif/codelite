@@ -133,15 +133,14 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
 int EditorSettingsMiscPanel::FindAvailableLocales(wxArrayString* locales)
 {
     const wxArrayString& cached_locales = clLocaleManager::get().GetCachedLocales();
-    const wxArrayString& cached_locales_canonical_names = clLocaleManager::get().GetCachedLocalesCanonicalName();
     int system_default_locale = clLocaleManager::get().GetSystemDefaultLocale();
     wxString preffered_locale = m_options->GetPreferredLocale();
 
     int select = wxNOT_FOUND;
     // find the selection
-    for(int i = 0; i < cached_locales.size(); ++i) {
+    for(size_t i = 0; i < cached_locales.size(); ++i) {
         if(cached_locales[i] == preffered_locale) {
-            select = i;
+            select = static_cast<int>(i);
             break;
         }
     }

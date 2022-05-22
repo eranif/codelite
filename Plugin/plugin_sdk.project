@@ -202,6 +202,8 @@
     <Topleveldir>/src/codelite/Plugin</Topleveldir>
   </Reconciliation>
   <VirtualDirectory Name="src">
+    <File Name="clLocaleManager.hpp"/>
+    <File Name="clLocaleManager.cpp"/>
     <File Name="DefaultLexerJSON.cpp"/>
     <File Name="clCodeLiteRemoteProcess.hpp"/>
     <File Name="clCodeLiteRemoteProcess.cpp"/>

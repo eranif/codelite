@@ -32,6 +32,7 @@
 
 class EditorSettingsMiscPanel : public OptionsConfigPage
 {
+private:
     int FindAvailableLocales(wxArrayString* locales);
 
 public:

@@ -79,6 +79,7 @@ void PreferencesDialog::DoSave()
 
 void PreferencesDialog::Initialize()
 {
+    Freeze();
     m_options = EditorConfigST::Get()->GetOptions();
 
     AddPage(new EditorOptionsGeneralGuidesPanel(m_treeBook, m_options), _("Guides"), true);
@@ -98,5 +99,6 @@ void PreferencesDialog::Initialize()
             p->Finalize();
         }
     }
+    Thaw();
     clSetSmallDialogBestSizeAndPosition(this);
 }

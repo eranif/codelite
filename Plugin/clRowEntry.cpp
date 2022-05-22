@@ -642,8 +642,9 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             button_rect.Deflate(1);
 
             // Draw a button with the unicode symbol in it
-            DrawButton(win, dc, button_rect, colours, cell.GetButtonUnicodeSymbol());
-
+            if(IsSelected()) {
+                DrawButton(win, dc, button_rect, colours, cell.GetButtonUnicodeSymbol());
+            }
             // Keep the rect to test clicks
             cell.SetButtonRect(button_rect);
             textXOffset += button_rect.GetWidth();

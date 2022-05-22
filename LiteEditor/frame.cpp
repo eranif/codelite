@@ -55,6 +55,7 @@
 #include "clFileSystemWorkspace.hpp"
 #include "clGotoAnythingManager.h"
 #include "clInfoBar.h"
+#include "clLocaleManager.hpp"
 #include "clMainFrameHelper.h"
 #include "clSingleChoiceDialog.h"
 #include "clThemedMenuBar.hpp"
@@ -3377,6 +3378,9 @@ void clMainFrame::CompleteInitialization()
 {
     // create indexer to be used by TagsManager
     TagsManagerST::Get()->SetIndexerPath(clStandardPaths::Get().GetBinaryFullPath("codelite_indexer"));
+
+    // cache the locales
+    clLocaleManager::get().load();
 
 #ifdef __WXMSW__
     wxWindowUpdateLocker locker(this);

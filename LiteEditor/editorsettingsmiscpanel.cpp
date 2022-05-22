@@ -25,6 +25,7 @@
 
 #include "editorsettingsmiscpanel.h"
 
+#include "clLocaleManager.hpp"
 #include "cl_config.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
@@ -131,40 +132,21 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
 
 int EditorSettingsMiscPanel::FindAvailableLocales(wxArrayString* locales)
 {
-    wxArrayString canonicalNames;
-    int select(wxNOT_FOUND), sysdefault_sel(wxNOT_FOUND);
-    locales->clear();
-
+    const wxArrayString& cached_locales = clLocaleManager::get().GetCachedLocales();
+    const wxArrayString& cached_locales_canonical_names = clLocaleManager::get().GetCachedLocalesCanonicalName();
+    int system_default_locale = clLocaleManager::get().GetSystemDefaultLocale();
     wxString preffered_locale = m_options->GetPreferredLocale();
-    int system_lang = wxLocale::GetSystemLanguage();
-    if(system_lang == wxLANGUAGE_UNKNOWN) {
-        // Least-stupid fallback value
-        system_lang = wxLANGUAGE_ENGLISH_US;
-    }
 
-    for(int n = 0, lang = wxLANGUAGE_UNKNOWN + 1; lang < wxLANGUAGE_USER_DEFINED; ++lang) {
-        const wxLanguageInfo* info = wxLocale::GetLanguageInfo(lang);
-        // Check there *is* a Canonical name, as empty strings return a valid locale :/
-        if((info && !info->CanonicalName.IsEmpty()) && wxLocale::IsAvailable(lang)) {
-
-            // Check we haven't already seen this item: we may find the system default twice
-            if(canonicalNames.Index(info->CanonicalName) == wxNOT_FOUND) {
-                // Display the name as e.g. "en_GB: English (U.K.)"
-                locales->Add(info->CanonicalName + ": " + info->Description);
-                canonicalNames.Add(info->CanonicalName);
-
-                if(info->CanonicalName == preffered_locale) {
-                    // Use this as the selection in the wxChoice
-                    select = n;
-                }
-
-                if(lang == system_lang) {
-                    // Use this as the selection if preffered_locale isn't found
-                    sysdefault_sel = n;
-                }
-                ++n;
-            }
+    int select = wxNOT_FOUND;
+    // find the selection
+    for(int i = 0; i < cached_locales.size(); ++i) {
+        if(cached_locales[i] == preffered_locale) {
+            select = i;
+            break;
         }
     }
-    return (select != wxNOT_FOUND) ? select : sysdefault_sel;
+
+    locales->reserve(cached_locales.size());
+    locales->insert(locales->end(), cached_locales.begin(), cached_locales.end());
+    return (select != wxNOT_FOUND) ? select : system_default_locale;
 }

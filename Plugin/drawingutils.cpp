@@ -871,7 +871,6 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     wxRect left_rect(rect.GetX(), rect.GetY(), rect.GetWidth() - right_rect.GetWidth(), rect.GetHeight());
     right_rect.SetX(left_rect.GetRight());
 
-    wxUnusedVar(win);
     // draw the text
     wxString text = pickerColour.GetAsString(wxC2S_HTML_SYNTAX);
     wxRect text_rect = dc.GetTextExtent(text);
@@ -880,8 +879,14 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     dc.DrawText(text, text_rect.GetTopLeft());
 
     // draw the colour button
+    wxRendererNative::Get().DrawPushButton(win, dc, right_rect, 0);
+
+    wxRect label_rect = right_rect;
+    label_rect.Deflate(2);
+
+    label_rect = label_rect.CenterIn(right_rect);
     dc.SetPen(wxPen(c.GetDarkBorderColour(), 1));
     dc.SetBrush(pickerColour.IsOk() ? pickerColour : *wxBLACK);
-    dc.DrawRectangle(right_rect);
+    dc.DrawRoundedRectangle(label_rect, 2.0);
     return right_rect;
 }

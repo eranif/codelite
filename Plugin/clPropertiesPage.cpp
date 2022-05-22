@@ -248,7 +248,7 @@ void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
 
 void clPropertiesPage::ShowColourPicker(size_t line, const wxColour& colour)
 {
-    wxColour c = ::wxGetColourFromUser(this, colour);
+    wxColour c = ::wxGetColourFromUser(wxGetTopLevelParent(this), colour);
     if(!c.IsOk()) {
         return;
     }
@@ -298,7 +298,8 @@ void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
         default_ext = wxFileName(path).GetExt();
     }
 
-    wxString new_path = wxFileSelector(_("Choose a file"), default_path, default_name, default_ext);
+    wxString new_path = wxFileSelector(_("Choose a file"), default_path, default_name, default_ext, wxEmptyString, 0,
+                                       wxGetTopLevelParent(this));
     if(new_path.empty()) {
         return;
     }
@@ -316,7 +317,7 @@ void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
 
 void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
 {
-    wxString new_path = wxDirSelector(_("Choose a directory"), path);
+    wxString new_path = wxDirSelector(_("Choose a directory"), path, 0, wxDefaultPosition, wxGetTopLevelParent(this));
     if(new_path.empty()) {
         return;
     }
@@ -335,8 +336,8 @@ void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
 void clPropertiesPage::ShowNumberPicker(size_t line, long number)
 {
     wxString label = m_view->GetItemText(m_view->RowToItem(line));
-    wxNumberEntryDialog dlg(EventNotifier::Get()->TopFrame(), label, wxEmptyString, _("Choose a number"), number,
-                            -10000, 10000);
+    wxNumberEntryDialog dlg(wxGetTopLevelParent(this), label, wxEmptyString, _("Choose a number"), number, -10000,
+                            10000);
     if(dlg.ShowModal() != wxID_OK)
         return;
 

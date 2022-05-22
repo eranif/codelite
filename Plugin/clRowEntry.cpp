@@ -83,39 +83,26 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
     dc.DrawRectangle(rect);
 }
 
-void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clColours& colours, const wxString& symbol)
+void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const wxString& symbol)
 {
-    wxColour base_colour = colours.GetHeaderVBorderColour();
-    wxColour light_pen = base_colour.ChangeLightness(150);
-    wxColour dark_pen = base_colour.ChangeLightness(50);
-
     wxFont orig_font = dc.GetFont();
-
+    wxColour orig_colour = dc.GetTextForeground();
     dc.SetFont(clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-    dc.SetPen(base_colour);
-    dc.SetBrush(base_colour);
-    dc.DrawRectangle(button_rect);
+    dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+    wxRendererNative::Get().DrawPushButton(win, dc, button_rect, 0);
 
-    dc.SetPen(light_pen);
-    dc.DrawLine(button_rect.GetTopLeft(), button_rect.GetTopRight());
-    dc.DrawLine(button_rect.GetTopLeft(), button_rect.GetBottomLeft());
-
-    dc.SetPen(dark_pen);
-    dc.DrawLine(button_rect.GetBottomLeft(), button_rect.GetBottomRight());
-    dc.DrawLine(button_rect.GetBottomRight(), button_rect.GetTopRight());
-
-    // Draw an arrow
     if(!symbol.empty()) {
-        wxRect textRect{ { 0, 0 }, dc.GetTextExtent(symbol) };
-        textRect = textRect.CenterIn(button_rect);
-
-        dc.SetTextForeground(colours.GetItemTextColour());
-        dc.DrawText(symbol, textRect.GetTopLeft());
+        wxRect text_rect = dc.GetTextExtent(symbol);
+        text_rect = text_rect.CenterIn(button_rect);
+        dc.DrawText(symbol, text_rect.GetTopLeft());
     }
 
     // restore the font
     if(orig_font.IsOk()) {
         dc.SetFont(orig_font);
+    }
+    if(orig_colour.IsOk()) {
+        dc.SetTextForeground(orig_colour);
     }
 }
 } // namespace
@@ -639,11 +626,9 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             wxRect button_rect(cellRect.GetTopRight().x - rowRect.GetHeight(), rowRect.GetY(), rowRect.GetHeight(),
                                rowRect.GetHeight());
             button_rect = button_rect.CenterIn(rowRect, wxVERTICAL);
-            button_rect.Deflate(1);
-
             // Draw a button with the unicode symbol in it
             if(IsSelected()) {
-                DrawButton(win, dc, button_rect, colours, cell.GetButtonUnicodeSymbol());
+                DrawButton(win, dc, button_rect, cell.GetButtonUnicodeSymbol());
             }
             // Keep the rect to test clicks
             cell.SetButtonRect(button_rect);
@@ -653,7 +638,6 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 
         if(cell.IsColour()) {
             wxRect rr = cellRect;
-            rr.Deflate(2);
             rr = rr.CenterIn(cellRect);
             // since the method `DrawingUtils::DrawColourPicker` is not familiar with our spacing policy
             // move the drawing rectangle to the X_SPACER position

@@ -3,6 +3,7 @@
 #include "clCellValue.h"
 #include "clHeaderBar.h"
 #include "clHeaderItem.h"
+#include "clSystemSettings.h"
 #include "clTreeCtrl.h"
 #include "file_logger.h"
 

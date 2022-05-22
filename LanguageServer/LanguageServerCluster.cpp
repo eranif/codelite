@@ -153,7 +153,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
             entry.clientData = new SymbolClientData(loc);
         }
 
-        clSelectSymbolDialog dlg(nullptr, entries);
+        clSelectSymbolDialog dlg(EventNotifier::Get()->TopFrame(), entries);
         if(dlg.ShowModal() != wxID_OK) {
             return;
         }

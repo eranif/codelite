@@ -6388,16 +6388,9 @@ void clEditor::SetSemanticTokens(const wxString& classes, const wxString& variab
 
 int clEditor::GetColumnInChars(int pos)
 {
-    if(GetUseTabs()) {
-        int tab_width = GetTabWidth();
-        SetTabWidth(1);
-        int col = GetColumn(pos);
-        // restore the tab width
-        SetTabWidth(tab_width);
-        return col;
-    } else {
-        return GetColumn(pos);
-    }
+    int line = LineFromPosition(pos);
+    int line_start_pos = PositionFromLine(line);
+    return pos - line_start_pos;
 }
 
 void clEditor::SetZoomFactor(int zoom_factor)

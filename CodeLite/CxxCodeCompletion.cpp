@@ -1504,23 +1504,30 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
                                           const wxString& text, const vector<wxString>& visible_scopes,
                                           vector<TagEntryPtr>& matches)
 {
-    // ----------------------------------
-    // word completion
-    // ----------------------------------
     vector<TagEntryPtr> candidates;
-
-    // first check if we are on a line
-    clDEBUG() << "find_definition(): calling word_complete(): is called for expression:" << expression << endl;
-    word_complete(filepath, line, expression, text, visible_scopes, true, candidates);
-    if(candidates.empty() || (candidates.size() == 1 && (candidates[0]->GetLine() == wxNOT_FOUND))) {
-        clDEBUG() << "Unable to complete, checking on the current lcoation" << endl;
-        candidates.clear();
-        m_lookup->GetTagsByFileAndLine(filepath, line, candidates);
-        if(candidates.empty()) {
-            return 0;
+    // optimization:
+    // check if we are currently (file:line) on a function definition / declaration
+    vector<TagEntryPtr> tmp_candidates;
+    m_lookup->GetTagsByFileAndLine(filepath, line, tmp_candidates);
+    if((tmp_candidates.size() == 1) && (tmp_candidates[0]->GetName() == expression) &&
+       (tmp_candidates[0]->IsMethod())) {
+        // we found our tag, now
+        candidates.swap(tmp_candidates);
+    } else {
+        // first check if we are on a line
+        clDEBUG() << "find_definition(): calling word_complete(): is called for expression:" << expression << endl;
+        word_complete(filepath, line, expression, text, visible_scopes, true, candidates);
+        // filter all the tags
+        if(candidates.empty() || (candidates.size() == 1 && (candidates[0]->GetLine() == wxNOT_FOUND))) {
+            clDEBUG() << "Unable to complete, checking on the current lcoation" << endl;
+            candidates.clear();
+            m_lookup->GetTagsByFileAndLine(filepath, line, candidates);
+            if(candidates.empty()) {
+                return 0;
+            }
+            clDEBUG() << "find_definition(): on a tag:" << candidates[0]->GetFullDisplayName() << "."
+                      << candidates[0]->IsMethod() << endl;
         }
-        clDEBUG() << "find_definition(): on a tag:" << candidates[0]->GetFullDisplayName() << "."
-                  << candidates[0]->IsMethod() << endl;
     }
 
     // filter tags with no line numbers

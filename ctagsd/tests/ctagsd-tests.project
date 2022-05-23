@@ -4,6 +4,7 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <VirtualDirectory Name="samples">
+      <File Name="src/samples/namespace_precedence.hpp"/>
       <File Name="src/samples/anonymous_class.hpp"/>
       <File Name="src/samples/locals.hpp"/>
       <File Name="src/samples/my_dialog.hpp"/>

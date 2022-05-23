@@ -467,22 +467,10 @@ wxBitmap DrawingUtils::CreateDisabledBitmap(const wxBitmap& bmp)
 
 #define DROPDOWN_ARROW_SIZE 20
 
-void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, const wxBitmap& bmp,
-                              eButtonKind kind, eButtonState state)
+namespace
 {
-    // Draw the background
-    wxRect clientRect = rect;
-    dc.SetPen(GetPanelBgColour());
-    dc.SetBrush(GetPanelBgColour());
-    dc.DrawRectangle(clientRect);
-
-    // Now draw the border around this control
-    // clientRect.Deflate(2);
-
-    wxColour baseColour = GetButtonBgColour();
-    wxColour textColour = GetButtonTextColour();
-    wxColour penColour = baseColour.ChangeLightness(80);
-
+wxColour update_button_bg_colour(const wxColour& baseColour, eButtonState state)
+{
     int bgLightness = 0;
     switch(state) {
     case eButtonState::kHover:
@@ -500,73 +488,88 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
         bgLightness = 100;
         break;
     }
+    return baseColour.ChangeLightness(bgLightness);
+}
+} // namespace
 
-    wxRect downRect = rect;
-    downRect.SetHeight(rect.GetHeight() / 2);
-    downRect.SetY(rect.GetY() + (rect.GetHeight() / 2));
+void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, const wxBitmap& bmp,
+                              eButtonKind kind, eButtonState state)
+{
+    wxDCFontChanger font_changer(dc);
+    wxDCTextColourChanger text_changer(dc);
 
-    wxColour bgColour = baseColour.ChangeLightness(bgLightness);
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(bgColour);
+    // there are 3 rectangles involved when drawing buttons:
+    // - bitmap
+    // - text
+    // - drop down arrow
+    wxRect allocated_text_rect = rect;
+    wxRect allocated_bmp_rect;
+    wxRect allocated_dropdown_arrow_rect;
+
+    // Draw the background
+    wxRect clientRect = rect;
+
+    wxDCBrushChanger brush_changer(dc, GetPanelBgColour());
+    wxDCPenChanger pen_changer(dc, GetPanelBgColour().ChangeLightness(90));
     dc.DrawRectangle(clientRect);
 
-    dc.SetBrush(bgColour.ChangeLightness(96));
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.DrawRectangle(downRect);
+    // define the core 3 colours
+    wxColour baseColour = update_button_bg_colour(GetButtonBgColour(), state);
+    wxColour textColour = GetButtonTextColour();
+    wxColour penColour = baseColour.ChangeLightness(80);
 
-    dc.SetPen(penColour);
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawRectangle(clientRect);
+    dc.SetTextForeground(textColour);
 
-    clientRect.Deflate(1);
-    wxRect textRect, arrowRect;
-    textRect = clientRect;
     if(kind == eButtonKind::kDropDown) {
-        // we need to save space for the drop down arrow
-        int xx = textRect.x + (textRect.GetWidth() - DROPDOWN_ARROW_SIZE);
-        int yy = textRect.y + ((textRect.GetHeight() - DROPDOWN_ARROW_SIZE) / 2);
-        textRect.SetWidth(textRect.GetWidth() - DROPDOWN_ARROW_SIZE);
-        arrowRect = wxRect(xx, yy, DROPDOWN_ARROW_SIZE, DROPDOWN_ARROW_SIZE);
+        // we want a drop down to the right
+        int height = rect.GetHeight();
+        allocated_dropdown_arrow_rect =
+            wxRect(allocated_text_rect.GetWidth() - height, allocated_text_rect.GetY(), height, height);
+
+        // update the text rectangle
+        allocated_text_rect.SetWidth(allocated_text_rect.GetWidth() - height);
     }
 
+    // check if we have a bitmap
     if(bmp.IsOk()) {
-        if(label.IsEmpty()) {
-            // There is no label, draw the bitmap centred
-            // Bitmaps are drawn to the _left_ of the text
-            int bmpX = textRect.GetX() + ((textRect.GetWidth() - bmp.GetScaledWidth()) / 2);
-            int bmpY = textRect.GetY() + ((textRect.GetHeight() - bmp.GetScaledHeight()) / 2);
-            dc.DrawBitmap(bmp, bmpX, bmpY);
-        } else {
-            // Bitmaps are drawn to the _left_ of the text
-            int xx = textRect.GetX();
-            xx += 5;
-            int bmpY = textRect.GetY() + ((textRect.GetHeight() - bmp.GetScaledHeight()) / 2);
-            dc.DrawBitmap(bmp, xx, bmpY);
-            xx += bmp.GetScaledWidth();
-            textRect.SetX(xx);
-        }
+        // bitmap is drawn on the left side of the button
+        allocated_bmp_rect = allocated_text_rect;
+        allocated_bmp_rect.SetWidth(allocated_text_rect.GetHeight());
+
+        // update the text rect
+        allocated_text_rect.SetX(allocated_text_rect.GetX() + allocated_text_rect.GetHeight());
+        allocated_text_rect.SetWidth(allocated_text_rect.GetWidth() - allocated_text_rect.GetHeight());
     }
 
-    // Draw the label
-    if(!label.IsEmpty()) {
-        wxString truncatedText;
-        TruncateText(label, textRect.GetWidth() - 5, dc, truncatedText);
-        wxSize textSize = dc.GetTextExtent(label);
-        int textY = textRect.GetY() + ((textRect.GetHeight() - textSize.GetHeight()) / 2);
-        dc.SetClippingRegion(textRect);
-        dc.SetFont(GetDefaultGuiFont());
-        dc.SetTextForeground(textColour);
-        dc.DrawText(truncatedText, textRect.GetX() + 5, textY);
+    // draw the bimap
+    if(bmp.IsOk()) {
+        // draw the bitmap
+        wxRect bmp_rect(0, 0, bmp.GetScaledWidth(), bmp.GetScaledHeight());
+        bmp_rect = bmp_rect.CenterIn(allocated_bmp_rect);
+        dc.SetClippingRegion(allocated_bmp_rect);
+        dc.DrawBitmap(bmp, bmp_rect.GetTopLeft());
         dc.DestroyClippingRegion();
     }
 
-    // Draw the drop down button
+    // the the text
+    if(!label.empty()) {
+        wxRect text_rect = dc.GetTextExtent(label);
+        text_rect = text_rect.CenterIn(allocated_text_rect);
+
+        dc.SetClippingRegion(allocated_text_rect);
+        dc.DrawText(label, text_rect.GetTopLeft());
+        dc.DestroyClippingRegion();
+    }
+
+    // draw the dropdown
     if(kind == eButtonKind::kDropDown) {
-        dc.SetPen(penColour);
-        dc.SetBrush(baseColour);
-        DrawDropDownArrow(win, dc, arrowRect);
-        dc.SetPen(penColour);
-        dc.DrawLine(arrowRect.GetX(), clientRect.GetTopLeft().y, arrowRect.GetX(), clientRect.GetBottomLeft().y);
+        const wxString DROPDOWN_RECT = wxT("\u25BC");
+        wxRect text_rect = dc.GetTextExtent(label);
+        text_rect = text_rect.CenterIn(allocated_text_rect);
+
+        dc.SetClippingRegion(allocated_text_rect);
+        dc.DrawText(DROPDOWN_RECT, text_rect.GetTopLeft());
+        dc.DestroyClippingRegion();
     }
 }
 
@@ -856,37 +859,38 @@ wxString DrawingUtils::GetFallbackFixedFontFace() { return GetFallbackFixedFont(
 wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour,
                                       const wxColour& bgColour)
 {
-    bool is_dark = bgColour.IsOk() ? IsDark(bgColour) : IsDark(clSystemSettings::GetDefaultPanelColour());
-    clColours c;
-    if(is_dark) {
-        c.InitDarkDefaults();
-    } else {
-        c.InitDefaults();
-    }
+    wxColour fixed_picker_colour = pickerColour.IsOk() ? pickerColour : *wxBLACK;
+    wxString label = fixed_picker_colour.GetAsString(wxC2S_HTML_SYNTAX);
 
-    // split "rect" into 2 rectangles:
-    // we use one for writing the colour text and the one on the right
-    // to draw the colour
-    wxRect right_rect(rect.GetX(), rect.GetY(), rect.GetHeight(), rect.GetHeight());
-    wxRect left_rect(rect.GetX(), rect.GetY(), rect.GetWidth() - right_rect.GetWidth(), rect.GetHeight());
-    right_rect.SetX(left_rect.GetRight());
+    // set the dont
+    wxDCFontChanger font_changer(dc);
+    wxFont f = GetDefaultGuiFont();
+    f.SetWeight(wxFONTWEIGHT_SEMIBOLD);
+    dc.SetFont(f);
 
-    // draw the text
-    wxString text = pickerColour.GetAsString(wxC2S_HTML_SYNTAX);
-    wxRect text_rect = dc.GetTextExtent(text);
-    text_rect = text_rect.CenterIn(left_rect, wxVERTICAL);
-    text_rect.SetX(left_rect.GetX());
-    dc.DrawText(text, text_rect.GetTopLeft());
+    wxRect text_rect = dc.GetTextExtent(label);
+    wxRect container_text_rect = text_rect;
+    container_text_rect.Inflate(10);
+    container_text_rect.SetHeight(rect.GetHeight());
 
-    // draw the colour button
-    wxRendererNative::Get().DrawPushButton(win, dc, right_rect, 0);
+    container_text_rect = container_text_rect.CenterIn(rect);
 
-    wxRect label_rect = right_rect;
-    label_rect.Deflate(3);
+    // draw button frame
+    DrawButton(dc, win, container_text_rect, wxEmptyString, wxNullBitmap, eButtonKind::kNormal, eButtonState::kNormal);
 
-    label_rect = label_rect.CenterIn(right_rect);
-    dc.SetPen(wxPen(c.GetDarkBorderColour(), 1));
-    dc.SetBrush(pickerColour.IsOk() ? pickerColour : *wxBLACK);
-    dc.DrawRoundedRectangle(label_rect, 0.0);
-    return right_rect;
+    // draw backgroun colour
+    wxRect bg_rect = container_text_rect.Deflate(3);
+    wxDCPenChanger pen_changer(dc, fixed_picker_colour);
+    wxDCBrushChanger brush_changer(dc, fixed_picker_colour);
+    dc.DrawRectangle(bg_rect);
+
+    // draw the label
+    wxColour text_colour = IsDark(fixed_picker_colour) ? *wxWHITE : *wxBLACK;
+
+    wxDCTextColourChanger text_colour_changer(dc);
+
+    dc.SetTextForeground(text_colour);
+    text_rect = text_rect.CenterIn(container_text_rect);
+    dc.DrawText(label, text_rect.GetTopLeft());
+    return container_text_rect;
 }

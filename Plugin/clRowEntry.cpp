@@ -85,32 +85,7 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
 
 void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const wxString& symbol)
 {
-    wxFont orig_font = dc.GetFont();
-    wxColour orig_colour = dc.GetTextForeground();
-    dc.SetFont(clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-#ifdef __WXMSW__
-    dc.SetTextForeground(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
-    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
-    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-#else
-    dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
-#endif
-
-    wxRendererNative::Get().DrawPushButton(win, dc, button_rect, 0);
-
-    if(!symbol.empty()) {
-        wxRect text_rect = dc.GetTextExtent(symbol);
-        text_rect = text_rect.CenterIn(button_rect);
-        dc.DrawText(symbol, text_rect.GetTopLeft());
-    }
-
-    // restore the font
-    if(orig_font.IsOk()) {
-        dc.SetFont(orig_font);
-    }
-    if(orig_colour.IsOk()) {
-        dc.SetTextForeground(orig_colour);
-    }
+    DrawingUtils::DrawButton(dc, win, button_rect, symbol, wxNullBitmap, eButtonKind::kNormal, eButtonState::kNormal);
 }
 } // namespace
 
@@ -645,11 +620,10 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 
         if(cell.IsColour()) {
             wxRect rr = cellRect;
-            rr = rr.CenterIn(cellRect);
             // since the method `DrawingUtils::DrawColourPicker` is not familiar with our spacing policy
             // move the drawing rectangle to the X_SPACER position
-            rr.SetX(rr.GetX() + X_SPACER);
-            rr.SetWidth(rr.GetWidth() - X_SPACER);
+            // rr.SetX(rr.GetX() + X_SPACER);
+            // rr.SetWidth(rr.GetWidth() - X_SPACER);
             wxRect button_rect = DrawingUtils::DrawColourPicker(win, dc, rr, cell.GetValueColour());
             cell.SetButtonRect(button_rect);
         }

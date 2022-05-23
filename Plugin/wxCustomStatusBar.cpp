@@ -235,11 +235,12 @@ wxCustomStatusBar::~wxCustomStatusBar()
 
 void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
-    wxAutoBufferedPaintDC abdc(this);
-    PrepareDC(abdc);
+    wxPaintDC abdc(this);
     wxGCDC gcdc;
     wxDC& dc = DrawingUtils::GetGCDC(abdc, gcdc);
+    PrepareDC(dc);
     wxRect rect = GetClientRect();
+    rect.Inflate(1);
 
     dc.SetFont(DrawingUtils::GetDefaultGuiFont());
 

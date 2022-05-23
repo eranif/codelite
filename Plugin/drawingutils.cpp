@@ -511,7 +511,27 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
 
     wxDCBrushChanger brush_changer(dc, GetPanelBgColour());
     wxDCPenChanger pen_changer(dc, GetPanelBgColour().ChangeLightness(90));
+#ifdef __WXGTK__
+    // translate states
+    int flags = 0;
+    switch(state) {
+    case eButtonState::kNormal:
+        flags = 0;
+        break;
+    case eButtonState::kDisabled:
+        flags = wxCONTROL_DISABLED;
+        break;
+    case eButtonState::kHover:
+        flags = wxCONTROL_CURRENT;
+        break;
+    case eButtonState::kPressed:
+        flags = wxCONTROL_PRESSED;
+        break;
+    }
+    wxRendererNative::Get().DrawPushButton(win, dc, rect, flags);
+#else
     dc.DrawRectangle(clientRect);
+#endif
 
     // define the core 3 colours
     wxColour baseColour = update_button_bg_colour(GetButtonBgColour(), state);

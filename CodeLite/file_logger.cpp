@@ -24,7 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "file_logger.h"
+
 #include "cl_standard_paths.h"
+
 #include <sys/time.h>
 #include <wx/crt.h>
 #include <wx/filename.h>
@@ -110,6 +112,9 @@ wxString FileLogger::GetVerbosityAsString(int verbosity)
 
     case FileLogger::Developer:
         return wxT("Developer");
+
+    case FileLogger::System:
+        return wxT("System");
 
     default:
         return wxT("Error");

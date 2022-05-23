@@ -1087,7 +1087,7 @@ TEST_FUNC(test_cxx_code_completion_after_adding_func_impl)
         vector<TagEntryPtr> candidates;
         completer->get_completions(resolved, wxEmptyString, wxEmptyString, candidates, {});
         CHECK_BOOL(!candidates.empty());
-        CHECK_SIZE(candidates.size(), 10);
+        CHECK_SIZE(candidates.size(), 194);
     }
     return true;
 }

@@ -27,6 +27,7 @@
 
 #include "cl_config.h"
 #include "cl_defs.h"
+#include "wxStringHash.h"
 
 EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)
@@ -64,7 +65,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
         { "UP", wxUP }, { "BOTTOM", wxDOWN }, { "LEFT", wxLEFT }, { "RIGHT", wxRIGHT }
     };
 
-    unordered_map<wxDirection, wxString> orientation_map_reverse = {
+    unordered_map<int, wxString> orientation_map_reverse = {
         { wxUP, "UP" }, { wxDOWN, "BOTTOM" }, { wxLEFT, "LEFT" }, { wxRIGHT, "RIGHT" }
     };
 

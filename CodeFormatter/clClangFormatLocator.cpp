@@ -18,7 +18,7 @@ clClangFormatLocator::~clClangFormatLocator() {}
 
 bool clClangFormatLocator::Locate(wxString& clangFormat)
 {
-#ifdef __WXGTK__
+#if defined(__WXGTK__)
     wxPathList paths;
     paths.AddEnvList("PATH");
 
@@ -28,10 +28,10 @@ bool clClangFormatLocator::Locate(wxString& clangFormat)
         clangFormatNames.Add(wxString() << "clang-format-" << i);
     }
 
-    for(wxString cfName : clangFormatNames) {
+    for(const wxString& cfName : clangFormatNames) {
         wxString fnClangFormat = paths.FindAbsoluteValidPath(cfName);
         if(!fnClangFormat.empty()) {
-            clSYSTEM() << "Found clang-format ==>" << fnClangFormat << endl;
+            clDEBUG() << "Found clang-format ==>" << fnClangFormat << endl;
             clangFormat = fnClangFormat;
             return true;
         }

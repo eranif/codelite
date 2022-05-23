@@ -427,8 +427,14 @@ vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
         }
 
         // do we have text to redner?
-        if(!cell.GetValueString().empty()) {
-            wxString text_to_render = GetTextForRendering(cell.GetValueString());
+        // if we dont and we have a header, use the header's label
+        wxString label = cell.GetValueString();
+        if(label.empty() && m_tree->GetHeader() && m_tree->GetHeader()->size() >= i) {
+            label = m_tree->GetHeader()->Item(i).GetLabel();
+        }
+
+        if(!label.empty()) {
+            wxString text_to_render = GetTextForRendering(label);
             width += (i == 0 ? itemIndent : clHeaderItem::X_SPACER);
             width += dc.GetTextExtent(text_to_render).GetWidth();
             width += X_SPACER;

@@ -1,13 +1,16 @@
-#include "asyncprocess.h"
 #include "clClangFormatLocator.h"
+
+#include "asyncprocess.h"
 #include "cl_standard_paths.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "procutils.h"
+
+#include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/log.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
-#include "file_logger.h"
 
 clClangFormatLocator::clClangFormatLocator() {}
 
@@ -16,19 +19,20 @@ clClangFormatLocator::~clClangFormatLocator() {}
 bool clClangFormatLocator::Locate(wxString& clangFormat)
 {
 #ifdef __WXGTK__
-    wxFileName fnClangFormat("/usr/bin", "clang-format");
-    if(fnClangFormat.FileExists()) {
-        clSYSTEM() << "Found clang-format ==>" << fnClangFormat << endl;
-        clangFormat = fnClangFormat.GetFullPath();
-        return true;
-    }
-    
-    wxArrayString suffix;
+    wxPathList paths;
+    paths.AddEnvList("PATH");
+
+    wxArrayString clangFormatNames;
+    clangFormatNames.Add("clang-format");
     for(size_t i = 20; i >= 7; --i) {
-        fnClangFormat.SetFullName(wxString() << "clang-format-" << i);
-        if(fnClangFormat.FileExists()) {
+        clangFormatNames.Add(wxString() << "clang-format-" << i);
+    }
+
+    for(wxString cfName : clangFormatNames) {
+        wxString fnClangFormat = paths.FindAbsoluteValidPath(cfName);
+        if(!fnClangFormat.empty()) {
             clSYSTEM() << "Found clang-format ==>" << fnClangFormat << endl;
-            clangFormat = fnClangFormat.GetFullPath();
+            clangFormat = fnClangFormat;
             return true;
         }
     }

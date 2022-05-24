@@ -1,6 +1,7 @@
 #include "RemotyWorkspaceView.hpp"
 
 #include "RemotyWorkspace.hpp"
+#include "SFTPClientData.hpp"
 #include "asyncprocess.h"
 #include "clFileSystemWorkspaceConfig.hpp"
 #include "clFileSystemWorkspaceDlg.h"
@@ -35,6 +36,8 @@ RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* work
     m_tree->Bind(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnFileContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &RemotyWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_OPEN_MATCH, &RemotyWorkspaceView::OnOpenFindInFilesMatch, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &RemotyWorkspaceView::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &RemotyWorkspaceView::OnWorkspaceLoaded, this);
 }
 
 RemotyWorkspaceView::~RemotyWorkspaceView()
@@ -43,6 +46,8 @@ RemotyWorkspaceView::~RemotyWorkspaceView()
     m_tree->Unbind(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnFileContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &RemotyWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_OPEN_MATCH, &RemotyWorkspaceView::OnOpenFindInFilesMatch, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &RemotyWorkspaceView::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &RemotyWorkspaceView::OnWorkspaceLoaded, this);
 }
 
 void RemotyWorkspaceView::OpenWorkspace(const wxString& path, const wxString& accountName)
@@ -50,7 +55,7 @@ void RemotyWorkspaceView::OpenWorkspace(const wxString& path, const wxString& ac
     auto account = SSHAccountInfo::LoadAccount(accountName);
     if(account.GetAccountName().empty()) {
         clWARNING() << "Failed to open workspace at:" << path << "for account" << accountName << endl;
-        clWARNING() << "No such account exist" << endl;
+        clWARNING() << "Account does not exist" << endl;
     }
     m_tree->Close(false);
     m_tree->Open(path, account);
@@ -129,6 +134,18 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
             m_workspace->CallAfter(&RemotyWorkspace::SaveSettings);
         },
         XRCID("remoty-wsp-settings"));
+
+    menu->Append(XRCID("edit-codelite-remote"), _("Edit codelite-remote.json..."));
+
+    menu->Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxString remote_file_path = m_workspace->GetRemoteWorkingDir();
+            remote_file_path << "/.codelite/codelite-remote.json";
+            IEditor* editor = m_workspace->OpenFile(remote_file_path);
+            wxUnusedVar(editor);
+        },
+        XRCID("edit-codelite-remote"));
 
     menu->AppendSeparator();
     menu->Append(wxID_REFRESH, _("Reload workspace"));
@@ -231,4 +248,95 @@ void RemotyWorkspaceView::DoCloseWorkspace()
     clCommandEvent e(wxEVT_CMD_CLOSE_WORKSPACE, GetId());
     e.SetEventObject(this);
     EventNotifier::Get()->ProcessEvent(e);
+}
+
+void RemotyWorkspaceView::OnFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+    if(!m_workspace->IsOpened())
+        return;
+
+    const wxString& filename = event.GetFileName();
+    bool is_codelite_remote_json = filename.EndsWith("codelite-remote.json");
+    IEditor* editor = clGetManager()->FindEditor(filename);
+
+    auto cd = GetClientSFTPData(editor);
+    CHECK_PTR_RET(cd);
+
+    if(cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
+        // this is our codelite-remote.json file, offer a workspace reload to the user
+        wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(
+            _("NOTICE: a workspace reload is required in order for the changes to take place"),
+            "ReloadWorkspaceAfterCodeLiteRemoteEdit");
+        if(res == wxID_YES) {
+            // keep list of files to restore
+            //            m_filesToRestore.clear();
+            //            GetWorkspaceRemoteFilesOpened(&m_filesToRestore);
+            CallAfter(&RemotyWorkspaceView::DoReloadWorkspace);
+        }
+    }
+}
+
+SFTPClientData* RemotyWorkspaceView::GetClientSFTPData(IEditor* editor) const
+{
+    CHECK_PTR_RET_NULL(editor);
+
+    auto clientData = editor->GetClientData("sftp");
+    CHECK_PTR_RET_NULL(clientData);
+
+    SFTPClientData* cd = dynamic_cast<SFTPClientData*>(clientData);
+    CHECK_PTR_RET_NULL(cd);
+    return cd;
+}
+
+wxString RemotyWorkspaceView::GetRemotePathIsOwnedByWorkspace(IEditor* editor) const
+{
+    if(!m_workspace->IsOpened())
+        return wxEmptyString;
+
+    auto cd = GetClientSFTPData(editor);
+    if(!cd) {
+        return wxEmptyString;
+    }
+
+    if(cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
+        return cd->GetRemotePath();
+    }
+    return wxEmptyString;
+}
+
+size_t RemotyWorkspaceView::GetWorkspaceRemoteFilesOpened(wxArrayString* paths) const
+{
+    if(!paths) {
+        return 0;
+    }
+
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    for(auto editor : editors) {
+        wxString remote_path = GetRemotePathIsOwnedByWorkspace(editor);
+        if(remote_path.empty())
+            continue;
+        paths->Add(remote_path);
+    }
+    return paths->size();
+}
+
+void RemotyWorkspaceView::OnWorkspaceLoaded(clWorkspaceEvent& event)
+{
+    event.Skip();
+    //    if(!m_workspace || !m_workspace->IsOpened() || m_filesToRestore.empty())
+    //        return;
+    //
+    //    // restore files
+    //    clGetManager()->SetStatusMessage(_("Restoring files..."));
+    //    wxBusyCursor bc;
+    //
+    //    clSYSTEM() << "will restore the following files:" << m_filesToRestore << endl;
+    //    for(const wxString& path : m_filesToRestore) {
+    //        auto editor = m_workspace->OpenFile(path);
+    //        if(!editor)
+    //            wxMessageBox("nullptr!");
+    //    }
+    //    m_filesToRestore.clear();
 }

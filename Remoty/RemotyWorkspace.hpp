@@ -11,6 +11,7 @@
 #include "clRemoteFinderHelper.hpp"
 #include "clRemoteTerminal.hpp"
 #include "cl_command_event.h"
+#include "ieditor.h"
 #include "ssh_account_info.h"
 #include "wx/event.h"
 
@@ -124,7 +125,6 @@ protected:
     void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
     void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);
 
-    wxString GetRemoteWorkingDir() const;
     wxString CreateEnvScriptContent() const;
     wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
     /**
@@ -144,6 +144,10 @@ public:
     wxArrayString GetWorkspaceProjects() const override;
     bool IsBuildSupported() const override;
     bool IsProjectSupported() const override;
+    /**
+     * @brief return the remote workspace directory (on the remote machine)
+     */
+    wxString GetRemoteWorkingDir() const;
     wxString GetName() const override;
     void SetProjectActive(const wxString& name) override;
     /**
@@ -152,7 +156,10 @@ public:
      * @param account ssh account defined in CodeLite
      */
     void OpenWorkspace(const wxString& path, const wxString& account);
-
+    /**
+     * @brief Attempt to open a remote file and open it in the editor
+     */
+    IEditor* OpenFile(const wxString& remote_file_path);
     // API
     bool IsOpened() const;
     const SSHAccountInfo& GetAccount() const { return m_account; }

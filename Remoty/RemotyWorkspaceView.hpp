@@ -1,6 +1,8 @@
 #ifndef REMOTYWORKSPACEVIEW_H
 #define REMOTYWORKSPACEVIEW_H
+
 #include "RemotyUI.h"
+#include "SFTPClientData.hpp"
 #include "asyncprocess.h"
 #include "clRemoteDirCtrl.hpp"
 #include "clRemoteFinderHelper.hpp"
@@ -8,21 +10,31 @@
 
 #include <wx/stopwatch.h>
 
+class IEditor;
 class RemotyWorkspace;
 class RemotyWorkspaceView : public RemotyWorkspaceViewBase
 {
     clRemoteDirCtrl* m_tree = nullptr;
     RemotyWorkspace* m_workspace = nullptr;
+    wxArrayString m_filesToRestore;
 
 protected:
     void OnDirContextMenu(clContextMenuEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnOpenFindInFilesMatch(clFindInFilesEvent& event);
+    void OnFileSaved(clCommandEvent& event);
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
+
     void SetBuildConfiguration(const wxString& config);
     void BuildTarget(const wxString& name);
+
     void DoCloseWorkspace();
     void DoReloadWorkspace();
+
+    SFTPClientData* GetClientSFTPData(IEditor* editor) const;
+    wxString GetRemotePathIsOwnedByWorkspace(IEditor* editor) const;
+    size_t GetWorkspaceRemoteFilesOpened(wxArrayString* paths) const;
 
 public:
     RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace);

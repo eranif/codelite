@@ -1217,3 +1217,10 @@ void RemotyWorkspace::OnReloadWorkspace(clCommandEvent& event)
     wxString account_name = GetAccount().GetAccountName();
     CallAfter(&RemotyWorkspace::OpenWorkspace, filepath, account_name);
 }
+
+IEditor* RemotyWorkspace::OpenFile(const wxString& remote_file_path)
+{
+    if(!IsOpened())
+        return nullptr;
+    return clSFTPManager::Get().OpenFile(remote_file_path, m_account);
+}

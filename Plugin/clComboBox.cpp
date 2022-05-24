@@ -97,11 +97,9 @@ void clComboBox::DoCreate(const wxString& value)
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
     m_textCtrl = new clThemedTextCtrl(this, wxID_ANY, value);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND | wxALL, 1);
-    const wxString arrowSymbol = wxT(" \u25BC ");
 
-    m_button = new wxButton(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
-    m_button->SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-    m_button->SetLabel(arrowSymbol);
+    const wxString arrowSymbol = wxT(" \u25BC ");
+    m_button = new wxButton(this, wxID_ANY, arrowSymbol, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 
     wxColour text_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
     m_button->SetForegroundColour(DrawingUtils::IsDark(text_colour) ? text_colour.ChangeLightness(120)

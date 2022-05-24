@@ -266,7 +266,7 @@ void RemotyWorkspaceView::OnFileSaved(clCommandEvent& event)
     if(cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
         // this is our codelite-remote.json file, offer a workspace reload to the user
         wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(
-            _("NOTICE: a workspace reload is required in order for the changes to take place"),
+            _("NOTICE: a workspace reload is required in order for the changes to take place\nReload now?"),
             "ReloadWorkspaceAfterCodeLiteRemoteEdit");
         if(res == wxID_YES) {
             // keep list of files to restore

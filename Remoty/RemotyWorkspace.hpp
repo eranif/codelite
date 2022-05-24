@@ -68,6 +68,7 @@ protected:
     void UnbindEvents();
     void Initialise();
     void OnOpenWorkspace(clCommandEvent& event);
+    void OnReloadWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void DoClose(bool notify);
     void StartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart = false);
@@ -145,6 +146,12 @@ public:
     bool IsProjectSupported() const override;
     wxString GetName() const override;
     void SetProjectActive(const wxString& name) override;
+    /**
+     * @brief open workspace with at a given path (remote) and ssh account
+     * @param path workspace file path (on the remote machine)
+     * @param account ssh account defined in CodeLite
+     */
+    void OpenWorkspace(const wxString& path, const wxString& account);
 
     // API
     bool IsOpened() const;

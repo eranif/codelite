@@ -105,6 +105,7 @@ void RemotyWorkspace::BindEvents()
 
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &RemotyWorkspace::OnDebugStarting, this);
     EventNotifier::Get()->Bind(wxEVT_SWITCHING_TO_WORKSPACE, &RemotyWorkspace::OnOpenWorkspace, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_RELOAD_WORKSPACE, &RemotyWorkspace::OnReloadWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &RemotyWorkspace::OnCloseWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &RemotyWorkspace::OnBuildStarting, this);
     EventNotifier::Get()->Bind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &RemotyWorkspace::OnIsBuildInProgress, this);
@@ -156,6 +157,7 @@ void RemotyWorkspace::UnbindEvents()
     }
     EventNotifier::Get()->Unbind(wxEVT_SWITCHING_TO_WORKSPACE, &RemotyWorkspace::OnOpenWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &RemotyWorkspace::OnCloseWorkspace, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_WORKSPACE, &RemotyWorkspace::OnReloadWorkspace, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &RemotyWorkspace::OnBuildStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &RemotyWorkspace::OnIsBuildInProgress, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemotyWorkspace::OnBuildHotspotClicked, this);
@@ -1204,4 +1206,14 @@ void RemotyWorkspace::OnDownloadFile(clCommandEvent& event)
         event.SetFileName(editor->GetFileName().GetFullPath());
         event.Skip(false);
     }
+}
+
+void RemotyWorkspace::OpenWorkspace(const wxString& path, const wxString& account) { DoOpen(path, account); }
+
+void RemotyWorkspace::OnReloadWorkspace(clCommandEvent& event)
+{
+    CHECK_EVENT(event);
+    wxString filepath = GetRemoteWorkspaceFile();
+    wxString account_name = GetAccount().GetAccountName();
+    CallAfter(&RemotyWorkspace::OpenWorkspace, filepath, account_name);
 }

@@ -114,7 +114,7 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
     }
 
     menu->AppendSeparator();
-    menu->Append(XRCID("remoty-wps-settings"), _("Workspace settings..."));
+    menu->Append(XRCID("remoty-wsp-settings"), _("Workspace settings..."));
 
     menu->Bind(
         wxEVT_MENU,
@@ -128,15 +128,24 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
             // save workspace settings to the remote server
             m_workspace->CallAfter(&RemotyWorkspace::SaveSettings);
         },
-        XRCID("remoty-wps-settings"));
+        XRCID("remoty-wsp-settings"));
 
+    menu->AppendSeparator();
+    menu->Append(wxID_REFRESH, _("Reload workspace"));
+    menu->Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            CallAfter(&RemotyWorkspaceView::DoReloadWorkspace);
+        },
+        wxID_REFRESH);
     menu->AppendSeparator();
     menu->Append(wxID_CLOSE, _("Close workspace"));
     menu->Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& e) {
             wxUnusedVar(e);
-            m_workspace->CallAfter(&RemotyWorkspaceView::DoCloseWorkspace);
+            CallAfter(&RemotyWorkspaceView::DoCloseWorkspace);
         },
         wxID_CLOSE);
 }
@@ -209,7 +218,10 @@ void RemotyWorkspaceView::BuildTarget(const wxString& name) { m_workspace->Build
 
 void RemotyWorkspaceView::DoReloadWorkspace()
 {
-    // TODO: implement this
+    // Async call to re-open the workspace
+    clCommandEvent e(wxEVT_CMD_RELOAD_WORKSPACE, GetId());
+    e.SetEventObject(this);
+    EventNotifier::Get()->AddPendingEvent(e);
 }
 
 void RemotyWorkspaceView::DoCloseWorkspace()

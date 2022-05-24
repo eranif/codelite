@@ -5,6 +5,7 @@
 #include "clRemoteDirCtrl.hpp"
 #include "clRemoteFinderHelper.hpp"
 #include "cl_command_event.h"
+
 #include <wx/stopwatch.h>
 
 class RemotyWorkspace;
@@ -20,6 +21,8 @@ protected:
     void OnOpenFindInFilesMatch(clFindInFilesEvent& event);
     void SetBuildConfiguration(const wxString& config);
     void BuildTarget(const wxString& name);
+    void DoCloseWorkspace();
+    void DoReloadWorkspace();
 
 public:
     RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* workspace);

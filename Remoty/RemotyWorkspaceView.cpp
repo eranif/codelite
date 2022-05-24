@@ -115,6 +115,7 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
 
     menu->AppendSeparator();
     menu->Append(XRCID("remoty-wps-settings"), _("Workspace settings..."));
+
     menu->Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& e) {
@@ -128,6 +129,16 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
             m_workspace->CallAfter(&RemotyWorkspace::SaveSettings);
         },
         XRCID("remoty-wps-settings"));
+
+    menu->AppendSeparator();
+    menu->Append(wxID_CLOSE, _("Close workspace"));
+    menu->Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            m_workspace->CallAfter(&RemotyWorkspaceView::DoCloseWorkspace);
+        },
+        wxID_CLOSE);
 }
 
 void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event) { event.Skip(); }
@@ -195,3 +206,17 @@ void RemotyWorkspaceView::SetBuildConfiguration(const wxString& config)
 }
 
 void RemotyWorkspaceView::BuildTarget(const wxString& name) { m_workspace->BuildTarget(name); }
+
+void RemotyWorkspaceView::DoReloadWorkspace()
+{
+    // TODO: implement this
+}
+
+void RemotyWorkspaceView::DoCloseWorkspace()
+{
+    wxBusyCursor bc;
+    // let the plugins close any custom workspace
+    clCommandEvent e(wxEVT_CMD_CLOSE_WORKSPACE, GetId());
+    e.SetEventObject(this);
+    EventNotifier::Get()->ProcessEvent(e);
+}

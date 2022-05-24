@@ -97,7 +97,7 @@ def _load_config_file(filepath):
 
     return False
 
-def _create_empty_config_file(directory):
+def _create_empty_config_file_if_not_exists(directory):
     """
     create empty configuration file with a given path
     """
@@ -119,16 +119,20 @@ def _create_empty_config_file(directory):
     fp.close()
 
 def load_configuration():
+    # We first try to load the configuration file for the current workspace
+    # by default this will be the `WORKSPACE_PATH/.codelite`
     curdir = os.path.dirname(__file__)
     local_config_file = "{}/codelite-remote.json".format(curdir)
 
     # try to load the local configuration first
     config_loaded = _load_config_file(local_config_file)
     if not config_loaded:
-        # create new empty configuration file at the given location
-        home_dir = os.path.expandvars("$HOME/.codelite-remote")
+        # we could not find a local configuration file -
+        # try loading the global one (`~/.codelite/codelite-remote.json`)
+        # if a global configuration file does not exist, create an empty one
+        home_dir = os.path.expandvars("$HOME/.codelite")
         global_config_file = "{}/codelite-remote.json".format(home_dir)
-        _create_empty_config_file(home_dir)
+        _create_empty_config_file_if_not_exists(home_dir)
         config_loaded = _load_config_file(global_config_file)
     return config_loaded
 
@@ -309,12 +313,11 @@ def on_list_lsps(lsps_array):
     # use the global configuration file
     global configuration
     if "Language Server Plugin" in configuration and "servers" in configuration["Language Server Plugin"]:
-        for server in configuration["Language Server Plugin"]["servers"]:
-            if "name" in server and "command" in server and "priority" in server and "languages" in server and "working_directory" in server:
-                langstr = ';'.join(server["languages"])
-                server_line = "{},{},{},{},{}".format(server["name"], server["command"], langstr, server["priority"], server["working_directory"])
-                logging.info(server_line)
-                print(server_line)
+        # print the servers array
+        print(json.dumps(configuration["Language Server Plugin"]["servers"]))
+    else:
+        # print an empty array
+        print("[]")
     print_message_terminator()
 
 def on_find_path(cmd):

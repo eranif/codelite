@@ -2,7 +2,9 @@
 #define REMOTEWORKSPACE_HPP
 
 #include "IWorkspace.h" // Base class: IWorkspace
+#include "JSON.h"
 #include "LSP/LSPEvent.h"
+#include "asyncprocess.h"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWorkspaceConfig.hpp"
@@ -19,6 +21,19 @@
 #define WORKSPACE_TYPE_NAME "Remote over SSH"
 
 class RemotyWorkspaceView;
+
+struct LSPParams {
+    wxString lsp_name;
+    wxString command;
+    std::vector<wxString> languages;
+    size_t priority = 80;
+    wxString working_directory;
+    clEnvList_t env;
+
+    void From(const JSONItem& json);
+    bool IsOk() const;
+};
+
 class RemotyWorkspace : public IWorkspace
 {
 private:
@@ -38,6 +53,7 @@ private:
     bool m_buildInProgress = false;
     std::unordered_map<wxString, bool> m_old_servers_state;
     wxArrayString m_installedLSPs;
+    wxString m_listLspOutput;
 
 public:
     RemotyWorkspace();
@@ -45,9 +61,8 @@ public:
     virtual ~RemotyWorkspace();
 
 protected:
-    void ConfigureLsp(const wxString& output);
-    void DoConfigureLSP(const wxString& lsp_name, const wxString& command, const std::vector<wxString>& languages,
-                        size_t priority, const wxString& working_directory);
+    void ConfigureLsp(const JSONItem& output);
+    void DoConfigureLSP(const LSPParams& lsp);
 
     void BindEvents();
     void UnbindEvents();

@@ -243,6 +243,7 @@ bool RemotyWorkspace::IsOpened() const { return !m_account.GetAccountName().empt
 
 void RemotyWorkspace::DoClose(bool notify)
 {
+    m_listLspOutput.clear();
     if(!IsOpened()) {
         clDEBUG() << "Remoty: DoClose() -> not opened..." << endl;
         return;
@@ -693,25 +694,24 @@ void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
     wd = conf->GetWorkingDirectory().IsEmpty() ? GetFileName().GetPath() : conf->GetWorkingDirectory();
 }
 
-void RemotyWorkspace::DoConfigureLSP(const wxString& lsp_name, const wxString& command,
-                                     const std::vector<wxString>& languages, size_t priority,
-                                     const wxString& working_directory)
+void RemotyWorkspace::DoConfigureLSP(const LSPParams& lsp)
 {
     wxArrayString langs;
-    langs.reserve(languages.size());
-    for(const auto& lang : languages) {
+    langs.reserve(lsp.languages.size());
+    for(const auto& lang : lsp.languages) {
         langs.Add(lang);
     }
 
-    wxString root_uri = working_directory;
+    wxString root_uri = lsp.working_directory;
     if(root_uri.empty()) {
         root_uri = GetRemoteWorkingDir();
     }
 
     clLanguageServerEvent configure_event(wxEVT_LSP_CONFIGURE);
-    configure_event.SetLspName(lsp_name);
+    configure_event.SetLspName(lsp.lsp_name);
     configure_event.SetLanguages(langs);
     configure_event.SetRootUri(root_uri);
+    configure_event.SetEnviroment(lsp.env);
 
     auto conf = m_settings.GetSelectedConfig();
     wxString envLine;
@@ -724,22 +724,27 @@ void RemotyWorkspace::DoConfigureLSP(const wxString& lsp_name, const wxString& c
         }
     }
 
+    // append the configuration environment from the configuraton file
+    for(const auto& env_pair : lsp.env) {
+        envLine << env_pair.first << "=" << env_pair.second << " ";
+    }
+
     wxString lsp_cmd;
     lsp_cmd << "cd " << root_uri << " && ";
 
     if(!envLine.empty()) {
         lsp_cmd << envLine << " "; // it ends with space
     }
-    lsp_cmd << command;
+    lsp_cmd << lsp.command;
 
     configure_event.SetLspCommand(lsp_cmd);
     configure_event.SetFlags(clLanguageServerEvent::kEnabled | clLanguageServerEvent::kDisaplyDiags |
                              clLanguageServerEvent::kSSHEnabled);
     configure_event.SetSshAccount(m_account.GetAccountName());
     configure_event.SetConnectionString("stdio");
-    configure_event.SetPriority(priority);
-    clDEBUG() << "Remoty: configured server:" << lsp_name << ", command:" << lsp_cmd << endl;
-    m_installedLSPs.Add(lsp_name);
+    configure_event.SetPriority(lsp.priority);
+    clDEBUG() << "Remoty: configured server:" << lsp.lsp_name << ", command:" << lsp.command << endl;
+    m_installedLSPs.Add(lsp.lsp_name);
     EventNotifier::Get()->ProcessEvent(configure_event);
 }
 
@@ -1070,16 +1075,31 @@ void RemotyWorkspace::OnLSPOpenFile(LSPEvent& event)
 
 void RemotyWorkspace::OnCodeLiteRemoteListLSPsOutput(clCommandEvent& event)
 {
-    clDEBUG() << "Remoty: `list_lsps` output:" << event.GetStrings() << endl;
-    const wxArrayString& lines = event.GetStrings();
-    for(const wxString& line : lines) {
-        ConfigureLsp(line);
-    }
+    clDEBUG() << "Remoty: `list_lsps` output:" << event.GetString() << endl;
+    m_listLspOutput << event.GetString();
 }
 
 void RemotyWorkspace::OnCodeLiteRemoteListLSPsOutputDone(clCommandEvent& event)
 {
     wxUnusedVar(event);
+    JSON root(m_listLspOutput);
+    if(!root.isOk()) {
+        clERROR() << "Invalid JSON output received from codelite-remote for `list_lsps` command." << endl;
+        clERROR() << m_listLspOutput << endl;
+        return;
+    }
+
+    auto servers = root.toElement();
+    if(!servers.isArray()) {
+        clERROR() << "Invalid JSON. Expected array of servers, found:" << servers.format(true) << endl;
+        return;
+    }
+
+    int servers_count = servers.arraySize();
+    for(int i = 0; i < servers_count; ++i) {
+        ConfigureLsp(servers[i]);
+    }
+
     clDEBUG() << "Sending wxEVT_LSP_RESTART_ALL event" << endl;
     // we are done configuring the lsp_metadata_arr, restart them
     clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
@@ -1137,31 +1157,39 @@ void RemotyWorkspace::LSPRestore()
 
 wxString RemotyWorkspace::GetName() const { return wxFileName(m_localWorkspaceFile).GetName(); }
 
-void RemotyWorkspace::ConfigureLsp(const wxString& output)
+bool LSPParams::IsOk() const { return !this->command.empty() && !this->lsp_name.empty(); }
+
+void LSPParams::From(const JSONItem& json)
 {
-    wxArrayString parts = ::wxStringTokenize(output, ",", wxTOKEN_STRTOK);
-    if(parts.size() < 4) {
-        clWARNING() << "Remoty: invalid LSP line found." << output << endl;
-    }
+    this->lsp_name = "Remoty." + json["name"].toString();
+    this->command = json["command"].toString();
+    this->working_directory = json["working_directory"].toString();
 
-    const wxString& name = parts[0];
-    const wxString& command = parts[1];
-    const wxString& languages_str = parts[2];
-    const wxString& priority = parts[3];
-    wxString working_directory = wxEmptyString;
-    if(parts.size() > 4) {
-        working_directory = parts[4];
-    }
+    wxArrayString langs_arr = json["languages"].toArrayString();
+    this->languages.reserve(langs_arr.size());
+    this->languages.insert(languages.end(), langs_arr.begin(), langs_arr.end());
+    this->priority = json["priority"].toSize_t(80);
 
-    // configure LSP
-    wxArrayString languages = ::wxStringTokenize(languages_str, ";", wxTOKEN_STRTOK);
-    std::vector<wxString> vec_langs{ languages.begin(), languages.end() };
-    long lsp_priority = 75;
-    if(!priority.ToCLong(&lsp_priority)) {
-        lsp_priority = 75;
+    int env_list_size = json["env"].arraySize();
+    for(int i = 0; i < env_list_size; ++i) {
+        auto env_entry = json["env"][i];
+        wxString name = env_entry["name"].toString();
+        wxString value = env_entry["value"].toString();
+        if(!name.empty()) {
+            this->env.push_back({ name, value });
+        }
     }
+}
 
-    DoConfigureLSP("Remoty." + name, command, vec_langs, lsp_priority, working_directory);
+void RemotyWorkspace::ConfigureLsp(const JSONItem& lsp)
+{
+    // build the
+    LSPParams lsp_params;
+    lsp_params.From(lsp);
+    if(!lsp_params.IsOk()) {
+        return;
+    }
+    DoConfigureLSP(lsp_params);
 }
 
 void RemotyWorkspace::SetProjectActive(const wxString& name) { wxUnusedVar(name); }

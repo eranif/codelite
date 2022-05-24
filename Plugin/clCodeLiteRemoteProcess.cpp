@@ -528,8 +528,7 @@ void clCodeLiteRemoteProcess::OnListLSPsOutput(const wxString& output, bool is_c
     clCommandEvent event(wxEVT_CODELITE_REMOTE_LIST_LSPS);
 
     // parse the output
-    wxArrayString lsps = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
-    event.GetStrings().swap(lsps);
+    event.SetString(output);
     AddPendingEvent(event);
 
     if(is_completed) {
@@ -543,8 +542,7 @@ void clCodeLiteRemoteProcess::OnListFilesOutput(const wxString& output, bool is_
     clCommandEvent event(wxEVT_CODELITE_REMOTE_LIST_FILES);
 
     // parse the output
-    wxArrayString files = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
-    event.GetStrings().swap(files);
+    event.SetString(output);
     AddPendingEvent(event);
 
     if(is_completed) {

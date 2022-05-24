@@ -1,15 +1,19 @@
 {
- "lsp": {
+ "Language Server Plugin": {
   "servers": [{
     "name": "clangd",
     "command": "/usr/bin/clangd-12 -limit-results=500 -header-insertion-decorators=0",
+    "working_directory": "",
     "languages": ["c", "cpp"],
-    "priority": 90
+    "priority": 90,
+    "env": []
    }, {
     "name": "python",
     "command": "/usr/bin/python3 -m pylsp",
+    "working_directory": "",
     "languages": ["python"],
-    "priority": 80
+    "priority": 80,
+    "env": []
    }]
  }
 }

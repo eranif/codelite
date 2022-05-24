@@ -27,6 +27,7 @@
 #define CLCOMMANDEVENT_H
 
 #include "LSP/CompletionItem.h"
+#include "asyncprocess.h"
 #include "clDebuggerBreakpoint.hpp"
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"
@@ -34,6 +35,7 @@
 #include "entry.h"
 #include "ssh_account_info.h"
 #include "wxCodeCompletionBoxEntry.hpp"
+
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h>
@@ -846,7 +848,7 @@ protected:
     wxString m_sshAccount;
     size_t m_priority = 50;
     wxString m_connectionString;
-    std::vector<std::pair<wxString, wxString>> m_enviroment;
+    clEnvList_t m_enviroment;
     wxString m_initOptions;
     wxArrayString m_languages;
     eAction m_action = kInvalidAction;
@@ -878,6 +880,8 @@ public:
     const eAction& GetAction() const { return m_action; }
     void SetRootUri(const wxString& rootUri) { this->m_rootUri = rootUri; }
     const wxString& GetRootUri() const { return m_rootUri; }
+    void SetEnviroment(const clEnvList_t& enviroment) { this->m_enviroment = enviroment; }
+    const clEnvList_t& GetEnviroment() const { return m_enviroment; }
 };
 
 typedef void (wxEvtHandler::*clLanguageServerEventFunction)(clLanguageServerEvent&);

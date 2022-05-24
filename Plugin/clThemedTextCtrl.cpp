@@ -3,6 +3,7 @@
 #include "ColoursAndFontsManager.h"
 #include "clSystemSettings.h"
 #include "drawingutils.h"
+#include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
 
@@ -43,6 +44,28 @@ clThemedTextCtrl::clThemedTextCtrl(wxWindow* parent, wxWindowID id, const wxStri
     SetBufferedDraw(true);
     SetModEventMask(wxSTC_MOD_DELETETEXT | wxSTC_MOD_INSERTTEXT);
     SetLayoutCache(wxSTC_CACHE_PAGE);
+
+    // Options
+    auto options = EditorConfigST::Get()->GetOptions();
+
+    // Set CamelCase caret movement
+    if(options->GetCaretUseCamelCase()) {
+        // selection
+        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDPARTLEFTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDPARTRIGHTEXTEND);
+
+        // movement
+        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_WORDPARTLEFT);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_WORDPARTRIGHT);
+    } else {
+        // selection
+        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDLEFTEXTEND);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL | wxSTC_KEYMOD_SHIFT, wxSTC_CMD_WORDRIGHTEXTEND);
+
+        // movement
+        CmdKeyAssign(wxSTC_KEY_LEFT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_WORDLEFT);
+        CmdKeyAssign(wxSTC_KEY_RIGHT, wxSTC_KEYMOD_CTRL, wxSTC_CMD_WORDRIGHT);
+    }
 
     // Bind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Bind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);

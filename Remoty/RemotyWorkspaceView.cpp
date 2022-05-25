@@ -263,7 +263,7 @@ void RemotyWorkspaceView::OnFileSaved(clCommandEvent& event)
     auto cd = GetClientSFTPData(editor);
     CHECK_PTR_RET(cd);
 
-    if(cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
+    if(is_codelite_remote_json && cd->GetAccountName() == m_workspace->GetAccount().GetAccountName()) {
         // this is our codelite-remote.json file, offer a workspace reload to the user
         wxStandardID res = ::PromptForYesNoCancelDialogWithCheckbox(
             _("NOTICE: a workspace reload is required in order for the changes to take place\nReload now?"),

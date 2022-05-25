@@ -577,7 +577,7 @@ void GitConsole::ShowProgress(const wxString& message, bool pulse)
 void GitConsole::UpdateProgress(unsigned long current, const wxString& message)
 {
     wxString trimmedMessage = message;
-    m_gauge->SetValue(current);
+    m_gauge->SetValue(wxMin(current, m_gauge->GetRange()));
     // m_staticTextGauge->SetLabel(trimmedMessage.Trim().Trim(false));
 }
 

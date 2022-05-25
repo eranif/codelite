@@ -148,14 +148,14 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
         XRCID("edit-codelite-remote"));
 
     menu->AppendSeparator();
-    menu->Append(wxID_REFRESH, _("Reload workspace"));
+    menu->Append(XRCID("reload-workspace"), _("Reload workspace"));
     menu->Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& e) {
             wxUnusedVar(e);
             CallAfter(&RemotyWorkspaceView::DoReloadWorkspace);
         },
-        wxID_REFRESH);
+        XRCID("reload-workspace"));
     menu->AppendSeparator();
     menu->Append(wxID_CLOSE, _("Close workspace"));
     menu->Bind(

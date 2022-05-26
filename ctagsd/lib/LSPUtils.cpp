@@ -10,7 +10,7 @@ LSPUtils::LSPUtils() {}
 
 LSPUtils::~LSPUtils() {}
 
-void LSPUtils::encode_semantic_tokens(const vector<TokenWrapper>& tokens_vec, vector<int>* encoded_arr)
+void LSPUtils::encode_semantic_tokens(const std::vector<TokenWrapper>& tokens_vec, std::vector<int>* encoded_arr)
 {
     TokenWrapper dummy;
     dummy.token = SimpleTokenizer::Token(0, 0, 0, 0);
@@ -19,7 +19,7 @@ void LSPUtils::encode_semantic_tokens(const vector<TokenWrapper>& tokens_vec, ve
     const auto* prev_token_ptr = &dummy.token;
     for(size_t i = 0; i < tokens_vec.size(); ++i) {
         auto* current_token_ptr = &tokens_vec[i].token;
-        array<int, 5> info;
+        std::array<int, 5> info;
 
         bool changed_line = prev_token_ptr->line() != current_token_ptr->line();
         if(changed_line) {
@@ -112,10 +112,10 @@ LSP::CompletionItem::eCompletionItemKind LSPUtils::get_completion_kind(const Tag
     return kind;
 }
 
-vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const vector<TagEntryPtr>& tags,
-                                                                     bool for_tree_view)
+std::vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const std::vector<TagEntryPtr>& tags,
+                                                                          bool for_tree_view)
 {
-    vector<LSP::SymbolInformation> result;
+    std::vector<LSP::SymbolInformation> result;
     result.reserve(tags.size());
 
     wxStringSet_t parent_seen;
@@ -127,9 +127,10 @@ vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const vecto
     return result;
 }
 
-vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const vector<TagEntry>& tags, bool for_tree_view)
+std::vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const std::vector<TagEntry>& tags,
+                                                                          bool for_tree_view)
 {
-    vector<LSP::SymbolInformation> result;
+    std::vector<LSP::SymbolInformation> result;
     result.reserve(tags.size());
 
     wxStringSet_t parent_seen;
@@ -142,7 +143,7 @@ vector<LSP::SymbolInformation> LSPUtils::to_symbol_information_array(const vecto
 }
 
 void LSPUtils::to_symbol_information(const TagEntry* tag, LSP::SymbolInformation& symbol_information,
-                                     unordered_set<wxString>* parents_seen)
+                                     std::unordered_set<wxString>* parents_seen)
 {
     if(parents_seen && tag->IsContainer()) {
         parents_seen->insert(tag->GetName());

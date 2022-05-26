@@ -98,7 +98,7 @@ void clComboBox::DoCreate(const wxString& value)
     m_textCtrl = new clThemedTextCtrl(this, wxID_ANY, value);
     GetSizer()->Add(m_textCtrl, 1, wxEXPAND | wxALL, 1);
 
-    const wxString arrowSymbol = wxT(" \u25BC ");
+    const wxString arrowSymbol = " \u25BC ";
     m_button = new wxButton(this, wxID_ANY, arrowSymbol, wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 
     wxColour text_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
@@ -245,7 +245,7 @@ void clComboBox::SetStringSelection(const wxString& text)
 
 void clComboBox::SetFocus() { m_textCtrl->SetFocus(); }
 
-void clComboBox::Append(const vector<wxString>& strings)
+void clComboBox::Append(const std::vector<wxString>& strings)
 {
     if(strings.empty()) {
         return;

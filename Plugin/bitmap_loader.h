@@ -36,8 +36,6 @@
 #include <wx/filename.h>
 #include <wx/imaglist.h>
 
-using namespace std;
-
 #ifndef __WXMSW__
 namespace std
 {
@@ -50,8 +48,8 @@ template <> struct hash<FileExtManager::FileType> {
 class WXDLLIMPEXP_SDK clMimeBitmaps
 {
     /// Maps between image-id : index in the list
-    unordered_map<int, int> m_fileIndexMap;
-    vector<wxBitmap> m_bitmaps;
+    std::unordered_map<int, int> m_fileIndexMap;
+    std::vector<wxBitmap> m_bitmaps;
 
 public:
     clMimeBitmaps();
@@ -69,8 +67,8 @@ public:
     void AddBitmap(const wxBitmap& bitmap, int type);
     void Clear();
     bool IsEmpty() const { return m_bitmaps.empty(); }
-    vector<wxBitmap>& GetBitmaps() { return m_bitmaps; }
-    const vector<wxBitmap>& GetBitmaps() const { return m_bitmaps; }
+    std::vector<wxBitmap>& GetBitmaps() { return m_bitmaps; }
+    const std::vector<wxBitmap>& GetBitmaps() const { return m_bitmaps; }
 };
 
 class WXDLLIMPEXP_SDK clBitmaps;
@@ -85,8 +83,8 @@ class WXDLLIMPEXP_SDK clBitmapList : public wxEvtHandler
         wxString name;
         int ref_count = 1;
     };
-    unordered_map<size_t, BmpInfo> m_bitmaps;
-    unordered_map<wxString, size_t> m_nameToIndex;
+    std::unordered_map<size_t, BmpInfo> m_bitmaps;
+    std::unordered_map<wxString, size_t> m_nameToIndex;
 
 protected:
     void OnBitmapsUpdated(clCommandEvent& event);
@@ -116,8 +114,8 @@ class WXDLLIMPEXP_SDK BitmapLoader : public wxEvtHandler
     friend class clBitmaps;
 
 public:
-    typedef unordered_map<FileExtManager::FileType, wxBitmap> BitmapMap_t;
-    typedef vector<wxBitmap> Vec_t;
+    typedef std::unordered_map<FileExtManager::FileType, wxBitmap> BitmapMap_t;
+    typedef std::vector<wxBitmap> Vec_t;
 
     enum eBitmapId {
         kClass = 1000,
@@ -149,9 +147,9 @@ public:
 
 protected:
     wxFileName m_zipPath;
-    unordered_map<wxString, wxBitmap> m_toolbarsBitmaps;
-    unordered_map<wxString, wxString> m_manifest;
-    unordered_map<FileExtManager::FileType, int> m_fileIndexMap;
+    std::unordered_map<wxString, wxBitmap> m_toolbarsBitmaps;
+    std::unordered_map<wxString, wxString> m_manifest;
+    std::unordered_map<FileExtManager::FileType, int> m_fileIndexMap;
     bool m_bMapPopulated;
     size_t m_toolbarIconSize;
     clMimeBitmaps m_mimeBitmaps;

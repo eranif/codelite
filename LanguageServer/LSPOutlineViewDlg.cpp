@@ -12,11 +12,11 @@
 
 namespace
 {
-const wxString FUNCTION_SYMBOL = wxT("\u2A10");
-const wxString CLASS_SYMBOL = wxT("\u2394");
-const wxString VARIABLE_SYMBOL = wxT("\u2027");
-const wxString MODULE_SYMBOL = wxT("{}");
-const wxString ENUMERATOR_SYMBOL = wxT("#");
+const wxString FUNCTION_SYMBOL = "\u2A10";
+const wxString CLASS_SYMBOL = "\u2394";
+const wxString VARIABLE_SYMBOL = "\u2027";
+const wxString MODULE_SYMBOL = "{}";
+const wxString ENUMERATOR_SYMBOL = "#";
 } // namespace
 
 LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
@@ -54,7 +54,7 @@ void LSPOutlineViewDlg::DoInitialise()
     wxColour module_colour = lexer->GetProperty(wxSTC_P_STRING).GetFgColour();
     wxColour function_colour = lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour();
     wxColour operator_colour = lexer->GetProperty(wxSTC_P_OPERATOR).GetFgColour();
-    vector<pair<wxString, int>> containers;
+    std::vector<std::pair<wxString, int>> containers;
 
     clAnsiEscapeCodeColourBuilder builder;
     for(const SymbolInformation& si : m_symbols) {
@@ -229,7 +229,7 @@ void LSPOutlineViewDlg::OnListKeyDown(wxKeyEvent& event)
     }
 }
 
-void LSPOutlineViewDlg::SetSymbols(const vector<SymbolInformation>& symbols)
+void LSPOutlineViewDlg::SetSymbols(const std::vector<SymbolInformation>& symbols)
 {
     m_symbols = symbols;
     DoInitialise();

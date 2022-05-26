@@ -376,9 +376,9 @@ void clRowEntry::ClearRects()
     m_rowRect = wxRect();
 }
 
-vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
+std::vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
 {
-    vector<size_t> v;
+    std::vector<size_t> v;
     wxRect rowRect = GetItemRect();
     int itemIndent = IsListItem() ? clHeaderItem::X_SPACER : (GetIndentsCount() * m_tree->GetIndent());
     wxFont f = m_tree->GetDefaultFont();

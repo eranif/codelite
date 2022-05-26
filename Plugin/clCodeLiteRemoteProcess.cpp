@@ -178,8 +178,8 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
         return;
     }
 
-    vector<wxString> command = { ssh_exe.GetFullPath(), "-o", "ServerAliveInterval=10", "-o",
-                                 "StrictHostKeyChecking=no" };
+    std::vector<wxString> command = { ssh_exe.GetFullPath(), "-o", "ServerAliveInterval=10", "-o",
+                                      "StrictHostKeyChecking=no" };
     command.push_back(m_account.GetUsername() + "@" + m_account.GetHost());
     command.push_back("-p");
     command.push_back(wxString() << m_account.GetPort());

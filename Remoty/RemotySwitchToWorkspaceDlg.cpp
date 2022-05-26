@@ -1,12 +1,14 @@
 #include "RemotySwitchToWorkspaceDlg.h"
+
 #include "RemotyConfig.hpp"
 #include "SFTPBrowserDlg.h"
 #include "cl_config.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "wx/dirdlg.h"
-#include "wx/filedlg.h"
+
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
 #include <wx/tokenzr.h>
 
 namespace
@@ -60,7 +62,7 @@ void RemotySwitchToWorkspaceDlg::OnBrowse(wxCommandEvent& event)
         UpdateSelection(m_comboBoxPath, path);
     } else {
         wxString path = ::wxFileSelector(_("Choose a file"), wxEmptyString, wxEmptyString, wxEmptyString,
-                                         wxT("CodeLite Workspace files (*.workspace)|*.workspace"));
+                                         "CodeLite Workspace files (*.workspace)|*.workspace");
         if(path.empty()) {
             return;
         }
@@ -109,7 +111,7 @@ void RemotySwitchToWorkspaceDlg::InitialiseDialog()
         }
     } else {
         // remote workspaces
-        set<wxString> S;
+        std::set<wxString> S;
         if(m_remoteWorkspaces.empty()) {
             return;
         }

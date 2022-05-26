@@ -10,13 +10,13 @@ ParseThread::~ParseThread() { stop(); }
 void ParseThread::start(const wxString& settings_folder, const wxString& indexer_path)
 {
     stop();
-    m_change_thread = new thread(
-        [=](mutex& m, condition_variable& cv, vector<ParseThreadTaskFunc>& Q) {
+    m_change_thread = new std::thread(
+        [=](std::mutex& m, std::condition_variable& cv, std::vector<ParseThreadTaskFunc>& Q) {
             FileLogger::RegisterThread(wxThread::GetCurrentId(), "Parser");
             while(true) {
                 ParseThreadTaskFunc task_callback = nullptr;
                 {
-                    unique_lock<mutex> lk{ m };
+                    std::unique_lock<std::mutex> lk{ m };
                     cv.wait(lk, [&] { return !Q.empty(); });
                     task_callback = move(Q.front());
                     Q.erase(Q.begin());
@@ -49,7 +49,7 @@ void ParseThread::stop()
 
 void ParseThread::queue_parse_request(ParseThreadTaskFunc&& task)
 {
-    unique_lock<mutex> lk{ m_mutex };
+    std::unique_lock<std::mutex> lk{ m_mutex };
     // add new entry
     m_queue.emplace_back(move(task));
     m_cv.notify_one();

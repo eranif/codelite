@@ -7,17 +7,16 @@
 
 #include <vector>
 
-using namespace std;
 class OutlineTab : public OutlineTabBaseClass
 {
     wxString m_currentSymbolsFileName;
-    vector<LSP::SymbolInformation> m_symbols;
+    std::vector<LSP::SymbolInformation> m_symbols;
 
 private:
     void OnOutlineSymbols(LSPEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);
-    void RenderSymbols(const vector<LSP::SymbolInformation>& symbols, const wxString& filename);
+    void RenderSymbols(const std::vector<LSP::SymbolInformation>& symbols, const wxString& filename);
     void ClearView();
 
 public:

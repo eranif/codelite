@@ -3,10 +3,10 @@
 
 #include "cl_command_event.h"
 #include "ssh_account_info.h"
+
 #include <memory>
 #include <wx/event.h>
 
-using namespace std;
 class clRemoteTerminal : public wxEvtHandler
 {
     IProcess* m_proc = nullptr;
@@ -15,7 +15,7 @@ class clRemoteTerminal : public wxEvtHandler
     SSHAccountInfo m_account;
 
 public:
-    typedef unique_ptr<clRemoteTerminal> ptr_t;
+    typedef std::unique_ptr<clRemoteTerminal> ptr_t;
 
 public:
     clRemoteTerminal(const SSHAccountInfo& account);

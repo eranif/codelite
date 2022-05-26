@@ -36,7 +36,7 @@ protected:
     bool m_eventsConnected = true;
     std::thread* m_worker_thread = nullptr;
     SyncQueue<std::function<void()>> m_q;
-    atomic_bool m_shutdown;
+    std::atomic_bool m_shutdown;
     wxString m_lastError;
     std::unordered_map<wxString, saved_file> m_downloadedFileToAccount;
 

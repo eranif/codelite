@@ -13,21 +13,20 @@
 #include <wx/string.h>
 #include <wx/thread.h>
 
-using namespace std;
 enum class eParseThreadCallbackRC {
     RC_SUCCESS,
     RC_EXIT,
 };
 
-typedef function<eParseThreadCallbackRC()> ParseThreadTaskFunc;
+typedef std::function<eParseThreadCallbackRC()> ParseThreadTaskFunc;
 
 class ParseThread
 {
-    thread* m_change_thread = nullptr;
-    mutex m_mutex;
-    condition_variable m_cv;
-    atomic_bool m_shutdown;
-    vector<ParseThreadTaskFunc> m_queue;
+    std::thread* m_change_thread = nullptr;
+    std::mutex m_mutex;
+    std::condition_variable m_cv;
+    std::atomic_bool m_shutdown;
+    std::vector<ParseThreadTaskFunc> m_queue;
     wxString m_settings_folder;
     wxString m_indexer_path;
 

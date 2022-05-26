@@ -6,10 +6,9 @@
 #include <unordered_map>
 #include <vector>
 
-using namespace std;
 class RemotySwitchToWorkspaceDlg : public RemotySwitchToWorkspaceDlgBase
 {
-    vector<RemoteWorkspaceInfo> m_remoteWorkspaces;
+    std::vector<RemoteWorkspaceInfo> m_remoteWorkspaces;
 
 public:
     RemotySwitchToWorkspaceDlg(wxWindow* parent);

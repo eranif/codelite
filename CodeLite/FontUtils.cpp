@@ -1,8 +1,7 @@
 #include "FontUtils.hpp"
 
-#include <wxStringHash.h>
+#include "wxStringHash.h"
 
-using namespace std;
 namespace FontUtils
 {
 #ifdef __WXMSW__
@@ -17,10 +16,10 @@ constexpr int DEFAULT_FONT_SIZE = 14;
 #endif
 
 #ifdef __WXMSW__
-const unordered_set<wxString> words = { "SemiBold", "Semibold", "Extended", "Semi Bold", "Semi bold" };
+const std::unordered_set<wxString> words = { "SemiBold", "Semibold", "Extended", "Semi Bold", "Semi bold" };
 #endif
 
-unordered_map<wxString, wxString> fixed_fonts_cache;
+std::unordered_map<wxString, wxString> fixed_fonts_cache;
 
 const wxString& GetFontInfo(const wxFont& font) { return GetFontInfo(font.GetNativeFontInfoDesc()); }
 

@@ -28,6 +28,7 @@
 
 #include "codelite_exports.h"
 #include "macros.h"
+
 #include <functional>
 #include <map>
 #include <vector>
@@ -37,7 +38,6 @@
 #include <wx/utils.h>
 
 class ProcessReaderThread;
-using namespace std;
 typedef std::vector<std::pair<wxString, wxString>> clEnvList_t;
 enum IProcessCreateFlags {
     IProcessCreateDefault = (1 << 0),           // Default: create process with no console window
@@ -244,7 +244,7 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayS
  * @brief a wrapper for the variant that accepts wxArrayString.
  * This is because wxArrayString does not allow initializer list
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const vector<wxString>& args,
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vector<wxString>& args,
                                             size_t flags = IProcessCreateDefault,
                                             const wxString& workingDir = wxEmptyString,
                                             const clEnvList_t* env = nullptr,
@@ -269,7 +269,7 @@ WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = I
  * @param workingDir set the working directory of the executed process
  * @param env
  */
-WXDLLIMPEXP_CL void CreateAsyncProcessCB(const wxString& cmd, function<void(const wxString&)> cb,
+WXDLLIMPEXP_CL void CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString&)> cb,
                                          size_t flags = IProcessCreateDefault,
                                          const wxString& workingDir = wxEmptyString, const clEnvList_t* env = nullptr);
 

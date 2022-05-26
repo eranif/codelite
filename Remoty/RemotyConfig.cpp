@@ -1,5 +1,7 @@
 #include "RemotyConfig.hpp"
+
 #include "cl_config.h"
+
 #include <algorithm>
 
 namespace
@@ -13,9 +15,9 @@ RemotyConfig::RemotyConfig() {}
 
 RemotyConfig::~RemotyConfig() {}
 
-vector<RemoteWorkspaceInfo> RemotyConfig::GetRecentWorkspaces() const
+std::vector<RemoteWorkspaceInfo> RemotyConfig::GetRecentWorkspaces() const
 {
-    vector<RemoteWorkspaceInfo> res;
+    std::vector<RemoteWorkspaceInfo> res;
     clConfig::Get().Read(REMOTY_RECENT_WORKSPACES, [&res](const JSONItem& item) {
         size_t count = item.arraySize();
         if(count) {
@@ -26,7 +28,7 @@ vector<RemoteWorkspaceInfo> RemotyConfig::GetRecentWorkspaces() const
             RemoteWorkspaceInfo d;
             d.account = n["account"].toString();
             d.path = n["path"].toString();
-            res.emplace_back(move(d));
+            res.emplace_back(std::move(d));
         }
     });
     return res;
@@ -46,7 +48,7 @@ void RemotyConfig::UpdateRecentWorkspaces(const RemoteWorkspaceInfo& workspaceIn
         curitems.erase(where);
     }
 
-    curitems.insert(curitems.begin(), move(workspaceInfo));
+    curitems.insert(curitems.begin(), std::move(workspaceInfo));
     if(curitems.size() > MAX_ITEMS) {
         // shrink the list
         curitems.resize(MAX_ITEMS);

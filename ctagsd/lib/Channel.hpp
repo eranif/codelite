@@ -7,8 +7,6 @@
 #include <memory>
 #include <wx/string.h>
 
-using namespace std;
-
 enum class eReadSome {
     kTimeout,
     kError,
@@ -21,9 +19,9 @@ public:
     virtual bool write_reply(const wxString& message) = 0;
     virtual bool write_reply(const JSONItem& response) = 0;
     virtual bool write_reply(const JSON& response) = 0;
-    virtual unique_ptr<JSON> read_message() = 0;
+    virtual std::unique_ptr<JSON> read_message() = 0;
     virtual void open() = 0;
-    typedef shared_ptr<Channel> ptr_t;
+    typedef std::shared_ptr<Channel> ptr_t;
 };
 
 // socket based channel
@@ -45,6 +43,6 @@ public:
     bool write_reply(const wxString& message) override;
     bool write_reply(const JSONItem& response) override;
     bool write_reply(const JSON& response) override;
-    unique_ptr<JSON> read_message() override;
+    std::unique_ptr<JSON> read_message() override;
 };
 #endif // Channel_HPP

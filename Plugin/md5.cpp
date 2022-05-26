@@ -86,7 +86,7 @@ void MD5::update(uint1* input, uint4 input_length)
     uint4 buffer_space; // how much space is left in buffer
 
     if(finalized) { // so we can't update!
-        cerr << "MD5::update:  Can't update a finalized digest!" << endl;
+        std::cerr << "MD5::update:  Can't update a finalized digest!" << std::endl;
         return;
     }
 
@@ -94,8 +94,9 @@ void MD5::update(uint1* input, uint4 input_length)
     buffer_index = (unsigned int)((count[0] >> 3) & 0x3F);
 
     // Update number of bits
-    if((count[0] += ((uint4)input_length << 3)) < ((uint4)input_length << 3))
+    if((count[0] += ((uint4)input_length << 3)) < ((uint4)input_length << 3)) {
         count[1]++;
+    }
 
     count[1] += ((uint4)input_length >> 29);
 
@@ -108,8 +109,9 @@ void MD5::update(uint1* input, uint4 input_length)
         transform(buffer);
 
         // now, transform each 64-byte piece of the input, bypassing the buffer
-        for(input_index = buffer_space; input_index + 63 < input_length; input_index += 64)
+        for(input_index = buffer_space; input_index + 63 < input_length; input_index += 64) {
             transform(input + input_index);
+        }
 
         buffer_index = 0; // so we can buffer remaining
     } else
@@ -128,8 +130,9 @@ void MD5::update(FILE* file)
     unsigned char buffer[BUF_SIZE];
     int len;
 
-    while((len = fread(buffer, 1, BUF_SIZE, file)))
+    while((len = fread(buffer, 1, BUF_SIZE, file))) {
         update(buffer, len);
+    }
 
     fclose(file);
 }
@@ -137,7 +140,7 @@ void MD5::update(FILE* file)
 // MD5 update for istreams.
 // Like update for files; see above.
 
-void MD5::update(istream& stream)
+void MD5::update(std::istream& stream)
 {
 
     char buffer[BUF_SIZE];
@@ -153,7 +156,7 @@ void MD5::update(istream& stream)
 // MD5 update for ifstreams.
 // Like update for files; see above.
 
-void MD5::update(ifstream& stream)
+void MD5::update(std::ifstream& stream)
 {
     char buffer[BUF_SIZE];
     int len;
@@ -178,7 +181,7 @@ void MD5::finalize()
                                  0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     if(finalized) {
-        cerr << "MD5::finalize:  Already finalized this digest!" << endl;
+        std::cerr << "MD5::finalize:  Already finalized this digest!" << std::endl;
         return;
     }
 
@@ -210,7 +213,7 @@ MD5::MD5(FILE* file)
     finalize();
 }
 
-MD5::MD5(istream& stream)
+MD5::MD5(std::istream& stream)
 {
 
     init(); // must called by all constructors
@@ -218,7 +221,7 @@ MD5::MD5(istream& stream)
     finalize();
 }
 
-MD5::MD5(ifstream& stream)
+MD5::MD5(std::ifstream& stream)
 {
 
     init(); // must called by all constructors
@@ -251,20 +254,21 @@ const char* MD5::hex_digest()
     ::memset(hex_digest_buff, 0, sizeof(hex_digest_buff));
 
     if(!finalized) {
-        cerr << "MD5::hex_digest:  Can't get digest if you haven't "
-             << "finalized the digest!" << endl;
+        std::cerr << "MD5::hex_digest:  Can't get digest if you haven't "
+                  << "finalized the digest!" << std::endl;
         return hex_digest_buff;
     }
 
-    for(int i = 0; i < 16; i++)
+    for(int i = 0; i < 16; i++) {
         sprintf(hex_digest_buff + (i * 2), "%02x", digest[i]);
+    }
 
     hex_digest_buff[32] = '\0';
 
     return hex_digest_buff;
 }
 
-ostream& operator<<(ostream& stream, MD5 context)
+std::ostream& operator<<(std::ostream& stream, MD5 context)
 {
 
     stream << context.hex_digest();
@@ -422,9 +426,10 @@ void MD5::decode(uint4* output, uint1* input, uint4 len)
 
     unsigned int i, j;
 
-    for(i = 0, j = 0; j < len; i++, j += 4)
+    for(i = 0, j = 0; j < len; i++, j += 4) {
         output[i] = ((uint4)input[j]) | (((uint4)input[j + 1]) << 8) | (((uint4)input[j + 2]) << 16) |
                     (((uint4)input[j + 3]) << 24);
+    }
 }
 
 // Note: Replace "for loop" with standard memcpy if possible.
@@ -433,8 +438,9 @@ void MD5::memcpy(uint1* output, uint1* input, uint4 len)
 
     unsigned int i;
 
-    for(i = 0; i < len; i++)
+    for(i = 0; i < len; i++) {
         output[i] = input[i];
+    }
 }
 
 // Note: Replace "for loop" with standard memset if possible.
@@ -443,8 +449,9 @@ void MD5::memset(uint1* output, uint1 value, uint4 len)
 
     unsigned int i;
 
-    for(i = 0; i < len; i++)
+    for(i = 0; i < len; i++) {
         output[i] = value;
+    }
 }
 
 // ROTATE_LEFT rotates x left n bits.

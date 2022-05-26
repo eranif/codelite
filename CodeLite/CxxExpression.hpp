@@ -9,8 +9,6 @@
 #include <vector>
 #include <wx/string.h>
 
-using namespace std;
-
 /// A remainder is the part of an expression chain that was not processed.
 /// Consider the following simple expression:
 ///
@@ -33,11 +31,11 @@ private:
     wxString m_type_name;
     wxArrayString m_scopes; // potential scopes for the type
     int m_operand = 0;
-    wxString m_operand_string;                 // string representation for the operand
-    wxArrayString m_template_init_list;        // template init list vector<wxString> -> `wxString`
-    wxArrayString m_template_placeholder_list; // template placeholders (e.g. `T`)
-    vector<wxArrayString> m_subscript_params;  // subscript operator params
-    wxArrayString m_func_call_params;          // function params
+    wxString m_operand_string;                     // string representation for the operand
+    wxArrayString m_template_init_list;            // template init list vector<wxString> -> `wxString`
+    wxArrayString m_template_placeholder_list;     // template placeholders (e.g. `T`)
+    std::vector<wxArrayString> m_subscript_params; // subscript operator params
+    wxArrayString m_func_call_params;              // function params
     size_t m_flags = 0;
 
 public:
@@ -87,8 +85,8 @@ public:
 
     const wxString& operand_string() const;
     const wxArrayString& template_init_list() const { return m_template_init_list; }
-    const vector<wxArrayString>& subscript_params() const { return m_subscript_params; }
-    void set_subscript_params(const vector<wxArrayString>& params);
+    const std::vector<wxArrayString>& subscript_params() const { return m_subscript_params; }
+    void set_subscript_params(const std::vector<wxArrayString>& params);
     const wxArrayString& func_call_params() const { return m_func_call_params; }
     bool is_auto() const { return m_flags & FLAGS_AUTO; }
     bool is_this() const { return m_flags & FLAGS_THIS; }
@@ -97,8 +95,8 @@ public:
     /// `class ContextManager : public Singleton<ContextManager>, OtherClass, SecondClass<wxString, wxArrayString>`
     /// returns:
     /// {"Singleton<ContextManager>", "OtherClass", "SecondClass<wxString, wxArrayString>"}
-    static vector<wxString> split_subclass_expression(const wxString& subclass_pattern);
-    static vector<CxxExpression> from_expression(const wxString& expression, CxxRemainder* remainder);
+    static std::vector<wxString> split_subclass_expression(const wxString& subclass_pattern);
+    static std::vector<CxxExpression> from_expression(const wxString& expression, CxxRemainder* remainder);
 
     /**
      * should the code completion check for subscript operator overloading?

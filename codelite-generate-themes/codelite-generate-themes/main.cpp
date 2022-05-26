@@ -20,8 +20,6 @@
 #include <gtk/gtk.h>
 #endif
 
-using namespace std;
-
 namespace
 {
 void import_files(const wxString& input_dir, const wxString& output_dir)

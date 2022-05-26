@@ -6,7 +6,7 @@
 
 namespace
 {
-void split_mask(const wxString& maskString, vector<_Mask>& includeMask, vector<_Mask>& excludeMask)
+void split_mask(const wxString& maskString, std::vector<_Mask>& includeMask, std::vector<_Mask>& excludeMask)
 {
     // wxString lcMask = maskString.Lower();
     wxArrayString masks = ::wxStringTokenize(maskString, ";,", wxTOKEN_STRTOK);
@@ -27,7 +27,7 @@ void split_mask(const wxString& maskString, vector<_Mask>& includeMask, vector<_
 clFileExtensionMatcher::clFileExtensionMatcher(const wxString& mask)
     : m_mask(mask)
 {
-    vector<_Mask> dummy;
+    std::vector<_Mask> dummy;
     wxArrayString masks = ::wxStringTokenize(m_mask, ";,", wxTOKEN_STRTOK);
     for(wxString& mask : masks) {
         mask.Replace("*", wxEmptyString);
@@ -57,7 +57,7 @@ bool clFileExtensionMatcher::matches(const wxString& filename) const
 clPathExcluder::clPathExcluder(const wxString& mask)
     : m_mask(mask)
 {
-    vector<_Mask> dummy;
+    std::vector<_Mask> dummy;
     split_mask(m_mask, m_exclude_mask, dummy);
 }
 

@@ -9,8 +9,6 @@
 #include <sstream>
 #include <string>
 
-using namespace std;
-
 ChannelSocket::ChannelSocket(const wxString& ip, int port)
     : m_ip(ip)
     , m_port(port)
@@ -59,7 +57,7 @@ bool ChannelSocket::write_reply(const wxString& message)
     return true;
 }
 
-unique_ptr<JSON> ChannelSocket::read_message()
+std::unique_ptr<JSON> ChannelSocket::read_message()
 {
     while(true) {
         auto msg = LSP::Message::GetJSONPayload(m_buffer);

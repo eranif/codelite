@@ -235,11 +235,12 @@ void OpenResourceDialog::DoPopulateList()
 
 void OpenResourceDialog::OnWorkspaceSymbols(LSPEvent& event) { DoPopulateTags(event.GetSymbolsInformation()); }
 
-void OpenResourceDialog::DoPopulateTags(const vector<LSP::SymbolInformation>& symbols)
+void OpenResourceDialog::DoPopulateTags(const std::vector<LSP::SymbolInformation>& symbols)
 {
     // Next, add the tags
-    if(m_userFilters.IsEmpty() || symbols.empty())
+    if(m_userFilters.IsEmpty() || symbols.empty()) {
         return;
+    }
 
     for(const LSP::SymbolInformation& symbol : symbols) {
         if(!MatchesFilter(symbol.GetName())) {
@@ -268,8 +269,9 @@ void OpenResourceDialog::DoPopulateTags(const vector<LSP::SymbolInformation>& sy
 void OpenResourceDialog::DoPopulateWorkspaceFile()
 {
     // do we need to include files?
-    if(!m_filters.IsEmpty() && m_filters.Index(KIND_FILE) == wxNOT_FOUND)
+    if(!m_filters.IsEmpty() && m_filters.Index(KIND_FILE) == wxNOT_FOUND) {
         return;
+    }
 
     if(!m_userFilters.IsEmpty()) {
 
@@ -278,13 +280,14 @@ void OpenResourceDialog::DoPopulateWorkspaceFile()
         int counter = 0;
         for(; (iter != m_files.end()) && (counter < maxFileSize); iter++) {
             const wxString& fullpath = iter->second;
-            if(!MatchesFilter(fullpath))
+            if(!MatchesFilter(fullpath)) {
                 continue;
+            }
 
             wxFileName fn(iter->second);
             int imgId = clGetManager()->GetStdIcons()->GetMimeImageId(fn.GetFullName());
             DoAppendLine(fn.GetFullName(), iter->second, false,
-                         new OpenResourceDialogItemData(iter->second, -1, wxT(""), fn.GetFullName(), wxT("")), imgId);
+                         new OpenResourceDialogItemData(iter->second, -1, "", fn.GetFullName(), ""), imgId);
             ++counter;
         }
     }
@@ -309,8 +312,9 @@ void OpenResourceDialog::OpenSelection(const OpenResourceDialogItemData& selecti
     wxString file_path = selection.m_file;
     clCommandEvent activateEvent(wxEVT_TREE_ITEM_FILE_ACTIVATED);
     activateEvent.SetFileName(file_path);
-    if(EventNotifier::Get()->ProcessEvent(activateEvent))
+    if(EventNotifier::Get()->ProcessEvent(activateEvent)) {
         return;
+    }
 
     clDEBUG() << "Opening editor:" << selection.m_file << ":" << selection.m_line << ":" << selection.m_column << endl;
 
@@ -370,7 +374,7 @@ void OpenResourceDialog::DoAppendLine(const wxString& name, const wxString& full
     clientData->m_impl = boldFont;
     wxVector<wxVariant> cols;
     cols.push_back(::MakeBitmapIndexText(prefix + name, imgid));
-    cols.push_back(clientData->m_impl ? wxString(wxT("\u274C")) : wxString());
+    cols.push_back(clientData->m_impl ? wxString("\u274C") : wxString());
     cols.push_back(fullname);
     m_dataview->AppendItem(cols, (wxUIntPtr)clientData);
 }

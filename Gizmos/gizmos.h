@@ -28,9 +28,9 @@
 #include "newclassdlg.h"
 #include "newwxprojectinfo.h"
 #include "plugin.h"
+
 #include <vector>
 
-using namespace std;
 class WizardsPlugin : public IPlugin
 {
     void CreateClass(NewClassInfo& info);
@@ -48,14 +48,16 @@ protected:
      * @param path_prefix prepend this prefix to each file before reading it
      * @return false if we failed to read one or more files. In addition, both vectors size must me the same
      */
-    bool BulkRead(vector<pair<wxString, wxString*>>& files, const wxString& path_prefix = wxEmptyString) const;
+    bool BulkRead(std::vector<std::pair<wxString, wxString*>>& files,
+                  const wxString& path_prefix = wxEmptyString) const;
     /**
      * @brief read the contet of multiple files to the file system
      * @param files vector of pairs {`file-name` -> `file-content`}
      * @param path_prefix prepend this prefix to each file before reading it
      * @return false if we failed to write one or more files. In addition, both vectors size must me the same
      */
-    bool BulkWrite(const vector<pair<wxString, wxString>>& files, const wxString& path_prefix = wxEmptyString) const;
+    bool BulkWrite(const std::vector<std::pair<wxString, wxString>>& files,
+                   const wxString& path_prefix = wxEmptyString) const;
 
 public:
     WizardsPlugin(IManager* manager);

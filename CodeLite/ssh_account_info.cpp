@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ssh_account_info.h"
+
 #include "xor_string.h"
 
 SSHAccountInfo::SSHAccountInfo()
@@ -36,9 +37,9 @@ SSHAccountInfo::~SSHAccountInfo() {}
 
 SSHAccountInfo& SSHAccountInfo::operator=(const SSHAccountInfo& other)
 {
-    if(&other == this)
+    if(&other == this) {
         return *this;
-
+    }
     m_accountName = other.m_accountName;
     m_username = other.m_username;
     m_password = other.m_password;
@@ -83,7 +84,7 @@ void SSHAccountInfo::AddBookmark(const wxString& location)
     }
 }
 
-SSHAccountInfo::Vect_t SSHAccountInfo::Load(const function<bool(const SSHAccountInfo&)>& matcher)
+SSHAccountInfo::Vect_t SSHAccountInfo::Load(const std::function<bool(const SSHAccountInfo&)>& matcher)
 {
     wxFileName jsonfile(clStandardPaths::Get().GetUserDataDir(), "sftp-settings.conf");
     jsonfile.AppendDir("config");

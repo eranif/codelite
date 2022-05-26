@@ -5,7 +5,6 @@
 #include <vector>
 #include <wx/string.h>
 
-using namespace std;
 class TrieTree;
 typedef TrieTree TreeNode;
 class TrieTree

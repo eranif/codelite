@@ -49,12 +49,12 @@ static bool shell_is_cmd = false;
 #endif
 class __AsyncCallback : public wxEvtHandler
 {
-    function<void(const wxString&)> m_cb;
+    std::function<void(const wxString&)> m_cb;
     wxString m_output;
 
 public:
-    __AsyncCallback(function<void(const wxString&)> cb)
-        : m_cb(move(cb))
+    __AsyncCallback(std::function<void(const wxString&)> cb)
+        : m_cb(std::move(cb))
     {
         Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &__AsyncCallback::OnProcessTerminated, this);
         Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &__AsyncCallback::OnProcessOutput, this);
@@ -111,9 +111,9 @@ static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
 
     bool is_ssh = flags & IProcessCreateSSH;
     if(shell_is_cmd && !is_ssh) {
-        wxChar* shell = wxGetenv(wxT("COMSPEC"));
-        if(!shell) {
-            shell = (wxChar*)wxT("CMD.EXE");
+        wxString shell = wxGetenv("COMSPEC");
+        if(shell.IsEmpty()) {
+            shell = "CMD.EXE";
         }
         command.Add(shell);
         command.Add("/C");
@@ -227,7 +227,7 @@ static void __FixArgs(wxArrayString& args)
     }
 }
 
-IProcess* CreateAsyncProcess(wxEvtHandler* parent, const vector<wxString>& args, size_t flags,
+IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vector<wxString>& args, size_t flags,
                              const wxString& workingDir, const clEnvList_t* env, const wxString& sshAccountName)
 {
     wxArrayString wxargs;
@@ -251,7 +251,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
         return nullptr;
     }
 
-    //clDEBUG1() << "1: CreateAsyncProcess called with:" << c << endl;
+    // clDEBUG1() << "1: CreateAsyncProcess called with:" << c << endl;
 
     if(flags & IProcessWrapInShell) {
         // wrap the command in OS specific terminal
@@ -266,7 +266,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
 
     // needed on linux where fork does not require the extra quoting
     __FixArgs(c);
-    //clDEBUG1() << "2: CreateAsyncProcess called with:" << c << endl;
+    // clDEBUG1() << "2: CreateAsyncProcess called with:" << c << endl;
 
 #ifdef __WXMSW__
     return WinProcessImpl::Execute(parent, c, flags, workingDir);
@@ -282,7 +282,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t f
     return CreateAsyncProcess(parent, args, flags, workingDir, env, sshAccountName);
 }
 
-void CreateAsyncProcessCB(const wxString& cmd, function<void(const wxString&)> cb, size_t flags,
+void CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString&)> cb, size_t flags,
                           const wxString& workingDir, const clEnvList_t* env)
 {
     clEnvironment e(env);

@@ -28,10 +28,10 @@
 
 #include "cl_config.h" // Base class: clConfigItem
 #include "codelite_exports.h"
+
 #include <functional>
 #include <vector>
 
-using namespace std;
 class WXDLLIMPEXP_CL SSHAccountInfo : public clConfigItem
 {
     wxString m_accountName;
@@ -72,7 +72,7 @@ public:
      * @brief read list of accounts from the JSON file
      * @param matcher a callback that allows the user to filter matches
      */
-    static SSHAccountInfo::Vect_t Load(const function<bool(const SSHAccountInfo&)>& matcher = nullptr);
+    static SSHAccountInfo::Vect_t Load(const std::function<bool(const SSHAccountInfo&)>& matcher = nullptr);
     /**
      * @brief load a specific account from configuration
      */

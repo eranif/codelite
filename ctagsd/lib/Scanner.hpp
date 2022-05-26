@@ -9,7 +9,6 @@
 #include <wx/filename.h>
 #include <wx/string.h>
 
-using namespace std;
 class Scanner
 {
     wxStringSet_t m_missing_includes;

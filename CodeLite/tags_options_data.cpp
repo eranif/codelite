@@ -38,8 +38,6 @@ wxString TagsOptionsData::CLANG_CACHE_ON_FILE_LOAD = "On File Load";
 
 size_t TagsOptionsData::CURRENT_VERSION = 7100;
 
-using namespace std;
-
 static bool _IsValidCppIndetifier(const wxString& id)
 {
     if(id.IsEmpty()) {
@@ -633,8 +631,9 @@ JSONItem TagsOptionsData::ToJSON() const
 wxString TagsOptionsData::DoJoinArray(const wxArrayString& arr) const
 {
     wxString s;
-    for(size_t i = 0; i < arr.GetCount(); ++i)
+    for(size_t i = 0; i < arr.GetCount(); ++i) {
         s << arr.Item(i) << "\n";
+    }
 
     if(s.IsEmpty() == false) {
         s.RemoveLast();

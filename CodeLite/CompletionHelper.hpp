@@ -4,14 +4,13 @@
 #include "CxxTokenizer.h"
 #include "codelite_exports.h"
 #include "entry.h"
+#include "istorage.h"
 
 #include <functional>
-#include <istorage.h>
 #include <vector>
 #include <wx/filename.h>
 #include <wx/string.h>
 
-using namespace std;
 class WXDLLIMPEXP_CL CompletionHelper
 {
 public:
@@ -44,8 +43,8 @@ public:
                                                                     CompletionHelper::STRIP_NO_NAME);
     wxString get_expression(const wxString& file_content, bool for_calltip, wxString* last_word = nullptr) const;
     wxString truncate_file_to_location(const wxString& file_content, size_t line, size_t column, size_t flags) const;
-    vector<wxString> split_function_signature(const wxString& signature, wxString* return_value,
-                                              size_t flags = CompletionHelper::STRIP_DEFAULT) const;
+    std::vector<wxString> split_function_signature(const wxString& signature, wxString* return_value,
+                                                   size_t flags = CompletionHelper::STRIP_DEFAULT) const;
     static bool is_cxx_keyword(const wxString& word);
 
     /**

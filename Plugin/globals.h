@@ -293,7 +293,7 @@ WXDLLIMPEXP_SDK void GetProjectTemplateList(std::list<ProjectPtr>& list);
  * @brief set the native Windows theme for the application
  * @param win [input]
  */
-WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = wxT("Explorer"));
+WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = "Explorer");
 
 /**
  * @brief under Windows 10 and later, enable dark mode controls (where it is implemented)
@@ -313,7 +313,7 @@ WXDLLIMPEXP_SDK bool MakeRelativeIfSensible(wxFileName& fn, const wxString& refe
  * @brief joins array element into a string using 'glue' as the array elements
  * separator
  */
-WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString& arr, const wxString& glue = wxT("\n"));
+WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString& arr, const wxString& glue = "\n");
 
 /**
  * @brief executes a command under the proper shell and return string as the output
@@ -525,16 +525,16 @@ WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title, const wxString
 /**
  * @brief similar to wxDirSelector, but on a remote machine
  */
-WXDLLIMPEXP_SDK pair<wxString, wxString>
+WXDLLIMPEXP_SDK std::pair<wxString, wxString>
 clRemoteFolderSelector(const wxString& title, const wxString& accountName = wxEmptyString, wxWindow* parent = NULL);
 
 /**
  * @brief similar to wxFileSelector, but on a remote machine
  */
-WXDLLIMPEXP_SDK pair<wxString, wxString> clRemoteFileSelector(const wxString& title,
-                                                              const wxString& accountName = wxEmptyString,
-                                                              const wxString& filter = wxEmptyString,
-                                                              wxWindow* parent = NULL);
+WXDLLIMPEXP_SDK std::pair<wxString, wxString> clRemoteFileSelector(const wxString& title,
+                                                                   const wxString& accountName = wxEmptyString,
+                                                                   const wxString& filter = wxEmptyString,
+                                                                   wxWindow* parent = NULL);
 /**
  * @brief return the instance to the plugin manager. A convinience method
  */

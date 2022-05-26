@@ -2229,7 +2229,8 @@ static void DoSetDialogSize(wxDialog* win, double factor)
 #endif
 }
 
-pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, const wxString& accountName, wxWindow* parent)
+std::pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, const wxString& accountName,
+                                                     wxWindow* parent)
 {
 #if USE_SFTP
     SFTPBrowserDlg dlg(parent, title, wxEmptyString, clSFTP::SFTP_BROWSE_FOLDERS, accountName);
@@ -2242,8 +2243,8 @@ pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, const wxS
 #endif
 }
 
-pair<wxString, wxString> clRemoteFileSelector(const wxString& title, const wxString& accountName,
-                                              const wxString& filter, wxWindow* parent)
+std::pair<wxString, wxString> clRemoteFileSelector(const wxString& title, const wxString& accountName,
+                                                   const wxString& filter, wxWindow* parent)
 {
 #if USE_SFTP
     SFTPBrowserDlg dlg(parent, title, filter, clSFTP::SFTP_BROWSE_FOLDERS | clSFTP::SFTP_BROWSE_FILES, accountName);

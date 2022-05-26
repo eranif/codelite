@@ -29,7 +29,7 @@ bool clRemoteTerminal::Start()
         return false;
     }
 
-    vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
+    std::vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
     command.push_back(m_account.GetUsername() + "@" + m_account.GetHost());
     command.push_back("-t");
     command.push_back("-p");
@@ -60,7 +60,7 @@ const wxString& clRemoteTerminal::ReadTty()
         return empty_string;
     }
 
-    vector<wxString> command = { "cat", m_tty_file };
+    std::vector<wxString> command = { "cat", m_tty_file };
     IProcess::Ptr_t proc(::CreateAsyncProcess(this, command, IProcessCreateSSH | IProcessCreateSync, wxEmptyString,
                                               nullptr, m_account.GetAccountName()));
 

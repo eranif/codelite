@@ -10,14 +10,14 @@ This page contains tips for building various components using `MinGW` for Window
 - Open `MSYS2` terminal, and install the following packages:
 
 ```bash
-pacman -S mingw-w64-x86_64-toolchain            \
-          mingw-w64-x86_64-cmake                \
-          mingw-w64-x86_64-gdb                  \
-          mingw64/mingw-w64-x86_64-python-pip   \
-          mingw64/mingw-w64-x86_64-python       \
-          git                                   \
-          openssh                               \
-          unzip
+pacman -Sy mingw-w64-x86_64-toolchain           \
+           mingw-w64-x86_64-cmake               \
+           mingw-w64-x86_64-gdb                 \
+           mingw64/mingw-w64-x86_64-python-pip  \
+           mingw64/mingw-w64-x86_64-python      \
+           git                                  \
+           openssh                              \
+           unzip
 ```
 
 - Next, still in the `MSYS2` terminal, Add the `/mingw64/bin` to your `~/.bashrc` and `source` it:

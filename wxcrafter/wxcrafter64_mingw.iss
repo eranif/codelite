@@ -33,6 +33,7 @@ UninstallDisplayIcon={app}\wxcrafter.exe,0
 #define CLANG_DIR "C:\LLVM\bin"
 #define BUILD_BIN_DIR "C:\src\codelite\wxcrafter\build-Release_Standalone\bin"
 #define WX_CONFIG_DIR "C:\msys64\home\eran\devl\wx-config-msys2\bin"
+#define MINGW_INSTALL_DIR "C:\msys64\home\eran\root"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -84,8 +85,8 @@ Source: "{#CODELITE_ROOT}\Runtime\libcodeliteu.dll"; DestDir: "{app}"; Flags: ig
 Source: "{#CODELITE_ROOT}\Runtime\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libssh.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\sdk\libssh\lib\libzlib.dll"; DestDir: "{app}\"; DestName: "zlib1.dll"; Flags: ignoreversion ;
+Source: "{#MINGW_INSTALL_DIR}\bin\libssh.dll"; DestDir: "{app}\"; DestName: "libssh.dll"; Flags: ignoreversion ;
+Source: "{#MINGW_DIR}\zlib1.dll"; DestDir: "{app}\"; DestName: "zlib1.dll"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\msys-1.0.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\images\*"; DestDir: "{app}\images"; Flags: ignoreversion ;

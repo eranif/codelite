@@ -486,7 +486,8 @@ WXCFG=gcc_dll\mswu</Environment>
     <WorkspaceConfiguration Name="Win_x64_Release">
       <Environment>WXWIN=C:/msys64/home/eran/root
 WXCFG=gcc_x64_dll/mswu&#xD;
-SSH_HOME=C:/msys64/home/eran/root</Environment>
+SSH_HOME=C:/msys64/home/eran/root&#xD;
+MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>

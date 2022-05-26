@@ -2,8 +2,6 @@
 
 #include <vector>
 
-using namespace std;
-
 std::string StringUtils::ToStdString(const wxString& str)
 {
     const char* data = str.mb_str(wxConvUTF8).data();
@@ -114,7 +112,7 @@ void StringUtils::DisableMarkdownStyling(wxString& buffer)
 
 namespace
 {
-int get_current_state(const vector<int>& states)
+int get_current_state(const std::vector<int>& states)
 {
     if(states.empty()) {
         return ARGV_STATE_NORMAL;
@@ -122,7 +120,7 @@ int get_current_state(const vector<int>& states)
     return states[0];
 }
 
-int get_prev_state(const vector<int>& states)
+int get_prev_state(const std::vector<int>& states)
 {
     if(states.size() < 2) {
         return ARGV_STATE_NORMAL;
@@ -130,15 +128,15 @@ int get_prev_state(const vector<int>& states)
     return states[1];
 }
 
-void push_state(vector<int>& states, int state) { states.insert(states.begin(), state); }
-void pop_state(vector<int>& states) { states.erase(states.begin()); }
+void push_state(std::vector<int>& states, int state) { states.insert(states.begin(), state); }
+void pop_state(std::vector<int>& states) { states.erase(states.begin()); }
 } // namespace
 
 char** StringUtils::BuildArgv(const wxString& str, int& argc)
 {
     std::vector<wxString> A;
     int dollar_paren_depth = 0;
-    vector<int> states = { ARGV_STATE_NORMAL };
+    std::vector<int> states = { ARGV_STATE_NORMAL };
     wxString curstr;
     for(wxChar ch : str) {
         switch(get_current_state(states)) {

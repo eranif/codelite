@@ -44,7 +44,6 @@
 #include <wx/filesys.h>
 #include <wx/stc/stc.h>
 
-using namespace std;
 thread_local wxString emptyString;
 FileExtManager::FileType LanguageServerProtocol::workspace_file_type = FileExtManager::TypeOther;
 

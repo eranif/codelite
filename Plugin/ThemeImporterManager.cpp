@@ -75,7 +75,7 @@ wxString ThemeImporterManager::Import(const wxString& theme_file)
 {
     // we add all or nothing
     wxString name;
-    vector<LexerConf::Ptr_t> lexers;
+    std::vector<LexerConf::Ptr_t> lexers;
     lexers.reserve(m_importers.size());
     for(auto importer : m_importers) {
         auto lexer = importer->Import(theme_file);

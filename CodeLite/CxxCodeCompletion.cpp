@@ -24,7 +24,7 @@ TagEntryPtr create_global_scope_tag()
     return global_scope;
 }
 
-wxArrayString to_wx_array_string(const vector<wxString>& v)
+wxArrayString to_wx_array_string(const std::vector<wxString>& v)
 {
     wxArrayString a;
     a.reserve(v.size());
@@ -56,7 +56,7 @@ CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& cod
 }
 
 CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& codelite_indexer,
-                                     const unordered_map<wxString, TagEntryPtr>& unit_tests_db)
+                                     const std::unordered_map<wxString, TagEntryPtr>& unit_tests_db)
     : m_codelite_indexer(codelite_indexer)
 {
     m_lookup = lookup;
@@ -77,23 +77,23 @@ void CxxCodeCompletion::determine_current_scope()
 
     m_current_function_tag = m_lookup->GetScope(m_filename, m_line_number + 1);
     if(m_current_function_tag && m_current_function_tag->IsMethod()) {
-        vector<TagEntryPtr> tmp_tags;
+        std::vector<TagEntryPtr> tmp_tags;
         m_lookup->GetTagsByPath(m_current_function_tag->GetScope(), tmp_tags, 1);
         if(tmp_tags.size() == 1) {
-            m_current_container_tag = move(tmp_tags[0]);
+            m_current_container_tag = std::move(tmp_tags[0]);
         }
     }
 }
 
-TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const vector<wxString>& visible_scopes,
+TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const std::vector<wxString>& visible_scopes,
                                              CxxRemainder* remainder)
 {
     // build expression from the expression
     m_recurse_protector = 0;
     m_template_manager.reset(new TemplateManager(this));
 
-    vector<wxString> scopes = { visible_scopes.begin(), visible_scopes.end() };
-    vector<CxxExpression> expr_arr = from_expression(expression, remainder);
+    std::vector<wxString> scopes = { visible_scopes.begin(), visible_scopes.end() };
+    std::vector<CxxExpression> expr_arr = from_expression(expression, remainder);
 
     // add extra scopes (global scope, file scopes)
     scopes = prepend_extra_scopes(scopes);
@@ -109,8 +109,8 @@ TagEntryPtr CxxCodeCompletion::code_complete(const wxString& expression, const v
     return resolve_compound_expression(expr_arr, scopes, {});
 }
 
-TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>& expression,
-                                                           const vector<wxString>& visible_scopes,
+TagEntryPtr CxxCodeCompletion::resolve_compound_expression(std::vector<CxxExpression>& expression,
+                                                           const std::vector<wxString>& visible_scopes,
                                                            const CxxExpression& orig_expression)
 {
     RECURSE_GUARD_RETURN_NULLPTR();
@@ -121,7 +121,7 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
     }
 
     // handle global scope
-    vector<wxString> scopes = visible_scopes;
+    std::vector<wxString> scopes = visible_scopes;
     if(expression.size() == 1 && expression[0].type_name().empty() && expression[0].operand_string() == "::") {
         // return a dummy entry representing the global scope
         return create_global_scope_tag();
@@ -151,13 +151,13 @@ TagEntryPtr CxxCodeCompletion::resolve_compound_expression(vector<CxxExpression>
     return resolved;
 }
 
-size_t CxxCodeCompletion::parse_locals(const wxString& text, unordered_map<wxString, __local>* locals) const
+size_t CxxCodeCompletion::parse_locals(const wxString& text, std::unordered_map<wxString, __local>* locals) const
 {
     shrink_scope(text, locals, nullptr);
     return locals->size();
 }
 
-void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxString, __local>* locals,
+void CxxCodeCompletion::shrink_scope(const wxString& text, std::unordered_map<wxString, __local>* locals,
                                      FileScope* file_tags) const
 {
     // parse local variables
@@ -165,17 +165,17 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
     CxxVariable::Vec_t variables = scanner.GetVariables(false);
     locals->reserve(variables.size());
 
-    vector<TagEntryPtr> parameters;
+    std::vector<TagEntryPtr> parameters;
     if(m_current_function_tag && m_current_function_tag->IsFunction()) {
-        vector<TagEntryPtr> all_lambdas;
-        vector<TagEntryPtr> lambdas;
+        std::vector<TagEntryPtr> all_lambdas;
+        std::vector<TagEntryPtr> lambdas;
         // get the current function parameters
         m_lookup->GetParameters(m_current_function_tag->GetPath(), parameters);
         m_lookup->GetLambdas(m_current_function_tag->GetPath(), all_lambdas);
 
         // read all lambdas paramteres
-        unordered_map<wxString, TagEntryPtr> lambda_parameters_map;
-        unordered_map<wxString, TagEntryPtr> function_parameters_map;
+        std::unordered_map<wxString, TagEntryPtr> lambda_parameters_map;
+        std::unordered_map<wxString, TagEntryPtr> function_parameters_map;
 
         for(auto param : parameters) {
             function_parameters_map.insert({ param->GetName(), param });
@@ -184,12 +184,13 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
         for(auto lambda : all_lambdas) {
             if((lambda->GetLine() - 1) <= m_line_number) {
                 // load this lambda parameters and add them
-                vector<TagEntryPtr> lambda_parameters;
+                std::vector<TagEntryPtr> lambda_parameters;
                 m_lookup->GetParameters(lambda->GetPath(), lambda_parameters);
                 for(auto param : lambda_parameters) {
                     // if a function parameter with this name alrady exists, skip it
-                    if(function_parameters_map.count(param->GetName()))
+                    if(function_parameters_map.count(param->GetName())) {
                         continue;
+                    }
 
                     // if we already encoutered a lambda parameter with this name, replace it
                     if(lambda_parameters_map.count(param->GetName())) {
@@ -221,7 +222,7 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
     kinds.Add("variable");
     kinds.Add("enum");
     kinds.Add("macro");
-    vector<TagEntryPtr> anonymous_tags;
+    std::vector<TagEntryPtr> anonymous_tags;
     get_anonymous_tags(wxEmptyString, kinds, anonymous_tags);
 
     wxStringSet_t unique_scopes;
@@ -259,17 +260,18 @@ void CxxCodeCompletion::shrink_scope(const wxString& text, unordered_map<wxStrin
     }
 }
 
-TagEntryPtr CxxCodeCompletion::lookup_operator_arrow(TagEntryPtr parent, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::lookup_operator_arrow(TagEntryPtr parent, const std::vector<wxString>& visible_scopes)
 {
     return lookup_child_symbol(parent, m_template_manager, "operator->", visible_scopes, { "function", "prototype" });
 }
 
-TagEntryPtr CxxCodeCompletion::lookup_subscript_operator(TagEntryPtr parent, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::lookup_subscript_operator(TagEntryPtr parent,
+                                                         const std::vector<wxString>& visible_scopes)
 {
     CHECK_PTR_RET_NULL(m_lookup);
-    vector<TagEntryPtr> scopes = get_scopes(parent, visible_scopes);
+    std::vector<TagEntryPtr> scopes = get_scopes(parent, visible_scopes);
     for(auto scope : scopes) {
-        vector<TagEntryPtr> tags;
+        std::vector<TagEntryPtr> tags;
         m_lookup->GetSubscriptOperator(scope->GetPath(), tags);
         if(!tags.empty()) {
             return tags[0];
@@ -279,8 +281,9 @@ TagEntryPtr CxxCodeCompletion::lookup_subscript_operator(TagEntryPtr parent, con
 }
 
 TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateManager::ptr_t template_manager,
-                                                   const wxString& child_symbol, const vector<wxString>& visible_scopes,
-                                                   const vector<wxString>& kinds)
+                                                   const wxString& child_symbol,
+                                                   const std::vector<wxString>& visible_scopes,
+                                                   const std::vector<wxString>& kinds)
 {
     CHECK_PTR_RET_NULL(m_lookup);
     auto resolved = lookup_symbol_by_kind(child_symbol, visible_scopes, kinds);
@@ -293,7 +296,7 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateM
 
     // to avoid spaces and other stuff that depends on the user typing
     // we tokenize the symbol name
-    vector<wxString> requested_symbol_tokens;
+    std::vector<wxString> requested_symbol_tokens;
     {
         CxxLexerToken tok;
         CxxTokenizer tokenizer;
@@ -311,9 +314,9 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateM
             if(!tokenizer.NextToken(tok)) {
                 return false;
             }
-
-            if(tok.GetWXString() != token)
+            if(tok.GetWXString() != token) {
                 return false;
+            }
         }
 
         // if we can read more tokens from the tokenizer, it means that
@@ -324,7 +327,7 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateM
         return true;
     };
 
-    deque<TagEntryPtr> q;
+    std::deque<TagEntryPtr> q;
     q.push_front(parent);
     wxStringSet_t visited;
 
@@ -333,10 +336,11 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateM
         q.pop_front();
 
         // avoid visiting the same tag twice
-        if(!visited.insert(t->GetPath()).second)
+        if(!visited.insert(t->GetPath()).second) {
             continue;
+        }
 
-        vector<TagEntryPtr> tags;
+        std::vector<TagEntryPtr> tags;
         m_lookup->GetTagsByScope(t->GetPath(), tags);
         for(TagEntryPtr child : tags) {
             if(compare_tokens_func(child->GetName())) {
@@ -351,11 +355,11 @@ TagEntryPtr CxxCodeCompletion::lookup_child_symbol(TagEntryPtr parent, TemplateM
     return nullptr;
 }
 
-TagEntryPtr CxxCodeCompletion::lookup_symbol_by_kind(const wxString& name, const vector<wxString>& visible_scopes,
-                                                     const vector<wxString>& kinds)
+TagEntryPtr CxxCodeCompletion::lookup_symbol_by_kind(const wxString& name, const std::vector<wxString>& visible_scopes,
+                                                     const std::vector<wxString>& kinds)
 {
-    vector<TagEntryPtr> tags;
-    vector<wxString> scopes_to_check = visible_scopes;
+    std::vector<TagEntryPtr> tags;
+    std::vector<wxString> scopes_to_check = visible_scopes;
     if(scopes_to_check.empty()) {
         scopes_to_check.push_back(wxEmptyString);
     }
@@ -376,7 +380,7 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol_by_kind(const wxString& name, const
 }
 
 void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpression& curexpr,
-                                              const vector<wxString>& visible_scopes, wxStringSet_t& visited)
+                                              const std::vector<wxString>& visible_scopes, wxStringSet_t& visited)
 {
     CHECK_PTR_RET(resolved);
     if(!visited.insert(resolved->GetPath()).second) {
@@ -392,11 +396,13 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
     }
 
     // Check if one of the parents is a template class
-    vector<wxString> inhertiance_expressions = CxxExpression::split_subclass_expression(normalize_pattern(resolved));
+    std::vector<wxString> inhertiance_expressions =
+        CxxExpression::split_subclass_expression(normalize_pattern(resolved));
     for(const wxString& inherit : inhertiance_expressions) {
-        vector<CxxExpression> more_expressions = from_expression(inherit + ".", nullptr);
-        if(more_expressions.empty())
+        std::vector<CxxExpression> more_expressions = from_expression(inherit + ".", nullptr);
+        if(more_expressions.empty()) {
             continue;
+        }
 
         auto match = lookup_symbol_by_kind(more_expressions[0].type_name(), visible_scopes, { "class", "struct" });
         if(match) {
@@ -405,7 +411,7 @@ void CxxCodeCompletion::update_template_table(TagEntryPtr resolved, CxxExpressio
     }
 }
 
-TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vector<wxString>& visible_scopes,
+TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const std::vector<wxString>& visible_scopes,
                                              TagEntryPtr parent)
 {
     wxString name_to_find = curexpr.type_name();
@@ -469,9 +475,9 @@ TagEntryPtr CxxCodeCompletion::lookup_symbol(CxxExpression& curexpr, const vecto
     return resolved;
 }
 
-vector<wxString> CxxCodeCompletion::update_visible_scope(const vector<wxString>& curscopes, TagEntryPtr tag)
+std::vector<wxString> CxxCodeCompletion::update_visible_scope(const std::vector<wxString>& curscopes, TagEntryPtr tag)
 {
-    vector<wxString> scopes;
+    std::vector<wxString> scopes;
     scopes.insert(scopes.end(), curscopes.begin(), curscopes.end());
 
     if(tag && (tag->IsClass() || tag->IsStruct() || tag->IsNamespace() || tag->GetKind() == "union")) {
@@ -481,7 +487,7 @@ vector<wxString> CxxCodeCompletion::update_visible_scope(const vector<wxString>&
     }
     return scopes;
 }
-TagEntryPtr CxxCodeCompletion::on_local(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::on_local(CxxExpression& curexp, const std::vector<wxString>& visible_scopes)
 {
     // local member
     if(m_locals.count(curexp.type_name()) == 0) {
@@ -489,11 +495,11 @@ TagEntryPtr CxxCodeCompletion::on_local(CxxExpression& curexp, const vector<wxSt
     }
 
     wxString exprstr = m_locals.find(curexp.type_name())->second.type_name() + curexp.operand_string();
-    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    std::vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
-TagEntryPtr CxxCodeCompletion::on_parameter(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::on_parameter(CxxExpression& curexp, const std::vector<wxString>& visible_scopes)
 {
     // local member
     if(!m_file_only_tags.is_function_parameter(curexp.type_name())) {
@@ -502,12 +508,12 @@ TagEntryPtr CxxCodeCompletion::on_parameter(CxxExpression& curexp, const vector<
 
     wxString exprstr =
         m_file_only_tags.get_function_parameter(curexp.type_name())->GetTypename() + curexp.operand_string();
-    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    std::vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
 TagEntryPtr CxxCodeCompletion::on_extern_var(CxxExpression& curexp, TagEntryPtr var,
-                                             const vector<wxString>& visible_scopes)
+                                             const std::vector<wxString>& visible_scopes)
 {
     // local member
     if(!var) {
@@ -515,22 +521,22 @@ TagEntryPtr CxxCodeCompletion::on_extern_var(CxxExpression& curexp, TagEntryPtr 
     }
 
     wxString exprstr = var->GetTypename() + curexp.operand_string();
-    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    std::vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
-TagEntryPtr CxxCodeCompletion::on_static_local(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::on_static_local(CxxExpression& curexp, const std::vector<wxString>& visible_scopes)
 {
     if(!m_file_only_tags.is_static_member(curexp.type_name())) {
         return nullptr;
     }
 
     wxString exprstr = m_file_only_tags.get_static_member(curexp.type_name())->GetTypename() + curexp.operand_string();
-    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    std::vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
-TagEntryPtr CxxCodeCompletion::on_this(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::on_this(CxxExpression& curexp, const std::vector<wxString>& visible_scopes)
 {
     // this can only work with ->
     if(curexp.operand_string() != "->") {
@@ -541,10 +547,11 @@ TagEntryPtr CxxCodeCompletion::on_this(CxxExpression& curexp, const vector<wxStr
     determine_current_scope();
     wxString current_scope_name = m_current_container_tag ? m_current_container_tag->GetPath() : wxString();
     wxString exprstr = current_scope_name + curexp.operand_string();
-    vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
+    std::vector<CxxExpression> expr_arr = from_expression(exprstr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
-TagEntryPtr CxxCodeCompletion::find_scope_tag_externvar(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::find_scope_tag_externvar(CxxExpression& curexp,
+                                                        const std::vector<wxString>& visible_scopes)
 {
     auto extern_var = lookup_symbol_by_kind(curexp.type_name(), visible_scopes, { "externvar" });
     if(extern_var) {
@@ -555,7 +562,7 @@ TagEntryPtr CxxCodeCompletion::find_scope_tag_externvar(CxxExpression& curexp, c
     return nullptr;
 }
 
-TagEntryPtr CxxCodeCompletion::find_scope_tag(CxxExpression& curexp, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::find_scope_tag(CxxExpression& curexp, const std::vector<wxString>& visible_scopes)
 {
     determine_current_scope();
 
@@ -563,8 +570,8 @@ TagEntryPtr CxxCodeCompletion::find_scope_tag(CxxExpression& curexp, const vecto
     // current-scope::name (if we are in a scope)
     // other-scopes::name
     // global-scope::name
-    vector<wxString> paths_to_try;
-    vector<TagEntryPtr> parent_tags;
+    std::vector<wxString> paths_to_try;
+    std::vector<TagEntryPtr> parent_tags;
     wxStringSet_t visited;
     if(m_current_container_tag) {
         // get list of scopes to try (including parents)
@@ -605,7 +612,7 @@ TagEntryPtr CxxCodeCompletion::find_scope_tag(CxxExpression& curexp, const vecto
 }
 
 TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntryPtr parent,
-                                                  const vector<wxString>& visible_scopes)
+                                                  const std::vector<wxString>& visible_scopes)
 {
     // test locals first, if its empty, its the first time we are entering here
     if(m_first_time && !parent) {
@@ -635,7 +642,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
     }
 
     // update the visible scopes
-    vector<wxString> scopes = update_visible_scope(visible_scopes, parent);
+    std::vector<wxString> scopes = update_visible_scope(visible_scopes, parent);
 
     auto resolved = lookup_symbol(curexp, scopes, parent);
     CHECK_PTR_RET_NULL(resolved);
@@ -667,7 +674,7 @@ TagEntryPtr CxxCodeCompletion::resolve_expression(CxxExpression& curexp, TagEntr
 }
 
 TagEntryPtr CxxCodeCompletion::on_typedef(CxxExpression& curexp, TagEntryPtr tag,
-                                          const vector<wxString>& visible_scopes)
+                                          const std::vector<wxString>& visible_scopes)
 {
     // substitude the type with the typeref
     wxString new_expr;
@@ -675,29 +682,31 @@ TagEntryPtr CxxCodeCompletion::on_typedef(CxxExpression& curexp, TagEntryPtr tag
         new_expr = typedef_from_tag(tag);
     }
     new_expr += curexp.operand_string();
-    vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
+    std::vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
-TagEntryPtr CxxCodeCompletion::on_member(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::on_member(CxxExpression& curexp, TagEntryPtr tag,
+                                         const std::vector<wxString>& visible_scopes)
 {
     // replace the member variable by its type
-    unordered_map<wxString, __local> locals_variables;
+    std::unordered_map<wxString, __local> locals_variables;
     if((parse_locals(normalize_pattern(tag), &locals_variables) == 0) ||
        (locals_variables.count(tag->GetName()) == 0)) {
         return nullptr;
     }
 
     wxString new_expr = locals_variables[tag->GetName()].type_name() + curexp.operand_string();
-    vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
+    std::vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
-TagEntryPtr CxxCodeCompletion::on_method(CxxExpression& curexp, TagEntryPtr tag, const vector<wxString>& visible_scopes)
+TagEntryPtr CxxCodeCompletion::on_method(CxxExpression& curexp, TagEntryPtr tag,
+                                         const std::vector<wxString>& visible_scopes)
 {
     // parse the return value
     wxString new_expr = get_return_value(tag) + curexp.operand_string();
-    vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
+    std::vector<CxxExpression> expr_arr = from_expression(new_expr, nullptr);
     return resolve_compound_expression(expr_arr, visible_scopes, curexp);
 }
 
@@ -717,11 +726,12 @@ wxString CxxCodeCompletion::get_return_value(TagEntryPtr tag) const
 
 namespace
 {
-void remove_template_instantiation(vector<pair<int, wxString>>& tokens)
+void remove_template_instantiation(std::vector<std::pair<int, wxString>>& tokens)
 {
     bool is_template_inst = !tokens.empty() && tokens.back().first == '>';
-    if(!is_template_inst)
+    if(!is_template_inst) {
         return;
+    }
 
     // remove the open angle bracket
     tokens.pop_back();
@@ -764,7 +774,7 @@ wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const w
     // when we find our function name
     int depth = 0;
     bool cont = true;
-    vector<pair<int, wxString>> tokens;
+    std::vector<std::pair<int, wxString>> tokens;
     const wxString& function_name = name;
     wxString peeked_token;
     while(cont && tokenizer.NextToken(token)) {
@@ -807,8 +817,9 @@ wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const w
         }
     }
 
-    if(tokens.empty())
+    if(tokens.empty()) {
         return "";
+    }
 
     // remove the scope tokens
     // assume the signature looks like this:
@@ -855,7 +866,7 @@ wxString CxxCodeCompletion::do_get_return_value(const wxString& pattern, const w
     return as_str;
 }
 
-void CxxCodeCompletion::prepend_scope(vector<wxString>& scopes, const wxString& scope) const
+void CxxCodeCompletion::prepend_scope(std::vector<wxString>& scopes, const wxString& scope) const
 {
     auto find_and_erase_cb = [&scopes](const wxString& scope_name) {
         auto where = find_if(scopes.begin(), scopes.end(), [=](const wxString& __s) { return __s == scope_name; });
@@ -926,7 +937,7 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
     wxString pattern = normalize_pattern(tag);
     tkzr.Reset(pattern);
 
-    vector<wxString> V;
+    std::vector<wxString> V;
     wxString last_identifier;
     // consume the first token which is one of T_USING | T_TYPEDEF
     tkzr.NextToken(tk);
@@ -950,8 +961,9 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
 
         // consume everything until we find the "="
         while(tkzr.NextToken(tk)) {
-            if(tk.GetType() == '=')
+            if(tk.GetType() == '=') {
                 break;
+            }
         }
 
         // read until the ";"
@@ -1006,14 +1018,14 @@ wxString CxxCodeCompletion::typedef_from_tag(TagEntryPtr tag) const
 }
 
 size_t CxxCodeCompletion::get_local_tags(const wxString& filter, const wxStringSet_t& kinds,
-                                         vector<TagEntryPtr>& tags) const
+                                         std::vector<TagEntryPtr>& tags) const
 {
     return 0;
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
+std::vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
 {
-    vector<TagEntryPtr> locals;
+    std::vector<TagEntryPtr> locals;
     locals.reserve(m_locals.size());
 
     wxString lowercase_filter = filter.Lower();
@@ -1027,23 +1039,24 @@ vector<TagEntryPtr> CxxCodeCompletion::get_locals(const wxString& filter) const
         tag->SetAccess("public");
         tag->SetPattern("/^ " + local.pattern() + " $/");
         tag->SetLine(local.line_number());
-        if(!tag->GetName().Lower().StartsWith(lowercase_filter))
+        if(!tag->GetName().Lower().StartsWith(lowercase_filter)) {
             continue;
+        }
         locals.push_back(tag);
     }
     return locals;
 }
 
 size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& operand_string, const wxString& filter,
-                                          vector<TagEntryPtr>& candidates, const vector<wxString>& visible_scopes,
-                                          size_t limit)
+                                          std::vector<TagEntryPtr>& candidates,
+                                          const std::vector<wxString>& visible_scopes, size_t limit)
 {
     if(!parent) {
         return 0;
     }
 
-    vector<wxString> kinds = { "function", "prototype", "member",    "enum",    "enumerator", "class",
-                               "struct",   "union",     "namespace", "typedef", "variable" };
+    std::vector<wxString> kinds = { "function", "prototype", "member",    "enum",    "enumerator", "class",
+                                    "struct",   "union",     "namespace", "typedef", "variable" };
     if(operand_string == "." || operand_string == "->") {
         kinds = { "prototype", "function", "member" };
     }
@@ -1054,8 +1067,8 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& op
     // give prototypes a priority over functions
     // why? most people will write their comment in the header
     // file
-    vector<TagEntryPtr> ordered_candidates;
-    vector<TagEntryPtr> functions_candidates; // only of type `function`
+    std::vector<TagEntryPtr> ordered_candidates;
+    std::vector<TagEntryPtr> functions_candidates; // only of type `function`
 
     // this is done in O(n)
     ordered_candidates.reserve(candidates.size());
@@ -1072,7 +1085,7 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& op
     ordered_candidates.insert(ordered_candidates.end(), functions_candidates.begin(), functions_candidates.end());
     candidates.swap(ordered_candidates);
 
-    vector<TagEntryPtr> unique_candidates;
+    std::vector<TagEntryPtr> unique_candidates;
     unique_candidates.reserve(candidates.size());
     CompletionHelper helper;
     for(TagEntryPtr tag : candidates) {
@@ -1102,18 +1115,18 @@ size_t CxxCodeCompletion::get_completions(TagEntryPtr parent, const wxString& op
     candidates.swap(unique_candidates);
 
     // filter the results
-    vector<TagEntryPtr> sorted_tags;
+    std::vector<TagEntryPtr> sorted_tags;
     sort_tags(candidates, sorted_tags, false, {});
     candidates.swap(sorted_tags);
     return candidates.size();
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vector<wxString>& visible_scopes)
+std::vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const std::vector<wxString>& visible_scopes)
 {
-    vector<TagEntryPtr> scopes;
+    std::vector<TagEntryPtr> scopes;
     scopes.reserve(100);
 
-    deque<TagEntryPtr> q;
+    std::deque<TagEntryPtr> q;
     q.push_front(parent);
     wxStringSet_t visited;
 
@@ -1122,8 +1135,9 @@ vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vect
         q.pop_front();
 
         // avoid visiting the same tag twice
-        if(!visited.insert(t->GetPath()).second)
+        if(!visited.insert(t->GetPath()).second) {
             continue;
+        }
 
         scopes.push_back(t);
 
@@ -1133,22 +1147,23 @@ vector<TagEntryPtr> CxxCodeCompletion::get_scopes(TagEntryPtr parent, const vect
     return scopes;
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent, const vector<wxString>& kinds,
-                                                             const wxString& filter,
-                                                             const vector<wxString>& visible_scopes)
+std::vector<TagEntryPtr> CxxCodeCompletion::get_children_of_scope(TagEntryPtr parent,
+                                                                  const std::vector<wxString>& kinds,
+                                                                  const wxString& filter,
+                                                                  const std::vector<wxString>& visible_scopes)
 {
     if(!m_lookup) {
         return {};
     }
 
-    vector<TagEntryPtr> tags;
+    std::vector<TagEntryPtr> tags;
     auto parents = get_scopes(parent, visible_scopes);
     for(auto tag : parents) {
         wxString scope = tag->GetPath();
         if(tag->IsMethod()) {
             scope = tag->GetScope();
         }
-        vector<TagEntryPtr> parent_tags;
+        std::vector<TagEntryPtr> parent_tags;
         m_lookup->GetTagsByScopeAndKind(scope, to_wx_array_string(kinds), filter, parent_tags, true);
         tags.reserve(tags.size() + parent_tags.size());
         tags.insert(tags.end(), parent_tags.begin(), parent_tags.end());
@@ -1172,7 +1187,8 @@ void CxxCodeCompletion::set_text(const wxString& text, const wxString& filename,
 namespace
 {
 
-bool find_wild_match(const vector<pair<wxString, wxString>>& table, const wxString& find_what, wxString* match)
+bool find_wild_match(const std::vector<std::pair<wxString, wxString>>& table, const wxString& find_what,
+                     wxString* match)
 {
     for(const auto& p : table) {
         // we support wildcard matching
@@ -1184,8 +1200,8 @@ bool find_wild_match(const vector<pair<wxString, wxString>>& table, const wxStri
     return false;
 }
 
-bool try_resovle_user_type_with_scopes(const vector<pair<wxString, wxString>>& table, const wxString& type,
-                                       const vector<wxString>& visible_scopes, wxString* resolved)
+bool try_resovle_user_type_with_scopes(const std::vector<std::pair<wxString, wxString>>& table, const wxString& type,
+                                       const std::vector<wxString>& visible_scopes, wxString* resolved)
 {
     for(const wxString& scope : visible_scopes) {
         wxString user_type = scope;
@@ -1201,7 +1217,7 @@ bool try_resovle_user_type_with_scopes(const vector<pair<wxString, wxString>>& t
 }
 }; // namespace
 
-bool CxxCodeCompletion::resolve_user_type(const wxString& type, const vector<wxString>& visible_scopes,
+bool CxxCodeCompletion::resolve_user_type(const wxString& type, const std::vector<wxString>& visible_scopes,
                                           wxString* resolved) const
 {
     bool match_found = false;
@@ -1227,7 +1243,7 @@ bool CxxCodeCompletion::resolve_user_type(const wxString& type, const vector<wxS
 
 void TemplateManager::clear() { m_table.clear(); }
 
-void TemplateManager::add_placeholders(const wxStringMap_t& table, const vector<wxString>& visible_scopes)
+void TemplateManager::add_placeholders(const wxStringMap_t& table, const std::vector<wxString>& visible_scopes)
 {
 
     // try to resolve any of the template before we insert them
@@ -1279,7 +1295,7 @@ bool try_resolve_placeholder(const wxStringMap_t& table, const wxString& name, w
 }
 }; // namespace
 
-wxString TemplateManager::resolve(const wxString& name, const vector<wxString>& visible_scopes) const
+wxString TemplateManager::resolve(const wxString& name, const std::vector<wxString>& visible_scopes) const
 {
     wxStringSet_t visited;
     wxString resolved = name;
@@ -1289,7 +1305,7 @@ wxString TemplateManager::resolve(const wxString& name, const vector<wxString>& 
     return resolved;
 }
 
-void CxxCodeCompletion::set_macros_table(const vector<pair<wxString, wxString>>& t)
+void CxxCodeCompletion::set_macros_table(const std::vector<std::pair<wxString, wxString>>& t)
 {
     m_macros_table = t;
     m_macros_table_map.reserve(m_macros_table.size());
@@ -1298,7 +1314,7 @@ void CxxCodeCompletion::set_macros_table(const vector<pair<wxString, wxString>>&
     }
 }
 
-void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEntryPtr>& sorted_tags,
+void CxxCodeCompletion::sort_tags(const std::vector<TagEntryPtr>& tags, std::vector<TagEntryPtr>& sorted_tags,
                                   bool include_ctor_dtor, const wxStringSet_t& visible_files)
 {
     TagEntryPtrVector_t publicTags;
@@ -1310,18 +1326,20 @@ void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEnt
     bool skip_tor = !include_ctor_dtor;
 
     // first: remove duplicates
-    unordered_set<int> visited_by_id;
-    unordered_set<wxString> visited_by_name;
+    std::unordered_set<int> visited_by_id;
+    std::unordered_set<wxString> visited_by_name;
 
     for(size_t i = 0; i < tags.size(); ++i) {
         TagEntryPtr tag = tags[i];
 
         // only include matches from the provided list of files
-        if(!visible_files.empty() && visible_files.count(tag->GetFile()) == 0)
+        if(!visible_files.empty() && visible_files.count(tag->GetFile()) == 0) {
             continue;
+        }
 
-        if(skip_tor && (tag->IsConstructor() || tag->IsDestructor()))
+        if(skip_tor && (tag->IsConstructor() || tag->IsDestructor())) {
             continue;
+        }
 
         bool is_local = tag->IsLocalVariable() || tag->GetScope() == "<local>" || tag->GetParent() == "<local>";
         // we filter local tags by name
@@ -1381,7 +1399,7 @@ void CxxCodeCompletion::sort_tags(const vector<TagEntryPtr>& tags, vector<TagEnt
     sorted_tags.insert(sorted_tags.end(), members.begin(), members.end());
 }
 
-size_t CxxCodeCompletion::get_file_completions(const wxString& user_typed, vector<TagEntryPtr>& files,
+size_t CxxCodeCompletion::get_file_completions(const wxString& user_typed, std::vector<TagEntryPtr>& files,
                                                const wxString& suffix)
 {
     if(!m_lookup) {
@@ -1410,11 +1428,11 @@ size_t CxxCodeCompletion::get_file_completions(const wxString& user_typed, vecto
     return files.size();
 }
 
-size_t CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& kinds, const wxString& filter,
-                                                        const vector<wxString>& visible_scopes,
-                                                        vector<TagEntryPtr>* current_scope_children,
-                                                        vector<TagEntryPtr>* other_scopes_children,
-                                                        vector<TagEntryPtr>* global_scope_children)
+size_t CxxCodeCompletion::get_children_of_current_scope(const std::vector<wxString>& kinds, const wxString& filter,
+                                                        const std::vector<wxString>& visible_scopes,
+                                                        std::vector<TagEntryPtr>* current_scope_children,
+                                                        std::vector<TagEntryPtr>* other_scopes_children,
+                                                        std::vector<TagEntryPtr>* global_scope_children)
 {
     determine_current_scope();
     if(m_current_container_tag) {
@@ -1431,30 +1449,30 @@ size_t CxxCodeCompletion::get_children_of_current_scope(const vector<wxString>& 
     return current_scope_children->size() + other_scopes_children->size() + global_scope_children->size();
 }
 
-size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, vector<TagEntryPtr>& candidates,
-                                               const vector<wxString>& visible_scopes,
+size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, std::vector<TagEntryPtr>& candidates,
+                                               const std::vector<wxString>& visible_scopes,
                                                const wxStringSet_t& visible_files)
 
 {
-    vector<TagEntryPtr> locals;
-    vector<TagEntryPtr> function_parameters;
-    vector<TagEntryPtr> keywords;
-    vector<TagEntryPtr> scope_members;
-    vector<TagEntryPtr> other_scopes_members;
-    vector<TagEntryPtr> global_scopes_members;
+    std::vector<TagEntryPtr> locals;
+    std::vector<TagEntryPtr> function_parameters;
+    std::vector<TagEntryPtr> keywords;
+    std::vector<TagEntryPtr> scope_members;
+    std::vector<TagEntryPtr> other_scopes_members;
+    std::vector<TagEntryPtr> global_scopes_members;
 
-    vector<TagEntryPtr> sorted_locals;
-    vector<TagEntryPtr> sorted_scope_members;
-    vector<TagEntryPtr> sorted_other_scopes_members;
-    vector<TagEntryPtr> sorted_global_scopes_members;
+    std::vector<TagEntryPtr> sorted_locals;
+    std::vector<TagEntryPtr> sorted_scope_members;
+    std::vector<TagEntryPtr> sorted_other_scopes_members;
+    std::vector<TagEntryPtr> sorted_global_scopes_members;
 
     // include the file scopes
-    vector<wxString> scopes = prepend_extra_scopes(visible_scopes);
+    std::vector<wxString> scopes = prepend_extra_scopes(visible_scopes);
 
     locals = get_locals(remainder.filter);
     function_parameters = m_file_only_tags.get_function_parameters(remainder.filter);
 
-    vector<wxString> kinds;
+    std::vector<wxString> kinds;
     // based on the lasts operand, build the list of items to fetch
     determine_current_scope();
     bool add_keywords = false;
@@ -1501,13 +1519,13 @@ size_t CxxCodeCompletion::get_word_completions(const CxxRemainder& remainder, ve
 }
 
 size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, const wxString& expression,
-                                          const wxString& text, const vector<wxString>& visible_scopes,
-                                          vector<TagEntryPtr>& matches)
+                                          const wxString& text, const std::vector<wxString>& visible_scopes,
+                                          std::vector<TagEntryPtr>& matches)
 {
-    vector<TagEntryPtr> candidates;
+    std::vector<TagEntryPtr> candidates;
     // optimization:
     // check if we are currently (file:line) on a function definition / declaration
-    vector<TagEntryPtr> tmp_candidates;
+    std::vector<TagEntryPtr> tmp_candidates;
     m_lookup->GetTagsByFileAndLine(filepath, line, tmp_candidates);
     if((tmp_candidates.size() == 1) && (tmp_candidates[0]->GetName() == expression) &&
        (tmp_candidates[0]->IsMethod())) {
@@ -1531,7 +1549,7 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
     }
 
     // filter tags with no line numbers
-    vector<TagEntryPtr> good_tags;
+    std::vector<TagEntryPtr> good_tags;
     TagEntryPtr first;
     for(auto tag : candidates) {
         if(tag->GetLine() != wxNOT_FOUND && !tag->GetFile().empty()) {
@@ -1548,8 +1566,8 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
         // we prefer the definition, unless we are already on it, and in that case, return the declaration
         // locate both declaration + implementation
         wxString path = first->GetPath();
-        vector<TagEntryPtr> impl_vec;
-        vector<TagEntryPtr> decl_vec;
+        std::vector<TagEntryPtr> impl_vec;
+        std::vector<TagEntryPtr> decl_vec;
         clDEBUG() << "Searching for path:" << path << endl;
         m_lookup->GetTagsByPathAndKind(path, impl_vec, { "function" }, 100);
         m_lookup->GetTagsByPathAndKind(path, decl_vec, { "prototype" }, 100);
@@ -1566,7 +1584,7 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
             matches.swap(impl_vec);
             return matches.size();
         }
-        auto is_on_line = [](const vector<TagEntryPtr>& tags_vec, int line, const wxString& file) {
+        auto is_on_line = [](const std::vector<TagEntryPtr>& tags_vec, int line, const wxString& file) {
             for(auto tag : tags_vec) {
                 if(tag->GetLine() == line && tag->GetFile() == file) {
                     return true;
@@ -1600,8 +1618,9 @@ size_t CxxCodeCompletion::find_definition(const wxString& filepath, int line, co
 }
 
 size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, const wxString& expression,
-                                        const wxString& text, const vector<wxString>& visible_scopes, bool exact_match,
-                                        vector<TagEntryPtr>& candidates, const wxStringSet_t& visible_files)
+                                        const wxString& text, const std::vector<wxString>& visible_scopes,
+                                        bool exact_match, std::vector<TagEntryPtr>& candidates,
+                                        const wxStringSet_t& visible_files)
 {
     // ----------------------------------
     // word completion
@@ -1637,7 +1656,7 @@ size_t CxxCodeCompletion::word_complete(const wxString& filepath, int line, cons
         return candidates.size();
     }
 
-    vector<TagEntryPtr> matches;
+    std::vector<TagEntryPtr> matches;
     matches.reserve(candidates.size());
     for(TagEntryPtr t : candidates) {
         if(t->GetName() == filter) {
@@ -1678,7 +1697,7 @@ wxString CxxCodeCompletion::normalize_pattern(TagEntryPtr tag) const
 }
 
 size_t CxxCodeCompletion::get_anonymous_tags(const wxString& name, const wxArrayString& kinds,
-                                             vector<TagEntryPtr>& tags) const
+                                             std::vector<TagEntryPtr>& tags) const
 {
     if(!m_lookup) {
         return 0;
@@ -1687,10 +1706,10 @@ size_t CxxCodeCompletion::get_anonymous_tags(const wxString& name, const wxArray
     return tags.size();
 }
 
-size_t CxxCodeCompletion::get_keywords_tags(const wxString& name, vector<TagEntryPtr>& tags)
+size_t CxxCodeCompletion::get_keywords_tags(const wxString& name, std::vector<TagEntryPtr>& tags)
 {
     CompletionHelper helper;
-    vector<wxString> keywords;
+    std::vector<wxString> keywords;
     helper.get_cxx_keywords(keywords);
     tags.reserve(keywords.size());
 
@@ -1755,7 +1774,7 @@ bool CxxCodeCompletion::read_template_definition(CxxTokenizer& tokenizer, wxStri
 }
 #undef CHECK_EXPECTED
 
-size_t CxxCodeCompletion::get_class_constructors(TagEntryPtr tag, vector<TagEntryPtr>& tags)
+size_t CxxCodeCompletion::get_class_constructors(TagEntryPtr tag, std::vector<TagEntryPtr>& tags)
 {
     if(!tag->IsClass() && !tag->IsStruct()) {
         tags.clear();
@@ -1763,14 +1782,14 @@ size_t CxxCodeCompletion::get_class_constructors(TagEntryPtr tag, vector<TagEntr
     }
     m_lookup->GetTagsByPathAndKind(tag->GetPath() + "::" + tag->GetName(), tags, { "prototype", "function" }, 250);
 
-    vector<TagEntryPtr> sorted_tags;
+    std::vector<TagEntryPtr> sorted_tags;
     // filter duplicate
     sort_tags(tags, sorted_tags, true, {});
     tags.swap(sorted_tags);
     return tags.size();
 }
 
-vector<CxxExpression> CxxCodeCompletion::from_expression(const wxString& expression, CxxRemainder* remainder)
+std::vector<CxxExpression> CxxCodeCompletion::from_expression(const wxString& expression, CxxRemainder* remainder)
 {
     auto arr = CxxExpression::from_expression(expression, remainder);
     for(auto& exp : arr) {
@@ -1800,13 +1819,13 @@ wxString& CxxCodeCompletion::simple_pre_process(wxString& name) const
     return name;
 }
 
-vector<TagEntryPtr> CxxCodeCompletion::get_parents_of_tag_no_recurse(TagEntryPtr parent,
-                                                                     TemplateManager::ptr_t template_manager,
-                                                                     const vector<wxString>& visible_scopes)
+std::vector<TagEntryPtr> CxxCodeCompletion::get_parents_of_tag_no_recurse(TagEntryPtr parent,
+                                                                          TemplateManager::ptr_t template_manager,
+                                                                          const std::vector<wxString>& visible_scopes)
 {
     wxArrayString inherits_with_template = parent->GetInheritsAsArrayWithTemplates();
     wxArrayString inherits = parent->GetInheritsAsArrayNoTemplates();
-    vector<TagEntryPtr> parents;
+    std::vector<TagEntryPtr> parents;
     parents.reserve(inherits.size());
 
     for(size_t i = 0; i < inherits.size(); ++i) {
@@ -1848,9 +1867,9 @@ vector<TagEntryPtr> CxxCodeCompletion::get_parents_of_tag_no_recurse(TagEntryPtr
     return parents;
 }
 
-vector<wxString> CxxCodeCompletion::prepend_extra_scopes(const vector<wxString>& visible_scopes)
+std::vector<wxString> CxxCodeCompletion::prepend_extra_scopes(const std::vector<wxString>& visible_scopes)
 {
-    vector<wxString> scopes = m_file_only_tags.get_file_scopes();
+    std::vector<wxString> scopes = m_file_only_tags.get_file_scopes();
     wxStringSet_t unique_scopes{ scopes.begin(), scopes.end() };
 
     // append only unique scopes

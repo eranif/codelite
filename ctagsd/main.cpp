@@ -15,7 +15,7 @@
 
 namespace
 {
-unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
+std::unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
     { "initialize", &ProtocolHandler::on_initialize },
     { "initialized", &ProtocolHandler::on_initialized },
     { "textDocument/didOpen", &ProtocolHandler::on_did_open },

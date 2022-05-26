@@ -10,7 +10,6 @@
 
 #include <wx/panel.h>
 
-using namespace std;
 class clRemoteDirCtrlItemData;
 class WXDLLIMPEXP_SDK clRemoteDirCtrl : public wxPanel
 {

@@ -252,7 +252,7 @@ void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
 
     // Did the user pass wxTR_COLUMN_WIDTH_NEVER_SHRINKS or wxDV_DYNAMIC_COLUMN_WIDTH ?
     if(m_recalcColumnWidthOnPaint) {
-        vector<size_t> max_widths;
+        std::vector<size_t> max_widths;
 
         // calculate the width of the cells
         for(size_t i = 0; i < items.size(); ++i) {

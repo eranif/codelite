@@ -2,8 +2,8 @@
 
 #include "clControlWithItems.h"
 #include "clScrolledPanel.h"
+#include "file_logger.h"
 
-#include <file_logger.h>
 #include <wx/cursor.h>
 #include <wx/dcbuffer.h>
 #include <wx/dcclient.h>
@@ -251,7 +251,7 @@ void clHeaderBar::DoCancelDrag()
     }
 }
 
-void clHeaderBar::SetColumnsWidth(const vector<size_t>& v_width)
+void clHeaderBar::SetColumnsWidth(const std::vector<size_t>& v_width)
 {
     if(v_width.size() != m_columns.size()) {
         return;

@@ -14,11 +14,11 @@
 
 namespace
 {
-const wxString FUNCTION_SYMBOL = wxT("\u2A10");
-const wxString CLASS_SYMBOL = wxT("\u2394");
-const wxString VARIABLE_SYMBOL = wxT("\u2027");
-const wxString MODULE_SYMBOL = wxT("{}");
-const wxString ENUMERATOR_SYMBOL = wxT("#");
+const wxString FUNCTION_SYMBOL = "\u2A10";
+const wxString CLASS_SYMBOL = "\u2394";
+const wxString VARIABLE_SYMBOL = "\u2027";
+const wxString MODULE_SYMBOL = "{}";
+const wxString ENUMERATOR_SYMBOL = "#";
 } // namespace
 
 using namespace LSP;
@@ -47,7 +47,7 @@ void OutlineTab::OnOutlineSymbols(LSPEvent& event)
     RenderSymbols(event.GetSymbolsInformation(), event.GetFileName());
 }
 
-void OutlineTab::RenderSymbols(const vector<LSP::SymbolInformation>& symbols, const wxString& filename)
+void OutlineTab::RenderSymbols(const std::vector<LSP::SymbolInformation>& symbols, const wxString& filename)
 {
     ClearView();
 
@@ -87,7 +87,7 @@ void OutlineTab::RenderSymbols(const vector<LSP::SymbolInformation>& symbols, co
     wxColour module_colour = lexer->GetProperty(wxSTC_P_STRING).GetFgColour();
     wxColour function_colour = lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour();
     wxColour operator_colour = lexer->GetProperty(wxSTC_P_OPERATOR).GetFgColour();
-    vector<pair<wxString, int>> containers;
+    std::vector<std::pair<wxString, int>> containers;
 
     constexpr int INITIAL_DEPTH = 0;
     constexpr int DEPTH_WIDTH = 2;

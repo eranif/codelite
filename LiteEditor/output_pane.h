@@ -25,11 +25,11 @@
 #ifndef OUTPUT_PANE_H
 #define OUTPUT_PANE_H
 
-#include <wx/panel.h>
-
 #include "Notebook.h"
 #include "cl_command_event.h"
 #include "shelltab.h"
+
+#include <wx/panel.h>
 
 class BuildTab;
 class ClangOutputTab;
@@ -45,7 +45,6 @@ class TaskPanel;
 class OutputPaneBook;
 class FindUsageTab;
 
-using namespace std;
 /**
  * \ingroup LiteEditor
  * This class represents the default bottom pane in the editor
@@ -79,7 +78,7 @@ protected:
 
         Tab() {}
     };
-    unordered_map<wxString, Tab> m_tabs;
+    std::unordered_map<wxString, Tab> m_tabs;
 
 private:
     wxString m_caption;

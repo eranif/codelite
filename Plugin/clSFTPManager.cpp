@@ -13,8 +13,6 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
-#include "wx/debug.h"
-#include "wx/thread.h"
 
 #include <condition_variable>
 #include <functional>
@@ -22,9 +20,11 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <wx/debug.h>
 #include <wx/event.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
+#include <wx/thread.h>
 #include <wx/utils.h>
 
 wxDEFINE_EVENT(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);
@@ -724,7 +724,7 @@ void clSFTPManager::StartWorkerThread()
     }
 
     m_worker_thread = new std::thread(
-        [](SyncQueue<std::function<void()>>& Q, atomic_bool& shutdown) {
+        [](SyncQueue<std::function<void()>>& Q, std::atomic_bool& shutdown) {
             while(!shutdown.load()) {
                 auto work_func = Q.pop_front();
                 if(work_func == nullptr) {

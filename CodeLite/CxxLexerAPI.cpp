@@ -4,17 +4,16 @@
 
 #include <unordered_set>
 
-using namespace std;
 namespace
 {
-unordered_set<int> set_number_tokens = {
+std::unordered_set<int> set_number_tokens = {
     T_DEC_NUMBER,
     T_OCTAL_NUMBER,
     T_HEX_NUMBER,
     T_FLOAT_NUMBER,
 };
 
-unordered_set<int> set_pp_tokens = {
+std::unordered_set<int> set_pp_tokens = {
     T_PP_DEFINE,       T_PP_DEFINED,
     T_PP_IF,           T_PP_IFNDEF,
     T_PP_IFDEF,        T_PP_ELSE,
@@ -31,17 +30,17 @@ unordered_set<int> set_pp_tokens = {
     T_PP_LTEQ,
 };
 
-unordered_set<int> set_operators_tokens = {
+std::unordered_set<int> set_operators_tokens = {
     T_DOT_STAR,   T_DOUBLE_COLONS, T_ARROW,     T_ARROW_STAR, T_PLUS_PLUS, T_MINUS_MINUS, T_LS,          T_LE,
     T_GE,         T_EQUAL,         T_NOT_EQUAL, T_AND_AND,    T_OR_OR,     T_STAR_EQUAL,  T_SLASH_EQUAL, T_DIV_EQUAL,
     T_PLUS_EQUAL, T_MINUS_EQUAL,   T_LS_ASSIGN, T_RS_ASSIGN,  T_AND_EQUAL, T_POW_EQUAL,   T_OR_EQUAL,    T_3_DOTS,
 };
 
-unordered_set<int> set_builtin_types = {
+std::unordered_set<int> set_builtin_types = {
     T_BOOL, T_CHAR,  T_CHAR16_T, T_CHAR32_T, T_DOUBLE, T_FLOAT,   T_INT,
     T_LONG, T_SHORT, T_SIGNED,   T_UNSIGNED, T_VOID,   T_WCHAR_T,
 };
-unordered_set<int> set_keywords_tokens = {
+std::unordered_set<int> set_keywords_tokens = {
     T_ALIGNAS,     T_ALIGNOF,      T_AND,          T_AND_EQ,
     T_ASM,         T_AUTO,         T_BITAND,       T_BITOR,
     T_BREAK,       T_CASE,         T_CATCH,

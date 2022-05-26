@@ -14,7 +14,6 @@
 #define INVALID_SIZE_T static_cast<size_t>(wxNOT_FOUND)
 
 class clThemedTextCtrl;
-using namespace std;
 
 class WXDLLIMPEXP_SDK clComboBox : public wxControl
 {
@@ -120,7 +119,7 @@ public:
      */
     void SetStringSelection(const wxString& text);
 
-    void Append(const vector<wxString>& strings);
+    void Append(const std::vector<wxString>& strings);
     void Append(const wxArrayString& strings);
     size_t Append(const wxString& text);
     /**

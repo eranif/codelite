@@ -12,7 +12,6 @@
 
 #include <sstream>
 
-using namespace std;
 static const char separator_str[] = "\n************\n";
 static size_t separator_str_len = sizeof(separator_str) - 1;
 
@@ -98,7 +97,7 @@ void LSPNetworkSTDIO::DoStartLocalProcess()
     if(m_startupInfo.GetFlags() & LSPStartupInfo::kRemoteLSP) {
 #if USE_SFTP
         // wrap the command in ssh
-        vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
+        std::vector<wxString> command = { "ssh", "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
         // add user@host
         SFTPSettings s;
         SSHAccountInfo accountInfo;

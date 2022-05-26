@@ -18,8 +18,6 @@ class clSearchText;
 class clTreeCtrlModel;
 class clTreeCtrl;
 
-using namespace std;
-
 enum clTreeCtrlNodeFlags {
     kNF_FontBold = (1 << 0),
     kNF_FontItalic = (1 << 1),
@@ -151,7 +149,7 @@ public:
      */
     void DeleteAllChildren();
     void Render(wxWindow* win, wxDC& dc, const clColours& colours, int row_index, clSearchText* searcher);
-    vector<size_t> GetColumnWidths(wxWindow* win, wxDC& dc);
+    std::vector<size_t> GetColumnWidths(wxWindow* win, wxDC& dc);
     void SetHovered(bool b) { SetFlag(kNF_Hovered, b); }
     bool IsHovered() const { return m_flags & kNF_Hovered; }
 

@@ -18,11 +18,10 @@ struct _Mask {
     }
 };
 
-using namespace std;
 class WXDLLIMPEXP_CL clFileExtensionMatcher
 {
     wxString m_mask;
-    vector<_Mask> m_include_mask;
+    std::vector<_Mask> m_include_mask;
     bool m_always_matches = false;
 
 public:
@@ -35,7 +34,7 @@ public:
 class WXDLLIMPEXP_CL clPathExcluder
 {
     wxString m_mask;
-    vector<_Mask> m_exclude_mask;
+    std::vector<_Mask> m_exclude_mask;
 
 public:
     clPathExcluder(const wxString& mask);

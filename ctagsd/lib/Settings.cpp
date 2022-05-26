@@ -17,7 +17,7 @@
 
 namespace
 {
-FileLogger& operator<<(FileLogger& logger, const vector<pair<wxString, wxString>>& vec)
+FileLogger& operator<<(FileLogger& logger, const std::vector<std::pair<wxString, wxString>>& vec)
 {
     wxString buffer;
     buffer << "[";
@@ -29,7 +29,7 @@ FileLogger& operator<<(FileLogger& logger, const vector<pair<wxString, wxString>
     return logger;
 }
 
-vector<wxString> DEFAULT_TYPES = {
+std::vector<wxString> DEFAULT_TYPES = {
     "std::unique_ptr::pointer=_Tp", // needed for unique_ptr
                                     // {unordered}_map / map / {unordered}_multimap
     "std::*map::*iterator=std::pair<_Key, _Tp>",
@@ -55,7 +55,7 @@ vector<wxString> DEFAULT_TYPES = {
     "std::list::*reference=_Tp",
 };
 
-vector<wxString> DEFAULT_TOKENS = {
+std::vector<wxString> DEFAULT_TOKENS = {
     "ATTRIBUTE_PRINTF_1",
     "ATTRIBUTE_PRINTF_2",
     "BEGIN_DECLARE_EVENT_TYPES()=enum {",
@@ -373,19 +373,19 @@ vector<wxString> DEFAULT_TOKENS = {
 #endif
 };
 
-vector<pair<wxString, wxString>> to_vector_of_pairs(const vector<wxString>& arr)
+std::vector<std::pair<wxString, wxString>> to_vector_of_pairs(const std::vector<wxString>& arr)
 {
-    vector<pair<wxString, wxString>> result;
+    std::vector<std::pair<wxString, wxString>> result;
     result.reserve(arr.size());
     for(const wxString& line : arr) {
         wxString k = line.BeforeFirst('=');
         wxString v = line.AfterFirst('=');
-        result.emplace_back(make_pair(k, v));
+        result.emplace_back(std::make_pair(k, v));
     }
     return result;
 }
 
-void write_to_json(JSONItem& json_arr, const vector<pair<wxString, wxString>>& arr)
+void write_to_json(JSONItem& json_arr, const std::vector<std::pair<wxString, wxString>>& arr)
 {
     for(const auto& entry : arr) {
         auto type = json_arr.AddObject(wxEmptyString);
@@ -395,7 +395,6 @@ void write_to_json(JSONItem& json_arr, const vector<pair<wxString, wxString>>& a
 }
 } // namespace
 
-using namespace std;
 CTagsdSettings::CTagsdSettings()
 {
     // set some defaults
@@ -481,7 +480,7 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
     wxFileName compile_flags_txt(path, "compile_flags.txt");
     wxFileName compile_commands_json(path, "compile_commands.json");
 
-    set<wxString> S{ m_search_path.begin(), m_search_path.end() };
+    std::set<wxString> S{ m_search_path.begin(), m_search_path.end() };
     if(compile_flags_txt.FileExists()) {
         // we are using the compile_flags.txt file method
         CompileFlagsTxt cft(compile_flags_txt);
@@ -512,7 +511,7 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
 
     wxString content;
     FileUtils::ReadFileContent(tmpfile.GetFullPath(), content);
-    wxArrayString outputArr = wxStringTokenize(content, wxT("\n\r"), wxTOKEN_STRTOK);
+    wxArrayString outputArr = wxStringTokenize(content, "\n\r", wxTOKEN_STRTOK);
 
     // Analyze the output
     bool collect(false);
@@ -521,12 +520,12 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
         line.Trim().Trim(false);
 
         // search the scan starting point
-        if(line.Contains(wxT("#include <...> search starts here:"))) {
+        if(line.Contains("#include <...> search starts here:")) {
             collect = true;
             continue;
         }
 
-        if(line.Contains(wxT("End of search list."))) {
+        if(line.Contains("End of search list.")) {
             break;
         }
 

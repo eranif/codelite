@@ -14,7 +14,6 @@
 #include <wx/menu.h>
 #include <wx/notebook.h>
 
-using namespace std;
 class clGTKNotebook : public wxNotebook
 {
 protected:

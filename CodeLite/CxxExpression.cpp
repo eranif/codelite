@@ -8,7 +8,7 @@ CxxExpression::CxxExpression() {}
 
 CxxExpression::~CxxExpression() {}
 
-vector<CxxExpression> CxxExpression::from_expression(const wxString& expression, CxxRemainder* remainder)
+std::vector<CxxExpression> CxxExpression::from_expression(const wxString& expression, CxxRemainder* remainder)
 {
     CxxTokenizer tokenizer;
     CxxLexerToken tk;
@@ -19,7 +19,7 @@ vector<CxxExpression> CxxExpression::from_expression(const wxString& expression,
         tokenizer.Reset(cast_type);
     }
 
-    vector<CxxExpression> arr;
+    std::vector<CxxExpression> arr;
     CxxExpression curexpr;
 
     while(tokenizer.NextToken(tk)) {
@@ -388,7 +388,7 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
 wxStringMap_t CxxExpression::get_template_placeholders_map() const
 {
     wxStringMap_t M;
-    size_t count = min(m_template_placeholder_list.size(), m_template_init_list.size());
+    size_t count = std::min(m_template_placeholder_list.size(), m_template_init_list.size());
     for(size_t i = 0; i < count; i++) {
         M.insert({ m_template_placeholder_list[i], m_template_init_list[i] });
     }
@@ -416,7 +416,7 @@ void CxxExpression::set_operand(int op)
 }
 
 // class ContextManager : public Singleton<ContextManager>, OtherClass, SecondClass<wxString, wxArrayString> {
-vector<wxString> CxxExpression::split_subclass_expression(const wxString& subclass_pattern)
+std::vector<wxString> CxxExpression::split_subclass_expression(const wxString& subclass_pattern)
 {
     CxxLexerToken token;
     CxxTokenizer tokenizer;
@@ -431,7 +431,7 @@ vector<wxString> CxxExpression::split_subclass_expression(const wxString& subcla
     }
 
     // Check for possible
-    vector<wxString> result;
+    std::vector<wxString> result;
     wxString curexpr;
 
     int depth = 0;
@@ -482,4 +482,4 @@ vector<wxString> CxxExpression::split_subclass_expression(const wxString& subcla
     return result;
 }
 
-void CxxExpression::set_subscript_params(const vector<wxArrayString>& params) { m_subscript_params = params; }
+void CxxExpression::set_subscript_params(const std::vector<wxArrayString>& params) { m_subscript_params = params; }

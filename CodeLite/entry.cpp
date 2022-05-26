@@ -112,7 +112,7 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     wxString path;
 
     // Check if we can get full name (including path)
-    static vector<wxString> scope_fields = { "class", "struct", "namespace", "interface", "enum", "function" };
+    static std::vector<wxString> scope_fields = { "class", "struct", "namespace", "interface", "enum", "function" };
     for(const wxString& scope_field : scope_fields) {
         path = GetExtField(scope_field);
         if(!path.IsEmpty()) {
@@ -147,8 +147,9 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     }
 
     // If there is no path, path is set to name
-    if(GetPath().IsEmpty())
+    if(GetPath().IsEmpty()) {
         SetPath(GetName());
+    }
 
     // Get the parent name
     StringTokenizer tok(GetPath(), "::");
@@ -179,8 +180,9 @@ void TagEntry::Print()
 
     std::cout << " ---- Ext fields: ---- " << std::endl;
     wxStringMap_t::const_iterator iter = m_extFields.begin();
-    for(; iter != m_extFields.end(); iter++)
+    for(; iter != m_extFields.end(); iter++) {
         std::cout << iter->first << ":\t\t" << iter->second << std::endl;
+    }
     std::cout << "======================================" << std::endl;
 }
 
@@ -364,17 +366,17 @@ void TagEntry::FromLine(const wxString& line)
 
 bool TagEntry::IsConstructor() const
 {
-    if(GetKind() != "function" && GetKind() != "prototype")
+    if(GetKind() != "function" && GetKind() != "prototype") {
         return false;
-
+    }
     return GetName() == GetScope();
 }
 
 bool TagEntry::IsDestructor() const
 {
-    if(GetKind() != "function" && GetKind() != "prototype")
+    if(GetKind() != "function" && GetKind() != "prototype") {
         return false;
-
+    }
     return GetName().StartsWith("~");
 }
 

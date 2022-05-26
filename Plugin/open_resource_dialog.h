@@ -57,11 +57,11 @@ public:
 
 public:
     OpenResourceDialogItemData()
-        : m_file(wxT(""))
+        : m_file("")
         , m_line(wxNOT_FOUND)
-        , m_pattern(wxT(""))
-        , m_name(wxT(""))
-        , m_scope(wxT(""))
+        , m_pattern("")
+        , m_name("")
+        , m_scope("")
         , m_impl(false)
     {
     }
@@ -112,7 +112,7 @@ protected:
     void DoPopulateList();
     void DoPopulateWorkspaceFile();
     bool MatchesFilter(const wxString& name);
-    void DoPopulateTags(const vector<LSP::SymbolInformation>& symbols);
+    void DoPopulateTags(const std::vector<LSP::SymbolInformation>& symbols);
     void DoSelectItem(const wxDataViewItem& item);
     void Clear();
     void DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont,

@@ -5,7 +5,6 @@
 #include <wx/arrstr.h>
 #include <wx/string.h>
 
-using namespace std;
 struct RemoteWorkspaceInfo {
     wxString account;
     wxString path;
@@ -21,7 +20,7 @@ public:
      * @brief read the recent workspaces from the file system
      * @return
      */
-    vector<RemoteWorkspaceInfo> GetRecentWorkspaces() const;
+    std::vector<RemoteWorkspaceInfo> GetRecentWorkspaces() const;
 
     /**
      * @brief update recent workspaces with workspace

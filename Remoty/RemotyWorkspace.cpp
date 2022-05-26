@@ -389,7 +389,7 @@ void RemotyWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
     wxArrayString arrTargets;
     const auto& targets = m_settings.GetSelectedConfig()->GetBuildTargets();
 
-    unordered_map<int, wxString> M;
+    std::unordered_map<int, wxString> M;
     for(const auto& vt : targets) {
         const wxString& name = vt.first;
         int menuId = wxXmlResource::GetXRCID(vt.first);
@@ -753,7 +753,7 @@ void RemotyWorkspace::DoConfigureLSP(const LSPParams& lsp)
 IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool sync)
 {
     wxString path = UploadScript(scriptContent);
-    vector<wxString> args = { "/bin/bash", path };
+    std::vector<wxString> args = { "/bin/bash", path };
     size_t flags = IProcessCreateDefault | IProcessCreateSSH;
     if(sync) {
         flags |= IProcessCreateSync;

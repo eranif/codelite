@@ -31,7 +31,6 @@
 #include <vector>
 #include <wx/treectrl.h>
 
-using namespace std;
 class WXDLLIMPEXP_SDK clRemoteDirCtrlItemData : public wxTreeItemData
 {
 public:
@@ -48,7 +47,7 @@ protected:
     size_t m_flags = kFile;
 
 public:
-    typedef vector<clRemoteDirCtrlItemData*> Vec_t;
+    typedef std::vector<clRemoteDirCtrlItemData*> Vec_t;
 
 public:
     clRemoteDirCtrlItemData(const wxString& path)

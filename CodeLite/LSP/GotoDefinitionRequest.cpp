@@ -23,7 +23,7 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
         return;
     }
 
-    vector<LSP::Location> locations;
+    std::vector<LSP::Location> locations;
     if(result.isArray()) {
         int count = result.arraySize();
         locations.reserve(count);
@@ -38,8 +38,9 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
         locations.push_back(loc);
     }
 
-    if(locations.empty())
+    if(locations.empty()) {
         return;
+    }
 
     // Fire an event with the matching location
     LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);

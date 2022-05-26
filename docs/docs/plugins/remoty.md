@@ -47,44 +47,71 @@ configuration file.
 ### `codelite-remote.json` file
 ---
 
+By default, `codelite-remote` process will search for a configuration file under `WORKSPACE_PATH/.codelite/codelite-remote.json`, if no
+configuration file is found, it will search for it under `$HOME/.codelite/codelite-remote.json`, if still no match, it will create an empty configuration
+file and work with it.
+
+To get started, you can create a global configuration file `$HOME/.codelite/`:
+
 - Open a terminal on your remote machine, or connect to it via SSH
 - Type:
-    ```bash
-    mkdir -p ~/.codelite-remote.json
-    touch ~/.codelite-remote/codelite-remote.json
-    ```
-- Add [Language Servers][5] entries so you will end up with `~/.codelite-remote.json` that looks similar to this:
-    ```json
+
+```bash
+mkdir -p ~/.codelite/
+touch ~/.codelite/codelite-remote.json
+```
+
+- Add [Language Servers][5] entries so you will end up with `~/.codelite/codelite-remote.json` that looks similar to this:
+
+```json
     {
      "Language Server Plugin": {
       "servers": [{
         "name": "clangd",
-        "command": "/usr/bin/clangd-12 -limit-results=500 -header-insertion-decorators=0",
+        "command": "clangd -limit-results=500 -header-insertion-decorators=0",
         "languages": ["c", "cpp"],
         "priority": 90,
-        "working_directory": ""
+        "working_directory": "",
+        "env": []
        }, {
         "name": "python",
-        "command": "/usr/bin/python3 -m pylsp",
+        "command": "python3 -m pylsp",
         "languages": ["python"],
         "priority": 80,
-        "working_directory": ""
+        "working_directory": "",
+        "env": []
        }]
      }
     }
-    ```
+```
+
 - Modify the `command` field in the above example, to match the actual paths installed on your machine
 - Add / remove more `server` entries
 - Save the file
+- If your language server requires environment variables, use the `env` property using the following format:
+
+```json
+{
+    ...
+    "env" : [{
+        "name": "PATH",
+        "value": "/some/path/bin:$PATH"
+    }, {
+        "name": "LD_LIBRARY_PATH",
+        "value": "/some/path/lib:$LD_LIBRARY_PATH"
+    }]
+    ...
+}
+```
 
 !!! Note
-    Whenever you modify your `$HOME/.codelite-remote/codelite-remote.json` file,
-    remember to reload your workspace in CodeLite (Close followed by Open)
+    Whenever you modify your `$HOME/.codelite/codelite-remote.json` file,
+    remember to reload your workspace in CodeLite (Right click on the top workspace folder -> Reload Workspace)
 
 !!! Note
     The following code block contains the complete list of supported languages known to CodeLite:
 
-    ```json
+```json
     {
         "bat",        "bibtex",     "clojure",     "coffeescript",  "c",
         "cpp",        "csharp",     "css",         "diff",          "dart",
@@ -98,7 +125,7 @@ configuration file.
         "typescript", "tex",        "vb",          "xml",           "xsl",
         "yaml"
     };
-    ```
+```
 
 ## Supported features
 ---

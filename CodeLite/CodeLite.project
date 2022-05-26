@@ -680,8 +680,7 @@ CxxLexer.cpp: CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
-</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -697,7 +696,7 @@ XmlLexer.cpp: XMLLexer.l
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../sdk/codelite_indexer/network"/>
         <IncludePath Value="../PCH"/>
-        <IncludePath Value="../sdk/libssh/include"/>
+        <IncludePath Value="$(SSH_HOME)/include"/>
         <IncludePath Value="../sdk/websocketpp"/>
         <IncludePath Value="../sdk/asio-1.12.1"/>
         <Preprocessor Value="USE_SFTP=1"/>
@@ -705,7 +704,7 @@ XmlLexer.cpp: XMLLexer.l
       </Compiler>
       <Linker Options=";$(shell wx-config --libs std,stc --debug=no --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>
-        <LibraryPath Value="../sdk/libssh/lib"/>
+        <LibraryPath Value="$(SSH_HOME)/lib"/>
         <Library Value="libwxsqlite3u.dll"/>
         <Library Value="libssh"/>
         <Library Value="ws2_32"/>

@@ -14,11 +14,11 @@
 
 namespace
 {
-const wxString FUNCTION_SYMBOL = "\u2A10";
-const wxString CLASS_SYMBOL = "\u2394";
-const wxString VARIABLE_SYMBOL = "\u2027";
-const wxString MODULE_SYMBOL = "{}";
-const wxString ENUMERATOR_SYMBOL = "#";
+const wxString FUNCTION_SYMBOL = wxT("\u2A10");
+const wxString CLASS_SYMBOL = wxT("\u2394");
+const wxString VARIABLE_SYMBOL = wxT("\u2027");
+const wxString MODULE_SYMBOL = wxT("{}");
+const wxString ENUMERATOR_SYMBOL = wxT("#");
 } // namespace
 
 using namespace LSP;

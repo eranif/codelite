@@ -5,7 +5,6 @@ set TARGET_DIR=%ProgramFiles%
 set COPY_WXC_RESOURCES=0
 set CODELITE_SRC_DIR=C:\src\codelite
 set LIB_DIR=%CODELITE_SRC_DIR%\build-Win_x64_Release\lib
-set SDK_DIR==%CODELITE_SRC_DIR%\sdk
 set RUNTIME_DIR=%CODELITE_SRC_DIR%\Runtime
 set WX_CONFIG_DIR=%MSYS2_HOME%\devl\wx-config-msys2\bin
 set WXWIN=%MSYS2_HOME%\root
@@ -62,7 +61,6 @@ copy %LLVM_BIN%\clangd.exe "%TARGET_DIR%\CodeLite\lsp\" /Y
 copy %LLVM_BIN%\msvcp140.dll "%TARGET_DIR%\CodeLite\lsp\" /Y
 copy %LLVM_BIN%\vcruntime140.dll "%TARGET_DIR%\CodeLite\lsp\" /Y
 copy %LLVM_BIN%\vcruntime140_1.dll "%TARGET_DIR%\CodeLite\lsp\" /Y
-copy %SDK_DIR%\libssh\lib\libssh.dll "%TARGET_DIR%\CodeLite\libssh.dll" /Y
 copy %RUNTIME_DIR%\codelite-exec.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\codelite-make.exe "%TARGET_DIR%\CodeLite\" /Y
@@ -70,7 +68,6 @@ copy %RUNTIME_DIR%\codelite-terminal.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\rm.exe "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\astyle.sample "%TARGET_DIR%\CodeLite\" /Y
 copy %RUNTIME_DIR%\php.sample "%TARGET_DIR%\CodeLite\" /Y
-copy %RUNTIME_DIR%\pthreadGC2.dll "%TARGET_DIR%\CodeLite\" /Y
 copy %WX_CONFIG_DIR%\wx-config.exe "%TARGET_DIR%\CodeLite\" /Y
 
 :END

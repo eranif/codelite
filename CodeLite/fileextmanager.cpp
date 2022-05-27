@@ -64,10 +64,12 @@ struct Matcher {
         return false;
     }
 };
-
-static std::unordered_map<wxString, FileExtManager::FileType> m_map;
-static std::vector<Matcher> m_matchers;
-static bool init_done = false;
+namespace
+{
+std::unordered_map<wxString, FileExtManager::FileType> m_map;
+std::vector<Matcher> m_matchers;
+bool init_done = false;
+}; // namespace
 
 void FileExtManager::Init()
 {
@@ -171,6 +173,7 @@ void FileExtManager::Init()
         m_map["s"] = TypeAsm;
         m_map["yaml"] = TypeYAML;
         m_map["yml"] = TypeYAML;
+        m_map["clangd"] = TypeYAML;
         m_map["db"] = TypeDatabase;
         m_map["tags"] = TypeDatabase;
         m_map["lua"] = TypeLua;
@@ -228,6 +231,8 @@ FileExtManager::FileType FileExtManager::GetType(const wxString& filename, FileE
             return TypeDockerfile;
         } else if(fn.GetFullName().CmpNoCase("README") == 0) {
             return TypeMarkdown;
+        } else if(fn.GetFullName().CmpNoCase(".clangd") == 0) {
+            return TypeYAML;
         } else {
             // try auto detecting
             FileType autoDetectType = defaultType;

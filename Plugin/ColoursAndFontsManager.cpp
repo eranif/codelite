@@ -66,20 +66,14 @@ void AddLexerKeywords(LexerConf::Ptr_t lexer, int setIndex, const std::vector<wx
 void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
 {
     wxString spec = lexer->GetFileSpec();
-    wxString ext = extension;
-    ext.Replace(".", wxEmptyString);
-    ext.Replace("*", wxEmptyString);
-    ext.Prepend(".").Prepend("*");
-
     wxString as_str;
     auto extensions = ::wxStringTokenize(spec, ";,", wxTOKEN_STRTOK);
-    if(extensions.Index(ext) == wxNOT_FOUND) {
-        extensions.Add(ext);
-        as_str = ::wxJoin(extensions, ';');
-        lexer->SetFileSpec(as_str);
-    } else {
-        // already exists
+    if(extensions.Index(extension) != wxNOT_FOUND) {
+        return;
     }
+    extensions.Add(extension);
+    as_str = ::wxJoin(extensions, ';');
+    lexer->SetFileSpec(as_str);
 }
 } // namespace
 
@@ -888,8 +882,14 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     if(lexer->GetName() == "makefile" && !lexer->GetFileSpec().Contains("*akefile.am")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*akefile.in;*akefile.am");
     }
+
     if(lexer->GetName() == "properties") {
         AddFileExtension(lexer, "*.toml");
+    }
+
+    // .clangd is of type "yaml"
+    if(lexer->GetName() == "yaml") {
+        AddFileExtension(lexer, ".clangd");
     }
 
     // Upgrade the lexer colours

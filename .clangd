@@ -1,4 +1,11 @@
-If:
-  PathMatch: .*\.h
 CompileFlags:
-  Add: -xc++
+    Add:
+        - "-ferror-limit=0"
+
+---
+
+If:
+    PathMatch: .*\.h
+CompileFlags:
+    Add:
+        - "-xc++"

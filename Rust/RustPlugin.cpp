@@ -262,6 +262,7 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     // build the file path:
     // the compiler report the file in relative path to the `Cargo.toml` file
     if(!m_cargoTomlFile.FileExists()) {
+        event.Skip(true); // let others handle this
         return;
     }
 
@@ -269,6 +270,7 @@ void RustPlugin::OnBuildErrorLineClicked(clBuildEvent& event)
     strfile << wxFILE_SEP_PATH << event.GetFileName();
     wxFileName fnFile(strfile);
     if(!fnFile.FileExists()) {
+        event.Skip(true); // let others handle this
         return;
     }
 

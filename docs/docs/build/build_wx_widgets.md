@@ -20,7 +20,9 @@ git submodule update --init
 ```bash
 mkdir build-release
 cd build-release
-cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DwxBUILD_DEBUG_LEVEL=0
+cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release                 \
+         -DwxBUILD_DEBUG_LEVEL=0                                        \
+         -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1
 mingw32-make -j$(nproc)
 ```
 
@@ -39,7 +41,7 @@ mingw32-make -j$(nproc)
 To build wxWidgets on you computer you will need these packages:
 
 - The gtk development package: for GTK+2 it's often called `libgtk2.0-dev` or similar; for GTK3, `libgtk-3-dev`
-- `pkg-config` (which usually comes with the gtk dev package) 
+- `pkg-config` (which usually comes with the gtk dev package)
 - The `build-essential` package (or the relevant bit of it: `g++`, `make` etc)
 - `git`
 - `cmake`

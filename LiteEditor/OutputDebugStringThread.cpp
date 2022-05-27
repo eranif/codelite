@@ -1,6 +1,7 @@
 #include "OutputDebugStringThread.h"
-#include "file_logger.h"
+
 #include "event_notifier.h"
+#include "file_logger.h"
 
 wxDEFINE_EVENT(wxEVT_OUTPUT_DEBUG_STRING, clCommandEvent);
 
@@ -21,7 +22,7 @@ OutputDebugStringThread::OutputDebugStringThread()
     // Mutex: DBWin
     // ---------------------------------------------------------
     m_hDBWinMutex = ::OpenMutex(MUTEX_ALL_ACCESS, FALSE, L"DBWinMutex");
-    
+
     if(m_hDBWinMutex == NULL) {
         clWARNING() << "Failed to open mutex: 'DBWinMutex'." << GetLastError() << clEndl;
         return;
@@ -31,9 +32,9 @@ OutputDebugStringThread::OutputDebugStringThread()
 
     if(m_hEventBufferReady == NULL) {
         m_hEventBufferReady = ::CreateEvent(NULL,
-            FALSE, // auto-reset
-            TRUE,  // initial state: signaled
-            L"DBWIN_BUFFER_READY");
+                                            FALSE, // auto-reset
+                                            TRUE,  // initial state: signaled
+                                            L"DBWIN_BUFFER_READY");
 
         if(m_hEventBufferReady == NULL) {
             clWARNING() << "Failed to create event: 'DBWIN_BUFFER_READY'." << GetLastError() << clEndl;
@@ -46,9 +47,9 @@ OutputDebugStringThread::OutputDebugStringThread()
 
     if(m_hEventDataReady == NULL) {
         m_hEventDataReady = ::CreateEvent(NULL,
-            FALSE, // auto-reset
-            FALSE, // initial state: nonsignaled
-            L"DBWIN_DATA_READY");
+                                          FALSE, // auto-reset
+                                          FALSE, // initial state: nonsignaled
+                                          L"DBWIN_DATA_READY");
 
         if(m_hEventDataReady == NULL) {
             clWARNING() << "Failed to create event: 'DBWIN_DATA_READY'." << GetLastError() << clEndl;
@@ -59,11 +60,11 @@ OutputDebugStringThread::OutputDebugStringThread()
     // Shared memory
     // ---------------------------------------------------------
     wxString DBWIN_BUFFER = L"DBWIN_BUFFER";
-    m_hDBMonBuffer = ::OpenFileMapping(FILE_MAP_READ, FALSE, DBWIN_BUFFER);
+    m_hDBMonBuffer = ::OpenFileMapping(FILE_MAP_READ, FALSE, DBWIN_BUFFER.c_str());
 
     if(m_hDBMonBuffer == NULL) {
-        m_hDBMonBuffer = ::CreateFileMapping(
-            INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(struct dbwin_buffer), DBWIN_BUFFER);
+        m_hDBMonBuffer = ::CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, sizeof(struct dbwin_buffer),
+                                             DBWIN_BUFFER.c_str());
 
         if(m_hDBMonBuffer == NULL) {
             clWARNING() << "Failed to CreateFileMapping:" << DBWIN_BUFFER << "." << GetLastError() << clEndl;

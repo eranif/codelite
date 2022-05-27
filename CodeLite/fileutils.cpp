@@ -1005,7 +1005,7 @@ bool FileUtils::IsBinaryExecutable(const wxString& filename)
 
     // check the file itself
     DWORD type;
-    return GetBinaryType(filename, &type) == TRUE;
+    return GetBinaryType(filename.c_str(), &type) == TRUE;
 #else
     // do ELF check by comparing the first 4 bytes of the file to the ELF magic string
     char buffer[4];

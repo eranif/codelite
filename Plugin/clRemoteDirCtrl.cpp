@@ -13,6 +13,7 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
+#include <wx/window.h>
 #include <wx/xrc/xmlres.h>
 
 wxDEFINE_EVENT(wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING, clContextMenuEvent);
@@ -30,9 +31,13 @@ clRemoteDirCtrl::clRemoteDirCtrl(wxWindow* parent)
     GetSizer()->Add(m_treeCtrl, 1, wxEXPAND);
     GetSizer()->Fit(this);
 
+    // set the default bitmaps
+    m_treeCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
+
     // events
     EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, [this](clCommandEvent& e) {
         e.Skip();
+        // update the bitmaps
         m_treeCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     });
 

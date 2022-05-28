@@ -117,7 +117,9 @@ const wxEventType wxEVT_CMD_RESTART_CODELITE = wxNewEventType();
 //---------------------------------------------------------------
 // Debugger helper method
 //---------------------------------------------------------------
-static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
+namespace
+{
+wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
 {
     wxArrayString types;
     int depth(0);
@@ -178,6 +180,75 @@ static wxArrayString DoGetTemplateTypes(const wxString& tmplDecl)
 
     return types;
 }
+
+const wxString CLANGD_FILE_CONTENT = R"EOF(
+CompileFlags:
+    Add:
+        - "-ferror-limit=0"
+---
+If:
+    PathMatch: .*\.h
+CompileFlags:
+    Add:
+        - "-xc++"
+)EOF";
+
+const wxString CLANG_FORMAT_FILE_CONTENT = R"EOF(
+---
+Language:        Cpp
+AccessModifierOffset: -4
+AlignEscapedNewlinesLeft: true
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: true
+AllowShortFunctionsOnASingleLine: true
+#AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: false
+BinPackParameters: true
+BreakBeforeBraces: Linux
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializersBeforeComma: true
+ColumnLimit: 120
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+Cpp11BracedListStyle: false
+DerivePointerAlignment: false
+DisableFormat:   false
+ExperimentalAutoDetectBinPacking: false
+ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
+IndentCaseLabels: false
+IndentWidth:     4
+IndentWrappedFunctionNames: false
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 1
+NamespaceIndentation: Inner
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 300
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakString: 1000
+PenaltyExcessCharacter: 1000000
+PenaltyReturnTypeOnItsOwnLine: 60
+PointerAlignment: Left
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  false
+SpacesInContainerLiterals: true
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+Standard: C++11
+TabWidth: 4
+UseTab: Never
+SortIncludes: true
+IncludeBlocks: Regroup
+)EOF";
+} // namespace
 
 //---------------------------------------------------------------
 //
@@ -584,6 +655,16 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
                 }
             }
             wxCopyFile(sourceFile.GetFullPath(), targetFile.GetFullPath());
+
+            // Create .clangd file
+            wxFileName clangd_file(proj->GetFileName());
+            clangd_file.SetFullName(".clangd");
+            FileUtils::WriteFileContent(clangd_file, CLANGD_FILE_CONTENT);
+
+            // Create .clang-format file
+            wxFileName clang_format_file(proj->GetFileName());
+            clang_format_file.SetFullName(".clang-format");
+            FileUtils::WriteFileContent(clang_format_file, CLANG_FORMAT_FILE_CONTENT);
         }
     }
 

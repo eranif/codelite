@@ -378,11 +378,14 @@ void clRowEntry::ClearRects()
 
 std::vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
 {
+    wxDCFontChanger font_changer(dc);
+
     std::vector<size_t> v;
     wxRect rowRect = GetItemRect();
     int itemIndent = IsListItem() ? clHeaderItem::X_SPACER : (GetIndentsCount() * m_tree->GetIndent());
-    wxFont f = m_tree->GetDefaultFont();
-    dc.SetFont(f);
+
+    // set default font
+    const wxFont default_font = m_tree->GetDefaultFont();
     v.reserve(m_cells.size());
 
     int COLOUR_TEXT_LEN = wxNOT_FOUND;
@@ -390,6 +393,16 @@ std::vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
 
     for(size_t i = 0; i < m_cells.size(); ++i) {
         auto& cell = m_cells[i];
+
+        // use the tree font to calculate the width
+        dc.SetFont(default_font);
+
+        // unless cell font is valid
+        if(cell.GetFont().IsOk()) {
+            // cell
+            dc.SetFont(cell.GetFont());
+        }
+
         v.emplace_back();
         size_t& width = v.back();
 

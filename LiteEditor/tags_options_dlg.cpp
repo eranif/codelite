@@ -60,7 +60,7 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     WindowAttrManager::Load(this);
 
     // Set default values
-    bool genJsonFile = clConfig::Get().Read("GenerateCompileCommands", false);
+    bool genJsonFile = clConfig::Get().Read("GenerateCompileCommands", true);
 
     //------------------------------------------------------------------
     // Display and behavior

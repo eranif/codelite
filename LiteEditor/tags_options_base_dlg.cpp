@@ -87,7 +87,7 @@ TagsOptionsBaseDlg::TagsOptionsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     m_checkBoxGenCompileCommandsJSON = new wxCheckBox(this, wxID_ANY, _("Generate compile_commands.json file"),
                                                       wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxGenCompileCommandsJSON->SetValue(false);
+    m_checkBoxGenCompileCommandsJSON->SetValue(true);
 
     flexGridSizer127->Add(m_checkBoxGenCompileCommandsJSON, 0, wxALL, WXC_FROM_DIP(5));
 

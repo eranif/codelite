@@ -346,6 +346,7 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir, const wxString
     item.addProperty("command", "ls");
     item.addProperty("root_dir", root_dir);
     item.addProperty("file_extensions", ::wxStringTokenize(exts, ",; |", wxTOKEN_STRTOK));
+    clDEBUG1() << "ListFiles: sending command:" << item.format(false) << endl;
     m_process->Write(item.format(false) + "\n");
 
     // push a callback
@@ -541,8 +542,11 @@ void clCodeLiteRemoteProcess::OnListFilesOutput(const wxString& output, bool is_
 {
     clCommandEvent event(wxEVT_CODELITE_REMOTE_LIST_FILES);
 
-    // parse the output
-    event.SetString(output);
+    clDEBUG1() << output << endl;
+
+    // parse the output (line based)
+    wxArrayString files = ::wxStringTokenize(output, "\r\n", wxTOKEN_STRTOK);
+    event.GetStrings().swap(files);
     AddPendingEvent(event);
 
     if(is_completed) {

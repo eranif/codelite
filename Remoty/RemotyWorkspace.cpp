@@ -969,7 +969,9 @@ void RemotyWorkspace::OnCodeLiteRemoteListFilesProgress(clCommandEvent& event)
 
 void RemotyWorkspace::OnCodeLiteRemoteListFilesDone(clCommandEvent& event)
 {
-    clGetManager()->SetStatusMessage(_("Remote file system scan completed"));
+    wxString message;
+    message << _("Remote file system scan completed. Found: ") << m_workspaceFiles.size() << _(" files");
+    clGetManager()->SetStatusMessage(message);
 }
 
 void RemotyWorkspace::ScanForWorkspaceFiles()

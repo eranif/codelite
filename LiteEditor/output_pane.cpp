@@ -49,6 +49,7 @@ OutputPane::OutputPane(wxWindow* parent, const wxString& caption)
     , m_caption(caption)
     , m_buildInProgress(false)
 {
+    Hide();
     CreateGUIControls();
     EventNotifier::Get()->Connect(wxEVT_EDITOR_CLICKED, wxCommandEventHandler(OutputPane::OnEditorFocus), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTED, clBuildEventHandler(OutputPane::OnBuildStarted), NULL, this);
@@ -224,15 +225,14 @@ void OutputPane::SaveTabOrder()
     clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
 }
 
-typedef struct {
+typedef struct _tagTabInfo {
     wxString text;
     wxWindow* win = nullptr;
     int bmp = wxNOT_FOUND;
 } tagTabInfo;
 
-void OutputPane::ApplySavedTabOrder() const
+void OutputPane::ApplySavedTabOrder(bool update_ui) const
 {
-
     wxArrayString tabs;
     int index = -1;
     if(!clConfig::Get().GetOutputTabOrder(tabs, index))
@@ -276,6 +276,10 @@ void OutputPane::ApplySavedTabOrder() const
         m_book->SetSelection(index);
     } else if(m_book->GetPageCount()) {
         m_book->SetSelection(0);
+    }
+
+    if(update_ui) {
+        clGetManager()->GetDockingManager()->Update();
     }
 }
 

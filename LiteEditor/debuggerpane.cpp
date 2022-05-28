@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "debuggerpane.h"
+
 #include "DebuggerCallstackView.h"
 #include "DebuggerDisassemblyTab.h"
 #include "breakpointdlg.h"
@@ -29,7 +31,6 @@
 #include "debugger.h"
 #include "debuggerasciiviewer.h"
 #include "debuggermanager.h"
-#include "debuggerpane.h"
 #include "detachedpanesinfo.h"
 #include "dockablepane.h"
 #include "editor_config.h"
@@ -43,6 +44,7 @@
 #include "threadlistpanel.h"
 #include "wx/dcbuffer.h"
 #include "wx/xrc/xmlres.h"
+
 #include <wx/aui/framemanager.h>
 
 const wxString DebuggerPane::LOCALS = wxTRANSLATE("Locals");
@@ -63,6 +65,7 @@ DebuggerPane::DebuggerPane(wxWindow* parent, const wxString& caption, wxAuiManag
     , m_initDone(false)
     , m_mgr(mgr)
 {
+    Hide();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &DebuggerPane::OnSettingsChanged, this);
     CreateGUIControls();
 }

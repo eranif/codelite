@@ -96,7 +96,7 @@ public:
 
     void UpdateProgress(int val);
     void ClearProgress();
-    void ApplySavedTabOrder() const;
+    void ApplySavedTabOrder(bool update_ui) const;
     void SaveWorkspaceViewTabOrder() const;
     bool IsTabVisible(int flag);
 

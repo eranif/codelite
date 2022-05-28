@@ -931,6 +931,10 @@ void clMainFrame::PostConstruct()
 {
     Maximize(m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME);
     CreateWelcomePage();
+
+    GetMainBook()->Show();
+    Layout();
+
     CallAfter(&clMainFrame::CompleteInitialization);
 
     // Post wxEVT_SYS_COLOURS_CHANGED event to make sure that all of our controls are aligned with the colour
@@ -1158,6 +1162,7 @@ void clMainFrame::CreateGUIControls()
 
     // tell wxAuiManager to manage this frame
     m_mgr.SetManagedWindow(m_mainPanel);
+
     m_mgr.SetArtProvider(new clAuiDockArt(PluginManager::Get()));
     SetAUIManagerFlags();
 
@@ -1194,7 +1199,7 @@ void clMainFrame::CreateGUIControls()
     // replace the menu bar with our customer menu bar
     wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar("main_menu");
     m_menuBar = new clThemedMenuBar(this, 0, nullptr, nullptr);
-    GetSizer()->Add(m_menuBar, 0, wxEXPAND);
+    GetSizer()->Insert(0, m_menuBar, 0, wxEXPAND);
     m_menuBar->FromMenuBar(mb);
     SetMenuBar(nullptr);
 #else
@@ -1208,9 +1213,11 @@ void clMainFrame::CreateGUIControls()
 #endif
     SetMenuBar(m_menuBar);
 #endif
-
     bool showMenuBar = clConfig::Get().Read(kConfigShowMenuBar, true);
     DoShowMenuBar(showMenuBar);
+
+    // Layout the main panel ASAP
+    m_mgr.Update();
 
     // add the toolbars sizer
     m_toolbarsSizer = new wxBoxSizer(wxVERTICAL);
@@ -1249,35 +1256,16 @@ void clMainFrame::CreateGUIControls()
     // Add the explorer pane
 
     m_workspacePane = new WorkspacePane(m_mainPanel, "Workspace View", &m_mgr);
-    m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
-                                       .CaptionVisible(true)
-                                       .Name(m_workspacePane->GetCaption())
-                                       .Caption(m_workspacePane->GetCaption())
-                                       .Left()
-                                       .MinSize(200, -1)
-                                       .Layer(1)
-                                       .Position(0)
-                                       .CloseButton(true));
-
     RegisterDockWindow(XRCID("workspace_pane"), "Workspace View");
 
     // add the debugger locals tree, make it hidden by default
-
     m_debuggerPane = new DebuggerPane(m_mainPanel, "Debugger", &m_mgr);
-    m_mgr.AddPane(m_debuggerPane, wxAuiPaneInfo()
-                                      .CaptionVisible(true)
-                                      .Name(m_debuggerPane->GetCaption())
-                                      .Caption(m_debuggerPane->GetCaption())
-                                      .Bottom()
-                                      .Layer(1)
-                                      .Position(1)
-                                      .CloseButton(true)
-                                      .Hide());
     RegisterDockWindow(XRCID("debugger_pane"), "Debugger");
 
     // Wrap the mainbook with a wxPanel
     // We do this so we can place the find bar under the main book
     wxPanel* container = new wxPanel(m_mainPanel);
+
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
         e.Skip();
         container->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
@@ -1309,16 +1297,8 @@ void clMainFrame::CreateGUIControls()
     CreateRecentlyOpenedFilesMenu();
 
     m_outputPane = new OutputPane(m_mainPanel, "Output View");
-    wxAuiPaneInfo paneInfo;
-    m_mgr.AddPane(m_outputPane, paneInfo.CaptionVisible(true)
-                                    .Name("Output View")
-                                    .Caption("Output View")
-                                    .Bottom()
-                                    .Layer(1)
-                                    .Position(0)
-                                    .Show(false)
-                                    .BestSize(wxSize(wxNOT_FOUND, 400)));
     RegisterDockWindow(XRCID("output_pane"), "Output View");
+
     long show_nav = EditorConfigST::Get()->GetInteger("ShowNavBar", 0);
     m_mainBook->ShowNavBar(show_nav ? true : false);
 
@@ -1373,7 +1353,6 @@ void clMainFrame::CreateGUIControls()
     GetOutputPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("outputview_view_rmenu"));
 
     DoSysColoursChanged();
-    m_mgr.Update();
     SetAutoLayout(true);
 
     // add the managed panel to the AUI manager
@@ -3352,13 +3331,43 @@ void clMainFrame::CompleteInitialization()
 
     // Connect some system events
     m_mgr.Connect(wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler(clMainFrame::OnDockablePaneClosed), NULL, this);
-    // m_mgr.Connect(wxEVT_AUI_RENDER,     wxAuiManagerEventHandler(clMainFrame::OnAuiManagerRender),   NULL, this);
+
+    m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
+                                       .CaptionVisible(true)
+                                       .Name(m_workspacePane->GetCaption())
+                                       .Caption(m_workspacePane->GetCaption())
+                                       .Left()
+                                       .MinSize(200, -1)
+                                       .Layer(1)
+                                       .Position(0)
+                                       .CloseButton(true));
+
+    m_mgr.AddPane(m_debuggerPane, wxAuiPaneInfo()
+                                      .CaptionVisible(true)
+                                      .Name(m_debuggerPane->GetCaption())
+                                      .Caption(m_debuggerPane->GetCaption())
+                                      .Bottom()
+                                      .Layer(1)
+                                      .Position(1)
+                                      .CloseButton(true)
+                                      .Hide());
+
+    m_mgr.AddPane(m_outputPane, wxAuiPaneInfo()
+                                    .CaptionVisible(true)
+                                    .Name("Output View")
+                                    .Caption("Output View")
+                                    .Bottom()
+                                    .Layer(1)
+                                    .Position(0)
+                                    .Show(false)
+                                    .BestSize(wxSize(wxNOT_FOUND, 400)));
+    UpdateAUI();
     Layout();
     SelectBestEnvSet();
 
     // Now everything is loaded, set the saved tab-order in the workspace and the output pane
-    GetWorkspacePane()->ApplySavedTabOrder();
-    GetOutputPane()->ApplySavedTabOrder();
+    GetWorkspacePane()->ApplySavedTabOrder(false);
+    GetOutputPane()->ApplySavedTabOrder(false);
 
     ManagerST::Get()->GetPerspectiveManager().ConnectEvents(&m_mgr);
 
@@ -3483,6 +3492,7 @@ void clMainFrame::CompleteInitialization()
 
     // Process the remainder of the command line arguments
     static_cast<CodeLiteApp*>(wxTheApp)->ProcessCommandLineParams();
+    m_mgr.Update();
 
 #if defined(__WXGTK__)
     // Needed on GTK

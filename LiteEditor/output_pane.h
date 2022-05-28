@@ -131,7 +131,7 @@ public:
     /**
      * @brief restore the tab order from the configuration file
      */
-    void ApplySavedTabOrder() const;
+    void ApplySavedTabOrder(bool update_ui) const;
 
     FindResultsTab* GetFindResultsTab() { return m_findResultsTab; }
     ReplaceInFilesPanel* GetReplaceResultsTab() { return m_replaceResultsTab; }

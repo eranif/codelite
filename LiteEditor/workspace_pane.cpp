@@ -23,6 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "workspace_pane.h"
+
 #include "Notebook.h"
 #include "clTabRendererDefault.hpp"
 #include "clTabRendererMinimal.hpp"
@@ -51,6 +52,7 @@
 #include "tabgroupspane.h"
 #include "windowstack.h"
 #include "workspacetab.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/menu.h>
@@ -75,6 +77,7 @@ WorkspacePane::WorkspacePane(wxWindow* parent, const wxString& caption, wxAuiMan
     }
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 
+    Hide();
     CreateGUIControls();
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &WorkspacePane::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &WorkspacePane::OnSettingsChanged, this);
@@ -238,16 +241,14 @@ void WorkspacePane::UpdateProgress(int val)
     m_parsingProgress->Update();
 }
 
-typedef struct {
+typedef struct _tagTabInfo {
     wxString text;
     wxWindow* win = nullptr;
     int bmp = wxNOT_FOUND;
 } tagTabInfo;
 
-#include "file_logger.h"
-void WorkspacePane::ApplySavedTabOrder() const
+void WorkspacePane::ApplySavedTabOrder(bool update_ui) const
 {
-
     wxArrayString tabs;
     int index = -1;
     if(!clConfig::Get().GetWorkspaceTabOrder(tabs, index))
@@ -257,6 +258,8 @@ void WorkspacePane::ApplySavedTabOrder() const
     // NB Since we're only dealing with panes currently in the notebook, this shouldn't
     // be broken by floating panes or non-loaded plugins
     std::vector<tagTabInfo> vTempstore;
+    vTempstore.reserve(tabs.size());
+
     for(size_t t = 0; t < tabs.GetCount(); ++t) {
         wxString title = tabs.Item(t);
         if(title.empty()) {
@@ -295,7 +298,9 @@ void WorkspacePane::ApplySavedTabOrder() const
     } else if(m_book->GetPageCount()) {
         m_book->SetSelection(0);
     }
-    m_mgr->Update();
+    if(update_ui) {
+        m_mgr->Update();
+    }
 }
 
 void WorkspacePane::SaveWorkspaceViewTabOrder() const

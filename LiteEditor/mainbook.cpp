@@ -70,7 +70,6 @@ MainBook::MainBook(wxWindow* parent)
     Hide();
     CreateGuiControls();
     ConnectEvents();
-    Show();
 }
 
 void MainBook::CreateGuiControls()

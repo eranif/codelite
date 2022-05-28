@@ -183,7 +183,8 @@ wxRect clToolBar::CalculateRect(wxDC& dc) const
 
 void clToolBar::Realize()
 {
-    wxBitmap bmp(1, 1);
+    wxBitmap bmp;
+    bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
     wxMemoryDC dc(bmp);
     wxGCDC gcdc(dc);
     gcdc.SetFont(DrawingUtils::GetDefaultGuiFont());

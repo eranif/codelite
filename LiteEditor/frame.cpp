@@ -932,6 +932,13 @@ void clMainFrame::PostConstruct()
     Maximize(m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME);
     CreateWelcomePage();
 
+    // Place the toolbar and and menu bar
+    m_toolbarsSizer->Insert(0, m_toolbar, 0, wxEXPAND);
+
+#if !wxUSE_NATIVE_MENUBAR
+    GetSizer()->Insert(0, m_menuBar, 0, wxEXPAND);
+#endif
+
     GetMainBook()->Show();
     Layout();
 
@@ -1199,7 +1206,7 @@ void clMainFrame::CreateGUIControls()
     // replace the menu bar with our customer menu bar
     wxMenuBar* mb = wxXmlResource::Get()->LoadMenuBar("main_menu");
     m_menuBar = new clThemedMenuBar(this, 0, nullptr, nullptr);
-    GetSizer()->Insert(0, m_menuBar, 0, wxEXPAND);
+    m_menuBar->Hide();
     m_menuBar->FromMenuBar(mb);
     SetMenuBar(nullptr);
 #else
@@ -1452,6 +1459,8 @@ void clMainFrame::CreateToolBar(int toolSize)
     style |= wxTB_NODIVIDER;
 
     m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_toolbar->Hide();
+
     m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
     m_toolbar->SetMiniToolBar(false); // We want main toolbar
     m_toolbar->EnableCustomisation(true);
@@ -1512,8 +1521,8 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->AddTool(XRCID("start_debugger"), _("Start or Continue debugger"),
                        images->Add("start-debugger", toolSize), _("Start or Continue debugger"));
     m_toolbar->AddSpacer();
-    m_toolbarsSizer->Insert(0, m_toolbar, 0, wxEXPAND);
     m_toolbar->Realize();
+
     m_toolbar->Bind(wxEVT_TOOLBAR_CUSTOMISE, &clMainFrame::OnCustomiseToolbar, this);
 }
 

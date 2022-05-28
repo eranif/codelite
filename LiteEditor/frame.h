@@ -367,6 +367,15 @@ private:
      * at construction time
      */
     void CreateGUIControls();
+
+    /**
+     * @brief construct the frame, we call this function in the first event loop after the application
+     * is ready
+     */
+    void Construct();
+
+    void PostConstruct();
+
     /**
      * \brief update the path & name of the build tool
      * on windows, try to locate make, followed by mingw32-make

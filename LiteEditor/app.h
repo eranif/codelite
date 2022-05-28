@@ -27,7 +27,9 @@
 
 #include "clPersistenceManager.h"
 #include "frame.h"
+
 #include <set>
+#include <wx/cmdline.h>
 
 class wxSplashScreen;
 class wxSingleInstanceChecker;
@@ -55,6 +57,7 @@ protected:
     bool m_restartCodeLite = false;
     wxString m_restartCommand;
     wxString m_restartWD;
+    wxCmdLineParser m_parser;
 
 private: // Methods
     bool CopySettings(const wxString& destDir, wxString& installPath);
@@ -100,6 +103,8 @@ public:
     }
     bool IsRestartCodeLite() const { return m_restartCodeLite; }
     const wxString& GetRestartCommand() const { return m_restartCommand; }
+
+    void ProcessCommandLineParams();
 
 protected:
     virtual bool OnInit();

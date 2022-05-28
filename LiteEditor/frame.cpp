@@ -718,6 +718,113 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
         return;
     }
 
+    // constuct the UI
+    Construct();
+
+    EditorConfig* cfg = EditorConfigST::Get();
+    GeneralInfo inf;
+    cfg->ReadObject("GeneralInfo", &inf);
+
+    SetSize(inf.GetFrameSize());
+    Move(inf.GetFramePosition());
+
+    m_frameGeneralInfo = inf;
+}
+
+clMainFrame::~clMainFrame(void)
+{
+    wxDELETE(m_singleInstanceThread);
+    wxDELETE(m_webUpdate);
+
+#ifndef __WXMSW__ // show the main panel
+    m_mainPanel->Show();
+    m_zombieReaper.Stop();
+#endif
+
+    // Free the code completion manager
+    CodeCompletionManager::Release();
+
+// this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
+// see this wxWidgets bug report for more details:
+//  http://trac.wxwidgets.org/ticket/14292
+#if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
+    delete m_myMenuBar;
+#endif
+    m_infoBar->Unbind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
+    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
+    wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Disconnect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Disconnect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
+    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
+                         this);
+    wxTheApp->Disconnect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
+                         this);
+    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent),
+                         NULL, this);
+    wxTheApp->Disconnect(wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
+                         this);
+    EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified,
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_ENDED, &clMainFrame::OnBuildEnded, this);
+    EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clMainFrame::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL,
+                                     this);
+    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
+                                     wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged),
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
+                                 wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt), this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles,
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
+
+    EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
+                                 wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
+
+    m_toolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
+    m_toolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
+    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
+    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
+    EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL,
+                                     this);
+    wxDELETE(m_timer);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
+
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
+    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
+
+    // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
+    // on the stack of clMainFrame)
+    ManagerST::Get()->GetPerspectiveManager().DisconnectEvents();
+
+    ManagerST::Free();
+    delete m_DPmenuMgr;
+
+    // uninitialize AUI manager
+    m_mgr.UnInit();
+
+    // Remove the temporary folder and its content
+    clStandardPaths::Get().RemoveTempDir();
+}
+
+void clMainFrame::Construct()
+{
+    // set the revision number in the frame title
+    wxString title(_("CodeLite "));
+    title << CODELITE_VERSION_STRING;
+
+    // initialize the environment variable configuration manager
+    EnvironmentConfig::Instance()->Load();
+
     /// keep the initial background colour
     startupBackgroundColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 
@@ -729,8 +836,8 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     // function key that is apparently legal, but doesn't really exist.
     // (Or if it does, it certainly isn't a key we use.)
     gtk_settings_set_string_property(gtk_settings_get_default(), "gtk-menu-bar-accel", "F15", "foo");
-
 #endif
+
     // Pass the docking manager to the plugin-manager
     PluginManager::Get()->SetDockingManager(&m_mgr);
 
@@ -812,132 +919,30 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
 
     // Register keyboard shortcuts
     AddKeyboardAccelerators();
+
 #ifdef __WXGTK__
     // Try to detect if this is a Wayland session; we have some Wayland-workaround code
     m_isWaylandSession = clIsWaylandSession();
 #endif
+    CallAfter(&clMainFrame::PostConstruct);
 }
 
-clMainFrame::~clMainFrame(void)
+void clMainFrame::PostConstruct()
 {
-    wxDELETE(m_singleInstanceThread);
-    wxDELETE(m_webUpdate);
+    Maximize(m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME);
+    CreateWelcomePage();
+    CallAfter(&clMainFrame::CompleteInitialization);
 
-#ifndef __WXMSW__
-    m_zombieReaper.Stop();
-#endif
-
-    // Free the code completion manager
-    CodeCompletionManager::Release();
-
-// this will make sure that the main menu bar's member m_widget is freed before the we enter wxMenuBar destructor
-// see this wxWidgets bug report for more details:
-//  http://trac.wxwidgets.org/ticket/14292
-#if defined(__WXGTK__) && wxVERSION_NUMBER < 2904
-    delete m_myMenuBar;
-#endif
-    m_infoBar->Unbind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
-    wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
-    wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Disconnect(wxID_PASTE, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Disconnect(wxID_CUT, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
-    wxTheApp->Disconnect(wxID_COPY, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                         this);
-    wxTheApp->Disconnect(wxID_PASTE, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                         this);
-    wxTheApp->Disconnect(wxID_SELECTALL, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent),
-                         NULL, this);
-    wxTheApp->Disconnect(wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL,
-                         this);
-    EventNotifier::Get()->Unbind(wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified,
-                                 this);
-    EventNotifier::Get()->Unbind(wxEVT_BUILD_PROCESS_ENDED, &clMainFrame::OnBuildEnded, this);
-    EventNotifier::Get()->Disconnect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clMainFrame::OnWorkspaceLoaded, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clMainFrame::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(clMainFrame::OnThemeChanged), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
-                                     wxCommandEventHandler(clMainFrame::OnActiveEditorChanged), NULL, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, wxCommandEventHandler(clMainFrame::OnSettingsChanged),
-                                 this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED_NOPROMPT,
-                                 wxCommandEventHandler(clMainFrame::OnReloadExternallModifiedNoPrompt), this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, &clMainFrame::OnSingleInstanceOpenFiles,
-                                 this);
-    EventNotifier::Get()->Unbind(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, &clMainFrame::OnSingleInstanceRaise, this);
-
-    EventNotifier::Get()->Unbind(wxEVT_CMD_RELOAD_EXTERNALLY_MODIFIED,
-                                 wxCommandEventHandler(clMainFrame::OnReloadExternallModified), this);
-
-    m_toolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_UNDO);
-    m_toolbar->Unbind(wxEVT_TOOL, &clMainFrame::OnTBUnRedo, this, wxID_REDO);
-    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_UNDO);
-    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &clMainFrame::OnTBUnRedoMenu, this, wxID_REDO);
-    EventNotifier::Get()->Disconnect(wxEVT_PROJ_RENAMED, clCommandEventHandler(clMainFrame::OnProjectRenamed), NULL,
-                                     this);
-    wxDELETE(m_timer);
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clMainFrame::OnSysColoursChanged, this);
-
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clMainFrame::OnDebugStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clMainFrame::OnDebugEnded, this);
-    EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG, &clMainFrame::OnStartQuickDebug, this);
-
-    // GetPerspectiveManager().DisconnectEvents() assumes that m_mgr is still alive (and it should be as it is allocated
-    // on the stack of clMainFrame)
-    ManagerST::Get()->GetPerspectiveManager().DisconnectEvents();
-
-    ManagerST::Free();
-    delete m_DPmenuMgr;
-
-    // uninitialize AUI manager
-    m_mgr.UnInit();
-
-    // Remove the temporary folder and its content
-    clStandardPaths::Get().RemoveTempDir();
+    // Post wxEVT_SYS_COLOURS_CHANGED event to make sure that all of our controls are aligned with the colour
+    clCommandEvent evtColoursChanged(wxEVT_SYS_COLOURS_CHANGED);
+    EventNotifier::Get()->AddPendingEvent(evtColoursChanged);
 }
 
 void clMainFrame::Initialize(bool loadLastSession)
 {
-    // set the revision number in the frame title
-    wxString title(_("CodeLite "));
-    title << CODELITE_VERSION_STRING;
-
-    // initialize the environment variable configuration manager
-    EnvironmentConfig::Instance()->Load();
-
-    EditorConfig* cfg = EditorConfigST::Get();
-    GeneralInfo inf;
-    cfg->ReadObject("GeneralInfo", &inf);
-
-    m_theFrame = new clMainFrame(NULL, wxID_ANY, title, inf.GetFramePosition(), inf.GetFrameSize(),
+    m_theFrame = new clMainFrame(NULL, wxID_ANY, "CodeLite", wxDefaultPosition, wxDefaultSize,
                                  wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
-    m_theFrame->m_frameGeneralInfo = inf;
     m_theFrame->m_loadLastSession = loadLastSession;
-    m_theFrame->Maximize(m_theFrame->m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME);
-    // Create the default welcome page
-    m_theFrame->CreateWelcomePage();
-
-    // plugins must be loaded before the file explorer
-    m_theFrame->CompleteInitialization();
-
-    // time to create the file explorer
-    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
-    m_theFrame->GetFileExplorer()->GetEventHandler()->ProcessEvent(e);
-
-    m_theFrame->SendSizeEvent();
-    m_theFrame->StartTimer();
-
-    // Keep the current layout before loading the perspective from the disk
-    m_theFrame->m_defaultLayout = m_theFrame->m_mgr.SavePerspective();
-
-    // Save the current layout as the "Default" layout (unless we already got one ...)
-    ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
 }
 
 void clMainFrame::AddKeyboardAccelerators()
@@ -1184,64 +1189,6 @@ void clMainFrame::CreateGUIControls()
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BUTTON_SIZE, GetBestXButtonSize(this));
     m_mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_SASH_SIZE, 4);
 
-    // add the caption bar
-#if !wxUSE_NATIVE_CAPTION
-    m_captionBar = new clCaptionBar(this, this);
-    GetSizer()->Add(m_captionBar, 0, wxEXPAND);
-    m_captionBar->SetOptions(wxCAPTION_STYLE_DEFAULT);
-    m_captionBar->SetCaption("CodeLite");
-    m_captionBar->ShowActionButton(clGetManager()->GetStdIcons()->LoadBitmap("menu-lines"));
-    m_captionBar->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("codelite-logo", 24));
-    m_captionBar->Bind(wxEVT_CAPTION_MOVE_END, [this](wxCommandEvent& event) {
-        wxUnusedVar(event);
-#ifdef __WXMSW__
-        // Once a move event is completed from the caption bar
-        // it seems as if the coordinates of the internally managed
-        // windows in wxAUI are not updated this causes to weird behaviour
-        // e.g. scrollbars can not be access, since the UI thinks they
-        // are positioned elsewhere.
-        // We use this hack to a fore a layout by showing and hiding the navigation bar
-        // this seems to reset the coordinates
-        wxWindowUpdateLocker locker(this);
-        bool current_state = GetMainBook()->IsNavBarShown();
-        GetMainBook()->ShowNavBar(!current_state);
-        GetMainBook()->ShowNavBar(current_state);
-        SendSizeEvent();
-#endif
-    });
-    m_captionBar->Bind(wxEVT_CAPTION_ACTION_BUTTON, [this](wxCommandEvent& event) {
-        wxUnusedVar(event);
-        wxMenu action_menu;
-#if defined(__WXMSW__) || defined(__WXGTK__)
-        action_menu.Append(XRCID("action_show_menu_bar"), _("Show Menu Bar"), wxEmptyString, wxITEM_CHECK);
-        action_menu.Check(XRCID("action_show_menu_bar"), GetMainMenuBar()->IsShown());
-        action_menu.Bind(
-            wxEVT_MENU, [this](wxCommandEvent& e) { GetMainMenuBar()->Show(e.IsChecked()); },
-            XRCID("action_show_menu_bar"));
-#endif
-        action_menu.Append(XRCID("action_show_tool_bar"), _("Show Tool Bar"), wxEmptyString, wxITEM_CHECK);
-        action_menu.Check(XRCID("action_show_tool_bar"), GetMainToolBar()->IsShown());
-        action_menu.Bind(
-            wxEVT_MENU, [this](wxCommandEvent& e) { GetMainToolBar()->Show(e.IsChecked()); },
-            XRCID("action_show_tool_bar"));
-
-        bool is_output_pane_visible = false;
-        wxAuiPaneInfo& info = m_mgr.GetPane("Output View");
-        if(info.IsOk()) {
-            is_output_pane_visible = info.IsShown();
-        }
-
-        action_menu.Append(XRCID("show_output_pane"), _("Show Output View "), wxEmptyString, wxITEM_CHECK);
-        action_menu.Check(XRCID("show_output_pane"), is_output_pane_visible);
-        action_menu.Bind(
-            wxEVT_MENU, [this](wxCommandEvent& e) { ViewPane("Output View", e.IsChecked()); },
-            XRCID("show_output_pane"));
-
-        m_captionBar->ShowMenuForActionButton(&action_menu);
-        PostSizeEvent();
-    });
-#endif
-
     // add menu bar
 #if !wxUSE_NATIVE_MENUBAR
     // replace the menu bar with our customer menu bar
@@ -1300,6 +1247,7 @@ void clMainFrame::CreateGUIControls()
         _("wxCrafter")); // One that would otherwise be untranslated; OT here, but it's a convenient place to put it
 
     // Add the explorer pane
+
     m_workspacePane = new WorkspacePane(m_mainPanel, "Workspace View", &m_mgr);
     m_mgr.AddPane(m_workspacePane, wxAuiPaneInfo()
                                        .CaptionVisible(true)
@@ -1310,9 +1258,11 @@ void clMainFrame::CreateGUIControls()
                                        .Layer(1)
                                        .Position(0)
                                        .CloseButton(true));
+
     RegisterDockWindow(XRCID("workspace_pane"), "Workspace View");
 
     // add the debugger locals tree, make it hidden by default
+
     m_debuggerPane = new DebuggerPane(m_mainPanel, "Debugger", &m_mgr);
     m_mgr.AddPane(m_debuggerPane, wxAuiPaneInfo()
                                       .CaptionVisible(true)
@@ -1355,7 +1305,7 @@ void clMainFrame::CreateGUIControls()
     m_mainBook->SetFindBar(findbar);
     m_mainBook->SetEditorBar(navbar);
 
-    m_mgr.AddPane(container, wxAuiPaneInfo().Name("Editor").CenterPane().PaneBorder(false));
+    m_mgr.AddPane(container, wxAuiPaneInfo().Name("Editor").CenterPane().PaneBorder(true));
     CreateRecentlyOpenedFilesMenu();
 
     m_outputPane = new OutputPane(m_mainPanel, "Output View");
@@ -1369,7 +1319,6 @@ void clMainFrame::CreateGUIControls()
                                     .Show(false)
                                     .BestSize(wxSize(wxNOT_FOUND, 400)));
     RegisterDockWindow(XRCID("output_pane"), "Output View");
-
     long show_nav = EditorConfigST::Get()->GetInteger("ShowNavBar", 0);
     m_mainBook->ShowNavBar(show_nav ? true : false);
 
@@ -1377,7 +1326,6 @@ void clMainFrame::CreateGUIControls()
         CL_ERROR("Could not locate build configuration! CodeLite installation is broken this might cause unwanted "
                  "behavior!");
     }
-
     clConfig ccConfig("code-completion.conf");
     ccConfig.ReadItem(&m_tagsOptionsData);
 
@@ -2821,13 +2769,6 @@ void clMainFrame::OnExecuteNoDebugUI(wxUpdateUIEvent& event)
 
 void clMainFrame::OnTimer(wxTimerEvent& event)
 {
-    //#ifdef __WXMSW__
-    //    wxWindowUpdateLocker locker(this);
-    //#endif
-
-    clLogMessage(wxString::Format("Install path: %s", ManagerST::Get()->GetInstallDir().c_str()));
-    clLogMessage(wxString::Format("Startup Path: %s", ManagerST::Get()->GetStartupDirectory().c_str()));
-    clLogMessage("Using " + wxStyledTextCtrl::GetLibraryVersionInfo().ToString());
     if(::clIsCygwinEnvironment()) {
         clLogMessage("Running under Cygwin environment");
     }
@@ -3382,10 +3323,6 @@ void clMainFrame::CompleteInitialization()
     // cache the locales
     clLocaleManager::get().load();
 
-#ifdef __WXMSW__
-    wxWindowUpdateLocker locker(this);
-#endif
-
     // Register the file system workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));
 
@@ -3530,6 +3467,29 @@ void clMainFrame::CompleteInitialization()
     if(m_frameGeneralInfo.GetFlags() & CL_FULLSCREEN) {
         CallAfter(&clMainFrame::DoFullscreen, true);
     }
+
+    // time to create the file explorer
+    wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
+    GetFileExplorer()->GetEventHandler()->ProcessEvent(e);
+
+    SendSizeEvent();
+    StartTimer();
+
+    // Keep the current layout before loading the perspective from the disk
+    m_defaultLayout = m_mgr.SavePerspective();
+
+    // Save the current layout as the "Default" layout (unless we already got one ...)
+    ManagerST::Get()->GetPerspectiveManager().SavePerspectiveIfNotExists(NORMAL_LAYOUT);
+
+    // Process the remainder of the command line arguments
+    static_cast<CodeLiteApp*>(wxTheApp)->ProcessCommandLineParams();
+
+#if defined(__WXGTK__)
+    // Needed on GTK
+    if(GetMainBook()->GetActiveEditor() == nullptr) {
+        GetWorkspacePane()->GetWorkspaceTab()->SetFocus();
+    }
+#endif
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)

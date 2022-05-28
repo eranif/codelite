@@ -1913,6 +1913,16 @@ wxString& EscapeSpaces(wxString& str)
     return str;
 }
 
+bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
+{
+    wxString content;
+    if(!FileUtils::ReadFileContent(filepath, content)) {
+        return false;
+    }
+    wxStringInputStream sis(content);
+    return doc->Load(sis);
+}
+
 bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
 {
     CHECK_PTR_RET_FALSE(doc);
@@ -1920,7 +1930,7 @@ bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
     wxString content;
     wxStringOutputStream sos(&content);
     if(doc->Save(sos)) {
-        return ::WriteFileUTF8(filename, content);
+        return FileUtils::WriteFileContent(filename, content);
     }
     return false;
 }

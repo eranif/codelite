@@ -67,8 +67,10 @@ MainBook::MainBook(wxWindow* parent)
     , m_welcomePage(NULL)
     , m_findBar(NULL)
 {
+    Hide();
     CreateGuiControls();
     ConnectEvents();
+    Show();
 }
 
 void MainBook::CreateGuiControls()

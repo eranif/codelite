@@ -334,40 +334,39 @@ bool CodeLiteApp::OnInit()
     wxString homeDir(wxEmptyString);
 
     // parse command line
-    wxCmdLineParser parser;
-    parser.SetDesc(cmdLineDesc);
-    parser.SetCmdLine(wxAppBase::argc, wxAppBase::argv);
-    if(parser.Parse(false) != 0) {
-        PrintUsage(parser);
+    m_parser.SetDesc(cmdLineDesc);
+    m_parser.SetCmdLine(wxAppBase::argc, wxAppBase::argv);
+    if(m_parser.Parse(false) != 0) {
+        PrintUsage(m_parser);
         return false;
     }
 
     wxString newDataDir(wxEmptyString);
-    if(parser.Found("g", &m_exeToDebug)) {
+    if(m_parser.Found("g", &m_exeToDebug)) {
         SetStartedInDebuggerMode(true);
         // Check to see if the user also passed "--working-directory" switch
-        parser.Found("w", &m_debuggerWorkingDirectory);
-        for(size_t i = 0; i < parser.GetParamCount(); ++i) {
-            m_debuggerArgs << parser.GetParam(i) << " ";
+        m_parser.Found("w", &m_debuggerWorkingDirectory);
+        for(size_t i = 0; i < m_parser.GetParamCount(); ++i) {
+            m_debuggerArgs << m_parser.GetParam(i) << " ";
         }
     }
 
-    if(parser.Found(wxT("d"), &newDataDir)) {
+    if(m_parser.Found(wxT("d"), &newDataDir)) {
         clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
 
     // check for single instance
-    if(!IsSingleInstance(parser)) {
+    if(!IsSingleInstance(m_parser)) {
         return false;
     }
 
-    if(parser.Found(wxT("h"))) {
+    if(m_parser.Found(wxT("h"))) {
         // print usage
-        PrintUsage(parser);
+        PrintUsage(m_parser);
         return false;
     }
 
-    if(parser.Found(wxT("v"))) {
+    if(m_parser.Found(wxT("v"))) {
 // print version
 #ifdef __WXMSW__
         ::wxMessageBox(wxString() << "CodeLite IDE v" << CODELITE_VERSION_STRING, "CodeLite");
@@ -378,13 +377,13 @@ bool CodeLiteApp::OnInit()
     }
 
     // When launching CodeLite as a debugger interface, disable the plugins
-    if(parser.Found(wxT("n")) || IsStartedInDebuggerMode()) {
+    if(m_parser.Found(wxT("n")) || IsStartedInDebuggerMode()) {
         // Load codelite without plugins
         SetPluginLoadPolicy(PP_None);
     }
 
     wxString plugins;
-    if(parser.Found(wxT("p"), &plugins)) {
+    if(m_parser.Found(wxT("p"), &plugins)) {
         wxArrayString pluginsArr = ::wxStringTokenize(plugins, wxT(","));
         // Trim and make lower case
         for(size_t i = 0; i < pluginsArr.GetCount(); i++) {
@@ -397,7 +396,7 @@ bool CodeLiteApp::OnInit()
     }
 
     wxString newBaseDir(wxEmptyString);
-    if(parser.Found(wxT("b"), &newBaseDir)) {
+    if(m_parser.Found(wxT("b"), &newBaseDir)) {
 #if defined(__WXMSW__)
         homeDir = newBaseDir;
 #else
@@ -666,39 +665,11 @@ bool CodeLiteApp::OnInit()
     // Make sure that the colours and fonts manager is instantiated
     ColoursAndFontsManager::Get().Load();
 
-    // Merge the user settings with any new settings
-    ColoursAndFontsManager::Get().ImportLexersFile(wxFileName(clStandardPaths::Get().GetLexersDir(), "lexers.json"),
-                                                   false);
-
     // Create the main application window
-    clMainFrame::Initialize((parser.GetParamCount() == 0) && !IsStartedInDebuggerMode());
+    clMainFrame::Initialize((m_parser.GetParamCount() == 0) && !IsStartedInDebuggerMode());
     m_pMainFrame = clMainFrame::Get();
     m_pMainFrame->Show(TRUE);
     SetTopWindow(m_pMainFrame);
-
-    long lineNumber(0);
-    parser.Found(wxT("l"), &lineNumber);
-    if(lineNumber > 0) {
-        lineNumber--;
-    } else {
-        lineNumber = 0;
-    }
-
-    if(!IsStartedInDebuggerMode()) {
-        for(size_t i = 0; i < parser.GetParamCount(); i++) {
-            OpenItem(parser.GetParam(i), lineNumber);
-        }
-    }
-
-    clLogMessage(wxString::Format(wxT("Install path: %s"), ManagerST::Get()->GetInstallDir().c_str()));
-    clLogMessage(wxString::Format(wxT("Startup Path: %s"), ManagerST::Get()->GetStartupDirectory().c_str()));
-
-#ifdef __WXGTK__
-    // Needed on GTK
-    if(clMainFrame::Get()->GetMainBook()->GetActiveEditor() == NULL) {
-        clMainFrame::Get()->GetOutputPane()->GetBuildTab()->SetFocus();
-    }
-#endif
 
     // Especially with the OutputView open, CodeLite was consuming 50% of a cpu, mostly in updateui
     // The next line limits the frequency of UpdateUI events to every 100ms
@@ -708,6 +679,23 @@ bool CodeLiteApp::OnInit()
     wxUpdateUIEvent::SetUpdateInterval(50);
 #endif
     return TRUE;
+}
+
+void CodeLiteApp::ProcessCommandLineParams()
+{
+    long lineNumber(0);
+    m_parser.Found(wxT("l"), &lineNumber);
+    if(lineNumber > 0) {
+        lineNumber--;
+    } else {
+        lineNumber = 0;
+    }
+
+    if(!IsStartedInDebuggerMode()) {
+        for(size_t i = 0; i < m_parser.GetParamCount(); i++) {
+            OpenItem(m_parser.GetParam(i), lineNumber);
+        }
+    }
 }
 
 int CodeLiteApp::OnExit()
@@ -766,7 +754,7 @@ void CodeLiteApp::OnFatalException()
 #endif
 }
 
-bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser)
+bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& m_parser)
 {
     // check for single instance
     if(clConfig::Get().Read(kConfigSingleInstance, false)) {
@@ -780,8 +768,8 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& parser)
         if(m_singleInstance->IsAnotherRunning()) {
             // prepare commands file for the running instance
             wxArrayString files;
-            for(size_t i = 0; i < parser.GetParamCount(); i++) {
-                wxString argument = parser.GetParam(i);
+            for(size_t i = 0; i < m_parser.GetParamCount(); i++) {
+                wxString argument = m_parser.GetParam(i);
 
                 // convert to full path and open it
                 wxFileName fn(argument);
@@ -1042,12 +1030,12 @@ void CodeLiteApp::AdjustPathForMSYSIfNeeded()
 #endif
 }
 
-void CodeLiteApp::PrintUsage(const wxCmdLineParser& parser)
+void CodeLiteApp::PrintUsage(const wxCmdLineParser& m_parser)
 {
 #ifdef __WXMSW__
-    parser.Usage();
+    m_parser.Usage();
 #else
-    wxString usageString = parser.GetUsageString();
+    wxString usageString = m_parser.GetUsageString();
     std::cout << usageString.mb_str(wxConvUTF8).data() << std::endl;
 #endif
 }

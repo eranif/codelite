@@ -489,6 +489,11 @@ WXDLLIMPEXP_SDK wxString GetCppExpressionFromPos(long pos, wxStyledTextCtrl* ctr
 WXDLLIMPEXP_SDK bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename);
 
 /**
+ * @brief an efficient way to load XML from file
+ */
+WXDLLIMPEXP_SDK bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath);
+
+/**
  * @brief return true if running under Cygwin environment
  * This function returns false under Linux/OSX and under Windows it checks the
  * output of the command 'uname -s'

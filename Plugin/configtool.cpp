@@ -43,14 +43,14 @@ ConfigTool::~ConfigTool() {}
 bool ConfigTool::Load(const wxString& basename, const wxString& version)
 {
     wxString initialSettings = ConfFileLocator::Instance()->Locate(basename);
-    bool loaded = m_doc.Load(initialSettings);
+    bool loaded = ::LoadXmlFile(&m_doc, initialSettings);
     wxString xmlVersion;
     if(loaded) {
         xmlVersion = m_doc.GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
     }
 
     if(xmlVersion != version) {
-        loaded = m_doc.Load(ConfFileLocator::Instance()->GetDefaultCopy(basename));
+        loaded = ::LoadXmlFile(&m_doc, ConfFileLocator::Instance()->GetDefaultCopy(basename));
     }
     m_fileName = ConfFileLocator::Instance()->GetLocalCopy(basename);
     return loaded;

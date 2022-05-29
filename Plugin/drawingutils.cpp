@@ -883,22 +883,19 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     // set the dont
     wxDCFontChanger font_changer(dc);
     wxFont f = GetDefaultGuiFont();
-    f.SetWeight(wxFONTWEIGHT_SEMIBOLD);
     dc.SetFont(f);
 
     wxRect text_rect = dc.GetTextExtent(label);
-    wxRect container_text_rect = text_rect;
-    container_text_rect.Inflate(10);
-    container_text_rect.SetHeight(rect.GetHeight());
-
-    container_text_rect = container_text_rect.CenterIn(rect);
+    text_rect = text_rect.CenterIn(rect);
 
     // draw button frame
-    DrawButton(dc, win, container_text_rect, wxEmptyString, wxNullBitmap, eButtonKind::kNormal, state);
+    DrawButton(dc, win, rect, wxEmptyString, wxNullBitmap, eButtonKind::kNormal, state);
 
-    // draw backgroun colour
-    wxRect bg_rect = container_text_rect.Deflate(3);
-    wxDCPenChanger pen_changer(dc, fixed_picker_colour);
+    // draw background colour
+    wxRect bg_rect = rect;
+    bg_rect.Deflate(3);
+    bg_rect = bg_rect.CenterIn(rect);
+    wxDCPenChanger pen_changer(dc, fixed_picker_colour.ChangeLightness(75));
     wxDCBrushChanger brush_changer(dc, fixed_picker_colour);
     dc.DrawRectangle(bg_rect);
 
@@ -908,7 +905,6 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     wxDCTextColourChanger text_colour_changer(dc);
 
     dc.SetTextForeground(text_colour);
-    text_rect = text_rect.CenterIn(container_text_rect);
     dc.DrawText(label, text_rect.GetTopLeft());
-    return container_text_rect;
+    return rect;
 }

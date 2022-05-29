@@ -648,6 +648,8 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
 
         } else if(cell.IsColour()) {
             wxRect rr = cellRect;
+            rr.Deflate(1);
+
             // since the method `DrawingUtils::DrawColourPicker` is not familiar with our spacing policy
             // move the drawing rectangle to the X_SPACER position
             // rr.SetX(rr.GetX() + X_SPACER);

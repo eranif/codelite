@@ -124,18 +124,20 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
                 UPDATE_CLCONFIG_BOOL_CB(kConfigRedirectLogOutput));
 #endif
 
-    AddPropertyButton(_("Forget recent workspaces and files"), _("Clear"), [](const wxString&, const wxAny& value) {
-        wxUnusedVar(value);
-        ManagerST::Get()->ClearWorkspaceHistory();
-        clMainFrame::Get()->GetMainBook()->ClearFileHistory();
-        wxMessageBox(_("Success!"));
-    });
+    AddPropertyButton(_("Forget recent workspaces and files"), _("Clear ") + wxT("\u232B"),
+                      [](const wxString&, const wxAny& value) {
+                          wxUnusedVar(value);
+                          ManagerST::Get()->ClearWorkspaceHistory();
+                          clMainFrame::Get()->GetMainBook()->ClearFileHistory();
+                          wxMessageBox(_("Success!"));
+                      });
 
-    AddPropertyButton(_("Reset annoying dialogs answers"), _("Clear"), [](const wxString&, const wxAny& value) {
-        wxUnusedVar(value);
-        clConfig::Get().ClearAnnoyingDlgAnswers();
-        wxMessageBox(_("Success!"));
-    });
+    AddPropertyButton(_("Reset annoying dialogs answers"), _("Clear ") + wxT("\u232B"),
+                      [](const wxString&, const wxAny& value) {
+                          wxUnusedVar(value);
+                          clConfig::Get().ClearAnnoyingDlgAnswers();
+                          wxMessageBox(_("Success!"));
+                      });
 }
 
 int EditorSettingsMiscPanel::FindAvailableLocales(wxArrayString* locales)

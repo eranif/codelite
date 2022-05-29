@@ -95,7 +95,7 @@ int clRowEntry::X_SPACER = 4;
 int clRowEntry::Y_SPACER = 2;
 #elif defined(__WXOSX__)
 int clRowEntry::X_SPACER = 4;
-int clRowEntry::Y_SPACER = 2;
+int clRowEntry::Y_SPACER = 4;
 #else
 int clRowEntry::X_SPACER = 5;
 int clRowEntry::Y_SPACER = 2;

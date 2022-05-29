@@ -63,7 +63,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     tabAreaColour = base_colour.ChangeLightness(80);
     activeTabBgColour = base_colour.ChangeLightness(120);
     activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
-    activeTabPenColour = activeTabBgColour.ChangeLightness(is_dark ? 130 : 70);
+    activeTabPenColour = activeTabBgColour.ChangeLightness(is_dark ? 30 : 70);
     activeTabInnerPenColour = activeTabPenColour;
 
     // inactive tab colours
@@ -498,7 +498,11 @@ void clTabRenderer::DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
     }
 
     bool is_dark = DrawingUtils::IsDark(colours.tabAreaColour);
+#ifdef __WXMAC__
+    wxColour marker_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+#else
     wxColour marker_colour = colours.tabAreaColour.ChangeLightness(is_dark ? 130 : 70);
+#endif
     wxPen markerPen(marker_colour);
 
     // Draw marker line if needed

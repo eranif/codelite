@@ -148,6 +148,8 @@ void OutputPane::CreateGUIControls()
         } else if(value.GetAs(&colour_value)) {
             wxMessageBox(wxString() << label << " changed\n"
                                     << "New value (wxColour): " << colour_value.GetAsString(wxC2S_HTML_SYNTAX));
+        } else {
+            wxMessageBox(label + " action");
         }
     };
 
@@ -174,6 +176,10 @@ void OutputPane::CreateGUIControls()
     props->AddPropertyFilePicker("Choose second file", wxEmptyString, change_callbck);
     props->AddPropertyDirPicker("Choose directory", wxEmptyString, change_callbck);
 
+
+    props->AddHeader("Buttons");
+    props->AddPropertyButton("First button", change_callbck);
+    props->AddPropertyButton("Second button", change_callbck);
     m_book->AddPage(props, "Properties", false, images->Add(wxT("console")));
 
 #endif

@@ -25,6 +25,7 @@ enum class LineKind {
     FILE_PICKER,
     DIR_PICKER,
     INTEGER,
+    BUTTON,
 };
 
 struct WXDLLIMPEXP_SDK LineData {
@@ -62,6 +63,7 @@ protected:
     void ShowFilePicker(size_t line, const wxString& path);
     void ShowDirPicker(size_t line, const wxString& path);
     void ShowNumberPicker(size_t line, long number);
+    void DoButtonClicked(size_t line);
     void SetModified();
 
     bool GetLineData(size_t line, const LineData** data) const;
@@ -122,6 +124,7 @@ public:
 
     void AddPropertyFilePicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
     void AddPropertyDirPicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
+    void AddPropertyButton(const wxString& label, clPropertiesPage::Callback_t update_cb);
     void AddHeader(const wxString& label);
 
     bool IsModified() const { return m_isModified; }

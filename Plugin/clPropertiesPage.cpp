@@ -86,8 +86,8 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& c
     wxVector<wxVariant> cols;
     cols.push_back(label);
 
-    clDataViewTextWithButton choice(sel < choices.size() ? choices[sel] : wxString(), eCellButtonType::BT_DROPDOWN_ARROW,
-                            wxNOT_FOUND);
+    clDataViewTextWithButton choice(sel < choices.size() ? choices[sel] : wxString(),
+                                    eCellButtonType::BT_DROPDOWN_ARROW, wxNOT_FOUND);
     wxVariant v;
     v << choice;
     cols.push_back(v);
@@ -178,6 +178,20 @@ void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxStrin
     UpdateLastLineData(LineKind::DIR_PICKER, path, move(update_cb));
 }
 
+void clPropertiesPage::AddPropertyButton(const wxString& label, clPropertiesPage::Callback_t update_cb)
+{
+    wxVector<wxVariant> cols;
+    cols.push_back(label);
+
+    // horizontal 3 dots symbol
+    clDataViewButton button(label, wxNOT_FOUND);
+    wxVariant v;
+    v << button;
+    cols.push_back(v);
+    m_view->AppendItem(cols);
+    UpdateLastLineData(LineKind::BUTTON, nullptr, move(update_cb));
+}
+
 void clPropertiesPage::AddHeader(const wxString& label)
 {
     // keep the header row number
@@ -237,6 +251,10 @@ void clPropertiesPage::OnActionButton(wxDataViewEvent& e)
         if(!data->value.GetAs(&value))
             return;
         ShowNumberPicker(row, value);
+        break;
+    }
+    case LineKind::BUTTON: {
+        DoButtonClicked(row);
         break;
     }
     case LineKind::CHECKBOX:
@@ -331,6 +349,12 @@ void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
     // call the user callback for this change
     NotifyChange(line);
     SetModified();
+}
+
+void clPropertiesPage::DoButtonClicked(size_t line)
+{
+    // call the user provided callback
+    NotifyChange(line);
 }
 
 void clPropertiesPage::ShowNumberPicker(size_t line, long number)

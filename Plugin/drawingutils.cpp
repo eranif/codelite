@@ -509,8 +509,13 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     // Draw the background
     wxRect clientRect = rect;
 
-    wxDCBrushChanger brush_changer(dc, GetPanelBgColour());
-    wxDCPenChanger pen_changer(dc, GetPanelBgColour().ChangeLightness(90));
+    bool is_dark = IsDark(GetPanelBgColour());
+
+    wxColour button_bg_colour =
+        is_dark ? GetPanelBgColour().ChangeLightness(120) : GetPanelBgColour().ChangeLightness(80);
+    wxDCBrushChanger brush_changer(dc, button_bg_colour);
+    wxDCPenChanger pen_changer(dc, button_bg_colour.ChangeLightness(60));
+
 #ifdef __WXGTK__
     // translate states
     int flags = 0;
@@ -536,7 +541,6 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     // define the core 3 colours
     wxColour baseColour = update_button_bg_colour(GetButtonBgColour(), state);
     wxColour textColour = GetButtonTextColour();
-    wxColour penColour = baseColour.ChangeLightness(80);
 
     dc.SetTextForeground(textColour);
 

@@ -38,6 +38,26 @@ bool clColours::IsLightTheme() const
 
 void clColours::InitFromColour(const wxColour& baseColour)
 {
+#ifdef __WXMAC__
+    bgColour = clSystemSettings::GetDefaultPanelColour();             // background colour for the control
+    itemBgColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX); // item bg colour
+    itemTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
+    hoverBgColour = itemBgColour.ChangeLightness(90);
+    selItemTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+    selItemTextColourNoFocus = selItemTextColour; // item bg colour
+    selItemBgColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+    selItemBgColourNoFocus = selItemBgColour;
+    buttonColour = itemTextColour;    // expand/collapse button colour
+    selbuttonColour = itemTextColour; // The colour of the button ("Expand") when on a selected row
+    alternateColour = DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(103) : bgColour.ChangeLightness(97);
+    headerBgColour = bgColour;
+    darkBorderColour = borderColour = headerVBorderColour = headerHBorderColour =
+        bgColour.ChangeLightness(80); // Header background colour
+    matchedItemText = *wxBLACK;       // Text colour for matched item (need the style wxTR_ENABLE_SEARCH)
+    matchedItemBgText = *wxYELLOW;
+    fillColour = bgColour;                                         // fill colour
+    grayText = clSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT); // Gray text
+#else
     if(!baseColour.IsOk()) {
         InitDefaults();
         return;
@@ -83,4 +103,5 @@ void clColours::InitFromColour(const wxColour& baseColour)
     fillColour = bgColour;
     borderColour = is_light ? bgColour.ChangeLightness(70) : bgColour.ChangeLightness(110);
     darkBorderColour = is_light ? bgColour.ChangeLightness(30) : bgColour.ChangeLightness(150);
+#endif
 }

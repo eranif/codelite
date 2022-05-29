@@ -287,7 +287,7 @@ wxColour DrawingUtils::GetMenuTextColour() { return clSystemSettings::GetColour(
 wxColour DrawingUtils::GetMenuBarBgColour(bool miniToolbar)
 {
     wxUnusedVar(miniToolbar);
-#if CL_USE_NATIVEBOOK
+#if defined(CL_USE_NATIVEBOOK) || defined(__WXOSX__)
     return clSystemSettings::GetDefaultPanelColour();
 #else
     clTabColours c;

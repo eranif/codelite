@@ -24,7 +24,7 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
 {
     *bgColour = colours.tabAreaColour;
     *activeTabBgColour = colours.activeTabBgColour;
-
+#ifndef __WXMAC__
     bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
     // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
     if(style & kNotebook_DynamicColours) {
@@ -35,6 +35,7 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
         }
         *bgColour = activeTabBgColour->ChangeLightness(is_dark ? 120 : 80);
     }
+#endif
 }
 } // namespace
 

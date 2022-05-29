@@ -298,6 +298,10 @@ bool CodeLiteApp::OnInit()
 #endif
     wxSocketBase::Initialize();
 
+#ifdef __WXMAC__
+    wxSystemOptions::SetOption("mac.window-plain-transition", "0");
+#endif
+
     // Redirect all error messages to stderr
     wxLog::SetActiveTarget(new wxLogStderr());
 

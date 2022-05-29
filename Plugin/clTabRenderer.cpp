@@ -31,7 +31,7 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
 {
     *bgColour = colours.tabAreaColour;
     *activeTabBgColour = colours.activeTabBgColour;
-
+#ifndef __WXMAC__
     bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
     // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
     if(style & kNotebook_DynamicColours) {
@@ -42,6 +42,9 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
         }
         *bgColour = activeTabBgColour->ChangeLightness(is_dark ? 120 : 80);
     }
+#else
+    wxUnusedVar(style);
+#endif
 }
 int X_BUTTON_SIZE = 20;
 void SetBestXButtonSize(wxWindow* win) { wxUnusedVar(win); }
@@ -53,6 +56,23 @@ clTabColours::clTabColours() { UpdateColours(0); }
 void clTabColours::UpdateColours(size_t notebookStyle)
 {
     wxUnusedVar(notebookStyle);
+#ifdef __WXMAC__
+    wxColour base_colour = clSystemSettings::GetDefaultPanelColour();
+    bool is_dark = DrawingUtils::IsDark(base_colour);
+
+    tabAreaColour = base_colour.ChangeLightness(80);
+    activeTabBgColour = base_colour.ChangeLightness(120);
+    activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+    activeTabPenColour = activeTabBgColour.ChangeLightness(is_dark ? 130 : 70);
+    activeTabInnerPenColour = activeTabPenColour;
+
+    // inactive tab colours
+    inactiveTabTextColour = activeTabTextColour.ChangeLightness(is_dark ? 85 : 115);
+    inactiveTabBgColour = tabAreaColour;
+    inactiveTabPenColour = tabAreaColour.ChangeLightness(90);
+    inactiveTabInnerPenColour = inactiveTabBgColour;
+    markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#dc7633"));
+#else
     wxColour base_colour = clSystemSettings::GetDefaultPanelColour();
     bool is_dark = DrawingUtils::IsDark(base_colour);
 
@@ -68,6 +88,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     inactiveTabPenColour = tabAreaColour.ChangeLightness(90);
     inactiveTabInnerPenColour = inactiveTabBgColour;
     markerColour = clConfig::Get().Read("ActiveTabMarkerColour", wxColour("#dc7633"));
+#endif
 }
 
 bool clTabColours::IsDarkColours() const { return DrawingUtils::IsDark(activeTabBgColour); }

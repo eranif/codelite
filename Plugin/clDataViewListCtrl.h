@@ -321,7 +321,7 @@ public:
 DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK)
 
 // Helper class passing bitmap bool + label with possible bitmap index
-class WXDLLIMPEXP_SDK clDataViewButton : public wxObject
+class WXDLLIMPEXP_SDK clDataViewTextWithButton : public wxObject
 {
 private:
     wxString m_label;
@@ -329,15 +329,15 @@ private:
     eCellButtonType m_button_kind = eCellButtonType::BT_NONE;
 
 public:
-    clDataViewButton(const wxString& label, eCellButtonType button, int bitmapIndex)
+    clDataViewTextWithButton(const wxString& label, eCellButtonType button, int bitmapIndex)
         : m_label(label)
         , m_bitmapIndex(bitmapIndex)
         , m_button_kind(button)
     {
     }
 
-    clDataViewButton() {}
-    virtual ~clDataViewButton() {}
+    clDataViewTextWithButton() {}
+    virtual ~clDataViewTextWithButton() {}
 
     void SetBitmapIndex(int index) { m_bitmapIndex = index; }
     int GetBitmapIndex() const { return m_bitmapIndex; }
@@ -348,10 +348,45 @@ public:
     const wxString& GetLabel() const { return m_label; }
     const wxString& GetButtonUnicodeSymbol() const;
 
+    bool IsSameAs(const clDataViewTextWithButton& other) const
+    {
+        return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex;
+    }
+    bool operator==(const clDataViewTextWithButton& other) const { return IsSameAs(other); }
+    bool operator!=(const clDataViewTextWithButton& other) const { return !IsSameAs(other); }
+    wxDECLARE_DYNAMIC_CLASS(clDataViewTextWithButton);
+};
+
+DECLARE_VARIANT_OBJECT_EXPORTED(clDataViewTextWithButton, WXDLLIMPEXP_SDK)
+
+// Helper class passing button as a cell content
+class WXDLLIMPEXP_SDK clDataViewButton : public wxObject
+{
+private:
+    wxString m_label;
+    int m_bitmapIndex = wxNOT_FOUND;
+
+public:
+    clDataViewButton(const wxString& label, int bitmapIndex)
+        : m_label(label)
+        , m_bitmapIndex(bitmapIndex)
+    {
+    }
+
+    clDataViewButton() {}
+    virtual ~clDataViewButton() {}
+
+    void SetBitmapIndex(int index) { m_bitmapIndex = index; }
+    int GetBitmapIndex() const { return m_bitmapIndex; }
+
+    void SetLabel(const wxString& label) { this->m_label = label; }
+    const wxString& GetLabel() const { return m_label; }
+
     bool IsSameAs(const clDataViewButton& other) const
     {
         return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex;
     }
+
     bool operator==(const clDataViewButton& other) const { return IsSameAs(other); }
     bool operator!=(const clDataViewButton& other) const { return !IsSameAs(other); }
     wxDECLARE_DYNAMIC_CLASS(clDataViewButton);

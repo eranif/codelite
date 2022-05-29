@@ -23,6 +23,7 @@ public:
         kTypeBool = 2,
         kTypeButton = 3,
         kTypeColour = 4,
+        kTypeOnlyButton = 5,
     };
     typedef std::vector<clCellValue> Vect_t;
 
@@ -57,7 +58,16 @@ public:
     const wxString& GetValueString() const;
     bool GetValueBool() const { return m_boolValue; }
     const wxColour& GetValueColour() const { return m_colourValue; }
+    /**
+     * @brief this cell has button in addition to ...
+     */
     bool HasButton() const { return m_type == kTypeButton; }
+
+    /**
+     * @brief the entire cell is a button
+     */
+    bool IsButton() const { return m_type == kTypeOnlyButton; }
+
     bool IsColour() const { return m_type == kTypeColour; }
     eCellButtonType GetButtonType() const { return m_button_type; }
     void SetButtonType(eCellButtonType type, const wxString& unicode_symbol)

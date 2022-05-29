@@ -18,11 +18,14 @@ IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewTextBitmap, WXDLLIMPEXP_SDK);
 wxIMPLEMENT_DYNAMIC_CLASS(clDataViewCheckbox, wxObject);
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewCheckbox, WXDLLIMPEXP_SDK);
 
-wxIMPLEMENT_DYNAMIC_CLASS(clDataViewButton, wxObject);
-IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewButton, WXDLLIMPEXP_SDK);
+wxIMPLEMENT_DYNAMIC_CLASS(clDataViewTextWithButton, wxObject);
+IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewTextWithButton, WXDLLIMPEXP_SDK);
 
 wxIMPLEMENT_DYNAMIC_CLASS(clDataViewColour, wxObject);
 IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewColour, WXDLLIMPEXP_SDK);
+
+wxIMPLEMENT_DYNAMIC_CLASS(clDataViewButton, wxObject);
+IMPLEMENT_VARIANT_OBJECT_EXPORTED(clDataViewButton, WXDLLIMPEXP_SDK);
 
 wxDEFINE_EVENT(wxEVT_DATAVIEW_SEARCH_TEXT, wxDataViewEvent);
 wxDEFINE_EVENT(wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
@@ -38,7 +41,7 @@ const wxString ELLIPSIS_UNICODE = wxT("\u22EF");
 const wxString NO_BUTTON_UNICODE = wxT("");
 } // namespace
 
-const wxString& clDataViewButton::GetButtonUnicodeSymbol() const
+const wxString& clDataViewTextWithButton::GetButtonUnicodeSymbol() const
 {
     switch(m_button_kind) {
     case eCellButtonType::BT_ELLIPSIS:
@@ -380,18 +383,22 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
     wxString variantType = value.GetType();
     if(variantType == "bool") {
         row->SetChecked(value.GetBool(), wxNOT_FOUND, wxString(), col);
+
     } else if(variantType == "string") {
         row->SetLabel(value.GetString(), col);
+
     } else if(variantType == "clDataViewCheckbox") {
         clDataViewCheckbox check;
         check << value;
         row->SetChecked(check.IsChecked(), check.GetBitmapIndex(), check.GetText(), col);
+
     } else if(variantType == "wxDataViewIconText") {
         // Extract the iamge + text from the wxDataViewIconText class
         wxDataViewIconText iconText;
         iconText << value;
         //  update the row with the icon + text
         row->SetLabel(iconText.GetText(), col);
+
     } else if(variantType == "clDataViewTextBitmap") {
         // Extract the iamge + text from the wxDataViewIconText class
         clDataViewTextBitmap iconText;
@@ -399,21 +406,32 @@ void clDataViewListCtrl::DoSetCellValue(clRowEntry* row, size_t col, const wxVar
         //  update the row with the icon + text
         row->SetLabel(iconText.GetText(), col);
         row->SetBitmapIndex(iconText.GetBitmapIndex(), col);
+
+    } else if(variantType == "clDataViewTextWithButton") {
+        clDataViewTextWithButton text_with_button;
+        text_with_button << value;
+        row->SetHasButton(text_with_button.GetButtonType(), text_with_button.GetButtonUnicodeSymbol(), col);
+        row->SetBitmapIndex(text_with_button.GetBitmapIndex(), col);
+        row->SetLabel(text_with_button.GetLabel(), col);
+
     } else if(variantType == "clDataViewButton") {
-        clDataViewButton choice;
-        choice << value;
-        row->SetButton(choice.GetButtonType(), choice.GetButtonUnicodeSymbol(), col);
-        row->SetBitmapIndex(choice.GetBitmapIndex(), col);
-        row->SetLabel(choice.GetLabel(), col);
+        clDataViewButton button;
+        button << value;
+        row->SetIsButton(button.GetLabel(), col);
+        row->SetBitmapIndex(button.GetBitmapIndex(), col);
+
     } else if(variantType == "double") {
         row->SetLabel(wxString() << value.GetDouble(), col);
+
     } else if(variantType == "datetime") {
         row->SetLabel(value.GetDateTime().FormatDate(), col);
+
     } else if(variantType == "clDataViewColour") {
         clDataViewColour c;
         c << value;
         row->SetColour(c.GetColour(), col);
     }
+
     // Call this to update the view + update the header bar
     clTreeCtrl::SetItemText(wxTreeItemId(row), row->GetLabel(col), col);
 }

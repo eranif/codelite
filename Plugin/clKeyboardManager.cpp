@@ -399,7 +399,7 @@ void clKeyboardManager::DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuI
 clKeyboardShortcut::Vec_t clKeyboardManager::GetAllUnassignedKeyboardShortcuts() const
 {
     clKeyboardShortcut::Set_t usedShortcuts;
-    for(const std::pair<wxString, MenuItemData>& p : m_accelTable) {
+    for(std::pair<wxString, MenuItemData> p : m_accelTable) {
         if(p.second.accel.IsOk()) {
             usedShortcuts.insert(p.second.accel);
         }

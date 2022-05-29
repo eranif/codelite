@@ -635,9 +635,17 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             cell.SetButtonRect(button_rect);
             textXOffset += button_rect.GetWidth();
             textXOffset += X_SPACER;
-        }
 
-        if(cell.IsColour()) {
+        } else if(cell.IsButton()) {
+            // the centire cell is a button
+            wxRect button_rect = cellRect;
+            button_rect.Deflate(1);
+            button_rect = button_rect.CenterIn(cellRect);
+            DrawingUtils::DrawButton(dc, win, button_rect, cell.GetValueString(), wxNullBitmap, eButtonKind::kNormal,
+                                     eButtonState::kNormal);
+            cell.SetButtonRect(button_rect);
+
+        } else if(cell.IsColour()) {
             wxRect rr = cellRect;
             // since the method `DrawingUtils::DrawColourPicker` is not familiar with our spacing policy
             // move the drawing rectangle to the X_SPACER position
@@ -1068,7 +1076,7 @@ int clRowEntry::GetCheckBoxWidth(wxWindow* win)
     return width;
 }
 
-void clRowEntry::SetButton(eCellButtonType button_type, const wxString& unicode_symbol, size_t col)
+void clRowEntry::SetHasButton(eCellButtonType button_type, const wxString& unicode_symbol, size_t col)
 {
     clCellValue& cell = GetColumn(col);
     if(!cell.IsOk()) {
@@ -1085,6 +1093,25 @@ bool clRowEntry::HasButton(size_t col) const
         return false;
     }
     return cell.HasButton();
+}
+
+void clRowEntry::SetIsButton(const wxString& label, size_t col)
+{
+    clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) {
+        return;
+    }
+    cell.SetType(clCellValue::kTypeOnlyButton);
+    cell.SetValue(label);
+}
+
+bool clRowEntry::IsButton(size_t col) const
+{
+    const clCellValue& cell = GetColumn(col);
+    if(!cell.IsOk()) {
+        return false;
+    }
+    return cell.IsButton();
 }
 
 void clRowEntry::SetColour(const wxColour& colour, size_t col)

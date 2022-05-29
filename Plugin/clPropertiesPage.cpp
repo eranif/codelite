@@ -86,7 +86,7 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxArrayString& c
     wxVector<wxVariant> cols;
     cols.push_back(label);
 
-    clDataViewButton choice(sel < choices.size() ? choices[sel] : wxString(), eCellButtonType::BT_DROPDOWN_ARROW,
+    clDataViewTextWithButton choice(sel < choices.size() ? choices[sel] : wxString(), eCellButtonType::BT_DROPDOWN_ARROW,
                             wxNOT_FOUND);
     wxVariant v;
     v << choice;
@@ -113,7 +113,7 @@ void clPropertiesPage::AddProperty(const wxString& label, long value, clProperti
     wxVector<wxVariant> cols;
     cols.push_back(label);
 
-    clDataViewButton c(wxString() << value, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    clDataViewTextWithButton c(wxString() << value, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     cols.push_back(v);
@@ -127,7 +127,7 @@ void clPropertiesPage::AddProperty(const wxString& label, const wxString& value,
     cols.push_back(label);
 
     // horizontal 3 dots symbol
-    clDataViewButton c(value, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    clDataViewTextWithButton c(value, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     cols.push_back(v);
@@ -155,7 +155,7 @@ void clPropertiesPage::AddPropertyFilePicker(const wxString& label, const wxStri
     cols.push_back(label);
 
     // horizontal 3 dots symbol
-    clDataViewButton c(path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    clDataViewTextWithButton c(path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     cols.push_back(v);
@@ -170,7 +170,7 @@ void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxStrin
     cols.push_back(label);
 
     // horizontal 3 dots symbol
-    clDataViewButton c(path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    clDataViewTextWithButton c(path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     cols.push_back(v);
@@ -271,7 +271,7 @@ void clPropertiesPage::ShowTextEditor(size_t line, const wxString& text)
     }
 
     // update the cell value
-    clDataViewButton c(new_text, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    clDataViewTextWithButton c(new_text, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     m_view->SetValue(v, line, 1);
@@ -305,7 +305,7 @@ void clPropertiesPage::ShowFilePicker(size_t line, const wxString& path)
     }
 
     // update the view
-    clDataViewButton c(new_path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    clDataViewTextWithButton c(new_path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     m_view->SetValue(v, line, 1);
@@ -323,7 +323,7 @@ void clPropertiesPage::ShowDirPicker(size_t line, const wxString& path)
     }
 
     // update the view
-    clDataViewButton c(new_path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    clDataViewTextWithButton c(new_path, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     m_view->SetValue(v, line, 1);
@@ -342,7 +342,7 @@ void clPropertiesPage::ShowNumberPicker(size_t line, long number)
         return;
 
     int new_number = dlg.GetValue();
-    clDataViewButton c(wxString() << new_number, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
+    clDataViewTextWithButton c(wxString() << new_number, eCellButtonType::BT_ELLIPSIS, wxNOT_FOUND);
     wxVariant v;
     v << c;
     m_view->SetValue(v, line, 1);

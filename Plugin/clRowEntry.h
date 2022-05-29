@@ -193,8 +193,18 @@ public:
     /**
      * @brief add button to the right of the cell
      */
-    void SetButton(eCellButtonType button_type, const wxString& unicode_symbol, size_t col = 0);
+    void SetHasButton(eCellButtonType button_type, const wxString& unicode_symbol, size_t col = 0);
     bool HasButton(size_t col) const;
+
+    /**
+     * @brief mark cell at column as a button cell
+     * @param label the button label
+     */
+    void SetIsButton(const wxString& label, size_t col = 0);
+    /**
+     * @brief is cell at given column is a button?
+     */
+    bool IsButton(size_t col) const;
 
     void SetColour(const wxColour& colour, size_t col = 0);
     bool IsColour(size_t col) const;

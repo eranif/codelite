@@ -389,11 +389,11 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
     renderer.reset(Create(win, name));
 
     if(!renderer) {
-        renderer = Create(win, "GTK3");
+        renderer = Create(win, "MINIMAL");
     } else {
         // make sure the selected renderer supports vertical tabbing
         if(is_vertical && !renderer->IsVerticalTabSupported()) {
-            renderer.reset(Create(win, "DEFAULT"));
+            renderer.reset(Create(win, "MINIMAL"));
         }
     }
     return renderer;

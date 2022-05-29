@@ -390,9 +390,9 @@ void clScrolledPanel::DoPositionVScrollbar()
     wxSize vsbSize = m_vsb->GetSize();
 
     int height = clientRect.GetHeight();
-    if(m_hsb && m_hsb->IsShown()) {
-        height -= m_hsb->GetSize().GetHeight();
-    }
+    // if(m_hsb && m_hsb->IsShown()) {
+    //     height -= m_hsb->GetSize().GetHeight();
+    // }
     int width = vsbSize.GetWidth();
     int x = clientRect.GetWidth() - vsbSize.GetWidth();
     int y = 0;

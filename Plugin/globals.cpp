@@ -2201,7 +2201,7 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     frameSize.Deflate(100);
     tlw->SetMinSize(frameSize.GetSize());
     tlw->SetSize(frameSize.GetSize());
-    tlw->GetSizer()->Fit(win);
+    //tlw->GetSizer()->Fit(win);
     tlw->CentreOnParent();
     tlw->PostSizeEvent();
 }

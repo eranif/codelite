@@ -178,13 +178,14 @@ void clPropertiesPage::AddPropertyDirPicker(const wxString& label, const wxStrin
     UpdateLastLineData(LineKind::DIR_PICKER, path, move(update_cb));
 }
 
-void clPropertiesPage::AddPropertyButton(const wxString& label, clPropertiesPage::Callback_t update_cb)
+void clPropertiesPage::AddPropertyButton(const wxString& label, const wxString& button_label,
+                                         clPropertiesPage::Callback_t update_cb)
 {
     wxVector<wxVariant> cols;
     cols.push_back(label);
 
     // horizontal 3 dots symbol
-    clDataViewButton button(label, wxNOT_FOUND);
+    clDataViewButton button(button_label, wxNOT_FOUND);
     wxVariant v;
     v << button;
     cols.push_back(v);

@@ -509,10 +509,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     // Draw the background
     wxRect clientRect = rect;
 
-    bool is_dark = IsDark(GetPanelBgColour());
-
-    wxColour button_bg_colour =
-        is_dark ? GetPanelBgColour().ChangeLightness(120) : GetPanelBgColour().ChangeLightness(80);
+    wxColour button_bg_colour = update_button_bg_colour(GetButtonBgColour(), state);
     wxDCBrushChanger brush_changer(dc, button_bg_colour);
     wxDCPenChanger pen_changer(dc, button_bg_colour.ChangeLightness(60));
 
@@ -538,10 +535,7 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     dc.DrawRectangle(clientRect);
 #endif
 
-    // define the core 3 colours
-    wxColour baseColour = update_button_bg_colour(GetButtonBgColour(), state);
     wxColour textColour = GetButtonTextColour();
-
     dc.SetTextForeground(textColour);
 
     if(kind == eButtonKind::kDropDown) {
@@ -881,7 +875,7 @@ int DrawingUtils::GetFallbackFixedFontSize() { return GetFallbackFixedFont().Get
 wxString DrawingUtils::GetFallbackFixedFontFace() { return GetFallbackFixedFont().GetFaceName(); }
 
 wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour,
-                                      const wxColour& bgColour)
+                                      eButtonState state)
 {
     wxColour fixed_picker_colour = pickerColour.IsOk() ? pickerColour : *wxBLACK;
     wxString label = fixed_picker_colour.GetAsString(wxC2S_HTML_SYNTAX);
@@ -900,7 +894,7 @@ wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rec
     container_text_rect = container_text_rect.CenterIn(rect);
 
     // draw button frame
-    DrawButton(dc, win, container_text_rect, wxEmptyString, wxNullBitmap, eButtonKind::kNormal, eButtonState::kNormal);
+    DrawButton(dc, win, container_text_rect, wxEmptyString, wxNullBitmap, eButtonKind::kNormal, state);
 
     // draw backgroun colour
     wxRect bg_rect = container_text_rect.Deflate(3);

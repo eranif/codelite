@@ -53,6 +53,7 @@ private:
     clRowEntry* GetFirstItemOnScreen() override;
     void SetFirstItemOnScreen(clRowEntry* item) override;
     wxTreeItemId DoScrollLines(int numLines, bool up, wxTreeItemId from, bool selectIt);
+    void UpdateButtonState(clRowEntry::Vec_t& lines);
 
     /**
      * @brief bitmap file was added, re-calculate the line heights

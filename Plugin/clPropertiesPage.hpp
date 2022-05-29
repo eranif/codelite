@@ -124,7 +124,7 @@ public:
 
     void AddPropertyFilePicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
     void AddPropertyDirPicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
-    void AddPropertyButton(const wxString& label, clPropertiesPage::Callback_t update_cb);
+    void AddPropertyButton(const wxString& label, const wxString& button_label, clPropertiesPage::Callback_t update_cb);
     void AddHeader(const wxString& label);
 
     bool IsModified() const { return m_isModified; }

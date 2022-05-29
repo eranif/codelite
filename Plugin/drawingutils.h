@@ -108,7 +108,7 @@ public:
      * @brief draw colour picker. return the rectangle the contains the button part of the picker
      */
     static wxRect DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour,
-                                   const wxColour& bgColour = wxColour());
+                                   eButtonState state);
 
     static void DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
                                  const wxBitmap& bmp = wxNullBitmap,

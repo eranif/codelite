@@ -83,9 +83,10 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
     dc.DrawRectangle(rect);
 }
 
-void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const wxString& symbol)
+void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clCellValue& cell)
 {
-    DrawingUtils::DrawButton(dc, win, button_rect, symbol, wxNullBitmap, eButtonKind::kNormal, eButtonState::kNormal);
+    DrawingUtils::DrawButton(dc, win, button_rect, cell.GetButtonUnicodeSymbol(), wxNullBitmap, eButtonKind::kNormal,
+                             cell.GetButtonState());
 }
 } // namespace
 
@@ -629,7 +630,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             button_rect = button_rect.CenterIn(rowRect, wxVERTICAL);
             // Draw a button with the unicode symbol in it
             if(IsSelected()) {
-                DrawButton(win, dc, button_rect, cell.GetButtonUnicodeSymbol());
+                DrawButton(win, dc, button_rect, cell);
             }
             // Keep the rect to test clicks
             cell.SetButtonRect(button_rect);
@@ -642,7 +643,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             button_rect.Deflate(1);
             button_rect = button_rect.CenterIn(cellRect);
             DrawingUtils::DrawButton(dc, win, button_rect, cell.GetValueString(), wxNullBitmap, eButtonKind::kNormal,
-                                     eButtonState::kNormal);
+                                     cell.GetButtonState());
             cell.SetButtonRect(button_rect);
 
         } else if(cell.IsColour()) {
@@ -651,7 +652,8 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             // move the drawing rectangle to the X_SPACER position
             // rr.SetX(rr.GetX() + X_SPACER);
             // rr.SetWidth(rr.GetWidth() - X_SPACER);
-            wxRect button_rect = DrawingUtils::DrawColourPicker(win, dc, rr, cell.GetValueColour());
+            wxRect button_rect =
+                DrawingUtils::DrawColourPicker(win, dc, rr, cell.GetValueColour(), cell.GetButtonState());
             cell.SetButtonRect(button_rect);
         }
 

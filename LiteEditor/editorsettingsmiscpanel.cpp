@@ -37,6 +37,7 @@
 
 #include <wx/fontmap.h>
 #include <wx/intl.h>
+#include <wx/msgdlg.h>
 #include <wx/wxprec.h>
 
 #ifdef __WXMSW__
@@ -111,7 +112,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
     int cur_log = clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error);
 
     AddProperty(_("Log file verbosity"), log_levels, FileLogger::GetVerbosityAsString(cur_log),
-                [this](const wxString&, const wxAny& value) {
+                [](const wxString&, const wxAny& value) {
                     wxString str;
                     if(value.GetAs(&str)) {
                         clConfig::Get().Write(kConfigLogVerbosity, FileLogger::GetVerbosityAsNumber(str));
@@ -122,12 +123,19 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
     AddProperty(_("Redirect stdout/stderr to file"), clConfig::Get().Read(kConfigRedirectLogOutput, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigRedirectLogOutput));
 #endif
-    // TODO: add uspport for clearing history (file + workspace)
-    //    ManagerST::Get()->ClearWorkspaceHistory();
-    //    clMainFrame::Get()->GetMainBook()->ClearFileHistory();
 
-    // TODO: add support for cleaing annoying dialog answers
-    // clConfig::Get().ClearAnnoyingDlgAnswers();
+    AddPropertyButton(_("Forget recent workspaces and files"), _("Clear"), [](const wxString&, const wxAny& value) {
+        wxUnusedVar(value);
+        ManagerST::Get()->ClearWorkspaceHistory();
+        clMainFrame::Get()->GetMainBook()->ClearFileHistory();
+        wxMessageBox(_("Success!"));
+    });
+
+    AddPropertyButton(_("Reset annoying dialogs answers"), _("Clear"), [](const wxString&, const wxAny& value) {
+        wxUnusedVar(value);
+        clConfig::Get().ClearAnnoyingDlgAnswers();
+        wxMessageBox(_("Success!"));
+    });
 }
 
 int EditorSettingsMiscPanel::FindAvailableLocales(wxArrayString* locales)

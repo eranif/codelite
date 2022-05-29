@@ -5,6 +5,7 @@
 #include "clTreeCtrlModel.h"
 #include "clTreeNodeVisitor.h"
 #include "drawingutils.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "macros.h"
 
@@ -293,6 +294,9 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     // Update the first item on screen
     SetFirstItemOnScreen(firstItem);
 
+    // Before we draw, reset the buttons states
+    UpdateButtonState(items);
+
     // Draw the items
     wxRect clientRect = GetItemsRect();
     // Set the width of the clipping region to match the header's width
@@ -450,11 +454,7 @@ void clTreeCtrl::OnMouseLeftDown(wxMouseEvent& event)
             }
 
             if((flags & wxTREE_HITTEST_ONACTIONBUTTON) && !has_multiple_selection) {
-                wxTreeEvent evt(wxEVT_TREE_ACTIONBUTTON_CLICKED);
-                evt.SetInt(column);
-                evt.SetEventObject(this);
-                evt.SetItem(where);
-                GetEventHandler()->ProcessEvent(evt);
+                pNode->GetColumn(column).SetButtonState(eButtonState::kPressed);
             }
         }
         Refresh();
@@ -474,6 +474,14 @@ void clTreeCtrl::OnMouseLeftUp(wxMouseEvent& event)
         if(has_multiple_selection && pNode->IsSelected() && !event.HasAnyModifiers()) {
             // Select this item while clearing the others
             m_model.SelectItem(where, true, false, true);
+            Refresh();
+        }
+        if((flags & wxTREE_HITTEST_ONACTIONBUTTON) && !has_multiple_selection) {
+            wxTreeEvent evt(wxEVT_TREE_ACTIONBUTTON_CLICKED);
+            evt.SetInt(column);
+            evt.SetEventObject(this);
+            evt.SetItem(where);
+            GetEventHandler()->AddPendingEvent(evt);
             Refresh();
         }
     }
@@ -1590,4 +1598,34 @@ void clTreeCtrl::ShowColourPicker(const wxTreeItemId& item, int column)
 
     cell.SetValue(sel);
     Refresh();
+}
+
+void clTreeCtrl::UpdateButtonState(clRowEntry::Vec_t& lines)
+{
+    int flags = 0;
+    wxPoint pt = ScreenToClient(::wxGetMousePosition());
+    bool is_left_down = ::wxGetMouseState().LeftIsDown();
+    int column = wxNOT_FOUND;
+    wxTreeItemId item = HitTest(pt, flags, column);
+    clRowEntry* hovered_line = m_model.ToPtr(item);
+
+    bool is_on_button = flags & wxTREE_HITTEST_ONACTIONBUTTON;
+    for(auto line : lines) {
+        if(!line) {
+            continue;
+        }
+        for(size_t i = 0; i < line->GetColumnCount(); ++i) {
+            // if we are:
+            // - mouse left button IS DOWN and..
+            // - the mouse is on a button and..
+            // - we are on the correct line and..
+            // - we are on the same cell then...
+            if(is_left_down && is_on_button && (hovered_line == line) && (column == (int)i)) {
+                line->GetColumn(i).SetButtonState(eButtonState::kPressed);
+
+            } else {
+                line->GetColumn(i).SetButtonState(eButtonState::kNormal);
+            }
+        }
+    }
 }

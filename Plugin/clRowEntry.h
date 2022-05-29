@@ -101,6 +101,8 @@ public:
     clRowEntry* GetLastChild() const;
     clRowEntry* GetFirstChild() const;
 
+    size_t GetColumnCount() const { return m_cells.size(); }
+
     const clCellValue& GetColumn(size_t col = 0) const;
     clCellValue& GetColumn(size_t col = 0);
     clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex = wxNOT_FOUND,

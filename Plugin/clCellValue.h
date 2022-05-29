@@ -2,6 +2,7 @@
 #define CLCELLVALUE_H
 
 #include "codelite_exports.h"
+#include "drawingutils.h"
 
 #include <vector>
 #include <wx/colour.h>
@@ -41,6 +42,7 @@ protected:
     wxRect m_buttonRect;
     wxColour m_colourValue;
     wxString m_buttonUnicodeSymbol;
+    eButtonState m_button_state = eButtonState::kNormal;
 
 public:
     clCellValue();
@@ -58,6 +60,10 @@ public:
     const wxString& GetValueString() const;
     bool GetValueBool() const { return m_boolValue; }
     const wxColour& GetValueColour() const { return m_colourValue; }
+
+    void SetButtonState(const eButtonState& button_state) { this->m_button_state = button_state; }
+    const eButtonState& GetButtonState() const { return m_button_state; }
+
     /**
      * @brief this cell has button in addition to ...
      */

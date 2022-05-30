@@ -38,20 +38,31 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
         return;
     }
 
-    // Is this object already registered?
+    // Check if this object is registered with our persistency manager
+    if(!wxPersistenceManager::Get().Find(win)) {
+        // register it
+        wxPersistenceManager::Get().Register(win);
+    }
+
+#ifndef __WXGTK__
+    // restore the object (size and position)
+    // note that we do not do this linux due to bug
+    // the on some DE, the restored window gets
+    // larger and larger...
     if(wxPersistenceManager::Get().Find(win)) {
         wxPersistenceManager::Get().Restore(win);
-    } else {
-        // Register and restore the object and recurse into its children
-        wxPersistenceManager::Get().RegisterAndRestore(win);
     }
+#endif
+
     DoLoad(win, win->GetName(), 0);
 }
 
 void WindowAttrManager::DoLoad(wxWindow* win, const wxString& parentName, int depth)
 {
-    if(!win)
+    if(!win) {
         return;
+    }
+
     int childIndex(0);
     wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
     while(pclNode) {

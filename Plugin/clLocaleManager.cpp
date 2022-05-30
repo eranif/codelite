@@ -53,8 +53,12 @@ void clLocaleManager::load()
         manager->CallAfter(&clLocaleManager::OnScanCompleted, d);
     };
 
+#ifdef __WXGTK__
     thread thr(entry_point, this);
     thr.detach();
+#else
+    entry_point(this);
+#endif
 }
 
 void clLocaleManager::OnScanCompleted(const LocaleParams& params)

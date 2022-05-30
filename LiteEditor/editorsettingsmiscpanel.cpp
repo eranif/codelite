@@ -50,12 +50,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
     AddHeader(_("General"));
     AddProperty(_("Allow only single instance"), clConfig::Get().Read(kConfigSingleInstance, false),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigSingleInstance));
-    AddProperty(_("Check for new version on startup"), clConfig::Get().Read(kConfigCheckForNewVersion, true),
-                UPDATE_CLCONFIG_BOOL_CB(kConfigCheckForNewVersion));
-    AddProperty(_("Check for new version on startup"), clConfig::Get().Read("PromptForNewReleaseOnly", false),
-                UPDATE_CLCONFIG_BOOL_CB("PromptForNewReleaseOnly"));
-    AddProperty(_("Load last session on startup"), clConfig::Get().Read(kConfigRestoreLastSession, true),
-                UPDATE_CLCONFIG_BOOL_CB(kConfigRestoreLastSession));
     AddProperty(_("Web search URL"), m_options->GetWebSearchPrefix(), UPDATE_TEXT_CB(SetWebSearchPrefix));
 #ifdef __WXMSW__
     AddProperty(_("Use Direct2D editor drawings"), clConfig::Get().Read("Editor/UseDirect2D", true),
@@ -63,6 +57,16 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
 #endif
     AddProperty(_("Frame title"), clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath")),
                 UPDATE_CLCONFIG_TEXT_CB(kConfigFrameTitlePattern));
+
+    AddHeader(_("Startup"));
+    AddProperty(_("Check for new version on startup"), clConfig::Get().Read(kConfigCheckForNewVersion, true),
+                UPDATE_CLCONFIG_BOOL_CB(kConfigCheckForNewVersion));
+    AddProperty(_("Only prompt for stable releases"), clConfig::Get().Read("PromptForNewReleaseOnly", false),
+                UPDATE_CLCONFIG_BOOL_CB("PromptForNewReleaseOnly"));
+    AddProperty(_("Load last session on startup"), clConfig::Get().Read(kConfigRestoreLastSession, true),
+                UPDATE_CLCONFIG_BOOL_CB(kConfigRestoreLastSession));
+    AddProperty(_("Show splashscreen"), clConfig::Get().Read("ShowSplashScreen", true),
+                UPDATE_CLCONFIG_BOOL_CB("ShowSplashScreen"));
 
     AddHeader(_("Status bar"));
     AddProperty(_("Show current line number"), clConfig::Get().Read(kConfigStatusbarShowLine, true),
@@ -124,6 +128,7 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
                 UPDATE_CLCONFIG_BOOL_CB(kConfigRedirectLogOutput));
 #endif
 
+    AddHeader(_("History"));
     AddPropertyButton(_("Forget recent workspaces and files"), _("Clear ") + wxT("\u232B"),
                       [](const wxString&, const wxAny& value) {
                           wxUnusedVar(value);

@@ -161,6 +161,13 @@ if(NOT APPLE)
                 DESTINATION ${CL_PREFIX}/share/icons/hicolor/256x256/apps
                 RENAME codelite.png)
 
+        install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
+                DESTINATION ${CL_PREFIX}/share/codelite/images
+                RENAME splashscreen.png)
+
+        install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
+                DESTINATION ${CL_PREFIX}/share/codelite/images)
+
         # Clear the icon cache if exists
         install(CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CL_PREFIX}/share/icons/hicolor/icon-theme.cache)")
     endif (  UNIX AND NOT APPLE )

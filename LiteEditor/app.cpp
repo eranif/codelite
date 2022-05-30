@@ -333,18 +333,21 @@ bool CodeLiteApp::OnInit()
     wxImage::AddHandler(new wxGIFHandler);
     wxImage::AddHandler(new wxJPEGHandler);
 
-#ifdef __WXMSW__
-    wxBitmap bitmap;
-    wxFileName splashscreen_png(clStandardPaths::Get().GetInstallDir(), "splashscreen.png");
-    splashscreen_png.AppendDir("images");
+#if defined(__WXMSW__) || defined(__WXGTK__)
+    bool show_splash = clConfig::Get().Read("ShowSplashScreen", true);
+    if(show_splash) {
+        wxBitmap bitmap;
+        wxFileName splashscreen_png(clStandardPaths::Get().GetDataDir(), "splashscreen.png");
+        splashscreen_png.AppendDir("images");
 
-    if(splashscreen_png.FileExists() && bitmap.LoadFile(splashscreen_png.GetFullPath(), wxBITMAP_TYPE_PNG)) {
-        wxSplashScreen* splash =
-            new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT, 2000, nullptr, -1,
-                               wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE | wxSTAY_ON_TOP);
-        wxUnusedVar(splash);
+        if(splashscreen_png.FileExists() && bitmap.LoadFile(splashscreen_png.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+            wxSplashScreen* splash =
+                new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT, 1000, nullptr, -1,
+                                   wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE | wxSTAY_ON_TOP);
+            wxUnusedVar(splash);
+        }
+        wxYield();
     }
-    wxYield();
 #endif
 
     InitXmlResource();

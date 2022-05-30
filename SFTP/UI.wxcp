@@ -121,6 +121,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -296,6 +300,10 @@
 													"m_label":	"Style:",
 													"m_value":	""
 												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
+												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
 													"m_selection":	0,
@@ -422,7 +430,6 @@
 													"m_events":	[{
 															"m_eventName":	"wxEVT_CONTEXT_MENU",
 															"m_eventClass":	"wxContextMenuEvent",
-															"m_eventHandler":	"wxContextMenuEventHandler",
 															"m_functionNameAndSignature":	"OnContentMenu(wxContextMenuEvent& event)",
 															"m_description":	"A right click (or other context menu command depending on platform) has been detected",
 															"m_noBody":	false
@@ -532,6 +539,10 @@
 													"type":	"string",
 													"m_label":	"Style:",
 													"m_value":	""
+												}, {
+													"type":	"bool",
+													"m_label":	"Keep as a class member",
+													"m_value":	false
 												}, {
 													"type":	"choice",
 													"m_label":	"Orientation:",
@@ -851,7 +862,7 @@
 				}, {
 					"type":	"bool",
 					"m_label":	"Hidden",
-					"m_value":	false
+					"m_value":	true
 				}, {
 					"type":	"bool",
 					"m_label":	"Disabled",
@@ -919,6 +930,10 @@
 							"type":	"string",
 							"m_label":	"Style:",
 							"m_value":	""
+						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
 						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
@@ -1001,6 +1016,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -1103,7 +1122,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnGotoLocationUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -1187,6 +1205,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -1197,14 +1219,12 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnGotoLocation(wxCommandEvent& event)",
 											"m_description":	"Respond to a wxEVT_COMMAND_TEXT_ENTER event, generated when enter is pressed in a text control\n(which must have wxTE_PROCESS_ENTER style for this event to be generated).",
 											"m_noBody":	false
 										}, {
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnGotoLocationUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -1345,6 +1365,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -1371,6 +1395,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
@@ -1474,6 +1502,10 @@
 											"m_label":	"Style:",
 											"m_value":	""
 										}, {
+											"type":	"bool",
+											"m_label":	"Keep as a class member",
+											"m_value":	false
+										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",
 											"m_selection":	0,
@@ -1569,14 +1601,12 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 													"m_eventClass":	"wxCommandEvent",
-													"m_eventHandler":	"wxCommandEventHandler",
 													"m_functionNameAndSignature":	"OnDelete(wxCommandEvent& event)",
 													"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 													"m_noBody":	false
 												}, {
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_eventHandler":	"wxUpdateUIEventHandler",
 													"m_functionNameAndSignature":	"OnDeleteUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
@@ -1841,6 +1871,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -1867,6 +1901,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -2143,7 +2181,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_COMMAND_BUTTON_CLICKED",
 											"m_eventClass":	"wxCommandEvent",
-											"m_eventHandler":	"wxCommandEventHandler",
 											"m_functionNameAndSignature":	"OnOK(wxCommandEvent& event)",
 											"m_description":	"Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.",
 											"m_noBody":	false
@@ -2312,6 +2349,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -2471,6 +2512,10 @@
 									"m_value":	"0"
 								}, {
 									"type":	"bool",
+									"m_label":	"Enable Spell Checking",
+									"m_value":	false
+								}, {
+									"type":	"bool",
 									"m_label":	"Auto Complete Directories:",
 									"m_value":	false
 								}, {
@@ -2594,7 +2639,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -2763,6 +2807,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -2845,7 +2893,6 @@
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 									"m_eventClass":	"wxCommandEvent",
-									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnCheckboxChooseAccount(wxCommandEvent& event)",
 									"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 									"m_noBody":	false
@@ -2927,7 +2974,6 @@
 							"m_events":	[{
 									"m_eventName":	"wxEVT_UPDATE_UI",
 									"m_eventClass":	"wxUpdateUIEvent",
-									"m_eventHandler":	"wxUpdateUIEventHandler",
 									"m_functionNameAndSignature":	"OnChooseAccountUI(wxUpdateUIEvent& event)",
 									"m_description":	"Process a wxEVT_UPDATE_UI event",
 									"m_noBody":	false
@@ -3076,7 +3122,6 @@
 							"m_events":	[{
 									"m_eventName":	"wxEVT_COMMAND_CHECKBOX_CLICKED",
 									"m_eventClass":	"wxCommandEvent",
-									"m_eventHandler":	"wxCommandEventHandler",
 									"m_functionNameAndSignature":	"OnQuickConnect(wxCommandEvent& event)",
 									"m_description":	"Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
 									"m_noBody":	false
@@ -3102,6 +3147,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -3204,7 +3253,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnQuickConnectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -3288,6 +3336,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -3298,7 +3350,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnQuickConnectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -3380,7 +3431,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnQuickConnectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -3464,6 +3514,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -3474,7 +3528,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnQuickConnectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -3556,7 +3609,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnQuickConnectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -3640,6 +3692,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -3650,7 +3706,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnQuickConnectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -3732,7 +3787,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnQuickConnectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -3816,6 +3870,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -3826,7 +3884,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnQuickConnectUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -3928,7 +3985,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnOKUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false
@@ -4097,6 +4153,10 @@
 							"m_label":	"Style:",
 							"m_value":	""
 						}, {
+							"type":	"bool",
+							"m_label":	"Keep as a class member",
+							"m_value":	false
+						}, {
 							"type":	"choice",
 							"m_label":	"Orientation:",
 							"m_selection":	0,
@@ -4123,6 +4183,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -4302,6 +4366,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -4464,6 +4532,10 @@
 											"m_value":	"0"
 										}, {
 											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
+										}, {
+											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
 											"m_value":	false
 										}, {
@@ -4494,6 +4566,10 @@
 									"type":	"string",
 									"m_label":	"Style:",
 									"m_value":	""
+								}, {
+									"type":	"bool",
+									"m_label":	"Keep as a class member",
+									"m_value":	false
 								}, {
 									"type":	"string",
 									"m_label":	"# Columns:",
@@ -4766,7 +4842,6 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_eventHandler":	"wxUpdateUIEventHandler",
 											"m_functionNameAndSignature":	"OnOkUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
 											"m_noBody":	false

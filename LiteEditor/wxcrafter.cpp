@@ -22,7 +22,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
         bBitmapLoaded = true;
     }
 
-    boxSizer36 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
 
     m_splitter =
@@ -35,7 +35,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
     m_splitterPage39 =
         new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer42 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage39->SetSizer(boxSizer42);
 
     wxArrayString m_scopeArr;
@@ -48,7 +48,7 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
         new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPage39, m_splitterPage41, 200);
 
-    boxSizer43 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage41->SetSizer(boxSizer43);
 
     wxArrayString m_funcArr;
@@ -63,17 +63,14 @@ NavBarControlBaseClass::NavBarControlBaseClass(wxWindow* parent, wxWindowID id, 
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_scope->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnScope), NULL, this);
-    m_func->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnFunction), NULL,
-                    this);
+    m_scope->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &NavBarControlBaseClass::OnScope, this);
+    m_func->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &NavBarControlBaseClass::OnFunction, this);
 }
 
 NavBarControlBaseClass::~NavBarControlBaseClass()
 {
-    m_scope->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnScope), NULL,
-                        this);
-    m_func->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(NavBarControlBaseClass::OnFunction), NULL,
-                       this);
+    m_scope->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &NavBarControlBaseClass::OnScope, this);
+    m_func->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &NavBarControlBaseClass::OnFunction, this);
 }
 
 NewProjImgList::NewProjImgList()
@@ -102,10 +99,10 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
 
-    boxSizer117 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer117 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer117);
 
-    boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer129 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer117->Add(boxSizer129, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -116,7 +113,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
 
     m_dvListCtrl->AppendTextColumn(_("Function"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
                                    wxDATAVIEW_COL_RESIZABLE);
-    boxSizer131 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer131 = new wxBoxSizer(wxVERTICAL);
 
     boxSizer129->Add(boxSizer131, 0, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -135,7 +132,7 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
 
     boxSizer117->Add(m_filePicker, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer119 = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* boxSizer119 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer117->Add(boxSizer119, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
@@ -160,20 +157,16 @@ AddFunctionsImplBaseDlg::AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id
         CentreOnScreen(wxBOTH);
     }
     // Connect events
-    m_button133->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddFunctionsImplBaseDlg::OnCheckAll), NULL,
-                         this);
-    m_button135->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddFunctionsImplBaseDlg::OnUncheckAll),
-                         NULL, this);
-    m_button121->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddFunctionsImplBaseDlg::OnOKUI), NULL, this);
+    m_button133->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AddFunctionsImplBaseDlg::OnCheckAll, this);
+    m_button135->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AddFunctionsImplBaseDlg::OnUncheckAll, this);
+    m_button121->Bind(wxEVT_UPDATE_UI, &AddFunctionsImplBaseDlg::OnOKUI, this);
 }
 
 AddFunctionsImplBaseDlg::~AddFunctionsImplBaseDlg()
 {
-    m_button133->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddFunctionsImplBaseDlg::OnCheckAll),
-                            NULL, this);
-    m_button135->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(AddFunctionsImplBaseDlg::OnUncheckAll),
-                            NULL, this);
-    m_button121->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(AddFunctionsImplBaseDlg::OnOKUI), NULL, this);
+    m_button133->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AddFunctionsImplBaseDlg::OnCheckAll, this);
+    m_button135->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AddFunctionsImplBaseDlg::OnUncheckAll, this);
+    m_button121->Unbind(wxEVT_UPDATE_UI, &AddFunctionsImplBaseDlg::OnOKUI, this);
 }
 
 WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -187,7 +180,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
     }
     this->Hide();
 
-    boxSizer149 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer149 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer149);
 
     m_scrollWin247 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(600, 600)),
@@ -196,7 +189,7 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     boxSizer149->Add(m_scrollWin247, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer249 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer249 = new wxBoxSizer(wxVERTICAL);
     m_scrollWin247->SetSizer(boxSizer249);
 
     m_panel191 = new wxPanel(m_scrollWin247, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_scrollWin247, wxSize(-1, -1)),
@@ -204,10 +197,10 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     boxSizer249->Add(m_panel191, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer195 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panel191->SetSizer(boxSizer195);
 
-    boxSizer585 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer585 = new wxBoxSizer(wxVERTICAL);
 
     boxSizer195->Add(boxSizer585, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
@@ -228,13 +221,10 @@ WelcomePageBase::WelcomePageBase(wxWindow* parent, wxWindowID id, const wxPoint&
         GetSizer()->Fit(this);
     }
     // Connect events
-    this->Connect(wxEVT_SIZE, wxSizeEventHandler(WelcomePageBase::OnSize), NULL, this);
+    this->Bind(wxEVT_SIZE, &WelcomePageBase::OnSize, this);
 }
 
-WelcomePageBase::~WelcomePageBase()
-{
-    this->Disconnect(wxEVT_SIZE, wxSizeEventHandler(WelcomePageBase::OnSize), NULL, this);
-}
+WelcomePageBase::~WelcomePageBase() { this->Unbind(wxEVT_SIZE, &WelcomePageBase::OnSize, this); }
 
 WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
@@ -245,8 +235,9 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
         wxC3F25InitBitmapResources();
         bBitmapLoaded = true;
     }
+    this->Hide();
 
-    mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
     m_simpleBook = new wxSimplebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBORDER_NONE);
@@ -259,7 +250,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
                              wxTAB_TRAVERSAL);
     m_simpleBook->AddPage(m_panelCxx, _("C++ Workspace"), true);
 
-    boxSizer505 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer505 = new wxBoxSizer(wxVERTICAL);
     m_panelCxx->SetSizer(boxSizer505);
 
     m_panel625 = new wxPanel(m_panelCxx, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelCxx, wxSize(-1, -1)),
@@ -267,7 +258,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     boxSizer505->Add(m_panel625, 0, wxEXPAND, WXC_FROM_DIP(2));
 
-    boxSizer627 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer627 = new wxBoxSizer(wxVERTICAL);
     m_panel625->SetSizer(boxSizer627);
 
     m_toolbar580 = new clToolBar(m_panel625, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel625, wxSize(-1, -1)),
@@ -291,7 +282,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
     m_splitterPagePinnedProjects =
         new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer621 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer621 = new wxBoxSizer(wxVERTICAL);
     m_splitterPagePinnedProjects->SetSizer(boxSizer621);
 
     m_dvListCtrlPinnedProjects =
@@ -307,7 +298,7 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
         new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter->SplitHorizontally(m_splitterPagePinnedProjects, m_splitterPageTreeView, 100);
 
-    boxSizer619 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer619 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTreeView->SetSizer(boxSizer619);
 
     m_fileView = new FileViewTree(m_splitterPageTreeView, wxID_ANY, wxDefaultPosition,
@@ -322,22 +313,18 @@ WorkspaceTabBase::WorkspaceTabBase(wxWindow* parent, wxWindowID id, const wxPoin
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_dvListCtrlPinnedProjects->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                        wxDataViewEventHandler(WorkspaceTabBase::OnPinnedCxxProjectContextMenu), NULL,
-                                        this);
-    m_dvListCtrlPinnedProjects->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                                        wxDataViewEventHandler(WorkspaceTabBase::OnPinnedCxxProjectSelected), NULL,
-                                        this);
+    m_dvListCtrlPinnedProjects->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                     &WorkspaceTabBase::OnPinnedCxxProjectContextMenu, this);
+    m_dvListCtrlPinnedProjects->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
+                                     &WorkspaceTabBase::OnPinnedCxxProjectSelected, this);
 }
 
 WorkspaceTabBase::~WorkspaceTabBase()
 {
-    m_dvListCtrlPinnedProjects->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                           wxDataViewEventHandler(WorkspaceTabBase::OnPinnedCxxProjectContextMenu),
-                                           NULL, this);
-    m_dvListCtrlPinnedProjects->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                                           wxDataViewEventHandler(WorkspaceTabBase::OnPinnedCxxProjectSelected), NULL,
-                                           this);
+    m_dvListCtrlPinnedProjects->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
+                                       &WorkspaceTabBase::OnPinnedCxxProjectContextMenu, this);
+    m_dvListCtrlPinnedProjects->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
+                                       &WorkspaceTabBase::OnPinnedCxxProjectSelected, this);
 }
 
 EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -351,14 +338,14 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
         bBitmapLoaded = true;
     }
 
-    mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
     m_mainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     mainSizer->Add(m_mainPanel, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    boxSizer324 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer324 = new wxBoxSizer(wxVERTICAL);
     m_mainPanel->SetSizer(boxSizer324);
 
     m_toolbar = new clToolBar(m_mainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)),
@@ -407,64 +394,40 @@ EditorFrameBase::EditorFrameBase(wxWindow* parent, wxWindowID id, const wxString
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EditorFrameBase::OnCloseWindow), NULL, this);
-    this->Connect(m_menuItemSave->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(EditorFrameBase::OnSave),
-                  NULL, this);
-    this->Connect(m_menuItemSave->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnSaveUI), NULL,
-                  this);
-    this->Connect(m_menuItemReload->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                  wxCommandEventHandler(EditorFrameBase::OnReload), NULL, this);
-    this->Connect(m_menuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                  wxCommandEventHandler(EditorFrameBase::OnClose), NULL, this);
-    this->Connect(m_menuItemClose->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI), NULL,
-                  this);
-    this->Connect(m_menuItemFind->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(EditorFrameBase::OnFind),
-                  NULL, this);
-    this->Connect(m_menuItemFind->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnFindUI), NULL,
-                  this);
-    this->Connect(m_menuItemUndo->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(EditorFrameBase::OnUndo),
-                  NULL, this);
-    this->Connect(m_menuItemUndo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnUndoUI), NULL,
-                  this);
-    this->Connect(m_menuItemRedo->GetId(), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(EditorFrameBase::OnRedo),
-                  NULL, this);
-    this->Connect(m_menuItemRedo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnRedoUI), NULL,
-                  this);
+    this->Bind(wxEVT_CLOSE_WINDOW, &EditorFrameBase::OnCloseWindow, this);
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnSave, this, m_menuItemSave->GetId());
+    this->Bind(wxEVT_UPDATE_UI, &EditorFrameBase::OnSaveUI, this, m_menuItemSave->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnReload, this, m_menuItemReload->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnClose, this, m_menuItemClose->GetId());
+    this->Bind(wxEVT_UPDATE_UI, &EditorFrameBase::OnCloseUI, this, m_menuItemClose->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnFind, this, m_menuItemFind->GetId());
+    this->Bind(wxEVT_UPDATE_UI, &EditorFrameBase::OnFindUI, this, m_menuItemFind->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnUndo, this, m_menuItemUndo->GetId());
+    this->Bind(wxEVT_UPDATE_UI, &EditorFrameBase::OnUndoUI, this, m_menuItemUndo->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnRedo, this, m_menuItemRedo->GetId());
+    this->Bind(wxEVT_UPDATE_UI, &EditorFrameBase::OnRedoUI, this, m_menuItemRedo->GetId());
 }
 
 EditorFrameBase::~EditorFrameBase()
 {
-    this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(EditorFrameBase::OnCloseWindow), NULL, this);
-    this->Disconnect(m_menuItemSave->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(EditorFrameBase::OnSave), NULL, this);
-    this->Disconnect(m_menuItemSave->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnSaveUI), NULL,
-                     this);
-    this->Disconnect(m_menuItemReload->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(EditorFrameBase::OnReload), NULL, this);
-    this->Disconnect(m_menuItemClose->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(EditorFrameBase::OnClose), NULL, this);
-    this->Disconnect(m_menuItemClose->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnCloseUI),
-                     NULL, this);
-    this->Disconnect(m_menuItemFind->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(EditorFrameBase::OnFind), NULL, this);
-    this->Disconnect(m_menuItemFind->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnFindUI), NULL,
-                     this);
-    this->Disconnect(m_menuItemUndo->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(EditorFrameBase::OnUndo), NULL, this);
-    this->Disconnect(m_menuItemUndo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnUndoUI), NULL,
-                     this);
-    this->Disconnect(m_menuItemRedo->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                     wxCommandEventHandler(EditorFrameBase::OnRedo), NULL, this);
-    this->Disconnect(m_menuItemRedo->GetId(), wxEVT_UPDATE_UI, wxUpdateUIEventHandler(EditorFrameBase::OnRedoUI), NULL,
-                     this);
+    this->Unbind(wxEVT_CLOSE_WINDOW, &EditorFrameBase::OnCloseWindow, this);
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnSave, this, m_menuItemSave->GetId());
+    this->Unbind(wxEVT_UPDATE_UI, &EditorFrameBase::OnSaveUI, this, m_menuItemSave->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnReload, this, m_menuItemReload->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnClose, this, m_menuItemClose->GetId());
+    this->Unbind(wxEVT_UPDATE_UI, &EditorFrameBase::OnCloseUI, this, m_menuItemClose->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnFind, this, m_menuItemFind->GetId());
+    this->Unbind(wxEVT_UPDATE_UI, &EditorFrameBase::OnFindUI, this, m_menuItemFind->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnUndo, this, m_menuItemUndo->GetId());
+    this->Unbind(wxEVT_UPDATE_UI, &EditorFrameBase::OnUndoUI, this, m_menuItemUndo->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &EditorFrameBase::OnRedo, this, m_menuItemRedo->GetId());
+    this->Unbind(wxEVT_UPDATE_UI, &EditorFrameBase::OnRedoUI, this, m_menuItemRedo->GetId());
 }
 
 OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -478,10 +441,10 @@ OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxSt
         bBitmapLoaded = true;
     }
 
-    boxSizer471 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer471 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer471);
 
-    flexGridSizer483 = new wxFlexGridSizer(0, 2, 0, 0);
+    wxFlexGridSizer* flexGridSizer483 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer483->SetFlexibleDirection(wxBOTH);
     flexGridSizer483->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
     flexGridSizer483->AddGrowableCol(1);
@@ -525,13 +488,11 @@ OpenFolderDlgBase::OpenFolderDlgBase(wxWindow* parent, wxWindowID id, const wxSt
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
 }
 
 OpenFolderDlgBase::~OpenFolderDlgBase() {}
@@ -547,7 +508,7 @@ DefaultWorkspacePageBase::DefaultWorkspacePageBase(wxWindow* parent, wxWindowID 
         bBitmapLoaded = true;
     }
 
-    boxSizer515 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer515 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer515);
 
     boxSizer515->Add(0, 0, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -589,7 +550,7 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
         bBitmapLoaded = true;
     }
 
-    boxSizer527 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer527 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer527);
 
     m_banner = new wxBannerWindow(this, wxID_ANY, wxTOP, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -631,26 +592,20 @@ SelectDropTargetBaseDlg::SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(SelectDropTargetBaseDlg::OnSelectionActivated), NULL, this);
-    m_button547->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SelectDropTargetBaseDlg::OnOKUI), NULL, this);
-    m_button547->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectDropTargetBaseDlg::OnOK), NULL,
-                         this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &SelectDropTargetBaseDlg::OnSelectionActivated, this);
+    m_button547->Bind(wxEVT_UPDATE_UI, &SelectDropTargetBaseDlg::OnOKUI, this);
+    m_button547->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SelectDropTargetBaseDlg::OnOK, this);
 }
 
 SelectDropTargetBaseDlg::~SelectDropTargetBaseDlg()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(SelectDropTargetBaseDlg::OnSelectionActivated), NULL, this);
-    m_button547->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SelectDropTargetBaseDlg::OnOKUI), NULL, this);
-    m_button547->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SelectDropTargetBaseDlg::OnOK), NULL,
-                            this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &SelectDropTargetBaseDlg::OnSelectionActivated, this);
+    m_button547->Unbind(wxEVT_UPDATE_UI, &SelectDropTargetBaseDlg::OnOKUI, this);
+    m_button547->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SelectDropTargetBaseDlg::OnOK, this);
 }

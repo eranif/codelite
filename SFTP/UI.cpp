@@ -129,13 +129,12 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_stcOutput->Connect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SFTPStatusPageBase::OnContentMenu), NULL, this);
+    m_stcOutput->Bind(wxEVT_CONTEXT_MENU, &SFTPStatusPageBase::OnContentMenu, this);
 }
 
 SFTPStatusPageBase::~SFTPStatusPageBase()
 {
-    m_stcOutput->Disconnect(wxEVT_CONTEXT_MENU, wxContextMenuEventHandler(SFTPStatusPageBase::OnContentMenu), NULL,
-                            this);
+    m_stcOutput->Unbind(wxEVT_CONTEXT_MENU, &SFTPStatusPageBase::OnContentMenu, this);
 }
 
 SFTPImages::SFTPImages()
@@ -162,6 +161,7 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
         wxC32BEInitBitmapResources();
         bBitmapLoaded = true;
     }
+    this->Hide();
 
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer16);
@@ -198,20 +198,16 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_staticText49->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
-    m_textCtrlQuickJump->Connect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation),
-                                 NULL, this);
-    m_textCtrlQuickJump->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL,
-                                 this);
+    m_staticText49->Bind(wxEVT_UPDATE_UI, &SFTPTreeViewBase::OnGotoLocationUI, this);
+    m_textCtrlQuickJump->Bind(wxEVT_COMMAND_TEXT_ENTER, &SFTPTreeViewBase::OnGotoLocation, this);
+    m_textCtrlQuickJump->Bind(wxEVT_UPDATE_UI, &SFTPTreeViewBase::OnGotoLocationUI, this);
 }
 
 SFTPTreeViewBase::~SFTPTreeViewBase()
 {
-    m_staticText49->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL, this);
-    m_textCtrlQuickJump->Disconnect(wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler(SFTPTreeViewBase::OnGotoLocation),
-                                    NULL, this);
-    m_textCtrlQuickJump->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPTreeViewBase::OnGotoLocationUI), NULL,
-                                    this);
+    m_staticText49->Unbind(wxEVT_UPDATE_UI, &SFTPTreeViewBase::OnGotoLocationUI, this);
+    m_textCtrlQuickJump->Unbind(wxEVT_COMMAND_TEXT_ENTER, &SFTPTreeViewBase::OnGotoLocation, this);
+    m_textCtrlQuickJump->Unbind(wxEVT_UPDATE_UI, &SFTPTreeViewBase::OnGotoLocationUI, this);
 }
 
 SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -268,24 +264,20 @@ SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowI
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button70->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPManageBookmarkDlgBase::OnDelete), NULL,
-                        this);
-    m_button70->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPManageBookmarkDlgBase::OnDeleteUI), NULL, this);
+    m_button70->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPManageBookmarkDlgBase::OnDelete, this);
+    m_button70->Bind(wxEVT_UPDATE_UI, &SFTPManageBookmarkDlgBase::OnDeleteUI, this);
 }
 
 SFTPManageBookmarkDlgBase::~SFTPManageBookmarkDlgBase()
 {
-    m_button70->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPManageBookmarkDlgBase::OnDelete),
-                           NULL, this);
-    m_button70->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPManageBookmarkDlgBase::OnDeleteUI), NULL, this);
+    m_button70->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPManageBookmarkDlgBase::OnDelete, this);
+    m_button70->Unbind(wxEVT_UPDATE_UI, &SFTPManageBookmarkDlgBase::OnDeleteUI, this);
 }
 
 SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -342,21 +334,18 @@ SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, 
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button87->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPSettingsDialogBase::OnOK), NULL, this);
+    m_button87->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPSettingsDialogBase::OnOK, this);
 }
 
 SFTPSettingsDialogBase::~SFTPSettingsDialogBase()
 {
-    m_button87->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(SFTPSettingsDialogBase::OnOK), NULL,
-                           this);
+    m_button87->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPSettingsDialogBase::OnOK, this);
 }
 
 SFTPUploadDialogBase::SFTPUploadDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -422,20 +411,18 @@ SFTPUploadDialogBase::SFTPUploadDialogBase(wxWindow* parent, wxWindowID id, cons
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPUploadDialogBase::OnOKUI), NULL, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &SFTPUploadDialogBase::OnOKUI, this);
 }
 
 SFTPUploadDialogBase::~SFTPUploadDialogBase()
 {
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPUploadDialogBase::OnOKUI), NULL, this);
+    m_buttonOK->Unbind(wxEVT_UPDATE_UI, &SFTPUploadDialogBase::OnOKUI, this);
 }
 
 SFTPQuickConnectBaseDlg::SFTPQuickConnectBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -556,66 +543,42 @@ SFTPQuickConnectBaseDlg::SFTPQuickConnectBaseDlg(wxWindow* parent, wxWindowID id
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_checkBoxChooseAccount->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                     wxCommandEventHandler(SFTPQuickConnectBaseDlg::OnCheckboxChooseAccount), NULL,
-                                     this);
-    m_choiceAccount->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnChooseAccountUI), NULL,
-                             this);
-    m_checkBoxQuickConnect->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                    wxCommandEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnect), NULL, this);
-    m_staticText143->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI), NULL,
-                             this);
-    m_textCtrlHost->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI), NULL,
-                            this);
-    m_staticText147->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI), NULL,
-                             this);
-    m_textCtrlPort->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI), NULL,
-                            this);
-    m_staticText151->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI), NULL,
-                             this);
-    m_textCtrlUsername->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
-                                NULL, this);
-    m_staticText155->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI), NULL,
-                             this);
-    m_textCtrlPassword->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
-                                NULL, this);
-    m_button125->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnOKUI), NULL, this);
+    m_checkBoxChooseAccount->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnCheckboxChooseAccount,
+                                  this);
+    m_choiceAccount->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnChooseAccountUI, this);
+    m_checkBoxQuickConnect->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnQuickConnect, this);
+    m_staticText143->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_textCtrlHost->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_staticText147->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_textCtrlPort->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_staticText151->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_textCtrlUsername->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_staticText155->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_textCtrlPassword->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_button125->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnOKUI, this);
 }
 
 SFTPQuickConnectBaseDlg::~SFTPQuickConnectBaseDlg()
 {
-    m_checkBoxChooseAccount->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                        wxCommandEventHandler(SFTPQuickConnectBaseDlg::OnCheckboxChooseAccount), NULL,
-                                        this);
-    m_choiceAccount->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnChooseAccountUI),
-                                NULL, this);
-    m_checkBoxQuickConnect->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                       wxCommandEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnect), NULL, this);
-    m_staticText143->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
-                                NULL, this);
-    m_textCtrlHost->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI), NULL,
-                               this);
-    m_staticText147->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
-                                NULL, this);
-    m_textCtrlPort->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI), NULL,
-                               this);
-    m_staticText151->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
-                                NULL, this);
-    m_textCtrlUsername->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
-                                   NULL, this);
-    m_staticText155->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
-                                NULL, this);
-    m_textCtrlPassword->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnQuickConnectUI),
-                                   NULL, this);
-    m_button125->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPQuickConnectBaseDlg::OnOKUI), NULL, this);
+    m_checkBoxChooseAccount->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnCheckboxChooseAccount,
+                                    this);
+    m_choiceAccount->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnChooseAccountUI, this);
+    m_checkBoxQuickConnect->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnQuickConnect, this);
+    m_staticText143->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_textCtrlHost->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_staticText147->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_textCtrlPort->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_staticText151->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_textCtrlUsername->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_staticText155->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_textCtrlPassword->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
+    m_button125->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnOKUI, this);
 }
 
 SFTPGrepBase::SFTPGrepBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -707,18 +670,13 @@ SFTPGrepBase::SFTPGrepBase(wxWindow* parent, wxWindowID id, const wxString& titl
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_buttonOK->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPGrepBase::OnOkUI), NULL, this);
+    m_buttonOK->Bind(wxEVT_UPDATE_UI, &SFTPGrepBase::OnOkUI, this);
 }
 
-SFTPGrepBase::~SFTPGrepBase()
-{
-    m_buttonOK->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(SFTPGrepBase::OnOkUI), NULL, this);
-}
+SFTPGrepBase::~SFTPGrepBase() { m_buttonOK->Unbind(wxEVT_UPDATE_UI, &SFTPGrepBase::OnOkUI, this); }

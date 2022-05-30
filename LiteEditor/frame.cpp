@@ -722,7 +722,13 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
         inf.SetFramePosition({ 100, 100 });
     }
 
-    if(!wxFrame::Create(pParent, id, title, { -10000, -10000 }, inf.GetFrameSize(), style)) {
+    wxPoint create_point = inf.GetFramePosition();
+#ifdef __WXMSW__
+    // on Windows, create the frame outside of the display
+    create_point = wxPoint{ -20000, -20000 };
+#endif
+
+    if(!wxFrame::Create(pParent, id, title, create_point, inf.GetFrameSize(), style)) {
         return;
     }
 
@@ -3503,7 +3509,9 @@ void clMainFrame::CompleteInitialization()
     m_mgr.Update();
 
     // needs to be done in an "CallAfter" to avoid the flicker
+#ifdef __WXMSW__
     CallAfter(&clMainFrame::SetPosition, m_frameGeneralInfo.GetFramePosition());
+#endif
 
 #if defined(__WXGTK__)
     // Needed on GTK

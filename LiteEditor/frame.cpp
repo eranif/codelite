@@ -714,19 +714,20 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_webUpdate(NULL)
     , m_toolbar(NULL)
 {
-    if(!wxFrame::Create(pParent, id, title, pos, size, style)) {
+    EditorConfig* cfg = EditorConfigST::Get();
+    GeneralInfo inf;
+    cfg->ReadObject("GeneralInfo", &inf);
+
+    if(inf.GetFramePosition().x < 0 || inf.GetFramePosition().y < 0) {
+        inf.SetFramePosition({ 100, 100 });
+    }
+
+    if(!wxFrame::Create(pParent, id, title, { -10000, -10000 }, inf.GetFrameSize(), style)) {
         return;
     }
 
     // constuct the UI
     Construct();
-
-    EditorConfig* cfg = EditorConfigST::Get();
-    GeneralInfo inf;
-    cfg->ReadObject("GeneralInfo", &inf);
-
-    SetSize(inf.GetFrameSize());
-    Move(inf.GetFramePosition());
 
     m_frameGeneralInfo = inf;
 }
@@ -924,7 +925,7 @@ void clMainFrame::Construct()
     // Try to detect if this is a Wayland session; we have some Wayland-workaround code
     m_isWaylandSession = clIsWaylandSession();
 #endif
-    CallAfter(&clMainFrame::PostConstruct);
+    PostConstruct();
 }
 
 void clMainFrame::PostConstruct()
@@ -940,8 +941,6 @@ void clMainFrame::PostConstruct()
 #endif
 
     GetMainBook()->Show();
-    Layout();
-
     CallAfter(&clMainFrame::CompleteInitialization);
 
     // Post wxEVT_SYS_COLOURS_CHANGED event to make sure that all of our controls are aligned with the colour
@@ -3490,7 +3489,7 @@ void clMainFrame::CompleteInitialization()
     wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
     GetFileExplorer()->GetEventHandler()->ProcessEvent(e);
 
-    SendSizeEvent();
+    // SendSizeEvent();
     StartTimer();
 
     // Keep the current layout before loading the perspective from the disk
@@ -3502,6 +3501,9 @@ void clMainFrame::CompleteInitialization()
     // Process the remainder of the command line arguments
     static_cast<CodeLiteApp*>(wxTheApp)->ProcessCommandLineParams();
     m_mgr.Update();
+
+    // needs to be done in an "CallAfter" to avoid the flicker
+    CallAfter(&clMainFrame::SetPosition, m_frameGeneralInfo.GetFramePosition());
 
 #if defined(__WXGTK__)
     // Needed on GTK

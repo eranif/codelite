@@ -31,7 +31,6 @@
 #include <set>
 #include <wx/cmdline.h>
 
-class wxSplashScreen;
 class wxSingleInstanceChecker;
 
 class CodeLiteApp : public wxApp
@@ -40,7 +39,6 @@ public:
     enum PluginPolicy { PP_None = 0, PP_All, PP_FromList };
 
 protected:
-    wxSplashScreen* m_splash;
     clMainFrame* m_pMainFrame;
     wxSingleInstanceChecker* m_singleInstance;
     wxArrayString m_parserPaths;

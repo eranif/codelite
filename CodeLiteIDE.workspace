@@ -873,7 +873,10 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins">
-      <Environment/>
+      <Environment>WXWIN=C:/msys64/home/eran/root&#xD;
+WXCFG=gcc_x64_dll/mswu&#xD;
+SSH_HOME=C:/msys64/home/eran/root&#xD;
+MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>

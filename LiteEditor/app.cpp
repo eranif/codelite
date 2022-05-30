@@ -332,6 +332,21 @@ bool CodeLiteApp::OnInit()
     wxImage::AddHandler(new wxXPMHandler);
     wxImage::AddHandler(new wxGIFHandler);
     wxImage::AddHandler(new wxJPEGHandler);
+
+#ifdef __WXMSW__
+    wxBitmap bitmap;
+    wxFileName splashscreen_png(clStandardPaths::Get().GetInstallDir(), "splashscreen.png");
+    splashscreen_png.AppendDir("images");
+
+    if(splashscreen_png.FileExists() && bitmap.LoadFile(splashscreen_png.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+        wxSplashScreen* splash =
+            new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT, 2000, nullptr, -1,
+                               wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE | wxSTAY_ON_TOP);
+        wxUnusedVar(splash);
+    }
+    wxYield();
+#endif
+
     InitXmlResource();
 
     wxLog::EnableLogging(false);

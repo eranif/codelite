@@ -77,7 +77,7 @@ void WriteContent( const std::string& logfile, const std::string& filename, cons
 extern void WriteContent( const std::string& logfile, const std::string& filename, const std::string& flags );
 
 // A thin wrapper around gcc
-// Its soul purpose is to parse gcc's output and to store the parsed output
+// Its sole purpose is to parse gcc's output and to store the parsed output
 // in a sqlite database
 int main(int argc, char **argv)
 {

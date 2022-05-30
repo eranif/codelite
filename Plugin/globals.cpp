@@ -73,6 +73,7 @@
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>
+#include <wx/persist.h>
 #include <wx/regex.h>
 #include <wx/richmsgdlg.h>
 #include <wx/settings.h>
@@ -2201,17 +2202,15 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     frameSize.Deflate(100);
     tlw->SetMinSize(frameSize.GetSize());
     tlw->SetSize(frameSize.GetSize());
-    //tlw->GetSizer()->Fit(win);
     tlw->CentreOnParent();
     tlw->PostSizeEvent();
+
+    // restore persistency stuff
+    WindowAttrManager::Load(tlw);
 }
 
 static void DoSetDialogSize(wxDialog* win, double factor)
 {
-#if 0
-    wxUnusedVar(win);
-    wxUnusedVar(factor);
-#else
     if(!win) {
         return;
     }
@@ -2232,11 +2231,12 @@ static void DoSetDialogSize(wxDialog* win, double factor)
         parentSize.SetHeight(dlgHeight);
         win->SetMinSize(parentSize);
         win->SetSize(parentSize);
-        // win->GetSizer()->Fit(win);
         win->GetSizer()->Layout();
         win->CentreOnParent();
     }
-#endif
+
+    // restore persistency stuff
+    WindowAttrManager::Load(win);
 }
 
 std::pair<wxString, wxString> clRemoteFolderSelector(const wxString& title, const wxString& accountName,

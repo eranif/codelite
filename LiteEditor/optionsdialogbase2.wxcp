@@ -76,7 +76,7 @@
 				}, {
 					"type":	"bool",
 					"m_label":	"Enable Window Persistency:",
-					"m_value":	false
+					"m_value":	true
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",

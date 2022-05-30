@@ -63,6 +63,14 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
 
     btnSizer->Add(m_applyButton, 0, wxALL, WXC_FROM_DIP(5));
 
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_treeBook)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_treeBook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_treeBook);
+    }
+#endif
+
     SetName(wxT("OptionsBaseDlg2"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if(GetSizer()) {
@@ -72,6 +80,11 @@ OptionsBaseDlg2::OptionsBaseDlg2(wxWindow* parent, wxWindowID id, const wxString
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
+    }
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
     this->Bind(wxEVT_ACTIVATE, &OptionsBaseDlg2::OnActivate, this);

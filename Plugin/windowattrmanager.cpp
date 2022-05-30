@@ -37,7 +37,7 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
     if(win->GetName().IsEmpty()) {
         return;
     }
-#if 0
+
     // Is this object already registered?
     if(wxPersistenceManager::Get().Find(win)) {
         wxPersistenceManager::Get().Restore(win);
@@ -46,10 +46,6 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
         wxPersistenceManager::Get().RegisterAndRestore(win);
     }
     DoLoad(win, win->GetName(), 0);
-#endif
-    if(win->GetParent()) {
-        win->CentreOnParent();
-    }
 }
 
 void WindowAttrManager::DoLoad(wxWindow* win, const wxString& parentName, int depth)

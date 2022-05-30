@@ -86,12 +86,25 @@ wxColour clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const 
 {
     wxColour bg_colour;
     wxColour active_tab_colour;
-    GetTabColours(colours, style, &active_tab_colour, &bg_colour);
-    wxUnusedVar(active_tab_colour);
-
+    wxRect rr = rect;
+#ifdef __WXMAC__
+    // on mac, we use 2 drawings:
+    // the first time, we use the default background colour to colour the entire tab
+    // area colour, while on the second time we use the renderer colours
+    // but we reduce the tab area width by 1 pixel
+    bg_colour = clSystemSettings::GetDefaultPanelColour();
     dc.SetBrush(bg_colour);
     dc.SetPen(bg_colour);
     dc.DrawRectangle(rect);
+
+    rr.SetWidth(rr.GetWidth() - 1);
+#endif
+
+    GetTabColours(colours, style, &active_tab_colour, &bg_colour);
+    wxUnusedVar(active_tab_colour);
+    dc.SetBrush(bg_colour);
+    dc.SetPen(bg_colour);
+    dc.DrawRectangle(rr);
     return bg_colour;
 }
 

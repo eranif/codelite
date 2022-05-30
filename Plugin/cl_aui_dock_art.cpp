@@ -165,14 +165,16 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
 
 #ifdef __WXMAC__
     tmpRect = rect;
-    tmpRect.Inflate(1);
+    tmpRect.Inflate(2);
 
     // Prepare the colours
     wxFont f = DrawingUtils::GetDefaultGuiFont();
+    f.SetFractionalPointSize(1.1 * f.GetFractionalPointSize());
+    f.SetWeight(wxFONTWEIGHT_SEMIBOLD);
     dc.SetFont(f);
 
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(m_captionColour);
+    dc.SetPen(clSystemSettings::GetDefaultPanelColour());
+    dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
     dc.DrawRectangle(tmpRect);
 
     int caption_offset = 5;
@@ -194,8 +196,12 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     }
 
     wxString draw_text = wxAuiChopText(dc, text, clip_rect.width);
-    wxSize textSize = dc.GetTextExtent(draw_text);
-    dc.DrawText(draw_text, tmpRect.x + 3 + caption_offset, tmpRect.y + ((tmpRect.height - textSize.y) / 2));
+    wxRect text_rect = dc.GetTextExtent(draw_text);
+
+    // on macOS, we center the caption text
+    text_rect = text_rect.CenterIn(rect);
+    dc.DrawText(draw_text, text_rect.GetTopLeft());
+
 #elif defined(__WXMSW__)
     wxAuiDefaultDockArt::DrawCaption(dc, window, text, rect, pane);
 #else

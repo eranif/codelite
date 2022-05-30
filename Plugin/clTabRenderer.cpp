@@ -61,7 +61,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     bool is_dark = DrawingUtils::IsDark(base_colour);
 
     tabAreaColour = base_colour.ChangeLightness(80);
-    activeTabBgColour = base_colour.ChangeLightness(120);
+    activeTabBgColour = base_colour;//.ChangeLightness(120);
     activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
     activeTabPenColour = activeTabBgColour.ChangeLightness(is_dark ? 30 : 70);
     activeTabInnerPenColour = activeTabPenColour;
@@ -380,11 +380,14 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
         RegisterRenderer(new clTabRendererMinimal(win));
         RegisterRenderer(new clTabRendererFirefox(win));
     }
-
+    clTabRenderer::Ptr_t renderer;
+#ifdef __WXMAC__
+    renderer = Create(win, "MINIMAL");
+    return renderer;
+#else
     wxString tab = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
     wxString name = tab.Upper();
 
-    clTabRenderer::Ptr_t renderer;
     bool is_vertical = (tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs);
     renderer.reset(Create(win, name));
 
@@ -397,6 +400,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
         }
     }
     return renderer;
+#endif
 }
 
 wxArrayString clTabRenderer::GetRenderers()

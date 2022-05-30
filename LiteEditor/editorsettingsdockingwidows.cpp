@@ -35,6 +35,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
     AddHeader(_("Tabs"));
 
 #if !CL_USE_NATIVEBOOK
+#ifndef __WXMAC__
     wxArrayString tab_styles = clTabRenderer::GetRenderers();
     wxString selected_style = clConfig::Get().Read("TabStyle", wxString("DEFAULT"));
     AddProperty(_("Appearance"), tab_styles, selected_style, [this](const wxString& label, const wxAny& value) {
@@ -43,6 +44,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
             clConfig::Get().Write("TabStyle", value_str);
         }
     });
+#endif
     const unordered_map<wxString, int> tab_height_map = { { "TALL", OptionsConfig::nbTabHt_Tall },
                                                           { "MEDIUM", OptionsConfig::nbTabHt_Medium },
                                                           { "SHORT", OptionsConfig::nbTabHt_Short },

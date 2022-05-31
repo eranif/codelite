@@ -29,6 +29,7 @@
 #include <wx/clntdata.h>
 #include <map>
 #include <vector>
+#include <wx/arrstr.h>
 
 //------------------------------------------------------------
 

@@ -28,6 +28,7 @@
 #include "FontUtils.hpp"
 #include "cl_defs.h"
 #include "cl_standard_paths.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "wx/filename.h"
 
@@ -240,8 +241,10 @@ wxStringMap_t clConfig::MergeStringMaps(const wxStringMap_t& map1, const wxStrin
 
 void clConfig::Save()
 {
-    if(m_root)
+    if(m_root) {
+        clDEBUG() << "Config file:" << m_filename << "saved!" << endl;
         m_root->save(m_filename);
+    }
 }
 
 void clConfig::Save(const wxFileName& fn)

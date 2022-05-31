@@ -148,7 +148,7 @@ void BitmapLoader::Initialize(bool darkTheme)
                 wxMemoryInputStream is(d.buffer, d.len);
                 clBitmap bmp;
                 if(bmp.LoadPNGFromMemory(name, is, fnGetHiResVersion)) {
-                    clDEBUG1() << "Adding new image:" << name;
+                    clDEBUG1() << "Adding new image:" << name << endl;
                     m_toolbarsBitmaps.erase(name);
                     m_toolbarsBitmaps.insert({ name, bmp });
                 }

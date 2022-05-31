@@ -1,7 +1,9 @@
 #include "ServiceProviderManager.h"
+
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+
 #include <algorithm>
 
 ServiceProviderManager::ServiceProviderManager()
@@ -29,7 +31,7 @@ void ServiceProviderManager::Register(ServiceProvider* provider)
     V.push_back(provider);
 
     clDEBUG() << "Handler:" << provider->GetName() << "registerd. Priority:" << provider->GetPriority()
-              << ". Type:" << (int)provider->GetType();
+              << ". Type:" << (int)provider->GetType() << endl;
 
     // Sort the providers by priority (descending order)
     std::sort(V.begin(), V.end(),
@@ -39,7 +41,7 @@ void ServiceProviderManager::Register(ServiceProvider* provider)
     for(ServiceProvider* p : V) {
         order << p->GetName() << "(" << p->GetPriority() << ") ";
     }
-    clDEBUG() << "Service providers:" << order;
+    clDEBUG() << "Service providers:" << order << endl;
 }
 
 void ServiceProviderManager::Unregister(ServiceProvider* provider)
@@ -59,7 +61,7 @@ void ServiceProviderManager::Unregister(ServiceProvider* provider)
         }
         V.erase(where); // remove it
         clDEBUG() << "Handler:" << provider->GetName() << "Uregisterd. Priority:" << provider->GetPriority()
-                  << ". Type:" << (int)provider->GetType();
+                  << ". Type:" << (int)provider->GetType() << endl;
     }
 }
 

@@ -633,6 +633,7 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
 
     if(line_count_before != line_count_after || !new_includes.empty()) {
         // parse the file buffer
+        clDEBUG() << "Re-parsing file:" << filepath << endl;
         wxString indexer_path = m_settings.GetCodeliteIndexer();
         wxString settings_folder = m_settings_folder;
         ParseThreadTaskFunc buffer_parse_task = [=]() {
@@ -641,6 +642,7 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
             clDEBUG() << "on_did_change(): parsing file task ... Success" << endl;
             return eParseThreadCallbackRC::RC_SUCCESS;
         };
+        clDEBUG() << "Pushing parse request to worker thread" << endl;
         m_parse_thread.queue_parse_request(move(buffer_parse_task));
 
         // parse the files included by this file

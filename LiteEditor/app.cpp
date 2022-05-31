@@ -321,6 +321,21 @@ bool CodeLiteApp::OnInit()
     }
 #endif
 
+    wxLog::EnableLogging(false);
+    wxString homeDir(wxEmptyString);
+
+    // parse command line
+    m_parser.SetDesc(cmdLineDesc);
+    m_parser.SetCmdLine(wxAppBase::argc, wxAppBase::argv);
+    if(m_parser.Parse(false) != 0) {
+        PrintUsage(m_parser);
+        return false;
+    }
+    wxString newDataDir(wxEmptyString);
+    if(m_parser.Found(wxT("d"), &newDataDir)) {
+        clStandardPaths::Get().SetUserDataDir(newDataDir);
+    }
+
     // Init resources and add the PNG handler
     wxSystemOptions::SetOption(_T("msw.remap"), 0);
     wxSystemOptions::SetOption("msw.notebook.themed-background", 1);
@@ -349,18 +364,6 @@ bool CodeLiteApp::OnInit()
 
     InitXmlResource();
 
-    wxLog::EnableLogging(false);
-    wxString homeDir(wxEmptyString);
-
-    // parse command line
-    m_parser.SetDesc(cmdLineDesc);
-    m_parser.SetCmdLine(wxAppBase::argc, wxAppBase::argv);
-    if(m_parser.Parse(false) != 0) {
-        PrintUsage(m_parser);
-        return false;
-    }
-
-    wxString newDataDir(wxEmptyString);
     if(m_parser.Found("g", &m_exeToDebug)) {
         SetStartedInDebuggerMode(true);
         // Check to see if the user also passed "--working-directory" switch
@@ -368,10 +371,6 @@ bool CodeLiteApp::OnInit()
         for(size_t i = 0; i < m_parser.GetParamCount(); ++i) {
             m_debuggerArgs << m_parser.GetParam(i) << " ";
         }
-    }
-
-    if(m_parser.Found(wxT("d"), &newDataDir)) {
-        clStandardPaths::Get().SetUserDataDir(newDataDir);
     }
 
     // check for single instance

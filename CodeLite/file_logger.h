@@ -47,16 +47,14 @@ public:
     enum LOG_LEVEL { System = -1, Error = 0, Warning = 1, Dbg = 2, Developer = 3 };
 
 protected:
-    int m_verbosity = FileLogger::Error;
-    wxString m_logfile;
     int _requestedLogLevel;
     FILE* m_fp = nullptr;
     wxString m_buffer;
-    std::unordered_map<wxThreadIdType, wxString> m_threads;
-    wxCriticalSection m_cs;
+    wxString m_thread_name;
+    wxString m_thread_logfile;
 
 protected:
-    wxString GetCurrentThreadName();
+    const wxString& GetCurrentThreadName();
 
 public:
     FileLogger(int requestedVerbo);
@@ -75,18 +73,17 @@ public:
     }
 
     int GetRequestedLogLevel() const { return _requestedLogLevel; }
-    int GetCurrentLogLevel() { return m_verbosity; }
+    int GetCurrentLogLevel() const;
 
     /**
      * @brief return true if log_level is lower than the currently set log level
      */
-    bool CanLog(int log_level) { return log_level <= GetCurrentLogLevel(); }
+    bool CanLog(int log_level) const { return log_level <= GetCurrentLogLevel(); }
 
     /**
-     * @brief give a thread-id a unique name which will be displayed in log
+     * @brief give a name to the current thread
      */
-    void RegisterThread(wxThreadIdType id, const wxString& name);
-    void UnRegisterThread(wxThreadIdType id);
+    void SetThreadName(const wxString& name);
 
     /**
      * @brief create log entry prefix
@@ -108,10 +105,16 @@ public:
     ///----------------------------------
     /// Statics
     ///----------------------------------
+
     /**
-     * @brief open the log file
+     * @brief sets the log file path and verbosity. when called from the main thread
+     * this affects all threads. To provide custom thread path, call OpenLog again
+     * from that thread.
+     * @param fullpath path to the log file
+     * @param verbosity when called from non main thread, this param is ignored
      */
-    void OpenLog(const wxString& fullName, int verbosity);
+    void OpenLog(const wxString& fullpath, int verbosity = FileLogger::Error);
+
     // Various util methods
     static wxString GetVerbosityAsString(int verbosity);
     static int GetVerbosityAsNumber(const wxString& verbosity);
@@ -125,7 +128,7 @@ public:
     // special types printing
     inline FileLogger& operator<<(const std::vector<wxString>& arr)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(GetRequestedLogLevel() > GetCurrentLogLevel()) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -144,7 +147,7 @@ public:
 
     inline FileLogger& operator<<(const wxStringSet_t& S)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(GetRequestedLogLevel() > GetCurrentLogLevel()) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -163,7 +166,7 @@ public:
 
     inline FileLogger& operator<<(const wxStringMap_t& M)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(GetRequestedLogLevel() > GetCurrentLogLevel()) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -182,7 +185,7 @@ public:
 
     inline FileLogger& operator<<(const wxArrayString& arr)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(GetRequestedLogLevel() > GetCurrentLogLevel()) {
             return *this;
         }
         std::vector<wxString> v{ arr.begin(), arr.end() };
@@ -192,7 +195,7 @@ public:
 
     inline FileLogger& operator<<(const wxColour& colour)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(GetRequestedLogLevel() > GetCurrentLogLevel()) {
             return *this;
         }
 
@@ -207,7 +210,7 @@ public:
      */
     inline FileLogger& operator<<(const wxString& str)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(GetRequestedLogLevel() > GetCurrentLogLevel()) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -222,7 +225,7 @@ public:
      */
     inline FileLogger& operator<<(const wxFileName& fn)
     {
-        if(GetRequestedLogLevel() > m_verbosity) {
+        if(GetRequestedLogLevel() > GetCurrentLogLevel()) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {
@@ -237,7 +240,7 @@ public:
      */
     template <typename T> FileLogger& Append(const T& elem, int level)
     {
-        if(level > m_verbosity) {
+        if(level > GetCurrentLogLevel()) {
             return *this;
         }
         if(!m_buffer.IsEmpty()) {

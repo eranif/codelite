@@ -106,13 +106,6 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_highlightMatches(false)
     , m_inSelection(false)
 {
-    // SetBackgroundStyle(wxBG_STYLE_PAINT);
-
-    // Handle Edit events
-    m_findEventsHandler.Reset(new clEditEventsHandler(m_textCtrlFind, "Find Bar (Find)"));
-    m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace, "Find Bar (Replace)"));
-    m_findEventsHandler->NoUnbind();
-    m_replaceEventsHandler->NoUnbind();
     m_toolbar->SetMiniToolBar(true);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(wxID_CLOSE, _("Close"), images->Add("file_close"), _("Close"), wxITEM_NORMAL);

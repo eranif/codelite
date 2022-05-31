@@ -90,8 +90,6 @@ protected:
     bool m_onNextPrev;
     eRegexType m_regexType;
     bool m_disableTextUpdateEvent;
-    clEditEventsHandler::Ptr_t m_findEventsHandler;
-    clEditEventsHandler::Ptr_t m_replaceEventsHandler;
     size_t m_searchFlags = 0;
     bool m_highlightMatches;
     bool m_inSelection;

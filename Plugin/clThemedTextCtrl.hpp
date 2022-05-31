@@ -1,6 +1,7 @@
 #ifndef CLTHEMEDTEXTCTRL_HPP
 #define CLTHEMEDTEXTCTRL_HPP
 
+#include "clEditorEditEventsHandler.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
@@ -8,6 +9,9 @@
 
 class WXDLLIMPEXP_SDK clThemedTextCtrl : public wxStyledTextCtrl
 {
+protected:
+    clEditEventsHandler::Ptr_t m_editEventsHandler;
+
 protected:
     void OnKeyDown(wxKeyEvent& event);
     void OnAddChar(wxStyledTextEvent& event);

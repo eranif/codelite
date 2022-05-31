@@ -12,7 +12,7 @@ void ParseThread::start(const wxString& settings_folder, const wxString& indexer
     stop();
     m_change_thread = new std::thread(
         [=](std::mutex& m, std::condition_variable& cv, std::vector<ParseThreadTaskFunc>& Q) {
-            FileLogger::Get().SetThreadName("Parser");
+            FileLogger::RegisterThread(wxThread::GetCurrentId(), "Parser");
             clDEBUG() << "ctagsd parser thread started..." << endl;
             while(true) {
                 ParseThreadTaskFunc task_callback = nullptr;

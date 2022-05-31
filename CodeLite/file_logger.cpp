@@ -34,24 +34,10 @@
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
 
-// the logbal log object
-thread_local FileLogger LOG{ FileLogger::Error };
-
-// critical section to sync writes to the file
-static wxCriticalSection m_fileCS;
-
-// We maintain 2 global variables that holds the default log file file + log verbosity
-// they are both updated when the *main* thread calls for OpenLog(..)
-// and they are used incase a thread calls clDEBUG() (or any debug macro)
-// without calling first to FileLogger::Get().OpenLog(..)
-static wxString global_log_file;
-static int global_log_level = FileLogger::Error;
-
-FileLogger& set_log_level(FileLogger& _LOG, FileLogger::LOG_LEVEL level)
-{
-    _LOG.SetRequestedLogLevel(level);
-    return _LOG;
-}
+int FileLogger::m_verbosity = FileLogger::Error;
+wxString FileLogger::m_logfile;
+std::unordered_map<wxThreadIdType, wxString> FileLogger::m_threads;
+wxCriticalSection FileLogger::m_cs;
 
 FileLogger::FileLogger(int requestedVerbo)
     : _requestedLogLevel(requestedVerbo)
@@ -65,15 +51,12 @@ FileLogger::~FileLogger()
     Flush();
 }
 
-FileLogger& FileLogger::Get() { return LOG; }
-
 void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 {
-    if(msg.empty()) {
+    if(msg.IsEmpty()) {
         return;
     }
-
-    if(verbosity < GetRequestedLogLevel()) {
+    if((m_verbosity >= verbosity)) {
         wxString formattedMsg = Prefix(verbosity);
         formattedMsg << " " << msg;
         formattedMsg.Trim().Trim(false);
@@ -90,9 +73,7 @@ void FileLogger::SetVerbosity(int level)
     if(level > FileLogger::Warning) {
         clSYSTEM() << "Log verbosity is now set to:" << FileLogger::GetVerbosityAsString(level) << clEndl;
     }
-
-    wxCriticalSectionLocker locker{ m_fileCS };
-    global_log_level = level;
+    m_verbosity = level;
 }
 
 int FileLogger::GetVerbosityAsNumber(const wxString& verbosity)
@@ -144,13 +125,9 @@ void FileLogger::SetVerbosity(const wxString& verbosity) { SetVerbosity(GetVerbo
 
 void FileLogger::OpenLog(const wxString& fullName, int verbosity)
 {
-    wxCriticalSectionLocker locker(m_fileCS);
-    m_thread_logfile << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
-
-    if(wxThread::IsMain()) {
-        global_log_level = verbosity;
-        global_log_file = m_thread_logfile;
-    }
+    m_logfile.Clear();
+    m_logfile << clStandardPaths::Get().GetUserDataDir() << wxFileName::GetPathSeparator() << fullName;
+    m_verbosity = verbosity;
 }
 
 void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
@@ -162,44 +139,24 @@ void FileLogger::AddLogLine(const wxArrayString& arr, int verbosity)
 
 void FileLogger::Flush()
 {
-    if(m_buffer.empty()) {
+    if(m_buffer.IsEmpty()) {
         return;
     }
+    if(!m_fp) {
+        m_fp = wxFopen(m_logfile, wxT("a+"));
+    }
 
-    {
-        wxCriticalSectionLocker locker(m_fileCS);
-        if(m_thread_logfile.empty()) {
-            // user did not call OpenLog for this thread
-            m_thread_logfile = global_log_file;
-        }
-
-        // still empty?
-        if(m_thread_logfile.empty()) {
-            m_buffer.clear();
-            return;
-        }
-
-        // we always open the file and then closing it
-        // this is because on Windows, we cant really keep the file open in write open
-        // an alternative is to create a writer thread that will handle all the writes
-        // and other threads will just pass the buffer to it for writing
-        if(!m_fp) {
-            m_fp = wxFopen(m_thread_logfile, "a+");
-        }
-
-        if(m_fp) {
-            wxFprintf(m_fp, "%s\n", m_buffer);
-            fflush(m_fp);
-            fclose(m_fp);
-            m_fp = nullptr;
-        }
+    if(m_fp) {
+        wxFprintf(m_fp, "%s\n", m_buffer);
+        fclose(m_fp);
+        m_fp = nullptr;
     }
     m_buffer.Clear();
 }
 
 wxString FileLogger::Prefix(int verbosity)
 {
-    if(verbosity <= GetCurrentLogLevel()) {
+    if(verbosity <= m_verbosity) {
         wxString prefix;
         timeval tim;
         gettimeofday(&tim, NULL);
@@ -239,22 +196,34 @@ wxString FileLogger::Prefix(int verbosity)
     }
 }
 
-const wxString& FileLogger::GetCurrentThreadName()
+wxString FileLogger::GetCurrentThreadName()
 {
-    if(!m_thread_name.empty()) {
-        return m_thread_name;
-    }
-
-    // auto assign name to the thread
     if(wxThread::IsMain()) {
-        m_thread_name = "Main Thread";
-        return m_thread_name;
-    } else {
-        m_thread_name << "Thread-" << wxThread::GetCurrentId();
+        return "Main";
     }
-    return m_thread_name;
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(wxThread::GetCurrentId());
+    if(iter != m_threads.end()) {
+        return iter->second;
+    }
+    return "";
 }
 
-void FileLogger::SetThreadName(const wxString& name) { m_thread_name = name; }
+void FileLogger::RegisterThread(wxThreadIdType id, const wxString& name)
+{
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(id);
+    if(iter != m_threads.end()) {
+        m_threads.erase(iter);
+    }
+    m_threads[id] = name;
+}
 
-int FileLogger::GetCurrentLogLevel() const { return global_log_level; }
+void FileLogger::UnRegisterThread(wxThreadIdType id)
+{
+    wxCriticalSectionLocker locker(m_cs);
+    std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(id);
+    if(iter != m_threads.end()) {
+        m_threads.erase(iter);
+    }
+}

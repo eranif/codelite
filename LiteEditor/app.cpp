@@ -424,7 +424,7 @@ bool CodeLiteApp::OnInit()
 
     // Set the global log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging
     // CodeLite itself :/
-    FileLogger::Get().OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
+    FileLogger::OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
     clDEBUG() << "Starting codelite..." << endl;
 
     // Copy gdb pretty printers from the installation folder to a writeable location

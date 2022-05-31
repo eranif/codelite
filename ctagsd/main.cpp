@@ -63,7 +63,7 @@ int main(int argc, char** argv)
     parser.Found("log-level", &log_level_str);
 
     int log_level = FileLogger::GetVerbosityAsNumber(log_level_str);
-    FileLogger::Get().OpenLog("ctagsd.log", log_level);
+    FileLogger::OpenLog("ctagsd.log", log_level);
 
     // make sure that all shared objects and the main app
     // are all seeing the same instances of singletons

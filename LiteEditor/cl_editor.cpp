@@ -350,7 +350,7 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
 {
     // Use a distinct style to highlight the current line number
     wxColour default_bg_colour = ctrl->StyleGetBackground(0);
-    wxColour default_fg_colour = DrawingUtils::IsDark(default_bg_colour) ? default_bg_colour.ChangeLightness(140)
+    wxColour default_fg_colour = DrawingUtils::IsDark(default_bg_colour) ? default_bg_colour.ChangeLightness(120)
                                                                          : default_bg_colour.ChangeLightness(50);
     wxColour current_line_bg_colour = ctrl->StyleGetBackground(0);
     wxColour current_line_fg_colour = current_line_bg_colour;

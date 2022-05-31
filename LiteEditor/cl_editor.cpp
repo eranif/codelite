@@ -799,7 +799,7 @@ void clEditor::SetProperties()
 #if wxCHECK_VERSION(3, 1, 0)
     SetMarginType(SYMBOLS_MARGIN_SEP_ID, wxSTC_MARGIN_COLOUR);
     SetMarginMask(SYMBOLS_MARGIN_SEP_ID, 0);
-    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, clGetSize(1, this));
+    SetMarginWidth(SYMBOLS_MARGIN_SEP_ID, FromDIP(1));
     wxColour bgColour = StyleGetBackground(0);
     SetMarginBackground(SYMBOLS_MARGIN_SEP_ID,
                         DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(120) : bgColour.ChangeLightness(60));
@@ -809,13 +809,13 @@ void clEditor::SetProperties()
     // Show the separator margin only if the fold margin is hidden
     // (otherwise the fold margin is the separator)
     SetMarginWidth(SYMBOLS_MARGIN_SEP_ID,
-                   (GetLexer() == wxSTC_LEX_CPP && FileExtManager::IsCxxFile(GetFileName())) ? 1 : 0);
+                   (GetLexer() == wxSTC_LEX_CPP && FileExtManager::IsCxxFile(GetFileName())) ? FromDIP(1) : 0);
 #endif
     // Fold margin - allow only folder symbols to display
     SetMarginMask(FOLD_MARGIN_ID, wxSTC_MASK_FOLDERS);
 
     // Set margins' width
-    SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? clGetSize(16, this) : 0); // Symbol margin
+    SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? FromDIP(16) : 0); // Symbol margin
 
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
@@ -824,7 +824,7 @@ void clEditor::SetProperties()
     UpdateLineNumberMarginWidth();
 
     // Show the fold margin
-    SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? clGetSize(16, this) : 0); // Fold margin
+    SetMarginWidth(FOLD_MARGIN_ID, options->GetDisplayFoldMargin() ? FromDIP(16) : 0); // Fold margin
 
     // Mark fold margin & symbols margins as sensetive
     SetMarginSensitive(FOLD_MARGIN_ID, true);
@@ -989,7 +989,14 @@ void clEditor::SetProperties()
     CallTipSetForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
     SetTwoPhaseDraw(true);
+
+#ifdef __WXMSW__
     SetBufferedDraw(true);
+#else
+    // when enabled on GTK, this causes some nasty drawing issues
+    // and macOS always draw with buffered drawing
+    SetBufferedDraw(false);
+#endif
 
 #if defined(__WXMAC__)
     // turning off these two greatly improves performance
@@ -6243,9 +6250,8 @@ void clEditor::UpdateLineNumberMarginWidth()
 {
     int newLineCount = GetLineCount();
     int newWidthCount = log10(newLineCount) + 2;
-    SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers()
-                                         ? (newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"))
-                                         : 0);
+    int size = FromDIP(newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"));
+    SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers() ? size : 0);
 }
 
 void clEditor::OnZoom(wxStyledTextEvent& event)

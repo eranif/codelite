@@ -113,6 +113,10 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetBufferedDraw(true);
 #elif defined(__WXGTK__)
     ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
+    // need to force this to false, see thess bugs:
+    // https://github.com/eranif/codelite/issues/3010
+    // https://github.com/eranif/codelite/issues/2992
+    ctrl->SetBufferedDraw(false);
 #endif
 
     if(IsSubstyleSupported()) {
@@ -167,7 +171,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     } else {
         clSYSTEM() << "Could not found default font!" << endl;
     }
-
     for(const auto& sp : GetLexerProperties()) {
         // handle special cases
         switch(sp.GetId()) {

@@ -341,7 +341,7 @@ bool CodeLiteApp::OnInit()
 
         if(splashscreen_png.FileExists() && bitmap.LoadFile(splashscreen_png.GetFullPath(), wxBITMAP_TYPE_PNG)) {
             wxSplashScreen* splash =
-                new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT, 1000, nullptr, -1,
+                new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT, 2000, nullptr, -1,
                                    wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE | wxSTAY_ON_TOP);
             wxUnusedVar(splash);
         }

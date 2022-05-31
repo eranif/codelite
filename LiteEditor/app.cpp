@@ -333,7 +333,6 @@ bool CodeLiteApp::OnInit()
     wxImage::AddHandler(new wxGIFHandler);
     wxImage::AddHandler(new wxJPEGHandler);
 
-#if defined(__WXMSW__) || defined(__WXGTK__)
     bool show_splash = clConfig::Get().Read("ShowSplashScreen", true);
     if(show_splash) {
         wxBitmap bitmap;
@@ -348,7 +347,6 @@ bool CodeLiteApp::OnInit()
         }
         wxYield();
     }
-#endif
 
     InitXmlResource();
 

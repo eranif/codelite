@@ -239,4 +239,11 @@ else() # !APPLE
     install(TARGETS codelite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS PERMISSIONS ${EXE_PERM})
     CL_INSTALL_NAME_TOOL_STD(${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/codelite)
     install(FILES ${CL_SRC_ROOT}/Runtime/OpenTerm DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport PERMISSIONS ${EXE_PERM})
+    
+    install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png 
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/images)
+
+    install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png 
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/images
+            RENAME splashscreen.png)
 endif()

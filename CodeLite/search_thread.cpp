@@ -135,6 +135,7 @@ void SearchThread::PerformSearch(const SearchData& data) { Add(new SearchData(da
 
 void SearchThread::ProcessRequest(ThreadRequest* req)
 {
+    FileLogger::Get().SetThreadName("Search Thread");
     wxStopWatch sw;
     m_summary = SearchSummary();
     DoSearchFiles(req);

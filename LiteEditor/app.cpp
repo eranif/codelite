@@ -719,7 +719,7 @@ void CodeLiteApp::ProcessCommandLineParams()
 
 int CodeLiteApp::OnExit()
 {
-    clDEBUG() << "Bye";
+    clDEBUG() << "Bye" << endl;
     EditorConfigST::Free();
     ConfFileLocator::Release();
 

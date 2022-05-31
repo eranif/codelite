@@ -7,29 +7,32 @@
 #include <wx/textctrl.h>
 #include <wx/textentry.h>
 
-clEditEventsHandler::clEditEventsHandler(wxStyledTextCtrl* wnd)
+clEditEventsHandler::clEditEventsHandler(wxStyledTextCtrl* wnd, const wxString& name)
     : m_stc(wnd)
     , m_textCtrl(nullptr)
     , m_combo(nullptr)
     , m_noUnbind(false)
+    , m_name(name)
 {
     DoInitialize();
 }
 
-clEditEventsHandler::clEditEventsHandler(wxTextCtrl* wnd)
+clEditEventsHandler::clEditEventsHandler(wxTextCtrl* wnd, const wxString& name)
     : m_stc(nullptr)
     , m_textCtrl(wnd)
     , m_combo(nullptr)
     , m_noUnbind(false)
+    , m_name(name)
 {
     DoInitialize();
 }
 
-clEditEventsHandler::clEditEventsHandler(wxComboBox* wnd)
+clEditEventsHandler::clEditEventsHandler(wxComboBox* wnd, const wxString& name)
     : m_stc(nullptr)
     , m_textCtrl(nullptr)
     , m_combo(wnd)
     , m_noUnbind(false)
+    , m_name(name)
 {
     DoInitialize();
 }
@@ -37,12 +40,12 @@ clEditEventsHandler::clEditEventsHandler(wxComboBox* wnd)
 clEditEventsHandler::~clEditEventsHandler()
 {
     if(!m_noUnbind && (m_stc || m_textCtrl || m_combo)) {
-        EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
-        EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
-        EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);
-        EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnSelectAll, this, wxID_SELECTALL);
-        EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnUndo, this, wxID_UNDO);
-        EventNotifier::Get()->TopFrame()->Unbind(wxEVT_MENU, &clEditEventsHandler::OnRedo, this, wxID_REDO);
+        wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
+        wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
+        wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);
+        wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnSelectAll, this, wxID_SELECTALL);
+        wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnUndo, this, wxID_UNDO);
+        wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnRedo, this, wxID_REDO);
     }
 }
 
@@ -104,11 +107,11 @@ void clEditEventsHandler::OnRedo(wxCommandEvent& event)
 void clEditEventsHandler::DoInitialize()
 {
     if(m_textCtrl || m_stc || m_combo) {
-        EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
-        EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
-        EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);
-        EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnSelectAll, this, wxID_SELECTALL);
-        EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnUndo, this, wxID_UNDO);
-        EventNotifier::Get()->TopFrame()->Bind(wxEVT_MENU, &clEditEventsHandler::OnRedo, this, wxID_REDO);
+        wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
+        wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
+        wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);
+        wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnSelectAll, this, wxID_SELECTALL);
+        wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnUndo, this, wxID_UNDO);
+        wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnRedo, this, wxID_REDO);
     }
 }

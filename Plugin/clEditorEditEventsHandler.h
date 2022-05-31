@@ -13,10 +13,11 @@ class wxTextCtrl;
 
 class WXDLLIMPEXP_SDK clEditEventsHandler : public wxEvtHandler
 {
-    wxStyledTextCtrl* m_stc;
-    wxTextCtrl* m_textCtrl;
-    wxComboBox* m_combo;
-    bool m_noUnbind;
+    wxStyledTextCtrl* m_stc = nullptr;
+    wxTextCtrl* m_textCtrl = nullptr;
+    wxComboBox* m_combo = nullptr;
+    bool m_noUnbind = false;
+    wxString m_name;
 
 private:
     void DoInitialize();
@@ -30,9 +31,9 @@ protected:
     void OnRedo(wxCommandEvent& event);
 
 public:
-    clEditEventsHandler(wxTextCtrl* wnd);
-    clEditEventsHandler(wxStyledTextCtrl* wnd);
-    clEditEventsHandler(wxComboBox* wnd);
+    clEditEventsHandler(wxTextCtrl* wnd, const wxString& name = wxEmptyString);
+    clEditEventsHandler(wxStyledTextCtrl* wnd, const wxString& name = wxEmptyString);
+    clEditEventsHandler(wxComboBox* wnd, const wxString& name = wxEmptyString);
     virtual ~clEditEventsHandler();
     void NoUnbind() { m_noUnbind = true; }
     typedef SmartPtr<clEditEventsHandler> Ptr_t;

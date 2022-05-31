@@ -109,8 +109,8 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     // SetBackgroundStyle(wxBG_STYLE_PAINT);
 
     // Handle Edit events
-    m_findEventsHandler.Reset(new clEditEventsHandler(m_textCtrlFind));
-    m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace));
+    m_findEventsHandler.Reset(new clEditEventsHandler(m_textCtrlFind, "Find Bar (Find)"));
+    m_replaceEventsHandler.Reset(new clEditEventsHandler(m_textCtrlReplace, "Find Bar (Replace)"));
     m_findEventsHandler->NoUnbind();
     m_replaceEventsHandler->NoUnbind();
     m_toolbar->SetMiniToolBar(true);

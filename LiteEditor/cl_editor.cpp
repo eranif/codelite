@@ -342,7 +342,7 @@ wxColour GetContrastColour(const wxColour& c)
     if(DrawingUtils::IsDark(c)) {
         return c.ChangeLightness(180);
     } else {
-        return c.ChangeLightness(40);
+        return c.ChangeLightness(20);
     }
 }
 
@@ -351,9 +351,8 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
     // Use a distinct style to highlight the current line number
     wxColour default_bg_colour = ctrl->StyleGetBackground(0);
     wxColour default_fg_colour = DrawingUtils::IsDark(default_bg_colour) ? default_bg_colour.ChangeLightness(120)
-                                                                         : default_bg_colour.ChangeLightness(50);
+                                                                         : default_bg_colour.ChangeLightness(80);
     wxColour current_line_bg_colour = ctrl->StyleGetBackground(0);
-    wxColour current_line_fg_colour = current_line_bg_colour;
 
     wxColour RED("RED");
     wxColour ORANGE("GOLD");
@@ -362,10 +361,8 @@ void SetCurrentLineMarginStyle(wxStyledTextCtrl* ctrl)
     bool is_dark = DrawingUtils::IsDark(current_line_bg_colour);
     if(is_dark) {
         current_line_bg_colour = current_line_bg_colour.ChangeLightness(110);
-        current_line_fg_colour = GetContrastColour(current_line_bg_colour);
     } else {
         current_line_bg_colour = current_line_bg_colour.ChangeLightness(95);
-        current_line_fg_colour = GetContrastColour(current_line_bg_colour);
     }
     wxColour MODIFIED_COLOUR = is_dark ? ORANGE : RED;
 

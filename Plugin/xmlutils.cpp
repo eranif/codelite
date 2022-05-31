@@ -36,8 +36,8 @@ wxXmlNode* XmlUtils::FindNodeByName(const wxXmlNode* parent, const wxString& tag
     wxXmlNode* child = parent->GetChildren();
     while(child) {
         if(child->GetName() == tagName) {
-            if((child->GetPropVal(wxT("Name"), wxEmptyString) == name) ||
-               (child->GetPropVal(wxT("name"), wxEmptyString) == name)) {
+            if((child->GetAttribute(wxT("Name"), wxEmptyString) == name) ||
+               (child->GetAttribute(wxT("name"), wxEmptyString) == name)) {
                 return child;
             }
         }
@@ -77,7 +77,7 @@ wxXmlNode* XmlUtils::FindLastByTagName(const wxXmlNode* parent, const wxString& 
 
 void XmlUtils::UpdateProperty(wxXmlNode* node, const wxString& name, const wxString& value)
 {
-    wxXmlProperty* prop = node->GetProperties();
+    auto prop = node->GetAttributes();
     while(prop) {
         if(prop->GetName() == name) {
             prop->SetValue(value);
@@ -87,22 +87,22 @@ void XmlUtils::UpdateProperty(wxXmlNode* node, const wxString& name, const wxStr
     }
 
     // No such property, create new one and add it
-    node->AddProperty(name, value);
+    node->AddAttribute(name, value);
 }
 
 wxString XmlUtils::ReadString(const wxXmlNode* node, const wxString& propName, const wxString& defaultValue)
 {
-    return node->GetPropVal(propName, defaultValue);
+    return node->GetAttribute(propName, defaultValue);
 }
 
 bool XmlUtils::ReadStringIfExists(const wxXmlNode* node, const wxString& propName, wxString& value)
 {
-    return node->GetPropVal(propName, &value);
+    return node->GetAttribute(propName, &value);
 }
 
 long XmlUtils::ReadLong(const wxXmlNode* node, const wxString& propName, long defaultValue)
 {
-    wxString val = node->GetPropVal(propName, wxEmptyString);
+    wxString val = node->GetAttribute(propName, wxEmptyString);
     if(val.IsEmpty()) {
         return defaultValue;
     }
@@ -121,7 +121,7 @@ long XmlUtils::ReadLong(const wxXmlNode* node, const wxString& propName, long de
 bool XmlUtils::ReadLongIfExists(const wxXmlNode* node, const wxString& propName, long& answer)
 {
     wxString value;
-    if(!node->GetPropVal(propName, &value)) {
+    if(!node->GetAttribute(propName, &value)) {
         return false;
     }
 
@@ -138,7 +138,7 @@ bool XmlUtils::ReadLongIfExists(const wxXmlNode* node, const wxString& propName,
 
 bool XmlUtils::ReadBool(const wxXmlNode* node, const wxString& propName, bool defaultValue)
 {
-    wxString val = node->GetPropVal(propName, wxEmptyString);
+    wxString val = node->GetAttribute(propName, wxEmptyString);
 
     if(val.IsEmpty()) {
         return defaultValue;
@@ -156,7 +156,7 @@ bool XmlUtils::ReadBool(const wxXmlNode* node, const wxString& propName, bool de
 bool XmlUtils::ReadBoolIfExists(const wxXmlNode* node, const wxString& propName, bool& answer)
 {
     wxString value;
-    if(!node->GetPropVal(propName, &value)) {
+    if(!node->GetAttribute(propName, &value)) {
         return false;
     }
 
@@ -280,7 +280,7 @@ bool XmlUtils::StaticReadObject(wxXmlNode* root, const wxString& name, Serialize
         // Check to see if we need a version check
         wxString objectVersion = obj->GetVersion();
         if(objectVersion.IsEmpty() == false) {
-            if(node->GetPropVal(wxT("Version"), wxT("")) != objectVersion) {
+            if(node->GetAttribute(wxT("Version"), wxT("")) != objectVersion) {
                 return false;
             }
         }
@@ -312,9 +312,9 @@ bool XmlUtils::StaticWriteObject(wxXmlNode* root, const wxString& name, Serializ
 
     wxString objectVersion = obj->GetVersion();
     if(objectVersion.IsEmpty() == false)
-        child->AddProperty(wxT("Version"), objectVersion);
+        child->AddAttribute(wxT("Version"), objectVersion);
 
-    child->AddProperty(wxT("Name"), name);
+    child->AddAttribute(wxT("Name"), name);
 
     arch.SetXmlNode(child);
     // serialize the object into the archive

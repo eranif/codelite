@@ -1,3 +1,5 @@
+#include "phpexecutor.h"
+
 #include "PHPTerminal.h"
 #include "TerminalEmulatorFrame.h"
 #include "asyncprocess.h"
@@ -9,7 +11,7 @@
 #include "php_event.h"
 #include "php_project_settings_data.h"
 #include "php_workspace.h"
-#include "phpexecutor.h"
+
 #include <cl_config.h>
 #include <dirsaver.h>
 #include <event_notifier.h>
@@ -58,7 +60,6 @@ bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& urlToRun, c
         url << uri.BuildURI();
     }
 
-    CL_DEBUG("CodeLite: Calling URL: " + url);
     PHPEvent evtLoadURL(wxEVT_PHP_LOAD_URL);
     evtLoadURL.SetUrl(url);
     evtLoadURL.SetUseDefaultBrowser(data.IsUseSystemBrowser());

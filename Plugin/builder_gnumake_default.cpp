@@ -148,7 +148,7 @@ bool BuilderGnuMake::Export(const wxString& project, const wxString& confToBuild
 
     wxArrayString depsArr = proj->GetDependencies(bld_conf_name);
 
-    CL_DEBUG("Generating Makefile...");
+    clDEBUG() << "Generating Makefile..." << endl;
     // Filter all disabled projects from the dependencies array
     wxArrayString updatedDepsArr;
     for(size_t i = 0; i < depsArr.GetCount(); ++i) {
@@ -473,7 +473,7 @@ bool BuilderGnuMake::Export(const wxString& project, const wxString& confToBuild
     wxStringInputStream content(text);
     output << content;
 
-    CL_DEBUG("Generating Makefile...is completed");
+    clDEBUG() << "Generating Makefile...is completed" << endl;
     return true;
 }
 
@@ -953,7 +953,6 @@ void BuilderGnuMake::CreateLinkTargets(const wxString& type, BuildConfigPtr bldC
 
     for(size_t i = 0; i < depsProj.GetCount(); i++) {
         wxFileName fn(depsProj.Item(i));
-        // CL_DEBUG("making %s relative to %s", fn.GetFullPath().c_str(),
         // proj->GetFileName().GetPath().c_str());
         fn.MakeRelativeTo(proj->GetProjectPath());
         extraDeps << "\"" << fn.GetFullPath() << "\" ";

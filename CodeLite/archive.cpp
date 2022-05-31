@@ -23,19 +23,20 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "archive.h"
-#include <wx/colour.h>
-#include <wx/xml/xml.h>
+
+#include "clFontHelper.h"
 #include "serialized_object.h"
+#include "wx_xml_compatibility.h"
 
 #include <memory>
-#include "wx_xml_compatibility.h"
-#include "clFontHelper.h"
+#include <wx/colour.h>
+#include <wx/xml/xml.h>
 
 namespace
 {
 const wxChar breakpointName[] = wxT("Breakpoint");
 const wxChar breakpointArrayName[] = wxT("BreakpointArray");
-}
+} // namespace
 
 // helper functions
 static wxXmlNode* FindNodeByName(const wxXmlNode* parent, const wxString& tagName, const wxString& name)
@@ -47,7 +48,7 @@ static wxXmlNode* FindNodeByName(const wxXmlNode* parent, const wxString& tagNam
     wxXmlNode* child = parent->GetChildren();
     while(child) {
         if(child->GetName() == tagName) {
-            if(child->GetPropVal(wxT("Name"), wxEmptyString) == name) {
+            if(child->GetAttribute(wxT("Name"), wxEmptyString) == name) {
                 return child;
             }
         }
@@ -108,7 +109,8 @@ static void SetCDATANodeContent(wxXmlNode* node, const wxString& text)
 TabInfo::TabInfo()
     : m_firstVisibleLine(0)
     , m_currentLine(0)
-{}
+{
+}
 
 TabInfo::~TabInfo() {}
 
@@ -149,7 +151,7 @@ bool Archive::Write(const wxString& name, SerializedObject* obj)
 
     node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SerializedObject"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     arch.SetXmlNode(node);
     obj->Serialize(arch);
@@ -175,13 +177,13 @@ bool Archive::Write(const wxString& name, const wxArrayString& arr)
     }
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxArrayString"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
     for(size_t i = 0; i < arr.GetCount(); i++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxString"));
         node->AddChild(child);
-        child->AddProperty(wxT("Value"), arr.Item(i));
+        child->AddAttribute(wxT("Value"), arr.Item(i));
     }
     return true;
 }
@@ -193,7 +195,7 @@ bool Archive::Write(const wxString& name, std::vector<TabInfo>& _vTabInfoArr)
     }
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfoArray"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
     for(size_t i = 0; i < _vTabInfoArr.size(); i++) {
@@ -213,13 +215,13 @@ bool Archive::Write(const wxString& name, std::vector<int>& _vInt)
     }
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IntVector"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each int in the vector
     for(size_t i = 0; i < _vInt.size(); ++i) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IntVectorItem"));
         node->AddChild(child);
-        child->AddProperty(wxT("Value"), wxString::Format(wxT("%i"), _vInt.at(i)));
+        child->AddAttribute(wxT("Value"), wxString::Format(wxT("%i"), _vInt.at(i)));
     }
     return true;
 }
@@ -232,15 +234,15 @@ bool Archive::Write(const wxString& name, const StringMap& str_map)
 
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("StringMap"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
     StringMap::const_iterator iter = str_map.begin();
     for(; iter != str_map.end(); iter++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
-        child->AddProperty(wxT("Key"), iter->first);
-        child->AddProperty(wxT("Value"), iter->second);
+        child->AddAttribute(wxT("Key"), iter->first);
+        child->AddAttribute(wxT("Value"), iter->second);
     }
     return true;
 }
@@ -254,14 +256,14 @@ bool Archive::Write(const wxString& name, wxSize size)
 
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxSize"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     wxString xstr, ystr;
     xstr << size.x;
     ystr << size.y;
 
-    node->AddProperty(wxT("x"), xstr);
-    node->AddProperty(wxT("y"), ystr);
+    node->AddAttribute(wxT("x"), xstr);
+    node->AddAttribute(wxT("y"), ystr);
     return true;
 }
 bool Archive::Write(const wxString& name, wxPoint pt)
@@ -272,14 +274,14 @@ bool Archive::Write(const wxString& name, wxPoint pt)
 
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxPoint"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     wxString xstr, ystr;
     xstr << pt.x;
     ystr << pt.y;
 
-    node->AddProperty(wxT("x"), xstr);
-    node->AddProperty(wxT("y"), ystr);
+    node->AddAttribute(wxT("x"), xstr);
+    node->AddAttribute(wxT("y"), ystr);
     return true;
 }
 #endif
@@ -298,7 +300,7 @@ bool Archive::Read(const wxString& name, wxArrayString& arr)
         while(child) {
             if(child->GetName() == wxT("wxString")) {
                 wxString value;
-                value = child->GetPropVal(wxT("Value"), wxEmptyString);
+                value = child->GetAttribute(wxT("Value"), wxEmptyString);
                 arr.Add(value);
             }
             child = child->GetNext();
@@ -348,7 +350,7 @@ bool Archive::Read(const wxString& name, std::vector<int>& _vInt)
         while(child) {
             if(child->GetName() == wxT("IntVectorItem")) {
                 long value;
-                wxString stringvalue = child->GetPropVal(wxT("Value"), wxEmptyString);
+                wxString stringvalue = child->GetAttribute(wxT("Value"), wxEmptyString);
                 if(stringvalue.ToLong(&value)) {
                     _vInt.push_back(value);
                 }
@@ -375,8 +377,8 @@ bool Archive::Read(const wxString& name, StringMap& str_map)
             if(child->GetName() == wxT("MapEntry")) {
                 wxString value;
                 wxString key;
-                key = child->GetPropVal(wxT("Key"), wxEmptyString);
-                value = child->GetPropVal(wxT("Value"), wxEmptyString);
+                key = child->GetAttribute(wxT("Key"), wxEmptyString);
+                value = child->GetAttribute(wxT("Value"), wxEmptyString);
                 str_map[key] = value;
             }
             child = child->GetNext();
@@ -396,11 +398,11 @@ bool Archive::Read(const wxString& name, wxSize& size)
     if(node) {
         long v;
         wxString value;
-        value = node->GetPropVal(wxT("x"), wxEmptyString);
+        value = node->GetAttribute(wxT("x"), wxEmptyString);
         value.ToLong(&v);
         size.x = v;
 
-        value = node->GetPropVal(wxT("y"), wxEmptyString);
+        value = node->GetAttribute(wxT("y"), wxEmptyString);
         value.ToLong(&v);
         size.y = v;
         return true;
@@ -418,11 +420,11 @@ bool Archive::Read(const wxString& name, wxPoint& pt)
     if(node) {
         long v;
         wxString value;
-        value = node->GetPropVal(wxT("x"), wxEmptyString);
+        value = node->GetAttribute(wxT("x"), wxEmptyString);
         value.ToLong(&v);
         pt.x = v;
 
-        value = node->GetPropVal(wxT("y"), wxEmptyString);
+        value = node->GetAttribute(wxT("y"), wxEmptyString);
         value.ToLong(&v);
         pt.y = v;
         return true;
@@ -470,8 +472,8 @@ bool Archive::Write(const wxString& name, const wxString& str)
     }
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxString"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Value"), str);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Value"), str);
+    node->AddAttribute(wxT("Name"), name);
     return true;
 }
 
@@ -485,7 +487,7 @@ bool Archive::WriteCData(const wxString& name, const wxString& str)
     m_root->AddChild(node);
 
     SetCDATANodeContent(node, str);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
     return true;
 }
 
@@ -512,7 +514,7 @@ bool Archive::Read(const wxString& name, wxString& value)
     }
     wxXmlNode* node = FindNodeByName(m_root, wxT("wxString"), name);
     if(node) {
-        value = node->GetPropVal(wxT("Value"), value);
+        value = node->GetAttribute(wxT("Value"), value);
         return true;
     }
     return false;
@@ -546,26 +548,28 @@ void Archive::SetXmlNode(wxXmlNode* node) { m_root = node; }
 
 bool Archive::WriteSimple(long value, const wxString& typeName, const wxString& name)
 {
-    if(!m_root) return false;
+    if(!m_root)
+        return false;
 
     wxString propValue;
     propValue << value;
 
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, typeName);
     m_root->AddChild(node);
-    node->AddProperty(wxT("Value"), propValue);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Value"), propValue);
+    node->AddAttribute(wxT("Name"), name);
     return true;
 }
 
 bool Archive::ReadSimple(long& value, const wxString& typeName, const wxString& name)
 {
-    if(!m_root) return false;
+    if(!m_root)
+        return false;
 
     value = 0;
     wxXmlNode* node = FindNodeByName(m_root, typeName, name);
     if(node) {
-        wxString val = node->GetPropVal(wxT("Value"), wxEmptyString);
+        wxString val = node->GetAttribute(wxT("Value"), wxEmptyString);
         val.ToLong(&value);
         return true;
     }
@@ -582,7 +586,7 @@ bool Archive::Read(const wxString& name, wxColour& colour)
     wxXmlNode* node = FindNodeByName(m_root, wxT("wxColour"), name);
     wxString value;
     if(node) {
-        value = node->GetPropVal(wxT("Value"), wxEmptyString);
+        value = node->GetAttribute(wxT("Value"), wxEmptyString);
     }
 
     if(value.IsEmpty()) {
@@ -599,8 +603,8 @@ bool Archive::Write(const wxString& name, const wxColour& colour)
     }
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("wxColour"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Value"), colour.GetAsString());
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Value"), colour.GetAsString());
+    node->AddAttribute(wxT("Name"), name);
     return true;
 }
 #endif
@@ -613,14 +617,14 @@ bool Archive::Write(const wxString& name, const wxStringMap_t& strinMap)
 
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("std_string_map"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
     wxStringMap_t::const_iterator iter = strinMap.begin();
     for(; iter != strinMap.end(); ++iter) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("MapEntry"));
         node->AddChild(child);
-        child->AddProperty(wxT("Key"), iter->first);
+        child->AddAttribute(wxT("Key"), iter->first);
         SetNodeContent(child, iter->second);
     }
     return true;
@@ -641,7 +645,7 @@ bool Archive::Read(const wxString& name, wxStringMap_t& strinMap)
             if(child->GetName() == wxT("MapEntry")) {
                 wxString value;
                 wxString key;
-                key = child->GetPropVal(wxT("Key"), wxEmptyString);
+                key = child->GetAttribute(wxT("Key"), wxEmptyString);
                 value = child->GetNodeContent();
                 strinMap[key] = value;
             }
@@ -684,7 +688,7 @@ bool Archive::Write(const wxString& name, const wxStringSet_t& s)
 
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("std_string_set"));
     m_root->AddChild(node);
-    node->AddProperty(wxT("Name"), name);
+    node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
     wxStringSet_t::const_iterator iter = s.begin();

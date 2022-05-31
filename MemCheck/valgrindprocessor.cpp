@@ -5,20 +5,19 @@
  * @copyright GNU General Public License v2
  */
 
-#include <wx/stdpaths.h>
-#include <wx/textfile.h>
+#include "valgrindprocessor.h"
 
 #include "file_logger.h"
-#include "workspace.h"
-
 #include "memcheckdefs.h"
 #include "memchecksettings.h"
-#include "valgrindprocessor.h"
+#include "workspace.h"
+
+#include <wx/stdpaths.h>
+#include <wx/textfile.h>
 
 ValgrindMemcheckProcessor::ValgrindMemcheckProcessor(MemCheckSettings* const settings)
     : IMemCheckProcessor(settings)
 {
-    // CL_DEBUG1(PLUGIN_PREFIX("ValgrindMemcheckProcessor created"));
 }
 
 wxArrayString ValgrindMemcheckProcessor::GetSuppressionFiles()
@@ -27,7 +26,8 @@ wxArrayString ValgrindMemcheckProcessor::GetSuppressionFiles()
     if(clCxxWorkspaceST::Get()->IsOpen() && m_settings->GetValgrindSettings().GetSuppFileInPrivateFolder()) {
         wxTextFile defaultSupp(
             wxFileName(clCxxWorkspaceST::Get()->GetPrivateFolder(), "valgrind.memcheck.supp").GetFullPath());
-        if(!defaultSupp.Exists()) defaultSupp.Create();
+        if(!defaultSupp.Exists())
+            defaultSupp.Create();
         suppFiles.Insert(defaultSupp.GetName(), 0);
     }
     return suppFiles;
@@ -38,15 +38,14 @@ void ValgrindMemcheckProcessor::GetExecutionCommand(const wxString& originalComm
 {
     m_outputLogFileName = m_settings->GetValgrindSettings().GetOutputFile();
     if(m_settings->GetValgrindSettings().GetOutputInPrivateFolder() && m_outputLogFileName.IsEmpty())
-        CL_ERROR(PLUGIN_PREFIX("Valgrind output file is not set properly. Using default - file in private folder"));
-    if(m_settings->GetValgrindSettings().GetOutputInPrivateFolder() || m_outputLogFileName.IsEmpty()) {
-        if(clCxxWorkspaceST::Get()->IsOpen())
-            m_outputLogFileName =
-                wxFileName(clCxxWorkspaceST::Get()->GetPrivateFolder(), "valgrind.memcheck.log.xml").GetFullPath();
-        else
-            m_outputLogFileName =
-                wxFileName(clStandardPaths::Get().GetTempDir(), "valgrind.memcheck.log.xml").GetFullPath();
-    }
+        if(m_settings->GetValgrindSettings().GetOutputInPrivateFolder() || m_outputLogFileName.IsEmpty()) {
+            if(clCxxWorkspaceST::Get()->IsOpen())
+                m_outputLogFileName =
+                    wxFileName(clCxxWorkspaceST::Get()->GetPrivateFolder(), "valgrind.memcheck.log.xml").GetFullPath();
+            else
+                m_outputLogFileName =
+                    wxFileName(clStandardPaths::Get().GetTempDir(), "valgrind.memcheck.log.xml").GetFullPath();
+        }
 
     wxArrayString suppFiles = GetSuppressionFiles();
     wxString suppresions;
@@ -65,13 +64,11 @@ bool ValgrindMemcheckProcessor::Process(const wxString& outputLogFileName)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("ValgrindMemcheckProcessor::Process()"));
 
-    if(!outputLogFileName.IsEmpty()) m_outputLogFileName = outputLogFileName;
-
-    CL_DEBUG(PLUGIN_PREFIX("Processing file '%s'", m_outputLogFileName));
+    if(!outputLogFileName.IsEmpty())
+        m_outputLogFileName = outputLogFileName;
 
     wxXmlDocument doc;
     if(!doc.Load(m_outputLogFileName) || doc.GetRoot()->GetName() != wxT("valgrindoutput")) {
-        CL_WARNING("Error while loading file '%s'", m_outputLogFileName);
         return false;
     }
     m_errorList.clear();
@@ -79,7 +76,9 @@ bool ValgrindMemcheckProcessor::Process(const wxString& outputLogFileName)
     int i = 0;
     wxXmlNode* errorNode = doc.GetRoot()->GetChildren();
     while(errorNode) {
-        if(errorNode->GetName() == wxT("error")) { m_errorList.push_back(ProcessError(doc, errorNode)); }
+        if(errorNode->GetName() == wxT("error")) {
+            m_errorList.push_back(ProcessError(doc, errorNode));
+        }
         errorNode = errorNode->GetNext();
 
         if(i < 1000)
@@ -150,7 +149,8 @@ MemCheckError ValgrindMemcheckProcessor::ProcessError(wxXmlDocument& doc, wxXmlN
         result.suppression = wxT("#Suppresion pattern not present in output log.\n#This plugin requires Valgrind to be "
                                  "run with '--gen-suppressions=all' option");
 
-    if(auxiliary) result.nestedErrors.push_back(auxiliaryResult);
+    if(auxiliary)
+        result.nestedErrors.push_back(auxiliaryResult);
 
     // TODO ? add checout ?
     // add check for empty locationArrays
@@ -193,7 +193,8 @@ MemCheckErrorLocation ValgrindMemcheckProcessor::ProcessLocation(wxXmlDocument& 
         subframeNode = subframeNode->GetNext();
     }
 
-    if(!dir.IsEmpty() && !dir.EndsWith(wxT("/"))) dir.Append(wxT("/"));
+    if(!dir.IsEmpty() && !dir.EndsWith(wxT("/")))
+        dir.Append(wxT("/"));
     result.file = dir + file;
 
     // TODO ? add checkout ?

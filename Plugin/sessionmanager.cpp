@@ -171,7 +171,7 @@ bool SessionManager::Save(const wxString& name, SessionEntry& session, const wxS
         return false;
 
     wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, Tag);
-    child->AddProperty(wxT("Name"), name);
+    child->AddAttribute(wxT("Name"), name);
 
     Archive arch;
     arch.SetXmlNode(child);

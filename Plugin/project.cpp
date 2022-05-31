@@ -83,7 +83,7 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
 
     wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "CodeLite_Project");
     m_doc.SetRoot(root);
-    m_doc.GetRoot()->AddProperty("Name", name);
+    m_doc.GetRoot()->AddAttribute("Name", name);
     XmlUtils::UpdateProperty(m_doc.GetRoot(), "Version", CURRENT_WORKSPACE_VERSION_STR);
 
     wxXmlNode* descNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Description");
@@ -94,11 +94,11 @@ bool Project::Create(const wxString& name, const wxString& description, const wx
     wxXmlNode *srcNode = NULL, *headNode = NULL;
 
     srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
-    srcNode->AddProperty("Name", "src");
+    srcNode->AddAttribute("Name", "src");
     m_doc.GetRoot()->AddChild(srcNode);
 
     headNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
-    headNode->AddProperty("Name", "include");
+    headNode->AddAttribute("Name", "include");
     m_doc.GetRoot()->AddChild(headNode);
 
     // creae dependencies node
@@ -277,7 +277,7 @@ bool Project::RemoveFile(const wxString& fileName, const wxString& virtualDir)
     }
 }
 
-wxString Project::GetName() const { return m_doc.GetRoot()->GetPropVal("Name", wxEmptyString); }
+wxString Project::GetName() const { return m_doc.GetRoot()->GetAttribute("Name", wxEmptyString); }
 
 ProjectTreePtr Project::AsTree()
 {
@@ -299,7 +299,7 @@ void Project::RecursiveAdd(wxXmlNode* xmlNode, ProjectTreePtr& ptp, ProjectTreeN
 
     wxXmlNode* parent = xmlNode->GetParent();
     while(parent) {
-        nameList.push_front(parent->GetPropVal("Name", wxEmptyString));
+        nameList.push_front(parent->GetAttribute("Name", wxEmptyString));
         parent = parent->GetParent();
     }
 
@@ -309,19 +309,19 @@ void Project::RecursiveAdd(wxXmlNode* xmlNode, ProjectTreePtr& ptp, ProjectTreeN
         key += ":";
         nameList.pop_front();
     }
-    key += xmlNode->GetPropVal("Name", wxEmptyString);
+    key += xmlNode->GetAttribute("Name", wxEmptyString);
 
     // Create the tree node data
     ProjectItem item;
     if(xmlNode->GetName() == "Project") {
-        item = ProjectItem(key, xmlNode->GetPropVal("Name", wxEmptyString), wxEmptyString, ProjectItem::TypeProject);
+        item = ProjectItem(key, xmlNode->GetAttribute("Name", wxEmptyString), wxEmptyString, ProjectItem::TypeProject);
 
     } else if(xmlNode->GetName() == "VirtualDirectory") {
-        item = ProjectItem(key, xmlNode->GetPropVal("Name", wxEmptyString), wxEmptyString,
+        item = ProjectItem(key, xmlNode->GetAttribute("Name", wxEmptyString), wxEmptyString,
                            ProjectItem::TypeVirtualDirectory);
 
     } else if(xmlNode->GetName() == "File") {
-        wxFileName filename(xmlNode->GetPropVal("Name", wxEmptyString));
+        wxFileName filename(xmlNode->GetAttribute("Name", wxEmptyString));
         // Convert this file name to absolute path
         filename.MakeAbsolute(m_fileName.GetPath());
         item = ProjectItem(key, filename.GetFullName(), filename.GetFullPath(), ProjectItem::TypeFile);
@@ -384,7 +384,7 @@ void Project::GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& fi
             wxXmlNode* child = vd->GetChildren();
             while(child) {
                 if(child->GetName() == "File") {
-                    wxFileName fileName(child->GetPropVal("Name", wxEmptyString));
+                    wxFileName fileName(child->GetAttribute("Name", wxEmptyString));
                     fileName.MakeAbsolute(m_fileName.GetPath());
                     files.Add(fileName.GetFullPath());
                 } else if(recurse && (child->GetName() == "VirtualDirectory")) {
@@ -539,7 +539,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
         wxCopyFile(fn.GetFullPath(), new_path + "/" + fn.GetFullName());
 
         wxXmlNode* file_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "File");
-        file_node->AddProperty("Name", fn.GetFullName());
+        file_node->AddAttribute("Name", fn.GetFullName());
 
         switch(FileExtManager::GetType(fn.GetFullName())) {
         case FileExtManager::TypeSourceC:
@@ -548,7 +548,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
             // source file
             if(!srcNode) {
                 srcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
-                srcNode->AddProperty("Name", "src");
+                srcNode->AddAttribute("Name", "src");
                 doc.GetRoot()->AddChild(srcNode);
             }
             srcNode->AddChild(file_node);
@@ -558,7 +558,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
             // header file
             if(!headNode) {
                 headNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
-                headNode->AddProperty("Name", "include");
+                headNode->AddAttribute("Name", "include");
                 doc.GetRoot()->AddChild(headNode);
             }
             headNode->AddChild(file_node);
@@ -568,7 +568,7 @@ void Project::CopyTo(const wxString& new_path, const wxString& new_name, const w
             // resource file
             if(!rcNode) {
                 rcNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "VirtualDirectory");
-                rcNode->AddProperty("Name", "resources");
+                rcNode->AddAttribute("Name", "resources");
                 doc.GetRoot()->AddChild(rcNode);
             }
             rcNode->AddChild(file_node);
@@ -586,7 +586,7 @@ clProjectFile::Ptr_t Project::FileFromXml(wxXmlNode* node, const wxString& vd)
     // files are kept relative to the project file
     // Convert the path to unix format
     wxString fileName;
-    wxXmlProperty* props = node->GetProperties();
+    wxXmlAttribute* props = node->GetAttributes();
     while(props) {
         if(props->GetName() == "Name") {
             wxString val = props->GetValue();
@@ -635,7 +635,7 @@ void Project::DoBuildCacheFromXml()
                 folder->GetFiles().insert(file->GetFilename());
 
             } else if(child->GetName() == "VirtualDirectory") {
-                wxString folderName = child->GetPropVal("Name", wxEmptyString);
+                wxString folderName = child->GetAttribute("Name", wxEmptyString);
                 clProjectFolder::Ptr_t newFolder(new clProjectFolder(
                     folder->GetFullpath().IsEmpty() ? folderName : folder->GetFullpath() + ":" + folderName, child));
                 // Cache this folder
@@ -721,7 +721,7 @@ wxArrayString Project::GetDependencies(const wxString& configuration) const
     // dependencies are located directly under the root level
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
     while(node) {
-        if(node->GetName() == "Dependencies" && node->GetPropVal("Name", wxEmptyString) == configuration) {
+        if(node->GetName() == "Dependencies" && node->GetAttribute("Name", wxEmptyString) == configuration) {
             // we have our match
             wxXmlNode* child = node->GetChildren();
             while(child) {
@@ -745,7 +745,7 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
     // first try to locate the old node
     wxXmlNode* node = m_doc.GetRoot()->GetChildren();
     while(node) {
-        if(node->GetName() == "Dependencies" && node->GetPropVal("Name", wxEmptyString) == configuration) {
+        if(node->GetName() == "Dependencies" && node->GetAttribute("Name", wxEmptyString) == configuration) {
             // we have our match
             node->GetParent()->RemoveChild(node);
             delete node;
@@ -756,13 +756,13 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
 
     // create new dependencies node
     node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Dependencies");
-    node->AddProperty("Name", configuration);
+    node->AddAttribute("Name", configuration);
     m_doc.GetRoot()->AddChild(node);
 
     // create a node for each dependency in the array
     for(size_t i = 0; i < deps.GetCount(); i++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Project");
-        child->AddProperty("Name", deps.Item(i));
+        child->AddAttribute("Name", deps.Item(i));
         node->AddChild(child);
     }
 
@@ -856,7 +856,7 @@ bool Project::SetUserData(const wxString& name, SerializedObject* obj)
 
     // create a new node and set the userData node as the parent
     dataNode = new wxXmlNode(userData, wxXML_ELEMENT_NODE, "Data");
-    dataNode->AddProperty("Name", name);
+    dataNode->AddAttribute("Name", name);
 
     // serialize the data
     arch.SetXmlNode(dataNode);
@@ -877,7 +877,7 @@ wxString Project::GetProjectInternalType() const
     if(!m_doc.GetRoot()) {
         return "";
     }
-    return m_doc.GetRoot()->GetPropVal("InternalType", wxEmptyString);
+    return m_doc.GetRoot()->GetAttribute("InternalType", wxEmptyString);
 }
 
 void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
@@ -899,7 +899,7 @@ void Project::GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap)
             wxString content = child->GetNodeContent();
             // overcome bug in WX where CDATA content comes out with extra \n and 4xspaces
             content.Trim().Trim(false);
-            pluginsDataMap[child->GetPropVal("Name", wxEmptyString)] = content;
+            pluginsDataMap[child->GetAttribute("Name", wxEmptyString)] = content;
         }
         child = child->GetNext();
     }
@@ -940,7 +940,7 @@ void Project::SetPluginData(const wxString& pluginName, const wxString& data, bo
     wxXmlNode* plugin = XmlUtils::FindNodeByName(plugins, "Plugin", pluginName);
     if(!plugin) {
         plugin = new wxXmlNode(plugins, wxXML_ELEMENT_NODE, "Plugin");
-        plugin->AddProperty("Name", pluginName);
+        plugin->AddAttribute("Name", pluginName);
     }
 
     wxString tmpData(data);
@@ -992,7 +992,7 @@ void Project::ConvertToUnixFormat(wxXmlNode* parent)
 
         } else if(child->GetName() == "File") {
 
-            wxXmlProperty* props = child->GetProperties();
+            wxXmlAttribute* props = child->GetAttributes();
             // Convert the path to unix format
             while(props) {
                 if(props->GetName() == "Name") {
@@ -1164,7 +1164,7 @@ void Project::ClearAllVirtDirs()
     SaveXmlFile();
 }
 
-wxString Project::GetProjectIconName() const { return m_doc.GetRoot()->GetPropVal("IconIndex", "gear16"); }
+wxString Project::GetProjectIconName() const { return m_doc.GetRoot()->GetAttribute("IconIndex", "gear16"); }
 
 void Project::GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& ignoreFiles,
                                     wxArrayString& excludePaths, wxArrayString& regexes)
@@ -1280,7 +1280,7 @@ wxString Project::DoFormatVirtualFolderName(const wxXmlNode* node) const
     std::list<wxString> q;
     while(p) {
         if(p->GetName() == "VirtualDirectory") {
-            q.push_front(p->GetPropVal("Name", ""));
+            q.push_front(p->GetAttribute("Name", ""));
         } else {
             break;
         }
@@ -2216,7 +2216,7 @@ clProjectFolder::Ptr_t clProjectFolder::AddFolder(Project* project, const wxStri
     }
 
     wxXmlNode* node = new wxXmlNode(m_xmlNode, wxXML_ELEMENT_NODE, "VirtualDirectory");
-    node->AddProperty("Name", name);
+    node->AddAttribute("Name", name);
 
     clProjectFolder::Ptr_t childFolder(new clProjectFolder(fullpath, node));
     project->m_virtualFoldersTable[fullpath] = childFolder;
@@ -2259,7 +2259,7 @@ void clProjectFolder::GetSubfolders(wxArrayString& folders, bool recursive) cons
         wxXmlNode* child = node->GetChildren();
         while(child) {
             if(child->GetName() == "VirtualDirectory") {
-                wxString name = child->GetPropVal("Name", "");
+                wxString name = child->GetAttribute("Name", "");
                 wxString childpath = prefix.IsEmpty() ? (name) : (prefix + ":" + name);
                 foldersV.push_back(childpath);
                 if(recursive) {
@@ -2327,7 +2327,7 @@ clProjectFile::Ptr_t clProjectFolder::AddFile(Project* project, const wxString& 
 
     // Create the XML ndoe
     wxXmlNode* node = new wxXmlNode(m_xmlNode, wxXML_ELEMENT_NODE, "File");
-    node->AddProperty("Name", tmp.GetFullPath(wxPATH_UNIX));
+    node->AddAttribute("Name", tmp.GetFullPath(wxPATH_UNIX));
 
     clProjectFile::Ptr_t file(new clProjectFile());
     file->SetFilename(fullpath);

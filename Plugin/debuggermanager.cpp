@@ -135,11 +135,11 @@ bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
             continue;
         }
 #endif
-        clDEBUG() << "Attempting to load debugger:" << fileName;
+        clDEBUG() << "Attempting to load debugger:" << fileName << endl;
         if(!dl->Load(fileName)) {
-            CL_WARNING("Failed to load debugger: %s", fileName);
+            clWARNING() << "Failed to load debugger:" << fileName << endl;
             if(!dl->GetError().IsEmpty()) {
-                CL_WARNING("%s", dl->GetError());
+                clWARNING() << dl->GetError() << endl;
             }
             wxDELETE(dl);
             continue;

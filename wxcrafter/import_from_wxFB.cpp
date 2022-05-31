@@ -1,4 +1,5 @@
 #include "import_from_wxFB.h"
+
 #include "allocator_mgr.h"
 #include "file_logger.h"
 #include "import_dlg.h"
@@ -7,6 +8,7 @@
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <wx/window.h>
@@ -25,10 +27,14 @@ bool ImportFromwxFB::ImportProject(ImportDlg::ImportFileData& data, const wxStri
 {
     ImportDlg dlg(ImportDlg::IPD_FB, m_Parent, sourceFile);
 
-    if(dlg.ShowModal() != wxID_OK) { return false; }
+    if(dlg.ShowModal() != wxID_OK) {
+        return false;
+    }
 
     wxString filepath = dlg.GetFilepath();
-    if(filepath.empty() || !wxFileExists(filepath)) { return false; }
+    if(filepath.empty() || !wxFileExists(filepath)) {
+        return false;
+    }
 
     wxXmlDocument doc(filepath);
     if(!doc.IsOk()) {
@@ -86,7 +92,9 @@ bool ImportFromwxFB::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels)
 
         bool alreadyParented(false);
         wxcWidget* wrapper = ParseNode(toplevelnode, NULL, alreadyParented);
-        if(wrapper) { toplevels.push_back(wrapper); }
+        if(wrapper) {
+            toplevels.push_back(wrapper);
+        }
 
         toplevelnode = toplevelnode->GetNext();
     }
@@ -114,7 +122,6 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
             // I don't think this can happen, but...
-            CL_WARNING(wxT("No object found in a sizeritem"));
             return NULL;
         }
 
@@ -129,7 +136,6 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
             // I don't think this can happen, but...
-            CL_WARNING(wxString::Format(wxT("No object found in a %s"), classname.c_str()));
             return NULL;
         }
 
@@ -144,7 +150,6 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
             // I don't think this can happen, but...
-            CL_WARNING(wxString::Format(wxT("No object found in a %s"), classname.c_str()));
             return NULL;
         }
 
@@ -158,7 +163,6 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
             // I don't think this can happen, but...
-            CL_WARNING(wxString::Format(wxT("No object found in a %s"), classname.c_str()));
             return NULL;
         }
         classname = XmlUtils::ReadString(node, wxT("class"));
@@ -221,7 +225,9 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         if(childname == wxT("object")) {
             bool alreadyParented(false);
             wxcWidget* childwrapper = ParseNode(child, wrapper, alreadyParented);
-            if(childwrapper && !alreadyParented) { wrapper->AddChild(childwrapper); }
+            if(childwrapper && !alreadyParented) {
+                wrapper->AddChild(childwrapper);
+            }
         }
 
         child = child->GetNext();
@@ -294,12 +300,20 @@ void ImportFromwxFB::GetGridBagSizerItem(const wxXmlNode* node, wxcWidget* wrapp
     while(child) {
         wxString childname(child->GetName());
         if(childname == wxT("property")) {
-            if(XmlUtils::ReadString(child, wxT("name")) == "row") { row = child->GetNodeContent(); }
+            if(XmlUtils::ReadString(child, wxT("name")) == "row") {
+                row = child->GetNodeContent();
+            }
 
-            if(XmlUtils::ReadString(child, wxT("name")) == "column") { column = child->GetNodeContent(); }
-            if(XmlUtils::ReadString(child, wxT("name")) == "rowspan") { rowspan = child->GetNodeContent(); }
+            if(XmlUtils::ReadString(child, wxT("name")) == "column") {
+                column = child->GetNodeContent();
+            }
+            if(XmlUtils::ReadString(child, wxT("name")) == "rowspan") {
+                rowspan = child->GetNodeContent();
+            }
 
-            if(XmlUtils::ReadString(child, wxT("name")) == "colspan") { colspan = child->GetNodeContent(); }
+            if(XmlUtils::ReadString(child, wxT("name")) == "colspan") {
+                colspan = child->GetNodeContent();
+            }
         }
 
         child = child->GetNext();
@@ -315,14 +329,18 @@ void ImportFromwxFB::GetBookitemContents(const wxXmlNode* node, NotebookPageWrap
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "select");
     if(propertynode) {
         wxString selected = propertynode->GetNodeContent();
-        if(selected == "1") { wrapper->SetSelected(true); }
+        if(selected == "1") {
+            wrapper->SetSelected(true);
+        }
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "label");
     if(propertynode) {
         wxString label = propertynode->GetNodeContent();
         PropertyBase* prop = wrapper->GetProperty(PROP_LABEL);
-        if(prop) { prop->SetValue(label); }
+        if(prop) {
+            prop->SetValue(label);
+        }
     }
 
     if(classname != "choicebookpage") { // which don't have bitmaps
@@ -384,7 +402,9 @@ void ImportFromwxFB::ProcessBitmapProperty(const wxString& bitmapinfo, wxcWidget
             PropertyBase* prop = wrapper->GetProperty(property); // Either PROP_BITMAP_PATH or PROP_DISABLED_BITMAP_PATH
             if(prop) {
                 wxFileName fn(bitmappath.Trim(false)); // wxFB will probably have supplied a relative path
-                if(fn.Normalize()) { prop->SetValue(fn.GetFullPath()); }
+                if(fn.Normalize()) {
+                    prop->SetValue(fn.GetFullPath());
+                }
             }
         }
     }
@@ -413,7 +433,9 @@ void ImportFromwxFB::ProcessBitmapProperty(const wxString& bitmapinfo, wxcWidget
                 if(clientstring.empty()) {
                     clientstring = client_hint; // Use any hint we were given
                 }
-                if(!clientstring.empty()) { artdata << "," << clientstring; }
+                if(!clientstring.empty()) {
+                    artdata << "," << clientstring;
+                }
                 prop->SetValue(artdata);
             }
         }

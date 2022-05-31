@@ -185,7 +185,7 @@ WorkspaceConfiguration::~WorkspaceConfiguration() {}
 wxXmlNode* WorkspaceConfiguration::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("WorkspaceConfiguration"));
-    node->AddProperty(wxT("Name"), m_name);
+    node->AddAttribute(wxT("Name"), m_name);
 
     wxXmlNode* env = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Environment");
     XmlUtils::SetNodeContent(env, m_environmentVariables);
@@ -194,8 +194,8 @@ wxXmlNode* WorkspaceConfiguration::ToXml() const
     WorkspaceConfiguration::ConfigMappingList::const_iterator iter = m_mappingList.begin();
     for(; iter != m_mappingList.end(); iter++) {
         wxXmlNode* projNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
-        projNode->AddProperty(wxT("Name"), iter->m_project);
-        projNode->AddProperty(wxT("ConfigName"), iter->m_name);
+        projNode->AddAttribute(wxT("Name"), iter->m_project);
+        projNode->AddAttribute(wxT("ConfigName"), iter->m_name);
         node->AddChild(projNode);
     }
     return node;

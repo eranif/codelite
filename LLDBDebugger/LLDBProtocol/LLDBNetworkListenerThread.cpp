@@ -24,8 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBNetworkListenerThread.h"
-#include "LLDBReply.h"
+
 #include "LLDBEvent.h"
+#include "LLDBReply.h"
 #include "file_logger.h"
 
 LLDBNetworkListenerThread::LLDBNetworkListenerThread(wxEvtHandler* owner, const LLDBPivot& pivot, int fd)
@@ -86,14 +87,14 @@ void* LLDBNetworkListenerThread::Entry()
                     m_owner->AddPendingEvent(event);
                     break;
                 }
-                
+
                 case kReplyTypeLaunchSuccess: {
                     // notify debugger exited
                     LLDBEvent event(wxEVT_LLDB_LAUNCH_SUCCESS);
                     m_owner->AddPendingEvent(event);
                     break;
                 }
-                
+
                 case kReplyTypeDebuggerStoppedOnFirstEntry: {
                     // notify debugger exited
                     LLDBEvent event(wxEVT_LLDB_STOPPED_ON_FIRST_ENTRY);
@@ -139,7 +140,7 @@ void* LLDBNetworkListenerThread::Entry()
                 }
             }
         } catch(clSocketException& e) {
-            CL_WARNING("Seems like we lost connection to codelite-lldb (probably crashed): %s", e.what().c_str());
+            clWARNING() << "Seems like we lost connection to codelite-lldb (probably crashed):" << e.what() << endl;
             LLDBEvent event(wxEVT_LLDB_CRASHED);
             m_owner->AddPendingEvent(event);
 

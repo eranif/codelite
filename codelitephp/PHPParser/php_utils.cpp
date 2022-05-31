@@ -1,20 +1,22 @@
-#include <wx/stc/stc.h>
-#include <wx/treectrl.h>
-#include <wx/filename.h>
-#include <wx/tokenzr.h>
-#include <lexer_configuration.h>
-#include <editor_config.h>
 #include "php_utils.h"
-#include <wx/uri.h>
-#include <wx/base64.h>
-#include <map>
+
+#include "JSON.h"
+#include "PHPSourceFile.h"
+#include "file_logger.h"
+#include "fileextmanager.h"
+#include "fileutils.h"
 #include "php_project.h"
 #include "php_workspace.h"
-#include "JSON.h"
-#include "file_logger.h"
-#include "fileutils.h"
-#include "PHPSourceFile.h"
-#include "fileextmanager.h"
+
+#include <editor_config.h>
+#include <lexer_configuration.h>
+#include <map>
+#include <wx/base64.h>
+#include <wx/filename.h>
+#include <wx/stc/stc.h>
+#include <wx/tokenzr.h>
+#include <wx/treectrl.h>
+#include <wx/uri.h>
 
 bool IsPHPCommentOrString(int styleAtPos)
 {
@@ -116,8 +118,7 @@ wxString FileNameToURI(const wxString& filename)
         sourceFullPath.Prepend(FILE_SCHEME);
     }
     sourceFullPath.Replace("\\", "/");
-    while(sourceFullPath.Replace("//", "/")) {
-    }
+    while(sourceFullPath.Replace("//", "/")) {}
     //    wxURI uri(sourceFullPath);
     sourceFullPath = URIEncode(sourceFullPath);
     sourceFullPath.Replace("file:", FILE_SCHEME);
@@ -135,31 +136,30 @@ static void DecodeFileName(wxString& filename) { filename = FileUtils::DecodeURI
 wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
 {
     // Check that a workspace is opened
-    if(!PHPWorkspace::Get()->IsOpen()) return remoteFile;
+    if(!PHPWorkspace::Get()->IsOpen())
+        return remoteFile;
 
     // Sanity
     PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
-    if(!pProject) return remoteFile;
+    if(!pProject)
+        return remoteFile;
 
     // Map filename file attribute returned by xdebug to local filename
     wxString filename = remoteFile;
 
     // Remote the "file://" from the file path
     filename.StartsWith(FILE_SCHEME, &filename);
-    CL_DEBUG("filename => %s", filename);
 
     // On Windows, the file is returned like (after removing the file://)
     // /C:/Http/htdocs/file.php - remote the leading "/"
     wxRegEx reMSWPrefix("/[a-zA-Z]{1}:/");
     if(reMSWPrefix.IsValid() && reMSWPrefix.Matches(filename)) {
         // Windows file
-        CL_DEBUG("filename => %s", filename);
         filename.Remove(0, 1);
     }
 
     // Remove URI encoding ("%20"=>" " etc)
     DecodeFileName(filename);
-    CL_DEBUG("filename => %s", filename);
 
     // First check if the remote file exists locally
     if(wxFileName(filename).Exists()) {

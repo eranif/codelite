@@ -1,8 +1,10 @@
+#include "CxxPreProcessorScanner.h"
+
 #include "CxxPreProcessor.h"
 #include "CxxPreProcessorExpression.h"
-#include "CxxPreProcessorScanner.h"
 #include "CxxScannerTokens.h"
 #include "file_logger.h"
+
 #include <wx/sharedptr.h>
 
 CxxPreProcessorScanner::CxxPreProcessorScanner(const wxFileName& filename, size_t options,
@@ -87,7 +89,7 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
                     }
                 } catch(CxxLexerException& e) {
                     // catch the exception
-                    CL_DEBUG("Exception caught: %s\n", e.message);
+                    clDEBUG() << "Exception caught:" << e.message << endl;
                 }
                 // make sure we always delete the scanner
                 clDEBUG1() << "<== Resuming parser on file:" << m_filename << clEndl;
@@ -222,10 +224,7 @@ struct ExpressionLocker {
         : m_expr(expr)
     {
     }
-    ~ExpressionLocker()
-    {
-        wxDELETE(m_expr);
-    }
+    ~ExpressionLocker() { wxDELETE(m_expr); }
 };
 
 bool CxxPreProcessorScanner::CheckIf(const CxxPreProcessorToken::Map_t& table)

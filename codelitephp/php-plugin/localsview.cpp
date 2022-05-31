@@ -1,7 +1,9 @@
+#include "localsview.h"
+
 #include "XDebugManager.h"
 #include "editor_config.h"
 #include "globals.h"
-#include "localsview.h"
+
 #include <editor_config.h>
 #include <event_notifier.h>
 #include <file_logger.h>
@@ -28,7 +30,7 @@ LocalsView::LocalsView(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &LocalsView::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &LocalsView::OnXDebugSessionStarted, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnProperytGet, this);
-    
+
     ClearView();
     m_tree->AddHeader(_("Name"));
     m_tree->AddHeader(_("Type"));
@@ -54,13 +56,15 @@ void LocalsView::OnLocalCollapsed(wxTreeEvent& event)
     CHECK_ITEM_RET(event.GetItem());
     MyStringData* cd = dynamic_cast<MyStringData*>(m_tree->GetItemData(event.GetItem()));
     CHECK_PTR_RET(cd);
-    if(m_localsExpandedItemsFullname.count(cd->GetData())) { m_localsExpandedItemsFullname.erase(cd->GetData()); }
+    if(m_localsExpandedItemsFullname.count(cd->GetData())) {
+        m_localsExpandedItemsFullname.erase(cd->GetData());
+    }
 }
 
 void LocalsView::OnXDebugSessionEnded(XDebugEvent& e)
 {
     e.Skip();
-    CL_DEBUG("LocalsView::OnXDebugSessionEnded(): Debug sessions started - cleaning all locals view");
+    clDEBUG() << "LocalsView::OnXDebugSessionEnded(): Debug sessions started - cleaning all locals view" << endl;
     // Clear the variables view
     ClearView();
     m_localsExpandedItemsFullname.clear();
@@ -80,7 +84,7 @@ void LocalsView::OnLocalExpanded(wxTreeEvent& event)
 void LocalsView::OnLocalsUpdated(XDebugEvent& e)
 {
     e.Skip();
-    CL_DEBUG("Inside OnLocalsUpdated");
+    clDEBUG() << "Inside OnLocalsUpdated" << endl;
 
     ClearView();
     m_localsExpandedItems.Clear();
@@ -126,7 +130,7 @@ void LocalsView::AppendVariablesToTree(const wxTreeItemId& parent, const XVariab
 void LocalsView::OnXDebugSessionStarted(XDebugEvent& e)
 {
     e.Skip();
-    CL_DEBUG("LocalsView::OnXDebugSessionStarted(): Debug sessions started - cleaning all locals view");
+    clDEBUG() << "LocalsView::OnXDebugSessionStarted(): Debug sessions started - cleaning all locals view" << endl;
     // Clear the variables view
     ClearView();
     m_localsExpandedItemsFullname.clear();
@@ -156,7 +160,9 @@ void LocalsView::OnLocalExpanding(wxTreeEvent& event)
 wxString LocalsView::DoGetItemClientData(const wxTreeItemId& item) const
 {
     MyStringData* scd = dynamic_cast<MyStringData*>(m_tree->GetItemData(item));
-    if(scd) { return scd->GetData(); }
+    if(scd) {
+        return scd->GetData();
+    }
     return wxEmptyString;
 }
 
@@ -165,7 +171,9 @@ void LocalsView::OnProperytGet(XDebugEvent& e)
     e.Skip();
     // An item was evaluated using property_get
     std::unordered_map<wxString, wxTreeItemId>::iterator iter = m_waitingExpand.find(e.GetEvaluted());
-    if(iter == m_waitingExpand.end()) { return; }
+    if(iter == m_waitingExpand.end()) {
+        return;
+    }
 
     wxTreeItemId item = iter->second;
     m_waitingExpand.erase(iter);
@@ -174,7 +182,8 @@ void LocalsView::OnProperytGet(XDebugEvent& e)
     m_tree->DeleteChildren(item);
 
     XVariable::List_t vars = e.GetVariables();
-    if(vars.empty()) return;
+    if(vars.empty())
+        return;
 
     // Since we got here from property_get, XDebug will reply with the specific property (e.g. $myclass->secondClass)
     // and all its children. Howeverr, $myclass->secondClass already exist in the tree

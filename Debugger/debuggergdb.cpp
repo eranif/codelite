@@ -219,13 +219,6 @@ DbgCmdHandler* DbgGdb::PopHandler(const wxString& id)
     }
 
     DbgCmdHandler* cmd = it->second;
-    //    if(it != m_handlers.begin()) {
-    //        --it;
-    //        if(it->first != oldId) {
-    //            CL_WARNING("Request to process handler %s while handler %s is still in the queue!!", id, it->first);
-    //        }
-    //        ++it;
-    //    }
     m_handlers.erase(id);
     return cmd;
 }
@@ -358,7 +351,7 @@ bool DbgGdb::WriteCommand(const wxString& command, DbgCmdHandler* handler)
     }
 
     if(!ExecuteCmd(cmd)) {
-        CL_WARNING("Failed to send command: %s", cmd);
+        clWARNING() << "Failed to send command" << cmd << endl;
         return false;
     }
     RegisterHandler(id, handler);
@@ -730,7 +723,7 @@ bool DbgGdb::ExecuteCmd(const wxString& cmd)
     static wxLongLong commandsCounter = 0;
     if(m_gdbProcess) {
         if(m_info.enableDebugLog) {
-            CL_DEBUG("DEBUG>>%s", cmd);
+            clDEBUG() << "DEBUG>>" << cmd << endl;
             m_observer->UpdateAddLine(wxString::Format("DEBUG>>%s", cmd));
         }
 #ifdef __WXMSW__
@@ -1200,6 +1193,9 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     ExecuteCmd("set width 0");
     ExecuteCmd("set height 0");
     ExecuteCmd("set pagingation off");
+
+    // do not prompt for loading symbols
+    ExecuteCmd("set debuginfod enabled off");
 
     // Number of elements to show for arrays (including strings)
     wxString sizeCommand;

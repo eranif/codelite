@@ -367,7 +367,7 @@ void LLDBPlugin::OnDebugContinue(clDebugEvent& event)
     event.Skip();
     if(m_connector.IsRunning()) {
         // we are the active debugger
-        CL_DEBUG("CODELITE>> continue...");
+        clDEBUG() << "CODELITE>> continue..." << endl;
         m_connector.Continue();
         event.Skip(false);
     }
@@ -380,7 +380,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
         return;
     }
 
-    CL_DEBUG("LLDB: Initial working directory is restored to: " + ::wxGetCwd());
+    clDEBUG() << "LLDB: Initial working directory is restored to" << ::wxGetCwd() << endl;
     {
         // Get the executable to debug
         wxString errMsg;
@@ -457,7 +457,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 m_debuggerTerminal.Launch(clDebuggerTerminalPOSIX::MakeExeTitle(execToDebug.GetFullPath(), args));
 
                 if(m_debuggerTerminal.IsValid()) {
-                    CL_DEBUG("Successfully launched terminal %s", m_debuggerTerminal.GetTty());
+                    clDEBUG() << "Successfully launched terminal" << m_debuggerTerminal.GetTty() << endl;
 
                 } else {
                     // Failed to launch it...
@@ -472,8 +472,8 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
                 workingDirectory = ::wxGetCwd();
             }
 
-            CL_DEBUG("LLDB: Using executable : " + execToDebug.GetFullPath());
-            CL_DEBUG("LLDB: Working directory: " + workingDirectory);
+            clDEBUG() << "LLDB: Using executable:" << execToDebug.GetFullPath() << endl;
+            clDEBUG() << "LLDB: Working directory:" << workingDirectory << endl;
 
             //////////////////////////////////////////////////////////////////////
             // Initiate the connection to codelite-lldb
@@ -524,7 +524,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             }
         }
     }
-    CL_DEBUG("LLDB: Working directory is restored to: " + ::wxGetCwd());
+    clDEBUG() << "LLDB: Working directory is restored to:" << ::wxGetCwd() << endl;
 }
 
 void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
@@ -549,7 +549,7 @@ void LLDBPlugin::OnLLDBExited(LLDBEvent& event)
     // Reset various state variables
     DoCleanup();
 
-    CL_DEBUG("CODELITE>> LLDB exited");
+    clDEBUG() << "CODELITE>> LLDB exited" << endl;
 
     // Also notify codelite's event
     clDebugEvent e2(wxEVT_DEBUG_ENDED);
@@ -576,19 +576,19 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
     // should follow a 'Run' command
     switch(event.GetSessionType()) {
     case kDebugSessionTypeCore:
-        CL_DEBUG("CODELITE>> LLDB started (core file)");
+        clDEBUG() << "CODELITE>> LLDB started (core file)" << endl;
         break;
 
     case kDebugSessionTypeAttach: {
         m_raisOnBpHit = settings.IsRaiseWhenBreakpointHit();
-        CL_DEBUG("CODELITE>> LLDB started (attached)");
+        clDEBUG() << "CODELITE>> LLDB started (attached)" << endl;
         m_connector.SetAttachedToProcess(event.GetSessionType() == kDebugSessionTypeAttach);
         // m_connector.Continue();
         break;
     }
     case kDebugSessionTypeNormal: {
         m_raisOnBpHit = settings.IsRaiseWhenBreakpointHit();
-        CL_DEBUG("CODELITE>> LLDB started (normal)");
+        clDEBUG() << "CODELITE>> LLDB started (normal)" << endl;
         m_connector.Run();
         break;
     }
@@ -605,7 +605,7 @@ void LLDBPlugin::OnLLDBStarted(LLDBEvent& event)
 void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
 {
     event.Skip();
-    CL_DEBUGS(wxString() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber());
+    clDEBUG() << "CODELITE>> LLDB stopped at " << event.GetFileName() << ":" << event.GetLinenumber() << endl;
     m_connector.SetCanInteract(true);
 
     if(event.GetInterruptReason() == kInterruptReasonNone) {
@@ -651,22 +651,22 @@ void LLDBPlugin::OnLLDBStopped(LLDBEvent& event)
         }
 
     } else if(event.GetInterruptReason() == kInterruptReasonApplyBreakpoints) {
-        CL_DEBUG("Applying breakpoints and continue...");
+        clDEBUG() << "Applying breakpoints and continue..." << endl;
         m_connector.ApplyBreakpoints();
         m_connector.Continue();
 
     } else if(event.GetInterruptReason() == kInterruptReasonDeleteAllBreakpoints) {
-        CL_DEBUG("Deleting all breakpoints");
+        clDEBUG() << "Deleting all breakpoints" << endl;
         m_connector.DeleteAllBreakpoints();
         m_connector.Continue();
 
     } else if(event.GetInterruptReason() == kInterruptReasonDeleteBreakpoint) {
-        CL_DEBUG("Deleting all pending deletion breakpoints");
+        clDEBUG() << "Deleting all pending deletion breakpoints" << endl;
         m_connector.DeleteBreakpoints();
         m_connector.Continue();
 
     } else if(event.GetInterruptReason() == kInterruptReasonDetaching) {
-        CL_DEBUG("Detaching from process");
+        clDEBUG() << "Detaching from process" << endl;
         m_connector.Detach();
     }
 }
@@ -677,23 +677,23 @@ void LLDBPlugin::OnLLDBStoppedOnEntry(LLDBEvent& event)
     m_connector.SetCanInteract(true);
     m_connector.SetIsRunning(true);
 
-    CL_DEBUG("CODELITE>> Applying breakpoints...");
+    clDEBUG() << "CODELITE>> Applying breakpoints..." << endl;
     m_connector.ApplyBreakpoints();
-    CL_DEBUG("CODELITE>> continue...");
+    clDEBUG() << "CODELITE>> continue..." << endl;
     m_connector.Continue();
 }
 
 void LLDBPlugin::OnDebugNext(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
-    CL_DEBUG("LLDB    >> Next");
+    clDEBUG() << "LLDB    >> Next" << endl;
     m_connector.Next();
 }
 
 void LLDBPlugin::OnDebugStop(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
-    CL_DEBUG("LLDB    >> Stop");
+    clDEBUG() << "LLDB    >> Stop" << endl;
     m_connector.Stop();
 }
 
@@ -952,7 +952,7 @@ void LLDBPlugin::OnToggleInterrupt(clDebugEvent& event)
 {
     CHECK_IS_LLDB_SESSION();
     event.Skip();
-    CL_DEBUG("CODELITE: interrupting debuggee");
+    clDEBUG() << "CODELITE: interrupting debuggee" << endl;
     if(!m_connector.IsCanInteract()) {
         m_connector.Interrupt(kInterruptReasonNone);
     }
@@ -1174,7 +1174,7 @@ bool LLDBPlugin::DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, 
         m_debuggerTerminal.Launch(terminalTitle);
 
         if(m_debuggerTerminal.IsValid()) {
-            CL_DEBUG("Successfully launched terminal");
+            clDEBUG() << "Successfully launched terminal" << endl;
 
         } else {
             // Failed to launch it...
@@ -1317,7 +1317,7 @@ void LLDBPlugin::OnLLDBLaunchSuccess(LLDBEvent& event)
     m_connector.SetCanInteract(true);
     m_connector.SetIsRunning(true);
 
-    CL_DEBUG("CODELITE>> Applying breakpoints...");
+    clDEBUG() << "CODELITE>> Applying breakpoints..." << endl;
     m_connector.ApplyBreakpoints();
     m_connector.Next();
 }

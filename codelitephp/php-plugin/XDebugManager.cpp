@@ -1,4 +1,5 @@
 #include "XDebugManager.h"
+
 #include "PHPDebugStartDlg.h"
 #include "XDebugCommThread.h"
 #include "XDebugEvalCmdHandler.h"
@@ -8,6 +9,7 @@
 #include "php_utils.h"
 #include "php_workspace.h"
 #include "ssh_workspace_settings.h"
+
 #include <bookmark_manager.h>
 #include <event_notifier.h>
 #include <file_logger.h>
@@ -204,7 +206,7 @@ void XDebugManager::DoStopDebugger()
     // Save the breakpoints
 
     // Reset the connection
-    CL_DEBUG("CodeLite >>> closing debug session");
+    clDEBUG() << "CodeLite >>> closing debug session" << endl;
     wxDELETE(m_readerThread);
 
     // Notify about debug session ended
@@ -222,13 +224,13 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
     if(buffer.IsEmpty())
         return false;
 
-    CL_DEBUGS(wxString() << "XDebug <<< " << buffer);
+    clDEBUG() << "XDebug <<< " << buffer << endl;
 
     wxXmlDocument doc;
     wxStringInputStream sis(buffer);
     if(!doc.Load(sis)) {
         // failed to parse XML
-        CL_DEBUG("CodeLite >>> invalid XML!");
+        clDEBUG() << "CodeLite >>> invalid XML!" << endl;
         return false;
     }
 
@@ -257,7 +259,7 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 
 void XDebugManager::DoApplyBreakpoints()
 {
-    CL_DEBUG("CodeLite >>> Applying breakpoints");
+    clDEBUG() << "CodeLite >>> Applying breakpoints" << endl;
     if(!m_readerThread) {
         clDEBUG() << "CodeLite (PHP): No XDebug reader thread?" << endl;
         return;
@@ -327,7 +329,7 @@ void XDebugManager::DoHandleResponse(wxXmlNode* xml)
 
         wxStringOutputStream sos;
         if(doc.Save(sos)) {
-            CL_DEBUG(sos.GetString());
+            clDEBUG() << sos.GetString() << endl;
         }
         doc.DetachRoot();
     }
@@ -446,8 +448,8 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
         frame->Raise();
     }
 
-    CL_DEBUG("CodeLite: opening file %s:%d", e.GetFileName(),
-             e.GetLineNumber() + 1); // The user sees the line number from 1 (while scintilla counts them from 0)
+    clDEBUG() << "CodeLite: opening file:" << e.GetFileName() << ":" << (e.GetLineNumber() + 1)
+              << endl; // The user sees the line number from 1 (while scintilla counts them from 0)
 
     // Mark the debugger line / file
     IEditor* editor = m_plugin->GetManager()->FindEditor(e.GetFileName());
@@ -725,7 +727,7 @@ void XDebugManager::CloseDebugSession() { DoStopDebugger(); }
 
 void XDebugManager::OnCommThreadTerminated()
 {
-    CL_DEBUG("CodeLite >>> Comm Thread: session with XDebug is terminated!");
+    clDEBUG() << "CodeLite >>> Comm Thread: session with XDebug is terminated!" << endl;
     DoStopDebugger();
 }
 

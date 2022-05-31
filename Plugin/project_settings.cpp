@@ -76,7 +76,7 @@ ProjectSettings* ProjectSettings::Clone() const
 wxXmlNode* ProjectSettings::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Settings"));
-    node->AddProperty(wxT("Type"), m_projectType);
+    node->AddAttribute(wxT("Type"), m_projectType);
     node->AddChild(m_globalSettings->ToXml());
     std::map<wxString, BuildConfigPtr>::const_iterator iter = m_configs.begin();
     for(; iter != m_configs.end(); iter++) {

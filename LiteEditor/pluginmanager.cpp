@@ -185,9 +185,9 @@ void PluginManager::Load()
 
             clDynamicLibrary* dl = new clDynamicLibrary();
             if(!dl->Load(fileName)) {
-                CL_ERROR(wxT("Failed to load plugin's dll: ") + fileName);
+                clERROR() << "Failed to load plugin's dll" << fileName << endl;
                 if(!dl->GetError().IsEmpty()) {
-                    CL_ERROR(dl->GetError());
+                    clERROR() << dl->GetError() << endl;
                 }
                 wxDELETE(dl);
                 continue;
@@ -208,16 +208,15 @@ void PluginManager::Load()
             if(success) {
                 interface_version = pfnInterfaceVersion();
             } else {
-                CL_WARNING(wxT("Failed to find GetPluginInterfaceVersion() in dll: ") + fileName);
+                clWARNING() << "Failed to find GetPluginInterfaceVersion() in dll" << fileName << endl;
                 if(!dl->GetError().IsEmpty()) {
-                    CL_WARNING(dl->GetError());
+                    clWARNING() << dl->GetError() << endl;
                 }
             }
 
             if(interface_version != PLUGIN_INTERFACE_VERSION) {
-                CL_WARNING(wxString::Format(wxT("Version interface mismatch error for plugin '%s'. Plugin's interface "
-                                                "version is '%d', CodeLite interface version is '%d'"),
-                                            fileName.c_str(), interface_version, PLUGIN_INTERFACE_VERSION));
+                clWARNING() << "Version interface mismatch error for plugin:" << fileName
+                            << ". Found:" << interface_version << "Expected:" << PLUGIN_INTERFACE_VERSION << endl;
                 wxDELETE(dl);
                 continue;
             }
@@ -248,7 +247,7 @@ void PluginManager::Load()
 
             // Can we load it?
             if(!m_pluginsData.CanLoad(*pluginInfo)) {
-                CL_WARNING(wxT("Plugin ") + pluginInfo->GetName() + wxT(" is not enabled"));
+                clWARNING() << "Plugin:" << pluginInfo->GetName() << " is not enabled" << endl;
                 wxDELETE(dl);
                 continue;
             }
@@ -256,9 +255,9 @@ void PluginManager::Load()
             // try and load the plugin
             GET_PLUGIN_CREATE_FUNC pfn = (GET_PLUGIN_CREATE_FUNC)dl->GetSymbol(wxT("CreatePlugin"), &success);
             if(!success) {
-                CL_WARNING(wxT("Failed to find CreatePlugin() in dll: ") + fileName);
+                clWARNING() << "Failed to find CreatePlugin() in dll:" << fileName << endl;
                 if(!dl->GetError().IsEmpty()) {
-                    CL_WARNING(dl->GetError());
+                    clWARNING() << dl->GetError() << endl;
                 }
 
                 m_pluginsData.DisablePlugin(pluginInfo->GetName());
@@ -267,7 +266,7 @@ void PluginManager::Load()
 
             // Construct the plugin
             IPlugin* plugin = pfn((IManager*)this);
-            CL_DEBUG(wxT("Loaded plugin: ") + plugin->GetLongName());
+            clDEBUG() << "Loaded plugin:" << plugin->GetLongName() << endl;
             m_plugins[plugin->GetShortName()] = plugin;
 
             // Load the toolbar

@@ -1609,7 +1609,7 @@ void TagsStorageSQLite::GetMacrosDefined(const std::set<std::string>& files, con
             defMacros.push_back(res.GetString(0));
         }
     } catch(wxSQLite3Exception& exc) {
-        CL_DEBUG(wxT("%s"), exc.GetMessage().c_str());
+        clDEBUG() << exc.GetMessage() << endl;
     }
 }
 
@@ -1626,7 +1626,7 @@ void TagsStorageSQLite::GetTagsByName(const wxString& prefix, std::vector<TagEnt
         DoFetchTags(sql, tags);
 
     } catch(wxSQLite3Exception& e) {
-        CL_DEBUG(wxT("%s"), e.GetMessage().c_str());
+        clDEBUG() << e.GetMessage() << endl;
     }
 }
 
@@ -1691,7 +1691,7 @@ TagEntryPtr TagsStorageSQLite::GetTagsByNameLimitOne(const wxString& name)
             return NULL;
 
     } catch(wxSQLite3Exception& e) {
-        CL_DEBUG(wxT("%s"), e.GetMessage().c_str());
+        clDEBUG() << e.GetMessage() << endl;
     }
     return NULL;
 }
@@ -1711,7 +1711,7 @@ void TagsStorageSQLite::GetTagsByPartName(const wxString& partname, std::vector<
         DoFetchTags(sql, tags);
 
     } catch(wxSQLite3Exception& e) {
-        CL_DEBUG(wxT("%s"), e.GetMessage().c_str());
+        clDEBUG() << e.GetMessage() << endl;
     }
 }
 

@@ -37,29 +37,6 @@
 #include <wx/string.h>
 #include <wx/variant.h>
 
-#if 0
-#define DEBUGMSG wxPrintf
-#define CL_DEBUG wxPrintf
-#define CL_DEBUG1 wxPrintf
-#else
-
-#define DEBUGMSG(...) \
-    do {              \
-    } while(false)
-
-#if 0
-#define CL_DEBUG(...) \
-    do {              \
-    } while(false)
-
-#define CL_DEBUG1(...) \
-    do {               \
-    } while(false)
-
-#endif
-
-#endif
-
 enum eLexerOptions {
     /// Options
     kLexerOpt_None = 0,

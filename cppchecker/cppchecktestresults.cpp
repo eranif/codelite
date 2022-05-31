@@ -23,100 +23,97 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/xml/xml.h>
-#include <wx/filename.h>
-#include <wx/sstream.h>
 #include "cppchecktestresults.h"
+
 #include "wx_xml_compatibility.h"
 
-CppCheckResult::~CppCheckResult()
-{
+#include <wx/filename.h>
+#include <wx/sstream.h>
+#include <wx/xml/xml.h>
 
-}
+CppCheckResult::~CppCheckResult() {}
 
 //------------------------------------------------------------
 
 CppCheckTestResults::CppCheckTestResults()
-: m_errorCount(0)
+    : m_errorCount(0)
 {
 }
 
-CppCheckTestResults::~CppCheckTestResults()
-{
-}
+CppCheckTestResults::~CppCheckTestResults() {}
 
 void CppCheckTestResults::AddResultsForFile(const wxString& xmlOutput)
 {
-	// Create XML parser
-	wxStringInputStream xmlStream(xmlOutput);
-	wxXmlDocument xmlDoc(xmlStream);
-	if (!xmlDoc.IsOk()) {
-		return;
-	}
+    // Create XML parser
+    wxStringInputStream xmlStream(xmlOutput);
+    wxXmlDocument xmlDoc(xmlStream);
+    if(!xmlDoc.IsOk()) {
+        return;
+    }
 
-	wxXmlNode* root = xmlDoc.GetRoot();
-	if (!root || root->GetName() != wxT("results")) {
-		return;
-	}
+    wxXmlNode* root = xmlDoc.GetRoot();
+    if(!root || root->GetName() != wxT("results")) {
+        return;
+    }
 
-	std::vector<CppCheckResult>* v(NULL);
-	wxString fileName;
-	for (wxXmlNode* child = root->GetChildren(); child; child = child->GetNext()) {
-		if (child->GetName() == wxT("error")) {
-			CppCheckResult cppCheckResult;
-			child->GetPropVal(wxT("id"),   &cppCheckResult.id);
-			child->GetPropVal(wxT("file"), &fileName);
+    std::vector<CppCheckResult>* v(NULL);
+    wxString fileName;
+    for(wxXmlNode* child = root->GetChildren(); child; child = child->GetNext()) {
+        if(child->GetName() == wxT("error")) {
+            CppCheckResult cppCheckResult;
+            child->GetAttribute(wxT("id"), &cppCheckResult.id);
+            child->GetAttribute(wxT("file"), &fileName);
 
-			// Normalize the path
-			wxFileName fn(fileName);
-			fn.Normalize(wxPATH_NORM_ALL & ~(wxPATH_NORM_LONG));
-			cppCheckResult.filename = fn.GetFullPath();
+            // Normalize the path
+            wxFileName fn(fileName);
+            fn.Normalize(wxPATH_NORM_ALL & ~(wxPATH_NORM_LONG));
+            cppCheckResult.filename = fn.GetFullPath();
 
-			wxString sLine;
-			child->GetPropVal(wxT("line"), &sLine);
-			sLine.ToLong(&cppCheckResult.lineno);
-			child->GetPropVal(wxT("severity"), &cppCheckResult.severity);
-			child->GetPropVal(wxT("msg"),      &cppCheckResult.msg);
+            wxString sLine;
+            child->GetAttribute(wxT("line"), &sLine);
+            sLine.ToLong(&cppCheckResult.lineno);
+            child->GetAttribute(wxT("severity"), &cppCheckResult.severity);
+            child->GetAttribute(wxT("msg"), &cppCheckResult.msg);
 
-			// Locate the entry that matches this file name
-			std::map<wxString, std::vector<CppCheckResult>* >::iterator iter = m_results.find(fileName);
-			if(iter == m_results.end()) {
-				v = new std::vector<CppCheckResult>();
-				m_results[fn.GetFullPath()] = v;
-			} else {
-				v = iter->second;
-			}
+            // Locate the entry that matches this file name
+            std::map<wxString, std::vector<CppCheckResult>*>::iterator iter = m_results.find(fileName);
+            if(iter == m_results.end()) {
+                v = new std::vector<CppCheckResult>();
+                m_results[fn.GetFullPath()] = v;
+            } else {
+                v = iter->second;
+            }
 
-			v->push_back(cppCheckResult);
-			m_errorCount++;
-			v = NULL;
-		}
-	}
+            v->push_back(cppCheckResult);
+            m_errorCount++;
+            v = NULL;
+        }
+    }
 }
 
 std::vector<CppCheckResult>* CppCheckTestResults::GetResultsForFile(const wxString& filename)
 {
-	std::map<wxString, std::vector<CppCheckResult>* >::iterator iter = m_results.find(filename);
-	if (iter != m_results.end())
-		return iter->second;
+    std::map<wxString, std::vector<CppCheckResult>*>::iterator iter = m_results.find(filename);
+    if(iter != m_results.end())
+        return iter->second;
 
-	return NULL;
+    return NULL;
 }
 
 void CppCheckTestResults::ClearAll()
 {
-	std::map<wxString, std::vector<CppCheckResult>* >::iterator iter = m_results.begin();
-	for(; iter != m_results.end(); iter++)
-		delete iter->second;
-	m_results.clear();
-	m_errorCount = 0;
+    std::map<wxString, std::vector<CppCheckResult>*>::iterator iter = m_results.begin();
+    for(; iter != m_results.end(); iter++)
+        delete iter->second;
+    m_results.clear();
+    m_errorCount = 0;
 }
 
 wxArrayString CppCheckTestResults::GetFiles()
 {
-	wxArrayString files;
-	std::map<wxString, std::vector<CppCheckResult>* >::iterator iter = m_results.begin();
-	for(; iter != m_results.end(); iter++)
-		files.Add(iter->first);
-	return files;
+    wxArrayString files;
+    std::map<wxString, std::vector<CppCheckResult>*>::iterator iter = m_results.begin();
+    for(; iter != m_results.end(); iter++)
+        files.Add(iter->first);
+    return files;
 }

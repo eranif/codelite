@@ -213,12 +213,12 @@ bool clCxxWorkspace::CreateWorkspace(const wxString& name, const wxString& path,
 
     wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Workspace"));
     m_doc.SetRoot(root);
-    m_doc.GetRoot()->AddProperty(wxT("Name"), name);
-    m_doc.GetRoot()->AddProperty(wxT("Database"), dbFileName.GetFullPath(wxPATH_UNIX));
+    m_doc.GetRoot()->AddAttribute(wxT("Name"), name);
+    m_doc.GetRoot()->AddAttribute(wxT("Database"), dbFileName.GetFullPath(wxPATH_UNIX));
 
     m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
     if(GetLocalWorkspace()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
-        m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
+        m_doc.GetRoot()->AddAttribute(wxT("SWTLW"), "Yes");
     }
 
     SaveXmlFile();
@@ -240,7 +240,7 @@ wxString clCxxWorkspace::GetStringProperty(const wxString& propName, wxString& e
         return wxEmptyString;
     }
 
-    return rootNode->GetPropVal(propName, wxEmptyString);
+    return rootNode->GetAttribute(propName, wxEmptyString);
 }
 
 void clCxxWorkspace::AddProjectToBuildMatrix(ProjectPtr prj)
@@ -354,8 +354,8 @@ bool clCxxWorkspace::CreateProject(const wxString& name, const wxString& path, c
 
     // Add an entry to the workspace file
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
-    node->AddProperty(wxT("Name"), name);
-    node->AddProperty(wxT("Path"), tmp.GetFullPath(wxPATH_UNIX));
+    node->AddAttribute(wxT("Name"), name);
+    node->AddAttribute(wxT("Path"), tmp.GetFullPath(wxPATH_UNIX));
 
     // Create the workspace folder and add the project
     wxXmlNode* parentNode = DoCreateWorkspaceFolder(workspaceFolder);
@@ -395,8 +395,8 @@ bool clCxxWorkspace::AddProject(const wxString& path, // fullpath
 
     // Add an entry to the workspace file
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
-    node->AddProperty(wxT("Name"), proj->GetName());
-    node->AddProperty(wxT("Path"), tmp.GetFullPath(wxPATH_UNIX));
+    node->AddAttribute(wxT("Name"), proj->GetName());
+    node->AddAttribute(wxT("Path"), tmp.GetFullPath(wxPATH_UNIX));
 
     // Create the workspace folder and add the project
     wxXmlNode* parentNode = DoCreateWorkspaceFolder(workspaceFolder);
@@ -470,9 +470,9 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
         fn.MakeRelativeTo(m_fileName.GetPath());
 
         wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
-        node->AddProperty(wxT("Name"), fn.GetName());
-        node->AddProperty(wxT("Path"), fn.GetFullPath(wxPATH_UNIX));
-        node->AddProperty(wxT("Active"), m_projects.size() == 1 ? wxT("Yes") : wxT("No"));
+        node->AddAttribute(wxT("Name"), fn.GetName());
+        node->AddAttribute(wxT("Path"), fn.GetFullPath(wxPATH_UNIX));
+        node->AddAttribute(wxT("Active"), m_projects.size() == 1 ? wxT("Yes") : wxT("No"));
         m_doc.GetRoot()->AddChild(node);
         if(!SaveXmlFile()) {
             wxMessageBox(
@@ -556,8 +556,8 @@ bool clCxxWorkspace::RemoveProject(const wxString& name, wxString& errMsg, const
 
     wxXmlNode* child = root->GetChildren();
     while(child) {
-        if(child->GetName() == wxT("Project") && child->GetPropVal(wxT("Name"), wxEmptyString) == name) {
-            if(child->GetPropVal(wxT("Active"), wxEmptyString).CmpNoCase(wxT("Yes")) == 0) {
+        if(child->GetName() == wxT("Project") && child->GetAttribute(wxT("Name"), wxEmptyString) == name) {
+            if(child->GetAttribute(wxT("Active"), wxEmptyString).CmpNoCase(wxT("Yes")) == 0) {
                 // the removed project was active,
                 // select new project to be active
                 if(!m_projects.empty()) {
@@ -632,7 +632,8 @@ void clCxxWorkspace::SetActiveProject(const wxString& name)
 
     std::list<wxXmlNode*> xmls = DoGetProjectsXmlNodes();
     std::for_each(xmls.begin(), xmls.end(), [&](wxXmlNode* node) {
-        XmlUtils::UpdateProperty(node, "Active", (node->GetPropVal(wxT("Name"), wxEmptyString) == name) ? "Yes" : "No");
+        XmlUtils::UpdateProperty(node, "Active",
+                                 (node->GetAttribute(wxT("Name"), wxEmptyString) == name) ? "Yes" : "No");
     });
 
     SaveXmlFile();
@@ -695,7 +696,7 @@ bool clCxxWorkspace::SaveXmlFile()
     }
 
     if(GetLocalWorkspace()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {
-        m_doc.GetRoot()->AddProperty(wxT("SWTLW"), "Yes");
+        m_doc.GetRoot()->AddAttribute(wxT("SWTLW"), "Yes");
         SyncFromLocalWorkspaceSTParserPaths();
         SyncFromLocalWorkspaceSTParserMacros();
     }
@@ -726,7 +727,7 @@ void clCxxWorkspace::SyncToLocalWorkspaceSTParserPaths()
         wxXmlNode* child = workspaceInclPaths->GetChildren();
         while(child) {
             if(child->GetName() == wxT("Exclude")) {
-                wxString path = child->GetPropVal(wxT("Path"), wxT(""));
+                wxString path = child->GetAttribute(wxT("Path"), wxT(""));
                 path.Trim().Trim(false);
                 if(path.IsEmpty() == false) {
                     excludePaths.Add(path);
@@ -734,7 +735,7 @@ void clCxxWorkspace::SyncToLocalWorkspaceSTParserPaths()
             }
 
             else if(child->GetName() == wxT("Include")) {
-                wxString path = child->GetPropVal(wxT("Path"), wxT(""));
+                wxString path = child->GetAttribute(wxT("Path"), wxT(""));
                 path.Trim().Trim(false);
                 if(path.IsEmpty() == false) {
                     inclduePaths.Add(path);
@@ -768,12 +769,12 @@ void clCxxWorkspace::SyncFromLocalWorkspaceSTParserPaths()
     workspaceInclPaths = new wxXmlNode(m_doc.GetRoot(), wxXML_ELEMENT_NODE, wxT("WorkspaceParserPaths"));
     for(size_t i = 0; i < inclduePaths.GetCount(); i++) {
         wxXmlNode* child = new wxXmlNode(workspaceInclPaths, wxXML_ELEMENT_NODE, wxT("Include"));
-        child->AddProperty(wxT("Path"), inclduePaths.Item(i));
+        child->AddAttribute(wxT("Path"), inclduePaths.Item(i));
     }
 
     for(size_t i = 0; i < excludePaths.GetCount(); i++) {
         wxXmlNode* child = new wxXmlNode(workspaceInclPaths, wxXML_ELEMENT_NODE, wxT("Exclude"));
-        child->AddProperty(wxT("Path"), excludePaths.Item(i));
+        child->AddAttribute(wxT("Path"), excludePaths.Item(i));
     }
 }
 
@@ -1313,7 +1314,7 @@ void clCxxWorkspace::DoLoadProjectsFromXml(wxXmlNode* parentNode, const wxString
     wxXmlNode* child = parentNode->GetChildren();
     while(child) {
         if(child->GetName() == wxT("Project")) {
-            wxString projectPath = child->GetPropVal(wxT("Path"), wxEmptyString);
+            wxString projectPath = child->GetAttribute(wxT("Path"), wxEmptyString);
             wxString errmsg;
             if(!DoAddProject(projectPath, folder, errmsg)) {
                 removedChildren.push_back(child);

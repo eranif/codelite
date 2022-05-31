@@ -79,7 +79,7 @@ void STDCALL ASErrorHandler(int errorNumber, const char* errorMessage)
 {
     wxString errStr;
     errStr << _U(errorMessage) << " (error " << errorNumber << ")";
-    CL_DEBUG(errStr.c_str());
+    clDEBUG() << errStr << endl;
 }
 
 // Allocate memory for the Artistic Style formatter

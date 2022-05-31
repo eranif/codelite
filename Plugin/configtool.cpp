@@ -46,7 +46,7 @@ bool ConfigTool::Load(const wxString& basename, const wxString& version)
     bool loaded = ::LoadXmlFile(&m_doc, initialSettings);
     wxString xmlVersion;
     if(loaded) {
-        xmlVersion = m_doc.GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
+        xmlVersion = m_doc.GetRoot()->GetAttribute(wxT("Version"), wxEmptyString);
     }
 
     if(xmlVersion != version) {

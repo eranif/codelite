@@ -1,4 +1,5 @@
 #include "PHPEntityFunction.h"
+
 #include "PHPEntityVariable.h"
 #include "PHPLookupTable.h"
 #include "commentconfigdata.h"
@@ -39,11 +40,13 @@ wxString PHPEntityFunction::GetSignature() const
                 break;
             }
         }
-        if(strSignature.EndsWith(", ")) { strSignature.RemoveLast(2); }
+        if(strSignature.EndsWith(", ")) {
+            strSignature.RemoveLast(2);
+        }
         strSignature << ")";
-        if (!GetReturnValue().IsEmpty()) {
+        if(!GetReturnValue().IsEmpty()) {
             strSignature << ": ";
-            if (HasFlag(kFunc_ReturnNullable)) {
+            if(HasFlag(kFunc_ReturnNullable)) {
                 strSignature << "?";
             }
             strSignature << GetReturnValue();
@@ -77,7 +80,7 @@ void PHPEntityFunction::Store(PHPLookupTable* lookup)
         SetDbId(db.GetLastRowId());
 
     } catch(wxSQLite3Exception& exc) {
-        CL_WARNING("PHPEntityFunction::Store: %s", exc.GetMessage());
+        clWARNING() << "PHPEntityFunction::Store:" << exc.GetMessage() << endl;
     }
 }
 
@@ -96,7 +99,9 @@ void PHPEntityFunction::FromResultSet(wxSQLite3ResultSet& res)
 
 wxString PHPEntityFunction::GetScope() const
 {
-    if(Parent()) { return Parent()->GetFullName(); }
+    if(Parent()) {
+        return Parent()->GetFullName();
+    }
     return "";
 }
 
@@ -115,11 +120,11 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
         if(var) {
             hasParams = true;
             doc << " * @param ";
-            if (var->IsNullable() || var->GetDefaultValue().Matches("null")) {
+            if(var->IsNullable() || var->GetDefaultValue().Matches("null")) {
                 doc << "?";
             }
             doc << (var->GetTypeHint().IsEmpty() ? "mixed" : var->GetTypeHint()) << " " << var->GetFullName();
-            if (!var->GetDefaultValue().IsEmpty()) {
+            if(!var->GetDefaultValue().IsEmpty()) {
                 doc << " [" << var->GetDefaultValue() << "]";
             }
             doc << " \n";
@@ -130,7 +135,7 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
             doc << " *\n";
         }
         doc << " * @return ";
-        if (HasFlag(kFunc_ReturnNullable)) {
+        if(HasFlag(kFunc_ReturnNullable)) {
             doc << "?";
         }
         doc << (GetReturnValue().IsEmpty() ? "mixed" : GetReturnValue()) << " \n";
@@ -177,6 +182,8 @@ wxString PHPEntityFunction::ToTooltip() const
 {
     wxString tip;
     tip << GetShortName() << GetSignature();
-    if(!GetReturnValue().IsEmpty()) { tip << " : " << GetReturnValue(); }
+    if(!GetReturnValue().IsEmpty()) {
+        tip << " : " << GetReturnValue();
+    }
     return tip;
 }

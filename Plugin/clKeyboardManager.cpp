@@ -225,16 +225,15 @@ void clKeyboardManager::Save()
 void clKeyboardManager::Initialize()
 {
     m_accelTable.clear();
-    CL_DEBUG("Keyboard manager: Initializing keyboard manager");
+    clDEBUG() << "Keyboard manager: Initializing keyboard manager" << endl;
     // Load old format
     clKeyboardBindingConfig config;
     if(!config.Exists()) {
-        CL_DEBUG("Keyboard manager: No configurtion found - importing old settings");
+        clDEBUG() << "Keyboard manager: No configurtion found - importing old settings" << endl;
         // Decide which file we want to load, take the user settings file first
         wxFileName fnOldSettings(clStandardPaths::Get().GetUserDataDir(), "accelerators.conf");
         fnOldSettings.AppendDir("config");
         if(fnOldSettings.Exists()) {
-            CL_DEBUG("Keyboard manager: Importing settings from '%s'", fnOldSettings.GetFullPath());
             // Apply the old settings to the menus
             m_accelTable = DoLoadAccelerators(fnOldSettings);
 

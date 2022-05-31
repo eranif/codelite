@@ -1,8 +1,10 @@
 #include "custom_control_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "file_logger.h"
 #include "wxc_settings.h"
 #include "xmlutils.h"
+
 #include <macromanager.h>
 #include <wx/regex.h>
 
@@ -14,7 +16,9 @@ CustomControlWrapper::CustomControlWrapper()
     m_namePattern = wxT("m_custom");
 
     // Generate a name if there isn't one; but don't overwrite e.g. an imported one
-    if(!GetName().empty()) { SetName(GenerateName()); }
+    if(!GetName().empty()) {
+        SetName(GenerateName());
+    }
 }
 
 CustomControlWrapper::~CustomControlWrapper() {}
@@ -24,7 +28,8 @@ wxcWidget* CustomControlWrapper::Clone() const { return new CustomControlWrapper
 wxString CustomControlWrapper::CppCtorCode() const
 {
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() == false) return wxT("");
+    if(cct.IsValid() == false)
+        return wxT("");
 
     // support for Subclass
     wxString subclass = PropertyString(PROP_SUBCLASS_NAME);
@@ -42,7 +47,9 @@ wxString CustomControlWrapper::CppCtorCode() const
         reNewClass.Replace(&cppCode, "new " + subclass + "(");
     }
 
-    if(!cppCode.EndsWith(wxT(";"))) { cppCode << wxT(";"); }
+    if(!cppCode.EndsWith(wxT(";"))) {
+        cppCode << wxT(";");
+    }
 
     // Replace $name with the actual control c++ name
     cppCode = MacroManager::Instance()->Replace(cppCode, wxT("name"), GetName(), true);
@@ -54,20 +61,25 @@ wxString CustomControlWrapper::CppCtorCode() const
 void CustomControlWrapper::GetIncludeFile(wxArrayString& headers) const
 {
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() == false) return;
+    if(cct.IsValid() == false)
+        return;
 
     wxString inclLine = cct.GetIncludeFile();
-    if(inclLine.IsEmpty()) return;
+    if(inclLine.IsEmpty())
+        return;
 
     inclLine.Trim().Trim(false);
-    if(inclLine.EndsWith(wxT(";"))) { inclLine.RemoveLast(); }
+    if(inclLine.EndsWith(wxT(";"))) {
+        inclLine.RemoveLast();
+    }
     headers.Add(inclLine);
 }
 
 wxString CustomControlWrapper::GetWxClassName() const
 {
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() == false) return wxT("");
+    if(cct.IsValid() == false)
+        return wxT("");
 
     return cct.GetClassName();
 }
@@ -128,29 +140,41 @@ void CustomControlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
 
     wxString include, construction, declaration, name, xrcclassname, settings;
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "name");
-    if(propertynode) { name = propertynode->GetNodeContent(); }
+    if(propertynode) {
+        name = propertynode->GetNodeContent();
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "declaration");
-    if(propertynode) { declaration = propertynode->GetNodeContent(); }
+    if(propertynode) {
+        declaration = propertynode->GetNodeContent();
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "include");
-    if(propertynode) { include = propertynode->GetNodeContent(); }
+    if(propertynode) {
+        include = propertynode->GetNodeContent();
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "construction");
-    if(propertynode) { construction = propertynode->GetNodeContent(); }
+    if(propertynode) {
+        construction = propertynode->GetNodeContent();
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "settings");
-    if(propertynode) { settings = propertynode->GetNodeContent(); }
+    if(propertynode) {
+        settings = propertynode->GetNodeContent();
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "class");
-    if(propertynode) { xrcclassname = propertynode->GetNodeContent(); }
+    if(propertynode) {
+        xrcclassname = propertynode->GetNodeContent();
+    }
 
     // The wxFB fields aren't the same as the wxC ones, so we need to do some guesswork here:
     wxString wxclassname = declaration.BeforeFirst('*').Trim(); // Get the real classname from 'MyFoo * m_foo;'
 
     if(wxclassname.empty() || construction.empty() ||
        declaration.empty()) { // settings and xrcclassname are optional; 'include' probably is too
-        CL_WARNING("Failed to load a Custom Control from wxFB: not all necessary data was available");
+        clWARNING() << "Failed to load a Custom Control from wxFB: not all necessary data was available" << endl;
         return;
     }
 
@@ -177,7 +201,8 @@ void CustomControlWrapper::DoUpdateEvents()
     m_connectedEvents.Clear();
 
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() == false) return;
+    if(cct.IsValid() == false)
+        return;
 
     const wxStringMap_t& events = cct.GetEvents();
     wxStringMap_t::const_iterator iter = events.begin();

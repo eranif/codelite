@@ -98,7 +98,7 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
     wxTheApp->Unbind(wxEVT_KEY_DOWN, &NotebookNavigationDlg::OnKeyDown, this);
     wxTheApp->Unbind(wxEVT_KEY_UP, &NotebookNavigationDlg::OnKeyUp, this);
 
-    CL_DEBUG("NotebookNavigationDlg::~NotebookNavigationDlg");
+    clDEBUG() << "NotebookNavigationDlg::~NotebookNavigationDlg" << endl;
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         TabData* d = (TabData*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         wxDELETE(d);
@@ -108,7 +108,7 @@ NotebookNavigationDlg::~NotebookNavigationDlg()
 
 void NotebookNavigationDlg::CloseDialog()
 {
-    CL_DEBUG("NotebookNavigationDlg::CloseDialog");
+    clDEBUG() << "NotebookNavigationDlg::CloseDialog" << endl;
     wxDataViewItem selection = m_dvListCtrl->GetSelection();
     if(selection.IsOk()) {
         TabData* d = (TabData*)m_dvListCtrl->GetItemData(selection);
@@ -192,7 +192,7 @@ void NotebookNavigationDlg::OnKeyDown(wxKeyEvent& event)
 
 void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
 {
-    CL_DEBUG("NotebookNavigationDlg::OnKeyUp");
+    clDEBUG() << "NotebookNavigationDlg::OnKeyUp" << endl;
 #ifdef __WXOSX__
     event.Skip();
 #else
@@ -207,6 +207,6 @@ void NotebookNavigationDlg::OnKeyUp(wxKeyEvent& event)
 void NotebookNavigationDlg::OnItemActivated(wxDataViewEvent& event)
 {
     event.Skip();
-    CL_DEBUG("NotebookNavigationDlg::OnItemActivated");
+    clDEBUG() << "NotebookNavigationDlg::OnItemActivated" << endl;
     CloseDialog();
 }

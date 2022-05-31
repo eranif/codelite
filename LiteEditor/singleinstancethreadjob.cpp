@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "globals.h"
 #include "singleinstancethreadjob.h"
-#include <wx/filename.h>
-#include "file_logger.h"
+
 #include "JSON.h"
 #include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
+
+#include <wx/filename.h>
 
 wxDEFINE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_OPEN_FILES, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP, clCommandEvent);
@@ -51,11 +53,13 @@ void* clSingleInstanceThread::Entry()
         while(!TestDestroy()) {
             // wait for a new connection
             clSocketBase::Ptr_t client = m_serverSocket.WaitForNewConnection(1);
-            if(!client) continue;
+            if(!client)
+                continue;
 
             wxString message;
-            if(client->ReadMessage(message, 3) == clSocketBase::kTimeout) continue;
-            CL_DEBUG("clSingleInstanceThread: received new message: %s", message);
+            if(client->ReadMessage(message, 3) == clSocketBase::kTimeout)
+                continue;
+            clDEBUG() << "clSingleInstanceThread: received new message:" << message << endl;
 
             JSON root(message);
             wxArrayString args = root.toElement().namedObject("args").toArrayString();
@@ -71,7 +75,7 @@ void* clSingleInstanceThread::Entry()
             }
         }
     } catch(clSocketException& e) {
-        CL_ERROR("Failed to create single instance socket: %s", e.what());
+        clERROR() << "Failed to create single instance socket:" << e.what() << endl;
     }
     return NULL;
 }

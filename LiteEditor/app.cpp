@@ -163,7 +163,6 @@ static void ChildTerminatedSingalHandler(int signo)
         if(pid > 0) {
             // waitpid succeeded
             IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
-            // CL_DEBUG("Process terminated. PID: %d, Exit Code: %d", pid, WEXITSTATUS(status));
 
         } else {
             break;
@@ -424,10 +423,10 @@ bool CodeLiteApp::OnInit()
 #endif
     }
 
-    // Set the log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging CodeLite
-    // itself :/
-    FileLogger::OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
-    CL_DEBUG(wxT("Starting codelite..."));
+    // Set the global log file verbosity. NB Doing this earlier seems to break wxGTK debug output when debugging
+    // CodeLite itself :/
+    FileLogger::Get().OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
+    clDEBUG() << "Starting codelite..." << endl;
 
     // Copy gdb pretty printers from the installation folder to a writeable location
     // this is  needed because python complies the files and in most cases the user
@@ -578,7 +577,8 @@ bool CodeLiteApp::OnInit()
     wxString strVersion = CODELITE_VERSION_STRING;
     cfg->Init(strVersion, wxT("2.0.2"));
     if(!cfg->Load()) {
-        CL_ERROR(wxT("Failed to load configuration file: %s/config/codelite.xml"), wxGetCwd().c_str());
+        clERROR() << "Failed to load configuration file: config/codelite.xml. Workding directory:" << wxGetCwd()
+                  << endl;
         return false;
     }
 
@@ -809,7 +809,7 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& m_parser)
                 return false;
 
             } catch(clSocketException& e) {
-                CL_ERROR("Failed to send single instance request: %s", e.what());
+                clERROR() << "Failed to send single instance request" << e.what() << endl;
             }
         }
     }
@@ -917,7 +917,7 @@ wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory, const wxS
             wxLogNull noLog;
             wxXmlDocument doc;
             if(doc.Load(menuFile.GetFullPath())) {
-                wxString version = doc.GetRoot()->GetPropVal(wxT("version"), wxT("1.0"));
+                wxString version = doc.GetRoot()->GetAttribute(wxT("version"), wxT("1.0"));
                 if(version != requiredVersion) {
                     return defaultMenuFile;
                 }
@@ -947,13 +947,13 @@ void CodeLiteApp::DoCopyGdbPrinters()
 void CodeLiteApp::AdjustPathForCygwinIfNeeded()
 {
 #ifdef __WXMSW__
-    CL_DEBUG("AdjustPathForCygwinIfNeeded called");
+    clDEBUG() << "AdjustPathForCygwinIfNeeded called" << endl;
     if(!::clIsCygwinEnvironment()) {
-        CL_DEBUG("Not running under Cygwin - nothing be done");
+        clDEBUG() << "Not running under Cygwin - nothing be done" << endl;
         return;
     }
 
-    CL_SYSTEM("Cygwin environment detected");
+    clSYSTEM() << "Cygwin environment detected" << endl;
 
     wxString cygwinRootDir;
     CompilerLocatorCygwin cygwin;
@@ -970,7 +970,7 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
     // Always add the default paths
     wxArrayString paths;
     if(!cygwinRootDir.IsEmpty()) {
-        CL_SYSTEM("Cygwin root folder is: %s", cygwinRootDir);
+        clSYSTEM() << "Cygwin root folder is:" << cygwinRootDir << endl;
         wxFileName cygwinBinFolder(cygwinRootDir, "");
         cygwinBinFolder.AppendDir("bin");
         paths.Add(cygwinBinFolder.GetPath());
@@ -1000,7 +1000,7 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
         fixedPath << curpath << ";";
     }
 
-    CL_DEBUG("Setting PATH environment variable to:\n%s", fixedPath);
+    clDEBUG() << "Setting PATH environment variable to:" << fixedPath << endl;
     ::wxSetEnv("PATH", fixedPath);
 #endif
 }
@@ -1008,13 +1008,13 @@ void CodeLiteApp::AdjustPathForCygwinIfNeeded()
 void CodeLiteApp::AdjustPathForMSYSIfNeeded()
 {
 #ifdef __WXMSW__
-    CL_DEBUG("AdjustPathForMSYSIfNeeded called");
+    clDEBUG() << "AdjustPathForMSYSIfNeeded called" << endl;
     if(!::clIsMSYSEnvironment()) {
-        CL_DEBUG("Not running under MSYS - nothing be done");
+        clDEBUG() << "Not running under MSYS - nothing be done" << endl;
         return;
     }
 
-    CL_SYSTEM("MSYS environment detected");
+    clSYSTEM() << "MSYS environment detected" << endl;
 
     // Running under Cygwin
     // Adjust the PATH environment variable
@@ -1028,7 +1028,7 @@ void CodeLiteApp::AdjustPathForMSYSIfNeeded()
     // determine the baseroot of the MSYS installation
     wxString msysRoot = ProcUtils::SafeExecuteCommand("sh -c 'cd / && pwd -W'");
     if(!msysRoot.IsEmpty()) {
-        CL_SYSTEM("MSYS Root folder is set to: %s", msysRoot);
+        clSYSTEM() << "MSYS Root folder is set to:" << msysRoot << endl;
         msysRoot.Trim().Trim(false);
         rootDir.Clear();
         rootDir << msysRoot << "/";
@@ -1045,7 +1045,7 @@ void CodeLiteApp::AdjustPathForMSYSIfNeeded()
     paths.insert(paths.end(), userPaths.begin(), userPaths.end());
 
     wxString fixedPath = ::wxJoin(paths, ';');
-    CL_DEBUG("Setting PATH environment variable to:\n%s", fixedPath);
+    clDEBUG() << "Setting PATH environment variable to:" << fixedPath << endl;
     ::wxSetEnv("PATH", fixedPath);
 #endif
 }

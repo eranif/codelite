@@ -23,26 +23,23 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "svnxml.h"
-#include <wx/xml/xml.h>
-#include <wx/sstream.h>
-#include "xmlutils.h"
-#include <wx/log.h>
-#include "wx_xml_compatibility.h"
-#include <wx/tokenzr.h>
+
 #include "file_logger.h"
+#include "wx_xml_compatibility.h"
+#include "xmlutils.h"
+
+#include <wx/log.h>
+#include <wx/sstream.h>
+#include <wx/tokenzr.h>
+#include <wx/xml/xml.h>
 
 SvnXML::SvnXML() {}
 
 SvnXML::~SvnXML() {}
 
-void SvnXML::GetFiles(const wxString& input,
-                      wxArrayString& modifiedFiles,
-                      wxArrayString& conflictedFiles,
-                      wxArrayString& unversionedFiles,
-                      wxArrayString& newFiles,
-                      wxArrayString& deletedFiles,
-                      wxArrayString& lockedFiles,
-                      wxArrayString& ignoredFiles)
+void SvnXML::GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArrayString& conflictedFiles,
+                      wxArrayString& unversionedFiles, wxArrayString& newFiles, wxArrayString& deletedFiles,
+                      wxArrayString& lockedFiles, wxArrayString& ignoredFiles)
 {
     // First column information:
     //
@@ -120,12 +117,12 @@ void SvnXML::GetFiles(const wxString& input,
 void SvnXML::GetSvnInfo(const wxString& input, SvnInfo& svnInfo)
 {
     int start = input.Find("<info>");
-    if(start == wxNOT_FOUND) return;
+    if(start == wxNOT_FOUND)
+        return;
     wxStringInputStream stream(input);
     wxXmlDocument doc(stream);
 
     if(!doc.IsOk()) {
-        CL_DEBUG("GetSvnInfo:\n[%s]\n", input);
         return;
     }
 
@@ -134,13 +131,13 @@ void SvnXML::GetSvnInfo(const wxString& input, SvnInfo& svnInfo)
         wxXmlNode* node = root->GetChildren();
         // in newer versions of svn, there is another top level child named
         // <info>
-        //if(node && node->GetName() == "info") {
+        // if(node && node->GetName() == "info") {
         //    node = node->GetChildren();
         //}
 
         while(node) {
             if(node->GetName() == wxT("entry")) {
-                node->GetPropVal(wxT("revision"), &svnInfo.m_revision);
+                node->GetAttribute(wxT("revision"), &svnInfo.m_revision);
 
                 // Look for the URL
                 wxXmlNode* child = node->GetChildren();

@@ -86,8 +86,8 @@ bool EnvironmentConfig::Load()
                 wxXmlNode* child = node->GetChildren();
                 while(child) {
                     if(child->GetName() == wxT("MapEntry")) {
-                        wxString key = child->GetPropVal(wxT("Key"), wxT(""));
-                        wxString val = child->GetPropVal(wxT("Value"), wxT(""));
+                        wxString key = child->GetAttribute(wxT("Key"), wxT(""));
+                        wxString val = child->GetAttribute(wxT("Value"), wxT(""));
                         content << key << wxT("=") << val << wxT("\n");
                     }
                     child = child->GetNext();
@@ -124,11 +124,9 @@ void EnvironmentConfig::ApplyEnv(wxStringMap_t* overrideMap, const wxString& pro
     ++m_envApplied;
 
     if(m_envApplied > 1) {
-        // CL_DEBUG("Thread-%d: Applying environment variables... (not needed)", (int)wxThread::GetCurrentId());
         return;
     }
 
-    // CL_DEBUG("Thread-%d: Applying environment variables...", (int)wxThread::GetCurrentId());
     // read the environments variables
     EvnVarList vars;
     ReadObject(wxT("Variables"), &vars);
@@ -179,7 +177,6 @@ void EnvironmentConfig::UnApplyEnv()
 {
     --m_envApplied;
     if(m_envApplied == 0) {
-        // CL_DEBUG("Thread-%d: Un-Applying environment variables", (int)wxThread::GetCurrentId());
         // loop over the old values and restore them
         wxStringMap_t::iterator iter = m_envSnapshot.begin();
         for(; iter != m_envSnapshot.end(); iter++) {

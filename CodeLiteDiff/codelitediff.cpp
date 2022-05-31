@@ -130,7 +130,7 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
             tempfile = true;
             m_leftFile = SaveEditorToTmpfile(m_mgr->GetActiveEditor());
             if(!m_leftFile.IsOk()) {
-                CL_DEBUG("CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for m_leftFile");
+                clDEBUG() << "CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for m_leftFile" << endl;
                 return;
             }
         }
@@ -139,12 +139,12 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
             tempfile = true;
             IEditor* editor = m_mgr->FindEditor(secondFile);
             if(!editor) {
-                CL_DEBUG("CodeLiteDiff::OnDiff: call to FindEditor() failed");
+                clDEBUG() << "CodeLiteDiff::OnDiff: call to FindEditor() failed" << endl;
                 return;
             }
             wxFileName rightFn = SaveEditorToTmpfile(editor);
             if(!rightFn.IsOk()) {
-                CL_DEBUG("CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile");
+                clDEBUG() << "CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile" << endl;
                 return;
             }
             secondFile = rightFn.GetFullPath();
@@ -157,13 +157,13 @@ void CodeLiteDiff::OnDiff(wxCommandEvent& event)
             if(editor && editor->IsEditorModified()) {
                 wxFileName rightFn = SaveEditorToTmpfile(editor);
                 if(!rightFn.IsOk()) {
-                    CL_DEBUG("CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile");
+                    clDEBUG() << "CodeLiteDiff::OnDiff: call to SaveEditorToTmpfile() failed for secondFile" << endl;
                     return;
                 }
                 secondFile = rightFn.GetFullPath();
 
             } else {
-                CL_DEBUG("CodeLiteDiff::OnDiff: trying to diff an editor against itself");
+                clDEBUG() << "CodeLiteDiff::OnDiff: trying to diff an editor against itself" << endl;
                 return;
             }
         }

@@ -42,7 +42,7 @@ void LSPNetworkSTDIO::Send(const std::string& data)
 {
     if(m_server) {
         m_server->Write(data);
-        if(FileLogger::CanLog(FileLogger::Dbg)) {
+        if(FileLogger::Get().CanLog(FileLogger::Dbg)) {
             m_log.Write(separator_str, separator_str_len);
             m_log.Write(data.c_str(), data.length());
             m_log.Flush();
@@ -68,7 +68,7 @@ void LSPNetworkSTDIO::OnProcessOutput(clProcessEvent& event)
     clCommandEvent evt(wxEVT_LSP_NET_DATA_READY);
     evt.SetString(dataRead);
 
-    if(FileLogger::CanLog(FileLogger::Dbg)) {
+    if(FileLogger::Get().CanLog(FileLogger::Dbg)) {
         m_log.Write(separator_str, separator_str_len);
         m_log.Write(dataRead);
         m_log.Flush();
@@ -79,7 +79,7 @@ void LSPNetworkSTDIO::OnProcessOutput(clProcessEvent& event)
 
 void LSPNetworkSTDIO::OnProcessStderr(clProcessEvent& event)
 {
-    if(FileLogger::CanLog(FileLogger::Dbg)) {
+    if(FileLogger::Get().CanLog(FileLogger::Dbg)) {
         m_log.Write(wxString() << "[**STDERR**]");
         m_log.Write(event.GetOutput());
     }
@@ -120,7 +120,7 @@ void LSPNetworkSTDIO::DoStartLocalProcess()
     clCommandEvent evtReady(wxEVT_LSP_NET_CONNECTED);
     AddPendingEvent(evtReady);
 
-    if(FileLogger::CanLog(FileLogger::Dbg)) {
+    if(FileLogger::Get().CanLog(FileLogger::Dbg)) {
         m_log.Write(wxString("\n\n  =============== Process Started ===============  \n\n"));
         m_log.Flush();
     }

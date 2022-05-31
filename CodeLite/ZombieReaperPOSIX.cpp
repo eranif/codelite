@@ -24,11 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "ZombieReaperPOSIX.h"
+
 #include "event_notifier.h"
 
 #ifndef __WXMSW__
 
 #include "file_logger.h"
+
 #include <sys/wait.h>
 
 wxDEFINE_EVENT(wxEVT_CL_PROCESS_TERMINATED, wxProcessEvent);
@@ -36,7 +38,6 @@ wxDEFINE_EVENT(wxEVT_CL_PROCESS_TERMINATED, wxProcessEvent);
 ZombieReaperPOSIX::ZombieReaperPOSIX()
     : wxThread(wxTHREAD_JOINABLE)
 {
-    CL_DEBUG("ZombieReaperPOSIX: started");
 }
 
 ZombieReaperPOSIX::~ZombieReaperPOSIX() {}

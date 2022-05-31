@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "tabgroupspane.h"
+
 #include "clThemedTreeCtrl.h"
 #include "codelite_events.h"
 #include "editor_config.h"
@@ -33,8 +35,8 @@
 #include "ieditor.h"
 #include "pluginmanager.h"
 #include "tabgroupmanager.h"
-#include "tabgroupspane.h"
 #include "wx_xml_compatibility.h"
+
 #include <algorithm>
 #include <wx/accel.h>
 #include <wx/filename.h>
@@ -781,14 +783,14 @@ void TabgroupsPane::AddFile(const wxString& filename)
     m_copieditem_filepath = filename;
     m_node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfo"));
     wxXmlNode* fp = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("wxString"));
-    fp->AddProperty(wxT("Value"), filename);
-    fp->AddProperty(wxT("Name"), wxT("FileName"));
+    fp->AddAttribute(wxT("Value"), filename);
+    fp->AddAttribute(wxT("Name"), wxT("FileName"));
     wxXmlNode* fvl = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("int"));
-    fvl->AddProperty(wxT("Name"), wxT("FirstVisibleLine"));
+    fvl->AddAttribute(wxT("Name"), wxT("FirstVisibleLine"));
     wxXmlNode* cl = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("int"));
-    cl->AddProperty(wxT("Name"), wxT("CurrentLine"));
+    cl->AddAttribute(wxT("Name"), wxT("CurrentLine"));
     wxXmlNode* bm = new wxXmlNode(m_node, wxXML_ELEMENT_NODE, wxT("wxArrayString"));
-    bm->AddProperty(wxT("Name"), wxT("Bookmarks"));
+    bm->AddAttribute(wxT("Name"), wxT("Bookmarks"));
 
     PasteTabgroupItem();
 

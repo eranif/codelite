@@ -1,8 +1,10 @@
 #include "XDebugCommThread.h"
+
 #include "XDebugManager.h"
-#include <wx/buffer.h>
+
 #include <file_logger.h>
 #include <string>
+#include <wx/buffer.h>
 #include <wx/log.h>
 
 void XDebugComThread::SendMsg(const wxString& msg) { m_queue.Post(msg); }
@@ -49,7 +51,7 @@ void* XDebugComThread::Entry()
 
         } while(!TestDestroy() && !client);
 
-        CL_DEBUG("CodeLite >>> Successfully accepted connection from XDebug!");
+        clDEBUG() << "CodeLite >>> Successfully accepted connection from XDebug!" << endl;
         m_xdebugMgr->CallAfter(&XDebugManager::SetConnected, true);
 
         //----------------------------------------------------------------
@@ -85,7 +87,7 @@ void* XDebugComThread::Entry()
             }
         }
     } catch(clSocketException& e) {
-        CL_DEBUG("XDebugComThread caught an exception: %s", e.what());
+        clDEBUG() << "XDebugComThread caught an exception:" << e.what() << endl;
         m_xdebugMgr->CallAfter(&XDebugManager::OnCommThreadTerminated);
         return NULL;
     }
@@ -142,7 +144,7 @@ void XDebugComThread::DoSendCommand(const wxString& command, clSocketBase::Ptr_t
     if(!client) {
         return;
     }
-    CL_DEBUGS(wxString() << "CodeLite >>> " << command);
+    clDEBUG() << "CodeLite >>> " << command << endl;
 
     wxMemoryBuffer buff;
     buff.AppendData(command.mb_str(wxConvISO8859_1), command.length());

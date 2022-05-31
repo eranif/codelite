@@ -1,8 +1,10 @@
 #include "XDebugRunCmdHandler.h"
+
 #include "XDebugManager.h"
 #include "php.h" // PhpPlugin
 #include "php_utils.h"
 #include "xdebugevent.h"
+
 #include <event_notifier.h>
 #include <file_logger.h>
 #include <imanager.h>
@@ -23,19 +25,19 @@ void XDebugRunCmdHandler::Process(const wxXmlNode* response)
     // a reply to the "Run" command has arrived
     wxString status = response->GetAttribute("status");
     if(status == "stopping") {
-        CL_DEBUG("CodeLite >>> xdebug entered status 'stopping'");
+        clDEBUG() << "CodeLite >>> xdebug entered status 'stopping'" << endl;
         m_mgr->SendStopCommand();
 
     } else if(status == "break") {
         // Break point was hit
-        CL_DEBUG("CodeLite >>> Breakpoint was hit");
+        clDEBUG() << "CodeLite >>> Breakpoint was hit" << endl;
         wxXmlNode* msg = XmlUtils::FindFirstByTagName(response, "xdebug:message");
         if(msg) {
             wxString filename = msg->GetAttribute("filename");
             int line_number = XmlUtils::ReadLong(msg, "lineno");
 
             wxString localFile = ::MapRemoteFileToLocalFile(filename);
-            CL_DEBUG("Mapping remote file: %s => %s", filename, localFile);
+            clDEBUG() << "Mapping remote file:" << filename << "->" << localFile << endl;
             wxFileName fnFilename(localFile);
             if(fnFilename.Exists()) {
                 // Notify about control

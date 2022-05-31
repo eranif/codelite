@@ -271,9 +271,6 @@ void OutputPane::ApplySavedTabOrder(bool update_ui) const
         m_book->InsertPage(n, vTempstore.at(n).win, vTempstore.at(n).text, false, vTempstore.at(n).bmp);
     }
 
-    // wxPrintf("After load");for (size_t n=0; n < m_book->GetPageCount(); ++n)  CL_DEBUG1(wxString::Format("Tab %i:
-    // %zs",(int)n,m_book->GetPageText(n)));
-
     // Restore any saved last selection
     // NB: this doesn't actually work atm: the selection is set correctly, but presumably something else changes is
     // later

@@ -682,7 +682,6 @@ wxString wxCrafter::FBToFontstring(const wxString& FBstr)
     // The wxFB default font is also faceless, so we must use wxTOKEN_RET_EMPTY_ALL here
     wxArrayString arr = Split(FBstr, ",", wxTOKEN_RET_EMPTY_ALL);
     if(arr.GetCount() < 6) {
-        CL_WARNING(wxT("Badly-formed wxFB font"));
         return str;
     }
     wxString face = arr.Item(0), sz = arr.Item(3);

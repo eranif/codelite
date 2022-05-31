@@ -1,4 +1,5 @@
 #include "php.h"
+
 #include "NewPHPProjectWizard.h"
 #include "PHPDebugPane.h"
 #include "PHPXDebugSetupWizard.h"
@@ -28,6 +29,7 @@
 #include "ssh_workspace_settings.h"
 #include "wxCodeCompletionBox.h"
 #include "xdebugevent.h"
+
 #include <cl_config.h>
 #include <cl_standard_paths.h>
 #include <ctags_manager.h>
@@ -536,7 +538,6 @@ void PhpPlugin::OnReloadWorkspace(clCommandEvent& e)
 void PhpPlugin::OnLoadURL(PHPEvent& e)
 {
     e.Skip();
-    CL_DEBUG("Loading URL: " + e.GetUrl());
     ::wxLaunchDefaultBrowser(e.GetUrl());
 }
 

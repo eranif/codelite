@@ -1,5 +1,7 @@
 #include "CxxPreProcessor.h"
+
 #include "file_logger.h"
+
 #include <wx/regex.h>
 
 CxxPreProcessor::CxxPreProcessor()
@@ -78,8 +80,6 @@ bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxStrin
             m_fileMapping.insert({ includeStatement, fn.GetFullPath() });
             outFile = fn;
             return true;
-        } else {
-            // CL_DEBUG("Including a folder :/ : %s", fixedFileName.GetFullPath());
         }
     }
 

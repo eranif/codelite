@@ -49,10 +49,12 @@
 
 // Declaration
 #include "CMakeHelpTab.h"
+
 #include "ColoursAndFontsManager.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
+
 #include <wx/filename.h>
 #include <wx/stc/stc.h>
 
@@ -342,7 +344,7 @@ void CMakeHelpTab::LoadData(bool force)
 
     // Create a new joinable thread
     if(CreateThread(wxTHREAD_JOINABLE) != wxTHREAD_NO_ERROR) {
-        CL_ERROR("Could not create the worker thread!");
+        clERROR() << "Could not create the worker thread!" << endl;
         return;
     }
 
@@ -351,7 +353,7 @@ void CMakeHelpTab::LoadData(bool force)
 
     // Run the thread
     if(GetThread()->Run() != wxTHREAD_NO_ERROR) {
-        CL_ERROR("Could not run the worker thread!");
+        clERROR() << "Could not run the worker thread!" << endl;
         return;
     }
 }

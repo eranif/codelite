@@ -115,11 +115,11 @@ bool CompilerLocatorCrossGCC::IsCrossGCC(const wxString& name) const
     }
 #ifdef __CYGWIN__
 #ifdef __i386__
-    if (name == "i686-pc-cygwin-gcc")
+    if(name == "i686-pc-cygwin-gcc")
         // Standard gcc will be picked up later by the GCC locator
         return false;
 #elif defined(__x86_64__)
-    if (name == "x86_64-pc-cygwin-gcc")
+    if(name == "x86_64-pc-cygwin-gcc")
         // Standard gcc will be picked up later by the GCC locator
         return false;
 #endif // __x86_64__
@@ -157,7 +157,7 @@ void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler, const wxString& bin
     compiler->SetName("Cross GCC ( " + prefix + " )");
     compiler->SetInstallationPath(binFolder);
 
-    CL_DEBUG("Found CrossGCC compiler under: %s. \"%s\"", binFolder, compiler->GetName());
+    clDEBUG() << "Found CrossGCC compiler under:" << binFolder << "Name:" << compiler->GetName() << endl;
     wxFileName toolFile(binFolder, "");
 
     toolFile.SetFullName(prefix + "-g++");
@@ -211,5 +211,4 @@ void CompilerLocatorCrossGCC::AddTool(CompilerPtr compiler, const wxString& tool
         tool << " " << extraArgs;
     }
     compiler->SetTool(toolname, tool);
-    CL_DEBUG("Adding tool: %s => %s", toolname, tool);
 }

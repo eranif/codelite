@@ -62,7 +62,7 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
         loaded = LoadXmlFile(m_doc, initialSettings);
         CHECK_PTR_RET_FALSE(m_doc->GetRoot());
 
-        wxString xmlVersion = m_doc->GetRoot()->GetPropVal(wxT("Version"), wxEmptyString);
+        wxString xmlVersion = m_doc->GetRoot()->GetAttribute(wxT("Version"), wxEmptyString);
         if(xmlVersion != version) {
             loaded = LoadXmlFile(m_doc, ConfFileLocator::Instance()->GetDefaultCopy(wxT("config/build_settings.xml")));
         }
@@ -232,8 +232,8 @@ wxString BuildSettingsConfig::GetSelectedBuildSystem()
     wxXmlNode* node = m_doc->GetRoot()->GetChildren();
     while(node) {
         if(node->GetName() == wxT("BuildSystem")) {
-            if(node->GetPropVal(wxT("Active"), wxT("")) == wxT("yes")) {
-                active = node->GetPropVal(wxT("Name"), wxT(""));
+            if(node->GetAttribute(wxT("Active"), wxT("")) == wxT("yes")) {
+                active = node->GetAttribute(wxT("Name"), wxT(""));
                 break;
             }
         }

@@ -1,4 +1,5 @@
 #include "import_from_xrc.h"
+
 #include "allocator_mgr.h"
 #include "file_logger.h"
 #include "import_dlg.h"
@@ -7,6 +8,7 @@
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <wx/window.h>
@@ -22,11 +24,15 @@ ImportFromXrc::~ImportFromXrc() {}
 bool ImportFromXrc::ImportProject(ImportDlg::ImportFileData& data) const
 {
     ImportDlg dlg(ImportDlg::IPD_XRC, m_Parent);
-    if(dlg.ShowModal() != wxID_OK) { return false; }
+    if(dlg.ShowModal() != wxID_OK) {
+        return false;
+    }
 
     wxString filepath = dlg.GetFilepath();
 
-    if(filepath.empty() || !wxFileExists(filepath)) { return false; }
+    if(filepath.empty() || !wxFileExists(filepath)) {
+        return false;
+    }
 
     wxXmlDocument doc(filepath);
     if(!doc.IsOk()) {
@@ -56,7 +62,9 @@ bool ImportFromXrc::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) 
 
         bool alreadyParented(false);
         wxcWidget* wrapper = ParseNode(toplevelnode, NULL, alreadyParented);
-        if(wrapper) { toplevels.push_back(wrapper); }
+        if(wrapper) {
+            toplevels.push_back(wrapper);
+        }
 
         toplevelnode = toplevelnode->GetNext();
     }
@@ -105,7 +113,6 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
             // I don't think this can happen, but...
-            CL_WARNING(wxT("No object found in a sizeritem"));
             return NULL;
         }
 
@@ -120,7 +127,6 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
             // I don't think this can happen, but...
-            CL_WARNING(wxString::Format(wxT("No object found in a %s"), classname.c_str()));
             return NULL;
         }
 
@@ -132,7 +138,6 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         buttonnode = node;
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
-            CL_WARNING(wxT("No object found in a <button> node"));
             return NULL;
         }
 
@@ -148,7 +153,9 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         return NULL;
     }
 
-    if((Id == ID_WXPANEL) && (parentwrapper == NULL)) { Id = ID_WXPANEL_TOPLEVEL; }
+    if((Id == ID_WXPANEL) && (parentwrapper == NULL)) {
+        Id = ID_WXPANEL_TOPLEVEL;
+    }
 
     if(parentwrapper && parentwrapper->GetWidgetType() == TYPE_TOOLBAR) {
         // In XRC, classname == "separator", which gives and Id of ID_WXMENUITEM, could be a menu or toolbar one
@@ -225,7 +232,9 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         if(childname == wxT("object")) {
             bool alreadyParented(false);
             wxcWidget* childwrapper = ParseNode(child, wrapper, alreadyParented);
-            if(childwrapper && !alreadyParented) { wrapper->AddChild(childwrapper); }
+            if(childwrapper && !alreadyParented) {
+                wrapper->AddChild(childwrapper);
+            }
         }
 
         child = child->GetNext();
@@ -280,20 +289,26 @@ void ImportFromXrc::GetSizeritemContents(const wxXmlNode* node, wxcWidget* wrapp
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("cellpos"));
     if(propertynode) {
         wxString cellpos = propertynode->GetNodeContent();
-        if(!cellpos.empty()) { wrapper->SetGbPos(cellpos); }
+        if(!cellpos.empty()) {
+            wrapper->SetGbPos(cellpos);
+        }
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("cellspan"));
     if(propertynode) {
         wxString cellspan = propertynode->GetNodeContent();
-        if(!cellspan.empty()) { wrapper->SetGbSpan(cellspan); }
+        if(!cellspan.empty()) {
+            wrapper->SetGbSpan(cellspan);
+        }
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("minsize"));
     if(propertynode) {
         wxString minsize = propertynode->GetNodeContent();
         PropertyBase* prop = wrapper->GetProperty(PROP_MINSIZE);
-        if(prop) { prop->SetValue(minsize); }
+        if(prop) {
+            prop->SetValue(minsize);
+        }
     }
 }
 
@@ -304,14 +319,18 @@ void ImportFromXrc::GetBookitemContents(const wxXmlNode* node, NotebookPageWrapp
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("selected"));
     if(propertynode) {
         wxString selected = propertynode->GetNodeContent();
-        if(selected == "1") { wrapper->SetSelected(true); }
+        if(selected == "1") {
+            wrapper->SetSelected(true);
+        }
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("label"));
     if(propertynode) {
         wxString label = propertynode->GetNodeContent();
         PropertyBase* prop = wrapper->GetProperty(PROP_LABEL);
-        if(prop) { prop->SetValue(label); }
+        if(prop) {
+            prop->SetValue(label);
+        }
     }
 
     if(classname != "choicebookpage") { // which don't have bitmaps
@@ -323,7 +342,9 @@ void ImportFromXrc::GetBookitemContents(const wxXmlNode* node, NotebookPageWrapp
 
     if(classname == "treebookpage") {
         propertynode = XmlUtils::FindFirstByTagName(node, wxT("depth"));
-        if(propertynode) { depth = wxCrafter::ToNumber(propertynode->GetNodeContent(), 0); }
+        if(propertynode) {
+            depth = wxCrafter::ToNumber(propertynode->GetNodeContent(), 0);
+        }
     }
 }
 
@@ -341,7 +362,9 @@ void ImportFromXrc::ProcessBitmapProperty(const wxXmlNode* node, wxcWidget* wrap
         if(clientId.empty()) {
             clientId = client_hint; // Use any hint we were given
         }
-        if(!clientId.empty()) { artstring << "," << clientId; }
+        if(!clientId.empty()) {
+            artstring << "," << clientId;
+        }
         wrapper->SetPropertyString(property, artstring);
     } else {
         // or e.g. <bitmap>/path/to/some.png</bitmap>
@@ -391,7 +414,9 @@ void ImportFromXrc::ProcessNamedNode(wxXmlNode* node, wxcWidget* parentwrapper, 
     if(childnode && (XmlUtils::ReadString(childnode, "class") == name)) {
         bool alreadyParented(false);
         wxcWidget* childwrapper = ParseNode(childnode, parentwrapper, alreadyParented);
-        if(childwrapper) { parentwrapper->AddChild(childwrapper); }
+        if(childwrapper) {
+            parentwrapper->AddChild(childwrapper);
+        }
     }
 }
 

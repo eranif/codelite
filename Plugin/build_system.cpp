@@ -50,10 +50,10 @@ BuilderConfig::~BuilderConfig() {}
 wxXmlNode* BuilderConfig::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("BuildSystem"));
-    node->AddProperty(wxT("Name"), m_name);
-    node->AddProperty(wxT("ToolPath"), m_toolPath);
-    node->AddProperty(wxT("Options"), m_toolOptions);
-    node->AddProperty(wxT("Jobs"), m_toolJobs);
-    node->AddProperty(wxT("Active"), m_isActive ? wxString(wxT("yes")) : wxString(wxT("no")));
+    node->AddAttribute(wxT("Name"), m_name);
+    node->AddAttribute(wxT("ToolPath"), m_toolPath);
+    node->AddAttribute(wxT("Options"), m_toolOptions);
+    node->AddAttribute(wxT("Jobs"), m_toolJobs);
+    node->AddAttribute(wxT("Active"), m_isActive ? wxString(wxT("yes")) : wxString(wxT("no")));
     return node;
 }

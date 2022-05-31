@@ -873,7 +873,6 @@ void FileViewTree::DoRemoveItems()
                     // Remove the file. Do not fire an event here, we will send a "bulk" event
                     // with a list of all files removed
                     wxString fullpathOfFileRemoved;
-                    CL_DEBUG("File removed %s", path);
                     if(affectedProject.IsEmpty()) {
                         affectedProject = path.BeforeFirst(':');
                     }

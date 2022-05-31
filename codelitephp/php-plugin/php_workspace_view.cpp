@@ -1,4 +1,5 @@
 #include "php_workspace_view.h"
+
 #include "FilesCollector.h"
 #include "NewPHPClass.h"
 #include "PHPDebugStartDlg.h"
@@ -18,6 +19,7 @@
 #include "php_workspace.h"
 #include "ssh_workspace_settings.h"
 #include "tree_item_data.h"
+
 #include <SFTPBrowserDlg.h>
 #include <SSHAccountManagerDlg.h>
 #include <bitmap_loader.h>
@@ -908,7 +910,6 @@ void PHPWorkspaceView::OnProjectSettings(wxCommandEvent& event)
 void PHPWorkspaceView::OnRunActiveProject(clExecuteEvent& e)
 {
     if(PHPWorkspace::Get()->IsOpen()) {
-        CL_DEBUG("Running active project...");
         CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
         // Test which file we want to debug
         PHPDebugStartDlg dlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_mgr);

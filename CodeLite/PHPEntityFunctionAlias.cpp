@@ -1,7 +1,8 @@
 #include "PHPEntityFunctionAlias.h"
-#include "file_logger.h"
-#include "PHPLookupTable.h"
+
 #include "PHPEntityFunction.h"
+#include "PHPLookupTable.h"
+#include "file_logger.h"
 
 PHPEntityFunctionAlias::PHPEntityFunctionAlias() {}
 
@@ -38,7 +39,7 @@ void PHPEntityFunctionAlias::Store(PHPLookupTable* lookup)
         SetDbId(db.GetLastRowId());
 
     } catch(wxSQLite3Exception& exc) {
-        CL_WARNING("PHPEntityFunctionAlias::Store: %s", exc.GetMessage());
+        clWARNING() << "PHPEntityFunctionAlias::Store:" << exc.GetMessage() << endl;
     }
 }
 

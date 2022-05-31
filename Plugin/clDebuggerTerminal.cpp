@@ -48,7 +48,7 @@ void clDebuggerTerminalPOSIX::Launch(const wxString& title)
     wxUnusedVar(symblink);
 
     if(IsValid()) {
-        CL_DEBUG("clDebuggerTerminalPOSIX successfully started. Process %d. TTY: %s", (int)m_pid, m_tty);
+        clDEBUG() << "clDebuggerTerminalPOSIX successfully started. Process" << m_pid << "tty:" << m_tty << endl;
     }
 }
 

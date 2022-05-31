@@ -80,7 +80,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         m_isDefault = XmlUtils::ReadBool(node, "IsDefault");
 
-        if(!node->HasProp(wxT("GenerateDependenciesFiles"))) {
+        if(!node->HasAttribute(wxT("GenerateDependenciesFiles"))) {
             if(m_name == wxT("gnu g++") || m_name == wxT("gnu gcc")) {
                 m_generateDependeciesFile = true;
             } else
@@ -89,7 +89,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
             m_generateDependeciesFile = XmlUtils::ReadBool(node, wxT("GenerateDependenciesFiles"));
         }
 
-        if(!node->HasProp(wxT("ReadObjectsListFromFile"))) {
+        if(!node->HasAttribute(wxT("ReadObjectsListFromFile"))) {
             m_readObjectFilesFromList = true;
         } else {
             m_readObjectFilesFromList = XmlUtils::ReadBool(node, wxT("ReadObjectsListFromFile"));
@@ -381,12 +381,12 @@ Compiler::~Compiler() {}
 wxXmlNode* Compiler::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));
-    node->AddProperty(wxT("Name"), m_name);
-    node->AddProperty(wxT("GenerateDependenciesFiles"), BoolToString(m_generateDependeciesFile));
-    node->AddProperty(wxT("ReadObjectsListFromFile"), BoolToString(m_readObjectFilesFromList));
-    node->AddProperty(wxT("ObjectNameIdenticalToFileName"), BoolToString(m_objectNameIdenticalToFileName));
-    node->AddProperty("CompilerFamily", m_compilerFamily);
-    node->AddProperty("IsDefault", BoolToString(m_isDefault));
+    node->AddAttribute(wxT("Name"), m_name);
+    node->AddAttribute(wxT("GenerateDependenciesFiles"), BoolToString(m_generateDependeciesFile));
+    node->AddAttribute(wxT("ReadObjectsListFromFile"), BoolToString(m_readObjectFilesFromList));
+    node->AddAttribute(wxT("ObjectNameIdenticalToFileName"), BoolToString(m_objectNameIdenticalToFileName));
+    node->AddAttribute("CompilerFamily", m_compilerFamily);
+    node->AddAttribute("IsDefault", BoolToString(m_isDefault));
 
     wxXmlNode* installPath = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "InstallationPath");
     node->AddChild(installPath);
@@ -395,16 +395,16 @@ wxXmlNode* Compiler::ToXml() const
     std::map<wxString, wxString>::const_iterator iter = m_switches.begin();
     for(; iter != m_switches.end(); iter++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Switch"));
-        child->AddProperty(wxT("Name"), iter->first);
-        child->AddProperty(wxT("Value"), iter->second);
+        child->AddAttribute(wxT("Name"), iter->first);
+        child->AddAttribute(wxT("Value"), iter->second);
         node->AddChild(child);
     }
 
     iter = m_tools.begin();
     for(; iter != m_tools.end(); iter++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Tool"));
-        child->AddProperty(wxT("Name"), iter->first);
-        child->AddProperty(wxT("Value"), iter->second);
+        child->AddAttribute(wxT("Name"), iter->first);
+        child->AddAttribute(wxT("Value"), iter->second);
         node->AddChild(child);
     }
 
@@ -412,12 +412,12 @@ wxXmlNode* Compiler::ToXml() const
     for(; it != m_fileTypes.end(); it++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
         Compiler::CmpFileTypeInfo ft = it->second;
-        child->AddProperty(wxT("Extension"), ft.extension);
-        child->AddProperty(wxT("CompilationLine"), ft.compilation_line);
+        child->AddAttribute(wxT("Extension"), ft.extension);
+        child->AddAttribute(wxT("CompilationLine"), ft.compilation_line);
 
         wxString strKind;
         strKind << (long)ft.kind;
-        child->AddProperty(wxT("Kind"), strKind);
+        child->AddAttribute(wxT("Kind"), strKind);
 
         node->AddChild(child);
     }
@@ -425,25 +425,25 @@ wxXmlNode* Compiler::ToXml() const
     std::map<wxString, LinkLine>::const_iterator it2 = m_linkerLines.begin();
     for(; it2 != m_linkerLines.end(); it2++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "LinkLine");
-        child->AddProperty("ProjectType", it2->first);
-        child->AddProperty("Pattern", it2->second.line);
-        child->AddProperty("PatternWithFile", it2->second.lineFromFile);
+        child->AddAttribute("ProjectType", it2->first);
+        child->AddAttribute("Pattern", it2->second.line);
+        child->AddAttribute("PatternWithFile", it2->second.lineFromFile);
         node->AddChild(child);
     }
 
     wxXmlNode* options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
-    options->AddProperty(wxT("Name"), wxT("ObjectSuffix"));
-    options->AddProperty(wxT("Value"), m_objectSuffix);
+    options->AddAttribute(wxT("Name"), wxT("ObjectSuffix"));
+    options->AddAttribute(wxT("Value"), m_objectSuffix);
     node->AddChild(options);
 
     options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
-    options->AddProperty(wxT("Name"), wxT("DependSuffix"));
-    options->AddProperty(wxT("Value"), m_dependSuffix);
+    options->AddAttribute(wxT("Name"), wxT("DependSuffix"));
+    options->AddAttribute(wxT("Value"), m_dependSuffix);
     node->AddChild(options);
 
     options = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Option"));
-    options->AddProperty(wxT("Name"), wxT("PreprocessSuffix"));
-    options->AddProperty(wxT("Value"), m_preprocessSuffix);
+    options->AddAttribute(wxT("Name"), wxT("PreprocessSuffix"));
+    options->AddAttribute(wxT("Value"), m_preprocessSuffix);
     node->AddChild(options);
 
     // add patterns
@@ -485,7 +485,7 @@ wxXmlNode* Compiler::ToXml() const
     for(; itCmpOption != m_compilerOptions.end(); ++itCmpOption) {
         const CmpCmdLineOption& cmpOption = itCmpOption->second;
         wxXmlNode* pCmpOptionNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CompilerOption"));
-        pCmpOptionNode->AddProperty(wxT("Name"), cmpOption.name);
+        pCmpOptionNode->AddAttribute(wxT("Name"), cmpOption.name);
         XmlUtils::SetNodeContent(pCmpOptionNode, cmpOption.help);
         node->AddChild(pCmpOptionNode);
     }
@@ -495,7 +495,7 @@ wxXmlNode* Compiler::ToXml() const
     for(; itLnkOption != m_linkerOptions.end(); ++itLnkOption) {
         const CmpCmdLineOption& lnkOption = itLnkOption->second;
         wxXmlNode* pLnkOptionNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LinkerOption"));
-        pLnkOptionNode->AddProperty(wxT("Name"), lnkOption.name);
+        pLnkOptionNode->AddAttribute(wxT("Name"), lnkOption.name);
         XmlUtils::SetNodeContent(pLnkOptionNode, lnkOption.help);
         node->AddChild(pLnkOptionNode);
     }

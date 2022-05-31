@@ -23,20 +23,21 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/dir.h>
-#include <wx/filename.h>
-#include <wx/stdpaths.h>
-#include <wx/xml/xml.h>
+#include "tabgroupmanager.h"
 
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "frame.h"
 #include "manager.h"
-#include "tabgroupmanager.h"
 #include "tabgroupspane.h"
 #include "workspace_pane.h"
 #include "wx_xml_compatibility.h"
 #include "xmlutils.h"
+
+#include <wx/dir.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
+#include <wx/xml/xml.h>
 
 TabgroupManager::~TabgroupManager()
 {
@@ -143,7 +144,7 @@ wxXmlNode* TabgroupManager::FindTabgroupItem(wxXmlDocument& doc, const wxString&
         wxXmlNode* TabInfoNode = TabInfoArrayNode->GetChildren();
         while(TabInfoNode) {
             wxXmlNode* child = XmlUtils::FindFirstByTagName(TabInfoNode, wxT("wxString"));
-            if(child && child->GetPropVal(wxT("Value"), wxEmptyString) == itemfilepath) {
+            if(child && child->GetAttribute(wxT("Value"), wxEmptyString) == itemfilepath) {
                 // Found it. Return the data in TabInfoNode
                 return TabInfoNode;
             }
@@ -162,7 +163,7 @@ wxXmlNode* TabgroupManager::DoDeleteTabgroupItem(wxXmlDocument& doc, const wxStr
         wxXmlNode* TabInfoNode = TabInfoArrayNode->GetChildren();
         while(TabInfoNode) {
             wxXmlNode* child = XmlUtils::FindFirstByTagName(TabInfoNode, wxT("wxString"));
-            if(child && child->GetPropVal(wxT("Value"), wxEmptyString) == itemfilepath) {
+            if(child && child->GetAttribute(wxT("Value"), wxEmptyString) == itemfilepath) {
                 TabInfoArrayNode->RemoveChild(TabInfoNode);
                 doc.Save(filepath);
                 return TabInfoNode;

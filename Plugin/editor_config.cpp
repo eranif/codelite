@@ -119,7 +119,7 @@ bool EditorConfig::Load()
 
     // Check the codelite-version for this file
     wxString version;
-    bool found = m_doc->GetRoot()->GetPropVal(wxT("Version"), &version);
+    bool found = m_doc->GetRoot()->GetAttribute(wxT("Version"), &version);
     if(userSettingsLoaded) {
         if(!found || (found && version != this->m_version)) {
             if(DoLoadDefaultSettings() == false) {
@@ -221,7 +221,7 @@ void EditorConfig::SetTagsDatabase(const wxString& dbName)
     } else {
         // create new node
         node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, nodeName);
-        node->AddProperty(wxT("Path"), dbName);
+        node->AddAttribute(wxT("Path"), dbName);
         m_doc->GetRoot()->AddChild(node);
     }
 
@@ -295,7 +295,7 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& no
     m_doc->GetRoot()->AddChild(node);
     for(size_t i = 0; i < files.GetCount(); i++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
-        child->AddProperty(wxT("Name"), files.Item(i));
+        child->AddAttribute(wxT("Name"), files.Item(i));
         node->AddChild(child);
     }
 

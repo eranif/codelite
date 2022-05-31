@@ -166,7 +166,6 @@ bool CompilerLocatorMinGW::Locate()
             while(cont) {
                 wxString fullpath;
                 fullpath << volumes.Item(i) << path;
-                CL_DEBUG("Found folder containing MinGW: %s", fullpath);
                 mingwFolderArr.Add(fullpath);
                 cont = dir.GetNext(&path);
             }
@@ -257,7 +256,7 @@ void CompilerLocatorMinGW::AddTools(const wxString& binFolder, const wxString& n
         compiler->SetName(name);
     compiler->SetInstallationPath(masterPath.GetPath());
 
-    CL_DEBUG("Found MinGW compiler under: %s. \"%s\"", masterPath.GetPath(), compiler->GetName());
+    clDEBUG() << "Found MinGW compiler under:" << masterPath.GetPath() << "Name:" << compiler->GetName() << endl;
     wxFileName toolFile(binFolder, "");
 
     toolFile.SetFullName("g++.exe");

@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "LLDBConnector.h"
+
+#include "JSON.h"
 #include "LLDBEvent.h"
 #include "LLDBNetworkListenerThread.h"
 #include "LLDBRemoteHandshakePacket.h"
@@ -34,8 +36,8 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "JSON.h"
 #include "processreaderthread.h"
+
 #include <wx/filefn.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
@@ -90,7 +92,9 @@ bool LLDBConnector::ConnectToLocalDebugger(LLDBConnectReturnObject& ret, int tim
         break;
     }
 
-    if(!connected) { return false; }
+    if(!connected) {
+        return false;
+    }
 
     // Start the lldb event thread
     // and start a listener thread which will read replies
@@ -190,13 +194,15 @@ void LLDBConnector::InvalidateBreakpoints()
 
     for(size_t i = 0; i < m_breakpoints.size(); ++i) {
         m_breakpoints.at(i)->Invalidate();
-        if(wxFileName::Exists(m_breakpoints.at(i)->GetFilename())) { updatedList.push_back(m_breakpoints.at(i)); }
+        if(wxFileName::Exists(m_breakpoints.at(i)->GetFilename())) {
+            updatedList.push_back(m_breakpoints.at(i));
+        }
     }
     // we keep only breakpoints with valid filename
     m_breakpoints.swap(updatedList);
     ClearBreakpointDeletionQueue();
 
-    CL_DEBUG("codelite: InvalidateBreakpoints called");
+    clDEBUG() << "codelite: InvalidateBreakpoints called" << endl;
     m_pendingDeletionBreakpoints.clear();
 }
 
@@ -209,7 +215,9 @@ LLDBBreakpoint::Vec_t::iterator LLDBConnector::FindBreakpoint(LLDBBreakpoint::Pt
 {
     LLDBBreakpoint::Vec_t::iterator iter = m_breakpoints.begin();
     for(; iter != m_breakpoints.end(); ++iter) {
-        if((*iter)->SameAs(bp)) { return iter; }
+        if((*iter)->SameAs(bp)) {
+            return iter;
+        }
     }
     return m_breakpoints.end();
 }
@@ -218,7 +226,9 @@ LLDBBreakpoint::Vec_t::const_iterator LLDBConnector::FindBreakpoint(LLDBBreakpoi
 {
     LLDBBreakpoint::Vec_t::const_iterator iter = m_breakpoints.begin();
     for(; iter != m_breakpoints.end(); ++iter) {
-        if((*iter)->SameAs(bp)) { return iter; }
+        if((*iter)->SameAs(bp)) {
+            return iter;
+        }
     }
     return m_breakpoints.end();
 }
@@ -273,7 +283,9 @@ void LLDBConnector::JumpTo(const wxFileName& filename, int line)
 void LLDBConnector::SendSingleBreakpointCommand(const eCommandType commandType, const wxFileName& filename,
                                                 const int line)
 {
-    if(!IsCanInteract()) { return; }
+    if(!IsCanInteract()) {
+        return;
+    }
 
     LLDBCommand lldbCommand;
     lldbCommand.SetCommandType(commandType);
@@ -296,7 +308,7 @@ void LLDBConnector::Stop()
 void LLDBConnector::Detach()
 {
     if(IsCanInteract()) {
-        CL_DEBUG("Sending 'Detach' command");
+        clDEBUG() << "Sending 'Detach' command" << endl;
         LLDBCommand command;
         command.SetCommandType(kCommandDetach);
         SendCommand(command);
@@ -308,7 +320,9 @@ void LLDBConnector::Detach()
 
 void LLDBConnector::MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp)
 {
-    if(!IsBreakpointExists(bp)) { return; }
+    if(!IsBreakpointExists(bp)) {
+        return;
+    }
 
     LLDBBreakpoint::Vec_t::iterator iter = FindBreakpoint(bp);
 
@@ -321,24 +335,24 @@ void LLDBConnector::MarkBreakpointForDeletion(LLDBBreakpoint::Ptr_t bp)
 void LLDBConnector::DeleteBreakpoints()
 {
     if(IsCanInteract()) {
-        CL_DEBUGS(wxString() << "codelite: deleting breakpoints (total of " << m_pendingDeletionBreakpoints.size()
-                             << " breakpoints)");
+        clDEBUG() << "codelite: deleting breakpoints (total of " << m_pendingDeletionBreakpoints.size()
+                  << " breakpoints)" << endl;
         LLDBCommand command;
         command.SetCommandType(kCommandDeleteBreakpoint);
         command.SetBreakpoints(m_pendingDeletionBreakpoints);
         SendCommand(command);
-        CL_DEBUGS(wxString() << "codelite: DeleteBreakpoints clear pending deletionbreakpoints queue");
+        clDEBUG() << "codelite: DeleteBreakpoints clear pending deletionbreakpoints queue" << endl;
         m_pendingDeletionBreakpoints.clear();
 
     } else {
-        CL_DEBUG("codelite: interrupting codelite-lldb for kInterruptReasonDeleteBreakpoint");
+        clDEBUG() << "codelite: interrupting codelite-lldb for kInterruptReasonDeleteBreakpoint" << endl;
         Interrupt(kInterruptReasonDeleteBreakpoint);
     }
 }
 
 void LLDBConnector::ClearBreakpointDeletionQueue()
 {
-    CL_DEBUGS(wxString() << "codelite: ClearBreakpointDeletionQueue called");
+    clDEBUG() << "codelite: ClearBreakpointDeletionQueue called" << endl;
     m_pendingDeletionBreakpoints.clear();
 }
 
@@ -376,7 +390,7 @@ void LLDBConnector::DeleteAllBreakpoints()
     }
 
     // mark all breakpoints for deletion
-    CL_DEBUGS(wxString() << "codelite: DeleteAllBreakpoints called");
+    clDEBUG() << "codelite: DeleteAllBreakpoints called" << endl;
     m_pendingDeletionBreakpoints.swap(m_breakpoints);
 
     if(!IsCanInteract()) {
@@ -467,7 +481,7 @@ void LLDBConnector::OnProcessOutput(clProcessEvent& event)
 
     wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
     for(size_t i = 0; i < lines.GetCount(); ++i) {
-        CL_DEBUG("%s", lines.Item(i).Trim());
+        clDEBUG1() << lines.Item(i).Trim() << endl;
     }
 }
 
@@ -541,7 +555,9 @@ LLDBBreakpoint::Vec_t LLDBConnector::GetUnappliedBreakpoints()
 {
     LLDBBreakpoint::Vec_t unappliedBreakpoints;
     for(size_t i = 0; i < m_breakpoints.size(); ++i) {
-        if(!m_breakpoints.at(i)->IsApplied()) { unappliedBreakpoints.push_back(m_breakpoints.at(i)); }
+        if(!m_breakpoints.at(i)->IsApplied()) {
+            unappliedBreakpoints.push_back(m_breakpoints.at(i));
+        }
     }
     return unappliedBreakpoints;
 }
@@ -731,5 +747,5 @@ void LLDBTerminalCallback::OnProcessTerminated()
 {
     m_process = nullptr;
     delete this;
-    CL_DEBUG("LLDB terminal process terminated. Cleaning up");
+    clDEBUG() << "LLDB terminal process terminated. Cleaning up" << endl;
 }

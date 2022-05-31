@@ -34,10 +34,14 @@
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
 
-int FileLogger::m_verbosity = FileLogger::Error;
-wxString FileLogger::m_logfile;
-std::unordered_map<wxThreadIdType, wxString> FileLogger::m_threads;
-wxCriticalSection FileLogger::m_cs;
+// the logbal log object
+static FileLogger LOG{ FileLogger::Error };
+
+FileLogger& set_log_level(FileLogger& _LOG, FileLogger::LOG_LEVEL level)
+{
+    _LOG.SetRequestedLogLevel(level);
+    return _LOG;
+}
 
 FileLogger::FileLogger(int requestedVerbo)
     : _requestedLogLevel(requestedVerbo)
@@ -50,6 +54,8 @@ FileLogger::~FileLogger()
     // flush any content that remain
     Flush();
 }
+
+FileLogger& FileLogger::Get() { return LOG; }
 
 void FileLogger::AddLogLine(const wxString& msg, int verbosity)
 {
@@ -73,7 +79,7 @@ void FileLogger::SetVerbosity(int level)
     if(level > FileLogger::Warning) {
         clSYSTEM() << "Log verbosity is now set to:" << FileLogger::GetVerbosityAsString(level) << clEndl;
     }
-    m_verbosity = level;
+    LOG.m_verbosity = level;
 }
 
 int FileLogger::GetVerbosityAsNumber(const wxString& verbosity)
@@ -142,8 +148,9 @@ void FileLogger::Flush()
     if(m_buffer.IsEmpty()) {
         return;
     }
+
     if(!m_fp) {
-        m_fp = wxFopen(m_logfile, wxT("a+"));
+        m_fp = wxFopen(m_logfile, "a+");
     }
 
     if(m_fp) {

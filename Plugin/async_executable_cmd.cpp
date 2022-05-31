@@ -198,10 +198,8 @@ void AsyncExeCmd::Terminate() { m_proc->Terminate(); }
 #ifndef __WXMSW__
 void AsyncExeCmd::OnZombieReaperProcessTerminated(wxProcessEvent& event)
 {
-    CL_DEBUG("AsyncExeCmd: process %d terminated. (reported by OnZombieReaperProcessTerminated)", event.GetPid());
     event.Skip();
     if(m_proc && (event.GetPid() == m_proc->GetPid())) {
-        CL_DEBUG("AsyncExeCmd: this is our process! performing cleanup");
         ProcessEnd(event);
         event.Skip(false);
     }

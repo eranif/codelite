@@ -300,13 +300,13 @@ FileNameVector_t CompilationDatabase::GetCompileCommandsFiles() const
         std::pair<wxString, int> curdir = dirs.front();
         dirs.pop();
         if(files.empty() && (curdir.second > MAX_DEPTH)) {
-            CL_DEBUG("Could not find compile_commands.json files while reaching depth 2, aborting");
+            clDEBUG() << "Could not find compile_commands.json files while reaching depth 2, aborting" << endl;
             break;
         }
 
         wxFileName fn(curdir.first, "compile_commands.json");
         if(fn.Exists()) {
-            CL_DEBUGS("CompilationDatabase: found file: " + fn.GetFullPath());
+            clDEBUG() << "CompilationDatabase: found file: " << fn.GetFullPath() << endl;
             files.push_back(fn);
         }
 

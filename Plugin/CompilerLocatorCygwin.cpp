@@ -78,7 +78,7 @@ void CompilerLocatorCygwin::AddTools(const wxString& binFolder, const wxString& 
     compiler->SetInstallationPath(masterPath.GetPath());
     m_compilers.push_back(compiler);
 
-    CL_DEBUG("Found Cygwin compiler under: %s. \"%s\"", masterPath.GetPath(), compiler->GetName());
+    clDEBUG() << "Found Cygwin compiler under:" << masterPath.GetPath() << ". Name:" << compiler->GetName() << endl;
     wxFileName toolFile(binFolder, "");
 
     toolFile.SetFullName("g++-" + suffix + ".exe");

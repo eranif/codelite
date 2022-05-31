@@ -1152,8 +1152,6 @@ void wxcWidget::ImportEventsFromXRC(const wxString& events)
                     ConnectDetails eventDetails = edb.Item(wxXmlResource::GetXRCID(eventtype));
                     eventDetails.SetFunctionNameAndSignature(eventDetails.GetEventClass() + "Handler");
                     AddEvent(eventDetails);
-                } else {
-                    CL_WARNING(wxString::Format("No wxCrafter equivalent for XRCed event: %s", eventname));
                 }
             }
         }
@@ -1175,8 +1173,6 @@ void wxcWidget::ImportEventFromwxSmith(const wxString& eventname, const wxString
                 ConnectDetails eventDetails = edb.Item(wxXmlResource::GetXRCID(eventtype));
                 eventDetails.SetFunctionNameAndSignature(handlerstub);
                 AddEvent(eventDetails);
-            } else {
-                CL_WARNING(wxString::Format("No wxCrafter equivalent for wxSmith event: %s", eventname));
             }
         }
     }
@@ -1197,8 +1193,6 @@ void wxcWidget::ImportEventFromFB(const wxString& eventname, const wxString& han
                 ConnectDetails eventDetails = edb.Item(wxXmlResource::GetXRCID(eventtype));
                 eventDetails.SetFunctionNameAndSignature(handlerstub);
                 AddEvent(eventDetails);
-            } else {
-                CL_WARNING(wxString::Format("No wxCrafter equivalent for wxFormBuilder event: %s", eventname));
             }
         }
     }

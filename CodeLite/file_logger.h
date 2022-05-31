@@ -44,23 +44,29 @@ typedef FileLogger& (*FileLoggerFunction)(FileLogger&);
 class WXDLLIMPEXP_CL FileLogger
 {
 public:
-    enum { System = -1, Error = 0, Warning = 1, Dbg = 2, Developer = 3 };
+    enum LOG_LEVEL { System = -1, Error = 0, Warning = 1, Dbg = 2, Developer = 3 };
 
 protected:
-    static int m_verbosity;
-    static wxString m_logfile;
+    int m_verbosity = FileLogger::Error;
+    wxString m_logfile;
     int _requestedLogLevel;
-    FILE* m_fp;
+    FILE* m_fp = nullptr;
     wxString m_buffer;
-    static std::unordered_map<wxThreadIdType, wxString> m_threads;
-    static wxCriticalSection m_cs;
+    std::unordered_map<wxThreadIdType, wxString> m_threads;
+    wxCriticalSection m_cs;
 
 protected:
-    static wxString GetCurrentThreadName();
+    wxString GetCurrentThreadName();
 
 public:
     FileLogger(int requestedVerbo);
     ~FileLogger();
+
+    /**
+     * @brief return the global logger object
+     * @return
+     */
+    static FileLogger& Get();
 
     FileLogger& SetRequestedLogLevel(int level)
     {
@@ -69,23 +75,23 @@ public:
     }
 
     int GetRequestedLogLevel() const { return _requestedLogLevel; }
-    static int GetCurrentLogLevel() { return m_verbosity; }
+    int GetCurrentLogLevel() { return m_verbosity; }
 
     /**
      * @brief return true if log_level is lower than the currently set log level
      */
-    static bool CanLog(int log_level) { return log_level <= GetCurrentLogLevel(); }
+    bool CanLog(int log_level) { return log_level <= GetCurrentLogLevel(); }
 
     /**
      * @brief give a thread-id a unique name which will be displayed in log
      */
-    static void RegisterThread(wxThreadIdType id, const wxString& name);
-    static void UnRegisterThread(wxThreadIdType id);
+    void RegisterThread(wxThreadIdType id, const wxString& name);
+    void UnRegisterThread(wxThreadIdType id);
 
     /**
      * @brief create log entry prefix
      */
-    static wxString Prefix(int verbosity);
+    wxString Prefix(int verbosity);
 
     void AddLogLine(const wxString& msg, int verbosity);
     /**
@@ -94,10 +100,10 @@ public:
      * @param verbosity
      */
     void AddLogLine(const wxArrayString& arr, int verbosity);
-    static void SetVerbosity(int level);
+    void SetVerbosity(int level);
 
     // Set the verbosity as string
-    static void SetVerbosity(const wxString& verbosity);
+    void SetVerbosity(const wxString& verbosity);
 
     ///----------------------------------
     /// Statics
@@ -105,7 +111,7 @@ public:
     /**
      * @brief open the log file
      */
-    static void OpenLog(const wxString& fullName, int verbosity);
+    void OpenLog(const wxString& fullName, int verbosity);
     // Various util methods
     static wxString GetVerbosityAsString(int verbosity);
     static int GetVerbosityAsNumber(const wxString& verbosity);
@@ -265,31 +271,25 @@ template <typename T> FileLogger& operator<<(FileLogger& logger, const T& obj)
     return logger;
 }
 
-#define CL_SYSTEM(...) FileLogger(FileLogger::System).AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::System);
-#define CL_ERROR(...) FileLogger(FileLogger::Error).AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::Error);
-#define CL_WARNING(...) FileLogger(FileLogger::Warning).AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::Warning);
-#define CL_DEBUG(...) FileLogger(FileLogger::Dbg).AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::Dbg);
-#define CL_DEBUGS(s) FileLogger(FileLogger::Dbg).AddLogLine(s, FileLogger::Dbg);
-#define CL_DEBUG1(...) \
-    FileLogger(FileLogger::Developer).AddLogLine(wxString::Format(__VA_ARGS__), FileLogger::Developer);
-#define CL_DEBUG_ARR(arr) FileLogger(FileLogger::Dbg).AddLogLine(arr, FileLogger::Dbg);
-#define CL_DEBUG1_ARR(arr) FileLogger(FileLogger::Developer).AddLogLine(arr, FileLogger::Developer);
+WXDLLIMPEXP_CL FileLogger& set_log_level(FileLogger& LOG, FileLogger::LOG_LEVEL level);
 
-// New API
-#define clDEBUG() FileLogger(FileLogger::Dbg) << FileLogger::Prefix(FileLogger::Dbg)
-#define clDEBUG1() FileLogger(FileLogger::Developer) << FileLogger::Prefix(FileLogger::Developer)
-#define clERROR() FileLogger(FileLogger::Error) << FileLogger::Prefix(FileLogger::Error)
-#define clWARNING() FileLogger(FileLogger::Warning) << FileLogger::Prefix(FileLogger::Warning)
-#define clSYSTEM() FileLogger(FileLogger::System) << FileLogger::Prefix(FileLogger::System)
+// Log to custom LOG instance
+#define LOG_DEBUG(LOG) set_log_level(LOG, FileLogger::Dbg) << LOG.Prefix(FileLogger::Dbg)
+#define LOG_DEBUG1(LOG) set_log_level(LOG, FileLogger::Developer) << LOG.Prefix(FileLogger::Developer)
+#define LOG_ERROR(LOG) set_log_level(LOG, FileLogger::Error) << LOG.Prefix(FileLogger::Error)
+#define LOG_WARNING(LOG) set_log_level(LOG, FileLogger::Warning) << LOG.Prefix(FileLogger::Warning)
+#define LOG_SYSTEM(LOG) set_log_level(LOG, FileLogger::System) << LOG.Prefix(FileLogger::System)
+
+#define clTheLog FileLogger::Get()
+
+// Log to the global logger
+#define clDEBUG() LOG_DEBUG(clTheLog)
+#define clDEBUG1() LOG_DEBUG1(clTheLog)
+#define clERROR() LOG_ERROR(clTheLog)
+#define clWARNING() LOG_WARNING(clTheLog)
+#define clSYSTEM() LOG_SYSTEM(clTheLog)
 
 // A replacement for wxLogMessage
 #define clLogMessage(msg) clDEBUG() << msg
-
-class WXDLLIMPEXP_CL FileLoggerNameRegistrar
-{
-public:
-    FileLoggerNameRegistrar(const wxString& name) { FileLogger::RegisterThread(wxThread::GetCurrentId(), name); }
-    ~FileLoggerNameRegistrar() { FileLogger::UnRegisterThread(wxThread::GetCurrentId()); }
-};
 
 #endif // FILELOGGER_H

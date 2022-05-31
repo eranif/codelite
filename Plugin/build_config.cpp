@@ -220,7 +220,7 @@ BuildConfig::BuildConfig(wxXmlNode* node)
                 } else if(child->GetName() == "MakefileGenerationCommand") {
                     m_makeGenerationCommand = child->GetNodeContent();
                 } else if(child->GetName() == "Target") {
-                    wxString target_name = child->GetPropVal("Name", "");
+                    wxString target_name = child->GetAttribute("Name", "");
                     wxString target_cmd = child->GetNodeContent();
                     if(target_name.IsEmpty() == false) {
                         m_customTargets[target_name] = target_cmd;
@@ -325,61 +325,61 @@ wxXmlNode* BuildConfig::ToXml() const
     // Create the common nodes
     wxXmlNode* node = m_commonConfig.ToXml();
 
-    node->AddProperty("Name", m_name);
-    node->AddProperty("CompilerType", m_compilerType);
-    node->AddProperty("DebuggerType", m_debuggerType);
-    node->AddProperty("Type", m_projectType);
-    node->AddProperty("BuildCmpWithGlobalSettings", m_buildCmpWithGlobalSettings);
-    node->AddProperty("BuildLnkWithGlobalSettings", m_buildLnkWithGlobalSettings);
-    node->AddProperty("BuildResWithGlobalSettings", m_buildResWithGlobalSettings);
+    node->AddAttribute("Name", m_name);
+    node->AddAttribute("CompilerType", m_compilerType);
+    node->AddAttribute("DebuggerType", m_debuggerType);
+    node->AddAttribute("Type", m_projectType);
+    node->AddAttribute("BuildCmpWithGlobalSettings", m_buildCmpWithGlobalSettings);
+    node->AddAttribute("BuildLnkWithGlobalSettings", m_buildLnkWithGlobalSettings);
+    node->AddAttribute("BuildResWithGlobalSettings", m_buildResWithGlobalSettings);
 
     wxXmlNode* compile = XmlUtils::FindFirstByTagName(node, "Compiler");
     if(compile) {
-        compile->AddProperty("Required", BoolToString(m_compilerRequired));
-        compile->AddProperty("PreCompiledHeader", m_precompiledHeader);
-        compile->AddProperty("PCHInCommandLine", BoolToString(m_pchInCommandLine));
-        compile->AddProperty("PCHFlags", m_pchCompileFlags);
-        compile->AddProperty("PCHFlagsPolicy", wxString() << (int)m_pchPolicy);
+        compile->AddAttribute("Required", BoolToString(m_compilerRequired));
+        compile->AddAttribute("PreCompiledHeader", m_precompiledHeader);
+        compile->AddAttribute("PCHInCommandLine", BoolToString(m_pchInCommandLine));
+        compile->AddAttribute("PCHFlags", m_pchCompileFlags);
+        compile->AddAttribute("PCHFlagsPolicy", wxString() << (int)m_pchPolicy);
     }
 
     wxXmlNode* link = XmlUtils::FindFirstByTagName(node, "Linker");
     if(link) {
-        link->AddProperty("Required", BoolToString(m_linkerRequired));
+        link->AddAttribute("Required", BoolToString(m_linkerRequired));
     }
 
     wxXmlNode* resCmp = XmlUtils::FindFirstByTagName(node, "ResourceCompiler");
     if(resCmp) {
-        resCmp->AddProperty("Required", BoolToString(m_isResCmpNeeded));
+        resCmp->AddAttribute("Required", BoolToString(m_isResCmpNeeded));
     }
 
     wxXmlNode* general = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "General");
-    general->AddProperty("OutputFile", m_outputFile);
-    general->AddProperty("IntermediateDirectory", m_intermediateDirectory);
-    general->AddProperty("Command", m_command);
-    general->AddProperty("CommandArguments", m_commandArguments);
-    general->AddProperty("UseSeparateDebugArgs", BoolToString(m_useSeparateDebugArgs));
-    general->AddProperty("DebugArguments", m_debugArgs);
-    general->AddProperty("WorkingDirectory", m_workingDirectory);
-    general->AddProperty("PauseExecWhenProcTerminates", BoolToString(m_pauseWhenExecEnds));
-    general->AddProperty("IsGUIProgram", BoolToString(m_isGUIProgram));
-    general->AddProperty("IsEnabled", BoolToString(m_isProjectEnabled));
+    general->AddAttribute("OutputFile", m_outputFile);
+    general->AddAttribute("IntermediateDirectory", m_intermediateDirectory);
+    general->AddAttribute("Command", m_command);
+    general->AddAttribute("CommandArguments", m_commandArguments);
+    general->AddAttribute("UseSeparateDebugArgs", BoolToString(m_useSeparateDebugArgs));
+    general->AddAttribute("DebugArguments", m_debugArgs);
+    general->AddAttribute("WorkingDirectory", m_workingDirectory);
+    general->AddAttribute("PauseExecWhenProcTerminates", BoolToString(m_pauseWhenExecEnds));
+    general->AddAttribute("IsGUIProgram", BoolToString(m_isGUIProgram));
+    general->AddAttribute("IsEnabled", BoolToString(m_isProjectEnabled));
     node->AddChild(general);
 
     wxXmlNode* buildSystem = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "BuildSystem");
-    buildSystem->AddProperty("Name", m_buildSystem);
+    buildSystem->AddAttribute("Name", m_buildSystem);
     XmlUtils::SetNodeContent(buildSystem, m_buildSystemArguments);
     node->AddChild(buildSystem);
 
     wxXmlNode* debugger = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Debugger");
-    debugger->AddProperty("IsRemote", BoolToString(m_isDbgRemoteTarget));
-    debugger->AddProperty("RemoteHostName", m_dbgHostName);
-    debugger->AddProperty("RemoteHostPort", m_dbgHostPort);
-    debugger->AddProperty("DebuggerPath", m_debuggerPath);
-    debugger->AddProperty("IsExtended", BoolToString(m_isDbgRemoteExtended));
+    debugger->AddAttribute("IsRemote", BoolToString(m_isDbgRemoteTarget));
+    debugger->AddAttribute("RemoteHostName", m_dbgHostName);
+    debugger->AddAttribute("RemoteHostPort", m_dbgHostPort);
+    debugger->AddAttribute("DebuggerPath", m_debuggerPath);
+    debugger->AddAttribute("IsExtended", BoolToString(m_isDbgRemoteExtended));
 
     wxXmlNode* envNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Environment");
-    envNode->AddProperty("EnvVarSetName", GetEnvVarSet());
-    envNode->AddProperty("DbgSetName", GetDbgEnvSet());
+    envNode->AddAttribute("EnvVarSetName", GetEnvVarSet());
+    envNode->AddAttribute("DbgSetName", GetDbgEnvSet());
 
     // Add CDATA section with project environment variables
     wxXmlNode* envContent = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, m_envvars);
@@ -407,7 +407,7 @@ wxXmlNode* BuildConfig::ToXml() const
         }
 
         wxXmlNode* command = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Command");
-        command->AddProperty("Enabled", BoolToString(cmd.GetEnabled()));
+        command->AddAttribute("Enabled", BoolToString(cmd.GetEnabled()));
         XmlUtils::SetNodeContent(command, cmd.GetCommand());
         preBuild->AddChild(command);
     }
@@ -422,7 +422,7 @@ wxXmlNode* BuildConfig::ToXml() const
         }
 
         wxXmlNode* command = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Command");
-        command->AddProperty("Enabled", BoolToString(cmd.GetEnabled()));
+        command->AddAttribute("Enabled", BoolToString(cmd.GetEnabled()));
         XmlUtils::SetNodeContent(command, cmd.GetCommand());
         postBuild->AddChild(command);
     }
@@ -430,7 +430,7 @@ wxXmlNode* BuildConfig::ToXml() const
     // add postbuild commands
     wxXmlNode* customBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "CustomBuild");
     node->AddChild(customBuild);
-    customBuild->AddProperty("Enabled", BoolToString(m_enableCustomBuild));
+    customBuild->AddAttribute("Enabled", BoolToString(m_enableCustomBuild));
 
     // add the working directory of the custom build
     wxXmlNode* customBuildWd = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, "WorkingDirectory");
@@ -469,7 +469,7 @@ wxXmlNode* BuildConfig::ToXml() const
         wxString target_cmd = ir->second;
 
         wxXmlNode* customTarget = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, "Target");
-        customTarget->AddProperty("Name", target_name);
+        customTarget->AddAttribute("Name", target_name);
         XmlUtils::SetNodeContent(customTarget, target_cmd);
     }
 
@@ -485,8 +485,8 @@ wxXmlNode* BuildConfig::ToXml() const
     // Set the completion flags
     wxXmlNode* completion = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "Completion");
     node->AddChild(completion);
-    completion->AddProperty("EnableCpp11", BoolToString(m_clangC11));
-    completion->AddProperty("EnableCpp14", BoolToString(m_clangC14));
+    completion->AddAttribute("EnableCpp11", BoolToString(m_clangC11));
+    completion->AddAttribute("EnableCpp14", BoolToString(m_clangC14));
 
     wxXmlNode* search_paths = new wxXmlNode(completion, wxXML_ELEMENT_NODE, "SearchPaths");
     XmlUtils::SetNodeContent(search_paths, m_ccSearchPaths);

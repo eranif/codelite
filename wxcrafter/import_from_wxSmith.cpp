@@ -89,7 +89,6 @@ wxcWidget* ImportFromwxSmith::ParseNode(wxXmlNode* node, wxcWidget* parentwrappe
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
             // I don't think this can happen, but...
-            CL_WARNING(wxT("No object found in a sizeritem"));
             return NULL;
         }
 
@@ -104,7 +103,6 @@ wxcWidget* ImportFromwxSmith::ParseNode(wxXmlNode* node, wxcWidget* parentwrappe
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
             // I don't think this can happen, but...
-            CL_WARNING(wxString::Format(wxT("No object found in a %s"), classname.c_str()));
             return NULL;
         }
 
@@ -116,7 +114,6 @@ wxcWidget* ImportFromwxSmith::ParseNode(wxXmlNode* node, wxcWidget* parentwrappe
         buttonnode = node;
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
         if(!node) {
-            CL_WARNING(wxT("No object found in a <button> node"));
             return NULL;
         }
 

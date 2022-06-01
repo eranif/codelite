@@ -25,8 +25,6 @@
 #include "workspace_pane.h"
 
 #include "Notebook.h"
-#include "clTabRendererDefault.hpp"
-#include "clTabRendererMinimal.hpp"
 #include "clTabTogglerHelper.h"
 #include "clWorkspaceView.h"
 #include "cl_aui_dock_art.h"

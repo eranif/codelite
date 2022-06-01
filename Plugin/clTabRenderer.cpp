@@ -4,9 +4,6 @@
 #include "Notebook.h"
 #include "clGenericNotebook.hpp"
 #include "clSystemSettings.h"
-#include "clTabRendererDefault.hpp"
-#include "clTabRendererFirefox.hpp"
-#include "clTabRendererGTK3.h"
 #include "clTabRendererMinimal.hpp"
 #include "cl_config.h"
 #include "cl_defs.h"
@@ -31,7 +28,7 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
 {
     *bgColour = colours.tabAreaColour;
     *activeTabBgColour = colours.activeTabBgColour;
-#ifndef __WXMAC__
+#if 0
     bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
     // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
     if(style & kNotebook_DynamicColours) {
@@ -61,7 +58,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     bool is_dark = DrawingUtils::IsDark(base_colour);
 
     tabAreaColour = base_colour.ChangeLightness(80);
-    activeTabBgColour = base_colour;//.ChangeLightness(120);
+    activeTabBgColour = base_colour; //.ChangeLightness(120);
     activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
     activeTabPenColour = activeTabBgColour.ChangeLightness(is_dark ? 30 : 70);
     activeTabInnerPenColour = activeTabPenColour;
@@ -142,7 +139,6 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     wxFont font = clTabRenderer::GetTabFont(using_bold_font);
     dc.SetFont(font);
 
-    bool bVerticalTabs = IS_VERTICAL_TABS(style);
     // On vertical tabs, use the short label
     wxSize sz = dc.GetTextExtent(GetBestLabel(style));
     wxSize fixedHeight = dc.GetTextExtent("Tp");
@@ -159,7 +155,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
     m_bmpX = wxNOT_FOUND;
     m_bmpY = wxNOT_FOUND;
 
-    if(HasBitmap() && !bVerticalTabs) {
+    if(HasBitmap()) {
         const wxBitmap& bmp = m_tabCtrl->GetBitmaps()->Get(m_bitmap, false);
         m_bmpX = m_width;
         m_width += bmp.GetScaledWidth();
@@ -184,7 +180,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
         m_width += X_spacer;
     }
 
-    if((style & kNotebook_UnderlineActiveTab) && bVerticalTabs) {
+    if(style & kNotebook_UnderlineActiveTab) {
         m_width += 8;
     }
 
@@ -235,14 +231,7 @@ wxRect clTabInfo::GetCloseButtonRect() const
     return xRect.CenterIn(GetRect(), wxVERTICAL);
 }
 
-const wxString& clTabInfo::GetBestLabel(size_t style) const
-{
-    if((style & (kNotebook_RightTabs | kNotebook_LeftTabs)) && !m_shortLabel.empty()) {
-        return m_shortLabel;
-    } else {
-        return m_label;
-    }
-}
+const wxString& clTabInfo::GetBestLabel(size_t style) const { return m_label; }
 
 const wxBitmap& clTabInfo::GetBitmap(int index, bool disabled) const
 {
@@ -293,26 +282,7 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
 {
     wxPoint pt1, pt2;
     dc.SetPen(colours.activeTabPenColour);
-    if(style & kNotebook_LeftTabs) {
-        dc.SetPen(colours.activeTabBgColour);
-        pt1 = activeTab->GetRect().GetTopRight();
-        pt2 = activeTab->GetRect().GetBottomRight();
-        pt2.y -= 1;
-        DRAW_LINE(pt1, pt2);
-
-        pt1.x -= 1;
-        pt2.x -= 1;
-        DRAW_LINE(pt1, pt2);
-
-    } else if(style & kNotebook_RightTabs) {
-        // Right tabs
-        dc.SetPen(colours.activeTabBgColour);
-        pt1 = activeTab->GetRect().GetTopLeft();
-        pt2 = activeTab->GetRect().GetBottomLeft();
-        pt2.y -= 1;
-        DRAW_LINE(pt1, pt2);
-
-    } else if(style & kNotebook_BottomTabs) {
+    if(style & kNotebook_BottomTabs) {
         // bottom tabs
         dc.SetPen(colours.activeTabBgColour);
         pt1 = activeTab->GetRect().GetTopLeft();
@@ -375,41 +345,39 @@ int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
 clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t tabStyle)
 {
     if(ms_Renderes.empty()) {
-        RegisterRenderer(new clTabRendererDefault(win));
-        RegisterRenderer(new clTabRendererGTK3(win));
+        //        RegisterRenderer(new clTabRendererDefault(win));
+        //        RegisterRenderer(new clTabRendererGTK3(win));
         RegisterRenderer(new clTabRendererMinimal(win));
-        RegisterRenderer(new clTabRendererFirefox(win));
+        //        RegisterRenderer(new clTabRendererFirefox(win));
     }
     clTabRenderer::Ptr_t renderer;
-#ifdef __WXMAC__
     renderer = Create(win, "MINIMAL");
     return renderer;
-#else
-    wxString tab = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
-    wxString name = tab.Upper();
 
-    bool is_vertical = (tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs);
-    renderer.reset(Create(win, name));
-
-    if(!renderer) {
-        renderer = Create(win, "MINIMAL");
-    } else {
-        // make sure the selected renderer supports vertical tabbing
-        if(is_vertical && !renderer->IsVerticalTabSupported()) {
-            renderer.reset(Create(win, "MINIMAL"));
-        }
-    }
-    return renderer;
-#endif
+    //    wxString tab = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
+    //    wxString name = tab.Upper();
+    //
+    //    bool is_vertical = (tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs);
+    //    renderer.reset(Create(win, name));
+    //
+    //    if(!renderer) {
+    //        renderer = Create(win, "MINIMAL");
+    //    } else {
+    //        // make sure the selected renderer supports vertical tabbing
+    //        if(is_vertical && !renderer->IsVerticalTabSupported()) {
+    //            renderer.reset(Create(win, "MINIMAL"));
+    //        }
+    //    }
+    //    return renderer;
 }
 
 wxArrayString clTabRenderer::GetRenderers()
 {
     if(ms_Renderes.empty()) {
-        RegisterRenderer(new clTabRendererDefault(nullptr));
-        RegisterRenderer(new clTabRendererGTK3(nullptr));
         RegisterRenderer(new clTabRendererMinimal(nullptr));
-        RegisterRenderer(new clTabRendererFirefox(nullptr));
+        //        RegisterRenderer(new clTabRendererDefault(nullptr));
+        //        RegisterRenderer(new clTabRendererGTK3(nullptr));
+        //        RegisterRenderer(new clTabRendererFirefox(nullptr));
     }
 
     wxArrayString renderers;
@@ -447,19 +415,11 @@ wxColour clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect&
 
 #ifndef __WXOSX__
     bool isBottom = style & kNotebook_BottomTabs;
-    bool isLeft = style & kNotebook_LeftTabs;
-    bool isRight = style & kNotebook_RightTabs;
 
     wxPoint p1, p2;
     if(isBottom) {
         p1 = clientRect.GetTopLeft();
         p2 = clientRect.GetTopRight();
-    } else if(isLeft) {
-        p1 = clientRect.GetTopRight();
-        p2 = clientRect.GetBottomRight();
-    } else if(isRight) {
-        p1 = clientRect.GetTopLeft();
-        p2 = clientRect.GetBottomLeft();
     } else {
         p1 = clientRect.GetBottomLeft();
         p2 = clientRect.GetBottomRight();
@@ -476,17 +436,15 @@ void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect&
     wxUnusedVar(parent);
     wxUnusedVar(activeTabRect);
 
-    if(!IS_VERTICAL_TABS(style) && ((style & kNotebook_BottomTabs) == 0)) {
-        // top tabs
-        wxColour bg_colour;
-        wxColour active_tab_colour;
-        GetTabColours(colours, style, &active_tab_colour, &bg_colour);
-        bool is_dark = DrawingUtils::IsDark(bg_colour);
-        dc.SetPen(bg_colour.ChangeLightness(is_dark ? 60 : 80));
-        dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
-        dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetBottomLeft());
-        dc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
-    }
+    // top tabs
+    wxColour bg_colour;
+    wxColour active_tab_colour;
+    GetTabColours(colours, style, &active_tab_colour, &bg_colour);
+    bool is_dark = DrawingUtils::IsDark(bg_colour);
+    dc.SetPen(bg_colour.ChangeLightness(is_dark ? 60 : 80));
+    dc.DrawLine(clientRect.GetTopRight(), clientRect.GetTopLeft());
+    dc.DrawLine(clientRect.GetTopLeft(), clientRect.GetBottomLeft());
+    dc.DrawLine(clientRect.GetTopRight(), clientRect.GetBottomRight());
 }
 
 void clTabRenderer::AdjustColours(clTabColours& colours, size_t style)
@@ -514,18 +472,7 @@ void clTabRenderer::DrawMarker(wxDC& dc, const clTabInfo& tabInfo, const clTabCo
     bool isGTK3 = true;
     wxDirection direction;
     wxPoint p1, p2;
-    if((style & kNotebook_LeftTabs)) {
-        p1 = tabInfo.GetRect().GetTopRight();
-        p2 = tabInfo.GetRect().GetBottomRight();
-        dc.SetPen(markerPen);
-        DrawMarkerLine(dc, p1, p2, wxLEFT);
-    } else if(style & kNotebook_RightTabs) {
-        // Right tabs
-        p1 = tabInfo.GetRect().GetTopLeft();
-        p2 = tabInfo.GetRect().GetBottomLeft();
-        dc.SetPen(markerPen);
-        DrawMarkerLine(dc, p1, p2, wxRIGHT);
-    } else if(style & kNotebook_BottomTabs) {
+    if(style & kNotebook_BottomTabs) {
         // Bottom tabs
         if(isGTK3) {
             direction = wxDOWN;

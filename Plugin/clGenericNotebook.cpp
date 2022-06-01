@@ -3,7 +3,6 @@
 #include "JSON.h"
 #include "clColours.h"
 #include "clSystemSettings.h"
-#include "clTabRendererDefault.hpp"
 #include "clTabRendererMinimal.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -63,23 +62,12 @@ wxRect GetFileListButtonRect(wxWindow* win, size_t style)
 {
     wxRect client_rect = win->GetClientRect();
     int button_width, button_height;
-    if(IS_VERTICAL_TABS(style)) {
-        button_width = client_rect.GetWidth();
-        button_height = win->GetTextExtent("Tp").GetHeight() + 10;
-    } else {
-        button_width = client_rect.GetHeight() / 2;
-        button_height = client_rect.GetHeight();
-    }
+    button_width = client_rect.GetHeight() / 2;
+    button_height = client_rect.GetHeight();
 
     wxRect rr = wxRect(wxPoint(0, 0), wxSize(button_width, button_height));
-    // place it on the far right / bottom
-    if(IS_VERTICAL_TABS(style)) {
-        rr.SetX(client_rect.GetX());
-        rr.SetY(client_rect.GetY() + (client_rect.GetHeight() - rr.GetHeight()));
-    } else {
-        rr.SetX(client_rect.GetX() + client_rect.GetWidth() - rr.GetWidth());
-        rr.SetY(client_rect.GetY());
-    }
+    rr.SetX(client_rect.GetX() + client_rect.GetWidth() - rr.GetWidth());
+    rr.SetY(client_rect.GetY());
     return rr;
 }
 } // namespace
@@ -98,16 +86,6 @@ void clGenericNotebook::PositionControls()
     if(style & kNotebook_BottomTabs) {
         // Tabs are placed under the pages
         SetSizer(new wxBoxSizer(wxVERTICAL));
-        GetSizer()->Add(m_windows, 1, wxEXPAND);
-        GetSizer()->Add(m_tabCtrl, 0, wxEXPAND);
-    } else if(style & kNotebook_LeftTabs) {
-        // Tabs are placed to the left of the pages
-        SetSizer(new wxBoxSizer(wxHORIZONTAL));
-        GetSizer()->Add(m_tabCtrl, 0, wxEXPAND);
-        GetSizer()->Add(m_windows, 1, wxEXPAND);
-    } else if(style & kNotebook_RightTabs) {
-        // Tabs are placed to the right of the pages
-        SetSizer(new wxBoxSizer(wxHORIZONTAL));
         GetSizer()->Add(m_windows, 1, wxEXPAND);
         GetSizer()->Add(m_tabCtrl, 0, wxEXPAND);
     } else {
@@ -135,8 +113,7 @@ clGenericNotebook::clGenericNotebook(wxWindow* parent, wxWindowID id, const wxPo
     Bind(wxEVT_SIZE, &clGenericNotebook::OnSize, this);
     Bind(wxEVT_SIZING, &clGenericNotebook::OnSize, this);
     m_tabCtrl = new clTabCtrl(this, style);
-    bool use_system_theme = (style & kNotebook_DynamicColours) == 0;
-    m_windows = new WindowStack(this, wxID_ANY, use_system_theme);
+    m_windows = new WindowStack(this, wxID_ANY, true);
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clGenericNotebook::OnColoursChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_SETTINGS_CHANGED, &clGenericNotebook::OnPreferencesChanged, this);
@@ -168,13 +145,7 @@ bool clGenericNotebook::InsertPage(size_t index, wxWindow* page, const wxString&
 
 void clGenericNotebook::SetStyle(size_t style)
 {
-    size_t oldStyle = m_tabCtrl->GetStyle();
-    bool oldVerticalState = (oldStyle & (kNotebook_RightTabs | kNotebook_LeftTabs));
-    bool newVerticalState = (style & (kNotebook_RightTabs | kNotebook_LeftTabs));
     m_tabCtrl->SetStyle(style);
-    if(oldVerticalState != newVerticalState) {
-        m_tabCtrl->DoSetBestSize();
-    }
     PositionControls();
     m_tabCtrl->Refresh();
 }
@@ -206,23 +177,11 @@ void clGenericNotebook::EnableStyle(NotebookStyle style, bool enable)
 void clGenericNotebook::SetTabDirection(wxDirection d)
 {
     size_t flags = GetStyle();
-    // Clear all direction styles
+    // Unless wxBOTTOM, use UP tabs (default, no flag is set)
     flags &= ~kNotebook_BottomTabs;
-    flags &= ~kNotebook_LeftTabs;
-    flags &= ~kNotebook_RightTabs;
-#if 0
-    if(d == wxBOTTOM || d == wxRIGHT) {
-        flags |= kNotebook_BottomTabs;
-    }
-#else
     if(d == wxBOTTOM) {
         flags |= kNotebook_BottomTabs;
-    } else if(d == wxRIGHT) {
-        flags |= kNotebook_RightTabs;
-    } else if(d == wxLEFT) {
-        flags |= kNotebook_LeftTabs;
     }
-#endif
     SetStyle(flags);
 }
 
@@ -316,20 +275,8 @@ void clTabCtrl::DoSetBestSize()
     m_nHeight = wxMax(m_nHeight, bmpHeight);
     m_nWidth = sz.GetWidth();
 
-    if(IsVerticalTabs()) {
-        m_nWidth += 2 * GetArt()->xSpacer;
-        if(m_style & kNotebook_CloseButtonOnActiveTab) {
-            // add the button width
-            m_nWidth += 5;
-            m_nWidth += clTabRenderer::GetXButtonSize();
-            m_nWidth += 5;
-        }
-        SetSizeHints(wxSize(m_nWidth, -1));
-        SetSize(m_nWidth, -1);
-    } else {
-        SetSizeHints(wxSize(-1, m_nHeight));
-        SetSize(-1, m_nHeight);
-    }
+    SetSizeHints(wxSize(-1, m_nHeight));
+    SetSize(-1, m_nHeight);
     PositionFilelistButton();
 }
 
@@ -363,11 +310,8 @@ bool clTabCtrl::IsActiveTabInList(const clTabInfo::Vec_t& tabs) const
 bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 {
     wxRect clientRect(GetClientRect());
-    if((GetStyle() & kNotebook_ShowFileListButton) && !IsVerticalTabs()) {
+    if(GetStyle() & kNotebook_ShowFileListButton) {
         clientRect.SetWidth(clientRect.GetWidth() - CHEVRON_SIZE);
-    } else if((GetStyle() & kNotebook_ShowFileListButton) && IsVerticalTabs()) {
-        // Vertical tabs
-        clientRect.SetHeight(clientRect.GetHeight() - CHEVRON_SIZE);
     }
 
     for(size_t i = 0; i < tabs.size(); ++i) {
@@ -483,14 +427,16 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         m_art->Draw(this, gcdc, gcdc, *tab.get(), (*pColours), m_style, tab->m_xButtonState);
     }
 
+    if(!activeTab) {
+        m_tabs[0]->SetActive(true, GetStyle());
+        activeTab = m_tabs[0]; // make the first tab, the default one
+    }
+
     // Redraw the active tab
-    if(activeTab) {
-        m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, activeTab->m_xButtonState);
-    }
-    if(!IsVerticalTabs()) {
-        gcdc.DestroyClippingRegion();
-    }
-    m_art->FinaliseBackground(this, gcdc, clientRect, activeTab ? activeTab->GetRect() : wxRect(), m_colours, m_style);
+    m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, activeTab->m_xButtonState);
+
+    m_art->FinaliseBackground(this, gcdc, clientRect, activeTab->GetRect(), m_colours, m_style);
+    gcdc.DestroyClippingRegion();
 }
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
@@ -1363,7 +1309,7 @@ void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& client
     GetArt()->DrawBottomRect(this, activeTab, clientRect, dc, colours, GetStyle());
 }
 
-bool clTabCtrl::IsVerticalTabs() const { return (m_style & kNotebook_RightTabs) || (m_style & kNotebook_LeftTabs); }
+bool clTabCtrl::IsVerticalTabs() const { return false; }
 
 bool clTabCtrl::ShiftBottom(clTabInfo::Vec_t& tabs)
 {

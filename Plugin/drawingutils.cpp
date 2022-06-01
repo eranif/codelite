@@ -28,7 +28,6 @@
 #include "FontUtils.hpp"
 #include "clScrolledPanel.h"
 #include "clSystemSettings.h"
-#include "clTabRendererDefault.hpp"
 #include "globals.h"
 #include "wx/dc.h"
 #include "wx/settings.h"

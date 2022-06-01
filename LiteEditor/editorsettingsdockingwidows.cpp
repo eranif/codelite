@@ -35,7 +35,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
     AddHeader(_("Tabs"));
 
 #if !CL_USE_NATIVEBOOK
-#ifndef __WXMAC__
+#if 0
     wxArrayString tab_styles = clTabRenderer::GetRenderers();
     wxString selected_style = clConfig::Get().Read("TabStyle", wxString("DEFAULT"));
     AddProperty(_("Appearance"), tab_styles, selected_style, [this](const wxString& label, const wxAny& value) {
@@ -45,6 +45,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
         }
     });
 #endif
+
     const unordered_map<wxString, int> tab_height_map = { { "TALL", OptionsConfig::nbTabHt_Tall },
                                                           { "MEDIUM", OptionsConfig::nbTabHt_Medium },
                                                           { "SHORT", OptionsConfig::nbTabHt_Short },
@@ -66,15 +67,10 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
                 });
 #endif
 
-    unordered_map<wxString, wxDirection> orientation_map = {
-        { "UP", wxUP }, { "DOWN", wxDOWN }, { "LEFT", wxLEFT }, { "RIGHT", wxRIGHT }
-    };
+    unordered_map<wxString, wxDirection> orientation_map = { { "UP", wxUP }, { "DOWN", wxDOWN } };
+    unordered_map<int, wxString> orientation_map_reverse = { { wxUP, "UP" }, { wxDOWN, "DOWN" } };
 
-    unordered_map<int, wxString> orientation_map_reverse = {
-        { wxUP, "UP" }, { wxDOWN, "DOWN" }, { wxLEFT, "LEFT" }, { wxRIGHT, "RIGHT" }
-    };
-
-    AddProperty(_("Workspace tabs orientation"), { "UP", "DOWN", "LEFT", "RIGHT" },
+    AddProperty(_("Workspace tabs orientation"), { "UP", "DOWN" },
                 orientation_map_reverse[m_options->GetWorkspaceTabsDirection()],
                 [this, orientation_map](const wxString&, const wxAny& value) mutable {
                     wxString str_value;
@@ -82,7 +78,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
                         m_options->SetWorkspaceTabsDirection(orientation_map[str_value]);
                     }
                 });
-    AddProperty(_("Output tabs orientation"), { "UP", "DOWN", "LEFT", "RIGHT" },
+    AddProperty(_("Output tabs orientation"), { "UP", "DOWN" },
                 orientation_map_reverse[m_options->GetOutputTabsDirection()],
                 [this, orientation_map](const wxString&, const wxAny& value) mutable {
                     wxString str_value;

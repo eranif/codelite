@@ -714,10 +714,10 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     , m_webUpdate(NULL)
     , m_toolbar(NULL)
 {
-    EditorConfig* cfg = EditorConfigST::Get();
     GeneralInfo inf;
-    cfg->ReadObject("GeneralInfo", &inf);
+    EditorConfigST::Get()->ReadObject("GeneralInfo", &inf);
 
+    // Ensure that the position is within the display coords
     if(inf.GetFramePosition().x < 0 || inf.GetFramePosition().y < 0) {
         inf.SetFramePosition({ 100, 100 });
     }
@@ -733,9 +733,8 @@ clMainFrame::clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title
     }
 
     // constuct the UI
-    Construct();
-
     m_frameGeneralInfo = inf;
+    Construct();
 }
 
 clMainFrame::~clMainFrame(void)
@@ -936,7 +935,6 @@ void clMainFrame::Construct()
 
 void clMainFrame::PostConstruct()
 {
-    Maximize(m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME);
     CreateWelcomePage();
 
     // Place the toolbar and and menu bar
@@ -3488,9 +3486,6 @@ void clMainFrame::CompleteInitialization()
         clConfig::Get().Write("ColoursAdjusted", true);
     }
     MSWSetWindowDarkTheme(this);
-    if(m_frameGeneralInfo.GetFlags() & CL_FULLSCREEN) {
-        CallAfter(&clMainFrame::DoFullscreen, true);
-    }
 
     // time to create the file explorer
     wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, XRCID("go_home"));
@@ -3509,9 +3504,11 @@ void clMainFrame::CompleteInitialization()
     static_cast<CodeLiteApp*>(wxTheApp)->ProcessCommandLineParams();
     m_mgr.Update();
 
-    // needs to be done in an "CallAfter" to avoid the flicker
 #ifdef __WXMSW__
-    CallAfter(&clMainFrame::SetPosition, m_frameGeneralInfo.GetFramePosition());
+    // needs to be done in an "CallAfter" to avoid the flicker
+    CallAfter(&clMainFrame::RestoreFrameSizeAndPosition);
+#else
+    RestoreFrameSizeAndPosition();
 #endif
 
 #if defined(__WXGTK__)
@@ -3520,6 +3517,17 @@ void clMainFrame::CompleteInitialization()
         GetWorkspacePane()->GetWorkspaceTab()->SetFocus();
     }
 #endif
+}
+
+void clMainFrame::RestoreFrameSizeAndPosition()
+{
+    SetPosition(m_frameGeneralInfo.GetFramePosition());
+    SetSize(m_frameGeneralInfo.GetFrameSize());
+    Maximize(m_frameGeneralInfo.GetFlags() & CL_MAXIMIZE_FRAME);
+    if(m_frameGeneralInfo.GetFlags() & CL_FULLSCREEN) {
+        ShowFullScreen(true, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER |
+                                 wxFULLSCREEN_NOCAPTION);
+    }
 }
 
 void clMainFrame::OnAppActivated(wxActivateEvent& e)
@@ -4550,10 +4558,11 @@ void clMainFrame::OnShowFullScreen(wxCommandEvent& e)
     wxUnusedVar(e);
 
     if(IsFullScreen()) {
-        DoFullscreen(false);
+        ShowFullScreen(false);
 
     } else {
-        DoFullscreen(true);
+        ShowFullScreen(true, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER |
+                                 wxFULLSCREEN_NOCAPTION);
 
         // Re-apply the menu accelerators
         ManagerST::Get()->UpdateMenuAccelerators();
@@ -6072,11 +6081,6 @@ void clMainFrame::OnReportIssue(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     ::wxLaunchDefaultBrowser("https://github.com/eranif/codelite/issues");
-}
-
-void clMainFrame::DoFullscreen(bool b)
-{
-    ShowFullScreen(b, wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION);
 }
 
 void clMainFrame::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID)

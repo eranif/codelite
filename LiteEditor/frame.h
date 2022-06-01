@@ -156,9 +156,9 @@ protected:
     void DoCreateBuildDropDownMenu(wxMenu* menu);
     void DoShowToolbars(bool show, bool update = true);
     void InitializeLogo();
-    void DoFullscreen(bool b);
     void DoShowMenuBar(bool show);
     void OnSysColoursChanged(clCommandEvent& event);
+    void RestoreFrameSizeAndPosition();
 
 public:
     void Raise() override;

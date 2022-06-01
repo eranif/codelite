@@ -48,7 +48,7 @@ wxObject* MyWxPropGridXmlHandler::DoCreateResource()
 
         // add the splitter property after the children were added
         int splitterLeft = GetBool("splitterleft");
-        if(splitterLeft) { m_pgmgr->GetPage(0)->SetSplitterLeft(); }
+        if(splitterLeft) { m_pgmgr->SetSplitterLeft(); }
 
         int splitterPos = GetLong("splitterpos", wxNOT_FOUND);
         if(splitterPos != wxNOT_FOUND) { m_pgmgr->GetPage(0)->SetSplitterPosition(splitterPos); }

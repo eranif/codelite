@@ -274,7 +274,7 @@ void clButtonBase::Render(wxDC& dc)
 
     // set the pen and draw the border
     wxColour base_colour = clSystemSettings::GetDefaultPanelColour();
-    wxColour border_colour = base_colour.ChangeLightness(70);
+    wxColour border_colour = base_colour.ChangeLightness(isDark ? 50 : 70);
 #ifdef __WXMAC__
     if(isDisabled) {
         border_colour = border_colour.ChangeLightness(110);

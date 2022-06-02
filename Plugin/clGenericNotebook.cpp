@@ -57,21 +57,27 @@ struct DnD_Data {
 };
 
 DnD_Data s_clTabCtrlDnD_Data;
+const wxString BUTTON_FILE_LIST_SYMBOL = wxT("\u22EE");
 
-wxRect GetFileListButtonRect(wxWindow* win, size_t style)
+wxRect GetFileListButtonRect(wxWindow* win, size_t style, wxDC& dc)
 {
+    wxDCFontChanger font_changer(dc);
+    wxFont font = clTabRenderer::GetTabFont(true);
+    dc.SetFont(font);
+
+    wxRect rr = dc.GetTextExtent(BUTTON_FILE_LIST_SYMBOL);
+    rr.Inflate(win->FromDIP(5));
+
+    int max_dim = wxMax(rr.GetWidth(), rr.GetHeight());
+    rr.SetWidth(max_dim);
+    rr.SetHeight(max_dim);
+
     wxRect client_rect = win->GetClientRect();
-    int button_width, button_height;
-    button_width = client_rect.GetHeight() / 2;
-    button_height = client_rect.GetHeight();
-
-    wxRect rr = wxRect(wxPoint(0, 0), wxSize(button_width, button_height));
-    rr.Deflate(0, win->FromDIP(5));
-
     rr.SetX(client_rect.GetX() + client_rect.GetWidth() - rr.GetWidth());
     rr = rr.CenterIn(client_rect, wxVERTICAL);
     return rr;
 }
+
 } // namespace
 
 void clGenericNotebook::PositionControls()
@@ -318,17 +324,10 @@ bool clTabCtrl::IsActiveTabVisible(const clTabInfo::Vec_t& tabs) const
 
     for(size_t i = 0; i < tabs.size(); ++i) {
         clTabInfo::Ptr_t t = tabs.at(i);
-        if(IsVerticalTabs()) {
-            if(t->IsActive() && clientRect.Intersects(t->GetRect())) {
-                return true;
-            }
-        } else {
-            wxRect tabRect = t->GetRect();
-            tabRect.SetWidth(tabRect.GetWidth() *
-                             0.5); // The tab does not need to be fully shown, but at least 50% of it
-            if(t->IsActive() && clientRect.Contains(tabRect)) {
-                return true;
-            }
+        wxRect tabRect = t->GetRect();
+        tabRect.SetWidth(tabRect.GetWidth() * 0.5); // The tab does not need to be fully shown, but at least 50% of it
+        if(t->IsActive() && clientRect.Contains(tabRect)) {
+            return true;
         }
     }
     return false;
@@ -388,7 +387,7 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     m_chevronRect = {};
     if(m_style & kNotebook_ShowFileListButton) {
-        m_chevronRect = GetFileListButtonRect(this, m_style);
+        m_chevronRect = GetFileListButtonRect(this, m_style, gcdc);
     }
 
 #ifdef __WXOSX__
@@ -405,7 +404,6 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         m_visibleTabs.clear();
         return;
     }
-
 
     SetBackgroundColour(GetArt()->DrawBackground(this, gcdc, rect, m_colours, m_style));
     UpdateVisibleTabs();
@@ -464,10 +462,8 @@ void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
 void clTabCtrl::UpdateVisibleTabs(bool forceReshuffle)
 {
     // don't update the list if we don't need to
-    if(!IsVerticalTabs()) {
-        if(IsActiveTabInList(m_visibleTabs) && IsActiveTabVisible(m_visibleTabs) && !forceReshuffle)
-            return;
-    }
+    if(IsActiveTabInList(m_visibleTabs) && IsActiveTabVisible(m_visibleTabs) && !forceReshuffle)
+        return;
 
     // set the physical coords for each tab (we do this for all the tabs)
     DoUpdateCoordiantes(m_tabs);
@@ -1377,7 +1373,8 @@ void clTabCtrl::PositionFilelistButton()
         return;
     }
 
-    wxRect button_rect_base = GetFileListButtonRect(this, m_style);
+    wxClientDC cdc(this);
+    wxRect button_rect_base = GetFileListButtonRect(this, m_style, cdc);
     m_chevronRect = button_rect_base;
 
     wxRect button_rect = button_rect_base;
@@ -1385,7 +1382,8 @@ void clTabCtrl::PositionFilelistButton()
     button_rect = button_rect.CenterIn(m_chevronRect);
 
     if(m_fileListButton == nullptr) {
-        m_fileListButton = new clButton(this, wxID_ANY, wxT("\u22EE"), wxDefaultPosition, button_rect.GetSize());
+        m_fileListButton =
+            new clButton(this, wxID_ANY, BUTTON_FILE_LIST_SYMBOL, wxDefaultPosition, button_rect.GetSize());
         m_fileListButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
             wxUnusedVar(event);
             DoShowTabList();

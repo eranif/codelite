@@ -98,8 +98,9 @@ public:
 private:
     void AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex,
                     int colIndex = wxNOT_FOUND);
-    void AddDefaultGnuComplierOptions();
+    void AddDefaultGnuCompilerOptions();
     void AddDefaultGnuLinkerOptions();
+    void AddDefaultGnuCompilerLinkerOptions();
 
 protected:
     wxString m_name;
@@ -179,6 +180,7 @@ public:
 
     void AddCompilerOption(const wxString& name, const wxString& desc);
     void AddLinkerOption(const wxString& name, const wxString& desc);
+    void AddCompilerLinkerOption(const wxString& name, const wxString& desc);
 
     wxString GetLinkLine(const wxString& type, bool inputFromFile) const;
     void SetLinkLine(const wxString& type, const wxString& line, bool inputFromFile);

@@ -206,8 +206,9 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
         // For backward compatibility, if the compiler / linker options are empty - add them
         if(IsGnuCompatibleCompiler()) {
-            AddDefaultGnuComplierOptions();
+            AddDefaultGnuCompilerOptions();
             AddDefaultGnuLinkerOptions();
+            AddDefaultGnuCompilerLinkerOptions();
         }
 
     } else {
@@ -261,8 +262,9 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
                 "(In file included from *)([a-zA-Z:]{0,2}[ a-zA-Z\\.0-9_/\\+\\-\\\\]+ *)(:)([0-9]+ *)(:)([0-9:]*)?", 2,
                 4, -1);
 
-            AddDefaultGnuComplierOptions();
+            AddDefaultGnuCompilerOptions();
             AddDefaultGnuLinkerOptions();
+            AddDefaultGnuCompilerLinkerOptions();
 
         } else {
 
@@ -602,6 +604,17 @@ void Compiler::AddLinkerOption(const wxString& name, const wxString& desc)
     m_linkerOptions.insert(std::make_pair(name, option));
 }
 
+void Compiler::AddCompilerLinkerOption(const wxString& name, const wxString& desc)
+{
+    CmpCmdLineOption option;
+    option.help = desc;
+    option.name = name;
+    m_compilerOptions.erase(name);
+    m_compilerOptions.insert(std::make_pair(name, option));
+    m_linkerOptions.erase(name);
+    m_linkerOptions.insert(std::make_pair(name, option));
+}
+
 bool Compiler::IsGnuCompatibleCompiler() const
 {
     static wxStringSet_t gnu_compilers = { COMPILER_FAMILY_CLANG, COMPILER_FAMILY_MINGW, COMPILER_FAMILY_GCC,
@@ -609,7 +622,7 @@ bool Compiler::IsGnuCompatibleCompiler() const
     return !m_compilerFamily.IsEmpty() && gnu_compilers.count(m_compilerFamily);
 }
 
-void Compiler::AddDefaultGnuComplierOptions()
+void Compiler::AddDefaultGnuCompilerOptions()
 {
     // Add GCC / CLANG default compiler options
     AddCompilerOption("-O", "Optimize generated code for speed");
@@ -620,22 +633,47 @@ void Compiler::AddDefaultGnuComplierOptions()
     AddCompilerOption("-O0", "Optimize for debugging");
     AddCompilerOption("-W", "Enable standard compiler warnings");
     AddCompilerOption("-Wall", "Enable all compiler warnings");
+    AddCompilerOption("-Weffc++", "Enable Effective-C++ warnings");
+    AddCompilerOption("-Wextra", "Enable extra compiler warnings");
     AddCompilerOption("-Wfatal-errors", "Stop compiling after first error");
+    AddCompilerOption("-Winit-self", "Warn about variables initialized with themselves");
+    AddCompilerOption("-Wzero-as-null-pointer-constant", "Warn if '0' is used as a null pointer constant");
+    AddCompilerOption("-Wnon-virtual-dtor", "Warn if a class has virtual functions but no virtual destructor");
+    AddCompilerOption("-Winline", "Warn if an inline function can not be inlined");
+    AddCompilerOption("-Wmissing-declarations", "Warn if a global function definition does not have a forward declaration");
+    AddCompilerOption("-Wundef", "Warn if an undefined macro is evaluated in an '#if' directive");
+    AddCompilerOption("-Wredundant-decls", "Warn if there are redundant declarations in the same scope");
+    AddCompilerOption("-Wfloat-equal", "Warn about floating point equality/inequality comparisons");
     AddCompilerOption("-Wmain", "Warn if main() is not conformant");
+    AddCompilerOption("-Wunreachable-code", "Warn about code that will never execute");
+    AddCompilerOption("-Wshadow", "Warn about shadowed scoped identifiers");
+    AddCompilerOption("-Wswitch-default", "Warn about missing default case in switch statements");
+    AddCompilerOption("-Wswitch-enum", "Warn if an enumeration based switch statement lacks any enumerator");
     AddCompilerOption("-ansi",
                       "In C mode, this is equivalent to -std=c90. In C++ mode, it is equivalent to -std=c++98");
+    AddCompilerOption("-fPIC", "Position Independent Code");
+    AddCompilerOption("-fPIE", "Position Independent Executable");
     AddCompilerOption("-fexpensive-optimizations", "Expensive optimizations");
     AddCompilerOption("-fopenmp", "Enable OpenMP (compilation)");
     AddCompilerOption("-g", "Produce debugging information");
+    AddCompilerOption("-Og", "Optimize debugging information");
     AddCompilerOption("-pedantic", "Enable warnings demanded by strict ISO C and ISO C++");
     AddCompilerOption("-pedantic-errors", "Treat as errors the warnings demanded by strict ISO C and ISO C++");
     AddCompilerOption("-pg", "Profile code when executed");
     AddCompilerOption("-w", "Inhibit all warning messages");
+    AddCompilerOption("-std=c90", "Enable C90 features");
     AddCompilerOption("-std=c99", "Enable C99 features");
     AddCompilerOption("-std=c11", "Enable C11 features");
+    AddCompilerOption("-std=c17", "Enable C17 features");
+    AddCompilerOption("-std=gnu++98", "Enable C++98 features (w/ GNU extensions)");
+    AddCompilerOption("-std=c++98", "Enable C++98 features");
+    AddCompilerOption("-std=gnu++11", "Enable C++11 features (w/ GNU extensions)");
     AddCompilerOption("-std=c++11", "Enable C++11 features");
+    AddCompilerOption("-std=gnu++14", "Enable C++14 features (w/ GNU extensions)");
     AddCompilerOption("-std=c++14", "Enable C++14 features");
+    AddCompilerOption("-std=gnu++17", "Enable C++17 features (w/ GNU extensions)");
     AddCompilerOption("-std=c++17", "Enable C++17 features");
+    AddCompilerOption("-std=gnu++20", "Enable C++20 features (w/ GNU extensions)");
     AddCompilerOption("-std=c++20", "Enable C++20 features");
 }
 
@@ -646,6 +684,17 @@ void Compiler::AddDefaultGnuLinkerOptions()
     AddLinkerOption("-mwindows", "Prevent a useless terminal console appearing with MSWindows GUI programs");
     AddLinkerOption("-pg", "Profile code when executed");
     AddLinkerOption("-s", "Remove all symbol table and relocation information from the executable");
+    AddLinkerOption("-static-libgcc", "Static libgcc");
+    AddLinkerOption("-static-libstdc++", "Static libstdc++");
+    AddLinkerOption("-static", "Static linking");
+}
+
+void Compiler::AddDefaultGnuCompilerLinkerOptions()
+{
+    // Compiler and Linker options
+    AddCompilerLinkerOption("-m32", "Target x86 (32bit)");
+    AddCompilerLinkerOption("-m64", "Target x86_64 (64bit)");
+    AddCompilerLinkerOption("-flto", "Link-Time Optimization (Eliminates duplicate template functions and unused code)");
 }
 
 wxArrayString Compiler::GetDefaultIncludePaths()

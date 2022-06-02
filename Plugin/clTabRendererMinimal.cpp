@@ -20,9 +20,15 @@
 
 namespace
 {
+#ifdef __WXMAC__
+constexpr int BOTTOM_PEN_LIGHNTESS = 60;
+constexpr int SIDE_PEN_LIGHNTESS_WHEN_DARK = 115;
+constexpr int SIDE_PEN_LIGHNTESS_WHEN_LIGHT = 70;
+#else
 constexpr int BOTTOM_PEN_LIGHNTESS = 40;
 constexpr int SIDE_PEN_LIGHNTESS_WHEN_DARK = 115;
 constexpr int SIDE_PEN_LIGHNTESS_WHEN_LIGHT = 80;
+#endif
 
 void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTabBgColour, wxColour* bgColour)
 {

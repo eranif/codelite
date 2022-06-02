@@ -66,8 +66,10 @@ wxRect GetFileListButtonRect(wxWindow* win, size_t style)
     button_height = client_rect.GetHeight();
 
     wxRect rr = wxRect(wxPoint(0, 0), wxSize(button_width, button_height));
+    rr.Deflate(0, win->FromDIP(5));
+
     rr.SetX(client_rect.GetX() + client_rect.GetWidth() - rr.GetWidth());
-    rr.SetY(client_rect.GetY());
+    rr = rr.CenterIn(client_rect, wxVERTICAL);
     return rr;
 }
 } // namespace
@@ -404,16 +406,10 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         return;
     }
 
-    if(IsVerticalTabs()) {
-        gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width,
-                               clientRect.height - m_chevronRect.GetHeight());
-    } else {
-        gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - m_chevronRect.GetWidth(),
-                               clientRect.height);
-    }
 
     SetBackgroundColour(GetArt()->DrawBackground(this, gcdc, rect, m_colours, m_style));
     UpdateVisibleTabs();
+    gcdc.SetClippingRegion(clientRect.x, clientRect.y, clientRect.width - m_chevronRect.GetWidth(), clientRect.height);
 
     clTabInfo::Ptr_t activeTab;
     for(int i = (m_visibleTabs.size() - 1); i >= 0; --i) {
@@ -434,9 +430,9 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
 
     // Redraw the active tab
     m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabColours, m_style, activeTab->m_xButtonState);
+    gcdc.DestroyClippingRegion();
 
     m_art->FinaliseBackground(this, gcdc, clientRect, activeTab->GetRect(), m_colours, m_style);
-    gcdc.DestroyClippingRegion();
 }
 
 void clTabCtrl::DoUpdateCoordiantes(clTabInfo::Vec_t& tabs)
@@ -1377,30 +1373,32 @@ void clTabCtrl::OnBeginDrag()
 
 void clTabCtrl::PositionFilelistButton()
 {
-    if(m_style & kNotebook_ShowFileListButton) {
-        wxRect button_rect_base = GetFileListButtonRect(this, m_style);
-        m_chevronRect = button_rect_base;
-
-        wxRect button_rect = button_rect_base;
-        button_rect.Deflate(2);
-        button_rect = button_rect.CenterIn(m_chevronRect);
-
-        if(m_fileListButton == nullptr) {
-            m_fileListButton = new clButton(this, wxID_ANY, wxT("\u22EE"), wxDefaultPosition, button_rect.GetSize());
-            m_fileListButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-                wxUnusedVar(event);
-                DoShowTabList();
-            });
-        }
-
-        clColours colours;
-        colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
-        colours.SetBgColour(GetBackgroundColour());
-        colours.SetBorderColour(GetBackgroundColour());
-        m_fileListButton->SetColours(colours);
-        m_fileListButton->SetSize(button_rect.GetSize());
-        m_fileListButton->Move(button_rect.GetTopLeft());
+    if((m_style & kNotebook_ShowFileListButton) == 0) {
+        return;
     }
+
+    wxRect button_rect_base = GetFileListButtonRect(this, m_style);
+    m_chevronRect = button_rect_base;
+
+    wxRect button_rect = button_rect_base;
+    button_rect.Deflate(2);
+    button_rect = button_rect.CenterIn(m_chevronRect);
+
+    if(m_fileListButton == nullptr) {
+        m_fileListButton = new clButton(this, wxID_ANY, wxT("\u22EE"), wxDefaultPosition, button_rect.GetSize());
+        m_fileListButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+            wxUnusedVar(event);
+            DoShowTabList();
+        });
+    }
+
+    clColours colours;
+    colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
+    colours.SetBgColour(GetBackgroundColour());
+    colours.SetBorderColour(GetBackgroundColour());
+    m_fileListButton->SetColours(colours);
+    m_fileListButton->SetSize(button_rect.GetSize());
+    m_fileListButton->Move(button_rect.GetTopLeft());
 }
 
 clTabCtrlDropTarget::clTabCtrlDropTarget(clTabCtrl* tabCtrl)

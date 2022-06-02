@@ -74,7 +74,7 @@ void clTabColours::UpdateColours(size_t notebookStyle)
     bool is_dark = DrawingUtils::IsDark(base_colour);
 
     tabAreaColour = base_colour.ChangeLightness(is_dark ? 60 : 90);
-    activeTabBgColour = base_colour;
+    activeTabBgColour = base_colour.ChangeLightness(is_dark ? 107 : 100);
     activeTabTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
     activeTabPenColour = base_colour;
     activeTabInnerPenColour = activeTabPenColour;
@@ -176,12 +176,7 @@ void clTabInfo::CalculateOffsets(size_t style, wxDC& dc)
         xrect = wxRect(m_width, 0, X_BUTTON_SIZE, X_BUTTON_SIZE);
         m_bmpCloseX = xrect.GetX();
         m_bmpCloseY = 0; // we will fix this later
-        m_width += xrect.GetWidth();
-        m_width += X_spacer;
-    }
-
-    if(style & kNotebook_UnderlineActiveTab) {
-        m_width += 8;
+        m_width += xrect.GetWidth() + m_tabCtrl->FromDIP(5);
     }
 
     // Update the rect width
@@ -345,39 +340,17 @@ int clTabRenderer::GetDefaultBitmapHeight(int Y_spacer)
 clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t tabStyle)
 {
     if(ms_Renderes.empty()) {
-        //        RegisterRenderer(new clTabRendererDefault(win));
-        //        RegisterRenderer(new clTabRendererGTK3(win));
         RegisterRenderer(new clTabRendererMinimal(win));
-        //        RegisterRenderer(new clTabRendererFirefox(win));
     }
     clTabRenderer::Ptr_t renderer;
     renderer = Create(win, "MINIMAL");
     return renderer;
-
-    //    wxString tab = clConfig::Get().Read("TabStyle", wxString("MINIMAL"));
-    //    wxString name = tab.Upper();
-    //
-    //    bool is_vertical = (tabStyle & kNotebook_LeftTabs) || (tabStyle & kNotebook_RightTabs);
-    //    renderer.reset(Create(win, name));
-    //
-    //    if(!renderer) {
-    //        renderer = Create(win, "MINIMAL");
-    //    } else {
-    //        // make sure the selected renderer supports vertical tabbing
-    //        if(is_vertical && !renderer->IsVerticalTabSupported()) {
-    //            renderer.reset(Create(win, "MINIMAL"));
-    //        }
-    //    }
-    //    return renderer;
 }
 
 wxArrayString clTabRenderer::GetRenderers()
 {
     if(ms_Renderes.empty()) {
         RegisterRenderer(new clTabRendererMinimal(nullptr));
-        //        RegisterRenderer(new clTabRendererDefault(nullptr));
-        //        RegisterRenderer(new clTabRendererGTK3(nullptr));
-        //        RegisterRenderer(new clTabRendererFirefox(nullptr));
     }
 
     wxArrayString renderers;

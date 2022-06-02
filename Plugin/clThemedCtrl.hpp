@@ -31,14 +31,15 @@ template <typename T> void ApplyTheme(T* ctrl)
 
     colours.InitFromColour(baseColour);
 
-    auto& prop = lexer->GetProperty(SEL_TEXT_ATTR_ID);
-    wxColour selBgColour = prop.GetBgColour();
-    wxColour selTextColour = prop.GetFgColour();
-    colours.SetSelItemBgColour(selBgColour);
-    colours.SetSelItemTextColour(selTextColour);
+    //    auto& prop = lexer->GetProperty(SEL_TEXT_ATTR_ID);
+    //    wxColour selBgColour = prop.GetBgColour();
+    //    wxColour selTextColour = prop.GetFgColour();
+    colours.SetSelItemBgColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    colours.SetSelItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    wxColour selBgColour = colours.GetSelItemBgColour();
     colours.SetSelItemBgColourNoFocus(colours.IsLightTheme() ? selBgColour.ChangeLightness(120)
                                                              : selBgColour.ChangeLightness(80));
-    colours.SetSelItemTextColourNoFocus(selTextColour);
+    colours.SetSelItemTextColourNoFocus(colours.GetSelItemTextColour());
     ctrl->SetColours(colours);
 }
 

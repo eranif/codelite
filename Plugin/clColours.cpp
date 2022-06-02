@@ -43,9 +43,9 @@ void clColours::InitFromColour(const wxColour& baseColour)
     itemBgColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX); // item bg colour
     itemTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
     hoverBgColour = itemBgColour.ChangeLightness(90);
-    selItemTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+    selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
     selItemTextColourNoFocus = selItemTextColour; // item bg colour
-    selItemBgColour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+    selItemBgColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
     selItemBgColourNoFocus = selItemBgColour;
     buttonColour = itemTextColour;    // expand/collapse button colour
     selbuttonColour = itemTextColour; // The colour of the button ("Expand") when on a selected row

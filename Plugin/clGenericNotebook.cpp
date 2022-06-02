@@ -57,7 +57,7 @@ struct DnD_Data {
 };
 
 DnD_Data s_clTabCtrlDnD_Data;
-const wxString BUTTON_FILE_LIST_SYMBOL = wxT("\u22EE");
+const wxString BUTTON_FILE_LIST_SYMBOL = wxT("\u22EF");
 
 wxRect GetFileListButtonRect(wxWindow* win, size_t style, wxDC& dc)
 {

@@ -214,9 +214,11 @@ void clFileSystemWorkspace::CacheFiles(bool force)
             clFileSystemEvent event(wxEVT_FS_SCAN_COMPLETED);
             wxArrayString arrfiles;
             arrfiles.Alloc(files.size());
-            for(const wxFileName& f : files) {
+            for(const wxString& s : files) {
+                wxFileName f(s);
                 arrfiles.Add(f.GetFullPath());
             }
+
             event.SetPaths(arrfiles);
             EventNotifier::Get()->QueueEvent(event.Clone());
         },

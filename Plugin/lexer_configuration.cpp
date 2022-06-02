@@ -486,6 +486,8 @@ void LexerConf::ApplySystemColours(wxStyledTextCtrl* ctrl)
         ctrl->StyleSetForeground(i, fg_colour);
     }
     ctrl->SetCaretForeground(caret_colour);
+    ctrl->SetSelForeground(true, clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    ctrl->SetSelBackground(true, clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 }
 
 void LexerConf::ApplyWordSet(wxStyledTextCtrl* ctrl, eWordSetIndex index, const wxString& keywords)

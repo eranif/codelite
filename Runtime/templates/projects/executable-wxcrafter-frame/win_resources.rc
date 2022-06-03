@@ -1,4 +1,7 @@
+#if !defined(__llvm__)
 #include "wx/msw/wx.rc"
+#endif
+
 #include "wx/version.h"
 #if defined(WIN64) && !wxCHECK_VERSION(3, 1, 6)
 1 24 "wx/msw/amd64.manifest"

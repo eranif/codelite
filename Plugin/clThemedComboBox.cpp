@@ -43,17 +43,18 @@ void clThemedComboBox::OnThemeChanged(wxCommandEvent& event)
 
 void clThemedComboBox::ApplyTheme()
 {
-#ifdef __WXMSW__
-    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-#elif defined(__WXMAC__) || defined(__WXGTK__)
     auto parent = wxGetTopLevelParent(this);
     if(!parent) {
         return;
     }
+
     auto top_frame = dynamic_cast<wxFrame*>(parent);
     if(top_frame && top_frame == EventNotifier::Get()->TopFrame()) {
         // we are placed inside our main frame
         SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
-    }
+#ifdef __WXMSW__
+        GetButton()->SetForegroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+        GetButton()->SetBackgroundColour(clSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 #endif
+    }
 }

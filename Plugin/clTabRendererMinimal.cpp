@@ -34,18 +34,6 @@ void GetTabColours(const clTabColours& colours, size_t style, wxColour* activeTa
 {
     *bgColour = colours.tabAreaColour;
     *activeTabBgColour = colours.activeTabBgColour;
-#if 0
-    bool is_dark = DrawingUtils::IsDark(colours.activeTabBgColour);
-    // If we are painting the active tab, check to see if the page is of type wxStyledTextCtrl
-    if(style & kNotebook_DynamicColours) {
-        auto editor = clGetManager()->GetActiveEditor();
-        if(editor) {
-            *activeTabBgColour = editor->GetCtrl()->StyleGetBackground(0);
-            is_dark = DrawingUtils::IsDark(*activeTabBgColour);
-        }
-        *bgColour = activeTabBgColour->ChangeLightness(is_dark ? 120 : 80);
-    }
-#endif
 }
 } // namespace
 
@@ -197,24 +185,25 @@ wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, co
             activeTabBgColour.ChangeLightness(is_dark ? SIDE_PEN_LIGHNTESS_WHEN_DARK : SIDE_PEN_LIGHNTESS_WHEN_LIGHT);
         {
             wxDCPenChanger pen_changer(dc, side_pen);
-            DRAW_LINE(tabRect.GetTopLeft(), tabRect.GetBottomLeft());
-            DRAW_LINE(tabRect.GetRightTop(), tabRect.GetRightBottom());
+            dc.DrawLine(tabRect.GetTopLeft(), tabRect.GetBottomLeft());
+            dc.DrawLine(tabRect.GetRightTop(), tabRect.GetRightBottom());
         }
         {
             wxDCPenChanger pen_changer(dc, bottom_pen);
-            DRAW_LINE(tabRect.GetBottomLeft(), tabRect.GetBottomRight());
+            dc.DrawLine(tabRect.GetBottomLeft(), tabRect.GetBottomRight());
         }
     }
 
     wxFont font = GetTabFont(tabInfo.IsActive() && IsUseBoldFont());
     wxColour text_colour = is_dark ? bgColour.ChangeLightness(170) : bgColour.ChangeLightness(30);
     fontDC.SetTextForeground(text_colour);
-    wxDCFontChanger font_changer(fontDC);
-    fontDC.SetFont(font);
+    wxDCFontChanger font_changer(fontDC, font);
 
-    wxRect textRect = dc.GetTextExtent(label);
-    textRect = textRect.CenterIn(visibleTab);
-    fontDC.DrawText(label, tabInfo.m_textX + rr.GetX(), textRect.GetY());
+    wxRect textRect = fontDC.GetTextExtent(label);
+    textRect = textRect.CenterIn(visibleTab, wxVERTICAL);
+    textRect.SetX(tabInfo.m_textX + rr.GetX());
+    fontDC.DrawText(label, textRect.GetTopLeft());
+
     if(style & kNotebook_CloseButtonOnActiveTab) {
         // use the adjusted tab rect and not the original one passed to us
         clTabInfo tab_info = tabInfo;

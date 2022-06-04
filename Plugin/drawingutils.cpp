@@ -611,11 +611,9 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
                                const wxColour& bgColouur, eButtonState state)
 {
     // Calculate the circle radius:
-    wxRect innerRect(rect);
     wxColour bg_colour = bgColouur;
     bool is_dark = IsDark(bg_colour);
     wxColour xColour = is_dark ? wxColour(*wxWHITE).ChangeLightness(90) : wxColour(*wxBLACK).ChangeLightness(120);
-    int penWidth = 2;
     bool drawBackground = false;
     switch(state) {
     case eButtonState::kNormal:
@@ -639,21 +637,21 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     wxRect xrect(rect);
     wxRect bgRect = rect;
     if(drawBackground) {
-        bgRect.Inflate(2);
+        bgRect.Inflate(3);
+        bgRect = bgRect.CenterIn(rect);
         dc.SetBrush(bg_colour);
         dc.SetPen(bg_colour);
-        dc.DrawRoundedRectangle(bgRect, 0.0);
+        dc.DrawRectangle(bgRect);
     }
 
-    xrect.Deflate(rect.GetWidth() / 4);
-    xrect = xrect.CenterIn(rect);
+    const wxString symbol = wxT("\u2715");
+    wxDCFontChanger font_changer(dc);
+    wxDCTextColourChanger font_colour_changer(dc, xColour);
+    dc.SetFont(clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 
-    dc.SetPen(wxPen(xColour, penWidth));
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawLine(xrect.GetTopLeft(), xrect.GetBottomRight());
-    dc.DrawLine(xrect.GetTopRight(), xrect.GetBottomLeft());
-    dc.DrawPoint(xrect.GetBottomRight());
-    dc.DrawPoint(xrect.GetBottomLeft());
+    xrect = dc.GetTextExtent(symbol);
+    xrect = xrect.CenterIn(bgRect);
+    dc.DrawText(symbol, xrect.GetTopLeft());
 }
 
 void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,

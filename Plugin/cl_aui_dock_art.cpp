@@ -55,7 +55,6 @@ bool IsRectOK(wxDC& dc, const wxRect& rect)
     return (true);
 }
 
-#ifndef __WXMSW__
 wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 {
     wxCoord x, y;
@@ -82,8 +81,8 @@ wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
     ret += wxT("...");
     return ret;
 }
-#endif
 } // namespace
+
 // ------------------------------------------------------------
 
 clAuiDockArt::clAuiDockArt(IManager* manager)
@@ -104,9 +103,6 @@ clAuiDockArt::~clAuiDockArt()
 void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
                                   wxAuiPaneInfo& pane)
 {
-#ifdef __WXMSW__
-    wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, _rect, pane);
-#else
     wxRect buttonRect = _rect;
 
     if(!IsRectOK(dc, _rect))
@@ -137,13 +133,21 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
         break;
     }
 
+#ifdef __WXMSW__
+    wxColour pen_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+    wxColour bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+#else
+    wxColour pen_colour = m_penColour;
+    wxColour bg_colour = m_bgColour;
+#endif
+
     // Prepare the colours
     switch(button) {
     case wxAUI_BUTTON_CLOSE:
-        DrawingUtils::DrawButtonX(dc, window, buttonRect, m_penColour, m_bgColour, buttonState);
+        DrawingUtils::DrawButtonX(dc, window, buttonRect, pen_colour, bg_colour, buttonState);
         break;
     case wxAUI_BUTTON_MAXIMIZE_RESTORE:
-        DrawingUtils::DrawButtonMaximizeRestore(dc, window, buttonRect, m_penColour, m_bgColour, buttonState);
+        DrawingUtils::DrawButtonMaximizeRestore(dc, window, buttonRect, pen_colour, bg_colour, buttonState);
         break;
     default:
         // Make sure that the pane buttons are drawn with proper colours
@@ -151,7 +155,6 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
         wxAuiDefaultDockArt::DrawPaneButton(dc, window, button, button_state, _rect, pane);
         break;
     }
-#endif
 }
 
 void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect,
@@ -163,22 +166,27 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     if(!IsRectOK(dc, rect))
         return;
 
-#ifdef __WXMAC__
+#if defined(__WXMAC__) || defined(__WXMSW__)
     tmpRect = rect;
     tmpRect.Inflate(2);
 
     // Prepare the colours
     wxFont f = DrawingUtils::GetDefaultGuiFont();
+
+#if defined(__WXMSW__)
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    dc.SetTextForeground(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+#else
     f.SetFractionalPointSize(1.1 * f.GetFractionalPointSize());
     f.SetWeight(wxFONTWEIGHT_SEMIBOLD);
-    dc.SetFont(f);
-
     dc.SetPen(clSystemSettings::GetDefaultPanelColour());
     dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
+    dc.SetTextForeground(m_captionTextColour);
+#endif
+    dc.SetFont(f);
     dc.DrawRectangle(tmpRect);
 
-    int caption_offset = 5;
-    dc.SetTextForeground(m_captionTextColour);
     wxCoord w, h;
     dc.GetTextExtent(wxT("ABCDEFHXfgkj"), &w, &h);
 
@@ -202,8 +210,6 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     text_rect = text_rect.CenterIn(rect);
     dc.DrawText(draw_text, text_rect.GetTopLeft());
 
-#elif defined(__WXMSW__)
-    wxAuiDefaultDockArt::DrawCaption(dc, window, text, rect, pane);
 #else
     tmpRect = rect;
     tmpRect.SetPosition(wxPoint(0, 0));

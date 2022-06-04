@@ -212,10 +212,29 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     wxDC& dc = pdc;
 #endif
 
+    // ------------------------------------------------
     // calculate the line height using the drawing DC
+    // ------------------------------------------------
     dc.SetFont(GetDefaultFont());
     wxSize textSize = dc.GetTextExtent("Tp");
     SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);
+
+    // If we have bitmaps, take them into consideration as well
+    if(GetBitmaps()) {
+        int heighestBitmap = 0;
+        for(size_t i = 0; i < GetBitmaps()->size(); ++i) {
+            const wxBitmap& bmp = GetBitmaps()->at(i);
+            if(bmp.IsOk()) {
+                heighestBitmap = wxMax(heighestBitmap, bmp.GetScaledHeight());
+            }
+        }
+        heighestBitmap += (2 * clRowEntry::Y_SPACER);
+        SetLineHeight(wxMax(heighestBitmap, GetLineHeight()));
+
+        // update the indentation size as well
+        clControlWithItems::SetIndent(GetLineHeight() / 2);
+        m_model.SetIndentSize(GetLineHeight() / 2);
+    }
 
     // set the indent to match the line height
     clControlWithItems::SetIndent(GetLineHeight() / 2);
@@ -799,7 +818,7 @@ void clTreeCtrl::DoBitmapAdded()
             heighestBitmap = wxMax(heighestBitmap, bmp.GetScaledHeight());
         }
     }
-    heighestBitmap += 2 * m_spacerY;
+    heighestBitmap += 2 * FromDIP(clRowEntry::Y_SPACER);
     SetLineHeight(wxMax(heighestBitmap, GetLineHeight()));
     SetIndent(GetLineHeight() / 2);
 }

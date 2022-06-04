@@ -55,6 +55,19 @@ public:
     }
     ~MyDirGuard() { wxSetWorkingDirectory(_d); }
 };
+namespace
+{
+bool restore_handle(DWORD wordHandle, HANDLE& h)
+{
+    HANDLE curhandle = GetStdHandle(wordHandle);
+    if(!SetStdHandle(wordHandle, h)) {
+        return false;
+    }
+    h = INVALID_HANDLE_VALUE;
+    CloseHandle(curhandle);
+    return true;
+}
+} // namespace
 
 /**
  * @class ConsoleAttacher
@@ -238,6 +251,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
     saAttr.bInheritHandle = TRUE;
     saAttr.lpSecurityDescriptor = NULL;
     WinProcessImpl* prc = new WinProcessImpl(parent);
+    wxScopedPtr<WinProcessImpl> deleter{ prc };
     prc->m_callback = cb;
     prc->m_flags = flags;
 
@@ -257,13 +271,11 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
 
         // Create a pipe for the child process's STDOUT.
         if(!CreatePipe(&prc->hChildStdoutRd, &prc->hChildStdoutWr, &saAttr, 0)) {
-            delete prc;
             return NULL;
         }
 
         // Set a write handle to the pipe to be STDOUT.
         if(!SetStdHandle(STD_OUTPUT_HANDLE, prc->hChildStdoutWr)) {
-            delete prc;
             return NULL;
         }
 
@@ -271,7 +283,6 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
         fSuccess = DuplicateHandle(GetCurrentProcess(), prc->hChildStdoutRd, GetCurrentProcess(),
                                    &prc->hChildStdoutRdDup, 0, FALSE, DUPLICATE_SAME_ACCESS);
         if(!fSuccess) {
-            delete prc;
             return NULL;
         }
         CloseHandle(prc->hChildStdoutRd);
@@ -289,13 +300,12 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
 
         // Create a pipe for the child process's STDERR.
         if(!CreatePipe(&prc->hChildStderrRd, &prc->hChildStderrWr, &saAttr, 0)) {
-            delete prc;
             return NULL;
         }
 
         // Set a write handle to the pipe to be STDERR.
         if(!SetStdHandle(STD_ERROR_HANDLE, prc->hChildStderrWr)) {
-            delete prc;
+
             return NULL;
         }
 
@@ -303,7 +313,6 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
         fSuccess = DuplicateHandle(GetCurrentProcess(), prc->hChildStderrRd, GetCurrentProcess(),
                                    &prc->hChildStderrRdDup, 0, FALSE, DUPLICATE_SAME_ACCESS);
         if(!fSuccess) {
-            delete prc;
             return NULL;
         }
         CloseHandle(prc->hChildStderrRd);
@@ -321,12 +330,10 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
 
         // Create a pipe for the child process's STDIN.
         if(!CreatePipe(&prc->hChildStdinRd, &prc->hChildStdinWr, &saAttr, 0)) {
-            delete prc;
             return NULL;
         }
         // Set a read handle to the pipe to be STDIN.
         if(!SetStdHandle(STD_INPUT_HANDLE, prc->hChildStdinRd)) {
-            delete prc;
             return NULL;
         }
         // Duplicate the write handle to the pipe so it is not inherited.
@@ -335,7 +342,6 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
                             FALSE, // not inherited
                             DUPLICATE_SAME_ACCESS);
         if(!fSuccess) {
-            delete prc;
             return NULL;
         }
         CloseHandle(prc->hChildStdinWr);
@@ -379,26 +385,17 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
     if(ret) {
         prc->dwProcessId = prc->piProcInfo.dwProcessId;
     } else {
-        int err = GetLastError();
-        wxUnusedVar(err);
-        delete prc;
         return NULL;
     }
 
     if(redirectOutput) {
         // After process creation, restore the saved STDIN and STDOUT.
-        if(!SetStdHandle(STD_INPUT_HANDLE, prc->hSaveStdin)) {
-            delete prc;
+        if(!restore_handle(STD_INPUT_HANDLE, prc->hSaveStdin))
             return NULL;
-        }
-        if(!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStdout)) {
-            delete prc;
+        if(!restore_handle(STD_OUTPUT_HANDLE, prc->hSaveStdout))
             return NULL;
-        }
-        if(!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStderr)) {
-            delete prc;
+        if(!restore_handle(STD_ERROR_HANDLE, prc->hSaveStderr))
             return NULL;
-        }
     }
 
     if((prc->m_flags & IProcessCreateConsole) || (prc->m_flags & IProcessCreateWithHiddenConsole)) {
@@ -414,6 +411,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
     }
     prc->m_writerThread = new WinWriterThread(prc->piProcInfo.hProcess, prc->hChildStdinWrDup);
     prc->m_writerThread->Start();
+    deleter.release(); // do not release the process pointer
     return prc;
 }
 
@@ -457,6 +455,7 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
             return true;
         }
     }
+
     bool success = !buff.IsEmpty() || !buffErr.IsEmpty();
     if(!success) {
         DWORD dwExitCode;

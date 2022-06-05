@@ -55,19 +55,6 @@ public:
     }
     ~MyDirGuard() { wxSetWorkingDirectory(_d); }
 };
-namespace
-{
-bool restore_handle(DWORD wordHandle, HANDLE& h)
-{
-    HANDLE curhandle = GetStdHandle(wordHandle);
-    if(!SetStdHandle(wordHandle, h)) {
-        return false;
-    }
-    h = INVALID_HANDLE_VALUE;
-    CloseHandle(curhandle);
-    return true;
-}
-} // namespace
 
 /**
  * @class ConsoleAttacher
@@ -105,36 +92,26 @@ static bool CheckIsAlive(HANDLE hProcess)
 
 template <typename T> bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hProcess)
 {
+    DWORD dwMode;
 
     // Make the pipe to non-blocking mode
-    DWORD dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
-    if(!SetNamedPipeHandleState(hStdin, &dwMode, NULL, NULL)) {
-        clERROR() << "WriteStdin: SetNamedPipeHandleState(PIPE_READMODE_BYTE | PIPE_WAIT) error." << GetLastError()
-                  << endl;
-    }
+    dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
+    SetNamedPipeHandleState(hStdin, &dwMode, NULL, NULL);
     DWORD bytesLeft = buffer.length();
     long offset = 0;
     static constexpr int max_retry_count = 100;
     size_t retryCount = 0;
     while(bytesLeft > 0 && (retryCount < max_retry_count)) {
         DWORD dwWritten = 0;
-        BOOL write_result = WriteFile(hStdin, buffer.c_str() + offset, bytesLeft, &dwWritten, NULL);
-        int errorCode = GetLastError();
-        if(!write_result) {
+        if(!WriteFile(hStdin, buffer.c_str() + offset, bytesLeft, &dwWritten, NULL)) {
+            int errorCode = GetLastError();
             clDEBUG() << ">> WriteStdin: (WriteFile) error:" << errorCode << endl;
             return false;
         }
-
-        if(errorCode == ERROR_BROKEN_PIPE) {
-            clDEBUG() << "WriteStdin: untable to write. broken pipe" << endl;
-            return false;
-        }
-
         if(!CheckIsAlive(hProcess)) {
-            clDEBUG() << "WriteStdin: error - process is not alive" << endl;
+            clDEBUG() << "WriteStdin failed. Process is not alive" << endl;
             return false;
         }
-
         if(dwWritten == 0) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
@@ -261,7 +238,6 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
     saAttr.bInheritHandle = TRUE;
     saAttr.lpSecurityDescriptor = NULL;
     WinProcessImpl* prc = new WinProcessImpl(parent);
-    wxScopedPtr<WinProcessImpl> deleter{ prc };
     prc->m_callback = cb;
     prc->m_flags = flags;
 
@@ -281,11 +257,13 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
 
         // Create a pipe for the child process's STDOUT.
         if(!CreatePipe(&prc->hChildStdoutRd, &prc->hChildStdoutWr, &saAttr, 0)) {
+            delete prc;
             return NULL;
         }
 
         // Set a write handle to the pipe to be STDOUT.
         if(!SetStdHandle(STD_OUTPUT_HANDLE, prc->hChildStdoutWr)) {
+            delete prc;
             return NULL;
         }
 
@@ -293,6 +271,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
         fSuccess = DuplicateHandle(GetCurrentProcess(), prc->hChildStdoutRd, GetCurrentProcess(),
                                    &prc->hChildStdoutRdDup, 0, FALSE, DUPLICATE_SAME_ACCESS);
         if(!fSuccess) {
+            delete prc;
             return NULL;
         }
         CloseHandle(prc->hChildStdoutRd);
@@ -310,12 +289,13 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
 
         // Create a pipe for the child process's STDERR.
         if(!CreatePipe(&prc->hChildStderrRd, &prc->hChildStderrWr, &saAttr, 0)) {
+            delete prc;
             return NULL;
         }
 
         // Set a write handle to the pipe to be STDERR.
         if(!SetStdHandle(STD_ERROR_HANDLE, prc->hChildStderrWr)) {
-
+            delete prc;
             return NULL;
         }
 
@@ -323,6 +303,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
         fSuccess = DuplicateHandle(GetCurrentProcess(), prc->hChildStderrRd, GetCurrentProcess(),
                                    &prc->hChildStderrRdDup, 0, FALSE, DUPLICATE_SAME_ACCESS);
         if(!fSuccess) {
+            delete prc;
             return NULL;
         }
         CloseHandle(prc->hChildStderrRd);
@@ -340,10 +321,12 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
 
         // Create a pipe for the child process's STDIN.
         if(!CreatePipe(&prc->hChildStdinRd, &prc->hChildStdinWr, &saAttr, 0)) {
+            delete prc;
             return NULL;
         }
         // Set a read handle to the pipe to be STDIN.
         if(!SetStdHandle(STD_INPUT_HANDLE, prc->hChildStdinRd)) {
+            delete prc;
             return NULL;
         }
         // Duplicate the write handle to the pipe so it is not inherited.
@@ -352,6 +335,7 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
                             FALSE, // not inherited
                             DUPLICATE_SAME_ACCESS);
         if(!fSuccess) {
+            delete prc;
             return NULL;
         }
         CloseHandle(prc->hChildStdinWr);
@@ -395,17 +379,26 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
     if(ret) {
         prc->dwProcessId = prc->piProcInfo.dwProcessId;
     } else {
+        int err = GetLastError();
+        wxUnusedVar(err);
+        delete prc;
         return NULL;
     }
 
     if(redirectOutput) {
         // After process creation, restore the saved STDIN and STDOUT.
-        if(!restore_handle(STD_INPUT_HANDLE, prc->hSaveStdin))
+        if(!SetStdHandle(STD_INPUT_HANDLE, prc->hSaveStdin)) {
+            delete prc;
             return NULL;
-        if(!restore_handle(STD_OUTPUT_HANDLE, prc->hSaveStdout))
+        }
+        if(!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStdout)) {
+            delete prc;
             return NULL;
-        if(!restore_handle(STD_ERROR_HANDLE, prc->hSaveStderr))
+        }
+        if(!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStderr)) {
+            delete prc;
             return NULL;
+        }
     }
 
     if((prc->m_flags & IProcessCreateConsole) || (prc->m_flags & IProcessCreateWithHiddenConsole)) {
@@ -421,7 +414,6 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, siz
     }
     prc->m_writerThread = new WinWriterThread(prc->piProcInfo.hProcess, prc->hChildStdinWrDup);
     prc->m_writerThread->Start();
-    deleter.release(); // do not release the process pointer
     return prc;
 }
 
@@ -453,31 +445,18 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
     }
 
     // Read data from STDOUT and STDERR
-    wxString& stderr_buffer = m_flags & IProcessStderrEvent ? buffErr : buff;
-    if(!DoReadFromPipe(hChildStderrRdDup, stderr_buffer)) {
+    if(!DoReadFromPipe(hChildStderrRdDup, ((m_flags & IProcessStderrEvent) ? buffErr : buff))) {
         le2 = GetLastError();
     }
-
     if(!DoReadFromPipe(hChildStdoutRdDup, buff)) {
         le1 = GetLastError();
     }
-
-    if(le1 == ERROR_BROKEN_PIPE || le2 == ERROR_BROKEN_PIPE) {
-        // the process terminated
-        DWORD dwExitCode;
-        if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
-            SetProcessExitCode(GetPid(), (int)dwExitCode);
-        }
-        return false;
-    } else {
-        if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
-            if(IsAlive()) {
-                wxThread::Sleep(5);
-                return true;
-            }
+    if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
+        if(IsAlive()) {
+            wxThread::Sleep(5);
+            return true;
         }
     }
-
     bool success = !buff.IsEmpty() || !buffErr.IsEmpty();
     if(!success) {
         DWORD dwExitCode;
@@ -583,16 +562,17 @@ void WinProcessImpl::StartReaderThread()
 
 bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
 {
-    DWORD dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
+    DWORD dwRead = 0;
+    DWORD dwMode;
+    DWORD dwTimeout;
 
     // Make the pipe to non-blocking mode
-    if(!SetNamedPipeHandleState(pipe, &dwMode, NULL, NULL)) {
-        clERROR() << "Failed to SetNamedPipeHandleState(PIPE_READMODE_BYTE | PIPE_NOWAIT)." << GetLastError() << endl;
-    }
+    dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
+    dwTimeout = 100;
+    SetNamedPipeHandleState(pipe, &dwMode, NULL, &dwTimeout);
 
     bool read_something = false;
     while(true) {
-        DWORD dwRead = 0;
         BOOL bRes = ReadFile(pipe, m_buffer, BUFFER_SIZE - 1, &dwRead, NULL);
         if(bRes && (dwRead > 0)) {
             wxString tmpBuff;

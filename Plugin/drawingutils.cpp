@@ -647,7 +647,9 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     const wxString symbol = wxT("\u2715");
     wxDCFontChanger font_changer(dc);
     wxDCTextColourChanger font_colour_changer(dc, xColour);
-    dc.SetFont(clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+    wxFont font = clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    font.SetWeight(wxFONTWEIGHT_BOLD);
+    dc.SetFont(font);
 
     xrect = dc.GetTextExtent(symbol);
     xrect = xrect.CenterIn(bgRect);

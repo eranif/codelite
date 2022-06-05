@@ -362,9 +362,10 @@ void clTabCtrl::OnEraseBG(wxEraseEvent& e) { wxUnusedVar(e); }
 
 void clTabCtrl::OnPaint(wxPaintEvent& e)
 {
-    wxAutoBufferedPaintDC dc(this);
-    PrepareDC(dc);
-    wxGCDC gcdc(dc);
+    wxPaintDC dc(this);
+    wxGCDC gcdc;
+    DrawingUtils::GetGCDC(dc, gcdc);
+    PrepareDC(gcdc);
 
     wxRect clientRect(GetClientRect());
     if(clientRect.width <= 3)

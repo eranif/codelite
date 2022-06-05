@@ -121,6 +121,20 @@ bool FileUtils::WriteFileContent(const wxFileName& fn, const wxString& content, 
     return ::wxRenameFile(tmpFile.GetFullPath(), fn.GetFullPath(), true);
 }
 
+bool FileUtils::AppendFileContent(const wxFileName& fn, const wxString& content, const wxMBConv& conv)
+{
+    wxFile fp(fn.GetFullPath(), wxFile::write_append);
+    if(!fp.IsOpened()) {
+        // failed to open the file
+        return false;
+    }
+    if(!fp.Write(content, conv)) {
+        clWARNING() << "Failed to append content to file:" << fn << endl;
+    }
+    fp.Close();
+    return true;
+}
+
 bool FileUtils::ReadFileContent(const wxFileName& fn, wxString& data, const wxMBConv& conv)
 {
     std::string rawdata;

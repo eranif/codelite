@@ -105,26 +105,36 @@ static bool CheckIsAlive(HANDLE hProcess)
 
 template <typename T> bool WriteStdin(const T& buffer, HANDLE hStdin, HANDLE hProcess)
 {
-    DWORD dwMode;
 
     // Make the pipe to non-blocking mode
-    dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
-    SetNamedPipeHandleState(hStdin, &dwMode, NULL, NULL);
+    DWORD dwMode = PIPE_READMODE_BYTE | PIPE_WAIT;
+    if(!SetNamedPipeHandleState(hStdin, &dwMode, NULL, NULL)) {
+        clERROR() << "WriteStdin: SetNamedPipeHandleState(PIPE_READMODE_BYTE | PIPE_WAIT) error." << GetLastError()
+                  << endl;
+    }
     DWORD bytesLeft = buffer.length();
     long offset = 0;
     static constexpr int max_retry_count = 100;
     size_t retryCount = 0;
     while(bytesLeft > 0 && (retryCount < max_retry_count)) {
         DWORD dwWritten = 0;
-        if(!WriteFile(hStdin, buffer.c_str() + offset, bytesLeft, &dwWritten, NULL)) {
-            int errorCode = GetLastError();
+        BOOL write_result = WriteFile(hStdin, buffer.c_str() + offset, bytesLeft, &dwWritten, NULL);
+        int errorCode = GetLastError();
+        if(!write_result) {
             clDEBUG() << ">> WriteStdin: (WriteFile) error:" << errorCode << endl;
             return false;
         }
-        if(!CheckIsAlive(hProcess)) {
-            clDEBUG() << "WriteStdin failed. Process is not alive" << endl;
+
+        if(errorCode == ERROR_BROKEN_PIPE) {
+            clDEBUG() << "WriteStdin: untable to write. broken pipe" << endl;
             return false;
         }
+
+        if(!CheckIsAlive(hProcess)) {
+            clDEBUG() << "WriteStdin: error - process is not alive" << endl;
+            return false;
+        }
+
         if(dwWritten == 0) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
@@ -443,16 +453,28 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
     }
 
     // Read data from STDOUT and STDERR
-    if(!DoReadFromPipe(hChildStderrRdDup, ((m_flags & IProcessStderrEvent) ? buffErr : buff))) {
+    wxString& stderr_buffer = m_flags & IProcessStderrEvent ? buffErr : buff;
+    if(!DoReadFromPipe(hChildStderrRdDup, stderr_buffer)) {
         le2 = GetLastError();
     }
+
     if(!DoReadFromPipe(hChildStdoutRdDup, buff)) {
         le1 = GetLastError();
     }
-    if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
-        if(IsAlive()) {
-            wxThread::Sleep(5);
-            return true;
+
+    if(le1 == ERROR_BROKEN_PIPE || le2 == ERROR_BROKEN_PIPE) {
+        // the process terminated
+        DWORD dwExitCode;
+        if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
+            SetProcessExitCode(GetPid(), (int)dwExitCode);
+        }
+        return false;
+    } else {
+        if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
+            if(IsAlive()) {
+                wxThread::Sleep(5);
+                return true;
+            }
         }
     }
 
@@ -561,17 +583,16 @@ void WinProcessImpl::StartReaderThread()
 
 bool WinProcessImpl::DoReadFromPipe(HANDLE pipe, wxString& buff)
 {
-    DWORD dwRead = 0;
-    DWORD dwMode;
-    DWORD dwTimeout;
+    DWORD dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
 
     // Make the pipe to non-blocking mode
-    dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
-    dwTimeout = 100;
-    SetNamedPipeHandleState(pipe, &dwMode, NULL, &dwTimeout);
+    if(!SetNamedPipeHandleState(pipe, &dwMode, NULL, NULL)) {
+        clERROR() << "Failed to SetNamedPipeHandleState(PIPE_READMODE_BYTE | PIPE_NOWAIT)." << GetLastError() << endl;
+    }
 
     bool read_something = false;
     while(true) {
+        DWORD dwRead = 0;
         BOOL bRes = ReadFile(pipe, m_buffer, BUFFER_SIZE - 1, &dwRead, NULL);
         if(bRes && (dwRead > 0)) {
             wxString tmpBuff;

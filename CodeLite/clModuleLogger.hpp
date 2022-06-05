@@ -179,6 +179,9 @@ public:
      */
     inline clModuleLogger& operator<<(const char* str)
     {
+        if(!CanLog()) {
+            return *this;
+        }
         wxString s(str);
         return *this << s;
     }
@@ -224,7 +227,7 @@ inline clModuleLogger& endl(clModuleLogger& d)
 
 template <typename T> clModuleLogger& operator<<(clModuleLogger& logger, const T& obj)
 {
-    if(logger.CanLog()) {
+    if(!logger.CanLog()) {
         return logger;
     }
 

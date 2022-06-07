@@ -6249,7 +6249,7 @@ int clEditor::GetFirstNonWhitespacePos(bool backward)
 void clEditor::UpdateLineNumberMarginWidth()
 {
     int newLineCount = GetLineCount();
-    int newWidthCount = log10(newLineCount) + 1;
+    int newWidthCount = log10(newLineCount) + 2;
     int size = FromDIP(newWidthCount * TextWidth(wxSTC_STYLE_LINENUMBER, "X"));
     SetMarginWidth(NUMBER_MARGIN_ID, GetOptions()->GetDisplayLineNumbers() ? size : 0);
 }

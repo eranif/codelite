@@ -72,6 +72,13 @@ set( BUILD_WXC 0 )
 set( CL_COPY_WX_LIBS 0 )
 set( WITH_SFTP 1 )
 
+if (APPLE)
+    # add homebrew path to cmake search pathsbrew --prefix
+    execute_process(COMMAND brew --prefix OUTPUT_VARIABLE BREW_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+    list(APPEND CMAKE_SYSTEM_PREFIX_PATH ${BREW_PREFIX})
+    message(STATUS "CMAKE_SYSTEM_PREFIX_PATH is set to ${CMAKE_SYSTEM_PREFIX_PATH}")
+endif()
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to deprecated wx methods
 if( UNIX AND NOT APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem /usr/include/harfbuzz") # Needed for fedora 31 so far, but will spread. See https://gitlab.kitware.com/cmake/cmake/issues/19531
@@ -225,12 +232,17 @@ endif()
 unset(ENABLE_SFTP CACHE)
 
 if ( WITH_SFTP )
-    if (UNIX AND NOT APPLE OR MINGW)
-        ## Linux
+    if (UNIX OR MINGW)
+        ## Linux / MinGW / Apple
         if (MINGW)
             find_library(LIBSSH_LIB NAMES ssh PATH_SUFFIXES lib)
             find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h PATH_SUFFIXES include/libssh)
-        else()
+        elseif (APPLE)
+            include(${BREW_PREFIX}/lib/cmake/libssh/libssh-config.cmake)
+            set(LIBSSH_LIB ssh)
+            include_directories("${BREW_PREFIX}/include")
+        elseif (UNIX)
+            # Linux
             find_library(LIBSSH_LIB NAMES libssh.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
             find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h HINTS /usr/local/include /usr/include PATH_SUFFIXES libssh)
         endif()
@@ -238,20 +250,16 @@ if ( WITH_SFTP )
         if ( LIBSSH_NOT_FOUND_POS GREATER -1 )
             if (UNIX AND NOT APPLE )
                 ## Linux / FreeBSD
-                message("**** NOTICE: Install libssh-dev and try again")
+                message(FATAL_ERROR "**** NOTICE: Install libssh-dev and try again")
+            elseif (APPLE)
+                message(FATAL_ERROR "Could not locate libssh. Please run 'brew install libssh'")
             elseif (NOT MINGW )
                 ## OSX
-                message("**** NOTICE: Install libssh and try again (brew install libssh)")
+                message(FATAL_ERROR "**** NOTICE: Install libssh and try again (brew install libssh)")
             endif ()
             message(FATAL_ERROR "-- Could not find libssh")
-        endif( LIBSSH_NOT_FOUND_POS GREATER -1 )
-
-    else ( UNIX AND NOT APPLE OR MINGW )
-        ## OSX
-        set( LIBSSH_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/libssh/include)
-        set( LIBSSH_LIB "${CL_SRC_ROOT}/sdk/libssh/lib/osx/libssh.a;${CL_SRC_ROOT}/sdk/libssh/lib/osx/libcrypto.a")
-        include_directories(${LIBSSH_INCLUDE_DIR})
-    endif ( UNIX AND NOT APPLE OR MINGW )
+        endif()
+    endif()
     message("-- LIBSSH_LIB is set to ${LIBSSH_LIB}")
 endif ( WITH_SFTP )
 

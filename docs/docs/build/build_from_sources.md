@@ -65,57 +65,59 @@ Prerequisites:
  - Git
  - Xcode
  - Xcode command-line tools
- - Homebrew.
+ - Homebrew
 
 Preparation:
 
  - (Optional) Make a separate folder for building if you want to get rid of all except the `.app` file after building
  - Install Xcode from Mac App Store
- - Install Xcode command-line tools: `xcode-select --install`
+ - Install Xcode command-line tools: `xcode-select --install` (or you can type `clang` from the command line and if it is missing you will be prompted to install it)
  - Install Homebrew:
 
 ```
  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
 
-- Update Homebrew: `brew update`
- - (Optional) Upgrade Homebrew packages: `brew upgrade`
- - Install Git: `brew install git`
- - Install CMake: `brew install cmake`
- - Install wxWidgets: `brew install wxmac --dev --use-llvm`
-
-!!! Tip
-    You can choose to build [wxWidgets from sources][9]
-
-
-Clone the repo (I will assume that your development folder is: `/Users/$USER/src`)
+ - Install the required libraries:
 
 ```bash
-    mkdir -p /Users/$USER/src
-    cd /Users/$USER/src
+brew update
+brew install git \
+             cmake \
+             libssh \
+             hunspell
+```
+
+ - Usually, `brew` will install everything under `/opt/homebrew`, so run this from the terminal:
+
+```bash
+echo 'export PATH=/opt/homebrew/bin:$PATH' >> $HOME/.$(basename $SHELL)rc
+source $HOME/.$(basename $SHELL)rc
+```
+
+ - Next step is to [Build wxWidgets from sources][9]
+ - Finally, Build CodeLite:
+ 
+```bash
+    mkdir -p $HOME/src
+    cd $HOME/src
     git clone https://github.com/eranif/codelite.git
     cd codelite
     git submodule update --init
+    
+    # build CodeLite release configuration
+    mkdir build-release
+    cd build-release
+    cmake .. -DCMAKE_BUILD_TYPE=Release
+    cmake --build . -j $(sysctl -n hw.physicalcpu)
+    cmake --build . --target install
 ```
 
- the above will create the folder `/Users/$USER/src/codelite`
-
- To build CodeLite:
-
-```bash
-cd /Users/$USER/src/codelite
-mkdir build-release
-cd build-release
-cmake .. -DCMAKE_BUILD_TYPE=Release
-cmake --build . -j $(sysctl -n hw.physicalcpu)
-cmake --build . --target install
-```
-
-You should now have an app bundle `/Users/$USER/src/codelite/build-release/codelite.app`
+You should now have an app bundle `$HOME/src/codelite/build-release/codelite.app`
 
 To launch CodeLite:
 
-`open /Users/$USER/src/codelite/build-release/codelite.app`
+- `open $HOME/src/codelite/build-release/codelite.app`
 
 ----------
 

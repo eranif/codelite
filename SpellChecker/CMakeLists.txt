@@ -80,6 +80,7 @@ else()
 
     # Installation destination
     CL_INSTALL_PLUGIN(${PLUGIN_NAME})
+    CL_OSX_COPY_BREW_LIB(${LIBHUNSPELL} ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
 
     if(APPLE)
         install(
@@ -90,11 +91,6 @@ else()
           PATTERN ".git" EXCLUDE
         )
 
-        # Install Hunspell library
-        install(
-          FILES ${LIBHUNSPELL}
-          DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/
-        )
     else()
         install(
           DIRECTORY ${CL_SRC_ROOT}/SpellChecker/dics

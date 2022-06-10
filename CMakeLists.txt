@@ -230,6 +230,7 @@ if(MAKE_RPM_SLIM MATCHES 1)
 endif()
 
 unset(ENABLE_SFTP CACHE)
+include(OSXInstall)
 
 if ( WITH_SFTP )
     if (UNIX OR MINGW)
@@ -238,9 +239,8 @@ if ( WITH_SFTP )
             find_library(LIBSSH_LIB NAMES ssh PATH_SUFFIXES lib)
             find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h PATH_SUFFIXES include/libssh)
         elseif (APPLE)
-            include(${BREW_PREFIX}/lib/cmake/libssh/libssh-config.cmake)
-            set(LIBSSH_LIB ssh)
-            include_directories("${BREW_PREFIX}/include")
+            CL_OSX_FIND_BREW_LIB(libssh.dylib LIBSSH_LIB) 
+            CL_OSX_FIND_BREW_HEADER(libssh/libssh.h LIBSSH_INCLUDE_DIR) 
         elseif (UNIX)
             # Linux
             find_library(LIBSSH_LIB NAMES libssh.so HINTS /usr/local/lib /usr/lib ${CMAKE_INSTALL_LIBDIR})
@@ -329,8 +329,6 @@ else ( UNIX AND NOT APPLE OR MINGW )
     set (LIBUCHARDET_LIB "")
 endif (LIBUCHARDET_LIB AND LIBUCHARDET_INCLUDE_DIR)
 
-## Will set PLUGINS_DIR to the proper location on Linux / OSX
-include(OSXInstall)
 
 ## Under OSX, create the skeleton bundle directory
 OSX_MAKE_BUNDLE_DIRECTORY()

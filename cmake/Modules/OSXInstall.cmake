@@ -27,6 +27,41 @@ macro(CL_INSTALL_NAME_TOOL _findwhat_ _binary_)
     endif()
 endmacro()
 
+macro(CL_OSX_COPY_BREW_LIB lib_full_path destination_folder)
+    if(APPLE)
+        # when using brew, the libraries are symlinked to ../Cellar/...
+        # we need to fix this by copying the real file and then creating a symbolic link
+        # in our directory
+        
+        # what we want to do here is:
+        # alter the symlink libfoo.dylib -> ../Cellar/lib/libfoo.1.X.dylib 
+        # into libfoo.dylib -> real-libfoo.dylib
+        execute_process(COMMAND basename ${lib_full_path} OUTPUT_VARIABLE __lib_basename OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND cp -L ${lib_full_path} ${destination_folder}/real-${__lib_basename})
+        execute_process(COMMAND /bin/sh -c "cd ${destination_folder} && ln -sf real-${__lib_basename} ${__lib_basename}")
+    endif()
+endmacro()
+
+macro(CL_OSX_FIND_BREW_LIB __lib_name LIB_OUTPUT_VARIABLE)
+    if(APPLE)
+        unset(${LIB_OUTPUT_VARIABLE} CACHE)
+        find_library(${LIB_OUTPUT_VARIABLE}
+            NAMES ${__lib_name}
+            HINTS ${BREW_PREFIX}/lib
+            PATH_SUFFIXES lib)
+    endif()
+endmacro()
+    
+macro(CL_OSX_FIND_BREW_HEADER __header_name HEADER_OUTPUT_VARIABLE)
+    if(APPLE)
+        unset(${HEADER_OUTPUT_VARIABLE} CACHE)
+        find_path(${HEADER_OUTPUT_VARIABLE}
+            NAMES ${__header_name}
+            HINTS ${BREW_PREFIX}/include
+            PATH_SUFFIXES include)
+    endif()
+endmacro()
+
 macro(CL_INSTALL_NAME_TOOL_EX _findwhat_ _replacewith_ _binary_)
     if(APPLE)
         install(CODE 
@@ -65,6 +100,7 @@ macro(CL_INSTALL_NAME_TOOL_STD _binary_)
         CL_INSTALL_NAME_TOOL("libdatabaselayersqlite" ${_binary_})
         CL_INSTALL_NAME_TOOL("libclang" ${_binary_})
         CL_INSTALL_NAME_TOOL("liblldb" ${_binary_})
+        CL_INSTALL_NAME_TOOL("libssh" ${_binary_})
     endif()
 endmacro()
 

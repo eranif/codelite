@@ -13,7 +13,7 @@ Note that there are two variants to choose from:
    If you wish to experiment with the latest features, pick this variant.
   Note that despite their name, these releases are very stable.
 
-## macOS big sur
+## macOS
 ---
 
 Since version `16.1.0`, CodeLite installation method is by using [`brew`][9]

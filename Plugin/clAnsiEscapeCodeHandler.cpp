@@ -483,6 +483,8 @@ void clAnsiEscapeCodeHandler::Render(wxDC& dc, const clRenderDefaultStyle& defau
     int xx = 5;
     dc.SetClippingRegion(rect);
     for(size_t i : v) {
+        // ensure to restore the dont once we are done with this line
+        wxDCFontChanger font_changer(dc);
         const auto& chunk = m_chunks[i];
         if(chunk.is_style_reset()) {
             // reset the style

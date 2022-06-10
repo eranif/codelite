@@ -95,12 +95,8 @@ macro(CL_INSTALL_NAME_TOOL_STD _binary_)
         CL_INSTALL_NAME_TOOL("libwxsqlite" ${_binary_})
         CL_INSTALL_NAME_TOOL("libplugin" ${_binary_})
         CL_INSTALL_NAME_TOOL("libwxshapeframework" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libhunspell" ${_binary_})
         CL_INSTALL_NAME_TOOL("libdatabaselayersqlite" ${_binary_})
         CL_INSTALL_NAME_TOOL("libdatabaselayersqlite" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libclang" ${_binary_})
-        CL_INSTALL_NAME_TOOL("liblldb" ${_binary_})
-        CL_INSTALL_NAME_TOOL("libssh" ${_binary_})
     endif()
 endmacro()
 
@@ -258,18 +254,6 @@ macro(OSX_MAKE_BUNDLE_DIRECTORY)
              DESTINATION 
              ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS 
              FILE_PERMISSIONS ${EXE_PERM})
-
-        ## Copy pre-built binaries
-        file(COPY ${CL_SRC_ROOT}/Runtime/debugserver 
-             DESTINATION 
-             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
-        
-        ## Copy and fix libclang.dylib / liblldb
-        message(STATUS "Copying ${CL_SRC_ROOT}/sdk/lldb/osx/lib/liblldb.10.0.0svn.dylib -> ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/")
-        file(COPY ${CL_SRC_ROOT}/sdk/lldb/osx/lib/liblldb.10.0.0svn.dylib
-             DESTINATION 
-             ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/
-             )
 
         ## codelite-clang-format
         file(COPY ${CL_SRC_ROOT}/tools/macOS/clang-format 

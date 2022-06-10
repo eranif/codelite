@@ -234,8 +234,8 @@ include(OSXInstall)
 
 if ( WITH_SFTP )
     if (UNIX OR MINGW)
-        ## Linux / MinGW / Apple
-        if (MINGW)
+        ## Linux / MinGW / Apple / CYGWIN
+        if (MINGW OR CYGWIN)
             find_library(LIBSSH_LIB NAMES ssh PATH_SUFFIXES lib)
             find_path(LIBSSH_INCLUDE_DIR NAMES libssh.h PATH_SUFFIXES include/libssh)
         elseif (APPLE)

@@ -698,8 +698,9 @@ else()
             add_subdirectory(SFTP)
             add_subdirectory(Remoty)
         endif(WITH_SFTP)
-
-        if (WITH_LLDB AND NOT DISABLE_CXX)
+        
+        # for now, disable LLDB
+        if (WITH_LLDB AND NOT DISABLE_CXX AND NOT APPLE)
             add_subdirectory(LLDBDebugger)
         endif()
 

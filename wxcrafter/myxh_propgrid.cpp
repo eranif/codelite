@@ -1,4 +1,5 @@
 #include "myxh_propgrid.h"
+
 #include <wx/datetime.h>
 #include <wx/log.h>
 #include <wx/propgrid/advprops.h>
@@ -48,10 +49,14 @@ wxObject* MyWxPropGridXmlHandler::DoCreateResource()
 
         // add the splitter property after the children were added
         int splitterLeft = GetBool("splitterleft");
-        if(splitterLeft) { m_pgmgr->GetPage(0)->SetSplitterLeft(); }
+        if(splitterLeft) {
+            m_pgmgr->SetSplitterLeft();
+        }
 
         int splitterPos = GetLong("splitterpos", wxNOT_FOUND);
-        if(splitterPos != wxNOT_FOUND) { m_pgmgr->GetPage(0)->SetSplitterPosition(splitterPos); }
+        if(splitterPos != wxNOT_FOUND) {
+            m_pgmgr->GetPage(0)->SetSplitterPosition(splitterPos);
+        }
 
         m_isInside = false;
         return m_pgmgr;
@@ -67,7 +72,9 @@ bool MyWxPropGridXmlHandler::CanHandle(wxXmlNode* node)
 
 void MyWxPropGridXmlHandler::HandlePgProperty(wxPGProperty* parent)
 {
-    if(!HasParam(wxT("proptype"))) { return; }
+    if(!HasParam(wxT("proptype"))) {
+        return;
+    }
 
     // Property
     wxString proptype = GetText("proptype");
@@ -116,7 +123,9 @@ void MyWxPropGridXmlHandler::HandlePgProperty(wxPGProperty* parent)
 
     } else if(proptype == "wxEnumProperty") {
         int sel = items.Index(value);
-        if(sel == wxNOT_FOUND) { sel = 0; }
+        if(sel == wxNOT_FOUND) {
+            sel = 0;
+        }
 
         prop = DoAppendProperty(parent, new wxEnumProperty(label, wxPG_LABEL, items, wxArrayInt(), sel));
 
@@ -143,8 +152,12 @@ void MyWxPropGridXmlHandler::HandlePgProperty(wxPGProperty* parent)
 
     // Handle nested children
     if(prop) {
-        if(bgcol.IsOk()) { prop->SetBackgroundColour(bgcol, bgcolRecurse); }
-        if(!propEditor.IsEmpty()) { prop->SetEditor(propEditor); }
+        if(bgcol.IsOk()) {
+            prop->SetBackgroundColour(bgcol, bgcolRecurse);
+        }
+        if(!propEditor.IsEmpty()) {
+            prop->SetEditor(propEditor);
+        }
         prop->SetHelpString(tip);
 
         // Check to see if this property has children
@@ -160,12 +173,15 @@ void MyWxPropGridXmlHandler::HandlePgProperty(wxPGProperty* parent)
 
 wxArrayString MyWxPropGridXmlHandler::GetArray(const wxXmlNode* node) const
 {
-    if(!node) return wxArrayString();
+    if(!node)
+        return wxArrayString();
 
     wxArrayString items;
     wxXmlNode* child = node->GetChildren();
     while(child) {
-        if(child->GetName() == "item") { items.Add(child->GetNodeContent()); }
+        if(child->GetName() == "item") {
+            items.Add(child->GetNodeContent());
+        }
         child = child->GetNext();
     }
     return items;

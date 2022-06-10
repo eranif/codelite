@@ -1,16 +1,21 @@
-find_library(LIBHUNSPELL
-            # Fedora doesn't create a hunspell->hunspell-1.3 symlink, so explicitly look for (the current) full name
-            NAMES hunspell hunspell-1.3  hunspell-1.4 hunspell-1.5 hunspell-1.6 hunspell-1.7 
-            HINTS /usr/lib /usr/lib/x86_64-linux-gnu/ /usr/lib64/ ${BREW_PREFIX}/lib
-            PATH_SUFFIXES lib)
-
-find_path(  HUNSPELL_H
-            NAMES hunspell.h
-            HINTS
-              ENV HUNSPELL_DIR
-            PATHS
-              /usr/include /usr/local/include /usr/include/hunspell /usr/local/include/hunspell ${BREW_PREFIX}/include
-            PATH_SUFFIXES include/hunspell include)
+if(NOT APPLE)
+    find_library(LIBHUNSPELL
+                # Fedora doesn't create a hunspell->hunspell-1.3 symlink, so explicitly look for (the current) full name
+                NAMES hunspell hunspell-1.3  hunspell-1.4 hunspell-1.5 hunspell-1.6 hunspell-1.7 
+                HINTS /usr/lib /usr/lib/x86_64-linux-gnu/ /usr/lib64/ ${BREW_PREFIX}/lib
+                PATH_SUFFIXES lib)
+    
+    find_path(  HUNSPELL_H
+                NAMES hunspell.h
+                HINTS
+                ENV HUNSPELL_DIR
+                PATHS
+                /usr/include /usr/local/include /usr/include/hunspell /usr/local/include/hunspell ${BREW_PREFIX}/include
+                PATH_SUFFIXES include/hunspell include)
+else()
+    CL_OSX_FIND_BREW_LIB(libhunspell-1.7.0.dylib LIBHUNSPELL) 
+    CL_OSX_FIND_BREW_HEADER(hunspell/hunspell.h HUNSPELL_H)
+endif()
 
 if(LIBHUNSPELL STREQUAL "LIBHUNSPELL-NOTFOUND" OR HUNSPELL_H STREQUAL "HUNSPELL_H-NOTFOUND")
     message("    **")

@@ -37,6 +37,7 @@
 #include "winprocess.h"
 #include "wx/tokenzr.h"
 
+#include <memory>
 #include <stdio.h>
 #ifdef __WXMSW__
 #include "wx/msw/private.h"
@@ -267,7 +268,10 @@ wxString ProcUtils::GetProcessNameByPid(long pid)
 
 void ProcUtils::ExecuteCommand(const wxString& command, wxArrayString& output, long flags)
 {
-    FILE* fp = nullptr;
+#ifdef __WXMSW__
+    wxExecute(command, output, flags);
+#else
+    FILE* fp;
     char line[512];
     memset(line, 0, sizeof(line));
     fp = popen(command.mb_str(wxConvUTF8), "r");
@@ -278,6 +282,7 @@ void ProcUtils::ExecuteCommand(const wxString& command, wxArrayString& output, l
         }
         pclose(fp);
     }
+#endif
 }
 
 void ProcUtils::ExecuteInteractiveCommand(const wxString& command) { wxShell(command); }
@@ -550,7 +555,39 @@ bool ProcUtils::Locate(const wxString& name, wxString& where)
 
 void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& output)
 {
+#ifdef __WXMSW__
+    wxString errMsg;
+    std::unique_ptr<WinProcess> proc{ WinProcess::Execute(command, errMsg) };
+    if(!proc) {
+        return;
+    }
+
+    // wait for the process to terminate
+    wxString tmpbuf;
+    wxString buff;
+
+    while(proc->IsAlive()) {
+        tmpbuf.Clear();
+        proc->Read(tmpbuf);
+        buff << tmpbuf;
+        wxThread::Sleep(10);
+    }
+    tmpbuf.Clear();
+
+    // Read any unread output
+    proc->Read(tmpbuf);
+    while(!tmpbuf.IsEmpty()) {
+        buff << tmpbuf;
+        tmpbuf.Clear();
+        proc->Read(tmpbuf);
+    }
+    proc->Cleanup();
+
+    // Convert buff into wxArrayString
+    output = ::wxStringTokenize(buff, "\n", wxTOKEN_STRTOK);
+#else
     ProcUtils::ExecuteCommand(command, output);
+#endif
 }
 
 wxString ProcUtils::SafeExecuteCommand(const wxString& command)

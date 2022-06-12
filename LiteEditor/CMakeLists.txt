@@ -246,4 +246,6 @@ else() # !APPLE
     install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png 
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/images
             RENAME splashscreen.png)
+
+    codelite_install_script(${CL_SRC_ROOT}/Runtime/codelite-remote)
 endif()

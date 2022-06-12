@@ -48,6 +48,30 @@ namespace
 {
 static const char* CONTEXT_BUILDER = "builder";
 static const char* CONTEXT_FINDER = "finder";
+
+const wxString DEFAULT_CODELITE_REMOTE_JSON = R"EOF({
+ "Language Server Plugin": {
+  "servers": [{
+    "name": "clangd",
+    "command": "/usr/bin/clangd -limit-results=500 -header-insertion-decorators=1",
+    "languages": ["c", "cpp"],
+    "priority": 90,
+    "working_directory": "",
+    "env": []
+   }, {
+    "name": "python",
+    "command": "python3 -m pylsp",
+    "languages": ["python"],
+    "priority": 90,
+    "working_directory": "",
+    "env": [{
+        "name": "PYTHONPATH",
+        "value": ".:$PYTHONPATH"
+    }]
+   }]
+ }
+}
+)EOF";
 } // namespace
 
 RemotyWorkspace::RemotyWorkspace()
@@ -1225,4 +1249,39 @@ IEditor* RemotyWorkspace::OpenFile(const wxString& remote_file_path)
     if(!IsOpened())
         return nullptr;
     return clSFTPManager::Get().OpenFile(remote_file_path, m_account);
+}
+
+void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
+{
+    wxString remote_file_path = GetRemoteWorkingDir();
+    remote_file_path << "/.codelite/codelite-remote.json";
+    IEditor* editor = OpenFile(remote_file_path);
+    if(editor) {
+        return;
+    }
+    // Could not find the file, prompt the user
+    if(wxMessageBox(_("Could not find codelite-remote.json file\nWould you like to create one?"), "CodeLite",
+                    wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTRE) != wxYES) {
+        return;
+    }
+
+    wxString remote_file_dir = GetRemoteWorkingDir() + "/.codelite";
+    if(!clSFTPManager::Get().NewFolder(remote_file_dir, m_account)) {
+        wxMessageBox(_("Failed to create directory: ") + remote_file_dir, "CodeLite", wxICON_ERROR | wxOK);
+        return;
+    }
+
+    // create a new file
+    if(!clSFTPManager::Get().NewFile(remote_file_path, m_account)) {
+        wxMessageBox(_("Failed to create file: ") + remote_file_path, "CodeLite", wxICON_ERROR | wxOK);
+        return;
+    }
+
+    editor = OpenFile(remote_file_path);
+    if(!editor) {
+        wxMessageBox(_("Failed to open file: ") + remote_file_path, "CodeLite", wxICON_ERROR | wxOK);
+        return;
+    }
+    editor->SetEditorText(DEFAULT_CODELITE_REMOTE_JSON);
+    editor->SetActive();
 }

@@ -160,6 +160,12 @@ public:
      * @brief Attempt to open a remote file and open it in the editor
      */
     IEditor* OpenFile(const wxString& remote_file_path);
+
+    /**
+     * @brief attempt to load and edit codelite-remote.json file for this workspace
+     */
+    void OpenAndEditCodeLiteRemoteJson();
+
     // API
     bool IsOpened() const;
     const SSHAccountInfo& GetAccount() const { return m_account; }

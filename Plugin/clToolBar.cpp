@@ -222,12 +222,20 @@ void clToolBar::OnLeftUp(wxMouseEvent& event)
                 } else if(btn->InsideMenuButton(pos)) {
                     wxMenu* menu = btn->GetMenu();
                     if(menu) {
-                        // We got the menu, show it
+// We got the menu, show it
+#ifdef __WXOSX__
                         CallAfter(&clToolBar::ShowMenuForButton, btn->GetId(), menu);
+#else
+                        ShowMenuForButton(btn->GetId(), menu);
+#endif
                     } else {
                         wxCommandEvent clicked(wxEVT_TOOL_DROPDOWN, btn->GetId());
                         clicked.SetEventObject(this);
+#ifdef __WXOSX__
                         GetEventHandler()->AddPendingEvent(clicked);
+#else
+                        GetEventHandler()->ProcessEvent(clicked);
+#endif
                     }
                     btn->SetPressed(false);
                     Refresh();

@@ -140,10 +140,8 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
     menu->Bind(
         wxEVT_MENU,
         [this](wxCommandEvent& e) {
-            wxString remote_file_path = m_workspace->GetRemoteWorkingDir();
-            remote_file_path << "/.codelite/codelite-remote.json";
-            IEditor* editor = m_workspace->OpenFile(remote_file_path);
-            wxUnusedVar(editor);
+            wxUnusedVar(e);
+            m_workspace->CallAfter(&RemotyWorkspace::OpenAndEditCodeLiteRemoteJson);
         },
         XRCID("edit-codelite-remote"));
 

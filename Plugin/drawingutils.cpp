@@ -647,7 +647,7 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     const wxString symbol = wxT("\u2715");
     wxDCFontChanger font_changer(dc);
     wxDCTextColourChanger font_colour_changer(dc, xColour);
-    wxFont font = clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    wxFont font = GetDefaultGuiFont();
     font.SetWeight(wxFONTWEIGHT_BOLD);
     dc.SetFont(font);
 
@@ -714,8 +714,13 @@ void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRe
 
 void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& colour)
 {
+    // make sure we exit this function with the font that we entered
+    wxDCFontChanger font_changer(dc);
+
     // Draw an arrow
     const wxString arrowSymbol = wxT("\u25BC");
+    dc.SetFont(GetDefaultGuiFont());
+
     wxRect arrowRect{ { 0, 0 }, dc.GetTextExtent(arrowSymbol) };
     arrowRect = arrowRect.CenterIn(rect);
 
@@ -727,12 +732,7 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     }
 
     dc.SetTextForeground(buttonColour);
-    wxFont origfont = dc.GetFont();
-    dc.SetFont(clSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
     dc.DrawText(arrowSymbol, arrowRect.GetTopLeft());
-    if(origfont.IsOk()) {
-        dc.SetFont(origfont);
-    }
 }
 
 wxColour DrawingUtils::GetCaptionTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_CAPTIONTEXT); }

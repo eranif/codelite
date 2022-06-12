@@ -223,11 +223,11 @@ void clToolBar::OnLeftUp(wxMouseEvent& event)
                     wxMenu* menu = btn->GetMenu();
                     if(menu) {
                         // We got the menu, show it
-                        ShowMenuForButton(btn->GetId(), menu);
+                        CallAfter(&clToolBar::ShowMenuForButton, btn->GetId(), menu);
                     } else {
                         wxCommandEvent clicked(wxEVT_TOOL_DROPDOWN, btn->GetId());
                         clicked.SetEventObject(this);
-                        GetEventHandler()->ProcessEvent(clicked);
+                        GetEventHandler()->AddPendingEvent(clicked);
                     }
                     btn->SetPressed(false);
                     Refresh();
@@ -374,7 +374,8 @@ void clToolBar::ShowMenuForButton(wxWindowID buttonID, wxMenu* menu)
     m_popupShown = true;
     wxPoint menuPos = button->GetButtonRect().GetBottomLeft();
 #ifdef __WXOSX__
-    menuPos.y += 5;
+    menuPos.y += 8;
+    menuPos.x -= 2;
 #else
     menuPos.y += 2;
     menuPos.x -= 1;

@@ -100,17 +100,15 @@ void clToolBarButtonBase::Render(wxDC& dc, const wxRect& rect)
     // Do we need to draw a drop down arrow?
     if(IsMenuButton()) {
         // draw a drop down menu
-        m_dropDownArrowRect =
-            wxRect(xx, m_buttonRect.GetY(), (2 * m_toolbar->GetXSpacer()) + CL_TOOL_BAR_DROPDOWN_ARROW_SIZE,
-                   m_buttonRect.GetHeight());
+        int drop_down_button_width = m_buttonRect.GetHeight();
+        m_dropDownArrowRect = wxRect(xx, m_buttonRect.GetY(), drop_down_button_width, drop_down_button_width);
+        m_dropDownArrowRect = m_dropDownArrowRect.CenterIn(m_buttonRect, wxVERTICAL);
         if(IsPressed() && IsEnabled()) {
             dc.DrawLine(wxPoint(xx, m_buttonRect.GetY() + 2),
                         wxPoint(xx, m_buttonRect.GetY() + m_buttonRect.GetHeight() - 2));
         }
-        xx += m_toolbar->GetXSpacer();
         DrawingUtils::DrawDropDownArrow(m_toolbar, dc, m_dropDownArrowRect);
-        xx += CL_TOOL_BAR_DROPDOWN_ARROW_SIZE;
-        xx += m_toolbar->GetXSpacer();
+        xx += drop_down_button_width;
     }
 }
 

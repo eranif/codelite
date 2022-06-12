@@ -31,8 +31,6 @@ wxSize clToolBarMenuButton::CalculateSize(wxDC& dc) const
         sz.y = wxMax(sz.GetHeight(), height);
     }
 
-    sz.x += m_toolbar->GetXSpacer();
-    sz.x += CL_TOOL_BAR_DROPDOWN_ARROW_SIZE;
-    sz.x += m_toolbar->GetXSpacer();
+    sz.x += sz.GetHeight(); // the button width is the as the height of the button
     return sz;
 }

@@ -202,12 +202,14 @@ void clCodeLiteRemoteProcess::StartInteractive(const SSHAccountInfo& account, co
 #if USE_SFTP
     // upload codelite-remote script and start it once its uploaded
     wxString localCodeLiteRemoteScript = clStandardPaths::Get().GetBinFolder() + "/codelite-remote";
+    clDEBUG() << "Uploading codelite-remote file:" << endl;
+    clDEBUG() << localCodeLiteRemoteScript << "->" << scriptPath << endl;
     if(!clSFTPManager::Get().AwaitSaveFile(localCodeLiteRemoteScript, scriptPath, account.GetAccountName())) {
         clERROR() << "Failed to upload file:" << scriptPath << "." << clSFTPManager::Get().GetLastError() << endl;
         return;
     }
 #else
-    clERROR() << "CodeLite is build with NO SFTP support" << endl;
+    clERROR() << "CodeLite is built with NO SFTP support" << endl;
 #endif
 
     m_going_down = false;

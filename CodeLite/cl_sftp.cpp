@@ -25,9 +25,11 @@
 
 #if USE_SFTP
 #include "cl_sftp.h"
+
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "wx/tokenzr.h"
+
 #include <atomic>
 #include <libssh/sftp.h>
 #include <string.h>
@@ -321,12 +323,22 @@ void clSFTP::CreateDir(const wxString& dirname)
     }
 
     int rc;
+    auto attr = sftp_stat(m_sftp, dirname.mb_str(wxConvUTF8).data());
+    if(attr) {
+        // already exists
+        sftp_attributes_free(attr);
+        clDEBUG() << "remote folder:" << dirname << "already exists. nothing to be done here" << endl;
+        // nothing to be done here
+        return;
+    }
+
     rc = sftp_mkdir(m_sftp, dirname.mb_str(wxConvUTF8).data(), S_IRWXU);
 
     if(rc != SSH_OK) {
-        throw clException(wxString() << _("Failed to create directory: ") << dirname << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        wxString message;
+        message << _("SFTP: failed to create directory: ") << dirname << ". " << ssh_get_error(m_ssh->GetSession());
+        clERROR() << message << endl;
+        throw clException(message);
     }
 }
 

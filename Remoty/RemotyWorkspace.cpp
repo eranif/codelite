@@ -952,11 +952,11 @@ void RemotyWorkspace::StartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const w
     clDEBUG() << "Starting codelite-remote...(" << context << ") ..." << endl;
 
     // upload codelite-remote script to the workspace folder
-    wxString remoteCodeLitePath = GetRemoteWorkingDir() + "/.codelite/codelite-remote";
     clSFTPManager::Get().NewFolder(GetRemoteWorkingDir() + "/.codelite", m_account);
 
     wxString codelite_remote_script;
     codelite_remote_script << GetRemoteWorkingDir() << "/.codelite/codelite-remote";
+    clDEBUG() << "Calling proc->StartInteractive(..," << codelite_remote_script << ",..)" << endl;
     proc->StartInteractive(m_account, codelite_remote_script, context);
     clDEBUG() << "Starting codelite-remote...(" << context << ") ... done" << endl;
 }

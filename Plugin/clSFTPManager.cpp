@@ -349,15 +349,16 @@ bool clSFTPManager::DoSyncSaveFile(const wxString& localPath, const wxString& re
     auto save_func = [localPath, remotePath, conn, delete_local, &save_promise]() {
         try {
             conn->Write(localPath, remotePath);
+            save_promise.set_value(true);
         } catch(clException& e) {
             clERROR() << "Failed to write file:" << remotePath << "." << e.What();
             save_promise.set_value(false);
         }
+
         // always delete the file
         if(delete_local) {
             clRemoveFile(localPath);
         }
-        save_promise.set_value(true);
     };
     m_q.push_back(std::move(save_func));
     return future.get();
@@ -724,16 +725,16 @@ void clSFTPManager::StartWorkerThread()
     }
 
     m_worker_thread = new std::thread(
-        [](SyncQueue<std::function<void()>>& Q, std::atomic_bool& shutdown) {
-            while(!shutdown.load()) {
-                auto work_func = Q.pop_front();
-                if(work_func == nullptr) {
-                    continue;
-                }
-                work_func();
+    [](SyncQueue<std::function<void()>>& Q, std::atomic_bool& shutdown) {
+        while(!shutdown.load()) {
+            auto work_func = Q.pop_front();
+            if(work_func == nullptr) {
+                continue;
             }
-        },
-        std::ref(m_q), std::ref(m_shutdown));
+            work_func();
+        }
+    },
+    std::ref(m_q), std::ref(m_shutdown));
 }
 
 void clSFTPManager::OnSaveCompleted(clCommandEvent& e)

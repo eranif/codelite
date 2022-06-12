@@ -148,7 +148,7 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
     EventNotifier::Get()->Bind(wxEVT_DOWNLOAD_FILE, &RemotyWorkspace::OnDownloadFile, this);
-
+    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_STOP_SEARCH, &RemotyWorkspace::OnStopFindInFiles, this);
     // codelite-remote events
 
     // finder
@@ -198,7 +198,7 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &RemotyWorkspace::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_OPEN_FILE, &RemotyWorkspace::OnLSPOpenFile, this);
     EventNotifier::Get()->Unbind(wxEVT_DOWNLOAD_FILE, &RemotyWorkspace::OnDownloadFile, this);
-
+    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_STOP_SEARCH, &RemotyWorkspace::OnStopFindInFiles, this);
     // codelite-remote events
 
     // finder
@@ -397,7 +397,7 @@ void RemotyWorkspace::OnIsBuildInProgress(clBuildEvent& event)
 void RemotyWorkspace::OnStopBuild(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    StartCodeLiteRemote(&m_codeliteRemoteBuilder, m_codeliteRemoteBuilder.GetContext(), true);
+    RestartCodeLiteRemote(&m_codeliteRemoteBuilder, m_codeliteRemoteBuilder.GetContext(), true);
     m_buildInProgress = false;
 
     clBuildEvent eventStopped(wxEVT_BUILD_ENDED);
@@ -585,8 +585,8 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
             "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
     }
 
-    StartCodeLiteRemote(&m_codeliteRemoteBuilder, CONTEXT_BUILDER);
-    StartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER);
+    RestartCodeLiteRemote(&m_codeliteRemoteBuilder, CONTEXT_BUILDER);
+    RestartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER);
     ScanForWorkspaceFiles();
 
     // Disable all local lsp_metadata_arr before we start
@@ -959,12 +959,14 @@ void RemotyWorkspace::OnFindSwapped(clFileSystemEvent& event)
     }
 }
 
-void RemotyWorkspace::StartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart)
+void RemotyWorkspace::RestartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart)
 {
+    CHECK_PTR_RET(proc);
+
     // if running and restart is true, restart codelite-remote
     if(proc->IsRunning() && restart) {
         clDEBUG() << "Stopping codelite-remote..." << endl;
-        m_codeliteRemoteBuilder.Stop();
+        proc->Stop();
     }
 
     // make sure we are not running
@@ -1284,4 +1286,14 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
     }
     editor->SetEditorText(DEFAULT_CODELITE_REMOTE_JSON);
     editor->SetActive();
+}
+
+void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)
+{
+    event.Skip();
+    if(IsOpened() && m_codeliteRemoteFinder.IsRunning()) {
+        RestartCodeLiteRemote(&m_codeliteRemoteFinder, CONTEXT_FINDER, true);
+        // send event notifying that the search has been cancelled
+        m_remoteFinder.NotifySearchCancelled();
+    }
 }

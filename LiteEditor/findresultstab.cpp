@@ -445,7 +445,13 @@ void FindResultsTab::DoOpenSearchResult(const SearchResult& result, wxStyledText
 void FindResultsTab::OnStopSearch(wxCommandEvent& e)
 {
     // stop the search thread
+    wxUnusedVar(e);
+    // stop the search thread
     SearchThreadST::Get()->StopSearch();
+
+    // and in case the search functionality is done by a plugin, fire an event
+    clFindInFilesEvent stop_event{ wxEVT_FINDINFILES_STOP_SEARCH };
+    EventNotifier::Get()->AddPendingEvent(stop_event);
 }
 
 void FindResultsTab::OnStopSearchUI(wxUpdateUIEvent& e) { e.Enable(m_searchInProgress); }

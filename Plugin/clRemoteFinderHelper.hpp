@@ -34,6 +34,11 @@ public:
      */
     void Search(const wxString& root_dir, const wxString& findString, const wxString& fileExtensions, bool whole_word,
                 bool icase);
+
+    /**
+     * @brief send wxEVT_SEARCH_THREAD_SEARCHCANCELED event
+     */
+    void NotifySearchCancelled();
 };
 
 #endif // CLREMOTEFINDERHELPER_HPP

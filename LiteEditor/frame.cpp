@@ -1466,7 +1466,7 @@ void clMainFrame::CreateToolBar(int toolSize)
     m_toolbar->Hide();
 
     m_toolbar->SetGroupSpacing(clConfig::Get().Read(kConfigToolbarGroupSpacing, 50));
-    m_toolbar->SetMiniToolBar(false); // We want main toolbar
+    m_toolbar->SetMiniToolBar(true); // We want main toolbar
     m_toolbar->EnableCustomisation(true);
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(XRCID("new_file"), _("New"), images->Add("file_new", toolSize), _("New File"));

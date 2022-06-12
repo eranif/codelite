@@ -72,12 +72,17 @@ protected:
     void OnReloadWorkspace(clCommandEvent& event);
     void OnCloseWorkspace(clCommandEvent& event);
     void DoClose(bool notify);
-    void StartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart = false);
+    /**
+     * @brief restart the remote process. If it is already running and `restart` is set to false
+     * do nothing. Otherwise, stop and start it again
+     */
+    void RestartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart = false);
     void OnOpenResourceFile(clCommandEvent& event);
     void OnShutdown(clCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
     void OnLSPOpenFile(LSPEvent& event);
     void OnDownloadFile(clCommandEvent& event);
+    void OnStopFindInFiles(clFindInFilesEvent& event);
 
     // keep the LSPs state as it were before we added our remote ones
     // and disable them

@@ -7,6 +7,7 @@
 #include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
+#include "macros.h"
 #include "processreaderthread.h"
 #include "search_thread.h"
 
@@ -109,3 +110,16 @@ wxWindow* clRemoteFinderHelper::GetSearchTab()
 }
 
 void clRemoteFinderHelper::SetCodeLiteRemote(clCodeLiteRemoteProcess* clr) { m_codeliteRemote = clr; }
+
+void clRemoteFinderHelper::NotifySearchCancelled()
+{
+    CHECK_PTR_RET(GetSearchTab());
+    // Notify that the search is cancelled
+    wxCommandEvent event_cacnelled{ wxEVT_SEARCH_THREAD_SEARCHCANCELED };
+    GetSearchTab()->GetEventHandler()->AddPendingEvent(event_cacnelled);
+
+    // the UI is also expecting the wxEVT_SEARCH_THREAD_SEARCHEND event
+    wxCommandEvent end_event{ wxEVT_SEARCH_THREAD_SEARCHEND };
+    end_event.SetClientData(nullptr);
+    GetSearchTab()->GetEventHandler()->AddPendingEvent(end_event);
+}

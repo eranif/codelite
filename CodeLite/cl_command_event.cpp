@@ -223,6 +223,7 @@ clDebugEvent& clDebugEvent::operator=(const clDebugEvent& other)
     m_isSSHDebugging = other.m_isSSHDebugging;
     m_sshAccount = other.m_sshAccount;
     m_alternateDebuggerPath = other.m_alternateDebuggerPath;
+    m_uiBreakpoint = other.m_uiBreakpoint;
     return *this;
 }
 

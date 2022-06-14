@@ -25,6 +25,7 @@
 
 #include "cl_editor.h"
 
+#include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
 #include "ServiceProviderManager.h"
@@ -33,7 +34,6 @@
 #include "attribute_style.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
-#include "BreakpointsView.hpp"
 #include "buildtabsettingsdata.h"
 #include "cc_box_tip_window.h"
 #include "clEditorStateLocker.h"
@@ -276,6 +276,18 @@ public:
 
 namespace
 {
+/// Queue clDebugEvent notifying about breakpoint added/deleted from the UI
+void QueueUIBreakpointEvent(wxEventType type, const wxString& path, int line)
+{
+    clDebugEvent event_bp_added{ type };
+    UIBreakpoint bp;
+    bp.SetLine(line);
+    bp.SetType(UIBreakpointType::SOURCE);
+    bp.SetFile(path);
+    event_bp_added.SetUiBreakpoint(bp);
+    EventNotifier::Get()->AddPendingEvent(event_bp_added);
+}
+
 bool IsWordChar(const wxChar& ch)
 {
     static wxStringSet_t wordsChar;
@@ -4023,9 +4035,10 @@ void clEditor::ToggleBreakpoint(int lineno)
     if(bp.IsNull()) {
         // This will (always?) be from a margin mouse-click, so assume it's a standard breakpt that's wanted
         AddBreakpoint(lineno);
-
+        QueueUIBreakpointEvent(wxEVT_DBG_UI_BREAKPOINT_ADDED, file_path, lineno);
     } else {
         DelBreakpoint(lineno);
+        QueueUIBreakpointEvent(wxEVT_DBG_UI_BREAKPOINT_DELETED, file_path, lineno);
     }
 }
 
@@ -6416,3 +6429,50 @@ struct SelectorSorter {
 void clEditor::SelectionInfo::Sort() { std::sort(this->selections.begin(), this->selections.end(), SelectorSorter()); }
 
 void clEditor::DoSetCaretAt(long pos) { clEditor::DoSetCaretAt(this, pos); }
+
+bool clEditor::HasBreakpointMarker(int line_number)
+{
+    int markers_bit_mask = MarkerGet(line_number);
+    int mask = (1 << smt_breakpoint);
+    return markers_bit_mask & mask;
+}
+
+void clEditor::DeleteAllBreakpointMarkers(int line_number, bool notify)
+{
+    // get a list of lines to work on
+    std::vector<int> lines;
+    if(line_number == wxNOT_FOUND) {
+        int mask = (1 << smt_breakpoint);
+        int line = MarkerNext(0, mask);
+        while(line != wxNOT_FOUND) {
+            lines.push_back(line);
+            MarkerNext(line + 1, mask);
+        }
+    } else {
+        lines.push_back(line_number);
+    }
+
+    for(int line : lines) {
+        MarkerDelete(line, smt_breakpoint);
+        if(notify) {
+            QueueUIBreakpointEvent(wxEVT_DBG_UI_BREAKPOINT_DELETED, GetRemotePathOrLocal(), line);
+        }
+    }
+    m_breakpoints_tooltips.clear();
+}
+
+void clEditor::SetBreakpointMarker(int line_number, const wxString& tooltip, bool notify)
+{
+    if(HasBreakpointMarker(line_number)) {
+        m_breakpoints_tooltips.erase(line_number);
+        m_breakpoints_tooltips.insert({ line_number, tooltip });
+        return;
+    }
+
+    MarkerAdd(line_number, smt_breakpoint);
+    m_breakpoints_tooltips.insert({ line_number, tooltip });
+
+    if(notify) {
+        QueueUIBreakpointEvent(wxEVT_DBG_UI_BREAKPOINT_ADDED, GetRemotePathOrLocal(), line_number);
+    }
+}

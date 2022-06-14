@@ -568,7 +568,9 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug">
       <Environment>WXWIN=C:/msys64/home/eran/root&#xD;
-WXCFG=gcc_x64_dll/mswu</Environment>
+WXCFG=gcc_x64_dll/mswu&#xD;
+SSH_HOME=C:/msys64/home/eran/root&#xD;
+MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>

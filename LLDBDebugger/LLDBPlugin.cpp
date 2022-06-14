@@ -322,6 +322,15 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             clDEBUG() << "DAP: Using executable:" << exepath << endl;
             clDEBUG() << "DAP: Working directory:" << workingDirectory << endl;
 
+            if(workingDirectory.empty()) {
+                workingDirectory = wxGetCwd();
+            }
+            wxFileName fn(exepath);
+            if(fn.IsRelative()) {
+                fn.MakeAbsolute(workingDirectory);
+            }
+            exepath = fn.GetFullPath();
+
             //////////////////////////////////////////////////////////////////////
             // Initiate the connection to codelite-lldb
             //////////////////////////////////////////////////////////////////////
@@ -350,6 +359,9 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
             command_array.Insert(exepath, 0);
 
             std::vector<wxString> v{ command_array.begin(), command_array.end() };
+            clSYSTEM() << "Starting debugger for command:" << endl;
+            clSYSTEM() << v << endl;
+            clSYSTEM() << "working directory:" << workingDirectory << endl;
             m_client.Launch(std::move(v), workingDirectory, false);
         }
     }
@@ -386,6 +398,13 @@ void LLDBPlugin::OnLaunchResponse(DAPEvent& event)
         wxMessageBox("Failed to launch debuggee: " + resp->message, "DAP",
                      wxICON_ERROR | wxOK | wxOK_DEFAULT | wxCENTRE);
         m_client.CallAfter(&dap::Client::Reset);
+    } else if(resp) {
+        InitializeUI();
+        LoadPerspective();
+
+        // Fire CodeLite IDE event indicating that a debug session started
+        clDebugEvent cl_event{ wxEVT_DEBUG_STARTED };
+        EventNotifier::Get()->AddPendingEvent(cl_event);
     }
 }
 
@@ -440,7 +459,12 @@ void LLDBPlugin::OnStoppedEvent(DAPEvent& event)
     }
 }
 
-void LLDBPlugin::OnThreadsResponse(DAPEvent& event) { m_threadsView->UpdateThreads(event); }
+void LLDBPlugin::OnThreadsResponse(DAPEvent& event)
+{
+    if(m_threadsView) {
+        m_threadsView->UpdateThreads(event);
+    }
+}
 
 void LLDBPlugin::OnDebugNext(clDebugEvent& event)
 {

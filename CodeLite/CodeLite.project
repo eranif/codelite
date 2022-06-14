@@ -527,6 +527,7 @@
     <Project Name="sqlite3"/>
     <Project Name="wxsqlite3"/>
     <Project Name="wxshapeframework"/>
+    <Project Name="dapcxx"/>
   </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
@@ -713,6 +714,7 @@ XmlLexer.cpp: XMLLexer.l
         <Library Value="libssh"/>
         <Library Value="ws2_32"/>
         <Library Value="ctagsdlib"/>
+        <Library Value="dapcxx"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="libcodeliteu.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>

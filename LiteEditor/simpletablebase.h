@@ -26,11 +26,11 @@
 #ifndef __simpletablebase__
 #define __simpletablebase__
 
-#include "cl_treelistctrl.h"
 #include "debugger.h"
 #include "debuggerobserver.h"
 #include "debuggersettingsbasedlg.h"
 #include "manager.h"
+
 #include <map>
 #include <wx/button.h>
 #include <wx/choice.h>

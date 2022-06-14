@@ -41,20 +41,18 @@ LLDBCallStackBase::LLDBCallStackBase(wxWindow* parent, wxWindowID id, const wxPo
 
     SetName(wxT("LLDBCallStackBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
-    m_dvListCtrlBacktrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                   wxDataViewEventHandler(LLDBCallStackBase::OnItemActivated), NULL, this);
-    m_dvListCtrlBacktrace->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                   wxDataViewEventHandler(LLDBCallStackBase::OnContextMenu), NULL, this);
+    m_dvListCtrlBacktrace->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LLDBCallStackBase::OnItemActivated, this);
+    m_dvListCtrlBacktrace->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &LLDBCallStackBase::OnContextMenu, this);
 }
 
 LLDBCallStackBase::~LLDBCallStackBase()
 {
-    m_dvListCtrlBacktrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                      wxDataViewEventHandler(LLDBCallStackBase::OnItemActivated), NULL, this);
-    m_dvListCtrlBacktrace->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
-                                      wxDataViewEventHandler(LLDBCallStackBase::OnContextMenu), NULL, this);
+    m_dvListCtrlBacktrace->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LLDBCallStackBase::OnItemActivated, this);
+    m_dvListCtrlBacktrace->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU, &LLDBCallStackBase::OnContextMenu, this);
 }
 
 LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -152,20 +150,18 @@ LLDBOutputViewBase::LLDBOutputViewBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("LLDBOutputViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
-    m_treeCtrlBreakpoints->Connect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                                   wxTreeEventHandler(LLDBOutputViewBase::OnBpActivated), NULL, this);
-    m_textCtrlConsoleSend->Connect(wxEVT_COMMAND_TEXT_ENTER,
-                                   wxCommandEventHandler(LLDBOutputViewBase::OnSendCommandToLLDB), NULL, this);
+    m_treeCtrlBreakpoints->Bind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &LLDBOutputViewBase::OnBpActivated, this);
+    m_textCtrlConsoleSend->Bind(wxEVT_COMMAND_TEXT_ENTER, &LLDBOutputViewBase::OnSendCommandToLLDB, this);
 }
 
 LLDBOutputViewBase::~LLDBOutputViewBase()
 {
-    m_treeCtrlBreakpoints->Disconnect(wxEVT_COMMAND_TREE_ITEM_ACTIVATED,
-                                      wxTreeEventHandler(LLDBOutputViewBase::OnBpActivated), NULL, this);
-    m_textCtrlConsoleSend->Disconnect(wxEVT_COMMAND_TEXT_ENTER,
-                                      wxCommandEventHandler(LLDBOutputViewBase::OnSendCommandToLLDB), NULL, this);
+    m_treeCtrlBreakpoints->Unbind(wxEVT_COMMAND_TREE_ITEM_ACTIVATED, &LLDBOutputViewBase::OnBpActivated, this);
+    m_textCtrlConsoleSend->Unbind(wxEVT_COMMAND_TEXT_ENTER, &LLDBOutputViewBase::OnSendCommandToLLDB, this);
 }
 
 LLDBNewBreakpointDlgBase::LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
@@ -241,44 +237,34 @@ LLDBNewBreakpointDlgBase::LLDBNewBreakpointDlgBase(wxWindow* parent, wxWindowID 
 
     SetName(wxT("LLDBNewBreakpointDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_checkBoxFileLine->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                wxCommandEventHandler(LLDBNewBreakpointDlgBase::OnCheckFileAndLine), NULL, this);
-    m_textCtrlFile->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBNewBreakpointDlgBase::OnFileLineEnabledUI),
-                            NULL, this);
-    m_textCtrlLine->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBNewBreakpointDlgBase::OnFileLineEnabledUI),
-                            NULL, this);
-    m_checkBoxFuncName->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                wxCommandEventHandler(LLDBNewBreakpointDlgBase::OnCheckFuncName), NULL, this);
-    m_textCtrlFunctionName->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBNewBreakpointDlgBase::OnFuncNameUI),
-                                    NULL, this);
+    m_checkBoxFileLine->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &LLDBNewBreakpointDlgBase::OnCheckFileAndLine, this);
+    m_textCtrlFile->Bind(wxEVT_UPDATE_UI, &LLDBNewBreakpointDlgBase::OnFileLineEnabledUI, this);
+    m_textCtrlLine->Bind(wxEVT_UPDATE_UI, &LLDBNewBreakpointDlgBase::OnFileLineEnabledUI, this);
+    m_checkBoxFuncName->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &LLDBNewBreakpointDlgBase::OnCheckFuncName, this);
+    m_textCtrlFunctionName->Bind(wxEVT_UPDATE_UI, &LLDBNewBreakpointDlgBase::OnFuncNameUI, this);
 }
 
 LLDBNewBreakpointDlgBase::~LLDBNewBreakpointDlgBase()
 {
-    m_checkBoxFileLine->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                   wxCommandEventHandler(LLDBNewBreakpointDlgBase::OnCheckFileAndLine), NULL, this);
-    m_textCtrlFile->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBNewBreakpointDlgBase::OnFileLineEnabledUI),
-                               NULL, this);
-    m_textCtrlLine->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBNewBreakpointDlgBase::OnFileLineEnabledUI),
-                               NULL, this);
-    m_checkBoxFuncName->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                   wxCommandEventHandler(LLDBNewBreakpointDlgBase::OnCheckFuncName), NULL, this);
-    m_textCtrlFunctionName->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBNewBreakpointDlgBase::OnFuncNameUI),
-                                       NULL, this);
+    m_checkBoxFileLine->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &LLDBNewBreakpointDlgBase::OnCheckFileAndLine, this);
+    m_textCtrlFile->Unbind(wxEVT_UPDATE_UI, &LLDBNewBreakpointDlgBase::OnFileLineEnabledUI, this);
+    m_textCtrlLine->Unbind(wxEVT_UPDATE_UI, &LLDBNewBreakpointDlgBase::OnFileLineEnabledUI, this);
+    m_checkBoxFuncName->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &LLDBNewBreakpointDlgBase::OnCheckFuncName, this);
+    m_textCtrlFunctionName->Unbind(wxEVT_UPDATE_UI, &LLDBNewBreakpointDlgBase::OnFuncNameUI, this);
 }
 
 LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -303,7 +289,9 @@ LLDBLocalsViewBase::LLDBLocalsViewBase(wxWindow* parent, wxWindowID id, const wx
     SetName(wxT("LLDBLocalsViewBase"));
     SetMinClientSize(wxSize(200, 200));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
 }
 
 LLDBLocalsViewBase::~LLDBLocalsViewBase() {}
@@ -477,6 +465,7 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
 #if !defined(__WXOSX__) && !defined(_WIN64)
     m_pgPropDebugServer->SetAttribute(wxPG_FILE_WILDCARD, wxT(""));
 #endif // !defined(__WXOSX__) && !defined(_WIN64)
+    m_pgPropDebugServer->SetAttribute("ShowFullPath", 1);
     m_pgPropDebugServer->SetHelpString(_("The path to lldb's lldb-server.\nThis is a mandatory field"));
 
     m_pgProp169 = m_pgMgrAdvanced->Append(new wxPropertyCategory(_("Remote proxy settings")));
@@ -514,40 +503,34 @@ LLDBSettingDialogBase::LLDBSettingDialogBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("LLDBSettingDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_pgMgrDisplayProperties->Connect(
-        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
-    m_pgMgrAdvanced->Connect(wxEVT_PG_CHANGED,
-                             wxPropertyGridEventHandler(LLDBSettingDialogBase::OnAdvancedValueChanged), NULL, this);
-    m_button83->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
-    m_button175->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBSettingDialogBase::OnApply), NULL,
-                         this);
-    m_button175->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
+    m_pgMgrDisplayProperties->Bind(wxEVT_PG_CHANGED, &LLDBSettingDialogBase::OnGeneralValueChanged, this);
+    m_pgMgrAdvanced->Bind(wxEVT_PG_CHANGED, &LLDBSettingDialogBase::OnAdvancedValueChanged, this);
+    m_button83->Bind(wxEVT_UPDATE_UI, &LLDBSettingDialogBase::OnOKUI, this);
+    m_button175->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LLDBSettingDialogBase::OnApply, this);
+    m_button175->Bind(wxEVT_UPDATE_UI, &LLDBSettingDialogBase::OnOKUI, this);
 }
 
 LLDBSettingDialogBase::~LLDBSettingDialogBase()
 {
-    m_pgMgrDisplayProperties->Disconnect(
-        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(LLDBSettingDialogBase::OnGeneralValueChanged), NULL, this);
-    m_pgMgrAdvanced->Disconnect(wxEVT_PG_CHANGED,
-                                wxPropertyGridEventHandler(LLDBSettingDialogBase::OnAdvancedValueChanged), NULL, this);
-    m_button83->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
-    m_button175->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(LLDBSettingDialogBase::OnApply), NULL,
-                            this);
-    m_button175->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(LLDBSettingDialogBase::OnOKUI), NULL, this);
+    m_pgMgrDisplayProperties->Unbind(wxEVT_PG_CHANGED, &LLDBSettingDialogBase::OnGeneralValueChanged, this);
+    m_pgMgrAdvanced->Unbind(wxEVT_PG_CHANGED, &LLDBSettingDialogBase::OnAdvancedValueChanged, this);
+    m_button83->Unbind(wxEVT_UPDATE_UI, &LLDBSettingDialogBase::OnOKUI, this);
+    m_button175->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LLDBSettingDialogBase::OnApply, this);
+    m_button175->Unbind(wxEVT_UPDATE_UI, &LLDBSettingDialogBase::OnOKUI, this);
 }
 
 LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -584,16 +567,16 @@ LLDBThreadsViewBase::LLDBThreadsViewBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("LLDBThreadsViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     // Connect events
-    m_dvListCtrlThreads->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                 wxDataViewEventHandler(LLDBThreadsViewBase::OnItemActivated), NULL, this);
+    m_dvListCtrlThreads->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LLDBThreadsViewBase::OnItemActivated, this);
 }
 
 LLDBThreadsViewBase::~LLDBThreadsViewBase()
 {
-    m_dvListCtrlThreads->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                                    wxDataViewEventHandler(LLDBThreadsViewBase::OnItemActivated), NULL, this);
+    m_dvListCtrlThreads->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LLDBThreadsViewBase::OnItemActivated, this);
 }
 
 FolderMappingBaseDlg::FolderMappingBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
@@ -668,24 +651,76 @@ FolderMappingBaseDlg::FolderMappingBaseDlg(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("FolderMappingBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_button183->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FolderMappingBaseDlg::OnOKUI), NULL, this);
+    m_button183->Bind(wxEVT_UPDATE_UI, &FolderMappingBaseDlg::OnOKUI, this);
 }
 
 FolderMappingBaseDlg::~FolderMappingBaseDlg()
 {
-    m_button183->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(FolderMappingBaseDlg::OnOKUI), NULL, this);
+    m_button183->Unbind(wxEVT_UPDATE_UI, &FolderMappingBaseDlg::OnOKUI, this);
 }
+
+DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer237 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer237);
+
+    m_splitter238 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                         wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_splitter238->SetSashGravity(0.5);
+    m_splitter238->SetMinimumPaneSize(10);
+
+    boxSizer237->Add(m_splitter238, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_splitterPage240 = new wxPanel(m_splitter238, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitter238, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    wxBoxSizer* boxSizer243 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage240->SetSizer(boxSizer243);
+
+    m_treeThreads = new clThemedTreeCtrl(m_splitterPage240, wxID_ANY, wxDefaultPosition,
+                                         wxDLG_UNIT(m_splitterPage240, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer243->Add(m_treeThreads, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    m_splitterPage242 = new wxPanel(m_splitter238, wxID_ANY, wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitter238, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter238->SplitVertically(m_splitterPage240, m_splitterPage242, 0);
+
+    wxBoxSizer* boxSizer244 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPage242->SetSizer(boxSizer244);
+
+    m_treeVariables = new clThemedTreeCtrl(m_splitterPage242, wxID_ANY, wxDefaultPosition,
+                                           wxDLG_UNIT(m_splitterPage242, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+
+    boxSizer244->Add(m_treeVariables, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    SetName(wxT("DAPMainViewBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+}
+
+DAPMainViewBase::~DAPMainViewBase() {}

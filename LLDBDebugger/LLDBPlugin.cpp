@@ -25,6 +25,7 @@
 
 #include "LLDBPlugin.h"
 
+#include "DAPMainView.h"
 #include "FolderMappingDlg.h"
 #include "JSON.h"
 #include "LLDBCallStack.h"
@@ -838,7 +839,7 @@ void LLDBPlugin::InitializeUI()
     }
 
     if(!m_threadsView) {
-        m_threadsView = new LLDBThreadsView(parent, this);
+        m_threadsView = new DAPMainView(parent);
         m_mgr->GetDockingManager()->AddPane(
             m_threadsView,
             wxAuiPaneInfo().MinSize(200, 200).Layer(10).Right().Position(1).CloseButton().Caption("Threads").Name(

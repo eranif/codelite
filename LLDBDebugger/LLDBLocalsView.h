@@ -26,10 +26,10 @@
 #ifndef LLDBLOCALSVIEW_H
 #define LLDBLOCALSVIEW_H
 
-#include "UI.h"
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBVariable.h"
-#include "cl_treelistctrl.h"
+#include "UI.h"
+
 #include <map>
 
 class clThemedTreeCtrl;

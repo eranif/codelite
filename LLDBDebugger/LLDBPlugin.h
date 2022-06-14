@@ -26,23 +26,20 @@
 #ifndef __LLDBDebugger__
 #define __LLDBDebugger__
 
-#include "plugin.h"
-#include "cl_command_event.h"
-#include <wx/stc/stc.h>
-
 #include "LLDBProtocol/LLDBConnector.h"
 #include "LLDBProtocol/LLDBEvent.h"
 #include "LLDBProtocol/LLDBRemoteConnectReturnObject.h"
 #include "clDebuggerTerminal.h"
+#include "cl_command_event.h"
+#include "dap/Client.hpp"
+#include "plugin.h"
 
-class LLDBTooltip;
-class LLDBThreadsView;
-class LLDBLocalsView;
-class LLDBOutputView;
-class LLDBCallStackPane;
+#include <wx/stc/stc.h>
+
+class DAPMainView;
 class LLDBPlugin : public IPlugin
 {
-    LLDBConnector m_connector;
+    dap::Client m_dapClient;
     wxString m_defaultPerspective;
 
     /// ------------------------------------
@@ -51,7 +48,7 @@ class LLDBPlugin : public IPlugin
     LLDBCallStackPane* m_callstack;
     LLDBOutputView* m_breakpointsView;
     LLDBLocalsView* m_localsView;
-    LLDBThreadsView* m_threadsView;
+    DAPMainView* m_threadsView = nullptr;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
     bool m_stopReasonPrompted;
     bool m_raisOnBpHit;

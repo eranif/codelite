@@ -7,6 +7,7 @@
 #ifndef _CODELITE_LLDBDEBUGGER_UI_BASE_CLASSES_H
 #define _CODELITE_LLDBDEBUGGER_UI_BASE_CLASSES_H
 
+// clang-format off
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
@@ -34,6 +35,7 @@
 #include <wx/hyperlink.h>
 #include <wx/stattext.h>
 #include <wx/filepicker.h>
+#include <wx/splitter.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -49,6 +51,8 @@
 #else
 #define WXC_FROM_DIP(x) x
 #endif
+
+// clang-format on
 
 class LLDBCallStackBase : public wxPanel
 {
@@ -227,6 +231,27 @@ public:
                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~FolderMappingBaseDlg();
+};
+
+class DAPMainViewBase : public wxPanel
+{
+protected:
+    wxSplitterWindow* m_splitter238;
+    wxPanel* m_splitterPage240;
+    clThemedTreeCtrl* m_treeThreads;
+    wxPanel* m_splitterPage242;
+    clThemedTreeCtrl* m_treeVariables;
+
+protected:
+public:
+    clThemedTreeCtrl* GetTreeThreads() { return m_treeThreads; }
+    wxPanel* GetSplitterPage240() { return m_splitterPage240; }
+    clThemedTreeCtrl* GetTreeVariables() { return m_treeVariables; }
+    wxPanel* GetSplitterPage242() { return m_splitterPage242; }
+    wxSplitterWindow* GetSplitter238() { return m_splitter238; }
+    DAPMainViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    virtual ~DAPMainViewBase();
 };
 
 #endif

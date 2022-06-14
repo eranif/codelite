@@ -61,6 +61,8 @@
       <File Name="LLDBPlugin.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="UI">
+      <File Name="DAPMainView.cpp"/>
+      <File Name="DAPMainView.h"/>
       <File Name="LLDBCallStack.cpp"/>
       <File Name="LLDBCallStack.h"/>
       <File Name="LLDBLocalsView.cpp"/>
@@ -296,6 +298,7 @@
         <IncludePath Value="../sqlite3"/>
         <IncludePath Value="../sdk/wxsqlite3/include"/>
         <IncludePath Value="../PCH"/>
+        <IncludePath Value="../wxdap"/>
         <Preprocessor Value="WXUSINGDLL_SDK"/>
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="WXUSINGDLL_SCI"/>
@@ -306,6 +309,7 @@
         <Preprocessor Value="WXUSINGDLL_CL"/>
         <Preprocessor Value="YY_NEVER_INTERACTIVE=1"/>
         <Preprocessor Value="USE_SFTP=1"/>
+        <Preprocessor Value="WXUSINGDLL_DAP"/>
       </Compiler>
       <Linker Options=";-O2;$(shell wx-config --debug=no --libs std,stc,propgrid,aui --unicode=yes)" Required="yes">
         <LibraryPath Value="$(WorkspacePath)/build-$(WorkspaceConfiguration)/lib"/>

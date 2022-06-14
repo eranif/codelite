@@ -73,6 +73,7 @@
     <Project Name="sqlite3" Path="sqlite3/sqlite3.project" Active="No"/>
     <Project Name="wxshapeframework" Path="sdk/wxshapeframework/wxshapeframework.project" Active="No"/>
     <Project Name="wxsqlite3" Path="sdk/wxsqlite3/wxsqlite3.project" Active="No"/>
+    <Project Name="dapcxx" Path="wxdap/dap/dapcxx.project"/>
   </VirtualDirectory>
   <VirtualDirectory Name="UnitTests">
     <VirtualDirectory Name="PHP">
@@ -171,6 +172,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release">
       <Environment/>
@@ -249,6 +251,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug">
       <Environment/>
@@ -326,6 +329,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Debug">
       <Environment/>
@@ -404,6 +408,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="OSX_Release">
       <Environment/>
@@ -482,6 +487,7 @@ WXCFG=gcc_dll\mswu</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release">
       <Environment>WXWIN=C:/msys64/home/eran/root
@@ -491,13 +497,11 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Release"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Release"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Release"/>
-      <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Release"/>
       <Project Name="CodeFormatter" ConfigName="Win_x64_Release"/>
       <Project Name="codelite-exec" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_cppcheck" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_echo" ConfigName="Win_x64_Release"/>
-      <Project Name="codelite_indexer" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_launcher" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_make" ConfigName="Win_x64_Release"/>
       <Project Name="codelite_terminal" ConfigName="Win_x64_Release"/>
@@ -512,7 +516,7 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="ctagsd" ConfigName="Release"/>
       <Project Name="ctagsd-tests" ConfigName="Release"/>
       <Project Name="ctagsdlib" ConfigName="Release"/>
-      <Project Name="CxxParserTests" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Release"/>
       <Project Name="DatabaseExplorer" ConfigName="Win_x64_Release"/>
       <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Release"/>
       <Project Name="DebuggerGDB" ConfigName="Win_x64_Release"/>
@@ -544,7 +548,6 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="QMakePlugin" ConfigName="Win_x64_Release"/>
       <Project Name="Remote" ConfigName="Win_x64_Release"/>
       <Project Name="Rust" ConfigName="Win_x64_Release"/>
-      <Project Name="SampleWorksapce" ConfigName="Debug"/>
       <Project Name="SFTP" ConfigName="Win_x64_Release"/>
       <Project Name="SmartCompletion" ConfigName="Win_x64_Release"/>
       <Project Name="snipwiz" ConfigName="Win_x64_Release"/>
@@ -569,13 +572,11 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="abbreviation" ConfigName="Win_x64_Debug"/>
       <Project Name="AutoSave" ConfigName="Win_x64_Debug"/>
       <Project Name="CallGraph" ConfigName="Win_x64_Debug"/>
-      <Project Name="CCTest" ConfigName="Debug"/>
       <Project Name="CMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="CodeFormatter" ConfigName="Win_x64_Debug"/>
       <Project Name="codelite-exec" ConfigName="Debug"/>
       <Project Name="codelite_cppcheck" ConfigName="Debug"/>
       <Project Name="codelite_echo" ConfigName="Debug"/>
-      <Project Name="codelite_indexer" ConfigName="Debug_Unix"/>
       <Project Name="codelite_launcher" ConfigName="Debug"/>
       <Project Name="codelite_make" ConfigName="Debug"/>
       <Project Name="codelite_terminal" ConfigName="Debug"/>
@@ -588,7 +589,9 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="CppChecker" ConfigName="Win_x64_Debug"/>
       <Project Name="Cscope" ConfigName="Win_x64_Debug"/>
       <Project Name="ctagsd" ConfigName="Debug"/>
-      <Project Name="CxxParserTests" ConfigName="Win_x64_Debug"/>
+      <Project Name="ctagsd-tests" ConfigName="Debug"/>
+      <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
       <Project Name="DatabaseExplorer" ConfigName="Win_x64_Debug"/>
       <Project Name="databaselayer_sqlite" ConfigName="Win_x64_Debug"/>
       <Project Name="DebuggerGDB" ConfigName="Win_x64_Debug"/>
@@ -620,7 +623,6 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="QMakePlugin" ConfigName="Win_x64_Debug"/>
       <Project Name="Remote" ConfigName="Win_x64_Debug"/>
       <Project Name="Rust" ConfigName="Win_x64_Debug"/>
-      <Project Name="SampleWorksapce" ConfigName="Debug"/>
       <Project Name="SFTP" ConfigName="Win_x64_Debug"/>
       <Project Name="SmartCompletion" ConfigName="Win_x64_Debug"/>
       <Project Name="snipwiz" ConfigName="Win_x64_Debug"/>
@@ -638,8 +640,6 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="wxshapeframework" ConfigName="Win_x64_Debug"/>
       <Project Name="wxsqlite3" ConfigName="Win_x64_Debug"/>
       <Project Name="ZoomNavigator" ConfigName="Win_x64_Debug"/>
-      <Project Name="ctagsd-tests" ConfigName="Debug"/>
-      <Project Name="ctagsdlib" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Debug_GTK3">
       <Environment/>
@@ -717,6 +717,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="CMake_Release_GTK3">
       <Environment/>
@@ -794,6 +795,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Release_PHP">
       <Environment/>
@@ -871,6 +873,7 @@ WXCFG=gcc_x64_dll/mswu</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
     <WorkspaceConfiguration Name="Win_x64_Debug_No_Plugins">
       <Environment>WXWIN=C:/msys64/home/eran/root&#xD;
@@ -951,6 +954,7 @@ MINGW64_HOME=C:/msys64/mingw64</Environment>
       <Project Name="ctagsd" ConfigName="Debug"/>
       <Project Name="ctagsd-tests" ConfigName="Debug"/>
       <Project Name="ctagsdlib" ConfigName="Debug"/>
+      <Project Name="dapcxx" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
 </CodeLite_Workspace>

@@ -63,22 +63,6 @@
     <VirtualDirectory Name="UI">
       <File Name="DAPMainView.cpp"/>
       <File Name="DAPMainView.h"/>
-      <File Name="LLDBCallStack.cpp"/>
-      <File Name="LLDBCallStack.h"/>
-      <File Name="LLDBLocalsView.cpp"/>
-      <File Name="LLDBLocalsView.h"/>
-      <File Name="LLDBNewBreakpointDlg.cpp"/>
-      <File Name="LLDBNewBreakpointDlg.h"/>
-      <File Name="LLDBSettingDialog.h"/>
-      <File Name="LLDBSettingDialog.cpp"/>
-      <File Name="LLDBThreadsView.h"/>
-      <File Name="LLDBThreadsView.cpp"/>
-      <File Name="LLDBTooltip.h"/>
-      <File Name="LLDBTooltip.cpp"/>
-      <File Name="FolderMappingDlg.h"/>
-      <File Name="FolderMappingDlg.cpp"/>
-      <File Name="LLDBOutputView.h"/>
-      <File Name="LLDBOutputView.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="wxcrafter">
       <File Name="UI.wxcp"/>
@@ -94,10 +78,8 @@
   <Dependencies Name="Win_x64_Debug">
     <Project Name="LLDBProtocol"/>
   </Dependencies>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="LLDBProtocol"/>
-  </Dependencies>
   <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Win_x64_Release"/>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -316,10 +298,10 @@
         <Library Value="libplugin_sdku.dll"/>
         <Library Value="libcodeliteu.dll"/>
         <Library Value="libwxsqlite3u.dll"/>
-        <Library Value="libLLDBProtocol.a"/>
+        <Library Value="dapcxx"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="LLDBDebugger.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="DAP.dll" IntermediateDirectory="" Command="$(WorkspacePath)/build-$(WorkspaceConfiguration)/bin/$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <BuildSystem Name="CodeLite Makefile Generator"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>

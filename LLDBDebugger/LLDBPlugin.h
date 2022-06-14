@@ -39,31 +39,34 @@
 class DAPMainView;
 class LLDBPlugin : public IPlugin
 {
-    dap::Client m_dapClient;
+    dap::Client m_client;
     wxString m_defaultPerspective;
 
     /// ------------------------------------
     /// UI elements
     /// ------------------------------------
-    LLDBCallStackPane* m_callstack;
-    LLDBOutputView* m_breakpointsView;
-    LLDBLocalsView* m_localsView;
     DAPMainView* m_threadsView = nullptr;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
     bool m_stopReasonPrompted;
     bool m_raisOnBpHit;
-    LLDBTooltip* m_tooltip;
     bool m_isPerspectiveLoaded;
     bool m_showThreadNames;
     bool m_showFileNamesOnly;
 
     friend class LLDBTooltip;
 
+private:
+    void DestroyUI();
+    void InitializeUI();
+    void LoadPerspective();
+    void ShowPane(const wxString& paneName, bool show);
+    void ClearDebuggerMarker();
+    void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
+    void DoCleanup();
+
 public:
     LLDBPlugin(IManager* manager);
     ~LLDBPlugin();
-
-    LLDBConnector* GetLLDB() { return &m_connector; }
 
     IManager* GetManager() { return m_mgr; }
 
@@ -76,19 +79,6 @@ public:
      * @brief Maybe convert a path to filename only for display.
      */
     wxString GetFilenameForDisplay(const wxString& fileName) const;
-
-private:
-    void TerminateTerminal();
-    void SetupPivotFolder(const LLDBConnectReturnObject& ret);
-    void ClearDebuggerMarker();
-    void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
-    void LoadLLDBPerspective();
-    void ShowLLDBPane(const wxString& paneName, bool show = true);
-    void InitializeUI();
-    void DestroyUI();
-    void DoCleanup();
-    bool DoInitializeDebugger(clDebugEvent& event, bool redirectOutput, const wxString& terminalTitle);
-    void DestroyTooltip();
 
 protected:
     // Other codelite events
@@ -126,18 +116,12 @@ protected:
 
     void OnAddWatch(wxCommandEvent& event);
 
-    // LLDB events
-    void OnLLDBCrashed(LLDBEvent& event);
-    void OnLLDBStarted(LLDBEvent& event);
-    void OnLLDBExited(LLDBEvent& event);
-    void OnLLDBStopped(LLDBEvent& event);
-    void OnLLDBStoppedOnEntry(LLDBEvent& event);
-    void OnLLDBRunning(LLDBEvent& event);
-    void OnLLDBDeletedAllBreakpoints(LLDBEvent& event);
-    void OnLLDBBreakpointsUpdated(LLDBEvent& event);
-    void OnLLDBExpressionEvaluated(LLDBEvent& event);
-    void OnLLDBLaunchSuccess(LLDBEvent& event);
-    void OnDestroyTip(clCommandEvent& e);
+    // DAP events
+    void OnDapExited(DAPEvent& event);
+    void OnLaunchResponse(DAPEvent& event);
+    void OnInitializedEvent(DAPEvent& event);
+    void OnStoppedEvent(DAPEvent& event);
+    void OnThreadsResponse(DAPEvent& event);
 
 public:
     //--------------------------------------------

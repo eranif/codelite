@@ -831,6 +831,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, 
 // action (this is useful if the session is managed by an external plugin)
 // A good example for this is the PHP plugin which manages its own session
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SAVE_SESSION_NEEDED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SESSION_LOADING, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SESSION_LOADED, clCommandEvent);
 
 // Event: clCommandEvent
 // User modified its environment variables

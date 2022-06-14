@@ -33,7 +33,7 @@
 class DebuggerCallstackView;
 class LocalsTable;
 class WatchesTable;
-class BreakpointDlg;
+class BreakpointsView;
 class ThreadListPanel;
 class MemoryView;
 class wxAuiManager;
@@ -107,7 +107,7 @@ private:
     wxString m_caption;
     WatchesTable* m_watchesTable;
     DebuggerCallstackView* m_frameList;
-    BreakpointDlg* m_breakpoints;
+    BreakpointsView* m_breakpoints;
     ThreadListPanel* m_threads;
     MemoryView* m_memory;
     DebuggerAsciiViewer* m_asciiViewer;
@@ -130,7 +130,7 @@ public:
     LocalsTable* GetLocalsTable() { return m_localsTable; }
     WatchesTable* GetWatchesTable() { return m_watchesTable; }
     DebuggerCallstackView* GetFrameListView() { return m_frameList; }
-    BreakpointDlg* GetBreakpointView() { return m_breakpoints; }
+    BreakpointsView* GetBreakpointView() { return m_breakpoints; }
     ThreadListPanel* GetThreadsView() { return m_threads; }
     MemoryView* GetMemoryView() { return m_memory; }
     DebuggerAsciiViewer* GetAsciiViewer() { return m_asciiViewer; }

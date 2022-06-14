@@ -89,7 +89,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Inherited Class",
-					"m_value":	"BreakpointDlg"
+					"m_value":	"BreakpointsView"
 				}, {
 					"type":	"string",
 					"m_label":	"File:",

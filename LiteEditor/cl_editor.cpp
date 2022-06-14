@@ -33,7 +33,7 @@
 #include "attribute_style.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
-#include "breakpointdlg.h"
+#include "BreakpointsView.hpp"
 #include "buildtabsettingsdata.h"
 #include "cc_box_tip_window.h"
 #include "clEditorStateLocker.h"

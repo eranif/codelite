@@ -603,6 +603,8 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     open_event.SetRemoteAccount(m_account.GetAccountName());
     open_event.SetWorkspaceType(GetWorkspaceType());
     EventNotifier::Get()->AddPendingEvent(open_event);
+
+    CallAfter(&RemotyWorkspace::RestoreSession);
 }
 
 void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
@@ -1296,4 +1298,16 @@ void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)
         // send event notifying that the search has been cancelled
         m_remoteFinder.NotifySearchCancelled();
     }
+}
+
+void RemotyWorkspace::RestoreSession()
+{
+    clCommandEvent event_loading{ wxEVT_SESSION_LOADING };
+    EventNotifier::Get()->AddPendingEvent(event_loading);
+
+    // TODO:
+    // Do the actual session loading here
+
+    clCommandEvent event_loaded{ wxEVT_SESSION_LOADED };
+    EventNotifier::Get()->AddPendingEvent(event_loaded);
 }

@@ -124,8 +124,8 @@
     <File Name="DbgCommandBaseDlg.h"/>
     <File Name="DbgCommandBaseDlg.cpp"/>
     <VirtualDirectory Name="Debugger">
-      <File Name="breakpointdlg.h"/>
-      <File Name="breakpointdlg.cpp"/>
+      <File Name="BreakpointsView.cpp"/>
+      <File Name="BreakpointsView.hpp"/>
       <File Name="debuggersettingsdlg.h"/>
       <File Name="debuggersettingsbasedlg.cpp"/>
       <File Name="debuggersettingsbasedlg.h"/>

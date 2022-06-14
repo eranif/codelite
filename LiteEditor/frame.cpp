@@ -42,7 +42,7 @@
 #include "batchbuilddlg.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
-#include "breakpointdlg.h"
+#include "BreakpointsView.hpp"
 #include "build_custom_targets_menu_manager.h"
 #include "build_settings_config.h"
 #include "builder.h"

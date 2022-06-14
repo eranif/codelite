@@ -33,7 +33,7 @@
 #include "app.h"
 #include "asyncprocess.h"
 #include "attachdbgprocdlg.h"
-#include "breakpointdlg.h"
+#include "BreakpointsView.hpp"
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "clConsoleBase.h"
@@ -439,18 +439,7 @@ void Manager::DoSetupWorkspace(const wxString& path)
     // Update the refactoring cache
     wxFileList_t allfiles;
     GetWorkspaceFiles(allfiles, true);
-
-    {
-        SessionEntry session;
-        if(SessionManager::Get().GetSession(path, session)) {
-            SessionManager::Get().SetLastSession(path);
-            clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(true); // Undo any workspace/editor link while loading
-            clMainFrame::Get()->GetMainBook()->RestoreSession(session);
-            clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(false);
-            GetBreakpointsMgr()->LoadSession(session);
-            clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
-        }
-    }
+    clGetManager()->LoadWorkspaceSession(path);
 
     // Update the parser search paths
     UpdateParserPaths(false);

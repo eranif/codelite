@@ -815,10 +815,22 @@ void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
 {
     SessionEntry session;
     if(SessionManager::Get().GetSession(workspaceFile.GetFullPath(), session)) {
+        // notify about session loading starting
+        clCommandEvent event_loading{ wxEVT_SESSION_LOADING };
+        EventNotifier::Get()->ProcessEvent(event_loading);
+
+        // Undo any workspace/editor link while loading
+        clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(true);
         clMainFrame::Get()->GetMainBook()->RestoreSession(session);
+        clMainFrame::Get()->GetWorkspaceTab()->FreezeThaw(false);
+
         // Set this session as the 'Last' session
         ManagerST::Get()->GetBreakpointsMgr()->LoadSession(session);
         SessionManager::Get().SetLastSession(workspaceFile.GetFullPath());
+
+        // and we are done
+        clCommandEvent event_loaded{ wxEVT_SESSION_LOADED };
+        EventNotifier::Get()->AddPendingEvent(event_loaded);
     }
 }
 

@@ -22,30 +22,35 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "breakpointdlg.h"
+#include "BreakpointsView.hpp"
 
 #include "breakpointslistctrl.h"
 #include "debuggermanager.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "frame.h"
 #include "globals.h"
 #include "macros.h"
 #include "manager.h"
 #include "plugin.h"
 
-BreakpointDlg::BreakpointDlg(wxWindow* parent)
+BreakpointsView::BreakpointsView(wxWindow* parent)
     : BreakpointTabBase(parent)
 {
-    EventNotifier::Get()->Bind(wxEVT_BREAKPOINTS_UPDATED, &BreakpointDlg::OnBreakpointsUpdated, this);
+    EventNotifier::Get()->Bind(wxEVT_BREAKPOINTS_UPDATED, &BreakpointsView::OnBreakpointsUpdated, this);
+    EventNotifier::Get()->Bind(wxEVT_SESSION_LOADING, &BreakpointsView::OnSessionLoading, this);
+    EventNotifier::Get()->Bind(wxEVT_SESSION_LOADED, &BreakpointsView::OnSessionLoaded, this);
     Initialize();
 }
 
-BreakpointDlg::~BreakpointDlg()
+BreakpointsView::~BreakpointsView()
 {
-    EventNotifier::Get()->Unbind(wxEVT_BREAKPOINTS_UPDATED, &BreakpointDlg::OnBreakpointsUpdated, this);
+    EventNotifier::Get()->Unbind(wxEVT_BREAKPOINTS_UPDATED, &BreakpointsView::OnBreakpointsUpdated, this);
+    EventNotifier::Get()->Unbind(wxEVT_SESSION_LOADING, &BreakpointsView::OnSessionLoading, this);
+    EventNotifier::Get()->Unbind(wxEVT_SESSION_LOADED, &BreakpointsView::OnSessionLoaded, this);
 }
 
-void BreakpointDlg::Initialize()
+void BreakpointsView::Initialize()
 {
     std::vector<clDebuggerBreakpoint> bps;
     clGetManager()->GetAllBreakpoints(bps);
@@ -79,7 +84,7 @@ void BreakpointDlg::Initialize()
     m_buttonDeleteAll->Enable(hasItems || pending);
 }
 
-void BreakpointDlg::OnDelete(wxCommandEvent& e)
+void BreakpointsView::OnDelete(wxCommandEvent& e)
 {
     wxDataViewItem item = m_dvListCtrlBreakpoints->GetSelection();
     if(!item.IsOk()) {
@@ -94,7 +99,7 @@ void BreakpointDlg::OnDelete(wxCommandEvent& e)
     Initialize(); // ReInitialise, as either a bp was deleted, or the data was corrupt
 }
 
-void BreakpointDlg::OnDeleteAll(wxCommandEvent& e)
+void BreakpointsView::OnDeleteAll(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints();
@@ -106,7 +111,7 @@ void BreakpointDlg::OnDeleteAll(wxCommandEvent& e)
     EventNotifier::Get()->AddPendingEvent(evtDelAll);
 }
 
-void BreakpointDlg::OnApplyPending(wxCommandEvent& e)
+void BreakpointsView::OnApplyPending(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     ManagerST::Get()->GetBreakpointsMgr()->ApplyPendingBreakpoints();
@@ -115,7 +120,7 @@ void BreakpointDlg::OnApplyPending(wxCommandEvent& e)
     clMainFrame::Get()->GetStatusBar()->SetMessage(_("Pending Breakpoints reapplied"));
 }
 
-void BreakpointDlg::OnBreakpointActivated(wxDataViewEvent& event)
+void BreakpointsView::OnBreakpointActivated(wxDataViewEvent& event)
 {
     wxString file = m_dvListCtrlBreakpoints->GetItemText(event.GetItem(), m_dvListCtrlBreakpoints->GetFileColumn());
     wxString line = m_dvListCtrlBreakpoints->GetItemText(event.GetItem(), m_dvListCtrlBreakpoints->GetLinenoColumn());
@@ -130,7 +135,7 @@ void BreakpointDlg::OnBreakpointActivated(wxDataViewEvent& event)
     clGetManager()->OpenFileAndAsyncExecute(file, std::move(callback));
 }
 
-void BreakpointDlg::OnEdit(wxCommandEvent& e)
+void BreakpointsView::OnEdit(wxCommandEvent& e)
 {
     wxDataViewItem item = m_dvListCtrlBreakpoints->GetSelection();
     if(!item.IsOk()) {
@@ -149,7 +154,7 @@ void BreakpointDlg::OnEdit(wxCommandEvent& e)
     Initialize(); // Make any changes visible
 }
 
-void BreakpointDlg::OnAdd(wxCommandEvent& e)
+void BreakpointsView::OnAdd(wxCommandEvent& e)
 {
     wxUnusedVar(e);
 
@@ -206,7 +211,7 @@ void BreakpointsListctrl::Initialise(std::vector<clDebuggerBreakpoint>& bps)
     }
 }
 
-void BreakpointDlg::OnContextMenu(wxDataViewEvent& event)
+void BreakpointsView::OnContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
     menu.Append(XRCID("edit_breakpoint"), _("Edit Breakpoint..."));
@@ -224,9 +229,21 @@ void BreakpointDlg::OnContextMenu(wxDataViewEvent& event)
     }
 }
 
-void BreakpointDlg::OnBreakpointsUpdated(clDebugEvent& event)
+void BreakpointsView::OnBreakpointsUpdated(clDebugEvent& event)
 {
     event.Skip();
     // Update the UI
+    Initialize();
+}
+
+void BreakpointsView::OnSessionLoading(clCommandEvent& event)
+{
+    event.Skip();
+    m_dvListCtrlBreakpoints->DeleteAllItems();
+}
+
+void BreakpointsView::OnSessionLoaded(clCommandEvent& event)
+{
+    event.Skip();
     Initialize();
 }

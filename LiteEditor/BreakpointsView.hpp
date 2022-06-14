@@ -52,7 +52,7 @@ struct bpd_IDs {
     }
 };
 
-class BreakpointDlg : public BreakpointTabBase
+class BreakpointsView : public BreakpointTabBase
 {
     std::vector<bpd_IDs> m_ids;
 
@@ -65,10 +65,12 @@ protected:
     void OnDeleteAll(wxCommandEvent& e);
     void OnApplyPending(wxCommandEvent& e);
     void OnBreakpointsUpdated(clDebugEvent& event);
+    void OnSessionLoading(clCommandEvent& event);
+    void OnSessionLoaded(clCommandEvent& event);
 
 public:
-    BreakpointDlg(wxWindow* parent);
-    virtual ~BreakpointDlg();
+    BreakpointsView(wxWindow* parent);
+    virtual ~BreakpointsView();
     void Initialize();
 };
 

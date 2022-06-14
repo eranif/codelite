@@ -137,6 +137,8 @@ protected:
      */
     void ScanForLSPs();
 
+    void RestoreSession();
+
 public:
     // IWorkspace
     wxString GetActiveProjectName() const override { return wxEmptyString; }

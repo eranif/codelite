@@ -26,7 +26,7 @@
 
 #include "DebuggerCallstackView.h"
 #include "DebuggerDisassemblyTab.h"
-#include "breakpointdlg.h"
+#include "BreakpointsView.hpp"
 #include "codelite_events.h"
 #include "debugger.h"
 #include "debuggerasciiviewer.h"
@@ -171,11 +171,11 @@ void DebuggerPane::CreateGUIControls()
     name = wxGetTranslation(BREAKPOINTS);
     if(IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), m_book, name, false, wxNOT_FOUND, wxSize(200, 200));
-        m_breakpoints = new BreakpointDlg(cp);
+        m_breakpoints = new BreakpointsView(cp);
         cp->SetChildNoReparent(m_breakpoints);
 
     } else {
-        m_breakpoints = new BreakpointDlg(m_book);
+        m_breakpoints = new BreakpointsView(m_book);
         m_book->AddPage(m_breakpoints, name, false, wxNOT_FOUND);
     }
 

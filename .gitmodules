@@ -1,3 +1,6 @@
 [submodule "ctags"]
 	path = ctags
 	url = https://github.com/eranif/ctags
+[submodule "wxdap"]
+	path = wxdap
+	url = https://github.com/eranif/dbgd

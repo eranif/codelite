@@ -71,13 +71,6 @@
     <File Name="win_resources.rc"/>
     <File Name="CMakeLists.txt"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug"/>
-  <Dependencies Name="Debug_Linux"/>
-  <Dependencies Name="Debug_Linux_GTK3"/>
-  <Dependencies Name="Release"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Windows_Standalone_x64"/>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -423,4 +416,11 @@ PATH=/home/eran/devl/wxWidgets/build-release-gtk3/:$PATH]]>
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug"/>
+  <Dependencies Name="Debug_Linux"/>
+  <Dependencies Name="Debug_Linux_GTK3"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Windows_Standalone_x64"/>
 </CodeLite_Project>

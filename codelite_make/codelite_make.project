@@ -32,14 +32,6 @@
     <File Name="cl_make_generator_app.h"/>
     <File Name="cl_make_generator_app.cpp"/>
   </VirtualDirectory>
-  <Dependencies Name="Debug_Linux"/>
-  <Dependencies Name="Release"/>
-  <Dependencies Name="Win_x64_Release"/>
-  <Dependencies Name="Win_x86_Release"/>
-  <Dependencies Name="Debug">
-    <Project Name="libCodeLite"/>
-    <Project Name="plugin_sdk"/>
-  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -293,4 +285,12 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="plugin_sdk"/>
+  </Dependencies>
+  <Dependencies Name="Debug_Linux"/>
+  <Dependencies Name="Release"/>
+  <Dependencies Name="Win_x64_Release"/>
+  <Dependencies Name="Win_x86_Release"/>
 </CodeLite_Project>

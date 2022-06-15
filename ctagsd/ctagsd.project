@@ -5,14 +5,6 @@
   <VirtualDirectory Name="src">
     <File Name="main.cpp" ExcludeProjConfig=""/>
   </VirtualDirectory>
-  <Dependencies Name="Release">
-    <Project Name="libCodeLite"/>
-    <Project Name="ctagsdlib"/>
-  </Dependencies>
-  <Dependencies Name="Debug">
-    <Project Name="libCodeLite"/>
-    <Project Name="ctagsdlib"/>
-  </Dependencies>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -147,4 +139,12 @@
       </Completion>
     </Configuration>
   </Settings>
+  <Dependencies Name="Debug">
+    <Project Name="libCodeLite"/>
+    <Project Name="ctagsdlib"/>
+  </Dependencies>
+  <Dependencies Name="Release">
+    <Project Name="libCodeLite"/>
+    <Project Name="ctagsdlib"/>
+  </Dependencies>
 </CodeLite_Project>

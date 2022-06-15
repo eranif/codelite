@@ -26,10 +26,6 @@
 #ifndef __LLDBDebugger__
 #define __LLDBDebugger__
 
-#include "LLDBProtocol/LLDBConnector.h"
-#include "LLDBProtocol/LLDBEvent.h"
-#include "LLDBProtocol/LLDBRemoteConnectReturnObject.h"
-#include "clDebuggerTerminal.h"
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
 #include "plugin.h"
@@ -46,8 +42,6 @@ class LLDBPlugin : public IPlugin
     /// UI elements
     /// ------------------------------------
     DAPMainView* m_threadsView = nullptr;
-    clDebuggerTerminalPOSIX m_debuggerTerminal;
-    bool m_stopReasonPrompted;
     bool m_raisOnBpHit;
     bool m_isPerspectiveLoaded;
     bool m_showThreadNames;
@@ -68,7 +62,10 @@ public:
     LLDBPlugin(IManager* manager);
     ~LLDBPlugin();
 
-    IManager* GetManager() { return m_mgr; }
+    IManager* GetManager()
+    {
+        return m_mgr;
+    }
 
     /**
      * @brief Should thread name column be shown in thread pane?

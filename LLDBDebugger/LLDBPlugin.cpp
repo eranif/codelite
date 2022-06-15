@@ -592,7 +592,6 @@ void LLDBPlugin::DoCleanup()
 {
     ClearDebuggerMarker();
     m_client.Reset();
-    m_stopReasonPrompted = false;
     m_raisOnBpHit = false;
 }
 

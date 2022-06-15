@@ -50,7 +50,6 @@ Source: "{#CODELITE_ROOT}\universal-ctags\win32\codelite-ctags.exe"; DestDir: "{
 Source: "{#BUILD_BIN_DIR}\codelite-make.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#BUILD_BIN_DIR}\codelite-terminal.exe"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#WX_CONFIG_DIR}\wx-config.exe"; DestDir: "{app}";
-Source: "{#BUILD_BIN_DIR}\codelite_indexer.exe"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#BUILD_BIN_DIR}\codelite_launcher.exe"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#BUILD_BIN_DIR}\codelite_cppcheck.exe"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#BUILD_BIN_DIR}\codelite-cc.exe"; DestDir: "{app}"; Flags: ignoreversion ;
@@ -144,7 +143,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\ZoomNavigator.dll"; DestDir: "{app}\pl
 Source: "{#CODELITE_ROOT}\Runtime\plugins\SFTP.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\CMakePlugin.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\CodeLiteDiff.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
-Source: "{#CODELITE_ROOT}\Runtime\plugins\LLDBDebugger.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
+Source: "{#CODELITE_ROOT}\Runtime\plugins\DebugAdapterClient.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\wxcrafter.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\WordCompletion.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\plugins\SpellCheck.dll"; DestDir: "{app}\plugins"; Flags: ignoreversion ;
@@ -166,6 +165,7 @@ Source: "{#CODELITE_ROOT}\Runtime\plugins\Remote.dll"; DestDir: "{app}\plugins";
 
 Source: "{#CODELITE_ROOT}\Runtime\libwxsqlite3u.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\libcodeliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ;
+Source: "{#CODELITE_ROOT}\Runtime\libdapcxx.dll"; DestDir: "{app}"; Flags: ignoreversion;
 Source: "{#CODELITE_ROOT}\Runtime\libplugin_sdku.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\libdatabaselayersqliteu.dll"; DestDir: "{app}"; Flags: ignoreversion ;
 Source: "{#CODELITE_ROOT}\Runtime\libwxshapeframeworku.dll"; DestDir: "{app}"; Flags: ignoreversion ;

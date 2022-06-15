@@ -44,7 +44,7 @@
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>
 
-static LLDBPlugin* thePlugin = NULL;
+static DebugAdapterClient* thePlugin = NULL;
 namespace
 {
 
@@ -82,7 +82,7 @@ wxString GetWatchWord(IEditor& editor)
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
 {
     if(thePlugin == 0) {
-        thePlugin = new LLDBPlugin(manager);
+        thePlugin = new DebugAdapterClient(manager);
     }
     return thePlugin;
 }
@@ -91,116 +91,122 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
     static PluginInfo info;
     info.SetAuthor(wxT("eran"));
-    info.SetName(wxT("DAPPlugin"));
-    info.SetDescription(_("Debug Adapter Plugin"));
+    info.SetName(wxT("DebugAdapterClient"));
+    info.SetDescription(_("Debug Adapter Client"));
     info.SetVersion(wxT("v1.0"));
     return &info;
 }
 
 CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
 
-LLDBPlugin::LLDBPlugin(IManager* manager)
+DebugAdapterClient::DebugAdapterClient(IManager* manager)
     : IPlugin(manager)
     , m_isPerspectiveLoaded(false)
 {
-    m_longName = _("Debug Adapter Plugin");
-    m_shortName = wxT("DAPPlugin");
+    m_longName = _("Debug Adapter Client");
+    m_shortName = wxT("DebugAdapterClient");
 
     // UI events
-    EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &LLDBPlugin::OnIsDebugger, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &LLDBPlugin::OnDebugStart, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &LLDBPlugin::OnDebugContinue, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &LLDBPlugin::OnDebugNext, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_IN, &LLDBPlugin::OnDebugStepIn, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_OUT, &LLDBPlugin::OnDebugStepOut, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &LLDBPlugin::OnDebugStop, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &LLDBPlugin::OnDebugIsRunning, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_CAN_INTERACT, &LLDBPlugin::OnDebugCanInteract, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &LLDBPlugin::OnToggleBreakpoint, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_INTERRUPT, &LLDBPlugin::OnToggleInterrupt, this);
-    EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &LLDBPlugin::OnBuildStarting, this);
-    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LLDBPlugin::OnInitDone, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_EXPR_TOOLTIP, &LLDBPlugin::OnDebugTooltip, this);
-    EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &LLDBPlugin::OnDebugQuickDebug, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_CORE_FILE, &LLDBPlugin::OnDebugCoreFile, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, &LLDBPlugin::OnDebugDeleteAllBreakpoints, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_ATTACH_TO_PROCESS, &LLDBPlugin::OnDebugAttachToProcess, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, &LLDBPlugin::OnDebugEnableAllBreakpoints, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, &LLDBPlugin::OnDebugDisableAllBreakpoints, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT_INST, &LLDBPlugin::OnDebugNextInst, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_I, &LLDBPlugin::OnDebugVOID, this); // not supported
+    EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &DebugAdapterClient::OnIsDebugger, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &DebugAdapterClient::OnDebugStart, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &DebugAdapterClient::OnDebugContinue, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT, &DebugAdapterClient::OnDebugNext, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_IN, &DebugAdapterClient::OnDebugStepIn, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_OUT, &DebugAdapterClient::OnDebugStepOut, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &DebugAdapterClient::OnDebugStop, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &DebugAdapterClient::OnDebugIsRunning, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_CAN_INTERACT, &DebugAdapterClient::OnDebugCanInteract, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &DebugAdapterClient::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_INTERRUPT, &DebugAdapterClient::OnToggleInterrupt, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &DebugAdapterClient::OnBuildStarting, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &DebugAdapterClient::OnInitDone, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_EXPR_TOOLTIP, &DebugAdapterClient::OnDebugTooltip, this);
+    EventNotifier::Get()->Bind(wxEVT_QUICK_DEBUG, &DebugAdapterClient::OnDebugQuickDebug, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_CORE_FILE, &DebugAdapterClient::OnDebugCoreFile, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, &DebugAdapterClient::OnDebugDeleteAllBreakpoints,
+                               this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_ATTACH_TO_PROCESS, &DebugAdapterClient::OnDebugAttachToProcess, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, &DebugAdapterClient::OnDebugEnableAllBreakpoints,
+                               this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, &DebugAdapterClient::OnDebugDisableAllBreakpoints,
+                               this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_NEXT_INST, &DebugAdapterClient::OnDebugNextInst, this);
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_STEP_I, &DebugAdapterClient::OnDebugVOID, this); // not supported
 
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_SHOW_CURSOR, &LLDBPlugin::OnDebugShowCursor, this);
-    wxTheApp->Bind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
+    EventNotifier::Get()->Bind(wxEVT_DBG_UI_SHOW_CURSOR, &DebugAdapterClient::OnDebugShowCursor, this);
+    wxTheApp->Bind(wxEVT_MENU, &DebugAdapterClient::OnSettings, this, XRCID("lldb_settings"));
 
-    EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnRunToCursor, this,
+    EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnRunToCursor, this,
                                lldbRunToCursorContextMenuId);
-    EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnJumpToCursor, this,
+    EventNotifier::Get()->Bind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnJumpToCursor, this,
                                lldbJumpToCursorContextMenuId);
 
-    wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnAddWatch, this, lldbAddWatchContextMenuId);
+    wxTheApp->Bind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnAddWatch, this, lldbAddWatchContextMenuId);
 
     dap::Initialize(); // register all dap objects
 
-    m_client.Bind(wxEVT_DAP_EXITED_EVENT, &LLDBPlugin::OnDapExited, this);
-    m_client.Bind(wxEVT_DAP_TERMINATED_EVENT, &LLDBPlugin::OnDapExited, this);
-    m_client.Bind(wxEVT_DAP_INITIALIZED_EVENT, &LLDBPlugin::OnInitializedEvent, this);
-    m_client.Bind(wxEVT_DAP_LAUNCH_RESPONSE, &LLDBPlugin::OnLaunchResponse, this);
-    m_client.Bind(wxEVT_DAP_STOPPED_EVENT, &LLDBPlugin::OnStoppedEvent, this);
-    m_client.Bind(wxEVT_DAP_THREADS_RESPONSE, &LLDBPlugin::OnThreadsResponse, this);
+    m_client.Bind(wxEVT_DAP_EXITED_EVENT, &DebugAdapterClient::OnDapExited, this);
+    m_client.Bind(wxEVT_DAP_TERMINATED_EVENT, &DebugAdapterClient::OnDapExited, this);
+    m_client.Bind(wxEVT_DAP_INITIALIZED_EVENT, &DebugAdapterClient::OnInitializedEvent, this);
+    m_client.Bind(wxEVT_DAP_LAUNCH_RESPONSE, &DebugAdapterClient::OnLaunchResponse, this);
+    m_client.Bind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnStoppedEvent, this);
+    m_client.Bind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnThreadsResponse, this);
 }
 
-void LLDBPlugin::UnPlug()
+void DebugAdapterClient::UnPlug()
 {
     DestroyUI();
 
     // UI events
-    EventNotifier::Get()->Unbind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &LLDBPlugin::OnIsDebugger, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &LLDBPlugin::OnDebugStart, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &LLDBPlugin::OnDebugContinue, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &LLDBPlugin::OnDebugNext, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &LLDBPlugin::OnDebugStop, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &LLDBPlugin::OnDebugIsRunning, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_CAN_INTERACT, &LLDBPlugin::OnDebugCanInteract, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_IN, &LLDBPlugin::OnDebugStepIn, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_OUT, &LLDBPlugin::OnDebugStepOut, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &LLDBPlugin::OnToggleBreakpoint, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_INTERRUPT, &LLDBPlugin::OnToggleInterrupt, this);
-    EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &LLDBPlugin::OnBuildStarting, this);
-    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &LLDBPlugin::OnInitDone, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_EXPR_TOOLTIP, &LLDBPlugin::OnDebugTooltip, this);
-    EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG, &LLDBPlugin::OnDebugQuickDebug, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CORE_FILE, &LLDBPlugin::OnDebugCoreFile, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, &LLDBPlugin::OnDebugDeleteAllBreakpoints, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_ATTACH_TO_PROCESS, &LLDBPlugin::OnDebugAttachToProcess, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, &LLDBPlugin::OnDebugEnableAllBreakpoints, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS, &LLDBPlugin::OnDebugDisableAllBreakpoints, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_I, &LLDBPlugin::OnDebugVOID, this); // Not supported
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT_INST, &LLDBPlugin::OnDebugNextInst, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_SHOW_CURSOR, &LLDBPlugin::OnDebugShowCursor, this);
-    wxTheApp->Unbind(wxEVT_MENU, &LLDBPlugin::OnSettings, this, XRCID("lldb_settings"));
+    EventNotifier::Get()->Unbind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &DebugAdapterClient::OnIsDebugger, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &DebugAdapterClient::OnDebugStart, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &DebugAdapterClient::OnDebugContinue, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT, &DebugAdapterClient::OnDebugNext, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STOP, &DebugAdapterClient::OnDebugStop, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_IS_RUNNING, &DebugAdapterClient::OnDebugIsRunning, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_CAN_INTERACT, &DebugAdapterClient::OnDebugCanInteract, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_IN, &DebugAdapterClient::OnDebugStepIn, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_OUT, &DebugAdapterClient::OnDebugStepOut, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &DebugAdapterClient::OnToggleBreakpoint, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_INTERRUPT, &DebugAdapterClient::OnToggleInterrupt, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &DebugAdapterClient::OnBuildStarting, this);
+    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &DebugAdapterClient::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_EXPR_TOOLTIP, &DebugAdapterClient::OnDebugTooltip, this);
+    EventNotifier::Get()->Unbind(wxEVT_QUICK_DEBUG, &DebugAdapterClient::OnDebugQuickDebug, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CORE_FILE, &DebugAdapterClient::OnDebugCoreFile, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS, &DebugAdapterClient::OnDebugDeleteAllBreakpoints,
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_ATTACH_TO_PROCESS, &DebugAdapterClient::OnDebugAttachToProcess, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_ENABLE_ALL_BREAKPOINTS, &DebugAdapterClient::OnDebugEnableAllBreakpoints,
+                                 this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_DISABLE_ALL_BREAKPOINTS,
+                                 &DebugAdapterClient::OnDebugDisableAllBreakpoints, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_I, &DebugAdapterClient::OnDebugVOID, this); // Not supported
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_NEXT_INST, &DebugAdapterClient::OnDebugNextInst, this);
+    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_SHOW_CURSOR, &DebugAdapterClient::OnDebugShowCursor, this);
+    wxTheApp->Unbind(wxEVT_MENU, &DebugAdapterClient::OnSettings, this, XRCID("lldb_settings"));
 
-    EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnRunToCursor, this,
+    EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnRunToCursor, this,
                                  lldbRunToCursorContextMenuId);
-    EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnJumpToCursor, this,
+    EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnJumpToCursor, this,
                                  lldbJumpToCursorContextMenuId);
 
-    wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &LLDBPlugin::OnAddWatch, this, lldbAddWatchContextMenuId);
+    wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnAddWatch, this, lldbAddWatchContextMenuId);
 
     // Dap events
-    m_client.Unbind(wxEVT_DAP_EXITED_EVENT, &LLDBPlugin::OnDapExited, this);
-    m_client.Unbind(wxEVT_DAP_TERMINATED_EVENT, &LLDBPlugin::OnDapExited, this);
-    m_client.Unbind(wxEVT_DAP_INITIALIZED_EVENT, &LLDBPlugin::OnInitializedEvent, this);
-    m_client.Unbind(wxEVT_DAP_LAUNCH_RESPONSE, &LLDBPlugin::OnLaunchResponse, this);
-    m_client.Unbind(wxEVT_DAP_STOPPED_EVENT, &LLDBPlugin::OnStoppedEvent, this);
-    m_client.Unbind(wxEVT_DAP_THREADS_RESPONSE, &LLDBPlugin::OnThreadsResponse, this);
+    m_client.Unbind(wxEVT_DAP_EXITED_EVENT, &DebugAdapterClient::OnDapExited, this);
+    m_client.Unbind(wxEVT_DAP_TERMINATED_EVENT, &DebugAdapterClient::OnDapExited, this);
+    m_client.Unbind(wxEVT_DAP_INITIALIZED_EVENT, &DebugAdapterClient::OnInitializedEvent, this);
+    m_client.Unbind(wxEVT_DAP_LAUNCH_RESPONSE, &DebugAdapterClient::OnLaunchResponse, this);
+    m_client.Unbind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnStoppedEvent, this);
+    m_client.Unbind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnThreadsResponse, this);
 }
 
-LLDBPlugin::~LLDBPlugin() {}
+DebugAdapterClient::~DebugAdapterClient() {}
 
-bool LLDBPlugin::ShowThreadNames() const { return m_showThreadNames; }
+bool DebugAdapterClient::ShowThreadNames() const { return m_showThreadNames; }
 
-wxString LLDBPlugin::GetFilenameForDisplay(const wxString& fileName) const
+wxString DebugAdapterClient::GetFilenameForDisplay(const wxString& fileName) const
 {
     if(m_showFileNamesOnly) {
         return wxFileName(fileName).GetFullName();
@@ -209,9 +215,9 @@ wxString LLDBPlugin::GetFilenameForDisplay(const wxString& fileName) const
     }
 }
 
-void LLDBPlugin::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
+void DebugAdapterClient::CreateToolBar(clToolBar* toolbar) { wxUnusedVar(toolbar); }
 
-void LLDBPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
+void DebugAdapterClient::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     // We want to add an entry in the global settings menu
     // Menu Bar > Settings > LLDB Settings
@@ -230,13 +236,13 @@ void LLDBPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     }
 }
 
-void LLDBPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
+void DebugAdapterClient::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     wxUnusedVar(type);
     wxUnusedVar(menu);
 }
 
-void LLDBPlugin::ClearDebuggerMarker()
+void DebugAdapterClient::ClearDebuggerMarker()
 {
     IEditor::List_t editors;
     m_mgr->GetAllEditors(editors);
@@ -246,7 +252,7 @@ void LLDBPlugin::ClearDebuggerMarker()
     }
 }
 
-void LLDBPlugin::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
+void DebugAdapterClient::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
 {
     stc->MarkerDeleteAll(smt_indicator);
     stc->MarkerAdd(lineno, smt_indicator);
@@ -256,7 +262,7 @@ void LLDBPlugin::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
     stc->EnsureCaretVisible();
 }
 
-void LLDBPlugin::OnDebugContinue(clDebugEvent& event)
+void DebugAdapterClient::OnDebugContinue(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     event.Skip();
@@ -265,7 +271,7 @@ void LLDBPlugin::OnDebugContinue(clDebugEvent& event)
     m_client.Continue();
 }
 
-void LLDBPlugin::OnDebugStart(clDebugEvent& event)
+void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
 {
     if(event.GetDebuggerName() != DEBUGGER_NAME) {
         event.Skip();
@@ -367,7 +373,7 @@ void LLDBPlugin::OnDebugStart(clDebugEvent& event)
     }
 }
 
-void LLDBPlugin::OnDapExited(DAPEvent& event)
+void DebugAdapterClient::OnDapExited(DAPEvent& event)
 {
     event.Skip();
     m_client.Reset();
@@ -389,7 +395,7 @@ void LLDBPlugin::OnDapExited(DAPEvent& event)
     EventNotifier::Get()->AddPendingEvent(e);
 }
 
-void LLDBPlugin::OnLaunchResponse(DAPEvent& event)
+void DebugAdapterClient::OnLaunchResponse(DAPEvent& event)
 {
     // Check that the debugee was started successfully
     dap::LaunchResponse* resp = event.GetDapResponse()->As<dap::LaunchResponse>();
@@ -409,7 +415,7 @@ void LLDBPlugin::OnLaunchResponse(DAPEvent& event)
 }
 
 /// DAP server responded to our `initialize` request
-void LLDBPlugin::OnInitializedEvent(DAPEvent& event)
+void DebugAdapterClient::OnInitializedEvent(DAPEvent& event)
 {
     // got initialized event, place breakpoints and continue
     clDEBUG() << "Got Initialized event" << endl;
@@ -446,7 +452,7 @@ void LLDBPlugin::OnInitializedEvent(DAPEvent& event)
     m_client.Continue();
 }
 
-void LLDBPlugin::OnStoppedEvent(DAPEvent& event)
+void DebugAdapterClient::OnStoppedEvent(DAPEvent& event)
 {
     // got stopped event
     dap::StoppedEvent* stopped_data = event.GetDapEvent()->As<dap::StoppedEvent>();
@@ -459,59 +465,59 @@ void LLDBPlugin::OnStoppedEvent(DAPEvent& event)
     }
 }
 
-void LLDBPlugin::OnThreadsResponse(DAPEvent& event)
+void DebugAdapterClient::OnThreadsResponse(DAPEvent& event)
 {
     if(m_threadsView) {
         m_threadsView->UpdateThreads(event);
     }
 }
 
-void LLDBPlugin::OnDebugNext(clDebugEvent& event)
+void DebugAdapterClient::OnDebugNext(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     clDEBUG() << "LLDB    >> Next" << endl;
     m_client.Next();
 }
 
-void LLDBPlugin::OnDebugStop(clDebugEvent& event)
+void DebugAdapterClient::OnDebugStop(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     clDEBUG() << "LLDB    >> Stop" << endl;
     m_client.Reset();
 }
 
-void LLDBPlugin::OnDebugIsRunning(clDebugEvent& event)
+void DebugAdapterClient::OnDebugIsRunning(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     event.SetAnswer(m_client.IsConnected());
 }
 
-void LLDBPlugin::OnDebugCanInteract(clDebugEvent& event)
+void DebugAdapterClient::OnDebugCanInteract(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     event.SetAnswer(m_client.IsConnected() && m_client.CanInteract());
 }
 
-void LLDBPlugin::OnDebugStepIn(clDebugEvent& event)
+void DebugAdapterClient::OnDebugStepIn(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     m_client.StepIn();
 }
 
-void LLDBPlugin::OnDebugStepOut(clDebugEvent& event)
+void DebugAdapterClient::OnDebugStepOut(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     m_client.StepOut();
 }
 
-void LLDBPlugin::OnIsDebugger(clDebugEvent& event)
+void DebugAdapterClient::OnIsDebugger(clDebugEvent& event)
 {
     event.Skip();
     // register us as a debugger
     event.GetStrings().Add(DEBUGGER_NAME);
 }
 
-void LLDBPlugin::LoadPerspective()
+void DebugAdapterClient::LoadPerspective()
 {
     // Save the current persepctive we start debguging
     m_mgr->SavePerspective("Default");
@@ -531,7 +537,7 @@ void LLDBPlugin::LoadPerspective()
     m_mgr->GetDockingManager()->Update();
 }
 
-void LLDBPlugin::ShowPane(const wxString& paneName, bool show)
+void DebugAdapterClient::ShowPane(const wxString& paneName, bool show)
 {
     wxAuiPaneInfo& pi = m_mgr->GetDockingManager()->GetPane(paneName);
     if(pi.IsOk()) {
@@ -547,7 +553,7 @@ void LLDBPlugin::ShowPane(const wxString& paneName, bool show)
     }
 }
 
-void LLDBPlugin::DestroyUI()
+void DebugAdapterClient::DestroyUI()
 {
     // Destroy the callstack window
     if(m_threadsView) {
@@ -562,7 +568,7 @@ void LLDBPlugin::DestroyUI()
     m_mgr->GetDockingManager()->Update();
 }
 
-void LLDBPlugin::InitializeUI()
+void DebugAdapterClient::InitializeUI()
 {
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     if(!m_threadsView) {
@@ -578,7 +584,7 @@ void LLDBPlugin::InitializeUI()
     }
 }
 
-void LLDBPlugin::OnToggleBreakpoint(clDebugEvent& event)
+void DebugAdapterClient::OnToggleBreakpoint(clDebugEvent& event)
 {
     // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serialization in the
     // session file )
@@ -588,29 +594,29 @@ void LLDBPlugin::OnToggleBreakpoint(clDebugEvent& event)
     // FIXME
 }
 
-void LLDBPlugin::DoCleanup()
+void DebugAdapterClient::DoCleanup()
 {
     ClearDebuggerMarker();
     m_client.Reset();
     m_raisOnBpHit = false;
 }
 
-void LLDBPlugin::OnWorkspaceClosed(wxCommandEvent& event)
+void DebugAdapterClient::OnWorkspaceClosed(wxCommandEvent& event)
 {
     event.Skip();
     m_client.Reset();
 }
 
-void LLDBPlugin::OnWorkspaceLoaded(wxCommandEvent& event) { event.Skip(); }
+void DebugAdapterClient::OnWorkspaceLoaded(wxCommandEvent& event) { event.Skip(); }
 
-void LLDBPlugin::OnToggleInterrupt(clDebugEvent& event)
+void DebugAdapterClient::OnToggleInterrupt(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     event.Skip();
     m_client.Pause();
 }
 
-void LLDBPlugin::OnBuildStarting(clBuildEvent& event)
+void DebugAdapterClient::OnBuildStarting(clBuildEvent& event)
 {
     if(m_client.IsConnected()) {
         // lldb session is active, prompt the user
@@ -628,7 +634,7 @@ void LLDBPlugin::OnBuildStarting(clBuildEvent& event)
     }
 }
 
-void LLDBPlugin::OnAddWatch(wxCommandEvent& event)
+void DebugAdapterClient::OnAddWatch(wxCommandEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
 #if 0
@@ -649,7 +655,7 @@ void LLDBPlugin::OnAddWatch(wxCommandEvent& event)
 #endif
 }
 
-void LLDBPlugin::OnRunToCursor(wxCommandEvent& event)
+void DebugAdapterClient::OnRunToCursor(wxCommandEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
 #if 0
@@ -662,7 +668,7 @@ void LLDBPlugin::OnRunToCursor(wxCommandEvent& event)
 #endif
 }
 
-void LLDBPlugin::OnJumpToCursor(wxCommandEvent& event)
+void DebugAdapterClient::OnJumpToCursor(wxCommandEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     // FIXME
@@ -676,7 +682,7 @@ void LLDBPlugin::OnJumpToCursor(wxCommandEvent& event)
 #endif
 }
 
-void LLDBPlugin::OnSettings(wxCommandEvent& event)
+void DebugAdapterClient::OnSettings(wxCommandEvent& event)
 {
     event.Skip();
 #if 0
@@ -687,9 +693,9 @@ void LLDBPlugin::OnSettings(wxCommandEvent& event)
 #endif
 }
 
-void LLDBPlugin::OnInitDone(wxCommandEvent& event) { event.Skip(); }
+void DebugAdapterClient::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
-void LLDBPlugin::OnDebugTooltip(clDebugEvent& event)
+void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
 #if 0
@@ -702,7 +708,7 @@ void LLDBPlugin::OnDebugTooltip(clDebugEvent& event)
 #endif
 }
 
-void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
+void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
 {
 #if 0
     if(!DoInitializeDebugger(event, true,
@@ -753,7 +759,7 @@ void LLDBPlugin::OnDebugQuickDebug(clDebugEvent& event)
 #endif
 }
 
-void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
+void DebugAdapterClient::OnDebugCoreFile(clDebugEvent& event)
 {
     // FIXME
 #if 0
@@ -803,7 +809,7 @@ void LLDBPlugin::OnDebugCoreFile(clDebugEvent& event)
 #endif
 }
 
-void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
+void DebugAdapterClient::OnDebugAttachToProcess(clDebugEvent& event)
 {
 #if 0
     if(event.GetDebuggerName() != LLDB_DEBUGGER_NAME) {
@@ -852,25 +858,25 @@ void LLDBPlugin::OnDebugAttachToProcess(clDebugEvent& event)
 #endif
 }
 
-void LLDBPlugin::OnDebugDeleteAllBreakpoints(clDebugEvent& event)
+void DebugAdapterClient::OnDebugDeleteAllBreakpoints(clDebugEvent& event)
 {
     event.Skip();
     // FIXME
 }
 
-void LLDBPlugin::OnDebugDisableAllBreakpoints(clDebugEvent& event) { event.Skip(); }
+void DebugAdapterClient::OnDebugDisableAllBreakpoints(clDebugEvent& event) { event.Skip(); }
 
-void LLDBPlugin::OnDebugEnableAllBreakpoints(clDebugEvent& event) { event.Skip(); }
+void DebugAdapterClient::OnDebugEnableAllBreakpoints(clDebugEvent& event) { event.Skip(); }
 
-void LLDBPlugin::OnDebugVOID(clDebugEvent& event) { CHECK_IS_DAP_CONNECTED(); }
+void DebugAdapterClient::OnDebugVOID(clDebugEvent& event) { CHECK_IS_DAP_CONNECTED(); }
 
-void LLDBPlugin::OnDebugNextInst(clDebugEvent& event)
+void DebugAdapterClient::OnDebugNextInst(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     // FIXME
 }
 
-void LLDBPlugin::OnDebugShowCursor(clDebugEvent& event)
+void DebugAdapterClient::OnDebugShowCursor(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     // FIXME

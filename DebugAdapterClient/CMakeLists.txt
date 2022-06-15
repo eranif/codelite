@@ -1,7 +1,7 @@
 ## lldb requires C++11
 add_definitions(-std=c++11)
-set(PLUGIN_NAME "DAP")
-project(DAP)
+set(PLUGIN_NAME "DebugAdapterClient")
+project(DebugAdapterClient)
 
 add_subdirectory("${CL_SRC_ROOT}/wxdap/dap" ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 

@@ -33,7 +33,7 @@
 #include <wx/stc/stc.h>
 
 class DAPMainView;
-class LLDBPlugin : public IPlugin
+class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
     wxString m_defaultPerspective;
@@ -59,13 +59,10 @@ private:
     void DoCleanup();
 
 public:
-    LLDBPlugin(IManager* manager);
-    ~LLDBPlugin();
+    DebugAdapterClient(IManager* manager);
+    ~DebugAdapterClient();
 
-    IManager* GetManager()
-    {
-        return m_mgr;
-    }
+    IManager* GetManager() { return m_mgr; }
 
     /**
      * @brief Should thread name column be shown in thread pane?

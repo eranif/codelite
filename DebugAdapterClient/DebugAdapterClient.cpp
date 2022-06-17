@@ -151,6 +151,9 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     m_client.Bind(wxEVT_DAP_LAUNCH_RESPONSE, &DebugAdapterClient::OnLaunchResponse, this);
     m_client.Bind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnStoppedEvent, this);
     m_client.Bind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnThreadsResponse, this);
+    m_client.Bind(wxEVT_DAP_SET_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnBreakpointResponse, this);
+
+    m_store = new clBreakpointsStore();
 }
 
 void DebugAdapterClient::UnPlug()
@@ -200,9 +203,10 @@ void DebugAdapterClient::UnPlug()
     m_client.Unbind(wxEVT_DAP_LAUNCH_RESPONSE, &DebugAdapterClient::OnLaunchResponse, this);
     m_client.Unbind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnStoppedEvent, this);
     m_client.Unbind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnThreadsResponse, this);
+    m_client.Unbind(wxEVT_DAP_SET_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnBreakpointResponse, this);
 }
 
-DebugAdapterClient::~DebugAdapterClient() {}
+DebugAdapterClient::~DebugAdapterClient() { wxDELETE(m_store); }
 
 bool DebugAdapterClient::ShowThreadNames() const { return m_showThreadNames; }
 
@@ -469,6 +473,15 @@ void DebugAdapterClient::OnThreadsResponse(DAPEvent& event)
 {
     if(m_threadsView) {
         m_threadsView->UpdateThreads(event);
+    }
+}
+
+void DebugAdapterClient::OnBreakpointResponse(DAPEvent& event)
+{
+    auto resp = event.GetDapResponse()->As<dap::SetBreakpointsResponse>();
+    CHECK_PTR_RET(resp);
+    for(const auto& bp : resp->breakpoints) {
+        //
     }
 }
 

@@ -1,8 +1,10 @@
 #ifndef UIBREAKPOINT_HPP
 #define UIBREAKPOINT_HPP
 
+#include "JSON.h"
 #include "codelite_exports.h"
 
+#include <functional>
 #include <wx/string.h>
 
 enum class UIBreakpointType {
@@ -15,10 +17,10 @@ class WXDLLIMPEXP_CL UIBreakpoint
 {
 
 protected:
-    wxString m_file;
-    wxString m_function;
-    int m_line;
     UIBreakpointType m_type = UIBreakpointType::INVALID;
+    wxString m_file;
+    int m_line = wxNOT_FOUND;
+    wxString m_function;
 
 public:
     UIBreakpoint();
@@ -34,10 +36,23 @@ public:
     UIBreakpointType GetType() const { return m_type; }
 
     bool SameAs(const UIBreakpoint& other) const;
+    bool operator==(const UIBreakpoint& other) const { return SameAs(other); }
+
+    wxString GetKey() const { return (wxString() << GetFile() << GetLine() << GetFunction()); }
 
     // aliases
     bool IsFunctionBreakpoint() const { return GetType() == UIBreakpointType::FUNCTION; }
     bool IsSourceBreakpoint() const { return GetType() == UIBreakpointType::SOURCE; }
+
+    JSONItem To() const;
+    void From(const JSONItem& json);
 };
 
+// provide custom hash so we will be able to use UIBreakpoint with unordered_map/unordered_set et al
+namespace std
+{
+template <> struct hash<UIBreakpoint> {
+    std::size_t operator()(const UIBreakpoint& b) const { return hash<std::wstring>{}(b.GetKey().ToStdWstring()); }
+};
+} // namespace std
 #endif // UIBREAKPOINT_HPP

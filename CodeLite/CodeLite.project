@@ -141,6 +141,8 @@
     <File Name="clConsoleBase.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
+    <File Name="clBreakpointsStore.cpp"/>
+    <File Name="clBreakpointsStore.hpp"/>
     <File Name="UIBreakpoint.cpp"/>
     <File Name="UIBreakpoint.hpp"/>
     <File Name="clModuleLogger.hpp"/>
@@ -170,8 +172,6 @@
     <File Name="CTags.hpp"/>
     <File Name="BreakpointInfoArray.cpp"/>
     <File Name="BreakpointInfoArray.hpp"/>
-    <File Name="clDebuggerBreakpointStore.cpp"/>
-    <File Name="clDebuggerBreakpointStore.hpp"/>
     <File Name="clDebuggerBreakpoint.cpp"/>
     <File Name="clDebuggerBreakpoint.hpp"/>
     <File Name="StringUtils.cpp"/>
@@ -517,6 +517,20 @@
     <File Name="clFileSystemWatcher.h"/>
     <File Name="clFileSystemWatcher.cpp"/>
   </VirtualDirectory>
+  <Dependencies Name="CMake_Debug"/>
+  <Dependencies Name="Win_wxWidgets_29"/>
+  <Dependencies Name="Win_x64_Debug">
+    <Project Name="dapcxx"/>
+  </Dependencies>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="sqlite3"/>
+    <Project Name="wxsqlite3"/>
+    <Project Name="wxshapeframework"/>
+    <Project Name="dapcxx"/>
+  </Dependencies>
+  <Dependencies Name="Win_x86_Release">
+    <Project Name="PCH"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -673,8 +687,7 @@ CxxLexer.cpp: CxxScanner.l
 PhpLexer.cpp: PhpLexer.l
 	flex -Pphp --noline --batch --outfile=PhpLexer.cpp PhpLexer.l
 XmlLexer.cpp: XMLLexer.l
-	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l
-</CustomPreBuild>
+	flex --noline --batch --outfile=XmlLexer.cpp XMLLexer.l</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>
@@ -693,6 +706,7 @@ XmlLexer.cpp: XMLLexer.l
         <IncludePath Value="$(SSH_HOME)/include"/>
         <IncludePath Value="../sdk/websocketpp"/>
         <IncludePath Value="../sdk/asio-1.12.1"/>
+        <IncludePath Value="../wxdap"/>
         <Preprocessor Value="USE_SFTP=1"/>
         <Preprocessor Value="wxUSE_GUI=1"/>
       </Compiler>
@@ -802,18 +816,4 @@ PhpLexer.cpp: PhpLexer.l
       </Completion>
     </Configuration>
   </Settings>
-  <Dependencies Name="CMake_Debug"/>
-  <Dependencies Name="Win_wxWidgets_29"/>
-  <Dependencies Name="Win_x64_Debug">
-    <Project Name="dapcxx"/>
-  </Dependencies>
-  <Dependencies Name="Win_x64_Release">
-    <Project Name="sqlite3"/>
-    <Project Name="wxsqlite3"/>
-    <Project Name="wxshapeframework"/>
-    <Project Name="dapcxx"/>
-  </Dependencies>
-  <Dependencies Name="Win_x86_Release">
-    <Project Name="PCH"/>
-  </Dependencies>
 </CodeLite_Project>

@@ -5,7 +5,6 @@
 #include "asyncprocess.h"
 #include "clBacktickCache.hpp"
 #include "clConsoleBase.h"
-#include "clDebuggerBreakpointStore.hpp"
 #include "clDebuggerTerminal.h"
 #include "clFileCache.hpp"
 #include "clFileSystemEvent.h"

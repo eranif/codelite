@@ -151,9 +151,9 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     m_client.Bind(wxEVT_DAP_LAUNCH_RESPONSE, &DebugAdapterClient::OnLaunchResponse, this);
     m_client.Bind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnStoppedEvent, this);
     m_client.Bind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnThreadsResponse, this);
-    m_client.Bind(wxEVT_DAP_SET_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnBreakpointResponse, this);
-
-    m_store = new clBreakpointsStore();
+    m_client.Bind(wxEVT_DAP_SET_FUNCTION_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnSetFunctionBreakpointResponse,
+                  this);
+    m_client.Bind(wxEVT_DAP_SET_SOURCE_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnSetSourceBreakpointResponse, this);
 }
 
 void DebugAdapterClient::UnPlug()
@@ -203,10 +203,12 @@ void DebugAdapterClient::UnPlug()
     m_client.Unbind(wxEVT_DAP_LAUNCH_RESPONSE, &DebugAdapterClient::OnLaunchResponse, this);
     m_client.Unbind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnStoppedEvent, this);
     m_client.Unbind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnThreadsResponse, this);
-    m_client.Unbind(wxEVT_DAP_SET_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnBreakpointResponse, this);
+    m_client.Unbind(wxEVT_DAP_SET_FUNCTION_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnSetFunctionBreakpointResponse,
+                    this);
+    m_client.Unbind(wxEVT_DAP_SET_SOURCE_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnSetSourceBreakpointResponse, this);
 }
 
-DebugAdapterClient::~DebugAdapterClient() { wxDELETE(m_store); }
+DebugAdapterClient::~DebugAdapterClient() {}
 
 bool DebugAdapterClient::ShowThreadNames() const { return m_showThreadNames; }
 
@@ -473,15 +475,6 @@ void DebugAdapterClient::OnThreadsResponse(DAPEvent& event)
 {
     if(m_threadsView) {
         m_threadsView->UpdateThreads(event);
-    }
-}
-
-void DebugAdapterClient::OnBreakpointResponse(DAPEvent& event)
-{
-    auto resp = event.GetDapResponse()->As<dap::SetBreakpointsResponse>();
-    CHECK_PTR_RET(resp);
-    for(const auto& bp : resp->breakpoints) {
-        //
     }
 }
 
@@ -893,4 +886,16 @@ void DebugAdapterClient::OnDebugShowCursor(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     // FIXME
+}
+
+void DebugAdapterClient::OnSetFunctionBreakpointResponse(DAPEvent& event)
+{
+    auto resp = event.GetDapResponse()->As<dap::SetFunctionBreakpointsResponse>();
+    CHECK_PTR_RET(resp);
+}
+
+void DebugAdapterClient::OnSetSourceBreakpointResponse(DAPEvent& event)
+{
+    auto resp = event.GetDapResponse()->As<dap::SetBreakpointsResponse>();
+    CHECK_PTR_RET(resp);
 }

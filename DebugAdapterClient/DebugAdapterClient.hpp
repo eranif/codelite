@@ -26,7 +26,6 @@
 #ifndef __LLDBDebugger__
 #define __LLDBDebugger__
 
-#include "clBreakpointsStore.hpp"
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
 #include "plugin.h"
@@ -38,7 +37,6 @@ class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
     wxString m_defaultPerspective;
-    clBreakpointsStore* m_store = nullptr;
 
     /// ------------------------------------
     /// UI elements
@@ -118,7 +116,8 @@ protected:
     void OnInitializedEvent(DAPEvent& event);
     void OnStoppedEvent(DAPEvent& event);
     void OnThreadsResponse(DAPEvent& event);
-    void OnBreakpointResponse(DAPEvent& event);
+    void OnSetFunctionBreakpointResponse(DAPEvent& event);
+    void OnSetSourceBreakpointResponse(DAPEvent& event);
 
 public:
     //--------------------------------------------

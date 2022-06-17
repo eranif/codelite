@@ -12,7 +12,7 @@
 #include <vector>
 #include <wx/filename.h>
 
-class WXDLLIMPEXP_CL clBreakpointsStore : public wxEvtHandler
+class WXDLLIMPEXP_SDK clBreakpointsStore : public wxEvtHandler
 {
     // breakpoints as set by the user
     std::unordered_map<wxString, std::unordered_set<UIBreakpoint>> m_source_breakpoints;

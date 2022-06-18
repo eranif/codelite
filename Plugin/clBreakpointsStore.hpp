@@ -15,21 +15,16 @@
 class WXDLLIMPEXP_SDK clBreakpointsStore : public wxEvtHandler
 {
     // breakpoints as set by the user
-    std::unordered_map<wxString, std::unordered_set<UIBreakpoint>> m_source_breakpoints;
-    std::unordered_set<UIBreakpoint> m_function_breakpoints;
+    std::unordered_map<wxString, UIBreakpoint::set_t> m_source_breakpoints;
+    std::unordered_map<UIBreakpoint, UIBreakpoint> m_function_breakpoints;
 
     // is a debug session in progress?
-    bool m_debug_session_in_progress = false;
     wxFileName m_breakpoint_file;
 
 private:
     void Clear();
 
 protected:
-    void OnBreakpointAdded(clDebugEvent& event);
-    void OnBreakpointDeleted(clDebugEvent& event);
-    void OnDebugSessionStarted(clDebugEvent& event);
-    void OnDebugSessionEnded(clDebugEvent& event);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
 
@@ -46,6 +41,22 @@ public:
      * @brief load list of breakpoints from the file system
      */
     void Load(const wxFileName& filename);
+
+    /**
+     * @brief update the breakpoints for a given source
+     */
+    void SetBreakpoints(const wxString& filepath, const UIBreakpoint::set_t& bps);
+
+    /**
+     * @brief associate a source breakpoint with a function breakpoint
+     */
+    void ResolveFunctionBreakpoint(const UIBreakpoint& func_bp, const UIBreakpoint& bp);
+
+    /**
+     * @brief return all breakpoints associated a given file. If no file is provided
+     * return all breakpoints
+     */
+    size_t GetAllSourceBreakpoints(UIBreakpoint::set_t* output, const wxString& filepath = wxEmptyString) const;
 };
 
 #endif // CLDEBUGGERBREAKPOINTSTORE_HPP

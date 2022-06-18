@@ -694,20 +694,18 @@ public:
     /**
      * @brief return true if there is a breakpoint marker on the given line
      */
-    bool HasBreakpointMarker(int line_number) override;
+    bool HasBreakpointMarker(int line_number = wxNOT_FOUND) override;
 
     /**
-     * @brief delete all breakpoint markers from the given line. if notify is set to true a
-     * wxEVT_DBG_UI_BREAKPOINT_DELETED event is fired, one event per breakpoint
+     * @brief delete all breakpoint markers from the given line
      * @param line_number if set to wxNOT_FOUND(-1), delete all breakpoints from the editor
      */
-    void DeleteAllBreakpointMarkers(int line_number, bool notify) override;
+    void DeleteBreakpointMarkers(int line_number = wxNOT_FOUND) override;
 
     /**
-     * @brief delete all breakpoint markers from the given line. If notify is set to true a
-     * wxEVT_DBG_UI_BREAKPOINT_ADDED is fired
+     * @brief delete all breakpoint markers from the given line
      */
-    void SetBreakpointMarker(int line_number, const wxString& tooltip, bool notify) override;
+    void SetBreakpointMarker(int line_number = wxNOT_FOUND, const wxString& tooltip = wxEmptyString) override;
 
     /**
      * Store all bookmarks in a wxArrayString

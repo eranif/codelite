@@ -31,6 +31,7 @@ JSONItem UIBreakpoint::To() const
     json.addProperty("file", m_file);
     json.addProperty("line", m_line);
     json.addProperty("function", m_function);
+    json.addProperty("condition", m_condition);
     return json;
 }
 
@@ -40,4 +41,5 @@ void UIBreakpoint::From(const JSONItem& json)
     m_file = json["file"].toString();
     m_line = json["line"].toInt(wxNOT_FOUND);
     m_function = json["function"].toString();
+    m_condition = json["condition"].toString();
 }

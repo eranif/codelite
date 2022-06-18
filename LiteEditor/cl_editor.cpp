@@ -273,21 +273,8 @@ public:
 };
 
 //=====================================================================
-
 namespace
 {
-/// Queue clDebugEvent notifying about breakpoint added/deleted from the UI
-void QueueUIBreakpointEvent(wxEventType type, const wxString& path, int line)
-{
-    clDebugEvent event_bp_added{ type };
-    UIBreakpoint bp;
-    bp.SetLine(line);
-    bp.SetType(UIBreakpointType::SOURCE);
-    bp.SetFile(path);
-    event_bp_added.SetUiBreakpoint(bp);
-    EventNotifier::Get()->AddPendingEvent(event_bp_added);
-}
-
 bool IsWordChar(const wxChar& ch)
 {
     static wxStringSet_t wordsChar;
@@ -4035,10 +4022,8 @@ void clEditor::ToggleBreakpoint(int lineno)
     if(bp.IsNull()) {
         // This will (always?) be from a margin mouse-click, so assume it's a standard breakpt that's wanted
         AddBreakpoint(lineno);
-        QueueUIBreakpointEvent(wxEVT_DBG_UI_BREAKPOINT_ADDED, file_path, lineno);
     } else {
         DelBreakpoint(lineno);
-        QueueUIBreakpointEvent(wxEVT_DBG_UI_BREAKPOINT_DELETED, file_path, lineno);
     }
 }
 
@@ -6437,7 +6422,7 @@ bool clEditor::HasBreakpointMarker(int line_number)
     return markers_bit_mask & mask;
 }
 
-void clEditor::DeleteAllBreakpointMarkers(int line_number, bool notify)
+void clEditor::DeleteBreakpointMarkers(int line_number)
 {
     // get a list of lines to work on
     std::vector<int> lines;
@@ -6454,14 +6439,11 @@ void clEditor::DeleteAllBreakpointMarkers(int line_number, bool notify)
 
     for(int line : lines) {
         MarkerDelete(line, smt_breakpoint);
-        if(notify) {
-            QueueUIBreakpointEvent(wxEVT_DBG_UI_BREAKPOINT_DELETED, GetRemotePathOrLocal(), line);
-        }
     }
     m_breakpoints_tooltips.clear();
 }
 
-void clEditor::SetBreakpointMarker(int line_number, const wxString& tooltip, bool notify)
+void clEditor::SetBreakpointMarker(int line_number, const wxString& tooltip)
 {
     if(HasBreakpointMarker(line_number)) {
         m_breakpoints_tooltips.erase(line_number);
@@ -6471,8 +6453,4 @@ void clEditor::SetBreakpointMarker(int line_number, const wxString& tooltip, boo
 
     MarkerAdd(line_number, smt_breakpoint);
     m_breakpoints_tooltips.insert({ line_number, tooltip });
-
-    if(notify) {
-        QueueUIBreakpointEvent(wxEVT_DBG_UI_BREAKPOINT_ADDED, GetRemotePathOrLocal(), line_number);
-    }
 }

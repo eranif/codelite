@@ -6,20 +6,12 @@
 
 clBreakpointsStore::clBreakpointsStore()
 {
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_BREAKPOINT_ADDED, &clBreakpointsStore::OnBreakpointAdded, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_BREAKPOINT_DELETED, &clBreakpointsStore::OnBreakpointDeleted, this);
-    EventNotifier::Get()->Bind(wxEVT_DEBUG_STARTED, &clBreakpointsStore::OnDebugSessionStarted, this);
-    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &clBreakpointsStore::OnDebugSessionEnded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBreakpointsStore::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clBreakpointsStore::OnWorkspaceClosed, this);
 }
 
 clBreakpointsStore::~clBreakpointsStore()
 {
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_BREAKPOINT_ADDED, &clBreakpointsStore::OnBreakpointAdded, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_BREAKPOINT_DELETED, &clBreakpointsStore::OnBreakpointDeleted, this);
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_STARTED, &clBreakpointsStore::OnDebugSessionStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &clBreakpointsStore::OnDebugSessionEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBreakpointsStore::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clBreakpointsStore::OnWorkspaceClosed, this);
 }
@@ -29,8 +21,10 @@ void clBreakpointsStore::Save(const wxFileName& filename)
     JSON root(cJSON_Array);
     auto json = root.toElement();
 
-    for(const auto& bp : m_function_breakpoints) {
-        json.append(bp.To());
+    // for function breakpoints, we only store the
+    // the memory one, not the resolved one
+    for(const auto& vt : m_function_breakpoints) {
+        json.append(vt.first.To());
     }
 
     for(const auto& vt : m_source_breakpoints) {
@@ -66,7 +60,7 @@ void clBreakpointsStore::Load(const wxFileName& filename)
         UIBreakpoint bp;
         bp.From(json[i]);
         if(bp.IsFunctionBreakpoint()) {
-            m_function_breakpoints.insert(bp);
+            m_function_breakpoints.insert({ bp, {} });
             func_breakpoints_count++;
         } else if(bp.IsSourceBreakpoint()) {
             const wxString& file = bp.GetFile();
@@ -82,62 +76,18 @@ void clBreakpointsStore::Load(const wxFileName& filename)
               << "function breakpoints from" << filename << endl;
 }
 
-void clBreakpointsStore::OnBreakpointAdded(clDebugEvent& event)
-{
-    event.Skip();
-    const auto& bp = event.GetUiBreakpoint();
-    if(bp.IsFunctionBreakpoint()) {
-        m_function_breakpoints.insert(bp);
-
-    } else if(bp.IsSourceBreakpoint()) {
-        const wxString& file = bp.GetFile();
-        if(m_source_breakpoints.count(file) == 0) {
-            m_source_breakpoints.insert({ file, {} });
-        }
-        m_source_breakpoints[file].insert(bp);
-    }
-}
-
-void clBreakpointsStore::OnBreakpointDeleted(clDebugEvent& event)
-{
-    event.Skip();
-    const auto& bp = event.GetUiBreakpoint();
-    if(bp.IsFunctionBreakpoint()) {
-        m_function_breakpoints.erase(bp);
-
-    } else if(bp.IsSourceBreakpoint()) {
-        const wxString& file = bp.GetFile();
-        if(m_source_breakpoints.count(file) == 0) {
-            return;
-        }
-        m_source_breakpoints[file].erase(bp);
-    }
-}
-
-void clBreakpointsStore::OnDebugSessionStarted(clDebugEvent& event)
-{
-    event.Skip();
-    m_debug_session_in_progress = true;
-}
-
-void clBreakpointsStore::OnDebugSessionEnded(clDebugEvent& event)
-{
-    event.Skip();
-    m_debug_session_in_progress = false;
-}
-
 void clBreakpointsStore::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
     Clear();
     m_breakpoint_file = event.GetFileName();
-    if(!m_breakpoint_file.IsOk() || !m_breakpoint_file.FileExists()) {
-        Clear();
-        return;
-    }
-
     m_breakpoint_file.AppendDir(".codelite");
     m_breakpoint_file.SetFullName("breakpoints.json");
+    if(!m_breakpoint_file.FileExists()) {
+        // first time, create the file with empty content
+        m_breakpoint_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        FileUtils::WriteFileContent(m_breakpoint_file, "[]");
+    }
     Load(m_breakpoint_file);
 }
 
@@ -153,4 +103,42 @@ void clBreakpointsStore::Clear()
     m_breakpoint_file.Clear();
     m_source_breakpoints.clear();
     m_function_breakpoints.clear();
+}
+
+void clBreakpointsStore::SetBreakpoints(const wxString& filepath, const UIBreakpoint::set_t& bps)
+{
+    m_source_breakpoints.erase(filepath);
+    m_source_breakpoints.insert({ filepath, bps });
+}
+
+void clBreakpointsStore::ResolveFunctionBreakpoint(const UIBreakpoint& func_bp, const UIBreakpoint& bp)
+{
+    if(m_function_breakpoints.count(func_bp) == 0) {
+        return;
+    }
+
+    m_function_breakpoints.erase(func_bp);
+    m_function_breakpoints.insert({ func_bp, bp });
+}
+
+size_t clBreakpointsStore::GetAllSourceBreakpoints(UIBreakpoint::set_t* output, const wxString& filepath) const
+{
+    if(!output) {
+        return 0;
+    }
+
+    if(filepath.empty()) {
+        // return all breakpoints from all files
+        for(const auto& vt : m_source_breakpoints) {
+            output->insert(vt.second.begin(), vt.second.end());
+        }
+    } else if(m_source_breakpoints.count(filepath)) {
+        // this file exists
+        const auto& bps = m_source_breakpoints.find(filepath)->second;
+        output->reserve(bps.size());
+        output->insert(bps.begin(), bps.end());
+    } else {
+        return 0;
+    }
+    return output->size();
 }

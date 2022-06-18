@@ -276,20 +276,18 @@ public:
     /**
      * @brief return true if there is a breakpoint marker on the given line
      */
-    virtual bool HasBreakpointMarker(int line_number) = 0;
+    virtual bool HasBreakpointMarker(int line_number = wxNOT_FOUND) = 0;
 
     /**
-     * @brief delete all breakpoint markers from the given line. if notify is set to true a
-     * wxEVT_DBG_UI_BREAKPOINT_DELETED event is fired, one event per breakpoint
+     * @brief delete all breakpoint markers from the given line
      * @param line_number if set to wxNOT_FOUND(-1), delete all breakpoints from the editor
      */
-    virtual void DeleteAllBreakpointMarkers(int line_number, bool notify) = 0;
+    virtual void DeleteBreakpointMarkers(int line_number = wxNOT_FOUND) = 0;
 
     /**
-     * @brief delete all breakpoint markers from the given line. If notify is set to true a
-     * wxEVT_DBG_UI_BREAKPOINT_ADDED is fired
+     * @brief delete all breakpoint markers from the given line
      */
-    virtual void SetBreakpointMarker(int line_number, const wxString& tooltip, bool notify) = 0;
+    virtual void SetBreakpointMarker(int line_number = wxNOT_FOUND, const wxString& tooltip = wxEmptyString) = 0;
 
     /**
      * @brief return the first user indicator starting from 'pos'. along with 'GetUserIndicatorEnd' caller can

@@ -5,6 +5,7 @@
 #include "codelite_exports.h"
 
 #include <functional>
+#include <unordered_set>
 #include <wx/string.h>
 
 enum class UIBreakpointType {
@@ -15,12 +16,15 @@ enum class UIBreakpointType {
 
 class WXDLLIMPEXP_CL UIBreakpoint
 {
+public:
+    typedef std::unordered_set<UIBreakpoint> set_t;
 
 protected:
     UIBreakpointType m_type = UIBreakpointType::INVALID;
     wxString m_file;
     int m_line = wxNOT_FOUND;
     wxString m_function;
+    wxString m_condition;
 
 public:
     UIBreakpoint();
@@ -35,6 +39,9 @@ public:
     int GetLine() const { return m_line; }
     UIBreakpointType GetType() const { return m_type; }
 
+    void SetCondition(const wxString& condition) { this->m_condition = condition; }
+    const wxString& GetCondition() const { return m_condition; }
+
     bool SameAs(const UIBreakpoint& other) const;
     bool operator==(const UIBreakpoint& other) const { return SameAs(other); }
 
@@ -43,6 +50,7 @@ public:
     // aliases
     bool IsFunctionBreakpoint() const { return GetType() == UIBreakpointType::FUNCTION; }
     bool IsSourceBreakpoint() const { return GetType() == UIBreakpointType::SOURCE; }
+    bool IsOk() const { return GetType() != UIBreakpointType::INVALID; }
 
     JSONItem To() const;
     void From(const JSONItem& json);

@@ -28,6 +28,7 @@
 #include "DAPMainView.h"
 #include "StringUtils.h"
 #include "bookmark_manager.h"
+#include "clFileSystemWorkspace.hpp"
 #include "clcommandlineparser.h"
 #include "console_frame.h"
 #include "dirsaver.h"
@@ -70,6 +71,32 @@ wxString GetWatchWord(IEditor& editor)
     return word;
 }
 
+// helper methods converting between UIBreakpoint & dap::NNNBreakpoint classes
+dap::SourceBreakpoint to_dap_source_bp(const UIBreakpoint& uibp)
+{
+    dap::SourceBreakpoint bp;
+    bp.line = uibp.GetLine();
+    bp.condition = uibp.GetCondition();
+    return bp;
+}
+
+dap::FunctionBreakpoint to_dap_function_bp(const UIBreakpoint& uibp)
+{
+    dap::FunctionBreakpoint bp;
+    bp.name = uibp.GetFunction();
+    bp.condition = uibp.GetCondition();
+    return bp;
+}
+
+std::vector<wxString> to_string_array(const clEnvList_t& env_list)
+{
+    std::vector<wxString> arr;
+    arr.reserve(env_list.size());
+    for(const auto& vt : env_list) {
+        arr.emplace_back(vt.first + "=" + vt.second);
+    }
+    return arr;
+}
 } // namespace
 
 #define CHECK_IS_DAP_CONNECTED()  \
@@ -103,10 +130,16 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     : IPlugin(manager)
     , m_isPerspectiveLoaded(false)
 {
+    // setup custom logger for this module
+    wxFileName logfile(clStandardPaths::Get().GetUserDataDir(), "debug-adapter-client.log");
+    LOG.Open(logfile);
+    LOG.SetCurrentLogLevel(FileLogger::Dbg);
+    LOG_DEBUG(LOG) << "Debug Adapter Client startd" << endl;
     m_longName = _("Debug Adapter Client");
     m_shortName = wxT("DebugAdapterClient");
 
     // UI events
+    EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &DebugAdapterClient::OnFileLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &DebugAdapterClient::OnIsDebugger, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &DebugAdapterClient::OnDebugStart, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_CONTINUE, &DebugAdapterClient::OnDebugContinue, this);
@@ -161,6 +194,7 @@ void DebugAdapterClient::UnPlug()
     DestroyUI();
 
     // UI events
+    EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &DebugAdapterClient::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_IS_PLUGIN_DEBUGGER, &DebugAdapterClient::OnIsDebugger, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &DebugAdapterClient::OnDebugStart, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_CONTINUE, &DebugAdapterClient::OnDebugContinue, this);
@@ -250,12 +284,14 @@ void DebugAdapterClient::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void DebugAdapterClient::ClearDebuggerMarker()
 {
+    LOG_DEBUG(LOG) << "Clearing debugger markers..." << endl;
     IEditor::List_t editors;
     m_mgr->GetAllEditors(editors);
 
     for(auto editor : editors) {
         editor->GetCtrl()->MarkerDeleteAll(smt_indicator);
     }
+    LOG_DEBUG(LOG) << "Clearing debugger markers... done" << endl;
 }
 
 void DebugAdapterClient::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
@@ -266,6 +302,7 @@ void DebugAdapterClient::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
     stc->SetSelection(caretPos, caretPos);
     stc->SetCurrentPos(caretPos);
     stc->EnsureCaretVisible();
+    LOG_DEBUG(LOG) << "Debugger marker is placed at line" << lineno << endl;
 }
 
 void DebugAdapterClient::OnDebugContinue(clDebugEvent& event)
@@ -275,44 +312,49 @@ void DebugAdapterClient::OnDebugContinue(clDebugEvent& event)
 
     // call continue
     m_client.Continue();
+    LOG_DEBUG(LOG) << "Sending 'continue' command" << endl;
 }
 
 void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
 {
+    LOG_DEBUG(LOG) << "debug-start event is called for debugger:" << event.GetDebuggerName() << endl;
     if(event.GetDebuggerName() != DEBUGGER_NAME) {
         event.Skip();
+        LOG_DEBUG(LOG) << "Skipping" << endl;
         return;
     }
 
-    clDEBUG() << "LLDB: Initial working directory is restored to" << ::wxGetCwd() << endl;
-    {
-        // Get the executable to debug
-        wxString errMsg;
-        ProjectPtr pProject = clCxxWorkspaceST::Get()->FindProjectByName(event.GetProjectName(), errMsg);
-        if(!pProject) {
-            ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(), "LLDB Debugger",
-                           wxICON_ERROR | wxOK | wxCENTER);
+    LOG_DEBUG(LOG) << "working directory is:" << ::wxGetCwd() << endl;
+
+    // the following 4 variables are used for launching the debugger
+    wxString working_directory;
+    wxString exepath;
+    wxString args;
+    clEnvList_t env;
+
+    if(clCxxWorkspaceST::Get()->IsOpen()) {
+        // standard C++ workspace
+        ProjectPtr project = clCxxWorkspaceST::Get()->GetProject(event.GetProjectName());
+        if(!project) {
+            ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(),
+                           "DebugAdapterClient ", wxICON_ERROR | wxOK | wxCENTER);
+            LOG_ERROR(LOG) << "unable to locate project:" << event.GetProjectName() << endl;
             return;
         }
 
-        DirSaver ds;
-        ::wxSetWorkingDirectory(pProject->GetFileName().GetPath());
-
-        BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(pProject->GetName(), wxEmptyString);
+        BuildConfigPtr bldConf = project->GetBuildConfiguration();
         if(!bldConf) {
-            ::wxMessageBox(wxString() << _("Could not locate the requested build configuration"), "LLDB Debugger",
+            ::wxMessageBox(wxString() << _("Could not locate the requested build configuration"), "DebugAdapterClient ",
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
-
-        // Launch codelite-lldb now.
-        // Choose wether we need to debug a local or remote target
 
         // Determine the executable to debug, working directory and arguments
-        EnvSetter env(NULL, NULL, pProject ? pProject->GetName() : wxString(), bldConf->GetName());
-        wxString exepath = bldConf->GetCommand();
-        wxString args;
-        wxString workingDirectory;
+        LOG_DEBUG(LOG) << "Preparing environment variables.." << endl;
+        env = bldConf->GetEnvironment(project.Get());
+        LOG_DEBUG(LOG) << "Success" << endl;
+        exepath = bldConf->GetCommand();
+
         // Get the debugging arguments.
         if(bldConf->GetUseSeparateDebugArgs()) {
             args = bldConf->GetDebugArgs();
@@ -320,63 +362,23 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
             args = bldConf->GetCommandArguments();
         }
 
-        workingDirectory = MacroManager::Instance()->Expand(bldConf->GetWorkingDirectory(), m_mgr, pProject->GetName());
-        exepath = MacroManager::Instance()->Expand(exepath, m_mgr, pProject->GetName());
+        working_directory = MacroManager::Instance()->Expand(bldConf->GetWorkingDirectory(), m_mgr, project->GetName());
+        exepath = MacroManager::Instance()->Expand(exepath, m_mgr, project->GetName());
 
-        {
-            DirSaver ds;
-            ::wxSetWorkingDirectory(workingDirectory);
-
-#ifndef __WXMSW__
-            workingDirectory = ::wxGetCwd();
-#endif
-
-            clDEBUG() << "DAP: Using executable:" << exepath << endl;
-            clDEBUG() << "DAP: Working directory:" << workingDirectory << endl;
-
-            if(workingDirectory.empty()) {
-                workingDirectory = wxGetCwd();
-            }
-            wxFileName fn(exepath);
-            if(fn.IsRelative()) {
-                fn.MakeAbsolute(workingDirectory);
-            }
-            exepath = fn.GetFullPath();
-
-            //////////////////////////////////////////////////////////////////////
-            // Initiate the connection to codelite-lldb
-            //////////////////////////////////////////////////////////////////////
-
-            // Reset the client
-            m_client.Reset();
-
-            wxBusyCursor cursor;
-            // For this demo, we use socket transport. But you may choose
-            // to write your own transport that implements the dap::Transport interface
-            // This is useful when the user wishes to use stdin/out for communicating with
-            // the dap and not over socket
-            dap::SocketTransport* transport = new dap::SocketTransport();
-            if(!transport->Connect("tcp://127.0.0.1:12345", 10)) {
-                wxMessageBox("Failed to connect to DAP server", "CodeLite", wxICON_ERROR | wxOK | wxCENTRE);
-                wxDELETE(transport);
-                m_client.Reset();
-                return;
-            }
-
-            // construct new client with the transport
-            m_client.SetTransport(transport);
-            m_client.Initialize(); // send protocol Initialize request
-
-            wxArrayString command_array = StringUtils::BuildArgv(args);
-            command_array.Insert(exepath, 0);
-
-            std::vector<wxString> v{ command_array.begin(), command_array.end() };
-            clSYSTEM() << "Starting debugger for command:" << endl;
-            clSYSTEM() << v << endl;
-            clSYSTEM() << "working directory:" << workingDirectory << endl;
-            m_client.Launch(std::move(v), workingDirectory, false);
+        if(working_directory.empty()) {
+            working_directory = wxGetCwd();
         }
+        wxFileName fn(exepath);
+        if(fn.IsRelative()) {
+            fn.MakeAbsolute(working_directory);
+        }
+        exepath = fn.GetFullPath();
+    } else if(clFileSystemWorkspace::Get().IsOpen()) {
+        LOG_SYSTEM(LOG) << "File System workspace is not yet supported" << endl;
     }
+
+    // start the debugger
+    StartAndConnectToDapServer(exepath, args, working_directory, env);
 }
 
 void DebugAdapterClient::OnDapExited(DAPEvent& event)
@@ -395,7 +397,7 @@ void DebugAdapterClient::OnDapExited(DAPEvent& event)
 
     DestroyUI();
 
-    clDEBUG() << "CODELITE>> DAP exited" << endl;
+    LOG_DEBUG(LOG) << "CODELITE>> DAP exited" << endl;
 
     clDebugEvent e(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent(e);
@@ -424,34 +426,11 @@ void DebugAdapterClient::OnLaunchResponse(DAPEvent& event)
 void DebugAdapterClient::OnInitializedEvent(DAPEvent& event)
 {
     // got initialized event, place breakpoints and continue
-    clDEBUG() << "Got Initialized event" << endl;
-    clDEBUG() << "Placing breakpoint at main..." << endl;
+    LOG_DEBUG(LOG) << "Got Initialized event" << endl;
+    LOG_DEBUG(LOG) << "Placing breakpoint at main..." << endl;
 
     // fetch all breakpoints from CodeLite breakpoints manager
-    clDebuggerBreakpoint::Vec_t gdbBps;
-    m_mgr->GetAllBreakpoints(gdbBps);
-
-    std::vector<dap::FunctionBreakpoint> function_bps;
-
-    // sort the breakpoints into types
-    std::unordered_map<wxString, std::vector<dap::SourceBreakpoint>> source_bps;
-    for(auto bp : gdbBps) {
-        if(bp.bp_type == BreakpointType::BP_type_break) {
-            if(!bp.function_name.empty()) {
-                function_bps.push_back({ bp.function_name, wxEmptyString });
-            } else {
-                if(source_bps.count(bp.file) == 0) {
-                    source_bps.insert({ bp.file, {} });
-                }
-                source_bps[bp.file].push_back({ bp.lineno, wxEmptyString });
-            }
-        }
-    }
-
-    m_client.SetFunctionBreakpoints(function_bps);
-    for(auto vt : source_bps) {
-        m_client.SetBreakpointsFile(vt.first, vt.second);
-    }
+    ApplyBreakpoints(wxEmptyString);
 
     // place all breakpoints
     m_client.ConfigurationDone();
@@ -463,10 +442,10 @@ void DebugAdapterClient::OnStoppedEvent(DAPEvent& event)
     // got stopped event
     dap::StoppedEvent* stopped_data = event.GetDapEvent()->As<dap::StoppedEvent>();
     if(stopped_data) {
-        clSYSTEM() << "Stopped reason:" << stopped_data->reason << endl;
-        clSYSTEM() << "All threads stopped:" << stopped_data->allThreadsStopped << endl;
-        clSYSTEM() << "Stopped thread ID:" << stopped_data->threadId
-                   << "(active thread ID:" << m_client.GetActiveThreadId() << ")" << endl;
+        LOG_DEBUG(LOG) << "Stopped reason:" << stopped_data->reason << endl;
+        LOG_DEBUG(LOG) << "All threads stopped:" << stopped_data->allThreadsStopped << endl;
+        LOG_DEBUG(LOG) << "Stopped thread ID:" << stopped_data->threadId
+                       << "(active thread ID:" << m_client.GetActiveThreadId() << ")" << endl;
         m_client.GetThreads();
     }
 }
@@ -481,14 +460,14 @@ void DebugAdapterClient::OnThreadsResponse(DAPEvent& event)
 void DebugAdapterClient::OnDebugNext(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-    clDEBUG() << "LLDB    >> Next" << endl;
+    LOG_DEBUG(LOG) << "-> Next" << endl;
     m_client.Next();
 }
 
 void DebugAdapterClient::OnDebugStop(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-    clDEBUG() << "LLDB    >> Stop" << endl;
+    LOG_DEBUG(LOG) << "-> Stop" << endl;
     m_client.Reset();
 }
 
@@ -508,12 +487,14 @@ void DebugAdapterClient::OnDebugStepIn(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     m_client.StepIn();
+    LOG_DEBUG(LOG) << "-> StopIn" << endl;
 }
 
 void DebugAdapterClient::OnDebugStepOut(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     m_client.StepOut();
+    LOG_DEBUG(LOG) << "-> StopOut" << endl;
 }
 
 void DebugAdapterClient::OnIsDebugger(clDebugEvent& event)
@@ -592,12 +573,27 @@ void DebugAdapterClient::InitializeUI()
 
 void DebugAdapterClient::OnToggleBreakpoint(clDebugEvent& event)
 {
-    // Call Skip() here since we want codelite to manage the breakpoint as well ( in term of serialization in the
-    // session file )
-    CHECK_IS_DAP_CONNECTED();
     event.Skip();
 
-    // FIXME
+    // User toggled a breakpoint
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    if(editor->GetRemotePathOrLocal() != event.GetFileName()) {
+        event.Skip(false);
+        return;
+    }
+
+    const wxString& path = event.GetFileName();
+    int line = event.GetLineNumber();
+    if(m_breakpointsStore.HasSourceBreakpoint(path, line)) {
+        m_breakpointsStore.DeleteSourceBreakpoint(path, line);
+    } else {
+        m_breakpointsStore.AddSourceBreakpoint(path, line);
+    }
+
+    // if a session is running, re-apply the breakpoints
+    ApplyBreakpoints(path);
 }
 
 void DebugAdapterClient::DoCleanup()
@@ -898,4 +894,92 @@ void DebugAdapterClient::OnSetSourceBreakpointResponse(DAPEvent& event)
 {
     auto resp = event.GetDapResponse()->As<dap::SetBreakpointsResponse>();
     CHECK_PTR_RET(resp);
+}
+
+void DebugAdapterClient::ApplyBreakpoints(const wxString& path)
+{
+    if(!m_client.IsConnected()) {
+        return;
+    }
+
+    std::vector<dap::SourceBreakpoint> dap_breakpoints;
+    UIBreakpoint::set_t ui_breakpoints;
+    m_breakpointsStore.GetAllSourceBreakpoints(&ui_breakpoints, path);
+
+    dap_breakpoints.reserve(ui_breakpoints.size());
+    for(const auto& bp : ui_breakpoints) {
+        LOG_DEBUG(LOG) << "setting breakpoing:" << bp.GetFile() << ":" << bp.GetLine() << endl;
+        dap_breakpoints.push_back(to_dap_source_bp(bp));
+    }
+    m_client.SetBreakpointsFile(path, dap_breakpoints);
+}
+
+void DebugAdapterClient::RefreshBreakpointsMarkersForEditor(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+
+    // clear all the markers
+    editor->DeleteBreakpointMarkers();
+    UIBreakpoint::set_t bps;
+    m_breakpointsStore.GetAllSourceBreakpoints(&bps, editor->GetRemotePathOrLocal());
+    for(const auto& bp : bps) {
+        editor->SetBreakpointMarker(bp.GetLine());
+    }
+}
+
+void DebugAdapterClient::StartAndConnectToDapServer(const wxString& exepath, const wxString& args,
+                                                    const wxString& working_directory, const clEnvList_t& env)
+{
+    // Reset the client
+    m_client.Reset();
+    LOG_DEBUG(LOG) << "Connecting to dap-server:" << endl;
+    LOG_DEBUG(LOG) << "exepath:" << exepath << endl;
+    LOG_DEBUG(LOG) << "args:" << args << endl;
+    LOG_DEBUG(LOG) << "working_directory:" << working_directory << endl;
+    LOG_DEBUG(LOG) << "env:" << to_string_array(env) << endl;
+
+    wxBusyCursor cursor;
+    // For this demo, we use socket transport. But you may choose
+    // to write your own transport that implements the dap::Transport interface
+    // This is useful when the user wishes to use stdin/out for communicating with
+    // the dap and not over socket
+    dap::SocketTransport* transport = new dap::SocketTransport();
+    if(!transport->Connect("tcp://127.0.0.1:12345", 10)) {
+        wxMessageBox("Failed to connect to DAP server", "CodeLite", wxICON_ERROR | wxOK | wxCENTRE);
+        wxDELETE(transport);
+        m_client.Reset();
+        return;
+    }
+
+    // construct new client with the transport
+    m_client.SetTransport(transport);
+    m_client.Initialize(); // send protocol Initialize request
+
+    wxArrayString command_array = StringUtils::BuildArgv(args);
+    command_array.Insert(exepath, 0);
+
+    std::vector<wxString> v{ command_array.begin(), command_array.end() };
+    LOG_DEBUG(LOG) << "Starting debugger for command:" << endl;
+    LOG_DEBUG(LOG) << v << endl;
+    LOG_DEBUG(LOG) << "working directory:" << working_directory << endl;
+    m_client.Launch(std::move(v), working_directory, false);
+}
+
+void DebugAdapterClient::OnFileLoaded(clCommandEvent& event)
+{
+    event.Skip();
+    auto editor = clGetManager()->FindEditor(event.GetFileName());
+    if(!editor) {
+        return;
+    }
+
+    wxString path = editor->GetRemotePathOrLocal();
+    std::vector<int> lines;
+    editor->GetBreakpointMarkers(&lines);
+
+    UIBreakpoint::set_t bps;
+    for(int line : lines) {
+        bps.insert({ path, line });
+    }
+    m_breakpointsStore.SetBreakpoints(path, bps);
 }

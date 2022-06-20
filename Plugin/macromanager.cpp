@@ -34,6 +34,7 @@
 #include "imanager.h"
 #include "project.h"
 #include "workspace.h"
+#include "wxStringHash.h"
 
 #include <wx/regex.h>
 
@@ -148,6 +149,52 @@ bool MacroManager::FindVariable(const wxString& inString, wxString& name, wxStri
     return false;
 }
 
+namespace
+{
+// the below list are macros supported by CodeLite
+const std::unordered_set<wxString> CODELITE_MACROS = {
+    "WorkspaceName",
+    "WorkspaceConfiguration",
+    "WorkspacePath",
+    "OutputDirectory",
+    "ProjectOutputFile",
+    "OutputFile",
+    "ProjectWorkingDirectory",
+    "ProjectRunWorkingDirectory",
+    "ProjectPath",
+    "ProjectName",
+    "IntermediateDirectory",
+    "ConfigurationName",
+    "OutDir",
+    "ProjectFiles",
+    "ProjectFilesAbs",
+    "CurrentFileName",
+    "CurrentFilePath",
+    "CurrentFileExt",
+    "CurrentFileFullName",
+    "CurrentSelection",
+    "CurrentSelectionRange",
+    "User",
+    "Date",
+    "CodeLitePath",
+    "CC",
+    "CFLAGS",
+    "CXX",
+    "CXXFLAGS",
+    "LDFLAGS",
+    "AS",
+    "ASFLAGS",
+    "RES",
+    "RESFLAGS",
+    "AR",
+    "MAKE",
+    "IncludePath",
+    "LibraryPath",
+    "ResourcePath",
+    "LinkLibraries",
+};
+} // namespace
+
 wxString MacroManager::ExpandNoEnv(const wxString& expression, const wxString& project, const wxString& confToBuild)
 {
     return DoExpand(expression, NULL, project, false, confToBuild);
@@ -197,7 +244,6 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
             if(proj) {
                 wxString prjBuildWd;
                 wxString prjRunWd;
-
                 wxString project_name(proj->GetName());
 
                 // make sure that the project name does not contain any spaces
@@ -229,7 +275,6 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                     expandedString.Replace("$(OutDir)", bldConf->GetIntermediateDirectory());
 
                     // Compiler-related variables
-
                     wxString cFlags = bldConf->GetCCompileOptions();
                     cFlags.Replace(";", " ");
                     expandedString.Replace("$(CC)", bldConf->GetCompiler()->GetTool("CC"));
@@ -317,3 +362,5 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
     }
     return expandedString;
 }
+
+bool MacroManager::IsCodeLiteMacro(const wxString& macroname) const { return CODELITE_MACROS.count(macroname) != 0; }

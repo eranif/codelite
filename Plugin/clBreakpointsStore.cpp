@@ -142,3 +142,41 @@ size_t clBreakpointsStore::GetAllSourceBreakpoints(UIBreakpoint::set_t* output, 
     }
     return output->size();
 }
+
+bool clBreakpointsStore::HasSourceBreakpoint(const wxString& path, int lineNumber) const
+{
+    if(m_source_breakpoints.count(path) == 0) {
+        return false;
+    }
+
+    auto bps = m_source_breakpoints.find(path)->second;
+    UIBreakpoint find_what{ path, lineNumber };
+    return bps.count(find_what) != 0;
+}
+
+void clBreakpointsStore::AddSourceBreakpoint(const wxString& path, int lineNumber)
+{
+    if(HasSourceBreakpoint(path, lineNumber)) {
+        return;
+    }
+    if(m_source_breakpoints.count(path) == 0) {
+        m_source_breakpoints.insert({ path, {} });
+    }
+    m_source_breakpoints[path].insert({ path, lineNumber });
+}
+
+void clBreakpointsStore::DeleteSourceBreakpoint(const wxString& path, int lineNumber)
+{
+    if(m_source_breakpoints.count(path) == 0) {
+        return;
+    }
+
+    if(lineNumber == wxNOT_FOUND) {
+        m_source_breakpoints.erase(path);
+    } else {
+        if(!HasSourceBreakpoint(path, lineNumber)) {
+            return;
+        }
+        m_source_breakpoints[path].erase({ path, lineNumber });
+    }
+}

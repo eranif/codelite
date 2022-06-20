@@ -26,6 +26,9 @@
 #ifndef __LLDBDebugger__
 #define __LLDBDebugger__
 
+#include "asyncprocess.h"
+#include "clBreakpointsStore.hpp"
+#include "clModuleLogger.hpp"
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
 #include "plugin.h"
@@ -37,6 +40,8 @@ class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
     wxString m_defaultPerspective;
+    clBreakpointsStore m_breakpointsStore;
+    clModuleLogger LOG;
 
     /// ------------------------------------
     /// UI elements
@@ -57,6 +62,15 @@ private:
     void ClearDebuggerMarker();
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
     void DoCleanup();
+    void StartAndConnectToDapServer(const wxString& exepath, const wxString& args, const wxString& working_directory,
+                                    const clEnvList_t& env);
+    /// loads all the breakpoints from the store for a given file and
+    /// pass them to the debugger. If the debugger, is not running, do
+    /// nothing
+    void ApplyBreakpoints(const wxString& path);
+
+    /// Place breakpoint markers for a given editor
+    void RefreshBreakpointsMarkersForEditor(IEditor* editor);
 
 public:
     DebugAdapterClient(IManager* manager);
@@ -80,6 +94,7 @@ protected:
     void OnWorkspaceClosed(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
+    void OnFileLoaded(clCommandEvent& event);
 
     // UI debugger events
     void OnIsDebugger(clDebugEvent& event);

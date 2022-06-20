@@ -28,6 +28,12 @@ protected:
 
 public:
     UIBreakpoint();
+    UIBreakpoint(const wxString& file, int line)
+        : m_type(UIBreakpointType::SOURCE)
+        , m_file(file)
+        , m_line(line)
+    {
+    }
     ~UIBreakpoint();
 
     void SetFile(const wxString& file) { this->m_file = file; }

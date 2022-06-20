@@ -76,8 +76,10 @@
   <Dependencies Name="DebugUnicode"/>
   <Dependencies Name="ReleaseUnicode"/>
   <Dependencies Name="Win_x64_Debug"/>
-  <Dependencies Name="Win_x64_Release"/>
   <Dependencies Name="Win_x86_Release"/>
+  <Dependencies Name="Win_x64_Release">
+    <Project Name="dapcxx"/>
+  </Dependencies>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -314,6 +316,7 @@
       <PreBuild/>
       <PostBuild>
         <Command Enabled="yes">copy "$(OutputFile)"  ..\Runtime\plugins</Command>
+        <Command Enabled="yes">copy "$(WorkspacePath)\build-$(WorkspaceConfiguration)\lib\libdapcxx.dll" ..\Runtime</Command>
       </PostBuild>
       <CustomBuild Enabled="no">
         <RebuildCommand/>

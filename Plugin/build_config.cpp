@@ -28,7 +28,10 @@
 #include "buildmanager.h"
 #include "debuggermanager.h"
 #include "editor_config.h"
+#include "environmentconfig.h"
+#include "file_logger.h"
 #include "globals.h"
+#include "macromanager.h"
 #include "macros.h"
 #include "project.h"
 #include "wx_xml_compatibility.h"
@@ -530,3 +533,143 @@ wxString BuildConfig::GetWorkingDirectory() const { return NormalizePath(m_worki
 CompilerPtr BuildConfig::GetCompiler() const { return BuildSettingsConfigST::Get()->GetCompiler(GetCompilerType()); }
 
 BuilderPtr BuildConfig::GetBuilder() { return BuildManagerST::Get()->GetBuilder(GetBuildSystem()); }
+
+namespace
+{
+bool is_env_variable(const wxString& str, wxString* env_name)
+{
+    if(str.empty() || str[0] != '$') {
+        return false;
+    }
+    env_name->reserve(str.length());
+
+    // start from 1 to skip the prefix $
+    for(size_t i = 1; i < str.length(); ++i) {
+        wxChar ch = str[i];
+        if(ch == '(' || ch == ')' || ch == '{' || ch == '}')
+            continue;
+        env_name->Append(ch);
+    }
+    return true;
+}
+
+/**
+ * @brief expand an environment variable. use `env_map` to resolve any variables
+ * accepting value in the form of (one example):
+ * $PATH;C:\bin;$(LD_LIBRARY_PATH);${PYTHONPATH}
+ */
+wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& env_map, const wxString& project_name,
+                             const wxString& config_name)
+{
+    // split the value into its parts
+    wxArrayString parts = wxStringTokenize(value, wxPATH_SEP, wxTOKEN_STRTOK);
+    wxString resolved;
+    for(const wxString& part : parts) {
+        wxArrayString resovled_array;
+        wxString env_name;
+        if(is_env_variable(part, &env_name)) {
+            // try the environment variables first
+            if(env_map.count(env_name)) {
+                resolved << env_map.find(env_name)->second;
+            } else if(MacroManager::Instance()->IsCodeLiteMacro(env_name)) {
+                // try to resolve it using the macro manager
+                resolved << MacroManager::Instance()->ExpandNoEnv(part, project_name, config_name);
+            }
+        } else {
+            // literal
+            resolved << part;
+        }
+        resolved << wxPATH_SEP;
+    }
+    if(!resolved.empty()) {
+        resolved.RemoveLast();
+    }
+    return resolved;
+}
+
+clEnvList_t split_env_string(const wxString& env_str)
+{
+    clEnvList_t result;
+    wxArrayString lines = ::wxStringTokenize(env_str, "\r\n", wxTOKEN_STRTOK);
+    for(wxString& line : lines) {
+        wxString key = line.BeforeFirst('=');
+        wxString value = line.AfterFirst('=');
+        if(key.empty()) {
+            continue;
+        }
+        result.push_back({ key, value });
+    }
+    return result;
+}
+} // namespace
+
+clEnvList_t BuildConfig::GetEnvironment(Project* project) const
+{
+    wxString envstr;
+    EvnVarList env = EnvironmentConfig::Instance()->GetSettings();
+
+    wxString config_name;
+    wxString project_name;
+    if(project) {
+        config_name = GetName();
+        project_name = project->GetName();
+    }
+
+    wxEnvVariableHashMap current_env_map;
+    ::wxGetEnvMap(&current_env_map);
+
+    // contains a list of env that are returned to the caller
+    // by default, we only return env modified within CodeLite
+    std::unordered_set<wxString> interesting_env_set;
+
+    // get the global enviroment variables (macros expnaded)
+    EnvMap envMap = env.GetVariables(env.GetActiveSet(), false, project_name, config_name);
+
+    // expand the global environments variables first
+    for(size_t i = 0; i < envMap.GetCount(); ++i) {
+        wxString key, value;
+        if(!envMap.Get(i, key, value))
+            continue;
+        value = expand_env_variable(value, current_env_map, project_name, config_name);
+        current_env_map.erase(key);
+        current_env_map.insert({ key, value });
+        interesting_env_set.insert(key);
+    }
+
+    // get the workspace environment variables
+    wxString workspace_env = clCxxWorkspaceST::Get()->GetEnvironmentVariabels();
+    {
+        auto arr = split_env_string(workspace_env);
+        for(auto& p : arr) {
+            wxString key = p.first;
+            wxString value = p.second;
+            value = expand_env_variable(value, current_env_map, project_name, config_name);
+            current_env_map.erase(key);
+            current_env_map.insert({ key, value });
+            interesting_env_set.insert(key);
+        }
+    }
+
+    // and finally, this configuration environment variables
+    wxString config_env = GetEnvvars();
+    {
+        auto arr = split_env_string(config_env);
+        for(auto& p : arr) {
+            wxString key = p.first;
+            wxString value = p.second;
+            value = expand_env_variable(value, current_env_map, project_name, config_name);
+            current_env_map.erase(key);
+            current_env_map.insert({ key, value });
+            interesting_env_set.insert(key);
+        }
+    }
+
+    // Serialize it
+    clEnvList_t result;
+    result.reserve(current_env_map.size());
+    for(const auto& vt : current_env_map) {
+        if(interesting_env_set.count(vt.first))
+            result.emplace_back(vt);
+    }
+    return result;
+}

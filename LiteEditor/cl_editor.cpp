@@ -4013,6 +4013,7 @@ void clEditor::ToggleBreakpoint(int lineno)
     // Does any of the plugins want to handle this?
     clDebugEvent dbgEvent(wxEVT_DBG_UI_TOGGLE_BREAKPOINT);
     dbgEvent.SetInt(lineno);
+    dbgEvent.SetLineNumber(lineno);
     dbgEvent.SetFileName(file_path);
     if(EventNotifier::Get()->ProcessEvent(dbgEvent)) {
         return;
@@ -6422,17 +6423,23 @@ bool clEditor::HasBreakpointMarker(int line_number)
     return markers_bit_mask & mask;
 }
 
+size_t clEditor::GetBreakpointMarkers(std::vector<int>* lines)
+{
+    int mask = (1 << smt_breakpoint);
+    int line = MarkerNext(0, mask);
+    while(line != wxNOT_FOUND) {
+        lines->push_back(line);
+        line = MarkerNext(line + 1, mask);
+    }
+    return lines->size();
+}
+
 void clEditor::DeleteBreakpointMarkers(int line_number)
 {
     // get a list of lines to work on
     std::vector<int> lines;
     if(line_number == wxNOT_FOUND) {
-        int mask = (1 << smt_breakpoint);
-        int line = MarkerNext(0, mask);
-        while(line != wxNOT_FOUND) {
-            lines.push_back(line);
-            MarkerNext(line + 1, mask);
-        }
+        GetBreakpointMarkers(&lines);
     } else {
         lines.push_back(line_number);
     }

@@ -57,6 +57,22 @@ public:
      * return all breakpoints
      */
     size_t GetAllSourceBreakpoints(UIBreakpoint::set_t* output, const wxString& filepath = wxEmptyString) const;
+
+    /**
+     * @brief return true if a breakpoint is already set for a given file and line
+     */
+    bool HasSourceBreakpoint(const wxString& path, int lineNumber) const;
+
+    /**
+     * @brief add a source breakpoint
+     */
+    void AddSourceBreakpoint(const wxString& path, int lineNumber);
+
+    /**
+     * @brief delete source breakpoint
+     * if lineNumber is wxNOT_FOUND, delete all breakpoints for this file
+     */
+    void DeleteSourceBreakpoint(const wxString& path, int lineNumber);
 };
 
 #endif // CLDEBUGGERBREAKPOINTSTORE_HPP

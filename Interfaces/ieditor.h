@@ -290,6 +290,11 @@ public:
     virtual void SetBreakpointMarker(int line_number = wxNOT_FOUND, const wxString& tooltip = wxEmptyString) = 0;
 
     /**
+     * @brief return all lines that have breakpoint marker
+     */
+    virtual size_t GetBreakpointMarkers(std::vector<int>* lines) = 0;
+
+    /**
      * @brief return the first user indicator starting from 'pos'. along with 'GetUserIndicatorEnd' caller can
      * iterate through all user indicator in the document
      * @param pos position to search from

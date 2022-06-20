@@ -73,6 +73,11 @@ public:
                     const wxString& confToBuild = wxEmptyString);
 
     /**
+     * @brief return true if macroname can be resolved as CodeLite internal macro
+     */
+    bool IsCodeLiteMacro(const wxString& macroname) const;
+
+    /**
      * @brief same as above, but don't apply environment variables
      */
     wxString ExpandNoEnv(const wxString& expression, const wxString& project,

@@ -229,7 +229,7 @@ wxString EnvironmentConfig::DoExpandVariables(const wxString& in)
             }
         }
 
-        // dont allow recrusive replacements
+        // dont allow recursive replacements
         if(replacement.Contains(text)) {
             break;
         }

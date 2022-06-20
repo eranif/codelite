@@ -25,6 +25,7 @@
 #ifndef BUILD_CONFIGURATION_H
 #define BUILD_CONFIGURATION_H
 
+#include "asyncprocess.h"
 #include "build_config_common.h"
 #include "builder.h"
 #include "codelite_exports.h"
@@ -46,6 +47,7 @@
 #endif // WXMAKINGDLL_LE_SDK
 #endif
 
+class Project;
 class WXDLLIMPEXP_LE_SDK BuildCommand
 {
     wxString m_command;
@@ -372,9 +374,18 @@ public:
 
     /**
      * @brief return the build defined for this build configuration
-     * @return 
+     * @return
      */
     BuilderPtr GetBuilder();
+
+    /**
+     * @brief build environment list for this build configuration
+     * taking into consideration:
+     * - the build configuration env
+     * - workspace env
+     * - global env
+     */
+    clEnvList_t GetEnvironment(Project* project = nullptr) const;
 };
 
 typedef SmartPtr<BuildConfig> BuildConfigPtr;

@@ -703,6 +703,11 @@ public:
     void DeleteBreakpointMarkers(int line_number = wxNOT_FOUND) override;
 
     /**
+     * @brief return all lines that have breakpoint marker
+     */
+    size_t GetBreakpointMarkers(std::vector<int>* lines) override;
+
+    /**
      * @brief delete all breakpoint markers from the given line
      */
     void SetBreakpointMarker(int line_number = wxNOT_FOUND, const wxString& tooltip = wxEmptyString) override;

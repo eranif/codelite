@@ -247,6 +247,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     m_client.Bind(wxEVT_DAP_LAUNCH_RESPONSE, &DebugAdapterClient::OnLaunchResponse, this);
     m_client.Bind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnStoppedEvent, this);
     m_client.Bind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnThreadsResponse, this);
+    m_client.Bind(wxEVT_DAP_STACKTRACE_RESPONSE, &DebugAdapterClient::OnStackTraceResponse, this);
     m_client.Bind(wxEVT_DAP_SET_FUNCTION_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnSetFunctionBreakpointResponse,
                   this);
     m_client.Bind(wxEVT_DAP_SET_SOURCE_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnSetSourceBreakpointResponse, this);
@@ -530,9 +531,23 @@ void DebugAdapterClient::OnStoppedEvent(DAPEvent& event)
 
 void DebugAdapterClient::OnThreadsResponse(DAPEvent& event)
 {
-    if(m_threadsView) {
-        m_threadsView->UpdateThreads(event);
-    }
+    CHECK_PTR_RET(m_threadsView);
+
+    auto response = event.GetDapResponse()->As<dap::ThreadsResponse>();
+    CHECK_PTR_RET(response);
+
+    m_threadsView->UpdateThreads(m_client.GetActiveThreadId(), response);
+    // request the frames for the active thread
+    m_client.GetFrames();
+}
+
+void DebugAdapterClient::OnStackTraceResponse(DAPEvent& event)
+{
+    CHECK_PTR_RET(m_threadsView);
+
+    auto response = event.GetDapResponse()->As<dap::StackTraceResponse>();
+    CHECK_PTR_RET(response);
+    m_threadsView->UpdateFrames(m_client.GetActiveThreadId(), response);
 }
 
 void DebugAdapterClient::OnDebugNext(clDebugEvent& event)

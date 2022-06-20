@@ -132,6 +132,7 @@ protected:
     void OnInitializedEvent(DAPEvent& event);
     void OnStoppedEvent(DAPEvent& event);
     void OnThreadsResponse(DAPEvent& event);
+    void OnStackTraceResponse(DAPEvent& event);
     void OnSetFunctionBreakpointResponse(DAPEvent& event);
     void OnSetSourceBreakpointResponse(DAPEvent& event);
 

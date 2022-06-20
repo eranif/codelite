@@ -17,10 +17,11 @@ DAPMainView::DAPMainView(wxWindow* parent, dap::Client* client)
 
 DAPMainView::~DAPMainView() {}
 
-void DAPMainView::UpdateThreads(const DAPEvent& event)
+void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* response)
 {
+    wxUnusedVar(activeThreadId);
+
     // threads are the top level
-    auto response = event.GetDapResponse()->As<dap::ThreadsResponse>();
     if(!response || !response->success) {
         return;
     }
@@ -41,6 +42,8 @@ void DAPMainView::UpdateThreads(const DAPEvent& event)
         if(M.count(thread.id) == 0) {
             // new thread, add it
             item = m_treeThreads->AppendItem(root, wxString() << thread.id);
+            // add a dummy child, so will get the ">" button
+            m_treeThreads->AppendItem(item, "<dummy>");
         } else {
             item = M[thread.id];
             M.erase(thread.id); // remove it
@@ -53,5 +56,51 @@ void DAPMainView::UpdateThreads(const DAPEvent& event)
         m_treeThreads->Delete(vt.second);
     }
     M.clear();
+    m_treeThreads->Commit();
+}
+
+wxTreeItemId DAPMainView::FindThreadNode(int threadId)
+{
+    wxTreeItemId root = m_treeThreads->GetRootItem();
+    wxTreeItemIdValue cookie;
+    auto curitem = m_treeThreads->GetFirstChild(root, cookie);
+    while(curitem.IsOk()) {
+        int cur_thread_id = ::wxStringToInt(m_treeThreads->GetItemText(curitem, 0), -1);
+        if(cur_thread_id == threadId) {
+            return curitem;
+        }
+        curitem = m_treeThreads->GetNextChild(root, cookie);
+    }
+    return wxTreeItemId(nullptr);
+}
+
+void DAPMainView::UpdateFrames(int threadId, dap::StackTraceResponse* response)
+{
+    // locate the row
+    m_treeThreads->Begin();
+    wxTreeItemId parent = FindThreadNode(threadId);
+    if(!parent.IsOk()) {
+        return;
+    }
+
+    if(m_treeThreads->ItemHasChildren(parent)) {
+        m_treeThreads->DeleteChildren(parent);
+    }
+
+    // append the stack frame
+    for(const auto& frame : response->stackFrames) {
+        wxTreeItemId frame_item = m_treeThreads->AppendItem(parent, wxString() << frame.id);
+        m_treeThreads->SetItemText(frame_item, frame.name, 1);
+
+        wxString source;
+        if(!frame.source.name.empty()) {
+            source = frame.source.name;
+        } else {
+            source = frame.source.path;
+        }
+        m_treeThreads->SetItemText(frame_item, source, 2);
+        m_treeThreads->SetItemText(frame_item, wxString() << frame.line, 3);
+    }
+    m_treeThreads->Expand(parent);
     m_treeThreads->Commit();
 }

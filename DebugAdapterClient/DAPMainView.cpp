@@ -21,8 +21,6 @@ DAPMainView::~DAPMainView() {}
 
 void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* response)
 {
-    wxUnusedVar(activeThreadId);
-
     // threads are the top level
     if(!response || !response->success) {
         return;
@@ -49,6 +47,10 @@ void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* respon
         } else {
             item = M[thread.id];
             M.erase(thread.id); // remove it
+        }
+        if(thread.id == activeThreadId) {
+            m_treeThreads->SetItemBold(item, true, 0);
+            m_treeThreads->SetItemBold(item, true, 1);
         }
         m_treeThreads->SetItemText(item, thread.name, 1);
     }
@@ -115,11 +117,13 @@ void DAPMainView::OnItemExpanding(wxTreeEvent& event)
     CHECK_ITEM_RET(item);
 
     wxTreeItemIdValue cookie;
-    if(m_treeThreads->ItemHasChildren(item) && m_treeThreads->GetChildrenCount(item, false) == 1 &&
-       m_treeThreads->GetItemText(m_treeThreads->GetFirstChild(item, cookie)) == "<dummy>") {
-        // delete the children and request for backtrace
-        m_client->GetFrames(GetThreadId(item));
+    if(m_treeThreads->ItemHasChildren(item)) {
+        m_treeThreads->DeleteChildren(item);
+        m_treeThreads->AppendItem(item, _("Loading..."));
     }
+
+    // delete the children and request for backtrace
+    m_client->GetFrames(GetThreadId(item));
 }
 
 int DAPMainView::GetThreadId(const wxTreeItemId& item)
@@ -128,4 +132,21 @@ int DAPMainView::GetThreadId(const wxTreeItemId& item)
         return wxNOT_FOUND;
     }
     return wxStringToInt(m_treeThreads->GetItemText(item), wxNOT_FOUND);
+}
+
+std::unordered_set<int> DAPMainView::GetExpandedThreads()
+{
+    std::unordered_set<int> result = { m_client->GetActiveThreadId() };
+    wxTreeItemIdValue cookie;
+    wxTreeItemId root = m_treeThreads->GetRootItem();
+    auto curitem = m_treeThreads->GetFirstChild(root, cookie);
+    while(curitem.IsOk()) {
+        if(m_treeThreads->IsExpanded(curitem)) {
+            int cur_thread_id = ::wxStringToInt(m_treeThreads->GetItemText(curitem, 0), -1);
+            result.insert(cur_thread_id);
+
+        }
+        curitem = m_treeThreads->GetNextChild(root, cookie);
+    }
+    return result;
 }

@@ -543,8 +543,10 @@ void DebugAdapterClient::OnThreadsResponse(DAPEvent& event)
     CHECK_PTR_RET(response);
 
     m_threadsView->UpdateThreads(m_client.GetActiveThreadId(), response);
-    // request the frames for the active thread
-    m_client.GetFrames();
+    auto threads_to_update = m_threadsView->GetExpandedThreads();
+    for(int thread_id : threads_to_update) {
+        m_client.GetFrames(thread_id);
+    }
 }
 
 void DebugAdapterClient::OnStackTraceResponse(DAPEvent& event)
@@ -553,7 +555,9 @@ void DebugAdapterClient::OnStackTraceResponse(DAPEvent& event)
 
     auto response = event.GetDapResponse()->As<dap::StackTraceResponse>();
     CHECK_PTR_RET(response);
-    m_threadsView->UpdateFrames(m_client.GetActiveThreadId(), response);
+
+    LOG_DEBUG(LOG) << "Requesting frames for thread-id:" << response->threadId << endl;
+    m_threadsView->UpdateFrames(response->threadId, response);
     if(!response->stackFrames.empty()) {
         auto frame = response->stackFrames[0];
         LOG_DEBUG(LOG) << "Frame path:" << frame.source.path << endl;

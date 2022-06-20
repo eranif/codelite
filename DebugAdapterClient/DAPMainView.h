@@ -6,6 +6,8 @@
 #include "dap/DAPEvent.hpp"
 #include "dap/dap.hpp"
 
+#include <unordered_set>
+
 class DAPMainView : public DAPMainViewBase
 {
     dap::Client* m_client = nullptr;
@@ -22,5 +24,9 @@ public:
 
     void UpdateThreads(int activeThreadId, dap::ThreadsResponse* response);
     void UpdateFrames(int threadId, dap::StackTraceResponse* response);
+    /**
+     * @brief return list of thread-id that are expanded in the UI
+     */
+    std::unordered_set<int> GetExpandedThreads();
 };
 #endif // DAPMAINVIEW_H

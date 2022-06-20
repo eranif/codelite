@@ -49,6 +49,12 @@ static DebugAdapterClient* thePlugin = NULL;
 namespace
 {
 
+#ifdef __WXMSW__
+constexpr bool IS_WINDOWS = true;
+#else
+constexpr bool IS_WINDOWS = false;
+#endif
+
 const wxString DAP_MAIN_VIEW = _("Thread, stacks & variables");
 const wxString DEBUGGER_NAME = "DAP Debugger";
 
@@ -503,7 +509,7 @@ void DebugAdapterClient::OnInitializedEvent(DAPEvent& event)
 
     // place a single breakpoint on main
     dap::FunctionBreakpoint main_bp{ "main" };
-    m_need_to_set_breakpoints = true;
+    m_session.need_to_set_breakpoints = true;
     m_client.SetFunctionBreakpoints({ main_bp });
 
     // place all breakpoints
@@ -514,9 +520,9 @@ void DebugAdapterClient::OnInitializedEvent(DAPEvent& event)
 void DebugAdapterClient::OnStoppedEvent(DAPEvent& event)
 {
     // got stopped event
-    if(m_need_to_set_breakpoints) {
+    if(m_session.need_to_set_breakpoints) {
         ApplyBreakpoints(wxEmptyString);
-        m_need_to_set_breakpoints = false;
+        m_session.need_to_set_breakpoints = false;
     }
 
     dap::StoppedEvent* stopped_data = event.GetDapEvent()->As<dap::StoppedEvent>();
@@ -548,6 +554,19 @@ void DebugAdapterClient::OnStackTraceResponse(DAPEvent& event)
     auto response = event.GetDapResponse()->As<dap::StackTraceResponse>();
     CHECK_PTR_RET(response);
     m_threadsView->UpdateFrames(m_client.GetActiveThreadId(), response);
+    if(!response->stackFrames.empty()) {
+        auto frame = response->stackFrames[0];
+        LOG_DEBUG(LOG) << "Frame path:" << frame.source.path << endl;
+        wxString filepath = NormalisePath(frame.source.path);
+        LOG_DEBUG(LOG) << "Normalising file:" << frame.source.path << "->" << filepath << endl;
+        int line_number = frame.line;
+
+        auto callback = [this, line_number, filepath](IEditor* editor) {
+            LOG_DEBUG(LOG) << "setting debugger marker at:" << filepath << ":" << line_number << endl;
+            this->SetDebuggerMarker(editor->GetCtrl(), line_number - 1);
+        };
+        clGetManager()->OpenFileAndAsyncExecute(filepath, callback);
+    }
 }
 
 void DebugAdapterClient::OnDebugNext(clDebugEvent& event)
@@ -699,16 +718,16 @@ void DebugAdapterClient::OnWorkspaceClosed(clWorkspaceEvent& event)
 void DebugAdapterClient::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
-    m_breakpoints_file = event.GetFileName();
-    m_breakpoints_file.AppendDir(".codelite");
-    m_breakpoints_file.SetFullName("breakpoints.json");
-    if(!m_breakpoints_file.FileExists()) {
+    m_session.breakpoints_file = event.GetFileName();
+    m_session.breakpoints_file.AppendDir(".codelite");
+    m_session.breakpoints_file.SetFullName("breakpoints.json");
+    if(!m_session.breakpoints_file.FileExists()) {
         // first time, create the file with empty content
-        m_breakpoints_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        FileUtils::WriteFileContent(m_breakpoints_file, "[]");
+        m_session.breakpoints_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        FileUtils::WriteFileContent(m_session.breakpoints_file, "[]");
     }
 
-    LOG_DEBUG(LOG) << "Loading breakpoints from file:" << m_breakpoints_file << endl;
+    LOG_DEBUG(LOG) << "Loading breakpoints from file:" << m_session.breakpoints_file << endl;
 }
 
 void DebugAdapterClient::OnToggleInterrupt(clDebugEvent& event)
@@ -1091,7 +1110,31 @@ void DebugAdapterClient::StartAndConnectToDapServer(const wxString& exepath, con
     LOG_DEBUG(LOG) << "Starting debugger for command:" << endl;
     LOG_DEBUG(LOG) << v << endl;
     LOG_DEBUG(LOG) << "working directory:" << working_directory << endl;
+    m_session.Clear();
+    m_session.working_directory = working_directory;
     m_client.Launch(std::move(v), working_directory, false);
 }
 
 void DebugAdapterClient::OnFileLoaded(clCommandEvent& event) { event.Skip(); }
+
+wxString DebugAdapterClient::NormalisePath(const wxString& path) const
+{
+    wxFileName fn(path);
+    wxPathFormat path_format = wxPATH_NATIVE;
+    if(m_session.debug_over_ssh) {
+        path_format = wxPATH_UNIX;
+    }
+
+    if(fn.IsRelative()) {
+        fn.MakeAbsolute(m_session.working_directory, path_format);
+        if(!m_session.debug_over_ssh) {
+            // try to locate the file locally
+            if(IS_WINDOWS && !fn.FileExists()) {
+                if(fn.HasVolume()) {
+                    fn.SetVolume("C");
+                }
+            }
+        }
+    }
+    return fn.GetFullPath(path_format);
+}

@@ -1,6 +1,7 @@
 #include "DAPMainView.h"
 
 #include "globals.h"
+#include "macros.h"
 
 DAPMainView::DAPMainView(wxWindow* parent, dap::Client* client)
     : DAPMainViewBase(parent)
@@ -9,10 +10,11 @@ DAPMainView::DAPMainView(wxWindow* parent, dap::Client* client)
     m_treeThreads->SetTreeStyle(m_treeThreads->GetTreeStyle() | wxTR_HIDE_ROOT);
     m_treeThreads->SetShowHeader(true);
     m_treeThreads->AddHeader(_("ID"));     // The thread/frame ID
-    m_treeThreads->AddHeader(_("Name"));   // The thread/frame name
-    m_treeThreads->AddHeader(_("Source")); // The frame source (function or file)
+    m_treeThreads->AddHeader(_("Name"));   // The frame source (function or file)
     m_treeThreads->AddHeader(_("Line"));   // The frame line
+    m_treeThreads->AddHeader(_("Source")); // The thread/frame name
     m_treeThreads->AddRoot(_("Threads"));
+    m_treeThreads->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPMainView::OnItemExpanding, this);
 }
 
 DAPMainView::~DAPMainView() {}
@@ -90,17 +92,40 @@ void DAPMainView::UpdateFrames(int threadId, dap::StackTraceResponse* response)
     // append the stack frame
     for(const auto& frame : response->stackFrames) {
         wxTreeItemId frame_item = m_treeThreads->AppendItem(parent, wxString() << frame.id);
-        m_treeThreads->SetItemText(frame_item, frame.name, 1);
 
         wxString source;
-        if(!frame.source.name.empty()) {
-            source = frame.source.name;
-        } else {
+        if(!frame.source.path.empty()) {
             source = frame.source.path;
+        } else {
+            source = frame.source.name;
         }
-        m_treeThreads->SetItemText(frame_item, source, 2);
-        m_treeThreads->SetItemText(frame_item, wxString() << frame.line, 3);
+
+        m_treeThreads->SetItemText(frame_item, source, 1);
+        m_treeThreads->SetItemText(frame_item, wxString() << frame.line, 2);
+        m_treeThreads->SetItemText(frame_item, frame.name, 3);
     }
     m_treeThreads->Expand(parent);
     m_treeThreads->Commit();
+}
+
+void DAPMainView::OnItemExpanding(wxTreeEvent& event)
+{
+    event.Skip();
+    wxTreeItemId item = event.GetItem();
+    CHECK_ITEM_RET(item);
+
+    wxTreeItemIdValue cookie;
+    if(m_treeThreads->ItemHasChildren(item) && m_treeThreads->GetChildrenCount(item, false) == 1 &&
+       m_treeThreads->GetItemText(m_treeThreads->GetFirstChild(item, cookie)) == "<dummy>") {
+        // delete the children and request for backtrace
+        m_client->GetFrames(GetThreadId(item));
+    }
+}
+
+int DAPMainView::GetThreadId(const wxTreeItemId& item)
+{
+    if(!item.IsOk()) {
+        return wxNOT_FOUND;
+    }
+    return wxStringToInt(m_treeThreads->GetItemText(item), wxNOT_FOUND);
 }

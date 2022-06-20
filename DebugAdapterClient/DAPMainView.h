@@ -12,6 +12,9 @@ class DAPMainView : public DAPMainViewBase
 
 protected:
     wxTreeItemId FindThreadNode(int threadId);
+    int GetThreadId(const wxTreeItemId& item);
+
+    void OnItemExpanding(wxTreeEvent& event);
 
 public:
     DAPMainView(wxWindow* parent, dap::Client* client);

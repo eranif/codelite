@@ -32,17 +32,35 @@
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
 #include "plugin.h"
+#include "ssh_account_info.h"
 
 #include <wx/stc/stc.h>
 
 class DAPMainView;
+
+struct DebugSession {
+    wxFileName breakpoints_file;
+    bool need_to_set_breakpoints = false;
+    wxString working_directory;
+    bool debug_over_ssh = false;
+    SSHAccountInfo ssh_acount;
+
+    void Clear()
+    {
+        breakpoints_file.Clear();
+        need_to_set_breakpoints = false;
+        working_directory.clear();
+        debug_over_ssh = false;
+        ssh_acount = {};
+    }
+};
+
 class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
     wxString m_defaultPerspective;
     clModuleLogger LOG;
-    wxFileName m_breakpoints_file;
-    bool m_need_to_set_breakpoints = false;
+    DebugSession m_session;
 
     /// ------------------------------------
     /// UI elements
@@ -72,6 +90,7 @@ private:
 
     /// Place breakpoint markers for a given editor
     void RefreshBreakpointsMarkersForEditor(IEditor* editor);
+    wxString NormalisePath(const wxString& path) const;
 
 public:
     DebugAdapterClient(IManager* manager);

@@ -569,7 +569,7 @@ wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& 
         wxString env_name;
         if(is_env_variable(part, &env_name)) {
             // try the environment variables first
-            if(env_map.count(env_name)) {
+            if(env_map.find(env_name) != env_map.end()) {
                 resolved << env_map.find(env_name)->second;
             } else if(MacroManager::Instance()->IsCodeLiteMacro(env_name)) {
                 // try to resolve it using the macro manager
@@ -669,7 +669,7 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     result.reserve(current_env_map.size());
     for(const auto& vt : current_env_map) {
         if(interesting_env_set.count(vt.first))
-            result.emplace_back(vt);
+            result.push_back({vt.first, vt.second});
     }
     return result;
 }

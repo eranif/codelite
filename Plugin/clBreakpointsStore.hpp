@@ -12,25 +12,21 @@
 #include <vector>
 #include <wx/filename.h>
 
-class WXDLLIMPEXP_SDK clBreakpointsStore : public wxEvtHandler
+class WXDLLIMPEXP_SDK clBreakpointsStore
 {
     // breakpoints as set by the user
     std::unordered_map<wxString, UIBreakpoint::set_t> m_source_breakpoints;
     std::unordered_map<UIBreakpoint, UIBreakpoint> m_function_breakpoints;
 
-    // is a debug session in progress?
-    wxFileName m_breakpoint_file;
-
 private:
-    void Clear();
-
-protected:
-    void OnWorkspaceLoaded(clWorkspaceEvent& event);
-    void OnWorkspaceClosed(clWorkspaceEvent& event);
-
 public:
     clBreakpointsStore();
     virtual ~clBreakpointsStore();
+
+    /**
+     * @brief clear the store
+     */
+    void Clear();
 
     /**
      * @brief store the breakpoints into a file
@@ -62,6 +58,16 @@ public:
      * @brief return true if a breakpoint is already set for a given file and line
      */
     bool HasSourceBreakpoint(const wxString& path, int lineNumber) const;
+
+    /**
+     * @brief return true if we already have this breakpoint
+     */
+    bool HasBreakpoint(const UIBreakpoint& bp) const;
+
+    /**
+     * @brief add breakpoint to the store
+     */
+    void AddBreakpoint(const UIBreakpoint& bp);
 
     /**
      * @brief add a source breakpoint

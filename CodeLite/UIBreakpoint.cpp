@@ -43,3 +43,23 @@ void UIBreakpoint::From(const JSONItem& json)
     m_function = json["function"].toString();
     m_condition = json["condition"].toString();
 }
+
+bool UIBreakpoint::From(const clDebuggerBreakpoint& bp)
+{
+    if(bp.bp_type != BreakpointType::BP_type_break)
+        return false;
+
+    if(!bp.function_name.empty()) {
+        SetType(UIBreakpointType::FUNCTION);
+        SetFunction(bp.function_name);
+        SetCondition(bp.conditions);
+    } else if(bp.lineno < 0 || bp.file.empty()) {
+        return false;
+    } else {
+        SetType(UIBreakpointType::SOURCE);
+        SetFile(bp.file);
+        SetLine(bp.lineno);
+        SetCondition(bp.conditions);
+    }
+    return true;
+}

@@ -3,18 +3,12 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
+#include "imanager.h"
 
-clBreakpointsStore::clBreakpointsStore()
-{
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBreakpointsStore::OnWorkspaceLoaded, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clBreakpointsStore::OnWorkspaceClosed, this);
-}
+clBreakpointsStore::clBreakpointsStore() {}
 
-clBreakpointsStore::~clBreakpointsStore()
-{
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBreakpointsStore::OnWorkspaceLoaded, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clBreakpointsStore::OnWorkspaceClosed, this);
-}
+clBreakpointsStore::~clBreakpointsStore() {}
 
 void clBreakpointsStore::Save(const wxFileName& filename)
 {
@@ -76,31 +70,8 @@ void clBreakpointsStore::Load(const wxFileName& filename)
               << "function breakpoints from" << filename << endl;
 }
 
-void clBreakpointsStore::OnWorkspaceLoaded(clWorkspaceEvent& event)
-{
-    event.Skip();
-    Clear();
-    m_breakpoint_file = event.GetFileName();
-    m_breakpoint_file.AppendDir(".codelite");
-    m_breakpoint_file.SetFullName("breakpoints.json");
-    if(!m_breakpoint_file.FileExists()) {
-        // first time, create the file with empty content
-        m_breakpoint_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        FileUtils::WriteFileContent(m_breakpoint_file, "[]");
-    }
-    Load(m_breakpoint_file);
-}
-
-void clBreakpointsStore::OnWorkspaceClosed(clWorkspaceEvent& event)
-{
-    event.Skip();
-    Save(m_breakpoint_file);
-    Clear();
-}
-
 void clBreakpointsStore::Clear()
 {
-    m_breakpoint_file.Clear();
     m_source_breakpoints.clear();
     m_function_breakpoints.clear();
 }
@@ -178,5 +149,29 @@ void clBreakpointsStore::DeleteSourceBreakpoint(const wxString& path, int lineNu
             return;
         }
         m_source_breakpoints[path].erase({ path, lineNumber });
+    }
+}
+
+bool clBreakpointsStore::HasBreakpoint(const UIBreakpoint& bp) const
+{
+    if(bp.IsFunctionBreakpoint()) {
+        return m_function_breakpoints.count(bp);
+    } else if(bp.IsSourceBreakpoint()) {
+        const wxString& path = bp.GetFile();
+        return m_source_breakpoints.count(path) != 0 && m_source_breakpoints.find(path)->second.count(bp) != 0;
+    } else {
+        return false;
+    }
+}
+
+void clBreakpointsStore::AddBreakpoint(const UIBreakpoint& bp)
+{
+    if(HasBreakpoint(bp)) {
+        return;
+    }
+    if(bp.IsFunctionBreakpoint()) {
+        m_function_breakpoints.insert({ bp, {} });
+    } else if(bp.IsSourceBreakpoint()) {
+        AddSourceBreakpoint(bp.GetFile(), bp.GetLine());
     }
 }

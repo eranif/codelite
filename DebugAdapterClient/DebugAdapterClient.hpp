@@ -40,8 +40,9 @@ class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
     wxString m_defaultPerspective;
-    clBreakpointsStore m_breakpointsStore;
     clModuleLogger LOG;
+    wxFileName m_breakpoints_file;
+    bool m_need_to_set_breakpoints = false;
 
     /// ------------------------------------
     /// UI elements
@@ -90,8 +91,8 @@ public:
 
 protected:
     // Other codelite events
-    void OnWorkspaceLoaded(wxCommandEvent& event);
-    void OnWorkspaceClosed(wxCommandEvent& event);
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnSettings(wxCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
     void OnFileLoaded(clCommandEvent& event);

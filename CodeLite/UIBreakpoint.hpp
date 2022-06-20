@@ -2,6 +2,7 @@
 #define UIBREAKPOINT_HPP
 
 #include "JSON.h"
+#include "clDebuggerBreakpoint.hpp"
 #include "codelite_exports.h"
 
 #include <functional>
@@ -60,6 +61,7 @@ public:
 
     JSONItem To() const;
     void From(const JSONItem& json);
+    bool From(const clDebuggerBreakpoint& bp);
 };
 
 // provide custom hash so we will be able to use UIBreakpoint with unordered_map/unordered_set et al

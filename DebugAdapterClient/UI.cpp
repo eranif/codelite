@@ -62,3 +62,69 @@ DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
 }
 
 DAPMainViewBase::~DAPMainViewBase() {}
+
+DapDebuggerSettingsDlgBase::DapDebuggerSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
+                                                       const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer249 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer249);
+
+    m_panelMain = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+
+    boxSizer249->Add(m_panelMain, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer254 = new wxBoxSizer(wxVERTICAL);
+    m_panelMain->SetSizer(boxSizer254);
+
+    m_notebook =
+        new wxNotebook(m_panelMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelMain, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebook->SetName(wxT("m_notebook"));
+
+    boxSizer254->Add(m_notebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer250 = new wxStdDialogButtonSizer();
+
+    boxSizer249->Add(m_stdBtnSizer250, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button251 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button251->SetDefault();
+    m_stdBtnSizer250->AddButton(m_button251);
+
+    m_button252 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer250->AddButton(m_button252);
+    m_stdBtnSizer250->Realize();
+
+#if wxVERSION_NUMBER >= 2900
+    if(!wxPersistenceManager::Get().Find(m_notebook)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_notebook);
+    }
+#endif
+
+    SetName(wxT("DapDebuggerSettingsDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if(GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if(!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+}
+
+DapDebuggerSettingsDlgBase::~DapDebuggerSettingsDlgBase() {}

@@ -56,11 +56,17 @@
   <Dependencies/>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">
+      <File Name="clDapSettingsStore.cpp"/>
+      <File Name="clDapSettingsStore.hpp"/>
       <File Name="CMakeLists.txt"/>
       <File Name="DebugAdapterClient.cpp"/>
       <File Name="DebugAdapterClient.hpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="UI">
+      <File Name="DapSettingsPage.cpp"/>
+      <File Name="DapSettingsPage.hpp"/>
+      <File Name="DapDebuggerSettingsDlg.cpp"/>
+      <File Name="DapDebuggerSettingsDlg.h"/>
       <File Name="DAPMainView.cpp"/>
       <File Name="DAPMainView.h"/>
     </VirtualDirectory>

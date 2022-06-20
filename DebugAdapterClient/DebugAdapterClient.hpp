@@ -27,7 +27,7 @@
 #define __LLDBDebugger__
 
 #include "asyncprocess.h"
-#include "clBreakpointsStore.hpp"
+#include "clDapSettingsStore.hpp"
 #include "clModuleLogger.hpp"
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
@@ -39,7 +39,6 @@
 class DAPMainView;
 
 struct DebugSession {
-    wxFileName breakpoints_file;
     bool need_to_set_breakpoints = false;
     wxString working_directory;
     bool debug_over_ssh = false;
@@ -47,7 +46,6 @@ struct DebugSession {
 
     void Clear()
     {
-        breakpoints_file.Clear();
         need_to_set_breakpoints = false;
         working_directory.clear();
         debug_over_ssh = false;
@@ -61,6 +59,7 @@ class DebugAdapterClient : public IPlugin
     wxString m_defaultPerspective;
     clModuleLogger LOG;
     DebugSession m_session;
+    clDapSettingsStore m_dap_store;
 
     /// ------------------------------------
     /// UI elements
@@ -87,6 +86,7 @@ private:
     /// pass them to the debugger. If the debugger, is not running, do
     /// nothing
     void ApplyBreakpoints(const wxString& path);
+    void RestoreUI();
 
     /// Place breakpoint markers for a given editor
     void RefreshBreakpointsMarkersForEditor(IEditor* editor);

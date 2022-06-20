@@ -26,6 +26,7 @@
 #include "DebugAdapterClient.hpp"
 
 #include "DAPMainView.h"
+#include "DapDebuggerSettingsDlg.h"
 #include "StringUtils.h"
 #include "bookmark_manager.h"
 #include "clFileSystemWorkspace.hpp"
@@ -198,11 +199,17 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
 {
     // setup custom logger for this module
     wxFileName logfile(clStandardPaths::Get().GetUserDataDir(), "debug-adapter-client.log");
+
     LOG.Open(logfile);
     LOG.SetCurrentLogLevel(FileLogger::Dbg);
     LOG_DEBUG(LOG) << "Debug Adapter Client startd" << endl;
     m_longName = _("Debug Adapter Client");
     m_shortName = wxT("DebugAdapterClient");
+
+    // load settings
+    wxFileName configuration_file(clStandardPaths::Get().GetUserDataDir(), "debug-adapter-client.conf");
+    configuration_file.AppendDir("config");
+    m_dap_store.Load(configuration_file);
 
     // UI events
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &DebugAdapterClient::OnFileLoaded, this);
@@ -301,8 +308,6 @@ void DebugAdapterClient::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnJumpToCursor, this,
                                  lldbJumpToCursorContextMenuId);
 
-    wxTheApp->Unbind(wxEVT_COMMAND_MENU_SELECTED, &DebugAdapterClient::OnAddWatch, this, lldbAddWatchContextMenuId);
-
     // Dap events
     m_client.Unbind(wxEVT_DAP_EXITED_EVENT, &DebugAdapterClient::OnDapExited, this);
     m_client.Unbind(wxEVT_DAP_TERMINATED_EVENT, &DebugAdapterClient::OnDapExited, this);
@@ -343,7 +348,7 @@ void DebugAdapterClient::CreatePluginMenu(wxMenu* pluginsMenu)
         if(menuPos != wxNOT_FOUND) {
             settingsMenu = mb->GetMenu(menuPos);
             if(settingsMenu) {
-                settingsMenu->Append(XRCID("lldb_settings"), _("LLDB Settings..."));
+                settingsMenu->Append(XRCID("lldb_settings"), _("Debug Adapter Client..."));
             }
         }
     }
@@ -464,18 +469,8 @@ void DebugAdapterClient::OnDapExited(DAPEvent& event)
     event.Skip();
     m_client.Reset();
 
-    // Save current perspective before destroying the session
-    if(m_isPerspectiveLoaded) {
-        m_mgr->SavePerspective("DAP");
-
-        // Restore the old perspective
-        m_mgr->LoadPerspective("Default");
-        m_isPerspectiveLoaded = false;
-    }
-
-    DestroyUI();
-
-    LOG_DEBUG(LOG) << "CODELITE>> DAP exited" << endl;
+    RestoreUI();
+    LOG_DEBUG(LOG) << "dap-server exited" << endl;
 
     clDebugEvent e(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent(e);
@@ -585,6 +580,7 @@ void DebugAdapterClient::OnDebugStop(clDebugEvent& event)
     CHECK_IS_DAP_CONNECTED();
     LOG_DEBUG(LOG) << "-> Stop" << endl;
     m_client.Reset();
+    RestoreUI();
 }
 
 void DebugAdapterClient::OnDebugIsRunning(clDebugEvent& event)
@@ -618,6 +614,20 @@ void DebugAdapterClient::OnIsDebugger(clDebugEvent& event)
     event.Skip();
     // register us as a debugger
     event.GetStrings().Add(DEBUGGER_NAME);
+}
+
+void DebugAdapterClient::RestoreUI()
+{
+    // Save current perspective before destroying the session
+    if(m_isPerspectiveLoaded) {
+        m_mgr->SavePerspective("DAP");
+
+        // Restore the old perspective
+        m_mgr->LoadPerspective("Default");
+        m_isPerspectiveLoaded = false;
+    }
+
+    DestroyUI();
 }
 
 void DebugAdapterClient::LoadPerspective()
@@ -719,20 +729,7 @@ void DebugAdapterClient::OnWorkspaceClosed(clWorkspaceEvent& event)
     m_client.Reset();
 }
 
-void DebugAdapterClient::OnWorkspaceLoaded(clWorkspaceEvent& event)
-{
-    event.Skip();
-    m_session.breakpoints_file = event.GetFileName();
-    m_session.breakpoints_file.AppendDir(".codelite");
-    m_session.breakpoints_file.SetFullName("breakpoints.json");
-    if(!m_session.breakpoints_file.FileExists()) {
-        // first time, create the file with empty content
-        m_session.breakpoints_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-        FileUtils::WriteFileContent(m_session.breakpoints_file, "[]");
-    }
-
-    LOG_DEBUG(LOG) << "Loading breakpoints from file:" << m_session.breakpoints_file << endl;
-}
+void DebugAdapterClient::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
 
 void DebugAdapterClient::OnToggleInterrupt(clDebugEvent& event)
 {
@@ -762,76 +759,31 @@ void DebugAdapterClient::OnBuildStarting(clBuildEvent& event)
 void DebugAdapterClient::OnAddWatch(wxCommandEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-#if 0
-    const auto editor = m_mgr->GetActiveEditor();
-    if(!editor) {
-        return;
-    }
-
-    const auto watchWord = GetWatchWord(*editor);
-    if(watchWord.IsEmpty()) {
-        return;
-    }
-
-    GetLLDB()->AddWatch(watchWord);
-
-    // Refresh the locals view
-    GetLLDB()->RequestLocals();
-#endif
+    // FIXME
 }
 
 void DebugAdapterClient::OnRunToCursor(wxCommandEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-#if 0
-    const auto editor = m_mgr->GetActiveEditor();
-    if(!editor) {
-        return;
-    }
-
-    m_connector.RunTo(editor->GetFileName(), editor->GetCurrentLine() + 1);
-#endif
+    // FIXME
 }
 
 void DebugAdapterClient::OnJumpToCursor(wxCommandEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     // FIXME
-#if 0
-    const auto editor = m_mgr->GetActiveEditor();
-    if(!editor) {
-        return;
-    }
-
-    m_connector.JumpTo(editor->GetFileName(), editor->GetCurrentLine() + 1);
-#endif
 }
 
 void DebugAdapterClient::OnSettings(wxCommandEvent& event)
 {
     event.Skip();
-#if 0
-    LLDBSettingDialog dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
-        dlg.Save();
-    }
-#endif
+    DapDebuggerSettingsDlg dlg(EventNotifier::Get()->TopFrame(), m_dap_store);
+    dlg.ShowModal();
 }
 
 void DebugAdapterClient::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
-void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event)
-{
-    CHECK_IS_DAP_CONNECTED();
-#if 0
-    // FIXME: use the function ::GetCppExpressionFromPos() to get a better expression
-    wxString expression = event.GetString();
-    if(expression.IsEmpty())
-        return;
-
-    m_connector.EvaluateExpression(expression);
-#endif
-}
+void DebugAdapterClient::OnDebugTooltip(clDebugEvent& event) { CHECK_IS_DAP_CONNECTED(); }
 
 void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
 {

@@ -12,6 +12,7 @@ class DapEntry
     wxString m_command;
     wxString m_name;
     wxString m_connection_string;
+    wxString m_environment;
 
 public:
     DapEntry() {}
@@ -24,6 +25,9 @@ public:
     const wxString& GetCommand() const { return m_command; }
     const wxString& GetName() const { return m_name; }
     const wxString& GetConnectionString() const { return m_connection_string; }
+
+    void SetEnvironment(const wxString& environment) { this->m_environment = environment; }
+    const wxString& GetEnvironment() const { return m_environment; }
 
     JSONItem To() const;
     void From(const JSONItem& json);

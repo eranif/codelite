@@ -777,8 +777,13 @@ void DebugAdapterClient::OnJumpToCursor(wxCommandEvent& event)
 void DebugAdapterClient::OnSettings(wxCommandEvent& event)
 {
     event.Skip();
-    DapDebuggerSettingsDlg dlg(EventNotifier::Get()->TopFrame(), m_dap_store);
-    dlg.ShowModal();
+    clDapSettingsStore store = m_dap_store;
+    DapDebuggerSettingsDlg dlg(EventNotifier::Get()->TopFrame(), store);
+    if(dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+    m_dap_store = store;
+    m_dap_store.Store();
 }
 
 void DebugAdapterClient::OnInitDone(wxCommandEvent& event) { event.Skip(); }

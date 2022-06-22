@@ -25,6 +25,7 @@
 
 #include "frame.h"
 
+#include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompilersDetectorManager.h"
 #include "CompilersFoundDlg.h"
@@ -42,7 +43,6 @@
 #include "batchbuilddlg.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
-#include "BreakpointsView.hpp"
 #include "build_custom_targets_menu_manager.h"
 #include "build_settings_config.h"
 #include "builder.h"
@@ -4932,7 +4932,7 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 
 void clMainFrame::DoSuggestRestart()
 {
-    m_infoBar->DisplayMessage(_("A CodeLite restart is needed. Would you like to restart it now?"), wxICON_QUESTION,
+    m_infoBar->DisplayMessage(_("Reload CodeLite?"), wxICON_QUESTION,
                               { { XRCID("restart-codelite"), _("Yes") }, { wxID_NO, _("No") } });
 }
 

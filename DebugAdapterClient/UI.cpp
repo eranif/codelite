@@ -77,6 +77,12 @@ DapDebuggerSettingsDlgBase::DapDebuggerSettingsDlgBase(wxWindow* parent, wxWindo
     wxBoxSizer* boxSizer249 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer249);
 
+    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                              wxTB_HORZ_TEXT | wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer249->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     m_panelMain = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     boxSizer249->Add(m_panelMain, 1, wxEXPAND, WXC_FROM_DIP(5));

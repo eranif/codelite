@@ -19,6 +19,8 @@
 #include "clThemedTreeCtrl.h"
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/notebook.h>
 #include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
@@ -63,6 +65,7 @@ public:
 class DapDebuggerSettingsDlgBase : public wxDialog
 {
 protected:
+    clToolBar* m_toolbar;
     wxPanel* m_panelMain;
     wxNotebook* m_notebook;
     wxStdDialogButtonSizer* m_stdBtnSizer250;
@@ -71,11 +74,12 @@ protected:
 
 protected:
 public:
+    clToolBar* GetToolbar() { return m_toolbar; }
     wxNotebook* GetNotebook() { return m_notebook; }
     wxPanel* GetPanelMain() { return m_panelMain; }
     DapDebuggerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Settings"),
                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
-                               long style = wxDEFAULT_DIALOG_STYLE);
+                               long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DapDebuggerSettingsDlgBase();
 };
 

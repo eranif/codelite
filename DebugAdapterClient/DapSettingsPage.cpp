@@ -20,6 +20,7 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     AddHeader(m_entry.GetName() + _(" settings"));
     AddProperty(_("Command"), m_entry.GetCommand(), UPDATE_TEXT_CB(SetCommand));
     AddProperty(_("Connection string"), m_entry.GetConnectionString(), UPDATE_TEXT_CB(SetConnectionString));
+    AddProperty(_("Environment"), m_entry.GetEnvironment(), UPDATE_TEXT_CB(SetEnvironment));
 }
 
 DapSettingsPage::~DapSettingsPage() {}

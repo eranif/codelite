@@ -8,6 +8,10 @@ class DapDebuggerSettingsDlg : public DapDebuggerSettingsDlgBase
 {
     clDapSettingsStore& m_store;
 
+protected:
+    void OnScan(wxCommandEvent& event);
+    void OnNew(wxCommandEvent& event);
+
 public:
     DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsStore& store);
     virtual ~DapDebuggerSettingsDlg();

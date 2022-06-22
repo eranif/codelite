@@ -6,6 +6,7 @@ JSONItem DapEntry::To() const
     json.addProperty("name", m_name);
     json.addProperty("command", m_command);
     json.addProperty("connection_string", m_connection_string);
+    json.addProperty("environment", m_environment);
     return json;
 }
 
@@ -14,6 +15,7 @@ void DapEntry::From(const JSONItem& json)
     m_name = json["name"].toString();
     m_command = json["command"].toString();
     m_connection_string = json["connection_string"].toString();
+    m_environment = json["environment"].toString();
 }
 
 //////////////////////////////////////////////////////////////

@@ -448,12 +448,13 @@ bool WinProcessImpl::Read(wxString& buff, wxString& buffErr)
     if(!DoReadFromPipe(hChildStderrRdDup, ((m_flags & IProcessStderrEvent) ? buffErr : buff))) {
         le2 = GetLastError();
     }
+
     if(!DoReadFromPipe(hChildStdoutRdDup, buff)) {
         le1 = GetLastError();
     }
     if((le1 == ERROR_NO_DATA) && (le2 == ERROR_NO_DATA)) {
         if(IsAlive()) {
-            wxThread::Sleep(5);
+            wxThread::Sleep(1);
             return true;
         }
     }

@@ -32,6 +32,7 @@
 #endif
 
 #include "asyncprocess.h"
+#include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
 #include "winprocess.h"
@@ -557,6 +558,7 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
 {
 #ifdef __WXMSW__
     wxString errMsg;
+    clDEBUG1() << "executing process:" << command << endl;
     std::unique_ptr<WinProcess> proc{ WinProcess::Execute(command, errMsg) };
     if(!proc) {
         return;
@@ -566,15 +568,21 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
     wxString tmpbuf;
     wxString buff;
 
+    clDEBUG1() << "reading process output..." << endl;
     while(proc->IsAlive()) {
         tmpbuf.Clear();
-        proc->Read(tmpbuf);
-        buff << tmpbuf;
-        wxThread::Sleep(10);
+        if(proc->Read(tmpbuf)) {
+            // as long as we read something, dont sleep...
+            buff << tmpbuf;
+        } else {
+            wxThread::Sleep(1);
+        }
     }
     tmpbuf.Clear();
+    clDEBUG1() << "process terminated" << endl;
 
     // Read any unread output
+    clDEBUG1() << "reading process output remainder..." << endl;
     proc->Read(tmpbuf);
     while(!tmpbuf.IsEmpty()) {
         buff << tmpbuf;
@@ -582,6 +590,7 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
         proc->Read(tmpbuf);
     }
     proc->Cleanup();
+    clDEBUG1() << "reading process output remainder...done" << endl;
 
     // Convert buff into wxArrayString
     output = ::wxStringTokenize(buff, "\n", wxTOKEN_STRTOK);

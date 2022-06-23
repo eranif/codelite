@@ -1059,7 +1059,7 @@ void DebugAdapterClient::StartAndConnectToDapServer(const DapEntry& dap_server, 
     LOG_DEBUG(LOG) << "working directory:" << working_directory << endl;
     m_session.Clear();
     m_session.working_directory = working_directory;
-    m_client.Launch(std::move(v), working_directory, false);
+    m_client.Launch(std::move(v), working_directory);
 }
 
 void DebugAdapterClient::OnFileLoaded(clCommandEvent& event) { event.Skip(); }

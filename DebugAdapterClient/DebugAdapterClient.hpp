@@ -37,6 +37,7 @@
 #include <wx/stc/stc.h>
 
 class DAPMainView;
+class IProcess;
 
 struct DebugSession {
     bool need_to_set_breakpoints = false;
@@ -60,6 +61,7 @@ class DebugAdapterClient : public IPlugin
     clModuleLogger LOG;
     DebugSession m_session;
     clDapSettingsStore m_dap_store;
+    IProcess* m_dap_server = nullptr;
 
     /// ------------------------------------
     /// UI elements
@@ -80,8 +82,13 @@ private:
     void ClearDebuggerMarker();
     void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
     void DoCleanup();
-    void StartAndConnectToDapServer(const wxString& exepath, const wxString& args, const wxString& working_directory,
-                                    const clEnvList_t& env);
+    void StartAndConnectToDapServer(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
+                                    const wxString& working_directory, const clEnvList_t& env);
+    bool LaunchProcess(const DapEntry& dap_entry);
+
+    /// stop the dap server if it is running and send DEBUG_STOP event
+    void StopProcess();
+
     /// loads all the breakpoints from the store for a given file and
     /// pass them to the debugger. If the debugger, is not running, do
     /// nothing
@@ -91,6 +98,12 @@ private:
     /// Place breakpoint markers for a given editor
     void RefreshBreakpointsMarkersForEditor(IEditor* editor);
     wxString NormalisePath(const wxString& path) const;
+    void RegisterDebuggers();
+    /**
+     * @brief return true of the debugger identified by "name"
+     * is owned by this plugin
+     */
+    bool IsDebuggerOwnedByPlugin(const wxString& name) const;
 
 public:
     DebugAdapterClient(IManager* manager);
@@ -117,7 +130,6 @@ protected:
     void OnFileLoaded(clCommandEvent& event);
 
     // UI debugger events
-    void OnIsDebugger(clDebugEvent& event);
     void OnDebugStart(clDebugEvent& event);
     void OnDebugContinue(clDebugEvent& event);
     void OnDebugNext(clDebugEvent& event);
@@ -144,6 +156,8 @@ protected:
     void OnJumpToCursor(wxCommandEvent& event);
 
     void OnAddWatch(wxCommandEvent& event);
+    void OnProcessOutput(clProcessEvent& event);
+    void OnProcessTerminated(clProcessEvent& event);
 
     // DAP events
     void OnDapExited(DAPEvent& event);

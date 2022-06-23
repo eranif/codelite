@@ -26,7 +26,7 @@ DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsSt
         m_notebook->AddPage(new DapSettingsPage(m_notebook, m_store, vt.second), vt.first);
     }
 
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetDialogSizeAndPosition(this, 0.25);
     WindowAttrManager::Load(this);
 }
 
@@ -42,7 +42,7 @@ void DapDebuggerSettingsDlg::OnNew(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     // FIXME
-    wxString name = clGetTextFromUser(_("Enter name"), _("New dap server name"));
+    wxString name = clGetTextFromUser(_("Enter name"), _("New dap server name"), "", wxNOT_FOUND, this);
     if(name.empty()) {
         return;
     }

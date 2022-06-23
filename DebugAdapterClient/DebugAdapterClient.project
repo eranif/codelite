@@ -56,6 +56,7 @@
   <Dependencies/>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">
+      <File Name="DapLoggingHelper.hpp"/>
       <File Name="clDapSettingsStore.cpp"/>
       <File Name="clDapSettingsStore.hpp"/>
       <File Name="CMakeLists.txt"/>

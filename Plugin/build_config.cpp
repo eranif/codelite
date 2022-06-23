@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "build_config.h"
 
+#include "StringUtils.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "debuggermanager.h"
@@ -587,20 +588,6 @@ wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& 
     return resolved;
 }
 
-clEnvList_t split_env_string(const wxString& env_str)
-{
-    clEnvList_t result;
-    wxArrayString lines = ::wxStringTokenize(env_str, "\r\n", wxTOKEN_STRTOK);
-    for(wxString& line : lines) {
-        wxString key = line.BeforeFirst('=');
-        wxString value = line.AfterFirst('=');
-        if(key.empty()) {
-            continue;
-        }
-        result.push_back({ key, value });
-    }
-    return result;
-}
 } // namespace
 
 clEnvList_t BuildConfig::GetEnvironment(Project* project) const
@@ -639,7 +626,7 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     // get the workspace environment variables
     wxString workspace_env = clCxxWorkspaceST::Get()->GetEnvironmentVariabels();
     {
-        auto arr = split_env_string(workspace_env);
+        auto arr = StringUtils::BuildEnvFromString(workspace_env);
         for(auto& p : arr) {
             wxString key = p.first;
             wxString value = p.second;
@@ -653,7 +640,7 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     // and finally, this configuration environment variables
     wxString config_env = GetEnvvars();
     {
-        auto arr = split_env_string(config_env);
+        auto arr = StringUtils::BuildEnvFromString(config_env);
         for(auto& p : arr) {
             wxString key = p.first;
             wxString value = p.second;
@@ -669,7 +656,7 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     result.reserve(current_env_map.size());
     for(const auto& vt : current_env_map) {
         if(interesting_env_set.count(vt.first))
-            result.push_back({vt.first, vt.second});
+            result.push_back({ vt.first, vt.second });
     }
     return result;
 }

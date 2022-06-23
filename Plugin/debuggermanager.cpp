@@ -64,6 +64,7 @@ DebuggerMgr::~DebuggerMgr()
         (*iter)->Detach();
         delete(*iter);
     }
+
     m_dl.clear();
     m_debuggers.clear();
 }
@@ -182,25 +183,23 @@ bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
         // keep the dynamic load library
         m_dl.push_back(dl);
     }
-
-    // Load all debuggers in the form of plugin (i.e. they dont implement the IDebugger interface)
-    // and append them to a special list
-    clDebugEvent queryPlugins(wxEVT_DBG_IS_PLUGIN_DEBUGGER);
-    EventNotifier::Get()->ProcessEvent(queryPlugins);
-    m_pluginsDebuggers.swap(queryPlugins.GetStrings());
     return true;
 }
 
 wxArrayString DebuggerMgr::GetAvailableDebuggers()
 {
     wxArrayString dbgs;
-    std::map<wxString, IDebugger*>::iterator iter = m_debuggers.begin();
+    dbgs.reserve(m_pluginsDebuggers.size() + m_debuggers.size());
+
+    auto iter = m_debuggers.begin();
     for(; iter != m_debuggers.end(); iter++) {
         dbgs.Add(iter->first);
     }
 
     // append all the plugins that were registered themself as debugger
-    dbgs.insert(dbgs.end(), m_pluginsDebuggers.begin(), m_pluginsDebuggers.end());
+    for(const auto& vt : m_pluginsDebuggers) {
+        dbgs.insert(dbgs.end(), vt.second.begin(), vt.second.end());
+    }
     return dbgs;
 }
 
@@ -208,7 +207,7 @@ IDebugger* DebuggerMgr::GetActiveDebugger()
 {
     if(m_activeDebuggerName.IsEmpty()) {
         // no active debugger is set, use the first one
-        std::map<wxString, IDebugger*>::const_iterator iter = m_debuggers.begin();
+        auto iter = m_debuggers.begin();
         if(iter != m_debuggers.end()) {
             SetActiveDebugger(iter->first);
             return iter->second;
@@ -216,7 +215,7 @@ IDebugger* DebuggerMgr::GetActiveDebugger()
         return NULL;
     }
 
-    std::map<wxString, IDebugger*>::iterator iter = m_debuggers.find(m_activeDebuggerName);
+    auto iter = m_debuggers.find(m_activeDebuggerName);
     if(iter != m_debuggers.end()) {
         return iter->second;
     }
@@ -237,7 +236,7 @@ bool DebuggerMgr::GetDebuggerInformation(const wxString& name, DebuggerInformati
 
 bool DebuggerMgr::IsNativeDebuggerRunning() const
 {
-    std::map<wxString, IDebugger*>::const_iterator iter = m_debuggers.find(m_activeDebuggerName);
+    auto iter = m_debuggers.find(m_activeDebuggerName);
     if(iter == m_debuggers.end()) {
         return false;
     }
@@ -245,3 +244,11 @@ bool DebuggerMgr::IsNativeDebuggerRunning() const
     IDebugger* d = iter->second;
     return d && d->IsRunning();
 }
+
+void DebuggerMgr::RegisterDebuggers(const wxString& plugin_name, const wxArrayString& names)
+{
+    m_pluginsDebuggers.erase(plugin_name);
+    m_pluginsDebuggers.insert({ plugin_name, names });
+}
+
+void DebuggerMgr::UnregisterDebuggers(const wxString& plugin_name) { m_pluginsDebuggers.erase(plugin_name); }

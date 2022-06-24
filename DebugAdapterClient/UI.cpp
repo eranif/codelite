@@ -24,8 +24,8 @@ DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer237 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer237);
 
-    m_splitter238 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                         wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_splitter238 = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+                                               wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitter238->SetSashGravity(0.5);
     m_splitter238->SetMinimumPaneSize(10);
 

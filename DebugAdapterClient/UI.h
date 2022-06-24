@@ -15,6 +15,7 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
+#include "clThemedSplitterWindow.h"
 #include <wx/dataview.h>
 #include "clThemedTreeCtrl.h"
 #include <wx/dialog.h>
@@ -44,7 +45,7 @@
 class DAPMainViewBase : public wxPanel
 {
 protected:
-    wxSplitterWindow* m_splitter238;
+    clThemedSplitterWindow* m_splitter238;
     wxPanel* m_splitterPage240;
     clThemedTreeCtrl* m_treeThreads;
     wxPanel* m_splitterPage242;
@@ -56,7 +57,7 @@ public:
     wxPanel* GetSplitterPage240() { return m_splitterPage240; }
     clThemedTreeCtrl* GetTreeVariables() { return m_treeVariables; }
     wxPanel* GetSplitterPage242() { return m_splitterPage242; }
-    wxSplitterWindow* GetSplitter238() { return m_splitter238; }
+    clThemedSplitterWindow* GetSplitter238() { return m_splitter238; }
     DAPMainViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~DAPMainViewBase();

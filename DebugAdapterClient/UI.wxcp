@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	258,
+		"m_objCounter":	262,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafternz79PnInitBitmapResources",
 		"m_bitmapsFile":	"UI_lldbdebugger_bitmaps.cpp",
@@ -80,7 +80,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"LLDBDebugger:Plugin:UI"
+					"m_path":	"DebugAdapterClient:Plugin:UI"
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -186,11 +186,11 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
-									"m_value":	""
+									"m_value":	"clThemedSplitterWindow"
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
-									"m_value":	""
+									"m_value":	"clThemedSplitterWindow.h"
 								}, {
 									"type":	"string",
 									"m_label":	"Style:",

@@ -24,6 +24,7 @@
 #include "clToolBar.h"
 #include <wx/notebook.h>
 #include <wx/button.h>
+#include "clThemedListCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -82,6 +83,19 @@ public:
                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
                                long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~DapDebuggerSettingsDlgBase();
+};
+
+class DAPBreakpointsViewBase : public wxPanel
+{
+protected:
+    clThemedListCtrl* m_dvListCtrl;
+
+protected:
+public:
+    clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    virtual ~DAPBreakpointsViewBase();
 };
 
 #endif

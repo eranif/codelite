@@ -26,6 +26,7 @@
 #ifndef __LLDBDebugger__
 #define __LLDBDebugger__
 
+#include "DAPBreakpointsView.h"
 #include "RunInTerminalHelper.hpp"
 #include "asyncprocess.h"
 #include "clDapSettingsStore.hpp"
@@ -65,7 +66,6 @@ struct DebugSession {
 class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
-    clModuleLogger LOG;
     wxString m_defaultPerspective;
     DebugSession m_session;
     clDapSettingsStore m_dap_store;
@@ -76,6 +76,7 @@ class DebugAdapterClient : public IPlugin
     /// UI elements
     /// ------------------------------------
     DAPMainView* m_threadsView = nullptr;
+    DAPBreakpointsView* m_breakpointsView = nullptr;
     bool m_raisOnBpHit;
     bool m_isPerspectiveLoaded;
     bool m_showThreadNames;
@@ -171,15 +172,16 @@ protected:
 
     // DAP events
     void OnDapExited(DAPEvent& event);
-    void OnLaunchResponse(DAPEvent& event);
-    void OnInitializedEvent(DAPEvent& event);
-    void OnInitializeResponse(DAPEvent& event);
-    void OnStoppedEvent(DAPEvent& event);
-    void OnThreadsResponse(DAPEvent& event);
-    void OnStackTraceResponse(DAPEvent& event);
-    void OnSetFunctionBreakpointResponse(DAPEvent& event);
-    void OnSetSourceBreakpointResponse(DAPEvent& event);
-    void OnRunInTerminal(DAPEvent& event);
+    void OnDapLaunchResponse(DAPEvent& event);
+    void OnDapInitializedEvent(DAPEvent& event);
+    void OnDapInitializeResponse(DAPEvent& event);
+    void OnDapStoppedEvent(DAPEvent& event);
+    void OnDapThreadsResponse(DAPEvent& event);
+    void OnDapStackTraceResponse(DAPEvent& event);
+    void OnDapSetFunctionBreakpointResponse(DAPEvent& event);
+    void OnDapSetSourceBreakpointResponse(DAPEvent& event);
+    void OnDapBreakpointEvent(DAPEvent& event);
+    void OnDapRunInTerminal(DAPEvent& event);
     void OnDapLog(DAPEvent& event);
 
 public:

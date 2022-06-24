@@ -106,7 +106,8 @@ private:
 
     /// Place breakpoint markers for a given editor
     void RefreshBreakpointsMarkersForEditor(IEditor* editor);
-    wxString NormalisePath(const wxString& path) const;
+    wxString NormalisePathForSend(const wxString& path) const;
+    wxString NormaliseReceivedPath(const wxString& path) const;
     void RegisterDebuggers();
     /**
      * @brief return true of the debugger identified by "name"

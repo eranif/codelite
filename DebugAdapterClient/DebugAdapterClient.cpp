@@ -936,7 +936,7 @@ void DebugAdapterClient::OnStackTraceResponse(DAPEvent& event)
     if(!response->stackFrames.empty()) {
         auto frame = response->stackFrames[0];
         LOG_DEBUG(LOG) << "Frame path:" << frame.source.path << endl;
-        wxString filepath = NormalisePath(frame.source.path);
+        wxString filepath = NormaliseReceivedPath(frame.source.path);
         LOG_DEBUG(LOG) << "Normalising file:" << frame.source.path << "->" << filepath << endl;
         int line_number = frame.line;
 
@@ -1030,7 +1030,7 @@ void DebugAdapterClient::ApplyBreakpoints(const wxString& path)
             wxFileName filepath(vt.first);
             LOG_DEBUG(LOG) << "Applying breakpoints for file:" << filepath << endl;
             LOG_DEBUG(LOG) << vt.second << endl;
-            wxString source_path = NormalisePath(filepath.GetFullPath());
+            wxString source_path = NormalisePathForSend(filepath.GetFullPath());
             m_client.SetBreakpointsFile(source_path, vt.second);
         }
     }
@@ -1123,32 +1123,6 @@ void DebugAdapterClient::StartAndConnectToDapServer(const DapEntry& dap_server, 
 
 void DebugAdapterClient::OnFileLoaded(clCommandEvent& event) { event.Skip(); }
 
-wxString DebugAdapterClient::NormalisePath(const wxString& path) const
-{
-    wxFileName fn(path);
-    if(m_session.dap_server.UseRelativePath()) {
-        return fn.GetFullName();
-    }
-
-    wxPathFormat path_format = wxPATH_NATIVE;
-    if(m_session.debug_over_ssh || m_session.dap_server.IsUsingUnixPath()) {
-        path_format = wxPATH_UNIX;
-    }
-
-    if(fn.IsRelative()) {
-        fn.MakeAbsolute(m_session.working_directory, path_format);
-        if(!m_session.debug_over_ssh) {
-            // try to locate the file locally
-            if(IS_WINDOWS && !fn.FileExists()) {
-                if(fn.HasVolume()) {
-                    fn.SetVolume("C");
-                }
-            }
-        }
-    }
-    return fn.GetFullPath(path_format);
-}
-
 bool DebugAdapterClient::IsDebuggerOwnedByPlugin(const wxString& name) const
 {
     return m_dap_store.GetEntries().count(name) != 0;
@@ -1185,4 +1159,35 @@ void DebugAdapterClient::StopProcess()
         clDebugEvent e(wxEVT_DEBUG_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
     }
+}
+
+wxString DebugAdapterClient::NormalisePathForSend(const wxString& path) const
+{
+    wxFileName fn(path);
+    if(m_session.dap_server.UseRelativePath()) {
+        return fn.GetFullName();
+    }
+    return NormaliseReceivedPath(path);
+}
+
+wxString DebugAdapterClient::NormaliseReceivedPath(const wxString& path) const
+{
+    wxFileName fn(path);
+    wxPathFormat path_format = wxPATH_NATIVE;
+    if(m_session.debug_over_ssh || m_session.dap_server.IsUsingUnixPath()) {
+        path_format = wxPATH_UNIX;
+    }
+
+    if(fn.IsRelative()) {
+        fn.MakeAbsolute(m_session.working_directory, path_format);
+        if(!m_session.debug_over_ssh) {
+            // try to locate the file locally
+            if(IS_WINDOWS && !fn.FileExists()) {
+                if(fn.HasVolume()) {
+                    fn.SetVolume("C");
+                }
+            }
+        }
+    }
+    return fn.GetFullPath(path_format);
 }

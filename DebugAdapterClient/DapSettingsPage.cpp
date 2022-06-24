@@ -33,10 +33,12 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     , m_store(store)
     , m_entry(entry)
 {
-    AddHeader(m_entry.GetName() + _(" settings"));
+    AddHeader(_("General"));
     AddProperty(_("Command"), m_entry.GetCommand(), UPDATE_TEXT_CB(SetCommand));
     AddProperty(_("Connection string"), m_entry.GetConnectionString(), UPDATE_TEXT_CB(SetConnectionString));
     AddProperty(_("Environment"), m_entry.GetEnvironment(), UPDATE_TEXT_CB(SetEnvironment));
+
+    AddHeader(_("File paths"));
     AddProperty(_("Use relative paths"), m_entry.UseRelativePath(), UPDATE_BOOL_CB(SetUseRelativePath));
 
     std::vector<wxString> path_choices = { "Native", "Linux" };
@@ -60,9 +62,10 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     choices.reserve(settings.GetAccounts().size());
 
     for(const auto& account : settings.GetAccounts()) {
-        choices.Add(account.GetName());
+        choices.Add(account.GetAccountName());
     }
 
+    AddHeader(_("SSH Settings"));
     AddProperty(_("Is Remote"), m_entry.IsRemote(), UPDATE_BOOL_CB(SetRemote));
     AddProperty(_("SSH Account"), choices, m_entry.GetSshAccount(), UPDATE_TEXT_CB(SetSshAccount));
 #else

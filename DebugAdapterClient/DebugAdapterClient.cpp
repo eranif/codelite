@@ -1223,7 +1223,8 @@ wxString DebugAdapterClient::NormalisePathForSend(const wxString& path) const
     }
 #endif
 
-    return fn.GetFullPath(path_format);
+    wxString fullpath = fn.GetFullPath(path_format);
+    return fullpath;
 }
 
 wxString DebugAdapterClient::NormaliseReceivedPath(const wxString& path) const

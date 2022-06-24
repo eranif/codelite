@@ -56,6 +56,10 @@
   <Dependencies/>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">
+      <File Name="DapProcess.cpp"/>
+      <File Name="DapProcess.hpp"/>
+      <File Name="RunInTerminalHelper.cpp"/>
+      <File Name="RunInTerminalHelper.hpp"/>
       <File Name="DapLoggingHelper.hpp"/>
       <File Name="clDapSettingsStore.cpp"/>
       <File Name="clDapSettingsStore.hpp"/>

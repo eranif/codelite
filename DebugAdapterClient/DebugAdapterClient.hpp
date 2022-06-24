@@ -26,6 +26,7 @@
 #ifndef __LLDBDebugger__
 #define __LLDBDebugger__
 
+#include "RunInTerminalHelper.hpp"
 #include "asyncprocess.h"
 #include "clDapSettingsStore.hpp"
 #include "clModuleLogger.hpp"
@@ -34,16 +35,20 @@
 #include "plugin.h"
 #include "ssh_account_info.h"
 
+#include <vector>
 #include <wx/stc/stc.h>
 
 class DAPMainView;
 class IProcess;
 
 struct DebugSession {
-    bool need_to_set_breakpoints = false;
+    std::vector<wxString> command;
     wxString working_directory;
+    clEnvList_t environment;
+    bool need_to_set_breakpoints = false;
     bool debug_over_ssh = false;
     SSHAccountInfo ssh_acount;
+    DapEntry dap_server;
 
     void Clear()
     {
@@ -51,17 +56,21 @@ struct DebugSession {
         working_directory.clear();
         debug_over_ssh = false;
         ssh_acount = {};
+        command.clear();
+        environment.clear();
+        dap_server = {};
     }
 };
 
 class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
-    wxString m_defaultPerspective;
     clModuleLogger LOG;
+    wxString m_defaultPerspective;
     DebugSession m_session;
     clDapSettingsStore m_dap_store;
     IProcess* m_dap_server = nullptr;
+    RunInTerminalHelper m_terminal_helper;
 
     /// ------------------------------------
     /// UI elements
@@ -163,11 +172,14 @@ protected:
     void OnDapExited(DAPEvent& event);
     void OnLaunchResponse(DAPEvent& event);
     void OnInitializedEvent(DAPEvent& event);
+    void OnInitializeResponse(DAPEvent& event);
     void OnStoppedEvent(DAPEvent& event);
     void OnThreadsResponse(DAPEvent& event);
     void OnStackTraceResponse(DAPEvent& event);
     void OnSetFunctionBreakpointResponse(DAPEvent& event);
     void OnSetSourceBreakpointResponse(DAPEvent& event);
+    void OnRunInTerminal(DAPEvent& event);
+    void OnDapLog(DAPEvent& event);
 
 public:
     //--------------------------------------------

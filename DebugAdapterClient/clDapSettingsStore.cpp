@@ -1,5 +1,7 @@
 #include "clDapSettingsStore.hpp"
 
+#include "fileutils.h"
+
 JSONItem DapEntry::To() const
 {
     auto json = JSONItem::createObject();
@@ -7,7 +9,7 @@ JSONItem DapEntry::To() const
     json.addProperty("command", m_command);
     json.addProperty("connection_string", m_connection_string);
     json.addProperty("environment", m_environment);
-    json.addProperty("is_remote", m_is_remote);
+    json.addProperty("flags", m_flags);
     json.addProperty("ssh_account", m_ssh_account);
     return json;
 }
@@ -18,7 +20,7 @@ void DapEntry::From(const JSONItem& json)
     m_command = json["command"].toString();
     m_connection_string = json["connection_string"].toString();
     m_environment = json["environment"].toString();
-    m_is_remote = json["is_remote"].toBool(m_is_remote);
+    m_flags = json["flags"].toSize_t(m_flags);
     m_ssh_account = json["ssh_account"].toString();
 }
 
@@ -38,6 +40,13 @@ void clDapSettingsStore::Clear()
 void clDapSettingsStore::Load(const wxFileName& file)
 {
     Clear();
+
+    // ensure that we have something to load
+    if(!file.FileExists()) {
+        wxFileName::Mkdir(file.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        FileUtils::WriteFileContent(file, "[]");
+    }
+
     JSON root(file);
     if(!root.isOk()) {
         return;

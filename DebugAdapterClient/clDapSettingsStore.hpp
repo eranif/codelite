@@ -7,14 +7,32 @@
 #include <map>
 #include <wx/filename.h>
 
+enum class DapEntryFlag : size_t {
+    USE_LINUX_PATHS = (1 << 0),
+    REMOTE_OVER_SSH = (1 << 1),
+    USE_RELATIVE_PATH = (1 << 2),
+};
+
 class DapEntry
 {
     wxString m_command;
     wxString m_name;
     wxString m_connection_string;
     wxString m_environment;
-    bool m_is_remote = false;
     wxString m_ssh_account;
+    size_t m_flags = (size_t)DapEntryFlag::USE_RELATIVE_PATH; // bitset of DapEntryFlags
+
+private:
+    void SetFlag(DapEntryFlag flag, bool b)
+    {
+        if(b) {
+            m_flags |= (size_t)flag;
+        } else {
+            m_flags &= ~(size_t)flag;
+        }
+    }
+
+    bool HasFlag(DapEntryFlag flag) const { return m_flags & (size_t)flag; }
 
 public:
     DapEntry() {}
@@ -23,17 +41,23 @@ public:
     void SetCommand(const wxString& command) { this->m_command = command; }
     void SetName(const wxString& name) { this->m_name = name; }
     void SetConnectionString(const wxString& connection_string) { this->m_connection_string = connection_string; }
-    void SetRemote(bool b) { this->m_is_remote = b; }
+    void SetRemote(bool b) { SetFlag(DapEntryFlag::REMOTE_OVER_SSH, b); }
     void SetSshAccount(const wxString& name) { this->m_ssh_account = name; }
 
     const wxString& GetCommand() const { return m_command; }
     const wxString& GetName() const { return m_name; }
     const wxString& GetConnectionString() const { return m_connection_string; }
-    bool IsRemote() const { return m_is_remote; }
+    bool IsRemote() const { return HasFlag(DapEntryFlag::REMOTE_OVER_SSH); }
     const wxString& GetSshAccount() const { return m_ssh_account; }
 
     void SetEnvironment(const wxString& environment) { this->m_environment = environment; }
     const wxString& GetEnvironment() const { return m_environment; }
+
+    void SetUseUnixPath(bool b) { SetFlag(DapEntryFlag::USE_LINUX_PATHS, b); }
+    bool IsUsingUnixPath() const { return HasFlag(DapEntryFlag::USE_LINUX_PATHS); }
+
+    void SetUseRelativePath(bool b) { SetFlag(DapEntryFlag::USE_RELATIVE_PATH, b); }
+    bool UseRelativePath() const { return HasFlag(DapEntryFlag::USE_RELATIVE_PATH); }
 
     JSONItem To() const;
     void From(const JSONItem& json);

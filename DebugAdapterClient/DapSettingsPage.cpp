@@ -37,6 +37,20 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     AddProperty(_("Command"), m_entry.GetCommand(), UPDATE_TEXT_CB(SetCommand));
     AddProperty(_("Connection string"), m_entry.GetConnectionString(), UPDATE_TEXT_CB(SetConnectionString));
     AddProperty(_("Environment"), m_entry.GetEnvironment(), UPDATE_TEXT_CB(SetEnvironment));
+    AddProperty(_("Use relative paths"), m_entry.UseRelativePath(), UPDATE_BOOL_CB(SetUseRelativePath));
+
+    std::vector<wxString> path_choices = { "Native", "Linux" };
+    AddProperty(_("Path format"), path_choices, m_entry.IsUsingUnixPath() ? 1 : 0,
+                [this](const wxString& label, const wxAny& value) {
+                    wxUnusedVar(label);
+                    wxString str_value;
+                    if(value.GetAs(&str_value)) {
+                        DapEntry d;
+                        m_store.Get(m_entry.GetName(), &d);
+                        d.SetUseUnixPath(str_value == "Linux");
+                        m_store.Set(d);
+                    }
+                });
 
 #if USE_SFTP
     SFTPSettings settings;

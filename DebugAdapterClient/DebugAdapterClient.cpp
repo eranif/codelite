@@ -51,6 +51,7 @@
 #include <wx/xrc/xmlres.h>
 
 static DebugAdapterClient* thePlugin = NULL;
+
 namespace
 {
 
@@ -61,12 +62,14 @@ constexpr bool IS_WINDOWS = false;
 #endif
 
 const wxString DAP_MAIN_VIEW = _("Thread, stacks & variables");
+const wxString DAP_MESSAGE_BOX_TITLE = "CodeLite - Debug Adapter Client";
 
 // Reusing gdb ids so global debugger menu and accelerators work.
 const int lldbRunToCursorContextMenuId = XRCID("dbg_run_to_cursor");
 const int lldbJumpToCursorContextMenuId = XRCID("dbg_jump_cursor");
 const int lldbAddWatchContextMenuId = XRCID("lldb_add_watch");
 
+#if 0
 wxString GetWatchWord(IEditor& editor)
 {
     auto word = editor.GetSelection();
@@ -80,6 +83,7 @@ wxString GetWatchWord(IEditor& editor)
 
     return word;
 }
+#endif
 
 // helper methods converting between clDebuggerBreakpoint and dap::XXXBreakpoint
 bool is_source_breakpoint(const clDebuggerBreakpoint& bp)
@@ -149,6 +153,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 DebugAdapterClient::DebugAdapterClient(IManager* manager)
     : IPlugin(manager)
+    , m_terminal_helper(LOG)
     , m_isPerspectiveLoaded(false)
 {
     // setup custom logger for this module
@@ -212,9 +217,12 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
 
     dap::Initialize(); // register all dap objects
 
+    m_client.SetWantsLogEvents(true);
+    m_client.Bind(wxEVT_DAP_INITIALIZE_RESPONSE, &DebugAdapterClient::OnInitializeResponse, this);
+    m_client.Bind(wxEVT_DAP_INITIALIZED_EVENT, &DebugAdapterClient::OnInitializedEvent, this);
+    m_client.Bind(wxEVT_DAP_RUN_IN_TERMINAL_REQUEST, &DebugAdapterClient::OnRunInTerminal, this);
     m_client.Bind(wxEVT_DAP_EXITED_EVENT, &DebugAdapterClient::OnDapExited, this);
     m_client.Bind(wxEVT_DAP_TERMINATED_EVENT, &DebugAdapterClient::OnDapExited, this);
-    m_client.Bind(wxEVT_DAP_INITIALIZED_EVENT, &DebugAdapterClient::OnInitializedEvent, this);
     m_client.Bind(wxEVT_DAP_LAUNCH_RESPONSE, &DebugAdapterClient::OnLaunchResponse, this);
     m_client.Bind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnStoppedEvent, this);
     m_client.Bind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnThreadsResponse, this);
@@ -222,6 +230,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     m_client.Bind(wxEVT_DAP_SET_FUNCTION_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnSetFunctionBreakpointResponse,
                   this);
     m_client.Bind(wxEVT_DAP_SET_SOURCE_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnSetSourceBreakpointResponse, this);
+    m_client.Bind(wxEVT_DAP_LOG_EVENT, &DebugAdapterClient::OnDapLog, this);
 }
 
 void DebugAdapterClient::RegisterDebuggers()
@@ -390,14 +399,14 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
         ProjectPtr project = clCxxWorkspaceST::Get()->GetProject(event.GetProjectName());
         if(!project) {
             ::wxMessageBox(wxString() << _("Could not locate project: ") << event.GetProjectName(),
-                           "DebugAdapterClient ", wxICON_ERROR | wxOK | wxCENTER);
+                           DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTER);
             LOG_ERROR(LOG) << "unable to locate project:" << event.GetProjectName() << endl;
             return;
         }
 
         BuildConfigPtr bldConf = project->GetBuildConfiguration();
         if(!bldConf) {
-            ::wxMessageBox(wxString() << _("Could not locate the requested build configuration"), "DebugAdapterClient ",
+            ::wxMessageBox(wxString() << _("Could not locate the requested build configuration"), DAP_MESSAGE_BOX_TITLE,
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
@@ -432,105 +441,6 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
 
     // start the debugger
     StartAndConnectToDapServer(dap_server, exepath, args, working_directory, env);
-}
-
-void DebugAdapterClient::OnDapExited(DAPEvent& event)
-{
-    event.Skip();
-    LOG_DEBUG(LOG) << "dap-server exited" << endl;
-    DoCleanup();
-}
-
-void DebugAdapterClient::OnLaunchResponse(DAPEvent& event)
-{
-    // Check that the debugee was started successfully
-    dap::LaunchResponse* resp = event.GetDapResponse()->As<dap::LaunchResponse>();
-    if(resp && !resp->success) {
-        // launch failed!
-        wxMessageBox("Failed to launch debuggee: " + resp->message, "DAP",
-                     wxICON_ERROR | wxOK | wxOK_DEFAULT | wxCENTRE);
-        m_client.CallAfter(&dap::Client::Reset);
-    } else if(resp) {
-        InitializeUI();
-        LoadPerspective();
-
-        // Fire CodeLite IDE event indicating that a debug session started
-        clDebugEvent cl_event{ wxEVT_DEBUG_STARTED };
-        EventNotifier::Get()->AddPendingEvent(cl_event);
-    }
-}
-
-/// DAP server responded to our `initialize` request
-void DebugAdapterClient::OnInitializedEvent(DAPEvent& event)
-{
-    // got initialized event, place breakpoints and continue
-    LOG_DEBUG(LOG) << "Got Initialized event" << endl;
-    LOG_DEBUG(LOG) << "Placing breakpoint at main..." << endl;
-
-    // place a single breakpoint on main
-    dap::FunctionBreakpoint main_bp{ "main" };
-    m_session.need_to_set_breakpoints = true;
-    m_client.SetFunctionBreakpoints({ main_bp });
-
-    // place all breakpoints
-    m_client.ConfigurationDone();
-    m_client.Continue();
-}
-
-void DebugAdapterClient::OnStoppedEvent(DAPEvent& event)
-{
-    // got stopped event
-    if(m_session.need_to_set_breakpoints) {
-        ApplyBreakpoints(wxEmptyString);
-        m_session.need_to_set_breakpoints = false;
-    }
-
-    dap::StoppedEvent* stopped_data = event.GetDapEvent()->As<dap::StoppedEvent>();
-    if(stopped_data) {
-        LOG_DEBUG(LOG) << "Stopped reason:" << stopped_data->reason << endl;
-        LOG_DEBUG(LOG) << "All threads stopped:" << stopped_data->allThreadsStopped << endl;
-        LOG_DEBUG(LOG) << "Stopped thread ID:" << stopped_data->threadId
-                       << "(active thread ID:" << m_client.GetActiveThreadId() << ")" << endl;
-        m_client.GetThreads();
-    }
-}
-
-void DebugAdapterClient::OnThreadsResponse(DAPEvent& event)
-{
-    CHECK_PTR_RET(m_threadsView);
-
-    auto response = event.GetDapResponse()->As<dap::ThreadsResponse>();
-    CHECK_PTR_RET(response);
-
-    m_threadsView->UpdateThreads(m_client.GetActiveThreadId(), response);
-    auto threads_to_update = m_threadsView->GetExpandedThreads();
-    for(int thread_id : threads_to_update) {
-        m_client.GetFrames(thread_id);
-    }
-}
-
-void DebugAdapterClient::OnStackTraceResponse(DAPEvent& event)
-{
-    CHECK_PTR_RET(m_threadsView);
-
-    auto response = event.GetDapResponse()->As<dap::StackTraceResponse>();
-    CHECK_PTR_RET(response);
-
-    LOG_DEBUG(LOG) << "Requesting frames for thread-id:" << response->threadId << endl;
-    m_threadsView->UpdateFrames(response->threadId, response);
-    if(!response->stackFrames.empty()) {
-        auto frame = response->stackFrames[0];
-        LOG_DEBUG(LOG) << "Frame path:" << frame.source.path << endl;
-        wxString filepath = NormalisePath(frame.source.path);
-        LOG_DEBUG(LOG) << "Normalising file:" << frame.source.path << "->" << filepath << endl;
-        int line_number = frame.line;
-
-        auto callback = [this, line_number, filepath](IEditor* editor) {
-            LOG_DEBUG(LOG) << "setting debugger marker at:" << filepath << ":" << line_number << endl;
-            this->SetDebuggerMarker(editor->GetCtrl(), line_number - 1);
-        };
-        clGetManager()->OpenFileAndAsyncExecute(filepath, callback);
-    }
 }
 
 void DebugAdapterClient::OnDebugNext(clDebugEvent& event)
@@ -678,8 +588,9 @@ void DebugAdapterClient::DoCleanup()
     ClearDebuggerMarker();
     m_client.Reset();
     m_raisOnBpHit = false;
-    m_client.Reset();
     StopProcess();
+    m_session.Clear();
+    m_terminal_helper.Terminate();
 }
 
 void DebugAdapterClient::OnWorkspaceClosed(clWorkspaceEvent& event)
@@ -701,8 +612,8 @@ void DebugAdapterClient::OnBuildStarting(clBuildEvent& event)
 {
     if(m_client.IsConnected()) {
         // lldb session is active, prompt the user
-        if(::wxMessageBox(_("A debug session is running\nCancel debug session and continue building?"), "CodeLite",
-                          wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT | wxCENTER) == wxYES) {
+        if(::wxMessageBox(_("A debug session is running\nCancel debug session and continue building?"),
+                          DAP_MESSAGE_BOX_TITLE, wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT | wxCENTER) == wxYES) {
             clDebugEvent dummy;
             OnDebugStop(dummy);
             event.Skip();
@@ -797,7 +708,7 @@ void DebugAdapterClient::OnDebugQuickDebug(clDebugEvent& event)
         DoCleanup();
         wxString message;
         message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
-        ::wxMessageBox(message, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        ::wxMessageBox(message, DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
 #endif
@@ -813,7 +724,7 @@ void DebugAdapterClient::OnDebugCoreFile(clDebugEvent& event)
     }
 
 #ifdef __WXMSW__
-    ::wxMessageBox(_("Debug core file with LLDB is not supported under Windows"), "CodeLite",
+    ::wxMessageBox(_("Debug core file with LLDB is not supported under Windows"), DAP_MESSAGE_BOX_TITLE,
                    wxOK | wxCENTER | wxICON_WARNING);
     return;
 #endif
@@ -847,7 +758,7 @@ void DebugAdapterClient::OnDebugCoreFile(clDebugEvent& event)
         DoCleanup();
         wxString message;
         message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
-        ::wxMessageBox(message, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        ::wxMessageBox(message, DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
 #endif
@@ -862,7 +773,7 @@ void DebugAdapterClient::OnDebugAttachToProcess(clDebugEvent& event)
     }
 
 #ifdef __WXMSW__
-    ::wxMessageBox(_("Attach to process with LLDB is not supported under Windows"), "CodeLite",
+    ::wxMessageBox(_("Attach to process with LLDB is not supported under Windows"), DAP_MESSAGE_BOX_TITLE,
                    wxOK | wxCENTER | wxICON_WARNING);
     return;
 #endif
@@ -896,7 +807,7 @@ void DebugAdapterClient::OnDebugAttachToProcess(clDebugEvent& event)
         DoCleanup();
         wxString message;
         message << _("Could not connect to codelite-lldb at '") << m_connector.GetConnectString() << "'";
-        ::wxMessageBox(message, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        ::wxMessageBox(message, DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
 #endif
@@ -926,6 +837,116 @@ void DebugAdapterClient::OnDebugShowCursor(clDebugEvent& event)
     // FIXME
 }
 
+/// --------------------------------------------------------------------------
+/// dap events starting here
+/// --------------------------------------------------------------------------
+
+void DebugAdapterClient::OnDapExited(DAPEvent& event)
+{
+    event.Skip();
+    LOG_DEBUG(LOG) << "dap-server exited" << endl;
+    DoCleanup();
+}
+
+void DebugAdapterClient::OnDapLog(DAPEvent& event)
+{
+    event.Skip();
+    LOG_DEBUG(LOG) << event.GetString() << endl;
+}
+
+void DebugAdapterClient::OnLaunchResponse(DAPEvent& event)
+{
+    // Check that the debugee was started successfully
+    dap::LaunchResponse* resp = event.GetDapResponse()->As<dap::LaunchResponse>();
+
+    if(resp && !resp->success) {
+        // launch failed!
+        wxMessageBox("Failed to launch debuggee: " + resp->message, DAP_MESSAGE_BOX_TITLE,
+                     wxICON_ERROR | wxOK | wxOK_DEFAULT | wxCENTRE);
+        CallAfter(&DebugAdapterClient::DoCleanup);
+    }
+}
+
+void DebugAdapterClient::OnInitializeResponse(DAPEvent& event)
+{
+    LOG_DEBUG(LOG) << "got initialize response" << endl;
+    LOG_DEBUG(LOG) << "Starting debugger for command:" << endl;
+    LOG_DEBUG(LOG) << m_session.command << endl;
+    LOG_DEBUG(LOG) << "working directory:" << m_session.working_directory << endl;
+
+    // FIXME: apply the environment here
+    auto v = m_session.command;
+    LOG_DEBUG(LOG) << "Calling Launch() with command:" << v << endl;
+    m_client.Launch(std::move(v), m_session.working_directory);
+}
+
+/// DAP server responded to our `initialize` request
+void DebugAdapterClient::OnInitializedEvent(DAPEvent& event)
+{
+    // place a single breakpoint on main
+    dap::FunctionBreakpoint main_bp{ "main" };
+    m_session.need_to_set_breakpoints = true;
+    m_client.SetFunctionBreakpoints({ main_bp });
+
+    // place all breakpoints
+    m_client.ConfigurationDone();
+}
+
+void DebugAdapterClient::OnStoppedEvent(DAPEvent& event)
+{
+    // got stopped event
+    if(m_session.need_to_set_breakpoints) {
+        ApplyBreakpoints(wxEmptyString);
+        m_session.need_to_set_breakpoints = false;
+    }
+
+    dap::StoppedEvent* stopped_data = event.GetDapEvent()->As<dap::StoppedEvent>();
+    if(stopped_data) {
+        LOG_DEBUG(LOG) << "Stopped reason:" << stopped_data->reason << endl;
+        LOG_DEBUG(LOG) << "All threads stopped:" << stopped_data->allThreadsStopped << endl;
+        LOG_DEBUG(LOG) << "Stopped thread ID:" << stopped_data->threadId
+                       << "(active thread ID:" << m_client.GetActiveThreadId() << ")" << endl;
+        m_client.GetThreads();
+    }
+}
+
+void DebugAdapterClient::OnThreadsResponse(DAPEvent& event)
+{
+    CHECK_PTR_RET(m_threadsView);
+
+    auto response = event.GetDapResponse()->As<dap::ThreadsResponse>();
+    CHECK_PTR_RET(response);
+
+    m_threadsView->UpdateThreads(m_client.GetActiveThreadId(), response);
+    auto threads_to_update = m_threadsView->GetExpandedThreads();
+    for(int thread_id : threads_to_update) {
+        m_client.GetFrames(thread_id);
+    }
+}
+
+void DebugAdapterClient::OnStackTraceResponse(DAPEvent& event)
+{
+    CHECK_PTR_RET(m_threadsView);
+
+    auto response = event.GetDapResponse()->As<dap::StackTraceResponse>();
+    CHECK_PTR_RET(response);
+
+    LOG_DEBUG(LOG) << "Requesting frames for thread-id:" << response->threadId << endl;
+    m_threadsView->UpdateFrames(response->threadId, response);
+    if(!response->stackFrames.empty()) {
+        auto frame = response->stackFrames[0];
+        LOG_DEBUG(LOG) << "Frame path:" << frame.source.path << endl;
+        wxString filepath = NormalisePath(frame.source.path);
+        LOG_DEBUG(LOG) << "Normalising file:" << frame.source.path << "->" << filepath << endl;
+        int line_number = frame.line;
+
+        clGetManager()->OpenFileAndAsyncExecute(filepath, [this, line_number, filepath](IEditor* editor) {
+            LOG_DEBUG(LOG) << "setting debugger marker at:" << filepath << ":" << line_number << endl;
+            this->SetDebuggerMarker(editor->GetCtrl(), line_number - 1);
+        });
+    }
+}
+
 void DebugAdapterClient::OnSetFunctionBreakpointResponse(DAPEvent& event)
 {
     auto resp = event.GetDapResponse()->As<dap::SetFunctionBreakpointsResponse>();
@@ -945,6 +966,30 @@ void DebugAdapterClient::OnSetSourceBreakpointResponse(DAPEvent& event)
         LOG_DEBUG(LOG) << "verified:" << bp.verified << "file:" << bp.source.path << "line:" << bp.line << endl;
     }
 }
+
+void DebugAdapterClient::OnRunInTerminal(DAPEvent& event)
+{
+    auto request = event.GetDapRequest()->As<dap::RunInTerminalRequest>();
+    CHECK_PTR_RET(request);
+
+    int process_id = m_terminal_helper.RunProcess(request->arguments.args, wxEmptyString, {});
+    // send the response back to the dap server
+    auto response = m_client.MakeRequest<dap::RunInTerminalResponse>();
+    LOG_DEBUG(LOG) << "RunInTerminal process ID:" << process_id << endl;
+    response.request_seq = request->seq;
+    if(process_id == wxNOT_FOUND) {
+        response.success = false;
+        response.processId = 0;
+    } else {
+        response.success = true;
+        response.processId = process_id;
+    }
+    m_client.SendResponse(response);
+}
+
+/// --------------------------------------------------------------------------
+/// dap events stops here
+/// --------------------------------------------------------------------------
 
 void DebugAdapterClient::ApplyBreakpoints(const wxString& path)
 {
@@ -985,7 +1030,8 @@ void DebugAdapterClient::ApplyBreakpoints(const wxString& path)
             wxFileName filepath(vt.first);
             LOG_DEBUG(LOG) << "Applying breakpoints for file:" << filepath << endl;
             LOG_DEBUG(LOG) << vt.second << endl;
-            m_client.SetBreakpointsFile(filepath.GetFullPath(wxPATH_UNIX), vt.second);
+            wxString source_path = NormalisePath(filepath.GetFullPath());
+            m_client.SetBreakpointsFile(source_path, vt.second);
         }
     }
 
@@ -1005,13 +1051,15 @@ bool DebugAdapterClient::LaunchProcess(const DapEntry& dap_server)
     if(dap_server.IsRemote()) {
         // launch ssh process
         auto env_list = StringUtils::BuildEnvFromString(dap_server.GetEnvironment());
-        m_dap_server = ::CreateAsyncProcess(this, dap_server.GetCommand(), IProcessCreateDefault | IProcessCreateSSH,
+        m_dap_server = ::CreateAsyncProcess(this, dap_server.GetCommand(),
+                                            IProcessCreateDefault | IProcessCreateSSH | IProcessWrapInShell,
                                             wxEmptyString, &env_list, dap_server.GetSshAccount());
     } else {
         // launch local process
         auto env_list = StringUtils::ResolveEnvList(dap_server.GetEnvironment());
-        m_dap_server =
-            ::CreateAsyncProcess(this, dap_server.GetCommand(), IProcessNoRedirect, wxEmptyString, &env_list);
+        m_dap_server = ::CreateAsyncProcess(this, dap_server.GetCommand(),
+                                            IProcessNoRedirect | IProcessWrapInShell | IProcessCreateWithHiddenConsole,
+                                            wxEmptyString, &env_list);
     }
     return m_dap_server != nullptr;
 }
@@ -1040,26 +1088,37 @@ void DebugAdapterClient::StartAndConnectToDapServer(const DapEntry& dap_server, 
     // the dap and not over socket
     dap::SocketTransport* transport = new dap::SocketTransport();
     if(!transport->Connect(dap_server.GetConnectionString(), 10)) {
-        wxMessageBox("Failed to connect to DAP server", "CodeLite", wxICON_ERROR | wxOK | wxCENTRE);
+        wxMessageBox("Failed to connect to DAP server", DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTRE);
         wxDELETE(transport);
         m_client.Reset();
         return;
     }
+    m_session.Clear();
+    wxArrayString command_array = StringUtils::BuildArgv(args);
+    command_array.Insert(exepath, 0);
+    m_session.command = { command_array.begin(), command_array.end() };
+    if(m_session.command.empty()) {
+        wxMessageBox(_("Can't debug an empty command!"), DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTRE);
+        DoCleanup();
+        return;
+    }
+
+    m_session.working_directory = working_directory;
+    m_session.environment = env;
+    m_session.dap_server = dap_server;
+
+    // Notify about debug start event
+    // + load the UI
+    InitializeUI();
+    LoadPerspective();
+
+    // Fire CodeLite IDE event indicating that a debug session started
+    clDebugEvent cl_event{ wxEVT_DEBUG_STARTED };
+    EventNotifier::Get()->AddPendingEvent(cl_event);
 
     // construct new client with the transport
     m_client.SetTransport(transport);
     m_client.Initialize(); // send protocol Initialize request
-
-    wxArrayString command_array = StringUtils::BuildArgv(args);
-    command_array.Insert(exepath, 0);
-
-    std::vector<wxString> v{ command_array.begin(), command_array.end() };
-    LOG_DEBUG(LOG) << "Starting debugger for command:" << endl;
-    LOG_DEBUG(LOG) << v << endl;
-    LOG_DEBUG(LOG) << "working directory:" << working_directory << endl;
-    m_session.Clear();
-    m_session.working_directory = working_directory;
-    m_client.Launch(std::move(v), working_directory);
 }
 
 void DebugAdapterClient::OnFileLoaded(clCommandEvent& event) { event.Skip(); }
@@ -1067,8 +1126,12 @@ void DebugAdapterClient::OnFileLoaded(clCommandEvent& event) { event.Skip(); }
 wxString DebugAdapterClient::NormalisePath(const wxString& path) const
 {
     wxFileName fn(path);
+    if(m_session.dap_server.UseRelativePath()) {
+        return fn.GetFullName();
+    }
+
     wxPathFormat path_format = wxPATH_NATIVE;
-    if(m_session.debug_over_ssh) {
+    if(m_session.debug_over_ssh || m_session.dap_server.IsUsingUnixPath()) {
         path_format = wxPATH_UNIX;
     }
 

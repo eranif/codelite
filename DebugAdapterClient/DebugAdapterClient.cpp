@@ -1258,15 +1258,16 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
         return;
     }
 
-    if(!m_client.LoadSource(
-           sourceId, [this, sourceId, line_number](bool success, const wxString& content, const wxString& mimeType) {
-               if(!success) {
-                   return;
-               }
-               m_textView->SetText(sourceId, content,
-                                   wxString() << sourceId.name << " (ref: " << sourceId.sourceReference << ")");
-               m_textView->SetMarker(line_number);
-           })) {
+    if(!m_client.LoadSource(sourceId, [this, sourceId, line_number](bool success, const wxString& content,
+                                                                    const wxString& mimeType) {
+           if(!success) {
+               return;
+           }
+           LOG_DEBUG(LOG) << "mimeType:" << mimeType << endl;
+           m_textView->SetText(sourceId, content,
+                               wxString() << sourceId.name << " (ref: " << sourceId.sourceReference << ")", mimeType);
+           m_textView->SetMarker(line_number);
+       })) {
         // not a server file, load it locally
         wxFileName fp(sourceId.path);
 

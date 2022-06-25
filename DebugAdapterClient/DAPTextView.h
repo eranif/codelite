@@ -9,6 +9,7 @@ class DAPTextView : public DAPTextViewBase
 {
     wxString m_filepath;
     dap::Source m_current_source;
+    wxString m_mimeType;
 
 protected:
     void ApplyTheme();
@@ -25,7 +26,7 @@ public:
     wxStyledTextCtrl* GetCtrl() { return m_stcTextView; }
     void ClearMarker();
     void SetMarker(int line_number);
-    void SetText(const dap::Source& source, const wxString& text, const wxString& path);
+    void SetText(const dap::Source& source, const wxString& text, const wxString& path, const wxString& mimeType);
     void LoadFile(const dap::Source& source, const wxString& filepath);
 
     const wxString& GetFilePath() const { return m_filepath; }

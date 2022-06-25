@@ -59,7 +59,17 @@ void DAPTextView::OnColourChanged(clCommandEvent& event)
 
 void DAPTextView::ApplyTheme()
 {
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    wxString file_name = "file.text";
+    if(!m_current_source.path.empty()) {
+        file_name = wxFileName(m_current_source.path).GetFullName();
+    } else if(!m_mimeType.empty()) {
+        // try the mime type
+        if(m_mimeType == "text/x-lldb.disassembly") {
+            file_name = "file.asm"; // assembly
+        }
+    }
+
+    auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(file_name);
     lexer->Apply(m_stcTextView);
 }
 
@@ -82,14 +92,17 @@ void DAPTextView::Clear()
     m_filepath.clear();
 }
 
-void DAPTextView::SetText(const dap::Source& source, const wxString& text, const wxString& path)
+void DAPTextView::SetText(const dap::Source& source, const wxString& text, const wxString& path,
+                          const wxString& mimeType)
 {
     m_stcTextView->SetEditable(true);
     m_stcTextView->SetText(text);
     m_stcTextView->SetEditable(false);
     m_current_source = source;
+    m_mimeType = mimeType;
     SetFilePath(path);
     UpdateLineNumbersMargin();
+    ApplyTheme();
 }
 
 void DAPTextView::LoadFile(const dap::Source& source, const wxString& filepath)
@@ -97,6 +110,7 @@ void DAPTextView::LoadFile(const dap::Source& source, const wxString& filepath)
     m_stcTextView->SetEditable(true);
     bool ok = m_stcTextView->LoadFile(filepath);
     m_stcTextView->SetEditable(false);
+    m_mimeType.clear();
 
     if(ok) {
         SetFilePath(filepath);
@@ -106,6 +120,7 @@ void DAPTextView::LoadFile(const dap::Source& source, const wxString& filepath)
     }
 
     UpdateLineNumbersMargin();
+    ApplyTheme();
 }
 
 void DAPTextView::SetFilePath(const wxString& filepath)

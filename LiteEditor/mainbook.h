@@ -289,6 +289,8 @@ public:
 
     void SetUseBuffereLimit(bool useBuffereLimit) { this->m_useBuffereLimit = useBuffereLimit; }
     bool GetUseBuffereLimit() const { return m_useBuffereLimit; }
+
+    Notebook* GetNotebook() { return m_book; }
 };
 
 #endif // MAINBOOK_H

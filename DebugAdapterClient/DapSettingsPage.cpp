@@ -41,7 +41,7 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     AddHeader(_("File paths"));
     AddProperty(_("Use relative paths"), m_entry.UseRelativePath(), UPDATE_BOOL_CB(SetUseRelativePath));
 
-    std::vector<wxString> path_choices = { "Native", "Linux" };
+    std::vector<wxString> path_choices = { "Native", "Linux", "Native with forward slash" };
     AddProperty(_("Path format"), path_choices, m_entry.IsUsingUnixPath() ? 1 : 0,
                 [this](const wxString& label, const wxAny& value) {
                     wxUnusedVar(label);
@@ -49,7 +49,16 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
                     if(value.GetAs(&str_value)) {
                         DapEntry d;
                         m_store.Get(m_entry.GetName(), &d);
-                        d.SetUseUnixPath(str_value == "Linux");
+                        // reset the flags first
+                        d.SetUseUnixPath(false);
+                        d.SetUseForwardSlash(false);
+                        // enable per selection
+                        if(str_value == "Linux") {
+                            d.SetUseUnixPath(true);
+                            d.SetUseForwardSlash(true);
+                        } else if(str_value == "Native with forward slash") {
+                            d.SetUseForwardSlash(true);
+                        }
                         m_store.Set(d);
                     }
                 });

@@ -1,8 +1,12 @@
-Property Page:
---------------
+Debug Adapter Client
+---
 
-- Add API to clTreeCtrl that allows the caller to query the cell type (Colour, Edit Text, Static Text, Checkbox etc)
 
-TODO:
------
-- Change the open resource dialog to use clTerminalCtrl view similar to the LSPOutlineView dialog
+Breakpoints management:
+
+- Handle breakpoint change event
+- Make sure that no duplicate breakpoints are added and no breakpoints without file/name
+- Allow user to set function breakpoint from the UI
+- Deleting a breakpoint should be reflected in the breakpoint table view
+- Double click / activating bp should open the relevant source file
+

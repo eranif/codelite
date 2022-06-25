@@ -380,6 +380,7 @@ clTreeCtrl* PluginManager::GetWorkspaceTree() { return clMainFrame::Get()->GetWo
 clTreeCtrl* PluginManager::GetFileExplorerTree() { return clMainFrame::Get()->GetFileExplorer()->GetTree(); }
 
 Notebook* PluginManager::GetOutputPaneNotebook() { return clMainFrame::Get()->GetOutputPane()->GetNotebook(); }
+Notebook* PluginManager::GetMainNotebook() { return clMainFrame::Get()->GetMainBook()->GetNotebook(); }
 
 Notebook* PluginManager::GetWorkspacePaneNotebook() { return clMainFrame::Get()->GetWorkspacePane()->GetNotebook(); }
 

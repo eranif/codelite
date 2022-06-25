@@ -167,3 +167,64 @@ DAPBreakpointsViewBase::DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id, 
 }
 
 DAPBreakpointsViewBase::~DAPBreakpointsViewBase() {}
+
+DAPTextViewBase::DAPTextViewBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if(!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafternz79PnInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer267 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer267);
+
+    m_stcTextView =
+        new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBORDER_NONE);
+    // Configure the fold margin
+    m_stcTextView->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stcTextView->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stcTextView->SetMarginSensitive(4, true);
+    m_stcTextView->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stcTextView->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stcTextView->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stcTextView->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stcTextView->SetMarginWidth(2, 0);
+    m_stcTextView->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stcTextView->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stcTextView->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stcTextView->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stcTextView->SetMarginMask(3, 0);
+    m_stcTextView->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stcTextView->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stcTextView->StyleClearAll();
+    m_stcTextView->SetWrapMode(0);
+    m_stcTextView->SetIndentationGuides(0);
+    m_stcTextView->SetKeyWords(0, wxT(""));
+    m_stcTextView->SetKeyWords(1, wxT(""));
+    m_stcTextView->SetKeyWords(2, wxT(""));
+    m_stcTextView->SetKeyWords(3, wxT(""));
+    m_stcTextView->SetKeyWords(4, wxT(""));
+
+    boxSizer267->Add(m_stcTextView, 1, wxEXPAND, WXC_FROM_DIP(5));
+
+    SetName(wxT("DAPTextViewBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if(GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+}
+
+DAPTextViewBase::~DAPTextViewBase() {}

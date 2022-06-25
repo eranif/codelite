@@ -25,6 +25,7 @@
 #include <wx/notebook.h>
 #include <wx/button.h>
 #include "clThemedListCtrl.h"
+#include <wx/stc/stc.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -96,6 +97,19 @@ public:
     DAPBreakpointsViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
     virtual ~DAPBreakpointsViewBase();
+};
+
+class DAPTextViewBase : public wxPanel
+{
+protected:
+    wxStyledTextCtrl* m_stcTextView;
+
+protected:
+public:
+    wxStyledTextCtrl* GetStcTextView() { return m_stcTextView; }
+    DAPTextViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    virtual ~DAPTextViewBase();
 };
 
 #endif

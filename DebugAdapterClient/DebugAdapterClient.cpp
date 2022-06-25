@@ -348,22 +348,14 @@ void DebugAdapterClient::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void DebugAdapterClient::ClearDebuggerMarker()
 {
-    IEditor::List_t editors;
-    m_mgr->GetAllEditors(editors);
-
-    for(auto editor : editors) {
-        editor->GetCtrl()->MarkerDeleteAll(smt_indicator);
-    }
+    CHECK_PTR_RET(m_textView);
+    m_textView->ClearMarker();
 }
 
-void DebugAdapterClient::SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno)
+void DebugAdapterClient::SetDebuggerMarker(int lineno)
 {
-    stc->MarkerDeleteAll(smt_indicator);
-    stc->MarkerAdd(lineno, smt_indicator);
-    int caretPos = stc->PositionFromLine(lineno);
-    stc->SetSelection(caretPos, caretPos);
-    stc->SetCurrentPos(caretPos);
-    stc->EnsureCaretVisible();
+    CHECK_PTR_RET(m_textView);
+    m_textView->SetMarker(lineno);
 }
 
 void DebugAdapterClient::OnDebugContinue(clDebugEvent& event)
@@ -511,7 +503,12 @@ void DebugAdapterClient::LoadPerspective()
     // Save the current persepctive we start debguging
     m_mgr->SavePerspective("Default");
 
-    // Load the LLDB perspective
+    // Hide all the panes
+    const auto& panes = m_mgr->GetDockingManager()->GetAllPanes();
+    for(size_t i = 0; i < panes.size(); ++i) {
+        panes[i].Hide();
+    }
+
     m_mgr->LoadPerspective("DAP");
     m_isPerspectiveLoaded = true;
 
@@ -552,7 +549,7 @@ void DebugAdapterClient::DestroyUI()
             m_mgr->GetDockingManager()->DetachPane(m_threadsView);
         }
         m_threadsView->Destroy();
-        m_threadsView = NULL;
+        m_threadsView = nullptr;
     }
 
     if(m_breakpointsView) {
@@ -561,7 +558,16 @@ void DebugAdapterClient::DestroyUI()
             m_mgr->GetDockingManager()->DetachPane(m_breakpointsView);
         }
         m_breakpointsView->Destroy();
-        m_breakpointsView = NULL;
+        m_breakpointsView = nullptr;
+    }
+
+    if(m_textView) {
+        int index = clGetManager()->GetMainNotebook()->FindPage(m_textView);
+        if(index != wxNOT_FOUND) {
+            clGetManager()->GetMainNotebook()->RemovePage(index, true);
+        }
+        m_textView->Destroy();
+        m_textView = nullptr;
     }
 
     ClearDebuggerMarker();
@@ -592,6 +598,10 @@ void DebugAdapterClient::InitializeUI()
                                                                    .CloseButton()
                                                                    .Caption(DAP_BREAKPOINTS_VIEW)
                                                                    .Name(DAP_BREAKPOINTS_VIEW));
+    }
+    if(!m_textView) {
+        m_textView = new DAPTextView(clGetManager()->GetMainNotebook());
+        clGetManager()->GetMainNotebook()->AddPage(m_textView, _("Debug Adapter Client"), true);
     }
 }
 
@@ -968,12 +978,7 @@ void DebugAdapterClient::OnDapStackTraceResponse(DAPEvent& event)
     m_threadsView->UpdateFrames(response->threadId, response);
     if(!response->stackFrames.empty()) {
         auto frame = response->stackFrames[0];
-        wxString filepath = NormaliseReceivedPath(frame.source.path);
-        int line_number = frame.line;
-
-        clGetManager()->OpenFileAndAsyncExecute(filepath, [this, line_number, filepath](IEditor* editor) {
-            this->SetDebuggerMarker(editor->GetCtrl(), line_number - 1);
-        });
+        LoadFile(frame.source, frame.line - 1);
     }
 }
 
@@ -1202,28 +1207,22 @@ wxString DebugAdapterClient::NormalisePathForSend(const wxString& path) const
         return fn.GetFullName();
     }
 
-    // determine the format
-    wxPathFormat path_format = wxPATH_NATIVE;
-    if(m_session.debug_over_ssh || m_session.dap_server.IsUsingUnixPath()) {
-        path_format = wxPATH_UNIX;
-    }
+    const auto& dap = m_session.dap_server;
 
     // attempt to make it fullpath
     if(fn.IsRelative()) {
-        fn.MakeAbsolute(m_session.working_directory, path_format);
+        fn.MakeAbsolute(m_session.working_directory);
     }
 
-    // When not on SSH debug
-#ifdef __WXMSW__
-    if(!m_session.debug_over_ssh && !fn.FileExists()) {
-        // try to locate the file locally
-        if(!fn.HasVolume()) {
-            fn.SetVolume("C");
-        }
+    if(dap.IsRemote() || dap.IsUsingUnixPath()) {
+        // no volume
+        fn.SetVolume(wxEmptyString);
     }
-#endif
 
-    wxString fullpath = fn.GetFullPath(path_format);
+    wxString fullpath = fn.GetFullPath();
+    if(dap.UseForwardSlash()) {
+        fullpath.Replace(R"(\)", "/");
+    }
     return fullpath;
 }
 
@@ -1247,5 +1246,37 @@ wxString DebugAdapterClient::NormaliseReceivedPath(const wxString& path) const
 #endif
         wxString fullpath = fn.GetFullPath();
         return fullpath;
+    }
+}
+
+void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
+{
+    // easy path
+    CHECK_PTR_RET(m_textView);
+    if(m_textView->IsSame(sourceId)) {
+        m_textView->SetMarker(line_number);
+        return;
+    }
+
+    if(!m_client.LoadSource(
+           sourceId, [this, sourceId, line_number](bool success, const wxString& content, const wxString& mimeType) {
+               if(!success) {
+                   return;
+               }
+               m_textView->SetText(sourceId, content,
+                                   wxString() << sourceId.name << " (ref: " << sourceId.sourceReference << ")");
+               m_textView->SetMarker(line_number);
+           })) {
+        // not a server file, load it locally
+        wxFileName fp(sourceId.path);
+
+        // the is already loaded
+        wxString file_to_load = fp.GetFullPath();
+        LOG_DEBUG(LOG) << "Loading file.." << file_to_load;
+        wxFileName fn(file_to_load);
+        if(fn.FileExists()) {
+            m_textView->LoadFile(sourceId, sourceId.path);
+            m_textView->SetMarker(line_number);
+        }
     }
 }

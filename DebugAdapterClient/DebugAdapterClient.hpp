@@ -27,6 +27,7 @@
 #define __LLDBDebugger__
 
 #include "DAPBreakpointsView.h"
+#include "DAPTextView.h"
 #include "RunInTerminalHelper.hpp"
 #include "asyncprocess.h"
 #include "clDapSettingsStore.hpp"
@@ -77,6 +78,8 @@ class DebugAdapterClient : public IPlugin
     /// ------------------------------------
     DAPMainView* m_threadsView = nullptr;
     DAPBreakpointsView* m_breakpointsView = nullptr;
+    DAPTextView* m_textView = nullptr;
+
     bool m_raisOnBpHit;
     bool m_isPerspectiveLoaded;
     bool m_showThreadNames;
@@ -90,11 +93,12 @@ private:
     void LoadPerspective();
     void ShowPane(const wxString& paneName, bool show);
     void ClearDebuggerMarker();
-    void SetDebuggerMarker(wxStyledTextCtrl* stc, int lineno);
+    void SetDebuggerMarker(int lineno);
     void DoCleanup();
     void StartAndConnectToDapServer(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
                                     const wxString& working_directory, const clEnvList_t& env);
     bool LaunchProcess(const DapEntry& dap_entry);
+    void LoadFile(const dap::Source& sourceId, int line_number);
 
     /// stop the dap server if it is running and send DEBUG_STOP event
     void StopProcess();

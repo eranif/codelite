@@ -8,9 +8,15 @@
 #include <wx/filename.h>
 
 enum class DapEntryFlag : size_t {
+    // linux path: no volume, always forward slash
     USE_LINUX_PATHS = (1 << 0),
+    // implies: USE_LINUX_PATHS
     REMOTE_OVER_SSH = (1 << 1),
+    // relative path: file name only
     USE_RELATIVE_PATH = (1 << 2),
+    // forward slash. on windows, we include the volume
+    // e.g. C:/path/to/file
+    USE_FORWARD_SLASH = (1 << 3),
 };
 
 class DapEntry
@@ -58,6 +64,9 @@ public:
 
     void SetUseRelativePath(bool b) { SetFlag(DapEntryFlag::USE_RELATIVE_PATH, b); }
     bool UseRelativePath() const { return HasFlag(DapEntryFlag::USE_RELATIVE_PATH); }
+
+    void SetUseForwardSlash(bool b) { SetFlag(DapEntryFlag::USE_FORWARD_SLASH, b); }
+    bool UseForwardSlash() const { return HasFlag(DapEntryFlag::USE_FORWARD_SLASH); }
 
     JSONItem To() const;
     void From(const JSONItem& json);

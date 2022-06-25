@@ -247,6 +247,11 @@ public:
     virtual Notebook* GetOutputPaneNotebook() = 0;
 
     /**
+     * @brief return the main editor notebook
+     */
+    virtual Notebook* GetMainNotebook() = 0;
+
+    /**
      * @brief append text line to the tab in the "Output View"
      */
     virtual void AppendOutputTabText(eOutputPaneTab tab, const wxString& text) = 0;

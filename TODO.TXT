@@ -9,4 +9,6 @@ Breakpoints management:
 - Allow user to set function breakpoint from the UI
 - Deleting a breakpoint should be reflected in the breakpoint table view
 - Double click / activating bp should open the relevant source file
-
+- Capture the default "Toggle UI breakpoint" view and don't let the user to set visual breakpoints while the selected
+  debugger is one of the dap
+- Once a breakpoint is set in the TextView, let dap knows about it by re-applying breakpoints

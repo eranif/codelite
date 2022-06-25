@@ -5,6 +5,8 @@
 #include "cl_command_event.h"
 #include "dap/dap.hpp"
 
+#include <vector>
+
 class DAPTextView : public DAPTextViewBase
 {
     wxString m_filepath;
@@ -18,6 +20,7 @@ protected:
     void UpdateLineNumbersMargin();
 
     void OnColourChanged(clCommandEvent& event);
+    void OnMarginClick(wxStyledTextEvent& event);
 
 public:
     DAPTextView(wxWindow* parent);
@@ -31,6 +34,10 @@ public:
 
     const wxString& GetFilePath() const { return m_filepath; }
     bool IsSame(const dap::Source& source) const { return m_current_source == source; }
+    void DeleteBreakpointMarkers(int line_number = wxNOT_FOUND);
+    void SetBreakpointMarker(int line_number, const wxString& tooltip);
+    bool HasBreakpointMarker(int line_number);
+    size_t GetBreakpointMarkers(std::vector<int>* lines);
 };
 
 #endif // DAPTEXTVIEW_H

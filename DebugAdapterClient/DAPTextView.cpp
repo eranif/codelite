@@ -20,6 +20,8 @@ DAPTextView::DAPTextView(wxWindow* parent)
     : DAPTextViewBase(parent)
 {
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &DAPTextView::OnColourChanged, this);
+    m_stcTextView->Bind(wxEVT_STC_MARGINCLICK, &DAPTextView::OnMarginClick, this);
+
     m_stcTextView->SetEditable(false);
     ApplyTheme();
 
@@ -44,11 +46,17 @@ DAPTextView::DAPTextView(wxWindow* parent)
     // symbol margin
     m_stcTextView->SetMarginType(SYMBOLS_MARGIN_ID, wxSTC_MARGIN_SYMBOL);
     m_stcTextView->SetMarginWidth(SYMBOLS_MARGIN_ID, FromDIP(16));
+
+    // breakpoints
+    m_stcTextView->MarkerDefine(smt_breakpoint, wxSTC_MARK_CIRCLE);
+    m_stcTextView->MarkerSetBackground(smt_breakpoint, "RED");
+    m_stcTextView->MarkerSetAlpha(smt_breakpoint, 30);
 }
 
 DAPTextView::~DAPTextView()
 {
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &DAPTextView::OnColourChanged, this);
+    m_stcTextView->Unbind(wxEVT_STC_MARGINCLICK, &DAPTextView::OnMarginClick, this);
 }
 
 void DAPTextView::OnColourChanged(clCommandEvent& event)
@@ -140,4 +148,64 @@ void DAPTextView::UpdateLineNumbersMargin()
     int newWidthCount = log10(newLineCount) + 2;
     int size = FromDIP(newWidthCount * m_stcTextView->TextWidth(wxSTC_STYLE_LINENUMBER, "X"));
     m_stcTextView->SetMarginWidth(NUMBER_MARGIN_ID, size);
+}
+
+void DAPTextView::OnMarginClick(wxStyledTextEvent& event)
+{
+    int nLine = m_stcTextView->LineFromPosition(event.GetPosition());
+
+    switch(event.GetMargin()) {
+    case SYMBOLS_MARGIN_ID:
+        if(HasBreakpointMarker(nLine)) {
+            DeleteBreakpointMarkers(nLine);
+        } else {
+            SetBreakpointMarker(nLine, wxEmptyString);
+        }
+        break;
+    default:
+        break;
+    }
+
+    // TODO: let the plugin know that it needs to apply breakpoints for this source
+}
+
+bool DAPTextView::HasBreakpointMarker(int line_number)
+{
+    int markers_bit_mask = m_stcTextView->MarkerGet(line_number);
+    int mask = (1 << smt_breakpoint);
+    return markers_bit_mask & mask;
+}
+
+size_t DAPTextView::GetBreakpointMarkers(std::vector<int>* lines)
+{
+    int mask = (1 << smt_breakpoint);
+    int line = m_stcTextView->MarkerNext(0, mask);
+    while(line != wxNOT_FOUND) {
+        lines->push_back(line);
+        line = m_stcTextView->MarkerNext(line + 1, mask);
+    }
+    return lines->size();
+}
+
+void DAPTextView::DeleteBreakpointMarkers(int line_number)
+{
+    // get a list of lines to work on
+    std::vector<int> lines;
+    if(line_number == wxNOT_FOUND) {
+        GetBreakpointMarkers(&lines);
+    } else {
+        lines.push_back(line_number);
+    }
+
+    for(int line : lines) {
+        m_stcTextView->MarkerDelete(line, smt_breakpoint);
+    }
+}
+
+void DAPTextView::SetBreakpointMarker(int line_number, const wxString& tooltip)
+{
+    if(HasBreakpointMarker(line_number)) {
+        return;
+    }
+    m_stcTextView->MarkerAdd(line_number, smt_breakpoint);
 }

@@ -41,6 +41,7 @@
 #include "clPrintout.h"
 #include "clResizableTooltip.h"
 #include "clSTCLineKeeper.h"
+#include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "cl_editor_tip_window.h"
 #include "code_completion_manager.h"
@@ -71,6 +72,7 @@
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
 #include "precompiled_header.h"
+#include "quickdebuginfo.h"
 #include "quickfindbar.h"
 #include "simpletable.h"
 #include "stringhighlighterjob.h"
@@ -4012,11 +4014,28 @@ void clEditor::ToggleBreakpoint(int lineno)
     }
 
     wxString file_path = GetRemotePathOrLocal();
+
     // Does any of the plugins want to handle this?
     clDebugEvent dbgEvent(wxEVT_DBG_UI_TOGGLE_BREAKPOINT);
     dbgEvent.SetInt(lineno);
     dbgEvent.SetLineNumber(lineno);
     dbgEvent.SetFileName(file_path);
+    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        dbgEvent.SetDebuggerName(clWorkspaceManager::Get().GetWorkspace()->GetDebuggerName());
+
+    } else {
+        // use the global debugger selected in the quick debug view
+        QuickDebugInfo info;
+        EditorConfigST::Get()->ReadObject(wxT("QuickDebugDlg"), &info);
+
+        wxArrayString debuggers = DebuggerMgr::Get().GetAvailableDebuggers();
+        if(debuggers.empty() || info.GetSelectedDbg() < 0 || info.GetSelectedDbg() >= (int)debuggers.size()) {
+            dbgEvent.SetDebuggerName(wxEmptyString);
+        } else {
+            dbgEvent.SetDebuggerName(debuggers[info.GetSelectedDbg()]);
+        }
+    }
+
     if(EventNotifier::Get()->ProcessEvent(dbgEvent)) {
         return;
     }

@@ -1161,3 +1161,12 @@ void clFileSystemWorkspace::OnReloadWorkspace(clCommandEvent& event)
         OpenWorkspace(current_file);
     }
 }
+
+wxString clFileSystemWorkspace::GetDebuggerName() const
+{
+    if(GetConfig()) {
+        return GetConfig()->GetDebugger();
+    } else {
+        return wxEmptyString;
+    }
+}

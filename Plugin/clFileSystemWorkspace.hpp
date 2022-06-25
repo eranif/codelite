@@ -111,6 +111,7 @@ public:
     bool IsProjectSupported() const override;
     wxFileName GetProjectFileName(const wxString& projectName) const override;
     void SetProjectActive(const wxString& project) override;
+    wxString GetDebuggerName() const override;
 
     virtual wxString GetExcludeFolders() const;
     clFileSystemWorkspace(bool dummy);

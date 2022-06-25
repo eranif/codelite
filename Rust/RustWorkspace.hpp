@@ -22,6 +22,7 @@ public:
     bool IsProjectSupported() const override;
     wxString GetName() const override;
     void SetProjectActive(const wxString& name) override;
+    wxString GetDebuggerName() const override;
 };
 
 #endif // RUSTWORKSPACE_HPP

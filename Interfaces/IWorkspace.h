@@ -70,6 +70,12 @@ public:
     const wxString& GetWorkspaceType() const { return m_workspaceType; }
 
     /**
+     * @brief return the currently selected debugger. i.e. if the user hit F7
+     * this debugger will be activated
+     */
+    virtual wxString GetDebuggerName() const = 0;
+
+    /**
      * @brief is this workspace support the build concept?
      * e.g. for C++ workspace, the answer is 'true', for PHP workspace, this will be 'false'
      */

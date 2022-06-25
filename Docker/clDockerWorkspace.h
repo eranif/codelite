@@ -30,6 +30,8 @@ public:
     bool IsBuildSupported() const override;
     bool IsProjectSupported() const override;
     void SetProjectActive(const wxString& project) override;
+    wxString GetDebuggerName() const override { return wxEmptyString; }
+
     const clDockerWorkspaceSettings& GetSettings() const { return m_settings; }
     clDockerWorkspaceSettings& GetSettings() { return m_settings; }
 

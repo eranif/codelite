@@ -609,14 +609,18 @@ void DebugAdapterClient::InitializeUI()
 
 void DebugAdapterClient::OnToggleBreakpoint(clDebugEvent& event)
 {
-    event.Skip();
+    if(!IsDebuggerOwnedByPlugin(event.GetDebuggerName())) {
+        event.Skip();
+        return;
+    }
+
+    event.Skip(false);
 
     // User toggled a breakpoint
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
     if(editor->GetRemotePathOrLocal() != event.GetFileName()) {
-        event.Skip(false);
         return;
     }
 

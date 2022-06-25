@@ -151,6 +151,8 @@ public:
     wxArrayString GetWorkspaceProjects() const override;
     bool IsBuildSupported() const override;
     bool IsProjectSupported() const override;
+    wxString GetDebuggerName() const override;
+
     /**
      * @brief return the remote workspace directory (on the remote machine)
      */

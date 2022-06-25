@@ -1,4 +1,5 @@
 #include "NodeDebugger.h"
+
 #include "NodeFileManager.h"
 #include "NodeJSDebuggerDlg.h"
 #include "NodeJSEvents.h"
@@ -15,9 +16,10 @@
 #include "imanager.h"
 #include "macros.h"
 #include "processreaderthread.h"
+
 #include <wx/msgdlg.h>
 
-#define NODE_CLI_DEBUGGER_NAME "Node.js - CLI"
+wxString NodeDebugger::NODE_CLI_DEBUGGER_NAME = "Node.js - CLI";
 
 #define CHECK_RUNNING() \
     if(!IsRunning()) {  \

@@ -1670,3 +1670,17 @@ void clCxxWorkspace::OnBuildHotspotClicked(clBuildEvent& event)
 }
 
 void clCxxWorkspace::SetProjectActive(const wxString& project) { SetActiveProject(project); }
+
+wxString clCxxWorkspace::GetDebuggerName() const
+{
+    auto proj = GetActiveProject();
+    if(!proj) {
+        return wxEmptyString;
+    }
+
+    auto build_conf = proj->GetBuildConfiguration();
+    if(!build_conf) {
+        return wxEmptyString;
+    }
+    return build_conf->GetDebuggerType();
+}

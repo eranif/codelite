@@ -1,4 +1,5 @@
 #include "RustWorkspace.hpp"
+
 #include "clFileSystemWorkspace.hpp"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -33,3 +34,5 @@ bool RustWorkspace::IsProjectSupported() const { return false; }
 wxString RustWorkspace::GetName() const { return clFileSystemWorkspace::Get().GetName(); }
 
 void RustWorkspace::SetProjectActive(const wxString& name) { wxUnusedVar(name); }
+
+wxString RustWorkspace::GetDebuggerName() const { return clFileSystemWorkspace::Get().GetDebuggerName(); }

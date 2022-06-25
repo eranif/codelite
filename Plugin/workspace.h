@@ -65,6 +65,7 @@ public:
     bool IsProjectSupported() const override;
     wxString GetProjectFromFile(const wxFileName& filename) const override;
     void SetProjectActive(const wxString& project) override;
+    wxString GetDebuggerName() const override;
 
 public:
     typedef std::unordered_map<wxString, ProjectPtr> ProjectMap_t;

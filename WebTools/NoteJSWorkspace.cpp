@@ -420,3 +420,5 @@ NodeDebugger::Ptr_t NodeJSWorkspace::GetDebugger() { return m_debugger; }
 void NodeJSWorkspace::AllocateDebugger() { DoAllocateDebugger(); }
 
 void NodeJSWorkspace::SetProjectActive(const wxString& project) { wxUnusedVar(project); }
+
+wxString NodeJSWorkspace::GetDebuggerName() const { return NodeDebugger::NODE_CLI_DEBUGGER_NAME; }

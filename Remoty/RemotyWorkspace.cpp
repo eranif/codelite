@@ -1311,3 +1311,12 @@ void RemotyWorkspace::RestoreSession()
     clCommandEvent event_loaded{ wxEVT_SESSION_LOADED };
     EventNotifier::Get()->AddPendingEvent(event_loaded);
 }
+
+wxString RemotyWorkspace::GetDebuggerName() const
+{
+    if(m_settings.GetSelectedConfig()) {
+        return m_settings.GetSelectedConfig()->GetDebugger();
+    } else {
+        return wxEmptyString;
+    }
+}

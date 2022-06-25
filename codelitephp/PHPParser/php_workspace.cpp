@@ -1,4 +1,5 @@
 #include "php_workspace.h"
+
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "file_logger.h"
@@ -8,6 +9,7 @@
 #include "php_parser_thread.h"
 #include "php_strings.h"
 #include "wxCodeCompletionBox.h"
+
 #include <algorithm>
 #include <cl_command_event.h>
 #include <dirtraverser.h>
@@ -741,3 +743,5 @@ wxArrayString PHPWorkspace::GetWorkspaceProjects() const
 }
 
 wxString PHPWorkspace::GetName() const { return m_workspaceFile.GetName(); }
+
+wxString PHPWorkspace::GetDebuggerName() const { return "xdebug"; }

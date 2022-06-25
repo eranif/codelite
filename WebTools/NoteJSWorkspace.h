@@ -110,6 +110,7 @@ public:
     wxString GetProjectFromFile(const wxFileName& filename) const override;
     wxString GetFilesMask() const override;
     void SetProjectActive(const wxString& project) override;
+    wxString GetDebuggerName() const override;
 
     NodeJSWorkspace(bool dummy);
     virtual ~NodeJSWorkspace();

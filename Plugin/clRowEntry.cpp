@@ -151,12 +151,14 @@ clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex,
     : m_tree(tree)
     , m_model(tree ? &tree->GetModel() : nullptr)
 {
-    // Fill the verctor with items constructed using the _non_ default constructor
-    // to makes sure that IsOk() returns TRUE
-    m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
-                   clCellValue("", -1, -1)); // at least one column
-    clCellValue cv(label, bitmapIndex, bitmapSelectedIndex);
-    m_cells[0] = cv;
+    if(m_tree) {
+        // Fill the verctor with items constructed using the _non_ default constructor
+        // to makes sure that IsOk() returns TRUE
+        m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
+                       clCellValue("", -1, -1)); // at least one column
+        clCellValue cv(label, bitmapIndex, bitmapSelectedIndex);
+        m_cells[0] = cv;
+    }
 }
 
 clRowEntry::clRowEntry(clTreeCtrl* tree, bool checked, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
@@ -165,10 +167,12 @@ clRowEntry::clRowEntry(clTreeCtrl* tree, bool checked, const wxString& label, in
 {
     // Fill the verctor with items constructed using the _non_ default constructor
     // to makes sure that IsOk() returns TRUE
-    m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
-                   clCellValue("", -1, -1)); // at least one column
-    clCellValue cv(checked, label, bitmapIndex, bitmapSelectedIndex);
-    m_cells[0] = cv;
+    if(m_tree) {
+        m_cells.resize(m_tree->GetHeader()->empty() ? 1 : m_tree->GetHeader()->size(),
+                       clCellValue("", -1, -1)); // at least one column
+        clCellValue cv(checked, label, bitmapIndex, bitmapSelectedIndex);
+        m_cells[0] = cv;
+    }
 }
 
 clRowEntry::~clRowEntry()
@@ -480,6 +484,29 @@ std::vector<size_t> clRowEntry::GetColumnWidths(wxWindow* win, wxDC& dc)
         }
     }
     return v;
+}
+
+void clRowEntry::RenderBackground(wxDC& dc, long tree_style, const clColours& c, int row_index)
+{
+    wxRect rowRect = GetItemRect();
+    bool zebraColouring = (tree_style & wxTR_ROW_LINES) || (tree_style & wxDV_ROW_LINES);
+    bool even_row = ((row_index % 2) == 0);
+
+    clColours colours = c;
+    if(zebraColouring) {
+        // Set Zebra colouring, only if no user colour was provided for the given line
+        colours.SetItemBgColour(even_row ? c.GetAlternateColour() : c.GetBgColour());
+    }
+
+    // Override default item bg colour with the user's one
+    if(GetBgColour().IsOk()) {
+        colours.SetItemBgColour(GetBgColour());
+    }
+
+    wxRect selectionRect = rowRect;
+    wxPoint deviceOrigin = dc.GetDeviceOrigin();
+    selectionRect.SetX(-deviceOrigin.x);
+    draw_selection(dc, selectionRect, colours.GetItemBgColour(), colours.GetItemBgColour(), 0.0);
 }
 
 void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index, clSearchText* searcher)

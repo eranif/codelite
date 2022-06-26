@@ -150,7 +150,8 @@ public:
      * @brief remove all children items
      */
     void DeleteAllChildren();
-    void Render(wxWindow* win, wxDC& dc, const clColours& colours, int row_index, clSearchText* searcher);
+    void Render(wxWindow* win, wxDC& dc, const clColours& c, int row_index, clSearchText* searcher);
+    void RenderBackground(wxDC& dc, long tree_style, const clColours& c, int row_index);
     std::vector<size_t> GetColumnWidths(wxWindow* win, wxDC& dc);
     void SetHovered(bool b) { SetFlag(kNF_Hovered, b); }
     bool IsHovered() const { return m_flags & kNF_Hovered; }

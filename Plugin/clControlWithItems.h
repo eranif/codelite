@@ -56,6 +56,12 @@ public:
      * in the `entry` field.
      */
     virtual void Render(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) = 0;
+
+    /**
+     * @brief draw the background of a given entry
+     */
+    virtual void RenderBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index,
+                                  clRowEntry* entry) = 0;
 };
 
 class WXDLLIMPEXP_SDK clControlWithItems : public clScrolledPanel
@@ -86,7 +92,7 @@ protected:
     int GetNumLineCanFitOnScreen(bool fully_fit = false) const;
     virtual clRowEntry* GetFirstItemOnScreen();
     virtual void SetFirstItemOnScreen(clRowEntry* item);
-    void RenderItems(wxDC& dc, const clRowEntry::Vec_t& items);
+    void RenderItems(wxDC& dc, long tree_style, const clRowEntry::Vec_t& items);
     void AssignRects(const clRowEntry::Vec_t& items);
     void OnSize(wxSizeEvent& event);
     void DoUpdateHeader(clRowEntry* row);

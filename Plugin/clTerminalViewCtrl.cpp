@@ -21,12 +21,22 @@ public:
     }
 
     void SetFont(const wxFont& f) { this->m_font = f; }
+
+    /// just the draw the item background
+    void RenderBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index,
+                          clRowEntry* entry) override
+    {
+        wxUnusedVar(dc);
+        wxUnusedVar(tree_style);
+        wxUnusedVar(colours);
+        wxUnusedVar(row_index);
+        wxUnusedVar(entry);
+    }
+
+    /// render item background and all text and stuff
     void Render(wxWindow* window, wxDC& dc, const clColours& colours, int row_index, clRowEntry* entry) override
     {
         wxUnusedVar(window);
-        wxUnusedVar(row_index);
-        bool zebraColouring = (m_ctrl->HasStyle(wxTR_ROW_LINES) || m_ctrl->HasStyle(wxDV_ROW_LINES));
-        bool even_row = ((row_index % 2) == 0);
 
         // draw the ascii line
         handler.Reset();
@@ -35,11 +45,6 @@ public:
         if(entry->IsSelected()) {
             dc.SetPen(colours.GetSelItemBgColour());
             dc.SetBrush(colours.GetSelItemBgColour());
-            dc.DrawRectangle(entry->GetItemRect());
-        } else if(zebraColouring) {
-            wxColour bg_colour = even_row ? colours.GetItemBgColour().ChangeLightness(105) : colours.GetItemBgColour();
-            dc.SetPen(bg_colour);
-            dc.SetBrush(bg_colour);
             dc.DrawRectangle(entry->GetItemRect());
         }
 

@@ -23,17 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "gitCommitDlg.h"
+
 #include "ColoursAndFontsManager.h"
 #include "GitDiffOutputParser.h"
 #include "clSingleChoiceDialog.h"
 #include "editor_config.h"
 #include "git.h"
-#include "gitCommitDlg.h"
 #include "gitCommitEditor.h"
 #include "gitentry.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "windowattrmanager.h"
+
 #include <wx/tokenzr.h>
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir)
@@ -66,6 +68,10 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     m_editEventsHandlerCommitStc.Reset(new clEditEventsHandler(m_stcCommitMessage));
     m_editEventsHandlerDiffStc.Reset(new clEditEventsHandler(m_stcDiff));
     ::clSetTLWindowBestSizeAndPosition(this);
+    CentreOnParent();
+
+    // set the focus to the text control
+    m_stcCommitMessage->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
 /*******************************************************************************/

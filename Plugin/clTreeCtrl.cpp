@@ -326,7 +326,7 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     // we set the column width to match the visible content
     m_recalcColumnWidthOnPaint = !(m_treeStyle & wxTR_COLUMN_WIDTH_NEVER_SHRINKS);
 
-    RenderItems(dc, items);
+    RenderItems(dc, m_treeStyle, items);
     dc.DestroyClippingRegion();
 
     // Keep the visible items

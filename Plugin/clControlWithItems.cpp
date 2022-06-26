@@ -246,7 +246,7 @@ wxRect clControlWithItems::GetItemsRect() const
     return clientRect;
 }
 
-void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
+void clControlWithItems::RenderItems(wxDC& dc, long tree_style, const clRowEntry::Vec_t& items)
 {
     AssignRects(items);
 
@@ -272,6 +272,10 @@ void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
         }
     }
 
+    int lines_drawn = 0;
+    wxRect clientRect = GetItemsRect();
+    int cury = clientRect.y;
+    int row_index = 0;
     for(size_t i = 0; i < items.size(); ++i) {
         clRowEntry* curitem = items[i];
         if(curitem->IsHidden()) {
@@ -281,6 +285,30 @@ void clControlWithItems::RenderItems(wxDC& dc, const clRowEntry::Vec_t& items)
             m_customRenderer->Render(this, dc, m_colours, i, curitem);
         } else {
             curitem->Render(this, dc, m_colours, i, &GetSearch());
+        }
+        cury += m_lineHeight;
+        ++row_index;
+        ++lines_drawn;
+    }
+
+    int header_bar_width = m_viewHeader ? m_viewHeader->GetWidth() : wxNOT_FOUND;
+    int width = wxMax(clientRect.GetWidth(), header_bar_width);
+
+    int max_items = GetNumLineCanFitOnScreen();
+    int fake_items_count = max_items - lines_drawn;
+    if(fake_items_count > 0) {
+        for(size_t i = 0; i < (size_t)fake_items_count; ++i) {
+            wxRect fake_entry_rect{ 0, cury, width, m_lineHeight };
+            clRowEntry fake_entry{ nullptr, false, wxEmptyString };
+            fake_entry.SetRects(fake_entry_rect, {});
+            if(m_customRenderer) {
+                m_customRenderer->RenderBackground(dc, tree_style, m_colours, row_index, &fake_entry);
+
+            } else {
+                fake_entry.RenderBackground(dc, tree_style, m_colours, row_index);
+            }
+            ++row_index;
+            cury += m_lineHeight;
         }
     }
 }

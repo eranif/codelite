@@ -75,12 +75,31 @@ wxString GetTextForRendering(const wxString& text)
     }
 }
 
+namespace
+{
+    void draw_selection(wxDC& dc, const wxRect& rect, const wxColour& pen_colour, const wxColour& brush_colour,
+                        double radius = 3.0)
+    {
+        wxBrush brush(brush_colour);
+        wxPen pen(pen_colour);
+
+        wxDCBrushChanger brush_changer(dc, brush);
+        wxDCPenChanger pen_changer(dc, pen);
+
+        dc.SetPen(pen);
+        dc.SetBrush(brush);
+
+        wxRect selection_rect = rect;
+        selection_rect.Deflate(2);
+        selection_rect = selection_rect.CenterIn(rect);
+        dc.DrawRoundedRectangle(selection_rect, radius);
+    }
+} // namespace
+
 void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
     wxColour c = win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus();
-    dc.SetPen(c);
-    dc.SetBrush(c);
-    dc.DrawRectangle(rect);
+    draw_selection(dc, rect, c, c);
 }
 
 void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clCellValue& cell)
@@ -470,9 +489,6 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     bool zebraColouring = (m_tree->HasStyle(wxTR_ROW_LINES) || m_tree->HasStyle(wxDV_ROW_LINES));
     bool even_row = ((row_index % 2) == 0);
 
-    // Define the clipping region
-    // bool hasHeader = (m_tree->GetHeader() && !m_tree->GetHeader()->empty());
-
     // Not cell related
     clColours colours = c;
     if(zebraColouring) {
@@ -484,19 +500,16 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     if(GetBgColour().IsOk()) {
         colours.SetItemBgColour(GetBgColour());
     }
+
     wxRect selectionRect = rowRect;
     wxPoint deviceOrigin = dc.GetDeviceOrigin();
     selectionRect.SetX(-deviceOrigin.x);
     if(IsSelected()) {
         DrawSimpleSelection(win, dc, selectionRect, colours);
     } else if(IsHovered()) {
-        dc.SetPen(colours.GetHoverBgColour());
-        dc.SetBrush(colours.GetHoverBgColour());
-        dc.DrawRectangle(selectionRect);
+        draw_selection(dc, selectionRect, colours.GetHoverBgColour(), colours.GetHoverBgColour());
     } else if(colours.GetItemBgColour().IsOk()) {
-        dc.SetBrush(colours.GetItemBgColour());
-        dc.SetPen(colours.GetItemBgColour());
-        dc.DrawRectangle(selectionRect);
+        draw_selection(dc, selectionRect, colours.GetItemBgColour(), colours.GetItemBgColour(), 0.0);
     }
 
     // Per cell drawings

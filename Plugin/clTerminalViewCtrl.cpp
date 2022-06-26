@@ -92,8 +92,8 @@ void clTerminalViewCtrl::ApplyStyle()
         clDataViewListCtrl::SetDefaultFont(f);
 
         clColours colours;
-        colours.InitFromColour(lexer->GetProperty(0).GetBgColour());
-        colours.SetItemTextColour(lexer->GetProperty(0).GetFgColour());
+        colours.InitFromColour(clSystemSettings::GetDefaultPanelColour());
+        colours.SetItemTextColour(clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
         SetColours(colours);
     }
 }

@@ -2229,7 +2229,6 @@ static void DoSetDialogSize(wxDialog* win, double factor)
         double dlgHeight = (double)parentSize.GetHeight() * factor;
         parentSize.SetWidth(dlgWidth);
         parentSize.SetHeight(dlgHeight);
-        win->SetMinSize(parentSize);
         win->SetSize(parentSize);
         win->GetSizer()->Layout();
         win->CentreOnParent();

@@ -177,6 +177,12 @@ void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text,
     dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     dc.SetTextForeground(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+#elif defined(__WXMAC__)
+    f.SetFractionalPointSize(1.1 * f.GetFractionalPointSize());
+    f.SetWeight(wxFONTWEIGHT_SEMIBOLD);
+    dc.SetPen(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    dc.SetBrush(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    dc.SetTextForeground(clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
 #else
     f.SetFractionalPointSize(1.1 * f.GetFractionalPointSize());
     f.SetWeight(wxFONTWEIGHT_SEMIBOLD);

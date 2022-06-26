@@ -157,7 +157,9 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
         m_initialTheme = DrawingUtils::IsDark(baseColour) ? kTHEME_DARK : kTHEME_LIGHT;
         m_endingTheme = m_initialTheme;
     }
-    ::clSetTLWindowBestSizeAndPosition(this);
+
+    ::clSetDialogBestSizeAndPosition(this);
+    CentreOnParent();
 }
 
 void SyntaxHighlightDlg::DoUpdatePreview()

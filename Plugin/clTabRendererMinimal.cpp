@@ -21,7 +21,7 @@
 namespace
 {
 #ifdef __WXMAC__
-constexpr int BOTTOM_PEN_LIGHNTESS = 60;
+constexpr int BOTTOM_PEN_LIGHNTESS = 80;
 constexpr int SIDE_PEN_LIGHNTESS_WHEN_DARK = 115;
 constexpr int SIDE_PEN_LIGHNTESS_WHEN_LIGHT = 70;
 #else

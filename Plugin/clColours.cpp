@@ -49,7 +49,7 @@ void clColours::InitFromColour(const wxColour& baseColour)
     selItemBgColourNoFocus = selItemBgColour;
     buttonColour = itemTextColour;    // expand/collapse button colour
     selbuttonColour = itemTextColour; // The colour of the button ("Expand") when on a selected row
-    alternateColour = DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(103) : bgColour.ChangeLightness(97);
+    alternateColour = bgColour.ChangeLightness(110);
     headerBgColour = bgColour;
     darkBorderColour = borderColour = headerVBorderColour = headerHBorderColour =
         bgColour.ChangeLightness(80); // Header background colour

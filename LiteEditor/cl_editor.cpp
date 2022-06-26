@@ -991,10 +991,12 @@ void clEditor::SetProperties()
 
 #ifdef __WXMSW__
     SetBufferedDraw(true);
-#else
+#elif defined(__WXGTK__)
     // when enabled on GTK, this causes some nasty drawing issues
     // and macOS always draw with buffered drawing
     SetBufferedDraw(false);
+#else
+    SetBufferedDraw(true);
 #endif
 
 #if defined(__WXMAC__)

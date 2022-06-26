@@ -624,13 +624,13 @@ void DebugAdapterClient::OnToggleBreakpoint(clDebugEvent& event)
         return;
     }
 
-    const wxString& path = event.GetFileName();
-
-    // if a session is running, re-apply the breakpoints
-    // note that we do this using "CallAfter" and not during
-    // this event handler to make sure that the BreakpointsMgr
-    // is updated before we access it
-    CallAfter(&DebugAdapterClient::ApplyBreakpoints, path);
+    // keep the breakpoint
+    if(!m_breakpoints_store.Contains(event.GetFileName(), event.GetLineNumber())) {
+        m_breakpoints_store.SetSourceBreakpoint(event.GetFileName(), event.GetLineNumber());
+        if(m_client.IsConnected()) {
+            ApplyBreakpoints(event.GetFileName());
+        }
+    }
 }
 
 void DebugAdapterClient::DoCleanup()

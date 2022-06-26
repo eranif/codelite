@@ -56,6 +56,8 @@
   <Dependencies/>
   <VirtualDirectory Name="Plugin">
     <VirtualDirectory Name="src">
+      <File Name="BreakpointsStore.hpp"/>
+      <File Name="BreakpointsStore.cpp"/>
       <File Name="DapProcess.cpp"/>
       <File Name="DapProcess.hpp"/>
       <File Name="RunInTerminalHelper.cpp"/>

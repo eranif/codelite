@@ -442,8 +442,6 @@
     <File Name="EnvVarImporterDlg.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="Debugger">
-    <File Name="clBreakpointsStore.hpp"/>
-    <File Name="clBreakpointsStore.cpp"/>
     <File Name="DebuggerToolBar.cpp"/>
     <File Name="DebuggerToolBar.h"/>
     <File Name="memoryviewbase_liteeditor_bitmaps.cpp"/>

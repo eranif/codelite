@@ -31,6 +31,7 @@
 #include "RunInTerminalHelper.hpp"
 #include "asyncprocess.h"
 #include "clDapSettingsStore.hpp"
+#include "BreakpointsStore.hpp"
 #include "clModuleLogger.hpp"
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
@@ -72,6 +73,7 @@ class DebugAdapterClient : public IPlugin
     clDapSettingsStore m_dap_store;
     IProcess* m_dap_server = nullptr;
     RunInTerminalHelper m_terminal_helper;
+    dap::BreakpointsStore m_breakpoints_store;
 
     /// ------------------------------------
     /// UI elements

@@ -37,7 +37,7 @@ public:
             dc.SetBrush(colours.GetSelItemBgColour());
             dc.DrawRectangle(entry->GetItemRect());
         } else if(zebraColouring) {
-            wxColour bg_colour = even_row ? colours.GetAlternateColour() : colours.GetItemBgColour();
+            wxColour bg_colour = even_row ? colours.GetItemBgColour().ChangeLightness(105) : colours.GetItemBgColour();
             dc.SetPen(bg_colour);
             dc.SetBrush(bg_colour);
             dc.DrawRectangle(entry->GetItemRect());

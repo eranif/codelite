@@ -506,7 +506,9 @@ void DebugAdapterClient::LoadPerspective()
     // Hide all the panes
     const auto& panes = m_mgr->GetDockingManager()->GetAllPanes();
     for(size_t i = 0; i < panes.size(); ++i) {
-        panes[i].Hide();
+        if(panes[i].dock_direction != wxAUI_DOCK_CENTER) {
+            panes[i].Hide();
+        }
     }
 
     m_mgr->LoadPerspective("DAP");

@@ -21,6 +21,12 @@
 #define wxCONTROL_NONE 0
 #endif
 
+#ifdef __WXGTK__
+#define SELECTION_RECT_DEFLATE 1
+#else
+#define SELECTION_RECT_DEFLATE 2
+#endif
+
 namespace
 {
 const wxString COLOUR_TEXT = " #FFFFFF ";
@@ -90,7 +96,7 @@ namespace
         dc.SetBrush(brush);
 
         wxRect selection_rect = rect;
-        selection_rect.Deflate(2);
+        selection_rect.Deflate(SELECTION_RECT_DEFLATE);
         selection_rect = selection_rect.CenterIn(rect);
         dc.DrawRoundedRectangle(selection_rect, radius);
     }

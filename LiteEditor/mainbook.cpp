@@ -459,6 +459,10 @@ clEditor* MainBook::FindEditor(const wxString& fileName)
                 return editor;
             }
 #endif
+            // still no luck? try the remotepath
+            if(editor->GetRemotePathOrLocal() == fileName) {
+                return editor;
+            }
         }
     }
 

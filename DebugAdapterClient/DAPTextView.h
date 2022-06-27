@@ -27,8 +27,13 @@ public:
     virtual ~DAPTextView();
 
     wxStyledTextCtrl* GetCtrl() { return m_stcTextView; }
-    void ClearMarker();
-    void SetMarker(int line_number);
+
+    static void ClearMarker(wxStyledTextCtrl* ctrl);
+    void ClearMarker() { ClearMarker(m_stcTextView); }
+
+    static void SetMarker(wxStyledTextCtrl* ctrl, int line_number);
+    void SetMarker(int line_number) { SetMarker(m_stcTextView, line_number); }
+
     void SetText(const dap::Source& source, const wxString& text, const wxString& path, const wxString& mimeType);
     void LoadFile(const dap::Source& source, const wxString& filepath);
 

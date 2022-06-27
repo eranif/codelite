@@ -61,12 +61,17 @@ BreakpointsHelper::~BreakpointsHelper()
     // restore the breakpoints
     clDebuggerBreakpoint::Vec_t all_bps;
     for(const auto& vt : m_ui_breakpoints) {
+        LOG_DEBUG(LOG) << "Restoring breakpoints for file:" << vt.first << " -" << vt.second.size() << "breakpoints"
+                       << endl;
         for(const auto& bp : vt.second) {
             all_bps.push_back(bp);
         }
     }
 
     clGetManager()->SetBreakpoints(all_bps);
+    LOG_DEBUG(LOG) << "Restoring breakpoints...done" << endl;
+
+    // refresh markers
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &BreakpointsHelper::OnToggleBreakpoint, this);
 }
 

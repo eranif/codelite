@@ -322,20 +322,35 @@ void DebugAdapterClient::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void DebugAdapterClient::ClearDebuggerMarker()
 {
-    CHECK_PTR_RET(m_textView);
-    m_textView->ClearMarker();
-}
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
 
-void DebugAdapterClient::SetDebuggerMarker(int lineno)
-{
-    CHECK_PTR_RET(m_textView);
-    m_textView->SetMarker(lineno);
+    for(auto editor : editors) {
+        DAPTextView::ClearMarker(editor->GetCtrl());
+    }
 }
 
 void DebugAdapterClient::RefreshBreakpointsView()
 {
     if(m_breakpointsView) {
         m_breakpointsView->RefreshView(m_sessionBreakpoints);
+    }
+
+    // clear all breakpoint markers
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    for(auto editor : editors) {
+        editor->DeleteBreakpointMarkers();
+    }
+
+    // update the open editors with breakpoint markers
+    for(const auto& bp : m_sessionBreakpoints.get_breakpoints()) {
+        wxString path = NormaliseReceivedPath(bp.source.path);
+        auto editor = clGetManager()->FindEditor(path);
+        if(!editor) {
+            continue;
+        }
+        editor->SetBreakpointMarker(bp.line - 1);
     }
 }
 
@@ -597,6 +612,24 @@ void DebugAdapterClient::DoCleanup()
     m_terminal_helper.Terminate();
     m_sessionBreakpoints.clear();
     wxDELETE(m_breakpointsHelper);
+
+    // clear all breakpoint markers
+    IEditor::List_t editors;
+    clGetManager()->GetAllEditors(editors);
+    for(auto editor : editors) {
+        editor->DeleteBreakpointMarkers();
+    }
+
+    clDebuggerBreakpoint::Vec_t all_bps;
+    clGetManager()->GetAllBreakpoints(all_bps);
+
+    for(const auto& bp : all_bps) {
+        if(bp.file.empty()) {
+            continue;
+        }
+        auto editor = clGetManager()->FindEditor(bp.file);
+        editor->SetBreakpointMarker(bp.lineno - 1);
+    }
 }
 
 void DebugAdapterClient::OnWorkspaceClosed(clWorkspaceEvent& event)
@@ -957,7 +990,7 @@ void DebugAdapterClient::OnDapSetFunctionBreakpointResponse(DAPEvent& event)
     for(const auto& bp : resp->breakpoints) {
         m_sessionBreakpoints.update_or_insert(bp);
     }
-    CallAfter(&DebugAdapterClient::RefreshBreakpointsView);
+    RefreshBreakpointsView();
 }
 
 void DebugAdapterClient::OnDapSetSourceBreakpointResponse(DAPEvent& event)
@@ -971,7 +1004,7 @@ void DebugAdapterClient::OnDapSetSourceBreakpointResponse(DAPEvent& event)
     for(const auto& bp : resp->breakpoints) {
         m_sessionBreakpoints.update_or_insert(bp);
     }
-    CallAfter(&DebugAdapterClient::RefreshBreakpointsView);
+    RefreshBreakpointsView();
 }
 
 void DebugAdapterClient::OnDapBreakpointEvent(DAPEvent& event)
@@ -985,7 +1018,7 @@ void DebugAdapterClient::OnDapBreakpointEvent(DAPEvent& event)
     if(event_data->reason != "removed") {
         m_sessionBreakpoints.update_or_insert(bp);
     }
-    CallAfter(&DebugAdapterClient::RefreshBreakpointsView);
+    RefreshBreakpointsView();
 }
 
 void DebugAdapterClient::OnDapRunInTerminal(DAPEvent& event)
@@ -1159,33 +1192,56 @@ wxString DebugAdapterClient::NormaliseReceivedPath(const wxString& path) const
 
 void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
 {
-    // easy path
-    CHECK_PTR_RET(m_textView);
-    if(m_textView->IsSame(sourceId)) {
-        m_textView->SetMarker(line_number);
-        return;
-    }
-
-    if(!m_client.LoadSource(sourceId, [this, sourceId, line_number](bool success, const wxString& content,
-                                                                    const wxString& mimeType) {
-           if(!success) {
-               return;
-           }
-           LOG_DEBUG(LOG) << "mimeType:" << mimeType << endl;
-           m_textView->SetText(sourceId, content,
-                               wxString() << sourceId.name << " (ref: " << sourceId.sourceReference << ")", mimeType);
-           m_textView->SetMarker(line_number);
-       })) {
+    if(sourceId.sourceReference <= 0) {
+        // use local file system
         // not a server file, load it locally
         wxFileName fp(sourceId.path);
 
         // the is already loaded
         wxString file_to_load = fp.GetFullPath();
-        LOG_DEBUG(LOG) << "Loading file.." << file_to_load;
-        wxFileName fn(file_to_load);
-        if(fn.FileExists()) {
-            m_textView->LoadFile(sourceId, sourceId.path);
-            m_textView->SetMarker(line_number);
+        LOG_DEBUG(LOG) << "Loading file.." << file_to_load << endl;
+        file_to_load = NormaliseReceivedPath(file_to_load);
+        LOG_DEBUG(LOG) << "Normalised form:" << file_to_load << endl;
+
+        if(m_session.dap_server.IsRemote()) {
+            clGetManager()->SetStatusMessage(_("ERROR: (dap) loading remote file over SSH is not supported yet"));
+            return;
+        } else {
+            wxFileName fn(file_to_load);
+            if(!fn.FileExists()) {
+                clGetManager()->SetStatusMessage(_("ERROR: (dap) file:") + file_to_load + _(" does not exist"));
+                return;
+            }
+
+            auto callback = [line_number](IEditor* editor) {
+                DAPTextView::ClearMarker(editor->GetCtrl());
+                DAPTextView::SetMarker(editor->GetCtrl(), line_number);
+            };
+            clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), callback);
+            m_textView->ClearMarker();
         }
+
+    } else {
+        // reference file, load it into the editor
+
+        // easy path
+        CHECK_PTR_RET(m_textView);
+        if(m_textView->IsSame(sourceId)) {
+            clGetManager()->SelectPage(m_textView);
+            m_textView->SetMarker(line_number);
+            return;
+        }
+
+        m_client.LoadSource(sourceId, [this, sourceId, line_number](bool success, const wxString& content,
+                                                                    const wxString& mimeType) {
+            if(!success) {
+                return;
+            }
+            LOG_DEBUG(LOG) << "mimeType:" << mimeType << endl;
+            clGetManager()->SelectPage(m_textView);
+            m_textView->SetText(sourceId, content,
+                                wxString() << sourceId.name << " (ref: " << sourceId.sourceReference << ")", mimeType);
+            m_textView->SetMarker(line_number);
+        });
     }
 }

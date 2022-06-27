@@ -81,16 +81,16 @@ void DAPTextView::ApplyTheme()
     lexer->Apply(m_stcTextView);
 }
 
-void DAPTextView::ClearMarker() { m_stcTextView->MarkerDeleteAll(smt_indicator); }
+void DAPTextView::ClearMarker(wxStyledTextCtrl* ctrl) { ctrl->MarkerDeleteAll(smt_indicator); }
 
-void DAPTextView::SetMarker(int line_number)
+void DAPTextView::SetMarker(wxStyledTextCtrl* ctrl, int line_number)
 {
-    m_stcTextView->MarkerDeleteAll(smt_indicator);
-    m_stcTextView->MarkerAdd(line_number, smt_indicator);
-    int caretPos = m_stcTextView->PositionFromLine(line_number);
-    m_stcTextView->SetSelection(caretPos, caretPos);
-    m_stcTextView->SetCurrentPos(caretPos);
-    m_stcTextView->EnsureCaretVisible();
+    ctrl->MarkerDeleteAll(smt_indicator);
+    ctrl->MarkerAdd(line_number, smt_indicator);
+    int caretPos = ctrl->PositionFromLine(line_number);
+    ctrl->SetSelection(caretPos, caretPos);
+    ctrl->SetCurrentPos(caretPos);
+    ctrl->EnsureCaretVisible();
 }
 
 void DAPTextView::Clear()

@@ -78,7 +78,6 @@ private:
     void LoadPerspective();
     void ShowPane(const wxString& paneName, bool show);
     void ClearDebuggerMarker();
-    void SetDebuggerMarker(int lineno);
     void DoCleanup();
     void StartAndConnectToDapServer(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
                                     const wxString& working_directory, const clEnvList_t& env);

@@ -933,6 +933,9 @@ void DebugAdapterClient::OnDapInitializedEvent(DAPEvent& event)
 
 void DebugAdapterClient::OnDapStoppedEvent(DAPEvent& event)
 {
+    // raise CodeLite
+    EventNotifier::Get()->TopFrame()->Raise();
+
     // got stopped event
     if(m_session.need_to_set_breakpoints) {
         if(m_breakpointsHelper) {

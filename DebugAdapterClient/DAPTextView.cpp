@@ -19,6 +19,7 @@ constexpr int FOLD_MARGIN_ID = 4;
 DAPTextView::DAPTextView(wxWindow* parent)
     : DAPTextViewBase(parent)
 {
+    MSWSetWindowDarkTheme(this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &DAPTextView::OnColourChanged, this);
     m_stcTextView->Bind(wxEVT_STC_MARGINCLICK, &DAPTextView::OnMarginClick, this);
 

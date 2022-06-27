@@ -157,6 +157,7 @@ public:
     size_t GetAllEditors(IEditor::List_t& editors, bool inOrder = false) override;
     size_t GetAllTabs(clTab::Vec_t& tabs) override;
     size_t GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints) override;
+    clDebuggerBreakpoint CreateBreakpoint(const wxString& filepath, int line_number) override;
     void DeleteAllBreakpoints() override;
     void SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints) override;
     void LoadPerspective(const wxString& perspectiveName) override;

@@ -1,6 +1,7 @@
 #ifndef DAPBREAKPOINTSVIEW_H
 #define DAPBREAKPOINTSVIEW_H
 
+#include "SessionBreakpoints.hpp"
 #include "UI.h"
 #include "dap/dap.hpp"
 
@@ -8,29 +9,14 @@
 
 class DAPBreakpointsView : public DAPBreakpointsViewBase
 {
-    std::unordered_set<dap::Breakpoint> m_breakpoints;
-
-protected:
-    void RefreshView();
-
 public:
     DAPBreakpointsView(wxWindow* parent);
     virtual ~DAPBreakpointsView();
 
     /**
-     * @brief set or update a breakpoint
+     * @brief initialise the view by syncing the data with the store
      */
-    void SetBreakpoint(const dap::Breakpoint& breakpoint);
-
-    /**
-     * @brief set or update list of breakpoints
-     */
-    void SetBreakpoints(const std::vector<dap::Breakpoint>& breakpoint);\
-
-    /**
-     * @brief remove all the breakpoints from the ui
-     */
-    void Clear();
+    void RefreshView(const SessionBreakpoints& breakpoints);
 };
 
 #endif // DAPBREAKPOINTSVIEW_H

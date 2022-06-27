@@ -26,12 +26,14 @@
 #ifndef __LLDBDebugger__
 #define __LLDBDebugger__
 
+#include "BreakpointsHelper.hpp"
 #include "DAPBreakpointsView.h"
 #include "DAPTextView.h"
+#include "DebugSession.hpp"
 #include "RunInTerminalHelper.hpp"
+#include "SessionBreakpoints.hpp"
 #include "asyncprocess.h"
 #include "clDapSettingsStore.hpp"
-#include "BreakpointsStore.hpp"
 #include "clModuleLogger.hpp"
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
@@ -44,27 +46,6 @@
 class DAPMainView;
 class IProcess;
 
-struct DebugSession {
-    std::vector<wxString> command;
-    wxString working_directory;
-    clEnvList_t environment;
-    bool need_to_set_breakpoints = false;
-    bool debug_over_ssh = false;
-    SSHAccountInfo ssh_acount;
-    DapEntry dap_server;
-
-    void Clear()
-    {
-        need_to_set_breakpoints = false;
-        working_directory.clear();
-        debug_over_ssh = false;
-        ssh_acount = {};
-        command.clear();
-        environment.clear();
-        dap_server = {};
-    }
-};
-
 class DebugAdapterClient : public IPlugin
 {
     dap::Client m_client;
@@ -73,7 +54,9 @@ class DebugAdapterClient : public IPlugin
     clDapSettingsStore m_dap_store;
     IProcess* m_dap_server = nullptr;
     RunInTerminalHelper m_terminal_helper;
-    dap::BreakpointsStore m_breakpoints_store;
+    wxFileName m_breakpointsFile;
+    BreakpointsHelper* m_breakpointsHelper = nullptr;
+    SessionBreakpoints m_sessionBreakpoints;
 
     /// ------------------------------------
     /// UI elements
@@ -101,19 +84,14 @@ private:
                                     const wxString& working_directory, const clEnvList_t& env);
     bool LaunchProcess(const DapEntry& dap_entry);
     void LoadFile(const dap::Source& sourceId, int line_number);
+    void RefreshBreakpointsView();
 
     /// stop the dap server if it is running and send DEBUG_STOP event
     void StopProcess();
-
-    /// loads all the breakpoints from the store for a given file and
-    /// pass them to the debugger. If the debugger, is not running, do
-    /// nothing
-    void ApplyBreakpoints(const wxString& path);
     void RestoreUI();
 
     /// Place breakpoint markers for a given editor
     void RefreshBreakpointsMarkersForEditor(IEditor* editor);
-    wxString NormalisePathForSend(const wxString& path) const;
     wxString NormaliseReceivedPath(const wxString& path) const;
     void RegisterDebuggers();
     /**
@@ -155,7 +133,6 @@ protected:
     void OnDebugCanInteract(clDebugEvent& event);
     void OnDebugStepIn(clDebugEvent& event);
     void OnDebugStepOut(clDebugEvent& event);
-    void OnToggleBreakpoint(clDebugEvent& event);
     void OnToggleInterrupt(clDebugEvent& event);
     void OnDebugTooltip(clDebugEvent& event);
     void OnDebugQuickDebug(clDebugEvent& event);

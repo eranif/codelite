@@ -593,6 +593,11 @@ public:
     virtual size_t GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints) = 0;
 
     /**
+     * @brief create a simple breakpoint from file:line
+     */
+    virtual clDebuggerBreakpoint CreateBreakpoint(const wxString& filepath, int line_number) = 0;
+
+    /**
      * @brief delete all breakpoints assigned by the user
      */
     virtual void DeleteAllBreakpoints() = 0;

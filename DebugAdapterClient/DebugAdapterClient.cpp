@@ -32,6 +32,7 @@
 #include "asyncprocess.h"
 #include "bookmark_manager.h"
 #include "clFileSystemWorkspace.hpp"
+#include "clWorkspaceManager.h"
 #include "clcommandlineparser.h"
 #include "console_frame.h"
 #include "debuggermanager.h"
@@ -85,33 +86,6 @@ wxString GetWatchWord(IEditor& editor)
     return word;
 }
 #endif
-
-// helper methods converting between clDebuggerBreakpoint and dap::XXXBreakpoint
-bool is_source_breakpoint(const clDebuggerBreakpoint& bp)
-{
-    return bp.bp_type == BreakpointType::BP_type_break && !bp.file.empty() && bp.lineno > 0;
-}
-
-bool is_function_breakpoint(const clDebuggerBreakpoint& bp)
-{
-    return bp.bp_type == BreakpointType::BP_type_break && !bp.function_name.empty();
-}
-
-dap::SourceBreakpoint to_dap_source_bp(const clDebuggerBreakpoint& bp)
-{
-    dap::SourceBreakpoint d;
-    d.line = bp.lineno;
-    d.condition = bp.conditions;
-    return d;
-}
-
-dap::FunctionBreakpoint to_dap_function_bp(const clDebuggerBreakpoint& bp)
-{
-    dap::FunctionBreakpoint d;
-    d.name = bp.function_name;
-    d.condition = bp.conditions;
-    return d;
-}
 
 std::vector<wxString> to_string_array(const clEnvList_t& env_list)
 {
@@ -189,7 +163,6 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_STOP, &DebugAdapterClient::OnDebugStop, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_IS_RUNNING, &DebugAdapterClient::OnDebugIsRunning, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_CAN_INTERACT, &DebugAdapterClient::OnDebugCanInteract, this);
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &DebugAdapterClient::OnToggleBreakpoint, this);
     EventNotifier::Get()->Bind(wxEVT_DBG_UI_INTERRUPT, &DebugAdapterClient::OnToggleInterrupt, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTING, &DebugAdapterClient::OnBuildStarting, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &DebugAdapterClient::OnInitDone, this);
@@ -238,6 +211,8 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
 
 void DebugAdapterClient::UnPlug()
 {
+    wxDELETE(m_breakpointsHelper);
+
     DestroyUI();
     DebuggerMgr::Get().UnregisterDebuggers(m_shortName);
 
@@ -254,7 +229,6 @@ void DebugAdapterClient::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_DBG_CAN_INTERACT, &DebugAdapterClient::OnDebugCanInteract, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_IN, &DebugAdapterClient::OnDebugStepIn, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_STEP_OUT, &DebugAdapterClient::OnDebugStepOut, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &DebugAdapterClient::OnToggleBreakpoint, this);
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_INTERRUPT, &DebugAdapterClient::OnToggleInterrupt, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_STARTING, &DebugAdapterClient::OnBuildStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &DebugAdapterClient::OnInitDone, this);
@@ -358,6 +332,13 @@ void DebugAdapterClient::SetDebuggerMarker(int lineno)
     m_textView->SetMarker(lineno);
 }
 
+void DebugAdapterClient::RefreshBreakpointsView()
+{
+    if(m_breakpointsView) {
+        m_breakpointsView->RefreshView(m_sessionBreakpoints);
+    }
+}
+
 void DebugAdapterClient::OnDebugContinue(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
@@ -374,7 +355,6 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
         // already running, do nothing
         return;
     }
-
     LOG_DEBUG(LOG) << "debug-start event is called for debugger:" << event.GetDebuggerName() << endl;
 
     if(!IsDebuggerOwnedByPlugin(event.GetDebuggerName())) {
@@ -607,32 +587,6 @@ void DebugAdapterClient::InitializeUI()
     }
 }
 
-void DebugAdapterClient::OnToggleBreakpoint(clDebugEvent& event)
-{
-    if(!IsDebuggerOwnedByPlugin(event.GetDebuggerName())) {
-        event.Skip();
-        return;
-    }
-
-    event.Skip(false);
-
-    // User toggled a breakpoint
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-
-    if(editor->GetRemotePathOrLocal() != event.GetFileName()) {
-        return;
-    }
-
-    // keep the breakpoint
-    if(!m_breakpoints_store.Contains(event.GetFileName(), event.GetLineNumber())) {
-        m_breakpoints_store.SetSourceBreakpoint(event.GetFileName(), event.GetLineNumber());
-        if(m_client.IsConnected()) {
-            ApplyBreakpoints(event.GetFileName());
-        }
-    }
-}
-
 void DebugAdapterClient::DoCleanup()
 {
     ClearDebuggerMarker();
@@ -641,6 +595,8 @@ void DebugAdapterClient::DoCleanup()
     StopProcess();
     m_session.Clear();
     m_terminal_helper.Terminate();
+    m_sessionBreakpoints.clear();
+    wxDELETE(m_breakpointsHelper);
 }
 
 void DebugAdapterClient::OnWorkspaceClosed(clWorkspaceEvent& event)
@@ -946,7 +902,9 @@ void DebugAdapterClient::OnDapStoppedEvent(DAPEvent& event)
 {
     // got stopped event
     if(m_session.need_to_set_breakpoints) {
-        ApplyBreakpoints(wxEmptyString);
+        if(m_breakpointsHelper) {
+            m_breakpointsHelper->ApplyBreakpoints(wxEmptyString);
+        }
         m_session.need_to_set_breakpoints = false;
     }
 
@@ -992,14 +950,28 @@ void DebugAdapterClient::OnDapSetFunctionBreakpointResponse(DAPEvent& event)
 {
     auto resp = event.GetDapResponse()->As<dap::SetFunctionBreakpointsResponse>();
     CHECK_PTR_RET(resp);
-    m_breakpointsView->SetBreakpoints(resp->breakpoints);
+
+    // delete all breakpoints associated with the reported file
+    m_sessionBreakpoints.delete_by_paths(resp->breakpoints);
+
+    for(const auto& bp : resp->breakpoints) {
+        m_sessionBreakpoints.update_or_insert(bp);
+    }
+    CallAfter(&DebugAdapterClient::RefreshBreakpointsView);
 }
 
 void DebugAdapterClient::OnDapSetSourceBreakpointResponse(DAPEvent& event)
 {
     auto resp = event.GetDapResponse()->As<dap::SetBreakpointsResponse>();
     CHECK_PTR_RET(resp);
-    m_breakpointsView->SetBreakpoints(resp->breakpoints);
+
+    // delete all breakpoints associated with the reported file
+    m_sessionBreakpoints.delete_by_paths(resp->breakpoints);
+
+    for(const auto& bp : resp->breakpoints) {
+        m_sessionBreakpoints.update_or_insert(bp);
+    }
+    CallAfter(&DebugAdapterClient::RefreshBreakpointsView);
 }
 
 void DebugAdapterClient::OnDapBreakpointEvent(DAPEvent& event)
@@ -1007,7 +979,13 @@ void DebugAdapterClient::OnDapBreakpointEvent(DAPEvent& event)
     auto event_data = event.GetDapEvent()->As<dap::BreakpointEvent>();
     CHECK_PTR_RET(event_data);
     CHECK_PTR_RET(m_breakpointsView);
-    m_breakpointsView->SetBreakpoint(event_data->breakpoint);
+    // check the event reason
+    const auto& bp = event_data->breakpoint;
+    m_sessionBreakpoints.delete_by_id(bp.id);
+    if(event_data->reason != "removed") {
+        m_sessionBreakpoints.update_or_insert(bp);
+    }
+    CallAfter(&DebugAdapterClient::RefreshBreakpointsView);
 }
 
 void DebugAdapterClient::OnDapRunInTerminal(DAPEvent& event)
@@ -1033,57 +1011,6 @@ void DebugAdapterClient::OnDapRunInTerminal(DAPEvent& event)
 /// --------------------------------------------------------------------------
 /// dap events stops here
 /// --------------------------------------------------------------------------
-
-void DebugAdapterClient::ApplyBreakpoints(const wxString& path)
-{
-    if(!m_client.IsConnected()) {
-        return;
-    }
-
-    std::unordered_map<wxString, std::vector<dap::SourceBreakpoint>> dap_source_breakpoints;
-    std::vector<dap::FunctionBreakpoint> dap_function_breakpoints;
-
-    clDebuggerBreakpoint::Vec_t all_bps;
-    clGetManager()->GetAllBreakpoints(all_bps);
-
-    if(all_bps.empty()) {
-        return;
-    }
-
-    dap_source_breakpoints.reserve(all_bps.size());
-    dap_function_breakpoints.reserve(all_bps.size());
-    for(const auto& bp : all_bps) {
-        if(is_source_breakpoint(bp)) {
-            if(path.empty() || path == bp.file) {
-                // all breakpoints
-                if(dap_source_breakpoints.count(bp.file) == 0) {
-                    dap_source_breakpoints.insert({ bp.file, {} });
-                }
-                dap_source_breakpoints[bp.file].push_back(to_dap_source_bp(bp));
-            }
-
-        } else if(is_function_breakpoint(bp)) {
-            dap_function_breakpoints.push_back(to_dap_function_bp(bp));
-        }
-    }
-
-    // dont pass empty array, it will tell dap to clear all breakpoints
-    for(const auto& vt : dap_source_breakpoints) {
-        if(!vt.second.empty()) {
-            wxFileName filepath(vt.first);
-            LOG_DEBUG(LOG) << "Applying breakpoints for file:" << filepath << endl;
-            LOG_DEBUG(LOG) << vt.second << endl;
-            wxString source_path = NormalisePathForSend(filepath.GetFullPath());
-            m_client.SetBreakpointsFile(source_path, vt.second);
-        }
-    }
-
-    if(!dap_function_breakpoints.empty()) {
-        LOG_DEBUG(LOG) << "Applying function breakpoints:" << endl;
-        LOG_DEBUG(LOG) << dap_function_breakpoints << endl;
-        m_client.SetFunctionBreakpoints(dap_function_breakpoints);
-    }
-}
 
 void DebugAdapterClient::RefreshBreakpointsMarkersForEditor(IEditor* editor) { CHECK_PTR_RET(editor); }
 
@@ -1150,6 +1077,9 @@ void DebugAdapterClient::StartAndConnectToDapServer(const DapEntry& dap_server, 
     m_session.environment = env;
     m_session.dap_server = dap_server;
 
+    wxDELETE(m_breakpointsHelper);
+    m_breakpointsHelper = new BreakpointsHelper(m_client, m_session, LOG);
+
     // Notify about debug start event
     // + load the UI
     InitializeUI();
@@ -1202,34 +1132,6 @@ void DebugAdapterClient::StopProcess()
         clDebugEvent e(wxEVT_DEBUG_ENDED);
         EventNotifier::Get()->AddPendingEvent(e);
     }
-}
-
-wxString DebugAdapterClient::NormalisePathForSend(const wxString& path) const
-{
-    wxFileName fn(path);
-
-    // easy path
-    if(m_session.dap_server.UseRelativePath()) {
-        return fn.GetFullName();
-    }
-
-    const auto& dap = m_session.dap_server;
-
-    // attempt to make it fullpath
-    if(fn.IsRelative()) {
-        fn.MakeAbsolute(m_session.working_directory);
-    }
-
-    if(dap.IsRemote() || dap.IsUsingUnixPath()) {
-        // no volume
-        fn.SetVolume(wxEmptyString);
-    }
-
-    wxString fullpath = fn.GetFullPath();
-    if(dap.UseForwardSlash()) {
-        fullpath.Replace(R"(\)", "/");
-    }
-    return fullpath;
 }
 
 wxString DebugAdapterClient::NormaliseReceivedPath(const wxString& path) const

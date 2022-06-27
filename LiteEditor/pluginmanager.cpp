@@ -742,6 +742,15 @@ size_t PluginManager::GetAllBreakpoints(clDebuggerBreakpoint::Vec_t& breakpoints
     return breakpoints.size();
 }
 
+clDebuggerBreakpoint PluginManager::CreateBreakpoint(const wxString& filepath, int line_number)
+{
+    clDebuggerBreakpoint bp;
+    bp.file = filepath;
+    bp.lineno = line_number;
+    bp.internal_id = ManagerST::Get()->GetBreakpointsMgr()->GetNextID();
+    return bp;
+}
+
 void PluginManager::DeleteAllBreakpoints() { ManagerST::Get()->GetBreakpointsMgr()->DelAllBreakpoints(); }
 
 void PluginManager::SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints)

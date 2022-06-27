@@ -12,46 +12,19 @@ DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent)
 
 DAPBreakpointsView::~DAPBreakpointsView() {}
 
-void DAPBreakpointsView::SetBreakpoint(const dap::Breakpoint& breakpoint)
-{
-    m_breakpoints.erase(breakpoint);
-    m_breakpoints.insert(breakpoint);
-    RefreshView();
-}
-
-void DAPBreakpointsView::SetBreakpoints(const std::vector<dap::Breakpoint>& breakpoint)
-{
-    for(const auto& bp : breakpoint) {
-        if(bp.source.name.empty() && bp.source.path.empty()) {
-            continue;
-        }
-        // remove old entry that matches this breakpoint
-        m_breakpoints.erase(bp);
-        // insert the new instance
-        m_breakpoints.insert(bp);
-    }
-    RefreshView();
-}
-
-void DAPBreakpointsView::RefreshView()
+void DAPBreakpointsView::RefreshView(const SessionBreakpoints& breakpoints)
 {
     m_dvListCtrl->Begin();
     m_dvListCtrl->DeleteAllItems();
 
-    for(auto& bp : m_breakpoints) {
+    for(const auto& bp : breakpoints.get_breakpoints()) {
         wxVector<wxVariant> cols;
         cols.reserve(m_dvListCtrl->GetHeader()->GetCount());
         cols.push_back(wxString() << bp.id);
-        cols.push_back(bp.source.path);
+        cols.push_back(bp.source.path.empty() ? "<unknown>" : bp.source.path);
         cols.push_back(wxString() << bp.line);
-        cols.push_back(bp.verified ? wxString("Yes") : wxString("No"));
-        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)&bp);
+        cols.push_back(bp.verified ? wxString("YES") : wxString("NO"));
+        m_dvListCtrl->AppendItem(cols);
     }
     m_dvListCtrl->Commit();
-}
-
-void DAPBreakpointsView::Clear()
-{
-    m_breakpoints.clear();
-    m_dvListCtrl->DeleteAllItems();
 }

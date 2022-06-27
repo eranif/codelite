@@ -55,7 +55,10 @@ bool SessionBreakpoints::update_or_insert(const dap::Breakpoint& bp)
     if(where == wxNOT_FOUND) {
         m_breakpoints.push_back(bp);
     } else {
-        m_breakpoints[where] = bp;
+        // only update when the bp is changing from not-verified -> verified
+        if(bp.verified) {
+            m_breakpoints[where] = bp;
+        }
     }
     return true;
 }

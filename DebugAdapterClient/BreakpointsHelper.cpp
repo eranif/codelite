@@ -1,4 +1,5 @@
 #include "BreakpointsHelper.hpp"
+#include "event_notifier.h"
 
 #include <algorithm>
 

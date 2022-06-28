@@ -510,10 +510,10 @@ void clControlWithItems::AssignRects(const clRowEntry::Vec_t& items)
             curitem->SetRects(wxRect(-100, -100, 0, 0), wxRect(-100, -100, 0, 0));
             continue;
         }
-        wxRect itemRect = wxRect(0, y, width, m_lineHeight);
+        wxRect itemRect = wxRect(clientRect.GetX(), y, width, m_lineHeight);
         wxRect buttonRect;
         if(curitem->HasChildren()) {
-            buttonRect = wxRect((curitem->GetIndentsCount() * GetIndent()), y, m_lineHeight, m_lineHeight);
+            buttonRect = wxRect(itemRect.x + (curitem->GetIndentsCount() * GetIndent()), y, m_lineHeight, m_lineHeight);
         }
         curitem->SetRects(itemRect, buttonRect);
         y += m_lineHeight;

@@ -7,8 +7,7 @@
 #include <wx/settings.h>
 
 #ifdef __WXOSX__
-#define FACTOR_ALTROW_LIGHT 95
-#define FACTOR_ALTROW_DARK 105
+#define FACTOR_ALTROW 103
 #define FACTOR_SEL_BG_COLOUR_NOFOCUS 110
 #else
 #define FACTOR_ALTROW_LIGHT 98
@@ -39,7 +38,9 @@ bool clColours::IsLightTheme() const
 void clColours::InitFromColour(const wxColour& baseColour)
 {
 #ifdef __WXMAC__
-    bgColour = clSystemSettings::GetDefaultPanelColour();             // background colour for the control
+    bool is_dark = DrawingUtils::IsDark(clSystemSettings::GetDefaultPanelColour());
+    bgColour = clSystemSettings::GetDefaultPanelColour().ChangeLightness(
+        is_dark ? 110 : 90);                                          // background colour for the control
     itemBgColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX); // item bg colour
     itemTextColour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
     hoverBgColour = itemBgColour.ChangeLightness(90);
@@ -49,7 +50,7 @@ void clColours::InitFromColour(const wxColour& baseColour)
     selItemBgColourNoFocus = selItemBgColour;
     buttonColour = itemTextColour;    // expand/collapse button colour
     selbuttonColour = itemTextColour; // The colour of the button ("Expand") when on a selected row
-    alternateColour = bgColour.ChangeLightness(110);
+    alternateColour = bgColour.ChangeLightness(105);
     headerBgColour = bgColour;
     darkBorderColour = borderColour = headerVBorderColour = headerHBorderColour =
         bgColour.ChangeLightness(80); // Header background colour

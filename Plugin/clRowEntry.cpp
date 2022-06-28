@@ -23,8 +23,10 @@
 
 #ifdef __WXGTK__
 #define SELECTION_RECT_DEFLATE 1
-#else
+#elif defined(__WXMSW__)
 #define SELECTION_RECT_DEFLATE 2
+#else
+#define SELECTION_RECT_DEFLATE 3
 #endif
 
 namespace
@@ -94,18 +96,17 @@ namespace
 
         dc.SetPen(pen);
         dc.SetBrush(brush);
-
-        wxRect selection_rect = rect;
-        selection_rect.Deflate(SELECTION_RECT_DEFLATE);
-        selection_rect = selection_rect.CenterIn(rect);
-        dc.DrawRoundedRectangle(selection_rect, radius);
+        dc.DrawRoundedRectangle(rect, radius);
     }
 } // namespace
 
 void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
 {
-    wxColour c = win->HasFocus() ? colours.GetSelItemBgColour() : colours.GetSelItemBgColourNoFocus();
-    draw_selection(dc, rect, c, c);
+    wxUnusedVar(win);
+    wxRect r = rect;
+    r.Deflate(SELECTION_RECT_DEFLATE);
+    r = r.CenterIn(rect);
+    draw_selection(dc, r, colours.GetSelItemBgColour(), colours.GetSelItemBgColour());
 }
 
 void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clCellValue& cell)
@@ -569,7 +570,8 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
         if((i == 0) && !IsListItem()) {
             // The expand button is only make sense for the first cell
             if(HasChildren()) {
-                wxRect buttonRect = GetButtonRect();
+                wxRect assignedRectForButton = GetButtonRect();
+                wxRect buttonRect = assignedRectForButton;
                 buttonRect.Deflate(1);
                 textXOffset += buttonRect.GetWidth();
 
@@ -580,13 +582,13 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                     continue;
                 }
 
-                buttonRect.Deflate((buttonRect.GetWidth() / 4), (buttonRect.GetHeight() / 4));
+                buttonRect.Deflate((buttonRect.GetWidth() / 3), (buttonRect.GetHeight() / 3));
                 wxRect tribtn = buttonRect;
                 dc.SetPen(wxPen(buttonColour, 2));
                 if(IsExpanded()) {
                     dc.SetPen(wxPen(buttonColour, 2));
                     tribtn.SetHeight(tribtn.GetHeight() - tribtn.GetHeight() / 2);
-                    tribtn = tribtn.CenterIn(buttonRect);
+                    tribtn = tribtn.CenterIn(assignedRectForButton);
                     wxPoint middleLeft = wxPoint((tribtn.GetLeft() + tribtn.GetWidth() / 2), tribtn.GetBottom());
                     dc.DrawLine(tribtn.GetTopLeft(), middleLeft);
                     dc.DrawLine(tribtn.GetTopRight(), middleLeft);

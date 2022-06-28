@@ -165,6 +165,8 @@ protected:
     void OnDapBreakpointEvent(DAPEvent& event);
     void OnDapRunInTerminal(DAPEvent& event);
     void OnDapLog(DAPEvent& event);
+    void OnDapScopesResponse(DAPEvent& event);
+    void OnDapVariablesResponse(DAPEvent& event);
 
 public:
     //--------------------------------------------

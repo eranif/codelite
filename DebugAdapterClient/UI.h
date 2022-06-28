@@ -49,15 +49,15 @@ class DAPMainViewBase : public wxPanel
 protected:
     clThemedSplitterWindow* m_splitter238;
     wxPanel* m_splitterPage240;
-    clThemedTreeCtrl* m_treeThreads;
+    clThemedTreeCtrl* m_threadsTree;
     wxPanel* m_splitterPage242;
-    clThemedTreeCtrl* m_treeVariables;
+    clThemedTreeCtrl* m_variablesTree;
 
 protected:
 public:
-    clThemedTreeCtrl* GetTreeThreads() { return m_treeThreads; }
+    clThemedTreeCtrl* GetThreadsTree() { return m_threadsTree; }
     wxPanel* GetSplitterPage240() { return m_splitterPage240; }
-    clThemedTreeCtrl* GetTreeVariables() { return m_treeVariables; }
+    clThemedTreeCtrl* GetVariablesTree() { return m_variablesTree; }
     wxPanel* GetSplitterPage242() { return m_splitterPage242; }
     clThemedSplitterWindow* GetSplitter238() { return m_splitter238; }
     DAPMainViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,

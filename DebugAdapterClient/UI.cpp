@@ -37,10 +37,10 @@ DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer243 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage240->SetSizer(boxSizer243);
 
-    m_treeThreads = new clThemedTreeCtrl(m_splitterPage240, wxID_ANY, wxDefaultPosition,
+    m_threadsTree = new clThemedTreeCtrl(m_splitterPage240, wxID_ANY, wxDefaultPosition,
                                          wxDLG_UNIT(m_splitterPage240, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
 
-    boxSizer243->Add(m_treeThreads, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer243->Add(m_threadsTree, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitterPage242 = new wxPanel(m_splitter238, wxID_ANY, wxDefaultPosition,
                                     wxDLG_UNIT(m_splitter238, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -49,10 +49,10 @@ DAPMainViewBase::DAPMainViewBase(wxWindow* parent, wxWindowID id, const wxPoint&
     wxBoxSizer* boxSizer244 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage242->SetSizer(boxSizer244);
 
-    m_treeVariables = new clThemedTreeCtrl(m_splitterPage242, wxID_ANY, wxDefaultPosition,
+    m_variablesTree = new clThemedTreeCtrl(m_splitterPage242, wxID_ANY, wxDefaultPosition,
                                            wxDLG_UNIT(m_splitterPage242, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
 
-    boxSizer244->Add(m_treeVariables, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer244->Add(m_variablesTree, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("DAPMainViewBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));

@@ -689,8 +689,10 @@ void clTreeCtrl::DeleteChildren(const wxTreeItemId& item)
         return;
     clRowEntry* node = m_model.ToPtr(item);
     node->DeleteAllChildren();
-    UpdateScrollBar();
-    Refresh();
+    if(!m_bulkInsert) { // in tx
+        UpdateScrollBar();
+        Refresh();
+    }
 }
 
 wxTreeItemId clTreeCtrl::GetFirstChild(const wxTreeItemId& item, wxTreeItemIdValue& cookie) const
@@ -1054,8 +1056,10 @@ void clTreeCtrl::Delete(const wxTreeItemId& item)
     // delete the item + its children
     // fires event
     m_model.DeleteItem(item);
-    UpdateScrollBar();
-    Refresh();
+    if(!m_bulkInsert) { // in tx
+        UpdateScrollBar();
+        Refresh();
+    }
 }
 
 void clTreeCtrl::SetItemData(const wxTreeItemId& item, wxTreeItemData* data)
@@ -1104,8 +1108,10 @@ void clTreeCtrl::SetItemText(const wxTreeItemId& item, const wxString& text, siz
     clRowEntry* node = m_model.ToPtr(item);
     CHECK_PTR_RET(node);
     node->SetLabel(text, col);
-    DoUpdateHeader(item);
-    Refresh();
+    if(!m_bulkInsert) { // in tx
+        DoUpdateHeader(item);
+        Refresh();
+    }
 }
 
 void clTreeCtrl::SetItemBold(const wxTreeItemId& item, bool bold, size_t col)

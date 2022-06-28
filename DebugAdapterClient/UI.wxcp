@@ -334,7 +334,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"m_treeThreads"
+															"m_value":	"m_threadsTree"
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",
@@ -500,7 +500,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Name:",
-															"m_value":	"m_treeVariables"
+															"m_value":	"m_variablesTree"
 														}, {
 															"type":	"multi-string",
 															"m_label":	"Tooltip:",

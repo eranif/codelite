@@ -201,6 +201,8 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     m_client.Bind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnDapStoppedEvent, this);
     m_client.Bind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnDapThreadsResponse, this);
     m_client.Bind(wxEVT_DAP_STACKTRACE_RESPONSE, &DebugAdapterClient::OnDapStackTraceResponse, this);
+    m_client.Bind(wxEVT_DAP_SCOPES_RESPONSE, &DebugAdapterClient::OnDapScopesResponse, this);
+    m_client.Bind(wxEVT_DAP_VARIABLES_RESPONSE, &DebugAdapterClient::OnDapVariablesResponse, this);
     m_client.Bind(wxEVT_DAP_SET_FUNCTION_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnDapSetFunctionBreakpointResponse,
                   this);
     m_client.Bind(wxEVT_DAP_SET_SOURCE_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnDapSetSourceBreakpointResponse,
@@ -262,6 +264,8 @@ void DebugAdapterClient::UnPlug()
     m_client.Unbind(wxEVT_DAP_STOPPED_EVENT, &DebugAdapterClient::OnDapStoppedEvent, this);
     m_client.Unbind(wxEVT_DAP_THREADS_RESPONSE, &DebugAdapterClient::OnDapThreadsResponse, this);
     m_client.Unbind(wxEVT_DAP_STACKTRACE_RESPONSE, &DebugAdapterClient::OnDapStackTraceResponse, this);
+    m_client.Unbind(wxEVT_DAP_SCOPES_RESPONSE, &DebugAdapterClient::OnDapScopesResponse, this);
+    m_client.Unbind(wxEVT_DAP_VARIABLES_RESPONSE, &DebugAdapterClient::OnDapVariablesResponse, this);
     m_client.Unbind(wxEVT_DAP_SET_FUNCTION_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnDapSetFunctionBreakpointResponse,
                     this);
     m_client.Unbind(wxEVT_DAP_SET_SOURCE_BREAKPOINT_RESPONSE, &DebugAdapterClient::OnDapSetSourceBreakpointResponse,
@@ -575,7 +579,7 @@ void DebugAdapterClient::InitializeUI()
 {
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     if(!m_threadsView) {
-        m_threadsView = new DAPMainView(parent, &m_client);
+        m_threadsView = new DAPMainView(parent, &m_client, LOG);
         m_mgr->GetDockingManager()->AddPane(m_threadsView, wxAuiPaneInfo()
                                                                .MinSize(200, 200)
                                                                .Layer(10)
@@ -652,7 +656,7 @@ void DebugAdapterClient::OnBuildStarting(clBuildEvent& event)
     if(m_client.IsConnected()) {
         // lldb session is active, prompt the user
         if(::wxMessageBox(_("A debug session is running\nCancel debug session and continue building?"),
-                          DAP_MESSAGE_BOX_TITLE, wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT | wxCENTER) == wxYES) {
+                          DAP_MESSAGE_BOX_TITLE, wxICON_QUESTION | wxYES_NO | wxNO_DEFAULT | wxCENTER) == wxYES) {
             clDebugEvent dummy;
             OnDebugStop(dummy);
             event.Skip();
@@ -975,11 +979,35 @@ void DebugAdapterClient::OnDapStackTraceResponse(DAPEvent& event)
     auto response = event.GetDapResponse()->As<dap::StackTraceResponse>();
     CHECK_PTR_RET(response);
 
-    m_threadsView->UpdateFrames(response->threadId, response);
+    m_threadsView->UpdateFrames(response->refId, response);
     if(!response->stackFrames.empty()) {
         auto frame = response->stackFrames[0];
         LoadFile(frame.source, frame.line - 1);
+
+        // ask the scopes for the first frame
+        m_client.GetScopes(frame.id);
     }
+}
+
+void DebugAdapterClient::OnDapScopesResponse(DAPEvent& event)
+{
+    auto response = event.GetDapResponse()->As<dap::ScopesResponse>();
+    CHECK_PTR_RET(response);
+    CHECK_PTR_RET(m_threadsView);
+
+    if(!response->success) {
+        LOG_DEBUG(LOG) << "failed to retrieve scopes." << response->message << endl;
+        return;
+    }
+    m_threadsView->UpdateScopes(response->refId, response);
+}
+
+void DebugAdapterClient::OnDapVariablesResponse(DAPEvent& event)
+{
+    auto response = event.GetDapResponse()->As<dap::VariablesResponse>();
+    CHECK_PTR_RET(response);
+    CHECK_PTR_RET(m_threadsView);
+    m_threadsView->UpdateVariables(response->refId, response);
 }
 
 void DebugAdapterClient::OnDapSetFunctionBreakpointResponse(DAPEvent& event)

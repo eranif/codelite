@@ -27,7 +27,7 @@ DAPMainView::DAPMainView(wxWindow* parent, dap::Client* client, clModuleLogger& 
     m_threadsTree->Bind(wxEVT_TREE_ITEM_EXPANDING, &DAPMainView::OnThreadItemExpanding, this);
 
     m_variablesTree->SetTreeStyle(m_variablesTree->GetTreeStyle() | wxTR_HIDE_ROOT);
-    m_variablesTree->SetShowHeader(false);
+    m_variablesTree->SetShowHeader(true);
     m_variablesTree->AddHeader(_("Name"));
     m_variablesTree->AddHeader(_("Value"));
     m_variablesTree->AddHeader(_("Type"));

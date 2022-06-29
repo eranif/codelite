@@ -1,9 +1,11 @@
-#include "CompilerLocatorCLANG.h"
 #include "LSPClangdDetector.hpp"
+
+#include "CompilerLocatorCLANG.h"
 #include "asyncprocess.h"
 #include "clFilesCollector.h"
 #include "file_logger.h"
 #include "globals.h"
+
 #include <wx/filename.h>
 #include <wx/regex.h>
 
@@ -26,14 +28,7 @@ bool LSPClangdDetector::DoLocate()
         return true;
     }
 
-#elif defined(__WXOSX__)
-    // Try the installation folder first
-    wxFileName clangdExe(clStandardPaths::Get().GetBinaryFullPath("clangd"));
-    if(clangdExe.FileExists()) {
-        ConfigureFile(clangdExe);
-        return true;
-    }
-#elif defined(__WXGTK__)
+#elif defined(__WXGTK__) || defined(__WXMAC__)
     // try the obvious name first: "clangd"
     wxFileName fnClangdExe("/usr/bin", "clangd");
     if(fnClangdExe.FileExists()) {
